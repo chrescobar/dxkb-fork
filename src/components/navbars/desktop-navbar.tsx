@@ -79,7 +79,7 @@ const DesktopNavbar = () => {
       <div className="flex items-center space-x-4">
         <Link id="dxkb-logo" href="/">
           <Image
-            src="/dxkb-logo-white-cropped.svg"
+            src="/logos/dxkb-logo-white-cropped.svg"
             alt="DXKB Logo"
             width={100}
             height={40}
@@ -100,7 +100,7 @@ const DesktopNavbar = () => {
                         className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 p-6 no-underline outline-none focus:shadow-md bg-dxkb-blue hover:bg-dxkb-blue/80 transition-all duration-300"
                         href="/"
                       >
-                        <Image src="/dxkb-logo-white-cropped.svg" alt="DXKB Logo" width={100} height={40} />
+                        <Image src="/logos/dxkb-logo-white-cropped.svg" alt="DXKB Logo" width={100} height={40} />
                         <div className="mb-2 mt-4 text-lg font-medium text-white">
                           shadcn/ui
                         </div>

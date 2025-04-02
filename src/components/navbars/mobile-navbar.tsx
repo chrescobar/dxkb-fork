@@ -35,7 +35,7 @@ const MobileNavbar = () => {
             </SheetTitle>
             <div id="sheet-logo" className="flex p-4 bg-dxkb-blue rounded-tr-lg w-full">
               <Image
-                src="/dxkb-logo-white-cropped.svg"
+                src="/logos/dxkb-logo-white-cropped.svg"
                 alt="DXKB Logo"
                 width={100}
                 height={40}
@@ -73,7 +73,7 @@ const MobileNavbar = () => {
 
         <Link id="dxkb-logo" href="/">
           <Image
-            src="/dxkb-logo-orange.svg"
+            src="/logos/dxkb-logo-orange.svg"
             alt="DXKB Logo"
             width={100}
             height={40}

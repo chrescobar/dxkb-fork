@@ -24,7 +24,7 @@ const About = () => {
         </div>
 
         <Image
-          src="/workshop.jpg"
+          src="/images/workshop.jpg"
           alt="BV-BRC Workshop 2024 participants"
           className="rounded-xl w-full max-w-[600px] justify-self-center"
           quality={100}

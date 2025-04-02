@@ -10,37 +10,68 @@ import {
 } from "react-icons/fa";
 import { Button } from "@/components/buttons/button";
 
-const footerLinks = {
-  about: {
-    Funding: "/funding",
-    "Our Team": "/team",
-    "Community News": "/news",
-  },
-  faq: {
-    Documentation: "/documentation",
-    "Related Resources": "/related-resources",
-    Tutorials: "/tutorials",
-  },
-  updates: {
-    Calendar: "/calendar",
-    Publications: "/publications",
-    Citations: "/citations",
-  },
-  help: {
-    "Contact Us": "/contact",
-    "Instructional Videos": "/instructional-videos",
-    "Privacy Policy": "/privacy-policy",
-  },
+interface FooterLink {
+  name: string;
+  url: string;
+}
+
+interface FooterSection {
+  title: string;
+  titleUrl: string;
+  links: FooterLink[];
+}
+
+const isExternalUrl = (url: string): boolean => {
+  return url.startsWith("http") || url.startsWith("https");
 };
 
-const footer = () => {
+const footerLinks: FooterSection[] = [
+  {
+    title: "ABOUT",
+    titleUrl: "/about",
+    links: [
+      { name: "Funding", url: "/funding" },
+      { name: "Our Team", url: "/team" },
+      { name: "Community News", url: "/news" },
+    ],
+  },
+  {
+    title: "FAQ",
+    titleUrl: "/faq",
+    links: [
+      { name: "Documentation", url: "https://docs.dxkb.org" },
+      { name: "Related Resources", url: "/related-resources" },
+      { name: "Tutorials", url: "/tutorials" },
+    ],
+  },
+  {
+    title: "UPDATES",
+    titleUrl: "/updates",
+    links: [
+      { name: "Calendar", url: "/calendar" },
+      { name: "Publications", url: "/publications" },
+      { name: "Citations", url: "/citations" },
+    ],
+  },
+  {
+    title: "HELP",
+    titleUrl: "/help",
+    links: [
+      { name: "Contact Us", url: "/contact" },
+      { name: "Instructional Videos", url: "/instructional-videos" },
+      { name: "Privacy Policy", url: "/privacy-policy" },
+    ],
+  },
+];
+
+const Footer = () => {
   return (
     <footer className="bg-dxkb-blue rounded-t-xl py-8 text-white">
       <div className="mx-auto w-full px-12">
         <div className="grid gap-8 md:grid-cols-[25%_75%]">
-          <div id="website-info" className="flex flex-col order-2 md:order-1">
+          <div id="website-info" className="order-2 flex flex-col md:order-1">
             <Image
-              src="/dxkb-text-white.svg"
+              src="/logos/dxkb-text-white.svg"
               alt="DXKB Logo"
               width={100}
               height={32}
@@ -54,7 +85,7 @@ const footer = () => {
               This project is funded in whole or in parts with Federal funds
               using grants awarded to the University of Chicago.
             </span>
-            <div className="mt-4 flex gap-auto lg:gap-4">
+            <div className="gap-auto mt-4 flex lg:gap-4">
               <Button
                 variant="ghost"
                 size="icon"
@@ -112,75 +143,38 @@ const footer = () => {
               </Button>
             </div>
           </div>
-          <div id="footer-links" className="grid grid-cols-2 md:grid-cols-4 gap-4 order-1 md:order-2">
-            <div>
-              <h4 className="text-dxkb-orange mb-4 font-bold">
-                <Link href="/about" className="hover:underline">
-                  ABOUT
-                </Link>
-              </h4>
-              <ul className="space-y-2">
-                {Object.entries(footerLinks.about).map(
-                  ([link_name, link_url]) => (
-                    <li key={link_name}>
-                      <Link href={link_url} className="hover:underline">
-                        {link_name}
+          <div
+            id="footer-links"
+            className="order-1 grid grid-cols-2 gap-4 md:order-2 md:grid-cols-4"
+          >
+            {footerLinks.map((section) => (
+              <div key={section.title}>
+                <h4 className="text-dxkb-orange mb-4 font-bold">
+                  <Link
+                    href={section.titleUrl}
+                    className="hover:underline"
+                    {...(isExternalUrl(section.titleUrl) && {
+                      target: "_blank",
+                    })}
+                  >
+                    {section.title}
+                  </Link>
+                </h4>
+                <ul className="space-y-2">
+                  {section.links.map((link) => (
+                    <li key={link.name}>
+                      <Link
+                        href={link.url}
+                        className="hover:underline"
+                        {...(isExternalUrl(link.url) && { target: "_blank" })}
+                      >
+                        {link.name}
                       </Link>
                     </li>
-                  ),
-                )}
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-dxkb-orange mb-4 font-bold">
-                <Link href="/faq" className="hover:underline">
-                  FAQ
-                </Link>
-              </h4>
-              <ul className="space-y-2">
-                {Object.entries(footerLinks.faq).map(([link_name, link_url]) => (
-                  <li key={link_name}>
-                    <Link href={link_url} className="hover:underline">
-                      {link_name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-dxkb-orange mb-4 font-bold">
-                <Link href="/updates" className="hover:underline">
-                  UPDATES
-                </Link>
-              </h4>
-              <ul className="space-y-2">
-                {Object.entries(footerLinks.updates).map(
-                  ([link_name, link_url]) => (
-                    <li key={link_name}>
-                      <Link href={link_url} className="hover:underline">
-                        {link_name}
-                      </Link>
-                    </li>
-                  ),
-                )}
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-dxkb-orange mb-4 font-bold">
-                <Link href="/help" className="hover:underline">
-                  HELP
-                </Link>
-              </h4>
-              <ul className="space-y-2">
-                {Object.entries(footerLinks.help).map(([link_name, link_url]) => (
-                  <li key={link_name}>
-                    <Link href={link_url} className="hover:underline">
-                      {link_name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -188,4 +182,4 @@ const footer = () => {
   );
 };
 
-export default footer;
+export default Footer;

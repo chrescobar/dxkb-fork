@@ -47,7 +47,7 @@ const oldNavbarNoSearch = () => {
         <div className="flex items-center space-x-4">
           <Link id="dxkb-logo" href="/">
             <Image
-              src="/dxkb-logo-white-cropped.svg"
+              src="/logos/dxkb-logo-white-cropped.svg"
               alt="DXKB Logo"
               width={100}
               height={40}

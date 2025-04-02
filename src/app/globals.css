@@ -272,4 +272,46 @@
   @apply mt-1 text-sm text-muted-foreground line-clamp-2;
 }
 
+/* Shared Card Grid Layout Styles */
+.card-container {
+  @apply container mx-auto w-[95%] max-w-7xl space-y-12 py-8 my-12;
+}
+
+.section-title {
+  @apply mb-6 text-3xl font-bold text-center;
+}
+
+.card-grid-two {
+  @apply grid grid-cols-1 gap-6 sm:grid-cols-2;
+}
+
+.card-grid-three {
+  @apply grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+.card-grid-four {
+  @apply grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4;
+}
+
+/* Shared Card Component Styles */
+.card-base {
+  @apply block overflow-hidden rounded-lg bg-white shadow-sm transition-shadow hover:shadow-md h-full w-full hover:bg-dxkb-light-gray;
+}
+
+.card-image {
+  @apply relative h-40 w-full transition-transform duration-300 group-hover:scale-105;
+}
+
+.card-content {
+  @apply p-4;
+}
+
+.card-title {
+  @apply font-semibold text-dxkb-blue group-hover:text-dxkb-orange;
+}
+
+.card-description {
+  @apply mt-2 text-sm text-muted-foreground line-clamp-2;
+}
+
 

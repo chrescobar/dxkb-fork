@@ -59,8 +59,8 @@ const relatedWebsites: ResourceCard[] = [
 ];
 
 const ResourceCard = ({ title, subtitle, image, url }: ResourceCard) => (
-  <Link href={url} target="_blank" className="resource-card group">
-    <div className="resource-card-image">
+  <Link href={url} target="_blank" className="card-base group">
+    <div className="card-image">
       <Image
         src={image}
         alt={title}
@@ -68,9 +68,9 @@ const ResourceCard = ({ title, subtitle, image, url }: ResourceCard) => (
         className="object-cover"
       />
     </div>
-    <div className="resource-card-content">
-      <h3 className="resource-card-title">{title}</h3>
-      <p className="resource-card-subtitle">{subtitle}</p>
+    <div className="card-content">
+      <h3 className="card-title">{title}</h3>
+      <p className="card-description">{subtitle}</p>
     </div>
   </Link>
 );
@@ -80,13 +80,13 @@ const RelatedResources = () => {
     <div className="flex w-full flex-col items-center">
       <FooterHeader title="Related Resources" />
 
-      <div className="resources-container">
+      <div className="card-container">
         {/* Disease X/CEPI Resource Centers */}
         <section>
-          <h2 className="resources-section-title">
+          <h2 className="section-title">
             Disease X/CEPI Resource Centers
           </h2>
-          <div className="resources-grid-three">
+          <div className="card-grid-three">
             {resourceCenters.map((resource) => (
               <ResourceCard key={resource.title} {...resource} />
             ))}
@@ -95,10 +95,10 @@ const RelatedResources = () => {
 
         {/* Related Websites */}
         <section>
-          <h2 className="resources-section-title">
+          <h2 className="section-title">
             Related Websites
           </h2>
-          <div className="resources-grid-four">
+          <div className="card-grid-four">
             {relatedWebsites.map((resource) => (
               <ResourceCard key={resource.title} {...resource} />
             ))}

@@ -102,7 +102,7 @@ const DesktopNavbar = () => {
                 Services
               </NavigationMenuTrigger>
               <NavigationMenuContent>
-                <div className="grid w-[650px] grid-cols-2 gap-2 p-2">
+                <div className="grid md:w-[550px] lg:w-[650px] grid-cols-2 gap-2 p-2">
                   <div className="space-y-0">
                     {/* Left Column */}
                     {Object.entries(serviceItems)

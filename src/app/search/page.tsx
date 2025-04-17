@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -17,7 +17,7 @@ import {
   LuActivity,
   LuDatabase,
 } from "react-icons/lu";
-import { SearchBar } from "@/components/search/search-bar";
+import { SearchBar, labelsByType } from "@/components/search/search-bar";
 
 interface SearchPayload {
   dataType: string;
@@ -59,65 +59,12 @@ function getDataTypeIcon(dataType: string) {
 // Helper function to format the content based on data type
 function getFormattedContent(doc: any, dataType: string) {
   switch (dataType) {
-    case "genome":
+    case "antibiotics":
       return (
         <>
-          <h3 className="search-results-header">{doc.genome_name}</h3>
+          <h3 className="search-results-header">{doc.antibiotic_name}</h3>
           <div className="mt-2 space-y-1 text-sm text-gray-600">
-            <p>
-              Genome ID: {doc.genome_id} | {doc.contigs} Contigs
-            </p>
-            <p>
-              SEQUENCED: {new Date(doc.completion_date).toLocaleDateString()}{" "}
-              {doc.sequencing_centers ? `by ${doc.sequencing_centers}` : ""}
-            </p>
-            <p>COLLECTED: {doc.collection_date}</p>
-            <p>HOST: {doc.host_name}</p>
-            {doc.comments?.map((comment: string, i: number) => (
-              <p key={i} className="mt-2 italic">
-                {comment}
-              </p>
-            ))}
-          </div>
-        </>
-      );
-    case "genome_feature":
-      return (
-        <>
-          <h3 className="search-results-header">
-            {doc.product || doc.feature_type}
-          </h3>
-          <div className="mt-2 space-y-1 text-sm text-gray-600">
-            <p>{doc.genome_name}</p>
-            <p>
-              {doc.annotation} | {doc.patric_id}
-            </p>
-          </div>
-        </>
-      );
-    case "surveillance":
-      return (
-        <>
-          <h3 className="search-results-header">
-            {doc.sample_identifier} | {doc.host_identifier}
-          </h3>
-          <div className="mt-2 space-y-1 text-sm text-gray-600">
-            <p>
-              ENV | {doc.collection_country} |{" "}
-              {new Date(doc.collection_date).getFullYear()}
-            </p>
-          </div>
-        </>
-      );
-    case "genome_sequence":
-      return (
-        <>
-          <h3 className="search-results-header">{doc.genome_name}</h3>
-          <div className="mt-2 space-y-1 text-sm text-gray-600">
-            <p>
-              {" "}
-              {doc.accession} | {doc.description}{" "}
-            </p>
+            <p dangerouslySetInnerHTML={{ __html: doc.description[0] }} className="search-results-description" />
           </div>
         </>
       );
@@ -133,7 +80,75 @@ function getFormattedContent(doc: any, dataType: string) {
           </div>
         </>
       );
-
+    case "experiment":
+      return (
+        <>
+          <h3 className="search-results-header">{doc.exp_name} | {doc.exp_id}</h3>
+          <div className="mt-2 space-y-1 text-sm text-gray-600 line-clamp-3 lg:line-clamp-6">
+            <p>{doc.exp_description}</p>
+          </div>
+        </>
+      );
+    case "genome":
+      return (
+        <>
+          <h3 className="search-results-header">{doc.genome_name}</h3>
+          <div className="mt-2 space-y-1 text-sm text-gray-600">
+            <p>
+              Genome ID: {doc.genome_id} | {doc.contigs} Contigs
+            </p>
+            <p>
+              SEQUENCED: {new Date(doc.completion_date).toLocaleDateString()}{" "}
+              {doc.sequencing_centers ? `by ${doc.sequencing_centers}` : ""}
+            </p>
+            {doc.collection_date && (
+              <p>COLLECTED: {doc.collection_date}</p>
+            )}
+            {doc.host_name && <p>HOST: {doc.host_name}</p>}
+            {doc.comments?.map((comment: string, i: number) => (
+              <p key={i} className="mt-2 italic">
+                {comment}
+              </p>
+            ))}
+          </div>
+        </>
+      );
+    case "genome_feature":
+      return (
+        <>
+          <h3 className="search-results-header">
+            {doc.product || doc.feature_type}  {doc.gene && ` | ${doc.gene}`}
+          </h3>
+          <div className="mt-2 space-y-1 text-sm text-gray-600">
+            <p>{doc.genome_name}</p>
+            <p>
+              {doc.annotation} | {doc.patric_id}
+            </p>
+          </div>
+        </>
+      );
+    case "genome_sequence":
+      return (
+        <>
+          <h3 className="search-results-header">{doc.genome_name}</h3>
+          <div className="mt-2 space-y-1 text-sm text-gray-600">
+            <p className="line-clamp-3 lg:line-clamp-6">
+              {" "}
+              {doc.accession} | {doc.description}{" "}
+            </p>
+          </div>
+        </>
+      );
+    case "pathway":
+      return (
+        <>
+          <h3 className="search-results-header">{doc.pathway_name}</h3>
+          <div className="mt-2 space-y-1 text-sm text-gray-600">
+            <p>{doc.product} | {doc.patric_id}</p>
+            <p>{doc.genome_name}</p>
+          </div>
+        </>
+      );
     case "protein_feature":
       return (
         <>
@@ -143,6 +158,69 @@ function getFormattedContent(doc: any, dataType: string) {
           <div className="mt-2 space-y-1 text-sm text-gray-600">
             <p>{doc.genome_name}</p>
             <p>{doc.patric_id} | {doc.refseq_locus_tag}</p>
+          </div>
+        </>
+      );
+    case "protein_structure":
+      return (
+        <>
+          <h3 className="search-results-header">{doc.pdb_id} | {doc.title}</h3>
+          <div className="mt-2 space-y-1 text-sm text-gray-600">
+            {doc.organism_name.map((name: any, i: number) => (
+              <p key={i}>{name}</p>
+            ))}
+          </div>
+        </>
+      );
+    case "serology":
+      return (
+        <>
+          <h3 className="search-results-header">{doc.sample_identifier} | {doc.host_identifier}</h3>
+          <div className="mt-2 space-y-1 text-sm text-gray-600">
+            <p>{doc.host_common_name} | {doc.collection_country} | {doc.host_health}</p>
+          </div>
+        </>
+      );
+    case "sp_gene":
+      return (
+        <>
+          <h3 className="search-results-header">{doc.product}</h3>
+          <div className="mt-2 space-y-1 text-sm text-gray-600">
+            <p>{doc.genome_name}</p>
+            <p>{doc.patric_id} | {doc.source} | {doc.evidence}</p>
+          </div>
+        </>
+      );
+    case "strain":
+      return (
+        <>
+          <h3 className="search-results-header">{doc.strain}</h3>
+          <div className="mt-2 space-y-1 text-sm text-gray-600">
+            <p>{doc.species}</p>
+          </div>
+        </>
+      );
+    case "subsystem":
+      return (
+        <>
+          <h3 className="search-results-header">{doc.subsystem_name}</h3>
+          <div className="mt-2 space-y-1 text-sm text-gray-600">
+            <p>{doc.product} | {doc.patric_id}</p>
+            <p>{doc.genome_name}</p>
+          </div>
+        </>
+      );
+    case "surveillance":
+      return (
+        <>
+          <h3 className="search-results-header">
+            {doc.sample_identifier} | {doc.host_identifier}
+          </h3>
+          <div className="mt-2 space-y-1 text-sm text-gray-600">
+            <p>
+              ENV | {doc.collection_country} |{" "}
+              {new Date(doc.collection_date).getFullYear()}
+            </p>
           </div>
         </>
       );
@@ -163,7 +241,7 @@ function getFormattedContent(doc: any, dataType: string) {
             {doc.name || doc.id || "Untitled"}
           </h3>
           {doc.description && (
-            <p className="mt-1 text-sm text-gray-600">{doc.description}</p>
+            <p className="mt-1 space-y-1 text-sm text-gray-600">{doc.description}</p>
           )}
         </>
       );
@@ -171,7 +249,6 @@ function getFormattedContent(doc: any, dataType: string) {
 }
 
 export default function SearchResultsPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [searchResults, setSearchResults] = useState<SearchResults>({});
 
@@ -222,31 +299,29 @@ export default function SearchResultsPage() {
             if (numFound === 0) return null;
 
             return (
-              <div
+              <Card
                 key={dataType}
-                className="bg-card text-card-foreground rounded-lg border shadow-sm"
+                className="bg-card text-card-foreground rounded-lg border shadow-sm py-0 gap-0"
               >
-                <div className="flex items-center justify-between border-b p-6">
+                <CardHeader className="flex flex-row items-center justify-between border-b p-6">
                   <div className="flex items-center gap-2">
                     {getDataTypeIcon(dataType)}
-                    <h2 className="text-xl font-semibold capitalize">
-                      {dataType === "protein_feature"
-                        ? "Domains & Motifs"
-                        : dataType.replace(/_/g, " ")}
-                    </h2>
+                    <CardTitle className="text-xl font-semibold capitalize">
+                      {labelsByType[dataType]}
+                    </CardTitle>
                   </div>
-                  <Badge className="bg-secondary-def text-white min-w-8 max-w-fit h-8">
+                  <Badge className="bg-secondary-def text-white min-w-8 max-w-fit h-8 font-semibold">
                     {numFound}
                   </Badge>
-                </div>
-                <div className="divide-y">
+                </CardHeader>
+                <CardContent className="divide-y">
                   {docs.map((doc: any, index: number) => (
-                    <div key={doc.id || index} className="p-6">
+                    <div key={doc.id || index} className="py-6">
                       {getFormattedContent(doc, dataType)}
                     </div>
                   ))}
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             );
           })}
         </div>

@@ -23,14 +23,36 @@ const searchTypes = [
   "genome",
   "strain",
   "genome_feature",
+  "sp_gene",
   "protein_feature",
   "epitope",
   "protein_structure",
+  "pathway",
+  "subsystem",
   "surveillance",
   "serology",
   "experiment",
+  "antibiotics",
   "genome_sequence",
 ];
+
+export const labelsByType: { [key: string]: string } = {
+  taxonomy: "Taxa",
+  genome: "Genomes",
+  strain: "Strains",
+  genome_feature: "Features",
+  sp_gene: "Specialty Genes",
+  protein_feature: "Domains and Motifs",
+  epitope: "Epitopes",
+  protein_structure: "Protein Structures",
+  pathway: "Pathways",
+  subsystem: "Subsystems",
+  surveillance: "Surveillance",
+  serology: "Serology",
+  experiment: "Experiments",
+  antibiotics: "Antibiotics",
+  genome_sequence: "Genomic Sequences",
+};
 
 export function SearchBar({
   initialValue = "",
@@ -120,6 +142,8 @@ export function SearchBar({
         };
       });
 
+      console.log(searchPayload);
+
       const response = await fetch(bvbrcAPI + "query/", {
         method: "POST",
         headers: {
@@ -134,6 +158,8 @@ export function SearchBar({
       if (onSubmit) {
         onSubmit(inputValue);
       }
+
+      console.log(data);
 
       sessionStorage.setItem("searchResults", JSON.stringify(data));
       sessionStorage.setItem("searchQuery", inputValue);
@@ -157,14 +183,14 @@ export function SearchBar({
         <Input
           type="text"
           placeholder={placeholder}
-          className={`${size === "lg" ? "py-6" : ""} ${showIcon ? "pl-10" : ""}`}
+          className={`${size === "lg" ? "py-6" : ""} ${showIcon ? "pl-10" : ""} bg-white`}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
         />
         {showIcon && (
           <LuSearch
-            className="absolute top-1/2 left-3 -translate-y-1/2 transform text-gray-400"
+            className="absolute top-1/2 left-3 -translate-y-1/2 transform text-primary-500"
             size={18}
           />
         )}

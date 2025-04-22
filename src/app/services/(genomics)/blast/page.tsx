@@ -26,7 +26,6 @@ import {
 } from "@/components/ui/tooltip";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Collapsible,
   CollapsibleContent,
@@ -63,39 +62,14 @@ export default function BlastServicePage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="mb-2 text-3xl font-bold">BLAST</h1>
-        <div className="mb-4 flex items-start gap-2">
-          <div className="text-gray-600">
-            <p>
-              The BLAST service uses BLAST (Basic Local Alignment Search Tool)
-              to search against public or private genomes or other databases
-              using DNA or protein sequence(s).
-            </p>
-            <div className="mt-2 flex items-center gap-2">
-              <p>For further explanation, please see the</p>
-              <a
-                href="/docs/blast-guide"
-                className="flex items-center text-blue-500 hover:text-blue-700"
-              >
-                BLAST Service Quick Reference Guide{" "}
-                <ExternalLink className="ml-1 h-3 w-3" />
-              </a>
-              <p>and</p>
-              <a
-                href="/tutorial/blast-video"
-                className="flex items-center text-blue-500 hover:text-blue-700"
-              >
-                Tutorial and Instructional Video{" "}
-                <ExternalLink className="ml-1 h-3 w-3" />
-              </a>
-            </div>
-          </div>
+    <div className="container service-container">
+      <div className="service-header">
+        <div className="service-header-title">
+          <h1>BLAST</h1>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <Info className="mt-1 h-5 w-5 text-blue-500" />
+                <Info className="service-header-tooltip" />
               </TooltipTrigger>
               <TooltipContent side="right" className="max-w-sm">
                 <p>
@@ -106,14 +80,40 @@ export default function BlastServicePage() {
             </Tooltip>
           </TooltipProvider>
         </div>
+        <div className="service-header-description">
+          <div className="text-gray-600">
+            <p>
+              The BLAST service uses BLAST (Basic Local Alignment Search Tool)
+              to search against public or private genomes or other databases
+              using DNA or protein sequence(s).
+            </p>
+            <p>
+              For further explanation, please see the{" "}
+              <a
+                href="/docs/blast-guide"
+              >
+                BLAST Service Quick Reference Guide
+                <ExternalLink className="ml-1 h-3 w-3" />
+              </a>{" "}
+              and{" "}
+              <a
+                href="/tutorial/blast-video"
+              >
+                Tutorial and Instructional Video
+                <ExternalLink className="ml-1 h-3 w-3" />
+              </a>
+              .
+            </p>
+          </div>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="space-y-6">
+        <div className="service-form-section">
           {/* Search Program Card */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="service-form-section-header">
                 Search Program
                 <TooltipProvider>
                   <Tooltip>
@@ -133,30 +133,30 @@ export default function BlastServicePage() {
               <RadioGroup
                 value={searchProgram}
                 onValueChange={setSearchProgram}
-                className="grid grid-cols-1 gap-4 md:grid-cols-2"
+                className="service-radio-group"
               >
-                <div className="flex items-center space-x-2">
+                <div className="service-radio-group-item">
                   <RadioGroupItem value="blastn" id="blastn" />
                   <Label htmlFor="blastn" className="cursor-pointer">
                     BLASTN (nucleotide → nucleotide database)
                   </Label>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="service-radio-group-item">
                   <RadioGroupItem value="blastp" id="blastp" />
                   <Label htmlFor="blastp" className="cursor-pointer">
                     BLASTP (protein → protein database)
                   </Label>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="service-radio-group-item">
                   <RadioGroupItem value="blastx" id="blastx" />
                   <Label htmlFor="blastx" className="cursor-pointer">
                     BLASTX (translated nucleotide → protein database)
                   </Label>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="service-radio-group-item">
                   <RadioGroupItem value="tblastn" id="tblastn" />
                   <Label htmlFor="tblastn" className="cursor-pointer">
-                    TBLASTN (protein → translated nucleotide database)
+                    tBLASTn (protein → translated nucleotide database)
                   </Label>
                 </div>
               </RadioGroup>
@@ -166,7 +166,7 @@ export default function BlastServicePage() {
           {/* Query Source Card */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="service-form-section-header">
                 Query Source
                 <TooltipProvider>
                   <Tooltip>
@@ -187,20 +187,21 @@ export default function BlastServicePage() {
                   onValueChange={setQueryType}
                   className="flex gap-6"
                 >
-                  <div className="flex items-center space-x-2">
+                  <div className="service-radio-group-item">
                     <RadioGroupItem value="enterSequence" id="enterSequence" />
                     <Label htmlFor="enterSequence" className="cursor-pointer">
                       Enter sequence
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="service-radio-group-item">
                     <RadioGroupItem value="selectFasta" id="selectFasta" />
                     <Label htmlFor="selectFasta" className="cursor-pointer">
                       Select FASTA file
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="service-radio-group-item">
                     <RadioGroupItem value="selectFeature" id="selectFeature" />
+                    {/* TODO: Add feature group selector from Workspace */}
                     <Label htmlFor="selectFeature" className="cursor-pointer">
                       Select feature group
                     </Label>
@@ -208,23 +209,22 @@ export default function BlastServicePage() {
                 </RadioGroup>
 
                 {queryType === "enterSequence" && (
-                  <div className="space-y-2">
+                  <div className="service-card-content-grid-item">
                     <Label htmlFor="sequence-input">
-                      Enter one or more query nucleotide or protein sequences to
-                      search. Requires FASTA format.
+                      Enter a FASTA formatted sequence.
                     </Label>
                     <Textarea
                       id="sequence-input"
-                      placeholder="Enter FASTA sequence"
+                      placeholder="Enter one or more query nucleotide or protein sequences to search. Requires FASTA format."
                       value={sequenceInput}
                       onChange={(e) => setSequenceInput(e.target.value)}
-                      className="min-h-40 font-mono"
+                      className="min-h-40 font-mono max-h-96"
                     />
                   </div>
                 )}
 
                 {queryType === "selectFasta" && (
-                  <div className="space-y-4">
+                  <div className="service-card-content-grid-item">
                     <Label htmlFor="fasta-file">Upload a FASTA file</Label>
                     <Input
                       id="fasta-file"
@@ -235,7 +235,7 @@ export default function BlastServicePage() {
                 )}
 
                 {queryType === "selectFeature" && (
-                  <div className="space-y-4">
+                  <div className="service-card-content-grid-item">
                     <Label htmlFor="feature-group">
                       Select a feature group
                     </Label>
@@ -256,10 +256,10 @@ export default function BlastServicePage() {
           </Card>
 
           {/* Database Selection Card */}
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="service-card-content-grid">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center">
+                <CardTitle className="service-form-section-header">
                   Database Source
                   <TooltipProvider>
                     <Tooltip>
@@ -278,12 +278,15 @@ export default function BlastServicePage() {
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select database source" />
                   </SelectTrigger>
+                  {/* TODO: Conditionally render based on query type */}
                   <SelectContent>
-                    <SelectItem value="reference">
-                      Reference and representative genomes (bacteria, archaea)
-                    </SelectItem>
-                    <SelectItem value="all">All bacterial genomes</SelectItem>
-                    <SelectItem value="user">User uploaded genomes</SelectItem>
+                    <SelectItem value="reference">Reference and representative genomes (bacteria, archaea)</SelectItem>
+                    <SelectItem value="reference-virus">Reference and representative genomes (viruses)</SelectItem>
+                    <SelectItem value="search-genome-list">Search within selected genome list</SelectItem>
+                    <SelectItem value="search-genome-group">Search within selected genome group</SelectItem>
+                    <SelectItem value="search-feature-group">Search within selected feature group</SelectItem>
+                    <SelectItem value="search-taxonomy">Search within a taxon</SelectItem>
+                    <SelectItem value="search-fasta">Search within selected FASTA file</SelectItem>
                   </SelectContent>
                 </Select>
               </CardContent>
@@ -291,7 +294,7 @@ export default function BlastServicePage() {
 
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center">
+                <CardTitle className="service-form-section-header">
                   Database Type
                   <TooltipProvider>
                     <Tooltip>
@@ -311,13 +314,9 @@ export default function BlastServicePage() {
                     <SelectValue placeholder="Select database type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="genome">
-                      Genome sequences (NT)
-                    </SelectItem>
-                    <SelectItem value="proteins">
-                      Protein sequences (AA)
-                    </SelectItem>
-                    <SelectItem value="genes">Gene sequences</SelectItem>
+                    <SelectItem value="genome-sequences">Genome sequences (NT)</SelectItem>
+                    <SelectItem value="genes">Genes (NT)</SelectItem>
+                    <SelectItem value="rnas">RNAs (NT)</SelectItem>
                   </SelectContent>
                 </Select>
               </CardContent>
@@ -327,13 +326,14 @@ export default function BlastServicePage() {
           {/* Output Settings Card */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="service-form-section-header">
                 Output Settings
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <div className="space-y-2">
+              <div className="service-card-content-grid">
+                {/* TODO: Add the workspace folder selector here */}
+                <div className="service-card-content-grid-item">
                   <Label htmlFor="output-folder">Output Folder</Label>
                   <Input
                     id="output-folder"
@@ -342,7 +342,7 @@ export default function BlastServicePage() {
                     placeholder="Specify output folder"
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="service-card-content-grid-item">
                   <Label htmlFor="output-name">Output Name</Label>
                   <Input
                     id="output-name"
@@ -360,87 +360,66 @@ export default function BlastServicePage() {
             <Collapsible
               open={showAdvanced}
               onOpenChange={setShowAdvanced}
-              className="w-full"
+              className="service-collapsible"
             >
-              <div className="flex items-center justify-between px-6 py-4">
-                <h3 className="text-lg font-semibold">BLAST Parameters</h3>
-                <CollapsibleTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="flex items-center gap-1 p-1"
-                  >
-                    {showAdvanced ? "Hide" : "Show"} Advanced Options
-                    <ChevronDown
-                      className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
-                    />
-                  </Button>
-                </CollapsibleTrigger>
-              </div>
-              <Separator />
+              <CardHeader className="service-collapsible-header">
+                <CardTitle className="service-form-section-header">
+                  Advanced Options
+                </CardTitle>
+                <div>
+                  <CollapsibleTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="service-collapsible-trigger"
+                    >
+                      {showAdvanced ? "Hide" : "Show"}
+                      <ChevronDown
+                        className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
+                      />
+                    </Button>
+                  </CollapsibleTrigger>
+                </div>
+              </CardHeader>
               <CollapsibleContent>
                 <CardContent className="pt-4">
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    <div className="space-y-2">
+                  <div className="service-card-content-grid">
+                    <div className="service-card-content-grid-item">
                       <Label htmlFor="max-hits">Max Hits</Label>
-                      <Input
-                        id="max-hits"
-                        type="number"
-                        min="1"
-                        value={maxHits}
-                        onChange={(e) => setMaxHits(e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="e-value">E-Value Threshold</Label>
-                      <Input
-                        id="e-value"
-                        type="number"
-                        step="0.0001"
-                        min="0"
-                        value={eValueThreshold}
-                        onChange={(e) => setEValueThreshold(e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="word-size">Word Size</Label>
-                      <Input
-                        id="word-size"
-                        type="number"
-                        min="2"
-                        defaultValue="11"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="gap-costs">Gap Costs</Label>
-                      <Select defaultValue="default">
-                        <SelectTrigger id="gap-costs">
-                          <SelectValue placeholder="Select gap costs" />
+                      <Select>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select max hits" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="default">Default</SelectItem>
-                          <SelectItem value="existence11extension1">
-                            Existence: 11, Extension: 1
-                          </SelectItem>
-                          <SelectItem value="existence5extension2">
-                            Existence: 5, Extension: 2
-                          </SelectItem>
+                          <SelectItem value="1">1</SelectItem>
+                          <SelectItem value="10">10</SelectItem>
+                          <SelectItem value="20">20</SelectItem>
+                          <SelectItem value="50">50</SelectItem>
+                          <SelectItem value="100">100</SelectItem>
+                          <SelectItem value="500">500</SelectItem>
+                          <SelectItem value="1000">1000</SelectItem>
+                          <SelectItem value="5000">5000</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="col-span-2 space-y-4">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox id="filter-low-complexity" />
-                        <Label htmlFor="filter-low-complexity">
-                          Filter low complexity regions
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox id="mask-repeats" />
-                        <Label htmlFor="mask-repeats">
-                          Mask for lookup table only
-                        </Label>
-                      </div>
+                      <div className="service-card-content-grid-item">
+                      <Label htmlFor="e-value">E-Value Threshold</Label>
+                      <Select>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select E-Value Threshold" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="0.0001">0.0001</SelectItem>
+                          <SelectItem value="0.001">0.001</SelectItem>
+                          <SelectItem value="0.01">0.01</SelectItem>
+                          <SelectItem value="0.1">0.1</SelectItem>
+                          <SelectItem value="1">1</SelectItem>
+                          <SelectItem value="10">10</SelectItem>
+                          <SelectItem value="100">100</SelectItem>
+                          <SelectItem value="1000">1000</SelectItem>
+                          <SelectItem value="10000">10000</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                 </CardContent>
@@ -449,7 +428,7 @@ export default function BlastServicePage() {
           </Card>
 
           {/* Form Controls */}
-          <div className="flex justify-end gap-4">
+          <div className="service-form-controls">
             <Button type="button" variant="outline" onClick={handleReset}>
               Reset
             </Button>

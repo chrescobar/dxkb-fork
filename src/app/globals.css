@@ -367,3 +367,83 @@
 .search-results-description a {
   @apply text-textcolor-400 hover:underline hover:cursor-pointer;
 }
+
+.service-container {
+  @apply max-w-6xl mx-auto px-4 py-8;
+}
+
+.service-header {
+  @apply mb-8;
+}
+
+.service-header h1 {
+  @apply text-3xl font-bold;
+}
+
+.service-header p {
+  @apply text-muted-foreground mt-2;
+}
+
+.service-header a {
+  @apply inline-flex items-center text-blue-500 hover:text-blue-700;
+}
+
+.service-header-title {
+  @apply flex items-center gap-2;
+}
+
+.service-header-description {
+  @apply mb-4 flex items-start gap-2;
+}
+
+.service-header-description p {
+  @apply text-muted-foreground;
+}
+
+.service-header-description a {
+  @apply inline-flex items-center text-blue-500 hover:text-blue-700;
+}
+
+.service-header-tooltip {
+  @apply h-5 w-5 text-blue-500;
+}
+
+.service-radio-group {
+  @apply grid grid-cols-1 gap-4 md:grid-cols-2;
+}
+
+.service-radio-group-item {
+  @apply flex items-center space-x-2;
+}
+
+.service-form-section {
+  @apply space-y-6;
+}
+
+.service-form-section-header {
+  @apply flex items-center
+}
+
+.service-collapsible-header {
+  @apply flex flex-row justify-between w-full;
+}
+
+.service-collapsible-content {
+  @apply flex flex-row justify-between w-full;
+}
+
+.service-collapsible-trigger {
+  @apply flex items-center gap-1 p-2;
+}
+
+.service-card-content-grid {
+  @apply grid grid-cols-1 gap-6 md:grid-cols-2;
+}
+
+.service-card-content-grid-item {
+  @apply space-y-2;
+}
+
+.service-form-controls {
+  @apply flex flex-row justify-end gap-4;
+}

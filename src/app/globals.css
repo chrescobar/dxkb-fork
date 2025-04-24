@@ -91,7 +91,7 @@
   --color-accentt-900: oklch(52.06% 0.087 168.58);
   --color-accentt-950: oklch(45.19% 0.075 168.3);
 
-  /* --color-background: var(--background); */
+  --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -424,16 +424,24 @@
   @apply flex items-center
 }
 
+.service-collapsible-container {
+  @apply w-full rounded-md border p-2 bg-background-50;
+}
+
 .service-collapsible-header {
   @apply flex flex-row justify-between w-full;
 }
 
 .service-collapsible-content {
-  @apply flex flex-row justify-between w-full;
+  @apply flex flex-row justify-between w-full py-2 px-2;
 }
 
 .service-collapsible-trigger {
   @apply flex items-center gap-1 p-2;
+}
+
+.service-card-content {
+  @apply h-full space-y-4;
 }
 
 .service-card-content-grid {
@@ -445,5 +453,40 @@
 }
 
 .service-form-controls {
-  @apply flex flex-row justify-end gap-4;
+  @apply flex flex-row justify-end gap-4 mt-4;
+}
+
+.service-card-input-search {
+  @apply relative flex-1;
+}
+
+.service-card-input-search-icon {
+  @apply absolute top-2.5 right-3 h-4 w-4 text-gray-400;
+}
+
+.service-card-input-group  {
+  @apply flex space-x-2;
+}
+
+.service-table {
+  @apply overflow-hidden rounded-md border;
+}
+.service-table-none {
+  @apply rounded-md border bg-gray-50 p-4 text-center text-gray-500 italic;
+}
+
+.service-table-header {
+  @apply grid grid-cols-[2fr_1fr_auto] bg-gray-100 p-2 text-sm font-medium ;
+}
+
+.service-table-body {
+  @apply divide-y divide-gray-200 divide-x;
+}
+
+.service-table-row {
+  @apply grid grid-cols-[2fr_1fr_auto] items-center p-2 gap-2 text-sm divide-x-2 divide-gray-200;
+}
+
+.service-subsection {
+  @apply flex flex-col gap-2 p-2;
 }

@@ -1,3 +1,6 @@
+"use client";
+
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -23,93 +26,88 @@ import {
 } from "@/components/ui/tooltip";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Info,
   FileDown,
   Search,
-  Dna,
   ExternalLink,
   Database,
   BarChart4,
+  ChevronDown,
 } from "lucide-react";
-
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { LuLinkedin } from "react-icons/lu";
 const SimilarGenomeFinderInterface = () => {
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="mb-2 text-3xl font-bold text-indigo-800">
-          Similar Genome Finder
-        </h1>
-        <div className="mb-4 flex items-center space-x-2">
+    <div className="service-container container">
+      <div className="service-header">
+        <div className="service-header-title">
+          <h1>Similar Genome Finder</h1>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <Info className="h-5 w-5 text-gray-500" />
+                <Info className="service-header-tooltip" />
               </TooltipTrigger>
               <TooltipContent>
-                <p className="max-w-md">
-                  Find similar genomes using sequence comparison
-                </p>
+                <div className="max-w-[300px] space-y-2">
+                  <p>
+                    Specifies the genome to use as the basis for finding other
+                    similar genomes. Search by Genome Name or Genome ID.
+                    Selection box for specifying genome to use as the basis of
+                    comparison, or upload a FASTA file.
+                  </p>
+                </div>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <a href="#" className="text-indigo-600 hover:text-indigo-800">
+          <a href="#">
             <ExternalLink className="h-5 w-5" />
           </a>
-          <a href="#" className="text-indigo-600 hover:text-indigo-800">
-            <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-            </svg>
+          <a href="#">
+            <LuLinkedin className="service-header-tooltip" />
           </a>
         </div>
-        <p className="max-w-4xl text-gray-600">
-          The Similar Genome Finder Service will find similar public genomes in
-          BV-BRC or compute genome distance estimation using Mash/MinHash. It
-          returns a set of genomes matching the specified similarity criteria.
-          <a
-            href="#"
-            className="mx-1 inline-flex items-center text-indigo-600 hover:text-indigo-800"
-          >
-            <svg
-              className="mr-1 h-3 w-3"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2"
+        <div className="service-header-description">
+          <p>
+            The Similar Genome Finder Service will find similar public genomes in
+            BV-BRC or compute genome distance estimation using Mash/MinHash. It
+            returns a set of genomes matching the specified similarity criteria.
+            {" "}
+            <a
+              href="#"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-              />
-            </svg>
-            Link to Mash/MinHash
-          </a>
-          . For further explanation, please see the Similar Genome Finder
-          Service
-          <a href="#" className="mx-1 text-indigo-600 hover:text-indigo-800">
-            Quick Reference Guide
-          </a>
-          ,
-          <a href="#" className="mx-1 text-indigo-600 hover:text-indigo-800">
-            Tutorial
-          </a>{" "}
-          and
-          <a href="#" className="ml-1 text-indigo-600 hover:text-indigo-800">
-            Instructional Video
-          </a>
-          .
-        </p>
+              Link to Mash/MinHash
+              <ExternalLink className="ml-1 h-3 w-3" />
+            </a>
+            . For further explanation, please see the Similar Genome Finder
+            Service:
+            <a href="#" className="mx-1 text-indigo-600 hover:text-indigo-800">
+              Quick Reference Guide
+              <ExternalLink className="ml-1 h-3 w-3" />
+            </a>
+            ,
+            <a href="#" className="mx-1 text-indigo-600 hover:text-indigo-800">
+              Tutorial
+              <ExternalLink className="ml-1 h-3 w-3" />
+            </a>{" "}
+            and
+            <a href="#" className="ml-1 text-indigo-600 hover:text-indigo-800">
+              Instructional Video
+              <ExternalLink className="ml-1 h-3 w-3" />
+            </a>
+            .
+          </p>
+        </div>
       </div>
 
-      <form className="mx-auto max-w-4xl space-y-6">
+      <form className="service-form-section">
         {/* Select a Genome Section */}
         <Card>
           <CardHeader className="pb-2">
@@ -129,11 +127,11 @@ const SimilarGenomeFinderInterface = () => {
               </TooltipProvider>
             </div>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             <div className="space-y-2">
               <div className="flex items-center">
                 <Label className="font-medium text-gray-700">
-                  SEARCH BY GENOME NAME OR GENOME ID
+                  Search by Genome Name or Genome ID
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -146,6 +144,7 @@ const SimilarGenomeFinderInterface = () => {
                   </Tooltip>
                 </TooltipProvider>
               </div>
+
               <div className="flex space-x-2">
                 <Input
                   placeholder="e.g. Mycobacterium tuberculosis H37Rv"
@@ -160,7 +159,7 @@ const SimilarGenomeFinderInterface = () => {
 
             <div className="space-y-2">
               <Label className="font-medium text-gray-700">
-                OR UPLOAD FASTA/READS
+                Or Upload FASTA/FASTQ
               </Label>
               <div className="flex space-x-2">
                 <Input type="file" className="flex-1" />
@@ -169,28 +168,26 @@ const SimilarGenomeFinderInterface = () => {
                 </Button>
               </div>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Parameters Section */}
-        <Accordion
-          type="single"
-          collapsible
-          className="w-full"
-          defaultValue="parameters"
-        >
-          <AccordionItem value="parameters">
-            <AccordionTrigger className="rounded-md bg-gray-100 px-4 py-3 text-lg font-semibold">
-              Parameters
-            </AccordionTrigger>
-            <AccordionContent className="space-y-4 pt-4">
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {/* Parameters Section */}
+            <Collapsible
+              open={showAdvanced}
+              onOpenChange={setShowAdvanced}
+              className="service-collapsible-container"
+            >
+              <CollapsibleTrigger className="service-collapsible-trigger">
+                Advanced Options
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
+                />
+              </CollapsibleTrigger>
+              <CollapsibleContent className="service-collapsible-content">
+                <div className="flex flex-col justify-between w-full space-y-4">
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
                     <div className="space-y-2">
                       <div className="flex items-center">
                         <Label className="font-medium text-gray-700">
-                          MAX HITS
+                          Max Hits
                         </Label>
                         <TooltipProvider>
                           <Tooltip>
@@ -208,8 +205,8 @@ const SimilarGenomeFinderInterface = () => {
                           <SelectValue placeholder="50" />
                         </SelectTrigger>
                         <SelectContent>
+                          <SelectItem value="1">1</SelectItem>
                           <SelectItem value="10">10</SelectItem>
-                          <SelectItem value="25">25</SelectItem>
                           <SelectItem value="50">50</SelectItem>
                           <SelectItem value="100">100</SelectItem>
                           <SelectItem value="200">200</SelectItem>
@@ -220,7 +217,7 @@ const SimilarGenomeFinderInterface = () => {
                     <div className="space-y-2">
                       <div className="flex items-center">
                         <Label className="font-medium text-gray-700">
-                          P-VALUE THRESHOLD
+                          P-Value Threshold
                         </Label>
                         <TooltipProvider>
                           <Tooltip>
@@ -249,7 +246,7 @@ const SimilarGenomeFinderInterface = () => {
                     <div className="space-y-2">
                       <div className="flex items-center">
                         <Label className="font-medium text-gray-700">
-                          DISTANCE
+                          Distance
                         </Label>
                         <TooltipProvider>
                           <Tooltip>
@@ -275,19 +272,21 @@ const SimilarGenomeFinderInterface = () => {
                         </SelectContent>
                       </Select>
                     </div>
+                  </div>
 
-                    <div className="space-y-2">
-                      <Label className="font-medium text-gray-700">
-                        ORGANISM TYPE
-                      </Label>
-                      <div className="space-y-3 pt-1">
+                  <div className="space-y-2">
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      <div className="flex flex-col gap-2">
+                        <Label className="font-medium text-gray-700">
+                          Organism Type
+                        </Label>
                         <div className="flex items-center space-x-2">
                           <Checkbox id="bacteria" defaultChecked />
                           <Label
                             htmlFor="bacteria"
                             className="text-sm font-normal"
-                          >
-                            BACTERIAL AND ARCHAEAL GENOMES
+                            >
+                            Bacterial and Archaeal Genomes
                           </Label>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -295,33 +294,37 @@ const SimilarGenomeFinderInterface = () => {
                           <Label
                             htmlFor="viral"
                             className="text-sm font-normal"
-                          >
-                            VIRAL GENOMES
-                          </Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="reference" />
-                          <Label
-                            htmlFor="reference"
-                            className="text-sm font-normal"
-                          >
-                            REFERENCE AND REPRESENTATIVE GENOMES
-                          </Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="all" />
-                          <Label htmlFor="all" className="text-sm font-normal">
-                            ALL PUBLIC GENOMES
+                            >
+                            Viral Genomes
                           </Label>
                         </div>
                       </div>
+                      <div className="flex flex-col gap-2">
+                        <Label className="font-medium text-gray-700">
+                          Scope
+                        </Label>
+                        <RadioGroup className="gap-2">
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="all" />
+                            <Label htmlFor="all" className="text-sm font-normal">
+                              All Public Genomes
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="reference" />
+                            <Label htmlFor="reference" className="text-sm font-normal">
+                              Reference and Representative Genomes
+                            </Label>
+                          </div>
+                        </RadioGroup>
+                      </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          </CardContent>
+        </Card>
 
         {/* Submit Button */}
         <div className="flex justify-center pt-4">

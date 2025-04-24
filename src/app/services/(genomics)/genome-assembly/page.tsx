@@ -25,7 +25,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Collapsible,
   CollapsibleContent,
@@ -38,7 +37,10 @@ import {
   ChevronRight,
   Trash2,
   ChevronDown,
+  ExternalLink,
 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { NumberInput } from "@/components/ui/number-input";
 
 interface Library {
   id: string;
@@ -64,6 +66,7 @@ export default function GenomeAssemblyPage() {
   const [outputFolder, setOutputFolder] = useState("");
   const [outputName, setOutputName] = useState("");
   const [assemblyStrategy, setAssemblyStrategy] = useState("auto");
+  const [genomeSizeUnit, setGenomeSizeUnit] = useState("M");
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   const addPairedReadFile = () => {
@@ -106,7 +109,10 @@ export default function GenomeAssemblyPage() {
     );
   };
 
-  const addToSelectedLibraries = (file: ReadFile, type: "paired" | "single") => {
+  const addToSelectedLibraries = (
+    file: ReadFile,
+    type: "paired" | "single",
+  ) => {
     if (
       file.filename &&
       !selectedLibraries.some((lib) => lib.id === `${type}-${file.id}`)
@@ -141,15 +147,10 @@ export default function GenomeAssemblyPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="mb-2 text-3xl font-bold">Genome Assembly</h1>
-        <div className="mb-4 flex items-center gap-2">
-          <p className="text-gray-600">
-            The Genome Assembly Service allows single or multiple assemblies to
-            be involved to compare results. The service attempts to select the
-            best assembly.
-          </p>
+    <div className="service-container container">
+      <div className="service-header">
+        <div className="service-header-title">
+          <h1>Genome Assembly</h1>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
@@ -163,12 +164,21 @@ export default function GenomeAssemblyPage() {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <a
-            href="/docs/assembly-guide"
-            className="text-sm text-blue-500 hover:underline"
-          >
-            Quick Reference Guide
-          </a>
+        </div>
+        <div className="service-header-description">
+          <div className="text-gray-600">
+            <p>
+              The Genome Assembly Service allows single or multiple assemblies to
+              be involved to compare results. The service attempts to select the
+              best assembly.
+            </p>
+            <a
+              href="/docs/assembly-guide"
+            >
+              Quick Reference Guide
+              <ExternalLink className="ml-1 h-3 w-3" />
+            </a>
+          </div>
         </div>
       </div>
 
@@ -182,7 +192,7 @@ export default function GenomeAssemblyPage() {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger className="ml-2">
-                      <Info className="h-4 w-4 text-gray-400" />
+                      <Info className="service-header-tooltip" />
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>
@@ -195,128 +205,104 @@ export default function GenomeAssemblyPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="paired" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="paired">Paired Read Library</TabsTrigger>
-                  <TabsTrigger value="single">Single Read Library</TabsTrigger>
-                  <TabsTrigger value="sra">SRA Accession</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="paired" className="mt-4 space-y-4">
-                  {pairedReadFiles.map((file) => (
-                    <div key={file.id} className="flex items-center gap-2">
-                      <div className="relative flex-1">
-                        <Input
-                          placeholder={`READ FILE ${file.id}`}
-                          value={file.filename}
-                          onChange={(e) =>
-                            updatePairedReadFile(file.id, e.target.value)
-                          }
-                          className="pr-10"
-                        />
-                        {pairedReadFiles.length > 1 && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="absolute top-0 right-0"
-                            onClick={() => removePairedReadFile(file.id)}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => addToSelectedLibraries(file, "paired")}
-                      >
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
+              <div className="service-subsection">
+                <Label>Paired Read Library</Label>
+                {pairedReadFiles.map((file) => (
+                  <div key={file.id} className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <Input
+                        placeholder={`READ FILE ${file.id}`}
+                        value={file.filename}
+                        onChange={(e) =>
+                          updatePairedReadFile(file.id, e.target.value)
+                        }
+                        className="pr-10"
+                      />
+                      {pairedReadFiles.length > 2 && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute top-0 right-0"
+                          onClick={() => removePairedReadFile(file.id)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
-                  ))}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mt-2"
-                    onClick={addPairedReadFile}
-                  >
-                    <Upload className="mr-2 h-4 w-4" />
-                    Add Paired Read File
-                  </Button>
-                </TabsContent>
-
-                <TabsContent value="single" className="mt-4 space-y-4">
-                  {singleReadFiles.map((file) => (
-                    <div key={file.id} className="flex items-center gap-2">
-                      <div className="relative flex-1">
-                        <Input
-                          placeholder="READ FILE"
-                          value={file.filename}
-                          onChange={(e) =>
-                            updateSingleReadFile(file.id, e.target.value)
-                          }
-                          className="pr-10"
-                        />
-                        {singleReadFiles.length > 1 && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="absolute top-0 right-0"
-                            onClick={() => removeSingleReadFile(file.id)}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => addToSelectedLibraries(file, "single")}
-                      >
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mt-2"
-                    onClick={addSingleReadFile}
-                  >
-                    <Upload className="mr-2 h-4 w-4" />
-                    Add Single Read File
-                  </Button>
-                </TabsContent>
-
-                <TabsContent value="sra" className="mt-4">
-                  <div className="flex items-center gap-2">
-                    <Input
-                      placeholder="SRR"
-                      value={sraAccession}
-                      onChange={(e) => setSraAccession(e.target.value)}
-                    />
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => {
-                        if (sraAccession) {
-                          setSelectedLibraries([
-                            ...selectedLibraries,
-                            {
-                              id: `sra-${Date.now()}`,
-                              name: sraAccession,
-                              type: "sra",
-                            },
-                          ]);
-                          setSraAccession("");
-                        }
-                      }}
+                      onClick={() => addToSelectedLibraries(file, "paired")}
                     >
                       <ChevronRight className="h-4 w-4" />
                     </Button>
                   </div>
-                </TabsContent>
-              </Tabs>
+                ))}
+              </div>
+
+              <div className="service-subsection">
+                <Label>Single Read Library</Label>
+                {singleReadFiles.map((file) => (
+                  <div key={file.id} className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <Input
+                        placeholder="READ FILE"
+                        value={file.filename}
+                        onChange={(e) =>
+                          updateSingleReadFile(file.id, e.target.value)
+                        }
+                        className="pr-10"
+                      />
+                      {singleReadFiles.length > 1 && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute top-0 right-0"
+                          onClick={() => removeSingleReadFile(file.id)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => addToSelectedLibraries(file, "single")}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              <div className="service-subsection">
+                <Label>SRA Run Accession</Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    placeholder="SRR"
+                    value={sraAccession}
+                    onChange={(e) => setSraAccession(e.target.value)}
+                  />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => {
+                      if (sraAccession) {
+                        setSelectedLibraries([
+                          ...selectedLibraries,
+                          {
+                            id: `sra-${Date.now()}`,
+                            name: sraAccession,
+                            type: "sra",
+                          },
+                        ]);
+                        setSraAccession("");
+                      }
+                    }}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
@@ -350,8 +336,13 @@ export default function GenomeAssemblyPage() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="auto">Auto</SelectItem>
-                        <SelectItem value="fast">Fast</SelectItem>
-                        <SelectItem value="thorough">Thorough</SelectItem>
+                        <SelectItem value="unicycler">Unicycler</SelectItem>
+                        <SelectItem value="spades">SPAdes</SelectItem>
+                        <SelectItem value="canu">Canu</SelectItem>
+                        <SelectItem value="metaspades">MetaSPAdes</SelectItem>
+                        <SelectItem value="plasmidspades">PlasmidSPAdes</SelectItem>
+                        <SelectItem value="mda">MDA (single-cell)</SelectItem>
+                        <SelectItem value="flye">Flye</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -380,33 +371,84 @@ export default function GenomeAssemblyPage() {
                 <Collapsible
                   open={showAdvanced}
                   onOpenChange={setShowAdvanced}
-                  className="w-full rounded-md border p-2"
+                  className="service-collapsible-container"
                 >
-                  <CollapsibleTrigger className="flex w-full items-center justify-between p-2 text-left font-medium">
+                  <CollapsibleTrigger className="service-collapsible-trigger">
                     Advanced Options
                     <ChevronDown
                       className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
                     />
                   </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <div className="grid grid-cols-1 gap-4 px-2 pt-4 md:grid-cols-2">
+                  <CollapsibleContent className="space-y-6">
+                    <div className="grid grid-cols-1 gap-4 px-2 pt-4 sm:grid-cols-3">
                       <div className="space-y-2">
-                        <Label htmlFor="threads">Threads</Label>
-                        <Input
-                          id="threads"
-                          type="number"
-                          min="1"
-                          defaultValue="4"
-                        />
+                        <Label htmlFor="illumina-reads">Normalize Illumina Reads</Label>
+                        <Switch id="illumina-reads" defaultChecked={true} />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="memory">Memory (GB)</Label>
-                        <Input
-                          id="memory"
-                          type="number"
-                          min="1"
-                          defaultValue="16"
-                        />
+                        <Label htmlFor="trim-short-reads">Trim Short Reads</Label>
+                        <Switch id="trim-short-reads" defaultChecked={true} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="filter-long-reads">Filter Long Reads</Label>
+                        <Switch id="filter-long-reads" defaultChecked={true} />
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <Label className="text-lg font-semibold">Genome Parameters</Label>
+                      <div className="flex flex-col sm:flex-row w-full gap-2 sm:items-end">
+                        <div className="flex flex-col gap-2">
+                          <Label htmlFor="genome-coverage">Genome Coverage</Label>
+                          <NumberInput id="genome-coverage" min={100} max={500} stepper={50} defaultValue={200} />
+                        </div>
+                        <p className="text-lg p-1">x</p>
+                        <div className="flex flex-col gap-2">
+                          <Label htmlFor="genome-size">Genome Size</Label>
+                          <div className="flex flex-row gap-2 items-center">
+                            <NumberInput id="genome-size" min={1} max={500} stepper={50} defaultValue={200} />
+                            <Select
+                            value={genomeSizeUnit}
+                            onValueChange={setGenomeSizeUnit}
+                            >
+                              <SelectTrigger id="genome-size-unit">
+                                <SelectValue placeholder="Select unit" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="M">M</SelectItem>
+                                <SelectItem value="K">K</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <Label className="text-lg font-semibold">Assembly Polishing</Label>
+                      <div className="flex flex-col sm:flex-row w-full gap-2 sm:items-end">
+                        <div className="flex flex-col gap-2">
+                          <Label htmlFor="racon-iterations">Racon Iterations</Label>
+                          <NumberInput id="racon-iterations" min={0} max={4} defaultValue={2} />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <Label htmlFor="pilon-iterations">Pilon Iterations</Label>
+                          <NumberInput id="pilon-iterations" min={0} max={4} defaultValue={2} />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <Label className="text-lg font-semibold">Assembly Thresholds</Label>
+                      <div className="flex flex-col sm:flex-row w-full gap-2 sm:items-end">
+                        <div className="flex flex-col gap-2">
+                          <Label htmlFor="genome-coverage">Genome Coverage</Label>
+                          <NumberInput id="genome-coverage" min={100} max={10000} stepper={10} defaultValue={300} />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <Label htmlFor="genome-size">Genome Size</Label>
+                          <NumberInput id="genome-size" min={0} max={10000} stepper={5} defaultValue={5} />
+                        </div>
                       </div>
                     </div>
                   </CollapsibleContent>
@@ -478,14 +520,15 @@ export default function GenomeAssemblyPage() {
                 )}
               </div>
             </CardContent>
-            <CardFooter className="flex justify-end gap-4 pt-6">
-              <Button variant="outline" onClick={resetForm}>
-                Reset
-              </Button>
-              <Button>Assemble</Button>
-            </CardFooter>
           </Card>
         </div>
+      </div>
+
+      <div className="service-form-controls">
+        <Button variant="outline" onClick={resetForm}>
+          Reset
+        </Button>
+        <Button>Assemble</Button>
       </div>
     </div>
   );

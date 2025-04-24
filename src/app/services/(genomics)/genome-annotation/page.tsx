@@ -22,56 +22,55 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
-import { Info, Search, FileDown, Database, Dna, Upload } from "lucide-react";
+import { Info, Search, FileDown, Database, Dna, Upload, ExternalLink } from "lucide-react";
 
 const GenomeAnnotationContent = () => {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8 text-center">
-        <h1 className="mb-2 text-3xl font-bold text-indigo-800">
-          Genome Annotation
-        </h1>
-        <div className="mb-4 flex justify-center space-x-2">
+    <div className="service-container container">
+      <div className="service-header">
+        <div className="service-header-title">
+          <h1>Genome Annotation</h1>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <Info className="h-5 w-5 text-gray-500" />
+                <Info className="service-header-tooltip" />
               </TooltipTrigger>
               <TooltipContent>
-                <p className="max-w-md">Genome Annotation Information</p>
+                <p>Genome Annotation Information</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <a href="#" className="text-indigo-600 hover:text-indigo-800">
-            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
-              <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
-            </svg>
+          <a href="#">
+            <ExternalLink className="service-header-tooltip" />
           </a>
         </div>
-        <p className="mx-auto max-w-3xl text-gray-600">
-          The Genome Annotation Service provides annotation of genomic features
-          using the RAST tool kit (RASTtk) for bacteria and VirION for viruses.
-          The service accepts a FASTA formatted file and an annotation recipe
-          based on taxonomy to provide an annotated genome. For further
-          explanation, please see the Genome Annotation Service
-          <a href="#" className="mx-1 text-indigo-600 hover:text-indigo-800">
-            Quick Reference Guide
-          </a>{" "}
-          and
-          <a href="#" className="ml-1 text-indigo-600 hover:text-indigo-800">
-            Tutorial
-          </a>
-          .
-        </p>
+        <div className="service-header-description">
+          <p>
+            The Genome Annotation Service provides annotation of genomic features
+            using the RAST tool kit (RASTtk) for bacteria and VirION for viruses.
+            The service accepts a FASTA formatted file and an annotation recipe
+            based on taxonomy to provide an annotated genome. For further
+            explanation, please see the Genome Annotation Service {" "}
+            <a href="#">
+              Quick Reference Guide
+              <ExternalLink className="ml-1 h-3 w-3" />
+            </a>
+            {" "} and {" "}
+            <a href="#">
+              Tutorial
+              <ExternalLink className="ml-1 h-3 w-3" />
+            </a>
+            .
+          </p>
+        </div>
       </div>
 
-      <form className="mx-auto max-w-4xl space-y-6">
+      <form className="service-form-section">
         {/* Contigs Upload */}
         <Card>
           <CardHeader className="pb-2">
             <div className="flex items-center">
-              <CardTitle className="text-lg">Parameters</CardTitle>
+              <CardTitle className="service-form-section-header">Parameters</CardTitle>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger className="ml-2">
@@ -88,9 +87,10 @@ const GenomeAnnotationContent = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
+              {/* TODO: Add file upload from Workspace */}
               <div className="space-y-2">
                 <Label htmlFor="contigsFile" className="font-medium">
-                  CONTIGS
+                  Contigs
                 </Label>
                 <div className="flex items-center">
                   <Input id="contigsFile" type="file" className="flex-1" />
@@ -123,17 +123,14 @@ const GenomeAnnotationContent = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <Select defaultValue="select">
+            <Select>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="--- Select Recipe ---" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="select">--- Select Recipe ---</SelectItem>
-                <SelectItem value="bacteria">Bacteria Generic</SelectItem>
-                <SelectItem value="archaea">Archaea Generic</SelectItem>
-                <SelectItem value="virus">Virus</SelectItem>
+                <SelectItem value="bacteria-archaea">Bacteria / Archaea</SelectItem>
+                <SelectItem value="viruses">Viruses</SelectItem>
                 <SelectItem value="bacteriophage">Bacteriophage</SelectItem>
-                <SelectItem value="custom">Custom Recipe</SelectItem>
               </SelectContent>
             </Select>
           </CardContent>
@@ -151,7 +148,9 @@ const GenomeAnnotationContent = () => {
                       <Info className="h-4 w-4 text-gray-500" />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p className="max-w-md">Enter the taxonomy name</p>
+                      <p>
+                        Taxon must be specified at the genus level or below to get the latest protein family predictions.
+                      </p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -177,14 +176,14 @@ const GenomeAnnotationContent = () => {
                       <Info className="h-4 w-4 text-gray-500" />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p className="max-w-md">Enter a taxonomy ID (optional)</p>
+                      <p className="max-w-md">NCBI Taxonomy ID</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </div>
             </CardHeader>
             <CardContent>
-              <Input placeholder="Taxonomy ID (optional)" />
+              <Input placeholder="Taxonomy ID" />
             </CardContent>
           </Card>
         </div>
@@ -208,12 +207,12 @@ const GenomeAnnotationContent = () => {
             <CardContent>
               <Input
                 placeholder="Taxonomy + My Label"
-                defaultValue="Taxonomy + My Label"
               />
             </CardContent>
           </Card>
 
           <Card>
+            {/* TODO: Add folder selector from Workspace */}
             <CardHeader className="pb-2">
               <CardTitle className="text-lg">Output Folder</CardTitle>
             </CardHeader>
@@ -232,7 +231,7 @@ const GenomeAnnotationContent = () => {
         </div>
 
         {/* Submit Buttons */}
-        <div className="flex justify-center space-x-4 pt-4">
+        <div className="service-form-controls">
           <Button variant="outline" type="reset">
             Reset
           </Button>

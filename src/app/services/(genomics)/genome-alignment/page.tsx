@@ -18,13 +18,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import {
   Info,
   FileDown,
@@ -34,7 +27,11 @@ import {
   ExternalLink,
   AlignJustify,
   Trash2,
+  ChevronDown,
 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@radix-ui/react-collapsible";
 
 interface Genome {
   id: string;
@@ -43,6 +40,9 @@ interface Genome {
 
 const GenomeAlignmentInterface = () => {
   const [selectedGenomes, setSelectedGenomes] = useState<Genome[]>([]);
+  const [isManualSeedWeight, setIsManualSeedWeight] = useState(false);
+  const [seedWeight, setSeedWeight] = useState([11]); // Default value centered
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const addGenome = () => {
     const newGenome: Genome = {
@@ -58,16 +58,14 @@ const GenomeAlignmentInterface = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="mb-2 text-3xl font-bold text-indigo-800">
-          Genome Alignment (Mauve)
-        </h1>
-        <div className="mb-4 flex items-center space-x-2">
+    <div className="service-container container">
+      <div className="service-header">
+        <div className="service-header-title">
+          <h1>Genome Alignment (Mauve)</h1>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <Info className="h-5 w-5 text-gray-500" />
+                <Info className="service-header-tooltip" />
               </TooltipTrigger>
               <TooltipContent>
                 <p className="max-w-md">
@@ -76,129 +74,102 @@ const GenomeAlignmentInterface = () => {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <a href="#" className="text-indigo-600 hover:text-indigo-800">
-            <ExternalLink className="h-5 w-5" />
+          <a href="#">
+            <ExternalLink className="service-header-tooltip" />
           </a>
         </div>
-        <p className="max-w-4xl text-gray-600">
-          The Whole Genome Alignment Service aligns genomes using
-          progressiveMauve. For further explanation, please see the Genome
-          Alignment (Mauve) Service
-          <a href="#" className="mx-1 text-indigo-600 hover:text-indigo-800">
-            Quick Reference Guide
-          </a>
-          ,
-          <a href="#" className="mx-1 text-indigo-600 hover:text-indigo-800">
-            Tutorial
-          </a>{" "}
-          and
-          <a href="#" className="ml-1 text-indigo-600 hover:text-indigo-800">
-            Instructional Video
-          </a>
-          .
-        </p>
+        <div className="service-header-description">
+          <p>
+            The Whole Genome Alignment Service aligns genomes using
+            progressiveMauve. For further explanation, please see the Genome
+            Alignment (Mauve) Service <a href="#">Quick Reference Guide</a>,{" "}
+            <a href="#">Tutorial</a> and <a href="#">Instructional Video</a>.
+          </p>
+        </div>
       </div>
 
-      <form className="mx-auto max-w-4xl space-y-6">
+      <form className="service-form-section">
         {/* Select Genomes Section */}
         <Card>
-          <CardHeader className="pb-2">
-            <div className="flex items-center">
-              <CardTitle className="text-lg">Select Genomes</CardTitle>
+          <CardHeader>
+            <CardTitle className="service-form-section-header">
+              Select Genomes
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger className="ml-2">
-                    <Info className="h-4 w-4 text-gray-500" />
+                    <Info className="h-4 w-4 text-gray-400" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p className="max-w-md">
+                    <p>
                       Add at least 2 (up to 20) genomes. Note the first genome
                       selected will be the reference (anchor) genome.
                     </p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            </div>
+            </CardTitle>
             <CardDescription>
               Add at least 2 (up to 20) genomes. Note the first genome selected
               will be the reference (anchor) genome.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+
+          <CardContent className="space-y-6">
             {/* Genome Search */}
-            <div className="space-y-2">
-              <Label className="font-medium text-gray-700">SELECT GENOME</Label>
-              <div className="flex space-x-2">
-                <div className="relative flex-1">
+            <div className="service-card-content-grid-item">
+              <Label>Select Genome</Label>
+              <div className="service-card-input-group">
+                <div className="service-card-input-search">
                   <Input
                     placeholder="e.g. M. tuberculosis CDC1551"
                     className="pr-10"
                   />
-                  <Search className="absolute top-2.5 right-3 h-4 w-4 text-gray-400" />
+                  <Search className="service-card-input-search-icon" />
                 </div>
-                <Button
-                  type="button"
-                  onClick={addGenome}
-                  className="bg-indigo-600 text-white hover:bg-indigo-700"
-                >
-                  <Plus className="mr-2 h-4 w-4" />
+                <Button type="button" onClick={addGenome} variant="outline">
+                  <Plus />
                   Add
                 </Button>
               </div>
             </div>
 
             {/* Select Genome Group */}
-            <div className="space-y-2">
-              <Label className="font-medium text-gray-700">
-                AND/OR SELECT GENOME GROUP
-              </Label>
-              <div className="flex space-x-2">
-                <Input placeholder="Optional" className="flex-1" />
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="ml-2"
-                  size="icon"
-                >
-                  <FileDown className="h-4 w-4" />
+            <div className="service-card-content-grid-item">
+              <Label>And/Or Select Genome Group</Label>
+              <div className="service-card-input-group">
+                <Input placeholder="Optional" />
+                <Button type="button" variant="outline" size="icon">
+                  <FileDown />
                 </Button>
-                <Button
-                  type="button"
-                  className="bg-indigo-600 text-white hover:bg-indigo-700"
-                >
-                  <Plus className="mr-2 h-4 w-4" />
+                <Button type="button" variant="outline">
+                  <Plus />
                   Add
                 </Button>
               </div>
             </div>
 
             {/* Selected Genomes List */}
-            <div className="mt-6">
-              <h3 className="mb-2 text-sm font-semibold text-gray-700">
-                SELECTED GENOMES
-              </h3>
+            <div className="service-card-content-grid-item">
+              <Label>Selected Genomes</Label>
 
               {selectedGenomes.length === 0 ? (
                 <div className="rounded-md border bg-gray-50 p-4 text-center text-gray-500 italic">
                   No genomes selected
                 </div>
               ) : (
-                <div className="overflow-hidden rounded-md border">
-                  <div className="grid grid-cols-[2fr_1fr_auto] bg-gray-100 p-2 text-sm font-medium">
+                <div className="service-table">
+                  <div className="service-table-header">
                     <div>Name</div>
                     <div>ID</div>
                     <div></div>
                   </div>
-                  <div className="divide-y">
+                  <div className="service-table-body">
                     {selectedGenomes.map((genome, index) => (
-                      <div
-                        key={genome.id}
-                        className="grid grid-cols-[2fr_1fr_auto] items-center p-2 text-sm"
-                      >
-                        <div className="flex items-center">
+                      <div key={genome.id} className="service-table-row">
+                        <div>
                           {genome.name}
                           {index === 0 && (
-                            <span className="ml-2 rounded-full bg-indigo-100 px-1.5 py-0.5 text-xs text-indigo-600">
+                            <span className="bg-secondary-100 text-secondary-600 ml-2 rounded-full px-1.5 py-0.5 text-xs">
                               Reference
                             </span>
                           )}
@@ -207,7 +178,7 @@ const GenomeAlignmentInterface = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 w-8 p-0 text-gray-400 hover:text-red-500"
+                          className="h-8 w-8 p-0 text-gray-400 hover:text-black"
                           onClick={() => removeGenome(genome.id)}
                         >
                           <Trash2 className="h-4 w-4" />
@@ -223,13 +194,13 @@ const GenomeAlignmentInterface = () => {
 
         {/* Parameters Section */}
         <Card>
-          <CardHeader className="pb-2">
-            <div className="flex items-center">
-              <CardTitle className="text-lg">Parameters</CardTitle>
+          <CardHeader>
+            <CardTitle className="service-form-section-header">
+              Parameters
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger className="ml-2">
-                    <Info className="h-4 w-4 text-gray-500" />
+                    <Info className="h-4 w-4 text-gray-400" />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p className="max-w-md">
@@ -238,79 +209,88 @@ const GenomeAlignmentInterface = () => {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            </div>
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
+            <div className="service-card-content-grid-item">
               <Label className="font-medium text-gray-700">OUTPUT FOLDER</Label>
-              <div className="flex space-x-2">
-                <Input placeholder="Select output folder" className="flex-1" />
-                <Button variant="outline" className="ml-2" size="icon">
-                  <FileDown className="h-4 w-4" />
+              <div className="service-card-input-group">
+                <Input placeholder="Select output folder" />
+                <Button variant="outline" size="icon">
+                  <FileDown />
                 </Button>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label className="font-medium text-gray-700">OUTPUT NAME</Label>
+            <div className="service-card-content-grid-item">
+              <Label>Output Name</Label>
               <Input placeholder="Output Name" />
             </div>
 
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="advanced">
-                <AccordionTrigger className="text-sm font-medium text-gray-700">
-                  <div className="flex items-center">
-                    <Settings className="mr-2 h-4 w-4" />
-                    ADVANCED (OPTIONAL)
+            <Collapsible
+              open={showAdvanced}
+              onOpenChange={setShowAdvanced}
+              className="service-collapsible-container"
+            >
+              <CollapsibleTrigger className="service-collapsible-trigger">
+                <div className="service-form-section-header">
+                  Advanced Options
+                  <ChevronDown
+                    className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
+                  />
+                </div>
+              </CollapsibleTrigger>
+
+              <CollapsibleContent>
+                <div className="flex flex-col gap-4 pt-4 sm:flex-row">
+                  <div className="space-y-4 sm:min-w-fit">
+                    <Label>Manually Set Seed Weight</Label>
+                    <Switch
+                      id="manual-seed-weight"
+                      checked={isManualSeedWeight}
+                      onCheckedChange={setIsManualSeedWeight}
+                    />
                   </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="space-y-4 pt-4">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  {isManualSeedWeight && (
+                    <div className="w-full space-y-4">
                       <div className="space-y-2">
-                        <Label className="text-gray-700">Seed Weight</Label>
-                        <Input type="number" defaultValue="15" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-gray-700">
-                          Minimum LCB Score
-                        </Label>
-                        <Input type="number" defaultValue="3000" />
+                        <div className="flex items-center justify-between">
+                          <Label>Seed Weight</Label>
+                          <span className="text-muted-foreground text-sm">
+                            {seedWeight[0]}
+                          </span>
+                        </div>
+                        <Slider
+                          value={seedWeight}
+                          onValueChange={setSeedWeight}
+                          min={3}
+                          max={21}
+                          step={1}
+                          className="w-full"
+                        />
+                        <div className="text-muted-foreground flex justify-between text-xs">
+                          <span>3</span>
+                          <span>21</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label className="text-gray-700">
-                          Minimum Island Size
-                        </Label>
-                        <Input type="number" defaultValue="50" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-gray-700">
-                          Maximum Backbone Size
-                        </Label>
-                        <Input type="number" defaultValue="1500" />
-                      </div>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+                  )}
+                </div>
+                <div className="w-full space-y-2">
+                  <Label>Weight</Label>
+                  <Input type="number" placeholder="Min pairwise LCB score" />
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
           </CardContent>
         </Card>
 
         {/* Submit Buttons */}
-        <div className="flex justify-center space-x-4 pt-4">
+        <div className="flex justify-end space-x-4 pt-4">
           <Button variant="outline" type="reset">
             Reset
           </Button>
-          <Button
-            type="submit"
-            className="bg-indigo-600 text-white hover:bg-indigo-700"
-          >
-            <AlignJustify className="mr-2 h-4 w-4" />
-            Submit
-          </Button>
+          <Button type="submit">Submit</Button>
         </div>
       </form>
     </div>

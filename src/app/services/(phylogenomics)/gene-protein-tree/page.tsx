@@ -1,29 +1,60 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Upload, X } from "lucide-react";
+import { Upload, X, Info, ExternalLink, Plus, ArrowRight } from "lucide-react";
 import { CiCircleInfo } from "react-icons/ci";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function GeneProteinTreePage() {
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+  const [sequenceType, setSequenceType] = useState<"dna" | "protein">("dna");
+  const [selectedModel, setSelectedModel] = useState<string>("gtr");
   const [metadataFields, setMetadataFields] = useState([
-    { name: "Genome ID", selected: true },
-    { name: "Genome Name", selected: true },
-    { name: "Species", selected: true },
-    { name: "Strain", selected: true },
-    { name: "Accession", selected: true },
-    { name: "Subtype", selected: true },
+    { id: "genomeId", name: "Genome ID", selected: true },
+    { id: "genomeName", name: "Genome Name", selected: true },
+    { id: "species", name: "Species", selected: true },
+    { id: "strain", name: "Strain", selected: true },
+    { id: "accession", name: "Accession", selected: true },
+    { id: "subtype", name: "Subtype", selected: true },
   ]);
+  const [selectedMetadataField, setSelectedMetadataField] =
+    useState<string>("");
+  const [featureGroup, setFeatureGroup] = useState<string>("");
+  const [alignedFasta, setAlignedFasta] = useState<string>("");
+  const [unalignedFasta, setUnalignedFasta] = useState<string>("");
 
   const handleFileSelect = (fileName: string) => {
     setSelectedFiles([...selectedFiles, fileName]);
@@ -33,66 +64,138 @@ export default function GeneProteinTreePage() {
     setSelectedFiles(selectedFiles.filter((file) => file !== fileName));
   };
 
-  const toggleMetadataField = (index: number) => {
-    const newFields = [...metadataFields];
-    newFields[index].selected = !newFields[index].selected;
-    setMetadataFields(newFields);
+  const addMetadataField = () => {
+    if (selectedMetadataField) {
+      setMetadataFields(
+        metadataFields.map((field) =>
+          field.id === selectedMetadataField
+            ? { ...field, selected: true }
+            : field,
+        ),
+      );
+      setSelectedMetadataField("");
+    }
+  };
+
+  const removeMetadataField = (fieldId: string) => {
+    setMetadataFields(
+      metadataFields.map((field) =>
+        field.id === fieldId ? { ...field, selected: false } : field,
+      ),
+    );
+  };
+
+  const handleFeatureGroupChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFeatureGroup(e.target.value);
+  };
+
+  const handleAlignedFastaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAlignedFasta(e.target.value);
+  };
+
+  const handleUnalignedFastaChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setUnalignedFasta(e.target.value);
+  };
+
+  const addFeatureGroup = () => {
+    if (featureGroup.trim()) {
+      handleFileSelect(featureGroup);
+      setFeatureGroup("");
+    }
+  };
+
+  const addAlignedFasta = () => {
+    if (alignedFasta.trim()) {
+      handleFileSelect(alignedFasta);
+      setAlignedFasta("");
+    }
+  };
+
+  const addUnalignedFasta = () => {
+    if (unalignedFasta.trim()) {
+      handleFileSelect(unalignedFasta);
+      setUnalignedFasta("");
+    }
   };
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <section className="service-container container">
       {/* Header */}
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-primary-700 flex items-center justify-center gap-2">
-          Gene / Protein Tree
+      <div className="service-header">
+        <div className="service-header-title">
+          <h1>Gene / Protein Tree</h1>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <CiCircleInfo size={18} className="text-muted-foreground" />
+                <Info className="service-header-tooltip" />
               </TooltipTrigger>
               <TooltipContent>
-                <p className="max-w-xs">Information about Gene/Protein Tree service</p>
+                <p className="max-w-xs">
+                  Information about Gene/Protein Tree service
+                </p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-        </h1>
-        <div className="flex justify-center space-x-2 mt-1">
-          <a href="#" className="text-primary-500 hover:underline">
-            <Badge variant="outline" className="bg-primary-50">LinkedIn</Badge>
-          </a>
-          <a href="#" className="text-primary-500 hover:underline">
-            <Badge variant="outline" className="bg-primary-50">GitHub</Badge>
-          </a>
         </div>
-        <p className="mt-3 text-sm text-muted-foreground max-w-3xl mx-auto">
-          The Gene / Protein Tree Service enables construction of custom phylogenetic trees built from user-selected genes or proteins.
-          For further explanation, please see the Gene / Protein Tree Service Quick Reference Guide, Tutorial and Instructional Video.
-        </p>
+        <div className="service-header-description">
+          <p>
+            The Gene / Protein Tree Service enables construction of custom
+            phylogenetic trees built from user-selected genes or proteins. For
+            further explanation, please see the Gene / Protein Tree Service: {" "}
+            <a href="#">
+              Quick Reference Guide
+              <ExternalLink className="ml-1 h-3 w-3" />
+            </a>
+            {", "}
+            <a href="#">
+              Tutorial
+              <ExternalLink className="ml-1 h-3 w-3" />
+            </a>
+            {" "}and{" "}
+            <a href="#">
+              Instructional Video
+              <ExternalLink className="ml-1 h-3 w-3" />
+            </a>
+            .
+          </p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {/* Input Section */}
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2">
+            <CardTitle className="service-form-section-header">
               Input
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <CiCircleInfo size={16} className="text-muted-foreground" />
+                    <Info className="h-4 w-4 text-gray-400" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p className="max-w-xs">Choose fasta file or features for the tree</p>
+                    <p>Choose FASTA file or features for the tree</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </CardTitle>
-            <CardDescription>Choose fasta file or features for tree.</CardDescription>
+            <CardDescription>
+              Choose fasta file or features for tree.
+            </CardDescription>
           </CardHeader>
+
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center space-x-4">
-                <RadioGroup defaultValue="dna" className="flex items-center space-x-4">
+                <RadioGroup
+                  defaultValue="dna"
+                  className="flex items-center space-x-4"
+                  onValueChange={(value: "dna" | "protein") => {
+                    setSequenceType(value);
+                    setSelectedModel(value === "dna" ? "gtr" : "lg");
+                  }}
+                >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="dna" id="dna" />
                     <Label htmlFor="dna">DNA</Label>
@@ -103,98 +206,129 @@ export default function GeneProteinTreePage() {
                   </div>
                 </RadioGroup>
               </div>
-              
+
               <div>
-                <div className="flex items-center mb-1">
-                  <Label className="text-xs uppercase tracking-wider">Feature Group</Label>
+                <div className="mb-1 flex items-center">
+                  <Label>Feature Group</Label>
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger>
-                        <CiCircleInfo size={14} className="ml-1 text-muted-foreground" />
+                      <TooltipTrigger className="ml-2">
+                        <Info className="h-4 w-4 text-gray-400" />
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p className="max-w-xs">Select a feature group</p>
+                        <p>Select a feature group</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 </div>
                 <div className="flex gap-2">
-                  <Input placeholder="Optional" className="text-sm" />
+                  <Input
+                    placeholder="Optional"
+                    value={featureGroup}
+                    onChange={handleFeatureGroupChange}
+                  />
                   <Button size="icon" variant="outline">
                     <Upload size={16} />
                   </Button>
-                  <Button size="icon" variant="outline">
-                    <CiCircleInfo size={16} />
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={addFeatureGroup}
+                  >
+                    <Plus className="h-4 w-4 text-gray-600" />
                   </Button>
                 </div>
               </div>
 
               <div>
-                <div className="flex items-center mb-1">
-                  <Label className="text-xs uppercase tracking-wider">Uploaded Aligned Fasta</Label>
+                <div className="mb-1 flex items-center">
+                  <Label>Uploaded Aligned Fasta</Label>
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger>
-                        <CiCircleInfo size={14} className="ml-1 text-muted-foreground" />
+                      <TooltipTrigger className="ml-2">
+                        <Info className="h-4 w-4 text-gray-400" />
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p className="max-w-xs">Upload already aligned fasta files</p>
+                        <p>Upload already aligned FASTA files</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 </div>
                 <div className="flex gap-2">
-                  <Input placeholder="Optional" className="text-sm" />
+                  <Input
+                    placeholder="Optional"
+                    value={alignedFasta}
+                    onChange={handleAlignedFastaChange}
+                  />
                   <Button size="icon" variant="outline">
                     <Upload size={16} />
                   </Button>
-                  <Button size="icon" variant="outline">
-                    <CiCircleInfo size={16} />
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={addAlignedFasta}
+                  >
+                    <Plus className="h-4 w-4 text-gray-600" />
                   </Button>
                 </div>
               </div>
 
               <div>
-                <div className="flex items-center mb-1">
-                  <Label className="text-xs uppercase tracking-wider">Submitted Unaligned Fasta</Label>
+                <div className="mb-1 flex items-center">
+                  <Label>Submitted Unaligned Fasta</Label>
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger>
-                        <CiCircleInfo size={14} className="ml-1 text-muted-foreground" />
+                      <TooltipTrigger className="ml-2">
+                        <Info className="h-4 w-4 text-gray-400" />
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p className="max-w-xs">Upload unaligned fasta files</p>
+                        <p>Upload unaligned FASTA files</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 </div>
                 <div className="flex gap-2">
-                  <Input placeholder="Optional" className="text-sm" />
+                  <Input
+                    placeholder="Optional"
+                    value={unalignedFasta}
+                    onChange={handleUnalignedFastaChange}
+                  />
                   <Button size="icon" variant="outline">
                     <Upload size={16} />
                   </Button>
-                  <Button size="icon" variant="outline">
-                    <CiCircleInfo size={16} />
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={addUnalignedFasta}
+                  >
+                    <Plus className="h-4 w-4 text-gray-600" />
                   </Button>
                 </div>
               </div>
 
-              <div>
-                <Label className="text-xs uppercase tracking-wider mb-1 block">Selected Files/Feature Group</Label>
-                <div className="bg-gray-50 border rounded-md p-2 min-h-[120px]">
+              <div className="flex-grow space-y-2">
+                <Label>Selected Files/Feature Group</Label>
+                <div className="flex max-h-96 min-h-48 flex-col overflow-y-auto rounded-md border bg-gray-50 p-2">
                   {selectedFiles.length > 0 ? (
-                    <div className="space-y-1">
+                    <div className="flex-grow space-y-1">
                       {selectedFiles.map((file, index) => (
-                        <div key={index} className="flex justify-between items-center bg-white px-2 py-1 rounded">
-                          <span className="text-sm truncate">{file}</span>
-                          <Button variant="ghost" size="icon" onClick={() => removeFile(file)}>
+                        <div
+                          key={index}
+                          className="flex items-center justify-between rounded bg-white px-2 py-1"
+                        >
+                          <span className="truncate text-sm">{file}</span>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => removeFile(file)}
+                          >
                             <X size={14} />
                           </Button>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <div className="text-muted-foreground text-sm h-full flex items-center justify-center">
+                    <div className="text-muted-foreground flex flex-grow items-center justify-center text-sm">
                       No files or features selected
                     </div>
                   )}
@@ -209,52 +343,65 @@ export default function GeneProteinTreePage() {
           {/* Alignment Parameters */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="service-form-section-header">
                 Alignment Parameters
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
-                      <CiCircleInfo size={16} className="text-muted-foreground" />
+                      <Info className="h-4 w-4 text-gray-400" />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p className="max-w-xs">Set parameters for sequence alignment</p>
+                      <p>Set parameters for sequence alignment</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </CardTitle>
             </CardHeader>
+
             <CardContent>
               <div className="space-y-4">
-                <div>
-                  <Label className="text-xs uppercase tracking-wider mb-1 block">Trim Ends of Alignment Threshold</Label>
-                  <div className="flex gap-2">
-                    <Input type="number" defaultValue="0" className="text-sm" />
-                    <Select defaultValue="option1">
-                      <SelectTrigger className="w-[120px]">
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="option1">Percent</SelectItem>
-                        <SelectItem value="option2">Bases</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div className="space-y-2">
+                  <Label>Trim Ends of Alignment Threshold</Label>
+                  <Select defaultValue="0">
+                    <SelectTrigger id="trim-threshold" className="w-full">
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">0</SelectItem>
+                      <SelectItem value="0.1">0.1</SelectItem>
+                      <SelectItem value="0.2">0.2</SelectItem>
+                      <SelectItem value="0.3">0.3</SelectItem>
+                      <SelectItem value="0.4">0.4</SelectItem>
+                      <SelectItem value="0.5">0.5</SelectItem>
+                      <SelectItem value="0.6">0.6</SelectItem>
+                      <SelectItem value="0.7">0.7</SelectItem>
+                      <SelectItem value="0.8">0.8</SelectItem>
+                      <SelectItem value="0.9">0.9</SelectItem>
+                      <SelectItem value="1">1</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
-                <div>
-                  <Label className="text-xs uppercase tracking-wider mb-1 block">Remove Gappy Sequences Threshold</Label>
-                  <div className="flex gap-2">
-                    <Input type="number" defaultValue="0" className="text-sm" />
-                    <Select defaultValue="option1">
-                      <SelectTrigger className="w-[120px]">
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="option1">Percent</SelectItem>
-                        <SelectItem value="option2">Bases</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div className="space-y-2">
+                  <Label>Remove Gappy Sequences Threshold</Label>
+                  <Select defaultValue="0">
+                    <SelectTrigger id="gappy-threshold" className="w-full">
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">0</SelectItem>
+                      <SelectItem value="0.1">0.1</SelectItem>
+                      <SelectItem value="0.2">0.2</SelectItem>
+                      <SelectItem value="0.3">0.3</SelectItem>
+                      <SelectItem value="0.4">0.4</SelectItem>
+                      <SelectItem value="0.5">0.5</SelectItem>
+                      <SelectItem value="0.6">0.6</SelectItem>
+                      <SelectItem value="0.7">0.7</SelectItem>
+                      <SelectItem value="0.8">0.8</SelectItem>
+                      <SelectItem value="0.9">0.9</SelectItem>
+                      <SelectItem value="1">1</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </CardContent>
@@ -263,55 +410,95 @@ export default function GeneProteinTreePage() {
           {/* Tree Parameters */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="service-form-section-header">
                 Tree Parameters
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
-                      <CiCircleInfo size={16} className="text-muted-foreground" />
+                      <Info className="h-4 w-4 text-gray-400" />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p className="max-w-xs">Set parameters for the phylogenetic tree</p>
+                      <p>Set parameters for the phylogenetic tree</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </CardTitle>
             </CardHeader>
+
             <CardContent>
               <div className="space-y-4">
                 <div className="flex gap-4">
-                  <div className="flex items-center">
-                    <Checkbox id="raxml" />
-                    <Label htmlFor="raxml" className="ml-2">RAXML</Label>
-                  </div>
-                  <div className="flex items-center">
-                    <Checkbox id="phyml" />
-                    <Label htmlFor="phyml" className="ml-2">PHYML</Label>
-                  </div>
-                  <div className="flex items-center">
-                    <Checkbox id="fasttree" />
-                    <Label htmlFor="fasttree" className="ml-2">FASTTREE</Label>
-                  </div>
+                  <RadioGroup
+                    defaultValue="raxml"
+                    className="flex items-center justify-between"
+                  >
+                    <div className="flex items-center">
+                      <RadioGroupItem value="raxml" id="raxml" />
+                      <Label htmlFor="raxml" className="ml-2">
+                        RAxML
+                      </Label>
+                    </div>
+                    <div className="flex items-center">
+                      <RadioGroupItem value="phyml" id="phyml" />
+                      <Label htmlFor="phyml" className="ml-2">
+                        PhyML
+                      </Label>
+                    </div>
+                    <div className="flex items-center">
+                      <RadioGroupItem value="fasttree" id="fasttree" />
+                      <Label htmlFor="fasttree" className="ml-2">
+                        FastTree
+                      </Label>
+                    </div>
+                  </RadioGroup>
                 </div>
 
-                <div>
-                  <Label className="text-xs uppercase tracking-wider mb-1 block">Model</Label>
-                  <Input defaultValue="GTR" className="text-sm" />
+                <div className="flex flex-col gap-2">
+                  <Label>Model</Label>
+                  <Select
+                    value={selectedModel}
+                    onValueChange={setSelectedModel}
+                  >
+                    <SelectTrigger id="model" className="w-full">
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    {sequenceType === "dna" ? (
+                      <SelectContent>
+                        <SelectItem value="gtr">GTR</SelectItem>
+                        <SelectItem value="tn93">TN93</SelectItem>
+                        <SelectItem value="hky85">HKY85</SelectItem>
+                        <SelectItem value="f84">F84</SelectItem>
+                        <SelectItem value="f81">F81</SelectItem>
+                        <SelectItem value="k80">K80</SelectItem>
+                        <SelectItem value="jc96">JC96</SelectItem>
+                      </SelectContent>
+                    ) : (
+                      <SelectContent>
+                        <SelectItem value="lg">LG</SelectItem>
+                        <SelectItem value="wag">WAG</SelectItem>
+                        <SelectItem value="jtt">JTT</SelectItem>
+                        <SelectItem value="blosum62">Blosum62</SelectItem>
+                        <SelectItem value="dayhoff">Dayhoff</SelectItem>
+                        <SelectItem value="hivw">HIVw</SelectItem>
+                        <SelectItem value="hivb">HIVb</SelectItem>
+                      </SelectContent>
+                    )}
+                  </Select>
                 </div>
 
-                <div>
-                  <Label className="text-xs uppercase tracking-wider mb-1 block">Output Folder</Label>
+                <div className="flex flex-col gap-2">
+                  <Label>Output Folder</Label>
                   <div className="flex gap-2">
-                    <Input className="text-sm" />
+                    <Input placeholder="Output Folder" />
                     <Button size="icon" variant="outline">
                       <Upload size={16} />
                     </Button>
                   </div>
                 </div>
 
-                <div>
-                  <Label className="text-xs uppercase tracking-wider mb-1 block">Output Name</Label>
-                  <Input placeholder="Output Name" className="text-sm" />
+                <div className="flex flex-col gap-2">
+                  <Label>Output Name</Label>
+                  <Input placeholder="Output Name" />
                 </div>
               </div>
             </CardContent>
@@ -322,60 +509,81 @@ export default function GeneProteinTreePage() {
       {/* Metadata Options */}
       <Card className="mt-4">
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className="service-form-section-header">
             Metadata Options
-            <Badge variant="outline">4</Badge>
+            <Badge variant="outline">
+              {metadataFields.filter((f) => f.selected).length}
+            </Badge>
           </CardTitle>
         </CardHeader>
+
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <h3 className="text-sm font-medium mb-2">Metadata Table</h3>
-              <p className="text-sm text-muted-foreground mb-4">These fields will appear as options in the phylogeny visualization</p>
-              
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="space-y-4">
               <div>
-                <Label className="text-xs uppercase tracking-wider mb-1 block">Metadata Fields</Label>
-                <Select defaultValue="genomeName">
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select field" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="genomeName">Genome Name</SelectItem>
-                    <SelectItem value="genomeId">Genome ID</SelectItem>
-                    <SelectItem value="species">Species</SelectItem>
-                    <SelectItem value="strain">Strain</SelectItem>
-                    <SelectItem value="accession">Accession</SelectItem>
-                    <SelectItem value="subtype">Subtype</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label>Metadata Table</Label>
+                <p className="text-muted-foreground pt-2 pb-4 text-sm">
+                  These fields will appear as options in the phylogeny
+                  visualization
+                </p>
+
+                <div className="flex gap-2">
+                  <Select
+                    value={selectedMetadataField}
+                    onValueChange={setSelectedMetadataField}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select field" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {metadataFields
+                        .filter((field) => !field.selected)
+                        .map((field) => (
+                          <SelectItem key={field.id} value={field.id}>
+                            {field.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={addMetadataField}
+                    disabled={!selectedMetadataField}
+                  >
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </div>
 
             <div>
-              <h3 className="text-sm font-medium mb-2">Metadata Table</h3>
-              <Table>
+              <Label>Metadata Table</Label>
+              <Table className="mt-2">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Field</TableHead>
-                    <TableHead className="w-24 text-center">Include</TableHead>
+                    <TableHead className="w-24 text-center">Remove</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {metadataFields.map((field, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{field.name}</TableCell>
-                      <TableCell className="text-center">
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={() => toggleMetadataField(index)}
-                          className={field.selected ? "text-destructive" : "text-muted-foreground"}
-                        >
-                          <X size={16} />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {metadataFields
+                    .filter((field) => field.selected)
+                    .map((field) => (
+                      <TableRow key={field.id}>
+                        <TableCell>{field.name}</TableCell>
+                        <TableCell className="text-center">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => removeMetadataField(field.id)}
+                            className="text-destructive hover:text-destructive/90"
+                          >
+                            <X size={16} />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </div>
@@ -384,10 +592,10 @@ export default function GeneProteinTreePage() {
       </Card>
 
       {/* Form Controls */}
-      <div className="flex justify-end mt-4 gap-2">
+      <div className="service-form-controls">
         <Button variant="outline">Reset</Button>
         <Button>Submit</Button>
       </div>
-    </div>
+    </section>
   );
 }

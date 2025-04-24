@@ -60,17 +60,17 @@ const PrimerDesignInterface = () => {
             given input sequence under a variety of temperature, size, and
             concentration constraints. For further explanation, please see the
             Primer Design Service
-            <a href="#" className="mx-1 text-indigo-600 hover:text-indigo-800">
+            <a href="#">
               Quick Reference Guide
               <ExternalLink className="ml-1 h-3 w-3" />
             </a>
             ,
-            <a href="#" className="ml-1 text-indigo-600 hover:text-indigo-800">
+            <a href="#">
               Tutorial
               <ExternalLink className="ml-1 h-3 w-3" />
             </a>{" "}
             and
-            <a href="#" className="ml-1 text-indigo-600 hover:text-indigo-800">
+            <a href="#">
               Instructional Video
               <ExternalLink className="ml-1 h-3 w-3" />
             </a>

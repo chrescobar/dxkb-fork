@@ -87,12 +87,12 @@ const VariationAnalysisInterface = () => {
             The Variation Analysis Service can be used to identify and annotate
             sequence variations. For further explanation, please see the
             Variation Analysis Service
-            <a href="#" className="mx-1 text-indigo-600 hover:text-indigo-800">
+            <a href="#">
               Quick Reference Guide
               <ExternalLink className="ml-1 h-3 w-3" />
             </a>{" "}
             and
-            <a href="#" className="ml-1 text-indigo-600 hover:text-indigo-800">
+            <a href="#">
               Tutorial
               <ExternalLink className="ml-1 h-3 w-3" />
             </a>

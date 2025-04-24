@@ -101,13 +101,13 @@ const serviceItems = {
     title: "Phylogenomics",
     items: [
       {
-        title: "Viral Genome Tree",
-        href: "/services/viral-genome-tree",
+        title: "Gene/Protein Tree",
+        href: "/services/gene-protein-tree",
         target: "_self",
       },
       {
-        title: "Gene/Protein Tree",
-        href: "/services/gene-protein-tree",
+        title: "Viral Genome Tree",
+        href: "/services/viral-genome-tree",
         target: "_self",
       },
     ],
@@ -136,11 +136,6 @@ const serviceItems = {
     title: "Metagenomics",
     items: [
       {
-        title: "Taxonomic Classification",
-        href: "/services/taxonomic-classification",
-        target: "_self",
-      },
-      {
         title: "Metagenomic Binning",
         href: "/services/metagenomic-binning",
         target: "_self",
@@ -148,6 +143,11 @@ const serviceItems = {
       {
         title: "Metagenomic Read Mapping",
         href: "/services/metagenomic-read-mapping",
+        target: "_self",
+      },
+      {
+        title: "Taxonomic Classification",
+        href: "/services/taxonomic-classification",
         target: "_self",
       },
     ],
@@ -166,6 +166,11 @@ const serviceItems = {
     title: "Viral Tools",
     items: [
       {
+        title: "Influenza HA Subtype Conversion",
+        href: "/services/influenza-ha-subtype",
+        target: "_self",
+      },
+      {
         title: "SARS-CoV-2 Genome Analysis",
         href: "/services/sars-cov2-genome-analysis",
         target: "_self",
@@ -173,11 +178,6 @@ const serviceItems = {
       {
         title: "SARS-CoV-2 Wastewater Analysis",
         href: "/services/sars-cov2-wastewater-analysis",
-        target: "_self",
-      },
-      {
-        title: "Influenza HA Subtype Conversion",
-        href: "/services/influenza-ha-subtype",
         target: "_self",
       },
       {
@@ -196,13 +196,18 @@ const serviceItems = {
     title: "BV-BRC Outbreak Tracker",
     items: [
       {
-        title: "Mpox 2024",
-        href: "https://www.bv-brc.org/outbreaks/Mpox/#view_tab=overview",
+        title: "Measles 2025",
+        href: "https://www.bv-brc.org/outbreaks/Measles/#view_tab=overview",
         target: "_blank",
       },
       {
         title: "Influenza H5N1 2024",
         href: "https://www.bv-brc.org/outbreaks/H5N1/#view_tab=overview",
+        target: "_blank",
+      },
+      {
+        title: "Mpox 2024",
+        href: "https://www.bv-brc.org/outbreaks/Mpox/#view_tab=overview",
         target: "_blank",
       },
       {

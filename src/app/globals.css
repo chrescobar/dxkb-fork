@@ -437,7 +437,7 @@
 }
 
 .service-collapsible-trigger {
-  @apply flex items-center gap-1 p-2;
+  @apply flex items-center gap-1 p-2 font-medium;
 }
 
 .service-card-content {

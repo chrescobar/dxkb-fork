@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
+import { ServiceHeader } from "@/components/services/service-header";
 import {
   Card,
   CardContent,
@@ -62,47 +63,14 @@ export default function BlastServicePage() {
   };
 
   return (
-    <div className="service-container container">
-      <div className="service-header">
-        <div className="service-header-title">
-          <h1>BLAST</h1>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Info className="service-header-tooltip" />
-              </TooltipTrigger>
-              <TooltipContent side="right" className="max-w-sm">
-                <p>
-                  BLAST (Basic Local Alignment Search Tool) finds regions of
-                  similarity between biological sequences.
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-        <div className="service-header-description">
-          <div className="text-gray-600">
-            <p>
-              The BLAST service uses BLAST (Basic Local Alignment Search Tool)
-              to search against public or private genomes or other databases
-              using DNA or protein sequence(s).
-            </p>
-            <p>
-              For further explanation, please see the{" "}
-              <a href="/docs/blast-guide">
-                BLAST Service Quick Reference Guide
-                <ExternalLink className="ml-1 h-3 w-3" />
-              </a>{" "}
-              and{" "}
-              <a href="/tutorial/blast-video">
-                Tutorial and Instructional Video
-                <ExternalLink className="ml-1 h-3 w-3" />
-              </a>
-              .
-            </p>
-          </div>
-        </div>
-      </div>
+    <section>
+      <ServiceHeader
+        title="BLAST"
+        tooltipContent="BLAST Information"
+        description="The BLAST service uses BLAST (Basic Local Alignment Search Tool) to search against public or private genomes or other databases using DNA or protein sequence(s)."
+        quickReferenceGuide="#"
+        tutorial="#"
+      />
 
       <form onSubmit={handleSubmit} className="service-form-section">
         {/* Search Program Card */}
@@ -445,6 +413,6 @@ export default function BlastServicePage() {
           </Button>
         </div>
       </form>
-    </div>
+    </section>
   );
 }

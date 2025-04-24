@@ -233,12 +233,10 @@ const GenomeAlignmentInterface = () => {
               className="service-collapsible-container"
             >
               <CollapsibleTrigger className="service-collapsible-trigger">
-                <div className="service-form-section-header">
-                  Advanced Options
-                  <ChevronDown
-                    className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
-                  />
-                </div>
+                Advanced Options
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
+                />
               </CollapsibleTrigger>
 
               <CollapsibleContent>

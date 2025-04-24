@@ -1,3 +1,4 @@
+import { ServiceHeader } from "@/components/services/service-header";
 import {
   Card,
   CardContent,
@@ -22,55 +23,35 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
-import { Info, Search, FileDown, Database, Dna, Upload, ExternalLink } from "lucide-react";
+import {
+  Info,
+  Search,
+  FileDown,
+  Database,
+  Dna,
+  Upload,
+  ExternalLink,
+} from "lucide-react";
 
 const GenomeAnnotationContent = () => {
   return (
-    <div className="service-container container">
-      <div className="service-header">
-        <div className="service-header-title">
-          <h1>Genome Annotation</h1>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Info className="service-header-tooltip" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Genome Annotation Information</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <a href="#">
-            <ExternalLink className="service-header-tooltip" />
-          </a>
-        </div>
-        <div className="service-header-description">
-          <p>
-            The Genome Annotation Service provides annotation of genomic features
-            using the RAST tool kit (RASTtk) for bacteria and VirION for viruses.
-            The service accepts a FASTA formatted file and an annotation recipe
-            based on taxonomy to provide an annotated genome. For further
-            explanation, please see the Genome Annotation Service {" "}
-            <a href="#">
-              Quick Reference Guide
-              <ExternalLink className="ml-1 h-3 w-3" />
-            </a>
-            {" "} and {" "}
-            <a href="#">
-              Tutorial
-              <ExternalLink className="ml-1 h-3 w-3" />
-            </a>
-            .
-          </p>
-        </div>
-      </div>
+    <section>
+      <ServiceHeader
+        title="Genome Annotation"
+        tooltipContent="Genome Annotation Information"
+        description="The Genome Annotation Service provides annotation of genomic features using the RAST tool kit (RASTtk) for bacteria and VirION for viruses. The service accepts a FASTA formatted file and an annotation recipe based on taxonomy to provide an annotated genome."
+        quickReferenceGuide="#"
+        tutorial="#"
+      />
 
       <form className="service-form-section">
         {/* Contigs Upload */}
         <Card>
           <CardHeader className="pb-2">
             <div className="flex items-center">
-              <CardTitle className="service-form-section-header">Parameters</CardTitle>
+              <CardTitle className="service-form-section-header">
+                Parameters
+              </CardTitle>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger className="ml-2">
@@ -128,7 +109,9 @@ const GenomeAnnotationContent = () => {
                 <SelectValue placeholder="--- Select Recipe ---" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="bacteria-archaea">Bacteria / Archaea</SelectItem>
+                <SelectItem value="bacteria-archaea">
+                  Bacteria / Archaea
+                </SelectItem>
                 <SelectItem value="viruses">Viruses</SelectItem>
                 <SelectItem value="bacteriophage">Bacteriophage</SelectItem>
               </SelectContent>
@@ -149,7 +132,8 @@ const GenomeAnnotationContent = () => {
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>
-                        Taxon must be specified at the genus level or below to get the latest protein family predictions.
+                        Taxon must be specified at the genus level or below to
+                        get the latest protein family predictions.
                       </p>
                     </TooltipContent>
                   </Tooltip>
@@ -205,9 +189,7 @@ const GenomeAnnotationContent = () => {
               <CardTitle className="text-lg">Output Name</CardTitle>
             </CardHeader>
             <CardContent>
-              <Input
-                placeholder="Taxonomy + My Label"
-              />
+              <Input placeholder="Taxonomy + My Label" />
             </CardContent>
           </Card>
 
@@ -238,7 +220,7 @@ const GenomeAnnotationContent = () => {
           <Button type="submit">Annotate</Button>
         </div>
       </form>
-    </div>
+    </section>
   );
 };
 

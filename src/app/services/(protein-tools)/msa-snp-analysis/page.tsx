@@ -61,7 +61,7 @@ export default function MSAandSNPAnalysisPage() {
         {/* Start with */}
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-lg">
+            <CardTitle className="service-card-title">
               Start with:
               <TooltipProvider>
                 <Tooltip>

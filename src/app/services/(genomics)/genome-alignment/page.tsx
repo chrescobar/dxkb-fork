@@ -274,6 +274,7 @@ const GenomeAlignmentInterface = () => {
                     </div>
                   )}
                 </div>
+                {/* TODO: Change to NumberInput component */}
                 <div className="w-full space-y-2">
                   <Label>Weight</Label>
                   <Input type="number" placeholder="Min pairwise LCB score" />

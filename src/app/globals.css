@@ -441,11 +441,11 @@
 }
 
 .service-card-content {
-  @apply h-full space-y-4;
+  @apply h-full space-y-6;
 }
 
 .service-card-content-grid {
-  @apply grid grid-cols-1 gap-6 md:grid-cols-2;
+  @apply grid grid-cols-1 gap-6 md:grid-cols-2 py-4 px-2;
 }
 
 .service-card-content-grid-item {
@@ -454,6 +454,14 @@
 
 .service-form-controls {
   @apply flex flex-row justify-end gap-4 mt-4;
+}
+
+.service-card-input {
+  @apply w-full flex-1 bg-white;
+}
+
+.service-card-num-input {
+  @apply bg-white;
 }
 
 .service-card-input-search {
@@ -466,6 +474,22 @@
 
 .service-card-input-group  {
   @apply flex space-x-2;
+}
+
+.service-card-header {
+  @apply pb-2;
+}
+
+.service-card-title {
+  @apply text-lg font-semibold gap-2 flex items-center;
+}
+
+.service-card-label {
+  @apply text-sm font-medium mb-2 block;
+}
+
+.service-card-sublabel {
+  @apply text-sm font-normal mb-2 block;
 }
 
 .service-table {

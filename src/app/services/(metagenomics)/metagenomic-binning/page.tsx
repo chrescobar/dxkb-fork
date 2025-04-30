@@ -44,23 +44,6 @@ const MetagenomicBinningService = () => {
   const [showAdvanced, setAdvanced] = useState(false);
   const [startingDataType, setStartingDataType] = useState("read_file");
 
-  const handleSraAdd = () => {
-    if (
-      sraAccession.trim() &&
-      !selectedLibraries.some((lib) => lib.name === sraAccession)
-    ) {
-      setSelectedLibraries([
-        ...selectedLibraries,
-        {
-          id: `sra-${Date.now()}`,
-          name: sraAccession,
-          type: "sra",
-        },
-      ]);
-      setSraAccession("");
-    }
-  };
-
   const removeFromSelectedLibraries = (id: string) => {
     setSelectedLibraries(selectedLibraries.filter((lib) => lib.id !== id));
   };
@@ -91,6 +74,23 @@ const MetagenomicBinningService = () => {
         type: "single",
       },
     ]);
+  };
+
+  const handleSraAdd = () => {
+    if (
+      sraAccession.trim() &&
+      !selectedLibraries.some((lib) => lib.name === sraAccession)
+    ) {
+      setSelectedLibraries([
+        ...selectedLibraries,
+        {
+          id: `sra-${Date.now()}`,
+          name: sraAccession,
+          type: "sra",
+        },
+      ]);
+      setSraAccession("");
+    }
   };
 
   return (

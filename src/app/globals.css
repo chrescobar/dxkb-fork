@@ -493,7 +493,7 @@
 }
 
 .service-card-tooltip-icon {
-  @apply text-muted-foreground mb-2 h-4 w-4;
+  @apply text-muted-foreground h-4 w-4;
 }
 
 .service-table {

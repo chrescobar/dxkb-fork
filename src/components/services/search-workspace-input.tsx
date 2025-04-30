@@ -2,10 +2,10 @@ import React from "react";
 import { Button } from "../ui/button";
 import { FolderSearch, Plus } from "lucide-react";
 import { Input } from "../ui/input";
-import { Label } from "@radix-ui/react-label";
+import { Label } from "../ui/label";
 
 interface SearchWorkspaceInputProps {
-  title?: string;
+  title?: string | null;
   placeholder?: string;
   icon?: React.ReactNode;
   variant?: "default" | "add";
@@ -26,11 +26,11 @@ const SearchWorkspaceInput = ({
   disabled = false,
 }: SearchWorkspaceInputProps) => {
   return (
-    <div>
-      <Label className="mb-1 block text-sm font-medium">{title}</Label>
+    <>
+      {title && <Label className="service-card-label">{title}</Label>}
       <div className="flex gap-2">
         <Input
-          className="flex-1"
+          className="service-card-input"
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
@@ -49,7 +49,7 @@ const SearchWorkspaceInput = ({
           </Button>
         )}
       </div>
-    </div>
+    </>
   );
 };
 

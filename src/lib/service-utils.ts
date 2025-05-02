@@ -55,4 +55,11 @@ export function handleSraAdd(
       type: "sra",
     },
   ];
-} 
+}
+
+export function removeFromSelectedLibraries(
+  id: string,
+  selectedLibraries: Library[]
+) {
+  return selectedLibraries.filter((lib) => lib.id !== id);
+}

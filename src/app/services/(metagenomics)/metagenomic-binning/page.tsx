@@ -130,7 +130,7 @@ const MetagenomicBinningService = () => {
             <CardContent className="service-card-content">
               <RadioGroup
                 defaultValue="read_file"
-                className="flex flex-row gap-4"
+                className="service-radio-group"
                 onValueChange={setStartingDataType}
               >
                 <div className="service-radio-group-item">

@@ -10,6 +10,7 @@ interface SearchPairInputProps {
   secondPlaceholder?: string;
   icon?: React.ReactNode;
   variant?: "single" | "pair";
+  justInput?: boolean;
   value?: string;
   onChange?: (value: string) => void;
   onAdd?: (files: { first: string; second?: string }) => void;
@@ -22,6 +23,7 @@ const SearchReadLibrary = ({
   secondPlaceholder = "Select File 2...",
   icon = <FolderSearch size={16} />,
   variant = "single",
+  justInput = false,
   value = "",
   onChange,
   onAdd,
@@ -54,24 +56,26 @@ const SearchReadLibrary = ({
     }
   };
 
-  const canAdd = variant === "pair" 
-    ? firstInput && secondInput 
-    : firstInput;
+  const canAdd = variant === "pair" ? firstInput && secondInput : firstInput;
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        {title && <Label className="mb-1 block text-sm font-medium">{title}</Label>}
-        <div className="flex-1 h-[1px] bg-border mx-4" />
-        <Button 
-          variant="outline" 
-          size="icon"
-          onClick={handleAdd}
-          disabled={!canAdd || disabled}
-        >
-          <ChevronRight size={16} />
-        </Button>
-      </div>
+      {!justInput && (
+        <div className="flex items-center justify-between">
+          {title && (
+            <Label className="mb-1 block text-sm font-medium">{title}</Label>
+          )}
+          <div className="bg-border mx-4 h-[1px] flex-1" />
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={handleAdd}
+            disabled={!canAdd || disabled}
+          >
+            <ChevronRight size={16} />
+          </Button>
+        </div>
+      )}
       <div className="flex gap-2">
         <Input
           className="flex-1"

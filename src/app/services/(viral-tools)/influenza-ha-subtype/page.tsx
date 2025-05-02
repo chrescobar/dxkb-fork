@@ -13,265 +13,181 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
-import {
-  Info,
-  Upload,
-  FileText,
-  HelpCircle,
-} from "lucide-react";
+import { Info } from "lucide-react";
+import { ServiceHeader } from "@/components/services/service-header";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import SearchWorkspaceInput from "@/components/services/search-workspace-input";
+import { HaReferenceTypes } from "@/types/services";
 
 export default function HASubtypeNumbering() {
   // States for the form
-  const [inputSequence, setInputSequence] = useState("");
+  const [inputSequence, setInputSequence] = useState("sequence");
+  const [inputSequenceValue, setInputSequenceValue] = useState("");
   const [outputFolder, setOutputFolder] = useState("");
   const [outputName, setOutputName] = useState("");
-  const [selectedScheme, setSelectedScheme] = useState("H1PDM34");
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // Handle form submission logic here
-    console.log({ inputSequence, outputFolder, outputName, selectedScheme });
-  };
+  const [selectedSchemes, setSelectedSchemes] = useState(["H1PDM34"]);
 
   const handleReset = () => {
     setInputSequence("");
     setOutputFolder("");
     setOutputName("");
-    setSelectedScheme("H1PDM34");
+    setSelectedSchemes(["H1PDM34"]);
   };
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 py-8">
-      {/* Header Section */}
-      <div className="mb-8 text-center">
-        <div className="mb-2 flex items-center justify-center gap-2">
-          <h1 className="text-2xl font-bold">
-            HA Subtype Numbering Conversion
-          </h1>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button className="bg-primary-50 text-primary-700 inline-flex h-6 w-6 items-center justify-center rounded-full">
-                  <Info className="h-4 w-4" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="w-64">Information about HA Subtype Numbering</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-        <p className="text-muted-foreground mx-auto max-w-3xl text-sm">
-          The HA Subtype Numbering Conversion service allows user to renumber
+    <section>
+      <ServiceHeader
+        title="HA Subtype Numbering Conversion"
+        tooltipContent="HA Subtype Numbering Conversion Information"
+        description="The HA Subtype Numbering Conversion service allows user to renumber
           Influenza HA sequences according to a cross-subtype numbering scheme
-          proposed by Burke and Smith in Burke DF, Smith DJ (2014). A
+          proposed by Burke and Smith in <a href='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4100033/'>Burke DF, Smith DJ (2014). A
           recommended numbering scheme for influenza A HA subtypes. PLUS One
-          9:e112302. Burke and Smith's numbering scheme uses analysis of known
+          9:e112302</a>. Burke and Smith's numbering scheme uses analysis of known
           HA structures to identify amino acids that are structurally and
           functionally equivalent across all HA subtypes, using a numbering
-          system based on the mature HA sequence. For further explanation,
-          please see the{" "}
-          <a href="#" className="text-primary-600 hover:underline">
-            HA Subtype Numbering Conversion Service Quick Reference Guide
-          </a>{" "}
-          and{" "}
-          <a href="#" className="text-primary-600 hover:underline">
-            Tutorial
-          </a>
-          .
-        </p>
-      </div>
+          system based on the mature HA sequence."
+        quickReferenceGuide="#"
+        tutorial="#"
+        instructionalVideo="#"
+      />
 
       {/* Main Form Content */}
       <div className="grid grid-cols-1 gap-6">
-        {/* Input Sequence Section */}
         <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-base font-medium">
-                Input Sequence
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <HelpCircle className="text-muted-foreground h-4 w-4" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="w-64">
-                        Enter protein sequences for analysis
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </CardTitle>
-            </div>
+          <CardHeader className="service-card-header">
+            <CardTitle className="service-card-title">
+              Input Sequence
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Info className="service-card-tooltip-icon" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Enter protein sequences for analysis</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="mb-4 flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Checkbox id="enter-sequence" />
-                <Label htmlFor="enter-sequence" className="text-sm">
-                  Enter sequence
-                </Label>
+
+          <CardContent className="service-card-content">
+            <RadioGroup
+              defaultValue="sequence"
+              className="service-radio-group"
+              onValueChange={setInputSequence}
+            >
+              <div className="service-radio-group-item">
+                <RadioGroupItem value="sequence" id="sequence" />
+                <Label htmlFor="sequence">Enter Sequence</Label>
               </div>
-
-              <div className="flex items-center gap-2">
-                <Checkbox id="select-fasta" checked={true} />
-                <Label htmlFor="select-fasta" className="text-sm">
-                  Select FASTA file
-                </Label>
+              <div className="service-radio-group-item">
+                <RadioGroupItem value="fasta" id="fasta" />
+                <Label htmlFor="fasta">Select FASTA File</Label>
               </div>
-
-              <div className="flex items-center gap-2">
-                <Checkbox id="feature-group" />
-                <Label htmlFor="feature-group" className="text-sm">
-                  Feature group
-                </Label>
+              <div className="service-radio-group-item">
+                <RadioGroupItem value="feature-group" id="feature-group" />
+                <Label htmlFor="feature-group">Feature Group</Label>
               </div>
-            </div>
+            </RadioGroup>
 
-            <Textarea
-              placeholder="Enter one or more protein sequences."
-              className="min-h-[200px] font-mono text-sm"
-              value={inputSequence}
-              onChange={(e) => setInputSequence(e.target.value)}
-            />
+            {inputSequence === "sequence" && (
+              <Textarea
+                placeholder="Enter one or more protein sequences..."
+                className="service-card-textarea"
+                value={inputSequenceValue}
+                onChange={(e) => setInputSequenceValue(e.target.value)}
+              />
+            )}
 
-            <div className="flex justify-end">
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-1"
-              >
-                <Upload className="h-4 w-4" />
-                <span>Upload FASTA</span>
-              </Button>
-            </div>
+            {inputSequence === "fasta" && (
+              <SearchWorkspaceInput
+                title="FASTA File"
+                placeholder="Select FASTA File"
+              />
+            )}
+
+            {inputSequence === "feature-group" && (
+              <SearchWorkspaceInput
+                title="Feature Group"
+                placeholder="Select Feature Group"
+              />
+            )}
           </CardContent>
         </Card>
 
         {/* Conversion Sequence Numbering Scheme Section */}
         <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-base font-medium">
-                Conversion Sequence Numbering Scheme
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <HelpCircle className="text-muted-foreground h-4 w-4" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="w-64">
-                        Select the numbering scheme to apply
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </CardTitle>
-            </div>
+          <CardHeader className="service-card-header">
+            <CardTitle className="service-card-title">
+              Conversion Sequence Numbering Scheme
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Info className="service-card-tooltip-icon" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Select the numbering scheme to apply</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-2">
-              {[
-                "H1PDM34",
-                "H1PR834",
-                "H3post1968",
-                "H5Haedin",
-                "H2",
-                "H3",
-                "H4",
-                "H5GAlamoaGsGD",
-                "H5",
-                "H5c221",
-              ].map((scheme) => (
-                <div className="flex items-center gap-2" key={scheme}>
-                  <Checkbox
-                    id={scheme}
-                    checked={selectedScheme === scheme}
-                    onCheckedChange={() => setSelectedScheme(scheme)}
+
+          <CardContent className="service-card-content">
+            <div className="space-y-6">
+              <div className="bg-background-100 grid grid-cols-2 gap-2 rounded-md border p-4 md:grid-cols-4">
+                {HaReferenceTypes.map((scheme) => (
+                  <div className="flex items-center gap-2" key={scheme.id}>
+                    <Checkbox
+                      id={scheme.id}
+                      checked={selectedSchemes.includes(scheme.id)}
+                      onCheckedChange={() =>
+                        setSelectedSchemes(
+                          selectedSchemes.includes(scheme.id)
+                            ? selectedSchemes.filter((s) => s !== scheme.id)
+                            : [...selectedSchemes, scheme.id],
+                        )
+                      }
+                      className="bg-white"
+                    />
+                    <Label htmlFor={scheme.id} className="text-sm">
+                      {scheme.label}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+
+              <div className="service-card-content-row">
+                <div className="w-full">
+                  <SearchWorkspaceInput
+                    title="Output Folder"
+                    placeholder="Select Output Folder"
+                    onChange={setOutputFolder}
                   />
-                  <Label htmlFor={scheme} className="text-sm">
-                    {scheme}
-                  </Label>
                 </div>
-              ))}
+
+                <div className="w-full">
+                  <Label className="service-card-label">Output Name</Label>
+                  <Input
+                    defaultValue=""
+                    placeholder="Output Name"
+                    onChange={(e) => setOutputName(e.target.value)}
+                  />
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
-
-        {/* Output Options Section */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2 text-base font-medium">
-                  Output Folder
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <HelpCircle className="text-muted-foreground h-4 w-4" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p className="w-64">
-                          Specify where output files should be saved
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-2">
-                <Input
-                  placeholder="Output Folder"
-                  value={outputFolder}
-                  onChange={(e) => setOutputFolder(e.target.value)}
-                  className="flex-1"
-                />
-                <Button variant="outline" size="icon">
-                  <FileText className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2 text-base font-medium">
-                  Output Name
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <HelpCircle className="text-muted-foreground h-4 w-4" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p className="w-64">Name for the output files</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Input
-                placeholder="Output Name"
-                value={outputName}
-                onChange={(e) => setOutputName(e.target.value)}
-              />
-            </CardContent>
-          </Card>
-        </div>
       </div>
 
       {/* Action Buttons */}
-      <div className="mt-8 flex justify-center gap-4">
+      <div className="service-form-controls">
         <Button variant="outline" onClick={handleReset}>
           Reset
         </Button>
         <Button type="submit">Submit</Button>
       </div>
-    </div>
+    </section>
   );
 }

@@ -393,7 +393,7 @@
 }
 
 .service-header-description {
-  @apply mb-4 flex items-start gap-2;
+  @apply mb-4 flex flex-col items-start gap-2;
 }
 
 .service-header-description p {
@@ -403,6 +403,8 @@
 .service-header-description a {
   @apply inline-flex items-center text-blue-500 hover:text-blue-700;
 }
+
+
 
 .service-header-tooltip {
   @apply h-5 w-5 text-blue-500;
@@ -452,6 +454,14 @@
   @apply space-y-2;
 }
 
+.service-card-content-row {
+  @apply flex flex-col sm:flex-row gap-4 md:gap-8 w-full;
+}
+
+.service-card-content-col {
+  @apply flex flex-col gap-2 w-full;
+}
+
 .service-form-controls {
   @apply flex flex-row justify-end gap-4 mt-4;
 }
@@ -494,6 +504,10 @@
 
 .service-card-tooltip-icon {
   @apply text-muted-foreground h-4 w-4;
+}
+
+.service-card-textarea {
+  @apply min-h-48 max-h-96 text-sm font-mono;
 }
 
 .service-table {

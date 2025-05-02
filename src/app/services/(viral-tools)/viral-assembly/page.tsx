@@ -19,11 +19,10 @@ import {
 } from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Badge } from "@/components/ui/badge";
-import {
-  FileText,
-  HelpCircle,
-} from "lucide-react";
+import { HelpCircle } from "lucide-react";
+import { ServiceHeader } from "@/components/services/service-header";
+import SearchReadLibrary from "@/components/services/search-read-library";
+import OutputFolder from "@/components/services/output-folder";
 
 export default function ViralAssembly() {
   // States for the form
@@ -62,95 +61,66 @@ export default function ViralAssembly() {
   };
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 py-8">
-      {/* Header Section */}
-      <div className="mb-8 text-center">
-        <div className="mb-2 flex items-center justify-center gap-2">
-          <h1 className="text-2xl font-bold">Viral Assembly - BETA</h1>
-          <Badge
-            variant="outline"
-            className="border-amber-200 bg-amber-50 text-amber-600"
-          >
-            BETA
-          </Badge>
-        </div>
-        <p className="text-muted-foreground mx-auto max-w-3xl text-sm">
-          The Viral Assembly Service utilizes IRMA (Iterative Refinement
+    <section>
+      <ServiceHeader
+        title="Viral Assembly - BETA"
+        tooltipContent="Viral Assembly Information"
+        description='The Viral Assembly Service utilizes IRMA (Iterative Refinement
           Meta-Assembler) to assemble viral genomes. Users must select the virus
           genome for processing. This service is currently in beta; any feedback
-          or improvement is welcomed. For further explanation, please see the{" "}
-          <a href="#" className="text-primary-600 hover:underline">
-            Viral Assembly - BETA Service Tutorial
-          </a>
-          .
-        </p>
-      </div>
+          or improvement is welcomed.'
+        quickReferenceGuide="#"
+        tutorial="#"
+        instructionalVideo="#"
+      />
 
       {/* Main Form Content */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Input File Section */}
         <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-base font-medium">
-                Input File
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <HelpCircle className="text-muted-foreground h-4 w-4" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="w-64">
-                        Select input files for viral assembly
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </CardTitle>
-            </div>
+          <CardHeader className="service-card-header">
+            <CardTitle className="service-card-title">
+              Input File
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+
+          <CardContent className="service-card-content">
             <RadioGroup
               defaultValue={inputType}
               onValueChange={setInputType}
-              className="space-y-2"
+              className="service-radio-group"
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="paired" id="paired" />
-                <Label htmlFor="paired">PAIRED READ LIBRARY</Label>
+                <Label htmlFor="paired">Paired Read Library</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="single" id="single" />
-                <Label htmlFor="single">SINGLE READ LIBRARY</Label>
+                <Label htmlFor="single">Single Read Library</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="sra" id="sra" />
-                <Label htmlFor="sra">SRA RUN ACCESSION</Label>
+                <Label htmlFor="sra">SRA Run Accession</Label>
               </div>
             </RadioGroup>
 
             {inputType === "paired" && (
-              <div className="space-y-3 pt-2">
-                {readFiles.map((file) => (
-                  <div key={file.id} className="flex items-center gap-2">
-                    <Input value={file.name} readOnly className="flex-1" />
-                    <Button variant="ghost" size="icon">
-                      <FileText className="text-muted-foreground h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
+              <SearchReadLibrary
+                title="Paired Read Library"
+                firstPlaceholder="Select File 1..."
+                secondPlaceholder="Select File 2..."
+                variant="pair"
+                justInput={true}
+              />
             )}
 
             {inputType === "single" && (
-              <div className="pt-2">
-                <div className="flex items-center gap-2">
-                  <Input placeholder="READ FILE" className="flex-1" />
-                  <Button variant="ghost" size="icon">
-                    <FileText className="text-muted-foreground h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
+              <SearchReadLibrary
+                title="Single Read Library"
+                firstPlaceholder="Select File 1..."
+                variant="single"
+                justInput={true}
+              />
             )}
 
             {inputType === "sra" && (
@@ -163,72 +133,66 @@ export default function ViralAssembly() {
 
         {/* Parameters Section */}
         <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-base font-medium">
-                Parameters
-                <TooltipProvider>
+          <CardHeader className="service-card-header">
+            <CardTitle className="service-card-title">
+              Parameters
+              <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
-                      <HelpCircle className="text-muted-foreground h-4 w-4" />
+                      <HelpCircle className="service-card-tooltip-icon" />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p className="w-64">Configure assembly parameters</p>
+                      <p>Configure assembly parameters</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-              </CardTitle>
-            </div>
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-3">
-              <Label>ASSEMBLY STRATEGY</Label>
-              <Select
-                value={assemblyStrategy}
-                onValueChange={setAssemblyStrategy}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select assembly strategy" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="irma">IRMA</SelectItem>
-                  <SelectItem value="other">Other Strategy</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
 
-            <div className="space-y-3">
-              <Label>VIRUS GENOME</Label>
-              <Select value={virusGenome} onValueChange={setVirusGenome}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select virus genome" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="flu">FLU</SelectItem>
-                  <SelectItem value="sars-cov-2">SARS-CoV-2</SelectItem>
-                  <SelectItem value="hiv">HIV</SelectItem>
-                  <SelectItem value="rsv">RSV</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <CardContent className="service-card-content">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
+              <div className="w-full">
+                <Label className="service-card-label">Assembly Strategy</Label>
 
-            <div className="space-y-3">
-              <Label>OUTPUT FOLDER</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  placeholder="Select output folder"
-                  className="flex-1"
-                  value={outputFolder}
-                  onChange={(e) => setOutputFolder(e.target.value)}
-                />
-                <Button variant="outline" size="icon">
-                  <FileText className="h-4 w-4" />
-                </Button>
+                <Select
+                  value={assemblyStrategy}
+                  onValueChange={setAssemblyStrategy}
+                  >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select assembly strategy" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="irma">IRMA</SelectItem>
+                    <SelectItem value="other">Other Strategy</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="w-full">
+                <Label className="service-card-label">Virus Genome</Label>
+
+                <Select value={virusGenome} onValueChange={setVirusGenome}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select virus genome" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="flu">Flu</SelectItem>
+                    <SelectItem value="cov">CoV</SelectItem>
+                    <SelectItem value="rsv">RSV</SelectItem>
+                    <SelectItem value="ebola">Ebola</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
-            <div className="space-y-3">
-              <Label>OUTPUT NAME</Label>
+            <OutputFolder
+              value={outputFolder}
+              onChange={(value) => setOutputFolder(value)}
+            />
+
+            <div className="w-full">
+              <Label className="service-card-label">Output Name</Label>
+
               <Input
                 placeholder="Output Name"
                 value={outputName}
@@ -240,12 +204,12 @@ export default function ViralAssembly() {
       </div>
 
       {/* Action Buttons */}
-      <div className="mt-8 flex justify-center gap-4">
+      <div className="service-form-controls">
         <Button variant="outline" onClick={handleReset}>
           Reset
         </Button>
         <Button onClick={handleSubmit}>Assemble</Button>
       </div>
-    </div>
+    </section>
   );
 }

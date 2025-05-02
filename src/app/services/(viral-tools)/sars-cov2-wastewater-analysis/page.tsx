@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,8 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
@@ -30,258 +34,246 @@ import {
   HelpCircle,
   Droplets,
   Link2,
+  ChevronRight,
 } from "lucide-react";
+import { ServiceHeader } from "@/components/services/service-header";
+import SearchReadLibrary from "@/components/services/search-read-library";
+import {
+  handlePairedLibraryAdd,
+  handleSingleLibraryAdd,
+  handleSraAdd,
+  removeFromSelectedLibraries,
+} from "@/lib/service-utils";
+import { Library, primerOptions } from "@/types/services";
+import { DatePicker } from "@/components/ui/date-picker";
+import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
+import { wastewaterAnalysisInputLib } from "@/lib/service-info";
+import SelectedItemsTable from "@/components/services/selected-items-table";
 
 export default function WastewaterAnalysis() {
-  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
-
-  const addFile = () => {
-    setSelectedFiles([
-      ...selectedFiles,
-      `READ FILE ${selectedFiles.length + 1}`,
-    ]);
-  };
-
-  const removeFile = (index: number) => {
-    const newFiles = [...selectedFiles];
-    newFiles.splice(index, 1);
-    setSelectedFiles(newFiles);
-  };
-
-  const moveFileToSelected = (file: string) => {
-    // Implementation would move a file to the selected libraries section
-  };
+  const [selectedLibraries, setSelectedLibraries] = useState<Library[]>([]);
+  const [sraAccession, setSraAccession] = useState("");
+  const [primer, setPrimer] = useState<string>("artic");
+  const [version, setVersion] = useState<string>(
+    primerOptions.find((option) => option.id === primer)?.versions[0] ?? "",
+  );
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 py-8">
-      {/* Header Section */}
-      <div className="mb-8 text-center">
-        <div className="mb-2 flex items-center justify-center gap-2">
-          <h1 className="text-2xl font-bold">SARS-CoV-2 Wastewater Analysis</h1>
-          <div className="flex gap-1">
-            <Badge variant="outline" className="bg-primary-50 text-primary-700">
-              v5.3.2
-            </Badge>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button className="bg-primary-50 text-primary-700 inline-flex h-6 w-6 items-center justify-center rounded-full">
-                    <Info className="h-4 w-4" />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="w-64">Information about this service</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <a
-              href="#"
-              className="bg-primary-50 text-primary-700 inline-flex h-6 w-6 items-center justify-center rounded-full"
-            >
-              <Link2 className="h-4 w-4" />
-            </a>
-          </div>
-        </div>
-        <p className="text-muted-foreground mx-auto max-w-2xl text-sm">
-          The SARS-CoV-2 Wastewater Analysis assembles raw reads with the Sara
-          One Codex pipeline and performs variant analysis with Freyja. For
-          further explanation, please see the
-          <a href="#" className="text-primary-600 mx-1 hover:underline">
-            SARS-CoV-2 Wastewater Analysis Service Quick Reference Guide
-          </a>
-          ,
-          <a href="#" className="text-primary-600 mr-1 ml-1 hover:underline">
-            Tutorial
-          </a>
-          and
-          <a href="#" className="text-primary-600 ml-1 hover:underline">
-            Instructional Video
-          </a>
-          .
-        </p>
-      </div>
+    <section>
+      <ServiceHeader
+        title="SARS-CoV-2 Wastewater Analysis"
+        tooltipContent="SARS-CoV-2 Wastewater Analysis Information"
+        description="The SARS-CoV-2 Wastewater Analysis assembles raw reads with the Sara
+          One Codex pipeline and performs variant analysis with Freyja."
+        quickReferenceGuide="#"
+        tutorial="#"
+        instructionalVideo="#"
+      />
 
       {/* Main Content */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Input Library Section */}
         <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-base font-medium">
-                Input Library Selection
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <HelpCircle className="text-muted-foreground h-4 w-4" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="w-64">Select input files for analysis</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </CardTitle>
-            </div>
+          <CardHeader className="service-card-header">
+            <CardTitle className="service-card-title">
+              Input Library Selection
+              <DialogInfoPopup
+                title={wastewaterAnalysisInputLib.title}
+                description={wastewaterAnalysisInputLib.description}
+                sections={wastewaterAnalysisInputLib.sections}
+              />
+            </CardTitle>
+            <CardDescription>
+              Send to selected libraries using the arrow buttons
+            </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="bg-muted flex items-start rounded-md p-3">
-              <span className="text-muted-foreground text-xs font-medium uppercase">
-                Send to Selected Libraries
-              </span>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Info className="text-muted-foreground ml-2 h-4 w-4" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="w-64">
-                      Files selected here will be sent to the Selected Libraries
-                      section
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
 
-            <Tabs defaultValue="paired">
-              <TabsList className="w-full">
-                <TabsTrigger value="paired" className="flex-1">
-                  PAIRED READ LIBRARY
-                </TabsTrigger>
-                <TabsTrigger value="single" className="flex-1">
-                  SINGLE READ LIBRARY
-                </TabsTrigger>
-                <TabsTrigger value="sra" className="flex-1">
-                  SRA RUN ACCESSION
-                </TabsTrigger>
-              </TabsList>
+          <CardContent className="service-card-content">
+            <SearchReadLibrary
+              title="Paired Read Library"
+              firstPlaceholder="Select File 1..."
+              secondPlaceholder="Select File 2..."
+              variant="pair"
+              onAdd={(files) => {
+                const newLibraries = handlePairedLibraryAdd(
+                  files,
+                  selectedLibraries,
+                );
+                setSelectedLibraries(newLibraries);
+              }}
+            />
 
-              <TabsContent value="paired" className="mt-4 space-y-3">
-                <div className="flex items-center gap-2">
-                  <Input value="READ FILE 1" readOnly className="flex-1" />
-                  <Button variant="ghost" size="icon" className="shrink-0">
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Input value="READ FILE 2" readOnly className="flex-1" />
-                  <Button variant="ghost" size="icon" className="shrink-0">
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </TabsContent>
+            <SearchReadLibrary
+              title="Single Read Library"
+              firstPlaceholder="Select File 1..."
+              variant="single"
+              onAdd={(files) => {
+                const newLibraries = handleSingleLibraryAdd(
+                  files,
+                  selectedLibraries,
+                );
+                setSelectedLibraries(newLibraries);
+              }}
+            />
 
-              <TabsContent value="single" className="mt-4 space-y-3">
-                <div className="flex items-center gap-2">
-                  <Input value="READ FILE" readOnly className="flex-1" />
-                  <Button variant="ghost" size="icon" className="shrink-0">
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="sra" className="mt-4">
-                <Input placeholder="SRA" className="w-full" />
-              </TabsContent>
-            </Tabs>
-
-            <Separator />
-
-            <div className="space-y-3">
+            <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label>Primers</Label>
-                <Label>Version</Label>
+                <Label className="service-card-label">SRA Run Accession</Label>
+                <div className="bg-border mx-4 h-[1px] flex-1" />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => {
+                    const newLibraries = handleSraAdd(
+                      sraAccession,
+                      selectedLibraries,
+                    );
+                    if (newLibraries) {
+                      setSelectedLibraries(newLibraries);
+                      setSraAccession("");
+                    }
+                  }}
+                  disabled={!sraAccession.trim()}
+                >
+                  <ChevronRight size={16} />
+                </Button>
               </div>
+              <div className="flex gap-2">
+                <Input
+                  className="service-card-input"
+                  placeholder="SRR"
+                  value={sraAccession}
+                  onChange={(e) => setSraAccession(e.target.value)}
+                />
+              </div>
+            </div>
 
-              <div className="flex items-center gap-3">
-                <Select defaultValue="artic">
-                  <SelectTrigger className="flex-1">
-                    <SelectValue placeholder="Select primers" />
+            <div className="service-card-content-row">
+              <div className="flex w-full flex-col gap-2">
+                <Label className="service-card-label">Primers</Label>
+                <Select
+                  defaultValue="artic"
+                  onValueChange={(value) => {
+                    setPrimer(value);
+                    const selectedPrimer = primerOptions.find(
+                      (option) => option.id === value,
+                    );
+                    setVersion(selectedPrimer?.versions[0] ?? "");
+                  }}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select primer" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="artic">ARTIC</SelectItem>
-                    <SelectItem value="other">Other Primers</SelectItem>
+                    {primerOptions.map((option) => (
+                      <SelectItem key={option.id} value={option.id}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
+              </div>
 
-                <Select defaultValue="v5.3.2">
-                  <SelectTrigger className="w-32">
-                    <SelectValue placeholder="Version" />
+              <div className="flex w-full flex-col gap-2">
+                <Label className="service-card-label">Version</Label>
+
+                <Select value={version} onValueChange={setVersion}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select version" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="v5.3.2">V5.3.2</SelectItem>
-                    <SelectItem value="v5.2.0">V5.2.0</SelectItem>
+                    {primerOptions
+                      .find((option) => option.id === primer)
+                      ?.versions.map((version) => (
+                        <SelectItem key={version} value={version}>
+                          {version}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
             <div className="space-y-3">
-              <Label>Sample Identifier</Label>
-              <Input placeholder="SAMPLE ID" />
+              <Label className="service-card-label">Sample Identifier</Label>
+              <Input className="service-card-input" placeholder="SAMPLE ID" />
             </div>
 
+            {/* TODO: Change to date picker with text input */}
             <div className="space-y-3">
-              <Label>Sample Date</Label>
-              <Input placeholder="MM/DD/YYYY" type="date" />
+              <Label className="service-card-label">Sample Date</Label>
+              <DatePicker className="w-full bg-white" />
             </div>
           </CardContent>
         </Card>
 
         {/* Selected Libraries Section */}
         <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-base font-medium">
-                Selected Libraries
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <HelpCircle className="text-muted-foreground h-4 w-4" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="w-64">
-                        Place read files here using the arrow buttons
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </CardTitle>
-            </div>
+          <CardHeader className="service-card-header">
+            <CardTitle className="service-card-title">
+              Selected Libraries
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <HelpCircle className="service-card-tooltip-icon" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Place read files here using the arrow buttons</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </CardTitle>
           </CardHeader>
+
           <CardContent>
-            <div className="flex h-64 items-center justify-center rounded-md border border-dashed p-8">
-              <p className="text-muted-foreground text-sm">
-                No libraries selected
-              </p>
-            </div>
+            <SelectedItemsTable
+              title="Selected Libraries"
+              items={selectedLibraries.map((lib) => ({
+                id: lib.id,
+                name: lib.name,
+                type:
+                  lib.type === "paired"
+                    ? "Paired Read"
+                    : lib.type === "single"
+                      ? "Single Read"
+                      : "SRA Accession",
+              }))}
+              onRemove={(id) => {
+                const newLibraries = removeFromSelectedLibraries(
+                  id,
+                  selectedLibraries,
+                );
+                setSelectedLibraries(newLibraries);
+              }}
+              className="max-h-84 overflow-y-auto"
+            />
           </CardContent>
         </Card>
 
         {/* Parameters Section */}
         <Card className="lg:col-span-2">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-base font-medium">
-                Parameters
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <HelpCircle className="text-muted-foreground h-4 w-4" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="w-64">Configure analysis parameters</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </CardTitle>
-            </div>
+          <CardHeader className="service-card-header">
+            <CardTitle className="service-card-title">
+              Parameters
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <HelpCircle className="service-card-tooltip-icon" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Configure analysis parameters</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
+
+          <CardContent className="service-card-content">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div className="space-y-3">
-                <Label>Strategy</Label>
+                <Label className="service-card-label">Strategy</Label>
                 <Select defaultValue="codex">
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a strategy" />
                   </SelectTrigger>
                   <SelectContent>
@@ -292,13 +284,13 @@ export default function WastewaterAnalysis() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div className="space-y-3">
-                <Label>Output Folder</Label>
+            <div className="service-card-content-row">
+              <div className="w-full space-y-3">
+                <Label className="service-card-label">Output Folder</Label>
                 <div className="flex items-center gap-2">
                   <Input
                     placeholder="Select output folder"
-                    className="flex-1"
+                    className="service-card-input"
                   />
                   <Button variant="outline" size="icon">
                     <FileText className="h-4 w-4" />
@@ -306,9 +298,12 @@ export default function WastewaterAnalysis() {
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <Label>Output Name</Label>
-                <Input placeholder="Output Name" />
+              <div className="w-full space-y-3">
+                <Label className="service-card-label">Output Name</Label>
+                <Input
+                  className="service-card-input"
+                  placeholder="Output Name"
+                />
               </div>
             </div>
           </CardContent>
@@ -316,10 +311,10 @@ export default function WastewaterAnalysis() {
       </div>
 
       {/* Action Buttons */}
-      <div className="mt-8 flex justify-end gap-4">
+      <div className="service-form-controls">
         <Button variant="outline">Reset</Button>
         <Button>Submit</Button>
       </div>
-    </div>
+    </section>
   );
 }

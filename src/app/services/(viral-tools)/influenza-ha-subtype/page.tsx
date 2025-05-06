@@ -158,7 +158,7 @@ export default function HASubtypeNumbering() {
                 ))}
               </div>
 
-              <div className="service-card-content-row">
+              <div className="service-card-row">
                 <div className="w-full">
                   <SearchWorkspaceInput
                     title="Output Folder"

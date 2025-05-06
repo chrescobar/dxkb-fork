@@ -31,6 +31,7 @@ import {
   removeFromSelectedLibraries,
 } from "@/lib/service-utils";
 import SelectedItemsTable from "@/components/services/selected-items-table";
+import SraRunAccession from "@/components/services/sra-run-accession";
 
 export default function GenomeAnalysis() {
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
@@ -368,37 +369,10 @@ export default function GenomeAnalysis() {
                 </div>
 
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label className="service-card-label">
-                      SRA Run Accession
-                    </Label>
-                    <div className="bg-border mx-4 h-[1px] flex-1" />
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => {
-                        const newLibraries = handleSraAdd(
-                          sraAccession,
-                          selectedLibraries,
-                        );
-                        if (newLibraries) {
-                          setSelectedLibraries(newLibraries);
-                          setSraAccession("");
-                        }
-                      }}
-                      disabled={!sraAccession.trim()}
-                    >
-                      <ChevronRight size={16} />
-                    </Button>
-                  </div>
-                  <div className="flex gap-2">
-                    <Input
-                      className="service-card-input"
-                      placeholder="SRR"
-                      value={sraAccession}
-                      onChange={(e) => setSraAccession(e.target.value)}
-                    />
-                  </div>
+                  <SraRunAccession
+                    selectedLibraries={selectedLibraries}
+                    setSelectedLibraries={setSelectedLibraries}
+                  />
                 </div>
               </CardContent>
             </Card>

@@ -403,14 +403,14 @@ const MetagenomicBinningService = () => {
 
                   <div>
                     <Label className="service-card-label">Output Name</Label>
-                    <Input defaultValue="" placeholder="Output Name" />
+                    <Input defaultValue="" placeholder="Output Name" className="service-card-input"/>
                   </div>
 
                   <div>
                     <Label className="service-card-label">
                       Genome Group Name
                     </Label>
-                    <Input defaultValue="" placeholder="My Genome Group" />
+                    <Input defaultValue="" placeholder="My Genome Group" className="service-card-input"/>
                   </div>
                 </div>
 

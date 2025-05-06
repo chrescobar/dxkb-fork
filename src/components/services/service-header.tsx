@@ -1,71 +1,47 @@
-import { Info, ExternalLink } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { DialogInfoPopup } from "./dialog-info-popup";
 
 interface ServiceHeaderProps {
   title: string;
   description: string;
-  tooltipContent?: string;
+  infoPopupTitle?: string;
+  infoPopupDescription?: string;
+  infoPopupSections?: any[];
   quickReferenceGuide?: string;
   tutorial?: string;
   instructionalVideo?: string;
   version?: string;
-  socialLinks?: {
-    github?: string;
-    linkedin?: string;
-    twitter?: string;
-  };
+  isHeader?: boolean;
 }
 
 export function ServiceHeader({
   title,
   description,
-  tooltipContent,
+  infoPopupTitle,
+  infoPopupDescription,
+  infoPopupSections,
   quickReferenceGuide,
   tutorial,
   instructionalVideo,
   version,
-  socialLinks,
 }: ServiceHeaderProps) {
   return (
     <div className="service-header">
       <div className="service-header-title">
         <h1>{title}</h1>
-        {tooltipContent && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Info className="service-header-tooltip" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{tooltipContent}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+        {(infoPopupTitle && infoPopupDescription) && (
+          <DialogInfoPopup
+            title={infoPopupTitle}
+            description={infoPopupDescription}
+            sections={infoPopupSections}
+            isHeader={true}
+          />
         )}
         {version && (
           <Badge variant="outline" className="bg-primary-50 text-primary-700">
             {version}
           </Badge>
-        )}
-        {socialLinks && (
-          <div className="flex gap-2">
-            {socialLinks.github && (
-              <a href={socialLinks.github} aria-label="GitHub">
-                <ExternalLink className="service-header-tooltip" />
-              </a>
-            )}
-            {socialLinks.linkedin && (
-              <a href={socialLinks.linkedin} aria-label="LinkedIn">
-                <ExternalLink className="service-header-tooltip" />
-              </a>
-            )}
-            {socialLinks.twitter && (
-              <a href={socialLinks.twitter} aria-label="Twitter">
-                <ExternalLink className="service-header-tooltip" />
-              </a>
-            )}
-          </div>
         )}
       </div>
       <div className="service-header-description">

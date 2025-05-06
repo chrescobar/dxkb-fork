@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { ChevronRight, FolderSearch, Plus } from "lucide-react";
+import { ChevronRight, FolderSearch } from "lucide-react";
 import { Label } from "../ui/label";
 
 interface SearchPairInputProps {

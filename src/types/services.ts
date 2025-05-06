@@ -3,16 +3,21 @@ export interface Library {
   name: string;
   type: "paired" | "single" | "sra";
 }
+
+export interface Genome {
+  id: string;
+  name: string;
+}
+
 export interface ServiceInfoPopup {
   title: string;
-  description: string;
+  description?: string;
   sections?: ServiceInfoSection[];
 }
 
 interface ServiceInfoSection {
   header?: string;
-  subheader?: string;
-  description: string;
+  description?: string;
   subsections?: ServiceInfoSubsection[];
 }
 

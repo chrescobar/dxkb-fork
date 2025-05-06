@@ -18,17 +18,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
-  Info,
   FileDown,
   Search,
   ExternalLink,
@@ -41,133 +34,69 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { LuLinkedin } from "react-icons/lu";
+import {
+  similarGenomeFinderAdvancedParameters,
+  similarGenomeFinderInfo,
+  similarGenomeFinderSelectGenome,
+} from "@/lib/service-info";
+import { ServiceHeader } from "@/components/services/service-header";
+import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
+import SearchWorkspaceInput from "@/components/services/search-workspace-input";
+
 const SimilarGenomeFinderInterface = () => {
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [scope, setScope] = useState("reference");
 
   return (
-    <div className="service-container container">
-      <div className="service-header">
-        <div className="service-header-title">
-          <h1>Similar Genome Finder</h1>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Info className="service-header-tooltip" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <div className="max-w-[300px] space-y-2">
-                  <p>
-                    Specifies the genome to use as the basis for finding other
-                    similar genomes. Search by Genome Name or Genome ID.
-                    Selection box for specifying genome to use as the basis of
-                    comparison, or upload a FASTA file.
-                  </p>
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <a href="#">
-            <ExternalLink className="h-5 w-5" />
-          </a>
-          <a href="#">
-            <LuLinkedin className="service-header-tooltip" />
-          </a>
-        </div>
-        <div className="service-header-description">
-          <p>
-            The Similar Genome Finder Service will find similar public genomes in
-            BV-BRC or compute genome distance estimation using Mash/MinHash. It
-            returns a set of genomes matching the specified similarity criteria.
-            {" "}
-            <a
-              href="#"
-            >
-              Link to Mash/MinHash
-              <ExternalLink className="ml-1 h-3 w-3" />
-            </a>
-            . For further explanation, please see the Similar Genome Finder
-            Service: {" "}
-            <a href="#">
-              Quick Reference Guide
-              <ExternalLink className="ml-1 h-3 w-3" />
-            </a>
-            ,{" "}
-            <a href="#">
-              Tutorial
-              <ExternalLink className="ml-1 h-3 w-3" />
-            </a>
-            {" "}and{" "}
-            <a href="#">
-              Instructional Video
-              <ExternalLink className="ml-1 h-3 w-3" />
-            </a>
-            .
-          </p>
-        </div>
-      </div>
+    <section>
+      <ServiceHeader
+        title="Similar Genome Finder"
+        description="Specifies the genome to use as the basis for finding other similar genomes. Search by Genome Name or Genome ID.
+          Selection box for specifying genome to use as the basis of comparison, or upload a FASTA file."
+        infoPopupTitle={similarGenomeFinderInfo.title}
+        infoPopupDescription={similarGenomeFinderInfo.description}
+        quickReferenceGuide="#"
+        tutorial="#"
+        instructionalVideo="#"
+      />
 
       <form className="service-form-section">
         {/* Select a Genome Section */}
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className="service-card-header">
             <div className="flex items-center">
-              <CardTitle className="text-lg">Select a Genome</CardTitle>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger className="ml-2">
-                    <Info className="h-4 w-4 text-gray-500" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-md">
-                      Choose a genome to find similar matches
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <CardTitle className="service-card-title">
+                Select a Genome
+              </CardTitle>
+              <DialogInfoPopup
+                title={similarGenomeFinderSelectGenome.title}
+                description={similarGenomeFinderSelectGenome.description}
+                sections={similarGenomeFinderSelectGenome.sections}
+                className="ml-2"
+              />
             </div>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <div className="flex items-center">
-                <Label className="font-medium text-gray-700">
-                  Search by Genome Name or Genome ID
-                </Label>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger className="ml-2">
-                      <Info className="h-4 w-4 text-gray-500" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Enter a genome name or ID to search</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
 
+          <CardContent className="service-card-content">
+            <div className="space-y-2">
+              <Label className="service-card-label">
+                Search by Genome Name or Genome ID
+              </Label>
               <div className="flex space-x-2">
                 <Input
                   placeholder="e.g. Mycobacterium tuberculosis H37Rv"
-                  className="flex-1"
+                  className="service-card-input"
                 />
-                <Button variant="outline" className="flex-shrink-0">
-                  <Search className="mr-2 h-4 w-4" />
-                  Search
+                <Button variant="outline" size="icon">
+                  <Search className="h-4 w-4" />
                 </Button>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label className="font-medium text-gray-700">
-                Or Upload FASTA/FASTQ
-              </Label>
-              <div className="flex space-x-2">
-                <Input type="file" className="flex-1" />
-                <Button variant="outline" className="ml-2" size="icon">
-                  <FileDown className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
+            <SearchWorkspaceInput
+              title="Or Upload FASTA/FASTQ"
+              placeholder="FASTA/FASTQ file..."
+            />
 
             {/* Parameters Section */}
             <Collapsible
@@ -181,27 +110,26 @@ const SimilarGenomeFinderInterface = () => {
                   className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
                 />
               </CollapsibleTrigger>
+
               <CollapsibleContent className="service-collapsible-content">
-                <div className="flex flex-col justify-between w-full space-y-4">
-                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+                <div className="flex w-full flex-col justify-between space-y-4">
+                  <div className="flex items-center">
+                    <Label className="service-card-label">Parameters</Label>
+                    <DialogInfoPopup
+                      title={similarGenomeFinderAdvancedParameters.title}
+                      description={
+                        similarGenomeFinderAdvancedParameters.description
+                      }
+                      sections={similarGenomeFinderAdvancedParameters.sections}
+                      className="mb-2 ml-2"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                     <div className="space-y-2">
-                      <div className="flex items-center">
-                        <Label className="font-medium text-gray-700">
-                          Max Hits
-                        </Label>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger className="ml-2">
-                              <Info className="h-4 w-4 text-gray-500" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Maximum number of similar genomes to return</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
+                      <Label className="service-card-label">Max Hits</Label>
                       <Select defaultValue="50">
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="50" />
                         </SelectTrigger>
                         <SelectContent>
@@ -215,23 +143,12 @@ const SimilarGenomeFinderInterface = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <div className="flex items-center">
-                        <Label className="font-medium text-gray-700">
-                          P-Value Threshold
-                        </Label>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger className="ml-2">
-                              <Info className="h-4 w-4 text-gray-500" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Statistical significance threshold</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
+                      <Label className="service-card-label">
+                        P-Value Threshold
+                      </Label>
+
                       <Select defaultValue="1">
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="1" />
                         </SelectTrigger>
                         <SelectContent>
@@ -244,23 +161,10 @@ const SimilarGenomeFinderInterface = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <div className="flex items-center">
-                        <Label className="font-medium text-gray-700">
-                          Distance
-                        </Label>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger className="ml-2">
-                              <Info className="h-4 w-4 text-gray-500" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Maximum Mash distance to include</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
+                      <Label className="service-card-label">Distance</Label>
+
                       <Select defaultValue="1">
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="1" />
                         </SelectTrigger>
                         <SelectContent>
@@ -277,43 +181,52 @@ const SimilarGenomeFinderInterface = () => {
                   <div className="space-y-2">
                     <div className="grid grid-cols-2 gap-2 pt-1">
                       <div className="flex flex-col gap-2">
-                        <Label className="font-medium text-gray-700">
+                        <Label className="service-card-label">
                           Organism Type
                         </Label>
+
                         <div className="flex items-center space-x-2">
                           <Checkbox id="bacteria" defaultChecked />
                           <Label
                             htmlFor="bacteria"
                             className="text-sm font-normal"
-                            >
+                          >
                             Bacterial and Archaeal Genomes
                           </Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Checkbox id="viral" />
+                          <Checkbox id="viral" defaultChecked />
                           <Label
                             htmlFor="viral"
                             className="text-sm font-normal"
-                            >
+                          >
                             Viral Genomes
                           </Label>
                         </div>
                       </div>
+
                       <div className="flex flex-col gap-2">
-                        <Label className="font-medium text-gray-700">
+                        <Label className="service-card-label">
                           Scope
                         </Label>
-                        <RadioGroup className="gap-2">
+
+                        <RadioGroup className="gap-2" defaultValue="reference" onValueChange={setScope}>
                           <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="all" />
-                            <Label htmlFor="all" className="text-sm font-normal">
-                              All Public Genomes
+                            <RadioGroupItem value="reference" />
+                            <Label
+                              htmlFor="reference"
+                              className="text-sm font-normal"
+                            >
+                              Reference and Representative Genomes
                             </Label>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="reference" />
-                            <Label htmlFor="reference" className="text-sm font-normal">
-                              Reference and Representative Genomes
+                            <RadioGroupItem value="all" />
+                            <Label
+                              htmlFor="all"
+                              className="text-sm font-normal"
+                            >
+                              All Public Genomes
                             </Label>
                           </div>
                         </RadioGroup>
@@ -325,18 +238,15 @@ const SimilarGenomeFinderInterface = () => {
             </Collapsible>
           </CardContent>
         </Card>
-
-        {/* Submit Button */}
-        <div className="flex justify-center pt-4">
-          <Button
-            type="submit"
-            className="bg-indigo-600 text-white hover:bg-indigo-700"
-          >
-            <Search className="mr-2 h-4 w-4" />
-            Search
-          </Button>
-        </div>
       </form>
+
+       {/* Submit Button */}
+      <div className="service-form-controls">
+        <Button>
+          <Search className="h-4 w-4" />
+          Search
+        </Button>
+      </div>
 
       {/* Results Section - Would appear after search */}
       <div className="mx-auto mt-12 hidden max-w-4xl">
@@ -410,7 +320,7 @@ const SimilarGenomeFinderInterface = () => {
           </CardFooter>
         </Card>
       </div>
-    </div>
+    </section>
   );
 };
 

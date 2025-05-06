@@ -34,6 +34,11 @@ const SearchWorkspaceInput = ({
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              onAdd?.();
+            }
+          }}
         />
         <Button size="icon" variant="outline">
           {icon}

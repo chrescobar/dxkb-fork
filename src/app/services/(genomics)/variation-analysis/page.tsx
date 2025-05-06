@@ -25,19 +25,23 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
+import { Dna, HelpCircle } from "lucide-react";
 import {
-  Info,
-  FileDown,
-  Search,
-  Plus,
-  ArrowRight,
-  CircleX,
-  ExternalLink,
-  FileText,
-  Dna,
-} from "lucide-react";
-
+  readInputFileInfo,
+  variationAnalysisInfo,
+  variationAnalysisParameters,
+} from "@/lib/service-info";
+import { ServiceHeader } from "@/components/services/service-header";
+import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
+import SearchReadLibrary from "@/components/services/search-read-library";
+import {
+  handlePairedLibraryAdd,
+  handleSingleLibraryAdd,
+  removeFromSelectedLibraries,
+} from "@/lib/service-utils";
+import SraRunAccession from "@/components/services/sra-run-accession";
+import SelectedItemsTable from "@/components/services/selected-items-table";
+import OutputFolder from "@/components/services/output-folder";
 interface Library {
   id: string;
   type: "paired" | "single" | "sra";
@@ -46,6 +50,8 @@ interface Library {
 
 const VariationAnalysisInterface = () => {
   const [selectedLibraries, setSelectedLibraries] = useState<Library[]>([]);
+  const [outputFolder, setOutputFolder] = useState<string>("");
+  const [outputName, setOutputName] = useState<string>("");
 
   const addLibrary = (type: Library["type"], name?: string) => {
     const newLibrary: Library = {
@@ -62,240 +68,139 @@ const VariationAnalysisInterface = () => {
   };
 
   return (
-    <section className="service-container container">
-      <div className="service-header">
-        <div className="service-header-title">
-          <h1>Variation Analysis</h1>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Info className="service-header-tooltip" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <div className="max-w-md space-y-2">
-                  <p>Identify and annotate sequence variations</p>
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <a href="#">
-            <ExternalLink className="h-5 w-5" />
-          </a>
-        </div>
-        <div className="service-header-description">
-          <p>
-            The Variation Analysis Service can be used to identify and annotate
-            sequence variations. For further explanation, please see the
-            Variation Analysis Service
-            <a href="#">
-              Quick Reference Guide
-              <ExternalLink className="ml-1 h-3 w-3" />
-            </a>{" "}
-            and
-            <a href="#">
-              Tutorial
-              <ExternalLink className="ml-1 h-3 w-3" />
-            </a>
-            .
-          </p>
-        </div>
-      </div>
+    <section>
+      <ServiceHeader
+        title="Variation Analysis"
+        description="The Variation Analysis Service can be used to identify and annotate sequence variations."
+        infoPopupTitle={variationAnalysisInfo.title}
+        infoPopupDescription={variationAnalysisInfo.description}
+        quickReferenceGuide="#"
+        tutorial="#"
+        instructionalVideo="#"
+      />
 
       <div className="space-y-6">
         <div className="mx-auto grid grid-cols-1 gap-6 md:grid-cols-2">
           {/* Input File Section */}
           <Card>
-            <CardHeader className="pb-2">
-              <div className="flex items-center">
-                <CardTitle className="text-lg">Input File</CardTitle>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger className="ml-2">
-                      <Info className="h-4 w-4 text-gray-500" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="max-w-md">
-                        Select input files for analysis
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
+            <CardHeader className="service-card-header">
+              <CardTitle className="service-card-title">
+                Input File
+                <DialogInfoPopup
+                  title={readInputFileInfo.title}
+                  description={readInputFileInfo.description}
+                  sections={readInputFileInfo.sections}
+                />
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Paired Read Library */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label className="font-medium text-gray-700">
-                    Paired Read Library
-                  </Label>
-                  <CircleX className="h-4 w-4 text-gray-400" />
-                </div>
-                <div className="flex space-x-2">
-                  <Input placeholder="READ FILE 1" className="flex-1" />
-                  <Button variant="outline" className="ml-2" size="icon">
-                    <FileDown className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="flex space-x-2">
-                  <Input placeholder="READ FILE 2" className="flex-1" />
-                  <Button variant="outline" className="ml-2" size="icon">
-                    <FileDown className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    onClick={() => addLibrary("paired", "Paired_Sample.fastq")}
-                    variant="outline"
-                    className="ml-2"
-                    size="icon"
-                  >
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
 
-              <Separator />
+            <CardContent className="service-card-content">
+              <SearchReadLibrary
+                title="Paired Read Library"
+                firstPlaceholder="Select File 1..."
+                secondPlaceholder="Select File 2..."
+                variant="pair"
+                onAdd={(files) => {
+                  const newLibraries = handlePairedLibraryAdd(
+                    files,
+                    selectedLibraries,
+                  );
+                  setSelectedLibraries(newLibraries);
+                }}
+              />
 
-              {/* Single Read Library */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label className="font-medium text-gray-700">
-                    Single Read Library
-                  </Label>
-                  <CircleX className="h-4 w-4 text-gray-400" />
-                </div>
-                <div className="flex space-x-2">
-                  <Input placeholder="READ FILE" className="flex-1" />
-                  <Button variant="outline" className="ml-2" size="icon">
-                    <FileDown className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    onClick={() => addLibrary("single", "Single_Sample.fastq")}
-                    variant="outline"
-                    className="ml-2"
-                    size="icon"
-                  >
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
+              <SearchReadLibrary
+                title="Single Read Library"
+                firstPlaceholder="Select File 1..."
+                variant="single"
+                onAdd={(files) => {
+                  const newLibraries = handleSingleLibraryAdd(
+                    files,
+                    selectedLibraries,
+                  );
+                  setSelectedLibraries(newLibraries);
+                }}
+              />
 
-              <Separator />
-
-              {/* SRA Run Accession */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label className="font-medium text-gray-700">
-                    SRA Run Accession
-                  </Label>
-                  <CircleX className="h-4 w-4 text-gray-400" />
-                </div>
-                <div className="flex space-x-2">
-                  <Input placeholder="SRR" className="flex-1" />
-                  <Button
-                    onClick={() => addLibrary("sra", "SRR1234567")}
-                    variant="outline"
-                    className="ml-2"
-                    size="icon"
-                  >
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
+              <SraRunAccession
+                selectedLibraries={selectedLibraries}
+                setSelectedLibraries={setSelectedLibraries}
+              />
             </CardContent>
           </Card>
 
           {/* Selected Libraries Section */}
           <Card>
             <CardHeader className="service-card-header">
-              <div className="flex items-center">
-                <CardTitle className="text-lg">Selected Libraries</CardTitle>
+              <CardTitle className="service-card-title">
+                Selected Libraries
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger className="ml-2">
-                      <Info className="h-4 w-4 text-gray-500" />
+                    <TooltipTrigger>
+                      <HelpCircle className="service-card-tooltip-icon" />
                     </TooltipTrigger>
                     <TooltipContent>
                       <p className="max-w-md">Files selected for analysis</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-              </div>
+              </CardTitle>
               <CardDescription>
                 Place read files here using the arrow buttons.
               </CardDescription>
             </CardHeader>
+
             <CardContent className="service-card-content">
-              <div className="h-full max-h-72 overflow-y-scroll rounded-md border">
-                {selectedLibraries.length === 0 ? (
-                  <div className="flex h-full items-center justify-center text-gray-400 italic">
-                    No libraries selected
-                  </div>
-                ) : (
-                  <div className="divide-y">
-                    {selectedLibraries.map((lib) => (
-                      <div
-                        key={lib.id}
-                        className="flex items-center justify-between p-2"
-                      >
-                        <div className="flex items-center">
-                          <FileText className="mr-2 h-4 w-4 text-gray-500" />
-                          <span className="text-sm">{lib.name}</span>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-6 w-6 p-0 text-gray-400 hover:text-red-500"
-                          onClick={() => removeLibrary(lib.id)}
-                        >
-                          <CircleX className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <SelectedItemsTable
+                title="Selected Libraries"
+                items={selectedLibraries.map((library) => ({
+                  id: library.id,
+                  name: library.name,
+                  type: library.type,
+                }))}
+                onRemove={(id) => {
+                  const newLibraries = removeFromSelectedLibraries(
+                    id,
+                    selectedLibraries,
+                  );
+                  setSelectedLibraries(newLibraries);
+                }}
+                className="max-h-84 overflow-y-auto"
+              />
             </CardContent>
           </Card>
         </div>
 
         {/* Parameters Section */}
         <Card>
-          <CardHeader className="pb-2">
-            <div className="flex items-center">
-              <CardTitle className="text-lg">Parameters</CardTitle>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger className="ml-2">
-                    <Info className="h-4 w-4 text-gray-500" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-md">
-                      Configure variation analysis parameters
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
+          <CardHeader className="service-card-header">
+            <CardTitle className="service-card-title">
+              Parameters
+              <DialogInfoPopup
+                title={variationAnalysisParameters.title}
+                description={variationAnalysisParameters.description}
+                sections={variationAnalysisParameters.sections}
+              />
+            </CardTitle>
           </CardHeader>
+
           <CardContent className="service-card-content">
             <div className="space-y-2">
-              <Label className="font-medium text-gray-700">
-                Target Genome
-              </Label>
+              <Label className="service-card-label">Target Genome</Label>
               <div className="relative">
                 <Input
                   placeholder="e.g. Mycobacterium tuberculosis H37Rv"
-                  className="pl-9"
+                  className="service-card-input pl-9"
                 />
                 <Dna className="absolute top-2.5 left-3 h-4 w-4 text-gray-400" />
               </div>
             </div>
 
-            <div className="flex flex-row w-full space-x-2">
-              <div className="space-y-2 w-full">
-                <Label className="font-medium text-gray-700">SNP Caller</Label>
+            <div className="space-y-4">
+              <div className="w-full space-y-2">
+                <Label className="service-card-label">SNP Caller</Label>
                 <Select defaultValue="freebayes">
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="service-card-select-trigger">
                     <SelectValue placeholder="Select SNP caller" />
                   </SelectTrigger>
                   <SelectContent>
@@ -305,15 +210,17 @@ const VariationAnalysisInterface = () => {
                 </Select>
               </div>
 
-              <div className="space-y-2 w-full">
-                <Label className="font-medium text-gray-700">Aligner</Label>
+              <div className="w-full space-y-2">
+                <Label className="service-card-label">Aligner</Label>
                 <Select defaultValue="bwa-mem">
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="service-card-select-trigger">
                     <SelectValue placeholder="Select aligner" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="bwa-mem">BWA-mem</SelectItem>
-                    <SelectItem value="bwa-mem-strict">BWA-mem-strict</SelectItem>
+                    <SelectItem value="bwa-mem-strict">
+                      BWA-mem-strict
+                    </SelectItem>
                     <SelectItem value="bowtie2">Bowtie2</SelectItem>
                     <SelectItem value="last">LAST</SelectItem>
                     <SelectItem value="minimap2">Minimap2</SelectItem>
@@ -322,25 +229,12 @@ const VariationAnalysisInterface = () => {
               </div>
             </div>
 
-            <div className="flex flex-row w-full space-x-2">
-              <div className="space-y-2 w-full">
-                <Label className="font-medium text-gray-700">Output Name</Label>
-                <Input placeholder="Output Name" className="w-full" />
+            <div className="flex w-full flex-row space-x-4">
+              <div className="w-full">
+                <OutputFolder onChange={setOutputFolder} />
               </div>
-
-              <div className="space-y-2 w-full">
-                <Label className="font-medium text-gray-700">
-                  Output Folder
-                </Label>
-                <div className="flex space-x-2">
-                  <Input
-                    placeholder="Select output folder"
-                    className="w-full"
-                  />
-                  <Button variant="outline" className="ml-2" size="icon">
-                    <FileDown className="h-4 w-4" />
-                  </Button>
-                </div>
+              <div className="w-full">
+                <OutputFolder variant="name" onChange={setOutputName} />
               </div>
             </div>
           </CardContent>

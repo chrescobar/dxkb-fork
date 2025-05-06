@@ -1,19 +1,5 @@
 import React from "react";
 import { Button } from "../ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
-import { Info } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
 
 interface SelectedItem {
   id: string;
@@ -79,7 +65,7 @@ const SelectedItemsTable = ({
     <div className={`bg-background-100 rounded-md p-4 border overflow-auto ${className}`}>
       <div className="overflow-y-auto rounded-md border h-full">
         {items.length === 0 ? (
-          <div className="text-muted-foreground p-4 text-center text-sm">
+          <div className="text-muted-foreground p-4.5 text-center text-sm bg-white h-full">
             {emptyMessage}
           </div>
         ) : (

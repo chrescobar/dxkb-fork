@@ -71,13 +71,13 @@ const serviceItems = {
         target: "_self",
       },
       {
-        title: "Genome Assembly",
-        href: "/services/genome-assembly",
+        title: "Genome Annotation",
+        href: "/services/genome-annotation",
         target: "_self",
       },
       {
-        title: "Genome Annotation",
-        href: "/services/genome-annotation",
+        title: "Genome Assembly",
+        href: "/services/genome-assembly",
         target: "_self",
       },
       {

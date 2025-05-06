@@ -154,7 +154,7 @@ export default function SubspeciesClassification() {
                 </Select>
               </div>
 
-              <div className="service-card-content-row">
+              <div className="service-card-row">
                 <div className="w-full">
                   <OutputFolder
                     onChange={setOutputFolder}

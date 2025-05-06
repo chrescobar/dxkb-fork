@@ -11,102 +11,61 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
-import {
-  Info,
-  FileDown,
-  Search,
-  Plus,
-  Settings,
-  ExternalLink,
-  AlignJustify,
-  Trash2,
-  ChevronDown,
-} from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-
-interface Genome {
-  id: string;
-  name: string;
-}
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { ServiceHeader } from "@/components/services/service-header";
+import {
+  genomeAlignmentAdvancedParamaterOptions,
+  genomeAlignmentMauveInfo,
+  genomeAlignmentSelectGenomes,
+} from "@/lib/service-info";
+import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
+import SearchWorkspaceInput from "@/components/services/search-workspace-input";
+import SelectedItemsTable from "@/components/services/selected-items-table";
+import { addGenome, handleFormSubmit, removeFromSelectedGenomes } from "@/lib/service-utils";
+import { Genome } from "@/types/services";
+import OutputFolder from "@/components/services/output-folder";
 
 const GenomeAlignmentInterface = () => {
   const [selectedGenomes, setSelectedGenomes] = useState<Genome[]>([]);
   const [isManualSeedWeight, setIsManualSeedWeight] = useState(false);
   const [seedWeight, setSeedWeight] = useState([11]); // Default value centered
   const [showAdvanced, setShowAdvanced] = useState(false);
-
-  const addGenome = () => {
-    const newGenome: Genome = {
-      id: `genome_${selectedGenomes.length + 1}`,
-      name: `Mycobacterium tuberculosis CDC${Math.floor(Math.random() * 9000) + 1000}`,
-    };
-
-    setSelectedGenomes([...selectedGenomes, newGenome]);
-  };
-
-  const removeGenome = (id: string) => {
-    setSelectedGenomes(selectedGenomes.filter((genome) => genome.id !== id));
-  };
+  const [genomeInput, setGenomeInput] = useState("");
+  const [genomeGroupInput, setGenomeGroupInput] = useState("");
+  const [outputFolder, setOutputFolder] = useState("");
+  const [outputName, setOutputName] = useState("");
 
   return (
-    <div className="service-container container">
-      <div className="service-header">
-        <div className="service-header-title">
-          <h1>Genome Alignment (Mauve)</h1>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Info className="service-header-tooltip" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="max-w-md">
-                  Multiple genome alignment using progressiveMauve
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <a href="#">
-            <ExternalLink className="service-header-tooltip" />
-          </a>
-        </div>
-        <div className="service-header-description">
-          <p>
-            The Whole Genome Alignment Service aligns genomes using
-            progressiveMauve. For further explanation, please see the Genome
-            Alignment (Mauve) Service <a href="#">Quick Reference Guide</a>,{" "}
-            <a href="#">Tutorial</a> and <a href="#">Instructional Video</a>.
-          </p>
-        </div>
-      </div>
+    <section>
+      <ServiceHeader
+        title="Genome Alignment (Mauve)"
+        description="The BLAST service uses BLAST (Basic Local Alignment Search Tool) to search against using <a href='https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0011147'>progressiveMauve</a>."
+        infoPopupTitle={genomeAlignmentMauveInfo.title}
+        infoPopupDescription={genomeAlignmentMauveInfo.description}
+        quickReferenceGuide="#"
+        tutorial="#"
+        instructionalVideo="#"
+      />
 
-      <form className="service-form-section">
+      <form onSubmit={handleFormSubmit} className="service-form-section">
         {/* Select Genomes Section */}
         <Card>
-          <CardHeader>
-            <CardTitle className="service-form-section-header">
+          <CardHeader className="service-card-header">
+            <CardTitle className="service-card-title">
               Select Genomes
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger className="ml-2">
-                    <Info className="h-4 w-4 text-gray-400" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>
-                      Add at least 2 (up to 20) genomes. Note the first genome
-                      selected will be the reference (anchor) genome.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <DialogInfoPopup
+                title={genomeAlignmentSelectGenomes.title}
+                description={genomeAlignmentSelectGenomes.description}
+                sections={genomeAlignmentSelectGenomes.sections}
+              />
             </CardTitle>
             <CardDescription>
               Add at least 2 (up to 20) genomes. Note the first genome selected
@@ -114,81 +73,59 @@ const GenomeAlignmentInterface = () => {
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="space-y-6">
+          <CardContent className="service-card-content">
             {/* Genome Search */}
+            {/* TODO: Change these to properly support Genomes and Genome Groups */}
             <div className="service-card-content-grid-item">
-              <Label>Select Genome</Label>
-              <div className="service-card-input-group">
-                <div className="service-card-input-search">
-                  <Input
-                    placeholder="e.g. M. tuberculosis CDC1551"
-                    className="pr-10"
-                  />
-                  <Search className="service-card-input-search-icon" />
-                </div>
-                <Button type="button" onClick={addGenome} variant="outline">
-                  <Plus />
-                  Add
-                </Button>
-              </div>
+              <SearchWorkspaceInput
+                title="Select Genome"
+                placeholder="Genome..."
+                variant="add"
+                value={genomeInput}
+                onChange={setGenomeInput}
+                onAdd={() => {
+                  const genome: Genome = { id: genomeInput, name: genomeInput };
+                  setSelectedGenomes(addGenome(genome, selectedGenomes));
+                }}
+              />
             </div>
 
             {/* Select Genome Group */}
             <div className="service-card-content-grid-item">
-              <Label>And/Or Select Genome Group</Label>
-              <div className="service-card-input-group">
-                <Input placeholder="Optional" />
-                <Button type="button" variant="outline" size="icon">
-                  <FileDown />
-                </Button>
-                <Button type="button" variant="outline">
-                  <Plus />
-                  Add
-                </Button>
-              </div>
+              <SearchWorkspaceInput
+                title="And/Or Select Genome Group"
+                placeholder="Genome Group (Optional)"
+                variant="add"
+                value={genomeGroupInput}
+                onChange={setGenomeGroupInput}
+                onAdd={() => {
+                  const genome: Genome = {
+                    id: genomeGroupInput,
+                    name: genomeGroupInput,
+                  };
+                  setSelectedGenomes(addGenome(genome, selectedGenomes));
+                }}
+              />
             </div>
 
             {/* Selected Genomes List */}
-            <div className="service-card-content-grid-item">
-              <Label>Selected Genomes</Label>
-
-              {selectedGenomes.length === 0 ? (
-                <div className="rounded-md border bg-gray-50 p-4 text-center text-gray-500 italic">
-                  No genomes selected
-                </div>
-              ) : (
-                <div className="service-table">
-                  <div className="service-table-header">
-                    <div>Name</div>
-                    <div>ID</div>
-                    <div></div>
-                  </div>
-                  <div className="service-table-body">
-                    {selectedGenomes.map((genome, index) => (
-                      <div key={genome.id} className="service-table-row">
-                        <div>
-                          {genome.name}
-                          {index === 0 && (
-                            <span className="bg-secondary-100 text-secondary-600 ml-2 rounded-full px-1.5 py-0.5 text-xs">
-                              Reference
-                            </span>
-                          )}
-                        </div>
-                        <div>{genome.id}</div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-gray-400 hover:text-black"
-                          onClick={() => removeGenome(genome.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            {/* TODO: Change this table to display 2 columns (Genome name, genome ID) like BVBRC */}
+            <SelectedItemsTable
+              title="Selected Genomes"
+              items={selectedGenomes.map((genome) => ({
+                id: genome.id,
+                name: genome.name,
+                type: "Genome",
+              }))}
+              onRemove={(id) => {
+                const newGenomes = removeFromSelectedGenomes(
+                  id,
+                  selectedGenomes,
+                );
+                setSelectedGenomes(newGenomes);
+              }}
+              className="max-h-84 overflow-y-auto"
+            />
           </CardContent>
         </Card>
 
@@ -197,35 +134,20 @@ const GenomeAlignmentInterface = () => {
           <CardHeader>
             <CardTitle className="service-form-section-header">
               Parameters
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger className="ml-2">
-                    <Info className="h-4 w-4 text-gray-400" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-md">
-                      Configure alignment output parameters
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <DialogInfoPopup
+                title={genomeAlignmentAdvancedParamaterOptions.title}
+                description={
+                  genomeAlignmentAdvancedParamaterOptions.description
+                }
+                sections={genomeAlignmentAdvancedParamaterOptions.sections}
+              />
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="service-card-content-grid-item">
-              <Label className="font-medium text-gray-700">OUTPUT FOLDER</Label>
-              <div className="service-card-input-group">
-                <Input placeholder="Select output folder" />
-                <Button variant="outline" size="icon">
-                  <FileDown />
-                </Button>
-              </div>
-            </div>
 
-            <div className="service-card-content-grid-item">
-              <Label>Output Name</Label>
-              <Input placeholder="Output Name" />
-            </div>
+          <CardContent className="space-y-4">
+            <OutputFolder onChange={setOutputFolder} />
+
+            <OutputFolder variant="name" onChange={setOutputName} />
 
             <Collapsible
               open={showAdvanced}
@@ -239,10 +161,12 @@ const GenomeAlignmentInterface = () => {
                 />
               </CollapsibleTrigger>
 
-              <CollapsibleContent>
+              <CollapsibleContent className="service-collapsible-content">
                 <div className="flex flex-col gap-4 pt-4 sm:flex-row">
                   <div className="space-y-4 sm:min-w-fit">
-                    <Label>Manually Set Seed Weight</Label>
+                    <Label className="service-card-label">
+                      Manually Set Seed Weight
+                    </Label>
                     <Switch
                       id="manual-seed-weight"
                       checked={isManualSeedWeight}
@@ -253,7 +177,9 @@ const GenomeAlignmentInterface = () => {
                     <div className="w-full space-y-4">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <Label>Seed Weight</Label>
+                          <Label className="service-card-label">
+                            Seed Weight
+                          </Label>
                           <span className="text-muted-foreground text-sm">
                             {seedWeight[0]}
                           </span>
@@ -276,23 +202,26 @@ const GenomeAlignmentInterface = () => {
                 </div>
                 {/* TODO: Change to NumberInput component */}
                 <div className="w-full space-y-2">
-                  <Label>Weight</Label>
-                  <Input type="number" placeholder="Min pairwise LCB score" />
+                  <Label className="service-card-label">Weight</Label>
+                  <Input
+                    placeholder="Min pairwise LCB score"
+                    className="service-card-input"
+                  />
                 </div>
               </CollapsibleContent>
             </Collapsible>
           </CardContent>
         </Card>
-
-        {/* Submit Buttons */}
-        <div className="flex justify-end space-x-4 pt-4">
-          <Button variant="outline" type="reset">
-            Reset
-          </Button>
-          <Button type="submit">Submit</Button>
-        </div>
       </form>
-    </div>
+
+      {/* Submit Buttons */}
+      <div className="service-form-controls">
+        <Button variant="outline" type="reset">
+          Reset
+        </Button>
+        <Button type="submit">Submit</Button>
+      </div>
+    </section>
   );
 };
 

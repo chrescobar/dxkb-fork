@@ -148,7 +148,7 @@ export default function WastewaterAnalysis() {
               </div>
             </div>
 
-            <div className="service-card-content-row">
+            <div className="service-card-row">
               <div className="flex w-full flex-col gap-2">
                 <Label className="service-card-label">Primers</Label>
                 <Select
@@ -284,7 +284,7 @@ export default function WastewaterAnalysis() {
               </div>
             </div>
 
-            <div className="service-card-content-row">
+            <div className="service-card-row">
               <div className="w-full space-y-3">
                 <Label className="service-card-label">Output Folder</Label>
                 <div className="flex items-center gap-2">

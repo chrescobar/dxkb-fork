@@ -392,6 +392,10 @@
   @apply flex items-center gap-2;
 }
 
+.service-header-title h1 {
+  @apply text-4xl font-bold;
+}
+
 .service-header-description {
   @apply mb-4 flex flex-col items-start gap-2;
 }
@@ -418,6 +422,10 @@
   @apply flex items-center space-x-2 justify-start;
 }
 
+.service-radio-group-item label {
+  @apply cursor-pointer;
+}
+
 .service-form-section {
   @apply space-y-6;
 }
@@ -435,8 +443,11 @@
 }
 
 .service-collapsible-content {
-  @apply flex flex-row justify-between w-full py-2 px-2;
+  @apply w-full py-2 px-2 space-y-4;
 }
+/* .service-collapsible-content {
+  @apply flex flex-row justify-between w-full py-2 px-2;
+} */
 
 .service-collapsible-trigger {
   @apply flex items-center gap-1 p-2 font-medium;
@@ -454,8 +465,12 @@
   @apply space-y-2;
 }
 
-.service-card-content-row {
+.service-card-row {
   @apply flex flex-col sm:flex-row gap-4 md:gap-8 w-full;
+}
+
+.service-card-row-item {
+  @apply flex flex-col gap-2 w-full;
 }
 
 .service-card-content-col {
@@ -499,7 +514,7 @@
 }
 
 .service-card-sublabel {
-  @apply text-sm font-normal mb-2 block;
+  @apply text-sm font-normal mb-2 block text-textcolor-800/70;
 }
 
 .service-card-tooltip-icon {
@@ -508,6 +523,10 @@
 
 .service-card-textarea {
   @apply min-h-48 max-h-96 text-sm font-mono;
+}
+
+.service-card-select-trigger {
+  @apply w-full bg-white;
 }
 
 .service-table {

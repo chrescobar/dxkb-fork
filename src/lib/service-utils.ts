@@ -1,4 +1,5 @@
-import { Library } from "@/types/services";
+import type { FormEvent } from "react";
+import { Library, Genome } from "@/types/services";
 
 export interface FileInput {
   first: string;
@@ -7,7 +8,7 @@ export interface FileInput {
 
 export function handlePairedLibraryAdd(
   files: FileInput,
-  currentLibraries: Library[]
+  currentLibraries: Library[],
 ): Library[] {
   if (!files.second) return currentLibraries;
   const newId = Date.now();
@@ -23,7 +24,7 @@ export function handlePairedLibraryAdd(
 
 export function handleSingleLibraryAdd(
   files: FileInput,
-  currentLibraries: Library[]
+  currentLibraries: Library[],
 ): Library[] {
   const newId = Date.now();
   return [
@@ -38,7 +39,7 @@ export function handleSingleLibraryAdd(
 
 export function handleSraAdd(
   sraAccession: string,
-  currentLibraries: Library[]
+  currentLibraries: Library[],
 ): Library[] | null {
   if (
     !sraAccession.trim() ||
@@ -46,7 +47,7 @@ export function handleSraAdd(
   ) {
     return null;
   }
-  
+
   return [
     ...currentLibraries,
     {
@@ -59,7 +60,26 @@ export function handleSraAdd(
 
 export function removeFromSelectedLibraries(
   id: string,
-  selectedLibraries: Library[]
+  selectedLibraries: Library[],
 ) {
   return selectedLibraries.filter((lib) => lib.id !== id);
+}
+
+export function removeFromSelectedGenomes(
+  id: string,
+  selectedGenomes: Genome[],
+) {
+  return selectedGenomes.filter((genome) => genome.id !== id);
+}
+
+export function addGenome(
+  genome: Genome,
+  selectedGenomes: Genome[],
+) {
+  return [...selectedGenomes, genome];
+}
+
+export function handleFormSubmit(e: FormEvent<HTMLFormElement>) {
+  e.preventDefault();
+  console.log("Form submitted");
 }

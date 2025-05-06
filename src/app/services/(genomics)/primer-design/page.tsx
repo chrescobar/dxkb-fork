@@ -21,88 +21,55 @@ import {
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Info,
-  FileDown,
-  ExternalLink,
+  HelpCircle,
   ChevronDown,
 } from "lucide-react";
-import { LuLinkedin } from "react-icons/lu";
 import { Switch } from "@/components/ui/switch";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ServiceHeader } from "@/components/services/service-header";
+import { primerDesignInfo, primerDesignInputSequence } from "@/lib/service-info";
+import { handleFormSubmit } from "@/lib/service-utils";
+import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
+import OutputFolder from "@/components/services/output-folder";
+import SearchWorkspaceInput from "@/components/services/search-workspace-input";
 
 const PrimerDesignInterface = () => {
-  const [sequenceInputMethod, setSequenceInputMethod] = useState("paste");
+  const [sequenceInputMethod, setSequenceInputMethod] = useState("paste-sequence");
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [outputFolder, setOutputFolder] = useState("");
+  const [outputName, setOutputName] = useState("");
 
   return (
-    <div className="service-container container">
-      <div className="service-header">
-        <div className="service-header-title">
-          <h1>Primer Design</h1>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Info className="service-header-tooltip" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="max-w-md">Design primers for PCR amplification</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <a href="#" className="space-x-2">
-            <ExternalLink className="service-header-tooltip" />
-            <LuLinkedin className="service-header-tooltip" />
-          </a>
-        </div>
-        <div className="service-header-description">
-          <p>
-            The Primer Design Service utilizes Primer3 to design primers from a
-            given input sequence under a variety of temperature, size, and
-            concentration constraints. For further explanation, please see the
-            Primer Design Service
-            <a href="#">
-              Quick Reference Guide
-              <ExternalLink className="ml-1 h-3 w-3" />
-            </a>
-            ,
-            <a href="#">
-              Tutorial
-              <ExternalLink className="ml-1 h-3 w-3" />
-            </a>{" "}
-            and
-            <a href="#">
-              Instructional Video
-              <ExternalLink className="ml-1 h-3 w-3" />
-            </a>
-            .
-          </p>
-        </div>
-      </div>
+    <section>
+      <ServiceHeader
+        title="Primer Design"
+        description="The Primer Design Service utilizes Primer3 to design primers from a given \
+          input sequence under a variety of temperature, size, and concentration constraints."
+        infoPopupTitle={primerDesignInfo.title}
+        infoPopupDescription={primerDesignInfo.description}
+        quickReferenceGuide="#"
+        tutorial="#"
+        instructionalVideo="#"
+      />
 
-      <form className="service-form-section">
+      <form
+        onSubmit={handleFormSubmit}
+        className="service-form-section"
+      >
         {/* Input Sequence Section */}
         <Card>
-          <CardHeader className="pb-2">
-            <div className="flex items-center">
-              <CardTitle className="service-form-section-header">
-                Input Sequence
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger className="ml-2">
-                      <Info className="h-4 w-4 text-gray-500" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="max-w-md">
-                        Enter your DNA sequence to design primers
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </CardTitle>
-            </div>
+          <CardHeader className="service-card-header">
+            <CardTitle className="service-card-title">
+              Input Sequence
+              <DialogInfoPopup
+                title={primerDesignInputSequence.title}
+                description={primerDesignInputSequence.description}
+                sections={primerDesignInputSequence.sections}
+              />
+            </CardTitle>
           </CardHeader>
 
-          <CardContent className="space-y-4">
+          <CardContent className="service-card-content">
             {/* Input Method Tabs */}
             <Tabs
               defaultValue="paste"
@@ -111,23 +78,23 @@ const PrimerDesignInterface = () => {
               className="w-full"
             >
               <TabsList className="mb-4 grid w-full grid-cols-2">
-                <TabsTrigger value="paste">Paste Sequence</TabsTrigger>
-                <TabsTrigger value="workspace">Workspace FASTA</TabsTrigger>
+                <TabsTrigger value="paste-sequence">Paste Sequence</TabsTrigger>
+                <TabsTrigger value="workspace-fasta">Workspace FASTA</TabsTrigger>
               </TabsList>
 
               {/* Paste Sequence Content */}
-              <TabsContent value="paste" className="mt-0">
+              <TabsContent value="paste-sequence" className="mt-0">
                 {/* Sequence Identifier */}
                 <div className="mb-4 space-y-2">
-                  <Label>Sequence Identifier</Label>
-                  <Input placeholder="Identifier for input sequence" />
+                  <Label className="service-card-label">Sequence Identifier</Label>
+                  <Input placeholder="Identifier for input sequence" className="service-card-input" />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Paste Sequence</Label>
+                  <Label className="service-card-label">Paste Sequence</Label>
                   <Textarea
                     placeholder="Enter nucleotide sequence"
-                    className="min-h-32 max-h-96 font-mono text-sm"
+                    className="service-card-textarea"
                   />
                 </div>
 
@@ -155,19 +122,11 @@ const PrimerDesignInterface = () => {
               </TabsContent>
 
               {/* Workspace FASTA Content */}
-              <TabsContent value="workspace" className="mt-0">
-                <div className="space-y-2">
-                  <Label>Select FASTA File</Label>
-                  <div className="flex space-x-2">
-                    <Input
-                      placeholder="Select a FASTA file from workspace"
-                      className="flex-1"
-                    />
-                    <Button variant="outline" type="button">
-                      Browse
-                    </Button>
-                  </div>
-                </div>
+              <TabsContent value="workspace-fasta" className="mt-0">
+                <SearchWorkspaceInput
+                  title="FASTA File"
+                  placeholder="Select FASTA File..."
+                />
               </TabsContent>
             </Tabs>
 
@@ -184,11 +143,11 @@ const PrimerDesignInterface = () => {
             {/* Product Size Range */}
             <div className="space-y-2 pt-2">
               <div className="flex items-center">
-                <Label>Product Size Range (BP)</Label>
+                <Label className="service-card-label">Product Size Range (BP)</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger className="ml-2">
-                      <Info className="h-4 w-4 text-gray-500" />
+                      <HelpCircle className="service-card-tooltip-icon mb-2" />
                     </TooltipTrigger>
                     <TooltipContent>
                       <div className="max-w-[300px] space-y-2">
@@ -203,17 +162,17 @@ const PrimerDesignInterface = () => {
                   </Tooltip>
                 </TooltipProvider>
               </div>
-              <Input defaultValue="50-200" />
+              <Input defaultValue="50-200" className="service-card-input" />
             </div>
 
             {/* Primer Size */}
             <div className="space-y-2">
               <div className="flex items-center">
-                <Label>Primer Size (BP)</Label>
+                <Label className="service-card-label">Primer Size (BP)</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger className="ml-2">
-                      <Info className="h-4 w-4 text-gray-500" />
+                      <HelpCircle className="service-card-tooltip-icon mb-2" />
                     </TooltipTrigger>
                     <TooltipContent>
                       <div className="max-w-[300px] space-y-2">
@@ -230,16 +189,16 @@ const PrimerDesignInterface = () => {
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-1">
-                  <Label className="text-xs text-gray-500">Min</Label>
-                  <Input defaultValue="18" />
+                  <Label className="service-card-sublabel">Min</Label>
+                  <Input defaultValue="18" className="service-card-input" />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs text-gray-500">Opt</Label>
-                  <Input defaultValue="20" />
+                  <Label className="service-card-sublabel">Opt</Label>
+                  <Input defaultValue="20" className="service-card-input" />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs text-gray-500">Max</Label>
-                  <Input defaultValue="27" />
+                  <Label className="service-card-sublabel">Max</Label>
+                  <Input defaultValue="27" className="service-card-input" />
                 </div>
               </div>
             </div>
@@ -247,11 +206,11 @@ const PrimerDesignInterface = () => {
             {/* Excluded Regions */}
             <div className="space-y-2">
               <div className="flex items-center">
-                <Label>Excluded Regions</Label>
+                <Label className="service-card-label">Excluded Regions</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger className="ml-2">
-                      <Info className="h-4 w-4 text-gray-500" />
+                      <HelpCircle className="service-card-tooltip-icon mb-2" />
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>Regions to avoid when designing primers</p>
@@ -259,11 +218,12 @@ const PrimerDesignInterface = () => {
                   </Tooltip>
                 </TooltipProvider>
               </div>
+
               <div className="flex flex-row items-center">
                 {"<"}
                 <Input
                   placeholder="401,7 68,3 forbids primers in the 7 bases starting at 401 and the 3 bases at 68."
-                  className="w-full m-2"
+                  className="service-card-input mx-2"
                 />
                 {">"}
               </div>
@@ -272,13 +232,13 @@ const PrimerDesignInterface = () => {
             {/* Target Region */}
             <div className="space-y-2">
               <div className="flex items-center">
-                <Label className="font-medium text-gray-700">
+                <Label className="service-card-label">
                   Target Region
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger className="ml-2">
-                      <Info className="h-4 w-4 text-gray-500" />
+                      <HelpCircle className="service-card-tooltip-icon mb-2" />
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>Regions that must be included in the PCR product</p>
@@ -286,11 +246,12 @@ const PrimerDesignInterface = () => {
                   </Tooltip>
                 </TooltipProvider>
               </div>
+
               <div className="flex flex-row items-center">
                 {"["}
                 <Input
                   placeholder="50,2 requires primers to surround the 2 bases at positions 50 and 51."
-                  className="w-full m-2"
+                  className="service-card-input mx-2"
                 />
                 {"]"}
               </div>
@@ -299,11 +260,11 @@ const PrimerDesignInterface = () => {
             {/* Included Regions */}
             <div className="space-y-2">
               <div className="flex items-center">
-                <Label>Included Regions</Label>
+                <Label className="service-card-label">Included Regions</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger className="ml-2">
-                      <Info className="h-4 w-4 text-gray-500" />
+                      <HelpCircle className="service-card-tooltip-icon mb-2" />
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>Regions where primers must be selected</p>
@@ -311,11 +272,12 @@ const PrimerDesignInterface = () => {
                   </Tooltip>
                 </TooltipProvider>
               </div>
+
               <div className="flex flex-row items-center">
                 {"{"}
                 <Input
                   placeholder="20,400: only pick primers in the 400 base region starting at position 20."
-                  className="w-full m-2"
+                  className="service-card-input mx-2"
                 />
                 {"}"}
               </div>
@@ -323,12 +285,12 @@ const PrimerDesignInterface = () => {
 
             {/* Primer Overlap Positions */}
             <div className="space-y-2">
-              <Label>Primer Overlap Positions</Label>
+              <Label className="service-card-label">Primer Overlap Positions</Label>
               <div className="flex flex-row items-center">
                 {"-"}
                 <Input
                   placeholder="Space-separated list of positions. The forward OR reverse primer will overlap one."
-                  className="w-full m-2"
+                  className="service-card-input m-2"
                 />
                 {"-"}
               </div>
@@ -345,18 +307,19 @@ const PrimerDesignInterface = () => {
                   className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
                 />
               </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-4">
+
+              <CollapsibleContent className="service-collapsible-content">
                 <div className="space-y-6 px-2 py-4">
                   <div className="flex flex-row items-center">
                     <div className="space-y-2 w-full">
                       <div className="flex flex-row items-center">
-                        <Label className="font-medium text-gray-700">
+                        <Label className="service-card-label">
                           Number to Return
                         </Label>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger className="ml-2">
-                              <Info className="h-4 w-4 text-gray-500" />
+                              <HelpCircle className="service-card-tooltip-icon mb-2" />
                             </TooltipTrigger>
                             <TooltipContent>
                               <div className="max-w-[300px] space-y-2">
@@ -370,19 +333,19 @@ const PrimerDesignInterface = () => {
                           </Tooltip>
                         </TooltipProvider>
                       </div>
-                      <Input placeholder="Max number of primers to return (5)" />
+                      <Input placeholder="Max number of primers to return (5)" className="service-card-input" />
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <div className="flex items-center">
-                      <Label className="font-medium text-gray-700">
+                      <Label className="service-card-label">
                         Primer Tm (°C)
                       </Label>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger className="ml-2">
-                            <Info className="h-4 w-4 text-gray-500" />
+                            <HelpCircle className="service-card-tooltip-icon mb-2" />
                           </TooltipTrigger>
                           <TooltipContent>
                             <div className="max-w-[300px] space-y-2">
@@ -396,35 +359,36 @@ const PrimerDesignInterface = () => {
                         </Tooltip>
                       </TooltipProvider>
                     </div>
+
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                       <div className="space-y-1">
-                        <Label className="text-xs text-gray-500">Min</Label>
-                        <Input defaultValue="57.0" />
+                        <Label className="service-card-sublabel">Min</Label>
+                        <Input defaultValue="57.0" className="service-card-input" />
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-xs text-gray-500">Opt</Label>
-                        <Input defaultValue="60.0" />
+                        <Label className="service-card-sublabel">Opt</Label>
+                        <Input defaultValue="60.0" className="service-card-input" />
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-xs text-gray-500">Max</Label>
-                        <Input defaultValue="63.0" />
+                        <Label className="service-card-sublabel">Max</Label>
+                        <Input defaultValue="63.0" className="service-card-input" />
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-xs text-gray-500">Max TM Difference</Label>
-                        <Input defaultValue="100.0" />
+                        <Label className="service-card-sublabel">Max TM Difference</Label>
+                        <Input defaultValue="100.0" className="service-card-input" />
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <div className="flex items-center">
-                      <Label className="font-medium text-gray-700">
+                      <Label className="service-card-label">
                         Primer GC%
                       </Label>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger className="ml-2">
-                            <Info className="h-4 w-4 text-gray-500" />
+                            <HelpCircle className="service-card-tooltip-icon mb-2" />
                           </TooltipTrigger>
                           <TooltipContent>
                             <div className="max-w-[300px] space-y-2">
@@ -436,49 +400,50 @@ const PrimerDesignInterface = () => {
                         </Tooltip>
                       </TooltipProvider>
                     </div>
+
                     <div className="grid grid-cols-3 gap-2">
                       <div className="space-y-1">
-                        <Label className="text-xs text-gray-500">Min</Label>
-                        <Input defaultValue="20.0" />
+                        <Label className="service-card-sublabel">Min</Label>
+                        <Input defaultValue="20.0" className="service-card-input" />
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-xs text-gray-500">Opt</Label>
-                        <Input defaultValue="50.0" />
+                        <Label className="service-card-sublabel">Opt</Label>
+                        <Input defaultValue="50.0" className="service-card-input" />
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-xs text-gray-500">Max</Label>
-                        <Input defaultValue="80.0" />
+                        <Label className="service-card-sublabel">Max</Label>
+                        <Input defaultValue="80.0" className="service-card-input" />
                       </div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div className="space-y-2">
-                      <Label className="font-medium text-gray-700">
+                      <Label className="service-card-label">
                         Concentration of Monovalent Cations (MM)
                       </Label>
-                      <Input defaultValue="50.0" />
+                      <Input defaultValue="50.0" className="service-card-input" />
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="font-medium text-gray-700">
+                      <Label className="service-card-label">
                         Concentration of Divalent Cations (MM)
                       </Label>
-                      <Input defaultValue="1.5" />
+                      <Input defaultValue="1.5" className="service-card-input" />
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="font-medium text-gray-700">
+                      <Label className="service-card-label">
                         Annealing Oligo Concentration (MM)
                       </Label>
-                      <Input defaultValue="50.0" />
+                      <Input defaultValue="50.0" className="service-card-input" />
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="font-medium text-gray-700">
+                      <Label className="service-card-label">
                         Concentration of DNTPS (MM)
                       </Label>
-                      <Input defaultValue="0.6" />
+                      <Input defaultValue="0.6" className="service-card-input" />
                     </div>
                   </div>
                 </div>
@@ -486,44 +451,24 @@ const PrimerDesignInterface = () => {
             </Collapsible>
           </CardContent>
         </Card>
+
         {/* Output Section */}
         <Card>
-          <CardHeader className="pb-2">
-            <div className="flex items-center">
-              <CardTitle className="text-lg">Output</CardTitle>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger className="ml-2">
-                    <Info className="h-4 w-4 text-gray-500" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-md">Configure output settings</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
+          <CardHeader className="service-card-header">
+            <CardTitle className="service-card-title">
+              Output
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {/* TODO: Add Workspace folder picker */}
-            <div className="space-y-2">
-              <Label className="font-medium text-gray-700">Output Folder</Label>
-              <div className="flex items-center">
-                <Input placeholder="Select output folder" className="flex-1" />
-                <Button variant="outline" className="ml-2" size="icon">
-                  <FileDown className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label className="font-medium text-gray-700">Output Name</Label>
-              <Input placeholder="Output Name" />
-            </div>
+          <CardContent className="service-card-content">
+            <OutputFolder onChange={setOutputFolder} />
+
+            <OutputFolder variant="name" onChange={setOutputName} />
           </CardContent>
         </Card>
 
         {/* Submit Buttons */}
-        <div className="flex justify-center space-x-4 pt-4">
+        <div className="service-form-controls">
           <Button variant="outline" type="reset">
             Reset
           </Button>
@@ -535,7 +480,7 @@ const PrimerDesignInterface = () => {
           </Button>
         </div>
       </form>
-    </div>
+    </section>
   );
 };
 

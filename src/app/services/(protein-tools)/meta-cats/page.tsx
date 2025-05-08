@@ -28,7 +28,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { FolderInput, FolderSearch, Info, Plus, Search } from "lucide-react";
 import { CiCircleInfo } from "react-icons/ci";
 import {
   Tooltip,
@@ -37,10 +36,20 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ServiceHeader } from "@/components/services/service-header";
+import OutputFolder from "@/components/services/output-folder";
+import { handleFormSubmit } from "@/lib/service-utils";
+import {
+  metaCATSInfo,
+  metaCATSParameters,
+  metaCATSInput,
+} from "@/lib/service-info";
+import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
+import SearchWorkspaceInput from "@/components/services/search-workspace-input";
+import SelectedItemsTable from "@/components/services/selected-items-table";
 
 export default function MetaCATSPage() {
-  const [groupingType, setGroupingType] = useState("auto");
-  const [featureGroupType, setFeatureGroupType] = useState("dna");
+  const [groupingType, setGroupingType] = useState("auto-grouping");
+  const [featureGroupType, setFeatureGroupType] = useState("protein");
   const [featureGroupInput, setFeatureGroupInput] = useState("");
   const [tableData, setTableData] = useState<
     Array<{
@@ -54,63 +63,23 @@ export default function MetaCATSPage() {
     }>
   >([]);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
-  const [selectedFeatureGroups, setSelectedFeatureGroups] = useState<Array<{
-    id: string;
-    name: string;
-  }>>([]);
-
-  const handleAddFeatureGroup = () => {
-    if (!featureGroupInput.trim()) return;
-
-    const newItem = {
-      id: crypto.randomUUID(),
-      genbankAccession: featureGroupInput,
-      strain: "N/A",
-      metadata: "N/A",
-      group: "Default Group",
-      srcId: "N/A",
-      genomeId: "N/A",
-    };
-
-    setTableData((prev) => [...prev, newItem]);
-    setFeatureGroupInput("");
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFeatureGroupInput(e.target.value);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleAddFeatureGroupFeature();
-    }
-  };
-
-  const handleRowSelect = (id: string) => {
-    setSelectedRows((prev) => {
-      if (prev.includes(id)) {
-        return prev.filter((rowId) => rowId !== id);
-      } else {
-        return [...prev, id];
-      }
-    });
-  };
-
-  const handleDeleteRows = () => {
-    if (selectedRows.length === 0) return;
-    setTableData((prev) =>
-      prev.filter((item) => !selectedRows.includes(item.id)),
-    );
-    setSelectedRows([]);
-  };
-
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedRows(tableData.map((item) => item.id));
-    } else {
-      setSelectedRows([]);
-    }
-  };
+  const [selectedFeatureGroups, setSelectedFeatureGroups] = useState<
+    Array<{
+      id: string;
+      name: string;
+    }>
+  >([]);
+  const [outputFolder, setOutputFolder] = useState("");
+  const [outputName, setOutputName] = useState("");
+  const [selectedAutoGroupingFiles, setSelectedAutoGroupingFiles] = useState<
+    string[]
+  >([]);
+  const [autoGroupingFeatureGroup, setAutoGroupingFeatureGroup] = useState("");
+  const [autoGroupingSelectedRows, setAutoGroupingSelectedRows] = useState<
+    string[]
+  >([]);
+  const [alignmentFileInput, setAlignmentFileInput] = useState("");
+  const [groupFileInput, setGroupFileInput] = useState("");
 
   const handleAddFeatureGroupFeature = () => {
     if (!featureGroupInput.trim()) return;
@@ -124,43 +93,84 @@ export default function MetaCATSPage() {
     setFeatureGroupInput("");
   };
 
-  const handleRemoveFeatureGroup = (id: string) => {
-    setSelectedFeatureGroups((prev) => prev.filter((group) => group.id !== id));
+  const handleAddAutoGroupingFeatureGroup = () => {
+    if (!autoGroupingFeatureGroup.trim()) return;
+
+    const newItem = {
+      id: crypto.randomUUID(),
+      genbankAccession: autoGroupingFeatureGroup,
+      strain: "N/A",
+      metadata: "N/A",
+      group: "Default Group",
+      srcId: "N/A",
+      genomeId: "N/A",
+    };
+
+    setTableData((prev) => [...prev, newItem]);
+    setSelectedAutoGroupingFiles((prev) => [...prev, autoGroupingFeatureGroup]);
+    setAutoGroupingFeatureGroup("");
+  };
+
+  const handleAutoGroupingRowSelect = (id: string) => {
+    setAutoGroupingSelectedRows((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((rowId) => rowId !== id);
+      } else {
+        return [...prev, id];
+      }
+    });
+  };
+
+  const handleAutoGroupingDeleteRows = () => {
+    if (autoGroupingSelectedRows.length === 0) return;
+    setTableData((prev) =>
+      prev.filter((item) => !autoGroupingSelectedRows.includes(item.id)),
+    );
+    setSelectedAutoGroupingFiles((prev) =>
+      prev.filter(
+        (_, index) => !autoGroupingSelectedRows.includes(tableData[index].id),
+      ),
+    );
+    setAutoGroupingSelectedRows([]);
+  };
+
+  const handleAutoGroupingSelectAll = (checked: boolean) => {
+    if (checked) {
+      setAutoGroupingSelectedRows(tableData.map((item) => item.id));
+    } else {
+      setAutoGroupingSelectedRows([]);
+    }
   };
 
   return (
     <section>
       <ServiceHeader
         title="Metadata-driven Comparative Analysis Tool (Meta-CATS)"
-        tooltipContent="Metadata-driven Comparative Analysis Tool (Meta-CATS) Information"
         description="The Meta-CATS tool looks for positions that significantly differ between user-defined groups of sequences.
           However, biological biases due to correlation, codon biases, and differences in genotype, geography, time of isolation,
           or others may affect the robustness of the underlying statistical assumptions."
+        infoPopupTitle={metaCATSInfo.title}
+        infoPopupDescription={metaCATSInfo.description}
         quickReferenceGuide="#"
         tutorial="#"
         instructionalVideo="#"
       />
 
       {/* Main Content */}
-      <div className="service-form-section">
+      <form onSubmit={handleFormSubmit} className="service-form-section">
         {/* Parameters Section */}
         <Card>
           <CardHeader className="service-card-header">
             <CardTitle className="service-card-title">
               Parameters
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Info size={16} className="text-muted-foreground" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Configure analysis parameters</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <DialogInfoPopup
+                title={metaCATSParameters.title}
+                description={metaCATSParameters.description}
+              />
             </CardTitle>
           </CardHeader>
-          <CardContent>
+
+          <CardContent className="service-card-content">
             <div className="space-y-4">
               <div>
                 <Label className="service-card-label">P-Value</Label>
@@ -173,22 +183,13 @@ export default function MetaCATSPage() {
                 />
               </div>
 
-              <div>
-                <Label className="service-card-label">Output Folder</Label>
-                <div className="flex gap-2">
-                  <Input
-                    className="flex-1"
-                    placeholder="Choose the output folder"
-                  />
-                  <Button size="icon" variant="outline">
-                    <FolderInput size={16} />
-                  </Button>
+              <div className="service-card-row">
+                <div className="w-full">
+                  <OutputFolder onChange={setOutputFolder} />
                 </div>
-              </div>
-
-              <div>
-                <Label className="service-card-label">Output Name</Label>
-                <Input placeholder="Output Name" />
+                <div className="w-full">
+                  <OutputFolder variant="name" onChange={setOutputName} />
+                </div>
               </div>
             </div>
           </CardContent>
@@ -199,45 +200,42 @@ export default function MetaCATSPage() {
           <CardHeader className="service-card-header">
             <CardTitle className="service-card-title">
               Input
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Info size={16} className="text-muted-foreground" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Specify input data for analysis</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <DialogInfoPopup
+                title={metaCATSInput.title}
+                description={metaCATSInput.description}
+                sections={metaCATSInput.sections}
+              />
             </CardTitle>
           </CardHeader>
+
           <CardContent className="service-card-content">
             <RadioGroup
               defaultValue="auto"
-              className="flex space-x-6"
+              className="service-radio-group"
               value={groupingType}
               onValueChange={setGroupingType}
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="auto" id="auto-grouping" />
+              <div className="service-radio-group-item">
+                <RadioGroupItem value="auto-grouping" id="auto-grouping" />
                 <Label htmlFor="auto-grouping">Auto Grouping</Label>
               </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="feature" id="feature-groups" />
+              <div className="service-radio-group-item">
+                <RadioGroupItem value="feature-groups" id="feature-groups" />
                 <Label htmlFor="feature-groups">Feature Groups</Label>
               </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="alignment" id="alignment-file" />
+              <div className="service-radio-group-item">
+                <RadioGroupItem value="alignment-file" id="alignment-file" />
                 <Label htmlFor="alignment-file">Alignment File</Label>
               </div>
             </RadioGroup>
 
-            {groupingType === "auto" && (
+            {groupingType === "auto-grouping" && (
               <>
                 <div>
                   <Label className="service-card-label">Metadata</Label>
+
                   <Select defaultValue="host-name">
-                    <SelectTrigger>
+                    <SelectTrigger className="service-card-select-trigger !w-fit">
                       <SelectValue placeholder="Select metadata" />
                     </SelectTrigger>
                     <SelectContent>
@@ -284,41 +282,26 @@ export default function MetaCATSPage() {
                 </div>
 
                 <div className="space-y-4">
-                  <Label className="service-card-label">
-                    Select Feature Group
-                  </Label>
-
-                  <div className="flex gap-2">
-                    <Input
-                      className="flex-1"
-                      placeholder="Select DNA or Protein Feature Group"
-                      value={featureGroupInput}
-                      onChange={handleInputChange}
-                      onKeyDown={handleKeyDown}
-                    />
-                    <Button size="icon" variant="outline">
-                      <FolderSearch size={16} />
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="outline"
-                      onClick={handleAddFeatureGroup}
-                    >
-                      <Plus size={16} />
-                    </Button>
-                  </div>
+                  <SearchWorkspaceInput
+                    title="Select Feature Group"
+                    placeholder="Select DNA or Protein Feature Group"
+                    onChange={setAutoGroupingFeatureGroup}
+                    onAdd={handleAddAutoGroupingFeatureGroup}
+                    variant="add"
+                    value={autoGroupingFeatureGroup}
+                  />
 
                   <RadioGroup
                     defaultValue="dna"
-                    className="flex space-x-6"
+                    className="service-radio-group"
                     value={featureGroupType}
                     onValueChange={setFeatureGroupType}
                   >
-                    <div className="flex items-center space-x-2">
+                    <div className="service-radio-group-item">
                       <RadioGroupItem value="dna" id="dna" />
                       <Label htmlFor="dna">DNA</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="service-radio-group-item">
                       <RadioGroupItem value="protein" id="protein" />
                       <Label htmlFor="protein">Protein</Label>
                     </div>
@@ -351,10 +334,10 @@ export default function MetaCATSPage() {
                           <TableHead className="w-12">
                             <Checkbox
                               checked={
-                                selectedRows.length === tableData.length &&
-                                tableData.length > 0
+                                autoGroupingSelectedRows.length ===
+                                  tableData.length && tableData.length > 0
                               }
-                              onCheckedChange={handleSelectAll}
+                              onCheckedChange={handleAutoGroupingSelectAll}
                             />
                           </TableHead>
                           <TableHead>Genbank Accession</TableHead>
@@ -406,7 +389,7 @@ export default function MetaCATSPage() {
                               colSpan={7}
                               className="text-muted-foreground py-8 text-center"
                             >
-                              No results found.
+                              No feature groups selected.
                             </TableCell>
                           </TableRow>
                         ) : (
@@ -414,9 +397,11 @@ export default function MetaCATSPage() {
                             <TableRow key={item.id}>
                               <TableCell>
                                 <Checkbox
-                                  checked={selectedRows.includes(item.id)}
+                                  checked={autoGroupingSelectedRows.includes(
+                                    item.id,
+                                  )}
                                   onCheckedChange={() =>
-                                    handleRowSelect(item.id)
+                                    handleAutoGroupingRowSelect(item.id)
                                   }
                                 />
                               </TableCell>
@@ -441,8 +426,8 @@ export default function MetaCATSPage() {
 
                     <Button
                       variant="outline"
-                      onClick={handleDeleteRows}
-                      disabled={selectedRows.length === 0}
+                      onClick={handleAutoGroupingDeleteRows}
+                      disabled={autoGroupingSelectedRows.length === 0}
                     >
                       Delete Rows
                     </Button>
@@ -451,125 +436,83 @@ export default function MetaCATSPage() {
               </>
             )}
 
-            {groupingType === "feature" && (
+            {groupingType === "feature-groups" && (
               <>
                 <div className="space-y-4">
-                  <Label className="service-card-label">
-                    Select Feature Group
-                  </Label>
-
-                  <div className="flex gap-2">
-                    <Input
-                      className="flex-1"
-                      placeholder="Select DNA or Protein Feature Group"
-                      value={featureGroupInput}
-                      onChange={handleInputChange}
-                      onKeyDown={handleKeyDown}
-                    />
-                    <Button size="icon" variant="outline">
-                      <FolderSearch size={16} />
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="outline"
-                      onClick={handleAddFeatureGroupFeature}
-                    >
-                      <Plus size={16} />
-                    </Button>
-                  </div>
+                  <SearchWorkspaceInput
+                    title="Select Feature Group"
+                    placeholder="Select DNA or Protein Feature Group"
+                    onChange={setFeatureGroupInput}
+                    onAdd={handleAddFeatureGroupFeature}
+                    variant="add"
+                    value={featureGroupInput}
+                  />
 
                   <RadioGroup
                     defaultValue="dna"
-                    className="flex space-x-6"
+                    className="service-radio-group"
                     value={featureGroupType}
                     onValueChange={setFeatureGroupType}
                   >
-                    <div className="flex items-center space-x-2">
+                    <div className="service-radio-group-item">
                       <RadioGroupItem value="dna" id="dna" />
                       <Label htmlFor="dna">DNA</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="service-radio-group-item">
                       <RadioGroupItem value="protein" id="protein" />
                       <Label htmlFor="protein">Protein</Label>
                     </div>
                   </RadioGroup>
                 </div>
 
-                <div>
-                  <Label className="service-card-label">Selected Groups Table</Label>
-                  <div className="overflow-hidden rounded-md border">
-                    {selectedFeatureGroups.length === 0 ? (
-                      <div className="text-muted-foreground p-4 text-center text-sm">
-                        No feature groups selected
-                      </div>
-                    ) : (
-                      <div className="divide-y">
-                        {selectedFeatureGroups.map((group) => (
-                          <div
-                            key={group.id}
-                            className="flex items-center justify-between bg-white px-4 py-2 hover:bg-gray-50"
-                          >
-                            <span className="text-sm">{group.name}</span>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-6 w-6"
-                              onClick={() => handleRemoveFeatureGroup(group.id)}
-                            >
-                              <span className="text-gray-400 hover:text-gray-600">×</span>
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <SelectedItemsTable
+                  title="Selected Files/Feature Group"
+                  items={selectedFeatureGroups.map(
+                    (file: { id: string; name: string }) => ({
+                      id: file.id,
+                      name: file.name,
+                      type: "file",
+                    }),
+                  )}
+                  onRemove={(id: string) => {
+                    setSelectedFeatureGroups(
+                      (prev: { id: string; name: string }[]) =>
+                        prev.filter(
+                          (file: { id: string; name: string }) =>
+                            file.id !== id,
+                        ),
+                    );
+                  }}
+                  className="max-h-84 overflow-y-auto"
+                />
               </>
             )}
 
-            {groupingType === "alignment" && (
+            {groupingType === "alignment-file" && (
               <div className="space-y-4">
-                <div>
-                  <Label className="service-card-label">
-                    Select Alignment File
-                  </Label>
+                <SearchWorkspaceInput
+                  title="Select Alignment File"
+                  placeholder="Alignment File..."
+                  onChange={setAlignmentFileInput}
+                  value={alignmentFileInput}
+                />
 
-                  <div className="flex gap-2">
-                    <Input
-                      className="flex-1"
-                      placeholder="Select Alignment File"
-                    />
-                    <Button size="icon" variant="outline">
-                      <FolderSearch size={16} />
-                    </Button>
-                  </div>
-                </div>
-
-                <div>
-                  <Label className="service-card-label">
-                    Select Group File
-                  </Label>
-
-                  <div className="flex gap-2">
-                    <Input
-                      className="flex-1"
-                      placeholder="Select Group File"
-                    />
-                    <Button size="icon" variant="outline">
-                      <FolderSearch size={16} />
-                    </Button>
-                  </div>
-                </div>
+                <SearchWorkspaceInput
+                  title="Select Group File"
+                  placeholder="Group File..."
+                  onChange={setGroupFileInput}
+                  value={groupFileInput}
+                />
               </div>
             )}
           </CardContent>
         </Card>
+      </form>
 
-        {/* Form Controls */}
-        <div className="service-form-controls">
-          <Button variant="outline">Reset</Button>
-          <Button>Submit</Button>
-        </div>
+      {/* Form Controls */}
+      <div className="service-form-controls">
+        <Button variant="outline">Reset</Button>
+        <Button>Submit</Button>
       </div>
     </section>
   );

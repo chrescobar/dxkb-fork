@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -23,6 +22,13 @@ import { HelpCircle } from "lucide-react";
 import { ServiceHeader } from "@/components/services/service-header";
 import SearchReadLibrary from "@/components/services/search-read-library";
 import OutputFolder from "@/components/services/output-folder";
+import SraRunAccession from "@/components/services/sra-run-accession";
+import { Library } from "@/types/services";
+import {
+  handlePairedLibraryAdd,
+  handleSingleLibraryAdd,
+  handleFormSubmit,
+} from "@/lib/service-utils";
 
 export default function ViralAssembly() {
   // States for the form
@@ -31,22 +37,11 @@ export default function ViralAssembly() {
   const [virusGenome, setVirusGenome] = useState("flu");
   const [outputFolder, setOutputFolder] = useState("");
   const [outputName, setOutputName] = useState("");
+  const [selectedLibraries, setSelectedLibraries] = useState<Library[]>([]);
   const [readFiles, setReadFiles] = useState([
     { id: 1, name: "READ FILE 1" },
     { id: 2, name: "READ FILE 2" },
   ]);
-
-  const handleSubmit = () => {
-    // Handle form submission logic here
-    console.log({
-      inputType,
-      readFiles,
-      assemblyStrategy,
-      virusGenome,
-      outputFolder,
-      outputName,
-    });
-  };
 
   const handleReset = () => {
     setInputType("paired");
@@ -64,24 +59,20 @@ export default function ViralAssembly() {
     <section>
       <ServiceHeader
         title="Viral Assembly - BETA"
-        tooltipContent="Viral Assembly Information"
-        description='The Viral Assembly Service utilizes IRMA (Iterative Refinement
-          Meta-Assembler) to assemble viral genomes. Users must select the virus
-          genome for processing. This service is currently in beta; any feedback
-          or improvement is welcomed.'
+        description="The Viral Assembly Service utilizes IRMA (Iterative Refinement Meta-Assembler)
+          to assemble viral genomes. Users must select the virus genome for processing.
+          This service is currently in beta, any feedback or improvement is welcomed."
         quickReferenceGuide="#"
         tutorial="#"
         instructionalVideo="#"
       />
 
       {/* Main Form Content */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <form onSubmit={handleFormSubmit} className="flex flex-col gap-6">
         {/* Input File Section */}
         <Card>
           <CardHeader className="service-card-header">
-            <CardTitle className="service-card-title">
-              Input File
-            </CardTitle>
+            <CardTitle className="service-card-title">Input File</CardTitle>
           </CardHeader>
 
           <CardContent className="service-card-content">
@@ -90,15 +81,15 @@ export default function ViralAssembly() {
               onValueChange={setInputType}
               className="service-radio-group"
             >
-              <div className="flex items-center space-x-2">
+              <div className="service-radio-group-item">
                 <RadioGroupItem value="paired" id="paired" />
                 <Label htmlFor="paired">Paired Read Library</Label>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="service-radio-group-item">
                 <RadioGroupItem value="single" id="single" />
                 <Label htmlFor="single">Single Read Library</Label>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="service-radio-group-item">
                 <RadioGroupItem value="sra" id="sra" />
                 <Label htmlFor="sra">SRA Run Accession</Label>
               </div>
@@ -106,27 +97,41 @@ export default function ViralAssembly() {
 
             {inputType === "paired" && (
               <SearchReadLibrary
-                title="Paired Read Library"
+                title="Select Files"
                 firstPlaceholder="Select File 1..."
                 secondPlaceholder="Select File 2..."
                 variant="pair"
-                justInput={true}
+                onAdd={(files) => {
+                  const newLibraries = handlePairedLibraryAdd(
+                    files,
+                    selectedLibraries,
+                  );
+                  setSelectedLibraries(newLibraries);
+                }}
               />
             )}
 
             {inputType === "single" && (
               <SearchReadLibrary
-                title="Single Read Library"
+                title="Select File"
                 firstPlaceholder="Select File 1..."
                 variant="single"
-                justInput={true}
+                onAdd={(files) => {
+                  const newLibraries = handleSingleLibraryAdd(
+                    files,
+                    selectedLibraries,
+                  );
+                  setSelectedLibraries(newLibraries);
+                }}
               />
             )}
 
             {inputType === "sra" && (
-              <div className="pt-2">
-                <Input placeholder="SRA Accession Number" />
-              </div>
+              <SraRunAccession
+                title="Select Accession"
+                selectedLibraries={selectedLibraries}
+                setSelectedLibraries={setSelectedLibraries}
+              />
             )}
           </CardContent>
         </Card>
@@ -137,28 +142,28 @@ export default function ViralAssembly() {
             <CardTitle className="service-card-title">
               Parameters
               <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <HelpCircle className="service-card-tooltip-icon" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Configure assembly parameters</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <HelpCircle className="service-card-tooltip-icon" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Configure assembly parameters</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </CardTitle>
           </CardHeader>
 
           <CardContent className="service-card-content">
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
+            <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
               <div className="w-full">
                 <Label className="service-card-label">Assembly Strategy</Label>
 
                 <Select
                   value={assemblyStrategy}
                   onValueChange={setAssemblyStrategy}
-                  >
-                  <SelectTrigger className="w-full">
+                >
+                  <SelectTrigger className="service-card-select-trigger">
                     <SelectValue placeholder="Select assembly strategy" />
                   </SelectTrigger>
                   <SelectContent>
@@ -172,7 +177,7 @@ export default function ViralAssembly() {
                 <Label className="service-card-label">Virus Genome</Label>
 
                 <Select value={virusGenome} onValueChange={setVirusGenome}>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="service-card-select-trigger">
                     <SelectValue placeholder="Select virus genome" />
                   </SelectTrigger>
                   <SelectContent>
@@ -185,30 +190,24 @@ export default function ViralAssembly() {
               </div>
             </div>
 
-            <OutputFolder
-              value={outputFolder}
-              onChange={(value) => setOutputFolder(value)}
-            />
-
-            <div className="w-full">
-              <Label className="service-card-label">Output Name</Label>
-
-              <Input
-                placeholder="Output Name"
-                value={outputName}
-                onChange={(e) => setOutputName(e.target.value)}
-              />
+            <div className="service-card-row">
+              <div className="w-full">
+                <OutputFolder onChange={setOutputFolder} />
+              </div>
+              <div className="w-full">
+                <OutputFolder variant="name" onChange={setOutputName} />
+              </div>
             </div>
           </CardContent>
         </Card>
-      </div>
+      </form>
 
       {/* Action Buttons */}
       <div className="service-form-controls">
         <Button variant="outline" onClick={handleReset}>
           Reset
         </Button>
-        <Button onClick={handleSubmit}>Assemble</Button>
+        <Button type="submit">Assemble</Button>
       </div>
     </section>
   );

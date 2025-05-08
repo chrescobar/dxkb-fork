@@ -122,10 +122,8 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
 
     useEffect(() => {
       const handleKeyDown = (e: KeyboardEvent) => {
-        if (
-          document.activeElement ===
-          (ref as React.RefObject<HTMLInputElement>).current
-        ) {
+        const inputRef = ref as React.RefObject<HTMLInputElement>;
+        if (inputRef?.current && document.activeElement === inputRef.current) {
           if (e.key === "ArrowUp") {
             handleIncrement();
           } else if (e.key === "ArrowDown") {
@@ -190,7 +188,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           prefix={prefix}
           customInput={Input}
           placeholder={placeholder}
-          className="relative [appearance:textfield] rounded-r-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none bg-white"
+          className="relative [appearance:textfield] rounded-r-none bg-white [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           getInputRef={ref}
           {...props}
         />

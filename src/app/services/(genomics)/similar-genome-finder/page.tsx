@@ -42,6 +42,7 @@ import {
 import { ServiceHeader } from "@/components/services/service-header";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import SearchWorkspaceInput from "@/components/services/search-workspace-input";
+import { handleFormSubmit } from "@/lib/service-utils";
 
 const SimilarGenomeFinderInterface = () => {
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -60,7 +61,7 @@ const SimilarGenomeFinderInterface = () => {
         instructionalVideo="#"
       />
 
-      <form className="service-form-section">
+      <form onSubmit={handleFormSubmit} className="service-form-section">
         {/* Select a Genome Section */}
         <Card>
           <CardHeader className="service-card-header">
@@ -127,7 +128,7 @@ const SimilarGenomeFinderInterface = () => {
 
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                     <div className="space-y-2">
-                      <Label className="service-card-label">Max Hits</Label>
+                      <Label className="service-card-sublabel">Max Hits</Label>
                       <Select defaultValue="50">
                         <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="50" />
@@ -143,7 +144,7 @@ const SimilarGenomeFinderInterface = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="service-card-label">
+                      <Label className="service-card-sublabel">
                         P-Value Threshold
                       </Label>
 
@@ -161,7 +162,7 @@ const SimilarGenomeFinderInterface = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="service-card-label">Distance</Label>
+                      <Label className="service-card-sublabel">Distance</Label>
 
                       <Select defaultValue="1">
                         <SelectTrigger className="service-card-select-trigger">
@@ -206,11 +207,13 @@ const SimilarGenomeFinderInterface = () => {
                       </div>
 
                       <div className="flex flex-col gap-2">
-                        <Label className="service-card-label">
-                          Scope
-                        </Label>
+                        <Label className="service-card-label">Scope</Label>
 
-                        <RadioGroup className="gap-2" defaultValue="reference" onValueChange={setScope}>
+                        <RadioGroup
+                          className="gap-2"
+                          defaultValue="reference"
+                          onValueChange={setScope}
+                        >
                           <div className="flex items-center space-x-2">
                             <RadioGroupItem value="reference" />
                             <Label
@@ -240,7 +243,7 @@ const SimilarGenomeFinderInterface = () => {
         </Card>
       </form>
 
-       {/* Submit Button */}
+      {/* Submit Button */}
       <div className="service-form-controls">
         <Button>
           <Search className="h-4 w-4" />

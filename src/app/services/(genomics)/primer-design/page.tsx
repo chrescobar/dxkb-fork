@@ -98,8 +98,8 @@ const PrimerDesignInterface = () => {
                   />
                 </div>
 
-                <div className="flex items-center space-x-2 pt-2">
-                  <Label className="font-medium text-gray-700">
+                <div className="flex items-center align-middle space-x-2 pt-2">
+                  <Label className="service-card-sublabel !mb-0">
                     Mark Selected Region
                   </Label>
                   <div className="flex space-x-1">

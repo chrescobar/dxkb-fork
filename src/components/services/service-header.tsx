@@ -30,7 +30,7 @@ export function ServiceHeader({
     <div className="service-header">
       <div className="service-header-title">
         <h1>{title}</h1>
-        {(infoPopupTitle && infoPopupDescription) && (
+        {infoPopupTitle && infoPopupDescription && (
           <DialogInfoPopup
             title={infoPopupTitle}
             description={infoPopupDescription}
@@ -69,7 +69,8 @@ export function ServiceHeader({
           )}
           {instructionalVideo && (
             <>
-              {" "}and{" "}
+              {" "}
+              and{" "}
               <a href={instructionalVideo}>
                 Instructional Video
                 <ExternalLink className="ml-1 h-3 w-3" />
@@ -81,4 +82,4 @@ export function ServiceHeader({
       </div>
     </div>
   );
-} 
+}

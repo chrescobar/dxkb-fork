@@ -1,5 +1,14 @@
 import React from "react";
 import { Button } from "../ui/button";
+import { Label } from "../ui/label";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+import { HelpCircle } from "lucide-react";
+import { toast } from "sonner";
 
 interface SelectedItem {
   id: string;
@@ -11,23 +20,25 @@ interface SelectedItem {
 }
 
 interface SelectedItemsTableProps {
-  title: string;
+  title?: string;
   description?: string;
   tooltipContent?: string;
   items: SelectedItem[];
   onRemove: (id: string) => void;
   emptyMessage?: string;
   className?: string;
+  allowDuplicates?: boolean;
 }
 
 const SelectedItemsTable = ({
   title,
-  description = "Place items here using the arrow buttons.",
-  tooltipContent = "Place items here using the arrow buttons",
+  description,
+  tooltipContent,
   items,
   onRemove,
   emptyMessage = "No items selected",
   className = "",
+  allowDuplicates = false,
 }: SelectedItemsTableProps) => {
   const getShapeClass = (shape?: string) => {
     switch (shape) {
@@ -47,68 +58,101 @@ const SelectedItemsTable = ({
 
     if (shape === "triangle") {
       return (
-        <div className="inline-block w-0 h-0 border-[5px] border-transparent" style={{
-          borderBottomWidth: "8px",
-          borderBottomColor: color.replace("bg-", ""),
-        }} />
+        <div
+          className="inline-block h-0 w-0 border-[5px] border-transparent"
+          style={{
+            borderBottomWidth: "8px",
+            borderBottomColor: color.replace("bg-", ""),
+          }}
+        />
       );
     }
 
-    return (
-      <div
-        className={`h-2.5 w-2.5 ${color} ${getShapeClass(shape)}`}
-      />
-    );
+    return <div className={`h-2.5 w-2.5 ${color} ${getShapeClass(shape)}`} />;
+  };
+
+  const handleAddItem = (newItem: SelectedItem) => {
+    if (!allowDuplicates && items.some((item) => item.id === newItem.id)) {
+      toast.error("Duplicate item detected", {
+        description: "This item has already been added to the table.",
+      });
+      return false;
+    }
+    return true;
   };
 
   return (
-    <div className={`bg-background-100 rounded-md p-4 border overflow-auto ${className}`}>
-      <div className="overflow-y-auto rounded-md border h-full">
-        {items.length === 0 ? (
-          <div className="text-muted-foreground p-4.5 text-center text-sm bg-white h-full">
-            {emptyMessage}
+    <>
+      {(title || description || tooltipContent) && (
+        <div className="mb-0">
+          <div className="flex flex-row items-center gap-2">
+            {title && <Label className="service-card-label">{title}</Label>}
+            {tooltipContent && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <HelpCircle className="service-card-tooltip-icon mb-2" />
+                  </TooltipTrigger>
+                  <TooltipContent>{tooltipContent}</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </div>
-        ) : (
-          <div className="divide-y">
-            {items.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center justify-between bg-white px-4 py-2 hover:bg-gray-50"
-              >
-                <div className="flex items-center gap-2">
-                  <div>
-                    <span className="text-sm">{item.name}</span>
-                    {(item.color || item.shape) && (
-                      <div className="inline-flex items-center gap-2 ml-2">
-                        {renderShape(item.color, item.shape)}
-                      </div>
-                    )}
-                    {item.type && (
-                      <div className="text-muted-foreground text-xs">
-                        {item.type}
-                      </div>
-                    )}
-                    {item.description && (
-                      <div className="text-muted-foreground text-xs">
-                        {item.description}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6"
-                  onClick={() => onRemove(item.id)}
+          {description && (
+            <p className="service-card-sublabel">{description}</p>
+          )}
+        </div>
+      )}
+      <div
+        className={`bg-background-100 overflow-auto rounded-md border p-4 ${className}`}
+      >
+        <div className="h-full overflow-y-auto rounded-md border">
+          {items.length === 0 ? (
+            <div className="text-muted-foreground h-full bg-white p-4.5 text-center text-sm">
+              {emptyMessage}
+            </div>
+          ) : (
+            <div className="divide-y">
+              {items.map((item) => (
+                <div
+                  key={item.id + item.type}
+                  className="flex items-center justify-between bg-white px-4 py-2 hover:bg-gray-50"
                 >
-                  <span className="text-gray-400 hover:text-gray-600">×</span>
-                </Button>
-              </div>
-            ))}
-          </div>
-        )}
+                  <div className="flex items-center gap-2">
+                    <div>
+                      <span className="text-sm">{item.name}</span>
+                      {(item.color || item.shape) && (
+                        <div className="ml-2 inline-flex items-center gap-2">
+                          {renderShape(item.color, item.shape)}
+                        </div>
+                      )}
+                      {item.type && (
+                        <div className="text-muted-foreground text-xs">
+                          {item.type}
+                        </div>
+                      )}
+                      {item.description && (
+                        <div className="text-muted-foreground text-xs">
+                          {item.description}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6"
+                    onClick={() => onRemove(item.id)}
+                  >
+                    <span className="text-gray-400 hover:text-gray-600">×</span>
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

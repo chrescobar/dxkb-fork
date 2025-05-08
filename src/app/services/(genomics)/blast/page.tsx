@@ -225,7 +225,7 @@ export default function BlastServicePage() {
                 </div>
 
                 <Select>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="service-card-select-trigger ">
                     <SelectValue placeholder="Select database source" />
                   </SelectTrigger>
                   {/* TODO: Conditionally render based on query type */}
@@ -267,7 +267,7 @@ export default function BlastServicePage() {
                 </div>
 
                 <Select>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="service-card-select-trigger">
                     <SelectValue placeholder="Select database type" />
                   </SelectTrigger>
                   <SelectContent>

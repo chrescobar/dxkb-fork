@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -13,11 +12,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
-import { Info } from "lucide-react";
+import { HelpCircle } from "lucide-react";
 import { ServiceHeader } from "@/components/services/service-header";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import SearchWorkspaceInput from "@/components/services/search-workspace-input";
 import { HaReferenceTypes } from "@/types/services";
+import { haSubtypeNumberingInput } from "@/lib/service-info";
+import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
+import OutputFolder from "@/components/services/output-folder";
+import { handleFormSubmit } from "@/lib/service-utils";
 
 export default function HASubtypeNumbering() {
   // States for the form
@@ -38,7 +41,6 @@ export default function HASubtypeNumbering() {
     <section>
       <ServiceHeader
         title="HA Subtype Numbering Conversion"
-        tooltipContent="HA Subtype Numbering Conversion Information"
         description="The HA Subtype Numbering Conversion service allows user to renumber
           Influenza HA sequences according to a cross-subtype numbering scheme
           proposed by Burke and Smith in <a href='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4100033/'>Burke DF, Smith DJ (2014). A
@@ -53,21 +55,16 @@ export default function HASubtypeNumbering() {
       />
 
       {/* Main Form Content */}
-      <div className="grid grid-cols-1 gap-6">
+      <form onSubmit={handleFormSubmit} className="grid grid-cols-1 gap-6">
         <Card>
           <CardHeader className="service-card-header">
             <CardTitle className="service-card-title">
               Input Sequence
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Info className="service-card-tooltip-icon" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Enter protein sequences for analysis</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <DialogInfoPopup
+                title={haSubtypeNumberingInput.title}
+                description={haSubtypeNumberingInput.description}
+                sections={haSubtypeNumberingInput.sections}
+              />
             </CardTitle>
           </CardHeader>
 
@@ -102,84 +99,73 @@ export default function HASubtypeNumbering() {
 
             {inputSequence === "fasta" && (
               <SearchWorkspaceInput
-                title="FASTA File"
+                title={null}
                 placeholder="Select FASTA File"
               />
             )}
 
             {inputSequence === "feature-group" && (
               <SearchWorkspaceInput
-                title="Feature Group"
+                title={null}
                 placeholder="Select Feature Group"
               />
             )}
-          </CardContent>
-        </Card>
 
-        {/* Conversion Sequence Numbering Scheme Section */}
-        <Card>
-          <CardHeader className="service-card-header">
-            <CardTitle className="service-card-title">
-              Conversion Sequence Numbering Scheme
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Info className="service-card-tooltip-icon" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Select the numbering scheme to apply</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </CardTitle>
-          </CardHeader>
-
-          <CardContent className="service-card-content">
             <div className="space-y-6">
-              <div className="bg-background-100 grid grid-cols-2 gap-2 rounded-md border p-4 md:grid-cols-4">
-                {HaReferenceTypes.map((scheme) => (
-                  <div className="flex items-center gap-2" key={scheme.id}>
-                    <Checkbox
-                      id={scheme.id}
-                      checked={selectedSchemes.includes(scheme.id)}
-                      onCheckedChange={() =>
-                        setSelectedSchemes(
-                          selectedSchemes.includes(scheme.id)
-                            ? selectedSchemes.filter((s) => s !== scheme.id)
-                            : [...selectedSchemes, scheme.id],
-                        )
-                      }
-                      className="bg-white"
-                    />
-                    <Label htmlFor={scheme.id} className="text-sm">
-                      {scheme.label}
-                    </Label>
-                  </div>
-                ))}
+              <div>
+                <div className="flex flex-row gap-2">
+                  <Label className="service-card-label">
+                    Conversion Sequence Numbering Scheme
+                  </Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <HelpCircle className="service-card-tooltip-icon mb-2" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>
+                          Selects the subtype(s) (one or more) to which
+                          numbering scheme conversion is desired.
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <div className="bg-background-100 grid grid-cols-2 gap-2 rounded-md border p-4 md:grid-cols-4">
+                  {HaReferenceTypes.map((scheme) => (
+                    <div className="flex items-center gap-2" key={scheme.id}>
+                      <Checkbox
+                        id={scheme.id}
+                        checked={selectedSchemes.includes(scheme.id)}
+                        onCheckedChange={() =>
+                          setSelectedSchemes(
+                            selectedSchemes.includes(scheme.id)
+                              ? selectedSchemes.filter((s) => s !== scheme.id)
+                              : [...selectedSchemes, scheme.id],
+                          )
+                        }
+                        className="service-card-checkbox"
+                      />
+                      <Label htmlFor={scheme.id} className="text-sm">
+                        {scheme.label}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="service-card-row">
                 <div className="w-full">
-                  <SearchWorkspaceInput
-                    title="Output Folder"
-                    placeholder="Select Output Folder"
-                    onChange={setOutputFolder}
-                  />
+                  <OutputFolder onChange={setOutputFolder} />
                 </div>
-
                 <div className="w-full">
-                  <Label className="service-card-label">Output Name</Label>
-                  <Input
-                    defaultValue=""
-                    placeholder="Output Name"
-                    onChange={(e) => setOutputName(e.target.value)}
-                  />
+                  <OutputFolder variant="name" onChange={setOutputName} />
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
-      </div>
+      </form>
 
       {/* Action Buttons */}
       <div className="service-form-controls">

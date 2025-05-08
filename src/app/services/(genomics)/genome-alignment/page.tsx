@@ -110,29 +110,31 @@ const GenomeAlignmentInterface = () => {
 
             {/* Selected Genomes List */}
             {/* TODO: Change this table to display 2 columns (Genome name, genome ID) like BVBRC */}
-            <SelectedItemsTable
-              title="Selected Genomes"
-              items={selectedGenomes.map((genome) => ({
-                id: genome.id,
-                name: genome.name,
-                type: "Genome",
-              }))}
-              onRemove={(id) => {
-                const newGenomes = removeFromSelectedGenomes(
-                  id,
-                  selectedGenomes,
-                );
-                setSelectedGenomes(newGenomes);
-              }}
-              className="max-h-84 overflow-y-auto"
-            />
+            <div>
+              <SelectedItemsTable
+                title="Selected Genomes"
+                items={selectedGenomes.map((genome) => ({
+                  id: genome.id,
+                  name: genome.name,
+                  type: "Genome",
+                }))}
+                onRemove={(id) => {
+                  const newGenomes = removeFromSelectedGenomes(
+                    id,
+                    selectedGenomes,
+                  );
+                  setSelectedGenomes(newGenomes);
+                }}
+                className="max-h-84 overflow-y-auto"
+              />
+            </div>
           </CardContent>
         </Card>
 
         {/* Parameters Section */}
         <Card>
-          <CardHeader>
-            <CardTitle className="service-form-section-header">
+          <CardHeader className="service-card-header">
+            <CardTitle className="service-card-title">
               Parameters
               <DialogInfoPopup
                 title={genomeAlignmentAdvancedParamaterOptions.title}
@@ -144,7 +146,7 @@ const GenomeAlignmentInterface = () => {
             </CardTitle>
           </CardHeader>
 
-          <CardContent className="space-y-4">
+          <CardContent className="service-card-content">
             <OutputFolder onChange={setOutputFolder} />
 
             <OutputFolder variant="name" onChange={setOutputName} />
@@ -162,8 +164,8 @@ const GenomeAlignmentInterface = () => {
               </CollapsibleTrigger>
 
               <CollapsibleContent className="service-collapsible-content">
-                <div className="flex flex-col gap-4 pt-4 sm:flex-row">
-                  <div className="space-y-4 sm:min-w-fit">
+                <div className="flex flex-col gap-4 sm:flex-row">
+                  <div className="space-y-2 sm:min-w-fit">
                     <Label className="service-card-label">
                       Manually Set Seed Weight
                     </Label>

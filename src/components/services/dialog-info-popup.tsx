@@ -81,13 +81,13 @@ export function DialogInfoPopup({
             ))}
           </div>
         )}
-        <DialogFooter className="sm:justify-end">
+        {/* <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
             <Button type="button" variant="secondary" className="text-white">
               Close
             </Button>
           </DialogClose>
-        </DialogFooter>
+        </DialogFooter> */}
       </DialogContent>
     </Dialog>
   );

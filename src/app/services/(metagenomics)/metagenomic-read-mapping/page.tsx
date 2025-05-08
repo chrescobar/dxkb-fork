@@ -9,7 +9,6 @@ import {
   CardDescription,
   CardFooter,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -26,158 +25,110 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  handlePairedLibraryAdd,
+  handleSingleLibraryAdd,
+  removeFromSelectedLibraries,
+  handleFormSubmit,
+} from "@/lib/service-utils";
 import { ServiceHeader } from "@/components/services/service-header";
-import { ChevronRight, Info } from "lucide-react";
 import SearchReadLibrary from "@/components/services/search-read-library";
 import SelectedItemsTable from "@/components/services/selected-items-table";
 import SearchWorkspaceInput from "@/components/services/search-workspace-input";
-
-interface Library {
-  id: string;
-  name: string;
-  type: "paired" | "single" | "sra";
-}
+import { Library } from "@/types/services";
+import {
+  metagenomicReadMappingInfo,
+  metagenomicReadMappingParameters,
+  readInputFileInfo,
+} from "@/lib/service-info";
+import SraRunAccession from "@/components/services/sra-run-accession";
+import { HelpCircle } from "lucide-react";
+import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
+import OutputFolder from "@/components/services/output-folder";
 
 const MetagenomicReadMappingService = () => {
-  const [sraAccession, setSraAccession] = useState("");
   const [selectedLibraries, setSelectedLibraries] = useState<Library[]>([]);
-  const [geneSetType, setGeneSetType] = useState("predefined_list");
-
-  const handleSraAdd = () => {
-    if (
-      sraAccession.trim() &&
-      !selectedLibraries.some((lib) => lib.name === sraAccession)
-    ) {
-      setSelectedLibraries([
-        ...selectedLibraries,
-        {
-          id: `sra-${Date.now()}`,
-          name: sraAccession,
-          type: "sra",
-        },
-      ]);
-      setSraAccession("");
-    }
-  };
-
-  const removeFromSelectedLibraries = (id: string) => {
-    setSelectedLibraries(selectedLibraries.filter((lib) => lib.id !== id));
-  };
-
-  const handlePairedLibraryAdd = (files: {
-    first: string;
-    second?: string;
-  }) => {
-    if (!files.second) return;
-    const newId = Date.now();
-    setSelectedLibraries([
-      ...selectedLibraries,
-      {
-        id: `paired-${newId}`,
-        name: `${files.first} / ${files.second}`,
-        type: "paired",
-      },
-    ]);
-  };
-
-  const handleSingleLibraryAdd = (files: { first: string }) => {
-    const newId = Date.now();
-    setSelectedLibraries([
-      ...selectedLibraries,
-      {
-        id: `single-${newId}`,
-        name: files.first,
-        type: "single",
-      },
-    ]);
-  };
+  const [geneSetType, setGeneSetType] = useState("predefined-list");
+  const [geneSetName, setGeneSetName] = useState("card");
+  const [outputFolder, setOutputFolder] = useState("");
+  const [outputName, setOutputName] = useState("");
 
   return (
     <section>
       <ServiceHeader
         title="Metagenomic Read Mapping"
-        tooltipContent="Metagenomic Read Mapping Information"
         description="The Metagenomic Read Mapping Service uses KMA to align reads against
           antibiotic resistance genes from CARD and virulence factors from VFDB."
+        infoPopupTitle={metagenomicReadMappingInfo.title}
+        infoPopupDescription={metagenomicReadMappingInfo.description}
         quickReferenceGuide="#"
         tutorial="#"
         instructionalVideo="#"
       />
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
+      <form
+        onSubmit={handleFormSubmit}
+        className="grid grid-cols-1 gap-6 md:grid-cols-12"
+      >
         <div className="md:col-span-7">
-          {/* Input File Section */}
           <Card>
             <CardHeader className="service-card-header">
               <CardTitle className="service-card-title">
                 Input File
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="service-card-tooltip-icon" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Select your input files here</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <DialogInfoPopup
+                  title={readInputFileInfo.title}
+                  description={readInputFileInfo.description}
+                  sections={readInputFileInfo.sections}
+                />
               </CardTitle>
             </CardHeader>
 
-            <CardContent className="service-card-content space-y-6">
+            <CardContent className="service-card-content">
               <SearchReadLibrary
                 title="Paired Read Library"
                 firstPlaceholder="Select File 1..."
                 secondPlaceholder="Select File 2..."
                 variant="pair"
-                onAdd={handlePairedLibraryAdd}
+                onAdd={(files) => {
+                  const newLibraries = handlePairedLibraryAdd(
+                    files,
+                    selectedLibraries,
+                  );
+                  setSelectedLibraries(newLibraries);
+                }}
               />
 
               <SearchReadLibrary
                 title="Single Read Library"
                 firstPlaceholder="Select File 1..."
                 variant="single"
-                onAdd={handleSingleLibraryAdd}
+                onAdd={(files) => {
+                  const newLibraries = handleSingleLibraryAdd(
+                    files,
+                    selectedLibraries,
+                  );
+                  setSelectedLibraries(newLibraries);
+                }}
               />
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label className="service-card-label">
-                    SRA Run Accession
-                  </Label>
-                  <div className="bg-border mx-4 h-[1px] flex-1" />
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={handleSraAdd}
-                    disabled={!sraAccession.trim()}
-                  >
-                    <ChevronRight size={16} />
-                  </Button>
-                </div>
-                <div className="flex gap-2">
-                  <Input
-                    className="service-card-input"
-                    placeholder="SRR"
-                    value={sraAccession}
-                    onChange={(e) => setSraAccession(e.target.value)}
-                  />
-                </div>
-              </div>
+              <SraRunAccession
+                selectedLibraries={selectedLibraries}
+                setSelectedLibraries={setSelectedLibraries}
+              />
             </CardContent>
           </Card>
         </div>
 
         <div className="md:col-span-5">
           {/* Selected Libraries Section */}
-          <Card>
+          <Card className="h-full">
             <CardHeader className="service-card-header">
               <CardTitle className="service-card-title">
                 Selected Libraries
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
-                      <Info className="service-card-tooltip-icon" />
+                      <HelpCircle className="service-card-tooltip-icon" />
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>Place read files here using the arrow buttons</p>
@@ -192,7 +143,6 @@ const MetagenomicReadMappingService = () => {
 
             <CardContent>
               <SelectedItemsTable
-                title="Selected Libraries"
                 items={selectedLibraries.map((lib) => ({
                   id: lib.id,
                   name: lib.name,
@@ -203,7 +153,13 @@ const MetagenomicReadMappingService = () => {
                         ? "Single Read"
                         : "SRA Accession",
                 }))}
-                onRemove={removeFromSelectedLibraries}
+                onRemove={(id) => {
+                  const newLibraries = removeFromSelectedLibraries(
+                    id,
+                    selectedLibraries,
+                  );
+                  setSelectedLibraries(newLibraries);
+                }}
               />
             </CardContent>
           </Card>
@@ -215,16 +171,11 @@ const MetagenomicReadMappingService = () => {
             <CardHeader className="service-card-header">
               <CardTitle className="service-card-title">
                 Parameters
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="service-card-tooltip-icon" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Configure analysis parameters</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <DialogInfoPopup
+                  title={metagenomicReadMappingParameters.title}
+                  description={metagenomicReadMappingParameters.description}
+                  sections={metagenomicReadMappingParameters.sections}
+                />
               </CardTitle>
             </CardHeader>
 
@@ -232,47 +183,34 @@ const MetagenomicReadMappingService = () => {
               <div className="space-y-6">
                 <div className="flex w-full flex-col gap-4 space-y-4 md:flex-row md:space-y-0">
                   <div className="w-full">
-                    <div className="flex items-center gap-2">
-                      <Label className="service-card-label">
-                        Assembly Strategy
-                      </Label>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Info className="service-card-tooltip-icon" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Select the assembly strategy</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
+                    <Label className="service-card-label">Gene Set Type</Label>
+
                     <RadioGroup
-                      defaultValue="predefined_list"
+                      defaultValue="predefined-list"
                       className="service-radio-group"
                       onValueChange={setGeneSetType}
                     >
                       <div className="service-radio-group-item">
                         <RadioGroupItem
-                          value="predefined_list"
-                          id="predefined_list"
+                          value="predefined-list"
+                          id="predefined-list"
                         />
-                        <Label htmlFor="predefined_list" className="text-sm">
+                        <Label htmlFor="predefined-list" className="text-sm">
                           Predefined List
                         </Label>
                       </div>
                       <div className="service-radio-group-item">
-                        <RadioGroupItem value="fasta_file" id="fasta_file" />
-                        <Label htmlFor="fasta_file" className="text-sm">
+                        <RadioGroupItem value="fasta-file" id="fasta-file" />
+                        <Label htmlFor="fasta-file" className="text-sm">
                           FASTA File
                         </Label>
                       </div>
                       <div className="service-radio-group-item">
                         <RadioGroupItem
-                          value="feature_group"
-                          id="feature_group"
+                          value="feature-group"
+                          id="feature-group"
                         />
-                        <Label htmlFor="feature_group" className="text-sm">
+                        <Label htmlFor="feature-group" className="text-sm">
                           Feature Group
                         </Label>
                       </div>
@@ -280,13 +218,13 @@ const MetagenomicReadMappingService = () => {
                   </div>
                 </div>
 
-                {geneSetType === "predefined_list" && (
+                {geneSetType === "predefined-list" && (
                   <div className="w-full">
                     <Label className="service-card-label">
                       Predefined Gene Set Name
                     </Label>
                     <Select defaultValue="card">
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="service-card-select-trigger">
                         <SelectValue placeholder="Select Genome Group" />
                       </SelectTrigger>
                       <SelectContent>
@@ -297,7 +235,7 @@ const MetagenomicReadMappingService = () => {
                   </div>
                 )}
 
-                {geneSetType === "fasta_file" && (
+                {geneSetType === "fasta-file" && (
                   <div className="w-full">
                     <SearchWorkspaceInput
                       title="Gene Set FASTA"
@@ -306,7 +244,7 @@ const MetagenomicReadMappingService = () => {
                   </div>
                 )}
 
-                {geneSetType === "feature_group" && (
+                {geneSetType === "feature-group" && (
                   <div className="w-full">
                     <SearchWorkspaceInput
                       title="Gene Set Feature Group"
@@ -315,29 +253,23 @@ const MetagenomicReadMappingService = () => {
                   </div>
                 )}
 
-                <div className="space-y-6">
-                  <SearchWorkspaceInput
-                    title="Output Folder"
-                    placeholder="Select Output Folder"
-                  />
-
-                  <div>
-                    <Label className="service-card-label">Output Name</Label>
-                    <Input
-                      placeholder="Output Name"
-                      className="service-card-input"
-                    />
+                <div className="flex flex-col space-y-4">
+                  <div className="w-full">
+                    <OutputFolder onChange={setOutputFolder} />
+                  </div>
+                  <div className="w-full">
+                    <OutputFolder variant="name" onChange={setOutputName} />
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
-
-          <div className="service-form-controls">
-            <Button variant="outline">Reset</Button>
-            <Button>Submit</Button>
-          </div>
         </div>
+      </form>
+
+      <div className="service-form-controls">
+        <Button variant="outline">Reset</Button>
+        <Button>Submit</Button>
       </div>
     </section>
   );

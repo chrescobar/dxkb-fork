@@ -28,26 +28,42 @@ import {
 } from "@/components/ui/tooltip";
 import { ServiceHeader } from "@/components/services/service-header";
 import SearchReadLibrary from "@/components/services/search-read-library";
-import { ChevronRight, Info } from "lucide-react";
 import SelectedItemsTable from "@/components/services/selected-items-table";
-import SearchWorkspaceInput from "@/components/services/search-workspace-input";
-
-interface Library {
-  id: string;
-  name: string;
-  type: "paired" | "single" | "sra";
-}
+import SraRunAccession from "@/components/services/sra-run-accession";
+import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
+import OutputFolder from "@/components/services/output-folder";
+import { HelpCircle } from "lucide-react";
+import { Library } from "@/types/services";
+import {
+  handlePairedLibraryAdd,
+  handleSingleLibraryAdd,
+  removeFromSelectedLibraries,
+  handleFormSubmit,
+} from "@/lib/service-utils";
+import {
+  taxonomyClassificationAnalysisType,
+  taxonomyClassificationDatabase,
+  taxonomyClassificationFilterHostReads,
+  taxonomyClassificatioConfidenceInterval,
+  taxonomyClassificationInfo,
+  taxonomyClassificationInput,
+  taxonomyClassificationParameters,
+} from "@/lib/service-info";
 
 const TaxonomicClassificationService = () => {
-  const [sraAccession, setSraAccession] = useState("");
   const [selectedLibraries, setSelectedLibraries] = useState<Library[]>([]);
   const [sequencingType, setSequencingType] = useState("wgs");
+  const [outputFolder, setOutputFolder] = useState("");
+  const [outputName, setOutputName] = useState("");
   const [selectedDatabase, setSelectedDatabase] = useState(
     sequencingType === "wgs" ? "bvbrc" : "silva",
   );
   const [selectedAnalysisType, setSelectedAnalysisType] = useState(
     sequencingType === "wgs" ? "microbiome" : "default",
   );
+  const [saveClassifiedSequences, setSaveClassifiedSequences] = useState("no");
+  const [saveUnclassifiedSequences, setSaveUnclassifiedSequences] =
+    useState("no");
 
   useEffect(() => {
     setSelectedDatabase(sequencingType === "wgs" ? "bvbrc" : "silva");
@@ -65,100 +81,56 @@ const TaxonomicClassificationService = () => {
     sra: "Sample ID",
   });
 
-  const handlePairedLibraryAdd = (files: {
-    first: string;
-    second?: string;
-  }) => {
-    if (!files.second) return;
-    const newId = Date.now();
-    setSelectedLibraries([
-      ...selectedLibraries,
-      {
-        id: `paired-${newId}`,
-        name: `${files.first} / ${files.second}`,
-        type: "paired",
-      },
-    ]);
-  };
-
-  const handleSingleLibraryAdd = (files: { first: string }) => {
-    const newId = Date.now();
-    setSelectedLibraries([
-      ...selectedLibraries,
-      {
-        id: `single-${newId}`,
-        name: files.first,
-        type: "single",
-      },
-    ]);
-  };
-
-  const handleSraAdd = () => {
-    if (
-      sraAccession.trim() &&
-      !selectedLibraries.some((lib) => lib.name === sraAccession)
-    ) {
-      setSelectedLibraries([
-        ...selectedLibraries,
-        {
-          id: `sra-${Date.now()}`,
-          name: sraAccession,
-          type: "sra",
-        },
-      ]);
-      setSraAccession("");
-    }
-  };
-
-  const removeFromSelectedLibraries = (id: string) => {
-    setSelectedLibraries(selectedLibraries.filter((lib) => lib.id !== id));
-  };
-
   return (
     <section>
       <ServiceHeader
         title="Taxonomic Classification"
-        tooltipContent="Taxonomic Classification Information"
         description="The Taxonomic Classification Service computes taxonomic classification
           for read data."
+        infoPopupTitle={taxonomyClassificationInfo.title}
+        infoPopupDescription={taxonomyClassificationInfo.description}
         quickReferenceGuide="#"
         tutorial="#"
         instructionalVideo="#"
       />
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
+      <form
+        onSubmit={handleFormSubmit}
+        className="grid grid-cols-1 gap-6 md:grid-cols-12"
+      >
         <div className="md:col-span-7">
           {/* Input File Section */}
           <Card>
             <CardHeader className="service-card-header">
               <CardTitle className="service-card-title">
                 Input File
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="service-card-tooltip-icon" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Select your input files here</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <DialogInfoPopup
+                  title={taxonomyClassificationInput.title}
+                  description={taxonomyClassificationInput.description}
+                />
               </CardTitle>
             </CardHeader>
 
-            <CardContent className="service-card-content space-y-6">
-              <div className="space-y-6">
+            <CardContent className="service-card-content !space-y-8">
+              <div id="paired-read-library" className="space-y-4">
                 <SearchReadLibrary
                   title="Paired Read Library"
                   firstPlaceholder="Select File 1..."
                   secondPlaceholder="Select File 2..."
                   variant="pair"
-                  onAdd={handlePairedLibraryAdd}
+                  onAdd={(files) => {
+                    const newLibraries = handlePairedLibraryAdd(
+                      files,
+                      selectedLibraries,
+                    );
+                    setSelectedLibraries(newLibraries);
+                  }}
+                  // canAdd={Boolean(sampleIdentifiers)}
                 />
 
-                <div className="mt-2">
-                  <Label className="service-card-label">
-                    Sample Identifier
+                <div>
+                  <Label className="service-card-sublabel">
+                    Paired Sample Identifier
                   </Label>
                   <Input
                     onChange={(e) =>
@@ -173,19 +145,24 @@ const TaxonomicClassificationService = () => {
                 </div>
               </div>
 
-              <br />
-
-              <div className="space-y-6">
+              <div id="single-read-library" className="space-y-4">
                 <SearchReadLibrary
                   title="Single Read Library"
                   firstPlaceholder="Select File 1..."
                   variant="single"
-                  onAdd={handleSingleLibraryAdd}
+                  onAdd={(files) => {
+                    const newLibraries = handleSingleLibraryAdd(
+                      files,
+                      selectedLibraries,
+                    );
+                    setSelectedLibraries(newLibraries);
+                  }}
+                  // canAdd={Boolean(sampleIdentifiers)}
                 />
 
                 <div className="mt-2">
-                  <Label className="service-card-label">
-                    Sample Identifier
+                  <Label className="service-card-sublabel">
+                    Single Sample Identifier
                   </Label>
                   <Input
                     onChange={(e) =>
@@ -200,38 +177,15 @@ const TaxonomicClassificationService = () => {
                 </div>
               </div>
 
-              <br />
-
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label className="service-card-label">
-                      SRA Run Accession
-                    </Label>
-                    <div className="bg-border mx-4 h-[1px] flex-1" />
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={handleSraAdd}
-                      disabled={!sraAccession.trim()}
-                    >
-                      <ChevronRight size={16} />
-                    </Button>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Input
-                      className="service-card-input"
-                      placeholder="SRR"
-                      value={sraAccession}
-                      onChange={(e) => setSraAccession(e.target.value)}
-                    />
-                  </div>
-                </div>
+              <div id="sra-run-accession" className="space-y-4">
+                <SraRunAccession
+                  selectedLibraries={selectedLibraries}
+                  setSelectedLibraries={setSelectedLibraries}
+                />
 
                 <div className="mt-2">
-                  <Label className="service-card-label">
-                    Sample Identifier
+                  <Label className="service-card-sublabel">
+                    SRA Sample Identifier
                   </Label>
                   <Input
                     onChange={(e) =>
@@ -258,7 +212,7 @@ const TaxonomicClassificationService = () => {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
-                      <Info className="service-card-tooltip-icon" />
+                      <HelpCircle className="service-card-tooltip-icon" />
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>Place read files here using the arrow buttons</p>
@@ -266,14 +220,13 @@ const TaxonomicClassificationService = () => {
                   </Tooltip>
                 </TooltipProvider>
               </CardTitle>
-              <CardDescription className="text-xs">
+              <CardDescription>
                 Place read files here using the arrow buttons.
               </CardDescription>
             </CardHeader>
 
-            <CardContent>
+            <CardContent className="service-card-content">
               <SelectedItemsTable
-                title="Selected Libraries"
                 items={selectedLibraries.map((lib) => ({
                   id: lib.id,
                   name: lib.name,
@@ -284,7 +237,13 @@ const TaxonomicClassificationService = () => {
                         ? "Single Read"
                         : "SRA Accession",
                 }))}
-                onRemove={removeFromSelectedLibraries}
+                onRemove={(id) => {
+                  const newLibraries = removeFromSelectedLibraries(
+                    id,
+                    selectedLibraries,
+                  );
+                  setSelectedLibraries(newLibraries);
+                }}
               />
             </CardContent>
           </Card>
@@ -296,20 +255,14 @@ const TaxonomicClassificationService = () => {
             <CardHeader className="service-card-header">
               <CardTitle className="service-card-title">
                 Parameters
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="service-card-tooltip-icon" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Configure analysis parameters</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <DialogInfoPopup
+                  title={taxonomyClassificationParameters.title}
+                  description={taxonomyClassificationParameters.description}
+                />
               </CardTitle>
             </CardHeader>
 
-            <CardContent>
+            <CardContent className="service-card-content">
               <div className="space-y-6">
                 <div className="space-y-6">
                   <div id="sequencing-type-container">
@@ -320,7 +273,7 @@ const TaxonomicClassificationService = () => {
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
-                            <Info className="service-card-tooltip-icon" />
+                            <HelpCircle className="service-card-tooltip-icon mb-2" />
                           </TooltipTrigger>
                           <TooltipContent>
                             <p>
@@ -361,16 +314,14 @@ const TaxonomicClassificationService = () => {
                         <Label className="service-card-label">
                           Analysis Type
                         </Label>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <Info className="service-card-tooltip-icon" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Select the analysis type</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <DialogInfoPopup
+                          title={taxonomyClassificationAnalysisType.title}
+                          description={
+                            taxonomyClassificationAnalysisType.description
+                          }
+                          sections={taxonomyClassificationAnalysisType.sections}
+                          className="mb-2"
+                        />
                       </div>
 
                       <Select
@@ -378,7 +329,7 @@ const TaxonomicClassificationService = () => {
                         onValueChange={setSelectedAnalysisType}
                         disabled={sequencingType === "16s"}
                       >
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="Select analysis type" />
                         </SelectTrigger>
                         <SelectContent>
@@ -405,23 +356,21 @@ const TaxonomicClassificationService = () => {
                     >
                       <div className="flex items-center gap-2">
                         <Label className="service-card-label">Database</Label>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <Info className="service-card-tooltip-icon" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Select the reference database</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <DialogInfoPopup
+                          title={taxonomyClassificationDatabase.title}
+                          description={
+                            taxonomyClassificationDatabase.description
+                          }
+                          sections={taxonomyClassificationDatabase.sections}
+                          className="mb-2"
+                        />
                       </div>
 
                       <Select
                         value={selectedDatabase}
                         onValueChange={setSelectedDatabase}
                       >
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="Select database" />
                         </SelectTrigger>
                         <SelectContent>
@@ -455,31 +404,20 @@ const TaxonomicClassificationService = () => {
                         <Label className="service-card-label">
                           Filter Host Reads
                         </Label>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <Info className="service-card-tooltip-icon" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>
-                                If a host is chosen in the Filter Host Reads
-                                dropdown, Hisat2 will align the reads to the
-                                host genome then remove any aligned reads that
-                                aligned to the host genome from the sample.
-                                FastQC will run on the host removed reads. Then
-                                the host removed reads are used in thee Kraken2
-                                command.
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <DialogInfoPopup
+                          title={taxonomyClassificationFilterHostReads.title}
+                          description={
+                            taxonomyClassificationFilterHostReads.description
+                          }
+                          className="mb-2"
+                        />
                       </div>
 
                       <Select
                         defaultValue="none"
                         disabled={sequencingType === "16s"}
                       >
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="Select filter option" />
                         </SelectTrigger>
                         <SelectContent>
@@ -514,25 +452,17 @@ const TaxonomicClassificationService = () => {
                         <Label className="service-card-label">
                           Confidence Interval
                         </Label>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <Info className="service-card-tooltip-icon" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>
-                                The default confidence interval is 0.1. The
-                                classifier then will adjust labels up the tree
-                                until the label's score meets or exceeds that
-                                threshold.
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <DialogInfoPopup
+                          title={taxonomyClassificatioConfidenceInterval.title}
+                          description={
+                            taxonomyClassificatioConfidenceInterval.description
+                          }
+                          className="mb-2"
+                        />
                       </div>
 
                       <Select defaultValue="0.1">
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="Select confidence interval" />
                         </SelectTrigger>
                         <SelectContent>
@@ -559,8 +489,9 @@ const TaxonomicClassificationService = () => {
                       </Label>
 
                       <RadioGroup
-                        defaultValue="no"
+                        defaultValue={saveClassifiedSequences}
                         className="service-radio-group"
+                        onValueChange={setSaveClassifiedSequences}
                       >
                         <div className="service-radio-group-item">
                           <RadioGroupItem value="no" id="classified-no" />
@@ -583,8 +514,9 @@ const TaxonomicClassificationService = () => {
                       </Label>
 
                       <RadioGroup
-                        defaultValue="no"
+                        defaultValue={saveUnclassifiedSequences}
                         className="service-radio-group"
+                        onValueChange={setSaveUnclassifiedSequences}
                       >
                         <div className="service-radio-group-item">
                           <RadioGroupItem value="no" id="unclassified-no" />
@@ -603,31 +535,23 @@ const TaxonomicClassificationService = () => {
                   </div>
                 </div>
 
-                <div className="space-y-3 md:col-span-2">
-                  <div>
-                    <SearchWorkspaceInput
-                      title="Output Folder"
-                      placeholder="Select Output Folder"
-                    />
+                <div className="flex flex-col space-y-4">
+                  <div className="w-full">
+                    <OutputFolder onChange={setOutputFolder} />
                   </div>
-
-                  <div>
-                    <Label className="service-card-label">Output Name</Label>
-                    <Input
-                      placeholder="Output Name"
-                      className="service-card-input"
-                    />
+                  <div className="w-full">
+                    <OutputFolder variant="name" onChange={setOutputName} />
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
-
-          <div className="service-form-controls">
-            <Button variant="outline">Reset</Button>
-            <Button>Submit</Button>
-          </div>
         </div>
+      </form>
+
+      <div className="service-form-controls">
+        <Button variant="outline">Reset</Button>
+        <Button>Submit</Button>
       </div>
     </section>
   );

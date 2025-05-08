@@ -23,7 +23,7 @@ interface ServiceInfoSection {
 
 interface ServiceInfoSubsection {
   subheader: string;
-  subdescription: string;
+  subdescription?: string;
 }
 
 
@@ -67,7 +67,7 @@ export const HaReferenceTypes = [
   { id: "B/HUMAN/BRISBANE/60/2008", label: "BBrisbane" },
 ];
 
-export const subspeciesClassificationSpecies = [
+export const subspeciesClassificationSpeciesList = [
   { id: "adenoviridae_mastadenovirus_A", label: "Adenoviridae - Human mastadenovirus A [complete genome, genomic RNA]" },
   { id: "adenoviridae_mastadenovirus_B", label: "Adenoviridae - Human mastadenovirus B [complete genome, genomic RNA]" },
   { id: "adenoviridae_mastadenovirus_C", label: "Adenoviridae - Human mastadenovirus C [complete genome, genomic RNA]" },

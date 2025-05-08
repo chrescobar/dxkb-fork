@@ -24,36 +24,31 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import {
-  Info,
-  Upload,
-  FileText,
-  ArrowRight,
-  X,
-  HelpCircle,
-  Droplets,
-  Link2,
-  ChevronRight,
-} from "lucide-react";
+import { HelpCircle } from "lucide-react";
 import { ServiceHeader } from "@/components/services/service-header";
 import SearchReadLibrary from "@/components/services/search-read-library";
+import { Library, primerOptions } from "@/types/services";
+import { DatePickerInput } from "@/components/ui/date-picker-input";
+import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
+import SelectedItemsTable from "@/components/services/selected-items-table";
+import OutputFolder from "@/components/services/output-folder";
+import SraRunAccession from "@/components/services/sra-run-accession";
 import {
   handlePairedLibraryAdd,
   handleSingleLibraryAdd,
-  handleSraAdd,
   removeFromSelectedLibraries,
+  handleFormSubmit,
 } from "@/lib/service-utils";
-import { Library, primerOptions } from "@/types/services";
-import { DatePicker } from "@/components/ui/date-picker";
-import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import { wastewaterAnalysisInputLib } from "@/lib/service-info";
-import SelectedItemsTable from "@/components/services/selected-items-table";
+import {
+  sarsCov2WastewaterAnalysisInfo,
+  sarsCov2WastewaterAnalysisInputLib,
+} from "@/lib/service-info";
 
 export default function WastewaterAnalysis() {
   const [selectedLibraries, setSelectedLibraries] = useState<Library[]>([]);
-  const [sraAccession, setSraAccession] = useState("");
   const [primer, setPrimer] = useState<string>("artic");
+  const [outputFolder, setOutputFolder] = useState<string>("");
+  const [outputName, setOutputName] = useState<string>("");
   const [version, setVersion] = useState<string>(
     primerOptions.find((option) => option.id === primer)?.versions[0] ?? "",
   );
@@ -62,29 +57,33 @@ export default function WastewaterAnalysis() {
     <section>
       <ServiceHeader
         title="SARS-CoV-2 Wastewater Analysis"
-        tooltipContent="SARS-CoV-2 Wastewater Analysis Information"
         description="The SARS-CoV-2 Wastewater Analysis assembles raw reads with the Sara
           One Codex pipeline and performs variant analysis with Freyja."
+        infoPopupTitle={sarsCov2WastewaterAnalysisInfo.title}
+        infoPopupDescription={sarsCov2WastewaterAnalysisInfo.description}
         quickReferenceGuide="#"
         tutorial="#"
         instructionalVideo="#"
       />
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <form
+        onSubmit={handleFormSubmit}
+        className="grid grid-cols-1 gap-6 lg:grid-cols-2"
+      >
         {/* Input Library Section */}
         <Card>
           <CardHeader className="service-card-header">
             <CardTitle className="service-card-title">
               Input Library Selection
               <DialogInfoPopup
-                title={wastewaterAnalysisInputLib.title}
-                description={wastewaterAnalysisInputLib.description}
-                sections={wastewaterAnalysisInputLib.sections}
+                title={sarsCov2WastewaterAnalysisInputLib.title}
+                description={sarsCov2WastewaterAnalysisInputLib.description}
+                sections={sarsCov2WastewaterAnalysisInputLib.sections}
               />
             </CardTitle>
             <CardDescription>
-              Send to selected libraries using the arrow buttons
+              Send to selected libraries using the arrow buttons.
             </CardDescription>
           </CardHeader>
 
@@ -116,37 +115,10 @@ export default function WastewaterAnalysis() {
               }}
             />
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label className="service-card-label">SRA Run Accession</Label>
-                <div className="bg-border mx-4 h-[1px] flex-1" />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => {
-                    const newLibraries = handleSraAdd(
-                      sraAccession,
-                      selectedLibraries,
-                    );
-                    if (newLibraries) {
-                      setSelectedLibraries(newLibraries);
-                      setSraAccession("");
-                    }
-                  }}
-                  disabled={!sraAccession.trim()}
-                >
-                  <ChevronRight size={16} />
-                </Button>
-              </div>
-              <div className="flex gap-2">
-                <Input
-                  className="service-card-input"
-                  placeholder="SRR"
-                  value={sraAccession}
-                  onChange={(e) => setSraAccession(e.target.value)}
-                />
-              </div>
-            </div>
+            <SraRunAccession
+              selectedLibraries={selectedLibraries}
+              setSelectedLibraries={setSelectedLibraries}
+            />
 
             <div className="service-card-row">
               <div className="flex w-full flex-col gap-2">
@@ -161,7 +133,7 @@ export default function WastewaterAnalysis() {
                     setVersion(selectedPrimer?.versions[0] ?? "");
                   }}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="service-card-select-trigger">
                     <SelectValue placeholder="Select primer" />
                   </SelectTrigger>
                   <SelectContent>
@@ -178,7 +150,7 @@ export default function WastewaterAnalysis() {
                 <Label className="service-card-label">Version</Label>
 
                 <Select value={version} onValueChange={setVersion}>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="service-card-select-trigger">
                     <SelectValue placeholder="Select version" />
                   </SelectTrigger>
                   <SelectContent>
@@ -202,7 +174,7 @@ export default function WastewaterAnalysis() {
             {/* TODO: Change to date picker with text input */}
             <div className="space-y-3">
               <Label className="service-card-label">Sample Date</Label>
-              <DatePicker className="w-full bg-white" />
+              <DatePickerInput className="w-full bg-white" />
             </div>
           </CardContent>
         </Card>
@@ -225,7 +197,7 @@ export default function WastewaterAnalysis() {
             </CardTitle>
           </CardHeader>
 
-          <CardContent>
+          <CardContent className="service-card-content">
             <SelectedItemsTable
               title="Selected Libraries"
               items={selectedLibraries.map((lib) => ({
@@ -270,10 +242,10 @@ export default function WastewaterAnalysis() {
 
           <CardContent className="service-card-content">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <Label className="service-card-label">Strategy</Label>
                 <Select defaultValue="codex">
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="service-card-select-trigger">
                     <SelectValue placeholder="Select a strategy" />
                   </SelectTrigger>
                   <SelectContent>
@@ -285,35 +257,21 @@ export default function WastewaterAnalysis() {
             </div>
 
             <div className="service-card-row">
-              <div className="w-full space-y-3">
-                <Label className="service-card-label">Output Folder</Label>
-                <div className="flex items-center gap-2">
-                  <Input
-                    placeholder="Select output folder"
-                    className="service-card-input"
-                  />
-                  <Button variant="outline" size="icon">
-                    <FileText className="h-4 w-4" />
-                  </Button>
-                </div>
+              <div className="w-full">
+                <OutputFolder onChange={setOutputFolder} />
               </div>
-
-              <div className="w-full space-y-3">
-                <Label className="service-card-label">Output Name</Label>
-                <Input
-                  className="service-card-input"
-                  placeholder="Output Name"
-                />
+              <div className="w-full">
+                <OutputFolder variant="name" onChange={setOutputName} />
               </div>
             </div>
           </CardContent>
         </Card>
-      </div>
+      </form>
 
       {/* Action Buttons */}
       <div className="service-form-controls">
         <Button variant="outline">Reset</Button>
-        <Button>Submit</Button>
+        <Button type="submit">Submit</Button>
       </div>
     </section>
   );

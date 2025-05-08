@@ -55,7 +55,6 @@ import OutputFolder from "@/components/services/output-folder";
 import { Library } from "@/types/services";
 
 export default function GenomeAssemblyPage() {
-  const [sraAccession, setSraAccession] = useState("");
   const [selectedLibraries, setSelectedLibraries] = useState<Library[]>([]);
   const [outputFolder, setOutputFolder] = useState("");
   const [outputName, setOutputName] = useState("");
@@ -64,7 +63,6 @@ export default function GenomeAssemblyPage() {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   const resetForm = () => {
-    setSraAccession("");
     setSelectedLibraries([]);
     setOutputFolder("");
     setOutputName("");
@@ -391,7 +389,6 @@ export default function GenomeAssemblyPage() {
 
             <CardContent className="service-card-content">
               <SelectedItemsTable
-                title="Selected Libraries"
                 items={selectedLibraries.map((library) => ({
                   id: library.id,
                   name: library.name,

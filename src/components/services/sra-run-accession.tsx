@@ -12,22 +12,31 @@ interface SraRunAccessionProps {
   selectedLibraries: Library[];
   setSelectedLibraries: (libraries: Library[]) => void;
   disabled?: boolean;
+  onValueChange?: (value: string) => void;
+  allowDuplicates?: boolean;
 }
 
 const SraRunAccession = ({
   title = "SRA Run Accession",
-  placeholder = "SRR",
+  placeholder = "Select SRA File...",
   selectedLibraries,
   setSelectedLibraries,
   disabled = false,
+  onValueChange,
+  allowDuplicates = false,
 }: SraRunAccessionProps) => {
   const [sraAccession, setSraAccession] = useState("");
 
   const handleAdd = () => {
-    const newLibraries = handleSraAdd(sraAccession, selectedLibraries);
+    const newLibraries = handleSraAdd(
+      sraAccession,
+      selectedLibraries,
+      allowDuplicates,
+    );
     if (newLibraries) {
       setSelectedLibraries(newLibraries);
       setSraAccession("");
+      if (onValueChange) onValueChange("");
     }
   };
 
@@ -50,7 +59,10 @@ const SraRunAccession = ({
           className="service-card-input"
           placeholder={placeholder}
           value={sraAccession}
-          onChange={(e) => setSraAccession(e.target.value)}
+          onChange={(e) => {
+            setSraAccession(e.target.value);
+            if (onValueChange) onValueChange(e.target.value);
+          }}
           disabled={disabled}
         />
       </div>

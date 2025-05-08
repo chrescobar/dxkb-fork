@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -12,42 +11,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
-import {
-  HelpCircle,
-} from "lucide-react";
 import { ServiceHeader } from "@/components/services/service-header";
 import {
   subspeciesClassificationQuerySource,
-  subspeciesClassificationSpecies as subspeciesClassificationSpeciesInfo,
+  subspeciesClassificationInfo,
+  subspeciesClassificationSpeciesInfo,
 } from "@/lib/service-info";
-import { subspeciesClassificationSpecies } from "@/types/services";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import SearchWorkspaceInput from "@/components/services/search-workspace-input";
 import OutputFolder from "@/components/services/output-folder";
+import { subspeciesClassificationSpeciesList } from "@/types/services";
+import { handleFormSubmit } from "@/lib/service-utils";
 
 export default function SubspeciesClassification() {
   // States for the form
   const [querySequence, setQuerySequence] = useState("");
-  const [species, setSpecies] = useState(
-    subspeciesClassificationSpecies[0].id,
-  );
   const [outputFolder, setOutputFolder] = useState("");
   const [outputName, setOutputName] = useState("");
-  const [querySource, setQuerySource] = useState("sequence");
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // Handle form submission logic here
-    console.log({ querySequence, species, outputFolder, outputName });
-  };
+  const [querySource, setQuerySource] = useState("enter-sequence");
+  const [species, setSpecies] = useState(
+    subspeciesClassificationSpeciesList[0].id,
+  );
 
   const handleReset = () => {
     setQuerySequence("");
@@ -59,7 +45,6 @@ export default function SubspeciesClassification() {
     <section>
       <ServiceHeader
         title="Subspecies Classification"
-        tooltipContent="Subspecies Classification Information"
         description='The Subspecies Classification tool assigns the genotype/subtype of a
           virus, based on the genotype/subtype assignments maintained by the
           International Committee on Taxonomy of Viruses (ICTV). This tool
@@ -69,13 +54,15 @@ export default function SubspeciesClassification() {
           as input. Interpretation of the pplacer result is handled by
           Cladinator. Link to <a href="#" className="text-primary-600 hover:underline">pplacer</a>{" "}
           and <a href="#" className="text-primary-600 hover:underline">Cladinator</a>'
+        infoPopupTitle={subspeciesClassificationInfo.title}
+        infoPopupDescription={subspeciesClassificationInfo.description}
         quickReferenceGuide="#"
         tutorial="#"
         instructionalVideo="#"
       />
 
       {/* Main Form Content */}
-      <div className="grid grid-cols-1 gap-6">
+      <form onSubmit={handleFormSubmit} className="grid grid-cols-1 gap-6">
         {/* Query Source Section */}
         <Card>
           <CardHeader className="service-card-header">
@@ -91,32 +78,32 @@ export default function SubspeciesClassification() {
 
           <CardContent className="service-card-content">
             <RadioGroup
-              defaultValue="sequence"
+              defaultValue="enter-sequence"
               className="service-radio-group"
               onValueChange={setQuerySource}
             >
               <div className="service-radio-group-item">
-                <RadioGroupItem value="sequence" id="sequence" />
-                <Label htmlFor="sequence">Enter Sequence</Label>
+                <RadioGroupItem value="enter-sequence" id="enter-sequence" />
+                <Label htmlFor="enter-sequence">Enter Sequence</Label>
               </div>
               <div className="service-radio-group-item">
-                <RadioGroupItem value="fasta" id="fasta" />
-                <Label htmlFor="fasta">Select FASTA File</Label>
+                <RadioGroupItem value="fasta-file" id="fasta-file" />
+                <Label htmlFor="fasta-file">Select FASTA File</Label>
               </div>
             </RadioGroup>
 
-            {querySource === "sequence" && (
+            {querySource === "enter-sequence" && (
               <Textarea
-                placeholder="Enter one or more protein sequences..."
+                placeholder="Enter one or more nucleotide or protein sequences (FASTA format)..."
                 className="service-card-textarea"
                 value={querySequence}
                 onChange={(e) => setQuerySequence(e.target.value)}
               />
             )}
 
-            {querySource === "fasta" && (
+            {querySource === "fasta-file" && (
               <SearchWorkspaceInput
-                title="FASTA File"
+                title={null}
                 placeholder="Select FASTA File"
               />
             )}
@@ -140,12 +127,12 @@ export default function SubspeciesClassification() {
               <div className="w-full">
                 <Label className="service-card-label">Select Species</Label>
 
-                <Select defaultValue={species}>
-                  <SelectTrigger className="w-full">
+                <Select defaultValue={species} onValueChange={setSpecies}>
+                  <SelectTrigger className="service-card-select-trigger">
                     <SelectValue placeholder="Select species" />
                   </SelectTrigger>
                   <SelectContent className="max-h-128 overflow-y-auto">
-                    {subspeciesClassificationSpecies.map((species) => (
+                    {subspeciesClassificationSpeciesList.map((species) => (
                       <SelectItem key={species.id} value={species.id}>
                         {species.label}
                       </SelectItem>
@@ -156,33 +143,16 @@ export default function SubspeciesClassification() {
 
               <div className="service-card-row">
                 <div className="w-full">
-                  <OutputFolder
-                    onChange={setOutputFolder}
-                  />
+                  <OutputFolder onChange={setOutputFolder} />
                 </div>
-
                 <div className="w-full">
-                  <div className="flex flex-row items-center gap-2">
-                    <Label className="service-card-label">Output Name</Label>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <HelpCircle className="service-card-tooltip-icon mb-2" />
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-sm">The name of the output file. This will appear in the specified output folder when the annotation job is complete.</TooltipContent>
-                    </Tooltip>
-                  </div>
-                  <Input
-                    defaultValue=""
-                    placeholder="Output Name"
-                    onChange={(e) => setOutputName(e.target.value)}
-                    className="service-card-input"
-                  />
+                  <OutputFolder variant="name" onChange={setOutputName} />
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
-      </div>
+      </form>
 
       {/* Action Buttons */}
       <div className="service-form-controls">

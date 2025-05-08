@@ -4,6 +4,11 @@ import { Input } from "../ui/input";
 import { ChevronRight, FolderSearch } from "lucide-react";
 import { Label } from "../ui/label";
 
+interface FileInput {
+  first: string;
+  second?: string;
+}
+
 interface SearchPairInputProps {
   title?: string | null;
   firstPlaceholder?: string;
@@ -13,8 +18,10 @@ interface SearchPairInputProps {
   justInput?: boolean;
   value?: string;
   onChange?: (value: string) => void;
-  onAdd?: (files: { first: string; second?: string }) => void;
+  onAdd?: (files: FileInput) => void;
   disabled?: boolean;
+  allowDuplicates?: boolean;
+  canAdd?: boolean;
 }
 
 const SearchReadLibrary = ({
@@ -28,6 +35,8 @@ const SearchReadLibrary = ({
   onChange,
   onAdd,
   disabled = false,
+  allowDuplicates = false,
+  canAdd: canAddProp,
 }: SearchPairInputProps) => {
   const [firstInput, setFirstInput] = useState("");
   const [secondInput, setSecondInput] = useState("");
@@ -56,14 +65,20 @@ const SearchReadLibrary = ({
     }
   };
 
-  const canAdd = variant === "pair" ? firstInput && secondInput : firstInput;
+  // Allows the adding of an element only if all elements specified have a valid input (Ex. Sars-CoV-2 Genome Analysis page)
+  const canAdd =
+    typeof canAddProp === "boolean"
+      ? canAddProp && (variant === "pair" ? firstInput && secondInput : firstInput)
+      : variant === "pair"
+        ? firstInput && secondInput
+        : firstInput;
 
   return (
     <div className="space-y-2">
       {!justInput && (
         <div className="flex items-center justify-between">
           {title && (
-            <Label className="mb-1 block text-sm font-medium">{title}</Label>
+            <Label className="service-card-label">{title}</Label>
           )}
           <div className="bg-border mx-4 h-[1px] flex-1" />
           <Button
@@ -78,7 +93,7 @@ const SearchReadLibrary = ({
       )}
       <div className="flex gap-2">
         <Input
-          className="flex-1"
+          className="service-card-input"
           placeholder={firstPlaceholder}
           value={firstInput}
           onChange={handleFirstInputChange}
@@ -92,7 +107,7 @@ const SearchReadLibrary = ({
       {variant === "pair" && (
         <div className="flex gap-2">
           <Input
-            className="flex-1"
+            className="service-card-input"
             placeholder={secondPlaceholder}
             value={secondInput}
             onChange={handleSecondInputChange}

@@ -349,7 +349,7 @@
 }
 
 .mobile-nav-link:hover {
-  @apply bg-secondary-100;
+  @apply bg-secondary-50;
 }
 
 .search-results-card-title {
@@ -408,8 +408,6 @@
   @apply inline-flex items-center text-blue-500 hover:text-blue-700;
 }
 
-
-
 .service-header-tooltip {
   @apply h-5 w-5 text-blue-500;
 }
@@ -445,9 +443,6 @@
 .service-collapsible-content {
   @apply w-full py-2 px-2 space-y-4;
 }
-/* .service-collapsible-content {
-  @apply flex flex-row justify-between w-full py-2 px-2;
-} */
 
 .service-collapsible-trigger {
   @apply flex items-center gap-1 p-2 font-medium;
@@ -458,15 +453,15 @@
 }
 
 .service-card-content-grid {
-  @apply grid grid-cols-1 gap-6 md:grid-cols-2 py-4 px-2;
+  @apply grid grid-cols-1 gap-4 md:grid-cols-2 px-2;
 }
 
 .service-card-content-grid-item {
-  @apply space-y-2;
+  @apply space-y-0;
 }
 
 .service-card-row {
-  @apply flex flex-col sm:flex-row gap-4 md:gap-8 w-full;
+  @apply flex flex-col sm:flex-row gap-4 md:gap-6 w-full;
 }
 
 .service-card-row-item {
@@ -482,10 +477,26 @@
 }
 
 .service-card-input {
-  @apply w-full flex-1 bg-white text-sm;
+  @apply w-full flex-1 bg-white text-sm transition-all duration-300;
+}
+
+.service-card-input:hover {
+  @apply bg-secondary-50;
+}
+
+.service-card-input:focus {
+  @apply bg-white;
 }
 
 .service-card-num-input {
+  @apply bg-white transition-all duration-300;
+}
+
+.service-card-num-input:hover {
+  @apply bg-secondary-50;
+}
+
+.service-card-num-input:focus {
   @apply bg-white;
 }
 
@@ -522,11 +533,27 @@
 }
 
 .service-card-textarea {
-  @apply min-h-48 max-h-96 text-sm font-mono;
+  @apply min-h-48 max-h-96 text-sm font-mono transition-all duration-300;
+}
+
+.service-card-textarea:hover {
+  @apply bg-secondary-50;
+}
+
+.service-card-textarea:focus {
+  @apply bg-white;
 }
 
 .service-card-select-trigger {
-  @apply w-full bg-white;
+  @apply w-full bg-white transition-all duration-300;
+}
+
+.service-card-select-trigger:hover {
+  @apply bg-secondary-50;
+}
+
+.service-card-select-trigger:focus {
+  @apply bg-white;
 }
 
 .service-table {

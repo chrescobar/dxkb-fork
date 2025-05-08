@@ -20,7 +20,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Info, ChevronRight, ChevronDown } from "lucide-react";
 import { ServiceHeader } from "@/components/services/service-header";
 import SearchWorkspaceInput from "@/components/services/search-workspace-input";
 import SearchReadLibrary from "@/components/services/search-read-library";
@@ -31,199 +30,150 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { NumberInput } from "@/components/ui/number-input";
-
-interface Library {
-  id: string;
-  name: string;
-  type: "paired" | "single" | "sra";
-}
+import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
+import SraRunAccession from "@/components/services/sra-run-accession";
+import OutputFolder from "@/components/services/output-folder";
+import { ChevronDown, HelpCircle } from "lucide-react";
+import { Library } from "@/types/services";
+import {
+  metagenomicBinningInfo,
+  metagenomicBinningInputFile,
+  metagenomicBinningParameters,
+  metagenomicBinningStartWith,
+} from "@/lib/service-info";
+import {
+  handlePairedLibraryAdd,
+  handleSingleLibraryAdd,
+  removeFromSelectedLibraries,
+  handleFormSubmit,
+} from "@/lib/service-utils";
 
 const MetagenomicBinningService = () => {
-  const [sraAccession, setSraAccession] = useState("");
   const [selectedLibraries, setSelectedLibraries] = useState<Library[]>([]);
   const [showAdvanced, setAdvanced] = useState(false);
-  const [startingDataType, setStartingDataType] = useState("read_file");
-
-  const removeFromSelectedLibraries = (id: string) => {
-    setSelectedLibraries(selectedLibraries.filter((lib) => lib.id !== id));
-  };
-
-  const handlePairedLibraryAdd = (files: {
-    first: string;
-    second?: string;
-  }) => {
-    if (!files.second) return;
-    const newId = Date.now();
-    setSelectedLibraries([
-      ...selectedLibraries,
-      {
-        id: `paired-${newId}`,
-        name: `${files.first} / ${files.second}`,
-        type: "paired",
-      },
-    ]);
-  };
-
-  const handleSingleLibraryAdd = (files: { first: string }) => {
-    const newId = Date.now();
-    setSelectedLibraries([
-      ...selectedLibraries,
-      {
-        id: `single-${newId}`,
-        name: files.first,
-        type: "single",
-      },
-    ]);
-  };
-
-  const handleSraAdd = () => {
-    if (
-      sraAccession.trim() &&
-      !selectedLibraries.some((lib) => lib.name === sraAccession)
-    ) {
-      setSelectedLibraries([
-        ...selectedLibraries,
-        {
-          id: `sra-${Date.now()}`,
-          name: sraAccession,
-          type: "sra",
-        },
-      ]);
-      setSraAccession("");
-    }
-  };
+  const [startingDataType, setStartingDataType] = useState("read-file");
+  const [outputFolder, setOutputFolder] = useState("");
+  const [outputName, setOutputName] = useState("");
+  const [assemblyStrategy, setAssemblyStrategy] = useState("auto");
+  const [organismsOfInterest, setOrganismsOfInterest] = useState("both");
 
   return (
     <section>
       <ServiceHeader
         title="Metagenomic Binning"
-        tooltipContent="Metagenomic Binning Information"
         description="The Metagenomic Binning Service accepts either reads or contigs, and
           attempts to 'bin' the data into a set of genomes. This service can be
           used to reconstruct bacterial and archaeal genomes from environmental
           samples."
+        infoPopupTitle={metagenomicBinningInfo.title}
+        infoPopupDescription={metagenomicBinningInfo.description}
         quickReferenceGuide="#"
         tutorial="#"
         instructionalVideo="#"
       />
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
+      <form
+        onSubmit={handleFormSubmit}
+        className="grid grid-cols-1 gap-6 md:grid-cols-12"
+      >
         <div className="md:col-span-12" id="start-with-section">
           {/* Start With Section */}
           <Card>
             <CardHeader className="service-card-header">
               <CardTitle className="service-card-title">
                 Start With
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="service-card-tooltip-icon" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Select your starting data type</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <DialogInfoPopup
+                  title={metagenomicBinningStartWith.title}
+                  description={metagenomicBinningStartWith.description}
+                  sections={metagenomicBinningStartWith.sections}
+                />
               </CardTitle>
             </CardHeader>
 
             <CardContent className="service-card-content">
               <RadioGroup
-                defaultValue="read_file"
+                defaultValue="read-file"
                 className="service-radio-group"
                 onValueChange={setStartingDataType}
               >
                 <div className="service-radio-group-item">
-                  <RadioGroupItem value="read_file" id="read_file" />
-                  <Label htmlFor="read_file">Read Files</Label>
+                  <RadioGroupItem value="read-file" id="read-file" />
+                  <Label htmlFor="read-file">Read Files</Label>
                 </div>
                 <div className="service-radio-group-item">
                   <RadioGroupItem
-                    value="assembled_contigs"
-                    id="assembled_contigs"
+                    value="assembled-contigs"
+                    id="assembled-contigs"
                   />
-                  <Label htmlFor="assembled_contigs">Assembled Contigs</Label>
+                  <Label htmlFor="assembled-contigs">Assembled Contigs</Label>
                 </div>
               </RadioGroup>
             </CardContent>
           </Card>
         </div>
 
-        {startingDataType === "read_file" && (
+        {startingDataType === "read-file" && (
           <>
             <div className="md:col-span-7" id="input-file-section">
               {/* Input File Section */}
-              <Card>
+              <Card className="h-full">
                 <CardHeader className="service-card-header">
                   <CardTitle className="service-card-title">
                     Input File
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <Info className="service-card-tooltip-icon" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Select your input files here</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                    <DialogInfoPopup
+                      title={metagenomicBinningInputFile.title}
+                      description={metagenomicBinningInputFile.description}
+                      sections={metagenomicBinningInputFile.sections}
+                    />
                   </CardTitle>
                 </CardHeader>
 
-                <CardContent className="service-card-content space-y-6">
+                <CardContent className="service-card-content space-y-4">
                   <SearchReadLibrary
                     title="Paired Read Library"
                     firstPlaceholder="Select File 1..."
                     secondPlaceholder="Select File 2..."
                     variant="pair"
-                    onAdd={handlePairedLibraryAdd}
+                    onAdd={(files) => {
+                      const newLibraries = handlePairedLibraryAdd(
+                        files,
+                        selectedLibraries,
+                      );
+                      setSelectedLibraries(newLibraries);
+                    }}
                   />
 
                   <SearchReadLibrary
                     title="Single Read Library"
                     firstPlaceholder="Select File 1..."
                     variant="single"
-                    onAdd={handleSingleLibraryAdd}
+                    onAdd={(files) => {
+                      const newLibraries = handleSingleLibraryAdd(
+                        files,
+                        selectedLibraries,
+                      );
+                      setSelectedLibraries(newLibraries);
+                    }}
                   />
 
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label className="mb-1 block text-sm font-medium">
-                        SRA Run Accession
-                      </Label>
-                      <div className="bg-border mx-4 h-[1px] flex-1" />
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={handleSraAdd}
-                        disabled={!sraAccession.trim()}
-                      >
-                        <ChevronRight size={16} />
-                      </Button>
-                    </div>
-                    <div className="flex gap-2">
-                      <Input
-                        className="flex-1"
-                        placeholder="SRR"
-                        value={sraAccession}
-                        onChange={(e) => setSraAccession(e.target.value)}
-                      />
-                    </div>
-                  </div>
+                  <SraRunAccession
+                    selectedLibraries={selectedLibraries}
+                    setSelectedLibraries={setSelectedLibraries}
+                  />
                 </CardContent>
               </Card>
             </div>
 
             <div className="md:col-span-5" id="selected-libraries-section">
               {/* Selected Libraries Section */}
-              <Card>
+              <Card className="h-full">
                 <CardHeader className="service-card-header">
                   <CardTitle className="service-card-title">
                     Selected Libraries
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          <Info className="service-card-tooltip-icon" />
+                          <HelpCircle className="service-card-tooltip-icon" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>Place read files here using the arrow buttons</p>
@@ -235,9 +185,9 @@ const MetagenomicBinningService = () => {
                     Place read files here using the arrow buttons.
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+
+                <CardContent className="service-card-content">
                   <SelectedItemsTable
-                    title="Selected Libraries"
                     items={selectedLibraries.map((lib) => ({
                       id: lib.id,
                       name: lib.name,
@@ -248,7 +198,13 @@ const MetagenomicBinningService = () => {
                             ? "Single Read"
                             : "SRA Accession",
                     }))}
-                    onRemove={removeFromSelectedLibraries}
+                    onRemove={(id: string) => {
+                      const newLibraries = removeFromSelectedLibraries(
+                        id,
+                        selectedLibraries,
+                      );
+                      setSelectedLibraries(newLibraries);
+                    }}
                   />
                 </CardContent>
               </Card>
@@ -256,7 +212,7 @@ const MetagenomicBinningService = () => {
           </>
         )}
 
-        {startingDataType === "assembled_contigs" && (
+        {startingDataType === "assembled-contigs" && (
           <div className="md:col-span-12" id="assembled-contigs-section">
             <Card>
               <CardHeader className="service-card-header">
@@ -265,7 +221,7 @@ const MetagenomicBinningService = () => {
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>
-                        <Info className="service-card-tooltip-icon" />
+                        <HelpCircle className="service-card-tooltip-icon" />
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>Select your input files here</p>
@@ -291,42 +247,27 @@ const MetagenomicBinningService = () => {
             <CardHeader className="service-card-header">
               <CardTitle className="service-card-title">
                 Parameters
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="service-card-tooltip-icon" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Configure analysis parameters</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <DialogInfoPopup
+                  title={metagenomicBinningParameters.title}
+                  description={metagenomicBinningParameters.description}
+                  sections={metagenomicBinningParameters.sections}
+                />
               </CardTitle>
             </CardHeader>
 
             <CardContent>
               <div className="space-y-6">
                 <div className="flex w-full flex-col gap-4 md:flex-row">
-                  {startingDataType === "read_file" && (
+                  {startingDataType === "read-file" && (
                     <div className="w-full">
-                      <div className="flex items-center gap-2">
-                        <Label className="service-card-label">
-                          Assembly Strategy
-                        </Label>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <Info className="service-card-tooltip-icon" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Select the assembly strategy</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
+                      <Label className="service-card-label">
+                        Assembly Strategy
+                      </Label>
+
                       <RadioGroup
-                        defaultValue="metaspades"
+                        defaultValue={assemblyStrategy}
                         className="service-radio-group"
+                        onValueChange={setAssemblyStrategy}
                       >
                         <div className="service-radio-group-item">
                           <RadioGroupItem value="metaspades" id="metaspades" />
@@ -351,31 +292,21 @@ const MetagenomicBinningService = () => {
                   )}
 
                   <div className="w-full">
-                    <div className="flex items-center gap-2">
-                      <Label className="service-card-label">
-                        Organisms of Interest
-                      </Label>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Info className="service-card-tooltip-icon" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Select organisms of interest</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
+                    <Label className="service-card-label">
+                      Organisms of Interest
+                    </Label>
+
                     <RadioGroup
-                      defaultValue="bacteria_archaea"
+                      defaultValue={organismsOfInterest}
                       className="service-radio-group"
+                      onValueChange={setOrganismsOfInterest}
                     >
                       <div className="service-radio-group-item">
                         <RadioGroupItem
-                          value="bacteria_archaea"
-                          id="bacteria_archaea"
+                          value="bacteria-archaea"
+                          id="bacteria-archaea"
                         />
-                        <Label htmlFor="bacteria_archaea" className="text-sm">
+                        <Label htmlFor="bacteria-archaea" className="text-sm">
                           Bacteria/Archaea
                         </Label>
                       </div>
@@ -396,21 +327,24 @@ const MetagenomicBinningService = () => {
                 </div>
 
                 <div className="mt-4 space-y-6">
-                  <SearchWorkspaceInput
-                    title="Output Folder"
-                    placeholder="Select Output Folder"
-                  />
-
-                  <div>
-                    <Label className="service-card-label">Output Name</Label>
-                    <Input defaultValue="" placeholder="Output Name" className="service-card-input"/>
+                  <div className="flex flex-col space-y-4">
+                    <div className="w-full">
+                      <OutputFolder onChange={setOutputFolder} />
+                    </div>
+                    <div className="w-full">
+                      <OutputFolder variant="name" onChange={setOutputName} />
+                    </div>
                   </div>
 
                   <div>
                     <Label className="service-card-label">
                       Genome Group Name
                     </Label>
-                    <Input defaultValue="" placeholder="My Genome Group" className="service-card-input"/>
+                    <Input
+                      defaultValue=""
+                      placeholder="My Genome Group"
+                      className="service-card-input"
+                    />
                   </div>
                 </div>
 
@@ -426,18 +360,10 @@ const MetagenomicBinningService = () => {
                     />
                   </CollapsibleTrigger>
 
-                  <CollapsibleContent>
-                    <div className="mt-6 space-y-2">
-                      <div className="mx-2 flex items-center gap-2">
-                        <Checkbox id="disable_search" />
-                        <Label htmlFor="disable_search">
-                          Disable Search For Dangling Contigs (Decreases Memory
-                          Use)
-                        </Label>
-                      </div>
-
-                      <div className="service-card-content-grid">
-                        <div>
+                  <CollapsibleContent className="service-collapsible-content">
+                    <div className="mt-6 space-y-4">
+                      <div className="service-card-row">
+                        <div className="w-full">
                           <Label className="service-card-sublabel">
                             Minimum Contig Length
                           </Label>
@@ -450,7 +376,7 @@ const MetagenomicBinningService = () => {
                           />
                         </div>
 
-                        <div>
+                        <div className="w-full">
                           <Label className="service-card-sublabel">
                             Minimum Contig Coverage
                           </Label>
@@ -463,18 +389,32 @@ const MetagenomicBinningService = () => {
                           />
                         </div>
                       </div>
+
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          id="disable-search"
+                          className="mb-2 bg-white"
+                        />
+                        <Label
+                          htmlFor="disable-search"
+                          className="service-card-sublabel"
+                        >
+                          Disable Search For Dangling Contigs (Decreases Memory
+                          Use)
+                        </Label>
+                      </div>
                     </div>
                   </CollapsibleContent>
                 </Collapsible>
               </div>
             </CardContent>
           </Card>
-
-          <div className="service-form-controls">
-            <Button variant="outline">Reset</Button>
-            <Button>Submit</Button>
-          </div>
         </div>
+      </form>
+
+      <div className="service-form-controls">
+        <Button variant="outline">Reset</Button>
+        <Button>Submit</Button>
       </div>
     </section>
   );

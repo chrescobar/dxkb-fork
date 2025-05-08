@@ -28,7 +28,7 @@ function CollapsibleContent({
       data-slot="collapsible-content"
       {...props}
     >
-      <Separator className="my-2" />
+      <Separator />
       {props.children}
     </CollapsiblePrimitive.CollapsibleContent>
   )

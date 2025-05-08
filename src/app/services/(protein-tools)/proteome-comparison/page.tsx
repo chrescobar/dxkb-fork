@@ -18,40 +18,39 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Upload,
-  Plus,
-  Search,
-  ChevronDown,
-  FolderSearch,
-  Info,
-} from "lucide-react";
-import { CiCircleInfo } from "react-icons/ci";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { Plus, ChevronDown } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Separator } from "@/components/ui/separator";
 import { NumberInput } from "@/components/ui/number-input";
 import { ServiceHeader } from "@/components/services/service-header";
 import SearchWorkspaceInput from "@/components/services/search-workspace-input";
+import {
+  proteomeComparisonInfo,
+  proteomeComparisonParameters,
+  proteomeComparisonComparisonGenomes,
+  proteomeComparisonReferenceGenome,
+} from "@/lib/service-info";
+import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
+import OutputFolder from "@/components/services/output-folder";
+import { handleFormSubmit } from "@/lib/service-utils";
+import SelectedItemsTable from "@/components/services/selected-items-table";
+import { toast } from "sonner";
+
 export default function ProteomeComparisonPage() {
-  const [selectedGenomes, setSelectedGenomes] = useState([
-    "Mycobacterium tuberculosis H37Rv",
-  ]);
-  const [selectedGenome, setSelectedGenome] = useState("tuberculosis");
+  const [selectComparisonGenome, setSelectComparisonGenome] = useState("");
+  const [selectReferenceGenome, setSelectReferenceGenome] = useState("");
+  const [selectedGenomes, setSelectedGenomes] = useState<
+    { name: string; type: string }[]
+  >([]);
   const [showAdvancedParams, setAdvancedParams] = useState(false);
   const [proteinFastaInput, setProteinFastaInput] = useState("");
   const [featureGroupInput, setFeatureGroupInput] = useState("");
   const [genomeGroupInput, setGenomeGroupInput] = useState("");
+  const [outputFolder, setOutputFolder] = useState("");
+  const [outputName, setOutputName] = useState("");
 
   const MAX_GENOMES = 9;
 
@@ -62,188 +61,273 @@ export default function ProteomeComparisonPage() {
     cerevisiae: "Saccharomyces cerevisiae S288C",
   };
 
-  const addGenome = () => {
+  const addComparisonGenome = () => {
     const genomeName =
-      genomeOptions[selectedGenome as keyof typeof genomeOptions];
-    if (
-      !selectedGenomes.includes(genomeName) &&
-      selectedGenomes.length < MAX_GENOMES
-    ) {
-      setSelectedGenomes([...selectedGenomes, genomeName]);
+      genomeOptions[selectComparisonGenome as keyof typeof genomeOptions];
+    const isDuplicate = selectedGenomes.some(
+      (item) => item.name === genomeName && item.type === "Genome",
+    );
+    if (isDuplicate) {
+      toast.error("Each item must be unique (name + type)");
+      return;
+    }
+    if (selectedGenomes.length < MAX_GENOMES) {
+      setSelectedGenomes([
+        ...selectedGenomes,
+        { name: genomeName, type: "Genome" },
+      ]);
     }
   };
 
   const addProteinFasta = () => {
-    if (
-      proteinFastaInput.trim() &&
-      !selectedGenomes.includes(proteinFastaInput) &&
-      selectedGenomes.length < MAX_GENOMES
-    ) {
-      setSelectedGenomes([...selectedGenomes, proteinFastaInput]);
+    if (!proteinFastaInput.trim()) return;
+    const isDuplicate = selectedGenomes.some(
+      (item) => item.name === proteinFastaInput && item.type === "Protein",
+    );
+    if (isDuplicate) {
+      toast.error("Each item must be unique (name + type)");
+      return;
+    }
+    if (selectedGenomes.length < MAX_GENOMES) {
+      setSelectedGenomes([
+        ...selectedGenomes,
+        { name: proteinFastaInput, type: "Protein" },
+      ]);
       setProteinFastaInput("");
     }
   };
 
   const addFeatureGroup = () => {
-    if (
-      featureGroupInput.trim() &&
-      !selectedGenomes.includes(featureGroupInput) &&
-      selectedGenomes.length < MAX_GENOMES
-    ) {
-      setSelectedGenomes([...selectedGenomes, featureGroupInput]);
+    if (!featureGroupInput.trim()) return;
+    const isDuplicate = selectedGenomes.some(
+      (item) =>
+        item.name === featureGroupInput && item.type === "Feature Group",
+    );
+    if (isDuplicate) {
+      toast.error("Each item must be unique (name + type)");
+      return;
+    }
+    if (selectedGenomes.length < MAX_GENOMES) {
+      setSelectedGenomes([
+        ...selectedGenomes,
+        { name: featureGroupInput, type: "Feature Group" },
+      ]);
       setFeatureGroupInput("");
     }
   };
 
   const addGenomeGroup = () => {
-    if (
-      genomeGroupInput.trim() &&
-      !selectedGenomes.includes(genomeGroupInput) &&
-      selectedGenomes.length < MAX_GENOMES
-    ) {
-      setSelectedGenomes([...selectedGenomes, genomeGroupInput]);
+    if (!genomeGroupInput.trim()) return;
+    const isDuplicate = selectedGenomes.some(
+      (item) => item.name === genomeGroupInput && item.type === "Genome Group",
+    );
+    if (isDuplicate) {
+      toast.error("Each item must be unique (name + type)");
+      return;
+    }
+    if (selectedGenomes.length < MAX_GENOMES) {
+      setSelectedGenomes([
+        ...selectedGenomes,
+        { name: genomeGroupInput, type: "Genome Group" },
+      ]);
       setGenomeGroupInput("");
     }
   };
 
-  const removeGenome = (genome: string) => {
-    setSelectedGenomes(selectedGenomes.filter((g) => g !== genome));
+  const resetForm = () => {
+    setSelectedGenomes([]);
+    setSelectComparisonGenome("");
+    setSelectReferenceGenome("");
+    setProteinFastaInput("");
+    setFeatureGroupInput("");
+    setGenomeGroupInput("");
   };
 
   return (
     <section>
       <ServiceHeader
         title="Proteome Comparison"
-        tooltipContent="Proteome Comparison Information"
-        description=" The Proteome Comparison Service performs protein sequence-based genome
+        description="The Proteome Comparison Service performs protein sequence-based genome
           comparison using bidirectional BLASTP. This service allows users to
           select genomes and compare them to reference genome."
+        infoPopupTitle={proteomeComparisonInfo.title}
+        infoPopupDescription={proteomeComparisonInfo.description}
         quickReferenceGuide="#"
         tutorial="#"
         instructionalVideo="#"
       />
 
       {/* Main Content */}
-      <div className="service-form-section">
+      <form onSubmit={handleFormSubmit} className="service-form-section">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {/* Parameters */}
-          <Card>
-            <CardHeader className="service-card-header">
-              <CardTitle className="service-card-title">
-                Parameters
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info size={16} className="text-muted-foreground" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Configure analysis parameters</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </CardTitle>
-            </CardHeader>
+          <div className="flex flex-col gap-6">
+            {/* Parameters */}
+            <Card>
+              <CardHeader className="service-card-header">
+                <CardTitle className="service-card-title">
+                  Parameters
+                  <DialogInfoPopup
+                    title={proteomeComparisonParameters.title}
+                    description={proteomeComparisonParameters.description}
+                    sections={proteomeComparisonParameters.sections}
+                  />
+                </CardTitle>
+              </CardHeader>
 
-            <CardContent className="service-card-content">
-              <div className="space-y-4">
-                <Collapsible
-                  open={showAdvancedParams}
-                  onOpenChange={setAdvancedParams}
-                  className="service-collapsible-container"
-                >
-                  <CollapsibleTrigger className="service-collapsible-trigger text-sm font-medium">
-                    Advanced Parameters
-                    <ChevronDown
-                      className={`h-4 w-4 transition-transform ${showAdvancedParams ? "rotate-180 transform" : ""}`}
-                    />
-                  </CollapsibleTrigger>
-
-                  <CollapsibleContent>
-                    <div className="service-card-content-grid">
-                      <div>
-                        <Label className="service-card-sublabel">
-                          Minimum % Coverage
-                        </Label>
-                        <NumberInput
-                          id="minimum-coverage"
-                          defaultValue={30}
-                          min={10}
-                          max={100}
-                          stepper={5}
-                        />
-                      </div>
-
-                      <div>
-                        <Label className="service-card-sublabel">
-                          BLAST E-Value
-                        </Label>
-                        <Input
-                          defaultValue="1e-5"
-                          className="service-card-input"
-                        />
-                      </div>
-
-                      <div>
-                        <Label className="service-card-sublabel">
-                          Minimum % Identity
-                        </Label>
-                        <NumberInput
-                          id="minimum-identity"
-                          defaultValue={10}
-                          min={10}
-                          max={100}
-                          stepper={5}
-                        />
-                      </div>
+              <CardContent className="service-card-content">
+                <div className="space-y-4">
+                  <div className="flex flex-col space-y-4">
+                    <div className="w-full">
+                      <OutputFolder onChange={setOutputFolder} />
                     </div>
-                  </CollapsibleContent>
-                </Collapsible>
+                    <div className="w-full">
+                      <OutputFolder variant="name" onChange={setOutputName} />
+                    </div>
+                  </div>
 
-                <SearchWorkspaceInput
-                  title="Output Folder"
-                  placeholder="Select Output Folder..."
-                />
+                  <Collapsible
+                    open={showAdvancedParams}
+                    onOpenChange={setAdvancedParams}
+                    className="service-collapsible-container"
+                  >
+                    <CollapsibleTrigger className="service-collapsible-trigger text-sm font-medium">
+                      Advanced Parameters (Optional)
+                      <ChevronDown
+                        className={`h-4 w-4 transition-transform ${showAdvancedParams ? "rotate-180 transform" : ""}`}
+                      />
+                    </CollapsibleTrigger>
 
-                <div>
-                  <Label className="service-card-label">Output Name</Label>
-                  <Input placeholder="Output Name" />
+                    <CollapsibleContent className="service-collapsible-content">
+                      <div className="service-card-content-grid">
+                        <div>
+                          <Label className="service-card-sublabel">
+                            Minimum % Coverage
+                          </Label>
+                          <NumberInput
+                            id="minimum-coverage"
+                            defaultValue={30}
+                            min={10}
+                            max={100}
+                            stepper={5}
+                          />
+                        </div>
+
+                        <div>
+                          <Label className="service-card-sublabel">
+                            BLAST E-Value
+                          </Label>
+                          <Input
+                            defaultValue="1e-5"
+                            className="service-card-input"
+                          />
+                        </div>
+
+                        <div>
+                          <Label className="service-card-sublabel">
+                            Minimum % Identity
+                          </Label>
+                          <NumberInput
+                            id="minimum-identity"
+                            defaultValue={10}
+                            min={10}
+                            max={100}
+                            stepper={5}
+                          />
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+
+            {/* Reference Genome */}
+            <Card>
+              <CardHeader className="service-card-header">
+                <CardTitle className="service-card-title">
+                  Reference Genome
+                  <DialogInfoPopup
+                    title={proteomeComparisonReferenceGenome.title}
+                    description={proteomeComparisonReferenceGenome.description}
+                    sections={proteomeComparisonReferenceGenome.sections}
+                  />
+                </CardTitle>
+                <CardDescription>
+                  Select 1 reference genome from the following options
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent className="service-card-content">
+                <div className="space-y-4">
+                  <div>
+                    <Label className="service-card-label">
+                      Select a Genome
+                    </Label>
+                    <div className="flex gap-2">
+                      <Select
+                        value={selectReferenceGenome}
+                        onValueChange={setSelectReferenceGenome}
+                      >
+                        <SelectTrigger className="flex-1">
+                          <SelectValue placeholder="Select genome" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="tuberculosis">
+                            Mycobacterium tuberculosis H37Rv
+                          </SelectItem>
+                          <SelectItem value="coli">
+                            Escherichia coli K-12
+                          </SelectItem>
+                          <SelectItem value="subtilis">
+                            Bacillus subtilis 168
+                          </SelectItem>
+                          <SelectItem value="cerevisiae">
+                            Saccharomyces cerevisiae S288C
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <SearchWorkspaceInput
+                    title="Or a FASTA File"
+                    placeholder="(Optional)"
+                  />
+
+                  <SearchWorkspaceInput
+                    title="Or a Feature Group"
+                    placeholder="(Optional)"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Comparison Genomes */}
           <Card>
             <CardHeader className="service-card-header">
               <CardTitle className="service-card-title">
                 Comparison Genomes
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info size={16} className="text-muted-foreground" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>
-                        Add up to {MAX_GENOMES} genomes to compare (use plus
-                        buttons to add)
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <DialogInfoPopup
+                  title={proteomeComparisonComparisonGenomes.title}
+                  description={proteomeComparisonComparisonGenomes.description}
+                  sections={proteomeComparisonComparisonGenomes.sections}
+                />
               </CardTitle>
               <CardDescription>
                 Add up to {MAX_GENOMES} genomes to compare (use plus buttons to
                 add)
               </CardDescription>
             </CardHeader>
+
             <CardContent className="service-card-content">
               <div className="space-y-4">
                 <div>
                   <Label className="service-card-label">Select Genome</Label>
                   <div className="flex gap-2">
                     <Select
-                      value={selectedGenome}
-                      onValueChange={setSelectedGenome}
+                      value={selectComparisonGenome}
+                      onValueChange={setSelectComparisonGenome}
                     >
                       <SelectTrigger className="flex-1">
                         <SelectValue placeholder="Select genome" />
@@ -266,7 +350,7 @@ export default function ProteomeComparisonPage() {
                     <Button
                       size="icon"
                       variant="outline"
-                      onClick={addGenome}
+                      onClick={addComparisonGenome}
                       disabled={selectedGenomes.length >= MAX_GENOMES}
                     >
                       <Plus size={16} />
@@ -304,113 +388,38 @@ export default function ProteomeComparisonPage() {
                   disabled={selectedGenomes.length >= MAX_GENOMES}
                 />
 
-                <div>
-                  <Label className="service-card-label">
-                    Selected Genome Table
-                  </Label>
-                  <div className="overflow-hidden rounded-md border">
-                    {selectedGenomes.length === 0 ? (
-                      <div className="text-muted-foreground p-4 text-center text-sm">
-                        No genomes selected
-                      </div>
-                    ) : (
-                      <div className="divide-y">
-                        {selectedGenomes.map((genome, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center justify-between bg-white px-4 py-2 hover:bg-gray-50"
-                          >
-                            <span className="text-sm">{genome}</span>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-6 w-6"
-                              onClick={() => removeGenome(genome)}
-                            >
-                              <span className="text-gray-400 hover:text-gray-600">
-                                ×
-                              </span>
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <SelectedItemsTable
+                  title="Selected Genome Table"
+                  items={selectedGenomes.map(
+                    (genome: { name: string; type: string }) => ({
+                      id: genome.name,
+                      name: genome.name,
+                      type: genome.type,
+                    }),
+                  )}
+                  onRemove={(id: string) => {
+                    setSelectedGenomes(
+                      (prev: { name: string; type: string }[]) =>
+                        prev.filter(
+                          (genome: { name: string; type: string }) =>
+                            genome.name !== id,
+                        ),
+                    );
+                  }}
+                  className="max-h-96 overflow-y-auto"
+                />
               </div>
             </CardContent>
           </Card>
         </div>
+      </form>
 
-        {/* Reference Genome */}
-        <Card>
-          <CardHeader className="service-card-header">
-            <CardTitle className="service-card-title">
-              Reference Genome
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Info size={16} className="text-muted-foreground" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>
-                      Select 1 reference genome from the following options
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </CardTitle>
-            <CardDescription>
-              Select 1 reference genome from the following options
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="service-card-content">
-            <div className="space-y-4">
-              <div>
-                <Label className="service-card-label">
-                  SELECT A GENOME
-                </Label>
-                <div className="flex gap-2">
-                  <Select defaultValue="tuberculosis">
-                    <SelectTrigger className="flex-1">
-                      <SelectValue placeholder="Select genome" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="tuberculosis">
-                        Mycobacterium tuberculosis H37Rv
-                      </SelectItem>
-                      <SelectItem value="coli">
-                        Escherichia coli K-12
-                      </SelectItem>
-                      <SelectItem value="subtilis">
-                        Bacillus subtilis 168
-                      </SelectItem>
-                      <SelectItem value="cerevisiae">
-                        Saccharomyces cerevisiae S288C
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <SearchWorkspaceInput
-                title="Or A FASTA File"
-                placeholder="(Optional)"
-              />
-
-              <SearchWorkspaceInput
-                title="Or A Feature Group"
-                placeholder="(Optional)"
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Form Controls */}
-        <div className="service-form-controls">
-          <Button variant="outline">Reset</Button>
-          <Button>Submit</Button>
-        </div>
+      {/* Form Controls */}
+      <div className="service-form-controls">
+        <Button variant="outline" onClick={resetForm}>
+          Reset
+        </Button>
+        <Button>Submit</Button>
       </div>
     </section>
   );

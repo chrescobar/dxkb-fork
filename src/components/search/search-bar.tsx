@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LuSearch } from "react-icons/lu";
 import { useRouter } from "next/navigation";
+import { searchTypes } from '../../constants/searchInfo';
 
 interface SearchBarProps {
   initialValue?: string;
@@ -27,7 +28,7 @@ export function SearchBar({
   const handleSearch = (e?: FormEvent) => {
     if (e) e.preventDefault();
     if (!inputValue.trim()) return;
-    router.push(`/search?q=${encodeURIComponent(inputValue)}`);
+    router.push(`/buildsearch?q=${encodeURIComponent(inputValue)}&searchtype=${selected}`);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -36,8 +37,16 @@ export function SearchBar({
     }
   };
 
+  const [selected, setSelected] = useState("everything");
+  const [selectedTitle, setSelectedTitle] = useState("All Data Types");
+
+  const handleSelect = (val: string, title: string) => {
+    setSelected(val);
+    setSelectedTitle(title);
+  };
+
   return (
-    <form onSubmit={handleSearch} className={`flex gap-2 ${className}`}>
+    <form onSubmit={handleSearch} className={`flex gap-4 ${className}`}>
       <div className="relative flex-grow">
         <Input
           type="text"
@@ -54,6 +63,20 @@ export function SearchBar({
           />
         )}
       </div>
+
+      <select
+        id="searchtype"
+        value={selected}
+        onChange={(e) => setSelected(e.target.value)}
+        className={`${size === "lg" ? "py-2" : ""} ${showIcon ? "pl-4" : ""} bg-white`}
+        >
+        {searchTypes.map((option) => (
+          <option key={option.id} value={option.id}>
+            {option.typeTitle}
+          </option>
+        ))}
+      </select>
+      
       <Button
         type="submit"
         size={size}

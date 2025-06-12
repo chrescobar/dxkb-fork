@@ -149,7 +149,7 @@ const Footer = () => {
           >
             {footerLinks.map((section) => (
               <div key={section.title}>
-                <h4 className="text-secondary-def mb-4 font-bold">
+                <h4 className="text-secondary-def font-bold mt-2 mb-4 md:mb-6">
                   <Link
                     href={section.titleUrl}
                     className="hover:underline hover:text-secondary-500"
@@ -160,7 +160,7 @@ const Footer = () => {
                     {section.title}
                   </Link>
                 </h4>
-                <ul className="space-y-2">
+                <ul className="space-y-4 md:space-y-6 mb-2">
                   {section.links.map((link) => (
                     <li key={link.name}>
                       <Link

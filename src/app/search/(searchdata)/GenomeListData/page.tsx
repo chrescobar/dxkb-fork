@@ -5,9 +5,8 @@ import { useSearchParams } from "next/navigation";
 import { DataTable } from '@/components/containers/DataTable';
 import { SortingState } from '@tanstack/react-table';
 import { genomeFields } from '@/constants/datafields/genomes';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-export default function Genomes() {
+export function GenomeData() {
 
   const genomeColumns = Object.values(genomeFields).map(obj => ({
     id: obj.field,

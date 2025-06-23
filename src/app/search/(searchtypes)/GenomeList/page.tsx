@@ -1,111 +1,25 @@
+"use client";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import React from 'react';
+import { useSearchParams } from "next/navigation";
+import { GenomeData } from "@/app/search/(searchdata)/GenomeListData/page";
 
 export default function Genomes() {
 
-  const genomeColumns = Object.values(genomeFields).map(obj => ({
-    id: obj.field,
-    label: obj.label,
-    visible: !obj.hidden,
-//    visible: true
-  }));
-  
-  const widget = {
-    id: 'widget-1',
-    columns: genomeColumns,
-  };
-
-  const searchParams = useSearchParams();
-  const [data, setData] = useState(null);
-  const [fullData, setFullData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [totalItems, setTotalItems] = useState(0);
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [start, setStart] = useState(0);
-  const [end, setEnd] = useState(200); // or your desired page size
-  const pageSize = 200;
-  
-  const handleNext = () => {
-    setStart(prev => prev + pageSize);
-    setEnd(prev => prev + pageSize);
-  };
-  
-  const handlePrevious = () => {
-    setStart(prev => Math.max(prev - pageSize, 0));
-    setEnd(prev => Math.max(prev - pageSize, pageSize));
-  };
-  const q = searchParams.get('q');
-  const DataAPI = process.env.NEXT_PUBLIC_DATA_API;
-  const cleanQ = q.split('#')[0];
-
-  var dataURL = DataAPI + '/genome/?' + cleanQ;
-
-  useEffect(() => {
-  const fetchData = async () => {
-      try {
-        const response = await fetch(dataURL + '&limit(1)', {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/solr+json',
-            },
-          });
-        
-          const res = await response.json();
-          setTotalItems(res.response.numFound);
-          setData(res);
-        } catch (error) {
-          console.error("Error fetching search results:", error);
-        } finally {
-          setLoading(false);
-        }
-  };
-  fetchData();
-
-  }, []); // Empty array means this runs only once when the component mounts
-
-  useEffect(() => {
-    if(totalItems > 0) {
-      const fetchAllData = async () => {
-        const sortParam = sorting[0] ? `${sorting[0].id}:${sorting[0].desc ? 'desc' : 'asc'}` : null;
-
-        try {
-            const response = await fetch(dataURL, {
-                method: 'GET',
-                headers: {
-                    'Content-type': 'application/rqlquery+x-www-form-urlencoded',
-                    'Accept': 'application/json',
-                    'Range': `items=0-${totalItems}`,
-                    'X-Range': `items=0-${totalItems}`,
-//                    'Range': `items=${start}-${end}`,
-//                    'X-Range': `items=${start}-${end}`,
-},
-              });
-            
-              const results = await response.json();
-              setFullData(results);
-            } catch (error) {
-              console.error("Error fetching search results:", error);
-            } finally {
-              setLoading(false);
-            }
-      };
-
-    fetchAllData();
-    }
-
-    }, [start, end, totalItems]); 
-
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}. <br/>Sent: {JSON.stringify(q)}</div>;
+    const searchParams = useSearchParams();
+    const q = searchParams.get('q');
 
     return(
-      <Tabs defaultValue="account" className="w-[400px]">
-        <TabsList>
-          <TabsTrigger value="account">Account</TabsTrigger>
-          <TabsTrigger value="password">Password</TabsTrigger>
+      <Tabs defaultValue="genomes" className="w-[95%] px-0 ml-[10px] h-[90%]">
+        <TabsList className="pb-0 mb-0">
+          <TabsTrigger value="genomes" className="mb-0">Genomes</TabsTrigger>
+          <TabsTrigger value="features" className="mb-0">Features</TabsTrigger>
         </TabsList>
-        <TabsContent value="account">Make changes to your account here.</TabsContent>
-        <TabsContent value="password">Change your password here.</TabsContent>
+        <TabsContent value="genomes" className="border border-black mt-0 px-0">
+          <GenomeData q={{q}} />
+        </TabsContent>
+        <TabsContent value="features">Change your password here.</TabsContent>
       </Tabs>
     );
 }; 

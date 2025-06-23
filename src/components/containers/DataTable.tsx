@@ -135,31 +135,34 @@ export function DataTable({ id, data, columns }: DataTableProps) {
     const checkboxColumn: ColumnDef<any> = {
       id: '__select__',
       header: ({ table }) => (
-        <input
-          type="checkbox"
-          checked={table.getIsAllRowsSelected()}
-          onChange={(e) => {
-            e.stopPropagation();
-            table.toggleAllRowsSelected();
-          }}
-          className="cursor-pointer"
-        />
+        <div className="flex justify-center items-center w-full h-full">
+          <input
+            type="checkbox"
+            checked={table.getIsAllRowsSelected()}
+            onChange={(e) => {
+              e.stopPropagation();
+              table.toggleAllRowsSelected();
+            }}
+            className="cursor-pointer m-0 p-0"
+          />
+        </div>
       ),
       cell: ({ row }) => (
-        <input
-          type="checkbox"
-          checked={row.getIsSelected()}
-          onChange={(e) => {
-            e.stopPropagation();
-            row.toggleSelected();
-          }}
-          className="cursor-pointer"
-        />
+        <div className="flex justify-center items-center w-full h-full">
+          <input
+            type="checkbox"
+            checked={row.getIsSelected()}
+            onChange={(e) => {
+              e.stopPropagation();
+              row.toggleSelected();
+            }}
+            className="cursor-pointer m-0 p-0"
+          />
+        </div>
       ),
       enableResizing: false,
       size: 40,
     };
-
     return [
       checkboxColumn,
       ...columns.map((col) => ({
@@ -229,7 +232,7 @@ export function DataTable({ id, data, columns }: DataTableProps) {
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => tableContainerRef.current,
-    estimateSize: () => 34,
+    estimateSize: () => 24,
     overscan: 10,
   });
   const virtualRows = rowVirtualizer.getVirtualItems();
@@ -305,11 +308,11 @@ export function DataTable({ id, data, columns }: DataTableProps) {
   };
       
   return (
-    <div className="flex flex-col px-4 pt-4 text-xs relative items-center">
-      <div className="w-[85%] flex justify-end mb-2 gap-2 z-50" ref={controlsRef}>
+    <div className="flex flex-col px-0 pt-4 text-xs relative items-center">
+      <div className="w-[100%] flex justify-end mb-2 z-50" ref={controlsRef}>
           <div className="relative inline-block text-left" ref={columnMenuRef}>
             <button
-              className="flex justify-end w-full rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50"
+              className="flex justify-end w-full rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2"
               onClick={() => setShowColumnMenu(prev => !prev)}
             >
               Columns ▾
@@ -341,13 +344,13 @@ export function DataTable({ id, data, columns }: DataTableProps) {
           {/* Download buttons */}
           <button
             onClick={() => handleDownload('csv')}
-            className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50"
+            className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2 ml-2"
           >
             Download (CSV)
           </button>
           <button
             onClick={() => handleDownload('txt')}
-            className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50"
+            className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2"
           >
             Download (TXT)
           </button>
@@ -355,20 +358,20 @@ export function DataTable({ id, data, columns }: DataTableProps) {
             <>
               <button
                 onClick={() => handleDownload('csv', true)}
-                className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2"
               >
                 Download Selected (CSV)
               </button>
               <button
                 onClick={() => handleDownload('txt', true)}
-                className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2"
               >
                 Download Selected (TXT)
               </button>
             </>
           )}
-        </div>
-      <div className="w-[90%] flex flex-col border border-gray-500 rounded relative"
+      </div>
+      <div className="w-[100%] flex flex-col border border-gray-500 rounded relative"
             style={{ height: availableHeight ? `${availableHeight}px` : 'auto' }}
             >
         <div
@@ -393,7 +396,12 @@ export function DataTable({ id, data, columns }: DataTableProps) {
                         <TableHead
                           key={header.id}
                           colSpan={header.colSpan}
-                          className="relative px-2 py-0 text-sm font-bold bg-gray-300 border-r border-l border-black leading-none align-middle"
+                          className={clsx(
+                            'border-r border-l border-black bg-gray-300',
+                            column.id === '__select__'
+                              ? 'p-0 flex justify-center items-center' // ✅ center checkbox
+                              : 'px-2 py-0 text-sm font-bold leading-none align-middle'
+                          )}
                           style={{
                             width: `var(--col-${column.id}-size)`,
                             minWidth: `var(--col-${column.id}-size)`,
@@ -426,7 +434,7 @@ export function DataTable({ id, data, columns }: DataTableProps) {
                           }}
                         >
                           <div
-                            className="flex items-center justify-between w-full h-full cursor-pointer select-none py-[6px]"
+                            className="flex items-center justify-between w-full h-full cursor-pointer select-none py-0"
                             onClick={column.getToggleSortingHandler()}
                           >
                             {flexRender(header.column.columnDef.header, header.getContext())}
@@ -447,14 +455,14 @@ export function DataTable({ id, data, columns }: DataTableProps) {
                     })}
                   </TableRow>
                 ))}
-              </TableHeader>
+            </TableHeader>
 
               <TableBody
                 style={{
                   position: 'relative',
                   height: totalSize,
                 }}
-                className="relative z-10"
+                className="relative z-10 border-collapse gap-0"
               >
                 {virtualRows.map((virtualRow) => {
                   const row = rows[virtualRow.index];
@@ -467,16 +475,19 @@ export function DataTable({ id, data, columns }: DataTableProps) {
                         left: 0,
                         right: 0,
                         display: 'flex',
+                        height: '24px',
                       }}
                       className={clsx(
                         row.getIsSelected()
                           ? 'bg-yellow-100 hover:bg-yellow-100' // lock in yellow background
                           : 'hover:bg-yellow-100' // only apply white hover if not selected
                       )}
+                      
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
                           key={cell.id}
+                          className='py-1'
                           style={{
                             width: `var(--col-${cell.column.id}-size)`,
                             minWidth: `var(--col-${cell.column.id}-size)`,
@@ -484,7 +495,11 @@ export function DataTable({ id, data, columns }: DataTableProps) {
                             whiteSpace: 'nowrap',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
+                            display: 'flex',
                             border: '1px solid #000000',
+                            height: '24px',
+                            alignItems: 'center',
+                            justifyContent: cell.column.id === '__select__' ? 'center' : 'flex-start',                          
                           }}
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}

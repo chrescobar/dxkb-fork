@@ -5,6 +5,7 @@ import { useTheme } from "next-themes";
 import { getLogoPath, type LogoVariant } from "@/styles/logo-utils";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface LogoProps {
   variant?: LogoVariant;
@@ -35,6 +36,13 @@ export function Logo({
   // This prevents hydration mismatch
   const currentTheme = mounted ? theme : "dxkb-light";
   const logoPath = getLogoPath(currentTheme || "dxkb-light", variant);
+
+  if (!mounted) {
+    console.log("Logo loading");
+    return (
+      <Skeleton className="h-10 w-36" aria-label="Logo loading" />
+    );
+  }
 
   return (
     <Image

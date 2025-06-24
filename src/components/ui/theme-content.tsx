@@ -4,6 +4,7 @@ import React from "react";
 import { useTheme } from "next-themes";
 import { getThemeContent, type ContentType } from "@/styles/theme-content";
 import { useState, useEffect } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ThemeContentProps {
   type: ContentType;
@@ -28,6 +29,12 @@ export function ThemeContent({
   // This prevents hydration mismatch
   const currentTheme = mounted ? theme : "dxkb-light";
   const content = getThemeContent(currentTheme || "dxkb-light", type);
+
+  if (!mounted) {
+    return (
+      <Skeleton className="w-3xl h-8 mx-auto justify-center items-center" aria-label="Content loading" />
+    );
+  }
 
   return (
     <Component className={className}>

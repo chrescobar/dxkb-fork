@@ -24,9 +24,9 @@ const WelcomeSearch = ({ setSearchResults }: WelcomeSearchProps) => {
           <h1 className="mb-4 text-3xl font-bold text-white md:text-4xl lg:text-5xl">
             <ThemeContent type="welcome-title" as="span" />
           </h1>
-          <p className="mx-auto mb-8 max-w-3xl text-lg font-normal text-white/80">
+          <h3 className="mx-auto mb-8 max-w-3xl text-lg font-normal text-white/80">
             <ThemeContent type="welcome-subtitle" as="span" />
-          </p>
+          </h3>
 
           {/* Search Interface */}
           <div className="mx-auto max-w-4xl">

@@ -34,10 +34,12 @@ export const searchTypes = [
        id: 'genome_feature',
        typeTitle: 'Features'
    },
+/*
    {
        id: 'protein',
        typeTitle: 'Proteins'
    },
+*/
 /*
    {
        id: 'sp_gene',

@@ -1,6 +1,5 @@
 import { Button } from "@/components/buttons/button";
 import { LuMenu } from "react-icons/lu";
-import Image from "next/image";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { RxAvatar } from "react-icons/rx";
 import {
@@ -15,6 +14,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import Link from "next/link";
+import Logo from "@/components/ui/logo";
 
 const MobileNavbar = () => {
   return (
@@ -32,9 +32,8 @@ const MobileNavbar = () => {
           >
             <SheetTitle className="sr-only">Mobile Navigation Menu</SheetTitle>
             <div id="sheet-logo" className="bg-primary flex w-full p-4">
-              <Image
-                src="/logos/dxkb-logo-white-cropped.svg"
-                alt="DXKB Logo"
+              <Logo
+                variant="logo-white"
                 width={100}
                 height={40}
                 className="h-8 w-auto"
@@ -42,7 +41,7 @@ const MobileNavbar = () => {
               />
             </div>
 
-            <div className="flex flex-col divide-y divide-gray-100">
+            <div className="flex flex-col divide-y divide-muted-foreground">
               {/* Getting Started Section */}
               <div className="p-3">
                 <h2 className="mobile-nav-section-header">Getting Started</h2>
@@ -104,9 +103,8 @@ const MobileNavbar = () => {
         </Sheet>
 
         <Link id="dxkb-logo" href="/">
-          <Image
-            src="/logos/dxkb-logo-orange.svg"
-            alt="DXKB Logo"
+          <Logo
+            variant="logo-icon"
             width={100}
             height={40}
             className="h-10 w-auto"

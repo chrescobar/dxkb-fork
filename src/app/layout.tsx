@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { TailwindIndicator } from "@/components/ui/tailwind-indicator";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
+import { ThemeSwitcher } from "@/styles/theme-switcher-floating";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +34,7 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           {children}
+          <ThemeSwitcher />
         </ThemeProvider>
         <Toaster richColors position="top-right" />
         <TailwindIndicator />

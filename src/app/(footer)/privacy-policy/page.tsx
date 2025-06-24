@@ -27,7 +27,7 @@ const PrivacyPolicy = () => {
                 </p>
               </div>
 
-              <p className="text-lg text-gray-700 mb-6">
+              <p className="text-lg text-muted-foreground mb-6">
                 At VirusDB, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose,
                 and safeguard your information when you visit our website or use our services. Please read this privacy
                 policy carefully. If you do not agree with the terms of this privacy policy, please do not access the

@@ -8,7 +8,7 @@ const ContactUs = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-2xl font-bold mb-4">Still Need Help?</h2>
-          <p className="text-gray-600 mb-8">
+          <p className="text-muted-foreground mb-8">
             Our support team is available to assist you with any questions or issues you may encounter.
           </p>
 

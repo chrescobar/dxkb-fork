@@ -9,7 +9,6 @@ import Navbar from "@/components/navbars/navbar";
 import QuickViralLinks from "@/components/quick-links/quick-viral";
 import ResearchUpdates from "@/components/research/research-updates";
 import DBStatistics from "@/components/statistics/db-statistics";
-import { ThemeSwitcher } from "@/components/ui/theme-switcher-floating";
 
 export default function Home() {
   // const [_searchResults, setSearchResults] = useState([]);
@@ -26,7 +25,6 @@ export default function Home() {
           <NewsCarousel />
           <DBStatistics />
           <ResearchUpdates />
-          <ThemeSwitcher />
         </main>
 
         <Footer />

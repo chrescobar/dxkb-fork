@@ -9,6 +9,7 @@ import { SearchBar } from "./search-bar";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import ThemeContent from "@/components/ui/theme-content";
 
 interface WelcomeSearchProps {
   setSearchResults?: (results: any) => void;
@@ -21,11 +22,10 @@ const WelcomeSearch = ({ setSearchResults }: WelcomeSearchProps) => {
       <div className="from-primary to-background bg-gradient-to-b py-16 md:py-24">
         <div className="container mx-auto px-4 text-center">
           <h1 className="mb-4 text-3xl font-bold text-white md:text-4xl lg:text-5xl">
-            Welcome to the Disease X Knowledge Base
+            <ThemeContent type="welcome-title" as="span" />
           </h1>
           <p className="mx-auto mb-8 max-w-3xl text-lg font-normal text-white/80">
-            Access detailed information on viral genomes, proteins, and
-            biological data to accelerate your research and discoveries.
+            <ThemeContent type="welcome-subtitle" as="span" />
           </p>
 
           {/* Search Interface */}

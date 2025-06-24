@@ -37,7 +37,7 @@ export default function ViralAssembly() {
   const [virusGenome, setVirusGenome] = useState("flu");
   const [_outputFolder, setOutputFolder] = useState("");
   const [_outputName, setOutputName] = useState("");
-  const [_selectedLibraries, setSelectedLibraries] = useState<Library[]>([]);
+  const [selectedLibraries, setSelectedLibraries] = useState<Library[]>([]);
   const [_readFiles, setReadFiles] = useState([
     { id: 1, name: "READ FILE 1" },
     { id: 2, name: "READ FILE 2" },

@@ -224,7 +224,7 @@ const Updates = () => {
                     </div>
                     <div>
                       <h3 className="font-medium leading-none">{event.title}</h3>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-foreground">
                         {event.description}
                       </p>
                     </div>

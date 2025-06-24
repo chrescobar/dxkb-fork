@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   FaGithub,
@@ -9,6 +8,8 @@ import {
   FaYoutube,
 } from "react-icons/fa";
 import { Button } from "@/components/buttons/button";
+import Logo from "@/components/ui/logo";
+import ThemeContent from "@/components/ui/theme-content";
 
 interface FooterLink {
   name: string;
@@ -68,10 +69,10 @@ const Footer = () => {
   return (
     <footer className="bg-primary rounded-t-xl py-8 text-white">
       <div className="mx-auto w-full px-12">
-        <div className="grid gap-8 md:grid-cols-[25%_75%]">
+        <div className="grid gap-8 md:grid-cols-[40%_60%]">
           <div id="website-info" className="order-2 flex flex-col md:order-1">
-            <Image
-              src="/logos/dxkb-text-white.svg"
+            <Logo
+              variant="logo-text-white"
               alt="DXKB Logo"
               width={100}
               height={32}
@@ -79,11 +80,10 @@ const Footer = () => {
               priority
             />
             <span className="mt-5 text-xl font-semibold">
-              A CEPI Initiative.
+              <ThemeContent type="funding-title" as="span" />
             </span>
             <span className="mt-1 text-sm text-white/80">
-              This project is funded in whole or in parts with Federal funds
-              using grants awarded to the University of Chicago.
+              <ThemeContent type="funding-statement" as="span" />
             </span>
             <div className="gap-auto mt-4 flex lg:gap-4">
               <Button

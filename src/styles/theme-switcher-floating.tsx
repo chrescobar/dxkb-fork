@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { LuSun, LuMoon, LuPalette } from "react-icons/lu";
+import { themeBases } from "@/styles/themes";
 
 export function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
@@ -17,8 +18,6 @@ export function ThemeSwitcher() {
   // Extract current theme base and mode
   const currentTheme = theme || "zinc-light";
   const [currentBase, currentMode] = currentTheme.split("-");
-
-  const themeBases = ["zinc", "orange", "violet", "dxkb"];
 
   const handleThemeChange = (base: string) => {
     const newTheme = `${base}-${currentMode}`;
@@ -38,7 +37,7 @@ export function ThemeSwitcher() {
           <Button
             variant="default"
             size="icon"
-            className="bg-primary hover:bg-secondary border border-accent h-12 w-12 rounded-full shadow-lg transition-all duration-200 hover:shadow-xl"
+            className="bg-primary hover:bg-foreground border border-accent h-12 w-12 rounded-full shadow-lg transition-all duration-200 hover:shadow-xl"
             onClick={() => setIsOpen(!isOpen)}
           >
             <LuPalette className="h-5 w-5" />

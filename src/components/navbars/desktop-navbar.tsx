@@ -9,6 +9,7 @@ import { RxAvatar } from "react-icons/rx";
 import { cn } from "@/lib/utils";
 import { gettingStartedItems, organismItems, serviceItems } from "./navbar-links";
 import ThemeSwitch from "@/styles/ThemeSwitch";
+import Logo from "@/components/ui/logo";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -17,15 +18,17 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { useTheme } from "next-themes";
 
 const DesktopNavbar = () => {
+  const { theme } = useTheme();
+
   return (
     <header className="bg-primary hidden items-center justify-between px-8 py-4 text-white md:flex">
       <div className="flex items-center space-x-4">
-        <Link id="dxkb-logo" href="/">
-          <Image
-            src="/logos/dxkb-logo-white-cropped.svg"
-            alt="DXKB Logo"
+        <Link id="dxkb-logooooo" href="/">
+          <Logo
+            variant="logo-white"
             width={100}
             height={40}
             className="h-10 w-auto"
@@ -47,9 +50,8 @@ const DesktopNavbar = () => {
                         className="from-muted/50 bg-primary hover:bg-primary/80 flex h-full w-full flex-col justify-end rounded-md bg-gradient-to-b p-6 no-underline transition-all duration-300 outline-none select-none focus:shadow-md"
                         href="/"
                       >
-                        <Image
-                          src="/logos/dxkb-logo-white-cropped.svg"
-                          alt="DXKB Logo"
+                        <Logo
+                          variant="logo-white"
                           width={100}
                           height={40}
                         />

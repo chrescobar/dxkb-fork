@@ -41,7 +41,7 @@ const ContactForm = () => {
                         <a href="tel:+18005551234" className="text-link hover:underline">
                           +1 (800) 555-1234
                         </a>
-                        <p className="text-sm text-gray-500 mt-1">Mon-Fri, 9am-5pm EST</p>
+                        <p className="text-sm text-muted-foreground mt-1">Mon-Fri, 9am-5pm EST</p>
                       </div>
                     </div>
 
@@ -51,7 +51,7 @@ const ContactForm = () => {
                       </div>
                       <div>
                         <h3 className="font-medium mb-1">Main Office</h3>
-                        <p className="text-gray-600">123 Science Way, Cambridge, MA 02142, USA</p>
+                        <p className="text-muted-foreground">123 Science Way, Cambridge, MA 02142, USA</p>
                       </div>
                     </div>
                   </div>

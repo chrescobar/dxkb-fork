@@ -63,10 +63,8 @@ export function getLogoFolder(theme: string): string {
  */
 export function getLogoPath(theme: string, variant: LogoVariant): string {
   const folder = getLogoFolder(theme);
-  console.log(`folder: ${folder}`);
   const fileName =
     logoNamingPatterns[folder]?.[variant] || logoNamingPatterns.dxkb[variant];
-  console.log(`fileName: ${fileName}`);
   return `/logos/${folder}/${fileName}`;
 }
 

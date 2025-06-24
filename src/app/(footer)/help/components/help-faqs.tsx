@@ -49,7 +49,7 @@ const HelpFAQs = () => {
                 <AccordionItem value="item-4">
                   <AccordionTrigger>How do I cite VirusDB in my research?</AccordionTrigger>
                   <AccordionContent>
-                    To cite VirusDB in your research, please use the following format: "Smith J, et al. (2023) VirusDB:
+                    To cite VirusDB in your research, please use the following format: &quot;Smith J, et al. (2023) VirusDB:
                     A comprehensive database for viral genomic and proteomic research. Journal of Molecular Biology,
                     45(2), 112-118.&quot; Alternatively, you can use the &quot;Cite&quot; button available on each data page to
                     generate a citation in your preferred format.

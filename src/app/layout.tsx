@@ -32,7 +32,7 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
       <head />
       <body>
-        <ThemeProvider>
+        <ThemeProvider defaultTheme="dxkb-light" >
           {children}
           <ThemeSwitcher />
         </ThemeProvider>

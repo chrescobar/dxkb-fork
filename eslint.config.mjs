@@ -23,6 +23,12 @@ const eslintConfig = [
         "varsIgnorePattern": "^_",
         "caughtErrorsIgnorePattern": "^_"
       }
+    ],
+    "@typescript-eslint/no-explicit-any": [
+      "warn",
+      {
+        "ignoreRestArgs": true,
+      }
     ]
   }
   },

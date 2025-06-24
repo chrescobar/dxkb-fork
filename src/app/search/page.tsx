@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -296,7 +296,7 @@ function getFormattedContent(doc: any, dataType: string) {
   }
 }
 
-export default function SearchResultsPage() {
+function SearchResultsContent() {
   const searchParams = useSearchParams();
   const [searchResults, setSearchResults] = useState<SearchResults>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -465,5 +465,13 @@ export default function SearchResultsPage() {
         </>
       )}
     </div>
+  );
+}
+
+export default function SearchResultsPage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto px-4 py-8">Loading search results...</div>}>
+      <SearchResultsContent />
+    </Suspense>
   );
 }

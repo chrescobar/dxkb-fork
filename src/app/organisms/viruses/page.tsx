@@ -1,14 +1,13 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Views, ViewType } from "./views";
-import { Suspense } from "react";
 import { NavigationMenuSkeleton } from "@/components/skeletons/viruses/navigation-menu-skeleton";
 import { NavigationMenu } from "@/app/organisms/viruses/_components/navigation-menu";
 
-export default function VirusesPage() {
+function VirusesContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const view = (searchParams?.get("view") as ViewType) ?? "overview";
@@ -54,5 +53,13 @@ export default function VirusesPage() {
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
+  );
+}
+
+export default function VirusesPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VirusesContent />
+    </Suspense>
   );
 }

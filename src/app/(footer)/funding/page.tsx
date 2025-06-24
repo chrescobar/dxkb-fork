@@ -32,7 +32,7 @@ const Funding = () => {
           <p>
             This project is supported by the Coalition for Epidemic Preparedness
             Innovations (CEPI) under the Disease X Program. We gratefully
-            acknowledge CEPI's commitment to advancing global health security
+            acknowledge CEPI&apos;s commitment to advancing global health security
             and its pivotal role in funding initiatives aimed at preventing and
             controlling infectious disease outbreaks.
           </p>

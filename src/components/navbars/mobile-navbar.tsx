@@ -113,18 +113,22 @@ const MobileNavbar = () => {
         </Link>
       </div>
 
-      <div className="flex">
+      <div className="flex items-center space-x-2">
         <Button
           variant="ghost"
-          size="icon"
-          className="group h-10 w-10 transition-all duration-300"
+          size="sm"
+          className="text-foreground hover:bg-gray-300/50"
+          asChild
         >
-          <span className="sr-only">User account</span>
-          <Avatar className="h-10 w-10">
-            <AvatarFallback>
-              <RxAvatar className="h-6 w-6 text-gray-400 group-hover:text-black" />
-            </AvatarFallback>
-          </Avatar>
+          <Link href="/auth/login">Login</Link>
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="border-foreground text-foreground hover:bg-foreground hover:text-background"
+          asChild
+        >
+          <Link href="/auth/register">Register</Link>
         </Button>
       </div>
     </header>

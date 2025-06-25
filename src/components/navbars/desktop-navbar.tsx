@@ -164,20 +164,26 @@ const DesktopNavbar = () => {
         </NavigationMenu>
       </div>
 
-      <div className='space-x-4 flex items-center'>
+      <div className='space-x-2 flex items-center'>
         <ThemeSwitch />
-        <Button
-          variant="ghost"
-          size="icon"
-          className="group h-10 w-10 transition-all duration-300"
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-white hover:bg-white/10"
+            asChild
           >
-          <span className="sr-only">User account</span>
-          <Avatar className="h-10 w-10">
-            <AvatarFallback>
-              <RxAvatar className="h-6 w-6 text-muted-foreground group-hover:text-black" />
-            </AvatarFallback>
-          </Avatar>
-        </Button>
+            <Link href="/auth/login">Login</Link>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-white text-white hover:bg-white hover:text-primary"
+            asChild
+          >
+            <Link href="/auth/register">Register</Link>
+          </Button>
+        </div>
       </div>
     </header>
   );

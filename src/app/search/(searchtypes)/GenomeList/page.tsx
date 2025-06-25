@@ -18,25 +18,25 @@ export default function Genomes() {
           <TabsList className="pb-0 mb-0">
           <TabsTrigger 
               value="genomes" 
-              className="bg-primary-800 text-white data-[state=active]:bg-secondary-800 data-[state=active]:text-white mx-[2px]"
+              className="bg-primary text-white data-[state=active]:bg-secondary data-[state=active]:text-white mx-[2px]"
             >
               Genomes
             </TabsTrigger>
             <TabsTrigger 
               value="sequences" 
-              className="bg-primary-800 text-white data-[state=active]:bg-secondary-800 data-[state=active]:text-white mx-[2px]"
+              className="bg-primary text-white data-[state=active]:bg-secondary data-[state=active]:text-white mx-[2px]"
             >
               Sequences
             </TabsTrigger>
             <TabsTrigger 
               value="amrphenotypes" 
-              className="bg-primary-800 text-white data-[state=active]:bg-secondary-800 data-[state=active]:text-white mx-[2px]"
+              className="bg-primary text-white data-[state=active]:bg-secondary data-[state=active]:text-white mx-[2px]"
             >
               AMR Phenotypes
             </TabsTrigger>
             <TabsTrigger 
               value="features" 
-              className="mb-0 bg-primary-800 text-white data-[state=active]:bg-secondary-800 data-[state=active]:text-white mx-[2px]"
+              className="mb-0 bg-primary text-white data-[state=active]:bg-secondary data-[state=active]:text-white mx-[2px]"
             >
               Features
             </TabsTrigger>

@@ -28,6 +28,7 @@ export function SearchBar({
   const handleSearch = (e?: FormEvent) => {
     if (e) e.preventDefault();
     if (!inputValue.trim()) return;
+
     router.push(`/buildsearch?q=${encodeURIComponent(inputValue)}&searchtype=${selected}`);
   };
 
@@ -51,14 +52,14 @@ export function SearchBar({
         <Input
           type="text"
           placeholder={placeholder}
-          className={`${size === "lg" ? "py-6" : ""} ${showIcon ? "pl-10" : ""} bg-white`}
+          className={`${size === "lg" ? "py-6" : ""} ${showIcon ? "pl-10" : ""} bg-background`}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
         />
         {showIcon && (
           <LuSearch
-            className="absolute top-1/2 left-3 -translate-y-1/2 transform text-primary-500"
+            className="absolute top-1/2 left-3 -translate-y-1/2 transform text-primary"
             size={18}
           />
         )}
@@ -68,7 +69,7 @@ export function SearchBar({
         id="searchtype"
         value={selected}
         onChange={(e) => setSelected(e.target.value)}
-        className={`${size === "lg" ? "py-2" : ""} ${showIcon ? "pl-4" : ""} bg-white`}
+        className={`${size === "lg" ? "py-2" : ""} ${showIcon ? "pl-4" : ""} bg-background`}
         >
         {searchTypes.map((option) => (
           <option key={option.id} value={option.id}>
@@ -80,7 +81,7 @@ export function SearchBar({
       <Button
         type="submit"
         size={size}
-        className={`bg-secondary-def hover:bg-secondary-def ${
+        className={`bg-secondary hover:bg-secondary-foreground text-foreground ${
           size === "lg" ? "py-6" : ""
         }`}
       >

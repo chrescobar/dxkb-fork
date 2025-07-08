@@ -1,11 +1,5 @@
 import { AuthUser, UserProfile } from "./types";
 
-export const AUTH_STORAGE_KEY = "auth";
-export const TOKEN_STORAGE_KEY = "token";
-export const USERID_STORAGE_KEY = "user_id";
-export const USER_PROFILE_STORAGE_KEY = "user_profile";
-export const REALM_STORAGE_KEY = "realm";
-
 // Utility function to extract realm from token
 export function extractRealmFromToken(token: string): string | undefined {
   // Look for the pattern "un=username@realm" in the token
@@ -21,58 +15,63 @@ export function extractRealmFromToken(token: string): string | undefined {
 }
 
 export class AuthStorage {
-  static save(user: AuthUser): void {
-    if (typeof window !== "undefined") {
-      // Extract realm from token if not already present
-      const realm = user.realm || extractRealmFromToken(user.token);
-
-      const userData = JSON.stringify({
-        ...user,
-        realm,
-      });
-
-      localStorage.setItem(AUTH_STORAGE_KEY, userData);
-      localStorage.setItem(TOKEN_STORAGE_KEY, user.token);
-      localStorage.setItem(USERID_STORAGE_KEY, user.username);
-      if (realm) {
-        localStorage.setItem(REALM_STORAGE_KEY, realm);
-      }
-    }
-  }
-
+  // User profile is now fetched via API when needed, but keep localStorage for UI preferences
   static saveUserProfile(userProfile: UserProfile): void {
     if (typeof window !== "undefined") {
-      localStorage.setItem(USER_PROFILE_STORAGE_KEY, JSON.stringify(userProfile));
+      // Only store non-sensitive UI preferences locally
+      const uiPreferences = {
+        theme: (userProfile as any).theme,
+        language: (userProfile as any).language,
+        // Add other non-sensitive UI state here
+      };
+      localStorage.setItem("ui_preferences", JSON.stringify(uiPreferences));
     }
   }
 
-  static load(): AuthUser | null {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem(AUTH_STORAGE_KEY);
-      if (saved) {
-        try {
-          const user = JSON.parse(saved);
-          // Check if token is expired
-          if (user.expires_at && Date.now() > user.expires_at) {
-            this.clear();
-            return null;
-          }
-          return user;
-        } catch {
-          this.clear();
+  // Check authentication status via API
+  static async load(): Promise<AuthUser | null> {
+    try {
+      const response = await fetch("/api/auth/verify", {
+        method: "GET",
+        credentials: "include", // Include cookies
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.isAuthenticated && data.user) {
+          return {
+            username: data.user.username,
+            email: data.user.email,
+            token: "", // Token is in HTTP-only cookie, not accessible to client
+            realm: data.user.realm,
+            expires_at: 0, // Managed server-side
+            first_name: data.user.first_name,
+            last_name: data.user.last_name,
+            email_verified: data.user.email_verified,
+            id: data.user.id,
+          } as AuthUser;
         }
       }
+      return null;
+    } catch (error) {
+      console.error("Failed to verify authentication:", error);
+      return null;
     }
-    return null;
   }
 
-  static clear(): void {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem(AUTH_STORAGE_KEY);
-      localStorage.removeItem(TOKEN_STORAGE_KEY);
-      localStorage.removeItem(USERID_STORAGE_KEY);
-      localStorage.removeItem(USER_PROFILE_STORAGE_KEY);
-      localStorage.removeItem(REALM_STORAGE_KEY);
+  // Clear authentication cookies via API
+  static async clear(): Promise<boolean> {
+    try {
+      // Clear server-side cookies
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      return response.ok;
+    } catch (error) {
+      console.error("Failed to clear auth cookies:", error);
+      return false;
     }
   }
 }

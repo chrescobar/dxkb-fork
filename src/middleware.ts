@@ -1,15 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
+import { safeDecodeURIComponent } from "./app/api/auth/utils";
 
 export function middleware(request: NextRequest) {
-  // For API routes that need auth, check for Authorization header
+  // For API routes that need auth, check for auth cookies
   if (request.nextUrl.pathname.startsWith("/api/protected/")) {
-    const authHeader = request.headers.get("Authorization");
+    const rawAuthToken = request.cookies.get("token")?.value;
+    const authToken = rawAuthToken ? safeDecodeURIComponent(rawAuthToken) : undefined;
+    const userId = request.cookies.get("user_id")?.value;
 
-    if (!authHeader) {
+    if (!authToken || !userId) {
       return NextResponse.json(
         { message: "Authentication required" },
         { status: 401 },
       );
+    }
+
+    // Add auth info to headers for API routes to use
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set("x-auth-token", authToken);
+    requestHeaders.set("x-user-id", userId);
+    
+    const realm = request.cookies.get("realm")?.value;
+    if (realm) {
+      requestHeaders.set("x-realm", realm);
+    }
+
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+  }
+
+  // For protected pages, redirect to login if not authenticated
+  if (request.nextUrl.pathname.startsWith("/services/") && 
+      request.nextUrl.pathname !== "/services") {
+    const authToken = request.cookies.get("token")?.value;
+    
+    if (!authToken) {
+      return NextResponse.redirect(new URL("/login", request.url));
     }
   }
 
@@ -17,5 +46,8 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/api/protected/:path*"],
+  matcher: [
+    "/api/protected/:path*",
+    "/services/:path*"
+  ],
 };

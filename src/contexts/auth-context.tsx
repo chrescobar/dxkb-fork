@@ -14,7 +14,6 @@ import {
   RegisterCredentials,
 } from "../app/api/auth/types";
 import { AuthStorage } from "../app/api/auth/storage";
-import { AuthService } from "../app/api/auth/service";
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -34,177 +33,182 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
-  const authService = new AuthService();
 
   // Check for existing session on mount
   useEffect(() => {
-    const savedUser = AuthStorage.load();
-    if (savedUser) {
-      // Validate token on app start
-      authService
-        .validateAndGetUserInfo(savedUser.token, savedUser.username)
-        .then(({ isValid, userInfo }) => {
-          if (isValid) {
-            const updatedUser = userInfo
-              ? { ...savedUser, ...userInfo }
-              : savedUser;
-            setUser(updatedUser);
-            setIsVerified(userInfo?.email_verified ?? false);
-            if (userInfo) {
-              AuthStorage.save(updatedUser);
-            }
+    const initAuth = async () => {
+      try {
+        // Check authentication status via secure cookies
+        const savedUser = await AuthStorage.load();
+        if (savedUser) {
+          setUser(savedUser);
+          setIsVerified(savedUser.email_verified ?? false);
+        }
+      } catch (error) {
+        console.error("Auth initialization failed:", error);
+        await AuthStorage.clear();
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initAuth();
+  }, []);
+
+  // Auto-refresh auth status periodically to sync with server-side session
+  useEffect(() => {
+    if (!user) return;
+
+    const interval = setInterval(
+      async () => {
+        try {
+          const userData = await AuthStorage.load();
+          if (userData) {
+            setUser(userData);
+            setIsVerified(userData.email_verified ?? false);
           } else {
-            AuthStorage.clear();
+            setUser(null);
+            setIsVerified(false);
           }
-          setIsLoading(false);
-        });
-    } else {
+        } catch (error) {
+          console.error("Auth refresh failed:", error);
+        }
+      },
+      5 * 60 * 1000,
+    ); // Check every 5 minutes
+
+    return () => clearInterval(interval);
+  }, [user]);
+
+  const login = useCallback(async (credentials: LoginCredentials) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+        credentials: "include", // Include cookies
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Login failed");
+      }
+
+      // Login sets cookies server-side, now fetch user data with verification status
+      const userData = await AuthStorage.load();
+      console.log("USER DATA", userData);
+      if (userData) {
+        setUser(userData);
+        setIsVerified(userData.email_verified ?? false);
+
+        // Save user profile for UI preferences
+        if (userData.email_verified !== undefined) {
+          AuthStorage.saveUserProfile({
+            email_verified: userData.email_verified,
+            email: userData.email,
+            first_name: userData.first_name || "",
+            last_name: userData.last_name || "",
+            id: userData.id || "",
+            creation_date: "",
+            l_id: "",
+            last_login: "",
+            organisms: "",
+            reverification: false,
+            source: "",
+          });
+        }
+      }
+    } catch (error) {
+      throw error;
+    } finally {
       setIsLoading(false);
     }
   }, []);
 
-  // Auto-refresh token before expiration
-  useEffect(() => {
-    if (!user?.token || !user?.expires_at) return;
-
-    const timeUntilExpiry = user.expires_at - Date.now();
-    const refreshTime = Math.max(timeUntilExpiry - 5 * 60 * 1000, 0); // Refresh 5 mins before expiry
-
-    const timeoutId = setTimeout(() => {
-      refreshAuth();
-    }, refreshTime);
-
-    return () => clearTimeout(timeoutId);
-  }, [user]);
-
-  const login = useCallback(
-    async (credentials: LoginCredentials) => {
-      setIsLoading(true);
-      try {
-        const userData = await authService.login(credentials);
-        setUser(userData);
-        AuthStorage.save(userData);
-        console.log("AUTH STORAGE SAVED", AuthStorage.load());
-
-        // Validate user and fetch metadata after successful login
-        const { isValid, userInfo } = await authService.validateAndGetUserInfo(
-          userData.token,
-          userData.username,
-        );
-        if (isValid && userInfo) {
-          console.log("USER INFO", userInfo);
-          // Update user with additional metadata
-          const updatedUser = { ...userData, ...userInfo };
-          setUser(updatedUser);
-          setIsVerified(userInfo.email_verified);
-          console.log("USER VERIFIED?", userInfo.email_verified);
-          AuthStorage.save(updatedUser);
-          AuthStorage.saveUserProfile(userInfo);
-        } else {
-          console.warn("Token validation failed or no user metadata available");
-        }
-      } catch (error) {
-        throw error;
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [authService],
-  );
-
-  const register = useCallback(
-    async (credentials: RegisterCredentials) => {
-      setIsLoading(true);
-      try {
-        const userData = await authService.register(credentials);
-        setUser(userData);
-        AuthStorage.save(userData);
-
-        // Fetch user metadata after successful registration
-        const { isValid, userInfo } = await authService.validateAndGetUserInfo(
-          userData.token,
-          userData.username,
-        );
-        if (isValid && userInfo) {
-          const updatedUser = { ...userData, ...userInfo };
-          setUser(updatedUser);
-          setIsVerified(userInfo.email_verified);
-          AuthStorage.save(updatedUser);
-        } else {
-          console.warn("Token validation failed or no user metadata available");
-        }
-      } catch (error) {
-        throw error;
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [authService],
-  );
-
-  const logout = useCallback(async () => {
-    setUser(null);
-    AuthStorage.clear();
-
-    // Optionally call logout endpoint
+  const register = useCallback(async (credentials: RegisterCredentials) => {
+    setIsLoading(true);
     try {
-      await fetch("/api/auth/logout", { method: "POST" });
-    } catch {
-      // Ignore logout endpoint errors
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+        credentials: "include", // Include cookies
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Registration failed");
+      }
+
+      // Registration sets cookies server-side, now fetch user data
+      const userData = await AuthStorage.load();
+      if (userData) {
+        setUser(userData);
+        setIsVerified(userData.email_verified ?? false);
+      }
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
-  const refreshAuth = useCallback(async () => {
-    if (!user?.token) return;
+  const logout = useCallback(async () => {
+    setUser(null);
+    setIsVerified(false);
 
+    // Clear cookies via API endpoint
     try {
-      const newToken = await authService.refreshToken(user.token);
-      const updatedUser = {
-        ...user,
-        token: newToken,
-        expiresAt: Date.now() + 3600 * 1000, // Assume 1 hour expiry
-      };
-      setUser(updatedUser);
-      AuthStorage.save(updatedUser);
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (error) {
+      console.error("Logout API call failed:", error);
+    }
 
-      // Validate and get fresh user metadata
-      const { isValid, userInfo } = await authService.validateAndGetUserInfo(
-        newToken,
-        user.username,
-      );
-      if (isValid && userInfo) {
-        const finalUser = { ...updatedUser, ...userInfo };
-        setUser(finalUser);
-        AuthStorage.save(finalUser);
+    // Clear any remaining auth state
+    await AuthStorage.clear();
+  }, []);
+
+  const refreshAuth = useCallback(async () => {
+    try {
+      // Refresh authentication by checking current status
+      const userData = await AuthStorage.load();
+      if (userData) {
+        setUser(userData);
+        setIsVerified(userData.email_verified ?? false);
+      } else {
+        // If no valid session, logout
+        await logout();
       }
     } catch (error) {
-      console.error("Token refresh failed:", error);
+      console.error("Auth refresh failed:", error);
       await logout(); // Force logout if refresh fails
     }
-  }, [user, authService, logout]);
+  }, [logout]);
 
   const validateUser = useCallback(async () => {
-    console.log("VALIDATING USER");
-    console.log("USER", user);
-    if (!user?.token) {
-      console.log("NO TOKEN");
-      return;
-    }
-    console.log("VALIDATE USER TOKEN", user.token);
-    const { isValid, userInfo } = await authService.validateAndGetUserInfo(
-      user.token,
-      user.username,
-    );
-    console.log("VALIDATE USER IS VALID", isValid);
-    if (!isValid) {
+    try {
+      // Validate current authentication status
+      const userData = await AuthStorage.load();
+      if (userData) {
+        setUser(userData);
+        setIsVerified(userData.email_verified ?? false);
+      } else {
+        // No valid session, logout
+        await logout();
+      }
+    } catch (error) {
+      console.error("User validation failed:", error);
       await logout();
-    } else if (userInfo) {
-      // Update user with fresh metadata
-      const updatedUser = { ...user, ...userInfo };
-      setUser(updatedUser);
-      AuthStorage.save(updatedUser);
     }
-  }, [user, authService, logout]);
+  }, [logout]);
 
   const value = {
     user,
@@ -215,7 +219,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     validateUser,
     isLoading,
     isAuthenticated: !!user,
-    isVerified
+    isVerified,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -64,17 +64,9 @@ export default function LoginPage() {
     try {
       await login(data);
       toast.success("Logged in successfully. Welcome to DXKB!", {closeButton: true});
-    } catch (err) {
-      console.log("Login error:", err);
-      setError(
-        err instanceof Error ? err.message : "Invalid username or password",
-      );
-    }
-    try {
-      console.log("LOGIN");
-      await login(form.getValues());
       // Navigation will happen automatically via useEffect
     } catch (err) {
+      console.log("Login error:", err);
       setError(
         err instanceof Error ? err.message : "Invalid username or password",
       );
@@ -174,56 +166,6 @@ export default function LoginPage() {
                   </FormItem>
                 )}
               />
-
-              {/* <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
-
-                  <p className="text-primary text-xs">
-                    <Link
-                      href="/forgot-password"
-                      className="hover:text-secondary transition-all duration-300 hover:font-medium"
-                    >
-                      Forgot your password?
-                    </Link>
-                  </p>
-                </div>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    value={credentials.password}
-                    onChange={handleInputChange("password")}
-                    placeholder="Enter your password"
-                    required
-                    disabled={isLoading}
-                    autoComplete="current-password"
-                    className="pr-10 transition-all duration-200"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute top-1/2 right-3 -translate-y-1/2 transform text-gray-500 transition-colors hover:text-gray-700"
-                    disabled={isLoading}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-              </div> */}
-
-              {error && (
-                <Alert
-                  variant="destructive"
-                  className="animate-in slide-in-from-top-1"
-                >
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
 
               <Button
                 type="submit"

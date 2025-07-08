@@ -6,6 +6,10 @@ export interface AuthUser {
   expires_at?: number;
   realm?: string;
   un?: string;
+  first_name?: string;
+  last_name?: string;
+  email_verified?: boolean;
+  id?: string;
 }
 
 export interface UserProfile {

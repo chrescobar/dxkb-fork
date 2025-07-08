@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { extractRealmFromToken } from "../storage";
+import { setAuthCookies, getProfileMetadata } from "../utils";
 
 export async function POST(request: NextRequest) {
   try {
@@ -43,15 +45,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log("RESPONSE", response);
-    console.log("register??");
-
     const data = await response.text();
     const token = response.headers.get("Authorization") || data;
+    const expires_at = Date.now() + 3600 * 1000; // 1 hour from now
+    const realm = extractRealmFromToken(token);
 
+    // Fetch user profile from BV-BRC
+    const userProfile = await getProfileMetadata(token, credentials.username);
+
+    // Set authentication cookies
+    await setAuthCookies(token, credentials.username, realm, userProfile);
+
+    // Return user data without sensitive information
     return NextResponse.json({
-      token,
-      expires_at: 3600, // 1 hour
+      username: credentials.username,
+      email: credentials.email,
+      first_name: credentials.first_name,
+      last_name: credentials.last_name,
+      realm: realm,
+      expires_at: expires_at,
+      success: true,
     });
   } catch (error) {
     console.error("Register error:", error);

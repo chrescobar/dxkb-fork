@@ -22,6 +22,7 @@ interface AuthContextType {
   register: (credentials: RegisterCredentials) => Promise<void>;
   refreshAuth: () => Promise<void>;
   validateUser: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
   isLoading: boolean;
   isAuthenticated: boolean;
   isVerified: boolean;
@@ -158,6 +159,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const resetPassword = useCallback(async (usernameOrEmail: string) => {
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("/api/auth/reset-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ usernameOrEmail }),
+      });
+
+      if (!response.ok) {
+        console.warn("Password reset request failed:", response.status);
+      }
+
+    } catch (error) {
+      console.error("Password reset error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   const logout = useCallback(async () => {
     setUser(null);
     setIsVerified(false);
@@ -217,6 +241,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     register,
     refreshAuth,
     validateUser,
+    resetPassword,
     isLoading,
     isAuthenticated: !!user,
     isVerified,

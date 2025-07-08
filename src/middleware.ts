@@ -5,7 +5,9 @@ export function middleware(request: NextRequest) {
   // For API routes that need auth, check for auth cookies
   if (request.nextUrl.pathname.startsWith("/api/protected/")) {
     const rawAuthToken = request.cookies.get("token")?.value;
-    const authToken = rawAuthToken ? safeDecodeURIComponent(rawAuthToken) : undefined;
+    const authToken = rawAuthToken
+      ? safeDecodeURIComponent(rawAuthToken)
+      : undefined;
     const userId = request.cookies.get("user_id")?.value;
 
     if (!authToken || !userId) {
@@ -19,7 +21,7 @@ export function middleware(request: NextRequest) {
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set("x-auth-token", authToken);
     requestHeaders.set("x-user-id", userId);
-    
+
     const realm = request.cookies.get("realm")?.value;
     if (realm) {
       requestHeaders.set("x-realm", realm);
@@ -33,12 +35,17 @@ export function middleware(request: NextRequest) {
   }
 
   // For protected pages, redirect to login if not authenticated
-  if (request.nextUrl.pathname.startsWith("/services/") && 
-      request.nextUrl.pathname !== "/services") {
+  if (
+    request.nextUrl.pathname.startsWith("/services/") &&
+    request.nextUrl.pathname !== "/services"
+  ) {
     const authToken = request.cookies.get("token")?.value;
-    
+
     if (!authToken) {
-      return NextResponse.redirect(new URL("/login", request.url));
+      // Create login URL with redirect parameter to preserve the original destination
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("redirect", request.nextUrl.pathname);
+      return NextResponse.redirect(loginUrl);
     }
   }
 
@@ -46,8 +53,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/api/protected/:path*",
-    "/services/:path*"
-  ],
+  matcher: ["/api/protected/:path*", "/services/:path*"],
 };

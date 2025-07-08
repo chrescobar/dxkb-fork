@@ -28,25 +28,22 @@ import { Button } from "@/components/buttons/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import ThemeSwitch from "@/styles/ThemeSwitch";
 import Logo from "@/components/ui/logo";
 import { useAuth } from "@/contexts/auth-context";
-import { useTheme } from "next-themes";
 import { LogoutButton } from "../auth/logout-button";
 import { UserRound, Settings, NotebookPen, BriefcaseBusiness } from 'lucide-react';
 
 const DesktopNavbar = () => {
-  const { theme } = useTheme();
-  const { isAuthenticated, user, logout, isLoading } = useAuth();
+  const { isAuthenticated, user, isLoading } = useAuth();
 
   return (
-    <header className="bg-primary hidden items-center justify-between px-4 py-4 text-white md:flex">
+    <header className="bg-primary hidden h-18 items-center justify-between px-4 py-4 text-white md:flex">
       <div className="flex items-center space-x-2">
         <Link id="dxkb-logooooo" href="/">
           <Logo
             variant="logo-white"
             width={100}
-            height={40}
+            height={44}
             className="h-10 w-auto"
             priority
           />
@@ -172,7 +169,6 @@ const DesktopNavbar = () => {
       </div>
 
       <div className="flex items-center space-x-2">
-        <ThemeSwitch />
         <div className="flex items-center space-x-2">
           {/* Show skeleton while loading */}
           {isLoading && (
@@ -188,7 +184,7 @@ const DesktopNavbar = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-white/10"
+                className="text-white hover:text-white hover:bg-white/10"
                 asChild
               >
                 <Link href="/login">Login</Link>
@@ -207,8 +203,8 @@ const DesktopNavbar = () => {
           {/* Show user info and logout when authenticated and not loading */}
           {!isLoading && isAuthenticated && (
             <>
-              <div className="flex items-center space-x-2 hover:bg-foreground/10 rounded-md pl-1 pr-2 py-1">
-                <DropdownMenu>
+              <div className="flex items-center space-x-2 hover:bg-foreground/10 rounded-md px-1 py-1">
+                <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
                     <div className="flex items-center space-x-2">
                       <Avatar className="h-8 w-8">
@@ -216,10 +212,9 @@ const DesktopNavbar = () => {
                           {user?.username?.charAt(0).toUpperCase() || "U"}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="text-sm font-medium">{user?.username}</span>
                     </div>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent>
+                  <DropdownMenuContent side="bottom" sideOffset={8} align="end">
                     <DropdownMenuLabel>User Actions</DropdownMenuLabel>
 
                     <DropdownMenuSeparator />

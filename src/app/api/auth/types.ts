@@ -59,3 +59,13 @@ export interface AuthError {
   message: string;
   code?: string;
 }
+
+export interface PasswordResetRequest {
+  usernameOrEmail: string;
+}
+
+export interface PasswordResetResponse {
+  message: string;
+  success: boolean;
+  code?: string;
+}

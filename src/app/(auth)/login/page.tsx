@@ -99,12 +99,12 @@ export default function LoginPage() {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>Username or email</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <LuUser className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
                         <Input
-                          placeholder="Enter your username"
+                          placeholder="Enter your username or email"
                           {...field}
                           className="pl-10"
                         />

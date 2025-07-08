@@ -31,48 +31,46 @@ export async function GET() {
       }
     }
 
-    // If no user profile in cookie, validate token directly with BV-BRC service
-    if (!userInfo) {
-      try {
-        const response = await fetch(
-          `https://user.patricbrc.org/user/${username}`,
-          {
-            headers: {
-              Authorization: token,
-              Accept: "application/json",
-            },
+    try {
+      const response = await fetch(
+        `https://user.patricbrc.org/user/${username}`,
+        {
+          headers: {
+            Authorization: token,
+            Accept: "application/json",
           },
-        );
+        },
+      );
 
-        if (response.ok) {
-          userInfo = await response.json();
-          isValid = true;
+      if (response.ok) {
+        userInfo = await response.json();
+        isValid = true;
 
-          // Update user_profile cookie with fresh data from BV-BRC
-          const profileData = {
-            first_name: userInfo.first_name,
-            last_name: userInfo.last_name,
-            email: userInfo.email,
-            email_verified: userInfo.email_verified,
-            id: userInfo.id,
-            username: username,
-            realm: realm,
-          };
+        // Update user_profile cookie with fresh data from BV-BRC
+        const profileData = {
+          first_name: userInfo.first_name,
+          last_name: userInfo.last_name,
+          email: userInfo.email,
+          email_verified: userInfo.email_verified,
+          id: userInfo.id,
+          username: username,
+          realm: realm,
+        };
 
-          const responseCookies = await cookies();
-          responseCookies.set("user_profile", JSON.stringify(profileData), {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            maxAge: 3600, // 1 hour
-            path: "/",
-          });
-        }
-      } catch (error) {
-        console.error("User validation failed:", error);
-        isValid = false;
+        const responseCookies = await cookies();
+        responseCookies.set("user_profile", JSON.stringify(profileData), {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          maxAge: 3600, // 1 hour
+          path: "/",
+        });
       }
+    } catch (error) {
+      console.error("User validation failed:", error);
+      isValid = false;
     }
+
     console.log("isValid", isValid);
     if (!isValid) {
       // Clear invalid cookies

@@ -147,6 +147,28 @@ export default function RegisterPage() {
 
               <FormField
                 control={form.control}
+                name="middle_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Middle name</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <LuUser className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
+                        <Input
+                          {...field}
+                          placeholder="James"
+                          className="pl-10"
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="last_name"
                 render={({ field }) => (
                   <FormItem>

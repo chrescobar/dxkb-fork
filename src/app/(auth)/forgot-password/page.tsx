@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Button } from "@/components/buttons/button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -12,32 +14,57 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, AlertCircle } from "lucide-react";
 import { LuMail, LuArrowLeft } from "react-icons/lu";
+import { useAuth } from "@/contexts/auth-context";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
+const formSchema = z.object({
+  usernameOrEmail: z
+    .string()
+    .min(1, { message: "Username or email is required" }),
+});
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      usernameOrEmail: "",
+    },
+  });
+
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const { resetPassword, isLoading, isAuthenticated } = useAuth();
+  const router = useRouter();
+  // Get redirect URL from query params (for protected route redirects)
+  const redirectTo = "/";
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push(redirectTo);
+    }
+  }, [isAuthenticated, router, redirectTo]);
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    setError(""); // Clear any previous errors
 
     try {
-      // TODO: Implement actual password reset logic here
-      console.log("Password reset request for:", email);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      await resetPassword(data.usernameOrEmail);
       setSuccess(true);
     } catch (err) {
-      setError("Failed to send reset email. Please try again.");
-    } finally {
-      setIsLoading(false);
+      setError("An unexpected error occurred. Please try again.");
     }
   };
 
@@ -50,7 +77,8 @@ export default function ForgotPasswordPage() {
               Check your email
             </CardTitle>
             <CardDescription className="text-center">
-              We've sent a password reset link to {email}
+              We've sent a password reset link to your email address if it
+              exists in our system.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -79,48 +107,67 @@ export default function ForgotPasswordPage() {
             Forgot password?
           </CardTitle>
           <CardDescription className="text-center">
-            Enter your email address and we'll send you a link to reset your
-            password
+            Enter your username or email address and we'll send you a link to
+            reset your password.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <div className="relative">
-                <LuMail className="text-foreground absolute top-3 left-3 h-4 w-4" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10"
-                  required
-                />
-              </div>
-            </div>
+              <FormField
+                control={form.control}
+                name="usernameOrEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username or email</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <LuMail className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
+                        <Input
+                          placeholder="Enter your username or email"
+                          {...field}
+                          className="pl-10"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <Button type="submit" className="w-full text-muted-foreground hover:text-foreground" disabled={isLoading}>
-              {isLoading ? "Sending..." : "Send reset link"}
-            </Button>
-
-            <div className="text-center text-sm">
-              <Link
-                href="/login"
-                className=" group text-primary font-medium hover:underline hover:text-secondary"
+              <Button
+                type="submit"
+                className="text-muted-foreground hover:text-foreground w-full transition-all duration-200"
+                disabled={isLoading}
               >
-                <LuArrowLeft className="mr-1 inline h-3 w-3" />
-                Back to login
-              </Link>
-            </div>
-          </form>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  "Send reset link"
+                )}
+              </Button>
+
+              <div className="text-center text-sm">
+                <Link
+                  href="/login"
+                  className="group text-primary hover:text-secondary font-medium transition-all duration-300 hover:font-medium"
+                >
+                  <LuArrowLeft className="mr-1 inline h-3 w-3" />
+                  Back to login
+                </Link>
+              </div>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </div>

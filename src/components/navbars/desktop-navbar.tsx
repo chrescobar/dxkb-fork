@@ -19,9 +19,15 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { useTheme } from "next-themes";
+import { SearchBar } from "../search/search-bar";
+import { usePathname } from "next/navigation";
+
 
 const DesktopNavbar = () => {
   const { theme } = useTheme();
+
+  const pathname = usePathname();
+  const isHome = pathname === '/';
 
   return (
     <header className="bg-primary hidden items-center justify-between px-8 py-4 text-white md:flex">
@@ -162,8 +168,12 @@ const DesktopNavbar = () => {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-      </div>
+        </div>
 
+        {!isHome && (
+          <SearchBar />
+        )}
+                      
       <div className='space-x-4 flex items-center'>
         <ThemeSwitch />
         <Button

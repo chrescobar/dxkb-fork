@@ -1,5 +1,6 @@
 'use client';
 
+// The following imports are relatively self-explanatory as to what they're used for. They're used to help set up the columns, pagination, sorting, etc on the table
 import {
   ColumnDef,
   getCoreRowModel,
@@ -10,8 +11,14 @@ import {
   SortingState,
   PaginationState,
 } from '@tanstack/react-table';
-import { useMemo, useRef, useState, useEffect, useLayoutEffect  } from 'react';
+
+// The following imports are usual hooks used in React to do things on events. The only non-standard one is useMemo, which isused to cache data and checks on rerenders to see if the data has changed. This is relevant to when the columns are resized.
+import { useMemo, useRef, useState, useEffect } from 'react';
+
+// This helps with rendering rows more quickly in situations that have thousands of rows
 import { useVirtualizer } from '@tanstack/react-virtual';
+
+// These imports are used to actually build the table structure
 import {
   Table,
   TableHeader,
@@ -20,27 +27,30 @@ import {
   TableBody,
   TableCell,
 } from '../ui/table';
+
+// This allows for using shorthand to conditionally apply CSS classes
 import clsx from 'clsx';
 
+// This sets the structure of the columns that are sent in as JSON
 interface ColumnInfo {
-  id: string;
-  label: string;
-  visible?: boolean;
+  id: string; // The key in the JSON for this column
+  label: string; // The readable string that gets displayed as the column header 
+  visible?: boolean; // Whether or not we see this column. There is a default that it comes in with from the parent, but it can be changed dynamically, as we'll see later
 }
 
+// This sets the structure of the data that is sent in as JSON
 interface DataTableProps {
-  id: string;
-  data: Record<string, any>[];
-  columns: ColumnInfo[];
+  id: string; // This property ended up not really being used in the end, but I left it in since it seemed like it might be useful in the future and it didn't hurt to just leave it
+  data: Record<string, any>[]; // The actual raw data as JSON
+  columns: ColumnInfo[]; // The list of columns in the structure defined above
 }
 
+// This is the actual function...
 export function DataTable({ id, data, columns }: DataTableProps) {
+
+  // These next consts are used and activated when something about the columm changes
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnSizing, setColumnSizing] = useState<Record<string, number>>({});
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 200,
-  });
   const [columnOrder, setColumnOrder] = useState(() => [
     '__select__',
     ...columns.map((col) => col.id),
@@ -48,17 +58,26 @@ export function DataTable({ id, data, columns }: DataTableProps) {
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>(
     () => Object.fromEntries(columns.map((col) => [col.id, col.visible !== false]))
   );
-
-  const tableContainerRef = useRef<HTMLDivElement>(null);
-  const resizeLineRef = useRef<HTMLDivElement>(null);
-  const headerRef = useRef<HTMLTableSectionElement>(null);
-  const [rowSelection, setRowSelection] = useState({});
-  const [headerHeight, setHeaderHeight] = useState(0);
   const [showColumnMenu, setShowColumnMenu] = useState(false);
+
+  // This handles the event of someone selecting a row
+  const [rowSelection, setRowSelection] = useState({});
+
+  // This helps set up the pagination
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 200,
+  });
+
+  // These reference variables are used since React doesn't naturally have direct access to the DOM. As a result, we need to create hooks to use to be able to access and manipulate the DOM at various points in the code. These are the DOM elements that we'll need references for.
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const resizeLineRef = useRef<HTMLDivElement>(null); // This one is used to create the "ghost line" that appears on a column resize to guide the user
+  const headerRef = useRef<HTMLTableSectionElement>(null);
   const columnMenuRef = useRef<HTMLDivElement>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLDivElement>(null);
 
+  // This simply closes the columns dropdown if a mouseclick event happens outside of it
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -77,7 +96,8 @@ export function DataTable({ id, data, columns }: DataTableProps) {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showColumnMenu]);
-  
+
+  // This makes sure the sizing all works right as per the height of the table within the page. This manages the height of the table, the pagination section, etc to make sure everything appears to the user as it should.
   useEffect(() => {
     const measure = () => {
       const controlsHeight = controlsRef.current?.offsetHeight || 0;
@@ -100,9 +120,11 @@ export function DataTable({ id, data, columns }: DataTableProps) {
     };
   }, []);
   
+  // This defines how the columns are laid out and react to various actions like being resized or reordered. You can see that the first column - the checkbox - is handled slightly differently in that the actions really cannot be applied to it.
   const columnDefs = useMemo<ColumnDef<any, any>[]>(() => {
     const checkboxColumn: ColumnDef<any> = {
       id: '__select__',
+      // This is specifically the "check all" checkbox in the header. Its value and action affect ALL rows.
       header: ({ table }) => (
         <div className="flex justify-center items-center w-full h-full">
           <input
@@ -116,6 +138,7 @@ export function DataTable({ id, data, columns }: DataTableProps) {
           />
         </div>
       ),
+      // This is the code for each row's checkbox. Its value and action only affect its row.
       cell: ({ row }) => (
         <div className="flex justify-center items-center w-full h-full">
           <input
@@ -148,7 +171,7 @@ export function DataTable({ id, data, columns }: DataTableProps) {
         size: 200,
         enableResizing: true,
         enableSorting: true,
-        sortingFn: (rowA, rowB, columnId) => {
+        sortingFn: (rowA, rowB, columnId) => { // This defines the sorting function on each column
           const a = rowA.getValue(columnId);
           const b = rowB.getValue(columnId);
       
@@ -167,10 +190,11 @@ export function DataTable({ id, data, columns }: DataTableProps) {
     ];
   }, [columns]);
 
+  // This defines all the features, actions, and hooks for the table.
   const table = useReactTable({
     data,
     columns: columnDefs,
-    state: {
+    state: { // These are the various states that are relevant in the table. These were defined up above.
       sorting,
       pagination,
       columnOrder,
@@ -178,6 +202,7 @@ export function DataTable({ id, data, columns }: DataTableProps) {
       columnSizing,
       rowSelection,
     },
+    // These are the definitions of what happens when any of the above states change. Most of them are pretty self-explanatory
     onSortingChange: (updater) => {
       setSorting(updater);
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
@@ -201,9 +226,9 @@ export function DataTable({ id, data, columns }: DataTableProps) {
     },
     onPaginationChange: setPagination,
     onColumnOrderChange: setColumnOrder,
-    columnResizeMode: 'onEnd',
+    columnResizeMode: 'onEnd', // This waits to implement the new column size until the mouse is released. This makes the transition smoother as it doesn't have to keep rerendering the column/table in realtime as the user moves the mouse.
     enableColumnResizing: true,
-    getCoreRowModel: getCoreRowModel(),
+    getCoreRowModel: getCoreRowModel(), // This is what lets react build out the table from the raw data
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onRowSelectionChange: setRowSelection,
@@ -211,6 +236,7 @@ export function DataTable({ id, data, columns }: DataTableProps) {
     enableSortingRemoval: false,
   });
 
+  // This controls and handles the actual widths of the columns. It keeps track of any resizing that happens on any given column and manages them all.
   const columnSizeVars = useMemo(() => {
     const headers = table.getFlatHeaders();
     const colSizes: { [key: string]: string } = {};
@@ -221,6 +247,7 @@ export function DataTable({ id, data, columns }: DataTableProps) {
   }, [table.getState().columnSizing, table.getState().columnSizingInfo]);
 
   const rows = table.getRowModel().rows;
+  // This renders rows before they're all ready to go. This is useful in large data sets where we don't necessarily want to wait for thousands of rows of data to be ready before seeing anything at all. This watches for a certain number of rows to be ready, along with a handful extra of a buffer, and renders those while still working on fetching the rest of the data.
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => tableContainerRef.current,
@@ -230,6 +257,7 @@ export function DataTable({ id, data, columns }: DataTableProps) {
   const virtualRows = rowVirtualizer.getVirtualItems();
   const totalSize = rowVirtualizer.getTotalSize();
 
+  // This is what happens when the user clicks the "resize region" in a column header
   const handleResizeStart = (event: React.MouseEvent, header: any) => {
     event.preventDefault();
 
@@ -241,7 +269,7 @@ export function DataTable({ id, data, columns }: DataTableProps) {
 
     const tableRect = colElement.closest('table')!.getBoundingClientRect();
 
-    if (resizeLineRef.current) {
+    if (resizeLineRef.current) { // Make the ghost line appear
       resizeLineRef.current.style.left = `${colElement.getBoundingClientRect().right - tableRect.left}px`;
       resizeLineRef.current.style.display = 'block';
     }
@@ -250,7 +278,7 @@ export function DataTable({ id, data, columns }: DataTableProps) {
       const delta = e.clientX - startX;
       const newSize = Math.max(40, startSize + delta);
 
-      if (resizeLineRef.current) {
+      if (resizeLineRef.current) { // Make the ghost line move
         resizeLineRef.current.style.left = `${colElement.getBoundingClientRect().left - tableRect.left + newSize}px`;
       }
     };
@@ -264,7 +292,7 @@ export function DataTable({ id, data, columns }: DataTableProps) {
         [column.id]: finalSize,
       }));
 
-      if (resizeLineRef.current) {
+      if (resizeLineRef.current) { // Make the ghost line go away
         resizeLineRef.current.style.display = 'none';
       }
 
@@ -276,16 +304,19 @@ export function DataTable({ id, data, columns }: DataTableProps) {
     window.addEventListener('mouseup', onMouseUp);
   };
 
+  // This is the section that handles downloading the data. By default, it grabs all the data. However, there is an option to only download the selected rows
   const handleDownload = (format: 'csv' | 'txt', onlySelected = false) => {
     const allCols = table.getAllLeafColumns();
     const visibleCols = allCols.filter(col => col.id !== '__select__');
   
     const headers = visibleCols.map(col => col.columnDef.header as string);
-  
+
+    // Check to see if we're downloading everything or only selected rows
     const rowsToExport = onlySelected
       ? table.getSelectedRowModel().rows
       : table.getPrePaginationRowModel().rows;
-  
+
+    // Go through and pack all the content into one large file...
     const content = [
       headers.join(','), // header row
       ...rowsToExport.map(row =>
@@ -296,13 +327,15 @@ export function DataTable({ id, data, columns }: DataTableProps) {
       )
     ].join('\n');
   
+    // ...and then download it.
     downloadFile(`table-export.${onlySelected ? 'selected-' : ''}${format}`, content);
   };
-      
+
+  // Now that all the setup is done, let's render the table!
   return (
-    <div className="flex flex-col h-full w-full text-xs relative items-center">
-      <div className="w-[100%] flex justify-end mb-2 z-50" ref={controlsRef}>
-          <div className="relative inline-block text-left" ref={columnMenuRef}>
+    <div className="flex flex-col h-full w-full text-xs relative items-center">{/* This is the main container. Full width and content centered. */}
+      <div className="w-[100%] flex justify-end mb-2 z-50" ref={controlsRef}> {/* This is the area above the table for the various buttons. */}
+          <div className="relative inline-block text-left" ref={columnMenuRef}> {/* This is the button for changing the visibility of columns in the table */}
             <button
               className="flex justify-end w-full rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2"
               onClick={() => setShowColumnMenu(prev => !prev)}
@@ -346,7 +379,9 @@ export function DataTable({ id, data, columns }: DataTableProps) {
           >
             Download (TXT)
           </button>
-          {table.getSelectedRowModel().rows.length > 0 && (
+
+          {/* These next two only show up if rows are selected */}
+          {table.getSelectedRowModel().rows.length > 0 && ( 
             <>
               <button
                 onClick={() => handleDownload('csv', true)}
@@ -363,21 +398,24 @@ export function DataTable({ id, data, columns }: DataTableProps) {
             </>
           )}
       </div>
-      <div className="w-full flex flex-col border border-gray-500 rounded relative h-full overflow-hidden">
-      <div
-        className="flex-1 overflow-auto relative"
-        ref={tableContainerRef}
-        style={{
-          maxHeight: '100%',
-          paddingBottom: '52px', // leave room for footer
-        }}
-      >
-        <div className="min-w-max relative" style={columnSizeVars}>
-          <Table className="w-full table-auto text-xs border-collapse" style={{ borderSpacing: 0 }}>
-            <TableHeader
-              ref={headerRef}
-              className="sticky top-0 z-30 bg-primary text-secondary uppercase border-black"
-            >
+      <div className="w-full flex flex-col border border-gray-500 rounded relative h-full overflow-hidden"> {/* This is the main container, which contains both the table and the pagination footer */}
+
+        {/* This is the section containing the main data table */}
+        <div
+          className="flex-1 overflow-auto relative"
+          ref={tableContainerRef}
+          style={{
+            maxHeight: '100%',
+            paddingBottom: '52px', // leave room for pagination footer
+          }}
+        >
+          {/* This extra nested div is necessary to make sure all the table elements/columns lay out properly. Specifically to ensure things like scrolling, table width, column-resizing, etc, all work as intended. */}
+          <div className="min-w-max relative" style={columnSizeVars}>
+            <Table className="w-full table-auto text-xs border-collapse" style={{ borderSpacing: 0 }}>
+              <TableHeader
+                ref={headerRef}
+                className="sticky top-0 z-30 bg-primary text-secondary uppercase border-black"
+              >
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id} className="flex border-t border-b border-black">
                     {headerGroup.headers.map((header) => {
@@ -397,6 +435,7 @@ export function DataTable({ id, data, columns }: DataTableProps) {
                             minWidth: `var(--col-${column.id}-size)`,
                             maxWidth: `var(--col-${column.id}-size)`,
                           }}
+                          // This is the part that makes the columns reorderable...
                           draggable
                           onDragStart={(e) => {
                             e.dataTransfer.setData('text/plain', column.id);
@@ -433,12 +472,13 @@ export function DataTable({ id, data, columns }: DataTableProps) {
                             className="flex items-center justify-between w-full h-full cursor-pointer select-none py-0"
                             onClick={column.getToggleSortingHandler()}
                           >
-                            {flexRender(header.column.columnDef.header, header.getContext())}
+                            {flexRender(header.column.columnDef.header, header.getContext())} {/* This is the line that actually renders the column name */}
                             {{
                               asc: ' ↑',
                               desc: ' ↓',
                             }[column.getIsSorted() as string] ?? ''}
                               {column.getCanResize() && (
+                              // This extra div is the grabbable area for resizing the column 
                                 <div
                                   onMouseDown={(e) => handleResizeStart(e, header)}
                                   className="absolute top-0 right-0 w-2 h-full cursor-col-resize z-30 hover:bg-blue-300"
@@ -451,8 +491,10 @@ export function DataTable({ id, data, columns }: DataTableProps) {
                     })}
                   </TableRow>
                 ))}
-            </TableHeader>
+              </TableHeader>
 
+              {/* Now we output the actual data...
+              Most of this is self-explanatory*/}
               <TableBody
                 style={{
                   position: 'relative',
@@ -460,17 +502,18 @@ export function DataTable({ id, data, columns }: DataTableProps) {
                 }}
                 className="relative z-10 border-collapse gap-0"
               >
-                {rows.length === 0 ? (
+                {rows.length === 0 ? ( // If there are no results...
                 <TableRow className="flex w-full h-24 items-center justify-center">
                   <TableCell
                     colSpan={table.getVisibleLeafColumns().length}
-                    className="text-center w-full border-t border-black py-8 text-xl font-semibold text-foreground"
-                    style={{ justifyContent: 'center' }}
+                    className="text-left w-full border-t border-black py-8 text-xl font-semibold text-foreground"
+                    style={{ justifyContent: 'left' }}
                   >
                     No results
                   </TableCell>
                 </TableRow>
               ) : (
+                // If there ARE results...
                 virtualRows.map((virtualRow) => {
                   const row = rows[virtualRow.index];
                   return (
@@ -518,6 +561,7 @@ export function DataTable({ id, data, columns }: DataTableProps) {
               </TableBody>
             </Table>
 
+            {/* This is the "ghost line" that appears when resizing a column width. It remains hidden until triggered to appear by clicking the resizing div */}
             <div
               ref={resizeLineRef}
               className="absolute top-0 bottom-0 w-[2px] bg-blue-600 opacity-50 pointer-events-none z-40"
@@ -540,6 +584,7 @@ export function DataTable({ id, data, columns }: DataTableProps) {
               })()}
             </div>
             <div className="flex items-center space-x-2">
+              {/* Back arrow */}
               <button
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
@@ -547,6 +592,7 @@ export function DataTable({ id, data, columns }: DataTableProps) {
               >
                 {'<'}
               </button>
+              {/* Pagination page buttons */}
               {(() => {
                 const pageCount = table.getPageCount();
                 const currentPage = table.getState().pagination.pageIndex;
@@ -578,6 +624,7 @@ export function DataTable({ id, data, columns }: DataTableProps) {
                   );
                 });
               })()}
+              {/* Forward arrow */}
               <button
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
@@ -593,6 +640,7 @@ export function DataTable({ id, data, columns }: DataTableProps) {
   );
 }
 
+// This is the function that allows the user to download the data
 function downloadFile(filename: string, content: string) {
   const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
   const link = document.createElement('a');

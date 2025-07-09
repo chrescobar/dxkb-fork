@@ -69,7 +69,7 @@ export function SearchBar({
         id="searchtype"
         value={selected}
         onChange={(e) => setSelected(e.target.value)}
-        className={`${size === "lg" ? "py-2" : ""} ${showIcon ? "pl-4" : ""} bg-background`}
+        className={`${size === "lg" ? "py-2" : ""} ${showIcon ? "pl-4" : ""} bg-background rounded-md`}
         >
         {searchTypes.map((option) => (
           <option key={option.id} value={option.id}>

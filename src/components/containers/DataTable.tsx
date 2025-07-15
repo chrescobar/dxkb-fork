@@ -69,6 +69,9 @@ export function DataTable({ id, data, columns }: DataTableProps) {
     pageSize: 200,
   });
 
+  // This allows us to select multiple rows at once...
+  const lastSelectedIndexRef = useRef<number | null>(null);
+
   // These reference variables are used since React doesn't naturally have direct access to the DOM. As a result, we need to create hooks to use to be able to access and manipulate the DOM at various points in the code. These are the DOM elements that we'll need references for.
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const resizeLineRef = useRef<HTMLDivElement>(null); // This one is used to create the "ghost line" that appears on a column resize to guide the user
@@ -139,19 +142,62 @@ export function DataTable({ id, data, columns }: DataTableProps) {
         </div>
       ),
       // This is the code for each row's checkbox. Its value and action only affect its row.
-      cell: ({ row }) => (
-        <div className="flex justify-center items-center w-full h-full">
-          <input
-            type="checkbox"
-            checked={row.getIsSelected()}
-            onChange={(e) => {
-              e.stopPropagation();
-              row.toggleSelected();
-            }}
-            className="cursor-pointer m-0 p-0"
-          />
-        </div>
-      ),
+      cell: ({ row }) => {
+        const allRows = table.getPaginationRowModel().rows;
+
+        return (
+          <div className="flex justify-center items-center w-full h-full">
+            <input
+              type="checkbox"
+              checked={row.getIsSelected()}
+              onChange={() => {}} // required to avoid React warning
+              onClick={(e) => {
+                e.stopPropagation();
+
+                const isShift = (e as React.MouseEvent<HTMLInputElement>).shiftKey;
+                const allRows = table.getPaginationRowModel().rows;
+                const currentRowId = row.id;
+                const currentIndex = allRows.findIndex(r => r.id === currentRowId);
+
+                if (currentIndex === -1) {
+                  console.warn('Could not find current row index');
+                  return;
+                }
+
+                const lastSelectedIndex = lastSelectedIndexRef.current;
+
+                if (isShift && lastSelectedIndex !== null && lastSelectedIndex !== currentIndex) {
+                  const start = Math.min(lastSelectedIndex, currentIndex);
+                  const end = Math.max(lastSelectedIndex, currentIndex);
+
+                  const newSelection: Record<string, boolean> = {};
+                  for (let i = start; i <= end; i++) {
+                    const rowId = allRows[i]?.id;
+                    if (rowId) {
+                      newSelection[rowId] = true;
+                    }
+                  }
+
+                  table.setRowSelection((prev) => ({
+                    ...prev,
+                    ...newSelection,
+                  }));
+                } else {
+                  const isSelected = row.getIsSelected();
+                  table.setRowSelection((prev) => ({
+                    ...prev,
+                    [row.id]: !isSelected,
+                  }));
+                }
+
+                // ✅ Set synchronously
+                lastSelectedIndexRef.current = currentIndex;
+              }}
+              className="cursor-pointer m-0 p-0"
+            />
+          </div>
+        );
+      },
       enableResizing: false,
       size: 40,
     };
@@ -234,6 +280,8 @@ export function DataTable({ id, data, columns }: DataTableProps) {
     onRowSelectionChange: setRowSelection,
     enableRowSelection: true,
     enableSortingRemoval: false,
+    enableMultiRowSelection: true,
+    getRowId: (row, index) => String(index), // or use row.id if your data has unique ids,
   });
 
   // This controls and handles the actual widths of the columns. It keeps track of any resizing that happens on any given column and manages them all.
@@ -246,7 +294,8 @@ export function DataTable({ id, data, columns }: DataTableProps) {
     return colSizes;
   }, [table.getState().columnSizing, table.getState().columnSizingInfo]);
 
-  const rows = table.getRowModel().rows;
+  const rows = table.getPaginationRowModel().rows;
+
   // This renders rows before they're all ready to go. This is useful in large data sets where we don't necessarily want to wait for thousands of rows of data to be ready before seeing anything at all. This watches for a certain number of rows to be ready, along with a handful extra of a buffer, and renders those while still working on fetching the rest of the data.
   const rowVirtualizer = useVirtualizer({
     count: rows.length,

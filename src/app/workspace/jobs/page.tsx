@@ -266,8 +266,12 @@ function JobsContent() {
   return (
     <div className="w-full space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Workspace</h1>
-        <Button onClick={handleRefresh} disabled={loading.enumerate}>
+        <h1 className="text-3xl font-bold text-foreground">Workspace</h1>
+        <Button
+          onClick={handleRefresh}
+          disabled={loading.enumerate}
+          className="text-white"
+        >
           <RefreshCw
             className={`mr-2 h-4 w-4 ${loading.enumerate ? "animate-spin" : ""}`}
           />

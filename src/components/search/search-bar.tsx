@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LuSearch } from "react-icons/lu";
 import { useRouter } from "next/navigation";
 import { searchTypes } from '../../constants/searchInfo';
+import { useSearchParams } from "next/navigation";
 
 interface SearchBarProps {
   initialValue?: string;
@@ -45,6 +46,16 @@ export function SearchBar({
     setSelected(val);
     setSelectedTitle(title);
   };
+
+  const searchParams = useSearchParams();
+  const qry = searchParams.get("q");
+
+  useEffect(() => {
+    if (qry !== null) {
+      const cleaned = qry.replace(/^[^(]+\(|\)$/g, ""); // removes prefix before `(` and trailing `)`
+      setInputValue(cleaned);
+    }
+  }, [qry]);
 
   return (
     <form onSubmit={handleSearch} className={`flex gap-4 ${className}`}>

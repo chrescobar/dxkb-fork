@@ -213,6 +213,8 @@ export function DataTable({ id, data, columns, onSelectionChange, onGenomeSelect
       },
       enableResizing: false,
       size: 40,
+      minSize: 40,
+      maxSize: 40,
     };
     return [
       checkboxColumn,
@@ -249,6 +251,9 @@ export function DataTable({ id, data, columns, onSelectionChange, onGenomeSelect
     ];
   }, [columns]);
 
+  const [columnPinning, setColumnPinning] = useState({
+    left: ['__select__'],
+  });
   // This defines all the features, actions, and hooks for the table.
   const table = useReactTable({
     data,
@@ -260,6 +265,7 @@ export function DataTable({ id, data, columns, onSelectionChange, onGenomeSelect
       columnVisibility,
       columnSizing,
       rowSelection,
+      columnPinning,
     },
     onRowSelectionChange: (updater) => {
       const newSelection = typeof updater === 'function' ? updater(rowSelection) : updater;
@@ -306,6 +312,7 @@ export function DataTable({ id, data, columns, onSelectionChange, onGenomeSelect
     enableRowSelection: true,
     enableSortingRemoval: false,
     enableMultiRowSelection: true,
+    enableColumnPinning: true,
     getRowId: (row, index) => String(index), // or use row.id if your data has unique ids,
   });
 
@@ -513,11 +520,6 @@ export function DataTable({ id, data, columns, onSelectionChange, onGenomeSelect
                               ? 'p-0 flex justify-center items-center' // ✅ center checkbox
                               : 'px-2 py-0 text-sm font-bold leading-none align-middle'
                           )}
-                          style={{
-                            width: `var(--col-${column.id}-size)`,
-                            minWidth: `var(--col-${column.id}-size)`,
-                            maxWidth: `var(--col-${column.id}-size)`,
-                          }}
                           // This is the part that makes the columns reorderable...
                           draggable
                           onDragStart={(e) => {
@@ -549,6 +551,16 @@ export function DataTable({ id, data, columns, onSelectionChange, onGenomeSelect
 
                               table.setColumnOrder(newOrder);
                             }
+                          }}
+                          data-pinned={header.column.getIsPinned() === 'left' ? 'left' : undefined}
+                          style={{
+                            width: `var(--col-${column.id}-size)`,
+                            minWidth: `var(--col-${column.id}-size)`,
+                            maxWidth: `var(--col-${column.id}-size)`,
+                            ...header.column.getSize() && { width: `${header.column.getSize()}px` },
+                            left: header.column.getIsPinned() === 'left' ? 0 : undefined,
+                            position: header.column.getIsPinned() === 'left' ? 'sticky' : undefined,
+                            zIndex: header.column.getIsPinned() === 'left' ? 2 : 1,
                           }}
                         >
                           <div
@@ -620,8 +632,13 @@ export function DataTable({ id, data, columns, onSelectionChange, onGenomeSelect
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
                           key={cell.id}
-                          className='py-1 border border-primary'
+                          className='py-1 border border-primary bg-background'
+                          data-pinned={cell.column.getIsPinned() === 'left' ? 'left' : undefined}
                           style={{
+                            ...cell.column.getSize() && { width: `${cell.column.getSize()}px` },
+                            left: cell.column.getIsPinned() === 'left' ? 0 : undefined,
+                            position: cell.column.getIsPinned() === 'left' ? 'sticky' : undefined,
+                            zIndex: cell.column.getIsPinned() === 'left' ? 1 : 0,
                             width: `var(--col-${cell.column.id}-size)`,
                             minWidth: `var(--col-${cell.column.id}-size)`,
                             maxWidth: `var(--col-${cell.column.id}-size)`,
@@ -631,7 +648,7 @@ export function DataTable({ id, data, columns, onSelectionChange, onGenomeSelect
                             display: 'flex',
                             height: '24px',
                             alignItems: 'center',
-                            justifyContent: cell.column.id === '__select__' ? 'center' : 'flex-start',                          
+                            justifyContent: cell.column.id === '__select__' ? 'center' : 'flex-start',                       
                           }}
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}

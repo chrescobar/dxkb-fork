@@ -17,7 +17,7 @@ export default function Genomes() {
   const { setSelectedRows } = useSelection();
 
     return(
-      <WithGenomePanel>
+      <WithGenomePanel tabs={['genomes','sequences','amrphenotypes','features']}>
         {({ activeTab, setActiveTab }) => (
         <Tabs className="h-[85vh]" value={activeTab} onValueChange={setActiveTab} >
           <TabsList className="pb-0 mb-0 bg-background">

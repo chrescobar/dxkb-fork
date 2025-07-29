@@ -14,7 +14,6 @@ export default function Strains() {
     const { setSelectedRows } = useSelection();
     
     return(
-  
         <WithGenomePanel tabs={['strains']}>
           {({ activeTab, setActiveTab }) => (
           <Tabs className="h-[85vh]" value={activeTab} onValueChange={setActiveTab} >

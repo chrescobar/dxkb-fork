@@ -7,7 +7,12 @@ import { SortingState } from '@tanstack/react-table';
 import { strainsFields } from '@/constants/datafields/strains';
 import { useQuery } from '@tanstack/react-query';
 
-export function StrainData() {
+interface GenomeDataProps {
+  onSelectionChange?: (rows: any[]) => void;
+}
+
+export function StrainData({ onSelectionChange }: GenomeDataProps) {
+ 
   const strainsColumns = Object.values(strainsFields).map(obj => ({
     id: obj.field,
     label: obj.label,
@@ -93,6 +98,7 @@ export function StrainData() {
           id={widget.id}
           data={fullData ?? []}
           columns={widget.columns}
+          onSelectionChange={onSelectionChange}
         />
       </div>
     </div>

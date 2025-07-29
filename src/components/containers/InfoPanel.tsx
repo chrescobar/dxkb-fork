@@ -50,13 +50,13 @@ export function InfoPanel({
       break;
     case 'strains':
       fieldFile = strainsFields;
-      allowedFields = [];
-      order = [];
+      allowedFields = ['taxon_id', 'family', 'genus', 'species', 'strain', 'subtype', 'h_type', 'n_type', 'genome_ids', 'genbank_accessions', 'segment_count', 'status', 'host_group', 'host_common_name', 'host_name', 'lab_host', 'passage', 'geographic_group', 'isolation_country', 'collection_year', 'collection_date', 'season', '1_pb2', '2_pb1', '3_pa', '4_ha', '5_np', '6_na', '7_mp', '8_ns', 's', 'm', 'l', 'other_segments', 'date_inserted'];
+      order = ['Genome Info','Strain Info'];
       break;
     case 'domainsandmotifs':
       fieldFile = domainsandmotifsFields;
-      allowedFields = [];
-      order = [];
+      allowedFields = ['genome_id', 'genome_name', 'taxon_id', 'patric_id', 'refseq_locus_tag', 'gene', 'product', 'interpro_id', 'interpro_description', 'feature_type', 'source', 'source_id', 'description', 'classification', 'score', 'e_value', 'evidence', 'publication', 'start', 'end', 'segments', 'length', 'sequence', 'comments', 'date_inserted'];
+      order = ['Genome Info','Sequence Info','Feature Info','Additional Info'];
       break;
     case 'epitopes':
       fieldFile = epitopeFields;

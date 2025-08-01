@@ -15,9 +15,11 @@ export default function Genomes() {
   const searchParams = useSearchParams();
   const q = searchParams.get("q");
   const { setSelectedRows } = useSelection();
+  const activeTabParam = searchParams.get('activeTab');
 
     return(
-      <WithGenomePanel tabs={['genomes','sequences','amrphenotypes','features']}>
+      <WithGenomePanel tabs={['genomes','sequences','amrphenotypes','features']}
+        {...(activeTabParam ? { activeTab: activeTabParam } : {})}>
         {({ activeTab, setActiveTab }) => (
         <Tabs className="h-[85vh]" value={activeTab} onValueChange={setActiveTab} >
           <TabsList className="pb-0 mb-0 bg-background">

@@ -13,7 +13,9 @@ interface GenomeDataProps {
 
 export function StrainData({ onSelectionChange }: GenomeDataProps) {
  
-  const strainsColumns = Object.values(strainsFields).map(obj => ({
+  const strainsColumns = Object.values(strainsFields)
+  .filter(obj => obj.show_in_table !== false)
+  .map(obj => ({
     id: obj.field,
     label: obj.label,
     visible: !obj.hidden,

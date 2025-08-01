@@ -12,7 +12,9 @@ interface GenomeDataProps {
 }
 
 export function SurveillanceData({ onSelectionChange }: GenomeDataProps) {
-  const surveillanceColumns = Object.values(surveillanceFields).map(obj => ({
+  const surveillanceColumns = Object.values(surveillanceFields)
+    .filter(obj => obj.show_in_table !== false)
+  .map(obj => ({
     id: obj.field,
     label: obj.label,
     visible: !obj.hidden,

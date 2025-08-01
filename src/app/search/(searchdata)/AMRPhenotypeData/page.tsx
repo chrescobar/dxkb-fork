@@ -12,7 +12,9 @@ interface GenomeDataProps {
 }
 
 export function AMRPhenotypeData({ onSelectionChange }: GenomeDataProps) {
-  const amrphenotypeColumns = Object.values(amrphenotypeFields).map(obj => ({
+  const amrphenotypeColumns = Object.values(amrphenotypeFields)
+  .filter(obj => obj.show_in_table !== false)
+.map(obj => ({
     id: obj.field,
     label: obj.label,
     visible: !obj.hidden,

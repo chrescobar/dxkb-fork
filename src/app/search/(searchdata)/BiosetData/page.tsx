@@ -12,7 +12,9 @@ interface GenomeDataProps {
 }
 
 export function BiosetData({ onSelectionChange }: GenomeDataProps) {
-  const biosetColumns = Object.values(biosetFields).map(obj => ({
+  const biosetColumns = Object.values(biosetFields)
+  .filter(obj => obj.show_in_table !== false)
+  .map(obj => ({
     id: obj.field,
     label: obj.label,
     visible: !obj.hidden,

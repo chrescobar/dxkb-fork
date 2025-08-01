@@ -48,14 +48,17 @@ export function SearchBar({
   };
 
   const searchParams = useSearchParams();
-  const qry = searchParams.get("q");
 
-  useEffect(() => {
-    if (qry !== null) {
-      const cleaned = qry.replace(/^[^(]+\(|\)$/g, ""); // removes prefix before `(` and trailing `)`
-      setInputValue(cleaned);
-    }
-  }, [qry]);
+useEffect(() => {
+  const raw = searchParams.get('q') || ''
+
+  // Match all keyword(...) values, even if nested
+  const matches = [...raw.matchAll(/keyword\(([^)]+)\)/g)]
+  const keywords = matches.map(match => match[1])
+
+  // Join with space (or comma if preferred)
+  setInputValue(keywords.join(' '))
+}, [searchParams])
 
   return (
     <form onSubmit={handleSearch} className={`flex gap-4 ${className}`}>

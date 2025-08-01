@@ -12,7 +12,9 @@ interface GenomeDataProps {
 }
 
 export function ExperimentData({ onSelectionChange }: GenomeDataProps) {
-  const experimentColumns = Object.values(experimentFields).map(obj => ({
+  const experimentColumns = Object.values(experimentFields)
+  .filter(obj => obj.show_in_table !== false)
+.map(obj => ({
     id: obj.field,
     label: obj.label,
     visible: !obj.hidden,

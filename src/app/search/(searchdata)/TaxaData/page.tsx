@@ -12,7 +12,9 @@ interface GenomeDataProps {
 }
 
 export function TaxaData({ onSelectionChange }: GenomeDataProps) {
-  const taxaColumns = Object.values(taxaFields).map(obj => ({
+  const taxaColumns = Object.values(taxaFields)
+  .filter(obj => obj.show_in_table !== false)
+  .map(obj => ({
     id: obj.field,
     label: obj.label,
     visible: !obj.hidden,

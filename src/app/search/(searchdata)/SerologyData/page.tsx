@@ -12,7 +12,9 @@ interface GenomeDataProps {
 }
 
 export function SerologyData({ onSelectionChange }: GenomeDataProps) {
-  const serologyColumns = Object.values(serologyFields).map(obj => ({
+  const serologyColumns = Object.values(serologyFields)
+  .filter(obj => obj.show_in_table !== false)
+  .map(obj => ({
     id: obj.field,
     label: obj.label,
     visible: !obj.hidden,

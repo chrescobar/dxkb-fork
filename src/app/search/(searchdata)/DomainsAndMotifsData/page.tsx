@@ -12,7 +12,9 @@ interface GenomeDataProps {
 }
 
 export function DomainsAndMotifData({ onSelectionChange }: GenomeDataProps) {
-  const domainsandmotifsColumns = Object.values(domainsandmotifsFields).map(obj => ({
+  const domainsandmotifsColumns = Object.values(domainsandmotifsFields)
+  .filter(obj => obj.show_in_table !== false)
+  .map(obj => ({
     id: obj.field,
     label: obj.label,
     visible: !obj.hidden,

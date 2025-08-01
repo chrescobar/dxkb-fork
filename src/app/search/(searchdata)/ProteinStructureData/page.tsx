@@ -12,7 +12,9 @@ interface GenomeDataProps {
 }
 
 export function ProteinStructureData({ onSelectionChange }: GenomeDataProps) {
-  const proteinstructureColumns = Object.values(proteinstructureFields).map(obj => ({
+  const proteinstructureColumns = Object.values(proteinstructureFields)
+  .filter(obj => obj.show_in_table !== false)
+  .map(obj => ({
     id: obj.field,
     label: obj.label,
     visible: !obj.hidden,

@@ -365,7 +365,7 @@ export default function GeneProteinTreePage() {
         <Collapsible
           open={showAdvanced}
           onOpenChange={setShowAdvanced}
-          className="service-collapsible-container col-span-2 !bg-white"
+          className="service-collapsible-container col-span-2"
         >
           <CollapsibleTrigger className="service-collapsible-trigger">
             Metadata Options

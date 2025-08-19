@@ -423,7 +423,7 @@
 }
 
 .funding-section {
-  @apply bg-card mx-32 my-24 flex flex-row items-center justify-center gap-16 rounded-xl p-8 align-middle text-lg border shadow-lg;
+  @apply bg-card mx-auto my-24 flex flex-row items-center justify-center gap-16 rounded-xl p-8 align-middle text-lg border shadow-lg max-w-7xl;
 }
 
 .team-section {

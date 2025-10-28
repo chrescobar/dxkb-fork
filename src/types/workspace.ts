@@ -118,6 +118,14 @@ export interface FetchJobOutputParams {
   output_type: "stdout" | "stderr";
 }
 
+export interface SubmitServiceParams {
+  app_name: string;
+  app_params: Record<string, any>;
+  context?: {
+    base_url?: string;
+  };
+}
+
 // Response types for each API method
 export type EnumerateJobsResponse = JobListItem[];
 export type QueryJobsResponse = JobListItem[];
@@ -128,6 +136,18 @@ export type KillJobResponse = {
   message?: string;
 };
 export type FetchJobOutputResponse = string;
+export type SubmitServiceResponse = {
+  success: boolean;
+  job: [
+    {
+      id: string;
+      app: string;
+      status: JobStatus;
+      submit_time: string;
+      params: Record<string, any>;
+    }
+  ]
+};
 
 // Error types
 export interface WorkspaceError {
@@ -148,6 +168,7 @@ export interface WorkspaceService {
   ): Promise<QueryJobDetailsResponse>;
   killJob(params: KillJobParams): Promise<KillJobResponse>;
   fetchJobOutput(params: FetchJobOutputParams): Promise<FetchJobOutputResponse>;
+  submitService(params: SubmitServiceParams): Promise<SubmitServiceResponse>;
 }
 
 // Frontend state types

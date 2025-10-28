@@ -6,12 +6,14 @@ import {
   QueryJobDetailsResponse,
   KillJobResponse,
   FetchJobOutputResponse,
+  SubmitServiceResponse,
   EnumerateJobsParams,
   QueryJobsParams,
   QueryJobSummaryParams,
   QueryJobDetailsParams,
   KillJobParams,
   FetchJobOutputParams,
+  SubmitServiceParams,
 } from "../types/workspace";
 
 /**
@@ -112,6 +114,26 @@ export class WorkspaceService {
         `Failed to fetch ${output_type} for job ${job_id}: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
+  }
+
+  /**
+   * Submit a service job (maps to AppService.start_app2)
+   */
+  async submitService(
+    params: SubmitServiceParams,
+  ): Promise<SubmitServiceResponse> {
+    const { app_name, app_params, context } = params;
+
+    // Build the context object with base_url
+    const contextObj = {
+      base_url: context?.base_url || "https://dev.dxkb.org",
+    };
+
+    return this.client.call("AppService.start_app2", [
+      app_name,
+      app_params,
+      contextObj,
+    ]);
   }
 }
 

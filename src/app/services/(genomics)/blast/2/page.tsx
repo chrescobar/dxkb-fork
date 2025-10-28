@@ -57,6 +57,8 @@ import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { useServiceFormSubmission } from "@/hooks/use-service-form-submission";
 import { FastaTextarea } from "@/components/services/fasta-textarea";
 import { FastaValidationResult } from "@/lib/fasta-validation";
+import { workspace } from "@/lib/workspace";
+import { toast } from "sonner";
 
 // Base schema with common fields (excluding discriminators)
 const baseFormSchema = z.object({
@@ -71,8 +73,8 @@ const baseFormSchema = z.object({
     "fasta_file",
   ]),
   db_precomputed_database: z.enum([
-    "bacteria_archaea",
-    "viral_reference",
+    "bacteria-archaea",
+    "viral-reference",
     "selGenome",
     "selGroup",
     "selFeatureGroup",
@@ -141,7 +143,7 @@ const DEFAULT_BLAST_FORM_VALUES = {
   output_path: "",
   blast_max_hits: 10,
   blast_evalue_cutoff: 0.0001,
-  db_precomputed_database: "bacteria_archaea" as const,
+  db_precomputed_database: "bacteria-archaea" as const,
 };
 
 export default function BlastServicePage() {
@@ -163,7 +165,7 @@ export default function BlastServicePage() {
 
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [availableDatabaseTypes, setAvailableDatabaseTypes] = useState(
-    getAvailableBlastDatabaseTypes("blastn", "bacteria_archaea"),
+    getAvailableBlastDatabaseTypes("blastn", "bacteria-archaea"),
   );
 
   // Setup service debugging and form submission
@@ -197,15 +199,59 @@ export default function BlastServicePage() {
         // Validate FASTA data if using fasta_data input source
         if (data.input_source === "fasta_data" && data.input_fasta_data) {
           if (!isFastaValid) {
-            console.error("Invalid FASTA data:", fastaValidationResult?.message);
-            // You could show an error message to the user here
+            const errorMessage = fastaValidationResult?.message || "Invalid FASTA data";
+            console.error("Invalid FASTA data:", errorMessage);
+            toast.error(errorMessage);
             return;
           }
         }
 
-        // This is where you would actually submit the job
-        console.log("Submitting BLAST job:", data);
-        // TODO: Call your API endpoint here
+        try {
+          // Submit the BLAST job using the workspace services API
+          const appParams = {
+            input_type: data.input_type,
+            input_source: data.input_source,
+            ...(data.input_source === "fasta_data" && { input_fasta_data: data.input_fasta_data }),
+            ...(data.input_source === "fasta_file" && { input_fasta_file: data.input_fasta_file }),
+            ...(data.input_source === "feature_group" && { input_feature_group: data.input_feature_group }),
+            db_type: data.db_type,
+            db_source: data.db_source,
+            db_precomputed_database: data.db_precomputed_database,
+            ...(data.db_precomputed_database === "selGenome" && { db_genome_list: data.db_genome_list }),
+            ...(data.db_precomputed_database === "selGroup" && { db_genome_group: data.db_genome_group }),
+            ...(data.db_precomputed_database === "selFeatureGroup" && { db_feature_group: data.db_feature_group }),
+            ...(data.db_precomputed_database === "selTaxon" && { db_taxon_list: data.db_taxon_list }),
+            ...(data.db_precomputed_database === "selFasta" && { db_fasta_file: data.db_fasta_file }),
+            blast_program: data.blast_program,
+            output_file: data.output_file,
+            output_path: data.output_path,
+            blast_max_hits: data.blast_max_hits,
+            blast_evalue_cutoff: data.blast_evalue_cutoff.toString(),
+          };
+
+          // Use the generic submit method to have full control over the params
+          const result = await workspace.services.submit({
+            app_name: "Homology",
+            app_params: appParams,
+          });
+
+          console.log(result);
+          // Show success message
+          toast.success("BLAST job submitted successfully!", {
+            description: `Job ID: ${result.job[0]?.id}`,
+          });
+
+          // Optionally redirect to jobs page
+          // router.push(`/workspace/jobs/${result.id}`);
+          
+          console.log("BLAST job submitted successfully:", result);
+        } catch (error) {
+          console.error("Failed to submit BLAST job:", error);
+          const errorMessage = error instanceof Error ? error.message : "Failed to submit BLAST job";
+          toast.error("Submission failed", {
+            description: errorMessage,
+          });
+        }
       },
     });
 
@@ -283,7 +329,7 @@ export default function BlastServicePage() {
     form.reset(DEFAULT_BLAST_FORM_VALUES);
     setShowAdvanced(false);
     setAvailableDatabaseTypes(
-      getAvailableBlastDatabaseTypes("blastn", "bacteria_archaea"),
+      getAvailableBlastDatabaseTypes("blastn", "bacteria-archaea"),
     );
   };
 

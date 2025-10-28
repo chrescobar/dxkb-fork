@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { safeDecodeURIComponent } from "./app/api/auth/utils";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   // For API routes that need auth, check for auth cookies
   if (request.nextUrl.pathname.startsWith("/api/protected/")) {
     const rawAuthToken = request.cookies.get("token")?.value;

@@ -3,7 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import React from 'react';
 import { useSearchParams } from "next/navigation";
-import { SurveillanceData } from "../../(searchdata)/SurveillanceData/page";
+import { ListData } from "@/components/services/ListData";
 import { useSelection } from "../SelectionContext";
 import { WithGenomePanel } from "@/components/layouts/WithGenomePanel";
 
@@ -26,8 +26,7 @@ export default function Surveillance() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="surveillance" className="border-0 mt-0 px-0 pt-[5px] flex-1 flex flex-col overflow-hidden">
-            <SurveillanceData q={{q}} 
-               onSelectionChange={setSelectedRows} />
+            <ListData resource="surveillance" q={{q}} onSelectionChange={setSelectedRows} />
           </TabsContent>
         </Tabs>
           )}

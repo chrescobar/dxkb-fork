@@ -3,7 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import React from 'react';
 import { useSearchParams } from "next/navigation";
-import { SerologyData } from "../../(searchdata)/SerologyData/page";
+import { ListData } from "@/components/services/ListData";
 import { useSelection } from "../SelectionContext";
 import { WithGenomePanel } from "@/components/layouts/WithGenomePanel";
 
@@ -26,8 +26,7 @@ export default function Serology() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="serology" className="border-0 mt-0 px-0 pt-[5px] flex-1 flex flex-col overflow-hidden">
-            <SerologyData q={{q}} 
-               onSelectionChange={setSelectedRows} />
+            <ListData resource="serology"q={{q}} onSelectionChange={setSelectedRows} />
           </TabsContent>
         </Tabs>
           )}

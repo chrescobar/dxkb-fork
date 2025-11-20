@@ -66,7 +66,7 @@ useEffect(() => {
         <Input
           type="text"
           placeholder={placeholder}
-          className={`${size === "lg" ? "py-6" : ""} ${showIcon ? "pl-10" : ""} bg-background`}
+          className={`${size === "lg" ? "py-6" : ""} ${showIcon ? "pl-10" : ""} bg-background text-foreground`}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -83,7 +83,7 @@ useEffect(() => {
         id="searchtype"
         value={selected}
         onChange={(e) => setSelected(e.target.value)}
-        className={`${size === "lg" ? "py-2" : ""} ${showIcon ? "pl-4" : ""} bg-background rounded-md`}
+        className={`${size === "lg" ? "py-2" : ""} ${showIcon ? "pl-4" : ""} bg-background rounded-md text-foreground`}
         >
         {searchTypes.map((option) => (
           <option key={option.id} value={option.id}>

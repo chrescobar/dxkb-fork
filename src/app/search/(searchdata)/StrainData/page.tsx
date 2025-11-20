@@ -208,9 +208,15 @@ async function handleDownloadAll(format: 'csv' | 'txt', visibleColumns: string[]
           pageIndex={pageIndex}
           pageSize={pageSize}
           totalItems={totalItems}
-          onPageChange={(newPage) => setPageIndex(newPage)}
+          onPageChange={(newPage) => {
+            onSelectionChange?.([]);     // ← CLEAR SELECTION
+            setPageIndex(newPage);
+          }}
           sorting={sorting}
-          onSortingChange={setSortingAndResetPage} // resets page to 0
+          onSortingChange={(newSorting) => {
+            onSelectionChange?.([]);     // ← CLEAR SELECTION
+            setSortingAndResetPage(newSorting);
+          }}
           onDownloadAll={handleDownloadAll}
         />
 

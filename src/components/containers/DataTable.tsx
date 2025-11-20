@@ -488,7 +488,7 @@ const columnSizeVars = useMemo(() => {
       ),
     ].join('\n');
 
-    downloadFile(`table-export.${onlySelected ? 'selected-' : ''}${format}`, content);
+    downloadFile(`table-export${onlySelected ? '-selected.' : '.'}${format}`, content);
   };
 
   // Pagination calculations (server-driven)
@@ -520,7 +520,7 @@ const columnSizeVars = useMemo(() => {
   return (
     <div className="flex flex-col h-full w-full text-xs relative items-center border-0">
       {/* Controls */}
-      <div className="w-[100%] flex justify-end mb-2 z-50 px-5" ref={controlsRef}>
+      <div className="w-[100%] flex justify-end mb-2 px-5" ref={controlsRef}>
         <div className="relative inline-block text-left" ref={columnMenuRef}>
           <button
             className="flex justify-end w-full rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2"
@@ -529,7 +529,7 @@ const columnSizeVars = useMemo(() => {
             Columns ▾
           </button>
           {showColumnMenu && (
-            <div className="absolute left-0 mt-1 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+            <div className="absolute left-0 mt-1 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-30">
               <div className="py-1 max-h-64 overflow-auto text-xs">
                 {table.getAllColumns()
                   .filter((col) => col.id !== '__select__')
@@ -588,7 +588,7 @@ const columnSizeVars = useMemo(() => {
         <div className="flex-1 overflow-auto relative" ref={tableContainerRef} style={{ maxHeight: '100%', paddingBottom: '52px' }}>
           <div className="min-w-max relative" style={columnSizeVars}>
             <Table className="w-full table-auto text-xs border-collapse" style={{ borderSpacing: 0 }}>
-              <TableHeader ref={headerRef} className="sticky top-0 z-30 bg-primary text-secondary uppercase border-black">
+              <TableHeader ref={headerRef} className="sticky top-0 bg-primary text-secondary uppercase border-black z-20">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id} className="flex border-t border-b border-black">
                     {headerGroup.headers.map((header) => {
@@ -735,7 +735,7 @@ const columnSizeVars = useMemo(() => {
                     <button
                       onClick={() => onPageChange?.(pageIndex - 1)}
                       disabled={pageIndex === 0}
-                      className="px-2 py-1 border rounded"
+                      className="px-2 py-1 border rounded border-primary"
                     >
                       Prev
                     </button>
@@ -751,8 +751,8 @@ const columnSizeVars = useMemo(() => {
                           onClick={() => onPageChange?.(p as number)}
                           className={`font-bold px-2 py-1 border rounded mx-[2px] ${
                             pageIndex === p
-                              ? "bg-secondary text-primary"
-                              : "bg-primary text-secondary hover:bg-secondary hover:text-primary"
+                              ? "bg-secondary text-primary border-primary"
+                              : "bg-primary text-secondary hover:bg-secondary hover:text-primary hover:border-primary"
                           }`}
                         >
                           {(p as number) + 1}
@@ -763,7 +763,7 @@ const columnSizeVars = useMemo(() => {
                     <button
                       onClick={() => onPageChange?.(pageIndex + 1)}
                       disabled={pageIndex + 1 >= pageCount}
-                      className="px-2 py-1 border rounded"
+                      className="px-2 py-1 border rounded border-primary"
                     >
                       Next
                     </button>

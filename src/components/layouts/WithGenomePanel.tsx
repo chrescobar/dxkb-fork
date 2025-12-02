@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSelection } from "@/app/search/(searchtypes)/SelectionContext";
+import { useSelection } from "@/app/search/SelectionContext";
 import { InfoPanel } from "../containers/InfoPanel";
 
 type WithGenomePanelProps = {
@@ -10,18 +10,25 @@ type WithGenomePanelProps = {
     setActiveTab: (tab: string) => void;
   }) => React.ReactNode;
   tabs: string[];
-  activeTab?: string; 
+  activeTab?: string;
+  selectedRows: any[]; // new
+  setSelectedRows: (rows: any[]) => void; // new
 };
 
-export function WithGenomePanel({ children, tabs, activeTab: incomingTab }: WithGenomePanelProps) {
+export function WithGenomePanel({
+  children,
+  tabs,
+  activeTab: incomingTab,
+  selectedRows,
+  setSelectedRows,
+}: WithGenomePanelProps) {
   const initialTab = incomingTab && tabs.includes(incomingTab) ? incomingTab : tabs[0];
   const [activeTab, setActiveTabState] = useState(initialTab);
 
-  const { selectedRows, setSelectedRows } = useSelection();
   const hasSelection = selectedRows.length > 0;
 
   const setActiveTab = (tab: string) => {
-    setSelectedRows([]); 
+    setSelectedRows([]); // clear selection when changing tab
     setActiveTabState(tab);
   };
 

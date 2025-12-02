@@ -1,4 +1,4 @@
-export const strainsFields = {
+export const strainFields = {
     taxon_id: { 
         label: 'Taxon ID', 
         field: 'taxon_id', 

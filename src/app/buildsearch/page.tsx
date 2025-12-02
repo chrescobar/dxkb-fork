@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { searchToQuery } from '../../functions/searchToQuery';
+import { TypeSearch } from "../search/typesearch";
 
 export default function GlobalSearch () {
 
@@ -57,6 +58,7 @@ export default function GlobalSearch () {
       var q = searchToQuery(query);
 
       // Now that we have the entire query formatted properly, let's figure out where to send it...
+/*
       useEffect(() => {
 
          switch(searchtype) {
@@ -64,39 +66,46 @@ export default function GlobalSearch () {
               router.push('/search?q=' + query );
               break;
             case 'genome':
-              router.push('/search/GenomeList?q=' + q  );
-              break;
             case 'strain':
-              router.push('/search/StrainList?q=' + q );
-              break;
             case 'genome_feature':
-              router.push('/search/FeatureList?q=' + q );
-              break;
             case 'protein_feature':
-              router.push('/search/DomainsAndMotifsList?q=' + q );
-              break;
             case 'epitope':
-              router.push('/search/EpitopeList?q=' + q );
-              break;
             case 'protein_structure':
-              router.push('/search/ProteinStructureList?q=' + q );
-              break;
             case 'surveillance':
-              router.push('/search/SurveillanceList?q=' + q );
-              break;
             case 'serology':
-              router.push('/search/SerologyList?q=' + q );
-              break;
             case 'taxonomy':
-              router.push('/search/TaxonList?q=' + q );
-              break;
             case 'experiment':
-              router.push('/search/ExperimentList?q=' + q );
+              console.log('Type Search: ', searchtype, query);
+              <TypeSearch q={query} searchtype={searchtype} />;
               break;
             default:
               console.log('Do Search: ', searchtype, query);
          }
       
       }, []);
+*/
+      if (searchtype === "everything") {
+          router.push("/search?q=" + query);
+          return null; // you don’t render anything
+        } else if (
+          [
+            "genome",
+            "strain",
+            "genome_feature",
+            "protein_feature",
+            "epitope",
+            "protein_structure",
+            "surveillance",
+            "serology",
+            "taxonomy",
+            "experiment",
+          ].includes(searchtype)
+        ) {
+          console.log("Type Search: ", searchtype, query);
+          return <TypeSearch q={query} searchtype={searchtype} />;
+        } else {
+          console.log("Do Search: ", searchtype, query);
+          return <div>Fallback search</div>;
+        }
 
-   }
+}

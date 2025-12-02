@@ -1,4 +1,4 @@
-export const domainsandmotifsFields = {
+export const protein_featureFields = {
     id: { 
         label: 'ID', 
         field: 'id', 

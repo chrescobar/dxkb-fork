@@ -549,7 +549,7 @@ const columnSizeVars = useMemo(() => {
             .getVisibleLeafColumns()
             .filter(col => col.id !== '__select__')
             .map(col => col.id)
-        : null)} className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2 ml-2">
+        : null)} className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2 ml-2 cursor-pointer hover:opacity-80">
           Download (CSV)
         </button>
         <button onClick={() => onDownloadAll?.('txt', onlyVisibleColumns
@@ -557,16 +557,16 @@ const columnSizeVars = useMemo(() => {
             .getVisibleLeafColumns()
             .filter(col => col.id !== '__select__')
             .map(col => col.id)
-        : null)} className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2">
+        : null)} className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2 cursor-pointer hover:opacity-80">
           Download (TXT)
         </button>
 
         {table.getSelectedRowModel().rows.length > 0 && (
           <>
-            <button onClick={() => handleDownload('csv', true)} className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2">
+            <button onClick={() => handleDownload('csv', true)} className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2 cursor-pointer hover:opacity-80">
               Download Selected (CSV)
             </button>
-            <button onClick={() => handleDownload('txt', true)} className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2">
+            <button onClick={() => handleDownload('txt', true)} className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2 cursor-pointer hover:opacity-80">
               Download Selected (TXT)
             </button>
           </>

@@ -95,7 +95,7 @@ useEffect(() => {
       <Button
         type="submit"
         size={size}
-        className={`bg-secondary hover:bg-secondary-foreground text-foreground ${
+        className={`bg-secondary text-primary hover:bg-secondary-foreground  ${
           size === "lg" ? "py-6" : ""
         }`}
       >

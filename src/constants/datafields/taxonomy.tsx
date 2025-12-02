@@ -1,4 +1,4 @@
-export const taxaFields = {
+export const taxonomyFields = {
     taxon_id: { 
         label: 'Taxon ID', 
         field: 'taxon_id', 

@@ -1,4 +1,4 @@
-export const proteinstructureFields = {
+export const protein_structureFields = {
     pdb_id: { 
         label: 'PDB ID', 
         field: 'pdb_id', 

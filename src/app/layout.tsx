@@ -5,9 +5,10 @@ import { TailwindIndicator } from "@/components/ui/tailwind-indicator";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
 import { ThemeSwitcher } from "@/styles/theme-switcher-floating";
-import { Providers } from './providers' // adjust the path as needed
+import { Providers } from "./providers"; // adjust the path as needed
 import { AuthProvider } from "@/contexts/auth-context";
 import { ReactScan } from "@/components/react-scan";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,24 +33,34 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         {/* <script src="https://unpkg.com/react-scan/dist/auto.global.js" /> */}
       </head>
 
       {/* <ReactScan /> */}
 
+      {/* TODO: Might need to fox <Suspense /> wrapping everything in the app */}
       <body>
-      <Providers>
-        <ThemeProvider defaultTheme="dxkb-light">
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-          <ThemeSwitcher />
-        </ThemeProvider>
-        <Toaster richColors position="top-right" offset={{top: "4rem"}} duration={3000}/>
-        <TailwindIndicator />
-      </Providers>
+        <Providers>
+          <ThemeProvider defaultTheme="dxkb-light">
+            <AuthProvider>
+              <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+            </AuthProvider>
+            <ThemeSwitcher />
+          </ThemeProvider>
+          <Toaster
+            richColors
+            position="top-right"
+            offset={{ top: "4rem" }}
+            duration={3000}
+          />
+          <TailwindIndicator />
+        </Providers>
       </body>
     </html>
   );

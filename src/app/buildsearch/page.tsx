@@ -16,7 +16,7 @@ export default function GlobalSearch () {
       
       // The first step is to get the search phrase in a friendly format.
       // This requires a handful of replacements to make sure we don't break the API
-      var query = keyword.replace(/^\s+|\s+$/g, '');
+      var query = keyword?.replace(/^\s+|\s+$/g, '') ?? '';
 
       // replace some special characters
       query = query.replace(/'/g, '').replace(/:/g, ' ');

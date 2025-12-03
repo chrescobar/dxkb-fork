@@ -5,8 +5,6 @@ name: pnpm Build Verification
 
 on:
   pull_request:
-    branches:
-      - main
 
 jobs:
   build:

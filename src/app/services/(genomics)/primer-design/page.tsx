@@ -48,7 +48,7 @@ import {
   transformPrimerDesignParams,
   validatePrimerDesignSequence,
   type PrimerSequenceValidationResult,
-} from "@/lib/schemas";
+} from "@/lib/forms/(genomics)";
 import { submitServiceJob } from "@/utils/services/service-utils";
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
@@ -1004,7 +1004,6 @@ export default function PrimerDesignServicePage() {
             </Button>
             <Button
               type="submit"
-              className="bg-indigo-600 text-white hover:bg-indigo-700"
               disabled={isSubmitting || !form.formState.isValid}
             >
               {isSubmitting && <Spinner className="mr-2 h-4 w-4" />}

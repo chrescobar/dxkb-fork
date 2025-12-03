@@ -1,4 +1,4 @@
-import type { BlastFormData } from "./blast/blast-form-schema";
+import type { BlastFormData } from "./blast-form-schema";
 import { blastPrecomputedDatabases } from "@/types/services";
 
 /**

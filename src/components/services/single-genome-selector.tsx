@@ -65,13 +65,74 @@ export function SingleGenomeSelector({
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const latestAbortController = useRef<AbortController | null>(null);
+  const selectedGenomeIdRef = useRef<string | null>(null);
 
-  // Sync query with value prop
+  // Check if a string looks like a genome ID (numeric pattern like "123.45")
+  const isGenomeId = (str: string): boolean => {
+    return /^[0-9]+(\.[0-9]+)?$/.test(str.trim());
+  };
+
+  // Sync query with value prop, but preserve genome name if value is a genome ID
   useEffect(() => {
-    if (value !== query) {
-      setQuery(value || "");
+    // If value is empty, clear query
+    if (!value) {
+      if (query) {
+        setQuery("");
+        setSelectedGenome(null);
+        selectedGenomeIdRef.current = null;
+      }
+      return;
     }
-  }, [value, query]);
+
+    // If value is a genome ID and we have a matching selectedGenome, keep the genome name displayed
+    if (isGenomeId(value)) {
+      // Check both state and ref to handle race conditions
+      if ((selectedGenome && selectedGenome.genome_id === value) || selectedGenomeIdRef.current === value) {
+        // Keep the genome name displayed, don't overwrite with ID
+        return;
+      }
+      // If we have a genome ID but no matching selectedGenome, fetch it
+      if (!selectedGenome || selectedGenome.genome_id !== value) {
+        setIsLoading(true);
+        fetchGenomesByIds([value])
+          .then((results) => {
+            if (results.length > 0) {
+              const genome = results[0];
+              selectedGenomeIdRef.current = genome.genome_id;
+              setSelectedGenome(genome);
+              setQuery(genome.genome_name);
+            } else {
+              // If genome not found, show the ID
+              setQuery(value);
+              setSelectedGenome(null);
+            }
+          })
+          .catch(() => {
+            // On error, show the ID
+            setQuery(value);
+            setSelectedGenome(null);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+        return;
+      }
+    }
+
+    // If value is not a genome ID (or is a name), sync normally
+    // But only if it's different from current query and not matching selectedGenome
+    if (value !== query) {
+      // If we have a selectedGenome and the value matches its name, keep it
+      if (selectedGenome && value === selectedGenome.genome_name) {
+        return;
+      }
+      // Otherwise, update query and clear selectedGenome if value doesn't match
+      setQuery(value);
+      if (selectedGenome && value !== selectedGenome.genome_id && value !== selectedGenome.genome_name) {
+        setSelectedGenome(null);
+      }
+    }
+  }, [value]);
 
   useEffect(() => {
     // Skip search if query matches selected genome (from dropdown click)
@@ -162,6 +223,7 @@ export function SingleGenomeSelector({
   }, [highlightedIndex]);
 
   const handleSelect = (genome: GenomeSummary) => {
+    selectedGenomeIdRef.current = genome.genome_id;
     onChange(genome.genome_id);
     setQuery(genome.genome_name);
     setSelectedGenome(genome);
@@ -170,10 +232,8 @@ export function SingleGenomeSelector({
   };
 
   const handleDropdownClick = (genome: GenomeSummary) => {
-    // Just populate the input field, don't select yet
-    setQuery(genome.genome_name);
-    setSelectedGenome(genome);
-    setShowDropdown(false);
+    // Select the genome immediately when clicked
+    handleSelect(genome);
   };
 
   const handleManualSelect = async () => {
@@ -260,6 +320,7 @@ export function SingleGenomeSelector({
     suggestions.length === 0;
 
   return (
+    // TODO: A
     <div className={cn("space-y-2", className)}>
       {title && <Label className="service-card-label">{title}</Label>}
       <div className="relative">
@@ -270,12 +331,16 @@ export function SingleGenomeSelector({
           disabled={disabled}
           placeholder={placeholder}
           onChange={(event) => {
-            setQuery(event.target.value);
+            const newValue = event.target.value;
+            setQuery(newValue);
             setSelectedGenome(null); // Clear selected genome when user types manually
             setHighlightedIndex(-1); // Reset highlight when typing
             setShowDropdown(true);
-            // Update the form value with the query (could be genome ID or name)
-            onChange(event.target.value);
+            // Clear form value if input is cleared, but don't update while typing
+            if (!newValue.trim()) {
+              onChange("");
+              selectedGenomeIdRef.current = null;
+            }
           }}
           onFocus={() => setShowDropdown(true)}
           onKeyDown={handleKeyDown}

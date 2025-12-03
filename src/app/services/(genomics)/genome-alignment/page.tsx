@@ -48,7 +48,7 @@ import {
   genomeAlignmentFormSchema,
   type GenomeAlignmentFormData,
   transformGenomeAlignmentParams,
-} from "@/lib/schemas";
+} from "@/lib/forms/(genomics)";
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
 import { submitServiceJob } from "@/utils/services/service-utils";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";

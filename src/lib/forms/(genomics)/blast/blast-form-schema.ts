@@ -22,8 +22,8 @@ export const baseFormSchema = z.object({
     "selFasta",
   ]),
   blast_program: z.enum(["blastn", "blastp", "blastx", "tblastn"]),
-  output_file: z.string(),
-  output_path: z.string(),
+  output_file: z.string().min(1, "Output file name is required"),
+  output_path: z.string().min(1, "Output path is required"),
   blast_max_hits: z
     .number()
     .refine((val) => [1, 10, 20, 50, 100, 500, 5000].includes(val), {
@@ -45,15 +45,15 @@ export const baseFormSchema = z.object({
 export const inputSourceFormSchema = z.discriminatedUnion("input_source", [
   z.object({
     input_source: z.literal("fasta_data"),
-    input_fasta_data: z.string(),
+    input_fasta_data: z.string().min(1, "FASTA sequence is required"),
   }),
   z.object({
     input_source: z.literal("fasta_file"),
-    input_fasta_file: z.string(),
+    input_fasta_file: z.string().min(1, "FASTA file is required"),
   }),
   z.object({
     input_source: z.literal("feature_group"),
-    input_feature_group: z.string(),
+    input_feature_group: z.string().min(1, "Feature group is required"),
   }),
 ]);
 
@@ -66,10 +66,54 @@ export const databaseConditionalFieldsSchema = z.object({
   db_fasta_file: z.string().optional(),
 });
 
-// Combined schema using intersection
+// Combined schema using intersection with conditional validation
 export const completeFormSchema = baseFormSchema
   .and(inputSourceFormSchema)
-  .and(databaseConditionalFieldsSchema);
+  .and(databaseConditionalFieldsSchema)
+  .superRefine((data, ctx) => {
+    // Validate conditional database fields based on db_precomputed_database
+    if (data.db_precomputed_database === "selGenome") {
+      if (!data.db_genome_list || data.db_genome_list.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "At least one genome must be selected",
+          path: ["db_genome_list"],
+        });
+      }
+    } else if (data.db_precomputed_database === "selGroup") {
+      if (!data.db_genome_group || data.db_genome_group.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Genome group is required",
+          path: ["db_genome_group"],
+        });
+      }
+    } else if (data.db_precomputed_database === "selFeatureGroup") {
+      if (!data.db_feature_group || data.db_feature_group.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Feature group is required",
+          path: ["db_feature_group"],
+        });
+      }
+    } else if (data.db_precomputed_database === "selTaxon") {
+      if (!data.db_taxon_list || data.db_taxon_list.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "At least one taxon must be selected",
+          path: ["db_taxon_list"],
+        });
+      }
+    } else if (data.db_precomputed_database === "selFasta") {
+      if (!data.db_fasta_file || data.db_fasta_file.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "FASTA file is required",
+          path: ["db_fasta_file"],
+        });
+      }
+    }
+  });
 
 // Default form values constant
 export const DEFAULT_BLAST_FORM_VALUES = {

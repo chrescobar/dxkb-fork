@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -48,8 +48,8 @@ import {
   similarGenomeFinderFormSchema,
   DEFAULT_SIMILAR_GENOME_FINDER_FORM_VALUES,
   type SimilarGenomeFinderFormData,
-} from "@/lib/schemas";
-import { transformSimilarGenomeFinderParams } from "@/lib/schemas/similar-genome-finder/similar-genome-finder-form-utils";
+} from "@/lib/forms/(genomics)";
+import { transformSimilarGenomeFinderParams } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-utils";
 
 export default function SimilarGenomeFinderServicePage() {
   const form = useForm<SimilarGenomeFinderFormData>({
@@ -60,6 +60,25 @@ export default function SimilarGenomeFinderServicePage() {
 
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Watch both fields to trigger cross-validation when either changes
+  const fastaFile = form.watch("fasta_file");
+  const selectedGenomeId = form.watch("selectedGenomeId");
+  
+  useEffect(() => {
+    // When fasta_file changes, trigger validation of selectedGenomeId
+    // This ensures the error clears if fasta_file has a value
+    if (fastaFile?.trim()) {
+      form.trigger("selectedGenomeId");
+    }
+  }, [fastaFile, form]);
+
+  useEffect(() => {
+    // When selectedGenomeId changes, trigger validation to ensure error state is correct
+    if (selectedGenomeId?.trim()) {
+      form.trigger("selectedGenomeId");
+    }
+  }, [selectedGenomeId, form]);
 
   // Setup service debugging and form submission
   const {
@@ -411,7 +430,10 @@ export default function SimilarGenomeFinderServicePage() {
             >
               Reset
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting || !form.formState.isValid}
+            >
               {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
               <Search className="mr-2 h-4 w-4" />
               Search

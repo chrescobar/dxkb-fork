@@ -64,12 +64,13 @@ import {
   createInputSourceOverrides,
   createDatabaseSourceOverrides,
   extractInputFields,
-} from "@/lib/schemas";
+} from "@/lib/forms/(genomics)";
 
 export default function BlastServicePage() {
   const form = useForm<BlastFormData>({
     resolver: zodResolver(completeFormSchema),
     defaultValues: DEFAULT_BLAST_FORM_VALUES,
+    mode: "onChange",
   });
 
   // Use custom hooks for simplified state management
@@ -525,7 +526,7 @@ export default function BlastServicePage() {
                               types={["unspecified"]}
                               placeholder="Genome..."
                               onObjectSelect={(object: WorkspaceObject) => {
-                                field.onChange(object.path);
+                                field.onChange([object.path]);
                               }}
                             />
                           </FormControl>
@@ -616,7 +617,7 @@ export default function BlastServicePage() {
                               types={["unspecified"]}
                               placeholder="Taxon..."
                               onObjectSelect={(object: WorkspaceObject) => {
-                                field.onChange(object.path);
+                                field.onChange([object.path]);
                               }}
                             />
                           </FormControl>
@@ -812,7 +813,10 @@ export default function BlastServicePage() {
               >
                 Reset
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                disabled={isSubmitting || !form.formState.isValid}
+              >
                 {isSubmitting ? <Spinner /> : null}
                 Submit
               </Button>

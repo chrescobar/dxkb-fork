@@ -50,6 +50,9 @@ export const similarGenomeFinderFormSchema = z
     const hasFastaFile = data.fasta_file.trim().length > 0;
 
     if (!hasGenomeId && !hasFastaFile) {
+      // Only add error to selectedGenomeId field
+      // The error will clear automatically when fasta_file gets a value
+      // because the validation condition will no longer be true
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Please provide either a genome ID/name or a FASTA file",

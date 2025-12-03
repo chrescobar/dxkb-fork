@@ -62,7 +62,7 @@ import {
   type LibraryItem,
   transformGenomeAssemblyParams,
   calculateGenomeSize,
-} from "@/lib/schemas";
+} from "@/lib/forms/(genomics)";
 import { submitServiceJob } from "@/utils/services/service-utils";
 import {
   RequiredFormCardTitle,
@@ -814,7 +814,10 @@ export default function GenomeAssemblyPage() {
               >
                 Reset
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                disabled={isSubmitting || !form.formState.isValid}
+              >
                 {isSubmitting ? <Spinner /> : null}
                 Assemble
               </Button>

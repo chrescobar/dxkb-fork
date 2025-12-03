@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { UseFormReturn } from "react-hook-form";
-import type { BlastFormData } from "../../../lib/schemas/blast/blast-form-schema";
+import type { BlastFormData } from "../../../lib/forms/(genomics)/blast/blast-form-schema";
 import { getAvailableBlastDatabaseTypes, getDefaultBlastDatabaseType } from "@/utils/services/service-utils";
 import { validateFastaForBlast } from "@/utils/fasta-validation";
 import type { FastaValidationResult } from "@/utils/fasta-validation";

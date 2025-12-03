@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/tooltip";
 import { ServiceHeader } from "@/components/services/service-header";
 import OutputFolder from "@/components/services/output-folder";
-import { handleFormSubmit } from "@/utils/services/service-utils";
+import { handleFormSubmit } from "@/lib/services/service-utils";
 import {
   metaCATSInfo,
   metaCATSParameters,

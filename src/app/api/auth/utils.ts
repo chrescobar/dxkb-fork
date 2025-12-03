@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { safeDecodeURIComponent } from "../../../utils/auth";
+import { safeDecodeURIComponent } from "@/lib/auth";
 
 // Re-export for backward compatibility
 export { safeDecodeURIComponent };

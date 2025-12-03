@@ -29,7 +29,7 @@ import {
   handleSingleLibraryAdd,
   removeFromSelectedLibraries,
   handleFormSubmit,
-} from "@/utils/services/service-utils";
+} from "@/lib/services/service-utils";
 import { ServiceHeader } from "@/components/services/service-header";
 import SearchReadLibrary from "@/components/services/search-read-library";
 import SelectedItemsTable from "@/components/services/selected-items-table";

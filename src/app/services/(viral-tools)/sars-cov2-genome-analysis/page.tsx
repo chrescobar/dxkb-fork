@@ -39,7 +39,7 @@ import {
   handleSingleLibraryAdd,
   removeFromSelectedLibraries,
   handleFormSubmit,
-} from "@/utils/services/service-utils";
+} from "@/lib/services/service-utils";
 import {
   readInputFileInfo,
   sarsCov2GenomeAnalysisInfo,

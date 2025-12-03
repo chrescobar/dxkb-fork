@@ -20,7 +20,7 @@ import { HaReferenceTypes } from "@/types/services";
 import { haSubtypeNumberingInput } from "@/lib/services/service-info";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import OutputFolder from "@/components/services/output-folder";
-import { handleFormSubmit } from "@/utils/services/service-utils";
+import { handleFormSubmit } from "@/lib/services/service-utils";
 
 export default function HASubtypeNumbering() {
   // States for the form

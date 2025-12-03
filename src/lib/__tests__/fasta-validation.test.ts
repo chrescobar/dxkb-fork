@@ -3,7 +3,7 @@ import {
   isDNA,
   validateFasta,
   validateFastaForBlast,
-} from "../../utils/fasta-validation";
+} from "../fasta-validation";
 
 describe("FASTA Validation", () => {
   describe("cleanFasta", () => {

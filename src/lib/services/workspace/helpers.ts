@@ -49,7 +49,5 @@ export function validateWorkspaceObjectTypes(types: string[]): {
     }
   });
 
-  console.log("Valid workspace object types:", valid);
-
   return { valid, invalid };
 }

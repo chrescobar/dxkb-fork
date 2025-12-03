@@ -5,7 +5,7 @@ import {
   validateFastaForBlast,
   getBlastFastaErrorMessage,
   FastaValidationResult,
-} from "@/utils/fasta-validation";
+} from "@/lib/fasta-validation";
 
 export interface UseFastaValidationOptions {
   inputType: "blastn" | "blastp" | "blastx" | "tblastn";

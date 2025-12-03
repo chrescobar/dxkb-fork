@@ -43,7 +43,7 @@ import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
-import { submitServiceJob } from "@/utils/services/service-utils";
+import { submitServiceJob } from "@/lib/services/service-utils";
 import {
   similarGenomeFinderFormSchema,
   DEFAULT_SIMILAR_GENOME_FINDER_FORM_VALUES,
@@ -174,7 +174,7 @@ export default function SimilarGenomeFinderServicePage() {
                     <FormControl>
                       <SingleGenomeSelector
                         placeholder="e.g. Mycobacterium tuberculosis H37Rv"
-                        value={field.value}
+                        value={field.value ?? ""}
                         onChange={field.onChange}
                       />
                     </FormControl>
@@ -243,7 +243,7 @@ export default function SimilarGenomeFinderServicePage() {
                             </FormLabel>
                             <FormControl>
                               <Select
-                                value={field.value.toString()}
+                                value={(field.value ?? 10).toString()}
                                 onValueChange={(value) =>
                                   field.onChange(parseInt(value, 10))
                                 }
@@ -275,7 +275,7 @@ export default function SimilarGenomeFinderServicePage() {
                             </FormLabel>
                             <FormControl>
                               <Select
-                                value={field.value.toString()}
+                                value={field.value?.toString() ?? "1"}
                                 onValueChange={(value) =>
                                   field.onChange(parseFloat(value))
                                 }
@@ -306,7 +306,7 @@ export default function SimilarGenomeFinderServicePage() {
                             </FormLabel>
                             <FormControl>
                               <Select
-                                value={field.value.toString()}
+                                value={field.value?.toString() ?? "1"}
                                 onValueChange={(value) =>
                                   field.onChange(parseFloat(value))
                                 }

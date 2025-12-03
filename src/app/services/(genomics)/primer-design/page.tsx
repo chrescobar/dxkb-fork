@@ -49,7 +49,7 @@ import {
   validatePrimerDesignSequence,
   type PrimerSequenceValidationResult,
 } from "@/lib/forms/(genomics)";
-import { submitServiceJob } from "@/utils/services/service-utils";
+import { submitServiceJob } from "@/lib/services/service-utils";
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { WorkspaceObject } from "@/lib/workspace-client";
@@ -404,7 +404,7 @@ export default function PrimerDesignServicePage() {
                     name="SEQUENCE_ID"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="service-card-label">
+                        <FormLabel className="service-card-label ">
                           Sequence Identifier
                         </FormLabel>
                         <FormControl>
@@ -429,7 +429,7 @@ export default function PrimerDesignServicePage() {
                     name="sequence_input"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="service-card-label">
+                        <FormLabel className="service-card-label ">
                           Paste Sequence
                         </FormLabel>
                         <FormControl>
@@ -461,7 +461,7 @@ export default function PrimerDesignServicePage() {
                   />
 
                   <div className="space-y-2">
-                    <Label className="service-card-sublabel mb-0!">
+                    <Label className="service-card-sublabel">
                       Mark Selected Region
                     </Label>
                     <div className="flex flex-wrap gap-2">
@@ -498,7 +498,7 @@ export default function PrimerDesignServicePage() {
                     name="sequence_input"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="service-card-label">
+                        <FormLabel className="service-card-label ">
                           FASTA File
                         </FormLabel>
                         <FormControl>
@@ -549,6 +549,9 @@ export default function PrimerDesignServicePage() {
                 name="PRIMER_PICK_INTERNAL_OLIGO"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center gap-3">
+                    <FormLabel className="service-card-sublabel ">
+                      Pick Internal Oligo
+                    </FormLabel>
                     <FormControl>
                       <Switch
                         checked={field.value ? true : false}
@@ -557,9 +560,6 @@ export default function PrimerDesignServicePage() {
                         }
                       />
                     </FormControl>
-                    <FormLabel className="service-card-sublabel mb-0!">
-                      Pick Internal Oligo
-                    </FormLabel>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -571,13 +571,13 @@ export default function PrimerDesignServicePage() {
                 render={({ field }) => (
                   <FormItem>
                     <div className="flex items-center gap-2">
-                      <FormLabel className="service-card-label">
+                      <FormLabel className="service-card-label ">
                         Product Size Range (bp)
                       </FormLabel>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <HelpCircle className="service-card-tooltip-icon" />
+                            <HelpCircle className="service-card-tooltip-icon mb-2" />
                           </TooltipTrigger>
                           <TooltipContent className="max-w-sm">
                             Minimum, optimum, and maximum lengths (in bases) of
@@ -611,11 +611,11 @@ export default function PrimerDesignServicePage() {
 
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
-                  <Label className="service-card-label">Primer Size (bp)</Label>
+                  <FormLabel className="service-card-label ">Primer Size (bp)</FormLabel>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <HelpCircle className="service-card-tooltip-icon" />
+                        <HelpCircle className="service-card-tooltip-icon mb-2" />
                       </TooltipTrigger>
                       <TooltipContent className="max-w-sm">
                         Specify minimum, optimum, and maximum primer lengths.
@@ -639,7 +639,7 @@ export default function PrimerDesignServicePage() {
                       name={name}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="service-card-sublabel">
+                          <FormLabel className="service-card-sublabel ">
                             {label}
                           </FormLabel>
                           <FormControl>
@@ -705,13 +705,13 @@ export default function PrimerDesignServicePage() {
                     render={({ field }) => (
                       <FormItem>
                         <div className="flex items-center gap-2">
-                          <FormLabel className="service-card-label">
+                          <FormLabel className="service-card-label ">
                             {label}
                           </FormLabel>
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <HelpCircle className="service-card-tooltip-icon" />
+                                <HelpCircle className="service-card-tooltip-icon mb-2" />
                               </TooltipTrigger>
                               <TooltipContent className="max-w-sm">
                                 {tooltip}
@@ -766,13 +766,13 @@ export default function PrimerDesignServicePage() {
                       render={({ field }) => (
                         <FormItem>
                           <div className="flex items-center gap-2">
-                            <FormLabel className="service-card-label">
+                            <FormLabel className="service-card-label ">
                               Number to Return
                             </FormLabel>
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <HelpCircle className="service-card-tooltip-icon" />
+                                  <HelpCircle className="service-card-tooltip-icon mb-2" />
                                 </TooltipTrigger>
                                 <TooltipContent className="max-w-sm">
                                   Maximum number of primer pairs to return.
@@ -799,13 +799,13 @@ export default function PrimerDesignServicePage() {
 
                     <div className="space-y-4">
                       <div className="flex items-center gap-2">
-                        <Label className="service-card-label">
+                        <FormLabel className="service-card-label ">
                           Primer Tm (°C)
-                        </Label>
+                        </FormLabel>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <HelpCircle className="service-card-tooltip-icon" />
+                              <HelpCircle className="service-card-tooltip-icon mb-2" />
                             </TooltipTrigger>
                             <TooltipContent className="max-w-sm">
                               Define minimum, optimum, and maximum melting
@@ -833,7 +833,7 @@ export default function PrimerDesignServicePage() {
                             name={name}
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="service-card-sublabel">
+                                <FormLabel className="service-card-sublabel ">
                                   {label}
                                 </FormLabel>
                                 <FormControl>
@@ -856,11 +856,11 @@ export default function PrimerDesignServicePage() {
 
                     <div className="space-y-4">
                       <div className="flex items-center gap-2">
-                        <Label className="service-card-label">Primer GC%</Label>
+                        <FormLabel className="service-card-label ">Primer GC%</FormLabel>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <HelpCircle className="service-card-tooltip-icon" />
+                              <HelpCircle className="service-card-tooltip-icon mb-2" />
                             </TooltipTrigger>
                             <TooltipContent className="max-w-sm">
                               Specify acceptable GC content range for designed
@@ -883,7 +883,7 @@ export default function PrimerDesignServicePage() {
                             name={name}
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="service-card-sublabel">
+                                <FormLabel className="service-card-sublabel ">
                                   {label}
                                 </FormLabel>
                                 <FormControl>
@@ -931,7 +931,7 @@ export default function PrimerDesignServicePage() {
                           name={name}
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="service-card-label">
+                              <FormLabel className="service-card-label ">
                                 {label}
                               </FormLabel>
                               <FormControl>

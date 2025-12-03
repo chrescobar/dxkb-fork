@@ -156,8 +156,8 @@ function extractWorkspaceGetEntry(responseData: any): any | null {
     if (Array.isArray(firstValue)) {
       return firstValue[0];
     }
-    if (firstValue && typeof firstValue === "object" && "data" in firstValue) {
-      return [firstValue.metadata, (firstValue as any).data];
+    if (firstValue && typeof firstValue === "object" && "data" in firstValue && "metadata" in firstValue) {
+      return [(firstValue as any).metadata, (firstValue as any).data];
     }
   }
 

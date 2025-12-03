@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerAuthToken } from "@/utils/auth";
+import { getServerAuthToken } from "@/lib/auth";
 
 /**
  * Workspace API proxy route

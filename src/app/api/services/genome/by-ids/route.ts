@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerAuthToken } from "@/utils/auth";
+import { getServerAuthToken } from "@/lib/auth";
 
 const DATA_API_BASE = "https://p3.theseed.org/services/data_api/genome/";
 

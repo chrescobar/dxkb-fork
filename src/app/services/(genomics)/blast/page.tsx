@@ -47,7 +47,7 @@ import {
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { WorkspaceObject } from "@/lib/workspace-client";
 import { blastPrecomputedDatabases } from "@/types/services";
-import { transformBlastParams, submitServiceJob } from "@/utils/services/service-utils";
+import { transformBlastParams, submitServiceJob } from "@/lib/services/service-utils";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
 import { FastaTextarea } from "@/components/services/fasta-textarea";
@@ -337,7 +337,7 @@ export default function BlastServicePage() {
                           <FormItem>
                             <FormControl>
                               <FastaTextarea
-                                value={field.value}
+                                value={field.value ?? ""}
                                 onChange={field.onChange}
                                 inputType={currentBlastProgram}
                                 onValidationChange={handleFastaValidationChange}
@@ -730,7 +730,7 @@ export default function BlastServicePage() {
                           </FormLabel>
                           <FormControl>
                             <Select
-                              value={field.value.toString()}
+                              value={(field.value ?? 10).toString()}
                               onValueChange={(value) =>
                                 field.onChange(parseInt(value, 10))
                               }
@@ -767,7 +767,7 @@ export default function BlastServicePage() {
                           </FormLabel>
                           <FormControl>
                             <Select
-                              value={field.value.toString()}
+                              value={(field.value ?? 0.0001).toString()}
                               onValueChange={(value) =>
                                 field.onChange(parseFloat(value))
                               }

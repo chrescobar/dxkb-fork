@@ -9,7 +9,7 @@ import {
   validateFastaForBlast,
   getBlastFastaErrorMessage,
   FastaValidationResult,
-} from "@/utils/fasta-validation";
+} from "@/lib/fasta-validation";
 
 export interface FastaTextareaProps {
   id?: string;

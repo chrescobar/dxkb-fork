@@ -43,7 +43,7 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from "@/components/ui/collapsible";
-import { handleFormSubmit } from "@/utils/services/service-utils";
+import { handleFormSubmit } from "@/lib/services/service-utils";
 import { toast } from "sonner";
 
 interface SelectedFile {

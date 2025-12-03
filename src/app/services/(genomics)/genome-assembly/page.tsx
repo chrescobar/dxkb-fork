@@ -63,7 +63,7 @@ import {
   transformGenomeAssemblyParams,
   calculateGenomeSize,
 } from "@/lib/forms/(genomics)";
-import { submitServiceJob } from "@/utils/services/service-utils";
+import { submitServiceJob } from "@/lib/services/service-utils";
 import {
   RequiredFormCardTitle,
   RequiredFormLabel,
@@ -305,7 +305,7 @@ export default function GenomeAssemblyPage() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <Label className="service-card-label">Paired Read Library</Label>
-                    <div className="bg-border mx-4 h-[1px] flex-1" />
+                    <div className="bg-border mx-4 h-px flex-1" />
                     <Button
                       type="button"
                       variant="outline"
@@ -340,7 +340,7 @@ export default function GenomeAssemblyPage() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <Label className="service-card-label">Single Read Library</Label>
-                    <div className="bg-border mx-4 h-[1px] flex-1" />
+                    <div className="bg-border mx-4 h-px flex-1" />
                     <Button
                       type="button"
                       variant="outline"

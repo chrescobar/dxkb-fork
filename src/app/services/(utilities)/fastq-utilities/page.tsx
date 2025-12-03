@@ -37,7 +37,7 @@ import {
   actionShapes,
   removeFromSelectedPipelineActions,
   handleFormSubmit
-} from "@/utils/services/service-utils";
+} from "@/lib/services/service-utils";
 import { Library } from "@/types/services";
 import {
   fastqUtilitiesInfo,

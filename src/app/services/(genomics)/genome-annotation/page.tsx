@@ -47,7 +47,7 @@ import {
   generateOutputFileName,
   validateMyLabel,
 } from "@/lib/forms/(genomics)";
-import { submitServiceJob } from "@/utils/services/service-utils";
+import { submitServiceJob } from "@/lib/services/service-utils";
 import {
   RequiredFormLabel,
 } from "@/components/forms/required-form-components";

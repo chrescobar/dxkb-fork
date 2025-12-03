@@ -23,7 +23,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import SearchWorkspaceInput from "@/components/services/search-workspace-input";
 import OutputFolder from "@/components/services/output-folder";
 import { subspeciesClassificationSpeciesList } from "@/types/services";
-import { handleFormSubmit } from "@/utils/services/service-utils";
+import { handleFormSubmit } from "@/lib/services/service-utils";
 
 export default function SubspeciesClassification() {
   // States for the form

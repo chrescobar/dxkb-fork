@@ -54,7 +54,7 @@ import {
   type VariationLibraryItem,
   transformVariationAnalysisParams,
 } from "@/lib/forms/(genomics)";
-import { submitServiceJob } from "@/utils/services/service-utils";
+import { submitServiceJob } from "@/lib/services/service-utils";
 import {
   RequiredFormCardTitle,
   RequiredFormLabel,
@@ -408,7 +408,7 @@ export default function VariationAnalysisPage() {
                         <RequiredFormLabel>Target Genome</RequiredFormLabel>
                         <FormControl>
                           <SingleGenomeSelector
-                            value={field.value}
+                            value={field.value ?? ""}
                             onChange={(genomeId) => {
                               field.onChange(genomeId);
                               // Trigger validation after genome is selected

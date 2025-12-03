@@ -38,7 +38,7 @@ import {
   handleSingleLibraryAdd,
   removeFromSelectedLibraries,
   handleFormSubmit,
-} from "@/utils/services/service-utils";
+} from "@/lib/services/service-utils";
 import {
   sarsCov2WastewaterAnalysisInfo,
   sarsCov2WastewaterAnalysisInputLib,

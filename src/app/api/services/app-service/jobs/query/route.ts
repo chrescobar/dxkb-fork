@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAppService } from "@/lib/app-service";
 import { cookies } from "next/headers";
-import { safeDecodeURIComponent } from "@/utils/auth";
+import { safeDecodeURIComponent } from "@/lib/auth";
 
 /**
  * Query specific jobs by IDs

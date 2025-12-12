@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import { DataTable } from '@/components/containers/DataTable';
 import { SortingState } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
@@ -24,7 +24,7 @@ function downloadFile(filename: string, content: string) {
 export function ListData({ resource, onSelectionChange }: ListDataProps) {
   const [fields, setFields] = useState<any[]>([]);
 
-useEffect(() => {
+  useEffect(() => {
     (async () => {
       const mod = await import(`@/constants/datafields/${resource}`);
       const fieldObj = mod[`${resource}Fields`];
@@ -32,9 +32,9 @@ useEffect(() => {
         Object.values(fieldObj)
           .filter((f: any) => f.show_in_table !== false)
           .map((f: any) => ({ id: f.field, label: f.label, visible: !f.hidden }))
-      );
-    })();
-  }, [resource]);
+        );
+      })();
+    }, [resource]);
 
   const widget = {
     id: 'widget-1',
@@ -42,11 +42,13 @@ useEffect(() => {
   };
 
   const searchParams = useSearchParams();
-  const q = searchParams.get('q');
+  const q = searchParams.get('q') ?? '';
+  const searchtype = searchParams.get('searchtype') ?? '';
+  const pathname = usePathname();
   const cleanQ = q?.split('#')[0] ?? '';
   const DataAPI = process.env.NEXT_PUBLIC_DATA_API!;
-  const baseURL = `${DataAPI}/${resource}/?${cleanQ}`;
   const pageSize = 200;
+  const listKey = `${resource}-${cleanQ}-${searchtype}`;
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>({});
@@ -57,17 +59,26 @@ useEffect(() => {
     setPageIndex(0);
   };
 
+  useEffect(() => {
+    setPageIndex(0);
+    // If using React Query, call refetch on both queries
+    metaRefetch();
+    pageRefetch();
+  }, [q, resource, sorting]);
+
   // Fetch metadata (numFound)
-  const { data: metaData, isLoading: metaLoading, error: metaError } = useQuery({
-    queryKey: ['genome-meta', baseURL],
+  const { data: metaData, isLoading: metaLoading, error: metaError, refetch: metaRefetch  } = useQuery({
+    queryKey: ['genome-meta', resource, cleanQ, pathname, searchtype],
     queryFn: async () => {
+      const baseURL = `${DataAPI}/${resource}/?${cleanQ}`;
       const res = await fetch(`${baseURL}&limit(1)`, {
-        headers: { 'Accept': 'application/solr+json' },
+        headers: { 'Accept': 'application/solr+json' }
       });
       if (!res.ok) throw new Error('Failed to fetch metadata');
       return res.json();
     },
-    staleTime: 1000 * 60 * 10,
+    staleTime: 0,
+    refetchOnMount: true,
   });
 
   const totalItems = metaData?.response?.numFound ?? 0;
@@ -77,36 +88,38 @@ useEffect(() => {
     data: pageData,
     isLoading: dataLoading,
     error: dataError,
+    refetch: pageRefetch 
   } = useQuery({
-    queryKey: ['genome-full', baseURL, totalItems, sorting, pageIndex],
+    queryKey: ['genome-full', resource, cleanQ, totalItems, sorting, pageIndex, pathname, searchtype],
     queryFn: async () => {
       if (!totalItems) return [];
 
       const sortParam = sorting[0]
         ? `${sorting[0].desc ? '-' : '+'}${sorting[0].id}`
         : null;
+    
+      const baseURL = `${DataAPI}/${resource}/?${cleanQ}`;
 
       const url = sortParam ? `${baseURL}&sort(${sortParam})` : baseURL;
 
       const start = pageIndex * pageSize;
       const end = start + pageSize;
 
-      console.log('start, end', start, end);
-      
       const res = await fetch(url, {
         headers: {
           'Content-type': 'application/rqlquery+x-www-form-urlencoded',
           'Accept': 'application/json',
           'Range': `items=${start}-${end}`,
           'X-Range': `items=${start}-${end}`,
-        },
+        }
       });
 
       if (!res.ok) throw new Error('Failed to fetch genome data');
       return res.json();
     },
     enabled: !!totalItems,
-    staleTime: 1000 * 60 * 10,
+    staleTime: 0,
+    refetchOnMount: true,
   });
 
   if (metaLoading || dataLoading) return <div>Loading...</div>;
@@ -127,6 +140,7 @@ async function handleDownloadAll(format: 'csv' | 'txt', visibleColumns: string[]
   }
 
   try {
+    const baseURL = `${DataAPI}/${resource}/?${cleanQ}`;
     // Request all items from server (use totalItems — you said this works)
     const res = await fetch(baseURL, {
       headers: {
@@ -211,7 +225,7 @@ if (fields.length === 0) {
       <div className="h-full flex flex-col overflow-hidden">
         <div className="flex-1 overflow-hidden">
           <DataTable
-            key={resource}
+            key={listKey}
             id={widget.id}
             data={pageData ?? []}
             columns={widget.columns}

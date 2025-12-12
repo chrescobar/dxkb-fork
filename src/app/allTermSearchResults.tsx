@@ -378,7 +378,7 @@ function SearchResultsContent({ query }: { query: string }) {
         };
       });
 
-      console.log("query is:", searchPayload);
+//      console.log("query is:", searchPayload);
 
       const response = await fetch(bvbrcAPI + "query/", {
         method: "POST",
@@ -387,8 +387,9 @@ function SearchResultsContent({ query }: { query: string }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(searchPayload),
+        cache: 'no-store'
       });
-      
+
 
       const data = await response.json();
       setSearchResults(data);
@@ -398,7 +399,7 @@ function SearchResultsContent({ query }: { query: string }) {
       setIsLoading(false);
     }
 
-    console.log("results", searchResults);
+//    console.log("results", searchResults);
   };
 
   // Filter out empty results and sort by numFound

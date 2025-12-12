@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { LuSearch } from "react-icons/lu";
 import { useRouter, useSearchParams } from "next/navigation";
 import { searchTypes } from "../../constants/searchInfo";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface SearchBarProps {
   initialValue?: string;
@@ -25,6 +26,7 @@ function SearchBarContent({
   const router = useRouter();
   const searchParams = useSearchParams();
   const urlQ = searchParams.get("q") || "";
+  const queryClient = useQueryClient();
 
   // Initialize inputValue with initialValue if provided, otherwise URL q
   const [inputValue, setInputValue] = useState(initialValue || urlQ);
@@ -49,6 +51,16 @@ function SearchBarContent({
     router.push(
       `/search?q=${encodeURIComponent(inputValue)}&searchtype=${selected}`
     );
+    // 🚀 Force React Query to refetch all ListData queries
+    queryClient.invalidateQueries({
+      predicate: (query) => {
+        const key = query.queryKey[0];
+        return (
+          key === "genome-meta" ||
+          key === "genome-full" 
+        );
+      },
+    });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import React, { useState} from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { ListData } from "@/components/services/ListData";
 import { WithGenomePanel } from "@/components/layouts/WithGenomePanel";
@@ -20,15 +20,18 @@ interface SearchTypesMap {
 }
 
 export function TypeSearch({ q, searchtype }: TypeSearchProps) {
-
   const searchParams = useSearchParams();
 
-  // fallback to URL params if props not provided
-  const finalQ = q ?? searchParams.get("q");
-  const thistype = searchtype ?? searchParams.get("searchtype");
+  // derive url params into state so changes cause rerenders
+  const [urlQ, setUrlQ] = useState<string>(q ?? searchParams.get("q") ?? "");
+  const [urlType, setUrlType] = useState<string>(searchtype ?? searchParams.get("searchtype") ?? "");
 
-  const [selectedRows, setSelectedRows] = React.useState<any[]>([]);
+  useEffect(() => {
+    setUrlQ(q ?? searchParams.get("q") ?? "");
+    setUrlType(searchtype ?? searchParams.get("searchtype") ?? "");
+  }, [q, searchtype, searchParams.toString()]);
 
+  // fallback map
   const searchTypes: SearchTypesMap = {
     genome: {
       genome: "Genomes",
@@ -66,39 +69,72 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
     },
   };
 
-  const tabsForType = searchTypes[thistype || "genome"];
+  // Determine which tab group to render based on urlType (thistype)
+  const thistype = urlType || "genome";
+  const tabsForType = searchTypes[thistype] ?? searchTypes["genome"];
   const tablist = Object.keys(tabsForType);
 
+  const [selectedRows, setSelectedRows] = useState<any[]>([]);
+
+  // render prop from WithGenomePanel gives us activeTab + setActiveTab.
+  // We'll use an inner component so we can use useEffect to call setActiveTab
+  function TabsRenderer({ activeTab, setActiveTab }: { activeTab: string; setActiveTab: (v: string) => void; }) {
+    // Whenever urlType (searchtype) changes, set the active tab.
+    // If urlType matches one of the tabs (term), set that; otherwise pick the first tab.
+    useEffect(() => {
+      // prefer to activate the specific term requested by searchtype if valid,
+      // otherwise default to the first tab in the current tablist.
+      const desired = urlType ?? "genome";
+      // If desired corresponds to a tab term in this tabsForType group, use it;
+      // otherwise default to the first of tablist.
+      const targetTab = tablist.includes(desired) ? desired : tablist[0];
+      if (targetTab && targetTab !== activeTab) {
+        setActiveTab(targetTab);
+      }
+      // also, if q changes and there is no searchtype, ensure at least the first tab is active
+      if (!urlType && urlQ && tablist[0] !== activeTab) {
+        setActiveTab(tablist[0]);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [urlType, urlQ, tablist.join(",")]); // tablist.join used to keep dependency simple
+
+    return (
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="h-[85vh]">
+        <TabsList className="pb-0 mb-0 bg-background">
+          {Object.entries(tabsForType).map(([term, label]) => (
+            <TabsTrigger key={term} value={term} className="...">
+              {label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+
+        {Object.keys(tabsForType).map((term) => (
+          <TabsContent
+            key={`${term}-${urlQ}-${urlType}`}
+            value={term}
+            className="border-0 mt-0 px-0 pt-[5px] flex-1 flex flex-col overflow-hidden"
+          >
+            <ListData
+              key={`${term}-${urlQ}-${urlType}`}
+              resource={term}
+              q={urlQ}
+              onSelectionChange={setSelectedRows}
+            />
+          </TabsContent>
+        ))}
+      </Tabs>
+    );
+  }
+
+  // Main return: hand off rendering to WithGenomePanel which provides activeTab & setter
   return (
     <WithGenomePanel
       tabs={tablist}
       selectedRows={selectedRows}
-      setSelectedRows={setSelectedRows} // cascade down
+      setSelectedRows={setSelectedRows}
     >
       {({ activeTab, setActiveTab }) => (
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="h-[85vh]">
-          <TabsList className="pb-0 mb-0 bg-background">
-            {Object.entries(tabsForType).map(([term, label]) => (
-              <TabsTrigger key={term} value={term} className="...">
-                {label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
-          {Object.keys(tabsForType).map((term) => (
-            <TabsContent
-              key={term}
-              value={term}
-              className="border-0 mt-0 px-0 pt-[5px] flex-1 flex flex-col overflow-hidden"
-            >
-              <ListData
-                resource={term}
-                q={finalQ}
-                onSelectionChange={setSelectedRows} // still passed to ListData
-              />
-            </TabsContent>
-          ))}
-        </Tabs>
+        <TabsRenderer activeTab={activeTab} setActiveTab={setActiveTab} />
       )}
     </WithGenomePanel>
   );

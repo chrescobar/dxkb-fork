@@ -29,15 +29,15 @@ function SearchBarContent({
   // Initialize inputValue with initialValue if provided, otherwise URL q
   const [inputValue, setInputValue] = useState(initialValue || urlQ);
 
-  // Sync inputValue whenever URL q changes
+  // Sync inputValue whenever URL q changes (but do not overwrite while user is typing)
   useEffect(() => {
-    if (!urlQ) return; // skip if no q
+    if (!urlQ) return;
 
-    // Only update inputValue if it's different from URL (prevents overwriting typing)
     if (urlQ !== inputValue) {
-      // Extract keyword(...) matches if any
+      // Extract keyword(...) values if present
       const matches = [...urlQ.matchAll(/keyword\(([^)]+)\)/g)];
       const keywords = matches.map((match) => match[1]);
+
       setInputValue(keywords.join(" ") || urlQ);
     }
   }, [urlQ]);
@@ -63,26 +63,15 @@ function SearchBarContent({
     setSelectedTitle(title);
   };
 
-  useEffect(() => {
-    const raw = searchParams.get('q') || ''
-
-    // Match all keyword(...) values, even if nested
-    const matches = [...raw.matchAll(/keyword\(([^)]+)\)/g)]
-    const keywords = matches.map(match => match[1])
-
-    // Join with space (or comma if preferred)
-    setInputValue(keywords.join(' '))
-  }, [searchParams])
-
   return (
     <form onSubmit={handleSearch} className={`flex gap-4 ${className}`}>
       <div className="relative grow">
         <Input
           type="text"
           placeholder={placeholder}
-          className={`${
-            size === "lg" ? "py-6" : ""
-          } ${showIcon ? "pl-10" : ""} bg-background text-foreground`}
+          className={`${size === "lg" ? "py-6" : ""} ${
+            showIcon ? "pl-10" : ""
+          } bg-background text-foreground`}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -99,9 +88,9 @@ function SearchBarContent({
         id="searchtype"
         value={selected}
         onChange={(e) => setSelected(e.target.value)}
-        className={`${
-          size === "lg" ? "py-2" : ""
-        } ${showIcon ? "pl-4" : ""} bg-background rounded-md text-foreground`}
+        className={`${size === "lg" ? "py-2" : ""} ${
+          showIcon ? "pl-4" : ""
+        } bg-background rounded-md text-foreground`}
       >
         {searchTypes.map((option) => (
           <option key={option.id} value={option.id}>

@@ -13,8 +13,8 @@ export default function GlobalSearch () {
       const searchParams = useSearchParams();
 
       // Get the value of a specific query parameter
-      const keyword = searchParams.get('q');
-      const searchtype = searchParams.get('searchtype');
+      const keyword = searchParams.get("q") ?? "";
+      const searchtype = searchParams.get('searchtype') ?? "";
       
       // The first step is to get the search phrase in a friendly format.
       // This requires a handful of replacements to make sure we don't break the API

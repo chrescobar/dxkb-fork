@@ -2,26 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
 
-  // ============================
-  // 🛑 GLOBAL NO-CACHE SETTINGS
-  // ============================
-
-  // Disable all Next.js runtime caching
-  cache: false,
-
-  // Disable fetch() caching globally
-  experimental: {
-    fetchCache: false,
-  },
-
-  // Force all pages/routes to run dynamically on every request
-  // (prevents static optimization and stale DB queries)
-  dynamic: "force-dynamic",
-
-  // ============================
-  // ⭐ YOUR ORIGINAL CONFIG BELOW
-  // ============================
-
   webpack(config) {
     // Grab the existing rule that handles SVG imports
     const fileLoaderRule = config.module.rules.find((rule: any) =>

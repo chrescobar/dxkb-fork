@@ -62,7 +62,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
       surveillance: "Surveillance",
     },
     taxonomy: {
-      taxon: "Taxa",
+      taxonomy: "Taxa",
     },
   };
 

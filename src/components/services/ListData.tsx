@@ -3,13 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, usePathname } from "next/navigation";
 import { DataTable } from '@/components/containers/DataTable';
-import { SortingState } from '@tanstack/react-table';
+import { SortingState, RowSelectionState } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
 
 interface ListDataProps { 
   q: string; 
   resource: string; // 'genome', 'gene', etc. 
   onSelectionChange?: (rows: any[]) => void; 
+//  onRowsSelected?: (rows: any[]) => void;
   }
 
 function downloadFile(filename: string, content: string) {
@@ -21,8 +22,11 @@ function downloadFile(filename: string, content: string) {
   URL.revokeObjectURL(link.href);
 }
 
-export function ListData({ resource, onSelectionChange }: ListDataProps) {
+export function ListData({q, resource, onSelectionChange }: ListDataProps) {
   const [fields, setFields] = useState<any[]>([]);
+  const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
 
   useEffect(() => {
     (async () => {
@@ -42,7 +46,10 @@ export function ListData({ resource, onSelectionChange }: ListDataProps) {
   };
 
   const searchParams = useSearchParams();
-  const q = searchParams.get('q') ?? '';
+//  const q = searchParams.get('q') ?? '';
+
+  console.log('Search params q:', q);
+
   const searchtype = searchParams.get('searchtype') ?? '';
   const pathname = usePathname();
   const cleanQ = q?.split('#')[0] ?? '';
@@ -59,12 +66,10 @@ export function ListData({ resource, onSelectionChange }: ListDataProps) {
     setPageIndex(0);
   };
 
+
   useEffect(() => {
-    setPageIndex(0);
-    // If using React Query, call refetch on both queries
-    metaRefetch();
-    pageRefetch();
-  }, [q, resource, sorting]);
+  console.log('pageIndex updated to:', pageIndex);
+}, [pageIndex]);
 
   // Fetch metadata (numFound)
   const { data: metaData, isLoading: metaLoading, error: metaError, refetch: metaRefetch  } = useQuery({
@@ -72,7 +77,9 @@ export function ListData({ resource, onSelectionChange }: ListDataProps) {
     queryFn: async () => {
       const baseURL = `${DataAPI}/${resource}/?${cleanQ}`;
       const res = await fetch(`${baseURL}&limit(1)`, {
-        headers: { 'Accept': 'application/solr+json' }
+        headers: { 
+          'Accept': 'application/solr+json'
+          }
       });
       if (!res.ok) throw new Error('Failed to fetch metadata');
       return res.json();
@@ -81,46 +88,56 @@ export function ListData({ resource, onSelectionChange }: ListDataProps) {
     refetchOnMount: true,
   });
 
-  const totalItems = metaData?.response?.numFound ?? 0;
+// Compute totalItems safely
+const totalItems = metaData?.response?.numFound ?? 0;
 
-  // Fetch current page of data
-  const {
-    data: pageData,
-    isLoading: dataLoading,
-    error: dataError,
-    refetch: pageRefetch 
-  } = useQuery({
-    queryKey: ['genome-full', resource, cleanQ, totalItems, sorting, pageIndex, pathname, searchtype],
-    queryFn: async () => {
-      if (!totalItems) return [];
+// Fetch current page of data
+const { data: pageData, isLoading: dataLoading, error: dataError } = useQuery({
+  queryKey: [
+    'genome-full',
+    resource,
+    cleanQ,
+    pageIndex,    // must be here
+    sorting,      // must be here
+    pathname,
+    searchtype
+  ],
+  queryFn: async () => {
+    const total = metaData?.response?.numFound ?? 0;
+    console.log('Total items from metadata:', total);
 
-      const sortParam = sorting[0]
-        ? `${sorting[0].desc ? '-' : '+'}${sorting[0].id}`
-        : null;
-    
-      const baseURL = `${DataAPI}/${resource}/?${cleanQ}`;
+    if (total === 0) return [];
 
-      const url = sortParam ? `${baseURL}&sort(${sortParam})` : baseURL;
+    console.log('Fetching data for page:', pageIndex, 'with pageSize:', pageSize);
 
-      const start = pageIndex * pageSize;
-      const end = start + pageSize;
+    const sortParam = sorting[0] ? `${sorting[0].desc ? '-' : '+'}${sorting[0].id}` : null;
 
-      const res = await fetch(url, {
-        headers: {
-          'Content-type': 'application/rqlquery+x-www-form-urlencoded',
-          'Accept': 'application/json',
-          'Range': `items=${start}-${end}`,
-          'X-Range': `items=${start}-${end}`,
+    const start = pageIndex * pageSize;
+    const end = start + pageSize;
+
+    const baseURL = `${DataAPI}/${resource}/?${cleanQ}`;
+    const url = sortParam ? `${baseURL}&sort(${sortParam})` : baseURL;
+
+    console.log('SORTING STATE:', sorting);
+    console.log('REQUEST URL:', url);
+
+    const res = await fetch(url, {
+      headers: {
+        'Content-type': 'application/rqlquery+x-www-form-urlencoded',
+        'Accept': 'application/json',
+        'Range': `items=${start}-${end}`,
+        'X-Range': `items=${start}-${end}`,
         }
-      });
+    });
 
-      if (!res.ok) throw new Error('Failed to fetch genome data');
-      return res.json();
-    },
-    enabled: !!totalItems,
-    staleTime: 0,
-    refetchOnMount: true,
-  });
+    if (!res.ok) throw new Error('Failed to fetch genome data');
+    return res.json();
+  },
+  enabled: totalItems > 0,
+  keepPreviousData: true, // optional: avoids flicker
+  staleTime: 0,
+  refetchOnWindowFocus: false,
+});
 
   if (metaLoading || dataLoading) return <div>Loading...</div>;
   if (metaError || dataError) {
@@ -132,6 +149,13 @@ export function ListData({ resource, onSelectionChange }: ListDataProps) {
       </div>
     );
   }
+
+const handlePageChange = (newPage: number) => {
+  console.log('handlePageChange called, newPage:', newPage);
+  setPageIndex(newPage);
+  setRowSelection({});
+  setSelectedRows([]);
+};
 
 async function handleDownloadAll(format: 'csv' | 'txt', visibleColumns: string[] | null) {
   if (!totalItems) {
@@ -221,27 +245,32 @@ if (fields.length === 0) {
   return <div>Loading...</div>;
 }
 
+console.log('current pageIndex:', pageIndex);
+
   return (
       <div className="h-full flex flex-col overflow-hidden">
         <div className="flex-1 overflow-hidden">
           <DataTable
-            key={listKey}
             id={widget.id}
             data={pageData ?? []}
             columns={widget.columns}
-            onSelectionChange={onSelectionChange}
+            rowSelection={rowSelection}
+            onRowSelectionChange={(newSelection) => {
+              setRowSelection(newSelection);
+              const selectedRows = pageData.filter((row) => newSelection[row.genome_id]);
+              setSelectedRows(selectedRows);
+              onSelectionChange?.(selectedRows);
+}}
+            onSelectionChange={(rows) => {
+                setSelectedRows(rows);
+                onSelectionChange?.(rows);
+              }}
             pageIndex={pageIndex}
             pageSize={pageSize}
             totalItems={totalItems}
-            onPageChange={(newPage) => {
-              onSelectionChange?.([]);     // ← CLEAR SELECTION
-              setPageIndex(newPage);
-            }}
+            onPageChange={handlePageChange}
             sorting={sorting}
-            onSortingChange={(newSorting) => {
-              onSelectionChange?.([]);     // ← CLEAR SELECTION
-              setSortingAndResetPage(newSorting);
-            }}
+            onSortingChange={setSortingAndResetPage}
             onDownloadAll={handleDownloadAll}
           />
         </div>

@@ -98,6 +98,9 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [urlType, urlQ, tablist.join(",")]); // tablist.join used to keep dependency simple
 
+    const encodedQ = encodeURIComponent(urlQ);
+    const fullQ = "keyword(" + encodedQ + ")";
+
     return (
       <Tabs value={activeTab} onValueChange={setActiveTab} className="h-[85vh]">
         <TabsList className="pb-0 mb-0 bg-background">
@@ -117,7 +120,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
             <ListData
               key={`${term}-${urlQ}-${urlType}`}
               resource={term}
-              q={urlQ}
+              q={fullQ}
               onSelectionChange={setSelectedRows}
             />
           </TabsContent>

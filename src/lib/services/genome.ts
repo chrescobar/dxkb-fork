@@ -6,6 +6,7 @@ export interface GenomeSummary {
   reference_genome?: string;
   strain?: string;
   superkingdom?: string;
+  taxon_id?: number;
 }
 
 interface GenomeSuggestionOptions {
@@ -82,6 +83,94 @@ export async function fetchGenomesByIds(
 
     const data = await response.json();
     return Array.isArray(data?.results) ? data.results : [];
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      return [];
+    }
+
+    throw error;
+  }
+}
+
+export async function fetchAllGenomeIds(
+  options: { signal?: AbortSignal } = {},
+): Promise<GenomeSummary[]> {
+  try {
+    const response = await fetch("/api/services/genome/get-all-ids", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({}),
+      signal: options.signal,
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => ({}));
+      const message = errorBody?.error || "Failed to fetch genome metadata";
+      throw new Error(message);
+    }
+
+    const data = await response.json();
+    return Array.isArray(data?.results) ? data.results : [];
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      return [];
+    }
+
+    throw error;
+  }
+}
+
+export async function getGenomeIdsFromGroup(
+  path: string,
+  options: { signal?: AbortSignal } = {},
+): Promise<string[]> {
+  if (!path) {
+    return [];
+  }
+
+  try {
+    const response = await fetch("/api/services/workspace", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        method: "Workspace.get",
+        params: [
+          {
+            objects: [path],
+            metadata_only: false,
+          },
+        ],
+      }),
+      signal: options.signal,
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => ({}));
+      const message = errorBody?.error || "Failed to load genome group";
+      throw new Error(message);
+    }
+
+    const data = await response.json();
+    const entry = extractWorkspaceGetEntry(data);
+
+    if (!entry) {
+      throw new Error("Invalid workspace response for genome group");
+    }
+
+    const rawData = Array.isArray(entry) ? entry[1] : entry?.data ?? null;
+    const decoded = decodeGroupData(rawData);
+
+    if (!decoded?.id_list?.genome_id) {
+      return [];
+    }
+
+    return decoded.id_list.genome_id.filter((id: unknown) => typeof id === "string");
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
       return [];

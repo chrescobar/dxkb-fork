@@ -227,7 +227,7 @@ export function InfoPanel({
 
                         if (item.link) {
                           const resolved = resolveLink(item.link, rows[0], item.id);
-                          console.log(resolved);
+//                          console.log(resolved);
                         }
 
                         return (
@@ -238,9 +238,9 @@ export function InfoPanel({
                             <td className="px-2 py-0.5 text-xs break-all align-top">
                               {item.link ? (() => {
                                   var resolved = resolveLink(item.link, rows[0], item.id);
-                                  console.log(resolved);
+//                                console.log(resolved);
                                   resolved = toAbsoluteUrl(resolved);
-                                  console.log(resolved);
+//                                  console.log(resolved);
 
                                   return item.linkType === 'button' ? (
                                     <button

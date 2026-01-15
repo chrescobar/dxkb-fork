@@ -8,10 +8,9 @@ import { useQuery } from '@tanstack/react-query';
 
 interface ListDataProps { 
   q: string; 
-  resource: string; // 'genome', 'gene', etc. 
+  resource: string; // 'genome', 'gene', etc.
   onSelectionChange?: (rows: any[]) => void; 
-//  onRowsSelected?: (rows: any[]) => void;
-  }
+}
 
 function downloadFile(filename: string, content: string) {
   const blob = new Blob([content], { type: 'text/plain;charset=utf-8;' });
@@ -22,11 +21,10 @@ function downloadFile(filename: string, content: string) {
   URL.revokeObjectURL(link.href);
 }
 
-export function ListData({q, resource, onSelectionChange }: ListDataProps) {
+export function ListData({ q, resource, onSelectionChange }: ListDataProps) {
   const [fields, setFields] = useState<any[]>([]);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-
 
   useEffect(() => {
     (async () => {
@@ -36,9 +34,9 @@ export function ListData({q, resource, onSelectionChange }: ListDataProps) {
         Object.values(fieldObj)
           .filter((f: any) => f.show_in_table !== false)
           .map((f: any) => ({ id: f.field, label: f.label, visible: !f.hidden }))
-        );
-      })();
-    }, [resource]);
+      );
+    })();
+  }, [resource]);
 
   const widget = {
     id: 'widget-1',
@@ -46,8 +44,7 @@ export function ListData({q, resource, onSelectionChange }: ListDataProps) {
   };
 
   const searchParams = useSearchParams();
-//  const q = searchParams.get('q') ?? '';
-
+  // const q = searchParams.get('q') ?? '';
   console.log('Search params q:', q);
 
   const searchtype = searchParams.get('searchtype') ?? '';
@@ -57,17 +54,12 @@ export function ListData({q, resource, onSelectionChange }: ListDataProps) {
   const pageSize = 200;
   const listKey = `${resource}-${cleanQ}-${searchtype}`;
 
+  useEffect(() => { console.log('Resource changed, resetting selection'); }, [resource]);
+  useEffect(() => { console.log('CleanQ changed, resetting selection'); }, [cleanQ]);
+  useEffect(() => { console.log('Searchtype changed, resetting selection'); }, [searchtype]);
+
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnOrder, setColumnOrder] = useState<string[]>([]);
-
-  const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>(() => {
-    const vis: Record<string, boolean> = {};
-    fields.forEach(f => {
-      vis[f.id] = f.visible !== false;
-    });
-    vis['__select__'] = true; // always show checkbox column
-    return vis;
-  });
   const [pageIndex, setPageIndex] = useState(0);
 
   const setSortingAndResetPage = (newSorting: SortingState) => {
@@ -75,6 +67,16 @@ export function ListData({q, resource, onSelectionChange }: ListDataProps) {
     setPageIndex(0);
   };
 
+  const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean> | null>(null);
+
+  useEffect(() => {
+    if (!fields.length || columnVisibility !== null) return;
+    const vis: Record<string, boolean> = { __select__: true };
+    fields.forEach(f => {
+      vis[f.id] = f.visible !== false;
+    });
+    setColumnVisibility(vis);
+  }, [fields, columnVisibility]);
 
   useEffect(() => {
     if (fields.length) {
@@ -82,29 +84,18 @@ export function ListData({q, resource, onSelectionChange }: ListDataProps) {
     }
   }, [fields]);
 
-  useEffect(() => {
-    if (!fields.length) return;
-
-    setColumnVisibility((prev) => {
-      const updated = { ...prev };
-      fields.forEach(f => {
-        if (!(f.id in updated)) {
-          updated[f.id] = f.visible !== false;
-        }
-      });
-      return updated;
-    });
-  }, [fields]);
+  const sortingKey = sorting.length > 0
+    ? `${sorting[0].id}:${sorting[0].desc ? 'desc' : 'asc'}`
+    : 'none';
 
   // Fetch metadata (numFound)
-  const { data: metaData, isLoading: metaLoading, error: metaError, refetch: metaRefetch  } = useQuery({
-    queryKey: ['genome-meta', resource, cleanQ, pathname, searchtype],
+  const { data: metaData, isLoading: metaLoading, error: metaError, refetch: metaRefetch } = useQuery({
+    queryKey: ['genome-meta', resource, cleanQ, searchtype],
     queryFn: async () => {
       const baseURL = `${DataAPI}/${resource}/?${cleanQ}`;
+      console.log('Fetching metadata from URL:', baseURL);
       const res = await fetch(`${baseURL}&limit(1)`, {
-        headers: { 
-          'Accept': 'application/solr+json'
-          }
+        headers: { 'Accept': 'application/solr+json' }
       });
       if (!res.ok) throw new Error('Failed to fetch metadata');
       return res.json();
@@ -113,58 +104,52 @@ export function ListData({q, resource, onSelectionChange }: ListDataProps) {
     refetchOnMount: true,
   });
 
-// Compute totalItems safely
-const totalItems = metaData?.response?.numFound ?? 0;
+  // Compute totalItems safely
+  const totalItems = metaData?.response?.numFound ?? 0;
 
-// Fetch current page of data
-const { data: pageData, isLoading: dataLoading, error: dataError } = useQuery({
-  queryKey: [
-    'genome-full',
-    resource,
-    cleanQ,
-    pageIndex,    // must be here
-    sorting,      // must be here
-    pathname,
-    searchtype
-  ],
-  queryFn: async () => {
-    const total = metaData?.response?.numFound ?? 0;
-    console.log('Total items from metadata:', total);
+  // Fetch current page of data
+  const { data: pageData, isLoading: dataLoading, error: dataError } = useQuery({
+    queryKey: [
+      'genome-full',
+      resource,
+      cleanQ,
+      pageIndex,
+      sortingKey,
+      searchtype
+    ],
+    queryFn: async () => {
+      const total = metaData?.response?.numFound ?? 0;
+      console.log('Total items from metadata:', total);
+      if (total === 0) return [];
+      console.log('Fetching data for page:', pageIndex, 'with pageSize:', pageSize);
 
-    if (total === 0) return [];
+      const sortParam = sorting[0] ? `${sorting[0].desc ? '-' : '+'}${sorting[0].id}` : null;
+      const start = pageIndex * pageSize;
+      const end = start + pageSize;
 
-    console.log('Fetching data for page:', pageIndex, 'with pageSize:', pageSize);
+      const baseURL = `${DataAPI}/${resource}/?${cleanQ}`;
+      const url = sortParam ? `${baseURL}&sort(${sortParam})` : baseURL;
 
-    const sortParam = sorting[0] ? `${sorting[0].desc ? '-' : '+'}${sorting[0].id}` : null;
-
-    const start = pageIndex * pageSize;
-    const end = start + pageSize;
-
-    const baseURL = `${DataAPI}/${resource}/?${cleanQ}`;
-    const url = sortParam ? `${baseURL}&sort(${sortParam})` : baseURL;
-
-    console.log('SORTING STATE:', sorting);
-    console.log('REQUEST URL:', url);
-
-    const res = await fetch(url, {
-      headers: {
-        'Content-type': 'application/rqlquery+x-www-form-urlencoded',
-        'Accept': 'application/json',
-        'Range': `items=${start}-${end}`,
-        'X-Range': `items=${start}-${end}`,
+      console.log('REQUEST URL:', url);
+      const res = await fetch(url, {
+        headers: {
+          'Content-type': 'application/rqlquery+x-www-form-urlencoded',
+          'Accept': 'application/json',
+          'Range': `items=${start}-${end}`,
+          'X-Range': `items=${start}-${end}`,
         }
-    });
-
-    if (!res.ok) throw new Error('Failed to fetch genome data');
-    return res.json();
-  },
-  enabled: totalItems > 0,
-  keepPreviousData: true, // optional: avoids flicker
-  staleTime: 0,
-  refetchOnWindowFocus: false,
-});
+      });
+      if (!res.ok) throw new Error('Failed to fetch genome data');
+      return res.json();
+    },
+    enabled: totalItems > 0,
+    keepPreviousData: true,
+    staleTime: 0,
+    refetchOnWindowFocus: false,
+  });
 
   if (metaLoading || dataLoading) return <div>Loading...</div>;
+
   if (metaError || dataError) {
     return (
       <div>
@@ -175,121 +160,108 @@ const { data: pageData, isLoading: dataLoading, error: dataError } = useQuery({
     );
   }
 
-const handlePageChange = (newPage: number) => {
-  console.log('handlePageChange called, newPage:', newPage);
-  setPageIndex(newPage);
-  setRowSelection({});
-  setSelectedRows([]);
-};
+  const handleSelectionChange = (newSelection: Record<string, boolean>) => {
+    setRowSelection(newSelection);           // update local state
+    onSelectionChange?.(Object.keys(newSelection).filter(k => newSelection[k]));
+  };
 
-async function handleDownloadAll(format: 'csv' | 'txt', visibleColumns: string[] | null) {
-  if (!totalItems) {
-    console.warn('No totalItems available for download');
-    return;
+  const handlePageChange = (newPage: number) => {
+    console.log('handlePageChange called, newPage:', newPage);
+    setPageIndex(newPage);
+    setRowSelection({});
+    // setSelectedRows([]);
+  };
+
+  async function handleDownloadAll(format: 'csv' | 'txt', visibleColumns: string[] | null) {
+    if (!totalItems) {
+      console.warn('No totalItems available for download');
+      return;
+    }
+    try {
+      const baseURL = `${DataAPI}/${resource}/?${cleanQ}`;
+      const res = await fetch(baseURL, {
+        headers: {
+          'Content-type': 'application/rqlquery+x-www-form-urlencoded',
+          'Accept': 'application/json',
+          'Range': `items=0-${totalItems}`,
+          'X-Range': `items=0-${totalItems}`,
+        },
+      });
+      if (!res.ok) throw new Error(`Failed to fetch all data: ${res.status} ${res.statusText}`);
+      const allData = await res.json();
+
+      const rowsArray: any[] = Array.isArray(allData) ? allData : (allData.items ?? allData.response ?? allData.rows ?? []);
+      const colsToExport = (visibleColumns && visibleColumns.length > 0)
+        ? visibleColumns
+        : fields.map((c) => c.id);
+
+      const headers = colsToExport.map((id) => {
+        const col = fields.find((c) => c.id === id);
+        return col?.label ?? id;
+      });
+
+      const separator = format === 'csv' ? ',' : '\t';
+
+      const escapeValue = (val: any) => {
+        if (val === undefined || val === null) return '';
+        if (typeof val === 'string') {
+          const cleaned = val.replace(/\r\n|\n|\r/g, ' ');
+          return `"${cleaned.replace(/"/g, '""')}"`;
+        }
+        if (typeof val === 'object') {
+          const s = JSON.stringify(val);
+          const cleaned = s.replace(/\r\n|\n|\r/g, ' ');
+          return `"${cleaned.replace(/"/g, '""')}"`;
+        }
+        return String(val);
+      };
+
+      const contentRows = rowsArray.map((row) =>
+        colsToExport
+          .map((colId) => {
+            const val = row[colId];
+            if (format === 'csv') return escapeValue(val);
+            if (val === undefined || val === null) return '';
+            if (typeof val === 'object') return JSON.stringify(val).replace(/\r\n|\n|\r/g, ' ');
+            return String(val).replace(/\r\n|\n|\r/g, ' ');
+          })
+          .join(separator)
+      );
+
+      const content = [headers.join(separator), ...contentRows].join('\n');
+
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `${resource}-all.${format}`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    } catch (err) {
+      console.error('Download all failed:', err);
+      alert('Failed to download all results. See console for details.');
+    }
   }
 
-  try {
-    const baseURL = `${DataAPI}/${resource}/?${cleanQ}`;
-    // Request all items from server (use totalItems — you said this works)
-    const res = await fetch(baseURL, {
-      headers: {
-        'Content-type': 'application/rqlquery+x-www-form-urlencoded',
-        'Accept': 'application/json',
-        'Range': `items=0-${totalItems}`, // you said totalItems works in your API
-        'X-Range': `items=0-${totalItems}`,
-      },
-    });
-    if (!res.ok) throw new Error(`Failed to fetch all data: ${res.status} ${res.statusText}`);
-    const allData = await res.json();
-
-    // Normalize response: if API wraps results, try to detect an items array, otherwise assume it's the array
-    const rowsArray: any[] = Array.isArray(allData) ? allData : (allData.items ?? allData.response ?? allData.rows ?? []);
-
-    // Determine which columns to export
-    const colsToExport = (visibleColumns && visibleColumns.length > 0)
-      ? visibleColumns
-      : fields.map((c) => c.id);
-
-    // Build header labels based on fields mapping (fall back to id)
-    const headers = colsToExport.map((id) => {
-      const col = fields.find((c) => c.id === id);
-      return col?.label ?? id;
-    });
-
-    // CSV/TXT separator
-    const separator = format === 'csv' ? ',' : '\t';
-
-    // Helper to escape CSV values
-    const escapeValue = (val: any) => {
-      if (val === undefined || val === null) return '';
-      if (typeof val === 'string') {
-        // remove newlines and properly escape quotes for CSV
-        const cleaned = val.replace(/\r\n|\n|\r/g, ' ');
-        return `"${cleaned.replace(/"/g, '""')}"`;
-      }
-      if (typeof val === 'object') {
-        const s = JSON.stringify(val);
-        const cleaned = s.replace(/\r\n|\n|\r/g, ' ');
-        return `"${cleaned.replace(/"/g, '""')}"`;
-      }
-      return String(val);
-    };
-
-    // Build content rows
-    const contentRows = rowsArray.map((row) =>
-      colsToExport
-        .map((colId) => {
-          const val = row[colId];
-          // if CSV, use escapeValue; if TXT, use tab-separated without double-quoting complex objects
-          if (format === 'csv') return escapeValue(val);
-          // for txt (tab-separated), stringify objects but keep tabs/newlines replaced
-          if (val === undefined || val === null) return '';
-          if (typeof val === 'object') return JSON.stringify(val).replace(/\r\n|\n|\r/g, ' ');
-          return String(val).replace(/\r\n|\n|\r/g, ' ');
-        })
-        .join(separator)
-    );
-
-    const content = [headers.join(separator), ...contentRows].join('\n');
-
-    // download helper
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `${resource}-all.${format}`;
-    link.click();
-    URL.revokeObjectURL(link.href);
-  } catch (err) {
-    console.error('Download all failed:', err);
-    alert('Failed to download all results. See console for details.');
+  if (fields.length === 0) {
+    return <div>Loading...</div>;
   }
-}
-
-// Wait for fields to load before rendering the table
-if (fields.length === 0) {
-  return <div>Loading...</div>;
-}
-
-console.log('current pageIndex:', pageIndex);
 
   return (
-      <div className="h-full flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-hidden">
+    <div className="h-full flex flex-col overflow-hidden">
+      <div className="flex-1 overflow-hidden">
+        {!columnVisibility || !fields.length ? (
+          <div>Loading...</div>
+        ) : (
           <DataTable
             id={widget.id}
             data={pageData ?? []}
             columns={widget.columns}
             rowSelection={rowSelection}
-            onRowSelectionChange={(newSelection) => {
-              setRowSelection(newSelection);
-              const selectedRows = pageData.filter((row) => newSelection[row.genome_id]);
-              setSelectedRows(selectedRows);
+            onSelectionChange={(selectedRows) => {
+              // This is your callback — cascades up without changing table state
               onSelectionChange?.(selectedRows);
-}}
-            onSelectionChange={(rows) => {
-                setSelectedRows(rows);
-                onSelectionChange?.(rows);
-              }}
+              console.log('Selected rows:', selectedRows.length);
+            }}
             pageIndex={pageIndex}
             pageSize={pageSize}
             totalItems={totalItems}
@@ -302,8 +274,8 @@ console.log('current pageIndex:', pageIndex);
             onColumnVisibilityChange={setColumnVisibility}
             onDownloadAll={handleDownloadAll}
           />
-        </div>
+        )}
+      </div>
     </div>
   );
 }
-

@@ -166,7 +166,6 @@ const SraRunAccessionWithValidation = ({
             onAdd([accession]);
           }
 
-          setSraAccession("");
           setValidationMessage("");
         } else {
           toast.error("Duplicate SRA accession detected", {
@@ -206,6 +205,7 @@ const SraRunAccessionWithValidation = ({
             id: runId,
             name: runId,
             type: "sra",
+            ...(studyTitle && { title: studyTitle }),
           });
         }
 
@@ -218,8 +218,7 @@ const SraRunAccessionWithValidation = ({
             onAdd(runs, studyTitle);
           }
 
-          // Clear input and validation message
-          setSraAccession("");
+          // Clear validation message only; keep accession in textbox
           setValidationMessage("");
         }
       } catch (parseError) {
@@ -251,7 +250,7 @@ const SraRunAccessionWithValidation = ({
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <Label className="service-card-label">{title}</Label>
-        <div className="bg-border mx-4 h-[1px] flex-1" />
+        <div className="bg-border mx-4 h-px flex-1" />
         <Button
           variant="outline"
           size="icon"

@@ -71,9 +71,14 @@ import {
   transformMetagenomicBinningParams,
   shouldDisableMetaspades,
 } from "@/lib/forms/(metagenomics)/metagenomic-binning/metagenomic-binning-form-utils";
+import {
+  buildBaseLibraryItem,
+  getPairedLibraryName,
+  getSingleLibraryName,
+  useLibrarySelection,
+} from "@/lib/forms/shared-library-selection";
 
 import type { WorkspaceObject } from "@/lib/workspace-client";
-import { Library } from "@/types/services";
 
 export default function MetagenomicBinningPage() {
   const form = useForm<MetagenomicBinningFormData>({
@@ -87,10 +92,10 @@ export default function MetagenomicBinningPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Read input state
-  const [selectedLibraries, setSelectedLibraries] = useState<Library[]>([]);
   const [pairedRead1, setPairedRead1] = useState<string | null>(null);
   const [pairedRead2, setPairedRead2] = useState<string | null>(null);
   const [singleRead, setSingleRead] = useState<string | null>(null);
+  const [sraResetKey, setSraResetKey] = useState(0);
 
   // Watch form values
   const startWith = form.watch("start_with");
@@ -106,134 +111,71 @@ export default function MetagenomicBinningPage() {
     }
   }, [metaspadesDisabled, assembler, form]);
 
-  // Convert Library to LibraryItem for form submission
-  const convertLibraryToLibraryItem = (library: Library): LibraryItem => {
-    const baseLib: LibraryItem = {
-      _id: library.id,
-      _type:
-        library.type === "paired"
-          ? "paired"
-          : library.type === "single"
-            ? "single"
-            : "srr_accession",
-    };
-
-    if (library.type === "paired" && library.files) {
-      baseLib.read1 = library.files[0];
-      baseLib.read2 = library.files[1];
-    } else if (library.type === "single" && library.files) {
-      baseLib.read = library.files[0];
-    }
-
-    return baseLib;
-  };
-
-  // Sync selectedLibraries with form data
-  const syncLibrariesToForm = (libraries: Library[]) => {
-    const pairedLibs: LibraryItem[] = [];
-    const singleLibs: LibraryItem[] = [];
-    const srrIds: string[] = [];
-
-    libraries.forEach((lib) => {
-      if (lib.type === "paired") {
-        pairedLibs.push(convertLibraryToLibraryItem(lib));
-      } else if (lib.type === "single") {
-        singleLibs.push(convertLibraryToLibraryItem(lib));
-      } else if (lib.type === "sra") {
-        srrIds.push(lib.id);
-      }
-    });
-
-    // Update all library fields without individual validation
-    form.setValue("paired_end_libs", pairedLibs, { shouldValidate: false });
-    form.setValue("single_end_libs", singleLibs, { shouldValidate: false });
-    form.setValue("srr_ids", srrIds, { shouldValidate: false });
-    
-    // Trigger validation on all library fields together to ensure superRefine runs
-    // This ensures the validation error clears when any library type is added
-    form.trigger(["paired_end_libs", "single_end_libs", "srr_ids"]);
-  };
+  const {
+    selectedLibraries,
+    addPairedLibrary,
+    addSingleLibrary,
+    removeLibrary,
+    setLibrariesAndSync,
+  } = useLibrarySelection<MetagenomicBinningFormData, LibraryItem>({
+    form,
+    mapLibraryToItem: buildBaseLibraryItem,
+    fields: {
+      paired: "paired_end_libs",
+      single: "single_end_libs",
+      srr: "srr_ids",
+    },
+  });
 
   // Handle adding paired library
   const handlePairedLibraryAdd = () => {
-    if (!pairedRead1 || !pairedRead2) {
-      toast.error("Both read files must be selected for paired library");
-      return;
-    }
-
-    if (pairedRead1 === pairedRead2) {
-      toast.error("READ FILE 1 and READ FILE 2 cannot be the same");
-      return;
-    }
-
-    // Check for duplicate library
-    const libraryId = `${pairedRead1}${pairedRead2}`;
-    const isDuplicate = selectedLibraries.some((lib) => lib.id === libraryId);
-    if (isDuplicate) {
-      toast.error("This paired library has already been added");
-      return;
-    }
-
-    const newLibrary: Library = {
-      id: libraryId,
-      name: `P(${pairedRead1.split("/").pop()}, ${pairedRead2.split("/").pop()})`,
-      type: "paired",
-      files: [pairedRead1, pairedRead2],
-    };
-
-    const newLibraries = [...selectedLibraries, newLibrary];
-    setSelectedLibraries(newLibraries);
-    syncLibrariesToForm(newLibraries);
-
-    // Clear the inputs
-    setPairedRead1(null);
-    setPairedRead2(null);
+    addPairedLibrary({
+      read1: pairedRead1,
+      read2: pairedRead2,
+      buildLibrary: (read1, read2, id) => ({
+        library: {
+          id,
+          name: getPairedLibraryName(read1, read2),
+          type: "paired",
+          files: [read1, read2],
+        },
+      }),
+      onError: (message) => toast.error(message),
+      onAfterAdd: () => {
+        setPairedRead1(null);
+        setPairedRead2(null);
+      },
+    });
   };
 
   // Handle adding single library
   const handleSingleLibraryAdd = () => {
-    if (!singleRead) {
-      toast.error("Read file must be selected");
-      return;
-    }
-
-    // Check for duplicate library
-    const isDuplicate = selectedLibraries.some((lib) => lib.id === singleRead);
-    if (isDuplicate) {
-      toast.error("This single library has already been added");
-      return;
-    }
-
-    const newLibrary: Library = {
-      id: singleRead,
-      name: `S(${singleRead.split("/").pop()})`,
-      type: "single",
-      files: [singleRead],
-    };
-
-    const newLibraries = [...selectedLibraries, newLibrary];
-    setSelectedLibraries(newLibraries);
-    syncLibrariesToForm(newLibraries);
-
-    // Clear the input
-    setSingleRead(null);
-  };
-
-  // Handle removing a library
-  const handleRemoveLibrary = (id: string) => {
-    const newLibraries = selectedLibraries.filter((lib) => lib.id !== id);
-    setSelectedLibraries(newLibraries);
-    syncLibrariesToForm(newLibraries);
+    addSingleLibrary({
+      read: singleRead,
+      buildLibrary: (read) => ({
+        library: {
+          id: read,
+          name: getSingleLibraryName(read),
+          type: "single",
+          files: [read],
+        },
+      }),
+      onError: (message) => toast.error(message),
+      onAfterAdd: () => {
+        setSingleRead(null);
+      },
+    });
   };
 
   // Handle form reset
   const handleReset = () => {
     form.reset(DEFAULT_METAGENOMIC_BINNING_FORM_VALUES);
-    setSelectedLibraries([]);
+    setLibrariesAndSync([]);
     setShowAdvanced(false);
     setPairedRead1(null);
     setPairedRead2(null);
     setSingleRead(null);
+    setSraResetKey((k) => k + 1);
   };
 
   // Setup service form submission
@@ -422,15 +364,13 @@ export default function MetagenomicBinningPage() {
                       />
                     </div>
 
-                    {/* SRA Run Accession */}
+                    {/* SRA Run Accession - key forces remount on reset to clear internal textbox state */}
                     <SraRunAccessionWithValidation
+                      key={sraResetKey}
                       title="SRA Run Accession"
                       placeholder="SRR..."
                       selectedLibraries={selectedLibraries}
-                      setSelectedLibraries={(libs) => {
-                        setSelectedLibraries(libs);
-                        syncLibrariesToForm(libs);
-                      }}
+                      setSelectedLibraries={setLibrariesAndSync}
                       onAdd={() => {
                         // Libraries are already added and synced via setSelectedLibraries prop
                       }}
@@ -478,7 +418,7 @@ export default function MetagenomicBinningPage() {
                         name: library.name,
                         type: library.type,
                       }))}
-                      onRemove={handleRemoveLibrary}
+                      onRemove={removeLibrary}
                     />
                   </CardContent>
                 </Card>

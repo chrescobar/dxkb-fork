@@ -79,9 +79,15 @@ import {
   isHostFilteringAvailable,
   isAnalysisTypeSelectable,
 } from "@/lib/forms/(metagenomics)/taxonomic-classification/taxonomic-classification-form-utils";
+import {
+  buildBaseLibraryItem,
+  getPairedLibraryName,
+  getSingleLibraryName,
+  useLibrarySelection,
+} from "@/lib/forms/shared-library-selection";
 
 import type { WorkspaceObject } from "@/lib/workspace-client";
-import { Library } from "@/types/services";
+import type { Library } from "@/types/services";
 
 export default function TaxonomicClassificationPage() {
   const form = useForm<TaxonomicClassificationFormData>({
@@ -94,7 +100,6 @@ export default function TaxonomicClassificationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Read input state
-  const [selectedLibraries, setSelectedLibraries] = useState<Library[]>([]);
   const [pairedRead1, setPairedRead1] = useState<string | null>(null);
   const [pairedRead2, setPairedRead2] = useState<string | null>(null);
   const [singleRead, setSingleRead] = useState<string | null>(null);
@@ -132,144 +137,101 @@ export default function TaxonomicClassificationPage() {
     return library.id;
   };
 
-  // Convert Library to LibraryItem for form submission
-  const convertLibraryToLibraryItem = (library: Library): LibraryItem => {
-    const baseLib: LibraryItem = {
-      _id: library.id,
-      _type:
-        library.type === "paired"
-          ? "paired"
-          : library.type === "single"
-            ? "single"
-            : "srr_accession",
+  const {
+    selectedLibraries,
+    addPairedLibrary,
+    addSingleLibrary,
+    removeLibrary,
+    setLibrariesAndSync,
+  } = useLibrarySelection<
+    TaxonomicClassificationFormData,
+    LibraryItem,
+    { srr_accession: string; sample_id: string; title?: string }
+  >({
+    form,
+    mapLibraryToItem: (library) => ({
+      ...buildBaseLibraryItem(library),
       sample_id: library.sampleId?.trim() || deriveSampleId(library),
-    };
-
-    if (library.type === "paired" && library.files) {
-      baseLib.read1 = library.files[0];
-      baseLib.read2 = library.files[1];
-    } else if (library.type === "single" && library.files) {
-      baseLib.read = library.files[0];
-    }
-
-    return baseLib;
-  };
-
-  // Sync selectedLibraries with form data
-  const syncLibrariesToForm = (libraries: Library[]) => {
-    const pairedLibs: LibraryItem[] = [];
-    const singleLibs: LibraryItem[] = [];
-    const srrLibs: { srr_accession: string; sample_id: string; title?: string }[] = [];
-
-    libraries.forEach((lib) => {
-      if (lib.type === "paired") {
-        pairedLibs.push(convertLibraryToLibraryItem(lib));
-      } else if (lib.type === "single") {
-        singleLibs.push(convertLibraryToLibraryItem(lib));
-      } else if (lib.type === "sra") {
-        srrLibs.push({
-          srr_accession: lib.id,
-          sample_id: lib.sampleId?.trim() || lib.id,
-          ...(lib.title && { title: lib.title }),
-        });
-      }
-    });
-
-    // Update all library fields without individual validation
-    form.setValue("paired_end_libs", pairedLibs, { shouldValidate: false });
-    form.setValue("single_end_libs", singleLibs, { shouldValidate: false });
-    form.setValue("srr_libs", srrLibs, { shouldValidate: false });
-
-    // Trigger validation on all library fields together
-    form.trigger(["paired_end_libs", "single_end_libs", "srr_libs"]);
-  };
+    }),
+    mapSraLibraryToItem: (library) => ({
+      srr_accession: library.id,
+      sample_id: library.sampleId?.trim() || library.id,
+      ...(library.title && { title: library.title }),
+    }),
+    fields: {
+      paired: "paired_end_libs",
+      single: "single_end_libs",
+      srr: "srr_libs",
+    },
+    normalizeLibraries: (nextLibraries, previousLibraries) => {
+      const prevSraIds = new Set(
+        previousLibraries.filter((lib) => lib.type === "sra").map((lib) => lib.id)
+      );
+      return nextLibraries.map((lib) => {
+        if (lib.type === "sra" && !prevSraIds.has(lib.id)) {
+          return { ...lib, sampleId: srrSampleId.trim() || lib.id };
+        }
+        return lib;
+      });
+    },
+  });
 
   // Handle adding paired library
   const handlePairedLibraryAdd = () => {
-    if (!pairedRead1 || !pairedRead2) {
-      toast.error("Both read files must be selected for paired library");
-      return;
-    }
-
-    if (pairedRead1 === pairedRead2) {
-      toast.error("READ FILE 1 and READ FILE 2 cannot be the same");
-      return;
-    }
-
-    // Check for duplicate library
-    const libraryId = `${pairedRead1}${pairedRead2}`;
-    const isDuplicate = selectedLibraries.some((lib) => lib.id === libraryId);
-    if (isDuplicate) {
-      toast.error("This paired library has already been added");
-      return;
-    }
-
-    // Library-level sample_id is captured at add-time from the textbox (fallback to default)
-    const defaultSampleId = pairedRead1.split("/").pop()?.split(".")[0] || "sample";
-    const librarySampleId = pairedSampleId.trim() || defaultSampleId;
-    const newLibrary: Library = {
-      id: libraryId,
-      name: `P(${pairedRead1.split("/").pop()}, ${pairedRead2.split("/").pop()})`,
-      type: "paired",
-      files: [pairedRead1, pairedRead2],
-      sampleId: librarySampleId,
-    };
-
-    const newLibraries = [...selectedLibraries, newLibrary];
-    setSelectedLibraries(newLibraries);
-    syncLibrariesToForm(newLibraries);
-
-    // Set top-level sample ID form field (preserves user input including hyphens)
-    form.setValue("paired_sample_id", pairedSampleId.trim() || defaultSampleId);
-
-    // Clear the inputs and sample identifier
-    setPairedRead1(null);
-    setPairedRead2(null);
-    setPairedSampleId("");
+    addPairedLibrary({
+      read1: pairedRead1,
+      read2: pairedRead2,
+      buildLibrary: (read1, read2, id) => {
+        const defaultSampleId = read1.split("/").pop()?.split(".")[0] || "sample";
+        const librarySampleId = pairedSampleId.trim() || defaultSampleId;
+        return {
+          library: {
+            id,
+            name: getPairedLibraryName(read1, read2),
+            type: "paired",
+            files: [read1, read2],
+            sampleId: librarySampleId,
+          },
+        };
+      },
+      onError: (message) => toast.error(message),
+      onAfterAdd: (library) => {
+        const fallbackSampleId =
+          library.files?.[0]?.split("/").pop()?.split(".")[0] || "sample";
+        form.setValue("paired_sample_id", pairedSampleId.trim() || fallbackSampleId);
+        setPairedRead1(null);
+        setPairedRead2(null);
+        setPairedSampleId("");
+      },
+    });
   };
 
   // Handle adding single library
   const handleSingleLibraryAdd = () => {
-    if (!singleRead) {
-      toast.error("Read file must be selected");
-      return;
-    }
-
-    // Check for duplicate library
-    const isDuplicate = selectedLibraries.some((lib) => lib.id === singleRead);
-    if (isDuplicate) {
-      toast.error("This single library has already been added");
-      return;
-    }
-
-    // Library-level sample_id is captured at add-time from the textbox (fallback to default)
-    const defaultSampleId = singleRead.split("/").pop()?.split(".")[0] || "sample";
-    const librarySampleId = singleSampleId.trim() || defaultSampleId;
-    const newLibrary: Library = {
-      id: singleRead,
-      name: `S(${singleRead.split("/").pop()})`,
-      type: "single",
-      files: [singleRead],
-      sampleId: librarySampleId,
-    };
-
-    const newLibraries = [...selectedLibraries, newLibrary];
-    setSelectedLibraries(newLibraries);
-    syncLibrariesToForm(newLibraries);
-
-    // Set top-level sample ID form field (preserves user input including hyphens)
-    form.setValue("single_sample_id", singleSampleId.trim() || defaultSampleId);
-
-    // Clear the input and sample identifier
-    setSingleRead(null);
-    setSingleSampleId("");
-  };
-
-  // Handle removing a library
-  const handleRemoveLibrary = (id: string) => {
-    const newLibraries = selectedLibraries.filter((lib) => lib.id !== id);
-    setSelectedLibraries(newLibraries);
-    syncLibrariesToForm(newLibraries);
+    addSingleLibrary({
+      read: singleRead,
+      buildLibrary: (read) => {
+        const defaultSampleId = read.split("/").pop()?.split(".")[0] || "sample";
+        const librarySampleId = singleSampleId.trim() || defaultSampleId;
+        return {
+          library: {
+            id: read,
+            name: getSingleLibraryName(read),
+            type: "single",
+            files: [read],
+            sampleId: librarySampleId,
+          },
+        };
+      },
+      onError: (message) => toast.error(message),
+      onAfterAdd: (library) => {
+        const fallbackSampleId =
+          library.files?.[0]?.split("/").pop()?.split(".")[0] || "sample";
+        form.setValue("single_sample_id", singleSampleId.trim() || fallbackSampleId);
+        setSingleRead(null);
+        setSingleSampleId("");
+      },
+    });
   };
 
   // Update both local state (for adding new libs) and form field (for submission top-level param)
@@ -294,7 +256,7 @@ export default function TaxonomicClassificationPage() {
       { ...DEFAULT_TAXONOMIC_CLASSIFICATION_FORM_VALUES },
       { keepDefaultValues: false }
     );
-    setSelectedLibraries([]);
+    setLibrariesAndSync([]);
     setPairedRead1(null);
     setPairedRead2(null);
     setSingleRead(null);
@@ -308,15 +270,7 @@ export default function TaxonomicClassificationPage() {
   const handleSetSelectedLibraries = (libs: Library[]) => {
     const prevSraIds = new Set(selectedLibraries.filter((l) => l.type === "sra").map((l) => l.id));
     const newSraLibs = libs.filter((l) => l.type === "sra" && !prevSraIds.has(l.id));
-    const libsWithSampleId = libs.map((lib) => {
-      if (lib.type === "sra" && !prevSraIds.has(lib.id)) {
-        // Library-level sample_id is captured at add-time from the textbox (fallback to SRR accession)
-        return { ...lib, sampleId: srrSampleId.trim() || lib.id };
-      }
-      return lib;
-    });
-    setSelectedLibraries(libsWithSampleId);
-    syncLibrariesToForm(libsWithSampleId);
+    setLibrariesAndSync(libs);
 
     // Set top-level sample ID form field and clear the textbox after adding SRA libs
     if (newSraLibs.length > 0) {
@@ -565,7 +519,7 @@ export default function TaxonomicClassificationPage() {
                     name: library.name,
                     type: library.type,
                   }))}
-                  onRemove={handleRemoveLibrary}
+                  onRemove={removeLibrary}
                 />
               </CardContent>
             </Card>

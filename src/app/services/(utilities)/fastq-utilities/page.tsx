@@ -76,6 +76,12 @@ import {
   actionItemsToRecipe,
   resetVisualIndexes,
 } from "@/lib/forms/(utilities)/fastq-utilities/fastq-utilities-form-utils";
+import {
+  buildBaseLibraryItem,
+  getPairedLibraryName,
+  getSingleLibraryName,
+  useLibrarySelection,
+} from "@/lib/forms/shared-library-selection";
 
 import type { WorkspaceObject } from "@/lib/workspace-client";
 import type { Library } from "@/types/services";
@@ -91,7 +97,6 @@ export default function FastqUtilitiesPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Read input state
-  const [selectedLibraries, setSelectedLibraries] = useState<Library[]>([]);
   const [pairedRead1, setPairedRead1] = useState<string | null>(null);
   const [pairedRead2, setPairedRead2] = useState<string | null>(null);
   const [singleRead, setSingleRead] = useState<string | null>(null);
@@ -108,129 +113,79 @@ export default function FastqUtilitiesPage() {
   // Check if align is selected (to show/require target genome)
   const alignSelected = isAlignSelected(recipe);
 
-  // Convert Library to LibraryItem for form submission
-  const convertLibraryToLibraryItem = (library: Library): LibraryItem => {
-    const baseLib: LibraryItem = {
-      _id: library.id,
-      _type:
-        library.type === "paired"
-          ? "paired"
-          : library.type === "single"
-            ? "single"
-            : "srr_accession",
-    };
+  const {
+    selectedLibraries,
+    addPairedLibrary,
+    addSingleLibrary,
+    removeLibrary,
+    setLibrariesAndSync,
+  } = useLibrarySelection<FastqUtilitiesFormData, LibraryItem>({
+    form,
+    mapLibraryToItem: (library) => ({
+      ...buildBaseLibraryItem(library),
+      ...(library.type === "single" && { platform: library.platform as Platform }),
+    }),
+    fields: {
+      paired: "paired_end_libs",
+      single: "single_end_libs",
+      srr: "srr_ids",
+    },
+  });
 
-    if (library.type === "paired" && library.files) {
-      baseLib.read1 = library.files[0];
-      baseLib.read2 = library.files[1];
-    } else if (library.type === "single" && library.files) {
-      baseLib.read = library.files[0];
-      baseLib.platform = library.platform as Platform;
+  const handleLibraryError = (message: string) => {
+    if (
+      message === "This paired library has already been added" ||
+      message === "This single library has already been added"
+    ) {
+      toast.error("Duplicate library", { description: message });
+      return;
     }
-
-    return baseLib;
-  };
-
-  // Sync selectedLibraries with form data
-  const syncLibrariesToForm = (libraries: Library[]) => {
-    const pairedLibs: LibraryItem[] = [];
-    const singleLibs: LibraryItem[] = [];
-    const srrIds: string[] = [];
-
-    libraries.forEach((lib) => {
-      if (lib.type === "paired") {
-        pairedLibs.push(convertLibraryToLibraryItem(lib));
-      } else if (lib.type === "single") {
-        singleLibs.push(convertLibraryToLibraryItem(lib));
-      } else if (lib.type === "sra") {
-        srrIds.push(lib.id);
-      }
-    });
-
-    form.setValue("paired_end_libs", pairedLibs, { shouldValidate: false });
-    form.setValue("single_end_libs", singleLibs, { shouldValidate: false });
-    form.setValue("srr_ids", srrIds, { shouldValidate: false });
-
-    form.trigger(["paired_end_libs", "single_end_libs", "srr_ids"]);
+    toast.error(message);
   };
 
   // Handle adding paired library
   const handlePairedLibraryAdd = () => {
-    if (!pairedRead1 || !pairedRead2) {
-      toast.error("Both read files must be selected for paired library");
-      return;
-    }
-
-    if (pairedRead1 === pairedRead2) {
-      toast.error("READ FILE 1 and READ FILE 2 cannot be the same");
-      return;
-    }
-
-    // Check for duplicates
-    const existingId = `${pairedRead1}${pairedRead2}`;
-    if (selectedLibraries.some((lib) => lib.id === existingId)) {
-      toast.error("Duplicate library", {
-        description: "This paired library has already been added",
-      });
-      return;
-    }
-
-    const newLibrary: Library = {
-      id: existingId,
-      name: `P(${pairedRead1.split("/").pop()}, ${pairedRead2.split("/").pop()})`,
-      type: "paired",
-      files: [pairedRead1, pairedRead2],
-    };
-
-    const newLibraries = [...selectedLibraries, newLibrary];
-    setSelectedLibraries(newLibraries);
-    syncLibrariesToForm(newLibraries);
+    addPairedLibrary({
+      read1: pairedRead1,
+      read2: pairedRead2,
+      buildLibrary: (read1, read2, id) => ({
+        library: {
+          id,
+          name: getPairedLibraryName(read1, read2),
+          type: "paired",
+          files: [read1, read2],
+        },
+      }),
+      onError: handleLibraryError,
+    });
   };
 
   // Handle adding single library
   const handleSingleLibraryAdd = () => {
-    if (!singleRead) {
-      toast.error("Read file must be selected");
-      return;
-    }
-
-    if (!singlePlatform) {
-      toast.error("Platform must be selected for single read library");
-      return;
-    }
-
-    // Check for duplicates
-    if (selectedLibraries.some((lib) => lib.id === singleRead && lib.type === "single")) {
-      toast.error("Duplicate library", {
-        description: "This single library has already been added",
-      });
-      return;
-    }
-
-    const newLibrary: Library = {
-      id: singleRead,
-      name: `S(${singleRead.split("/").pop()})`,
-      type: "single",
-      files: [singleRead],
-      platform: singlePlatform,
-    };
-
-    const newLibraries = [...selectedLibraries, newLibrary];
-    setSelectedLibraries(newLibraries);
-    syncLibrariesToForm(newLibraries);
-  };
-
-  // Handle removing a library
-  const handleRemoveLibrary = (id: string) => {
-    const newLibraries = selectedLibraries.filter((lib) => lib.id !== id);
-    setSelectedLibraries(newLibraries);
-    syncLibrariesToForm(newLibraries);
+    addSingleLibrary({
+      read: singleRead,
+      buildLibrary: (read) => {
+        if (!singlePlatform) {
+          return { error: "Platform must be selected for single read library" };
+        }
+        return {
+          library: {
+            id: read,
+            name: getSingleLibraryName(read),
+            type: "single",
+            files: [read],
+            platform: singlePlatform,
+          },
+        };
+      },
+      duplicateMatcher: (library, read) => library.id === read && library.type === "single",
+      onError: handleLibraryError,
+    });
   };
 
   // Handle SRA libraries
   const handleSetSelectedLibraries = (libs: Library[]) => {
-    setSelectedLibraries(libs);
-    syncLibrariesToForm(libs);
+    setLibrariesAndSync(libs);
   };
 
   // Handle adding pipeline action
@@ -273,7 +228,7 @@ export default function FastqUtilitiesPage() {
       { ...DEFAULT_FASTQ_UTILITIES_FORM_VALUES },
       { keepDefaultValues: false }
     );
-    setSelectedLibraries([]);
+    setLibrariesAndSync([]);
     setPairedRead1(null);
     setPairedRead2(null);
     setSingleRead(null);
@@ -662,7 +617,7 @@ export default function FastqUtilitiesPage() {
                           ? "Single Read"
                           : "SRA Accession",
                   }))}
-                  onRemove={handleRemoveLibrary}
+                    onRemove={removeLibrary}
                   className="max-h-80 overflow-y-auto"
                 />
               </CardContent>

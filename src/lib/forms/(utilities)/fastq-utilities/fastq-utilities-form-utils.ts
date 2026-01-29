@@ -4,7 +4,7 @@ import type {
   PipelineAction,
 } from "./fastq-utilities-form-schema";
 import { PIPELINE_ACTION_OPTIONS } from "./fastq-utilities-form-schema";
-import { actionColors, actionShapes } from "@/lib/services/service-utils";
+import { actionColors } from "@/lib/services/service-utils";
 
 /**
  * Transform FASTQ utilities form data to API parameters
@@ -65,58 +65,48 @@ function getActionLabel(action: PipelineAction): string {
 }
 
 /**
- * Color index counter for pipeline actions
+ * Get a deterministic color for a pipeline action index
  */
-let colorIndex = 0;
-let shapeIndex = 0;
-
-/**
- * Reset visual index counters
- */
-export function resetVisualIndexes(): void {
-  colorIndex = 0;
-  shapeIndex = 0;
-}
-
-/**
- * Get the next color for a pipeline action
- */
-export function getNextColor(): string {
-  const color = actionColors[colorIndex % actionColors.length];
-  colorIndex += 1;
-  return color;
-}
-
-/**
- * Get the next shape for a pipeline action
- */
-export function getNextShape(): string {
-  const shape = actionShapes[shapeIndex % actionShapes.length];
-  shapeIndex += 1;
-  return shape;
+function getColorForIndex(index: number): string {
+  return actionColors[index % actionColors.length];
 }
 
 /**
  * Create a new pipeline action item with visual properties
  */
-export function createPipelineActionItem(action: PipelineAction): PipelineActionItem {
+export function createPipelineActionItem(
+  action: PipelineAction,
+  index = 0
+): PipelineActionItem {
   return {
     id: `${action}_${Date.now()}`,
     action,
     label: getActionLabel(action),
-    color: getNextColor(),
-    shape: getNextShape(),
+    color: getColorForIndex(index),
   };
 }
 
 /**
- * Remove a pipeline action item by ID
+ * Reassign colors based on current array position to keep sequence compact
+ */
+export function renormalizePipelineActions(
+  items: PipelineActionItem[]
+): PipelineActionItem[] {
+  return items.map((item, index) => ({
+    ...item,
+    color: getColorForIndex(index),
+  }));
+}
+
+/**
+ * Remove a pipeline action item by ID and renormalize visuals
  */
 export function removePipelineActionItem(
   items: PipelineActionItem[],
   id: string
 ): PipelineActionItem[] {
-  return items.filter((item) => item.id !== id);
+  const filtered = items.filter((item) => item.id !== id);
+  return renormalizePipelineActions(filtered);
 }
 
 /**

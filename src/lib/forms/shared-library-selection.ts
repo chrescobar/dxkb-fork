@@ -90,8 +90,7 @@ export function useLibrarySelection<
   TFormValues extends FieldValues,
   LibraryItem,
   SrrItem = string
->(config: UseLibrarySelectionConfig<TFormValues, LibraryItem, SrrItem>)
-) {
+>(config: UseLibrarySelectionConfig<TFormValues, LibraryItem, SrrItem>) {
   const [selectedLibraries, setSelectedLibraries] = useState<Library[]>([]);
 
   const syncLibrariesToForm = useCallback(
@@ -146,7 +145,7 @@ export function useLibrarySelection<
         return normalizedLibraries;
       });
     },
-    [config.normalizeLibraries, syncLibrariesToForm]
+    [config, syncLibrariesToForm]
   );
 
   const addPairedLibrary = useCallback(

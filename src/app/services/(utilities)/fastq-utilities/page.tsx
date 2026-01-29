@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -8,7 +8,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import {
@@ -74,7 +73,6 @@ import {
   createPipelineActionItem,
   removePipelineActionItem,
   actionItemsToRecipe,
-  resetVisualIndexes,
 } from "@/lib/forms/(utilities)/fastq-utilities/fastq-utilities-form-utils";
 import {
   buildBaseLibraryItem,
@@ -202,7 +200,7 @@ export default function FastqUtilitiesPage() {
       return;
     }
 
-    const newActionItem = createPipelineActionItem(selectedAction);
+    const newActionItem = createPipelineActionItem(selectedAction, pipelineActions.length);
     const newActions = [...pipelineActions, newActionItem];
     setPipelineActions(newActions);
     form.setValue("recipe", actionItemsToRecipe(newActions), { shouldValidate: true });
@@ -236,7 +234,6 @@ export default function FastqUtilitiesPage() {
     setPipelineActions([]);
     setSelectedAction("");
     setSraResetKey((k) => k + 1);
-    resetVisualIndexes();
   };
 
   // Setup service form submission
@@ -397,7 +394,7 @@ export default function FastqUtilitiesPage() {
                       No actions added yet
                     </p>
                   ) : (
-                    pipelineActions.map((action, index) => (
+                    pipelineActions.map((action) => (
                       <div
                         key={action.id}
                         className="flex items-center justify-between rounded-md border px-3 py-2"

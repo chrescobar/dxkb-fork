@@ -32,7 +32,6 @@ export const pipelineActionItemSchema = z.object({
   action: pipelineActionSchema,
   label: z.string(),
   color: z.string().optional(),
-  shape: z.string().optional(),
 });
 
 export type PipelineActionItem = z.infer<typeof pipelineActionItemSchema>;

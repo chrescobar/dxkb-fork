@@ -148,8 +148,16 @@ export default function MetagenomicReadMappingPage() {
       return;
     }
 
+    // Check for duplicate library
+    const libraryId = `${pairedRead1}${pairedRead2}`;
+    const isDuplicate = selectedLibraries.some((lib) => lib.id === libraryId);
+    if (isDuplicate) {
+      toast.error("This paired library has already been added");
+      return;
+    }
+
     const newLibrary: Library = {
-      id: `${pairedRead1}${pairedRead2}`,
+      id: libraryId,
       name: `P(${pairedRead1.split("/").pop()}, ${pairedRead2.split("/").pop()})`,
       type: "paired",
       files: [pairedRead1, pairedRead2],
@@ -168,6 +176,13 @@ export default function MetagenomicReadMappingPage() {
   const handleSingleLibraryAdd = () => {
     if (!singleRead) {
       toast.error("Read file must be selected");
+      return;
+    }
+
+    // Check for duplicate library
+    const isDuplicate = selectedLibraries.some((lib) => lib.id === singleRead);
+    if (isDuplicate) {
+      toast.error("This single library has already been added");
       return;
     }
 

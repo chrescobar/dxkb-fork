@@ -166,8 +166,16 @@ export default function MetagenomicBinningPage() {
       return;
     }
 
+    // Check for duplicate library
+    const libraryId = `${pairedRead1}${pairedRead2}`;
+    const isDuplicate = selectedLibraries.some((lib) => lib.id === libraryId);
+    if (isDuplicate) {
+      toast.error("This paired library has already been added");
+      return;
+    }
+
     const newLibrary: Library = {
-      id: `${pairedRead1}${pairedRead2}`,
+      id: libraryId,
       name: `P(${pairedRead1.split("/").pop()}, ${pairedRead2.split("/").pop()})`,
       type: "paired",
       files: [pairedRead1, pairedRead2],
@@ -186,6 +194,13 @@ export default function MetagenomicBinningPage() {
   const handleSingleLibraryAdd = () => {
     if (!singleRead) {
       toast.error("Read file must be selected");
+      return;
+    }
+
+    // Check for duplicate library
+    const isDuplicate = selectedLibraries.some((lib) => lib.id === singleRead);
+    if (isDuplicate) {
+      toast.error("This single library has already been added");
       return;
     }
 
@@ -364,6 +379,7 @@ export default function MetagenomicBinningPage() {
                         <WorkspaceObjectSelector
                           types={["reads"]}
                           placeholder="Select READ FILE 1..."
+                          value={pairedRead1 ?? ""}
                           onObjectSelect={(object: WorkspaceObject) => {
                             setPairedRead1(object.path);
                           }}
@@ -371,6 +387,7 @@ export default function MetagenomicBinningPage() {
                         <WorkspaceObjectSelector
                           types={["reads"]}
                           placeholder="Select READ FILE 2..."
+                          value={pairedRead2 ?? ""}
                           onObjectSelect={(object: WorkspaceObject) => {
                             setPairedRead2(object.path);
                           }}
@@ -398,6 +415,7 @@ export default function MetagenomicBinningPage() {
                       <WorkspaceObjectSelector
                         types={["reads"]}
                         placeholder="Select READ FILE..."
+                        value={singleRead ?? ""}
                         onObjectSelect={(object: WorkspaceObject) => {
                           setSingleRead(object.path);
                         }}

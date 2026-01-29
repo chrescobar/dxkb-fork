@@ -49,7 +49,6 @@ import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { Spinner } from "@/components/ui/spinner";
 
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
-import { submitServiceJob } from "@/lib/services/service-utils";
 import {
   metagenomicBinningInfo,
   metagenomicBinningInputFile,
@@ -89,7 +88,6 @@ export default function MetagenomicBinningPage() {
 
   // UI state
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Read input state
   const [pairedRead1, setPairedRead1] = useState<string | null>(null);
@@ -185,38 +183,12 @@ export default function MetagenomicBinningPage() {
     setShowParamsDialog,
     currentParams,
     serviceName,
+    isSubmitting,
   } = useServiceFormSubmission<MetagenomicBinningFormData>({
     serviceName: "MetagenomeBinning",
+    displayName: "Metagenomic Binning",
     transformParams: transformMetagenomicBinningParams,
-    onSubmit: async (data) => {
-      try {
-        setIsSubmitting(true);
-        const params = transformMetagenomicBinningParams(data);
-        const result = await submitServiceJob("MetagenomeBinning", params);
-
-        if (result.success) {
-          toast.success("Metagenomic Binning job submitted successfully!", {
-            description: result.job?.[0]?.id
-              ? `Job ID: ${result.job[0].id}`
-              : "Job submitted successfully",
-            closeButton: true,
-          });
-          handleReset();
-        } else {
-          throw new Error(result.error || "Failed to submit job");
-        }
-      } catch (error) {
-        console.error("Failed to submit Metagenomic Binning job:", error);
-        const errorMessage =
-          error instanceof Error ? error.message : "Failed to submit job";
-        toast.error("Submission failed", {
-          description: errorMessage,
-          closeButton: true,
-        });
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
+    onSuccess: handleReset,
   });
 
   return (

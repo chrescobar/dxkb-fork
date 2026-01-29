@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -113,6 +113,9 @@ export default function TaxonomicClassificationPage() {
   // Watch form values
   const sequenceType = form.watch("sequence_type");
 
+  // Track if this is the initial mount to avoid triggering validation on load
+  const isInitialMount = useRef(true);
+
   // Update analysis type and database when sequence type changes
   useEffect(() => {
     const newAnalysisType = getDefaultAnalysisType(sequenceType);
@@ -124,6 +127,14 @@ export default function TaxonomicClassificationPage() {
     // Reset host genome when switching to 16S
     if (sequenceType === "16s") {
       form.setValue("host_genome", "no_host");
+    }
+
+    // Only trigger validation after initial mount (when user actually changes sequence type)
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+    } else {
+      // Trigger validation after updating dependent fields to ensure form validity is recalculated
+      form.trigger();
     }
   }, [sequenceType, form]);
 
@@ -252,6 +263,8 @@ export default function TaxonomicClassificationPage() {
 
   // Handle form reset
   const handleReset = () => {
+    // Reset initial mount flag so validation doesn't trigger after form reset
+    isInitialMount.current = true;
     form.reset(
       { ...DEFAULT_TAXONOMIC_CLASSIFICATION_FORM_VALUES },
       { keepDefaultValues: false }

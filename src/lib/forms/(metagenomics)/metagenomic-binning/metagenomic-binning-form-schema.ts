@@ -3,15 +3,12 @@ import { baseLibrarySchema } from "../../shared-schemas";
 
 // Start with options
 export const startWithSchema = z.enum(["reads", "contigs"]);
-export type StartWith = z.infer<typeof startWithSchema>;
 
 // Assembly strategy options (only for reads)
 export const assemblyStrategySchema = z.enum(["metaspades", "megahit", "auto"]);
-export type AssemblyStrategy = z.infer<typeof assemblyStrategySchema>;
 
 // Organisms of interest options
 export const organismSchema = z.enum(["bacteria", "viral", "both"]);
-export type Organism = z.infer<typeof organismSchema>;
 
 // Library schema - uses shared base
 export const librarySchema = baseLibrarySchema;

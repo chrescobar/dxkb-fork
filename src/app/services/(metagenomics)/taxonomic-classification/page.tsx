@@ -49,7 +49,6 @@ import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { Spinner } from "@/components/ui/spinner";
 
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
-import { submitServiceJob } from "@/lib/services/service-utils";
 import {
   taxonomyClassificationInfo,
   taxonomyClassificationInput,
@@ -96,9 +95,6 @@ export default function TaxonomicClassificationPage() {
     defaultValues: DEFAULT_TAXONOMIC_CLASSIFICATION_FORM_VALUES,
     mode: "onChange",
   });
-
-  // UI state
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Read input state
   const [pairedRead1, setPairedRead1] = useState<string | null>(null);
@@ -264,12 +260,12 @@ export default function TaxonomicClassificationPage() {
 
   // Handle form reset
   const handleReset = () => {
-    // Reset initial mount flag so validation doesn't trigger after form reset
-    isInitialMount.current = true;
     form.reset(
       { ...DEFAULT_TAXONOMIC_CLASSIFICATION_FORM_VALUES },
       { keepDefaultValues: false }
     );
+    // Clear any stale validation errors after reset
+    form.clearErrors();
     setLibrariesAndSync([]);
     setPairedRead1(null);
     setPairedRead2(null);
@@ -304,38 +300,12 @@ export default function TaxonomicClassificationPage() {
     setShowParamsDialog,
     currentParams,
     serviceName,
+    isSubmitting,
   } = useServiceFormSubmission<TaxonomicClassificationFormData>({
     serviceName: "TaxonomicClassification",
+    displayName: "Taxonomic Classification",
     transformParams: transformTaxonomicClassificationParams,
-    onSubmit: async (data) => {
-      try {
-        setIsSubmitting(true);
-        const params = transformTaxonomicClassificationParams(data);
-        const result = await submitServiceJob("TaxonomicClassification", params);
-
-        if (result.success) {
-          toast.success("Taxonomic Classification job submitted successfully!", {
-            description: result.job?.[0]?.id
-              ? `Job ID: ${result.job[0].id}`
-              : "Job submitted successfully",
-            closeButton: true,
-          });
-          handleReset();
-        } else {
-          throw new Error(result.error || "Failed to submit job");
-        }
-      } catch (error) {
-        console.error("Failed to submit Taxonomic Classification job:", error);
-        const errorMessage =
-          error instanceof Error ? error.message : "Failed to submit job";
-        toast.error("Submission failed", {
-          description: errorMessage,
-          closeButton: true,
-        });
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
+    onSuccess: handleReset,
   });
 
   // Get current options based on sequence type

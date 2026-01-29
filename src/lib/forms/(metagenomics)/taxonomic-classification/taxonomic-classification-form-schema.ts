@@ -3,15 +3,12 @@ import { baseLibrarySchema } from "../../shared-schemas";
 
 // Sequencing type options
 export const sequencingTypeSchema = z.enum(["wgs", "16s"]);
-export type SequencingType = z.infer<typeof sequencingTypeSchema>;
 
 // Analysis type options (depends on sequencing type)
 export const analysisTypeSchema = z.enum(["microbiome", "pathogen", "default"]);
-export type AnalysisType = z.infer<typeof analysisTypeSchema>;
 
 // Database options (depends on sequencing type)
 export const databaseSchema = z.enum(["bvbrc", "standard", "SILVA", "Greengenes"]);
-export type Database = z.infer<typeof databaseSchema>;
 
 // Host genome options for filtering
 export const hostGenomeSchema = z.enum([
@@ -27,7 +24,6 @@ export const hostGenomeSchema = z.enum([
   "mustela_putorius_furo",
   "sus_scrofa",
 ]);
-export type HostGenome = z.infer<typeof hostGenomeSchema>;
 
 // Library schema - extends shared base with sample_id
 export const librarySchema = baseLibrarySchema.extend({

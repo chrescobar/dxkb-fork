@@ -47,7 +47,6 @@ import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { Spinner } from "@/components/ui/spinner";
 
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
-import { submitServiceJob } from "@/lib/services/service-utils";
 import {
   fastqUtilitiesInfo,
   fastqUtilitiesParameters,
@@ -91,9 +90,6 @@ export default function FastqUtilitiesPage() {
     defaultValues: DEFAULT_FASTQ_UTILITIES_FORM_VALUES,
     mode: "onChange",
   });
-
-  // UI state
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Read input state
   const [pairedRead1, setPairedRead1] = useState<string | null>(null);
@@ -251,38 +247,12 @@ export default function FastqUtilitiesPage() {
     setShowParamsDialog,
     currentParams,
     serviceName,
+    isSubmitting,
   } = useServiceFormSubmission<FastqUtilitiesFormData>({
     serviceName: "FastqUtils",
+    displayName: "FASTQ Utilities",
     transformParams: transformFastqUtilitiesParams,
-    onSubmit: async (data) => {
-      try {
-        setIsSubmitting(true);
-        const params = transformFastqUtilitiesParams(data);
-        const result = await submitServiceJob("FastqUtils", params);
-
-        if (result.success) {
-          toast.success("FASTQ Utilities job submitted successfully!", {
-            description: result.job?.[0]?.id
-              ? `Job ID: ${result.job[0].id}`
-              : "Job submitted successfully",
-            closeButton: true,
-          });
-          handleReset();
-        } else {
-          throw new Error(result.error || "Failed to submit job");
-        }
-      } catch (error) {
-        console.error("Failed to submit FASTQ Utilities job:", error);
-        const errorMessage =
-          error instanceof Error ? error.message : "Failed to submit job";
-        toast.error("Submission failed", {
-          description: errorMessage,
-          closeButton: true,
-        });
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
+    onSuccess: handleReset,
   });
 
   return (

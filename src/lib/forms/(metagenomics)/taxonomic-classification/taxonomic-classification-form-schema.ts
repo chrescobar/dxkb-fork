@@ -39,8 +39,6 @@ export const srrLibItemSchema = z.object({
   title: z.string().optional(),
 });
 
-export type SrrLibItem = z.infer<typeof srrLibItemSchema>;
-
 // Confidence interval options
 export const CONFIDENCE_INTERVAL_OPTIONS = [
   "0",

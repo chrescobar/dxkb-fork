@@ -3,11 +3,9 @@ import { baseLibrarySchema } from "../../shared-schemas";
 
 // Gene set type options
 export const geneSetTypeSchema = z.enum(["predefined_list", "fasta_file", "feature_group"]);
-export type GeneSetType = z.infer<typeof geneSetTypeSchema>;
 
 // Predefined gene set name options
 export const predefinedGeneSetNameSchema = z.enum(["CARD", "VFDB"]);
-export type PredefinedGeneSetName = z.infer<typeof predefinedGeneSetNameSchema>;
 
 // Library schema - uses shared base
 export const librarySchema = baseLibrarySchema;

@@ -82,7 +82,6 @@ import {
 import { getLibraryTypeLabel } from "@/lib/forms/shared-schemas";
 
 import type { WorkspaceObject } from "@/lib/workspace-client";
-import type { Library } from "@/types/services";
 
 export default function FastqUtilitiesPage() {
   const form = useForm<FastqUtilitiesFormData>({
@@ -183,11 +182,6 @@ export default function FastqUtilitiesPage() {
         setSingleRead(null);
       },
     });
-  };
-
-  // Handle SRA libraries
-  const handleSetSelectedLibraries = (libs: Library[]) => {
-    setLibrariesAndSync(libs);
   };
 
   // Handle adding pipeline action
@@ -538,7 +532,7 @@ export default function FastqUtilitiesPage() {
                   title="SRA Run Accession"
                   placeholder="SRR..."
                   selectedLibraries={selectedLibraries}
-                  setSelectedLibraries={handleSetSelectedLibraries}
+                  setSelectedLibraries={setLibrariesAndSync}
                   onAdd={() => {
                     // Libraries are already added and synced via setSelectedLibraries prop
                   }}

@@ -146,12 +146,16 @@ export default function TaxonomicClassificationPage() {
     }
   }, [sequenceType, form]);
 
+  // Extract sample ID (filename base without extension) from a file path
+  const extractSampleIdFromPath = (path: string, fallback: string = ""): string => {
+    const filename = path.split("/").pop() || "";
+    return filename.split(".")[0] || fallback;
+  };
+
   // Derive sample ID from library name or files
   const deriveSampleId = (library: Library): string => {
     if (library.files && library.files.length > 0) {
-      // Extract filename without extension from first file
-      const filename = library.files[0].split("/").pop() || "";
-      return filename.split(".")[0] || library.id;
+      return extractSampleIdFromPath(library.files[0], library.id);
     }
     return library.id;
   };
@@ -201,7 +205,7 @@ export default function TaxonomicClassificationPage() {
       read1: pairedRead1,
       read2: pairedRead2,
       buildLibrary: (read1, read2, id) => {
-        const defaultSampleId = read1.split("/").pop()?.split(".")[0] || "sample";
+        const defaultSampleId = extractSampleIdFromPath(read1, "sample");
         const librarySampleId = pairedSampleId.trim() || defaultSampleId;
         return {
           library: {
@@ -215,8 +219,9 @@ export default function TaxonomicClassificationPage() {
       },
       onError: (message) => toast.error(message),
       onAfterAdd: (library) => {
-        const fallbackSampleId =
-          library.files?.[0]?.split("/").pop()?.split(".")[0] || "sample";
+        const fallbackSampleId = library.files?.[0]
+          ? extractSampleIdFromPath(library.files[0], "sample")
+          : "sample";
         form.setValue("paired_sample_id", pairedSampleId.trim() || fallbackSampleId);
         setPairedRead1(null);
         setPairedRead2(null);
@@ -230,7 +235,7 @@ export default function TaxonomicClassificationPage() {
     addSingleLibrary({
       read: singleRead,
       buildLibrary: (read) => {
-        const defaultSampleId = read.split("/").pop()?.split(".")[0] || "sample";
+        const defaultSampleId = extractSampleIdFromPath(read, "sample");
         const librarySampleId = singleSampleId.trim() || defaultSampleId;
         return {
           library: {
@@ -244,8 +249,9 @@ export default function TaxonomicClassificationPage() {
       },
       onError: (message) => toast.error(message),
       onAfterAdd: (library) => {
-        const fallbackSampleId =
-          library.files?.[0]?.split("/").pop()?.split(".")[0] || "sample";
+        const fallbackSampleId = library.files?.[0]
+          ? extractSampleIdFromPath(library.files[0], "sample")
+          : "sample";
         form.setValue("single_sample_id", singleSampleId.trim() || fallbackSampleId);
         setSingleRead(null);
         setSingleSampleId("");
@@ -253,20 +259,18 @@ export default function TaxonomicClassificationPage() {
     });
   };
 
-  // Update both local state (for adding new libs) and form field (for submission top-level param)
-  const handlePairedSampleIdChange = (value: string) => {
-    setPairedSampleId(value);
-    form.setValue("paired_sample_id", value);
-  };
-
-  const handleSingleSampleIdChange = (value: string) => {
-    setSingleSampleId(value);
-    form.setValue("single_sample_id", value);
-  };
-
-  const handleSrrSampleIdChange = (value: string) => {
-    setSrrSampleId(value);
-    form.setValue("srr_sample_id", value);
+  // Unified handler for sample ID changes - updates both local state and form field
+  const handleSampleIdChange = (
+    type: "paired" | "single" | "srr",
+    value: string
+  ) => {
+    const config = {
+      paired: { setter: setPairedSampleId, field: "paired_sample_id" as const },
+      single: { setter: setSingleSampleId, field: "single_sample_id" as const },
+      srr: { setter: setSrrSampleId, field: "srr_sample_id" as const },
+    };
+    config[type].setter(value);
+    form.setValue(config[type].field, value);
   };
 
   // Handle form reset
@@ -382,7 +386,7 @@ export default function TaxonomicClassificationPage() {
                       value={pairedRead1 ?? ""}
                       onObjectSelect={(object: WorkspaceObject) => {
                         setPairedRead1(object.path);
-                        setPairedSampleId(object.path.split("/").pop()?.split(".")[0] ?? "");
+                        setPairedSampleId(extractSampleIdFromPath(object.path));
                       }}
                     />
                     <WorkspaceObjectSelector
@@ -392,7 +396,7 @@ export default function TaxonomicClassificationPage() {
                       onObjectSelect={(object: WorkspaceObject) => {
                         setPairedRead2(object.path);
                         if (!pairedRead1) {
-                          setPairedSampleId(object.path.split("/").pop()?.split(".")[0] ?? "");
+                          setPairedSampleId(extractSampleIdFromPath(object.path));
                         }
                       }}
                     />
@@ -401,7 +405,7 @@ export default function TaxonomicClassificationPage() {
                     <Label className="service-card-sublabel">Sample Identifier</Label>
                     <Input
                       value={pairedSampleId}
-                      onChange={(e) => handlePairedSampleIdChange(e.target.value)}
+                      onChange={(e) => handleSampleIdChange("paired", e.target.value)}
                       placeholder="Sample ID"
                       className="service-card-input mt-1.5 font-mono text-sm"
                     />
@@ -431,14 +435,14 @@ export default function TaxonomicClassificationPage() {
                     value={singleRead ?? ""}
                     onObjectSelect={(object: WorkspaceObject) => {
                       setSingleRead(object.path);
-                      setSingleSampleId(object.path.split("/").pop()?.split(".")[0] ?? "");
+                      setSingleSampleId(extractSampleIdFromPath(object.path));
                     }}
                   />
                   <div>
                     <Label className="service-card-sublabel">Sample Identifier</Label>
                     <Input
                       value={singleSampleId}
-                      onChange={(e) => handleSingleSampleIdChange(e.target.value)}
+                      onChange={(e) => handleSampleIdChange("single", e.target.value)}
                       placeholder="Sample ID"
                       className="service-card-input mt-1.5 font-mono text-sm"
                     />
@@ -465,7 +469,7 @@ export default function TaxonomicClassificationPage() {
                   <Label className="service-card-sublabel">Sample Identifier</Label>
                   <Input
                     value={srrSampleId}
-                    onChange={(e) => handleSrrSampleIdChange(e.target.value)}
+                    onChange={(e) => handleSampleIdChange("srr", e.target.value)}
                     placeholder="Sample ID"
                     className="service-card-input mt-1.5 font-mono text-sm"
                   />

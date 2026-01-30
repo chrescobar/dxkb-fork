@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
-  baseLibrarySchema,
+  libraryWithPlatformSchema,
+  type LibraryWithPlatform,
   platformSchema,
   type Platform,
   PLATFORM_OPTIONS,
@@ -19,12 +20,9 @@ export type PipelineAction = z.infer<typeof pipelineActionSchema>;
 // Re-export platform types from shared schemas
 export { platformSchema, type Platform, PLATFORM_OPTIONS };
 
-// Library schema - extends shared base with platform
-export const librarySchema = baseLibrarySchema.extend({
-  platform: platformSchema.optional(), // for single
-});
-
-export type LibraryItem = z.infer<typeof librarySchema>;
+// Re-export shared library schema and type for use in this service
+export const librarySchema = libraryWithPlatformSchema;
+export type LibraryItem = LibraryWithPlatform;
 
 // Pipeline action item with visual properties
 export const pipelineActionItemSchema = z.object({

@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { baseLibrarySchema } from "../../shared-schemas";
+import {
+  baseLibrarySchema,
+  type BaseLibraryItem,
+} from "../../shared-schemas";
 
 // Start with options
 export const startWithSchema = z.enum(["reads", "contigs"]);
@@ -10,10 +13,9 @@ export const assemblyStrategySchema = z.enum(["metaspades", "megahit", "auto"]);
 // Organisms of interest options
 export const organismSchema = z.enum(["bacteria", "viral", "both"]);
 
-// Library schema - uses shared base
+// Re-export shared library schema and type for use in this service
 export const librarySchema = baseLibrarySchema;
-
-export type LibraryItem = z.infer<typeof librarySchema>;
+export type LibraryItem = BaseLibraryItem;
 
 // Constants
 export const MIN_CONTIG_LENGTH_DEFAULT = 300;

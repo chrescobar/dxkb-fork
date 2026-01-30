@@ -1,14 +1,12 @@
 import { z } from "zod";
-import { baseLibrarySchema } from "../../shared-schemas";
+import {
+  libraryWithAssemblyOptionsSchema,
+  type LibraryWithAssemblyOptions,
+} from "../../shared-schemas";
 
-// Library schema - extends shared base with genome assembly specific fields
-export const librarySchema = baseLibrarySchema.extend({
-  platform: z.string().optional(),
-  interleaved: z.boolean().optional(),
-  read_orientation_outward: z.boolean().optional(),
-});
-
-export type LibraryItem = z.infer<typeof librarySchema>;
+// Re-export shared library schema and type for use in this service
+export const librarySchema = libraryWithAssemblyOptionsSchema;
+export type LibraryItem = LibraryWithAssemblyOptions;
 
 // Main form schema
 export const genomeAssemblyFormSchema = z

@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { baseLibrarySchema } from "../../shared-schemas";
+import {
+  baseLibrarySchema,
+  type BaseLibraryItem,
+} from "../../shared-schemas";
 
 // Gene set type options
 export const geneSetTypeSchema = z.enum(["predefined_list", "fasta_file", "feature_group"]);
@@ -7,10 +10,9 @@ export const geneSetTypeSchema = z.enum(["predefined_list", "fasta_file", "featu
 // Predefined gene set name options
 export const predefinedGeneSetNameSchema = z.enum(["CARD", "VFDB"]);
 
-// Library schema - uses shared base
+// Re-export shared library schema and type for use in this service
 export const librarySchema = baseLibrarySchema;
-
-export type LibraryItem = z.infer<typeof librarySchema>;
+export type LibraryItem = BaseLibraryItem;
 
 // Main form schema
 export const metagenomicReadMappingFormSchema = z

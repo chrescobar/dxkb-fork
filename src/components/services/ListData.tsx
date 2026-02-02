@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams, usePathname } from "next/navigation";
 import { DataTable } from '@/components/containers/DataTable';
 import { SortingState, RowSelectionState } from '@tanstack/react-table';
@@ -12,6 +12,8 @@ interface ListDataProps {
   onSelectionChange?: (rows: any[]) => void;
   rowSelection?: Record<string, boolean>;
   onRowSelectionChange?: (selection: Record<string, boolean>) => void;
+  pageIndex?: number;
+  onPageChange?: (page: number) => void;
 }
 
 function downloadFile(filename: string, content: string) {
@@ -23,7 +25,7 @@ function downloadFile(filename: string, content: string) {
   URL.revokeObjectURL(link.href);
 }
 
-export function ListData({ q, resource, onSelectionChange, rowSelection: controlledRowSelection, onRowSelectionChange }: ListDataProps) {
+export function ListData({ q, resource, onSelectionChange, rowSelection: controlledRowSelection, onRowSelectionChange, pageIndex: controlledPageIndex, onPageChange }: ListDataProps) {
   const [fields, setFields] = useState<any[]>([]);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   
@@ -60,18 +62,38 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const pageSize = 200;
   const listKey = `${resource}-${cleanQ}-${searchtype}`;
 
-  useEffect(() => { console.log('Resource changed, resetting selection'); }, [resource]);
-  useEffect(() => { console.log('CleanQ changed, resetting selection'); }, [cleanQ]);
-  useEffect(() => { console.log('Searchtype changed, resetting selection'); }, [searchtype]);
+  // Reset sorting when resource/query actually changes
+  const prevResourceRef = useRef(resource);
+  const prevCleanQRef = useRef(cleanQ);
+  
+  useEffect(() => {
+    const resourceChanged = prevResourceRef.current !== resource;
+    const queryChanged = prevCleanQRef.current !== cleanQ;
+    
+    if (resourceChanged || queryChanged) {
+      console.log('Resource or query changed, resetting sorting and selection');
+      setSorting([]);
+      setRowSelection({});
+      onSelectionChange?.([]);
+      prevResourceRef.current = resource;
+      prevCleanQRef.current = cleanQ;
+    }
+  }, [resource, cleanQ, onSelectionChange]);
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnOrder, setColumnOrder] = useState<string[]>([]);
-  const [pageIndex, setPageIndex] = useState(0);
+  const [internalPageIndex, setInternalPageIndex] = useState(0);
+  const pageIndex = controlledPageIndex !== undefined ? controlledPageIndex : internalPageIndex;
+  const setPageIndex = onPageChange || setInternalPageIndex;
 
-  const setSortingAndResetPage = (newSorting: SortingState) => {
+  const setSortingAndResetPage = useCallback((newSorting: SortingState) => {
+    console.log('🔵 setSortingAndResetPage called with:', JSON.stringify(newSorting));
     setSorting(newSorting);
+    console.log('🔵 setSorting called (async state update scheduled)');
     setPageIndex(0);
-  };
+    setRowSelection({});
+    onSelectionChange?.([]); // Clear selection in parent too
+  }, [onSelectionChange, setPageIndex, setRowSelection]);
 
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean> | null>(null);
 
@@ -90,9 +112,14 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     }
   }, [fields]);
 
-  const sortingKey = sorting.length > 0
-    ? `${sorting[0].id}:${sorting[0].desc ? 'desc' : 'asc'}`
-    : 'none';
+  // Compute sortingKey from state using useMemo
+  const sortingKey = useMemo(() => {
+    const key = sorting.length > 0
+      ? `${sorting[0].id}:${sorting[0].desc ? 'desc' : 'asc'}`
+      : 'none';
+    console.log('🟣 sortingKey recomputed:', key, 'sorting:', JSON.stringify(sorting));
+    return key;
+  }, [sorting]);
 
   // Fetch metadata (numFound)
   const { data: metaData, isLoading: metaLoading, error: metaError, refetch: metaRefetch } = useQuery({
@@ -114,7 +141,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const totalItems = metaData?.response?.numFound ?? 0;
 
   // Fetch current page of data
-  const { data: pageData, isLoading: dataLoading, error: dataError } = useQuery({
+  const { data: pageData, isLoading: dataLoading, error: dataError, refetch } = useQuery({
     queryKey: [
       'genome-full',
       resource,
@@ -129,7 +156,11 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       if (total === 0) return [];
       console.log('Fetching data for page:', pageIndex, 'with pageSize:', pageSize);
 
-      const sortParam = sorting[0] ? `${sorting[0].desc ? '-' : '+'}${sorting[0].id}` : null;
+      // Use sorting state from query key (not ref)
+      const currentSorting = sorting;
+      console.log('🟠 QueryFn: sorting array:', JSON.stringify(currentSorting));
+      const sortParam = currentSorting[0] ? `${currentSorting[0].desc ? '-' : '+'}${currentSorting[0].id}` : null;
+      console.log('🟠 QueryFn: sortParam:', sortParam);
       const start = pageIndex * pageSize;
       const end = start + pageSize;
 
@@ -149,10 +180,15 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       return res.json();
     },
     enabled: totalItems > 0,
-    keepPreviousData: true,
+    placeholderData: (previousData) => previousData,
     staleTime: 0,
     refetchOnWindowFocus: false,
   });
+
+  // Log sorting state changes for debugging
+  useEffect(() => {
+    console.log('🟢 Sorting state changed to:', JSON.stringify(sorting));
+  }, [sorting]);
 
   if (metaLoading || dataLoading) return <div>Loading...</div>;
 
@@ -180,9 +216,11 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
 
   const handlePageChange = (newPage: number) => {
     console.log('handlePageChange called, newPage:', newPage);
-    setPageIndex(newPage);
+    // Clear selections when page changes
     setRowSelection({});
     onSelectionChange?.([]); // Clear selection in parent too
+    // Update page index (this will call parent's setPageIndex if controlled)
+    setPageIndex(newPage);
   };
 
   async function handleDownloadAll(format: 'csv' | 'txt', visibleColumns: string[] | null) {
@@ -278,7 +316,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
             pageIndex={pageIndex}
             pageSize={pageSize}
             totalItems={totalItems}
-            onPageChange={setPageIndex}
+            onPageChange={handlePageChange}
             sorting={sorting}
             onSortingChange={setSortingAndResetPage}
             columnOrder={columnOrder}

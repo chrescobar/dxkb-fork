@@ -68,7 +68,7 @@ interface DataTableProps {
   onRowSelectionChange?: (selection: Record<string, boolean>) => void;
 
   // Optional download handler
-  onDownloadAll?: (format: 'csv' | 'txt') => void;
+  onDownloadAll?: (format: 'csv' | 'txt', visibleColumns: string[] | null) => void;
 }
 
 // This is the actual function...
@@ -319,10 +319,12 @@ export function DataTable({ id, data, columns, totalItems, onSelectionChange, on
           ? updater(controlledSorting ?? [])
           : updater;
 
+      console.log('🟡 DataTable onSortingChange called. Current sorting:', controlledSorting, 'New sorting:', newSorting);
+
       // Reset to first page
       table.setPageIndex(0);
 
-      // Notify parent
+      // Notify parent (parent will handle clearing selection)
       onSortingChange?.(newSorting);
       },
 
@@ -356,10 +358,17 @@ export function DataTable({ id, data, columns, totalItems, onSelectionChange, on
 
       onPageChange?.(next.pageIndex);
     },
+    onColumnOrderChange: onColumnOrderChange ? (updater) => {
+      const newOrder =
+        typeof updater === 'function'
+          ? updater(columnOrder ?? [])
+          : updater;
+
+      onColumnOrderChange(newOrder);
+    } : undefined,
     manualPagination: true,
     manualSorting: true,
     pageCount: Math.ceil(totalItems / (pageSize ?? 200)),
-    onColumnOrderChange,
     columnResizeMode: 'onEnd', // This waits to implement the new column size until the mouse is released. This makes the transition smoother as it doesn't have to keep rerendering the column/table in realtime as the user moves the mouse.
     enableColumnResizing: true,
     getCoreRowModel: getCoreRowModel(), // This is what lets react build out the table from the raw data
@@ -572,64 +581,57 @@ export function DataTable({ id, data, columns, totalItems, onSelectionChange, on
                             'border-r border-l border-black bg-primary text-secondary relative',
                             column.id === '__select__'
                               ? 'p-0 flex justify-center items-center' // ✅ center checkbox
-                              : 'px-2 py-0 text-sm font-bold leading-none align-middle'
+                              : 'px-2 py-0 text-sm font-bold leading-none align-middle cursor-pointer'
                           )}
                           style={{
                             width: `var(--col-${column.id}-size)`,
                             minWidth: `var(--col-${column.id}-size)`,
                             maxWidth: `var(--col-${column.id}-size)`,
                           }}
-                          // This is the part that makes the columns reorderable...
-                          draggable
-                          onDragStart={(e) => {
-                            e.dataTransfer.setData('text/plain', column.id);
-                            e.dataTransfer.effectAllowed = 'move';
-                          }}
-                          onDragOver={(e) => {
-                            e.preventDefault();
-                            e.dataTransfer.dropEffect = 'move';
-                          }}
-                          onDrop={(e) => {
-                            e.preventDefault();
-                            const draggedColumnId = e.dataTransfer.getData('text/plain');
-                            const targetColumnId = column.id;
-
-                            if (
-                              draggedColumnId &&
-                              draggedColumnId !== targetColumnId &&
-                              draggedColumnId !== '__select__' &&
-                              targetColumnId !== '__select__'
-                            ) {
-                            
-                              const newOrder = [...table.getState().columnOrder];
-                              const fromIndex = newOrder.indexOf(draggedColumnId);
-                              const toIndex = newOrder.indexOf(targetColumnId);
-
-                              newOrder.splice(fromIndex, 1);
-                              newOrder.splice(toIndex, 0, draggedColumnId);
-
-                              table.setColumnOrder(newOrder);
+                          onClick={column.id !== '__select__' ? (e) => {
+                            e.stopPropagation();
+                            console.log('🟢 Column header clicked:', column.id, 'canSort:', column.getCanSort(), 'isSorted:', column.getIsSorted());
+                            const handler = column.getToggleSortingHandler();
+                            if (handler) {
+                              handler(e);
+                            } else {
+                              console.log('❌ No toggle handler for column:', column.id);
                             }
-                          }}
+                          } : undefined}
                         >
-                          <div
-                            className="flex items-center justify-between w-full h-full cursor-pointer select-none py-0"
-                            onClick={column.getToggleSortingHandler()}
-                          >
-                            {flexRender(header.column.columnDef.header, header.getContext())} {/* This is the line that actually renders the column name */}
-                            {{
-                              asc: ' ↑',
-                              desc: ' ↓',
-                            }[column.getIsSorted() as string] ?? ''}
+                          {column.id === '__select__' ? (
+                            // Checkbox column - no sorting or dragging
+                            <div className="flex items-center justify-center w-full h-full py-0">
+                              {flexRender(header.column.columnDef.header, header.getContext())}
+                            </div>
+                          ) : (
+                            // Regular column - sortable
+                            <div className="flex items-center justify-between w-full h-full py-0 relative">
+                              <div className="flex items-center gap-2 flex-1">
+                                <span className="select-none">{flexRender(header.column.columnDef.header, header.getContext())}</span>
+                                <div className="flex flex-col justify-center items-center">
+                                  {column.getIsSorted() === 'asc' ? (
+                                    <span className="text-xs">▲</span>
+                                  ) : column.getIsSorted() === 'desc' ? (
+                                    <span className="text-xs">▼</span>
+                                  ) : (
+                                    <span className="text-xs opacity-30">⇅</span>
+                                  )}
+                                </div>
+                              </div>
                               {column.getCanResize() && (
-                              // This extra div is the grabbable area for resizing the column 
+                                // This extra div is the grabbable area for resizing the column 
                                 <div
-                                  onMouseDown={(e) => handleResizeStart(e, header)}
+                                  onMouseDown={(e) => {
+                                    e.stopPropagation();
+                                    handleResizeStart(e, header);
+                                  }}
                                   className="absolute top-0 right-0 w-2 h-full cursor-col-resize z-30 hover:bg-blue-300"
                                   style={{ transform: 'translateX(50%)' }}
                                 />
                               )}
-                          </div>
+                            </div>
+                          )}
                         </TableHead>
                       );
                     })}
@@ -732,7 +734,7 @@ export function DataTable({ id, data, columns, totalItems, onSelectionChange, on
               <button
                 onClick={() => {
                   table.previousPage();
-                  onPageChange?.(table.getState().pagination.pageIndex);
+                  // Parent will handle this via onPaginationChange
                 }}
                 disabled={!table.getCanPreviousPage()}
                 className="px-2 py-1 border border-primary disabled:opacity-50"
@@ -760,8 +762,9 @@ export function DataTable({ id, data, columns, totalItems, onSelectionChange, on
                       {showDots && <span className="px-1">...</span>}
                       <button
                         onClick={() => {
-                          table.setPageIndex(page);      // internal state (keeps buttons highlighted)
-                          onPageChange?.(page);          // notify parent to fetch new data
+                          // Update table's internal state for immediate UI feedback
+                          table.setPageIndex(page);
+                          // Parent will handle this via onPaginationChange
                         }}
                         className={clsx(
                           'px-3 py-1 border mx-1 bg-background text-foreground',
@@ -777,8 +780,8 @@ export function DataTable({ id, data, columns, totalItems, onSelectionChange, on
               {/* Forward arrow */}
               <button
                 onClick={() => {
-                  table.previousPage();
-                  onPageChange?.(table.getState().pagination.pageIndex);
+                  table.nextPage();
+                  // Parent will handle this via onPaginationChange
                 }}
                 disabled={!table.getCanNextPage()}
                 className="px-2 py-1 border border-primary disabled:opacity-50"

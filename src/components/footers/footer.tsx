@@ -7,7 +7,7 @@ import {
   FaInstagram,
   FaYoutube,
 } from "react-icons/fa";
-import { Button } from "@/components/buttons/button";
+import { Button } from "@/components/ui/button";
 import Logo from "@/components/ui/logo";
 import ThemeContent from "@/components/ui/theme-content";
 

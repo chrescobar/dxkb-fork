@@ -501,6 +501,19 @@ export function DataTable({ id, data, columns, totalItems, onSelectionChange, on
 
   // This is the section that handles downloading the data. By default, it grabs all the data. However, there is an option to only download the selected rows
   const handleDownload = (format: 'csv' | 'txt', onlySelected = false) => {
+    // If downloading all data and onDownloadAll is provided, use it
+    if (!onlySelected && onDownloadAll) {
+      const allCols = table.getAllLeafColumns();
+      const visibleCols = onlyVisibleColumns
+        ? allCols.filter(col => col.getIsVisible() && col.id !== '__select__')
+        : allCols.filter(col => col.id !== '__select__');
+      
+      const visibleColumnIds = visibleCols.map(col => col.id);
+      onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
+      return;
+    }
+
+    // Otherwise, use the local download logic (for selected rows or when onDownloadAll is not provided)
     const allCols = table.getAllLeafColumns();
     const visibleCols = onlyVisibleColumns
       ? allCols.filter(col => col.getIsVisible() && col.id !== '__select__')

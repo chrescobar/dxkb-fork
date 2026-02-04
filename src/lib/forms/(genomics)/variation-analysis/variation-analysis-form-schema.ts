@@ -24,10 +24,10 @@ export const variationAnalysisFormSchema = z
     // Required parameters
     reference_genome_id: z.string().min(1, "Target genome is required"),
     mapper: z.enum(["BWA-mem", "BWA-mem-strict", "Bowtie2", "LAST", "minimap2"], {
-      required_error: "Aligner must be selected",
+      error: "Aligner must be selected",
     }),
     caller: z.enum(["FreeBayes", "BCFtools"], {
-      required_error: "SNP caller must be selected",
+      error: "SNP caller must be selected",
     }),
     output_path: z.string().min(1, "Output folder is required"),
     output_file: z

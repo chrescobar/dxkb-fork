@@ -13,7 +13,7 @@ export const taxonomyItemSchema = z.object({
 export const baseGenomeAnnotationSchema = z.object({
   contigs: z.string().min(1, "Contigs must be provided"),
   recipe: z.enum(["default", "viral", "viral-lowvan", "phage"], {
-    required_error: "Annotation recipe must be selected",
+    error: "Annotation recipe must be selected",
   }),
   scientific_name: z.string().nullable(),
   taxonomy_id: z.string().nullable(),

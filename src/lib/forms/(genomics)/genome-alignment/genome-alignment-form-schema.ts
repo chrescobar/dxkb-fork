@@ -11,14 +11,14 @@ export const genomeAlignmentFormSchema = z
     manual_seed_weight: z.boolean(),
     seed_weight: z
       .number({
-        invalid_type_error: "Seed weight must be a number",
+        error: "Seed weight must be a number",
       })
       .min(3, "Seed weight must be at least 3")
       .max(21, "Seed weight must be at most 21")
       .optional(),
     weight: z
       .number({
-        invalid_type_error: "Weight must be a number",
+        error: "Weight must be a number",
       })
       .min(0, "Weight must be non-negative")
       .optional(),

@@ -19,10 +19,10 @@ export const sequenceItemSchema = z.object({
 export const geneProteinTreeFormSchema = z
   .object({
     alphabet: z.enum(["DNA", "Protein"], {
-      required_error: "Alphabet must be selected",
+      error: "Alphabet must be selected",
     }),
     recipe: z.enum(["RAxML", "PhyML", "FastTree"], {
-      required_error: "Recipe must be selected",
+      error: "Recipe must be selected",
     }),
     substitution_model: z.string().min(1, "Substitution model is required"),
     trim_threshold: z

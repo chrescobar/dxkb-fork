@@ -25,21 +25,23 @@ export const genomeAlignmentFormSchema = z
     recipe: z.literal("progressiveMauve"),
     genome_group_path: z.string().optional(),
   })
-  .superRefine((data, ctx) => {
+  .superRefine((data, err) => {
     const uniqueIds = new Set(data.genome_ids);
     if (uniqueIds.size !== data.genome_ids.length) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+      err.issues.push({
+        code: "custom",
         message: "Duplicate genomes are not allowed",
         path: ["genome_ids"],
+        input: data,
       });
     }
 
     if (data.manual_seed_weight && (data.seed_weight === undefined || data.seed_weight === null)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+      err.issues.push({
+        code: "custom",
         message: "Seed weight is required when manual mode is enabled",
         path: ["seed_weight"],
+        input: data,
       });
     }
   });

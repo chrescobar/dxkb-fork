@@ -70,46 +70,51 @@ export const databaseConditionalFieldsSchema = z.object({
 export const completeFormSchema = baseFormSchema
   .and(inputSourceFormSchema)
   .and(databaseConditionalFieldsSchema)
-  .superRefine((data, ctx) => {
+  .superRefine((data, err) => {
     // Validate conditional database fields based on db_precomputed_database
     if (data.db_precomputed_database === "selGenome") {
       if (!data.db_genome_list || data.db_genome_list.length === 0) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+        err.issues.push({
+          code: "custom",
           message: "At least one genome must be selected",
           path: ["db_genome_list"],
+          input: data,
         });
       }
     } else if (data.db_precomputed_database === "selGroup") {
       if (!data.db_genome_group || data.db_genome_group.trim() === "") {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+        err.issues.push({
+          code: "custom",
           message: "Genome group is required",
           path: ["db_genome_group"],
+          input: data,
         });
       }
     } else if (data.db_precomputed_database === "selFeatureGroup") {
       if (!data.db_feature_group || data.db_feature_group.trim() === "") {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+        err.issues.push({
+          code: "custom",
           message: "Feature group is required",
           path: ["db_feature_group"],
+          input: data,
         });
       }
     } else if (data.db_precomputed_database === "selTaxon") {
       if (!data.db_taxon_list || data.db_taxon_list.length === 0) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+        err.issues.push({
+          code: "custom",
           message: "At least one taxon must be selected",
           path: ["db_taxon_list"],
+          input: data,
         });
       }
     } else if (data.db_precomputed_database === "selFasta") {
       if (!data.db_fasta_file || data.db_fasta_file.trim() === "") {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+        err.issues.push({
+          code: "custom",
           message: "FASTA file is required",
           path: ["db_fasta_file"],
+          input: data,
         });
       }
     }

@@ -44,7 +44,7 @@ export const similarGenomeFinderFormSchema = z
     // Scope
     scope: z.enum(["reference", "all"]),
   })
-  .superRefine((data, ctx) => {
+  .superRefine((data, err) => {
     // Validate that at least one input is provided
     const hasGenomeId = data.selectedGenomeId.trim().length > 0;
     const hasFastaFile = data.fasta_file.trim().length > 0;
@@ -53,19 +53,21 @@ export const similarGenomeFinderFormSchema = z
       // Only add error to selectedGenomeId field
       // The error will clear automatically when fasta_file gets a value
       // because the validation condition will no longer be true
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+      err.issues.push({
+        code: "custom",
         message: "Please provide either a genome ID/name or a FASTA file",
         path: ["selectedGenomeId"],
+        input: data,
       });
     }
 
     // Validate that at least one organism type is selected
     if (!data.include_bacterial && !data.include_viral) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+      err.issues.push({
+        code: "custom",
         message: "Please select at least one organism type",
         path: ["include_bacterial"],
+        input: data,
       });
     }
   });

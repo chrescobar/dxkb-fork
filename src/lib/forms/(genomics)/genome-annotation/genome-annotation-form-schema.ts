@@ -24,19 +24,21 @@ export const baseGenomeAnnotationSchema = z.object({
 
 // Complete form schema with refined validation for required taxonomy fields
 export const completeGenomeAnnotationSchema = baseGenomeAnnotationSchema.superRefine(
-  (data, ctx) => {
+  (data, err) => {
     if (data.scientific_name === null) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+      err.issues.push({
+        code: "custom",
         message: "Taxonomy Name is required",
         path: ["scientific_name"],
+        input: data,
       });
     }
     if (data.taxonomy_id === null) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+      err.issues.push({
+        code: "custom",
         message: "Taxonomy ID is required",
         path: ["taxonomy_id"],
+        input: data,
       });
     }
   }

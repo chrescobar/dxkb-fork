@@ -36,32 +36,35 @@ export const primerDesignFormSchema = z
     PRIMER_DNA_CONC: z.string().optional(),
     PRIMER_DNTP_CONC: z.string().optional(),
   })
-  .superRefine((data, ctx) => {
+  .superRefine((data, err) => {
     if (data.input_type === "sequence_text") {
       if (!data.sequence_input.trim()) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+        err.issues.push({
+          code: "custom",
           message: "Sequence input is required when pasting a sequence",
           path: ["sequence_input"],
+          input: data,
         });
       }
     }
 
     if (data.input_type === "workplace_fasta") {
       if (!data.sequence_input.trim()) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+        err.issues.push({
+          code: "custom",
           message: "Select a FASTA file from the workspace",
           path: ["sequence_input"],
+          input: data,
         });
       }
     }
 
     if (!data.output_path.trim()) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+      err.issues.push({
+        code: "custom",
         message: "Output folder is required",
         path: ["output_path"],
+        input: data,
       });
     }
   });

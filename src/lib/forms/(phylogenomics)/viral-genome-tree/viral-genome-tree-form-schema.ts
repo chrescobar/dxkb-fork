@@ -50,15 +50,16 @@ export const viralGenomeTreeFormSchema = z
     output_path: z.string().min(1, "Output folder is required"),
     output_file: z.string().min(1, "Output name is required"),
   })
-  .superRefine((data, ctx) => {
+  .superRefine((data, err) => {
     // Validate substitution model (DNA models only for genomes)
     const dnaModels = ["GTR", "TN93", "HKY85", "F84", "F81", "K80", "JC69"];
 
     if (!dnaModels.includes(data.substitution_model)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+      err.issues.push({
+        code: "custom",
         message: `Substitution model ${data.substitution_model} is not valid for genome sequences`,
         path: ["substitution_model"],
+        input: data,
       });
     }
   });

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerAuthToken } from "@/lib/auth";
+import { getBvbrcAuthToken } from "@/lib/auth";
 import type { ViralGenomeValidationResult } from "@/lib/services/genome";
 
 const DATA_API_BASE = "https://p3.theseed.org/services/data_api/genome/";
@@ -14,7 +14,7 @@ function buildInClause(ids: string[]): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const token = await getServerAuthToken();
+    const token = await getBvbrcAuthToken();
 
     if (!token) {
       return NextResponse.json(

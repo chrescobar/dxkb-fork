@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerAuthToken } from "@/lib/auth";
+import { getBvbrcAuthToken } from "@/lib/auth";
 
 const DATA_API_BASE = "https://p3.theseed.org/services/data_api/genome/";
 
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       ? Math.min(Math.max(limitParam, 1), 50)
       : 25;
 
-    const token = await getServerAuthToken();
+    const token = await getBvbrcAuthToken();
 
     if (!token) {
       return NextResponse.json(

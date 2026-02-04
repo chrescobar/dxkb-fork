@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerAuthToken } from "@/lib/auth";
+import { getBvbrcAuthToken } from "@/lib/auth";
 
 /**
  * Workspace API proxy route
@@ -7,8 +7,8 @@ import { getServerAuthToken } from "@/lib/auth";
  */
 export async function POST(request: NextRequest) {
   try {
-    // Get the auth token from cookies
-    const authToken = await getServerAuthToken();
+    // Get the BV-BRC auth token from cookies
+    const authToken = await getBvbrcAuthToken();
 
     if (!authToken) {
       return NextResponse.json(

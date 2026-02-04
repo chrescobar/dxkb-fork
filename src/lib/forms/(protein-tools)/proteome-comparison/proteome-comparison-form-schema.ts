@@ -47,11 +47,11 @@ export const proteomeComparisonFormSchema = z
     output_path: z.string().min(1, "Output folder is required"),
     output_file: z.string().min(1, "Output name is required"),
   })
-  .superRefine((data, err) => {
+  .superRefine((data, ctx) => {
     // Validate reference genome based on source type
     if (data.ref_source_type === "genome") {
       if (!data.ref_genome_id || data.ref_genome_id.trim() === "") {
-        err.issues.push({
+        ctx.addIssue({
           code: "custom",
           message: "Please select a reference genome",
           path: ["ref_genome_id"],
@@ -60,7 +60,7 @@ export const proteomeComparisonFormSchema = z
       }
     } else if (data.ref_source_type === "fasta") {
       if (!data.ref_fasta_file || data.ref_fasta_file.trim() === "") {
-        err.issues.push({
+        ctx.addIssue({
           code: "custom",
           message: "Please select a protein FASTA file",
           path: ["ref_fasta_file"],
@@ -69,7 +69,7 @@ export const proteomeComparisonFormSchema = z
       }
     } else if (data.ref_source_type === "feature_group") {
       if (!data.ref_feature_group || data.ref_feature_group.trim() === "") {
-        err.issues.push({
+        ctx.addIssue({
           code: "custom",
           message: "Please select a feature group",
           path: ["ref_feature_group"],
@@ -80,7 +80,7 @@ export const proteomeComparisonFormSchema = z
 
     // Validate that at least 1 comparison item is added (legacy requires at least 2 total)
     if (data.comparison_items.length < 1) {
-      err.issues.push({
+      ctx.addIssue({
         code: "custom",
         message: `At least ${MIN_COMPARISON_GENOMES} comparison genome must be added`,
         path: ["comparison_items"],
@@ -90,7 +90,7 @@ export const proteomeComparisonFormSchema = z
 
     // Validate max comparison items
     if (data.comparison_items.length > MAX_COMPARISON_GENOMES) {
-      err.issues.push({
+      ctx.addIssue({
         code: "custom",
         message: `Maximum ${MAX_COMPARISON_GENOMES} comparison genomes allowed`,
         path: ["comparison_items"],
@@ -101,7 +101,7 @@ export const proteomeComparisonFormSchema = z
     // Validate E-value format
     const evalPattern = /^[0-9]+(\.[0-9]+)?(e-?[0-9]+)?$/i;
     if (data.max_e_val && !evalPattern.test(data.max_e_val.trim())) {
-      err.issues.push({
+      ctx.addIssue({
         code: "custom",
         message: "Invalid E-value format (e.g., 1e-5, 0.001)",
         path: ["max_e_val"],

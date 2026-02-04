@@ -69,11 +69,11 @@ export const databaseConditionalFieldsSchema = z.object({
 export const completeFormSchema = baseFormSchema
   .and(inputSourceFormSchema)
   .and(databaseConditionalFieldsSchema)
-  .superRefine((data, err) => {
+  .superRefine((data, ctx) => {
     // Validate conditional database fields based on db_precomputed_database
     if (data.db_precomputed_database === "selGenome") {
       if (!data.db_genome_list || data.db_genome_list.length === 0) {
-        err.issues.push({
+        ctx.addIssue({
           code: "custom",
           message: "At least one genome must be selected",
           path: ["db_genome_list"],
@@ -82,7 +82,7 @@ export const completeFormSchema = baseFormSchema
       }
     } else if (data.db_precomputed_database === "selGroup") {
       if (!data.db_genome_group || data.db_genome_group.trim() === "") {
-        err.issues.push({
+        ctx.addIssue({
           code: "custom",
           message: "Genome group is required",
           path: ["db_genome_group"],
@@ -91,7 +91,7 @@ export const completeFormSchema = baseFormSchema
       }
     } else if (data.db_precomputed_database === "selFeatureGroup") {
       if (!data.db_feature_group || data.db_feature_group.trim() === "") {
-        err.issues.push({
+        ctx.addIssue({
           code: "custom",
           message: "Feature group is required",
           path: ["db_feature_group"],
@@ -100,7 +100,7 @@ export const completeFormSchema = baseFormSchema
       }
     } else if (data.db_precomputed_database === "selTaxon") {
       if (!data.db_taxon_list || data.db_taxon_list.length === 0) {
-        err.issues.push({
+        ctx.addIssue({
           code: "custom",
           message: "At least one taxon must be selected",
           path: ["db_taxon_list"],
@@ -109,7 +109,7 @@ export const completeFormSchema = baseFormSchema
       }
     } else if (data.db_precomputed_database === "selFasta") {
       if (!data.db_fasta_file || data.db_fasta_file.trim() === "") {
-        err.issues.push({
+        ctx.addIssue({
           code: "custom",
           message: "FASTA file is required",
           path: ["db_fasta_file"],

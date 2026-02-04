@@ -55,7 +55,7 @@ export const geneProteinTreeFormSchema = z
     output_path: z.string().min(1, "Output folder is required"),
     output_file: z.string().min(1, "Output name is required"),
   })
-  .superRefine((data, err) => {
+  .superRefine((data, ctx) => {
     // Validate that sequences match the selected alphabet
     const isDNA = data.alphabet === "DNA";
     const validTypes = isDNA
@@ -64,7 +64,7 @@ export const geneProteinTreeFormSchema = z
 
     data.sequences.forEach((seq, index) => {
       if (!validTypes.includes(seq.type)) {
-        err.issues.push({
+        ctx.addIssue({
           code: "custom",
           message: `Sequence type ${seq.type} does not match selected alphabet ${data.alphabet}`,
           path: ["sequences", index, "type"],
@@ -87,7 +87,7 @@ export const geneProteinTreeFormSchema = z
 
     const validModels = isDNA ? dnaModels : proteinModels;
     if (!validModels.includes(data.substitution_model)) {
-      err.issues.push({
+      ctx.addIssue({
         code: "custom",
         message: `Substitution model ${data.substitution_model} is not valid for ${data.alphabet} sequences`,
         path: ["substitution_model"],

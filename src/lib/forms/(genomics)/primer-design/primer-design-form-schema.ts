@@ -36,10 +36,10 @@ export const primerDesignFormSchema = z
     PRIMER_DNA_CONC: z.string().optional(),
     PRIMER_DNTP_CONC: z.string().optional(),
   })
-  .superRefine((data, err) => {
+  .superRefine((data, ctx) => {
     if (data.input_type === "sequence_text") {
       if (!data.sequence_input.trim()) {
-        err.issues.push({
+        ctx.addIssue({
           code: "custom",
           message: "Sequence input is required when pasting a sequence",
           path: ["sequence_input"],
@@ -50,7 +50,7 @@ export const primerDesignFormSchema = z
 
     if (data.input_type === "workplace_fasta") {
       if (!data.sequence_input.trim()) {
-        err.issues.push({
+        ctx.addIssue({
           code: "custom",
           message: "Select a FASTA file from the workspace",
           path: ["sequence_input"],
@@ -60,7 +60,7 @@ export const primerDesignFormSchema = z
     }
 
     if (!data.output_path.trim()) {
-      err.issues.push({
+      ctx.addIssue({
         code: "custom",
         message: "Output folder is required",
         path: ["output_path"],

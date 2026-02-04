@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +15,7 @@ import { SearchBar } from "@/components/search/search-bar";
 import { searchToQuery } from "@/app/search/search-to-query";
 import ResultsOverview from "@/components/search/results-overview";
 
-const bvbrcAPI = "https://p3.theseed.org/services/data_api/";
+const bvbrcAPI = `${process.env.NEXT_PUBLIC_DATA_API}/`;
 
 const searchTypes = [
   "taxonomy",

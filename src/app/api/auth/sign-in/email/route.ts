@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Authenticate against BV-BRC
-    const response = await fetch("https://user.patricbrc.org/authenticate", {
+    const response = await fetch(`${process.env.USER_AUTH_URL}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 /**
  * Taxonomy API proxy route
- * Forwards requests to https://www.bv-brc.org/api-for-website/taxonomy
+ * Forwards requests to ${process.env.BVBRC_WEBSITE_API_URL}/taxonomy
  */
 export async function GET(request: NextRequest) {
   try {
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 
     // Make the request to BV-BRC Taxonomy API
     const response = await fetch(
-      `https://www.bv-brc.org/api-for-website/taxonomy?${queryString}`,
+      `${process.env.BVBRC_WEBSITE_API_URL}/taxonomy?${queryString}`,
       {
         method: "GET",
         headers: {

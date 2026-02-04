@@ -22,18 +22,38 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Verify the email with BV-BRC
-    const response = await fetch("https://user.patricbrc.org/verify/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        token: verificationToken,
-        username: verificationUsername,
-      }),
-    });
+    const verifyUrl = process.env.USER_VERIFICATION_URL;
+    if (!verifyUrl) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Email verification service is not configured",
+        },
+        { status: 503 },
+      );
+    }
+
+    const timeoutMs = 15_000;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    let response: Response;
+    try {
+      response = await fetch(verifyUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          token: verificationToken,
+          username: verificationUsername,
+        }),
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
     if (response.ok) {
       const result = await response.json();
@@ -56,6 +76,15 @@ export async function GET(request: NextRequest) {
       );
     }
   } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Email verification request timed out",
+        },
+        { status: 504 },
+      );
+    }
     console.error("Email verification error:", error);
 
     return NextResponse.json(

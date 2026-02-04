@@ -12,7 +12,7 @@ import type {
 // Better Auth Client (for session management)
 // ============================================================================
 
-export const authClient = createAuthClient({});
+const authClient = createAuthClient({});
 
 // ============================================================================
 // BV-BRC Auth Client (better-auth style API)
@@ -23,6 +23,23 @@ interface AuthResponse<T> {
   error: { message: string; status?: number } | null;
 }
 
+// Raw API response types (expiresAt is ISO string over the wire)
+interface SignInResponseRaw {
+  user: AuthUser;
+  session: { token: string; expiresAt: string };
+}
+
+interface SignUpResponseRaw {
+  user: AuthUser;
+  session: { token: string; expiresAt: string };
+}
+
+interface SessionResponseRaw {
+  user: AuthUser | null;
+  session: { expiresAt: string } | null;
+}
+
+// Public types (expiresAt parsed to Date for consumers)
 interface SignInResponse {
   user: AuthUser;
   session: { token: string; expiresAt: Date };
@@ -37,6 +54,7 @@ interface SessionResponse {
   user: AuthUser | null;
   session: { expiresAt: Date } | null;
 }
+
 
 export interface FetchOptions {
   onSuccess?: (data: unknown) => void;
@@ -76,28 +94,54 @@ export async function signInEmail(
   credentials: SigninCredentials,
   options?: FetchOptions,
 ): Promise<AuthResponse<SignInResponse>> {
-  const result = await authFetch<SignInResponse>(
+  const result = await authFetch<SignInResponseRaw>(
     "/api/auth/sign-in/email",
     { method: "POST", body: JSON.stringify(credentials) },
     "Sign in failed",
   );
-  if (result.error) options?.onError?.(result.error);
-  else if (result.data) options?.onSuccess?.(result.data);
-  return result;
+  if (result.error) {
+    options?.onError?.(result.error);
+    return { data: null, error: result.error };
+  }
+  if (result.data) {
+    const data: SignInResponse = {
+      ...result.data,
+      session: {
+        ...result.data.session,
+        expiresAt: new Date(result.data.session.expiresAt),
+      },
+    };
+    options?.onSuccess?.(data);
+    return { data, error: null };
+  }
+  return { data: null, error: null };
 }
 
 export async function signUpEmail(
   credentials: SignupCredentials,
   options?: FetchOptions,
 ): Promise<AuthResponse<SignUpResponse>> {
-  const result = await authFetch<SignUpResponse>(
+  const result = await authFetch<SignUpResponseRaw>(
     "/api/auth/sign-up/email",
     { method: "POST", body: JSON.stringify(credentials) },
     "Sign up failed",
   );
-  if (result.error) options?.onError?.(result.error);
-  else if (result.data) options?.onSuccess?.(result.data);
-  return result;
+  if (result.error) {
+    options?.onError?.(result.error);
+    return { data: null, error: result.error };
+  }
+  if (result.data) {
+    const data: SignUpResponse = {
+      ...result.data,
+      session: {
+        ...result.data.session,
+        expiresAt: new Date(result.data.session.expiresAt),
+      },
+    };
+    options?.onSuccess?.(data);
+    return { data, error: null };
+  }
+  return { data: null, error: null };
 }
 
 export async function signOut(
@@ -143,14 +187,29 @@ export async function sendVerificationEmail(
 export async function getSessionWithUser(
   options?: FetchOptions,
 ): Promise<AuthResponse<SessionResponse>> {
-  const result = await authFetch<SessionResponse>(
+  const result = await authFetch<SessionResponseRaw>(
     "/api/auth/get-session",
     { method: "GET" },
     "Failed to get session",
   );
-  if (result.error) options?.onError?.(result.error);
-  else if (result.data) options?.onSuccess?.(result.data);
-  return result;
+  if (result.error) {
+    options?.onError?.(result.error);
+    return { data: null, error: result.error };
+  }
+  if (result.data) {
+    const data: SessionResponse = {
+      ...result.data,
+      session: result.data.session
+        ? {
+            ...result.data.session,
+            expiresAt: new Date(result.data.session.expiresAt),
+          }
+        : null,
+    };
+    options?.onSuccess?.(data);
+    return { data, error: null };
+  }
+  return { data: null, error: null };
 }
 
 // ============================================================================

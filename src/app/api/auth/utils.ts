@@ -18,7 +18,7 @@ export async function getProfileMetadata(
 ): Promise<any | null> {
   try {
     const userResponse = await fetch(
-      `https://user.bv-brc.org/user/${username}`,
+      `${process.env.USER_URL}/${username}`,
       {
         headers: {
           Authorization: token,
@@ -48,7 +48,7 @@ export async function getUserEmailByUsername(
 ): Promise<string | null> {
   try {
     const userResponse = await fetch(
-      `https://user.bv-brc.org/user/${username}`,
+      `${process.env.USER_URL}/${username}`,
       {
         headers: {
           Accept: "application/json",
@@ -95,16 +95,8 @@ export async function setBvbrcAuthCookies(
     });
   }
 
-  // Set user profile cookie if we have user data
-  if (userProfile) {
-    cookieStore.set("bvbrc_user_profile", JSON.stringify(userProfile), {
-      ...COOKIE_OPTIONS,
-      maxAge: SESSION_MAX_AGE,
-    });
-  }
-
-  // Set user ID
-  const userId = userProfile?.id || username.match(/[A-Za-z\W0-9]+(?=[@])/)?.[0] || username;
+  // Set only a stable user ID (no PII); full profile is fetched server-side when needed
+  const userId = userProfile?.id ?? username.split("@")[0];
   cookieStore.set("bvbrc_user_id", userId, {
     ...COOKIE_OPTIONS,
     maxAge: SESSION_MAX_AGE,
@@ -137,7 +129,7 @@ export async function clearBvbrcAuthCookies() {
   }
 }
 
-// Helper function to get BV-BRC auth data from cookies
+// Helper function to get BV-BRC auth data from cookies (ID only; fetch full profile server-side via getProfileMetadata when needed)
 export async function getBvbrcAuthData() {
   const cookieStore = await cookies();
 
@@ -145,18 +137,8 @@ export async function getBvbrcAuthData() {
   const token = rawToken ? safeDecodeURIComponent(rawToken) : undefined;
   const userId = cookieStore.get("bvbrc_user_id")?.value;
   const realm = cookieStore.get("bvbrc_realm")?.value;
-  const userProfileCookie = cookieStore.get("bvbrc_user_profile")?.value;
 
-  let userProfile = null;
-  if (userProfileCookie) {
-    try {
-      userProfile = JSON.parse(userProfileCookie);
-    } catch {
-      // Ignore parse errors
-    }
-  }
-
-  return { token, userId, realm, userProfile };
+  return { token, userId, realm };
 }
 
 export function extractRealmFromToken(token: string): string | undefined {

@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { getBvbrcAuthData, clearBvbrcAuthCookies } from "../utils";
+import { getBvbrcAuthData, setBvbrcAuthCookies, clearBvbrcAuthCookies } from "../utils";
 
 /** BV-BRC user shape from profile cookie or /user API */
 interface SessionUserInfo {
@@ -17,7 +16,7 @@ interface SessionUserInfo {
  */
 export async function GET() {
   try {
-    const { token, userId, realm, userProfile } = await getBvbrcAuthData();
+    const { token, userId, realm } = await getBvbrcAuthData();
 
     if (!token || !userId) {
       return NextResponse.json({
@@ -26,13 +25,13 @@ export async function GET() {
       });
     }
 
-    // Validate token against BV-BRC
-    let userInfo: SessionUserInfo | null = userProfile as SessionUserInfo | null;
-    let isValid = !!userProfile;
+    // Validate token against BV-BRC; default to invalid so failed fetch does not allow access
+    let userInfo: SessionUserInfo | null = null;
+    let isValid = false;
 
     try {
       const response = await fetch(
-        `https://user.patricbrc.org/user/${userId}`,
+        `${process.env.USER_URL}/${userId}`,
         {
           headers: {
             Authorization: token,
@@ -45,25 +44,21 @@ export async function GET() {
         userInfo = (await response.json()) as SessionUserInfo;
         isValid = true;
 
-        // Update user_profile cookie with fresh data
-        if (userInfo) {
-          const cookieStore = await cookies();
-          cookieStore.set("bvbrc_user_profile", JSON.stringify(userInfo), {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            maxAge: 3600 * 4, // 4 hours
-            path: "/",
-          });
+        // Refresh auth cookies (ID only; profile is not stored in cookies)
+        if (userId) {
+          await setBvbrcAuthCookies(token, userId, realm);
         }
+      } else {
+        isValid = false;
+        await clearBvbrcAuthCookies();
       }
     } catch (error) {
       console.error("Session validation failed:", error);
       isValid = false;
+      await clearBvbrcAuthCookies();
     }
 
     if (!isValid) {
-      // Clear invalid cookies
       await clearBvbrcAuthCookies();
 
       return NextResponse.json({

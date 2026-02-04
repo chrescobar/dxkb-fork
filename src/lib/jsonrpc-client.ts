@@ -156,7 +156,7 @@ export class JsonRpcError extends Error {
 // Factory function for creating BV-BRC API client
 export function createBvBrcClient(authToken?: string): JsonRpcClient {
   return new JsonRpcClient(
-    "https://p3.theseed.org/services/app_service",
+    `${process.env.APP_SERVICE_URL}`,
     authToken,
   );
 }

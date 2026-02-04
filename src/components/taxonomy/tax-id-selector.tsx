@@ -19,7 +19,7 @@ export function TaxIDSelector({
   required = false,
   disabled = false,
   className,
-  apiServiceUrl = "https://www.bv-brc.org/api-for-website/taxonomy",
+  apiServiceUrl = `${process.env.BVBRC_WEBSITE_API_URL}/taxonomy`,
   queryFilter,
 }: TaxIDSelectorProps) {
   const [showDropdown, setShowDropdown] = useState(false);

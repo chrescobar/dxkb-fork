@@ -3,7 +3,7 @@ import { getBvbrcAuthToken } from "@/lib/auth";
 
 /**
  * Workspace API proxy route
- * Forwards JSON-RPC requests to https://p3.theseed.org/services/Workspace
+ * Forwards JSON-RPC requests to ${process.env.WORKSPACE_API_URL}
  */
 export async function POST(request: NextRequest) {
   try {
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Make the request to BV-BRC Workspace API
-    const response = await fetch("https://p3.theseed.org/services/Workspace", {
+    const response = await fetch(`${process.env.WORKSPACE_API_URL}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/jsonrpc+json",

@@ -110,17 +110,21 @@ export function AuthProvider({
   const signIn = useCallback(async (credentials: SigninCredentials) => {
     setIsLoading(true);
     try {
-      const { data, error } = await bvbrcAuth.signIn.email(credentials);
+      const result = await bvbrcAuth.signIn.email(credentials);
 
-      if (error) {
-        throw new Error(error.message);
+      if (result.error) {
+        throw new Error(result.error.message);
       }
 
-      // Fetch full user data after successful sign in
-      const userData = await fetchSession();
-      if (userData) {
-        setUser(userData);
-        setIsVerified(userData.email_verified ?? false);
+      if (result.data?.user) {
+        setUser(result.data.user);
+        setIsVerified(result.data.user.email_verified ?? false);
+      } else {
+        const userData = await fetchSession();
+        if (userData) {
+          setUser(userData);
+          setIsVerified(userData.email_verified ?? false);
+        }
       }
     } finally {
       setIsLoading(false);
@@ -133,7 +137,7 @@ export function AuthProvider({
   const signUp = useCallback(async (credentials: SignupCredentials) => {
     setIsLoading(true);
     try {
-      const { data, error } = await bvbrcAuth.signUp.email(credentials);
+      const { error } = await bvbrcAuth.signUp.email(credentials);
 
       if (error) {
         throw new Error(error.message);
@@ -171,9 +175,7 @@ export function AuthProvider({
     setIsLoading(true);
     try {
       const { error } = await bvbrcAuth.requestPasswordReset({ usernameOrEmail });
-      if (error) {
-        console.warn("Password reset request failed:", error.message);
-      }
+      if (error) throw new Error(error.message || "Password reset request failed");
     } finally {
       setIsLoading(false);
     }

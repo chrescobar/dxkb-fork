@@ -20,7 +20,7 @@ export async function POST() {
     }
 
     // Call BV-BRC email verification endpoint
-    const response = await fetch("https://user.patricbrc.org/verify/", {
+    const response = await fetch(`${process.env.USER_VERIFICATION_URL}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

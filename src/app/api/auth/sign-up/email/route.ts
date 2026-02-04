@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Register with BV-BRC
-    const response = await fetch("https://user.patricbrc.org/register", {
+    const response = await fetch(`${process.env.USER_REGISTER_URL}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",

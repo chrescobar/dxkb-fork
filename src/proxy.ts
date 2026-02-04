@@ -41,9 +41,12 @@ export function proxy(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/workspace")
   ) {
     if (!hasBvbrcSession(request)) {
-      // Redirect to sign-in page with return URL
+      // Redirect to sign-in page with return URL (path + query so deep links retain params)
       const signInUrl = new URL("/sign-in", request.url);
-      signInUrl.searchParams.set("redirect", request.nextUrl.pathname);
+      signInUrl.searchParams.set(
+        "redirect",
+        request.nextUrl.pathname + request.nextUrl.search,
+      );
       return NextResponse.redirect(signInUrl);
     }
   }

@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getBvbrcAuthToken } from "@/lib/auth";
 import type { ViralGenomeValidationResult } from "@/lib/services/genome";
 
-const DATA_API_BASE = "https://p3.theseed.org/services/data_api/genome/";
 
 function buildInClause(ids: string[]): string {
   const sanitizedIds = ids
@@ -40,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     // Query with fields needed for viral genome validation
     const queryString = `?in(genome_id,(${inClause}))&select(genome_id,superkingdom,genome_length,contigs)&limit(${Math.min(genomeIds.length, 5000)})`;
-    const url = `${DATA_API_BASE}${queryString}`;
+    const url = `${process.env.NEXT_PUBLIC_DATA_API}/genome/${queryString}`;
 
     const response = await fetch(url, {
       method: "GET",

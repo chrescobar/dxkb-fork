@@ -60,13 +60,8 @@ export function SignoutButton({
     }
   };
 
-  const SignoutButtonContent = (
-    <Button
-      variant={variant}
-      size={size}
-      disabled={isSigningOut}
-      className={className}
-    >
+  const buttonContent = (
+    <>
       {isSigningOut ? (
         <Loader2 className="h-4 w-4 animate-spin" />
       ) : (
@@ -77,16 +72,28 @@ export function SignoutButton({
           {isSigningOut ? "Signing out..." : "Sign Out"}
         </span>
       )}
+    </>
+  );
+
+  const signoutButton = (
+    <Button
+      variant={variant}
+      size={size}
+      disabled={isSigningOut}
+      className={className}
+      {...(!confirmDialog && { onClick: handleSignout })}
+    >
+      {buttonContent}
     </Button>
   );
 
   if (!confirmDialog) {
-    return <div onClick={handleSignout}>{SignoutButtonContent}</div>;
+    return signoutButton;
   }
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>{SignoutButtonContent}</AlertDialogTrigger>
+      <AlertDialogTrigger asChild>{signoutButton}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Sign out of BV-BRC?</AlertDialogTitle>

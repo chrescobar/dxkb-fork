@@ -69,7 +69,10 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const searchtype = searchParams.get('searchtype') ?? '';
   const pathname = usePathname();
   const cleanQ = q?.split('#')[0] ?? '';
-  const DataAPI = process.env.NEXT_PUBLIC_DATA_API!;
+  const DataAPI = process.env.NEXT_PUBLIC_DATA_API;
+  if (!DataAPI) {
+    throw new Error('NEXT_PUBLIC_DATA_API environment variable is not configured');
+  }
   const pageSize = 200;
   const listKey = `${resource}-${cleanQ}-${searchtype}`;
 

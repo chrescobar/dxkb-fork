@@ -33,6 +33,9 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const [internalRowSelection, setInternalRowSelection] = useState<RowSelectionState>({});
   const rowSelection = controlledRowSelection !== undefined ? controlledRowSelection : internalRowSelection;
   const setRowSelection = onRowSelectionChange || setInternalRowSelection;
+  
+  // Track if we're in the middle of a page transition
+  const [isPageTransitioning, setIsPageTransitioning] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -141,7 +144,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const totalItems = metaData?.response?.numFound ?? 0;
 
   // Fetch current page of data
-  const { data: pageData, isLoading: dataLoading, error: dataError, refetch } = useQuery({
+  const { data: pageData, isLoading: dataLoading, error: dataError, refetch, isFetching: dataFetching } = useQuery({
     queryKey: [
       'genome-full',
       resource,
@@ -177,7 +180,12 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
         }
       });
       if (!res.ok) throw new Error('Failed to fetch genome data');
-      return res.json();
+      const data = await res.json();
+      
+      // Clear transitioning state when data is fetched
+      setIsPageTransitioning(false);
+      
+      return data;
     },
     enabled: totalItems > 0,
     placeholderData: (previousData) => previousData,
@@ -189,6 +197,13 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   useEffect(() => {
     console.log('🟢 Sorting state changed to:', JSON.stringify(sorting));
   }, [sorting]);
+  
+  // Clear transitioning state if there's an error
+  useEffect(() => {
+    if (dataError) {
+      setIsPageTransitioning(false);
+    }
+  }, [dataError]);
 
   if (metaError || dataError) {
     return (
@@ -214,6 +229,8 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
 
   const handlePageChange = (newPage: number) => {
     console.log('handlePageChange called, newPage:', newPage);
+    // Set transitioning state
+    setIsPageTransitioning(true);
     // Clear selections when page changes
     setRowSelection({});
     onSelectionChange?.([]); // Clear selection in parent too
@@ -322,7 +339,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
             columnVisibility={columnVisibility}
             onColumnVisibilityChange={setColumnVisibility}
             onDownloadAll={handleDownloadAll}
-            isLoading={metaLoading || dataLoading}
+            isLoading={metaLoading || dataLoading || isPageTransitioning || dataFetching}
           />
         )}
       </div>

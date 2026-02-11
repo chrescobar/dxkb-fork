@@ -86,6 +86,7 @@ export default function MetagenomicBinningPage() {
 
   // UI state
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
   // Read input state
   const [pairedRead1, setPairedRead1] = useState<string | null>(null);
@@ -593,6 +594,8 @@ export default function MetagenomicBinningPage() {
                                 required={true}
                                 value={field.value}
                                 onChange={field.onChange}
+                                outputFolderPath={form.watch("output_path")}
+                                onValidationChange={setIsOutputNameValid}
                               />
                             </FormControl>
                             <FormMessage />
@@ -735,7 +738,7 @@ export default function MetagenomicBinningPage() {
               </Button>
               <Button
                 type="submit"
-                disabled={isSubmitting || !form.formState.isValid}
+                disabled={isSubmitting || !form.formState.isValid || !isOutputNameValid}
               >
                 {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
                 Submit

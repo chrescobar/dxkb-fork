@@ -101,6 +101,9 @@ export default function FastqUtilitiesPage() {
   const [selectedAction, setSelectedAction] = useState<PipelineAction | "">("");
   const [pipelineActions, setPipelineActions] = useState<PipelineActionItem[]>([]);
 
+  // Output name uniqueness (variant="name"); valid until check says otherwise
+  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
+
   // Watch form values
   const recipe = form.watch("recipe");
 
@@ -305,6 +308,8 @@ export default function FastqUtilitiesPage() {
                           variant="name"
                           value={field.value}
                           onChange={field.onChange}
+                          outputFolderPath={form.watch("output_path")}
+                          onValidationChange={setIsOutputNameValid}
                         />
                       </FormControl>
                       <FormMessage />
@@ -596,7 +601,7 @@ export default function FastqUtilitiesPage() {
               </Button>
               <Button
                 type="submit"
-                disabled={isSubmitting || !form.formState.isValid}
+                disabled={isSubmitting || !form.formState.isValid || !isOutputNameValid}
               >
                 {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
                 Submit

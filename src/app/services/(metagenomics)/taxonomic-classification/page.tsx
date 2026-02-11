@@ -118,6 +118,8 @@ export default function TaxonomicClassificationPage() {
   const [singleSampleId, setSingleSampleId] = useState("");
   const [srrSampleId, setSrrSampleId] = useState("");
 
+  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
+
   // Watch form values
   const sequenceType = form.watch("sequence_type");
 
@@ -845,6 +847,8 @@ export default function TaxonomicClassificationPage() {
                               required={true}
                               value={field.value}
                               onChange={field.onChange}
+                              outputFolderPath={form.watch("output_path")}
+                              onValidationChange={setIsOutputNameValid}
                             />
                           </FormControl>
                           <FormMessage />
@@ -865,7 +869,7 @@ export default function TaxonomicClassificationPage() {
               </Button>
               <Button
                 type="submit"
-                disabled={isSubmitting || !form.formState.isValid}
+                disabled={isSubmitting || !form.formState.isValid || !isOutputNameValid}
               >
                 {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
                 Submit

@@ -39,13 +39,21 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
 
   useEffect(() => {
     (async () => {
-      const mod = await import(`@/constants/datafields/${resource}`);
-      const fieldObj = mod[`${resource}Fields`];
-      setFields(
-        Object.values(fieldObj)
-          .filter((f: any) => f.show_in_table !== false)
-          .map((f: any) => ({ id: f.field, label: f.label, visible: !f.hidden }))
-      );
+      try {
+        const mod = await import(`@/constants/datafields/${resource}`);
+        const fieldObj = mod[`${resource}Fields`];
+        if (!fieldObj) {
+          console.error(`No fields definition found for resource: ${resource}`);
+          return;
+        }
+        setFields(
+          Object.values(fieldObj)
+            .filter((f: any) => f.show_in_table !== false)
+            .map((f: any) => ({ id: f.field, label: f.label, visible: !f.hidden }))
+        );
+      } catch (err) {
+        console.error(`Failed to load fields for resource "${resource}":`, err);
+      }
     })();
   }, [resource]);
 

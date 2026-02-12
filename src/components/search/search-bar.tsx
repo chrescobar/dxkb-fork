@@ -10,9 +10,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { LuSearch } from "react-icons/lu";
-import { useRouter } from "next/navigation";
-import { searchTypes } from '../../constants/searchInfo';
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { searchTypes } from "../../constants/searchInfo";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface SearchBarProps {
   initialValue?: string;
@@ -50,20 +50,48 @@ function SearchBarContent({
   size = "default",
   showIcon = true,
 }: SearchBarProps) {
-  const [inputValue, setInputValue] = useState(initialValue);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const urlQ = searchParams.get("q") || "";
+  const queryClient = useQueryClient();
+
+  // Initialize inputValue with initialValue if provided, otherwise URL q
+  const [inputValue, setInputValue] = useState(initialValue || urlQ);
+
+  // Sync inputValue whenever URL q changes (but do not overwrite while user is typing)
+  useEffect(() => {
+    if (!urlQ) return;
+
+    if (urlQ !== inputValue) {
+      // Extract keyword(...) values if present
+      const matches = [...urlQ.matchAll(/keyword\(([^)]+)\)/g)];
+      const keywords = matches.map((match) => match[1]);
+
+      setInputValue(keywords.join(" ") || urlQ);
+    }
+  }, [urlQ]);
 
   const handleSearch = (e?: FormEvent) => {
     if (e) e.preventDefault();
     if (!inputValue.trim()) return;
 
-    router.push(`/buildsearch?q=${encodeURIComponent(inputValue)}&searchtype=${selected}`);
+    router.push(
+      `/search?q=${encodeURIComponent(inputValue)}&searchtype=${selected}`
+    );
+    // 🚀 Force React Query to refetch all ListData queries
+    queryClient.invalidateQueries({
+      predicate: (query) => {
+        const key = query.queryKey[0];
+        return (
+          key === "genome-meta" ||
+          key === "genome-full" 
+        );
+      },
+    });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
+    if (e.key === "Enter") handleSearch();
   };
 
   const [selected, setSelected] = useState("everything");

@@ -1,4 +1,4 @@
-export const amrphenotypeFields = {
+export const genome_amrFields = {
     taxon_id: { 
         label: 'Taxon ID', 
         field: 'taxon_id', 

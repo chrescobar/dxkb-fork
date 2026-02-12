@@ -1,4 +1,4 @@
-export const sequenceFields = {
+export const genome_sequenceFields = {
     genome_id: { 
         label: 'Genome ID', 
         field: 'genome_id', 

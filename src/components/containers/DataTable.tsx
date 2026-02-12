@@ -44,6 +44,7 @@ interface DataTableProps {
   data: Record<string, any>[];
   columns: ColumnInfo[];
   totalItems: number;
+  resource: string;
   onSelectionChange?: (rows: any[]) => void;
   onGenomeSelect?: (id: string | null) => void;
 
@@ -75,7 +76,7 @@ interface DataTableProps {
 }
 
 // This is the actual function...
-export function DataTable({ id, data, columns, totalItems, onSelectionChange, onGenomeSelect, pageIndex, pageSize, onPageChange, sorting:controlledSorting, onSortingChange, columnOrder, onColumnOrderChange, columnVisibility: controlledVisibility, onColumnVisibilityChange: onColumnVisibilityChangeProp, rowSelection: controlledRowSelection, onRowSelectionChange, onDownloadAll, isLoading = false }: DataTableProps) {
+export function DataTable({ id, data, columns, totalItems, resource, onSelectionChange, onGenomeSelect, pageIndex, pageSize, onPageChange, sorting:controlledSorting, onSortingChange, columnOrder, onColumnOrderChange, columnVisibility: controlledVisibility, onColumnVisibilityChange: onColumnVisibilityChangeProp, rowSelection: controlledRowSelection, onRowSelectionChange, onDownloadAll, isLoading = false }: DataTableProps) {
 
   // These next consts are used and activated when something about the columm changes
   const [columnSizing, setColumnSizing] = useState<Record<string, number>>({});
@@ -570,7 +571,7 @@ export function DataTable({ id, data, columns, totalItems, onSelectionChange, on
       )
     ].join('\n');
 
-    downloadFile(`table-export.${onlySelected ? 'selected-' : ''}${format}`, content);
+    downloadFile(`${resource}-${onlySelected ? 'selected-' : ''}.${format}`, content);
   };
 
   // Now that all the setup is done, let's render the table!

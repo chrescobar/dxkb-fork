@@ -333,6 +333,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
             id={widget.id}
             data={pageData ?? []}
             columns={widget.columns}
+            resource={resource}
             rowSelection={rowSelection}
             onRowSelectionChange={handleRowSelectionChange}
             onSelectionChange={(selectedRows) => {

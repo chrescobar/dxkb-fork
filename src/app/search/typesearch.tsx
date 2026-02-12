@@ -67,8 +67,15 @@ function TabsRenderer({
   const encodedQ = encodeURIComponent(urlQ);
   const fullQ = "keyword(" + encodedQ + ")";
 
+  // Handle tab change - clear selections when switching tabs
+  const handleTabChange = (newTab: string) => {
+    setActiveTab(newTab);
+    setRowSelection({});
+    setSelectedRows([]);
+  };
+
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab} className="h-[85vh]">
+    <Tabs value={activeTab} onValueChange={handleTabChange} className="h-[85vh]">
       <TabsList className="pb-0 mb-0 bg-background">
         {Object.entries(tabsForType).map(([term, label]) => (
           <TabsTrigger key={term} value={term} className="...">
@@ -151,7 +158,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [pageIndex, setPageIndex] = useState(0);
-  
+
   // Track previous values to detect actual changes
   const prevUrlTypeRef = useRef<string>(urlType);
   const prevUrlQRef = useRef<string>(urlQ);
@@ -160,7 +167,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
   useEffect(() => {
     const urlTypeChanged = prevUrlTypeRef.current !== urlType;
     const urlQChanged = prevUrlQRef.current !== urlQ;
-    
+
     if (urlTypeChanged || urlQChanged) {
       console.log('Clearing selection due to URL change');
       setRowSelection({});

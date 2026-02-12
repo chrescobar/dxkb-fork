@@ -22,14 +22,9 @@ export function WithGenomePanel({
   setSelectedRows,
 }: WithGenomePanelProps) {
   const initialTab = incomingTab && tabs.includes(incomingTab) ? incomingTab : tabs[0];
-  const [activeTab, setActiveTabState] = useState(initialTab);
+  const [activeTab, setActiveTab] = useState(initialTab);
 
   const hasSelection = selectedRows.length > 0;
-
-  const setActiveTab = (tab: string) => {
-    setSelectedRows([]); // clear selection when changing tab
-    setActiveTabState(tab);
-  };
 
   return (
     <div className="w-full px-[10px] mt-[10px]">

@@ -86,7 +86,7 @@ export function LogoutButton({
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>{LogoutButtonContent}</AlertDialogTrigger>
+      <AlertDialogTrigger render={LogoutButtonContent} />
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Sign out of BV-BRC?</AlertDialogTitle>

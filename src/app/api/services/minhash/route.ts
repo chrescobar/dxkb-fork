@@ -31,12 +31,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const authToken = await getServerAuthToken();
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (authToken) {
+      headers["Authorization"] = authToken;
+    }
+
     const response = await fetch(MINHASH_SERVICE_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": await getServerAuthToken() || "",
-        },
+      headers,
       body: JSON.stringify(body),
     });
 

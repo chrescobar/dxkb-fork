@@ -16,8 +16,8 @@ export const influenzaHaSubtypeFormSchema = z
     types: z
       .array(z.string())
       .min(1, "Select at least one numbering scheme"),
-    output_path: z.string().min(1, "Output folder is required"),
-    output_file: z.string().min(1, "Output name is required"),
+    output_path: z.string().trim().min(1, "Output folder is required"),
+    output_file: z.string().trim().min(1, "Output name is required"),
   })
   .superRefine((data, ctx) => {
     if (data.input_source === "fasta_data") {
@@ -47,10 +47,9 @@ export const influenzaHaSubtypeFormSchema = z
     }
   });
 
-export type InfluenzaHaSubtypeFormData = z.infer<
-  typeof influenzaHaSubtypeFormSchema
->;
-
+  export interface InfluenzaHaSubtypeFormData
+    extends z.infer<typeof influenzaHaSubtypeFormSchema> {}
+  
 export const defaultInfluenzaHaSubtypeFormValues: InfluenzaHaSubtypeFormData =
   {
     input_source: "fasta_data",

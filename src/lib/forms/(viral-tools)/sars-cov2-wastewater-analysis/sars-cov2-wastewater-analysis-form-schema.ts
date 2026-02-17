@@ -37,8 +37,55 @@ export const recipeOptions: { value: Recipe; label: string }[] = [
   { value: "onecodex", label: "One Codex" },
 ];
 
-// MM/DD/YYYY optional date string for validation
-const sampleLevelDateRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/(1000|1\d{3}|2[0-9]{3})$/;
+const MIN_YEAR = 2000;
+const MAX_YEAR = 2099;
+
+/**
+ * Validates a date string in MM/DD/YYYY format with real calendar rules
+ * and year range 2000–2099. Use for sample_level_date validation.
+ */
+export function isValidDate(dateStr: string): boolean {
+  const trimmed = dateStr.trim();
+  const parts = trimmed.split("/");
+  if (parts.length !== 3) return false;
+  const month = parseInt(parts[0], 10);
+  const day = parseInt(parts[1], 10);
+  const year = parseInt(parts[2], 10);
+  if (Number.isNaN(month) || Number.isNaN(day) || Number.isNaN(year)) return false;
+  if (year < MIN_YEAR || year > MAX_YEAR) return false;
+  if (month < 1 || month > 12) return false;
+  const daysInMonth = new Date(year, month, 0).getDate();
+  if (day < 1 || day > daysInMonth) return false;
+  return true;
+}
+
+const INVALID_DATE_MESSAGE =
+  "Sample date must be a valid MM/DD/YYYY (year 2000–2099)";
+
+export interface LibraryDateValidationResult {
+  valid: boolean;
+  message?: string;
+  code?: z.ZodIssueCode;
+}
+
+/**
+ * Validates sample_level_date on a library item (paired/single/SRA).
+ * Returns a result that callers can use to add a schema issue when valid is false.
+ */
+export function validateLibraryDate(lib: {
+  sample_level_date?: string;
+}): LibraryDateValidationResult {
+  const d = lib.sample_level_date;
+  if (!d || !d.trim()) return { valid: true };
+  if (!isValidDate(d.trim())) {
+    return {
+      valid: false,
+      message: INVALID_DATE_MESSAGE,
+      code: z.ZodIssueCode.invalid_date,
+    };
+  }
+  return { valid: true };
+}
 
 export const sarsCov2WastewaterAnalysisFormSchema = z
   .object({
@@ -62,33 +109,32 @@ export const sarsCov2WastewaterAnalysisFormSchema = z
         path: ["paired_end_libs"],
       });
     }
-    // Optional: validate sample_level_date format when present
     (data.paired_end_libs ?? []).forEach((lib, i) => {
-      const d = lib.sample_level_date;
-      if (d && d.trim() && !sampleLevelDateRegex.test(d.trim())) {
+      const result = validateLibraryDate(lib);
+      if (!result.valid) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Sample date must be MM/DD/YYYY",
+          code: z.ZodIssueCode.invalid_date,
+          message: result.message ?? INVALID_DATE_MESSAGE,
           path: ["paired_end_libs", i, "sample_level_date"],
         });
       }
     });
     (data.single_end_libs ?? []).forEach((lib, i) => {
-      const d = lib.sample_level_date;
-      if (d && d.trim() && !sampleLevelDateRegex.test(d.trim())) {
+      const result = validateLibraryDate(lib);
+      if (!result.valid) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Sample date must be MM/DD/YYYY",
+          code: z.ZodIssueCode.invalid_date,
+          message: result.message ?? INVALID_DATE_MESSAGE,
           path: ["single_end_libs", i, "sample_level_date"],
         });
       }
     });
     (data.srr_libs ?? []).forEach((lib, i) => {
-      const d = lib.sample_level_date;
-      if (d && d.trim() && !sampleLevelDateRegex.test(d.trim())) {
+      const result = validateLibraryDate(lib);
+      if (!result.valid) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Sample date must be MM/DD/YYYY",
+          code: z.ZodIssueCode.invalid_date,
+          message: result.message ?? INVALID_DATE_MESSAGE,
           path: ["srr_libs", i, "sample_level_date"],
         });
       }

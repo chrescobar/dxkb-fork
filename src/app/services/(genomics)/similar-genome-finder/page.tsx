@@ -11,6 +11,22 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { ChevronDown, Search } from "lucide-react";
 import { ServiceHeader } from "@/components/services/service-header";
 import {
   Card,
@@ -20,7 +36,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/containers/DataTable";
-import { Search } from "lucide-react";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
@@ -34,14 +49,19 @@ import { useServiceFormSubmission } from "@/hooks/services/use-service-form-subm
 import {
   similarGenomeFinderInfo,
   similarGenomeFinderSelectGenome,
+  similarGenomeFinderAdvancedParameters,
 } from "@/lib/services/service-info";
 import {
   similarGenomeFinderFormSchema,
   DEFAULT_SIMILAR_GENOME_FINDER_FORM_VALUES,
+  maxHitsOptions,
+  pValueOptions,
+  distanceOptions,
   type SimilarGenomeFinderFormData,
 } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-schema";
 import { buildMinhashServicePayload } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-utils";
-import { SimilarGenomeFinderAdvancedOptions } from "./similar-genome-finder-advanced-options";
+import type { SimilarGenomeFinderResultRow } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-result-utils";
+import { submitSimilarGenomes } from "./actions";
 
 const similarGenomeFinderTableColumns = [
   { id: "genome_id", label: "Genome ID" },
@@ -61,154 +81,8 @@ const tutorial =
 const video =
   "https://youtube.com/playlist?list=PLWfOyhOW_OashHfld0w1DUkO7rQz6s8SA&si=Enh6GME_i4LMcXL8";
 
-/** Result row shape for Similar Genome Finder (when result data is available) */
-export interface SimilarGenomeFinderResultRow {
-  genome_id: string;
-  genome_name: string;
-  organism_name: string;
-  genome_status?: string;
-  genome_quality?: string;
-  distance: number;
-  pvalue: number;
-  /** K-mer counts; may be number or string (e.g. "0/1000") from Minhash */
-  counts?: number | string;
-}
-
-/**
- * Convert columnar result { genome_id: [...], distance: [...] } to row array.
- */
-function columnarToRows(result: Record<string, unknown>): unknown[] {
-  const ids = result.genome_id ?? result.genomeId ?? result.id;
-  const arr = Array.isArray(ids) ? ids : [];
-  if (arr.length === 0) return [];
-  const dist = (result.distance ?? result.dist) as unknown[] | undefined;
-  const pval = (result.pvalue ?? result.p_value) as unknown[] | undefined;
-  const cnt = (result.counts ?? result.kmer_count) as unknown[] | undefined;
-  return arr.map((id, i) => ({
-    genome_id: id,
-    genome_name: (result.genome_name as unknown[])?.[i],
-    organism_name: (result.organism_name as unknown[])?.[i],
-    distance: dist?.[i],
-    pvalue: pval?.[i],
-    counts: cnt?.[i],
-  }));
-}
-
-/**
- * Extract the hits array from Minhash JSON-RPC response.
- * Handles: { result: [...] }, { result: [ [ row1, row2, ... ] ] } (nested), columnar, or top-level array.
- */
-function extractMinhashArray(payload: unknown): unknown[] {
-  if (!payload || typeof payload !== "object") return [];
-  const obj = payload as Record<string, unknown>;
-  const result = obj.result;
-  if (Array.isArray(result)) {
-    // Minhash returns result: [ [ row1, row2, ... ] ] — one outer array containing the rows array
-    if (result.length === 1 && Array.isArray(result[0])) return result[0] as unknown[];
-    return result;
-  }
-  if (result && typeof result === "object") {
-    const r = result as Record<string, unknown>;
-    if (Array.isArray(r.data)) return r.data;
-    if (Array.isArray(r.hits)) return r.hits;
-    if (Array.isArray(r.results)) return r.results;
-    if (Array.isArray(r[0])) return (result as unknown) as unknown[];
-    if (Array.isArray(r.genome_id ?? r.genomeId)) return columnarToRows(r);
-    const values = Object.values(r);
-    if (values.length > 0 && Array.isArray(values[0])) return values.flat() as unknown[];
-  }
-  if (Array.isArray(obj.data)) return obj.data;
-  if (Array.isArray(obj.hits)) return obj.hits;
-  if (Array.isArray(obj.results)) return obj.results;
-  if (Array.isArray(obj.genome_id ?? obj.genomeId)) return columnarToRows(obj);
-  return [];
-}
-
-/** Parse a numeric value from number or string (e.g. Minhash array row values). */
-function parseNum(v: unknown): number {
-  if (typeof v === "number" && Number.isFinite(v)) return v;
-  if (typeof v === "string") {
-    const n = Number(v);
-    return Number.isFinite(n) ? n : 0;
-  }
-  return 0;
-}
-
-/** Parse counts: keep number, keep string as-is (e.g. "0/1000" for K-mer display), or numeric string as number. */
-function parseCounts(v: unknown): number | string | undefined {
-  if (typeof v === "number" && Number.isFinite(v)) return v;
-  if (typeof v === "string") {
-    if (v.includes("/")) return v;
-    const n = Number(v);
-    return Number.isFinite(n) ? n : undefined;
-  }
-  return undefined;
-}
-
-/** Minhash JSON-RPC returns { result: [...] }. Extract rows with genome_id and metrics. */
-function parseMinhashResultPayload(payload: unknown): SimilarGenomeFinderResultRow[] {
-  const arr = extractMinhashArray(payload);
-  return arr.map((item): SimilarGenomeFinderResultRow => {
-    const row = item && typeof item === "object" ? (item as Record<string, unknown>) : {};
-    const get = (...keys: string[]) => {
-      for (const k of keys) {
-        const v = row[k];
-        if (v !== undefined && v !== null) return v;
-      }
-      return undefined;
-    };
-    // Support array rows: [genome_id, distance, pvalue, count] or similar (values may be strings)
-    const arrRow = Array.isArray(item) ? item : [];
-    const genomeId =
-      get("genome_id", "genomeId", "genome ID", "id", "ref", "reference") ??
-      (arrRow[0] !== undefined ? String(arrRow[0]) : "");
-    const distanceVal = get("distance") ?? arrRow[1];
-    const pvalueVal = get("pvalue", "p_value") ?? arrRow[2];
-    const countsVal = get("counts", "kmer_count") ?? arrRow[3];
-    return {
-      genome_id: String(genomeId),
-      genome_name: String(get("genome_name", "genomeName", "genome name") ?? ""),
-      organism_name: String(get("organism_name", "organismName", "organism name", "organism") ?? ""),
-      distance: parseNum(distanceVal),
-      pvalue: parseNum(pvalueVal),
-      counts: parseCounts(countsVal),
-    };
-  });
-}
-
-/** Build table rows by merging Minhash metrics with BV-BRC genome API response (genome_name, organism). */
-function mergeGenomeResults(
-  minhashRows: SimilarGenomeFinderResultRow[],
-  genomeApiResults: Record<string, string>[],
-): SimilarGenomeFinderResultRow[] {
-  const byId = new Map<string, Record<string, string>>();
-  for (const row of genomeApiResults) {
-    const id = row.genome_id;
-    if (id) byId.set(String(id).trim(), row);
-  }
-  const get = (row: Record<string, string>, ...keys: string[]) => {
-    for (const k of keys) {
-      const v = row[k];
-      if (v !== undefined && v !== null && String(v).trim() !== "") return String(v);
-    }
-    return "";
-  };
-
-  return minhashRows.map((m) => {
-    const genome = m.genome_id ? byId.get(m.genome_id.trim()) : undefined;
-    return {
-      ...m,
-      genome_name: genome
-        ? get(genome, "genome_name", "genome name")
-        : m.genome_name,
-      organism_name: genome
-        ? get(genome, "species", "organism_name", "organism name", "taxon_lineage_names", "genome_name")
-        : m.organism_name,
-      genome_status: genome ? get(genome, "genome_status") : undefined,
-      genome_quality: genome ? get(genome, "genome_quality") : undefined,
-    };
-  });
-}
+/** Re-export for consumers that import from the page */
+export type { SimilarGenomeFinderResultRow } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-result-utils";
 
 export default function SimilarGenomeFinderServicePage() {
   const form = useForm<SimilarGenomeFinderFormData>({
@@ -240,111 +114,22 @@ export default function SimilarGenomeFinderServicePage() {
       buildMinhashServicePayload(data) as unknown as Record<string, unknown>,
     onSuccess,
     onSubmit: async (data) => {
-      try {
-        const payload = buildMinhashServicePayload(data);
-        const res = await fetch("/api/services/minhash", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        const result = await res.json().catch(() => ({}));
-        const errorMessage =
-          typeof result.error === "string"
-            ? result.error
-            : result.error && typeof result.error === "object"
-              ? "message" in result.error
-                ? String((result.error as { message?: unknown }).message)
-                : JSON.stringify(result.error)
-              : null;
-        if (!res.ok) {
-          throw new Error(
-            errorMessage || "Minhash service request failed",
-          );
-        }
-        if (result.error != null && result.error !== "" && result.error !== false) {
-          throw new Error(
-            errorMessage ?? "Service returned an error",
-          );
-        }
-        let minhashRows = parseMinhashResultPayload(result);
-        let genomeIds = minhashRows
-          .map((r) => r.genome_id?.trim())
-          .filter(Boolean) as string[];
-
-        // Fallback: if Minhash returned rows but no genome_id in them, try to get IDs from raw payload
-        if (minhashRows.length > 0 && genomeIds.length === 0 && result && typeof result === "object") {
-          const raw = result as Record<string, unknown>;
-          const res = raw.result;
-          if (res && typeof res === "object") {
-            const r = res as Record<string, unknown>;
-            const idList = (r.genome_id ?? r.genomeId ?? r.id ?? raw.genome_ids) as unknown;
-            const ids = Array.isArray(idList)
-              ? (idList as unknown[]).map((x) => (x !== null && x !== undefined ? String(x).trim() : "")).filter(Boolean)
-              : [];
-            if (ids.length >= minhashRows.length) {
-              genomeIds = ids.slice(0, minhashRows.length) as string[];
-              minhashRows = minhashRows.map((row, i) => ({ ...row, genome_id: genomeIds[i] ?? row.genome_id }));
-            }
-          }
-        }
-
-        let rows: SimilarGenomeFinderResultRow[];
-        if (genomeIds.length > 0) {
-          try {
-            const genomeRes = await fetch("/api/services/genome/website-query", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ genome_ids: genomeIds }),
-            });
-            const genomeData = await genomeRes.json().catch(() => ({}));
-            if (!genomeRes.ok) {
-              rows = minhashRows;
-              toast.info("Results loaded; genome details could not be fetched.", {
-                closeButton: true,
-              });
-            } else {
-              const rawResults = Array.isArray(genomeData.results)
-                ? genomeData.results
-                : [];
-              const genomeResults: Record<string, string>[] = rawResults.map(
-                (r: unknown) =>
-                  r && typeof r === "object"
-                    ? (Object.fromEntries(
-                        Object.entries(r as Record<string, unknown>).map(([k, v]) => [
-                          k,
-                          v !== null && v !== undefined ? String(v) : "",
-                        ]),
-                      ) as Record<string, string>)
-                    : ({} as Record<string, string>),
-              );
-              rows = mergeGenomeResults(minhashRows, genomeResults);
-            }
-          } catch {
-            rows = minhashRows;
-            toast.info("Results loaded; genome details could not be fetched.", {
-              closeButton: true,
-            });
-          }
-        } else {
-          rows = minhashRows;
-        }
-
-        setResults(rows);
+      const response = await submitSimilarGenomes(data);
+      if (response.success) {
+        setResults(response.rows);
         toast.success("Similar Genome Finder completed successfully!", {
           description:
-            rows.length > 0
-              ? `Results returned from Minhash service (${rows.length} genome${rows.length === 1 ? "" : "s"})`
+            response.rows.length > 0
+              ? `Results returned from Minhash service (${response.rows.length} genome${response.rows.length === 1 ? "" : "s"})`
               : "Results returned from Minhash service",
           closeButton: true,
         });
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "Submission failed";
+      } else {
         toast.error("Submission failed", {
-          description: message,
+          description: response.error,
           closeButton: true,
         });
-        throw err;
+        throw new Error(response.error);
       }
     },
   });
@@ -439,11 +224,233 @@ export default function SimilarGenomeFinderServicePage() {
                   )}
                 />
 
-                <SimilarGenomeFinderAdvancedOptions
-                  control={form.control}
+                <Collapsible
                   open={showAdvanced}
                   onOpenChange={setShowAdvanced}
-                />
+                  className="service-collapsible-container"
+                >
+                  <CollapsibleTrigger className="service-collapsible-trigger">
+                    Advanced Options
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
+                    />
+                  </CollapsibleTrigger>
+
+                  <CollapsibleContent className="service-collapsible-content">
+                    <div className="flex w-full flex-col justify-between space-y-4">
+                      <div className="flex items-center">
+                        <Label className="service-card-label">Parameters</Label>
+                        <DialogInfoPopup
+                          title={similarGenomeFinderAdvancedParameters.title}
+                          description={
+                            similarGenomeFinderAdvancedParameters.description
+                          }
+                          sections={similarGenomeFinderAdvancedParameters.sections}
+                          className="mb-2 ml-2"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                        <FormField
+                          control={form.control}
+                          name="max_hits"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="service-card-sublabel">
+                                Max Hits
+                              </FormLabel>
+                              <FormControl>
+                                <Select
+                                  value={(field.value ?? 50).toString()}
+                                  onValueChange={(value) =>
+                                    field.onChange(parseInt(value, 10))
+                                  }
+                                >
+                                  <SelectTrigger className="service-card-select-trigger">
+                                    <SelectValue placeholder="Select max hits" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {maxHitsOptions.map((opt) => (
+                                      <SelectItem
+                                        key={opt.value}
+                                        value={opt.value.toString()}
+                                      >
+                                        {opt.label}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="max_pvalue"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="service-card-sublabel">
+                                P-Value Threshold
+                              </FormLabel>
+                              <FormControl>
+                                <Select
+                                  value={field.value?.toString() ?? "1"}
+                                  onValueChange={(value) =>
+                                    field.onChange(parseFloat(value))
+                                  }
+                                >
+                                  <SelectTrigger className="service-card-select-trigger">
+                                    <SelectValue placeholder="Select P-value" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {pValueOptions.map((opt) => (
+                                      <SelectItem
+                                        key={opt.value}
+                                        value={opt.value.toString()}
+                                      >
+                                        {opt.label}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="max_distance"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="service-card-sublabel">
+                                Distance
+                              </FormLabel>
+                              <FormControl>
+                                <Select
+                                  value={field.value?.toString() ?? "1"}
+                                  onValueChange={(value) =>
+                                    field.onChange(parseFloat(value))
+                                  }
+                                >
+                                  <SelectTrigger className="service-card-select-trigger">
+                                    <SelectValue placeholder="Select distance" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {distanceOptions.map((opt) => (
+                                      <SelectItem
+                                        key={opt.value}
+                                        value={opt.value.toString()}
+                                      >
+                                        {opt.label}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                          <div className="flex flex-col gap-2">
+                            <Label className="service-card-label">
+                              Organism Type
+                            </Label>
+
+                            <FormField
+                              control={form.control}
+                              name="include_bacterial"
+                              render={({ field }) => (
+                                <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="text-sm font-normal">
+                                    Bacterial and Archaeal Genomes
+                                  </FormLabel>
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="include_viral"
+                              render={({ field }) => (
+                                <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="text-sm font-normal">
+                                    Viral Genomes
+                                  </FormLabel>
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <div className="flex flex-col gap-2">
+                            <Label className="service-card-label">Scope</Label>
+
+                            <FormField
+                              control={form.control}
+                              name="scope"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormControl>
+                                    <RadioGroup
+                                      value={field.value}
+                                      onValueChange={field.onChange}
+                                      className="gap-2"
+                                    >
+                                      <div className="flex items-center space-x-2">
+                                        <RadioGroupItem
+                                          value="reference"
+                                          id="scope-reference"
+                                        />
+                                        <FormLabel
+                                          htmlFor="scope-reference"
+                                          className="text-sm font-normal"
+                                        >
+                                          Reference and Representative Genomes
+                                        </FormLabel>
+                                      </div>
+                                      <div className="flex items-center space-x-2">
+                                        <RadioGroupItem
+                                          value="all"
+                                          id="scope-all"
+                                        />
+                                        <FormLabel
+                                          htmlFor="scope-all"
+                                          className="text-sm font-normal"
+                                        >
+                                          All Public Genomes
+                                        </FormLabel>
+                                      </div>
+                                    </RadioGroup>
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
               </CardContent>
             </Card>
           </div>

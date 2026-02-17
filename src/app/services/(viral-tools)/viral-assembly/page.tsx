@@ -21,7 +21,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { toast } from "sonner";
 
 import { ServiceHeader } from "@/components/services/service-header";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
@@ -49,10 +48,8 @@ import {
 } from "@/lib/forms/(viral-tools)/viral-assembly/viral-assembly-form-schema";
 import {
   transformViralAssemblyParams,
-  handleLibraryError as handleLibraryErrorUtil,
   getPairedLibraryBuildFn,
   getSingleLibraryBuildFn,
-  singleLibraryDuplicateMatcher,
 } from "@/lib/forms/(viral-tools)/viral-assembly/viral-assembly-form-utils";
 import {
   buildBaseLibraryItem,
@@ -82,12 +79,7 @@ export default function ViralAssemblyPage() {
 
   const inputType = form.watch("input_type");
 
-  const {
-    selectedLibraries,
-    addPairedLibrary,
-    addSingleLibrary,
-    setLibrariesAndSync,
-  } = useLibrarySelection<
+  const { selectedLibraries, setLibrariesAndSync } = useLibrarySelection<
     ViralAssemblyFormData,
     ViralAssemblyLibraryItem,
     string
@@ -100,35 +92,6 @@ export default function ViralAssemblyPage() {
       srr: "srr_ids",
     },
   });
-
-  const handleLibraryError = (message: string) => {
-    handleLibraryErrorUtil(message, toast);
-  };
-
-  const handlePairedLibraryAdd = () => {
-    addPairedLibrary({
-      read1: pairedRead1,
-      read2: pairedRead2,
-      buildLibrary: getPairedLibraryBuildFn(),
-      onError: handleLibraryError,
-      onAfterAdd: () => {
-        setPairedRead1(null);
-        setPairedRead2(null);
-      },
-    });
-  };
-
-  const handleSingleLibraryAdd = () => {
-    addSingleLibrary({
-      read: singleRead,
-      buildLibrary: getSingleLibraryBuildFn(),
-      duplicateMatcher: singleLibraryDuplicateMatcher,
-      onError: handleLibraryError,
-      onAfterAdd: () => {
-        setSingleRead(null);
-      },
-    });
-  };
 
   // Sync selected single read into form when Single Read Library is selected (no Add button on this page)
   useEffect(() => {

@@ -287,144 +287,146 @@ export default function SarsCov2GenomeAnalysisPage() {
           </div>
 
           {/* Parameters */}
-          <div className="md:col-span-6">
-            <Card>
-              <CardHeader className="service-card-header">
-                <RequiredFormCardTitle className="service-card-title">
-                  Input Library
-                  <DialogInfoPopup
-                    title={readInputFileInfo.title}
-                    description={readInputFileInfo.description}
-                    sections={readInputFileInfo.sections}
-                  />
-                </RequiredFormCardTitle>
-              </CardHeader>
-              <CardContent className="service-card-content space-y-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <Label className="service-card-label">
-                      Paired Read Library
-                    </Label>
-                    <div className="bg-border mx-4 h-px flex-1" />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      onClick={handlePairedLibraryAdd}
-                      disabled={!pairedRead1 || !pairedRead2}
-                    >
-                      <ChevronRight size={16} />
-                    </Button>
+          {inputType === "reads" && (
+            <div className="md:col-span-6">
+              <Card>
+                <CardHeader className="service-card-header">
+                  <RequiredFormCardTitle className="service-card-title">
+                    Input Library
+                    <DialogInfoPopup
+                      title={readInputFileInfo.title}
+                      description={readInputFileInfo.description}
+                      sections={readInputFileInfo.sections}
+                    />
+                  </RequiredFormCardTitle>
+                </CardHeader>
+                <CardContent className="service-card-content space-y-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Label className="service-card-label">
+                        Paired Read Library
+                      </Label>
+                      <div className="bg-border mx-4 h-px flex-1" />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={handlePairedLibraryAdd}
+                        disabled={!pairedRead1 || !pairedRead2}
+                      >
+                        <ChevronRight size={16} />
+                      </Button>
+                    </div>
+                    <div className="space-y-3">
+                      <WorkspaceObjectSelector
+                        types={["reads"]}
+                        placeholder="Select READ FILE 1..."
+                        value={pairedRead1 ?? ""}
+                        onObjectSelect={(object: WorkspaceObject) =>
+                          setPairedRead1(object.path)
+                        }
+                      />
+                      <WorkspaceObjectSelector
+                        types={["reads"]}
+                        placeholder="Select READ FILE 2..."
+                        value={pairedRead2 ?? ""}
+                        onObjectSelect={(object: WorkspaceObject) =>
+                          setPairedRead2(object.path)
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="service-card-sublabel">Platform</Label>
+                      <Select
+                        value={pairedPlatform}
+                        onValueChange={(v) =>
+                          setPairedPlatform(v as SarsCov2Platform)
+                        }
+                      >
+                        <SelectTrigger className="service-card-select-trigger">
+                          <SelectValue placeholder="Select a platform..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {SARS_COV2_PAIRED_PLATFORM_OPTIONS.map((opt) => (
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                  <div className="space-y-3">
+
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Label className="service-card-label">
+                        Single Read Library
+                      </Label>
+                      <div className="bg-border mx-4 h-px flex-1" />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={handleSingleLibraryAdd}
+                        disabled={!singleRead || !singlePlatform}
+                      >
+                        <ChevronRight size={16} />
+                      </Button>
+                    </div>
+
                     <WorkspaceObjectSelector
                       types={["reads"]}
-                      placeholder="Select READ FILE 1..."
-                      value={pairedRead1 ?? ""}
+                      placeholder="Select READ FILE..."
+                      value={singleRead ?? ""}
                       onObjectSelect={(object: WorkspaceObject) =>
-                        setPairedRead1(object.path)
+                        setSingleRead(object.path)
                       }
                     />
-                    <WorkspaceObjectSelector
-                      types={["reads"]}
-                      placeholder="Select READ FILE 2..."
-                      value={pairedRead2 ?? ""}
-                      onObjectSelect={(object: WorkspaceObject) =>
-                        setPairedRead2(object.path)
-                      }
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="service-card-sublabel">Platform</Label>
-                    <Select
-                      value={pairedPlatform}
-                      onValueChange={(v) =>
-                        setPairedPlatform(v as SarsCov2Platform)
-                      }
-                    >
-                      <SelectTrigger className="service-card-select-trigger">
-                        <SelectValue placeholder="Select a platform..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {SARS_COV2_PAIRED_PLATFORM_OPTIONS.map((opt) => (
-                          <SelectItem key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <Label className="service-card-label">
-                      Single Read Library
-                    </Label>
-                    <div className="bg-border mx-4 h-px flex-1" />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      onClick={handleSingleLibraryAdd}
-                      disabled={!singleRead || !singlePlatform}
-                    >
-                      <ChevronRight size={16} />
-                    </Button>
+                    <div className="space-y-2">
+                      <Label className="service-card-sublabel">Platform</Label>
+                      <Select
+                        value={singlePlatform}
+                        onValueChange={(v) =>
+                          setSinglePlatform(v as SarsCov2Platform)
+                        }
+                      >
+                        <SelectTrigger className="service-card-select-trigger">
+                          <SelectValue placeholder="Select a platform..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {SARS_COV2_SINGLE_PLATFORM_OPTIONS.map((opt) => (
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
-                  <WorkspaceObjectSelector
-                    types={["reads"]}
-                    placeholder="Select READ FILE..."
-                    value={singleRead ?? ""}
-                    onObjectSelect={(object: WorkspaceObject) =>
-                      setSingleRead(object.path)
-                    }
+                  <SraRunAccessionWithValidation
+                    key={sraResetKey}
+                    title="SRA Run Accession"
+                    placeholder="SRR..."
+                    selectedLibraries={selectedLibraries}
+                    setSelectedLibraries={setLibrariesAndSync}
+                    allowDuplicates={false}
                   />
 
-                  <div className="space-y-2">
-                    <Label className="service-card-sublabel">Platform</Label>
-                    <Select
-                      value={singlePlatform}
-                      onValueChange={(v) =>
-                        setSinglePlatform(v as SarsCov2Platform)
-                      }
-                    >
-                      <SelectTrigger className="service-card-select-trigger">
-                        <SelectValue placeholder="Select a platform..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {SARS_COV2_SINGLE_PLATFORM_OPTIONS.map((opt) => (
-                          <SelectItem key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <SraRunAccessionWithValidation
-                  key={sraResetKey}
-                  title="SRA Run Accession"
-                  placeholder="SRR..."
-                  selectedLibraries={selectedLibraries}
-                  setSelectedLibraries={setLibrariesAndSync}
-                  allowDuplicates={false}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="paired_end_libs"
-                  render={() => (
-                    <FormItem>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
-          </div>
+                  <FormField
+                    control={form.control}
+                    name="paired_end_libs"
+                    render={() => (
+                      <FormItem>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          )}
 
           {/* Selected Libraries (when reads) */}
           {inputType === "reads" && (
@@ -463,324 +465,9 @@ export default function SarsCov2GenomeAnalysisPage() {
             </div>
           )}
 
-          {/* Input Library (when reads) */}
-          {inputType === "reads" && (
-            <div className="col-span-full">
-              <Card className="h-full">
-                <CardHeader className="service-card-header">
-                  <RequiredFormCardTitle className="service-card-title">
-                    Parameters
-                    <DialogInfoPopup
-                      title={sarsCov2GenomeAnalysisParameters.title}
-                      sections={sarsCov2GenomeAnalysisParameters.sections}
-                    />
-                  </RequiredFormCardTitle>
-                </CardHeader>
-                <CardContent className="service-card-content space-y-4">
-                  {inputType === "reads" && (
-                    <>
-                      <div className="space-y-2">
-                        <Label className="service-card-label">Strategy</Label>
-                        <FormField
-                          control={form.control}
-                          name="recipe"
-                          render={({ field }) => (
-                            <FormItem>
-                              <Select
-                                value={field.value}
-                                onValueChange={field.onChange}
-                              >
-                                <SelectTrigger className="service-card-select-trigger">
-                                  <SelectValue placeholder="Select strategy" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {RECIPE_OPTIONS.map((opt) => (
-                                    <SelectItem
-                                      key={opt.value}
-                                      value={opt.value}
-                                    >
-                                      {opt.label}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      {showPrimersSection && (
-                        <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
-                          <div className="flex-1 space-y-2">
-                            <Label className="service-card-label">
-                              Primers
-                            </Label>
-                            <FormField
-                              control={form.control}
-                              name="primers"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <Select
-                                    value={field.value}
-                                    onValueChange={(v) =>
-                                      field.onChange(v as Primers)
-                                    }
-                                  >
-                                    <SelectTrigger className="service-card-select-trigger">
-                                      <SelectValue placeholder="Select primers" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      {PRIMER_OPTIONS.map((opt) => (
-                                        <SelectItem
-                                          key={opt.value}
-                                          value={opt.value}
-                                        >
-                                          {opt.label}
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          </div>
-                          <div className="w-full space-y-2 sm:w-32">
-                            <Label className="service-card-label">
-                              Version
-                            </Label>
-                            <FormField
-                              control={form.control}
-                              name="primer_version"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <Select
-                                    value={field.value}
-                                    onValueChange={field.onChange}
-                                  >
-                                    <SelectTrigger className="service-card-select-trigger">
-                                      <SelectValue placeholder="Version" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      {primerVersionOptions.map((opt) => (
-                                        <SelectItem
-                                          key={opt.value}
-                                          value={opt.value}
-                                        >
-                                          {opt.label}
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </>
-                  )}
-
-                  <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
-                    <div className="flex-1 space-y-2">
-                      <Label className="service-card-label">
-                        Taxonomy Name
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <HelpCircle className="service-card-tooltip-icon ml-1 inline-block" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Select the taxonomy name for SARS-CoV-2</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </Label>
-                      <FormField
-                        control={form.control}
-                        name="scientific_name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <TaxonNameSelector
-                                value={
-                                  field.value || form.getValues("taxonomy_id")
-                                    ? {
-                                        taxon_id:
-                                          parseInt(
-                                            form.getValues("taxonomy_id") ||
-                                              "0",
-                                            10,
-                                          ) || 0,
-                                        taxon_name: field.value || "",
-                                      }
-                                    : null
-                                }
-                                onChange={(item) => {
-                                  if (item) {
-                                    field.onChange(item.taxon_name);
-                                    form.setValue(
-                                      "taxonomy_id",
-                                      String(item.taxon_id),
-                                      {
-                                        shouldValidate: true,
-                                      },
-                                    );
-                                    const out = computeOutputName(
-                                      item.taxon_name,
-                                      form.getValues("my_label"),
-                                    );
-                                    if (out)
-                                      form.setValue("output_file", out, {
-                                        shouldValidate: true,
-                                      });
-                                  } else {
-                                    field.onChange("");
-                                    form.setValue("taxonomy_id", "", {
-                                      shouldValidate: true,
-                                    });
-                                  }
-                                }}
-                                placeholder="e.g. Severe acute respiratory syndrome coronavirus 2"
-                                includeViruses={false}
-                                includeBacteria={false}
-                                includeEukaryotes={false}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="w-full space-y-2 sm:w-40">
-                      <Label className="service-card-label">Taxonomy ID</Label>
-                      <FormField
-                        control={form.control}
-                        name="taxonomy_id"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <TaxIDSelector
-                                value={
-                                  field.value
-                                    ? {
-                                        taxon_id:
-                                          parseInt(field.value, 10) || 0,
-                                        taxon_name:
-                                          form.getValues("scientific_name") ||
-                                          "",
-                                      }
-                                    : null
-                                }
-                                onChange={(item) => {
-                                  if (item) {
-                                    field.onChange(String(item.taxon_id));
-                                    form.setValue(
-                                      "scientific_name",
-                                      item.taxon_name,
-                                      {
-                                        shouldValidate: true,
-                                      },
-                                    );
-                                    const out = computeOutputName(
-                                      item.taxon_name,
-                                      form.getValues("my_label"),
-                                    );
-                                    if (out)
-                                      form.setValue("output_file", out, {
-                                        shouldValidate: true,
-                                      });
-                                  } else {
-                                    field.onChange("");
-                                    form.setValue("scientific_name", "", {
-                                      shouldValidate: true,
-                                    });
-                                  }
-                                }}
-                                placeholder="NCBI Taxonomy ID"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-
-                  <FormField
-                    control={form.control}
-                    name="my_label"
-                    render={({ field }) => (
-                      <FormItem>
-                        <Label className="service-card-label">My Label</Label>
-                        <FormControl>
-                          <Input
-                            placeholder="My identifier123"
-                            className="service-card-input"
-                            {...field}
-                            onChange={(e) => {
-                              field.onChange(e.target.value);
-                              const out = computeOutputName(
-                                form.getValues("scientific_name"),
-                                e.target.value,
-                              );
-                              if (out)
-                                form.setValue("output_file", out, {
-                                  shouldValidate: true,
-                                });
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="output_path"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <OutputFolder
-                            value={field.value}
-                            onChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="output_file"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <OutputFolder
-                            variant="name"
-                            value={field.value}
-                            onChange={field.onChange}
-                            outputFolderPath={form.watch("output_path")}
-                            onValidationChange={setIsOutputNameValid}
-                            disabled={true}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-            </div>
-          )}
-
           {/* Contigs (when contigs) */}
           {inputType === "contigs" && (
-            <div className="md:col-span-7">
+            <div className="md:col-span-12">
               <Card>
                 <CardHeader className="service-card-header">
                   <RequiredFormCardTitle className="service-card-title">
@@ -812,6 +499,309 @@ export default function SarsCov2GenomeAnalysisPage() {
               </Card>
             </div>
           )}
+
+          {/* Input Library (when reads) */}
+          <div className="col-span-full">
+            <Card className="h-full">
+              <CardHeader className="service-card-header">
+                <RequiredFormCardTitle className="service-card-title">
+                  Parameters
+                  <DialogInfoPopup
+                    title={sarsCov2GenomeAnalysisParameters.title}
+                    sections={sarsCov2GenomeAnalysisParameters.sections}
+                  />
+                </RequiredFormCardTitle>
+              </CardHeader>
+              <CardContent className="service-card-content space-y-4">
+                {inputType === "reads" && (
+                  <>
+                    <div className="space-y-2">
+                      <Label className="service-card-label">Strategy</Label>
+                      <FormField
+                        control={form.control}
+                        name="recipe"
+                        render={({ field }) => (
+                          <FormItem>
+                            <Select
+                              value={field.value}
+                              onValueChange={field.onChange}
+                            >
+                              <SelectTrigger className="service-card-select-trigger">
+                                <SelectValue placeholder="Select strategy" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {RECIPE_OPTIONS.map((opt) => (
+                                  <SelectItem key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    {showPrimersSection && (
+                      <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
+                        <div className="flex-1 space-y-2">
+                          <Label className="service-card-label">Primers</Label>
+                          <FormField
+                            control={form.control}
+                            name="primers"
+                            render={({ field }) => (
+                              <FormItem>
+                                <Select
+                                  value={field.value}
+                                  onValueChange={(v) =>
+                                    field.onChange(v as Primers)
+                                  }
+                                >
+                                  <SelectTrigger className="service-card-select-trigger">
+                                    <SelectValue placeholder="Select primers" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {PRIMER_OPTIONS.map((opt) => (
+                                      <SelectItem
+                                        key={opt.value}
+                                        value={opt.value}
+                                      >
+                                        {opt.label}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="w-full space-y-2 sm:w-32">
+                          <Label className="service-card-label">Version</Label>
+                          <FormField
+                            control={form.control}
+                            name="primer_version"
+                            render={({ field }) => (
+                              <FormItem>
+                                <Select
+                                  value={field.value}
+                                  onValueChange={field.onChange}
+                                >
+                                  <SelectTrigger className="service-card-select-trigger">
+                                    <SelectValue placeholder="Version" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {primerVersionOptions.map((opt) => (
+                                      <SelectItem
+                                        key={opt.value}
+                                        value={opt.value}
+                                      >
+                                        {opt.label}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+
+                <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
+                  <div className="flex-1 space-y-2">
+                    <Label className="service-card-label">
+                      Taxonomy Name
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <HelpCircle className="service-card-tooltip-icon ml-1 inline-block" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Select the taxonomy name for SARS-CoV-2</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </Label>
+                    <FormField
+                      control={form.control}
+                      name="scientific_name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <TaxonNameSelector
+                              value={
+                                field.value || form.getValues("taxonomy_id")
+                                  ? {
+                                      taxon_id:
+                                        parseInt(
+                                          form.getValues("taxonomy_id") || "0",
+                                          10,
+                                        ) || 0,
+                                      taxon_name: field.value || "",
+                                    }
+                                  : null
+                              }
+                              onChange={(item) => {
+                                if (item) {
+                                  field.onChange(item.taxon_name);
+                                  form.setValue(
+                                    "taxonomy_id",
+                                    String(item.taxon_id),
+                                    {
+                                      shouldValidate: true,
+                                    },
+                                  );
+                                  const out = computeOutputName(
+                                    item.taxon_name,
+                                    form.getValues("my_label"),
+                                  );
+                                  if (out)
+                                    form.setValue("output_file", out, {
+                                      shouldValidate: true,
+                                    });
+                                } else {
+                                  field.onChange("");
+                                  form.setValue("taxonomy_id", "", {
+                                    shouldValidate: true,
+                                  });
+                                }
+                              }}
+                              placeholder="e.g. Severe acute respiratory syndrome coronavirus 2"
+                              includeViruses={false}
+                              includeBacteria={false}
+                              includeEukaryotes={false}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="w-full space-y-2 sm:w-40">
+                    <Label className="service-card-label">Taxonomy ID</Label>
+                    <FormField
+                      control={form.control}
+                      name="taxonomy_id"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <TaxIDSelector
+                              value={
+                                field.value
+                                  ? {
+                                      taxon_id: parseInt(field.value, 10) || 0,
+                                      taxon_name:
+                                        form.getValues("scientific_name") || "",
+                                    }
+                                  : null
+                              }
+                              onChange={(item) => {
+                                if (item) {
+                                  field.onChange(String(item.taxon_id));
+                                  form.setValue(
+                                    "scientific_name",
+                                    item.taxon_name,
+                                    {
+                                      shouldValidate: true,
+                                    },
+                                  );
+                                  const out = computeOutputName(
+                                    item.taxon_name,
+                                    form.getValues("my_label"),
+                                  );
+                                  if (out)
+                                    form.setValue("output_file", out, {
+                                      shouldValidate: true,
+                                    });
+                                } else {
+                                  field.onChange("");
+                                  form.setValue("scientific_name", "", {
+                                    shouldValidate: true,
+                                  });
+                                }
+                              }}
+                              placeholder="NCBI Taxonomy ID"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="my_label"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Label className="service-card-label">My Label</Label>
+                      <FormControl>
+                        <Input
+                          placeholder="My identifier123"
+                          className="service-card-input"
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e.target.value);
+                            const out = computeOutputName(
+                              form.getValues("scientific_name"),
+                              e.target.value,
+                            );
+                            if (out)
+                              form.setValue("output_file", out, {
+                                shouldValidate: true,
+                              });
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="output_path"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <OutputFolder
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="output_file"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <OutputFolder
+                          variant="name"
+                          value={field.value}
+                          onChange={field.onChange}
+                          outputFolderPath={form.watch("output_path")}
+                          onValidationChange={setIsOutputNameValid}
+                          disabled={true}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Form controls */}
           <div className="md:col-span-12">

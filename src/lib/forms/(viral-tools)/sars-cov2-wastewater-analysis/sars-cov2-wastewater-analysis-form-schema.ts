@@ -16,9 +16,8 @@ export const sarsCov2WastewaterLibrarySchema = baseLibrarySchema.extend({
   sample_id: z.string().min(1, "Sample identifier is required"),
   sample_level_date: z.string().optional(),
 });
-export type SarsCov2WastewaterLibraryItem = z.infer<
-  typeof sarsCov2WastewaterLibrarySchema
->;
+export interface SarsCov2WastewaterLibraryItem
+  extends z.infer<typeof sarsCov2WastewaterLibrarySchema> {}
 
 // SRA library item (primers/primer_version added at transform from form-level)
 export const srrLibItemSchema = z.object({
@@ -27,7 +26,7 @@ export const srrLibItemSchema = z.object({
   sample_level_date: z.string().optional(),
   title: z.string().optional(),
 });
-export type SrrLibItem = z.infer<typeof srrLibItemSchema>;
+export interface SrrLibItem extends z.infer<typeof srrLibItemSchema> {}
 
 // Strategy (recipe) — legacy has only One Codex
 export const recipeSchema = z.enum(["onecodex"]);
@@ -40,18 +39,22 @@ export const recipeOptions: { value: Recipe; label: string }[] = [
 const MIN_YEAR = 2000;
 const MAX_YEAR = 2099;
 
+/** Exact MM/DD/YYYY token pattern: two digits, slash, two digits, slash, four digits. */
+const MM_DD_YYYY_REGEX = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+
 /**
  * Validates a date string in MM/DD/YYYY format with real calendar rules
  * and year range 2000–2099. Use for sample_level_date validation.
+ * Requires the full string to match the exact token pattern so trailing
+ * characters (e.g. "01/15/2024xyz") are rejected.
  */
 export function isValidDate(dateStr: string): boolean {
   const trimmed = dateStr.trim();
-  const parts = trimmed.split("/");
-  if (parts.length !== 3) return false;
-  const month = parseInt(parts[0], 10);
-  const day = parseInt(parts[1], 10);
-  const year = parseInt(parts[2], 10);
-  if (Number.isNaN(month) || Number.isNaN(day) || Number.isNaN(year)) return false;
+  const match = trimmed.match(MM_DD_YYYY_REGEX);
+  if (!match) return false;
+  const month = parseInt(match[1], 10);
+  const day = parseInt(match[2], 10);
+  const year = parseInt(match[3], 10);
   if (year < MIN_YEAR || year > MAX_YEAR) return false;
   if (month < 1 || month > 12) return false;
   const daysInMonth = new Date(year, month, 0).getDate();
@@ -141,9 +144,8 @@ export const sarsCov2WastewaterAnalysisFormSchema = z
     });
   });
 
-export type SarsCov2WastewaterAnalysisFormData = z.infer<
-  typeof sarsCov2WastewaterAnalysisFormSchema
->;
+export interface SarsCov2WastewaterAnalysisFormData
+  extends z.infer<typeof sarsCov2WastewaterAnalysisFormSchema> {}
 
 export const defaultSarsCov2WastewaterAnalysisFormValues: SarsCov2WastewaterAnalysisFormData =
   {

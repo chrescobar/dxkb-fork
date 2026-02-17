@@ -124,10 +124,11 @@ export default function ViralAssemblyPage() {
 
   const currentPairedIdsKey = useMemo(
     () =>
-      selectedLibraries
-        .filter((lib) => lib.type === "paired")
-        .map((lib) => lib.id)
-        .join(","),
+      JSON.stringify(
+        selectedLibraries
+          .filter((lib) => lib.type === "paired")
+          .map((lib) => lib.id),
+      ),
     [selectedLibraries],
   );
 

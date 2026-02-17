@@ -215,6 +215,7 @@ export default function BrucellaGenomeViewer() {
                         <DropdownMenuItem>
                           <Checkbox
                             id="strain"
+                            name="strain"
                             className="mr-2"
                             defaultChecked
                           />
@@ -223,33 +224,35 @@ export default function BrucellaGenomeViewer() {
                         <DropdownMenuItem>
                           <Checkbox
                             id="genbank"
+                            name="genbank"
                             className="mr-2"
                             defaultChecked
                           />
                           <label htmlFor="genbank">GenBank Accessions</label>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
-                          <Checkbox id="size" className="mr-2" defaultChecked />
+                          <Checkbox id="size" name="size" className="mr-2" defaultChecked />
                           <label htmlFor="size">Size</label>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
-                          <Checkbox id="cds" className="mr-2" defaultChecked />
+                          <Checkbox id="cds" name="cds" className="mr-2" defaultChecked />
                           <label htmlFor="cds">CDS</label>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
-                          <Checkbox id="year" className="mr-2" defaultChecked />
+                          <Checkbox id="year" name="year" className="mr-2" defaultChecked />
                           <label htmlFor="year">Collection Year</label>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                           <Checkbox
                             id="country"
+                            name="country"
                             className="mr-2"
                             defaultChecked
                           />
                           <label htmlFor="country">Isolation Country</label>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
-                          <Checkbox id="host" className="mr-2" defaultChecked />
+                          <Checkbox id="host" name="host" className="mr-2" defaultChecked />
                           <label htmlFor="host">Host Common Name</label>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -265,7 +268,7 @@ export default function BrucellaGenomeViewer() {
                   <div className="sticky top-0 bg-white">
                     <div className="flex border-b border-gray-200">
                       <div className="w-10 px-4 py-3 text-left">
-                        <Checkbox />
+                        <Checkbox id="select-all-brucella" name="select-all-brucella" />
                       </div>
                       <div className="w-1/4 px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                         Genome Name
@@ -300,6 +303,8 @@ export default function BrucellaGenomeViewer() {
                       <div key={genome.id} className="flex hover:bg-gray-50">
                         <div className="w-10 px-4 py-4 whitespace-nowrap">
                           <Checkbox
+                            id={`row-${genome.id}-checkbox`}
+                            name={`row-${genome.id}-checkbox`}
                             checked={selectedRows.includes(genome.id)}
                             onCheckedChange={() =>
                               toggleRowSelection(genome.id)
@@ -406,19 +411,19 @@ export default function BrucellaGenomeViewer() {
                     <h4 className="mb-2 font-medium">Collection Year</h4>
                     <div className="space-y-2">
                       <div className="flex items-center">
-                        <Checkbox id="y2017" className="mr-2" />
+                        <Checkbox id="y2017" name="y2017" className="mr-2" />
                         <label htmlFor="y2017">2017 (24)</label>
                       </div>
                       <div className="flex items-center">
-                        <Checkbox id="y2015" className="mr-2" />
+                        <Checkbox id="y2015" name="y2015" className="mr-2" />
                         <label htmlFor="y2015">2015 (6)</label>
                       </div>
                       <div className="flex items-center">
-                        <Checkbox id="y2014" className="mr-2" />
+                        <Checkbox id="y2014" name="y2014" className="mr-2" />
                         <label htmlFor="y2014">2014 (8)</label>
                       </div>
                       <div className="flex items-center">
-                        <Checkbox id="y2012" className="mr-2" />
+                        <Checkbox id="y2012" name="y2012" className="mr-2" />
                         <label htmlFor="y2012">2012 (5)</label>
                       </div>
                     </div>
@@ -428,15 +433,15 @@ export default function BrucellaGenomeViewer() {
                     <h4 className="mb-2 font-medium">Isolation Country</h4>
                     <div className="space-y-2">
                       <div className="flex items-center">
-                        <Checkbox id="cTunisia" className="mr-2" />
+                        <Checkbox id="cTunisia" name="cTunisia" className="mr-2" />
                         <label htmlFor="cTunisia">Tunisia (18)</label>
                       </div>
                       <div className="flex items-center">
-                        <Checkbox id="cFrance" className="mr-2" />
+                        <Checkbox id="cFrance" name="cFrance" className="mr-2" />
                         <label htmlFor="cFrance">France (8)</label>
                       </div>
                       <div className="flex items-center">
-                        <Checkbox id="cUK" className="mr-2" />
+                        <Checkbox id="cUK" name="cUK" className="mr-2" />
                         <label htmlFor="cUK">United Kingdom (4)</label>
                       </div>
                     </div>
@@ -446,15 +451,15 @@ export default function BrucellaGenomeViewer() {
                     <h4 className="mb-2 font-medium">Host</h4>
                     <div className="space-y-2">
                       <div className="flex items-center">
-                        <Checkbox id="hHuman" className="mr-2" />
+                        <Checkbox id="hHuman" name="hHuman" className="mr-2" />
                         <label htmlFor="hHuman">Human (22)</label>
                       </div>
                       <div className="flex items-center">
-                        <Checkbox id="hDolphin" className="mr-2" />
+                        <Checkbox id="hDolphin" name="hDolphin" className="mr-2" />
                         <label htmlFor="hDolphin">Dolphin (6)</label>
                       </div>
                       <div className="flex items-center">
-                        <Checkbox id="hSeal" className="mr-2" />
+                        <Checkbox id="hSeal" name="hSeal" className="mr-2" />
                         <label htmlFor="hSeal">Grey Seal (4)</label>
                       </div>
                     </div>

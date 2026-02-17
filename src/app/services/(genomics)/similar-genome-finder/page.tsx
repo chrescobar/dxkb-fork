@@ -353,6 +353,8 @@ export default function SimilarGenomeFinderServicePage() {
                               <FormItem className="flex flex-row items-center space-x-2 space-y-0">
                                 <FormControl>
                                   <Checkbox
+                                    id="include_bacterial"
+                                    name="include_bacterial"
                                     checked={field.value}
                                     onCheckedChange={field.onChange}
                                   />
@@ -371,6 +373,8 @@ export default function SimilarGenomeFinderServicePage() {
                               <FormItem className="flex flex-row items-center space-x-2 space-y-0">
                                 <FormControl>
                                   <Checkbox
+                                    id="include_viral"
+                                    name="include_viral"
                                     checked={field.value}
                                     onCheckedChange={field.onChange}
                                   />

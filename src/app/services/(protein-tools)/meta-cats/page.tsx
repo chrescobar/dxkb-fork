@@ -701,6 +701,8 @@ export default function MetaCATSPage() {
                           <TableRow>
                             <TableHead className="w-12">
                               <Checkbox
+                                id="select-all-meta-cats"
+                                name="select-all-meta-cats"
                                 checked={
                                   selectedGridRows.size === autoGroups.length &&
                                   autoGroups.length > 0
@@ -731,6 +733,8 @@ export default function MetaCATSPage() {
                               <TableRow key={item.id}>
                                 <TableCell>
                                   <Checkbox
+                                    id={`row-${item.id}-checkbox`}
+                                    name={`row-${item.id}-checkbox`}
                                     checked={selectedGridRows.has(item.id)}
                                     onCheckedChange={() => handleRowSelect(item.id)}
                                   />

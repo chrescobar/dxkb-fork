@@ -267,42 +267,42 @@ export default function BrucellaGenomeViewerAlt() {
                     <AccordionContent>
                       <div className="space-y-2 pl-2">
                         <div className="flex items-center">
-                          <Checkbox id="sp1" className="mr-2" />
+                          <Checkbox id="sp1" name="sp1" className="mr-2" />
                           <label htmlFor="sp1" className="flex-1 text-sm">
                             B. melitensis
                           </label>
                           <span className="text-xs text-gray-500">840</span>
                         </div>
                         <div className="flex items-center">
-                          <Checkbox id="sp2" className="mr-2" />
+                          <Checkbox id="sp2" name="sp2" className="mr-2" />
                           <label htmlFor="sp2" className="flex-1 text-sm">
                             B. abortus
                           </label>
                           <span className="text-xs text-gray-500">612</span>
                         </div>
                         <div className="flex items-center">
-                          <Checkbox id="sp3" className="mr-2" />
+                          <Checkbox id="sp3" name="sp3" className="mr-2" />
                           <label htmlFor="sp3" className="flex-1 text-sm">
                             B. suis
                           </label>
                           <span className="text-xs text-gray-500">204</span>
                         </div>
                         <div className="flex items-center">
-                          <Checkbox id="sp4" className="mr-2" />
+                          <Checkbox id="sp4" name="sp4" className="mr-2" />
                           <label htmlFor="sp4" className="flex-1 text-sm">
                             B. canis
                           </label>
                           <span className="text-xs text-gray-500">65</span>
                         </div>
                         <div className="flex items-center">
-                          <Checkbox id="sp5" className="mr-2" defaultChecked />
+                          <Checkbox id="sp5" name="sp5" className="mr-2" defaultChecked />
                           <label htmlFor="sp5" className="flex-1 text-sm">
                             B. ceti
                           </label>
                           <span className="text-xs text-gray-500">42</span>
                         </div>
                         <div className="flex items-center">
-                          <Checkbox id="sp6" className="mr-2" />
+                          <Checkbox id="sp6" name="sp6" className="mr-2" />
                           <label htmlFor="sp6" className="flex-1 text-sm">
                             B. ovis
                           </label>
@@ -319,28 +319,28 @@ export default function BrucellaGenomeViewerAlt() {
                     <AccordionContent>
                       <div className="space-y-2 pl-2">
                         <div className="flex items-center">
-                          <Checkbox id="h1" className="mr-2" />
+                          <Checkbox id="h1" name="h1" className="mr-2" />
                           <label htmlFor="h1" className="flex-1 text-sm">
                             Human
                           </label>
                           <span className="text-xs text-gray-500">943</span>
                         </div>
                         <div className="flex items-center">
-                          <Checkbox id="h2" className="mr-2" />
+                          <Checkbox id="h2" name="h2" className="mr-2" />
                           <label htmlFor="h2" className="flex-1 text-sm">
                             Cattle
                           </label>
                           <span className="text-xs text-gray-500">412</span>
                         </div>
                         <div className="flex items-center">
-                          <Checkbox id="h3" className="mr-2" defaultChecked />
+                          <Checkbox id="h3" name="h3" className="mr-2" defaultChecked />
                           <label htmlFor="h3" className="flex-1 text-sm">
                             Dolphin
                           </label>
                           <span className="text-xs text-gray-500">38</span>
                         </div>
                         <div className="flex items-center">
-                          <Checkbox id="h4" className="mr-2" defaultChecked />
+                          <Checkbox id="h4" name="h4" className="mr-2" defaultChecked />
                           <label htmlFor="h4" className="flex-1 text-sm">
                             Grey Seal
                           </label>
@@ -392,28 +392,28 @@ export default function BrucellaGenomeViewerAlt() {
                     <AccordionContent>
                       <div className="space-y-2 pl-2">
                         <div className="flex items-center">
-                          <Checkbox id="c1" className="mr-2" />
+                          <Checkbox id="c1" name="c1" className="mr-2" />
                           <label htmlFor="c1" className="flex-1 text-sm">
                             Tunisia
                           </label>
                           <span className="text-xs text-gray-500">324</span>
                         </div>
                         <div className="flex items-center">
-                          <Checkbox id="c2" className="mr-2" defaultChecked />
+                          <Checkbox id="c2" name="c2" className="mr-2" defaultChecked />
                           <label htmlFor="c2" className="flex-1 text-sm">
                             France
                           </label>
                           <span className="text-xs text-gray-500">215</span>
                         </div>
                         <div className="flex items-center">
-                          <Checkbox id="c3" className="mr-2" defaultChecked />
+                          <Checkbox id="c3" name="c3" className="mr-2" defaultChecked />
                           <label htmlFor="c3" className="flex-1 text-sm">
                             Finland
                           </label>
                           <span className="text-xs text-gray-500">86</span>
                         </div>
                         <div className="flex items-center">
-                          <Checkbox id="c4" className="mr-2" defaultChecked />
+                          <Checkbox id="c4" name="c4" className="mr-2" defaultChecked />
                           <label htmlFor="c4" className="flex-1 text-sm">
                             United Kingdom
                           </label>
@@ -669,6 +669,8 @@ export default function BrucellaGenomeViewerAlt() {
                     </CardContent>
                     <CardFooter className="flex justify-between bg-gray-50 p-2">
                       <Checkbox
+                        id={`genome-card-${genome.id}`}
+                        name={`genome-card-${genome.id}`}
                         checked={selectedRows.includes(genome.id)}
                         onCheckedChange={() => toggleRowSelection(genome.id)}
                       />
@@ -703,7 +705,7 @@ export default function BrucellaGenomeViewerAlt() {
               <div className="rounded-lg border border-gray-200 bg-white">
                 <div className="flex border-b text-xs font-medium text-gray-500 uppercase">
                   <div className="flex w-10 items-center justify-center p-3">
-                    <Checkbox />
+                    <Checkbox id="select-all-genomes-header" name="select-all-genomes-header" />
                   </div>
                   <div className="flex-1 p-3">Genome</div>
                   <div className="w-32 p-3 text-right">Size</div>
@@ -721,6 +723,8 @@ export default function BrucellaGenomeViewerAlt() {
                   >
                     <div className="flex w-10 items-center justify-center p-3">
                       <Checkbox
+                        id={`row-${genome.id}-checkbox`}
+                        name={`row-${genome.id}-checkbox`}
                         checked={selectedRows.includes(genome.id)}
                         onCheckedChange={() => toggleRowSelection(genome.id)}
                       />

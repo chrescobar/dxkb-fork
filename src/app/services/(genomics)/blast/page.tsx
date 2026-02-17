@@ -864,7 +864,7 @@ export default function BlastServicePage() {
           {/* Form Controls */}
           <div className="service-form-controls">
             <div className="flex items-center gap-2">
-              <Checkbox id="view-results" />
+              <Checkbox id="view-results" name="view-results" />
               <Label htmlFor="view-results">View Results</Label>
             </div>
             <div className="flex items-center gap-2">

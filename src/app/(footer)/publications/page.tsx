@@ -201,6 +201,7 @@ export default function PublicationsListView() {
                       <div className="flex items-center space-x-2">
                         <Checkbox
                           id="journal"
+                          name="journal"
                           checked={typeFilters.journal}
                           onCheckedChange={() => handleTypeFilterChange("journal")}
                         />
@@ -211,6 +212,7 @@ export default function PublicationsListView() {
                       <div className="flex items-center space-x-2">
                         <Checkbox
                           id="conference"
+                          name="conference"
                           checked={typeFilters.conference}
                           onCheckedChange={() => handleTypeFilterChange("conference")}
                         />
@@ -221,6 +223,7 @@ export default function PublicationsListView() {
                       <div className="flex items-center space-x-2">
                         <Checkbox
                           id="book"
+                          name="book"
                           checked={typeFilters.book}
                           onCheckedChange={() => handleTypeFilterChange("book")}
                         />
@@ -231,6 +234,7 @@ export default function PublicationsListView() {
                       <div className="flex items-center space-x-2">
                         <Checkbox
                           id="preprint"
+                          name="preprint"
                           checked={typeFilters.preprint}
                           onCheckedChange={() => handleTypeFilterChange("preprint")}
                         />
@@ -281,6 +285,7 @@ export default function PublicationsListView() {
                       <div className="flex items-center space-x-2">
                         <Checkbox
                           id="medicine"
+                          name="medicine"
                           checked={fieldFilters.medicine}
                           onCheckedChange={() => handleFieldFilterChange("medicine")}
                         />
@@ -291,6 +296,7 @@ export default function PublicationsListView() {
                       <div className="flex items-center space-x-2">
                         <Checkbox
                           id="computer-science"
+                          name="computer-science"
                           checked={fieldFilters.computerScience}
                           onCheckedChange={() => handleFieldFilterChange("computerScience")}
                         />
@@ -301,6 +307,7 @@ export default function PublicationsListView() {
                       <div className="flex items-center space-x-2">
                         <Checkbox
                           id="biology"
+                          name="biology"
                           checked={fieldFilters.biology}
                           onCheckedChange={() => handleFieldFilterChange("biology")}
                         />
@@ -311,6 +318,7 @@ export default function PublicationsListView() {
                       <div className="flex items-center space-x-2">
                         <Checkbox
                           id="education"
+                          name="education"
                           checked={fieldFilters.education}
                           onCheckedChange={() => handleFieldFilterChange("education")}
                         />
@@ -321,6 +329,7 @@ export default function PublicationsListView() {
                       <div className="flex items-center space-x-2">
                         <Checkbox
                           id="climate"
+                          name="climate"
                           checked={fieldFilters.climate}
                           onCheckedChange={() => handleFieldFilterChange("climate")}
                         />

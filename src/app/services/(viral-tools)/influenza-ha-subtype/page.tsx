@@ -137,6 +137,7 @@ export default function HASubtypeNumbering() {
                     <div className="flex items-center gap-2" key={scheme.id}>
                       <Checkbox
                         id={scheme.id}
+                        name={scheme.id}
                         checked={selectedSchemes.includes(scheme.id)}
                         onCheckedChange={() =>
                           setSelectedSchemes(

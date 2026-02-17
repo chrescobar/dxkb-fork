@@ -704,6 +704,7 @@ export default function MetagenomicBinningPage() {
                               <FormControl>
                                 <Checkbox
                                   id="disable_dangling"
+                                  name="disable_dangling"
                                   checked={field.value}
                                   onCheckedChange={field.onChange}
                                   className="mb-2 bg-white"

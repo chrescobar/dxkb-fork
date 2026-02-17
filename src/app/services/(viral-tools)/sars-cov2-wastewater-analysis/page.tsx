@@ -55,11 +55,11 @@ import {
 
 import {
   sarsCov2WastewaterAnalysisFormSchema,
-  DEFAULT_SARS_COV2_WASTEWATER_ANALYSIS_FORM_VALUES,
-  PRIMER_OPTIONS,
-  PRIMER_VERSION_OPTIONS,
-  DEFAULT_PRIMER_VERSION,
-  RECIPE_OPTIONS,
+  defaultSarsCov2WastewaterAnalysisFormValues,
+  primerOptions,
+  primerVersionOptions,
+  defaultPrimerVersion,
+  recipeOptions,
   type SarsCov2WastewaterAnalysisFormData,
   type SarsCov2WastewaterLibraryItem,
   type Primers,
@@ -85,15 +85,15 @@ import { getLibraryTypeLabel } from "@/lib/forms/shared-schemas";
 import type { WorkspaceObject } from "@/lib/workspace-client";
 import type { Library } from "@/types/services";
 
-const QUICK_REFERENCE =
+const quickReference =
   "https://www.bv-brc.org/docs/quick_references/services/sars_cov_2_wastewater_analysis_service.html";
-const TUTORIAL =
+const tutorial =
   "https://www.bv-brc.org/docs/tutorial/sars_cov_2_wastewater/sars_cov_2_wastewater.html";
 
 export default function SarsCov2WastewaterAnalysisPage() {
   const form = useForm<SarsCov2WastewaterAnalysisFormData>({
     resolver: zodResolver(sarsCov2WastewaterAnalysisFormSchema),
-    defaultValues: DEFAULT_SARS_COV2_WASTEWATER_ANALYSIS_FORM_VALUES,
+    defaultValues: defaultSarsCov2WastewaterAnalysisFormValues,
     mode: "onChange",
   });
 
@@ -106,8 +106,8 @@ export default function SarsCov2WastewaterAnalysisPage() {
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
   const primers = form.watch("primers");
-  const primerVersionOptions =
-    PRIMER_VERSION_OPTIONS[primers] ?? PRIMER_VERSION_OPTIONS.ARTIC;
+  const primerVersionOpts =
+    primerVersionOptions[primers] ?? primerVersionOptions.ARTIC;
 
   const {
     selectedLibraries,
@@ -161,7 +161,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
   // When primers change, set default primer_version
   useEffect(() => {
     if (primers) {
-      const defaultVersion = DEFAULT_PRIMER_VERSION[primers];
+      const defaultVersion = defaultPrimerVersion[primers];
       if (
         defaultVersion &&
         form.getValues("primer_version") !== defaultVersion
@@ -239,7 +239,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
 
   const handleReset = () => {
     form.reset(
-      { ...DEFAULT_SARS_COV2_WASTEWATER_ANALYSIS_FORM_VALUES },
+      { ...defaultSarsCov2WastewaterAnalysisFormValues },
       { keepDefaultValues: false }
     );
     setLibrariesAndSync([]);
@@ -272,8 +272,8 @@ export default function SarsCov2WastewaterAnalysisPage() {
         description="The SARS-CoV-2 Wastewater Analysis assembles raw reads with the Sars One Codex pipeline and performs variant analysis with Freyja."
         infoPopupTitle={sarsCov2WastewaterAnalysisInfo.title}
         infoPopupDescription={sarsCov2WastewaterAnalysisInfo.description}
-        quickReferenceGuide={QUICK_REFERENCE}
-        tutorial={TUTORIAL}
+        quickReferenceGuide={quickReference}
+        tutorial={tutorial}
       />
 
       <Form {...form}>
@@ -388,7 +388,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                               <SelectValue placeholder="Select primers" />
                             </SelectTrigger>
                             <SelectContent>
-                              {PRIMER_OPTIONS.map((opt) => (
+                              {primerOptions.map((opt) => (
                                 <SelectItem
                                   key={opt.value}
                                   value={opt.value}
@@ -418,7 +418,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                               <SelectValue placeholder="Version" />
                             </SelectTrigger>
                             <SelectContent>
-                              {primerVersionOptions.map((opt) => (
+                              {primerVersionOpts.map((opt) => (
                                 <SelectItem
                                   key={opt.value}
                                   value={opt.value}
@@ -535,7 +535,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                             <SelectValue placeholder="Select strategy" />
                           </SelectTrigger>
                           <SelectContent>
-                            {RECIPE_OPTIONS.map((opt) => (
+                            {recipeOptions.map((opt) => (
                               <SelectItem
                                 key={opt.value}
                                 value={opt.value}

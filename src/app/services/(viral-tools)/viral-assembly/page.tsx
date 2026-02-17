@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -41,9 +41,9 @@ import {
 
 import {
   viralAssemblyFormSchema,
-  DEFAULT_VIRAL_ASSEMBLY_FORM_VALUES,
-  STRATEGY_OPTIONS,
-  MODULE_OPTIONS,
+  defaultViralAssemblyFormValues,
+  strategyOptions,
+  moduleOptions,
   type ViralAssemblyFormData,
   type ViralAssemblyLibraryItem,
 } from "@/lib/forms/(viral-tools)/viral-assembly/viral-assembly-form-schema";
@@ -62,15 +62,15 @@ import {
 
 import type { WorkspaceObject } from "@/lib/workspace-client";
 
-const QUICK_REFERENCE =
+const quickReference =
   "https://www.bv-brc.org/docs/quick_references/services/viral_assembly.html";
-const TUTORIAL =
+const tutorial =
   "https://www.bv-brc.org/docs/tutorial/viral_assembly/assembly.html";
 
 export default function ViralAssemblyPage() {
   const form = useForm<ViralAssemblyFormData>({
     resolver: zodResolver(viralAssemblyFormSchema),
-    defaultValues: DEFAULT_VIRAL_ASSEMBLY_FORM_VALUES,
+    defaultValues: defaultViralAssemblyFormValues,
     mode: "onChange",
   });
 
@@ -159,6 +159,15 @@ export default function ViralAssemblyPage() {
     setLibrariesAndSync,
   ]);
 
+  const currentPairedIdsKey = useMemo(
+    () =>
+      selectedLibraries
+        .filter((lib) => lib.type === "paired")
+        .map((lib) => lib.id)
+        .join(","),
+    [selectedLibraries],
+  );
+
   // Sync selected paired reads into form when Paired Read Library is selected (no Add button on this page)
   useEffect(() => {
     if (inputType !== "paired") return;
@@ -193,13 +202,13 @@ export default function ViralAssemblyPage() {
     inputType,
     pairedRead1,
     pairedRead2,
-    selectedLibraries,
+    currentPairedIdsKey,
     setLibrariesAndSync,
   ]);
 
   const handleReset = () => {
     form.reset(
-      { ...DEFAULT_VIRAL_ASSEMBLY_FORM_VALUES },
+      { ...defaultViralAssemblyFormValues },
       { keepDefaultValues: false },
     );
     setLibrariesAndSync([]);
@@ -231,8 +240,8 @@ export default function ViralAssemblyPage() {
         description="The Viral Assembly Service utilizes IRMA (Iterative Refinement Meta-Assembler) to assemble viral genomes. Users must select the virus genome for processing. This service is currently in beta; any feedback or improvement is welcomed."
         infoPopupTitle={viralAssemblyInfo.title}
         infoPopupDescription={viralAssemblyInfo.description}
-        quickReferenceGuide={QUICK_REFERENCE}
-        tutorial={TUTORIAL}
+        quickReferenceGuide={quickReference}
+        tutorial={tutorial}
       />
 
       <Form {...form}>
@@ -389,7 +398,7 @@ export default function ViralAssemblyPage() {
                               <SelectValue placeholder="Select strategy" />
                             </SelectTrigger>
                             <SelectContent>
-                              {STRATEGY_OPTIONS.map((opt) => (
+                              {strategyOptions.map((opt) => (
                                 <SelectItem
                                   key={opt.value}
                                   value={opt.value}
@@ -421,7 +430,7 @@ export default function ViralAssemblyPage() {
                               <SelectValue placeholder="Select reference database" />
                             </SelectTrigger>
                             <SelectContent>
-                              {MODULE_OPTIONS.map((opt) => (
+                              {moduleOptions.map((opt) => (
                                 <SelectItem
                                   key={opt.value}
                                   value={opt.value}

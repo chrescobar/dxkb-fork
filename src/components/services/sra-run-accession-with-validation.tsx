@@ -10,6 +10,11 @@ import { toast } from "sonner";
 
 const VALIDATION_DEBOUNCE_MS = 500;
 
+/** Strips HTML tags so only plain text is stored/displayed (XSS safety). */
+function toPlainText(s: string): string {
+  return s.replace(/<[^>]+>/g, "").trim() || s;
+}
+
 interface ValidationResult {
   runs: string[];
   title: string;
@@ -120,6 +125,8 @@ const SraRunAccessionWithValidation = ({
   allowDuplicates = false,
   onAdd,
   onChange,
+  label,
+  addButton,
   showLabel = true,
   showAddButton = true,
 }: SraRunAccessionWithValidationProps) => {
@@ -139,10 +146,11 @@ const SraRunAccessionWithValidation = ({
     ) => {
       const { runs, title: studyTitle } = result;
       const skipClear = options?.skipClear ?? false;
+      const current = selectedLibrariesRef.current;
 
       // Timeout case: accession is a single run
       if (runs.length === 1 && runs[0] === accession) {
-        const isDuplicate = selectedLibraries.some(
+        const isDuplicate = current.some(
           (lib) => lib.id === accession && lib.type === "sra",
         );
         if (isDuplicate && !allowDuplicates) {
@@ -156,12 +164,12 @@ const SraRunAccessionWithValidation = ({
           name: accession,
           type: "sra",
         };
-        setSelectedLibraries([...selectedLibraries, newLibrary]);
+        setSelectedLibraries([...current, newLibrary]);
         onAdd?.([accession]);
       } else {
         const newLibraries: Library[] = [];
         for (const runId of runs) {
-          const isDuplicate = selectedLibraries.some(
+          const isDuplicate = current.some(
             (lib) => lib.id === runId && lib.type === "sra",
           );
           if (isDuplicate && !allowDuplicates) {
@@ -178,7 +186,7 @@ const SraRunAccessionWithValidation = ({
           });
         }
         if (newLibraries.length > 0) {
-          setSelectedLibraries([...selectedLibraries, ...newLibraries]);
+          setSelectedLibraries([...current, ...newLibraries]);
           onAdd?.(runs, studyTitle);
         }
       }
@@ -191,7 +199,7 @@ const SraRunAccessionWithValidation = ({
         validationCacheRef.current = null;
       }
     },
-    [selectedLibraries, setSelectedLibraries, allowDuplicates, onAdd, onChange],
+    [setSelectedLibraries, allowDuplicates, onAdd, onChange],
   );
 
   const validateAccession = useCallback(
@@ -217,13 +225,13 @@ const SraRunAccessionWithValidation = ({
 
         if (!response.ok) {
           const errorData = await response.json();
+          const rawError = errorData?.error != null ? String(errorData.error) : "";
+          const plainError = rawError ? toPlainText(rawError) : `Your input ${accession} is not valid`;
           if (response.status >= 400 && response.status < 500) {
-            setValidationMessage(
-              errorData.error || `Your input ${accession} is not valid`,
-            );
+            setValidationMessage(plainError);
             setIsValidSra(false);
           } else {
-            throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+            throw new Error(plainError);
           }
           return null;
         }
@@ -251,11 +259,8 @@ const SraRunAccessionWithValidation = ({
         return result;
       } catch (error) {
         console.error("Error validating SRA accession:", error);
-        setValidationMessage(
-          error instanceof Error
-            ? error.message
-            : "Something went wrong during validation.",
-        );
+        const raw = error instanceof Error ? error.message : "Something went wrong during validation.";
+        setValidationMessage(toPlainText(raw));
         setIsValidSra(false);
         return null;
       } finally {
@@ -330,26 +335,29 @@ const SraRunAccessionWithValidation = ({
         <div className="flex items-center justify-between">
           {showLabel ? (
             <>
-              <Label className="service-card-label">{title}</Label>
+              {label ?? (
+                <Label className="service-card-label">{title}</Label>
+              )}
               <div className="bg-border mx-4 h-px flex-1" />
             </>
           ) : (
             <div className="bg-border mx-4 h-px flex-1" />
           )}
-          {showAddButton && (
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handleAdd}
-              disabled={!sraAccession.trim() || disabled || isValidating}
-            >
-              {isValidating ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <ChevronRight size={16} />
-              )}
-            </Button>
-          )}
+          {showAddButton &&
+            (addButton ?? (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handleAdd}
+                disabled={!sraAccession.trim() || disabled || isValidating}
+              >
+                {isValidating ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <ChevronRight size={16} />
+                )}
+              </Button>
+            ))}
         </div>
       )}
       <div className="space-y-2">
@@ -368,8 +376,9 @@ const SraRunAccessionWithValidation = ({
                 ? "text-muted-foreground"
                 : "text-destructive"
             }`}
-            dangerouslySetInnerHTML={{ __html: validationMessage }}
-          />
+          >
+            {validationMessage}
+          </p>
         )}
         {isValidSra && !validationMessage && (
           <p className="text-sm text-muted-foreground">Provided SRA is valid</p>

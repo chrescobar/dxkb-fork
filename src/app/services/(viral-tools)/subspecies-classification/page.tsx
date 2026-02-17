@@ -41,8 +41,8 @@ import {
 
 import {
   subspeciesClassificationFormSchema,
-  DEFAULT_SUBSPECIES_CLASSIFICATION_FORM_VALUES,
-  SUBSPECIES_VIRUS_TYPE_OPTIONS,
+  defaultSubspeciesClassificationFormValues,
+  subspeciesVirusTypeOptions,
   type SubspeciesClassificationFormData,
 } from "@/lib/forms/(viral-tools)/subspecies-classification/subspecies-classification-form-schema";
 import {
@@ -54,9 +54,9 @@ import {
 import type { WorkspaceObject } from "@/lib/workspace-client";
 import type { ValidWorkspaceObjectTypes } from "@/lib/services/workspace/types";
 
-const QUICK_REFERENCE =
+const quickReference =
   "https://www.bv-brc.org/docs/quick_references/services/subspecies_classification_service.html";
-const TUTORIAL =
+const tutorial =
   "https://www.bv-brc.org/docs/tutorial/subspecies_classification/subspecies_classification.html";
 
 const FASTA_WORKSPACE_TYPES: ValidWorkspaceObjectTypes[] = [
@@ -68,14 +68,14 @@ const FASTA_WORKSPACE_TYPES: ValidWorkspaceObjectTypes[] = [
 ];
 
 /** Indices in SUBSPECIES_VIRUS_TYPE_OPTIONS before which to render a SelectSeparator (legacy family grouping). */
-const SUBSPECIES_SPECIES_SEPARATOR_BEFORE_INDEX = new Set([
+const subspeciesSpeciesSeparatorBeforeIndex = new Set([
   5, 7, 17, 21, 23, 24,
 ]);
 
 export default function SubspeciesClassificationPage() {
   const form = useForm<SubspeciesClassificationFormData>({
     resolver: zodResolver(subspeciesClassificationFormSchema),
-    defaultValues: DEFAULT_SUBSPECIES_CLASSIFICATION_FORM_VALUES,
+    defaultValues: defaultSubspeciesClassificationFormValues,
     mode: "onChange",
   });
 
@@ -103,7 +103,7 @@ export default function SubspeciesClassificationPage() {
   }, [form]);
 
   const handleReset = useCallback(() => {
-    form.reset(DEFAULT_SUBSPECIES_CLASSIFICATION_FORM_VALUES, {
+    form.reset(defaultSubspeciesClassificationFormValues, {
       keepDefaultValues: false,
     });
     setIsOutputNameValid(true);
@@ -156,8 +156,8 @@ export default function SubspeciesClassificationPage() {
         }
         infoPopupTitle={subspeciesClassificationInfo.title}
         infoPopupDescription={subspeciesClassificationInfo.description}
-        quickReferenceGuide={QUICK_REFERENCE}
-        tutorial={TUTORIAL}
+        quickReferenceGuide={quickReference}
+        tutorial={tutorial}
       />
 
       <Form {...form}>
@@ -303,9 +303,9 @@ export default function SubspeciesClassificationPage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="max-h-[min(20rem,70vh)] overflow-y-auto">
-                          {SUBSPECIES_VIRUS_TYPE_OPTIONS.map((opt, index) => (
+                          {subspeciesVirusTypeOptions.map((opt, index) => (
                             <Fragment key={opt.value}>
-                              {SUBSPECIES_SPECIES_SEPARATOR_BEFORE_INDEX.has(index) && (
+                              {subspeciesSpeciesSeparatorBeforeIndex.has(index) && (
                                 <SelectSeparator />
                               )}
                               <SelectItem value={opt.value}>

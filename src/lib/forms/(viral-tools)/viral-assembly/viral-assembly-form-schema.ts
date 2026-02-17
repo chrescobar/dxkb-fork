@@ -8,7 +8,7 @@ import { baseLibrarySchema, libraryTypeSchema } from "../../shared-schemas";
 export const strategySchema = z.enum(["irma"]);
 export type Strategy = z.infer<typeof strategySchema>;
 
-export const STRATEGY_OPTIONS: { value: Strategy; label: string }[] = [
+export const strategyOptions: { value: Strategy; label: string }[] = [
   { value: "irma", label: "IRMA" },
 ];
 
@@ -27,7 +27,7 @@ export const moduleSchema = z.enum([
 ]);
 export type ViralAssemblyModule = z.infer<typeof moduleSchema>;
 
-export const MODULE_OPTIONS: { value: ViralAssemblyModule; label: string }[] = [
+export const moduleOptions: { value: ViralAssemblyModule; label: string }[] = [
   { value: "FLU", label: "FLU" },
   { value: "FLU_AD", label: "FLU AD" },
   { value: "FLU-minion", label: "FLU ONT" },
@@ -86,15 +86,15 @@ export const viralAssemblyFormSchema = z
 
 export type ViralAssemblyFormData = z.infer<typeof viralAssemblyFormSchema>;
 
-const DEFAULT_MODULE = MODULE_OPTIONS[0]?.value ?? "FLU";
+const defaultModule = moduleOptions[0]?.value ?? "FLU";
 
-export const DEFAULT_VIRAL_ASSEMBLY_FORM_VALUES: ViralAssemblyFormData = {
+export const defaultViralAssemblyFormValues: ViralAssemblyFormData = {
   input_type: "paired",
   paired_end_libs: [],
   single_end_libs: [],
   srr_ids: [],
   strategy: "irma",
-  module: DEFAULT_MODULE,
+  module: defaultModule,
   output_path: "",
   output_file: "",
 };

@@ -11,7 +11,7 @@ export type InputSource = z.infer<typeof inputSourceSchema>;
 // Virus type options (legacy API values from BV-BRC SubspeciesClassification.js)
 // -----------------------------------------------------------------------------
 
-export const SUBSPECIES_VIRUS_TYPE_OPTIONS: { value: string; label: string }[] = [
+export const subspeciesVirusTypeOptions: { value: string; label: string }[] = [
   { value: "MASTADENOA", label: "Adenoviridae - Human mastadenovirus A [complete genome, genomic RNA]" },
   { value: "MASTADENOB", label: "Adenoviridae - Human mastadenovirus B [complete genome, genomic RNA]" },
   { value: "MASTADENOC", label: "Adenoviridae - Human mastadenovirus C [complete genome, genomic RNA]" },
@@ -31,7 +31,7 @@ export const SUBSPECIES_VIRUS_TYPE_OPTIONS: { value: string; label: string }[] =
   { value: "ZIKA", label: "Flaviviridae - Zika virus [complete genome, genomic RNA]" },
   { value: "INFLUENZAH5", label: "Orthomyxoviridae - Influenza A H5 [Hemagglutinin gene, genomic RNA]" },
   { value: "SWINEH1", label: "Orthomyxoviridae - Swine influenza H1 (global classification) [Hemagglutinin gene, genomic RNA]" },
-  { value: "SWINEH1US", label: "Orthomyxoviridae – Swine influenza H1 (US classification) [Hemagglutinin gene, genomic RNA]" },
+  { value: "SWINEH1US", label: "Orthomyxoviridae - Swine influenza H1 (US classification) [Hemagglutinin gene, genomic RNA]" },
   { value: "SWINEH3", label: "Orthomyxoviridae - Swine influenza H3 (global classification, beta version) [Hemagglutinin gene, genomic RNA]" },
   { value: "MEASLES", label: "Paramyxoviridae - Measles morbillivirus [complete genome, genomic RNA]" },
   { value: "MUMPS", label: "Paramyxoviridae - Mumps orthorubulavirus [complete genome, genomic RNA]" },
@@ -39,7 +39,7 @@ export const SUBSPECIES_VIRUS_TYPE_OPTIONS: { value: string; label: string }[] =
   { value: "ROTAA", label: "Reoviridae - Rotavirus A [complete genome, genomic RNA]" },
 ];
 
-const FIRST_VIRUS_TYPE = SUBSPECIES_VIRUS_TYPE_OPTIONS[0]?.value ?? "MASTADENOA";
+const firstVirusType = subspeciesVirusTypeOptions[0]?.value ?? "MASTADENOA";
 
 // -----------------------------------------------------------------------------
 // Main form schema
@@ -81,11 +81,11 @@ export type SubspeciesClassificationFormData = z.infer<
   typeof subspeciesClassificationFormSchema
 >;
 
-export const DEFAULT_SUBSPECIES_CLASSIFICATION_FORM_VALUES: SubspeciesClassificationFormData = {
+export const defaultSubspeciesClassificationFormValues: SubspeciesClassificationFormData = {
   input_source: "fasta_data",
   input_fasta_data: "",
   input_fasta_file: "",
-  virus_type: FIRST_VIRUS_TYPE,
+  virus_type: firstVirusType,
   output_path: "",
   output_file: "",
 };

@@ -2,14 +2,14 @@ import { z } from "zod";
 import { baseLibrarySchema } from "../../shared-schemas";
 import {
   primersSchema,
-  PRIMER_OPTIONS,
-  PRIMER_VERSION_OPTIONS,
-  DEFAULT_PRIMER_VERSION,
+  primerOptions,
+  primerVersionOptions,
+  defaultPrimerVersion,
   type Primers,
 } from "../sars-cov2-genome-analysis/sars-cov2-genome-analysis-form-schema";
 
 export type { Primers };
-export { PRIMER_OPTIONS, PRIMER_VERSION_OPTIONS, DEFAULT_PRIMER_VERSION };
+export { primerOptions, primerVersionOptions, defaultPrimerVersion };
 
 // Library with sample_id and optional sample_level_date for wastewater (no platform — legacy has no platform selector)
 export const sarsCov2WastewaterLibrarySchema = baseLibrarySchema.extend({
@@ -33,7 +33,7 @@ export type SrrLibItem = z.infer<typeof srrLibItemSchema>;
 export const recipeSchema = z.enum(["onecodex"]);
 export type Recipe = z.infer<typeof recipeSchema>;
 
-export const RECIPE_OPTIONS: { value: Recipe; label: string }[] = [
+export const recipeOptions: { value: Recipe; label: string }[] = [
   { value: "onecodex", label: "One Codex" },
 ];
 
@@ -99,7 +99,7 @@ export type SarsCov2WastewaterAnalysisFormData = z.infer<
   typeof sarsCov2WastewaterAnalysisFormSchema
 >;
 
-export const DEFAULT_SARS_COV2_WASTEWATER_ANALYSIS_FORM_VALUES: SarsCov2WastewaterAnalysisFormData =
+export const defaultSarsCov2WastewaterAnalysisFormValues: SarsCov2WastewaterAnalysisFormData =
   {
     paired_end_libs: [],
     single_end_libs: [],

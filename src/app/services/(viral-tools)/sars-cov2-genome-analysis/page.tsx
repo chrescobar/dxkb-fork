@@ -59,11 +59,11 @@ import {
 
 import {
   sarsCov2GenomeAnalysisFormSchema,
-  DEFAULT_SARS_COV2_GENOME_ANALYSIS_FORM_VALUES,
-  RECIPE_OPTIONS,
-  PRIMER_OPTIONS,
-  PRIMER_VERSION_OPTIONS,
-  DEFAULT_PRIMER_VERSION,
+  defaultSarsCov2GenomeAnalysisFormValues,
+  recipeOptions,
+  primerOptions,
+  primerVersionOptions,
+  defaultPrimerVersion,
   type SarsCov2GenomeAnalysisFormData,
   type SarsCov2LibraryItem,
   type SarsCov2Platform,
@@ -85,19 +85,19 @@ import { getLibraryTypeLabel } from "@/lib/forms/shared-schemas";
 
 import type { WorkspaceObject } from "@/lib/workspace-client";
 import {
-  SARS_COV2_PAIRED_PLATFORM_OPTIONS,
-  SARS_COV2_SINGLE_PLATFORM_OPTIONS,
+  sarsCov2PairedPlatformOptions,
+  sarsCov2SinglePlatformOptions,
 } from "@/lib/forms/(viral-tools)/sars-cov2-genome-analysis/sars-cov2-genome-analysis-form-schema";
 
-const QUICK_REFERENCE =
+const quickReference =
   "https://www.bv-brc.org/docs/quick_references/services/sars_cov_2_assembly_annotation_service.html";
-const TUTORIAL =
+const tutorial =
   "https://www.bv-brc.org/docs/tutorial/sars_cov_2_assembly_annotation/sars_cov_2_assembly_annotation.html";
 
 export default function SarsCov2GenomeAnalysisPage() {
   const form = useForm<SarsCov2GenomeAnalysisFormData>({
     resolver: zodResolver(sarsCov2GenomeAnalysisFormSchema),
-    defaultValues: DEFAULT_SARS_COV2_GENOME_ANALYSIS_FORM_VALUES,
+    defaultValues: defaultSarsCov2GenomeAnalysisFormValues,
     mode: "onChange",
   });
 
@@ -118,8 +118,8 @@ export default function SarsCov2GenomeAnalysisPage() {
   const myLabel = form.watch("my_label");
 
   const showPrimersSection = recipe === "onecodex";
-  const primerVersionOptions =
-    PRIMER_VERSION_OPTIONS[primers] ?? PRIMER_VERSION_OPTIONS.ARTIC;
+  const primerVersionOpts =
+    primerVersionOptions[primers] ?? primerVersionOptions.ARTIC;
 
   const {
     selectedLibraries,
@@ -153,7 +153,7 @@ export default function SarsCov2GenomeAnalysisPage() {
   // When primers change, set default primer_version
   useEffect(() => {
     if (showPrimersSection && primers) {
-      const defaultVersion = DEFAULT_PRIMER_VERSION[primers];
+      const defaultVersion = defaultPrimerVersion[primers];
       if (
         defaultVersion &&
         form.getValues("primer_version") !== defaultVersion
@@ -196,7 +196,7 @@ export default function SarsCov2GenomeAnalysisPage() {
 
   const handleReset = () => {
     form.reset(
-      { ...DEFAULT_SARS_COV2_GENOME_ANALYSIS_FORM_VALUES },
+      { ...defaultSarsCov2GenomeAnalysisFormValues },
       { keepDefaultValues: false },
     );
     setLibrariesAndSync([]);
@@ -229,8 +229,8 @@ export default function SarsCov2GenomeAnalysisPage() {
         description="The SARS-CoV-2 Genome Analysis Service provides a streamlined meta-service that accepts raw reads and performs genome assembly, annotation, and variation analysis."
         infoPopupTitle={sarsCov2GenomeAnalysisInfo.title}
         infoPopupDescription={sarsCov2GenomeAnalysisInfo.description}
-        quickReferenceGuide={QUICK_REFERENCE}
-        tutorial={TUTORIAL}
+        quickReferenceGuide={quickReference}
+        tutorial={tutorial}
       />
 
       <Form {...form}>
@@ -347,7 +347,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                           <SelectValue placeholder="Select a platform..." />
                         </SelectTrigger>
                         <SelectContent>
-                          {SARS_COV2_PAIRED_PLATFORM_OPTIONS.map((opt) => (
+                          {sarsCov2PairedPlatformOptions.map((opt) => (
                             <SelectItem key={opt.value} value={opt.value}>
                               {opt.label}
                             </SelectItem>
@@ -395,7 +395,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                           <SelectValue placeholder="Select a platform..." />
                         </SelectTrigger>
                         <SelectContent>
-                          {SARS_COV2_SINGLE_PLATFORM_OPTIONS.map((opt) => (
+                          {sarsCov2SinglePlatformOptions.map((opt) => (
                             <SelectItem key={opt.value} value={opt.value}>
                               {opt.label}
                             </SelectItem>
@@ -530,7 +530,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                                 <SelectValue placeholder="Select strategy" />
                               </SelectTrigger>
                               <SelectContent>
-                                {RECIPE_OPTIONS.map((opt) => (
+                                {recipeOptions.map((opt) => (
                                   <SelectItem key={opt.value} value={opt.value}>
                                     {opt.label}
                                   </SelectItem>
@@ -562,7 +562,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                                     <SelectValue placeholder="Select primers" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    {PRIMER_OPTIONS.map((opt) => (
+                                    {primerOptions.map((opt) => (
                                       <SelectItem
                                         key={opt.value}
                                         value={opt.value}
@@ -592,7 +592,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                                     <SelectValue placeholder="Version" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    {primerVersionOptions.map((opt) => (
+                                    {primerVersionOpts.map((opt) => (
                                       <SelectItem
                                         key={opt.value}
                                         value={opt.value}

@@ -28,9 +28,9 @@ import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import { similarGenomeFinderAdvancedParameters } from "@/lib/services/service-info";
 import type { SimilarGenomeFinderFormData } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-schema";
 import {
-  MAX_HITS_OPTIONS,
-  PVALUE_OPTIONS,
-  DISTANCE_OPTIONS,
+  maxHitsOptions,
+  pValueOptions,
+  distanceOptions,
 } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-schema";
 
 interface SimilarGenomeFinderAdvancedOptionsProps {
@@ -91,7 +91,7 @@ export function SimilarGenomeFinderAdvancedOptions({
                         <SelectValue placeholder="Select max hits" />
                       </SelectTrigger>
                       <SelectContent>
-                        {MAX_HITS_OPTIONS.map((opt) => (
+                        {maxHitsOptions.map((opt) => (
                           <SelectItem
                             key={opt.value}
                             value={opt.value.toString()}
@@ -126,7 +126,7 @@ export function SimilarGenomeFinderAdvancedOptions({
                         <SelectValue placeholder="Select P-value" />
                       </SelectTrigger>
                       <SelectContent>
-                        {PVALUE_OPTIONS.map((opt) => (
+                        {pValueOptions.map((opt) => (
                           <SelectItem
                             key={opt.value}
                             value={opt.value.toString()}
@@ -161,7 +161,7 @@ export function SimilarGenomeFinderAdvancedOptions({
                         <SelectValue placeholder="Select distance" />
                       </SelectTrigger>
                       <SelectContent>
-                        {DISTANCE_OPTIONS.map((opt) => (
+                        {distanceOptions.map((opt) => (
                           <SelectItem
                             key={opt.value}
                             value={opt.value.toString()}

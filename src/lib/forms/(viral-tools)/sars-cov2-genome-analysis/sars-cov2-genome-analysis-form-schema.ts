@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { baseLibrarySchema, libraryTypeSchema } from "../../shared-schemas";
 
-// SARS-CoV-2–specific platform enum (includes iontorrent, infer; not in shared-schemas)
+// SARS-CoV-2-specific platform enum (includes iontorrent, infer; not in shared-schemas)
 export const sarsCov2PlatformSchema = z.enum([
   "illumina",
   "iontorrent",
@@ -11,13 +11,13 @@ export const sarsCov2PlatformSchema = z.enum([
 ]);
 export type SarsCov2Platform = z.infer<typeof sarsCov2PlatformSchema>;
 
-export const SARS_COV2_PAIRED_PLATFORM_OPTIONS: { value: SarsCov2Platform; label: string }[] = [
+export const sarsCov2SinglePlatformOptions: { value: SarsCov2Platform; label: string }[] = [
   { value: "illumina", label: "Illumina" },
   { value: "iontorrent", label: "Ion Torrent" },
   { value: "infer", label: "Infer Platform" },
 ];
 
-export const SARS_COV2_SINGLE_PLATFORM_OPTIONS: { value: SarsCov2Platform; label: string }[] = [
+export const sarsCov2PairedPlatformOptions: { value: SarsCov2Platform; label: string }[] = [
   { value: "illumina", label: "Illumina" },
   { value: "iontorrent", label: "Ion Torrent" },
   { value: "pacbio", label: "PacBio" },
@@ -26,10 +26,23 @@ export const SARS_COV2_SINGLE_PLATFORM_OPTIONS: { value: SarsCov2Platform; label
 ];
 
 // Library with platform for SARS-CoV-2 (platform required for paired/single)
-export const sarsCov2LibrarySchema = baseLibrarySchema.extend({
-  platform: sarsCov2PlatformSchema.optional(),
-});
-export type SarsCov2LibraryItem = z.infer<typeof sarsCov2LibrarySchema>;
+export const sarsCov2LibrarySchema = baseLibrarySchema
+  .extend({
+    platform: sarsCov2PlatformSchema.optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      (data._type === "paired" || data._type === "single") &&
+      data.platform === undefined
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Platform is required for paired and single library types",
+        path: ["platform"],
+      });
+    }
+  });
+export interface SarsCov2LibraryItem extends z.infer<typeof sarsCov2LibrarySchema> {}
 
 // Input type
 export const inputTypeSchema = z.enum(["reads", "contigs"]);
@@ -45,7 +58,7 @@ export const recipeSchema = z.enum([
 ]);
 export type Recipe = z.infer<typeof recipeSchema>;
 
-export const RECIPE_OPTIONS: { value: Recipe; label: string }[] = [
+export const recipeOptions: { value: Recipe; label: string }[] = [
   { value: "onecodex", label: "One Codex" },
   { value: "cdc-illumina", label: "CDC-Illumina" },
   { value: "cdc-nanopore", label: "CDC-Nanopore" },
@@ -64,7 +77,7 @@ export const primersSchema = z.enum([
 ]);
 export type Primers = z.infer<typeof primersSchema>;
 
-export const PRIMER_OPTIONS: { value: Primers; label: string }[] = [
+export const primerOptions: { value: Primers; label: string }[] = [
   { value: "ARTIC", label: "ARTIC" },
   { value: "midnight", label: "midnight" },
   { value: "qiagen", label: "qiagen" },
@@ -74,7 +87,7 @@ export const PRIMER_OPTIONS: { value: Primers; label: string }[] = [
 ];
 
 // Primer version options per primer (legacy onPrimersChange)
-export const PRIMER_VERSION_OPTIONS: Record<Primers, { value: string; label: string }[]> = {
+export const primerVersionOptions: Record<Primers, { value: string; label: string }[]> = {
   ARTIC: [
     { value: "V5.3.2", label: "V5.3.2" },
     { value: "V4.1", label: "V4.1" },
@@ -93,7 +106,7 @@ export const PRIMER_VERSION_OPTIONS: Record<Primers, { value: string; label: str
   "varskip-long": [{ value: "V1a", label: "V1a" }],
 };
 
-export const DEFAULT_PRIMER_VERSION: Record<Primers, string> = {
+export const defaultPrimerVersion: Record<Primers, string> = {
   ARTIC: "V5.3.2",
   midnight: "V1",
   qiagen: "V1",
@@ -149,11 +162,10 @@ export const sarsCov2GenomeAnalysisFormSchema = z
     }
   });
 
-export type SarsCov2GenomeAnalysisFormData = z.infer<
-  typeof sarsCov2GenomeAnalysisFormSchema
->;
+export interface SarsCov2GenomeAnalysisFormData
+  extends z.infer<typeof sarsCov2GenomeAnalysisFormSchema> {}
 
-export const DEFAULT_SARS_COV2_GENOME_ANALYSIS_FORM_VALUES: SarsCov2GenomeAnalysisFormData = {
+export const defaultSarsCov2GenomeAnalysisFormValues: SarsCov2GenomeAnalysisFormData = {
   input_type: "reads",
   paired_end_libs: [],
   single_end_libs: [],

@@ -39,26 +39,26 @@ import { HaReferenceTypes } from "@/types/services";
 
 import {
   influenzaHaSubtypeFormSchema,
-  DEFAULT_INFLUENZA_HA_SUBTYPE_FORM_VALUES,
+  defaultInfluenzaHaSubtypeFormValues,
   type InfluenzaHaSubtypeFormData,
 } from "@/lib/forms/(viral-tools)/influenza-ha-subtype/influenza-ha-subtype-form-schema";
 import { transformHaSubtypeParams } from "@/lib/forms/(viral-tools)/influenza-ha-subtype/influenza-ha-subtype-form-utils";
 
-const QUICK_REFERENCE =
+const quickReference =
   "https://www.bv-brc.org/docs/quick_references/services/ha_numbering_service.html";
-const TUTORIAL =
+const tutorial =
   "https://www.bv-brc.org/docs/tutorial/ha_numbering/ha_numbering.html";
 
 export default function HASubtypeNumberingPage() {
   const form = useForm<InfluenzaHaSubtypeFormData>({
     resolver: zodResolver(influenzaHaSubtypeFormSchema),
-    defaultValues: DEFAULT_INFLUENZA_HA_SUBTYPE_FORM_VALUES,
+    defaultValues: defaultInfluenzaHaSubtypeFormValues,
     mode: "onChange",
   });
 
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
   const [fastaValidationMessage, setFastaValidationMessage] = useState("");
-  const [validFasta, setValidFasta] = useState(false);
+  const [isFastaValid, setIsFastaValid] = useState(false);
 
   const inputSource = form.watch("input_source");
   const fastaData = form.watch("input_fasta_data");
@@ -67,18 +67,18 @@ export default function HASubtypeNumberingPage() {
     const trimmed = fastaData?.trim() ?? "";
     if (!trimmed) {
       setFastaValidationMessage("");
-      setValidFasta(false);
+      setIsFastaValid(false);
       return;
     }
     const result = validateFasta(trimmed, "aa");
     if (result.valid && result.status === "valid_dna") {
-      setValidFasta(false);
+      setIsFastaValid(false);
       setFastaValidationMessage(
         "This service requires protein (amino acid) sequences."
       );
       return;
     }
-    setValidFasta(result.valid);
+    setIsFastaValid(result.valid);
     setFastaValidationMessage(result.message || "");
     if (result.valid && result.trimFasta && result.trimFasta !== trimmed) {
       form.setValue("input_fasta_data", result.trimFasta, {
@@ -88,12 +88,12 @@ export default function HASubtypeNumberingPage() {
   }, [fastaData, form]);
 
   const handleReset = useCallback(() => {
-    form.reset(DEFAULT_INFLUENZA_HA_SUBTYPE_FORM_VALUES, {
+    form.reset(defaultInfluenzaHaSubtypeFormValues, {
       keepDefaultValues: false,
     });
     setIsOutputNameValid(true);
     setFastaValidationMessage("");
-    setValidFasta(false);
+    setIsFastaValid(false);
   }, [form]);
 
   const {
@@ -111,8 +111,8 @@ export default function HASubtypeNumberingPage() {
   });
 
   const isFastaDataInvalid =
-    inputSource === "fasta_data" && !!fastaData?.trim() && !validFasta;
-  const submitDisabled = Boolean(
+    inputSource === "fasta_data" && !!fastaData?.trim() && !isFastaValid;
+  const isSubmitDisabled = Boolean(
     !form.formState.isValid ||
       !isOutputNameValid ||
       isSubmitting ||
@@ -143,8 +143,8 @@ export default function HASubtypeNumberingPage() {
             system based on the mature HA sequence.
           </>
         }
-        quickReferenceGuide={QUICK_REFERENCE}
-        tutorial={TUTORIAL}
+        quickReferenceGuide={quickReference}
+        tutorial={tutorial}
       />
 
       <Form {...form}>
@@ -390,7 +390,7 @@ export default function HASubtypeNumberingPage() {
               <Button type="button" variant="outline" onClick={handleReset}>
                 Reset
               </Button>
-              <Button type="submit" disabled={submitDisabled}>
+              <Button type="submit" disabled={isSubmitDisabled}>
                 {isSubmitting ? (
                   <Spinner className="mr-2 h-4 w-4" />
                 ) : null}

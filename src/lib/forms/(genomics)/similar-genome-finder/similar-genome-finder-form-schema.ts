@@ -3,7 +3,7 @@ import { z } from "zod";
 const OUTPUT_NAME_INVALID_CHARS = /[\\/]/;
 
 /** Options for Max hits dropdown */
-export const MAX_HITS_OPTIONS = [
+export const maxHitsOptions = [
   { value: 1, label: "1" },
   { value: 10, label: "10" },
   { value: 50, label: "50" },
@@ -12,7 +12,7 @@ export const MAX_HITS_OPTIONS = [
 ] as const;
 
 /** Options for P-value threshold dropdown */
-export const PVALUE_OPTIONS = [
+export const pValueOptions = [
   { value: 0.001, label: "0.001" },
   { value: 0.01, label: "0.01" },
   { value: 0.1, label: "0.1" },
@@ -20,7 +20,7 @@ export const PVALUE_OPTIONS = [
 ] as const;
 
 /** Options for Distance dropdown */
-export const DISTANCE_OPTIONS = [
+export const distanceOptions = [
   { value: 0.01, label: "0.01" },
   { value: 0.05, label: "0.05" },
   { value: 0.1, label: "0.1" },

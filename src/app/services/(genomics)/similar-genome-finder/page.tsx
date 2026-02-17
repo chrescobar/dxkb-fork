@@ -43,7 +43,7 @@ import {
 import { buildMinhashServicePayload } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-utils";
 import { SimilarGenomeFinderAdvancedOptions } from "./similar-genome-finder-advanced-options";
 
-const SIMILAR_GENOME_FINDER_TABLE_COLUMNS = [
+const similarGenomeFinderTableColumns = [
   { id: "genome_id", label: "Genome ID" },
   { id: "genome_name", label: "Genome Name" },
   { id: "organism_name", label: "Organism" },
@@ -54,11 +54,11 @@ const SIMILAR_GENOME_FINDER_TABLE_COLUMNS = [
   { id: "counts", label: "K-mer Counts" },
 ] as const;
 
-const QUICK_REFERENCE =
+const quickReference =
   "https://www.bv-brc.org/docs/quick_references/services/similar_genome_finder_service.html";
-const TUTORIAL =
+const tutorial =
   "https://www.bv-brc.org/docs/tutorial/similar_genome_finder/similar_genome_finder.html";
-const VIDEO =
+const video =
   "https://youtube.com/playlist?list=PLWfOyhOW_OashHfld0w1DUkO7rQz6s8SA&si=Enh6GME_i4LMcXL8";
 
 /** Result row shape for Similar Genome Finder (when result data is available) */
@@ -362,9 +362,9 @@ export default function SimilarGenomeFinderServicePage() {
         description="The Similar Genome Finder Service will find similar public genomes in BV-BRC or compute genome distance estimation using Mash/MinHash. It returns a set of genomes matching the specified similarity criteria."
         infoPopupTitle={similarGenomeFinderInfo.title}
         infoPopupDescription={similarGenomeFinderInfo.description}
-        quickReferenceGuide={QUICK_REFERENCE}
-        tutorial={TUTORIAL}
-        instructionalVideo={VIDEO}
+        quickReferenceGuide={quickReference}
+        tutorial={tutorial}
+        instructionalVideo={video}
       />
 
       <Form {...form}>
@@ -479,7 +479,7 @@ export default function SimilarGenomeFinderServicePage() {
             <DataTable
               id="similar-genome-finder-results"
               data={results as unknown as Record<string, unknown>[]}
-              columns={[...SIMILAR_GENOME_FINDER_TABLE_COLUMNS]}
+              columns={[...similarGenomeFinderTableColumns]}
               totalItems={results.length}
               resource="similar-genome-finder-results"
               isLoading={isSubmitting}

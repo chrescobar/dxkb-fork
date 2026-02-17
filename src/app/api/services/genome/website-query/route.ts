@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { parse } from "csv-parse/sync";
 import { getServerAuthToken } from "@/lib/auth";
 
 /**
@@ -10,44 +11,37 @@ const GENOME_WEBSITE_API = `${process.env.BVBRC_WEBSITE_API_URL}/genome/`;
 const MAX_ROWS = 25_000;
 
 /**
- * Parse CSV line handling quoted fields (handles commas inside quotes).
- */
-function parseCsvLine(line: string): string[] {
-  const result: string[] = [];
-  let current = "";
-  let inQuotes = false;
-  for (let i = 0; i < line.length; i++) {
-    const c = line[i];
-    if (c === '"') {
-      inQuotes = !inQuotes;
-    } else if (c === "," && !inQuotes) {
-      result.push(current.trim());
-      current = "";
-    } else {
-      current += c;
-    }
-  }
-  result.push(current.trim());
-  return result;
-}
-
-/**
  * Parse CSV text into array of objects (first row = headers).
+ * Uses csv-parse for quoted fields, escaped quotes, and multiline support.
  */
 function csvToJson(csvText: string): Record<string, string>[] {
-  const lines = csvText.split(/\r?\n/).filter((line) => line.trim().length > 0);
-  if (lines.length === 0) return [];
-  const headers = parseCsvLine(lines[0]);
-  const rows: Record<string, string>[] = [];
-  for (let i = 1; i < lines.length; i++) {
-    const values = parseCsvLine(lines[i]);
-    const row: Record<string, string> = {};
-    headers.forEach((h, j) => {
-      row[h] = values[j] ?? "";
+  const trimmed = csvText.trim();
+  if (trimmed.length === 0) return [];
+
+  try {
+    const records = parse(trimmed, {
+      columns: true,
+      skip_empty_lines: true,
+      trim: true,
+      relax_quotes: true,
+      relax_column_count: true,
+    }) as Record<string, string>[];
+
+    return records.map((row) => {
+      const out: Record<string, string> = {};
+      for (const [k, v] of Object.entries(row)) {
+        out[k] = v ?? "";
+      }
+      return out;
     });
-    rows.push(row);
+  } catch (err) {
+    console.error("CSV parse error:", err);
+    throw err;
   }
-  return rows;
+}
+
+function escapeSolrTerm(value: string): string {
+  return value.replace(/([+\-!(){}[\]^"~*?:\\/]|&&|\|\|)/g, "\\$1");
 }
 
 export async function POST(request: NextRequest) {
@@ -73,9 +67,9 @@ export async function POST(request: NextRequest) {
     // Build Solr-style query: genome_id:(id1 OR id2 OR ...)
     const escapedIds = genomeIds
       .filter((id) => id.length > 0)
-      .map((id) => (id.includes(" ") ? `"${id}"` : id));
+      .map((id) => `"${escapeSolrTerm(id)}"`);
     const q = `genome_id:(${escapedIds.join(" OR ")})`;
-    const rowsParam = String(Math.min(MAX_ROWS, Math.max(genomeIds.length, 25000)));
+    const rowsParam = String(Math.min(MAX_ROWS, genomeIds.length));
 
     // PATRIC/BV-BRC genome API expects POST with form body (solrquery or x-www-form-urlencoded)
     const formBody = new URLSearchParams({ rows: rowsParam, q });

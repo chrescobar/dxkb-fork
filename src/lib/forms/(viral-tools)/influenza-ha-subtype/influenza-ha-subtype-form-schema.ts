@@ -51,7 +51,7 @@ export type InfluenzaHaSubtypeFormData = z.infer<
   typeof influenzaHaSubtypeFormSchema
 >;
 
-export const DEFAULT_INFLUENZA_HA_SUBTYPE_FORM_VALUES: InfluenzaHaSubtypeFormData =
+export const defaultInfluenzaHaSubtypeFormValues: InfluenzaHaSubtypeFormData =
   {
     input_source: "fasta_data",
     input_fasta_data: "",

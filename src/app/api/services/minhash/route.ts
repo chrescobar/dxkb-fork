@@ -10,7 +10,19 @@ const MINHASH_SERVICE_URL = process.env.MINHASH_SERVICE_URL;
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    if (!MINHASH_SERVICE_URL) {
+      return NextResponse.json(
+        { error: "Minhash service URL is not configured (MINHASH_SERVICE_URL)" },
+        { status: 500 },
+      );
+    }
+
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: "Malformed JSON" }, { status: 400 });
+    }
 
     if (!body || typeof body !== "object") {
       return NextResponse.json(
@@ -19,7 +31,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const response = await fetch(MINHASH_SERVICE_URL!, {
+    const response = await fetch(MINHASH_SERVICE_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

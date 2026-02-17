@@ -532,18 +532,21 @@ export default function ViralGenomeTreePage() {
                         </FormLabel>
                         <FormControl>
                           <Select
+                            items={ViralGenomeTree.THRESHOLD_OPTIONS.map((v) => ({ value: v, label: v }))}
                             value={field.value}
-                            onValueChange={field.onChange}
+                            onValueChange={(value) => value != null && field.onChange(value)}
                           >
                             <SelectTrigger className="service-card-select-trigger">
                               <SelectValue placeholder="Select" />
                             </SelectTrigger>
                             <SelectContent>
-                              {ViralGenomeTree.THRESHOLD_OPTIONS.map((value) => (
-                                <SelectItem key={value} value={value}>
-                                  {value}
-                                </SelectItem>
-                              ))}
+                              <SelectGroup>
+                                {ViralGenomeTree.THRESHOLD_OPTIONS.map((value) => (
+                                  <SelectItem key={value} value={value}>
+                                    {value}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
                             </SelectContent>
                           </Select>
                         </FormControl>
@@ -562,18 +565,21 @@ export default function ViralGenomeTreePage() {
                         </FormLabel>
                         <FormControl>
                           <Select
+                            items={ViralGenomeTree.THRESHOLD_OPTIONS.map((v) => ({ value: v, label: v }))}
                             value={field.value}
-                            onValueChange={field.onChange}
+                            onValueChange={(value) => value != null && field.onChange(value)}
                           >
                             <SelectTrigger className="service-card-select-trigger">
                               <SelectValue placeholder="Select" />
                             </SelectTrigger>
                             <SelectContent>
-                              {ViralGenomeTree.THRESHOLD_OPTIONS.map((value) => (
-                                <SelectItem key={value} value={value}>
-                                  {value}
-                                </SelectItem>
-                              ))}
+                              <SelectGroup>
+                                {ViralGenomeTree.THRESHOLD_OPTIONS.map((value) => (
+                                  <SelectItem key={value} value={value}>
+                                    {value}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
                             </SelectContent>
                           </Select>
                         </FormControl>
@@ -639,8 +645,9 @@ export default function ViralGenomeTreePage() {
                         </FormLabel>
                         <FormControl>
                           <Select
+                            items={ViralGenomeTree.DNA_MODELS.map((m) => ({ value: m.value, label: m.label }))}
                             value={field.value}
-                            onValueChange={field.onChange}
+                            onValueChange={(value) => value != null && field.onChange(value)}
                           >
                             <SelectTrigger
                               id="model"
@@ -649,11 +656,13 @@ export default function ViralGenomeTreePage() {
                               <SelectValue placeholder="Select" />
                             </SelectTrigger>
                             <SelectContent>
-                              {ViralGenomeTree.DNA_MODELS.map((model) => (
-                                <SelectItem key={model.value} value={model.value}>
-                                  {model.label}
-                                </SelectItem>
-                              ))}
+                              <SelectGroup>
+                                {ViralGenomeTree.DNA_MODELS.map((model) => (
+                                  <SelectItem key={model.value} value={model.value}>
+                                    {model.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
                             </SelectContent>
                           </Select>
                         </FormControl>
@@ -727,8 +736,11 @@ export default function ViralGenomeTreePage() {
 
                     <div className="flex gap-2">
                       <Select
+                        items={availableMetadataOptions
+                          .filter((f) => !f.isLabel)
+                          .map((f) => ({ value: f.value, label: f.label }))}
                         value={selectedMetadataField}
-                        onValueChange={handleMetadataSelection}
+                        onValueChange={(value) => value != null && handleMetadataSelection(value)}
                       >
                         <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="Select field" />

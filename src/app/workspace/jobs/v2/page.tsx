@@ -15,6 +15,7 @@ import { Input } from "../../../../components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -465,34 +466,49 @@ function JobsV2Content() {
         </div>
         <div className="flex space-x-2">
           <Select
+            items={[
+              { value: "all", label: "All Status" },
+              ...Object.entries(statusLabels).map(([status, label]) => ({ value: status, label })),
+            ]}
             value={statusFilter}
             onValueChange={(value) =>
-              setStatusFilter(value as JobStatus | "all")
+              value != null && setStatusFilter(value as JobStatus | "all")
             }
           >
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              {Object.entries(statusLabels).map(([status, label]) => (
-                <SelectItem key={status} value={status}>
-                  {label}
-                </SelectItem>
-              ))}
+              <SelectGroup>
+                <SelectItem value="all">All Status</SelectItem>
+                {Object.entries(statusLabels).map(([status, label]) => (
+                  <SelectItem key={status} value={status}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
             </SelectContent>
           </Select>
-          <Select value={appFilter} onValueChange={setAppFilter}>
+          <Select
+            items={[
+              { value: "all", label: "All Services" },
+              ...uniqueApps.map((app) => ({ value: app, label: app })),
+            ]}
+            value={appFilter}
+            onValueChange={(value) => setAppFilter(value ?? "")}
+          >
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Application" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Services</SelectItem>
-              {uniqueApps.map((app) => (
-                <SelectItem key={app} value={app}>
-                  {app}
-                </SelectItem>
-              ))}
+              <SelectGroup>
+                <SelectItem value="all">All Services</SelectItem>
+                {uniqueApps.map((app) => (
+                  <SelectItem key={app} value={app}>
+                    {app}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
             </SelectContent>
           </Select>
         </div>

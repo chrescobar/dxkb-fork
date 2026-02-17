@@ -24,6 +24,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -411,6 +412,7 @@ export default function MetagenomicReadMappingPage() {
                             </FormLabel>
                             <FormControl>
                               <Select
+                                items={PREDEFINED_GENE_SET_OPTIONS.map((option) => ({ value: option.value, label: option.label }))}
                                 value={field.value}
                                 onValueChange={field.onChange}
                               >
@@ -418,11 +420,13 @@ export default function MetagenomicReadMappingPage() {
                                   <SelectValue placeholder="Select Gene Set" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {PREDEFINED_GENE_SET_OPTIONS.map((option) => (
-                                    <SelectItem key={option.value} value={option.value}>
-                                      {option.label}
-                                    </SelectItem>
-                                  ))}
+                                  <SelectGroup>
+                                    {PREDEFINED_GENE_SET_OPTIONS.map((option) => (
+                                      <SelectItem key={option.value} value={option.value}>
+                                        {option.label}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectGroup>
                                 </SelectContent>
                               </Select>
                             </FormControl>

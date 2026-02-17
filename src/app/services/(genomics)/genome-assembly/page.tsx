@@ -24,6 +24,7 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -62,6 +63,7 @@ import {
   type LibraryItem,
   transformGenomeAssemblyParams,
   calculateGenomeSize,
+  genomeAssemblyRecipes,
 } from "@/lib/forms/(genomics)";
 import { submitServiceJob } from "@/lib/services/service-utils";
 import {
@@ -439,6 +441,7 @@ export default function GenomeAssemblyPage() {
                         </RequiredFormLabel>
                         <FormControl>
                           <Select
+                            items={genomeAssemblyRecipes.map((recipe) => ({ value: recipe.value, label: recipe.label }))}
                             value={field.value}
                             onValueChange={field.onChange}
                           >
@@ -446,15 +449,13 @@ export default function GenomeAssemblyPage() {
                               <SelectValue placeholder="Select strategy" />
                             </SelectTrigger>
                             <SelectContent className="service-card-select-content">
-                              <SelectItem value="auto">Auto</SelectItem>
-                              <SelectItem value="unicycler">Unicycler</SelectItem>
-                              <SelectItem value="spades">SPAdes</SelectItem>
-                              <SelectItem value="canu">Canu</SelectItem>
-                              <SelectItem value="meta-spades">metaSPAdes</SelectItem>
-                              <SelectItem value="plasmid-spades">plasmidSPAdes</SelectItem>
-                              <SelectItem value="single-cell">MDA (single-cell)</SelectItem>
-                              <SelectItem value="flye">Flye</SelectItem>
-                              <SelectItem value="megahit">MegaHit</SelectItem>
+                              <SelectGroup>
+                                {genomeAssemblyRecipes.map((recipe) => (
+                                  <SelectItem key={recipe.value} value={recipe.value}>
+                                    {recipe.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
                             </SelectContent>
                           </Select>
                         </FormControl>
@@ -529,8 +530,13 @@ export default function GenomeAssemblyPage() {
                               />
                               <span className="text-lg">×</span>
                               <Select
+                                items={[
+                                  { value: "M", label: "M" },
+                                  { value: "K", label: "K" },
+                                ]}
                                 value={genomeSizeUnit}
-                                onValueChange={(value: "M" | "K") => {
+                                onValueChange={(value) => {
+                                  if (value == null) return;
                                   setGenomeSizeUnit(value);
                                   if (value === "M") {
                                     setExpectedGenomeSize(5);
@@ -545,8 +551,10 @@ export default function GenomeAssemblyPage() {
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="M">M</SelectItem>
-                                  <SelectItem value="K">K</SelectItem>
+                                  <SelectGroup>
+                                    <SelectItem value="M">M</SelectItem>
+                                    <SelectItem value="K">K</SelectItem>
+                                  </SelectGroup>
                                 </SelectContent>
                               </Select>
                             </div>

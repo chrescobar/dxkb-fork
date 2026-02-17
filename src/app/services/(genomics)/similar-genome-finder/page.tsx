@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -243,20 +244,23 @@ export default function SimilarGenomeFinderServicePage() {
                             </FormLabel>
                             <FormControl>
                               <Select
+                                items={["1", "10", "50", "100", "500"].map((v) => ({ value: v, label: v }))}
                                 value={(field.value ?? 10).toString()}
                                 onValueChange={(value) =>
-                                  field.onChange(parseInt(value, 10))
+                                  value != null && field.onChange(parseInt(value, 10))
                                 }
                               >
                                 <SelectTrigger className="service-card-select-trigger">
                                   <SelectValue placeholder="Select max hits" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="1">1</SelectItem>
-                                  <SelectItem value="10">10</SelectItem>
-                                  <SelectItem value="50">50</SelectItem>
-                                  <SelectItem value="100">100</SelectItem>
-                                  <SelectItem value="500">500</SelectItem>
+                                  <SelectGroup>
+                                    <SelectItem value="1">1</SelectItem>
+                                    <SelectItem value="10">10</SelectItem>
+                                    <SelectItem value="50">50</SelectItem>
+                                    <SelectItem value="100">100</SelectItem>
+                                    <SelectItem value="500">500</SelectItem>
+                                  </SelectGroup>
                                 </SelectContent>
                               </Select>
                             </FormControl>
@@ -275,19 +279,22 @@ export default function SimilarGenomeFinderServicePage() {
                             </FormLabel>
                             <FormControl>
                               <Select
+                                items={["0.001", "0.01", "0.1", "1"].map((v) => ({ value: v, label: v }))}
                                 value={field.value?.toString() ?? "1"}
                                 onValueChange={(value) =>
-                                  field.onChange(parseFloat(value))
+                                  value != null && field.onChange(parseFloat(value))
                                 }
                               >
                                 <SelectTrigger className="service-card-select-trigger">
                                   <SelectValue placeholder="Select P-value" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="0.001">0.001</SelectItem>
-                                  <SelectItem value="0.01">0.01</SelectItem>
-                                  <SelectItem value="0.1">0.1</SelectItem>
-                                  <SelectItem value="1">1</SelectItem>
+                                  <SelectGroup>
+                                    <SelectItem value="0.001">0.001</SelectItem>
+                                    <SelectItem value="0.01">0.01</SelectItem>
+                                    <SelectItem value="0.1">0.1</SelectItem>
+                                    <SelectItem value="1">1</SelectItem>
+                                  </SelectGroup>
                                 </SelectContent>
                               </Select>
                             </FormControl>
@@ -306,20 +313,23 @@ export default function SimilarGenomeFinderServicePage() {
                             </FormLabel>
                             <FormControl>
                               <Select
+                                items={["0.01", "0.05", "0.1", "0.5", "1"].map((v) => ({ value: v, label: v }))}
                                 value={field.value?.toString() ?? "1"}
                                 onValueChange={(value) =>
-                                  field.onChange(parseFloat(value))
+                                  value != null && field.onChange(parseFloat(value))
                                 }
                               >
                                 <SelectTrigger className="service-card-select-trigger">
                                   <SelectValue placeholder="Select distance" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="0.01">0.01</SelectItem>
-                                  <SelectItem value="0.05">0.05</SelectItem>
-                                  <SelectItem value="0.1">0.1</SelectItem>
-                                  <SelectItem value="0.5">0.5</SelectItem>
-                                  <SelectItem value="1">1</SelectItem>
+                                  <SelectGroup>
+                                    <SelectItem value="0.01">0.01</SelectItem>
+                                    <SelectItem value="0.05">0.05</SelectItem>
+                                    <SelectItem value="0.1">0.1</SelectItem>
+                                    <SelectItem value="0.5">0.5</SelectItem>
+                                    <SelectItem value="1">1</SelectItem>
+                                  </SelectGroup>
                                 </SelectContent>
                               </Select>
                             </FormControl>

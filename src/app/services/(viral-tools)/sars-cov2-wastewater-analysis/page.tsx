@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -125,8 +126,10 @@ export default function WastewaterAnalysis() {
               <div className="flex w-full flex-col gap-2">
                 <Label className="service-card-label">Primers</Label>
                 <Select
+                  items={primerOptions.map((o) => ({ value: o.id, label: o.label }))}
                   defaultValue="artic"
                   onValueChange={(value) => {
+                    if (value == null) return;
                     setPrimer(value);
                     const selectedPrimer = primerOptions.find(
                       (option) => option.id === value,
@@ -138,11 +141,13 @@ export default function WastewaterAnalysis() {
                     <SelectValue placeholder="Select primer" />
                   </SelectTrigger>
                   <SelectContent>
-                    {primerOptions.map((option) => (
-                      <SelectItem key={option.id} value={option.id}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
+                    <SelectGroup>
+                      {primerOptions.map((option) => (
+                        <SelectItem key={option.id} value={option.id}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
               </div>
@@ -150,18 +155,28 @@ export default function WastewaterAnalysis() {
               <div className="flex w-full flex-col gap-2">
                 <Label className="service-card-label">Version</Label>
 
-                <Select value={version} onValueChange={setVersion}>
+                <Select
+                  items={
+                    primerOptions
+                      .find((option) => option.id === primer)
+                      ?.versions.map((v) => ({ value: v, label: v })) ?? []
+                  }
+                  value={version}
+                  onValueChange={(value) => setVersion(value ?? "")}
+                >
                   <SelectTrigger className="service-card-select-trigger">
                     <SelectValue placeholder="Select version" />
                   </SelectTrigger>
                   <SelectContent>
-                    {primerOptions
-                      .find((option) => option.id === primer)
-                      ?.versions.map((version) => (
-                        <SelectItem key={version} value={version}>
-                          {version}
-                        </SelectItem>
-                      ))}
+                    <SelectGroup>
+                      {primerOptions
+                        .find((option) => option.id === primer)
+                        ?.versions.map((version) => (
+                          <SelectItem key={version} value={version}>
+                            {version}
+                          </SelectItem>
+                        ))}
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
               </div>
@@ -245,13 +260,21 @@ export default function WastewaterAnalysis() {
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label className="service-card-label">Strategy</Label>
-                <Select defaultValue="codex">
+                <Select
+                  items={[
+                    { value: "codex", label: "One Codex" },
+                    { value: "other", label: "Other Strategy" },
+                  ]}
+                  defaultValue="codex"
+                >
                   <SelectTrigger className="service-card-select-trigger">
                     <SelectValue placeholder="Select a strategy" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="codex">One Codex</SelectItem>
-                    <SelectItem value="other">Other Strategy</SelectItem>
+                    <SelectGroup>
+                      <SelectItem value="codex">One Codex</SelectItem>
+                      <SelectItem value="other">Other Strategy</SelectItem>
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
               </div>

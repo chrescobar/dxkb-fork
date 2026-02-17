@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -128,16 +129,22 @@ export default function SubspeciesClassification() {
               <div className="w-full">
                 <Label className="service-card-label">Select Species</Label>
 
-                <Select defaultValue={species} onValueChange={setSpecies}>
+                <Select
+                  items={subspeciesClassificationSpeciesList.map((s) => ({ value: s.id, label: s.label }))}
+                  defaultValue={species}
+                  onValueChange={(value) => setSpecies(value ?? "")}
+                >
                   <SelectTrigger className="service-card-select-trigger">
                     <SelectValue placeholder="Select species" />
                   </SelectTrigger>
                   <SelectContent className="max-h-128 overflow-y-auto">
-                    {subspeciesClassificationSpeciesList.map((species) => (
-                      <SelectItem key={species.id} value={species.id}>
-                        {species.label}
-                      </SelectItem>
-                    ))}
+                    <SelectGroup>
+                      {subspeciesClassificationSpeciesList.map((species) => (
+                        <SelectItem key={species.id} value={species.id}>
+                          {species.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
               </div>

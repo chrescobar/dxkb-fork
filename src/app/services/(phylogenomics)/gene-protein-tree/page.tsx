@@ -503,18 +503,21 @@ export default function GeneProteinTreePage() {
                         </RequiredFormLabel>
                         <FormControl>
                           <Select
+                            items={GeneProteinTree.THRESHOLD_OPTIONS.map((v) => ({ value: v, label: v }))}
                             value={field.value}
-                            onValueChange={field.onChange}
+                            onValueChange={(value) => value != null && field.onChange(value)}
                           >
                             <SelectTrigger className="service-card-select-trigger">
                               <SelectValue placeholder="Select" />
                             </SelectTrigger>
                             <SelectContent>
-                              {GeneProteinTree.THRESHOLD_OPTIONS.map((value) => (
-                                <SelectItem key={value} value={value}>
-                                  {value}
-                                </SelectItem>
-                              ))}
+                              <SelectGroup>
+                                {GeneProteinTree.THRESHOLD_OPTIONS.map((value) => (
+                                  <SelectItem key={value} value={value}>
+                                    {value}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
                             </SelectContent>
                           </Select>
                         </FormControl>
@@ -533,18 +536,21 @@ export default function GeneProteinTreePage() {
                         </RequiredFormLabel>
                         <FormControl>
                           <Select
+                            items={GeneProteinTree.THRESHOLD_OPTIONS.map((v) => ({ value: v, label: v }))}
                             value={field.value}
-                            onValueChange={field.onChange}
+                            onValueChange={(value) => value != null && field.onChange(value)}
                           >
                             <SelectTrigger className="service-card-select-trigger">
                               <SelectValue placeholder="Select" />
                             </SelectTrigger>
                             <SelectContent>
-                              {GeneProteinTree.THRESHOLD_OPTIONS.map((value) => (
-                                <SelectItem key={value} value={value}>
-                                  {value}
-                                </SelectItem>
-                              ))}
+                              <SelectGroup>
+                                {GeneProteinTree.THRESHOLD_OPTIONS.map((value) => (
+                                  <SelectItem key={value} value={value}>
+                                    {value}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
                             </SelectContent>
                           </Select>
                         </FormControl>
@@ -610,8 +616,9 @@ export default function GeneProteinTreePage() {
                         </RequiredFormLabel>
                         <FormControl>
                           <Select
+                            items={substitutionModelOptions.map((m) => ({ value: m.value, label: m.label }))}
                             value={field.value}
-                            onValueChange={field.onChange}
+                            onValueChange={(value) => value != null && field.onChange(value)}
                           >
                             <SelectTrigger
                               id="model"
@@ -620,11 +627,13 @@ export default function GeneProteinTreePage() {
                               <SelectValue placeholder="Select" />
                             </SelectTrigger>
                             <SelectContent>
-                              {substitutionModelOptions.map((model) => (
-                                <SelectItem key={model.value} value={model.value}>
-                                  {model.label}
-                                </SelectItem>
-                              ))}
+                              <SelectGroup>
+                                {substitutionModelOptions.map((model) => (
+                                  <SelectItem key={model.value} value={model.value}>
+                                    {model.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
                             </SelectContent>
                           </Select>
                         </FormControl>
@@ -698,8 +707,11 @@ export default function GeneProteinTreePage() {
 
                     <div className="flex gap-2">
                       <Select
+                        items={availableMetadataOptions
+                          .filter((f) => !f.isLabel)
+                          .map((f) => ({ value: f.value, label: f.label }))}
                         value={selectedMetadataField}
-                        onValueChange={handleMetadataSelection}
+                        onValueChange={(value) => value != null && handleMetadataSelection(value)}
                       >
                         <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="Select field" />

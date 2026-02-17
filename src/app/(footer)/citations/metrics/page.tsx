@@ -7,7 +7,7 @@ import { useState, useMemo } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CitationNav } from "../components/citation-nav"
 import { citations as citationsData } from "../data/citations"
@@ -123,31 +123,56 @@ export default function CitationsMetricsPage() {
         {/* Time Range Filter */}
         <div className="citation-filters">
           <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-x-2 md:space-y-0">
-            <Select value={yearRange} onValueChange={(value: string) => setYearRange(value)}>
+            <Select
+              items={[
+                { value: "all", label: "All Time" },
+                ...(uniqueYears.length > 0 && uniqueYears[0] !== uniqueYears[uniqueYears.length - 1]
+                  ? [
+                      {
+                        value: String(uniqueYears[0]) + "-" + String(uniqueYears[uniqueYears.length - 1]),
+                        label: `${uniqueYears[0]} - ${uniqueYears[uniqueYears.length - 1]}`,
+                      },
+                      ...(uniqueYears.length > 2
+                        ? [
+                            {
+                              value: String(uniqueYears[uniqueYears.length - 3]) + "-" + String(uniqueYears[uniqueYears.length - 1]),
+                              label: "Last 3 Years",
+                            },
+                          ]
+                        : []),
+                    ]
+                  : []),
+                ...uniqueYears.map((year) => ({ value: String(year) + "-" + String(year), label: String(year) })),
+              ]}
+              value={yearRange}
+              onValueChange={(value) => setYearRange(value ?? "")}
+            >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select year range" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Time</SelectItem>
-                {uniqueYears.length > 0 && uniqueYears[0] !== uniqueYears[uniqueYears.length - 1] && (
-                  <>
-                    <SelectItem value={String(uniqueYears[0]) + "-" + String(uniqueYears[uniqueYears.length - 1])}>
-                      {uniqueYears[0]} - {uniqueYears[uniqueYears.length - 1]}
-                    </SelectItem>
-                    {uniqueYears.length > 2 && (
-                      <SelectItem 
-                        value={String(uniqueYears[uniqueYears.length - 3]) + "-" + String(uniqueYears[uniqueYears.length - 1])}
-                      >
-                        Last 3 Years
+                <SelectGroup>
+                  <SelectItem value="all">All Time</SelectItem>
+                  {uniqueYears.length > 0 && uniqueYears[0] !== uniqueYears[uniqueYears.length - 1] && (
+                    <>
+                      <SelectItem value={String(uniqueYears[0]) + "-" + String(uniqueYears[uniqueYears.length - 1])}>
+                        {uniqueYears[0]} - {uniqueYears[uniqueYears.length - 1]}
                       </SelectItem>
-                    )}
-                  </>
-                )}
-                {uniqueYears.map((year) => (
-                  <SelectItem key={year} value={String(year) + "-" + String(year)}>
-                    {year}
-                  </SelectItem>
-                ))}
+                      {uniqueYears.length > 2 && (
+                        <SelectItem 
+                          value={String(uniqueYears[uniqueYears.length - 3]) + "-" + String(uniqueYears[uniqueYears.length - 1])}
+                        >
+                          Last 3 Years
+                        </SelectItem>
+                      )}
+                    </>
+                  )}
+                  {uniqueYears.map((year) => (
+                    <SelectItem key={year} value={String(year) + "-" + String(year)}>
+                      {year}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>

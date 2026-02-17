@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -143,18 +144,30 @@ export default function GenomeAnalysis() {
                 <div className="space-y-2">
                   <Label className="service-card-label">Strategy</Label>
 
-                  <Select defaultValue="one-codex" onValueChange={setStrategy}>
+                  <Select
+                    items={[
+                      { value: "one-codex", label: "One Codex" },
+                      { value: "cdc-illumina", label: "CDC-Illumina" },
+                      { value: "cdc-nanopore", label: "CDC-Nanopore" },
+                      { value: "artic-nanopore", label: "ARTIC-Nanopore" },
+                      { value: "auto", label: "Auto" },
+                    ]}
+                    defaultValue="one-codex"
+                    onValueChange={(value) => setStrategy(value ?? "")}
+                  >
                     <SelectTrigger className="service-card-select-trigger">
                       <SelectValue placeholder="Select a strategy" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="one-codex">One Codex</SelectItem>
-                      <SelectItem value="cdc-illumina">CDC-Illumina</SelectItem>
-                      <SelectItem value="cdc-nanopore">CDC-Nanopore</SelectItem>
-                      <SelectItem value="artic-nanopore">
-                        ARTIC-Nanopore
-                      </SelectItem>
-                      <SelectItem value="auto">Auto</SelectItem>
+                      <SelectGroup>
+                        <SelectItem value="one-codex">One Codex</SelectItem>
+                        <SelectItem value="cdc-illumina">CDC-Illumina</SelectItem>
+                        <SelectItem value="cdc-nanopore">CDC-Nanopore</SelectItem>
+                        <SelectItem value="artic-nanopore">
+                          ARTIC-Nanopore
+                        </SelectItem>
+                        <SelectItem value="auto">Auto</SelectItem>
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                 </div>
@@ -165,8 +178,10 @@ export default function GenomeAnalysis() {
                       <Label className="service-card-label">Primer</Label>
 
                       <Select
+                        items={primerOptions.map((o) => ({ value: o.id, label: o.label }))}
                         defaultValue="artic"
                         onValueChange={(value) => {
+                          if (value == null) return;
                           setPrimer(value);
                           const selectedPrimer = primerOptions.find(
                             (option) => option.id === value,
@@ -178,11 +193,13 @@ export default function GenomeAnalysis() {
                           <SelectValue placeholder="Select primer" />
                         </SelectTrigger>
                         <SelectContent>
-                          {primerOptions.map((option) => (
-                            <SelectItem key={option.id} value={option.id}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
+                          <SelectGroup>
+                            {primerOptions.map((option) => (
+                              <SelectItem key={option.id} value={option.id}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
                         </SelectContent>
                       </Select>
                     </div>
@@ -190,18 +207,28 @@ export default function GenomeAnalysis() {
                     <div className="w-[50%] space-y-2">
                       <Label className="service-card-label">Version</Label>
 
-                      <Select value={version} onValueChange={setVersion}>
+                      <Select
+                        items={
+                          primerOptions
+                            .find((option) => option.id === primer)
+                            ?.versions.map((v) => ({ value: v, label: v })) ?? []
+                        }
+                        value={version}
+                        onValueChange={(value) => setVersion(value ?? "")}
+                      >
                         <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="Select version" />
                         </SelectTrigger>
                         <SelectContent>
-                          {primerOptions
-                            .find((option) => option.id === primer)
-                            ?.versions.map((version) => (
-                              <SelectItem key={version} value={version}>
-                                {version}
-                              </SelectItem>
-                            ))}
+                          <SelectGroup>
+                            {primerOptions
+                              .find((option) => option.id === primer)
+                              ?.versions.map((version) => (
+                                <SelectItem key={version} value={version}>
+                                  {version}
+                                </SelectItem>
+                              ))}
+                          </SelectGroup>
                         </SelectContent>
                       </Select>
                     </div>
@@ -227,28 +254,45 @@ export default function GenomeAnalysis() {
                   </TooltipProvider>
                 </div>
 
-                <Select defaultValue="sars" onValueChange={setTaxonomyName}>
+                <Select
+                  items={[
+                    { value: "sars", label: "Severe acute respiratory syndrome" },
+                    { value: "other", label: "Other Taxonomy" },
+                  ]}
+                  defaultValue="sars"
+                  onValueChange={(value) => setTaxonomyName(value ?? "")}
+                >
                   <SelectTrigger className="service-card-select-trigger">
                     <SelectValue placeholder="Select taxonomy" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="sars">
-                      Severe acute respiratory syndrome
-                    </SelectItem>
-                    <SelectItem value="other">Other Taxonomy</SelectItem>
+                    <SelectGroup>
+                      <SelectItem value="sars">
+                        Severe acute respiratory syndrome
+                      </SelectItem>
+                      <SelectItem value="other">Other Taxonomy</SelectItem>
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="flex w-[50%] flex-col">
                 <Label className="service-card-label">Taxonomy ID</Label>
-                <Select defaultValue="2697049">
+                <Select
+                  items={[
+                    { value: "2697049", label: "2697049" },
+                    { value: "other", label: "Other ID" },
+                  ]}
+                  defaultValue="2697049"
+                >
                   <SelectTrigger className="service-card-select-trigger">
                     <SelectValue placeholder="Select taxonomy ID" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="2697049">2697049</SelectItem>
-                    <SelectItem value="other">Other ID</SelectItem>
+                    <SelectGroup>
+                      <SelectItem value="2697049">2697049</SelectItem>
+                      <SelectItem value="other">Other ID</SelectItem>
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
               </div>
@@ -312,18 +356,25 @@ export default function GenomeAnalysis() {
                     canAdd={Boolean(prlPlatform)}
                   />
                   <Select
+                    items={[
+                      { value: "illumina", label: "Illumina" },
+                      { value: "ion-torrent", label: "Ion Torrent" },
+                      { value: "infer-platform", label: "Infer Platform" },
+                    ]}
                     value={prlPlatform}
-                    onValueChange={(value) => setPrlPlatform(value)}
+                    onValueChange={(value) => value != null && setPrlPlatform(value)}
                   >
                     <SelectTrigger className="service-card-select-trigger">
                       <SelectValue placeholder="Select a platform..." />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="illumina">Illumina</SelectItem>
-                      <SelectItem value="ion-torrent">Ion Torrent</SelectItem>
-                      <SelectItem value="infer-platform">
-                        Infer Platform
-                      </SelectItem>
+                      <SelectGroup>
+                        <SelectItem value="illumina">Illumina</SelectItem>
+                        <SelectItem value="ion-torrent">Ion Torrent</SelectItem>
+                        <SelectItem value="infer-platform">
+                          Infer Platform
+                        </SelectItem>
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                 </div>
@@ -345,20 +396,29 @@ export default function GenomeAnalysis() {
                   />
 
                   <Select
+                    items={[
+                      { value: "illumina", label: "Illumina" },
+                      { value: "ion-torrent", label: "Ion Torrent" },
+                      { value: "nanopore", label: "Nanopore" },
+                      { value: "pacbio", label: "PacBio" },
+                      { value: "infer-platform", label: "Infer Platform" },
+                    ]}
                     value={srlPlatform}
-                    onValueChange={(value) => setSrlPlatform(value)}
+                    onValueChange={(value) => value != null && setSrlPlatform(value)}
                   >
                     <SelectTrigger className="service-card-select-trigger">
                       <SelectValue placeholder="Select a platform..." />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="illumina">Illumina</SelectItem>
-                      <SelectItem value="ion-torrent">Ion Torrent</SelectItem>
-                      <SelectItem value="nanopore">Nanopore</SelectItem>
-                      <SelectItem value="pacbio">PacBio</SelectItem>
-                      <SelectItem value="infer-platform">
-                        Infer Platform
-                      </SelectItem>
+                      <SelectGroup>
+                        <SelectItem value="illumina">Illumina</SelectItem>
+                        <SelectItem value="ion-torrent">Ion Torrent</SelectItem>
+                        <SelectItem value="nanopore">Nanopore</SelectItem>
+                        <SelectItem value="pacbio">PacBio</SelectItem>
+                        <SelectItem value="infer-platform">
+                          Infer Platform
+                        </SelectItem>
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                 </div>

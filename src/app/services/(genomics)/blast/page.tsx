@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -489,6 +490,7 @@ export default function BlastServicePage() {
                             infoPopup={blastServiceDatabaseSource}
                           />
                           <Select
+                            items={blastPrecomputedDatabases.map((dbSource) => ({ value: dbSource.value, label: dbSource.label }))}
                             value={field.value}
                             onValueChange={(value) => {
                               field.onChange(
@@ -502,15 +504,14 @@ export default function BlastServicePage() {
                             <SelectTrigger className="service-card-select-trigger">
                               <SelectValue placeholder="Select database source" />
                             </SelectTrigger>
-                            <SelectContent className="service-card-select-content">
-                              {blastPrecomputedDatabases.map((dbSource) => (
-                                <SelectItem
-                                  key={dbSource.value}
-                                  value={dbSource.value}
-                                >
-                                  {dbSource.label}
-                                </SelectItem>
-                              ))}
+                            <SelectContent>
+                              <SelectGroup>
+                                {blastPrecomputedDatabases.map((dbSource) => (
+                                  <SelectItem key={dbSource.value} value={dbSource.value}>
+                                    {dbSource.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
                             </SelectContent>
                           </Select>
                         </div>
@@ -532,6 +533,7 @@ export default function BlastServicePage() {
                             infoPopup={blastServiceDatabaseType}
                           />
                           <Select
+                            items={availableDatabaseTypes.map((dbType) => ({ value: dbType.value, label: dbType.label }))}
                             key={`${currentBlastProgram}-${dbPrecomputedDatabase}-${availableDatabaseTypes.length}`}
                             value={field.value || ""}
                             onValueChange={field.onChange}
@@ -540,20 +542,13 @@ export default function BlastServicePage() {
                               <SelectValue placeholder="Select database type" />
                             </SelectTrigger>
                             <SelectContent>
-                              {availableDatabaseTypes.length === 0 ? (
-                                <SelectItem value="" disabled>
-                                  No options available
-                                </SelectItem>
-                              ) : (
-                                availableDatabaseTypes.map((dbType) => (
-                                  <SelectItem
-                                    key={dbType.value}
-                                    value={dbType.value}
-                                  >
+                              <SelectGroup>
+                                {availableDatabaseTypes.map((dbType) => (
+                                  <SelectItem key={dbType.value} value={dbType.value}>
                                     {dbType.label}
                                   </SelectItem>
-                                ))
-                              )}
+                                ))}
+                              </SelectGroup>
                             </SelectContent>
                           </Select>
                         </div>
@@ -792,22 +787,25 @@ export default function BlastServicePage() {
                           </FormLabel>
                           <FormControl>
                             <Select
+                              items={["1", "10", "20", "50", "100", "500", "5000"].map((v) => ({ value: v, label: v }))}
                               value={(field.value ?? 10).toString()}
                               onValueChange={(value) =>
-                                field.onChange(parseInt(value, 10))
+                                value != null && field.onChange(parseInt(value, 10))
                               }
                             >
                               <SelectTrigger className="service-card-select-trigger">
                                 <SelectValue placeholder="Select max hits" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="1">1</SelectItem>
-                                <SelectItem value="10">10</SelectItem>
-                                <SelectItem value="20">20</SelectItem>
-                                <SelectItem value="50">50</SelectItem>
-                                <SelectItem value="100">100</SelectItem>
-                                <SelectItem value="500">500</SelectItem>
-                                <SelectItem value="5000">5000</SelectItem>
+                                <SelectGroup>
+                                  <SelectItem value="1">1</SelectItem>
+                                  <SelectItem value="10">10</SelectItem>
+                                  <SelectItem value="20">20</SelectItem>
+                                  <SelectItem value="50">50</SelectItem>
+                                  <SelectItem value="100">100</SelectItem>
+                                  <SelectItem value="500">500</SelectItem>
+                                  <SelectItem value="5000">5000</SelectItem>
+                                </SelectGroup>
                               </SelectContent>
                             </Select>
                           </FormControl>
@@ -829,24 +827,27 @@ export default function BlastServicePage() {
                           </FormLabel>
                           <FormControl>
                             <Select
+                              items={["0.0001", "0.001", "0.01", "0.1", "1", "10", "100", "1000", "10000"].map((v) => ({ value: v, label: v }))}
                               value={(field.value ?? 0.0001).toString()}
                               onValueChange={(value) =>
-                                field.onChange(parseFloat(value))
+                                value != null && field.onChange(parseFloat(value))
                               }
                             >
                               <SelectTrigger className="service-card-select-trigger">
                                 <SelectValue placeholder="Select E-Value Threshold" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="0.0001">0.0001</SelectItem>
-                                <SelectItem value="0.001">0.001</SelectItem>
-                                <SelectItem value="0.01">0.01</SelectItem>
-                                <SelectItem value="0.1">0.1</SelectItem>
-                                <SelectItem value="1">1</SelectItem>
-                                <SelectItem value="10">10</SelectItem>
-                                <SelectItem value="100">100</SelectItem>
-                                <SelectItem value="1000">1000</SelectItem>
-                                <SelectItem value="10000">10000</SelectItem>
+                                <SelectGroup>
+                                  <SelectItem value="0.0001">0.0001</SelectItem>
+                                  <SelectItem value="0.001">0.001</SelectItem>
+                                  <SelectItem value="0.01">0.01</SelectItem>
+                                  <SelectItem value="0.1">0.1</SelectItem>
+                                  <SelectItem value="1">1</SelectItem>
+                                  <SelectItem value="10">10</SelectItem>
+                                  <SelectItem value="100">100</SelectItem>
+                                  <SelectItem value="1000">1000</SelectItem>
+                                  <SelectItem value="10000">10000</SelectItem>
+                                </SelectGroup>
                               </SelectContent>
                             </Select>
                           </FormControl>

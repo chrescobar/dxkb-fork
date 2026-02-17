@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -51,25 +52,14 @@ function SearchBarContent({
   showIcon = true,
 }: SearchBarProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const urlQ = searchParams.get("q") || "";
   const queryClient = useQueryClient();
 
-  // Initialize inputValue with initialValue if provided, otherwise URL q
-  const [inputValue, setInputValue] = useState(initialValue || urlQ);
+  const [inputValue, setInputValue] = useState(initialValue);
+  const [selected, setSelected] = useState("everything");
 
-  // Sync inputValue whenever URL q changes (but do not overwrite while user is typing)
-  useEffect(() => {
-    if (!urlQ) return;
-
-    if (urlQ !== inputValue) {
-      // Extract keyword(...) values if present
-      const matches = [...urlQ.matchAll(/keyword\(([^)]+)\)/g)];
-      const keywords = matches.map((match) => match[1]);
-
-      setInputValue(keywords.join(" ") || urlQ);
-    }
-  }, [urlQ]);
+  const handleQueryChange = useCallback((value: string) => {
+    setInputValue(value);
+  }, []);
 
   const handleSearch = (e?: FormEvent) => {
     if (e) e.preventDefault();
@@ -78,13 +68,12 @@ function SearchBarContent({
     router.push(
       `/search?q=${encodeURIComponent(inputValue)}&searchtype=${selected}`
     );
-    // 🚀 Force React Query to refetch all ListData queries
     queryClient.invalidateQueries({
       predicate: (query) => {
         const key = query.queryKey[0];
         return (
           key === "genome-meta" ||
-          key === "genome-full" 
+          key === "genome-full"
         );
       },
     });
@@ -94,19 +83,17 @@ function SearchBarContent({
     if (e.key === "Enter") handleSearch();
   };
 
-  const [selected, setSelected] = useState("everything");
-
-  const handleQueryChange = useCallback((value: string) => {
-    setInputValue(value);
-  }, []);
-
   return (
     <form onSubmit={handleSearch} className={`flex w-full max-w-[880px] ${className}`}>
       <Suspense fallback={null}>
         <SearchParamsSync onQueryChange={handleQueryChange} />
       </Suspense>
       <div className="relative flex w-full h-full items-stretch rounded-md border border-input bg-background overflow-hidden">
-        <Select value={selected} onValueChange={setSelected}>
+        <Select
+          items={searchTypes.map((option) => ({ value: option.id, label: option.typeTitle }))}
+          value={selected}
+          onValueChange={(value) => setSelected(value ?? "everything")}
+        >
           <SelectTrigger
             id="searchtype"
             className={`${size === "lg" ? "h-auto py-6" : ""} text-sm min-w-[120px] rounded-l-md rounded-r-none border-0 border-r border-input bg-background text-foreground shadow-none focus:ring-0`}
@@ -114,11 +101,13 @@ function SearchBarContent({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {searchTypes.map((option) => (
-              <SelectItem key={option.id} value={option.id}>
-                {option.typeTitle}
-              </SelectItem>
-            ))}
+            <SelectGroup>
+              {searchTypes.map((option) => (
+                <SelectItem key={option.id} value={option.id}>
+                  {option.typeTitle}
+                </SelectItem>
+              ))}
+            </SelectGroup>
           </SelectContent>
         </Select>
 

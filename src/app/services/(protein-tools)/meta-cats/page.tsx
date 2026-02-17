@@ -20,6 +20,7 @@ import { NumberInput } from "@/components/ui/number-input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -532,8 +533,10 @@ export default function MetaCATSPage() {
                           <FormLabel className="service-card-label">Metadata</FormLabel>
                           <FormControl>
                             <Select
+                              items={METADATA_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
                               value={field.value}
                               onValueChange={(value) => {
+                                if (value == null) return;
                                 field.onChange(value);
                                 // Reset year ranges when metadata changes
                                 if (value !== "collection_year") {
@@ -547,11 +550,13 @@ export default function MetaCATSPage() {
                                 <SelectValue placeholder="Select metadata" />
                               </SelectTrigger>
                               <SelectContent className="service-card-select-content max-h-80">
-                                {METADATA_OPTIONS.map((option) => (
-                                  <SelectItem key={option.value} value={option.value}>
-                                    {option.label}
-                                  </SelectItem>
-                                ))}
+                                <SelectGroup>
+                                  {METADATA_OPTIONS.map((option) => (
+                                    <SelectItem key={option.value} value={option.value}>
+                                      {option.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectGroup>
                               </SelectContent>
                             </Select>
                           </FormControl>
@@ -647,18 +652,21 @@ export default function MetaCATSPage() {
                     <Label className="service-card-label">Group Names</Label>
                     <div className="flex gap-2">
                       <Select
+                        items={groupNames.map((name) => ({ value: name, label: name }))}
                         value={selectedGroupName}
-                        onValueChange={setSelectedGroupName}
+                        onValueChange={(value) => setSelectedGroupName(value ?? "")}
                       >
                         <SelectTrigger className="flex-1 service-card-select-trigger">
                           <SelectValue placeholder="Select or enter group name" />
                         </SelectTrigger>
                         <SelectContent>
-                          {groupNames.map((name) => (
-                            <SelectItem key={name} value={name}>
-                              {name}
-                            </SelectItem>
-                          ))}
+                          <SelectGroup>
+                            {groupNames.map((name) => (
+                              <SelectItem key={name} value={name}>
+                                {name}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
                         </SelectContent>
                       </Select>
                       <Button

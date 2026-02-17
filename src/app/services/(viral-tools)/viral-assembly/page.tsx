@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -161,15 +162,21 @@ export default function ViralAssembly() {
                 <Label className="service-card-label">Assembly Strategy</Label>
 
                 <Select
+                  items={[
+                    { value: "irma", label: "IRMA" },
+                    { value: "other", label: "Other Strategy" },
+                  ]}
                   value={assemblyStrategy}
-                  onValueChange={setAssemblyStrategy}
+                  onValueChange={(value) => setAssemblyStrategy(value ?? "")}
                 >
                   <SelectTrigger className="service-card-select-trigger">
                     <SelectValue placeholder="Select assembly strategy" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="irma">IRMA</SelectItem>
-                    <SelectItem value="other">Other Strategy</SelectItem>
+                    <SelectGroup>
+                      <SelectItem value="irma">IRMA</SelectItem>
+                      <SelectItem value="other">Other Strategy</SelectItem>
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
               </div>
@@ -177,15 +184,26 @@ export default function ViralAssembly() {
               <div className="w-full">
                 <Label className="service-card-label">Virus Genome</Label>
 
-                <Select value={virusGenome} onValueChange={setVirusGenome}>
+                <Select
+                  items={[
+                    { value: "flu", label: "Flu" },
+                    { value: "cov", label: "CoV" },
+                    { value: "rsv", label: "RSV" },
+                    { value: "ebola", label: "Ebola" },
+                  ]}
+                  value={virusGenome}
+                  onValueChange={(value) => setVirusGenome(value ?? "")}
+                >
                   <SelectTrigger className="service-card-select-trigger">
                     <SelectValue placeholder="Select virus genome" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="flu">Flu</SelectItem>
-                    <SelectItem value="cov">CoV</SelectItem>
-                    <SelectItem value="rsv">RSV</SelectItem>
-                    <SelectItem value="ebola">Ebola</SelectItem>
+                    <SelectGroup>
+                      <SelectItem value="flu">Flu</SelectItem>
+                      <SelectItem value="cov">CoV</SelectItem>
+                      <SelectItem value="rsv">RSV</SelectItem>
+                      <SelectItem value="ebola">Ebola</SelectItem>
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
               </div>

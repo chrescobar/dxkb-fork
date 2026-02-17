@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import FooterHeader from "@/components/headers/footer-header"
 import {
@@ -374,16 +374,27 @@ export default function PublicationsListView() {
                   />
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Select defaultValue="newest" onValueChange={(value) => setSortOption(value)}>
+                  <Select
+                    items={[
+                      { value: "newest", label: "Newest First" },
+                      { value: "oldest", label: "Oldest First" },
+                      { value: "citations", label: "Most Cited" },
+                      { value: "title", label: "Title (A-Z)" },
+                    ]}
+                    defaultValue="newest"
+                    onValueChange={(value) => setSortOption(value ?? "")}
+                  >
                     <SelectTrigger className="w-[180px]">
                       <SortDesc className="mr-2 h-4 w-4" />
                       <SelectValue placeholder="Sort by" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="newest">Newest First</SelectItem>
-                      <SelectItem value="oldest">Oldest First</SelectItem>
-                      <SelectItem value="citations">Most Cited</SelectItem>
-                      <SelectItem value="title">Title (A-Z)</SelectItem>
+                      <SelectGroup>
+                        <SelectItem value="newest">Newest First</SelectItem>
+                        <SelectItem value="oldest">Oldest First</SelectItem>
+                        <SelectItem value="citations">Most Cited</SelectItem>
+                        <SelectItem value="title">Title (A-Z)</SelectItem>
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                   <Button variant="outline" size="icon">

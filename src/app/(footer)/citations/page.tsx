@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CitationNav } from "./components/citation-nav";
 import { citations as citationsData } from "./data/citations";
@@ -193,29 +193,49 @@ export default function CitationsPage() {
         {/* Filters and Search */}
         <div className="citation-filters">
           <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-x-2 md:space-y-0">
-            <Select defaultValue="all" onValueChange={setYearFilter}>
+            <Select
+              items={[
+                { value: "all", label: "All Years" },
+                ...uniqueYears.map((year) => ({ value: year.toString(), label: year.toString() })),
+              ]}
+              defaultValue="all"
+              onValueChange={(value) => setYearFilter(value ?? "")}
+            >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by Year" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Years</SelectItem>
-                {uniqueYears.map((year) => (
-                  <SelectItem key={year} value={year.toString()}>
-                    {year}
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  <SelectItem value="all">All Years</SelectItem>
+                  {uniqueYears.map((year) => (
+                    <SelectItem key={year} value={year.toString()}>
+                      {year}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
-            <Select defaultValue="newest" onValueChange={setSortOption}>
+            <Select
+              items={[
+                { value: "newest", label: "Newest First" },
+                { value: "oldest", label: "Oldest First" },
+                { value: "citations", label: "Most Cited" },
+                { value: "impact", label: "Highest Impact" },
+              ]}
+              defaultValue="newest"
+              onValueChange={(value) => setSortOption(value ?? "")}
+            >
               <SelectTrigger className="w-[180px]">
                 <SortDesc className="mr-2 h-4 w-4" />
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="oldest">Oldest First</SelectItem>
-                <SelectItem value="citations">Most Cited</SelectItem>
-                <SelectItem value="impact">Highest Impact</SelectItem>
+                <SelectGroup>
+                  <SelectItem value="newest">Newest First</SelectItem>
+                  <SelectItem value="oldest">Oldest First</SelectItem>
+                  <SelectItem value="citations">Most Cited</SelectItem>
+                  <SelectItem value="impact">Highest Impact</SelectItem>
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>

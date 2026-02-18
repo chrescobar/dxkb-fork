@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { createPortal } from "react-dom";
 import {
   Search,
   FolderOpen,
@@ -61,6 +62,11 @@ export function WorkspaceObjectSelector({
     openUpward: boolean;
     maxHeight: number;
   }>({ openUpward: false, maxHeight: 640 });
+  const [dropdownRect, setDropdownRect] = React.useState<{
+    top: number;
+    left: number;
+    width: number;
+  } | null>(null);
   const inputRef = React.useRef<HTMLDivElement>(null);
   const inputElementRef = React.useRef<HTMLInputElement | null>(null);
   const dropdownRef = React.useRef<HTMLDivElement | null>(null);
@@ -205,38 +211,61 @@ export function WorkspaceObjectSelector({
     }
   }, [highlightedIndex]);
 
-  // Calculate dropdown position based on available space
+  // Calculate dropdown position and rect for portal (so it isn't clipped by Card overflow)
+  const updateDropdownLayout = React.useCallback(() => {
+    if (!showDropdown || !inputRef.current) return;
+    const rect = inputRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const spaceBelow = viewportHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    const preferredHeight = 640;
+    const minHeight = 288;
+    const gap = 4;
+
+    let openUpward = false;
+    let maxHeight = preferredHeight;
+
+    if (spaceBelow >= preferredHeight) {
+      openUpward = false;
+      maxHeight = preferredHeight;
+    } else if (spaceAbove >= preferredHeight) {
+      openUpward = true;
+      maxHeight = preferredHeight;
+    } else if (spaceBelow >= spaceAbove) {
+      openUpward = false;
+      maxHeight = Math.max(spaceBelow - 20, minHeight);
+    } else {
+      openUpward = true;
+      maxHeight = Math.max(spaceAbove - 20, minHeight);
+    }
+
+    setDropdownPosition({ openUpward, maxHeight });
+    setDropdownRect({
+      top: openUpward ? rect.top - maxHeight - gap : rect.bottom + gap,
+      left: rect.left,
+      width: rect.width,
+    });
+  }, [showDropdown]);
+
   React.useEffect(() => {
     if (showDropdown && inputRef.current) {
-      const rect = inputRef.current.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const spaceBelow = viewportHeight - rect.bottom;
-      const spaceAbove = rect.top;
-      const preferredHeight = 640; // Original max-h-160 value
-      const minHeight = 288; // Fallback max-h-72 value
-
-      // Decide if we should open upward or downward
-      if (spaceBelow >= preferredHeight) {
-        // Plenty of space below, use preferred height
-        setDropdownPosition({ openUpward: false, maxHeight: preferredHeight });
-      } else if (spaceAbove >= preferredHeight) {
-        // Not enough space below but enough above
-        setDropdownPosition({ openUpward: true, maxHeight: preferredHeight });
-      } else if (spaceBelow >= spaceAbove) {
-        // More space below than above, shrink to fit
-        setDropdownPosition({
-          openUpward: false,
-          maxHeight: Math.max(spaceBelow - 20, minHeight),
-        });
-      } else {
-        // More space above than below, shrink to fit
-        setDropdownPosition({
-          openUpward: true,
-          maxHeight: Math.max(spaceAbove - 20, minHeight),
-        });
-      }
+      updateDropdownLayout();
+    } else {
+      setDropdownRect(null);
     }
-  }, [showDropdown]);
+  }, [showDropdown, updateDropdownLayout]);
+
+  // Update portal position on scroll/resize so dropdown stays aligned
+  React.useEffect(() => {
+    if (!showDropdown) return;
+    const handleUpdate = () => updateDropdownLayout();
+    window.addEventListener("scroll", handleUpdate, true);
+    window.addEventListener("resize", handleUpdate);
+    return () => {
+      window.removeEventListener("scroll", handleUpdate, true);
+      window.removeEventListener("resize", handleUpdate);
+    };
+  }, [showDropdown, updateDropdownLayout]);
 
   // Use filtered objects from hook, with manual trigger override
   const displayObjects = React.useMemo(() => {
@@ -391,84 +420,86 @@ export function WorkspaceObjectSelector({
             />
           </Button>
 
-          {/* Live Search Dropdown */}
-          {showDropdown && (
-            <div
-              ref={dropdownRef}
-              className={`bg-popover scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/20 hover:scrollbar-thumb-muted-foreground/40 dark:scrollbar-thumb-muted-foreground/30 dark:hover:scrollbar-thumb-muted-foreground/50 absolute right-0 left-0 z-50 overflow-y-auto rounded-md border shadow-md ${
-                dropdownPosition.openUpward
-                  ? "bottom-full mb-1"
-                  : "top-full mt-1"
-              }`}
-              style={{ maxHeight: `${dropdownPosition.maxHeight}px` }}
-            >
-              {error ? (
-                <div className="p-4">
-                  <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>
-                      Failed to load workspace objects: {error}
-                    </AlertDescription>
-                  </Alert>
-                </div>
-              ) : loading ? (
-                <div className="flex items-center justify-center p-4">
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  <span className="text-muted-foreground text-sm">
-                    Loading...
-                  </span>
-                </div>
-              ) : displayObjects.length > 0 ? (
-                displayObjects.map((object, index) => {
-                  if (!object) return null; // Skip undefined objects
+          {/* Live Search Dropdown — rendered in portal so it isn't clipped by Card overflow-hidden */}
+          {showDropdown &&
+            dropdownRect &&
+            typeof document !== "undefined" &&
+            createPortal(
+              <div
+                ref={dropdownRef}
+                className="bg-popover scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/20 hover:scrollbar-thumb-muted-foreground/40 dark:scrollbar-thumb-muted-foreground/30 dark:hover:scrollbar-thumb-muted-foreground/50 fixed z-100 overflow-y-auto rounded-md border shadow-md"
+                style={{
+                  top: dropdownRect.top,
+                  left: dropdownRect.left,
+                  width: dropdownRect.width,
+                  maxHeight: dropdownPosition.maxHeight,
+                }}
+              >
+                {error ? (
+                  <div className="p-4">
+                    <Alert variant="destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        Failed to load workspace objects: {error}
+                      </AlertDescription>
+                    </Alert>
+                  </div>
+                ) : loading ? (
+                  <div className="flex items-center justify-center p-4">
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <span className="text-muted-foreground text-sm">
+                      Loading...
+                    </span>
+                  </div>
+                ) : displayObjects.length > 0 ? (
+                  displayObjects.map((object, index) => {
+                    if (!object) return null;
 
-                  // Remove user@workspace prefix from path
-                  const cleanPath =
-                    object.path?.replace(/^\/[^/]+@[^/]+/, "") ||
-                    object.path ||
-                    object.name ||
-                    "Unnamed Object";
+                    const cleanPath =
+                      object.path?.replace(/^\/[^/]+@[^/]+/, "") ||
+                      object.path ||
+                      object.name ||
+                      "Unnamed Object";
 
-                  const isHighlighted = highlightedIndex === index;
+                    const isHighlighted = highlightedIndex === index;
 
-                  return (
-                    <div
-                      key={`${object.id}-${index}`}
-                      ref={(el) => {
-                        itemRefs.current[index] = el;
-                      }}
-                      className={cn(
-                        "hover:bg-accent flex cursor-pointer items-center justify-between p-2",
-                        isHighlighted && "bg-accent"
-                      )}
-                      onClick={() => {
-                        // If onSelectedObjectChange is provided, use the '+' pattern (don't immediately select)
-                        // Otherwise, immediately select (for OutputFolder use case)
-                        const immediateSelect = !onSelectedObjectChange;
-                        handleObjectClick(object, immediateSelect);
-                      }}
-                      onMouseEnter={() => setHighlightedIndex(index)}
-                    >
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium">
-                          {object.name}
-                        </p>
-                        <p className="text-muted-foreground truncate text-xs">
-                          {cleanPath}
-                        </p>
+                    return (
+                      <div
+                        key={`${object.id}-${index}`}
+                        ref={(el) => {
+                          itemRefs.current[index] = el;
+                        }}
+                        className={cn(
+                          "hover:bg-accent flex cursor-pointer items-center justify-between p-2",
+                          isHighlighted && "bg-accent"
+                        )}
+                        onClick={() => {
+                          const immediateSelect = !onSelectedObjectChange;
+                          handleObjectClick(object, immediateSelect);
+                        }}
+                        onMouseEnter={() => setHighlightedIndex(index)}
+                      >
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium">
+                            {object.name}
+                          </p>
+                          <p className="text-muted-foreground truncate text-xs">
+                            {cleanPath}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <p className="text-muted-foreground py-4 text-center text-sm">
-                  {searchQuery
-                    ? "No objects found matching your search"
-                    : "No objects found"}
-                </p>
-              )}
-            </div>
-          )}
+                    );
+                  })
+                ) : (
+                  <p className="text-muted-foreground py-4 text-center text-sm">
+                    {searchQuery
+                      ? "No objects found matching your search"
+                      : "No objects found"}
+                  </p>
+                )}
+              </div>,
+              document.body
+            )}
         </div>
 
         {/* Folder Icon Button */}

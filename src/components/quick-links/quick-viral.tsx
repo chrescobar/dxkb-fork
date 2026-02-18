@@ -6,6 +6,7 @@ import EnzymeIcon from "../../../public/icons/enzyme.svg";
 import SequenceIcon from "../../../public/icons/sequence.svg";
 import GenomeIcon from "../../../public/icons/genome.svg";
 import PartialSeqIcon from "../../../public/icons/pipeline.svg";
+import { TbCube3dSphere } from "react-icons/tb";
 
 const QuickViralLinks = () => {
   return (

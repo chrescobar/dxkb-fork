@@ -16,6 +16,11 @@ interface ServiceHeaderProps {
   isHeader?: boolean;
 }
 
+interface ResourceLink {
+  href: string;
+  label: string;
+}
+
 export function ServiceHeader({
   title,
   description,
@@ -27,7 +32,7 @@ export function ServiceHeader({
   instructionalVideo,
   version,
 }: ServiceHeaderProps) {
-  const resourceLinks: { href: string; label: string }[] = [
+  const resourceLinks: ResourceLink[] = [
     ...(quickReferenceGuide
       ? [{ href: quickReferenceGuide, label: "Quick Reference Guide" }]
       : []),

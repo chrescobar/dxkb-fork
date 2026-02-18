@@ -62,7 +62,7 @@ import type { WorkspaceObject } from "@/lib/workspace-client";
 const tutorial =
   "https://www.bv-brc.org/docs/tutorial/viral_assembly/assembly.html";
 
-export default function ViralAssemblyPage() {
+export const ViralAssemblyPage = function ViralAssemblyPage() {
   const form = useForm<ViralAssemblyFormData>({
     resolver: zodResolver(viralAssemblyFormSchema),
     defaultValues: defaultViralAssemblyFormValues,
@@ -476,4 +476,6 @@ export default function ViralAssemblyPage() {
       />
     </section>
   );
-}
+};
+
+export default ViralAssemblyPage;

@@ -362,9 +362,9 @@ export default function MetagenomicReadMappingPage() {
                             <RadioGroup
                               value={field.value}
                               onValueChange={field.onChange}
-                              className="service-radio-group"
+                              className="grid gap-2 w-full"
                             >
-                              <div className="service-radio-group-item">
+                              <div className="flex items-center gap-3">
                                 <RadioGroupItem
                                   value="predefined_list"
                                   id="predefined_list"
@@ -373,7 +373,7 @@ export default function MetagenomicReadMappingPage() {
                                   Predefined List
                                 </Label>
                               </div>
-                              <div className="service-radio-group-item">
+                              <div className="flex items-center gap-3">
                                 <RadioGroupItem
                                   value="fasta_file"
                                   id="fasta_file"
@@ -382,7 +382,7 @@ export default function MetagenomicReadMappingPage() {
                                   FASTA File
                                 </Label>
                               </div>
-                              <div className="service-radio-group-item">
+                              <div className="flex items-center gap-3">
                                 <RadioGroupItem
                                   value="feature_group"
                                   id="feature_group"

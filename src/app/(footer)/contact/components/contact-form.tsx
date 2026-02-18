@@ -114,25 +114,25 @@ const ContactForm = () => {
                             What can we help you with?
                           </Label>
                           <RadioGroup defaultValue="general" className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="general" id="general" className="" />
+                            <div className="flex items-center gap-3">
+                              <RadioGroupItem value="general" id="general" />
                               <Label htmlFor="general" className="font-normal">
                                 General Inquiry
                               </Label>
                             </div>
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center gap-3">
                               <RadioGroupItem value="technical" id="technical" />
                               <Label htmlFor="technical" className="font-normal">
                                 Technical Support
                               </Label>
                             </div>
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center gap-3">
                               <RadioGroupItem value="research" id="research" />
                               <Label htmlFor="research" className="font-normal">
                                 Research Collaboration
                               </Label>
                             </div>
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center gap-3">
                               <RadioGroupItem value="feedback" id="feedback" />
                               <Label htmlFor="feedback" className="font-normal">
                                 Feedback & Suggestions

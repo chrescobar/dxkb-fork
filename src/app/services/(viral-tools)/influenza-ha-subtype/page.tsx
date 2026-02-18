@@ -72,18 +72,18 @@ export default function HASubtypeNumbering() {
           <CardContent className="service-card-content">
             <RadioGroup
               defaultValue="sequence"
-              className="service-radio-group"
+              className="grid gap-2 w-full"
               onValueChange={setInputSequence}
             >
-              <div className="service-radio-group-item">
+              <div className="flex items-center gap-3">
                 <RadioGroupItem value="sequence" id="sequence" />
                 <Label htmlFor="sequence">Enter Sequence</Label>
               </div>
-              <div className="service-radio-group-item">
+              <div className="flex items-center gap-3">
                 <RadioGroupItem value="fasta" id="fasta" />
                 <Label htmlFor="fasta">Select FASTA File</Label>
               </div>
-              <div className="service-radio-group-item">
+              <div className="flex items-center gap-3">
                 <RadioGroupItem value="feature-group" id="feature-group" />
                 <Label htmlFor="feature-group">Feature Group</Label>
               </div>

@@ -81,17 +81,17 @@ export default function ViralAssembly() {
             <RadioGroup
               defaultValue={inputType}
               onValueChange={setInputType}
-              className="service-radio-group"
+              className="grid gap-2 w-full"
             >
-              <div className="service-radio-group-item">
+              <div className="flex items-center gap-3">
                 <RadioGroupItem value="paired" id="paired" />
                 <Label htmlFor="paired">Paired Read Library</Label>
               </div>
-              <div className="service-radio-group-item">
+              <div className="flex items-center gap-3">
                 <RadioGroupItem value="single" id="single" />
                 <Label htmlFor="single">Single Read Library</Label>
               </div>
-              <div className="service-radio-group-item">
+              <div className="flex items-center gap-3">
                 <RadioGroupItem value="sra" id="sra" />
                 <Label htmlFor="sra">SRA Run Accession</Label>
               </div>

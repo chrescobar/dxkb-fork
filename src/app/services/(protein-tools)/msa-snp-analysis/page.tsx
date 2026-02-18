@@ -546,13 +546,13 @@ export default function MSAandSNPAnalysisPage() {
                             setFeatureOptions([]);
                           }
                         }}
-                        className="service-radio-group"
+                        className="grid gap-2 w-full"
                       >
-                        <div className="service-radio-group-item">
+                        <div className="flex items-center gap-3">
                           <RadioGroupItem value="unaligned" id="unaligned" />
                           <Label htmlFor="unaligned">Unaligned Sequences</Label>
                         </div>
-                        <div className="service-radio-group-item">
+                        <div className="flex items-center gap-3">
                           <RadioGroupItem value="aligned" id="aligned" />
                           <Label htmlFor="aligned">Aligned Sequences</Label>
                         </div>
@@ -605,9 +605,9 @@ export default function MSAandSNPAnalysisPage() {
                                 setFeatureOptions([]);
                               }
                             }}
-                            className="service-radio-group"
+                            className="grid gap-2 w-full"
                           >
-                            <div className="service-radio-group-item">
+                            <div className="flex items-center gap-3">
                               <RadioGroupItem
                                 value="input_feature_group"
                                 id="input_feature_group"
@@ -616,7 +616,7 @@ export default function MSAandSNPAnalysisPage() {
                                 Feature Group
                               </Label>
                             </div>
-                            <div className="service-radio-group-item">
+                            <div className="flex items-center gap-3">
                               <RadioGroupItem
                                 value="input_genome_group"
                                 id="input_genome_group"
@@ -625,7 +625,7 @@ export default function MSAandSNPAnalysisPage() {
                                 Viral Genome Group
                               </Label>
                             </div>
-                            <div className="service-radio-group-item">
+                            <div className="flex items-center gap-3">
                               <RadioGroupItem
                                 value="input_fasta"
                                 id="input_fasta"
@@ -634,7 +634,7 @@ export default function MSAandSNPAnalysisPage() {
                                 DNA or Protein FASTA File
                               </Label>
                             </div>
-                            <div className="service-radio-group-item">
+                            <div className="flex items-center gap-3">
                               <RadioGroupItem
                                 value="input_sequence"
                                 id="input_sequence"
@@ -691,13 +691,13 @@ export default function MSAandSNPAnalysisPage() {
                               <RadioGroup
                                 value={field.value}
                                 onValueChange={field.onChange}
-                                className="service-radio-group"
+                                className="grid gap-2 w-full"
                               >
-                                <div className="service-radio-group-item">
+                                <div className="flex items-center gap-3">
                                   <RadioGroupItem value="dna" id="dna" />
                                   <Label htmlFor="dna">DNA</Label>
                                 </div>
-                                <div className="service-radio-group-item">
+                                <div className="flex items-center gap-3">
                                   <RadioGroupItem
                                     value="protein"
                                     id="protein"
@@ -998,14 +998,14 @@ export default function MSAandSNPAnalysisPage() {
                               setGenomeIdDropdownOpen(false);
                             }
                           }}
-                          className="service-radio-group"
+                          className="grid gap-2 w-full"
                         >
-                          <div className="service-radio-group-item">
+                          <div className="flex items-center gap-3">
                             <RadioGroupItem value="none" id="ref_none" />
                             <Label htmlFor="ref_none">None</Label>
                           </div>
                           {availableRefTypes.includes("first" as const) && (
-                            <div className="service-radio-group-item">
+                            <div className="flex items-center gap-3">
                               <RadioGroupItem value="first" id="ref_first" />
                               <Label htmlFor="ref_first">First Sequence</Label>
                             </div>
@@ -1013,7 +1013,7 @@ export default function MSAandSNPAnalysisPage() {
                           {availableRefTypes.includes(
                             "feature_id" as const,
                           ) && (
-                            <div className="service-radio-group-item">
+                            <div className="flex items-center gap-3">
                               <RadioGroupItem
                                 value="feature_id"
                                 id="ref_feature_id"
@@ -1022,7 +1022,7 @@ export default function MSAandSNPAnalysisPage() {
                             </div>
                           )}
                           {availableRefTypes.includes("genome_id" as const) && (
-                            <div className="service-radio-group-item">
+                            <div className="flex items-center gap-3">
                               <RadioGroupItem
                                 value="genome_id"
                                 id="ref_genome_id"
@@ -1031,7 +1031,7 @@ export default function MSAandSNPAnalysisPage() {
                             </div>
                           )}
                           {availableRefTypes.includes("string" as const) && (
-                            <div className="service-radio-group-item">
+                            <div className="flex items-center gap-3">
                               <RadioGroupItem value="string" id="ref_string" />
                               <Label htmlFor="ref_string">
                                 Input Reference Sequence
@@ -1357,13 +1357,13 @@ export default function MSAandSNPAnalysisPage() {
                               <RadioGroup
                                 value={field.value || "auto"}
                                 onValueChange={field.onChange}
-                                className="space-y-2 p-2"
+                                className="grid gap-2 w-full p-2"
                               >
                                 {MsaSnpAnalysis.STRATEGY_OPTIONS.map(
                                   (option) => (
                                     <div
                                       key={option.value}
-                                      className="flex items-center space-x-2"
+                                      className="flex items-center gap-3"
                                     >
                                       <RadioGroupItem
                                         value={option.value}

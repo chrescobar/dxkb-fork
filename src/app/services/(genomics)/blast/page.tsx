@@ -272,9 +272,9 @@ export default function BlastServicePage() {
                       <RadioGroup
                         value={field.value}
                         onValueChange={field.onChange}
-                        className="service-radio-group-grid"
+                        className="grid gap-2 w-full"
                       >
-                        <div className="service-radio-group-item">
+                        <div className="flex items-center gap-3">
                           <RadioGroupItem value="blastn" id="blastn" />
                           <FormLabel
                             htmlFor="blastn"
@@ -283,7 +283,7 @@ export default function BlastServicePage() {
                             BLASTN (nucleotide → nucleotide database)
                           </FormLabel>
                         </div>
-                        <div className="service-radio-group-item">
+                        <div className="flex items-center gap-3">
                           <RadioGroupItem value="blastp" id="blastp" />
                           <FormLabel
                             htmlFor="blastp"
@@ -292,7 +292,7 @@ export default function BlastServicePage() {
                             BLASTP (protein → protein database)
                           </FormLabel>
                         </div>
-                        <div className="service-radio-group-item">
+                        <div className="flex items-center gap-3">
                           <RadioGroupItem value="blastx" id="blastx" />
                           <FormLabel
                             htmlFor="blastx"
@@ -301,7 +301,7 @@ export default function BlastServicePage() {
                             BLASTX (translated nucleotide → protein database)
                           </FormLabel>
                         </div>
-                        <div className="service-radio-group-item">
+                        <div className="flex items-center gap-3">
                           <RadioGroupItem value="tblastn" id="tblastn" />
                           <FormLabel
                             htmlFor="tblastn"
@@ -350,9 +350,9 @@ export default function BlastServicePage() {
                             );
                           }}
                           value={field.value}
-                          className="service-radio-group"
+                          className="grid gap-2 w-full"
                         >
-                          <div className="service-radio-group-item">
+                          <div className="flex items-center gap-3">
                             <RadioGroupItem
                               value="fasta_data"
                               id="fastaSequence"
@@ -361,13 +361,13 @@ export default function BlastServicePage() {
                               Enter sequence
                             </FormLabel>
                           </div>
-                          <div className="service-radio-group-item">
+                          <div className="flex items-center gap-3">
                             <RadioGroupItem value="fasta_file" id="fastaFile" />
                             <FormLabel htmlFor="fastaFile">
                               Select FASTA file
                             </FormLabel>
                           </div>
-                          <div className="service-radio-group-item">
+                          <div className="flex items-center gap-3">
                             <RadioGroupItem
                               value="feature_group"
                               id="featureGroup"

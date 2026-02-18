@@ -356,13 +356,13 @@ export default function GeneProteinTreePage() {
                         <RadioGroup
                           value={field.value}
                           onValueChange={field.onChange}
-                          className="service-radio-group"
+                          className="grid gap-2 w-full"
                         >
-                          <div className="service-radio-group-item">
+                          <div className="flex items-center gap-3">
                             <RadioGroupItem value="DNA" id="DNA" />
                             <FormLabel htmlFor="DNA">DNA</FormLabel>
                           </div>
-                          <div className="service-radio-group-item">
+                          <div className="flex items-center gap-3">
                             <RadioGroupItem value="Protein" id="Protein" />
                             <FormLabel htmlFor="Protein">Protein</FormLabel>
                           </div>
@@ -585,17 +585,17 @@ export default function GeneProteinTreePage() {
                           <RadioGroup
                             value={field.value}
                             onValueChange={field.onChange}
-                            className="service-radio-group"
+                            className="grid gap-2 w-full"
                           >
-                            <div className="service-radio-group-item">
+                            <div className="flex items-center gap-3">
                               <RadioGroupItem value="RAxML" id="raxml" />
                               <FormLabel htmlFor="raxml">RAxML</FormLabel>
                             </div>
-                            <div className="service-radio-group-item">
+                            <div className="flex items-center gap-3">
                               <RadioGroupItem value="PhyML" id="phyml" />
                               <FormLabel htmlFor="phyml">PhyML</FormLabel>
                             </div>
-                            <div className="service-radio-group-item">
+                            <div className="flex items-center gap-3">
                               <RadioGroupItem value="FastTree" id="fasttree" />
                               <FormLabel htmlFor="fasttree">FastTree</FormLabel>
                             </div>

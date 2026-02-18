@@ -399,9 +399,9 @@ export default function SimilarGenomeFinderServicePage() {
                                   <RadioGroup
                                     value={field.value}
                                     onValueChange={field.onChange}
-                                    className="gap-2"
+                                    className="grid gap-2 w-full"
                                   >
-                                    <div className="flex items-center space-x-2">
+                                    <div className="flex items-center gap-3">
                                       <RadioGroupItem value="reference" id="reference" />
                                       <FormLabel
                                         htmlFor="reference"
@@ -410,7 +410,7 @@ export default function SimilarGenomeFinderServicePage() {
                                         Reference and Representative Genomes
                                       </FormLabel>
                                     </div>
-                                    <div className="flex items-center space-x-2">
+                                    <div className="flex items-center gap-3">
                                       <RadioGroupItem value="all" id="all" />
                                       <FormLabel
                                         htmlFor="all"

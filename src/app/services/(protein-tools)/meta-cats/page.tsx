@@ -499,17 +499,17 @@ export default function MetaCATSPage() {
                       <RadioGroup
                         value={field.value}
                         onValueChange={field.onChange}
-                        className="service-radio-group"
+                        className="grid gap-2 w-full"
                       >
-                        <div className="service-radio-group-item">
+                        <div className="flex items-center gap-3">
                           <RadioGroupItem value="auto" id="auto" />
                           <Label htmlFor="auto">Auto Grouping</Label>
                         </div>
-                        <div className="service-radio-group-item">
+                        <div className="flex items-center gap-3">
                           <RadioGroupItem value="groups" id="groups" />
                           <Label htmlFor="groups">Feature Groups</Label>
                         </div>
-                        <div className="service-radio-group-item">
+                        <div className="flex items-center gap-3">
                           <RadioGroupItem value="files" id="files" />
                           <Label htmlFor="files">Alignment File</Label>
                         </div>
@@ -630,13 +630,13 @@ export default function MetaCATSPage() {
                           <RadioGroup
                             value={field.value}
                             onValueChange={field.onChange}
-                            className="service-radio-group"
+                            className="grid gap-2 w-full"
                           >
-                            <div className="service-radio-group-item">
+                            <div className="flex items-center gap-3">
                               <RadioGroupItem value="na" id="auto_dna" />
                               <Label htmlFor="auto_dna">DNA</Label>
                             </div>
-                            <div className="service-radio-group-item">
+                            <div className="flex items-center gap-3">
                               <RadioGroupItem value="aa" id="auto_protein" />
                               <Label htmlFor="auto_protein">Protein</Label>
                             </div>
@@ -823,13 +823,13 @@ export default function MetaCATSPage() {
                           <RadioGroup
                             value={field.value}
                             onValueChange={field.onChange}
-                            className="service-radio-group"
+                            className="grid gap-2 w-full"
                           >
-                            <div className="service-radio-group-item">
+                            <div className="flex items-center gap-3">
                               <RadioGroupItem value="na" id="group_dna" />
                               <Label htmlFor="group_dna">DNA</Label>
                             </div>
-                            <div className="service-radio-group-item">
+                            <div className="flex items-center gap-3">
                               <RadioGroupItem value="aa" id="group_protein" />
                               <Label htmlFor="group_protein">Protein</Label>
                             </div>

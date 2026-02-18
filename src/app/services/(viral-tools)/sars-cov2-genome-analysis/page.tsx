@@ -107,14 +107,14 @@ export default function GenomeAnalysis() {
           <CardContent className="service-card-content">
             <RadioGroup
               defaultValue="read-file"
-              className="gap-4; flex flex-col lg:flex-row"
+              className="flex flex-col gap-2 w-full lg:flex-row"
               onValueChange={setAnalysisInput}
             >
-              <div className="service-radio-group-item">
+              <div className="flex items-center gap-3">
                 <RadioGroupItem value="read-file" id="read-file" />
                 <Label htmlFor="read-file">Read File</Label>
               </div>
-              <div className="service-radio-group-item">
+              <div className="flex items-center gap-3">
                 <RadioGroupItem
                   value="assembly-contigs"
                   id="assembly-contigs"

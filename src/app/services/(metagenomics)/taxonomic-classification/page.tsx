@@ -603,15 +603,15 @@ export default function TaxonomicClassificationPage() {
                             <RadioGroup
                               value={field.value}
                               onValueChange={field.onChange}
-                              className="service-radio-group"
+                              className="grid gap-2 w-full"
                             >
-                              <div className="service-radio-group-item">
+                              <div className="flex items-center gap-3">
                                 <RadioGroupItem value="wgs" id="wgs" />
                                 <Label htmlFor="wgs" className="text-sm">
                                   Whole Genome Sequencing (WGS)
                                 </Label>
                               </div>
-                              <div className="service-radio-group-item">
+                              <div className="flex items-center gap-3">
                                 <RadioGroupItem value="16s" id="16s" />
                                 <Label htmlFor="16s" className="text-sm">
                                   16S Ribosomal RNA
@@ -855,9 +855,9 @@ export default function TaxonomicClassificationPage() {
                                 onValueChange={(value) =>
                                   field.onChange(value === "yes")
                                 }
-                                className="service-radio-group"
+                                className="grid gap-2 w-full"
                               >
-                                <div className="service-radio-group-item">
+                                <div className="flex items-center gap-3">
                                   <RadioGroupItem
                                     value="no"
                                     id="classified-no"
@@ -869,7 +869,7 @@ export default function TaxonomicClassificationPage() {
                                     No
                                   </Label>
                                 </div>
-                                <div className="service-radio-group-item">
+                                <div className="flex items-center gap-3">
                                   <RadioGroupItem
                                     value="yes"
                                     id="classified-yes"
@@ -905,9 +905,9 @@ export default function TaxonomicClassificationPage() {
                                 onValueChange={(value) =>
                                   field.onChange(value === "yes")
                                 }
-                                className="service-radio-group"
+                                className="grid gap-2 w-full"
                               >
-                                <div className="service-radio-group-item">
+                                <div className="flex items-center gap-3">
                                   <RadioGroupItem
                                     value="no"
                                     id="unclassified-no"
@@ -919,7 +919,7 @@ export default function TaxonomicClassificationPage() {
                                     No
                                   </Label>
                                 </div>
-                                <div className="service-radio-group-item">
+                                <div className="flex items-center gap-3">
                                   <RadioGroupItem
                                     value="yes"
                                     id="unclassified-yes"

@@ -143,18 +143,16 @@ const WelcomeSearch = () => {
                   <div className="mb-4">
                     <RadioGroup
                       defaultValue="nucleotide"
-                      className="radio-group"
+                      className="grid gap-2 w-full"
                     >
                       <Label className="card-sublabel">Sequence Type</Label>
-                      <div className="radio-group-item-container">
-                        <div>
-                          <RadioGroupItem id="nucleotide" value="nucleotide" />
-                          <Label htmlFor="nucleotide">Nucleotide</Label>
-                        </div>
-                        <div>
-                          <RadioGroupItem id="protein" value="protein" />
-                          <Label htmlFor="protein">Protein</Label>
-                        </div>
+                      <div className="flex items-center gap-3">
+                        <RadioGroupItem id="nucleotide" value="nucleotide" />
+                        <Label htmlFor="nucleotide">Nucleotide</Label>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <RadioGroupItem id="protein" value="protein" />
+                        <Label htmlFor="protein">Protein</Label>
                       </div>
                     </RadioGroup>
 

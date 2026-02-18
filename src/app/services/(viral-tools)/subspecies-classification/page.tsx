@@ -81,14 +81,14 @@ export default function SubspeciesClassification() {
           <CardContent className="service-card-content">
             <RadioGroup
               defaultValue="enter-sequence"
-              className="service-radio-group"
+              className="grid gap-2 w-full"
               onValueChange={setQuerySource}
             >
-              <div className="service-radio-group-item">
+              <div className="flex items-center gap-3">
                 <RadioGroupItem value="enter-sequence" id="enter-sequence" />
                 <Label htmlFor="enter-sequence">Enter Sequence</Label>
               </div>
-              <div className="service-radio-group-item">
+              <div className="flex items-center gap-3">
                 <RadioGroupItem value="fasta-file" id="fasta-file" />
                 <Label htmlFor="fasta-file">Select FASTA File</Label>
               </div>

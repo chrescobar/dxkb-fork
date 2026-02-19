@@ -42,7 +42,7 @@ import {
   validateViralGenomes,
   getGenomeIdsFromGroup,
   type GenomeSummary,
-  fetchAllGenomeIds,
+  fetchGenomesByIds,
 } from "@/lib/services/genome";
 import {
   fetchFeaturesFromGroup,
@@ -279,13 +279,13 @@ export default function MSAandSNPAnalysisPage() {
           return;
         }
 
-        // Now fetch genomes using the website API
-        const allGenomeIds = await fetchAllGenomeIds({
+        // Fetch summaries for only the genomes in the selected group
+        const groupGenomes = await fetchGenomesByIds(genomeIds, {
           signal: abortController.signal,
         });
 
         setGenomeOptions(
-          allGenomeIds.map((genome) => ({
+          groupGenomes.map((genome) => ({
             genome_id: genome.genome_id,
             genome_name: genome.genome_name,
           })),
@@ -1052,12 +1052,6 @@ export default function MSAandSNPAnalysisPage() {
                       Feature ID
                     </FormLabel>
                     <Select
-                      items={featureOptions.map((feature) => ({
-                        value: feature.feature_id,
-                        label: feature.patric_id
-                          ? `${feature.patric_id}${feature.product ? ` --- ${feature.product}` : ""}`
-                          : feature.feature_id,
-                      }))}
                       value={selectedFeatureId}
                       onValueChange={(value) => {
                         if (value == null) return;
@@ -1141,12 +1135,6 @@ export default function MSAandSNPAnalysisPage() {
                       Genome ID
                     </FormLabel>
                     <Select
-                      items={genomeOptions.map((g) => ({
-                        value: g.genome_id,
-                        label: g.genome_name
-                          ? `${g.genome_id} -- ${g.genome_name}`
-                          : g.genome_id,
-                      }))}
                       value={selectedGenomeId}
                       open={genomeIdDropdownOpen}
                       onOpenChange={(open) => {

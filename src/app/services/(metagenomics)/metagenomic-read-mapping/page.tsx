@@ -57,8 +57,8 @@ import {
 
 import {
   metagenomicReadMappingFormSchema,
-  DEFAULT_METAGENOMIC_READ_MAPPING_FORM_VALUES,
-  PREDEFINED_GENE_SET_OPTIONS,
+  defaultMetagenomicReadMappingFormValues,
+  predefinedGeneSetOptions,
   type MetagenomicReadMappingFormData,
   type LibraryItem,
 } from "@/lib/forms/(metagenomics)/metagenomic-read-mapping/metagenomic-read-mapping-form-schema";
@@ -78,7 +78,7 @@ import type { WorkspaceObject } from "@/lib/workspace-client";
 export default function MetagenomicReadMappingPage() {
   const form = useForm<MetagenomicReadMappingFormData>({
     resolver: zodResolver(metagenomicReadMappingFormSchema),
-    defaultValues: DEFAULT_METAGENOMIC_READ_MAPPING_FORM_VALUES,
+    defaultValues: defaultMetagenomicReadMappingFormValues,
     mode: "onChange",
   });
 
@@ -152,7 +152,7 @@ export default function MetagenomicReadMappingPage() {
   // Handle form reset
   const handleReset = () => {
     form.reset(
-      { ...DEFAULT_METAGENOMIC_READ_MAPPING_FORM_VALUES },
+      { ...defaultMetagenomicReadMappingFormValues },
       { keepDefaultValues: false }
     );
     setLibrariesAndSync([]);
@@ -412,7 +412,7 @@ export default function MetagenomicReadMappingPage() {
                             </FormLabel>
                             <FormControl>
                               <Select
-                                items={PREDEFINED_GENE_SET_OPTIONS.map((option) => ({ value: option.value, label: option.label }))}
+                                items={predefinedGeneSetOptions}
                                 value={field.value}
                                 onValueChange={field.onChange}
                               >
@@ -421,7 +421,7 @@ export default function MetagenomicReadMappingPage() {
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectGroup>
-                                    {PREDEFINED_GENE_SET_OPTIONS.map((option) => (
+                                    {predefinedGeneSetOptions.map((option) => (
                                       <SelectItem key={option.value} value={option.value}>
                                         {option.label}
                                       </SelectItem>

@@ -34,6 +34,13 @@ interface Citation {
   doi: string;
 }
 
+const sortOptions = [
+  { value: "newest", label: "Newest First" },
+  { value: "oldest", label: "Oldest First" },
+  { value: "citations", label: "Most Cited" },
+  { value: "impact", label: "Highest Impact" },
+];
+
 export default function CitationsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("newest");
@@ -216,13 +223,8 @@ export default function CitationsPage() {
               </SelectContent>
             </Select>
             <Select
-              items={[
-                { value: "newest", label: "Newest First" },
-                { value: "oldest", label: "Oldest First" },
-                { value: "citations", label: "Most Cited" },
-                { value: "impact", label: "Highest Impact" },
-              ]}
-              defaultValue="newest"
+              items={sortOptions}
+              value={sortOption}
               onValueChange={(value) => setSortOption(value ?? "")}
             >
               <SelectTrigger className="w-[180px]">
@@ -231,10 +233,11 @@ export default function CitationsPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="newest">Newest First</SelectItem>
-                  <SelectItem value="oldest">Oldest First</SelectItem>
-                  <SelectItem value="citations">Most Cited</SelectItem>
-                  <SelectItem value="impact">Highest Impact</SelectItem>
+                  {sortOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>

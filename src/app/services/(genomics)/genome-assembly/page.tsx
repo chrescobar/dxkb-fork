@@ -64,6 +64,7 @@ import {
   transformGenomeAssemblyParams,
   calculateGenomeSize,
   genomeAssemblyRecipes,
+  genomeSizeUnitOptions,
 } from "@/lib/forms/(genomics)";
 import { submitServiceJob } from "@/lib/services/service-utils";
 import {
@@ -441,7 +442,7 @@ export default function GenomeAssemblyPage() {
                         </RequiredFormLabel>
                         <FormControl>
                           <Select
-                            items={genomeAssemblyRecipes.map((recipe) => ({ value: recipe.value, label: recipe.label }))}
+                            items={genomeAssemblyRecipes}
                             value={field.value}
                             onValueChange={field.onChange}
                           >
@@ -530,10 +531,7 @@ export default function GenomeAssemblyPage() {
                               />
                               <span className="text-lg">×</span>
                               <Select
-                                items={[
-                                  { value: "M", label: "M" },
-                                  { value: "K", label: "K" },
-                                ]}
+                                items={genomeSizeUnitOptions}
                                 value={genomeSizeUnit}
                                 onValueChange={(value) => {
                                   if (value == null) return;
@@ -552,8 +550,11 @@ export default function GenomeAssemblyPage() {
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectGroup>
-                                    <SelectItem value="M">M</SelectItem>
-                                    <SelectItem value="K">K</SelectItem>
+                                    {genomeSizeUnitOptions.map((option) => (
+                                      <SelectItem key={option.value} value={option.value}>
+                                        {option.label}
+                                      </SelectItem>
+                                    ))}
                                   </SelectGroup>
                                 </SelectContent>
                               </Select>

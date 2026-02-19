@@ -13,7 +13,7 @@ import { serologyFields } from "@/constants/datafields/serology";
 import { strainFields } from "@/constants/datafields/strain";
 import { surveillanceFields } from "@/constants/datafields/surveillance";
 import { taxonomyFields } from "@/constants/datafields/taxonomy";
-import { Button } from "@base-ui/react/button";
+import { Button } from "@/components/ui/button";
 
 export function InfoPanel({
   rows,

@@ -77,16 +77,15 @@ export function LogoutButton({
 
   if (!confirmDialog) {
     return (
-      <div onClick={handleLogout}>
-        <Button
-          variant={variant}
-          size={size}
-          disabled={isLoggingOut}
-          className={className}
-        >
-          {triggerChildren}
-        </Button>
-      </div>
+      <Button
+        variant={variant}
+        size={size}
+        disabled={isLoggingOut}
+        className={className}
+        onClick={handleLogout}
+      >
+        {triggerChildren}
+      </Button>
     );
   }
 

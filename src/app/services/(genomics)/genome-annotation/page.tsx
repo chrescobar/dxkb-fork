@@ -220,7 +220,7 @@ const GenomeAnnotationContent = () => {
                       <RequiredFormLabel>Annotation Recipe</RequiredFormLabel>
                       <FormControl>
                         <Select
-                          items={genomeAnnotationRecipes.map((recipe) => ({ value: recipe.value, label: recipe.label }))}
+                          items={genomeAnnotationRecipes}
                           value={field.value}
                           onValueChange={field.onChange}
                         >

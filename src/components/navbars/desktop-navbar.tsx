@@ -360,10 +360,12 @@ function ListItem({
 }: React.ComponentPropsWithoutRef<"li"> & { href: string; target?: "_self" | "_blank" }) {
   return (
     <li {...props}>
-      <NavigationMenuLink render={<Link href={href} target={target}><div className="flex flex-col gap-1 text-sm">
+      <NavigationMenuLink render={<Link href={href} target={target} />}>
+        <div className="flex flex-col gap-1 text-sm">
           <div className="leading-none font-medium">{title}</div>
           <div className="text-muted-foreground line-clamp-2">{children}</div>
-        </div></Link>} />
+        </div>
+      </NavigationMenuLink>
     </li>
   )
 }

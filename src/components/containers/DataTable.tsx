@@ -28,7 +28,7 @@ import {
 
 // This allows for using shorthand to conditionally apply CSS classes
 import clsx from "clsx";
-import { Button } from "@base-ui/react/button";
+import { Button } from "@/components/ui/button";
 
 // This sets the structure of the columns that are sent in as JSON
 interface ColumnInfo {

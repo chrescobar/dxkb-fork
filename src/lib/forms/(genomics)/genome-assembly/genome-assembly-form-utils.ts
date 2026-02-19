@@ -12,6 +12,11 @@ export const genomeAssemblyRecipes = [
   { value: "megahit", label: "MegaHit" },
 ];
 
+export const genomeSizeUnitOptions = [
+  { value: "M", label: "M" },
+  { value: "K", label: "K" },
+];
+
 /**
  * Transform genome assembly form data to the format expected by the backend service
  */

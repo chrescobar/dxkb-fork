@@ -2,7 +2,7 @@
 import { ViewType } from "../views";
 import { LuList, LuLayoutGrid, LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { VerticalMenu } from "@/components/ui/vertical-menu";
-import { Button } from "@base-ui/react/button";
+import { Button } from "@/components/ui/button";
 
 interface NavigationMenuProps {
   activeView: ViewType;

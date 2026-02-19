@@ -435,7 +435,7 @@ export default function VariationAnalysisPage() {
                         <RequiredFormLabel>Aligner</RequiredFormLabel>
                         <FormControl>
                           <Select
-                            items={variationAnalysisMappers.map((mapper) => ({ value: mapper.value, label: mapper.label }))}
+                            items={variationAnalysisMappers}
                             value={field.value}
                             onValueChange={field.onChange}
                           >
@@ -467,7 +467,7 @@ export default function VariationAnalysisPage() {
                         <RequiredFormLabel>SNP Caller</RequiredFormLabel>
                         <FormControl>
                           <Select
-                            items={variationAnalysisCallers.map((caller) => ({ value: caller.value, label: caller.label }))}
+                            items={variationAnalysisCallers}
                             value={field.value}
                             onValueChange={field.onChange}
                           >

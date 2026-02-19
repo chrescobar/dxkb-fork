@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -93,15 +94,15 @@ export function LogoutButton({
     <AlertDialog>
       <AlertDialogTrigger
         render={(props) => (
-          <Button
+          <button
             {...props}
-            variant={variant}
-            size={size}
-            className={className}
+            type="button"
+            data-slot="button"
+            className={cn(buttonVariants({ variant, size, className }))}
             disabled={isLoggingOut}
           >
             {triggerChildren}
-          </Button>
+          </button>
         )}
       />
       <AlertDialogContent>

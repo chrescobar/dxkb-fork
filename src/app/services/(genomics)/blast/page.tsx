@@ -66,6 +66,8 @@ import {
   createInputSourceOverrides,
   createDatabaseSourceOverrides,
   extractInputFields,
+  maxHitsOptions,
+  evalueOptions,
 } from "@/lib/forms/(genomics)";
 
 export default function BlastServicePage() {
@@ -272,7 +274,7 @@ export default function BlastServicePage() {
                       <RadioGroup
                         value={field.value}
                         onValueChange={field.onChange}
-                        className="grid grid-cols-2 gap-4 w-full"
+                        className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full"
                       >
                         <div className="flex items-center gap-3">
                           <RadioGroupItem value="blastn" id="blastn" />
@@ -490,7 +492,7 @@ export default function BlastServicePage() {
                             infoPopup={blastServiceDatabaseSource}
                           />
                           <Select
-                            items={blastPrecomputedDatabases.map((dbSource) => ({ value: dbSource.value, label: dbSource.label }))}
+                            items={blastPrecomputedDatabases}
                             value={field.value}
                             onValueChange={(value) => {
                               field.onChange(
@@ -533,7 +535,7 @@ export default function BlastServicePage() {
                             infoPopup={blastServiceDatabaseType}
                           />
                           <Select
-                            items={availableDatabaseTypes.map((dbType) => ({ value: dbType.value, label: dbType.label }))}
+                            items={availableDatabaseTypes}
                             key={`${currentBlastProgram}-${dbPrecomputedDatabase}-${availableDatabaseTypes.length}`}
                             value={field.value || ""}
                             onValueChange={field.onChange}
@@ -787,10 +789,10 @@ export default function BlastServicePage() {
                           </FormLabel>
                           <FormControl>
                             <Select
-                              items={["1", "10", "20", "50", "100", "500", "5000"].map((v) => ({ value: v, label: v }))}
-                              value={(field.value ?? 10).toString()}
+                              items={maxHitsOptions}
+                              value={field.value}
                               onValueChange={(value) =>
-                                value != null && field.onChange(parseInt(value, 10))
+                                value != null && field.onChange(Number(value))
                               }
                             >
                               <SelectTrigger className="service-card-select-trigger">
@@ -798,13 +800,11 @@ export default function BlastServicePage() {
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectGroup>
-                                  <SelectItem value="1">1</SelectItem>
-                                  <SelectItem value="10">10</SelectItem>
-                                  <SelectItem value="20">20</SelectItem>
-                                  <SelectItem value="50">50</SelectItem>
-                                  <SelectItem value="100">100</SelectItem>
-                                  <SelectItem value="500">500</SelectItem>
-                                  <SelectItem value="5000">5000</SelectItem>
+                                  {maxHitsOptions.map((o) => (
+                                    <SelectItem key={o.value} value={o.value}>
+                                      {o.label}
+                                    </SelectItem>
+                                  ))}
                                 </SelectGroup>
                               </SelectContent>
                             </Select>
@@ -827,10 +827,10 @@ export default function BlastServicePage() {
                           </FormLabel>
                           <FormControl>
                             <Select
-                              items={["0.0001", "0.001", "0.01", "0.1", "1", "10", "100", "1000", "10000"].map((v) => ({ value: v, label: v }))}
-                              value={(field.value ?? 0.0001).toString()}
+                              items={evalueOptions}
+                              value={field.value}
                               onValueChange={(value) =>
-                                value != null && field.onChange(parseFloat(value))
+                                value != null && field.onChange(Number(value))
                               }
                             >
                               <SelectTrigger className="service-card-select-trigger">
@@ -838,15 +838,11 @@ export default function BlastServicePage() {
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectGroup>
-                                  <SelectItem value="0.0001">0.0001</SelectItem>
-                                  <SelectItem value="0.001">0.001</SelectItem>
-                                  <SelectItem value="0.01">0.01</SelectItem>
-                                  <SelectItem value="0.1">0.1</SelectItem>
-                                  <SelectItem value="1">1</SelectItem>
-                                  <SelectItem value="10">10</SelectItem>
-                                  <SelectItem value="100">100</SelectItem>
-                                  <SelectItem value="1000">1000</SelectItem>
-                                  <SelectItem value="10000">10000</SelectItem>
+                                  {evalueOptions.map((o) => (
+                                    <SelectItem key={o.value} value={o.value}>
+                                    {o.label}
+                                  </SelectItem>
+                                ))}
                                 </SelectGroup>
                               </SelectContent>
                             </Select>
@@ -863,10 +859,6 @@ export default function BlastServicePage() {
 
           {/* Form Controls */}
           <div className="service-form-controls">
-            <div className="flex items-center gap-2">
-              <Checkbox id="view-results" name="view-results" />
-              <Label htmlFor="view-results">View Results</Label>
-            </div>
             <div className="flex items-center gap-2">
               <Button
                 type="button"

@@ -547,12 +547,12 @@ export default function SarsCov2GenomeAnalysisPage() {
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectGroup>
-                                  {recipeOptions.map((recipe) => (
+                                  {recipeOptions.map((opt) => (
                                     <SelectItem
-                                      key={recipe.value}
-                                      value={recipe.value}
+                                      key={opt.value}
+                                      value={opt.value}
                                     >
-                                      {recipe.label}
+                                      {opt.label}
                                     </SelectItem>
                                   ))}
                                 </SelectGroup>

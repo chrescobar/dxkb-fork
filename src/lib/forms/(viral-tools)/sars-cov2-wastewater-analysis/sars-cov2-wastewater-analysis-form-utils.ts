@@ -1,6 +1,7 @@
 import type { SarsCov2WastewaterAnalysisFormData } from "./sars-cov2-wastewater-analysis-form-schema";
 import type { BuildLibraryResult } from "@/lib/forms/shared-library-selection";
 import {
+  findNewSraLibraries,
   getPairedLibraryName,
   getSingleLibraryName,
 } from "@/lib/forms/shared-library-selection";
@@ -100,15 +101,7 @@ export function singleLibraryDuplicateMatcher(library: Library, read: string): b
   return library.id === read && library.type === "single";
 }
 
-/**
- * Find SRA libraries that appear in nextLibs but not in prevLibs (used when normalizing newly added SRA entries).
- */
-export function findNewSraLibraries(nextLibs: Library[], prevLibs: Library[]): Library[] {
-  const prevSraIds = new Set(
-    prevLibs.filter((lib) => lib.type === "sra").map((lib) => lib.id)
-  );
-  return nextLibs.filter((lib) => lib.type === "sra" && !prevSraIds.has(lib.id));
-}
+export { findNewSraLibraries } from "@/lib/forms/shared-library-selection";
 
 /**
  * Resolve sample ID and optional sample date from current form state, with optional fallback path for default sample ID.

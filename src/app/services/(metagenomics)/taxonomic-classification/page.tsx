@@ -81,6 +81,7 @@ import {
 } from "@/lib/forms/(metagenomics)/taxonomic-classification/taxonomic-classification-form-utils";
 import {
   buildBaseLibraryItem,
+  findNewSraLibraries,
   getPairedLibraryName,
   getSingleLibraryName,
   useLibrarySelection,
@@ -89,22 +90,6 @@ import { getLibraryTypeLabel } from "@/lib/forms/shared-schemas";
 
 import type { WorkspaceObject } from "@/lib/workspace-client";
 import type { Library } from "@/types/services";
-
-/**
- * Find newly added SRA libraries by comparing next state against previous state.
- * Used to identify which SRA entries need sample ID assignment and trigger side effects.
- */
-function findNewSraLibraries(
-  nextLibs: Library[],
-  prevLibs: Library[],
-): Library[] {
-  const prevSraIds = new Set(
-    prevLibs.filter((lib) => lib.type === "sra").map((lib) => lib.id),
-  );
-  return nextLibs.filter(
-    (lib) => lib.type === "sra" && !prevSraIds.has(lib.id),
-  );
-}
 
 export default function TaxonomicClassificationPage() {
   const form = useForm<TaxonomicClassificationFormData>({
@@ -161,10 +146,10 @@ export default function TaxonomicClassificationPage() {
   }, [sequenceType, form]);
 
   // Extract sample ID (filename base without extension) from a file path
-  const extractSampleIdFromPath = (
+  function extractSampleIdFromPath(
     path: string,
     fallback: string = "",
-  ): string => {
+  ): string {
     const filename = path.split("/").pop() || "";
     return filename.split(".")[0] || fallback;
   };

@@ -14,7 +14,7 @@ import {
   KillJobParams,
   FetchJobOutputParams,
   SubmitServiceParams,
-} from "../types/workspace";
+} from "@/types/workspace";
 
 /**
  * Centralized app service for AppService operations

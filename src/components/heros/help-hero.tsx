@@ -1,6 +1,7 @@
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
 import { LuSearch } from "react-icons/lu";
-import { Input } from "../ui/input";
 
 const HelpHero = () => {
   return (

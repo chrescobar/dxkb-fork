@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { baseLibrarySchema } from "../../shared-schemas";
+
+import { baseLibrarySchema } from "@/lib/forms/shared-schemas";
 
 // SARS-CoV-2–specific platform enum (includes iontorrent, infer; not in shared-schemas)
 export const sarsCov2PlatformSchema = z.enum([

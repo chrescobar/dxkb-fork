@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { setBvbrcAuthCookies, getProfileMetadata, extractRealmFromToken } from "../../utils";
+import { setBvbrcAuthCookies, getProfileMetadata, extractRealmFromToken } from "@/app/api/auth/utils";
 import { getRequiredEnv } from "@/lib/env";
 
 /**

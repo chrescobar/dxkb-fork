@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getBvbrcAuthData } from "../utils";
+import { getBvbrcAuthData } from "@/app/api/auth/utils";
 import { getRequiredEnv } from "@/lib/env";
 
 /**

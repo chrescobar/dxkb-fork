@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
-import { useAuth } from "../contexts/auth-context";
+
+import { useAuth } from "@/contexts/auth-context";
 
 // Client-side authenticated fetch hook
 export function useAuthenticatedFetch() {

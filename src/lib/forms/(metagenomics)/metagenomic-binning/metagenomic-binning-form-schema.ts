@@ -1,8 +1,6 @@
 import { z } from "zod";
-import {
-  baseLibrarySchema,
-  type BaseLibraryItem,
-} from "../../shared-schemas";
+
+import { baseLibrarySchema, type BaseLibraryItem } from "@/lib/forms/shared-schemas";
 
 // Start with options
 export const startWithSchema = z.enum(["reads", "contigs"]);

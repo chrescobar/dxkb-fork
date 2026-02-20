@@ -9,12 +9,9 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import {
-  AuthUser,
-  SigninCredentials,
-  SignupCredentials,
-} from "../app/api/auth/types";
-import { bvbrcAuth } from "../lib/auth-client";
+
+import { AuthUser, SigninCredentials, SignupCredentials } from "@/app/api/auth/types";
+import { bvbrcAuth } from "@/lib/auth-client";
 
 interface AuthContextType {
   user: AuthUser | null;

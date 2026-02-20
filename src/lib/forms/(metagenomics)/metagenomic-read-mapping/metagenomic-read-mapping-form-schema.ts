@@ -1,8 +1,6 @@
 import { z } from "zod";
-import {
-  baseLibrarySchema,
-  type BaseLibraryItem,
-} from "../../shared-schemas";
+
+import { baseLibrarySchema, type BaseLibraryItem } from "@/lib/forms/shared-schemas";
 
 // Gene set type options
 export const geneSetTypeSchema = z.enum(["predefined_list", "fasta_file", "feature_group"]);

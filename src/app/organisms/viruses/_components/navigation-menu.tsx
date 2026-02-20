@@ -1,5 +1,5 @@
 "use client";
-import { ViewType } from "../views";
+import { ViewType } from "@/app/organisms/viruses/views";
 import { LuList, LuLayoutGrid, LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { VerticalMenu } from "@/components/ui/vertical-menu";
 import { Button } from "@/components/ui/button";

@@ -1,12 +1,8 @@
 import type { FormEvent } from "react";
-import {
-  Library,
-  Genome,
-  blastDatabaseTypes,
-  blastDatabaseTypeMap,
-} from "@/types/services";
+
+import { Library, Genome, blastDatabaseTypes, blastDatabaseTypeMap } from "@/types/services";
+import { validateFastaForBlast, getBlastFastaErrorMessage } from "@/lib/fasta-validation";
 import { toast } from "sonner";
-import { validateFastaForBlast, getBlastFastaErrorMessage } from "../fasta-validation";
 
 export interface FileInput {
   first: string;

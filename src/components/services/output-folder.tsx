@@ -1,17 +1,14 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { HelpCircle } from "lucide-react";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-} from "../ui/tooltip";
-import { WorkspaceObjectSelector } from "../workspace/workspace-object-selector";
+
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
+import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { checkWorkspaceObjectExists } from "@/lib/services/workspace/validation";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+import { HelpCircle } from "lucide-react";
 
 const DEBOUNCE_MS = 350;
 const NAME_TAKEN_MESSAGE =

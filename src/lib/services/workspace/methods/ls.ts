@@ -1,8 +1,5 @@
-import { WorkspaceApiClient } from "../client";
-import {
-  WorkspaceListParams,
-  WorkspaceObject,
-} from "../types";
+import { WorkspaceListParams, WorkspaceObject } from "@/lib/services/workspace/types";
+import { WorkspaceApiClient } from "@/lib/services/workspace/client";
 
 /**
  * Workspace.ls - List workspace objects with optional filtering

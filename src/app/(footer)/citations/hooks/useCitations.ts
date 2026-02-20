@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Citation, SortOption, PublicationType } from "../data/types";
+import { Citation, SortOption, PublicationType } from "@/app/(footer)/citations/data/types";
 
 export function useCitations(citations: Citation[]) {
   const [searchQuery, setSearchQuery] = useState("");

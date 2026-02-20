@@ -1,12 +1,13 @@
 import { z } from "zod";
-import { baseLibrarySchema } from "../../shared-schemas";
+
+import { baseLibrarySchema } from "@/lib/forms/shared-schemas";
 import {
   primersSchema,
   primerOptions,
   primerVersionOptions,
   defaultPrimerVersion,
   type Primers,
-} from "../sars-cov2-genome-analysis/sars-cov2-genome-analysis-form-schema";
+} from "@/lib/forms/(viral-tools)/sars-cov2-genome-analysis/sars-cov2-genome-analysis-form-schema";
 
 export type { Primers };
 export { primerOptions, primerVersionOptions, defaultPrimerVersion };

@@ -1,31 +1,21 @@
 "use client";
 
 import { useEffect, useState, useRef, useMemo, Suspense } from "react";
-import { useWorkspace } from "../../../../hooks/services/workspace/use-workspace";
-import { JobStatus, JobListItem } from "../../../../types/workspace";
-import { Button, buttonVariants } from "../../../../components/ui/button";
-import {
-  Card,
-  CardContent,
-} from "../../../../components/ui/card";
+import { useWorkspace } from "@/hooks/services/workspace/use-workspace";
+import { JobStatus, JobListItem } from "@/types/workspace";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "../../../../components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../../../components/ui/select";
-import { Skeleton } from "../../../../components/ui/skeleton";
-import { Alert, AlertDescription } from "../../../../components/ui/alert";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "../../../../components/ui/dialog";
+} from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import {
   RefreshCw,

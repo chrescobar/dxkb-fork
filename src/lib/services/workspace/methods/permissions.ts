@@ -1,8 +1,5 @@
-import { WorkspaceApiClient } from "../client";
-import {
-  WorkspaceGetPermissionsParams,
-  WorkspaceGetPermissionsResponse,
-} from "../types";
+import { WorkspaceGetPermissionsParams, WorkspaceGetPermissionsResponse } from "@/lib/services/workspace/types";
+import { WorkspaceApiClient } from "@/lib/services/workspace/client";
 
 /**
  * Workspace.get_permissions - Get permissions for workspace objects

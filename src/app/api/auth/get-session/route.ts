@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getBvbrcAuthData, setBvbrcAuthCookies, clearBvbrcAuthCookies } from "../utils";
+import { getBvbrcAuthData, setBvbrcAuthCookies, clearBvbrcAuthCookies } from "@/app/api/auth/utils";
 import { getRequiredEnv } from "@/lib/env";
 
 /** BV-BRC user shape from profile cookie or /user API */

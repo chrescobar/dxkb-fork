@@ -1,4 +1,4 @@
-import { WorkspaceApiClient } from "../client";
+import { WorkspaceApiClient } from "@/lib/services/workspace/client";
 import {
   WorkspaceCreateParams,
   WorkspaceCreateResponse,
@@ -14,7 +14,7 @@ import {
   WorkspaceGetResponse,
   WorkspaceSaveParams,
   WorkspaceSaveResponse,
-} from "../types";
+} from "@/lib/services/workspace/types";
 
 /**
  * Workspace CRUD operations - Create, Read, Update, Delete

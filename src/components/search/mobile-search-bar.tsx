@@ -1,25 +1,16 @@
 "use client";
 
-import React, {
-  useState,
-  FormEvent,
-  useEffect,
-  useRef,
-  useCallback,
-  Suspense,
-} from "react";
-import { Input } from "@/components/ui/input";
-import { LuSearch, LuX } from "react-icons/lu";
-import { useRouter } from "next/navigation";
-import { searchTypes } from "../../constants/searchInfo";
+import React, { useState, FormEvent, useEffect, useRef, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { useRouter } from "next/navigation";
+
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { searchTypes } from "@/constants/searchInfo";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+
+import { LuSearch, LuX } from "react-icons/lu";
 
 interface MobileSearchBarProps {
   initialValue?: string;

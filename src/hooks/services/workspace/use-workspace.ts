@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
-import { useAuthenticatedFetch } from "../../use-authenticated-fetch-client";
+
+import { useAuthenticatedFetch } from "@/hooks/use-authenticated-fetch-client";
 import {
   EnumerateJobsResponse,
   QueryJobsResponse,
@@ -9,7 +10,7 @@ import {
   EnumerateJobsParams,
   QueryJobsParams,
   FetchJobOutputParams,
-} from "../../../types/workspace";
+} from "@/types/workspace";
 
 // Hook for enumerating jobs
 export function useEnumerateJobs() {

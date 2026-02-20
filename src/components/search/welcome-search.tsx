@@ -1,16 +1,16 @@
 "use client";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { SearchBar } from "@/components/search/search-bar";
+import ThemeContent from "@/components/ui/theme-content";
+import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/contexts/auth-context";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { SearchBar } from "./search-bar";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import ThemeContent from "@/components/ui/theme-content";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
-import { useAuth } from "@/contexts/auth-context";
 
 const WelcomeSearch = () => {
   const { isAuthenticated, isVerified, sendVerificationEmail } = useAuth();

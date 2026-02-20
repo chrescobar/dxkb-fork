@@ -1,8 +1,8 @@
 "use client"
 
 import { useSearchParams } from "next/navigation";
-import { TypeSearch } from "../search/typesearch";
-import { SearchResults } from "../allTermSearchResults";
+import { TypeSearch } from "@/app/search/typesearch";
+import { SearchResults } from "@/app/allTermSearchResults";
 
 export default function GlobalSearch () {
 

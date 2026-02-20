@@ -1,19 +1,14 @@
 "use client";
 
 import React, { useState, FormEvent, useEffect, useCallback, Suspense } from "react";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { LuSearch } from "react-icons/lu";
 import { useRouter, useSearchParams } from "next/navigation";
-import { searchTypes } from "../../constants/searchInfo";
 import { useQueryClient } from "@tanstack/react-query";
+
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { searchTypes } from "@/constants/searchInfo";
+import { Input } from "@/components/ui/input";
+
+import { LuSearch } from "react-icons/lu";
 
 interface SearchBarProps {
   initialValue?: string;

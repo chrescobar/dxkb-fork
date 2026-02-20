@@ -25,7 +25,7 @@ import {
   TableHead,
   TableBody,
   TableCell,
-} from "../ui/table";
+} from "@/components/ui/table";
 
 // This allows for using shorthand to conditionally apply CSS classes
 import clsx from "clsx";

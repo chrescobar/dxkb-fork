@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { UseFormReturn } from "react-hook-form";
-import type { BlastFormData } from "../../../lib/forms/(genomics)/blast/blast-form-schema";
+
 import { getAvailableBlastDatabaseTypes, getDefaultBlastDatabaseType } from "@/lib/services/service-utils";
-import { validateFastaForBlast } from "@/lib/fasta-validation";
+import type { BlastFormData } from "@/lib/forms/(genomics)/blast/blast-form-schema";
 import type { FastaValidationResult } from "@/lib/fasta-validation";
+import { validateFastaForBlast } from "@/lib/fasta-validation";
 
 /**
  * Custom hook to manage BLAST database type availability

@@ -1,4 +1,4 @@
-import { JsonRpcRequest, JsonRpcResponse } from "../types/workspace";
+import { JsonRpcRequest, JsonRpcResponse } from "@/types/workspace";
 import { getRequiredEnv } from "./env";
 
 export class JsonRpcClient {

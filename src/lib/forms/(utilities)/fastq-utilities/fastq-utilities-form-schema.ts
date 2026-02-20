@@ -1,11 +1,12 @@
 import { z } from "zod";
+
 import {
   libraryWithPlatformSchema,
   type LibraryWithPlatform,
   platformSchema,
   type Platform,
   PLATFORM_OPTIONS,
-} from "../../shared-schemas";
+} from "@/lib/forms/shared-schemas";
 
 // Pipeline action options
 export const pipelineActionSchema = z.enum([

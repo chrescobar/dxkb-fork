@@ -13,6 +13,7 @@ import { serologyFields } from "@/constants/datafields/serology";
 import { strainFields } from "@/constants/datafields/strain";
 import { surveillanceFields } from "@/constants/datafields/surveillance";
 import { taxonomyFields } from "@/constants/datafields/taxonomy";
+import { Button } from "@/components/ui/button";
 
 export function InfoPanel({
   rows,
@@ -243,12 +244,12 @@ export function InfoPanel({
                                   console.log(resolved);
 
                                   return item.linkType === 'button' ? (
-                                    <button
-                                      onClick={() => window.open(resolved, '_blank')}
+                                    <Button
+                                      onClick={() => window.open(resolved, '_blank', 'noopener,noreferrer')}
                                       className="text-sm border-black bg-primary text-secondary py-1 px-2 rounded"
                                     >
                                       {item.linkText ?? 'View'}
-                                    </button>
+                                    </Button>
                                   ) : (
                                     <a
                                       href={resolved}

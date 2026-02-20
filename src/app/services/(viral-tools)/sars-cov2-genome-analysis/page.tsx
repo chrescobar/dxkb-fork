@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -261,7 +262,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                         <RadioGroup
                           value={field.value}
                           onValueChange={field.onChange}
-                          className="flex flex-col gap-4 sm:flex-row"
+                          className="service-radio-group-horizontal"
                         >
                           <div className="service-radio-group-item flex items-center gap-2">
                             <RadioGroupItem value="reads" id="start-reads" />
@@ -338,70 +339,84 @@ export default function SarsCov2GenomeAnalysisPage() {
                     <div className="space-y-2">
                       <Label className="service-card-sublabel">Platform</Label>
                       <Select
+                        items={sarsCov2PairedPlatformOptions}
                         value={pairedPlatform}
-                        onValueChange={(v) =>
-                          setPairedPlatform(v as SarsCov2Platform)
-                        }
+                        onValueChange={(v) => {
+                          if (v == null) return;
+                          setPairedPlatform(v as SarsCov2Platform);
+                        }}
                       >
                         <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="Select a platform..." />
                         </SelectTrigger>
                         <SelectContent>
-                          {sarsCov2PairedPlatformOptions.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>
-                              {opt.label}
-                            </SelectItem>
-                          ))}
+                          <SelectGroup>
+                            {sarsCov2PairedPlatformOptions.map((platform) => (
+                              <SelectItem
+                                key={platform.value}
+                                value={platform.value}
+                              >
+                                {platform.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
                         </SelectContent>
                       </Select>
                     </div>
-                  </div>
 
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <Label className="service-card-label">
-                        Single Read Library
-                      </Label>
-                      <div className="bg-border mx-4 h-px flex-1" />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={handleSingleLibraryAdd}
-                        disabled={!singleRead || !singlePlatform}
-                      >
-                        <ChevronRight size={16} />
-                      </Button>
-                    </div>
-
-                    <WorkspaceObjectSelector
-                      types={["reads"]}
-                      placeholder="Select READ FILE..."
-                      value={singleRead ?? ""}
-                      onObjectSelect={(object: WorkspaceObject) =>
-                        setSingleRead(object.path)
-                      }
-                    />
-
-                    <div className="space-y-2">
-                      <Label className="service-card-sublabel">Platform</Label>
-                      <Select
-                        value={singlePlatform}
-                        onValueChange={(v) =>
-                          setSinglePlatform(v as SarsCov2Platform)
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <Label className="service-card-label">
+                          Single Read Library
+                        </Label>
+                        <div className="bg-border mx-4 h-px flex-1" />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={handleSingleLibraryAdd}
+                          disabled={!singleRead}
+                        >
+                          <ChevronRight size={16} />
+                        </Button>
+                      </div>
+                      <WorkspaceObjectSelector
+                        types={["reads"]}
+                        placeholder="Select READ FILE..."
+                        value={singleRead ?? ""}
+                        onObjectSelect={(object: WorkspaceObject) =>
+                          setSingleRead(object.path)
                         }
-                      >
-                        <SelectTrigger className="service-card-select-trigger">
-                          <SelectValue placeholder="Select a platform..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {sarsCov2SinglePlatformOptions.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>
-                              {opt.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      />
+                      <div className="space-y-2">
+                        <Label className="service-card-sublabel">
+                          Platform
+                        </Label>
+                        <Select
+                          items={sarsCov2SinglePlatformOptions}
+                          value={singlePlatform}
+                          onValueChange={(v) => {
+                            if (v == null) return;
+                            setSinglePlatform(v as SarsCov2Platform);
+                          }}
+                        >
+                          <SelectTrigger className="service-card-select-trigger">
+                            <SelectValue placeholder="Select a platform..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              {sarsCov2SinglePlatformOptions.map((platform) => (
+                                <SelectItem
+                                  key={platform.value}
+                                  value={platform.value}
+                                >
+                                  {platform.label}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                   </div>
 
@@ -523,6 +538,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                         render={({ field }) => (
                           <FormItem>
                             <Select
+                              items={recipeOptions}
                               value={field.value}
                               onValueChange={field.onChange}
                             >
@@ -530,11 +546,16 @@ export default function SarsCov2GenomeAnalysisPage() {
                                 <SelectValue placeholder="Select strategy" />
                               </SelectTrigger>
                               <SelectContent>
-                                {recipeOptions.map((opt) => (
-                                  <SelectItem key={opt.value} value={opt.value}>
-                                    {opt.label}
-                                  </SelectItem>
-                                ))}
+                                <SelectGroup>
+                                  {recipeOptions.map((opt) => (
+                                    <SelectItem
+                                      key={opt.value}
+                                      value={opt.value}
+                                    >
+                                      {opt.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectGroup>
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -553,6 +574,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                             render={({ field }) => (
                               <FormItem>
                                 <Select
+                                  items={primerOptions}
                                   value={field.value}
                                   onValueChange={(v) =>
                                     field.onChange(v as Primers)
@@ -562,14 +584,16 @@ export default function SarsCov2GenomeAnalysisPage() {
                                     <SelectValue placeholder="Select primers" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    {primerOptions.map((opt) => (
-                                      <SelectItem
-                                        key={opt.value}
-                                        value={opt.value}
-                                      >
-                                        {opt.label}
-                                      </SelectItem>
-                                    ))}
+                                    <SelectGroup>
+                                      {primerOptions.map((primer) => (
+                                        <SelectItem
+                                          key={primer.value}
+                                          value={primer.value}
+                                        >
+                                          {primer.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectGroup>
                                   </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -585,6 +609,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                             render={({ field }) => (
                               <FormItem>
                                 <Select
+                                  items={primerVersionOpts}
                                   value={field.value}
                                   onValueChange={field.onChange}
                                 >
@@ -592,14 +617,16 @@ export default function SarsCov2GenomeAnalysisPage() {
                                     <SelectValue placeholder="Version" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    {primerVersionOpts.map((opt) => (
-                                      <SelectItem
-                                        key={opt.value}
-                                        value={opt.value}
-                                      >
-                                        {opt.label}
-                                      </SelectItem>
-                                    ))}
+                                    <SelectGroup>
+                                      {primerVersionOpts.map((opt) => (
+                                        <SelectItem
+                                          key={opt.value}
+                                          value={opt.value}
+                                        >
+                                          {opt.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectGroup>
                                   </SelectContent>
                                 </Select>
                                 <FormMessage />

@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectSeparator,
@@ -68,9 +69,7 @@ const FASTA_WORKSPACE_TYPES: ValidWorkspaceObjectTypes[] = [
 ];
 
 /** Indices in SUBSPECIES_VIRUS_TYPE_OPTIONS before which to render a SelectSeparator (legacy family grouping). */
-const subspeciesSpeciesSeparatorBeforeIndex = new Set([
-  5, 7, 17, 21, 23, 24,
-]);
+const subspeciesSpeciesSeparatorBeforeIndex = new Set([5, 7, 17, 21, 23, 24]);
 
 export default function SubspeciesClassificationPage() {
   const form = useForm<SubspeciesClassificationFormData>({
@@ -195,7 +194,7 @@ export default function SubspeciesClassificationPage() {
                               form.clearErrors("input_fasta_data");
                             }
                           }}
-                          className="service-radio-group"
+                          className="service-radio-group-horizontal"
                         >
                           <div className="service-radio-group-item flex items-center gap-2">
                             <RadioGroupItem
@@ -294,6 +293,7 @@ export default function SubspeciesClassificationPage() {
                     <FormItem>
                       <Label className="service-card-label">Species</Label>
                       <Select
+                        items={subspeciesVirusTypeOptions}
                         value={field.value}
                         onValueChange={field.onChange}
                       >
@@ -303,16 +303,18 @@ export default function SubspeciesClassificationPage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="max-h-[min(20rem,70vh)] overflow-y-auto">
-                          {subspeciesVirusTypeOptions.map((opt, index) => (
-                            <Fragment key={opt.value}>
-                              {subspeciesSpeciesSeparatorBeforeIndex.has(index) && (
-                                <SelectSeparator />
-                              )}
-                              <SelectItem value={opt.value}>
-                                {opt.label}
-                              </SelectItem>
-                            </Fragment>
-                          ))}
+                          <SelectGroup>
+                            {subspeciesVirusTypeOptions.map((opt, index) => (
+                              <Fragment key={opt.value}>
+                                {subspeciesSpeciesSeparatorBeforeIndex.has(
+                                  index,
+                                ) && <SelectSeparator />}
+                                <SelectItem value={opt.value}>
+                                  {opt.label}
+                                </SelectItem>
+                              </Fragment>
+                            ))}
+                          </SelectGroup>
                         </SelectContent>
                       </Select>
                       <FormMessage />

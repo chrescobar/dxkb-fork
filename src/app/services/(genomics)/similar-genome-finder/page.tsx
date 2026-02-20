@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -28,12 +29,7 @@ import {
 } from "@/components/ui/collapsible";
 import { ChevronDown, Search } from "lucide-react";
 import { ServiceHeader } from "@/components/services/service-header";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/containers/DataTable";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
@@ -245,7 +241,9 @@ export default function SimilarGenomeFinderServicePage() {
                           description={
                             similarGenomeFinderAdvancedParameters.description
                           }
-                          sections={similarGenomeFinderAdvancedParameters.sections}
+                          sections={
+                            similarGenomeFinderAdvancedParameters.sections
+                          }
                           className="mb-2 ml-2"
                         />
                       </div>
@@ -261,8 +259,10 @@ export default function SimilarGenomeFinderServicePage() {
                               </FormLabel>
                               <FormControl>
                                 <Select
-                                  value={(field.value ?? 50).toString()}
+                                  items={maxHitsOptions}
+                                  value={(field.value ?? 10).toString()}
                                   onValueChange={(value) =>
+                                    value != null &&
                                     field.onChange(parseInt(value, 10))
                                   }
                                 >
@@ -270,14 +270,16 @@ export default function SimilarGenomeFinderServicePage() {
                                     <SelectValue placeholder="Select max hits" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    {maxHitsOptions.map((opt) => (
-                                      <SelectItem
-                                        key={opt.value}
-                                        value={opt.value.toString()}
-                                      >
-                                        {opt.label}
-                                      </SelectItem>
-                                    ))}
+                                    <SelectGroup>
+                                      {maxHitsOptions.map((o) => (
+                                        <SelectItem
+                                          key={o.value}
+                                          value={String(o.value)}
+                                        >
+                                          {o.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectGroup>
                                   </SelectContent>
                                 </Select>
                               </FormControl>
@@ -296,8 +298,10 @@ export default function SimilarGenomeFinderServicePage() {
                               </FormLabel>
                               <FormControl>
                                 <Select
+                                  items={pValueOptions}
                                   value={field.value?.toString() ?? "1"}
                                   onValueChange={(value) =>
+                                    value != null &&
                                     field.onChange(parseFloat(value))
                                   }
                                 >
@@ -305,14 +309,16 @@ export default function SimilarGenomeFinderServicePage() {
                                     <SelectValue placeholder="Select P-value" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    {pValueOptions.map((opt) => (
-                                      <SelectItem
-                                        key={opt.value}
-                                        value={opt.value.toString()}
-                                      >
-                                        {opt.label}
-                                      </SelectItem>
-                                    ))}
+                                    <SelectGroup>
+                                      {pValueOptions.map((o) => (
+                                        <SelectItem
+                                          key={o.value}
+                                          value={String(o.value)}
+                                        >
+                                          {o.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectGroup>
                                   </SelectContent>
                                 </Select>
                               </FormControl>
@@ -331,8 +337,10 @@ export default function SimilarGenomeFinderServicePage() {
                               </FormLabel>
                               <FormControl>
                                 <Select
+                                  items={distanceOptions}
                                   value={field.value?.toString() ?? "1"}
                                   onValueChange={(value) =>
+                                    value != null &&
                                     field.onChange(parseFloat(value))
                                   }
                                 >
@@ -340,14 +348,16 @@ export default function SimilarGenomeFinderServicePage() {
                                     <SelectValue placeholder="Select distance" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    {distanceOptions.map((opt) => (
-                                      <SelectItem
-                                        key={opt.value}
-                                        value={opt.value.toString()}
-                                      >
-                                        {opt.label}
-                                      </SelectItem>
-                                    ))}
+                                    <SelectGroup>
+                                      {distanceOptions.map((o) => (
+                                        <SelectItem
+                                          key={o.value}
+                                          value={String(o.value)}
+                                        >
+                                          {o.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectGroup>
                                   </SelectContent>
                                 </Select>
                               </FormControl>
@@ -368,9 +378,11 @@ export default function SimilarGenomeFinderServicePage() {
                               control={form.control}
                               name="include_bacterial"
                               render={({ field }) => (
-                                <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+                                <FormItem className="flex flex-row items-center space-y-0 space-x-2">
                                   <FormControl>
                                     <Checkbox
+                                      id="include_bacterial"
+                                      name="include_bacterial"
                                       checked={field.value}
                                       onCheckedChange={field.onChange}
                                     />
@@ -386,9 +398,11 @@ export default function SimilarGenomeFinderServicePage() {
                               control={form.control}
                               name="include_viral"
                               render={({ field }) => (
-                                <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+                                <FormItem className="flex flex-row items-center space-y-0 space-x-2">
                                   <FormControl>
                                     <Checkbox
+                                      id="include_viral"
+                                      name="include_viral"
                                       checked={field.value}
                                       onCheckedChange={field.onChange}
                                     />
@@ -413,27 +427,24 @@ export default function SimilarGenomeFinderServicePage() {
                                     <RadioGroup
                                       value={field.value}
                                       onValueChange={field.onChange}
-                                      className="gap-2"
+                                      className="grid w-full gap-2"
                                     >
-                                      <div className="flex items-center space-x-2">
+                                      <div className="flex items-center gap-3">
                                         <RadioGroupItem
                                           value="reference"
-                                          id="scope-reference"
+                                          id="reference"
                                         />
                                         <FormLabel
-                                          htmlFor="scope-reference"
+                                          htmlFor="reference"
                                           className="text-sm font-normal"
                                         >
                                           Reference and Representative Genomes
                                         </FormLabel>
                                       </div>
-                                      <div className="flex items-center space-x-2">
-                                        <RadioGroupItem
-                                          value="all"
-                                          id="scope-all"
-                                        />
+                                      <div className="flex items-center gap-3">
+                                        <RadioGroupItem value="all" id="all" />
                                         <FormLabel
-                                          htmlFor="scope-all"
+                                          htmlFor="all"
                                           className="text-sm font-normal"
                                         >
                                           All Public Genomes
@@ -453,24 +464,22 @@ export default function SimilarGenomeFinderServicePage() {
                 </Collapsible>
               </CardContent>
             </Card>
-          </div>
 
-          {/* Form controls */}
-          <div className="md:col-span-12">
-            <div className="service-form-controls">
-              <Button type="button" variant="outline" onClick={handleReset}>
-                Reset
-              </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting || !form.formState.isValid}
-              >
-                {isSubmitting ? (
-                  <Spinner className="mr-2 h-4 w-4" />
-                ) : null}
-                <Search className="mr-2 h-4 w-4" />
-                Search
-              </Button>
+            {/* Form controls */}
+            <div className="md:col-span-12">
+              <div className="service-form-controls">
+                <Button type="button" variant="outline" onClick={handleReset}>
+                  Reset
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || !form.formState.isValid}
+                >
+                  {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
+                  <Search className="mr-2 h-4 w-4" />
+                  Search
+                </Button>
+              </div>
             </div>
           </div>
         </form>

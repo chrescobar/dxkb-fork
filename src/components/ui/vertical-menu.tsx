@@ -1,4 +1,4 @@
-import { Button } from "@/components/buttons/button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface NavMenuItem {
@@ -22,7 +22,7 @@ export function VerticalMenu({ items, isCollapsed }: NavMenuProps) {
           onClick={item.onClick}
           variant="ghost"
           className={cn(
-            "min-w-[2.5rem] justify-start h-10 p-2 transition-[width] duration-300 ease-in-out",
+            "min-w-10 justify-start h-10 p-2 transition-[width] duration-300 ease-in-out",
             item.isActive && "bg-gray-300 hover:bg-gray-300 text-secondary hover:text-secondary/50",
             !item.isActive && "text-gray-700 hover:text-primary hover:bg-gray-200",
             isCollapsed && "w-10",

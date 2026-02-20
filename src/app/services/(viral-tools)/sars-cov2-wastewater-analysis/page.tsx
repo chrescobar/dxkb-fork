@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -189,7 +190,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
     const { sampleId, sampleLevelDate } = resolveSampleIdAndDate(
       currentSampleId,
       currentSampleDate,
-      pairedRead1 ?? undefined
+      pairedRead1 ?? undefined,
     );
     addPairedLibrary({
       read1: pairedRead1,
@@ -208,7 +209,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
     const { sampleId, sampleLevelDate } = resolveSampleIdAndDate(
       currentSampleId,
       currentSampleDate,
-      singleRead ?? undefined
+      singleRead ?? undefined,
     );
     addSingleLibrary({
       read: singleRead,
@@ -240,7 +241,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
   const handleReset = () => {
     form.reset(
       { ...defaultSarsCov2WastewaterAnalysisFormValues },
-      { keepDefaultValues: false }
+      { keepDefaultValues: false },
     );
     setLibrariesAndSync([]);
     setPairedRead1(null);
@@ -379,23 +380,24 @@ export default function SarsCov2WastewaterAnalysisPage() {
                       render={({ field }) => (
                         <FormItem>
                           <Select
+                            items={primerOptions}
                             value={field.value}
-                            onValueChange={(v) =>
-                              field.onChange(v as Primers)
-                            }
+                            onValueChange={(v) => field.onChange(v as Primers)}
                           >
                             <SelectTrigger className="service-card-select-trigger">
                               <SelectValue placeholder="Select primers" />
                             </SelectTrigger>
                             <SelectContent>
-                              {primerOptions.map((opt) => (
-                                <SelectItem
-                                  key={opt.value}
-                                  value={opt.value}
-                                >
-                                  {opt.label}
-                                </SelectItem>
-                              ))}
+                              <SelectGroup>
+                                {primerOptions.map((primer) => (
+                                  <SelectItem
+                                    key={primer.value}
+                                    value={primer.value}
+                                  >
+                                    {primer.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -411,6 +413,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                       render={({ field }) => (
                         <FormItem>
                           <Select
+                            items={primerVersionOpts}
                             value={field.value}
                             onValueChange={field.onChange}
                           >
@@ -418,14 +421,16 @@ export default function SarsCov2WastewaterAnalysisPage() {
                               <SelectValue placeholder="Version" />
                             </SelectTrigger>
                             <SelectContent>
-                              {primerVersionOpts.map((opt) => (
-                                <SelectItem
-                                  key={opt.value}
-                                  value={opt.value}
-                                >
-                                  {opt.label}
-                                </SelectItem>
-                              ))}
+                              <SelectGroup>
+                                {primerVersionOpts.map((version) => (
+                                  <SelectItem
+                                    key={version.value}
+                                    value={version.value}
+                                  >
+                                    {version.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -528,6 +533,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                     render={({ field }) => (
                       <FormItem>
                         <Select
+                          items={recipeOptions}
                           value={field.value}
                           onValueChange={field.onChange}
                         >
@@ -535,14 +541,16 @@ export default function SarsCov2WastewaterAnalysisPage() {
                             <SelectValue placeholder="Select strategy" />
                           </SelectTrigger>
                           <SelectContent>
-                            {recipeOptions.map((opt) => (
-                              <SelectItem
-                                key={opt.value}
-                                value={opt.value}
-                              >
-                                {opt.label}
-                              </SelectItem>
-                            ))}
+                            <SelectGroup>
+                              {recipeOptions.map((recipe) => (
+                                <SelectItem
+                                  key={recipe.value}
+                                  value={recipe.value}
+                                >
+                                  {recipe.label}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -599,14 +607,10 @@ export default function SarsCov2WastewaterAnalysisPage() {
               <Button
                 type="submit"
                 disabled={
-                  isSubmitting ||
-                  !form.formState.isValid ||
-                  !isOutputNameValid
+                  isSubmitting || !form.formState.isValid || !isOutputNameValid
                 }
               >
-                {isSubmitting ? (
-                  <Spinner className="mr-2 h-4 w-4" />
-                ) : null}
+                {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
                 Submit
               </Button>
             </div>

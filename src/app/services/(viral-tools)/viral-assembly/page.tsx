@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -233,7 +234,7 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
                         <RadioGroup
                           value={field.value}
                           onValueChange={field.onChange}
-                          className="flex flex-col gap-4 sm:flex-row"
+                          className="service-radio-group-horizontal"
                         >
                           <div className="service-radio-group-item flex items-center gap-2">
                             <RadioGroupItem value="paired" id="input-paired" />
@@ -352,6 +353,7 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
                       render={({ field }) => (
                         <FormItem>
                           <Select
+                            items={strategyOptions}
                             value={field.value}
                             onValueChange={field.onChange}
                           >
@@ -359,14 +361,16 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
                               <SelectValue placeholder="Select strategy" />
                             </SelectTrigger>
                             <SelectContent>
+                              <SelectGroup>
                               {strategyOptions.map((opt) => (
                                 <SelectItem
                                   key={opt.value}
                                   value={opt.value}
                                 >
-                                  {opt.label}
-                                </SelectItem>
-                              ))}
+                                    {opt.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -384,21 +388,21 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
                       render={({ field }) => (
                         <FormItem>
                           <Select
+                            items={moduleOptions}
                             value={field.value}
                             onValueChange={field.onChange}
                           >
                             <SelectTrigger className="service-card-select-trigger">
-                              <SelectValue placeholder="Select reference database" />
+                              <SelectValue placeholder="Select" />
                             </SelectTrigger>
                             <SelectContent>
-                              {moduleOptions.map((opt) => (
-                                <SelectItem
-                                  key={opt.value}
-                                  value={opt.value}
-                                >
-                                  {opt.label}
-                                </SelectItem>
-                              ))}
+                              <SelectGroup>
+                                {moduleOptions.map((opt) => (
+                                  <SelectItem key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
                             </SelectContent>
                           </Select>
                           <FormMessage />

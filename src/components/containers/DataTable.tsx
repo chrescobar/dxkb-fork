@@ -4,19 +4,17 @@
 import {
   ColumnDef,
   getCoreRowModel,
-  getPaginationRowModel,
   useReactTable,
   flexRender,
   SortingState,
   PaginationState,
-  Header,
-} from '@tanstack/react-table';
+} from "@tanstack/react-table";
 
 // The following imports are usual hooks used in React to do things on events. The only non-standard one is useMemo, which isused to cache data and checks on rerenders to see if the data has changed. This is relevant to when the columns are resized.
-import { useMemo, useRef, useState, useEffect } from 'react';
+import { useMemo, useRef, useState, useEffect } from "react";
 
 // This helps with rendering rows more quickly in situations that have thousands of rows
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 // These imports are used to actually build the table structure
 import {
@@ -26,15 +24,16 @@ import {
   TableHead,
   TableBody,
   TableCell,
-} from '../ui/table';
+} from "../ui/table";
 
 // This allows for using shorthand to conditionally apply CSS classes
-import clsx from 'clsx';
+import clsx from "clsx";
+import { Button } from "@/components/ui/button";
 
 // This sets the structure of the columns that are sent in as JSON
 interface ColumnInfo {
   id: string; // The key in the JSON for this column
-  label: string; // The readable string that gets displayed as the column header 
+  label: string; // The readable string that gets displayed as the column header
   visible?: boolean; // Whether or not we see this column. There is a default that it comes in with from the parent, but it can be changed dynamically, as we'll see later
 }
 
@@ -579,12 +578,12 @@ export function DataTable({ id, data, columns, totalItems, resource, onSelection
     <div className="flex flex-col h-full w-full text-xs relative items-center border-0">{/* This is the main container. Full width and content centered. */}
       <div className="w-[100%] flex justify-end mb-2 z-50 px-5" ref={controlsRef}> {/* This is the area above the table for the various buttons. */}
           <div className="relative inline-block text-left" ref={columnMenuRef}> {/* This is the button for changing the visibility of columns in the table */}
-            <button
+            <Button
               className="flex justify-end w-full rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2"
               onClick={() => setShowColumnMenu(prev => !prev)}
             >
               Columns ▾
-            </button>
+            </Button>
 
             {showColumnMenu && (
               <div className="absolute left-0 mt-1 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
@@ -610,34 +609,34 @@ export function DataTable({ id, data, columns, totalItems, resource, onSelection
           </div>
 
           {/* Download buttons */}
-          <button
+          <Button
             onClick={() => handleDownload('csv')}
             className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2 ml-2"
           >
             Download (CSV)
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => handleDownload('txt')}
             className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2"
           >
             Download (TXT)
-          </button>
+          </Button>
 
           {/* These next two only show up if rows are selected */}
           {table.getSelectedRowModel().rows.length > 0 && ( 
             <>
-              <button
+              <Button
                 onClick={() => handleDownload('csv', true)}
                 className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2"
               >
                 Download Selected (CSV)
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => handleDownload('txt', true)}
                 className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2"
               >
                 Download Selected (TXT)
-              </button>
+              </Button>
             </>
           )}
         
@@ -860,7 +859,7 @@ export function DataTable({ id, data, columns, totalItems, resource, onSelection
             </div>
             <div className="flex items-center space-x-2">
               {/* Back arrow */}
-              <button
+              <Button
                 onClick={() => {
                   table.previousPage();
                   // Parent will handle this via onPaginationChange
@@ -869,7 +868,7 @@ export function DataTable({ id, data, columns, totalItems, resource, onSelection
                 className="px-2 py-1 border border-primary disabled:opacity-50"
               >
                 {'Prev'}
-              </button>
+              </Button>
               {/* Pagination page buttons */}
               {(() => {
                 const pageCount = table.getPageCount();
@@ -889,7 +888,7 @@ export function DataTable({ id, data, columns, totalItems, resource, onSelection
                   return (
                     <span key={page}>
                       {showDots && <span className="px-1">...</span>}
-                      <button
+                      <Button
                         onClick={() => {
                           // Update table's internal state for immediate UI feedback
                           table.setPageIndex(page);
@@ -901,13 +900,13 @@ export function DataTable({ id, data, columns, totalItems, resource, onSelection
                         )}
                       >
                         {page + 1}
-                      </button>
+                      </Button>
                     </span>
                   );
                 });
               })()}
               {/* Forward arrow */}
-              <button
+              <Button
                 onClick={() => {
                   table.nextPage();
                   // Parent will handle this via onPaginationChange
@@ -916,7 +915,7 @@ export function DataTable({ id, data, columns, totalItems, resource, onSelection
                 className="px-2 py-1 border border-primary disabled:opacity-50"
               >
                 {'Next'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

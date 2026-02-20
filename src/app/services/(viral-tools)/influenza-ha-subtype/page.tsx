@@ -176,7 +176,7 @@ export default function HASubtypeNumberingPage() {
                         <RadioGroup
                           value={field.value}
                           onValueChange={field.onChange}
-                          className="service-radio-group"
+                          className="service-radio-group-horizontal"
                         >
                           <div className="service-radio-group-item">
                             <RadioGroupItem

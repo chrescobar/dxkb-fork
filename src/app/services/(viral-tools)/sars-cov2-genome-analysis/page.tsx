@@ -262,7 +262,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                         <RadioGroup
                           value={field.value}
                           onValueChange={field.onChange}
-                          className="flex flex-col gap-4 sm:flex-row"
+                          className="service-radio-group-horizontal"
                         >
                           <div className="service-radio-group-item flex items-center gap-2">
                             <RadioGroupItem value="reads" id="start-reads" />

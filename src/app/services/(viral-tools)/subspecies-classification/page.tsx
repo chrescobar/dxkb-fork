@@ -194,7 +194,7 @@ export default function SubspeciesClassificationPage() {
                               form.clearErrors("input_fasta_data");
                             }
                           }}
-                          className="service-radio-group"
+                          className="service-radio-group-horizontal"
                         >
                           <div className="service-radio-group-item flex items-center gap-2">
                             <RadioGroupItem

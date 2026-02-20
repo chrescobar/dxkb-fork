@@ -140,12 +140,12 @@ const WelcomeSearch = () => {
                 </TabsContent>
 
                 <TabsContent value="sequence">
-                  <div className="mb-4">
+                  <div className="mb-4 space-y-4">
+                    <Label className="card-sublabel">Sequence Type</Label>
                     <RadioGroup
                       defaultValue="nucleotide"
-                      className="grid gap-2 w-full"
+                      className="service-radio-group-horizontal"
                     >
-                      <Label className="card-sublabel">Sequence Type</Label>
                       <div className="flex items-center gap-3">
                         <RadioGroupItem id="nucleotide" value="nucleotide" />
                         <Label htmlFor="nucleotide">Nucleotide</Label>

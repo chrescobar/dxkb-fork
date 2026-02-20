@@ -1,16 +1,11 @@
-import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { themeList } from "@/styles/themes";
+import { useIsMounted } from "@/hooks/use-is-mounted";
 
 const ThemeSwitch = () => {
-  const [mounted, setMounted] = useState(false)
+  const mounted = useIsMounted();
   const { theme, setTheme } = useTheme()
-
-  // useEffect only runs on the client, so now we can safely show the UI
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   if (!mounted) {
     return null

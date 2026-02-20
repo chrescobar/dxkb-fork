@@ -2,7 +2,7 @@
 
 import { Download, Filter, Search, SortDesc } from "lucide-react"
 import Link from "next/link"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { cn } from "@/lib/utils"
 
 import { Badge } from "@/components/ui/badge";
@@ -57,7 +57,16 @@ export default function PublicationsListView() {
   })
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [prevFilterKey, setPrevFilterKey] = useState("");
   const itemsPerPage = 5;
+
+  const filterKey = JSON.stringify({ searchQuery, sortOption, typeFilters, fieldFilters, yearRange });
+  if (filterKey !== prevFilterKey) {
+    setPrevFilterKey(filterKey);
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    }
+  }
 
   // Handle type filter changes
   const handleTypeFilterChange = (type: PublicationType) => {
@@ -136,11 +145,6 @@ export default function PublicationsListView() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-
-  // Reset to first page when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, sortOption, typeFilters, fieldFilters, yearRange]);
 
   // Generate page numbers to display
   const getPageNumbers = () => {

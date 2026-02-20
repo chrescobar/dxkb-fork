@@ -55,7 +55,7 @@ function MobileSearchBarContent({
   className = "",
   placeholder = "Search by virus name, protein, gene, or taxonomy...",
   isOpen = true,
-  onClose,
+  onClose: _onClose,
 }: MobileSearchBarProps) {
   const [inputValue, setInputValue] = useState(initialValue);
   const [selected, setSelected] = useState("everything");
@@ -83,25 +83,17 @@ function MobileSearchBarContent({
     inputRef.current?.focus();
   };
 
-  const handleClose = (e?: React.MouseEvent) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  if (prevIsOpen !== isOpen) {
+    setPrevIsOpen(isOpen);
+    if (!isOpen) {
+      setIsPopoverOpen(false);
     }
-    // Close the popover if open
-    setIsPopoverOpen(false);
-    // Close the search bar
-    if (onClose) {
-      onClose();
-    }
-  };
+  }
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
-    } else {
-      // Close popover when search bar closes
-      setIsPopoverOpen(false);
     }
   }, [isOpen]);
 

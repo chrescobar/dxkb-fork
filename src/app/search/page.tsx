@@ -1,14 +1,11 @@
 "use client"
 
 import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
-import { searchToQuery } from "../../functions/searchToQuery";
 import { TypeSearch } from "../search/typesearch";
 import { SearchResults } from "../allTermSearchResults";
 
 export default function GlobalSearch () {
 
-      const router = useRouter();
       const searchParams = useSearchParams();
 
       // Get the value of a specific query parameter
@@ -17,7 +14,7 @@ export default function GlobalSearch () {
       
       // The first step is to get the search phrase in a friendly format.
       // This requires a handful of replacements to make sure we don't break the API
-      var query = keyword.replace(/^\s+|\s+$/g, '');
+      let query = keyword.replace(/^\s+|\s+$/g, '');
 
       // replace some special characters
       query = query.replace(/'/g, '').replace(/:/g, ' ');
@@ -39,11 +36,11 @@ export default function GlobalSearch () {
       if (query.charAt(0) != '"' || query.match(/\(|\)|\[|\]|\{|\}/)) {
 
       // keywords should not include {}, [] or () characters
-      var keywords = query.split(/\s|\(|\)|\[|\]|\{|\}/);
+      const keywords = query.split(/\s|\(|\)|\[|\]|\{|\}/);
       // console.log("keywords", keywords);
 
       // Add quotes for IDs: handle fig id (e.g. fig|83332.12.peg.1),  genome id (e.g. 83332.12), EC number (e.g. 2.1.1.1), other ids with number.number, number only, IDs ending with numbers (at least 1 digit).
-      for (var i = 0; i < keywords.length; i++) {
+      for (let i = 0; i < keywords.length; i++) {
          if (keywords[i].charAt(0) != '"' && keywords[i].charAt(keywords[i].length - 1) != '"') { // if not already quoted
             // if (keywords[i].match(/^fig\|[0-9]+/) != null || keywords[i].match(/[0-9]+\.[0-9]+/) != null || keywords[i].match(/^[0-9]+$/) != null || keywords[i].match(/[0-9]+$/) != null){
             if (keywords[i].match(/^fig\|[0-9]+/) != null || keywords[i].match(/[0-9]+\.[0-9]+/) != null || keywords[i].match(/[0-9]+$/) != null) {
@@ -53,9 +50,6 @@ export default function GlobalSearch () {
       }
       query = keywords.join(' ');
       }
-
-      // Now that we have the phrasing set, let's build the query into the proper
-      var q = searchToQuery(query);
 
       // Now that we have the entire query formatted properly, let's figure out where to send it...
       if (searchtype === "everything") {

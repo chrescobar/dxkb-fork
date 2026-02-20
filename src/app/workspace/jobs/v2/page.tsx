@@ -7,8 +7,6 @@ import { Button, buttonVariants } from "../../../../components/ui/button";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from "../../../../components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "../../../../components/ui/input";
@@ -35,16 +33,13 @@ import {
   Eye,
   StopCircle,
   Download,
-  MoreHorizontal,
   Copy,
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
   Trash2,
-  Pause,
   Play,
   FileText,
-  Settings,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -164,7 +159,7 @@ type SortField =
 type SortDirection = "asc" | "desc";
 
 interface JobModalData extends JobListItem {
-  parameters: any;
+  parameters: Record<string, unknown>;
   duration?: string;
   user?: string;
 }
@@ -193,20 +188,19 @@ function JobsV2Content() {
       isMountedRef.current = true;
       enumerateJobs();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Filter and sort jobs
   const filteredAndSortedJobs = useMemo(() => {
-    let filtered = jobs.filter((job) => {
+    const filtered = jobs.filter((job) => {
       if (!job?.id || !job?.app) return false;
 
+      const outputFile = String(job.parameters?.output_file ?? "");
       const matchesSearch =
         job.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
         job.app.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (job.parameters?.output_file &&
-          job.parameters.output_file
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()));
+        outputFile.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesStatus =
         statusFilter === "all" || job.status === statusFilter;
@@ -217,26 +211,22 @@ function JobsV2Content() {
 
     // Sort jobs
     filtered.sort((a, b) => {
-      let aValue: any = a[sortField];
-      let bValue: any = b[sortField];
+      const aVal: unknown = a[sortField];
+      const bVal: unknown = b[sortField];
 
       // Handle date fields
       if (sortField.includes("time")) {
-        aValue = aValue ? new Date(aValue).getTime() : 0;
-        bValue = bValue ? new Date(bValue).getTime() : 0;
+        const aNum = aVal != null && aVal !== "" ? new Date(aVal as string | number).getTime() : 0;
+        const bNum = bVal != null && bVal !== "" ? new Date(bVal as string | number).getTime() : 0;
+        if (sortDirection === "asc") return aNum > bNum ? 1 : -1;
+        return aNum < bNum ? 1 : -1;
       }
 
       // Handle string fields
-      if (typeof aValue === "string") {
-        aValue = aValue.toLowerCase();
-        bValue = bValue?.toLowerCase() || "";
-      }
-
-      if (sortDirection === "asc") {
-        return aValue > bValue ? 1 : -1;
-      } else {
-        return aValue < bValue ? 1 : -1;
-      }
+      const aStr = typeof aVal === "string" ? aVal.toLowerCase() : String(aVal ?? "").toLowerCase();
+      const bStr = typeof bVal === "string" ? bVal.toLowerCase() : String(bVal ?? "").toLowerCase();
+      if (sortDirection === "asc") return aStr > bStr ? 1 : -1;
+      return aStr < bStr ? 1 : -1;
     });
 
     return filtered;
@@ -671,9 +661,9 @@ function JobsV2Content() {
                     <td className="text-primary p-4 font-medium">{job.app}</td>
                     <td
                       className="max-w-48 truncate p-4"
-                      title={job.parameters?.output_file}
+                      title={String(job.parameters?.output_file ?? "")}
                     >
-                      {job.parameters?.output_file || "N/A"}
+                      {String(job.parameters?.output_file ?? "N/A")}
                     </td>
                     <td className="p-4">
                       <Badge
@@ -841,7 +831,7 @@ function JobsV2Content() {
                     Output Name
                   </div>
                   <div className="bg-muted rounded p-2 font-mono text-sm">
-                    {selectedJobModal.parameters?.output_file || "N/A"}
+                    {String(selectedJobModal.parameters?.output_file ?? "N/A")}
                   </div>
                 </div>
                 <div className="space-y-2">

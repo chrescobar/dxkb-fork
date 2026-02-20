@@ -61,7 +61,7 @@ import {
 } from "@/lib/services/service-info";
 import * as MsaSnpAnalysis from "@/lib/forms/(protein-tools)/msa-snp-analysis/msa-snp-analysis-form-schema";
 import * as MsaSnpAnalysisUtils from "@/lib/forms/(protein-tools)/msa-snp-analysis/msa-snp-analysis-form-utils";
-import { validateFasta } from "@/lib/fasta-validation";
+
 import { msaSNPAnalysisAligners } from "@/lib/forms/(protein-tools)/msa-snp-analysis/msa-snp-analysis-form-utils";
 
 export default function MSAandSNPAnalysisPage() {
@@ -71,7 +71,7 @@ export default function MSAandSNPAnalysisPage() {
     mode: "onChange",
   });
 
-  const [selectedFeatureGroupObject, setSelectedFeatureGroupObject] =
+  const [_selectedFeatureGroupObject, setSelectedFeatureGroupObject] =
     useState<WorkspaceObject | null>(null);
   const [selectedGenomeGroupObject, setSelectedGenomeGroupObject] =
     useState<WorkspaceObject | null>(null);
@@ -108,9 +108,9 @@ export default function MSAandSNPAnalysisPage() {
   const inputType = form.watch("input_type");
   const refType = form.watch("ref_type");
   const aligner = form.watch("aligner");
-  const fastaFiles = form.watch("fasta_files") || [];
   const featureGroup = form.watch("feature_groups");
-  const selectGenomegroup = form.watch("select_genomegroup") || [];
+  const rawSelectGenomegroup = form.watch("select_genomegroup");
+  const selectGenomegroup = useMemo(() => rawSelectGenomegroup || [], [rawSelectGenomegroup]);
 
   // Update strategy visibility based on aligner
   useEffect(() => {
@@ -151,7 +151,7 @@ export default function MSAandSNPAnalysisPage() {
         shouldDirty: false,
       });
     }
-  }, [fastaInputText, refType, referenceFastaText]);
+  }, [fastaInputText, refType, referenceFastaText, form]);
 
   // Validate reference FASTA input when text changes
   useEffect(() => {
@@ -181,7 +181,7 @@ export default function MSAandSNPAnalysisPage() {
         shouldDirty: false,
       });
     }
-  }, [referenceFastaText]);
+  }, [referenceFastaText, form]);
 
   // Fetch features from feature group when Feature ID reference is selected
   useEffect(() => {
@@ -312,83 +312,6 @@ export default function MSAandSNPAnalysisPage() {
       }
     };
   }, [refType, selectGenomegroup]);
-
-  // Handle selecting genome group (only one group allowed at a time)
-  async function handleSelectGenomeGroup() {
-    if (!selectedGenomeGroupObject || !selectedGenomeGroupObject.path) {
-      toast.error("No object selected", {
-        description: "Please select a genome group before adding.",
-        closeButton: true,
-      });
-      return;
-    }
-
-    const inputValue = selectedGenomeGroupObject.path;
-
-    setIsValidatingGenomeGroup(true);
-
-    try {
-      // Fetch genome group members to get genome IDs
-      const genomes = await fetchGenomeGroupMembers(inputValue);
-
-      if (genomes.length === 0) {
-        toast.error("Empty genome group", {
-          description: "The selected genome group is empty.",
-          closeButton: true,
-        });
-        setIsValidatingGenomeGroup(false);
-        return;
-      }
-
-      if (genomes.length > MsaSnpAnalysis.MAX_GENOMES) {
-        toast.error("Genome group too large", {
-          description: `The genome group has ${genomes.length} genomes, but the maximum is ${MsaSnpAnalysis.MAX_GENOMES}.`,
-          closeButton: true,
-        });
-        setIsValidatingGenomeGroup(false);
-        return;
-      }
-
-      const genomeIds = genomes.map((g) => g.genome_id);
-
-      // Validate viral genomes
-      const validation = await validateViralGenomes(genomeIds, {
-        maxGenomeLength: MsaSnpAnalysis.MAX_GENOME_LENGTH,
-      });
-
-      if (!validation.allValid) {
-        const errorMessages = Object.values(validation.errors).filter(Boolean);
-        const errorMsg =
-          errorMessages.length > 0
-            ? errorMessages.join("\n")
-            : "Invalid genome group. Please check that all genomes are viruses with single contigs.";
-
-        toast.error("Genome group validation failed", {
-          description: errorMsg,
-          duration: 10000,
-          closeButton: true,
-        });
-        setIsValidatingGenomeGroup(false);
-        return;
-      }
-
-      // Replace the existing group (only one group allowed)
-      form.setValue("select_genomegroup", [inputValue]);
-      setSelectedGenomeGroupObject(null);
-    } catch (error) {
-      console.error("Failed to validate genome group:", error);
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Failed to validate genome group";
-      toast.error("Validation error", {
-        description: errorMessage,
-        closeButton: true,
-      });
-    } finally {
-      setIsValidatingGenomeGroup(false);
-    }
-  }
 
   function handleReset() {
     form.reset(MsaSnpAnalysis.DEFAULT_MSA_SNP_ANALYSIS_FORM_VALUES);

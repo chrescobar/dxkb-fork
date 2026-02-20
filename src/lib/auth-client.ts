@@ -1,18 +1,11 @@
 "use client";
 
-import { createAuthClient } from "better-auth/react";
 import type {
   AuthUser,
   SigninCredentials,
   SignupCredentials,
   PasswordResetRequest,
 } from "@/app/api/auth/types";
-
-// ============================================================================
-// Better Auth Client (for session management)
-// ============================================================================
-
-const authClient = createAuthClient({});
 
 // ============================================================================
 // BV-BRC Auth Client (better-auth style API)

@@ -182,7 +182,8 @@ function JobsContent() {
       isMountedRef.current = true;
       enumerateJobs();
     }
-  }, []); // Empty dependency array - only run on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Filter jobs based on search and filters - memoized to prevent unnecessary re-computations
   const filteredJobs = useMemo(() => {
@@ -192,13 +193,11 @@ function JobsContent() {
         return false;
       }
 
+      const outputFile = String(job.parameters?.output_file ?? "");
       const matchesSearch =
         job.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
         job.app.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (job.parameters?.output_file &&
-          job.parameters.output_file
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()));
+        outputFile.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesStatus =
         statusFilter === "all" || job.status === statusFilter;
@@ -467,11 +466,11 @@ function JobsContent() {
                       </p>
                     </div>
                   )}
-                  {job.parameters?.output_file && (
+                  {job.parameters?.output_file != null && String(job.parameters.output_file) !== "" && (
                     <div className="flex flex-row gap-2">
                       <p className="text-sm font-medium">Output File</p>
                       <p className="text-muted-foreground text-sm">
-                        {job.parameters.output_file}
+                        {String(job.parameters.output_file)}
                       </p>
                     </div>
                   )}

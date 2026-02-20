@@ -3,7 +3,6 @@
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -11,7 +10,7 @@ import {
 interface JobParamsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  params: Record<string, any>;
+  params: Record<string, unknown>;
   serviceName?: string;
 }
 

@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     const userProfile = await getProfileMetadata(token, credentials.username);
 
     // Set BV-BRC authentication cookies
-    await setBvbrcAuthCookies(token, credentials.username, realm, userProfile);
+    await setBvbrcAuthCookies(token, credentials.username, realm, userProfile ?? undefined);
 
     // Return better-auth style response
     return NextResponse.json({

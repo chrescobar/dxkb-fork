@@ -60,7 +60,7 @@ export interface WorkspaceCreateParams {
     workspace: string;
     id: string;
     type: "folder" | "file";
-    meta?: Record<string, any>;
+    meta?: Record<string, unknown>;
   }>;
 }
 
@@ -69,7 +69,7 @@ export interface WorkspaceCreateResponse {
     workspace: string;
     id: string;
     type: string;
-    meta: Record<string, any>;
+    meta: Record<string, unknown>;
   }>;
 }
 
@@ -156,7 +156,7 @@ export interface WorkspaceGetResponse {
     workspace: string;
     id: string;
     type: string;
-    meta: Record<string, any>;
+    meta: Record<string, unknown>;
     data?: string; // Base64 encoded data for files
   }>;
 }
@@ -167,7 +167,7 @@ export interface WorkspaceSaveParams {
     workspace: string;
     id: string;
     type: string;
-    meta: Record<string, any>;
+    meta: Record<string, unknown>;
     data?: string; // Base64 encoded data for files
   }>;
 }
@@ -177,7 +177,7 @@ export interface WorkspaceSaveResponse {
     workspace: string;
     id: string;
     type: string;
-    meta: Record<string, any>;
+    meta: Record<string, unknown>;
   }>;
 }
 
@@ -185,17 +185,17 @@ export interface WorkspaceSaveResponse {
 export interface JsonRpcRequest {
   id: number;
   method: string;
-  params: any[];
+  params: unknown[];
   jsonrpc: "2.0";
 }
 
-export interface JsonRpcResponse<T = any> {
+export interface JsonRpcResponse<T = unknown> {
   id: number;
   result?: T;
   error?: {
     code: number;
     message: string;
-    data?: any;
+    data?: unknown;
   };
   jsonrpc: "2.0";
 }

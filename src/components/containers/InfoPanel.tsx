@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { ChevronRight, ChevronDown } from "lucide-react";
 import { genomeFields } from "@/constants/datafields/genome";
 import { genome_sequenceFields } from "@/constants/datafields/genome_sequence";
@@ -19,7 +19,7 @@ export function InfoPanel({
   rows,
   activeTab,
 }: {
-  rows: any[];
+  rows: Record<string, unknown>[];
   activeTab: string;
 }) {
 
@@ -108,15 +108,27 @@ export function InfoPanel({
       break;
   }
 
-  const displayColumns = Object.values(fieldFile ?? {}).map((obj: any) => ({
-    id: obj.field,
-    label: obj.label,
-    visible: !obj.hidden,
-    group: obj.group,
-    link: obj?.link,
-    linkType: obj?.linkType,
-    linkText: obj?.linkText
-  }));
+  interface DisplayColumn {
+    id: unknown;
+    label: unknown;
+    visible: boolean;
+    group: unknown;
+    link?: unknown;
+    linkType?: unknown;
+    linkText?: unknown;
+  }
+  const displayColumns: DisplayColumn[] = Object.values(fieldFile ?? {}).map((obj) => {
+    const o = obj as Record<string, unknown>;
+    return {
+      id: o.field,
+      label: o.label,
+      visible: !o.hidden,
+      group: o.group,
+      link: o?.link,
+      linkType: o?.linkType,
+      linkText: o?.linkText,
+    };
+  });
 
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
     () =>
@@ -127,12 +139,13 @@ export function InfoPanel({
   );
 
   const grouped = displayColumns.reduce(
-    (acc: Record<string, typeof displayColumns>, item) => {
-      if (!acc[item.group]) acc[item.group] = [];
-      acc[item.group].push(item);
+    (acc: Record<string, DisplayColumn[]>, item) => {
+      const g = String(item.group ?? "");
+      if (!acc[g]) acc[g] = [];
+      acc[g].push(item);
       return acc;
     },
-    {}
+    {} as Record<string, DisplayColumn[]>
   );
 
   const toggleGroup = (group: string) => {
@@ -151,10 +164,10 @@ export function InfoPanel({
     });
   }
 
-  function resolveLink(template: string, row: any, fallbackField: string) {
-    return template.replace(/{([^}]+)}/g, (_, key) => {
-      const value = row[key] ?? row[fallbackField] ?? '';
-      return encodeURIComponent(value);  // encode just the inserted value
+  function resolveLink(template: string, row: Record<string, unknown>, fallbackField: string) {
+    return template.replace(/{([^}]+)}/g, (_, key: string) => {
+      const value = row[key] ?? row[fallbackField] ?? "";
+      return encodeURIComponent(String(value));
     });
   }
 
@@ -178,7 +191,7 @@ export function InfoPanel({
   return (
     <div className="w-full p-4 overflow-y-auto text-xs">
       <div className="mb-2 text-secondary text-lg">
-        {rows[0]?.[panelTitleField]}
+        {String(rows[0]?.[panelTitleField] ?? "")}
       </div>
 
       {rows.length === 1 ? (
@@ -186,13 +199,13 @@ export function InfoPanel({
           <tbody>
             {order.map((group) => {
               const items = (grouped[group] || []).filter((item) =>
-                allowedFields.includes(item.id)
+                allowedFields.includes(String(item.id))
               );
               if (items.length === 0) return null;
 
               const isExpanded = expandedGroups[group] ?? true;
               const hasAtLeastOneValue = items.some(
-                (item) => rows[0]?.[item.id]
+                (item) => rows[0]?.[String(item.id)]
               );
 
               return (
@@ -212,7 +225,8 @@ export function InfoPanel({
                   {isExpanded &&
                     (hasAtLeastOneValue ? (
                       items.map((item) => {
-                        const rawValue = rows[0]?.[item.id];
+                        const fieldId = String(item.id);
+                        const rawValue = rows[0]?.[fieldId];
                         if (
                           rawValue === undefined ||
                           rawValue === null ||
@@ -227,28 +241,28 @@ export function InfoPanel({
                             : rawValue;
 
                         if (item.link) {
-                          const resolved = resolveLink(item.link, rows[0], item.id);
+                          const resolved = resolveLink(String(item.link), rows[0], fieldId);
                           console.log(resolved);
                         }
 
                         return (
-                          <tr key={item.id}>
+                          <tr key={fieldId}>
                             <td className="px-2 py-0.5 font-medium text-xs w-[40%] align-top">
-                              {item.label}
+                              {String(item.label)}
                             </td>
                             <td className="px-2 py-0.5 text-xs break-all align-top">
                               {item.link ? (() => {
-                                  var resolved = resolveLink(item.link, rows[0], item.id);
+                                  let resolved = resolveLink(String(item.link), rows[0], fieldId);
                                   console.log(resolved);
                                   resolved = toAbsoluteUrl(resolved);
                                   console.log(resolved);
 
-                                  return item.linkType === 'button' ? (
+                                  return item.linkType === "button" ? (
                                     <Button
-                                      onClick={() => window.open(resolved, '_blank', 'noopener,noreferrer')}
+                                      onClick={() => window.open(resolved, "_blank", "noopener,noreferrer")}
                                       className="text-sm border-black bg-primary text-secondary py-1 px-2 rounded"
                                     >
-                                      {item.linkText ?? 'View'}
+                                      {String(item.linkText ?? "View")}
                                     </Button>
                                   ) : (
                                     <a
@@ -257,10 +271,10 @@ export function InfoPanel({
                                       rel="noopener noreferrer"
                                       className="text-sm text-blue-600 underline hover:text-blue-800"
                                     >
-                                      {value}
+                                      {String(value)}
                                     </a>
                                   );
-                                })() : value}
+                                })() : String(value)}
                             </td>
                           </tr>
                         );

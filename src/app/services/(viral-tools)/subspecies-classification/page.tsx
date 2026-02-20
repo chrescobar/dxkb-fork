@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, Fragment } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -78,9 +78,11 @@ export default function SubspeciesClassificationPage() {
     mode: "onChange",
   });
 
+  const outputPath = useWatch({ control: form.control, name: "output_path" });
+
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  const inputSource = form.watch("input_source");
+  const inputSource = useWatch({ control: form.control, name: "input_source" });
 
   const handleFastaBlur = useCallback(() => {
     const value = form.getValues("input_fasta_data") ?? "";
@@ -352,7 +354,7 @@ export default function SubspeciesClassificationPage() {
                               variant="name"
                               value={field.value}
                               onChange={field.onChange}
-                              outputFolderPath={form.watch("output_path")}
+                              outputFolderPath={outputPath}
                               onValidationChange={setIsOutputNameValid}
                             />
                           </FormControl>

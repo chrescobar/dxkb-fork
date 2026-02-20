@@ -3,8 +3,8 @@
 import React from "react";
 import { useTheme } from "next-themes";
 import { getThemeContent, type ContentType } from "@/styles/theme-content";
-import { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useIsMounted } from "@/hooks/use-is-mounted";
 
 interface ThemeContentProps {
   type: ContentType;
@@ -17,13 +17,8 @@ export function ThemeContent({
   className,
   as: Component = "span",
 }: ThemeContentProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsMounted();
   const { theme } = useTheme();
-
-  // useEffect only runs on the client, so now we can safely show the UI
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // During SSR and initial render, always use the default theme
   // This prevents hydration mismatch

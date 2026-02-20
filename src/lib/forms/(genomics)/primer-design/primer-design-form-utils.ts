@@ -221,7 +221,7 @@ export function validatePrimerDesignSequence(
 export function transformPrimerDesignParams(
   data: PrimerDesignFormData,
 ) {
-  const params: Record<string, any> = {
+  const params: Record<string, unknown> = {
     output_path: data.output_path.trim(),
     output_file: data.output_file.trim(),
     input_type: data.input_type,

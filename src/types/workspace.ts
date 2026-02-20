@@ -2,17 +2,17 @@
 export interface JsonRpcRequest {
   id: number;
   method: string;
-  params: any[];
+  params: unknown[];
   jsonrpc: "2.0";
 }
 
-export interface JsonRpcResponse<T = any> {
+export interface JsonRpcResponse<T = unknown> {
   id: number;
   result?: T;
   error?: {
     code: number;
     message: string;
-    data?: any;
+    data?: unknown;
   };
   jsonrpc: "2.0";
 }
@@ -36,7 +36,7 @@ export interface JobBase {
   start_time?: string;
   completed_time?: string;
   owner: string;
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
   output_path?: string;
   output_file?: string;
 }
@@ -80,7 +80,7 @@ export interface JobDetails extends JobSummary {
       id: string;
       label: string;
       required: boolean;
-      default?: any;
+      default?: unknown;
       type: string;
     }>;
   };
@@ -121,7 +121,7 @@ export interface FetchJobOutputParams {
 
 export interface SubmitServiceParams {
   app_name: string;
-  app_params: Record<string, any>;
+  app_params: Record<string, unknown>;
   context?: {
     base_url?: string;
   };
@@ -145,7 +145,7 @@ export type SubmitServiceResponse = {
       app: string;
       status: JobStatus;
       submit_time: string;
-      params: Record<string, any>;
+      params: Record<string, unknown>;
     }
   ]
 };

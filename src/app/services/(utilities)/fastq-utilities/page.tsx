@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -91,6 +91,8 @@ export default function FastqUtilitiesPage() {
     mode: "onChange",
   });
 
+  const outputPath = useWatch({ control: form.control, name: "output_path" });
+
   // Read input state
   const [pairedRead1, setPairedRead1] = useState<string | null>(null);
   const [pairedRead2, setPairedRead2] = useState<string | null>(null);
@@ -105,8 +107,7 @@ export default function FastqUtilitiesPage() {
   // Output name uniqueness (variant="name"); valid until check says otherwise
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  // Watch form values
-  const recipe = form.watch("recipe");
+  const recipe = useWatch({ control: form.control, name: "recipe" });
 
   // Check if align is selected (to show/require target genome)
   const alignSelected = isAlignSelected(recipe);
@@ -309,7 +310,7 @@ export default function FastqUtilitiesPage() {
                           variant="name"
                           value={field.value}
                           onChange={field.onChange}
-                          outputFolderPath={form.watch("output_path")}
+                          outputFolderPath={outputPath}
                           onValidationChange={setIsOutputNameValid}
                         />
                       </FormControl>

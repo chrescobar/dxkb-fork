@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -98,6 +98,8 @@ export default function TaxonomicClassificationPage() {
     mode: "onChange",
   });
 
+  const outputPath = useWatch({ control: form.control, name: "output_path" });
+
   // Read input state
   const [pairedRead1, setPairedRead1] = useState<string | null>(null);
   const [pairedRead2, setPairedRead2] = useState<string | null>(null);
@@ -111,8 +113,7 @@ export default function TaxonomicClassificationPage() {
 
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  // Watch form values
-  const sequenceType = form.watch("sequence_type");
+  const sequenceType = useWatch({ control: form.control, name: "sequence_type" });
 
   // Track if this is the initial mount to avoid triggering validation on load
   const isInitialMount = useRef(true);
@@ -940,7 +941,7 @@ export default function TaxonomicClassificationPage() {
                               required={true}
                               value={field.value}
                               onChange={field.onChange}
-                              outputFolderPath={form.watch("output_path")}
+                              outputFolderPath={outputPath}
                               onValidationChange={setIsOutputNameValid}
                             />
                           </FormControl>

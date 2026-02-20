@@ -21,7 +21,7 @@ export class JsonRpcClient {
     return JsonRpcClient.requestId++;
   }
 
-  private createRequest(method: string, params: any[]): JsonRpcRequest {
+  private createRequest(method: string, params: unknown[]): JsonRpcRequest {
     return {
       id: this.getNextRequestId(),
       method,
@@ -30,7 +30,7 @@ export class JsonRpcClient {
     };
   }
 
-  async call<T = any>(method: string, params: any[] = []): Promise<T> {
+  async call<T = unknown>(method: string, params: unknown[] = []): Promise<T> {
     const request = this.createRequest(method, params);
 
     try {
@@ -77,8 +77,8 @@ export class JsonRpcClient {
   }
 
   // Batch requests (if needed in the future)
-  async batch<T = any>(
-    requests: Array<{ method: string; params: any[] }>,
+  async batch<T = unknown>(
+    requests: Array<{ method: string; params: unknown[] }>,
   ): Promise<T[]> {
     const jsonRequests = requests.map((req) =>
       this.createRequest(req.method, req.params),
@@ -132,21 +132,21 @@ export class JsonRpcClient {
 
   // Remove authentication token
   removeAuthToken(): void {
-    const { Authorization, ...headersWithoutAuth } = this.headers as any;
+    const { Authorization: _Authorization, ...headersWithoutAuth } = this.headers as Record<string, string>;
     this.headers = headersWithoutAuth;
   }
 
   // Get authentication token
   getAuthToken(): string | undefined {
-    return (this.headers as any).Authorization;
+    return (this.headers as Record<string, string>).Authorization;
   }
 }
 
 export class JsonRpcError extends Error {
   code: number;
-  data?: any;
+  data?: unknown;
 
-  constructor(message: string, code: number, data?: any) {
+  constructor(message: string, code: number, data?: unknown) {
     super(message);
     this.name = "JsonRpcError";
     this.code = code;

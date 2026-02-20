@@ -100,7 +100,7 @@ const GenomeAnnotationContent = () => {
           transformGenomeAnnotationParams(data),
         );
 
-        if (result.success) {
+        if (result.success && result.job?.[0]) {
           console.log("Genome Annotation job submitted successfully:", result.job[0]);
 
           // Show success message
@@ -284,7 +284,7 @@ const GenomeAnnotationContent = () => {
                                 form.setValue("taxonomy_id", taxonId, { shouldValidate: true, shouldTouch: true });
                               } else {
                                 // Clear taxonomy ID when name is cleared
-                                form.setValue("taxonomy_id", null as any, { shouldValidate: true, shouldTouch: true });
+                                form.setValue("taxonomy_id", null, { shouldValidate: true, shouldTouch: true });
                               }
                               // Auto-generate output file name
                               const myLabel = form.getValues("my_label");

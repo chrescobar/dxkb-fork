@@ -343,7 +343,7 @@ export function GenomeNameSelector({
                 })
               ) : showEmptyState ? (
                 <p className="text-muted-foreground py-4 text-center text-sm">
-                  No genomes found for "{query.trim()}"
+                  No genomes found for {'"'}{query.trim()}{'"'}
                 </p>
               ) : null}
             </div>

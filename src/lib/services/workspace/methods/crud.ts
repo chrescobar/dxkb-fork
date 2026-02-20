@@ -40,7 +40,7 @@ export class WorkspaceCrudMethods {
   async createFolder(
     workspace: string,
     id: string,
-    meta?: Record<string, any>,
+    meta?: Record<string, unknown>,
   ): Promise<WorkspaceCreateResponse> {
     return this.create({
       objects: [
@@ -60,7 +60,7 @@ export class WorkspaceCrudMethods {
   async createFile(
     workspace: string,
     id: string,
-    meta?: Record<string, any>,
+    meta?: Record<string, unknown>,
   ): Promise<WorkspaceCreateResponse> {
     return this.create({
       objects: [
@@ -234,7 +234,7 @@ export class WorkspaceCrudMethods {
     workspace: string,
     id: string,
     type: string,
-    meta: Record<string, any>,
+    meta: Record<string, unknown>,
     data?: string,
   ): Promise<WorkspaceSaveResponse> {
     return this.save({

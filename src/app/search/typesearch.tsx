@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { ListData } from "@/components/services/ListData";
 import { WithGenomePanel } from "@/components/layouts/WithGenomePanel";
@@ -30,7 +30,7 @@ type TabsRendererProps = {
   setRowSelection: (sel: Record<string, boolean>) => void;
   pageIndex: number;
   setPageIndex: (page: number) => void;
-  setSelectedRows: (rows: any[]) => void;
+  setSelectedRows: (rows: unknown[]) => void;
 };
 
 // IMPORTANT: This must be defined at module scope (not inside TypeSearch),
@@ -93,7 +93,7 @@ function TabsRenderer({
           <ListData
             resource={term}
             q={fullQ}
-            onSelectionChange={setSelectedRows}
+            onSelectionChange={(rows) => setSelectedRows(Array.isArray(rows) ? (rows as Record<string, unknown>[]) : [])}
             rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
             pageIndex={pageIndex}
@@ -155,28 +155,18 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
   const tabsForType = searchTypes[thistype] ?? searchTypes["genome"];
   const tablist = Object.keys(tabsForType);
 
-  const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const [selectedRows, setSelectedRows] = useState<Record<string, unknown>[]>([]);
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [pageIndex, setPageIndex] = useState(0);
+  const [prevUrlKey, setPrevUrlKey] = useState(`${urlType}|${urlQ}`);
 
-  // Track previous values to detect actual changes
-  const prevUrlTypeRef = useRef<string>(urlType);
-  const prevUrlQRef = useRef<string>(urlQ);
-
-  // Clear selection only when searchtype or query actually changes
-  useEffect(() => {
-    const urlTypeChanged = prevUrlTypeRef.current !== urlType;
-    const urlQChanged = prevUrlQRef.current !== urlQ;
-
-    if (urlTypeChanged || urlQChanged) {
-      console.log('Clearing selection due to URL change');
-      setRowSelection({});
-      setSelectedRows([]);
-      setPageIndex(0);
-      prevUrlTypeRef.current = urlType;
-      prevUrlQRef.current = urlQ;
-    }
-  }, [urlType, urlQ]);
+  const urlKey = `${urlType}|${urlQ}`;
+  if (urlKey !== prevUrlKey) {
+    setPrevUrlKey(urlKey);
+    setRowSelection({});
+    setSelectedRows([]);
+    setPageIndex(0);
+  }
 
   // Main return: hand off rendering to WithGenomePanel which provides activeTab & setter
   return (
@@ -197,7 +187,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
           setRowSelection={setRowSelection}
           pageIndex={pageIndex}
           setPageIndex={setPageIndex}
-          setSelectedRows={setSelectedRows}
+          setSelectedRows={(rows) => setSelectedRows(Array.isArray(rows) ? (rows as Record<string, unknown>[]) : [])}
         />
       )}
     </WithGenomePanel>

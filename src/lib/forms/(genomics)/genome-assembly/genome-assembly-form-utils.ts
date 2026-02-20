@@ -21,7 +21,7 @@ export const genomeSizeUnitOptions = [
  * Transform genome assembly form data to the format expected by the backend service
  */
 export function transformGenomeAssemblyParams(data: GenomeAssemblyFormData) {
-  const params: Record<string, any> = {
+  const params: Record<string, unknown> = {
     recipe: data.recipe,
     output_path: data.output_path,
     output_file: data.output_file,
@@ -30,7 +30,7 @@ export function transformGenomeAssemblyParams(data: GenomeAssemblyFormData) {
   // Add library data
   if (data.paired_end_libs && data.paired_end_libs.length > 0) {
     params.paired_end_libs = data.paired_end_libs.map((lib) => {
-      const libData: Record<string, any> = {};
+      const libData: Record<string, unknown> = {};
 
       // Copy all properties except internal ones (starting with _)
       Object.keys(lib).forEach((key) => {
@@ -45,7 +45,7 @@ export function transformGenomeAssemblyParams(data: GenomeAssemblyFormData) {
 
   if (data.single_end_libs && data.single_end_libs.length > 0) {
     params.single_end_libs = data.single_end_libs.map((lib) => {
-      const libData: Record<string, any> = {};
+      const libData: Record<string, unknown> = {};
 
       Object.keys(lib).forEach((key) => {
         if (!key.startsWith("_")) {

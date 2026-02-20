@@ -38,7 +38,7 @@ export function checkDuplicateFastaFile(
 /**
  * Check if the FASTA file limit has been reached
  */
-export function checkFastaFileLimit(fastaFiles: FastaFileItem[]): boolean {
+export function checkFastaFileLimit(_fastaFiles: FastaFileItem[]): boolean {
   // No specific limit, but we can add one if needed
   return false;
 }
@@ -103,8 +103,8 @@ export function validateReferenceFasta(
  */
 export function transformMsaSnpAnalysisParams(
   data: MsaSnpAnalysisFormData,
-): Record<string, any> {
-  const params: Record<string, any> = {
+): Record<string, unknown> {
+  const params: Record<string, unknown> = {
     input_status: data.input_status,
     aligner: data.aligner,
     output_path: data.output_path,

@@ -170,7 +170,7 @@ export default function BlastServicePage() {
           transformBlastParams(data),
         );
 
-        if (result.success) {
+        if (result.success && result.job?.[0]) {
           console.log("BLAST job submitted successfully:", result.job[0]);
 
           // Show success message
@@ -205,7 +205,7 @@ export default function BlastServicePage() {
     newSource: BlastFormData["input_source"],
   ) => {
     const currentValues = form.getValues();
-    const preservedFastaData = (currentValues as any).input_fasta_data || "";
+    const preservedFastaData = String((currentValues as Record<string, unknown>).input_fasta_data ?? "");
 
     const inputOverrides = createInputSourceOverrides(
       newSource,

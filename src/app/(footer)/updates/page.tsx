@@ -157,7 +157,7 @@ const Updates = () => {
       }
     });
     return dates;
-  }, [upcomingEvents]);
+  }, []);
 
   // Custom day content renderer
   const modifiers = {

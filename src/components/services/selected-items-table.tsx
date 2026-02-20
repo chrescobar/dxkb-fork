@@ -37,7 +37,7 @@ const SelectedItemsTable = ({
   onRemove,
   emptyMessage = "No items selected",
   className = "",
-  allowDuplicates = false,
+  allowDuplicates: _allowDuplicates = false,
 }: SelectedItemsTableProps) => {
   const getShapeClass = (shape?: string) => {
     switch (shape) {

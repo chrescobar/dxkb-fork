@@ -9,7 +9,7 @@ type WithGenomePanelProps = {
     setActiveTab: (tab: string) => void;
   }) => React.ReactNode;
   tabs: string[];
-  selectedRows: any[];
+  selectedRows: Record<string, unknown>[];
 };
 
 export function WithGenomePanel({

@@ -31,11 +31,11 @@ const SearchReadLibrary = ({
   icon = <FolderSearch size={16} />,
   variant = "single",
   justInput = false,
-  value = "",
+  value: _value = "",
   onChange,
   onAdd,
   disabled = false,
-  allowDuplicates = false,
+  allowDuplicates: _allowDuplicates = false,
   canAdd: canAddProp,
 }: SearchPairInputProps) => {
   const [firstInput, setFirstInput] = useState("");

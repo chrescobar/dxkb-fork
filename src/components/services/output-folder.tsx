@@ -84,14 +84,18 @@ const OutputFolder = ({
     [onValidationChange],
   );
 
+  const needsValidation = variant === "name" && !!outputFolderPath?.trim() && !!value?.trim();
+  const [prevNeedsValidation, setPrevNeedsValidation] = useState(needsValidation);
+  if (prevNeedsValidation && !needsValidation) {
+    setPrevNeedsValidation(needsValidation);
+    setIsChecking(false);
+    setNameTaken(false);
+  } else if (prevNeedsValidation !== needsValidation) {
+    setPrevNeedsValidation(needsValidation);
+  }
+
   useEffect(() => {
-    if (variant !== "name" || !outputFolderPath?.trim() || !value?.trim()) {
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-        debounceRef.current = null;
-      }
-      setIsChecking(false);
-      setNameTaken(false);
+    if (!needsValidation) {
       onValidationChange?.(true);
       return;
     }
@@ -111,7 +115,7 @@ const OutputFolder = ({
       }
       abortControllerRef.current?.abort();
     };
-  }, [variant, outputFolderPath, value, runCheck, onValidationChange]);
+  }, [needsValidation, outputFolderPath, value, runCheck, onValidationChange]);
 
   const resolvedTitle = variant === "default" ? "Output Folder" : "Output Name";
 

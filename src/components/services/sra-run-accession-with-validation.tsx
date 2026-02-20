@@ -74,7 +74,7 @@ function parseXmlAndExtract(xmlText: string): {
   }
 
   const runs: string[] = [];
-  const inputAccession = xmlDoc
+  const _inputAccession = xmlDoc
     .evaluate(
       "//EXPERIMENT_PACKAGE/EXPERIMENT/@accession",
       xmlDoc,
@@ -83,9 +83,6 @@ function parseXmlAndExtract(xmlText: string): {
       null,
     )
     .singleNodeValue?.textContent?.toLowerCase();
-
-  // Check if the input is an experiment ID
-  const isExperimentId = !!inputAccession;
 
   // Extract all run accessions
   try {

@@ -10,8 +10,8 @@ type WithGenomePanelProps = {
   }) => React.ReactNode;
   tabs: string[];
   activeTab?: string;
-  selectedRows: any[]; // new
-  setSelectedRows: (rows: any[]) => void; // new
+  selectedRows: Record<string, unknown>[];
+  setSelectedRows: (rows: Record<string, unknown>[]) => void;
 };
 
 export function WithGenomePanel({
@@ -19,7 +19,7 @@ export function WithGenomePanel({
   tabs,
   activeTab: incomingTab,
   selectedRows,
-  setSelectedRows,
+  setSelectedRows: _setSelectedRows,
 }: WithGenomePanelProps) {
   const initialTab = incomingTab && tabs.includes(incomingTab) ? incomingTab : tabs[0];
   const [activeTab, setActiveTab] = useState(initialTab);

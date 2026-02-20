@@ -167,8 +167,8 @@ export async function getGenomeIdsFromGroup(
       throw new Error("Invalid workspace response for genome group");
     }
 
-    const rawData = Array.isArray(entry) ? entry[1] : entry?.data ?? null;
-    const decoded = decodeGroupData(rawData);
+    const rawData = Array.isArray(entry) ? entry[1] : (entry as { data?: unknown })?.data ?? null;
+    const decoded = decodeGroupData(rawData) as { id_list?: { genome_id?: string[] } } | null;
 
     if (!decoded?.id_list?.genome_id) {
       return [];
@@ -184,7 +184,7 @@ export async function getGenomeIdsFromGroup(
   }
 }
 
-function decodeGroupData(raw: unknown): any {
+function decodeGroupData(raw: unknown): unknown {
   if (!raw) return null;
 
   if (typeof raw === "string") {
@@ -197,8 +197,8 @@ function decodeGroupData(raw: unknown): any {
             return window.atob(raw);
           }
 
-          if (typeof globalThis !== "undefined" && (globalThis as any).Buffer) {
-            return (globalThis as any).Buffer.from(raw, "base64").toString("utf-8");
+          if (typeof globalThis !== "undefined" && (globalThis as unknown as { Buffer?: { from(s: string, enc: string): { toString(enc: string): string } } }).Buffer) {
+            return (globalThis as unknown as { Buffer: { from(s: string, enc: string): { toString(enc: string): string } } }).Buffer.from(raw, "base64").toString("utf-8");
           }
 
           throw new Error("Base64 decoding is not supported in this environment");
@@ -221,8 +221,9 @@ function decodeGroupData(raw: unknown): any {
   return null;
 }
 
-function extractWorkspaceGetEntry(responseData: any): any | null {
-  const container = responseData?.result?.[0];
+function extractWorkspaceGetEntry(responseData: unknown): unknown | null {
+  const data = responseData as { result?: unknown[] };
+  const container = data?.result?.[0];
 
   if (!container) {
     return null;
@@ -234,11 +235,12 @@ function extractWorkspaceGetEntry(responseData: any): any | null {
       return entry;
     }
     if (entry && typeof entry === "object") {
-      if (Array.isArray(entry[0])) {
-        return entry[0];
+      const entryObj = entry as Record<string, unknown>;
+      if (Array.isArray(entryObj[0])) {
+        return entryObj[0];
       }
-      if (entry.metadata && entry.data !== undefined) {
-        return [entry.metadata, entry.data];
+      if (entryObj.metadata !== undefined && entryObj.data !== undefined) {
+        return [entryObj.metadata, entryObj.data];
       }
     }
     return entry;
@@ -250,7 +252,7 @@ function extractWorkspaceGetEntry(responseData: any): any | null {
       return firstValue[0];
     }
     if (firstValue && typeof firstValue === "object" && "data" in firstValue && "metadata" in firstValue) {
-      return [(firstValue as any).metadata, (firstValue as any).data];
+      return [(firstValue as { metadata: unknown; data: unknown }).metadata, (firstValue as { metadata: unknown; data: unknown }).data];
     }
   }
 
@@ -388,8 +390,8 @@ export async function fetchGenomeGroupMembers(path: string): Promise<GenomeSumma
       throw new Error("Invalid workspace response for genome group");
     }
 
-    const rawData = Array.isArray(entry) ? entry[1] : entry?.data ?? null;
-    const decoded = decodeGroupData(rawData);
+    const rawData = Array.isArray(entry) ? entry[1] : (entry as { data?: unknown })?.data ?? null;
+    const decoded = decodeGroupData(rawData) as { id_list?: { genome_id?: string[] } } | null;
 
     if (!decoded?.id_list?.genome_id) {
       return [];

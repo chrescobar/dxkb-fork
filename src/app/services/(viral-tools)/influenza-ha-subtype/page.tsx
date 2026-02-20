@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -56,12 +56,15 @@ export default function HASubtypeNumberingPage() {
     mode: "onChange",
   });
 
+  const outputPath = useWatch({ control: form.control, name: "output_path" });
+  const watchedTypes = useWatch({ control: form.control, name: "types" });
+
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
   const [fastaValidationMessage, setFastaValidationMessage] = useState("");
   const [isFastaValid, setIsFastaValid] = useState(false);
 
-  const inputSource = form.watch("input_source");
-  const fastaData = form.watch("input_fasta_data");
+  const inputSource = useWatch({ control: form.control, name: "input_source" });
+  const fastaData = useWatch({ control: form.control, name: "input_fasta_data" });
 
   const validateFastaData = useCallback(() => {
     const trimmed = fastaData?.trim() ?? "";
@@ -320,7 +323,7 @@ export default function HASubtypeNumberingPage() {
                           >
                             <Checkbox
                               id={`scheme-${scheme.id}`}
-                              checked={form.watch("types").includes(scheme.id)}
+                              checked={watchedTypes.includes(scheme.id)}
                               onCheckedChange={(checked) => {
                                 const current = form.getValues("types");
                                 const next = checked
@@ -372,7 +375,7 @@ export default function HASubtypeNumberingPage() {
                           variant="name"
                           value={field.value}
                           onChange={field.onChange}
-                          outputFolderPath={form.watch("output_path")}
+                          outputFolderPath={outputPath}
                           onValidationChange={setIsOutputNameValid}
                         />
                       </FormControl>

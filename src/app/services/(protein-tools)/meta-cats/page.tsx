@@ -60,7 +60,6 @@ import {
   MAX_GROUPS,
   MIN_GROUPS,
   type MetaCatsFormData,
-  type AutoGroupItem,
 } from "@/lib/forms/(protein-tools)/meta-cats/meta-cats-form-schema";
 import {
   transformMetaCatsParams,
@@ -73,7 +72,7 @@ import {
   removeAutoGroupsByRowIds,
   updateAutoGroupsGroupByRowIds,
 } from "@/lib/forms/(protein-tools)/meta-cats/meta-cats-form-utils";
-import { fetchFeaturesFromGroup, type FeatureSummary } from "@/lib/services/feature";
+import { fetchFeaturesFromGroup } from "@/lib/services/feature";
 import { fetchGenomesByIds, type GenomeSummary } from "@/lib/services/genome";
 
 export default function MetaCATSPage() {
@@ -101,9 +100,9 @@ export default function MetaCATSPage() {
     useState<WorkspaceObject | null>(null);
 
   // State for alignment file mode
-  const [selectedAlignmentFileObject, setSelectedAlignmentFileObject] =
+  const [_selectedAlignmentFileObject, setSelectedAlignmentFileObject] =
     useState<WorkspaceObject | null>(null);
-  const [selectedGroupFileObject, setSelectedGroupFileObject] =
+  const [_selectedGroupFileObject, setSelectedGroupFileObject] =
     useState<WorkspaceObject | null>(null);
 
   // General state
@@ -112,8 +111,10 @@ export default function MetaCATSPage() {
 
   const inputType = form.watch("input_type");
   const metadataGroup = form.watch("metadata_group");
-  const autoGroups = form.watch("auto_groups") || [];
-  const featureGroups = form.watch("groups") || [];
+  const rawAutoGroups = form.watch("auto_groups");
+  const autoGroups = useMemo(() => rawAutoGroups || [], [rawAutoGroups]);
+  const rawFeatureGroups = form.watch("groups");
+  const featureGroups = useMemo(() => rawFeatureGroups || [], [rawFeatureGroups]);
 
   // Calculate unique group count
   const uniqueGroupCount = useMemo(() => {

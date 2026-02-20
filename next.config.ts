@@ -1,10 +1,18 @@
 import type { NextConfig } from "next";
 
+// Minimal type for webpack rule (avoids depending on full webpack types)
+interface WebpackRuleLike {
+  test?: { test?(s: string): boolean };
+  issuer?: unknown;
+  resourceQuery?: unknown;
+  exclude?: RegExp;
+}
+
 const nextConfig: NextConfig = {
 
   webpack(config) {
     // Grab the existing rule that handles SVG imports
-    const fileLoaderRule = config.module.rules.find((rule: any) =>
+    const fileLoaderRule = config.module.rules.find((rule: WebpackRuleLike) =>
       rule.test?.test?.(".svg"),
     );
 

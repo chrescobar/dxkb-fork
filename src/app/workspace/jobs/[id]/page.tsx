@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "../../../../components/ui/skeleton";
 import { Alert, AlertDescription } from "../../../../components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../components/ui/tabs";
-import { RefreshCw, ArrowLeft, StopCircle, Download, Copy } from "lucide-react";
+import { RefreshCw, ArrowLeft, StopCircle, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { JobStatus } from "@/types/workspace";
 
@@ -119,7 +119,6 @@ function JobDetailContent() {
 
   const {
     jobDetails,
-    jobSummary,
     getJobDetails,
     getJobSummary,
     killJob,
@@ -170,9 +169,16 @@ function JobDetailContent() {
     }).format(new Date(dateString));
   };
 
+  const [currentTime, setCurrentTime] = useState(() => Date.now());
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   const formatDuration = (start: string, end?: string) => {
     const startTime = new Date(start).getTime();
-    const endTime = end ? new Date(end).getTime() : Date.now();
+    const endTime = end ? new Date(end).getTime() : currentTime;
     const duration = endTime - startTime;
 
     const hours = Math.floor(duration / (1000 * 60 * 60));
@@ -424,7 +430,7 @@ function JobDetailContent() {
                   )}
                 </div>
               ) : (
-                <p className="text-gray-500">Click "Load Logs" to view job output</p>
+                <p className="text-gray-500">Click {'"'}Load Logs{'"'} to view job output</p>
               )}
             </CardContent>
           </Card>

@@ -4,8 +4,8 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { getLogoPath, type LogoVariant } from "@/styles/logo-utils";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useIsMounted } from "@/hooks/use-is-mounted";
 
 interface LogoProps {
   variant?: LogoVariant;
@@ -24,13 +24,8 @@ export function Logo({
   priority = false,
   alt = "Logo",
 }: LogoProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsMounted();
   const { theme } = useTheme();
-
-  // useEffect only runs on the client, so now we can safely show the UI
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // During SSR and initial render, always use the default theme
   // This prevents hydration mismatch

@@ -100,7 +100,7 @@ export function isMetadataFieldSelected(
  */
 export function transformGeneProteinTreeParams(
   data: GeneProteinTreeFormData,
-): Record<string, any> {
+): Record<string, unknown> {
   // Split metadata fields into feature and genome fields
   // For now, all current metadata fields appear to be genome-related
   // Feature metadata fields would be things like gene_id, gene_name, etc.

@@ -198,14 +198,14 @@ const DesktopNavbar = () => {
                     <ListItem
                       key="workspace-nav"
                       title="My Workspace"
-                      href="/workspace"
+                      href={`/workspace/${user?.username}/home`}
                     >
                       View your workspace.
                     </ListItem>
                     <ListItem
                       key="workspace-jobs-nav"
                       title="Jobs"
-                      href="/workspace/jobs"
+                      href={`/workspace/${user?.username}/jobs`}
                     >
                       View all jobs in your workspace.
                     </ListItem>

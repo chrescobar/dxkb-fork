@@ -1,9 +1,4 @@
-import {
-  cleanFasta,
-  isDNA,
-  validateFasta,
-  validateFastaForBlast,
-} from "../fasta-validation";
+import { cleanFasta, isDNA, validateFasta, validateFastaForBlast } from "@/lib/fasta-validation";
 
 describe("FASTA Validation", () => {
   describe("cleanFasta", () => {

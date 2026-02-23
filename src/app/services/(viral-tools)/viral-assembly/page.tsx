@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -76,7 +76,8 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
   const [sraResetKey, setSraResetKey] = useState(0);
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  const inputType = form.watch("input_type");
+  const inputType = useWatch({ control: form.control, name: "input_type" });
+  const outputPath = useWatch({ control: form.control, name: "output_path" });
 
   const { selectedLibraries, setLibrariesAndSync } = useLibrarySelection<
     ViralAssemblyFormData,
@@ -161,6 +162,7 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
     } else {
       setLibrariesAndSync(otherLibs);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     inputType,
     pairedRead1,
@@ -438,7 +440,7 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
                           variant="name"
                           value={field.value}
                           onChange={field.onChange}
-                          outputFolderPath={form.watch("output_path")}
+                          outputFolderPath={outputPath}
                           onValidationChange={setIsOutputNameValid}
                         />
                       </FormControl>

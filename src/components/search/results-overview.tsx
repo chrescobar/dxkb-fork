@@ -2,12 +2,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ResultsOverviewProps {
   isLoading: boolean;
-  searchResults: Record<string, any>;
+  searchResults: Record<string, unknown>;
   labelsByType: Record<string, string>;
+}
+
+interface SearchResultItem {
+  result?: { response?: { numFound?: number } };
 }
 
 const ResultsOverview = ({ isLoading, searchResults, labelsByType }: ResultsOverviewProps) => {
   const searchTypes = Object.keys(labelsByType);
+  const getNumFound = (type: string) => (searchResults[type] as SearchResultItem | undefined)?.result?.response?.numFound ?? 0;
 
   return (
     <Card className="mb-8 px-4 py-8">
@@ -25,9 +30,7 @@ const ResultsOverview = ({ isLoading, searchResults, labelsByType }: ResultsOver
               {searchTypes.slice(0, 5).map((type) => (
                 <div key={type} className="flex items-center justify-between">
                   <span className="text-foreground">{labelsByType[type]}:</span>
-                  <span className="text-secondary">
-                    {searchResults[type]?.result?.response?.numFound || 0}
-                  </span>
+                  <span className="text-secondary">{getNumFound(type)}</span>
                 </div>
               ))}
             </div>
@@ -35,9 +38,7 @@ const ResultsOverview = ({ isLoading, searchResults, labelsByType }: ResultsOver
               {searchTypes.slice(5, 10).map((type) => (
                 <div key={type} className="flex items-center justify-between">
                   <span className="text-foreground">{labelsByType[type]}:</span>
-                  <span className="text-secondary">
-                    {searchResults[type]?.result?.response?.numFound || 0}
-                  </span>
+                  <span className="text-secondary">{getNumFound(type)}</span>
                 </div>
               ))}
             </div>
@@ -45,9 +46,7 @@ const ResultsOverview = ({ isLoading, searchResults, labelsByType }: ResultsOver
               {searchTypes.slice(10, 15).map((type) => (
                 <div key={type} className="flex items-center justify-between">
                   <span className="text-foreground">{labelsByType[type]}:</span>
-                  <span className="text-secondary">
-                    {searchResults[type]?.result?.response?.numFound || 0}
-                  </span>
+                  <span className="text-secondary">{getNumFound(type)}</span>
                 </div>
               ))}
             </div>

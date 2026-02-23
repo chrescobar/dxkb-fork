@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import {
   TaxonomyItem,
   TaxonomySelectorProps,
-  TaxonomySearchParams,
 } from "@/types";
 
 interface TaxonNameSelectorProps extends TaxonomySelectorProps {
@@ -68,7 +67,7 @@ export function TaxonNameSelector({
   includeViruses = false,
   setBacteriophage = false,
   segmentWildcard = true,
-  highlightMatch = "all",
+  highlightMatch: _highlightMatch = "all",
 }: TaxonNameSelectorProps) {
   const [showDropdown, setShowDropdown] = useState(false);
   // Initialize searchQuery from value prop to ensure SSR/client hydration match

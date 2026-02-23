@@ -120,6 +120,7 @@ export function DatePickerInput({
   React.useEffect(() => {
     const parsed = parseInputDate(inputValue);
     if (parsed) setCalendarMonth(parsed);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputValue]);
 
   // When popover opens, sync calendarMonth to input or today

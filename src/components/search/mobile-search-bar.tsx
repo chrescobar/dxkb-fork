@@ -1,25 +1,16 @@
 "use client";
 
-import React, {
-  useState,
-  FormEvent,
-  useEffect,
-  useRef,
-  useCallback,
-  Suspense,
-} from "react";
-import { Input } from "@/components/ui/input";
-import { LuSearch, LuX } from "react-icons/lu";
-import { useRouter } from "next/navigation";
-import { searchTypes } from "../../constants/searchInfo";
+import React, { useState, FormEvent, useEffect, useRef, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { useRouter } from "next/navigation";
+
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { searchTypes } from "@/constants/searchInfo";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+
+import { LuSearch, LuX } from "react-icons/lu";
 
 interface MobileSearchBarProps {
   initialValue?: string;
@@ -55,7 +46,7 @@ function MobileSearchBarContent({
   className = "",
   placeholder = "Search by virus name, protein, gene, or taxonomy...",
   isOpen = true,
-  onClose,
+  onClose: _onClose,
 }: MobileSearchBarProps) {
   const [inputValue, setInputValue] = useState(initialValue);
   const [selected, setSelected] = useState("everything");
@@ -83,25 +74,17 @@ function MobileSearchBarContent({
     inputRef.current?.focus();
   };
 
-  const handleClose = (e?: React.MouseEvent) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  if (prevIsOpen !== isOpen) {
+    setPrevIsOpen(isOpen);
+    if (!isOpen) {
+      setIsPopoverOpen(false);
     }
-    // Close the popover if open
-    setIsPopoverOpen(false);
-    // Close the search bar
-    if (onClose) {
-      onClose();
-    }
-  };
+  }
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
-    } else {
-      // Close popover when search bar closes
-      setIsPopoverOpen(false);
     }
   }, [isOpen]);
 

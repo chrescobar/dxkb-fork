@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -84,6 +84,8 @@ export default function MetagenomicBinningPage() {
     mode: "onChange",
   });
 
+  const outputPath = useWatch({ control: form.control, name: "output_path" });
+
   // UI state
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
@@ -94,9 +96,8 @@ export default function MetagenomicBinningPage() {
   const [singleRead, setSingleRead] = useState<string | null>(null);
   const [sraResetKey, setSraResetKey] = useState(0);
 
-  // Watch form values
-  const startWith = form.watch("start_with");
-  const assembler = form.watch("assembler");
+  const startWith = useWatch({ control: form.control, name: "start_with" });
+  const assembler = useWatch({ control: form.control, name: "assembler" });
 
   const {
     selectedLibraries,
@@ -591,7 +592,7 @@ export default function MetagenomicBinningPage() {
                                 required={true}
                                 value={field.value}
                                 onChange={field.onChange}
-                                outputFolderPath={form.watch("output_path")}
+                                outputFolderPath={outputPath}
                                 onValidationChange={setIsOutputNameValid}
                               />
                             </FormControl>

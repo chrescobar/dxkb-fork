@@ -1,12 +1,13 @@
 import { z } from "zod";
-import { baseLibrarySchema } from "../../shared-schemas";
+
+import { baseLibrarySchema } from "@/lib/forms/shared-schemas";
 import {
   primersSchema,
   primerOptions,
   primerVersionOptions,
   defaultPrimerVersion,
   type Primers,
-} from "../sars-cov2-genome-analysis/sars-cov2-genome-analysis-form-schema";
+} from "@/lib/forms/(viral-tools)/sars-cov2-genome-analysis/sars-cov2-genome-analysis-form-schema";
 
 export type { Primers };
 export { primerOptions, primerVersionOptions, defaultPrimerVersion };
@@ -16,8 +17,7 @@ export const sarsCov2WastewaterLibrarySchema = baseLibrarySchema.extend({
   sample_id: z.string().min(1, "Sample identifier is required"),
   sample_level_date: z.string().optional(),
 });
-export interface SarsCov2WastewaterLibraryItem
-  extends z.infer<typeof sarsCov2WastewaterLibrarySchema> {}
+export type SarsCov2WastewaterLibraryItem = z.infer<typeof sarsCov2WastewaterLibrarySchema>;
 
 // SRA library item (primers/primer_version added at transform from form-level)
 export const srrLibItemSchema = z.object({
@@ -26,7 +26,7 @@ export const srrLibItemSchema = z.object({
   sample_level_date: z.string().optional(),
   title: z.string().optional(),
 });
-export interface SrrLibItem extends z.infer<typeof srrLibItemSchema> {}
+export type SrrLibItem = z.infer<typeof srrLibItemSchema>;
 
 // Strategy (recipe) — legacy has only One Codex
 export const recipeSchema = z.enum(["onecodex"]);
@@ -144,8 +144,7 @@ export const sarsCov2WastewaterAnalysisFormSchema = z
     });
   });
 
-export interface SarsCov2WastewaterAnalysisFormData
-  extends z.infer<typeof sarsCov2WastewaterAnalysisFormSchema> {}
+export type SarsCov2WastewaterAnalysisFormData = z.infer<typeof sarsCov2WastewaterAnalysisFormSchema>;
 
 export const defaultSarsCov2WastewaterAnalysisFormValues: SarsCov2WastewaterAnalysisFormData =
   {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -102,6 +102,8 @@ export default function SarsCov2GenomeAnalysisPage() {
     mode: "onChange",
   });
 
+  const outputPath = useWatch({ control: form.control, name: "output_path" });
+
   const [pairedRead1, setPairedRead1] = useState<string | null>(null);
   const [pairedRead2, setPairedRead2] = useState<string | null>(null);
   const [pairedPlatform, setPairedPlatform] =
@@ -112,11 +114,11 @@ export default function SarsCov2GenomeAnalysisPage() {
   const [sraResetKey, setSraResetKey] = useState(0);
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  const inputType = form.watch("input_type");
-  const recipe = form.watch("recipe");
-  const primers = form.watch("primers");
-  const scientificName = form.watch("scientific_name");
-  const myLabel = form.watch("my_label");
+  const inputType = useWatch({ control: form.control, name: "input_type" });
+  const recipe = useWatch({ control: form.control, name: "recipe" });
+  const primers = useWatch({ control: form.control, name: "primers" });
+  const scientificName = useWatch({ control: form.control, name: "scientific_name" });
+  const myLabel = useWatch({ control: form.control, name: "my_label" });
 
   const showPrimersSection = recipe === "onecodex";
   const primerVersionOpts =
@@ -817,7 +819,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                           variant="name"
                           value={field.value}
                           onChange={field.onChange}
-                          outputFolderPath={form.watch("output_path")}
+                          outputFolderPath={outputPath}
                           onValidationChange={setIsOutputNameValid}
                           disabled={true}
                         />

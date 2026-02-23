@@ -96,7 +96,7 @@ export function isMetadataFieldSelected(
  */
 export function transformViralGenomeTreeParams(
   data: ViralGenomeTreeFormData,
-): Record<string, any> {
+): Record<string, unknown> {
   // All metadata fields for viral genome tree are genome-related
   const metadataFields = data.metadata_fields || [];
   

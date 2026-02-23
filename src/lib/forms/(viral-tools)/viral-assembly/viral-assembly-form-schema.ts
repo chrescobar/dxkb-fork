@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { baseLibrarySchema, libraryTypeSchema } from "../../shared-schemas";
+
+import { baseLibrarySchema, libraryTypeSchema } from "@/lib/forms/shared-schemas";
 
 // -----------------------------------------------------------------------------
 // Strategy (legacy only exposes IRMA)

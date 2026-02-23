@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -98,6 +98,8 @@ export default function SarsCov2WastewaterAnalysisPage() {
     mode: "onChange",
   });
 
+  const outputPath = useWatch({ control: form.control, name: "output_path" });
+
   const [pairedRead1, setPairedRead1] = useState<string | null>(null);
   const [pairedRead2, setPairedRead2] = useState<string | null>(null);
   const [singleRead, setSingleRead] = useState<string | null>(null);
@@ -106,7 +108,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
   const [sraResetKey, setSraResetKey] = useState(0);
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  const primers = form.watch("primers");
+  const primers = useWatch({ control: form.control, name: "primers" });
   const primerVersionOpts =
     primerVersionOptions[primers] ?? primerVersionOptions.ARTIC;
 
@@ -174,17 +176,15 @@ export default function SarsCov2WastewaterAnalysisPage() {
     }
   }, [primers, form]);
 
-  // Suggest default sample ID when user selects a read (legacy setPairedId/setSingleId behavior)
-  useEffect(() => {
-    if (pairedRead1) {
-      setCurrentSampleId(getDefaultSampleIdFromPath(pairedRead1));
-    }
-  }, [pairedRead1]);
-  useEffect(() => {
-    if (singleRead) {
-      setCurrentSampleId(getDefaultSampleIdFromPath(singleRead));
-    }
-  }, [singleRead]);
+  const handlePairedRead1Select = (path: string) => {
+    setPairedRead1(path);
+    setCurrentSampleId(getDefaultSampleIdFromPath(path));
+  };
+
+  const handleSingleReadSelect = (path: string) => {
+    setSingleRead(path);
+    setCurrentSampleId(getDefaultSampleIdFromPath(path));
+  };
 
   const handlePairedLibraryAdd = () => {
     const { sampleId, sampleLevelDate } = resolveSampleIdAndDate(
@@ -321,7 +321,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                       placeholder="Select READ FILE 1..."
                       value={pairedRead1 ?? ""}
                       onObjectSelect={(object: WorkspaceObject) =>
-                        setPairedRead1(object.path)
+                        handlePairedRead1Select(object.path)
                       }
                     />
                     <WorkspaceObjectSelector
@@ -356,7 +356,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                     placeholder="Select READ FILE..."
                     value={singleRead ?? ""}
                     onObjectSelect={(object: WorkspaceObject) =>
-                      setSingleRead(object.path)
+                      handleSingleReadSelect(object.path)
                     }
                   />
                 </div>
@@ -585,7 +585,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                             variant="name"
                             value={field.value}
                             onChange={field.onChange}
-                            outputFolderPath={form.watch("output_path")}
+                            outputFolderPath={outputPath}
                             onValidationChange={setIsOutputNameValid}
                           />
                         </FormControl>

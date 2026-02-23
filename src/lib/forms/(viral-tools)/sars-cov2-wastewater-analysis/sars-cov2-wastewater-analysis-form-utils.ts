@@ -1,7 +1,6 @@
 import type { SarsCov2WastewaterAnalysisFormData } from "./sars-cov2-wastewater-analysis-form-schema";
 import type { BuildLibraryResult } from "@/lib/forms/shared-library-selection";
 import {
-  findNewSraLibraries,
   getPairedLibraryName,
   getSingleLibraryName,
 } from "@/lib/forms/shared-library-selection";

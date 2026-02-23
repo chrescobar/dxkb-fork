@@ -1,33 +1,29 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { useSearchParams, usePathname } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { DataTable } from "@/components/containers/DataTable";
 import { SortingState, RowSelectionState } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 
+interface ColumnInfo {
+  id: string;
+  label: string;
+  visible: boolean;
+}
+
 interface ListDataProps { 
   q: string; 
   resource: string; // 'genome', 'gene', etc.
-  onSelectionChange?: (rows: any[]) => void;
+  onSelectionChange?: (rows: unknown[]) => void;
   rowSelection?: Record<string, boolean>;
   onRowSelectionChange?: (selection: Record<string, boolean>) => void;
   pageIndex?: number;
   onPageChange?: (page: number) => void;
 }
 
-function downloadFile(filename: string, content: string) {
-  const blob = new Blob([content], { type: 'text/plain;charset=utf-8;' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = filename;
-  link.click();
-  URL.revokeObjectURL(link.href);
-}
-
 export function ListData({ q, resource, onSelectionChange, rowSelection: controlledRowSelection, onRowSelectionChange, pageIndex: controlledPageIndex, onPageChange }: ListDataProps) {
-  const [fields, setFields] = useState<any[]>([]);
-  const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const [fields, setFields] = useState<ColumnInfo[]>([]);
   
   // Use controlled rowSelection if provided, otherwise use internal state
   const [internalRowSelection, setInternalRowSelection] = useState<RowSelectionState>({});
@@ -47,9 +43,13 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
           return;
         }
         setFields(
-          Object.values(fieldObj)
-            .filter((f: any) => f.show_in_table !== false)
-            .map((f: any) => ({ id: f.field, label: f.label, visible: !f.hidden }))
+          (Object.values(fieldObj) as Record<string, unknown>[])
+            .filter((f) => f.show_in_table !== false)
+            .map((f) => ({
+              id: String(f.field ?? ""),
+              label: String(f.label ?? ""),
+              visible: !f.hidden,
+            }))
         );
       } catch (err) {
         console.error(`Failed to load fields for resource "${resource}":`, err);
@@ -67,14 +67,12 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   console.log('Search params q:', q);
 
   const searchtype = searchParams.get('searchtype') ?? '';
-  const pathname = usePathname();
   const cleanQ = q?.split('#')[0] ?? '';
   const DataAPI = process.env.NEXT_PUBLIC_DATA_API;
   if (!DataAPI) {
     throw new Error('NEXT_PUBLIC_DATA_API environment variable is not configured');
   }
   const pageSize = 200;
-  const listKey = `${resource}-${cleanQ}-${searchtype}`;
 
   // Reset sorting when resource/query actually changes
   const prevResourceRef = useRef(resource);
@@ -92,7 +90,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       prevResourceRef.current = resource;
       prevCleanQRef.current = cleanQ;
     }
-  }, [resource, cleanQ, onSelectionChange]);
+  }, [resource, cleanQ, onSelectionChange, setRowSelection]);
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnOrder, setColumnOrder] = useState<string[]>([]);
@@ -136,7 +134,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   }, [sorting]);
 
   // Fetch metadata (numFound)
-  const { data: metaData, isLoading: metaLoading, error: metaError, refetch: metaRefetch } = useQuery({
+  const { data: metaData, isLoading: metaLoading, error: metaError } = useQuery({
     queryKey: ['genome-meta', resource, cleanQ, searchtype],
     queryFn: async () => {
       const baseURL = `${DataAPI}/${resource}/?${cleanQ}`;
@@ -155,7 +153,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const totalItems = metaData?.response?.numFound ?? 0;
 
   // Fetch current page of data
-  const { data: pageData, isLoading: dataLoading, error: dataError, refetch, isFetching: dataFetching } = useQuery({
+  const { data: pageData, isLoading: dataLoading, error: dataError, isFetching: dataFetching } = useQuery({
     queryKey: [
       'genome-full',
       resource,
@@ -267,7 +265,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       if (!res.ok) throw new Error(`Failed to fetch all data: ${res.status} ${res.statusText}`);
       const allData = await res.json();
 
-      const rowsArray: any[] = Array.isArray(allData) ? allData : (allData.items ?? allData.response ?? allData.rows ?? []);
+      const rowsArray: unknown[] = Array.isArray(allData) ? allData : (allData.items ?? allData.response ?? allData.rows ?? []);
       const colsToExport = (visibleColumns && visibleColumns.length > 0)
         ? visibleColumns
         : fields.map((c) => c.id);
@@ -279,7 +277,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
 
       const separator = format === 'csv' ? ',' : '\t';
 
-      const escapeValue = (val: any) => {
+      const escapeValue = (val: unknown) => {
         if (val === undefined || val === null) return '';
         if (typeof val === 'string') {
           const cleaned = val.replace(/\r\n|\n|\r/g, ' ');
@@ -293,17 +291,18 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
         return String(val);
       };
 
-      const contentRows = rowsArray.map((row) =>
-        colsToExport
+      const contentRows = rowsArray.map((row: unknown) => {
+        const r = row as Record<string, unknown>;
+        return colsToExport
           .map((colId) => {
-            const val = row[colId];
+            const val = r[colId];
             if (format === 'csv') return escapeValue(val);
             if (val === undefined || val === null) return '';
             if (typeof val === 'object') return JSON.stringify(val).replace(/\r\n|\n|\r/g, ' ');
             return String(val).replace(/\r\n|\n|\r/g, ' ');
           })
-          .join(separator)
-      );
+          .join(separator);
+      });
 
       const content = [headers.join(separator), ...contentRows].join('\n');
 

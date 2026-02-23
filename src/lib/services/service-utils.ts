@@ -1,10 +1,7 @@
 import type { FormEvent } from "react";
-import {
-  Library,
-  Genome,
-  blastDatabaseTypes,
-  blastDatabaseTypeMap,
-} from "@/types/services";
+
+import { Library, Genome, blastDatabaseTypes, blastDatabaseTypeMap } from "@/types/services";
+import { validateFastaForBlast, getBlastFastaErrorMessage } from "@/lib/fasta-validation";
 import { toast } from "sonner";
 
 export interface FileInput {
@@ -193,11 +190,6 @@ export function validateBlastFastaInput(
   fastaText: string,
   inputType: "blastn" | "blastp" | "blastx" | "tblastn",
 ): { isValid: boolean; message: string } {
-  const {
-    validateFastaForBlast,
-    getBlastFastaErrorMessage,
-  } = require("../fasta-validation");
-
   if (!fastaText.trim()) {
     return { isValid: false, message: "FASTA input is required" };
   }
@@ -215,8 +207,8 @@ export function validateBlastFastaInput(
  * Transform BLAST form data to API parameters
  * Handles conditional fields based on input_source and db_precomputed_database
  */
-export function transformBlastParams(data: Record<string, any>): Record<string, any> {
-  const params: Record<string, any> = {
+export function transformBlastParams(data: Record<string, unknown>): Record<string, unknown> {
+  const params: Record<string, unknown> = {
     input_type: data.input_type,
     input_source: data.input_source,
     db_type: data.db_type,
@@ -226,7 +218,7 @@ export function transformBlastParams(data: Record<string, any>): Record<string, 
     output_file: data.output_file,
     output_path: data.output_path,
     blast_max_hits: data.blast_max_hits,
-    blast_evalue_cutoff: data.blast_evalue_cutoff.toString(),
+    blast_evalue_cutoff: String(data.blast_evalue_cutoff),
   };
 
   // Add input-specific fields
@@ -254,14 +246,22 @@ export function transformBlastParams(data: Record<string, any>): Record<string, 
   return params;
 }
 
+/** Shape of a single job in the submit response (array of one element) */
+export interface SubmitJobEntry {
+  id: string;
+  app?: string;
+  status?: string;
+  submit_time?: string;
+}
+
 /**
  * Generic service submission helper
  * Submits any service job via the workspace API
  */
 export async function submitServiceJob(
   appName: string,
-  appParams: Record<string, any>,
-): Promise<{ success: boolean; job?: any; error?: string }> {
+  appParams: Record<string, unknown>,
+): Promise<{ success: boolean; job?: [SubmitJobEntry]; error?: string }> {
   try {
     const response = await fetch("/api/services/app-service/submit", {
       method: "POST",
@@ -298,7 +298,7 @@ export async function submitServiceJob(
       throw new Error(errorMessage);
     }
 
-    const result = await response.json();
+    const result = (await response.json()) as { job?: [SubmitJobEntry] };
     return { success: true, job: result.job };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Failed to submit service job";

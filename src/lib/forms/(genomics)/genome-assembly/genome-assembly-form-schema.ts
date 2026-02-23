@@ -2,7 +2,7 @@ import { z } from "zod";
 import {
   libraryWithAssemblyOptionsSchema,
   type LibraryWithAssemblyOptions,
-} from "../../shared-schemas";
+} from "@/lib/forms/shared-schemas";
 
 // Re-export shared library schema and type for use in this service
 export const librarySchema = libraryWithAssemblyOptionsSchema;

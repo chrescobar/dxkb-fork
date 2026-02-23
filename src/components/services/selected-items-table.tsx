@@ -1,12 +1,7 @@
-import React from "react";
-import { Button } from "../ui/button";
-import { Label } from "../ui/label";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+
 import { HelpCircle } from "lucide-react";
 
 interface SelectedItem {
@@ -37,7 +32,7 @@ const SelectedItemsTable = ({
   onRemove,
   emptyMessage = "No items selected",
   className = "",
-  allowDuplicates = false,
+  allowDuplicates: _allowDuplicates = false,
 }: SelectedItemsTableProps) => {
   const getShapeClass = (shape?: string) => {
     switch (shape) {

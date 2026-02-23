@@ -16,7 +16,7 @@ export function RequiredFormCardTitle({
 }
 
 import { FormLabel } from "@/components/ui/form";
-import { DialogInfoPopup } from "../services/dialog-info-popup";
+import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import { ServiceInfoPopup } from "@/types/services";
 
 interface RequiredFormLabelInfoProps {

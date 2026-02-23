@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
 import { ChevronRight, FolderSearch } from "lucide-react";
-import { Label } from "../ui/label";
 
 interface FileInput {
   first: string;
@@ -31,11 +32,11 @@ const SearchReadLibrary = ({
   icon = <FolderSearch size={16} />,
   variant = "single",
   justInput = false,
-  value = "",
+  value: _value = "",
   onChange,
   onAdd,
   disabled = false,
-  allowDuplicates = false,
+  allowDuplicates: _allowDuplicates = false,
   canAdd: canAddProp,
 }: SearchPairInputProps) => {
   const [firstInput, setFirstInput] = useState("");

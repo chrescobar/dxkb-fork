@@ -19,7 +19,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -65,7 +64,7 @@ export default function ForgotPasswordPage() {
     try {
       await requestPasswordReset(data.usernameOrEmail);
       setSuccess(true);
-    } catch (err) {
+    } catch (_err) {
       setError("An unexpected error occurred. Please try again.");
     }
   };

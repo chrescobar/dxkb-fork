@@ -7,7 +7,7 @@ import { metaListToObj } from "./helpers";
 export class WorkspaceApiClient {
   private baseUrl: string;
 
-  constructor(authToken?: string) {
+  constructor(_authToken?: string) {
     // Use our internal API endpoint that handles authentication via cookies
     this.baseUrl = "/api/services/workspace";
   }
@@ -15,9 +15,9 @@ export class WorkspaceApiClient {
   /**
    * Make a generic JSON-RPC request to the Workspace API
    */
-  async makeRequest<T = any>(
+  async makeRequest<T = unknown>(
     method: WorkspaceMethod,
-    params: any[],
+    params: unknown[],
   ): Promise<T> {
     try {
       console.log(`Making workspace API call: ${method}`, params);
@@ -59,11 +59,11 @@ export class WorkspaceApiClient {
       // For Workspace.ls, we need to find the specific path that was requested
       // The original code uses the exact path from the request
       let targetPath: string | null = null;
-      let res: any[] = [];
+      let res: unknown[] = [];
 
-      if (method === "Workspace.ls" && params[0]?.paths) {
+      if (method === "Workspace.ls" && (params[0] as { paths?: string[] })?.paths) {
         // Find the path that was requested in the parameters
-        const requestedPath = params[0].paths[0];
+        const requestedPath = (params[0] as { paths: string[] }).paths[0];
         if (result.result[0][requestedPath]) {
           targetPath = requestedPath;
           res = result.result[0][requestedPath];
@@ -81,14 +81,15 @@ export class WorkspaceApiClient {
       }
 
       // Map results using metaListToObj (same as original)
-      res = res.map((r: any) => {
-        return metaListToObj(r);
+      res = res.map((r: unknown) => {
+        return metaListToObj(r as unknown[]);
       });
 
       // Filter out hidden folders and apply type filtering (same as original)
-      res = res.filter((r: any) => {
-        if (r.type === 'folder') {
-          if (r.path.split('/').some((p: string) => {
+      res = res.filter((r: unknown) => {
+        const obj = r as Record<string, unknown>;
+        if (obj.type === "folder") {
+          if (String(obj.path).split("/").some((p: string) => {
             return p.charAt(0) === '.';
           })) {
             return false;
@@ -103,8 +104,8 @@ export class WorkspaceApiClient {
       console.error(`Failed to call ${method}:`, error);
       console.error("Error details:", {
         message: error instanceof Error ? error.message : String(error),
-        status: (error as any)?.status,
-        response: (error as any)?.response,
+        status: (error as { status?: number })?.status,
+        response: (error as { response?: unknown })?.response,
       });
       throw error;
     }
@@ -113,7 +114,7 @@ export class WorkspaceApiClient {
   /**
    * Update authentication token (not needed when using cookies)
    */
-  updateAuthToken(token: string): void {
+  updateAuthToken(_token: string): void {
     // No-op: authentication is handled via cookies
     console.warn(
       "updateAuthToken called but authentication is handled via cookies",

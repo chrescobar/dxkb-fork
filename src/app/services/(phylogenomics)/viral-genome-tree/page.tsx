@@ -46,11 +46,10 @@ import {
 import OutputFolder from "@/components/services/output-folder";
 import {
   RequiredFormCardTitle,
-  RequiredFormLabel,
 } from "@/components/forms/required-form-components";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { WorkspaceObject } from "@/lib/workspace-client";
-import { ValidWorkspaceObjectTypes } from "@/lib/services/workspace/types";
+
 import { submitServiceJob } from "@/lib/services/service-utils";
 import { fetchGenomeGroupMembers, validateViralGenomes } from "@/lib/services/genome";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
@@ -98,7 +97,6 @@ export default function ViralGenomeTreePage() {
   const [isValidatingGenomeGroup, setIsValidatingGenomeGroup] = useState(false);
 
   const sequences = form.watch("sequences");
-  const substitutionModel = form.watch("substitution_model");
 
   // Update metadata fields in form when they change
   useEffect(() => {

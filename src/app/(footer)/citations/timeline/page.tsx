@@ -10,8 +10,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { CitationNav } from "../components/citation-nav"
-import { citations as citationsData } from "../data/citations"
+import { CitationNav } from "@/app/(footer)/citations/components/citation-nav"
+import { citations as citationsData } from "@/app/(footer)/citations/data/citations"
 
 export default function CitationsTimelinePage() {
   const [searchQuery, setSearchQuery] = useState("")

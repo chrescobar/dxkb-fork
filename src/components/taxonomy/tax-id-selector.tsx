@@ -104,6 +104,7 @@ export function TaxIDSelector({
       // update searchQuery only if it doesn't match (to avoid overriding active typing)
       setSearchQuery(String(value.taxon_id));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, disabled]);
 
   // Debounce the search (only when not disabled)
@@ -146,11 +147,6 @@ export function TaxIDSelector({
     setShowDropdown(!showDropdown);
     setIsManualTrigger(!showDropdown);
   };
-
-  const displayValue = useMemo(() => {
-    if (!value) return "";
-    return `${value.taxon_id} [${value.taxon_name}]`;
-  }, [value]);
 
   const isValid = useMemo(() => {
     if (!required) return true;

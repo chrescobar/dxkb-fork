@@ -55,7 +55,7 @@ const labelsByType: { [key: string]: string } = {
 interface BVBRCAPIResponse {
   result: {
     response: {
-      docs: any[];
+      docs: unknown[];
       numFound: number;
       maxScore: number;
       numFoundExact: boolean;
@@ -126,16 +126,21 @@ function getDataTypeIcon(dataType: string) {
   }
 }
 
+// Helper to render unknown as React node
+function R(x: unknown): React.ReactNode {
+  return x as React.ReactNode;
+}
+
 // Helper function to format the content based on data type
-function getFormattedContent(doc: any, dataType: string) {
+function getFormattedContent(doc: Record<string, unknown>, dataType: string) {
   switch (dataType) {
     case "antibiotics":
       return (
         <>
-          <h3 className="search-result-header">{doc.antibiotic_name}</h3>
+          <h3 className="search-result-header">{R(doc.antibiotic_name)}</h3>
           <div className="search-result-metadata">
             <p
-              dangerouslySetInnerHTML={{ __html: doc.description[0] }}
+              dangerouslySetInnerHTML={{ __html: String((Array.isArray(doc.description) ? doc.description[0] : doc.description) ?? "") }}
               className="search-result-description"
             />
           </div>
@@ -145,11 +150,11 @@ function getFormattedContent(doc: any, dataType: string) {
       return (
         <>
           <h3 className="search-result-header">
-            {doc.epitope_id} | {doc.epitope_sequence}
+            {R(doc.epitope_id)} | {R(doc.epitope_sequence)}
           </h3>
           <div className="search-result-metadata">
-            <p>{doc.protein_name}</p>
-            <p>{doc.organism}</p>
+            <p>{R(doc.protein_name)}</p>
+            <p>{R(doc.organism)}</p>
           </div>
         </>
       );
@@ -157,30 +162,30 @@ function getFormattedContent(doc: any, dataType: string) {
       return (
         <>
           <h3 className="search-result-header">
-            {doc.exp_name} | {doc.exp_id}
+            {R(doc.exp_name)} | {R(doc.exp_id)}
           </h3>
           <div className="search-result-description">
-            <p>{doc.exp_description}</p>
+            <p>{R(doc.exp_description)}</p>
           </div>
         </>
       );
     case "genome":
       return (
         <>
-          <h3 className="search-result-header">{doc.genome_name}</h3>
+          <h3 className="search-result-header">{R(doc.genome_name)}</h3>
           <div className="search-result-metadata">
             <p>
-              Genome ID: {doc.genome_id} | {doc.contigs} Contigs
+              Genome ID: {R(doc.genome_id)} | {R(doc.contigs)} Contigs
             </p>
             <p>
-              SEQUENCED: {new Date(doc.completion_date).toLocaleDateString()}{" "}
-              {doc.sequencing_centers ? `by ${doc.sequencing_centers}` : ""}
+              SEQUENCED: {doc.completion_date != null ? new Date(doc.completion_date as string | number).toLocaleDateString() : ""}{" "}
+              {doc.sequencing_centers ? `by ${String(doc.sequencing_centers)}` : ""}
             </p>
-            {doc.collection_date && <p>COLLECTED: {doc.collection_date}</p>}
-            {doc.host_name && <p>HOST: {doc.host_name}</p>}
-            {doc.comments?.map((comment: string, i: number) => (
+            {doc.collection_date != null && <p>COLLECTED: {R(doc.collection_date)}</p>}
+            {doc.host_name != null && <p>HOST: {R(doc.host_name)}</p>}
+            {Array.isArray(doc.comments) && doc.comments.map((comment: unknown, i: number) => (
               <p key={i} className="mt-2 italic">
-                {comment}
+                {R(comment)}
               </p>
             ))}
           </div>
@@ -190,12 +195,12 @@ function getFormattedContent(doc: any, dataType: string) {
       return (
         <>
           <h3 className="search-result-header">
-            {doc.product || doc.feature_type} {doc.gene && ` | ${doc.gene}`}
+            {R(doc.product) || R(doc.feature_type)} {doc.gene != null && ` | ${String(doc.gene)}`}
           </h3>
           <div className="search-result-metadata">
-            <p>{doc.genome_name}</p>
+            <p>{R(doc.genome_name)}</p>
             <p>
-              {doc.annotation} | {doc.feature_type} | {doc.patric_id}
+              {R(doc.annotation)} | {R(doc.feature_type)} | {R(doc.patric_id)}
             </p>
           </div>
         </>
@@ -203,11 +208,11 @@ function getFormattedContent(doc: any, dataType: string) {
     case "genome_sequence":
       return (
         <>
-          <h3 className="search-result-header">{doc.genome_name}</h3>
+          <h3 className="search-result-header">{R(doc.genome_name)}</h3>
           <div className="search-result-description">
             <p>
               {" "}
-              {doc.accession} | {doc.description}{" "}
+              {R(doc.accession)} | {R(doc.description)}{" "}
             </p>
           </div>
         </>
@@ -215,12 +220,12 @@ function getFormattedContent(doc: any, dataType: string) {
     case "pathway":
       return (
         <>
-          <h3 className="search-result-header">{doc.pathway_name}</h3>
+          <h3 className="search-result-header">{R(doc.pathway_name)}</h3>
           <div className="search-result-metadata">
             <p>
-              {doc.product} | {doc.patric_id}
+              {R(doc.product)} | {R(doc.patric_id)}
             </p>
-            <p>{doc.genome_name}</p>
+            <p>{R(doc.genome_name)}</p>
           </div>
         </>
       );
@@ -228,12 +233,12 @@ function getFormattedContent(doc: any, dataType: string) {
       return (
         <>
           <h3 className="search-result-header">
-            {doc.source} | {doc.description}
+            {R(doc.source)} | {R(doc.description)}
           </h3>
           <div className="search-result-metadata">
-            <p>{doc.genome_name}</p>
+            <p>{R(doc.genome_name)}</p>
             <p>
-              {doc.patric_id} | {doc.refseq_locus_tag}
+              {R(doc.patric_id)} | {R(doc.refseq_locus_tag)}
             </p>
           </div>
         </>
@@ -242,11 +247,11 @@ function getFormattedContent(doc: any, dataType: string) {
       return (
         <>
           <h3 className="search-result-header">
-            {doc.pdb_id} | {doc.title}
+            {R(doc.pdb_id)} | {R(doc.title)}
           </h3>
           <div className="search-result-metadata">
-            {doc.organism_name?.map((name: any, i: number) => (
-              <p key={i}>{name}</p>
+            {Array.isArray(doc.organism_name) && doc.organism_name.map((name: unknown, i: number) => (
+              <p key={i}>{R(name)}</p>
             ))}
           </div>
         </>
@@ -255,12 +260,12 @@ function getFormattedContent(doc: any, dataType: string) {
       return (
         <>
           <h3 className="search-result-header">
-            {doc.sample_identifier} | {doc.host_identifier}
+            {R(doc.sample_identifier)} | {R(doc.host_identifier)}
           </h3>
           <div className="search-result-metadata">
             <p>
-              {doc.host_common_name} | {doc.collection_country} |{" "}
-              {doc.host_health}
+              {R(doc.host_common_name)} | {R(doc.collection_country)} |{" "}
+              {R(doc.host_health)}
             </p>
           </div>
         </>
@@ -268,11 +273,11 @@ function getFormattedContent(doc: any, dataType: string) {
     case "sp_gene":
       return (
         <>
-          <h3 className="search-result-header">{doc.product}</h3>
+          <h3 className="search-result-header">{R(doc.product)}</h3>
           <div className="search-result-metadata">
-            <p>{doc.genome_name}</p>
+            <p>{R(doc.genome_name)}</p>
             <p>
-              {doc.patric_id} | {doc.source} | {doc.evidence}
+              {R(doc.patric_id)} | {R(doc.source)} | {R(doc.evidence)}
             </p>
           </div>
         </>
@@ -280,21 +285,21 @@ function getFormattedContent(doc: any, dataType: string) {
     case "strain":
       return (
         <>
-          <h3 className="search-result-header">{doc.strain}</h3>
+          <h3 className="search-result-header">{R(doc.strain)}</h3>
           <div className="search-result-metadata">
-            <p>{doc.species}</p>
+            <p>{R(doc.species)}</p>
           </div>
         </>
       );
     case "subsystem":
       return (
         <>
-          <h3 className="search-result-header">{doc.subsystem_name}</h3>
+          <h3 className="search-result-header">{R(doc.subsystem_name)}</h3>
           <div className="search-result-metadata">
             <p>
-              {doc.product} | {doc.patric_id}
+              {R(doc.product)} | {R(doc.patric_id)}
             </p>
-            <p>{doc.genome_name}</p>
+            <p>{R(doc.genome_name)}</p>
           </div>
         </>
       );
@@ -302,12 +307,12 @@ function getFormattedContent(doc: any, dataType: string) {
       return (
         <>
           <h3 className="search-result-header">
-            {doc.sample_identifier} | {doc.host_identifier}
+            {R(doc.sample_identifier)} | {R(doc.host_identifier)}
           </h3>
           <div className="search-result-metadata">
             <p>
-              ENV | {doc.collection_country} |{" "}
-              {new Date(doc.collection_date).getFullYear()}
+              ENV | {R(doc.collection_country)} |{" "}
+              {doc.collection_date != null ? new Date(doc.collection_date as string | number).getFullYear() : ""}
             </p>
           </div>
         </>
@@ -315,10 +320,10 @@ function getFormattedContent(doc: any, dataType: string) {
     case "taxonomy":
       return (
         <>
-          <h3 className="search-result-header">{doc.taxon_name}</h3>
+          <h3 className="search-result-header">{R(doc.taxon_name)}</h3>
           <div className="search-result-metadata">
-            <p>{doc.genomes} Genomes</p>
-            <p>Taxon ID: {doc.taxon_id}</p>
+            <p>{R(doc.genomes)} Genomes</p>
+            <p>Taxon ID: {R(doc.taxon_id)}</p>
           </div>
         </>
       );
@@ -326,11 +331,11 @@ function getFormattedContent(doc: any, dataType: string) {
       return (
         <>
           <h3 className="search-result-header">
-            {doc.name || doc.id || "Untitled"}
+            {R(doc.name) || R(doc.id) || "Untitled"}
           </h3>
-          {doc.description && (
+          {doc.description != null && (
             <p className="search-result-description">
-              {doc.description}
+              {R(doc.description)}
             </p>
           )}
         </>
@@ -354,7 +359,7 @@ function SearchResultsContent({ query }: { query: string }) {
   const fetchSearchResults = async (query: string) => {
     setIsLoading(true);
     try {
-      const searchPayload: Record<string, any> = {};
+      const searchPayload: Record<string, unknown> = {};
       const processedQuery = processQuery(query);
 
       searchTypes.forEach((searchType) => {
@@ -456,11 +461,14 @@ function SearchResultsContent({ query }: { query: string }) {
                     </Badge>
                   </CardHeader>
                   <CardContent className="divide-y">
-                    {docs.map((doc: any, index: number) => (
-                      <div key={doc.id || index} className="py-6">
-                        {getFormattedContent(doc, dataType)}
-                      </div>
-                    ))}
+                    {docs.map((docUnknown, index) => {
+                      const doc = docUnknown as Record<string, unknown>;
+                      return (
+                        <div key={String(doc.id ?? index)} className="py-6">
+                          {getFormattedContent(doc, dataType)}
+                        </div>
+                      );
+                    })}
                   </CardContent>
                 </Card>
               );

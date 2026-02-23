@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { baseLibrarySchema, libraryTypeSchema } from "../../shared-schemas";
+
+import { baseLibrarySchema } from "@/lib/forms/shared-schemas";
 
 // SARS-CoV-2–specific platform enum (includes iontorrent, infer; not in shared-schemas)
 export const sarsCov2PlatformSchema = z.enum([
@@ -42,7 +43,7 @@ export const sarsCov2LibrarySchema = baseLibrarySchema
       });
     }
   });
-export interface SarsCov2LibraryItem extends z.infer<typeof sarsCov2LibrarySchema> {}
+export type SarsCov2LibraryItem = z.infer<typeof sarsCov2LibrarySchema>;
 
 // Input type
 export const inputTypeSchema = z.enum(["reads", "contigs"]);
@@ -162,8 +163,7 @@ export const sarsCov2GenomeAnalysisFormSchema = z
     }
   });
 
-export interface SarsCov2GenomeAnalysisFormData
-  extends z.infer<typeof sarsCov2GenomeAnalysisFormSchema> {}
+export type SarsCov2GenomeAnalysisFormData = z.infer<typeof sarsCov2GenomeAnalysisFormSchema>;
 
 export const defaultSarsCov2GenomeAnalysisFormValues: SarsCov2GenomeAnalysisFormData = {
   input_type: "reads",

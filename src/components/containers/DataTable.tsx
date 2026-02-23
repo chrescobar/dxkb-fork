@@ -8,6 +8,7 @@ import {
   flexRender,
   SortingState,
   PaginationState,
+  Header,
 } from "@tanstack/react-table";
 
 // The following imports are usual hooks used in React to do things on events. The only non-standard one is useMemo, which isused to cache data and checks on rerenders to see if the data has changed. This is relevant to when the columns are resized.
@@ -24,7 +25,7 @@ import {
   TableHead,
   TableBody,
   TableCell,
-} from "../ui/table";
+} from "@/components/ui/table";
 
 // This allows for using shorthand to conditionally apply CSS classes
 import clsx from "clsx";
@@ -40,11 +41,11 @@ interface ColumnInfo {
 // This sets the structure of the data that is sent in as JSON
 interface DataTableProps {
   id: string;
-  data: Record<string, any>[];
+  data: Record<string, unknown>[];
   columns: ColumnInfo[];
   totalItems: number;
   resource: string;
-  onSelectionChange?: (rows: any[]) => void;
+  onSelectionChange?: (rows: Record<string, unknown>[]) => void;
   onGenomeSelect?: (id: string | null) => void;
 
   // Pagination
@@ -75,7 +76,7 @@ interface DataTableProps {
 }
 
 // This is the actual function...
-export function DataTable({ id, data, columns, totalItems, resource, onSelectionChange, onGenomeSelect, pageIndex, pageSize, onPageChange, sorting:controlledSorting, onSortingChange, columnOrder, onColumnOrderChange, columnVisibility: controlledVisibility, onColumnVisibilityChange: onColumnVisibilityChangeProp, rowSelection: controlledRowSelection, onRowSelectionChange, onDownloadAll, isLoading = false }: DataTableProps) {
+export function DataTable({ id: _id, data, columns, totalItems, resource, onSelectionChange, onGenomeSelect, pageIndex, pageSize, onPageChange, sorting:controlledSorting, onSortingChange, columnOrder, onColumnOrderChange, columnVisibility: controlledVisibility, onColumnVisibilityChange: onColumnVisibilityChangeProp, rowSelection: controlledRowSelection, onRowSelectionChange, onDownloadAll, isLoading = false }: DataTableProps) {
 
   // These next consts are used and activated when something about the columm changes
   const [columnSizing, setColumnSizing] = useState<Record<string, number>>({});
@@ -150,9 +151,9 @@ export function DataTable({ id, data, columns, totalItems, resource, onSelection
   // This makes sure the sizing all works right as per the height of the table within the page. This manages the height of the table, the pagination section, etc to make sure everything appears to the user as it should.
   useEffect(() => {
     const measure = () => {
-      const controlsHeight = controlsRef.current?.offsetHeight || 0;
-      const footerHeight = footerRef.current?.offsetHeight || 0;
-      const viewportHeight = window.innerHeight;
+      const _controlsHeight = controlsRef.current?.offsetHeight || 0;
+      const _footerHeight = footerRef.current?.offsetHeight || 0;
+      const _viewportHeight = window.innerHeight;
     };
   
     // Delay measurement slightly to allow layout to settle
@@ -171,8 +172,8 @@ export function DataTable({ id, data, columns, totalItems, resource, onSelection
   }, []);
   
   // This defines how the columns are laid out and react to various actions like being resized or reordered. You can see that the first column - the checkbox - is handled slightly differently in that the actions really cannot be applied to it.
-  const columnDefs = useMemo<ColumnDef<any, any>[]>(() => {
-    const checkboxColumn: ColumnDef<any> = {
+  const columnDefs = useMemo<ColumnDef<Record<string, unknown>, unknown>[]>(() => {
+    const checkboxColumn: ColumnDef<Record<string, unknown>> = {
       id: '__select__',
       // This is specifically the "check all" checkbox in the header. Its value and action affect ALL rows.
       header: ({ table }) => (
@@ -190,7 +191,7 @@ export function DataTable({ id, data, columns, totalItems, resource, onSelection
       ),
       // This is the code for each row's checkbox. Its value and action only affect its row.
       cell: ({ row }) => {
-        const allRows = table.getRowModel().rows;
+        const _allRows = table.getRowModel().rows;
 
         return (
           <div className="flex justify-center items-center w-full h-full">
@@ -244,8 +245,8 @@ export function DataTable({ id, data, columns, totalItems, resource, onSelection
                 if (row.getIsSelected()) {
                   onGenomeSelect?.(null); // deselecting, so clear
                 } else {
-                  const genomeId = row.original?.genome_id; // or whatever the correct field is
-                  if (genomeId) onGenomeSelect?.(genomeId);
+                  const genomeId = row.original?.genome_id;
+                  if (genomeId != null) onGenomeSelect?.(String(genomeId));
                 }
               }}
               className="cursor-pointer m-0 p-0"
@@ -289,6 +290,7 @@ export function DataTable({ id, data, columns, totalItems, resource, onSelection
         },
       }))
     ];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [columns]);
 
   // This defines all the features, actions, and hooks for the table.
@@ -398,6 +400,9 @@ export function DataTable({ id, data, columns, totalItems, resource, onSelection
 
   
   // This controls and handles the actual widths of the columns. It keeps track of any resizing that happens on any given column and manages them all.
+  const columnSizingState = table.getState().columnSizing;
+  const columnSizingInfoState = table.getState().columnSizingInfo;
+
   const columnSizeVars = useMemo(() => {
     const headers = table.getFlatHeaders();
     const colSizes: { [key: string]: string } = {};
@@ -405,7 +410,8 @@ export function DataTable({ id, data, columns, totalItems, resource, onSelection
       colSizes[`--col-${header.column.id}-size`] = `${header.column.getSize()}px`;
     }
     return colSizes;
-  }, [table.getState().columnSizing, table.getState().columnSizingInfo]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [columnSizingState, columnSizingInfoState]);
 
   const rows = table.getRowModel().rows;
 
@@ -420,7 +426,7 @@ export function DataTable({ id, data, columns, totalItems, resource, onSelection
   const totalSize = rowVirtualizer.getTotalSize();
 
   // This is what happens when the user clicks the "resize region" in a column header
-  const handleResizeStart = (event: React.MouseEvent, header: any) => {
+  const handleResizeStart = (event: React.MouseEvent, header: Header<Record<string, unknown>, unknown>) => {
     event.preventDefault();
 
     const startX = event.clientX;

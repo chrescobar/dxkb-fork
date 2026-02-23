@@ -1,8 +1,5 @@
-import { WorkspaceApiClient } from "../client";
-import {
-  WorkspaceListParams,
-  WorkspaceObject,
-} from "../types";
+import { WorkspaceListParams, WorkspaceObject } from "@/lib/services/workspace/types";
+import { WorkspaceApiClient } from "@/lib/services/workspace/client";
 
 /**
  * Workspace.ls - List workspace objects with optional filtering
@@ -41,7 +38,7 @@ export class WorkspaceLsMethods {
     const objects = await this.listObjects(params);
 
     // Apply type filtering (replicating original logic: types.indexOf(r.type) >= 0)
-    return objects.filter((obj: any) => {
+    return objects.filter((obj: WorkspaceObject) => {
       return [type].indexOf(obj.type) >= 0;
     });
   }
@@ -70,7 +67,7 @@ export class WorkspaceLsMethods {
 
     // Apply type filtering if types are specified (replicating original logic)
     if (types && types.length > 0) {
-      return objects.filter((obj: any) => {
+      return objects.filter((obj: WorkspaceObject) => {
         return types.indexOf(obj.type) >= 0;
       });
     }

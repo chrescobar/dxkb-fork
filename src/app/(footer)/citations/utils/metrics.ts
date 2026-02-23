@@ -1,4 +1,4 @@
-import { Citation, YearMetrics } from "../data/types";
+import { Citation, YearMetrics } from "@/app/(footer)/citations/data/types";
 
 export function calculateMetrics(citations: Citation[]) {
   const totalCitations = citations.reduce((sum, citation) => sum + citation.citationCount, 0);

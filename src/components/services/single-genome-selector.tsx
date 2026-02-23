@@ -144,6 +144,7 @@ export function SingleGenomeSelector({
         setSelectedGenome(null);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   useEffect(() => {

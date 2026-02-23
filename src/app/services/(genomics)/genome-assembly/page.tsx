@@ -129,11 +129,13 @@ export default function GenomeAssemblyPage() {
         );
 
         if (result.success) {
-          console.log("Genome Assembly job submitted successfully:", result.job[0]);
+          if (result.job?.[0]) {
+            console.log("Genome Assembly job submitted successfully:", result.job[0]);
+          }
 
           // Show success message
           toast.success("Genome Assembly job submitted successfully!", {
-            description: `Job ID: ${result.job[0].id}`,
+            description: result.job?.[0] ? `Job ID: ${result.job[0].id}` : "Job submitted",
           });
 
           // Reset form after successful submission
@@ -264,12 +266,6 @@ export default function GenomeAssemblyPage() {
     const newLibraries = selectedLibraries.filter((lib) => lib.id !== id);
     setSelectedLibraries(newLibraries);
     syncLibrariesToForm(newLibraries);
-  };
-
-  // Handle genome size calculation
-  const handleGenomeSizeChange = () => {
-    const calculatedSize = calculateGenomeSize(expectedGenomeSize, genomeSizeUnit);
-    form.setValue("genome_size", calculatedSize, { shouldValidate: true });
   };
 
   return (

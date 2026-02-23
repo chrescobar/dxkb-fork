@@ -113,11 +113,13 @@ export default function VariationAnalysisPage() {
         );
 
         if (result.success) {
-          console.log("Variation Analysis job submitted successfully:", result.job[0]);
+          if (result.job?.[0]) {
+            console.log("Variation Analysis job submitted successfully:", result.job[0]);
+          }
 
           // Show success message
           toast.success("Variation Analysis job submitted successfully!", {
-            description: `Job ID: ${result.job[0].id}`,
+            description: result.job?.[0] ? `Job ID: ${result.job[0].id}` : "Job submitted",
           });
 
           // Reset form after successful submission

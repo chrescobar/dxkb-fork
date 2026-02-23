@@ -2,24 +2,18 @@
 
 import * as React from "react";
 import Link from "next/link";
-import {
-  gettingStartedItems,
-  organismItems,
-  serviceItems,
-} from "./navbar-links";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
-import { SearchBar } from "../search/search-bar";
 import { usePathname } from "next/navigation";
 
-import {
-  DropdownMenu,
+import { gettingStartedItems, organismItems, serviceItems } from "@/components/navbars/navbar-links";
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
+import { SearchBar } from "@/components/search/search-bar";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import Logo from "@/components/ui/logo";
+import { useAuth } from "@/contexts/auth-context";
+import { SignoutButton } from "@/components/auth/signout-button";
+import {DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
@@ -27,20 +21,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
-import Logo from "@/components/ui/logo";
-import { useAuth } from "@/contexts/auth-context";
-import { SignoutButton } from "../auth/signout-button";
-import {
-  UserRound,
-  Settings,
-  NotebookPen,
-  BriefcaseBusiness,
-  Mail,
-} from "lucide-react";
+
+import { UserRound, Settings, NotebookPen, BriefcaseBusiness, Mail } from "lucide-react";
 
 const DesktopNavbar = () => {
   const { isAuthenticated, user, isLoading, sendVerificationEmail } = useAuth();

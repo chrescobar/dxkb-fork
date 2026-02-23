@@ -43,6 +43,7 @@ export function useWorkspaceObjects({
 
   // Stabilize types array to prevent unnecessary re-renders
   const typesString = types ? JSON.stringify([...types].sort()) : "";
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const stableTypes = useMemo(() => types, [typesString]);
 
   // Local filtering function - no API calls
@@ -74,7 +75,7 @@ export function useWorkspaceObjects({
           recursive: true
         });
         // Apply client-side filtering to ensure only matching types are returned
-        result = allResults.filter((obj: any) => {
+        result = allResults.filter((obj: WorkspaceObject) => {
           return stableTypes.indexOf(obj.type) >= 0;
         });
       } else {
@@ -151,7 +152,7 @@ export function useWorkspaceObjects({
           recursive: true
         });
         // Apply client-side filtering to ensure only matching types are returned
-        result = allResults.filter((obj: any) => {
+        result = allResults.filter((obj: WorkspaceObject) => {
           return stableTypes.indexOf(obj.type) >= 0;
         });
       } else {

@@ -9,8 +9,8 @@ import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CitationNav } from "../components/citation-nav"
-import { citations as citationsData } from "../data/citations"
+import { CitationNav } from "@/app/(footer)/citations/components/citation-nav"
+import { citations as citationsData } from "@/app/(footer)/citations/data/citations"
 
 interface Citation {
   id: string;

@@ -1,10 +1,12 @@
-import React, { useState } from "react";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { ChevronRight } from "lucide-react";
-import { Label } from "../ui/label";
+import { useState } from "react";
+
 import { handleSraAdd } from "@/lib/services/service-utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Library } from "@/types/services";
+
+import { ChevronRight } from "lucide-react";
 
 interface SraRunAccessionProps {
   title?: string;

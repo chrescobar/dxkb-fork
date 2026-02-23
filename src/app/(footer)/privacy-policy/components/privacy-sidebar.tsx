@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { LuSearch } from "react-icons/lu";
-import { privacyPolicySections } from "../data/privacy-policy-sections";
+import { privacyPolicySections } from "@/app/(footer)/privacy-policy/data/privacy-policy-sections";
 
 const PrivacySidebar = () => {
   return (

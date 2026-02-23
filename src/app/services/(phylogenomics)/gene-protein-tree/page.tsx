@@ -97,7 +97,6 @@ export default function GeneProteinTreePage() {
 
   const alphabet = form.watch("alphabet");
   const sequences = form.watch("sequences");
-  const substitutionModel = form.watch("substitution_model");
 
   const substitutionModelOptions = useMemo(
     () => (alphabet === "DNA" ? GeneProteinTree.DNA_MODELS : GeneProteinTree.PROTEIN_MODELS),
@@ -126,7 +125,7 @@ export default function GeneProteinTreePage() {
 
     setSelectedAlignedFastaObject(null);
     setSelectedUnalignedFastaObject(null);
-  }, [alphabet, form]);
+  }, [alphabet, form, sequences]);
 
   // Update metadata fields in form when they change
   useEffect(() => {

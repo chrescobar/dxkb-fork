@@ -1,8 +1,10 @@
 import React from "react";
-import { Button } from "../ui/button";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
 import { FolderSearch, Plus } from "lucide-react";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 
 interface SearchWorkspaceInputProps {
   title?: string | null;

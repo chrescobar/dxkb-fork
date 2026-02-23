@@ -8,7 +8,7 @@ interface ServiceHeaderProps {
   description: ReactNode;
   infoPopupTitle?: string;
   infoPopupDescription?: string;
-  infoPopupSections?: any[];
+  infoPopupSections?: Record<string, unknown>[];
   quickReferenceGuide?: string;
   tutorial?: string;
   instructionalVideo?: string;

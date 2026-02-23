@@ -1,27 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+
+import { gettingStartedItems, organismItems, serviceItems } from "@/components/navbars/navbar-links";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { MobileSearchBar } from "@/components/search/mobile-search-bar";
+import { SignoutButton } from "@/components/auth/signout-button";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { LuMenu, LuSearch, LuChevronUp } from "react-icons/lu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  gettingStartedItems,
-  organismItems,
-  serviceItems,
-} from "./navbar-links";
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import Link from "next/link";
-import Logo from "@/components/ui/logo";
 import { useAuth } from "@/contexts/auth-context";
-import { SignoutButton } from "../auth/signout-button";
-import { MobileSearchBar } from "../search/mobile-search-bar";
-import { usePathname } from "next/navigation";
+import Logo from "@/components/ui/logo";
+
+import { LuMenu, LuSearch, LuChevronUp } from "react-icons/lu";
 
 const MobileNavbar = () => {
   const { isAuthenticated, user, isLoading } = useAuth();

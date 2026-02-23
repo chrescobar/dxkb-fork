@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -64,7 +64,7 @@ type MarkerType = keyof typeof MARKER_LABELS | "clear";
 
 export default function PrimerDesignServicePage() {
   const form = useForm<PrimerDesignFormData>({
-    resolver: zodResolver(primerDesignFormSchema) as any,
+    resolver: zodResolver(primerDesignFormSchema) as Resolver<PrimerDesignFormData>,
     defaultValues: DEFAULT_PRIMER_DESIGN_FORM_VALUES as PrimerDesignFormData,
     mode: "onChange",
   });

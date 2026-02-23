@@ -1,17 +1,14 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { HelpCircle } from "lucide-react";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-} from "../ui/tooltip";
-import { WorkspaceObjectSelector } from "../workspace/workspace-object-selector";
+
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
+import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { checkWorkspaceObjectExists } from "@/lib/services/workspace/validation";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+import { HelpCircle } from "lucide-react";
 
 const DEBOUNCE_MS = 350;
 const NAME_TAKEN_MESSAGE =
@@ -84,14 +81,18 @@ const OutputFolder = ({
     [onValidationChange],
   );
 
+  const needsValidation = variant === "name" && !!outputFolderPath?.trim() && !!value?.trim();
+  const [prevNeedsValidation, setPrevNeedsValidation] = useState(needsValidation);
+  if (prevNeedsValidation && !needsValidation) {
+    setPrevNeedsValidation(needsValidation);
+    setIsChecking(false);
+    setNameTaken(false);
+  } else if (prevNeedsValidation !== needsValidation) {
+    setPrevNeedsValidation(needsValidation);
+  }
+
   useEffect(() => {
-    if (variant !== "name" || !outputFolderPath?.trim() || !value?.trim()) {
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-        debounceRef.current = null;
-      }
-      setIsChecking(false);
-      setNameTaken(false);
+    if (!needsValidation) {
       onValidationChange?.(true);
       return;
     }
@@ -111,7 +112,7 @@ const OutputFolder = ({
       }
       abortControllerRef.current?.abort();
     };
-  }, [variant, outputFolderPath, value, runCheck, onValidationChange]);
+  }, [needsValidation, outputFolderPath, value, runCheck, onValidationChange]);
 
   const resolvedTitle = variant === "default" ? "Output Folder" : "Output Name";
 

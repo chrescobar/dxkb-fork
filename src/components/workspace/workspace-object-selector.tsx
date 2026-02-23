@@ -74,53 +74,35 @@ export function WorkspaceObjectSelector({
   const dropdownRef = React.useRef<HTMLDivElement | null>(null);
   const itemRefs = React.useRef<(HTMLDivElement | null)[]>([]);
 
-  // Ref to store last validated types to prevent unnecessary re-validation
-  const lastValidatedTypesRef = React.useRef<{
-    types: string;
-    result: ValidWorkspaceObjectTypes[] | undefined;
-  } | null>(null);
-
-  // Normalize and validate types prop with caching
+  // Normalize and validate types prop
   const validatedTypes = React.useMemo(() => {
     if (!types) {
-      setValidationError(null);
-      console.log("No types provided");
       return undefined;
     }
 
-    // Convert single type to array
     const typesArray = Array.isArray(types) ? types : [types];
-    const typesString = typesArray.join(',');
-
-    // Check if we've already validated this exact types array
-    if (lastValidatedTypesRef.current?.types === typesString) {
-      return lastValidatedTypesRef.current.result;
-    }
-
-    // Validate all types
     const { valid, invalid } = validateWorkspaceObjectTypes(typesArray);
 
-    let result: ValidWorkspaceObjectTypes[] | undefined;
-
     if (invalid.length > 0) {
-      const errorMsg = `Invalid upload type(s): ${invalid.join(", ")}. Valid types include: unspecified, aligned_dna_fasta, reads, contigs, etc.`;
+      return { valid: valid.length > 0 ? valid : undefined, invalid };
+    }
+    return { valid, invalid: [] as string[] };
+  }, [types]);
+
+  const [prevTypes, setPrevTypes] = React.useState(types);
+  if (prevTypes !== types) {
+    setPrevTypes(types);
+    if (!types) {
+      setValidationError(null);
+    } else if (validatedTypes && validatedTypes.invalid.length > 0) {
+      const errorMsg = `Invalid upload type(s): ${validatedTypes.invalid.join(", ")}. Valid types include: unspecified, aligned_dna_fasta, reads, contigs, etc.`;
       setValidationError(errorMsg);
-      console.error(errorMsg);
-      // Return only valid types if any exist, otherwise undefined
-      result = valid.length > 0 ? valid : undefined;
     } else {
       setValidationError(null);
-      result = valid;
     }
+  }
 
-    // Cache the result
-    lastValidatedTypesRef.current = {
-      types: typesString,
-      result
-    };
-
-    return result;
-  }, [types]);
+  const resolvedTypes = validatedTypes?.valid;
 
   // Use the workspace objects hook
   const {
@@ -131,11 +113,10 @@ export function WorkspaceObjectSelector({
     searchQuery,
     setSearchQuery,
     search,
-    clearSearch,
   } = useWorkspaceObjects({
     user: user?.username || "",
     path,
-    types: validatedTypes,
+    types: resolvedTypes,
   });
 
   const handleSearchChange = (value: string) => {
@@ -281,7 +262,7 @@ export function WorkspaceObjectSelector({
       return objects; // Show all objects when manually triggered
     }
     return filteredObjects;
-  }, [filteredObjects, objects, isManualTrigger, showDropdown]);
+  }, [filteredObjects, objects, isManualTrigger]);
 
   // Track previous value to avoid unnecessary updates
   const previousValueRef = React.useRef<string | undefined>(value);
@@ -324,7 +305,7 @@ export function WorkspaceObjectSelector({
         setSearchQuery("");
       }
     }
-  }, [value, objects, displayName, selectedObject]);
+  }, [value, objects, displayName, selectedObject, setSearchQuery]);
 
   return (
     <div className={className ? `relative ${className}` : "relative w-full"}>

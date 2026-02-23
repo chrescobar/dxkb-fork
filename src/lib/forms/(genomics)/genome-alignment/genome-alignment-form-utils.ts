@@ -6,7 +6,7 @@ import { GenomeAlignmentFormData } from "./genome-alignment-form-schema";
 export function transformGenomeAlignmentParams(
   data: GenomeAlignmentFormData,
 ) {
-  const params: Record<string, any> = {
+  const params: Record<string, unknown> = {
     genome_ids: data.genome_ids,
     recipe: data.recipe,
     output_path: data.output_path,

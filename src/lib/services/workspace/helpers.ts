@@ -1,20 +1,20 @@
 import { ValidWorkspaceObjectTypes, knownUploadTypes, otherWorkspaceObjectTypes, viewableTypes } from "./types";
 
-export function metaListToObj(list: any) {
-    return {
-      id: list[4],
-      path: list[2] + list[0],
-      name: list[0],
-      type: list[1],
-      creation_time: list[3],
-      link_reference: list[11],
-      owner_id: list[5],
-      size: list[6],
-      userMeta: list[7],
-      autoMeta: list[8],
-      user_permission: list[9],
-      global_permission: list[10],
-    timestamp: Date.parse(list[3]),
+export function metaListToObj(list: unknown[]) {
+  return {
+    id: list[4],
+    path: String(list[2] ?? "") + String(list[0] ?? ""),
+    name: list[0],
+    type: list[1],
+    creation_time: list[3],
+    link_reference: list[11],
+    owner_id: list[5],
+    size: list[6],
+    userMeta: list[7],
+    autoMeta: list[8],
+    user_permission: list[9],
+    global_permission: list[10],
+    timestamp: Date.parse(String(list[3])),
   };
 }
 

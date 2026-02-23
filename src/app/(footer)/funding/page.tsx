@@ -1,18 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useTheme } from "next-themes";
 import FooterHeader from "@/components/headers/footer-header";
 import Logo from "@/components/ui/logo";
+import { useIsMounted } from "@/hooks/use-is-mounted";
 
 const Funding = () => {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsMounted();
   const { theme } = useTheme();
-
-  // useEffect only runs on the client, so now we can safely show the UI
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // During SSR and initial render, always use the default theme
   // This prevents hydration mismatch

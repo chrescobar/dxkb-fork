@@ -93,9 +93,9 @@ export function createBlastFormValues(
     db_precomputed_database: dbPrecomputedDatabase,
 
     // Input source fields - handle discriminated union properly
-    input_fasta_data: (currentValues as any).input_fasta_data || "",
-    input_fasta_file: (currentValues as any).input_fasta_file || "",
-    input_feature_group: (currentValues as any).input_feature_group || "",
+    input_fasta_data: String((currentValues as Record<string, unknown>).input_fasta_data ?? ""),
+    input_fasta_file: String((currentValues as Record<string, unknown>).input_fasta_file ?? ""),
+    input_feature_group: String((currentValues as Record<string, unknown>).input_feature_group ?? ""),
 
     // Database conditional fields
     db_genome_list: currentValues.db_genome_list || [],
@@ -183,8 +183,8 @@ export function extractInputFields(
 ): Partial<BlastFormData> {
   return {
     input_source: values.input_source,
-    input_fasta_data: (values as any).input_fasta_data || "",
-    input_fasta_file: (values as any).input_fasta_file || "",
-    input_feature_group: (values as any).input_feature_group || "",
+    input_fasta_data: String((values as Record<string, unknown>).input_fasta_data ?? ""),
+    input_fasta_file: String((values as Record<string, unknown>).input_fasta_file ?? ""),
+    input_feature_group: String((values as Record<string, unknown>).input_feature_group ?? ""),
   };
 }

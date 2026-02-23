@@ -47,8 +47,7 @@ export const influenzaHaSubtypeFormSchema = z
     }
   });
 
-  export interface InfluenzaHaSubtypeFormData
-    extends z.infer<typeof influenzaHaSubtypeFormSchema> {}
+  export type InfluenzaHaSubtypeFormData = z.infer<typeof influenzaHaSubtypeFormSchema>;
   
 export const defaultInfluenzaHaSubtypeFormValues: InfluenzaHaSubtypeFormData =
   {

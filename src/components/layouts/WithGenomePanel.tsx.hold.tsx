@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { InfoPanel } from "../containers/InfoPanel";
+import { InfoPanel } from "@/components/containers/InfoPanel";
 
 type WithGenomePanelProps = {
   children: (props: {
@@ -9,7 +9,7 @@ type WithGenomePanelProps = {
     setActiveTab: (tab: string) => void;
   }) => React.ReactNode;
   tabs: string[];
-  selectedRows: any[];
+  selectedRows: Record<string, unknown>[];
 };
 
 export function WithGenomePanel({

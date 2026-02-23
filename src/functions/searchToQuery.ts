@@ -1,5 +1,5 @@
 export function searchToQuery(expression: string, field?: string): string {
-  let exprs: string[] = [];
+  const exprs: string[] = [];
   let exp = "";
   let expField = "";
   let openParans = 0;

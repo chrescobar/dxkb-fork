@@ -12,7 +12,7 @@ export const genomeAnnotationRecipes = [
  */
 export function transformGenomeAnnotationParams(
   data: GenomeAnnotationFormData,
-): Record<string, any> {
+): Record<string, unknown> {
   return {
     contigs: data.contigs,
     recipe: data.recipe,

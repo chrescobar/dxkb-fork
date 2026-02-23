@@ -3,7 +3,6 @@
 import React from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   validateFastaForBlast,
@@ -37,13 +36,13 @@ export const FastaTextarea = React.memo(function FastaTextarea({
   placeholder = "Enter one or more source nucleotide or protein sequences to search. Requires FASTA format.",
   className,
   disabled = false,
-  required = false,
+  required: _required = false,
   // showValidationStatus = true,
   debounceMs = 500,
 }: FastaTextareaProps) {
   const [validationResult, setValidationResult] =
     React.useState<FastaValidationResult | null>(null);
-  const [isValidating, setIsValidating] = React.useState(false);
+  const [_isValidating, setIsValidating] = React.useState(false);
   const [debounceTimeout, setDebounceTimeout] =
     React.useState<NodeJS.Timeout | null>(null);
 
@@ -99,22 +98,6 @@ export const FastaTextarea = React.memo(function FastaTextarea({
       }
     };
   }, [debounceTimeout]);
-
-  const getValidationIcon = () => {
-    if (isValidating) {
-      return <Loader2 className="text-muted-foreground h-4 w-4 animate-spin" />;
-    }
-
-    if (!validationResult) {
-      return null;
-    }
-
-    if (validationResult.valid) {
-      return <CheckCircle className="h-4 w-4 text-green-500" />;
-    }
-
-    return <XCircle className="h-4 w-4 text-red-500" />;
-  };
 
   const getErrorMessage = () => {
     if (!validationResult || validationResult.valid) {

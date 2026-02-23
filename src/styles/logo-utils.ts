@@ -27,8 +27,8 @@ const logoNamingPatterns: Record<string, Record<LogoVariant, string>> = {
     "logo-icon": "xkb-logo-icon-white.svg",
     "logo-icon-white": "xkb-logo-icon-white.svg",
     "logo-text-white": "xkb-logo-white.svg", // Fallback to regular white logo
-    "sponsor-logo": "../cepi/cepi-logo.svg",
-    "sponsor-logo-white": "../cepi/cepi-logo-white.svg",
+    "sponsor-logo": "@public/logos/cepi/cepi-logo.svg",
+    "sponsor-logo-white": "@public/logos/cepi/cepi-logo-white.svg",
   },
   dxkb: {
     logo: "dxkb-logo.svg",
@@ -36,8 +36,8 @@ const logoNamingPatterns: Record<string, Record<LogoVariant, string>> = {
     "logo-icon": "dxkb-logo-icon.svg",
     "logo-icon-white": "dxkb-logo-icon.svg", // Using regular icon for now
     "logo-text-white": "dxkb-text-white.svg",
-    "sponsor-logo": "../cepi/cepi-logo.svg",
-    "sponsor-logo-white": "../cepi/cepi-logo-white.svg",
+    "sponsor-logo": "@public/logos/cepi/cepi-logo.svg",
+    "sponsor-logo-white": "@public/logos/cepi/cepi-logo-white.svg",
   },
   bvbrc: {
     logo: "bvbrc-logo.svg",
@@ -45,8 +45,8 @@ const logoNamingPatterns: Record<string, Record<LogoVariant, string>> = {
     "logo-icon": "bvbrc-logo-icon.svg",
     "logo-icon-white": "bvbrc-logo-icon-white.svg",
     "logo-text-white": "bvbrc-logo-white.svg", // Fallback to regular white logo
-    "sponsor-logo": "../cepi/cepi-logo.svg",
-    "sponsor-logo-white": "../cepi/cepi-logo-white.svg",
+    "sponsor-logo": "@public/logos/cepi/cepi-logo.svg",
+    "sponsor-logo-white": "@public/logos/cepi/cepi-logo-white.svg",
   },
 };
 

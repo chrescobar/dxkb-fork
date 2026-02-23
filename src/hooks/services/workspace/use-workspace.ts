@@ -1,20 +1,16 @@
 import { useState, useCallback, useMemo } from "react";
-import { useAuthenticatedFetch } from "../../use-authenticated-fetch-client";
+
+import { useAuthenticatedFetch } from "@/hooks/use-authenticated-fetch-client";
 import {
   EnumerateJobsResponse,
   QueryJobsResponse,
   QueryJobSummaryResponse,
   QueryJobDetailsResponse,
-  KillJobResponse,
   FetchJobOutputResponse,
-  JobStatus,
   EnumerateJobsParams,
   QueryJobsParams,
-  QueryJobSummaryParams,
-  QueryJobDetailsParams,
-  KillJobParams,
   FetchJobOutputParams,
-} from "../../../types/workspace";
+} from "@/types/workspace";
 
 // Hook for enumerating jobs
 export function useEnumerateJobs() {
@@ -364,21 +360,25 @@ export function useWorkspace() {
     };
   }, [
     enumerateJobsHook.jobs,
+    enumerateJobsHook.enumerateJobs,
     enumerateJobsHook.loading,
     enumerateJobsHook.error,
     queryJobsHook.queryJobs,
     queryJobsHook.loading,
     queryJobsHook.error,
     jobSummaryHook.jobSummary,
+    jobSummaryHook.getJobSummary,
     jobSummaryHook.loading,
     jobSummaryHook.error,
     jobDetailsHook.jobDetails,
+    jobDetailsHook.getJobDetails,
     jobDetailsHook.loading,
     jobDetailsHook.error,
     killJobHook.killJob,
     killJobHook.loading,
     killJobHook.error,
     jobOutputHook.output,
+    jobOutputHook.fetchJobOutput,
     jobOutputHook.loading,
     jobOutputHook.error,
   ]);

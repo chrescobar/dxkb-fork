@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { clearBvbrcAuthCookies } from "../utils";
+import { clearBvbrcAuthCookies } from "@/app/api/auth/utils";
 
 /**
  * Sign out (better-auth style endpoint)

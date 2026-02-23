@@ -1,8 +1,6 @@
 import { z } from "zod";
-import {
-  libraryWithSampleIdSchema,
-  type LibraryWithSampleId,
-} from "../../shared-schemas";
+
+import { libraryWithSampleIdSchema, type LibraryWithSampleId } from "@/lib/forms/shared-schemas";
 
 // Sequencing type options
 export const sequencingTypeSchema = z.enum(["wgs", "16s"]);

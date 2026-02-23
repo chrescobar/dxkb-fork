@@ -1,34 +1,18 @@
 "use client";
 
 import { useEffect, useState, useRef, useMemo, Suspense } from "react";
-import { useWorkspace } from "../../../hooks/services/workspace/use-workspace";
-import { JobStatus, JobListItem } from "../../../types/workspace";
-import { Button, buttonVariants } from "../../../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../../components/ui/card";
+import { useWorkspace } from "@/hooks/services/workspace/use-workspace";
+import { JobStatus, JobListItem } from "@/types/workspace";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "../../../components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../../components/ui/select";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../../../components/ui/dropdown-menu";
-import { Skeleton } from "../../../components/ui/skeleton";
-import { Alert, AlertDescription } from "../../../components/ui/alert";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import Link from "next/link";
 import {
   RefreshCw,
   Search,
@@ -41,13 +25,6 @@ import {
   Pause,
   Trash2,
 } from "lucide-react";
-import Link from "next/link";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 
 const statusColors: Record<JobStatus, string> = {
   pending: "bg-gray-500",
@@ -182,7 +159,8 @@ function JobsContent() {
       isMountedRef.current = true;
       enumerateJobs();
     }
-  }, []); // Empty dependency array - only run on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Filter jobs based on search and filters - memoized to prevent unnecessary re-computations
   const filteredJobs = useMemo(() => {
@@ -192,13 +170,11 @@ function JobsContent() {
         return false;
       }
 
+      const outputFile = String(job.parameters?.output_file ?? "");
       const matchesSearch =
         job.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
         job.app.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (job.parameters?.output_file &&
-          job.parameters.output_file
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()));
+        outputFile.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesStatus =
         statusFilter === "all" || job.status === statusFilter;
@@ -467,11 +443,11 @@ function JobsContent() {
                       </p>
                     </div>
                   )}
-                  {job.parameters?.output_file && (
+                  {job.parameters?.output_file != null && String(job.parameters.output_file) !== "" && (
                     <div className="flex flex-row gap-2">
                       <p className="text-sm font-medium">Output File</p>
                       <p className="text-muted-foreground text-sm">
-                        {job.parameters.output_file}
+                        {String(job.parameters.output_file)}
                       </p>
                     </div>
                   )}

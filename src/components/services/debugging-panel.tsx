@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
@@ -24,38 +23,37 @@ export function DebuggingPanel() {
   const [localContainerId, setLocalContainerId] = useState(containerBuildId);
 
   // Sync local state with context when dialog opens
-  useEffect(() => {
-    if (isOpen) {
-      setLocalDebugMode(isDebugMode);
-      setLocalContainerId(containerBuildId);
-    }
-  }, [isOpen, isDebugMode, containerBuildId]);
+  const [prevSyncKey, setPrevSyncKey] = useState("");
+  const syncKey = isOpen ? `${isDebugMode}-${containerBuildId}` : "";
+  if (syncKey && syncKey !== prevSyncKey) {
+    setPrevSyncKey(syncKey);
+    setLocalDebugMode(isDebugMode);
+    setLocalContainerId(containerBuildId);
+  } else if (!syncKey && prevSyncKey) {
+    setPrevSyncKey("");
+  }
+
+  const handleOpenDialog = useCallback(() => {
+    setLocalDebugMode(isDebugMode);
+    setLocalContainerId(containerBuildId);
+    setIsOpen(true);
+  }, [isDebugMode, containerBuildId]);
 
   // Add keyboard shortcut listener
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Check for Ctrl + Shift + D
       if (event.ctrlKey && event.shiftKey && event.key === 'D') {
         event.preventDefault();
         handleOpenDialog();
       }
     };
 
-    // Add event listener
     document.addEventListener('keydown', handleKeyDown);
 
-    // Cleanup on unmount
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isDebugMode, containerBuildId]);
-
-  const handleOpenDialog = () => {
-    // Sync with current values when opening
-    setLocalDebugMode(isDebugMode);
-    setLocalContainerId(containerBuildId);
-    setIsOpen(true);
-  };
+  }, [handleOpenDialog]);
 
   const handleOpenChange = (open: boolean) => {
     if (open) {
@@ -72,12 +70,7 @@ export function DebuggingPanel() {
     setIsOpen(false);
   };
 
-  const handleCancel = () => {
-    // Reset local state to current values
-    setLocalDebugMode(isDebugMode);
-    setLocalContainerId(containerBuildId);
-    setIsOpen(false);
-  };
+
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>

@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { ChevronRight, Loader2 } from "lucide-react";
-import { Label } from "../ui/label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Library } from "@/types/services";
 import { toast } from "sonner";
+
+import { ChevronRight, Loader2 } from "lucide-react";
 
 const VALIDATION_DEBOUNCE_MS = 500;
 
@@ -74,7 +75,7 @@ function parseXmlAndExtract(xmlText: string): {
   }
 
   const runs: string[] = [];
-  const inputAccession = xmlDoc
+  const _inputAccession = xmlDoc
     .evaluate(
       "//EXPERIMENT_PACKAGE/EXPERIMENT/@accession",
       xmlDoc,
@@ -83,9 +84,6 @@ function parseXmlAndExtract(xmlText: string): {
       null,
     )
     .singleNodeValue?.textContent?.toLowerCase();
-
-  // Check if the input is an experiment ID
-  const isExperimentId = !!inputAccession;
 
   // Extract all run accessions
   try {

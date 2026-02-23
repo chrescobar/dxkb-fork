@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -95,8 +95,8 @@ export default function ProteomeComparisonPage() {
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
   // Watch form values
-  const comparisonItems = form.watch("comparison_items") || [];
-  const refSourceType = form.watch("ref_source_type");
+  const rawComparisonItems = form.watch("comparison_items");
+  const comparisonItems = useMemo(() => rawComparisonItems || [], [rawComparisonItems]);
 
   // Calculate total genome count (accounting for genome groups)
   const totalGenomeCount = countTotalComparisonGenomes(comparisonItems);

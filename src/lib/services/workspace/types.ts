@@ -211,7 +211,8 @@ export type WorkspaceMethod =
   | "Workspace.move"
   | "Workspace.rename"
   | "Workspace.get"
-  | "Workspace.save";
+  | "Workspace.save"
+  | "Workspace.get_download_url";
 
 export const forbiddenDownloadTypes = [
   "experiment_group",

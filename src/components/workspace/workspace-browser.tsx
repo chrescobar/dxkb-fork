@@ -24,6 +24,8 @@ import { WorkspaceDataTable } from "./workspace-data-table";
 import { InfoPanel } from "@/components/containers/InfoPanel";
 import { WorkspaceActionBar } from "./workspace-action-bar";
 import { isFolderType } from "./workspace-item-icon";
+import { getDownloadUrls } from "@/lib/services/workspace/methods/download";
+import { forbiddenDownloadTypes } from "@/lib/services/workspace/types";
 import { PanelRightClose, PanelRightOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WorkspaceBrowserItem, WorkspaceBrowserSort } from "@/types/workspace-browser";
@@ -126,6 +128,7 @@ export function WorkspaceBrowser({
   const [selectedItem, setSelectedItem] = useState<WorkspaceBrowserItem | null>(
     null,
   );
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const [sort, setSort] = useState<WorkspaceBrowserSort>({
     field: "name",
@@ -296,6 +299,47 @@ export function WorkspaceBrowser({
     if (!panelManuallyHidden) setPanelExpanded(true);
   }
 
+  async function handleAction(
+    actionId: string,
+    selection: WorkspaceBrowserItem[],
+  ) {
+    if (actionId !== "download") return;
+    const downloadable = selection.filter(
+      (item) =>
+        !isFolderType(item.type) &&
+        !(forbiddenDownloadTypes as readonly string[]).includes(item.type),
+    );
+    if (downloadable.length === 0) {
+      alert(
+        "Select a file to download. Folders and some object types cannot be downloaded.",
+      );
+      return;
+    }
+    const paths = downloadable.map((item) => item.path);
+    setIsDownloading(true);
+    try {
+      const urlArrays = await getDownloadUrls(paths);
+      for (let i = 0; i < urlArrays.length; i++) {
+        const url = urlArrays[i]?.[0];
+        if (!url) continue;
+        const name = downloadable[i]?.name ?? "download";
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = name;
+        a.rel = "noopener noreferrer";
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Download failed.";
+      alert(message);
+    } finally {
+      setIsDownloading(false);
+    }
+  }
+
   if (!currentUser) {
     if (mode === "shared" && !authChecked) {
       return (
@@ -325,7 +369,7 @@ export function WorkspaceBrowser({
 
   const mainContent = (
     <>
-      <div className="shrink-0 space-y-4 p-4">
+      <div className="min-w-0 shrink-0 space-y-4 overflow-hidden p-4">
         <WorkspaceBreadcrumbs
           path={path}
           username={username}
@@ -416,7 +460,9 @@ export function WorkspaceBrowser({
         <WorkspaceActionBar
           selection={selectedItem ? [selectedItem] : []}
           workspaceGuideUrl={workspaceGuideUrl}
-          onAction={() => {}}
+          disabledActionIds={isDownloading ? ["download"] : undefined}
+          loadingActionIds={isDownloading ? ["download"] : undefined}
+          onAction={handleAction}
         />
       </div>
     </div>
@@ -447,7 +493,7 @@ export function WorkspaceBrowser({
   if (!panelExpanded) {
     return (
       <div className="flex min-h-[calc(100vh-12rem)] w-full flex-row gap-0">
-        <div className="flex min-h-[calc(100vh-12rem)] min-w-0 flex-1 flex-col">
+        <div className="flex min-h-[calc(100vh-12rem)] min-w-0 flex-1 flex-col overflow-hidden">
           {mainContent}
         </div>
         <aside className="bg-muted/30 flex min-h-full shrink-0 rounded-tl-lg rounded-bl-lg border-l">
@@ -468,9 +514,9 @@ export function WorkspaceBrowser({
         id={WORKSPACE_PANEL_IDS.main}
         defaultSize={panelLayout[WORKSPACE_PANEL_IDS.main] ?? 75}
         minSize={50}
-        className="flex min-h-[calc(100vh-12rem)] flex-row"
+        className="flex min-h-[calc(100vh-12rem)] flex-row overflow-hidden"
       >
-        <div className="flex min-h-[calc(100vh-12rem)] min-w-0 flex-1 flex-col">
+        <div className="flex min-h-[calc(100vh-12rem)] min-w-0 flex-1 flex-col overflow-hidden">
           {mainContent}
         </div>
         <aside className="bg-muted/30 flex min-h-full shrink-0 rounded-tl-lg rounded-bl-lg border-l">

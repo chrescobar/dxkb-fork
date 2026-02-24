@@ -13,6 +13,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
 
 const writePermissions = new Set(["o", "a", "w"]);
@@ -68,35 +69,51 @@ export interface WorkspaceActionBarProps {
   /** URL opened when the Guide button is clicked (from env WORKSPACE_GUIDE_URL). */
   workspaceGuideUrl: string;
   currentPath?: string;
+  /** Action IDs to disable (e.g. "download" while fetching URL). */
+  disabledActionIds?: string[];
+  /** Action IDs currently loading (show spinner instead of icon). */
+  loadingActionIds?: string[];
   onAction?: (actionId: string, selection: WorkspaceBrowserItem[]) => void;
 }
 
 export function WorkspaceActionBar({
   selection,
   workspaceGuideUrl,
+  disabledActionIds,
+  loadingActionIds,
   onAction,
 }: WorkspaceActionBarProps) {
   const visibleActions = actionConfig.filter((action) =>
     isActionValidForSelection(action, selection),
   );
+  const isDisabled = (actionId: string) =>
+    disabledActionIds?.includes(actionId) ?? false;
+  const isLoading = (actionId: string) =>
+    loadingActionIds?.includes(actionId) ?? false;
 
   return (
     <div className="flex flex-col gap-1">
       {visibleActions.map((action) => {
         const Icon = action.icon;
+        const showSpinner = isLoading(action.id);
         return (
           <Button
             key={action.id}
             variant="secondary"
             size="sm"
             className="h-[60px] w-full flex-col gap-0.5 py-1.5 font-normal"
+            disabled={isDisabled(action.id)}
             onClick={() =>
               action.id === "guide"
                 ? window.open(workspaceGuideUrl, "_blank", "noopener,noreferrer")
                 : onAction?.(action.id, selection)
             }
           >
-            <Icon className="h-3.5 w-3.5 shrink-0" />
+            {showSpinner ? (
+              <Spinner className="h-3.5 w-3.5 shrink-0" />
+            ) : (
+              <Icon className="h-3.5 w-3.5 shrink-0" />
+            )}
             <span className="text-[10px] leading-tight">{action.label}</span>
           </Button>
         );

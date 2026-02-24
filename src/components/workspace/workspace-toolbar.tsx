@@ -50,8 +50,8 @@ export function WorkspaceToolbar({
   onShowHiddenFilesChange,
 }: WorkspaceToolbarProps) {
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex flex-1 items-center gap-2">
+    <div className="grid min-w-0 grid-cols-1 gap-3 lg:grid-cols-[1fr_auto] lg:items-center">
+      <div className="flex min-w-0 items-center gap-2">
         <Select
           items={typeFilterOptions}
           value={typeFilter}
@@ -59,7 +59,7 @@ export function WorkspaceToolbar({
             if (value != null) onTypeFilterChange(value);
           }}
         >
-          <SelectTrigger className="w-36">
+          <SelectTrigger className="w-36 shrink-0">
             <SelectValue placeholder="All Types" />
           </SelectTrigger>
           <SelectContent>
@@ -73,7 +73,7 @@ export function WorkspaceToolbar({
           </SelectContent>
         </Select>
 
-        <div className="relative max-w-xs flex-1">
+        <div className="relative min-w-0 flex-1">
           <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <Input
             placeholder="Search files..."
@@ -84,7 +84,7 @@ export function WorkspaceToolbar({
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Button
           variant="outline"
           size="sm"

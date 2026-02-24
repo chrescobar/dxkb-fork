@@ -64,6 +64,11 @@ export class WorkspaceApiClient {
         return (result.result ?? []) as T;
       }
 
+      // Workspace.get_download_url returns array of URL arrays: [[url], [url], ...]
+      if (method === "Workspace.get_download_url") {
+        return (result.result ?? []) as T;
+      }
+
       // Replicate the original logic for processing results (Workspace.ls)
       if (!result.result || !result.result[0]) {
         return [] as T;

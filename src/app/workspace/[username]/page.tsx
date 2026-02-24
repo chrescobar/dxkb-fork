@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { WorkspaceBrowser } from "@/components/workspace/workspace-browser";
 import { getBvbrcAuthToken } from "@/lib/auth";
+import { getRequiredEnv } from "@/lib/env";
 import { encodeWorkspaceSegment } from "@/lib/utils";
 
 interface WorkspaceUsernamePageProps {
@@ -23,5 +24,13 @@ export default async function WorkspaceUsernamePage({ params }: WorkspaceUsernam
     redirect(`/sign-in?redirect=${encodeURIComponent(`/workspace/${encodeWorkspaceSegment(username)}`)}`);
   }
 
-  return <WorkspaceBrowser mode="shared" username={username} path="" />;
+  const workspaceGuideUrl = getRequiredEnv("WORKSPACE_GUIDE_URL");
+  return (
+    <WorkspaceBrowser
+      mode="shared"
+      username={username}
+      path=""
+      workspaceGuideUrl={workspaceGuideUrl}
+    />
+  );
 }

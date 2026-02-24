@@ -43,6 +43,7 @@ function isActionValidForSelection(
   action: ActionConfig,
   selection: WorkspaceBrowserItem[],
 ): boolean {
+  if (action.id === "guide") return true;
   if (selection.length === 0) return false;
 
   const typesMatch =
@@ -64,12 +65,15 @@ function isActionValidForSelection(
 
 export interface WorkspaceActionBarProps {
   selection: WorkspaceBrowserItem[];
+  /** URL opened when the Guide button is clicked (from env WORKSPACE_GUIDE_URL). */
+  workspaceGuideUrl: string;
   currentPath?: string;
   onAction?: (actionId: string, selection: WorkspaceBrowserItem[]) => void;
 }
 
 export function WorkspaceActionBar({
   selection,
+  workspaceGuideUrl,
   onAction,
 }: WorkspaceActionBarProps) {
   const visibleActions = actionConfig.filter((action) =>
@@ -86,7 +90,11 @@ export function WorkspaceActionBar({
             variant="secondary"
             size="sm"
             className="h-[60px] w-full flex-col gap-0.5 py-1.5 font-normal"
-            onClick={() => onAction?.(action.id, selection)}
+            onClick={() =>
+              action.id === "guide"
+                ? window.open(workspaceGuideUrl, "_blank", "noopener,noreferrer")
+                : onAction?.(action.id, selection)
+            }
           >
             <Icon className="h-3.5 w-3.5 shrink-0" />
             <span className="text-[10px] leading-tight">{action.label}</span>

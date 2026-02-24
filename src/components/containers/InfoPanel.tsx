@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronRight, ChevronDown, PanelRightClose } from "lucide-react";
+
 import { genomeFields } from "@/constants/datafields/genome";
 import { genome_sequenceFields } from "@/constants/datafields/genome_sequence";
 import { genome_amrFields } from "@/constants/datafields/genome_amr";
@@ -16,6 +16,8 @@ import { taxonomyFields } from "@/constants/datafields/taxonomy";
 import { Button } from "@/components/ui/button";
 import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
 import { WorkspaceItemIcon } from "@/components/workspace/workspace-item-icon";
+
+import { ChevronRight, ChevronDown } from "lucide-react";
 
 export type InfoPanelProps =
   | {
@@ -64,15 +66,6 @@ function WorkspaceItemDetailContent({
     <div className="flex h-full flex-col overflow-hidden">
       <div className="flex items-center justify-between gap-2 border-b pb-2">
         <h3 className="truncate text-sm font-semibold">{workspaceItem.name}</h3>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 shrink-0"
-          onClick={onClose}
-          title="Hide panel"
-        >
-          <PanelRightClose className="h-4 w-4" />
-        </Button>
       </div>
       <div className="flex-1 overflow-y-auto py-3 text-xs">
         <div className="space-y-3">
@@ -134,7 +127,7 @@ export function InfoPanel(props: InfoPanelProps) {
 
   switch (activeTab) {
     case 'genome':
-      panelTitleField = 'genome_name'; 
+      panelTitleField = 'genome_name';
       fieldFile = genomeFields;
       allowedFields = ["genome_id", "genome_name", "other_names", "taxon_id", "superkingdom", "kingdom", "phylum", "class", "order", "family", "genus", "species", "genome_status", "strain", "serovar", "biovar", "pathovar", "mlst", "segment", "subtype", "h_type", "n_type", "h1_clade_gobal", "h1_clade_us", "h3_clade", "h5_clade", "ph1n1_like", "lineage", "clade", "subclade", "other_typing", "culture_collection", "type_strain", "reference_genome", "completion_date", "publication", "authors", "bioproject_accession", "biosample_accession", "assembly_accession", "sra_accession", "genbank_accessions", "sequencing_centers", "sequencing_status", "sequencing_platform", "sequencing_depth", "assembly_method", "chromosomes", "plasmids", "contigs", "genome_length", "gc_content", "contig_l50", "contig_n50", "trna", "rrna", "mat_peptide", "cds", "genome_quality", "coarse_consistency", "fine_consistency", "checkm_completeness", "checkm_contamination", "genome_quality_flags", "isolation_source", "isolation_comments", "collection_date", "collection_year", "season", "isolation_country", "state_province", "geographic_group", "geographic_location", "other_environmental", "host_name", "host_common_name", "host_gender", "host_age", "host_health", "host_group", "lab_host", "passage", "other_clinical", "additional_metadata", "comments", "date_inserted", "date_modified"];
       order = ["General Info","Taxonomy Info","Status","Type Info","DB Cross Reference","Sequence Info","Genome Statistics","Annotation Statistics","Genome Quality","Isolate Info","Host Info","Additional Info",];

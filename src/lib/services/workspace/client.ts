@@ -98,19 +98,9 @@ export class WorkspaceApiClient {
         return metaListToObj(r as unknown[]);
       });
 
-      // Filter out hidden folders and apply type filtering (same as original)
-      res = res.filter((r: unknown) => {
-        const obj = r as Record<string, unknown>;
-        if (obj.type === "folder") {
-          if (String(obj.path).split("/").some((p: string) => {
-            return p.charAt(0) === '.';
-          })) {
-            return false;
-          }
-        }
-        return true; // We'll handle type filtering in the specific methods
-      });
-
+      // Hidden files/folders (names starting with .) are not filtered here;
+      // the workspace browser UI filters them by default and shows them when
+      // the user toggles "Show hidden".
       console.log("PROCESSED RESULTS!!!", res);
       return res as T;
     } catch (error) {

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { WorkspaceBrowser } from "@/components/workspace/workspace-browser";
+import { getRequiredEnv } from "@/lib/env";
 
 interface WorkspaceHomePageProps {
   params: Promise<{ username?: string; path?: string[] }>;
@@ -23,7 +24,13 @@ export default async function WorkspaceHomePage({ params }: WorkspaceHomePagePro
     redirect("/workspace/home");
   }
 
+  const workspaceGuideUrl = getRequiredEnv("WORKSPACE_GUIDE_URL");
   return (
-    <WorkspaceBrowser mode="home" username={username} path={decodedPath} />
+    <WorkspaceBrowser
+      mode="home"
+      username={username}
+      path={decodedPath}
+      workspaceGuideUrl={workspaceGuideUrl}
+    />
   );
 }

@@ -1,4 +1,5 @@
 import { WorkspaceBrowser } from "@/components/workspace/workspace-browser";
+import { getRequiredEnv } from "@/lib/env";
 
 interface WorkspaceFolderPageProps {
   params: Promise<{ username: string; folder: string; path?: string[] }>;
@@ -17,6 +18,14 @@ export default async function WorkspaceFolderPage({
   const segments = resolved.path ?? [];
   const rest = segments.map((s) => decodeURIComponent(s)).join("/");
   const path = rest ? `${username}/${folder}/${rest}` : `${username}/${folder}`;
+  const workspaceGuideUrl = getRequiredEnv("WORKSPACE_GUIDE_URL");
 
-  return <WorkspaceBrowser mode="shared" username={username} path={path} />;
+  return (
+    <WorkspaceBrowser
+      mode="shared"
+      username={username}
+      path={path}
+      workspaceGuideUrl={workspaceGuideUrl}
+    />
+  );
 }

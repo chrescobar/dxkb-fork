@@ -320,8 +320,9 @@ export function WorkspaceDataTable({
                     <TableRow
                       key={item.id}
                       className={
-                        (isNavigable ? "cursor-pointer pl-8" : "")
-                        + (isSelected ? " bg-muted border-l-2 border-l-primary" : "")
+                        (useSelectionMode ? "border-l-2 " + (isSelected ? "border-l-primary" : "border-l-transparent") : "")
+                        + (isNavigable ? " cursor-pointer pl-8" : "")
+                        + (isSelected ? " bg-muted" : "")
                       }
                       onClick={handleRowClick}
                       onDoubleClick={handleRowDoubleClick}

@@ -14,18 +14,16 @@ import {
 } from "@/hooks/services/workspace/use-shared-with-user";
 import type { ListPermissionsResult } from "@/lib/services/workspace/shared";
 import { useAuth } from "@/contexts/auth-context";
+import { useWorkspacePanel } from "@/contexts/workspace-panel-context";
 import { WorkspaceBreadcrumbs } from "./workspace-breadcrumbs";
 import { WorkspaceToolbar } from "./workspace-toolbar";
 import { WorkspaceDataTable } from "./workspace-data-table";
 import { InfoPanel } from "@/components/containers/InfoPanel";
 import { WorkspaceActionBar } from "./workspace-action-bar";
 import { isFolderType } from "./workspace-item-icon";
-import { PanelRightOpen, X } from "lucide-react";
+import { PanelRightClose, PanelRightOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  WorkspaceBrowserItem,
-  WorkspaceBrowserSort,
-} from "@/types/workspace-browser";
+import { WorkspaceBrowserItem, WorkspaceBrowserSort } from "@/types/workspace-browser";
 import { encodeWorkspaceSegment, sanitizePathSegment } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -37,6 +35,8 @@ interface WorkspaceBrowserProps {
   /** Username from URL segment (e.g. workspace/chrescobar/home) */
   username: string;
   path: string;
+  /** URL for the workspace guide (env WORKSPACE_GUIDE_URL). Passed from server. */
+  workspaceGuideUrl: string;
   /** Optional initial data for shared mode (SSR/prefetch) */
   initialSharedItems?: WorkspaceBrowserItem[];
   initialPathItems?: WorkspaceBrowserItem[];
@@ -83,6 +83,7 @@ export function WorkspaceBrowser({
   mode,
   username,
   path,
+  workspaceGuideUrl,
   initialSharedItems,
   initialPathItems,
   initialPermissions,
@@ -91,7 +92,9 @@ export function WorkspaceBrowser({
   const { user } = useAuth();
   const currentUser = user?.username ?? "";
   const fullWorkspaceUsername =
-    (user?.realm ? `${user.username}@${user.realm}` : null) ?? user?.username ?? "";
+    (user?.realm ? `${user.username}@${user.realm}` : null) ??
+    user?.username ??
+    "";
   const myWorkspaceRoot = fullWorkspaceUsername || currentUser;
 
   const [authChecked, setAuthChecked] = useState(false);
@@ -102,35 +105,45 @@ export function WorkspaceBrowser({
 
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
-  const [selectedItem, setSelectedItem] = useState<WorkspaceBrowserItem | null>(null);
-  const [panelExpanded, setPanelExpanded] = useState(true);
+  const { panelManuallyHidden, setPanelManuallyHidden, showHiddenFiles, setShowHiddenFiles } =
+    useWorkspacePanel();
+  const [selectedItem, setSelectedItem] = useState<WorkspaceBrowserItem | null>(
+    null,
+  );
+  const [panelExpanded, setPanelExpanded] = useState(false);
   const [panelWidth, setPanelWidth] = useState(320);
 
   const MIN_PANEL_WIDTH = 280;
   const MAX_PANEL_WIDTH = 600;
 
-  const handlePanelResizeStart = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    const startX = e.clientX;
-    const startW = panelWidth;
+  const handlePanelResizeStart = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      const startX = e.clientX;
+      const startW = panelWidth;
 
-    function onMove(moveEvent: MouseEvent) {
-      const delta = startX - moveEvent.clientX;
-      const next = Math.min(MAX_PANEL_WIDTH, Math.max(MIN_PANEL_WIDTH, startW + delta));
-      setPanelWidth(next);
-    }
-    function onUp() {
-      document.body.style.cursor = "";
-      document.body.style.userSelect = "";
-      document.removeEventListener("mousemove", onMove);
-      document.removeEventListener("mouseup", onUp);
-    }
+      function onMove(moveEvent: MouseEvent) {
+        const delta = startX - moveEvent.clientX;
+        const next = Math.min(
+          MAX_PANEL_WIDTH,
+          Math.max(MIN_PANEL_WIDTH, startW + delta),
+        );
+        setPanelWidth(next);
+      }
+      function onUp() {
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+      }
 
-    document.body.style.cursor = "col-resize";
-    document.body.style.userSelect = "none";
-    document.addEventListener("mousemove", onMove);
-    document.addEventListener("mouseup", onUp);
-  }, [panelWidth]);
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
+      document.addEventListener("mousemove", onMove);
+      document.addEventListener("mouseup", onUp);
+    },
+    [panelWidth],
+  );
 
   const [sort, setSort] = useState<WorkspaceBrowserSort>({
     field: "name",
@@ -138,6 +151,9 @@ export function WorkspaceBrowser({
   });
 
   const isHome = mode === "home";
+  useEffect(() => {
+    setSelectedItem(null);
+  }, [path, mode]);
   const isAtSharedRoot = !isHome && (!path || path === "");
   const fullPath = path ? `/${path}` : "";
 
@@ -184,7 +200,7 @@ export function WorkspaceBrowser({
     ? (homeQuery.data ?? [])
     : isAtSharedRoot
       ? rootItems
-      : pathQuery.data ?? [];
+      : (pathQuery.data ?? []);
   const itemPaths = useMemo(() => items.map((i) => i.path), [items]);
   const permissionsQuery = useWorkspacePermissions({
     paths: itemPaths,
@@ -212,7 +228,7 @@ export function WorkspaceBrowser({
   const error = isHome
     ? homeQuery.error
     : isAtSharedRoot
-      ? sharedQuery.error ?? userWorkspacesQuery.error
+      ? (sharedQuery.error ?? userWorkspacesQuery.error)
       : pathQuery.error;
   const refetch = isHome
     ? homeQuery.refetch
@@ -231,6 +247,14 @@ export function WorkspaceBrowser({
   const processedItems = useMemo(() => {
     let filtered = items;
 
+    if (!showHiddenFiles) {
+      filtered = filtered.filter((item) => {
+        const name = item.name ?? "";
+        const lastSegment = item.path?.split("/").filter(Boolean).pop() ?? "";
+        return !name.startsWith(".") && !lastSegment.startsWith(".");
+      });
+    }
+
     if (typeFilter !== "all") {
       filtered = filtered.filter((item) => item.type === typeFilter);
     }
@@ -243,7 +267,7 @@ export function WorkspaceBrowser({
     }
 
     return sortItems(filtered, sort);
-  }, [items, typeFilter, searchQuery, sort]);
+  }, [items, showHiddenFiles, typeFilter, searchQuery, sort]);
 
   const isUrlCurrentUser =
     username === currentUser ||
@@ -251,9 +275,17 @@ export function WorkspaceBrowser({
     username === myWorkspaceRoot ||
     (currentUser && username.startsWith(`${currentUser}@`));
   useEffect(() => {
-    if (isHome || !isAtSharedRoot || !myWorkspaceRoot || isUrlCurrentUser) return;
+    if (isHome || !isAtSharedRoot || !myWorkspaceRoot || isUrlCurrentUser)
+      return;
     router.replace(`/workspace/${encodeWorkspaceSegment(myWorkspaceRoot)}`);
-  }, [isHome, isAtSharedRoot, myWorkspaceRoot, isUrlCurrentUser, username, router]);
+  }, [
+    isHome,
+    isAtSharedRoot,
+    myWorkspaceRoot,
+    isUrlCurrentUser,
+    username,
+    router,
+  ]);
 
   function handleItemDoubleClick(item: WorkspaceBrowserItem) {
     if (!isFolderType(item.type)) return;
@@ -279,7 +311,7 @@ export function WorkspaceBrowser({
 
   function handleSelectItem(item: WorkspaceBrowserItem) {
     setSelectedItem(item);
-    setPanelExpanded(true);
+    if (!panelManuallyHidden) setPanelExpanded(true);
   }
 
   if (!currentUser) {
@@ -310,16 +342,14 @@ export function WorkspaceBrowser({
       : "Failed to load shared folders";
 
   return (
-    <div className="flex min-h-0 w-full flex-1 gap-0 overflow-hidden">
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-        <div className="shrink-0 space-y-4 p-4 ">
+    <div className="flex min-h-[calc(100vh-12rem)] w-full flex-row gap-0">
+      <div className="flex min-h-[calc(100vh-12rem)] min-w-0 flex-1 flex-col">
+        <div className="shrink-0 space-y-4 p-4">
           <WorkspaceBreadcrumbs
             path={path}
             username={username}
             itemCount={items.length}
-            viewMode={
-              isHome ? "home" : isAtSharedRoot ? "root" : "shared"
-            }
+            viewMode={isHome ? "home" : isAtSharedRoot ? "root" : "shared"}
             currentUsername={currentUser}
             workspaceRootUsername={isHome ? undefined : myWorkspaceRoot}
           />
@@ -331,6 +361,8 @@ export function WorkspaceBrowser({
             onTypeFilterChange={setTypeFilter}
             onRefresh={() => refetch()}
             isRefreshing={isFetching}
+            showHiddenFiles={showHiddenFiles}
+            onShowHiddenFilesChange={setShowHiddenFiles}
           />
 
           {error && (
@@ -343,7 +375,7 @@ export function WorkspaceBrowser({
           )}
         </div>
 
-        <div className="min-h-0 flex-1 overflow-auto">
+        <div>
           <WorkspaceDataTable
             items={processedItems}
             isLoading={isLoading}
@@ -351,8 +383,7 @@ export function WorkspaceBrowser({
             sort={sort}
             onSortChange={setSort}
             showViewSharedRow={
-              isHome &&
-              (!path || path === "" || path === "/" || !path.trim())
+              isHome && (!path || path === "" || path === "/" || !path.trim())
             }
             viewMode={isHome ? "home" : "shared"}
             username={username}
@@ -365,28 +396,49 @@ export function WorkspaceBrowser({
         </div>
       </div>
 
-      {selectedItem && (
-        <aside className="flex h-full min-h-0 shrink-0 border-l bg-muted/30 rounded-tl-lg rounded-bl-lg">
-          <div className="flex h-full flex-col w-[80px] shrink-0 border-r border-border/50 bg-muted/50 py-2 rounded-l-lg">
-            {!panelExpanded && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="mx-0.5 mb-1 justify-start gap-1 font-normal"
-                onClick={() => setPanelExpanded(true)}
-                title="Show details"
-              >
-                <PanelRightOpen className="h-4 w-4 shrink-0" />
-                Show
-              </Button>
-            )}
-            <div className="min-h-0 flex-1 overflow-y-auto px-1.5">
-              <WorkspaceActionBar
-                selection={[selectedItem]}
-                onAction={() => {}}
-              />
-            </div>
-            {/* <Button
+      <aside className="bg-muted/30 flex min-h-full shrink-0 rounded-tl-lg rounded-bl-lg border-l">
+        <div className="border-border/50 bg-muted/50 flex h-full w-[80px] shrink-0 flex-col rounded-l-lg border-r py-2">
+          {/* Show / Hide panel: same slot, smooth transition by state */}
+          <div className="relative mx-0.5 mb-1 h-8 shrink-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`absolute inset-0 h-full w-full justify-start gap-1 font-normal ${
+                panelExpanded ? "pointer-events-none opacity-0" : "opacity-100"
+              }`}
+              onClick={() => {
+                setPanelManuallyHidden(false);
+                setPanelExpanded(true);
+              }}
+              title="Show details panel"
+            >
+              <PanelRightOpen className="h-4 w-4 shrink-0" />
+              Show
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`absolute inset-0 h-full w-full justify-start gap-1 font-normal ${
+                panelExpanded ? "opacity-100" : "pointer-events-none opacity-0"
+              }`}
+              onClick={() => {
+                setPanelManuallyHidden(true);
+                setPanelExpanded(false);
+              }}
+              title="Hide panel"
+            >
+              <PanelRightClose className="h-4 w-4 shrink-0" />
+              Hide
+            </Button>
+          </div>
+          <div className="min-h-0 flex-1 overflow-y-auto px-1.5">
+            <WorkspaceActionBar
+              selection={selectedItem ? [selectedItem] : []}
+              workspaceGuideUrl={workspaceGuideUrl}
+              onAction={() => {}}
+            />
+          </div>
+          {/* <Button
               variant="ghost"
               size="sm"
               className="mx-0.5 mt-1 shrink-0 justify-start gap-1 font-normal text-muted-foreground"
@@ -396,29 +448,44 @@ export function WorkspaceBrowser({
               <X className="h-4 w-4 shrink-0" />
               Close
             </Button> */}
-          </div>
-          {panelExpanded && (
-            <>
-              <div
-                role="separator"
-                aria-label="Resize panel"
-                className="w-1 shrink-0 cursor-col-resize touch-none border-l border-border/50 bg-border/30 hover:bg-primary/20 active:bg-primary/30 transition-colors"
-                onMouseDown={handlePanelResizeStart}
-              />
-              <div
-                className="flex h-full min-h-0 shrink-0 flex-col overflow-hidden"
-                style={{ width: panelWidth, minWidth: MIN_PANEL_WIDTH }}
-              >
+        </div>
+        {panelExpanded && (
+          <>
+            <div
+              role="separator"
+              aria-label="Resize panel"
+              className="border-border/50 bg-border/30 hover:bg-primary/20 active:bg-primary/30 w-1 shrink-0 cursor-col-resize touch-none border-l transition-colors"
+              onMouseDown={handlePanelResizeStart}
+            />
+            <div
+              className="flex h-full min-h-0 shrink-0 flex-col overflow-hidden py-2"
+              style={{ width: panelWidth, minWidth: MIN_PANEL_WIDTH }}
+            >
+              {selectedItem ? (
                 <InfoPanel
                   variant="workspace"
                   workspaceItem={selectedItem}
-                  onClose={() => setPanelExpanded(false)}
+                  onClose={() => {
+                    setPanelManuallyHidden(true);
+                    setPanelExpanded(false);
+                  }}
                 />
-              </div>
-            </>
-          )}
-        </aside>
-      )}
+              ) : (
+                <div className="flex h-full w-full flex-col overflow-hidden px-4 py-2">
+                  <div className="flex items-center justify-between gap-2 border-b pb-2">
+                    <h3 className="text-muted-foreground truncate text-sm font-semibold">
+                      Nothing selected
+                    </h3>
+                  </div>
+                  <div className="text-muted-foreground flex flex-1 items-center justify-center py-6 text-center text-sm">
+                    Select an item to view details
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </aside>
     </div>
   );
 }

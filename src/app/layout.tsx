@@ -74,10 +74,10 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable}`}
+      className={`${geistSans.variable} ${geistMono.variable} min-h-full`}
       suppressHydrationWarning
     >
-      <body>
+      <body className="min-h-screen">
         <Providers>
           <ThemeProvider defaultTheme="dxkb-light">
             <AuthProvider initialUser={initialUser}>{children}</AuthProvider>

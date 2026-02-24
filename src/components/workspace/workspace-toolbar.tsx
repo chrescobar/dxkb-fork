@@ -1,6 +1,6 @@
 "use client";
 
-import { RefreshCw, Search, FolderPlus, Upload } from "lucide-react";
+import { RefreshCw, Search, FolderPlus, Upload, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -35,6 +35,8 @@ interface WorkspaceToolbarProps {
   onTypeFilterChange: (type: string) => void;
   onRefresh: () => void;
   isRefreshing: boolean;
+  showHiddenFiles: boolean;
+  onShowHiddenFilesChange: (show: boolean) => void;
 }
 
 export function WorkspaceToolbar({
@@ -44,6 +46,8 @@ export function WorkspaceToolbar({
   onTypeFilterChange,
   onRefresh,
   isRefreshing,
+  showHiddenFiles,
+  onShowHiddenFilesChange,
 }: WorkspaceToolbarProps) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -81,6 +85,21 @@ export function WorkspaceToolbar({
       </div>
 
       <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onShowHiddenFilesChange(!showHiddenFiles)}
+          title={showHiddenFiles ? "Hide dotfiles and hidden items" : "Show hidden files (e.g. .folder)"}
+          aria-pressed={showHiddenFiles}
+        >
+          {showHiddenFiles ? (
+            <EyeOff className="h-4 w-4" data-icon="inline-start" />
+          ) : (
+            <Eye className="h-4 w-4" data-icon="inline-start" />
+          )}
+          {showHiddenFiles ? "Hide hidden" : "Show hidden"}
+        </Button>
+
         <Button
           variant="outline"
           size="sm"

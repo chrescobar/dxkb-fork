@@ -1,6 +1,6 @@
-import Navbar from "@/components/navbars/navbar";
-import Footer from "@/components/footers/footer";
 import { WorkspacePanelProvider } from "@/contexts/workspace-panel-context";
+import Navbar from "@/components/navbars/navbar";
+// import Footer from "@/components/footers/footer";
 
 export default function WorkspaceLayout({
   children,

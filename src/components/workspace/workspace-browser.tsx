@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -22,7 +22,10 @@ import {
 } from "@/contexts/workspace-panel-context";
 import { WorkspaceBreadcrumbs } from "./workspace-breadcrumbs";
 import { WorkspaceToolbar } from "./workspace-toolbar";
-import { WorkspaceDataTable } from "./workspace-data-table";
+import {
+  WorkspaceDataTable,
+  type WorkspaceDataTableHandle,
+} from "./workspace-data-table";
 import { InfoPanel } from "@/components/containers/InfoPanel";
 import { WorkspaceActionBar } from "./workspace-action-bar";
 import { isFolderType } from "./workspace-item-icon";
@@ -193,11 +196,19 @@ export function WorkspaceBrowser({
     field: "name",
     direction: "asc",
   });
+  const tableRef = useRef<WorkspaceDataTableHandle>(null);
 
   const isHome = mode === "home";
   useEffect(() => {
     setSelectedItem(null);
   }, [path, mode]);
+
+  // Restore focus to the table after selection so arrow keys work (runs after panel/layout and any deferred focus)
+  useEffect(() => {
+    if (!selectedItem) return;
+    const id = setTimeout(() => tableRef.current?.focus(), 50);
+    return () => clearTimeout(id);
+  }, [selectedItem]);
   const isAtSharedRoot = !isHome && (!path || path === "");
   const fullPath = path ? `/${path}` : "";
 
@@ -717,6 +728,7 @@ export function WorkspaceBrowser({
 
       <div>
         <WorkspaceDataTable
+          ref={tableRef}
           items={processedItems}
           isLoading={isLoading}
           path={path}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useCallback, forwardRef, useImperativeHandle } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowUp, ArrowDown, ArrowUpDown, FolderUp, Users } from "lucide-react";
 import {
@@ -43,6 +44,10 @@ interface WorkspaceDataTableProps {
   onSelect?: (item: WorkspaceBrowserItem) => void;
   /** Called on double click (folders only) when selection mode is used; parent should navigate */
   onItemDoubleClick?: (item: WorkspaceBrowserItem) => void;
+}
+
+export interface WorkspaceDataTableHandle {
+  focus: () => void;
 }
 
 function formatFileSize(bytes: number): string {
@@ -119,24 +124,65 @@ function formatMemberCount(count: number): string {
   return `${count} members`;
 }
 
-export function WorkspaceDataTable({
-  items,
-  isLoading,
-  path,
-  sort,
-  onSortChange,
-  showViewSharedRow = false,
-  viewMode = "home",
-  memberCountByPath,
-  username = "",
-  sharedRootUsername,
-  selectedPath = null,
-  onSelect,
-  onItemDoubleClick,
-}: WorkspaceDataTableProps) {
+export const WorkspaceDataTable = forwardRef<
+  WorkspaceDataTableHandle,
+  WorkspaceDataTableProps
+>(function WorkspaceDataTable(
+  {
+    items,
+    isLoading,
+    path,
+    sort,
+    onSortChange,
+    showViewSharedRow = false,
+    viewMode = "home",
+    memberCountByPath,
+    username = "",
+    sharedRootUsername,
+    selectedPath = null,
+    onSelect,
+    onItemDoubleClick,
+  },
+  ref,
+) {
   const useSelectionMode = onSelect != null;
   const router = useRouter();
+  const tableContainerRef = useRef<HTMLDivElement>(null);
   const isAtRoot = !path || path === "" || path === "/";
+
+  useImperativeHandle(ref, () => ({
+    focus: () => tableContainerRef.current?.focus(),
+  }));
+
+  function normalizePath(p: string | undefined): string {
+    return (p ?? "").replace(/\/+/g, "/").replace(/^\//, "").replace(/\/$/, "") || "/";
+  }
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (!useSelectionMode || items.length === 0) return;
+      if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+
+      const normalizedSelected = normalizePath(selectedPath ?? undefined);
+      const currentIndex = items.findIndex(
+        (i) => normalizePath(i.path) === normalizedSelected
+      );
+
+      let nextIndex: number;
+      if (e.key === "ArrowDown") {
+        nextIndex = currentIndex < 0 ? 0 : Math.min(currentIndex + 1, items.length - 1);
+      } else {
+        nextIndex = currentIndex <= 0 ? items.length - 1 : currentIndex - 1;
+      }
+
+      const nextItem = items[nextIndex];
+      if (nextItem) {
+        e.preventDefault();
+        onSelect?.(nextItem);
+      }
+    },
+    [useSelectionMode, items, selectedPath, onSelect]
+  );
   const pathSegments = path
     ? path.split("/").map(sanitizePathSegment).filter(Boolean)
     : [];
@@ -218,7 +264,14 @@ export function WorkspaceDataTable({
   ];
 
   return (
-    <div className="rounded-md border">
+    <div
+      ref={tableContainerRef}
+      role="grid"
+      tabIndex={useSelectionMode ? 0 : undefined}
+      aria-label="Workspace items"
+      className="rounded-md border outline-none"
+      onKeyDown={handleKeyDown}
+    >
       <Table>
         <TableHeader>
           <TableRow>
@@ -298,8 +351,8 @@ export function WorkspaceDataTable({
                 items.map((item) => {
                   const isNavigable = isFolderType(item.type);
                   const memberCount = memberCountByPath?.[item.path];
-                  const normalizedItemPath = (item.path ?? "").replace(/\/+/g, "/").replace(/^\//, "").replace(/\/$/, "") || "/";
-                  const normalizedSelectedPath = (selectedPath ?? "").replace(/\/+/g, "/").replace(/^\//, "").replace(/\/$/, "") || "/";
+                  const normalizedItemPath = normalizePath(item.path);
+                  const normalizedSelectedPath = normalizePath(selectedPath ?? undefined);
                   const isSelected = useSelectionMode && selectedPath != null && normalizedItemPath === normalizedSelectedPath;
 
                   function handleRowClick() {
@@ -376,4 +429,4 @@ export function WorkspaceDataTable({
       </Table>
     </div>
   );
-}
+});

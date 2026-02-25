@@ -1,8 +1,43 @@
 "use client";
 
-import { useRef, useCallback, forwardRef, useImperativeHandle } from "react";
+import React, {
+  useRef,
+  useCallback,
+  forwardRef,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from "react";
+import type { CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowUp, ArrowDown, ArrowUpDown, FolderUp, Users } from "lucide-react";
+import {
+  ColumnDef,
+  getCoreRowModel,
+  useReactTable,
+  flexRender,
+  type SortingState,
+  type Header,
+} from "@tanstack/react-table";
+import {
+  DndContext,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  closestCenter,
+  type DragEndEvent,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
+import {
+  arrayMove,
+  SortableContext,
+  horizontalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import clsx from "clsx";
 import {
   Table,
   TableBody,
@@ -21,6 +56,9 @@ import {
 import { encodeWorkspaceSegment, sanitizePathSegment } from "@/lib/utils";
 import { normalizePath } from "@/lib/workspace/table-selection";
 
+/** Stable empty array for table data fallback (avoids infinite re-renders per TanStack Data guide). */
+const EMPTY_ITEMS: WorkspaceBrowserItem[] = [];
+
 export type ViewMode = "home" | "shared";
 
 interface WorkspaceDataTableProps {
@@ -33,7 +71,7 @@ interface WorkspaceDataTableProps {
   showViewSharedRow?: boolean;
   /** When "shared", parent row and item navigation use shared routes */
   viewMode?: ViewMode;
-  /** Optional map of item path -> member count; when provided, a "Members" column is shown */
+  /** Optional map of item path -> member count; Members column is always shown (displays "—" when absent). */
   memberCountByPath?: Record<string, number>;
   /** Username for building workspace URLs (e.g. /workspace/${username}/home) */
   username?: string;
@@ -101,8 +139,8 @@ function SortIcon({
 /** Row height matching real data: TableCell p-2 (8px top/bottom) + 20px content = 36px (h-9). */
 const skeletonRowHeight = "h-9";
 
-/** Skeleton rows matching real table column order and dimensions (Name, Size, Owner, Members?, Created, Type). */
-function TableSkeleton({ showMembersColumn = true }: { showMembersColumn?: boolean }) {
+/** Skeleton rows matching real table column order (Name, Size, Owner, Members, Created, Type). */
+function TableSkeleton() {
   return (
     <>
       {Array.from({ length: 8 }).map((_, i) => (
@@ -119,11 +157,9 @@ function TableSkeleton({ showMembersColumn = true }: { showMembersColumn?: boole
           <TableCell className={`text-muted-foreground hidden md:table-cell text-left pl-6 ${skeletonRowHeight}`}>
             <Skeleton className="h-4 w-20" />
           </TableCell>
-          {showMembersColumn && (
-            <TableCell className={`text-muted-foreground hidden lg:table-cell text-left pl-6 ${skeletonRowHeight}`}>
-              <Skeleton className="h-4 w-16" />
-            </TableCell>
-          )}
+          <TableCell className={`text-muted-foreground text-left pl-6 ${skeletonRowHeight}`}>
+            <Skeleton className="h-4 w-16" />
+          </TableCell>
           <TableCell className={`text-muted-foreground hidden sm:table-cell text-left pl-6 ${skeletonRowHeight}`}>
             <Skeleton className="h-4 w-24" />
           </TableCell>
@@ -140,6 +176,95 @@ function formatMemberCount(count: number): string {
   if (count <= 0) return "—";
   if (count === 1) return "Only me";
   return `${count} members`;
+}
+
+const SORTABLE_FIELDS: SortField[] = [
+  "name",
+  "size",
+  "owner_id",
+  "creation_time",
+];
+
+function DraggableTableHeader({
+  header,
+  onSort,
+  sort,
+}: {
+  header: Header<WorkspaceBrowserItem, unknown>;
+  onSort: (field: SortField) => void;
+  sort: WorkspaceBrowserSort;
+}) {
+  const { attributes, isDragging, listeners, setNodeRef, transform } =
+    useSortable({
+      id: header.column.id,
+    });
+
+  const style: CSSProperties = {
+    opacity: isDragging ? 0.8 : 1,
+    position: "relative" as const,
+    transform: CSS.Translate.toString(transform),
+    transition: "width transform 0.2s ease-in-out",
+    whiteSpace: "nowrap",
+    width: header.column.getSize(),
+    zIndex: isDragging ? 1 : 0,
+  };
+
+  const meta = header.column.columnDef.meta as { className?: string } | undefined;
+  const className = clsx("pl-6 relative", meta?.className ?? "");
+  const isSortable = SORTABLE_FIELDS.includes(header.column.id as SortField);
+
+  return (
+    <TableHead
+      ref={setNodeRef}
+      colSpan={header.colSpan}
+      className={className}
+      style={{
+        ...style,
+        minWidth: style.width,
+        maxWidth: style.width,
+      }}
+      onClick={
+        isSortable
+          ? () => onSort(header.column.id as SortField)
+          : undefined
+      }
+    >
+      <div className="flex items-center justify-between w-full py-0 relative">
+        <div className="flex min-w-0 flex-1 cursor-pointer select-none">
+          {flexRender(header.column.columnDef.header, header.getContext())}
+        </div>
+        <button
+          type="button"
+          className="touch-none cursor-grab active:cursor-grabbing p-1 rounded hover:bg-primary/10"
+          {...attributes}
+          {...listeners}
+          onClick={(e) => e.stopPropagation()}
+          aria-label="Drag to reorder column"
+        >
+          <span className="text-muted-foreground select-none" aria-hidden>
+            ⋮⋮
+          </span>
+        </button>
+        {header.column.getCanResize() && (
+          <div
+            role="separator"
+            aria-orientation="vertical"
+            onMouseDown={header.getResizeHandler()}
+            onTouchStart={header.getResizeHandler()}
+            onDoubleClick={() => header.column.resetSize()}
+            className={clsx(
+              "absolute top-0 right-0 w-2 h-full cursor-col-resize z-10 border-r border-border",
+              "hover:bg-primary/15 hover:border-primary/50",
+              header.column.getIsResizing() && "bg-primary/25 border-primary",
+            )}
+            style={{
+              transform: "translateX(50%)",
+            }}
+          />
+        )}
+      </div>
+    </TableHead>
+  );
 }
 
 export const WorkspaceDataTable = forwardRef<
@@ -167,6 +292,15 @@ export const WorkspaceDataTable = forwardRef<
   const router = useRouter();
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const isAtRoot = !path || path === "" || path === "/";
+
+  const [columnOrder, setColumnOrder] = useState<string[]>([
+    "name",
+    "size",
+    "owner_id",
+    "creation_time",
+    "members",
+    "type",
+  ]);
 
   useImperativeHandle(ref, () => ({
     focus: () => tableContainerRef.current?.focus(),
@@ -272,16 +406,177 @@ export const WorkspaceDataTable = forwardRef<
   const showLeadingRow =
     showViewSharedRow && viewMode === "home" && isAtRoot;
 
-  const showMembersColumn = memberCountByPath != null;
-  /** When loading in shared folder view, show Members column in header/skeleton so layout matches once data loads. */
-  const showMembersColumnInUI =
-    showMembersColumn || (isLoading && viewMode === "shared" && !isAtRoot);
-  const sortableColumns: { field: SortField; label: string; className?: string }[] = [
-    { field: "name", label: "Name" },
-    { field: "size", label: "Size" },
-    { field: "owner_id", label: "Owner", className: "hidden md:table-cell" },
-    { field: "creation_time", label: "Created", className: "hidden sm:table-cell" },
-  ];
+  const sortingState: SortingState = useMemo(
+    () => [{ id: sort.field, desc: sort.direction === "desc" }],
+    [sort.field, sort.direction],
+  );
+
+  const columns = useMemo<ColumnDef<WorkspaceBrowserItem>[]>(() => {
+    const sortableHeader = (field: SortField, label: string) => (
+      <span
+        className="cursor-pointer select-none"
+        onClick={() => handleSort(field)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleSort(field);
+          }
+        }}
+      >
+        {label}
+        <SortIcon field={field} currentSort={sort} />
+      </span>
+    );
+    const base: ColumnDef<WorkspaceBrowserItem>[] = [
+      {
+        id: "name",
+        accessorKey: "name",
+        header: () => sortableHeader("name", "Name"),
+        cell: ({ row }) => {
+          const item = row.original;
+          const isNavigable = isFolderType(item.type);
+          return (
+            <div className="flex items-center gap-2">
+              <WorkspaceItemIcon type={item.type} />
+              <span className={isNavigable ? "font-medium hover:underline" : ""}>
+                {item.name}
+              </span>
+            </div>
+          );
+        },
+        meta: { className: "" },
+        size: 220,
+        enableResizing: true,
+      },
+      {
+        id: "size",
+        accessorKey: "size",
+        header: () => sortableHeader("size", "Size"),
+        cell: ({ getValue }) => (
+          <span className="text-muted-foreground">
+            {formatFileSize(Number(getValue()) ?? 0)}
+          </span>
+        ),
+        meta: { className: "" },
+        size: 90,
+        enableResizing: true,
+      },
+      {
+        id: "owner_id",
+        accessorKey: "owner_id",
+        header: () => sortableHeader("owner_id", "Owner"),
+        cell: ({ getValue }) => (
+          <span className="text-muted-foreground">
+            {formatOwner(String(getValue() ?? ""))}
+          </span>
+        ),
+        meta: { className: "hidden md:table-cell" },
+        size: 120,
+        enableResizing: true,
+      },
+      {
+        id: "creation_time",
+        accessorKey: "creation_time",
+        header: () => sortableHeader("creation_time", "Created"),
+        cell: ({ getValue }) => (
+          <span className="text-muted-foreground">
+            {formatDate(String(getValue() ?? ""))}
+          </span>
+        ),
+        meta: { className: "hidden sm:table-cell" },
+        size: 120,
+        enableResizing: true,
+      },
+      {
+        id: "members",
+        header: "Members",
+        cell: ({ row }) => {
+          const count = memberCountByPath?.[row.original.path];
+          return (
+            <span className="text-muted-foreground">
+              {count != null ? formatMemberCount(count) : "—"}
+            </span>
+          );
+        },
+        meta: { className: "" },
+        size: 100,
+        enableResizing: true,
+      },
+    ];
+    base.push({
+      id: "type",
+      accessorKey: "type",
+      header: "Type",
+      cell: ({ getValue }) => (
+        <span className="text-muted-foreground">{String(getValue() ?? "")}</span>
+      ),
+      meta: { className: "hidden lg:table-cell" },
+      size: 90,
+      enableResizing: true,
+    });
+    return base;
+  }, [sort, onSortChange, memberCountByPath]);
+
+  const table = useReactTable<WorkspaceBrowserItem>({
+    data: items ?? EMPTY_ITEMS,
+    columns,
+    state: {
+      sorting: sortingState,
+      columnOrder,
+    },
+    onSortingChange: (updater) => {
+      const next =
+        typeof updater === "function" ? updater(sortingState) : updater;
+      const entry = next?.[0];
+      if (entry) {
+        onSortChange({
+          field: entry.id as SortField,
+          direction: entry.desc ? "desc" : "asc",
+        });
+      }
+    },
+    onColumnOrderChange: (updater) => {
+      const next =
+        typeof updater === "function" ? updater(columnOrder) : updater;
+      setColumnOrder(next);
+    },
+    getRowId: (row) => row.id,
+    getCoreRowModel: getCoreRowModel(),
+    manualSorting: true,
+    columnResizeMode: "onChange",
+    enableColumnResizing: true,
+  });
+
+  const columnSizingState = table.getState().columnSizing;
+  const columnSizingInfoState = table.getState().columnSizingInfo;
+  const columnSizeVars = useMemo(() => {
+    const headers = table.getFlatHeaders();
+    const colSizes: Record<string, string> = {};
+    for (const header of headers) {
+      colSizes[`--col-${header.column.id}-size`] = `${header.column.getSize()}px`;
+    }
+    return colSizes;
+  }, [columnSizingState, columnSizingInfoState]);
+
+  const handleColumnDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (active && over && active.id !== over.id) {
+      setColumnOrder((prev) => {
+        const oldIndex = prev.indexOf(active.id as string);
+        const newIndex = prev.indexOf(over.id as string);
+        if (oldIndex === -1 || newIndex === -1) return prev;
+        return arrayMove(prev, oldIndex, newIndex);
+      });
+    }
+  }, []);
+
+  const sensors = useSensors(
+    useSensor(MouseSensor, {}),
+    useSensor(TouchSensor, {}),
+    useSensor(KeyboardSensor, {}),
+  );
 
   return (
     <div
@@ -292,28 +587,36 @@ export const WorkspaceDataTable = forwardRef<
       className="scrollbar-themed h-full min-h-0 overflow-y-auto rounded-md border outline-none"
       onKeyDown={handleKeyDown}
     >
-      <Table>
-        <TableHeader>
-          <TableRow>
-            {sortableColumns.map((col) => (
-              <TableHead
-                key={col.field}
-                className={`cursor-pointer select-none pl-6 ${col.className ?? ""}`}
-                onClick={() => handleSort(col.field)}
-              >
-                {col.label}
-                <SortIcon field={col.field} currentSort={sort} />
-              </TableHead>
-            ))}
-            {showMembersColumnInUI && (
-              <TableHead className="hidden lg:table-cell pl-6">Members</TableHead>
-            )}
-            <TableHead className="hidden lg:table-cell pl-6">Type</TableHead>
-          </TableRow>
-        </TableHeader>
+      <DndContext
+        collisionDetection={closestCenter}
+        modifiers={[restrictToHorizontalAxis]}
+        onDragEnd={handleColumnDragEnd}
+        sensors={sensors}
+      >
+        <div className="min-w-max relative" style={columnSizeVars}>
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  <SortableContext
+                    items={columnOrder}
+                    strategy={horizontalListSortingStrategy}
+                  >
+                    {headerGroup.headers.map((header) => (
+                      <DraggableTableHeader
+                        key={header.id}
+                        header={header}
+                        onSort={handleSort}
+                        sort={sort}
+                      />
+                    ))}
+                  </SortableContext>
+                </TableRow>
+              ))}
+            </TableHeader>
         <TableBody>
           {isLoading ? (
-            <TableSkeleton showMembersColumn={showMembersColumnInUI} />
+            <TableSkeleton />
           ) : (
             <>
               {showLeadingRow && (
@@ -321,19 +624,32 @@ export const WorkspaceDataTable = forwardRef<
                   className="cursor-pointer pl-6"
                   onClick={() => router.push(sharedBase)}
                 >
-                  <TableCell className="pl-6">
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 shrink-0 text-amber-500" />
-                      <span className="text-muted-foreground font-medium italic">
-                        View Shared Folders
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="pl-6" />
-                  <TableCell className="hidden md:table-cell pl-6" />
-                  {showMembersColumn && <TableCell className="hidden lg:table-cell pl-6" />}
-                  <TableCell className="hidden sm:table-cell pl-6" />
-                  <TableCell className="hidden lg:table-cell pl-6" />
+                  {table.getVisibleLeafColumns().map((column) => {
+                    const meta = column.columnDef.meta as
+                      | { className?: string }
+                      | undefined;
+                    const className = clsx("pl-6", meta?.className ?? "");
+                    return (
+                      <TableCell
+                        key={column.id}
+                        className={className}
+                        style={{
+                          width: `var(--col-${column.id}-size)`,
+                          minWidth: `var(--col-${column.id}-size)`,
+                          maxWidth: `var(--col-${column.id}-size)`,
+                        }}
+                      >
+                        {column.id === "name" ? (
+                          <div className="flex items-center gap-2">
+                            <Users className="h-4 w-4 shrink-0 text-amber-500" />
+                            <span className="text-muted-foreground font-medium italic">
+                              View Shared Folders
+                            </span>
+                          </div>
+                        ) : null}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               )}
 
@@ -342,42 +658,60 @@ export const WorkspaceDataTable = forwardRef<
                   className="cursor-pointer pl-6"
                   onClick={handleParentClick}
                 >
-                  <TableCell className="pl-6">
-                    <div className="flex items-center gap-2">
-                      <FolderUp className="h-4 w-4 shrink-0 text-amber-500" />
-                      <span className="text-muted-foreground font-medium italic">
-                        {parentRowLabel}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="pl-6" />
-                  <TableCell className="hidden md:table-cell pl-6" />
-                  {showMembersColumn && <TableCell className="hidden lg:table-cell pl-6" />}
-                  <TableCell className="hidden sm:table-cell pl-6" />
-                  <TableCell className="hidden lg:table-cell pl-6" />
+                  {table.getVisibleLeafColumns().map((column) => {
+                    const meta = column.columnDef.meta as
+                      | { className?: string }
+                      | undefined;
+                    const className = clsx("pl-6", meta?.className ?? "");
+                    return (
+                      <TableCell
+                        key={column.id}
+                        className={className}
+                        style={{
+                          width: `var(--col-${column.id}-size)`,
+                          minWidth: `var(--col-${column.id}-size)`,
+                          maxWidth: `var(--col-${column.id}-size)`,
+                        }}
+                      >
+                        {column.id === "name" ? (
+                          <div className="flex items-center gap-2">
+                            <FolderUp className="h-4 w-4 shrink-0 text-amber-500" />
+                            <span className="text-muted-foreground font-medium italic">
+                              {parentRowLabel}
+                            </span>
+                          </div>
+                        ) : null}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               )}
 
               {items.length === 0 && !isLoading ? (
                 <TableRow className="pl-6">
                   <TableCell
-                    colSpan={showMembersColumn ? 6 : 5}
+                    colSpan={table.getAllLeafColumns().length}
                     className="text-muted-foreground py-12 text-center pl-6"
                   >
                     This folder is empty
                   </TableCell>
                 </TableRow>
               ) : (
-                items.map((item) => {
+                table.getRowModel().rows.map((row) => {
+                  const item = row.original;
                   const isNavigable = isFolderType(item.type);
-                  const memberCount = memberCountByPath?.[item.path];
                   const normalizedItemPath = normalizePath(item.path);
-                  const selectedSet = new Set((selectedPaths ?? []).map(normalizePath));
+                  const selectedSet = new Set(
+                    (selectedPaths ?? []).map(normalizePath),
+                  );
                   const isSelected =
                     useSelectionMode && selectedSet.has(normalizedItemPath);
 
                   function handleRowMouseDown(e: React.MouseEvent) {
-                    if (useSelectionMode && (e.shiftKey || e.ctrlKey || e.metaKey)) {
+                    if (
+                      useSelectionMode &&
+                      (e.shiftKey || e.ctrlKey || e.metaKey)
+                    ) {
                       e.preventDefault();
                     }
                   }
@@ -401,11 +735,16 @@ export const WorkspaceDataTable = forwardRef<
 
                   return (
                     <TableRow
-                      key={item.id}
+                      key={row.id}
                       className={
-                        (useSelectionMode ? "border-l-2 " + (isSelected ? "border-l-primary" : "border-l-transparent") : "")
-                        + (useSelectionMode || isNavigable ? " cursor-pointer pl-6" : " pl-6")
-                        + (isSelected ? " bg-muted" : "")
+                        (useSelectionMode
+                          ? "border-l-2 " +
+                            (isSelected ? "border-l-primary" : "border-l-transparent")
+                          : "") +
+                        (useSelectionMode || isNavigable
+                          ? " cursor-pointer pl-6"
+                          : " pl-6") +
+                        (isSelected ? " bg-muted" : "")
                       }
                       onMouseDown={handleRowMouseDown}
                       onClick={handleRowClick}
@@ -417,39 +756,28 @@ export const WorkspaceDataTable = forwardRef<
                       }
                       aria-selected={useSelectionMode ? isSelected : undefined}
                     >
-                      <TableCell className="pl-6">
-                        <div className="flex items-center gap-2">
-                          <WorkspaceItemIcon type={item.type} />
-                          <span
-                            className={
-                              isNavigable
-                                ? "font-medium hover:underline"
-                                : ""
-                            }
+                      {row.getVisibleCells().map((cell) => {
+                        const meta = cell.column.columnDef.meta as
+                          | { className?: string }
+                          | undefined;
+                        const className = clsx("pl-6", meta?.className ?? "");
+                        return (
+                          <TableCell
+                            key={cell.id}
+                            className={className}
+                            style={{
+                              width: `var(--col-${cell.column.id}-size)`,
+                              minWidth: `var(--col-${cell.column.id}-size)`,
+                              maxWidth: `var(--col-${cell.column.id}-size)`,
+                            }}
                           >
-                            {item.name}
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground pl-6">
-                        {formatFileSize(item.size)}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground hidden md:table-cell pl-6">
-                        {formatOwner(item.owner_id)}
-                      </TableCell>
-                      {showMembersColumn && (
-                        <TableCell className="text-muted-foreground hidden lg:table-cell pl-6">
-                          {memberCount != null
-                            ? formatMemberCount(memberCount)
-                            : "—"}
-                        </TableCell>
-                      )}
-                      <TableCell className="text-muted-foreground hidden sm:table-cell pl-6">
-                        {formatDate(item.creation_time)}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground hidden lg:table-cell pl-6">
-                        {item.type}
-                      </TableCell>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </TableCell>
+                        );
+                      })}
                     </TableRow>
                   );
                 })
@@ -457,7 +785,9 @@ export const WorkspaceDataTable = forwardRef<
             </>
           )}
         </TableBody>
-      </Table>
+          </Table>
+        </div>
+      </DndContext>
     </div>
   );
 });

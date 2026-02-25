@@ -22,7 +22,8 @@ import { ChevronRight, ChevronDown } from "lucide-react";
 export type InfoPanelProps =
   | {
       variant: "workspace";
-      workspaceItem: WorkspaceBrowserItem;
+      /** When multiple items are selected, single-file details are not shown. */
+      selection: WorkspaceBrowserItem[];
       onClose?: () => void;
       onAction?: (actionId: string, selection: WorkspaceBrowserItem[]) => void;
     }
@@ -108,13 +109,29 @@ function WorkspaceItemDetailContent({
 
 export function InfoPanel(props: InfoPanelProps) {
   if (props.variant === "workspace") {
+    const { selection } = props;
+    const isMultiSelect = selection.length > 1;
+
     return (
       <div className="flex h-full w-full flex-col overflow-hidden px-4 py-2">
-        <WorkspaceItemDetailContent
-          workspaceItem={props.workspaceItem}
-          onClose={props.onClose}
-          onAction={props.onAction}
-        />
+        {isMultiSelect ? (
+          <>
+            <div className="flex items-center justify-between gap-2 border-b pb-2">
+              <h3 className="truncate text-sm font-semibold">
+                {selection.length} items selected
+              </h3>
+            </div>
+            <div className="text-muted-foreground flex flex-1 items-center justify-center py-6 text-center text-sm">
+              Select a single item to view details
+            </div>
+          </>
+        ) : (
+          <WorkspaceItemDetailContent
+            workspaceItem={selection[0]}
+            onClose={props.onClose}
+            onAction={props.onAction}
+          />
+        )}
       </div>
     );
   }

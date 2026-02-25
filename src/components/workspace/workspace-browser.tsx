@@ -897,10 +897,10 @@ export function WorkspaceBrowser({
     </div>
   );
 
-  const detailsPanelContent = primaryItem ? (
+  const detailsPanelContent = selectedItems.length > 0 ? (
     <InfoPanel
       variant="workspace"
-      workspaceItem={primaryItem}
+      selection={selectedItems}
       onClose={() => {
         setPanelManuallyHidden(true);
         setPanelExpanded(false);

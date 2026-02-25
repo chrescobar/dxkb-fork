@@ -87,6 +87,11 @@ export class WorkspaceApiClient {
         return (result.result ?? []) as T;
       }
 
+      // Workspace.create returns result array (nested array of created object metadata)
+      if (method === "Workspace.create") {
+        return (result.result ?? []) as T;
+      }
+
       // Replicate the original logic for processing results (Workspace.ls)
       if (!result.result || !result.result[0]) {
         return [] as T;

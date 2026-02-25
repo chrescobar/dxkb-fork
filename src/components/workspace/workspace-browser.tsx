@@ -63,6 +63,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { CopyToDialog } from "./copy-to-dialog";
+import { CreateFolderDialog } from "./create-folder-dialog";
 import { EditTypeDialog } from "./edit-type-dialog";
 import { WorkspaceApiClient } from "@/lib/services/workspace/client";
 import { WorkspaceCrudMethods } from "@/lib/services/workspace/methods/crud";
@@ -178,6 +179,8 @@ export function WorkspaceBrowser({
     useState<WorkspaceBrowserItem | null>(null);
   const [isUpdatingType, setIsUpdatingType] = useState(false);
   const [isFavoriting, setIsFavoriting] = useState(false);
+  const [newFolderDialogOpen, setNewFolderDialogOpen] = useState(false);
+  const [isCreatingFolder, setIsCreatingFolder] = useState(false);
 
   const workspaceCrud = useMemo(
     () => new WorkspaceCrudMethods(new WorkspaceApiClient()),
@@ -586,6 +589,31 @@ export function WorkspaceBrowser({
     }
   }
 
+  const currentDirectoryPath = `${currentUserWorkspaceRoot}/home${fullPath ? fullPath : ""}`;
+
+  async function handleCreateFolder(folderName: string) {
+    const name = folderName.trim();
+    if (!name) return;
+    const parent = currentDirectoryPath.replace(/\/+$/, "") || currentDirectoryPath;
+    const newFolderPath = `${parent}/${name}`;
+    setIsCreatingFolder(true);
+    try {
+      await workspaceCrud.createFolderByPath(newFolderPath);
+      setNewFolderDialogOpen(false);
+      setSelectedItem(null);
+      refetch();
+      toast.success("Folder created", {
+        description: name,
+      });
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Failed to create folder.";
+      toast.error(message);
+    } finally {
+      setIsCreatingFolder(false);
+    }
+  }
+
   async function handleEditTypeConfirm(newType: string) {
     const item = pendingEditTypeItem;
     if (!item?.path) return;
@@ -663,6 +691,12 @@ export function WorkspaceBrowser({
         onConfirm={(newType) => handleEditTypeConfirm(newType)}
         isUpdating={isUpdatingType}
       />
+      <CreateFolderDialog
+        open={newFolderDialogOpen}
+        onOpenChange={setNewFolderDialogOpen}
+        onCreateFolder={handleCreateFolder}
+        isCreating={isCreatingFolder}
+      />
       <AlertDialog
         open={deleteDialogOpen}
         onOpenChange={(open) => {
@@ -714,6 +748,7 @@ export function WorkspaceBrowser({
           isRefreshing={isFetching}
           showHiddenFiles={showHiddenFiles}
           onShowHiddenFilesChange={setShowHiddenFiles}
+          onNewFolder={isHome ? () => setNewFolderDialogOpen(true) : undefined}
         />
 
         {error && (

@@ -37,6 +37,7 @@ interface WorkspaceToolbarProps {
   isRefreshing: boolean;
   showHiddenFiles: boolean;
   onShowHiddenFilesChange: (show: boolean) => void;
+  onNewFolder?: () => void;
 }
 
 export function WorkspaceToolbar({
@@ -48,6 +49,7 @@ export function WorkspaceToolbar({
   isRefreshing,
   showHiddenFiles,
   onShowHiddenFilesChange,
+  onNewFolder,
 }: WorkspaceToolbarProps) {
   return (
     <div className="grid min-w-0 grid-cols-1 gap-3 lg:grid-cols-[1fr_auto] lg:items-center">
@@ -113,7 +115,12 @@ export function WorkspaceToolbar({
           Refresh
         </Button>
 
-        <Button variant="outline" size="sm" disabled>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onNewFolder}
+          disabled={!onNewFolder}
+        >
           <FolderPlus className="h-4 w-4" data-icon="inline-start" />
           New Folder
         </Button>

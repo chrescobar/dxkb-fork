@@ -38,6 +38,16 @@ export class WorkspaceCrudMethods {
   }
 
   /**
+   * Create a single folder by full path (path-based Workspace.create).
+   * Path format: /username@realm/home/.../folderName (e.g. /chrescobar@bvbrc/home/Testing/newfolder).
+   */
+  async createFolderByPath(fullPath: string): Promise<WorkspaceCreateResponse> {
+    return this.client.makeRequest<WorkspaceCreateResponse>("Workspace.create", [
+      { objects: [[fullPath, "Directory"]] },
+    ]);
+  }
+
+  /**
    * Create a single folder
    */
   async createFolder(

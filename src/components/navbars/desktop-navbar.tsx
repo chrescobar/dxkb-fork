@@ -195,13 +195,13 @@ const DesktopNavbar = () => {
               </NavigationMenuContent>
             </NavigationMenuItem>
 
-            {/* Workspace - only show when authenticated */}
-            {isAuthenticated && (
-              <NavigationMenuItem id="workspace-nav">
-                <NavigationMenuTrigger className="bg-primary">
-                  Workspace
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
+            {/* Workspace - always visible; when not signed in, prompt to Sign In */}
+            <NavigationMenuItem id="workspace-nav">
+              <NavigationMenuTrigger className="bg-primary">
+                Workspace
+              </NavigationMenuTrigger>
+              <NavigationMenuContent>
+                {isAuthenticated ? (
                   <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                     <ListItem
                       key="workspace-nav"
@@ -213,14 +213,33 @@ const DesktopNavbar = () => {
                     <ListItem
                       key="workspace-jobs-nav"
                       title="Jobs"
-                      href={wsUsername ? `/workspace/${encodeWorkspaceSegment(wsUsername)}/jobs` : "/workspace"}
+                      href="/jobs"
                     >
                       View all jobs in your workspace.
                     </ListItem>
                   </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            )}
+                ) : (
+                  <ul className="grid w-[300px] gap-3 p-4 md:w-[400px] md:grid-cols-2 lg:w-[500px]">
+                    <ListItem
+                      key="workspace-sign-in"
+                      title="My Workspace"
+                      href="/sign-in?redirect=/workspace"
+                      className="w-full"
+                    >
+                      Sign in required
+                    </ListItem>
+                    <ListItem
+                      key="jobs-sign-in"
+                      title="My Jobs"
+                      href="/sign-in?redirect=/jobs"
+                      className="w-full"
+                    >
+                      Sign in required
+                    </ListItem>
+                  </ul>
+                )}
+              </NavigationMenuContent>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
         </div>
@@ -304,7 +323,7 @@ const DesktopNavbar = () => {
                       <DropdownMenuItem>
                         <span className="flex items-center gap-2">
                           <BriefcaseBusiness className="text-foreground h-4 w-4" />
-                          <Link href={wsUsername ? `/workspace/${encodeWorkspaceSegment(wsUsername)}/jobs` : "/workspace"}>My Jobs</Link>
+                          <Link href="/jobs">My Jobs</Link>
                         </span>
                       </DropdownMenuItem>
                       <DropdownMenuItem>

@@ -77,6 +77,11 @@ export class WorkspaceApiClient {
         return (result.result ?? []) as T;
       }
 
+      // Workspace.get_archive_url returns [url, file_count, total_size]
+      if (method === "Workspace.get_archive_url") {
+        return (result.result ?? []) as T;
+      }
+
       // Workspace.copy returns result array (path-based copy)
       if (method === "Workspace.copy") {
         return (result.result ?? []) as T;

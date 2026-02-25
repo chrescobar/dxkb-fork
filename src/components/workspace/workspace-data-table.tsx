@@ -19,6 +19,7 @@ import {
   WorkspaceBrowserSort,
 } from "@/types/workspace-browser";
 import { encodeWorkspaceSegment, sanitizePathSegment } from "@/lib/utils";
+import { normalizePath } from "@/lib/workspace/table-selection";
 
 export type ViewMode = "home" | "shared";
 
@@ -39,9 +40,12 @@ interface WorkspaceDataTableProps {
   /** When viewMode is "shared", username for "Back to my workspaces" link (current user) */
   sharedRootUsername?: string;
   /** When set, single click selects (and opens panel); double click navigates. Omit for legacy single-click navigate. */
-  selectedPath?: string | null;
-  /** Called on single click when selection mode is used */
-  onSelect?: (item: WorkspaceBrowserItem) => void;
+  selectedPaths?: string[];
+  /** Called on single click when selection mode is used; modifiers support Ctrl/Cmd+click (toggle) and Shift+click (range). */
+  onSelect?: (
+    item: WorkspaceBrowserItem,
+    modifiers?: { ctrlOrMeta: boolean; shift: boolean },
+  ) => void;
   /** Called on double click (folders only) when selection mode is used; parent should navigate */
   onItemDoubleClick?: (item: WorkspaceBrowserItem) => void;
 }
@@ -139,7 +143,7 @@ export const WorkspaceDataTable = forwardRef<
     memberCountByPath,
     username = "",
     sharedRootUsername,
-    selectedPath = null,
+    selectedPaths = [],
     onSelect,
     onItemDoubleClick,
   },
@@ -154,18 +158,17 @@ export const WorkspaceDataTable = forwardRef<
     focus: () => tableContainerRef.current?.focus(),
   }));
 
-  function normalizePath(p: string | undefined): string {
-    return (p ?? "").replace(/\/+/g, "/").replace(/^\//, "").replace(/\/$/, "") || "/";
-  }
-
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (!useSelectionMode || items.length === 0) return;
       if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
 
-      const normalizedSelected = normalizePath(selectedPath ?? undefined);
+      const paths = selectedPaths ?? [];
+      const focusPath =
+        paths.length > 0 ? paths[paths.length - 1] : null;
+      const normalizedFocus = normalizePath(focusPath ?? undefined);
       const currentIndex = items.findIndex(
-        (i) => normalizePath(i.path) === normalizedSelected
+        (i) => normalizePath(i.path) === normalizedFocus,
       );
 
       let nextIndex: number;
@@ -178,10 +181,10 @@ export const WorkspaceDataTable = forwardRef<
       const nextItem = items[nextIndex];
       if (nextItem) {
         e.preventDefault();
-        onSelect?.(nextItem);
+        onSelect?.(nextItem, { ctrlOrMeta: false, shift: false });
       }
     },
-    [useSelectionMode, items, selectedPath, onSelect]
+    [useSelectionMode, items, selectedPaths, onSelect],
   );
   const pathSegments = path
     ? path.split("/").map(sanitizePathSegment).filter(Boolean)
@@ -352,12 +355,22 @@ export const WorkspaceDataTable = forwardRef<
                   const isNavigable = isFolderType(item.type);
                   const memberCount = memberCountByPath?.[item.path];
                   const normalizedItemPath = normalizePath(item.path);
-                  const normalizedSelectedPath = normalizePath(selectedPath ?? undefined);
-                  const isSelected = useSelectionMode && selectedPath != null && normalizedItemPath === normalizedSelectedPath;
+                  const selectedSet = new Set((selectedPaths ?? []).map(normalizePath));
+                  const isSelected =
+                    useSelectionMode && selectedSet.has(normalizedItemPath);
 
-                  function handleRowClick() {
+                  function handleRowMouseDown(e: React.MouseEvent) {
+                    if (useSelectionMode && (e.shiftKey || e.ctrlKey || e.metaKey)) {
+                      e.preventDefault();
+                    }
+                  }
+
+                  function handleRowClick(e: React.MouseEvent) {
                     if (useSelectionMode) {
-                      onSelect?.(item);
+                      onSelect?.(item, {
+                        ctrlOrMeta: e.ctrlKey || e.metaKey,
+                        shift: e.shiftKey,
+                      });
                     } else if (isNavigable) {
                       handleItemClick(item);
                     }
@@ -374,9 +387,10 @@ export const WorkspaceDataTable = forwardRef<
                       key={item.id}
                       className={
                         (useSelectionMode ? "border-l-2 " + (isSelected ? "border-l-primary" : "border-l-transparent") : "")
-                        + (isNavigable ? " cursor-pointer pl-6" : "")
+                        + (useSelectionMode || isNavigable ? " cursor-pointer pl-6" : " pl-6")
                         + (isSelected ? " bg-muted" : "")
                       }
+                      onMouseDown={handleRowMouseDown}
                       onClick={handleRowClick}
                       onDoubleClick={handleRowDoubleClick}
                       title={

@@ -252,6 +252,7 @@ export type WorkspaceMethod =
   | "Workspace.get"
   | "Workspace.save"
   | "Workspace.get_download_url"
+  | "Workspace.get_archive_url"
   | "Workspace.update_metadata"
   | "Workspace.update_auto_meta";
 

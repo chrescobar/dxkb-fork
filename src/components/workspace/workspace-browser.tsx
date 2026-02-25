@@ -29,7 +29,9 @@ import {
 import { InfoPanel } from "@/components/containers/InfoPanel";
 import { WorkspaceActionBar } from "./workspace-action-bar";
 import { isFolderType } from "./workspace-item-icon";
-import { getDownloadUrls } from "@/lib/services/workspace/methods/download";
+import {
+  getDownloadUrls,
+} from "@/lib/services/workspace/methods/download";
 import {
   loadFavorites,
   toggleFavorite,
@@ -64,10 +66,15 @@ import {
 } from "@/components/ui/alert-dialog";
 import { CopyToDialog } from "./copy-to-dialog";
 import { CreateFolderDialog } from "./create-folder-dialog";
+import { DownloadOptionsDialog } from "./download-options-dialog";
 import { UploadDialog } from "./upload-dialog";
 import { EditTypeDialog } from "./edit-type-dialog";
 import { WorkspaceApiClient } from "@/lib/services/workspace/client";
 import { WorkspaceCrudMethods } from "@/lib/services/workspace/methods/crud";
+import {
+  computeNextSelection,
+  normalizePath,
+} from "@/lib/workspace/table-selection";
 
 export type WorkspaceViewMode = "home" | "shared";
 
@@ -157,9 +164,8 @@ export function WorkspaceBrowser({
     panelLayout,
     setPanelLayout,
   } = useWorkspacePanel();
-  const [selectedItem, setSelectedItem] = useState<WorkspaceBrowserItem | null>(
-    null,
-  );
+  const [selectedItems, setSelectedItems] = useState<WorkspaceBrowserItem[]>([]);
+  const [anchorPath, setAnchorPath] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -183,6 +189,10 @@ export function WorkspaceBrowser({
   const [newFolderDialogOpen, setNewFolderDialogOpen] = useState(false);
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [downloadOptionsOpen, setDownloadOptionsOpen] = useState(false);
+  const [downloadOptionsPaths, setDownloadOptionsPaths] = useState<string[]>(
+    [],
+  );
 
   const workspaceCrud = useMemo(
     () => new WorkspaceCrudMethods(new WorkspaceApiClient()),
@@ -194,8 +204,9 @@ export function WorkspaceBrowser({
     queryFn: () => loadFavorites(myWorkspaceRoot),
     enabled: mode === "home" && !!myWorkspaceRoot,
   });
+  const primaryItem = selectedItems[selectedItems.length - 1] ?? null;
   const isCurrentSelectionFavorite =
-    selectedItem?.path != null && favoritePaths.includes(selectedItem.path);
+    primaryItem?.path != null && favoritePaths.includes(primaryItem.path);
 
   const [sort, setSort] = useState<WorkspaceBrowserSort>({
     field: "name",
@@ -205,15 +216,16 @@ export function WorkspaceBrowser({
 
   const isHome = mode === "home";
   useEffect(() => {
-    setSelectedItem(null);
+    setSelectedItems([]);
+    setAnchorPath(null);
   }, [path, mode]);
 
   // Restore focus to the table after selection so arrow keys work (runs after panel/layout and any deferred focus)
   useEffect(() => {
-    if (!selectedItem) return;
+    if (selectedItems.length === 0) return;
     const id = setTimeout(() => tableRef.current?.focus(), 50);
     return () => clearTimeout(id);
-  }, [selectedItem]);
+  }, [selectedItems]);
   const isAtSharedRoot = !isHome && (!path || path === "");
   const fullPath = path ? `/${path}` : "";
 
@@ -366,11 +378,23 @@ export function WorkspaceBrowser({
       const encoded = segments.map(encodeWorkspaceSegment).join("/");
       router.push(`/workspace/${encoded}`);
     }
-    setSelectedItem(null);
+    setSelectedItems([]);
+    setAnchorPath(null);
   }
 
-  function handleSelectItem(item: WorkspaceBrowserItem) {
-    setSelectedItem(item);
+  function handleSelectItem(
+    item: WorkspaceBrowserItem,
+    modifiers?: { ctrlOrMeta: boolean; shift: boolean },
+  ) {
+    const { nextSelection, nextAnchorPath } = computeNextSelection(
+      processedItems,
+      selectedItems,
+      anchorPath,
+      item,
+      modifiers ?? { ctrlOrMeta: false, shift: false },
+    );
+    setSelectedItems(nextSelection);
+    setAnchorPath(nextAnchorPath);
     if (!panelManuallyHidden) setPanelExpanded(true);
   }
 
@@ -445,28 +469,36 @@ export function WorkspaceBrowser({
       return;
     }
     const paths = downloadable.map((item) => item.path);
-    setIsDownloading(true);
-    try {
-      const urlArrays = await getDownloadUrls(paths);
-      for (let i = 0; i < urlArrays.length; i++) {
-        const url = urlArrays[i]?.[0];
-        if (!url) continue;
-        const name = downloadable[i]?.name ?? "download";
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = name;
-        a.rel = "noopener noreferrer";
-        a.style.display = "none";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+    const singleFile =
+      downloadable.length === 1 && downloadable[0]?.type !== "job_result";
+    if (singleFile) {
+      setIsDownloading(true);
+      try {
+        const urlArrays = await getDownloadUrls(paths);
+        for (let i = 0; i < urlArrays.length; i++) {
+          const url = urlArrays[i]?.[0];
+          if (!url) continue;
+          const name = downloadable[i]?.name ?? "download";
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = name;
+          a.rel = "noopener noreferrer";
+          a.style.display = "none";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : "Download failed.";
+        alert(message);
+      } finally {
+        setIsDownloading(false);
       }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Download failed.";
-      alert(message);
-    } finally {
-      setIsDownloading(false);
+      return;
     }
+    setDownloadOptionsPaths(paths);
+    setDownloadOptionsOpen(true);
   }
 
   async function handleConfirmDelete() {
@@ -489,7 +521,8 @@ export function WorkspaceBrowser({
         force: true,
         deleteDirectories: true,
       });
-      setSelectedItem(null);
+      setSelectedItems([]);
+      setAnchorPath(null);
       setDeleteDialogOpen(false);
       setPendingDeleteSelection([]);
       refetch();
@@ -540,7 +573,8 @@ export function WorkspaceBrowser({
       });
       setCopyDialogOpen(false);
       setPendingCopySelection([]);
-      setSelectedItem(null);
+      setSelectedItems([]);
+      setAnchorPath(null);
       refetch();
 
       const description = isMove
@@ -602,7 +636,8 @@ export function WorkspaceBrowser({
     try {
       await workspaceCrud.createFolderByPath(newFolderPath);
       setNewFolderDialogOpen(false);
-      setSelectedItem(null);
+      setSelectedItems([]);
+      setAnchorPath(null);
       refetch();
       toast.success("Folder created", {
         description: name,
@@ -622,7 +657,8 @@ export function WorkspaceBrowser({
     setIsUpdatingType(true);
     try {
       await workspaceCrud.updateObjectType(item.path, newType);
-      setSelectedItem(null);
+      setSelectedItems([]);
+      setAnchorPath(null);
       setEditTypeDialogOpen(false);
       setPendingEditTypeItem(null);
       refetch();
@@ -708,6 +744,12 @@ export function WorkspaceBrowser({
           setUploadDialogOpen(false);
         }}
       />
+      <DownloadOptionsDialog
+        open={downloadOptionsOpen}
+        onOpenChange={setDownloadOptionsOpen}
+        paths={downloadOptionsPaths}
+        defaultArchiveName="archive"
+      />
       <AlertDialog
         open={deleteDialogOpen}
         onOpenChange={(open) => {
@@ -788,7 +830,7 @@ export function WorkspaceBrowser({
           username={username}
           sharedRootUsername={isHome ? undefined : myWorkspaceRoot}
           memberCountByPath={memberCountByPath}
-          selectedPath={selectedItem?.path ?? null}
+          selectedPaths={selectedItems.map((i) => normalizePath(i.path))}
           onSelect={handleSelectItem}
           onItemDoubleClick={handleItemDoubleClick}
         />
@@ -832,7 +874,7 @@ export function WorkspaceBrowser({
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto px-1.5">
         <WorkspaceActionBar
-          selection={selectedItem ? [selectedItem] : []}
+          selection={selectedItems}
           workspaceGuideUrl={workspaceGuideUrl}
           isCurrentSelectionFavorite={isCurrentSelectionFavorite}
           disabledActionIds={[
@@ -855,10 +897,10 @@ export function WorkspaceBrowser({
     </div>
   );
 
-  const detailsPanelContent = selectedItem ? (
+  const detailsPanelContent = primaryItem ? (
     <InfoPanel
       variant="workspace"
-      workspaceItem={selectedItem}
+      workspaceItem={primaryItem}
       onClose={() => {
         setPanelManuallyHidden(true);
         setPanelExpanded(false);

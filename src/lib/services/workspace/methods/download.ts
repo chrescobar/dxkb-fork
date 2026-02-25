@@ -10,3 +10,19 @@ export async function getDownloadUrls(objectPaths: string[]): Promise<string[][]
     { objects: objectPaths },
   ]);
 }
+
+/**
+ * Get one-time URL for downloading multiple workspace objects as an archive.
+ * Calls Workspace.get_archive_url; returns [url, file_count, total_size].
+ */
+export async function getArchiveUrl(params: {
+  objects: string[];
+  recursive: boolean;
+  archive_name: string;
+  archive_type: string;
+}): Promise<[string, number, number]> {
+  return workspaceApi.makeRequest<[string, number, number]>(
+    "Workspace.get_archive_url",
+    [params],
+  );
+}

@@ -11,10 +11,10 @@ function buildWorkspacePath(
   base: string,
   relativePath: string,
 ): string {
-  const decodedUser = decodeURIComponent(username);
-  const decodedPath = decodeURIComponent(relativePath);
-  const trimmed = decodedPath.replace(/^\/+|\/+$/g, "");
-  const root = `/${decodedUser}@bvbrc/${base}`;
+  // Callers (page components) already decode params via safeDecode; do not
+  // decode again—decodeURIComponent throws on already-decoded strings with "%".
+  const trimmed = relativePath.replace(/^\/+|\/+$/g, "");
+  const root = `/${username}@bvbrc/${base}`;
   return trimmed ? `${root}/${trimmed}` : root;
 }
 

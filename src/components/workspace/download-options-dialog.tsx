@@ -20,7 +20,7 @@ import { Spinner } from "@/components/ui/spinner";
 import {
   WorkspaceDownloadMethods,
 } from "@/lib/services/workspace/methods/download";
-import { WorkspaceApiClient } from "@/lib/services/workspace/client";
+import { workspaceApi } from "@/lib/services/workspace/client";
 import { toast } from "sonner";
 
 const ARCHIVE_TYPE_OPTIONS = [{ value: "zip", label: "zip" }];
@@ -45,7 +45,7 @@ export function DownloadOptionsDialog({
   downloadMethods: downloadMethodsProp,
 }: DownloadOptionsDialogProps) {
   const defaultDownloadMethods = React.useMemo(
-    () => new WorkspaceDownloadMethods(new WorkspaceApiClient()),
+    () => new WorkspaceDownloadMethods(workspaceApi),
     [],
   );
   const downloadMethods = downloadMethodsProp ?? defaultDownloadMethods;

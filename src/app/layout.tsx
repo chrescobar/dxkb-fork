@@ -9,6 +9,7 @@ import { Providers } from "./providers"; // adjust the path as needed
 import { AuthProvider } from "@/contexts/auth-context";
 import { cookies } from "next/headers";
 import type { AuthUser } from "@/app/api/auth/types";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -80,7 +81,11 @@ export default async function RootLayout({
       <body className="min-h-screen">
         <Providers>
           <ThemeProvider defaultTheme="dxkb-light">
-            <AuthProvider initialUser={initialUser}>{children}</AuthProvider>
+            <AuthProvider initialUser={initialUser}>
+              <TooltipProvider>
+                {children}
+              </TooltipProvider>
+            </AuthProvider>
             <ThemeSwitcher />
           </ThemeProvider>
           <Toaster

@@ -1,18 +1,10 @@
 "use client";
 
-import {
-  Download,
-  Trash2,
-  Pencil,
-  Copy,
-  Move,
-  Star,
-  BookOpen,
-  Type,
-  type LucideIcon,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import {TooltipProvider, Tooltip, TooltipTrigger, TooltipContent} from "@/components/ui/tooltip";
+import { Download, Trash2, Pencil, Copy, Move, Star, BookOpen, Type, type LucideIcon } from "lucide-react";
+
 import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
 
 const writePermissions = new Set(["o", "a", "w"]);
@@ -25,6 +17,8 @@ interface ActionConfig {
   validTypes: string[] | "*";
   /** If true, hide when user has only read permission */
   requireWrite?: boolean;
+  /** If set, button is always disabled and this string is shown as hover title */
+  disabledWithTooltip?: string;
 }
 
 // TODO: Add "View" buttons to FASTA/PDB files once the viewer/datagrid is implemented fully.
@@ -32,7 +26,14 @@ const actionConfig: ActionConfig[] = [
   { id: "guide", label: "GUIDE", icon: BookOpen, validTypes: "*" },
   { id: "download", label: "DWNLD", icon: Download, validTypes: "*" },
   { id: "delete", label: "DELETE", icon: Trash2, validTypes: "*", requireWrite: true },
-  { id: "rename", label: "RENAME", icon: Pencil, validTypes: "*", requireWrite: true },
+  {
+    id: "rename",
+    label: "RENAME",
+    icon: Pencil,
+    validTypes: "*",
+    requireWrite: true,
+    disabledWithTooltip: "Rename has been temporarily disabled while we address a technical issue.",
+  },
   { id: "copy", label: "COPY", icon: Copy, validTypes: "*" },
   { id: "move", label: "MOVE", icon: Move, validTypes: "*", requireWrite: true },
   { id: "editType", label: "EDIT TYPE", icon: Type, validTypes: "*", requireWrite: true },
@@ -92,38 +93,60 @@ export function WorkspaceActionBar({
     disabledActionIds?.includes(actionId) ?? false;
   const isLoading = (actionId: string) =>
     loadingActionIds?.includes(actionId) ?? false;
+  const isPermanentlyDisabled = (action: ActionConfig) =>
+    !!action.disabledWithTooltip;
 
   return (
-    <div className="flex flex-col gap-1">
-      {visibleActions.map((action) => {
-        const Icon = action.icon;
-        const showSpinner = isLoading(action.id);
-        const isFavoriteAction = action.id === "favorite";
-        const showFilledStar =
-          isFavoriteAction && isCurrentSelectionFavorite && !showSpinner;
-        return (
-          <Button
-            key={action.id}
-            variant="secondary"
-            className="h-[60px] w-full flex-col gap-1 font-normal"
-            disabled={isDisabled(action.id)}
-            onClick={() =>
-              action.id === "guide"
-                ? window.open(workspaceGuideUrl, "_blank", "noopener,noreferrer")
-                : onAction?.(action.id, selection)
-            }
-          >
-            {showSpinner ? (
-              <Spinner className="h-4 w-4 shrink-0" />
-            ) : showFilledStar ? (
-              <Star className="h-4 w-4 shrink-0 fill-current" />
-            ) : (
-              <Icon className="h-4 w-4 shrink-0" />
-            )}
-            <span className="text-[11px] font-medium leading-tight">{action.label}</span>
-          </Button>
-        );
-      })}
-    </div>
+    <TooltipProvider>
+      <div className="flex flex-col gap-1">
+        {visibleActions.map((action) => {
+          const Icon = action.icon;
+          const showSpinner = isLoading(action.id);
+          const isFavoriteAction = action.id === "favorite";
+          const showFilledStar =
+            isFavoriteAction && isCurrentSelectionFavorite && !showSpinner;
+          const disabled =
+            isDisabled(action.id) || isPermanentlyDisabled(action);
+          const buttonEl = (
+            <Button
+              key={action.id}
+              variant="secondary"
+              className="h-[60px] w-full flex-col gap-1 font-normal"
+              disabled={disabled}
+              onClick={() =>
+                action.id === "guide"
+                  ? window.open(workspaceGuideUrl, "_blank", "noopener,noreferrer")
+                  : onAction?.(action.id, selection)
+              }
+            >
+              {showSpinner ? (
+                <Spinner className="h-4 w-4 shrink-0" />
+              ) : showFilledStar ? (
+                <Star className="h-4 w-4 shrink-0 fill-current" />
+              ) : (
+                <Icon className="h-4 w-4 shrink-0" />
+              )}
+              <span className="text-[11px] font-medium leading-tight">{action.label}</span>
+            </Button>
+          );
+          return action.disabledWithTooltip && disabled ? (
+            <Tooltip key={action.id}>
+              <TooltipTrigger
+                render={
+                  <span className="inline-flex w-full cursor-not-allowed">
+                    {buttonEl}
+                  </span>
+                }
+              />
+              <TooltipContent side="left">
+                <p>{action.disabledWithTooltip}</p>
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            buttonEl
+          );
+        })}
+      </div>
+    </TooltipProvider>
   );
 }

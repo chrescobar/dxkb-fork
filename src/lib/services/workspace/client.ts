@@ -76,6 +76,7 @@ export class WorkspaceApiClient {
       // the ls path and get incorrectly processed with metaListToObj.
       const rawResultMethods: Set<WorkspaceMethod> = new Set([
         "Workspace.get",
+        "Workspace.du",
         "Workspace.get_download_url",
         "Workspace.get_archive_url",
         "Workspace.copy",

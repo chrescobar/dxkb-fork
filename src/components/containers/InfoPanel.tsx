@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useWorkspaceDu } from "@/hooks/services/workspace/use-workspace-du";
 
 import { genomeFields } from "@/constants/datafields/genome";
 import { genome_sequenceFields } from "@/constants/datafields/genome_sequence";
@@ -51,6 +52,17 @@ function formatWorkspaceOwner(ownerId: string): string {
   return ownerId.replace(/@bvbrc$/, "");
 }
 
+function formatDiskUsage(bytes: number): string {
+  if (!bytes || bytes === 0) return "0 B";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  if (bytes < 1024 * 1024 * 1024)
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  if (bytes < 1024 * 1024 * 1024 * 1024)
+    return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+  return `${(bytes / (1024 * 1024 * 1024 * 1024)).toFixed(2)} TB`;
+}
+
 function WorkspaceItemDetailContent({
   workspaceItem,
   onClose: _onClose,
@@ -62,6 +74,8 @@ function WorkspaceItemDetailContent({
 }) {
   const fullPath = `${workspaceItem.path}${workspaceItem.name}`.replace(/\/+/g, "/");
   const pathDisplay = fullPath || workspaceItem.path || "—";
+
+  const { data: diskUsage, isPending: isDiskUsageLoading, error: diskUsageError } = useWorkspaceDu(workspaceItem.path || null);
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -97,10 +111,36 @@ function WorkspaceItemDetailContent({
               </dd>
             </div>
           </dl>
-          <div>
-            <dt className="text-muted-foreground mb-1">Disk Usage</dt>
-            <dd className="text-muted-foreground">—</dd>
-          </div>
+          <dl className="grid gap-1.5">
+            <div>
+              <dt className="text-muted-foreground mb-1">Disk Usage</dt>
+              <dd className="text-muted-foreground">
+                {isDiskUsageLoading
+                  ? "Loading…"
+                  : diskUsageError
+                    ? "—"
+                    : diskUsage !== undefined
+                      ? formatDiskUsage(diskUsage.sizeBytes)
+                      : "—"}
+              </dd>
+            </div>
+            {diskUsage !== undefined && (
+              <>
+                <div>
+                  <dt className="text-muted-foreground">Files</dt>
+                  <dd className="text-muted-foreground">
+                    {diskUsage.files.toLocaleString()}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-muted-foreground">Folders</dt>
+                  <dd className="text-muted-foreground">
+                    {diskUsage.folders.toLocaleString()}
+                  </dd>
+                </div>
+              </>
+            )}
+          </dl>
         </div>
       </div>
     </div>

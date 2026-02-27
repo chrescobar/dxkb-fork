@@ -240,8 +240,19 @@ export interface WorkspaceUpdateAutoMetaParams {
   objects: string[];
 }
 
+/** Params for Workspace.du (disk usage). */
+export interface WorkspaceDuParams {
+  paths: string[];
+  recursive?: boolean;
+  adminmode?: boolean;
+}
+
+/** Response from Workspace.du: result[0] = array of [path, sizeBytes, fileCount, dirCount, error]. */
+export type WorkspaceDuResponse = [[string, number, number, number, string][]];
+
 export type WorkspaceMethod =
   | "Workspace.ls"
+  | "Workspace.du"
   | "Workspace.list_permissions"
   | "Workspace.get_permissions"
   | "Workspace.create"

@@ -68,7 +68,7 @@ function formatSize(bytes: number): string {
   return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
 }
 
-function MiniBrowserBreadcrumbs({
+function _MiniBrowserBreadcrumbs({
   currentPath,
   onNavigate,
   className,
@@ -189,7 +189,10 @@ export function WorkspaceMiniBrowser({
     return Array.from(byPath.values());
   }, [isAtRoot, userWorkspacesQuery.data, sharedQuery.data]);
 
-  const items = isAtRoot ? rootItems : (pathQuery.data ?? []);
+  const items = useMemo(
+    () => (isAtRoot ? rootItems : (pathQuery.data ?? [])),
+    [isAtRoot, rootItems, pathQuery.data],
+  );
   const isLoading = isAtRoot
     ? userWorkspacesQuery.isLoading || sharedQuery.isLoading
     : pathQuery.isLoading;
@@ -214,7 +217,7 @@ export function WorkspaceMiniBrowser({
     return [...list].sort(sortCompare);
   }, [items, mode, showHidden]);
 
-  const handleNavigate = (path: string) => {
+  const _handleNavigate = (path: string) => {
     setCurrentPath(path);
   };
 
@@ -244,7 +247,7 @@ export function WorkspaceMiniBrowser({
       ? "Back to my workspaces"
       : "Parent folder";
 
-  const handleParentClick = () => {
+  const handleParentClick = useCallback(() => {
     if (isInSharedFolder && pathSegments.length <= 2) {
       setCurrentPath(workspaceRoot!);
       return;
@@ -252,9 +255,9 @@ export function WorkspaceMiniBrowser({
     const parentSegments = pathSegments.slice(0, -1);
     const parentPath = parentSegments.length > 0 ? "/" + parentSegments.join("/") : "/";
     setCurrentPath(parentPath);
-  };
+  }, [isInSharedFolder, pathSegments, workspaceRoot]);
 
-  const breadcrumbsClickable = !isInSharedFolder;
+  const _breadcrumbsClickable = !isInSharedFolder;
 
   const navigableItems = useMemo(
     () => displayItems.filter((item) => isFolderType(item.type)),
@@ -305,7 +308,7 @@ export function WorkspaceMiniBrowser({
       const currentKey =
         focusedRow ?? selectedKey ?? (showParentRow ? "parent" : null);
 
-      let currentIndex = currentKey
+      const currentIndex = currentKey
         ? navigationTargets.indexOf(currentKey)
         : -1;
 

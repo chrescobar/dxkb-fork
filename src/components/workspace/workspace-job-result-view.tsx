@@ -12,10 +12,8 @@ import {
   ChevronRight,
   ClipboardCopy,
   Construction,
-  HardHat,
   PanelRightClose,
   PanelRightOpen,
-  Wrench,
 } from "lucide-react";
 import { toast } from "sonner";
 import { WorkspaceBreadcrumbs } from "./workspace-breadcrumbs";
@@ -162,7 +160,7 @@ export function WorkspaceJobResultView({
     fullPath: dotPathNormalized,
     enabled: !!dotPath,
   });
-  const dotItems = listQuery.data ?? [];
+  const dotItems = useMemo(() => listQuery.data ?? [], [listQuery.data]);
   const isLoadingList = listQuery.isLoading;
 
   const [selectedItems, setSelectedItems] = useState<WorkspaceBrowserItem[]>([]);

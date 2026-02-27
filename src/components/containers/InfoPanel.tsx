@@ -67,7 +67,9 @@ function formatDiskUsage(bytes: number): string {
 function getItemFullPath(item: WorkspaceBrowserItem): string {
   const rawPath = (item.path ?? "").replace(/\/+$/, "").replace(/\/+/g, "/");
   const name = (item.name ?? "").trim();
-  const fullPath = (rawPath.endsWith(name) ? rawPath : `${rawPath}/${name}`).replace(/\/+/g, "/");
+  const segmentSuffix = `/${name}`;
+  const nameAlreadyInPath = rawPath === name || rawPath.endsWith(segmentSuffix);
+  const fullPath = (nameAlreadyInPath ? rawPath : `${rawPath}/${name}`).replace(/\/+/g, "/");
   const normalized = (fullPath || rawPath || item.path || "").trim();
   return normalized ? (normalized.startsWith("/") ? normalized : `/${normalized}`) : "";
 }

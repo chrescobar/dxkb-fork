@@ -784,7 +784,6 @@ export function WorkspaceBrowser({
         path={path}
         username={username}
         viewMode={isHome ? "home" : "shared"}
-        jobResultFullPath={currentFullPath}
         resolvedJobMeta={resolveQuery.data}
         workspaceGuideUrl={workspaceGuideUrl}
         currentUser={currentUser}

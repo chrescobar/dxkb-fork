@@ -58,7 +58,6 @@ interface WorkspaceJobResultViewProps {
   path: string;
   username: string;
   viewMode: WorkspaceViewMode;
-  jobResultFullPath: string;
   resolvedJobMeta: ResolvedPathObject;
   workspaceGuideUrl: string;
   currentUser?: string;
@@ -132,7 +131,6 @@ export function WorkspaceJobResultView({
   path,
   username,
   viewMode,
-  jobResultFullPath,
   resolvedJobMeta,
   workspaceGuideUrl,
   currentUser,
@@ -151,7 +149,6 @@ export function WorkspaceJobResultView({
   } = useWorkspacePanel();
 
   const { dotPath } = useJobResultData({
-    jobResultFullPath,
     resolvedJobMeta,
     enabled: true,
   });

@@ -14,7 +14,6 @@ export interface JobResultData {
 }
 
 interface UseJobResultDataOptions {
-  jobResultFullPath: string;
   resolvedJobMeta: ResolvedPathObject | null | undefined;
   enabled?: boolean;
 }
@@ -24,7 +23,6 @@ interface UseJobResultDataOptions {
  * The view should use useWorkspaceListByPath(dotPath) to get the folder contents for the table.
  */
 export function useJobResultData({
-  jobResultFullPath: _jobResultFullPath,
   resolvedJobMeta,
   enabled = true,
 }: UseJobResultDataOptions) {

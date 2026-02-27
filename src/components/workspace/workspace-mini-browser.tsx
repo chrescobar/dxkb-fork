@@ -357,7 +357,7 @@ export function WorkspaceMiniBrowser({
 
     const container = tableContainerRef.current;
     const row = container.querySelector<HTMLElement>(
-      `[data-row-key="${key}"]`,
+      `[data-row-key="${CSS.escape(key)}"]`,
     );
     if (!row) return;
 

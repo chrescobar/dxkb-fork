@@ -407,30 +407,7 @@ export function WorkspaceBrowser({
     router,
   ]);
 
-  function handleItemDoubleClick(item: WorkspaceBrowserItem) {
-    if (item.type === "job_result") {
-      if (isHome) {
-        const segments = path
-          ? path.split("/").map(sanitizePathSegment).filter(Boolean)
-          : [];
-        segments.push(sanitizePathSegment(item.name));
-        const encoded = segments.map(encodeWorkspaceSegment).join("/");
-        const homeBase = `/workspace/${encodeWorkspaceSegment(username)}/home`;
-        router.push(`${homeBase}/${encoded}`);
-      } else {
-        const segments = item.path
-          .replace(/^\//, "")
-          .split("/")
-          .map(sanitizePathSegment)
-          .filter(Boolean);
-        const encoded = segments.map(encodeWorkspaceSegment).join("/");
-        router.push(`/workspace/${encoded}`);
-      }
-      setSelectedItems([]);
-      setAnchorPath(null);
-      return;
-    }
-    if (!isFolderType(item.type)) return;
+  function navigateToItem(item: WorkspaceBrowserItem) {
     if (isHome) {
       const segments = path
         ? path.split("/").map(sanitizePathSegment).filter(Boolean)
@@ -450,6 +427,15 @@ export function WorkspaceBrowser({
     }
     setSelectedItems([]);
     setAnchorPath(null);
+  }
+
+  function handleItemDoubleClick(item: WorkspaceBrowserItem) {
+    if (item.type === "job_result") {
+      navigateToItem(item);
+      return;
+    }
+    if (!isFolderType(item.type)) return;
+    navigateToItem(item);
   }
 
   function handleSelectItem(

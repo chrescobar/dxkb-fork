@@ -10,7 +10,7 @@ import type {
   JobResultTaskData,
   JobResultSysMeta,
 } from "./types";
-import { isFolderType } from "./utils";
+import { isFolder, isFolderType } from "./utils";
 import type {
   WorkspaceBrowserItem,
   WorkspaceBrowserSort,
@@ -232,4 +232,146 @@ export function dedupeKeepOrder(values: string[]): string[] {
     out.push(n);
   }
   return out;
+}
+
+/**
+ * Returns normalized paths for items that are folders (type folder/directory/modelfolder).
+ * Used to know which paths to check for "non-empty" when confirming delete.
+ */
+export function getFolderPathsFromItems(
+  items: WorkspaceBrowserItem[],
+): string[] {
+  const paths: string[] = [];
+  for (const item of items) {
+    if (!item.path || !isFolder(item.type)) continue;
+    const normalized = normalizeWsPath(item.path);
+    if (normalized) paths.push(normalized);
+  }
+  return paths;
+}
+
+/**
+ * Given folder paths and a function that lists a folder's contents, returns which paths
+ * are non-empty (have at least one child). Uses optional AbortSignal to cancel when dialog closes.
+ */
+export async function getNonEmptyFolderPaths(
+  folderPaths: string[],
+  listFolder: (path: string) => Promise<WorkspaceBrowserItem[]>,
+  options?: { signal?: AbortSignal },
+): Promise<string[]> {
+  const nonEmpty: string[] = [];
+  for (const folderPath of folderPaths) {
+    if (options?.signal?.aborted) {
+      throw new DOMException("Aborted", "AbortError");
+    }
+    try {
+      const listing = await listFolder(folderPath);
+      if (options?.signal?.aborted) {
+        throw new DOMException("Aborted", "AbortError");
+      }
+      if (listing.length > 0) nonEmpty.push(folderPath);
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") throw err;
+      // Treat fetch failure as empty so the dialog is not blocked
+    }
+  }
+  return nonEmpty;
+}
+
+/**
+ * Given a dot-folder path (e.g. /user/home/.jobname) and the current items list,
+ * returns the path of the sibling job_result item if present.
+ */
+export function getSiblingJobResultPathForDotFolder(
+  dotFolderPath: string,
+  items: WorkspaceBrowserItem[],
+): string | null {
+  const normalized = normalizeWsPath(dotFolderPath);
+  if (!normalized) return null;
+
+  const segments = normalized.split("/").filter(Boolean);
+  const last = segments[segments.length - 1] ?? "";
+  if (!last.startsWith(".") || last.length < 2) return null;
+
+  const siblingLast = last.slice(1);
+  const siblingPath = `/${[...segments.slice(0, -1), siblingLast].join("/")}`;
+  const siblingNormalized = normalizeWsPath(siblingPath);
+  const sibling = items.find(
+    (it) =>
+      normalizeWsPath(it.path ?? "") === siblingNormalized &&
+      String(it.type ?? "").toLowerCase() === "job_result",
+  );
+  return sibling ? siblingNormalized : null;
+}
+
+/**
+ * Expands a selection of downloadable items into the full list of paths to download,
+ * handling job_result dot-folders and sibling job_result paths. Returns deduplicated paths.
+ */
+export function expandDownloadPaths(
+  downloadableItems: WorkspaceBrowserItem[],
+  items: WorkspaceBrowserItem[],
+): string[] {
+  const expandedPaths = downloadableItems.flatMap((item) => {
+    const p = normalizeWsPath(item.path ?? "");
+    if (!p) return [];
+
+    const type = String(item.type ?? "").toLowerCase();
+    if (type === "job_result") {
+      const name =
+        String(item.name ?? "").trim() ||
+        p.split("/").filter(Boolean).pop() ||
+        "";
+      const dotPath = normalizeWsPath(getJobResultDotPath({ path: p, name }));
+      return [dotPath, p].filter(Boolean);
+    }
+
+    const siblingJobResultPath = getSiblingJobResultPathForDotFolder(p, items);
+    if (siblingJobResultPath) return [p, siblingJobResultPath];
+
+    return [p];
+  });
+  return dedupeKeepOrder(expandedPaths);
+}
+
+export interface EnsureDestinationWriteAccessResult {
+  ok: boolean;
+  errorMessage?: string;
+}
+
+/**
+ * Verifies that the current user has write access to the given destination path
+ * (or its parent, if the destination is a new name). Uses the provided listFolder
+ * to fetch the parent listing. Returns { ok: true } or { ok: false, errorMessage }.
+ */
+export async function ensureDestinationWriteAccess(
+  destinationPath: string,
+  listFolder: (path: string) => Promise<WorkspaceBrowserItem[]>,
+): Promise<EnsureDestinationWriteAccessResult> {
+  const normalized = destinationPath.replace(/\/+$/, "") || "/";
+  const lastSlash = normalized.lastIndexOf("/");
+  const parentPath =
+    lastSlash > 0 ? normalized.slice(0, lastSlash) || "/" : "/";
+
+  try {
+    const listing = await listFolder(parentPath);
+
+    const target = listing.find(
+      (item) => (item.path ?? "").replace(/\/+$/, "") === normalized,
+    );
+
+    if (!target || !hasWriteAccess(target)) {
+      return {
+        ok: false,
+        errorMessage: `Access denied, you do not have write access to ${normalized}`,
+      };
+    }
+
+    return { ok: true };
+  } catch {
+    return {
+      ok: false,
+      errorMessage: `Access denied, you do not have write access to ${normalized}`,
+    };
+  }
 }

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import { toast } from "sonner";
 import { useWorkspaceBrowser } from "@/hooks/services/workspace/use-workspace-browser";
 import {
   useSharedWithUser,
@@ -30,56 +29,24 @@ import {
 } from "./workspace-data-table";
 import { InfoPanel } from "@/components/containers/InfoPanel";
 import { WorkspaceActionBar } from "./workspace-action-bar";
-import { isFolderType, isFolder } from "@/lib/services/workspace/utils";
 import { WorkspaceDownloadMethods } from "@/lib/services/workspace/methods/download";
-import {
-  getJobResultDotPath,
-  hasWriteAccess,
-  sortItems,
-  normalizeWsPath,
-  dedupeKeepOrder,
-} from "@/lib/services/workspace/helpers";
-import {
-  loadFavorites,
-  toggleFavorite,
-} from "@/lib/services/workspace/favorites";
-import { forbiddenDownloadTypes } from "@/lib/services/workspace/types";
-import {
-  PanelRightClose,
-  PanelRightOpen,
-  Construction,
-
-} from "lucide-react";
+import { sortItems } from "@/lib/services/workspace/helpers";
+import { loadFavorites } from "@/lib/services/workspace/favorites";
+import { PanelRightClose, PanelRightOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WorkspaceBrowserItem, WorkspaceBrowserSort } from "@/types/workspace-browser";
-import { encodeWorkspaceSegment, sanitizePathSegment } from "@/lib/utils";
+import { encodeWorkspaceSegment } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Spinner } from "@/components/ui/spinner";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogMedia,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { CopyToDialog } from "./copy-to-dialog";
-import { CreateFolderDialog } from "./create-folder-dialog";
-import { CreateWorkspaceDialog } from "./create-workspace-dialog";
-import { DownloadOptionsDialog } from "./download-options-dialog";
-import { UploadDialog } from "./upload-dialog";
-import { EditTypeDialog } from "./edit-type-dialog";
 import { WorkspaceApiClient } from "@/lib/services/workspace/client";
 import { WorkspaceCrudMethods } from "@/lib/services/workspace/methods/crud";
-import { computeNextSelection, normalizePath } from "@/lib/workspace/table-selection";
+import { normalizePath } from "@/lib/workspace/table-selection";
+import { useWorkspaceBrowserActions } from "@/hooks/services/workspace/use-workspace-browser-actions";
+import { WorkspaceDialogs } from "./workspace-dialogs";
 
 export type WorkspaceViewMode = "home" | "shared";
 
@@ -135,128 +102,8 @@ export function WorkspaceBrowser({
   } = useWorkspacePanel();
   const [selectedItems, setSelectedItems] = useState<WorkspaceBrowserItem[]>([]);
   const [anchorPath, setAnchorPath] = useState<string | null>(null);
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  /** Selection at the time Delete was clicked; used when confirming in the dialog. */
-  const [pendingDeleteSelection, setPendingDeleteSelection] = useState<
-    WorkspaceBrowserItem[]
-  >([]);
-  /** Paths of folders in the delete selection that are not empty (computed when dialog opens). */
-  const [nonEmptyFolderPathsInDelete, setNonEmptyFolderPathsInDelete] =
-    useState<string[]>([]);
-  const [copyDialogOpen, setCopyDialogOpen] = useState(false);
-  const [copyMoveDialogMode, setCopyMoveDialogMode] = useState<"copy" | "move">(
-    "copy",
-  );
-  const [pendingCopySelection, setPendingCopySelection] = useState<
-    WorkspaceBrowserItem[]
-  >([]);
-  const [isCopying, setIsCopying] = useState(false);
-  const [editTypeDialogOpen, setEditTypeDialogOpen] = useState(false);
-  const [pendingEditTypeItem, setPendingEditTypeItem] =
-    useState<WorkspaceBrowserItem | null>(null);
-  const [isUpdatingType, setIsUpdatingType] = useState(false);
-  const [isFavoriting, setIsFavoriting] = useState(false);
-  const [newFolderDialogOpen, setNewFolderDialogOpen] = useState(false);
-  const [isCreatingFolder, setIsCreatingFolder] = useState(false);
-  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
-  const [downloadOptionsOpen, setDownloadOptionsOpen] = useState(false);
-  const [downloadOptionsPaths, setDownloadOptionsPaths] = useState<string[]>(
-    [],
-  );
-  const [downloadOptionsDefaultName, setDownloadOptionsDefaultName] =
-    useState<string>("archive");
-  const [createWorkspaceDialogOpen, setCreateWorkspaceDialogOpen] =
-    useState(false);
-  const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);
-  const [fileViewerConstructionOpen, setFileViewerConstructionOpen] =
-    useState(false);
 
   const workspaceClient = useMemo(() => new WorkspaceApiClient(), []);
-
-  useEffect(() => {
-    if (!deleteDialogOpen) {
-      setNonEmptyFolderPathsInDelete([]);
-      return;
-    }
-    const folders = pendingDeleteSelection.filter(
-      (item) => item.path && isFolder(item.type),
-    );
-    if (folders.length === 0) {
-      setNonEmptyFolderPathsInDelete([]);
-      return;
-    }
-    let cancelled = false;
-    void (async () => {
-      const nonEmpty: string[] = [];
-      for (const item of folders) {
-        const folderPath =
-          (item.path ?? "").replace(/\/+$/, "") || (item.path ?? "");
-        if (!folderPath || cancelled) continue;
-        try {
-          const listing =
-            await workspaceClient.makeRequest<WorkspaceBrowserItem[]>(
-              "Workspace.ls",
-              [
-                {
-                  paths: [folderPath],
-                  includeSubDirs: false,
-                  recursive: false,
-                },
-              ],
-              { silent: true },
-            );
-          if (!cancelled && listing.length > 0) nonEmpty.push(folderPath);
-        } catch {
-          // Treat fetch failure as empty to avoid blocking the dialog
-        }
-      }
-      if (!cancelled) setNonEmptyFolderPathsInDelete(nonEmpty);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [deleteDialogOpen, pendingDeleteSelection, workspaceClient]);
-
-  async function ensureDestinationWriteAccess(destinationPath: string): Promise<boolean> {
-    const normalized = destinationPath.replace(/\/+$/, "") || "/";
-    const lastSlash = normalized.lastIndexOf("/");
-    const parentPath = lastSlash > 0 ? normalized.slice(0, lastSlash) || "/" : "/";
-
-    try {
-      const listing = await workspaceClient.makeRequest<WorkspaceBrowserItem[]>(
-        "Workspace.ls",
-        [
-          {
-            paths: [parentPath],
-            includeSubDirs: false,
-            recursive: false,
-          },
-        ],
-        { silent: true },
-      );
-
-      const target = listing.find(
-        (item) =>
-          (item.path ?? "").replace(/\/+$/, "") === normalized,
-      );
-
-      if (!target || !hasWriteAccess(target)) {
-        toast.error(
-          `Access denied, you do not have write access to ${normalized}`,
-        );
-        return false;
-      }
-
-      return true;
-    } catch {
-      toast.error(
-        `Access denied, you do not have write access to ${normalized}`,
-      );
-      return false;
-    }
-  }
   const workspaceCrud = useMemo(
     () => new WorkspaceCrudMethods(workspaceClient),
     [workspaceClient],
@@ -463,428 +310,79 @@ export function WorkspaceBrowser({
     router,
   ]);
 
-  function navigateToItem(item: WorkspaceBrowserItem) {
-    if (isHome) {
-      const segments = path
-        ? path.split("/").map(sanitizePathSegment).filter(Boolean)
-        : [];
-      segments.push(sanitizePathSegment(item.name));
-      const encoded = segments.map(encodeWorkspaceSegment).join("/");
-      const homeBase = `/workspace/${encodeWorkspaceSegment(username)}/home`;
-      router.push(`${homeBase}/${encoded}`);
-    } else {
-      const segments = item.path
-        .replace(/^\//, "")
-        .split("/")
-        .map(sanitizePathSegment)
-        .filter(Boolean);
-      const encoded = segments.map(encodeWorkspaceSegment).join("/");
-      router.push(`/workspace/${encoded}`);
-    }
-    setSelectedItems([]);
-    setAnchorPath(null);
-  }
-
-  function handleItemDoubleClick(item: WorkspaceBrowserItem) {
-    if (item.type === "job_result") {
-      navigateToItem(item);
-      return;
-    }
-    if (!isFolderType(item.type)) return;
-    navigateToItem(item);
-  }
-
-  function handleSelectItem(
-    item: WorkspaceBrowserItem,
-    modifiers?: { ctrlOrMeta: boolean; shift: boolean },
-  ) {
-    const { nextSelection, nextAnchorPath } = computeNextSelection(
-      processedItems,
-      selectedItems,
-      anchorPath,
-      item,
-      modifiers ?? { ctrlOrMeta: false, shift: false },
-    );
-    setSelectedItems(nextSelection);
-    setAnchorPath(nextAnchorPath);
-    if (!panelManuallyHidden) setPanelExpanded(true);
-  }
-
-  async function handleAction(
-    actionId: string,
-    selection: WorkspaceBrowserItem[],
-  ) {
-    if (actionId === "delete") {
-      setPendingDeleteSelection(selection);
-      setDeleteDialogOpen(true);
-      return;
-    }
-    if (actionId === "copy") {
-      setCopyMoveDialogMode("copy");
-      setPendingCopySelection(selection);
-      setCopyDialogOpen(true);
-      return;
-    }
-    if (actionId === "move") {
-      setCopyMoveDialogMode("move");
-      setPendingCopySelection(selection);
-      setCopyDialogOpen(true);
-      return;
-    }
-    if (actionId === "editType") {
-      const single = selection[0] ?? null;
-      if (single?.path) {
-        setPendingEditTypeItem(single);
-        setEditTypeDialogOpen(true);
-      }
-      return;
-    }
-    if (actionId === "favorite") {
-      const single = selection[0] ?? null;
-      if (
-        !currentUser ||
-        !myWorkspaceRoot ||
-        !single?.path ||
-        single.type !== "folder"
-      ) {
-        return;
-      }
-      setIsFavoriting(true);
-      try {
-        const added = await toggleFavorite(myWorkspaceRoot, single.path);
-        await queryClient.invalidateQueries({
-          queryKey: ["workspace-favorites", myWorkspaceRoot],
-        });
-        toast.success(
-          added ? "Added to favorites" : "Removed from favorites",
-          { description: single.path },
-        );
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "Failed to update favorites.";
-        toast.error(message);
-      } finally {
-        setIsFavoriting(false);
-      }
-      return;
-    }
-    if (actionId !== "download") return;
-    const downloadable = selection.filter(
-      (item) =>
-        Boolean(item.path) &&
-        !(forbiddenDownloadTypes as readonly string[]).includes(
-          (item.type ?? "").toLowerCase(),
-        ),
-    );
-    if (downloadable.length === 0) {
-      toast.error(
-        "Nothing to download for this selection.",
-        {
-          description:
-            "Some object types are not downloadable. Try selecting files or standard folders.",
-        },
-      );
-      return;
-    }
-
-    function getSiblingJobResultPathForDotFolder(dotFolderPath: string): string | null {
-      const normalized = normalizeWsPath(dotFolderPath);
-      if (!normalized) return null;
-
-      const segments = normalized.split("/").filter(Boolean);
-      const last = segments[segments.length - 1] ?? "";
-      if (!last.startsWith(".") || last.length < 2) return null;
-
-      const siblingLast = last.slice(1);
-      const siblingPath = `/${[...segments.slice(0, -1), siblingLast].join("/")}`;
-      const siblingNormalized = normalizeWsPath(siblingPath);
-      const sibling = items.find(
-        (it) =>
-          normalizeWsPath(it.path ?? "") === siblingNormalized &&
-          String(it.type ?? "").toLowerCase() === "job_result",
-      );
-      return sibling ? siblingNormalized : null;
-    }
-
-    const expandedPaths = downloadable.flatMap((item) => {
-      const p = normalizeWsPath(item.path ?? "");
-      if (!p) return [];
-
-      const type = String(item.type ?? "").toLowerCase();
-      if (type === "job_result") {
-        const name = String(item.name ?? "").trim() || p.split("/").filter(Boolean).pop() || "";
-        const dotPath = normalizeWsPath(getJobResultDotPath({ path: p, name }));
-        // Include dot-folder first, then the job_result itself (requested payload order).
-        return [dotPath, p].filter(Boolean);
-      }
-
-      // If user selects the hidden dot-folder itself, include the sibling job_result too (when present).
-      const siblingJobResultPath = getSiblingJobResultPathForDotFolder(p);
-      if (siblingJobResultPath) return [p, siblingJobResultPath];
-
-      return [p];
-    });
-
-    const mappedPaths = dedupeKeepOrder(expandedPaths);
-    const singleFile =
-      downloadable.length === 1 && !isFolderType(downloadable[0]?.type ?? "");
-    if (singleFile) {
-      setIsDownloading(true);
-      try {
-        const urlArrays = await workspaceDownload.getDownloadUrls(mappedPaths);
-        for (let i = 0; i < urlArrays.length; i++) {
-          const url = urlArrays[i]?.[0];
-          if (!url) continue;
-          const name = downloadable[i]?.name ?? "download";
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = name;
-          a.rel = "noopener noreferrer";
-          a.style.display = "none";
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        }
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "Download failed.";
-        alert(message);
-      } finally {
-        setIsDownloading(false);
-      }
-      return;
-    }
-    const single = downloadable.length === 1 ? downloadable[0] : null;
-    const singleType = String(single?.type ?? "").toLowerCase();
-    const defaultName =
-      singleType === "job_result"
-        ? String(single?.name ?? "").replace(/^\./, "").trim() || "archive"
-        : single?.name != null && String(single.name).startsWith(".")
-          ? (getSiblingJobResultPathForDotFolder(single.path ?? "")?.split("/").filter(Boolean).pop() ??
-              String(single.name).replace(/^\./, "")).trim() || "archive"
-          : "archive";
-
-    setDownloadOptionsDefaultName(defaultName);
-    setDownloadOptionsPaths(mappedPaths);
-    setDownloadOptionsOpen(true);
-  }
-
-  async function handleConfirmDelete() {
-    if (pendingDeleteSelection.length === 0) {
-      setDeleteDialogOpen(false);
-      return;
-    }
-    const paths = pendingDeleteSelection
-      .map((item) => item.path)
-      .filter((p): p is string => Boolean(p));
-    if (paths.length === 0) {
-      setDeleteDialogOpen(false);
-      setPendingDeleteSelection([]);
-      return;
-    }
-    setIsDeleting(true);
-    try {
-      await workspaceCrud.delete({
-        objects: paths,
-        force: true,
-        deleteDirectories: true,
-      });
-      setSelectedItems([]);
-      setAnchorPath(null);
-      setDeleteDialogOpen(false);
-      setPendingDeleteSelection([]);
-      refetch();
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to delete.";
-      alert(message);
-    } finally {
-      setIsDeleting(false);
-    }
-  }
-
   const currentUserWorkspaceRoot =
     myWorkspaceRoot ? `/${myWorkspaceRoot}` : `/${currentUser}`;
-
-  async function handleCopyConfirm(
-    destinationPath: string,
-    filenameOverride?: string,
-  ) {
-    if (pendingCopySelection.length === 0) return;
-    const isMove = copyMoveDialogMode === "move";
-    const base = destinationPath.replace(/\/+$/, "") || destinationPath;
-    const destIsRoot = base === currentUserWorkspaceRoot;
-    const hasNonFolder = pendingCopySelection.some(
-      (item) => !isFolder(item.type),
-    );
-    if (destIsRoot && hasNonFolder) {
-      const actionVerb = isMove ? "Moving" : "Copying";
-      toast.error(
-        "Sorry! " +
-          actionVerb +
-          " objects to the top level directory, " +
-          currentUserWorkspaceRoot +
-          ", is not allowed.",
-      );
-      return;
-    }
-    const canWrite = await ensureDestinationWriteAccess(base);
-    if (!canWrite) {
-      return;
-    }
-    const firstDestName =
-      filenameOverride ?? pendingCopySelection[0]?.name ?? "";
-    const objects: [string, string][] = pendingCopySelection
-      .map((item, index) => {
-        const src = item.path;
-        if (!src || item.name == null) return null;
-        const name =
-          index === 0 && filenameOverride != null
-            ? filenameOverride
-            : item.name;
-        const dest = `${base}/${name}`;
-        return [src, dest] as [string, string];
-      })
-      .filter((p): p is [string, string] => p != null);
-    if (objects.length === 0) {
-      setCopyDialogOpen(false);
-      setPendingCopySelection([]);
-      return;
-    }
-    setIsCopying(true);
-    try {
-      await workspaceCrud.copyByPaths({
-        objects,
-        recursive: true,
-        move: isMove,
-      });
-      setCopyDialogOpen(false);
-      setPendingCopySelection([]);
-      setSelectedItems([]);
-      setAnchorPath(null);
-      refetch();
-
-      const description = isMove
-        ? objects
-            .map(([src, dest]) => `Moved ${src} to ${dest}`)
-            .join("; ")
-        : objects.length === 1
-          ? `${base}/${firstDestName}`
-          : `${base} (${objects.length} items)`;
-      toast.success(isMove ? "Move Successful" : "Copy Successful", {
-        description,
-      });
-    } catch (err) {
-      const apiResponse = (err as Error & { apiResponse?: unknown }).apiResponse;
-      const errorCode =
-        apiResponse != null &&
-        typeof apiResponse === "object" &&
-        "error" in apiResponse &&
-        typeof (apiResponse as { error?: { code?: number } }).error === "object"
-          ? (apiResponse as { error: { code?: number } }).error?.code
-          : (apiResponse as { code?: number } | null)?.code;
-      const isOverwriteError = errorCode === -32603;
-
-      let message: string;
-      let description: string | undefined;
-
-      if (isOverwriteError) {
-        const base = destinationPath.replace(/\/+$/, "") || destinationPath;
-        const fullPath = firstDestName
-          ? `${base}/${firstDestName}`
-          : base;
-        message = `Can not overwrite '${fullPath}'`;
-        description = undefined;
-      } else {
-        message =
-          err instanceof Error ? err.message : isMove ? "Move failed." : "Copy failed.";
-        description =
-          apiResponse !== undefined && apiResponse !== null
-            ? typeof apiResponse === "string"
-              ? apiResponse
-              : JSON.stringify(apiResponse, null, 2)
-            : undefined;
-      }
-
-      toast.error(message, { description });
-    } finally {
-      setIsCopying(false);
-    }
-  }
-
   const currentDirectoryPath = `${currentUserWorkspaceRoot}/home${fullPath ? fullPath : ""}`;
 
-  async function handleCreateFolder(folderName: string) {
-    const name = folderName.trim();
-    if (!name) return;
-    const parent = currentDirectoryPath.replace(/\/+$/, "") || currentDirectoryPath;
-    const newFolderPath = `${parent}/${name}`;
-    setIsCreatingFolder(true);
-    try {
-      await workspaceCrud.createFolderByPath(newFolderPath);
-      setNewFolderDialogOpen(false);
-      setSelectedItems([]);
-      setAnchorPath(null);
-      refetch();
-      toast.success("Folder created", {
-        description: name,
-      });
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to create folder.";
-      toast.error(message);
-    } finally {
-      setIsCreatingFolder(false);
-    }
-  }
+  const actions = useWorkspaceBrowserActions({
+    workspaceClient,
+    workspaceCrud,
+    workspaceDownload,
+    queryClient,
+    router,
+    mode,
+    username,
+    path,
+    currentUser,
+    myWorkspaceRoot,
+    currentUserWorkspaceRoot,
+    currentDirectoryPath,
+    items,
+    processedItems,
+    selectedItems,
+    setSelectedItems,
+    anchorPath,
+    setAnchorPath,
+    panelManuallyHidden,
+    setPanelExpanded,
+    refetch,
+    favoritePaths,
+  });
 
-  async function handleCreateWorkspace(workspaceName: string) {
-    const name = workspaceName.trim();
-    if (!name) return;
-    const safeName = sanitizePathSegment(name);
-    if (!safeName) return;
-    setIsCreatingWorkspace(true);
-    try {
-      const fullPath = `/${username}/${safeName}/`;
-      await workspaceCrud.createFolderByPath(fullPath);
-      setCreateWorkspaceDialogOpen(false);
-      setSelectedItems([]);
-      setAnchorPath(null);
-      refetch();
-      toast.success("Workspace created", {
-        description: safeName,
-      });
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to create workspace.";
-      toast.error(message);
-    } finally {
-      setIsCreatingWorkspace(false);
-    }
-  }
-
-  async function handleEditTypeConfirm(newType: string) {
-    const item = pendingEditTypeItem;
-    if (!item?.path) return;
-    setIsUpdatingType(true);
-    try {
-      await workspaceCrud.updateObjectType(item.path, newType);
-      setSelectedItems([]);
-      setAnchorPath(null);
-      setEditTypeDialogOpen(false);
-      setPendingEditTypeItem(null);
-      refetch();
-      toast.success("Object type updated", {
-        description: `${item.name} is now type "${newType}".`,
-      });
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to update object type.";
-      toast.error(message);
-    } finally {
-      setIsUpdatingType(false);
-    }
-  }
+  const {
+    deleteDialogOpen,
+    setDeleteDialogOpen,
+    isDeleting,
+    pendingDeleteSelection,
+    nonEmptyFolderPathsInDelete,
+    deleteHoldProgress,
+    copyDialogOpen,
+    setCopyDialogOpen,
+    copyMoveDialogMode,
+    pendingCopySelection,
+    isCopying,
+    editTypeDialogOpen,
+    setEditTypeDialogOpen,
+    pendingEditTypeItem,
+    setPendingEditTypeItem,
+    isUpdatingType,
+    newFolderDialogOpen,
+    setNewFolderDialogOpen,
+    isCreatingFolder,
+    uploadDialogOpen,
+    setUploadDialogOpen,
+    downloadOptionsOpen,
+    setDownloadOptionsOpen,
+    downloadOptionsPaths,
+    downloadOptionsDefaultName,
+    createWorkspaceDialogOpen,
+    setCreateWorkspaceDialogOpen,
+    isCreatingWorkspace,
+    fileViewerConstructionOpen,
+    setFileViewerConstructionOpen,
+    isDownloading,
+    isFavoriting,
+    handleItemDoubleClick,
+    handleSelectItem,
+    handleAction,
+    handleConfirmDelete,
+    handleCopyConfirm,
+    handleCreateFolder,
+    handleCreateWorkspace,
+    handleEditTypeConfirm,
+    onDeleteHoldStart,
+    onDeleteHoldEnd,
+  } = actions;
 
   if (path && path.trim() !== "" && resolveQuery.isLoading) {
     return (
@@ -972,110 +470,52 @@ export function WorkspaceBrowser({
 
   const mainContent = (
     <div>
-      <CopyToDialog
-        open={copyDialogOpen}
-        onOpenChange={setCopyDialogOpen}
-        sourceItems={pendingCopySelection}
+      <WorkspaceDialogs
+        deleteDialogOpen={deleteDialogOpen}
+        onDeleteDialogOpenChange={setDeleteDialogOpen}
+        isDeleting={isDeleting}
+        pendingDeleteSelection={pendingDeleteSelection}
+        nonEmptyFolderPathsInDelete={nonEmptyFolderPathsInDelete}
+        deleteHoldProgress={deleteHoldProgress}
+        onDeleteHoldStart={onDeleteHoldStart}
+        onDeleteHoldEnd={onDeleteHoldEnd}
+        onConfirmDelete={handleConfirmDelete}
+        copyDialogOpen={copyDialogOpen}
+        onCopyDialogOpenChange={setCopyDialogOpen}
+        pendingCopySelection={pendingCopySelection}
         currentUserWorkspaceRoot={currentUserWorkspaceRoot}
-        onConfirm={handleCopyConfirm}
+        onCopyConfirm={handleCopyConfirm}
         isCopying={isCopying}
-        mode={copyMoveDialogMode}
-      />
-      <EditTypeDialog
-        open={editTypeDialogOpen}
-        onOpenChange={(open) => {
-          setEditTypeDialogOpen(open);
-          if (!open && !isUpdatingType) setPendingEditTypeItem(null);
-        }}
-        item={pendingEditTypeItem}
-        onConfirm={(newType) => handleEditTypeConfirm(newType)}
-        isUpdating={isUpdatingType}
-      />
-      <CreateFolderDialog
-        open={newFolderDialogOpen}
-        onOpenChange={setNewFolderDialogOpen}
+        copyMoveDialogMode={copyMoveDialogMode}
+        editTypeDialogOpen={editTypeDialogOpen}
+        onEditTypeDialogOpenChange={setEditTypeDialogOpen}
+        pendingEditTypeItem={pendingEditTypeItem}
+        setPendingEditTypeItem={setPendingEditTypeItem}
+        onEditTypeConfirm={handleEditTypeConfirm}
+        isUpdatingType={isUpdatingType}
+        newFolderDialogOpen={newFolderDialogOpen}
+        onNewFolderDialogOpenChange={setNewFolderDialogOpen}
         onCreateFolder={handleCreateFolder}
-        isCreating={isCreatingFolder}
-      />
-      <CreateWorkspaceDialog
-        open={createWorkspaceDialogOpen}
-        onOpenChange={setCreateWorkspaceDialogOpen}
+        isCreatingFolder={isCreatingFolder}
+        createWorkspaceDialogOpen={createWorkspaceDialogOpen}
+        onCreateWorkspaceDialogOpenChange={setCreateWorkspaceDialogOpen}
         onCreateWorkspace={handleCreateWorkspace}
-        isCreating={isCreatingWorkspace}
-      />
-      <UploadDialog
-        open={uploadDialogOpen}
-        onOpenChange={setUploadDialogOpen}
-        targetPath={currentDirectoryPath}
+        isCreatingWorkspace={isCreatingWorkspace}
+        uploadDialogOpen={uploadDialogOpen}
+        onUploadDialogOpenChange={setUploadDialogOpen}
+        currentDirectoryPath={currentDirectoryPath}
         onUploadComplete={() => {
           refetch();
           setUploadDialogOpen(false);
         }}
+        downloadOptionsOpen={downloadOptionsOpen}
+        onDownloadOptionsOpenChange={setDownloadOptionsOpen}
+        downloadOptionsPaths={downloadOptionsPaths}
+        downloadOptionsDefaultName={downloadOptionsDefaultName}
+        workspaceDownload={workspaceDownload}
+        fileViewerConstructionOpen={fileViewerConstructionOpen}
+        onFileViewerConstructionOpenChange={setFileViewerConstructionOpen}
       />
-      <DownloadOptionsDialog
-        open={downloadOptionsOpen}
-        onOpenChange={setDownloadOptionsOpen}
-        paths={downloadOptionsPaths}
-        defaultArchiveName={downloadOptionsDefaultName}
-        downloadMethods={workspaceDownload}
-      />
-      <AlertDialog
-        open={deleteDialogOpen}
-        onOpenChange={(open) => {
-          setDeleteDialogOpen(open);
-          if (!open && !isDeleting) setPendingDeleteSelection([]);
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogTitle>Delete from workspace</AlertDialogTitle>
-          <AlertDialogDescription>
-            Are you sure you want to delete {deleteTargetLabel}? This action
-            cannot be undone.
-            {nonEmptyFolderPathsInDelete.length > 0 && (
-              <span className="mt-2 block font-bold text-destructive">
-                This folder is NOT empty.
-              </span>
-            )}
-          </AlertDialogDescription>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              variant="destructive"
-              onClick={() => void handleConfirmDelete()}
-              disabled={isDeleting}
-            >
-              {isDeleting ? (
-                <>
-                  <Spinner className="mr-2 h-3.5 w-3.5 shrink-0" />
-                  Deleting…
-                </>
-              ) : (
-                "Delete"
-              )}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      <AlertDialog
-        open={fileViewerConstructionOpen}
-        onOpenChange={setFileViewerConstructionOpen}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogMedia className="flex items-center justify-center gap-2">
-              <Construction className="h-6 w-6 text-amber-600" />
-            </AlertDialogMedia>
-            <AlertDialogTitle>File viewer coming soon</AlertDialogTitle>
-            <AlertDialogDescription>
-              The file viewer is still under construction. Please check back at
-              a later date for this feature.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>OK</AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
       <div className="min-w-0 shrink-0 space-y-4 overflow-hidden p-4">
         <WorkspaceBreadcrumbs
           path={path}

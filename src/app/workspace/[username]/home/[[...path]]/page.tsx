@@ -20,6 +20,7 @@ export default async function WorkspaceHomePage({ params }: WorkspaceHomePagePro
   const workspaceGuideUrl = getRequiredEnv("WORKSPACE_GUIDE_URL");
   return (
     <WorkspaceBrowser
+      key={`home-${decodedPath}`}
       mode="home"
       username={username}
       path={decodedPath}

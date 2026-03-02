@@ -72,7 +72,7 @@ export function useWorkspaceBrowserActions(
     panelManuallyHidden,
     setPanelExpanded,
     refetch,
-    favoritePaths,
+    favoritePaths: _favoritePaths,
   } = options;
 
   const isHome = mode === "home";

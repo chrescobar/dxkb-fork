@@ -46,7 +46,14 @@ import { WorkspaceApiClient } from "@/lib/services/workspace/client";
 import { WorkspaceCrudMethods } from "@/lib/services/workspace/methods/crud";
 import { normalizePath } from "@/lib/workspace/table-selection";
 import { useWorkspaceBrowserActions } from "@/hooks/services/workspace/use-workspace-browser-actions";
-import { WorkspaceDialogs } from "./workspace-dialogs";
+import { CopyToDialog } from "./copy-to-dialog";
+import { CreateFolderDialog } from "./create-folder-dialog";
+import { CreateWorkspaceDialog } from "./create-workspace-dialog";
+import { DeleteConfirmDialog } from "./delete-confirm-dialog";
+import { DownloadOptionsDialog } from "./download-options-dialog";
+import { EditTypeDialog } from "./edit-type-dialog";
+import { FileViewerConstructionDialog } from "./file-viewer-construction-dialog";
+import { UploadDialog } from "./upload-dialog";
 
 export type WorkspaceViewMode = "home" | "shared";
 
@@ -129,10 +136,6 @@ export function WorkspaceBrowser({
   const tableRef = useRef<WorkspaceDataTableHandle>(null);
 
   const isHome = mode === "home";
-  useEffect(() => {
-    setSelectedItems([]);
-    setAnchorPath(null);
-  }, [path, mode]);
 
   // Restore focus to the table after selection so arrow keys work (runs after panel/layout and any deferred focus)
   useEffect(() => {
@@ -461,7 +464,7 @@ export function WorkspaceBrowser({
       ? "Failed to load workspace contents"
       : "Failed to load shared folders";
 
-  const deleteTargetLabel =
+  const _deleteTargetLabel =
     pendingDeleteSelection.length === 0
       ? "item"
       : pendingDeleteSelection.length === 1
@@ -470,9 +473,56 @@ export function WorkspaceBrowser({
 
   const mainContent = (
     <div>
-      <WorkspaceDialogs
-        deleteDialogOpen={deleteDialogOpen}
-        onDeleteDialogOpenChange={setDeleteDialogOpen}
+      <CopyToDialog
+        open={copyDialogOpen}
+        onOpenChange={setCopyDialogOpen}
+        sourceItems={pendingCopySelection}
+        currentUserWorkspaceRoot={currentUserWorkspaceRoot}
+        onConfirm={handleCopyConfirm}
+        isCopying={isCopying}
+        mode={copyMoveDialogMode}
+      />
+      <EditTypeDialog
+        open={editTypeDialogOpen}
+        onOpenChange={(open) => {
+          setEditTypeDialogOpen(open);
+          if (!open && !isUpdatingType) setPendingEditTypeItem(null);
+        }}
+        item={pendingEditTypeItem}
+        onConfirm={(newType) => handleEditTypeConfirm(newType)}
+        isUpdating={isUpdatingType}
+      />
+      <CreateFolderDialog
+        open={newFolderDialogOpen}
+        onOpenChange={setNewFolderDialogOpen}
+        onCreateFolder={handleCreateFolder}
+        isCreating={isCreatingFolder}
+      />
+      <CreateWorkspaceDialog
+        open={createWorkspaceDialogOpen}
+        onOpenChange={setCreateWorkspaceDialogOpen}
+        onCreateWorkspace={handleCreateWorkspace}
+        isCreating={isCreatingWorkspace}
+      />
+      <UploadDialog
+        open={uploadDialogOpen}
+        onOpenChange={setUploadDialogOpen}
+        targetPath={currentDirectoryPath}
+        onUploadComplete={() => {
+          refetch();
+          setUploadDialogOpen(false);
+        }}
+      />
+      <DownloadOptionsDialog
+        open={downloadOptionsOpen}
+        onOpenChange={setDownloadOptionsOpen}
+        paths={downloadOptionsPaths}
+        defaultArchiveName={downloadOptionsDefaultName}
+        downloadMethods={workspaceDownload}
+      />
+      <DeleteConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
         isDeleting={isDeleting}
         pendingDeleteSelection={pendingDeleteSelection}
         nonEmptyFolderPathsInDelete={nonEmptyFolderPathsInDelete}
@@ -480,41 +530,10 @@ export function WorkspaceBrowser({
         onDeleteHoldStart={onDeleteHoldStart}
         onDeleteHoldEnd={onDeleteHoldEnd}
         onConfirmDelete={handleConfirmDelete}
-        copyDialogOpen={copyDialogOpen}
-        onCopyDialogOpenChange={setCopyDialogOpen}
-        pendingCopySelection={pendingCopySelection}
-        currentUserWorkspaceRoot={currentUserWorkspaceRoot}
-        onCopyConfirm={handleCopyConfirm}
-        isCopying={isCopying}
-        copyMoveDialogMode={copyMoveDialogMode}
-        editTypeDialogOpen={editTypeDialogOpen}
-        onEditTypeDialogOpenChange={setEditTypeDialogOpen}
-        pendingEditTypeItem={pendingEditTypeItem}
-        setPendingEditTypeItem={setPendingEditTypeItem}
-        onEditTypeConfirm={handleEditTypeConfirm}
-        isUpdatingType={isUpdatingType}
-        newFolderDialogOpen={newFolderDialogOpen}
-        onNewFolderDialogOpenChange={setNewFolderDialogOpen}
-        onCreateFolder={handleCreateFolder}
-        isCreatingFolder={isCreatingFolder}
-        createWorkspaceDialogOpen={createWorkspaceDialogOpen}
-        onCreateWorkspaceDialogOpenChange={setCreateWorkspaceDialogOpen}
-        onCreateWorkspace={handleCreateWorkspace}
-        isCreatingWorkspace={isCreatingWorkspace}
-        uploadDialogOpen={uploadDialogOpen}
-        onUploadDialogOpenChange={setUploadDialogOpen}
-        currentDirectoryPath={currentDirectoryPath}
-        onUploadComplete={() => {
-          refetch();
-          setUploadDialogOpen(false);
-        }}
-        downloadOptionsOpen={downloadOptionsOpen}
-        onDownloadOptionsOpenChange={setDownloadOptionsOpen}
-        downloadOptionsPaths={downloadOptionsPaths}
-        downloadOptionsDefaultName={downloadOptionsDefaultName}
-        workspaceDownload={workspaceDownload}
-        fileViewerConstructionOpen={fileViewerConstructionOpen}
-        onFileViewerConstructionOpenChange={setFileViewerConstructionOpen}
+      />
+      <FileViewerConstructionDialog
+        open={fileViewerConstructionOpen}
+        onOpenChange={setFileViewerConstructionOpen}
       />
       <div className="min-w-0 shrink-0 space-y-4 overflow-hidden p-4">
         <WorkspaceBreadcrumbs

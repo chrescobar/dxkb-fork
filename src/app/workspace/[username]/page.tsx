@@ -27,6 +27,7 @@ export default async function WorkspaceUsernamePage({ params }: WorkspaceUsernam
   const workspaceGuideUrl = getRequiredEnv("WORKSPACE_GUIDE_URL");
   return (
     <WorkspaceBrowser
+      key="shared-"
       mode="shared"
       username={username}
       path=""

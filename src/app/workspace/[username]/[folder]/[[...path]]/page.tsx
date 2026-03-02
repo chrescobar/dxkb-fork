@@ -23,6 +23,7 @@ export default async function WorkspaceFolderPage({
 
   return (
     <WorkspaceBrowser
+      key={`shared-${path}`}
       mode="shared"
       username={username}
       path={path}

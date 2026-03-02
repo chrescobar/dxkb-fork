@@ -73,15 +73,19 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
-      // Missing favorites file is expected when .preferences folder or file does not exist (404 only).
-      // Do not treat 500 as "missing file" — it may indicate database/service failures and should be logged and propagated.
-      const isFavoritesGet =
+      // Missing preferences path is expected when .preferences or favorites.json does not exist.
+      // Treat 404 and 500 as "not found" so the client can create the file/dir without surfacing errors to the user.
+      const isPreferencesGet =
         method === "Workspace.get" &&
         Array.isArray(params) &&
-        (params[0] as { objects?: string[] })?.objects?.some?.((path: unknown) =>
-          typeof path === "string" && path.endsWith("/home/.preferences/favorites.json")
-        );
-      if (isFavoritesGet && response.status === 404) {
+        (params[0] as { objects?: unknown[] })?.objects?.some?.((path: unknown) => {
+          if (typeof path !== "string") return false;
+          return (
+            path.endsWith("/home/.preferences/favorites.json") ||
+            path.endsWith("/home/.preferences")
+          );
+        });
+      if (isPreferencesGet && (response.status === 404 || response.status === 500)) {
         return NextResponse.json({
           id: 1,
           result: [],

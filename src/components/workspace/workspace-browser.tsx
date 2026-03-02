@@ -142,6 +142,9 @@ export function WorkspaceBrowser({
   const [pendingDeleteSelection, setPendingDeleteSelection] = useState<
     WorkspaceBrowserItem[]
   >([]);
+  /** Paths of folders in the delete selection that are not empty (computed when dialog opens). */
+  const [nonEmptyFolderPathsInDelete, setNonEmptyFolderPathsInDelete] =
+    useState<string[]>([]);
   const [copyDialogOpen, setCopyDialogOpen] = useState(false);
   const [copyMoveDialogMode, setCopyMoveDialogMode] = useState<"copy" | "move">(
     "copy",
@@ -171,6 +174,50 @@ export function WorkspaceBrowser({
     useState(false);
 
   const workspaceClient = useMemo(() => new WorkspaceApiClient(), []);
+
+  useEffect(() => {
+    if (!deleteDialogOpen) {
+      setNonEmptyFolderPathsInDelete([]);
+      return;
+    }
+    const folders = pendingDeleteSelection.filter(
+      (item) => item.path && isFolder(item.type),
+    );
+    if (folders.length === 0) {
+      setNonEmptyFolderPathsInDelete([]);
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      const nonEmpty: string[] = [];
+      for (const item of folders) {
+        const folderPath =
+          (item.path ?? "").replace(/\/+$/, "") || (item.path ?? "");
+        if (!folderPath || cancelled) continue;
+        try {
+          const listing =
+            await workspaceClient.makeRequest<WorkspaceBrowserItem[]>(
+              "Workspace.ls",
+              [
+                {
+                  paths: [folderPath],
+                  includeSubDirs: false,
+                  recursive: false,
+                },
+              ],
+              { silent: true },
+            );
+          if (!cancelled && listing.length > 0) nonEmpty.push(folderPath);
+        } catch {
+          // Treat fetch failure as empty to avoid blocking the dialog
+        }
+      }
+      if (!cancelled) setNonEmptyFolderPathsInDelete(nonEmpty);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [deleteDialogOpen, pendingDeleteSelection, workspaceClient]);
 
   async function ensureDestinationWriteAccess(destinationPath: string): Promise<boolean> {
     const normalized = destinationPath.replace(/\/+$/, "") || "/";
@@ -984,6 +1031,11 @@ export function WorkspaceBrowser({
           <AlertDialogDescription>
             Are you sure you want to delete {deleteTargetLabel}? This action
             cannot be undone.
+            {nonEmptyFolderPathsInDelete.length > 0 && (
+              <span className="mt-2 block font-bold text-destructive">
+                This folder is NOT empty.
+              </span>
+            )}
           </AlertDialogDescription>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>

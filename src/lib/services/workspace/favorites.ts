@@ -54,21 +54,23 @@ export async function loadFavorites(userId: string): Promise<string[]> {
 }
 
 /**
- * Ensure the .preferences directory exists. If Workspace.get(metadata_only) fails, create the folder.
+ * Ensure the .preferences directory exists. If it does not exist (get returns empty or fails), create the folder.
+ * Failures from the existence check are not surfaced so the client can create the path on first use.
  */
 async function ensurePreferencesDir(userId: string): Promise<void> {
   const dirPath = getPreferencesDirPath(userId);
-  try {
-    await workspaceApi.makeRequest<unknown>("Workspace.get", [
-      { objects: [dirPath], metadata_only: true },
-    ]);
-    return;
-  } catch {
-    // Directory does not exist; create it (path-based create for folder).
-    await workspaceApi.makeRequest<unknown>("Workspace.create", [
-      { objects: [[dirPath, "folder", {}]] },
-    ]);
-  }
+  const result = await workspaceApi.makeRequest<unknown>("Workspace.get", [
+    { objects: [dirPath], metadata_only: true },
+  ], { silent: true });
+  const exists =
+    Array.isArray(result) &&
+    result.length > 0 &&
+    Array.isArray(result[0]) &&
+    result[0].length > 0;
+  if (exists) return;
+  await workspaceApi.makeRequest<unknown>("Workspace.create", [
+    { objects: [[dirPath, "folder", {}]] },
+  ]);
 }
 
 /**

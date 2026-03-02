@@ -27,6 +27,22 @@ import { ChevronRight, FolderUp } from "lucide-react";
 
 const client = new WorkspaceApiClient();
 
+function hasWriteAccess(item: WorkspaceBrowserItem): boolean {
+  const userPerm = String(item.user_permission ?? "");
+  const globalPerm = String(item.global_permission ?? "");
+
+  const hasUserWrite =
+    userPerm === "o" ||
+    userPerm === "a" ||
+    userPerm.includes("w");
+  const hasGlobalWrite =
+    globalPerm === "o" ||
+    globalPerm === "a" ||
+    globalPerm.includes("w");
+
+  return hasUserWrite || hasGlobalWrite;
+}
+
 /** Derive username (e.g. "user") from workspace root path (e.g. "/user@bvbrc"). */
 function usernameFromWorkspaceRoot(workspaceRoot: string): string {
   return workspaceRoot.replace(/^\//, "").split("@")[0] ?? "";
@@ -181,7 +197,7 @@ export function WorkspaceMiniBrowser({
   const rootItems = useMemo(() => {
     if (!isAtRoot) return [];
     const userData = userWorkspacesQuery.data ?? [];
-    const shared = sharedQuery.data ?? [];
+    const shared = (sharedQuery.data ?? []).filter(hasWriteAccess);
     const byPath = new Map<string, WorkspaceBrowserItem>();
     for (const item of [...userData, ...shared]) {
       if (!byPath.has(item.path)) byPath.set(item.path, item);

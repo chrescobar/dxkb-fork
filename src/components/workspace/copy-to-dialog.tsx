@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { WorkspaceMiniBrowser } from "./workspace-mini-browser";
 import { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import { isFolder } from "./workspace-item-icon";
 
 export interface CopyToDialogProps {
   open: boolean;
@@ -75,7 +76,15 @@ export function CopyToDialog({
     });
   }, [destinationPath, customFilename, sourceItems, onConfirm]);
 
-  const canConfirm = destinationPath != null && !isCopying;
+  const destinationIsRoot =
+    destinationPath != null && destinationPath === workspaceRootPath;
+  const hasNonFolderSource = sourceItems.some(
+    (item) => !isFolder(item.type),
+  );
+  const rootWithIncompatibleTypes = destinationIsRoot && hasNonFolderSource;
+
+  const canConfirm =
+    destinationPath != null && !isCopying && !rootWithIncompatibleTypes;
   const n = sourceItems.length;
   const title =
     mode === "move"

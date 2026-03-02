@@ -30,7 +30,7 @@ import {
 } from "./workspace-data-table";
 import { InfoPanel } from "@/components/containers/InfoPanel";
 import { WorkspaceActionBar } from "./workspace-action-bar";
-import { isFolderType } from "./workspace-item-icon";
+import { isFolder, isFolderType } from "./workspace-item-icon";
 import { WorkspaceDownloadMethods } from "@/lib/services/workspace/methods/download";
 import {
   loadFavorites,
@@ -72,10 +72,7 @@ import { UploadDialog } from "./upload-dialog";
 import { EditTypeDialog } from "./edit-type-dialog";
 import { WorkspaceApiClient } from "@/lib/services/workspace/client";
 import { WorkspaceCrudMethods } from "@/lib/services/workspace/methods/crud";
-import {
-  computeNextSelection,
-  normalizePath,
-} from "@/lib/workspace/table-selection";
+import { computeNextSelection, normalizePath } from "@/lib/workspace/table-selection";
 
 export type WorkspaceViewMode = "home" | "shared";
 
@@ -201,6 +198,61 @@ export function WorkspaceBrowser({
     useState(false);
 
   const workspaceClient = useMemo(() => new WorkspaceApiClient(), []);
+
+  function hasWriteAccess(item: WorkspaceBrowserItem): boolean {
+    const userPerm = String(item.user_permission ?? "");
+    const globalPerm = String(item.global_permission ?? "");
+
+    const hasUserWrite =
+      userPerm === "o" ||
+      userPerm === "a" ||
+      userPerm.includes("w");
+    const hasGlobalWrite =
+      globalPerm === "o" ||
+      globalPerm === "a" ||
+      globalPerm.includes("w");
+
+    return hasUserWrite || hasGlobalWrite;
+  }
+
+  async function ensureDestinationWriteAccess(destinationPath: string): Promise<boolean> {
+    const normalized = destinationPath.replace(/\/+$/, "") || "/";
+    const lastSlash = normalized.lastIndexOf("/");
+    const parentPath = lastSlash > 0 ? normalized.slice(0, lastSlash) || "/" : "/";
+
+    try {
+      const listing = await workspaceClient.makeRequest<WorkspaceBrowserItem[]>(
+        "Workspace.ls",
+        [
+          {
+            paths: [parentPath],
+            includeSubDirs: false,
+            recursive: false,
+          },
+        ],
+        { silent: true },
+      );
+
+      const target = listing.find(
+        (item) =>
+          (item.path ?? "").replace(/\/+$/, "") === normalized,
+      );
+
+      if (!target || !hasWriteAccess(target)) {
+        toast.error(
+          `Access denied, you do not have write access to ${normalized}`,
+        );
+        return false;
+      }
+
+      return true;
+    } catch {
+      toast.error(
+        `Access denied, you do not have write access to ${normalized}`,
+      );
+      return false;
+    }
+  }
   const workspaceCrud = useMemo(
     () => new WorkspaceCrudMethods(workspaceClient),
     [workspaceClient],
@@ -600,6 +652,22 @@ export function WorkspaceBrowser({
   ) {
     if (pendingCopySelection.length === 0) return;
     const base = destinationPath.replace(/\/+$/, "") || destinationPath;
+    const destIsRoot = base === currentUserWorkspaceRoot;
+    const hasNonFolder = pendingCopySelection.some(
+      (item) => !isFolder(item.type),
+    );
+    if (destIsRoot && hasNonFolder) {
+      toast.error(
+        "Sorry! Moving objects to the top level directory, " +
+          currentUserWorkspaceRoot +
+          ", is not allowed.",
+      );
+      return;
+    }
+    const canWrite = await ensureDestinationWriteAccess(base);
+    if (!canWrite) {
+      return;
+    }
     const firstDestName =
       filenameOverride ?? pendingCopySelection[0]?.name ?? "";
     const objects: [string, string][] = pendingCopySelection

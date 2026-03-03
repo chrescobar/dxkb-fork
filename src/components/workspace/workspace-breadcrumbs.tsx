@@ -57,7 +57,7 @@ export function WorkspaceBreadcrumbs({
 
   if (viewMode === "root") {
     return (
-      <nav aria-label="Workspace path" className="flex items-center gap-1 text-sm">
+      <nav aria-label="Workspace path" className="flex flex-wrap items-center gap-1 text-sm">
         <Link
           href={usernameRootHref}
           className="text-foreground font-medium transition-colors hover:text-foreground"
@@ -75,7 +75,7 @@ export function WorkspaceBreadcrumbs({
 
   if (viewMode === "shared") {
     return (
-      <nav aria-label="Workspace path" className="flex items-center gap-1 text-sm">
+      <nav aria-label="Workspace path" className="flex flex-wrap items-center gap-1 text-sm">
         {segments.map((segment, index) => {
           const segmentPath = segments
             .slice(0, index + 1)
@@ -118,7 +118,7 @@ export function WorkspaceBreadcrumbs({
   }
 
   return (
-    <nav aria-label="Workspace path" className="flex items-center gap-1 text-sm">
+    <nav aria-label="Workspace path" className="flex flex-wrap items-center gap-1 text-sm">
       <Link
         href={usernameRootHref}
         className={cn(

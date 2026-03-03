@@ -11,49 +11,27 @@ import {
   ChevronDown,
   ChevronRight,
   ClipboardCopy,
-  Construction,
-  PanelRightClose,
-  PanelRightOpen,
 } from "lucide-react";
 import { toast } from "sonner";
 import { WorkspaceBreadcrumbs } from "./workspace-breadcrumbs";
 import { WorkspaceToolbar } from "./workspace-toolbar";
 import { WorkspaceDataTable } from "./workspace-data-table";
-import { InfoPanel } from "@/components/containers/InfoPanel";
 import { WorkspaceActionBar } from "./workspace-action-bar";
+import { WorkspaceShell } from "./workspace-shell";
+import { FileViewerConstructionDialog } from "./file-viewer-construction-dialog";
 import { isFolderType } from "@/lib/services/workspace/utils";
 import { sortItems } from "@/lib/services/workspace/helpers";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button";
 import { useJobResultData } from "@/hooks/services/workspace/use-job-result-data";
 import { useWorkspaceListByPath } from "@/hooks/services/workspace/use-shared-with-user";
-import {
-  useWorkspacePanel,
-  WORKSPACE_PANEL_IDS,
-} from "@/contexts/workspace-panel-context";
+import { useWorkspacePanel } from "@/contexts/workspace-panel-context";
 import {
   computeNextSelection,
   normalizePath,
 } from "@/lib/workspace/table-selection";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogMedia,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import type { ResolvedPathObject } from "@/lib/services/workspace/types";
-import type { WorkspaceBrowserItem, WorkspaceBrowserSort } from "@/types/workspace-browser";
+import type { WorkspaceBrowserItem, WorkspaceBrowserSort, WorkspaceViewMode } from "@/types/workspace-browser";
 import { encodeWorkspaceSegment, sanitizePathSegment } from "@/lib/utils";
-
-export type WorkspaceViewMode = "home" | "shared";
 
 interface WorkspaceJobResultViewProps {
   path: string;
@@ -108,11 +86,7 @@ export function WorkspaceJobResultView({
   const router = useRouter();
   const {
     panelManuallyHidden,
-    setPanelManuallyHidden,
-    panelExpanded,
     setPanelExpanded,
-    panelLayout,
-    setPanelLayout,
   } = useWorkspacePanel();
 
   const { dotPath } = useJobResultData({
@@ -194,239 +168,122 @@ export function WorkspaceJobResultView({
     ],
   );
 
-  const mainContent = (
-    <div className="flex h-full flex-col overflow-hidden">
-      <AlertDialog
-        open={fileViewerConstructionOpen}
-        onOpenChange={setFileViewerConstructionOpen}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogMedia className="flex items-center justify-center gap-2">
-              <Construction className="h-6 w-6 text-amber-600" />
-            </AlertDialogMedia>
-            <AlertDialogTitle>File viewer coming soon</AlertDialogTitle>
-            <AlertDialogDescription>
-              The file viewer is still under construction. Please check back at
-              a later date for this feature.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>OK</AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      <div className="min-w-0 shrink-0 space-y-4 overflow-hidden p-4">
-        <WorkspaceBreadcrumbs
-          path={path}
-          username={username}
-          itemCount={dotItems.length}
-          viewMode={viewMode === "home" ? "home" : "shared"}
-          currentUsername={currentUser}
-          workspaceRootUsername={viewMode === "home" ? undefined : myWorkspaceRoot}
-        />
-        <WorkspaceToolbar
-          searchQuery=""
-          onSearchChange={() => {}}
-          typeFilter="all"
-          onTypeFilterChange={() => {}}
-          onRefresh={() => {
-            onRefetch?.();
-            void listQuery.refetch();
-          }}
-          isRefreshing={listQuery.isFetching}
-          showHiddenFiles={true}
-          onShowHiddenFilesChange={() => {}}
-        />
-      </div>
-
-      <div className="border-border flex min-h-0 flex-1 flex-col gap-4 overflow-hidden px-4 pb-4">
-        <div className="border-border flex shrink-0 flex-col gap-2 rounded-md border p-4">
-          <h2 className="text-lg font-semibold">{title}</h2>
-          <dl className="grid grid-cols-1 gap-x-4 gap-y-1 text-sm sm:grid-cols-2 xl:grid-cols-4">
-            <div>
-              <dt className="text-muted-foreground">Job ID</dt>
-              <dd className="font-mono text-xs">{jobId}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">Run time</dt>
-              <dd>{formatElapsedSeconds(elapsed ?? 0)}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">Start time</dt>
-              <dd>{formatUnixTimestamp(startTime)}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">End time</dt>
-              <dd>{formatUnixTimestamp(endTime)}</dd>
-            </div>
-          </dl>
-
-          <Collapsible open={parametersOpen} onOpenChange={setParametersOpen} className="service-collapsible-container p-1!">
-            <CollapsibleTrigger className="service-collapsible-trigger text-sm">
-              {parametersOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              Parameters
-            </CollapsibleTrigger>
-            <CollapsibleContent className="service-collapsible-content">
-              <div className="relative mt-2">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="absolute right-4 top-2 z-10 h-10 w-10 p-3 border border-border rounded-sm text-muted-foreground hover:text-foreground"
-                  onClick={() => {
-                    const text = JSON.stringify(parameters, null, 2);
-                    void navigator.clipboard.writeText(text).then(
-                      () => toast.success("Parameters copied to clipboard"),
-                      () => toast.error("Failed to copy"),
-                    );
-                  }}
-                  title="Copy to clipboard"
-                >
-                  <ClipboardCopy className="h-5 w-5" />
-                </Button>
-                <pre className="scrollbar-themed bg-muted/50 max-h-48 overflow-auto rounded p-2 pr-10 font-mono text-xs">
-                  {JSON.stringify(parameters, null, 2)}
-                </pre>
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-        </div>
-
-        <div className="min-h-0 flex-1">
-          <WorkspaceDataTable
-            items={processedItems}
-            isLoading={isLoadingList}
-            path={path}
-            sort={sort}
-            onSortChange={setSort}
-            showViewSharedRow={false}
-            viewMode={viewMode}
-            username={username}
-            sharedRootUsername={viewMode === "home" ? undefined : myWorkspaceRoot}
-            selectedPaths={selectedItems.map((i) => normalizePath(i.path))}
-            onSelect={handleSelectItem}
-            onItemDoubleClick={handleItemDoubleClick}
-            onOpenFileRequested={() => setFileViewerConstructionOpen(true)}
-            onClearSelection={() => {
-              setSelectedItems([]);
-              setAnchorPath(null);
-            }}
-          />
-        </div>
-      </div>
-    </div>
-  );
-
-  const actionStrip = (
-    <div className="border-border/50 bg-muted/50 flex h-full w-[80px] shrink-0 flex-col rounded-l-lg border-r py-2">
-      <div className="relative mx-0.5 mb-1 h-8 shrink-0">
-        <Button
-          variant="ghost"
-          size="sm"
-          className={`absolute inset-0 h-full w-full justify-start gap-1 font-normal ${
-            panelExpanded ? "pointer-events-none opacity-0" : "opacity-100"
-          }`}
-          onClick={() => {
-            setPanelManuallyHidden(false);
-            setPanelExpanded(true);
-          }}
-          title="Show details panel"
-        >
-          <PanelRightOpen className="h-4 w-4 shrink-0" />
-          Show
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className={`absolute inset-0 h-full w-full justify-start gap-1 font-normal ${
-            panelExpanded ? "opacity-100" : "pointer-events-none opacity-0"
-          }`}
-          onClick={() => {
-            setPanelManuallyHidden(true);
-            setPanelExpanded(false);
-          }}
-          title="Hide panel"
-        >
-          <PanelRightClose className="h-4 w-4 shrink-0" />
-          Hide
-        </Button>
-      </div>
-      <div className="scrollbar-themed min-h-0 flex-1 overflow-y-auto px-1.5">
+  return (
+    <WorkspaceShell
+      selectedItems={selectedItems}
+      workspaceGuideUrl={workspaceGuideUrl}
+      actionBar={
         <WorkspaceActionBar
           selection={selectedItems}
           workspaceGuideUrl={workspaceGuideUrl}
           onAction={onAction}
         />
-      </div>
-    </div>
-  );
-
-  const detailsPanelContent =
-    selectedItems.length > 0 ? (
-      <InfoPanel
-        variant="workspace"
-        selection={selectedItems}
-        onClose={() => {
-          setPanelManuallyHidden(true);
-          setPanelExpanded(false);
-        }}
-      />
-    ) : (
-      <div className="flex h-full w-full flex-col overflow-hidden px-4 py-2">
-        <div className="flex items-center justify-between gap-2 border-b pb-2">
-          <h3 className="text-muted-foreground truncate text-sm font-semibold">
-            Nothing selected
-          </h3>
-        </div>
-        <div className="text-muted-foreground flex flex-1 items-center justify-center py-6 text-center text-sm">
-          Select an item to view details
-        </div>
-      </div>
-    );
-
-  if (!panelExpanded) {
-    return (
-      <div className="flex h-full min-h-0 w-full flex-row gap-0">
-        <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-          {mainContent}
-        </div>
-        <aside className="bg-muted/30 flex min-h-full shrink-0 rounded-tl-lg rounded-bl-lg border-l">
-          {actionStrip}
-        </aside>
-      </div>
-    );
-  }
-
-  return (
-    <ResizablePanelGroup
-      orientation="horizontal"
-      className="h-full min-h-0 w-full"
-      defaultLayout={panelLayout}
-      onLayoutChanged={setPanelLayout}
+      }
     >
-      <ResizablePanel
-        id={WORKSPACE_PANEL_IDS.main}
-        defaultSize={panelLayout[WORKSPACE_PANEL_IDS.main] ?? 75}
-        minSize={50}
-        className="flex h-full min-h-0 flex-row overflow-hidden"
-      >
-        <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-          {mainContent}
+      <div className="flex h-full flex-col overflow-hidden">
+        <FileViewerConstructionDialog
+          open={fileViewerConstructionOpen}
+          onOpenChange={setFileViewerConstructionOpen}
+        />
+        <div className="min-w-0 shrink-0 space-y-4 overflow-hidden p-4">
+          <WorkspaceBreadcrumbs
+            path={path}
+            username={username}
+            itemCount={dotItems.length}
+            viewMode={viewMode === "home" ? "home" : "shared"}
+            currentUsername={currentUser}
+            workspaceRootUsername={viewMode === "home" ? undefined : myWorkspaceRoot}
+          />
+          <WorkspaceToolbar
+            searchQuery=""
+            onSearchChange={() => {}}
+            typeFilter="all"
+            onTypeFilterChange={() => {}}
+            onRefresh={() => {
+              onRefetch?.();
+              void listQuery.refetch();
+            }}
+            isRefreshing={listQuery.isFetching}
+            showHiddenFiles={true}
+            onShowHiddenFilesChange={() => {}}
+          />
         </div>
-        <aside className="bg-muted/30 flex min-h-full shrink-0 rounded-tl-lg rounded-bl-lg border-l">
-          {actionStrip}
-        </aside>
-      </ResizablePanel>
-      <ResizableHandle withHandle className="shrink-0" />
-      <ResizablePanel
-        id={WORKSPACE_PANEL_IDS.details}
-        defaultSize={panelLayout[WORKSPACE_PANEL_IDS.details] ?? 25}
-        minSize={110}
-        maxSize={600}
-        className="flex min-h-0 flex-col overflow-hidden py-2"
-      >
-        {detailsPanelContent}
-      </ResizablePanel>
-    </ResizablePanelGroup>
+
+        <div className="border-border flex min-h-0 flex-1 flex-col gap-4 overflow-hidden px-4 pb-4">
+          <div className="border-border flex shrink-0 flex-col gap-2 rounded-md border p-4">
+            <h2 className="text-lg font-semibold">{title}</h2>
+            <dl className="grid grid-cols-1 gap-x-4 gap-y-1 text-sm sm:grid-cols-2 xl:grid-cols-4">
+              <div>
+                <dt className="text-muted-foreground">Job ID</dt>
+                <dd className="font-mono text-xs">{jobId}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">Run time</dt>
+                <dd>{formatElapsedSeconds(elapsed ?? 0)}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">Start time</dt>
+                <dd>{formatUnixTimestamp(startTime)}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">End time</dt>
+                <dd>{formatUnixTimestamp(endTime)}</dd>
+              </div>
+            </dl>
+
+            <Collapsible open={parametersOpen} onOpenChange={setParametersOpen} className="service-collapsible-container p-1!">
+              <CollapsibleTrigger className="service-collapsible-trigger text-sm">
+                {parametersOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                Parameters
+              </CollapsibleTrigger>
+              <CollapsibleContent className="service-collapsible-content">
+                <div className="relative mt-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="absolute right-4 top-2 z-10 h-10 w-10 p-3 border border-border rounded-sm text-muted-foreground hover:text-foreground"
+                    onClick={() => {
+                      const text = JSON.stringify(parameters, null, 2);
+                      void navigator.clipboard.writeText(text).then(
+                        () => toast.success("Parameters copied to clipboard"),
+                        () => toast.error("Failed to copy"),
+                      );
+                    }}
+                    title="Copy to clipboard"
+                  >
+                    <ClipboardCopy className="h-5 w-5" />
+                  </Button>
+                  <pre className="scrollbar-themed bg-muted/50 max-h-48 overflow-auto rounded p-2 pr-10 font-mono text-xs">
+                    {JSON.stringify(parameters, null, 2)}
+                  </pre>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          </div>
+
+          <div className="min-h-0 flex-1">
+            <WorkspaceDataTable
+              items={processedItems}
+              isLoading={isLoadingList}
+              path={path}
+              sort={sort}
+              onSortChange={setSort}
+              showViewSharedRow={false}
+              viewMode={viewMode}
+              username={username}
+              sharedRootUsername={viewMode === "home" ? undefined : myWorkspaceRoot}
+              selectedPaths={selectedItems.map((i) => normalizePath(i.path))}
+              onSelect={handleSelectItem}
+              onItemDoubleClick={handleItemDoubleClick}
+              onOpenFileRequested={() => setFileViewerConstructionOpen(true)}
+              onClearSelection={() => {
+                setSelectedItems([]);
+                setAnchorPath(null);
+              }}
+            />
+          </div>
+        </div>
+      </div>
+    </WorkspaceShell>
   );
 }

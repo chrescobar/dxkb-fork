@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -83,16 +84,19 @@ export function EditTypeDialog({
             value={selectedType}
             onValueChange={(value) => setSelectedType(value ?? "")}
             disabled={isUpdating}
+          
           >
             <SelectTrigger id="edit-type-select" className="w-full">
               <SelectValue placeholder="Select a new type…" />
             </SelectTrigger>
             <SelectContent>
-              {options.map((typeId) => (
-                <SelectItem key={typeId} value={typeId}>
-                  {typeId}
-                </SelectItem>
-              ))}
+              <SelectGroup>
+                {options.map((typeId) => (
+                  <SelectItem key={typeId} value={typeId}>
+                    {typeId}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
             </SelectContent>
           </Select>
           {item && (

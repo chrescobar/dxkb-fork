@@ -5,20 +5,14 @@ import React, {
   useCallback,
   forwardRef,
   useImperativeHandle,
-  useEffect,
   useMemo,
   useState,
 } from "react";
-import type { CSSProperties } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowUp, ArrowDown, ArrowUpDown, FolderUp, Users } from "lucide-react";
 import {
-  ColumnDef,
   getCoreRowModel,
   useReactTable,
-  flexRender,
   type SortingState,
-  type Header,
 } from "@tanstack/react-table";
 import {
   DndContext,
@@ -35,34 +29,32 @@ import {
   arrayMove,
   SortableContext,
   horizontalListSortingStrategy,
-  useSortable,
 } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import clsx from "clsx";
 import {
   Table,
   TableBody,
-  TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
-import { WorkspaceItemIcon } from "./workspace-item-icon";
-import {
+import type {
   WorkspaceBrowserItem,
   SortField,
   WorkspaceBrowserSort,
+  WorkspaceViewMode,
 } from "@/types/workspace-browser";
 import { encodeWorkspaceSegment, sanitizePathSegment } from "@/lib/utils";
 import { normalizePath } from "@/lib/workspace/table-selection";
-import { formatFileSize, formatDate } from "@/lib/services/workspace/helpers";
 import { isFolderType } from "@/lib/services/workspace/utils";
+import { useTableKeyboardNavigation } from "@/hooks/workspace/use-table-keyboard-navigation";
+import {
+  DraggableTableHeader,
+  TableSkeleton,
+  useWorkspaceColumns,
+} from "./workspace-table-columns";
+import { LeadingRow, ParentRow, DataRow, EmptyRow } from "./workspace-table-rows";
 
 /** Stable empty array for table data fallback (avoids infinite re-renders per TanStack Data guide). */
 const EMPTY_ITEMS: WorkspaceBrowserItem[] = [];
-
-export type ViewMode = "home" | "shared";
 
 interface WorkspaceDataTableProps {
   items: WorkspaceBrowserItem[];
@@ -73,7 +65,7 @@ interface WorkspaceDataTableProps {
   /** When true and viewMode is "home" and at root, show "View Shared Folders" row */
   showViewSharedRow?: boolean;
   /** When "shared", parent row and item navigation use shared routes */
-  viewMode?: ViewMode;
+  viewMode?: WorkspaceViewMode;
   /** Optional map of item path -> member count; Members column is always shown (displays "—" when absent). */
   memberCountByPath?: Record<string, number>;
   /** Username for building workspace URLs (e.g. /workspace/${username}/home) */
@@ -97,160 +89,6 @@ interface WorkspaceDataTableProps {
 
 export interface WorkspaceDataTableHandle {
   focus: () => void;
-}
-
-function formatOwner(ownerId: string): string {
-  if (!ownerId) return "";
-  return ownerId.replace(/@bvbrc$/, "");
-}
-
-function SortIcon({
-  field,
-  currentSort,
-}: {
-  field: SortField;
-  currentSort: WorkspaceBrowserSort;
-}) {
-  if (currentSort.field !== field) {
-    return (
-      <ArrowUpDown className="text-muted-foreground/50 ml-1 inline h-3 w-3" />
-    );
-  }
-  return currentSort.direction === "asc" ? (
-    <ArrowUp className="ml-1 inline h-3 w-3" />
-  ) : (
-    <ArrowDown className="ml-1 inline h-3 w-3" />
-  );
-}
-
-/** Row height matching real data: TableCell p-2 (8px top/bottom) + 20px content = 36px (h-9). */
-const skeletonRowHeight = "h-9";
-
-/** Skeleton rows matching real table column order (Name, Size, Owner, Members, Created, Type). */
-function TableSkeleton() {
-  return (
-    <>
-      {Array.from({ length: 8 }).map((_, i) => (
-        <TableRow key={i} className="pl-6">
-          <TableCell className={`pl-6 text-left ${skeletonRowHeight}`}>
-            <div className="flex h-5 items-center gap-2">
-              <Skeleton className="h-4 w-4 shrink-0 rounded" />
-              <Skeleton className="h-4 w-40 shrink-0" />
-            </div>
-          </TableCell>
-          <TableCell
-            className={`text-muted-foreground pl-6 text-left ${skeletonRowHeight}`}
-          >
-            <Skeleton className="h-4 w-14" />
-          </TableCell>
-          <TableCell
-            className={`text-muted-foreground hidden pl-6 text-left md:table-cell ${skeletonRowHeight}`}
-          >
-            <Skeleton className="h-4 w-20" />
-          </TableCell>
-          <TableCell
-            className={`text-muted-foreground pl-6 text-left ${skeletonRowHeight}`}
-          >
-            <Skeleton className="h-4 w-16" />
-          </TableCell>
-          <TableCell
-            className={`text-muted-foreground hidden pl-6 text-left sm:table-cell ${skeletonRowHeight}`}
-          >
-            <Skeleton className="h-4 w-24" />
-          </TableCell>
-          <TableCell
-            className={`text-muted-foreground hidden pl-6 text-left lg:table-cell ${skeletonRowHeight}`}
-          >
-            <Skeleton className="h-4 w-16" />
-          </TableCell>
-        </TableRow>
-      ))}
-    </>
-  );
-}
-
-function formatMemberCount(count: number): string {
-  if (count <= 0) return "—";
-  if (count === 1) return "Only me";
-  return `${count} members`;
-}
-
-function DraggableTableHeader({
-  header,
-  onSort: _onSort,
-  sort: _sort,
-}: {
-  header: Header<WorkspaceBrowserItem, unknown>;
-  onSort: (field: SortField) => void;
-  sort: WorkspaceBrowserSort;
-}) {
-  const { attributes, isDragging, listeners, setNodeRef, transform } =
-    useSortable({
-      id: header.column.id,
-    });
-
-  const style: CSSProperties = {
-    opacity: isDragging ? 0.8 : 1,
-    position: "relative" as const,
-    transform: CSS.Translate.toString(transform),
-    transition: "width transform 0.2s ease-in-out",
-    whiteSpace: "nowrap",
-    width: header.column.getSize(),
-    zIndex: isDragging ? 1 : 0,
-  };
-
-  const meta = header.column.columnDef.meta as
-    | { className?: string }
-    | undefined;
-  const className = clsx("pl-6 relative bg-background", meta?.className ?? "");
-
-  return (
-    <TableHead
-      ref={setNodeRef}
-      colSpan={header.colSpan}
-      className={className}
-      style={{
-        ...style,
-        minWidth: style.width,
-        maxWidth: style.width,
-      }}
-    >
-      <div className="relative flex w-full items-center justify-between py-0">
-        <div className="flex min-w-0 flex-1 cursor-pointer select-none">
-          {flexRender(header.column.columnDef.header, header.getContext())}
-        </div>
-        <button
-          type="button"
-          className="hover:bg-primary/10 cursor-grab touch-none rounded p-1 active:cursor-grabbing"
-          {...attributes}
-          {...listeners}
-          onClick={(e) => e.stopPropagation()}
-          aria-label="Drag to reorder column"
-        >
-          <span className="text-muted-foreground select-none" aria-hidden>
-            ⋮⋮
-          </span>
-        </button>
-        {header.column.getCanResize() && (
-          <div
-            role="separator"
-            aria-orientation="vertical"
-            onMouseDown={header.getResizeHandler()}
-            onTouchStart={header.getResizeHandler()}
-            onDoubleClick={() => header.column.resetSize()}
-            className={clsx(
-              "border-border absolute top-0 right-0 z-10 h-full w-2 cursor-col-resize border-r",
-              "hover:bg-primary/15 hover:border-primary/50",
-              header.column.getIsResizing() && "bg-primary/25 border-primary",
-            )}
-            style={{
-              transform: "translateX(50%)",
-            }}
-          />
-        )}
-      </div>
-    </TableHead>
-  );
 }
 
 export const WorkspaceDataTable = forwardRef<
@@ -281,11 +119,6 @@ export const WorkspaceDataTable = forwardRef<
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const isAtRoot = !path || path === "" || path === "/";
 
-  /** When set, keyboard focus is on a special row (not an item); clear when selection changes */
-  const [focusedSpecialRow, setFocusedSpecialRow] = useState<
-    "leading" | "parent" | null
-  >(null);
-
   const [columnOrder, setColumnOrder] = useState<string[]>([
     "name",
     "size",
@@ -298,11 +131,6 @@ export const WorkspaceDataTable = forwardRef<
   useImperativeHandle(ref, () => ({
     focus: () => tableContainerRef.current?.focus(),
   }));
-
-  // Clear special-row focus when user selects an item (e.g. by clicking)
-  useEffect(() => {
-    if ((selectedPaths ?? []).length > 0) setFocusedSpecialRow(null);
-  }, [selectedPaths]);
 
   const pathSegments = useMemo(
     () =>
@@ -324,20 +152,6 @@ export const WorkspaceDataTable = forwardRef<
     sharedRootUsername != null
       ? `/workspace/${encodeWorkspaceSegment(sanitizePathSegment(sharedRootUsername))}`
       : sharedBase;
-
-  const handleSort = useCallback(
-    (field: SortField) => {
-      if (sort.field === field) {
-        onSortChange({
-          field,
-          direction: sort.direction === "asc" ? "desc" : "asc",
-        });
-      } else {
-        onSortChange({ field, direction: "asc" });
-      }
-    },
-    [sort.field, sort.direction, onSortChange],
-  );
 
   function handleItemClick(item: WorkspaceBrowserItem) {
     if (!isFolderType(item.type)) return;
@@ -388,227 +202,32 @@ export const WorkspaceDataTable = forwardRef<
 
   const leadingOffset = showLeadingRow ? 1 : 0;
   const parentOffset = showParentRow ? 1 : 0;
-  const virtualRowCount = leadingOffset + parentOffset + items.length;
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (!useSelectionMode) return;
-      if (virtualRowCount === 0) return;
+  const { focusedSpecialRow, handleKeyDown } = useTableKeyboardNavigation({
+    useSelectionMode,
+    items,
+    selectedPaths,
+    leadingOffset,
+    parentOffset,
+    onSelect,
+    onItemDoubleClick,
+    onOpenFileRequested,
+    onClearSelection,
+    sharedBase,
+    router,
+    handleParentClick,
+  });
 
-      const paths = selectedPaths ?? [];
-      const focusPath = paths.length > 0 ? paths[paths.length - 1] : null;
-      const normalizedFocus = normalizePath(focusPath ?? undefined);
-      const currentItemIndex = items.findIndex(
-        (i) => normalizePath(i.path) === normalizedFocus,
-      );
-
-      let currentVirtual: number;
-      if (focusedSpecialRow === "leading") {
-        currentVirtual = 0;
-      } else if (focusedSpecialRow === "parent") {
-        currentVirtual = leadingOffset;
-      } else if (currentItemIndex >= 0) {
-        currentVirtual = leadingOffset + parentOffset + currentItemIndex;
-      } else {
-        currentVirtual = -1;
-      }
-
-      if (e.key === "Enter") {
-        if (focusedSpecialRow === "parent") {
-          e.preventDefault();
-          handleParentClick();
-          return;
-        }
-        if (focusedSpecialRow === "leading") {
-          e.preventDefault();
-          router.push(sharedBase);
-          return;
-        }
-        const focusedItem =
-          currentItemIndex >= 0 ? items[currentItemIndex] : null;
-        if (focusedItem) {
-          e.preventDefault();
-          if (!isFolderType(focusedItem.type)) {
-            onOpenFileRequested?.(focusedItem);
-          } else {
-            onItemDoubleClick?.(focusedItem);
-          }
-        }
-        return;
-      }
-
-      if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
-
-      let nextVirtual: number;
-      if (e.shiftKey) {
-        nextVirtual =
-          e.key === "ArrowDown" ? virtualRowCount - 1 : 0;
-      } else if (e.key === "ArrowDown") {
-        nextVirtual =
-          currentVirtual < 0 ? 0 : Math.min(currentVirtual + 1, virtualRowCount - 1);
-      } else {
-        nextVirtual =
-          currentVirtual <= 0 ? virtualRowCount - 1 : currentVirtual - 1;
-      }
-
-      e.preventDefault();
-
-      if (nextVirtual < leadingOffset) {
-        setFocusedSpecialRow("leading");
-        onClearSelection?.();
-        return;
-      }
-      if (nextVirtual < leadingOffset + parentOffset) {
-        setFocusedSpecialRow("parent");
-        onClearSelection?.();
-        return;
-      }
-      const nextItemIndex = nextVirtual - leadingOffset - parentOffset;
-      const nextItem = items[nextItemIndex];
-      if (nextItem != null) {
-        setFocusedSpecialRow(null);
-        onSelect?.(nextItem, { ctrlOrMeta: false, shift: false });
-      }
-    },
-    [
-      useSelectionMode,
-      virtualRowCount,
-      leadingOffset,
-      parentOffset,
-      items,
-      selectedPaths,
-      focusedSpecialRow,
-      onSelect,
-      onItemDoubleClick,
-      onOpenFileRequested,
-      onClearSelection,
-      sharedBase,
-      router,
-      handleParentClick,
-    ],
+  const { columns, handleSort } = useWorkspaceColumns(
+    sort,
+    onSortChange,
+    memberCountByPath,
   );
 
   const sortingState: SortingState = useMemo(
     () => [{ id: sort.field, desc: sort.direction === "desc" }],
     [sort.field, sort.direction],
   );
-
-  const columns = useMemo<ColumnDef<WorkspaceBrowserItem>[]>(() => {
-    const sortableHeader = (field: SortField, label: string) => (
-      <span className="inline-flex items-center gap-1">
-        {label}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleSort(field);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              handleSort(field);
-            }
-          }}
-          className="hover:bg-primary/10 focus-visible:ring-primary cursor-pointer rounded p-0.5 select-none focus:outline-none focus-visible:ring-2"
-          aria-label={`Sort by ${label}`}
-        >
-          <SortIcon field={field} currentSort={sort} />
-        </button>
-      </span>
-    );
-    const base: ColumnDef<WorkspaceBrowserItem>[] = [
-      {
-        id: "name",
-        accessorKey: "name",
-        header: () => sortableHeader("name", "Name"),
-        cell: ({ row }) => {
-          const item = row.original;
-          const isNavigable = isFolderType(item.type);
-          return (
-            <div className="flex items-center gap-2">
-              <WorkspaceItemIcon type={item.type} />
-              <span
-                className={isNavigable ? "font-medium hover:underline" : ""}
-              >
-                {item.name}
-              </span>
-            </div>
-          );
-        },
-        meta: { className: "" },
-        size: 220,
-        enableResizing: true,
-      },
-      {
-        id: "size",
-        accessorKey: "size",
-        header: () => sortableHeader("size", "Size"),
-        cell: ({ getValue }) => (
-          <span className="text-muted-foreground">
-            {formatFileSize(Number(getValue()) || 0)}
-          </span>
-        ),
-        meta: { className: "" },
-        size: 90,
-        enableResizing: true,
-      },
-      {
-        id: "owner_id",
-        accessorKey: "owner_id",
-        header: () => sortableHeader("owner_id", "Owner"),
-        cell: ({ getValue }) => (
-          <span className="text-muted-foreground">
-            {formatOwner(String(getValue() ?? ""))}
-          </span>
-        ),
-        meta: { className: "hidden md:table-cell" },
-        size: 120,
-        enableResizing: true,
-      },
-      {
-        id: "creation_time",
-        accessorKey: "creation_time",
-        header: () => sortableHeader("creation_time", "Created"),
-        cell: ({ getValue }) => (
-          <span className="text-muted-foreground">
-            {formatDate(String(getValue() ?? ""))}
-          </span>
-        ),
-        meta: { className: "hidden sm:table-cell" },
-        size: 120,
-        enableResizing: true,
-      },
-      {
-        id: "members",
-        header: "Members",
-        cell: ({ row }) => {
-          const count = memberCountByPath?.[row.original.path];
-          return (
-            <span className="text-muted-foreground">
-              {count != null ? formatMemberCount(count) : "—"}
-            </span>
-          );
-        },
-        meta: { className: "" },
-        size: 100,
-        enableResizing: true,
-      },
-    ];
-    base.push({
-      id: "type",
-      accessorKey: "type",
-      header: () => sortableHeader("type", "Type"),
-      cell: ({ getValue }) => (
-        <span className="text-muted-foreground">
-          {String(getValue() ?? "")}
-        </span>
-      ),
-      meta: { className: "hidden lg:table-cell" },
-      size: 90,
-      enableResizing: true,
-    });
-    return base;
-  }, [sort, memberCountByPath, handleSort]);
 
   const table = useReactTable<WorkspaceBrowserItem>({
     data: items ?? EMPTY_ITEMS,
@@ -715,208 +334,41 @@ export const WorkspaceDataTable = forwardRef<
               ) : (
                 <>
                   {showLeadingRow && (
-                    <TableRow
-                      className={
-                        (useSelectionMode
-                          ? "border-l-2 " +
-                            (focusedSpecialRow === "leading"
-                              ? "border-l-primary"
-                              : "border-l-transparent") +
-                            " cursor-pointer pl-6 "
-                          : "cursor-pointer pl-6 ") +
-                        (focusedSpecialRow === "leading" ? " bg-muted" : "")
-                      }
+                    <LeadingRow
+                      columns={table.getVisibleLeafColumns()}
+                      useSelectionMode={useSelectionMode}
+                      isFocused={focusedSpecialRow === "leading"}
                       onClick={() => router.push(sharedBase)}
-                      aria-selected={
-                        useSelectionMode && focusedSpecialRow === "leading"
-                          ? true
-                          : undefined
-                      }
-                    >
-                      {table.getVisibleLeafColumns().map((column) => {
-                        const meta = column.columnDef.meta as
-                          | { className?: string }
-                          | undefined;
-                        const className = clsx("pl-6", meta?.className ?? "");
-                        return (
-                          <TableCell
-                            key={column.id}
-                            className={className}
-                            style={{
-                              width: `var(--col-${column.id}-size)`,
-                              minWidth: `var(--col-${column.id}-size)`,
-                              maxWidth: `var(--col-${column.id}-size)`,
-                            }}
-                          >
-                            {column.id === "name" ? (
-                              <div className="flex items-center gap-2">
-                                <Users className="h-4 w-4 shrink-0 text-amber-500" />
-                                <span className="text-muted-foreground font-medium italic">
-                                  View Shared Folders
-                                </span>
-                              </div>
-                            ) : null}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
+                    />
                   )}
 
                   {showParentRow && (
-                    <TableRow
-                      className={
-                        (useSelectionMode
-                          ? "border-l-2 " +
-                            (focusedSpecialRow === "parent"
-                              ? "border-l-primary"
-                              : "border-l-transparent") +
-                            " cursor-pointer pl-6 "
-                          : "cursor-pointer pl-6 ") +
-                        (focusedSpecialRow === "parent" ? " bg-muted" : "")
-                      }
+                    <ParentRow
+                      columns={table.getVisibleLeafColumns()}
+                      useSelectionMode={useSelectionMode}
+                      isFocused={focusedSpecialRow === "parent"}
                       onClick={handleParentClick}
-                      aria-selected={
-                        useSelectionMode && focusedSpecialRow === "parent"
-                          ? true
-                          : undefined
-                      }
-                    >
-                      {table.getVisibleLeafColumns().map((column) => {
-                        const meta = column.columnDef.meta as
-                          | { className?: string }
-                          | undefined;
-                        const className = clsx("pl-6", meta?.className ?? "");
-                        return (
-                          <TableCell
-                            key={column.id}
-                            className={className}
-                            style={{
-                              width: `var(--col-${column.id}-size)`,
-                              minWidth: `var(--col-${column.id}-size)`,
-                              maxWidth: `var(--col-${column.id}-size)`,
-                            }}
-                          >
-                            {column.id === "name" ? (
-                              <div className="flex items-center gap-2">
-                                <FolderUp className="h-4 w-4 shrink-0 text-amber-500" />
-                                <span className="text-muted-foreground font-medium italic">
-                                  {parentRowLabel}
-                                </span>
-                              </div>
-                            ) : null}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
+                      label={parentRowLabel}
+                    />
                   )}
 
                   {items.length === 0 && !isLoading ? (
-                    <TableRow className="pl-6">
-                      <TableCell
-                        colSpan={table.getAllLeafColumns().length}
-                        className="text-muted-foreground py-12 pl-6 text-center"
-                      >
-                        This folder is empty
-                      </TableCell>
-                    </TableRow>
+                    <EmptyRow colSpan={table.getAllLeafColumns().length} />
                   ) : (
-                    table.getRowModel().rows.map((row) => {
-                      const item = row.original;
-                      const isNavigable = isFolderType(item.type);
-                      const normalizedItemPath = normalizePath(item.path);
-                      const isSelected =
-                        useSelectionMode &&
-                        selectedPathSet.has(normalizedItemPath);
-
-                      function handleRowMouseDown(e: React.MouseEvent) {
-                        if (
-                          useSelectionMode &&
-                          (e.shiftKey || e.ctrlKey || e.metaKey)
-                        ) {
-                          e.preventDefault();
-                        }
-                      }
-
-                      function handleRowClick(e: React.MouseEvent) {
-                        if (useSelectionMode) {
-                          onSelect?.(item, {
-                            ctrlOrMeta: e.ctrlKey || e.metaKey,
-                            shift: e.shiftKey,
-                          });
-                        } else if (isNavigable) {
-                          handleItemClick(item);
-                        } else {
-                          onOpenFileRequested?.(item);
-                        }
-                      }
-
-                      function handleRowDoubleClick() {
-                        if (useSelectionMode) {
-                          if (isNavigable) {
-                            onItemDoubleClick?.(item);
-                          } else {
-                            onOpenFileRequested?.(item);
-                          }
-                        }
-                      }
-
-                      return (
-                        <TableRow
-                          key={row.id}
-                          className={
-                            (useSelectionMode
-                              ? "border-l-2 " +
-                                (isSelected
-                                  ? "border-l-primary"
-                                  : "border-l-transparent")
-                              : "") +
-                            (useSelectionMode || isNavigable || onOpenFileRequested
-                              ? " cursor-pointer pl-6"
-                              : " pl-6") +
-                            (isSelected ? " bg-muted" : "")
-                          }
-                          onMouseDown={handleRowMouseDown}
-                          onClick={handleRowClick}
-                          onDoubleClick={handleRowDoubleClick}
-                          title={
-                            useSelectionMode && isNavigable
-                              ? "Double-click to open folder"
-                              : useSelectionMode && !isNavigable && onOpenFileRequested
-                                ? "Double-click to open file"
-                                : undefined
-                          }
-                          aria-selected={
-                            useSelectionMode ? isSelected : undefined
-                          }
-                        >
-                          {row.getVisibleCells().map((cell) => {
-                            const meta = cell.column.columnDef.meta as
-                              | { className?: string }
-                              | undefined;
-                            const className = clsx(
-                              "pl-6",
-                              meta?.className ?? "",
-                            );
-                            return (
-                              <TableCell
-                                key={cell.id}
-                                className={className}
-                                style={{
-                                  width: `var(--col-${cell.column.id}-size)`,
-                                  minWidth: `var(--col-${cell.column.id}-size)`,
-                                  maxWidth: `var(--col-${cell.column.id}-size)`,
-                                }}
-                              >
-                                {flexRender(
-                                  cell.column.columnDef.cell,
-                                  cell.getContext(),
-                                )}
-                              </TableCell>
-                            );
-                          })}
-                        </TableRow>
-                      );
-                    })
+                    table.getRowModel().rows.map((row) => (
+                      <DataRow
+                        key={row.id}
+                        row={row}
+                        useSelectionMode={useSelectionMode}
+                        isSelected={selectedPathSet.has(
+                          normalizePath(row.original.path),
+                        )}
+                        onSelect={onSelect}
+                        onItemClick={handleItemClick}
+                        onItemDoubleClick={onItemDoubleClick}
+                        onOpenFileRequested={onOpenFileRequested}
+                      />
+                    ))
                   )}
                 </>
               )}

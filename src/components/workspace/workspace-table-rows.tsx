@@ -14,13 +14,17 @@ interface SpecialRowProps {
   useSelectionMode: boolean;
   isFocused: boolean;
   onClick: () => void;
+  icon: React.ElementType;
+  label: string;
 }
 
-export function LeadingRow({
+function SpecialRow({
   columns,
   useSelectionMode,
   isFocused,
   onClick,
+  icon: Icon,
+  label,
 }: SpecialRowProps) {
   return (
     <TableRow
@@ -55,60 +59,7 @@ export function LeadingRow({
           >
             {column.id === "name" ? (
               <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 shrink-0 text-amber-500" />
-                <span className="text-muted-foreground font-medium italic">
-                  View Shared Folders
-                </span>
-              </div>
-            ) : null}
-          </TableCell>
-        );
-      })}
-    </TableRow>
-  );
-}
-
-export function ParentRow({
-  columns,
-  useSelectionMode,
-  isFocused,
-  onClick,
-  label,
-}: SpecialRowProps & { label: string }) {
-  return (
-    <TableRow
-      className={
-        (useSelectionMode
-          ? "border-l-2 " +
-            (isFocused ? "border-l-primary" : "border-l-transparent") +
-            " cursor-pointer pl-6 "
-          : "cursor-pointer pl-6 ") +
-        (isFocused ? " bg-muted" : "")
-      }
-      onClick={onClick}
-      aria-selected={useSelectionMode && isFocused ? true : undefined}
-    >
-      {columns.map((column) => {
-        const meta = column.columnDef.meta as
-          | { className?: string }
-          | undefined;
-        const className = clsx(
-          column.id === "name" ? "pl-6" : "pl-2",
-          meta?.className ?? "",
-        );
-        return (
-          <TableCell
-            key={column.id}
-            className={className}
-            style={{
-              width: `var(--col-${column.id}-size)`,
-              minWidth: `var(--col-${column.id}-size)`,
-              maxWidth: `var(--col-${column.id}-size)`,
-            }}
-          >
-            {column.id === "name" ? (
-              <div className="flex items-center gap-2">
-                <FolderUp className="h-4 w-4 shrink-0 text-amber-500" />
+                <Icon className="h-4 w-4 shrink-0 text-amber-500" />
                 <span className="text-muted-foreground font-medium italic">
                   {label}
                 </span>
@@ -119,6 +70,16 @@ export function ParentRow({
       })}
     </TableRow>
   );
+}
+
+export function LeadingRow(props: Omit<SpecialRowProps, "icon" | "label">) {
+  return <SpecialRow {...props} icon={Users} label="View Shared Folders" />;
+}
+
+export function ParentRow(
+  props: Omit<SpecialRowProps, "icon"> & { label: string },
+) {
+  return <SpecialRow {...props} icon={FolderUp} />;
 }
 
 interface DataRowProps {

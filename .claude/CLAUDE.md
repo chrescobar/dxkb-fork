@@ -29,7 +29,7 @@ No test runner is currently configured (jest types are present but no test scrip
 - `/api/workspace/...` — Proxied workspace API routes
 
 **Auth system (`src/lib/auth-client.ts`, `src/contexts/auth-context.tsx`)**
-- Custom BV-BRC auth (not better-auth library), exposes a `bvbrcAuth` object with a better-auth-style API
+- Custom BV-BRC auth built on the `better-auth` library (`src/lib/auth.ts`) for stateless session management; `auth-client.ts` exposes a `bvbrcAuth` client object with a better-auth-style API
 - Auth state lives in `AuthContext`, hydrated from `user_profile` and `user_id` cookies on the server
 - Protected routes: `/services/*` and `/workspace/*` — middleware in `src/proxy.ts` checks for `bvbrc_token` + `bvbrc_user_id` cookies
 - When applicable, use the better-auth stateless functions for auth operations

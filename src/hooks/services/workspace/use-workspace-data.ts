@@ -37,7 +37,7 @@ export interface UseWorkspaceDataReturn {
 
 export function useWorkspaceData({
   mode,
-  username: _username,
+  username,
   path,
   fullPath,
   currentUser,
@@ -50,7 +50,7 @@ export function useWorkspaceData({
   const isHome = mode === "home";
 
   const homeQuery = useWorkspaceBrowser({
-    username: currentUser,
+    username,
     path,
     enabled: isHome && !!currentUser && !isJobResultView,
   });

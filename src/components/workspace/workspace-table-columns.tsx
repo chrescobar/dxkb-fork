@@ -120,7 +120,7 @@ export function DraggableTableHeader({
     opacity: isDragging ? 0.8 : 1,
     position: "relative" as const,
     transform: CSS.Translate.toString(transform),
-    transition: "width transform 0.2s ease-in-out",
+    transition: "width 0.2s ease-in-out, transform 0.2s ease-in-out",
     whiteSpace: "nowrap",
     width: header.column.getSize(),
     zIndex: isDragging ? 1 : 0,

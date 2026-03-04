@@ -19,7 +19,6 @@ export interface UseWorkspaceActionDispatchOptions {
   currentUser: string;
   myWorkspaceRoot: string;
   queryClient: QueryClient;
-  favoritePaths: string[];
   workspaceDownload: WorkspaceDownloadMethods;
   workspaceClient: WorkspaceApiClient;
   items: WorkspaceBrowserItem[];
@@ -29,7 +28,6 @@ export function useWorkspaceActionDispatch({
   currentUser,
   myWorkspaceRoot,
   queryClient,
-  favoritePaths: _favoritePaths,
   workspaceDownload,
   items,
 }: UseWorkspaceActionDispatchOptions) {

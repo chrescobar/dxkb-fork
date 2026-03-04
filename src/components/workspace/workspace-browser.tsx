@@ -167,7 +167,6 @@ export function WorkspaceBrowser({
     currentUser,
     myWorkspaceRoot,
     queryClient,
-    favoritePaths,
     workspaceDownload,
     workspaceClient,
     items,
@@ -182,7 +181,12 @@ export function WorkspaceBrowser({
   const canWriteToCurrentDir = useMemo(() => {
     if (!fullPath) return false;
     // User owns this path (created it themselves)
-    const decodedFullPath = decodeURIComponent(fullPath);
+    let decodedFullPath: string;
+    try {
+      decodedFullPath = decodeURIComponent(fullPath);
+    } catch {
+      decodedFullPath = fullPath;
+    }
     const isOwnedPath =
       decodedFullPath.startsWith(`/${myWorkspaceRoot}/`) ||
       decodedFullPath.startsWith(`/${currentUser}/`);
@@ -228,11 +232,13 @@ export function WorkspaceBrowser({
     return () => clearTimeout(id);
   }, [selectedItems]);
 
-  // After route change, focus the table so keyboard navigation works
+  // After route change (and after loading resolves), focus the table so keyboard navigation works.
+  // resolveQuery.isLoading causes an early return that unmounts the ref'd table; guard against that.
   useEffect(() => {
+    if (resolveQuery.isLoading) return;
     const id = setTimeout(() => tableRef.current?.focus(), 100);
     return () => clearTimeout(id);
-  }, [path, mode]);
+  }, [path, mode, resolveQuery.isLoading]);
 
   // Redirect non-owner to their own shared root
   const isUrlCurrentUser =

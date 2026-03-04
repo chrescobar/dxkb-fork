@@ -125,7 +125,7 @@ export function useTableKeyboardNavigation({
       const nextItem = items[nextItemIndex];
       if (nextItem != null) {
         setFocusedSpecialRow(null);
-        onSelect?.(nextItem, { ctrlOrMeta: false, shift: false });
+        onSelect?.(nextItem, { ctrlOrMeta: e.metaKey || e.ctrlKey, shift: e.shiftKey });
       }
     },
     [

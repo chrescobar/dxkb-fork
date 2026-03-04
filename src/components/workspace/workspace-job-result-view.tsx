@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Collapsible,
@@ -15,7 +15,10 @@ import {
 import { toast } from "sonner";
 import { WorkspaceBreadcrumbs } from "./workspace-breadcrumbs";
 import { WorkspaceToolbar } from "./workspace-toolbar";
-import { WorkspaceDataTable } from "./workspace-data-table";
+import {
+  WorkspaceDataTable,
+  type WorkspaceDataTableHandle,
+} from "./workspace-data-table";
 import { WorkspaceActionBar } from "./workspace-action-bar";
 import { WorkspaceShell } from "./workspace-shell";
 import { FileViewerConstructionDialog } from "./file-viewer-construction-dialog";
@@ -110,6 +113,15 @@ export function WorkspaceJobResultView({
   const [parametersOpen, setParametersOpen] = useState(false);
   const [fileViewerConstructionOpen, setFileViewerConstructionOpen] =
     useState(false);
+
+  const tableRef = useRef<WorkspaceDataTableHandle>(null);
+
+  // Focus the table when the job result view mounts and after its list data loads
+  useEffect(() => {
+    if (isLoadingList) return;
+    const id = setTimeout(() => tableRef.current?.focus(), 100);
+    return () => clearTimeout(id);
+  }, [isLoadingList]);
 
   const processedItems = useMemo(
     () => sortItems(dotItems, sort),
@@ -263,6 +275,7 @@ export function WorkspaceJobResultView({
 
           <div className="min-h-0 flex-1">
             <WorkspaceDataTable
+              ref={tableRef}
               items={processedItems}
               isLoading={isLoadingList}
               path={path}

@@ -210,15 +210,17 @@ export function useWorkspaceDialogHandlers(options: UseWorkspaceDialogHandlersOp
     async (folderName: string) => {
       const name = folderName.trim();
       if (!name) return;
+      const safeName = sanitizePathSegment(name);
+      if (!safeName) return;
       const parent = currentDirectoryPath.replace(/\/+$/, "") || currentDirectoryPath;
-      const newFolderPath = `${parent}/${name}`;
+      const newFolderPath = `${parent}/${safeName}`;
       dispatch({ type: "SET_LOADING", value: true });
       try {
         await workspaceCrud.createFolderByPath(newFolderPath);
         dispatch({ type: "CLOSE" });
         clearSelection();
         refetch();
-        toast.success("Folder created", { description: name });
+        toast.success("Folder created", { description: safeName });
       } catch (err) {
         const message =
           err instanceof Error ? err.message : "Failed to create folder.";

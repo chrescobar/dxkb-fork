@@ -6,10 +6,7 @@ import { SearchIcon, Loader2Icon, ChevronDownIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  TaxonomyItem,
-  TaxonomySelectorProps,
-} from "@/types";
+import { TaxonomyItem, TaxonomySelectorProps } from "@/types";
 
 interface TaxonNameSelectorProps extends TaxonomySelectorProps {
   apiServiceUrl?: string;
@@ -139,6 +136,7 @@ async function searchTaxonByName(
     setBacteriophage: boolean;
     segmentWildcard: boolean;
   },
+  signal?: AbortSignal,
 ): Promise<TaxonomyItem[]> {
   const queryParams = buildSolrQuery(query.trim(), filterOpts);
 
@@ -148,6 +146,7 @@ async function searchTaxonByName(
       "Content-Type": "application/solrquery+x-www-form-urlencoded",
     },
     credentials: "include",
+    signal,
   });
 
   if (!response.ok) {
@@ -180,7 +179,9 @@ export function TaxonNameSelector({
   const [touched, setTouched] = useState(false);
   const inputRef = useRef<HTMLDivElement>(null);
   const isSelectingRef = useRef(false);
-  const [prevValue, setPrevValue] = useState<TaxonomyItem | null>(value || null);
+  const [prevValue, setPrevValue] = useState<TaxonomyItem | null>(
+    value || null,
+  );
 
   // Debounce the search query
   useEffect(() => {
@@ -193,16 +194,25 @@ export function TaxonNameSelector({
   // Stabilize filter flags for queryKey
   const filterKey = `${includeEukaryotes}-${includeBacteria}-${includeViruses}-${setBacteriophage}-${segmentWildcard}`;
 
-  const { data: results = [], isLoading: loading, error: queryError } = useQuery<TaxonomyItem[], Error>({
+  const {
+    data: results = [],
+    isLoading: loading,
+    error: queryError,
+  } = useQuery<TaxonomyItem[], Error>({
     queryKey: ["taxonomy-search-name", debouncedQuery, filterKey],
-    queryFn: () =>
-      searchTaxonByName(apiServiceUrl, debouncedQuery, {
-        includeEukaryotes,
-        includeBacteria,
-        includeViruses,
-        setBacteriophage,
-        segmentWildcard,
-      }),
+    queryFn: ({ signal }) =>
+      searchTaxonByName(
+        apiServiceUrl,
+        debouncedQuery,
+        {
+          includeEukaryotes,
+          includeBacteria,
+          includeViruses,
+          setBacteriophage,
+          segmentWildcard,
+        },
+        signal,
+      ),
     enabled: !!debouncedQuery.trim(),
     staleTime: 5 * 60 * 1000,
   });
@@ -235,7 +245,6 @@ export function TaxonNameSelector({
     },
     [onChange],
   );
-
 
   const handleManualDropdownToggle = () => {
     setShowDropdown(!showDropdown);
@@ -281,7 +290,10 @@ export function TaxonNameSelector({
             setTouched(true);
             setTimeout(() => setShowDropdown(false), 200);
           }}
-          className={cn("w-full pr-10 pl-10", touched && !isValid && "border-destructive")}
+          className={cn(
+            "w-full pr-10 pl-10",
+            touched && !isValid && "border-destructive",
+          )}
           disabled={disabled}
         />
         <Button

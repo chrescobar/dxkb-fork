@@ -5,7 +5,6 @@ import type { CSSProperties } from "react";
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import {
   type ColumnDef,
-  flexRender,
   type Header,
 } from "@tanstack/react-table";
 import { useSortable } from "@dnd-kit/sortable";

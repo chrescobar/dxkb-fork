@@ -3,7 +3,8 @@
     "allow": [
       "Bash(wc:*)",
       "Bash(pnpm build:*)",
-      "Bash(pnpm lint:*)"
+      "Bash(pnpm lint:*)",
+      "Bash(git stash:*)"
     ]
   }
 }

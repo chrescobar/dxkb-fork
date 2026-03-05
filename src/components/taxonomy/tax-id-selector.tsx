@@ -20,6 +20,7 @@ async function searchTaxonById(
   apiUrl: string,
   query: string,
   queryFilter?: string,
+  signal?: AbortSignal,
 ): Promise<TaxonomyItem[]> {
   const searchQuery = `taxon_id:${query.trim()}`;
   const params = new URLSearchParams();
@@ -34,6 +35,7 @@ async function searchTaxonById(
   const response = await fetch(`${apiUrl}?${params.toString()}`, {
     headers: { Accept: "application/json" },
     credentials: "include",
+    signal,
   });
 
   if (!response.ok) {
@@ -75,7 +77,7 @@ export function TaxIDSelector({
 
   const { data: results = [], isLoading: loading, error: queryError } = useQuery<TaxonomyItem[], Error>({
     queryKey: ["taxonomy-search-id", debouncedQuery, queryFilter],
-    queryFn: () => searchTaxonById(resolvedApiServiceUrl, debouncedQuery, queryFilter),
+    queryFn: ({ signal }) => searchTaxonById(resolvedApiServiceUrl, debouncedQuery, queryFilter, signal),
     enabled: !!debouncedQuery.trim() && !disabled,
     staleTime: 5 * 60 * 1000,
   });

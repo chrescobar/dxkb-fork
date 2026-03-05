@@ -148,11 +148,11 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       cleanQ,
       pageIndex,
       sortingKey,
-      searchtype
+      searchtype,
+      totalItems,
     ],
     queryFn: async () => {
-      const total = metaData?.response?.numFound ?? 0;
-      if (total === 0) return [];
+      if (totalItems === 0) return [];
 
       // Derive sort param from sortingKey (already in queryKey) to avoid stale closure
       const sortParam = sortingKey !== "none"

@@ -25,6 +25,7 @@ import { JobDetailsPanel } from "./jobs-detail-panel";
 import { JobsShell } from "./jobs-shell";
 import { DetailPanel } from "@/components/detail-panel";
 import type { JobListItem } from "@/types/workspace";
+import { encodeWorkspaceSegment } from "@/lib/utils";
 
 const PAGE_SIZE = 200;
 
@@ -239,32 +240,6 @@ export function JobsBrowser() {
     [columns, columnVisibility],
   );
 
-  // Actions
-  const handleAction = useCallback(
-    (actionId: string, selection: JobListItem[]) => {
-      const job = selection[0];
-      if (!job) return;
-      switch (actionId) {
-        case "view":
-          router.push(`/jobs/${job.id}`);
-          break;
-        case "show":
-          if (job.output_path) {
-            // Navigate to workspace output folder
-            const wsPath = job.output_path.replace(/^\/+/, "");
-            router.push(`/workspace/${wsPath}`);
-          }
-          break;
-        case "kill":
-          for (const j of selection) {
-            killMutation.mutate(j.id);
-          }
-          break;
-      }
-    },
-    [router, killMutation],
-  );
-
   // Pagination
   const handlePrevious = useCallback(() => {
     setOffset((prev) => Math.max(0, prev - PAGE_SIZE));
@@ -304,8 +279,48 @@ export function JobsBrowser() {
 
   // Row rendering & keyboard
   const handleDoubleClick = useCallback(
-    (job: JobListItem) => router.push(`/jobs/${job.id}`),
+    (job: JobListItem) => {
+      const outputPath =
+        job.output_path ?? String(job.parameters?.output_path ?? "");
+      const outputFile =
+        job.output_file ?? String(job.parameters?.output_file ?? "");
+
+      if (outputPath && outputFile) {
+        const fullPath = `${outputPath}/${outputFile}`;
+        const segments = fullPath.replace(/^\/+/, "").split("/").filter(Boolean);
+        const encoded = segments.map(encodeWorkspaceSegment).join("/");
+        router.push(`/workspace/${encoded}`);
+      } else {
+        router.push(`/jobs/${job.id}`);
+      }
+    },
     [router],
+  );
+
+  // Actions
+  const handleAction = useCallback(
+    (actionId: string, selection: JobListItem[]) => {
+      const job = selection[0];
+      if (!job) return;
+      switch (actionId) {
+        case "view":
+          handleDoubleClick(job);
+          break;
+        case "show":
+          if (job.output_path) {
+            // Navigate to workspace output folder
+            const wsPath = job.output_path.replace(/^\/+/, "");
+            router.push(`/workspace/${wsPath}`);
+          }
+          break;
+        case "kill":
+          for (const j of selection) {
+            killMutation.mutate(j.id);
+          }
+          break;
+      }
+    },
+    [router, killMutation, handleDoubleClick],
   );
 
   const getFocusedIndex = useCallback(() => {

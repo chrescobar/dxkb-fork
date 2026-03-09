@@ -49,7 +49,7 @@ export default function ForgotPasswordPage() {
       usernameOrEmail: "",
     } as FormValues,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: formSchema as any },
+    validators: { onChange: formSchema as any, onSubmit: formSchema as any },
     onSubmit: async ({ value }) => {
       setError(""); // Clear any previous errors
 

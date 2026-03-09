@@ -93,7 +93,7 @@ function SignupForm() {
       password_repeat: "",
     } as FormValues,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: formSchema as any },
+    validators: { onChange: formSchema as any, onSubmit: formSchema as any },
     onSubmit: async ({ value }) => {
       try {
         await signUp(value as FormValues);

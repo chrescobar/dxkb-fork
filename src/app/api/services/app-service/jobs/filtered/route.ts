@@ -2,6 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAppService } from "@/lib/app-service";
 import { getBvbrcAuthToken } from "@/lib/auth";
 
+const MAX_LIMIT = 1000;
+const ALLOWED_SORT_FIELDS = new Set([
+  "status",
+  "app",
+  "submit_time",
+  "start_time",
+  "completed_time",
+]);
+const ALLOWED_SORT_ORDERS = new Set(["asc", "desc"]);
+
 /**
  * Enumerate jobs with server-side pagination and archived support
  * POST /api/services/app-service/jobs/filtered
@@ -26,14 +36,33 @@ export async function POST(request: NextRequest) {
       sort_order,
     } = body;
 
+    // Validate and clamp numeric inputs
+    const sanitizedOffset = Math.max(0, Math.floor(Number(offset) || 0));
+    const sanitizedLimit = Math.min(
+      MAX_LIMIT,
+      Math.max(1, Math.floor(Number(limit) || 200)),
+    );
+
+    // Validate sort_field against allowlist
+    const sanitizedSortField =
+      sort_field && ALLOWED_SORT_FIELDS.has(sort_field)
+        ? sort_field
+        : undefined;
+
+    // Validate sort_order against allowlist
+    const sanitizedSortOrder =
+      sort_order && ALLOWED_SORT_ORDERS.has(sort_order)
+        ? (sort_order as "asc" | "desc")
+        : undefined;
+
     const appService = createAppService(token);
 
     const jobs = await appService.enumerateTasksFiltered({
-      offset,
-      limit,
-      include_archived,
-      sort_field,
-      sort_order,
+      offset: sanitizedOffset,
+      limit: sanitizedLimit,
+      include_archived: Boolean(include_archived),
+      sort_field: sanitizedSortField,
+      sort_order: sanitizedSortOrder,
     });
 
     return NextResponse.json({ jobs });

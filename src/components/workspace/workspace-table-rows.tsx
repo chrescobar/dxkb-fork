@@ -8,6 +8,7 @@ import clsx from "clsx";
 import { TableCell, TableRow } from "@/components/ui/table";
 import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
 import { isFolderType } from "@/lib/services/workspace/utils";
+import { COLUMN_CLASS_MAP } from "./workspace-table-columns";
 
 interface SpecialRowProps {
   columns: Column<WorkspaceBrowserItem, unknown>[];
@@ -16,6 +17,9 @@ interface SpecialRowProps {
   onClick: () => void;
   icon: React.ElementType;
   label: string;
+  /** When true, use columnOrder instead of Column objects (for DataTable integration). */
+  _useDataTable?: boolean;
+  columnOrder?: string[];
 }
 
 function SpecialRow({
@@ -25,7 +29,22 @@ function SpecialRow({
   onClick,
   icon: Icon,
   label,
+  _useDataTable,
+  columnOrder,
 }: SpecialRowProps) {
+  // Build cell list from either Column objects or column IDs
+  const cells = _useDataTable && columnOrder
+    ? columnOrder.map((id) => ({
+        id,
+        metaClassName: COLUMN_CLASS_MAP[id] ?? "",
+      }))
+    : columns.map((column) => {
+        const meta = column.columnDef.meta as
+          | { className?: string }
+          | undefined;
+        return { id: column.id, metaClassName: meta?.className ?? "" };
+      });
+
   return (
     <TableRow
       className={
@@ -39,25 +58,22 @@ function SpecialRow({
       onClick={onClick}
       aria-selected={useSelectionMode && isFocused ? true : undefined}
     >
-      {columns.map((column) => {
-        const meta = column.columnDef.meta as
-          | { className?: string }
-          | undefined;
+      {cells.map((cell) => {
         const className = clsx(
-          column.id === "name" ? "pl-6" : "pl-2",
-          meta?.className ?? "",
+          cell.id === "name" ? "pl-6" : "pl-2",
+          cell.metaClassName,
         );
         return (
           <TableCell
-            key={column.id}
+            key={cell.id}
             className={className}
             style={{
-              width: `var(--col-${column.id}-size)`,
-              minWidth: `var(--col-${column.id}-size)`,
-              maxWidth: `var(--col-${column.id}-size)`,
+              width: `var(--col-${cell.id}-size)`,
+              minWidth: `var(--col-${cell.id}-size)`,
+              maxWidth: `var(--col-${cell.id}-size)`,
             }}
           >
-            {column.id === "name" ? (
+            {cell.id === "name" ? (
               <div className="flex items-center gap-2">
                 <Icon className="h-4 w-4 shrink-0 text-amber-500" />
                 <span className="text-muted-foreground font-medium italic">
@@ -72,7 +88,9 @@ function SpecialRow({
   );
 }
 
-export function LeadingRow(props: Omit<SpecialRowProps, "icon" | "label">) {
+export function LeadingRow(
+  props: Omit<SpecialRowProps, "icon" | "label">,
+) {
   return <SpecialRow {...props} icon={Users} label="View Shared Folders" />;
 }
 

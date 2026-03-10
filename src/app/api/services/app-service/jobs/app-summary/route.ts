@@ -2,17 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAppService } from "@/lib/app-service";
 import { getBvbrcAuthToken } from "@/lib/auth";
 
-interface RouteParams {
-  params: Promise<{ id: string }>;
-}
-
 /**
- * Get job summary
- * GET /api/services/app-service/jobs/[id]/summary
+ * Query app/service summary
+ * POST /api/services/app-service/jobs/app-summary
  */
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function POST(request: NextRequest) {
   try {
-    // Get BV-BRC authentication token from cookies
     const token = await getBvbrcAuthToken();
 
     if (!token) {
@@ -22,24 +17,18 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const { id: jobId } = await params;
+    const body = await request.json();
+    const { include_archived = false } = body;
 
-    if (!jobId) {
-      return NextResponse.json(
-        { error: "Job ID is required" },
-        { status: 400 },
-      );
-    }
-
-    // Create app service
     const appService = createAppService(token);
 
-    // Get job summary
-    const summary = await appService.queryJobSummary({ job_id: jobId });
+    const summary = await appService.queryAppSummaryFiltered({
+      include_archived,
+    });
 
-    return NextResponse.json(summary);
+    return NextResponse.json({ summary });
   } catch (error) {
-    console.error("Error getting job summary:", error);
+    console.error("Error querying app summary:", error);
 
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -51,4 +40,3 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     );
   }
 }
-

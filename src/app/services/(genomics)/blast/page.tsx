@@ -39,17 +39,8 @@ import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object
 import { WorkspaceObject } from "@/lib/workspace-client";
 import { ValidWorkspaceObjectTypes } from "@/lib/services/workspace/types";
 import { blastPrecomputedDatabases } from "@/types/services";
-import { transformBlastParams } from "@/lib/forms/(genomics)/blast/blast-form-utils";
-import { JobParamsDialog } from "@/components/services/job-params-dialog";
-import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
-import { FastaTextarea } from "@/components/services/fasta-textarea";
-import { toast } from "sonner";
-import { Spinner } from "@/components/ui/spinner";
-import { Label } from "@/components/ui/label";
 import {
-  completeFormSchema,
-  DEFAULT_BLAST_FORM_VALUES,
-  type BlastFormData,
+  transformBlastParams,
   useBlastDatabaseTypes,
   useBlastProgramTracking,
   useFastaValidation,
@@ -59,7 +50,18 @@ import {
   extractInputFields,
   maxHitsOptionsBlast,
   evalueOptionsBlast,
-} from "@/lib/forms/(genomics)";
+} from "@/lib/forms/(genomics)/blast/blast-form-utils";
+import {
+  completeFormSchema,
+  DEFAULT_BLAST_FORM_VALUES,
+  type BlastFormData,
+} from "@/lib/forms/(genomics)/blast/blast-form-schema";
+import { JobParamsDialog } from "@/components/services/job-params-dialog";
+import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
+import { FastaTextarea } from "@/components/services/fasta-textarea";
+import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
+import { Label } from "@/components/ui/label";
 
 export default function BlastServicePage() {
   const [showAdvanced, setShowAdvanced] = useState(false);

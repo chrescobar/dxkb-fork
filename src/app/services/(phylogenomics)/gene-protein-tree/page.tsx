@@ -56,7 +56,30 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import * as GeneProteinTree from "@/lib/forms/(phylogenomics)";
+import {
+  DEFAULT_METADATA_FIELDS,
+  type GeneProteinTreeFormData,
+  DEFAULT_GENE_PROTEIN_TREE_FORM_VALUES,
+  geneProteinTreeFormSchema,
+  DNA_MODELS,
+  PROTEIN_MODELS,
+  type SequenceItem,
+  THRESHOLD_OPTIONS,
+  getMetadataSelectOptions,
+  isMetadataLabel,
+} from "@/lib/forms/(phylogenomics)/gene-protein-tree/gene-protein-tree-form-schema";
+import {
+  transformGeneProteinTreeParams,
+  formatMetadataLabel,
+  getSequenceTypeLabel,
+  type Alphabet,
+  checkDuplicateSequence,
+  checkSequenceLimit,
+  createSequenceItem,
+  removeSequenceAtIndex,
+  createMetadataField,
+  getDisplayName,
+} from "@/lib/forms/(phylogenomics)/gene-protein-tree/gene-protein-tree-form-utils";
 
 interface MetadataField {
   id: string;
@@ -73,7 +96,7 @@ export default function GeneProteinTreePage() {
   const [selectedUnalignedFastaObject, setSelectedUnalignedFastaObject] =
     useState<WorkspaceObject | null>(null);
   const [metadataFields, setMetadataFields] =
-    useState<MetadataField[]>(GeneProteinTree.DEFAULT_METADATA_FIELDS);
+    useState<MetadataField[]>(DEFAULT_METADATA_FIELDS);
   const [selectedMetadataField, setSelectedMetadataField] =
     useState<string>("");
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -87,19 +110,19 @@ export default function GeneProteinTreePage() {
     currentParams,
     serviceName,
     isSubmitting,
-  } = useServiceFormSubmission<GeneProteinTree.GeneProteinTreeFormData>({
+  } = useServiceFormSubmission<GeneProteinTreeFormData>({
     serviceName: "GeneTree",
     displayName: "Gene/Protein Tree",
-    transformParams: GeneProteinTree.transformGeneProteinTreeParams,
+    transformParams: transformGeneProteinTreeParams,
     onSuccess: handleReset,
   });
 
   const form = useForm({
-    defaultValues: GeneProteinTree.DEFAULT_GENE_PROTEIN_TREE_FORM_VALUES as GeneProteinTree.GeneProteinTreeFormData,
+    defaultValues: DEFAULT_GENE_PROTEIN_TREE_FORM_VALUES as GeneProteinTreeFormData,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: GeneProteinTree.geneProteinTreeFormSchema as any },
+    validators: { onChange: geneProteinTreeFormSchema as any },
     onSubmit: async ({ value }) => {
-      await handleSubmit(value as GeneProteinTree.GeneProteinTreeFormData);
+      await handleSubmit(value as GeneProteinTreeFormData);
     },
   });
 
@@ -109,13 +132,13 @@ export default function GeneProteinTreePage() {
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
   const substitutionModelOptions = useMemo(
-    () => (alphabet === "DNA" ? GeneProteinTree.DNA_MODELS : GeneProteinTree.PROTEIN_MODELS),
+    () => (alphabet === "DNA" ? DNA_MODELS : PROTEIN_MODELS),
     [alphabet],
   );
 
   // Reset model when alphabet changes
   useEffect(() => {
-    const resetModel = alphabet === "DNA" ? GeneProteinTree.DNA_MODELS[0].value : GeneProteinTree.PROTEIN_MODELS[0].value;
+    const resetModel = alphabet === "DNA" ? DNA_MODELS[0].value : PROTEIN_MODELS[0].value;
     form.setFieldValue("substitution_model", resetModel);
 
     // Clear sequences that don't match the new alphabet
@@ -155,8 +178,8 @@ export default function GeneProteinTreePage() {
 
   // Always show all metadata fields with labels, excluding already selected ones
   const availableMetadataOptions = useMemo(() => {
-    const allOptions = GeneProteinTree.getMetadataSelectOptions(
-      GeneProteinTree.formatMetadataLabel,
+    const allOptions = getMetadataSelectOptions(
+      formatMetadataLabel,
     );
     return allOptions.filter(
       (option) =>
@@ -174,7 +197,7 @@ export default function GeneProteinTreePage() {
 
   function handleAddSequence(source: "feature" | "aligned" | "unaligned") {
     let selectedObject: WorkspaceObject | null = null;
-    let type: GeneProteinTree.SequenceItem["type"];
+    let type: SequenceItem["type"];
 
     if (source === "feature") {
       selectedObject = selectedFeatureGroupObject;
@@ -199,15 +222,15 @@ export default function GeneProteinTreePage() {
 
     const currentSequences = form.state.values.sequences;
 
-    if (GeneProteinTree.checkDuplicateSequence(currentSequences, inputValue, type)) {
+    if (checkDuplicateSequence(currentSequences, inputValue, type)) {
       toast.error("Duplicate selection detected", {
-        description: `${GeneProteinTree.getSequenceTypeLabel(type, alphabet as GeneProteinTree.Alphabet)} is already selected.`,
+        description: `${getSequenceTypeLabel(type, alphabet as Alphabet)} is already selected.`,
         closeButton: true,
       });
       return;
     }
 
-    if (GeneProteinTree.checkSequenceLimit(currentSequences)) {
+    if (checkSequenceLimit(currentSequences)) {
       toast.error("Selection limit reached", {
         description: "A maximum of 5000 sequences can be added.",
         closeButton: true,
@@ -215,7 +238,7 @@ export default function GeneProteinTreePage() {
       return;
     }
 
-    const newSequence = GeneProteinTree.createSequenceItem(inputValue, type);
+    const newSequence = createSequenceItem(inputValue, type);
 
     form.setFieldValue("sequences", [...currentSequences, newSequence]);
 
@@ -228,13 +251,13 @@ export default function GeneProteinTreePage() {
     const currentSequences = form.state.values.sequences;
     form.setFieldValue(
       "sequences",
-      GeneProteinTree.removeSequenceAtIndex(currentSequences, index),
+      removeSequenceAtIndex(currentSequences, index),
     );
   }
 
   function handleMetadataSelection(value: string) {
     // Don't allow selection of label items
-    if (GeneProteinTree.isMetadataLabel(value)) {
+    if (isMetadataLabel(value)) {
       setSelectedMetadataField("");
       return;
     }
@@ -248,7 +271,7 @@ export default function GeneProteinTreePage() {
       return;
     }
 
-    const newField = GeneProteinTree.createMetadataField(selectedMetadataField);
+    const newField = createMetadataField(selectedMetadataField);
     setMetadataFields((prev) => [newField, ...prev]);
     setSelectedMetadataField("");
   }
@@ -262,11 +285,11 @@ export default function GeneProteinTreePage() {
   }
 
   function handleReset() {
-    form.reset(GeneProteinTree.DEFAULT_GENE_PROTEIN_TREE_FORM_VALUES);
+    form.reset(DEFAULT_GENE_PROTEIN_TREE_FORM_VALUES);
     setSelectedFeatureGroupObject(null);
     setSelectedAlignedFastaObject(null);
     setSelectedUnalignedFastaObject(null);
-    setMetadataFields(GeneProteinTree.DEFAULT_METADATA_FIELDS);
+    setMetadataFields(DEFAULT_METADATA_FIELDS);
     setSelectedMetadataField("");
     setShowAdvanced(false);
   }
@@ -275,8 +298,8 @@ export default function GeneProteinTreePage() {
     () =>
       sequences.map((seq, index) => ({
         id: `${index}`,
-        name: GeneProteinTree.getDisplayName(seq.filename.split("/").pop() || seq.filename),
-        type: GeneProteinTree.getSequenceTypeLabel(seq.type, alphabet as GeneProteinTree.Alphabet),
+        name: getDisplayName(seq.filename.split("/").pop() || seq.filename),
+        type: getSequenceTypeLabel(seq.type, alphabet as Alphabet),
         description: seq.filename,
       })),
     [alphabet, sequences],
@@ -323,7 +346,7 @@ export default function GeneProteinTreePage() {
                   <FieldItem>
                     <RadioGroup
                       value={field.state.value}
-                      onValueChange={(value) => value != null && field.handleChange(value as GeneProteinTree.GeneProteinTreeFormData["alphabet"])}
+                      onValueChange={(value) => value != null && field.handleChange(value as GeneProteinTreeFormData["alphabet"])}
                       className="service-radio-group-horizontal"
                     >
                       <div className="flex items-center gap-3">
@@ -463,7 +486,7 @@ export default function GeneProteinTreePage() {
                         Trim Ends of Alignment Threshold
                       </RequiredFormLabel>
                       <Select
-                        items={GeneProteinTree.THRESHOLD_OPTIONS.map((v) => ({ value: v, label: v }))}
+                        items={THRESHOLD_OPTIONS.map((v) => ({ value: v, label: v }))}
                         value={field.state.value}
                         onValueChange={(value) => value != null && field.handleChange(value)}
                       >
@@ -472,7 +495,7 @@ export default function GeneProteinTreePage() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            {GeneProteinTree.THRESHOLD_OPTIONS.map((value) => (
+                            {THRESHOLD_OPTIONS.map((value) => (
                               <SelectItem key={value} value={value}>
                                 {value}
                               </SelectItem>
@@ -492,7 +515,7 @@ export default function GeneProteinTreePage() {
                         Remove Gappy Sequences Threshold
                       </RequiredFormLabel>
                       <Select
-                        items={GeneProteinTree.THRESHOLD_OPTIONS.map((v) => ({ value: v, label: v }))}
+                        items={THRESHOLD_OPTIONS.map((v) => ({ value: v, label: v }))}
                         value={field.state.value}
                         onValueChange={(value) => value != null && field.handleChange(value)}
                       >
@@ -501,7 +524,7 @@ export default function GeneProteinTreePage() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            {GeneProteinTree.THRESHOLD_OPTIONS.map((value) => (
+                            {THRESHOLD_OPTIONS.map((value) => (
                               <SelectItem key={value} value={value}>
                                 {value}
                               </SelectItem>
@@ -536,7 +559,7 @@ export default function GeneProteinTreePage() {
                     <FieldItem>
                       <RadioGroup
                         value={field.state.value}
-                        onValueChange={(value) => value != null && field.handleChange(value as GeneProteinTree.GeneProteinTreeFormData["recipe"])}
+                        onValueChange={(value) => value != null && field.handleChange(value as GeneProteinTreeFormData["recipe"])}
                         className="service-radio-group-horizontal"
                       >
                         <div className="flex items-center gap-3">

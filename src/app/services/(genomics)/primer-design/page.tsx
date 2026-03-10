@@ -36,10 +36,12 @@ import {
   DEFAULT_PRIMER_DESIGN_FORM_VALUES,
   primerDesignFormSchema,
   type PrimerDesignFormData,
+} from "@/lib/forms/(genomics)/primer-design/primer-design-form-schema";
+import {
   stripPrimerMarkers,
   transformPrimerDesignParams,
   validatePrimerDesignSequence,
-} from "@/lib/forms/(genomics)";
+} from "@/lib/forms/(genomics)/primer-design/primer-design-form-utils";
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { WorkspaceObject } from "@/lib/workspace-client";

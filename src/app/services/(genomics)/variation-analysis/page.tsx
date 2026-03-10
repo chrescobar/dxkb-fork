@@ -45,10 +45,12 @@ import {
   DEFAULT_VARIATION_ANALYSIS_FORM_VALUES,
   type VariationAnalysisFormData,
   type VariationLibraryItem,
+} from "@/lib/forms/(genomics)/variation-analysis/variation-analysis-form-schema";
+import {
   transformVariationAnalysisParams,
   variationAnalysisMappers,
   variationAnalysisCallers,
-} from "@/lib/forms/(genomics)";
+} from "@/lib/forms/(genomics)/variation-analysis/variation-analysis-form-utils";
 import {
   RequiredFormCardTitle,
   RequiredFormLabel,

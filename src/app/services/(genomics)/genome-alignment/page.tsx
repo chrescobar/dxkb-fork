@@ -40,8 +40,8 @@ import {
   DEFAULT_GENOME_ALIGNMENT_FORM_VALUES,
   genomeAlignmentFormSchema,
   type GenomeAlignmentFormData,
-  transformGenomeAlignmentParams,
-} from "@/lib/forms/(genomics)";
+} from "@/lib/forms/(genomics)/genome-alignment/genome-alignment-form-schema";
+import { transformGenomeAlignmentParams } from "@/lib/forms/(genomics)/genome-alignment/genome-alignment-form-utils";
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import {

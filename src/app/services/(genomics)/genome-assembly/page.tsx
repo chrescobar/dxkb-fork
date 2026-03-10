@@ -53,11 +53,13 @@ import {
   DEFAULT_GENOME_ASSEMBLY_FORM_VALUES,
   type GenomeAssemblyFormData,
   type LibraryItem,
+} from "@/lib/forms/(genomics)/genome-assembly/genome-assembly-form-schema";
+import {
   transformGenomeAssemblyParams,
   calculateGenomeSize,
   genomeAssemblyRecipes,
   genomeSizeUnitOptions,
-} from "@/lib/forms/(genomics)";
+} from "@/lib/forms/(genomics)/genome-assembly/genome-assembly-form-utils";
 import {
   RequiredFormCardTitle,
   RequiredFormLabel,

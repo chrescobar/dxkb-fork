@@ -35,11 +35,13 @@ import {
   completeGenomeAnnotationSchema,
   DEFAULT_GENOME_ANNOTATION_FORM_VALUES,
   type GenomeAnnotationFormData,
+} from "@/lib/forms/(genomics)/genome-annotation/genome-annotation-form-schema";
+import {
   transformGenomeAnnotationParams,
   generateOutputFileName,
   validateMyLabel,
   genomeAnnotationRecipes,
-} from "@/lib/forms/(genomics)";
+} from "@/lib/forms/(genomics)/genome-annotation/genome-annotation-form-utils";
 import { FieldItem, FieldLabel, FieldErrors } from "@/components/ui/tanstack-form";
 import {
   Tooltip,

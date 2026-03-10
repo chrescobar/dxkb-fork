@@ -23,7 +23,7 @@ export function useKillJob() {
       toast.success(`Kill request for Job ${jobId} was sent successfully`);
       void queryClient.invalidateQueries({ queryKey: ["jobs"] });
       void queryClient.invalidateQueries({ queryKey: ["jobs-filtered"] });
-      void queryClient.invalidateQueries({ queryKey: ["jobs-task-summary"] });
+      void queryClient.invalidateQueries({ queryKey: ["jobs-summary"] });
     },
     onError: (error, jobId) => {
       toast.error(`Failed to kill Job ${jobId}: ${error.message}`);

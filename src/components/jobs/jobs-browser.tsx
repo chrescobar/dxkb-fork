@@ -20,10 +20,7 @@ import {
 import { TableCell, TableRow } from "@/components/ui/table";
 import { useKillJob } from "@/hooks/services/workspace/use-workspace";
 import { useJobsData } from "@/hooks/services/jobs/use-jobs-data";
-import {
-  useJobsStatusSummary,
-  useJobsAppSummary,
-} from "@/hooks/services/jobs/use-jobs-summary";
+import { useJobsSummary } from "@/hooks/services/jobs/use-jobs-summary";
 import { DataTable, type DataTableSort } from "@/components/shared/data-table";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
 import { useJobsColumns } from "./jobs-table-columns";
@@ -38,6 +35,7 @@ import { encodeWorkspaceSegment } from "@/lib/utils";
 import {
   JOBS_PAGE_SIZE,
   DEFAULT_JOBS_COLUMN_ORDER,
+  ACTIVE_JOB_STATUSES,
 } from "@/lib/jobs/constants";
 
 interface JobDataRowProps {
@@ -113,7 +111,15 @@ export function JobsBrowser() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showJobNotFound, setShowJobNotFound] = useState(false);
 
-  // Data fetching — pass service filter to the server so pagination works correctly
+  // Data fetching
+  const { data: summaryData } = useJobsSummary(includeArchived);
+  const statusSummary = summaryData?.taskSummary;
+  const appSummary = summaryData?.appSummary;
+
+  const hasActiveJobs = ACTIVE_JOB_STATUSES.some(
+    (s) => (statusSummary?.[s] ?? 0) > 0,
+  );
+
   const {
     data: jobs = [],
     isLoading,
@@ -128,10 +134,8 @@ export function JobsBrowser() {
     sortField: sort.field,
     sortOrder: sort.direction,
     app: serviceFilter !== "all" ? serviceFilter : undefined,
+    refetchInterval: hasActiveJobs ? 10_000 : 30_000,
   });
-
-  const { data: statusSummary } = useJobsStatusSummary(includeArchived);
-  const { data: appSummary } = useJobsAppSummary(includeArchived);
 
   // Kill mutation
   const killMutation = useKillJob();

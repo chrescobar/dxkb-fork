@@ -9,11 +9,16 @@ interface UseJobsDataParams {
   sortField: string;
   sortOrder: "asc" | "desc";
   app?: string;
+  refetchInterval?: number;
 }
 
 export function useJobsData(params: UseJobsDataParams) {
   const authenticatedFetch = useAuthenticatedFetch();
-  const { offset, limit, includeArchived, sortField, sortOrder, app } = params;
+  const {
+    offset, limit, includeArchived,
+    sortField, sortOrder, app,
+    refetchInterval = 10_000,
+  } = params;
 
   return useQuery<JobListItem[], Error>({
     queryKey: [
@@ -25,7 +30,7 @@ export function useJobsData(params: UseJobsDataParams) {
       sortOrder,
       app,
     ],
-    refetchInterval: 10_000,
+    refetchInterval,
     refetchIntervalInBackground: false,
     queryFn: async () => {
       const response = await authenticatedFetch(

@@ -17,7 +17,7 @@ export interface PrimerSequenceValidationResult {
   errorCode?: PrimerSequenceValidationError;
 }
 
-const MARKER_REGEX = /[<>\[\]\{\}']+/g;
+const MARKER_REGEX = /[<>[\]{}']+/g;
 // Legacy validation only allows a, g, c, t, n (not extended IUPAC codes)
 const NUCLEOTIDE_REGEX = /[agctn]/gi;
 
@@ -244,7 +244,7 @@ export function transformPrimerDesignParams(
     }
   }
 
-  const regionMappings: Array<[keyof PrimerDesignFormData, string]> = [
+  const regionMappings: [keyof PrimerDesignFormData, string][] = [
     ["SEQUENCE_EXCLUDED_REGION", "SEQUENCE_EXCLUDED_REGION"],
     ["SEQUENCE_TARGET", "SEQUENCE_TARGET"],
     ["SEQUENCE_INCLUDED_REGION", "SEQUENCE_INCLUDED_REGION"],

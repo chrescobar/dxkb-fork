@@ -127,7 +127,8 @@ const Updates = () => {
       'June': 5, 'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
     }[eventDate.month];
 
-    return new Date(2025, monthNum!, parseInt(eventDate.day));
+    if (monthNum === undefined) return new Date();
+    return new Date(2025, monthNum, parseInt(eventDate.day));
   };
 
   // Function to check if a date matches an event

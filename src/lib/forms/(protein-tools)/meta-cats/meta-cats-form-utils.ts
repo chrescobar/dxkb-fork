@@ -13,7 +13,7 @@ export interface MetaCatsGenomeLike extends Record<string, unknown> {
 /**
  * Get display name for a path (truncated if too long)
  */
-export function getMetaCatsDisplayName(name: string, maxLength: number = 36): string {
+export function getMetaCatsDisplayName(name: string, maxLength = 36): string {
   if (name.length <= maxLength) return name;
   const half = Math.floor(maxLength / 2) - 2;
   return `${name.slice(0, half)}...${name.slice(name.length - half)}`;
@@ -99,8 +99,7 @@ export function getYearGroupForValue(
 ): string | null {
   if (ranges.length === 0 || yearGroups.length === 0) return null;
 
-  for (let i = 0; i < yearGroups.length; i++) {
-    const group = yearGroups[i];
+  for (const group of yearGroups) {
     if (group.includes("-")) {
       const [startYear, endYear] = group.split("-").map(Number);
       if (value >= startYear && value <= endYear) {

@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAuthenticatedFetch } from "@/hooks/use-authenticated-fetch-client";
 import type { JobDetails } from "@/types/workspace";
+import { ACTIVE_JOB_STATUSES } from "@/lib/jobs/constants";
 
 export function useJobDetail(jobId: string | null) {
   const authenticatedFetch = useAuthenticatedFetch();
@@ -18,6 +19,12 @@ export function useJobDetail(jobId: string | null) {
     },
     enabled: !!jobId,
     staleTime: 30_000,
+    refetchInterval: (query) => {
+      const status = query.state.data?.status;
+      if (status && ACTIVE_JOB_STATUSES.includes(status)) return 3_000;
+      return false;
+    },
+    refetchIntervalInBackground: false,
   });
 }
 

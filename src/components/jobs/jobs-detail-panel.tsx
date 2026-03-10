@@ -10,19 +10,7 @@ import {
 } from "@/components/ui/collapsible";
 import { useJobOutput } from "@/hooks/services/jobs/use-job-detail";
 import type { JobListItem } from "@/types/workspace";
-
-function formatDate(value: string | undefined): string {
-  if (!value) return "—";
-  const date = new Date(value);
-  return date.toLocaleString("en-US", {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  });
-}
+import { formatDate } from "@/lib/services/workspace/helpers";
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -32,9 +20,10 @@ function CopyButton({ text }: { text: string }) {
       size="sm"
       className="relative h-6 w-6 p-0"
       onClick={() => {
-        void navigator.clipboard.writeText(text);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
+        void navigator.clipboard.writeText(text).then(() => {
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1500);
+        }).catch(() => {});
       }}
       title="Copy to clipboard"
     >
@@ -102,9 +91,12 @@ function StatusBadge({ status }: { status: string }) {
   const colorMap: Record<string, string> = {
     completed: "bg-green-100 text-green-800",
     failed: "bg-red-100 text-red-800",
+    error: "bg-red-100 text-red-800",
     running: "bg-blue-100 text-blue-800",
     "in-progress": "bg-blue-100 text-blue-800",
     queued: "bg-yellow-100 text-yellow-800",
+    pending: "bg-gray-100 text-gray-600",
+    cancelled: "bg-orange-100 text-orange-800",
   };
   const colors = colorMap[status] ?? "bg-muted text-muted-foreground";
   return (

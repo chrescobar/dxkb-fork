@@ -3,12 +3,11 @@ import { createAppService } from "@/lib/app-service";
 import { getBvbrcAuthToken } from "@/lib/auth";
 
 /**
- * Query specific jobs by IDs
- * POST /api/services/app-service/jobs/query
+ * Query task status summary
+ * POST /api/services/app-service/jobs/task-summary
  */
 export async function POST(request: NextRequest) {
   try {
-    // Get BV-BRC authentication token from cookies
     const token = await getBvbrcAuthToken();
 
     if (!token) {
@@ -18,29 +17,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Parse request body
     const body = await request.json();
-    const { job_ids } = body;
+    const { include_archived = false } = body;
 
-    if (!job_ids || !Array.isArray(job_ids) || job_ids.length === 0) {
-      return NextResponse.json(
-        { error: "job_ids array is required" },
-        { status: 400 },
-      );
-    }
-
-    // Create app service
     const appService = createAppService(token);
 
-    // Query jobs
-    const jobs = await appService.queryJobs({ job_ids: job_ids });
-
-    return NextResponse.json({
-      jobs,
-      count: jobs.length,
+    const summary = await appService.queryTaskSummaryFiltered({
+      include_archived,
     });
+
+    return NextResponse.json({ summary });
   } catch (error) {
-    console.error("Error querying jobs:", error);
+    console.error("Error querying task summary:", error);
 
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -52,4 +40,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

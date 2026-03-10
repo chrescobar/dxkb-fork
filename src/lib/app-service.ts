@@ -1,15 +1,10 @@
 import { createBvBrcClient } from "./jsonrpc-client";
 import {
-  EnumerateJobsResponse,
-  QueryJobsResponse,
-  QueryJobSummaryResponse,
   QueryJobDetailsResponse,
   KillJobResponse,
+  KillJobRawResponse,
   FetchJobOutputResponse,
   SubmitServiceResponse,
-  EnumerateJobsParams,
-  QueryJobsParams,
-  QueryJobSummaryParams,
   QueryJobDetailsParams,
   KillJobParams,
   FetchJobOutputParams,
@@ -35,37 +30,6 @@ export class AppService {
   }
 
   /**
-   * Enumerate jobs (maps to AppService.enumerate_tasks)
-   */
-  async enumerateJobs(
-    params?: EnumerateJobsParams,
-  ): Promise<EnumerateJobsResponse> {
-    const { offset = 0, limit = 30000 } = params || {};
-
-    return this.client.call("AppService.enumerate_tasks", [offset, limit]);
-  }
-
-  /**
-   * Query multiple jobs by IDs (maps to AppService.query_tasks)
-   */
-  async queryJobs(params: QueryJobsParams): Promise<QueryJobsResponse> {
-    const { job_ids } = params;
-
-    return this.client.call("AppService.query_tasks", [job_ids]);
-  }
-
-  /**
-   * Get job summary (maps to AppService.query_task_summary)
-   */
-  async queryJobSummary(
-    params: QueryJobSummaryParams,
-  ): Promise<QueryJobSummaryResponse> {
-    const { job_id } = params;
-
-    return this.client.call("AppService.query_task_summary", [job_id]);
-  }
-
-  /**
    * Get detailed job information (maps to AppService.query_task_details)
    */
   async queryJobDetails(
@@ -85,7 +49,16 @@ export class AppService {
   async killJob(params: KillJobParams): Promise<KillJobResponse> {
     const { job_id } = params;
 
-    return this.client.call("AppService.kill_task", [job_id]);
+    // The legacy API expects the job ID as a number
+    const raw = await this.client.call<KillJobRawResponse>(
+      "AppService.kill_task",
+      [Number(job_id)],
+    );
+
+    return {
+      success: raw[0] === 1,
+      message: raw[1],
+    };
   }
 
   /**
@@ -130,11 +103,20 @@ export class AppService {
   async enumerateTasksFiltered(
     params: EnumerateTasksFilteredParams,
   ): Promise<EnumerateTasksFilteredResponse> {
-    const { offset, limit, include_archived, sort_field, sort_order } = params;
+    const { offset, limit, include_archived, sort_field, sort_order, app } =
+      params;
     const opts: Record<string, unknown> = {};
     if (include_archived) opts.include_archived = 1;
-    if (sort_field) opts.sort_field = sort_field;
+    if (sort_field) {
+      const fieldMap: Record<string, string> = {
+        status: "service_status",
+        app: "application_id",
+        completed_time: "finish_time",
+      };
+      opts.sort_field = fieldMap[sort_field] ?? sort_field;
+    }
     if (sort_order) opts.sort_order = sort_order;
+    if (app) opts.app = app;
     return this.client.call("AppService.enumerate_tasks_filtered", [
       offset,
       limit,

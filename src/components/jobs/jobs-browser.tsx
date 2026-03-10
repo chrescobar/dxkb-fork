@@ -2,19 +2,25 @@
 
 import React, { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Row } from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
 import clsx from "clsx";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
-import { TableCell, TableRow } from "@/components/ui/table";
-import { useAuthenticatedFetch } from "@/hooks/use-authenticated-fetch-client";
-import { useJobsData } from "@/hooks/services/jobs/use-jobs-data";
+import { AlertCircle, TriangleAlert } from "lucide-react";
 import {
-  useJobsStatusSummary,
-  useJobsAppSummary,
-} from "@/hooks/services/jobs/use-jobs-summary";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { TableCell, TableRow } from "@/components/ui/table";
+import { useKillJob } from "@/hooks/services/workspace/use-workspace";
+import { useJobsData } from "@/hooks/services/jobs/use-jobs-data";
+import { useJobsSummary } from "@/hooks/services/jobs/use-jobs-summary";
 import { DataTable, type DataTableSort } from "@/components/shared/data-table";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
 import { useJobsColumns } from "./jobs-table-columns";
@@ -26,26 +32,16 @@ import { JobsShell } from "./jobs-shell";
 import { DetailPanel } from "@/components/detail-panel";
 import type { JobListItem } from "@/types/workspace";
 import { encodeWorkspaceSegment } from "@/lib/utils";
-
-const PAGE_SIZE = 200;
-
-const DEFAULT_COLUMN_ORDER = [
-  "status",
-  "id",
-  "app",
-  "output_name",
-  "submit_time",
-  "start_time",
-  "completed_time",
-];
+import {
+  JOBS_PAGE_SIZE,
+  DEFAULT_JOBS_COLUMN_ORDER,
+  ACTIVE_JOB_STATUSES,
+} from "@/lib/jobs/constants";
 
 interface JobDataRowProps {
   row: Row<JobListItem>;
   isSelected: boolean;
-  onSelect: (
-    job: JobListItem,
-    modifiers?: { ctrlOrMeta: boolean; shift: boolean },
-  ) => void;
+  onSelect: (job: JobListItem, modifiers?: { ctrlOrMeta: boolean }) => void;
   onDoubleClick: (job: JobListItem) => void;
 }
 
@@ -58,15 +54,12 @@ const JobDataRow = React.memo(function JobDataRow({
   return (
     <TableRow
       className={clsx(
-        "border-l-2 cursor-pointer",
-        isSelected
-          ? "border-l-primary bg-muted"
-          : "border-l-transparent",
+        "cursor-pointer border-l-2",
+        isSelected ? "border-l-primary bg-muted" : "border-l-transparent",
       )}
       onClick={(e) =>
         onSelect(row.original, {
           ctrlOrMeta: e.ctrlKey || e.metaKey,
-          shift: e.shiftKey,
         })
       }
       onDoubleClick={() => onDoubleClick(row.original)}
@@ -94,10 +87,7 @@ const JobDataRow = React.memo(function JobDataRow({
               maxWidth: `var(--col-${cell.column.id}-size)`,
             }}
           >
-            {flexRender(
-              cell.column.columnDef.cell,
-              cell.getContext(),
-            )}
+            {flexRender(cell.column.columnDef.cell, cell.getContext())}
           </TableCell>
         );
       })}
@@ -107,8 +97,6 @@ const JobDataRow = React.memo(function JobDataRow({
 
 export function JobsBrowser() {
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const authenticatedFetch = useAuthenticatedFetch();
 
   // State
   const [offset, setOffset] = useState(0);
@@ -121,41 +109,36 @@ export function JobsBrowser() {
   const [searchQuery, setSearchQuery] = useState("");
   const [includeArchived, setIncludeArchived] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [showJobNotFound, setShowJobNotFound] = useState(false);
+
   // Data fetching
+  const { data: summaryData } = useJobsSummary(includeArchived);
+  const statusSummary = summaryData?.taskSummary;
+  const appSummary = summaryData?.appSummary;
+
+  const hasActiveJobs = ACTIVE_JOB_STATUSES.some(
+    (s) => (statusSummary?.[s] ?? 0) > 0,
+  );
+
   const {
     data: jobs = [],
     isLoading,
     isFetching,
     error,
     refetch,
+    dataUpdatedAt,
   } = useJobsData({
     offset,
-    limit: PAGE_SIZE,
+    limit: JOBS_PAGE_SIZE,
     includeArchived,
     sortField: sort.field,
     sortOrder: sort.direction,
+    app: serviceFilter !== "all" ? serviceFilter : undefined,
+    refetchInterval: hasActiveJobs ? 10_000 : 30_000,
   });
-
-  const { data: statusSummary } = useJobsStatusSummary(includeArchived);
-  const { data: appSummary } = useJobsAppSummary(includeArchived);
 
   // Kill mutation
-  const killMutation = useMutation<unknown, Error, string>({
-    mutationFn: async (jobId) => {
-      const response = await authenticatedFetch(
-        `/api/services/app-service/jobs/${jobId}/kill`,
-        { method: "POST" },
-      );
-      if (!response.ok) {
-        throw new Error(`Failed to kill job: ${response.statusText}`);
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["jobs-filtered"] });
-      void queryClient.invalidateQueries({ queryKey: ["jobs-task-summary"] });
-    },
-  });
+  const killMutation = useKillJob();
 
   // Derived data
   const availableServices = useMemo(() => {
@@ -199,10 +182,7 @@ export function JobsBrowser() {
   );
 
   const handleSelect = useCallback(
-    (
-      job: JobListItem,
-      modifiers?: { ctrlOrMeta: boolean; shift: boolean },
-    ) => {
+    (job: JobListItem, modifiers?: { ctrlOrMeta: boolean }) => {
       setSelectedIds((prev) => {
         const next = new Set(prev);
         if (modifiers?.ctrlOrMeta) {
@@ -223,12 +203,12 @@ export function JobsBrowser() {
 
   // Pagination
   const handlePrevious = useCallback(() => {
-    setOffset((prev) => Math.max(0, prev - PAGE_SIZE));
+    setOffset((prev) => Math.max(0, prev - JOBS_PAGE_SIZE));
     setSelectedIds(new Set());
   }, []);
 
   const handleNext = useCallback(() => {
-    setOffset((prev) => prev + PAGE_SIZE);
+    setOffset((prev) => prev + JOBS_PAGE_SIZE);
     setSelectedIds(new Set());
   }, []);
 
@@ -261,11 +241,14 @@ export function JobsBrowser() {
 
       if (outputPath && outputFile) {
         const fullPath = `${outputPath}/${outputFile}`;
-        const segments = fullPath.replace(/^\/+/, "").split("/").filter(Boolean);
+        const segments = fullPath
+          .replace(/^\/+/, "")
+          .split("/")
+          .filter(Boolean);
         const encoded = segments.map(encodeWorkspaceSegment).join("/");
         router.push(`/workspace/${encoded}`);
       } else {
-        router.push(`/jobs/${job.id}`);
+        setShowJobNotFound(true);
       }
     },
     [router],
@@ -283,8 +266,12 @@ export function JobsBrowser() {
         case "show":
           if (job.output_path) {
             // Navigate to workspace output folder
-            const wsPath = job.output_path.replace(/^\/+/, "");
-            router.push(`/workspace/${wsPath}`);
+            const segments = job.output_path
+              .replace(/^\/+/, "")
+              .split("/")
+              .filter(Boolean);
+            const encoded = segments.map(encodeWorkspaceSegment).join("/");
+            router.push(`/workspace/${encoded}`);
           }
           break;
         case "kill":
@@ -349,7 +336,9 @@ export function JobsBrowser() {
     selectedJobs.length === 1 ? (
       <JobDetailsPanel job={selectedJobs[0]} />
     ) : selectedJobs.length > 1 ? (
-      <DetailPanel.EmptyState message={`${selectedJobs.length} jobs selected`} />
+      <DetailPanel.EmptyState
+        message={`${selectedJobs.length} jobs selected`}
+      />
     ) : (
       <DetailPanel.EmptyState message="Select a job to view details" />
     );
@@ -389,11 +378,13 @@ export function JobsBrowser() {
             serviceFilter={serviceFilter}
             onServiceFilterChange={handleServiceFilterChange}
             availableServices={availableServices}
+            appSummary={appSummary}
             includeArchived={includeArchived}
             onIncludeArchivedChange={handleArchivedChange}
             onRefresh={() => void refetch()}
             isRefreshing={isFetching}
             statusSummary={statusSummary}
+            dataUpdatedAt={dataUpdatedAt}
           />
         </div>
 
@@ -402,11 +393,10 @@ export function JobsBrowser() {
           <DataTable<JobListItem>
             data={filteredJobs}
             columns={columns}
-            defaultColumnOrder={DEFAULT_COLUMN_ORDER}
+            defaultColumnOrder={DEFAULT_JOBS_COLUMN_ORDER}
             isLoading={isLoading}
             getRowId={(row) => row.id}
             sort={sort}
-            onSortChange={setSort}
             onSort={handleSort}
             dndId="jobs-table-dnd"
             renderRows={renderRows}
@@ -421,13 +411,32 @@ export function JobsBrowser() {
         <div className="shrink-0 border-t">
           <JobsPagination
             offset={offset}
-            limit={PAGE_SIZE}
+            limit={JOBS_PAGE_SIZE}
             totalOnPage={filteredJobs.length}
             onPrevious={handlePrevious}
             onNext={handleNext}
           />
         </div>
       </div>
+      <AlertDialog open={showJobNotFound} onOpenChange={setShowJobNotFound}>
+        <AlertDialogContent size="sm">
+          <AlertDialogHeader>
+            <AlertDialogMedia>
+              <TriangleAlert className="text-muted-foreground" />
+            </AlertDialogMedia>
+            <AlertDialogTitle>Job not found</AlertDialogTitle>
+            <AlertDialogDescription>
+              The job output could not be located. It may still be processing or
+              the output path is unavailable.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setShowJobNotFound(false)}>
+              OK
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </JobsShell>
   );
 }

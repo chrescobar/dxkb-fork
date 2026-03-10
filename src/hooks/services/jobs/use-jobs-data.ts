@@ -8,11 +8,17 @@ interface UseJobsDataParams {
   includeArchived: boolean;
   sortField: string;
   sortOrder: "asc" | "desc";
+  app?: string;
+  refetchInterval?: number;
 }
 
 export function useJobsData(params: UseJobsDataParams) {
   const authenticatedFetch = useAuthenticatedFetch();
-  const { offset, limit, includeArchived, sortField, sortOrder } = params;
+  const {
+    offset, limit, includeArchived,
+    sortField, sortOrder, app,
+    refetchInterval = 10_000,
+  } = params;
 
   return useQuery<JobListItem[], Error>({
     queryKey: [
@@ -22,10 +28,13 @@ export function useJobsData(params: UseJobsDataParams) {
       includeArchived,
       sortField,
       sortOrder,
+      app,
     ],
+    refetchInterval,
+    refetchIntervalInBackground: false,
     queryFn: async () => {
       const response = await authenticatedFetch(
-        "/api/services/app-service/jobs/filtered",
+        "/api/services/app-service/jobs/enumerate-tasks-filtered",
         {
           method: "POST",
           body: JSON.stringify({
@@ -34,6 +43,7 @@ export function useJobsData(params: UseJobsDataParams) {
             include_archived: includeArchived,
             sort_field: sortField,
             sort_order: sortOrder,
+            app,
           }),
         },
       );

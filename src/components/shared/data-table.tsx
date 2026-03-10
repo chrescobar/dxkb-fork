@@ -13,7 +13,6 @@ import {
   getCoreRowModel,
   useReactTable,
   type ColumnDef,
-  type SortingState,
   type Header,
   type Row,
 } from "@tanstack/react-table";
@@ -39,7 +38,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DraggableTableHeader, TableSkeleton } from "./data-table-header";
+import { DraggableTableHeader, TableSkeleton, type TableSkeletonColumn } from "./data-table-header";
 
 export interface DataTableSort {
   field: string;
@@ -54,13 +53,12 @@ export interface DataTableProps<T> {
   getRowId: (row: T) => string;
   // Sort
   sort: DataTableSort;
-  onSortChange: (sort: DataTableSort) => void;
   onSort: (field: string) => void;
   // DnD context id
   dndId?: string;
   // Render slots
   renderRows: (rows: Row<T>[]) => ReactNode;
-  renderLeadingRows?: () => ReactNode;
+  renderLeadingRows?: (columnOrder: string[]) => ReactNode;
   renderEmptyState?: (colSpan: number) => ReactNode;
   renderSkeleton?: () => ReactNode;
   // Keyboard
@@ -82,7 +80,6 @@ function DataTableInner<T>(
     isLoading,
     getRowId,
     sort,
-    onSortChange,
     onSort,
     dndId = "data-table-dnd",
     renderRows,
@@ -102,28 +99,11 @@ function DataTableInner<T>(
     focus: () => tableContainerRef.current?.focus(),
   }));
 
-  const sortingState: SortingState = useMemo(
-    () => [{ id: sort.field, desc: sort.direction === "desc" }],
-    [sort.field, sort.direction],
-  );
-
   const table = useReactTable<T>({
     data,
     columns,
     state: {
-      sorting: sortingState,
       columnOrder,
-    },
-    onSortingChange: (updater) => {
-      const next =
-        typeof updater === "function" ? updater(sortingState) : updater;
-      const entry = next?.[0];
-      if (entry) {
-        onSortChange({
-          field: entry.id,
-          direction: entry.desc ? "desc" : "asc",
-        });
-      }
     },
     onColumnOrderChange: (updater) => {
       const next =
@@ -165,6 +145,13 @@ function DataTableInner<T>(
     useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {}),
   );
+
+  const skeletonColumns = useMemo<TableSkeletonColumn[]>(() => {
+    return columnOrder.map((id, index) => ({
+      id,
+      isFirst: index === 0,
+    }));
+  }, [columnOrder]);
 
   const wrappedKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -236,11 +223,11 @@ function DataTableInner<T>(
                 renderSkeleton ? (
                   renderSkeleton()
                 ) : (
-                  <TableSkeleton />
+                  <TableSkeleton columns={skeletonColumns} />
                 )
               ) : (
                 <>
-                  {renderLeadingRows?.()}
+                  {renderLeadingRows?.(columnOrder)}
                   {data.length === 0 && !isLoading ? (
                     renderEmptyState ? (
                       renderEmptyState(table.getAllLeafColumns().length)

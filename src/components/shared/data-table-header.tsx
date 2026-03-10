@@ -6,6 +6,7 @@ import type { Header } from "@tanstack/react-table";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import { TableCell, TableHead, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { DataTableSort } from "./data-table";
@@ -101,7 +102,7 @@ export function DraggableTableHeader({
             onMouseDown={header.getResizeHandler()}
             onTouchStart={header.getResizeHandler()}
             onDoubleClick={() => header.column.resetSize()}
-            className={clsx(
+            className={cn(
               "border-border absolute top-0 right-0 z-10 h-full w-2 cursor-col-resize border-r",
               "hover:bg-primary/15 hover:border-primary/50",
               header.column.getIsResizing() && "bg-primary/25 border-primary h-9",

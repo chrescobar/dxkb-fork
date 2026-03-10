@@ -24,8 +24,9 @@ export function getOutputName(job: JobListItem): string {
 
 export function formatElapsedSeconds(seconds: number): string {
   if (!Number.isFinite(seconds) || seconds < 0) return "\u2014";
-  const m = Math.floor(seconds / 60);
-  const s = Math.round(seconds % 60);
+  const total = Math.round(seconds);
+  const m = Math.floor(total / 60);
+  const s = total % 60;
   return m > 0 ? `${m}m${s}s` : `${s}s`;
 }
 

@@ -436,9 +436,9 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     const colElement = event.currentTarget.closest('th') as HTMLElement;
     if (!colElement) return;
 
-    const table = colElement.closest('table');
-    if (!table) return;
-    const tableRect = table.getBoundingClientRect();
+    const tableEl = colElement.closest('table');
+    if (!tableEl) return;
+    const tableRect = tableEl.getBoundingClientRect();
 
     if (resizeLineRef.current) { // Make the ghost line appear
       resizeLineRef.current.style.left = `${colElement.getBoundingClientRect().right - tableRect.left}px`;

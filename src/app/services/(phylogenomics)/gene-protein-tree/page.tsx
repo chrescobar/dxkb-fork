@@ -139,9 +139,16 @@ export default function GeneProteinTreePage() {
   );
 
   const skipAlphabetEffect = useRef(false);
+  const prevAlphabetRef = useRef(alphabet);
 
-  // Reset model when alphabet changes
+  // Reset model and clear incompatible sequences when alphabet changes
   useEffect(() => {
+    const alphabetChanged = prevAlphabetRef.current !== alphabet;
+    prevAlphabetRef.current = alphabet;
+
+    // Nothing to do if alphabet didn't actually change (e.g. sequences dependency triggered this)
+    if (!alphabetChanged) return;
+
     // Skip when a rerun just set alphabet — rerun effect will set substitution_model itself
     if (skipAlphabetEffect.current) {
       skipAlphabetEffect.current = false;
@@ -165,7 +172,6 @@ export default function GeneProteinTreePage() {
       form.setFieldValue("sequences", filteredSequences);
       toast.info("Switched alphabet. Cleared incompatible sequences.");
     }
-
 
     queueMicrotask(() => {
       setSelectedAlignedFastaObject(null);

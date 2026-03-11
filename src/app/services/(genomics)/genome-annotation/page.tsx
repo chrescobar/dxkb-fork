@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { noop } from "@/lib/utils";
 import { useForm, useStore } from "@tanstack/react-form";
 import { ServiceHeader } from "@/components/services/service-header";
 import {
@@ -140,7 +141,7 @@ const GenomeAnnotationContent = () => {
             form.setFieldValue("my_label", storedLabel as never);
           }
         })
-        .catch(() => {});
+        .catch(noop);
     } else {
       if (rerunData.scientific_name) form.setFieldValue("scientific_name", rerunData.scientific_name as never);
       if (rerunData.my_label) form.setFieldValue("my_label", rerunData.my_label as never);

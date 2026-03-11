@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { noop } from "@/lib/utils";
 import { useForm, useStore } from "@tanstack/react-form";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import {
@@ -201,7 +202,7 @@ export default function SarsCov2GenomeAnalysisPage() {
             }
           }
         })
-        .catch(() => {});
+        .catch(noop);
     }
     if (rerunData.my_label) {
       form.setFieldValue("my_label", rerunData.my_label as never);

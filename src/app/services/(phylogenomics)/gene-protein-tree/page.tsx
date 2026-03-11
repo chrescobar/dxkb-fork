@@ -188,7 +188,9 @@ export default function GeneProteinTreePage() {
     if (!rerunData || !markApplied()) return;
 
     if (rerunData.alphabet) {
-      skipAlphabetEffect.current = true;
+      if (rerunData.alphabet !== form.state.values.alphabet) {
+        skipAlphabetEffect.current = true;
+      }
       form.setFieldValue("alphabet", rerunData.alphabet as GeneProteinTreeFormData["alphabet"]);
     }
     if (rerunData.recipe) form.setFieldValue("recipe", rerunData.recipe as GeneProteinTreeFormData["recipe"]);

@@ -137,7 +137,7 @@ function resolveInputType(
   return program === "blastp" || program === "tblastn" ? "aa" : "dna";
 }
 
-function resolveDbSource(
+export function resolveDbSource(
   database: BlastFormData["db_precomputed_database"] | undefined,
 ): BlastFormData["db_source"] {
   return DB_SOURCE_MAP[database || "bacteria-archaea"] || "precomputed_database";

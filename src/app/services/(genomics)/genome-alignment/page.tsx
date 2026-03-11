@@ -44,6 +44,7 @@ import {
 import { transformGenomeAlignmentParams } from "@/lib/forms/(genomics)/genome-alignment/genome-alignment-form-utils";
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
 import { useRerunForm } from "@/hooks/services/use-rerun-form";
+import { rerunBooleanValue } from "@/lib/rerun-utility";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import {
   fetchGenomeGroupMembers,
@@ -188,7 +189,7 @@ export default function GenomeAlignmentServicePage() {
 
     if (rerunData.output_path) form.setFieldValue("output_path", rerunData.output_path as never);
     if (rerunData.output_file) form.setFieldValue("output_file", rerunData.output_file as never);
-    if (rerunData.manual_seed_weight != null) form.setFieldValue("manual_seed_weight", rerunData.manual_seed_weight as boolean);
+    if (rerunData.manual_seed_weight != null) form.setFieldValue("manual_seed_weight", rerunBooleanValue(rerunData.manual_seed_weight));
     if (rerunData.seed_weight != null) form.setFieldValue("seed_weight", rerunData.seed_weight as number);
     if (rerunData.weight != null) form.setFieldValue("weight", rerunData.weight as number);
 

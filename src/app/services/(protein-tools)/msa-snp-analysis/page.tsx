@@ -225,11 +225,18 @@ export default function MSAandSNPAnalysisPage() {
       form.setFieldValue("aligner", rerunData.aligner as MsaSnpAnalysis.MsaSnpAnalysisFormData["aligner"]);
     }
 
-    // strategy (API stores as "strategy" or "strategy_settings")
-    const strategyVal = (rerunData.strategy || rerunData.strategy_settings) as string | undefined;
-    if (strategyVal && strategyVal.trim() !== "") {
-      form.setFieldValue("strategy", strategyVal as MsaSnpAnalysis.MsaSnpAnalysisFormData["strategy"]);
-      setShowStrategy(true);
+    // strategy (API stores as "strategy" or "strategy_settings", but always
+    // sets strategy_settings:"auto" even for Muscle jobs as a backend default)
+    if (rerunData.aligner === "Muscle") {
+      // Muscle doesn't support strategy — clear the default "auto" value to
+      // avoid a schema validation error ("Strategy is only available for Mafft").
+      form.setFieldValue("strategy", undefined);
+    } else {
+      const strategyVal = (rerunData.strategy || rerunData.strategy_settings) as string | undefined;
+      if (strategyVal && strategyVal.trim() !== "") {
+        form.setFieldValue("strategy", strategyVal as MsaSnpAnalysis.MsaSnpAnalysisFormData["strategy"]);
+        setShowStrategy(true);
+      }
     }
 
     // output_path / output_file
@@ -280,7 +287,12 @@ export default function MSAandSNPAnalysisPage() {
   useEffect(() => {
     if (!referenceFastaText.trim()) {
       setReferenceFastaValidationResult(null);
-      form.setFieldValue("ref_string", "");
+      // Only clear ref_string when the "string" ref type controls it.
+      // For "feature_id" / "genome_id", ref_string is set by the dropdown
+      // and must not be wiped out (e.g. after a rerun pre-fill).
+      if (refType === "string") {
+        form.setFieldValue("ref_string", "");
+      }
       return;
     }
 
@@ -298,7 +310,7 @@ export default function MSAandSNPAnalysisPage() {
     if (validation.valid && validation.isSingleSequence) {
       form.setFieldValue("ref_string", validation.trimFasta);
     }
-  }, [referenceFastaText, form]);
+  }, [referenceFastaText, refType, form]);
 
   // Fetch features from feature group when Feature ID reference is selected
   useEffect(() => {

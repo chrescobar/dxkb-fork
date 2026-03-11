@@ -177,8 +177,23 @@ export default function MetaCATSPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const autoGroupsRaw = normalizeToArray<any>(rerunData.auto_groups);
     if (autoGroupsRaw.length > 0) {
-      form.setFieldValue("auto_groups", autoGroupsRaw as MetaCatsFormData["auto_groups"]);
-      const uniqueGroupNames = Array.from(new Set(autoGroupsRaw.map((item: { group?: string }) => item.group).filter(Boolean))) as string[];
+      // API format uses { id, metadata, grp, g_id } — map back to internal form format
+      const mappedAutoGroups: MetaCatsFormData["auto_groups"] = autoGroupsRaw.map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (item: any) => ({
+          id: crypto.randomUUID(),
+          patric_id: item.patric_id ?? item.id ?? "",
+          metadata: item.metadata ?? "",
+          group: item.group ?? item.grp ?? "",
+          genome_id: item.genome_id ?? item.g_id ?? "",
+          strain: item.strain ?? "",
+          genbank_accessions: item.genbank_accessions ?? "",
+        })
+      );
+      form.setFieldValue("auto_groups", mappedAutoGroups);
+      const uniqueGroupNames = Array.from(
+        new Set(mappedAutoGroups.map((item) => item.group).filter(Boolean))
+      ) as string[];
       setGroupNames(uniqueGroupNames);
     }
     if (typeof rerunData.auto_alphabet === "string") {

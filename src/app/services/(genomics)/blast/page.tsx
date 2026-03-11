@@ -44,10 +44,7 @@ import {
   useBlastDatabaseTypes,
   useBlastProgramTracking,
   useFastaValidation,
-  createBlastFormValues,
-  createInputSourceOverrides,
-  createDatabaseSourceOverrides,
-  extractInputFields,
+  resolveDbSource,
   maxHitsOptionsBlast,
   evalueOptionsBlast,
 } from "@/lib/forms/(genomics)/blast/blast-form-utils";
@@ -84,7 +81,7 @@ export default function BlastServicePage() {
 
   const form = useForm({
     defaultValues: DEFAULT_BLAST_FORM_VALUES as BlastFormData,
-    validators: { onChange: completeFormSchema },
+    validators: { onChange: completeFormSchema, onSubmit: completeFormSchema },
     onSubmit: async ({ value }) => {
       const data = value as BlastFormData;
 
@@ -185,7 +182,7 @@ export default function BlastServicePage() {
     if (rerunData.db_genome_list) form.setFieldValue("db_genome_list", rerunData.db_genome_list as string[]);
     if (rerunData.db_fasta_file) form.setFieldValue("db_fasta_file", rerunData.db_fasta_file as never);
     if (rerunData.blast_max_hits != null) form.setFieldValue("blast_max_hits", rerunData.blast_max_hits as number);
-    if (rerunData.blast_evalue_cutoff != null) form.setFieldValue("blast_evalue_cutoff", rerunData.blast_evalue_cutoff as number);
+    if (rerunData.blast_evalue_cutoff != null) form.setFieldValue("blast_evalue_cutoff", Number(rerunData.blast_evalue_cutoff));
     if (rerunData.output_path) form.setFieldValue("output_path", rerunData.output_path as never);
     if (rerunData.output_file) form.setFieldValue("output_file", rerunData.output_file as never);
   }, [rerunData, markApplied, form]);
@@ -198,31 +195,36 @@ export default function BlastServicePage() {
   const handleInputSourceChange = (
     newSource: BlastFormData["input_source"],
   ) => {
-    const currentValues = form.state.values;
-    const preservedFastaData = String((currentValues as Record<string, unknown>).input_fasta_data ?? "");
+    const preservedFastaData = String((form.state.values as Record<string, unknown>).input_fasta_data ?? "");
 
-    const inputOverrides = createInputSourceOverrides(
-      newSource,
-      preservedFastaData,
-    );
-    const newValues = createBlastFormValues(currentValues, inputOverrides);
+    // Clear all input fields, then set the appropriate one
+    form.setFieldValue("input_fasta_data", "");
+    form.setFieldValue("input_fasta_file", "");
+    form.setFieldValue("input_feature_group", "");
 
-    form.reset(newValues);
+    switch (newSource) {
+      case "fasta_data":
+        form.setFieldValue("input_fasta_data", preservedFastaData);
+        break;
+      case "fasta_file":
+        break;
+      case "feature_group":
+        break;
+    }
   };
 
   const handleDatabaseSourceChange = (
     newDBPrecomputedDatabase: BlastFormData["db_precomputed_database"],
   ) => {
-    const currentValues = form.state.values;
-    const preservedInputFields = extractInputFields(currentValues);
+    // Update database source and derived db_source
+    form.setFieldValue("db_source", resolveDbSource(newDBPrecomputedDatabase));
 
-    const databaseOverrides = createDatabaseSourceOverrides(
-      newDBPrecomputedDatabase,
-      preservedInputFields,
-    );
-    const newValues = createBlastFormValues(currentValues, databaseOverrides);
-
-    form.reset(newValues);
+    // Clear all database-specific fields
+    form.setFieldValue("db_genome_list", []);
+    form.setFieldValue("db_genome_group", "");
+    form.setFieldValue("db_feature_group", "");
+    form.setFieldValue("db_taxon_list", []);
+    form.setFieldValue("db_fasta_file", "");
   };
 
   return (

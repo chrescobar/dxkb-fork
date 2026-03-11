@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import type { Library } from "@/types/services";
 import {
   getPairedLibraryId,
@@ -40,6 +41,14 @@ const SERVICE_ROUTE_MAP: Record<string, string> = {
 };
 
 /**
+ * Coerces a rerun param value to boolean. The backend stores booleans as
+ * "true"/"false" strings (from form transforms), so `Boolean()` alone is wrong.
+ */
+export function rerunBooleanValue(v: unknown): boolean {
+  return v === true || v === 1 || v === "true";
+}
+
+/**
  * Normalizes a value to an array. The backend sometimes serializes
  * single-element arrays as plain objects; this coerces both cases to T[].
  */
@@ -73,7 +82,7 @@ export function rerunJob(
   }
 
   if (!route) {
-    console.warn(`[rerunJob] No route mapped for service: ${serviceId}`);
+    toast.error(`The ${serviceId} service is not currently supported in DXKB`);
     return;
   }
 

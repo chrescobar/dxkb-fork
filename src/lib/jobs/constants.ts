@@ -77,7 +77,7 @@ export const SERVICE_NAMES: ServiceNameEntry[] = [
   { value: "SubspeciesClassification", displayName: "Subspecies Classification" },
   { value: "Docking", displayName: "Docking" },
   { value: "MetagenomicReadMapping", displayName: "Metagenomic Read Mapping" },
-  { value: "Homology", displayName: "Homology" },
+  { value: "Homology", displayName: "BLAST" },
   { value: "MetaCATS", displayName: "Meta-CATS" },
   { value: "GenomeAlignment", displayName: "Genome Alignment" },
   { value: "CodonTree", displayName: "Codon Tree" },

@@ -27,7 +27,7 @@ import { Spinner } from "@/components/ui/spinner";
 
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
 import { useRerunForm } from "@/hooks/services/use-rerun-form";
-import { normalizeToArray, buildPairedLibraries, buildSingleLibraries, buildSraLibraries } from "@/lib/rerun-utility";
+import { buildPairedLibraries, buildSingleLibraries } from "@/lib/rerun-utility";
 import {
   viralAssemblyInfo,
   viralAssemblyInputFile,
@@ -54,6 +54,7 @@ import {
 } from "@/lib/forms/tanstack-library-selection";
 
 import type { WorkspaceObject } from "@/lib/workspace-client";
+import type { Library } from "@/types/services";
 
 const tutorial =
   "https://www.bv-brc.org/docs/tutorial/viral_assembly/assembly.html";
@@ -73,18 +74,22 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
 
   const [pairedRead1, setPairedRead1] = useState<string | null>(() => {
     if (!rerunData) return null;
-    const libs = normalizeToArray<Record<string, string>>(rerunData.paired_end_libs);
-    return libs.length > 0 ? (libs[0].read1 ?? null) : null;
+    const lib = rerunData.paired_end_lib as Record<string, string> | undefined;
+    return lib?.read1 ?? null;
   });
   const [pairedRead2, setPairedRead2] = useState<string | null>(() => {
     if (!rerunData) return null;
-    const libs = normalizeToArray<Record<string, string>>(rerunData.paired_end_libs);
-    return libs.length > 0 ? (libs[0].read2 ?? null) : null;
+    const lib = rerunData.paired_end_lib as Record<string, string> | undefined;
+    return lib?.read2 ?? null;
   });
   const [singleRead, setSingleRead] = useState<string | null>(() => {
     if (!rerunData) return null;
-    const libs = normalizeToArray<Record<string, string>>(rerunData.single_end_libs);
-    return libs.length > 0 ? (libs[0].read ?? null) : null;
+    const lib = rerunData.single_end_lib as Record<string, string> | undefined;
+    return lib?.read ?? null;
+  });
+  const [sraDefaultValue, setSraDefaultValue] = useState<string>(() => {
+    if (!rerunData) return "";
+    return (rerunData.srr_id as string | undefined) ?? "";
   });
   const [sraResetKey, setSraResetKey] = useState(0);
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
@@ -118,24 +123,28 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
     if (rerunData.output_path) form.setFieldValue("output_path", rerunData.output_path as never);
     if (rerunData.output_file) form.setFieldValue("output_file", rerunData.output_file as never);
 
-    const pairedLibs = buildPairedLibraries(rerunData, (lib) => ({ platform: lib.platform || "illumina" }));
-    const singleLibs = buildSingleLibraries(rerunData, (lib) => ({ platform: lib.platform || "illumina" }));
-    const sraLibs = buildSraLibraries(rerunData);
+    // The transform stores singular fields: paired_end_lib, single_end_lib, srr_id
+    const pairedLib = rerunData.paired_end_lib as Record<string, string> | undefined;
+    const singleLib = rerunData.single_end_lib as Record<string, string> | undefined;
+    const srrId = rerunData.srr_id as string | undefined;
 
-    if (pairedLibs.length > 0) {
+    if (pairedLib?.read1 && pairedLib?.read2) {
       form.setFieldValue("input_type", "paired");
       // pairedRead1/pairedRead2 initialized via lazy useState above
-      syncLibrariesToForm(pairedLibs);
-      setLibrariesAndSync(pairedLibs);
-    } else if (singleLibs.length > 0) {
+      const libs = buildPairedLibraries({ paired_end_libs: [pairedLib] });
+      syncLibrariesToForm(libs);
+      setLibrariesAndSync(libs);
+    } else if (singleLib?.read) {
       form.setFieldValue("input_type", "single");
       // singleRead initialized via lazy useState above
-      syncLibrariesToForm(singleLibs);
-      setLibrariesAndSync(singleLibs);
-    } else if (sraLibs.length > 0) {
+      const libs = buildSingleLibraries({ single_end_libs: [singleLib] });
+      syncLibrariesToForm(libs);
+      setLibrariesAndSync(libs);
+    } else if (srrId) {
       form.setFieldValue("input_type", "srr_accession");
-      syncLibrariesToForm(sraLibs);
-      setLibrariesAndSync(sraLibs);
+      const libs: Library[] = [{ id: srrId, name: srrId, type: "sra" }];
+      syncLibrariesToForm(libs);
+      setLibrariesAndSync(libs);
     }
   }, [rerunData, markApplied, form, syncLibrariesToForm, setLibrariesAndSync]);
 
@@ -221,6 +230,7 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
     setPairedRead1(null);
     setPairedRead2(null);
     setSingleRead(null);
+    setSraDefaultValue("");
     setSraResetKey((k) => k + 1);
     setIsOutputNameValid(true);
   };
@@ -351,6 +361,7 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
                   key={sraResetKey}
                   title="SRA Run Accession"
                   placeholder="SRA Accession"
+                  defaultValue={sraDefaultValue}
                   selectedLibraries={selectedLibraries}
                   setSelectedLibraries={setLibrariesAndSync}
                   allowDuplicates={false}

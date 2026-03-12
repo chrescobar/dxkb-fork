@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const OUTPUT_NAME_INVALID_CHARS = /[\\/]/;
+const outputNameInvalidChars = /[\\/]/;
 
 // Library types for variation analysis (same as genome assembly)
 export const variationLibrarySchema = z.object({
@@ -33,7 +33,7 @@ export const variationAnalysisFormSchema = z
     output_file: z
       .string()
       .min(1, "Output name is required")
-      .refine((value) => !OUTPUT_NAME_INVALID_CHARS.test(value), {
+      .refine((value) => !outputNameInvalidChars.test(value), {
           error: "Output name cannot contain slashes"
     }),
   })
@@ -54,7 +54,7 @@ export const variationAnalysisFormSchema = z
 export type VariationAnalysisFormData = z.infer<typeof variationAnalysisFormSchema>;
 
 // Default form values
-export const DEFAULT_VARIATION_ANALYSIS_FORM_VALUES: VariationAnalysisFormData = {
+export const defaultVariationAnalysisFormValues: VariationAnalysisFormData = {
   paired_end_libs: [],
   single_end_libs: [],
   srr_ids: [],

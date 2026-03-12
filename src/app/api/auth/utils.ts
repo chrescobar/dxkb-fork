@@ -3,14 +3,14 @@ import { safeDecodeURIComponent } from "@/lib/auth";
 import { getRequiredEnv } from "@/lib/env";
 
 // Cookie configuration for BV-BRC authentication
-const COOKIE_OPTIONS = {
+const cookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "strict" as const,
   path: "/",
 };
 
-const SESSION_MAX_AGE = 3600 * 4; // 4 hours
+const sessionMaxAge = 3600 * 4; // 4 hours
 
 // Helper function to fetch user profile metadata from BV-BRC
 export async function getProfileMetadata(
@@ -84,15 +84,15 @@ export async function setBvbrcAuthCookies(
 
   // Set BV-BRC token cookie (renamed from 'token' to avoid conflicts with better-auth)
   cookieStore.set("bvbrc_token", token, {
-    ...COOKIE_OPTIONS,
-    maxAge: SESSION_MAX_AGE,
+    ...cookieOptions,
+    maxAge: sessionMaxAge,
   });
 
   // Set realm if provided
   if (realm) {
     cookieStore.set("bvbrc_realm", realm, {
-      ...COOKIE_OPTIONS,
-      maxAge: SESSION_MAX_AGE,
+      ...cookieOptions,
+      maxAge: sessionMaxAge,
     });
   }
 
@@ -100,8 +100,8 @@ export async function setBvbrcAuthCookies(
   // Use local part when falling back to username so USER_URL path and workspace principal (username@realm) stay correct.
   const userId = String(userProfile?.id ?? username.split("@")[0]);
   cookieStore.set("bvbrc_user_id", userId, {
-    ...COOKIE_OPTIONS,
-    maxAge: SESSION_MAX_AGE,
+    ...cookieOptions,
+    maxAge: sessionMaxAge,
   });
 }
 
@@ -125,7 +125,7 @@ export async function clearBvbrcAuthCookies() {
 
   for (const name of cookiesToClear) {
     cookieStore.set(name, "", {
-      ...COOKIE_OPTIONS,
+      ...cookieOptions,
       maxAge: 0,
     });
   }

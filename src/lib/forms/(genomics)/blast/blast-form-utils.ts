@@ -116,7 +116,7 @@ export const evalueOptionsBlast = [
   { value: 10000, label: "10000" },
 ] as const;
 
-const DB_SOURCE_MAP: Record<
+const dbSourceMap: Record<
   BlastFormData["db_precomputed_database"],
   BlastFormData["db_source"]
 > = {
@@ -140,7 +140,7 @@ function resolveInputType(
 export function resolveDbSource(
   database: BlastFormData["db_precomputed_database"] | undefined,
 ): BlastFormData["db_source"] {
-  return DB_SOURCE_MAP[database || "bacteria-archaea"] || "precomputed_database";
+  return dbSourceMap[database || "bacteria-archaea"] || "precomputed_database";
 }
 
 /**

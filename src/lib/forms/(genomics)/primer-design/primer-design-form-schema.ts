@@ -1,13 +1,13 @@
 import { z } from "zod";
 
-const OUTPUT_NAME_INVALID_CHARS = /[\\/]/;
+const outputNameInvalidChars = /[\\/]/;
 
 export const primerDesignFormSchema = z
   .object({
     output_file: z
       .string()
       .min(1, "Output name is required")
-      .refine((value) => !OUTPUT_NAME_INVALID_CHARS.test(value), {
+      .refine((value) => !outputNameInvalidChars.test(value), {
           error: "Output name cannot contain slashes"
     }),
     output_path: z.string().prefault(""),
@@ -66,7 +66,7 @@ export const primerDesignFormSchema = z
     }
   });
 
-export const DEFAULT_PRIMER_DESIGN_FORM_VALUES = {
+export const defaultPrimerDesignFormValues = {
   output_file: "",
   output_path: "",
   input_type: "sequence_text" as const,

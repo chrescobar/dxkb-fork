@@ -10,7 +10,7 @@ import {
  * Maps BV-BRC service IDs (job.app) to Next.js route paths.
  * Route groups (parentheses) are not part of the URL in Next.js App Router.
  */
-const SERVICE_ROUTE_MAP: Record<string, string> = {
+const serviceRouteMap: Record<string, string> = {
   // Genomics
   GenomeAssembly2: "/services/genome-assembly",
   GenomeAssembly: "/services/genome-assembly",
@@ -78,7 +78,7 @@ export function rerunJob(
         ? "/services/viral-genome-tree"
         : "/services/gene-protein-tree";
   } else {
-    route = SERVICE_ROUTE_MAP[serviceId];
+    route = serviceRouteMap[serviceId];
   }
 
   if (!route) {

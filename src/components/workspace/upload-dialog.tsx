@@ -24,7 +24,7 @@ import { toast } from "sonner";
 import { XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const UPLOAD_API = "/api/services/workspace/upload";
+const uploadApi = "/api/services/workspace/upload";
 
 const uploadTypeOptions = Object.entries(knownUploadTypes).map(([value, { label }]) => ({
   value,
@@ -120,7 +120,7 @@ export function UploadDialog({
         const formData = new FormData();
         formData.append("url", link_reference);
         formData.append("file", file);
-        const res = await fetch(UPLOAD_API, {
+        const res = await fetch(uploadApi, {
           method: "POST",
           credentials: "include",
           body: formData,

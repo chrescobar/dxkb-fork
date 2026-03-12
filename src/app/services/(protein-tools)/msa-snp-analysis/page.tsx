@@ -91,7 +91,7 @@ export default function MSAandSNPAnalysisPage() {
   const [isValidatingGenomeGroup, setIsValidatingGenomeGroup] = useState(false);
 
   function handleReset() {
-    form.reset(MsaSnpAnalysis.DEFAULT_MSA_SNP_ANALYSIS_FORM_VALUES);
+    form.reset(MsaSnpAnalysis.defaultMsaSnpAnalysisFormValues);
     setSelectedFeatureGroupObject(null);
     setSelectedGenomeGroupObject(null);
     setSelectedFastaObject(null);
@@ -126,7 +126,7 @@ export default function MSAandSNPAnalysisPage() {
   });
 
   const form = useForm({
-    defaultValues: MsaSnpAnalysis.DEFAULT_MSA_SNP_ANALYSIS_FORM_VALUES as MsaSnpAnalysis.MsaSnpAnalysisFormData,
+    defaultValues: MsaSnpAnalysis.defaultMsaSnpAnalysisFormValues as MsaSnpAnalysis.MsaSnpAnalysisFormData,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: MsaSnpAnalysis.msaSnpAnalysisFormSchema as any },
     onSubmit: async ({ value }) => {
@@ -713,9 +713,9 @@ export default function MSAandSNPAnalysisPage() {
                             return;
                           }
 
-                          if (genomes.length > MsaSnpAnalysis.MAX_GENOMES) {
+                          if (genomes.length > MsaSnpAnalysis.maxGenomes) {
                             toast.error("Genome group too large", {
-                              description: `The genome group has ${genomes.length} genomes, but the maximum is ${MsaSnpAnalysis.MAX_GENOMES}.`,
+                              description: `The genome group has ${genomes.length} genomes, but the maximum is ${MsaSnpAnalysis.maxGenomes}.`,
                               closeButton: true,
                             });
                             setIsValidatingGenomeGroup(false);
@@ -729,7 +729,7 @@ export default function MSAandSNPAnalysisPage() {
                             genomeIds,
                             {
                               maxGenomeLength:
-                                MsaSnpAnalysis.MAX_GENOME_LENGTH,
+                                MsaSnpAnalysis.maxGenomeLength,
                             },
                           );
 
@@ -1287,7 +1287,7 @@ export default function MSAandSNPAnalysisPage() {
                             onValueChange={(value) => value != null && field.handleChange(value as MsaSnpAnalysis.MsaSnpAnalysisFormData["strategy"])}
                             className="grid gap-2 w-full p-2"
                           >
-                            {MsaSnpAnalysis.STRATEGY_OPTIONS.map(
+                            {MsaSnpAnalysis.strategyOptions.map(
                               (option) => (
                                 <div
                                   key={option.value}

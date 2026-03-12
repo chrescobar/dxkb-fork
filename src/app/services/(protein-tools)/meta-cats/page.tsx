@@ -48,10 +48,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import SelectedItemsTable from "@/components/services/selected-items-table";
 import {
   metaCatsFormSchema,
-  DEFAULT_META_CATS_FORM_VALUES,
-  METADATA_OPTIONS,
-  MAX_GROUPS,
-  MIN_GROUPS,
+  defaultMetaCatsFormValues,
+  metadataOptions,
+  maxGroups,
+  minGroups,
   type MetaCatsFormData,
 } from "@/lib/forms/(protein-tools)/meta-cats/meta-cats-form-schema";
 import {
@@ -96,7 +96,7 @@ export default function MetaCATSPage() {
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
   const form = useForm({
-    defaultValues: DEFAULT_META_CATS_FORM_VALUES as MetaCatsFormData,
+    defaultValues: defaultMetaCatsFormValues as MetaCatsFormData,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: metaCatsFormSchema as any },
     onSubmit: async ({ value }) => {
@@ -107,7 +107,7 @@ export default function MetaCATSPage() {
 
   // Handle reset
   const handleReset = useCallback(() => {
-    form.reset(DEFAULT_META_CATS_FORM_VALUES);
+    form.reset(defaultMetaCatsFormValues);
     setSelectedAutoFeatureGroupObject(null);
     setSelectedFeatureGroupObject(null);
     setSelectedAlignmentFileObject(null);
@@ -402,9 +402,9 @@ export default function MetaCATSPage() {
     }
 
     // Check max limit
-    if (currentFeatureGroups.length >= MAX_GROUPS) {
+    if (currentFeatureGroups.length >= maxGroups) {
       toast.error("Maximum groups reached", {
-        description: `Maximum of ${MAX_GROUPS} feature groups allowed.`,
+        description: `Maximum of ${maxGroups} feature groups allowed.`,
         closeButton: true,
       });
       return;
@@ -565,7 +565,7 @@ export default function MetaCATSPage() {
                       <FieldItem className="min-w-48">
                         <Label className="service-card-label">Metadata</Label>
                         <Select
-                          items={METADATA_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
+                          items={metadataOptions.map((o) => ({ value: o.value, label: o.label }))}
                           value={field.state.value}
                           onValueChange={(value) => {
                             if (value == null) return;
@@ -587,7 +587,7 @@ export default function MetaCATSPage() {
                             sideOffset={4}
                           >
                             <SelectGroup>
-                              {METADATA_OPTIONS.map((option) => (
+                              {metadataOptions.map((option) => (
                                 <SelectItem key={option.value} value={option.value}>
                                   {option.label}
                                 </SelectItem>
@@ -714,13 +714,13 @@ export default function MetaCATSPage() {
                     <Label className="service-card-label">Groups Grid</Label>
                     <span
                       className={`text-sm ${
-                        uniqueGroupCount >= MIN_GROUPS && uniqueGroupCount <= MAX_GROUPS
+                        uniqueGroupCount >= minGroups && uniqueGroupCount <= maxGroups
                           ? "text-muted-foreground"
                           : "text-destructive"
                       }`}
                     >
                       {autoGroups.length > 0 &&
-                        `Max groups ${MAX_GROUPS}. Current ${uniqueGroupCount} group(s).`}
+                        `Max groups ${maxGroups}. Current ${uniqueGroupCount} group(s).`}
                     </span>
                   </div>
 
@@ -866,7 +866,7 @@ export default function MetaCATSPage() {
                 {/* Selected Feature Groups Table */}
                 <div className="space-y-2">
                   <Label className="service-card-label">
-                    Selected Feature Groups ({featureGroups.length}/{MAX_GROUPS})
+                    Selected Feature Groups ({featureGroups.length}/{maxGroups})
                   </Label>
                   <SelectedItemsTable
                     title=""
@@ -878,10 +878,10 @@ export default function MetaCATSPage() {
                     onRemove={handleRemoveFeatureGroup}
                     className="max-h-64 overflow-y-auto"
                   />
-                  {featureGroups.length < MIN_GROUPS && (
+                  {featureGroups.length < minGroups && (
                     <Alert variant="default">
                       <AlertDescription className="text-sm">
-                        At least {MIN_GROUPS} feature groups are required.
+                        At least {minGroups} feature groups are required.
                       </AlertDescription>
                     </Alert>
                   )}

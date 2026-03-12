@@ -52,10 +52,10 @@ import {
 
 import {
   fastqUtilitiesFormSchema,
-  DEFAULT_FASTQ_UTILITIES_FORM_VALUES,
-  PIPELINE_ACTION_OPTIONS,
-  PLATFORM_OPTIONS,
-  MAX_PIPELINE_ACTIONS,
+  defaultFastqUtilitiesFormValues,
+  pipelineActionOptions,
+  platformOptions,
+  maxPipelineActions,
   type FastqUtilitiesFormData,
   type LibraryItem,
   type PipelineActionItem,
@@ -97,7 +97,7 @@ export default function FastqUtilitiesPage() {
 
   // Handle form reset
   const handleReset = () => {
-    form.reset(DEFAULT_FASTQ_UTILITIES_FORM_VALUES as FastqUtilitiesFormData);
+    form.reset(defaultFastqUtilitiesFormValues as FastqUtilitiesFormData);
     setLibrariesAndSync([]);
     setPairedRead1(null);
     setPairedRead2(null);
@@ -124,7 +124,7 @@ export default function FastqUtilitiesPage() {
   });
 
   const form = useForm({
-    defaultValues: DEFAULT_FASTQ_UTILITIES_FORM_VALUES as FastqUtilitiesFormData,
+    defaultValues: defaultFastqUtilitiesFormValues as FastqUtilitiesFormData,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: fastqUtilitiesFormSchema as any },
     onSubmit: async ({ value }) => {
@@ -266,9 +266,9 @@ export default function FastqUtilitiesPage() {
       return;
     }
 
-    if (pipelineActions.length >= MAX_PIPELINE_ACTIONS) {
+    if (pipelineActions.length >= maxPipelineActions) {
       toast.error("Maximum actions reached", {
-        description: `You can add up to ${MAX_PIPELINE_ACTIONS} pipeline actions`,
+        description: `You can add up to ${maxPipelineActions} pipeline actions`,
       });
       return;
     }
@@ -373,7 +373,7 @@ export default function FastqUtilitiesPage() {
                 <Label className="service-card-label">Select Action</Label>
                 <div className="flex items-center gap-2">
                   <Select
-                    items={PIPELINE_ACTION_OPTIONS}
+                    items={pipelineActionOptions}
                     value={selectedAction}
                     onValueChange={(value) => value != null && setSelectedAction(value as PipelineAction)}
                   >
@@ -382,7 +382,7 @@ export default function FastqUtilitiesPage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                      {PIPELINE_ACTION_OPTIONS.map((action) => (
+                      {pipelineActionOptions.map((action) => (
                         <SelectItem key={action.value} value={action.value}>
                           {action.label}
                         </SelectItem>
@@ -395,7 +395,7 @@ export default function FastqUtilitiesPage() {
                     variant="outline"
                     size="icon"
                     onClick={handleAddPipelineAction}
-                    disabled={!selectedAction || pipelineActions.length >= MAX_PIPELINE_ACTIONS}
+                    disabled={!selectedAction || pipelineActions.length >= maxPipelineActions}
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
@@ -540,7 +540,7 @@ export default function FastqUtilitiesPage() {
                 <div>
                   <Label className="service-card-sublabel">Platform</Label>
                   <Select
-                    items={PLATFORM_OPTIONS}
+                    items={platformOptions}
                     value={singlePlatform}
                     onValueChange={(value) => value != null && setSinglePlatform(value as Platform)}
                   >
@@ -549,7 +549,7 @@ export default function FastqUtilitiesPage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        {PLATFORM_OPTIONS.map((platform) => (
+                        {platformOptions.map((platform) => (
                           <SelectItem key={platform.value} value={platform.value}>
                             {platform.label}
                           </SelectItem>

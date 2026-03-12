@@ -22,7 +22,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { formatServiceName } from "@/lib/jobs/formatting";
-import { STATUS_OPTIONS } from "@/lib/jobs/constants";
+import { statusOptions } from "@/lib/jobs/constants";
 
 interface JobsToolbarProps {
   searchQuery: string;
@@ -76,7 +76,7 @@ export function JobsToolbar({
       <div className="flex flex-wrap items-center gap-3">
         {/* Status filter */}
         <Select
-          items={STATUS_OPTIONS}
+          items={statusOptions}
           value={statusFilter}
           onValueChange={(value) =>
             value != null && onStatusFilterChange(value)
@@ -87,7 +87,7 @@ export function JobsToolbar({
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {STATUS_OPTIONS.map((opt) => (
+              {statusOptions.map((opt) => (
                 <SelectItem key={opt.value} value={opt.value}>
                   {opt.label}
                 </SelectItem>

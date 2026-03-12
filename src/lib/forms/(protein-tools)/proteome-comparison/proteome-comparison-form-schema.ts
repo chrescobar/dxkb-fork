@@ -1,17 +1,17 @@
 import { z } from "zod";
 
 // Constants
-export const MAX_COMPARISON_GENOMES = 9;
-export const MIN_COMPARISON_GENOMES = 1;
-export const PROTEOME_COMPARISON_STARTING_ROWS = 9;
+export const maxComparisonGenomes = 9;
+export const minComparisonGenomes = 1;
+export const proteomeComparisonStartingRows = 9;
 
 // Reference source types
-export const REFERENCE_SOURCE_TYPES = ["genome", "fasta", "feature_group"] as const;
-export type ReferenceSourceType = (typeof REFERENCE_SOURCE_TYPES)[number];
+export const referenceSourceTypes = ["genome", "fasta", "feature_group"] as const;
+export type ReferenceSourceType = (typeof referenceSourceTypes)[number];
 
 // Comparison item types
-export const COMPARISON_ITEM_TYPES = ["genome", "fasta", "feature_group", "genome_group"] as const;
-export type ComparisonItemType = (typeof COMPARISON_ITEM_TYPES)[number];
+export const comparisonItemTypes = ["genome", "fasta", "feature_group", "genome_group"] as const;
+export type ComparisonItemType = (typeof comparisonItemTypes)[number];
 
 // Comparison item schema for grid items
 export const comparisonItemSchema = z.object({
@@ -19,7 +19,7 @@ export const comparisonItemSchema = z.object({
   name: z.string(),
   path: z.string().optional(), // For workspace objects
   genome_id: z.string().optional(), // For genomes
-  type: z.enum(COMPARISON_ITEM_TYPES),
+  type: z.enum(comparisonItemTypes),
   genome_ids: z.array(z.string()).optional(), // For genome groups (stores the IDs)
 });
 
@@ -29,7 +29,7 @@ export type ComparisonItem = z.infer<typeof comparisonItemSchema>;
 export const proteomeComparisonFormSchema = z
   .object({
     // Reference genome fields
-    ref_source_type: z.enum(REFERENCE_SOURCE_TYPES),
+    ref_source_type: z.enum(referenceSourceTypes),
     ref_genome_id: z.string().optional(),
     ref_genome_name: z.string().optional(), // Display name for the genome
     ref_fasta_file: z.string().optional(),
@@ -79,16 +79,16 @@ export const proteomeComparisonFormSchema = z
     if (data.comparison_items.length < 1) {
       ctx.addIssue({
         code: "custom",
-        message: `At least ${MIN_COMPARISON_GENOMES} comparison genome must be added`,
+        message: `At least ${minComparisonGenomes} comparison genome must be added`,
         path: ["comparison_items"],
       });
     }
 
     // Validate max comparison items
-    if (data.comparison_items.length > MAX_COMPARISON_GENOMES) {
+    if (data.comparison_items.length > maxComparisonGenomes) {
       ctx.addIssue({
         code: "custom",
-        message: `Maximum ${MAX_COMPARISON_GENOMES} comparison genomes allowed`,
+        message: `Maximum ${maxComparisonGenomes} comparison genomes allowed`,
         path: ["comparison_items"],
       });
     }
@@ -107,7 +107,7 @@ export const proteomeComparisonFormSchema = z
 export type ProteomeComparisonFormData = z.infer<typeof proteomeComparisonFormSchema>;
 
 // Default form values
-export const DEFAULT_PROTEOME_COMPARISON_FORM_VALUES: ProteomeComparisonFormData = {
+export const defaultProteomeComparisonFormValues: ProteomeComparisonFormData = {
   // Reference genome defaults
   ref_source_type: "genome",
   ref_genome_id: "",

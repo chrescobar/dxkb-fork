@@ -43,7 +43,7 @@ export function checkDuplicateSequence(
  * Check if the sequence limit has been reached
  */
 export function checkSequenceLimit(sequences: ViralGenomeSequenceItem[]): boolean {
-  return sequences.length >= ViralGenomeTreeSchema.MAX_SEQUENCES;
+  return sequences.length >= ViralGenomeTreeSchema.maxSequences;
 }
 
 /**

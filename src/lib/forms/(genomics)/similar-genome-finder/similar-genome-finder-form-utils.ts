@@ -1,6 +1,6 @@
 import {
   type SimilarGenomeFinderFormData,
-  DEFAULT_SIMILAR_GENOME_FINDER_FORM_VALUES,
+  defaultSimilarGenomeFinderFormValues,
 } from "./similar-genome-finder-form-schema";
 
 /** JSON-RPC payload for https://p3.theseed.org/services/minhash_service */
@@ -111,6 +111,6 @@ export function transformSimilarGenomeFinderParams(
  * Reset form values to defaults
  */
 export function resetSimilarGenomeFinderValues(): SimilarGenomeFinderFormData {
-  return { ...DEFAULT_SIMILAR_GENOME_FINDER_FORM_VALUES };
+  return { ...defaultSimilarGenomeFinderFormValues };
 }
 

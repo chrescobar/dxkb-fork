@@ -43,7 +43,7 @@ export const completeGenomeAnnotationSchema = baseGenomeAnnotationSchema.superRe
 );
 
 // Default form values
-export const DEFAULT_GENOME_ANNOTATION_FORM_VALUES = {
+export const defaultGenomeAnnotationFormValues = {
   contigs: "",
   recipe: "default" as const,
   scientific_name: null,

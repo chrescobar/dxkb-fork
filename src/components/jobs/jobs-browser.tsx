@@ -34,9 +34,9 @@ import type { JobListItem } from "@/types/workspace";
 import { encodeWorkspaceSegment } from "@/lib/utils";
 import { rerunJob } from "@/lib/rerun-utility";
 import {
-  JOBS_PAGE_SIZE,
-  DEFAULT_JOBS_COLUMN_ORDER,
-  ACTIVE_JOB_STATUSES,
+  jobsPageSize,
+  defaultJobsColumnOrder,
+  activeJobStatuses,
 } from "@/lib/jobs/constants";
 
 interface JobDataRowProps {
@@ -117,7 +117,7 @@ export function JobsBrowser() {
   const statusSummary = summaryData?.taskSummary;
   const appSummary = summaryData?.appSummary;
 
-  const hasActiveJobs = ACTIVE_JOB_STATUSES.some(
+  const hasActiveJobs = activeJobStatuses.some(
     (s) => (statusSummary?.[s] ?? 0) > 0,
   );
   const {
@@ -129,7 +129,7 @@ export function JobsBrowser() {
     dataUpdatedAt,
   } = useJobsData({
     offset,
-    limit: JOBS_PAGE_SIZE,
+    limit: jobsPageSize,
     includeArchived,
     sortField: sort.field,
     sortOrder: sort.direction,
@@ -203,12 +203,12 @@ export function JobsBrowser() {
 
   // Pagination
   const handlePrevious = useCallback(() => {
-    setOffset((prev) => Math.max(0, prev - JOBS_PAGE_SIZE));
+    setOffset((prev) => Math.max(0, prev - jobsPageSize));
     setSelectedIds(new Set());
   }, []);
 
   const handleNext = useCallback(() => {
-    setOffset((prev) => prev + JOBS_PAGE_SIZE);
+    setOffset((prev) => prev + jobsPageSize);
     setSelectedIds(new Set());
   }, []);
 
@@ -399,7 +399,7 @@ export function JobsBrowser() {
           <DataTable<JobListItem>
             data={filteredJobs}
             columns={columns}
-            defaultColumnOrder={DEFAULT_JOBS_COLUMN_ORDER}
+            defaultColumnOrder={defaultJobsColumnOrder}
             isLoading={isLoading}
             getRowId={(row) => row.id}
             sort={sort}
@@ -417,7 +417,7 @@ export function JobsBrowser() {
         <div className="shrink-0 border-t">
           <JobsPagination
             offset={offset}
-            limit={JOBS_PAGE_SIZE}
+            limit={jobsPageSize}
             totalOnPage={filteredJobs.length}
             onPrevious={handlePrevious}
             onNext={handleNext}

@@ -75,7 +75,7 @@ export default function ViralGenomeTreePage() {
   const [selectedUnalignedFastaObject, setSelectedUnalignedFastaObject] =
     useState<WorkspaceObject | null>(null);
   const [metadataFields, setMetadataFields] =
-    useState<MetadataField[]>(ViralGenomeTree.DEFAULT_METADATA_FIELDS as MetadataField[]);
+    useState<MetadataField[]>(ViralGenomeTree.defaultMetadataFields as MetadataField[]);
   const [selectedMetadataField, setSelectedMetadataField] =
     useState<string>("");
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -98,7 +98,7 @@ export default function ViralGenomeTreePage() {
   });
 
   const form = useForm({
-    defaultValues: ViralGenomeTree.DEFAULT_VIRAL_GENOME_TREE_FORM_VALUES as ViralGenomeTree.ViralGenomeTreeFormData,
+    defaultValues: ViralGenomeTree.defaultViralGenomeTreeFormValues as ViralGenomeTree.ViralGenomeTreeFormData,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: ViralGenomeTree.viralGenomeTreeFormSchema as any },
     onSubmit: async ({ value }) => {
@@ -343,11 +343,11 @@ export default function ViralGenomeTreePage() {
   }
 
   function handleReset() {
-    form.reset(ViralGenomeTree.DEFAULT_VIRAL_GENOME_TREE_FORM_VALUES);
+    form.reset(ViralGenomeTree.defaultViralGenomeTreeFormValues);
     setSelectedGenomeGroupObject(null);
     setSelectedAlignedFastaObject(null);
     setSelectedUnalignedFastaObject(null);
-    setMetadataFields(ViralGenomeTree.DEFAULT_METADATA_FIELDS as MetadataField[]);
+    setMetadataFields(ViralGenomeTree.defaultMetadataFields as MetadataField[]);
     setSelectedMetadataField("");
     setShowAdvanced(false);
   }
@@ -518,7 +518,7 @@ export default function ViralGenomeTreePage() {
                         Trim Ends of Alignment Threshold
                       </Label>
                       <Select
-                        items={ViralGenomeTree.THRESHOLD_OPTIONS.map((v) => ({ value: v, label: v }))}
+                        items={ViralGenomeTree.thresholdOptions.map((v) => ({ value: v, label: v }))}
                         value={field.state.value}
                         onValueChange={(value) => value != null && field.handleChange(value)}
                       >
@@ -527,7 +527,7 @@ export default function ViralGenomeTreePage() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            {ViralGenomeTree.THRESHOLD_OPTIONS.map((value) => (
+                            {ViralGenomeTree.thresholdOptions.map((value) => (
                               <SelectItem key={value} value={value}>
                                 {value}
                               </SelectItem>
@@ -547,7 +547,7 @@ export default function ViralGenomeTreePage() {
                         Remove Gappy Sequences Threshold
                       </Label>
                       <Select
-                        items={ViralGenomeTree.THRESHOLD_OPTIONS.map((v) => ({ value: v, label: v }))}
+                        items={ViralGenomeTree.thresholdOptions.map((v) => ({ value: v, label: v }))}
                         value={field.state.value}
                         onValueChange={(value) => value != null && field.handleChange(value)}
                       >
@@ -556,7 +556,7 @@ export default function ViralGenomeTreePage() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            {ViralGenomeTree.THRESHOLD_OPTIONS.map((value) => (
+                            {ViralGenomeTree.thresholdOptions.map((value) => (
                               <SelectItem key={value} value={value}>
                                 {value}
                               </SelectItem>
@@ -619,7 +619,7 @@ export default function ViralGenomeTreePage() {
                         Model
                       </Label>
                       <Select
-                        items={ViralGenomeTree.DNA_MODELS.map((m) => ({ value: m.value, label: m.label }))}
+                        items={ViralGenomeTree.dnaModels.map((m) => ({ value: m.value, label: m.label }))}
                         value={field.state.value}
                         onValueChange={(value) => value != null && field.handleChange(value)}
                       >
@@ -631,7 +631,7 @@ export default function ViralGenomeTreePage() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            {ViralGenomeTree.DNA_MODELS.map((model) => (
+                            {ViralGenomeTree.dnaModels.map((model) => (
                               <SelectItem key={model.value} value={model.value}>
                                 {model.label}
                               </SelectItem>

@@ -42,7 +42,7 @@ import {
 } from "@/lib/services/service-info";
 import {
   similarGenomeFinderFormSchema,
-  DEFAULT_SIMILAR_GENOME_FINDER_FORM_VALUES,
+  defaultSimilarGenomeFinderFormValues,
   maxHitsOptions,
   pValueOptions,
   distanceOptions,
@@ -96,7 +96,7 @@ export default function SimilarGenomeFinderServicePage() {
   const isSubmitting = isJobSubmitting || isCustomSubmitting;
 
   const form = useForm({
-    defaultValues: DEFAULT_SIMILAR_GENOME_FINDER_FORM_VALUES as SimilarGenomeFinderFormData,
+    defaultValues: defaultSimilarGenomeFinderFormValues as SimilarGenomeFinderFormData,
     validators: { onChange: similarGenomeFinderFormSchema },
     onSubmit: async ({ value }) => {
       const data = value as SimilarGenomeFinderFormData;
@@ -161,7 +161,7 @@ export default function SimilarGenomeFinderServicePage() {
   }, [rerunData, markApplied, form]);
 
   const handleReset = () => {
-    form.reset(DEFAULT_SIMILAR_GENOME_FINDER_FORM_VALUES);
+    form.reset(defaultSimilarGenomeFinderFormValues);
     setShowAdvanced(false);
     setResults([]);
   };

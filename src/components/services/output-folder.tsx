@@ -10,8 +10,8 @@ import { Label } from "@/components/ui/label";
 
 import { HelpCircle } from "lucide-react";
 
-const DEBOUNCE_MS = 350;
-const NAME_TAKEN_MESSAGE =
+const debounceMs = 350;
+const nameTakenMessage =
   "An object with this name already exists in the selected folder.";
 
 interface OutputFolderProps {
@@ -104,7 +104,7 @@ const OutputFolder = ({
     debounceRef.current = setTimeout(() => {
       debounceRef.current = null;
       runCheck(outputFolderPath, value);
-    }, DEBOUNCE_MS);
+    }, debounceMs);
 
     return () => {
       if (debounceRef.current) {
@@ -172,7 +172,7 @@ const OutputFolder = ({
         </div>
         {variant === "name" && !isChecking && nameTaken && (
           <p className="text-sm text-destructive" role="alert">
-            {NAME_TAKEN_MESSAGE}
+            {nameTakenMessage}
           </p>
         )}
       </div>

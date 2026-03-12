@@ -31,7 +31,7 @@ interface GenomeNameSelectorProps {
   minQueryLength?: number;
 }
 
-const DEFAULT_MIN_QUERY_LENGTH = 3;
+const defaultMinQueryLength = 3;
 
 function shouldSearch(query: string, minLength: number): boolean {
   const trimmed = query.trim();
@@ -56,7 +56,7 @@ export function GenomeNameSelector({
   maxSelections = 20,
   disabled = false,
   className,
-  minQueryLength = DEFAULT_MIN_QUERY_LENGTH,
+  minQueryLength = defaultMinQueryLength,
 }: GenomeNameSelectorProps) {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<GenomeSummary[]>([]);

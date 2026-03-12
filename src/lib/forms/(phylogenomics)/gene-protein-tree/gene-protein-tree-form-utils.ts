@@ -47,7 +47,7 @@ export function checkDuplicateSequence(
  * Check if the sequence limit has been reached
  */
 export function checkSequenceLimit(sequences: SequenceItem[]): boolean {
-  return sequences.length >= GeneProteinTreeSchema.MAX_SEQUENCES;
+  return sequences.length >= GeneProteinTreeSchema.maxSequences;
 }
 
 /**

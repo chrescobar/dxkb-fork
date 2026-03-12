@@ -24,10 +24,10 @@ import {
 import { workspaceApi } from "@/lib/services/workspace/client";
 import { toast } from "sonner";
 
-const ARCHIVE_TYPE_OPTIONS = [{ value: "zip", label: "zip" }];
+const archiveTypeOptions = [{ value: "zip", label: "zip" }];
 
 /** Characters not allowed in archive file name (legacy validation). */
-const INVALID_ARCHIVE_NAME_CHARS = /[~`!#$%^&*+=[\]\\';,/{}|":<>?]/g;
+const invalidArchiveNameChars = /[~`!#$%^&*+=[\]\\';,/{}|":<>?]/g;
 
 export interface DownloadOptionsDialogProps {
   open: boolean;
@@ -72,7 +72,7 @@ export function DownloadOptionsDialog({
       setValidationError("File name is required.");
       return;
     }
-    const invalidChars = trimmed.match(INVALID_ARCHIVE_NAME_CHARS);
+    const invalidChars = trimmed.match(invalidArchiveNameChars);
     if (invalidChars && invalidChars.length > 0) {
       const unique = [...new Set(invalidChars)];
       setValidationError(
@@ -178,7 +178,7 @@ export function DownloadOptionsDialog({
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup> 
-                  {ARCHIVE_TYPE_OPTIONS.map((opt) => (
+                  {archiveTypeOptions.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value}>
                       {opt.label}
                     </SelectItem>

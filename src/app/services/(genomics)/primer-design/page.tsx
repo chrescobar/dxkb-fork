@@ -33,7 +33,7 @@ import {
   primerDesignInputSequence,
 } from "@/lib/services/service-info";
 import {
-  DEFAULT_PRIMER_DESIGN_FORM_VALUES,
+  defaultPrimerDesignFormValues,
   primerDesignFormSchema,
   type PrimerDesignFormData,
 } from "@/lib/forms/(genomics)/primer-design/primer-design-form-schema";
@@ -81,7 +81,7 @@ export default function PrimerDesignServicePage() {
   });
 
   const form = useForm({
-    defaultValues: DEFAULT_PRIMER_DESIGN_FORM_VALUES as PrimerDesignFormData,
+    defaultValues: defaultPrimerDesignFormValues as PrimerDesignFormData,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: primerDesignFormSchema as any },
     onSubmit: async ({ value }) => {
@@ -324,7 +324,7 @@ export default function PrimerDesignServicePage() {
   }, [rerunData, markApplied, form]);
 
   const handleReset = () => {
-    form.reset(DEFAULT_PRIMER_DESIGN_FORM_VALUES);
+    form.reset(defaultPrimerDesignFormValues);
     setShowAdvanced(false);
   };
 

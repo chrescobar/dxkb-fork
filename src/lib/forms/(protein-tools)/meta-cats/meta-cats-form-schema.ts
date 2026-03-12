@@ -7,7 +7,7 @@ export const metaCatsInputTypeSchema = z.enum(["auto", "groups", "files"]);
 export const metaCatsAlphabetSchema = z.enum(["na", "aa"]);
 
 // Metadata field options for auto grouping
-export const METADATA_OPTIONS = [
+export const metadataOptions = [
   { value: "accession", label: "Accession" },
   { value: "collection_date", label: "Collection Date" },
   { value: "collection_year", label: "Collection Year" },
@@ -32,7 +32,7 @@ export const METADATA_OPTIONS = [
   { value: "subtype", label: "Subtype" },
 ] as const;
 
-export type MetadataOption = (typeof METADATA_OPTIONS)[number]["value"];
+export type MetadataOption = (typeof metadataOptions)[number]["value"];
 
 // Auto group item schema (for grid rows)
 export const autoGroupItemSchema = z.object({
@@ -98,17 +98,17 @@ export const metaCatsFormSchema = z
 
       // Count unique groups
       const uniqueGroups = new Set(data.auto_groups.map((item) => item.group));
-      if (uniqueGroups.size < MIN_GROUPS) {
+      if (uniqueGroups.size < minGroups) {
         ctx.addIssue({
           code: "custom",
-          message: `At least ${MIN_GROUPS} different groups are required`,
+          message: `At least ${minGroups} different groups are required`,
           path: ["auto_groups"],
         });
       }
-      if (uniqueGroups.size > MAX_GROUPS) {
+      if (uniqueGroups.size > maxGroups) {
         ctx.addIssue({
           code: "custom",
-          message: `Maximum ${MAX_GROUPS} groups are allowed`,
+          message: `Maximum ${maxGroups} groups are allowed`,
           path: ["auto_groups"],
         });
       }
@@ -125,17 +125,17 @@ export const metaCatsFormSchema = z
         return;
       }
 
-      if (data.groups.length < MIN_GROUPS) {
+      if (data.groups.length < minGroups) {
         ctx.addIssue({
           code: "custom",
-          message: `At least ${MIN_GROUPS} feature groups are required`,
+          message: `At least ${minGroups} feature groups are required`,
           path: ["groups"],
         });
       }
-      if (data.groups.length > MAX_GROUPS) {
+      if (data.groups.length > maxGroups) {
         ctx.addIssue({
           code: "custom",
-          message: `Maximum ${MAX_GROUPS} feature groups are allowed`,
+          message: `Maximum ${maxGroups} feature groups are allowed`,
           path: ["groups"],
         });
       }
@@ -163,12 +163,12 @@ export const metaCatsFormSchema = z
 export type MetaCatsFormData = z.infer<typeof metaCatsFormSchema>;
 
 // Constants
-export const MAX_GROUPS = 10;
-export const MIN_GROUPS = 2;
-export const STARTING_ROWS = 10;
+export const maxGroups = 10;
+export const minGroups = 2;
+export const startingRows = 10;
 
 // Default form values
-export const DEFAULT_META_CATS_FORM_VALUES: MetaCatsFormData = {
+export const defaultMetaCatsFormValues: MetaCatsFormData = {
   p_value: 0.05,
   input_type: "auto",
   metadata_group: "host_name",

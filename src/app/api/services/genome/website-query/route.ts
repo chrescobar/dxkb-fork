@@ -6,9 +6,9 @@ import { getBvbrcAuthToken } from "@/lib/auth";
  * Base URL for PATRIC/BV-BRC genome API (e.g. https://patricbrc.org/api or BV-BRC equivalent).
  * Genome endpoint: ${BVBRC_WEBSITE_API_URL}/genome/
  */
-const GENOME_WEBSITE_API = `${process.env.BVBRC_WEBSITE_API_URL}/genome/`;
+const genomeWebsiteApi = `${process.env.BVBRC_WEBSITE_API_URL}/genome/`;
 
-const MAX_ROWS = 25_000;
+const maxRows = 25_000;
 
 /**
  * Parse CSV text into array of objects (first row = headers).
@@ -69,12 +69,12 @@ export async function POST(request: NextRequest) {
       .filter((id) => id.length > 0)
       .map((id) => `"${escapeSolrTerm(id)}"`);
     const q = `genome_id:(${escapedIds.join(" OR ")})`;
-    const rowsParam = String(Math.min(MAX_ROWS, genomeIds.length));
+    const rowsParam = String(Math.min(maxRows, genomeIds.length));
 
     // PATRIC/BV-BRC genome API expects POST with form body (solrquery or x-www-form-urlencoded)
     const formBody = new URLSearchParams({ rows: rowsParam, q });
 
-    const response = await fetch(GENOME_WEBSITE_API, {
+    const response = await fetch(genomeWebsiteApi, {
       method: "POST",
       headers: {
         "Content-Type": "application/solrquery+x-www-form-urlencoded",

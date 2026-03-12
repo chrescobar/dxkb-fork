@@ -12,7 +12,7 @@ import { formatFileSize, formatDate } from "@/lib/services/workspace/helpers";
 import { isFolderType } from "@/lib/services/workspace/utils";
 
 /** Responsive hide classes for each column — shared with special rows (LeadingRow, ParentRow). */
-export const COLUMN_CLASS_MAP: Record<string, string> = {
+export const columnClassMap: Record<string, string> = {
   name: "",
   size: "",
   owner_id: "hidden md:table-cell",
@@ -73,7 +73,7 @@ export function useWorkspaceColumns(
             </div>
           );
         },
-        meta: { className: COLUMN_CLASS_MAP.name, sortField: "name" as SortField },
+        meta: { className: columnClassMap.name, sortField: "name" as SortField },
         size: 220,
         enableResizing: true,
       },
@@ -86,7 +86,7 @@ export function useWorkspaceColumns(
             {formatFileSize(Number(getValue()) || 0)}
           </span>
         ),
-        meta: { className: COLUMN_CLASS_MAP.size, sortField: "size" as SortField },
+        meta: { className: columnClassMap.size, sortField: "size" as SortField },
         size: 50,
         enableResizing: true,
       },
@@ -99,7 +99,7 @@ export function useWorkspaceColumns(
             {formatOwner(String(getValue() ?? ""))}
           </span>
         ),
-        meta: { className: COLUMN_CLASS_MAP.owner_id, sortField: "owner_id" as SortField },
+        meta: { className: columnClassMap.owner_id, sortField: "owner_id" as SortField },
         size: 70,
         enableResizing: true,
       },
@@ -112,7 +112,7 @@ export function useWorkspaceColumns(
             {formatDate(String(getValue() ?? ""))}
           </span>
         ),
-        meta: { className: COLUMN_CLASS_MAP.creation_time, sortField: "creation_time" as SortField },
+        meta: { className: columnClassMap.creation_time, sortField: "creation_time" as SortField },
         size: 80,
         enableResizing: true,
       },
@@ -127,7 +127,7 @@ export function useWorkspaceColumns(
             </span>
           );
         },
-        meta: { className: COLUMN_CLASS_MAP.members },
+        meta: { className: columnClassMap.members },
         size: 55,
         enableResizing: true,
       },
@@ -140,7 +140,7 @@ export function useWorkspaceColumns(
             {String(getValue() ?? "")}
           </span>
         ),
-        meta: { className: COLUMN_CLASS_MAP.type, sortField: "type" as SortField },
+        meta: { className: columnClassMap.type, sortField: "type" as SortField },
         size: 60,
         enableResizing: true,
       },

@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 
-const FORMAT_MAP = {
+const formatMap = {
   "MM/DD/YYYY": {
     mask: [2, 2, 4] as number[],
     separator: "/",
@@ -40,14 +40,14 @@ const FORMAT_MAP = {
 
 interface DatePickerInputProps {
   className?: string;
-  format?: keyof typeof FORMAT_MAP;
+  format?: keyof typeof formatMap;
 }
 
 export function DatePickerInput({
   className,
   format = "MM/DD/YYYY",
 }: DatePickerInputProps) {
-  const fmt = FORMAT_MAP[format] || FORMAT_MAP["MM/DD/YYYY"];
+  const fmt = formatMap[format] || formatMap["MM/DD/YYYY"];
   const [date, setDate] = React.useState<Date>();
   const [inputValue, setInputValue] = React.useState<string>("");
   const [calendarMonth, setCalendarMonth] = React.useState<Date>(new Date());

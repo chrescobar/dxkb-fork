@@ -1,14 +1,14 @@
 import { workspaceApi } from "./client";
 
-const FAVORITES_FILE = "favorites.json";
-const PREFERENCES_DIR = ".preferences";
+const favoritesFile = "favorites.json";
+const preferencesDir = ".preferences";
 
 /**
  * Path to the favorites JSON file for a user (e.g. /user@bvbrc/home/.preferences/favorites.json).
  */
 export function getFavoritesFilePath(userId: string): string {
   const normalized = userId.startsWith("/") ? userId.slice(1) : userId;
-  return `/${normalized}/home/${PREFERENCES_DIR}/${FAVORITES_FILE}`;
+  return `/${normalized}/home/${preferencesDir}/${favoritesFile}`;
 }
 
 /**
@@ -16,7 +16,7 @@ export function getFavoritesFilePath(userId: string): string {
  */
 export function getPreferencesDirPath(userId: string): string {
   const normalized = userId.startsWith("/") ? userId.slice(1) : userId;
-  return `/${normalized}/home/${PREFERENCES_DIR}`;
+  return `/${normalized}/home/${preferencesDir}`;
 }
 
 /**

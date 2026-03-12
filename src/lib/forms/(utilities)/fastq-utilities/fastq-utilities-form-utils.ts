@@ -3,7 +3,7 @@ import type {
   PipelineActionItem,
   PipelineAction,
 } from "./fastq-utilities-form-schema";
-import { PIPELINE_ACTION_OPTIONS } from "./fastq-utilities-form-schema";
+import { pipelineActionOptions } from "./fastq-utilities-form-schema";
 
 export const actionColors = [
   "bg-purple-500",
@@ -67,7 +67,7 @@ export function isAlignSelected(recipe: PipelineAction[]): boolean {
  * Get the label for a pipeline action (internal helper)
  */
 function getActionLabel(action: PipelineAction): string {
-  const option = PIPELINE_ACTION_OPTIONS.find((opt) => opt.value === action);
+  const option = pipelineActionOptions.find((opt) => opt.value === action);
   return option?.label || action;
 }
 

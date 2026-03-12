@@ -37,6 +37,8 @@ interface SraRunAccessionWithValidationProps {
   showLabel?: boolean;
   /** Whether to show the ChevronRight add button. Defaults to true. When false, add via Enter key. */
   showAddButton?: boolean;
+  /** Pre-populate the accession input (e.g. for rerun). */
+  defaultValue?: string;
 }
 
 // Validation is now done via API proxy to avoid CORS issues
@@ -127,8 +129,9 @@ const SraRunAccessionWithValidation = ({
   addButton,
   showLabel = true,
   showAddButton = true,
+  defaultValue = "",
 }: SraRunAccessionWithValidationProps) => {
-  const [sraAccession, setSraAccession] = useState("");
+  const [sraAccession, setSraAccession] = useState(defaultValue);
   const [isValidating, setIsValidating] = useState(false);
   const [validationMessage, setValidationMessage] = useState<string>("");
   const [isValidSra, setIsValidSra] = useState(false);

@@ -73,11 +73,11 @@ export interface ServiceNameEntry {
 
 /** Known service names mapped to their human-readable display names. */
 export const SERVICE_NAMES: ServiceNameEntry[] = [
-  { value: "ComprehensiveSARS2Analysis", displayName: "Comprehensive SARS2 Analysis" },
+  { value: "ComprehensiveSARS2Analysis", displayName: "SARS-CoV-2 Genome Analysis" },
   { value: "SubspeciesClassification", displayName: "Subspecies Classification" },
   { value: "Docking", displayName: "Docking" },
   { value: "MetagenomicReadMapping", displayName: "Metagenomic Read Mapping" },
-  { value: "Homology", displayName: "Homology" },
+  { value: "Homology", displayName: "BLAST" },
   { value: "MetaCATS", displayName: "Meta-CATS" },
   { value: "GenomeAlignment", displayName: "Genome Alignment" },
   { value: "CodonTree", displayName: "Codon Tree" },

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm, useStore } from "@tanstack/react-form";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import {
@@ -41,6 +41,8 @@ import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { Spinner } from "@/components/ui/spinner";
 
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
+import { useRerunForm } from "@/hooks/services/use-rerun-form";
+import { normalizeToArray, buildPairedLibraries, buildSingleLibraries } from "@/lib/rerun-utility";
 import {
   sarsCov2WastewaterAnalysisInfo,
   sarsCov2WastewaterAnalysisInputLib,
@@ -85,6 +87,8 @@ const tutorial =
   "https://www.bv-brc.org/docs/tutorial/sars_cov_2_wastewater/sars_cov_2_wastewater.html";
 
 export default function SarsCov2WastewaterAnalysisPage() {
+  const { rerunData, markApplied } = useRerunForm<Record<string, unknown>>();
+
   const form = useForm({
     defaultValues:
       defaultSarsCov2WastewaterAnalysisFormValues as SarsCov2WastewaterAnalysisFormData,
@@ -103,6 +107,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
   const [singleRead, setSingleRead] = useState<string | null>(null);
   const [currentSampleId, setCurrentSampleId] = useState("");
   const [currentSampleDate, setCurrentSampleDate] = useState("");
+  const skipSraNormalization = useRef(false);
   const [sraResetKey, setSraResetKey] = useState(0);
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
@@ -142,6 +147,11 @@ export default function SarsCov2WastewaterAnalysisPage() {
       srr: "srr_libs",
     },
     normalizeLibraries: (nextLibraries, previousLibraries) => {
+      // Skip normalization when called from the rerun effect — libs already have correct sampleId
+      if (skipSraNormalization.current) {
+        skipSraNormalization.current = false;
+        return nextLibraries;
+      }
       const newSraLibs = findNewSraLibraries(nextLibraries, previousLibraries);
       return nextLibraries.map((lib) => {
         if (lib.type === "sra" && newSraLibs.some((n) => n.id === lib.id)) {
@@ -170,6 +180,50 @@ export default function SarsCov2WastewaterAnalysisPage() {
       }
     }
   }, [primers, form]);
+
+  // Rerun pre-fill
+  useEffect(() => {
+    if (!rerunData || !markApplied()) return;
+
+    if (rerunData.recipe) {
+      form.setFieldValue("recipe", rerunData.recipe as never);
+    }
+    if (rerunData.primers) {
+      form.setFieldValue("primers", rerunData.primers as never);
+    }
+    if (rerunData.primer_version) {
+      form.setFieldValue("primer_version", rerunData.primer_version as never);
+    }
+    if (rerunData.output_path) {
+      form.setFieldValue("output_path", rerunData.output_path as never);
+    }
+    if (rerunData.output_file) {
+      form.setFieldValue("output_file", rerunData.output_file as never);
+    }
+
+    const srrLibs = normalizeToArray<Record<string, string>>(rerunData.srr_libs);
+    const sraLibs: Library[] = srrLibs
+      .filter((lib) => !!lib.srr_accession)
+      .map((lib) => ({
+        id: lib.srr_accession,
+        name: lib.srr_accession,
+        type: "sra" as const,
+        sampleId: lib.sample_id || "",
+        ...(lib.sample_level_date ? { sampleLevelDate: lib.sample_level_date } : {}),
+        ...(lib.title ? { title: lib.title } : {}),
+      }));
+
+    const libs: Library[] = [
+      ...buildPairedLibraries(rerunData, (lib) => ({ sampleId: lib.sample_id || "", ...(lib.sample_level_date ? { sampleLevelDate: lib.sample_level_date } : {}) })),
+      ...buildSingleLibraries(rerunData, (lib) => ({ sampleId: lib.sample_id || "", ...(lib.sample_level_date ? { sampleLevelDate: lib.sample_level_date } : {}) })),
+      ...sraLibs,
+    ];
+
+    if (libs.length > 0) {
+      skipSraNormalization.current = true;
+      setLibrariesAndSync(libs);
+    }
+  }, [rerunData, markApplied, form, setLibrariesAndSync]);
 
   const handlePairedRead1Select = (path: string) => {
     setPairedRead1(path);

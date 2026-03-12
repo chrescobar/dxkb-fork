@@ -32,6 +32,7 @@ import { JobsShell } from "./jobs-shell";
 import { DetailPanel } from "@/components/detail-panel";
 import type { JobListItem } from "@/types/workspace";
 import { encodeWorkspaceSegment } from "@/lib/utils";
+import { rerunJob } from "@/lib/rerun-utility";
 import {
   JOBS_PAGE_SIZE,
   DEFAULT_JOBS_COLUMN_ORDER,
@@ -119,7 +120,6 @@ export function JobsBrowser() {
   const hasActiveJobs = ACTIVE_JOB_STATUSES.some(
     (s) => (statusSummary?.[s] ?? 0) > 0,
   );
-
   const {
     data: jobs = [],
     isLoading,
@@ -262,6 +262,12 @@ export function JobsBrowser() {
       switch (actionId) {
         case "view":
           handleDoubleClick(job);
+          break;
+        case "rerun":
+          rerunJob(
+            job.parameters as Record<string, unknown>,
+            job.app,
+          );
           break;
         case "show":
           if (job.output_path) {

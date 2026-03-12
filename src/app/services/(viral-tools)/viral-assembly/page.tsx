@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useForm, useStore } from "@tanstack/react-form";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -26,6 +26,8 @@ import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { Spinner } from "@/components/ui/spinner";
 
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
+import { useRerunForm } from "@/hooks/services/use-rerun-form";
+import { buildPairedLibraries, buildSingleLibraries } from "@/lib/rerun-utility";
 import {
   viralAssemblyInfo,
   viralAssemblyInputFile,
@@ -52,6 +54,7 @@ import {
 } from "@/lib/forms/tanstack-library-selection";
 
 import type { WorkspaceObject } from "@/lib/workspace-client";
+import type { Library } from "@/types/services";
 
 const tutorial =
   "https://www.bv-brc.org/docs/tutorial/viral_assembly/assembly.html";
@@ -66,9 +69,28 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
     },
   });
 
-  const [pairedRead1, setPairedRead1] = useState<string | null>(null);
-  const [pairedRead2, setPairedRead2] = useState<string | null>(null);
-  const [singleRead, setSingleRead] = useState<string | null>(null);
+  // Read rerun data before other state so lazy initializers can use it
+  const { rerunData, markApplied } = useRerunForm<Record<string, unknown>>();
+
+  const [pairedRead1, setPairedRead1] = useState<string | null>(() => {
+    if (!rerunData) return null;
+    const lib = rerunData.paired_end_lib as Record<string, string> | undefined;
+    return lib?.read1 ?? null;
+  });
+  const [pairedRead2, setPairedRead2] = useState<string | null>(() => {
+    if (!rerunData) return null;
+    const lib = rerunData.paired_end_lib as Record<string, string> | undefined;
+    return lib?.read2 ?? null;
+  });
+  const [singleRead, setSingleRead] = useState<string | null>(() => {
+    if (!rerunData) return null;
+    const lib = rerunData.single_end_lib as Record<string, string> | undefined;
+    return lib?.read ?? null;
+  });
+  const [sraDefaultValue, setSraDefaultValue] = useState<string>(() => {
+    if (!rerunData) return "";
+    return (rerunData.srr_id as string | undefined) ?? "";
+  });
   const [sraResetKey, setSraResetKey] = useState(0);
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
@@ -76,7 +98,7 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
   const outputPath = useStore(form.store, (s) => s.values.output_path);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
-  const { selectedLibraries, setLibrariesAndSync } =
+  const { selectedLibraries, setLibrariesAndSync, syncLibrariesToForm } =
     useTanstackLibrarySelection<ViralAssemblyLibraryItem, string>({
       form,
       mapLibraryToItem: buildBaseLibraryItem,
@@ -87,11 +109,50 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
       },
     });
 
+  const selectedLibrariesRef = useRef(selectedLibraries);
+  useEffect(() => {
+    selectedLibrariesRef.current = selectedLibraries;
+  }, [selectedLibraries]);
+
+  // Rerun: pre-fill form from job parameters (rerunData initialized at top via lazy useState)
+  useEffect(() => {
+    if (!rerunData || !markApplied()) return;
+
+    if (rerunData.strategy) form.setFieldValue("strategy", rerunData.strategy as never);
+    if (rerunData.module) form.setFieldValue("module", rerunData.module as never);
+    if (rerunData.output_path) form.setFieldValue("output_path", rerunData.output_path as never);
+    if (rerunData.output_file) form.setFieldValue("output_file", rerunData.output_file as never);
+
+    // The transform stores singular fields: paired_end_lib, single_end_lib, srr_id
+    const pairedLib = rerunData.paired_end_lib as Record<string, string> | undefined;
+    const singleLib = rerunData.single_end_lib as Record<string, string> | undefined;
+    const srrId = rerunData.srr_id as string | undefined;
+
+    if (pairedLib?.read1 && pairedLib?.read2) {
+      form.setFieldValue("input_type", "paired");
+      // pairedRead1/pairedRead2 initialized via lazy useState above
+      const libs = buildPairedLibraries({ paired_end_libs: [pairedLib] });
+      syncLibrariesToForm(libs);
+      setLibrariesAndSync(libs);
+    } else if (singleLib?.read) {
+      form.setFieldValue("input_type", "single");
+      // singleRead initialized via lazy useState above
+      const libs = buildSingleLibraries({ single_end_libs: [singleLib] });
+      syncLibrariesToForm(libs);
+      setLibrariesAndSync(libs);
+    } else if (srrId) {
+      form.setFieldValue("input_type", "srr_accession");
+      const libs: Library[] = [{ id: srrId, name: srrId, type: "sra" }];
+      syncLibrariesToForm(libs);
+      setLibrariesAndSync(libs);
+    }
+  }, [rerunData, markApplied, form, syncLibrariesToForm, setLibrariesAndSync]);
+
   // Sync selected single read into form when Single Read Library is selected (no Add button on this page)
   useEffect(() => {
     if (inputType !== "single") return;
     const desiredSingleId = singleRead ?? null;
-    const currentSingleIds = selectedLibraries
+    const currentSingleIds = selectedLibrariesRef.current
       .filter((lib) => lib.type === "single")
       .map((lib) => lib.id);
     const alreadyMatches =
@@ -100,7 +161,7 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
         currentSingleIds.length === 1 &&
         currentSingleIds[0] === desiredSingleId);
     if (alreadyMatches) return;
-    const otherLibs = selectedLibraries.filter((lib) => lib.type !== "single");
+    const otherLibs = selectedLibrariesRef.current.filter((lib) => lib.type !== "single");
     if (singleRead) {
       const result = getSingleLibraryBuildFn()(singleRead);
       if (result.library) {
@@ -112,7 +173,6 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
   }, [
     inputType,
     singleRead,
-    selectedLibraries,
     setLibrariesAndSync,
   ]);
 
@@ -133,7 +193,7 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
       pairedRead1 && pairedRead2
         ? getPairedLibraryId(pairedRead1, pairedRead2)
         : null;
-    const currentPairedIds = selectedLibraries
+    const currentPairedIds = selectedLibrariesRef.current
       .filter((lib) => lib.type === "paired")
       .map((lib) => lib.id);
     const alreadyMatches =
@@ -142,7 +202,7 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
         currentPairedIds.length === 1 &&
         currentPairedIds[0] === desiredPairId);
     if (alreadyMatches) return;
-    const otherLibs = selectedLibraries.filter((lib) => lib.type !== "paired");
+    const otherLibs = selectedLibrariesRef.current.filter((lib) => lib.type !== "paired");
     if (pairedRead1 && pairedRead2) {
       const libraryId = getPairedLibraryId(pairedRead1, pairedRead2);
       const result = getPairedLibraryBuildFn()(
@@ -156,7 +216,6 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
     } else {
       setLibrariesAndSync(otherLibs);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     inputType,
     pairedRead1,
@@ -171,6 +230,7 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
     setPairedRead1(null);
     setPairedRead2(null);
     setSingleRead(null);
+    setSraDefaultValue("");
     setSraResetKey((k) => k + 1);
     setIsOutputNameValid(true);
   };
@@ -301,6 +361,7 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
                   key={sraResetKey}
                   title="SRA Run Accession"
                   placeholder="SRA Accession"
+                  defaultValue={sraDefaultValue}
                   selectedLibraries={selectedLibraries}
                   setSelectedLibraries={setLibrariesAndSync}
                   allowDuplicates={false}

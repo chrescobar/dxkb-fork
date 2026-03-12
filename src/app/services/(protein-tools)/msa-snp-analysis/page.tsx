@@ -3,6 +3,8 @@
 import { useForm, useStore } from "@tanstack/react-form";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { useState, useMemo, useEffect } from "react";
+import { useRerunForm } from "@/hooks/services/use-rerun-form";
+import { normalizeToArray } from "@/lib/rerun-utility";
 import { ServiceHeader } from "@/components/services/service-header";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -58,7 +60,7 @@ import { msaSNPAnalysisAligners } from "@/lib/forms/(protein-tools)/msa-snp-anal
 export default function MSAandSNPAnalysisPage() {
   const [_selectedFeatureGroupObject, setSelectedFeatureGroupObject] =
     useState<WorkspaceObject | null>(null);
-  const [selectedGenomeGroupObject, setSelectedGenomeGroupObject] =
+  const [_selectedGenomeGroupObject, setSelectedGenomeGroupObject] =
     useState<WorkspaceObject | null>(null);
   const [selectedFastaObject, setSelectedFastaObject] =
     useState<WorkspaceObject | null>(null);
@@ -142,6 +144,110 @@ export default function MSAandSNPAnalysisPage() {
   const outputPath = useStore(form.store, (s) => s.values.output_path);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
+  // Rerun pre-fill
+  const { rerunData, markApplied } = useRerunForm<Record<string, unknown>>();
+
+  useEffect(() => {
+    if (!rerunData || !markApplied()) return;
+
+    // input_status (unaligned / aligned)
+    if (typeof rerunData.input_status === "string") {
+      form.setFieldValue("input_status", rerunData.input_status as MsaSnpAnalysis.MsaSnpAnalysisFormData["input_status"]);
+    }
+
+    // Map legacy API input_type values back to form values
+    const rawInputType = rerunData.input_type as string | undefined;
+    if (rawInputType) {
+      let inputTypeValue: MsaSnpAnalysis.MsaSnpAnalysisFormData["input_type"] | undefined;
+      if (rawInputType === "input_group") {
+        inputTypeValue = "input_feature_group";
+      } else if (rawInputType === "input_genomegroup") {
+        inputTypeValue = "input_genome_group";
+      } else if (rawInputType === "input_fasta" || rawInputType === "input_sequence") {
+        inputTypeValue = rawInputType as MsaSnpAnalysis.MsaSnpAnalysisFormData["input_type"];
+      }
+      if (inputTypeValue) {
+        form.setFieldValue("input_type", inputTypeValue);
+      }
+    }
+
+    // feature_groups (API sends as array; form stores as single string)
+    const featureGroupsRaw = normalizeToArray<string>(rerunData.feature_groups);
+    if (featureGroupsRaw.length > 0) {
+      form.setFieldValue("feature_groups", featureGroupsRaw[0]);
+    }
+
+    // alphabet
+    if (typeof rerunData.alphabet === "string") {
+      const alphabetVal = rerunData.alphabet as MsaSnpAnalysis.MsaSnpAnalysisFormData["alphabet"];
+      form.setFieldValue("alphabet", alphabetVal);
+    }
+
+    // select_genomegroup
+    const selectGenomegroupRaw = normalizeToArray<string>(rerunData.select_genomegroup);
+    if (selectGenomegroupRaw.length > 0) {
+      form.setFieldValue("select_genomegroup", selectGenomegroupRaw);
+    }
+
+    // fasta_files
+    const fastaFilesRaw = normalizeToArray<MsaSnpAnalysis.FastaFileItem>(rerunData.fasta_files);
+    if (fastaFilesRaw.length > 0) {
+      form.setFieldValue("fasta_files", fastaFilesRaw);
+    }
+
+    // fasta_keyboard_input
+    if (typeof rerunData.fasta_keyboard_input === "string" && rerunData.fasta_keyboard_input.trim() !== "") {
+      const text = rerunData.fasta_keyboard_input;
+      setFastaInputText(text);
+      form.setFieldValue("fasta_keyboard_input", text);
+    }
+
+    // ref_type
+    if (typeof rerunData.ref_type === "string") {
+      form.setFieldValue("ref_type", rerunData.ref_type as MsaSnpAnalysis.MsaSnpAnalysisFormData["ref_type"]);
+    }
+
+    // ref_string — also restore the relevant UI state variables
+    if (typeof rerunData.ref_string === "string" && rerunData.ref_string.trim() !== "") {
+      form.setFieldValue("ref_string", rerunData.ref_string);
+      const resolvedRefType = rerunData.ref_type as string | undefined;
+      if (resolvedRefType === "feature_id") {
+        setSelectedFeatureId(rerunData.ref_string);
+      } else if (resolvedRefType === "genome_id") {
+        setSelectedGenomeId(rerunData.ref_string);
+      } else if (resolvedRefType === "string") {
+        setReferenceFastaText(rerunData.ref_string);
+      }
+    }
+
+    // aligner
+    if (typeof rerunData.aligner === "string") {
+      form.setFieldValue("aligner", rerunData.aligner as MsaSnpAnalysis.MsaSnpAnalysisFormData["aligner"]);
+    }
+
+    // strategy (API stores as "strategy" or "strategy_settings", but always
+    // sets strategy_settings:"auto" even for Muscle jobs as a backend default)
+    if (rerunData.aligner === "Muscle") {
+      // Muscle doesn't support strategy — clear the default "auto" value to
+      // avoid a schema validation error ("Strategy is only available for Mafft").
+      form.setFieldValue("strategy", undefined);
+    } else {
+      const strategyVal = (rerunData.strategy || rerunData.strategy_settings) as string | undefined;
+      if (strategyVal && strategyVal.trim() !== "") {
+        form.setFieldValue("strategy", strategyVal as MsaSnpAnalysis.MsaSnpAnalysisFormData["strategy"]);
+        setShowStrategy(true);
+      }
+    }
+
+    // output_path / output_file
+    if (typeof rerunData.output_path === "string") {
+      form.setFieldValue("output_path", rerunData.output_path);
+    }
+    if (typeof rerunData.output_file === "string") {
+      form.setFieldValue("output_file", rerunData.output_file);
+    }
+  }, [rerunData, markApplied, form]);
+
   // Update strategy visibility based on aligner
   useEffect(() => {
     if (aligner === "Muscle" || inputStatus === "aligned") {
@@ -175,14 +281,18 @@ export default function MSAandSNPAnalysisPage() {
     if (validation.valid && validation.meetsMinSequenceRequirement) {
       form.setFieldValue("fasta_keyboard_input", validation.trimFasta);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fastaInputText, refType, referenceFastaText]);
+  }, [fastaInputText, refType, referenceFastaText, form]);
 
   // Validate reference FASTA input when text changes
   useEffect(() => {
     if (!referenceFastaText.trim()) {
       setReferenceFastaValidationResult(null);
-      form.setFieldValue("ref_string", "");
+      // Only clear ref_string when the "string" ref type controls it.
+      // For "feature_id" / "genome_id", ref_string is set by the dropdown
+      // and must not be wiped out (e.g. after a rerun pre-fill).
+      if (refType === "string") {
+        form.setFieldValue("ref_string", "");
+      }
       return;
     }
 
@@ -200,8 +310,7 @@ export default function MSAandSNPAnalysisPage() {
     if (validation.valid && validation.isSingleSequence) {
       form.setFieldValue("ref_string", validation.trimFasta);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [referenceFastaText]);
+  }, [referenceFastaText, refType, form]);
 
   // Fetch features from feature group when Feature ID reference is selected
   useEffect(() => {
@@ -662,7 +771,7 @@ export default function MSAandSNPAnalysisPage() {
                           setIsValidatingGenomeGroup(false);
                         }
                       }}
-                      value={selectedGenomeGroupObject?.path}
+                      value={selectGenomegroup[0]}
                     />
                     {isValidatingGenomeGroup && (
                       <div className="text-muted-foreground flex items-center gap-2 text-sm">

@@ -60,7 +60,7 @@ import { msaSNPAnalysisAligners } from "@/lib/forms/(protein-tools)/msa-snp-anal
 export default function MSAandSNPAnalysisPage() {
   const [_selectedFeatureGroupObject, setSelectedFeatureGroupObject] =
     useState<WorkspaceObject | null>(null);
-  const [selectedGenomeGroupObject, setSelectedGenomeGroupObject] =
+  const [_selectedGenomeGroupObject, setSelectedGenomeGroupObject] =
     useState<WorkspaceObject | null>(null);
   const [selectedFastaObject, setSelectedFastaObject] =
     useState<WorkspaceObject | null>(null);
@@ -771,7 +771,7 @@ export default function MSAandSNPAnalysisPage() {
                           setIsValidatingGenomeGroup(false);
                         }
                       }}
-                      value={selectedGenomeGroupObject?.path}
+                      value={selectGenomegroup[0]}
                     />
                     {isValidatingGenomeGroup && (
                       <div className="text-muted-foreground flex items-center gap-2 text-sm">

@@ -1,4 +1,4 @@
-import { AppService } from "@/lib/app-service";
+import { AppService, createAppService } from "@/lib/app-service";
 import { createBvBrcClient } from "@/lib/jsonrpc-client";
 
 vi.mock("@/lib/jsonrpc-client", () => ({
@@ -345,5 +345,17 @@ describe("AppService", () => {
         { base_url: "https://dev.dxkb.org" },
       ]);
     });
+  });
+});
+
+describe("createAppService", () => {
+  it("returns an AppService instance", () => {
+    const service = createAppService("my-token");
+    expect(service).toBeInstanceOf(AppService);
+  });
+
+  it("passes token to the constructor", () => {
+    createAppService("factory-token");
+    expect(createBvBrcClient).toHaveBeenCalledWith("factory-token");
   });
 });

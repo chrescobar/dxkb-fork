@@ -8,9 +8,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 pnpm dev          # Start dev server with Turbopack on port 3019
 pnpm build        # Production build
 pnpm lint         # ESLint
+pnpm test         # Vitest (run once)
+pnpm test:watch   # Vitest (watch mode)
+pnpm test:coverage # Vitest with V8 coverage
 ```
 
-No test runner is currently configured (jest types are present but no test scripts).
+Requires **Node v24** (`nvm use 24`). Vitest 4 / rolldown needs Node >= 22.
 
 ## Architecture Overview
 

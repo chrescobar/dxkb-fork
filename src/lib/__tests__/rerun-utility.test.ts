@@ -4,6 +4,7 @@ import {
   buildPairedLibraries,
   buildSingleLibraries,
   buildSraLibraries,
+  rerunJob,
 } from "@/lib/rerun-utility";
 
 vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
@@ -194,5 +195,87 @@ describe("buildSraLibraries", () => {
     const result = buildSraLibraries(rerunData);
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe("SRR111");
+  });
+});
+
+describe("rerunJob", () => {
+  let mockSetItem: ReturnType<typeof vi.fn>;
+  let mockOpen: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockSetItem = vi.fn();
+    mockOpen = vi.fn();
+    vi.stubGlobal("sessionStorage", { setItem: mockSetItem, getItem: vi.fn() });
+    vi.stubGlobal("window", { open: mockOpen });
+    // Mock crypto.randomUUID for deterministic key generation
+    vi.stubGlobal("crypto", { randomUUID: () => "12345678-abcd-efgh-ijkl-mnopqrstuvwx" });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("stores params in sessionStorage and opens correct route", () => {
+    const params = { genome_id: "123" };
+    rerunJob(params, "GenomeAssembly2");
+
+    expect(mockSetItem).toHaveBeenCalledWith(
+      "12345678",
+      JSON.stringify(params),
+    );
+    expect(mockOpen).toHaveBeenCalledWith(
+      "/services/genome-assembly?rerun_key=12345678",
+      "_blank",
+    );
+  });
+
+  it("shows toast error for unsupported service", async () => {
+    const { toast } = await import("sonner");
+    rerunJob({}, "UnsupportedService");
+
+    expect(toast.error).toHaveBeenCalledWith(
+      "The UnsupportedService service is not currently supported in DXKB",
+    );
+    expect(mockSetItem).not.toHaveBeenCalled();
+    expect(mockOpen).not.toHaveBeenCalled();
+  });
+
+  it("routes GeneTree with viral_genome tree_type to viral-genome-tree", () => {
+    rerunJob({ tree_type: "viral_genome" }, "GeneTree");
+
+    expect(mockOpen).toHaveBeenCalledWith(
+      expect.stringContaining("/services/viral-genome-tree"),
+      "_blank",
+    );
+  });
+
+  it("routes GeneTree with other tree_type to gene-protein-tree", () => {
+    rerunJob({ tree_type: "gene" }, "GeneTree");
+
+    expect(mockOpen).toHaveBeenCalledWith(
+      expect.stringContaining("/services/gene-protein-tree"),
+      "_blank",
+    );
+  });
+
+  it("maps various service IDs to correct routes", () => {
+    const testCases = [
+      ["GenomeAnnotation", "/services/genome-annotation"],
+      ["Homology", "/services/blast"],
+      ["MetagenomeBinning", "/services/metagenomic-binning"],
+      ["MSA", "/services/msa-snp-analysis"],
+      ["FastqUtils", "/services/fastq-utilities"],
+      ["ViralAssembly", "/services/viral-assembly"],
+    ];
+
+    for (const [serviceId, expectedRoute] of testCases) {
+      vi.clearAllMocks();
+      rerunJob({}, serviceId);
+      expect(mockOpen).toHaveBeenCalledWith(
+        expect.stringContaining(expectedRoute),
+        "_blank",
+      );
+    }
   });
 });

@@ -1,5 +1,6 @@
 import {
   metaListToObj,
+  parseWorkspaceGetSingle,
   normalizeWsPath,
   formatDate,
   formatFileSize,
@@ -9,6 +10,12 @@ import {
   getJobResultDotPath,
   getSiblingJobResultPathForDotFolder,
   expandDownloadPaths,
+  isValidWorkspaceObjectType,
+  getValidWorkspaceObjectTypes,
+  validateWorkspaceObjectTypes,
+  getFolderPathsFromItems,
+  getNonEmptyFolderPaths,
+  ensureDestinationWriteAccess,
 } from "@/lib/services/workspace/helpers";
 import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
 
@@ -342,5 +349,370 @@ describe("expandDownloadPaths", () => {
     });
     const result = expandDownloadPaths([file], []);
     expect(result).toEqual(["/user/home/data.fasta"]);
+  });
+});
+
+describe("parseWorkspaceGetSingle", () => {
+  it("parses a valid raw result into a ResolvedPathObject", () => {
+    const raw = [
+      [
+        [
+          [
+            "myfile.fasta",       // 0: name
+            "contigs",            // 1: type
+            "/user/home/",        // 2: parent path
+            "2024-01-15T00:00:00Z", // 3: creation_time
+            "abc123",             // 4: id
+            "owner@test.com",     // 5: owner_id
+            1024,                 // 6: size
+            {},                   // 7: userMeta
+            {},                   // 8: sysMeta
+          ],
+        ],
+      ],
+    ];
+    const result = parseWorkspaceGetSingle(raw);
+    expect(result).toEqual(
+      expect.objectContaining({
+        name: "myfile.fasta",
+        type: "contigs",
+        path: "/user/home/myfile.fasta",
+        id: "abc123",
+        owner_id: "owner@test.com",
+        size: 1024,
+      }),
+    );
+  });
+
+  it("returns null when pathResults is not an array", () => {
+    expect(parseWorkspaceGetSingle([null])).toBeNull();
+    expect(parseWorkspaceGetSingle([undefined])).toBeNull();
+  });
+
+  it("returns null when objectsAtPath is empty", () => {
+    const raw = [[
+      [],
+    ]];
+    expect(parseWorkspaceGetSingle(raw)).toBeNull();
+  });
+
+  it("returns null when list item is not an array", () => {
+    const raw = [[
+      ["not-an-array"],
+    ]];
+    expect(parseWorkspaceGetSingle(raw)).toBeNull();
+  });
+
+  it("populates taskData and jobSysMeta for job_result type", () => {
+    const taskData = { success: 1, app_id: "GenomeAssembly2" };
+    const sysMeta = { elapsed_time: 120, hostname: "node1" };
+    const raw = [
+      [
+        [
+          [
+            "myjob",
+            "job_result",
+            "/user/home/",
+            "2024-01-15T00:00:00Z",
+            "job-id-1",
+            "owner@test.com",
+            0,
+            { task_data: taskData },
+            sysMeta,
+          ],
+        ],
+      ],
+    ];
+    const result = parseWorkspaceGetSingle(raw);
+    expect(result).toEqual(
+      expect.objectContaining({
+        type: "job_result",
+        taskData: taskData,
+        jobSysMeta: sysMeta,
+      }),
+    );
+  });
+
+  it("collapses double slashes in path", () => {
+    const raw = [
+      [
+        [
+          [
+            "file.txt",
+            "txt",
+            "/user//home//",
+            "",
+            "id1",
+            "owner",
+            0,
+            {},
+            {},
+          ],
+        ],
+      ],
+    ];
+    const result = parseWorkspaceGetSingle(raw);
+    expect(result).toEqual(expect.objectContaining({ path: "/user/home/file.txt" }));
+  });
+
+  it("uses pathIndex parameter to select different path results", () => {
+    const raw = [
+      [
+        [
+          [
+            "file1.txt",
+            "txt",
+            "/user/home/",
+            "",
+            "id1",
+            "owner",
+            100,
+            {},
+            {},
+          ],
+        ],
+        [
+          [
+            "file2.txt",
+            "reads",
+            "/user/data/",
+            "",
+            "id2",
+            "owner",
+            200,
+            {},
+            {},
+          ],
+        ],
+      ],
+    ];
+    const result = parseWorkspaceGetSingle(raw, 1);
+    expect(result).toEqual(expect.objectContaining({ name: "file2.txt", type: "reads" }));
+  });
+});
+
+describe("isValidWorkspaceObjectType", () => {
+  it("returns true for known upload types", () => {
+    expect(isValidWorkspaceObjectType("contigs")).toBe(true);
+    expect(isValidWorkspaceObjectType("reads")).toBe(true);
+    expect(isValidWorkspaceObjectType("csv")).toBe(true);
+  });
+
+  it("returns true for other workspace object types", () => {
+    expect(isValidWorkspaceObjectType("folder")).toBe(true);
+    expect(isValidWorkspaceObjectType("job_result")).toBe(true);
+    expect(isValidWorkspaceObjectType("genome_group")).toBe(true);
+  });
+
+  it("returns true for viewable types", () => {
+    expect(isValidWorkspaceObjectType("txt")).toBe(true);
+    expect(isValidWorkspaceObjectType("html")).toBe(true);
+    expect(isValidWorkspaceObjectType("pdb")).toBe(true);
+  });
+
+  it("returns false for unknown types", () => {
+    expect(isValidWorkspaceObjectType("nonexistent_type")).toBe(false);
+    expect(isValidWorkspaceObjectType("")).toBe(false);
+  });
+});
+
+describe("getValidWorkspaceObjectTypes", () => {
+  it("returns an array of valid types", () => {
+    const types = getValidWorkspaceObjectTypes();
+    expect(Array.isArray(types)).toBe(true);
+    expect(types.length).toBeGreaterThan(0);
+  });
+
+  it("includes known upload types, other types, and viewable types", () => {
+    const types = getValidWorkspaceObjectTypes();
+    expect(types).toContain("contigs");
+    expect(types).toContain("folder");
+    expect(types).toContain("txt");
+  });
+});
+
+describe("validateWorkspaceObjectTypes", () => {
+  it("separates valid and invalid types", () => {
+    const result = validateWorkspaceObjectTypes(["contigs", "fake_type", "reads"]);
+    expect(result.valid).toContain("contigs");
+    expect(result.valid).toContain("reads");
+    expect(result.invalid).toEqual(["fake_type"]);
+  });
+
+  it("returns all valid when all types are valid", () => {
+    const result = validateWorkspaceObjectTypes(["contigs", "folder"]);
+    expect(result.valid).toHaveLength(2);
+    expect(result.invalid).toHaveLength(0);
+  });
+
+  it("returns all invalid when no types are valid", () => {
+    const result = validateWorkspaceObjectTypes(["bogus", "nope"]);
+    expect(result.valid).toHaveLength(0);
+    expect(result.invalid).toHaveLength(2);
+  });
+
+  it("handles empty input", () => {
+    const result = validateWorkspaceObjectTypes([]);
+    expect(result.valid).toHaveLength(0);
+    expect(result.invalid).toHaveLength(0);
+  });
+});
+
+describe("sortItems - additional fields", () => {
+  const fileA = makeItem({ name: "alpha.txt", type: "contigs", owner_id: "zack@test.com" });
+  const fileB = makeItem({ name: "beta.txt", type: "reads", owner_id: "alice@test.com" });
+
+  it("sorts by owner_id ascending", () => {
+    const sorted = sortItems([fileA, fileB], { field: "owner_id", direction: "asc" });
+    expect(sorted[0].owner_id).toBe("alice@test.com");
+    expect(sorted[1].owner_id).toBe("zack@test.com");
+  });
+
+  it("sorts by type ascending", () => {
+    const sorted = sortItems([fileA, fileB], { field: "type", direction: "asc" });
+    expect(sorted[0].type).toBe("contigs");
+    expect(sorted[1].type).toBe("reads");
+  });
+
+  it("sorts by type descending", () => {
+    const sorted = sortItems([fileA, fileB], { field: "type", direction: "desc" });
+    expect(sorted[0].type).toBe("reads");
+    expect(sorted[1].type).toBe("contigs");
+  });
+});
+
+describe("getFolderPathsFromItems", () => {
+  it("returns paths for folder-type items", () => {
+    const items = [
+      makeItem({ path: "/user/home/myfolder", type: "folder" }),
+      makeItem({ path: "/user/home/file.txt", type: "contigs" }),
+      makeItem({ path: "/user/home/subdir", type: "directory" }),
+    ];
+    const result = getFolderPathsFromItems(items);
+    expect(result).toEqual(["/user/home/myfolder", "/user/home/subdir"]);
+  });
+
+  it("excludes job_result and group types", () => {
+    const items = [
+      makeItem({ path: "/user/home/myjob", type: "job_result" }),
+      makeItem({ path: "/user/home/mygroup", type: "genome_group" }),
+    ];
+    const result = getFolderPathsFromItems(items);
+    expect(result).toHaveLength(0);
+  });
+
+  it("skips items without a path", () => {
+    const items = [
+      makeItem({ path: "", type: "folder" }),
+    ];
+    const result = getFolderPathsFromItems(items);
+    expect(result).toHaveLength(0);
+  });
+
+  it("returns empty array for empty input", () => {
+    expect(getFolderPathsFromItems([])).toEqual([]);
+  });
+});
+
+describe("getNonEmptyFolderPaths", () => {
+  it("returns paths of folders that have children", async () => {
+    const listFolder = vi.fn()
+      .mockResolvedValueOnce([makeItem({ name: "child.txt" })]) // non-empty
+      .mockResolvedValueOnce([]); // empty
+
+    const result = await getNonEmptyFolderPaths(
+      ["/user/home/full", "/user/home/empty"],
+      listFolder,
+    );
+    expect(result).toEqual(["/user/home/full"]);
+  });
+
+  it("returns empty array when all folders are empty", async () => {
+    const listFolder = vi.fn().mockResolvedValue([]);
+
+    const result = await getNonEmptyFolderPaths(
+      ["/user/home/a", "/user/home/b"],
+      listFolder,
+    );
+    expect(result).toEqual([]);
+  });
+
+  it("throws on abort signal", async () => {
+    const controller = new AbortController();
+    controller.abort();
+
+    const listFolder = vi.fn().mockResolvedValue([]);
+
+    await expect(
+      getNonEmptyFolderPaths(["/user/home/folder"], listFolder, {
+        signal: controller.signal,
+      }),
+    ).rejects.toThrow("Aborted");
+  });
+
+  it("treats fetch errors as empty (does not block)", async () => {
+    const listFolder = vi.fn().mockRejectedValue(new Error("Network error"));
+
+    const result = await getNonEmptyFolderPaths(["/user/home/folder"], listFolder);
+    expect(result).toEqual([]);
+  });
+
+  it("handles empty folder paths array", async () => {
+    const listFolder = vi.fn();
+    const result = await getNonEmptyFolderPaths([], listFolder);
+    expect(result).toEqual([]);
+    expect(listFolder).not.toHaveBeenCalled();
+  });
+});
+
+describe("ensureDestinationWriteAccess", () => {
+  it("returns ok when target exists and has write access", async () => {
+    const listFolder = vi.fn().mockResolvedValue([
+      makeItem({ path: "/user/home/target", user_permission: "o" }),
+    ]);
+
+    const result = await ensureDestinationWriteAccess("/user/home/target", listFolder);
+    expect(result).toEqual({ ok: true });
+  });
+
+  it("returns error when target exists but lacks write access", async () => {
+    const listFolder = vi.fn().mockResolvedValue([
+      makeItem({ path: "/user/home/target", user_permission: "r", global_permission: "r" }),
+    ]);
+
+    const result = await ensureDestinationWriteAccess("/user/home/target", listFolder);
+    expect(result.ok).toBe(false);
+    expect(result.errorMessage).toContain("Access denied");
+  });
+
+  it("checks parent write access for new destinations", async () => {
+    const listFolder = vi.fn()
+      .mockResolvedValueOnce([]) // target not in listing
+      .mockResolvedValueOnce([ // grandparent listing has parent with write
+        makeItem({ path: "/user/home", user_permission: "o" }),
+      ]);
+
+    const result = await ensureDestinationWriteAccess("/user/home/newfile", listFolder);
+    expect(result).toEqual({ ok: true });
+  });
+
+  it("returns error when parent lacks write access for new destination", async () => {
+    const listFolder = vi.fn()
+      .mockResolvedValueOnce([]) // target not in listing
+      .mockResolvedValueOnce([ // parent has no write
+        makeItem({ path: "/user/home", user_permission: "r", global_permission: "r" }),
+      ]);
+
+    const result = await ensureDestinationWriteAccess("/user/home/newfile", listFolder);
+    expect(result.ok).toBe(false);
+    expect(result.errorMessage).toContain("Access denied");
+  });
+
+  it("returns error on fetch failure", async () => {
+    const listFolder = vi.fn().mockRejectedValue(new Error("Network error"));
+
+    const result = await ensureDestinationWriteAccess("/user/home/target", listFolder);
+    expect(result.ok).toBe(false);
+    expect(result.errorMessage).toContain("Access denied");
   });
 });

@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
   try {
     if (!minhashServiceUrl) {
       return NextResponse.json(
-        { error: "Minhash service URL is not configured (minhashServiceUrl)" },
+        { error: "Minhash service URL is not configured (MINHASH_SERVICE_URL)" },
         { status: 500 },
       );
     }

@@ -163,7 +163,7 @@ export interface WorkspaceError {
 }
 
 /** Runtime constant for workspace changeable object types (label/value for dropdowns, etc.). */
-export const WORKSPACE_CHANGEABLE_TYPES = {
+export const workspaceChangeableTypes = {
   aligned_dna_fasta: { label: "Aligned DNA Fasta", value: "aligned_dna_fasta" },
   aligned_protein_fasta: { label: "Aligned Protein Fasta", value: "aligned_protein_fasta" },
   bam: { label: "BAM", value: "bam" },
@@ -207,4 +207,4 @@ export const WORKSPACE_CHANGEABLE_TYPES = {
   xml: { label: "XML", value: "xml" },
 } as const;
 
-export type WorkspaceChangeableTypes = typeof WORKSPACE_CHANGEABLE_TYPES;
+export type WorkspaceChangeableTypes = typeof workspaceChangeableTypes;

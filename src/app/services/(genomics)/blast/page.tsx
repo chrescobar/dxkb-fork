@@ -50,7 +50,7 @@ import {
 } from "@/lib/forms/(genomics)/blast/blast-form-utils";
 import {
   completeFormSchema,
-  DEFAULT_BLAST_FORM_VALUES,
+  defaultBlastFormValues,
   type BlastFormData,
 } from "@/lib/forms/(genomics)/blast/blast-form-schema";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
@@ -80,7 +80,7 @@ export default function BlastServicePage() {
   });
 
   const form = useForm({
-    defaultValues: DEFAULT_BLAST_FORM_VALUES as BlastFormData,
+    defaultValues: defaultBlastFormValues as BlastFormData,
     validators: { onChange: completeFormSchema, onSubmit: completeFormSchema },
     onSubmit: async ({ value }) => {
       const data = value as BlastFormData;
@@ -206,7 +206,7 @@ export default function BlastServicePage() {
   }, [rerunData, markApplied, form]);
 
   const handleReset = () => {
-    form.reset(DEFAULT_BLAST_FORM_VALUES);
+    form.reset(defaultBlastFormValues);
     setShowAdvanced(false);
   };
 

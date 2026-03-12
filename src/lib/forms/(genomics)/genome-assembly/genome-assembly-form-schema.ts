@@ -70,7 +70,7 @@ export const genomeAssemblyFormSchema = z
 export type GenomeAssemblyFormData = z.infer<typeof genomeAssemblyFormSchema>;
 
 // Default form values
-export const DEFAULT_GENOME_ASSEMBLY_FORM_VALUES: GenomeAssemblyFormData = {
+export const defaultGenomeAssemblyFormValues: GenomeAssemblyFormData = {
   paired_end_libs: [],
   single_end_libs: [],
   srr_ids: [],

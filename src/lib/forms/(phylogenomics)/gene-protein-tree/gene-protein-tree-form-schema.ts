@@ -98,9 +98,9 @@ export type GeneProteinTreeFormData = z.infer<typeof geneProteinTreeFormSchema>;
 export type SequenceItem = z.infer<typeof sequenceItemSchema>;
 
 // Constants
-export const MAX_SEQUENCES = 5000;
+export const maxSequences = 5000;
 
-export const DNA_MODELS = [
+export const dnaModels = [
   { value: "GTR", label: "GTR" },
   { value: "TN93", label: "TN93" },
   { value: "HKY85", label: "HKY85" },
@@ -110,7 +110,7 @@ export const DNA_MODELS = [
   { value: "JC69", label: "JC69" },
 ] as const;
 
-export const PROTEIN_MODELS = [
+export const proteinModels = [
   { value: "LG", label: "LG" },
   { value: "WAG", label: "WAG" },
   { value: "JTT", label: "JTT" },
@@ -120,7 +120,7 @@ export const PROTEIN_MODELS = [
   { value: "HIVb", label: "HIVb" },
 ] as const;
 
-export const THRESHOLD_OPTIONS = [
+export const thresholdOptions = [
   "0",
   "0.1",
   "0.2",
@@ -134,7 +134,7 @@ export const THRESHOLD_OPTIONS = [
   "1.0",
 ] as const;
 
-export const DEFAULT_METADATA_FIELDS = [
+export const defaultMetadataFields = [
   { id: "genome_id", name: "Genome ID", selected: true },
   { id: "genome_name", name: "Genome Name", selected: true },
   { id: "species", name: "Species", selected: true },
@@ -143,7 +143,7 @@ export const DEFAULT_METADATA_FIELDS = [
   { id: "subtype", name: "Subtype", selected: true },
 ];
 
-// export const BASE_METADATA_OPTIONS = [
+// export const baseMetadataOptions = [
 //   { value: "genome_name", label: "Genome Name" },
 //   { value: "genome_length", label: "Genome Length" },
 //   { value: "feature_group", label: "Feature Group" },
@@ -170,7 +170,7 @@ export interface GenomeMetadataFieldItem {
 }
 
 // Genome metadata fields organized by sections (from AdvancedSearchFields.js)
-export const GENOME_METADATA_FIELDS_DATA: GenomeMetadataFieldItem[] = [
+export const genomeMetadataFieldsData: GenomeMetadataFieldItem[] = [
   { field: "----- Frequent Fields -----", isLabel: true },
   { field: "genome_name" },
   { field: "genome_length" },
@@ -287,7 +287,7 @@ export const GENOME_METADATA_FIELDS_DATA: GenomeMetadataFieldItem[] = [
 ];
 
 // Legacy: Flat array of all field names (excluding labels) for backward compatibility
-export const GENOME_ADVANCED_FIELDS: string[] = GENOME_METADATA_FIELDS_DATA
+export const genomeAdvancedFields: string[] = genomeMetadataFieldsData
   .filter((item) => !item.field.startsWith("-----"))
   .map((item) => item.field);
 
@@ -312,7 +312,7 @@ export interface MetadataSelectOption {
 export function getMetadataSelectOptions(
   formatLabel: (field: string) => string,
 ): MetadataSelectOption[] {
-  return GENOME_METADATA_FIELDS_DATA.map((item) => {
+  return genomeMetadataFieldsData.map((item) => {
     const isLabel = isMetadataLabel(item.field);
     return {
       value: item.field,
@@ -326,14 +326,14 @@ export function getMetadataSelectOptions(
 }
 
 // Default form values
-export const DEFAULT_GENE_PROTEIN_TREE_FORM_VALUES: GeneProteinTreeFormData = {
+export const defaultGeneProteinTreeFormValues: GeneProteinTreeFormData = {
   alphabet: "DNA",
   recipe: "RAxML",
   substitution_model: "GTR",
   trim_threshold: "0",
   gap_threshold: "0",
   sequences: [],
-  metadata_fields: DEFAULT_METADATA_FIELDS.filter((f) => f.selected).map((f) => f.id),
+  metadata_fields: defaultMetadataFields.filter((f) => f.selected).map((f) => f.id),
   output_path: "",
   output_file: "",
 };

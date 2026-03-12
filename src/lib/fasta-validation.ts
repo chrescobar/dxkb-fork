@@ -18,7 +18,7 @@ export interface FastaValidationOptions {
   firstName?: string;
 }
 
-const DEFAULT_OPTIONS: Required<FastaValidationOptions> = {
+const defaultOptions: Required<FastaValidationOptions> = {
   maxFastaText: 64000,
   ignoreMaxFastaTextLimit: false,
   replace: true,
@@ -83,7 +83,7 @@ export function validateFasta(
   seqType: "aa" | "dna" = "aa",
   options: FastaValidationOptions = {},
 ): FastaValidationResult {
-  const opts = { ...DEFAULT_OPTIONS, ...options };
+  const opts = { ...defaultOptions, ...options };
 
   const result: FastaValidationResult = {
     valid: false,

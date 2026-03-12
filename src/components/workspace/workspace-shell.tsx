@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import {
   useWorkspacePanel,
-  WORKSPACE_PANEL_IDS,
+  workspacePanelIds,
 } from "@/contexts/workspace-panel-context";
 import {
   ResizableHandle,
@@ -114,8 +114,8 @@ export function WorkspaceShell({
       onLayoutChanged={setPanelLayout}
     >
       <ResizablePanel
-        id={WORKSPACE_PANEL_IDS.main}
-        defaultSize={panelLayout[WORKSPACE_PANEL_IDS.main] ?? 75}
+        id={workspacePanelIds.main}
+        defaultSize={panelLayout[workspacePanelIds.main] ?? 75}
         minSize="50%"
         className="flex h-full min-h-0 flex-row overflow-hidden"
       >
@@ -128,8 +128,8 @@ export function WorkspaceShell({
       </ResizablePanel>
       <ResizableHandle withHandle className="shrink-0" />
       <ResizablePanel
-        id={WORKSPACE_PANEL_IDS.details}
-        defaultSize={panelLayout[WORKSPACE_PANEL_IDS.details] ?? 25}
+        id={workspacePanelIds.details}
+        defaultSize={panelLayout[workspacePanelIds.details] ?? 25}
         minSize={110}
         maxSize={600}
         className="flex min-h-0 flex-col overflow-hidden"

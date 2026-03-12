@@ -16,12 +16,12 @@ export const librarySchema = baseLibrarySchema;
 export type LibraryItem = BaseLibraryItem;
 
 // Constants
-export const MIN_CONTIG_LENGTH_DEFAULT = 300;
-export const MIN_CONTIG_LENGTH_MIN = 100;
-export const MIN_CONTIG_LENGTH_MAX = 100000;
-export const MIN_CONTIG_COVERAGE_DEFAULT = 5;
-export const MIN_CONTIG_COVERAGE_MIN = 0;
-export const MIN_CONTIG_COVERAGE_MAX = 100000;
+export const minContigLengthDefault = 300;
+export const minContigLengthMin = 100;
+export const minContigLengthMax = 100000;
+export const minContigCoverageDefault = 5;
+export const minContigCoverageMin = 0;
+export const minContigCoverageMax = 100000;
 
 // Main form schema
 export const metagenomicBinningFormSchema = z
@@ -47,8 +47,8 @@ export const metagenomicBinningFormSchema = z
     genome_group: z.string().optional(),
 
     // Advanced parameters
-    min_contig_len: z.number().min(MIN_CONTIG_LENGTH_MIN).max(MIN_CONTIG_LENGTH_MAX),
-    min_contig_cov: z.number().min(MIN_CONTIG_COVERAGE_MIN).max(MIN_CONTIG_COVERAGE_MAX),
+    min_contig_len: z.number().min(minContigLengthMin).max(minContigLengthMax),
+    min_contig_cov: z.number().min(minContigCoverageMin).max(minContigCoverageMax),
     disable_dangling: z.boolean().optional(),
   })
   .superRefine((data, ctx) => {
@@ -81,7 +81,7 @@ export const metagenomicBinningFormSchema = z
 export type MetagenomicBinningFormData = z.infer<typeof metagenomicBinningFormSchema>;
 
 // Default form values
-export const DEFAULT_METAGENOMIC_BINNING_FORM_VALUES: MetagenomicBinningFormData = {
+export const defaultMetagenomicBinningFormValues: MetagenomicBinningFormData = {
   start_with: "reads",
   paired_end_libs: [],
   single_end_libs: [],
@@ -92,7 +92,7 @@ export const DEFAULT_METAGENOMIC_BINNING_FORM_VALUES: MetagenomicBinningFormData
   output_path: "",
   output_file: "",
   genome_group: "",
-  min_contig_len: MIN_CONTIG_LENGTH_DEFAULT,
-  min_contig_cov: MIN_CONTIG_COVERAGE_DEFAULT,
+  min_contig_len: minContigLengthDefault,
+  min_contig_cov: minContigCoverageDefault,
   disable_dangling: false,
 };

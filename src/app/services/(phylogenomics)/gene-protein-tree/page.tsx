@@ -59,14 +59,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  DEFAULT_METADATA_FIELDS,
+  defaultMetadataFields,
   type GeneProteinTreeFormData,
-  DEFAULT_GENE_PROTEIN_TREE_FORM_VALUES,
+  defaultGeneProteinTreeFormValues,
   geneProteinTreeFormSchema,
-  DNA_MODELS,
-  PROTEIN_MODELS,
+  dnaModels,
+  proteinModels,
   type SequenceItem,
-  THRESHOLD_OPTIONS,
+  thresholdOptions,
   getMetadataSelectOptions,
   isMetadataLabel,
 } from "@/lib/forms/(phylogenomics)/gene-protein-tree/gene-protein-tree-form-schema";
@@ -98,7 +98,7 @@ export default function GeneProteinTreePage() {
   const [selectedUnalignedFastaObject, setSelectedUnalignedFastaObject] =
     useState<WorkspaceObject | null>(null);
   const [metadataFields, setMetadataFields] =
-    useState<MetadataField[]>(DEFAULT_METADATA_FIELDS);
+    useState<MetadataField[]>(defaultMetadataFields);
   const [selectedMetadataField, setSelectedMetadataField] =
     useState<string>("");
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -120,7 +120,7 @@ export default function GeneProteinTreePage() {
   });
 
   const form = useForm({
-    defaultValues: DEFAULT_GENE_PROTEIN_TREE_FORM_VALUES as GeneProteinTreeFormData,
+    defaultValues: defaultGeneProteinTreeFormValues as GeneProteinTreeFormData,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: geneProteinTreeFormSchema as any },
     onSubmit: async ({ value }) => {
@@ -134,7 +134,7 @@ export default function GeneProteinTreePage() {
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
   const substitutionModelOptions = useMemo(
-    () => (alphabet === "DNA" ? DNA_MODELS : PROTEIN_MODELS),
+    () => (alphabet === "DNA" ? dnaModels : proteinModels),
     [alphabet],
   );
 
@@ -155,7 +155,7 @@ export default function GeneProteinTreePage() {
       return;
     }
 
-    const resetModel = alphabet === "DNA" ? DNA_MODELS[0].value : PROTEIN_MODELS[0].value;
+    const resetModel = alphabet === "DNA" ? dnaModels[0].value : proteinModels[0].value;
     form.setFieldValue("substitution_model", resetModel);
 
     // Clear sequences that don't match the new alphabet
@@ -337,11 +337,11 @@ export default function GeneProteinTreePage() {
   }
 
   function handleReset() {
-    form.reset(DEFAULT_GENE_PROTEIN_TREE_FORM_VALUES);
+    form.reset(defaultGeneProteinTreeFormValues);
     setSelectedFeatureGroupObject(null);
     setSelectedAlignedFastaObject(null);
     setSelectedUnalignedFastaObject(null);
-    setMetadataFields(DEFAULT_METADATA_FIELDS);
+    setMetadataFields(defaultMetadataFields);
     setSelectedMetadataField("");
     setShowAdvanced(false);
   }
@@ -538,7 +538,7 @@ export default function GeneProteinTreePage() {
                         Trim Ends of Alignment Threshold
                       </RequiredFormLabel>
                       <Select
-                        items={THRESHOLD_OPTIONS.map((v) => ({ value: v, label: v }))}
+                        items={thresholdOptions.map((v) => ({ value: v, label: v }))}
                         value={field.state.value}
                         onValueChange={(value) => value != null && field.handleChange(value)}
                       >
@@ -547,7 +547,7 @@ export default function GeneProteinTreePage() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            {THRESHOLD_OPTIONS.map((value) => (
+                            {thresholdOptions.map((value) => (
                               <SelectItem key={value} value={value}>
                                 {value}
                               </SelectItem>
@@ -567,7 +567,7 @@ export default function GeneProteinTreePage() {
                         Remove Gappy Sequences Threshold
                       </RequiredFormLabel>
                       <Select
-                        items={THRESHOLD_OPTIONS.map((v) => ({ value: v, label: v }))}
+                        items={thresholdOptions.map((v) => ({ value: v, label: v }))}
                         value={field.state.value}
                         onValueChange={(value) => value != null && field.handleChange(value)}
                       >
@@ -576,7 +576,7 @@ export default function GeneProteinTreePage() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            {THRESHOLD_OPTIONS.map((value) => (
+                            {thresholdOptions.map((value) => (
                               <SelectItem key={value} value={value}>
                                 {value}
                               </SelectItem>

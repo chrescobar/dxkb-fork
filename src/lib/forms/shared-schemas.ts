@@ -19,7 +19,7 @@ export type Platform = z.infer<typeof platformSchema>;
 /**
  * Platform options for UI dropdowns
  */
-export const PLATFORM_OPTIONS = [
+export const platformOptions = [
   { value: "illumina", label: "Illumina" },
   { value: "pacbio", label: "PacBio" },
   { value: "nanopore", label: "Nanopore" },
@@ -94,7 +94,7 @@ export type LibraryWithAssemblyOptions = z.infer<typeof libraryWithAssemblyOptio
 /**
  * Library type labels for display in UI components like SelectedItemsTable
  */
-export const LIBRARY_TYPE_LABELS: Record<string, string> = {
+export const libraryTypeLabels: Record<string, string> = {
   paired: "Paired Read",
   single: "Single Read",
   sra: "SRA Accession",
@@ -104,5 +104,5 @@ export const LIBRARY_TYPE_LABELS: Record<string, string> = {
  * Get human-readable label for a library type
  */
 export function getLibraryTypeLabel(type: string): string {
-  return LIBRARY_TYPE_LABELS[type] ?? type;
+  return libraryTypeLabels[type] ?? type;
 }

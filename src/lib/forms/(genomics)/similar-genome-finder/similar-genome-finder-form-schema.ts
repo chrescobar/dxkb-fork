@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const OUTPUT_NAME_INVALID_CHARS = /[\\/]/;
+const outputNameInvalidChars = /[\\/]/;
 
 /** Options for Max hits dropdown */
 export const maxHitsOptions = [
@@ -38,7 +38,7 @@ export const similarGenomeFinderFormSchema = z
     output_path: z.string().optional(),
     output_file: z
       .string()
-      .refine((value) => !value || !OUTPUT_NAME_INVALID_CHARS.test(value), {
+      .refine((value) => !value || !outputNameInvalidChars.test(value), {
           error: "Output name cannot contain slashes"
     })
       .optional(),
@@ -96,7 +96,7 @@ export const similarGenomeFinderFormSchema = z
     }
   });
 
-export const DEFAULT_SIMILAR_GENOME_FINDER_FORM_VALUES = {
+export const defaultSimilarGenomeFinderFormValues = {
   selectedGenomeId: "",
   fasta_file: "",
   output_path: "",

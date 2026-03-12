@@ -1,5 +1,5 @@
 import {
-  DEFAULT_PRIMER_DESIGN_FORM_VALUES,
+  defaultPrimerDesignFormValues,
   type PrimerDesignFormData,
 } from "./primer-design-form-schema";
 
@@ -66,9 +66,9 @@ export const markerLabels = {
 
 export type MarkerType = keyof typeof markerLabels | "clear";
 
-const MARKER_REGEX = /[<>[\]{}']+/g;
+const markerRegex = /[<>[\]{}']+/g;
 // Legacy validation only allows a, g, c, t, n (not extended IUPAC codes)
-const NUCLEOTIDE_REGEX = /[agctn]/gi;
+const nucleotideRegex = /[agctn]/gi;
 
 function normalizeNewlines(sequence: string) {
   return sequence.replace(/\r\n?/g, "\n");
@@ -130,7 +130,7 @@ export function stripPrimerMarkers(sequence: string): string {
         return line.trim();
       }
 
-      return line.replace(MARKER_REGEX, "");
+      return line.replace(markerRegex, "");
     })
     .join("\n")
     .trim();
@@ -182,9 +182,9 @@ function isInvalidSequence(val: string): boolean {
       continue; // Skip header lines
     }
     // Remove valid nucleotides (a, g, c, t, n)
-    let cleaned = trimmed.replace(NUCLEOTIDE_REGEX, "");
+    let cleaned = trimmed.replace(nucleotideRegex, "");
     // Remove markers
-    cleaned = cleaned.replace(MARKER_REGEX, "");
+    cleaned = cleaned.replace(markerRegex, "");
     // If anything remains, it's invalid
     if (cleaned.length > 0) {
       return true;
@@ -377,7 +377,7 @@ export function transformPrimerDesignParams(
 }
 
 export function resetPrimerDesignValues(): PrimerDesignFormData {
-  return { ...DEFAULT_PRIMER_DESIGN_FORM_VALUES };
+  return { ...defaultPrimerDesignFormValues };
 }
 
 

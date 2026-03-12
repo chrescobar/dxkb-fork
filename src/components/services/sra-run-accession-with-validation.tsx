@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 import { ChevronRight, Loader2 } from "lucide-react";
 
-const VALIDATION_DEBOUNCE_MS = 500;
+const validationDebounceMs = 500;
 
 /** Strips HTML tags so only plain text is stored/displayed (XSS safety). */
 function toPlainText(s: string): string {
@@ -294,7 +294,7 @@ const SraRunAccessionWithValidation = ({
           }
         }
       });
-    }, VALIDATION_DEBOUNCE_MS);
+    }, validationDebounceMs);
 
     return () => clearTimeout(timer);
   }, [sraAccession, validateAccession, showAddButton, applyValidationResult]);

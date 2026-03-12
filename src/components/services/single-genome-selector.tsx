@@ -31,7 +31,7 @@ interface SingleGenomeSelectorProps {
   minQueryLength?: number;
 }
 
-const DEFAULT_MIN_QUERY_LENGTH = 0;
+const defaultMinQueryLength = 0;
 
 function shouldSearch(query: string, minLength: number): boolean {
   const trimmed = query.trim();
@@ -55,7 +55,7 @@ export function SingleGenomeSelector({
   onChange,
   disabled = false,
   className,
-  minQueryLength = DEFAULT_MIN_QUERY_LENGTH,
+  minQueryLength = defaultMinQueryLength,
 }: SingleGenomeSelectorProps) {
   const [query, setQuery] = useState(value || "");
   const [suggestions, setSuggestions] = useState<GenomeSummary[]>([]);

@@ -54,7 +54,7 @@ const quickReference =
 const tutorial =
   "https://www.bv-brc.org/docs/tutorial/subspecies_classification/subspecies_classification.html";
 
-const FASTA_WORKSPACE_TYPES: ValidWorkspaceObjectTypes[] = [
+const fastaWorkspaceTypes: ValidWorkspaceObjectTypes[] = [
   "feature_protein_fasta",
   "feature_dna_fasta",
   "aligned_protein_fasta",
@@ -279,7 +279,7 @@ export default function SubspeciesClassificationPage() {
                   {(field) => (
                     <FieldItem className="mt-4">
                       <WorkspaceObjectSelector
-                        types={FASTA_WORKSPACE_TYPES}
+                        types={fastaWorkspaceTypes}
                         placeholder="Select or upload FASTA file to your workspace."
                         value={field.state.value ?? ""}
                         onObjectSelect={(object: WorkspaceObject) =>

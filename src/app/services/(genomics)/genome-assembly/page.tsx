@@ -52,7 +52,7 @@ import { buildPairedLibraries, buildSingleLibraries, buildSraLibraries } from "@
 import { toast } from "sonner";
 import {
   genomeAssemblyFormSchema,
-  DEFAULT_GENOME_ASSEMBLY_FORM_VALUES,
+  defaultGenomeAssemblyFormValues,
   type GenomeAssemblyFormData,
   type LibraryItem,
 } from "@/lib/forms/(genomics)/genome-assembly/genome-assembly-form-schema";
@@ -107,7 +107,7 @@ export default function GenomeAssemblyPage() {
   const [sraResetKey, setSraResetKey] = useState(0);
 
   const form = useForm({
-    defaultValues: DEFAULT_GENOME_ASSEMBLY_FORM_VALUES as GenomeAssemblyFormData,
+    defaultValues: defaultGenomeAssemblyFormValues as GenomeAssemblyFormData,
     validators: { onChange: genomeAssemblyFormSchema },
     onSubmit: async ({ value }) => {
       const data = value as GenomeAssemblyFormData;
@@ -178,7 +178,7 @@ export default function GenomeAssemblyPage() {
   });
 
   function handleReset() {
-    form.reset(DEFAULT_GENOME_ASSEMBLY_FORM_VALUES);
+    form.reset(defaultGenomeAssemblyFormValues);
     setLibrariesAndSync([]);
     setShowAdvanced(false);
     setGenomeSizeUnit("M");

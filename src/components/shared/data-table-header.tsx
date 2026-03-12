@@ -124,14 +124,14 @@ export interface TableSkeletonColumn {
   isFirst?: boolean;
 }
 
-const SKELETON_ROW_COUNT = 30;
+const skeletonRowCount = 30;
 
 export function TableSkeleton({ columns }: { columns?: TableSkeletonColumn[] }) {
   if (!columns || columns.length === 0) {
     // Fallback: single full-width skeleton cell
     return (
       <>
-        {Array.from({ length: SKELETON_ROW_COUNT }).map((_, i) => (
+        {Array.from({ length: skeletonRowCount }).map((_, i) => (
           <TableRow key={i}>
             <TableCell className={`pl-6 text-left ${skeletonRowHeight}`}>
               <Skeleton className="h-4 w-full max-w-48" />
@@ -144,7 +144,7 @@ export function TableSkeleton({ columns }: { columns?: TableSkeletonColumn[] }) 
 
   return (
     <>
-      {Array.from({ length: SKELETON_ROW_COUNT }).map((_, i) => (
+      {Array.from({ length: skeletonRowCount }).map((_, i) => (
         <TableRow key={i}>
           {columns.map((col) => (
             <TableCell

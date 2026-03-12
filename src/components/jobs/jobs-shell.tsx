@@ -10,7 +10,7 @@ import {
 import { PanelRightClose, PanelRightOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const JOBS_PANEL_IDS = { main: "jobs-main", details: "jobs-details" } as const;
+const jobsPanelIds = { main: "jobs-main", details: "jobs-details" } as const;
 
 interface JobsShellProps {
   children: ReactNode;
@@ -75,7 +75,7 @@ export function JobsShell({
       className="h-full min-h-0 w-full"
     >
       <ResizablePanel
-        id={JOBS_PANEL_IDS.main}
+        id={jobsPanelIds.main}
         defaultSize="75%"
         minSize="50%"
         className="flex h-full min-h-0 flex-row overflow-hidden"
@@ -93,7 +93,7 @@ export function JobsShell({
       />
       <ResizablePanel
         panelRef={detailsPanelRef}
-        id={JOBS_PANEL_IDS.details}
+        id={jobsPanelIds.details}
         defaultSize="20%"
         minSize={110}
         maxSize={600}

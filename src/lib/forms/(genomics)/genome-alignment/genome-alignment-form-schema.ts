@@ -46,7 +46,7 @@ export const genomeAlignmentFormSchema = z
 
 export type GenomeAlignmentFormData = z.infer<typeof genomeAlignmentFormSchema>;
 
-export const DEFAULT_GENOME_ALIGNMENT_FORM_VALUES: GenomeAlignmentFormData = {
+export const defaultGenomeAlignmentFormValues: GenomeAlignmentFormData = {
   genome_ids: [],
   output_path: "",
   output_file: "",

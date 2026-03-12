@@ -5,7 +5,7 @@ import {
   type LibraryWithPlatform,
   platformSchema,
   type Platform,
-  PLATFORM_OPTIONS,
+  platformOptions,
 } from "@/lib/forms/shared-schemas";
 
 // Pipeline action options
@@ -19,7 +19,7 @@ export const pipelineActionSchema = z.enum([
 export type PipelineAction = z.infer<typeof pipelineActionSchema>;
 
 // Re-export platform types from shared schemas
-export { platformSchema, type Platform, PLATFORM_OPTIONS };
+export { platformSchema, type Platform, platformOptions };
 
 // Re-export shared library schema and type for use in this service
 export const librarySchema = libraryWithPlatformSchema;
@@ -81,7 +81,7 @@ export const fastqUtilitiesFormSchema = z
 export type FastqUtilitiesFormData = z.infer<typeof fastqUtilitiesFormSchema>;
 
 // Pipeline action options for UI
-export const PIPELINE_ACTION_OPTIONS = [
+export const pipelineActionOptions = [
   { value: "trim", label: "Trim" },
   { value: "paired_filter", label: "Paired Filter" },
   { value: "fastqc", label: "FastQC" },
@@ -90,10 +90,10 @@ export const PIPELINE_ACTION_OPTIONS = [
 ] as const;
 
 // Maximum number of pipeline actions allowed
-export const MAX_PIPELINE_ACTIONS = 5;
+export const maxPipelineActions = 5;
 
 // Default form values
-export const DEFAULT_FASTQ_UTILITIES_FORM_VALUES: FastqUtilitiesFormData = {
+export const defaultFastqUtilitiesFormValues: FastqUtilitiesFormData = {
   paired_end_libs: [],
   single_end_libs: [],
   srr_ids: [],

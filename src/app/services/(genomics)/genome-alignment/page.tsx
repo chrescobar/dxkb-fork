@@ -37,7 +37,7 @@ import {
   genomeAlignmentSelectGenomes,
 } from "@/lib/services/service-info";
 import {
-  DEFAULT_GENOME_ALIGNMENT_FORM_VALUES,
+  defaultGenomeAlignmentFormValues,
   genomeAlignmentFormSchema,
   type GenomeAlignmentFormData,
 } from "@/lib/forms/(genomics)/genome-alignment/genome-alignment-form-schema";
@@ -53,7 +53,7 @@ import {
 } from "@/lib/services/genome";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 
-const MAX_GENOMES = 20;
+const maxGenomes = 20;
 
 export default function GenomeAlignmentServicePage() {
   const [selectedGenomes, setSelectedGenomes] = useState<GenomeSummary[]>([]);
@@ -77,7 +77,7 @@ export default function GenomeAlignmentServicePage() {
   });
 
   const form = useForm({
-    defaultValues: DEFAULT_GENOME_ALIGNMENT_FORM_VALUES,
+    defaultValues: defaultGenomeAlignmentFormValues,
     validators: { onChange: genomeAlignmentFormSchema },
     onSubmit: async ({ value }) => {
       await submitForm(value as GenomeAlignmentFormData);
@@ -95,7 +95,7 @@ export default function GenomeAlignmentServicePage() {
 
   const handleAddGenome = (genome: GenomeSummary) => {
     setSelectedGenomes((previous) => {
-      if (previous.length >= MAX_GENOMES) {
+      if (previous.length >= maxGenomes) {
         toast.error("You can add up to 20 genomes");
         return previous;
       }
@@ -136,7 +136,7 @@ export default function GenomeAlignmentServicePage() {
 
       setSelectedGenomes((previous) => {
         const existingIds = new Set(previous.map((item) => item.genome_id));
-        const availableSlots = MAX_GENOMES - previous.length;
+        const availableSlots = maxGenomes - previous.length;
         const uniqueNewGenomes = genomes.filter(
           (genome) => !existingIds.has(genome.genome_id),
         );
@@ -206,7 +206,7 @@ export default function GenomeAlignmentServicePage() {
   }, [rerunData, markApplied, form]);
 
   const handleReset = () => {
-    form.reset(DEFAULT_GENOME_ALIGNMENT_FORM_VALUES);
+    form.reset(defaultGenomeAlignmentFormValues);
     setSelectedGenomes([]);
     setShowAdvanced(false);
     setLastSelectedGroup(null);
@@ -277,7 +277,7 @@ export default function GenomeAlignmentServicePage() {
             <GenomeNameSelector
               onSelect={handleAddGenome}
               selectedGenomeIds={selectedGenomes.map((genome) => genome.genome_id)}
-              maxSelections={MAX_GENOMES}
+              maxSelections={maxGenomes}
               helperText="Use the search to add public or private genomes by name or genome ID."
             />
 

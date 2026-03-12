@@ -35,7 +35,7 @@ import { useRerunForm } from "@/hooks/services/use-rerun-form";
 import { toast } from "sonner";
 import {
   completeGenomeAnnotationSchema,
-  DEFAULT_GENOME_ANNOTATION_FORM_VALUES,
+  defaultGenomeAnnotationFormValues,
   type GenomeAnnotationFormData,
 } from "@/lib/forms/(genomics)/genome-annotation/genome-annotation-form-schema";
 import {
@@ -74,7 +74,7 @@ const GenomeAnnotationContent = () => {
   });
 
   const form = useForm({
-    defaultValues: DEFAULT_GENOME_ANNOTATION_FORM_VALUES as GenomeAnnotationFormData,
+    defaultValues: defaultGenomeAnnotationFormValues as GenomeAnnotationFormData,
     validators: { onChange: completeGenomeAnnotationSchema },
     onSubmit: async ({ value }) => {
       // Validate my label for slashes
@@ -149,7 +149,7 @@ const GenomeAnnotationContent = () => {
   }, [rerunData, markApplied, form]);
 
   const handleReset = () => {
-    form.reset(DEFAULT_GENOME_ANNOTATION_FORM_VALUES);
+    form.reset(defaultGenomeAnnotationFormValues);
   };
 
   const canSubmit = useStore(form.store, (s) => s.canSubmit);

@@ -18,7 +18,7 @@ interface TaxonNameSelectorProps extends TaxonomySelectorProps {
   highlightMatch?: "all" | "first" | "none";
 }
 
-const RANK_LIST = [
+const rankList = [
   "species",
   "no rank",
   "genus",
@@ -41,7 +41,7 @@ const RANK_LIST = [
   "subphylum",
 ];
 
-const BOOST_QUERY = [
+const boostQuery = [
   "taxon_rank:superkingdom^7000000",
   "taxon_rank:phylum^6000000",
   "taxon_rank:class^5000000",
@@ -75,7 +75,7 @@ function buildSolrQuery(
   // Extract rank parts
   let cleanQuery = qString;
 
-  RANK_LIST.forEach((rank) => {
+  rankList.forEach((rank) => {
     const re = new RegExp(`(\\b)${rank}(\\b)`, "gi");
     const newQuery = cleanQuery.replace(re, "");
     if (newQuery !== cleanQuery) {
@@ -97,8 +97,8 @@ function buildSolrQuery(
   }
 
   // Add boost query for ranking
-  if (BOOST_QUERY.length > 0) {
-    searchQuery += ` AND (${BOOST_QUERY.join(" OR ")})`;
+  if (boostQuery.length > 0) {
+    searchQuery += ` AND (${boostQuery.join(" OR ")})`;
   }
 
   // Build the complete query string manually to avoid double encoding

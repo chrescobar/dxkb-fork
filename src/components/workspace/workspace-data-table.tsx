@@ -28,9 +28,9 @@ import {
 } from "@/components/shared/data-table";
 
 /** Stable empty array for table data fallback (avoids infinite re-renders per TanStack Data guide). */
-const EMPTY_ITEMS: WorkspaceBrowserItem[] = [];
+const emptyItems: WorkspaceBrowserItem[] = [];
 
-const DEFAULT_COLUMN_ORDER = [
+const defaultColumnOrder = [
   "name",
   "size",
   "owner_id",
@@ -273,9 +273,9 @@ export const WorkspaceDataTable = forwardRef<
   return (
     <DataTable<WorkspaceBrowserItem>
       ref={dataTableRef}
-      data={items ?? EMPTY_ITEMS}
+      data={items ?? emptyItems}
       columns={columns}
-      defaultColumnOrder={DEFAULT_COLUMN_ORDER}
+      defaultColumnOrder={defaultColumnOrder}
       isLoading={isLoading}
       getRowId={(row) => row.id}
       sort={{ field: sort.field, direction: sort.direction }}

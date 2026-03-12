@@ -210,13 +210,13 @@ export const msaSnpAnalysisFormSchema = z
 export type MsaSnpAnalysisFormData = z.infer<typeof msaSnpAnalysisFormSchema>;
 
 // Constants
-export const MAX_GENOMES = 5000;
-export const MAX_GENOME_LENGTH = 250000;
-export const MIN_SEQUENCES = 2;
-export const MIN_SEQUENCES_WITH_REF = 1;
+export const maxGenomes = 5000;
+export const maxGenomeLength = 250000;
+export const minSequences = 2;
+export const minSequencesWithRef = 1;
 
 // Strategy options for Mafft
-export const STRATEGY_OPTIONS = [
+export const strategyOptions = [
   { value: "auto", label: "Auto (FFT-NS-1, FFT-NS-2, FFT-NS-i or L-INS-i; depends on data size)" },
   { value: "fftns1", label: "FFT-NS-1 (Very fast; recommended for >2,000 sequences; progressive method)" },
   { value: "fftns2", label: "FFT-NS-2 (Fast; progressive method)" },
@@ -227,7 +227,7 @@ export const STRATEGY_OPTIONS = [
 ] as const;
 
 // Default form values
-export const DEFAULT_MSA_SNP_ANALYSIS_FORM_VALUES: MsaSnpAnalysisFormData = {
+export const defaultMsaSnpAnalysisFormValues: MsaSnpAnalysisFormData = {
   input_status: "unaligned",
   input_type: "input_feature_group",
   alphabet: "protein",

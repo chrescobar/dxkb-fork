@@ -10,12 +10,12 @@ import {
 } from "react";
 
 /** Panel ids used by react-resizable-panels in the workspace layout. */
-export const WORKSPACE_PANEL_IDS = { main: "workspace-main", details: "workspace-details" } as const;
+export const workspacePanelIds = { main: "workspace-main", details: "workspace-details" } as const;
 
 /** Layout from react-resizable-panels: panel id -> size (%). Persists across folder navigation. */
-const DEFAULT_PANEL_LAYOUT: Record<string, number> = {
-  [WORKSPACE_PANEL_IDS.main]: 75,
-  [WORKSPACE_PANEL_IDS.details]: 25,
+const defaultPanelLayout: Record<string, number> = {
+  [workspacePanelIds.main]: 75,
+  [workspacePanelIds.details]: 25,
 };
 
 interface WorkspacePanelContextType {
@@ -39,7 +39,7 @@ export function WorkspacePanelProvider({ children }: { children: ReactNode }) {
   const [panelManuallyHidden, setPanelManuallyHiddenState] = useState(false);
   const [panelExpanded, setPanelExpandedState] = useState(false);
   const [showHiddenFiles, setShowHiddenFilesState] = useState(false);
-  const [panelLayout, setPanelLayoutState] = useState<Record<string, number>>(DEFAULT_PANEL_LAYOUT);
+  const [panelLayout, setPanelLayoutState] = useState<Record<string, number>>(defaultPanelLayout);
   const setPanelManuallyHidden = useCallback((value: boolean) => {
     setPanelManuallyHiddenState(value);
   }, []);

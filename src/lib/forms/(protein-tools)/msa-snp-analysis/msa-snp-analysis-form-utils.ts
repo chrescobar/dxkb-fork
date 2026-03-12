@@ -72,8 +72,8 @@ export function validateSequenceFasta(
   hasReference = false,
 ): FastaValidationResult & { meetsMinSequenceRequirement: boolean } {
   const minSeqs = hasReference
-    ? MsaSnpAnalysisSchema.MIN_SEQUENCES_WITH_REF
-    : MsaSnpAnalysisSchema.MIN_SEQUENCES;
+    ? MsaSnpAnalysisSchema.minSequencesWithRef
+    : MsaSnpAnalysisSchema.minSequences;
 
   const result = validateFasta(fastaText, "aa"); // Default to protein, will auto-detect
 

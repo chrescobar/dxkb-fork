@@ -8,7 +8,7 @@ import clsx from "clsx";
 import { TableCell, TableRow } from "@/components/ui/table";
 import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
 import { isFolderType } from "@/lib/services/workspace/utils";
-import { COLUMN_CLASS_MAP } from "./workspace-table-columns";
+import { columnClassMap } from "./workspace-table-columns";
 
 interface SpecialRowProps {
   columns: Column<WorkspaceBrowserItem, unknown>[];
@@ -36,7 +36,7 @@ function SpecialRow({
   const cells = _useDataTable && columnOrder
     ? columnOrder.map((id) => ({
         id,
-        metaClassName: COLUMN_CLASS_MAP[id] ?? "",
+        metaClassName: columnClassMap[id] ?? "",
       }))
     : columns.map((column) => {
         const meta = column.columnDef.meta as

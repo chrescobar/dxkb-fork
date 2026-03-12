@@ -163,7 +163,7 @@ export function createBvBrcClient(authToken?: string): JsonRpcClient {
 }
 
 // Common error codes for better error handling
-export const JSON_RPC_ERROR_CODES = {
+export const jsonRpcErrorCodes = {
   PARSE_ERROR: -32700,
   INVALID_REQUEST: -32600,
   METHOD_NOT_FOUND: -32601,

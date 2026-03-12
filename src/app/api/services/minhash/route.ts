@@ -1,7 +1,7 @@
 import { getBvbrcAuthToken } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 
-const MINHASH_SERVICE_URL = process.env.MINHASH_SERVICE_URL;
+const minhashServiceUrl = process.env.MINHASH_SERVICE_URL;
 
 /**
  * Proxy to Minhash service (Similar Genome Finder).
@@ -10,9 +10,9 @@ const MINHASH_SERVICE_URL = process.env.MINHASH_SERVICE_URL;
  */
 export async function POST(request: NextRequest) {
   try {
-    if (!MINHASH_SERVICE_URL) {
+    if (!minhashServiceUrl) {
       return NextResponse.json(
-        { error: "Minhash service URL is not configured (MINHASH_SERVICE_URL)" },
+        { error: "Minhash service URL is not configured (minhashServiceUrl)" },
         { status: 500 },
       );
     }
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       headers["Authorization"] = authToken;
     }
 
-    const response = await fetch(MINHASH_SERVICE_URL, {
+    const response = await fetch(minhashServiceUrl, {
       method: "POST",
       headers,
       body: JSON.stringify(body),

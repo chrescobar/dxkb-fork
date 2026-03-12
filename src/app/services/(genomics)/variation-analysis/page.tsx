@@ -45,7 +45,7 @@ import type { Library } from "@/types/services";
 import { toast } from "sonner";
 import {
   variationAnalysisFormSchema,
-  DEFAULT_VARIATION_ANALYSIS_FORM_VALUES,
+  defaultVariationAnalysisFormValues,
   type VariationAnalysisFormData,
   type VariationLibraryItem,
 } from "@/lib/forms/(genomics)/variation-analysis/variation-analysis-form-schema";
@@ -77,7 +77,7 @@ export default function VariationAnalysisPage() {
   const [sraResetKey, setSraResetKey] = useState(0);
 
   const form = useForm({
-    defaultValues: DEFAULT_VARIATION_ANALYSIS_FORM_VALUES,
+    defaultValues: defaultVariationAnalysisFormValues,
     validators: { onChange: variationAnalysisFormSchema },
     onSubmit: async ({ value }) => {
       const data = value as VariationAnalysisFormData;
@@ -152,7 +152,7 @@ export default function VariationAnalysisPage() {
   });
 
   function handleReset() {
-    form.reset(DEFAULT_VARIATION_ANALYSIS_FORM_VALUES);
+    form.reset(defaultVariationAnalysisFormValues);
     setLibrariesAndSync([]);
     setPairedRead1(null);
     setPairedRead2(null);

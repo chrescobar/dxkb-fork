@@ -53,11 +53,11 @@ import {
 
 import {
   metagenomicBinningFormSchema,
-  DEFAULT_METAGENOMIC_BINNING_FORM_VALUES,
-  MIN_CONTIG_LENGTH_MIN,
-  MIN_CONTIG_LENGTH_MAX,
-  MIN_CONTIG_COVERAGE_MIN,
-  MIN_CONTIG_COVERAGE_MAX,
+  defaultMetagenomicBinningFormValues,
+  minContigLengthMin,
+  minContigLengthMax,
+  minContigCoverageMin,
+  minContigCoverageMax,
   type MetagenomicBinningFormData,
   type LibraryItem,
 } from "@/lib/forms/(metagenomics)/metagenomic-binning/metagenomic-binning-form-schema";
@@ -85,7 +85,7 @@ export default function MetagenomicBinningPage() {
 
   // Handle form reset
   const handleReset = () => {
-    form.reset(DEFAULT_METAGENOMIC_BINNING_FORM_VALUES);
+    form.reset(defaultMetagenomicBinningFormValues);
     setLibrariesAndSync([]);
     setShowAdvanced(false);
     setPairedRead1(null);
@@ -110,7 +110,7 @@ export default function MetagenomicBinningPage() {
   });
 
   const form = useForm({
-    defaultValues: DEFAULT_METAGENOMIC_BINNING_FORM_VALUES as MetagenomicBinningFormData,
+    defaultValues: defaultMetagenomicBinningFormValues as MetagenomicBinningFormData,
     validators: { onChange: metagenomicBinningFormSchema },
     onSubmit: async ({ value }) => {
       await handleSubmit(value as MetagenomicBinningFormData);
@@ -645,8 +645,8 @@ export default function MetagenomicBinningPage() {
                               <NumberInput
                                 name={field.name}
                                 value={field.state.value}
-                                min={MIN_CONTIG_LENGTH_MIN}
-                                max={MIN_CONTIG_LENGTH_MAX}
+                                min={minContigLengthMin}
+                                max={minContigLengthMax}
                                 stepper={10}
                                 onBlur={field.handleBlur}
                                 onValueChange={(value) => {
@@ -668,8 +668,8 @@ export default function MetagenomicBinningPage() {
                               <NumberInput
                                 name={field.name}
                                 value={field.state.value}
-                                min={MIN_CONTIG_COVERAGE_MIN}
-                                max={MIN_CONTIG_COVERAGE_MAX}
+                                min={minContigCoverageMin}
+                                max={minContigCoverageMax}
                                 stepper={1}
                                 onBlur={field.handleBlur}
                                 onValueChange={(value) => {

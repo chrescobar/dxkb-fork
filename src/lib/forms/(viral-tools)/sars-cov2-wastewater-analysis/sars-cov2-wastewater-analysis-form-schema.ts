@@ -36,11 +36,11 @@ export const recipeOptions: { value: Recipe; label: string }[] = [
   { value: "onecodex", label: "One Codex" },
 ];
 
-const MIN_YEAR = 2000;
-const MAX_YEAR = 2099;
+const minYear = 2000;
+const maxYear = 2099;
 
 /** Exact MM/DD/YYYY token pattern: two digits, slash, two digits, slash, four digits. */
-const MM_DD_YYYY_REGEX = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+const mmDdYyyyRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
 
 /**
  * Validates a date string in MM/DD/YYYY format with real calendar rules
@@ -50,19 +50,19 @@ const MM_DD_YYYY_REGEX = /^(\d{2})\/(\d{2})\/(\d{4})$/;
  */
 export function isValidDate(dateStr: string): boolean {
   const trimmed = dateStr.trim();
-  const match = trimmed.match(MM_DD_YYYY_REGEX);
+  const match = trimmed.match(mmDdYyyyRegex);
   if (!match) return false;
   const month = parseInt(match[1], 10);
   const day = parseInt(match[2], 10);
   const year = parseInt(match[3], 10);
-  if (year < MIN_YEAR || year > MAX_YEAR) return false;
+  if (year < minYear || year > maxYear) return false;
   if (month < 1 || month > 12) return false;
   const daysInMonth = new Date(year, month, 0).getDate();
   if (day < 1 || day > daysInMonth) return false;
   return true;
 }
 
-const INVALID_DATE_MESSAGE =
+const invalidDateMessage =
   "Sample date must be a valid MM/DD/YYYY (year 2000–2099)";
 
 export interface LibraryDateValidationResult {
@@ -83,7 +83,7 @@ export function validateLibraryDate(lib: {
   if (!isValidDate(d.trim())) {
     return {
       valid: false,
-      message: INVALID_DATE_MESSAGE,
+      message: invalidDateMessage,
       code: "custom",
     };
   }
@@ -117,7 +117,7 @@ export const sarsCov2WastewaterAnalysisFormSchema = z
       if (!result.valid) {
         ctx.addIssue({
           code: "custom",
-          message: result.message ?? INVALID_DATE_MESSAGE,
+          message: result.message ?? invalidDateMessage,
           path: ["paired_end_libs", i, "sample_level_date"],
         });
       }
@@ -127,7 +127,7 @@ export const sarsCov2WastewaterAnalysisFormSchema = z
       if (!result.valid) {
         ctx.addIssue({
           code: "custom",
-          message: result.message ?? INVALID_DATE_MESSAGE,
+          message: result.message ?? invalidDateMessage,
           path: ["single_end_libs", i, "sample_level_date"],
         });
       }
@@ -137,7 +137,7 @@ export const sarsCov2WastewaterAnalysisFormSchema = z
       if (!result.valid) {
         ctx.addIssue({
           code: "custom",
-          message: result.message ?? INVALID_DATE_MESSAGE,
+          message: result.message ?? invalidDateMessage,
           path: ["srr_libs", i, "sample_level_date"],
         });
       }

@@ -1,8 +1,8 @@
 import type { JobListItem } from "@/types/workspace";
-import { SERVICE_NAMES } from "./constants";
+import { serviceNames } from "./constants";
 
 const serviceNameMap = new Map<string, string>(
-  SERVICE_NAMES.map((entry) => [entry.value, entry.displayName]),
+  serviceNames.map((entry) => [entry.value, entry.displayName]),
 );
 
 /** Look up a human-readable display name for a service, falling back to regex formatting for unknown services. */

@@ -43,8 +43,8 @@ import SelectedItemsTable from "@/components/services/selected-items-table";
 import { getGenomeIdsFromGroup, fetchGenomesByIds } from "@/lib/services/genome";
 import {
   proteomeComparisonFormSchema,
-  DEFAULT_PROTEOME_COMPARISON_FORM_VALUES,
-  MAX_COMPARISON_GENOMES,
+  defaultProteomeComparisonFormValues,
+  maxComparisonGenomes,
   type ProteomeComparisonFormData,
   type ComparisonItem,
 } from "@/lib/forms/(protein-tools)/proteome-comparison/proteome-comparison-form-schema";
@@ -81,7 +81,7 @@ export default function ProteomeComparisonPage() {
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
   const form = useForm({
-    defaultValues: DEFAULT_PROTEOME_COMPARISON_FORM_VALUES as ProteomeComparisonFormData,
+    defaultValues: defaultProteomeComparisonFormValues as ProteomeComparisonFormData,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: proteomeComparisonFormSchema as any },
     onSubmit: async ({ value }) => {
@@ -92,7 +92,7 @@ export default function ProteomeComparisonPage() {
 
   // Handle reset
   const handleReset = useCallback(() => {
-    form.reset(DEFAULT_PROTEOME_COMPARISON_FORM_VALUES);
+    form.reset(defaultProteomeComparisonFormValues);
     setSelectedCompGenomeId("");
     setSelectedCompFasta(null);
     setSelectedCompFeatureGroup(null);
@@ -215,9 +215,9 @@ export default function ProteomeComparisonPage() {
       return;
     }
 
-    if (totalGenomeCount >= MAX_COMPARISON_GENOMES) {
+    if (totalGenomeCount >= maxComparisonGenomes) {
       toast.error("Maximum genomes reached", {
-        description: `Maximum of ${MAX_COMPARISON_GENOMES} comparison genomes allowed.`,
+        description: `Maximum of ${maxComparisonGenomes} comparison genomes allowed.`,
         closeButton: true,
       });
       return;
@@ -266,9 +266,9 @@ export default function ProteomeComparisonPage() {
       return;
     }
 
-    if (totalGenomeCount >= MAX_COMPARISON_GENOMES) {
+    if (totalGenomeCount >= maxComparisonGenomes) {
       toast.error("Maximum genomes reached", {
-        description: `Maximum of ${MAX_COMPARISON_GENOMES} comparison genomes allowed.`,
+        description: `Maximum of ${maxComparisonGenomes} comparison genomes allowed.`,
         closeButton: true,
       });
       return;
@@ -299,9 +299,9 @@ export default function ProteomeComparisonPage() {
       return;
     }
 
-    if (totalGenomeCount >= MAX_COMPARISON_GENOMES) {
+    if (totalGenomeCount >= maxComparisonGenomes) {
       toast.error("Maximum genomes reached", {
-        description: `Maximum of ${MAX_COMPARISON_GENOMES} comparison genomes allowed.`,
+        description: `Maximum of ${maxComparisonGenomes} comparison genomes allowed.`,
         closeButton: true,
       });
       return;
@@ -354,7 +354,7 @@ export default function ProteomeComparisonPage() {
       const validation = validateGenomeGroupAddition(
         currentItems,
         genomeIds,
-        MAX_COMPARISON_GENOMES
+        maxComparisonGenomes
       );
 
       if (!validation.valid) {
@@ -679,7 +679,7 @@ export default function ProteomeComparisonPage() {
                 />
               </RequiredFormCardTitle>
               <CardDescription>
-                Add up to {MAX_COMPARISON_GENOMES} genomes to compare (use plus
+                Add up to {maxComparisonGenomes} genomes to compare (use plus
                 buttons to add)
               </CardDescription>
             </CardHeader>
@@ -706,7 +706,7 @@ export default function ProteomeComparisonPage() {
                       onClick={handleAddCompGenome}
                       disabled={
                         !selectedCompGenomeId ||
-                        totalGenomeCount >= MAX_COMPARISON_GENOMES ||
+                        totalGenomeCount >= maxComparisonGenomes ||
                         isLoadingCompGenome
                       }
                     >
@@ -744,7 +744,7 @@ export default function ProteomeComparisonPage() {
                       onClick={handleAddCompFasta}
                       disabled={
                         !selectedCompFasta ||
-                        totalGenomeCount >= MAX_COMPARISON_GENOMES
+                        totalGenomeCount >= maxComparisonGenomes
                       }
                     >
                       <Plus className="h-4 w-4" />
@@ -777,7 +777,7 @@ export default function ProteomeComparisonPage() {
                       onClick={handleAddCompFeatureGroup}
                       disabled={
                         !selectedCompFeatureGroup ||
-                        totalGenomeCount >= MAX_COMPARISON_GENOMES
+                        totalGenomeCount >= maxComparisonGenomes
                       }
                     >
                       <Plus className="h-4 w-4" />
@@ -810,7 +810,7 @@ export default function ProteomeComparisonPage() {
                       onClick={handleAddCompGenomeGroup}
                       disabled={
                         !selectedCompGenomeGroup ||
-                        totalGenomeCount >= MAX_COMPARISON_GENOMES ||
+                        totalGenomeCount >= maxComparisonGenomes ||
                         isLoadingGenomeGroup
                       }
                     >
@@ -842,7 +842,7 @@ export default function ProteomeComparisonPage() {
                   />
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">
-                      {totalGenomeCount} / {MAX_COMPARISON_GENOMES} genome(s)
+                      {totalGenomeCount} / {maxComparisonGenomes} genome(s)
                       selected
                     </span>
                   </div>

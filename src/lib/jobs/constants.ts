@@ -35,7 +35,7 @@ export const statusConfig: Record<
 };
 
 /** Status filter options for the jobs toolbar dropdown. */
-export const STATUS_OPTIONS = [
+export const statusOptions = [
   { value: "all", label: "All Status" },
   { value: "queued", label: "Queued" },
   { value: "running", label: "Running" },
@@ -44,7 +44,7 @@ export const STATUS_OPTIONS = [
 ];
 
 /** Job statuses that indicate the job is still active (for polling). */
-export const ACTIVE_JOB_STATUSES = [
+export const activeJobStatuses = [
   "pending",
   "queued",
   "running",
@@ -52,10 +52,10 @@ export const ACTIVE_JOB_STATUSES = [
 ];
 
 /** Default page size for the jobs list. */
-export const JOBS_PAGE_SIZE = 200;
+export const jobsPageSize = 200;
 
 /** Default column display order for the jobs table. */
-export const DEFAULT_JOBS_COLUMN_ORDER = [
+export const defaultJobsColumnOrder = [
   "status",
   "id",
   "app",
@@ -72,7 +72,7 @@ export interface ServiceNameEntry {
 }
 
 /** Known service names mapped to their human-readable display names. */
-export const SERVICE_NAMES: ServiceNameEntry[] = [
+export const serviceNames: ServiceNameEntry[] = [
   { value: "ComprehensiveSARS2Analysis", displayName: "SARS-CoV-2 Genome Analysis" },
   { value: "SubspeciesClassification", displayName: "Subspecies Classification" },
   { value: "Docking", displayName: "Docking" },

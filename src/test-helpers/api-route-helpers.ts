@@ -1,0 +1,77 @@
+import { NextRequest } from "next/server";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createElement, type ReactNode } from "react";
+
+/**
+ * Factory for creating mock NextRequest objects for route handler tests.
+ */
+export function mockNextRequest(
+  opts: {
+    method?: string;
+    url?: string;
+    body?: unknown;
+    headers?: Record<string, string>;
+    searchParams?: Record<string, string>;
+  } = {},
+): NextRequest {
+  const {
+    method = "GET",
+    url: baseUrl = "http://localhost:3019/api/test",
+    body,
+    headers = {},
+    searchParams,
+  } = opts;
+
+  let finalUrl = baseUrl;
+  if (searchParams) {
+    const params = new URLSearchParams(searchParams);
+    finalUrl = `${baseUrl}?${params.toString()}`;
+  }
+
+  const init: Record<string, unknown> = {
+    method,
+    headers: { "Content-Type": "application/json", ...headers },
+  };
+
+  if (body !== undefined && method !== "GET") {
+    init.body = JSON.stringify(body);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test-only helper; Next.js RequestInit differs from standard
+  return new NextRequest(finalUrl, init as any);
+}
+
+/**
+ * Factory for creating mock fetch responses for use with vi.stubGlobal("fetch", ...).
+ */
+export function mockFetchResponse(
+  data: unknown,
+  ok = true,
+  status = ok ? 200 : 500,
+): Response {
+  return {
+    ok,
+    status,
+    json: () => Promise.resolve(data),
+    text: () =>
+      Promise.resolve(typeof data === "string" ? data : JSON.stringify(data)),
+    headers: new Headers(),
+  } as unknown as Response;
+}
+
+/**
+ * Creates a QueryClientProvider wrapper for use with renderHook.
+ * Configured with retry: false for test stability.
+ */
+export function createQueryClientWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
+
+  return function Wrapper({ children }: { children: ReactNode }) {
+    return createElement(QueryClientProvider, { client: queryClient }, children);
+  };
+}

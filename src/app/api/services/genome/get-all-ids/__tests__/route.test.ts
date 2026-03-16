@@ -1,0 +1,101 @@
+import { POST } from "../route";
+import {
+  mockNextRequest,
+  mockFetchResponse,
+} from "@/test-helpers/api-route-helpers";
+
+vi.mock("@/lib/auth", () => ({ getBvbrcAuthToken: vi.fn() }));
+vi.mock("@/lib/env", () => ({
+  getRequiredEnv: vi.fn(() => "http://mock-api"),
+}));
+
+const mockFetch = vi.fn();
+vi.stubGlobal("fetch", mockFetch);
+
+async function json(res: Response) {
+  return res.json();
+}
+
+describe("POST /api/services/genome/get-all-ids", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("returns 401 when no auth token", async () => {
+    const { getBvbrcAuthToken } = await import("@/lib/auth");
+    vi.mocked(getBvbrcAuthToken).mockResolvedValue(undefined);
+
+    const req = mockNextRequest({ method: "POST", body: {} });
+    const res = await POST(req);
+
+    expect(res.status).toBe(401);
+    expect(await json(res)).toEqual(
+      expect.objectContaining({ error: "Authentication required" }),
+    );
+  });
+
+  it("uses default limit of 10000 when no body", async () => {
+    const { getBvbrcAuthToken } = await import("@/lib/auth");
+    vi.mocked(getBvbrcAuthToken).mockResolvedValue("token");
+    mockFetch.mockResolvedValue(mockFetchResponse([]));
+
+    // Send request with no JSON body — route handles parse failure via .catch(() => ({}))
+    const req = new (await import("next/server")).NextRequest(
+      "http://localhost:3019/api/services/genome/get-all-ids",
+      { method: "POST" },
+    );
+    await POST(req);
+
+    expect(mockFetch.mock.calls[0][0]).toContain("limit(10000)");
+  });
+
+  it("clamps limit below 1 to 1", async () => {
+    const { getBvbrcAuthToken } = await import("@/lib/auth");
+    vi.mocked(getBvbrcAuthToken).mockResolvedValue("token");
+    mockFetch.mockResolvedValue(mockFetchResponse([]));
+
+    const req = mockNextRequest({ method: "POST", body: { limit: 0 } });
+    await POST(req);
+
+    expect(mockFetch.mock.calls[0][0]).toContain("limit(1)");
+  });
+
+  it("clamps limit above 10000 to 10000", async () => {
+    const { getBvbrcAuthToken } = await import("@/lib/auth");
+    vi.mocked(getBvbrcAuthToken).mockResolvedValue("token");
+    mockFetch.mockResolvedValue(mockFetchResponse([]));
+
+    const req = mockNextRequest({ method: "POST", body: { limit: 99999 } });
+    await POST(req);
+
+    expect(mockFetch.mock.calls[0][0]).toContain("limit(10000)");
+  });
+
+  it("returns results on success", async () => {
+    const { getBvbrcAuthToken } = await import("@/lib/auth");
+    vi.mocked(getBvbrcAuthToken).mockResolvedValue("token");
+
+    const genomes = [{ genome_id: "1.1" }, { genome_id: "2.2" }];
+    mockFetch.mockResolvedValue(mockFetchResponse(genomes));
+
+    const req = mockNextRequest({ method: "POST", body: { limit: 10 } });
+    const res = await POST(req);
+
+    expect(res.status).toBe(200);
+    expect(await json(res)).toEqual({ results: genomes });
+  });
+
+  it("returns upstream error on non-ok response", async () => {
+    const { getBvbrcAuthToken } = await import("@/lib/auth");
+    vi.mocked(getBvbrcAuthToken).mockResolvedValue("token");
+    mockFetch.mockResolvedValue(mockFetchResponse("err", false, 500));
+
+    const req = mockNextRequest({ method: "POST", body: {} });
+    const res = await POST(req);
+
+    expect(res.status).toBe(500);
+    expect(await json(res)).toEqual(
+      expect.objectContaining({ error: expect.stringContaining("failed") }),
+    );
+  });
+});

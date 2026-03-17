@@ -39,6 +39,8 @@ import {
   resolveDbSource,
   createInputSourceOverrides,
   extractInputFields,
+  createBlastFormValues,
+  createDatabaseSourceOverrides,
 } from "../blast-form-utils";
 
 describe("getAvailableBlastDatabaseTypes", () => {
@@ -397,5 +399,122 @@ describe("extractInputFields", () => {
     expect(result.input_fasta_data).toBe("");
     expect(result.input_fasta_file).toBe("");
     expect(result.input_feature_group).toBe("");
+  });
+});
+
+describe("createBlastFormValues", () => {
+  it("merges currentValues with overrides", () => {
+    const current = {
+      blast_program: "blastn" as const,
+      output_file: "my-output",
+      blast_max_hits: 50,
+    };
+    const overrides = { blast_max_hits: 100 };
+
+    const result = createBlastFormValues(current, overrides);
+
+    expect(result.output_file).toBe("my-output");
+    expect(result.blast_max_hits).toBe(100);
+  });
+
+  it("derives input_type as dna from blastn", () => {
+    const result = createBlastFormValues({}, { blast_program: "blastn" });
+    expect(result.input_type).toBe("dna");
+  });
+
+  it("derives input_type as aa from blastp", () => {
+    const result = createBlastFormValues({}, { blast_program: "blastp" });
+    expect(result.input_type).toBe("aa");
+  });
+
+  it("derives input_type as aa from tblastn", () => {
+    const result = createBlastFormValues({}, { blast_program: "tblastn" });
+    expect(result.input_type).toBe("aa");
+  });
+
+  it("derives db_source from db_precomputed_database", () => {
+    const result = createBlastFormValues({}, { db_precomputed_database: "selGenome" });
+    expect(result.db_source).toBe("genome_list");
+  });
+
+  it("override values take precedence over derived values", () => {
+    const result = createBlastFormValues(
+      {},
+      { blast_program: "blastn", input_type: "aa", db_source: "fasta_file" },
+    );
+
+    expect(result.input_type).toBe("aa");
+    expect(result.db_source).toBe("fasta_file");
+  });
+
+  it("defaults missing fields", () => {
+    const result = createBlastFormValues({}, {});
+
+    expect(result.blast_program).toBe("blastn");
+    expect(result.db_precomputed_database).toBe("bacteria-archaea");
+    expect(result.input_source).toBe("fasta_data");
+    expect(result.blast_evalue_cutoff).toBe(0.0001);
+  });
+});
+
+describe("createDatabaseSourceOverrides", () => {
+  it("returns correct overrides for selGenome", () => {
+    const result = createDatabaseSourceOverrides("selGenome", {});
+
+    expect(result.db_source).toBe("genome_list");
+    expect(result.db_precomputed_database).toBe("selGenome");
+    expect(result.db_genome_list).toEqual([]);
+  });
+
+  it("returns correct overrides for selGroup", () => {
+    const result = createDatabaseSourceOverrides("selGroup", {});
+
+    expect(result.db_source).toBe("genome_group");
+    expect(result.db_genome_group).toBe("");
+  });
+
+  it("returns correct overrides for selFasta", () => {
+    const result = createDatabaseSourceOverrides("selFasta", {});
+
+    expect(result.db_source).toBe("fasta_file");
+    expect(result.db_fasta_file).toBe("");
+  });
+
+  it("returns correct overrides for selFeatureGroup", () => {
+    const result = createDatabaseSourceOverrides("selFeatureGroup", {});
+
+    expect(result.db_source).toBe("feature_group");
+    expect(result.db_feature_group).toBe("");
+  });
+
+  it("returns correct overrides for selTaxon", () => {
+    const result = createDatabaseSourceOverrides("selTaxon", {});
+
+    expect(result.db_source).toBe("taxon_list");
+    expect(result.db_taxon_list).toEqual([]);
+  });
+
+  it("resets all db-conditional fields when switching", () => {
+    const result = createDatabaseSourceOverrides("selGenome", {});
+
+    expect(result.db_genome_group).toBe("");
+    expect(result.db_feature_group).toBe("");
+    expect(result.db_taxon_list).toEqual([]);
+    expect(result.db_fasta_file).toBe("");
+  });
+
+  it("preserves input fields passed as second argument", () => {
+    const preserved = { input_source: "fasta_data" as const, input_fasta_data: ">seq\nACGT" };
+    const result = createDatabaseSourceOverrides("bacteria-archaea", preserved);
+
+    expect(result.input_source).toBe("fasta_data");
+    expect(result.input_fasta_data).toBe(">seq\nACGT");
+  });
+
+  it("throws for invalid database source", () => {
+    expect(() =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      createDatabaseSourceOverrides("nonexistent" as any, {}),
+    ).toThrow("Invalid database source: nonexistent");
   });
 });

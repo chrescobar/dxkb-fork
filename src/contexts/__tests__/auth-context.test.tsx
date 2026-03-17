@@ -1,10 +1,12 @@
-import { renderHook } from "@testing-library/react";
+import { renderHook, act, waitFor } from "@testing-library/react";
 import React from "react";
 
+const { mockReplace } = vi.hoisted(() => ({ mockReplace: vi.fn() }));
+
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/",
-  useRouter: () => ({ replace: vi.fn(), push: vi.fn() }),
-  useSearchParams: () => ({ toString: () => "" }),
+  usePathname: vi.fn(() => "/"),
+  useRouter: vi.fn(() => ({ replace: mockReplace, push: vi.fn() })),
+  useSearchParams: vi.fn(() => ({ toString: () => "" })),
 }));
 
 vi.mock("@/lib/auth-client", () => ({
@@ -22,9 +24,31 @@ vi.mock("@/lib/auth-client", () => ({
   },
 }));
 
+import { usePathname } from "next/navigation";
+import { bvbrcAuth } from "@/lib/auth-client";
 import { AuthProvider, useAuth } from "../auth-context";
 
+const testUser = {
+  username: "testuser",
+  email: "test@example.com",
+  token: "abc123",
+};
+
+const wrapper = ({ children }: { children: React.ReactNode }) => (
+  <AuthProvider initialUser={testUser}>{children}</AuthProvider>
+);
+
+const noUserWrapper = ({ children }: { children: React.ReactNode }) => (
+  <AuthProvider>{children}</AuthProvider>
+);
+
 describe("AuthContext", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(usePathname).mockReturnValue("/");
+    vi.mocked(bvbrcAuth.getSession).mockResolvedValue({ data: null, error: null } as never);
+  });
+
   it("useAuth throws outside provider", () => {
     expect(() => renderHook(() => useAuth())).toThrow(
       "useAuth must be used within an AuthProvider",
@@ -32,16 +56,6 @@ describe("AuthContext", () => {
   });
 
   it("provides initialUser when passed", () => {
-    const testUser = {
-      username: "testuser",
-      email: "test@example.com",
-      token: "abc123",
-    };
-
-    const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <AuthProvider initialUser={testUser}>{children}</AuthProvider>
-    );
-
     const { result } = renderHook(() => useAuth(), { wrapper });
 
     expect(result.current.user).toEqual(
@@ -54,28 +68,209 @@ describe("AuthContext", () => {
   });
 
   it("isAuthenticated is true when user exists", () => {
-    const testUser = {
-      username: "testuser",
-      email: "test@example.com",
-      token: "abc123",
-    };
-
-    const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <AuthProvider initialUser={testUser}>{children}</AuthProvider>
-    );
-
     const { result } = renderHook(() => useAuth(), { wrapper });
 
     expect(result.current.isAuthenticated).toBe(true);
   });
 
   it("isAuthenticated is false when no user", () => {
-    const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <AuthProvider>{children}</AuthProvider>
-    );
-
-    const { result } = renderHook(() => useAuth(), { wrapper });
+    const { result } = renderHook(() => useAuth(), { wrapper: noUserWrapper });
 
     expect(result.current.isAuthenticated).toBe(false);
+  });
+
+  describe("signIn", () => {
+    it("sets user from result.data.user on success", async () => {
+      const signedInUser = { username: "signed-in", email: "s@test.com", token: "t" };
+      vi.mocked(bvbrcAuth.signIn.email).mockResolvedValue({
+        data: { user: signedInUser },
+        error: null,
+      } as never);
+
+      const { result } = renderHook(() => useAuth(), { wrapper: noUserWrapper });
+
+      // Wait for the initial auth check to settle
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      await act(async () => {
+        await result.current.signIn({ username: "u", password: "p" } as never);
+      });
+
+      expect(result.current.user).toEqual(expect.objectContaining({ username: "signed-in" }));
+    });
+
+    it("falls back to fetchSession when result has no user", async () => {
+      vi.mocked(bvbrcAuth.signIn.email).mockResolvedValue({
+        data: {},
+        error: null,
+      } as never);
+      vi.mocked(bvbrcAuth.getSession).mockResolvedValue({
+        data: { user: { username: "session-user", email: "s@test.com", token: "t" } },
+        error: null,
+      } as never);
+
+      const { result } = renderHook(() => useAuth(), { wrapper: noUserWrapper });
+
+      await act(async () => {
+        await result.current.signIn({ username: "u", password: "p" } as never);
+      });
+
+      expect(bvbrcAuth.getSession).toHaveBeenCalled();
+    });
+
+    it("throws when result has error", async () => {
+      vi.mocked(bvbrcAuth.signIn.email).mockResolvedValue({
+        data: null,
+        error: { message: "Invalid credentials" },
+      } as never);
+
+      const { result } = renderHook(() => useAuth(), { wrapper: noUserWrapper });
+
+      await expect(
+        act(async () => {
+          await result.current.signIn({ username: "u", password: "p" } as never);
+        }),
+      ).rejects.toThrow("Invalid credentials");
+    });
+  });
+
+  describe("signUp", () => {
+    it("fetches session and sets user on success", async () => {
+      vi.mocked(bvbrcAuth.signUp.email).mockResolvedValue({ error: null } as never);
+      vi.mocked(bvbrcAuth.getSession).mockResolvedValue({
+        data: { user: { username: "newuser", email: "n@test.com", token: "t" } },
+        error: null,
+      } as never);
+
+      const { result } = renderHook(() => useAuth(), { wrapper: noUserWrapper });
+
+      await act(async () => {
+        await result.current.signUp({ username: "u", email: "e", password: "p" } as never);
+      });
+
+      expect(bvbrcAuth.getSession).toHaveBeenCalled();
+    });
+
+    it("throws when result has error", async () => {
+      vi.mocked(bvbrcAuth.signUp.email).mockResolvedValue({
+        error: { message: "Email taken" },
+      } as never);
+
+      const { result } = renderHook(() => useAuth(), { wrapper: noUserWrapper });
+
+      await expect(
+        act(async () => {
+          await result.current.signUp({ username: "u", email: "e", password: "p" } as never);
+        }),
+      ).rejects.toThrow("Email taken");
+    });
+  });
+
+  describe("requestPasswordReset", () => {
+    it("completes without error on success", async () => {
+      vi.mocked(bvbrcAuth.requestPasswordReset).mockResolvedValue({ error: null } as never);
+
+      const { result } = renderHook(() => useAuth(), { wrapper: noUserWrapper });
+
+      await act(async () => {
+        await result.current.requestPasswordReset("user@test.com");
+      });
+
+      expect(bvbrcAuth.requestPasswordReset).toHaveBeenCalledWith({ usernameOrEmail: "user@test.com" });
+    });
+
+    it("throws when result has error", async () => {
+      vi.mocked(bvbrcAuth.requestPasswordReset).mockResolvedValue({
+        error: { message: "User not found" },
+      } as never);
+
+      const { result } = renderHook(() => useAuth(), { wrapper: noUserWrapper });
+
+      await expect(
+        act(async () => {
+          await result.current.requestPasswordReset("unknown@test.com");
+        }),
+      ).rejects.toThrow("User not found");
+    });
+  });
+
+  describe("sendVerificationEmail", () => {
+    it("completes without throwing on success", async () => {
+      vi.mocked(bvbrcAuth.sendVerificationEmail).mockResolvedValue({ error: null } as never);
+
+      const { result } = renderHook(() => useAuth(), { wrapper });
+
+      await act(async () => {
+        await result.current.sendVerificationEmail();
+      });
+
+      expect(bvbrcAuth.sendVerificationEmail).toHaveBeenCalled();
+    });
+
+    it("logs error but does not throw on failure", async () => {
+      const consoleSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
+      vi.mocked(bvbrcAuth.sendVerificationEmail).mockResolvedValue({
+        error: { message: "Send failed" },
+      } as never);
+
+      const { result } = renderHook(() => useAuth(), { wrapper });
+
+      await act(async () => {
+        await result.current.sendVerificationEmail();
+      });
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "Failed to send verification email:",
+        "Send failed",
+      );
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe("refreshAuth", () => {
+    it("calls signOut when session returns null user", async () => {
+      vi.mocked(bvbrcAuth.getSession).mockResolvedValue({
+        data: null,
+        error: null,
+      } as never);
+
+      const { result } = renderHook(() => useAuth(), { wrapper });
+
+      await act(async () => {
+        await result.current.refreshAuth();
+      });
+
+      expect(bvbrcAuth.signOut).toHaveBeenCalled();
+    });
+
+    it("calls signOut when session fetch throws", async () => {
+      vi.mocked(bvbrcAuth.getSession).mockRejectedValue(new Error("Network error"));
+      const consoleSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
+
+      const { result } = renderHook(() => useAuth(), { wrapper });
+
+      await act(async () => {
+        await result.current.refreshAuth();
+      });
+
+      expect(bvbrcAuth.signOut).toHaveBeenCalled();
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe("protected route redirect", () => {
+    it("redirects to sign-in when user is null on protected path", async () => {
+      vi.mocked(usePathname).mockReturnValue("/services/blast");
+
+      renderHook(() => useAuth(), { wrapper: noUserWrapper });
+
+      await waitFor(() => {
+        expect(mockReplace).toHaveBeenCalledWith(
+          "/sign-in?redirect=%2Fservices%2Fblast",
+        );
+      });
+    });
   });
 });

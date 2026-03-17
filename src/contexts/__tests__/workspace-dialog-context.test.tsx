@@ -126,4 +126,79 @@ describe("WorkspaceDialogContext", () => {
 
     expect(result.current.state).toEqual(stateBefore);
   });
+
+  it("OPEN_DOWNLOAD_OPTIONS sets paths and defaultName", () => {
+    const { result } = renderHook(() => useWorkspaceDialog(), { wrapper });
+
+    act(() => {
+      result.current.dispatch({
+        type: "OPEN_DOWNLOAD_OPTIONS",
+        paths: ["/test/a.txt", "/test/b.txt"],
+        defaultName: "archive",
+      });
+    });
+
+    expect(result.current.state.activeDialog).toEqual({
+      type: "downloadOptions",
+      paths: ["/test/a.txt", "/test/b.txt"],
+      defaultName: "archive",
+    });
+  });
+
+  it("OPEN_FILE_VIEWER_CONSTRUCTION sets fileViewerConstruction type", () => {
+    const { result } = renderHook(() => useWorkspaceDialog(), { wrapper });
+
+    act(() => {
+      result.current.dispatch({ type: "OPEN_FILE_VIEWER_CONSTRUCTION" });
+    });
+
+    expect(result.current.state.activeDialog).toEqual({ type: "fileViewerConstruction" });
+  });
+
+  it("OPEN_CREATE_WORKSPACE sets createWorkspace type", () => {
+    const { result } = renderHook(() => useWorkspaceDialog(), { wrapper });
+
+    act(() => {
+      result.current.dispatch({ type: "OPEN_CREATE_WORKSPACE" });
+    });
+
+    expect(result.current.state.activeDialog).toEqual({ type: "createWorkspace" });
+  });
+
+  it("OPEN_COPY with move mode sets copy dialog with move mode", () => {
+    const { result } = renderHook(() => useWorkspaceDialog(), { wrapper });
+
+    const items = [
+      { name: "file.txt", path: "/test/file.txt" },
+    ] as unknown as import("@/types/workspace-browser").WorkspaceBrowserItem[];
+
+    act(() => {
+      result.current.dispatch({ type: "OPEN_COPY", items, mode: "move" });
+    });
+
+    expect(result.current.state.activeDialog).toEqual(
+      expect.objectContaining({
+        type: "copy",
+        items,
+        mode: "move",
+      }),
+    );
+  });
+
+  it("OPEN_EDIT_TYPE sets editType dialog with item", () => {
+    const { result } = renderHook(() => useWorkspaceDialog(), { wrapper });
+
+    const item = { name: "file.txt", path: "/test/file.txt" } as unknown as import("@/types/workspace-browser").WorkspaceBrowserItem;
+
+    act(() => {
+      result.current.dispatch({ type: "OPEN_EDIT_TYPE", item });
+    });
+
+    expect(result.current.state.activeDialog).toEqual(
+      expect.objectContaining({
+        type: "editType",
+        item,
+      }),
+    );
+  });
 });

@@ -4,7 +4,7 @@ import { createQueryClientWrapper } from "@/test-helpers/api-route-helpers";
 import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
 import { useWorkspaceActionDispatch } from "@/hooks/services/workspace/use-workspace-action-dispatch";
 
-const mockDispatch = vi.fn();
+const { mockDispatch } = vi.hoisted(() => ({ mockDispatch: vi.fn() }));
 vi.mock("@/contexts/workspace-dialog-context", () => ({
   useWorkspaceDialog: () => ({ dispatch: mockDispatch }),
 }));
@@ -284,5 +284,138 @@ describe("useWorkspaceActionDispatch", () => {
 
     expect(mockDispatch).not.toHaveBeenCalled();
     expect(mockGetDownloadUrls).not.toHaveBeenCalled();
+  });
+
+  it("download: folder item dispatches OPEN_DOWNLOAD_OPTIONS", async () => {
+    const options = createDefaultOptions();
+    const folderItem = makeItem({ name: "myFolder", path: "/user@bvbrc/home/myFolder", type: "folder" });
+    options.items = [folderItem];
+
+    const { result } = renderHook(
+      () => useWorkspaceActionDispatch(options as never),
+      { wrapper: createQueryClientWrapper() },
+    );
+
+    await act(async () => {
+      await result.current.handleAction("download", [folderItem]);
+    });
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "OPEN_DOWNLOAD_OPTIONS",
+        defaultName: "myFolder",
+      }),
+    );
+  });
+
+  it("download: multiple items dispatches OPEN_DOWNLOAD_OPTIONS", async () => {
+    const options = createDefaultOptions();
+    const items = [
+      makeItem({ name: "a.txt", path: "/user@bvbrc/home/a.txt" }),
+      makeItem({ name: "b.txt", path: "/user@bvbrc/home/b.txt" }),
+    ];
+    options.items = items;
+
+    const { result } = renderHook(
+      () => useWorkspaceActionDispatch(options as never),
+      { wrapper: createQueryClientWrapper() },
+    );
+
+    await act(async () => {
+      await result.current.handleAction("download", items);
+    });
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "OPEN_DOWNLOAD_OPTIONS",
+      }),
+    );
+  });
+
+  it("download: job_result item uses name without leading dot", async () => {
+    const options = createDefaultOptions();
+    const jobItem = makeItem({ name: ".assembly_results", path: "/user@bvbrc/home/.assembly_results", type: "job_result" });
+    options.items = [jobItem];
+
+    const { result } = renderHook(
+      () => useWorkspaceActionDispatch(options as never),
+      { wrapper: createQueryClientWrapper() },
+    );
+
+    await act(async () => {
+      await result.current.handleAction("download", [jobItem]);
+    });
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "OPEN_DOWNLOAD_OPTIONS",
+        defaultName: "assembly_results",
+      }),
+    );
+  });
+
+  it("download: dot-folder with sibling job_result uses sibling name", async () => {
+    const { getSiblingJobResultPathForDotFolder } = await import("@/lib/services/workspace/helpers");
+    vi.mocked(getSiblingJobResultPathForDotFolder).mockReturnValue("/user@bvbrc/home/SiblingJob");
+
+    const options = createDefaultOptions();
+    const dotFolder = makeItem({ name: ".hidden", path: "/user@bvbrc/home/.hidden", type: "folder" });
+    options.items = [dotFolder];
+
+    const { result } = renderHook(
+      () => useWorkspaceActionDispatch(options as never),
+      { wrapper: createQueryClientWrapper() },
+    );
+
+    await act(async () => {
+      await result.current.handleAction("download", [dotFolder]);
+    });
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "OPEN_DOWNLOAD_OPTIONS",
+        defaultName: "SiblingJob",
+      }),
+    );
+  });
+
+  it("favorite: skips when currentUser is empty", async () => {
+    const { toggleFavorite } = await import("@/lib/services/workspace/favorites");
+    const mockedToggleFavorite = vi.mocked(toggleFavorite);
+
+    const options = createDefaultOptions();
+    options.currentUser = "";
+    const folderItem = makeItem({ name: "myFolder", path: "/user@bvbrc/home/myFolder", type: "folder" });
+
+    const { result } = renderHook(
+      () => useWorkspaceActionDispatch(options as never),
+      { wrapper: createQueryClientWrapper() },
+    );
+
+    await act(async () => {
+      await result.current.handleAction("favorite", [folderItem]);
+    });
+
+    expect(mockedToggleFavorite).not.toHaveBeenCalled();
+  });
+
+  it("favorite: skips when myWorkspaceRoot is empty", async () => {
+    const { toggleFavorite } = await import("@/lib/services/workspace/favorites");
+    const mockedToggleFavorite = vi.mocked(toggleFavorite);
+
+    const options = createDefaultOptions();
+    options.myWorkspaceRoot = "";
+    const folderItem = makeItem({ name: "myFolder", path: "/user@bvbrc/home/myFolder", type: "folder" });
+
+    const { result } = renderHook(
+      () => useWorkspaceActionDispatch(options as never),
+      { wrapper: createQueryClientWrapper() },
+    );
+
+    await act(async () => {
+      await result.current.handleAction("favorite", [folderItem]);
+    });
+
+    expect(mockedToggleFavorite).not.toHaveBeenCalled();
   });
 });

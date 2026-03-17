@@ -12,15 +12,17 @@ import {
   type UseWorkspaceDialogHandlersOptions,
 } from "@/hooks/services/workspace/use-workspace-dialog-handlers";
 
-const mockDispatch = vi.fn();
-let mockActiveDialog: unknown = null;
+const { mockDispatch, mockActiveDialog } = vi.hoisted(() => ({
+  mockDispatch: vi.fn(),
+  mockActiveDialog: { value: null as unknown },
+}));
 
 vi.mock("@/contexts/workspace-dialog-context", () => ({
   useWorkspaceDialog: () => ({
     dispatch: mockDispatch,
     state: {
       get activeDialog() {
-        return mockActiveDialog;
+        return mockActiveDialog.value;
       },
     },
   }),
@@ -95,12 +97,12 @@ describe("useWorkspaceDialogHandlers", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockActiveDialog = null;
+    mockActiveDialog.value = null;
   });
 
   it("handleConfirmDelete calls workspaceCrud.delete with item paths", async () => {
     const item = makeItem({ name: "to-delete.txt", path: "/testuser/home/to-delete.txt" });
-    mockActiveDialog = {
+    mockActiveDialog.value = {
       type: "delete",
       items: [item],
       nonEmptyPaths: [],
@@ -128,7 +130,7 @@ describe("useWorkspaceDialogHandlers", () => {
   });
 
   it("handleConfirmDelete closes dialog when items array is empty", async () => {
-    mockActiveDialog = {
+    mockActiveDialog.value = {
       type: "delete",
       items: [],
       nonEmptyPaths: [],
@@ -150,7 +152,7 @@ describe("useWorkspaceDialogHandlers", () => {
 
   it("handleConfirmDelete closes dialog when all items have no path", async () => {
     const item = makeItem({ name: "no-path", path: "" });
-    mockActiveDialog = {
+    mockActiveDialog.value = {
       type: "delete",
       items: [item],
       nonEmptyPaths: [],
@@ -175,7 +177,7 @@ describe("useWorkspaceDialogHandlers", () => {
       name: "copy-me.txt",
       path: "/testuser/home/copy-me.txt",
     });
-    mockActiveDialog = {
+    mockActiveDialog.value = {
       type: "copy",
       items: [item],
       mode: "copy",
@@ -208,7 +210,7 @@ describe("useWorkspaceDialogHandlers", () => {
       path: "/testuser/home/file.txt",
       type: "contigs",
     });
-    mockActiveDialog = {
+    mockActiveDialog.value = {
       type: "copy",
       items: [item],
       mode: "copy",
@@ -237,7 +239,7 @@ describe("useWorkspaceDialogHandlers", () => {
       name: "move-me.txt",
       path: "/testuser/home/move-me.txt",
     });
-    mockActiveDialog = {
+    mockActiveDialog.value = {
       type: "copy",
       items: [item],
       mode: "move",
@@ -272,7 +274,7 @@ describe("useWorkspaceDialogHandlers", () => {
       name: "file.txt",
       path: "/testuser/home/file.txt",
     });
-    mockActiveDialog = {
+    mockActiveDialog.value = {
       type: "copy",
       items: [item],
       mode: "copy",
@@ -350,7 +352,7 @@ describe("useWorkspaceDialogHandlers", () => {
       path: "/testuser/home/data.txt",
       type: "contigs",
     });
-    mockActiveDialog = {
+    mockActiveDialog.value = {
       type: "editType",
       item,
     };
@@ -387,7 +389,7 @@ describe("useWorkspaceDialogHandlers", () => {
       "/testuser/home/my-folder",
     ]);
 
-    mockActiveDialog = {
+    mockActiveDialog.value = {
       type: "delete",
       items: [folderItem],
       nonEmptyPaths: [],
@@ -405,5 +407,179 @@ describe("useWorkspaceDialogHandlers", () => {
         paths: ["/testuser/home/my-folder"],
       });
     });
+  });
+
+  it("copy onError with overwrite error code -32603 shows 'Can not overwrite' message", async () => {
+    const item = makeItem({ name: "dup.txt", path: "/testuser/home/dup.txt" });
+    mockActiveDialog.value = { type: "copy", items: [item], mode: "copy" };
+
+    const options = createMockOptions();
+    vi.mocked(options.workspaceCrud.copyByPaths as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
+      Object.assign(new Error("Copy failed"), {
+        apiResponse: { error: { code: -32603 } },
+      }),
+    );
+
+    const { result } = renderHook(
+      () => useWorkspaceDialogHandlers(options),
+      { wrapper },
+    );
+
+    await act(async () => {
+      await result.current.handleCopyConfirm("/testuser/home/dest");
+    });
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(
+        expect.stringContaining("Can not overwrite"),
+        expect.anything(),
+      );
+    });
+  });
+
+  it("copy onError with generic error shows err.message", async () => {
+    const item = makeItem({ name: "fail.txt", path: "/testuser/home/fail.txt" });
+    mockActiveDialog.value = { type: "copy", items: [item], mode: "copy" };
+
+    const options = createMockOptions();
+    vi.mocked(options.workspaceCrud.copyByPaths as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
+      new Error("Network problem"),
+    );
+
+    const { result } = renderHook(
+      () => useWorkspaceDialogHandlers(options),
+      { wrapper },
+    );
+
+    await act(async () => {
+      await result.current.handleCopyConfirm("/testuser/home/dest");
+    });
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith("Network problem", expect.anything());
+    });
+  });
+
+  it("copy onError with string apiResponse shows it as description", async () => {
+    const item = makeItem({ name: "err.txt", path: "/testuser/home/err.txt" });
+    mockActiveDialog.value = { type: "copy", items: [item], mode: "copy" };
+
+    const options = createMockOptions();
+    vi.mocked(options.workspaceCrud.copyByPaths as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
+      Object.assign(new Error("Copy failed"), { apiResponse: "detailed reason" }),
+    );
+
+    const { result } = renderHook(
+      () => useWorkspaceDialogHandlers(options),
+      { wrapper },
+    );
+
+    await act(async () => {
+      await result.current.handleCopyConfirm("/testuser/home/dest");
+    });
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(
+        "Copy failed",
+        expect.objectContaining({ description: "detailed reason" }),
+      );
+    });
+  });
+
+  it("handleCopyConfirm with filenameOverride uses override for first item", async () => {
+    const item = makeItem({ name: "original.txt", path: "/testuser/home/original.txt" });
+    mockActiveDialog.value = { type: "copy", items: [item], mode: "copy" };
+
+    const options = createMockOptions();
+    const { result } = renderHook(
+      () => useWorkspaceDialogHandlers(options),
+      { wrapper },
+    );
+
+    await act(async () => {
+      await result.current.handleCopyConfirm("/testuser/home/dest", "renamed.txt");
+    });
+
+    await waitFor(() => {
+      expect(options.workspaceCrud.copyByPaths).toHaveBeenCalledWith(
+        expect.objectContaining({
+          objects: [["/testuser/home/original.txt", "/testuser/home/dest/renamed.txt"]],
+        }),
+      );
+    });
+  });
+
+  it("handleCopyConfirm with empty selection does nothing", async () => {
+    mockActiveDialog.value = { type: "copy", items: [], mode: "copy" };
+
+    const options = createMockOptions();
+    const { result } = renderHook(
+      () => useWorkspaceDialogHandlers(options),
+      { wrapper },
+    );
+
+    await act(async () => {
+      await result.current.handleCopyConfirm("/testuser/home/dest");
+    });
+
+    expect(options.workspaceCrud.copyByPaths).not.toHaveBeenCalled();
+  });
+
+  it("delete mutation onError shows toast.error", async () => {
+    const item = makeItem({ name: "undel.txt", path: "/testuser/home/undel.txt" });
+    mockActiveDialog.value = { type: "delete", items: [item], nonEmptyPaths: [] };
+
+    const options = createMockOptions();
+    vi.mocked(options.workspaceCrud.delete as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
+      new Error("Permission denied"),
+    );
+
+    const { result } = renderHook(
+      () => useWorkspaceDialogHandlers(options),
+      { wrapper },
+    );
+
+    await act(async () => {
+      await result.current.handleConfirmDelete();
+    });
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith("Permission denied");
+    });
+  });
+
+  it("handleConfirmDelete returns early when dialog type is not delete", async () => {
+    mockActiveDialog.value = { type: "copy", items: [], mode: "copy" };
+
+    const options = createMockOptions();
+    const { result } = renderHook(
+      () => useWorkspaceDialogHandlers(options),
+      { wrapper },
+    );
+
+    await act(async () => {
+      await result.current.handleConfirmDelete();
+    });
+
+    expect(options.workspaceCrud.delete).not.toHaveBeenCalled();
+    expect(mockDispatch).not.toHaveBeenCalledWith({ type: "CLOSE" });
+  });
+
+  it("handleCopyConfirm closes dialog when items have null path/name", async () => {
+    const item = makeItem({ name: null as unknown as string, path: null as unknown as string });
+    mockActiveDialog.value = { type: "copy", items: [item], mode: "copy" };
+
+    const options = createMockOptions();
+    const { result } = renderHook(
+      () => useWorkspaceDialogHandlers(options),
+      { wrapper },
+    );
+
+    await act(async () => {
+      await result.current.handleCopyConfirm("/testuser/home/dest");
+    });
+
+    expect(mockDispatch).toHaveBeenCalledWith({ type: "CLOSE" });
+    expect(options.workspaceCrud.copyByPaths).not.toHaveBeenCalled();
   });
 });

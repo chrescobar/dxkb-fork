@@ -224,6 +224,34 @@ describe("transformPrimerDesignParams", () => {
 
     expect(result.PRIMER_PICK_INTERNAL_OLIGO).toBe(true);
   });
+
+  it("omits SEQUENCE_ID when empty for sequence_text input", () => {
+    const data = { ...baseFormData, SEQUENCE_ID: "" };
+    const result = transformPrimerDesignParams(data as never);
+
+    expect(result).not.toHaveProperty("SEQUENCE_ID");
+  });
+
+  it("handles empty sequence_input for sequence_text", () => {
+    const data = { ...baseFormData, sequence_input: "" };
+    const result = transformPrimerDesignParams(data as never);
+
+    expect(result.sequence_input).toBe("");
+  });
+
+  it("includes multiple SEQUENCE_TARGET entries as space-joined string", () => {
+    const data = { ...baseFormData, SEQUENCE_TARGET: ["100,200", "300,400"] };
+    const result = transformPrimerDesignParams(data as never);
+
+    expect(result.SEQUENCE_TARGET).toBe("100,200 300,400");
+  });
+
+  it("formats PRIMER_PRODUCT_SIZE_RANGE replacing commas with dashes", () => {
+    const data = { ...baseFormData, PRIMER_PRODUCT_SIZE_RANGE: ["100,500"] };
+    const result = transformPrimerDesignParams(data as never);
+
+    expect(result.PRIMER_PRODUCT_SIZE_RANGE).toBe("100-500");
+  });
 });
 
 describe("resetPrimerDesignValues", () => {

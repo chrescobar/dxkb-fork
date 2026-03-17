@@ -7,6 +7,9 @@ vi.mock("@/types/services", () => ({}));
 
 import {
   handleLibraryError,
+  getPairedLibraryBuildFn,
+  getSingleLibraryBuildFn,
+  singleLibraryDuplicateMatcher,
   sanitizeTaxonomyForOutputName,
   computeOutputName,
   transformSarsCov2GenomeAnalysisParams,
@@ -232,5 +235,61 @@ describe("transformSarsCov2GenomeAnalysisParams", () => {
     expect(result).not.toHaveProperty("recipe");
     expect(result).not.toHaveProperty("primers");
     expect(result).not.toHaveProperty("primer_version");
+  });
+});
+
+describe("getPairedLibraryBuildFn", () => {
+  it("returns a function that builds a paired library with platform", () => {
+    const buildFn = getPairedLibraryBuildFn("illumina" as never);
+    const result = buildFn("/ws/r1.fq", "/ws/r2.fq", "p1");
+
+    expect(result.library).toEqual(
+      expect.objectContaining({
+        id: "p1",
+        type: "paired",
+        files: ["/ws/r1.fq", "/ws/r2.fq"],
+        platform: "illumina",
+      }),
+    );
+  });
+});
+
+describe("getSingleLibraryBuildFn", () => {
+  it("returns a library with platform when platform is provided", () => {
+    const buildFn = getSingleLibraryBuildFn("nanopore" as never);
+    const result = buildFn("/ws/reads.fq");
+
+    expect(result.library).toEqual(
+      expect.objectContaining({
+        id: "/ws/reads.fq",
+        type: "single",
+        platform: "nanopore",
+      }),
+    );
+  });
+
+  it("returns error when platform is null", () => {
+    const buildFn = getSingleLibraryBuildFn(null);
+    const result = buildFn("/ws/reads.fq");
+
+    expect(result.library).toBeUndefined();
+    expect(result.error).toBe("Platform must be selected for single read library");
+  });
+});
+
+describe("singleLibraryDuplicateMatcher", () => {
+  it("returns true when id and type match", () => {
+    const library = { id: "/ws/reads.fq", type: "single" } as never;
+    expect(singleLibraryDuplicateMatcher(library, "/ws/reads.fq")).toBe(true);
+  });
+
+  it("returns false when id matches but type is not single", () => {
+    const library = { id: "/ws/reads.fq", type: "paired" } as never;
+    expect(singleLibraryDuplicateMatcher(library, "/ws/reads.fq")).toBe(false);
+  });
+
+  it("returns false when type matches but id differs", () => {
+    const library = { id: "/ws/other.fq", type: "single" } as never;
+    expect(singleLibraryDuplicateMatcher(library, "/ws/reads.fq")).toBe(false);
   });
 });

@@ -4,7 +4,7 @@ const mockFetch = vi.fn();
 vi.stubGlobal("fetch", mockFetch);
 
 afterEach(() => {
-  vi.resetAllMocks();
+  vi.restoreAllMocks();
 });
 
 describe("submitServiceJob", () => {
@@ -81,6 +81,46 @@ describe("submitServiceJob", () => {
       expect.objectContaining({
         success: false,
         error: "Failed to fetch",
+      }),
+    );
+  });
+
+  it("appends details field to error message when present", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 422,
+      json: async () => ({ error: "Validation failed", details: { field: "genome_id" } }),
+      text: async () => "",
+    });
+
+    const result = await submitServiceJob(appName, appParams);
+
+    expect(result.error).toContain("Validation failed");
+    expect(result.error).toContain("genome_id");
+  });
+
+  it("uses default HTTP error message when both JSON and text parsing fail", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 502,
+      json: async () => { throw new Error("not json"); },
+      text: async () => { throw new Error("stream consumed"); },
+    });
+
+    const result = await submitServiceJob(appName, appParams);
+
+    expect(result.error).toBe("HTTP error! status: 502");
+  });
+
+  it("uses fallback message for non-Error exceptions", async () => {
+    mockFetch.mockRejectedValueOnce("string error");
+
+    const result = await submitServiceJob(appName, appParams);
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        success: false,
+        error: "Failed to submit service job",
       }),
     );
   });

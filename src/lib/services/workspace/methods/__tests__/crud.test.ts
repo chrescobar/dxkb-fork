@@ -210,4 +210,175 @@ describe("WorkspaceCrudMethods", () => {
       expect(result).toEqual([["saved"]]);
     });
   });
+
+  describe("deleteMultipleObjects", () => {
+    it("delegates to Workspace.delete with array of paths", async () => {
+      const paths = ["/user@bvbrc/home/a.txt", "/user@bvbrc/home/b.txt"];
+      mockClient.makeRequest.mockResolvedValue([["deleted"]]);
+
+      const result = await crud.deleteMultipleObjects(paths);
+
+      expect(mockClient.makeRequest).toHaveBeenCalledWith("Workspace.delete", [
+        { objects: paths },
+      ]);
+      expect(result).toEqual([["deleted"]]);
+    });
+  });
+
+  describe("copy", () => {
+    it("delegates to Workspace.copy with given params", async () => {
+      const params = {
+        objects: [{ workspace: "ws1", id: "file.txt" }],
+        new_workspace: "ws2",
+        new_id: "copy.txt",
+      };
+      mockClient.makeRequest.mockResolvedValue([["copied"]]);
+
+      const result = await crud.copy(params);
+
+      expect(mockClient.makeRequest).toHaveBeenCalledWith("Workspace.copy", [params]);
+      expect(result).toEqual([["copied"]]);
+    });
+  });
+
+  describe("copyObject", () => {
+    it("builds copy params from individual arguments", async () => {
+      mockClient.makeRequest.mockResolvedValue([["copied"]]);
+
+      await crud.copyObject("ws1", "file.txt", "ws2", "copy.txt");
+
+      expect(mockClient.makeRequest).toHaveBeenCalledWith("Workspace.copy", [
+        {
+          objects: [{ workspace: "ws1", id: "file.txt" }],
+          new_workspace: "ws2",
+          new_id: "copy.txt",
+        },
+      ]);
+    });
+  });
+
+  describe("moveObject", () => {
+    it("builds move params from individual arguments", async () => {
+      mockClient.makeRequest.mockResolvedValue([["moved"]]);
+
+      await crud.moveObject("ws1", "old.txt", "ws2", "new.txt");
+
+      expect(mockClient.makeRequest).toHaveBeenCalledWith("Workspace.move", [
+        {
+          objects: [{ workspace: "ws1", id: "old.txt" }],
+          new_workspace: "ws2",
+          new_id: "new.txt",
+        },
+      ]);
+    });
+  });
+
+  describe("renameObject", () => {
+    it("builds rename params from individual arguments", async () => {
+      mockClient.makeRequest.mockResolvedValue([["renamed"]]);
+
+      await crud.renameObject("ws1", "old.txt", "new.txt");
+
+      expect(mockClient.makeRequest).toHaveBeenCalledWith("Workspace.rename", [
+        {
+          objects: [{ workspace: "ws1", id: "old.txt" }],
+          new_name: "new.txt",
+        },
+      ]);
+    });
+  });
+
+  describe("getObjectMetadata", () => {
+    it("builds get params with metadata_only: true", async () => {
+      mockClient.makeRequest.mockResolvedValue([["metadata"]]);
+
+      await crud.getObjectMetadata("ws1", "file.txt");
+
+      expect(mockClient.makeRequest).toHaveBeenCalledWith("Workspace.get", [
+        {
+          objects: [{ workspace: "ws1", id: "file.txt" }],
+          infos: [{ workspace: "ws1", id: "file.txt", metadata_only: true }],
+        },
+      ]);
+    });
+  });
+
+  describe("getObjectWithData", () => {
+    it("builds get params with metadata_only: false", async () => {
+      mockClient.makeRequest.mockResolvedValue([["data"]]);
+
+      await crud.getObjectWithData("ws1", "file.txt");
+
+      expect(mockClient.makeRequest).toHaveBeenCalledWith("Workspace.get", [
+        {
+          objects: [{ workspace: "ws1", id: "file.txt" }],
+          infos: [{ workspace: "ws1", id: "file.txt", metadata_only: false }],
+        },
+      ]);
+    });
+  });
+
+  describe("saveObject", () => {
+    it("builds save params with data", async () => {
+      mockClient.makeRequest.mockResolvedValue([["saved"]]);
+
+      await crud.saveObject("ws1", "file.txt", "nk_file", { desc: "test" }, "content");
+
+      expect(mockClient.makeRequest).toHaveBeenCalledWith("Workspace.save", [
+        {
+          objects: [
+            { workspace: "ws1", id: "file.txt", type: "nk_file", meta: { desc: "test" }, data: "content" },
+          ],
+        },
+      ]);
+    });
+
+    it("builds save params without data", async () => {
+      mockClient.makeRequest.mockResolvedValue([["saved"]]);
+
+      await crud.saveObject("ws1", "file.txt", "nk_file", { desc: "test" });
+
+      expect(mockClient.makeRequest).toHaveBeenCalledWith("Workspace.save", [
+        {
+          objects: [
+            { workspace: "ws1", id: "file.txt", type: "nk_file", meta: { desc: "test" }, data: undefined },
+          ],
+        },
+      ]);
+    });
+  });
+
+  describe("createFolder", () => {
+    it("delegates to create with type folder", async () => {
+      mockClient.makeRequest.mockResolvedValue([["created"]]);
+
+      await crud.createFolder("ws1", "myFolder", { key: "val" });
+
+      expect(mockClient.makeRequest).toHaveBeenCalledWith("Workspace.create", [
+        { objects: [{ workspace: "ws1", id: "myFolder", type: "folder", meta: { key: "val" } }] },
+      ]);
+    });
+
+    it("works without meta argument", async () => {
+      mockClient.makeRequest.mockResolvedValue([["created"]]);
+
+      await crud.createFolder("ws1", "myFolder");
+
+      expect(mockClient.makeRequest).toHaveBeenCalledWith("Workspace.create", [
+        { objects: [{ workspace: "ws1", id: "myFolder", type: "folder", meta: undefined }] },
+      ]);
+    });
+  });
+
+  describe("createFile", () => {
+    it("delegates to create with type file", async () => {
+      mockClient.makeRequest.mockResolvedValue([["created"]]);
+
+      await crud.createFile("ws1", "data.csv", { format: "csv" });
+
+      expect(mockClient.makeRequest).toHaveBeenCalledWith("Workspace.create", [
+        { objects: [{ workspace: "ws1", id: "data.csv", type: "file", meta: { format: "csv" } }] },
+      ]);
+    });
+  });
 });

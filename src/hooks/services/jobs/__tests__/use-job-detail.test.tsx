@@ -2,7 +2,7 @@ import { renderHook, waitFor } from "@testing-library/react";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const mockFetch = vi.fn();
+const { mockFetch } = vi.hoisted(() => ({ mockFetch: vi.fn() }));
 vi.mock("@/hooks/use-authenticated-fetch-client", () => ({
   useAuthenticatedFetch: () => mockFetch,
 }));
@@ -88,5 +88,31 @@ describe("useJobOutput", () => {
     expect(mockFetch).toHaveBeenCalledWith(
       "/api/services/app-service/jobs/abc-123/stdout",
     );
+  });
+
+  it("is disabled when enabled is false", () => {
+    const { result } = renderHook(
+      () => useJobOutput("abc-123", "stdout", false),
+      { wrapper: createWrapper() },
+    );
+
+    expect(result.current.fetchStatus).toBe("idle");
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  it("throws on non-ok response", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      statusText: "Not Found",
+    });
+
+    const { result } = renderHook(
+      () => useJobOutput("abc-123", "stderr", true),
+      { wrapper: createWrapper() },
+    );
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+
+    expect(result.current.error?.message).toContain("Failed to fetch stderr");
   });
 });

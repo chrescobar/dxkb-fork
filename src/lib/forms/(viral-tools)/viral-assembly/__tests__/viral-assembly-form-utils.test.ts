@@ -7,6 +7,8 @@ vi.mock("@/types/services", () => ({}));
 
 import {
   handleLibraryError,
+  getPairedLibraryBuildFn,
+  getSingleLibraryBuildFn,
   singleLibraryDuplicateMatcher,
   transformViralAssemblyParams,
 } from "../viral-assembly-form-utils";
@@ -167,5 +169,48 @@ describe("transformViralAssemblyParams", () => {
     expect(result).not.toHaveProperty("paired_end_lib");
     expect(result).not.toHaveProperty("single_end_lib");
     expect(result).not.toHaveProperty("srr_id");
+  });
+
+  it("trims output_path and output_file", () => {
+    const data = {
+      ...baseData,
+      output_path: "  /workspace/user/home  ",
+      output_file: "  viral-assembly-test  ",
+    };
+
+    const result = transformViralAssemblyParams(data as never);
+
+    expect(result.output_path).toBe("/workspace/user/home");
+    expect(result.output_file).toBe("viral-assembly-test");
+  });
+});
+
+describe("getPairedLibraryBuildFn", () => {
+  it("returns a function that builds a paired library", () => {
+    const buildFn = getPairedLibraryBuildFn();
+    const result = buildFn("/ws/r1.fq", "/ws/r2.fq", "r1r2");
+
+    expect(result.library).toEqual(
+      expect.objectContaining({
+        id: "r1r2",
+        type: "paired",
+        files: ["/ws/r1.fq", "/ws/r2.fq"],
+      }),
+    );
+  });
+});
+
+describe("getSingleLibraryBuildFn", () => {
+  it("returns a function that builds a single library", () => {
+    const buildFn = getSingleLibraryBuildFn();
+    const result = buildFn("/ws/reads.fq");
+
+    expect(result.library).toEqual(
+      expect.objectContaining({
+        id: "/ws/reads.fq",
+        type: "single",
+        files: ["/ws/reads.fq"],
+      }),
+    );
   });
 });

@@ -10,6 +10,9 @@ import {
   getDefaultSampleIdFromPath,
   getDefaultSampleIdFromSrr,
   handleLibraryError,
+  getPairedLibraryBuildFn,
+  getSingleLibraryBuildFn,
+  singleLibraryDuplicateMatcher,
   resolveSampleIdAndDate,
   transformSarsCov2WastewaterParams,
 } from "../sars-cov2-wastewater-analysis-form-utils";
@@ -285,5 +288,92 @@ describe("transformSarsCov2WastewaterParams", () => {
     const lib = (result.paired_end_libs as Record<string, unknown>[])[0];
 
     expect(lib).not.toHaveProperty("sample_level_date");
+  });
+
+  it("omits title from srr_libs when not present", () => {
+    const data = {
+      ...baseData,
+      srr_libs: [
+        {
+          srr_accession: "SRR999",
+          sample_id: "s1",
+          sample_level_date: "",
+        },
+      ],
+    };
+
+    const result = transformSarsCov2WastewaterParams(data as never);
+    const lib = (result.srr_libs as Record<string, unknown>[])[0];
+
+    expect(lib).not.toHaveProperty("title");
+    expect(lib).not.toHaveProperty("sample_level_date");
+  });
+});
+
+describe("getPairedLibraryBuildFn", () => {
+  it("builds a paired library with sampleId and sampleLevelDate", () => {
+    const buildFn = getPairedLibraryBuildFn("mySample", "2024-01-15");
+    const result = buildFn("/ws/r1.fq", "/ws/r2.fq", "p1");
+
+    expect(result.library).toEqual(
+      expect.objectContaining({
+        id: "p1",
+        type: "paired",
+        files: ["/ws/r1.fq", "/ws/r2.fq"],
+        sampleId: "mySample",
+        sampleLevelDate: "2024-01-15",
+      }),
+    );
+  });
+
+  it("falls back to path-derived sampleId when sampleId is empty", () => {
+    const buildFn = getPairedLibraryBuildFn("", undefined);
+    const result = buildFn("/ws/reads_R1.fq", "/ws/reads_R2.fq", "p1");
+
+    expect(result.library).toEqual(
+      expect.objectContaining({
+        sampleId: "reads_R1",
+      }),
+    );
+    expect((result.library as Record<string, unknown>).sampleLevelDate).toBeUndefined();
+  });
+});
+
+describe("getSingleLibraryBuildFn", () => {
+  it("builds a single library with sampleId", () => {
+    const buildFn = getSingleLibraryBuildFn("mySample", "2024-06-01");
+    const result = buildFn("/ws/reads.fq");
+
+    expect(result.library).toEqual(
+      expect.objectContaining({
+        id: "/ws/reads.fq",
+        type: "single",
+        sampleId: "mySample",
+        sampleLevelDate: "2024-06-01",
+      }),
+    );
+  });
+
+  it("falls back to path-derived sampleId when empty", () => {
+    const buildFn = getSingleLibraryBuildFn("");
+    const result = buildFn("/ws/sample.fq");
+
+    expect(result.library).toEqual(
+      expect.objectContaining({
+        sampleId: "sample",
+      }),
+    );
+  });
+});
+
+describe("singleLibraryDuplicateMatcher", () => {
+  it("returns true when id and type match", () => {
+    const library = { id: "/ws/reads.fq", type: "single" } as never;
+    expect(singleLibraryDuplicateMatcher(library, "/ws/reads.fq")).toBe(true);
+  });
+
+  it("returns false when id matches but type differs", () => {
+    const library = { id: "/ws/reads.fq", type: "paired" } as never;
+    expect(singleLibraryDuplicateMatcher(library, "/ws/reads.fq")).toBe(false);
   });
 });

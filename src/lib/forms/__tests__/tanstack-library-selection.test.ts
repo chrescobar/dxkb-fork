@@ -1,9 +1,12 @@
+import { renderHook, act } from "@testing-library/react";
+
 import {
   getPairedLibraryId,
   getPairedLibraryName,
   getSingleLibraryName,
   buildBaseLibraryItem,
   findNewSraLibraries,
+  useTanstackLibrarySelection,
 } from "@/lib/forms/tanstack-library-selection";
 import type { Library } from "@/types/services";
 
@@ -149,5 +152,332 @@ describe("findNewSraLibraries", () => {
     ];
     const result = findNewSraLibraries(nextLibs, []);
     expect(result).toHaveLength(2);
+  });
+});
+
+function createMockForm() {
+  return {
+    setFieldValue: vi.fn(),
+    store: {},
+  } as never;
+}
+
+function createHookConfig(overrides = {}) {
+  return {
+    form: createMockForm(),
+    mapLibraryToItem: (lib: Library) => ({ _id: lib.id, _type: lib.type }),
+    fields: { paired: "paired_end_libs", single: "single_end_libs", srr: "srr_ids" },
+    ...overrides,
+  };
+}
+
+describe("useTanstackLibrarySelection", () => {
+  describe("addPairedLibrary", () => {
+    it("adds a paired library on success", () => {
+      const onAfterAdd = vi.fn();
+      const config = createHookConfig();
+      const { result } = renderHook(() => useTanstackLibrarySelection(config));
+
+      act(() => {
+        result.current.addPairedLibrary({
+          read1: "/ws/r1.fq",
+          read2: "/ws/r2.fq",
+          buildLibrary: (r1, r2, id) => ({
+            library: { id, name: `P(${r1}, ${r2})`, type: "paired", files: [r1, r2] },
+          }),
+          onAfterAdd,
+        });
+      });
+
+      expect(result.current.selectedLibraries).toHaveLength(1);
+      expect(result.current.selectedLibraries[0].type).toBe("paired");
+      expect(onAfterAdd).toHaveBeenCalled();
+    });
+
+    it("calls onError when read1 is missing", () => {
+      const onError = vi.fn();
+      const config = createHookConfig();
+      const { result } = renderHook(() => useTanstackLibrarySelection(config));
+
+      act(() => {
+        result.current.addPairedLibrary({
+          read1: null,
+          read2: "/ws/r2.fq",
+          buildLibrary: () => ({ library: undefined }),
+          onError,
+        });
+      });
+
+      expect(onError).toHaveBeenCalledWith("Both read files must be selected for paired library");
+      expect(result.current.selectedLibraries).toHaveLength(0);
+    });
+
+    it("calls onError when read1 === read2", () => {
+      const onError = vi.fn();
+      const config = createHookConfig();
+      const { result } = renderHook(() => useTanstackLibrarySelection(config));
+
+      act(() => {
+        result.current.addPairedLibrary({
+          read1: "/ws/same.fq",
+          read2: "/ws/same.fq",
+          buildLibrary: () => ({ library: undefined }),
+          onError,
+          sameFileMessage: "Files must differ",
+        });
+      });
+
+      expect(onError).toHaveBeenCalledWith("Files must differ");
+    });
+
+    it("calls onError for duplicate library", () => {
+      const onError = vi.fn();
+      const config = createHookConfig();
+      const { result } = renderHook(() => useTanstackLibrarySelection(config));
+
+      // Add first library
+      act(() => {
+        result.current.addPairedLibrary({
+          read1: "/ws/r1.fq",
+          read2: "/ws/r2.fq",
+          buildLibrary: (r1, r2, id) => ({
+            library: { id, name: "P", type: "paired", files: [r1, r2] },
+          }),
+        });
+      });
+
+      // Try to add duplicate
+      act(() => {
+        result.current.addPairedLibrary({
+          read1: "/ws/r1.fq",
+          read2: "/ws/r2.fq",
+          buildLibrary: (r1, r2, id) => ({
+            library: { id, name: "P", type: "paired", files: [r1, r2] },
+          }),
+          onError,
+        });
+      });
+
+      expect(onError).toHaveBeenCalledWith("This paired library has already been added");
+    });
+
+    it("calls onError when buildLibrary returns no library", () => {
+      const onError = vi.fn();
+      const config = createHookConfig();
+      const { result } = renderHook(() => useTanstackLibrarySelection(config));
+
+      act(() => {
+        result.current.addPairedLibrary({
+          read1: "/ws/r1.fq",
+          read2: "/ws/r2.fq",
+          buildLibrary: () => ({ error: "Build failed" }),
+          onError,
+        });
+      });
+
+      expect(onError).toHaveBeenCalledWith("Build failed");
+    });
+  });
+
+  describe("addSingleLibrary", () => {
+    it("adds a single library on success", () => {
+      const onAfterAdd = vi.fn();
+      const config = createHookConfig();
+      const { result } = renderHook(() => useTanstackLibrarySelection(config));
+
+      act(() => {
+        result.current.addSingleLibrary({
+          read: "/ws/reads.fq",
+          buildLibrary: (read) => ({
+            library: { id: read, name: `S(${read})`, type: "single", files: [read] },
+          }),
+          onAfterAdd,
+        });
+      });
+
+      expect(result.current.selectedLibraries).toHaveLength(1);
+      expect(onAfterAdd).toHaveBeenCalled();
+    });
+
+    it("calls onError when read is missing", () => {
+      const onError = vi.fn();
+      const config = createHookConfig();
+      const { result } = renderHook(() => useTanstackLibrarySelection(config));
+
+      act(() => {
+        result.current.addSingleLibrary({
+          read: null,
+          buildLibrary: () => ({ library: undefined }),
+          onError,
+        });
+      });
+
+      expect(onError).toHaveBeenCalledWith("Read file must be selected");
+    });
+
+    it("calls onError for duplicate with default matcher", () => {
+      const onError = vi.fn();
+      const config = createHookConfig();
+      const { result } = renderHook(() => useTanstackLibrarySelection(config));
+
+      act(() => {
+        result.current.addSingleLibrary({
+          read: "/ws/reads.fq",
+          buildLibrary: (read) => ({
+            library: { id: read, name: "S", type: "single", files: [read] },
+          }),
+        });
+      });
+
+      act(() => {
+        result.current.addSingleLibrary({
+          read: "/ws/reads.fq",
+          buildLibrary: (read) => ({
+            library: { id: read, name: "S", type: "single", files: [read] },
+          }),
+          onError,
+        });
+      });
+
+      expect(onError).toHaveBeenCalledWith("This single library has already been added");
+    });
+
+    it("uses custom duplicateMatcher when provided", () => {
+      const onError = vi.fn();
+      const config = createHookConfig();
+      const { result } = renderHook(() => useTanstackLibrarySelection(config));
+
+      act(() => {
+        result.current.addSingleLibrary({
+          read: "/ws/reads.fq",
+          buildLibrary: (read) => ({
+            library: { id: "custom-id", name: "S", type: "single", files: [read] },
+          }),
+        });
+      });
+
+      act(() => {
+        result.current.addSingleLibrary({
+          read: "/ws/reads.fq",
+          buildLibrary: (read) => ({
+            library: { id: "custom-id-2", name: "S", type: "single", files: [read] },
+          }),
+          duplicateMatcher: (lib, read) => lib.files?.[0] === read,
+          onError,
+        });
+      });
+
+      expect(onError).toHaveBeenCalledWith("This single library has already been added");
+    });
+
+    it("calls onError when buildLibrary returns no library", () => {
+      const onError = vi.fn();
+      const config = createHookConfig();
+      const { result } = renderHook(() => useTanstackLibrarySelection(config));
+
+      act(() => {
+        result.current.addSingleLibrary({
+          read: "/ws/reads.fq",
+          buildLibrary: () => ({ error: "Invalid read" }),
+          onError,
+        });
+      });
+
+      expect(onError).toHaveBeenCalledWith("Invalid read");
+    });
+  });
+
+  describe("removeLibrary", () => {
+    it("removes library by ID", () => {
+      const config = createHookConfig();
+      const { result } = renderHook(() => useTanstackLibrarySelection(config));
+
+      act(() => {
+        result.current.addSingleLibrary({
+          read: "/ws/reads.fq",
+          buildLibrary: (read) => ({
+            library: { id: read, name: "S", type: "single", files: [read] },
+          }),
+        });
+      });
+
+      expect(result.current.selectedLibraries).toHaveLength(1);
+
+      act(() => {
+        result.current.removeLibrary("/ws/reads.fq");
+      });
+
+      expect(result.current.selectedLibraries).toHaveLength(0);
+    });
+
+    it("is a no-op when ID does not exist", () => {
+      const config = createHookConfig();
+      const { result } = renderHook(() => useTanstackLibrarySelection(config));
+
+      act(() => {
+        result.current.addSingleLibrary({
+          read: "/ws/reads.fq",
+          buildLibrary: (read) => ({
+            library: { id: read, name: "S", type: "single", files: [read] },
+          }),
+        });
+      });
+
+      act(() => {
+        result.current.removeLibrary("nonexistent");
+      });
+
+      expect(result.current.selectedLibraries).toHaveLength(1);
+    });
+  });
+
+  describe("syncLibrariesToForm", () => {
+    it("calls form.setFieldValue for all 3 field types", () => {
+      const mockForm = createMockForm();
+      const config = createHookConfig({ form: mockForm });
+      const { result } = renderHook(() => useTanstackLibrarySelection(config));
+
+      const libraries: Library[] = [
+        { id: "p1", name: "P", type: "paired", files: ["/r1", "/r2"] },
+        { id: "/s1", name: "S", type: "single", files: ["/s1"] },
+        { id: "SRR1", name: "SRR1", type: "sra" },
+      ];
+
+      act(() => {
+        result.current.syncLibrariesToForm(libraries);
+      });
+
+      expect((mockForm as { setFieldValue: ReturnType<typeof vi.fn> }).setFieldValue).toHaveBeenCalledWith(
+        "paired_end_libs",
+        [expect.objectContaining({ _id: "p1" })],
+      );
+      expect((mockForm as { setFieldValue: ReturnType<typeof vi.fn> }).setFieldValue).toHaveBeenCalledWith(
+        "single_end_libs",
+        [expect.objectContaining({ _id: "/s1" })],
+      );
+      expect((mockForm as { setFieldValue: ReturnType<typeof vi.fn> }).setFieldValue).toHaveBeenCalledWith(
+        "srr_ids",
+        ["SRR1"],
+      );
+    });
+  });
+
+  describe("normalizeLibraries", () => {
+    it("invokes custom normalizeLibraries callback", () => {
+      const normalize = vi.fn((next: Library[]) => next);
+      const config = createHookConfig({ normalizeLibraries: normalize });
+      const { result } = renderHook(() => useTanstackLibrarySelection(config));
+
+      act(() => {
+        result.current.addSingleLibrary({
+          read: "/ws/reads.fq",
+          buildLibrary: (read) => ({
+            library: { id: read, name: "S", type: "single", files: [read] },
+          }),
+        });
+      });
+
+      expect(normalize).toHaveBeenCalled();
+    });
   });
 });

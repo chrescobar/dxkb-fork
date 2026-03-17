@@ -14,9 +14,21 @@ pnpm test:watch       # Watch mode
 pnpm test:coverage    # Run with V8 coverage
 ```
 
+## CI / GitHub Actions
+
+Three workflows run automatically on every PR targeting `main`:
+
+| Workflow | File | Command |
+|---|---|---|
+| Lint | `.github/workflows/pnpm-lint.yml` | `pnpm lint` |
+| Build | `.github/workflows/pnpm-build.yml` | `pnpm build` |
+| Test | `.github/workflows/pnpm-test.yml` | `pnpm test` |
+
+All three must pass before merging.
+
 ## Test Before Committing
 
-Before committing any changes, run the following commands to ensure that the code is without errors or warnings:
+Before committing any changes, run the following commands locally to catch errors before CI does:
 
 ```bash
 pnpm lint

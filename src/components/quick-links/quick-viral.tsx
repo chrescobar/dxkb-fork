@@ -79,7 +79,7 @@ const QuickViralLinks = () => {
                 </li>
                 <li className="flex justify-between">
                   <div className="flex items-center gap-2">
-                    <Box className="justify-start" />
+                    <Box className="justify-start w-4 h-4" />
                     <span>3D Structures</span>
                   </div>
                   <Badge className="bg-accent text-foreground [data-theme='dxkb-dark']:text-black">5,891</Badge>

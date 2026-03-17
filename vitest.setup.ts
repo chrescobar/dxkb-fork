@@ -1,3 +1,4 @@
+import React from "react";
 import "@testing-library/jest-dom/vitest";
 
 // Mock next/navigation
@@ -15,7 +16,8 @@ vi.mock("next/navigation", () => ({
 
 // Mock next/image
 vi.mock("next/image", () => ({
-  default: (props: Record<string, unknown>) => props,
+  default: ({ src, alt, ...rest }: Record<string, unknown>) =>
+    React.createElement("img", { src, alt, ...rest }),
 }));
 
 // Suppress console.error noise in tests (auto-restored by restoreMocks)

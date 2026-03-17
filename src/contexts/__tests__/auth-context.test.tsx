@@ -116,18 +116,23 @@ describe("AuthContext", () => {
         data: {},
         error: null,
       } as never);
+
+      const { result } = renderHook(() => useAuth(), { wrapper: noUserWrapper });
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+      // Override after mount settles so only the signIn fallback call is counted
       vi.mocked(bvbrcAuth.getSession).mockResolvedValue({
         data: { user: { username: "session-user", email: "s@test.com", token: "t" } },
         error: null,
       } as never);
-
-      const { result } = renderHook(() => useAuth(), { wrapper: noUserWrapper });
+      vi.mocked(bvbrcAuth.getSession).mockClear();
 
       await act(async () => {
         await result.current.signIn({ username: "u", password: "p" } as never);
       });
 
-      expect(bvbrcAuth.getSession).toHaveBeenCalled();
+      expect(bvbrcAuth.getSession).toHaveBeenCalledTimes(1);
+      expect(result.current.user).toEqual(expect.objectContaining({ username: "session-user" }));
     });
 
     it("throws when result has error", async () => {
@@ -149,18 +154,23 @@ describe("AuthContext", () => {
   describe("signUp", () => {
     it("fetches session and sets user on success", async () => {
       vi.mocked(bvbrcAuth.signUp.email).mockResolvedValue({ error: null } as never);
+
+      const { result } = renderHook(() => useAuth(), { wrapper: noUserWrapper });
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+      // Override after mount settles so only the signUp-triggered call is counted
       vi.mocked(bvbrcAuth.getSession).mockResolvedValue({
         data: { user: { username: "newuser", email: "n@test.com", token: "t" } },
         error: null,
       } as never);
-
-      const { result } = renderHook(() => useAuth(), { wrapper: noUserWrapper });
+      vi.mocked(bvbrcAuth.getSession).mockClear();
 
       await act(async () => {
         await result.current.signUp({ username: "u", email: "e", password: "p" } as never);
       });
 
-      expect(bvbrcAuth.getSession).toHaveBeenCalled();
+      expect(bvbrcAuth.getSession).toHaveBeenCalledTimes(1);
+      expect(result.current.user).toEqual(expect.objectContaining({ username: "newuser" }));
     });
 
     it("throws when result has error", async () => {

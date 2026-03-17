@@ -1,0 +1,187 @@
+vi.mock("./genome-assembly-form-schema", () => ({}));
+
+import {
+  transformGenomeAssemblyParams,
+  calculateGenomeSize,
+} from "@/lib/forms/(genomics)/genome-assembly/genome-assembly-form-utils";
+
+describe("transformGenomeAssemblyParams", () => {
+  const baseData = {
+    recipe: "auto",
+    output_path: "/workspace/output",
+    output_file: "assembly_result",
+    paired_end_libs: [],
+    single_end_libs: [],
+    srr_ids: [],
+  };
+
+  it("returns basic fields (recipe, output_path, output_file)", () => {
+    const result = transformGenomeAssemblyParams(baseData as never);
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        recipe: "auto",
+        output_path: "/workspace/output",
+        output_file: "assembly_result",
+      }),
+    );
+  });
+
+  it("does not include empty arrays for libraries or srr_ids", () => {
+    const result = transformGenomeAssemblyParams(baseData as never);
+
+    expect(result).not.toHaveProperty("paired_end_libs");
+    expect(result).not.toHaveProperty("single_end_libs");
+    expect(result).not.toHaveProperty("srr_ids");
+  });
+
+  it("includes paired_end_libs and strips _ prefixed keys", () => {
+    const data = {
+      ...baseData,
+      paired_end_libs: [
+        {
+          _id: "internal-id",
+          _type: "paired",
+          read1: "/reads/r1.fq",
+          read2: "/reads/r2.fq",
+          interleaved: false,
+        },
+      ],
+    };
+
+    const result = transformGenomeAssemblyParams(data as never);
+
+    expect(result.paired_end_libs).toEqual([
+      {
+        read1: "/reads/r1.fq",
+        read2: "/reads/r2.fq",
+        interleaved: false,
+      },
+    ]);
+  });
+
+  it("includes single_end_libs and strips _ prefixed keys", () => {
+    const data = {
+      ...baseData,
+      single_end_libs: [
+        {
+          _id: "single-id",
+          _type: "single",
+          read: "/reads/single.fq",
+        },
+      ],
+    };
+
+    const result = transformGenomeAssemblyParams(data as never);
+
+    expect(result.single_end_libs).toEqual([
+      {
+        read: "/reads/single.fq",
+      },
+    ]);
+  });
+
+  it("includes srr_ids when provided", () => {
+    const data = {
+      ...baseData,
+      srr_ids: ["SRR123456", "SRR789012"],
+    };
+
+    const result = transformGenomeAssemblyParams(data as never);
+
+    expect(result.srr_ids).toEqual(["SRR123456", "SRR789012"]);
+  });
+
+  it("includes genome_size when greater than 0", () => {
+    const data = {
+      ...baseData,
+      genome_size: 5000000,
+    };
+
+    const result = transformGenomeAssemblyParams(data as never);
+
+    expect(result.genome_size).toBe(5000000);
+  });
+
+  it("does not include genome_size when it is 0", () => {
+    const data = {
+      ...baseData,
+      genome_size: 0,
+    };
+
+    const result = transformGenomeAssemblyParams(data as never);
+
+    expect(result).not.toHaveProperty("genome_size");
+  });
+
+  it("does not include genome_size when undefined", () => {
+    const result = transformGenomeAssemblyParams(baseData as never);
+
+    expect(result).not.toHaveProperty("genome_size");
+  });
+
+  it("includes advanced params when defined", () => {
+    const data = {
+      ...baseData,
+      trim: true,
+      normalize: false,
+      filtlong: true,
+      target_depth: 200,
+      racon_iter: 2,
+      pilon_iter: 3,
+      min_contig_len: 300,
+      min_contig_cov: 5,
+    };
+
+    const result = transformGenomeAssemblyParams(data as never);
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        trim: true,
+        normalize: false,
+        filtlong: true,
+        target_depth: 200,
+        racon_iter: 2,
+        pilon_iter: 3,
+        min_contig_len: 300,
+        min_contig_cov: 5,
+      }),
+    );
+  });
+
+  it("does not include advanced params when undefined", () => {
+    const result = transformGenomeAssemblyParams(baseData as never);
+
+    expect(result).not.toHaveProperty("trim");
+    expect(result).not.toHaveProperty("normalize");
+    expect(result).not.toHaveProperty("filtlong");
+    expect(result).not.toHaveProperty("target_depth");
+    expect(result).not.toHaveProperty("racon_iter");
+    expect(result).not.toHaveProperty("pilon_iter");
+    expect(result).not.toHaveProperty("min_contig_len");
+    expect(result).not.toHaveProperty("min_contig_cov");
+  });
+});
+
+describe("calculateGenomeSize", () => {
+  it("multiplies by 1000000 when unit is M", () => {
+    expect(calculateGenomeSize(5, "M")).toBe(5000000);
+  });
+
+  it("multiplies by 1000 when unit is K", () => {
+    expect(calculateGenomeSize(500, "K")).toBe(500000);
+  });
+
+  it("handles decimal values with M unit", () => {
+    expect(calculateGenomeSize(1.5, "M")).toBe(1500000);
+  });
+
+  it("handles decimal values with K unit", () => {
+    expect(calculateGenomeSize(2.5, "K")).toBe(2500);
+  });
+
+  it("returns 0 when expected genome size is 0", () => {
+    expect(calculateGenomeSize(0, "M")).toBe(0);
+    expect(calculateGenomeSize(0, "K")).toBe(0);
+  });
+});

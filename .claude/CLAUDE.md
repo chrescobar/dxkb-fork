@@ -8,9 +8,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 pnpm dev          # Start dev server with Turbopack on port 3019
 pnpm build        # Production build
 pnpm lint         # ESLint
+pnpm test         # Vitest (run once)
+pnpm test:watch   # Vitest (watch mode)
+pnpm test:coverage # Vitest with V8 coverage
 ```
 
-No test runner is currently configured (jest types are present but no test scripts).
+Requires **Node v24** (`nvm use 24`). Vitest 4 / rolldown needs Node >= 22.
 
 ## Architecture Overview
 
@@ -101,3 +104,6 @@ No test runner is currently configured (jest types are present but no test scrip
 
 - Module-level constants and types that are used by a service page belong in that service's `*-form-utils.ts` file, not inline in the page component. Export them and import into the page.
 
+### Git
+
+- Do NOT automatically try to commit changes unless it was specified to do so. All changes need to be reviewed manually before blindly commiting them.

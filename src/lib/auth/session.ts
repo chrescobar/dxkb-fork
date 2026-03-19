@@ -115,11 +115,12 @@ export async function serverAuthenticatedFetch(
     throw new Error("Not authenticated");
   }
 
-  const headers = {
-    ...options.headers,
-    Authorization: token,
-    "Content-Type": "application/json",
-  };
+  const callerHeaders = new Headers(options.headers as HeadersInit);
+  if (!callerHeaders.has("Content-Type")) {
+    callerHeaders.set("Content-Type", "application/json");
+  }
+  callerHeaders.set("Authorization", token);
+  const headers = Object.fromEntries(callerHeaders.entries());
 
   const response = await fetch(url, {
     ...options,

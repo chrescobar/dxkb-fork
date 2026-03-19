@@ -6,7 +6,7 @@ export async function getProfileMetadata(
 ): Promise<Record<string, unknown> | null> {
   try {
     const userResponse = await fetch(
-      `${getRequiredEnv("USER_URL")}/${username}`,
+      `${getRequiredEnv("USER_URL")}/${encodeURIComponent(username)}`,
       {
         headers: {
           Authorization: token,
@@ -35,7 +35,7 @@ export async function getUserEmailByUsername(
 ): Promise<string | null> {
   try {
     const userResponse = await fetch(
-      `${getRequiredEnv("USER_URL")}/${username}`,
+      `${getRequiredEnv("USER_URL")}/${encodeURIComponent(username)}`,
       {
         headers: {
           Accept: "application/json",

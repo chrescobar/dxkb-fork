@@ -36,7 +36,7 @@ describe("GET /api/services/app-service/jobs/[id]/stdout", () => {
     const data = await response.json();
 
     expect(response.status).toBe(401);
-    expect(data).toEqual({ error: "Authentication required" });
+    expect(data).toEqual({ error: "Unauthorized" });
   });
 
   it("returns plain text stdout output on success", async () => {
@@ -70,6 +70,6 @@ describe("GET /api/services/app-service/jobs/[id]/stdout", () => {
     const data = await response.json();
 
     expect(response.status).toBe(500);
-    expect(data).toEqual({ error: "Fetch failed" });
+    expect(data).toEqual({ error: "Failed to fetch stdout" });
   });
 });

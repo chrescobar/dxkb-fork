@@ -1,21 +1,30 @@
-import { useApiQuery } from "@/hooks/use-api-query";
+import { useQuery } from "@tanstack/react-query";
+import { useAuthenticatedFetch } from "@/hooks/use-authenticated-fetch-client";
 import type { JobDetails } from "@/types/workspace";
 import { activeJobStatuses } from "@/lib/jobs/constants";
 
 export function useJobDetail(jobId: string | null) {
-  return useApiQuery<JobDetails>({
-    url: `/api/services/app-service/jobs/${jobId}`,
+  const authenticatedFetch = useAuthenticatedFetch();
+
+  return useQuery<JobDetails, Error>({
     queryKey: ["job-detail", jobId],
-    queryOptions: {
-      enabled: !!jobId,
-      staleTime: 30_000,
-      refetchInterval: (query) => {
-        const status = query.state.data?.status;
-        if (status && activeJobStatuses.includes(status)) return 3_000;
-        return false;
-      },
-      refetchIntervalInBackground: false,
+    queryFn: async () => {
+      const response = await authenticatedFetch(
+        `/api/services/app-service/jobs/${jobId}`,
+      );
+      if (!response.ok) {
+        throw new Error(`Failed to fetch job details: ${response.statusText}`);
+      }
+      return response.json();
     },
+    enabled: !!jobId,
+    staleTime: 30_000,
+    refetchInterval: (query) => {
+      const status = query.state.data?.status;
+      if (status && activeJobStatuses.includes(status)) return 3_000;
+      return false;
+    },
+    refetchIntervalInBackground: false,
   });
 }
 
@@ -24,13 +33,20 @@ export function useJobOutput(
   outputType: "stdout" | "stderr",
   enabled: boolean,
 ) {
-  return useApiQuery<string>({
-    url: `/api/services/app-service/jobs/${jobId}/${outputType}`,
+  const authenticatedFetch = useAuthenticatedFetch();
+
+  return useQuery<string, Error>({
     queryKey: ["job-output", jobId, outputType],
-    responseType: "text",
-    queryOptions: {
-      enabled: !!jobId && enabled,
-      staleTime: 60_000,
+    queryFn: async () => {
+      const response = await authenticatedFetch(
+        `/api/services/app-service/jobs/${jobId}/${outputType}`,
+      );
+      if (!response.ok) {
+        throw new Error(`Failed to fetch ${outputType}: ${response.statusText}`);
+      }
+      return response.text();
     },
+    enabled: !!jobId && enabled,
+    staleTime: 60_000,
   });
 }

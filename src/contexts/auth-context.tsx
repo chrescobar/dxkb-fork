@@ -203,7 +203,7 @@ export function AuthProvider({
     sendVerificationEmail,
     isLoading,
     isAuthenticated: !!user,
-    isVerified: user?.email_verified ?? false,
+    isVerified: user?.email_verified !== false,
   }), [
     user,
     signIn,

@@ -35,6 +35,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
 import { useRerunForm } from "@/hooks/services/use-rerun-form";
+import { useDefaultOutputPath } from "@/hooks/services/use-default-output-path";
 import {
   similarGenomeFinderInfo,
   similarGenomeFinderSelectGenome,
@@ -142,6 +143,7 @@ export default function SimilarGenomeFinderServicePage() {
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
   const { rerunData, markApplied } = useRerunForm<Record<string, unknown>>();
+  useDefaultOutputPath(form, rerunData);
 
   useEffect(() => {
     if (!rerunData || !markApplied()) return;

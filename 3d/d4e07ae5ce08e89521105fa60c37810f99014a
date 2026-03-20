@@ -1,0 +1,29 @@
+src/app/api/auth/profile/__tests__/route.test.ts
+  6c61a3245ff3fccc 1-2,5-6,14,16-36,40,51-54,65-71,77,81-85,97,99-101,113,128-130,143,151,172,175,193,196,214,217,235,238
+src/contexts/auth-context.tsx
+  6c61a3245ff3fccc 56,58-59,73
+.claude/rules/testing.md
+  6c61a3245ff3fccc 46-66
+src/app/api/auth/profile/route.ts
+  6c61a3245ff3fccc 49,51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.15",
+  "base_commit_sha": "3dd4e07ae5ce08e89521105fa60c37810f99014a",
+  "prompts": {
+    "6c61a3245ff3fccc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "17050ce7-5982-4ebc-af64-01d3826083c5",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>",
+      "messages": [],
+      "total_additions": 145,
+      "total_deletions": 91,
+      "accepted_lines": 118,
+      "overriden_lines": 0
+    }
+  }
+}

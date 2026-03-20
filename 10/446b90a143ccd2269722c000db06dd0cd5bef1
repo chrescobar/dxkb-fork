@@ -1,0 +1,58 @@
+src/components/settings/password-change-form.tsx
+  9270b2ee711f8fa7 1-184
+src/lib/auth/routes.ts
+  9270b2ee711f8fa7 1
+src/lib/auth/types.ts
+  9270b2ee711f8fa7 38-40
+src/components/settings/preferences-form.tsx
+  9270b2ee711f8fa7 1-105
+src/components/settings/profile-form.tsx
+  9270b2ee711f8fa7 1-85,87-231
+src/app/api/auth/profile/route.ts
+  9270b2ee711f8fa7 1-93
+src/app/settings/layout.tsx
+  9270b2ee711f8fa7 1-20
+src/app/settings/page.tsx
+  9270b2ee711f8fa7 1-35,37-42
+src/app/api/auth/change-password/route.ts
+  9270b2ee711f8fa7 1-65
+src/components/navbars/desktop-navbar.tsx
+  9270b2ee711f8fa7 314,332
+src/lib/forms/settings/settings-form-utils.ts
+  9270b2ee711f8fa7 1-77
+src/proxy.ts
+  9270b2ee711f8fa7 43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.15",
+  "base_commit_sha": "10446b90a143ccd2269722c000db06dd0cd5bef1",
+  "prompts": {
+    "9270b2ee711f8fa7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a5f6212a-e186-4513-a7a9-5ef057c570a5",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>",
+      "messages": [],
+      "total_additions": 892,
+      "total_deletions": 53,
+      "accepted_lines": 841,
+      "overriden_lines": 2
+    },
+    "b2206e4286713016": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c29bf408-2a6a-49d0-bfc7-1ca013a83688",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 218,
+      "overriden_lines": 0
+    }
+  }
+}

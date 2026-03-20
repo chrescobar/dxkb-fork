@@ -8,9 +8,9 @@ import { getRequiredEnv } from "@/lib/env";
  */
 export async function GET() {
   try {
-    const { userId } = await getSession();
+    const { token, userId } = await getSession();
 
-    if (!userId) {
+    if (!token || !userId) {
       return NextResponse.json(
         { message: "Authentication required" },
         { status: 401 },
@@ -46,9 +46,9 @@ export async function GET() {
  */
 export async function POST(request: NextRequest) {
   try {
-    const { token, userId } = await getSession();
+    const { userId } = await getSession();
 
-    if (!token || !userId) {
+    if (!userId) {
       return NextResponse.json(
         { message: "Authentication required" },
         { status: 401 },
@@ -57,16 +57,14 @@ export async function POST(request: NextRequest) {
 
     const body = await request.text();
 
-    const headers = new Headers();
-    headers.set("Authorization", token);
-    headers.set("Content-Type", "application/json-patch+json");
-    headers.set("Accept", "application/json");
-
-    const response = await fetch(
+    const response = await serverAuthenticatedFetch(
       `${getRequiredEnv("USER_URL")}/${encodeURIComponent(userId)}`,
       {
         method: "POST",
-        headers,
+        headers: {
+          "Content-Type": "application/json-patch+json",
+          Accept: "application/json",
+        },
         body,
       },
     );

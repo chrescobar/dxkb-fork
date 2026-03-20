@@ -2,6 +2,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ProfileForm } from "@/components/settings/profile-form";
 import { PreferencesForm } from "@/components/settings/preferences-form";
@@ -13,7 +15,11 @@ import type { UserProfile } from "@/lib/auth/types";
 export default function SettingsPage() {
   const authenticatedFetch = useAuthenticatedFetch();
 
-  const { data: profile, isLoading } = useQuery<UserProfile>({
+  const {
+    data: profile,
+    isLoading,
+    isError,
+  } = useQuery<UserProfile>({
     queryKey: ["user-profile"],
     queryFn: async () => {
       const res = await authenticatedFetch("/api/auth/profile");
@@ -22,12 +28,23 @@ export default function SettingsPage() {
     },
   });
 
-  if (isLoading || !profile) {
+  if (isLoading) {
     return (
       <div className="grid gap-6">
         <Skeleton className="h-[480px] w-full rounded-xl" />
         <Skeleton className="h-[320px] w-full rounded-xl" />
       </div>
+    );
+  }
+
+  if (isError || !profile) {
+    return (
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          Failed to load your profile. Please try refreshing the page.
+        </AlertDescription>
+      </Alert>
     );
   }
 

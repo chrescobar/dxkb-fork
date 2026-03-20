@@ -61,6 +61,8 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
 
       toast.success("Preferences updated successfully.");
       await queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+    } catch {
+      toast.error("Failed to update preferences.");
     } finally {
       setIsSubmitting(false);
     }

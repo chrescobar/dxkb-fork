@@ -54,22 +54,26 @@ export function ProfileForm({ profile }: ProfileFormProps) {
         return;
       }
 
-      const response = await authenticatedFetch("/api/auth/profile", {
-        method: "POST",
-        body: JSON.stringify(patches),
-      });
+      try {
+        const response = await authenticatedFetch("/api/auth/profile", {
+          method: "POST",
+          body: JSON.stringify(patches),
+        });
 
-      if (!response.ok) {
-        const err = await response.json();
-        toast.error(err.message || "Failed to update profile.");
-        return;
+        if (!response.ok) {
+          const err = await response.json().catch(() => null);
+          toast.error(err?.message || "Failed to update profile.");
+          return;
+        }
+
+        toast.success("Profile updated successfully.");
+        await Promise.all([
+          refreshAuth(),
+          queryClient.invalidateQueries({ queryKey: ["user-profile"] }),
+        ]);
+      } catch {
+        toast.error("Failed to update profile.");
       }
-
-      toast.success("Profile updated successfully.");
-      await Promise.all([
-        refreshAuth(),
-        queryClient.invalidateQueries({ queryKey: ["user-profile"] }),
-      ]);
     },
     validators: {
       onSubmit: profileFormSchema,

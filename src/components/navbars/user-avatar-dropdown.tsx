@@ -3,7 +3,6 @@
 import Link from "next/link";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -49,35 +48,24 @@ export function UserAvatarDropdown() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <span className="flex items-center gap-2">
-                  <NotebookPen className="text-foreground h-4 w-4" />
-                  <Link href={wsUsername ? `/workspace/${encodeWorkspaceSegment(wsUsername)}/home` : "/workspace"}>My Workspace</Link>
-                </span>
+              <DropdownMenuItem
+                render={<Link href={wsUsername ? `/workspace/${encodeWorkspaceSegment(wsUsername)}/home` : "/workspace"} />}
+              >
+                <NotebookPen className="text-foreground h-4 w-4" />
+                My Workspace
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <span className="flex items-center gap-2">
-                  <BriefcaseBusiness className="text-foreground h-4 w-4" />
-                  <Link href="/jobs">My Jobs</Link>
-                </span>
+              <DropdownMenuItem render={<Link href="/jobs" />}>
+                <BriefcaseBusiness className="text-foreground h-4 w-4" />
+                My Jobs
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <span className="flex items-center gap-2">
-                  <Settings className="text-foreground h-4 w-4" />
-                  <Link href="/settings">Settings</Link>
-                </span>
+              <DropdownMenuItem render={<Link href="/settings" />}>
+                <Settings className="text-foreground h-4 w-4" />
+                Settings
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => sendVerificationEmail()}>
                 <span className="flex items-center gap-2">
                   <Mail className="text-foreground h-4 w-4" />
-                  <Button
-                    variant="link"
-                    size="sm"
-                    onClick={() => sendVerificationEmail()}
-                    className="text-foreground font-inherit h-5 cursor-pointer p-0"
-                  >
-                    Resend Verification Email
-                  </Button>
+                  Resend Verification Email
                 </span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />

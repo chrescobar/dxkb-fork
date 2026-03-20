@@ -20,6 +20,18 @@ export async function POST(request: NextRequest) {
 
     const { currentPassword, newPassword } = await request.json();
 
+    if (
+      typeof currentPassword !== "string" ||
+      typeof newPassword !== "string" ||
+      !currentPassword ||
+      !newPassword
+    ) {
+      return NextResponse.json(
+        { message: "Current password and new password are required" },
+        { status: 400 },
+      );
+    }
+
     const headers = new Headers();
     headers.set("Authorization", token);
     headers.set("Content-Type", "application/json");

@@ -31,22 +31,26 @@ export function PasswordChangeForm() {
       confirmPassword: "",
     } satisfies PasswordFormData,
     onSubmit: async ({ value }) => {
-      const response = await authenticatedFetch("/api/auth/change-password", {
-        method: "POST",
-        body: JSON.stringify({
-          currentPassword: value.currentPassword,
-          newPassword: value.newPassword,
-        }),
-      });
+      try {
+        const response = await authenticatedFetch("/api/auth/change-password", {
+          method: "POST",
+          body: JSON.stringify({
+            currentPassword: value.currentPassword,
+            newPassword: value.newPassword,
+          }),
+        });
 
-      if (!response.ok) {
-        const err = await response.json();
-        toast.error(err.message || "Failed to change password.");
-        return;
+        if (!response.ok) {
+          const err = await response.json().catch(() => null);
+          toast.error(err?.message || "Failed to change password.");
+          return;
+        }
+
+        toast.success("Password changed successfully.");
+        form.reset();
+      } catch {
+        toast.error("Failed to change password.");
       }
-
-      toast.success("Password changed successfully.");
-      form.reset();
     },
     validators: {
       onSubmit: passwordFormSchema,

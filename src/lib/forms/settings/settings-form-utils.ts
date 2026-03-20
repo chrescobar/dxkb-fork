@@ -22,21 +22,22 @@ export type ProfileFormData = z.infer<typeof profileFormSchema>;
 // Password form
 // ============================================================================
 
-export const passwordFieldsSchema = z.object({
-  currentPassword: z.string().min(1, "Current password is required"),
-  newPassword: z.string().min(8, "Password must be at least 8 characters"),
-  confirmPassword: z.string().min(1, "Please confirm your new password"),
-});
-
-export const passwordFormSchema = passwordFieldsSchema.refine(
-  (data) => data.newPassword === data.confirmPassword,
-  {
+export const passwordFormSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string().min(1, "Please confirm your new password"),
+  })
+  .refine((data) => data.newPassword !== data.currentPassword, {
+    message: "New password must be different from current password",
+    path: ["newPassword"],
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
-  },
-);
+  });
 
-export type PasswordFormData = z.infer<typeof passwordFieldsSchema>;
+export type PasswordFormData = z.input<typeof passwordFormSchema>;
 
 // ============================================================================
 // Patch builder

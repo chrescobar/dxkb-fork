@@ -19,7 +19,6 @@ import { RequiredFormLabel } from "@/components/forms/required-form-components";
 
 import { useAuthenticatedFetch } from "@/hooks/use-authenticated-fetch-client";
 import {
-  passwordFieldsSchema,
   passwordFormSchema,
   type PasswordFormData,
 } from "@/lib/forms/settings/settings-form-utils";
@@ -37,18 +36,11 @@ export function PasswordChangeForm() {
       confirmPassword: "",
     } satisfies PasswordFormData,
     onSubmit: async ({ value }) => {
-      const parsed = passwordFormSchema.safeParse(value);
-      if (!parsed.success) {
-        const firstError = parsed.error.issues[0]?.message;
-        toast.error(firstError || "Please fix the form errors.");
-        return;
-      }
-
       const response = await authenticatedFetch("/api/auth/change-password", {
         method: "POST",
         body: JSON.stringify({
-          currentPassword: parsed.data.currentPassword,
-          newPassword: parsed.data.newPassword,
+          currentPassword: value.currentPassword,
+          newPassword: value.newPassword,
         }),
       });
 
@@ -62,7 +54,7 @@ export function PasswordChangeForm() {
       form.reset();
     },
     validators: {
-      onSubmit: passwordFieldsSchema,
+      onSubmit: passwordFormSchema,
     },
   });
 

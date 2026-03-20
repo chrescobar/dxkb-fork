@@ -20,14 +20,16 @@ export async function POST(request: NextRequest) {
 
     const { currentPassword, newPassword } = await request.json();
 
+    const headers = new Headers();
+    headers.set("Authorization", token);
+    headers.set("Content-Type", "application/json");
+    headers.set("Accept", "application/json");
+
     const response = await fetch(
-      `${getRequiredEnv("USER_URL")}/${encodeURIComponent(userId)}`,
+      `${getRequiredEnv("USER_URL")}/`,
       {
         method: "POST",
-        headers: {
-          Authorization: token,
-          "Content-Type": "application/json",
-        },
+        headers,
         body: JSON.stringify({
           id: 1,
           jsonrpc: "2.0",

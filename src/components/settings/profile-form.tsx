@@ -47,13 +47,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       interests: profile.interests ?? "",
     } satisfies ProfileFormData,
     onSubmit: async ({ value }) => {
-      const parsed = profileFormSchema.safeParse(value);
-      if (!parsed.success) {
-        toast.error("Please fix the form errors before saving.");
-        return;
-      }
-
-      const patches = buildProfilePatches(profile, parsed.data);
+      const patches = buildProfilePatches(profile, value);
 
       if (patches.length === 0) {
         toast.info("No changes to save.");

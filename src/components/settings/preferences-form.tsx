@@ -15,7 +15,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { FieldItem } from "@/components/ui/tanstack-form";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 
 import { useAuthenticatedFetch } from "@/hooks/use-authenticated-fetch-client";
@@ -75,7 +74,7 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
-          <FieldItem>
+          <div className="grid gap-2">
             <Label>Default Job Output Folder</Label>
             <div className="flex items-center gap-2">
               <div className="flex-1">
@@ -105,7 +104,7 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
               Set a default folder for job outputs. Leave empty to use home
               folder.
             </p>
-          </FieldItem>
+          </div>
 
           <Button
             type="button"

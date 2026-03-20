@@ -7,22 +7,11 @@ import { usePathname } from "next/navigation";
 import { gettingStartedItems, organismItems, serviceItems } from "@/components/navbars/navbar-links";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { SearchBar } from "@/components/search/search-bar";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import Logo from "@/components/ui/logo";
 import { useAuth } from "@/contexts/auth-context";
-import { SignoutButton } from "@/components/auth/signout-button";
-import {DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
-import { UserRound, Settings, NotebookPen, BriefcaseBusiness, Mail } from "lucide-react";
+import { UserAvatarDropdown } from "@/components/navbars/user-avatar-dropdown";
 import { encodeWorkspaceSegment } from "@/lib/utils";
 
 /** Full username with @domain for workspace URLs (session stores short form in user.username). */
@@ -32,7 +21,7 @@ function workspaceUsername(user: { username?: string; realm?: string } | null): 
 }
 
 const DesktopNavbar = () => {
-  const { isAuthenticated, user, isLoading, sendVerificationEmail } = useAuth();
+  const { isAuthenticated, user, isLoading } = useAuth();
   const wsUsername = workspaceUsername(user);
 
   const pathname = usePathname();
@@ -287,73 +276,7 @@ const DesktopNavbar = () => {
           )}
 
           {/* Show user info and signout when authenticated and not loading */}
-          {!isLoading && isAuthenticated && (
-            <>
-              <div className="hover:bg-foreground/10 flex items-center space-x-2 rounded-md px-1 py-1">
-                <div className="size-8 shrink-0 overflow-hidden rounded-full **:data-[slot=dropdown-menu-trigger]:size-full **:data-[slot=dropdown-menu-trigger]:min-w-0">
-                  <DropdownMenu modal={false}>
-                    <DropdownMenuTrigger
-                      nativeButton={false}
-                      render={<div className="flex size-full items-center justify-center" />}
-                    >
-                      <Avatar className="h-8 w-8">
-                        <AvatarFallback className="bg-white/10 text-white">
-                          {user?.username?.charAt(0).toUpperCase() || "U"}
-                        </AvatarFallback>
-                      </Avatar>
-                    </DropdownMenuTrigger>
-                  <DropdownMenuContent side="bottom" sideOffset={8} align="end" className="w-[200px]">
-                    <DropdownMenuGroup>
-                      <DropdownMenuLabel>User Actions</DropdownMenuLabel>
-                    </DropdownMenuGroup>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuGroup>
-                      <DropdownMenuItem>
-                        <span className="flex items-center gap-2">
-                          <UserRound className="text-foreground h-2 w-2" />
-                          <Link href="/settings">Profile</Link>
-                        </span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <span className="flex items-center gap-2">
-                          <NotebookPen className="text-foreground h-4 w-4" />
-                          <Link href={wsUsername ? `/workspace/${encodeWorkspaceSegment(wsUsername)}/home` : "/workspace"}>My Workspace</Link>
-                        </span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <span className="flex items-center gap-2">
-                          <BriefcaseBusiness className="text-foreground h-4 w-4" />
-                          <Link href="/jobs">My Jobs</Link>
-                        </span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <span className="flex items-center gap-2">
-                          <Settings className="text-foreground h-4 w-4" />
-                          <Link href="/settings">Settings</Link>
-                        </span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <span className="flex items-center gap-2">
-                          <Mail className="text-foreground h-4 w-4" />
-                          <Button
-                            variant="link"
-                            size="sm"
-                            onClick={() => sendVerificationEmail()}
-                            className="text-foreground font-inherit h-5 cursor-pointer p-0"
-                          >
-                            Resend Verification Email
-                          </Button>
-                        </span>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <SignoutButton className="bg-popover group-hover:bg-accent m-0 w-full justify-start border-none p-0 shadow-none" />
-                    </DropdownMenuGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                </div>
-              </div>
-            </>
-          )}
+          {!isLoading && isAuthenticated && <UserAvatarDropdown />}
         </div>
       </div>
     </header>

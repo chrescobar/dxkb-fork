@@ -7,17 +7,16 @@ import Link from "next/link";
 import { gettingStartedItems, organismItems, serviceItems } from "@/components/navbars/navbar-links";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { MobileSearchBar } from "@/components/search/mobile-search-bar";
-import { SignoutButton } from "@/components/auth/signout-button";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/auth-context";
 import Logo from "@/components/ui/logo";
+import { UserAvatarDropdown } from "@/components/navbars/user-avatar-dropdown";
 
 import { Menu, Search, ChevronUp } from "lucide-react";
 
 const MobileNavbar = () => {
-  const { isAuthenticated, user, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const pathname = usePathname();
   const isHome = pathname === "/";
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -167,13 +166,7 @@ const MobileNavbar = () => {
             variant="ghost"
             size="sm"
             className="text-foreground hover:bg-gray-300/50"
-            onClick={() => {
-              if (isSearchOpen) {
-                setIsSearchOpen(false);
-              } else {
-                setIsSearchOpen(true);
-              }
-            }}
+            onClick={() => setIsSearchOpen(!isSearchOpen)}
             aria-label={isSearchOpen ? "Close search" : "Open search"}
           >
             {isSearchOpen ? (
@@ -218,20 +211,8 @@ const MobileNavbar = () => {
           </>
         )}
 
-        {/* Show user info and signout when authenticated and not loading */}
-        {!isLoading && isAuthenticated && (
-          <>
-            <div className="flex items-center space-x-2">
-              <Avatar className="h-8 w-8">
-                <AvatarFallback className="bg-white/10 text-white">
-                  {user?.username?.charAt(0).toUpperCase() || "U"}
-                </AvatarFallback>
-              </Avatar>
-              <span className="text-sm font-medium text-white">{user?.username}</span>
-            </div>
-            <SignoutButton />
-          </>
-        )}
+        {/* Avatar dropdown when authenticated */}
+        {!isLoading && isAuthenticated && <UserAvatarDropdown />}
       </div>
     </div>
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getSession } from "@/lib/auth/session";
+import { getSession, serverAuthenticatedFetch } from "@/lib/auth/session";
 import { getRequiredEnv } from "@/lib/env";
 
 /**
@@ -8,23 +8,18 @@ import { getRequiredEnv } from "@/lib/env";
  */
 export async function GET() {
   try {
-    const { token, userId } = await getSession();
+    const { userId } = await getSession();
 
-    if (!token || !userId) {
+    if (!userId) {
       return NextResponse.json(
         { message: "Authentication required" },
         { status: 401 },
       );
     }
 
-    const response = await fetch(
+    const response = await serverAuthenticatedFetch(
       `${getRequiredEnv("USER_URL")}/${encodeURIComponent(userId)}`,
-      {
-        headers: {
-          Authorization: token,
-          Accept: "application/json",
-        },
-      },
+      { headers: { Accept: "application/json" } },
     );
 
     if (!response.ok) {

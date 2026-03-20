@@ -66,8 +66,10 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       }
 
       toast.success("Profile updated successfully.");
-      await refreshAuth();
-      await queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+      await Promise.all([
+        refreshAuth(),
+        queryClient.invalidateQueries({ queryKey: ["user-profile"] }),
+      ]);
     },
     validators: {
       onSubmit: profileFormSchema,

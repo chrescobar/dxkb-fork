@@ -4,7 +4,11 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
-import { gettingStartedItems, organismItems, serviceItems } from "@/components/navbars/navbar-links";
+import { useQuery } from "@tanstack/react-query";
+import { Star } from "lucide-react";
+
+import { gettingStartedItems, organismItems, serviceItems, workspaceNavItems } from "@/components/navbars/navbar-links";
+import { workspaceUsername, resolveWorkspaceHref, buildFolderHref } from "@/components/navbars/workspace-dropdown-content";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { MobileSearchBar } from "@/components/search/mobile-search-bar";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -12,14 +16,26 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/auth-context";
 import Logo from "@/components/ui/logo";
 import { UserAvatarDropdown } from "@/components/navbars/user-avatar-dropdown";
+import { loadFavorites } from "@/lib/services/workspace/favorites";
+import { getRecentFolders, getWorkspaceFolderDisplayName } from "@/lib/recent-workspace-folders";
 
 import { Menu, Search, ChevronUp } from "lucide-react";
 
 const MobileNavbar = () => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, user, isLoading } = useAuth();
+  const wsUsername = workspaceUsername(user);
   const pathname = usePathname();
   const isHome = pathname === "/";
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const { data: favoritePaths = [] } = useQuery({
+    queryKey: ["workspace-favorites", wsUsername],
+    queryFn: () => loadFavorites(wsUsername),
+    enabled: isAuthenticated && !!wsUsername,
+    staleTime: 2 * 60 * 1000,
+  });
+
+  const recentFolders = isAuthenticated ? getRecentFolders(wsUsername) : [];
 
   return (
     <header className="bg-primary flex flex-col lg:hidden">
@@ -106,43 +122,115 @@ const MobileNavbar = () => {
                 </div>
               </div>
 
-              {/* Workspace Section - always show; when not signed in, prompt to Sign In */}
+              {/* Workspace Section */}
               <div className="p-3">
                 <h2 className="mobile-nav-section-header">Workspace</h2>
-                <div className="grid grid-cols-1 gap-y-1">
-                  {isLoading ? (
-                    <>
-                      <Skeleton className="h-5 w-24 bg-muted" />
-                      <Skeleton className="h-9 w-20 bg-muted" />
-                    </>
-                  ) : isAuthenticated ? (
-                    <Link
-                      href="/jobs"
-                      className="mobile-nav-link"
-                    >
-                      My Jobs
-                    </Link>
-                  ) : (
-                    <>
-                      <Link
-                        href="/sign-in?redirect=/workspace"
-                        className="text-sm text-muted-foreground mb-2 block hover:text-foreground hover:underline focus:outline-none focus:underline"
-                      >
-                        Sign in to view your workspace.
-                      </Link>
-                      <Link
-                        href="/sign-in?redirect=/workspace"
-                        className={buttonVariants({
-                          variant: "default",
-                          size: "sm",
-                          className: "w-fit",
-                        })}
-                      >
-                        Sign In
-                      </Link>
-                    </>
-                  )}
-                </div>
+                {isLoading ? (
+                  <div className="space-y-1">
+                    <Skeleton className="h-5 w-24 bg-muted" />
+                    <Skeleton className="h-5 w-32 bg-muted" />
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 gap-y-4">
+                    {/* Workspaces subsection */}
+                    <div>
+                      <h3 className="mobile-nav-divider-title">
+                        {workspaceNavItems.workspaces.title}
+                      </h3>
+                      <div className="grid grid-cols-2">
+                        {workspaceNavItems.workspaces.items.map((item) => (
+                          <Link
+                            key={item.title}
+                            href={resolveWorkspaceHref(item, wsUsername, isAuthenticated)}
+                            className="mobile-nav-link"
+                          >
+                            {item.title}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Data subsection */}
+                    <div>
+                      <h3 className="mobile-nav-divider-title">
+                        {workspaceNavItems.data.title}
+                      </h3>
+                      <div className="grid grid-cols-2">
+                        {workspaceNavItems.data.items.map((item) => (
+                          <Link
+                            key={item.title}
+                            href={resolveWorkspaceHref(item, wsUsername, isAuthenticated)}
+                            className="mobile-nav-link"
+                          >
+                            {item.title}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Favorites (authenticated only) */}
+                    {isAuthenticated && favoritePaths.length > 0 && (
+                      <div>
+                        <h3 className="mobile-nav-divider-title">
+                          Favorite Folders <Star className="inline h-3.5 w-3.5 text-amber-400" />
+                        </h3>
+                        <div className="grid grid-cols-2">
+                          {favoritePaths.map((path) => (
+                            <Link
+                              key={path}
+                              href={buildFolderHref(path)}
+                              className="mobile-nav-link"
+                            >
+                              {getWorkspaceFolderDisplayName(path)}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Recently Visited (authenticated only) */}
+                    {isAuthenticated && recentFolders.length > 0 && (
+                      <div>
+                        <h3 className="mobile-nav-divider-title">
+                          Recently Visited Folders
+                        </h3>
+                        <div className="grid grid-cols-2">
+                          {recentFolders.map((folder) => (
+                            <Link
+                              key={folder.path}
+                              href={buildFolderHref(folder.path)}
+                              className="mobile-nav-link"
+                            >
+                              {getWorkspaceFolderDisplayName(folder.path)}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Sign-in prompt for unauthenticated users */}
+                    {!isAuthenticated && (
+                      <div>
+                        <Link
+                          href="/sign-in?redirect=/workspace"
+                          className="text-sm text-muted-foreground mb-2 block hover:text-foreground hover:underline focus:outline-none focus:underline"
+                        >
+                          Sign in to view your full workspace.
+                        </Link>
+                        <Link
+                          href="/sign-in?redirect=/workspace"
+                          className={buttonVariants({
+                            variant: "default",
+                            size: "sm",
+                            className: "w-fit",
+                          })}
+                        >
+                          Sign In
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </SheetContent>

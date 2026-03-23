@@ -3,6 +3,8 @@ const protectedApiPrefixes = ["/api/protected/"] as const;
 
 export function isProtectedPagePath(path: string): boolean {
   if (path === "/services") return false;
+  if (path.startsWith("/workspace/public")) return false;
+  if (path.startsWith("/workspace/workshop")) return false;
   return protectedPagePrefixes.some((prefix) => path.startsWith(prefix));
 }
 

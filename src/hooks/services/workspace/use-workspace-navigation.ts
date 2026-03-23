@@ -21,6 +21,7 @@ export function useWorkspaceNavigation({
   clearSelection,
 }: UseWorkspaceNavigationOptions) {
   const isHome = mode === "home";
+  const isPublic = mode === "public";
 
   const navigateToItem = useCallback(
     (item: WorkspaceBrowserItem) => {
@@ -32,6 +33,14 @@ export function useWorkspaceNavigation({
         const encoded = segments.map(encodeWorkspaceSegment).join("/");
         const homeBase = `/workspace/${encodeWorkspaceSegment(username)}/home`;
         router.push(`${homeBase}/${encoded}`);
+      } else if (isPublic) {
+        const segments = item.path
+          .replace(/^\//, "")
+          .split("/")
+          .map(sanitizePathSegment)
+          .filter(Boolean);
+        const encoded = segments.map(encodeWorkspaceSegment).join("/");
+        router.push(`/workspace/public/${encoded}`);
       } else {
         const segments = item.path
           .replace(/^\//, "")
@@ -43,7 +52,7 @@ export function useWorkspaceNavigation({
       }
       clearSelection();
     },
-    [isHome, path, username, router, clearSelection],
+    [isHome, isPublic, path, username, router, clearSelection],
   );
 
   const handleItemDoubleClick = useCallback(

@@ -75,8 +75,12 @@ export interface WorkspaceActionBarProps {
   loadingActionIds?: string[];
   /** When true, the Favorite action shows a filled star (selected folder is favorited). */
   isCurrentSelectionFavorite?: boolean;
+  /** When true, only show read-only actions (guide + download). Used for public workspace browsing. */
+  readOnly?: boolean;
   onAction?: (actionId: string, selection: WorkspaceBrowserItem[]) => void;
 }
+
+const readOnlyAllowedActions = new Set(["guide", "download"]);
 
 export function WorkspaceActionBar({
   selection,
@@ -84,11 +88,13 @@ export function WorkspaceActionBar({
   disabledActionIds,
   loadingActionIds,
   isCurrentSelectionFavorite = false,
+  readOnly = false,
   onAction,
 }: WorkspaceActionBarProps) {
-  const visibleActions = actionConfig.filter((action) =>
-    isActionValidForSelection(action, selection),
-  );
+  const visibleActions = actionConfig.filter((action) => {
+    if (readOnly && !readOnlyAllowedActions.has(action.id)) return false;
+    return isActionValidForSelection(action, selection);
+  });
   const isDisabled = (actionId: string) =>
     disabledActionIds?.includes(actionId) ?? false;
   const isLoading = (actionId: string) =>

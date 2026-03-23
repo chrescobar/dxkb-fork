@@ -5,7 +5,7 @@ import { metaListToObj } from "./helpers";
  * Base client for making JSON-RPC requests to the Workspace API
  */
 export class WorkspaceApiClient {
-  private baseUrl: string;
+  protected baseUrl: string;
 
   constructor(_authToken?: string) {
     // Use our internal API endpoint that handles authentication via cookies
@@ -32,8 +32,10 @@ export class WorkspaceApiClient {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          id: 1,
           method,
           params,
+          jsonrpc: "2.0",
         }),
       });
 

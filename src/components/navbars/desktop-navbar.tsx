@@ -12,13 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Logo from "@/components/ui/logo";
 import { useAuth } from "@/contexts/auth-context";
 import { UserAvatarDropdown } from "@/components/navbars/user-avatar-dropdown";
-import { encodeWorkspaceSegment } from "@/lib/utils";
-
-/** Full username with @domain for workspace URLs (session stores short form in user.username). */
-function workspaceUsername(user: { username?: string; realm?: string } | null): string {
-  if (!user?.username) return "";
-  return user.realm ? `${user.username}@${user.realm}` : user.username;
-}
+import { WorkspaceDropdownContent, workspaceUsername } from "@/components/navbars/workspace-dropdown-content";
 
 const DesktopNavbar = () => {
   const { isAuthenticated, user, isLoading } = useAuth();
@@ -107,7 +101,7 @@ const DesktopNavbar = () => {
                 Services
               </NavigationMenuTrigger>
               <NavigationMenuContent>
-                <div className="grid grid-cols-2 gap-2 p-2 md:w-[550px] lg:w-[650px]">
+                <div className="grid grid-cols-2 gap-2 p-2 lg:w-[550px]">
                   <div className="space-y-0">
                     {/* Left Column */}
                     {Object.entries(serviceItems)
@@ -184,49 +178,15 @@ const DesktopNavbar = () => {
               </NavigationMenuContent>
             </NavigationMenuItem>
 
-            {/* Workspace - always visible; when not signed in, prompt to Sign In */}
             <NavigationMenuItem id="workspace-nav">
               <NavigationMenuTrigger className="bg-primary">
                 Workspace
               </NavigationMenuTrigger>
               <NavigationMenuContent>
-                {isAuthenticated ? (
-                  <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                    <ListItem
-                      key="workspace-nav"
-                      title="My Workspace"
-                      href={wsUsername ? `/workspace/${encodeWorkspaceSegment(wsUsername)}/home` : "/workspace"}
-                    >
-                      View your workspace.
-                    </ListItem>
-                    <ListItem
-                      key="workspace-jobs-nav"
-                      title="Jobs"
-                      href="/jobs"
-                    >
-                      View all jobs in your workspace.
-                    </ListItem>
-                  </ul>
-                ) : (
-                  <ul className="grid w-[300px] gap-3 p-4 md:w-[400px] md:grid-cols-2 lg:w-[500px]">
-                    <ListItem
-                      key="workspace-sign-in"
-                      title="My Workspace"
-                      href="/sign-in?redirect=/workspace"
-                      className="w-full"
-                    >
-                      Sign in required
-                    </ListItem>
-                    <ListItem
-                      key="jobs-sign-in"
-                      title="My Jobs"
-                      href="/sign-in?redirect=/jobs"
-                      className="w-full"
-                    >
-                      Sign in required
-                    </ListItem>
-                  </ul>
-                )}
+                <WorkspaceDropdownContent
+                  isAuthenticated={isAuthenticated}
+                  wsUsername={wsUsername}
+                />
               </NavigationMenuContent>
             </NavigationMenuItem>
           </NavigationMenuList>

@@ -119,7 +119,15 @@ export const WorkspaceDataTable = forwardRef<
 
   function handleItemClick(item: WorkspaceBrowserItem) {
     if (!isFolderType(item.type)) return;
-    if (viewMode === "shared") {
+    if (viewMode === "public") {
+      const segments = item.path
+        .replace(/^\//, "")
+        .split("/")
+        .map(sanitizePathSegment)
+        .filter(Boolean);
+      const encoded = segments.map(encodeWorkspaceSegment).join("/");
+      router.push(`/workspace/public/${encoded}`);
+    } else if (viewMode === "shared") {
       const segments = item.path
         .replace(/^\//, "")
         .split("/")
@@ -138,7 +146,15 @@ export const WorkspaceDataTable = forwardRef<
   }
 
   const handleParentClick = useCallback(() => {
-    if (viewMode === "shared") {
+    if (viewMode === "public") {
+      if (pathSegments.length <= 1) {
+        router.push("/workspace/public");
+      } else {
+        const parentSegments = pathSegments.slice(0, -1);
+        const encoded = parentSegments.map(encodeWorkspaceSegment).join("/");
+        router.push(`/workspace/public/${encoded}`);
+      }
+    } else if (viewMode === "shared") {
       if (pathSegments.length <= 1) {
         router.push(sharedRootHref);
       } else {
@@ -155,13 +171,19 @@ export const WorkspaceDataTable = forwardRef<
   }, [viewMode, pathSegments, path, sharedRootHref, homeBase, router]);
 
   const showParentRow =
-    viewMode === "shared" ? pathSegments.length >= 1 : !isAtRoot;
+    viewMode === "shared" || viewMode === "public"
+      ? pathSegments.length >= 1
+      : !isAtRoot;
   const parentRowLabel =
-    viewMode === "shared"
+    viewMode === "public"
       ? pathSegments.length <= 2
-        ? "Back to my workspaces"
+        ? "Back to public workspaces"
         : "Parent folder"
-      : "Parent folder";
+      : viewMode === "shared"
+        ? pathSegments.length <= 2
+          ? "Back to my workspaces"
+          : "Parent folder"
+        : "Parent folder";
   const showLeadingRow = showViewSharedRow && viewMode === "home" && isAtRoot;
 
   const leadingOffset = showLeadingRow ? 1 : 0;

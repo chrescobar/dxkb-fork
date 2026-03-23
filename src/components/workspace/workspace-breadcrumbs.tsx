@@ -1,8 +1,9 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import { ChevronRight, Globe, Home } from "lucide-react";
-import { cn, encodeWorkspaceSegment, sanitizePathSegment } from "@/lib/utils";
+import { buildEncodedSegmentPath, cn, encodeWorkspaceSegment, sanitizePathSegment } from "@/lib/utils";
 
 export type BreadcrumbsViewMode = "home" | "shared" | "root" | "public";
 
@@ -42,10 +43,10 @@ export function WorkspaceBreadcrumbs({
   currentUsername,
   workspaceRootUsername,
 }: WorkspaceBreadcrumbsProps) {
-  const segments = path
-    .split("/")
-    .map((s) => sanitizePathSegment(s))
-    .filter(Boolean);
+  const segments = useMemo(
+    () => path.split("/").map((s) => sanitizePathSegment(s)).filter(Boolean),
+    [path],
+  );
 
   const safeUsername = sanitizePathSegment(username);
   const encodedUser = encodeWorkspaceSegment(safeUsername);
@@ -91,10 +92,7 @@ export function WorkspaceBreadcrumbs({
           </Link>
         )}
         {segments.map((segment, index) => {
-          const segmentPath = segments
-            .slice(0, index + 1)
-            .map(encodeWorkspaceSegment)
-            .join("/");
+          const segmentPath = buildEncodedSegmentPath(segments.slice(0, index + 1));
           const href = `/workspace/public/${segmentPath}`;
           const isLast = index === segments.length - 1;
 
@@ -129,10 +127,7 @@ export function WorkspaceBreadcrumbs({
     return (
       <nav aria-label="Workspace path" className="flex flex-wrap items-center gap-1 text-sm">
         {segments.map((segment, index) => {
-          const segmentPath = segments
-            .slice(0, index + 1)
-            .map(encodeWorkspaceSegment)
-            .join("/");
+          const segmentPath = buildEncodedSegmentPath(segments.slice(0, index + 1));
           const myRoot = workspaceRootUsername || currentUsername;
           const href =
             index === 0 && myRoot

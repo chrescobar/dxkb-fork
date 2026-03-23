@@ -23,7 +23,7 @@ import {
   WorkspaceDataTable,
   type WorkspaceDataTableHandle,
 } from "./workspace-data-table";
-import { WorkspaceActionBar } from "./workspace-action-bar";
+import { WorkspaceActionBar, type WorkspaceActionId } from "./workspace-action-bar";
 import { WorkspaceShell } from "./workspace-shell";
 import { WorkspaceDialogs } from "./workspace-dialogs";
 import { WorkspaceNotFoundDialog } from "./workspace-not-found-dialog";
@@ -32,7 +32,7 @@ import { loadFavorites } from "@/lib/services/workspace/favorites";
 import { addRecentFolder } from "@/lib/recent-workspace-folders";
 import { usePublicWorkspaceData, type PublicWorkspaceLevel } from "@/hooks/services/workspace/use-public-workspace-data";
 import { WorkspaceBrowserItem, WorkspaceBrowserSort, type WorkspaceViewMode } from "@/types/workspace-browser";
-import { encodeWorkspaceSegment, noop } from "@/lib/utils";
+import { encodeWorkspaceSegment, noop, workspaceUsername } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { WorkspaceApiClient } from "@/lib/services/workspace/client";
 import { WorkspaceCrudMethods } from "@/lib/services/workspace/methods/crud";
@@ -63,10 +63,7 @@ export function WorkspaceBrowser({
   const router = useRouter();
   const { user } = useAuth();
   const currentUser = user?.username ?? "";
-  const fullWorkspaceUsername =
-    (user?.realm ? `${user.username}@${user.realm}` : null) ??
-    user?.username ??
-    "";
+  const fullWorkspaceUsername = workspaceUsername(user);
   const myWorkspaceRoot = fullWorkspaceUsername || currentUser;
 
   const [authChecked, setAuthChecked] = useState(false);
@@ -378,12 +375,12 @@ export function WorkspaceBrowser({
   }
 
   const { activeDialog } = dialogState;
-  const disabledAndLoading = [
-    ...(isDownloading ? ["download"] : []),
-    ...(isDialogLoading && activeDialog?.type === "delete" ? ["delete"] : []),
-    ...(isDialogLoading && activeDialog?.type === "copy" ? ["copy", "move"] : []),
-    ...(isDialogLoading && activeDialog?.type === "editType" ? ["editType"] : []),
-    ...(isFavoriting ? ["favorite"] : []),
+  const disabledAndLoading: WorkspaceActionId[] = [
+    ...(isDownloading ? (["download"] as const) : []),
+    ...(isDialogLoading && activeDialog?.type === "delete" ? (["delete"] as const) : []),
+    ...(isDialogLoading && activeDialog?.type === "copy" ? (["copy", "move"] as const) : []),
+    ...(isDialogLoading && activeDialog?.type === "editType" ? (["editType"] as const) : []),
+    ...(isFavoriting ? (["favorite"] as const) : []),
   ];
 
   return (

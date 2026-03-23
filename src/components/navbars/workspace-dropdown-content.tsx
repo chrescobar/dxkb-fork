@@ -9,13 +9,9 @@ import { NavigationMenuLink } from "@/components/ui/navigation-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { loadFavorites } from "@/lib/services/workspace/favorites";
 import { getRecentFolders, getWorkspaceFolderDisplayName } from "@/lib/recent-workspace-folders";
-import { encodeWorkspaceSegment } from "@/lib/utils";
+import { buildEncodedSegmentPath, encodeWorkspaceSegment, parsePathSegments, workspaceUsername } from "@/lib/utils";
 
-/** Full username with @domain for workspace URLs (session stores short form in user.username). */
-export function workspaceUsername(user: { username?: string; realm?: string } | null): string {
-  if (!user?.username) return "";
-  return user.realm ? `${user.username}@${user.realm}` : user.username;
-}
+export { workspaceUsername };
 
 /** Resolve a nav item's href for the current user state. */
 export function resolveWorkspaceHref(
@@ -33,9 +29,7 @@ export function resolveWorkspaceHref(
 
 /** Convert a full workspace path (e.g. /user@bvbrc/home/folder) to a browser URL. */
 export function buildFolderHref(folderPath: string): string {
-  const trimmed = folderPath.startsWith("/") ? folderPath.slice(1) : folderPath;
-  const segments = trimmed.split("/");
-  return `/workspace/${segments.map(encodeWorkspaceSegment).join("/")}`;
+  return `/workspace/${buildEncodedSegmentPath(parsePathSegments(folderPath))}`;
 }
 
 interface WorkspaceDropdownContentProps {

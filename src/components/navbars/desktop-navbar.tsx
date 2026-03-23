@@ -102,78 +102,45 @@ const DesktopNavbar = () => {
               </NavigationMenuTrigger>
               <NavigationMenuContent>
                 <div className="grid grid-cols-2 gap-2 p-2 lg:w-[550px]">
-                  <div className="space-y-0">
-                    {/* Left Column */}
-                    {Object.entries(serviceItems)
-                      .slice(0, Math.ceil(Object.keys(serviceItems).length / 2))
-                      .map(([key, section]) => (
-                        <div key={key}>
-                          <h4 className="bg-primary my-0.5 rounded-md p-2 text-sm font-bold text-white">
-                            {section.title}
-                          </h4>
-                          <div className="space-y-0">
-                            {section.items.map((item) => (
-                              <NavigationMenuLink
-                                key={item.href}
-                                render={
-                                  item.target === "_blank" ? (
-                                    <a
-                                      href={item.href}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="hover:bg-secondary/20 my-0.5 block p-2 font-medium"
-                                    />
-                                  ) : (
-                                    <Link
-                                      href={item.href}
-                                      className="hover:bg-secondary/20 my-0.5 block p-2 font-medium"
-                                    />
-                                  )
-                                }
-                              >
-                                {item.title}
-                              </NavigationMenuLink>
-                            ))}
+                  {(() => {
+                    const entries = Object.entries(serviceItems);
+                    const mid = Math.ceil(entries.length / 2);
+                    return [entries.slice(0, mid), entries.slice(mid)].map((column, colIdx) => (
+                      <div key={colIdx} className="space-y-0">
+                        {column.map(([key, section]) => (
+                          <div key={key}>
+                            <h4 className="bg-primary my-0.5 rounded-md p-2 text-sm font-bold text-white">
+                              {section.title}
+                            </h4>
+                            <div className="space-y-0">
+                              {section.items.map((item) => (
+                                <NavigationMenuLink
+                                  key={item.href}
+                                  render={
+                                    item.target === "_blank" ? (
+                                      <a
+                                        href={item.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="hover:bg-secondary/20 my-0.5 block p-2 font-medium"
+                                      />
+                                    ) : (
+                                      <Link
+                                        href={item.href}
+                                        className="hover:bg-secondary/20 my-0.5 block p-2 font-medium"
+                                      />
+                                    )
+                                  }
+                                >
+                                  {item.title}
+                                </NavigationMenuLink>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                  </div>
-                  <div className="space-y-0">
-                    {/* Right Column */}
-                    {Object.entries(serviceItems)
-                      .slice(Math.ceil(Object.keys(serviceItems).length / 2))
-                      .map(([key, section]) => (
-                        <div key={key}>
-                          <h4 className="bg-primary my-0.5 rounded-md p-2 text-sm font-bold text-white">
-                            {section.title}
-                          </h4>
-                          <div className="space-y-0">
-                            {section.items.map((item) => (
-                              <NavigationMenuLink
-                                key={item.href}
-                                render={
-                                  item.target === "_blank" ? (
-                                    <a
-                                      href={item.href}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="hover:bg-secondary/20 my-0.5 block p-2 font-medium"
-                                    />
-                                  ) : (
-                                    <Link
-                                      href={item.href}
-                                      className="hover:bg-secondary/20 my-0.5 block p-2 font-medium"
-                                    />
-                                  )
-                                }
-                              >
-                                {item.title}
-                              </NavigationMenuLink>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                  </div>
+                        ))}
+                      </div>
+                    ));
+                  })()}
                 </div>
               </NavigationMenuContent>
             </NavigationMenuItem>
@@ -198,10 +165,9 @@ const DesktopNavbar = () => {
             <SearchBar className="w-full" />
           </div>
         )}
-                      
+
       <div className="flex items-center space-x-2">
         <div className="flex items-center space-x-2">
-          {/* Show skeleton while loading */}
           {isLoading && (
             <div className="flex items-center space-x-2">
               <Skeleton className="h-8 w-16 bg-white/20" />
@@ -209,7 +175,6 @@ const DesktopNavbar = () => {
             </div>
           )}
 
-          {/* Show sign in/sign up when NOT authenticated and not loading */}
           {!isLoading && !isAuthenticated && (
             <>
               <Link
@@ -235,7 +200,6 @@ const DesktopNavbar = () => {
             </>
           )}
 
-          {/* Show user info and signout when authenticated and not loading */}
           {!isLoading && isAuthenticated && <UserAvatarDropdown />}
         </div>
       </div>

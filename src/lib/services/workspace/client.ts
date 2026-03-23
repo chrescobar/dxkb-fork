@@ -147,25 +147,9 @@ export class WorkspaceApiClient {
     }
   }
 
-  /**
-   * Update authentication token (not needed when using cookies)
-   */
-  updateAuthToken(_token: string): void {
-    // No-op: authentication is handled via cookies
-    console.warn(
-      "updateAuthToken called but authentication is handled via cookies",
-    );
-  }
-
-  /**
-   * Remove authentication token (not needed when using cookies)
-   */
-  removeAuthToken(): void {
-    // No-op: authentication is handled via cookies
-    console.warn(
-      "removeAuthToken called but authentication is handled via cookies",
-    );
-  }
+  // No-op overrides: WorkspaceApiClient authenticates via cookies, not header tokens.
+  updateAuthToken(_token: string): void { return; }
+  removeAuthToken(): void { return; }
 }
 
 // Factory function for creating workspace API client

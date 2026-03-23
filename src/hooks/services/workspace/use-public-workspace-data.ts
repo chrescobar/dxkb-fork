@@ -24,40 +24,34 @@ export interface UsePublicWorkspaceDataReturn {
   refetch: () => void;
 }
 
+function buildQueryConfig(level: PublicWorkspaceLevel, username?: string, fullPath?: string) {
+  switch (level) {
+    case "root":
+      return { queryKey: ["workspace-public-root"], queryFn: listPublicWorkspaces, enabled: true };
+    case "user":
+      return { queryKey: ["workspace-public-user", username], queryFn: () => listUserPublicWorkspaces(username ?? ""), enabled: !!username };
+    case "path":
+      return { queryKey: ["workspace-public-path", fullPath], queryFn: () => listPublicWorkspacePath(fullPath ?? ""), enabled: !!fullPath };
+  }
+}
+
 export function usePublicWorkspaceData({
   level,
   username,
   fullPath,
 }: UsePublicWorkspaceDataOptions): UsePublicWorkspaceDataReturn {
-  const rootQuery = useQuery<WorkspaceBrowserItem[], Error>({
-    queryKey: ["workspace-public-root"],
-    queryFn: listPublicWorkspaces,
-    enabled: level === "root",
+  const config = buildQueryConfig(level, username, fullPath);
+
+  const query = useQuery<WorkspaceBrowserItem[], Error>({
+    ...config,
     staleTime: 2 * 60 * 1000,
   });
-
-  const userQuery = useQuery<WorkspaceBrowserItem[], Error>({
-    queryKey: ["workspace-public-user", username],
-    queryFn: () => listUserPublicWorkspaces(username ?? ""),
-    enabled: level === "user" && !!username,
-    staleTime: 2 * 60 * 1000,
-  });
-
-  const pathQuery = useQuery<WorkspaceBrowserItem[], Error>({
-    queryKey: ["workspace-public-path", fullPath],
-    queryFn: () => listPublicWorkspacePath(fullPath ?? ""),
-    enabled: level === "path" && !!fullPath,
-    staleTime: 2 * 60 * 1000,
-  });
-
-  const activeQuery =
-    level === "root" ? rootQuery : level === "user" ? userQuery : pathQuery;
 
   return {
-    items: activeQuery.data ?? [],
-    isLoading: activeQuery.isLoading,
-    isFetching: activeQuery.isFetching,
-    error: activeQuery.error,
-    refetch: activeQuery.refetch,
+    items: query.data ?? [],
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    error: query.error,
+    refetch: query.refetch,
   };
 }

@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 // Cookie configuration for BV-BRC authentication
 const cookieOptions = {
@@ -99,6 +100,34 @@ export async function getAuthToken(): Promise<string | undefined> {
   const cookieStore = await cookies();
   const rawToken = cookieStore.get("bvbrc_token")?.value;
   return rawToken ? safeDecodeURIComponent(rawToken) : undefined;
+}
+
+// ============================================================================
+// Auth guard helpers (return early 401 when session is missing)
+// ============================================================================
+
+export async function requireAuth(): Promise<
+  { token: string; userId: string; realm?: string } | NextResponse
+> {
+  const { token, userId, realm } = await getSession();
+  if (!token || !userId) {
+    return NextResponse.json(
+      { message: "Authentication required" },
+      { status: 401 },
+    );
+  }
+  return { token, userId, realm };
+}
+
+export async function requireAuthToken(): Promise<string | NextResponse> {
+  const token = await getAuthToken();
+  if (!token) {
+    return NextResponse.json(
+      { error: "Authentication required" },
+      { status: 401 },
+    );
+  }
+  return token;
 }
 
 // ============================================================================

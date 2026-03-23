@@ -14,7 +14,7 @@ import type {
   WorkspaceBrowserSort,
   WorkspaceViewMode,
 } from "@/types/workspace-browser";
-import { encodeWorkspaceSegment, noop, sanitizePathSegment } from "@/lib/utils";
+import { buildEncodedSegmentPath, encodeWorkspaceSegment, noop, parsePathSegments, sanitizePathSegment } from "@/lib/utils";
 import { normalizePath } from "@/lib/workspace/table-selection";
 import { isFolderType } from "@/lib/services/workspace/utils";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
@@ -118,28 +118,17 @@ export const WorkspaceDataTable = forwardRef<
   function handleItemClick(item: WorkspaceBrowserItem) {
     if (!isFolderType(item.type)) return;
     if (viewMode === "public") {
-      const segments = item.path
-        .replace(/^\//, "")
-        .split("/")
-        .map(sanitizePathSegment)
-        .filter(Boolean);
-      const encoded = segments.map(encodeWorkspaceSegment).join("/");
+      const encoded = buildEncodedSegmentPath(parsePathSegments(item.path));
       router.push(`/workspace/public/${encoded}`);
     } else if (viewMode === "shared") {
-      const segments = item.path
-        .replace(/^\//, "")
-        .split("/")
-        .map(sanitizePathSegment)
-        .filter(Boolean);
-      const encoded = segments.map(encodeWorkspaceSegment).join("/");
+      const encoded = buildEncodedSegmentPath(parsePathSegments(item.path));
       router.push(`/workspace/${encoded}`);
     } else {
       const segments = path
         ? path.split("/").map(sanitizePathSegment).filter(Boolean)
         : [];
       segments.push(sanitizePathSegment(item.name));
-      const encoded = segments.map(encodeWorkspaceSegment).join("/");
-      router.push(`${homeBase}/${encoded}`);
+      router.push(`${homeBase}/${buildEncodedSegmentPath(segments)}`);
     }
   }
 
@@ -148,22 +137,20 @@ export const WorkspaceDataTable = forwardRef<
       if (pathSegments.length <= 1) {
         router.push("/workspace/public");
       } else {
-        const parentSegments = pathSegments.slice(0, -1);
-        const encoded = parentSegments.map(encodeWorkspaceSegment).join("/");
+        const encoded = buildEncodedSegmentPath(pathSegments.slice(0, -1));
         router.push(`/workspace/public/${encoded}`);
       }
     } else if (viewMode === "shared") {
       if (pathSegments.length <= 1) {
         router.push(sharedRootHref);
       } else {
-        const parentSegments = pathSegments.slice(0, -1);
-        const encoded = parentSegments.map(encodeWorkspaceSegment).join("/");
+        const encoded = buildEncodedSegmentPath(pathSegments.slice(0, -1));
         if (encoded) router.push(`/workspace/${encoded}`);
       }
     } else {
       const segments = path.split("/").map(sanitizePathSegment).filter(Boolean);
       segments.pop();
-      const parentPath = segments.map(encodeWorkspaceSegment).join("/");
+      const parentPath = buildEncodedSegmentPath(segments);
       router.push(`${homeBase}${parentPath ? `/${parentPath}` : ""}`);
     }
   }, [viewMode, pathSegments, path, sharedRootHref, homeBase, router]);

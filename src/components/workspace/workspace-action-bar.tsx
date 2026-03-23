@@ -9,8 +9,10 @@ import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
 
 const writePermissions = new Set(["o", "a", "w"]);
 
+export type WorkspaceActionId = "guide" | "download" | "delete" | "rename" | "copy" | "move" | "editType" | "favorite";
+
 interface ActionConfig {
-  id: string;
+  id: WorkspaceActionId;
   label: string;
   icon: LucideIcon;
   /** "*" or list of item types this action applies to */
@@ -70,14 +72,14 @@ export interface WorkspaceActionBarProps {
   workspaceGuideUrl: string;
   currentPath?: string;
   /** Action IDs to disable (e.g. "download" while fetching URL). */
-  disabledActionIds?: string[];
+  disabledActionIds?: WorkspaceActionId[];
   /** Action IDs currently loading (show spinner instead of icon). */
-  loadingActionIds?: string[];
+  loadingActionIds?: WorkspaceActionId[];
   /** When true, the Favorite action shows a filled star (selected folder is favorited). */
   isCurrentSelectionFavorite?: boolean;
   /** When true, only show read-only actions (guide + download). Used for public workspace browsing. */
   readOnly?: boolean;
-  onAction?: (actionId: string, selection: WorkspaceBrowserItem[]) => void;
+  onAction?: (actionId: WorkspaceActionId, selection: WorkspaceBrowserItem[]) => void;
 }
 
 const readOnlyAllowedActions = new Set(["guide", "download"]);
@@ -95,9 +97,9 @@ export function WorkspaceActionBar({
     if (readOnly && !readOnlyAllowedActions.has(action.id)) return false;
     return isActionValidForSelection(action, selection);
   });
-  const isDisabled = (actionId: string) =>
+  const isDisabled = (actionId: WorkspaceActionId) =>
     disabledActionIds?.includes(actionId) ?? false;
-  const isLoading = (actionId: string) =>
+  const isLoading = (actionId: WorkspaceActionId) =>
     loadingActionIds?.includes(actionId) ?? false;
   const isPermanentlyDisabled = (action: ActionConfig) =>
     !!action.disabledWithTooltip;

@@ -21,7 +21,7 @@ import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigatio
 import {
   useWorkspaceColumns,
 } from "./workspace-table-columns";
-import { LeadingRow, ParentRow, DataRow, EmptyRow } from "./workspace-table-rows";
+import { ParentRow, DataRow, EmptyRow } from "./workspace-table-rows";
 import {
   DataTable,
   type DataTableHandle,
@@ -45,7 +45,6 @@ interface WorkspaceDataTableProps {
   path: string;
   sort: WorkspaceBrowserSort;
   onSortChange: (sort: WorkspaceBrowserSort) => void;
-  showViewSharedRow?: boolean;
   viewMode?: WorkspaceViewMode;
   memberCountByPath?: Record<string, number>;
   username?: string;
@@ -74,7 +73,6 @@ export const WorkspaceDataTable = forwardRef<
     path,
     sort,
     onSortChange,
-    showViewSharedRow = false,
     viewMode = "home",
     memberCountByPath,
     username = "",
@@ -184,9 +182,6 @@ export const WorkspaceDataTable = forwardRef<
           ? "Back to my workspaces"
           : "Parent folder"
         : "Parent folder";
-  const showLeadingRow = showViewSharedRow && viewMode === "home" && isAtRoot;
-
-  const leadingOffset = showLeadingRow ? 1 : 0;
   const parentOffset = showParentRow ? 1 : 0;
 
   const getFocusedIndex = useCallback(() => {
@@ -213,9 +208,8 @@ export const WorkspaceDataTable = forwardRef<
     onSelect: onSelect ?? noop,
     onEnter: handleEnter,
     enabled: useSelectionMode,
-    leadingOffset,
+    leadingOffset: 0,
     parentOffset,
-    onLeadingEnter: () => router.push(sharedBase),
     onParentEnter: handleParentClick,
     onClearSelection,
   });
@@ -230,16 +224,6 @@ export const WorkspaceDataTable = forwardRef<
   const renderLeadingRows = useCallback((columnOrder: string[]) => {
     return (
       <>
-        {showLeadingRow && (
-          <LeadingRow
-            columns={[] as never[]}
-            useSelectionMode={useSelectionMode}
-            isFocused={focusedSpecialRow === "leading"}
-            onClick={() => router.push(sharedBase)}
-            _useDataTable
-            columnOrder={columnOrder}
-          />
-        )}
         {showParentRow && (
           <ParentRow
             columns={[] as never[]}
@@ -254,12 +238,9 @@ export const WorkspaceDataTable = forwardRef<
       </>
     );
   }, [
-    showLeadingRow,
     showParentRow,
     useSelectionMode,
     focusedSpecialRow,
-    router,
-    sharedBase,
     handleParentClick,
     parentRowLabel,
   ]);

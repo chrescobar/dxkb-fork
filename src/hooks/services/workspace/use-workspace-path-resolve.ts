@@ -24,6 +24,7 @@ export function useWorkspacePathResolve({
       return parseWorkspaceGetSingle(raw as unknown[], 0);
     },
     enabled: enabled && !!fullPath,
+    retry: false,
     staleTime: 2 * 60 * 1000,
   });
 }

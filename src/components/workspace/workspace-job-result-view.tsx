@@ -263,7 +263,6 @@ export function WorkspaceJobResultView({
               path={path}
               sort={sort}
               onSortChange={setSort}
-              showViewSharedRow={false}
               viewMode={viewMode}
               username={username}
               sharedRootUsername={viewMode === "home" ? undefined : myWorkspaceRoot}

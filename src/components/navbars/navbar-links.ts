@@ -240,8 +240,7 @@ const workspaceNavItems: Record<string, WorkspaceNavSection> = {
     title: "Workspaces",
     items: [
       { title: "Home", href: (u) => `/workspace/${u}/home`, requiresAuth: true },
-      { title: "My Workspaces", href: (u) => `/workspace/${u}/home`, requiresAuth: true },
-      { title: "Shared Workspaces", href: (u) => `/workspace/${u}`, requiresAuth: true },
+      { title: "My Workspaces", href: (u) => `/workspace/${u}`, requiresAuth: true },
       { title: "Public Workspaces", href: "/workspace/public", requiresAuth: false },
       { title: "BV-BRC Workshop", href: "/workspace/public/ARWattam@patricbrc.org/BV-BRC%20Workshop", requiresAuth: false },
     ],
@@ -251,8 +250,8 @@ const workspaceNavItems: Record<string, WorkspaceNavSection> = {
     items: [
       { title: "My Jobs", href: "/jobs", requiresAuth: true, signInRedirect: "/sign-in?redirect=/jobs" },
       { title: "My Genomes", href: (u) => `/workspace/${u}/home/.genomes`, requiresAuth: true },
-      { title: "My Genome Groups", href: (u) => `/workspace/${u}/home/.genome_groups`, requiresAuth: true },
-      { title: "My Feature Groups", href: (u) => `/workspace/${u}/home/.feature_groups`, requiresAuth: true },
+      { title: "My Genome Groups", href: (u) => `/workspace/${u}/home/Genome%20Groups`, requiresAuth: true },
+      { title: "My Feature Groups", href: (u) => `/workspace/${u}/home/Feature%20Groups`, requiresAuth: true },
     ],
   },
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -26,6 +26,7 @@ import {
 import { WorkspaceActionBar } from "./workspace-action-bar";
 import { WorkspaceShell } from "./workspace-shell";
 import { WorkspaceDialogs } from "./workspace-dialogs";
+import { WorkspaceNotFoundDialog } from "./workspace-not-found-dialog";
 import { WorkspaceDownloadMethods } from "@/lib/services/workspace/methods/download";
 import { loadFavorites } from "@/lib/services/workspace/favorites";
 import { addRecentFolder } from "@/lib/recent-workspace-folders";
@@ -74,6 +75,7 @@ export function WorkspaceBrowser({
     return () => clearTimeout(t);
   }, []);
 
+  const [notFoundDismissed, setNotFoundDismissed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const {
@@ -155,6 +157,7 @@ export function WorkspaceBrowser({
     currentUser,
     isJobResultView,
     isAtSharedRoot,
+    pathResolveFailed: resolveQuery.isError,
     initialSharedItems,
     initialPathItems,
     initialPermissions,
@@ -288,9 +291,23 @@ export function WorkspaceBrowser({
     router.replace(`/workspace/${encodeWorkspaceSegment(myWorkspaceRoot)}`);
   }, [isPublic, isHome, isAtSharedRoot, myWorkspaceRoot, isUrlCurrentUser, username, router]);
 
+  // Detect when the workspace path doesn't exist
+  const pathNotFound = useMemo(() => {
+    if (isPublic || !path || path.trim() === "") return false;
+    // resolveQuery errors when the path doesn't exist at all
+    if (resolveQuery.isError) return true;
+    // authenticatedData.error when directory listing fails (e.g. deleted between resolve and listing)
+    if (error && !resolveQuery.isLoading && !resolveQuery.isError) return true;
+    return false;
+  }, [isPublic, path, resolveQuery.isError, resolveQuery.isLoading, error]);
+
+  const handleNotFoundConfirm = useCallback(() => {
+    router.replace(`/workspace/${encodeWorkspaceSegment(myWorkspaceRoot)}/home`);
+  }, [router, myWorkspaceRoot]);
+
   // --- Early returns ---
 
-  if (!isPublic && path && path.trim() !== "" && resolveQuery.isLoading) {
+  if (!isPublic && path && path.trim() !== "" && resolveQuery.isLoading && !resolveQuery.isError) {
     return (
       <div className="flex min-h-[calc(100vh-12rem)] w-full flex-col overflow-hidden">
         <div className="min-w-0 shrink-0 space-y-4 overflow-hidden p-4">
@@ -304,7 +321,6 @@ export function WorkspaceBrowser({
             path={path}
             sort={{ field: "name", direction: "asc" }}
             onSortChange={noop}
-            showViewSharedRow={false}
             viewMode={isHome ? "home" : "shared"}
             username={username}
           />
@@ -344,7 +360,6 @@ export function WorkspaceBrowser({
               path={path}
               sort={{ field: "name", direction: "asc" }}
               onSortChange={noop}
-              showViewSharedRow={false}
               viewMode="shared"
               username={username}
             />
@@ -443,9 +458,6 @@ export function WorkspaceBrowser({
           path={path}
           sort={sort}
           onSortChange={setSort}
-          showViewSharedRow={
-            !isPublic && isHome && (!path || path === "" || path === "/" || !path.trim())
-          }
           viewMode={isPublic ? "public" : isHome ? "home" : "shared"}
           username={username}
           sharedRootUsername={isHome ? undefined : myWorkspaceRoot}
@@ -457,6 +469,11 @@ export function WorkspaceBrowser({
           onClearSelection={clearSelection}
         />
       </div>
+      <WorkspaceNotFoundDialog
+        open={pathNotFound && !notFoundDismissed}
+        onOpenChange={(open) => { if (!open) setNotFoundDismissed(true); }}
+        onConfirm={handleNotFoundConfirm}
+      />
     </WorkspaceShell>
   );
 }

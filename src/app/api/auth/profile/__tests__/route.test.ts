@@ -139,20 +139,6 @@ describe("POST /api/auth/profile", () => {
     expect(data.message).toBe("Authentication required");
   });
 
-  it("returns 401 when token is missing", async () => {
-    mockRequireAuth.mockResolvedValue(
-      NextResponse.json({ message: "Authentication required" }, { status: 401 }),
-    );
-
-    const request = mockNextRequest({
-      method: "POST",
-      body: [{ op: "replace", path: "/email", value: "new@example.com" }],
-    });
-
-    const response = await POST(request);
-    expect(response.status).toBe(401);
-  });
-
   it("forwards JSON Patch body to upstream", async () => {
     mockRequireAuth.mockResolvedValue({ token: "the-token", userId: "user1", realm: "bvbrc" });
     setAuthCookies("the-token", "user1");

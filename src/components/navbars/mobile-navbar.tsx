@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
@@ -35,10 +35,7 @@ const MobileNavbar = () => {
     staleTime: 2 * 60 * 1000,
   });
 
-  const recentFolders = useMemo(
-    () => (isAuthenticated ? getRecentFolders(wsUsername) : []),
-    [isAuthenticated, wsUsername],
-  );
+  const recentFolders = isAuthenticated ? getRecentFolders(wsUsername) : [];
 
   return (
     <header className="bg-primary flex flex-col lg:hidden">

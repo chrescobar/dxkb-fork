@@ -123,7 +123,7 @@ export async function requireAuthToken(): Promise<string | NextResponse> {
   const token = await getAuthToken();
   if (!token) {
     return NextResponse.json(
-      { error: "Authentication required" },
+      { message: "Authentication required" },
       { status: 401 },
     );
   }

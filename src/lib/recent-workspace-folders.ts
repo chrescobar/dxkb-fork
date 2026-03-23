@@ -38,20 +38,35 @@ export function getRecentFolders(userPrefix?: string): RecentFolder[] {
 }
 
 /**
- * Add a folder to the recently visited list. Deduplicates and trims to maxItems.
+ * Add a folder to the recently visited list. Deduplicates and trims to maxItems
+ * per user, preserving other users' entries on shared browsers.
  */
 export function addRecentFolder(
   path: string,
+  userPrefix: string,
   maxItems: number = defaultMaxItems,
 ): void {
   try {
     const existing = getRecentFolders();
-    const filtered = existing.filter((f) => f.path !== path);
-    const updated = [{ path, visitedAt: Date.now() }, ...filtered].slice(
+    const prefix = userPrefix.startsWith("/") ? userPrefix : `/${userPrefix}`;
+
+    const otherEntries = existing.filter(
+      (f) => !f.path.startsWith(`${prefix}/`),
+    );
+    const userEntries = existing.filter((f) =>
+      f.path.startsWith(`${prefix}/`),
+    );
+
+    const deduped = userEntries.filter((f) => f.path !== path);
+    const updatedUser = [{ path, visitedAt: Date.now() }, ...deduped].slice(
       0,
       maxItems,
     );
-    localStorage.setItem(storageKey, JSON.stringify(updated));
+
+    localStorage.setItem(
+      storageKey,
+      JSON.stringify([...updatedUser, ...otherEntries]),
+    );
   } catch {
     // localStorage unavailable — silently ignore
   }

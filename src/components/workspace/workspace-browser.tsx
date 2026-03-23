@@ -72,7 +72,8 @@ export function WorkspaceBrowser({
     return () => clearTimeout(t);
   }, []);
 
-  const [notFoundDismissed, setNotFoundDismissed] = useState(false);
+  const [dismissedPath, setDismissedPath] = useState<string | null>(null);
+  const notFoundDismissed = dismissedPath === path;
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const {
@@ -212,8 +213,8 @@ export function WorkspaceBrowser({
 
   useEffect(() => {
     if (isPublic || !currentDirectoryPath || mode !== "home") return;
-    addRecentFolder(currentDirectoryPath);
-  }, [isPublic, currentDirectoryPath, mode]);
+    addRecentFolder(currentDirectoryPath, currentUserWorkspaceRoot);
+  }, [isPublic, currentDirectoryPath, mode, currentUserWorkspaceRoot]);
 
   const canWriteToCurrentDir = useMemo(() => {
     if (isPublic || !fullPath) return false;
@@ -468,7 +469,7 @@ export function WorkspaceBrowser({
       </div>
       <WorkspaceNotFoundDialog
         open={pathNotFound && !notFoundDismissed}
-        onOpenChange={(open) => { if (!open) setNotFoundDismissed(true); }}
+        onOpenChange={(open) => { if (!open) setDismissedPath(path); }}
         onConfirm={handleNotFoundConfirm}
       />
     </WorkspaceShell>

@@ -96,25 +96,25 @@ describe("addRecentFolder", () => {
   });
 
   it("adds a new entry to empty storage", () => {
-    addRecentFolder("/user@bvbrc/home/folder1");
+    addRecentFolder("/user@bvbrc/home/folder1", "/user@bvbrc");
     const result = getRecentFolders();
     expect(result).toHaveLength(1);
     expect(result[0].path).toBe("/user@bvbrc/home/folder1");
   });
 
   it("deduplicates by moving existing entry to front", () => {
-    addRecentFolder("/user@bvbrc/home/folder1");
-    addRecentFolder("/user@bvbrc/home/folder2");
-    addRecentFolder("/user@bvbrc/home/folder1");
+    addRecentFolder("/user@bvbrc/home/folder1", "/user@bvbrc");
+    addRecentFolder("/user@bvbrc/home/folder2", "/user@bvbrc");
+    addRecentFolder("/user@bvbrc/home/folder1", "/user@bvbrc");
     const result = getRecentFolders();
     expect(result).toHaveLength(2);
     expect(result[0].path).toBe("/user@bvbrc/home/folder1");
     expect(result[1].path).toBe("/user@bvbrc/home/folder2");
   });
 
-  it("trims to maxItems", () => {
+  it("trims to maxItems per user", () => {
     for (let i = 0; i < 10; i++) {
-      addRecentFolder(`/user@bvbrc/home/folder${i}`);
+      addRecentFolder(`/user@bvbrc/home/folder${i}`, "/user@bvbrc");
     }
     const result = getRecentFolders();
     expect(result).toHaveLength(5);
@@ -123,9 +123,21 @@ describe("addRecentFolder", () => {
 
   it("respects custom maxItems", () => {
     for (let i = 0; i < 5; i++) {
-      addRecentFolder(`/user@bvbrc/home/folder${i}`, 3);
+      addRecentFolder(`/user@bvbrc/home/folder${i}`, "/user@bvbrc", 3);
     }
     expect(getRecentFolders()).toHaveLength(3);
+  });
+
+  it("preserves other users' entries when trimming", () => {
+    addRecentFolder("/other@bvbrc/home/their-folder", "/other@bvbrc");
+    for (let i = 0; i < 6; i++) {
+      addRecentFolder(`/user@bvbrc/home/folder${i}`, "/user@bvbrc");
+    }
+    const all = getRecentFolders();
+    expect(all.some((f) => f.path === "/other@bvbrc/home/their-folder")).toBe(
+      true,
+    );
+    expect(getRecentFolders("/user@bvbrc")).toHaveLength(5);
   });
 });
 
@@ -135,8 +147,8 @@ describe("clearRecentFolders", () => {
   });
 
   it("removes all entries from localStorage", () => {
-    addRecentFolder("/user@bvbrc/home/folder1");
-    addRecentFolder("/user@bvbrc/home/folder2");
+    addRecentFolder("/user@bvbrc/home/folder1", "/user@bvbrc");
+    addRecentFolder("/user@bvbrc/home/folder2", "/user@bvbrc");
     expect(getRecentFolders()).toHaveLength(2);
     clearRecentFolders();
     expect(getRecentFolders()).toEqual([]);

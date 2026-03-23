@@ -1,0 +1,23 @@
+src/lib/auth/routes.ts
+  cd65829a544a8041 6-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "1f44a08aaaee015b836e77a9abce6d8301052200",
+  "prompts": {
+    "cd65829a544a8041": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8cf02a72-9593-4298-969e-d0e99cebd78a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>",
+      "messages": [],
+      "total_additions": 4,
+      "total_deletions": 2,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    }
+  }
+}

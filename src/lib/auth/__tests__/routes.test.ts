@@ -15,6 +15,25 @@ describe("isProtectedPagePath", () => {
     expect(isProtectedPagePath("/workspace/user1/home")).toBe(true);
   });
 
+  it("returns false for /workspace/public exact path and sub-paths", () => {
+    expect(isProtectedPagePath("/workspace/public")).toBe(false);
+    expect(isProtectedPagePath("/workspace/public/")).toBe(false);
+    expect(isProtectedPagePath("/workspace/public/user@bvbrc")).toBe(false);
+    expect(isProtectedPagePath("/workspace/public/user@bvbrc/home")).toBe(false);
+  });
+
+  it("returns false for /workspace/workshop exact path and sub-paths", () => {
+    expect(isProtectedPagePath("/workspace/workshop")).toBe(false);
+    expect(isProtectedPagePath("/workspace/workshop/")).toBe(false);
+    expect(isProtectedPagePath("/workspace/workshop/some-event")).toBe(false);
+  });
+
+  it("does not match paths that share the prefix but are different routes", () => {
+    expect(isProtectedPagePath("/workspace/publicXYZ")).toBe(true);
+    expect(isProtectedPagePath("/workspace/workshops")).toBe(true);
+    expect(isProtectedPagePath("/workspace/publicity")).toBe(true);
+  });
+
   it("returns true for /jobs paths", () => {
     expect(isProtectedPagePath("/jobs")).toBe(true);
     expect(isProtectedPagePath("/jobs/123")).toBe(true);

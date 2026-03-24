@@ -22,19 +22,3 @@ export async function fetchUserProfile(
     return null;
   }
 }
-
-/** @deprecated Use fetchUserProfile(username, token) instead. */
-export async function getProfileMetadata(
-  token: string,
-  username: string,
-): Promise<Record<string, unknown> | null> {
-  return fetchUserProfile(username, token);
-}
-
-/** @deprecated Use fetchUserProfile(username) and read .email instead. */
-export async function getUserEmailByUsername(
-  username: string,
-): Promise<string | null> {
-  const profile = await fetchUserProfile(username);
-  return (profile?.email as string) || null;
-}

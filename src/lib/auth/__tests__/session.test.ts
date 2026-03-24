@@ -17,6 +17,8 @@ import {
   createSession,
   deleteSession,
   getSession,
+  requireAuth,
+  requireAuthToken,
 } from "../session";
 
 describe("safeDecodeURIComponent", () => {
@@ -233,5 +235,79 @@ describe("getSession", () => {
       userId: undefined,
       realm: undefined,
     });
+  });
+});
+
+describe("requireAuth", () => {
+  beforeEach(() => {
+    mockCookieStore.get.mockReset();
+  });
+
+  it("returns credentials when session is valid", async () => {
+    mockCookieStore.get.mockImplementation((name: string) => {
+      const values: Record<string, string> = {
+        bvbrc_token: "tok",
+        bvbrc_user_id: "user1",
+        bvbrc_realm: "bvbrc.org",
+      };
+      return values[name] ? { value: values[name] } : undefined;
+    });
+
+    const result = await requireAuth();
+
+    expect(result).toEqual({ token: "tok", userId: "user1", realm: "bvbrc.org" });
+  });
+
+  it("returns 401 NextResponse when token is missing", async () => {
+    mockCookieStore.get.mockImplementation((name: string) => {
+      if (name === "bvbrc_user_id") return { value: "user1" };
+      return undefined;
+    });
+
+    const result = await requireAuth();
+
+    expect(result).toBeInstanceOf(Response);
+    const response = result as Response;
+    expect(response.status).toBe(401);
+    const body = await response.json();
+    expect(body).toEqual({ message: "Authentication required" });
+  });
+
+  it("returns 401 NextResponse when userId is missing", async () => {
+    mockCookieStore.get.mockImplementation((name: string) => {
+      if (name === "bvbrc_token") return { value: "tok" };
+      return undefined;
+    });
+
+    const result = await requireAuth();
+
+    expect(result).toBeInstanceOf(Response);
+    expect((result as Response).status).toBe(401);
+  });
+});
+
+describe("requireAuthToken", () => {
+  beforeEach(() => {
+    mockCookieStore.get.mockReset();
+  });
+
+  it("returns the token string when cookie exists", async () => {
+    mockCookieStore.get.mockReturnValue({ value: "my-token" });
+
+    const result = await requireAuthToken();
+
+    expect(result).toBe("my-token");
+  });
+
+  it("returns 401 NextResponse with message key when cookie is missing", async () => {
+    mockCookieStore.get.mockReturnValue(undefined);
+
+    const result = await requireAuthToken();
+
+    expect(result).toBeInstanceOf(Response);
+    const response = result as Response;
+    expect(response.status).toBe(401);
+    const body = await response.json();
+    expect(body).toEqual({ message: "Authentication required" });
   });
 });

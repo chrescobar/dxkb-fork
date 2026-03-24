@@ -4,88 +4,84 @@ vi.mock("@/lib/env", () => ({
 
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
-import { getProfileMetadata, getUserEmailByUsername } from "../profile";
+import { fetchUserProfile } from "../profile";
 
-describe("getProfileMetadata", () => {
+describe("fetchUserProfile", () => {
   it("returns profile on success", async () => {
     const profile = { id: "testuser", email: "test@example.com" };
+
+    server.use(
+      http.get("http://mock-url/testuser", () => HttpResponse.json(profile)),
+    );
+
+    const result = await fetchUserProfile("testuser");
+
+    expect(result).toEqual(profile);
+  });
+
+  it("sends Authorization header when token is provided", async () => {
     let capturedHeaders: Headers | null = null;
 
     server.use(
       http.get("http://mock-url/testuser", ({ request }) => {
         capturedHeaders = request.headers;
-        return HttpResponse.json(profile);
+        return HttpResponse.json({ id: "testuser" });
       }),
     );
 
-    const result = await getProfileMetadata("token123", "testuser");
+    await fetchUserProfile("testuser", "my-token");
 
-    expect(result).toEqual(profile);
-    expect(capturedHeaders?.get("Authorization")).toBe("token123");
+    expect(capturedHeaders?.get("Authorization")).toBe("my-token");
+  });
+
+  it("does not send Authorization header when token is omitted", async () => {
+    let capturedHeaders: Headers | null = null;
+
+    server.use(
+      http.get("http://mock-url/testuser", ({ request }) => {
+        capturedHeaders = request.headers;
+        return HttpResponse.json({ id: "testuser" });
+      }),
+    );
+
+    await fetchUserProfile("testuser");
+
+    expect(capturedHeaders?.get("Authorization")).toBeNull();
+  });
+
+  it("encodes username in URL", async () => {
+    let capturedUrl: string | null = null;
+
+    server.use(
+      http.get("http://mock-url/:userId", ({ request }) => {
+        capturedUrl = request.url;
+        return HttpResponse.json({});
+      }),
+    );
+
+    await fetchUserProfile("user@realm.org");
+
+    expect(capturedUrl).toBe("http://mock-url/user%40realm.org");
   });
 
   it("returns null on HTTP error", async () => {
     server.use(
-      http.get("http://mock-url/nouser", () => {
-        return new HttpResponse(null, { status: 404 });
-      }),
+      http.get("http://mock-url/nouser", () =>
+        new HttpResponse(null, { status: 404 }),
+      ),
     );
 
-    const result = await getProfileMetadata("token123", "nouser");
+    const result = await fetchUserProfile("nouser");
 
     expect(result).toBeNull();
   });
 
   it("returns null on network error", async () => {
     server.use(
-      http.get("http://mock-url/testuser", () => {
-        return HttpResponse.error();
-      }),
+      http.get("http://mock-url/testuser", () => HttpResponse.error()),
     );
 
-    const result = await getProfileMetadata("token123", "testuser");
-
-    expect(result).toBeNull();
-  });
-});
-
-describe("getUserEmailByUsername", () => {
-  it("returns email on success", async () => {
-    let capturedHeaders: Headers | null = null;
-
-    server.use(
-      http.get("http://mock-url/testuser", ({ request }) => {
-        capturedHeaders = request.headers;
-        return HttpResponse.json({ email: "user@example.com" });
-      }),
-    );
-
-    const result = await getUserEmailByUsername("testuser");
-
-    expect(result).toBe("user@example.com");
-    expect(capturedHeaders?.get("Accept")).toBe("application/json");
-  });
-
-  it("returns null when no email in response", async () => {
-    server.use(
-      http.get("http://mock-url/testuser", () => {
-        return HttpResponse.json({ id: "testuser" });
-      }),
-    );
-
-    const result = await getUserEmailByUsername("testuser");
-
-    expect(result).toBeNull();
-  });
-
-  it("returns null on error", async () => {
-    server.use(
-      http.get("http://mock-url/testuser", () => {
-        return HttpResponse.error();
-      }),
-    );
-
-    const result = await getUserEmailByUsername("testuser");
+    const result = await fetchUserProfile("testuser");
 
     expect(result).toBeNull();
   });

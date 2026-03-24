@@ -1,22 +1,25 @@
 vi.mock("@/lib/auth/session", () => ({
-  getSession: vi.fn(),
+  requireAuth: vi.fn(),
 }));
 
 vi.mock("@/lib/env", () => ({
   getRequiredEnv: vi.fn(() => "http://mock-user-url"),
 }));
 
+import { NextResponse } from "next/server";
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
 import { mockNextRequest } from "@/test-helpers/api-route-helpers";
 import { POST } from "../route";
-import { getSession } from "@/lib/auth/session";
+import { requireAuth } from "@/lib/auth/session";
 
-const mockGetSession = vi.mocked(getSession);
+const mockRequireAuth = vi.mocked(requireAuth);
 
 describe("POST /api/auth/change-password", () => {
   it("returns 401 when not authenticated", async () => {
-    mockGetSession.mockResolvedValue({ token: undefined, userId: undefined, realm: undefined });
+    mockRequireAuth.mockResolvedValue(
+      NextResponse.json({ message: "Authentication required" }, { status: 401 }),
+    );
 
     const request = mockNextRequest({
       method: "POST",
@@ -31,7 +34,9 @@ describe("POST /api/auth/change-password", () => {
   });
 
   it("returns 401 when token is missing", async () => {
-    mockGetSession.mockResolvedValue({ token: undefined, userId: "user1", realm: undefined });
+    mockRequireAuth.mockResolvedValue(
+      NextResponse.json({ message: "Authentication required" }, { status: 401 }),
+    );
 
     const request = mockNextRequest({
       method: "POST",
@@ -43,7 +48,7 @@ describe("POST /api/auth/change-password", () => {
   });
 
   it("forwards JSON-RPC setPassword call to upstream", async () => {
-    mockGetSession.mockResolvedValue({ token: "the-token", userId: "testuser", realm: undefined });
+    mockRequireAuth.mockResolvedValue({ token: "the-token", userId: "testuser", realm: "bvbrc" });
 
     let capturedBody: unknown = null;
     server.use(
@@ -69,7 +74,7 @@ describe("POST /api/auth/change-password", () => {
   });
 
   it("returns success when upstream succeeds", async () => {
-    mockGetSession.mockResolvedValue({ token: "the-token", userId: "testuser", realm: undefined });
+    mockRequireAuth.mockResolvedValue({ token: "the-token", userId: "testuser", realm: "bvbrc" });
 
     server.use(
       http.post("http://mock-user-url/", () =>
@@ -90,7 +95,7 @@ describe("POST /api/auth/change-password", () => {
   });
 
   it("returns upstream status when upstream returns non-ok", async () => {
-    mockGetSession.mockResolvedValue({ token: "the-token", userId: "testuser", realm: undefined });
+    mockRequireAuth.mockResolvedValue({ token: "the-token", userId: "testuser", realm: "bvbrc" });
 
     server.use(
       http.post("http://mock-user-url/", () =>
@@ -111,7 +116,7 @@ describe("POST /api/auth/change-password", () => {
   });
 
   it("returns 400 when upstream returns a JSON-RPC error", async () => {
-    mockGetSession.mockResolvedValue({ token: "the-token", userId: "testuser", realm: undefined });
+    mockRequireAuth.mockResolvedValue({ token: "the-token", userId: "testuser", realm: "bvbrc" });
 
     server.use(
       http.post("http://mock-user-url/", () =>
@@ -136,7 +141,7 @@ describe("POST /api/auth/change-password", () => {
   });
 
   it("returns 400 with fallback message when JSON-RPC error has no message", async () => {
-    mockGetSession.mockResolvedValue({ token: "the-token", userId: "testuser", realm: undefined });
+    mockRequireAuth.mockResolvedValue({ token: "the-token", userId: "testuser", realm: "bvbrc" });
 
     server.use(
       http.post("http://mock-user-url/", () =>
@@ -157,7 +162,7 @@ describe("POST /api/auth/change-password", () => {
   });
 
   it("returns 500 when an exception is thrown", async () => {
-    mockGetSession.mockResolvedValue({ token: "the-token", userId: "testuser", realm: undefined });
+    mockRequireAuth.mockResolvedValue({ token: "the-token", userId: "testuser", realm: "bvbrc" });
 
     server.use(
       http.post("http://mock-user-url/", () => HttpResponse.error()),

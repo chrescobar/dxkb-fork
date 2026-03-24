@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getSession } from "@/lib/auth/session";
+import { requireAuth } from "@/lib/auth/session";
 import { getRequiredEnv } from "@/lib/env";
 
 /**
@@ -9,14 +9,8 @@ import { getRequiredEnv } from "@/lib/env";
  */
 export async function POST(request: NextRequest) {
   try {
-    const { token, userId } = await getSession();
-
-    if (!token || !userId) {
-      return NextResponse.json(
-        { message: "Authentication required" },
-        { status: 401 },
-      );
-    }
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
 
     const { currentPassword, newPassword } = await request.json();
 
@@ -33,7 +27,7 @@ export async function POST(request: NextRequest) {
     }
 
     const headers = new Headers();
-    headers.set("Authorization", token);
+    headers.set("Authorization", auth.token);
     headers.set("Content-Type", "application/json");
     headers.set("Accept", "application/json");
 
@@ -46,7 +40,7 @@ export async function POST(request: NextRequest) {
           id: 1,
           jsonrpc: "2.0",
           method: "setPassword",
-          params: [userId, currentPassword, newPassword],
+          params: [auth.userId, currentPassword, newPassword],
         }),
       },
     );

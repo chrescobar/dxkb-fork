@@ -6,10 +6,22 @@ vi.mock("next/headers", () => ({
   cookies: vi.fn(() => Promise.resolve(mockCookieStore)),
 }));
 
+vi.mock("@/lib/auth/session", async (importActual) => {
+  const actual = await importActual<typeof import("@/lib/auth/session")>();
+  return {
+    ...actual,
+    requireAuth: vi.fn(),
+  };
+});
+
+import { NextResponse } from "next/server";
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
 import { mockNextRequest } from "@/test-helpers/api-route-helpers";
 import { GET, POST } from "../route";
+import { requireAuth } from "@/lib/auth/session";
+
+const mockRequireAuth = vi.mocked(requireAuth);
 
 const userUrl = "http://mock-user-url";
 
@@ -21,7 +33,7 @@ afterEach(() => {
   delete process.env.USER_URL;
 });
 
-/** Helper — configure mock cookies for an authenticated session */
+/** Helper — configure mock cookies so serverAuthenticatedFetch works */
 function setAuthCookies(token: string, userId: string) {
   mockCookieStore.get.mockImplementation((name: string) => {
     if (name === "bvbrc_token") return { value: token };
@@ -30,14 +42,11 @@ function setAuthCookies(token: string, userId: string) {
   });
 }
 
-/** Helper — configure mock cookies for an unauthenticated session */
-function clearAuthCookies() {
-  mockCookieStore.get.mockReturnValue(undefined);
-}
-
 describe("GET /api/auth/profile", () => {
   it("returns 401 when not authenticated", async () => {
-    clearAuthCookies();
+    mockRequireAuth.mockResolvedValue(
+      NextResponse.json({ message: "Authentication required" }, { status: 401 }),
+    );
 
     const response = await GET();
     const data = await response.json();
@@ -48,6 +57,7 @@ describe("GET /api/auth/profile", () => {
 
   it("returns profile data when authenticated", async () => {
     const profile = { id: "user1", email: "test@example.com", first_name: "Test" };
+    mockRequireAuth.mockResolvedValue({ token: "tok", userId: "user1", realm: "bvbrc" });
     setAuthCookies("tok", "user1");
 
     server.use(
@@ -62,6 +72,7 @@ describe("GET /api/auth/profile", () => {
   });
 
   it("passes encoded userId in the URL", async () => {
+    mockRequireAuth.mockResolvedValue({ token: "tok", userId: "user@realm.org", realm: "bvbrc" });
     setAuthCookies("tok", "user@realm.org");
 
     let capturedUrl: string | null = null;
@@ -78,6 +89,7 @@ describe("GET /api/auth/profile", () => {
   });
 
   it("returns upstream status when fetch fails", async () => {
+    mockRequireAuth.mockResolvedValue({ token: "tok", userId: "user1", realm: "bvbrc" });
     setAuthCookies("tok", "user1");
 
     server.use(
@@ -94,6 +106,7 @@ describe("GET /api/auth/profile", () => {
   });
 
   it("returns 500 when an exception is thrown", async () => {
+    mockRequireAuth.mockResolvedValue({ token: "tok", userId: "user1", realm: "bvbrc" });
     setAuthCookies("tok", "user1");
 
     server.use(
@@ -110,7 +123,9 @@ describe("GET /api/auth/profile", () => {
 
 describe("POST /api/auth/profile", () => {
   it("returns 401 when not authenticated", async () => {
-    clearAuthCookies();
+    mockRequireAuth.mockResolvedValue(
+      NextResponse.json({ message: "Authentication required" }, { status: 401 }),
+    );
 
     const request = mockNextRequest({
       method: "POST",
@@ -124,22 +139,8 @@ describe("POST /api/auth/profile", () => {
     expect(data.message).toBe("Authentication required");
   });
 
-  it("returns 401 when token is missing", async () => {
-    mockCookieStore.get.mockImplementation((name: string) => {
-      if (name === "bvbrc_user_id") return { value: "user1" };
-      return undefined;
-    });
-
-    const request = mockNextRequest({
-      method: "POST",
-      body: [{ op: "replace", path: "/email", value: "new@example.com" }],
-    });
-
-    const response = await POST(request);
-    expect(response.status).toBe(401);
-  });
-
   it("forwards JSON Patch body to upstream", async () => {
+    mockRequireAuth.mockResolvedValue({ token: "the-token", userId: "user1", realm: "bvbrc" });
     setAuthCookies("the-token", "user1");
 
     const patchOps = [{ op: "replace", path: "/email", value: "new@example.com" }];
@@ -169,6 +170,7 @@ describe("POST /api/auth/profile", () => {
   });
 
   it("returns success when upstream succeeds", async () => {
+    mockRequireAuth.mockResolvedValue({ token: "the-token", userId: "user1", realm: "bvbrc" });
     setAuthCookies("the-token", "user1");
 
     server.use(
@@ -190,6 +192,7 @@ describe("POST /api/auth/profile", () => {
   });
 
   it("returns upstream status when upstream fails", async () => {
+    mockRequireAuth.mockResolvedValue({ token: "the-token", userId: "user1", realm: "bvbrc" });
     setAuthCookies("the-token", "user1");
 
     server.use(
@@ -211,6 +214,7 @@ describe("POST /api/auth/profile", () => {
   });
 
   it("returns fallback message when upstream error body is empty", async () => {
+    mockRequireAuth.mockResolvedValue({ token: "the-token", userId: "user1", realm: "bvbrc" });
     setAuthCookies("the-token", "user1");
 
     server.use(
@@ -232,6 +236,7 @@ describe("POST /api/auth/profile", () => {
   });
 
   it("returns 500 when an exception is thrown", async () => {
+    mockRequireAuth.mockResolvedValue({ token: "the-token", userId: "user1", realm: "bvbrc" });
     setAuthCookies("the-token", "user1");
 
     server.use(

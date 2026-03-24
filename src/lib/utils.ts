@@ -29,6 +29,26 @@ export function encodeWorkspaceSegment(segment: string): string {
   return encodeURIComponent(safe).replace(/%40/g, "@");
 }
 
+/** Split a workspace path into sanitized, non-empty segments. */
+export function parsePathSegments(path: string): string[] {
+  return path
+    .replace(/^\//, "")
+    .split("/")
+    .map(sanitizePathSegment)
+    .filter(Boolean);
+}
+
+/** Encode an array of segments into a URL-safe workspace path string. */
+export function buildEncodedSegmentPath(segments: string[]): string {
+  return segments.map(encodeWorkspaceSegment).join("/");
+}
+
+/** Full username with @domain for workspace URLs (session stores short form in user.username). */
+export function workspaceUsername(user: { username?: string; realm?: string } | null): string {
+  if (!user?.username) return "";
+  return user.realm ? `${user.username}@${user.realm}` : user.username;
+}
+
 /**
  * Returns the first non-null/undefined value for the given keys on the object.
  */

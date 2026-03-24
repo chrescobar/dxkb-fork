@@ -8,7 +8,7 @@ vi.mock("@/lib/auth/session", () => ({
 }));
 
 vi.mock("@/lib/auth/profile", () => ({
-  getProfileMetadata: vi.fn(),
+  fetchUserProfile: vi.fn(),
 }));
 
 vi.mock("@/lib/env", () => ({
@@ -23,16 +23,16 @@ import {
   createSession,
   extractRealmFromToken,
 } from "@/lib/auth/session";
-import { getProfileMetadata } from "@/lib/auth/profile";
+import { fetchUserProfile } from "@/lib/auth/profile";
 
 const mockCreateSession = vi.mocked(createSession);
-const mockGetProfileMetadata = vi.mocked(getProfileMetadata);
+const mockFetchUserProfile = vi.mocked(fetchUserProfile);
 const mockExtractRealmFromToken = vi.mocked(extractRealmFromToken);
 
 describe("POST /api/auth/sign-in/email", () => {
   beforeEach(() => {
     mockExtractRealmFromToken.mockReturnValue("patricbrc.org");
-    mockGetProfileMetadata.mockResolvedValue(null);
+    mockFetchUserProfile.mockResolvedValue(null);
   });
 
   it("returns 400 when username is missing", async () => {
@@ -175,7 +175,7 @@ describe("POST /api/auth/sign-in/email", () => {
       last_name: "User",
       email_verified: true,
     };
-    mockGetProfileMetadata.mockResolvedValue(profile);
+    mockFetchUserProfile.mockResolvedValue(profile);
     mockExtractRealmFromToken.mockReturnValue("patricbrc.org");
 
     server.use(
@@ -211,7 +211,7 @@ describe("POST /api/auth/sign-in/email", () => {
       last_name: "User",
       email_verified: true,
     };
-    mockGetProfileMetadata.mockResolvedValue(profile);
+    mockFetchUserProfile.mockResolvedValue(profile);
     mockExtractRealmFromToken.mockReturnValue("patricbrc.org");
 
     server.use(
@@ -253,7 +253,7 @@ describe("POST /api/auth/sign-in/email", () => {
   });
 
   it("returns user with fallback values when no profile is available", async () => {
-    mockGetProfileMetadata.mockResolvedValue(null);
+    mockFetchUserProfile.mockResolvedValue(null);
     mockExtractRealmFromToken.mockReturnValue(undefined);
 
     server.use(

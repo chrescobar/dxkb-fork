@@ -12,13 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Logo from "@/components/ui/logo";
 import { useAuth } from "@/contexts/auth-context";
 import { UserAvatarDropdown } from "@/components/navbars/user-avatar-dropdown";
-import { encodeWorkspaceSegment } from "@/lib/utils";
-
-/** Full username with @domain for workspace URLs (session stores short form in user.username). */
-function workspaceUsername(user: { username?: string; realm?: string } | null): string {
-  if (!user?.username) return "";
-  return user.realm ? `${user.username}@${user.realm}` : user.username;
-}
+import { WorkspaceDropdownContent, workspaceUsername } from "@/components/navbars/workspace-dropdown-content";
 
 const DesktopNavbar = () => {
   const { isAuthenticated, user, isLoading } = useAuth();
@@ -107,126 +101,59 @@ const DesktopNavbar = () => {
                 Services
               </NavigationMenuTrigger>
               <NavigationMenuContent>
-                <div className="grid grid-cols-2 gap-2 p-2 md:w-[550px] lg:w-[650px]">
-                  <div className="space-y-0">
-                    {/* Left Column */}
-                    {Object.entries(serviceItems)
-                      .slice(0, Math.ceil(Object.keys(serviceItems).length / 2))
-                      .map(([key, section]) => (
-                        <div key={key}>
-                          <h4 className="bg-primary my-0.5 rounded-md p-2 text-sm font-bold text-white">
-                            {section.title}
-                          </h4>
-                          <div className="space-y-0">
-                            {section.items.map((item) => (
-                              <NavigationMenuLink
-                                key={item.href}
-                                render={
-                                  item.target === "_blank" ? (
-                                    <a
-                                      href={item.href}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="hover:bg-secondary/20 my-0.5 block p-2 font-medium"
-                                    />
-                                  ) : (
-                                    <Link
-                                      href={item.href}
-                                      className="hover:bg-secondary/20 my-0.5 block p-2 font-medium"
-                                    />
-                                  )
-                                }
-                              >
-                                {item.title}
-                              </NavigationMenuLink>
-                            ))}
+                <div className="grid grid-cols-2 gap-2 p-2 lg:w-[550px]">
+                  {(() => {
+                    const entries = Object.entries(serviceItems);
+                    const mid = Math.ceil(entries.length / 2);
+                    return [entries.slice(0, mid), entries.slice(mid)].map((column, colIdx) => (
+                      <div key={colIdx} className="space-y-0">
+                        {column.map(([key, section]) => (
+                          <div key={key}>
+                            <h4 className="bg-primary my-0.5 rounded-md p-2 text-sm font-bold text-white">
+                              {section.title}
+                            </h4>
+                            <div className="space-y-0">
+                              {section.items.map((item) => (
+                                <NavigationMenuLink
+                                  key={item.href}
+                                  render={
+                                    item.target === "_blank" ? (
+                                      <a
+                                        href={item.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="hover:bg-secondary/20 my-0.5 block p-2 font-medium"
+                                      />
+                                    ) : (
+                                      <Link
+                                        href={item.href}
+                                        className="hover:bg-secondary/20 my-0.5 block p-2 font-medium"
+                                      />
+                                    )
+                                  }
+                                >
+                                  {item.title}
+                                </NavigationMenuLink>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                  </div>
-                  <div className="space-y-0">
-                    {/* Right Column */}
-                    {Object.entries(serviceItems)
-                      .slice(Math.ceil(Object.keys(serviceItems).length / 2))
-                      .map(([key, section]) => (
-                        <div key={key}>
-                          <h4 className="bg-primary my-0.5 rounded-md p-2 text-sm font-bold text-white">
-                            {section.title}
-                          </h4>
-                          <div className="space-y-0">
-                            {section.items.map((item) => (
-                              <NavigationMenuLink
-                                key={item.href}
-                                render={
-                                  item.target === "_blank" ? (
-                                    <a
-                                      href={item.href}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="hover:bg-secondary/20 my-0.5 block p-2 font-medium"
-                                    />
-                                  ) : (
-                                    <Link
-                                      href={item.href}
-                                      className="hover:bg-secondary/20 my-0.5 block p-2 font-medium"
-                                    />
-                                  )
-                                }
-                              >
-                                {item.title}
-                              </NavigationMenuLink>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                  </div>
+                        ))}
+                      </div>
+                    ));
+                  })()}
                 </div>
               </NavigationMenuContent>
             </NavigationMenuItem>
 
-            {/* Workspace - always visible; when not signed in, prompt to Sign In */}
             <NavigationMenuItem id="workspace-nav">
               <NavigationMenuTrigger className="bg-primary">
                 Workspace
               </NavigationMenuTrigger>
               <NavigationMenuContent>
-                {isAuthenticated ? (
-                  <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                    <ListItem
-                      key="workspace-nav"
-                      title="My Workspace"
-                      href={wsUsername ? `/workspace/${encodeWorkspaceSegment(wsUsername)}/home` : "/workspace"}
-                    >
-                      View your workspace.
-                    </ListItem>
-                    <ListItem
-                      key="workspace-jobs-nav"
-                      title="Jobs"
-                      href="/jobs"
-                    >
-                      View all jobs in your workspace.
-                    </ListItem>
-                  </ul>
-                ) : (
-                  <ul className="grid w-[300px] gap-3 p-4 md:w-[400px] md:grid-cols-2 lg:w-[500px]">
-                    <ListItem
-                      key="workspace-sign-in"
-                      title="My Workspace"
-                      href="/sign-in?redirect=/workspace"
-                      className="w-full"
-                    >
-                      Sign in required
-                    </ListItem>
-                    <ListItem
-                      key="jobs-sign-in"
-                      title="My Jobs"
-                      href="/sign-in?redirect=/jobs"
-                      className="w-full"
-                    >
-                      Sign in required
-                    </ListItem>
-                  </ul>
-                )}
+                <WorkspaceDropdownContent
+                  isAuthenticated={isAuthenticated}
+                  wsUsername={wsUsername}
+                />
               </NavigationMenuContent>
             </NavigationMenuItem>
           </NavigationMenuList>
@@ -238,10 +165,9 @@ const DesktopNavbar = () => {
             <SearchBar className="w-full" />
           </div>
         )}
-                      
+
       <div className="flex items-center space-x-2">
         <div className="flex items-center space-x-2">
-          {/* Show skeleton while loading */}
           {isLoading && (
             <div className="flex items-center space-x-2">
               <Skeleton className="h-8 w-16 bg-white/20" />
@@ -249,7 +175,6 @@ const DesktopNavbar = () => {
             </div>
           )}
 
-          {/* Show sign in/sign up when NOT authenticated and not loading */}
           {!isLoading && !isAuthenticated && (
             <>
               <Link
@@ -275,7 +200,6 @@ const DesktopNavbar = () => {
             </>
           )}
 
-          {/* Show user info and signout when authenticated and not loading */}
           {!isLoading && isAuthenticated && <UserAvatarDropdown />}
         </div>
       </div>

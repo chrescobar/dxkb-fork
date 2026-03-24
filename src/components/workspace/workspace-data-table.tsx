@@ -14,14 +14,14 @@ import type {
   WorkspaceBrowserSort,
   WorkspaceViewMode,
 } from "@/types/workspace-browser";
-import { encodeWorkspaceSegment, noop, sanitizePathSegment } from "@/lib/utils";
+import { buildEncodedSegmentPath, encodeWorkspaceSegment, noop, parsePathSegments, sanitizePathSegment } from "@/lib/utils";
 import { normalizePath } from "@/lib/workspace/table-selection";
 import { isFolderType } from "@/lib/services/workspace/utils";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
 import {
   useWorkspaceColumns,
 } from "./workspace-table-columns";
-import { LeadingRow, ParentRow, DataRow, EmptyRow } from "./workspace-table-rows";
+import { ParentRow, DataRow, EmptyRow } from "./workspace-table-rows";
 import {
   DataTable,
   type DataTableHandle,
@@ -45,7 +45,6 @@ interface WorkspaceDataTableProps {
   path: string;
   sort: WorkspaceBrowserSort;
   onSortChange: (sort: WorkspaceBrowserSort) => void;
-  showViewSharedRow?: boolean;
   viewMode?: WorkspaceViewMode;
   memberCountByPath?: Record<string, number>;
   username?: string;
@@ -74,7 +73,6 @@ export const WorkspaceDataTable = forwardRef<
     path,
     sort,
     onSortChange,
-    showViewSharedRow = false,
     viewMode = "home",
     memberCountByPath,
     username = "",
@@ -119,52 +117,58 @@ export const WorkspaceDataTable = forwardRef<
 
   function handleItemClick(item: WorkspaceBrowserItem) {
     if (!isFolderType(item.type)) return;
-    if (viewMode === "shared") {
-      const segments = item.path
-        .replace(/^\//, "")
-        .split("/")
-        .map(sanitizePathSegment)
-        .filter(Boolean);
-      const encoded = segments.map(encodeWorkspaceSegment).join("/");
+    if (viewMode === "public") {
+      const encoded = buildEncodedSegmentPath(parsePathSegments(item.path));
+      router.push(`/workspace/public/${encoded}`);
+    } else if (viewMode === "shared") {
+      const encoded = buildEncodedSegmentPath(parsePathSegments(item.path));
       router.push(`/workspace/${encoded}`);
     } else {
       const segments = path
         ? path.split("/").map(sanitizePathSegment).filter(Boolean)
         : [];
       segments.push(sanitizePathSegment(item.name));
-      const encoded = segments.map(encodeWorkspaceSegment).join("/");
-      router.push(`${homeBase}/${encoded}`);
+      router.push(`${homeBase}/${buildEncodedSegmentPath(segments)}`);
     }
   }
 
   const handleParentClick = useCallback(() => {
-    if (viewMode === "shared") {
+    if (viewMode === "public") {
+      if (pathSegments.length <= 1) {
+        router.push("/workspace/public");
+      } else {
+        const encoded = buildEncodedSegmentPath(pathSegments.slice(0, -1));
+        router.push(`/workspace/public/${encoded}`);
+      }
+    } else if (viewMode === "shared") {
       if (pathSegments.length <= 1) {
         router.push(sharedRootHref);
       } else {
-        const parentSegments = pathSegments.slice(0, -1);
-        const encoded = parentSegments.map(encodeWorkspaceSegment).join("/");
+        const encoded = buildEncodedSegmentPath(pathSegments.slice(0, -1));
         if (encoded) router.push(`/workspace/${encoded}`);
       }
     } else {
       const segments = path.split("/").map(sanitizePathSegment).filter(Boolean);
       segments.pop();
-      const parentPath = segments.map(encodeWorkspaceSegment).join("/");
+      const parentPath = buildEncodedSegmentPath(segments);
       router.push(`${homeBase}${parentPath ? `/${parentPath}` : ""}`);
     }
   }, [viewMode, pathSegments, path, sharedRootHref, homeBase, router]);
 
   const showParentRow =
-    viewMode === "shared" ? pathSegments.length >= 1 : !isAtRoot;
+    viewMode === "shared" || viewMode === "public"
+      ? pathSegments.length >= 1
+      : !isAtRoot;
   const parentRowLabel =
-    viewMode === "shared"
+    viewMode === "public"
       ? pathSegments.length <= 2
-        ? "Back to my workspaces"
+        ? "Back to public workspaces"
         : "Parent folder"
-      : "Parent folder";
-  const showLeadingRow = showViewSharedRow && viewMode === "home" && isAtRoot;
-
-  const leadingOffset = showLeadingRow ? 1 : 0;
+      : viewMode === "shared"
+        ? pathSegments.length <= 2
+          ? "Back to my workspaces"
+          : "Parent folder"
+        : "Parent folder";
   const parentOffset = showParentRow ? 1 : 0;
 
   const getFocusedIndex = useCallback(() => {
@@ -191,9 +195,8 @@ export const WorkspaceDataTable = forwardRef<
     onSelect: onSelect ?? noop,
     onEnter: handleEnter,
     enabled: useSelectionMode,
-    leadingOffset,
+    leadingOffset: 0,
     parentOffset,
-    onLeadingEnter: () => router.push(sharedBase),
     onParentEnter: handleParentClick,
     onClearSelection,
   });
@@ -208,16 +211,6 @@ export const WorkspaceDataTable = forwardRef<
   const renderLeadingRows = useCallback((columnOrder: string[]) => {
     return (
       <>
-        {showLeadingRow && (
-          <LeadingRow
-            columns={[] as never[]}
-            useSelectionMode={useSelectionMode}
-            isFocused={focusedSpecialRow === "leading"}
-            onClick={() => router.push(sharedBase)}
-            _useDataTable
-            columnOrder={columnOrder}
-          />
-        )}
         {showParentRow && (
           <ParentRow
             columns={[] as never[]}
@@ -232,12 +225,9 @@ export const WorkspaceDataTable = forwardRef<
       </>
     );
   }, [
-    showLeadingRow,
     showParentRow,
     useSelectionMode,
     focusedSpecialRow,
-    router,
-    sharedBase,
     handleParentClick,
     parentRowLabel,
   ]);

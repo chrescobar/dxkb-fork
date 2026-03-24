@@ -32,6 +32,7 @@ export function useDefaultOutputPath(
       if (!res.ok) throw new Error("Failed to load profile");
       return res.json();
     },
+    staleTime: 5 * 60 * 1000,
   });
 
   const defaultJobFolder = profile?.settings?.default_job_folder;

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getSession, serverAuthenticatedFetch } from "@/lib/auth/session";
+import { requireAuth, serverAuthenticatedFetch } from "@/lib/auth/session";
 import { getRequiredEnv } from "@/lib/env";
 
 /**
@@ -8,17 +8,11 @@ import { getRequiredEnv } from "@/lib/env";
  */
 export async function GET() {
   try {
-    const { token, userId } = await getSession();
-
-    if (!token || !userId) {
-      return NextResponse.json(
-        { message: "Authentication required" },
-        { status: 401 },
-      );
-    }
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
 
     const response = await serverAuthenticatedFetch(
-      `${getRequiredEnv("USER_URL")}/${encodeURIComponent(userId)}`,
+      `${getRequiredEnv("USER_URL")}/${encodeURIComponent(auth.userId)}`,
       { headers: { Accept: "application/json" } },
     );
 
@@ -46,19 +40,13 @@ export async function GET() {
  */
 export async function POST(request: NextRequest) {
   try {
-    const { token, userId } = await getSession();
-
-    if (!token || !userId) {
-      return NextResponse.json(
-        { message: "Authentication required" },
-        { status: 401 },
-      );
-    }
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
 
     const body = await request.text();
 
     const response = await serverAuthenticatedFetch(
-      `${getRequiredEnv("USER_URL")}/${encodeURIComponent(userId)}`,
+      `${getRequiredEnv("USER_URL")}/${encodeURIComponent(auth.userId)}`,
       {
         method: "POST",
         headers: {

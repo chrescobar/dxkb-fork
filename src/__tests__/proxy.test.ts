@@ -152,5 +152,40 @@ describe("proxy", () => {
 
       expect(response.headers.get("x-middleware-next")).toBe("1");
     });
+
+    it("allows /workspace/public without session", () => {
+      const request = buildRequest("/workspace/public");
+      const response = proxy(request);
+
+      expect(response.headers.get("x-middleware-next")).toBe("1");
+    });
+
+    it("allows /workspace/public/ sub-paths without session", () => {
+      const request = buildRequest("/workspace/public/user@bvbrc/home");
+      const response = proxy(request);
+
+      expect(response.headers.get("x-middleware-next")).toBe("1");
+    });
+
+    it("allows /workspace/workshop without session", () => {
+      const request = buildRequest("/workspace/workshop");
+      const response = proxy(request);
+
+      expect(response.headers.get("x-middleware-next")).toBe("1");
+    });
+
+    it("allows /workspace/workshop/ sub-paths without session", () => {
+      const request = buildRequest("/workspace/workshop/some-event");
+      const response = proxy(request);
+
+      expect(response.headers.get("x-middleware-next")).toBe("1");
+    });
+
+    it("does not allow /workspace/publicXYZ without session", () => {
+      const request = buildRequest("/workspace/publicXYZ");
+      const response = proxy(request);
+
+      expect(response.status).toBe(307);
+    });
   });
 });

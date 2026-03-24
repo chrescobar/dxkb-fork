@@ -138,7 +138,7 @@ describe("usePublicWorkspaceData", () => {
   });
 
   it("returns empty items array when query has no data yet", () => {
-    vi.mocked(listPublicWorkspaces).mockReturnValue(new Promise(() => {}));
+    vi.mocked(listPublicWorkspaces).mockReturnValue(new Promise(vi.fn()));
     const wrapper = createQueryClientWrapper();
 
     const { result } = renderHook(

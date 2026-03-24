@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, FormEvent, useEffect, useCallback, Suspense } from "react";
+import { useState, FormEvent, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -39,7 +39,7 @@ function SearchParamsSync({
   return null;
 }
 
-function SearchBarContent({
+export function SearchBar({
   initialValue = "",
   className = "",
   placeholder = "Search by virus name, protein, gene, or taxonomy...",
@@ -56,8 +56,8 @@ function SearchBarContent({
     setInputValue(value);
   }, []);
 
-  const handleSearch = (e?: FormEvent) => {
-    if (e) e.preventDefault();
+  const handleSearch = (e: FormEvent) => {
+    e.preventDefault();
     if (!inputValue.trim()) return;
 
     router.push(
@@ -74,12 +74,8 @@ function SearchBarContent({
     });
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") handleSearch();
-  };
-
   return (
-    <form onSubmit={handleSearch} className={`flex w-full max-w-[880px] ${className}`}>
+    <form onSubmit={handleSearch} className={`flex w-full ${className}`}>
       <Suspense fallback={null}>
         <SearchParamsSync onQueryChange={handleQueryChange} />
       </Suspense>
@@ -113,7 +109,6 @@ function SearchBarContent({
             className={`${size === "lg" ? "py-6" : ""} ${showIcon ? "pl-10" : ""} rounded-l-none rounded-r-md border-0 bg-background text-foreground shadow-none focus-visible:ring-0 w-full`}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyDown}
           />
           {showIcon && (
             <Search
@@ -124,11 +119,5 @@ function SearchBarContent({
         </div>
       </div>
     </form>
-  );
-}
-
-export function SearchBar(props: SearchBarProps) {
-  return (
-    <SearchBarContent {...props} />
   );
 }

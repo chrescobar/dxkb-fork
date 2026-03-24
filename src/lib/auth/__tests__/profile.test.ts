@@ -20,33 +20,33 @@ describe("fetchUserProfile", () => {
   });
 
   it("sends Authorization header when token is provided", async () => {
-    let capturedHeaders: Headers | null = null;
+    let capturedAuthorization: string | null = null;
 
     server.use(
       http.get("http://mock-url/testuser", ({ request }) => {
-        capturedHeaders = request.headers;
+        capturedAuthorization = request.headers.get("Authorization");
         return HttpResponse.json({ id: "testuser" });
       }),
     );
 
     await fetchUserProfile("testuser", "my-token");
 
-    expect(capturedHeaders?.get("Authorization")).toBe("my-token");
+    expect(capturedAuthorization).toBe("my-token");
   });
 
   it("does not send Authorization header when token is omitted", async () => {
-    let capturedHeaders: Headers | null = null;
+    let capturedAuthorization: string | null = null;
 
     server.use(
       http.get("http://mock-url/testuser", ({ request }) => {
-        capturedHeaders = request.headers;
+        capturedAuthorization = request.headers.get("Authorization");
         return HttpResponse.json({ id: "testuser" });
       }),
     );
 
     await fetchUserProfile("testuser");
 
-    expect(capturedHeaders?.get("Authorization")).toBeNull();
+    expect(capturedAuthorization).toBeNull();
   });
 
   it("encodes username in URL", async () => {

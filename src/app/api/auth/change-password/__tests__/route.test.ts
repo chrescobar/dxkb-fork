@@ -47,6 +47,66 @@ describe("POST /api/auth/change-password", () => {
     expect(response.status).toBe(401);
   });
 
+  it("returns 400 when currentPassword is missing", async () => {
+    mockRequireAuth.mockResolvedValue({ token: "the-token", userId: "testuser", realm: "bvbrc" });
+
+    const request = mockNextRequest({
+      method: "POST",
+      body: { newPassword: "newpass" },
+    });
+
+    const response = await POST(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data.message).toBe("Current password and new password are required");
+  });
+
+  it("returns 400 when newPassword is missing", async () => {
+    mockRequireAuth.mockResolvedValue({ token: "the-token", userId: "testuser", realm: "bvbrc" });
+
+    const request = mockNextRequest({
+      method: "POST",
+      body: { currentPassword: "oldpass" },
+    });
+
+    const response = await POST(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data.message).toBe("Current password and new password are required");
+  });
+
+  it("returns 400 when passwords are empty strings", async () => {
+    mockRequireAuth.mockResolvedValue({ token: "the-token", userId: "testuser", realm: "bvbrc" });
+
+    const request = mockNextRequest({
+      method: "POST",
+      body: { currentPassword: "", newPassword: "" },
+    });
+
+    const response = await POST(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data.message).toBe("Current password and new password are required");
+  });
+
+  it("returns 400 when passwords are not strings", async () => {
+    mockRequireAuth.mockResolvedValue({ token: "the-token", userId: "testuser", realm: "bvbrc" });
+
+    const request = mockNextRequest({
+      method: "POST",
+      body: { currentPassword: 123, newPassword: true },
+    });
+
+    const response = await POST(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data.message).toBe("Current password and new password are required");
+  });
+
   it("forwards JSON-RPC setPassword call to upstream", async () => {
     mockRequireAuth.mockResolvedValue({ token: "the-token", userId: "testuser", realm: "bvbrc" });
 

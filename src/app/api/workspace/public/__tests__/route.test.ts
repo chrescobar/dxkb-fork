@@ -85,10 +85,10 @@ describe("POST /api/workspace/public", () => {
   it("does not require authentication", async () => {
     mockCookieStore.get.mockReturnValue(undefined);
 
-    let capturedHeaders: Headers | null = null;
+    let capturedAuthorization: string | null = null;
     server.use(
       http.post(workspaceApiUrl, ({ request }) => {
-        capturedHeaders = request.headers;
+        capturedAuthorization = request.headers.get("Authorization");
         return HttpResponse.json({ jsonrpc: "2.0", id: 1, result: [] });
       }),
     );
@@ -101,7 +101,7 @@ describe("POST /api/workspace/public", () => {
     const response = await POST(request);
 
     expect(response.status).toBe(200);
-    expect(capturedHeaders?.get("Authorization")).toBeNull();
+    expect(capturedAuthorization).toBeNull();
   });
 
   it("forwards auth token when user is logged in", async () => {
@@ -110,10 +110,10 @@ describe("POST /api/workspace/public", () => {
       return undefined;
     });
 
-    let capturedHeaders: Headers | null = null;
+    let capturedAuthorization: string | null = null;
     server.use(
       http.post(workspaceApiUrl, ({ request }) => {
-        capturedHeaders = request.headers;
+        capturedAuthorization = request.headers.get("Authorization");
         return HttpResponse.json({ jsonrpc: "2.0", id: 1, result: [] });
       }),
     );
@@ -125,7 +125,7 @@ describe("POST /api/workspace/public", () => {
 
     await POST(request);
 
-    expect(capturedHeaders?.get("Authorization")).toBe("user-token");
+    expect(capturedAuthorization).toBe("user-token");
   });
 
   it("returns upstream status on API error", async () => {

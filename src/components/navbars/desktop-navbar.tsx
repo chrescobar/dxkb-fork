@@ -162,7 +162,7 @@ const DesktopNavbar = () => {
 
         {!isHome && (
           <div className="hidden lg:flex flex-1 items-center justify-end px-2">
-            <SearchBar className="w-full" />
+            <SearchBar className="max-w-[1000px]" />
           </div>
         )}
 

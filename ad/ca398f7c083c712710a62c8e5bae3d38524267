@@ -1,0 +1,36 @@
+src/hooks/services/workspace/__tests__/use-public-workspace-data.test.tsx
+  f003ce31c833a6fd 141
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.18",
+  "base_commit_sha": "adca398f7c083c712710a62c8e5bae3d38524267",
+  "prompts": {
+    "1b5f63fddd9912b8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8c6d723c-a5c7-4c8b-90f6-ccff9e4abf71",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>",
+      "messages": [],
+      "total_additions": 16,
+      "total_deletions": 8,
+      "accepted_lines": 16,
+      "overriden_lines": 0
+    },
+    "f003ce31c833a6fd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d075a745-6860-4348-868b-36497ce4fbe8",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}

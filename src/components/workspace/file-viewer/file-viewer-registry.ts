@@ -109,10 +109,11 @@ const mimeMap: Record<string, string> = {
 };
 
 // ---------------------------------------------------------------------------
-// Size threshold
+// Preview constants
 // ---------------------------------------------------------------------------
 
-export const largeSizeThreshold = 50 * 1024 * 1024; // 50 MB
+export const previewMaxBytes = 10 * 1024 * 1024; // 1 MB — default byte limit for preview endpoint
+export const interactiveViewerSizeLimit = 10 * 1024 * 1024; // 10 MB — above this, CSV/JSON switch to text preview
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -186,5 +187,21 @@ export function getProxyUrl(filePath: string): string {
     .map((segment) => encodeURIComponent(segment))
     .join("/");
   return `/api/workspace/view/${encoded}`;
+}
+
+/**
+ * Build a preview API URL that returns only the first `maxBytes` bytes of a
+ * workspace file (rounded down to the last newline by the server).
+ */
+export function getPreviewUrl(
+  filePath: string,
+  maxBytes: number = previewMaxBytes,
+): string {
+  const encoded = filePath
+    .split("/")
+    .filter(Boolean)
+    .map((segment) => encodeURIComponent(segment))
+    .join("/");
+  return `/api/workspace/preview/${encoded}?maxBytes=${maxBytes}`;
 }
 

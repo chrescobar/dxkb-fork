@@ -26,7 +26,7 @@ export function metaListToObj(list: unknown[]) {
     creation_time: list[3],
     link_reference: list[11],
     owner_id: list[5],
-    size: list[6],
+    size: Number(list[6]) || 0,
     userMeta: list[7],
     autoMeta: list[8],
     user_permission: list[9],

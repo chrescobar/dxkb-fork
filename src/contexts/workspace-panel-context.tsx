@@ -14,8 +14,8 @@ export const workspacePanelIds = { main: "workspace-main", details: "workspace-d
 
 /** Layout from react-resizable-panels: panel id -> size (%). Persists across folder navigation. */
 const defaultPanelLayout: Record<string, number> = {
-  [workspacePanelIds.main]: 75,
-  [workspacePanelIds.details]: 25,
+  [workspacePanelIds.main]: 60,
+  [workspacePanelIds.details]: 40,
 };
 
 interface WorkspacePanelContextType {

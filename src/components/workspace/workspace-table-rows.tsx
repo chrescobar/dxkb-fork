@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import type { Row, Column } from "@tanstack/react-table";
+import type { Row } from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
 import { FolderUp, Users } from "lucide-react";
 import clsx from "clsx";
@@ -11,39 +11,26 @@ import { isFolderType } from "@/lib/services/workspace/utils";
 import { columnClassMap } from "./workspace-table-columns";
 
 interface SpecialRowProps {
-  columns: Column<WorkspaceBrowserItem, unknown>[];
   useSelectionMode: boolean;
   isFocused: boolean;
   onClick: () => void;
   icon: React.ElementType;
   label: string;
-  /** When true, use columnOrder instead of Column objects (for DataTable integration). */
-  _useDataTable?: boolean;
-  columnOrder?: string[];
+  columnOrder: string[];
 }
 
 function SpecialRow({
-  columns,
   useSelectionMode,
   isFocused,
   onClick,
   icon: Icon,
   label,
-  _useDataTable,
   columnOrder,
 }: SpecialRowProps) {
-  // Build cell list from either Column objects or column IDs
-  const cells = _useDataTable && columnOrder
-    ? columnOrder.map((id) => ({
-        id,
-        metaClassName: columnClassMap[id] ?? "",
-      }))
-    : columns.map((column) => {
-        const meta = column.columnDef.meta as
-          | { className?: string }
-          | undefined;
-        return { id: column.id, metaClassName: meta?.className ?? "" };
-      });
+  const cells = columnOrder.map((id) => ({
+    id,
+    metaClassName: columnClassMap[id] ?? "",
+  }));
 
   return (
     <TableRow
@@ -95,7 +82,7 @@ export function LeadingRow(
 }
 
 export function ParentRow(
-  props: Omit<SpecialRowProps, "icon"> & { label: string },
+  props: Omit<SpecialRowProps, "icon">,
 ) {
   return <SpecialRow {...props} icon={FolderUp} />;
 }

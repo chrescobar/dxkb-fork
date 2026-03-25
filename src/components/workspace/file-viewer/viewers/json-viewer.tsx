@@ -6,14 +6,24 @@ import "react-json-view-lite/dist/index.css";
 import { Braces, Code } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { getProxyUrl } from "../file-viewer-registry";
+import { getProxyUrl, interactiveViewerSizeLimit } from "../file-viewer-registry";
+import { TextViewer } from "./text-viewer";
 
 interface JsonViewerProps {
   filePath: string;
   fileName: string;
+  fileSize?: number;
 }
 
-export function JsonViewer({ filePath, fileName }: JsonViewerProps) {
+export function JsonViewer({ filePath, fileName, fileSize }: JsonViewerProps) {
+  if (fileSize && fileSize > interactiveViewerSizeLimit) {
+    return <TextViewer filePath={filePath} fileName={fileName} fileSize={fileSize} />;
+  }
+
+  return <InteractiveJsonViewer filePath={filePath} fileName={fileName} />;
+}
+
+function InteractiveJsonViewer({ filePath, fileName }: { filePath: string; fileName: string }) {
   const [data, setData] = useState<object | unknown[] | null>(null);
   const [rawText, setRawText] = useState("");
   const [isLoading, setIsLoading] = useState(true);

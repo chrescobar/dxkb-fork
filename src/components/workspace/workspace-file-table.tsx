@@ -25,7 +25,7 @@ import { ParentRow, DataRow, EmptyRow } from "./workspace-table-rows";
 import {
   DataTable,
   type DataTableHandle,
-} from "@/components/shared/data-table";
+} from "@/components/shared/file-table";
 
 /** Stable empty array for table data fallback (avoids infinite re-renders per TanStack Data guide). */
 const emptyItems: WorkspaceBrowserItem[] = [];
@@ -58,9 +58,7 @@ interface WorkspaceDataTableProps {
   onClearSelection?: () => void;
 }
 
-export interface WorkspaceDataTableHandle {
-  focus: () => void;
-}
+export type WorkspaceDataTableHandle = DataTableHandle;
 
 export const WorkspaceDataTable = forwardRef<
   WorkspaceDataTableHandle,
@@ -209,12 +207,10 @@ export const WorkspaceDataTable = forwardRef<
       <>
         {showParentRow && (
           <ParentRow
-            columns={[] as never[]}
             useSelectionMode={useSelectionMode}
             isFocused={focusedSpecialRow === "parent"}
             onClick={handleParentClick}
             label={parentRowLabel}
-            _useDataTable
             columnOrder={columnOrder}
           />
         )}

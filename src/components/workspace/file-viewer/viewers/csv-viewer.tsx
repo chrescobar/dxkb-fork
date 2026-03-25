@@ -11,14 +11,24 @@ import {
   type ColumnDef,
 } from "@tanstack/react-table";
 
-import { getProxyUrl } from "../file-viewer-registry";
+import { getProxyUrl, interactiveViewerSizeLimit } from "../file-viewer-registry";
+import { TextViewer } from "./text-viewer";
 
 interface CsvViewerProps {
   filePath: string;
   fileName: string;
+  fileSize?: number;
 }
 
-export function CsvViewer({ filePath, fileName }: CsvViewerProps) {
+export function CsvViewer({ filePath, fileName, fileSize }: CsvViewerProps) {
+  if (fileSize && fileSize > interactiveViewerSizeLimit) {
+    return <TextViewer filePath={filePath} fileName={fileName} fileSize={fileSize} />;
+  }
+
+  return <InteractiveCsvViewer filePath={filePath} fileName={fileName} />;
+}
+
+function InteractiveCsvViewer({ filePath, fileName }: { filePath: string; fileName: string }) {
   const [content, setContent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);

@@ -68,6 +68,30 @@ describe("metaListToObj", () => {
     expect(obj.link_reference).toBeNull();
   });
 
+  it("coerces null size to 0", () => {
+    const list = [
+      "file.txt", "txt", "/user/home/", "", "", "", null, {}, {}, "", "", null,
+    ];
+    const obj = metaListToObj(list);
+    expect(obj.size).toBe(0);
+  });
+
+  it("coerces undefined size to 0", () => {
+    const list = [
+      "file.txt", "txt", "/user/home/", "", "", "", undefined, {}, {}, "", "", null,
+    ];
+    const obj = metaListToObj(list);
+    expect(obj.size).toBe(0);
+  });
+
+  it("coerces string size to number", () => {
+    const list = [
+      "file.txt", "txt", "/user/home/", "", "", "", "339000000", {}, {}, "", "", null,
+    ];
+    const obj = metaListToObj(list);
+    expect(obj.size).toBe(339000000);
+  });
+
   it("builds path from parent + name", () => {
     const list = [
       "file.txt",        // 0: name

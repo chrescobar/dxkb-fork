@@ -65,7 +65,7 @@ export function WorkspaceItemDetails({
 
   return (
     <DetailPanel.CollapsibleSection label="Details" defaultExpanded={defaultExpanded}>
-      <div className="space-y-3 px-3 py-3 text-xs">
+      <div className="space-y-3 px-3 py-3 text-xs border-b">
         <div className="flex items-center gap-2">
           <WorkspaceItemIcon type={item.type} className="h-5 w-5 shrink-0" />
           <Select

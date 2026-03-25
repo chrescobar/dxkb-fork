@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/resizable";
 import { PanelRightClose, PanelRightOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { InfoPanel } from "@/components/containers/InfoPanel";
+import { InfoPanel } from "@/components/detail-panel/info-panel";
 import { DetailPanel } from "@/components/detail-panel";
 import { isViewableType } from "@/components/workspace/file-viewer/file-viewer-registry";
 import { isFolderType } from "@/lib/services/workspace/utils";
@@ -132,7 +132,7 @@ export function WorkspaceShell({
     >
       <ResizablePanel
         id={workspacePanelIds.main}
-        defaultSize={panelLayout[workspacePanelIds.main] ?? 75}
+        defaultSize={panelLayout[workspacePanelIds.main] ?? 60}
         minSize="30%"
         maxSize="100%"
         className="flex h-full min-h-0 flex-row overflow-hidden"
@@ -147,7 +147,7 @@ export function WorkspaceShell({
       <ResizableHandle withHandle className="shrink-0" />
       <ResizablePanel
         id={workspacePanelIds.details}
-        defaultSize={panelLayout[workspacePanelIds.details] ?? 25}
+        defaultSize={panelLayout[workspacePanelIds.details] ?? 40}
         minSize="10%"
         maxSize="70%"
         className="flex min-h-0 flex-col overflow-hidden"

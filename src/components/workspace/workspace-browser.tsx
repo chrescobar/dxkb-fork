@@ -25,7 +25,7 @@ import { WorkspaceToolbar } from "./workspace-toolbar";
 import {
   WorkspaceDataTable,
   type WorkspaceDataTableHandle,
-} from "./workspace-data-table";
+} from "./workspace-file-table";
 import { WorkspaceActionBar, type WorkspaceActionId } from "./workspace-action-bar";
 import { WorkspaceShell } from "./workspace-shell";
 import { WorkspaceDialogs } from "./workspace-dialogs";

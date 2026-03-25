@@ -4,22 +4,25 @@ import { useEffect, useReducer, useCallback } from "react";
 import { codeToHtml } from "shiki";
 
 import { Button } from "@/components/ui/button";
-import { getProxyUrl } from "../file-viewer-registry";
+import { Spinner } from "@/components/ui/spinner";
+import { formatFileSize } from "@/lib/services/workspace/helpers";
+import { getProxyUrl, getPreviewUrl, interactiveViewerSizeLimit } from "../file-viewer-registry";
 
 interface TextViewerProps {
   filePath: string;
   fileName: string;
+  fileSize?: number;
 }
 
 const maxHighlightLines = 5_000;
 
-function truncateText(text: string) {
+function truncateText(text: string, maxLines = maxHighlightLines) {
   const lines = text.split("\n");
-  if (lines.length <= maxHighlightLines) {
+  if (lines.length <= maxLines) {
     return { content: text, truncated: false, totalLines: lines.length };
   }
   return {
-    content: lines.slice(0, maxHighlightLines).join("\n"),
+    content: lines.slice(0, maxLines).join("\n"),
     truncated: true,
     totalLines: lines.length,
   };
@@ -54,6 +57,7 @@ interface State {
   content: string | null;
   highlightedHtml: string | null;
   truncated: boolean;
+  serverTruncated: boolean;
   totalLines: number;
 }
 
@@ -63,6 +67,7 @@ type Action =
       type: "fetch_success";
       content: string;
       truncated: boolean;
+      serverTruncated: boolean;
       totalLines: number;
     }
   | { type: "fetch_error"; error: string }
@@ -77,6 +82,7 @@ function reducer(_state: State, action: Action): State {
         content: null,
         highlightedHtml: null,
         truncated: false,
+        serverTruncated: false,
         totalLines: 0,
       };
     case "fetch_success":
@@ -86,6 +92,7 @@ function reducer(_state: State, action: Action): State {
         content: action.content,
         highlightedHtml: null,
         truncated: action.truncated,
+        serverTruncated: action.serverTruncated,
         totalLines: action.totalLines,
       };
     case "fetch_error":
@@ -95,6 +102,7 @@ function reducer(_state: State, action: Action): State {
         content: null,
         highlightedHtml: null,
         truncated: false,
+        serverTruncated: false,
         totalLines: 0,
       };
     case "highlight_done":
@@ -108,24 +116,40 @@ const initialState: State = {
   content: null,
   highlightedHtml: null,
   truncated: false,
+  serverTruncated: false,
   totalLines: 0,
 };
 
-export function TextViewer({ filePath, fileName }: TextViewerProps) {
+function processResponse(res: Response, maxLines = maxHighlightLines) {
+  if (!res.ok) throw new Error(`Failed to load file (HTTP ${res.status})`);
+  const serverTruncated = res.headers.get("X-Truncated") === "true";
+  return res.text().then((text) => {
+    const { content, truncated, totalLines } = truncateText(text, maxLines);
+    return {
+      content,
+      truncated: truncated || serverTruncated,
+      serverTruncated,
+      totalLines,
+    };
+  });
+}
+
+export function TextViewer({ filePath, fileName, fileSize }: TextViewerProps) {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  const maxLines =
+    fileSize && fileSize <= interactiveViewerSizeLimit
+      ? Infinity
+      : maxHighlightLines;
 
   useEffect(() => {
     const controller = new AbortController();
     dispatch({ type: "fetch_start" });
 
-    fetch(getProxyUrl(filePath), { signal: controller.signal })
-      .then((res) => {
-        if (!res.ok) throw new Error(`Failed to load file (HTTP ${res.status})`);
-        return res.text();
-      })
-      .then((text) => {
-        const { content, truncated, totalLines } = truncateText(text);
-        dispatch({ type: "fetch_success", content, truncated, totalLines });
+    fetch(getPreviewUrl(filePath), { signal: controller.signal })
+      .then((res) => processResponse(res, maxLines))
+      .then((result) => {
+        dispatch({ type: "fetch_success", ...result });
       })
       .catch((err: unknown) => {
         if (err instanceof DOMException && err.name === "AbortError") return;
@@ -136,7 +160,7 @@ export function TextViewer({ filePath, fileName }: TextViewerProps) {
       });
 
     return () => controller.abort();
-  }, [filePath]);
+  }, [filePath, maxLines]);
 
   useEffect(() => {
     if (state.content === null) return;
@@ -170,14 +194,10 @@ export function TextViewer({ filePath, fileName }: TextViewerProps) {
 
   const handleRetry = useCallback(() => {
     dispatch({ type: "fetch_start" });
-    fetch(getProxyUrl(filePath))
-      .then((res) => {
-        if (!res.ok) throw new Error(`Failed to load file (HTTP ${res.status})`);
-        return res.text();
-      })
-      .then((text) => {
-        const { content, truncated, totalLines } = truncateText(text);
-        dispatch({ type: "fetch_success", content, truncated, totalLines });
+    fetch(getPreviewUrl(filePath))
+      .then((res) => processResponse(res, maxLines))
+      .then((result) => {
+        dispatch({ type: "fetch_success", ...result });
       })
       .catch((err: unknown) => {
         dispatch({
@@ -189,8 +209,8 @@ export function TextViewer({ filePath, fileName }: TextViewerProps) {
 
   if (state.isLoading) {
     return (
-      <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-        Loading...
+      <div className="flex h-full w-full items-center justify-center gap-2 text-muted-foreground">
+        Loading... <Spinner />
       </div>
     );
   }
@@ -208,27 +228,30 @@ export function TextViewer({ filePath, fileName }: TextViewerProps) {
 
   if (!state.highlightedHtml) {
     return (
-      <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-        Highlighting...
+      <div className="flex h-full w-full items-center justify-center gap-2 text-muted-foreground">
+        Highlighting... <Spinner />
       </div>
     );
   }
 
+  const truncationMessage = state.serverTruncated
+    ? `Showing first ~${state.totalLines.toLocaleString()} lines${fileSize ? ` of a ${formatFileSize(fileSize)} file` : ""}.`
+    : `Showing first ${maxHighlightLines.toLocaleString()} of ${state.totalLines.toLocaleString()} lines.`;
+
   return (
     <div className="h-full w-full overflow-auto">
       <div
-        className="min-w-0 p-4 text-sm [&_pre]:!bg-transparent [&_code]:text-sm [&_.shiki]:!text-foreground"
+        className="min-w-0 p-4 text-sm [&_pre]:bg-transparent! [&_code]:text-sm [&_.shiki]:text-foreground!"
         // Safe: HTML generated by Shiki (trusted syntax highlighting library)
         dangerouslySetInnerHTML={{ __html: state.highlightedHtml }}
       />
-      {state.truncated && (
-        <div className="sticky bottom-0 border-t border-border bg-muted/90 px-4 py-2 text-center text-sm text-muted-foreground backdrop-blur-sm">
-          Showing first {maxHighlightLines.toLocaleString()} of{" "}
-          {state.totalLines.toLocaleString()} lines.{" "}
+      {state.truncated && fileSize && fileSize > interactiveViewerSizeLimit && (
+        <div className="sticky bottom-0 border-t border-border bg-primary/80 px-4 py-2 text-center text-sm text-primary-foreground backdrop-blur-sm">
+          {truncationMessage}{" "}
           <a
             href={getProxyUrl(filePath)}
             download
-            className="text-primary underline underline-offset-2 hover:text-primary/80"
+            className="text-primary-foreground font-bold underline underline-offset-2 hover:text-accent transition-all duration-200"
           >
             Download full file
           </a>

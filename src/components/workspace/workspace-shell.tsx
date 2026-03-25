@@ -36,7 +36,7 @@ export function WorkspaceShell({
     setPanelManuallyHidden,
     panelExpanded,
     setPanelExpanded,
-    panelLayoutRef,
+    panelInitialLayout,
     setPanelLayout,
   } = useWorkspacePanel();
 
@@ -127,12 +127,12 @@ export function WorkspaceShell({
     <ResizablePanelGroup
       orientation="horizontal"
       className="h-full min-h-0 w-full"
-      defaultLayout={panelLayoutRef.current}
+      defaultLayout={panelInitialLayout}
       onLayoutChanged={setPanelLayout}
     >
       <ResizablePanel
         id={workspacePanelIds.main}
-        defaultSize={panelLayoutRef.current[workspacePanelIds.main] ?? 60}
+        defaultSize={panelInitialLayout[workspacePanelIds.main] ?? 60}
         minSize="30%"
         maxSize="100%"
         className="flex h-full min-h-0 flex-row overflow-hidden"
@@ -147,7 +147,7 @@ export function WorkspaceShell({
       <ResizableHandle withHandle className="shrink-0" />
       <ResizablePanel
         id={workspacePanelIds.details}
-        defaultSize={panelLayoutRef.current[workspacePanelIds.details] ?? 40}
+        defaultSize={panelInitialLayout[workspacePanelIds.details] ?? 40}
         minSize="10%"
         maxSize="70%"
         className="flex min-h-0 flex-col overflow-hidden"

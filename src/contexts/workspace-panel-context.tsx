@@ -32,6 +32,8 @@ interface WorkspacePanelContextType {
   /** When true, show files/folders whose name starts with "." (persists across folder navigation). */
   showHiddenFiles: boolean;
   setShowHiddenFiles: (value: boolean) => void;
+  /** Stable snapshot of the initial panel layout — safe to read during render (e.g. for defaultSize props). */
+  panelInitialLayout: Record<string, number>;
   /** Ref holding resizable panel layout (panel id -> %). Stored as a ref to avoid re-renders during resize drag. */
   panelLayoutRef: React.RefObject<Record<string, number>>;
   setPanelLayout: (layout: Record<string, number>) => void;
@@ -49,7 +51,8 @@ export function WorkspacePanelProvider({
   const [panelManuallyHidden, setPanelManuallyHidden] = useState(false);
   const [panelExpanded, setPanelExpanded] = useState(false);
   const [showHiddenFiles, setShowHiddenFiles] = useState(false);
-  const panelLayoutRef = useRef<Record<string, number>>(initialLayout ?? defaultPanelLayout);
+  const panelInitialLayout = initialLayout ?? defaultPanelLayout;
+  const panelLayoutRef = useRef<Record<string, number>>(panelInitialLayout);
   const setPanelLayout = useCallback((layout: Record<string, number>) => {
     panelLayoutRef.current = layout;
     // Persist to cookie so the server can render the correct layout on next page load
@@ -64,6 +67,7 @@ export function WorkspacePanelProvider({
       setPanelExpanded,
       showHiddenFiles,
       setShowHiddenFiles,
+      panelInitialLayout,
       panelLayoutRef,
       setPanelLayout,
     }),
@@ -74,6 +78,7 @@ export function WorkspacePanelProvider({
       setPanelExpanded,
       showHiddenFiles,
       setShowHiddenFiles,
+      panelInitialLayout,
       panelLayoutRef,
       setPanelLayout,
     ]

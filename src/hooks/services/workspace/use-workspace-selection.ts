@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import { useState, useCallback, useMemo } from "react";
 import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
 import {
   computeNextSelection,
@@ -23,19 +23,17 @@ export function useWorkspaceSelection({
   const [anchorPath, setAnchorPath] = useState<string | null>(null);
 
   // Keep selected items in sync with latest processedItems data (e.g. after type change refetch)
-  const prevItemsRef = useRef(processedItems);
-  useEffect(() => {
-    if (prevItemsRef.current === processedItems) return;
-    prevItemsRef.current = processedItems;
-    if (selectedItems.length === 0) return;
-    const itemByPath = new Map(processedItems.map((i) => [normalizePath(i.path), i]));
-    setSelectedItems((prev) => {
-      const updated = prev.map((old) => itemByPath.get(normalizePath(old.path)) ?? old);
-      // Only update state if something actually changed
-      if (updated.every((item, idx) => item === prev[idx])) return prev;
-      return updated;
-    });
-  }, [processedItems, selectedItems.length]);
+  const [prevProcessedItems, setPrevProcessedItems] = useState(processedItems);
+  if (prevProcessedItems !== processedItems) {
+    setPrevProcessedItems(processedItems);
+    if (selectedItems.length > 0) {
+      const itemByPath = new Map(processedItems.map((i) => [normalizePath(i.path), i]));
+      const updated = selectedItems.map((old) => itemByPath.get(normalizePath(old.path)) ?? old);
+      if (!updated.every((item, idx) => item === selectedItems[idx])) {
+        setSelectedItems(updated);
+      }
+    }
+  }
 
   const selectedPaths = useMemo(
     () => selectedItems.map((i) => normalizePath(i.path)),

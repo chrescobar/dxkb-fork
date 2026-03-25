@@ -29,6 +29,7 @@ export function CsvViewer({ filePath, fileName, fileSize }: CsvViewerProps) {
 }
 
 function InteractiveCsvViewer({ filePath, fileName }: { filePath: string; fileName: string }) {
+  "use no memo";
   const [content, setContent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -93,6 +94,7 @@ function InteractiveCsvViewer({ filePath, fileName }: { filePath: string; fileNa
     }));
   }, [columnNames]);
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table's useReactTable API is inherently incompatible with React Compiler; component is already opted out via "use no memo"
   const table = useReactTable({
     data: records,
     columns,

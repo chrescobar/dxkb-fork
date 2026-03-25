@@ -7,6 +7,7 @@ export type ViewerCategory =
   | "text"
   | "json"
   | "image"
+  | "svg"
   | "csv"
   | "iframe"
   | "fallback";
@@ -26,7 +27,7 @@ const typeToViewer: Record<string, ViewerCategory> = {
   nwk: "text",
   xml: "text",
   json: "json",
-  svg: "image",
+  svg: "svg",
   png: "image",
   jpg: "image",
   gif: "image",
@@ -62,7 +63,7 @@ const extensionToViewer: Record<string, ViewerCategory> = {
   ".afa": "text",
   ".gfa": "text",
   ".json": "json",
-  ".svg": "image",
+  ".svg": "svg",
   ".png": "image",
   ".jpg": "image",
   ".jpeg": "image",
@@ -131,8 +132,9 @@ function getExtension(fileName: string): string {
  * Determine which viewer category should handle a given workspace item.
  *
  * Resolution order:
- *  1. Workspace object type (`typeToViewer`)
- *  2. File extension (`extensionToViewer`)
+ *  1. File extension (`extensionToViewer`) — checked first because workspace
+ *     types are often generic (e.g. an SVG stored as type "txt")
+ *  2. Workspace object type (`typeToViewer`)
  *  3. Legacy CSV/TSV filename pattern
  *  4. "fallback"
  */
@@ -140,13 +142,13 @@ export function resolveViewer(
   workspaceType: string,
   fileName: string,
 ): ViewerCategory {
-  const byType = typeToViewer[workspaceType];
-  if (byType) return byType;
-
   const ext = getExtension(fileName);
 
   const byExt = extensionToViewer[ext];
   if (byExt) return byExt;
+
+  const byType = typeToViewer[workspaceType];
+  if (byType) return byType;
 
   if (ext === ".csv" || ext === ".tsv") return "csv";
 

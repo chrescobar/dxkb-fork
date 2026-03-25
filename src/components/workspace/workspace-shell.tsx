@@ -88,7 +88,6 @@ export function WorkspaceShell({
 
   const detailsPanelContent = showFilePreview ? (
     <FileViewerPanel
-      key={singleItem.path}
       item={singleItem}
       onClose={() => {
         setPanelManuallyHidden(true);

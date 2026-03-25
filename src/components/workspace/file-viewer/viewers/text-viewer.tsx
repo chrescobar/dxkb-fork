@@ -35,6 +35,7 @@ function getLangFromFileName(fileName: string): string {
     case ".json":
       return "json";
     case ".xml":
+    case ".svg":
       return "xml";
     case ".csv":
     case ".tsv":

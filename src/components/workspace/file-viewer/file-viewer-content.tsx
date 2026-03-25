@@ -5,6 +5,7 @@ import { resolveViewer, largeSizeThreshold } from "./file-viewer-registry";
 import { TextViewer } from "./viewers/text-viewer";
 import { JsonViewer } from "./viewers/json-viewer";
 import { ImageViewer } from "./viewers/image-viewer";
+import { SvgViewer } from "./viewers/svg-viewer";
 import { CsvViewer } from "./viewers/csv-viewer";
 import { IframeViewer } from "./viewers/iframe-viewer";
 import { FallbackViewer } from "./viewers/fallback-viewer";
@@ -26,6 +27,8 @@ export function FileViewerContent({ item }: FileViewerContentProps) {
       return <JsonViewer filePath={item.path} fileName={item.name} />;
     case "image":
       return <ImageViewer filePath={item.path} fileName={item.name} />;
+    case "svg":
+      return <SvgViewer filePath={item.path} fileName={item.name} />;
     case "csv":
       return <CsvViewer filePath={item.path} fileName={item.name} />;
     case "iframe":

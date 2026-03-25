@@ -1,3 +1,4 @@
+import { sanitizePathSegment } from "@/lib/utils";
 import {
   ValidWorkspaceObjectTypes,
   knownUploadTypes,
@@ -196,6 +197,11 @@ export function sortItems(
 
     return sort.direction === "asc" ? comparison : -comparison;
   });
+}
+
+export function formatOwner(ownerId: string): string {
+  if (!ownerId) return "—";
+  return ownerId.replace(/@bvbrc$/, "");
 }
 
 export function formatDate(dateString: string): string {
@@ -401,4 +407,12 @@ export async function ensureDestinationWriteAccess(
       errorMessage: `Access denied, you do not have write access to ${normalized || "/"}`,
     };
   }
+}
+
+/** Dot path relative to workspace for URL (e.g. "ProteinMPNN_tests/.1e08_dwnld_d10010111"). */
+export function getDotPathRelative(path: string, jobName: string): string {
+  const segments = path.split("/").map(sanitizePathSegment).filter(Boolean);
+  const withoutLast = segments.slice(0, -1);
+  const base = withoutLast.length > 0 ? withoutLast.join("/") : "";
+  return base ? `${base}/.${jobName}` : `.${jobName}`;
 }

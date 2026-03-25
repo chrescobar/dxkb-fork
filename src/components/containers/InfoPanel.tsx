@@ -16,8 +16,10 @@ import { surveillanceFields } from "@/constants/datafields/surveillance";
 import { taxonomyFields } from "@/constants/datafields/taxonomy";
 import { Button } from "@/components/ui/button";
 import { DetailPanel, type DetailField } from "@/components/detail-panel";
+import { formatOwner } from "@/lib/services/workspace/helpers";
 import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
-import { WorkspaceItemIcon } from "@/components/workspace/workspace-item-icon";
+import { WorkspaceItemHeader } from "@/components/workspace/workspace-item-header";
+import { WorkspaceItemDetails } from "@/components/workspace/workspace-item-details";
 
 export type InfoPanelProps =
   | {
@@ -32,24 +34,6 @@ export type InfoPanelProps =
       rows: Record<string, unknown>[];
       activeTab: string;
     };
-
-function formatWorkspaceDate(value: string): string {
-  if (!value) return "—";
-  const date = new Date(value);
-  return date.toLocaleDateString("en-US", {
-    month: "numeric",
-    day: "numeric",
-    year: "2-digit",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  });
-}
-
-function formatWorkspaceOwner(ownerId: string): string {
-  if (!ownerId) return "—";
-  return ownerId.replace(/@bvbrc$/, "");
-}
 
 function formatDiskUsage(bytes: number): string {
   if (!bytes || bytes === 0) return "0 B";
@@ -75,84 +59,53 @@ function getItemFullPath(item: WorkspaceBrowserItem): string {
 
 function WorkspaceItemDetailContent({
   workspaceItem,
-  onClose: _onClose,
-  onAction: _onAction,
+  onClose,
 }: {
   workspaceItem: WorkspaceBrowserItem;
   onClose?: () => void;
   onAction?: (actionId: string, selection: WorkspaceBrowserItem[]) => void;
 }) {
   const fullPath = getItemFullPath(workspaceItem);
-  const pathDisplay = fullPath || workspaceItem.path || "—";
 
   const { data: diskUsage, isPending: isDiskUsageLoading, error: diskUsageError } = useWorkspaceDu(fullPath || null);
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <div className="flex items-center justify-between gap-2 border-b pb-2">
-        <h3 className="truncate text-sm font-semibold">{workspaceItem.name}</h3>
-      </div>
-      <div className="scrollbar-themed flex-1 overflow-y-auto py-3 text-xs">
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <WorkspaceItemIcon type={workspaceItem.type} className="h-6 w-6" />
-            <span className="font-medium capitalize text-muted-foreground">
-              {workspaceItem.type || "—"}
-            </span>
-          </div>
-          <dl className="grid gap-1.5">
-            <div>
-              <dt className="text-muted-foreground">Owner</dt>
-              <dd className="break-all">{formatWorkspaceOwner(workspaceItem.owner_id)}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">Created</dt>
-              <dd>{formatWorkspaceDate(workspaceItem.creation_time)}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">Path</dt>
-              <dd className="break-all font-mono text-[11px]">{pathDisplay}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground mb-1">Workspace Members</dt>
-              <dd className="text-muted-foreground">
-                {formatWorkspaceOwner(workspaceItem.owner_id)}
-                {workspaceItem.user_permission === "o" ? " (me) – Owner" : " – Owner"}
-              </dd>
-            </div>
-          </dl>
-          <dl className="grid gap-1.5">
-            <div>
-              <dt className="text-muted-foreground mb-1">Disk Usage</dt>
-              <dd className="text-muted-foreground">
-                {isDiskUsageLoading
-                  ? "Loading…"
-                  : diskUsageError
-                    ? "—"
-                    : diskUsage !== undefined
-                      ? formatDiskUsage(diskUsage.sizeBytes)
-                      : "—"}
-              </dd>
-            </div>
-            {diskUsage !== undefined && (
-              <>
-                <div>
-                  <dt className="text-muted-foreground">Files</dt>
-                  <dd className="text-muted-foreground">
-                    {diskUsage.files.toLocaleString()}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">Folders</dt>
-                  <dd className="text-muted-foreground">
-                    {diskUsage.folders.toLocaleString()}
-                  </dd>
-                </div>
-              </>
-            )}
-          </dl>
+      <WorkspaceItemHeader item={workspaceItem} onClose={onClose} />
+
+      <WorkspaceItemDetails item={workspaceItem}>
+        <div>
+          <dt className="text-muted-foreground">Workspace Members</dt>
+          <dd>
+            {formatOwner(workspaceItem.owner_id)}
+            {workspaceItem.user_permission === "o" ? " (me) – Owner" : " – Owner"}
+          </dd>
         </div>
-      </div>
+        <div>
+          <dt className="text-muted-foreground">Disk Usage</dt>
+          <dd>
+            {isDiskUsageLoading
+              ? "Loading…"
+              : diskUsageError
+                ? "—"
+                : diskUsage !== undefined
+                  ? formatDiskUsage(diskUsage.sizeBytes)
+                  : "—"}
+          </dd>
+        </div>
+        {diskUsage !== undefined && (
+          <>
+            <div>
+              <dt className="text-muted-foreground">Files</dt>
+              <dd>{diskUsage.files.toLocaleString()}</dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground">Folders</dt>
+              <dd>{diskUsage.folders.toLocaleString()}</dd>
+            </div>
+          </>
+        )}
+      </WorkspaceItemDetails>
     </div>
   );
 }
@@ -164,12 +117,12 @@ export function InfoPanel(props: InfoPanelProps) {
     const hasSingleSelection = selection.length === 1;
 
     return (
-      <div className="flex h-full w-full flex-col overflow-hidden px-4 py-2">
+      <div className="flex h-full w-full flex-col overflow-hidden">
         {isMultiSelect ? (
-          <>
+          <div className="px-4 py-2">
             <DetailPanel.Header title={`${selection.length} items selected`} />
             <DetailPanel.EmptyState message="Select a single item to view details" />
-          </>
+          </div>
         ) : hasSingleSelection ? (
           <WorkspaceItemDetailContent
             workspaceItem={selection[0]}
@@ -177,7 +130,9 @@ export function InfoPanel(props: InfoPanelProps) {
             onAction={props.onAction}
           />
         ) : (
-          <DetailPanel.EmptyState message="Select an item to view details" />
+          <div className="px-4 py-2">
+            <DetailPanel.EmptyState message="Select an item to view details" />
+          </div>
         )}
       </div>
     );

@@ -107,13 +107,11 @@ export function getJobResultDotPath(
   return parent ? `${parent}/.${dotName}` : `.${dotName}`;
 }
 
-// Validator function to check if a type is a valid knownUploadType
 export function isValidWorkspaceObjectType(type: string): type is ValidWorkspaceObjectTypes {
   const validTypes = getValidWorkspaceObjectTypes();
   return validTypes.includes(type as ValidWorkspaceObjectTypes);
 }
 
-// Get all valid upload type keys
 export function getValidWorkspaceObjectTypes(): ValidWorkspaceObjectTypes[] {
   return [
     ...Object.keys(knownUploadTypes),
@@ -122,7 +120,6 @@ export function getValidWorkspaceObjectTypes(): ValidWorkspaceObjectTypes[] {
   ] as ValidWorkspaceObjectTypes[];
 }
 
-// Validate multiple types at once
 export function validateWorkspaceObjectTypes(types: string[]): {
   valid: ValidWorkspaceObjectTypes[];
   invalid: string[];
@@ -273,23 +270,27 @@ export async function getNonEmptyFolderPaths(
   listFolder: (path: string) => Promise<WorkspaceBrowserItem[]>,
   options?: { signal?: AbortSignal },
 ): Promise<string[]> {
-  const nonEmpty: string[] = [];
-  for (const folderPath of folderPaths) {
-    if (options?.signal?.aborted) {
-      throw new DOMException("Aborted", "AbortError");
-    }
-    try {
-      const listing = await listFolder(folderPath);
-      if (options?.signal?.aborted) {
-        throw new DOMException("Aborted", "AbortError");
-      }
-      if (listing.length > 0) nonEmpty.push(folderPath);
-    } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") throw err;
-      // Treat fetch failure as empty so the dialog is not blocked
-    }
+  if (options?.signal?.aborted) {
+    throw new DOMException("Aborted", "AbortError");
   }
-  return nonEmpty;
+
+  const results = await Promise.all(
+    folderPaths.map(async (folderPath) => {
+      try {
+        const listing = await listFolder(folderPath);
+        if (options?.signal?.aborted) {
+          throw new DOMException("Aborted", "AbortError");
+        }
+        return listing.length > 0 ? folderPath : null;
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") throw err;
+        // Treat fetch failure as empty so the dialog is not blocked
+        return null;
+      }
+    }),
+  );
+
+  return results.filter((p): p is string => p !== null);
 }
 
 /**

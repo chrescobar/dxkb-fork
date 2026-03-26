@@ -3,6 +3,7 @@
 import { FileQuestion } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { triggerDownload } from "@/lib/utils";
 import { getProxyUrl } from "../file-viewer-registry";
 
 interface FallbackViewerProps {
@@ -17,12 +18,7 @@ export function FallbackViewer({
   filePath,
 }: FallbackViewerProps) {
   function handleDownload() {
-    const anchor = document.createElement("a");
-    anchor.href = getProxyUrl(filePath);
-    anchor.download = fileName;
-    document.body.appendChild(anchor);
-    anchor.click();
-    anchor.remove();
+    triggerDownload(getProxyUrl(filePath), fileName);
   }
 
   return (

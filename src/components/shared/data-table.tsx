@@ -71,14 +71,12 @@ interface DataTableProps {
 
 export function DataTable({ id: _id, data, columns, totalItems, resource, onSelectionChange, onGenomeSelect, pageIndex, pageSize, onPageChange, sorting:controlledSorting, onSortingChange, columnOrder, onColumnOrderChange, columnVisibility: controlledVisibility, onColumnVisibilityChange: onColumnVisibilityChangeProp, rowSelection: controlledRowSelection, onRowSelectionChange, onDownloadAll, isLoading = false }: DataTableProps) {
 
-  // These next consts are used and activated when something about the columm changes
   const [columnSizing, setColumnSizing] = useState<Record<string, number>>({});
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>(
     controlledVisibility || {}
   );
   const [showColumnMenu, setShowColumnMenu] = useState(false);
   
-  // Drag and drop state for column reordering
   const [draggedColumn, setDraggedColumn] = useState<string | null>(null);
 
   const [internalRowSelection, setInternalRowSelection] = useState({});
@@ -104,15 +102,12 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageIndex, pageSize]);
 
-  // This allows us to select multiple rows at once...
   const lastSelectedIndexRef = useRef<number | null>(null);
 
-  // This allows the user to only include displayed columns in download
   const [onlyVisibleColumns, setOnlyVisibleColumns] = useState(false);
 
-  // These reference variables are used since React doesn't naturally have direct access to the DOM. As a result, we need to create hooks to use to be able to access and manipulate the DOM at various points in the code. These are the DOM elements that we'll need references for.
   const tableContainerRef = useRef<HTMLDivElement>(null);
-  const resizeLineRef = useRef<HTMLDivElement>(null); // This one is used to create the "ghost line" that appears on a column resize to guide the user
+  const resizeLineRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLTableSectionElement>(null);
   const isResizingRef = useRef(false);
   const preventClickRef = useRef<((e: Event) => void) | null>(null);
@@ -120,7 +115,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
   const controlsRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLDivElement>(null);
 
-  // This simply closes the columns dropdown if a mouseclick event happens outside of it
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -348,7 +342,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     manualPagination: true,
     manualSorting: true,
     pageCount: Math.ceil(totalItems / (pagination.pageSize ?? 200)),
-    columnResizeMode: 'onEnd', // This waits to implement the new column size until the mouse is released. This makes the transition smoother as it doesn't have to keep rerendering the column/table in realtime as the user moves the mouse.
+    columnResizeMode: 'onEnd',
     enableColumnResizing: true,
     getCoreRowModel: getCoreRowModel(),
     enableRowSelection: true,
@@ -357,8 +351,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     getRowId: (row, index) => String(index), // or use row.id if your data has unique ids,
   });
 
-  
-  // This controls and handles the actual widths of the columns. It keeps track of any resizing that happens on any given column and manages them all.
   const columnSizingState = table.getState().columnSizing;
   const columnSizingInfoState = table.getState().columnSizingInfo;
 
@@ -374,7 +366,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
   const rows = table.getRowModel().rows;
 
-  // This renders rows before they're all ready to go. This is useful in large data sets where we don't necessarily want to wait for thousands of rows of data to be ready before seeing anything at all. This watches for a certain number of rows to be ready, along with a handful extra of a buffer, and renders those while still working on fetching the rest of the data.
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => tableContainerRef.current,
@@ -617,7 +608,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       </div>
       <div className="w-full flex flex-col border border-gray-500 rounded relative h-full overflow-hidden"> {/* This is the main container, which contains both the table and the pagination footer */}
 
-        {/* This is the section containing the main data table */}
         <div
           className="flex-1 overflow-auto relative"
           ref={tableContainerRef}
@@ -626,7 +616,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
             paddingBottom: '52px', // leave room for pagination footer
           }}
         >
-          {/* Loading overlay */}
           {isLoading && (
             <div className="absolute inset-0 z-40 bg-white/60 flex items-center justify-center">
               <div className="flex flex-col items-center gap-2">
@@ -635,7 +624,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
               </div>
             </div>
           )}
-          {/* This extra nested div is necessary to make sure all the table elements/columns lay out properly. Specifically to ensure things like scrolling, table width, column-resizing, etc, all work as intended. */}
           <div className="min-w-max relative" style={columnSizeVars}>
             <Table className="w-full table-auto text-xs border-collapse" style={{ borderSpacing: 0 }}>
               <TableHeader
@@ -710,7 +698,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                                 </div>
                               </div>
                               {column.getCanResize() && (
-                                // This extra div is the grabbable area for resizing the column 
                                 <div
                                   onMouseDown={(e) => {
                                     e.stopPropagation();
@@ -729,8 +716,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                 ))}
               </TableHeader>
 
-              {/* Now we output the actual data...
-              Most of this is self-explanatory*/}
               <TableBody
                 style={{
                   position: 'relative',
@@ -738,7 +723,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                 }}
                 className="relative z-10 border-collapse gap-0"
               >
-                {rows.length === 0 ? ( // If there are no results...
+                {rows.length === 0 ? (
                 <TableRow className="flex w-full h-24 items-center justify-center">
                   <TableCell
                     colSpan={table.getVisibleLeafColumns().length}
@@ -797,7 +782,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
               </TableBody>
             </Table>
 
-            {/* This is the "ghost line" that appears when resizing a column width. It remains hidden until triggered to appear by clicking the resizing div */}
             <div
               ref={resizeLineRef}
               className="absolute top-0 bottom-0 w-[2px] bg-blue-600 opacity-50 pointer-events-none z-40"
@@ -806,8 +790,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           </div>
         </div>
 
-        {/* Pagination Footer */}
-        <div className="bg-secondary py-3 border-t z-10 shadow-sm border-black w-full"ref={footerRef}>
+        <div className="bg-secondary py-3 border-t z-10 shadow-sm border-black w-full" ref={footerRef}>
           <div className="flex flex-col md:flex-row justify-between items-center px-4 space-y-2 md:space-y-0">
             <div>
               {(() => {
@@ -820,18 +803,16 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
               })()}
             </div>
             <div className="flex items-center space-x-2">
-              {/* Back arrow */}
               <Button
                 onClick={() => {
                   table.previousPage();
-                  // Parent will handle this via onPaginationChange
+
                 }}
                 disabled={!table.getCanPreviousPage()}
                 className="px-2 py-1 border border-primary disabled:opacity-50"
               >
                 {'Prev'}
               </Button>
-              {/* Pagination page buttons */}
               {(() => {
                 const pageCount = table.getPageCount();
                 const currentPage = table.getState().pagination.pageIndex;
@@ -854,7 +835,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                         onClick={() => {
                           // Update table's internal state for immediate UI feedback
                           table.setPageIndex(page);
-                          // Parent will handle this via onPaginationChange
+        
                         }}
                         className={clsx(
                           'px-3 py-1 border mx-1 bg-background text-foreground',
@@ -871,7 +852,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
               <Button
                 onClick={() => {
                   table.nextPage();
-                  // Parent will handle this via onPaginationChange
+
                 }}
                 disabled={!table.getCanNextPage()}
                 className="px-2 py-1 border border-primary disabled:opacity-50"

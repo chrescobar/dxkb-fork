@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { triggerDownload } from "@/lib/utils";
 import { formatFileSize } from "@/lib/services/workspace/helpers";
 import { getProxyUrl } from "@/components/workspace/file-viewer/file-viewer-registry";
 import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
@@ -25,12 +26,7 @@ export function WorkspaceItemHeader({
   const formattedSize = formatFileSize(item.size);
 
   const handleDownload = useCallback(() => {
-    const anchor = document.createElement("a");
-    anchor.href = proxyUrl;
-    anchor.download = item.name;
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
+    triggerDownload(proxyUrl, item.name);
   }, [proxyUrl, item.name]);
 
   const handleCopyPath = useCallback(async () => {

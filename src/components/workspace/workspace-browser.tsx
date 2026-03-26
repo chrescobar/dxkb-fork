@@ -336,49 +336,33 @@ export function WorkspaceBrowser({
 
   // --- Early returns ---
 
-  if (!isPublic && path && path.trim() !== "" && resolveQuery.isLoading && !resolveQuery.isError) {
-    return (
-      <div className="flex min-h-[calc(100vh-12rem)] w-full flex-col overflow-hidden">
-        <div className="min-w-0 shrink-0 space-y-4 overflow-hidden p-4">
-          <Skeleton className="h-5 w-64" />
-          <Skeleton className="h-8 w-full" />
-        </div>
-        <div className="min-h-0 flex-1">
-          <WorkspaceDataTable
-            items={[]}
-            isLoading={true}
-            path={path}
-            sort={{ field: "name", direction: "asc" }}
-            onSortChange={noop}
-            viewMode={isHome ? "home" : "shared"}
-            username={username}
-          />
-        </div>
+  const loadingSkeleton = (viewMode: "home" | "shared") => (
+    <div className="flex min-h-[calc(100vh-12rem)] w-full flex-col overflow-hidden">
+      <div className="min-w-0 shrink-0 space-y-4 overflow-hidden p-4">
+        <Skeleton className="h-5 w-64" />
+        <Skeleton className="h-8 w-full" />
       </div>
-    );
+      <div className="min-h-0 flex-1">
+        <WorkspaceDataTable
+          items={[]}
+          isLoading={true}
+          path={path}
+          sort={{ field: "name", direction: "asc" }}
+          onSortChange={noop}
+          viewMode={viewMode}
+          username={username}
+        />
+      </div>
+    </div>
+  );
+
+  if (!isPublic && path && path.trim() !== "" && resolveQuery.isLoading && !resolveQuery.isError) {
+    return loadingSkeleton(isHome ? "home" : "shared");
   }
 
   if (!isPublic && !currentUser) {
     if (mode === "shared" && !authChecked) {
-      return (
-        <div className="flex min-h-[calc(100vh-12rem)] w-full flex-col overflow-hidden">
-          <div className="min-w-0 shrink-0 space-y-4 overflow-hidden p-4">
-            <Skeleton className="h-5 w-64" />
-            <Skeleton className="h-8 w-full" />
-          </div>
-          <div>
-            <WorkspaceDataTable
-              items={[]}
-              isLoading={true}
-              path={path}
-              sort={{ field: "name", direction: "asc" }}
-              onSortChange={noop}
-              viewMode="shared"
-              username={username}
-            />
-          </div>
-        </div>
-      );
+      return loadingSkeleton("shared");
     }
     return (
       <Alert variant="destructive">
@@ -402,7 +386,6 @@ export function WorkspaceBrowser({
   return (
     <WorkspaceShell
       selectedItems={selectedItems}
-      workspaceGuideUrl={workspaceGuideUrl}
       actionBar={
         <WorkspaceActionBar
           selection={selectedItems}

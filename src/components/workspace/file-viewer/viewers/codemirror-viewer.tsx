@@ -16,6 +16,7 @@ import { AlertTriangle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { triggerDownload } from "@/lib/utils";
 import { formatFileSize } from "@/lib/services/workspace/helpers";
 import { getProxyUrl } from "../file-viewer-registry";
 import { getLanguageExtension } from "./codemirror-languages";
@@ -107,13 +108,24 @@ const maxCacheSize = 5;
 function evictOldest() {
   if (viewCache.size <= maxCacheSize) return;
 
-  // Evict the first (oldest) entry that isn't currently mounted
+  // Prefer evicting unmounted entries first
   for (const [key, entry] of viewCache) {
     if (!entry.wrapper.isConnected) {
       entry.abort.abort();
       entry.view.destroy();
       viewCache.delete(key);
       if (viewCache.size <= maxCacheSize) return;
+    }
+  }
+
+  // All entries are mounted — force-evict the oldest to cap memory
+  if (viewCache.size > maxCacheSize) {
+    const oldest = viewCache.entries().next().value;
+    if (oldest) {
+      const [key, entry] = oldest;
+      entry.abort.abort();
+      entry.view.destroy();
+      viewCache.delete(key);
     }
   }
 }
@@ -234,6 +246,7 @@ export function CodeMirrorViewer({
           pendingText = "";
           docLength += text.length;
           view.dispatch({ changes: { from, insert: text } });
+          setProgress({ bytesLoaded: loaded, totalBytes: total });
         }
 
         for (;;) {
@@ -248,8 +261,6 @@ export function CodeMirrorViewer({
             rafScheduled = true;
             requestAnimationFrame(flushToEditor);
           }
-
-          setProgress({ bytesLoaded: loaded, totalBytes: total });
         }
 
         pendingText += decoder.decode();
@@ -288,7 +299,7 @@ export function CodeMirrorViewer({
         viewCache.delete(filePath);
       }
     };
-  }, [fileName, filePath, foldable, startFolded, needsConfirmation, confirmedPath]);
+  }, [fileName, filePath, foldable, startFolded, needsConfirmation]);
 
   if (needsConfirmation) {
     return (
@@ -309,12 +320,7 @@ export function CodeMirrorViewer({
           <Button
             size="lg"
             variant="outline"
-            onClick={() => {
-              const a = document.createElement("a");
-              a.href = getProxyUrl(filePath);
-              a.download = "";
-              a.click();
-            }}
+            onClick={() => triggerDownload(getProxyUrl(filePath))}
           >
             Download
           </Button>

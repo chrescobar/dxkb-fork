@@ -62,3 +62,18 @@ export function getFirstDefined<T extends Record<string, unknown>>(
   }
   return undefined;
 }
+
+/**
+ * Programmatically trigger a file download via a temporary anchor element.
+ */
+export function triggerDownload(url: string, filename?: string): void {
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  if (filename) anchor.download = filename;
+  else anchor.download = "";
+  anchor.rel = "noopener noreferrer";
+  anchor.style.display = "none";
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+}

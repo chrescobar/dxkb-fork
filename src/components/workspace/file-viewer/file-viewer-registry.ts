@@ -3,6 +3,8 @@
  * Pure utility — no React dependencies.
  */
 
+import { buildEncodedSegmentPath, parsePathSegments } from "@/lib/utils";
+
 export type ViewerCategory =
   | "text"
   | "json"
@@ -112,8 +114,7 @@ const mimeMap: Record<string, string> = {
 // Preview constants
 // ---------------------------------------------------------------------------
 
-export const previewMaxBytes = 10 * 1024 * 1024; // 10 MB — default byte limit for preview endpoint
-export const interactiveViewerSizeLimit = 10 * 1024 * 1024; // 10 MB — above this, CSV/JSON switch to text preview
+export const previewMaxBytes = 10 * 1024 * 1024; // 10 MB — shared limit for preview endpoint and interactive viewer threshold
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -173,17 +174,16 @@ export function getMimeType(fileName: string): string {
   return mimeMap[ext] ?? "application/octet-stream";
 }
 
+function encodePath(filePath: string): string {
+  return buildEncodedSegmentPath(parsePathSegments(filePath));
+}
+
 /**
  * Build an API proxy URL for streaming a workspace file, encoding each path
  * segment individually so slashes are preserved.
  */
 export function getProxyUrl(filePath: string): string {
-  const encoded = filePath
-    .split("/")
-    .filter(Boolean)
-    .map((segment) => encodeURIComponent(segment))
-    .join("/");
-  return `/api/workspace/view/${encoded}`;
+  return `/api/workspace/view/${encodePath(filePath)}`;
 }
 
 /**
@@ -194,11 +194,6 @@ export function getPreviewUrl(
   filePath: string,
   maxBytes: number = previewMaxBytes,
 ): string {
-  const encoded = filePath
-    .split("/")
-    .filter(Boolean)
-    .map((segment) => encodeURIComponent(segment))
-    .join("/");
-  return `/api/workspace/preview/${encoded}?maxBytes=${maxBytes}`;
+  return `/api/workspace/preview/${encodePath(filePath)}?maxBytes=${maxBytes}`;
 }
 

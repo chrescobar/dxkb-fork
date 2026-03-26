@@ -19,12 +19,9 @@ interface FileViewerPanelProps {
 }
 
 export function FileViewerPanel({ item, onClose }: FileViewerPanelProps) {
-  const proxyUrl = getProxyUrl(item.path);
-  const formattedSize = formatFileSize(item.size);
-
   const handleOpenInNewTab = useCallback(() => {
-    window.open(proxyUrl, "_blank");
-  }, [proxyUrl]);
+    window.open(getProxyUrl(item.path), "_blank");
+  }, [item.path]);
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -42,13 +39,12 @@ export function FileViewerPanel({ item, onClose }: FileViewerPanelProps) {
       <WorkspaceItemDetails item={item} defaultExpanded={false}>
         <div>
           <dt className="text-muted-foreground">Size</dt>
-          <dd>{formattedSize || "\u2014"}</dd>
+          <dd>{formatFileSize(item.size) || "\u2014"}</dd>
         </div>
       </WorkspaceItemDetails>
 
       <Separator />
 
-      {/* File content preview */}
       <div className="min-h-0 flex-1 overflow-hidden">
         <FileViewerContent key={item.path} item={item} />
       </div>

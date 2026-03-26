@@ -23,7 +23,6 @@ interface WorkspaceShellProps {
   children: ReactNode;
   actionBar: ReactNode;
   selectedItems: WorkspaceBrowserItem[];
-  workspaceGuideUrl?: string;
 }
 
 export function WorkspaceShell({

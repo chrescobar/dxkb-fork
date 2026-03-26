@@ -8,7 +8,7 @@ import type {
   SortField,
   WorkspaceBrowserSort,
 } from "@/types/workspace-browser";
-import { formatFileSize, formatDate } from "@/lib/services/workspace/helpers";
+import { formatFileSize, formatDate, formatOwner } from "@/lib/services/workspace/helpers";
 import { isFolderType } from "@/lib/services/workspace/utils";
 
 /** Responsive hide classes for each column — shared with special rows (LeadingRow, ParentRow). */
@@ -20,11 +20,6 @@ export const columnClassMap: Record<string, string> = {
   members: "",
   type: "hidden lg:table-cell",
 };
-
-export function formatOwner(ownerId: string): string {
-  if (!ownerId) return "";
-  return ownerId.replace(/@bvbrc$/, "");
-}
 
 export function formatMemberCount(count: number): string {
   if (count <= 0) return "\u2014";

@@ -13,7 +13,7 @@ import {
 import { useVirtualizer } from "@tanstack/react-virtual";
 
 import { Spinner } from "@/components/ui/spinner";
-import { getProxyUrl, interactiveViewerSizeLimit } from "../file-viewer-registry";
+import { getProxyUrl, previewMaxBytes } from "../file-viewer-registry";
 import { CodeMirrorViewer } from "./codemirror-viewer";
 
 interface CsvViewerProps {
@@ -23,7 +23,7 @@ interface CsvViewerProps {
 }
 
 export function CsvViewer({ filePath, fileName, fileSize }: CsvViewerProps) {
-  if (fileSize && fileSize > interactiveViewerSizeLimit) {
+  if (fileSize && fileSize > previewMaxBytes) {
     return (
       <CodeMirrorViewer
         filePath={filePath}
@@ -104,9 +104,7 @@ function InteractiveCsvViewer({
     }
   }, [content, fileName]);
 
-  useEffect(() => {
-    if (parseError) setError(parseError);
-  }, [parseError]);
+  const displayError = error || parseError;
 
   const columns = useMemo<ColumnDef<Record<string, string>>[]>(() => {
     return columnNames.map((col) => ({
@@ -143,10 +141,10 @@ function InteractiveCsvViewer({
     );
   }
 
-  if (error) {
+  if (displayError) {
     return (
       <div className="flex h-full w-full items-center justify-center text-destructive">
-        {error}
+        {displayError}
       </div>
     );
   }

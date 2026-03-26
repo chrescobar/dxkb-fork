@@ -1,6 +1,6 @@
 "use client";
 
-import { interactiveViewerSizeLimit } from "../file-viewer-registry";
+import { previewMaxBytes } from "../file-viewer-registry";
 import { CodeMirrorViewer } from "./codemirror-viewer";
 
 interface JsonViewerProps {
@@ -10,7 +10,7 @@ interface JsonViewerProps {
 }
 
 export function JsonViewer({ filePath, fileName, fileSize }: JsonViewerProps) {
-  const isLargeFile = !!(fileSize && fileSize > interactiveViewerSizeLimit);
+  const isLargeFile = !!(fileSize && fileSize > previewMaxBytes);
 
   return (
     <CodeMirrorViewer

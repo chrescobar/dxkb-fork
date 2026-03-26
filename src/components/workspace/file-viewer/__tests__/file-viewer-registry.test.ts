@@ -72,9 +72,9 @@ describe("getMimeType", () => {
 });
 
 describe("getProxyUrl", () => {
-  it("builds encoded view URL", () => {
+  it("builds encoded view URL (keeps @ unencoded)", () => {
     expect(getProxyUrl("/user@bvbrc/home/file.fasta")).toBe(
-      "/api/workspace/view/user%40bvbrc/home/file.fasta",
+      "/api/workspace/view/user@bvbrc/home/file.fasta",
     );
   });
 });
@@ -83,14 +83,14 @@ describe("getPreviewUrl", () => {
   it("builds preview URL with default maxBytes", () => {
     const url = getPreviewUrl("/user@bvbrc/home/file.fasta");
     expect(url).toBe(
-      `/api/workspace/preview/user%40bvbrc/home/file.fasta?maxBytes=${previewMaxBytes}`,
+      `/api/workspace/preview/user@bvbrc/home/file.fasta?maxBytes=${previewMaxBytes}`,
     );
   });
 
   it("builds preview URL with custom maxBytes", () => {
     const url = getPreviewUrl("/user@bvbrc/home/file.fasta", 2048);
     expect(url).toBe(
-      "/api/workspace/preview/user%40bvbrc/home/file.fasta?maxBytes=2048",
+      "/api/workspace/preview/user@bvbrc/home/file.fasta?maxBytes=2048",
     );
   });
 });

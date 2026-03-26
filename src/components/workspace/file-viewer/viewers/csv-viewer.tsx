@@ -11,6 +11,7 @@ import {
   type ColumnDef,
 } from "@tanstack/react-table";
 
+import { Spinner } from "@/components/ui/spinner";
 import { getProxyUrl, interactiveViewerSizeLimit } from "../file-viewer-registry";
 import { TextViewer } from "./text-viewer";
 
@@ -108,8 +109,8 @@ function InteractiveCsvViewer({ filePath, fileName }: { filePath: string; fileNa
 
   if (loading) {
     return (
-      <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-        Loading...
+      <div className="flex h-full w-full items-center justify-center gap-2 text-muted-foreground">
+        Loading... <Spinner />
       </div>
     );
   }
@@ -137,7 +138,7 @@ function InteractiveCsvViewer({ filePath, fileName }: { filePath: string; fileNa
       </div>
       <div className="h-full w-full overflow-auto">
         <table className="w-full text-sm">
-          <thead className="bg-muted/50 sticky top-0">
+          <thead className="bg-muted sticky top-0">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (

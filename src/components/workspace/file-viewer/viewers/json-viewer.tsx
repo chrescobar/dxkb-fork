@@ -6,6 +6,7 @@ import "react-json-view-lite/dist/index.css";
 import { Braces, Code } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { getProxyUrl, interactiveViewerSizeLimit } from "../file-viewer-registry";
 import { TextViewer } from "./text-viewer";
 
@@ -111,8 +112,8 @@ function InteractiveJsonViewer({ filePath, fileName }: { filePath: string; fileN
 
       <div className="flex-1 overflow-auto p-4">
         {isLoading && (
-          <div className="flex h-full items-center justify-center text-muted-foreground">
-            Loading...
+          <div className="flex h-full items-center justify-center gap-2 text-muted-foreground">
+            Loading... <Spinner />
           </div>
         )}
 

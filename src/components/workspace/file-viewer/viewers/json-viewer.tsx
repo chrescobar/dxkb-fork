@@ -57,8 +57,17 @@ function InteractiveJsonViewer({ filePath, fileName }: { filePath: string; fileN
 
         try {
           const parsed: unknown = JSON.parse(text);
-          setData(parsed);
-          setParseSuccess(true);
+          if (
+            parsed !== null &&
+            typeof parsed === "object"
+          ) {
+            setData(parsed);
+            setParseSuccess(true);
+          } else {
+            // Valid JSON primitive (null, number, string, boolean) —
+            // JsonView only accepts objects/arrays, so show raw text.
+            setParseError(true);
+          }
         } catch {
           setParseError(true);
         }

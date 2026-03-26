@@ -13,7 +13,7 @@ export function IframeViewer({ filePath, allowScripts = false }: IframeViewerPro
   return (
     <iframe
       src={getProxyUrl(filePath)}
-      sandbox={allowScripts ? "allow-same-origin allow-scripts" : "allow-same-origin"}
+      sandbox={allowScripts ? "allow-scripts" : "allow-same-origin"}
       className="h-full w-full border-0"
       title={fileName}
     />

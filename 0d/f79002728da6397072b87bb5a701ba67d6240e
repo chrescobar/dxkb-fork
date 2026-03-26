@@ -1,0 +1,25 @@
+src/lib/jobs/formatting.ts
+  b8231bfd66b09791 26
+src/components/workspace/file-viewer/viewers/json-viewer.tsx
+  b8231bfd66b09791 127
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.19",
+  "base_commit_sha": "0df79002728da6397072b87bb5a701ba67d6240e",
+  "prompts": {
+    "b8231bfd66b09791": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "558ae253-2c6a-4da8-9927-6f09dd161dc0",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}

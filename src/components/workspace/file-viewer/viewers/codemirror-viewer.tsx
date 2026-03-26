@@ -12,11 +12,16 @@ import {
 } from "@codemirror/language";
 import { keymap } from "@codemirror/view";
 
+import { AlertTriangle } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { formatFileSize } from "@/lib/services/workspace/helpers";
 import { getProxyUrl } from "../file-viewer-registry";
 import { getLanguageExtension } from "./codemirror-languages";
 import { LoadingProgress } from "./loading-progress";
+
+const largeFileThreshold = 50 * 1024 * 1024; // 50 MB
 
 interface CodeMirrorViewerProps {
   filePath: string;
@@ -130,9 +135,16 @@ export function CodeMirrorViewer({
   >("loading");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // Large file confirmation gate
+  const [confirmedPath, setConfirmedPath] = useState<string | null>(null);
+  const isLargeFile =
+    fileSize !== undefined && fileSize >= largeFileThreshold;
+  const needsConfirmation =
+    isLargeFile && confirmedPath !== filePath && !viewCache.has(filePath);
+
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
+    if (!container || needsConfirmation) return;
 
     // Check cache for an existing EditorView for this file
     const cached = viewCache.get(filePath);
@@ -276,7 +288,40 @@ export function CodeMirrorViewer({
         viewCache.delete(filePath);
       }
     };
-  }, [fileName, filePath, foldable, startFolded]);
+  }, [fileName, filePath, foldable, startFolded, needsConfirmation, confirmedPath]);
+
+  if (needsConfirmation) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center gap-4 p-6 text-center">
+        <AlertTriangle className="h-10 w-10 text-accent" />
+        <div className="space-y-1">
+          <p className="text-sm font-medium">
+            Large File ({fileSize ? formatFileSize(fileSize) : "50+ MB"})
+          </p>
+          <p className="text-xs text-muted-foreground">
+            This file is large and may take a while to download and render.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button size="lg" variant="default" onClick={() => setConfirmedPath(filePath)}>
+            Preview
+          </Button>
+          <Button
+            size="lg"
+            variant="outline"
+            onClick={() => {
+              const a = document.createElement("a");
+              a.href = getProxyUrl(filePath);
+              a.download = "";
+              a.click();
+            }}
+          >
+            Download
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   if (status === "error") {
     return (

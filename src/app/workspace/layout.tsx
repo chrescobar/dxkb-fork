@@ -1,13 +1,9 @@
 import { cookies } from "next/headers";
 
-import { WorkspacePanelProvider } from "@/contexts/workspace-panel-context";
+import { WorkspacePanelProvider, panelLayoutCookieName } from "@/contexts/workspace-panel-context";
 import { WorkspaceDialogProvider } from "@/contexts/workspace-dialog-context";
 import Navbar from "@/components/navbars/navbar";
 // import Footer from "@/components/footers/footer";
-
-// Duplicated from workspace-panel-context.tsx because server components
-// cannot import runtime values from "use client" modules.
-const cookieName = "workspace-panel-layout";
 
 export default async function WorkspaceLayout({
   children,
@@ -15,7 +11,7 @@ export default async function WorkspaceLayout({
   children: React.ReactNode;
 }) {
   const cookieStore = await cookies();
-  const layoutCookie = cookieStore.get(cookieName);
+  const layoutCookie = cookieStore.get(panelLayoutCookieName);
   let initialLayout: Record<string, number> | undefined;
   try {
     initialLayout = layoutCookie ? JSON.parse(layoutCookie.value) : undefined;

@@ -52,7 +52,9 @@ function InteractiveCsvViewer({ filePath, fileName }: { filePath: string; fileNa
         if (err instanceof DOMException && err.name === "AbortError") return;
         setError(err instanceof Error ? err.message : "Unknown error");
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
 
     return () => controller.abort();
   }, [filePath]);

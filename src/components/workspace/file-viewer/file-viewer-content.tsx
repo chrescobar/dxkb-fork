@@ -46,8 +46,10 @@ export function FileViewerContent({ item }: FileViewerContentProps) {
           fileSize={item.size}
         />
       );
-    case "iframe":
-      return <IframeViewer filePath={item.path} />;
+    case "iframe": {
+      const ext = item.name.split(".").pop()?.toLowerCase();
+      return <IframeViewer filePath={item.path} allowScripts={ext === "pdf"} />;
+    }
     case "fallback":
       return (
         <FallbackViewer

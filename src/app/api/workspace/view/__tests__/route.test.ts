@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { mockNextRequest } from "@/test-helpers/api-route-helpers";
 import { GET } from "../[...path]/route";
 
-vi.mock("../../resolve-download", () => ({
+vi.mock("../../resolve-download", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../resolve-download")>()),
   resolveWorkspaceDownload: vi.fn(),
 }));
 

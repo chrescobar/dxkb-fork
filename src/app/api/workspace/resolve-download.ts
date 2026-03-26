@@ -4,6 +4,28 @@ import { getRequiredEnv } from "@/lib/env";
 import { getMimeType } from "@/components/workspace/file-viewer/file-viewer-registry";
 
 /**
+ * Build a safe Content-Disposition header value.
+ * Produces an ASCII-safe `filename=` parameter and, when the name contains
+ * non-ASCII characters, an RFC 6266 `filename*=UTF-8''...` extended parameter.
+ */
+export function contentDisposition(
+  disposition: "inline" | "attachment",
+  filename: string,
+): string {
+  // ASCII-safe fallback: strip characters that break the quoted-string
+  const asciiFallback = filename.replace(/[^\x20-\x7E]/g, "_").replace(/["\\]/g, "_");
+  const base = `${disposition}; filename="${asciiFallback}"`;
+
+  // If the original name differs, add the extended parameter for full Unicode support
+  if (asciiFallback !== filename) {
+    const encoded = encodeURIComponent(filename).replace(/'/g, "%27");
+    return `${base}; filename*=UTF-8''${encoded}`;
+  }
+
+  return base;
+}
+
+/**
  * Shared result from resolving a workspace path to a Shock download stream.
  */
 export interface ResolvedDownload {

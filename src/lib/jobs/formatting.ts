@@ -22,7 +22,7 @@ export function getOutputName(job: JobListItem): string {
   return "\u2014";
 }
 
-export function formatElapsedSeconds(seconds: number): string {
+export function formatElapsedSeconds(seconds: number | undefined): string {
   if (!Number.isFinite(seconds) || seconds < 0) return "\u2014";
   const total = Math.round(seconds);
   const m = Math.floor(total / 60);

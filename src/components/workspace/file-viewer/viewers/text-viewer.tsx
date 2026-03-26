@@ -234,8 +234,9 @@ export function TextViewer({ filePath, fileName, fileSize }: TextViewerProps) {
     );
   }
 
+  const displayedLines = Math.min(state.totalLines, maxHighlightLines);
   const truncationMessage = state.serverTruncated
-    ? `Showing first ~${state.totalLines.toLocaleString()} lines${fileSize ? ` of a ${formatFileSize(fileSize)} file` : ""}.`
+    ? `Showing first ~${displayedLines.toLocaleString()} lines${fileSize ? ` of a ${formatFileSize(fileSize)} file` : ""}.`
     : `Showing first ${maxHighlightLines.toLocaleString()} of ${state.totalLines.toLocaleString()} lines.`;
 
   return (

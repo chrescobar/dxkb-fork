@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { resolveWorkspaceDownload } from "../../resolve-download";
+import { contentDisposition, resolveWorkspaceDownload } from "../../resolve-download";
 
 const defaultMaxBytes = 2 * 1024 * 1024; // 2 MB default
 const maxBytesCap = 10 * 1024 * 1024; // 10 MB server-enforced cap (matches client previewMaxBytes)
@@ -40,7 +40,7 @@ export async function GET(
     if (fileSize !== null && fileSize <= maxBytes) {
       const headers: Record<string, string> = {
         "Content-Type": contentType,
-        "Content-Disposition": `inline; filename="${filename}"`,
+        "Content-Disposition": contentDisposition("inline", filename),
         "Cache-Control": "private, max-age=300",
         "Content-Length": String(fileSize),
       };
@@ -78,7 +78,8 @@ export async function GET(
       }
 
       if (!truncated && bytesRead >= maxBytes) {
-        truncated = true;
+        const { done } = await reader.read();
+        truncated = !done;
       }
     } finally {
       reader.cancel().catch(() => { /* connection already closed */ });
@@ -110,7 +111,7 @@ export async function GET(
 
     const headers: Record<string, string> = {
       "Content-Type": contentType,
-      "Content-Disposition": `inline; filename="${filename}"`,
+      "Content-Disposition": contentDisposition("inline", filename),
       "Cache-Control": "private, max-age=300",
       "Content-Length": String(finalBytes.byteLength),
     };

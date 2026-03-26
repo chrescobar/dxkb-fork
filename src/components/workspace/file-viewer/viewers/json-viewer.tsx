@@ -24,11 +24,12 @@ export function JsonViewer({ filePath, fileName, fileSize }: JsonViewerProps) {
 }
 
 function InteractiveJsonViewer({ filePath, fileName }: { filePath: string; fileName: string }) {
-  const [data, setData] = useState<object | unknown[] | null>(null);
+  const [data, setData] = useState<unknown>(undefined);
   const [rawText, setRawText] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [parseError, setParseError] = useState(false);
+  const [parseSuccess, setParseSuccess] = useState(false);
   const [viewMode, setViewMode] = useState<"tree" | "raw">("tree");
 
   useEffect(() => {
@@ -38,6 +39,7 @@ function InteractiveJsonViewer({ filePath, fileName }: { filePath: string; fileN
       setIsLoading(true);
       setError(null);
       setParseError(false);
+      setParseSuccess(false);
 
       try {
         const response = await fetch(getProxyUrl(filePath), {
@@ -54,8 +56,9 @@ function InteractiveJsonViewer({ filePath, fileName }: { filePath: string; fileN
         setRawText(text);
 
         try {
-          const parsed = JSON.parse(text) as object | unknown[];
+          const parsed: unknown = JSON.parse(text);
           setData(parsed);
+          setParseSuccess(true);
         } catch {
           setParseError(true);
         }
@@ -119,7 +122,7 @@ function InteractiveJsonViewer({ filePath, fileName }: { filePath: string; fileN
           </div>
         )}
 
-        {!isLoading && !error && !parseError && viewMode === "tree" && data && (
+        {!isLoading && !error && !parseError && viewMode === "tree" && parseSuccess && (
           <JsonView
             data={data}
             shouldExpandNode={allExpanded}

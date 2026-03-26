@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { resolveWorkspaceDownload } from "../../resolve-download";
+import { contentDisposition, resolveWorkspaceDownload } from "../../resolve-download";
 
 /**
  * Workspace file content proxy route.
@@ -20,7 +20,7 @@ export async function GET(
 
     const headers: Record<string, string> = {
       "Content-Type": contentType,
-      "Content-Disposition": `inline; filename="${filename}"`,
+      "Content-Disposition": contentDisposition("inline", filename),
       "Cache-Control": "private, max-age=300",
     };
 

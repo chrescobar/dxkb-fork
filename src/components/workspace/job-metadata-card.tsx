@@ -45,7 +45,7 @@ export function JobMetadataCard({ resolvedJobMeta, className }: JobMetadataCardP
         </div>
         <div>
           <dt className="text-muted-foreground">Run time</dt>
-          <dd>{formatElapsedSeconds(elapsed ?? 0)}</dd>
+          <dd>{formatElapsedSeconds(elapsed)}</dd>
         </div>
         <div>
           <dt className="text-muted-foreground">Start time</dt>

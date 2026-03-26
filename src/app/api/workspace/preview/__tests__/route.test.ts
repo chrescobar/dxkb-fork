@@ -3,7 +3,8 @@ import { mockNextRequest } from "@/test-helpers/api-route-helpers";
 import { GET } from "../[...path]/route";
 
 // Mock resolveWorkspaceDownload — the preview route depends on it
-vi.mock("../../resolve-download", () => ({
+vi.mock("../../resolve-download", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../resolve-download")>()),
   resolveWorkspaceDownload: vi.fn(),
 }));
 

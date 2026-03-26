@@ -33,9 +33,13 @@ export function WorkspaceItemHeader({
     document.body.removeChild(anchor);
   }, [proxyUrl, item.name]);
 
-  const handleCopyPath = useCallback(() => {
-    navigator.clipboard.writeText(item.path);
-    toast.success("Path copied to clipboard");
+  const handleCopyPath = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(item.path);
+      toast.success("Path copied to clipboard");
+    } catch {
+      toast.error("Failed to copy path to clipboard");
+    }
   }, [item.path]);
 
   return (

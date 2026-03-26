@@ -416,5 +416,6 @@ export function getDotPathRelative(path: string, jobName: string): string {
   const segments = path.split("/").map(sanitizePathSegment).filter(Boolean);
   const withoutLast = segments.slice(0, -1);
   const base = withoutLast.length > 0 ? withoutLast.join("/") : "";
-  return base ? `${base}/.${jobName}` : `.${jobName}`;
+  const safeJobName = sanitizePathSegment(jobName);
+  return base ? `${base}/.${safeJobName}` : `.${safeJobName}`;
 }

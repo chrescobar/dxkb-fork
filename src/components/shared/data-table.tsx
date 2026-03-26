@@ -157,9 +157,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           />
         </div>
       ),
-      cell: ({ row }) => {
-        const _allRows = table.getRowModel().rows;
-
+      cell: ({ row, table }) => {
         return (
           <div className="flex justify-center items-center w-full h-full">
             <input
@@ -537,7 +535,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       )
     ].join('\n');
 
-    downloadFile(`${resource}-${onlySelected ? 'selected-' : ''}.${format}`, content);
+    downloadFile(`${resource}${onlySelected ? '-selected' : ''}.${format}`, content);
   };
 
   // Now that all the setup is done, let's render the table!

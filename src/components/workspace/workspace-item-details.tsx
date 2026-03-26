@@ -69,7 +69,7 @@ export function WorkspaceItemDetails({
         <div className="flex items-center gap-2">
           <WorkspaceItemIcon type={item.type} className="h-5 w-5 shrink-0" />
           <Select
-            value={item.type ?? ""}
+            value={(editTypeMutation.isPending ? editTypeMutation.variables : item.type) ?? ""}
             onValueChange={(value) => {
               if (value && value !== item.type) {
                 editTypeMutation.mutate(value);

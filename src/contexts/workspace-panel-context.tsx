@@ -51,7 +51,7 @@ export function WorkspacePanelProvider({
   const [panelManuallyHidden, setPanelManuallyHidden] = useState(false);
   const [panelExpanded, setPanelExpanded] = useState(false);
   const [showHiddenFiles, setShowHiddenFiles] = useState(false);
-  const panelInitialLayout = initialLayout ?? defaultPanelLayout;
+  const [panelInitialLayout] = useState(() => initialLayout ?? defaultPanelLayout);
   const panelLayoutRef = useRef<Record<string, number>>(panelInitialLayout);
   const setPanelLayout = useCallback((layout: Record<string, number>) => {
     panelLayoutRef.current = layout;

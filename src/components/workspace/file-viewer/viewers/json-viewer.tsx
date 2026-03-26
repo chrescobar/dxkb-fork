@@ -30,6 +30,7 @@ function InteractiveJsonViewer({ filePath, fileName }: { filePath: string; fileN
   const [error, setError] = useState<string | null>(null);
   const [parseError, setParseError] = useState(false);
   const [parseSuccess, setParseSuccess] = useState(false);
+  const [isPrimitive, setIsPrimitive] = useState(false);
   const [viewMode, setViewMode] = useState<"tree" | "raw">("tree");
 
   useEffect(() => {
@@ -40,6 +41,7 @@ function InteractiveJsonViewer({ filePath, fileName }: { filePath: string; fileN
       setError(null);
       setParseError(false);
       setParseSuccess(false);
+      setIsPrimitive(false);
 
       try {
         const response = await fetch(getProxyUrl(filePath), {
@@ -64,9 +66,7 @@ function InteractiveJsonViewer({ filePath, fileName }: { filePath: string; fileN
             setData(parsed);
             setParseSuccess(true);
           } else {
-            // Valid JSON primitive (null, number, string, boolean) —
-            // JsonView only accepts objects/arrays, so show raw text.
-            setParseError(true);
+            setIsPrimitive(true);
           }
         } catch {
           setParseError(true);
@@ -131,7 +131,13 @@ function InteractiveJsonViewer({ filePath, fileName }: { filePath: string; fileN
           </div>
         )}
 
-        {!isLoading && !error && !parseError && viewMode === "tree" && parseSuccess && (
+        {!isLoading && !error && isPrimitive && (
+          <pre className="p-4 text-sm font-mono whitespace-pre-wrap">
+            {rawText}
+          </pre>
+        )}
+
+        {!isLoading && !error && !parseError && !isPrimitive && viewMode === "tree" && parseSuccess && (
           <JsonView
             data={data as Record<string, unknown>}
             shouldExpandNode={allExpanded}
@@ -139,7 +145,7 @@ function InteractiveJsonViewer({ filePath, fileName }: { filePath: string; fileN
           />
         )}
 
-        {!isLoading && !error && !parseError && viewMode === "raw" && (
+        {!isLoading && !error && !parseError && !isPrimitive && viewMode === "raw" && (
           <pre className="p-4 text-sm font-mono whitespace-pre-wrap">
             {rawText}
           </pre>

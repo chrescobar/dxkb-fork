@@ -210,6 +210,8 @@ export function CodeMirrorViewer({
   startFolded = false,
 }: CodeMirrorViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const fileSizeRef = useRef(fileSize);
+  fileSizeRef.current = fileSize;
   const [progress, setProgress] = useState<{
     bytesLoaded: number;
     totalBytes: number | null;
@@ -346,7 +348,7 @@ export function CodeMirrorViewer({
         if (!destroyed) {
           if (wasTruncated) {
             const divider = "─".repeat(60);
-            const sizeLabel = fileSize ? formatFileSize(fileSize) : "full file";
+            const sizeLabel = fileSizeRef.current ? formatFileSize(fileSizeRef.current) : "full file";
             const marker = `\n${divider}\n  Preview truncated at ${formatFileSize(largeFileThreshold)} of ${sizeLabel}. Download for complete content.\n${divider}`;
             view.dispatch({ changes: { from: view.state.doc.length, insert: marker } });
           }
@@ -386,7 +388,7 @@ export function CodeMirrorViewer({
         viewCache.delete(filePath);
       }
     };
-  }, [fileName, filePath, fileSize, foldable, startFolded]);
+  }, [fileName, filePath, foldable, startFolded]);
 
   if (status === "error") {
     return (

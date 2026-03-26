@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { parse } from "csv-parse/sync";
 import {
   useReactTable,
@@ -10,10 +10,11 @@ import {
   type SortingState,
   type ColumnDef,
 } from "@tanstack/react-table";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 import { Spinner } from "@/components/ui/spinner";
 import { getProxyUrl, interactiveViewerSizeLimit } from "../file-viewer-registry";
-import { TextViewer } from "./text-viewer";
+import { CodeMirrorViewer } from "./codemirror-viewer";
 
 interface CsvViewerProps {
   filePath: string;
@@ -23,18 +24,33 @@ interface CsvViewerProps {
 
 export function CsvViewer({ filePath, fileName, fileSize }: CsvViewerProps) {
   if (fileSize && fileSize > interactiveViewerSizeLimit) {
-    return <TextViewer filePath={filePath} fileName={fileName} fileSize={fileSize} />;
+    return (
+      <CodeMirrorViewer
+        filePath={filePath}
+        fileName={fileName}
+        fileSize={fileSize}
+      />
+    );
   }
 
   return <InteractiveCsvViewer filePath={filePath} fileName={fileName} />;
 }
 
-function InteractiveCsvViewer({ filePath, fileName }: { filePath: string; fileName: string }) {
+const rowHeight = 33;
+
+function InteractiveCsvViewer({
+  filePath,
+  fileName,
+}: {
+  filePath: string;
+  fileName: string;
+}) {
   "use no memo";
   const [content, setContent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -73,14 +89,17 @@ function InteractiveCsvViewer({ filePath, fileName }: { filePath: string; fileNa
       }) as Record<string, string>[];
 
       const names =
-        parsed.length > 0 ? Object.keys(parsed[0] as Record<string, string>) : [];
+        parsed.length > 0
+          ? Object.keys(parsed[0] as Record<string, string>)
+          : [];
 
       return { records: parsed, columnNames: names, parseError: null };
     } catch (err) {
       return {
         records: [],
         columnNames: [],
-        parseError: err instanceof Error ? err.message : "Failed to parse CSV/TSV",
+        parseError:
+          err instanceof Error ? err.message : "Failed to parse CSV/TSV",
       };
     }
   }, [content, fileName]);
@@ -105,6 +124,15 @@ function InteractiveCsvViewer({ filePath, fileName }: { filePath: string; fileNa
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+  });
+
+  const { rows } = table.getRowModel();
+
+  const virtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => scrollContainerRef.current,
+    estimateSize: () => rowHeight,
+    overscan: 20,
   });
 
   if (loading) {
@@ -136,9 +164,12 @@ function InteractiveCsvViewer({ filePath, fileName }: { filePath: string; fileNa
       <div className="flex items-center gap-2 border-b border-border px-3 py-1.5 text-xs text-muted-foreground">
         {records.length} rows · {columnNames.length} columns
       </div>
-      <div className="h-full w-full overflow-auto">
+      <div
+        ref={scrollContainerRef}
+        className="h-full w-full overflow-auto"
+      >
         <table className="w-full text-sm">
-          <thead className="bg-muted sticky top-0">
+          <thead className="bg-muted sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -162,18 +193,52 @@ function InteractiveCsvViewer({ filePath, fileName }: { filePath: string; fileNa
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr
-                key={row.id}
-                className="border-b border-border/50 hover:bg-muted/30"
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="px-3 py-1.5 whitespace-nowrap">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
+            {virtualizer.getVirtualItems().length > 0 && (
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  style={{ height: virtualizer.getVirtualItems()[0]?.start ?? 0, padding: 0, border: "none" }}
+                />
               </tr>
-            ))}
+            )}
+            {virtualizer.getVirtualItems().map((virtualRow) => {
+              const row = rows[virtualRow.index];
+              if (!row) return null;
+              return (
+                <tr
+                  key={row.id}
+                  data-index={virtualRow.index}
+                  ref={virtualizer.measureElement}
+                  className="border-b border-border/50 hover:bg-muted/30"
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <td
+                      key={cell.id}
+                      className="px-3 py-1.5 whitespace-nowrap"
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
+            {virtualizer.getVirtualItems().length > 0 && (
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  style={{
+                    height:
+                      virtualizer.getTotalSize() -
+                      (virtualizer.getVirtualItems().at(-1)?.end ?? 0),
+                    padding: 0,
+                    border: "none",
+                  }}
+                />
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

@@ -4,6 +4,8 @@ import {
   normalizeWsPath,
   formatDate,
   formatFileSize,
+  formatOwner,
+  getDotPathRelative,
   hasWriteAccess,
   sortItems,
   dedupeKeepOrder,
@@ -694,6 +696,47 @@ describe("getNonEmptyFolderPaths", () => {
     const result = await getNonEmptyFolderPaths([], listFolder);
     expect(result).toEqual([]);
     expect(listFolder).not.toHaveBeenCalled();
+  });
+});
+
+describe("formatOwner", () => {
+  it("strips @bvbrc suffix", () => {
+    expect(formatOwner("alice@bvbrc")).toBe("alice");
+  });
+
+  it("returns owner unchanged when no @bvbrc suffix", () => {
+    expect(formatOwner("bob@other.com")).toBe("bob@other.com");
+  });
+
+  it("returns em-dash for empty string", () => {
+    expect(formatOwner("")).toBe("—");
+  });
+
+  it("handles owner with no domain", () => {
+    expect(formatOwner("charlie")).toBe("charlie");
+  });
+});
+
+describe("getDotPathRelative", () => {
+  it("builds dot path from path and job name", () => {
+    expect(
+      getDotPathRelative("/user@bvbrc/home/folder/myjob", "myjob"),
+    ).toBe("user@bvbrc/home/folder/.myjob");
+  });
+
+  it("handles root-level job (no parent segments)", () => {
+    expect(getDotPathRelative("/myjob", "myjob")).toBe(".myjob");
+  });
+
+  it("handles path with multiple segments", () => {
+    expect(
+      getDotPathRelative("/user@bvbrc/home/sub/deep/job", "job"),
+    ).toBe("user@bvbrc/home/sub/deep/.job");
+  });
+
+  it("strips leading slash from segments", () => {
+    const result = getDotPathRelative("/a/b/c", "c");
+    expect(result.startsWith("/")).toBe(false);
   });
 });
 

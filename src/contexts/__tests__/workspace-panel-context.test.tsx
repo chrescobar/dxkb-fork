@@ -91,4 +91,44 @@ describe("WorkspacePanelContext", () => {
   it("exports panelLayoutCookieName constant", () => {
     expect(panelLayoutCookieName).toBe("workspace-panel-layout");
   });
+
+  it("setPanelLayout persists layout to cookie", () => {
+    const cookieSpy = vi.spyOn(document, "cookie", "set");
+    const { result } = renderHook(() => useWorkspacePanel(), { wrapper });
+
+    const newLayout = { "workspace-main": 70, "workspace-details": 30 };
+    act(() => {
+      result.current.setPanelLayout(newLayout);
+    });
+
+    expect(cookieSpy).toHaveBeenCalled();
+    const cookieValue = cookieSpy.mock.calls[0][0];
+    expect(cookieValue).toContain(panelLayoutCookieName);
+    expect(cookieValue).toContain(JSON.stringify(newLayout));
+    cookieSpy.mockRestore();
+  });
+
+  it("panelInitialLayout uses default when no initialLayout prop", () => {
+    const { result } = renderHook(() => useWorkspacePanel(), { wrapper });
+
+    expect(result.current.panelInitialLayout).toEqual({
+      "workspace-main": 60,
+      "workspace-details": 40,
+    });
+  });
+
+  it("panelInitialLayout uses custom initialLayout prop", () => {
+    const customLayout = { "workspace-main": 80, "workspace-details": 20 };
+    const customWrapper = ({ children }: { children: React.ReactNode }) => (
+      <WorkspacePanelProvider initialLayout={customLayout}>
+        {children}
+      </WorkspacePanelProvider>
+    );
+
+    const { result } = renderHook(() => useWorkspacePanel(), {
+      wrapper: customWrapper,
+    });
+
+    expect(result.current.panelInitialLayout).toEqual(customLayout);
+  });
 });

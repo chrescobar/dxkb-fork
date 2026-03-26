@@ -1,0 +1,49 @@
+src/components/workspace/workspace-item-header.tsx
+  0bab6788bedc5ec7 9,29
+src/components/workspace/file-viewer/viewers/csv-viewer.tsx
+  0bab6788bedc5ec7 16,26,107,144,147
+src/lib/utils.ts
+  0bab6788bedc5ec7 65-79
+src/components/workspace/file-viewer/viewers/json-viewer.tsx
+  0bab6788bedc5ec7 3,13
+src/components/workspace/workspace-table-columns.tsx
+  0bab6788bedc5ec7 11
+src/components/workspace/workspace-browser.tsx
+  0bab6788bedc5ec7 339-343,345-354,356-360,365
+src/components/workspace/file-viewer/viewers/fallback-viewer.tsx
+  0bab6788bedc5ec7 6,21
+src/components/shared/data-table.tsx
+  0bab6788bedc5ec7 110,345,726,793,809,838,855
+src/components/workspace/file-viewer/viewers/codemirror-viewer.tsx
+  0bab6788bedc5ec7 19,111,120-129,249,323
+src/hooks/services/workspace/use-workspace-action-dispatch.ts
+  0bab6788bedc5ec7 9,72
+src/components/workspace/file-viewer/file-viewer-registry.ts
+  0bab6788bedc5ec7 6-7,117,177-180,186,197
+src/lib/services/workspace/helpers.ts
+  0bab6788bedc5ec7 273-274,276-293
+src/components/workspace/file-viewer/__tests__/file-viewer-registry.test.ts
+  0bab6788bedc5ec7 75,77,86,93
+src/components/workspace/file-viewer/file-viewer-panel.tsx
+  0bab6788bedc5ec7 23-24,42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.19",
+  "base_commit_sha": "f285b91f3c3002f81d410fb2e5672dd1a7ece2c3",
+  "prompts": {
+    "0bab6788bedc5ec7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "15831781-2154-4e54-9a29-b024b7440555",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>",
+      "messages": [],
+      "total_additions": 114,
+      "total_deletions": 160,
+      "accepted_lines": 109,
+      "overriden_lines": 0
+    }
+  }
+}

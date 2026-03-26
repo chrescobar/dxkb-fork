@@ -124,7 +124,7 @@ function InteractiveJsonViewer({ filePath, fileName }: { filePath: string; fileN
 
         {!isLoading && !error && !parseError && viewMode === "tree" && parseSuccess && (
           <JsonView
-            data={data}
+            data={data as Record<string, unknown>}
             shouldExpandNode={allExpanded}
             style={defaultStyles}
           />

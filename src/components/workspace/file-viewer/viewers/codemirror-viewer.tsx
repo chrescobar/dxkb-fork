@@ -21,7 +21,7 @@ import { getProxyUrl } from "../file-viewer-registry";
 import { getLanguageExtension } from "./codemirror-languages";
 import { LoadingProgress } from "./loading-progress";
 
-const largeFileThreshold = 50 * 1024 * 1024; // 50 MB
+const largeFileThreshold = 10 * 1024 * 1024; // 10 MB
 
 interface CodeMirrorViewerProps {
   filePath: string;

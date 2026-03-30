@@ -115,7 +115,7 @@ describe("CodeMirrorViewer", () => {
       expect(screen.getByText(/Preview truncated to/)).toBeInTheDocument();
     });
 
-    expect(screen.getAllByText(/50\.0 MB of 100\.0 MB/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/10\.0 MB of 100\.0 MB/).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByRole("button", { name: "Download full file" })).toBeInTheDocument();
   });
 

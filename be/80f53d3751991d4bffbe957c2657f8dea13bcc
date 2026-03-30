@@ -1,0 +1,25 @@
+src/components/workspace/file-viewer/viewers/__tests__/codemirror-viewer.test.tsx
+  6bbeb88039821484 118
+src/components/workspace/file-viewer/viewers/codemirror-viewer.tsx
+  6bbeb88039821484 24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.19",
+  "base_commit_sha": "be80f53d3751991d4bffbe957c2657f8dea13bcc",
+  "prompts": {
+    "6bbeb88039821484": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b73f4bf-d0b7-4bd1-b7fc-344082ffc8aa",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 2,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}

@@ -1,0 +1,57 @@
+src/components/workspace/file-viewer/__tests__/file-viewer-content.test.ts
+  d67509861f2a56e0 45-46,49-50
+src/components/workspace/file-viewer/__tests__/file-viewer-registry.test.ts
+  d67509861f2a56e0 35-36,39-40
+src/components/workspace/file-viewer/viewers/expandable-viewer-wrapper.tsx
+  b2dea94de605c7b2 17-18,31,50,53,55,67
+  d67509861f2a56e0 34-35,37,39,42-43,56-66,70-73,92,98
+src/components/workspace/file-viewer/file-viewer-registry.ts
+  d67509861f2a56e0 42,78,169-182
+src/app/viewer/structure/layout.tsx
+  d67509861f2a56e0 1-16
+src/hooks/services/workspace/use-workspace-action-dispatch.ts
+  d67509861f2a56e0 18,107-113
+src/components/workspace/__tests__/workspace-action-bar.test.tsx
+  d67509861f2a56e0 48
+src/components/workspace/file-viewer/viewers/structure-viewer.tsx
+  d67509861f2a56e0 115-119,124-135,137,140-155,163
+src/components/workspace/file-viewer/viewers/__tests__/expandable-viewer-wrapper.test.tsx
+  d67509861f2a56e0 1,5-11,69-71,92-94
+src/app/viewer/structure/[[...path]]/page.tsx
+  d67509861f2a56e0 1-180
+src/components/workspace/workspace-action-bar.tsx
+  d67509861f2a56e0 6,12,42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "840474c6e44e77fb68e2a3fce6211965e415fb3b",
+  "prompts": {
+    "b2dea94de605c7b2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e4774d2b-710a-4369-a0d1-c896d5148983",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>",
+      "messages": [],
+      "total_additions": 60,
+      "total_deletions": 35,
+      "accepted_lines": 8,
+      "overriden_lines": 0
+    },
+    "d67509861f2a56e0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9142b2a6-40ce-4198-8eae-f0be3e91bc04",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>",
+      "messages": [],
+      "total_additions": 358,
+      "total_deletions": 92,
+      "accepted_lines": 335,
+      "overriden_lines": 0
+    }
+  }
+}

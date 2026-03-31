@@ -23,8 +23,8 @@ vi.mock("@/lib/services/workspace/types", () => ({
 }));
 
 vi.mock("@/components/ui/select", () => ({
-  Select: ({ children, value }: { children: React.ReactNode; value: string }) => (
-    <div data-testid="select" data-value={value}>{children}</div>
+  Select: ({ children, value, disabled }: { children: React.ReactNode; value: string; disabled?: boolean }) => (
+    <div data-testid="select" data-value={value} data-disabled={disabled ? "true" : "false"}>{children}</div>
   ),
   SelectContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   SelectGroup: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
@@ -33,6 +33,13 @@ vi.mock("@/components/ui/select", () => ({
   ),
   SelectTrigger: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   SelectValue: ({ placeholder }: { placeholder: string }) => <span>{placeholder}</span>,
+}));
+
+vi.mock("@/components/ui/tooltip", () => ({
+  TooltipProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Tooltip: ({ children }: { children: React.ReactNode }) => <div data-testid="tooltip-wrapper">{children}</div>,
+  TooltipTrigger: ({ render }: { render: React.ReactNode }) => <div data-testid="tooltip-trigger">{render}</div>,
+  TooltipContent: ({ children }: { children: React.ReactNode }) => <div data-testid="tooltip-content">{children}</div>,
 }));
 
 vi.mock("@/components/detail-panel", () => ({
@@ -119,5 +126,38 @@ describe("WorkspaceItemDetails", () => {
       "data-label",
       "Details",
     );
+  });
+
+  describe("job_result type restrictions", () => {
+    it("disables the type select for job_result items", () => {
+      renderWithQueryClient(
+        <WorkspaceItemDetails item={makeItem({ type: "job_result" })} />,
+      );
+      expect(screen.getByTestId("select")).toHaveAttribute("data-disabled", "true");
+    });
+
+    it("does not disable the type select for non-job_result items", () => {
+      renderWithQueryClient(
+        <WorkspaceItemDetails item={makeItem({ type: "contigs" })} />,
+      );
+      expect(screen.getByTestId("select")).toHaveAttribute("data-disabled", "false");
+    });
+
+    it("shows a tooltip for job_result items", () => {
+      renderWithQueryClient(
+        <WorkspaceItemDetails item={makeItem({ type: "job_result" })} />,
+      );
+      expect(screen.getByTestId("tooltip-wrapper")).toBeInTheDocument();
+      expect(screen.getByTestId("tooltip-content")).toHaveTextContent(
+        'Cannot change "job_result" type',
+      );
+    });
+
+    it("does not render a tooltip for non-job_result items", () => {
+      renderWithQueryClient(
+        <WorkspaceItemDetails item={makeItem({ type: "contigs" })} />,
+      );
+      expect(screen.queryByTestId("tooltip-wrapper")).not.toBeInTheDocument();
+    });
   });
 });

@@ -1,0 +1,27 @@
+src/components/search/search-bar.tsx
+  e95240bbb3b1971c 23-24,29,32,39-41,63-66,88,128
+src/components/search/__tests__/search-bar.test.tsx
+  e95240bbb3b1971c 140,147
+src/app/search/layout.tsx
+  e95240bbb3b1971c 11,13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "6840cffbc5bf12096fb2709c9712391e768cb75f",
+  "prompts": {
+    "e95240bbb3b1971c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b660919c-cb09-44f5-9de2-da81f73c1dde",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>",
+      "messages": [],
+      "total_additions": 18,
+      "total_deletions": 11,
+      "accepted_lines": 17,
+      "overriden_lines": 0
+    }
+  }
+}

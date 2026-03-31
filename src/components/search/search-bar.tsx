@@ -20,21 +20,25 @@ interface SearchBarProps {
 
 function extractKeywordQuery(raw: string): string {
   const matches = [...raw.matchAll(/keyword\(([^)]+)\)/g)];
-  const keywords = matches.map((match) => match[1]);
-  return keywords.join(" ");
+  if (matches.length === 0) return raw;
+  return matches.map((match) => match[1]).join(" ");
 }
 
 function SearchParamsSync({
   onQueryChange,
+  onSearchTypeChange,
 }: {
   onQueryChange: (value: string) => void;
+  onSearchTypeChange: (value: string) => void;
 }) {
   const searchParams = useSearchParams();
 
   useEffect(() => {
     const raw = searchParams.get("q") || "";
     onQueryChange(extractKeywordQuery(raw));
-  }, [searchParams, onQueryChange]);
+    const type = searchParams.get("searchtype") || "";
+    if (type) onSearchTypeChange(type);
+  }, [searchParams, onQueryChange, onSearchTypeChange]);
 
   return null;
 }
@@ -54,6 +58,10 @@ export function SearchBar({
 
   const handleQueryChange = useCallback((value: string) => {
     setInputValue(value);
+  }, []);
+
+  const handleSearchTypeChange = useCallback((value: string) => {
+    setSelected(value);
   }, []);
 
   const handleSearch = (e: FormEvent) => {
@@ -77,7 +85,7 @@ export function SearchBar({
   return (
     <form onSubmit={handleSearch} className={`flex w-full ${className}`}>
       <Suspense fallback={null}>
-        <SearchParamsSync onQueryChange={handleQueryChange} />
+        <SearchParamsSync onQueryChange={handleQueryChange} onSearchTypeChange={handleSearchTypeChange} />
       </Suspense>
       <div className="relative flex w-full h-full items-stretch rounded-md border border-input bg-background overflow-hidden">
         <Select
@@ -117,6 +125,7 @@ export function SearchBar({
             />
           )}
         </div>
+        <button type="submit" className="sr-only">Search</button>
       </div>
     </form>
   );

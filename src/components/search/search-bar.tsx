@@ -37,7 +37,7 @@ function SearchParamsSync({
     const raw = searchParams.get("q") || "";
     onQueryChange(extractKeywordQuery(raw));
     const type = searchParams.get("searchtype") || "";
-    if (type) onSearchTypeChange(type);
+    if (type && searchTypes.some((st) => st.id === type)) onSearchTypeChange(type);
   }, [searchParams, onQueryChange, onSearchTypeChange]);
 
   return null;

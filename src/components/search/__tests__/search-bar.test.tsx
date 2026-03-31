@@ -137,14 +137,14 @@ describe("SearchBar", () => {
       });
     });
 
-    it("sets empty string when q param has no keyword pattern", async () => {
+    it("preserves plain text when q param has no keyword pattern", async () => {
       mockSearchParams.current = new URLSearchParams();
       mockSearchParams.current.set("q", "plain text");
 
       renderSearchBar();
 
       await waitFor(() => {
-        expect(screen.getByRole("textbox")).toHaveValue("");
+        expect(screen.getByRole("textbox")).toHaveValue("plain text");
       });
     });
 

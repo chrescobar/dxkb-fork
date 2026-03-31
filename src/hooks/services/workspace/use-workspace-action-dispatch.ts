@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
 import type { WorkspaceApiClient } from "@/lib/services/workspace/client";
 import type { WorkspaceDownloadMethods } from "@/lib/services/workspace/methods/download";
+import { triggerDownload } from "@/lib/utils";
 import {
   expandDownloadPaths,
   getSiblingJobResultPathForDotFolder,
@@ -68,15 +69,7 @@ export function useWorkspaceActionDispatch({
       for (let i = 0; i < urlArrays.length; i++) {
         const url = urlArrays[i]?.[0];
         if (!url) continue;
-        const name = downloadable[i]?.name ?? "download";
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = name;
-        a.rel = "noopener noreferrer";
-        a.style.display = "none";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        triggerDownload(url, downloadable[i]?.name ?? "download");
       }
     },
     onError: (err) => {

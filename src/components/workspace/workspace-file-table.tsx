@@ -25,7 +25,7 @@ import { ParentRow, DataRow, EmptyRow } from "./workspace-table-rows";
 import {
   DataTable,
   type DataTableHandle,
-} from "@/components/shared/data-table";
+} from "@/components/shared/file-table";
 
 /** Stable empty array for table data fallback (avoids infinite re-renders per TanStack Data guide). */
 const emptyItems: WorkspaceBrowserItem[] = [];
@@ -55,13 +55,10 @@ interface WorkspaceDataTableProps {
     modifiers?: { ctrlOrMeta: boolean; shift: boolean },
   ) => void;
   onItemDoubleClick?: (item: WorkspaceBrowserItem) => void;
-  onOpenFileRequested?: (item: WorkspaceBrowserItem) => void;
   onClearSelection?: () => void;
 }
 
-export interface WorkspaceDataTableHandle {
-  focus: () => void;
-}
+export type WorkspaceDataTableHandle = DataTableHandle;
 
 export const WorkspaceDataTable = forwardRef<
   WorkspaceDataTableHandle,
@@ -80,7 +77,6 @@ export const WorkspaceDataTable = forwardRef<
     selectedPaths = [],
     onSelect,
     onItemDoubleClick,
-    onOpenFileRequested,
     onClearSelection,
   },
   ref,
@@ -180,13 +176,11 @@ export const WorkspaceDataTable = forwardRef<
 
   const handleEnter = useCallback(
     (item: WorkspaceBrowserItem) => {
-      if (!isFolderType(item.type)) {
-        onOpenFileRequested?.(item);
-      } else {
+      if (isFolderType(item.type)) {
         onItemDoubleClick?.(item);
       }
     },
-    [onOpenFileRequested, onItemDoubleClick],
+    [onItemDoubleClick],
   );
 
   const { focusedSpecialRow, handleKeyDown } = useTableKeyboardNavigation<WorkspaceBrowserItem>({
@@ -213,12 +207,10 @@ export const WorkspaceDataTable = forwardRef<
       <>
         {showParentRow && (
           <ParentRow
-            columns={[] as never[]}
             useSelectionMode={useSelectionMode}
             isFocused={focusedSpecialRow === "parent"}
             onClick={handleParentClick}
             label={parentRowLabel}
-            _useDataTable
             columnOrder={columnOrder}
           />
         )}
@@ -246,13 +238,12 @@ export const WorkspaceDataTable = forwardRef<
             onSelect={onSelect}
             onItemClick={handleItemClick}
             onItemDoubleClick={onItemDoubleClick}
-            onOpenFileRequested={onOpenFileRequested}
           />
         ))}
       </>
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- handleItemClick changes every render (uses path)
-    [useSelectionMode, selectedPathSet, onSelect, onItemDoubleClick, onOpenFileRequested, path, viewMode, homeBase],
+    [useSelectionMode, selectedPathSet, onSelect, onItemDoubleClick, path, viewMode, homeBase],
   );
 
   const renderEmptyState = useCallback(

@@ -16,13 +16,16 @@ import { useWorkspaceSelection } from "@/hooks/services/workspace/use-workspace-
 import { useWorkspaceNavigation } from "@/hooks/services/workspace/use-workspace-navigation";
 import { useWorkspaceActionDispatch } from "@/hooks/services/workspace/use-workspace-action-dispatch";
 import { useWorkspaceDialogHandlers } from "@/hooks/services/workspace/use-workspace-dialog-handlers";
-import { WorkspaceJobResultView } from "./workspace-job-result-view";
+import { JobMetadataCard } from "./job-metadata-card";
+import { useJobResultData } from "@/hooks/services/workspace/use-job-result-data";
+import { useWorkspaceListByPath } from "@/hooks/services/workspace/use-shared-with-user";
+import { getDotPathRelative } from "@/lib/services/workspace/helpers";
 import { WorkspaceBreadcrumbs } from "./workspace-breadcrumbs";
 import { WorkspaceToolbar } from "./workspace-toolbar";
 import {
   WorkspaceDataTable,
   type WorkspaceDataTableHandle,
-} from "./workspace-data-table";
+} from "./workspace-file-table";
 import { WorkspaceActionBar, type WorkspaceActionId } from "./workspace-action-bar";
 import { WorkspaceShell } from "./workspace-shell";
 import { WorkspaceDialogs } from "./workspace-dialogs";
@@ -36,6 +39,8 @@ import { encodeWorkspaceSegment, noop, workspaceUsername } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { WorkspaceApiClient } from "@/lib/services/workspace/client";
 import { WorkspaceCrudMethods } from "@/lib/services/workspace/methods/crud";
+
+const emptyItems: WorkspaceBrowserItem[] = [];
 
 interface WorkspaceBrowserProps {
   /** "home" = current user's home; "shared" = shared-with-me / shared folder view; "public" = public browsing */
@@ -161,6 +166,16 @@ export function WorkspaceBrowser({
     initialPermissions,
   });
 
+  const { dotPath } = useJobResultData({
+    resolvedJobMeta: resolveQuery.data ?? null,
+    enabled: isJobResultView,
+  });
+  const dotPathNormalized = dotPath.startsWith("/") ? dotPath : `/${dotPath}`;
+  const jobListQuery = useWorkspaceListByPath({
+    fullPath: dotPathNormalized,
+    enabled: isJobResultView && !!dotPath,
+  });
+
   const { items, isLoading, isFetching, error, refetch, memberCountByPath, currentDirPermissions } =
     isPublic
       ? {
@@ -172,12 +187,22 @@ export function WorkspaceBrowser({
           memberCountByPath: undefined,
           currentDirPermissions: undefined,
         }
-      : authenticatedData;
+      : isJobResultView
+        ? {
+            items: jobListQuery.data ?? emptyItems,
+            isLoading: jobListQuery.isLoading,
+            isFetching: jobListQuery.isFetching,
+            error: jobListQuery.error,
+            refetch: () => void jobListQuery.refetch(),
+            memberCountByPath: undefined,
+            currentDirPermissions: undefined,
+          }
+        : authenticatedData;
 
   const processedItems = useWorkspaceFilteredItems(items, {
-    showHiddenFiles,
-    typeFilter,
-    searchQuery,
+    showHiddenFiles: isJobResultView ? true : showHiddenFiles,
+    typeFilter: isJobResultView ? "all" : typeFilter,
+    searchQuery: isJobResultView ? "" : searchQuery,
     sort,
   });
 
@@ -188,12 +213,18 @@ export function WorkspaceBrowser({
       setPanelExpanded,
     });
 
+  const jobResultBasePath = useMemo(() => {
+    if (!isJobResultView || !resolveQuery.data) return undefined;
+    return getDotPathRelative(path, resolveQuery.data.name);
+  }, [isJobResultView, path, resolveQuery.data]);
+
   const { handleItemDoubleClick } = useWorkspaceNavigation({
     mode,
     username,
     path,
     router,
     clearSelection,
+    basePath: jobResultBasePath,
   });
 
   const { handleAction, isDownloading, isFavoriting } = useWorkspaceActionDispatch({
@@ -305,65 +336,33 @@ export function WorkspaceBrowser({
 
   // --- Early returns ---
 
-  if (!isPublic && path && path.trim() !== "" && resolveQuery.isLoading && !resolveQuery.isError) {
-    return (
-      <div className="flex min-h-[calc(100vh-12rem)] w-full flex-col overflow-hidden">
-        <div className="min-w-0 shrink-0 space-y-4 overflow-hidden p-4">
-          <Skeleton className="h-5 w-64" />
-          <Skeleton className="h-8 w-full" />
-        </div>
-        <div className="min-h-0 flex-1 px-4">
-          <WorkspaceDataTable
-            items={[]}
-            isLoading={true}
-            path={path}
-            sort={{ field: "name", direction: "asc" }}
-            onSortChange={noop}
-            viewMode={isHome ? "home" : "shared"}
-            username={username}
-          />
-        </div>
+  const loadingSkeleton = (viewMode: "home" | "shared") => (
+    <div className="flex min-h-[calc(100vh-12rem)] w-full flex-col overflow-hidden">
+      <div className="min-w-0 shrink-0 space-y-4 overflow-hidden p-4">
+        <Skeleton className="h-5 w-64" />
+        <Skeleton className="h-8 w-full" />
       </div>
-    );
-  }
+      <div className="min-h-0 flex-1">
+        <WorkspaceDataTable
+          items={[]}
+          isLoading={true}
+          path={path}
+          sort={{ field: "name", direction: "asc" }}
+          onSortChange={noop}
+          viewMode={viewMode}
+          username={username}
+        />
+      </div>
+    </div>
+  );
 
-  if (!isPublic && isJobResultView && resolveQuery.data) {
-    return (
-      <WorkspaceJobResultView
-        path={path}
-        username={username}
-        viewMode={isHome ? "home" : "shared"}
-        resolvedJobMeta={resolveQuery.data}
-        workspaceGuideUrl={workspaceGuideUrl}
-        currentUser={currentUser}
-        myWorkspaceRoot={myWorkspaceRoot}
-        onAction={handleAction}
-        onRefetch={() => void resolveQuery.refetch()}
-      />
-    );
+  if (!isPublic && path && path.trim() !== "" && resolveQuery.isLoading && !resolveQuery.isError) {
+    return loadingSkeleton(isHome ? "home" : "shared");
   }
 
   if (!isPublic && !currentUser) {
     if (mode === "shared" && !authChecked) {
-      return (
-        <div className="flex min-h-[calc(100vh-12rem)] w-full flex-col overflow-hidden">
-          <div className="min-w-0 shrink-0 space-y-4 overflow-hidden p-4">
-            <Skeleton className="h-5 w-64" />
-            <Skeleton className="h-8 w-full" />
-          </div>
-          <div>
-            <WorkspaceDataTable
-              items={[]}
-              isLoading={true}
-              path={path}
-              sort={{ field: "name", direction: "asc" }}
-              onSortChange={noop}
-              viewMode="shared"
-              username={username}
-            />
-          </div>
-        </div>
-      );
+      return loadingSkeleton("shared");
     }
     return (
       <Alert variant="destructive">
@@ -387,20 +386,19 @@ export function WorkspaceBrowser({
   return (
     <WorkspaceShell
       selectedItems={selectedItems}
-      workspaceGuideUrl={workspaceGuideUrl}
       actionBar={
         <WorkspaceActionBar
           selection={selectedItems}
           workspaceGuideUrl={workspaceGuideUrl}
-          isCurrentSelectionFavorite={isCurrentSelectionFavorite}
-          disabledActionIds={disabledAndLoading}
-          loadingActionIds={disabledAndLoading}
+          isCurrentSelectionFavorite={isJobResultView ? false : isCurrentSelectionFavorite}
+          disabledActionIds={isJobResultView ? [] : disabledAndLoading}
+          loadingActionIds={isJobResultView ? [] : disabledAndLoading}
           readOnly={isPublic}
           onAction={handleAction}
         />
       }
     >
-      {!isPublic && (
+      {!isPublic && !isJobResultView && (
         <WorkspaceDialogs
           currentUserWorkspaceRoot={currentUserWorkspaceRoot}
           currentDirectoryPath={currentDirectoryPath}
@@ -414,7 +412,7 @@ export function WorkspaceBrowser({
           onRefetch={refetch}
         />
       )}
-      <div className="min-w-0 shrink-0 space-y-4 overflow-hidden p-4">
+      <div className="@container min-w-0 shrink-0 space-y-4 overflow-hidden p-4">
         <WorkspaceBreadcrumbs
           path={path}
           username={username}
@@ -424,19 +422,22 @@ export function WorkspaceBrowser({
           workspaceRootUsername={isHome ? undefined : myWorkspaceRoot}
         />
         <WorkspaceToolbar
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          typeFilter={typeFilter}
-          onTypeFilterChange={setTypeFilter}
-          onRefresh={() => refetch()}
+          searchQuery={isJobResultView ? "" : searchQuery}
+          onSearchChange={isJobResultView ? noop : setSearchQuery}
+          typeFilter={isJobResultView ? "all" : typeFilter}
+          onTypeFilterChange={isJobResultView ? noop : setTypeFilter}
+          onRefresh={() => {
+            if (isJobResultView) void resolveQuery.refetch();
+            refetch();
+          }}
           isRefreshing={isFetching}
-          showHiddenFiles={showHiddenFiles}
-          onShowHiddenFilesChange={setShowHiddenFiles}
-          onNewFolder={!isPublic && (isHome || canWriteToCurrentDir) ? () => dialogDispatch({ type: "OPEN_CREATE_FOLDER" }) : undefined}
-          onUpload={!isPublic && (isHome || canWriteToCurrentDir) ? () => dialogDispatch({ type: "OPEN_UPLOAD" }) : undefined}
+          showHiddenFiles={isJobResultView ? true : showHiddenFiles}
+          onShowHiddenFilesChange={isJobResultView ? noop : setShowHiddenFiles}
+          onNewFolder={!isPublic && !isJobResultView && (isHome || canWriteToCurrentDir) ? () => dialogDispatch({ type: "OPEN_CREATE_FOLDER" }) : undefined}
+          onUpload={!isPublic && !isJobResultView && (isHome || canWriteToCurrentDir) ? () => dialogDispatch({ type: "OPEN_UPLOAD" }) : undefined}
           isAtRoot={isAtSharedRoot}
           onNewWorkspace={
-            !isPublic && isAtSharedRoot ? () => dialogDispatch({ type: "OPEN_CREATE_WORKSPACE" }) : undefined
+            !isPublic && !isJobResultView && isAtSharedRoot ? () => dialogDispatch({ type: "OPEN_CREATE_WORKSPACE" }) : undefined
           }
         />
         {error && (
@@ -448,25 +449,49 @@ export function WorkspaceBrowser({
           </Alert>
         )}
       </div>
-      <div className="min-h-0 flex-1">
-        <WorkspaceDataTable
-          ref={tableRef}
-          items={processedItems}
-          isLoading={isLoading}
-          path={path}
-          sort={sort}
-          onSortChange={setSort}
-          viewMode={isPublic ? "public" : isHome ? "home" : "shared"}
-          username={username}
-          sharedRootUsername={isHome ? undefined : myWorkspaceRoot}
-          memberCountByPath={memberCountByPath}
-          selectedPaths={selectedPaths}
-          onSelect={handleSelectItem}
-          onItemDoubleClick={handleItemDoubleClick}
-          onOpenFileRequested={() => dialogDispatch({ type: "OPEN_FILE_VIEWER_CONSTRUCTION" })}
-          onClearSelection={clearSelection}
-        />
-      </div>
+      {isJobResultView ? (
+        <div className="border-border flex min-h-0 flex-1 flex-col gap-4 overflow-hidden pb-4">
+          <div className="px-4">
+            {resolveQuery.data && <JobMetadataCard resolvedJobMeta={resolveQuery.data} className="px-4" />}
+          </div>
+          <div className="min-h-0 flex-1">
+            <WorkspaceDataTable
+              ref={tableRef}
+              items={processedItems}
+              isLoading={isLoading}
+              path={path}
+              sort={sort}
+              onSortChange={setSort}
+              viewMode={isHome ? "home" : "shared"}
+              username={username}
+              sharedRootUsername={isHome ? undefined : myWorkspaceRoot}
+              selectedPaths={selectedPaths}
+              onSelect={handleSelectItem}
+              onItemDoubleClick={handleItemDoubleClick}
+              onClearSelection={clearSelection}
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="min-h-0 flex-1">
+          <WorkspaceDataTable
+            ref={tableRef}
+            items={processedItems}
+            isLoading={isLoading}
+            path={path}
+            sort={sort}
+            onSortChange={setSort}
+            viewMode={isPublic ? "public" : isHome ? "home" : "shared"}
+            username={username}
+            sharedRootUsername={isHome ? undefined : myWorkspaceRoot}
+            memberCountByPath={memberCountByPath}
+            selectedPaths={selectedPaths}
+            onSelect={handleSelectItem}
+            onItemDoubleClick={handleItemDoubleClick}
+            onClearSelection={clearSelection}
+          />
+        </div>
+      )}
       <WorkspaceNotFoundDialog
         open={pathNotFound && !notFoundDismissed}
         onOpenChange={(open) => { if (!open) setDismissedPath(path); }}

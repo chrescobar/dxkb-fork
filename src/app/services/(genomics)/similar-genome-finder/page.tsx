@@ -23,7 +23,7 @@ import { ChevronDown, Search } from "lucide-react";
 import { ServiceHeader } from "@/components/services/service-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { DataTable } from "@/components/containers/DataTable";
+import { DataTable } from "@/components/shared/data-table";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";

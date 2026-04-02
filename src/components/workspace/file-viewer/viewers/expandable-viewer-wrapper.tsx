@@ -10,6 +10,7 @@ import {
 import { Maximize2, Minimize2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 interface ExpandableViewerWrapperProps {
   children: ReactNode;
@@ -89,28 +90,31 @@ export function ExpandableViewerWrapper({
     <div
       className={
         expanded
-          ? `bg-background fixed inset-0 z-50 flex flex-col transition-opacity duration-200 ease-out ${entering || leaving ? "opacity-0" : "opacity-100"}`
+          ? `fixed inset-0 z-50 flex flex-col bg-background transition-opacity duration-200 ease-out ${entering || leaving ? "opacity-0" : "opacity-100"}`
           : "relative h-full w-full"
       }
     >
       {expanded && (
-        <div
-          className={`border-border flex shrink-0 items-center gap-2 border-b px-3 py-2 transition-transform duration-200 ease-out ${entering || leaving ? "-translate-y-2" : "translate-y-0"}`}
-        >
-          {title && (
-            <span className="truncate text-sm font-medium">{title}</span>
-          )}
-          <div className="ml-auto flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={collapse}
-              title="Collapse"
-            >
-              <Minimize2 />
-            </Button>
+        <>
+          <div
+            className={`flex shrink-0 items-center gap-2 px-3 py-2 transition-transform duration-200 ease-out ${entering || leaving ? "-translate-y-2" : "translate-y-0"}`}
+          >
+            {title && (
+              <span className="truncate text-sm font-medium">{title}</span>
+            )}
+            <div className="ml-auto flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={collapse}
+                title="Collapse"
+              >
+                <Minimize2 className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-        </div>
+          <Separator />
+        </>
       )}
       <div className={expanded ? "min-h-0 flex-1" : "h-full w-full"}>
         {children}
@@ -119,11 +123,11 @@ export function ExpandableViewerWrapper({
         <Button
           variant="ghost"
           size="icon-sm"
-          className="absolute top-2 right-2 z-10 bg-background/80 backdrop-blur-sm"
+          className="absolute top-2 right-2 z-10 bg-background/70 backdrop-blur-sm hover:bg-background/90"
           onClick={expand}
           title="Expand to full screen"
         >
-          <Maximize2 />
+          <Maximize2 className="h-4 w-4" />
         </Button>
       )}
     </div>

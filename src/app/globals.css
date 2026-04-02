@@ -3,6 +3,7 @@
 @import "../styles/themes/orange-theme.css";
 @import "../styles/themes/violet-theme.css";
 @import "../styles/themes/bvbrc-theme.css";
+@import "../styles/molstar-theme.css";
 @plugin "tailwindcss-animate";
 @custom-variant dark (&:is([data-theme$="-dark"] *));
 

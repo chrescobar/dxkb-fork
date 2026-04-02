@@ -37,23 +37,23 @@ export function StructureViewer({ filePath, fileName }: StructureViewerProps) {
             import("molstar/lib/mol-plugin-ui/spec"),
           ]);
 
-        // Import Mol* skin CSS — processed by sass at build time, tree-shaken
-        // by Next.js when the component isn't rendered.
+        // Import Mol* base skin (theme overrides are in globals.css).
         await import("molstar/lib/mol-plugin-ui/skin/light.scss");
 
         if (disposed) return;
         setStatus("initializing");
 
+        // Embedded preview: hide all Molstar chrome, canvas only.
         const spec = {
           ...DefaultPluginUISpec(),
           layout: {
             initial: {
               isExpanded: false,
-              showControls: true,
+              showControls: false,
               controlsDisplay: "reactive" as const,
               regionState: {
                 left: "hidden" as const,
-                top: "full" as const,
+                top: "hidden" as const,
                 right: "hidden" as const,
                 bottom: "hidden" as const,
               },
@@ -157,26 +157,30 @@ export function StructureViewer({ filePath, fileName }: StructureViewerProps) {
 
   return (
     <ExpandableViewerWrapper title={fileName}>
-      <div className="relative flex h-full w-full flex-col">
+      <div className="relative flex h-full w-full flex-col overflow-hidden rounded-b-lg">
         <div
           ref={containerRef}
           className="isolate relative min-h-0 flex-1 overflow-hidden"
           data-testid="molstar-container"
         />
         {(status === "loading" || status === "initializing") && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center gap-2 bg-background/80 text-muted-foreground">
-            <Spinner className="h-5 w-5" />
-            <span className="text-sm">
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-background/80 backdrop-blur-sm">
+            <Spinner className="h-5 w-5 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">
               {status === "loading"
                 ? "Loading viewer\u2026"
                 : "Initializing structure\u2026"}
-            </span>
+            </p>
           </div>
         )}
         {status === "error" && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-background text-muted-foreground">
-            <AlertCircle className="h-8 w-8 text-destructive" />
-            <p className="text-sm">{errorMessage}</p>
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-background">
+            <div className="flex flex-col items-center gap-2 text-center">
+              <AlertCircle className="h-8 w-8 text-destructive" />
+              <p className="max-w-xs text-sm text-muted-foreground">
+                {errorMessage}
+              </p>
+            </div>
             <Button
               variant="outline"
               size="sm"

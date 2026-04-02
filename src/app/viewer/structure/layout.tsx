@@ -6,7 +6,7 @@ export default function StructureViewerLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen flex-col overflow-hidden">
+    <div className="flex h-screen flex-col overflow-hidden bg-background">
       <Navbar />
       <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
         {children}

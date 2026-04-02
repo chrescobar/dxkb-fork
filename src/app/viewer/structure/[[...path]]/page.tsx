@@ -1,9 +1,10 @@
 "use client";
 
 import { use, useEffect, useRef, useState } from "react";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, ArrowLeft, Cuboid } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { getProxyUrl } from "@/components/workspace/file-viewer/file-viewer-registry";
 
@@ -16,6 +17,7 @@ interface StructurePageProps {
 export default function StructureViewerPage({ params }: StructurePageProps) {
   const { path } = use(params);
   const filePath = path ? `/${path.map(decodeURIComponent).join("/")}` : "";
+  const fileName = filePath ? filePath.split("/").pop() ?? "" : "";
 
   const containerRef = useRef<HTMLDivElement>(null);
   const pluginRef = useRef<{ dispose: (opts?: object) => void } | null>(null);
@@ -38,12 +40,13 @@ export default function StructureViewerPage({ params }: StructurePageProps) {
             import("molstar/lib/mol-plugin-ui/spec"),
           ]);
 
+        // Import Mol* base skin (theme overrides are in globals.css).
         await import("molstar/lib/mol-plugin-ui/skin/light.scss");
 
         if (disposed) return;
         setStatus("initializing");
 
-        // Full Molstar viewer with all panels and controls enabled.
+        // Full viewer with all panels and controls enabled.
         const spec = {
           ...DefaultPluginUISpec(),
           layout: {
@@ -150,34 +153,70 @@ export default function StructureViewerPage({ params }: StructurePageProps) {
   }
 
   return (
-    <div className="relative h-full w-full">
-      <div ref={containerRef} className="h-full w-full" />
-      {(status === "loading" || status === "initializing") && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center gap-2 bg-background/80 text-muted-foreground">
-          <Spinner className="h-5 w-5" />
-          <span className="text-sm">
-            {status === "loading"
-              ? "Loading viewer\u2026"
-              : "Initializing structure\u2026"}
-          </span>
+    <div className="flex h-full flex-col">
+      {/* Header bar */}
+      <div className="flex shrink-0 items-center gap-3 px-4 py-2">
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={() => {
+            if (window.history.length > 1) {
+              window.history.back();
+            } else {
+              window.close();
+            }
+          }}
+          title="Go back"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <Separator orientation="vertical" className="h-5" />
+        <div className="flex items-center gap-2 overflow-hidden">
+          <Cuboid className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <span className="truncate text-sm font-medium">{fileName}</span>
         </div>
-      )}
-      {status === "error" && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-background text-muted-foreground">
-          <AlertCircle className="h-8 w-8 text-destructive" />
-          <p className="text-sm">{errorMessage}</p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setStatus("loading");
-              setErrorMessage(undefined);
-            }}
-          >
-            Retry
-          </Button>
-        </div>
-      )}
+      </div>
+
+      <Separator />
+
+      {/* Viewer area */}
+      <div className="relative min-h-0 flex-1">
+        <div
+          ref={containerRef}
+          className="h-full w-full"
+          data-testid="molstar-container"
+        />
+        {(status === "loading" || status === "initializing") && (
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-background/80 backdrop-blur-sm">
+            <Spinner className="h-5 w-5 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">
+              {status === "loading"
+                ? "Loading viewer\u2026"
+                : "Initializing structure\u2026"}
+            </p>
+          </div>
+        )}
+        {status === "error" && (
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-background">
+            <div className="flex flex-col items-center gap-2 text-center">
+              <AlertCircle className="h-10 w-10 text-destructive" />
+              <p className="max-w-sm text-sm text-muted-foreground">
+                {errorMessage}
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setStatus("loading");
+                setErrorMessage(undefined);
+              }}
+            >
+              Retry
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

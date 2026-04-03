@@ -137,6 +137,24 @@ describe("usePublicWorkspaceData", () => {
     });
   });
 
+  it("returns a stable empty items reference across renders (prevents re-render loops)", () => {
+    vi.mocked(listPublicWorkspaces).mockReturnValue(new Promise(vi.fn()));
+    const wrapper = createQueryClientWrapper();
+
+    const { result, rerender } = renderHook(
+      () => usePublicWorkspaceData({ level: "root" }),
+      { wrapper },
+    );
+
+    const firstItems = result.current.items;
+    rerender();
+    const secondItems = result.current.items;
+
+    // Must be the same reference to avoid infinite re-render loops
+    // in consumers that use the array as a dependency.
+    expect(firstItems).toBe(secondItems);
+  });
+
   it("returns empty items array when query has no data yet", () => {
     vi.mocked(listPublicWorkspaces).mockReturnValue(new Promise(vi.fn()));
     const wrapper = createQueryClientWrapper();

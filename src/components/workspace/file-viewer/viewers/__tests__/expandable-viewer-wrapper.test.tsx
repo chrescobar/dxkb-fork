@@ -98,6 +98,44 @@ describe("ExpandableViewerWrapper", () => {
     expect(screen.queryByText("Test Viewer")).not.toBeInTheDocument();
   });
 
+  it("calls onExpandChange(true) when expanding", () => {
+    const onChange = vi.fn();
+    render(
+      <ExpandableViewerWrapper onExpandChange={onChange}>
+        <div>content</div>
+      </ExpandableViewerWrapper>,
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Expand to full screen" }),
+    );
+
+    // Advance past the rAF that fires the callback
+    act(() => vi.advanceTimersByTime(50));
+
+    expect(onChange).toHaveBeenCalledWith(true);
+  });
+
+  it("calls onExpandChange(false) when collapsing", () => {
+    const onChange = vi.fn();
+    render(
+      <ExpandableViewerWrapper onExpandChange={onChange}>
+        <div>content</div>
+      </ExpandableViewerWrapper>,
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Expand to full screen" }),
+    );
+    act(() => vi.advanceTimersByTime(50));
+    onChange.mockClear();
+
+    fireEvent.click(screen.getByRole("button", { name: "Collapse" }));
+    act(() => vi.advanceTimersByTime(250));
+
+    expect(onChange).toHaveBeenCalledWith(false);
+  });
+
   it("renders without title in fullscreen header", () => {
     render(
       <ExpandableViewerWrapper>

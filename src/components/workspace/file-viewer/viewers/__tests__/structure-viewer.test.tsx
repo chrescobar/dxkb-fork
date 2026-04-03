@@ -118,6 +118,32 @@ describe("StructureViewer", () => {
     });
   });
 
+  it("uses embedded layout spec (controls hidden)", async () => {
+    const { createPluginUI } = await import("molstar/lib/mol-plugin-ui");
+
+    render(
+      <StructureViewer filePath="/user@bvbrc/home/model.pdb" fileName="model.pdb" />,
+    );
+
+    await waitFor(() => {
+      expect(createPluginUI).toHaveBeenCalledWith(
+        expect.objectContaining({
+          spec: expect.objectContaining({
+            layout: expect.objectContaining({
+              initial: expect.objectContaining({
+                showControls: false,
+                regionState: expect.objectContaining({
+                  left: "hidden",
+                  right: "hidden",
+                }),
+              }),
+            }),
+          }),
+        }),
+      );
+    });
+  });
+
   it("disposes the plugin on unmount", async () => {
     const { unmount } = render(
       <StructureViewer filePath="/user@bvbrc/home/model.pdb" fileName="model.pdb" />,

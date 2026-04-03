@@ -1,6 +1,8 @@
 import {
   resolveViewer,
   isViewableType,
+  isStructureFile,
+  getStructureViewerUrl,
   getMimeType,
   getProxyUrl,
   getPreviewUrl,
@@ -64,6 +66,36 @@ describe("isViewableType", () => {
 
   it("returns false for unknown types", () => {
     expect(isViewableType("unknown", "file.xyz")).toBe(false);
+  });
+});
+
+describe("isStructureFile", () => {
+  it("returns true for .pdb extension", () => {
+    expect(isStructureFile("model.pdb")).toBe(true);
+  });
+
+  it("returns true for .PDB extension (case-insensitive)", () => {
+    expect(isStructureFile("MODEL.PDB")).toBe(true);
+  });
+
+  it("returns false for non-pdb files", () => {
+    expect(isStructureFile("data.fasta")).toBe(false);
+    expect(isStructureFile("report.pdf")).toBe(false);
+    expect(isStructureFile("noext")).toBe(false);
+  });
+});
+
+describe("getStructureViewerUrl", () => {
+  it("builds encoded viewer URL for a PDB file path", () => {
+    expect(getStructureViewerUrl("/user@bvbrc/home/model.pdb")).toBe(
+      "/viewer/structure/user@bvbrc/home/model.pdb",
+    );
+  });
+
+  it("handles paths with special characters", () => {
+    const url = getStructureViewerUrl("/user@bvbrc/home/my folder/test.pdb");
+    expect(url).toContain("/viewer/structure/");
+    expect(url).toContain("my%20folder");
   });
 });
 

@@ -1,0 +1,66 @@
+src/components/workspace/workspace-action-bar.tsx
+  7950587007138c18 26
+src/components/workspace/file-viewer/viewers/structure-viewer.tsx
+  7950587007138c18 8-11,18-21,23-27,55
+src/hooks/services/workspace/use-workspace-action-dispatch.ts
+  7950587007138c18 110
+src/components/workspace/file-viewer/viewers/expandable-viewer-wrapper.tsx
+  7950587007138c18 49-50
+src/hooks/services/workspace/use-public-workspace-data.ts
+  7950587007138c18 27-28,53
+src/app/viewer/structure/[[...path]]/page.tsx
+  7950587007138c18 3,9-13,19-22,26-27,29-32,94
+src/components/workspace/workspace-table-columns.tsx
+  7950587007138c18 30-31,36,54,64,66
+src/components/workspace/workspace-file-table.tsx
+  7950587007138c18 78
+src/components/workspace/file-viewer/viewers/use-molstar-plugin.ts
+  7950587007138c18 1-65,70-166
+  dbc580748c2349f1 66-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "8a8caefff01cadea2177b52e7ae93b2aa06a1b34",
+  "prompts": {
+    "544d0c0d06c4b2ee": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "34581fa9-71c5-4812-8b49-f2859acd184e",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 5,
+      "overriden_lines": 0
+    },
+    "7950587007138c18": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "09801ba0-9e03-47a8-80cb-83f2292113ab",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 367,
+      "total_deletions": 300,
+      "accepted_lines": 362,
+      "overriden_lines": 0
+    },
+    "dbc580748c2349f1": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "e716ce38-ed94-4ce0-8f99-7f2aab940160",
+        "model": "default"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 4,
+      "total_deletions": 4,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    }
+  }
+}

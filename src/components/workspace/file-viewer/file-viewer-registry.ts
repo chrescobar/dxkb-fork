@@ -39,7 +39,7 @@ const typeToViewer: Record<string, ViewerCategory> = {
   diffexp_input_metadata: "csv",
   html: "iframe",
   pdf: "iframe",
-  pdb: "iframe",
+  pdb: "text",
   diffexp_experiment: "iframe",
   diffexp_expression: "iframe",
   diffexp_mapping: "iframe",
@@ -75,7 +75,7 @@ const extensionToViewer: Record<string, ViewerCategory> = {
   ".html": "iframe",
   ".htm": "iframe",
   ".pdf": "iframe",
-  ".pdb": "iframe",
+  ".pdb": "text",
 };
 
 // ---------------------------------------------------------------------------
@@ -163,6 +163,21 @@ export function isViewableType(
   fileName: string,
 ): boolean {
   return resolveViewer(workspaceType, fileName) !== "fallback";
+}
+
+/**
+ * Returns `true` when the file is a PDB structure file that can be viewed
+ * in the 3D Molstar viewer.
+ */
+export function isStructureFile(fileName: string): boolean {
+  return getExtension(fileName) === ".pdb";
+}
+
+/**
+ * Build a URL for the dedicated Molstar 3D viewer page.
+ */
+export function getStructureViewerUrl(filePath: string): string {
+  return `/viewer/structure/${encodePath(filePath)}`;
 }
 
 /**

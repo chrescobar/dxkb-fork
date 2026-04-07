@@ -3,13 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import {TooltipProvider, Tooltip, TooltipTrigger, TooltipContent} from "@/components/ui/tooltip";
-import { Download, Trash2, Pencil, Copy, Move, Star, BookOpen, Type, type LucideIcon } from "lucide-react";
+import { Box, Download, Trash2, Pencil, Copy, Move, Star, BookOpen, Type, Share2, type LucideIcon } from "lucide-react";
 
 import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
 
 const writePermissions = new Set(["o", "a", "w"]);
 
-export type WorkspaceActionId = "guide" | "download" | "delete" | "rename" | "copy" | "move" | "editType" | "favorite";
+export type WorkspaceActionId = "guide" | "download" | "delete" | "rename" | "copy" | "move" | "editType" | "viewer3d" | "favorite" | "share";
 
 interface ActionConfig {
   id: WorkspaceActionId;
@@ -19,11 +19,13 @@ interface ActionConfig {
   validTypes: string[] | "*";
   /** If true, hide when user has only read permission */
   requireWrite?: boolean;
+  /** If true, action only applies when exactly one item is selected */
+  singleOnly?: boolean;
   /** If set, button is always disabled and this string is shown as hover title */
   disabledWithTooltip?: string;
 }
 
-// TODO: Add "View" buttons to FASTA/PDB files once the viewer/datagrid is implemented fully.
+// TODO: Add "View" button for FASTA files once the viewer/datagrid is implemented fully.
 const actionConfig: ActionConfig[] = [
   { id: "guide", label: "GUIDE", icon: BookOpen, validTypes: "*" },
   { id: "download", label: "DWNLD", icon: Download, validTypes: "*" },
@@ -39,7 +41,16 @@ const actionConfig: ActionConfig[] = [
   { id: "copy", label: "COPY", icon: Copy, validTypes: "*" },
   { id: "move", label: "MOVE", icon: Move, validTypes: "*", requireWrite: true },
   { id: "editType", label: "EDIT TYPE", icon: Type, validTypes: "*", requireWrite: true },
+  { id: "viewer3d", label: "3D VIEWER", icon: Box, validTypes: ["pdb"], singleOnly: true },
   { id: "favorite", label: "FAVORITE", icon: Star, validTypes: ["folder"] },
+  {
+    id: "share",
+    label: "SHARE",
+    icon: Share2,
+    validTypes: ["folder"],
+    requireWrite: true,
+    disabledWithTooltip: "Feature to be implemented later",
+  },
 ];
 
 function getSelectionDisabledTooltip(
@@ -65,6 +76,8 @@ function isActionValidForSelection(
       (action.validTypes as string[]).includes(s.type ?? ""),
     );
   if (!typesMatch) return false;
+
+  if (action.singleOnly && selection.length > 1) return false;
 
   if (action.requireWrite) {
     const hasWrite = selection.every((s) =>

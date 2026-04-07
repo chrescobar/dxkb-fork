@@ -45,6 +45,7 @@ vi.mock("lucide-react", () => {
     <svg {...props}>{children}</svg>
   );
   return {
+    Box: icon,
     Download: icon,
     Trash2: icon,
     Pencil: icon,
@@ -53,6 +54,7 @@ vi.mock("lucide-react", () => {
     Star: icon,
     BookOpen: icon,
     Type: icon,
+    Share2: icon,
   };
 });
 

@@ -1,0 +1,21 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "8dee773aa5a27082df0cc57e192c095607af49d1",
+  "prompts": {
+    "3434402dac053cd3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7f3fb3d2-eeea-4b92-b8c8-8083c286c592",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 66,
+      "total_deletions": 116,
+      "accepted_lines": 1,
+      "overriden_lines": 6
+    }
+  }
+}

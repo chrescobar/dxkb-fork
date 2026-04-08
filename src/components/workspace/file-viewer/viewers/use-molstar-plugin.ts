@@ -34,26 +34,30 @@ function ensureMolstarCss(): void {
 
 /**
  * Inject a `<script>` for molstar.js and resolve once the global is available.
+ * A single shared promise ensures concurrent callers all wait on the same load
+ * and a failed attempt can be retried.
  */
+let molstarLoadPromise: Promise<void> | null = null;
+
 function loadMolstarBundle(): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if ((window as any).molstar) return Promise.resolve();
+  if (molstarLoadPromise) return molstarLoadPromise;
 
-  return new Promise((resolve, reject) => {
-    const existing = document.querySelector(
-      'script[src="/molstar/molstar.js"]',
-    );
-    if (existing) {
-      existing.addEventListener("load", () => resolve());
-      return;
-    }
+  molstarLoadPromise = new Promise<void>((resolve, reject) => {
     const script = document.createElement("script");
     script.src = "/molstar/molstar.js";
     script.async = true;
     script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Failed to load Molstar bundle"));
+    script.onerror = () => {
+      script.remove();
+      molstarLoadPromise = null;
+      reject(new Error("Failed to load Molstar bundle"));
+    };
     document.head.appendChild(script);
   });
+
+  return molstarLoadPromise;
 }
 
 /**

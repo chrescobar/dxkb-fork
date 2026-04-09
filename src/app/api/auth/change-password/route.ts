@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     const auth = await requireAuth();
     if (auth instanceof NextResponse) return auth;
 
-    const { currentPassword, newPassword } = await request.json();
+    const { currentPassword, newPassword } = await request.json().catch(() => ({}));
 
     if (
       typeof currentPassword !== "string" ||

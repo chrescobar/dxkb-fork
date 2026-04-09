@@ -10,7 +10,6 @@ vi.mock("next/headers", () => ({
 }));
 
 import {
-  safeDecodeURIComponent,
   getAuthToken,
   serverAuthenticatedFetch,
   extractRealmFromToken,
@@ -20,26 +19,6 @@ import {
   requireAuth,
   requireAuthToken,
 } from "../session";
-
-describe("safeDecodeURIComponent", () => {
-  it("decodes a valid percent-encoded string", () => {
-    expect(safeDecodeURIComponent("%20")).toBe(" ");
-  });
-
-  it("decodes a complex encoded string", () => {
-    expect(safeDecodeURIComponent("hello%20world%21")).toBe("hello world!");
-  });
-
-  it("returns original string on malformed input", () => {
-    vi.spyOn(console, "warn").mockImplementation(() => undefined);
-    const malformed = "%E0%A4%A";
-    expect(safeDecodeURIComponent(malformed)).toBe(malformed);
-  });
-
-  it("handles already-decoded strings", () => {
-    expect(safeDecodeURIComponent("hello")).toBe("hello");
-  });
-});
 
 describe("getAuthToken", () => {
   it("returns decoded token when cookie exists", async () => {
@@ -270,7 +249,7 @@ describe("requireAuth", () => {
     const response = result as Response;
     expect(response.status).toBe(401);
     const body = await response.json();
-    expect(body).toEqual({ message: "Authentication required" });
+    expect(body).toEqual({ error: "Authentication required" });
   });
 
   it("returns 401 NextResponse when userId is missing", async () => {
@@ -299,7 +278,7 @@ describe("requireAuthToken", () => {
     expect(result).toBe("my-token");
   });
 
-  it("returns 401 NextResponse with message key when cookie is missing", async () => {
+  it("returns 401 NextResponse with error key when cookie is missing", async () => {
     mockCookieStore.get.mockReturnValue(undefined);
 
     const result = await requireAuthToken();
@@ -308,6 +287,6 @@ describe("requireAuthToken", () => {
     const response = result as Response;
     expect(response.status).toBe(401);
     const body = await response.json();
-    expect(body).toEqual({ message: "Authentication required" });
+    expect(body).toEqual({ error: "Authentication required" });
   });
 });

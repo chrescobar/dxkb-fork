@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { ChevronRight, Globe, Home } from "lucide-react";
 import { buildEncodedSegmentPath, cn, encodeWorkspaceSegment, sanitizePathSegment } from "@/lib/utils";
+import { safeDecode } from "@/lib/url";
 
 export type BreadcrumbsViewMode = "home" | "shared" | "root" | "public";
 
@@ -22,13 +23,7 @@ function formatSegmentLabel(
   segment: string,
   currentUsername?: string,
 ): string {
-  let decoded: string;
-  try {
-    decoded = decodeURIComponent(segment);
-  } catch {
-    decoded = segment;
-  }
-  const safe = sanitizePathSegment(decoded);
+  const safe = sanitizePathSegment(safeDecode(segment));
   if (!currentUsername) return safe;
   if (safe === currentUsername) return safe;
   if (safe.startsWith(`${currentUsername}@`)) return currentUsername;

@@ -45,14 +45,14 @@ function setAuthCookies(token: string, userId: string) {
 describe("GET /api/auth/profile", () => {
   it("returns 401 when not authenticated", async () => {
     mockRequireAuth.mockResolvedValue(
-      NextResponse.json({ message: "Authentication required" }, { status: 401 }),
+      NextResponse.json({ error: "Authentication required" }, { status: 401 }),
     );
 
     const response = await GET();
     const data = await response.json();
 
     expect(response.status).toBe(401);
-    expect(data.message).toBe("Authentication required");
+    expect(data.error).toBe("Authentication required");
   });
 
   it("returns profile data when authenticated", async () => {
@@ -124,7 +124,7 @@ describe("GET /api/auth/profile", () => {
 describe("POST /api/auth/profile", () => {
   it("returns 401 when not authenticated", async () => {
     mockRequireAuth.mockResolvedValue(
-      NextResponse.json({ message: "Authentication required" }, { status: 401 }),
+      NextResponse.json({ error: "Authentication required" }, { status: 401 }),
     );
 
     const request = mockNextRequest({
@@ -136,7 +136,7 @@ describe("POST /api/auth/profile", () => {
     const data = await response.json();
 
     expect(response.status).toBe(401);
-    expect(data.message).toBe("Authentication required");
+    expect(data.error).toBe("Authentication required");
   });
 
   it("forwards JSON Patch body to upstream", async () => {

@@ -44,7 +44,7 @@ describe("buildWorkspacePath", () => {
 describe("resolveWorkspaceDownload", () => {
   it("returns 401 NextResponse when not authenticated", async () => {
     mockRequireAuthToken.mockResolvedValue(
-      NextResponse.json({ message: "Authentication required" }, { status: 401 }),
+      NextResponse.json({ error: "Authentication required" }, { status: 401 }),
     );
 
     const result = await resolveWorkspaceDownload(["user", "home", "file.txt"]);

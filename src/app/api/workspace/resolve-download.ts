@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAuthToken } from "@/lib/auth/session";
 import { getRequiredEnv } from "@/lib/env";
 import { getMimeType } from "@/components/workspace/file-viewer/file-viewer-registry";
+import { safeDecode } from "@/lib/url";
 
 /**
  * Build a safe Content-Disposition header value.
@@ -38,7 +39,7 @@ export interface ResolvedDownload {
  * Decode route path segments into a workspace path string.
  */
 export function buildWorkspacePath(segments: string[]): string {
-  return "/" + segments.map((s) => decodeURIComponent(s)).join("/");
+  return "/" + segments.map((s) => safeDecode(s)).join("/");
 }
 
 /**
@@ -110,7 +111,7 @@ export async function resolveWorkspaceDownload(
   }
 
   const lastSegment = segments[segments.length - 1] ?? "download";
-  const filename = decodeURIComponent(lastSegment);
+  const filename = safeDecode(lastSegment);
   const contentType = getMimeType(filename);
 
   return { shockResponse, filename, contentType };

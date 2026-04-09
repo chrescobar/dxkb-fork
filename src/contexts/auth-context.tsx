@@ -53,10 +53,9 @@ export function AuthProvider({
     return data.user;
   }, []);
 
-  // Check for existing session on mount (skip if server already provided a user)
+  // Always fetch the real session on mount to hydrate full user data
+  // (initialUser is optimistic SSR state from cookies — it lacks email_verified, etc.)
   useEffect(() => {
-    if (initialUser) return;
-
     const initAuth = async () => {
       try {
         const savedUser = await fetchSession();
@@ -70,7 +69,7 @@ export function AuthProvider({
     };
 
     initAuth();
-  }, [fetchSession, initialUser]);
+  }, [fetchSession]);
 
   /**
    * Sign out (better-auth style)

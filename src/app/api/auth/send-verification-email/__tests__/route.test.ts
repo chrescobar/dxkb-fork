@@ -17,26 +17,26 @@ const mockRequireAuth = vi.mocked(requireAuth);
 describe("POST /api/auth/send-verification-email", () => {
   it("returns 401 when no token is present", async () => {
     mockRequireAuth.mockResolvedValue(
-      NextResponse.json({ message: "Authentication required" }, { status: 401 }),
+      NextResponse.json({ error: "Authentication required" }, { status: 401 }),
     );
 
     const response = await POST();
     const data = await response.json();
 
     expect(response.status).toBe(401);
-    expect(data.message).toBe("Authentication required");
+    expect(data.error).toBe("Authentication required");
   });
 
   it("returns 401 when no userId is present", async () => {
     mockRequireAuth.mockResolvedValue(
-      NextResponse.json({ message: "Authentication required" }, { status: 401 }),
+      NextResponse.json({ error: "Authentication required" }, { status: 401 }),
     );
 
     const response = await POST();
     const data = await response.json();
 
     expect(response.status).toBe(401);
-    expect(data.message).toBe("Authentication required");
+    expect(data.error).toBe("Authentication required");
   });
 
   it("returns success when verification email is sent", async () => {

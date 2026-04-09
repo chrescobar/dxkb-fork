@@ -54,7 +54,12 @@ describe("AuthContext", () => {
     );
   });
 
-  it("provides initialUser when passed", async () => {
+  it("provides initialUser then hydrates from session", async () => {
+    vi.mocked(bvbrcAuth.getSession).mockResolvedValue({
+      data: { user: testUser },
+      error: null,
+    } as never);
+
     const { result } = renderHook(() => useAuth(), { wrapper });
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));

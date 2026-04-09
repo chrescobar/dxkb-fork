@@ -20,6 +20,7 @@ import { JobMetadataCard } from "./job-metadata-card";
 import { useJobResultData } from "@/hooks/services/workspace/use-job-result-data";
 import { useWorkspaceListByPath } from "@/hooks/services/workspace/use-shared-with-user";
 import { getDotPathRelative } from "@/lib/services/workspace/helpers";
+import { safeDecode } from "@/lib/url";
 import { WorkspaceBreadcrumbs } from "./workspace-breadcrumbs";
 import { WorkspaceToolbar } from "./workspace-toolbar";
 import {
@@ -250,12 +251,7 @@ export function WorkspaceBrowser({
   const canWriteToCurrentDir = useMemo(() => {
     if (isPublic || !fullPath) return false;
     // User owns this path (created it themselves)
-    let decodedFullPath: string;
-    try {
-      decodedFullPath = decodeURIComponent(fullPath);
-    } catch {
-      decodedFullPath = fullPath;
-    }
+    const decodedFullPath = safeDecode(fullPath);
     const isOwnedPath =
       decodedFullPath.startsWith(`/${myWorkspaceRoot}/`) ||
       decodedFullPath.startsWith(`/${currentUser}/`);

@@ -18,7 +18,7 @@ const mockRequireAuth = vi.mocked(requireAuth);
 describe("POST /api/auth/change-password", () => {
   it("returns 401 when not authenticated", async () => {
     mockRequireAuth.mockResolvedValue(
-      NextResponse.json({ message: "Authentication required" }, { status: 401 }),
+      NextResponse.json({ error: "Authentication required" }, { status: 401 }),
     );
 
     const request = mockNextRequest({
@@ -30,12 +30,12 @@ describe("POST /api/auth/change-password", () => {
     const data = await response.json();
 
     expect(response.status).toBe(401);
-    expect(data.message).toBe("Authentication required");
+    expect(data.error).toBe("Authentication required");
   });
 
   it("returns 401 when token is missing", async () => {
     mockRequireAuth.mockResolvedValue(
-      NextResponse.json({ message: "Authentication required" }, { status: 401 }),
+      NextResponse.json({ error: "Authentication required" }, { status: 401 }),
     );
 
     const request = mockNextRequest({

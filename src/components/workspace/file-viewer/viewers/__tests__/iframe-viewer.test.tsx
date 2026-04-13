@@ -22,10 +22,16 @@ describe("IframeViewer", () => {
     expect(iframe).toHaveAttribute("sandbox", "allow-same-origin");
   });
 
-  it("sets sandbox to allow-scripts when allowScripts is true", () => {
+  it("sets sandbox to allow-scripts (without allow-same-origin) when allowScripts is true", () => {
     render(<IframeViewer filePath="/user/home/page.html" allowScripts />);
     const iframe = screen.getByTitle("page.html");
     expect(iframe).toHaveAttribute("sandbox", "allow-scripts");
+  });
+
+  it("omits sandbox entirely for PDF files so Chrome's built-in viewer can render", () => {
+    render(<IframeViewer filePath="/user/home/doc.pdf" allowScripts />);
+    const iframe = screen.getByTitle("doc.pdf");
+    expect(iframe).not.toHaveAttribute("sandbox");
   });
 
   it("extracts filename from path for title", () => {

@@ -1,0 +1,23 @@
+src/components/navbars/mobile-navbar.tsx
+  cfd56799738b5ffd 412-413
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "dcf61fadcfa08e1f1804ed8cbfab8fdc0315abcb",
+  "prompts": {
+    "cfd56799738b5ffd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bd2bc965-ad1b-441e-90cd-6adced40d49f",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 2,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}

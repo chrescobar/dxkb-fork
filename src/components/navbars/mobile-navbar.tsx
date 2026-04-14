@@ -409,8 +409,8 @@ const MobileNavbar = () => {
           <Link id="dxkb-logo" href="/">
             <Logo
               variant="logo-icon"
-              width={100}
-              height={40}
+              width={474}
+              height={527}
               className="h-10 w-auto"
               priority
             />

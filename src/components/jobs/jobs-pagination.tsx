@@ -74,7 +74,9 @@ export function JobsPagination({
   return (
     <div className="flex items-center justify-between px-2 py-2">
       <span className="text-muted-foreground text-xs">
-        Showing {offset + 1}{"\u2013"}{offset + totalOnPage} of {totalTasks} jobs
+        {totalTasks === 0
+          ? "No jobs found"
+          : <>Showing {offset + 1}{"\u2013"}{offset + totalOnPage} of {totalTasks} jobs</>}
       </span>
       <div className="flex items-center gap-1">
         <Select

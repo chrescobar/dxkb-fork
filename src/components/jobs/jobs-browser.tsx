@@ -116,14 +116,15 @@ export function JobsBrowser() {
   const [pageSize, setPageSize] = useState(defaultPageSize);
 
   const dateParams = useMemo(() => {
-    const startTime = dateFrom
-      ? dateFrom.toISOString().split("T")[0]
-      : undefined;
+    const toLocalDate = (d: Date) =>
+      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+    const startTime = dateFrom ? toLocalDate(dateFrom) : undefined;
     let endTime: string | undefined;
     if (dateTo) {
       const inclusive = new Date(dateTo);
       inclusive.setDate(inclusive.getDate() + 1);
-      endTime = inclusive.toISOString().split("T")[0];
+      endTime = toLocalDate(inclusive);
     }
     return { startTime, endTime };
   }, [dateFrom, dateTo]);

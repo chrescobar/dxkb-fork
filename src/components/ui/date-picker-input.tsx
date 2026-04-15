@@ -63,18 +63,18 @@ export function DatePickerInput({
   );
   const [error, setError] = React.useState<string>("");
 
-  // Sync from external value prop
+  // Sync from external value prop or format change
   React.useEffect(() => {
     if (value === undefined) {
       setDate(undefined);
       setInputValue("");
-    } else if (value && (!date || value.getTime() !== date.getTime())) {
+    } else if (value) {
       setDate(value);
       setInputValue(formatDateFns(value, fmt.dateFns));
       setCalendarMonth(value);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
+  }, [value, fmt.dateFns]);
 
   // Format input as selected format
   function formatInputValue(value: string) {

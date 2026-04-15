@@ -36,7 +36,7 @@ export async function createSession(
   token: string,
   username: string,
   realm?: string,
-  userProfile?: Record<string, unknown>,
+  userProfile?: { id?: string },
 ) {
   const cookieStore = await cookies();
 

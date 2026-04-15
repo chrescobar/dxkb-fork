@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     // Re-verify admin role from upstream
     const adminProfile = await fetchUserProfile(userId, token);
 
-    if (!(adminProfile?.roles as string[] | undefined)?.includes("admin")) {
+    if (!adminProfile?.roles?.includes("admin")) {
       return NextResponse.json(
         { message: "Admin role required" },
         { status: 403 },
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
     // Optionally block admin-to-admin impersonation
     if (
       !allowAdminToAdminImpersonation &&
-      (targetProfile?.roles as string[] | undefined)?.includes("admin")
+      targetProfile?.roles?.includes("admin")
     ) {
       return NextResponse.json(
         { message: "Cannot impersonate another admin" },
@@ -90,14 +90,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       user: {
-        id: (targetProfile?.id as string) || targetUser,
+        id: targetProfile?.id || targetUser,
         username: targetUser,
-        email: (targetProfile?.email as string) || "",
-        first_name: (targetProfile?.first_name as string) || "",
-        last_name: (targetProfile?.last_name as string) || "",
-        email_verified: (targetProfile?.email_verified as boolean) || false,
+        email: targetProfile?.email || "",
+        first_name: targetProfile?.first_name || "",
+        last_name: targetProfile?.last_name || "",
+        email_verified: targetProfile?.email_verified || false,
         realm: targetRealm,
-        roles: (targetProfile?.roles as string[]) || [],
+        roles: targetProfile?.roles || [],
         isImpersonating: true,
         originalUsername: userId,
       },

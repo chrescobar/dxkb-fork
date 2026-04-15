@@ -17,14 +17,14 @@ export async function POST() {
 
     return NextResponse.json({
       user: {
-        id: (profile?.id as string) || backup.userId,
+        id: profile?.id || backup.userId,
         username: backup.userId,
-        email: (profile?.email as string) || "",
-        first_name: (profile?.first_name as string) || "",
-        last_name: (profile?.last_name as string) || "",
-        email_verified: (profile?.email_verified as boolean) || false,
+        email: profile?.email || "",
+        first_name: profile?.first_name || "",
+        last_name: profile?.last_name || "",
+        email_verified: profile?.email_verified || false,
         realm: backup.realm,
-        roles: (profile?.roles as string[]) || [],
+        roles: profile?.roles || [],
       },
       session: {
         token: "",

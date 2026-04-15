@@ -12,6 +12,11 @@ import {
 } from "@/components/ui/select";
 import { pageSizeOptions } from "@/lib/jobs/constants";
 
+const pageSizeItems = pageSizeOptions.map((size) => ({
+  value: String(size),
+  label: String(size),
+}));
+
 interface JobsPaginationProps {
   offset: number;
   limit: number;
@@ -73,10 +78,7 @@ export function JobsPagination({
       </span>
       <div className="flex items-center gap-1">
         <Select
-          items={pageSizeOptions.map((size) => ({
-            value: String(size),
-            label: String(size),
-          }))}
+          items={pageSizeItems}
           value={String(limit)}
           onValueChange={(value) =>
             value != null && onPageSizeChange(Number(value))

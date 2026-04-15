@@ -42,6 +42,8 @@ interface JobsDateFilterProps {
   onFilterChange: (from: Date | undefined, to: Date | undefined) => void;
 }
 
+const msPerDay = 24 * 60 * 60 * 1000;
+
 function conditionToApiDates(
   condition: DateCondition,
   date: Date | undefined,
@@ -52,9 +54,9 @@ function conditionToApiDates(
     case "is":
       return { from: date, to: date };
     case "is_before":
-      return { from: undefined, to: new Date(date.getTime() - 86400000) };
+      return { from: undefined, to: new Date(date.getTime() - msPerDay) };
     case "is_after":
-      return { from: new Date(date.getTime() + 86400000), to: undefined };
+      return { from: new Date(date.getTime() + msPerDay), to: undefined };
     case "is_on_or_before":
       return { from: undefined, to: date };
     case "is_on_or_after":
@@ -143,20 +145,16 @@ export function JobsDateFilter({
     [applyFilter],
   );
 
-  const handleClear = useCallback(() => {
-    setSingleDate(undefined);
-    setRangeFrom(undefined);
-    setRangeTo(undefined);
-    onFilterChange(undefined, undefined);
-    setOpen(false);
-  }, [onFilterChange]);
-
-  const handleDelete = useCallback(() => {
-    setSingleDate(undefined);
-    setRangeFrom(undefined);
-    setRangeTo(undefined);
-    onFilterChange(undefined, undefined);
-  }, [onFilterChange]);
+  const resetFilter = useCallback(
+    (closePopover: boolean) => {
+      setSingleDate(undefined);
+      setRangeFrom(undefined);
+      setRangeTo(undefined);
+      onFilterChange(undefined, undefined);
+      if (closePopover) setOpen(false);
+    },
+    [onFilterChange],
+  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -185,7 +183,7 @@ export function JobsDateFilter({
             className="h-8 w-8 p-0"
             onClick={(e) => {
               e.stopPropagation();
-              handleClear();
+              resetFilter(true);
             }}
           >
             <X className="h-3.5 w-3.5" />
@@ -220,7 +218,7 @@ export function JobsDateFilter({
             <button
               type="button"
               className="text-destructive ml-auto text-xs hover:underline"
-              onClick={handleDelete}
+              onClick={() => resetFilter(false)}
             >
               Clear
             </button>

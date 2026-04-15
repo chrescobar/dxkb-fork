@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+
+
 import {
   Search,
   RefreshCw,
@@ -25,6 +26,11 @@ import { Label } from "@/components/ui/label";
 import { formatServiceName } from "@/lib/jobs/formatting";
 import { statusOptions } from "@/lib/jobs/constants";
 import { JobsDateFilter } from "./jobs-date-filter";
+
+function formatTimestamp(ts: number | undefined): string | null {
+  if (!ts) return null;
+  return new Date(ts).toLocaleTimeString();
+}
 
 interface JobsToolbarProps {
   searchQuery: string;
@@ -65,25 +71,8 @@ export function JobsToolbar({
   dateTo,
   onDateFilterChange,
 }: JobsToolbarProps) {
-  // Keep the spin animation visible for at least 600ms
-  const [showSpin, setShowSpin] = useState(false);
-  const spinTimeout = useRef<ReturnType<typeof setTimeout>>(null);
 
-  useEffect(() => {
-    if (isRefreshing) {
-      setShowSpin(true);
-      if (spinTimeout.current) clearTimeout(spinTimeout.current);
-    } else if (showSpin) {
-      spinTimeout.current = setTimeout(() => setShowSpin(false), 600);
-    }
-    return () => {
-      if (spinTimeout.current) clearTimeout(spinTimeout.current);
-    };
-  }, [isRefreshing, showSpin]);
-
-  const lastUpdatedText = dataUpdatedAt
-    ? new Date(dataUpdatedAt).toLocaleTimeString()
-    : null;
+  const lastUpdatedText = formatTimestamp(dataUpdatedAt);
   return (
     <div className="space-y-3">
       {/* Search */}
@@ -231,7 +220,7 @@ export function JobsToolbar({
             disabled={isRefreshing}
           >
             <RefreshCw
-              className={`h-4 w-4 ${showSpin ? "animate-spin" : ""}`}
+              className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
             />
           </Button>
         </div>

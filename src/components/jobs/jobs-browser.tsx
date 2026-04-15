@@ -167,7 +167,8 @@ export function JobsBrowser() {
     return Object.keys(appSummary).sort();
   }, [appSummary]);
 
-  // Client-side filters (status, service, search) applied to the current page
+  // Client-side filters (status, search) applied to the current page
+  // Note: serviceFilter is handled server-side via the `app` param in useJobsData
   const filteredJobs = useMemo(() => {
     return jobs.filter((job) => {
       if (!job?.id || !job?.app) return false;
@@ -178,8 +179,6 @@ export function JobsBrowser() {
           (job.status === "running" || job.status === "in-progress");
         if (!isRunning && job.status !== statusFilter) return false;
       }
-
-      if (serviceFilter !== "all" && job.app !== serviceFilter) return false;
 
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
@@ -194,7 +193,7 @@ export function JobsBrowser() {
 
       return true;
     });
-  }, [jobs, statusFilter, serviceFilter, searchQuery]);
+  }, [jobs, statusFilter, searchQuery]);
 
   // Selection
   const selectedJobs = useMemo(

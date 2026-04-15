@@ -60,6 +60,11 @@ async function authFetch<T>(
   }
 }
 
+interface SuLoginCredentials {
+  targetUser: string;
+  password: string;
+}
+
 export async function signInEmail(
   credentials: SigninCredentials,
 ): Promise<AuthResponse<SignInResponse>> {
@@ -114,6 +119,24 @@ export async function getSessionWithUser(): Promise<AuthResponse<SessionResponse
   );
 }
 
+export async function suLogin(
+  credentials: SuLoginCredentials,
+): Promise<AuthResponse<SignInResponse>> {
+  return authFetch<SignInResponse>(
+    "/api/auth/su-login",
+    { method: "POST", body: JSON.stringify(credentials) },
+    "SU login failed",
+  );
+}
+
+export async function suExit(): Promise<AuthResponse<SignInResponse>> {
+  return authFetch<SignInResponse>(
+    "/api/auth/su-exit",
+    { method: "POST" },
+    "SU exit failed",
+  );
+}
+
 // ============================================================================
 // Combined Auth Client Export (better-auth style)
 // ============================================================================
@@ -129,4 +152,6 @@ export const bvbrcAuth = {
   requestPasswordReset,
   sendVerificationEmail,
   getSession: getSessionWithUser,
+  suLogin,
+  suExit,
 };

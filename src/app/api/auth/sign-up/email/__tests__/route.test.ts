@@ -24,6 +24,7 @@ import {
   extractRealmFromToken,
 } from "@/lib/auth/session";
 import { fetchUserProfile } from "@/lib/auth/profile";
+import type { UserProfile } from "@/lib/auth/types";
 
 const mockCreateSession = vi.mocked(createSession);
 const mockFetchUserProfile = vi.mocked(fetchUserProfile);
@@ -195,7 +196,7 @@ describe("POST /api/auth/sign-up/email", () => {
       first_name: "New",
       last_name: "User",
     };
-    mockFetchUserProfile.mockResolvedValue(profile);
+    mockFetchUserProfile.mockResolvedValue(profile as UserProfile);
     mockExtractRealmFromToken.mockReturnValue("patricbrc.org");
 
     server.use(
@@ -247,7 +248,7 @@ describe("POST /api/auth/sign-up/email", () => {
       id: "user123",
       email_verified: true,
     };
-    mockFetchUserProfile.mockResolvedValue(profile);
+    mockFetchUserProfile.mockResolvedValue(profile as UserProfile);
 
     server.use(
       http.post(

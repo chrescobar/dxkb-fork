@@ -7,6 +7,8 @@ import {
   requestPasswordReset,
   sendVerificationEmail,
   getSessionWithUser,
+  suLogin,
+  suExit,
 } from "@/lib/auth/client";
 
 describe("auth-client", () => {
@@ -233,6 +235,84 @@ describe("auth-client", () => {
 
       expect(result.data).toBeNull();
       expect(result.error).toEqual({ message: "Forbidden", status: 403 });
+    });
+  });
+
+  describe("suLogin", () => {
+    it("posts to /api/auth/su-login with targetUser and password", async () => {
+      const responseData = {
+        user: {
+          username: "targetuser",
+          email: "target@example.com",
+          token: "",
+          isImpersonating: true,
+          originalUsername: "adminuser",
+        },
+        session: { token: "", expiresAt: "2026-12-31" },
+      };
+      let capturedBody: unknown;
+      server.use(
+        http.post("*/api/auth/su-login", async ({ request }) => {
+          capturedBody = await request.json();
+          return HttpResponse.json(responseData);
+        }),
+      );
+
+      const result = await suLogin({
+        targetUser: "targetuser",
+        password: "adminpass",
+      });
+
+      expect(capturedBody).toEqual({
+        targetUser: "targetuser",
+        password: "adminpass",
+      });
+      expect(result).toEqual({ data: responseData, error: null });
+    });
+
+    it("returns error on 401", async () => {
+      server.use(
+        http.post("*/api/auth/su-login", () =>
+          HttpResponse.json(
+            { message: "Invalid credentials" },
+            { status: 401 },
+          ),
+        ),
+      );
+
+      const result = await suLogin({
+        targetUser: "baduser",
+        password: "wrongpass",
+      });
+
+      expect(result.data).toBeNull();
+      expect(result.error).toEqual({
+        message: "Invalid credentials",
+        status: 401,
+      });
+    });
+  });
+
+  describe("suExit", () => {
+    it("posts to /api/auth/su-exit and returns admin user data", async () => {
+      const responseData = {
+        user: {
+          username: "adminuser",
+          email: "admin@example.com",
+          token: "",
+          roles: ["admin"],
+        },
+        session: { token: "", expiresAt: "2026-12-31" },
+      };
+      server.use(
+        http.post("*/api/auth/su-exit", () =>
+          HttpResponse.json(responseData),
+        ),
+      );
+
+      const result = await suExit();
+
+      expect(result).toEqual({ data: responseData, error: null });
     });
   });
 });

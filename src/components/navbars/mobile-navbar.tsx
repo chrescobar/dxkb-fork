@@ -51,6 +51,7 @@ import {
   getRecentFolders,
   getWorkspaceFolderDisplayName,
 } from "@/lib/recent-workspace-folders";
+import { SuBanner } from "@/components/auth/su-banner";
 
 /* ------------------------------------------------------------------ */
 /*  Sub-components                                                     */
@@ -484,6 +485,7 @@ const MobileNavbar = () => {
           </div>
         </div>
       )}
+      <SuBanner />
     </header>
   );
 };

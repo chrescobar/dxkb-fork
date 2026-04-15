@@ -10,6 +10,9 @@ export interface AuthUser {
   last_name?: string;
   email_verified?: boolean;
   id?: string;
+  roles?: string[];
+  isImpersonating?: boolean;
+  originalUsername?: string;
 }
 
 export interface UserProfile {

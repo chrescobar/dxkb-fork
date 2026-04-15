@@ -1,9 +1,10 @@
 import { getRequiredEnv } from "@/lib/env";
+import type { UserProfile } from "@/lib/auth/types";
 
 export async function fetchUserProfile(
   username: string,
   token?: string,
-): Promise<Record<string, unknown> | null> {
+): Promise<UserProfile | null> {
   const headers: Record<string, string> = { Accept: "application/json" };
   if (token) headers["Authorization"] = token;
 

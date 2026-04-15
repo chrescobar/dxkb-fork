@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSession, createSession, deleteSession } from "@/lib/auth/session";
+import { getSession, createSession, deleteSession, getSuBackup } from "@/lib/auth/session";
 import { getRequiredEnv } from "@/lib/env";
 
 /** BV-BRC user shape from profile cookie or /user API */
@@ -9,6 +9,7 @@ interface SessionUserInfo {
   first_name?: string;
   last_name?: string;
   email_verified?: boolean;
+  roles?: string[];
 }
 
 /**
@@ -67,6 +68,10 @@ export async function GET() {
       });
     }
 
+    // Check for SU impersonation state
+    const suBackup = await getSuBackup();
+    const isImpersonating = !!suBackup.token && !!suBackup.userId;
+
     // Return better-auth style response (same shape as sign-in)
     return NextResponse.json({
       user: {
@@ -77,6 +82,11 @@ export async function GET() {
         last_name: userInfo?.last_name || "",
         email_verified: userInfo?.email_verified || false,
         realm,
+        roles: userInfo?.roles,
+        ...(isImpersonating && {
+          isImpersonating: true,
+          originalUsername: suBackup.userId,
+        }),
       },
       session: {
         token: "", // Token is in HTTP-only cookie

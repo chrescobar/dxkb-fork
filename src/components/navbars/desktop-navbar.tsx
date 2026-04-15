@@ -13,6 +13,7 @@ import Logo from "@/components/ui/logo";
 import { useAuth } from "@/contexts/auth-context";
 import { UserAvatarDropdown } from "@/components/navbars/user-avatar-dropdown";
 import { WorkspaceDropdownContent, workspaceUsername } from "@/components/navbars/workspace-dropdown-content";
+import { SuBanner } from "@/components/auth/su-banner";
 
 const DesktopNavbar = () => {
   const { isAuthenticated, user, isLoading } = useAuth();
@@ -22,7 +23,8 @@ const DesktopNavbar = () => {
   const isHome = pathname === '/';
 
   return (
-    <header className="bg-primary hidden h-18 items-center justify-between px-4 py-4 text-white lg:flex">
+    <header className="bg-primary hidden flex-col text-white lg:flex">
+      <div className="flex h-18 items-center justify-between px-4 py-4">
       <div className="flex items-center space-x-2 shrink-0">
         <Link id="dxkb-logo" href="/" className="shrink-0">
           <Logo
@@ -206,6 +208,8 @@ const DesktopNavbar = () => {
           {!isLoading && isAuthenticated && <UserAvatarDropdown />}
         </div>
       </div>
+    </div>
+    <SuBanner />
     </header>
   );
 };

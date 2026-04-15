@@ -6,6 +6,7 @@ vi.mock("@/lib/auth/session", () => ({
   getSession: vi.fn(),
   createSession: vi.fn(),
   deleteSession: vi.fn(),
+  getSuBackup: vi.fn(),
 }));
 
 vi.mock("@/lib/env", () => ({
@@ -19,13 +20,23 @@ import {
   getSession,
   createSession,
   deleteSession,
+  getSuBackup,
 } from "@/lib/auth/session";
 
 const mockGetSession = vi.mocked(getSession);
 const mockCreateSession = vi.mocked(createSession);
 const mockDeleteSession = vi.mocked(deleteSession);
+const mockGetSuBackup = vi.mocked(getSuBackup);
 
 describe("GET /api/auth/get-session", () => {
+  beforeEach(() => {
+    mockGetSuBackup.mockResolvedValue({
+      token: undefined,
+      userId: undefined,
+      realm: undefined,
+    });
+  });
+
   it("returns null user/session when no token", async () => {
     mockGetSession.mockResolvedValue({
       token: undefined,
@@ -208,5 +219,91 @@ describe("GET /api/auth/get-session", () => {
 
     expect(response.status).toBe(500);
     expect(data).toEqual({ user: null, session: null });
+  });
+
+  it("includes roles from upstream user profile in response", async () => {
+    mockGetSession.mockResolvedValue({
+      token: "valid-token",
+      userId: "adminuser",
+      realm: "bvbrc.org",
+    });
+
+    server.use(
+      http.get("http://mock-user-url/adminuser", () =>
+        HttpResponse.json({
+          id: "adminuser",
+          email: "admin@example.com",
+          first_name: "Admin",
+          last_name: "User",
+          email_verified: true,
+          roles: ["admin"],
+        }),
+      ),
+    );
+
+    const response = await GET();
+    const data = await response.json();
+
+    expect(data.user.roles).toEqual(["admin"]);
+  });
+
+  it("includes isImpersonating and originalUsername when SU backup cookies exist", async () => {
+    mockGetSession.mockResolvedValue({
+      token: "target-token",
+      userId: "targetuser",
+      realm: "bvbrc.org",
+    });
+
+    mockGetSuBackup.mockResolvedValue({
+      token: "admin-token",
+      userId: "adminuser",
+      realm: "bvbrc.org",
+    });
+
+    server.use(
+      http.get("http://mock-user-url/targetuser", () =>
+        HttpResponse.json({
+          id: "targetuser",
+          email: "target@example.com",
+          first_name: "Target",
+          last_name: "User",
+          email_verified: true,
+          roles: [],
+        }),
+      ),
+    );
+
+    const response = await GET();
+    const data = await response.json();
+
+    expect(data.user.isImpersonating).toBe(true);
+    expect(data.user.originalUsername).toBe("adminuser");
+  });
+
+  it("does not include impersonation fields when no SU backup exists", async () => {
+    mockGetSession.mockResolvedValue({
+      token: "valid-token",
+      userId: "normaluser",
+      realm: "bvbrc.org",
+    });
+
+    server.use(
+      http.get("http://mock-user-url/normaluser", () =>
+        HttpResponse.json({
+          id: "normaluser",
+          email: "user@example.com",
+          first_name: "Normal",
+          last_name: "User",
+          email_verified: true,
+          roles: [],
+        }),
+      ),
+    );
+
+    const response = await GET();
+    const data = await response.json();
+
+    expect(data.user.isImpersonating).toBeUndefined();
+    expect(data.user.originalUsername).toBeUndefined();
   });
 });

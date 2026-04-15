@@ -1,0 +1,59 @@
+src/lib/auth/profile.ts
+  48af88261f112390 2,7
+src/app/api/auth/su-exit/route.ts
+  48af88261f112390 20,22-25,27
+src/app/api/auth/sign-up/email/__tests__/route.test.ts
+  48af88261f112390 27,199,251
+src/app/api/auth/sign-in/email/__tests__/route.test.ts
+  48af88261f112390 27,179,215
+src/lib/auth/session.ts
+  48af88261f112390 39
+src/app/api/auth/su-login/route.ts
+  48af88261f112390 36,77,93,95-98,100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "3b9f67548173d7b02a1e2bfa8900fe03e469262c",
+  "prompts": {
+    "419a5305e23edd86": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1121456-7439-418d-8199-1af302a01764",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    },
+    "48af88261f112390": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a41485d6-f93a-48f0-bc19-fdc478577a8a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 23,
+      "total_deletions": 20,
+      "accepted_lines": 23,
+      "overriden_lines": 0
+    },
+    "b186c38203232bc3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2477c54-328c-477b-9f1e-c2ec999db01a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    }
+  }
+}

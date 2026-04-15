@@ -18,6 +18,10 @@ import {
   getSession,
   requireAuth,
   requireAuthToken,
+  createSuBackup,
+  getSuBackup,
+  deleteSuBackup,
+  restoreSuBackup,
 } from "../session";
 
 describe("getAuthToken", () => {
@@ -162,7 +166,7 @@ describe("createSession", () => {
 });
 
 describe("deleteSession", () => {
-  it("calls set with maxAge: 0 for all auth cookie names", async () => {
+  it("calls set with maxAge: 0 for all auth cookie names including SU backups", async () => {
     await deleteSession();
 
     const expectedCookies = [
@@ -170,6 +174,9 @@ describe("deleteSession", () => {
       "bvbrc_realm",
       "bvbrc_user_profile",
       "bvbrc_user_id",
+      "bvbrc_su_original_token",
+      "bvbrc_su_original_user_id",
+      "bvbrc_su_original_realm",
     ];
 
     for (const name of expectedCookies) {
@@ -288,5 +295,161 @@ describe("requireAuthToken", () => {
     expect(response.status).toBe(401);
     const body = await response.json();
     expect(body).toEqual({ error: "Authentication required" });
+  });
+});
+
+describe("createSuBackup", () => {
+  beforeEach(() => {
+    mockCookieStore.set.mockReset();
+  });
+
+  it("sets bvbrc_su_original_token, _user_id, and _realm cookies", async () => {
+    await createSuBackup("admin-token", "admin", "bvbrc.org");
+
+    expect(mockCookieStore.set).toHaveBeenCalledWith(
+      "bvbrc_su_original_token",
+      "admin-token",
+      expect.objectContaining({ httpOnly: true, path: "/" }),
+    );
+    expect(mockCookieStore.set).toHaveBeenCalledWith(
+      "bvbrc_su_original_user_id",
+      "admin",
+      expect.objectContaining({ httpOnly: true, path: "/" }),
+    );
+    expect(mockCookieStore.set).toHaveBeenCalledWith(
+      "bvbrc_su_original_realm",
+      "bvbrc.org",
+      expect.objectContaining({ httpOnly: true, path: "/" }),
+    );
+  });
+
+  it("handles missing realm gracefully", async () => {
+    await createSuBackup("admin-token", "admin");
+
+    const realmCalls = mockCookieStore.set.mock.calls.filter(
+      (call: unknown[]) => call[0] === "bvbrc_su_original_realm",
+    );
+    expect(realmCalls).toHaveLength(0);
+  });
+});
+
+describe("getSuBackup", () => {
+  beforeEach(() => {
+    mockCookieStore.get.mockReset();
+  });
+
+  it("returns token, userId, realm from SU backup cookies", async () => {
+    mockCookieStore.get.mockImplementation((name: string) => {
+      const values: Record<string, string> = {
+        bvbrc_su_original_token: "admin-token",
+        bvbrc_su_original_user_id: "admin",
+        bvbrc_su_original_realm: "bvbrc.org",
+      };
+      return values[name] ? { value: values[name] } : undefined;
+    });
+
+    const result = await getSuBackup();
+
+    expect(result).toEqual({
+      token: "admin-token",
+      userId: "admin",
+      realm: "bvbrc.org",
+    });
+  });
+
+  it("returns undefined values when no SU backup cookies exist", async () => {
+    mockCookieStore.get.mockReturnValue(undefined);
+
+    const result = await getSuBackup();
+
+    expect(result).toEqual({
+      token: undefined,
+      userId: undefined,
+      realm: undefined,
+    });
+  });
+});
+
+describe("deleteSuBackup", () => {
+  beforeEach(() => {
+    mockCookieStore.set.mockReset();
+  });
+
+  it("clears all SU backup cookies", async () => {
+    await deleteSuBackup();
+
+    for (const name of [
+      "bvbrc_su_original_token",
+      "bvbrc_su_original_user_id",
+      "bvbrc_su_original_realm",
+    ]) {
+      expect(mockCookieStore.set).toHaveBeenCalledWith(
+        name,
+        "",
+        expect.objectContaining({ maxAge: 0 }),
+      );
+    }
+  });
+});
+
+describe("restoreSuBackup", () => {
+  beforeEach(() => {
+    mockCookieStore.get.mockReset();
+    mockCookieStore.set.mockReset();
+  });
+
+  it("copies backup cookies to primary and clears backups", async () => {
+    mockCookieStore.get.mockImplementation((name: string) => {
+      const values: Record<string, string> = {
+        bvbrc_su_original_token: "admin-token",
+        bvbrc_su_original_user_id: "admin",
+        bvbrc_su_original_realm: "bvbrc.org",
+      };
+      return values[name] ? { value: values[name] } : undefined;
+    });
+
+    const result = await restoreSuBackup();
+
+    expect(result).toEqual({
+      token: "admin-token",
+      userId: "admin",
+      realm: "bvbrc.org",
+    });
+
+    // Verify primary cookies were set
+    expect(mockCookieStore.set).toHaveBeenCalledWith(
+      "bvbrc_token",
+      "admin-token",
+      expect.objectContaining({ httpOnly: true }),
+    );
+    expect(mockCookieStore.set).toHaveBeenCalledWith(
+      "bvbrc_user_id",
+      "admin",
+      expect.objectContaining({ httpOnly: true }),
+    );
+    expect(mockCookieStore.set).toHaveBeenCalledWith(
+      "bvbrc_realm",
+      "bvbrc.org",
+      expect.objectContaining({ httpOnly: true }),
+    );
+
+    // Verify backups were cleared
+    expect(mockCookieStore.set).toHaveBeenCalledWith(
+      "bvbrc_su_original_token",
+      "",
+      expect.objectContaining({ maxAge: 0 }),
+    );
+  });
+
+  it("returns undefined values when no backup exists", async () => {
+    mockCookieStore.get.mockReturnValue(undefined);
+
+    const result = await restoreSuBackup();
+
+    expect(result).toEqual({
+      token: undefined,
+      userId: undefined,
+      realm: undefined,
+    });
   });
 });

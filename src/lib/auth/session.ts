@@ -67,6 +67,9 @@ export async function deleteSession() {
     "bvbrc_realm",
     "bvbrc_user_profile",
     "bvbrc_user_id",
+    "bvbrc_su_original_token",
+    "bvbrc_su_original_user_id",
+    "bvbrc_su_original_realm",
   ];
 
   for (const name of cookiesToClear) {
@@ -149,4 +152,71 @@ export async function serverAuthenticatedFetch(
   });
 
   return response;
+}
+
+// ============================================================================
+// SU (Super User) backup cookie helpers
+// ============================================================================
+
+export const suSessionMaxAge = 3600 * 4; // Separate const for SU backup cookie expiry
+
+const suBackupCookieNames = [
+  "bvbrc_su_original_token",
+  "bvbrc_su_original_user_id",
+  "bvbrc_su_original_realm",
+] as const;
+
+export async function createSuBackup(
+  token: string,
+  userId: string,
+  realm?: string,
+) {
+  const cookieStore = await cookies();
+
+  cookieStore.set("bvbrc_su_original_token", token, {
+    ...cookieOptions,
+    maxAge: suSessionMaxAge,
+  });
+
+  cookieStore.set("bvbrc_su_original_user_id", userId, {
+    ...cookieOptions,
+    maxAge: suSessionMaxAge,
+  });
+
+  if (realm) {
+    cookieStore.set("bvbrc_su_original_realm", realm, {
+      ...cookieOptions,
+      maxAge: suSessionMaxAge,
+    });
+  }
+}
+
+export async function getSuBackup() {
+  const cookieStore = await cookies();
+
+  return {
+    token: cookieStore.get("bvbrc_su_original_token")?.value,
+    userId: cookieStore.get("bvbrc_su_original_user_id")?.value,
+    realm: cookieStore.get("bvbrc_su_original_realm")?.value,
+  };
+}
+
+export async function deleteSuBackup() {
+  const cookieStore = await cookies();
+
+  for (const name of suBackupCookieNames) {
+    cookieStore.set(name, "", { ...cookieOptions, maxAge: 0 });
+  }
+}
+
+export async function restoreSuBackup() {
+  const backup = await getSuBackup();
+
+  if (backup.token && backup.userId) {
+    await createSession(backup.token, backup.userId, backup.realm);
+  }
+
+  await deleteSuBackup();
+
+  return backup;
 }

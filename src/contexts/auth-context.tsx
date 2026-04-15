@@ -14,6 +14,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AuthUser, SigninCredentials, SignupCredentials } from "@/lib/auth/types";
 import { bvbrcAuth } from "@/lib/auth/client";
 import { isProtectedPagePath } from "@/lib/auth/routes";
+import { toast } from "sonner";
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -23,6 +24,11 @@ interface AuthContextType {
   refreshAuth: () => Promise<void>;
   requestPasswordReset: (usernameOrEmail: string) => Promise<void>;
   sendVerificationEmail: () => Promise<void>;
+  suLogin: (targetUser: string, password: string) => Promise<void>;
+  suExit: () => Promise<void>;
+  isAdmin: boolean;
+  isImpersonating: boolean;
+  originalUsername: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   isVerified: boolean;
@@ -194,6 +200,49 @@ export function AuthProvider({
     }
   }, []);
 
+  const suLoginHandler = useCallback(async (targetUser: string, password: string) => {
+    setIsLoading(true);
+    try {
+      const result = await bvbrcAuth.suLogin({ targetUser, password });
+
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+
+      if (result.data?.user) {
+        setUser(result.data.user);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const suExitHandler = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const result = await bvbrcAuth.suExit();
+
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+
+      if (result.data?.user) {
+        setUser(result.data.user);
+        toast.success("Returned to your account");
+      } else {
+        const userData = await fetchSession();
+        if (userData) {
+          setUser(userData);
+        }
+      }
+    } catch (error) {
+      console.error("SU exit failed:", error);
+      toast.error("Failed to exit impersonation");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [fetchSession]);
+
   const value = useMemo(() => ({
     user,
     signIn,
@@ -202,9 +251,14 @@ export function AuthProvider({
     refreshAuth,
     requestPasswordReset,
     sendVerificationEmail,
+    suLogin: suLoginHandler,
+    suExit: suExitHandler,
     isLoading,
     isAuthenticated: !!user,
     isVerified: user?.email_verified !== false,
+    isAdmin: user?.roles?.includes("admin") ?? false,
+    isImpersonating: user?.isImpersonating ?? false,
+    originalUsername: user?.originalUsername ?? null,
   }), [
     user,
     signIn,
@@ -213,6 +267,8 @@ export function AuthProvider({
     refreshAuth,
     requestPasswordReset,
     sendVerificationEmail,
+    suLoginHandler,
+    suExitHandler,
     isLoading,
   ]);
 

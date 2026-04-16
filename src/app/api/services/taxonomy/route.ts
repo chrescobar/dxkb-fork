@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRequiredEnv } from "@/lib/env";
-import { withOptionalAuth } from "@/lib/api/server";
+import { withErrorHandling } from "@/lib/api/server";
 
-export const GET = withOptionalAuth(async (request: NextRequest) => {
+export const GET = withErrorHandling(async (request: NextRequest) => {
   const { searchParams } = new URL(request.url);
   const queryString = searchParams.toString();
   const baseUrl = getRequiredEnv("BVBRC_WEBSITE_API_URL");

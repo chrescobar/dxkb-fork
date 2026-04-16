@@ -8,18 +8,13 @@ vi.mock("@/lib/app-service", () => ({
   createAppService: vi.fn(),
 }));
 
-vi.mock("@/lib/jsonrpc-client", () => {
-  class JsonRpcError extends Error {
-    code: number;
-    data: unknown;
-    constructor(message: string, code: number, data?: unknown) {
-      super(message);
-      this.name = "JsonRpcError";
-      this.code = code;
-      this.data = data;
-    }
-  }
-  return { JsonRpcError };
+vi.mock("@/lib/jsonrpc-client", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/jsonrpc-client")>();
+  return {
+    ...actual,
+    JsonRpcError: actual.JsonRpcError,
+    jsonRpcErrorCodes: actual.jsonRpcErrorCodes,
+  };
 });
 
 import { POST } from "../route";
@@ -161,7 +156,11 @@ describe("POST /api/services/app-service/submit", () => {
 
     expect(response.status).toBe(500);
     expect(data).toEqual(
-      expect.objectContaining({ error: "RPC failed", code: "upstream" }),
+      expect.objectContaining({
+        error: "RPC failed",
+        code: "upstream",
+        details: { detail: "server crash" },
+      }),
     );
   });
 

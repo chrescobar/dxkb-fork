@@ -7,8 +7,8 @@ vi.mock("next/headers", () => ({
 }));
 
 import { NextRequest, NextResponse } from "next/server";
-import { errorResponse, withAuth, withOptionalAuth } from "../server";
-import { JsonRpcError } from "@/lib/jsonrpc-client";
+import { errorResponse, withAuth, withOptionalAuth, withErrorHandling } from "../server";
+import { JsonRpcError, jsonRpcErrorCodes } from "@/lib/jsonrpc-client";
 
 describe("errorResponse", () => {
   it("normalizes a plain Error to { error } with status 500", async () => {
@@ -20,19 +20,47 @@ describe("errorResponse", () => {
     );
   });
 
-  it("normalizes a JsonRpcError with code and data", async () => {
-    const rpcError = new JsonRpcError("Method not found", -32601, {
-      detail: "x",
+  it("preserves JsonRpcError.data as details and maps code to HTTP status", async () => {
+    const rpcError = new JsonRpcError("Not found", jsonRpcErrorCodes.NOT_FOUND, {
+      resource: "genome",
     });
     const response = errorResponse(rpcError);
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(404);
     const body = await response.json();
     expect(body).toEqual(
       expect.objectContaining({
-        error: "Method not found",
-        code: "upstream",
+        error: "Not found",
+        code: "not_found",
+        details: { resource: "genome" },
       }),
     );
+  });
+
+  it("maps UNAUTHORIZED RPC code to 401", async () => {
+    const rpcError = new JsonRpcError("Access denied", jsonRpcErrorCodes.UNAUTHORIZED);
+    const response = errorResponse(rpcError);
+    expect(response.status).toBe(401);
+    const body = await response.json();
+    expect(body.code).toBe("unauthenticated");
+  });
+
+  it("maps VALIDATION_ERROR RPC code to 400", async () => {
+    const rpcError = new JsonRpcError("Bad input", jsonRpcErrorCodes.VALIDATION_ERROR, {
+      field: "genome_id",
+    });
+    const response = errorResponse(rpcError);
+    expect(response.status).toBe(400);
+    const body = await response.json();
+    expect(body.code).toBe("validation");
+    expect(body.details).toEqual({ field: "genome_id" });
+  });
+
+  it("falls back to 500 for unknown RPC codes", async () => {
+    const rpcError = new JsonRpcError("Internal error", jsonRpcErrorCodes.INTERNAL_ERROR);
+    const response = errorResponse(rpcError);
+    expect(response.status).toBe(500);
+    const body = await response.json();
+    expect(body.code).toBe("upstream");
   });
 
   it("uses a provided fallback status", () => {
@@ -137,5 +165,47 @@ describe("withOptionalAuth", () => {
     const response = await handler(makeRequest(), {});
     const body = await response.json();
     expect(body.token).toBe("my-token");
+  });
+});
+
+describe("withErrorHandling", () => {
+  function makeRequest(
+    url = "http://localhost/api/test",
+    init?: RequestInit,
+  ): NextRequest {
+    return new NextRequest(url, init);
+  }
+
+  it("passes through the handler response on success", async () => {
+    const handler = withErrorHandling(async () => {
+      return NextResponse.json({ ok: true });
+    });
+
+    const response = await handler(makeRequest(), {});
+    expect(response.status).toBe(200);
+    const body = await response.json();
+    expect(body.ok).toBe(true);
+  });
+
+  it("catches thrown errors and returns errorResponse", async () => {
+    const handler = withErrorHandling(async () => {
+      throw new Error("boom");
+    });
+
+    const response = await handler(makeRequest(), {});
+    expect(response.status).toBe(500);
+    const body = await response.json();
+    expect(body.error).toBe("boom");
+  });
+
+  it("does not read auth cookies", async () => {
+    mockCookieStore.get.mockClear();
+
+    const handler = withErrorHandling(async () => {
+      return NextResponse.json({ ok: true });
+    });
+
+    await handler(makeRequest(), {});
+    expect(mockCookieStore.get).not.toHaveBeenCalled();
   });
 });

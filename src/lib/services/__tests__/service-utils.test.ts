@@ -82,7 +82,7 @@ describe("submitServiceJob", () => {
     );
   });
 
-  it("returns the error message from a JSON error body", async () => {
+  it("returns the error message and details from a JSON error body", async () => {
     server.use(
       http.post("/api/services/app-service/submit", () => {
         return HttpResponse.json(
@@ -94,9 +94,8 @@ describe("submitServiceJob", () => {
 
     const result = await submitServiceJob(appName, appParams);
 
-    // The API facade returns the error.message from ApiCallError which is
-    // the body's error string; details are stored on the error object separately.
     expect(result.error).toContain("Validation failed");
+    expect(result.details).toEqual({ field: "genome_id" });
   });
 
   it("uses HTTP status fallback message when body cannot be parsed", async () => {

@@ -1,0 +1,68 @@
+src/app/services/(metagenomics)/metagenomic-binning/page.tsx
+  d05cd75852a1f7d8 169,188
+src/app/services/(metagenomics)/taxonomic-classification/page.tsx
+  d05cd75852a1f7d8 286,318
+src/hooks/services/use-rerun-form.ts
+  d05cd75852a1f7d8 50,52,79,123-127,137,153-154
+src/app/services/(metagenomics)/metagenomic-read-mapping/page.tsx
+  d05cd75852a1f7d8 151,170
+src/hooks/services/use-service-form-submission.ts
+  d05cd75852a1f7d8 11,32,42
+src/app/services/(protein-tools)/meta-cats/page.tsx
+  d05cd75852a1f7d8 124
+src/app/services/(genomics)/variation-analysis/page.tsx
+  d05cd75852a1f7d8 154,173
+src/app/services/(genomics)/genome-assembly/page.tsx
+  d05cd75852a1f7d8 74,81-87,89-95,203,223
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "d8ce26c513d4302eb1e18388b82ea0b4a587ffcc",
+  "prompts": {
+    "419a5305e23edd86": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1121456-7439-418d-8199-1af302a01764",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    },
+    "b186c38203232bc3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2477c54-328c-477b-9f1e-c2ec999db01a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    },
+    "d05cd75852a1f7d8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "739f0bda-98ac-4eb6-b9d9-9badda0df2b0",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 10964,
+      "total_deletions": 112,
+      "accepted_lines": 40,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_e893c4a39fbc49": {
+      "author": "Chris Escobar"
+    }
+  }
+}

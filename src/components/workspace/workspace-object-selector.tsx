@@ -24,7 +24,7 @@ import { useWorkspaceObjects } from "@/hooks/services/workspace/use-workspace-ob
 import { WorkspaceObject } from "@/lib/workspace-client";
 import { validateWorkspaceObjectTypes } from "@/lib/services/workspace/helpers";
 import { ValidWorkspaceObjectTypes } from "@/lib/services/workspace/types";
-import { useAuth } from "@/contexts/auth-context";
+import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 interface WorkspaceObjectSelectorProps {

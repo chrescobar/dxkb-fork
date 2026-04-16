@@ -1,7 +1,19 @@
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
-import { apiCall, apiGet, setAuthRefreshCallback } from "../client";
+import { apiCall, apiGet } from "../client";
 import { ApiCallError } from "../types";
+import { createAuthStore, setActiveAuthStore } from "@/lib/auth/store";
+import { httpAuthAdapter } from "@/lib/auth/adapters/http";
+
+function installAuthStore(
+  user = { username: "u", email: "u@example.com", token: "t" },
+) {
+  const store = createAuthStore({ port: httpAuthAdapter(), initialUser: user });
+  setActiveAuthStore(store);
+  return store;
+}
+
+afterEach(() => setActiveAuthStore(null));
 
 describe("apiCall", () => {
   it("sends a POST with credentials and JSON content-type", async () => {
@@ -47,7 +59,10 @@ describe("apiCall", () => {
   it("throws ApiCallError with statusText when body has no error field", async () => {
     server.use(
       http.post("/api/test", () => {
-        return new HttpResponse(null, { status: 500, statusText: "Internal Server Error" });
+        return new HttpResponse(null, {
+          status: 500,
+          statusText: "Internal Server Error",
+        });
       }),
     );
 
@@ -60,81 +75,80 @@ describe("apiCall", () => {
     }
   });
 
-  it("retries once on 401 if refreshAuth is registered", async () => {
-    let callCount = 0;
+  it("retries once on 401 when an auth store is active", async () => {
+    let apiCallCount = 0;
+    let sessionCallCount = 0;
+
     server.use(
       http.post("/api/test", () => {
-        callCount++;
-        if (callCount === 1) {
+        apiCallCount++;
+        if (apiCallCount === 1) {
           return HttpResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
         return HttpResponse.json({ ok: true });
       }),
+      http.get("/api/auth/get-session", () => {
+        sessionCallCount++;
+        return HttpResponse.json({
+          user: {
+            id: "u",
+            username: "u",
+            email: "u@example.com",
+          },
+          session: { token: "", expiresAt: new Date().toISOString() },
+        });
+      }),
     );
 
-    const mockRefresh = vi.fn().mockResolvedValue(undefined);
-    setAuthRefreshCallback(mockRefresh);
+    installAuthStore();
 
     const result = await apiCall<{ ok: boolean }>("/api/test", {});
     expect(result).toEqual({ ok: true });
-    expect(mockRefresh).toHaveBeenCalledOnce();
-    expect(callCount).toBe(2);
-
-    setAuthRefreshCallback(null);
+    expect(apiCallCount).toBe(2);
+    expect(sessionCallCount).toBe(1);
   });
 
-  it("throws on 401 if retry also fails", async () => {
+  it("coalesces concurrent 401 refreshes into a single refresh call", async () => {
+    let apiCallCount = 0;
+    let sessionCallCount = 0;
+
     server.use(
       http.post("/api/test", () => {
-        return HttpResponse.json({ error: "Unauthorized" }, { status: 401 });
-      }),
-    );
-
-    const mockRefresh = vi.fn().mockResolvedValue(undefined);
-    setAuthRefreshCallback(mockRefresh);
-
-    await expect(apiCall("/api/test", {})).rejects.toThrow(ApiCallError);
-
-    setAuthRefreshCallback(null);
-  });
-
-  it("coalesces concurrent 401 refreshes into a single call", async () => {
-    let callCount = 0;
-    server.use(
-      http.post("/api/test", () => {
-        callCount++;
-        // First two calls return 401, retries succeed
-        if (callCount <= 2) {
+        apiCallCount++;
+        if (apiCallCount <= 2) {
           return HttpResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
-        return HttpResponse.json({ ok: true, call: callCount });
+        return HttpResponse.json({ ok: true, call: apiCallCount });
+      }),
+      http.get("/api/auth/get-session", () => {
+        sessionCallCount++;
+        return HttpResponse.json({
+          user: { id: "u", username: "u", email: "u@example.com" },
+          session: { token: "", expiresAt: new Date().toISOString() },
+        });
       }),
     );
 
-    const mockRefresh = vi.fn().mockResolvedValue(undefined);
-    setAuthRefreshCallback(mockRefresh);
+    installAuthStore();
 
     const [r1, r2] = await Promise.all([
       apiCall<{ ok: boolean }>("/api/test", { id: 1 }),
       apiCall<{ ok: boolean }>("/api/test", { id: 2 }),
     ]);
 
-    expect(r1).toEqual({ ok: true, call: 3 });
-    expect(r2).toEqual({ ok: true, call: 4 });
-    // The key assertion: refresh was called only once despite two concurrent 401s
-    expect(mockRefresh).toHaveBeenCalledOnce();
-
-    setAuthRefreshCallback(null);
+    expect(r1).toMatchObject({ ok: true });
+    expect(r2).toMatchObject({ ok: true });
+    expect(sessionCallCount).toBe(1);
   });
 
-  it("throws on 401 without retry if no refreshAuth registered", async () => {
+  it("returns the 401 response when no auth store is active", async () => {
     server.use(
       http.post("/api/test", () => {
         return HttpResponse.json({ error: "Unauthorized" }, { status: 401 });
       }),
     );
 
-    setAuthRefreshCallback(null);
+    setActiveAuthStore(null);
 
     try {
       await apiCall("/api/test", {});

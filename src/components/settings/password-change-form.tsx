@@ -15,14 +15,13 @@ import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { RequiredFormLabel } from "@/components/forms/required-form-components";
 import { PasswordInput } from "@/components/settings/password-input";
 
-import { useAuthenticatedFetch } from "@/hooks/use-authenticated-fetch-client";
+import { apiFetch } from "@/lib/auth";
 import {
   passwordFormSchema,
   type PasswordFormData,
 } from "@/lib/forms/settings/settings-form-utils";
 
 export function PasswordChangeForm() {
-  const authenticatedFetch = useAuthenticatedFetch();
 
   const form = useForm({
     defaultValues: {
@@ -32,8 +31,9 @@ export function PasswordChangeForm() {
     } satisfies PasswordFormData,
     onSubmit: async ({ value }) => {
       try {
-        const response = await authenticatedFetch("/api/auth/change-password", {
+        const response = await apiFetch("/api/auth/change-password", {
           method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             currentPassword: value.currentPassword,
             newPassword: value.newPassword,

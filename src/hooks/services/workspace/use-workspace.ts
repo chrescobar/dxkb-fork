@@ -1,16 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuthenticatedFetch } from "@/hooks/use-authenticated-fetch-client";
+import { apiFetch } from "@/lib/auth";
 import { toast } from "sonner";
 import type { KillJobResponse } from "@/types/workspace";
 
 // Hook for killing jobs — invalidates jobs list on success
 export function useKillJob() {
-  const authenticatedFetch = useAuthenticatedFetch();
   const queryClient = useQueryClient();
 
   return useMutation<KillJobResponse, Error, string>({
     mutationFn: async (jobId) => {
-      const response = await authenticatedFetch(
+      const response = await apiFetch(
         `/api/services/app-service/jobs/${jobId}/kill`,
         { method: "POST" },
       );

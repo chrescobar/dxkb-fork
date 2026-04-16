@@ -1,29 +1,38 @@
 import { renderHook } from "@testing-library/react";
 import { useAuthStyles } from "@/hooks/use-auth-styles";
 
-const { mockAuth } = vi.hoisted(() => ({ mockAuth: { isAuthenticated: false, isLoading: false } }));
-vi.mock("@/contexts/auth-context", () => ({
+const { mockAuth } = vi.hoisted(() => ({
+  mockAuth: { isAuthenticated: false, status: "guest" as "loading" | "authed" | "guest" },
+}));
+vi.mock("@/lib/auth", () => ({
   useAuth: () => mockAuth,
 }));
 vi.mock("@/lib/utils", () => ({
   cn: (...args: unknown[]) => args.flat().filter(Boolean).join(" "),
 }));
 
+function setAuth(isAuthenticated: boolean, isLoading: boolean) {
+  Object.assign(mockAuth, {
+    isAuthenticated,
+    status: isLoading ? "loading" : isAuthenticated ? "authed" : "guest",
+  });
+}
+
 describe("useAuthStyles", () => {
   beforeEach(() => {
-    Object.assign(mockAuth, { isAuthenticated: false, isLoading: false });
+    setAuth(false, false);
   });
 
   describe("authClass", () => {
     it("returns authenticatedClass when authenticated", () => {
-      Object.assign(mockAuth, { isAuthenticated: true, isLoading: false });
+      setAuth(true, false);
       const { result } = renderHook(() => useAuthStyles());
 
       expect(result.current.authClass("auth-yes", "auth-no")).toBe("auth-yes");
     });
 
     it("returns unauthenticatedClass when not authenticated", () => {
-      Object.assign(mockAuth, { isAuthenticated: false, isLoading: false });
+      setAuth(false, false);
       const { result } = renderHook(() => useAuthStyles());
 
       expect(result.current.authClass("auth-yes", "auth-no")).toBe("auth-no");
@@ -32,14 +41,14 @@ describe("useAuthStyles", () => {
 
   describe("whenAuthenticated", () => {
     it("returns the class when authenticated", () => {
-      Object.assign(mockAuth, { isAuthenticated: true, isLoading: false });
+      setAuth(true, false);
       const { result } = renderHook(() => useAuthStyles());
 
       expect(result.current.whenAuthenticated("visible")).toBe("visible");
     });
 
     it("returns empty string when not authenticated", () => {
-      Object.assign(mockAuth, { isAuthenticated: false, isLoading: false });
+      setAuth(false, false);
       const { result } = renderHook(() => useAuthStyles());
 
       expect(result.current.whenAuthenticated("visible")).toBe("");
@@ -48,14 +57,14 @@ describe("useAuthStyles", () => {
 
   describe("whenUnauthenticated", () => {
     it("returns the class when not authenticated", () => {
-      Object.assign(mockAuth, { isAuthenticated: false, isLoading: false });
+      setAuth(false, false);
       const { result } = renderHook(() => useAuthStyles());
 
       expect(result.current.whenUnauthenticated("hidden")).toBe("hidden");
     });
 
     it("returns empty string when authenticated", () => {
-      Object.assign(mockAuth, { isAuthenticated: true, isLoading: false });
+      setAuth(true, false);
       const { result } = renderHook(() => useAuthStyles());
 
       expect(result.current.whenUnauthenticated("hidden")).toBe("");
@@ -64,14 +73,14 @@ describe("useAuthStyles", () => {
 
   describe("whenLoading", () => {
     it("returns the class when loading", () => {
-      Object.assign(mockAuth, { isAuthenticated: false, isLoading: true });
+      setAuth(false, true);
       const { result } = renderHook(() => useAuthStyles());
 
       expect(result.current.whenLoading("spinner")).toBe("spinner");
     });
 
     it("returns empty string when not loading", () => {
-      Object.assign(mockAuth, { isAuthenticated: false, isLoading: false });
+      setAuth(false, false);
       const { result } = renderHook(() => useAuthStyles());
 
       expect(result.current.whenLoading("spinner")).toBe("");
@@ -80,7 +89,7 @@ describe("useAuthStyles", () => {
 
   describe("authClasses", () => {
     it("combines classes where condition is true", () => {
-      Object.assign(mockAuth, { isAuthenticated: true, isLoading: false });
+      setAuth(true, false);
       const { result } = renderHook(() => useAuthStyles());
 
       const classes = result.current.authClasses({
@@ -95,7 +104,7 @@ describe("useAuthStyles", () => {
     });
 
     it("returns empty string when all conditions are false", () => {
-      Object.assign(mockAuth, { isAuthenticated: false, isLoading: false });
+      setAuth(false, false);
       const { result } = renderHook(() => useAuthStyles());
 
       const classes = result.current.authClasses({

@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/auth-context";
+import { authAdmin } from "@/lib/auth";
 
 interface SuLoginDialogProps {
   open: boolean;
@@ -23,7 +23,6 @@ interface SuLoginDialogProps {
 }
 
 export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
-  const { suLogin } = useAuth();
   const [targetUser, setTargetUser] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,16 +33,18 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
     if (!targetUser.trim() || !password) return;
 
     setIsSubmitting(true);
-    try {
-      await suLogin(targetUser.trim(), password);
-      onOpenChange(false);
-      setTargetUser("");
-      setPassword("");
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "SU login failed");
-    } finally {
-      setIsSubmitting(false);
+    const { error } = await authAdmin.impersonate.start(
+      targetUser.trim(),
+      password,
+    );
+    setIsSubmitting(false);
+    if (error) {
+      toast.error(error.message || "SU login failed");
+      return;
     }
+    onOpenChange(false);
+    setTargetUser("");
+    setPassword("");
   };
 
   const handleOpenChange = (nextOpen: boolean) => {

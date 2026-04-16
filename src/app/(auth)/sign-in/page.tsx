@@ -4,7 +4,7 @@ import { z } from "zod";
 import { useForm } from "@tanstack/react-form";
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useAuth } from "@/contexts/auth-context";
+import { useAuth, useSignIn } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -36,7 +36,9 @@ type FormValues = z.infer<typeof formSchema>;
 function SigninForm() {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { signIn, isLoading, isAuthenticated } = useAuth();
+  const { isAuthenticated, status } = useAuth();
+  const { signIn, isPending } = useSignIn();
+  const isLoading = status === "loading" || isPending;
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -58,17 +60,14 @@ function SigninForm() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: formSchema as any, onSubmit: formSchema as any },
     onSubmit: async ({ value }) => {
-      try {
-        await signIn(value as FormValues);
-        toast.success("Logged in successfully. Welcome to DXKB!", {
-          closeButton: true,
-        });
-        // Navigation will happen automatically via useEffect
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Invalid username or password",
-        );
+      const { error: signInError } = await signIn(value as FormValues);
+      if (signInError) {
+        setError(signInError.message || "Invalid username or password");
+        return;
       }
+      toast.success("Logged in successfully. Welcome to DXKB!", {
+        closeButton: true,
+      });
     },
   });
 

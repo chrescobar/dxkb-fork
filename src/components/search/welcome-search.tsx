@@ -6,14 +6,15 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { SearchBar } from "@/components/search/search-bar";
 import ThemeContent from "@/components/ui/theme-content";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuth } from "@/contexts/auth-context";
+import { useAuth, authAccount } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 const WelcomeSearch = () => {
-  const { isAuthenticated, isVerified, sendVerificationEmail } = useAuth();
+  const { isAuthenticated, isVerified } = useAuth();
+  const sendVerificationEmail = () => authAccount.sendVerificationEmail();
 
   return (
     <section className="flex-grow">

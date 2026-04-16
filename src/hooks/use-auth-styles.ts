@@ -1,8 +1,9 @@
-import { useAuth } from "@/contexts/auth-context";
+import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 export function useAuthStyles() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, status } = useAuth();
+  const isLoading = status === "loading";
 
   /**
    * Returns a class based on authentication status

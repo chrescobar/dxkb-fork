@@ -15,7 +15,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SignoutButton } from "@/components/auth/signout-button";
 import { SuLoginDialog } from "@/components/auth/su-login-dialog";
-import { useAuth } from "@/contexts/auth-context";
+import { useAuth, authAdmin, authAccount } from "@/lib/auth";
+import { toast } from "sonner";
 import { encodeWorkspaceSegment, workspaceUsername } from "@/lib/utils";
 
 import {
@@ -29,13 +30,16 @@ import {
 } from "lucide-react";
 
 export function UserAvatarDropdown() {
-  const {
-    user,
-    sendVerificationEmail,
-    isAdmin,
-    isImpersonating,
-    suExit,
-  } = useAuth();
+  const { user, isAdmin, isImpersonating } = useAuth();
+  const sendVerificationEmail = () => authAccount.sendVerificationEmail();
+  const suExit = async () => {
+    const { data, error } = await authAdmin.impersonate.exit();
+    if (error) {
+      toast.error("Failed to exit impersonation");
+      return;
+    }
+    if (data) toast.success("Returned to your account");
+  };
   const wsUsername = workspaceUsername(user);
   const [suDialogOpen, setSuDialogOpen] = useState(false);
 

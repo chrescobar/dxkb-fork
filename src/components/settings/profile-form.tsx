@@ -18,8 +18,7 @@ import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { RequiredFormLabel } from "@/components/forms/required-form-components";
 import { Label } from "@/components/ui/label";
 
-import { useAuth } from "@/contexts/auth-context";
-import { useAuthenticatedFetch } from "@/hooks/use-authenticated-fetch-client";
+import { apiFetch, authAccount } from "@/lib/auth";
 import type { UserProfile } from "@/lib/auth/types";
 import {
   profileFormSchema,
@@ -32,9 +31,7 @@ interface ProfileFormProps {
 }
 
 export function ProfileForm({ profile }: ProfileFormProps) {
-  const { refreshAuth } = useAuth();
   const queryClient = useQueryClient();
-  const authenticatedFetch = useAuthenticatedFetch();
 
   const form = useForm({
     defaultValues: {
@@ -55,8 +52,9 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       }
 
       try {
-        const response = await authenticatedFetch("/api/auth/profile", {
+        const response = await apiFetch("/api/auth/profile", {
           method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(patches),
         });
 
@@ -68,7 +66,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
 
         toast.success("Profile updated successfully.");
         await Promise.all([
-          refreshAuth(),
+          authAccount.refresh(),
           queryClient.invalidateQueries({ queryKey: ["user-profile"] }),
         ]);
       } catch {

@@ -178,7 +178,6 @@ export default function GenomeAlignmentServicePage() {
     }
   };
 
-  // Rerun: pre-fill form from job parameters
   useRerunForm<Record<string, unknown>>({
     form,
     fields: ["output_path", "output_file"] as const,

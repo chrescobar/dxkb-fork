@@ -66,7 +66,6 @@ export default function BlastServicePage() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  // Setup service debugging and form submission
   const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "Homology",
     displayName: "BLAST",
@@ -81,7 +80,6 @@ export default function BlastServicePage() {
     onSubmit: async ({ value }) => {
       const data = value as BlastFormData;
 
-      // Validate FASTA data if using fasta_data input source
       if (data.input_source === "fasta_data" && data.input_fasta_data) {
         if (!isFastaValid) {
           const errorMessage =
@@ -95,7 +93,6 @@ export default function BlastServicePage() {
     },
   });
 
-  // Use custom hooks for simplified state management
   const availableDatabaseTypes = useBlastDatabaseTypes(form);
   const currentBlastProgram = useBlastProgramTracking(form);
   const dbPrecomputedDatabase = useStore(form.store, (s) => s.values.db_precomputed_database);
@@ -133,7 +130,6 @@ export default function BlastServicePage() {
     }
   }, [currentBlastProgram]);
 
-  // Track previous program to detect changes
   const previousProgramRef = useRef<BlastFormData["blast_program"]>(currentBlastProgram);
 
   // Prevents the program-change clear effect from wiping inputs set by a rerun
@@ -154,17 +150,14 @@ export default function BlastServicePage() {
 
     // Only clear if program actually changed (not on initial mount) and not during rerun application
     if (previousProgram !== currentBlastProgram && previousProgram !== undefined && !isApplyingRerunRef.current) {
-      // Clear file-based input fields
       form.setFieldValue("input_fasta_file", "");
     }
 
     // Rerun application is complete once this effect has run after the program change
     isApplyingRerunRef.current = false;
-    // Update ref for next comparison
     previousProgramRef.current = currentBlastProgram;
   }, [currentBlastProgram, form]);
 
-  // Rerun: pre-fill form from job parameters
   useRerunForm<Record<string, unknown>>({
     form,
     fields: [
@@ -212,7 +205,6 @@ export default function BlastServicePage() {
   ) => {
     const preservedFastaData = String((form.state.values as Record<string, unknown>).input_fasta_data ?? "");
 
-    // Clear all input fields, then set the appropriate one
     form.setFieldValue("input_fasta_data", "");
     form.setFieldValue("input_fasta_file", "");
     form.setFieldValue("input_feature_group", "");
@@ -231,10 +223,7 @@ export default function BlastServicePage() {
   const handleDatabaseSourceChange = (
     newDBPrecomputedDatabase: BlastFormData["db_precomputed_database"],
   ) => {
-    // Update database source and derived db_source
     form.setFieldValue("db_source", resolveDbSource(newDBPrecomputedDatabase));
-
-    // Clear all database-specific fields
     form.setFieldValue("db_genome_list", []);
     form.setFieldValue("db_genome_group", "");
     form.setFieldValue("db_feature_group", "");
@@ -827,7 +816,6 @@ export default function BlastServicePage() {
         </div>
       </form>
 
-      {/* Job Params Dialog */}
       <JobParamsDialog {...dialogProps} />
     </section>
   );

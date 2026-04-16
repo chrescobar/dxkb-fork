@@ -103,7 +103,6 @@ export default function TaxonomicClassificationPage() {
   // Track if this is the initial mount to avoid triggering validation on load
   const isInitialMount = useRef(true);
 
-  // Handle form reset
   const handleReset = () => {
     form.reset(defaultTaxonomicClassificationFormValues);
     setLibrariesAndSync([]);
@@ -116,7 +115,6 @@ export default function TaxonomicClassificationPage() {
     setSraResetKey((k) => k + 1);
   };
 
-  // Setup service form submission
   const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "TaxonomicClassification",
     displayName: "Taxonomic Classification",
@@ -222,7 +220,6 @@ export default function TaxonomicClassificationPage() {
     },
   });
 
-  // Rerun: pre-fill form from job parameters
   useRerunForm<Record<string, unknown>>({
     form,
     fields: [
@@ -269,7 +266,6 @@ export default function TaxonomicClassificationPage() {
     },
   });
 
-  // Handle adding paired library
   const handlePairedLibraryAdd = () => {
     addPairedLibrary({
       read1: pairedRead1,
@@ -287,7 +283,7 @@ export default function TaxonomicClassificationPage() {
           },
         };
       },
-      onError: (message) => toast.error(message),
+      onError: toast.error,
       onAfterAdd: (library) => {
         const fallbackSampleId = library.files?.[0]
           ? extractSampleIdFromPath(library.files[0], "sample")
@@ -303,7 +299,6 @@ export default function TaxonomicClassificationPage() {
     });
   };
 
-  // Handle adding single library
   const handleSingleLibraryAdd = () => {
     addSingleLibrary({
       read: singleRead,
@@ -320,7 +315,7 @@ export default function TaxonomicClassificationPage() {
           },
         };
       },
-      onError: (message) => toast.error(message),
+      onError: toast.error,
       onAfterAdd: (library) => {
         const fallbackSampleId = library.files?.[0]
           ? extractSampleIdFromPath(library.files[0], "sample")
@@ -968,7 +963,6 @@ export default function TaxonomicClassificationPage() {
         </div>
       </form>
 
-      {/* Job Params Dialog */}
       <JobParamsDialog {...dialogProps} />
     </section>
   );

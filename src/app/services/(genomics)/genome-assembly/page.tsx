@@ -71,29 +71,28 @@ import { WorkspaceObject } from "@/lib/workspace-client";
 import { ChevronRight } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import {
+  buildBaseLibraryItem,
   getPairedLibraryName,
   getSingleLibraryName,
   useTanstackLibrarySelection,
 } from "@/lib/forms/tanstack-library-selection";
 
 function mapAssemblyLibraryToItem(library: Library): LibraryItem {
-  const baseLib: LibraryItem = {
-    _id: library.id,
-    _type: library.type === "paired" ? "paired" : library.type === "single" ? "single" : "srr_accession",
-  };
-
-  if (library.type === "paired" && library.files) {
-    baseLib.read1 = library.files[0];
-    baseLib.read2 = library.files[1];
-    baseLib.platform = library.platform || "infer";
-    baseLib.interleaved = library.interleaved || false;
-    baseLib.read_orientation_outward = library.read_orientation_outward || false;
-  } else if (library.type === "single" && library.files) {
-    baseLib.read = library.files[0];
-    baseLib.platform = library.platform || "infer";
+  if (library.type === "paired") {
+    return {
+      ...buildBaseLibraryItem(library),
+      platform: library.platform || "infer",
+      interleaved: library.interleaved || false,
+      read_orientation_outward: library.read_orientation_outward || false,
+    };
   }
-
-  return baseLib;
+  if (library.type === "single") {
+    return {
+      ...buildBaseLibraryItem(library),
+      platform: library.platform || "infer",
+    };
+  }
+  return buildBaseLibraryItem(library);
 }
 
 export default function GenomeAssemblyPage() {
@@ -112,7 +111,6 @@ export default function GenomeAssemblyPage() {
     onSubmit: async ({ value }) => {
       const data = value as GenomeAssemblyFormData;
 
-      // Validate that at least one library is provided
       const hasPaired = data.paired_end_libs && data.paired_end_libs.length > 0;
       const hasSingle = data.single_end_libs && data.single_end_libs.length > 0;
       const hasSrr = data.srr_ids && data.srr_ids.length > 0;
@@ -142,7 +140,6 @@ export default function GenomeAssemblyPage() {
     },
   });
 
-  // Rerun: pre-fill form from job parameters
   useRerunForm<Record<string, unknown>>({
     form,
     fields: ["output_path", "output_file", "recipe"] as const,
@@ -161,7 +158,6 @@ export default function GenomeAssemblyPage() {
     syncLibraries: setLibrariesAndSync,
   });
 
-  // Setup service debugging and form submission
   const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "GenomeAssembly2",
     displayName: "Genome Assembly",
@@ -183,11 +179,9 @@ export default function GenomeAssemblyPage() {
     setSraResetKey((k) => k + 1);
   }
 
-  // Watch recipe to show/hide genome size field
   const recipe = useStore(form.store, (s) => s.values.recipe);
   const showGenomeSizeField = recipe === "canu";
 
-  // Watch output_path for OutputFolder name validation
   const outputPath = useStore(form.store, (s) => s.values.output_path);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
@@ -206,7 +200,7 @@ export default function GenomeAssemblyPage() {
           read_orientation_outward: false,
         },
       }),
-      onError: (message) => toast.error(message),
+      onError: toast.error,
       onAfterAdd: () => {
         setPairedRead1(null);
         setPairedRead2(null);
@@ -226,7 +220,7 @@ export default function GenomeAssemblyPage() {
           platform: "infer",
         },
       }),
-      onError: (message) => toast.error(message),
+      onError: toast.error,
       onAfterAdd: () => {
         setSingleRead(null);
       },
@@ -746,7 +740,6 @@ export default function GenomeAssemblyPage() {
         </div>
       </form>
 
-      {/* Job Params Dialog */}
       <JobParamsDialog {...dialogProps} />
     </section>
   );

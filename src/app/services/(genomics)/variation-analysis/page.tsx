@@ -81,7 +81,6 @@ export default function VariationAnalysisPage() {
     onSubmit: async ({ value }) => {
       const data = value as VariationAnalysisFormData;
 
-      // Validate that at least one library is provided
       const hasPaired = data.paired_end_libs && data.paired_end_libs.length > 0;
       const hasSingle = data.single_end_libs && data.single_end_libs.length > 0;
       const hasSrr = data.srr_ids && data.srr_ids.length > 0;
@@ -112,7 +111,6 @@ export default function VariationAnalysisPage() {
     },
   });
 
-  // Rerun: pre-fill form from job parameters
   useRerunForm({
     form,
     fields: ["output_path", "output_file", "reference_genome_id", "mapper", "caller"] as const,
@@ -123,7 +121,6 @@ export default function VariationAnalysisPage() {
     },
   });
 
-  // Setup service debugging and form submission
   const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "Variation",
     displayName: "Variation Analysis",
@@ -154,7 +151,7 @@ export default function VariationAnalysisPage() {
           files: [read1, read2],
         },
       }),
-      onError: (message) => toast.error(message),
+      onError: toast.error,
       onAfterAdd: () => {
         setPairedRead1(null);
         setPairedRead2(null);
@@ -173,7 +170,7 @@ export default function VariationAnalysisPage() {
           files: [read],
         },
       }),
-      onError: (message) => toast.error(message),
+      onError: toast.error,
       onAfterAdd: () => {
         setSingleRead(null);
       },
@@ -502,7 +499,6 @@ export default function VariationAnalysisPage() {
         </div>
       </form>
 
-      {/* Job Params Dialog */}
       <JobParamsDialog {...dialogProps} />
     </section>
   );

@@ -173,7 +173,6 @@ export default function SarsCov2GenomeAnalysisPage() {
     }
   }, [primers, showPrimersSection, form]);
 
-  // Rerun pre-fill
   useRerunForm<Record<string, unknown>>({
     form,
     fields: [

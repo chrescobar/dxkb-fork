@@ -82,7 +82,6 @@ export default function MetagenomicBinningPage() {
   const [singleRead, setSingleRead] = useState<string | null>(null);
   const [sraResetKey, setSraResetKey] = useState(0);
 
-  // Handle form reset
   const handleReset = () => {
     form.reset(defaultMetagenomicBinningFormValues);
     setLibrariesAndSync([]);
@@ -93,7 +92,6 @@ export default function MetagenomicBinningPage() {
     setSraResetKey((k) => k + 1);
   };
 
-  // Setup service form submission
   const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "MetagenomeBinning",
     displayName: "Metagenomic Binning",
@@ -134,7 +132,6 @@ export default function MetagenomicBinningPage() {
     },
   });
 
-  // Rerun: pre-fill form from job parameters
   useRerunForm({
     form,
     fields: ["output_path", "output_file", "start_with", "assembler", "organism", "contigs", "genome_group"] as const,
@@ -157,7 +154,6 @@ export default function MetagenomicBinningPage() {
     }
   }, [metaspadesDisabled, assembler, form]);
 
-  // Handle adding paired library
   const handlePairedLibraryAdd = () => {
     addPairedLibrary({
       read1: pairedRead1,
@@ -170,7 +166,7 @@ export default function MetagenomicBinningPage() {
           files: [read1, read2],
         },
       }),
-      onError: (message) => toast.error(message),
+      onError: toast.error,
       onAfterAdd: () => {
         setPairedRead1(null);
         setPairedRead2(null);
@@ -178,7 +174,6 @@ export default function MetagenomicBinningPage() {
     });
   };
 
-  // Handle adding single library
   const handleSingleLibraryAdd = () => {
     addSingleLibrary({
       read: singleRead,
@@ -190,7 +185,7 @@ export default function MetagenomicBinningPage() {
           files: [read],
         },
       }),
-      onError: (message) => toast.error(message),
+      onError: toast.error,
       onAfterAdd: () => {
         setSingleRead(null);
       },
@@ -710,7 +705,6 @@ export default function MetagenomicBinningPage() {
         </div>
       </form>
 
-      {/* Job Params Dialog */}
       <JobParamsDialog {...dialogProps} />
     </section>
   );

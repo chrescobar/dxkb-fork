@@ -105,7 +105,6 @@ export default function GeneProteinTreePage() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  // Setup service debugging and form submission
   const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "GeneTree",
     displayName: "Gene/Protein Tree",
@@ -184,7 +183,6 @@ export default function GeneProteinTreePage() {
     form.setFieldValue("metadata_fields", selectedFields);
   }, [metadataFields, form]);
 
-  // Rerun: pre-fill form from job parameters
   useRerunForm<Record<string, unknown>>({
     form,
     fields: ["recipe", "substitution_model", "output_path", "output_file"] as const,
@@ -804,7 +802,6 @@ export default function GeneProteinTreePage() {
         </div>
       </form>
 
-      {/* Job Params Dialog */}
       <JobParamsDialog {...dialogProps} />
     </section>
   );

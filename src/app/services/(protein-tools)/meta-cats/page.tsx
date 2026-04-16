@@ -101,13 +101,11 @@ export default function MetaCATSPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: metaCatsFormSchema as any },
     onSubmit: async ({ value }) => {
-      // submit / previewOrPassthrough captured by closure — initialized by hooks below
       const data = value as MetaCatsFormData;
       await previewOrPassthrough(transformMetaCatsParams(data), submit);
     },
   });
 
-  // Handle reset
   const handleReset = useCallback(() => {
     form.reset(defaultMetaCatsFormValues);
     setSelectedAutoFeatureGroupObject(null);
@@ -121,9 +119,9 @@ export default function MetaCATSPage() {
     setYearRangesValidation(null);
   }, [form]);
 
-  // Setup service form submission
   const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "MetaCATS",
+    displayName: "Meta-CATS",
     onSuccess: handleReset,
   });
   const { previewOrPassthrough, dialogProps } = useDebugParamsPreview({
@@ -139,7 +137,6 @@ export default function MetaCATSPage() {
   const outputPath = useStore(form.store, (s) => s.values.output_path);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
-  // Rerun pre-fill
   useRerunForm<Record<string, unknown>>({
     form,
     fields: [
@@ -952,7 +949,6 @@ export default function MetaCATSPage() {
         </div>
       </form>
 
-      {/* Job Params Dialog */}
       <JobParamsDialog {...dialogProps} />
     </section>
   );

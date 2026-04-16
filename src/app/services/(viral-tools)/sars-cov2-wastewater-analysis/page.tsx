@@ -181,7 +181,6 @@ export default function SarsCov2WastewaterAnalysisPage() {
     }
   }, [primers, form]);
 
-  // Rerun pre-fill
   useRerunForm<Record<string, unknown>>({
     form,
     fields: [

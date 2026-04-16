@@ -86,7 +86,6 @@ export default function ProteomeComparisonPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: proteomeComparisonFormSchema as any },
     onSubmit: async ({ value }) => {
-      // submit / previewOrPassthrough captured by closure — initialized by hooks below
       const data = value as ProteomeComparisonFormData;
       await previewOrPassthrough(transformProteomeComparisonParams(data), submit);
     },
@@ -102,7 +101,6 @@ export default function ProteomeComparisonPage() {
     setShowAdvancedParams(false);
   }, [form]);
 
-  // Setup service form submission
   const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "GenomeComparison",
     displayName: "Proteome Comparison",
@@ -118,7 +116,6 @@ export default function ProteomeComparisonPage() {
   const outputPath = useStore(form.store, (s) => s.values.output_path);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
-  // Rerun pre-fill
   useRerunForm<Record<string, unknown>>({
     form,
     fields: ["output_path", "output_file", "max_e_val"] as const,
@@ -861,7 +858,6 @@ export default function ProteomeComparisonPage() {
         </div>
       </form>
 
-      {/* Job Params Dialog */}
       <JobParamsDialog {...dialogProps} />
     </section>
   );

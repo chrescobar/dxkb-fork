@@ -8,7 +8,7 @@ import { submitServiceJob } from "@/lib/services/service-utils";
 
 interface UseServiceFormSubmissionOptions {
   serviceName: string;
-  displayName?: string;
+  displayName: string;
   onSuccess?: () => void;
 }
 
@@ -21,9 +21,6 @@ export function useServiceFormSubmission(
   const { serviceName, displayName, onSuccess } = options;
   const router = useRouter();
 
-  const formattedDisplayName =
-    displayName ?? serviceName.replace(/([A-Z])/g, " $1").trim();
-
   const submitMutation = useMutation({
     mutationFn: async (params: Record<string, unknown>) => {
       const result = await submitServiceJob(serviceName, params);
@@ -32,7 +29,7 @@ export function useServiceFormSubmission(
     },
     onSuccess: (result) => {
       const jobId = result.job?.[0]?.id;
-      toast.success(`${formattedDisplayName} job submitted successfully!`, {
+      toast.success(`${displayName} job submitted successfully!`, {
         description: jobId ? `Job ID: ${jobId}` : "Job submitted successfully",
         closeButton: true,
         ...(jobId && {
@@ -42,7 +39,7 @@ export function useServiceFormSubmission(
       onSuccess?.();
     },
     onError: (error) => {
-      console.error(`Failed to submit ${formattedDisplayName} job:`, error);
+      console.error(`Failed to submit ${displayName} job:`, error);
       const errorMessage = error instanceof Error ? error.message : "Failed to submit job";
       toast.error("Submission failed", { description: errorMessage, closeButton: true });
     },

@@ -83,7 +83,6 @@ export default function ViralGenomeTreePage() {
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
   const [isValidatingGenomeGroup, setIsValidatingGenomeGroup] = useState(false);
 
-  // Setup service debugging and form submission
   const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "GeneTree",
     displayName: "Viral Genome Tree",
@@ -118,7 +117,6 @@ export default function ViralGenomeTreePage() {
     form.setFieldValue("metadata_fields", selectedFields);
   }, [metadataFields, form]);
 
-  // Rerun: pre-fill form from job parameters
   useRerunForm<Record<string, unknown>>({
     form,
     fields: ["recipe", "substitution_model", "output_path", "output_file"] as const,
@@ -788,7 +786,6 @@ export default function ViralGenomeTreePage() {
         </div>
       </form>
 
-      {/* Job Params Dialog */}
       <JobParamsDialog {...dialogProps} />
     </section>
   );

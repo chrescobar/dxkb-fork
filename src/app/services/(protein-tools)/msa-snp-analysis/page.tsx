@@ -111,7 +111,6 @@ export default function MSAandSNPAnalysisPage() {
     form.setFieldValue("feature_groups", "");
   }
 
-  // Setup service debugging and form submission
   const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "MSA",
     displayName: "MSA SNP Analysis",
@@ -144,7 +143,6 @@ export default function MSAandSNPAnalysisPage() {
   const outputPath = useStore(form.store, (s) => s.values.output_path);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
-  // Rerun pre-fill
   useRerunForm<Record<string, unknown>>({
     form,
     fields: [
@@ -1343,7 +1341,6 @@ export default function MSAandSNPAnalysisPage() {
         </div>
       </form>
 
-      {/* Job Params Dialog */}
       <JobParamsDialog {...dialogProps} />
     </section>
   );

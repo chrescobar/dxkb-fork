@@ -47,10 +47,9 @@ function useRerunData<T extends Record<string, unknown>>(): T | null {
     if (!key) return null;
     const stored = sessionStorage.getItem(key);
     if (!stored) return null;
+    sessionStorage.removeItem(key);
     try {
-      const parsed = JSON.parse(stored) as T;
-      sessionStorage.removeItem(key);
-      return parsed;
+      return JSON.parse(stored) as T;
     } catch {
       console.error(
         "[useRerunForm] Failed to parse rerun data from sessionStorage",
@@ -77,7 +76,7 @@ const libraryBuilders: Record<
  * Declarative form pre-fill hook.
  *
  * On mount, reads `?rerun_key=` from the URL, fetches the matching sessionStorage blob, and:
- *   1. Copies declared `fields` from rerunData onto the form (via setFieldValue, when truthy)
+ *   1. Copies declared `fields` from rerunData onto the form (via setFieldValue, when defined)
  *   2. Reconstructs declared `libraries` via the shared builders (passes `getLibraryExtra(lib, kind)`)
  *   3. Calls `syncLibraries(libs)` with the aggregated array if libraries are declared
  *   4. Invokes `onApply(rerunData, form, libs)` for custom logic (taxonomy fetches, branching flows)
@@ -121,6 +120,11 @@ export function useRerunForm<T extends Record<string, unknown>>(
   });
   const defaultJobFolder = profile?.settings?.default_job_folder;
 
+  // The `rerunApplied` ref enforces one-shot execution, so only `rerunData`
+  // matters as a trigger. Callers pass inline arrays/callbacks (fields, libraries,
+  // getLibraryExtra, syncLibraries, onApply) that change identity every render —
+  // including them as deps would re-schedule this effect on every parent render
+  // for no benefit. The closure captures the latest values when the effect fires.
   useEffect(() => {
     if (!rerunData || rerunApplied.current) return;
     rerunApplied.current = true;
@@ -130,7 +134,7 @@ export function useRerunForm<T extends Record<string, unknown>>(
         const value = rerunData[field];
         // `as never` matches tanstack-form's setFieldValue typing, which expects
         // a value whose type is derived from the field path. The field is declared in T.
-        if (value) form.setFieldValue(field, value as never);
+        if (value !== undefined) form.setFieldValue(field, value as never);
       }
     }
 
@@ -146,7 +150,8 @@ export function useRerunForm<T extends Record<string, unknown>>(
     }
 
     onApply?.(rerunData, form, builtLibs);
-  }, [rerunData, form, fields, libraries, getLibraryExtra, syncLibraries, onApply]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rerunData]);
 
   useEffect(() => {
     if (defaultOutputPath === null) return;

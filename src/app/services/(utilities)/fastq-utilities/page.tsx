@@ -94,7 +94,6 @@ export default function FastqUtilitiesPage() {
   // Output name uniqueness (variant="name"); valid until check says otherwise
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  // Handle form reset
   const handleReset = () => {
     form.reset(defaultFastqUtilitiesFormValues as FastqUtilitiesFormData);
     setLibrariesAndSync([]);
@@ -107,7 +106,6 @@ export default function FastqUtilitiesPage() {
     setSraResetKey((k) => k + 1);
   };
 
-  // Setup service form submission
   const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "FastqUtils",
     displayName: "FASTQ Utilities",
@@ -154,7 +152,6 @@ export default function FastqUtilitiesPage() {
     },
   });
 
-  // Rerun: pre-fill form from job parameters
   useRerunForm<Record<string, unknown>>({
     form,
     fields: ["output_path", "output_file", "reference_genome_id"] as const,
@@ -198,7 +195,6 @@ export default function FastqUtilitiesPage() {
     toast.error(message);
   };
 
-  // Handle adding paired library
   const handlePairedLibraryAdd = () => {
     addPairedLibrary({
       read1: pairedRead1,
@@ -219,7 +215,6 @@ export default function FastqUtilitiesPage() {
     });
   };
 
-  // Handle adding single library
   const handleSingleLibraryAdd = () => {
     addSingleLibrary({
       read: singleRead,
@@ -628,7 +623,6 @@ export default function FastqUtilitiesPage() {
         </div>
       </form>
 
-      {/* Job Params Dialog */}
       <JobParamsDialog {...dialogProps} />
     </section>
   );

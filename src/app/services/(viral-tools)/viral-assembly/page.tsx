@@ -98,7 +98,6 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
     selectedLibrariesRef.current = selectedLibraries;
   }, [selectedLibraries]);
 
-  // Rerun: pre-fill form from job parameters
   useRerunForm<Record<string, unknown>>({
     form,
     fields: ["strategy", "module", "output_path", "output_file"] as const,

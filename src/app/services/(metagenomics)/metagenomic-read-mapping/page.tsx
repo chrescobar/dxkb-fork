@@ -78,7 +78,6 @@ export default function MetagenomicReadMappingPage() {
 
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  // Handle form reset
   const handleReset = () => {
     form.reset(defaultMetagenomicReadMappingFormValues);
     setLibrariesAndSync([]);
@@ -88,7 +87,6 @@ export default function MetagenomicReadMappingPage() {
     setSraResetKey((k) => k + 1);
   };
 
-  // Setup service form submission
   const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "MetagenomicReadMapping",
     displayName: "Metagenomic Read Mapping",
@@ -128,7 +126,6 @@ export default function MetagenomicReadMappingPage() {
     },
   });
 
-  // Rerun: pre-fill form from job parameters
   useRerunForm({
     form,
     fields: ["output_path", "output_file", "gene_set_type", "gene_set_name", "gene_set_fasta", "gene_set_feature_group"] as const,
@@ -139,7 +136,6 @@ export default function MetagenomicReadMappingPage() {
     },
   });
 
-  // Handle adding paired library
   const handlePairedLibraryAdd = () => {
     addPairedLibrary({
       read1: pairedRead1,
@@ -152,7 +148,7 @@ export default function MetagenomicReadMappingPage() {
           files: [read1, read2],
         },
       }),
-      onError: (message) => toast.error(message),
+      onError: toast.error,
       onAfterAdd: () => {
         setPairedRead1(null);
         setPairedRead2(null);
@@ -160,7 +156,6 @@ export default function MetagenomicReadMappingPage() {
     });
   };
 
-  // Handle adding single library
   const handleSingleLibraryAdd = () => {
     addSingleLibrary({
       read: singleRead,
@@ -172,7 +167,7 @@ export default function MetagenomicReadMappingPage() {
           files: [read],
         },
       }),
-      onError: (message) => toast.error(message),
+      onError: toast.error,
       onAfterAdd: () => {
         setSingleRead(null);
       },
@@ -538,7 +533,6 @@ export default function MetagenomicReadMappingPage() {
         </div>
       </form>
 
-      {/* Job Params Dialog */}
       <JobParamsDialog {...dialogProps} />
     </section>
   );

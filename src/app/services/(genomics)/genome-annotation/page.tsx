@@ -60,7 +60,6 @@ import { Label } from "@/components/ui/label";
 const GenomeAnnotationContent = () => {
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  // Setup service debugging and form submission
   const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "GenomeAnnotation",
     displayName: "Genome Annotation",
@@ -84,7 +83,6 @@ const GenomeAnnotationContent = () => {
     },
   });
 
-  // Watch all form values for changes
   const watchedValues = useStore(form.store, (s) => s.values);
   const previousValuesRef = useRef<GenomeAnnotationFormData>(watchedValues);
 
@@ -111,7 +109,6 @@ const GenomeAnnotationContent = () => {
     previousValuesRef.current = currentValues;
   }, [watchedValues]);
 
-  // Rerun: pre-fill form from job parameters
   useRerunForm<Record<string, unknown>>({
     form,
     fields: ["contigs", "recipe", "output_path", "output_file"] as const,
@@ -400,7 +397,6 @@ const GenomeAnnotationContent = () => {
         </div>
       </form>
 
-      {/* Job Params Dialog */}
       <JobParamsDialog {...dialogProps} />
     </section>
   );

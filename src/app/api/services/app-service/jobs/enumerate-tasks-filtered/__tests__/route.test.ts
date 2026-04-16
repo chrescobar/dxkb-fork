@@ -1,8 +1,7 @@
-import { NextResponse } from "next/server";
 import { mockNextRequest } from "@/test-helpers/api-route-helpers";
 
 vi.mock("@/lib/auth/session", () => ({
-  requireAuthToken: vi.fn(),
+  getAuthToken: vi.fn(),
 }));
 
 vi.mock("@/lib/app-service", () => ({
@@ -10,10 +9,10 @@ vi.mock("@/lib/app-service", () => ({
 }));
 
 import { POST } from "../route";
-import { requireAuthToken } from "@/lib/auth/session";
+import { getAuthToken } from "@/lib/auth/session";
 import { createAppService } from "@/lib/app-service";
 
-const mockRequireAuthToken = vi.mocked(requireAuthToken);
+const mockGetAuthToken = vi.mocked(getAuthToken);
 const mockCreateAppService = vi.mocked(createAppService);
 
 const mockAppService = {
@@ -26,9 +25,7 @@ describe("POST /api/services/app-service/jobs/enumerate-tasks-filtered", () => {
   });
 
   it("returns 401 when no auth token is available", async () => {
-    mockRequireAuthToken.mockResolvedValue(
-      NextResponse.json({ error: "Authentication required" }, { status: 401 }),
-    );
+    mockGetAuthToken.mockResolvedValue(undefined);
 
     const request = mockNextRequest({ method: "POST", body: {} });
 
@@ -36,11 +33,13 @@ describe("POST /api/services/app-service/jobs/enumerate-tasks-filtered", () => {
     const data = await response.json();
 
     expect(response.status).toBe(401);
-    expect(data).toEqual({ error: "Authentication required" });
+    expect(data).toEqual(
+      expect.objectContaining({ error: "Authentication required" }),
+    );
   });
 
   it("returns 400 when offset is negative", async () => {
-    mockRequireAuthToken.mockResolvedValue("test-token");
+    mockGetAuthToken.mockResolvedValue("test-token");
 
     const request = mockNextRequest({
       method: "POST",
@@ -57,7 +56,7 @@ describe("POST /api/services/app-service/jobs/enumerate-tasks-filtered", () => {
   });
 
   it("returns 400 when limit exceeds 1000", async () => {
-    mockRequireAuthToken.mockResolvedValue("test-token");
+    mockGetAuthToken.mockResolvedValue("test-token");
 
     const request = mockNextRequest({
       method: "POST",
@@ -74,7 +73,7 @@ describe("POST /api/services/app-service/jobs/enumerate-tasks-filtered", () => {
   });
 
   it("returns 400 when sort_field is invalid", async () => {
-    mockRequireAuthToken.mockResolvedValue("test-token");
+    mockGetAuthToken.mockResolvedValue("test-token");
 
     const request = mockNextRequest({
       method: "POST",
@@ -91,7 +90,7 @@ describe("POST /api/services/app-service/jobs/enumerate-tasks-filtered", () => {
   });
 
   it("applies defaults when body is empty", async () => {
-    mockRequireAuthToken.mockResolvedValue("test-token");
+    mockGetAuthToken.mockResolvedValue("test-token");
     mockAppService.enumerateTasksFiltered.mockResolvedValue({ jobs: [], totalTasks: 0 });
 
     const request = mockNextRequest({ method: "POST", body: {} });
@@ -111,7 +110,7 @@ describe("POST /api/services/app-service/jobs/enumerate-tasks-filtered", () => {
   });
 
   it("passes all filter params through to the service", async () => {
-    mockRequireAuthToken.mockResolvedValue("test-token");
+    mockGetAuthToken.mockResolvedValue("test-token");
     mockAppService.enumerateTasksFiltered.mockResolvedValue({ jobs: [], totalTasks: 0 });
 
     const request = mockNextRequest({
@@ -141,7 +140,7 @@ describe("POST /api/services/app-service/jobs/enumerate-tasks-filtered", () => {
   });
 
   it("returns jobs on success", async () => {
-    mockRequireAuthToken.mockResolvedValue("test-token");
+    mockGetAuthToken.mockResolvedValue("test-token");
     const jobsList = [
       { id: "job-1", status: "completed" },
       { id: "job-2", status: "queued" },
@@ -158,7 +157,7 @@ describe("POST /api/services/app-service/jobs/enumerate-tasks-filtered", () => {
   });
 
   it("passes date filter params through to the service", async () => {
-    mockRequireAuthToken.mockResolvedValue("test-token");
+    mockGetAuthToken.mockResolvedValue("test-token");
     mockAppService.enumerateTasksFiltered.mockResolvedValue({ jobs: [], totalTasks: 0 });
 
     const request = mockNextRequest({
@@ -180,7 +179,7 @@ describe("POST /api/services/app-service/jobs/enumerate-tasks-filtered", () => {
   });
 
   it("returns 500 when an error is thrown", async () => {
-    mockRequireAuthToken.mockResolvedValue("test-token");
+    mockGetAuthToken.mockResolvedValue("test-token");
     mockAppService.enumerateTasksFiltered.mockRejectedValue(
       new Error("Query timeout"),
     );
@@ -191,6 +190,6 @@ describe("POST /api/services/app-service/jobs/enumerate-tasks-filtered", () => {
     const data = await response.json();
 
     expect(response.status).toBe(500);
-    expect(data).toEqual({ error: "Query timeout" });
+    expect(data).toEqual(expect.objectContaining({ error: "Query timeout" }));
   });
 });

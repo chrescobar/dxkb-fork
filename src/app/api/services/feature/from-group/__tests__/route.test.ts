@@ -1,23 +1,20 @@
-import { NextResponse } from "next/server";
 import { http, HttpResponse } from "msw";
 
 import { server } from "@/test-helpers/msw-server";
 import { POST } from "../route";
 import { json, mockNextRequest } from "@/test-helpers/api-route-helpers";
 
-vi.mock("@/lib/auth/session", () => ({ requireAuthToken: vi.fn() }));
+vi.mock("@/lib/auth/session", () => ({ getAuthToken: vi.fn() }));
 vi.mock("@/lib/env", () => ({
   getRequiredEnv: vi.fn(() => "http://mock-api"),
 }));
 
-import { requireAuthToken } from "@/lib/auth/session";
-const mockRequireAuthToken = vi.mocked(requireAuthToken);
+import { getAuthToken } from "@/lib/auth/session";
+const mockGetAuthToken = vi.mocked(getAuthToken);
 
 describe("POST /api/services/feature/from-group", () => {
   it("returns 401 when no auth token", async () => {
-    mockRequireAuthToken.mockResolvedValue(
-      NextResponse.json({ error: "Authentication required" }, { status: 401 }),
-    );
+    mockGetAuthToken.mockResolvedValue(undefined);
 
     const req = mockNextRequest({
       method: "POST",
@@ -32,7 +29,7 @@ describe("POST /api/services/feature/from-group", () => {
   });
 
   it("returns empty results when feature_group_path is missing", async () => {
-    mockRequireAuthToken.mockResolvedValue("token");
+    mockGetAuthToken.mockResolvedValue("token");
 
     const req = mockNextRequest({ method: "POST", body: {} });
     const res = await POST(req);
@@ -42,7 +39,7 @@ describe("POST /api/services/feature/from-group", () => {
   });
 
   it("returns empty results when feature_group_path is empty string", async () => {
-    mockRequireAuthToken.mockResolvedValue("token");
+    mockGetAuthToken.mockResolvedValue("token");
 
     const req = mockNextRequest({
       method: "POST",
@@ -55,7 +52,7 @@ describe("POST /api/services/feature/from-group", () => {
   });
 
   it("URL encodes the feature group path", async () => {
-    mockRequireAuthToken.mockResolvedValue("token");
+    mockGetAuthToken.mockResolvedValue("token");
 
     let capturedUrl: string | undefined;
 
@@ -78,7 +75,7 @@ describe("POST /api/services/feature/from-group", () => {
   });
 
   it("returns results on success", async () => {
-    mockRequireAuthToken.mockResolvedValue("token");
+    mockGetAuthToken.mockResolvedValue("token");
 
     const features = [
       { feature_id: "f1", patric_id: "p1" },
@@ -102,7 +99,7 @@ describe("POST /api/services/feature/from-group", () => {
   });
 
   it("returns upstream error on non-ok response", async () => {
-    mockRequireAuthToken.mockResolvedValue("token");
+    mockGetAuthToken.mockResolvedValue("token");
 
     server.use(
       http.get("http://mock-api/genome_feature/", () => {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAuthToken } from "@/lib/auth/session";
+import { withAuth } from "@/lib/api/server";
 import { createAppService } from "@/lib/app-service";
 
 interface RouteParams {
@@ -10,11 +10,8 @@ interface RouteParams {
  * Get job stderr
  * GET /api/services/app-service/jobs/[id]/stderr
  */
-export async function GET(_request: NextRequest, { params }: RouteParams) {
-  try {
-    const token = await requireAuthToken();
-    if (token instanceof NextResponse) return token;
-
+export const GET = withAuth<RouteParams>(
+  async (_request: NextRequest, { token, params }) => {
     const { id: jobId } = await params;
 
     const appService = createAppService(token);
@@ -28,12 +25,5 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
         "Content-Type": "text/plain",
       },
     });
-  } catch (error) {
-    console.error("Error fetching stderr:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch stderr" },
-      { status: 500 },
-    );
-  }
-}
-
+  },
+);

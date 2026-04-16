@@ -1,16 +1,20 @@
 import { http, HttpResponse } from "msw";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { server } from "@/test-helpers/msw-server";
 import { json } from "@/test-helpers/api-route-helpers";
 
-vi.mock("@/lib/auth/session", () => ({ requireAuthToken: vi.fn() }));
+const { mockGetAuthToken } = vi.hoisted(() => ({
+  mockGetAuthToken: vi.fn(),
+}));
 
-import { requireAuthToken } from "@/lib/auth/session";
-const mockRequireAuthToken = vi.mocked(requireAuthToken);
+vi.mock("@/lib/auth/session", () => ({
+  getAuthToken: mockGetAuthToken,
+}));
 
 describe("POST /api/services/minhash", () => {
   beforeEach(() => {
     vi.resetModules();
+    mockGetAuthToken.mockResolvedValue("test-token");
   });
 
   it("returns 500 when MINHASH_SERVICE_URL is not set", async () => {
@@ -70,9 +74,9 @@ describe("POST /api/services/minhash", () => {
 
   it("includes auth header when token is present", async () => {
     vi.stubEnv("MINHASH_SERVICE_URL", "http://mock-minhash");
+    mockGetAuthToken.mockResolvedValue("my-token");
 
     const { POST } = await import("../route");
-    mockRequireAuthToken.mockResolvedValue("my-token");
 
     let capturedHeaders: Headers | undefined;
     server.use(
@@ -94,12 +98,9 @@ describe("POST /api/services/minhash", () => {
 
   it("returns 401 when no auth token", async () => {
     vi.stubEnv("MINHASH_SERVICE_URL", "http://mock-minhash");
+    mockGetAuthToken.mockResolvedValue(undefined);
 
     const { POST } = await import("../route");
-    mockRequireAuthToken.mockResolvedValue(
-      NextResponse.json({ error: "Authentication required" }, { status: 401 }),
-    );
-
     const req = new NextRequest("http://localhost:3019/api/services/minhash", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -117,7 +118,6 @@ describe("POST /api/services/minhash", () => {
     vi.stubEnv("MINHASH_SERVICE_URL", "http://mock-minhash");
 
     const { POST } = await import("../route");
-    mockRequireAuthToken.mockResolvedValue("token");
 
     server.use(
       http.post("http://mock-minhash", () => {
@@ -142,7 +142,6 @@ describe("POST /api/services/minhash", () => {
     vi.stubEnv("MINHASH_SERVICE_URL", "http://mock-minhash");
 
     const { POST } = await import("../route");
-    mockRequireAuthToken.mockResolvedValue("token");
 
     const resultData = { result: [{ genome_id: "1.1", distance: 0.1 }] };
     server.use(

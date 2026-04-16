@@ -43,7 +43,7 @@ describe("submitServiceJob", () => {
     );
   });
 
-  it("falls back to response text when JSON parsing fails on HTTP error", async () => {
+  it("falls back to status text when JSON parsing fails on HTTP error", async () => {
     server.use(
       http.post("/api/services/app-service/submit", () => {
         return new HttpResponse("Internal Server Error", {
@@ -55,13 +55,12 @@ describe("submitServiceJob", () => {
 
     const result = await submitServiceJob(appName, appParams);
 
-    // With real fetch, response.json() consumes the body stream.
-    // When it fails (non-JSON body), response.text() also fails because
-    // the stream is already disturbed, so we fall through to the default message.
+    // The API facade's parseErrorBody catches JSON parse failures and falls back
+    // to "HTTP {status} {statusText}" format.
     expect(result).toEqual(
       expect.objectContaining({
         success: false,
-        error: "HTTP error! status: 500",
+        error: expect.stringMatching(/^HTTP 500/),
       }),
     );
   });
@@ -83,7 +82,7 @@ describe("submitServiceJob", () => {
     );
   });
 
-  it("appends details field to error message when present", async () => {
+  it("returns the error message and details from a JSON error body", async () => {
     server.use(
       http.post("/api/services/app-service/submit", () => {
         return HttpResponse.json(
@@ -96,10 +95,10 @@ describe("submitServiceJob", () => {
     const result = await submitServiceJob(appName, appParams);
 
     expect(result.error).toContain("Validation failed");
-    expect(result.error).toContain("genome_id");
+    expect(result.details).toEqual({ field: "genome_id" });
   });
 
-  it("uses default HTTP error message when both JSON and text parsing fail", async () => {
+  it("uses HTTP status fallback message when body cannot be parsed", async () => {
     server.use(
       http.post("/api/services/app-service/submit", () => {
         const stream = new ReadableStream({
@@ -113,7 +112,9 @@ describe("submitServiceJob", () => {
 
     const result = await submitServiceJob(appName, appParams);
 
-    expect(result.error).toBe("HTTP error! status: 502");
+    // The API facade's parseErrorBody catches body-read errors and falls back
+    // to "HTTP {status} {statusText}" format.
+    expect(result.error).toMatch(/^HTTP 502/);
   });
 
   it("uses fallback message for non-Error exceptions", async () => {

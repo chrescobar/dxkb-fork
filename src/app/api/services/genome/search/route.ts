@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAuthToken } from "@/lib/auth/session";
+import { withAuth } from "@/lib/api/server";
 import { getRequiredEnv } from "@/lib/env";
 
 
@@ -7,67 +7,56 @@ function sanitizeQuery(input: string): string {
   return input.replace(/[^a-zA-Z0-9._-]/g, "");
 }
 
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const rawQuery = searchParams.get("q") || "";
-    const limitParam = Number.parseInt(searchParams.get("limit") || "25", 10);
-    const limit = Number.isFinite(limitParam)
-      ? Math.min(Math.max(limitParam, 1), 50)
-      : 25;
+export const GET = withAuth(async (request: NextRequest, { token }) => {
+  const { searchParams } = new URL(request.url);
+  const rawQuery = searchParams.get("q") || "";
+  const limitParam = Number.parseInt(searchParams.get("limit") || "25", 10);
+  const limit = Number.isFinite(limitParam)
+    ? Math.min(Math.max(limitParam, 1), 50)
+    : 25;
 
-    const token = await requireAuthToken();
-    if (token instanceof NextResponse) return token;
+  const trimmedQuery = rawQuery.trim();
+  let queryString: string;
 
-    const trimmedQuery = rawQuery.trim();
-    let queryString: string;
+  if (!trimmedQuery) {
+    // Blank query - return all genomes with filters (no search filter)
+    queryString = `?or(eq(public,true),eq(public,false))&in(superkingdom,(Eukaryota,Bacteria,Viruses))&select(genome_id,genome_name,public,owner,reference_genome,strain,superkingdom)&limit(${limit})`;
+  } else {
+    // Has query - apply search filter
+    const sanitized = sanitizeQuery(trimmedQuery);
 
-    if (!trimmedQuery) {
-      // Blank query - return all genomes with filters (no search filter)
-      queryString = `?or(eq(public,true),eq(public,false))&in(superkingdom,(Eukaryota,Bacteria,Viruses))&select(genome_id,genome_name,public,owner,reference_genome,strain,superkingdom)&limit(${limit})`;
-    } else {
-      // Has query - apply search filter
-      const sanitized = sanitizeQuery(trimmedQuery);
-
-      if (!sanitized) {
-        return NextResponse.json({ results: [] });
-      }
-
-      const wildcard = `*${sanitized}*`;
-      queryString = `?or(eq(genome_name,${wildcard}),eq(genome_id,${wildcard}))&or(eq(public,true),eq(public,false))&in(superkingdom,(Eukaryota,Bacteria,Viruses))&select(genome_id,genome_name,public,owner,reference_genome,strain,superkingdom)&limit(${limit})`;
+    if (!sanitized) {
+      return NextResponse.json({ results: [] });
     }
 
-    const url = `${getRequiredEnv("NEXT_PUBLIC_DATA_API")}/genome/${queryString}`;
+    const wildcard = `*${sanitized}*`;
+    queryString = `?or(eq(genome_name,${wildcard}),eq(genome_id,${wildcard}))&or(eq(public,true),eq(public,false))&in(superkingdom,(Eukaryota,Bacteria,Viruses))&select(genome_id,genome_name,public,owner,reference_genome,strain,superkingdom)&limit(${limit})`;
+  }
 
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        Authorization: token,
-      },
-    });
+  const url = `${getRequiredEnv("NEXT_PUBLIC_DATA_API")}/genome/${queryString}`;
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Genome search error:", response.status, errorText);
-      return NextResponse.json(
-        {
-          error: `BV-BRC genome search failed: ${response.status} ${response.statusText}`,
-        },
-        { status: response.status },
-      );
-    }
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      Authorization: token,
+    },
+  });
 
-    const data = await response.json();
-    const results = Array.isArray(data) ? data : data?.items || [];
-
-    return NextResponse.json({ results });
-  } catch (error) {
-    console.error("Genome search API error:", error);
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("Genome search error:", response.status, errorText);
     return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
+      {
+        error: `BV-BRC genome search failed: ${response.status} ${response.statusText}`,
+      },
+      { status: response.status },
     );
   }
-}
+
+  const data = await response.json();
+  const results = Array.isArray(data) ? data : data?.items || [];
+
+  return NextResponse.json({ results });
+});
 

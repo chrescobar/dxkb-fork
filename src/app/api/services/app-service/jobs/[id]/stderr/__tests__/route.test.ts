@@ -1,11 +1,10 @@
-import { NextResponse } from "next/server";
 import {
   makeRouteContext,
   mockNextRequest,
 } from "@/test-helpers/api-route-helpers";
 
 vi.mock("@/lib/auth/session", () => ({
-  requireAuthToken: vi.fn(),
+  getAuthToken: vi.fn(),
 }));
 
 vi.mock("@/lib/app-service", () => ({
@@ -13,10 +12,10 @@ vi.mock("@/lib/app-service", () => ({
 }));
 
 import { GET } from "../route";
-import { requireAuthToken } from "@/lib/auth/session";
+import { getAuthToken } from "@/lib/auth/session";
 import { createAppService } from "@/lib/app-service";
 
-const mockRequireAuthToken = vi.mocked(requireAuthToken);
+const mockGetAuthToken = vi.mocked(getAuthToken);
 const mockCreateAppService = vi.mocked(createAppService);
 
 const mockAppService = {
@@ -29,9 +28,7 @@ describe("GET /api/services/app-service/jobs/[id]/stderr", () => {
   });
 
   it("returns 401 when no auth token is available", async () => {
-    mockRequireAuthToken.mockResolvedValue(
-      NextResponse.json({ error: "Authentication required" }, { status: 401 }),
-    );
+    mockGetAuthToken.mockResolvedValue(undefined);
 
     const request = mockNextRequest();
 
@@ -39,11 +36,13 @@ describe("GET /api/services/app-service/jobs/[id]/stderr", () => {
     const data = await response.json();
 
     expect(response.status).toBe(401);
-    expect(data).toEqual({ error: "Authentication required" });
+    expect(data).toEqual(
+      expect.objectContaining({ error: "Authentication required" }),
+    );
   });
 
   it("returns plain text stderr output on success", async () => {
-    mockRequireAuthToken.mockResolvedValue("test-token");
+    mockGetAuthToken.mockResolvedValue("test-token");
     const stderrText = "Warning: low memory\nError: segfault";
     mockAppService.fetchJobOutput.mockResolvedValue(stderrText);
 
@@ -62,7 +61,7 @@ describe("GET /api/services/app-service/jobs/[id]/stderr", () => {
   });
 
   it("returns 500 when an error is thrown", async () => {
-    mockRequireAuthToken.mockResolvedValue("test-token");
+    mockGetAuthToken.mockResolvedValue("test-token");
     mockAppService.fetchJobOutput.mockRejectedValue(
       new Error("Fetch failed"),
     );
@@ -73,6 +72,6 @@ describe("GET /api/services/app-service/jobs/[id]/stderr", () => {
     const data = await response.json();
 
     expect(response.status).toBe(500);
-    expect(data).toEqual({ error: "Failed to fetch stderr" });
+    expect(data).toEqual(expect.objectContaining({ error: "Fetch failed" }));
   });
 });

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAppService } from "@/lib/app-service";
-import { requireAuthToken } from "@/lib/auth/session";
+import { withAuth } from "@/lib/api/server";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -10,11 +10,8 @@ interface RouteParams {
  * Kill a job
  * POST /api/services/app-service/jobs/[id]/kill
  */
-export async function POST(request: NextRequest, { params }: RouteParams) {
-  try {
-    const token = await requireAuthToken();
-    if (token instanceof NextResponse) return token;
-
+export const POST = withAuth<RouteParams>(
+  async (request: NextRequest, { token, params }) => {
     const { id: jobId } = await params;
 
     if (!jobId) {
@@ -31,17 +28,5 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     const result = await appService.killJob({ job_id: jobId });
 
     return NextResponse.json(result);
-  } catch (error) {
-    console.error("Error killing job:", error);
-
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
-  }
-}
-
+  },
+);

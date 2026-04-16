@@ -1,11 +1,10 @@
-import { NextResponse } from "next/server";
 import {
   makeRouteContext,
   mockNextRequest,
 } from "@/test-helpers/api-route-helpers";
 
 vi.mock("@/lib/auth/session", () => ({
-  requireAuthToken: vi.fn(),
+  getAuthToken: vi.fn(),
 }));
 
 vi.mock("@/lib/app-service", () => ({
@@ -13,10 +12,10 @@ vi.mock("@/lib/app-service", () => ({
 }));
 
 import { GET } from "../route";
-import { requireAuthToken } from "@/lib/auth/session";
+import { getAuthToken } from "@/lib/auth/session";
 import { createAppService } from "@/lib/app-service";
 
-const mockRequireAuthToken = vi.mocked(requireAuthToken);
+const mockGetAuthToken = vi.mocked(getAuthToken);
 const mockCreateAppService = vi.mocked(createAppService);
 
 const mockAppService = {
@@ -29,9 +28,7 @@ describe("GET /api/services/app-service/jobs/[id]", () => {
   });
 
   it("returns 401 when no auth token is available", async () => {
-    mockRequireAuthToken.mockResolvedValue(
-      NextResponse.json({ error: "Authentication required" }, { status: 401 }),
-    );
+    mockGetAuthToken.mockResolvedValue(undefined);
 
     const request = mockNextRequest();
 
@@ -39,11 +36,13 @@ describe("GET /api/services/app-service/jobs/[id]", () => {
     const data = await response.json();
 
     expect(response.status).toBe(401);
-    expect(data).toEqual({ error: "Authentication required" });
+    expect(data).toEqual(
+      expect.objectContaining({ error: "Authentication required" }),
+    );
   });
 
   it("returns job details on success", async () => {
-    mockRequireAuthToken.mockResolvedValue("test-token");
+    mockGetAuthToken.mockResolvedValue("test-token");
     const mockDetails = {
       id: "job-1",
       status: "completed",
@@ -61,7 +60,7 @@ describe("GET /api/services/app-service/jobs/[id]", () => {
   });
 
   it("passes include_logs=true when query param is set", async () => {
-    mockRequireAuthToken.mockResolvedValue("test-token");
+    mockGetAuthToken.mockResolvedValue("test-token");
     mockAppService.queryJobDetails.mockResolvedValue({ id: "job-2" });
 
     const request = mockNextRequest({
@@ -77,7 +76,7 @@ describe("GET /api/services/app-service/jobs/[id]", () => {
   });
 
   it("defaults include_logs to false when query param is absent", async () => {
-    mockRequireAuthToken.mockResolvedValue("test-token");
+    mockGetAuthToken.mockResolvedValue("test-token");
     mockAppService.queryJobDetails.mockResolvedValue({ id: "job-3" });
 
     const request = mockNextRequest();
@@ -91,7 +90,7 @@ describe("GET /api/services/app-service/jobs/[id]", () => {
   });
 
   it("returns 500 when an error is thrown", async () => {
-    mockRequireAuthToken.mockResolvedValue("test-token");
+    mockGetAuthToken.mockResolvedValue("test-token");
     mockAppService.queryJobDetails.mockRejectedValue(
       new Error("Service unavailable"),
     );
@@ -102,6 +101,8 @@ describe("GET /api/services/app-service/jobs/[id]", () => {
     const data = await response.json();
 
     expect(response.status).toBe(500);
-    expect(data).toEqual({ error: "Service unavailable" });
+    expect(data).toEqual(
+      expect.objectContaining({ error: "Service unavailable" }),
+    );
   });
 });

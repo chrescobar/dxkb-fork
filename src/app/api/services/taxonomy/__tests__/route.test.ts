@@ -8,6 +8,10 @@ vi.mock("@/lib/env", () => ({
   getRequiredEnv: vi.fn(() => "http://mock-api"),
 }));
 
+vi.mock("@/lib/auth/session", () => ({
+  getAuthToken: vi.fn(() => Promise.resolve(undefined)),
+}));
+
 describe("GET /api/services/taxonomy", () => {
   it("does not require auth", async () => {
     const taxData = { taxon_id: 1 };
@@ -104,7 +108,7 @@ describe("GET /api/services/taxonomy", () => {
 
     expect(res.status).toBe(500);
     expect(await json(res)).toEqual(
-      expect.objectContaining({ error: "Internal server error" }),
+      expect.objectContaining({ error: expect.any(String) }),
     );
   });
 });

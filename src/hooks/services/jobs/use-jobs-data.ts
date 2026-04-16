@@ -1,5 +1,6 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useAuthenticatedFetch } from "@/hooks/use-authenticated-fetch-client";
+import { keepPreviousData } from "@tanstack/react-query";
+import { useApiQuery } from "@/lib/api/hooks";
+import { apiCall } from "@/lib/api/client";
 import type { JobListItem } from "@/types/workspace";
 
 interface UseJobsDataParams {
@@ -20,7 +21,6 @@ interface UseJobsDataResult {
 }
 
 export function useJobsData(params: UseJobsDataParams) {
-  const authenticatedFetch = useAuthenticatedFetch();
   const {
     offset, limit, includeArchived,
     sortField, sortOrder, app,
@@ -28,44 +28,29 @@ export function useJobsData(params: UseJobsDataParams) {
     refetchInterval = 10_000,
   } = params;
 
-  return useQuery<UseJobsDataResult, Error>({
+  return useApiQuery<UseJobsDataResult>({
     queryKey: [
-      "jobs-filtered",
-      offset,
-      limit,
-      includeArchived,
-      sortField,
-      sortOrder,
-      app,
-      startTime,
-      endTime,
+      "jobs-filtered", offset, limit, includeArchived,
+      sortField, sortOrder, app, startTime, endTime,
     ],
     placeholderData: keepPreviousData,
     refetchInterval,
     refetchIntervalInBackground: false,
     queryFn: async () => {
-      const response = await authenticatedFetch(
+      const data = await apiCall<{ jobs: unknown; totalTasks: number }>(
         "/api/services/app-service/jobs/enumerate-tasks-filtered",
         {
-          method: "POST",
-          body: JSON.stringify({
-            offset,
-            limit,
-            include_archived: includeArchived,
-            sort_field: sortField,
-            sort_order: sortOrder,
-            app,
-            start_time: startTime,
-            end_time: endTime,
-          }),
+          offset, limit,
+          include_archived: includeArchived,
+          sort_field: sortField,
+          sort_order: sortOrder,
+          app,
+          start_time: startTime,
+          end_time: endTime,
         },
       );
-      if (!response.ok) {
-        throw new Error(`Failed to fetch jobs: ${response.statusText}`);
-      }
-      const data = await response.json();
-      const raw = data.jobs ?? [];
-      const jobs = Array.isArray(raw[0]) ? raw[0] : raw;
+      const raw = Array.isArray(data.jobs) ? data.jobs : [];
+      const jobs = (Array.isArray(raw[0]) ? raw[0] : raw) as JobListItem[];
       const totalTasks = typeof data.totalTasks === "number" ? data.totalTasks : 0;
       return { jobs, totalTasks };
     },

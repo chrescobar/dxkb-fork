@@ -1,7 +1,3 @@
-vi.mock("@/hooks/use-authenticated-fetch-client", () => ({
-  useAuthenticatedFetch: vi.fn(() => (url: string) => fetch(url)),
-}));
-
 import { renderHook, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";

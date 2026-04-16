@@ -17,7 +17,7 @@ import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Mail, ArrowLeft } from "lucide-react";
-import { useAuth } from "@/contexts/auth-context";
+import { useAuth, authAccount } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { RequiredFormLabel } from "@/components/forms/required-form-components";
 
@@ -32,7 +32,9 @@ type FormValues = z.infer<typeof formSchema>;
 export default function ForgotPasswordPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const { requestPasswordReset, isLoading, isAuthenticated } = useAuth();
+  const { isAuthenticated, status } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const isLoading = status === "loading" || isSubmitting;
   const router = useRouter();
   // Get redirect URL from query params (for protected route redirects)
   const redirectTo = "/";
@@ -51,13 +53,19 @@ export default function ForgotPasswordPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: formSchema as any, onSubmit: formSchema as any },
     onSubmit: async ({ value }) => {
-      setError(""); // Clear any previous errors
-
+      setError("");
+      setIsSubmitting(true);
       try {
-        await requestPasswordReset((value as FormValues).usernameOrEmail);
+        const { error: resetError } = await authAccount.requestPasswordReset(
+          (value as FormValues).usernameOrEmail,
+        );
+        if (resetError) {
+          setError("An unexpected error occurred. Please try again.");
+          return;
+        }
         setSuccess(true);
-      } catch (_err) {
-        setError("An unexpected error occurred. Please try again.");
+      } finally {
+        setIsSubmitting(false);
       }
     },
   });

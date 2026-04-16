@@ -4,8 +4,8 @@ import { useKillJob } from "@/hooks/services/workspace/use-workspace";
 
 const { mockFetch } = vi.hoisted(() => ({ mockFetch: vi.fn() }));
 
-vi.mock("@/hooks/use-authenticated-fetch-client", () => ({
-  useAuthenticatedFetch: () => mockFetch,
+vi.mock("@/lib/auth", () => ({
+  apiFetch: mockFetch,
 }));
 
 vi.mock("sonner", () => ({

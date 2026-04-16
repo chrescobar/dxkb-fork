@@ -17,7 +17,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 
-import { useAuthenticatedFetch } from "@/hooks/use-authenticated-fetch-client";
+import { apiFetch } from "@/lib/auth";
 import type { UserProfile } from "@/lib/auth/types";
 
 interface PreferencesFormProps {
@@ -26,7 +26,6 @@ interface PreferencesFormProps {
 
 export function PreferencesForm({ profile }: PreferencesFormProps) {
   const queryClient = useQueryClient();
-  const authenticatedFetch = useAuthenticatedFetch();
   const [defaultJobFolder, setDefaultJobFolder] = useState(
     profile.settings?.default_job_folder ?? "",
   );
@@ -42,8 +41,9 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
     setIsSubmitting(true);
     try {
       const hasExistingSettings = profile.settings !== undefined;
-      const response = await authenticatedFetch("/api/auth/profile", {
+      const response = await apiFetch("/api/auth/profile", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify([
           {
             op: hasExistingSettings ? "replace" : "add",

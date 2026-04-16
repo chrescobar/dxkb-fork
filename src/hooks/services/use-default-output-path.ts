@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import { useAuthenticatedFetch } from "@/hooks/use-authenticated-fetch-client";
+import { apiFetch } from "@/lib/auth";
 import type { UserProfile } from "@/lib/auth/types";
 
 interface FormLike {
@@ -22,13 +22,12 @@ export function useDefaultOutputPath(
   form: FormLike,
   rerunData: Record<string, unknown> | null,
 ): void {
-  const authenticatedFetch = useAuthenticatedFetch();
   const applied = useRef(false);
 
   const { data: profile } = useQuery<UserProfile>({
     queryKey: ["user-profile"],
     queryFn: async () => {
-      const res = await authenticatedFetch("/api/auth/profile");
+      const res = await apiFetch("/api/auth/profile");
       if (!res.ok) throw new Error("Failed to load profile");
       return res.json();
     },

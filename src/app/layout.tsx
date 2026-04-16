@@ -5,8 +5,8 @@ import { TailwindIndicator } from "@/components/ui/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 import { ThemeSwitcher } from "@/styles/theme-switcher-floating";
-import { Providers } from "./providers"; // adjust the path as needed
-import { AuthProvider } from "@/contexts/auth-context";
+import { Providers } from "./providers";
+import { AuthBoundary } from "@/lib/auth";
 import { cookies } from "next/headers";
 import type { AuthUser } from "@/lib/auth/types";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -50,11 +50,11 @@ export default async function RootLayout({
       <body className="min-h-screen">
         <Providers>
           <ThemeProvider>
-            <AuthProvider initialUser={initialUser}>
+            <AuthBoundary initialUser={initialUser}>
               <TooltipProvider>
                 {children}
               </TooltipProvider>
-            </AuthProvider>
+            </AuthBoundary>
             <ThemeSwitcher />
             <Toaster
               richColors

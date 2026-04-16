@@ -2,10 +2,19 @@
 
 import { ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/auth-context";
+import { useAuth, authAdmin } from "@/lib/auth";
+import { toast } from "sonner";
 
 export function SuBanner() {
-  const { isImpersonating, user, suExit } = useAuth();
+  const { isImpersonating, user } = useAuth();
+  const suExit = async () => {
+    const { data, error } = await authAdmin.impersonate.exit();
+    if (error) {
+      toast.error("Failed to exit impersonation");
+      return;
+    }
+    if (data) toast.success("Returned to your account");
+  };
 
   if (!isImpersonating) return null;
 

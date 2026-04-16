@@ -9,12 +9,10 @@ import { ProfileForm } from "@/components/settings/profile-form";
 import { PreferencesForm } from "@/components/settings/preferences-form";
 import { PasswordChangeForm } from "@/components/settings/password-change-form";
 
-import { useAuthenticatedFetch } from "@/hooks/use-authenticated-fetch-client";
+import { apiFetch } from "@/lib/auth";
 import type { UserProfile } from "@/lib/auth/types";
 
 export default function SettingsPage() {
-  const authenticatedFetch = useAuthenticatedFetch();
-
   const {
     data: profile,
     isLoading,
@@ -22,7 +20,7 @@ export default function SettingsPage() {
   } = useQuery<UserProfile>({
     queryKey: ["user-profile"],
     queryFn: async () => {
-      const res = await authenticatedFetch("/api/auth/profile");
+      const res = await apiFetch("/api/auth/profile");
       if (!res.ok) throw new Error("Failed to load profile");
       return res.json();
     },

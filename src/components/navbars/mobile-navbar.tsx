@@ -43,7 +43,7 @@ import {
 import { SearchBar } from "@/components/search/search-bar";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAuth } from "@/contexts/auth-context";
+import { useAuth } from "@/lib/auth";
 import Logo from "@/components/ui/logo";
 import { UserAvatarDropdown } from "@/components/navbars/user-avatar-dropdown";
 import { loadFavorites } from "@/lib/services/workspace/favorites";
@@ -169,7 +169,8 @@ function DecoratedSubSection({
 /* ------------------------------------------------------------------ */
 
 const MobileNavbar = () => {
-  const { isAuthenticated, user, isLoading } = useAuth();
+  const { isAuthenticated, user, status } = useAuth();
+  const isLoading = status === "loading";
   const wsUsername = workspaceUsername(user);
   const pathname = usePathname();
   const isHome = pathname === "/";

@@ -6,7 +6,7 @@ import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/contexts/auth-context";
+import { useAuth, authAccount } from "@/lib/auth";
 import {
   Card,
   CardContent,
@@ -61,7 +61,9 @@ function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
-  const { signUp, isLoading, isAuthenticated } = useAuth();
+  const { isAuthenticated, status } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const isLoading = status === "loading" || isSubmitting;
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") || "/";
@@ -88,17 +90,20 @@ function SignupForm() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: formSchema as any, onSubmit: formSchema as any },
     onSubmit: async ({ value }) => {
+      setIsSubmitting(true);
       try {
-        await signUp(value as FormValues);
+        const { error: signUpError } = await authAccount.signUp(
+          value as FormValues,
+        );
+        if (signUpError) {
+          setError(signUpError.message || "Sign up failed. Please try again.");
+          return;
+        }
         toast.success("Account created successfully. Welcome to DXKB!", {
           closeButton: true,
         });
-      } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Sign up failed. Please try again.",
-        );
+      } finally {
+        setIsSubmitting(false);
       }
     },
   });

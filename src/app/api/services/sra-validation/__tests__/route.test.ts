@@ -8,6 +8,10 @@ vi.mock("@/lib/env", () => ({
   getRequiredEnv: vi.fn(() => "http://mock-ncbi"),
 }));
 
+vi.mock("@/lib/auth/session", () => ({
+  getAuthToken: vi.fn(() => Promise.resolve(undefined)),
+}));
+
 describe("GET /api/services/sra-validation", () => {
   it("returns 400 when accession is missing", async () => {
     const req = mockNextRequest({
@@ -126,7 +130,6 @@ describe("GET /api/services/sra-validation", () => {
         accession: "SRR123456",
       }),
     );
-
   });
 
   it("returns 500 on other errors", async () => {

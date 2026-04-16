@@ -1,11 +1,9 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-const { mockFetch } = vi.hoisted(() => ({ mockFetch: vi.fn() }));
-vi.mock("@/hooks/use-authenticated-fetch-client", () => ({
-  useAuthenticatedFetch: () => mockFetch,
-}));
+import { http, HttpResponse } from "msw";
+import { server } from "@/test-helpers/msw-server";
+import { ApiCallError } from "@/lib/api/types";
 
 vi.mock("@/lib/jobs/constants", () => ({
   activeJobStatuses: ["pending", "queued", "running", "in-progress"],
@@ -33,10 +31,11 @@ describe("useJobDetail", () => {
       parameters: { recipe: "auto" },
     };
 
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => jobDetail,
-    });
+    server.use(
+      http.get("/api/services/app-service/jobs/abc-123", () => {
+        return HttpResponse.json(jobDetail);
+      }),
+    );
 
     const { result } = renderHook(() => useJobDetail("abc-123"), {
       wrapper: createWrapper(),
@@ -45,9 +44,6 @@ describe("useJobDetail", () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(result.current.data).toEqual(jobDetail);
-    expect(mockFetch).toHaveBeenCalledWith(
-      "/api/services/app-service/jobs/abc-123",
-    );
   });
 
   it("is disabled when jobId is null", () => {
@@ -56,7 +52,6 @@ describe("useJobDetail", () => {
     });
 
     expect(result.current.fetchStatus).toBe("idle");
-    expect(mockFetch).not.toHaveBeenCalled();
   });
 });
 
@@ -64,10 +59,13 @@ describe("useJobOutput", () => {
   it("returns text output on success", async () => {
     const outputText = "Assembly started\nContigs generated: 42\nDone.";
 
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      text: async () => outputText,
-    });
+    server.use(
+      http.get("/api/services/app-service/jobs/abc-123/stdout", () => {
+        return new HttpResponse(outputText, {
+          headers: { "Content-Type": "text/plain" },
+        });
+      }),
+    );
 
     const { result } = renderHook(
       () => useJobOutput("abc-123", "stdout", true),
@@ -77,9 +75,6 @@ describe("useJobOutput", () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(result.current.data).toBe(outputText);
-    expect(mockFetch).toHaveBeenCalledWith(
-      "/api/services/app-service/jobs/abc-123/stdout",
-    );
   });
 
   it("is disabled when enabled is false", () => {
@@ -89,14 +84,14 @@ describe("useJobOutput", () => {
     );
 
     expect(result.current.fetchStatus).toBe("idle");
-    expect(mockFetch).not.toHaveBeenCalled();
   });
 
-  it("throws on non-ok response", async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: false,
-      statusText: "Not Found",
-    });
+  it("throws ApiCallError on non-ok response", async () => {
+    server.use(
+      http.get("/api/services/app-service/jobs/abc-123/stderr", () => {
+        return new HttpResponse(null, { status: 404, statusText: "Not Found" });
+      }),
+    );
 
     const { result } = renderHook(
       () => useJobOutput("abc-123", "stderr", true),
@@ -105,6 +100,7 @@ describe("useJobOutput", () => {
 
     await waitFor(() => expect(result.current.isError).toBe(true));
 
-    expect(result.current.error?.message).toContain("Failed to fetch stderr");
+    expect(result.current.error).toBeInstanceOf(ApiCallError);
+    expect(result.current.error?.status).toBe(404);
   });
 });

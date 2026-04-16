@@ -1,22 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
-import { useAuthenticatedFetch } from "@/hooks/use-authenticated-fetch-client";
+import { useApiQuery } from "@/lib/api/hooks";
+import { apiGet } from "@/lib/api/client";
 import type { JobDetails } from "@/types/workspace";
 import { activeJobStatuses } from "@/lib/jobs/constants";
 
 export function useJobDetail(jobId: string | null) {
-  const authenticatedFetch = useAuthenticatedFetch();
-
-  return useQuery<JobDetails, Error>({
+  return useApiQuery<JobDetails>({
     queryKey: ["job-detail", jobId],
-    queryFn: async () => {
-      const response = await authenticatedFetch(
-        `/api/services/app-service/jobs/${jobId}`,
-      );
-      if (!response.ok) {
-        throw new Error(`Failed to fetch job details: ${response.statusText}`);
-      }
-      return response.json();
-    },
+    queryFn: () => apiGet<JobDetails>(`/api/services/app-service/jobs/${jobId}`),
     enabled: !!jobId,
     staleTime: 30_000,
     refetchInterval: (query) => {
@@ -33,19 +23,10 @@ export function useJobOutput(
   outputType: "stdout" | "stderr",
   enabled: boolean,
 ) {
-  const authenticatedFetch = useAuthenticatedFetch();
-
-  return useQuery<string, Error>({
+  return useApiQuery<string>({
     queryKey: ["job-output", jobId, outputType],
-    queryFn: async () => {
-      const response = await authenticatedFetch(
-        `/api/services/app-service/jobs/${jobId}/${outputType}`,
-      );
-      if (!response.ok) {
-        throw new Error(`Failed to fetch ${outputType}: ${response.statusText}`);
-      }
-      return response.text();
-    },
+    queryFn: () =>
+      apiGet<string>(`/api/services/app-service/jobs/${jobId}/${outputType}`),
     enabled: !!jobId && enabled,
     staleTime: 60_000,
   });

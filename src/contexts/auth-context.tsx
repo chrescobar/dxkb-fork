@@ -15,6 +15,7 @@ import { AuthUser, SigninCredentials, SignupCredentials } from "@/lib/auth/types
 import { bvbrcAuth } from "@/lib/auth/client";
 import { isProtectedPagePath } from "@/lib/auth/routes";
 import { toast } from "sonner";
+import { setAuthRefreshCallback } from "@/lib/api/client";
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -106,6 +107,12 @@ export function AuthProvider({
       await signOutHandler();
     }
   }, [fetchSession, signOutHandler]);
+
+  // Register the auth refresh callback for apiCall/apiGet 401 retry
+  useEffect(() => {
+    setAuthRefreshCallback(refreshAuth);
+    return () => setAuthRefreshCallback(null);
+  }, [refreshAuth]);
 
   // Revalidate when tab becomes visible (replaces 5-min polling)
   useEffect(() => {

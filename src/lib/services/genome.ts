@@ -1,3 +1,5 @@
+import { apiCall, apiGet } from "@/lib/api/client";
+
 export interface GenomeSummary {
   genome_id: string;
   genome_name: string;
@@ -19,41 +21,19 @@ export async function fetchGenomeSuggestions(
   options: GenomeSuggestionOptions = {},
 ): Promise<GenomeSummary[]> {
   const trimmed = query.trim();
-
-  // if (!trimmed) {
-  //   console.log("no query, returning empty array");
-  //   return [];
-  // }
-
   const { limit = 25, signal } = options;
-  const params = new URLSearchParams({
-    q: trimmed || "",
-    limit: `${limit}`,
-  });
-
-  console.log("params are:", params.toString());
 
   try {
-    console.log("fetching suggestions for query:", query);
-    const response = await fetch(`/api/services/genome/search?${params.toString()}`, {
-      method: "GET",
-      credentials: "include",
-      signal,
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.json().catch(() => ({}));
-      const message = errorBody?.error || "Failed to search genomes";
-      throw new Error(message);
-    }
-
-    const data = await response.json();
+    const data = await apiGet<{ results: GenomeSummary[] }>(
+      "/api/services/genome/search",
+      { q: trimmed || "", limit },
+      { signal },
+    );
     return Array.isArray(data?.results) ? data.results : [];
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
       return [];
     }
-
     throw error;
   }
 }
@@ -62,36 +42,21 @@ export async function fetchGenomesByIds(
   genomeIds: string[],
   options: { signal?: AbortSignal } = {},
 ): Promise<GenomeSummary[]> {
-  if (genomeIds.length === 0) {
-    return [];
-  }
+  if (genomeIds.length === 0) return [];
 
   const uniqueIds = Array.from(new Set(genomeIds));
 
   try {
-    const response = await fetch("/api/services/genome/by-ids", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ genome_ids: uniqueIds }),
-      signal: options.signal,
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.json().catch(() => ({}));
-      const message = errorBody?.error || "Failed to fetch genome metadata";
-      throw new Error(message);
-    }
-
-    const data = await response.json();
+    const data = await apiCall<{ results: GenomeSummary[] }>(
+      "/api/services/genome/by-ids",
+      { genome_ids: uniqueIds },
+      { signal: options.signal },
+    );
     return Array.isArray(data?.results) ? data.results : [];
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
       return [];
     }
-
     throw error;
   }
 }
@@ -100,29 +65,16 @@ export async function fetchAllGenomeIds(
   options: { signal?: AbortSignal } = {},
 ): Promise<GenomeSummary[]> {
   try {
-    const response = await fetch("/api/services/genome/get-all-ids", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({}),
-      signal: options.signal,
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.json().catch(() => ({}));
-      const message = errorBody?.error || "Failed to fetch genome metadata";
-      throw new Error(message);
-    }
-
-    const data = await response.json();
+    const data = await apiCall<{ results: GenomeSummary[] }>(
+      "/api/services/genome/get-all-ids",
+      {},
+      { signal: options.signal },
+    );
     return Array.isArray(data?.results) ? data.results : [];
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
       return [];
     }
-
     throw error;
   }
 }
@@ -291,23 +243,11 @@ export async function validateViralGenomes(
   const uniqueIds = Array.from(new Set(genomeIds));
 
   try {
-    const response = await fetch("/api/services/genome/validate-viral", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ genome_ids: uniqueIds }),
-      signal,
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.json().catch(() => ({}));
-      const message = errorBody?.error || "Failed to validate genomes";
-      throw new Error(message);
-    }
-
-    const data = await response.json();
+    const data = await apiCall<{ results: ViralGenomeValidationResult[] }>(
+      "/api/services/genome/validate-viral",
+      { genome_ids: uniqueIds },
+      { signal },
+    );
     const results: ViralGenomeValidationResult[] = Array.isArray(data?.results) ? data.results : [];
 
     const errors: ViralGenomeValidationErrors = {};

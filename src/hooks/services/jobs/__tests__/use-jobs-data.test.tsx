@@ -1,11 +1,9 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-const { mockFetch } = vi.hoisted(() => ({ mockFetch: vi.fn() }));
-vi.mock("@/hooks/use-authenticated-fetch-client", () => ({
-  useAuthenticatedFetch: () => mockFetch,
-}));
+import { http, HttpResponse } from "msw";
+import { server } from "@/test-helpers/msw-server";
+import { ApiCallError } from "@/lib/api/types";
 
 function createWrapper() {
   const queryClient = new QueryClient({
@@ -34,10 +32,13 @@ describe("useJobsData", () => {
       { id: "job-2", app: "GenomeAnnotation", status: "queued" },
     ];
 
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ jobs, totalTasks: 42 }),
-    });
+    let capturedBody: unknown;
+    server.use(
+      http.post("/api/services/app-service/jobs/enumerate-tasks-filtered", async ({ request }) => {
+        capturedBody = await request.json();
+        return HttpResponse.json({ jobs, totalTasks: 42 });
+      }),
+    );
 
     const { result } = renderHook(() => useJobsData(defaultParams), {
       wrapper: createWrapper(),
@@ -46,20 +47,13 @@ describe("useJobsData", () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(result.current.data).toEqual({ jobs, totalTasks: 42 });
-    expect(mockFetch).toHaveBeenCalledWith(
-      "/api/services/app-service/jobs/enumerate-tasks-filtered",
+    expect(capturedBody).toEqual(
       expect.objectContaining({
-        method: "POST",
-        body: JSON.stringify({
-          offset: 0,
-          limit: 25,
-          include_archived: false,
-          sort_field: "submit_time",
-          sort_order: "desc",
-          app: undefined,
-          start_time: undefined,
-          end_time: undefined,
-        }),
+        offset: 0,
+        limit: 25,
+        include_archived: false,
+        sort_field: "submit_time",
+        sort_order: "desc",
       }),
     );
   });
@@ -69,10 +63,11 @@ describe("useJobsData", () => {
       { id: "job-1", app: "GenomeAssembly2", status: "completed" },
     ];
 
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ jobs: [jobs], totalTasks: 10 }),
-    });
+    server.use(
+      http.post("/api/services/app-service/jobs/enumerate-tasks-filtered", () => {
+        return HttpResponse.json({ jobs: [jobs], totalTasks: 10 });
+      }),
+    );
 
     const { result } = renderHook(() => useJobsData(defaultParams), {
       wrapper: createWrapper(),
@@ -83,11 +78,12 @@ describe("useJobsData", () => {
     expect(result.current.data).toEqual({ jobs, totalTasks: 10 });
   });
 
-  it("throws on HTTP error", async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: false,
-      statusText: "Internal Server Error",
-    });
+  it("throws ApiCallError on HTTP error", async () => {
+    server.use(
+      http.post("/api/services/app-service/jobs/enumerate-tasks-filtered", () => {
+        return new HttpResponse(null, { status: 500, statusText: "Internal Server Error" });
+      }),
+    );
 
     const { result } = renderHook(() => useJobsData(defaultParams), {
       wrapper: createWrapper(),
@@ -95,9 +91,7 @@ describe("useJobsData", () => {
 
     await waitFor(() => expect(result.current.isError).toBe(true));
 
-    expect(result.current.error).toBeInstanceOf(Error);
-    expect(result.current.error?.message).toBe(
-      "Failed to fetch jobs: Internal Server Error",
-    );
+    expect(result.current.error).toBeInstanceOf(ApiCallError);
+    expect(result.current.error?.status).toBe(500);
   });
 });

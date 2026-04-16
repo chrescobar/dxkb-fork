@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAppService } from "@/lib/app-service";
-import { requireAuthToken } from "@/lib/auth/session";
+import { withAuth } from "@/lib/api/server";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -10,11 +10,8 @@ interface RouteParams {
  * Get job details
  * GET /api/services/app-service/jobs/[id]
  */
-export async function GET(request: NextRequest, { params }: RouteParams) {
-  try {
-    const token = await requireAuthToken();
-    if (token instanceof NextResponse) return token;
-
+export const GET = withAuth<RouteParams>(
+  async (request: NextRequest, { token, params }) => {
     const { id: jobId } = await params;
 
     if (!jobId) {
@@ -38,17 +35,5 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     });
 
     return NextResponse.json(jobDetails);
-  } catch (error) {
-    console.error("Error getting job details:", error);
-
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
-  }
-}
-
+  },
+);

@@ -1,0 +1,124 @@
+src/lib/services/info/sars-cov2-wastewater-analysis.ts
+  ded25e5349274f25 65
+  9294eb6cbff32227 39
+src/lib/forms/(metagenomics)/metagenomic-binning/metagenomic-binning-service.ts
+  122a48f1e1ad7458 26-27,29-33
+src/lib/services/info/blast.ts
+  ded25e5349274f25 6,61
+src/lib/services/info/genome-alignment.ts
+  122a48f1e1ad7458 26
+src/lib/services/info/fastq-utilities.ts
+  ded25e5349274f25 8
+src/lib/services/info/phylogenetic-tree.ts
+  202efe713f9a38ae 102
+src/lib/services/info/genome-annotation.ts
+  202efe713f9a38ae 38
+src/lib/services/info/proteome-comparison.ts
+  202efe713f9a38ae 7,49
+src/lib/services/info/metagenomic-binning.ts
+  ded25e5349274f25 94
+src/lib/forms/(genomics)/genome-annotation/genome-annotation-service.ts
+  9294eb6cbff32227 24-26,28
+src/app/services/(genomics)/genome-alignment/page.tsx
+  122a48f1e1ad7458 35,352,354,356
+src/lib/forms/(viral-tools)/sars-cov2-genome-analysis/sars-cov2-genome-analysis-service.ts
+  9294eb6cbff32227 39
+src/lib/services/info/metagenomic-read-mapping.ts
+  9294eb6cbff32227 22,27
+src/lib/services/info/genome-assembly.ts
+  202efe713f9a38ae 20,25,73
+src/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-service.ts
+  122a48f1e1ad7458 34-38,41,44-52
+src/lib/services/info/msa-snp-analysis.ts
+  202efe713f9a38ae 56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "8f59851a2f5f52910a7e6a2e27b61ad5b78f3fe8",
+  "prompts": {
+    "122a48f1e1ad7458": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fd5932c4-6796-4e33-ab12-8c2028bf07de",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 27,
+      "total_deletions": 9,
+      "accepted_lines": 27,
+      "overriden_lines": 0
+    },
+    "202efe713f9a38ae": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2212a64e-20b0-42ae-8ad6-11791c86e81c",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 8,
+      "total_deletions": 8,
+      "accepted_lines": 8,
+      "overriden_lines": 0
+    },
+    "419a5305e23edd86": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1121456-7439-418d-8199-1af302a01764",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    },
+    "9294eb6cbff32227": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d1fa59eb-00b2-4694-b3f7-dc396ac55cd8",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 8,
+      "total_deletions": 9,
+      "accepted_lines": 8,
+      "overriden_lines": 0
+    },
+    "b186c38203232bc3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2477c54-328c-477b-9f1e-c2ec999db01a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    },
+    "ded25e5349274f25": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "451693db-34de-45c2-a001-3f5e6c472679",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 6,
+      "total_deletions": 6,
+      "accepted_lines": 5,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_e893c4a39fbc49": {
+      "author": "Chris Escobar"
+    }
+  }
+}

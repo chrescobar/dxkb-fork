@@ -1,0 +1,115 @@
+src/app/services/(metagenomics)/taxonomic-classification/page.tsx
+  36f446bc5db12965 6-9,113-114,155,179,212,299,388,468,475,537-540,559-564,592-595,611-615,617,646-649,656,663-668,697-700,715-719,721,750-753,768-770,777-784,799-802,808-809,814,823,843-846,852-853,858,929
+src/lib/forms/(protein-tools)/proteome-comparison/proteome-comparison-service.ts
+  36f446bc5db12965 28,34,59-62,65-69,73-77,103
+src/lib/forms/(metagenomics)/metagenomic-binning/metagenomic-binning-service.ts
+  36f446bc5db12965 29
+src/app/services/(protein-tools)/meta-cats/page.tsx
+  36f446bc5db12965 75-77,126-129,208-216,229-230,257-266,269-272,304-307,315-317,331,355,413,465,526-531,555-667,669-670,672-676,678-686,692-727,731-741,743-746,748-750,752-767,769-778,781-808,810-868,871-872,875-891,896-927,930,932-964,966-967,970-985,991
+src/app/services/(protein-tools)/gene-protein-tree/page.tsx
+  36f446bc5db12965 44,98-100,142-143,223-226,232,240-243,396-401,419,424-426,450,452-454,478,480-482,541-544,546-548,575-578,580-582,624-629,657-660,662-664,739-740,749-751,764,796-798,812
+src/lib/forms/(protein-tools)/gene-protein-tree/gene-protein-tree-service.ts
+  36f446bc5db12965 16
+src/app/services/(utilities)/fastq-utilities/page.tsx
+  36f446bc5db12965 90-92,99,130,136-138,161,234-235,257-260,275-278,365-368,375-379,388-391,401,538-540,548-551,575
+src/app/services/(protein-tools)/msa-snp-analysis/page.tsx
+  36f446bc5db12965 114-115,119-121,130-137,426-430,432-434,436-438,440-442,444-445,491-493,554-556,603,644-649,657,716,739-741,782,807-810,867,869,928-930,955,990,1069,1210,1212-1215,1219-1221,1237-1240,1272-1278,1280-1291,1293-1296,1346
+src/app/services/(metagenomics)/metagenomic-binning/page.tsx
+  36f446bc5db12965 6-9,89,98-99,116,136,144-149,238-243,350,355,420,461-464,469-474,491-492,515-518,523-528,532,593-596,632-635,658-661,689-691
+src/hooks/services/__tests__/use-service-runtime.test.tsx
+  36f446bc5db12965 78-82,190-225
+src/app/services/(genomics)/genome-annotation/page.tsx
+  36f446bc5db12965 6,40-44,60-61,158,180-184,205,218-220,229-236,252-255,276-283,286-288,317-318,320-323
+src/app/services/(protein-tools)/proteome-comparison/page.tsx
+  36f446bc5db12965 42-44,85-86,112-119,147-151,164-165,167-170,177-180,241,270-272,288,301,338,441,456-458,483,545,549,580,584-587,666,670,703,736
+src/lib/forms/(viral-tools)/influenza-ha-subtype/influenza-ha-subtype-service.ts
+  36f446bc5db12965 27-30
+src/app/services/(viral-tools)/sars-cov2-genome-analysis/page.tsx
+  36f446bc5db12965 130,199,222,275-276,389,423,491,540,564,646,668,711,740,787
+src/app/services/(viral-tools)/viral-assembly/page.tsx
+  36f446bc5db12965 30-32,85,114-116,120,123,125,153-155,164,167,169,173,203,209,217,278-279,333,384-385,469,471
+src/app/services/(phylogenomics)/viral-genome-tree/page.tsx
+  36f446bc5db12965 39,43-46,78-80,88-89,93-95,154-157,188-194,234-237,252-255,267-269,304-310,326-329,361-363,390-392,436,441-443,454-456,458-462,468,471,473-475,486-488,496,499,501-503,514-516,564-567,569-571,598-601,603-605,647-652,676,678-681,683-685,760-761,770-772,785,817-819,833
+src/app/services/(metagenomics)/metagenomic-read-mapping/page.tsx
+  36f446bc5db12965 6-9,83,91-92,108,128,277,282,344-347,352-357,365-368,403-406,412-417,425-428,448-451,455,458,477-480,487
+src/lib/forms/(genomics)/genome-annotation/genome-annotation-service.ts
+  36f446bc5db12965 1,19-20,23-25,27-29,31-32,34-35
+src/app/services/(viral-tools)/sars-cov2-wastewater-analysis/page.tsx
+  36f446bc5db12965 94,119,121,227,242,272,395,455,608
+src/app/services/(genomics)/similar-genome-finder/page.tsx
+  36f446bc5db12965 5-9,90-91,99-102,214,259-262,297-300,335-338,385-387,389-392,407-409,411-414,431-433,477
+src/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-service.ts
+  36f446bc5db12965 16,19,22,25,34,42,45
+src/app/services/(genomics)/blast/page.tsx
+  36f446bc5db12965 39,88-91,98-103,106,109,111,113,115,117,121-122,141-145,158,202-204,272,349-350,354,404,480-483,509-512,521-524,557,635,661,810-812
+src/lib/forms/(phylogenomics)/viral-genome-tree/viral-genome-tree-service.ts
+  36f446bc5db12965 16
+src/app/services/(genomics)/variation-analysis/page.tsx
+  36f446bc5db12965 100,120,128,213-215,250-252,279,361-363,371-374,394-396,404-407,455,501-504
+  h_e893c4a39fbc49 216
+src/lib/forms/(viral-tools)/sars-cov2-genome-analysis/sars-cov2-genome-analysis-service.ts
+  36f446bc5db12965 1,34,36-46,48-49
+src/app/services/(viral-tools)/subspecies-classification/page.tsx
+  36f446bc5db12965 84-87,165,241,265,350
+src/lib/forms/tanstack-library-selection.ts
+  36f446bc5db12965 21-25,88,97-100,103-105,114-117,140,156,159-165,171-172,179-180,189-190,195-199,208,214-216,221-223,227-228,242,249,255
+src/app/services/(genomics)/genome-assembly/page.tsx
+  36f446bc5db12965 5-9,134-135,165-168,174,270-272,307-309,336,399,403-405,413-416,464-467,477-480,509-512,542-544,549-552,557-559,568-571,576-578,587-590,595-597,607-609,614-617,636-638,643-646,663-666,684-686,691-694,712-715,739,790-792
+src/lib/forms/(metagenomics)/taxonomic-classification/taxonomic-classification-service.ts
+  36f446bc5db12965 18-19,34-59,61-67,69-70
+src/app/services/(genomics)/primer-design/page.tsx
+  36f446bc5db12965 5-9,250,359-360,364-365,386,396,419,483,487,501-504,506-507,528,533,544,549-553,584,587-591,594-595,608,611-614,670,674-677,682-686,736-739,744-748,750-751,772,777-781,802,805-808,829,832-836,852,855-858,898,901-904,963
+src/app/services/(viral-tools)/influenza-ha-subtype/page.tsx
+  36f446bc5db12965 6,74,102,170,226,268,349
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "82fab1541c30cb1fb7d9bc269fe1d93cafe8adbf",
+  "prompts": {
+    "36f446bc5db12965": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d9d08-1fe4-7c20-ad6e-72ccd947bdc7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 1655,
+      "total_deletions": 1262,
+      "accepted_lines": 1639,
+      "overriden_lines": 0
+    },
+    "419a5305e23edd86": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1121456-7439-418d-8199-1af302a01764",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    },
+    "b186c38203232bc3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2477c54-328c-477b-9f1e-c2ec999db01a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_e893c4a39fbc49": {
+      "author": "Chris Escobar"
+    }
+  }
+}

@@ -93,12 +93,17 @@ describe("GenomeAssembly page — rerun + submit flow", () => {
 
     // Click Assemble to submit — wait for tanstack-form validation to mark the
     // form submittable (button is disabled until canSubmit flips to true).
+    // Bumped timeouts accommodate the single-vCPU ubuntu-latest CI runner,
+    // where the library-state → form-field sync + submission chain can exceed
+    // the 1s waitFor default.
     const assembleButton = screen.getByRole("button", { name: /assemble/i });
-    await waitFor(() => expect(assembleButton).toBeEnabled());
+    await waitFor(() => expect(assembleButton).toBeEnabled(), {
+      timeout: 5000,
+    });
     await userEvent.click(assembleButton);
 
-    await waitFor(() => {
-      expect(submittedBody).not.toBeNull();
+    await waitFor(() => expect(submittedBody).not.toBeNull(), {
+      timeout: 5000,
     });
 
     const body = submittedBody as { app_name: string; app_params: Record<string, unknown> };

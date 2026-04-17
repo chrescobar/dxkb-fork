@@ -45,9 +45,8 @@ import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { Spinner } from "@/components/ui/spinner";
 
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
+import { useDebugParamsPreview } from "@/hooks/services/use-debug-params-preview";
 import { useRerunForm } from "@/hooks/services/use-rerun-form";
-import { useDefaultOutputPath } from "@/hooks/services/use-default-output-path";
-import { buildPairedLibraries, buildSingleLibraries, buildSraLibraries } from "@/lib/rerun-utility";
 import {
   sarsCov2GenomeAnalysisInfo,
   sarsCov2GenomeAnalysisParameters,
@@ -83,7 +82,6 @@ import {
 import { getLibraryTypeLabel } from "@/lib/forms/shared-schemas";
 
 import type { WorkspaceObject } from "@/lib/workspace-client";
-import type { Library } from "@/types/services";
 import {
   sarsCov2PairedPlatformOptions,
   sarsCov2SinglePlatformOptions,
@@ -95,18 +93,19 @@ const tutorial =
   "https://www.bv-brc.org/docs/tutorial/sars_cov_2_assembly_annotation/sars_cov_2_assembly_annotation.html";
 
 export default function SarsCov2GenomeAnalysisPage() {
-  const { rerunData, markApplied } = useRerunForm<Record<string, unknown>>();
-
   const form = useForm({
     defaultValues:
       defaultSarsCov2GenomeAnalysisFormValues as SarsCov2GenomeAnalysisFormData,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: sarsCov2GenomeAnalysisFormSchema as any },
     onSubmit: async ({ value }) => {
-      await handleSubmit(value as SarsCov2GenomeAnalysisFormData);
+      const data = value as SarsCov2GenomeAnalysisFormData;
+      await previewOrPassthrough(
+        transformSarsCov2GenomeAnalysisParams(data),
+        submit,
+      );
     },
   });
-  useDefaultOutputPath(form, rerunData);
 
   const outputPath = useStore(form.store, (s) => s.values.output_path);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
@@ -174,75 +173,58 @@ export default function SarsCov2GenomeAnalysisPage() {
     }
   }, [primers, showPrimersSection, form]);
 
-  // Rerun pre-fill
-  useEffect(() => {
-    if (!rerunData || !markApplied()) return;
-
-    const inputType = (rerunData.input_type as string) || "reads";
-    form.setFieldValue("input_type", inputType as never);
-
-    if (rerunData.taxonomy_id) {
-      const taxonId = String(rerunData.taxonomy_id);
-      form.setFieldValue("taxonomy_id", taxonId);
-      const outputFile = rerunData.output_file as string | undefined;
-      fetch(`/api/services/taxonomy?q=taxon_id:${taxonId}&fl=taxon_id,taxon_name`)
-        .then((r) => r.json())
-        .then((data) => {
-          const docs = Array.isArray(data) ? data : data?.response?.docs;
-          if (docs && docs.length > 0) {
-            const taxonName: string = docs[0].taxon_name;
-            form.setFieldValue("scientific_name", taxonName as never);
-            if (outputFile) {
-              const sanitized = sanitizeTaxonomyForOutputName(taxonName);
-              const prefix = sanitized + " ";
-              const label = outputFile.startsWith(prefix)
-                ? outputFile.slice(prefix.length).trim()
-                : "";
-              if (label) {
-                form.setFieldValue("my_label", label as never);
+  useRerunForm<Record<string, unknown>>({
+    form,
+    fields: [
+      "input_type",
+      "my_label",
+      "output_path",
+      "output_file",
+      "recipe",
+      "primers",
+      "primer_version",
+      "contigs",
+    ] as const,
+    libraries: ["paired", "single", "sra"],
+    getLibraryExtra: (lib, kind) => {
+      if (kind === "paired" || kind === "single") {
+        return { platform: lib.platform || "illumina" };
+      }
+      return {};
+    },
+    syncLibraries: (libs) => {
+      syncLibrariesToForm(libs);
+      setLibrariesAndSync(libs);
+    },
+    onApply: (rerunData, form) => {
+      // Taxonomy fetch: resolve scientific_name and extract label from output_file prefix
+      if (rerunData.taxonomy_id) {
+        const taxonId = String(rerunData.taxonomy_id);
+        form.setFieldValue("taxonomy_id", taxonId as never);
+        const outputFile = rerunData.output_file as string | undefined;
+        fetch(`/api/services/taxonomy?q=taxon_id:${taxonId}&fl=taxon_id,taxon_name`)
+          .then((r) => r.json())
+          .then((data) => {
+            const docs = Array.isArray(data) ? data : data?.response?.docs;
+            if (docs && docs.length > 0) {
+              const taxonName: string = docs[0].taxon_name;
+              form.setFieldValue("scientific_name", taxonName as never);
+              if (outputFile) {
+                const sanitized = sanitizeTaxonomyForOutputName(taxonName);
+                const prefix = sanitized + " ";
+                const label = outputFile.startsWith(prefix)
+                  ? outputFile.slice(prefix.length).trim()
+                  : "";
+                if (label) {
+                  form.setFieldValue("my_label", label as never);
+                }
               }
             }
-          }
-        })
-        .catch(noop);
-    }
-    if (rerunData.my_label) {
-      form.setFieldValue("my_label", rerunData.my_label as never);
-    }
-    if (rerunData.output_path) {
-      form.setFieldValue("output_path", rerunData.output_path as never);
-    }
-    if (rerunData.output_file) {
-      form.setFieldValue("output_file", rerunData.output_file as never);
-    }
-
-    if (inputType === "reads") {
-      if (rerunData.recipe) {
-        form.setFieldValue("recipe", rerunData.recipe as never);
+          })
+          .catch(noop);
       }
-      if (rerunData.primers) {
-        form.setFieldValue("primers", rerunData.primers as never);
-      }
-      if (rerunData.primer_version) {
-        form.setFieldValue("primer_version", rerunData.primer_version as never);
-      }
-
-      const libs: Library[] = [
-        ...buildPairedLibraries(rerunData, (lib) => ({ platform: lib.platform || "illumina" })),
-        ...buildSingleLibraries(rerunData, (lib) => ({ platform: lib.platform || "illumina" })),
-        ...buildSraLibraries(rerunData),
-      ];
-
-      if (libs.length > 0) {
-        syncLibrariesToForm(libs);
-        setLibrariesAndSync(libs);
-      }
-    } else if (inputType === "contigs") {
-      if (rerunData.contigs) {
-        form.setFieldValue("contigs", rerunData.contigs as never);
-      }
-    }
-  }, [rerunData, markApplied, form, syncLibrariesToForm, setLibrariesAndSync]);
+    },
+  });
 
   const handleLibraryError = (message: string) => {
     handleLibraryErrorUtil(message, toast);
@@ -284,18 +266,13 @@ export default function SarsCov2GenomeAnalysisPage() {
     setSraResetKey((k) => k + 1);
   };
 
-  const {
-    handleSubmit,
-    showParamsDialog,
-    setShowParamsDialog,
-    currentParams,
-    serviceName,
-    isSubmitting,
-  } = useServiceFormSubmission<SarsCov2GenomeAnalysisFormData>({
+  const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "ComprehensiveSARS2Analysis",
     displayName: "SARS-CoV-2 Genome Analysis",
-    transformParams: transformSarsCov2GenomeAnalysisParams,
     onSuccess: handleReset,
+  });
+  const { previewOrPassthrough, dialogProps } = useDebugParamsPreview({
+    serviceName: "ComprehensiveSARS2Analysis",
   });
 
   return (
@@ -883,12 +860,7 @@ export default function SarsCov2GenomeAnalysisPage() {
         </div>
       </form>
 
-      <JobParamsDialog
-        open={showParamsDialog}
-        onOpenChange={setShowParamsDialog}
-        params={currentParams}
-        serviceName={serviceName}
-      />
+      <JobParamsDialog {...dialogProps} />
     </section>
   );
 }

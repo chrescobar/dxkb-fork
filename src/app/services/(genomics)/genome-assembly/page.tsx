@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm, useStore } from "@tanstack/react-form";
 import { FieldItem, FieldLabel, FieldErrors } from "@/components/ui/tanstack-form";
 import { ServiceHeader } from "@/components/services/service-header";
@@ -47,9 +47,8 @@ import { Library } from "@/types/services";
 import { NumberInput } from "@/components/ui/number-input";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
+import { useDebugParamsPreview } from "@/hooks/services/use-debug-params-preview";
 import { useRerunForm } from "@/hooks/services/use-rerun-form";
-import { useDefaultOutputPath } from "@/hooks/services/use-default-output-path";
-import { buildPairedLibraries, buildSingleLibraries, buildSraLibraries } from "@/lib/rerun-utility";
 import { toast } from "sonner";
 import {
   genomeAssemblyFormSchema,
@@ -72,29 +71,28 @@ import { WorkspaceObject } from "@/lib/workspace-client";
 import { ChevronRight } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import {
+  buildBaseLibraryItem,
   getPairedLibraryName,
   getSingleLibraryName,
   useTanstackLibrarySelection,
 } from "@/lib/forms/tanstack-library-selection";
 
 function mapAssemblyLibraryToItem(library: Library): LibraryItem {
-  const baseLib: LibraryItem = {
-    _id: library.id,
-    _type: library.type === "paired" ? "paired" : library.type === "single" ? "single" : "srr_accession",
-  };
-
-  if (library.type === "paired" && library.files) {
-    baseLib.read1 = library.files[0];
-    baseLib.read2 = library.files[1];
-    baseLib.platform = library.platform || "infer";
-    baseLib.interleaved = library.interleaved || false;
-    baseLib.read_orientation_outward = library.read_orientation_outward || false;
-  } else if (library.type === "single" && library.files) {
-    baseLib.read = library.files[0];
-    baseLib.platform = library.platform || "infer";
+  if (library.type === "paired") {
+    return {
+      ...buildBaseLibraryItem(library),
+      platform: library.platform || "infer",
+      interleaved: library.interleaved || false,
+      read_orientation_outward: library.read_orientation_outward || false,
+    };
   }
-
-  return baseLib;
+  if (library.type === "single") {
+    return {
+      ...buildBaseLibraryItem(library),
+      platform: library.platform || "infer",
+    };
+  }
+  return buildBaseLibraryItem(library);
 }
 
 export default function GenomeAssemblyPage() {
@@ -113,7 +111,6 @@ export default function GenomeAssemblyPage() {
     onSubmit: async ({ value }) => {
       const data = value as GenomeAssemblyFormData;
 
-      // Validate that at least one library is provided
       const hasPaired = data.paired_end_libs && data.paired_end_libs.length > 0;
       const hasSingle = data.single_end_libs && data.single_end_libs.length > 0;
       const hasSrr = data.srr_ids && data.srr_ids.length > 0;
@@ -123,7 +120,7 @@ export default function GenomeAssemblyPage() {
         return;
       }
 
-      await handleSubmit(data);
+      await previewOrPassthrough(transformGenomeAssemblyParams(data), submit);
     },
   });
 
@@ -143,40 +140,31 @@ export default function GenomeAssemblyPage() {
     },
   });
 
-  // Rerun: pre-fill form from job parameters
-  const { rerunData, markApplied } = useRerunForm<Record<string, unknown>>();
-  useDefaultOutputPath(form, rerunData);
+  useRerunForm<Record<string, unknown>>({
+    form,
+    fields: ["output_path", "output_file", "recipe"] as const,
+    libraries: ["paired", "single", "sra"],
+    getLibraryExtra: (lib, kind) => {
+      if (kind === "paired") {
+        return {
+          platform: lib.platform || "infer",
+          interleaved: !!lib.interleaved,
+          read_orientation_outward: !!lib.read_orientation_outward,
+        };
+      }
+      if (kind === "single") return { platform: lib.platform || "infer" };
+      return {};
+    },
+    syncLibraries: setLibrariesAndSync,
+  });
 
-  useEffect(() => {
-    if (!rerunData || !markApplied()) return;
-
-    if (rerunData.output_path) form.setFieldValue("output_path", rerunData.output_path as never);
-    if (rerunData.output_file) form.setFieldValue("output_file", rerunData.output_file as never);
-    if (rerunData.recipe) form.setFieldValue("recipe", rerunData.recipe as never);
-
-    const libs: Library[] = [
-      ...buildPairedLibraries(rerunData, (lib) => ({ platform: lib.platform || "infer", interleaved: !!lib.interleaved, read_orientation_outward: !!lib.read_orientation_outward })),
-      ...buildSingleLibraries(rerunData, (lib) => ({ platform: lib.platform || "infer" })),
-      ...buildSraLibraries(rerunData),
-    ];
-    if (libs.length > 0) {
-      setLibrariesAndSync(libs);
-    }
-  }, [rerunData, markApplied, form, setLibrariesAndSync]);
-
-  // Setup service debugging and form submission
-  const {
-    handleSubmit,
-    showParamsDialog,
-    setShowParamsDialog,
-    currentParams,
-    serviceName,
-    isSubmitting,
-  } = useServiceFormSubmission<GenomeAssemblyFormData>({
+  const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "GenomeAssembly2",
     displayName: "Genome Assembly",
-    transformParams: transformGenomeAssemblyParams,
     onSuccess: handleReset,
+  });
+  const { previewOrPassthrough, dialogProps } = useDebugParamsPreview({
+    serviceName: "GenomeAssembly2",
   });
 
   function handleReset() {
@@ -191,11 +179,9 @@ export default function GenomeAssemblyPage() {
     setSraResetKey((k) => k + 1);
   }
 
-  // Watch recipe to show/hide genome size field
   const recipe = useStore(form.store, (s) => s.values.recipe);
   const showGenomeSizeField = recipe === "canu";
 
-  // Watch output_path for OutputFolder name validation
   const outputPath = useStore(form.store, (s) => s.values.output_path);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
@@ -214,7 +200,7 @@ export default function GenomeAssemblyPage() {
           read_orientation_outward: false,
         },
       }),
-      onError: (message) => toast.error(message),
+      onError: toast.error,
       onAfterAdd: () => {
         setPairedRead1(null);
         setPairedRead2(null);
@@ -234,7 +220,7 @@ export default function GenomeAssemblyPage() {
           platform: "infer",
         },
       }),
-      onError: (message) => toast.error(message),
+      onError: toast.error,
       onAfterAdd: () => {
         setSingleRead(null);
       },
@@ -754,13 +740,7 @@ export default function GenomeAssemblyPage() {
         </div>
       </form>
 
-      {/* Job Params Dialog */}
-      <JobParamsDialog
-        open={showParamsDialog}
-        onOpenChange={setShowParamsDialog}
-        params={currentParams}
-        serviceName={serviceName}
-      />
+      <JobParamsDialog {...dialogProps} />
     </section>
   );
 }

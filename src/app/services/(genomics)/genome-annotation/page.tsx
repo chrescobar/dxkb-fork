@@ -31,8 +31,8 @@ import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object
 import { WorkspaceObject } from "@/lib/workspace-client";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
+import { useDebugParamsPreview } from "@/hooks/services/use-debug-params-preview";
 import { useRerunForm } from "@/hooks/services/use-rerun-form";
-import { useDefaultOutputPath } from "@/hooks/services/use-default-output-path";
 import { toast } from "sonner";
 import {
   completeGenomeAnnotationSchema,
@@ -60,18 +60,12 @@ import { Label } from "@/components/ui/label";
 const GenomeAnnotationContent = () => {
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  // Setup service debugging and form submission
-  const {
-    handleSubmit,
-    showParamsDialog,
-    setShowParamsDialog,
-    currentParams,
-    serviceName,
-    isSubmitting,
-  } = useServiceFormSubmission<GenomeAnnotationFormData>({
+  const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "GenomeAnnotation",
     displayName: "Genome Annotation",
-    transformParams: transformGenomeAnnotationParams,
+  });
+  const { previewOrPassthrough, dialogProps } = useDebugParamsPreview({
+    serviceName: "GenomeAnnotation",
   });
 
   const form = useForm({
@@ -85,11 +79,10 @@ const GenomeAnnotationContent = () => {
         return;
       }
 
-      await handleSubmit(value);
+      await previewOrPassthrough(transformGenomeAnnotationParams(value), submit);
     },
   });
 
-  // Watch all form values for changes
   const watchedValues = useStore(form.store, (s) => s.values);
   const previousValuesRef = useRef<GenomeAnnotationFormData>(watchedValues);
 
@@ -116,39 +109,32 @@ const GenomeAnnotationContent = () => {
     previousValuesRef.current = currentValues;
   }, [watchedValues]);
 
-  // Rerun: pre-fill form from job parameters
-  const { rerunData, markApplied } = useRerunForm<Record<string, unknown>>();
-  useDefaultOutputPath(form, rerunData);
-
-  useEffect(() => {
-    if (!rerunData || !markApplied()) return;
-
-    if (rerunData.contigs) form.setFieldValue("contigs", rerunData.contigs as never);
-    if (rerunData.recipe) form.setFieldValue("recipe", rerunData.recipe as never);
-    if (rerunData.output_path) form.setFieldValue("output_path", rerunData.output_path as never);
-    if (rerunData.output_file) form.setFieldValue("output_file", rerunData.output_file as never);
-
-    if (rerunData.taxonomy_id) {
-      const taxonId = String(rerunData.taxonomy_id);
-      form.setFieldValue("taxonomy_id", taxonId);
-      const storedLabel = rerunData.my_label as string | undefined;
-      fetch(`/api/services/taxonomy?q=taxon_id:${taxonId}&fl=taxon_id,taxon_name`)
-        .then((r) => r.json())
-        .then((data) => {
-          const docs = Array.isArray(data) ? data : data?.response?.docs;
-          if (docs && docs.length > 0) {
-            form.setFieldValue("scientific_name", docs[0].taxon_name as never);
-          }
-          if (storedLabel) {
-            form.setFieldValue("my_label", storedLabel as never);
-          }
-        })
-        .catch(noop);
-    } else {
-      if (rerunData.scientific_name) form.setFieldValue("scientific_name", rerunData.scientific_name as never);
-      if (rerunData.my_label) form.setFieldValue("my_label", rerunData.my_label as never);
-    }
-  }, [rerunData, markApplied, form]);
+  useRerunForm<Record<string, unknown>>({
+    form,
+    fields: ["contigs", "recipe", "output_path", "output_file"] as const,
+    onApply: (rerunData, form) => {
+      if (rerunData.taxonomy_id) {
+        const taxonId = String(rerunData.taxonomy_id);
+        form.setFieldValue("taxonomy_id", taxonId as never);
+        const storedLabel = rerunData.my_label as string | undefined;
+        fetch(`/api/services/taxonomy?q=taxon_id:${taxonId}&fl=taxon_id,taxon_name`)
+          .then((r) => r.json())
+          .then((data) => {
+            const docs = Array.isArray(data) ? data : data?.response?.docs;
+            if (docs && docs.length > 0) {
+              form.setFieldValue("scientific_name", docs[0].taxon_name as never);
+            }
+            if (storedLabel) {
+              form.setFieldValue("my_label", storedLabel as never);
+            }
+          })
+          .catch(noop);
+      } else {
+        if (rerunData.scientific_name) form.setFieldValue("scientific_name", rerunData.scientific_name as never);
+        if (rerunData.my_label) form.setFieldValue("my_label", rerunData.my_label as never);
+      }
+    },
+  });
 
   const handleReset = () => {
     form.reset(defaultGenomeAnnotationFormValues);
@@ -411,13 +397,7 @@ const GenomeAnnotationContent = () => {
         </div>
       </form>
 
-      {/* Job Params Dialog */}
-      <JobParamsDialog
-        open={showParamsDialog}
-        onOpenChange={setShowParamsDialog}
-        params={currentParams}
-        serviceName={serviceName}
-      />
+      <JobParamsDialog {...dialogProps} />
     </section>
   );
 };

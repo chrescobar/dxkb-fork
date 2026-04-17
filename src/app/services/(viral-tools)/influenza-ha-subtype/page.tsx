@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { useForm, useStore } from "@tanstack/react-form";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import {
@@ -23,8 +23,8 @@ import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { Spinner } from "@/components/ui/spinner";
 
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
+import { useDebugParamsPreview } from "@/hooks/services/use-debug-params-preview";
 import { useRerunForm } from "@/hooks/services/use-rerun-form";
-import { useDefaultOutputPath } from "@/hooks/services/use-default-output-path";
 import { normalizeToArray } from "@/lib/rerun-utility";
 import { validateFasta } from "@/lib/fasta-validation";
 import {
@@ -52,38 +52,27 @@ export default function HASubtypeNumberingPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: influenzaHaSubtypeFormSchema as any },
     onSubmit: async ({ value }) => {
-      await handleSubmit(value as InfluenzaHaSubtypeFormData);
+      const data = value as InfluenzaHaSubtypeFormData;
+      await previewOrPassthrough(transformHaSubtypeParams(data), submit);
     },
   });
 
-  const { rerunData, markApplied } = useRerunForm<Record<string, unknown>>();
-  useDefaultOutputPath(form, rerunData);
-
-  useEffect(() => {
-    if (!rerunData || !markApplied()) return;
-
-    if (rerunData.input_source != null) {
-      form.setFieldValue("input_source", rerunData.input_source as never);
-    }
-    if (rerunData.input_fasta_data != null) {
-      form.setFieldValue("input_fasta_data", rerunData.input_fasta_data as never);
-    }
-    if (rerunData.input_fasta_file != null) {
-      form.setFieldValue("input_fasta_file", rerunData.input_fasta_file as never);
-    }
-    if (rerunData.input_feature_group != null) {
-      form.setFieldValue("input_feature_group", rerunData.input_feature_group as never);
-    }
-    if (rerunData.types != null) {
-      form.setFieldValue("types", normalizeToArray(rerunData.types) as string[]);
-    }
-    if (rerunData.output_path != null) {
-      form.setFieldValue("output_path", rerunData.output_path as never);
-    }
-    if (rerunData.output_file != null) {
-      form.setFieldValue("output_file", rerunData.output_file as never);
-    }
-  }, [rerunData, markApplied, form]);
+  useRerunForm<Record<string, unknown>>({
+    form,
+    fields: [
+      "input_source",
+      "input_fasta_data",
+      "input_fasta_file",
+      "input_feature_group",
+      "output_path",
+      "output_file",
+    ] as const,
+    onApply: (rerunData, form) => {
+      if (rerunData.types != null) {
+        form.setFieldValue("types", normalizeToArray(rerunData.types) as never);
+      }
+    },
+  });
 
   const outputPath = useStore(form.store, (s) => s.values.output_path);
   const watchedTypes = useStore(form.store, (s) => s.values.types);
@@ -125,18 +114,13 @@ export default function HASubtypeNumberingPage() {
     setIsFastaValid(false);
   };
 
-  const {
-    handleSubmit,
-    showParamsDialog,
-    setShowParamsDialog,
-    currentParams,
-    serviceName,
-    isSubmitting,
-  } = useServiceFormSubmission<InfluenzaHaSubtypeFormData>({
+  const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "HASubtypeNumberingConversion",
     displayName: "HA Subtype Numbering Conversion",
-    transformParams: transformHaSubtypeParams,
     onSuccess: handleReset,
+  });
+  const { previewOrPassthrough, dialogProps } = useDebugParamsPreview({
+    serviceName: "HASubtypeNumberingConversion",
   });
 
   const isFastaDataInvalid =
@@ -405,12 +389,7 @@ export default function HASubtypeNumberingPage() {
         </div>
       </form>
 
-      <JobParamsDialog
-        open={showParamsDialog}
-        onOpenChange={setShowParamsDialog}
-        params={currentParams}
-        serviceName={serviceName}
-      />
+      <JobParamsDialog {...dialogProps} />
     </section>
   );
 }

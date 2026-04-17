@@ -45,8 +45,8 @@ import { WorkspaceObject } from "@/lib/workspace-client";
 import { ValidWorkspaceObjectTypes } from "@/lib/services/workspace/types";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
+import { useDebugParamsPreview } from "@/hooks/services/use-debug-params-preview";
 import { useRerunForm } from "@/hooks/services/use-rerun-form";
-import { useDefaultOutputPath } from "@/hooks/services/use-default-output-path";
 import { normalizeToArray } from "@/lib/rerun-utility";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
@@ -105,19 +105,13 @@ export default function GeneProteinTreePage() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  // Setup service debugging and form submission
-  const {
-    handleSubmit,
-    showParamsDialog,
-    setShowParamsDialog,
-    currentParams,
-    serviceName,
-    isSubmitting,
-  } = useServiceFormSubmission<GeneProteinTreeFormData>({
+  const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "GeneTree",
     displayName: "Gene/Protein Tree",
-    transformParams: transformGeneProteinTreeParams,
     onSuccess: handleReset,
+  });
+  const { previewOrPassthrough, dialogProps } = useDebugParamsPreview({
+    serviceName: "GeneTree",
   });
 
   const form = useForm({
@@ -125,7 +119,8 @@ export default function GeneProteinTreePage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: geneProteinTreeFormSchema as any },
     onSubmit: async ({ value }) => {
-      await handleSubmit(value as GeneProteinTreeFormData);
+      const data = value as GeneProteinTreeFormData;
+      await previewOrPassthrough(transformGeneProteinTreeParams(data), submit);
     },
   });
 
@@ -188,42 +183,35 @@ export default function GeneProteinTreePage() {
     form.setFieldValue("metadata_fields", selectedFields);
   }, [metadataFields, form]);
 
-  // Rerun: pre-fill form from job parameters
-  const { rerunData, markApplied } = useRerunForm<Record<string, unknown>>();
-  useDefaultOutputPath(form, rerunData);
-
-  useEffect(() => {
-    if (!rerunData || !markApplied()) return;
-
-    if (rerunData.alphabet) {
-      if (rerunData.alphabet !== form.state.values.alphabet) {
-        skipAlphabetEffect.current = true;
+  useRerunForm<Record<string, unknown>>({
+    form,
+    fields: ["recipe", "substitution_model", "output_path", "output_file"] as const,
+    onApply: (rerunData) => {
+      if (rerunData.alphabet) {
+        if (rerunData.alphabet !== form.state.values.alphabet) {
+          skipAlphabetEffect.current = true;
+        }
+        form.setFieldValue("alphabet", rerunData.alphabet as GeneProteinTreeFormData["alphabet"]);
       }
-      form.setFieldValue("alphabet", rerunData.alphabet as GeneProteinTreeFormData["alphabet"]);
-    }
-    if (rerunData.recipe) form.setFieldValue("recipe", rerunData.recipe as GeneProteinTreeFormData["recipe"]);
-    if (rerunData.substitution_model) form.setFieldValue("substitution_model", rerunData.substitution_model as never);
-    if (rerunData.trim_threshold != null) form.setFieldValue("trim_threshold", String(rerunData.trim_threshold));
-    if (rerunData.gap_threshold != null) form.setFieldValue("gap_threshold", String(rerunData.gap_threshold));
-    if (rerunData.output_path) form.setFieldValue("output_path", rerunData.output_path as never);
-    if (rerunData.output_file) form.setFieldValue("output_file", rerunData.output_file as never);
+      if (rerunData.trim_threshold != null) form.setFieldValue("trim_threshold", String(rerunData.trim_threshold));
+      if (rerunData.gap_threshold != null) form.setFieldValue("gap_threshold", String(rerunData.gap_threshold));
 
-    const sequences = normalizeToArray<SequenceItem>(rerunData.sequences);
-    if (sequences.length > 0) {
-      form.setFieldValue("sequences", sequences);
-    }
+      const sequences = normalizeToArray<SequenceItem>(rerunData.sequences);
+      if (sequences.length > 0) {
+        form.setFieldValue("sequences", sequences);
+      }
 
-    // Restore metadata fields from feature_metadata_fields and genome_metadata_fields
-    const featureFields = normalizeToArray<string>(rerunData.feature_metadata_fields);
-    const genomeFields = normalizeToArray<string>(rerunData.genome_metadata_fields);
-    const allMetadataFieldIds = [...featureFields, ...genomeFields];
-    if (allMetadataFieldIds.length > 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setMetadataFields(
-        allMetadataFieldIds.map((id) => createMetadataField(id)),
-      );
-    }
-  }, [rerunData, markApplied, form]);
+      // Restore metadata fields from feature_metadata_fields and genome_metadata_fields
+      const featureFields = normalizeToArray<string>(rerunData.feature_metadata_fields);
+      const genomeFields = normalizeToArray<string>(rerunData.genome_metadata_fields);
+      const allMetadataFieldIds = [...featureFields, ...genomeFields];
+      if (allMetadataFieldIds.length > 0) {
+        setMetadataFields(
+          allMetadataFieldIds.map((id) => createMetadataField(id)),
+        );
+      }
+    },
+  });
 
   const selectedMetadataIds = useMemo(
     () => new Set(metadataFields.filter((field) => field.selected).map((f) => f.id)),
@@ -814,13 +802,7 @@ export default function GeneProteinTreePage() {
         </div>
       </form>
 
-      {/* Job Params Dialog */}
-      <JobParamsDialog
-        open={showParamsDialog}
-        onOpenChange={setShowParamsDialog}
-        params={currentParams}
-        serviceName={serviceName}
-      />
+      <JobParamsDialog {...dialogProps} />
     </section>
   );
 }

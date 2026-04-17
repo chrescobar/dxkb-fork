@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm, useStore } from "@tanstack/react-form";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { ServiceHeader } from "@/components/services/service-header";
@@ -39,10 +39,8 @@ import SelectedItemsTable from "@/components/services/selected-items-table";
 import OutputFolder from "@/components/services/output-folder";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
+import { useDebugParamsPreview } from "@/hooks/services/use-debug-params-preview";
 import { useRerunForm } from "@/hooks/services/use-rerun-form";
-import { useDefaultOutputPath } from "@/hooks/services/use-default-output-path";
-import { buildPairedLibraries, buildSingleLibraries, buildSraLibraries } from "@/lib/rerun-utility";
-import type { Library } from "@/types/services";
 import { toast } from "sonner";
 import {
   variationAnalysisFormSchema,
@@ -83,7 +81,6 @@ export default function VariationAnalysisPage() {
     onSubmit: async ({ value }) => {
       const data = value as VariationAnalysisFormData;
 
-      // Validate that at least one library is provided
       const hasPaired = data.paired_end_libs && data.paired_end_libs.length > 0;
       const hasSingle = data.single_end_libs && data.single_end_libs.length > 0;
       const hasSrr = data.srr_ids && data.srr_ids.length > 0;
@@ -93,7 +90,7 @@ export default function VariationAnalysisPage() {
         return;
       }
 
-      await handleSubmit(data);
+      await previewOrPassthrough(transformVariationAnalysisParams(data), submit);
     },
   });
 
@@ -114,43 +111,23 @@ export default function VariationAnalysisPage() {
     },
   });
 
-  // Rerun: pre-fill form from job parameters
-  const { rerunData, markApplied } = useRerunForm<Record<string, unknown>>();
-  useDefaultOutputPath(form, rerunData);
-
-  useEffect(() => {
-    if (!rerunData || !markApplied()) return;
-
-    if (rerunData.output_path) form.setFieldValue("output_path", rerunData.output_path as never);
-    if (rerunData.output_file) form.setFieldValue("output_file", rerunData.output_file as never);
-    if (rerunData.reference_genome_id) form.setFieldValue("reference_genome_id", rerunData.reference_genome_id as never);
-    if (rerunData.mapper) form.setFieldValue("mapper", rerunData.mapper as never);
-    if (rerunData.caller) form.setFieldValue("caller", rerunData.caller as never);
-
-    const libs: Library[] = [
-      ...buildPairedLibraries(rerunData),
-      ...buildSingleLibraries(rerunData),
-      ...buildSraLibraries(rerunData),
-    ];
-    if (libs.length > 0) {
+  useRerunForm({
+    form,
+    fields: ["output_path", "output_file", "reference_genome_id", "mapper", "caller"] as const,
+    libraries: ["paired", "single", "sra"],
+    syncLibraries: (libs) => {
       syncLibrariesToForm(libs);
       setLibrariesAndSync(libs);
-    }
-  }, [rerunData, markApplied, form, syncLibrariesToForm, setLibrariesAndSync]);
+    },
+  });
 
-  // Setup service debugging and form submission
-  const {
-    handleSubmit,
-    showParamsDialog,
-    setShowParamsDialog,
-    currentParams,
-    serviceName,
-    isSubmitting,
-  } = useServiceFormSubmission<VariationAnalysisFormData>({
+  const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "Variation",
     displayName: "Variation Analysis",
-    transformParams: transformVariationAnalysisParams,
     onSuccess: handleReset,
+  });
+  const { previewOrPassthrough, dialogProps } = useDebugParamsPreview({
+    serviceName: "Variation",
   });
 
   function handleReset() {
@@ -174,7 +151,7 @@ export default function VariationAnalysisPage() {
           files: [read1, read2],
         },
       }),
-      onError: (message) => toast.error(message),
+      onError: toast.error,
       onAfterAdd: () => {
         setPairedRead1(null);
         setPairedRead2(null);
@@ -193,7 +170,7 @@ export default function VariationAnalysisPage() {
           files: [read],
         },
       }),
-      onError: (message) => toast.error(message),
+      onError: toast.error,
       onAfterAdd: () => {
         setSingleRead(null);
       },
@@ -522,13 +499,7 @@ export default function VariationAnalysisPage() {
         </div>
       </form>
 
-      {/* Job Params Dialog */}
-      <JobParamsDialog
-        open={showParamsDialog}
-        onOpenChange={setShowParamsDialog}
-        params={currentParams}
-        serviceName={serviceName}
-      />
+      <JobParamsDialog {...dialogProps} />
     </section>
   );
 }

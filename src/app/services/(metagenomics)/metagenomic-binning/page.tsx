@@ -41,10 +41,8 @@ import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { Spinner } from "@/components/ui/spinner";
 
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
+import { useDebugParamsPreview } from "@/hooks/services/use-debug-params-preview";
 import { useRerunForm } from "@/hooks/services/use-rerun-form";
-import { useDefaultOutputPath } from "@/hooks/services/use-default-output-path";
-import { buildPairedLibraries, buildSingleLibraries, buildSraLibraries } from "@/lib/rerun-utility";
-import type { Library } from "@/types/services";
 import {
   metagenomicBinningInfo,
   metagenomicBinningInputFile,
@@ -84,7 +82,6 @@ export default function MetagenomicBinningPage() {
   const [singleRead, setSingleRead] = useState<string | null>(null);
   const [sraResetKey, setSraResetKey] = useState(0);
 
-  // Handle form reset
   const handleReset = () => {
     form.reset(defaultMetagenomicBinningFormValues);
     setLibrariesAndSync([]);
@@ -95,26 +92,21 @@ export default function MetagenomicBinningPage() {
     setSraResetKey((k) => k + 1);
   };
 
-  // Setup service form submission
-  const {
-    handleSubmit,
-    showParamsDialog,
-    setShowParamsDialog,
-    currentParams,
-    serviceName,
-    isSubmitting,
-  } = useServiceFormSubmission<MetagenomicBinningFormData>({
+  const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "MetagenomeBinning",
     displayName: "Metagenomic Binning",
-    transformParams: transformMetagenomicBinningParams,
     onSuccess: handleReset,
+  });
+  const { previewOrPassthrough, dialogProps } = useDebugParamsPreview({
+    serviceName: "MetagenomeBinning",
   });
 
   const form = useForm({
     defaultValues: defaultMetagenomicBinningFormValues as MetagenomicBinningFormData,
     validators: { onChange: metagenomicBinningFormSchema },
     onSubmit: async ({ value }) => {
-      await handleSubmit(value as MetagenomicBinningFormData);
+      const data = value as MetagenomicBinningFormData;
+      await previewOrPassthrough(transformMetagenomicBinningParams(data), submit);
     },
   });
 
@@ -140,31 +132,15 @@ export default function MetagenomicBinningPage() {
     },
   });
 
-  // Rerun: pre-fill form from job parameters
-  const { rerunData, markApplied } = useRerunForm<Record<string, unknown>>();
-  useDefaultOutputPath(form, rerunData);
-
-  useEffect(() => {
-    if (!rerunData || !markApplied()) return;
-
-    if (rerunData.output_path) form.setFieldValue("output_path", rerunData.output_path as never);
-    if (rerunData.output_file) form.setFieldValue("output_file", rerunData.output_file as never);
-    if (rerunData.start_with) form.setFieldValue("start_with", rerunData.start_with as never);
-    if (rerunData.assembler) form.setFieldValue("assembler", rerunData.assembler as never);
-    if (rerunData.organism) form.setFieldValue("organism", rerunData.organism as never);
-    if (rerunData.contigs) form.setFieldValue("contigs", rerunData.contigs as never);
-    if (rerunData.genome_group) form.setFieldValue("genome_group", rerunData.genome_group as never);
-
-    const libs: Library[] = [
-      ...buildPairedLibraries(rerunData),
-      ...buildSingleLibraries(rerunData),
-      ...buildSraLibraries(rerunData),
-    ];
-    if (libs.length > 0) {
+  useRerunForm({
+    form,
+    fields: ["output_path", "output_file", "start_with", "assembler", "organism", "contigs", "genome_group"] as const,
+    libraries: ["paired", "single", "sra"],
+    syncLibraries: (libs) => {
       syncLibrariesToForm(libs);
       setLibrariesAndSync(libs);
-    }
-  }, [rerunData, markApplied, form, syncLibrariesToForm, setLibrariesAndSync]);
+    },
+  });
 
   // Determine if MetaSPAdes should be disabled based on selectedLibraries (source of truth)
   // MetaSPAdes only supports a single paired-end library
@@ -178,7 +154,6 @@ export default function MetagenomicBinningPage() {
     }
   }, [metaspadesDisabled, assembler, form]);
 
-  // Handle adding paired library
   const handlePairedLibraryAdd = () => {
     addPairedLibrary({
       read1: pairedRead1,
@@ -191,7 +166,7 @@ export default function MetagenomicBinningPage() {
           files: [read1, read2],
         },
       }),
-      onError: (message) => toast.error(message),
+      onError: toast.error,
       onAfterAdd: () => {
         setPairedRead1(null);
         setPairedRead2(null);
@@ -199,7 +174,6 @@ export default function MetagenomicBinningPage() {
     });
   };
 
-  // Handle adding single library
   const handleSingleLibraryAdd = () => {
     addSingleLibrary({
       read: singleRead,
@@ -211,7 +185,7 @@ export default function MetagenomicBinningPage() {
           files: [read],
         },
       }),
-      onError: (message) => toast.error(message),
+      onError: toast.error,
       onAfterAdd: () => {
         setSingleRead(null);
       },
@@ -731,13 +705,7 @@ export default function MetagenomicBinningPage() {
         </div>
       </form>
 
-      {/* Job Params Dialog */}
-      <JobParamsDialog
-        open={showParamsDialog}
-        onOpenChange={setShowParamsDialog}
-        params={currentParams}
-        serviceName={serviceName}
-      />
+      <JobParamsDialog {...dialogProps} />
     </section>
   );
 }

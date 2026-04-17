@@ -55,8 +55,8 @@ import {
 } from "@/lib/forms/(genomics)/blast/blast-form-schema";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
+import { useDebugParamsPreview } from "@/hooks/services/use-debug-params-preview";
 import { useRerunForm } from "@/hooks/services/use-rerun-form";
-import { useDefaultOutputPath } from "@/hooks/services/use-default-output-path";
 import { FastaTextarea } from "@/components/services/fasta-textarea";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
@@ -66,18 +66,12 @@ export default function BlastServicePage() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  // Setup service debugging and form submission
-  const {
-    handleSubmit: submitForm,
-    showParamsDialog,
-    setShowParamsDialog,
-    currentParams,
-    serviceName,
-    isSubmitting,
-  } = useServiceFormSubmission<BlastFormData>({
+  const { submit, isSubmitting } = useServiceFormSubmission({
     serviceName: "Homology",
     displayName: "BLAST",
-    transformParams: transformBlastParams,
+  });
+  const { previewOrPassthrough, dialogProps } = useDebugParamsPreview({
+    serviceName: "Homology",
   });
 
   const form = useForm({
@@ -86,7 +80,6 @@ export default function BlastServicePage() {
     onSubmit: async ({ value }) => {
       const data = value as BlastFormData;
 
-      // Validate FASTA data if using fasta_data input source
       if (data.input_source === "fasta_data" && data.input_fasta_data) {
         if (!isFastaValid) {
           const errorMessage =
@@ -96,11 +89,10 @@ export default function BlastServicePage() {
         }
       }
 
-      await submitForm(data);
+      await previewOrPassthrough(transformBlastParams(data), submit);
     },
   });
 
-  // Use custom hooks for simplified state management
   const availableDatabaseTypes = useBlastDatabaseTypes(form);
   const currentBlastProgram = useBlastProgramTracking(form);
   const dbPrecomputedDatabase = useStore(form.store, (s) => s.values.db_precomputed_database);
@@ -138,7 +130,6 @@ export default function BlastServicePage() {
     }
   }, [currentBlastProgram]);
 
-  // Track previous program to detect changes
   const previousProgramRef = useRef<BlastFormData["blast_program"]>(currentBlastProgram);
 
   // Prevents the program-change clear effect from wiping inputs set by a rerun
@@ -159,53 +150,50 @@ export default function BlastServicePage() {
 
     // Only clear if program actually changed (not on initial mount) and not during rerun application
     if (previousProgram !== currentBlastProgram && previousProgram !== undefined && !isApplyingRerunRef.current) {
-      // Clear file-based input fields
       form.setFieldValue("input_fasta_file", "");
     }
 
     // Rerun application is complete once this effect has run after the program change
     isApplyingRerunRef.current = false;
-    // Update ref for next comparison
     previousProgramRef.current = currentBlastProgram;
   }, [currentBlastProgram, form]);
 
-  // Rerun: pre-fill form from job parameters
-  const { rerunData, markApplied } = useRerunForm<Record<string, unknown>>();
-  useDefaultOutputPath(form, rerunData);
-
-  useEffect(() => {
-    if (!rerunData || !markApplied()) return;
-
-    if (rerunData.blast_program) {
-      // Guard the program-change clear effect only when we're actually changing the program
-      if (rerunData.blast_program !== form.state.values.blast_program) {
-        isApplyingRerunRef.current = true;
+  useRerunForm<Record<string, unknown>>({
+    form,
+    fields: [
+      "input_source",
+      "input_fasta_data",
+      "input_fasta_file",
+      "input_feature_group",
+      "db_type",
+      "db_genome_group",
+      "db_feature_group",
+      "db_taxon_list",
+      "db_genome_list",
+      "db_fasta_file",
+      "output_path",
+      "output_file",
+    ] as const,
+    onApply: (rerunData) => {
+      if (rerunData.blast_program) {
+        // Guard the program-change clear effect only when we're actually changing the program
+        if (rerunData.blast_program !== form.state.values.blast_program) {
+          isApplyingRerunRef.current = true;
+        }
+        form.setFieldValue("blast_program", rerunData.blast_program as never);
       }
-      form.setFieldValue("blast_program", rerunData.blast_program as never);
-    }
-    if (rerunData.input_source) form.setFieldValue("input_source", rerunData.input_source as never);
-    if (rerunData.input_fasta_data) form.setFieldValue("input_fasta_data", rerunData.input_fasta_data as never);
-    if (rerunData.input_fasta_file) form.setFieldValue("input_fasta_file", rerunData.input_fasta_file as never);
-    if (rerunData.input_feature_group) form.setFieldValue("input_feature_group", rerunData.input_feature_group as never);
-    if (rerunData.db_precomputed_database) {
-      // The backend may store precomputed database IDs with underscores (e.g. "bacteria_archaea")
-      // but the schema expects hyphens (e.g. "bacteria-archaea").
-      const rawDb = String(rerunData.db_precomputed_database).replace(/_/g, "-");
-      const dbPrecomp = rawDb as BlastFormData["db_precomputed_database"];
-      form.setFieldValue("db_precomputed_database", dbPrecomp);
-      form.setFieldValue("db_source", resolveDbSource(dbPrecomp));
-    }
-    if (rerunData.db_type) form.setFieldValue("db_type", rerunData.db_type as never);
-    if (rerunData.db_genome_group) form.setFieldValue("db_genome_group", rerunData.db_genome_group as never);
-    if (rerunData.db_feature_group) form.setFieldValue("db_feature_group", rerunData.db_feature_group as never);
-    if (rerunData.db_taxon_list) form.setFieldValue("db_taxon_list", rerunData.db_taxon_list as string[]);
-    if (rerunData.db_genome_list) form.setFieldValue("db_genome_list", rerunData.db_genome_list as string[]);
-    if (rerunData.db_fasta_file) form.setFieldValue("db_fasta_file", rerunData.db_fasta_file as never);
-    if (rerunData.blast_max_hits != null) form.setFieldValue("blast_max_hits", rerunData.blast_max_hits as number);
-    if (rerunData.blast_evalue_cutoff != null) form.setFieldValue("blast_evalue_cutoff", Number(rerunData.blast_evalue_cutoff));
-    if (rerunData.output_path) form.setFieldValue("output_path", rerunData.output_path as never);
-    if (rerunData.output_file) form.setFieldValue("output_file", rerunData.output_file as never);
-  }, [rerunData, markApplied, form]);
+      if (rerunData.db_precomputed_database) {
+        // The backend may store precomputed database IDs with underscores (e.g. "bacteria_archaea")
+        // but the schema expects hyphens (e.g. "bacteria-archaea").
+        const rawDb = String(rerunData.db_precomputed_database).replace(/_/g, "-");
+        const dbPrecomp = rawDb as BlastFormData["db_precomputed_database"];
+        form.setFieldValue("db_precomputed_database", dbPrecomp);
+        form.setFieldValue("db_source", resolveDbSource(dbPrecomp));
+      }
+      if (rerunData.blast_max_hits != null) form.setFieldValue("blast_max_hits", rerunData.blast_max_hits as number);
+      if (rerunData.blast_evalue_cutoff != null) form.setFieldValue("blast_evalue_cutoff", Number(rerunData.blast_evalue_cutoff));
+    },
+  });
 
   const handleReset = () => {
     form.reset(defaultBlastFormValues);
@@ -217,7 +205,6 @@ export default function BlastServicePage() {
   ) => {
     const preservedFastaData = String((form.state.values as Record<string, unknown>).input_fasta_data ?? "");
 
-    // Clear all input fields, then set the appropriate one
     form.setFieldValue("input_fasta_data", "");
     form.setFieldValue("input_fasta_file", "");
     form.setFieldValue("input_feature_group", "");
@@ -236,10 +223,7 @@ export default function BlastServicePage() {
   const handleDatabaseSourceChange = (
     newDBPrecomputedDatabase: BlastFormData["db_precomputed_database"],
   ) => {
-    // Update database source and derived db_source
     form.setFieldValue("db_source", resolveDbSource(newDBPrecomputedDatabase));
-
-    // Clear all database-specific fields
     form.setFieldValue("db_genome_list", []);
     form.setFieldValue("db_genome_group", "");
     form.setFieldValue("db_feature_group", "");
@@ -832,13 +816,7 @@ export default function BlastServicePage() {
         </div>
       </form>
 
-      {/* Job Params Dialog */}
-      <JobParamsDialog
-        open={showParamsDialog}
-        onOpenChange={setShowParamsDialog}
-        params={currentParams}
-        serviceName={serviceName}
-      />
+      <JobParamsDialog {...dialogProps} />
     </section>
   );
 }

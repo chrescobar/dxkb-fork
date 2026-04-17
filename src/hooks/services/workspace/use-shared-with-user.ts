@@ -2,15 +2,9 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { WorkspaceBrowserItem } from "@/types/workspace-browser";
-import {
-  listSharedWithUser,
-  listUserWorkspaces,
-  listByFullPath,
-  listPermissions,
-  getWorkspaceMetadata,
-  type ListPermissionsResult,
-  type WorkspaceGetResult,
-} from "@/lib/services/workspace/shared";
+import { useWorkspaceRepository } from "@/contexts/workspace-repository-context";
+import { toWorkspaceBrowserItem } from "@/lib/services/workspace/domain";
+import { workspaceQueryKeys } from "@/lib/services/workspace/workspace-query-keys";
 
 interface UseSharedWithUserOptions {
   username: string;
@@ -23,13 +17,25 @@ export function useSharedWithUser({
   enabled = true,
   initialData,
 }: UseSharedWithUserOptions) {
+  const repository = useWorkspaceRepository("authenticated");
+
   return useQuery<WorkspaceBrowserItem[], Error>({
-    queryKey: ["workspace-shared", username],
-    queryFn: listSharedWithUser,
+    queryKey: workspaceQueryKeys.sharedRoot(username),
+    queryFn: async () => {
+      const items = await repository.listDirectory({ path: "/" });
+      return items
+        .filter((item) => {
+          const globalPermission = item.permissions?.global ?? "";
+          const userPermission = item.permissions?.user ?? "";
+          if (globalPermission !== "n") return false;
+          if (userPermission === "o" && globalPermission === "n") return false;
+          return true;
+        })
+        .map(toWorkspaceBrowserItem);
+    },
     enabled: enabled && !!username,
     initialData,
     staleTime: 2 * 60 * 1000,
-
   });
 }
 
@@ -44,72 +50,20 @@ export function useUserWorkspaces({
   enabled = true,
   initialData,
 }: UseUserWorkspacesOptions) {
+  const repository = useWorkspaceRepository("authenticated");
+
   return useQuery<WorkspaceBrowserItem[], Error>({
-    queryKey: ["workspace-user", username],
-    queryFn: () => listUserWorkspaces(username),
+    queryKey: workspaceQueryKeys.userRoot(username),
+    queryFn: async () => {
+      const decoded = decodeURIComponent(username);
+      const userSegment = decoded.includes("@")
+        ? decoded
+        : `${decoded}@bvbrc`;
+      const items = await repository.listDirectory({ path: `/${userSegment}` });
+      return items.map(toWorkspaceBrowserItem);
+    },
     enabled: enabled && !!username,
     initialData,
     staleTime: 2 * 60 * 1000,
-
-  });
-}
-
-interface UseWorkspaceGetOptions {
-  objectPaths: string[];
-  enabled?: boolean;
-}
-
-export function useWorkspaceGet({
-  objectPaths,
-  enabled = true,
-}: UseWorkspaceGetOptions) {
-  return useQuery<WorkspaceGetResult, Error>({
-    queryKey: ["workspace-get", objectPaths],
-    queryFn: () => getWorkspaceMetadata(objectPaths),
-    enabled: enabled && objectPaths.length > 0,
-    staleTime: 2 * 60 * 1000,
-
-  });
-}
-
-interface UseWorkspaceListByPathOptions {
-  fullPath: string;
-  enabled?: boolean;
-  initialData?: WorkspaceBrowserItem[];
-}
-
-export function useWorkspaceListByPath({
-  fullPath,
-  enabled = true,
-  initialData,
-}: UseWorkspaceListByPathOptions) {
-  return useQuery<WorkspaceBrowserItem[], Error>({
-    queryKey: ["workspace-list-path", fullPath],
-    queryFn: () => listByFullPath(fullPath),
-    enabled: enabled && !!fullPath,
-    initialData,
-    staleTime: 2 * 60 * 1000,
-
-  });
-}
-
-interface UseWorkspacePermissionsOptions {
-  paths: string[];
-  enabled?: boolean;
-  initialData?: ListPermissionsResult;
-}
-
-export function useWorkspacePermissions({
-  paths,
-  enabled = true,
-  initialData,
-}: UseWorkspacePermissionsOptions) {
-  return useQuery<ListPermissionsResult, Error>({
-    queryKey: ["workspace-permissions", paths],
-    queryFn: () => listPermissions(paths),
-    enabled: enabled && paths.length > 0,
-    initialData,
-    staleTime: 2 * 60 * 1000,
-
   });
 }

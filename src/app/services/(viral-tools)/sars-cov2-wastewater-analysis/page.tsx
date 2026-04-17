@@ -76,7 +76,7 @@ import {
 } from "@/lib/forms/tanstack-library-selection";
 import { getLibraryTypeLabel } from "@/lib/forms/shared-schemas";
 
-import type { WorkspaceObject } from "@/lib/workspace-client";
+import type { WorkspaceObject } from "@/lib/services/workspace/types";
 import type { Library } from "@/types/services";
 
 const quickReference =
@@ -333,7 +333,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                 </div>
                 <div className="space-y-3">
                   <WorkspaceObjectSelector
-                    types={["reads"]}
+                    preset="reads"
                     placeholder="Select READ FILE 1..."
                     value={pairedRead1 ?? ""}
                     onObjectSelect={(object: WorkspaceObject) =>
@@ -341,7 +341,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                     }
                   />
                   <WorkspaceObjectSelector
-                    types={["reads"]}
+                    preset="reads"
                     placeholder="Select READ FILE 2..."
                     value={pairedRead2 ?? ""}
                     onObjectSelect={(object: WorkspaceObject) =>
@@ -368,7 +368,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                   </Button>
                 </div>
                 <WorkspaceObjectSelector
-                  types={["reads"]}
+                  preset="reads"
                   placeholder="Select READ FILE..."
                   value={singleRead ?? ""}
                   onObjectSelect={(object: WorkspaceObject) =>

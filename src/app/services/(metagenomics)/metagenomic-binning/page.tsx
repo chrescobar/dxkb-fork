@@ -67,7 +67,7 @@ import {
 } from "@/lib/forms/tanstack-library-selection";
 import { getLibraryTypeLabel } from "@/lib/forms/shared-schemas";
 
-import type { WorkspaceObject } from "@/lib/workspace-client";
+import type { WorkspaceObject } from "@/lib/services/workspace/types";
 
 export default function MetagenomicBinningPage() {
   // UI state
@@ -282,7 +282,7 @@ export default function MetagenomicBinningPage() {
                     </div>
                     <div className="space-y-3">
                       <WorkspaceObjectSelector
-                        types={["reads"]}
+                        preset="reads"
                         placeholder="Select READ FILE 1..."
                         value={pairedRead1 ?? ""}
                         onObjectSelect={(object: WorkspaceObject) => {
@@ -290,7 +290,7 @@ export default function MetagenomicBinningPage() {
                         }}
                       />
                       <WorkspaceObjectSelector
-                        types={["reads"]}
+                        preset="reads"
                         placeholder="Select READ FILE 2..."
                         value={pairedRead2 ?? ""}
                         onObjectSelect={(object: WorkspaceObject) => {
@@ -318,7 +318,7 @@ export default function MetagenomicBinningPage() {
                       </Button>
                     </div>
                     <WorkspaceObjectSelector
-                      types={["reads"]}
+                      preset="reads"
                       placeholder="Select READ FILE..."
                       value={singleRead ?? ""}
                       onObjectSelect={(object: WorkspaceObject) => {

@@ -65,7 +65,7 @@ import {
   RequiredFormLabel,
 } from "@/components/forms/required-form-components";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
-import { WorkspaceObject } from "@/lib/workspace-client";
+import { WorkspaceObject } from "@/lib/services/workspace/types";
 import { ChevronRight } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -274,7 +274,7 @@ export default function GenomeAssemblyPage() {
                 <div className="space-y-3">
                   <div>
                     <WorkspaceObjectSelector
-                      types={["reads"]}
+                      preset="reads"
                       placeholder="Select READ FILE 1..."
                       onObjectSelect={(object: WorkspaceObject) => {
                         setPairedRead1(object.path);
@@ -282,7 +282,7 @@ export default function GenomeAssemblyPage() {
                     />
                   </div>
                   <WorkspaceObjectSelector
-                    types={["reads"]}
+                    preset="reads"
                     placeholder="Select READ FILE 2..."
                     onObjectSelect={(object: WorkspaceObject) => {
                       setPairedRead2(object.path);
@@ -307,7 +307,7 @@ export default function GenomeAssemblyPage() {
                   </Button>
                 </div>
                 <WorkspaceObjectSelector
-                  types={["reads"]}
+                  preset="reads"
                   placeholder="Select READ FILE..."
                   onObjectSelect={(object: WorkspaceObject) => {
                     setSingleRead(object.path);

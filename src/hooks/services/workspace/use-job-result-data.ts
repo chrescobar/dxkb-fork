@@ -6,6 +6,7 @@ import {
   getJobResultDotPath,
   parseWorkspaceGetSingle,
 } from "@/lib/services/workspace/helpers";
+import { workspaceQueryKeys } from "@/lib/services/workspace/workspace-query-keys";
 import type { ResolvedPathObject } from "@/lib/services/workspace/types";
 
 export interface JobResultData {
@@ -20,7 +21,7 @@ interface UseJobResultDataOptions {
 
 /**
  * For a resolved job_result path, computes the dot-folder path and fetches its metadata (Workspace.get).
- * The view should use useWorkspaceListByPath(dotPath) to get the folder contents for the table.
+ * The view uses `useWorkspaceDirectory({ kind: "jobResult", ... })` to list the dot-folder contents.
  */
 export function useJobResultData({
   resolvedJobMeta,
@@ -30,7 +31,7 @@ export function useJobResultData({
     resolvedJobMeta != null ? getJobResultDotPath(resolvedJobMeta) : "";
 
   const dotGetQuery = useQuery<ResolvedPathObject | null, Error>({
-    queryKey: ["workspace-get-resolved", [dotPath]],
+    queryKey: workspaceQueryKeys.jobResultResolved(dotPath),
     queryFn: async () => {
       const raw = await getWorkspaceMetadata([dotPath]);
       return parseWorkspaceGetSingle(raw as unknown[], 0);

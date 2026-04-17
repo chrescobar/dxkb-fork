@@ -40,7 +40,7 @@ import {
   RequiredFormCardTitle,
 } from "@/components/forms/required-form-components";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
-import { WorkspaceObject } from "@/lib/workspace-client";
+import { WorkspaceObject } from "@/lib/services/workspace/types";
 
 import { fetchGenomeGroupMembers, validateViralGenomes } from "@/lib/services/genome";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
@@ -405,7 +405,7 @@ export default function ViralGenomeTreePage() {
                 </Label>
                 <div className="flex gap-2">
                   <WorkspaceObjectSelector
-                    types={["genome_group"]}
+                    preset="genomeGroup"
                     placeholder="Optional"
                     onSelectedObjectChange={(object: WorkspaceObject | null) => {
                       setSelectedGenomeGroupObject(object);

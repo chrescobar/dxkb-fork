@@ -41,7 +41,7 @@ import {
   RequiredFormLabel,
 } from "@/components/forms/required-form-components";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
-import { WorkspaceObject } from "@/lib/workspace-client";
+import { WorkspaceObject } from "@/lib/services/workspace/types";
 import { ValidWorkspaceObjectTypes } from "@/lib/services/workspace/types";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
@@ -416,7 +416,7 @@ export default function GeneProteinTreePage() {
                 </Label>
                 <div className="flex gap-2">
                   <WorkspaceObjectSelector
-                    types={["feature_group"]}
+                    preset="featureGroup"
                     placeholder="Optional"
                     onSelectedObjectChange={(object: WorkspaceObject | null) => {
                       setSelectedFeatureGroupObject(object);

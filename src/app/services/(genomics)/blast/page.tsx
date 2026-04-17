@@ -36,7 +36,7 @@ import {
   RequiredFormCardTitle,
 } from "@/components/forms/required-form-components";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
-import { WorkspaceObject } from "@/lib/workspace-client";
+import { WorkspaceObject } from "@/lib/services/workspace/types";
 import { ValidWorkspaceObjectTypes } from "@/lib/services/workspace/types";
 import { blastPrecomputedDatabases } from "@/types/services";
 import {
@@ -426,7 +426,7 @@ export default function BlastServicePage() {
                       {(groupField) => (
                         <FieldItem>
                           <WorkspaceObjectSelector
-                            types={["feature_group"]}
+                            preset="featureGroup"
                             placeholder="Select a feature group to search..."
                             value={groupField.state.value}
                             onObjectSelect={(object: WorkspaceObject) => {
@@ -572,7 +572,7 @@ export default function BlastServicePage() {
                     {(field) => (
                       <FieldItem>
                         <WorkspaceObjectSelector
-                          types={["genome_group"]}
+                          preset="genomeGroup"
                           placeholder="Genome group..."
                           onObjectSelect={(object: WorkspaceObject) => {
                             field.handleChange(object.path);
@@ -598,7 +598,7 @@ export default function BlastServicePage() {
                     {(field) => (
                       <FieldItem>
                         <WorkspaceObjectSelector
-                          types={["feature_group"]}
+                          preset="featureGroup"
                           placeholder="Feature group..."
                           onObjectSelect={(object: WorkspaceObject) => {
                             field.handleChange(object.path);

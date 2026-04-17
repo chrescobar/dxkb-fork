@@ -4,8 +4,7 @@ import { useCallback } from "react";
 import { useMutation, type QueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
-import type { WorkspaceApiClient } from "@/lib/services/workspace/client";
-import type { WorkspaceDownloadMethods } from "@/lib/services/workspace/methods/download";
+import { useWorkspaceRepository } from "@/contexts/workspace-repository-context";
 import { triggerDownload } from "@/lib/utils";
 import {
   expandDownloadPaths,
@@ -14,6 +13,7 @@ import {
 import { isFolderType } from "@/lib/services/workspace/utils";
 import { toggleFavorite } from "@/lib/services/workspace/favorites";
 import { forbiddenDownloadTypes } from "@/lib/services/workspace/types";
+import { workspaceQueryKeys } from "@/lib/services/workspace/workspace-query-keys";
 import { useWorkspaceDialog } from "@/contexts/workspace-dialog-context";
 import { getStructureViewerUrl } from "@/components/workspace/file-viewer/file-viewer-registry";
 
@@ -21,18 +21,19 @@ export interface UseWorkspaceActionDispatchOptions {
   currentUser: string;
   myWorkspaceRoot: string;
   queryClient: QueryClient;
-  workspaceDownload: WorkspaceDownloadMethods;
-  workspaceClient: WorkspaceApiClient;
   items: WorkspaceBrowserItem[];
+  /** When true, dispatch download through the public (unauthenticated) repository. */
+  isPublic?: boolean;
 }
 
 export function useWorkspaceActionDispatch({
   currentUser,
   myWorkspaceRoot,
   queryClient,
-  workspaceDownload,
   items,
+  isPublic = false,
 }: UseWorkspaceActionDispatchOptions) {
+  const repository = useWorkspaceRepository(isPublic ? "public" : "authenticated");
   const { dispatch } = useWorkspaceDialog();
 
   const favoriteMutation = useMutation({
@@ -41,7 +42,7 @@ export function useWorkspaceActionDispatch({
     },
     onSuccess: (added, folderPath) => {
       void queryClient.invalidateQueries({
-        queryKey: ["workspace-favorites", myWorkspaceRoot],
+        queryKey: workspaceQueryKeys.favorites(myWorkspaceRoot),
       });
       toast.success(
         added ? "Added to favorites" : "Removed from favorites",
@@ -63,7 +64,7 @@ export function useWorkspaceActionDispatch({
       mappedPaths: string[];
       downloadable: WorkspaceBrowserItem[];
     }) => {
-      const urlArrays = await workspaceDownload.getDownloadUrls(mappedPaths);
+      const urlArrays = await repository.getDownloadUrls(mappedPaths);
       return { urlArrays, downloadable };
     },
     onSuccess: ({ urlArrays, downloadable }) => {

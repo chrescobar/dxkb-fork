@@ -77,7 +77,7 @@ import {
 } from "@/lib/forms/tanstack-library-selection";
 import { getLibraryTypeLabel } from "@/lib/forms/shared-schemas";
 
-import type { WorkspaceObject } from "@/lib/workspace-client";
+import type { WorkspaceObject } from "@/lib/services/workspace/types";
 import {
   sarsCov2PairedPlatformOptions,
   sarsCov2SinglePlatformOptions,
@@ -322,7 +322,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                   </div>
                   <div className="space-y-3">
                     <WorkspaceObjectSelector
-                      types={["reads"]}
+                      preset="reads"
                       placeholder="Select READ FILE 1..."
                       value={pairedRead1 ?? ""}
                       onObjectSelect={(object: WorkspaceObject) =>
@@ -330,7 +330,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                       }
                     />
                     <WorkspaceObjectSelector
-                      types={["reads"]}
+                      preset="reads"
                       placeholder="Select READ FILE 2..."
                       value={pairedRead2 ?? ""}
                       onObjectSelect={(object: WorkspaceObject) =>
@@ -383,7 +383,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                       </Button>
                     </div>
                     <WorkspaceObjectSelector
-                      types={["reads"]}
+                      preset="reads"
                       placeholder="Select READ FILE..."
                       value={singleRead ?? ""}
                       onObjectSelect={(object: WorkspaceObject) =>

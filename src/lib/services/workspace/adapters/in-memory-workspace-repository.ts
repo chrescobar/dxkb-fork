@@ -305,9 +305,10 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
       const clonedKeys: string[] = [];
       if (input.recursive) {
         const srcPrefix = srcNormalized === "/" ? "/" : `${srcNormalized}/`;
+        const suffixOffset = srcPrefix.length - 1;
         for (const key of Object.keys(this.directories)) {
           if (key !== srcNormalized && !key.startsWith(srcPrefix)) continue;
-          const suffix = key === srcNormalized ? "" : key.slice(srcNormalized.length);
+          const suffix = key === srcNormalized ? "" : key.slice(suffixOffset);
           const newKey = normalize(`${destNormalized}${suffix}`);
           this.directories[newKey] = this.directories[key].map((c) => ({ ...c }));
           clonedKeys.push(key);

@@ -36,7 +36,7 @@ export const sarsCov2WastewaterAnalysisInputLib: ServiceInfoPopup = {
     {
       header: "SRA Run Accession",
       description:
-        "Allows direct upload of read files from the NCBI Sequence Read Archive to the Assembly Service. Entering the SRR accession number and clicking the arrow will add the file to the selected libraries box for use in the assembly.",
+        "Allows direct upload of read files from the NCBI Sequence Read Archive to the SARS-CoV-2 Wastewater Analysis Service. Entering the SRR accession number and clicking the arrow will add the file to the selected libraries box for use in the analysis.",
     },
     {
       header: "Primers / Version",
@@ -62,7 +62,7 @@ export const sarsCov2WastewaterAnalysisParameters: ServiceInfoPopup = {
         {
             header: "Strategy",
             description:
-                "Currently there is only one strategy for this service. The raw reads are aligned to the reference genome (Wuhan-Hu-1, NC_045512) with Minimap2 with MiniMap2 2]. Then SAMtools [3] converts the aligned FASTQs into BAM files. SAMtools [3] also sorts the aligned BAM files by the leftmost coordinates. Then the primers and low-quality sequences are trimmed by iVAR [4]. FastQC [5] offers a range of quality assessments for the raw FASTQ files, as well as the aligned and sorted BAM files.",
+                "Currently there is only one strategy for this service. The raw reads are aligned to the reference genome (Wuhan-Hu-1, NC_045512) with Minimap2 [2]. Then SAMtools [3] converts the aligned FASTQs into BAM files. SAMtools [3] also sorts the aligned BAM files by the leftmost coordinates. Then the primers and low-quality sequences are trimmed by iVAR [4]. FastQC [5] offers a range of quality assessments for the raw FASTQ files, as well as the aligned and sorted BAM files.",
         },
         {
             header: "Output Folder",

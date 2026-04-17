@@ -19,12 +19,12 @@ export const metagenomicReadMappingParameters: ServiceInfoPopup = {
         {
           subheader: "CARD",
           subdescription:
-            "Antibiotic resistence gene set from the <a href='https://www.ncbi.nlm.nih.gov/pubmed/27789705>Comprehensive Antibiotic Resistance Database</a>",
+            "Antibiotic resistence gene set from the <a href='https://www.ncbi.nlm.nih.gov/pubmed/27789705'>Comprehensive Antibiotic Resistance Database</a>",
         },
         {
           subheader: "VFDB",
           subdescription:
-            "Virulence factor gene set from the <a href='https://www.ncbi.nlm.nih.gov/pubmed/30395255>Virulence Factor Database</a>",
+            "Virulence factor gene set from the <a href='https://www.ncbi.nlm.nih.gov/pubmed/30395255'>Virulence Factor Database</a>",
         },
       ],
     },

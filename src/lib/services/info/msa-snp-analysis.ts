@@ -53,7 +53,7 @@ export const msaSNPAnalysisParameters: ServiceInfoPopup = {
   sections: [
     {
       header: "Aligner",
-      description: "Choose one of the aligmnent algorithm options:",
+      description: "Choose one of the alignment algorithm options:",
       subsections: [
         {
           subheader: "Mafft (default)",

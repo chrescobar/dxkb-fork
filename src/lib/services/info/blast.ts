@@ -3,7 +3,7 @@ import type { ServiceInfoPopup } from "@/types/services";
 export const blastServiceInfo: ServiceInfoPopup = {
   title: "BLAST Overview",
   description:
-    "The BLAST service integrates the BLAST (Basic Local Aligment Search Tool) algorithms to perform searches against against public or private genomes in BV-BRC or other reference databases using a DNA or protein sequence and find matching genomes, genes, RNAs, or proteins.",
+    "The BLAST service integrates the BLAST (Basic Local Alignment Search Tool) algorithms to perform searches against public or private genomes in BV-BRC or other reference databases using a DNA or protein sequence and find matching genomes, genes, RNAs, or proteins.",
 };
 
 export const blastServiceSearchProgram: ServiceInfoPopup = {
@@ -58,7 +58,7 @@ export const blastServiceInputSource: ServiceInfoPopup = {
 export const blastServiceDatabaseSource: ServiceInfoPopup = {
   title: "Database Source",
   description:
-    "DXKB / BV-BRC have different databases to choose from for the source to search wihin:",
+    "DXKB / BV-BRC have different databases to choose from for the source to search within:",
   sections: [
     {
       header: "Reference and representative genomes (bacteria, archaea)",

@@ -32,7 +32,7 @@ import { GenomeNameSelector } from "@/components/services/genome-name-selector";
 import { NumberInput } from "@/components/ui/number-input";
 import { Label } from "@/components/ui/label";
 import {
-  genomeAlignmentAdvancedParamaterOptions,
+  genomeAlignmentAdvancedParameterOptions,
   genomeAlignmentMauveInfo,
   genomeAlignmentSelectGenomes,
 } from "@/lib/services/info/genome-alignment";
@@ -349,11 +349,11 @@ export default function GenomeAlignmentServicePage() {
             <CardTitle className="service-card-title">
               Parameters
               <DialogInfoPopup
-                title={genomeAlignmentAdvancedParamaterOptions.title}
+                title={genomeAlignmentAdvancedParameterOptions.title}
                 description={
-                  genomeAlignmentAdvancedParamaterOptions.description
+                  genomeAlignmentAdvancedParameterOptions.description
                 }
-                sections={genomeAlignmentAdvancedParamaterOptions.sections}
+                sections={genomeAlignmentAdvancedParameterOptions.sections}
               />
             </CardTitle>
           </CardHeader>

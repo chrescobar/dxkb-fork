@@ -17,12 +17,12 @@ export const genomeAssemblyParameters: ServiceInfoPopup = {
         {
           subheader: "Auto",
           subdescription:
-            "Will use Canu if only long reads are submitted. If long and short reads, as or short reads alone are submitted, Unicycler is selected.",
+            "Will use Canu if only long reads are submitted. If long and short reads, or short reads alone are submitted, Unicycler is selected.",
         },
         {
           subheader: "Unicycler",
           subdescription:
-            "Can assemble Illumina-only read sets where it functions as a SPAdes-optimizer. It can also assembly long-read-only sets (PacBio or Nanopore) where it runs a miniasm plus Racon pipeline. For the best possible assemblies, give it both Illumina reads and long reads, and it will conduct a hybrid assembly.",
+            "Can assemble Illumina-only read sets where it functions as a SPAdes-optimizer. It can also assemble long-read-only sets (PacBio or Nanopore) where it runs a miniasm plus Racon pipeline. For the best possible assemblies, give it both Illumina reads and long reads, and it will conduct a hybrid assembly.",
         },
         {
           subheader: "SPAdes",
@@ -70,7 +70,7 @@ export const genomeAssemblyParameters: ServiceInfoPopup = {
         "Trim reads before assembly: Trim reads using TrimGalore (True/False)",
       subsections: [
         {
-          subheader: "Racon iternations and Pilon iterations",
+          subheader: "Racon iterations and Pilon iterations",
           subdescription:
             "Correct assembly errors (or “polish”) using racon and/or Pilon. \
                         Both racon and Pilon take the contigs and the reads mapped to those contigs, and look for discrepancies between the assembly \

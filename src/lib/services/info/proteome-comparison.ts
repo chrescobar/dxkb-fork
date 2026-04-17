@@ -4,7 +4,7 @@ export const proteomeComparisonInfo: ServiceInfoPopup = {
   title: "Proteome Comparison Overview",
   description:
     "The bacterial Proteome Comparison Service performs protein sequence-based genome comparison \
-        using bidirectional BLASTP. This service allows users to select up to eight genomes, either public or private, \
+        using bidirectional BLASTP. This service allows users to select up to nine genomes, either public or private, \
         and compare them to a user-selected or supplied reference genome. The proteome comparison result is displayed as an \
         interactive circular genome view and is downloadable as a print-quality image or tabular comparison results.",
 };
@@ -46,7 +46,7 @@ export const proteomeComparisonParameters: ServiceInfoPopup = {
 export const proteomeComparisonComparisonGenomes: ServiceInfoPopup = {
   title: "Comparison Genomes Selection",
   description:
-    "Select up to total of 9 genomes from the genome list or FASTA files or a feature groups and use the plus buttons to place the genomes to the table.",
+    "Select up to 9 comparison genomes from the genome list or FASTA files or feature groups and use the plus buttons to place the genomes to the table.",
   sections: [
     {
       header: "Select genome",

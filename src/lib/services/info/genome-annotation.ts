@@ -35,7 +35,7 @@ export const genomeAnnotationParameters: ServiceInfoPopup = {
     {
       header: "Taxonomy ID",
       description:
-        "A unique numerical identifier assigned by the NCBI to the source organism of the protein.",
+        "A unique numerical identifier assigned by the NCBI to the source organism of the genome.",
     },
     {
       header: "My Label",

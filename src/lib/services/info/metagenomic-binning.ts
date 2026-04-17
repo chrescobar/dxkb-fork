@@ -91,7 +91,7 @@ export const metagenomicBinningParameters: ServiceInfoPopup = {
         {
           subheader: "Viruses",
           subdescription:
-            "Uses use one of two annotation pipelines. It uses the VIGOR4 [5,6] pipeline if a reference annotation is available for that virus or viral family. If not, the Mat Peptide [7] pipeline is used.",
+            "Uses one of two annotation pipelines. It uses the VIGOR4 [5,6] pipeline if a reference annotation is available for that virus or viral family. If not, the Mat Peptide [7] pipeline is used.",
         },
         {
           subheader: "Both",

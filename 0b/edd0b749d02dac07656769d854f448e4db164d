@@ -1,0 +1,175 @@
+src/hooks/services/workspace/use-workspace-dialog-handlers.ts
+  1563c2cb0f4644c1 7-11,18,33,44,56-59,66,74,98,119-120,135,152,171,196,251-252
+src/lib/services/workspace/workspace-repository.ts
+  1563c2cb0f4644c1 1-101
+src/lib/services/workspace/adapters/http-workspace-repository.ts
+  1563c2cb0f4644c1 1-293
+src/hooks/services/workspace/use-workspace-action-dispatch.ts
+  1563c2cb0f4644c1 7,32,63
+src/lib/services/workspace/__tests__/workspace-query-keys.test.ts
+  1563c2cb0f4644c1 1-38
+src/contexts/workspace-repository-context.tsx
+  1563c2cb0f4644c1 1-61
+src/lib/services/workspace/adapters/__tests__/in-memory-workspace-repository.test.ts
+  1563c2cb0f4644c1 1-109
+src/app/services/(metagenomics)/metagenomic-read-mapping/page.tsx
+  1563c2cb0f4644c1 66
+src/app/services/(phylogenomics)/viral-genome-tree/page.tsx
+  1563c2cb0f4644c1 43
+src/lib/services/workspace/__tests__/domain.test.ts
+  1563c2cb0f4644c1 2-9,12-49,51-52,54-59,63-67,70-85,88,90-96,98-101,105-112,115-121,124-126,130-135,137-140,142-145
+src/app/services/(metagenomics)/taxonomic-classification/page.tsx
+  1563c2cb0f4644c1 88
+src/lib/services/workspace/path-utils.ts
+  1563c2cb0f4644c1 1-98
+src/lib/services/workspace/adapters/__tests__/http-workspace-repository.test.ts
+  1563c2cb0f4644c1 1-42,45,47,49-52,55,58-62,64,67-69,71-75,80-100,102,105-108,112-116,118-119,122-126,129-134,138-142,145-149,152-158,161-165,167-179,182-193,195,198-200,202-203
+src/components/workspace/workspace-item-details.tsx
+  1563c2cb0f4644c1 24-25,41,54
+src/hooks/services/workspace/__tests__/use-workspace-directory.test.tsx
+  1563c2cb0f4644c1 2-10,12-23,25-37,39-40,42-43,46-65,67-68,70-74,77-88,90-91,93-97,100-108,110-111,113-114,117-120,123-127,129-131
+src/components/workspace/workspace-selector-presets.ts
+  1563c2cb0f4644c1 1-32
+src/app/services/(metagenomics)/metagenomic-binning/page.tsx
+  1563c2cb0f4644c1 70
+src/lib/services/workspace/adapters/parsers.ts
+  1563c2cb0f4644c1 1-5,8-10,12-28,31-49,52-54,57-68,70-82,84-93
+src/hooks/services/workspace/use-workspace-object-search.ts
+  1563c2cb0f4644c1 1,3-16,18,20,24-26,28,36,39-45,49-50,55-58,62-63,65-69,71-74,76-77,79-80,83-85,93
+src/lib/services/workspace/workspace-query-keys.ts
+  1563c2cb0f4644c1 1-69
+src/lib/services/workspace/types.ts
+  1563c2cb0f4644c1 2-6,10
+src/components/workspace/download-options-dialog.tsx
+  1563c2cb0f4644c1 21,42,90-91,93-94,109,170
+src/app/services/(protein-tools)/msa-snp-analysis/page.tsx
+  1563c2cb0f4644c1 32
+src/hooks/services/workspace/__tests__/use-workspace-object-search.test.tsx
+  1563c2cb0f4644c1 1-10,12-18,20-32,34-35,37-39,42-51,53-54,56-60,64-69,71-72,74-78,81-82,84-85,87-89
+src/app/services/(genomics)/genome-annotation/page.tsx
+  1563c2cb0f4644c1 30
+src/app/services/(viral-tools)/sars-cov2-wastewater-analysis/page.tsx
+  1563c2cb0f4644c1 79
+src/components/workspace/workspace-object-selector.tsx
+  1563c2cb0f4644c1 23-24,27-30,42-43,55,84-91,93-95,100,102-105,117,126-127
+src/hooks/services/workspace/__tests__/use-workspace-action-dispatch.test.tsx
+  1563c2cb0f4644c1 2-3,5-6,9-26,95-98,105,124,144,164,183,203,227,245,264-266,270,278-279,290,312,326,330,338,348,373,394,419,444,464
+src/components/services/output-folder.tsx
+  1563c2cb0f4644c1 152
+src/lib/services/workspace/adapters/__tests__/parsers.test.ts
+  1563c2cb0f4644c1 1-151
+src/components/workspace/workspace-browser.tsx
+  1563c2cb0f4644c1 13,22-25,43,145-150,158-160,168,205-214,221-234
+src/hooks/services/workspace/__tests__/use-workspace-du.test.tsx
+  1563c2cb0f4644c1 2-5,7,9-20,22,26-27,30-34,43-48,59-62,66,69-71,74-76,78-85
+src/app/services/(viral-tools)/viral-assembly/page.tsx
+  1563c2cb0f4644c1 55
+src/app/services/(viral-tools)/sars-cov2-genome-analysis/page.tsx
+  1563c2cb0f4644c1 80
+src/app/services/(genomics)/primer-design/page.tsx
+  1563c2cb0f4644c1 52
+src/app/services/(protein-tools)/gene-protein-tree/page.tsx
+  1563c2cb0f4644c1 44
+src/app/services/(protein-tools)/meta-cats/page.tsx
+  1563c2cb0f4644c1 42
+src/lib/services/workspace/adapters/in-memory-workspace-repository.ts
+  1563c2cb0f4644c1 1-374
+src/app/services/(genomics)/genome-assembly/page.tsx
+  1563c2cb0f4644c1 68
+src/components/workspace/workspace-mini-browser.tsx
+  1563c2cb0f4644c1 23-24,145,148-151
+src/hooks/services/workspace/__tests__/use-workspace-dialog-handlers.test.tsx
+  1563c2cb0f4644c1 2-3,10-12,39-49,79,92-105,107,110,113,115-116,119-120,128-133,138-139,142-143,150,155-156,159-160,167,170-173,176-177,184-188,191-192,197-199,202-206,215,219-221,224-225,232-233,242-244,247-248,255,258-260,262-266,273-277,282-283,285-286,292,296-297,299-301,308-309,313-316,319-320,327-332,336,355,357-359,369,372-378,381-382,399-401,404-405,419-427,430-431,448,451-452,459-465,471,474-475,481,487-489,492-493,506,509-510,516,523,526-527,534
+src/hooks/services/workspace/use-workspace-directory.ts
+  1563c2cb0f4644c1 3-10,12-23,25-46,49-56,59-97,99-132,134,136-141,144-156,159-211,214-266
+src/app/services/(genomics)/blast/page.tsx
+  1563c2cb0f4644c1 39
+src/app/services/(genomics)/genome-alignment/page.tsx
+  1563c2cb0f4644c1 28
+src/app/services/(genomics)/similar-genome-finder/page.tsx
+  1563c2cb0f4644c1 30
+src/lib/services/workspace/domain.ts
+  1563c2cb0f4644c1 1-236
+src/app/services/(protein-tools)/proteome-comparison/page.tsx
+  1563c2cb0f4644c1 35
+src/lib/services/workspace/adapters/rpc.ts
+  1563c2cb0f4644c1 1-78
+src/app/services/(genomics)/variation-analysis/page.tsx
+  1563c2cb0f4644c1 59
+src/app/services/(utilities)/fastq-utilities/page.tsx
+  1563c2cb0f4644c1 78
+src/lib/services/workspace/__tests__/path-utils.test.ts
+  1563c2cb0f4644c1 1-17,20-27,30-38,40,42-55,57,60-63,65-66,68,71-74,76-81,83,86-89,91-93,95-97,99-120
+src/hooks/services/workspace/use-workspace-browser-directory.ts
+  1563c2cb0f4644c1 5-9,11-14,16-17,19,21,23,25,27,29,31-37,39,45,47,56-60,64-93,95-115,117-127,130-131,136-142
+src/hooks/services/workspace/use-workspace-du.ts
+  1563c2cb0f4644c1 4-5,14,16-27
+src/app/services/(viral-tools)/subspecies-classification/page.tsx
+  1563c2cb0f4644c1 48
+src/hooks/services/workspace/use-job-result-data.ts
+  1563c2cb0f4644c1 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "0bedd0b749d02dac07656769d854f448e4db164d",
+  "prompts": {
+    "1563c2cb0f4644c1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "259cff15-4125-44d5-97c4-14619d3fec75",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 3554,
+      "total_deletions": 1008,
+      "accepted_lines": 3422,
+      "overriden_lines": 0
+    },
+    "419a5305e23edd86": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1121456-7439-418d-8199-1af302a01764",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    },
+    "96fe24a4384ee7eb": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d9c6a-dc13-7740-9875-fc9b1588d2ba",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 1247,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    },
+    "b186c38203232bc3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2477c54-328c-477b-9f1e-c2ec999db01a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_e893c4a39fbc49": {
+      "author": "Chris Escobar"
+    }
+  }
+}

@@ -117,6 +117,11 @@ export function useWorkspaceBrowserDirectory(
     return undefined;
   }, [directoryMode, options.initialSharedItems, options.initialPathItems]);
 
+  // When no mode resolves we still must call the hook, so we pass a
+  // `publicRoot` placeholder and rely on `enabled` to suppress fetching.
+  // TanStack Query still surfaces cached data for the placeholder's query key
+  // when disabled, so mask all outputs below to avoid leaking public-root
+  // cache into invalid/disabled states.
   const result = useWorkspaceDirectory(
     directoryMode ?? { kind: "publicRoot" },
     {
@@ -126,19 +131,24 @@ export function useWorkspaceBrowserDirectory(
     },
   );
 
+  const canonicalItems = useMemo<WorkspaceItem[]>(
+    () => (enabled ? result.items : []),
+    [enabled, result.items],
+  );
+
   const items = useMemo(
-    () => result.items.map(toWorkspaceBrowserItem),
-    [result.items],
+    () => canonicalItems.map(toWorkspaceBrowserItem),
+    [canonicalItems],
   );
 
   return {
     items,
-    canonicalItems: result.items,
-    isLoading: result.isLoading,
-    isFetching: result.isFetching,
-    error: result.error,
+    canonicalItems,
+    isLoading: enabled && result.isLoading,
+    isFetching: enabled && result.isFetching,
+    error: enabled ? result.error : null,
     refetch: result.refetch,
-    memberCountByPath: result.memberCountByPath,
-    currentDirPermissions: result.permissions,
+    memberCountByPath: enabled ? result.memberCountByPath : undefined,
+    currentDirPermissions: enabled ? result.permissions : undefined,
   };
 }

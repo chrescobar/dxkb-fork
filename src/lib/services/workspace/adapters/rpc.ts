@@ -61,7 +61,15 @@ export async function rpc<T = unknown>({
       );
     }
 
-    return (payload.result ?? null) as T;
+    if (!("result" in payload)) {
+      throw new WorkspaceApiError(
+        "Malformed JSON-RPC response: missing `result` and `error`",
+        method,
+        payload,
+      );
+    }
+
+    return payload.result as T;
   } catch (error) {
     if (error instanceof WorkspaceApiError) {
       if (!silent) console.error(`Failed to call ${method}:`, error);

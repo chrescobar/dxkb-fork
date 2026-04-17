@@ -233,8 +233,10 @@ export function useWorkspaceDirectory(
     staleTime: 2 * 60 * 1000,
   });
 
+  const isAuthenticated = isAuthenticatedMode(mode);
+
   const memberCountByPath = useMemo(() => {
-    if (!isAuthenticatedMode(mode)) return undefined;
+    if (!isAuthenticated) return undefined;
     const perms = permissionsQuery.data;
     if (!perms) return undefined;
     const out: Record<string, number> = {};
@@ -243,14 +245,14 @@ export function useWorkspaceDirectory(
       out[path] = Array.isArray(list) ? list.length : 0;
     }
     return out;
-  }, [mode, permissionsQuery.data, itemPaths]);
+  }, [isAuthenticated, permissionsQuery.data, itemPaths]);
 
   const combinedPermissions = useMemo<ListPermissionsResult | undefined>(() => {
-    if (!isAuthenticatedMode(mode)) return undefined;
+    if (!isAuthenticated) return undefined;
     const itemPerms = permissionsQuery.data ?? {};
     const currentPerms = currentPathPermissionsQuery.data ?? {};
     return { ...currentPerms, ...itemPerms };
-  }, [mode, permissionsQuery.data, currentPathPermissionsQuery.data]);
+  }, [isAuthenticated, permissionsQuery.data, currentPathPermissionsQuery.data]);
 
   return {
     items,

@@ -159,15 +159,15 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
     this.throwIfConfigured("listDirectory");
     const items = this.directories[normalize(input.path)] ?? [];
     const mapped = items.map((f, i) => toWorkspaceItem(toBrowserItem(input.path, f, i)));
-    if (input.query?.type && input.query.type.length > 0) {
-      const allowed = new Set(input.query.type);
-      return mapped.filter((item) => allowed.has(item.type));
-    }
-    if (input.query?.name) {
-      const term = input.query.name.toLowerCase();
-      return mapped.filter((item) => item.name.toLowerCase().includes(term));
-    }
-    return mapped;
+    const types = input.query?.type;
+    const allowed = types && types.length > 0 ? new Set(types) : null;
+    const term = input.query?.name?.toLowerCase();
+    if (!allowed && !term) return mapped;
+    return mapped.filter((item) => {
+      if (allowed && !allowed.has(item.type)) return false;
+      if (term && !item.name.toLowerCase().includes(term)) return false;
+      return true;
+    });
   }
 
   async getMetadata(
@@ -299,8 +299,29 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
       if (!source) continue;
       destSiblings.push({ ...source, name: destName });
       this.directories[destParent] = destSiblings;
+
+      // Recursively carry any nested directory listings for folder sources.
+      // Mirrors the HTTP server behavior when `recursive: true` is passed.
+      const clonedKeys: string[] = [];
+      if (input.recursive) {
+        const srcPrefix = srcNormalized === "/" ? "/" : `${srcNormalized}/`;
+        for (const key of Object.keys(this.directories)) {
+          if (key !== srcNormalized && !key.startsWith(srcPrefix)) continue;
+          const suffix = key === srcNormalized ? "" : key.slice(srcNormalized.length);
+          const newKey = normalize(`${destNormalized}${suffix}`);
+          this.directories[newKey] = this.directories[key].map((c) => ({ ...c }));
+          clonedKeys.push(key);
+        }
+      }
+
       if (input.move) {
         this.directories[srcParent] = srcSiblings.filter((c) => c.name !== srcName);
+        if (clonedKeys.length > 0) {
+          const removed = new Set(clonedKeys);
+          this.directories = Object.fromEntries(
+            Object.entries(this.directories).filter(([key]) => !removed.has(key)),
+          );
+        }
       }
     }
   }

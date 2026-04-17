@@ -98,7 +98,6 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
     selectedLibrariesRef.current = selectedLibraries;
   }, [selectedLibraries]);
 
-  // Sync selected single read into form when Single Read Library is selected (no Add button on this page)
   useEffect(() => {
     if (inputType !== "single") return;
     const desiredSingleId = singleRead ?? null;
@@ -134,7 +133,6 @@ export const ViralAssemblyPage = function ViralAssemblyPage() {
     [selectedLibraries],
   );
 
-  // Sync selected paired reads into form when Paired Read Library is selected (no Add button on this page)
   useEffect(() => {
     if (inputType !== "paired") return;
     const desiredPairId =

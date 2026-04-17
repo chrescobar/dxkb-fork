@@ -59,6 +59,9 @@ function mergeServiceRerunConfig<TForm, TRerun extends Record<string, unknown>>(
     ...(hasDefaultOutputPath ? { defaultOutputPath: null } : {}),
   };
 
+  // Library-family fields travel as a bundle — the discriminated
+  // `ServiceRerunConfig` union requires `libraries` to be present alongside
+  // its siblings, so keep the two branches explicit.
   if (overrideRerun?.libraries) {
     return {
       ...base,

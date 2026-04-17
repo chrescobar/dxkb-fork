@@ -1,4 +1,4 @@
-import { fetchTaxonNameById } from "@/lib/forms/taxonomy-lookup";
+import { applyTaxonomyIdWithLookup } from "@/lib/forms/taxonomy-lookup";
 import { createServiceDefinition } from "@/lib/services/service-definition";
 
 import {
@@ -29,24 +29,21 @@ export const sarsCov2GenomeAnalysisService =
       ],
       onApply: (rerunData, form) => {
         if (!rerunData.taxonomy_id) return;
-
-        const taxonId = String(rerunData.taxonomy_id);
-        form.setFieldValue("taxonomy_id", taxonId);
         const outputFile = rerunData.output_file as string | undefined;
-        void fetchTaxonNameById(taxonId).then((taxonName) => {
-          if (!taxonName) return;
-          form.setFieldValue("scientific_name", taxonName);
-          if (outputFile) {
-            const sanitized = sanitizeTaxonomyForOutputName(taxonName);
-            const prefix = `${sanitized} `;
+        applyTaxonomyIdWithLookup(
+          String(rerunData.taxonomy_id),
+          form,
+          (taxonName) => {
+            if (!outputFile) return;
+            const prefix = `${sanitizeTaxonomyForOutputName(taxonName)} `;
             const label = outputFile.startsWith(prefix)
               ? outputFile.slice(prefix.length).trim()
               : "";
             if (label) {
               form.setFieldValue("my_label", label);
             }
-          }
-        });
+          },
+        );
       },
     },
   });

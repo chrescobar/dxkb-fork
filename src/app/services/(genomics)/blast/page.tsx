@@ -104,7 +104,6 @@ export default function BlastServicePage() {
       : "featureDnaFastaOrContigs";
   }, [dbPrecomputedDatabase, dbType]);
 
-  // Determine workspace object types based on BLAST program (matching legacy behavior)
   const inputFastaPreset = useMemo<WorkspaceSelectorPreset>(() => {
     switch (currentBlastProgram) {
       case "blastp":
@@ -123,10 +122,9 @@ export default function BlastServicePage() {
   const previousProgramRef =
     useRef<BlastFormData["blast_program"]>(currentBlastProgram);
 
-  // Prevents the program-change clear effect from wiping inputs set by a rerun
+  // Suppresses the program-change clear effect while a rerun is writing fields.
   const isApplyingRerunRef = useRef(false);
 
-  // Keep input_type aligned with the current program (legacy behavior)
   useEffect(() => {
     const derivedInputType =
       currentBlastProgram === "blastp" || currentBlastProgram === "tblastn"
@@ -135,19 +133,18 @@ export default function BlastServicePage() {
     form.setFieldValue("input_type", derivedInputType);
   }, [currentBlastProgram, form]);
 
-  // Clear input fields when BLAST program changes to prevent stale/incorrect files
   useEffect(() => {
     const previousProgram = previousProgramRef.current;
 
     if (
       previousProgram !== currentBlastProgram &&
       previousProgram !== undefined &&
-      !isApplyingRerunRef.current
+      !isApplyingRerunRef.current &&
+      form.getFieldValue("input_fasta_file") !== ""
     ) {
       form.setFieldValue("input_fasta_file", "");
     }
 
-    // Rerun application is complete once this effect has run after the program change
     isApplyingRerunRef.current = false;
     previousProgramRef.current = currentBlastProgram;
   }, [currentBlastProgram, form]);

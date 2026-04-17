@@ -468,7 +468,7 @@ export default function ViralGenomeTreePage() {
                 <Label className="service-card-label">Aligned FASTA</Label>
                 <div className="flex gap-2">
                   <WorkspaceObjectSelector
-                    preset="dnaFasta"
+                    preset="alignedDnaFastaOrContigs"
                     placeholder="Optional"
                     onSelectedObjectChange={(
                       object: WorkspaceObject | null,

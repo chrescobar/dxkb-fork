@@ -1,4 +1,4 @@
-import { fetchTaxonNameById } from "@/lib/forms/taxonomy-lookup";
+import { applyTaxonomyIdWithLookup } from "@/lib/forms/taxonomy-lookup";
 import { createServiceDefinition } from "@/lib/services/service-definition";
 
 import {
@@ -19,14 +19,10 @@ export const genomeAnnotationService =
         const label =
           typeof rerunData.my_label === "string" ? rerunData.my_label : "";
         if (rerunData.taxonomy_id) {
-          const taxonId = String(rerunData.taxonomy_id);
-          form.setFieldValue("taxonomy_id", taxonId);
+          applyTaxonomyIdWithLookup(String(rerunData.taxonomy_id), form);
           if (label) {
             form.setFieldValue("my_label", label);
           }
-          void fetchTaxonNameById(taxonId).then((taxonName) => {
-            if (taxonName) form.setFieldValue("scientific_name", taxonName);
-          });
         } else {
           if (typeof rerunData.scientific_name === "string") {
             form.setFieldValue("scientific_name", rerunData.scientific_name);

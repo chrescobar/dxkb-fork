@@ -163,7 +163,6 @@ export default function SarsCov2WastewaterAnalysisPage() {
     },
   });
 
-  // When primers change, set default primer_version
   useEffect(() => {
     if (primers) {
       const defaultVersion = defaultPrimerVersion[primers];

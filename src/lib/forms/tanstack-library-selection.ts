@@ -104,7 +104,7 @@ export function useTanstackLibrarySelection<LibraryItem, SrrItem = string>(
   config: UseTanstackLibrarySelectionConfig<LibraryItem, SrrItem>,
 ) {
   const [selectedLibraries, setSelectedLibraries] = useState<Library[]>([]);
-  const shouldSyncRef = useRef(false);
+  const selectedLibrariesRef = useRef<Library[]>([]);
   const configRef = useRef(config);
   useEffect(() => {
     configRef.current = config;
@@ -140,22 +140,18 @@ export function useTanstackLibrarySelection<LibraryItem, SrrItem = string>(
     [],
   );
 
-  useEffect(() => {
-    if (!shouldSyncRef.current) {
-      shouldSyncRef.current = true;
-      return;
-    }
-
-    applyLibrariesToForm(selectedLibraries, configRef.current);
-  }, [selectedLibraries, applyLibrariesToForm]);
-
-  const updateLibraries = useCallback((nextLibraries: Library[]) => {
-    setSelectedLibraries((previousLibraries) => {
-      return configRef.current.normalizeLibraries
-        ? configRef.current.normalizeLibraries(nextLibraries, previousLibraries)
+  const updateLibraries = useCallback(
+    (nextLibraries: Library[]) => {
+      const cfg = configRef.current;
+      const finalLibraries = cfg.normalizeLibraries
+        ? cfg.normalizeLibraries(nextLibraries, selectedLibrariesRef.current)
         : nextLibraries;
-    });
-  }, []);
+      selectedLibrariesRef.current = finalLibraries;
+      setSelectedLibraries(finalLibraries);
+      applyLibrariesToForm(finalLibraries, cfg);
+    },
+    [applyLibrariesToForm],
+  );
 
   const addPairedLibrary = useCallback(
     (options: AddPairedLibraryOptions) => {

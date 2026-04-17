@@ -143,7 +143,6 @@ export default function SarsCov2GenomeAnalysisPage() {
     },
   });
 
-  // Sync output_file when scientific_name or my_label changes
   useEffect(() => {
     const outputName = computeOutputName(scientificName ?? "", myLabel ?? "");
     if (outputName) {
@@ -151,7 +150,6 @@ export default function SarsCov2GenomeAnalysisPage() {
     }
   }, [scientificName, myLabel, form]);
 
-  // When primers change, set default primer_version
   useEffect(() => {
     if (showPrimersSection && primers) {
       const defaultVersion = defaultPrimerVersion[primers];

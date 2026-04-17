@@ -224,7 +224,6 @@ export default function PrimerDesignServicePage() {
     }
   }
 
-  // Helper to restore workspace FASTA value
   function restoreWorkspaceFasta() {
     if (workspaceFastaValue) {
       isRestoringValueRef.current = true;
@@ -237,7 +236,6 @@ export default function PrimerDesignServicePage() {
     }
   }
 
-  // Helper to restore sequence text values
   function restoreSequenceText() {
     form.setFieldValue("sequence_input", sequenceTextValue);
     form.setFieldValue("SEQUENCE_ID", sequenceTextId);

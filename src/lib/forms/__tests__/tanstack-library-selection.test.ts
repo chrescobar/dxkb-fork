@@ -432,7 +432,7 @@ describe("useTanstackLibrarySelection", () => {
   });
 
   describe("setLibraries", () => {
-    it("applies all 3 field types to form via the state-driven sync effect", async () => {
+    it("applies all 3 field types to form", () => {
       const mockForm = createMockForm();
       const config = createHookConfig({ form: mockForm });
       const { result } = renderHook(() => useTanstackLibrarySelection(config));

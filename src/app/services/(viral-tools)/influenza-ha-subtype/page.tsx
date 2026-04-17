@@ -223,7 +223,7 @@ export default function HASubtypeNumberingPage() {
                   {(field) => (
                     <FieldItem>
                       <WorkspaceObjectSelector
-                        preset="proteinFastaOrContigs"
+                        preset="featureProteinFastaOrContigs"
                         placeholder="Select or upload FASTA file..."
                         value={field.state.value}
                         onSelectedObjectChange={(obj) =>

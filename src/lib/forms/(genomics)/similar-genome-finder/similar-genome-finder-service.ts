@@ -1,4 +1,5 @@
 import { createServiceDefinition } from "@/lib/services/service-definition";
+import { rerunBooleanValue } from "@/lib/rerun-utility";
 
 import {
   defaultSimilarGenomeFinderFormValues,
@@ -24,22 +25,17 @@ export const similarGenomeFinderService =
         if (typeof rerunData.max_distance === "number") {
           form.setFieldValue("max_distance", rerunData.max_distance);
         }
-        if (
-          typeof rerunData.include_bacterial === "boolean" ||
-          rerunData.include_bacterial === 0 ||
-          rerunData.include_bacterial === 1
-        ) {
+        if (rerunData.include_bacterial != null) {
           form.setFieldValue(
             "include_bacterial",
-            Boolean(rerunData.include_bacterial),
+            rerunBooleanValue(rerunData.include_bacterial),
           );
         }
-        if (
-          typeof rerunData.include_viral === "boolean" ||
-          rerunData.include_viral === 0 ||
-          rerunData.include_viral === 1
-        ) {
-          form.setFieldValue("include_viral", Boolean(rerunData.include_viral));
+        if (rerunData.include_viral != null) {
+          form.setFieldValue(
+            "include_viral",
+            rerunBooleanValue(rerunData.include_viral),
+          );
         }
         if (rerunData.scope === "reference" || rerunData.scope === "all") {
           form.setFieldValue("scope", rerunData.scope);

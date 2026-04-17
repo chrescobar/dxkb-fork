@@ -21,9 +21,11 @@ export const genomeAnnotationService =
         if (rerunData.taxonomy_id) {
           const taxonId = String(rerunData.taxonomy_id);
           form.setFieldValue("taxonomy_id", taxonId as never);
-          const storedLabel = rerunData.my_label as string | undefined;
+          if (rerunData.my_label) {
+            form.setFieldValue("my_label", rerunData.my_label as never);
+          }
           fetch(
-            `/api/services/taxonomy?q=taxon_id:${taxonId}&fl=taxon_id,taxon_name`,
+            `/api/services/taxonomy?q=taxon_id:${encodeURIComponent(taxonId)}&fl=taxon_id,taxon_name`,
           )
             .then((r) => r.json())
             .then((data) => {
@@ -33,9 +35,6 @@ export const genomeAnnotationService =
                   "scientific_name",
                   docs[0].taxon_name as never,
                 );
-              }
-              if (storedLabel) {
-                form.setFieldValue("my_label", storedLabel as never);
               }
             })
             .catch(noop);

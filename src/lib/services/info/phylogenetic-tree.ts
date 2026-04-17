@@ -99,7 +99,7 @@ export const phylogeneticTreeTreeParameters: ServiceInfoPopup = {
     {
       header: "Output name",
       description:
-        "User-specified label for the results of the tree-buidling analysis job. This name will appear in the workspace when the job is complete.",
+        "User-specified label for the results of the tree-building analysis job. This name will appear in the workspace when the job is complete.",
     },
   ],
 };

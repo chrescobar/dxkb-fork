@@ -23,6 +23,13 @@ export const metagenomicBinningService =
         "organism",
         "contigs",
         "genome_group",
+        "min_contig_len",
+        "min_contig_cov",
       ],
+      onApply: (rerunData, form) => {
+        if (rerunData.danglen === 0) {
+          form.setFieldValue("disable_dangling", true as never);
+        }
+      },
     },
   });

@@ -31,14 +31,25 @@ export const similarGenomeFinderService =
         if (typeof rerunData.max_distance === "number") {
           form.setFieldValue("max_distance", rerunData.max_distance as never);
         }
-        if (typeof rerunData.include_bacterial === "boolean") {
+        if (
+          typeof rerunData.include_bacterial === "boolean" ||
+          rerunData.include_bacterial === 0 ||
+          rerunData.include_bacterial === 1
+        ) {
           form.setFieldValue(
             "include_bacterial",
-            rerunData.include_bacterial as never,
+            Boolean(rerunData.include_bacterial) as never,
           );
         }
-        if (typeof rerunData.include_viral === "boolean") {
-          form.setFieldValue("include_viral", rerunData.include_viral as never);
+        if (
+          typeof rerunData.include_viral === "boolean" ||
+          rerunData.include_viral === 0 ||
+          rerunData.include_viral === 1
+        ) {
+          form.setFieldValue(
+            "include_viral",
+            Boolean(rerunData.include_viral) as never,
+          );
         }
         if (rerunData.scope === "reference" || rerunData.scope === "all") {
           form.setFieldValue("scope", rerunData.scope as never);

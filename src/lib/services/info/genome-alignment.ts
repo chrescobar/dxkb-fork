@@ -23,7 +23,7 @@ export const genomeAlignmentSelectGenomes: ServiceInfoPopup = {
   ],
 };
 
-export const genomeAlignmentAdvancedParamaterOptions: ServiceInfoPopup = {
+export const genomeAlignmentAdvancedParameterOptions: ServiceInfoPopup = {
   title: "Advanced Parameter options",
   sections: [
     {

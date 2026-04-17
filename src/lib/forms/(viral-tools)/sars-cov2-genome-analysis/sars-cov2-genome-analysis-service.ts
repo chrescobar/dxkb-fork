@@ -36,7 +36,7 @@ export const sarsCov2GenomeAnalysisService =
         form.setFieldValue("taxonomy_id", taxonId as never);
         const outputFile = rerunData.output_file as string | undefined;
         fetch(
-          `/api/services/taxonomy?q=taxon_id:${taxonId}&fl=taxon_id,taxon_name`,
+          `/api/services/taxonomy?q=taxon_id:${encodeURIComponent(taxonId)}&fl=taxon_id,taxon_name`,
         )
           .then((r) => r.json())
           .then((data) => {

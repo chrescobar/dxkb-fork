@@ -1,0 +1,82 @@
+src/lib/forms/(viral-tools)/sars-cov2-genome-analysis/sars-cov2-genome-analysis-service.ts
+  cd6c95f3b4c44a6b 1,33-38,45-46
+src/hooks/services/use-service-runtime.ts
+  cd6c95f3b4c44a6b 62-64
+src/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-service.ts
+  cd6c95f3b4c44a6b 2,28,31,34-38
+src/lib/forms/taxonomy-lookup.ts
+  cd6c95f3b4c44a6b 26-47
+src/lib/forms/(genomics)/genome-annotation/genome-annotation-service.ts
+  cd6c95f3b4c44a6b 1,22
+src/app/services/(genomics)/blast/page.tsx
+  cd6c95f3b4c44a6b 125,142-143
+src/app/services/(viral-tools)/influenza-ha-subtype/page.tsx
+  cd6c95f3b4c44a6b 226
+src/components/workspace/workspace-selector-presets.ts
+  cd6c95f3b4c44a6b 32,38
+src/lib/forms/__tests__/tanstack-library-selection.test.ts
+  cd6c95f3b4c44a6b 435
+src/lib/forms/tanstack-library-selection.ts
+  cd6c95f3b4c44a6b 107,143-147,149-154
+src/app/services/(phylogenomics)/viral-genome-tree/page.tsx
+  cd6c95f3b4c44a6b 471
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "f8237cf37691c1fd2542753bbde43c5b1bfe165f",
+  "prompts": {
+    "419a5305e23edd86": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1121456-7439-418d-8199-1af302a01764",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    },
+    "5c5de4a4f99d7e76": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a2f15dc9-6589-483c-a080-dce4fe084518",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 6,
+      "overriden_lines": 0
+    },
+    "b186c38203232bc3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2477c54-328c-477b-9f1e-c2ec999db01a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    },
+    "cd6c95f3b4c44a6b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6737c9e1-6894-4a41-b6c1-946abe30e348",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 98,
+      "overriden_lines": 0
+    }
+  }
+}

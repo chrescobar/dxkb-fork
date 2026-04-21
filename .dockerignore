@@ -1,0 +1,44 @@
+# VCS
+.git
+.gitignore
+
+# Node
+node_modules
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Next build output (regenerated inside the image)
+.next
+out
+
+# Tests + coverage
+coverage
+__tests__
+**/__tests__
+*.test.ts
+*.test.tsx
+
+# Editor / OS
+.vscode
+.idea
+.DS_Store
+
+# Environment / secrets — never bake into an image
+.env
+.env.*
+!.env.example
+
+# Local tooling + docs that don't affect the runtime
+.claude
+.github
+docs
+plans
+reports
+README.md
+Dockerfile
+.dockerignore
+
+# Type-check incremental cache
+tsconfig.tsbuildinfo

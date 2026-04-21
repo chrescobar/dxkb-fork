@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dxkb
+  name: dxkb
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: dxkb
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: dxkb
+    spec:
+      containers:
+      - image: chrescobar/dxkb:1.0
+        name: dxkb
+        ports:
+        - containerPort: 3000
+        resources: {}
+        envFrom:
+          - configMapRef:
+              name: dxkb-env
+status: {}

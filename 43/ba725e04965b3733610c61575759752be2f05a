@@ -1,0 +1,29 @@
+e2e/scripts/record-har.ts
+  9473b531403c671c 35-40
+playwright.config.ts
+  9473b531403c671c 81
+e2e/fixtures/overrides/jobs.ts
+  9473b531403c671c 24-26,29
+e2e/tests/visual/visual.spec.ts
+  9473b531403c671c 35-44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "43ba725e04965b3733610c61575759752be2f05a",
+  "prompts": {
+    "9473b531403c671c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "36b7d452-0b57-4254-84be-b0bf6b3fe834",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 21,
+      "total_deletions": 7,
+      "accepted_lines": 21,
+      "overriden_lines": 0
+    }
+  }
+}

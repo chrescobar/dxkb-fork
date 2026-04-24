@@ -1,0 +1,35 @@
+.gitignore
+  7dfb58368d1e8d2a 38
+playwright.config.ts
+  7dfb58368d1e8d2a 7-15,90
+.env.e2e.test
+  7dfb58368d1e8d2a 3-31
+src/app/api/e2e-mock/[...path]/route.ts
+  7dfb58368d1e8d2a 32
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  7dfb58368d1e8d2a 22-108
+e2e/README.md
+  7dfb58368d1e8d2a 58-70
+e2e/scripts/start-webserver.mjs
+  7dfb58368d1e8d2a 1-62
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "0280d9eb641c69ee72cbec656810610261131bf8",
+  "prompts": {
+    "7dfb58368d1e8d2a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f4ea5f85-985e-4d1d-9403-2d8f984ee6bc",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 324,
+      "total_deletions": 42,
+      "accepted_lines": 111,
+      "overriden_lines": 0
+    }
+  }
+}

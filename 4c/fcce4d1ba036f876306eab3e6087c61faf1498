@@ -1,0 +1,31 @@
+e2e/pages/index.ts
+  c58868f20b8849ce 1
+e2e/README.md
+  c58868f20b8849ce 31,38,41,75-90
+e2e/tests/services/services-smoke.spec.ts
+  c58868f20b8849ce 1-66
+e2e/pages/sign-in-page.ts
+  c58868f20b8849ce 1-51
+e2e/tests/auth.spec.ts
+  c58868f20b8849ce 1-7,9-17,20-27,30-35,39-103,107-109,115-117,122-125,131-133,139-141,146-177
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "4cfcce4d1ba036f876306eab3e6087c61faf1498",
+  "prompts": {
+    "c58868f20b8849ce": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "72fef2cc-a22b-4d21-9524-cb063a5791e8",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 285,
+      "total_deletions": 25,
+      "accepted_lines": 284,
+      "overriden_lines": 0
+    }
+  }
+}

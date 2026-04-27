@@ -1,0 +1,31 @@
+e2e/tests/search-keyboard.spec.ts
+  a619a517c01809bb 1-95
+e2e/tests/viewer-3d.spec.ts
+  a619a517c01809bb 1-134
+package.json
+  a619a517c01809bb 78
+e2e/tests/a11y.spec.ts
+  a619a517c01809bb 1-144
+e2e/README.md
+  a619a517c01809bb 43-45,166-173
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "d0447d3ad4bbb307c1d497033c7a31aa1536eb9a",
+  "prompts": {
+    "a619a517c01809bb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "53f1f9d0-a155-4cdc-bb88-d0287b6a9377",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 503,
+      "total_deletions": 114,
+      "accepted_lines": 389,
+      "overriden_lines": 0
+    }
+  }
+}

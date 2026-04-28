@@ -1,0 +1,30 @@
+src/hooks/services/use-rerun-form.ts
+  0f2a98ea5f917b61 31-43
+src/hooks/services/__tests__/use-rerun-form.test.tsx
+  0f2a98ea5f917b61 60-64,74
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "913b03595a408dfa28815ff63846cfc7f4551ef5",
+  "prompts": {
+    "0f2a98ea5f917b61": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "44776434-9167-48b9-818c-4d093db5193a",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 19,
+      "total_deletions": 3,
+      "accepted_lines": 51,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_e893c4a39fbc49": {
+      "author": "Chris Escobar"
+    }
+  }
+}

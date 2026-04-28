@@ -1,0 +1,45 @@
+e2e/mocks/backends.ts
+  12454bcd7d681d3a 6-13,149-151,160-171
+e2e/scripts/har-constants.ts
+  12454bcd7d681d3a 9-20
+e2e/scripts/har-overrides.ts
+  12454bcd7d681d3a 62-66,68-72,74,83-84,87,109-129,176-183,188,193,247,250-253,257
+e2e/tests/workspace-upload.spec.ts
+  12454bcd7d681d3a 8,62,64-69,82
+e2e/tests/workspace-viewer.spec.ts
+  12454bcd7d681d3a 9,96-101,112
+e2e/tests/services/genome-assembly.spec.ts
+  12454bcd7d681d3a 134-136,138-139
+.claude/CLAUDE.md
+  12454bcd7d681d3a 67-69
+e2e/scripts/seed-account.ts
+  12454bcd7d681d3a 24,28-31
+src/hooks/services/__tests__/use-rerun-form.test.tsx
+  12454bcd7d681d3a 60
+e2e/tests/jobs-lifecycle.spec.ts
+  12454bcd7d681d3a 225-230
+e2e/tests/workspace-browse.spec.ts
+  12454bcd7d681d3a 13,180-184,194
+e2e/scripts/record-har.ts
+  12454bcd7d681d3a 7-8,11-13,21,31-34,54-66,83-86,90,207-210
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "c2895d6e608a7f64f59edccd664ee79d217c3f1c",
+  "prompts": {
+    "12454bcd7d681d3a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dbe42a5c-2dc6-49a0-951a-be0727de298b",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 170,
+      "total_deletions": 227,
+      "accepted_lines": 162,
+      "overriden_lines": 0
+    }
+  }
+}

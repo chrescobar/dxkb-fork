@@ -1,0 +1,33 @@
+src/app/api/auth/change-password/__tests__/route.test.ts
+  68d33a6bbb21942b 1-5,8-9,15,17-21,23-25,27-31,33,35-45,51,54-56,59,64-65,68-81,92-103,106-117,121,126-128,132-139,148-149
+e2e/fixtures/overrides/workspace.ts
+  68d33a6bbb21942b 135-137,140-146,246-247,297-301,317-321
+e2e/tests/workspace-actions.spec.ts
+  68d33a6bbb21942b 17-21,139,142-149,154-155,164-174,176,178-186,188-189,203-204,210-223,236,247-252,258,261-262,275-281,283,285-292,294-295,309,315-326,344,355-358
+src/app/api/auth/sign-out/__tests__/route.test.ts
+  68d33a6bbb21942b 1-2,5-6,11-14,16-17,24-46
+src/app/api/auth/sign-in/email/__tests__/route.test.ts
+  68d33a6bbb21942b 1-5,8-9,15-16,18-32,34-58,68-88,90-93,99-102,112-113,116-119,127-128,131-138,142,147-150
+src/app/api/auth/sign-up/email/__tests__/route.test.ts
+  68d33a6bbb21942b 1-5,8-9,15-16,22,27-38,40-42,44-61,64,68-91,96-103,105-109,112-115,118-126,129,132-134
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "db2ef0c099dc2df6212aca7acd701f20f273b50f",
+  "prompts": {
+    "68d33a6bbb21942b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e696d25a-edc9-4ea3-9f8d-bfc3884bb0c0",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 478,
+      "total_deletions": 310,
+      "accepted_lines": 446,
+      "overriden_lines": 0
+    }
+  }
+}

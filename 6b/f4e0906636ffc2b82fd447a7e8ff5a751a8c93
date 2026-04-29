@@ -1,0 +1,27 @@
+src/components/filterbar/facet-panel.tsx
+  9ef84d51c36c8a16 32,41,43-45
+eslint.config.mjs
+  9ef84d51c36c8a16 14
+src/components/filterbar/filter-bar.tsx
+  9ef84d51c36c8a16 53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "6bf4e0906636ffc2b82fd447a7e8ff5a751a8c93",
+  "prompts": {
+    "9ef84d51c36c8a16": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "985ff1fd-f4ff-4f64-bfa6-819604a0bd83",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 7,
+      "total_deletions": 5,
+      "accepted_lines": 7,
+      "overriden_lines": 0
+    }
+  }
+}

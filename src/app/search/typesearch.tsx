@@ -26,7 +26,8 @@ interface TabsRendererProps {
   setRowSelection: (sel: Record<string, boolean>) => void;
   pageIndex: number;
   setPageIndex: (page: number) => void;
-  setSelectedRows: (rows: unknown[]) => void;
+  setSelectedIds: (ids: string[]) => void;
+//  setSelectedRows: (rows: unknown[]) => void;
 }
 
 // IMPORTANT: This must be defined at module scope (not inside TypeSearch),
@@ -43,7 +44,8 @@ function TabsRenderer({
   setRowSelection,
   pageIndex,
   setPageIndex,
-  setSelectedRows,
+  setSelectedIds,
+//  setSelectedRows,
 }: TabsRendererProps) {
   // Whenever urlType (searchtype) changes, set the active tab.
   // If urlType matches one of the tabs (term), set that; otherwise pick the first tab.
@@ -67,7 +69,8 @@ function TabsRenderer({
   const handleTabChange = (newTab: string) => {
     setActiveTab(newTab);
     setRowSelection({});
-    setSelectedRows([]);
+    setSelectedIds([]);
+//    setSelectedRows([]);
   };
 
   return (
@@ -89,7 +92,9 @@ function TabsRenderer({
           <ListData
             resource={term}
             q={fullQ}
-            onSelectionChange={(rows) => setSelectedRows(Array.isArray(rows) ? (rows as Record<string, unknown>[]) : [])}
+            onSelectionChange={(ids) =>
+              setSelectedIds(Array.isArray(ids) ? (ids as string[]) : [])
+            }
             rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
             pageIndex={pageIndex}
@@ -151,7 +156,9 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
   const tabsForType = searchTypes[thistype] ?? searchTypes["genome"];
   const tablist = Object.keys(tabsForType);
 
-  const [selectedRows, setSelectedRows] = useState<Record<string, unknown>[]>([]);
+//  const [selectedRows, setSelectedRows] = useState<Record<string, unknown>[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectedRowMap, setSelectedRowMap] = useState<Record<string, any>>({});
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [pageIndex, setPageIndex] = useState(0);
   const [prevUrlKey, setPrevUrlKey] = useState(`${urlType}|${urlQ}`);
@@ -160,7 +167,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
   if (urlKey !== prevUrlKey) {
     setPrevUrlKey(urlKey);
     setRowSelection({});
-    setSelectedRows([]);
+    setSelectedIds([]);
     setPageIndex(0);
   }
 
@@ -168,8 +175,9 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
   return (
     <WithGenomePanel
       tabs={tablist}
-      selectedRows={selectedRows}
-      setSelectedRows={setSelectedRows}
+      selectedIds={selectedIds}
+      selectedRowMap={selectedRowMap}
+      setSelectedIds={setSelectedIds}    
     >
       {({ activeTab, setActiveTab }) => (
         <TabsRenderer
@@ -183,7 +191,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
           setRowSelection={setRowSelection}
           pageIndex={pageIndex}
           setPageIndex={setPageIndex}
-          setSelectedRows={(rows) => setSelectedRows(Array.isArray(rows) ? (rows as Record<string, unknown>[]) : [])}
+          setSelectedIds={(ids) => setSelectedIds(Array.isArray(ids) ? ids as string[] : [])}
         />
       )}
     </WithGenomePanel>

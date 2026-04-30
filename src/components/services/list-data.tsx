@@ -225,18 +225,21 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     setRowSelection(newSelection);
     
     // Convert to selected rows array and notify parent
+/*
     const selectedRowsData = Object.keys(newSelection)
       .filter(k => newSelection[k])
       .map((key) => (pageData ?? [])[parseInt(key, 10)])
       .filter(Boolean);
-    
-    onSelectionChange?.(selectedRowsData);
+*/
+    const selectedIds = Object.keys(newSelection).filter(k => newSelection[k]);
+
+    onSelectionChange?.(selectedIds);
   };
 
   const handlePageChange = (newPage: number) => {
     // Clear selections when page changes
-    setRowSelection({});
-    onSelectionChange?.([]); // Clear selection in parent too
+//    setRowSelection({});
+//    onSelectionChange?.([]); // Clear selection in parent too
     // Update page index (this will call parent's setPageIndex if controlled)
     setPageIndex(newPage);
   };

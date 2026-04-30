@@ -31,8 +31,10 @@ export type InfoPanelProps =
     }
   | {
       variant?: "search";
-      rows: Record<string, unknown>[];
+      selectedIds: string[];
       activeTab: string;
+      selectedRow?: Record<string, unknown> | null;
+      isLoading?: boolean; 
     };
 
 
@@ -128,7 +130,7 @@ export function InfoPanel(props: InfoPanelProps) {
     );
   }
 
-  const { rows, activeTab } = props;
+  const { selectedIds, activeTab, selectedRow, isLoading } = props;
   let order: string[] = [];
   let fieldFile = {};
   let allowedFields: string[] = [];
@@ -264,8 +266,8 @@ export function InfoPanel(props: InfoPanelProps) {
 
   return (
     <DetailPanel>
-      <DetailPanel.Header title={String(rows[0]?.[panelTitleField] ?? "")} />
-      {rows.length === 1 ? (
+      <DetailPanel.Header title={String(selectedIds[0]?.[panelTitleField] ?? "")} />
+      {selectedIds.length === 1 ? (
         <>
           {order.map((group) => {
             const items = (grouped[group] || []).filter((item) =>
@@ -275,12 +277,11 @@ export function InfoPanel(props: InfoPanelProps) {
 
             const fields: DetailField[] = items.map((item) => {
               const fieldId = String(item.id);
-              const rawValue = rows[0]?.[fieldId];
+              const rawValue = selectedIds[0]?.[fieldId];
 
               if (item.link) {
                 const resolved = toAbsoluteUrl(
-                  resolveLink(String(item.link), rows[0], fieldId)
-                );
+                  resolveLink(String(item.link), selectedRow ?? {}, fieldId)                );
 
                 if (item.linkType === "button") {
                   return {
@@ -322,7 +323,7 @@ export function InfoPanel(props: InfoPanelProps) {
           })}
         </>
       ) : (
-        <p className="px-4 py-2 text-xs">{rows.length} rows selected</p>
+        <p className="px-4 py-2 text-xs">{selectedIds.length} rows selected</p>
       )}
     </DetailPanel>
   );

@@ -1,0 +1,41 @@
+src/components/workspace/__tests__/workspace-action-bar.test.tsx
+  8df74250bfee6ade 142-211
+src/hooks/services/workspace/use-workspace-dialog-handlers.ts
+  8df74250bfee6ade 17-21,230-237
+src/lib/services/workspace/__tests__/protected-folders.test.ts
+  8df74250bfee6ade 1-120
+src/lib/services/workspace/adapters/http-workspace-repository.ts
+  8df74250bfee6ade 35,192
+src/lib/services/workspace/adapters/__tests__/in-memory-workspace-repository.test.ts
+  8df74250bfee6ade 124-145
+src/lib/services/workspace/adapters/in-memory-workspace-repository.ts
+  8df74250bfee6ade 18,288
+src/hooks/services/workspace/__tests__/use-workspace-dialog-handlers.test.tsx
+  8df74250bfee6ade 536-598
+src/components/workspace/workspace-action-bar.tsx
+  8df74250bfee6ade 8,64-69
+src/lib/services/workspace/adapters/__tests__/http-workspace-repository.test.ts
+  8df74250bfee6ade 227-265
+src/lib/services/workspace/protected-folders.ts
+  8df74250bfee6ade 1-74
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "c2e882482953149b414a5e238585d09b29b555ce",
+  "prompts": {
+    "8df74250bfee6ade": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c4890797-f0a6-4463-adf6-0b4a6b514bfc",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 412,
+      "total_deletions": 0,
+      "accepted_lines": 412,
+      "overriden_lines": 0
+    }
+  }
+}

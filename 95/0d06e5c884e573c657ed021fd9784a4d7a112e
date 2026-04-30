@@ -1,0 +1,25 @@
+e2e/fixtures/overrides/auth-session.ts
+  1cd12a736bbfbb6e 41-45
+e2e/tests/workspace-browse.spec.ts
+  1cd12a736bbfbb6e 71-73,75,78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "950d06e5c884e573c657ed021fd9784a4d7a112e",
+  "prompts": {
+    "1cd12a736bbfbb6e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "906c4474-3d88-4035-94d7-86aae280c911",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 13,
+      "total_deletions": 5,
+      "accepted_lines": 10,
+      "overriden_lines": 0
+    }
+  }
+}

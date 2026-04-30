@@ -1,0 +1,47 @@
+.env.e2e.test
+  fb6a8b7d8c2ceead 43-46
+src/lib/services/workspace/server-rpc.ts
+  fb6a8b7d8c2ceead 1-53
+src/hooks/services/workspace/use-ensure-user-workspace.ts
+  fb6a8b7d8c2ceead 1-67
+src/components/workspace/workspace-browser.tsx
+  fb6a8b7d8c2ceead 14,177-189
+src/lib/services/workspace/__tests__/setup.test.ts
+  fb6a8b7d8c2ceead 1-224
+src/lib/services/workspace/client-rpc.ts
+  fb6a8b7d8c2ceead 1-19
+src/lib/services/workspace/setup.ts
+  fb6a8b7d8c2ceead 1-114
+src/app/api/auth/ensure-workspace/__tests__/route.test.ts
+  fb6a8b7d8c2ceead 1-196
+src/app/api/auth/ensure-workspace/route.ts
+  fb6a8b7d8c2ceead 1-20
+src/hooks/services/workspace/__tests__/use-ensure-user-workspace.test.tsx
+  fb6a8b7d8c2ceead 1-134
+src/lib/services/workspace/realm.ts
+  fb6a8b7d8c2ceead 1-9
+src/app/api/auth/sign-up/email/__tests__/route.test.ts
+  fb6a8b7d8c2ceead 17,28-52,56-57,60,66-67,167-256
+src/lib/auth/server/admin.ts
+  fb6a8b7d8c2ceead 11-13,135-147
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "47fcffb0a1d0d742e956214db5e1fc0a12d2cd49",
+  "prompts": {
+    "fb6a8b7d8c2ceead": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0c319fcb-8fdb-4a87-85a8-398a00c03cd8",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 1009,
+      "total_deletions": 18,
+      "accepted_lines": 991,
+      "overriden_lines": 0
+    }
+  }
+}

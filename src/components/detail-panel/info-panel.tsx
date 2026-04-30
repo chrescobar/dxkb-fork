@@ -131,6 +131,11 @@ export function InfoPanel(props: InfoPanelProps) {
   }
 
   const { selectedIds, activeTab, selectedRow, isLoading } = props;
+
+  if (selectedIds.length === 1 && isLoading) {
+    return <div className="p-4 text-sm">Loading...</div>;
+  }
+
   let order: string[] = [];
   let fieldFile = {};
   let allowedFields: string[] = [];
@@ -266,7 +271,7 @@ export function InfoPanel(props: InfoPanelProps) {
 
   return (
     <DetailPanel>
-      <DetailPanel.Header title={String(selectedIds[0]?.[panelTitleField] ?? "")} />
+      <DetailPanel.Header title={String(selectedRow?.[panelTitleField] ?? "")} />
       {selectedIds.length === 1 ? (
         <>
           {order.map((group) => {
@@ -277,8 +282,7 @@ export function InfoPanel(props: InfoPanelProps) {
 
             const fields: DetailField[] = items.map((item) => {
               const fieldId = String(item.id);
-              const rawValue = selectedIds[0]?.[fieldId];
-
+              const rawValue = selectedRow?.[fieldId];
               if (item.link) {
                 const resolved = toAbsoluteUrl(
                   resolveLink(String(item.link), selectedRow ?? {}, fieldId)                );

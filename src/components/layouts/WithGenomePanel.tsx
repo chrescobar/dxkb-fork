@@ -19,17 +19,27 @@ interface WithGenomePanelProps {
 export function WithGenomePanel({
   children,
   tabs,
-  activeTab: incomingTab,
   selectedIds,
 }: WithGenomePanelProps) {
-  const initialTab =
-    incomingTab && tabs.includes(incomingTab) ? incomingTab : tabs[0];
-
+  
+  const initialTab = tabs[0];
   const [activeTab, setActiveTab] = useState(initialTab);
 
   const hasSelection = selectedIds.length > 0;
 
   const DataAPI = process.env.NEXT_PUBLIC_DATA_API!;
+
+  const idFieldMap: Record<string, string> = {
+    genome: "genome_id",
+    genome_sequence: "sequence_id",
+    genome_feature: "patric_id",
+    strain: "strain",
+    epitope: "epitope_id",
+    protein_structure: "pdb_id",
+    taxonomy: "taxon_id",
+    experiment: "exp_id",
+    bioset: "bioset_id",
+  };
 
   // ✅ Fetch ONLY when exactly one row is selected
   const { data: selectedRow, isLoading } = useQuery({
@@ -38,8 +48,10 @@ export function WithGenomePanel({
       const id = selectedIds[0];
       if (!id) return null;
 
+      const idField = idFieldMap[activeTab] ?? "id";
+
       const res = await fetch(
-        `${DataAPI}/${activeTab}/?eq(id,${id})`
+        `${DataAPI}/${activeTab}/?eq(${idField},${id})`
       );
 
       if (!res.ok) throw new Error("Failed to fetch selected row");

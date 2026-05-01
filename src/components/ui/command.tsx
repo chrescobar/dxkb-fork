@@ -105,7 +105,7 @@ function CommandShortcutChip({
     <kbd
       data-slot="command-shortcut-chip"
       className={cn(
-        "inline-flex h-5 min-w-5 items-center justify-center rounded border bg-muted/40 px-1 font-sans text-[10px] font-medium text-muted-foreground",
+        "inline-flex h-5 min-w-5 items-center justify-center rounded border bg-muted/40 px-1 font-sans text-[10px] font-medium text-foreground/80",
         className
       )}
       {...props}
@@ -149,7 +149,7 @@ function CommandGroup({
   return (
     <CommandPrimitive.Group
       data-slot="command-group"
-      className={cn("text-foreground **:[[cmdk-group-heading]]:text-muted-foreground overflow-hidden p-1 **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:pt-2 **:[[cmdk-group-heading]]:pb-1 **:[[cmdk-group-heading]]:text-[11px] **:[[cmdk-group-heading]]:font-semibold **:[[cmdk-group-heading]]:uppercase **:[[cmdk-group-heading]]:tracking-wider", className)}
+      className={cn("text-foreground **:[[cmdk-group-heading]]:text-foreground/80 overflow-hidden p-1 **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:pt-2 **:[[cmdk-group-heading]]:pb-1 **:[[cmdk-group-heading]]:text-[11px] **:[[cmdk-group-heading]]:font-semibold **:[[cmdk-group-heading]]:uppercase **:[[cmdk-group-heading]]:tracking-wider", className)}
       {...props}
     />
   )
@@ -200,7 +200,7 @@ function CommandItem({
             <span className="font-medium">{rest}</span>
             {badge}
           </div>
-          <span className="truncate text-xs text-muted-foreground">
+          <span className="truncate text-xs text-foreground/80">
             {description}
           </span>
         </div>
@@ -243,7 +243,7 @@ function CommandFooter({
     <div
       data-slot="command-footer"
       className={cn(
-        "border-t flex items-center gap-4 px-3 py-2 text-xs text-muted-foreground",
+        "border-t flex items-center gap-4 px-3 py-2 text-xs text-foreground/80",
         className
       )}
       {...props}

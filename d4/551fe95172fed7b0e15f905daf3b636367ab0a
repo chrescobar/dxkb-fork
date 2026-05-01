@@ -1,0 +1,37 @@
+src/app/page.tsx
+  7554cf1b626b73e1 1,10,21-23
+src/components/statistics/db-statistics-skeleton.tsx
+  7554cf1b626b73e1 1-24
+src/components/statistics/__tests__/db-statistics-skeleton.test.tsx
+  7554cf1b626b73e1 1-28
+src/app/api/e2e-mock/[...path]/route.ts
+  7554cf1b626b73e1 35-52,60-61
+src/components/statistics/db-statistics.tsx
+  7554cf1b626b73e1 1-26,33-39,43-44,46
+src/lib/services/statistics.ts
+  7554cf1b626b73e1 1-99
+src/components/statistics/__tests__/db-statistics.test.tsx
+  7554cf1b626b73e1 1-73
+src/lib/services/__tests__/statistics.test.ts
+  7554cf1b626b73e1 1-147
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "d4551fe95172fed7b0e15f905daf3b636367ab0a",
+  "prompts": {
+    "7554cf1b626b73e1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "17362f09-0134-4353-992d-9fd97fbf8ca1",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 441,
+      "total_deletions": 33,
+      "accepted_lines": 432,
+      "overriden_lines": 0
+    }
+  }
+}

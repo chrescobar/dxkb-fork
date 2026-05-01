@@ -22,11 +22,14 @@ import {
   Command,
   CommandDialog,
   CommandEmpty,
+  CommandFooter,
+  CommandFooterHint,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
   CommandShortcut,
+  CommandShortcutChip,
 } from "@/components/ui/command";
 
 const COMMAND_PALETTE_OPEN_EVENT = "dxkb:open-command-palette";
@@ -146,7 +149,10 @@ export function CommandPalette() {
           placeholder="Search DXKB or jump to a page..."
           value={inputValue}
           onValueChange={setInputValue}
-        />
+        >
+          <CommandShortcutChip>⌘</CommandShortcutChip>
+          <CommandShortcutChip>K</CommandShortcutChip>
+        </CommandInput>
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
 
@@ -161,7 +167,11 @@ export function CommandPalette() {
           )}
 
           <CommandGroup heading="Navigate">
-            <CommandItem value="home" onSelect={() => navigate("/")}>
+            <CommandItem
+              value="home"
+              description="Global dashboard and situational overview"
+              onSelect={() => navigate("/")}
+            >
               <Home />
               <span>Home</span>
             </CommandItem>
@@ -171,6 +181,7 @@ export function CommandPalette() {
                 {encodedUsername && (
                   <CommandItem
                     value="workspace"
+                    description="Your files and saved analyses"
                     onSelect={() =>
                       navigate(`/workspace/${encodedUsername}/home`)
                     }
@@ -179,18 +190,27 @@ export function CommandPalette() {
                     <span>Workspace</span>
                   </CommandItem>
                 )}
-                <CommandItem value="jobs" onSelect={() => navigate("/jobs")}>
+                <CommandItem
+                  value="jobs"
+                  description="Monitor running and completed jobs"
+                  onSelect={() => navigate("/jobs")}
+                >
                   <Briefcase />
                   <span>Jobs</span>
                 </CommandItem>
                 <CommandItem
                   value="settings"
+                  description="Account, preferences, and integrations"
                   onSelect={() => navigate("/settings")}
                 >
                   <Settings />
                   <span>Settings</span>
                 </CommandItem>
-                <CommandItem value="sign out" onSelect={handleSignOut}>
+                <CommandItem
+                  value="sign out"
+                  description="End your current session"
+                  onSelect={handleSignOut}
+                >
                   <LogOut />
                   <span>Sign out</span>
                 </CommandItem>
@@ -199,6 +219,7 @@ export function CommandPalette() {
               <>
                 <CommandItem
                   value="sign in"
+                  description="Access your workspace and tools"
                   onSelect={() => navigate("/sign-in")}
                 >
                   <LogIn />
@@ -206,6 +227,7 @@ export function CommandPalette() {
                 </CommandItem>
                 <CommandItem
                   value="sign up"
+                  description="Create a new BV-BRC account"
                   onSelect={() => navigate("/sign-up")}
                 >
                   <UserPlus />
@@ -229,6 +251,11 @@ export function CommandPalette() {
             </CommandGroup>
           ))}
         </CommandList>
+        <CommandFooter>
+          <CommandFooterHint keys={["↑", "↓"]}>Select</CommandFooterHint>
+          <CommandFooterHint keys={["ENTER"]}>Open</CommandFooterHint>
+          <CommandFooterHint keys={["ESC"]}>Close</CommandFooterHint>
+        </CommandFooter>
       </Command>
     </CommandDialog>
   );

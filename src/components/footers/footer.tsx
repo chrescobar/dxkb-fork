@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { SiGithub, SiFacebook, SiInstagram, SiYoutube, SiX } from "@icons-pack/react-simple-icons";
+import {
+  SiGithub,
+  SiFacebook,
+  SiInstagram,
+  SiYoutube,
+  SiX,
+} from "@icons-pack/react-simple-icons";
 import Logo from "@/components/ui/logo";
 import ThemeContent from "@/components/ui/theme-content";
 
@@ -29,7 +35,7 @@ const footerLinks: FooterSection[] = [
     links: [
       { name: "Funding", url: "/funding" },
       { name: "Our Team", url: "/team" },
-      { name: "Source Code", url: "https://github.com/CEPI-dxkb" },
+      { name: "Source Code", url: "https://github.com/CEPI-dxkb/dxkb" },
     ],
   },
   {
@@ -55,7 +61,10 @@ const footerLinks: FooterSection[] = [
     titleUrl: "/help",
     links: [
       { name: "Contact Us", url: "/contact" },
-      { name: "Instructional Videos", url: "https://docs.dxkb.org/bv-brc/resources" },
+      {
+        name: "Instructional Videos",
+        url: "https://docs.dxkb.org/bv-brc/resources",
+      },
       { name: "Privacy Policy", url: "/privacy-policy" },
     ],
   },
@@ -145,7 +154,7 @@ const Footer = () => {
                     {section.title}
                   </Link>
                 </h4>
-                <ul className="space-y-4 md:space-y-6 mb-2">
+                <ul className="mb-2 space-y-4 md:space-y-6">
                   {section.links.map((link) => (
                     <li key={link.name}>
                       <Link

@@ -25,7 +25,7 @@ const resourcesItems: {
   {
     title: "GitHub",
     description: "Source code and issues.",
-    href: "https://github.com/dovieg/dxkb",
+    href: "https://github.com/CEPI-dxkb/dxkb",
     target: "_blank",
   },
 ];
@@ -168,7 +168,7 @@ const serviceItems = {
       },
     ],
   },
-  
+
   viralTools: {
     title: "Viral Tools",
     items: [
@@ -245,19 +245,52 @@ const workspaceNavItems: Record<string, WorkspaceNavSection> = {
   workspaces: {
     title: "Workspaces",
     items: [
-      { title: "Home", href: (u) => `/workspace/${u}/home`, requiresAuth: true },
-      { title: "My Workspaces", href: (u) => `/workspace/${u}`, requiresAuth: true },
-      { title: "Public Workspaces", href: "/workspace/public", requiresAuth: false },
-      { title: "BV-BRC Workshop", href: "/workspace/public/ARWattam@patricbrc.org/BV-BRC%20Workshop", requiresAuth: false },
+      {
+        title: "Home",
+        href: (u) => `/workspace/${u}/home`,
+        requiresAuth: true,
+      },
+      {
+        title: "My Workspaces",
+        href: (u) => `/workspace/${u}`,
+        requiresAuth: true,
+      },
+      {
+        title: "Public Workspaces",
+        href: "/workspace/public",
+        requiresAuth: false,
+      },
+      {
+        title: "BV-BRC Workshop",
+        href: "/workspace/public/ARWattam@patricbrc.org/BV-BRC%20Workshop",
+        requiresAuth: false,
+      },
     ],
   },
   data: {
     title: "Data",
     items: [
-      { title: "My Jobs", href: "/jobs", requiresAuth: true, signInRedirect: "/sign-in?redirect=/jobs" },
-      { title: "My Genomes", href: (u) => `/workspace/${u}/home/.genomes`, requiresAuth: true },
-      { title: "My Genome Groups", href: (u) => `/workspace/${u}/home/Genome%20Groups`, requiresAuth: true },
-      { title: "My Feature Groups", href: (u) => `/workspace/${u}/home/Feature%20Groups`, requiresAuth: true },
+      {
+        title: "My Jobs",
+        href: "/jobs",
+        requiresAuth: true,
+        signInRedirect: "/sign-in?redirect=/jobs",
+      },
+      {
+        title: "My Genomes",
+        href: (u) => `/workspace/${u}/home/.genomes`,
+        requiresAuth: true,
+      },
+      {
+        title: "My Genome Groups",
+        href: (u) => `/workspace/${u}/home/Genome%20Groups`,
+        requiresAuth: true,
+      },
+      {
+        title: "My Feature Groups",
+        href: (u) => `/workspace/${u}/home/Feature%20Groups`,
+        requiresAuth: true,
+      },
     ],
   },
 };

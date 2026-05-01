@@ -154,14 +154,14 @@ function DecoratedSubSection({
   return (
     <div>
       <div className="flex gap-3">
-        <div className="flex flex-col items-center pt-[16px]">
+        <div className="flex flex-col items-center pt-4">
           <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${dotColor}`} />
           <div className={`mt-0.5 w-0.5 flex-1 ${lineColor} ${showClass}`} />
         </div>
         <div className="min-w-0 flex-1">{children}</div>
       </div>
       <div
-        className={`ml-[2px] h-3 rounded-bl-xl border-b-2 border-l-2 ${curveColor} ${showClass}`}
+        className={`ml-0.5 h-3 rounded-bl-xl border-b-2 border-l-2 ${curveColor} ${showClass}`}
       />
     </div>
   );

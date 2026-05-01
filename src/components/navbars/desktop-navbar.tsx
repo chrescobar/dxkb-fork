@@ -61,7 +61,7 @@ const DesktopNavbar = () => {
                   Organisms
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <ul className="grid w-[280px] gap-3 p-4 md:w-[360px] md:grid-cols-2 lg:w-[450px]">
+                  <ul className="grid w-70 gap-3 p-4 md:w-90 md:grid-cols-2 lg:w-120">
                     {organismItems.map((organism) => (
                       <ListItem
                         key={organism.title}
@@ -81,7 +81,7 @@ const DesktopNavbar = () => {
                   Services
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="grid grid-cols-2 gap-2 p-2 lg:w-[550px]">
+                  <div className="grid grid-cols-2 gap-2 p-2 lg:w-140">
                     {(() => {
                       const entries = Object.entries(serviceItems);
                       const mid = Math.ceil(entries.length / 2);
@@ -144,7 +144,7 @@ const DesktopNavbar = () => {
                   Resources
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[500px]">
+                  <ul className="grid w-100 gap-3 p-4 md:w-125 md:grid-cols-2 lg:w-125">
                     {resourcesItems.map((item) => (
                       <ListItem
                         key={item.title}
@@ -164,7 +164,7 @@ const DesktopNavbar = () => {
 
         {!isHome && (
           <div className="hidden flex-1 items-center justify-end px-2 lg:flex">
-            <SearchBar className="max-w-[1000px]" />
+            <SearchBar className="max-w-250" />
           </div>
         )}
 

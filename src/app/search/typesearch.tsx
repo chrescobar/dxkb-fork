@@ -26,7 +26,8 @@ interface TabsRendererProps {
   setRowSelection: (sel: Record<string, boolean>) => void;
   pageIndex: number;
   setPageIndex: (page: number) => void;
-  setSelectedIds: (ids: string[]) => void;
+  setSelectedIds: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedIds: string[];
 //  setSelectedRows: (rows: unknown[]) => void;
 }
 
@@ -45,6 +46,7 @@ function TabsRenderer({
   pageIndex,
   setPageIndex,
   setSelectedIds,
+  selectedIds
 //  setSelectedRows,
 }: TabsRendererProps) {
   // Whenever urlType (searchtype) changes, set the active tab.
@@ -70,7 +72,6 @@ function TabsRenderer({
     setActiveTab(newTab);
     setRowSelection({});
     setSelectedIds([]);
-//    setSelectedRows([]);
   };
 
   return (
@@ -92,10 +93,28 @@ function TabsRenderer({
           <ListData
             resource={term}
             q={fullQ}
-            onSelectionChange={(ids) =>
-              setSelectedIds(Array.isArray(ids) ? (ids as string[]) : [])
-            }
-            rowSelection={rowSelection}
+            selectedIds={selectedIds}
+            onSelectionChange={(ids) => {
+              if (!Array.isArray(ids)) return;
+
+              setSelectedIds((prev) => {
+                const next = new Set(prev);
+
+                // Add new ones
+                ids.forEach((id) => {
+                  if (id) next.add(id);
+                });
+
+                // Remove ones that are no longer selected on this page
+                prev.forEach((id) => {
+                  if (!ids.includes(id)) {
+                    next.delete(id);
+                  }
+                });
+
+                return Array.from(next);
+              });
+            }}            rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
             pageIndex={pageIndex}
             onPageChange={setPageIndex}
@@ -156,9 +175,16 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
   const tabsForType = searchTypes[thistype] ?? searchTypes["genome"];
   const tablist = Object.keys(tabsForType);
 
-//  const [selectedRows, setSelectedRows] = useState<Record<string, unknown>[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [selectedRowMap, setSelectedRowMap] = useState<Record<string, any>>({});
+  const updateSelectedIds = (
+    updater: (prev: string[]) => string[]
+  ) => {
+    setSelectedIds((prev) => {
+      const next = updater(prev);
+      return Array.from(new Set(next)); // prevent duplicates
+    });
+  };
+//  const [selectedRowMap, setSelectedRowMap] = useState<Record<string, any>>({});
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [pageIndex, setPageIndex] = useState(0);
   const [prevUrlKey, setPrevUrlKey] = useState(`${urlType}|${urlQ}`);
@@ -171,12 +197,15 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
     setPageIndex(0);
   }
 
+  useEffect(() => {
+    console.log("selectedIds:", selectedIds);
+  }, [selectedIds]);
+
   // Main return: hand off rendering to WithGenomePanel which provides activeTab & setter
   return (
     <WithGenomePanel
       tabs={tablist}
       selectedIds={selectedIds}
-      selectedRowMap={selectedRowMap}
       setSelectedIds={setSelectedIds}    
     >
       {({ activeTab, setActiveTab }) => (
@@ -191,8 +220,9 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
           setRowSelection={setRowSelection}
           pageIndex={pageIndex}
           setPageIndex={setPageIndex}
-          setSelectedIds={(ids) => setSelectedIds(Array.isArray(ids) ? ids as string[] : [])}
-        />
+          setSelectedIds={setSelectedIds}
+          selectedIds={selectedIds} 
+       />
       )}
     </WithGenomePanel>
   );

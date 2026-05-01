@@ -28,14 +28,15 @@ interface RawField {
 interface ListDataProps { 
   q: string; 
   resource: string; // 'genome', 'gene', etc.
-  onSelectionChange?: (rows: unknown[]) => void;
+  onSelectionChange?: (ids: string[]) => void;
   rowSelection?: Record<string, boolean>;
   onRowSelectionChange?: (selection: Record<string, boolean>) => void;
   pageIndex?: number;
   onPageChange?: (page: number) => void;
+  selectedIds?: string[];
 }
 
-export function ListData({ q, resource, onSelectionChange, rowSelection: controlledRowSelection, onRowSelectionChange, pageIndex: controlledPageIndex, onPageChange }: ListDataProps) {
+export function ListData({ q, resource, onSelectionChange, rowSelection: controlledRowSelection, onRowSelectionChange, pageIndex: controlledPageIndex, onPageChange, selectedIds }: ListDataProps) {
   const [fields, setFields] = useState<ColumnInfo[]>([]);
   
   // Use controlled rowSelection if provided, otherwise use internal state
@@ -222,17 +223,34 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   }
 
   const handleRowSelectionChange = (newSelection: Record<string, boolean>) => {
-    setRowSelection(newSelection);
-    
-    // Convert to selected rows array and notify parent
-/*
-    const selectedRowsData = Object.keys(newSelection)
-      .filter(k => newSelection[k])
-      .map((key) => (pageData ?? [])[parseInt(key, 10)])
-      .filter(Boolean);
-*/
-    const selectedIds = Object.keys(newSelection).filter(k => newSelection[k]);
+    console.log("RAW SELECTION:", newSelection);
 
+    setRowSelection(newSelection);
+
+    const idFieldMap: Record<string, string> = {
+      genome: "genome_id",
+      genome_sequence: "sequence_id",
+      genome_feature: "patric_id",
+      strain: "strain",
+      epitope: "epitope_id",
+      protein_structure: "pdb_id",
+      taxonomy: "taxon_id",
+      experiment: "exp_id",
+      bioset: "bioset_id",
+    };
+
+    const idField = idFieldMap[resource] ?? "id";
+
+    const rows = pageData ?? [];
+
+    const selectedIds = Object.keys(newSelection)
+      .filter((id) => newSelection[id]);
+
+    console.log("NEW SELECTION STATE:", newSelection);
+
+    console.log("COMPUTED IDS:", selectedIds);
+
+    // 🚨 IMPORTANT: this is the ONLY thing parent should receive
     onSelectionChange?.(selectedIds);
   };
 
@@ -357,6 +375,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
             onColumnVisibilityChange={setColumnVisibility}
             onDownloadAll={handleDownloadAll}
             isLoading={metaLoading || dataLoading || dataFetching}
+            selectedIds={selectedIds ?? []}
           />
         )}
       </div>

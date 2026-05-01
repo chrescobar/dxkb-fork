@@ -41,6 +41,7 @@ interface DataTableProps {
   resource: string;
   onSelectionChange?: (rows: Record<string, unknown>[]) => void;
   onGenomeSelect?: (id: string | null) => void;
+  selectedIds?: string[];
 
   // Pagination
   pageIndex?: number;
@@ -69,7 +70,7 @@ interface DataTableProps {
   isLoading?: boolean;
 }
 
-export function DataTable({ id: _id, data, columns, totalItems, resource, onSelectionChange, onGenomeSelect, pageIndex, pageSize, onPageChange, sorting:controlledSorting, onSortingChange, columnOrder, onColumnOrderChange, columnVisibility: controlledVisibility, onColumnVisibilityChange: onColumnVisibilityChangeProp, rowSelection: controlledRowSelection, onRowSelectionChange, onDownloadAll, isLoading = false }: DataTableProps) {
+export function DataTable({ id: _id, data, columns, totalItems, resource, onSelectionChange, onGenomeSelect, selectedIds, pageIndex, pageSize, onPageChange, sorting:controlledSorting, onSortingChange, columnOrder, onColumnOrderChange, columnVisibility: controlledVisibility, onColumnVisibilityChange: onColumnVisibilityChangeProp, rowSelection: controlledRowSelection, onRowSelectionChange, onDownloadAll, isLoading = false }: DataTableProps) {
 
   const [columnSizing, setColumnSizing] = useState<Record<string, number>>({});
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>(
@@ -353,6 +354,9 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 //    getRowId: (row, index) => String(index), // or use row.id if your data has unique ids,
   });
 
+  console.log("ROW IDS:", table.getRowModel().rows.map(r => r.id));
+  console.log("ROW SELECTION:", table.getState().rowSelection);
+
   const columnSizingState = table.getState().columnSizing;
   const columnSizingInfoState = table.getState().columnSizingInfo;
 
@@ -514,9 +518,65 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
     const headers = visibleCols.map(col => col.columnDef.header as string);
 
-    const rowsToExport = onlySelected
-      ? table.getSelectedRowModel().rows
-      : table.getPrePaginationRowModel().rows;
+    if (onlySelected) {
+      if (!selectedIds || selectedIds.length === 0) return;
+
+      const idFieldMap: Record<string, string> = {
+        genome: "genome_id",
+        genome_sequence: "sequence_id",
+        genome_feature: "patric_id",
+        strain: "strain",
+        epitope: "epitope_id",
+        protein_structure: "pdb_id",
+        taxonomy: "taxon_id",
+        experiment: "exp_id",
+        bioset: "bioset_id",
+      };
+
+      const idField = idFieldMap[resource] ?? "id";
+
+      const idFilter = selectedIds
+        .map((id) => `eq(${idField},${id})`)
+        .join(",");
+
+      const query = `or(${idFilter})`;
+
+      const DataAPI = process.env.NEXT_PUBLIC_DATA_API;
+
+      fetch(`${DataAPI}/${resource}/?${query}`, {
+        headers: { Accept: "application/json" },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to fetch selected rows");
+          return res.json();
+        })
+        .then((data) => {
+          const rowsArray: any[] = Array.isArray(data)
+            ? data
+            : data.items ?? data.response ?? data.rows ?? [];
+
+          const content = [
+            headers.join(','),
+            ...rowsArray.map(row =>
+              visibleCols.map(col => {
+                const val = row[col.id];
+                return typeof val === 'string'
+                  ? `"${val.replace(/"/g, '""')}"`
+                  : val ?? '';
+              }).join(',')
+            )
+          ].join('\n');
+
+          downloadFile(`${resource}-selected.${format}`, content);
+        })
+        .catch((err) => {
+          console.error("Download selected failed:", err);
+        });
+
+      return;
+    }
+
+    const rowsToExport = table.getPrePaginationRowModel().rows;
 
     const content = [
       headers.join(','),
@@ -581,7 +641,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           </Button>
 
           {/* These next two only show up if rows are selected */}
-          {table.getSelectedRowModel().rows.length > 0 && ( 
+          {(selectedIds?.length ?? 0) > 0 && ( 
             <>
               <Button
                 onClick={() => handleDownload('csv', true)}

@@ -143,4 +143,34 @@ Because of the env-loading dance, the Playwright `webServer` runs `node e2e/scri
 - Chromium: strict (zero-pixel diff).
 - Firefox / WebKit: `maxDiffPixelRatio: 0.05`.
 - Update baselines via `pnpm e2e:update-snapshots` and review PNG diffs in the PR.
+- Snapshots are platform-specific — committed PNGs are suffixed `-darwin` or `-linux`. `pnpm e2e:update-snapshots` only writes baselines for the host OS, so a Mac can only refresh the `-darwin` set; the `-linux` set is normally regenerated in CI.
+
+#### Refreshing `-linux` baselines locally (Mac → Linux)
+
+When you need to update `-linux` PNGs from a Mac (e.g. UI changes touched the navbar or home page and you want the diff visible in the PR rather than waiting on CI), run Playwright inside the official Linux image. Match the image tag to the installed `@playwright/test` version:
+
+```bash
+PLAYWRIGHT_VERSION=$(pnpm exec playwright --version | awk '{print $2}')
+
+# One-time: named volumes isolate the container's Linux node_modules + .next
+# from your local darwin install so you don't clobber either side.
+docker volume create dxkb-linux-nm
+docker volume create dxkb-linux-next
+
+docker run --rm \
+  -v "$(pwd):/work" \
+  -v dxkb-linux-nm:/work/node_modules \
+  -v dxkb-linux-next:/work/.next \
+  -w /work \
+  -e CI=true \
+  -e WORKSPACE_GUIDE_URL="https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html" \
+  "mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-jammy" \
+  bash -c "npm install -g pnpm@10 && pnpm install --frozen-lockfile && pnpm build && pnpm e2e:update-snapshots --grep 'visual regression'"
+```
+
+- The source is bind-mounted at `/work`, so regenerated PNGs land back in `e2e/__snapshots__/` on the host. `node_modules` and `.next` live in named volumes — your darwin build/deps stay intact.
+- `WORKSPACE_GUIDE_URL` mirrors the value set in `.github/workflows/pnpm-e2e.yml`; without it, server components on `/workspace/[username]/**` throw at request time.
+- Drop `--grep 'visual regression'` to refresh every spec's snapshots, not just the visual ones.
+- Playwright only rewrites a PNG when the new screenshot exceeds the project's `maxDiffPixelRatio` — expect Firefox/WebKit baselines on visually-minor changes to stay untouched.
+- Reusing the volumes on subsequent runs skips most of the install/build cost. Cleanup when you're done: `docker volume rm dxkb-linux-nm dxkb-linux-next`.
 

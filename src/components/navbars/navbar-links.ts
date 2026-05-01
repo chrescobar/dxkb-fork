@@ -1,25 +1,31 @@
-const gettingStartedItems: {
+const resourcesItems: {
   title: string;
   href: string;
   description: string;
   target: "_self" | "_blank";
 }[] = [
   {
-    title: "Introduction",
-    description: "Introduction to DXKB.",
-    href: "/introduction",
-    target: "_self",
-  },
-  {
-    title: "Installation",
-    description: "Installation instructions for DXKB.",
-    href: "/installation",
-    target: "_self",
-  },
-  {
     title: "Documentation",
-    description: "Documentation for DXKB.",
-    href: "https://docs.dxkb.org",
+    description: "DXKB user guide and reference.",
+    href: "https://docs.dxkb.org/",
+    target: "_blank",
+  },
+  {
+    title: "BV-BRC API",
+    description: "BV-BRC Data API reference.",
+    href: "https://www.bv-brc.org/api/doc/",
+    target: "_blank",
+  },
+  {
+    title: "PATRIC",
+    description: "About the PATRIC platform.",
+    href: "https://p3.theseed.org/p3_docs/about.html",
+    target: "_blank",
+  },
+  {
+    title: "GitHub",
+    description: "Source code and issues.",
+    href: "https://github.com/dovieg/dxkb",
     target: "_blank",
   },
 ];
@@ -257,4 +263,4 @@ const workspaceNavItems: Record<string, WorkspaceNavSection> = {
 };
 
 export type { WorkspaceNavItem, WorkspaceNavSection };
-export { gettingStartedItems, organismItems, serviceItems, workspaceNavItems };
+export { resourcesItems, organismItems, serviceItems, workspaceNavItems };

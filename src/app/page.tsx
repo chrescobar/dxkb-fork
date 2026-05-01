@@ -16,8 +16,8 @@ export default function Home() {
 
       <main className="bg-background grow">
         <WelcomeSearch />
-        <QuickViralLinks />
         <NewsCarousel />
+        <QuickViralLinks />
         <Suspense fallback={<DBStatisticsSkeleton />}>
           <DBStatistics />
         </Suspense>

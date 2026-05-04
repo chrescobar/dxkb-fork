@@ -29,6 +29,12 @@ import {
 } from "@/components/navbars/workspace-dropdown-content";
 import { SuBanner } from "@/components/auth/su-banner";
 
+const serviceEntries = Object.entries(serviceItems);
+const serviceColumns = [
+  serviceEntries.slice(0, Math.ceil(serviceEntries.length / 2)),
+  serviceEntries.slice(Math.ceil(serviceEntries.length / 2)),
+];
+
 const DesktopNavbar = () => {
   const { isAuthenticated, user, status } = useAuth();
   const isLoading = status === "loading";
@@ -82,47 +88,41 @@ const DesktopNavbar = () => {
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="grid grid-cols-2 gap-2 p-2 lg:w-140">
-                    {(() => {
-                      const entries = Object.entries(serviceItems);
-                      const mid = Math.ceil(entries.length / 2);
-                      return [entries.slice(0, mid), entries.slice(mid)].map(
-                        (column, colIdx) => (
-                          <div key={colIdx} className="space-y-0">
-                            {column.map(([key, section]) => (
-                              <div key={key}>
-                                <h4 className="bg-primary my-0.5 rounded-md p-2 text-sm font-bold text-white">
-                                  {section.title}
-                                </h4>
-                                <div className="space-y-0">
-                                  {section.items.map((item) => (
-                                    <NavigationMenuLink
-                                      key={item.href}
-                                      render={
-                                        item.target === "_blank" ? (
-                                          <a
-                                            href={item.href}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="hover:bg-secondary/20 my-0.5 block p-2 font-medium"
-                                          />
-                                        ) : (
-                                          <Link
-                                            href={item.href}
-                                            className="hover:bg-secondary/20 my-0.5 block p-2 font-medium"
-                                          />
-                                        )
-                                      }
-                                    >
-                                      {item.title}
-                                    </NavigationMenuLink>
-                                  ))}
-                                </div>
-                              </div>
-                            ))}
+                    {serviceColumns.map((column, colIdx) => (
+                      <div key={colIdx} className="space-y-0">
+                        {column.map(([key, section]) => (
+                          <div key={key}>
+                            <h4 className="bg-primary my-0.5 rounded-md p-2 text-sm font-bold text-white">
+                              {section.title}
+                            </h4>
+                            <div className="space-y-0">
+                              {section.items.map((item) => (
+                                <NavigationMenuLink
+                                  key={item.href}
+                                  render={
+                                    item.target === "_blank" ? (
+                                      <a
+                                        href={item.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="hover:bg-secondary/20 my-0.5 block p-2 font-medium"
+                                      />
+                                    ) : (
+                                      <Link
+                                        href={item.href}
+                                        className="hover:bg-secondary/20 my-0.5 block p-2 font-medium"
+                                      />
+                                    )
+                                  }
+                                >
+                                  {item.title}
+                                </NavigationMenuLink>
+                              ))}
+                            </div>
                           </div>
-                        ),
-                      );
-                    })()}
+                        ))}
+                      </div>
+                    ))}
                   </div>
                 </NavigationMenuContent>
               </NavigationMenuItem>

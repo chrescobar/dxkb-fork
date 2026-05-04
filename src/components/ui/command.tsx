@@ -186,14 +186,11 @@ function CommandItem({
     className
   )
 
+  let body: React.ReactNode
   if (description) {
     const [icon, ...rest] = React.Children.toArray(children)
-    return (
-      <CommandPrimitive.Item
-        data-slot="command-item"
-        className={itemClassName}
-        {...props}
-      >
+    body = (
+      <>
         {icon}
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <div className="flex items-center gap-2">
@@ -204,8 +201,14 @@ function CommandItem({
             {description}
           </span>
         </div>
-        <CheckIcon className="ml-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100" />
-      </CommandPrimitive.Item>
+      </>
+    )
+  } else {
+    body = (
+      <>
+        {children}
+        {badge}
+      </>
     )
   }
 
@@ -215,8 +218,7 @@ function CommandItem({
       className={itemClassName}
       {...props}
     >
-      {children}
-      {badge}
+      {body}
       <CheckIcon className="ml-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100" />
     </CommandPrimitive.Item>
   )

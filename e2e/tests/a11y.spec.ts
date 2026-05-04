@@ -178,6 +178,14 @@ test.describe("a11y axe sweep", () => {
       state: "visible",
       timeout: 10_000,
     });
+    // The cmdk popover renders into a portal; on webkit the theme CSS
+    // variables can momentarily lag behind the dialog's visibility state,
+    // causing axe to scan with the wrong --popover-foreground and report
+    // false-positive color-contrast violations. Waiting for the input to
+    // receive auto-focus confirms cmdk is fully mounted and styled.
+    await expect(page.locator('[data-slot="command-input"]')).toBeFocused({
+      timeout: 5_000,
+    });
 
     const builder = new AxeBuilder({ page })
       .withTags(axeTags)

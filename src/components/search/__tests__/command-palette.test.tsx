@@ -292,6 +292,51 @@ describe("CommandPalette", () => {
     });
   });
 
+  describe("redesign elements", () => {
+    async function openPalette() {
+      act(() => {
+        fireEvent.keyDown(document, { key: "k", metaKey: true });
+      });
+      await waitFor(() => {
+        expect(screen.getByRole("dialog")).toBeInTheDocument();
+      });
+    }
+
+    it("renders ⌘K shortcut chips next to the input", async () => {
+      renderPalette();
+      await openPalette();
+
+      expect(screen.getByText("⌘")).toBeInTheDocument();
+      expect(screen.getByText("K")).toBeInTheDocument();
+    });
+
+    it("renders the keyboard-hint footer", async () => {
+      renderPalette();
+      await openPalette();
+
+      expect(screen.getByText("Select")).toBeInTheDocument();
+      expect(screen.getByText("Open")).toBeInTheDocument();
+      expect(screen.getByText("Close")).toBeInTheDocument();
+      expect(screen.getByText("ENTER")).toBeInTheDocument();
+      expect(screen.getByText("ESC")).toBeInTheDocument();
+    });
+
+    it("renders descriptions on Navigate items", async () => {
+      renderPalette();
+      await openPalette();
+
+      expect(
+        screen.getByText("Global dashboard and situational overview"),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText("Access your workspace and tools"),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText("Create a new BV-BRC account"),
+      ).toBeInTheDocument();
+    });
+  });
+
   describe("sign out", () => {
     async function openPalette() {
       act(() => {

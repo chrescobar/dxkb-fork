@@ -32,6 +32,24 @@ function logHit(method: string, path: string, extra?: string): void {
   console.log(`[api/e2e-mock] ${method} /${path}${tail}`);
 }
 
+const e2eDeterministicCounts: Record<string, number> = {
+  genome: 12345,
+  genome_feature: 67890,
+  taxonomy: 23456,
+  epitope: 7890,
+  protein_structure: 4567,
+  protein_feature: 8901,
+};
+
+function maybeSolrCount(path: string): { response: { numFound: number; docs: never[] } } | null {
+  const segments = path.split("/").filter(Boolean);
+  if (segments[0] !== "data" || segments.length < 2) return null;
+  const core = segments[1];
+  const numFound = e2eDeterministicCounts[core];
+  if (typeof numFound !== "number") return null;
+  return { response: { numFound, docs: [] } };
+}
+
 export async function GET(
   _request: NextRequest,
   context: { params: Promise<{ path: string[] }> },
@@ -39,6 +57,8 @@ export async function GET(
   if (!isEnabled()) return disabledResponse();
   const path = await resolvePath(context.params);
   logHit("GET", path);
+  const solr = maybeSolrCount(path);
+  if (solr) return NextResponse.json(solr);
   return NextResponse.json({});
 }
 

@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 
 import {
-  gettingStartedItems,
+  resourcesItems,
   organismItems,
   serviceItems,
   workspaceNavItems,
@@ -154,14 +154,14 @@ function DecoratedSubSection({
   return (
     <div>
       <div className="flex gap-3">
-        <div className="flex flex-col items-center pt-[16px]">
+        <div className="flex flex-col items-center pt-4">
           <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${dotColor}`} />
           <div className={`mt-0.5 w-0.5 flex-1 ${lineColor} ${showClass}`} />
         </div>
         <div className="min-w-0 flex-1">{children}</div>
       </div>
       <div
-        className={`ml-[2px] h-3 rounded-bl-xl border-b-2 border-l-2 ${curveColor} ${showClass}`}
+        className={`ml-0.5 h-3 rounded-bl-xl border-b-2 border-l-2 ${curveColor} ${showClass}`}
       />
     </div>
   );
@@ -243,24 +243,6 @@ const MobileNavbar = () => {
               </div>
 
               <nav className="flex flex-col pb-6">
-                {/* Getting Started */}
-                <Collapsible>
-                  <SectionTrigger icon={BookOpen} count={gettingStartedItems.length}>
-                    Getting Started
-                  </SectionTrigger>
-                  <CollapsibleContent className="*:data-[slot=collapsible-divider]:hidden">
-                    <div className="flex flex-col px-5 pb-3 pt-2">
-                      {gettingStartedItems.map((item) => (
-                        <NavLink key={item.href} href={item.href} target={item.target}>
-                          {item.title}
-                        </NavLink>
-                      ))}
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                <div className="mx-4 h-px bg-border" />
-
                 {/* Organisms */}
                 <Collapsible>
                   <SectionTrigger icon={Bug} count={organismItems.length}>
@@ -405,6 +387,24 @@ const MobileNavbar = () => {
                         )}
                       </div>
                     )}
+                  </CollapsibleContent>
+                </Collapsible>
+
+                <div className="mx-4 h-px bg-border" />
+
+                {/* Resources */}
+                <Collapsible>
+                  <SectionTrigger icon={BookOpen} count={resourcesItems.length}>
+                    Resources
+                  </SectionTrigger>
+                  <CollapsibleContent className="*:data-[slot=collapsible-divider]:hidden">
+                    <div className="flex flex-col px-5 pb-3 pt-2">
+                      {resourcesItems.map((item) => (
+                        <NavLink key={item.href} href={item.href} target={item.target}>
+                          {item.title}
+                        </NavLink>
+                      ))}
+                    </div>
                   </CollapsibleContent>
                 </Collapsible>
               </nav>

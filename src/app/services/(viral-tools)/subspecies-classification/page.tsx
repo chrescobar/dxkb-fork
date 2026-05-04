@@ -219,7 +219,7 @@ export default function SubspeciesClassificationPage() {
                     <FieldItem className="mt-4">
                       <Textarea
                         placeholder="Enter one or more query nucleotide or protein sequences to search. Requires FASTA format."
-                        className="min-h-[175px] font-mono text-xs"
+                        className="min-h-44 font-mono text-xs"
                         value={field.state.value ?? ""}
                         onChange={(e) => field.handleChange(e.target.value)}
                         onBlur={() => {

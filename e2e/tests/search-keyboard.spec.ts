@@ -144,8 +144,13 @@ test.describe("command palette (Cmd+K)", () => {
 
   const modifierKey = process.platform === "darwin" ? "Meta" : "Control";
 
+  // The CommandPalette listener attaches in a useEffect at the root layout.
+  // On webkit the keyboard.press can race that effect, causing the keystroke
+  // to be dropped before the listener is wired. waitForLoadState("networkidle")
+  // gives React time to hydrate and run mount effects on every browser.
   test("Cmd/Ctrl+K opens the palette with an accessible name", async ({ page }) => {
     await page.goto("/jobs");
+    await page.waitForLoadState("networkidle");
 
     await page.keyboard.press(`${modifierKey}+K`);
 
@@ -155,6 +160,7 @@ test.describe("command palette (Cmd+K)", () => {
 
   test("Esc closes the palette", async ({ page }) => {
     await page.goto("/jobs");
+    await page.waitForLoadState("networkidle");
     await page.keyboard.press(`${modifierKey}+K`);
     const dialog = page.getByRole("dialog", { name: /command palette/i });
     await expect(dialog).toBeVisible();
@@ -165,6 +171,7 @@ test.describe("command palette (Cmd+K)", () => {
 
   test("ArrowDown then Enter routes to a navigation item", async ({ page }) => {
     await page.goto("/jobs");
+    await page.waitForLoadState("networkidle");
     await page.keyboard.press(`${modifierKey}+K`);
     await expect(
       page.getByRole("dialog", { name: /command palette/i }),
@@ -181,6 +188,7 @@ test.describe("command palette (Cmd+K)", () => {
 
   test("typing a query then Enter routes to /search", async ({ page }) => {
     await page.goto("/jobs");
+    await page.waitForLoadState("networkidle");
     await page.keyboard.press(`${modifierKey}+K`);
     await expect(
       page.getByRole("dialog", { name: /command palette/i }),
@@ -207,6 +215,7 @@ test.describe("command palette (Cmd+K)", () => {
 
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
     await page.goto("/jobs");
+    await page.waitForLoadState("networkidle");
     await page.keyboard.press(`${modifierKey}+K`);
     await expect(
       page.getByRole("dialog", { name: /command palette/i }),

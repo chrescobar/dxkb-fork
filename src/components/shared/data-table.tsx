@@ -544,7 +544,11 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       const DataAPI = process.env.NEXT_PUBLIC_DATA_API;
 
       fetch(`${DataAPI}/${resource}/?${query}`, {
-        headers: { Accept: "application/json" },
+        headers: { 
+          Accept: "application/json",
+          'Range': `items=0-${selectedIds.length}`,
+          'X-Range': `items=0-${selectedIds.length}`,
+        },
       })
         .then((res) => {
           if (!res.ok) throw new Error("Failed to fetch selected rows");

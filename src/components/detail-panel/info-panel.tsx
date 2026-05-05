@@ -271,7 +271,7 @@ export function InfoPanel(props: InfoPanelProps) {
 
   return (
     <DetailPanel>
-      <DetailPanel.Header title={String(selectedRow?.[panelTitleField] ?? "")} />
+      <DetailPanel.Header title={selectedIds.length === 1 ? String(selectedRow?.[panelTitleField] ?? "") : ""} />
       {selectedIds.length === 1 ? (
         <>
           {order.map((group) => {

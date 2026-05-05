@@ -64,13 +64,18 @@ interface DataTableProps {
   rowSelection?: Record<string, boolean>;
   onRowSelectionChange?: (selection: Record<string, boolean>) => void;
 
+  // Cross-page selection
+  isAllPagesSelected?: boolean;
+  onAllPagesSelectionChange?: (selected: boolean) => void;
+  totalSelectedCount?: number;
+
   // Optional download handler
   onDownloadAll?: (format: 'csv' | 'txt', visibleColumns: string[] | null) => void;
   // Loading indicator: parent can set this while data is being fetched
   isLoading?: boolean;
 }
 
-export function DataTable({ id: _id, data, columns, totalItems, resource, onSelectionChange, onGenomeSelect, selectedIds, pageIndex, pageSize, onPageChange, sorting:controlledSorting, onSortingChange, columnOrder, onColumnOrderChange, columnVisibility: controlledVisibility, onColumnVisibilityChange: onColumnVisibilityChangeProp, rowSelection: controlledRowSelection, onRowSelectionChange, onDownloadAll, isLoading = false }: DataTableProps) {
+export function DataTable({ id: _id, data, columns, totalItems, resource, onSelectionChange, onGenomeSelect, selectedIds, pageIndex, pageSize, onPageChange, sorting:controlledSorting, onSortingChange, columnOrder, onColumnOrderChange, columnVisibility: controlledVisibility, onColumnVisibilityChange: onColumnVisibilityChangeProp, rowSelection: controlledRowSelection, onRowSelectionChange, isAllPagesSelected = false, onAllPagesSelectionChange, totalSelectedCount, onDownloadAll, isLoading = false }: DataTableProps) {
 
   const [columnSizing, setColumnSizing] = useState<Record<string, number>>({});
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>(
@@ -139,19 +144,56 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
   const columnDefs = useMemo<ColumnDef<Record<string, unknown>, unknown>[]>(() => {
     const checkboxColumn: ColumnDef<Record<string, unknown>> = {
       id: '__select__',
-      header: ({ table }) => (
-        <div className="flex justify-center items-center w-full h-full">
-          <input
-            type="checkbox"
-            checked={table.getIsAllRowsSelected()}
-            onChange={(e) => {
-              e.stopPropagation();
-              table.toggleAllRowsSelected();
-            }}
-            className="cursor-pointer m-0 p-0"
-          />
-        </div>
-      ),
+      header: ({ table }) => {
+        // Check if all rows on current page are selected
+        const allPageRowsSelected = table.getIsAllPageRowsSelected();
+        const somePageRowsSelected = table.getIsSomePageRowsSelected();
+        
+        // Determine checkbox state - if all pages selected, always show checked
+        // Otherwise show the state of the current page
+        const isChecked = isAllPagesSelected || allPageRowsSelected;
+        const isIndeterminate = !isAllPagesSelected && somePageRowsSelected;
+        
+        return (
+          <div className="flex justify-center items-center w-full h-full relative">
+            <input
+              type="checkbox"
+              checked={isChecked}
+              ref={(el) => {
+                if (el) {
+                  el.indeterminate = isIndeterminate;
+                }
+              }}
+              onChange={(e) => {
+                e.stopPropagation();
+                
+                if (isAllPagesSelected) {
+                  // If all pages are selected, deselect all (including cross-page)
+                  onAllPagesSelectionChange?.(false);
+                  table.toggleAllRowsSelected(false);
+                  // Clear all row selections
+                  if (onRowSelectionChange) {
+                    onRowSelectionChange({});
+                  }
+                } else if (allPageRowsSelected) {
+                  // If all rows on current page are selected, clicking again deselects current page
+                  table.toggleAllRowsSelected(false);
+                } else {
+                  // Otherwise, select all on current page
+                  table.toggleAllRowsSelected(true);
+                }
+              }}
+              className="cursor-pointer m-0 p-0"
+              title={isAllPagesSelected ? "Click to deselect all results" : (allPageRowsSelected ? "Click to deselect this page" : "Click to select all on this page")}
+            />
+            {isAllPagesSelected && (
+              <div className="absolute -bottom-5 left-1/2 transform -translate-x-1/2 text-[10px] text-blue-600 whitespace-nowrap z-50">
+                All {totalItems} selected
+              </div>
+            )}
+          </div>
+        );
+      },
       cell: ({ row, table }) => {
         return (
           <div className="flex justify-center items-center w-full h-full">
@@ -270,6 +312,11 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     },
     onRowSelectionChange: (updater) => {
       const newSelection = typeof updater === 'function' ? updater(rowSelection) : updater;
+      
+      // If any individual row selection changes, clear the "all pages selected" state
+      if (isAllPagesSelected) {
+        onAllPagesSelectionChange?.(false);
+      }
       
       // If controlled, call the parent handler
       if (onRowSelectionChange) {
@@ -498,6 +545,18 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
   };
 
   const handleDownload = (format: 'csv' | 'txt', onlySelected = false) => {
+    // If downloading selected and all pages are selected, download all data
+    if (onlySelected && isAllPagesSelected && onDownloadAll) {
+      const allCols = table.getAllLeafColumns();
+      const visibleCols = onlyVisibleColumns
+        ? allCols.filter(col => col.getIsVisible() && col.id !== '__select__')
+        : allCols.filter(col => col.id !== '__select__');
+      
+      const visibleColumnIds = visibleCols.map(col => col.id);
+      onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
+      return;
+    }
+    
     // If downloading all data and onDownloadAll is provided, use it
     if (!onlySelected && onDownloadAll) {
       const allCols = table.getAllLeafColumns();
@@ -519,7 +578,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     const headers = visibleCols.map(col => col.columnDef.header as string);
 
     if (onlySelected) {
-      if (!selectedIds || selectedIds.length === 0) return;
+      if (!isAllPagesSelected && (!selectedIds || selectedIds.length === 0)) return;
 
       const idFieldMap: Record<string, string> = {
         genome: "genome_id",
@@ -535,7 +594,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
       const idField = idFieldMap[resource] ?? "id";
 
-      const idFilter = selectedIds
+      const idFilter = selectedIds!
         .map((id) => `eq(${idField},${id})`)
         .join(",");
 
@@ -546,8 +605,8 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       fetch(`${DataAPI}/${resource}/?${query}`, {
         headers: { 
           Accept: "application/json",
-          'Range': `items=0-${selectedIds.length}`,
-          'X-Range': `items=0-${selectedIds.length}`,
+          'Range': `items=0-${selectedIds!.length}`,
+          'X-Range': `items=0-${selectedIds!.length}`,
         },
       })
         .then((res) => {
@@ -598,6 +657,45 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
   // Now that all the setup is done, let's render the table!
   return (
     <div className="flex flex-col h-full w-full text-xs relative items-center border-0">{/* This is the main container. Full width and content centered. */}
+      {/* Banner for selecting all results across pages */}
+      {!isAllPagesSelected && table.getIsAllPageRowsSelected() && (
+        <div className="w-full bg-blue-50 border border-blue-200 px-4 py-2 mb-2 flex items-center justify-between">
+          <span className="text-blue-700">
+            All {data.length} results on this page are selected.
+          </span>
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              onAllPagesSelectionChange?.(true);
+            }}
+            className="text-blue-700 underline hover:text-blue-900 font-semibold cursor-pointer"
+          >
+            Select all {totalItems} results across all pages
+          </button>
+        </div>
+      )}
+      {isAllPagesSelected && (
+        <div className="w-full bg-blue-100 border border-blue-300 px-4 py-2 mb-2 flex items-center justify-between">
+          <span className="text-blue-800 font-semibold">
+            All {totalItems} results are selected across all pages.
+          </span>
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              onAllPagesSelectionChange?.(false);
+              table.toggleAllRowsSelected(false);
+              if (onRowSelectionChange) {
+                onRowSelectionChange({});
+              }
+            }}
+            className="text-blue-700 underline hover:text-blue-900 cursor-pointer"
+          >
+            Clear selection
+          </button>
+        </div>
+      )}
       <div className="w-[100%] flex justify-end mb-2 z-50 px-5" ref={controlsRef}>
           <div className="relative inline-block text-left" ref={columnMenuRef}> {/* This is the button for changing the visibility of columns in the table */}
             <Button
@@ -645,7 +743,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           </Button>
 
           {/* These next two only show up if rows are selected */}
-          {(selectedIds?.length ?? 0) > 0 && ( 
+          {((selectedIds?.length ?? 0) > 0 || isAllPagesSelected) && ( 
             <>
               <Button
                 onClick={() => handleDownload('csv', true)}
@@ -876,7 +974,24 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                 const hasResults = totalItems > 0;
                 const start = hasResults ? pageIndex * pageSize + 1 : 0;
                 const end = hasResults ? Math.min(start + data.length - 1, totalRows): 0;
-                return <div>Showing {start}-{end} of {totalRows} results</div>;
+                
+                // Show selection count if applicable
+                const selectedCount = isAllPagesSelected 
+                  ? totalItems 
+                  : (totalSelectedCount ?? Object.keys(rowSelection).filter(key => rowSelection[key]).length);
+                
+                return (
+                  <div className="flex flex-col gap-1">
+                    <div>Showing {start}-{end} of {totalRows} results</div>
+                    {selectedCount > 0 && (
+                      <div className="text-blue-600 font-semibold">
+                        {isAllPagesSelected 
+                          ? `All ${totalItems} results selected` 
+                          : `${selectedCount} selected`}
+                      </div>
+                    )}
+                  </div>
+                );
               })()}
             </div>
             <div className="flex items-center space-x-2">

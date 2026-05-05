@@ -44,6 +44,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const rowSelection = controlledRowSelection !== undefined ? controlledRowSelection : internalRowSelection;
   const setRowSelection = onRowSelectionChange || setInternalRowSelection;
   const [filter, setFilter] = useState('');
+  const [isAllPagesSelected, setIsAllPagesSelected] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -226,6 +227,11 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     console.log("RAW SELECTION:", newSelection);
 
     setRowSelection(newSelection);
+    
+    // Clear all pages selection when individual rows are selected/deselected
+    if (isAllPagesSelected) {
+      setIsAllPagesSelected(false);
+    }
 
     const idFieldMap: Record<string, string> = {
       genome: "genome_id",
@@ -254,6 +260,20 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     onSelectionChange?.(selectedIds);
   };
 
+  const handleAllPagesSelectionChange = (selected: boolean) => {
+    setIsAllPagesSelected(selected);
+    
+    if (selected) {
+      // When selecting all pages, notify parent with all item IDs
+      // For now, we'll just set the flag - actual implementation would need to fetch all IDs
+      console.log(`Selecting all ${totalItems} items across all pages`);
+    } else {
+      // When deselecting all pages, clear selection
+      setRowSelection({});
+      onSelectionChange?.([]);
+    }
+  };
+
   const handlePageChange = (newPage: number) => {
     // Clear selections when page changes
 //    setRowSelection({});
@@ -267,6 +287,14 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       console.warn('No totalItems available for download');
       return;
     }
+    
+    // Check if totalItems exceeds the download limit
+    const DOWNLOAD_LIMIT = 50000;
+    if (totalItems > DOWNLOAD_LIMIT) {
+      alert(`The download limit is ${DOWNLOAD_LIMIT.toLocaleString()} rows. Your query returned ${totalItems.toLocaleString()} rows. Please refine your search to download fewer results.`);
+      return;
+    }
+    
     try {
       const baseURL = `${DataAPI}/${resource}/?${combinedQuery}`;
       const res = await fetch(baseURL, {
@@ -348,6 +376,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
           setPageIndex(0);          // ✅ reset pagination
           setRowSelection({});      // ✅ clear selection
           onSelectionChange?.([]);  // ✅ clear parent selection
+          setIsAllPagesSelected(false); // ✅ clear all pages selection
         }}
       />
 
@@ -373,6 +402,8 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
             onColumnOrderChange={setColumnOrder}
             columnVisibility={columnVisibility}
             onColumnVisibilityChange={setColumnVisibility}
+            isAllPagesSelected={isAllPagesSelected}
+            onAllPagesSelectionChange={handleAllPagesSelectionChange}
             onDownloadAll={handleDownloadAll}
             isLoading={metaLoading || dataLoading || dataFetching}
             selectedIds={selectedIds ?? []}

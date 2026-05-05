@@ -676,6 +676,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           style={{
             maxHeight: '100%',
             paddingBottom: '52px', // leave room for pagination footer
+            position: 'relative',
           }}
         >
           {isLoading && (
@@ -687,13 +688,22 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
             </div>
           )}
           <div className="min-w-max relative" style={columnSizeVars}>
-            <Table className="w-full table-auto text-xs border-collapse" style={{ borderSpacing: 0 }}>
+            <Table 
+              className="w-full table-auto text-xs border-collapse relative" 
+              style={{ borderSpacing: 0 }}
+              disableScrollWrapper={true}
+            >
               <TableHeader
                 ref={headerRef}
-                className="sticky top-0 z-30 bg-primary text-secondary uppercase border-black"
+                className="bg-primary text-secondary uppercase border-black"
+                style={{
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 30,
+                }}
               >
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="flex border-t border-b border-black">
+                  <TableRow key={headerGroup.id} className="flex border-t border-b border-black bg-primary">
                     {headerGroup.headers.map((header) => {
                       const column = header.column;
                       return (

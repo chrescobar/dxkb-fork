@@ -401,7 +401,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     enableSortingRemoval: false,
     enableMultiRowSelection: true,
     getRowId: (row, index) => String((row as any).genome_id ?? `${index}`)
-//    getRowId: (row, index) => String(index), // or use row.id if your data has unique ids,
   });
 
 

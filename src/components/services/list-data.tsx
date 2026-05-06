@@ -265,9 +265,6 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   };
 
   const handlePageChange = (newPage: number) => {
-    // Clear selections when page changes
-//    setRowSelection({});
-//    onSelectionChange?.([]); // Clear selection in parent too
     // Update page index (this will call parent's setPageIndex if controlled)
     setPageIndex(newPage);
   };

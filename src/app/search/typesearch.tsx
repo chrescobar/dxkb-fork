@@ -55,7 +55,6 @@ function TabsRenderer({
   setIsAllPagesSelected,
   totalItems,
   setTotalItems
-//  setSelectedRows,
 }: TabsRendererProps) {
   // Whenever urlType (searchtype) changes, set the active tab.
   // If urlType matches one of the tabs (term), set that; otherwise pick the first tab.
@@ -122,7 +121,8 @@ function TabsRenderer({
 
                 return Array.from(next);
               });
-            }}            rowSelection={rowSelection}
+            }}            
+            rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
             pageIndex={pageIndex}
             onPageChange={setPageIndex}
@@ -187,7 +187,6 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
   const tablist = Object.keys(tabsForType);
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-//  const [selectedRowMap, setSelectedRowMap] = useState<Record<string, any>>({});
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [pageIndex, setPageIndex] = useState(0);
   const [prevUrlKey, setPrevUrlKey] = useState(`${urlType}|${urlQ}`);

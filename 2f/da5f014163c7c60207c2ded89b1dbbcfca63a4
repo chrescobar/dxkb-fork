@@ -1,0 +1,214 @@
+src/components/organisms/genera-grid/__tests__/genera-grid.test.tsx
+  s_b6a8c14131e9d6::t_575910b082726b 1-30
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_b6a8c14131e9d6::t_39eee93bf1cbb6 88
+  s_b6a8c14131e9d6::t_71041b98144549 69-87,89-93,96,98,102-112,115-116
+  s_b6a8c14131e9d6::t_688638a27a5caf 94-95,97,99-101,113-114
+e2e/fixtures/overrides/organisms/bacteria/summary_by_taxon.json
+  s_b6a8c14131e9d6::t_7e9053db9dce98 1-9
+e2e/fixtures/overrides/organisms/bacteria/genome-facet-genus.json
+  s_b6a8c14131e9d6::t_7e9053db9dce98 1-15
+src/components/organisms/metadata-distributions/metadata-distributions.tsx
+  s_b6a8c14131e9d6::t_f722500f1e1c90 1-44
+src/components/organisms/pubmed-feed/pubmed-feed-skeleton.tsx
+  s_b6a8c14131e9d6::t_f722500f1e1c90 1-12
+src/lib/services/organisms/summary.ts
+  s_b6a8c14131e9d6::t_e540a27ac35cff 1-4,6-19,21-38
+  s_b6a8c14131e9d6::t_894ef9ca94122e 5,20
+e2e/pages/OrganismLandingPage.ts
+  s_b6a8c14131e9d6::t_7e9053db9dce98 1-26
+src/components/organisms/external-tools/__tests__/external-tools.test.tsx
+  s_b6a8c14131e9d6::t_575910b082726b 1-25
+src/lib/services/organisms/types.ts
+  s_b6a8c14131e9d6::t_e540a27ac35cff 1-37
+e2e/fixtures/overrides/organisms/bacteria/genome-facet-isolation-country.json
+  s_b6a8c14131e9d6::t_7e9053db9dce98 1-15
+src/components/organisms/landing-shell/landing-shell-skeleton.tsx
+  s_b6a8c14131e9d6::t_f722500f1e1c90 1-14
+package.json
+  s_b6a8c14131e9d6::t_c7c4967c55a76f 49-54,56
+src/app/api/services/pubmed/recent/__tests__/route.test.ts
+  s_b6a8c14131e9d6::t_61a18d633cd510 1-88
+e2e/tests/organisms/bacteria.spec.ts
+  s_b6a8c14131e9d6::t_7e9053db9dce98 1-47
+src/lib/services/organisms/__tests__/metadata-facets.test.ts
+  s_b6a8c14131e9d6::t_61a18d633cd510 1-65
+src/components/organisms/genera-grid/genera-card.tsx
+  s_b6a8c14131e9d6::t_f722500f1e1c90 1-57
+src/components/organisms/landing-shell/__tests__/landing-shell.test.tsx
+  s_b6a8c14131e9d6::t_575910b082726b 1-42
+src/components/organisms/genera-grid/genera-grid-skeleton.tsx
+  s_b6a8c14131e9d6::t_f722500f1e1c90 1-11
+e2e/fixtures/overrides/organisms/bacteria/taxonomy-2.json
+  s_b6a8c14131e9d6::t_7e9053db9dce98 1-7
+src/components/organisms/data-summary/data-summary-skeleton.tsx
+  s_b6a8c14131e9d6::t_f722500f1e1c90 1-11
+src/components/organisms/external-tools/external-tools.tsx
+  s_b6a8c14131e9d6::t_f722500f1e1c90 1-48
+src/lib/services/organisms/__tests__/summary.test.ts
+  s_b6a8c14131e9d6::t_61a18d633cd510 1-77
+src/app/organisms/bacteria/views/taxonomy.tsx
+  s_b6a8c14131e9d6::t_7439c4f9c6f51c 1-19
+e2e/fixtures/overrides/organisms/bacteria/genome-facet-host-name.json
+  s_b6a8c14131e9d6::t_7e9053db9dce98 1-15
+src/lib/services/organisms/metadata-facets.ts
+  s_b6a8c14131e9d6::t_e540a27ac35cff 1-4,6-22,24-57
+  s_b6a8c14131e9d6::t_894ef9ca94122e 5,23
+src/components/organisms/pubmed-feed/pubmed-feed.tsx
+  s_b6a8c14131e9d6::t_d523792367f81e 83
+  s_b6a8c14131e9d6::t_894ef9ca94122e 12-15,52
+  s_b6a8c14131e9d6::t_f722500f1e1c90 1-11,16-51,53-82,84-105
+src/app/organisms/bacteria/views/index.ts
+  s_b6a8c14131e9d6::t_7439c4f9c6f51c 1-4
+src/components/organisms/pubmed-feed/__tests__/pubmed-feed.test.tsx
+  s_b6a8c14131e9d6::t_575910b082726b 1-41
+src/app/organisms/bacteria/__tests__/page.test.tsx
+  s_b6a8c14131e9d6::t_575910b082726b 1-13,15-16
+  s_b6a8c14131e9d6::t_27bf0eeff60565 14
+src/components/organisms/data-summary/data-summary.tsx
+  s_b6a8c14131e9d6::t_4078a6b08fab64 37-41
+  s_b6a8c14131e9d6::t_f722500f1e1c90 1-36,42-57
+src/app/organisms/bacteria/_config.ts
+  s_b6a8c14131e9d6::t_7439c4f9c6f51c 1-17
+e2e/fixtures/overrides/organisms/bacteria/pubmed-esummary.json
+  s_b6a8c14131e9d6::t_7e9053db9dce98 1-19
+src/app/organisms/bacteria/page.tsx
+  47e869e4b9f7ba48 2,5,7,13,25-26
+  s_b6a8c14131e9d6::t_7439c4f9c6f51c 1,3-4,6,8-12,14-24
+src/lib/services/organisms/__tests__/pubmed.test.ts
+  s_b6a8c14131e9d6::t_61a18d633cd510 1-89
+src/components/organisms/genera-grid/__tests__/genera-card.test.tsx
+  s_b6a8c14131e9d6::t_575910b082726b 1-16
+src/app/organisms/bacteria/views/genomes.tsx
+  s_b6a8c14131e9d6::t_7439c4f9c6f51c 1-19
+src/components/organisms/metadata-distributions/__tests__/metadata-distributions.test.tsx
+  s_b6a8c14131e9d6::t_575910b082726b 1-31
+src/lib/services/organisms/__tests__/taxonomy.test.ts
+  s_b6a8c14131e9d6::t_61a18d633cd510 1-48
+src/app/api/e2e-mock/[...path]/route.ts
+  s_b6a8c14131e9d6::t_0871208f062526 153-165
+  s_b6a8c14131e9d6::t_c0ef58bbd75e4a 53-152,166-251,253,259-262
+src/components/organisms/data-summary/__tests__/data-summary.test.tsx
+  s_b6a8c14131e9d6::t_575910b082726b 1-35
+src/lib/services/organisms/taxonomy.ts
+  s_b6a8c14131e9d6::t_e540a27ac35cff 1-4,6-26,28-43
+  s_b6a8c14131e9d6::t_894ef9ca94122e 5,27
+src/components/organisms/shared/section-error.tsx
+  s_b6a8c14131e9d6::t_04599397d404cd 30-33
+  s_b6a8c14131e9d6::t_f722500f1e1c90 1-29,34-39
+src/components/organisms/types.ts
+  s_b6a8c14131e9d6::t_f722500f1e1c90 1-32
+src/lib/services/organisms/genera.ts
+  s_b6a8c14131e9d6::t_894ef9ca94122e 5,22
+  s_b6a8c14131e9d6::t_e540a27ac35cff 1-4,6-21,23-31
+src/components/organisms/genera-grid/genera-grid.tsx
+  s_b6a8c14131e9d6::t_f722500f1e1c90 1-50
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  s_b6a8c14131e9d6::t_f722500f1e1c90 1-86,88-144
+  s_b6a8c14131e9d6::t_c980c7ec7e2001 87
+e2e/fixtures/overrides/organisms/bacteria/pubmed-esearch.json
+  s_b6a8c14131e9d6::t_7e9053db9dce98 1-5
+src/components/organisms/landing-shell/__tests__/landing-nav.test.tsx
+  s_b6a8c14131e9d6::t_575910b082726b 1-61
+src/components/organisms/metadata-distributions/__tests__/donut-chart.test.tsx
+  s_b6a8c14131e9d6::t_575910b082726b 1-42
+.env.e2e.test
+  s_b6a8c14131e9d6::t_41bae92e13eff2 36
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_b6a8c14131e9d6::t_f722500f1e1c90 1-31,36-56,58-73
+  s_b6a8c14131e9d6::t_5f66d6d180864f 32-35,57
+src/app/api/services/pubmed/recent/route.ts
+  s_b6a8c14131e9d6::t_67dd1e3eca7964 5
+  s_b6a8c14131e9d6::t_e5fe9485874b10 1-4,6-36
+src/components/organisms/metadata-distributions/metadata-distributions-skeleton.tsx
+  s_b6a8c14131e9d6::t_f722500f1e1c90 1-11
+src/app/organisms/bacteria/views/phylogeny.tsx
+  s_b6a8c14131e9d6::t_7439c4f9c6f51c 1-19
+src/lib/services/organisms/utils.ts
+  s_b6a8c14131e9d6::t_e540a27ac35cff 1-5,15-92
+  s_b6a8c14131e9d6::t_894ef9ca94122e 6-14
+src/components/organisms/landing-shell/landing-shell.tsx
+  s_b6a8c14131e9d6::t_f722500f1e1c90 1-49
+src/app/organisms/bacteria/_components/sidebar-nav-items.tsx
+  s_b6a8c14131e9d6::t_7439c4f9c6f51c 1-34
+src/components/organisms/landing-shell/landing-nav.tsx
+  s_b6a8c14131e9d6::t_f722500f1e1c90 1-76
+src/components/organisms/shared/__tests__/section-error.test.tsx
+  s_b6a8c14131e9d6::t_575910b082726b 1-9,14-15
+  s_b6a8c14131e9d6::t_3ba3fe0d504d3f 10-13
+src/lib/services/organisms/pubmed.ts
+  s_b6a8c14131e9d6::t_894ef9ca94122e 2-7,64
+  s_b6a8c14131e9d6::t_e540a27ac35cff 1,8-63,65-123
+src/app/organisms/bacteria/layout.tsx
+  47e869e4b9f7ba48 1,3,9,11,15-18
+  s_b6a8c14131e9d6::t_7439c4f9c6f51c 2,4-8,10,12-14
+src/app/organisms/bacteria/views/overview.tsx
+  s_b6a8c14131e9d6::t_7439c4f9c6f51c 1-81
+src/lib/services/organisms/__tests__/genera.test.ts
+  s_b6a8c14131e9d6::t_61a18d633cd510 1-51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "2fda5f014163c7c60207c2ded89b1dbbcfca63a4",
+  "prompts": {
+    "1ea351aa2f898f42": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df8c0-273b-7ad3-9df1-937ee096c003",
+        "model": "unknown"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>",
+      "total_additions": 2,
+      "total_deletions": 0,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    },
+    "2638901d0a2433db": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dfdc6-4c24-7fe2-9309-9e9e8ed4e532",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>",
+      "total_additions": 13,
+      "total_deletions": 187,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    },
+    "47e869e4b9f7ba48": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "41fca322-e611-4238-82ad-d99acbcca4e3",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>",
+      "total_additions": 2222,
+      "total_deletions": 211,
+      "accepted_lines": 14,
+      "overriden_lines": 0
+    },
+    "951fd1437239d380": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fab691d7-2dd7-4110-86cc-1fb9f6125e9d",
+        "model": "<synthetic>"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>",
+      "total_additions": 3308,
+      "total_deletions": 0,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    }
+  },
+  "sessions": {
+    "s_b6a8c14131e9d6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dfee7-796e-7661-a76d-a851a9c1daf2",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

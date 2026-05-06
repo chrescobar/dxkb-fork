@@ -1,0 +1,19 @@
+{
+  "result": {
+    "uids": ["41000001", "41000002", "41000003", "41000004", "41000005"],
+    "41000001": {
+      "uid": "41000001",
+      "title": "Comparative genomics reveals conserved bacterial stress response pathways",
+      "source": "J Bacteriol",
+      "sortpubdate": "2026/04/18 00:00",
+      "authors": [{ "name": "Smith J" }, { "name": "Patel R" }]
+    },
+    "41000002": {
+      "uid": "41000002",
+      "title": "Mobile resistance elements across clinical Enterobacteriaceae isolates",
+      "source": "Microb Genom",
+      "sortpubdate": "2026/03/27 00:00",
+      "authors": [{ "name": "Chen L" }, { "name": "Garcia M" }]
+    }
+  }
+}

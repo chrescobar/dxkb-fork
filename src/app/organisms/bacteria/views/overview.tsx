@@ -1,0 +1,81 @@
+import { Suspense } from "react";
+
+import { DataSummary } from "@/components/organisms/data-summary/data-summary";
+import { DataSummarySkeleton } from "@/components/organisms/data-summary/data-summary-skeleton";
+import { ExternalTools } from "@/components/organisms/external-tools/external-tools";
+import { GeneraGrid } from "@/components/organisms/genera-grid/genera-grid";
+import { GeneraGridSkeleton } from "@/components/organisms/genera-grid/genera-grid-skeleton";
+import { MetadataDistributions } from "@/components/organisms/metadata-distributions/metadata-distributions";
+import { MetadataDistributionsSkeleton } from "@/components/organisms/metadata-distributions/metadata-distributions-skeleton";
+import { PubMedFeed } from "@/components/organisms/pubmed-feed/pubmed-feed";
+import { PubMedFeedSkeleton } from "@/components/organisms/pubmed-feed/pubmed-feed-skeleton";
+import { SectionError } from "@/components/organisms/shared/section-error";
+
+import { bacteriaLandingConfig as config } from "../_config";
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+async function DataSummaryBoundary() {
+  try {
+    return await DataSummary({ taxonId: config.taxonId });
+  } catch (error) {
+    return <SectionError message={errorMessage(error)} />;
+  }
+}
+
+async function GeneraGridBoundary() {
+  try {
+    return await GeneraGrid({ taxonId: config.taxonId, limit: 24 });
+  } catch (error) {
+    return <SectionError message={errorMessage(error)} />;
+  }
+}
+
+async function MetadataDistributionsBoundary() {
+  try {
+    return await MetadataDistributions({
+      taxonId: config.taxonId,
+      fields: config.metadataFields,
+    });
+  } catch (error) {
+    return <SectionError message={errorMessage(error)} />;
+  }
+}
+
+async function PubMedFeedBoundary() {
+  try {
+    return await PubMedFeed({ term: config.pubmedTerm, limit: 5 });
+  } catch (error) {
+    return <SectionError message={errorMessage(error)} />;
+  }
+}
+
+export function OverviewView() {
+  return (
+    <div className="flex flex-col gap-6">
+      <Suspense fallback={<DataSummarySkeleton />}>
+        <DataSummaryBoundary />
+      </Suspense>
+
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
+        <div className="min-w-0">
+          <Suspense fallback={<GeneraGridSkeleton />}>
+            <GeneraGridBoundary />
+          </Suspense>
+        </div>
+        <aside className="flex min-w-0 flex-col gap-4">
+          <ExternalTools resources={config.externalTools} />
+          <Suspense fallback={<PubMedFeedSkeleton />}>
+            <PubMedFeedBoundary />
+          </Suspense>
+        </aside>
+      </div>
+
+      <Suspense fallback={<MetadataDistributionsSkeleton />}>
+        <MetadataDistributionsBoundary />
+      </Suspense>
+    </div>
+  );
+}

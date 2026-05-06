@@ -84,6 +84,9 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
   const [showColumnMenu, setShowColumnMenu] = useState(false);
   
   const [draggedColumn, setDraggedColumn] = useState<string | null>(null);
+  
+  // Track which download button is currently downloading
+  const [downloadingButton, setDownloadingButton] = useState<string | null>(null);
 
   const [internalRowSelection, setInternalRowSelection] = useState({});
   const rowSelection = controlledRowSelection !== undefined ? controlledRowSelection : internalRowSelection;
@@ -401,8 +404,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 //    getRowId: (row, index) => String(index), // or use row.id if your data has unique ids,
   });
 
-  console.log("ROW IDS:", table.getRowModel().rows.map(r => r.id));
-  console.log("ROW SELECTION:", table.getState().rowSelection);
 
   const columnSizingState = table.getState().columnSizing;
   const columnSizingInfoState = table.getState().columnSizingInfo;
@@ -544,30 +545,37 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     setDraggedColumn(null);
   };
 
-  const handleDownload = (format: 'csv' | 'txt', onlySelected = false) => {
-    // If downloading selected and all pages are selected, download all data
-    if (onlySelected && isAllPagesSelected && onDownloadAll) {
-      const allCols = table.getAllLeafColumns();
-      const visibleCols = onlyVisibleColumns
-        ? allCols.filter(col => col.getIsVisible() && col.id !== '__select__')
-        : allCols.filter(col => col.id !== '__select__');
-      
-      const visibleColumnIds = visibleCols.map(col => col.id);
-      onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
-      return;
-    }
+  const handleDownload = async (format: 'csv' | 'txt', onlySelected = false) => {
+    // Set downloading state
+    const buttonKey = `${format}-${onlySelected ? 'selected' : 'all'}`;
+    setDownloadingButton(buttonKey);
     
-    // If downloading all data and onDownloadAll is provided, use it
-    if (!onlySelected && onDownloadAll) {
-      const allCols = table.getAllLeafColumns();
-      const visibleCols = onlyVisibleColumns
-        ? allCols.filter(col => col.getIsVisible() && col.id !== '__select__')
-        : allCols.filter(col => col.id !== '__select__');
+    try {
+      // If downloading selected and all pages are selected, download all data
+      if (onlySelected && isAllPagesSelected && onDownloadAll) {
+        const allCols = table.getAllLeafColumns();
+        const visibleCols = onlyVisibleColumns
+          ? allCols.filter(col => col.getIsVisible() && col.id !== '__select__')
+          : allCols.filter(col => col.id !== '__select__');
+        
+        const visibleColumnIds = visibleCols.map(col => col.id);
+        await onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
+        setDownloadingButton(null);
+        return;
+      }
       
-      const visibleColumnIds = visibleCols.map(col => col.id);
-      onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
-      return;
-    }
+      // If downloading all data and onDownloadAll is provided, use it
+      if (!onlySelected && onDownloadAll) {
+        const allCols = table.getAllLeafColumns();
+        const visibleCols = onlyVisibleColumns
+          ? allCols.filter(col => col.getIsVisible() && col.id !== '__select__')
+          : allCols.filter(col => col.id !== '__select__');
+        
+        const visibleColumnIds = visibleCols.map(col => col.id);
+        await onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
+        setDownloadingButton(null);
+        return;
+      }
 
     // Otherwise, use the local download logic (for selected rows or when onDownloadAll is not provided)
     const allCols = table.getAllLeafColumns();
@@ -602,7 +610,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
       const DataAPI = process.env.NEXT_PUBLIC_DATA_API;
 
-      fetch(`${DataAPI}/${resource}/?${query}`, {
+      await fetch(`${DataAPI}/${resource}/?${query}`, {
         headers: { 
           Accept: "application/json",
           'Range': `items=0-${selectedIds!.length}`,
@@ -634,6 +642,9 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
         })
         .catch((err) => {
           console.error("Download selected failed:", err);
+        })
+        .finally(() => {
+          setDownloadingButton(null);
         });
 
       return;
@@ -652,6 +663,11 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     ].join('\n');
 
     downloadFile(`${resource}${onlySelected ? '-selected' : ''}.${format}`, content);
+    setDownloadingButton(null);
+    } catch (error) {
+      console.error("Download failed:", error);
+      setDownloadingButton(null);
+    }
   };
 
   // Now that all the setup is done, let's render the table!
@@ -737,14 +753,24 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           <Button
             onClick={() => handleDownload('csv')}
             className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2 ml-2"
+            disabled={downloadingButton !== null}
           >
-            Download (CSV)
+            {downloadingButton === 'csv-all' ? (
+              <span className="text-red-600">Downloading...</span>
+            ) : (
+              'Download (CSV)'
+            )}
           </Button>
           <Button
             onClick={() => handleDownload('txt')}
             className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2"
+            disabled={downloadingButton !== null}
           >
-            Download (TXT)
+            {downloadingButton === 'txt-all' ? (
+              <span className="text-red-600">Downloading...</span>
+            ) : (
+              'Download (TXT)'
+            )}
           </Button>
 
           {/* These next two only show up if rows are selected */}
@@ -753,14 +779,24 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
               <Button
                 onClick={() => handleDownload('csv', true)}
                 className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2"
+                disabled={downloadingButton !== null}
               >
-                Download Selected (CSV)
+                {downloadingButton === 'csv-selected' ? (
+                  <span className="text-red-600">Downloading...</span>
+                ) : (
+                  'Download Selected (CSV)'
+                )}
               </Button>
               <Button
                 onClick={() => handleDownload('txt', true)}
                 className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2"
+                disabled={downloadingButton !== null}
               >
-                Download Selected (TXT)
+                {downloadingButton === 'txt-selected' ? (
+                  <span className="text-red-600">Downloading...</span>
+                ) : (
+                  'Download Selected (TXT)'
+                )}
               </Button>
             </>
           )}

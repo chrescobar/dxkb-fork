@@ -187,14 +187,6 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
   const tablist = Object.keys(tabsForType);
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const updateSelectedIds = (
-    updater: (prev: string[]) => string[]
-  ) => {
-    setSelectedIds((prev) => {
-      const next = updater(prev);
-      return Array.from(new Set(next)); // prevent duplicates
-    });
-  };
 //  const [selectedRowMap, setSelectedRowMap] = useState<Record<string, any>>({});
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [pageIndex, setPageIndex] = useState(0);
@@ -212,9 +204,6 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
     setTotalItems(0);
   }
 
-  useEffect(() => {
-    console.log("selectedIds:", selectedIds);
-  }, [selectedIds]);
 
   // Main return: hand off rendering to WithGenomePanel which provides activeTab & setter
   return (

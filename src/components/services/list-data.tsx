@@ -236,8 +236,6 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   }
 
   const handleRowSelectionChange = (newSelection: Record<string, boolean>) => {
-    console.log("RAW SELECTION:", newSelection);
-
     setRowSelection(newSelection);
     
     // Clear all pages selection when individual rows are selected/deselected
@@ -245,28 +243,8 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       setIsAllPagesSelected(false);
     }
 
-    const idFieldMap: Record<string, string> = {
-      genome: "genome_id",
-      genome_sequence: "sequence_id",
-      genome_feature: "patric_id",
-      strain: "strain",
-      epitope: "epitope_id",
-      protein_structure: "pdb_id",
-      taxonomy: "taxon_id",
-      experiment: "exp_id",
-      bioset: "bioset_id",
-    };
-
-    const idField = idFieldMap[resource] ?? "id";
-
-    const rows = pageData ?? [];
-
     const selectedIds = Object.keys(newSelection)
       .filter((id) => newSelection[id]);
-
-    console.log("NEW SELECTION STATE:", newSelection);
-
-    console.log("COMPUTED IDS:", selectedIds);
 
     // 🚨 IMPORTANT: this is the ONLY thing parent should receive
     onSelectionChange?.(selectedIds);
@@ -279,7 +257,6 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     if (selected) {
       // When selecting all pages, notify parent with all item IDs
       // For now, we'll just set the flag - actual implementation would need to fetch all IDs
-      console.log(`Selecting all ${totalItems} items across all pages`);
     } else {
       // When deselecting all pages, clear selection
       setRowSelection({});
@@ -295,7 +272,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     setPageIndex(newPage);
   };
 
-  async function handleDownloadAll(format: 'csv' | 'txt', visibleColumns: string[] | null) {
+  async function handleDownloadAll(format: 'csv' | 'txt', visibleColumns: string[] | null): Promise<void> {
     if (!totalItems) {
       console.warn('No totalItems available for download');
       return;
@@ -371,6 +348,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     } catch (err) {
       console.error('Download all failed:', err);
       alert('Failed to download all results. See console for details.');
+      throw err; // Re-throw to allow the DataTable to handle the error
     }
   }
 

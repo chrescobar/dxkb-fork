@@ -119,13 +119,15 @@ export function SearchBar({
             onChange={(e) => setInputValue(e.target.value)}
           />
           {showIcon && (
-            <Search
-              className="absolute top-1/2 left-3 -translate-y-1/2 transform text-primary pointer-events-none"
-              size={18}
-            />
+            <button
+              type="submit"
+              className="absolute top-1/2 left-3 -translate-y-1/2 transform text-primary hover:text-primary/80 transition-colors cursor-pointer"
+              aria-label="Search"
+            >
+              <Search size={18} />
+            </button>
           )}
         </div>
-        <button type="submit" className="sr-only">Search</button>
       </div>
     </form>
   );

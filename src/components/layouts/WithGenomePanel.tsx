@@ -14,12 +14,16 @@ interface WithGenomePanelProps {
 
   selectedIds: string[];
   setSelectedIds: (ids: string[]) => void;
+  isAllPagesSelected?: boolean;
+  totalItems?: number;
 }
 
 export function WithGenomePanel({
   children,
   tabs,
   selectedIds,
+  isAllPagesSelected,
+  totalItems,
 }: WithGenomePanelProps) {
   
   const initialTab = tabs[0];
@@ -88,7 +92,9 @@ export function WithGenomePanel({
               activeTab={activeTab}
               selectedIds={selectedIds}
               selectedRow={selectedRow}  
-              isLoading={isLoading}      
+              isLoading={isLoading}
+              isAllPagesSelected={isAllPagesSelected}
+              totalItems={totalItems}
             />
           </div>
         )}

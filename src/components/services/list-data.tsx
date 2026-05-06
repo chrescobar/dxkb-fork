@@ -34,9 +34,12 @@ interface ListDataProps {
   pageIndex?: number;
   onPageChange?: (page: number) => void;
   selectedIds?: string[];
+  isAllPagesSelected?: boolean;
+  onAllPagesSelectionChange?: (selected: boolean) => void;
+  onTotalItemsChange?: (total: number) => void;
 }
 
-export function ListData({ q, resource, onSelectionChange, rowSelection: controlledRowSelection, onRowSelectionChange, pageIndex: controlledPageIndex, onPageChange, selectedIds }: ListDataProps) {
+export function ListData({ q, resource, onSelectionChange, rowSelection: controlledRowSelection, onRowSelectionChange, pageIndex: controlledPageIndex, onPageChange, selectedIds, isAllPagesSelected: controlledIsAllPagesSelected, onAllPagesSelectionChange, onTotalItemsChange }: ListDataProps) {
   const [fields, setFields] = useState<ColumnInfo[]>([]);
   
   // Use controlled rowSelection if provided, otherwise use internal state
@@ -44,7 +47,9 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const rowSelection = controlledRowSelection !== undefined ? controlledRowSelection : internalRowSelection;
   const setRowSelection = onRowSelectionChange || setInternalRowSelection;
   const [filter, setFilter] = useState('');
-  const [isAllPagesSelected, setIsAllPagesSelected] = useState(false);
+  const [internalIsAllPagesSelected, setInternalIsAllPagesSelected] = useState(false);
+  const isAllPagesSelected = controlledIsAllPagesSelected !== undefined ? controlledIsAllPagesSelected : internalIsAllPagesSelected;
+  const setIsAllPagesSelected = onAllPagesSelectionChange || setInternalIsAllPagesSelected;
 
   useEffect(() => {
     (async () => {
@@ -172,6 +177,13 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   // Compute totalItems safely
   const totalItems = metaData?.response?.numFound ?? 0;
 
+  // Notify parent when totalItems changes
+  useEffect(() => {
+    if (onTotalItemsChange && totalItems !== undefined) {
+      onTotalItemsChange(totalItems);
+    }
+  }, [totalItems, onTotalItemsChange]);
+
   // Fetch current page of data
   const { data: pageData, isLoading: dataLoading, error: dataError, isFetching: dataFetching } = useQuery({
     queryKey: [
@@ -262,6 +274,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
 
   const handleAllPagesSelectionChange = (selected: boolean) => {
     setIsAllPagesSelected(selected);
+    onAllPagesSelectionChange?.(selected);
     
     if (selected) {
       // When selecting all pages, notify parent with all item IDs

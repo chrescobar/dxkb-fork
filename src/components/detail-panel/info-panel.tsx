@@ -34,7 +34,9 @@ export type InfoPanelProps =
       selectedIds: string[];
       activeTab: string;
       selectedRow?: Record<string, unknown> | null;
-      isLoading?: boolean; 
+      isLoading?: boolean;
+      isAllPagesSelected?: boolean;
+      totalItems?: number;
     };
 
 
@@ -327,7 +329,11 @@ export function InfoPanel(props: InfoPanelProps) {
           })}
         </>
       ) : (
-        <p className="px-4 py-2 text-xs">{selectedIds.length} rows selected</p>
+        <p className="px-4 py-2 text-xs">
+          {props.isAllPagesSelected && props.totalItems
+            ? `All ${props.totalItems.toLocaleString()} rows selected`
+            : `${selectedIds.length} rows selected`}
+        </p>
       )}
     </DetailPanel>
   );

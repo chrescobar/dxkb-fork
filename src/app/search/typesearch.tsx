@@ -28,6 +28,10 @@ interface TabsRendererProps {
   setPageIndex: (page: number) => void;
   setSelectedIds: React.Dispatch<React.SetStateAction<string[]>>;
   selectedIds: string[];
+  isAllPagesSelected: boolean;
+  setIsAllPagesSelected: (selected: boolean) => void;
+  totalItems: number;
+  setTotalItems: (total: number) => void;
 //  setSelectedRows: (rows: unknown[]) => void;
 }
 
@@ -46,7 +50,11 @@ function TabsRenderer({
   pageIndex,
   setPageIndex,
   setSelectedIds,
-  selectedIds
+  selectedIds,
+  isAllPagesSelected,
+  setIsAllPagesSelected,
+  totalItems,
+  setTotalItems
 //  setSelectedRows,
 }: TabsRendererProps) {
   // Whenever urlType (searchtype) changes, set the active tab.
@@ -118,6 +126,9 @@ function TabsRenderer({
             onRowSelectionChange={setRowSelection}
             pageIndex={pageIndex}
             onPageChange={setPageIndex}
+            isAllPagesSelected={isAllPagesSelected}
+            onAllPagesSelectionChange={setIsAllPagesSelected}
+            onTotalItemsChange={setTotalItems}
           />
         </TabsContent>
       ))}
@@ -188,6 +199,8 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [pageIndex, setPageIndex] = useState(0);
   const [prevUrlKey, setPrevUrlKey] = useState(`${urlType}|${urlQ}`);
+  const [isAllPagesSelected, setIsAllPagesSelected] = useState(false);
+  const [totalItems, setTotalItems] = useState(0);
 
   const urlKey = `${urlType}|${urlQ}`;
   if (urlKey !== prevUrlKey) {
@@ -195,6 +208,8 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
     setRowSelection({});
     setSelectedIds([]);
     setPageIndex(0);
+    setIsAllPagesSelected(false);
+    setTotalItems(0);
   }
 
   useEffect(() => {
@@ -206,7 +221,9 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
     <WithGenomePanel
       tabs={tablist}
       selectedIds={selectedIds}
-      setSelectedIds={setSelectedIds}    
+      setSelectedIds={setSelectedIds}
+      isAllPagesSelected={isAllPagesSelected}
+      totalItems={totalItems}
     >
       {({ activeTab, setActiveTab }) => (
         <TabsRenderer
@@ -221,7 +238,11 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
           pageIndex={pageIndex}
           setPageIndex={setPageIndex}
           setSelectedIds={setSelectedIds}
-          selectedIds={selectedIds} 
+          selectedIds={selectedIds}
+          isAllPagesSelected={isAllPagesSelected}
+          setIsAllPagesSelected={setIsAllPagesSelected}
+          totalItems={totalItems}
+          setTotalItems={setTotalItems}
        />
       )}
     </WithGenomePanel>

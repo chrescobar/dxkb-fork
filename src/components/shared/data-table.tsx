@@ -676,24 +676,29 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
         </div>
       )}
       {isAllPagesSelected && (
-        <div className="w-full bg-blue-100 border border-blue-300 px-4 py-2 mb-2 flex items-center justify-between">
-          <span className="text-blue-800 font-semibold">
-            All {totalItems} results are selected across all pages.
-          </span>
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              onAllPagesSelectionChange?.(false);
-              table.toggleAllRowsSelected(false);
-              if (onRowSelectionChange) {
-                onRowSelectionChange({});
-              }
-            }}
-            className="text-blue-700 underline hover:text-blue-900 cursor-pointer"
-          >
-            Clear selection
-          </button>
+        <div className="w-full bg-blue-100 border border-blue-300 px-4 py-2 mb-2">
+          <div className="flex items-center justify-between">
+            <span className="text-blue-800 font-semibold">
+              All {totalItems} results are selected across all pages.
+            </span>
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                onAllPagesSelectionChange?.(false);
+                table.toggleAllRowsSelected(false);
+                if (onRowSelectionChange) {
+                  onRowSelectionChange({});
+                }
+              }}
+              className="text-blue-700 underline hover:text-blue-900 cursor-pointer"
+            >
+              Clear selection
+            </button>
+          </div>
+          <div className="text-xs text-blue-700 mt-1">
+            Note: Checkboxes on other pages may not appear checked for performance reasons, but all rows are selected.
+          </div>
         </div>
       )}
       <div className="w-[100%] flex justify-end mb-2 z-50 px-5" ref={controlsRef}>

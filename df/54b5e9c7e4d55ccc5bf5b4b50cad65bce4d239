@@ -1,0 +1,31 @@
+src/components/organisms/pubmed-feed/pubmed-feed.tsx
+  s_20ac8a21b77dcd::t_a4f508a1b1f135 87-89,91-94,99,103,108-109,111-115,117,119
+  s_20ac8a21b77dcd::t_74a4687dce979c 101
+  s_20ac8a21b77dcd::t_86c362b55ba3cd 1
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  s_20ac8a21b77dcd::t_8ba3550d2157c3 50
+  s_20ac8a21b77dcd::t_45e897e3918574 255
+  s_20ac8a21b77dcd::t_ebb539ad358ae4 39,53-56
+src/app/organisms/bacteria/views/overview.tsx
+  s_20ac8a21b77dcd::t_ae87899ff2cc63 62
+src/components/organisms/external-tools/external-tools.tsx
+  s_20ac8a21b77dcd::t_9603cb53868c25 1
+  s_20ac8a21b77dcd::t_bb66f9db089403 34
+  s_20ac8a21b77dcd::t_08a0261c0f7c96 32,35,39,44,46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "df54b5e9c7e4d55ccc5bf5b4b50cad65bce4d239",
+  "prompts": {},
+  "sessions": {
+    "s_20ac8a21b77dcd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7fb5b48f-0640-478a-acaf-c82cc504dec2",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

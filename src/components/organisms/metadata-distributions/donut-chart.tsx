@@ -36,7 +36,7 @@ const chartColors = [
 ];
 
 const numberFormatter = new Intl.NumberFormat("en-US");
-const chartWidth = 400;
+const chartWidth = 460;
 const chartHeight = 240;
 const chartCenterX = chartWidth / 2;
 const chartCenterY = chartHeight / 2;
@@ -47,13 +47,13 @@ const labelTop = 20;
 const labelBottom = chartHeight - 20;
 const labelMinGap = 42;
 const naturalYScale = 85;
-const labelLineMaxChars = 20;
+const labelLineMaxChars = 16;
 const labelMaxLines = 2;
 const labelLineHeight = 17;
-const rightLabelX = 320;
-const rightSwatchX = 316;
-const leftLabelX = 100;
-const leftSwatchX = 104;
+const rightLabelX = 330;
+const rightSwatchX = 326;
+const leftLabelX = 130;
+const leftSwatchX = 134;
 const svgPrecision = 1000;
 
 interface AnnotationDatum {
@@ -252,7 +252,7 @@ export function DonutChart({ title, data }: DonutChartProps) {
               viewBox={`0 0 ${chartWidth} ${chartHeight}`}
               role="img"
               aria-label={`${title} distribution`}
-              className="mx-auto h-[15rem] w-full max-w-[25rem]"
+              className="mx-auto w-full max-w-[25rem]"
             >
               <Group top={chartCenterY} left={chartCenterX}>
                 <Pie<DonutDatum>

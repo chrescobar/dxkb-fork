@@ -59,7 +59,7 @@ export function OverviewView() {
         <DataSummaryBoundary />
       </Suspense>
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)] lg:items-start">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)] lg:items-start">
         <div className="flex min-w-0 flex-col gap-8">
           <Suspense fallback={<GeneraGridSkeleton />}>
             <GeneraGridBoundary />

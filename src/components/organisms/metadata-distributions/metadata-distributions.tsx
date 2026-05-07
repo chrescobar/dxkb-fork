@@ -22,14 +22,14 @@ export async function MetadataDistributions({
   return (
     <section className="flex flex-col gap-3">
       <div>
-        <h2 className="text-xl font-semibold tracking-normal">
+        <h2 className="text-2xl font-semibold tracking-normal">
           Metadata Distributions
         </h2>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-base">
           Top metadata buckets for available genome records.
         </p>
       </div>
-      <div className="grid gap-3 xl:grid-cols-2 2xl:grid-cols-3">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-3">
         {fields.map((field) => (
           <DonutChart
             key={field}

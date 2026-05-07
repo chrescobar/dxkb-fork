@@ -56,7 +56,7 @@ export function LandingShellClient({
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-none gap-3 px-2 sm:px-3 lg:px-4">
+    <div className="mx-auto flex w-full max-w-none flex-row gap-3 px-2 sm:px-3 lg:px-4">
       <LandingNav
         items={navItems}
         activeView={serverActiveView}
@@ -65,11 +65,13 @@ export function LandingShellClient({
         onCollapseToggle={() => setNavCollapsed((current) => !current)}
       />
       <section className="min-w-0 flex-1">
-        <div className="bg-card mb-6 rounded-lg border p-5 shadow-sm">
-          <p className="text-muted-foreground text-sm font-medium">Organisms</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-normal">
-            {displayName}
-          </h1>
+        <div className="bg-card mb-4 flex items-center justify-between rounded-lg border px-5 py-3 shadow-sm">
+          <div>
+            <p className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase">
+              Organisms
+            </p>
+            <h1 className="text-2xl font-bold tracking-tight">{displayName}</h1>
+          </div>
         </div>
         {children}
       </section>

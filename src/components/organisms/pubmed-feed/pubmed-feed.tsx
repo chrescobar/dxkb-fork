@@ -1,13 +1,8 @@
+import { ArrowRight, BookOpen } from "lucide-react";
 import { headers } from "next/headers";
 import Link from "next/link";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import type { OrganismPubMedArticle } from "@/lib/services/organisms/types";
 import {
   organismFetchCacheInit,
@@ -67,39 +62,51 @@ export async function PubMedFeed({ term, limit = 5 }: PubMedFeedProps) {
   const articles = await fetchArticles(term, limit);
 
   return (
-    <Card className="rounded-lg">
-      <CardHeader>
-        <CardTitle>Recent PubMed</CardTitle>
-        <CardDescription>Latest articles for {term}.</CardDescription>
-      </CardHeader>
-      <CardContent>
+    <section className="flex flex-col gap-3">
+      <div>
+        <h2 className="text-lg font-semibold tracking-normal">Recent PubMed</h2>
+        <p className="text-muted-foreground text-sm">Latest articles for {term}.</p>
+      </div>
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-2">
         {articles.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No recent articles were returned.</p>
+          <p className="text-muted-foreground text-xs">No recent articles were returned.</p>
         ) : (
-          <ul className="flex flex-col gap-4">
-            {articles.map((article) => (
-              <li key={article.pmid} className="border-b pb-4 last:border-b-0 last:pb-0">
-                <p className="text-xs font-medium text-muted-foreground">
-                  {[article.date, article.journal].filter(Boolean).join(" / ")}
-                </p>
+          articles.map((article) => {
+            const displayAuthors = article.authors.slice(0, 2).join(", ") + (article.authors.length > 2 ? " et al" : "");
+            const displayInfo = [article.date, article.journal, displayAuthors].filter(Boolean).join(" • ");
+            return (
+              <Card key={article.pmid} className="gap-0 rounded-md py-0 shadow-none">
                 <Link
                   href={article.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-1 block text-sm font-medium leading-5 text-primary hover:underline"
+                  className="hover:bg-muted/40 flex min-h-12 items-center gap-2.5 px-2.5 py-1.5 transition-colors"
                 >
-                  {article.title}
+                  <div className="bg-primary/10 text-primary flex h-7 w-7 shrink-0 items-center justify-center rounded-full">
+                    <BookOpen size={14} />
+                  </div>
+                  <div className="min-w-0 flex-1 space-y-0.5">
+                    <h3
+                      className="truncate text-sm leading-tight font-semibold"
+                      title={article.title}
+                    >
+                      {article.title}
+                    </h3>
+                    <p className="text-muted-foreground truncate text-[11px] leading-tight" title={displayInfo}>
+                      {displayInfo}
+                    </p>
+                  </div>
+                  <ArrowRight
+                    size={14}
+                    className="text-muted-foreground/50 shrink-0"
+                    aria-hidden="true"
+                  />
                 </Link>
-                {article.authors.length > 0 && (
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {article.authors.join(", ")}
-                  </p>
-                )}
-              </li>
-            ))}
-          </ul>
+              </Card>
+            );
+          })
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }

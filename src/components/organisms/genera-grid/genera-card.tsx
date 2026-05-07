@@ -18,35 +18,32 @@ export function GeneraCard({ name, count, taxonId }: GeneraCardProps) {
   const displayName = facetDisplayLabel(name);
 
   return (
-    <Card className="gap-0 rounded-md py-0">
+    <Card className="gap-0 rounded-md py-0 shadow-none">
       <Link
         href={legacyHref}
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`View ${displayName} genomes`}
-        className="hover:bg-muted/40 flex min-h-16 items-center gap-3 px-3 py-2.5 transition-colors"
+        className="hover:bg-muted/40 flex min-h-12 items-center gap-2.5 px-2.5 py-1.5 transition-colors"
       >
         <Avatar
-          size={36}
+          size={28}
           name={displayName}
           variant="beam"
           colors={["#264653", "#2a9d8f", "#e9c46a", "#f4a261", "#e76f51"]}
         />
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 space-y-0.5">
           <h3
-            className="truncate text-sm leading-snug font-medium"
+            className="truncate text-sm leading-tight font-semibold"
             title={displayName}
           >
             {displayName}
           </h3>
-          <p className="text-muted-foreground text-xs">
-            {numberFormatter.format(count)} genomes
+          <p className="text-muted-foreground text-[11px] leading-tight">
+            {numberFormatter.format(count)}
           </p>
         </div>
-        <span className="text-primary inline-flex shrink-0 items-center gap-1 text-xs font-medium">
-          View
-          <ArrowRight size={16} aria-hidden="true" />
-        </span>
+        <ArrowRight size={14} className="text-muted-foreground/50 shrink-0" aria-hidden="true" />
       </Link>
     </Card>
   );

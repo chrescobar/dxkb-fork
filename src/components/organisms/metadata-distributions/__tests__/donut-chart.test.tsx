@@ -1,4 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { hydrateRoot } from "react-dom/client";
+import { renderToString } from "react-dom/server";
 
 import { DonutChart } from "../donut-chart";
 
@@ -43,6 +45,49 @@ describe("DonutChart", () => {
 
     expect(screen.getByText("Unspecified")).toBeInTheDocument();
     expect(screen.getByLabelText("Unspecified: 76,420")).toBeInTheDocument();
+  });
+
+  it("server-renders annotation titles as text", () => {
+    const markup = renderToString(
+      <DonutChart
+        title="Genus"
+        data={[{ label: "Salmonella", value: 48185 }]}
+      />,
+    );
+
+    expect(markup).toContain("<title>Salmonella: 48,185</title>");
+  });
+
+  it("hydrates long wrapped labels without changing server text nodes", async () => {
+    const data = [{ label: "Human, Homo sapiens", value: 12 }];
+    const originalDocument = globalThis.document;
+
+    vi.stubGlobal("document", undefined);
+    let markup: string;
+    try {
+      markup = renderToString(<DonutChart title="Host" data={data} />);
+    } finally {
+      vi.stubGlobal("document", originalDocument);
+    }
+
+    const container = originalDocument.createElement("div");
+    container.innerHTML = markup;
+
+    vi.mocked(console.error).mockClear();
+    const root = hydrateRoot(
+      container,
+      <DonutChart title="Host" data={data} />,
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    const hydrationErrors = vi
+      .mocked(console.error)
+      .mock.calls.flat()
+      .filter((message) => String(message).includes("Hydration failed"));
+
+    expect(hydrationErrors).toHaveLength(0);
+    root.unmount();
   });
 
   it("renders an empty state", () => {

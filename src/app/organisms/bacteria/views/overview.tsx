@@ -46,7 +46,7 @@ async function MetadataDistributionsBoundary() {
 
 async function PubMedFeedBoundary() {
   try {
-    return await PubMedFeed({ term: config.pubmedTerm, limit: 5 });
+    return await PubMedFeed({ term: config.pubmedTerm, limit: 4 });
   } catch (error) {
     return <SectionError message={errorMessage(error)} />;
   }
@@ -54,28 +54,29 @@ async function PubMedFeedBoundary() {
 
 export function OverviewView() {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       <Suspense fallback={<DataSummarySkeleton />}>
         <DataSummaryBoundary />
       </Suspense>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(16rem,18rem)]">
-        <div className="min-w-0">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)] lg:items-start">
+        <div className="flex min-w-0 flex-col gap-8">
           <Suspense fallback={<GeneraGridSkeleton />}>
             <GeneraGridBoundary />
           </Suspense>
+
+          <Suspense fallback={<MetadataDistributionsSkeleton />}>
+            <MetadataDistributionsBoundary />
+          </Suspense>
         </div>
-        <aside className="flex max-w-sm min-w-0 flex-col gap-4 xl:max-w-none">
-          <ExternalTools resources={config.externalTools} />
+
+        <aside className="flex min-w-0 flex-col gap-8">
           <Suspense fallback={<PubMedFeedSkeleton />}>
             <PubMedFeedBoundary />
           </Suspense>
+          <ExternalTools resources={config.externalTools} />
         </aside>
       </div>
-
-      <Suspense fallback={<MetadataDistributionsSkeleton />}>
-        <MetadataDistributionsBoundary />
-      </Suspense>
     </div>
   );
 }

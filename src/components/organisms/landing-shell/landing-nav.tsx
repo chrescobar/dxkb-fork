@@ -28,7 +28,7 @@ export function LandingNav({
     <nav
       aria-label="Organism views"
       className={cn(
-        "bg-card text-card-foreground sticky top-4 h-fit shrink-0 rounded-lg border shadow-sm transition-[width] duration-200",
+        "bg-card text-card-foreground h-fit shrink-0 rounded-lg border shadow-sm transition-[width] duration-200 sticky top-4",
         collapsed ? "w-14" : "w-56",
       )}
     >

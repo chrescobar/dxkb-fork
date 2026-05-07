@@ -46,7 +46,7 @@ export async function DataSummary({ taxonId }: { taxonId: number }) {
   const summary = await fetchOrganismSummary(taxonId);
 
   return (
-    <div className="grid grid-cols-[repeat(auto-fit,minmax(9.5rem,1fr))] gap-2">
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(8rem,1fr))] gap-1.5">
       {summaryMetrics.map((metric) => {
         const formattedValue = formatCount(summary[metric.key]);
 
@@ -54,14 +54,14 @@ export async function DataSummary({ taxonId }: { taxonId: number }) {
           <Card
             key={metric.key}
             data-testid={`organism-kpi-${metric.key}`}
-            className="min-w-0 gap-0.5 rounded-md px-3 py-2.5"
+            className="min-w-0 gap-0 rounded-md px-2.5 py-1.5 shadow-none"
             title={metric.description}
           >
-            <p className="text-muted-foreground text-xs font-medium">
+            <p className="text-muted-foreground text-[11px] font-bold uppercase tracking-wider">
               {metric.label}
             </p>
             <p
-              className="text-lg leading-tight font-semibold tracking-normal whitespace-nowrap"
+              className="text-lg leading-tight font-bold tracking-tight whitespace-nowrap"
               title={formattedValue}
             >
               {formattedValue}

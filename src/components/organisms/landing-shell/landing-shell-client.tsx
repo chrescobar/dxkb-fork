@@ -4,7 +4,10 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 
 import { LandingNav } from "./landing-nav";
-import type { OrganismLandingNavItem, OrganismViewKey } from "@/components/organisms/types";
+import type {
+  OrganismLandingNavItem,
+  OrganismViewKey,
+} from "@/components/organisms/types";
 
 const collapseStorageKey = "dxkb.organismLanding.navCollapsed";
 
@@ -30,7 +33,9 @@ export function LandingShellClient({
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
-      setNavCollapsed(window.localStorage.getItem(collapseStorageKey) === "true");
+      setNavCollapsed(
+        window.localStorage.getItem(collapseStorageKey) === "true",
+      );
     });
     return () => window.cancelAnimationFrame(frame);
   }, []);
@@ -51,7 +56,7 @@ export function LandingShellClient({
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[1600px] gap-4 px-4">
+    <div className="mx-auto flex w-full max-w-none gap-3 px-2 sm:px-3 lg:px-4">
       <LandingNav
         items={navItems}
         activeView={serverActiveView}
@@ -60,8 +65,8 @@ export function LandingShellClient({
         onCollapseToggle={() => setNavCollapsed((current) => !current)}
       />
       <section className="min-w-0 flex-1">
-        <div className="mb-6 rounded-lg border bg-card p-5 shadow-sm">
-          <p className="text-sm font-medium text-muted-foreground">Organisms</p>
+        <div className="bg-card mb-6 rounded-lg border p-5 shadow-sm">
+          <p className="text-muted-foreground text-sm font-medium">Organisms</p>
           <h1 className="mt-1 text-3xl font-semibold tracking-normal">
             {displayName}
           </h1>

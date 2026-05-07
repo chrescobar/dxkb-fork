@@ -2,9 +2,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function DataSummarySkeleton() {
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(9.5rem,1fr))] gap-2">
       {Array.from({ length: 7 }).map((_, index) => (
-        <Skeleton key={index} className="h-28 rounded-lg" />
+        <Skeleton key={index} className="h-16 rounded-md" />
       ))}
     </div>
   );

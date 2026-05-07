@@ -2,7 +2,10 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import type { OrganismLandingNavItem, OrganismViewKey } from "@/components/organisms/types";
+import type {
+  OrganismLandingNavItem,
+  OrganismViewKey,
+} from "@/components/organisms/types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -25,13 +28,13 @@ export function LandingNav({
     <nav
       aria-label="Organism views"
       className={cn(
-        "sticky top-4 h-fit shrink-0 rounded-lg border bg-card text-card-foreground shadow-sm transition-[width] duration-200",
-        collapsed ? "w-[4.5rem]" : "w-64",
+        "bg-card text-card-foreground sticky top-4 h-fit shrink-0 rounded-lg border shadow-sm transition-[width] duration-200",
+        collapsed ? "w-14" : "w-56",
       )}
     >
-      <div className="flex items-center justify-between gap-2 p-3">
+      <div className="flex items-center justify-between gap-2 p-2.5">
         {!collapsed && (
-          <h2 className="truncate text-sm font-semibold text-muted-foreground">
+          <h2 className="text-muted-foreground truncate text-sm font-semibold">
             Views
           </h2>
         )}
@@ -39,14 +42,18 @@ export function LandingNav({
           type="button"
           variant="ghost"
           size="icon-sm"
-          aria-label={collapsed ? "Expand organism navigation" : "Collapse organism navigation"}
+          aria-label={
+            collapsed
+              ? "Expand organism navigation"
+              : "Collapse organism navigation"
+          }
           onClick={onCollapseToggle}
           className={collapsed ? "mx-auto" : "ml-auto"}
         >
           {collapsed ? <ChevronRight /> : <ChevronLeft />}
         </Button>
       </div>
-      <div className="flex flex-col gap-1 p-3 pt-0">
+      <div className="flex flex-col gap-1 p-2.5 pt-0">
         {items.map((item) => {
           const isActive = item.key === activeView;
           return (

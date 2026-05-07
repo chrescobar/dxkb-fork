@@ -59,13 +59,13 @@ export function OverviewView() {
         <DataSummaryBoundary />
       </Suspense>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(16rem,18rem)]">
         <div className="min-w-0">
           <Suspense fallback={<GeneraGridSkeleton />}>
             <GeneraGridBoundary />
           </Suspense>
         </div>
-        <aside className="flex min-w-0 flex-col gap-4">
+        <aside className="flex max-w-sm min-w-0 flex-col gap-4 xl:max-w-none">
           <ExternalTools resources={config.externalTools} />
           <Suspense fallback={<PubMedFeedSkeleton />}>
             <PubMedFeedBoundary />

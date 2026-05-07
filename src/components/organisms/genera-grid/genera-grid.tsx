@@ -31,11 +31,11 @@ export async function GeneraGrid({ taxonId, limit = 24 }: GeneraGridProps) {
     <section className="flex flex-col gap-3">
       <div>
         <h2 className="text-xl font-semibold tracking-normal">Top Genera</h2>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Ranked by available genome records.
         </p>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-2">
         {genera.map((genus) => (
           <GeneraCard
             key={genus.name}

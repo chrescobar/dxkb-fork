@@ -9,9 +9,7 @@ export default function BacteriaLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
-      <main className="flex grow bg-muted/30 py-8">
-        {children}
-      </main>
+      <main className="bg-muted/30 flex grow py-4">{children}</main>
       <Footer />
     </div>
   );

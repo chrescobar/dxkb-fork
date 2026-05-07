@@ -18,13 +18,17 @@ describe("DonutChart", () => {
       />,
     );
 
-    expect(screen.getByRole("img", { name: "Genus distribution" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: "Genus distribution" }),
+    ).toBeInTheDocument();
     expect(screen.getByText("Others")).toBeInTheDocument();
     expect(screen.getByText("5")).toBeInTheDocument();
   });
 
   it("shows tooltip content on hover", () => {
-    render(<DonutChart title="Host" data={[{ label: "Homo sapiens", value: 12 }]} />);
+    render(
+      <DonutChart title="Host" data={[{ label: "Homo sapiens", value: 12 }]} />,
+    );
 
     fireEvent.mouseMove(screen.getByLabelText("Homo sapiens: 12"), {
       clientX: 10,
@@ -34,9 +38,18 @@ describe("DonutChart", () => {
     expect(screen.getByRole("status")).toHaveTextContent("Homo sapiens: 12");
   });
 
+  it("renders blank labels as Unspecified", () => {
+    render(<DonutChart title="Host" data={[{ label: "", value: 76420 }]} />);
+
+    expect(screen.getByText("Unspecified")).toBeInTheDocument();
+    expect(screen.getByLabelText("Unspecified: 76,420")).toBeInTheDocument();
+  });
+
   it("renders an empty state", () => {
     render(<DonutChart title="Country" data={[]} />);
 
-    expect(screen.getByText("No distribution data was returned.")).toBeInTheDocument();
+    expect(
+      screen.getByText("No distribution data was returned."),
+    ).toBeInTheDocument();
   });
 });

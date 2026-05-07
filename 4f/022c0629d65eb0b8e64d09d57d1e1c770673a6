@@ -1,0 +1,112 @@
+src/components/organisms/data-summary/data-summary.tsx
+  s_c12c1077d792d7::t_5ae58d697db2e3 64
+  s_c12c1077d792d7::t_a70c5efdc04d3b 60
+  s_b85f9cff117564::t_343257efe6a811 49,57
+package.json
+  s_70d5b66a423b92::t_48708783f97242 49
+src/components/organisms/metadata-distributions/__tests__/donut-chart.test.tsx
+  s_5fda65f0e456c3::t_9f07b7c3ee4f4b 52-55
+  s_5fda65f0e456c3::t_57acb12c83a83f 3,50-51,56-58
+src/components/organisms/metadata-distributions/metadata-distributions.tsx
+  s_c12c1077d792d7::t_24867b72d8548b 25,28
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  s_c12c1077d792d7::t_172abe9cf5f5a5 48
+  s_b85f9cff117564::t_d2150f42c55ce0 319
+  s_5fda65f0e456c3::t_cbb4e04c361fea 321
+  s_c12c1077d792d7::t_60634749996558 335,351
+  s_c12c1077d792d7::t_be3b4fcba5bd97 349
+  s_b85f9cff117564::t_38c1413cd677e2 40,45-47
+  s_c12c1077d792d7::t_b3dc4766d1d846 53-54
+  s_b85f9cff117564::t_79dd3fe7289da5 323,326,328-329
+  s_c12c1077d792d7::t_ce850aa41c8ffa 52
+  s_b85f9cff117564::t_0a4f36b700e47e 39,255
+  s_b85f9cff117564::t_ad477744b54105 43-44,49
+  s_5fda65f0e456c3::t_330b1e6e72aa61 235
+  s_6a4926f1485c39::t_d7e5264413eb98 143-184,193-196,213,215-216,219
+  s_c12c1077d792d7::t_fef3d50443514c 50
+  s_c12c1077d792d7::t_4dfa0dfb030f37 55-56
+  s_5fda65f0e456c3::t_ce3d0a0e10d031 299-302,313,353
+  s_b85f9cff117564::t_187428fe36d75a 317,324-325,327
+  s_b85f9cff117564::t_1756e4ab8ae58a 333
+  s_5fda65f0e456c3::t_db8e83ba648d8f 57,87-95,197,199-200,207-211
+  s_70d5b66a423b92::t_ca5f078b7b63e7 3,7,41-42,59-65,83-86,185-192,198,201-206,212,214,217-218,220-221,250,252,257,261-262,265-298,310-312,314-316,318,320,322,330,334,336,350,352,355-359
+src/components/organisms/genera-grid/genera-card.tsx
+  s_b85f9cff117564::t_4093f83dd48296 21,27,30,43,46
+  s_c12c1077d792d7::t_6b989738caba7e 35,37,42
+src/components/organisms/data-summary/data-summary-skeleton.tsx
+  s_b85f9cff117564::t_43f7a7da22e42b 5,7
+src/components/organisms/genera-grid/genera-grid-skeleton.tsx
+  s_b85f9cff117564::t_75e0fc529ab1d2 5,7
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_b85f9cff117564::t_2431d7e4afb896 68-69,71-74
+  s_c12c1077d792d7::t_dc9c76621f393d 59
+src/components/organisms/external-tools/external-tools.tsx
+  s_b85f9cff117564::t_a98ceea2d92ac8 13-14,16-17,19-21,23-36,39-41,43-56
+  s_c12c1077d792d7::t_ec104801aa3067 22
+  s_c12c1077d792d7::t_a6e69ea2f17a00 37-38,42
+  s_c12c1077d792d7::t_35caf60954afd4 15,18
+  s_b85f9cff117564::t_1ea13de6f10d86 1
+src/components/organisms/landing-shell/landing-nav.tsx
+  s_c12c1077d792d7::t_0854d82fc938ed 31
+src/components/organisms/pubmed-feed/pubmed-feed.tsx
+  s_b85f9cff117564::t_8d3141480ab8b0 65-66,69,74-78,83,85-87,89,91-94,96,98-103,105-107,109-110
+  s_c12c1077d792d7::t_dbee8e938352a0 70
+  s_c12c1077d792d7::t_9471ff1e8f1e5b 67-68
+  s_b85f9cff117564::t_36e76b3b21cb7b 72,97
+  s_c12c1077d792d7::t_f08f648226edd1 88,90,95
+  s_b85f9cff117564::t_1e9b8ba8234223 1,5
+src/app/organisms/bacteria/views/overview.tsx
+  s_b85f9cff117564::t_d4bd4d044ca869 72
+  s_b85f9cff117564::t_01577b7a14051d 49,57,67,70
+  s_c12c1077d792d7::t_950a583d8c1030 62
+src/components/organisms/genera-grid/genera-grid.tsx
+  s_c12c1077d792d7::t_8fcf35412c35dd 33-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "4f022c0629d65eb0b8e64d09d57d1e1c770673a6",
+  "prompts": {},
+  "sessions": {
+    "s_5fda65f0e456c3": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e0404-dfb5-7ff2-9e74-52a84d4c8bcf",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_6a4926f1485c39": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b3d000ac-f93c-4125-ae2b-ac55f3cb9626",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_70d5b66a423b92": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e03e3-6dd9-7ca1-a9d1-2784660bb1a1",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_b85f9cff117564": {
+      "agent_id": {
+        "tool": "gemini",
+        "id": "60327270-3838-4bcf-8f36-699ced54e093",
+        "model": "gemini-3-flash-preview"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_c12c1077d792d7": {
+      "agent_id": {
+        "tool": "gemini",
+        "id": "6166a909-deba-44f5-9082-7321c82c29fb",
+        "model": "gemini-3.1-flash-lite-preview"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

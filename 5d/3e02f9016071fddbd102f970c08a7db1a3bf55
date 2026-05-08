@@ -1,0 +1,24 @@
+.github/workflows/pnpm-e2e.yml
+  s_e316b4ae6cbbb1::t_184f203eb79bb2 30-31
+  s_e316b4ae6cbbb1::t_abe4364403b33e 16
+  s_e316b4ae6cbbb1::t_5a97dfb2824e78 18-23
+.github/workflows/sync-linux-snapshots.yml
+  s_e316b4ae6cbbb1::t_2aae2e10dc47be 2-66
+  ai_agent 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "5d3e02f9016071fddbd102f970c08a7db1a3bf55",
+  "prompts": {},
+  "sessions": {
+    "s_e316b4ae6cbbb1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cd930fd6-0d40-4243-b283-67ca4aaa9282",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

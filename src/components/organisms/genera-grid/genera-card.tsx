@@ -14,6 +14,8 @@ interface GeneraCardProps {
 
 export function GeneraCard({ name, href, count }: GeneraCardProps) {
   const displayName = facetDisplayLabel(name);
+  const hashParams = new URLSearchParams(new URL(href).hash.slice(1));
+  const viewTab = hashParams.get("view_tab") ?? "genomes";
 
   return (
     <Card className="gap-0 rounded-md py-0 shadow-none">
@@ -21,6 +23,7 @@ export function GeneraCard({ name, href, count }: GeneraCardProps) {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
+        aria-label={`View ${displayName} ${viewTab}`}
         className="hover:bg-muted/40 flex min-h-12 items-center gap-2.5 px-2.5 py-1.5 transition-colors"
       >
         <Avatar

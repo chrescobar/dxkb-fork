@@ -1,0 +1,47 @@
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  s_2857f077ec9a3c::t_1c8ccf73b50826 317-319,322-325
+src/components/organisms/landing-shell/__tests__/landing-shell.test.tsx
+  ai_agent 1-2,5-8,34-41,45-47,52-58,62-90
+e2e/fixtures/overrides/organisms/bacteria/pubmed-esummary.json
+  s_a448e86ceda7df::t_371338bd69b353 17-37
+src/components/organisms/metadata-distributions/__tests__/donut-chart.test.tsx
+  s_2857f077ec9a3c::t_804466307e78a1 63-87
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  ai_agent 4,33,37,46-48
+e2e/tests/organisms/bacteria.spec.ts
+  ai_agent 3
+src/app/api/e2e-mock/[...path]/route.ts
+  s_929d6ff2d64c99::t_d3c605ca139177 158
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "9b123c3652e9b2779c3ecf8e4b99df0d4779db8b",
+  "prompts": {},
+  "sessions": {
+    "s_2857f077ec9a3c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "531e0347-dd44-4272-ad40-a7f8ce6d646f",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_929d6ff2d64c99": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "78f3b363-84c9-44cd-8801-dd7ad5f1f8b5",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_a448e86ceda7df": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "29adbe95-775b-4605-9b76-18159d45c6fc",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

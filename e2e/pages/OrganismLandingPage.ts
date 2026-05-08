@@ -17,7 +17,7 @@ export class OrganismLandingPage {
   }
 
   getGenusCard(name: string): Locator {
-    return this.page.locator("article, [data-slot='card']").filter({ hasText: name }).first();
+    return this.page.getByRole("link", { name: `View ${name} genomes` });
   }
 
   expectDonut(title: string): Promise<void> {

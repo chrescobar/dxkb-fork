@@ -1,0 +1,9 @@
+e2e/tests/organisms/bacteria.spec.ts
+  ai_agent 37-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "b0778e2b44c8f265fa8e4730a4e49e877abe2deb",
+  "prompts": {}
+}

@@ -1,6 +1,6 @@
 import { test, expect, applyBackendMocks } from "../../mocks/backends";
 import { permissiveBackendOverrides, workspaceOverrides } from "../../fixtures/overrides";
-import { OrganismLandingPage } from "../../pages/OrganismLandingPage";
+import { OrganismLandingPage } from "../../pages/organism-landing-page";
 
 test.use({ storageState: { cookies: [], origins: [] } });
 

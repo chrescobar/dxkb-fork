@@ -27,6 +27,26 @@ describe("DonutChart", () => {
     expect(screen.getByText("5")).toBeInTheDocument();
   });
 
+  it("uses a collision-free label for the aggregate bucket", () => {
+    render(
+      <DonutChart
+        title="Genus"
+        data={[
+          { label: "Others", value: 10 },
+          { label: "A", value: 9 },
+          { label: "B", value: 8 },
+          { label: "C", value: 7 },
+          { label: "D", value: 6 },
+          { label: "E", value: 5 },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText("Others")).toBeInTheDocument();
+    expect(screen.getByText("Other values")).toBeInTheDocument();
+    expect(screen.getByText("5")).toBeInTheDocument();
+  });
+
   it("shows tooltip content on hover", () => {
     render(
       <DonutChart title="Host" data={[{ label: "Homo sapiens", value: 12 }]} />,
@@ -38,6 +58,31 @@ describe("DonutChart", () => {
     });
 
     expect(screen.getByRole("status")).toHaveTextContent("Homo sapiens: 12");
+  });
+
+  it("shows tooltip content on focus and positions it near the arc", () => {
+    render(
+      <DonutChart title="Host" data={[{ label: "Homo sapiens", value: 12 }]} />,
+    );
+
+    const arc = screen.getByLabelText("Homo sapiens: 12");
+    vi.spyOn(arc, "getBoundingClientRect").mockReturnValue({
+      left: 100,
+      top: 200,
+      right: 150,
+      bottom: 250,
+      width: 50,
+      height: 50,
+      x: 100,
+      y: 200,
+      toJSON: () => ({}),
+    } as DOMRect);
+
+    fireEvent.focus(arc);
+
+    const tooltip = screen.getByRole("status");
+    expect(tooltip).toHaveTextContent("Homo sapiens: 12");
+    expect(tooltip).toHaveStyle({ left: "125px", top: "225px" });
   });
 
   it("renders blank labels as Unspecified", () => {

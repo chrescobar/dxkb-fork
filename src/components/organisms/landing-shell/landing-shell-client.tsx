@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { LandingNav } from "./landing-nav";
 import type {
@@ -30,9 +30,11 @@ export function LandingShellClient({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [navCollapsed, setNavCollapsed] = useState(false);
+  const hasLoadedNavPreference = useRef(false);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
+      hasLoadedNavPreference.current = true;
       setNavCollapsed(
         window.localStorage.getItem(collapseStorageKey) === "true",
       );
@@ -41,6 +43,9 @@ export function LandingShellClient({
   }, []);
 
   useEffect(() => {
+    if (!hasLoadedNavPreference.current) {
+      return;
+    }
     window.localStorage.setItem(collapseStorageKey, String(navCollapsed));
   }, [navCollapsed]);
 

@@ -155,7 +155,7 @@ function facetFieldFromRequest(request: NextRequest): string | null {
     url.search,
     ...Array.from(url.searchParams.keys()),
     ...Array.from(url.searchParams.values()),
-  ].map((value) => decodeURIComponent(value));
+  ].map((value) => { try { return decodeURIComponent(value); } catch { return value; } });
 
   for (const candidate of candidates) {
     const match = candidate.match(/\(field,([^),=]+)\)/);

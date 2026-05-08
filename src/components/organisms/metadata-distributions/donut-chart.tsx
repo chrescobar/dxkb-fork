@@ -21,8 +21,12 @@ interface DonutDatum {
   value: number;
 }
 
+interface DonutChartDatum extends DonutDatum {
+  id: string;
+}
+
 interface DonutPieArcDatum {
-  data: DonutDatum;
+  data: DonutChartDatum;
   startAngle: number;
   endAngle: number;
 }
@@ -60,6 +64,8 @@ const rightSwatchX = 326;
 const leftLabelX = 130;
 const leftSwatchX = 134;
 const svgPrecision = 1000;
+const aggregateLabel = "Others";
+const fallbackAggregateLabel = "Other values";
 
 interface AnnotationDatum {
   arc: DonutPieArcDatum;
@@ -69,11 +75,26 @@ interface AnnotationDatum {
   subjectY: number;
 }
 
-function chartData(data: DonutDatum[]): DonutDatum[] {
+function uniqueAggregateLabel(labels: readonly string[]): string {
+  const existingLabels = new Set(labels);
+  if (!existingLabels.has(aggregateLabel)) return aggregateLabel;
+  if (!existingLabels.has(fallbackAggregateLabel))
+    return fallbackAggregateLabel;
+
+  let suffix = 2;
+  while (existingLabels.has(`${fallbackAggregateLabel} ${suffix}`)) {
+    suffix += 1;
+  }
+
+  return `${fallbackAggregateLabel} ${suffix}`;
+}
+
+function chartData(data: DonutDatum[]): DonutChartDatum[] {
   const positive = data
     .filter((datum) => datum.value > 0)
-    .map((datum) => ({
+    .map((datum, index) => ({
       ...datum,
+      id: `bucket-${index}`,
       label: facetDisplayLabel(datum.label),
     }));
   const top = positive.slice(0, 5);
@@ -81,7 +102,14 @@ function chartData(data: DonutDatum[]): DonutDatum[] {
     .slice(5)
     .reduce((sum, datum) => sum + datum.value, 0);
   return otherValue > 0
-    ? [...top, { label: "Others", value: otherValue }]
+    ? [
+        ...top,
+        {
+          id: "aggregate-other",
+          label: uniqueAggregateLabel(top.map((datum) => datum.label)),
+          value: otherValue,
+        },
+      ]
     : top;
 }
 
@@ -230,7 +258,7 @@ export function DonutChart({ title, data }: DonutChartProps) {
   const slices = chartData(data);
   const total = slices.reduce((sum, datum) => sum + datum.value, 0);
   const colorScale = scaleOrdinal<string, string>({
-    domain: slices.map((datum) => datum.label),
+    domain: slices.map((datum) => datum.id),
     range: chartColors,
   });
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
@@ -260,7 +288,7 @@ export function DonutChart({ title, data }: DonutChartProps) {
               className="mx-auto w-full max-w-[25rem]"
             >
               <Group top={chartCenterY} left={chartCenterX}>
-                <Pie<DonutDatum>
+                <Pie<DonutChartDatum>
                   data={slices}
                   pieValue={(datum) => datum.value}
                   outerRadius={outerRadius}
@@ -271,10 +299,10 @@ export function DonutChart({ title, data }: DonutChartProps) {
                     <>
                       {pie.arcs.map((arc) => (
                         <path
-                          key={arc.data.label}
+                          key={arc.data.id}
                           suppressHydrationWarning
                           d={pie.path(arc) ?? undefined}
-                          fill={colorScale(arc.data.label)}
+                          fill={colorScale(arc.data.id)}
                           stroke="var(--card)"
                           strokeWidth={2}
                           tabIndex={0}
@@ -286,13 +314,15 @@ export function DonutChart({ title, data }: DonutChartProps) {
                               tooltipTop: event.clientY,
                             })
                           }
-                          onFocus={() =>
+                          onFocus={(event) => {
+                            const rect =
+                              event.currentTarget.getBoundingClientRect();
                             showTooltip({
                               tooltipData: arc.data,
-                              tooltipLeft: 0,
-                              tooltipTop: 0,
-                            })
-                          }
+                              tooltipLeft: rect.left + rect.width / 2,
+                              tooltipTop: rect.top + rect.height / 2,
+                            });
+                          }}
                           onMouseLeave={hideTooltip}
                           onBlur={hideTooltip}
                         />
@@ -314,7 +344,7 @@ export function DonutChart({ title, data }: DonutChartProps) {
                           (labelLines.length - 1) * labelLineHeight;
 
                         return (
-                          <g key={`annotation-${datum.arc.data.label}`}>
+                          <g key={`annotation-${datum.arc.data.id}`}>
                             <title>{annotationTitle}</title>
                             <Connector
                               x={datum.subjectX - chartCenterX}
@@ -322,7 +352,7 @@ export function DonutChart({ title, data }: DonutChartProps) {
                               dx={swatchX - datum.subjectX}
                               dy={datum.labelY - datum.subjectY}
                               type="line"
-                              stroke={colorScale(datum.arc.data.label)}
+                              stroke={colorScale(datum.arc.data.id)}
                               pathProps={{ strokeWidth: 1.25 }}
                             />
                             <line
@@ -330,7 +360,7 @@ export function DonutChart({ title, data }: DonutChartProps) {
                               y1={datum.labelY - chartCenterY - 8}
                               x2={swatchX - chartCenterX}
                               y2={datum.labelY - chartCenterY + 8}
-                              stroke={colorScale(datum.arc.data.label)}
+                              stroke={colorScale(datum.arc.data.id)}
                               strokeWidth={2}
                             />
                             <text

@@ -285,7 +285,7 @@ export function DonutChart({ title, data }: DonutChartProps) {
               viewBox={`0 0 ${chartWidth} ${chartHeight}`}
               role="img"
               aria-label={`${title} distribution`}
-              className="mx-auto w-full max-w-[25rem]"
+              className="mx-auto w-full max-w-100"
             >
               <Group top={chartCenterY} left={chartCenterX}>
                 <Pie<DonutChartDatum>

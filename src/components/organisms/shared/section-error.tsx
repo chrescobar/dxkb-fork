@@ -29,7 +29,7 @@ export function SectionError({
       <CardContent>
         <pre
           data-testid="section-error-message"
-          className="whitespace-pre-wrap break-words rounded-md bg-background p-3 text-xs text-foreground"
+          className="whitespace-pre-wrap wrap-break-word rounded-md bg-background p-3 text-xs text-foreground"
         >
           {message}
         </pre>

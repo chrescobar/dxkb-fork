@@ -34,7 +34,9 @@ test.describe("bacteria organism landing page", () => {
     await expect(page.getByText("Genome table filtering and pagination")).toBeVisible();
   });
 
-  test("matches the chromium visual snapshot", async ({ page }) => {
+  test("matches the chromium visual snapshot", async ({ page, browserName }) => {
+    test.skip(browserName !== "chromium", "Bacteria landing visual baseline is captured in Chromium only");
+
     const landing = new OrganismLandingPage(page);
 
     await landing.goto("bacteria");

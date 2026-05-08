@@ -40,7 +40,7 @@ export async function PubMedFeed({ term, limit = 5 }: PubMedFeedProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={article.title}
-                  className="hover:bg-muted/40 flex min-h-16 items-start gap-3 px-3 py-3 transition-colors"
+                  className="hover:bg-muted/40 flex h-36 items-start gap-3 overflow-hidden px-3 py-3 transition-colors"
                 >
                   <div className="min-w-0 flex-1 space-y-1">
                     <h3

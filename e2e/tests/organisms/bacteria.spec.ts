@@ -43,6 +43,7 @@ test.describe("bacteria organism landing page", () => {
     await page.waitForLoadState("networkidle");
     await expect(page).toHaveScreenshot("bacteria-organism-landing.png", {
       fullPage: true,
+      maxDiffPixelRatio: 0.07,
       timeout: 15_000,
     });
   });

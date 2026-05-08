@@ -3,7 +3,8 @@ import { Suspense } from "react";
 import { DataSummary } from "@/components/organisms/data-summary/data-summary";
 import { DataSummarySkeleton } from "@/components/organisms/data-summary/data-summary-skeleton";
 import { ExternalTools } from "@/components/organisms/external-tools/external-tools";
-import { FeaturedGeneraGrid } from "@/components/organisms/genera-grid/featured-genera-grid";
+import { featuredGenera } from "@/components/organisms/genera-grid/featured-genera-data";
+import { FeaturedOrganismsGrid } from "@/components/organisms/genera-grid/featured-organisms-grid";
 import { GeneraGrid } from "@/components/organisms/genera-grid/genera-grid";
 import { GeneraGridSkeleton } from "@/components/organisms/genera-grid/genera-grid-skeleton";
 import { MetadataDistributions } from "@/components/organisms/metadata-distributions/metadata-distributions";
@@ -59,7 +60,11 @@ export function OverviewView() {
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)] lg:items-start">
         <div className="flex min-w-0 flex-col gap-8">
-          <FeaturedGeneraGrid />
+          <FeaturedOrganismsGrid
+            data={featuredGenera}
+            title="Featured Genera"
+            subtitle="Curated genera of biodefense and infectious disease relevance."
+          />
 
           <Suspense fallback={<GeneraGridSkeleton />}>
             <GeneraGridBoundary />

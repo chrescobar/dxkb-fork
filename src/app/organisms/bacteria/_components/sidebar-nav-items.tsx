@@ -19,17 +19,11 @@ import {
 
 import type { OrganismLandingView } from "@/components/organisms/types";
 
-import {
-  GenomesView,
-  OverviewView,
-  PhylogenyView,
-  PlaceholderView,
-  TaxonomyView,
-} from "../views";
+import { OverviewView, PlaceholderView } from "../views";
 
-function placeholderView(title: string) {
+function placeholderView(title: string, description?: string) {
   function BacteriaPlaceholderView() {
-    return <PlaceholderView title={title} />;
+    return <PlaceholderView title={title} description={description} />;
   }
 
   BacteriaPlaceholderView.displayName = `${title.replaceAll(" ", "")}View`;
@@ -48,19 +42,28 @@ export function getBacteriaSidebarNavItems(): OrganismLandingView[] {
       key: "phylogeny",
       label: "Phylogeny",
       icon: <Network />,
-      Component: PhylogenyView,
+      Component: placeholderView(
+        "Phylogeny",
+        "Phylogeny data and visualization are planned for a follow-up view.",
+      ),
     },
     {
       key: "taxonomy",
       label: "Taxonomy",
       icon: <Binary />,
-      Component: TaxonomyView,
+      Component: placeholderView(
+        "Taxonomy",
+        "Taxonomy browsing is stubbed while the overview data panels are brought online.",
+      ),
     },
     {
       key: "genomes",
       label: "Genomes",
       icon: <Dna />,
-      Component: GenomesView,
+      Component: placeholderView(
+        "Genomes",
+        "Genome table filtering and pagination are planned for a dedicated follow-up view.",
+      ),
     },
     {
       key: "amr-phenotypes",
@@ -89,7 +92,7 @@ export function getBacteriaSidebarNavItems(): OrganismLandingView[] {
     {
       key: "protein-structures",
       label: "Protein Structures",
-      icon: <Blocks />,
+      icon: <Waypoints />,
       Component: placeholderView("Protein Structures"),
     },
     {

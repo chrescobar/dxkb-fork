@@ -41,7 +41,7 @@ export async function GeneraGrid({ taxonId, limit = 24 }: GeneraGridProps) {
             key={genus.name}
             name={genus.name}
             count={genus.count}
-            taxonId={taxonId}
+            href={`https://www.bv-brc.org/view/Taxonomy/${taxonId}#view_tab=genomes&filter=genus:${encodeURIComponent(genus.name)}`}
           />
         ))}
       </div>

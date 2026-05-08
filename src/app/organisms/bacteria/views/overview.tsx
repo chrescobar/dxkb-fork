@@ -14,43 +14,40 @@ import { SectionError } from "@/components/organisms/shared/section-error";
 
 import { bacteriaLandingConfig as config } from "../_config";
 
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
+async function withSectionError(
+  load: () => Promise<React.ReactElement>,
+): Promise<React.ReactElement> {
+  try {
+    return await load();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return <SectionError message={message} />;
+  }
 }
 
 async function DataSummaryBoundary() {
-  try {
-    return await DataSummary({ taxonId: config.taxonId });
-  } catch (error) {
-    return <SectionError message={errorMessage(error)} />;
-  }
+  return withSectionError(() => DataSummary({ taxonId: config.taxonId }));
 }
 
 async function GeneraGridBoundary() {
-  try {
-    return await GeneraGrid({ taxonId: config.taxonId, limit: 12 });
-  } catch (error) {
-    return <SectionError message={errorMessage(error)} />;
-  }
+  return withSectionError(() =>
+    GeneraGrid({ taxonId: config.taxonId, limit: 12 }),
+  );
 }
 
 async function MetadataDistributionsBoundary() {
-  try {
-    return await MetadataDistributions({
+  return withSectionError(() =>
+    MetadataDistributions({
       taxonId: config.taxonId,
       fields: config.metadataFields,
-    });
-  } catch (error) {
-    return <SectionError message={errorMessage(error)} />;
-  }
+    }),
+  );
 }
 
 async function PubMedFeedBoundary() {
-  try {
-    return await PubMedFeed({ term: config.pubmedTerm, limit: 4 });
-  } catch (error) {
-    return <SectionError message={errorMessage(error)} />;
-  }
+  return withSectionError(() =>
+    PubMedFeed({ term: config.pubmedTerm, limit: 4 }),
+  );
 }
 
 export function OverviewView() {

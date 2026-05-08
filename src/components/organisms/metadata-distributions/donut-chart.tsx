@@ -4,7 +4,6 @@ import { Connector } from "@visx/annotation";
 import { Group } from "@visx/group";
 import { scaleOrdinal } from "@visx/scale";
 import { Pie } from "@visx/shape";
-import type { PieArcDatum } from "@visx/shape/lib/shapes/Pie";
 import { useTooltip } from "@visx/tooltip";
 
 import { facetDisplayLabel } from "@/components/organisms/facet-label";
@@ -15,10 +14,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { numberFormatter } from "@/lib/services/organisms/utils";
 
 interface DonutDatum {
   label: string;
   value: number;
+}
+
+interface DonutPieArcDatum {
+  data: DonutDatum;
+  startAngle: number;
+  endAngle: number;
 }
 
 interface DonutChartProps {
@@ -35,7 +41,6 @@ const chartColors = [
   "var(--muted-foreground)",
 ];
 
-const numberFormatter = new Intl.NumberFormat("en-US");
 const chartWidth = 460;
 const chartHeight = 240;
 const chartCenterX = chartWidth / 2;
@@ -57,7 +62,7 @@ const leftSwatchX = 134;
 const svgPrecision = 1000;
 
 interface AnnotationDatum {
-  arc: PieArcDatum<DonutDatum>;
+  arc: DonutPieArcDatum;
   labelY: number;
   side: "left" | "right";
   subjectX: number;
@@ -182,7 +187,7 @@ function distributeLabelYs(naturalYs: number[]): number[] {
   return positions;
 }
 
-function annotationData(arcs: PieArcDatum<DonutDatum>[]): AnnotationDatum[] {
+function annotationData(arcs: DonutPieArcDatum[]): AnnotationDatum[] {
   const positioned = arcs.map((arc) => {
     const midpoint = (arc.startAngle + arc.endAngle) / 2;
     const xOffset = Math.sin(midpoint);

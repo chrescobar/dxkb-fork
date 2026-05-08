@@ -1,4 +1,4 @@
-import { FeaturedGeneraCard } from "./featured-genera-card";
+import { GeneraCard } from "./genera-card";
 import { featuredGenera } from "./featured-genera-data";
 
 export function FeaturedGeneraGrid() {
@@ -14,10 +14,10 @@ export function FeaturedGeneraGrid() {
       </div>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-2">
         {featuredGenera.map((genus) => (
-          <FeaturedGeneraCard
+          <GeneraCard
             key={genus.name}
             name={genus.name}
-            taxonId={genus.taxonId}
+            href={`https://www.bv-brc.org/view/Taxonomy/${genus.taxonId}#view_tab=overview`}
           />
         ))}
       </div>

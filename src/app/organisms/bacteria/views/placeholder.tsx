@@ -7,16 +7,17 @@ import {
 
 interface PlaceholderViewProps {
   title: string;
+  description?: string;
 }
 
-export function PlaceholderView({ title }: PlaceholderViewProps) {
+export function PlaceholderView({ title, description }: PlaceholderViewProps) {
   return (
     <Card className="rounded-lg">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>
-          This view is a placeholder while the Bacteria landing page tabs are
-          brought online.
+          {description ??
+            "This view is a placeholder while the Bacteria landing page tabs are brought online."}
         </CardDescription>
       </CardHeader>
     </Card>

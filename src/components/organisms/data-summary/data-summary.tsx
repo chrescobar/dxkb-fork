@@ -1,8 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { fetchOrganismSummary } from "@/lib/services/organisms/summary";
 import type { OrganismSummary } from "@/lib/services/organisms/types";
-
-const numberFormatter = new Intl.NumberFormat("en-US");
+import { numberFormatter } from "@/lib/services/organisms/utils";
 
 const summaryMetrics: {
   key: keyof OrganismSummary;

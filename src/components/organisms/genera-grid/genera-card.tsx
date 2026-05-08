@@ -4,26 +4,28 @@ import Link from "next/link";
 
 import { facetDisplayLabel } from "@/components/organisms/facet-label";
 import { Card } from "@/components/ui/card";
-
-const numberFormatter = new Intl.NumberFormat("en-US");
+import { numberFormatter } from "@/lib/services/organisms/utils";
 
 interface GeneraCardProps {
   name: string;
-  count: number;
-  taxonId: number;
+  href: string;
+  count?: number;
 }
 
-export function GeneraCard({ name, count, taxonId }: GeneraCardProps) {
-  const legacyHref = `https://www.bv-brc.org/view/Taxonomy/${taxonId}#view_tab=genomes&filter=genus:${encodeURIComponent(name)}`;
+export function GeneraCard({ name, href, count }: GeneraCardProps) {
   const displayName = facetDisplayLabel(name);
+  const ariaLabel =
+    count !== undefined
+      ? `View ${displayName} genomes`
+      : `View ${displayName} overview`;
 
   return (
     <Card className="gap-0 rounded-md py-0 shadow-none">
       <Link
-        href={legacyHref}
+        href={href}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label={`View ${displayName} genomes`}
+        aria-label={ariaLabel}
         className="hover:bg-muted/40 flex min-h-12 items-center gap-2.5 px-2.5 py-1.5 transition-colors"
       >
         <Avatar
@@ -39,9 +41,11 @@ export function GeneraCard({ name, count, taxonId }: GeneraCardProps) {
           >
             {displayName}
           </h3>
-          <p className="text-muted-foreground text-[11px] leading-tight">
-            {numberFormatter.format(count)} genomes
-          </p>
+          {count !== undefined && (
+            <p className="text-muted-foreground text-[11px] leading-tight">
+              {numberFormatter.format(count)} genomes
+            </p>
+          )}
         </div>
         <ArrowRight
           size={14}

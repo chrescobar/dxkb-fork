@@ -1,4 +1,4 @@
-name: E2E (Playwright)
+name: Playwright Visual Regression Tests
 
 on:
   pull_request:
@@ -15,8 +15,88 @@ on:
 permissions:
   contents: read
 
+# Cancel any in-progress e2e run for the same PR when a new one starts.
+# This ensures that when sync-linux-snapshots commits fresh PNGs and triggers
+# a new synchronize event, the stale first run is killed before it can fail.
+concurrency:
+  group: e2e-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
+  sync-linux-snapshots:
+    runs-on: ubuntu-latest
+    # Only runs for PRs from the same repo — GITHUB_TOKEN cannot push to forks
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.commit.outputs.sha }}
+
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-linux-all-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            playwright-linux-all-
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium firefox webkit
+
+      - name: Build app
+        run: pnpm build
+
+      - name: Set up auth state
+        run: pnpm e2e --project=setup-signed-in
+        env:
+          CI: "true"
+          WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
+
+      - name: Regenerate linux snapshots
+        run: pnpm e2e:update-snapshots --project=chromium --project=firefox --project=webkit --grep "visual regression"
+        env:
+          CI: "true"
+          WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
+
+      - name: Commit updated snapshots
+        id: commit
+        env:
+          HEAD_BRANCH: ${{ github.head_ref }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add e2e/__snapshots__/
+          if git diff --staged --quiet; then
+            echo "sha=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "chore: update linux e2e snapshots"
+            git push origin "HEAD:refs/heads/$HEAD_BRANCH"
+            echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          fi
+
   e2e:
+    needs: [sync-linux-snapshots]
+    # Run even when sync-linux-snapshots is skipped (fork PRs)
+    if: always()
     runs-on: ubuntu-latest
 
     strategy:
@@ -30,6 +110,10 @@ jobs:
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
+        with:
+          # Use the SHA after snapshot sync (may be a new commit); fall back to
+          # the trigger SHA for fork PRs where sync-linux-snapshots was skipped.
+          ref: ${{ needs.sync-linux-snapshots.outputs.sha || github.sha }}
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4

@@ -44,25 +44,25 @@ const chartColors = [
   "var(--muted-foreground)",
 ];
 
-const chartWidth = 460;
-const chartHeight = 240;
+const chartWidth = 500;
+const chartHeight = 300;
 const chartCenterX = chartWidth / 2;
 const chartCenterY = chartHeight / 2;
-const outerRadius = 60;
-const innerRadius = 38;
-const subjectRadius = outerRadius + 4;
+const outerRadius = 80;
+const innerRadius = 45;
+const subjectRadius = outerRadius + 2;
 const labelTop = 20;
 const labelBottom = chartHeight - 20;
-const labelMinGap = 42;
-const naturalYScale = 85;
-const labelLineMaxChars = 16;
+const labelMinGap = 52;
+const naturalYScale = 110;
+const labelLineMaxChars = 20;
 const labelMaxLines = 2;
 const labelLineHeight = 17;
-const rightLabelX = 330;
-const rightSwatchX = 326;
-const leftLabelX = 130;
-const leftSwatchX = 134;
-const connectorGatewayX = outerRadius + 6;
+const rightLabelX = 380;
+const rightSwatchX = 376;
+const leftLabelX = 126;
+const leftSwatchX = 130;
+const connectorRadialExtension = 20;
 const svgPrecision = 1000;
 const aggregateLabel = "Others";
 const fallbackAggregateLabel = "Other values";
@@ -97,20 +97,22 @@ function chartData(data: DonutDatum[]): DonutChartDatum[] {
       id: `bucket-${index}`,
       label: facetDisplayLabel(datum.label),
     }));
-  const top = positive.slice(0, 5);
+
+  if (positive.length <= 5) return positive;
+
+  const top = positive.slice(0, 4);
   const otherValue = positive
-    .slice(5)
+    .slice(4)
     .reduce((sum, datum) => sum + datum.value, 0);
-  return otherValue > 0
-    ? [
-        ...top,
-        {
-          id: "aggregate-other",
-          label: uniqueAggregateLabel(top.map((datum) => datum.label)),
-          value: otherValue,
-        },
-      ]
-    : top;
+
+  return [
+    ...top,
+    {
+      id: "aggregate-other",
+      label: uniqueAggregateLabel(top.map((datum) => datum.label)),
+      value: otherValue,
+    },
+  ];
 }
 
 function clamp(value: number, min: number, max: number) {
@@ -119,11 +121,6 @@ function clamp(value: number, min: number, max: number) {
 
 function roundSvgNumber(value: number) {
   return Math.round(value * svgPrecision) / svgPrecision;
-}
-
-function compareLabels(a: string, b: string) {
-  if (a === b) return 0;
-  return a < b ? -1 : 1;
 }
 
 function truncateLabelLine(line: string): string {
@@ -237,11 +234,7 @@ function annotationData(arcs: DonutPieArcDatum[]): AnnotationDatum[] {
   return (["left", "right"] as const).flatMap((side) => {
     const group = positioned
       .filter((datum) => datum.side === side)
-      .sort(
-        (a, b) =>
-          a.labelY - b.labelY ||
-          compareLabels(a.arc.data.label, b.arc.data.label),
-      );
+      .sort((a, b) => a.labelY - b.labelY);
 
     if (group.length === 0) return [];
 
@@ -285,7 +278,7 @@ export function DonutChart({ title, data }: DonutChartProps) {
               viewBox={`0 0 ${chartWidth} ${chartHeight}`}
               role="img"
               aria-label={`${title} distribution`}
-              className="mx-auto w-full max-w-100"
+              className="mx-auto w-full max-w-full"
             >
               <Group top={chartCenterY} left={chartCenterX}>
                 <Pie<DonutChartDatum>
@@ -343,14 +336,26 @@ export function DonutChart({ title, data }: DonutChartProps) {
                           4 -
                           (labelLines.length - 1) * labelLineHeight;
 
+                        const midpoint =
+                          (datum.arc.startAngle + datum.arc.endAngle) / 2;
+                        const radialX =
+                          Math.sin(midpoint) *
+                          (outerRadius + connectorRadialExtension);
+                        const radialY =
+                          -Math.cos(midpoint) *
+                          (outerRadius + connectorRadialExtension);
+
+                        const swatchXRelative = swatchX - chartCenterX;
+                        const labelYRelative = datum.labelY - chartCenterY;
+
                         return (
                           <g key={`annotation-${datum.arc.data.id}`}>
                             <title>{annotationTitle}</title>
                             <path
                               d={[
                                 `M ${datum.subjectX - chartCenterX},${datum.subjectY - chartCenterY}`,
-                                `L ${isRight ? connectorGatewayX : -connectorGatewayX},${datum.subjectY - chartCenterY}`,
-                                `L ${swatchX - chartCenterX},${datum.labelY - chartCenterY}`,
+                                `L ${roundSvgNumber(radialX)},${roundSvgNumber(radialY)}`,
+                                `L ${swatchXRelative},${labelYRelative}`,
                               ].join(" ")}
                               fill="none"
                               stroke={colorScale(datum.arc.data.id)}

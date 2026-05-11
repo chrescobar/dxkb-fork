@@ -6,7 +6,7 @@ export const virusesLandingConfig: OrganismLandingConfig = {
   pubmedTerm: "Viruses",
   accent: "viruses",
   defaultView: "overview",
-  metadataFields: ["family", "host_name", "isolation_country"],
+  metadataFields: ["family", "host_group", "isolation_country"],
   externalTools: [
     {
       label: "BEI Resources",

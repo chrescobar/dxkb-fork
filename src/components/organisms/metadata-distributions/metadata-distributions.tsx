@@ -5,7 +5,9 @@ import { DonutChart } from "./donut-chart";
 const fieldLabels: Record<string, string> = {
   genus: "Genus",
   host_name: "Host",
+  host_group: "Host",
   isolation_country: "Isolation Country",
+  family: "Family",
 };
 
 interface MetadataDistributionsProps {

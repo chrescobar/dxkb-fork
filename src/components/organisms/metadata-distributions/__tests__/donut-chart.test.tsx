@@ -5,7 +5,7 @@ import { renderToString } from "react-dom/server";
 import { DonutChart } from "../donut-chart";
 
 describe("DonutChart", () => {
-  it("renders top five slices and an Others bucket", () => {
+  it("renders top four slices and an Others bucket", () => {
     render(
       <DonutChart
         title="Genus"
@@ -24,7 +24,7 @@ describe("DonutChart", () => {
       screen.getByRole("img", { name: "Genus distribution" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Others")).toBeInTheDocument();
-    expect(screen.getByText("5")).toBeInTheDocument();
+    expect(screen.getByText("11")).toBeInTheDocument(); // E (6) + F (5)
   });
 
   it("uses a collision-free label for the aggregate bucket", () => {
@@ -44,7 +44,7 @@ describe("DonutChart", () => {
 
     expect(screen.getByText("Others")).toBeInTheDocument();
     expect(screen.getByText("Other values")).toBeInTheDocument();
-    expect(screen.getByText("5")).toBeInTheDocument();
+    expect(screen.getByText("11")).toBeInTheDocument();
   });
 
   it("shows tooltip content on hover", () => {

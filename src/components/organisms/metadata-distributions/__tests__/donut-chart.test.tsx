@@ -4,6 +4,45 @@ import { renderToString } from "react-dom/server";
 
 import { DonutChart } from "../donut-chart";
 
+beforeAll(() => {
+  const svgElementPrototype = SVGElement.prototype as SVGElement & {
+    getComputedTextLength?: () => number;
+  };
+
+  if (!svgElementPrototype.getComputedTextLength) {
+    Object.defineProperty(svgElementPrototype, "getComputedTextLength", {
+      configurable: true,
+      value() {
+        return (this.textContent ?? "").length * 8;
+      },
+    });
+  }
+});
+
+beforeEach(() => {
+  vi.spyOn(console, "warn").mockImplementation(() => undefined);
+});
+
+function connectorEndDirection(path: SVGPathElement) {
+  const points = [
+    ...(path.getAttribute("d") ?? "").matchAll(
+      /[ML](-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g,
+    ),
+  ].map((match) => ({
+    x: Number(match[1]),
+    y: Number(match[2]),
+  }));
+
+  const start = points[0];
+  const end = points.at(-1);
+
+  if (!start || !end) {
+    throw new Error("Connector path did not include start and end points");
+  }
+
+  return end.x >= start.x ? "right" : "left";
+}
+
 describe("DonutChart", () => {
   it("renders top four slices and an Others bucket", () => {
     render(
@@ -24,7 +63,7 @@ describe("DonutChart", () => {
       screen.getByRole("img", { name: "Genus distribution" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Others")).toBeInTheDocument();
-    expect(screen.getByText("11")).toBeInTheDocument(); // E (6) + F (5)
+    expect(screen.getByLabelText("Others: 11")).toBeInTheDocument(); // E (6) + F (5)
   });
 
   it("uses a collision-free label for the aggregate bucket", () => {
@@ -45,6 +84,35 @@ describe("DonutChart", () => {
     expect(screen.getByText("Others")).toBeInTheDocument();
     expect(screen.getByText("Other values")).toBeInTheDocument();
     expect(screen.getByText("11")).toBeInTheDocument();
+  });
+
+  it("balances five annotation labels across both sides", () => {
+    render(
+      <DonutChart
+        title="Host"
+        data={[
+          { label: "Others", value: 229915 },
+          { label: "Lab", value: 203257 },
+          { label: "Avian", value: 556736 },
+          { label: "Nonhuman Mammal", value: 702930 },
+          { label: "Human", value: 12245319 },
+        ]}
+      />,
+    );
+
+    const connectorDirections = [
+      ...document.querySelectorAll<SVGPathElement>(
+        ".visx-annotation-connector",
+      ),
+    ].map(connectorEndDirection);
+
+    expect(connectorDirections).toHaveLength(5);
+    expect(
+      connectorDirections.filter((direction) => direction === "left"),
+    ).toHaveLength(2);
+    expect(
+      connectorDirections.filter((direction) => direction === "right"),
+    ).toHaveLength(3);
   });
 
   it("shows tooltip content on hover", () => {

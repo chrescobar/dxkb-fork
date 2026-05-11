@@ -209,6 +209,26 @@ describe("DonutChart", () => {
     expect(screen.getByLabelText("Unspecified: 76,420")).toBeInTheDocument();
   });
 
+  it("positions values below wrapped labels", () => {
+    render(
+      <DonutChart
+        title="Host"
+        data={[{ label: "Human, Homo sapiens", value: 6 }]}
+      />,
+    );
+
+    const wrappedLine = screen.getByText("sapiens");
+    const valueLabel = document.querySelector<SVGTextElement>(
+      ".metadata-distribution-value-label",
+    );
+
+    expect(screen.getByText("Human, Homo")).toBeInTheDocument();
+    expect(valueLabel).not.toBeNull();
+    expect(Number(valueLabel?.getAttribute("y"))).toBeGreaterThan(
+      Number(wrappedLine.getAttribute("y")),
+    );
+  });
+
   it("server-renders annotation titles as text", () => {
     const markup = renderToString(
       <DonutChart

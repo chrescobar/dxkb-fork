@@ -1,6 +1,5 @@
 "use client";
 
-import { Label } from "@visx/annotation";
 import { Group } from "@visx/group";
 import { scaleOrdinal } from "@visx/scale";
 import { Pie } from "@visx/shape";
@@ -48,13 +47,20 @@ const innerRadius = 58;
 const subjectRadius = outerRadius + 2;
 const labelTop = 14;
 const labelBottom = chartHeight - 14;
-const labelMinGap = 48;
+const labelMinGap = 58;
 const naturalYScale = 104;
 const labelWidth = 132;
-const labelBlockHeight = 28;
 const labelAnchorGap = 6;
 const connectorMeetSlant = 10;
-const valueLabelYOffset = 15;
+const titleFontSize = 14;
+const titleLineHeight = 16;
+const titleBaselineOffset = 12;
+const valueFontSize = 12;
+const valueLineHeight = 14;
+const valueBaselineOffset = 10;
+const titleValueGap = 2;
+const averageTitleCharacterWidth = 7.5;
+const maxTitleLines = 2;
 const rightLabelX = chartWidth - 24 - labelWidth;
 const leftLabelX = 24 + labelWidth;
 const svgPrecision = 1000;
@@ -62,27 +68,6 @@ const aggregateLabel = "Others";
 const fallbackAggregateLabel = "Other values";
 const pieStartAngle = (150 * Math.PI) / 180;
 const pieEndAngle = pieStartAngle + Math.PI * 2;
-
-class NoopResizeObserver {
-  constructor(callback?: ResizeObserverCallback) {
-    void callback;
-  }
-
-  observe(target: Element) {
-    void target;
-  }
-
-  unobserve(target: Element) {
-    void target;
-  }
-
-  disconnect() {
-    return undefined;
-  }
-}
-
-const resizeObserverPolyfill =
-  typeof ResizeObserver === "undefined" ? NoopResizeObserver : undefined;
 
 interface AnnotationDatum {
   arc: DonutPieArcDatum;
@@ -140,6 +125,61 @@ function roundSvgNumber(value: number) {
   return Math.round(value * svgPrecision) / svgPrecision;
 }
 
+function truncateLine(line: string, maxLength: number) {
+  if (line.length <= maxLength) return line;
+  if (maxLength <= 3) return line.slice(0, maxLength);
+  return `${line.slice(0, maxLength - 3).trimEnd()}...`;
+}
+
+function splitLongWord(word: string, maxLength: number) {
+  const chunks: string[] = [];
+
+  for (let index = 0; index < word.length; index += maxLength) {
+    chunks.push(word.slice(index, index + maxLength));
+  }
+
+  return chunks;
+}
+
+function wrapLabelText(label: string) {
+  const maxLineLength = Math.max(
+    1,
+    Math.floor(labelWidth / averageTitleCharacterWidth),
+  );
+  const words = label.trim().split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
+  let currentLine = "";
+
+  for (const word of words) {
+    const candidates =
+      word.length > maxLineLength ? splitLongWord(word, maxLineLength) : [word];
+
+    for (const candidate of candidates) {
+      const nextLine = currentLine ? `${currentLine} ${candidate}` : candidate;
+
+      if (nextLine.length <= maxLineLength) {
+        currentLine = nextLine;
+      } else {
+        if (currentLine) lines.push(currentLine);
+        currentLine = candidate;
+      }
+    }
+  }
+
+  if (currentLine) lines.push(currentLine);
+  if (lines.length === 0) return [label];
+  if (lines.length <= maxTitleLines) return lines;
+
+  return [
+    ...lines.slice(0, maxTitleLines - 1),
+    truncateLine(lines.slice(maxTitleLines - 1).join(" "), maxLineLength),
+  ];
+}
+
+function annotationLabelBlockHeight(titleLines: readonly string[]) {
+  return titleLines.length * titleLineHeight + titleValueGap + valueLineHeight;
+}
+
 function connectorPath(
   subjectX: number,
   subjectY: number,
@@ -147,7 +187,8 @@ function connectorPath(
   labelY: number,
   side: AnnotationDatum["side"],
 ) {
-  const slantOffset = side === "right" ? connectorMeetSlant : -connectorMeetSlant;
+  const slantOffset =
+    side === "right" ? connectorMeetSlant : -connectorMeetSlant;
 
   return [
     `M${subjectX},${subjectY}`,
@@ -323,14 +364,23 @@ export function DonutChart({ title, data }: DonutChartProps) {
                         const labelLeftXRelative = isRight
                           ? labelXRelative + labelAnchorGap
                           : labelXRelative - labelAnchorGap - labelWidth;
+                        const titleLines = wrapLabelText(datum.arc.data.label);
+                        const labelBlockHeight =
+                          annotationLabelBlockHeight(titleLines);
                         const labelTopYRelative =
                           labelYRelative - labelBlockHeight / 2;
                         const textAnchor = isRight ? "start" : "end";
+                        const textX = isRight
+                          ? labelLeftXRelative
+                          : labelLeftXRelative + labelWidth;
+                        const valueY =
+                          labelTopYRelative +
+                          titleLines.length * titleLineHeight +
+                          titleValueGap +
+                          valueBaselineOffset;
 
                         return (
-                          <g
-                            key={`annotation-${datum.arc.data.id}`}
-                          >
+                          <g key={`annotation-${datum.arc.data.id}`}>
                             <path
                               className="visx-annotation-connector"
                               d={connectorPath(
@@ -353,47 +403,35 @@ export function DonutChart({ title, data }: DonutChartProps) {
                               stroke={colorScale(datum.arc.data.id)}
                               strokeWidth={2}
                             />
-                            <Label
-                              className="opacity-100"
-                              x={labelLeftXRelative}
-                              y={labelTopYRelative}
-                              title={datum.arc.data.label}
-                              titleFontSize={14}
-                              titleProps={{
-                                className: "fill-foreground font-semibold",
-                                textAnchor,
-                                x: isRight ? 0 : labelWidth,
-                              }}
-                              horizontalAnchor="start"
-                              verticalAnchor="start"
-                              showAnchorLine={false}
-                              anchorLineStroke={colorScale(datum.arc.data.id)}
-                              backgroundFill="none"
-                              backgroundPadding={0}
-                              resizeObserverPolyfill={resizeObserverPolyfill}
-                              width={labelWidth}
-                              maxWidth={labelWidth}
-                            />
-                            <Label
-                              className="opacity-100"
-                              x={labelLeftXRelative}
-                              y={labelTopYRelative + valueLabelYOffset}
-                              title={valueLabel}
-                              titleFontSize={12}
-                              titleProps={{
-                                className: "fill-muted-foreground tabular-nums",
-                                textAnchor,
-                                x: isRight ? 0 : labelWidth,
-                              }}
-                              horizontalAnchor="start"
-                              verticalAnchor="start"
-                              showAnchorLine={false}
-                              backgroundFill="none"
-                              backgroundPadding={0}
-                              resizeObserverPolyfill={resizeObserverPolyfill}
-                              width={labelWidth}
-                              maxWidth={labelWidth}
-                            />
+                            <text
+                              className="metadata-distribution-title-label fill-foreground font-semibold"
+                              textAnchor={textAnchor}
+                              fontSize={titleFontSize}
+                            >
+                              {titleLines.map((line, index) => (
+                                <tspan
+                                  key={`${datum.arc.data.id}-title-${index}`}
+                                  className="metadata-distribution-title-line"
+                                  x={textX}
+                                  y={
+                                    labelTopYRelative +
+                                    titleBaselineOffset +
+                                    index * titleLineHeight
+                                  }
+                                >
+                                  {line}
+                                </tspan>
+                              ))}
+                            </text>
+                            <text
+                              className="metadata-distribution-value-label fill-muted-foreground tabular-nums"
+                              textAnchor={textAnchor}
+                              fontSize={valueFontSize}
+                              x={textX}
+                              y={valueY}
+                            >
+                              {valueLabel}
+                            </text>
                           </g>
                         );
                       })}

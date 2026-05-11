@@ -25,7 +25,7 @@ export function VirusFamiliesSection() {
           >
             {column.group === null ? (
               column.subGroups.map((subGroup) => (
-                <div key={subGroup.label} className="flex flex-col gap-2">
+                <div key={subGroup.label} className="flex flex-col gap-3">
                   <h3 className="text-muted-foreground px-0.5 text-sm font-semibold">
                     {subGroup.label}
                   </h3>

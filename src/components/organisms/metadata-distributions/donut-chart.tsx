@@ -51,7 +51,9 @@ const labelBottom = chartHeight - 32;
 const labelMinGap = 56;
 const naturalYScale = 120;
 const labelWidth = 136;
-const labelBlockHeight = 34;
+const labelBlockHeight = 28;
+const labelAnchorGap = 6;
+const valueLabelYOffset = 15;
 const rightLabelX = chartWidth - 36 - labelWidth;
 const leftLabelX = 36 + labelWidth;
 const svgPrecision = 1000;
@@ -345,10 +347,11 @@ export function DonutChart({ title, data }: DonutChartProps) {
                         const labelXRelative = labelX - chartCenterX;
                         const labelYRelative = datum.labelY - chartCenterY;
                         const labelLeftXRelative = isRight
-                          ? labelXRelative
-                          : labelXRelative - labelWidth;
+                          ? labelXRelative + labelAnchorGap
+                          : labelXRelative - labelAnchorGap - labelWidth;
                         const labelTopYRelative =
                           labelYRelative - labelBlockHeight / 2;
+                        const textAnchor = isRight ? "start" : "end";
 
                         return (
                           <Annotation
@@ -363,25 +366,49 @@ export function DonutChart({ title, data }: DonutChartProps) {
                               type="elbow"
                               pathProps={{ strokeWidth: 1.25 }}
                             />
+                            <line
+                              x1={labelXRelative}
+                              y1={labelTopYRelative}
+                              x2={labelXRelative}
+                              y2={labelTopYRelative + labelBlockHeight}
+                              stroke={colorScale(datum.arc.data.id)}
+                              strokeWidth={2}
+                            />
                             <Label
                               className="opacity-100"
                               x={labelLeftXRelative}
                               y={labelTopYRelative}
                               title={datum.arc.data.label}
-                              subtitle={valueLabel}
-                              subtitleDy={16}
                               titleFontSize={14}
-                              subtitleFontSize={12}
                               titleProps={{
                                 className: "fill-foreground font-semibold",
-                              }}
-                              subtitleProps={{
-                                className: "fill-muted-foreground tabular-nums",
+                                textAnchor,
+                                x: isRight ? 0 : labelWidth,
                               }}
                               horizontalAnchor="start"
                               verticalAnchor="start"
                               showAnchorLine={false}
                               anchorLineStroke={colorScale(datum.arc.data.id)}
+                              backgroundFill="none"
+                              backgroundPadding={0}
+                              resizeObserverPolyfill={resizeObserverPolyfill}
+                              width={labelWidth}
+                              maxWidth={labelWidth}
+                            />
+                            <Label
+                              className="opacity-100"
+                              x={labelLeftXRelative}
+                              y={labelTopYRelative + valueLabelYOffset}
+                              title={valueLabel}
+                              titleFontSize={12}
+                              titleProps={{
+                                className: "fill-muted-foreground tabular-nums",
+                                textAnchor,
+                                x: isRight ? 0 : labelWidth,
+                              }}
+                              horizontalAnchor="start"
+                              verticalAnchor="start"
+                              showAnchorLine={false}
                               backgroundFill="none"
                               backgroundPadding={0}
                               resizeObserverPolyfill={resizeObserverPolyfill}

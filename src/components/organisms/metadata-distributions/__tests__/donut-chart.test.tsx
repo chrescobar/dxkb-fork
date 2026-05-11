@@ -23,7 +23,19 @@ beforeEach(() => {
   vi.spyOn(console, "warn").mockImplementation(() => undefined);
 });
 
-function connectorEndDirection(path: SVGPathElement) {
+function connectorEndpoints(path: SVGPathElement) {
+  const points = connectorPoints(path);
+  const start = points[0];
+  const end = points.at(-1);
+
+  if (!start || !end) {
+    throw new Error("Connector path did not include start and end points");
+  }
+
+  return { start, end };
+}
+
+function connectorPoints(path: SVGPathElement) {
   const points = [
     ...(path.getAttribute("d") ?? "").matchAll(
       /[ML](-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g,
@@ -33,14 +45,11 @@ function connectorEndDirection(path: SVGPathElement) {
     y: Number(match[2]),
   }));
 
-  const start = points[0];
-  const end = points.at(-1);
-
-  if (!start || !end) {
-    throw new Error("Connector path did not include start and end points");
+  if (points.length < 2) {
+    throw new Error("Connector path did not include enough points");
   }
 
-  return end.x >= start.x ? "right" : "left";
+  return points;
 }
 
 describe("DonutChart", () => {
@@ -86,7 +95,7 @@ describe("DonutChart", () => {
     expect(screen.getByText("11")).toBeInTheDocument();
   });
 
-  it("balances five annotation labels across both sides", () => {
+  it("keeps annotation connectors on the same side as their slice", () => {
     render(
       <DonutChart
         title="Host"
@@ -100,19 +109,59 @@ describe("DonutChart", () => {
       />,
     );
 
-    const connectorDirections = [
+    const connectorEndpointsByPath = [
       ...document.querySelectorAll<SVGPathElement>(
         ".visx-annotation-connector",
       ),
-    ].map(connectorEndDirection);
+    ].map(connectorEndpoints);
 
-    expect(connectorDirections).toHaveLength(5);
+    expect(connectorEndpointsByPath).toHaveLength(5);
     expect(
-      connectorDirections.filter((direction) => direction === "left"),
-    ).toHaveLength(2);
+      connectorEndpointsByPath.every(
+        ({ start, end }) => Math.sign(start.x) === Math.sign(end.x),
+      ),
+    ).toBe(true);
+  });
+
+  it("keeps label markers vertical while connectors meet them at a slant", () => {
+    render(
+      <DonutChart
+        title="Host"
+        data={[
+          { label: "Others", value: 229915 },
+          { label: "Lab", value: 203257 },
+          { label: "Avian", value: 556736 },
+          { label: "Nonhuman Mammal", value: 702930 },
+          { label: "Human", value: 12245319 },
+        ]}
+      />,
+    );
+
+    const markers = [
+      ...document.querySelectorAll<SVGLineElement>(
+        ".metadata-distribution-label-marker",
+      ),
+    ];
+    const connectors = [
+      ...document.querySelectorAll<SVGPathElement>(
+        ".visx-annotation-connector",
+      ),
+    ];
+
+    expect(markers).toHaveLength(5);
     expect(
-      connectorDirections.filter((direction) => direction === "right"),
-    ).toHaveLength(3);
+      markers.every(
+        (marker) => marker.getAttribute("x1") === marker.getAttribute("x2"),
+      ),
+    ).toBe(true);
+    expect(
+      connectors.every((connector) => {
+        const points = connectorPoints(connector);
+        const penultimate = points.at(-2);
+        const end = points.at(-1);
+        return Boolean(penultimate && end && penultimate.x !== end.x);
+      }),
+    ).toBe(true);
   });
 
   it("shows tooltip content on hover", () => {

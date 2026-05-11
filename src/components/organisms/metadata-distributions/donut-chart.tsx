@@ -1,6 +1,6 @@
 "use client";
 
-import { Annotation, Connector, Label } from "@visx/annotation";
+import { Label } from "@visx/annotation";
 import { Group } from "@visx/group";
 import { scaleOrdinal } from "@visx/scale";
 import { Pie } from "@visx/shape";
@@ -39,29 +39,29 @@ const chartColors = [
   "var(--muted-foreground)",
 ];
 
-const chartWidth = 560;
-const chartHeight = 320;
+const chartWidth = 540;
+const chartHeight = 260;
 const chartCenterX = chartWidth / 2;
 const chartCenterY = chartHeight / 2;
-const outerRadius = 80;
-const innerRadius = 45;
+const outerRadius = 104;
+const innerRadius = 58;
 const subjectRadius = outerRadius + 2;
-const labelTop = 32;
-const labelBottom = chartHeight - 32;
-const labelMinGap = 56;
-const naturalYScale = 120;
-const labelWidth = 136;
+const labelTop = 14;
+const labelBottom = chartHeight - 14;
+const labelMinGap = 48;
+const naturalYScale = 104;
+const labelWidth = 132;
 const labelBlockHeight = 28;
 const labelAnchorGap = 6;
+const connectorMeetSlant = 10;
 const valueLabelYOffset = 15;
-const rightLabelX = chartWidth - 36 - labelWidth;
-const leftLabelX = 36 + labelWidth;
+const rightLabelX = chartWidth - 24 - labelWidth;
+const leftLabelX = 24 + labelWidth;
 const svgPrecision = 1000;
 const aggregateLabel = "Others";
 const fallbackAggregateLabel = "Other values";
 const pieStartAngle = (150 * Math.PI) / 180;
 const pieEndAngle = pieStartAngle + Math.PI * 2;
-const minLabelsPerSide = 2;
 
 class NoopResizeObserver {
   constructor(callback?: ResizeObserverCallback) {
@@ -90,10 +90,6 @@ interface AnnotationDatum {
   side: "left" | "right";
   subjectX: number;
   subjectY: number;
-}
-
-interface PositionedAnnotationDatum extends AnnotationDatum {
-  xOffset: number;
 }
 
 function uniqueAggregateLabel(labels: readonly string[]): string {
@@ -144,6 +140,22 @@ function roundSvgNumber(value: number) {
   return Math.round(value * svgPrecision) / svgPrecision;
 }
 
+function connectorPath(
+  subjectX: number,
+  subjectY: number,
+  labelX: number,
+  labelY: number,
+  side: AnnotationDatum["side"],
+) {
+  const slantOffset = side === "right" ? connectorMeetSlant : -connectorMeetSlant;
+
+  return [
+    `M${subjectX},${subjectY}`,
+    `L${roundSvgNumber(labelX - slantOffset)},${subjectY}`,
+    `L${roundSvgNumber(labelX)},${roundSvgNumber(labelY)}`,
+  ].join("");
+}
+
 function distributeLabelYs(naturalYs: number[]): number[] {
   const n = naturalYs.length;
   if (n === 0) return [];
@@ -186,43 +198,6 @@ function distributeLabelYs(naturalYs: number[]): number[] {
   return positions;
 }
 
-function rebalanceAnnotationSides(
-  positioned: PositionedAnnotationDatum[],
-): PositionedAnnotationDatum[] {
-  if (positioned.length < minLabelsPerSide * 2) return positioned;
-
-  const balanced = positioned.map((datum) => ({ ...datum }));
-  const moveClosestToCenter = (
-    sourceSide: AnnotationDatum["side"],
-    targetSide: AnnotationDatum["side"],
-  ) => {
-    const candidate = balanced
-      .filter((datum) => datum.side === sourceSide)
-      .sort((a, b) => Math.abs(a.xOffset) - Math.abs(b.xOffset))[0];
-
-    if (candidate) {
-      candidate.side = targetSide;
-    }
-  };
-
-  let leftCount = balanced.filter((datum) => datum.side === "left").length;
-  let rightCount = balanced.length - leftCount;
-
-  while (leftCount < minLabelsPerSide && rightCount > minLabelsPerSide) {
-    moveClosestToCenter("right", "left");
-    leftCount += 1;
-    rightCount -= 1;
-  }
-
-  while (rightCount < minLabelsPerSide && leftCount > minLabelsPerSide) {
-    moveClosestToCenter("left", "right");
-    rightCount += 1;
-    leftCount -= 1;
-  }
-
-  return balanced;
-}
-
 function annotationData(arcs: DonutPieArcDatum[]): AnnotationDatum[] {
   const positioned = arcs.map((arc) => {
     const midpoint = (arc.startAngle + arc.endAngle) / 2;
@@ -239,12 +214,11 @@ function annotationData(arcs: DonutPieArcDatum[]): AnnotationDatum[] {
       side: xOffset >= 0 ? ("right" as const) : ("left" as const),
       subjectX: roundSvgNumber(chartCenterX + xOffset * subjectRadius),
       subjectY: roundSvgNumber(chartCenterY + yOffset * subjectRadius),
-      xOffset,
     };
   });
 
   return (["left", "right"] as const).flatMap((side) => {
-    const group = rebalanceAnnotationSides(positioned)
+    const group = positioned
       .filter((datum) => datum.side === side)
       .sort((a, b) => a.subjectY - b.subjectY);
 
@@ -354,19 +328,24 @@ export function DonutChart({ title, data }: DonutChartProps) {
                         const textAnchor = isRight ? "start" : "end";
 
                         return (
-                          <Annotation
+                          <g
                             key={`annotation-${datum.arc.data.id}`}
-                            x={subjectX}
-                            y={subjectY}
-                            dx={labelXRelative - subjectX}
-                            dy={labelYRelative - subjectY}
                           >
-                            <Connector
+                            <path
+                              className="visx-annotation-connector"
+                              d={connectorPath(
+                                subjectX,
+                                subjectY,
+                                labelXRelative,
+                                labelYRelative,
+                                datum.side,
+                              )}
                               stroke={colorScale(datum.arc.data.id)}
-                              type="elbow"
-                              pathProps={{ strokeWidth: 1.25 }}
+                              strokeWidth={1.25}
+                              fill="none"
                             />
                             <line
+                              className="metadata-distribution-label-marker"
                               x1={labelXRelative}
                               y1={labelTopYRelative}
                               x2={labelXRelative}
@@ -415,7 +394,7 @@ export function DonutChart({ title, data }: DonutChartProps) {
                               width={labelWidth}
                               maxWidth={labelWidth}
                             />
-                          </Annotation>
+                          </g>
                         );
                       })}
                     </>

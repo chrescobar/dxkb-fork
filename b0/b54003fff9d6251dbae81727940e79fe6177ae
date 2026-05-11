@@ -1,0 +1,38 @@
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  s_02ea2ae1c92336::t_90617254684fae 51,53,56-57,65
+  s_02ea2ae1c92336::t_66a9dbadffda09 100-103,105,107-115
+  s_02ea2ae1c92336::t_4d794c85a21dec 237
+  s_02ea2ae1c92336::t_ceb45393b91722 339-347,349,357
+  s_02ea2ae1c92336::t_b672fc0d647f7c 281,348,350,358
+src/components/organisms/metadata-distributions/__tests__/donut-chart.test.tsx
+  s_02ea2ae1c92336::t_ef3cff495dbf24 8,27
+  s_02ea2ae1c92336::t_e4666688e25c9d 47
+src/components/organisms/metadata-distributions/metadata-distributions.tsx
+  s_448a99d47dc9bf::t_2faf7fd80089a1 8
+src/app/organisms/viruses/_config.ts
+  s_448a99d47dc9bf::t_ba6cc4848661a8 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "b0b54003fff9d6251dbae81727940e79fe6177ae",
+  "prompts": {},
+  "sessions": {
+    "s_02ea2ae1c92336": {
+      "agent_id": {
+        "tool": "gemini",
+        "id": "c3fcbd59-c322-4b8f-935e-c48c664b89d4",
+        "model": "gemini-3-flash-preview"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_448a99d47dc9bf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8f63a7d0-60fc-4c23-bfd8-2930d7db204e",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

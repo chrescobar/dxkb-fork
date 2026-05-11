@@ -88,11 +88,8 @@ export function HorizontalLandingShellClient({
                     key={item.key}
                     value={item.key}
                     data-view-key={item.key}
-                    className="flex-none gap-1.5 px-3 py-1.5"
+                    className="flex-none gap-1 px-2 py-1.5"
                   >
-                    <span aria-hidden="true" className="flex shrink-0">
-                      {item.icon}
-                    </span>
                     <span>{item.label}</span>
                   </TabsTrigger>
                 ))}

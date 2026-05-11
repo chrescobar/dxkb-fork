@@ -1,6 +1,5 @@
 "use client";
 
-import { Connector } from "@visx/annotation";
 import { Group } from "@visx/group";
 import { scaleOrdinal } from "@visx/scale";
 import { Pie } from "@visx/shape";
@@ -63,6 +62,7 @@ const rightLabelX = 330;
 const rightSwatchX = 326;
 const leftLabelX = 130;
 const leftSwatchX = 134;
+const connectorGatewayX = outerRadius + 6;
 const svgPrecision = 1000;
 const aggregateLabel = "Others";
 const fallbackAggregateLabel = "Other values";
@@ -346,14 +346,15 @@ export function DonutChart({ title, data }: DonutChartProps) {
                         return (
                           <g key={`annotation-${datum.arc.data.id}`}>
                             <title>{annotationTitle}</title>
-                            <Connector
-                              x={datum.subjectX - chartCenterX}
-                              y={datum.subjectY - chartCenterY}
-                              dx={swatchX - datum.subjectX}
-                              dy={datum.labelY - datum.subjectY}
-                              type="line"
+                            <path
+                              d={[
+                                `M ${datum.subjectX - chartCenterX},${datum.subjectY - chartCenterY}`,
+                                `L ${isRight ? connectorGatewayX : -connectorGatewayX},${datum.subjectY - chartCenterY}`,
+                                `L ${swatchX - chartCenterX},${datum.labelY - chartCenterY}`,
+                              ].join(" ")}
+                              fill="none"
                               stroke={colorScale(datum.arc.data.id)}
-                              pathProps={{ strokeWidth: 1.25 }}
+                              strokeWidth={1.25}
                             />
                             <line
                               x1={swatchX - chartCenterX}

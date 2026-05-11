@@ -120,5 +120,15 @@
       "prettier-plugin-tailwindcss"
     ]
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "@scarf/scarf",
+      "esbuild",
+      "msw",
+      "sharp",
+      "unrs-resolver"
+    ]
+  },
   "packageManager": "pnpm@11.0.9"
 }

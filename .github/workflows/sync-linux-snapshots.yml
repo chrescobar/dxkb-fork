@@ -47,6 +47,7 @@ jobs:
         run: pnpm e2e:update-snapshots --project=chromium --project=firefox --project=webkit --grep "visual regression"
         env:
           CI: "true"
+          HOME: /root
           WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
 
       - name: Commit updated snapshots

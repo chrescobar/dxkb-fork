@@ -15,6 +15,9 @@ on:
 permissions:
   contents: read
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 # Cancel any in-progress e2e run for the same PR when a new one starts.
 # This ensures that when sync-linux-snapshots commits fresh PNGs and triggers
 # a new synchronize event, the stale first run is killed before it can fail.

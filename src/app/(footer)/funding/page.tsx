@@ -1,20 +1,19 @@
 "use client";
 
-import React from "react";
+import Image from "next/image";
 import { useTheme } from "next-themes";
 import FooterHeader from "@/components/headers/footer-header";
-import Logo from "@/components/ui/logo";
 import { useIsMounted } from "@/hooks/use-is-mounted";
+const cepiLogoUrl = "/logos/cepi/cepi-logo.svg";
+const cepiLogoWhiteUrl = "/logos/cepi/cepi-logo-white.svg";
 
 const Funding = () => {
   const mounted = useIsMounted();
   const { theme } = useTheme();
 
-  // During SSR and initial render, always use the default theme
-  // This prevents hydration mismatch
   const currentTheme = mounted ? theme : "dxkb-light";
   const isDarkTheme = currentTheme?.includes("-dark");
-  const logoVariant = isDarkTheme ? "sponsor-logo-white" : "sponsor-logo";
+  const logoSrc = isDarkTheme ? cepiLogoWhiteUrl : cepiLogoUrl;
 
   return (
     <div id="funding-container">
@@ -24,7 +23,7 @@ const Funding = () => {
           id="funding-content"
           className="flex flex-col gap-8 text-sm md:text-lg"
         >
-          <Logo variant={logoVariant} width={110} height={110} />
+          <Image src={logoSrc} alt="CEPI Logo" width={246} height={74} className="w-auto h-16" />
           <p>
             This project is supported by the Coalition for Epidemic Preparedness
             Innovations (CEPI) under the Disease X Program. We gratefully

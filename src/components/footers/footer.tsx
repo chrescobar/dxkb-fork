@@ -147,6 +147,7 @@ const Footer = () => {
                     href={section.titleUrl}
                     {...(isExternalUrl(section.titleUrl) && {
                       target: "_blank",
+                      rel: "noopener noreferrer",
                     })}
                   >
                     {section.title}
@@ -158,7 +159,10 @@ const Footer = () => {
                       <Link
                         href={link.url}
                         className="footer-link"
-                        {...(isExternalUrl(link.url) && { target: "_blank" })}
+                        {...(isExternalUrl(link.url) && {
+                          target: "_blank",
+                          rel: "noopener noreferrer",
+                        })}
                       >
                         {link.name}
                       </Link>

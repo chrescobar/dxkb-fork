@@ -44,7 +44,7 @@ jobs:
           WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
 
       - name: Regenerate linux snapshots
-        run: pnpm e2e:update-snapshots --project=chromium --project=firefox --project=webkit --grep "visual regression"
+        run: pnpm e2e:update-snapshots --project=chromium --project=firefox --project=webkit --grep "visual regression|matches the visual snapshot"
         env:
           CI: "true"
           HOME: /root

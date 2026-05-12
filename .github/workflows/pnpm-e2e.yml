@@ -25,6 +25,7 @@ concurrency:
 jobs:
   sync-linux-snapshots:
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.59.1-jammy
     # Only runs for PRs from the same repo — GITHUB_TOKEN cannot push to forks
     if: github.event.pull_request.head.repo.full_name == github.repository
     permissions:
@@ -50,17 +51,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-linux-all-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            playwright-linux-all-
-
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium firefox webkit
 
       - name: Build app
         run: pnpm build
@@ -98,6 +88,7 @@ jobs:
     # Run even when sync-linux-snapshots is skipped (fork PRs)
     if: always()
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.59.1-jammy
 
     strategy:
       fail-fast: false
@@ -126,24 +117,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ matrix.browser }}-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            playwright-${{ runner.os }}-${{ matrix.browser }}-
-
-      # Chromium is always required because the setup-signed-in project runs on chromium
-      # (it seeds cookies into storageState and has no browser-specific behavior).
-      - name: Install Playwright browsers
-        run: |
-          if [ "$BROWSER" = "chromium" ]; then
-            pnpm exec playwright install --with-deps chromium
-          else
-            pnpm exec playwright install --with-deps chromium "$BROWSER"
-          fi
 
       - name: Build app
         run: pnpm build

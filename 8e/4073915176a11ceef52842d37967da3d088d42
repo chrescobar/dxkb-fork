@@ -1,0 +1,19 @@
+.github/workflows/sync-linux-snapshots.yml
+  s_9be1e595c196cb::t_913f7e83829012 57-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "8e4073915176a11ceef52842d37967da3d088d42",
+  "prompts": {},
+  "sessions": {
+    "s_9be1e595c196cb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "feb842c7-3bd4-4ebc-ab38-e874539c0caa",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

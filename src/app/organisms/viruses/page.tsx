@@ -1,4 +1,4 @@
-import { HorizontalLandingShell } from "@/components/organisms/landing-shell/horizontal-landing-shell";
+import { OrganismLandingShell } from "@/components/organisms/landing-shell/landing-shell";
 
 import { getVirusNavItems } from "./_components/virus-nav-items";
 import { virusesLandingConfig } from "./_config";
@@ -17,7 +17,7 @@ export default async function VirusesPage({ searchParams }: VirusesPageProps) {
   const activeViewKey = Array.isArray(viewParam) ? viewParam[0] : viewParam;
 
   return (
-    <HorizontalLandingShell
+    <OrganismLandingShell
       config={virusesLandingConfig}
       views={getVirusNavItems()}
       activeViewKey={activeViewKey}

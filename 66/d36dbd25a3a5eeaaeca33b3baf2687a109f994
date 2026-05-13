@@ -1,0 +1,45 @@
+src/app/organisms/bacteria/__tests__/page.test.tsx
+  s_ba1414a14328a0::t_c16c002c419197 30
+src/app/organisms/viruses/_components/nav-items.tsx
+  s_ba1414a14328a0::t_c99c8aaa1c961c 15,25
+  s_ba1414a14328a0::t_9840ad935f5b3d 1-14,16,26-82
+src/app/organisms/bacteria/page.tsx
+  s_ba1414a14328a0::t_fe937dd6f5ae3b 3,22
+src/components/organisms/shared/with-section-error.tsx
+  s_ba1414a14328a0::t_d8a7918b3b852c 1-14
+src/components/organisms/landing-shell/__tests__/landing-shell.test.tsx
+  s_ba1414a14328a0::t_acccbaf6ffd386 1,57,60
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_ba1414a14328a0::t_9755e4ea1ba7a3 4
+src/components/organisms/shared/placeholder-view.tsx
+  s_ba1414a14328a0::t_5d7df7271376d0 1-24
+src/app/organisms/layout.tsx
+  s_ba1414a14328a0::t_285f493654572f 4
+src/app/organisms/viruses/page.tsx
+  s_ba1414a14328a0::t_a612afe0ee855c 3,22
+src/app/organisms/viruses/views/placeholder.tsx
+  s_ba1414a14328a0::t_85dcb953ae19f6 1
+src/app/organisms/viruses/views/overview.tsx
+  s_ba1414a14328a0::t_0210ece1c4205a 9
+src/app/organisms/bacteria/_components/nav-items.tsx
+  s_ba1414a14328a0::t_314a2faa918229 1-22,24-139
+  s_ba1414a14328a0::t_85c03e9464ee4f 23
+src/app/organisms/bacteria/views/overview.tsx
+  s_ba1414a14328a0::t_885eed9b251d9a 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "66d36dbd25a3a5eeaaeca33b3baf2687a109f994",
+  "prompts": {},
+  "sessions": {
+    "s_ba1414a14328a0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "14e1b96e-dddf-429e-b05c-4243fc180f33",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

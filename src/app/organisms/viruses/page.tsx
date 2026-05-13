@@ -1,6 +1,6 @@
 import { OrganismLandingShell } from "@/components/organisms/landing-shell/landing-shell";
 
-import { getVirusNavItems } from "./_components/virus-nav-items";
+import { virusNavItems } from "./_components/nav-items";
 import { virusesLandingConfig } from "./_config";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +19,7 @@ export default async function VirusesPage({ searchParams }: VirusesPageProps) {
   return (
     <OrganismLandingShell
       config={virusesLandingConfig}
-      views={getVirusNavItems()}
+      views={virusNavItems}
       activeViewKey={activeViewKey}
     />
   );

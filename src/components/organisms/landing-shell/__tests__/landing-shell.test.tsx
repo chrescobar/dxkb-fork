@@ -1,4 +1,4 @@
-import { act, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { vi } from "vitest";
 
 import { OrganismLandingShell } from "../landing-shell";
@@ -29,10 +29,6 @@ const views: OrganismLandingView[] = [
 ];
 
 describe("OrganismLandingShell", () => {
-  beforeEach(() => {
-    window.localStorage.clear();
-  });
-
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -58,33 +54,9 @@ describe("OrganismLandingShell", () => {
     expect(screen.getByText("Genomes content")).toBeInTheDocument();
   });
 
-  it("does not overwrite the stored collapsed navigation preference before loading it", () => {
-    window.localStorage.setItem("dxkb.organismLanding.navCollapsed", "true");
-    let animationFrameCallback: FrameRequestCallback | undefined;
-    const requestAnimationFrame = vi
-      .spyOn(window, "requestAnimationFrame")
-      .mockImplementation((callback) => {
-        animationFrameCallback = callback;
-        return 1;
-      });
-    vi.spyOn(window, "cancelAnimationFrame").mockImplementation(
-      () => undefined,
-    );
-
+  it("defaults to expanded navigation", () => {
     render(<OrganismLandingShell config={config} views={views} />);
 
-    expect(requestAnimationFrame).toHaveBeenCalled();
-    expect(
-      window.localStorage.getItem("dxkb.organismLanding.navCollapsed"),
-    ).toBe("true");
-
-    act(() => {
-      animationFrameCallback?.(0);
-    });
-
-    expect(screen.queryByText("Views")).not.toBeInTheDocument();
-    expect(
-      window.localStorage.getItem("dxkb.organismLanding.navCollapsed"),
-    ).toBe("true");
+    expect(screen.getByText("Views")).toBeInTheDocument();
   });
 });

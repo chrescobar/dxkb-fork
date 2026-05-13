@@ -8,20 +8,9 @@ import { GeneraGrid } from "@/components/organisms/genera-grid/genera-grid";
 import { GeneraGridSkeleton } from "@/components/organisms/genera-grid/genera-grid-skeleton";
 import { MetadataDistributions } from "@/components/organisms/metadata-distributions/metadata-distributions";
 import { MetadataDistributionsSkeleton } from "@/components/organisms/metadata-distributions/metadata-distributions-skeleton";
-import { SectionError } from "@/components/organisms/shared/section-error";
+import { withSectionError } from "@/components/organisms/shared/with-section-error";
 
 import { bacteriaLandingConfig as config } from "../_config";
-
-async function withSectionError(
-  load: () => Promise<React.ReactElement>,
-): Promise<React.ReactElement> {
-  try {
-    return await load();
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    return <SectionError message={message} />;
-  }
-}
 
 async function DataSummaryBoundary() {
   return withSectionError(() => DataSummary({ taxonId: config.taxonId }));

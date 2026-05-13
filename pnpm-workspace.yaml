@@ -1,13 +1,13 @@
 packages:
   - .
-onlyBuiltDependencies:
-  - '@parcel/watcher'
-  - '@prisma/engines'
-  - '@scarf/scarf'
-  - esbuild
-  - msw
-  - prisma
-  - sharp
-  - unrs-resolver
+allowBuilds:
+  '@parcel/watcher': true
+  '@scarf/scarf': true
+  esbuild: true
+  msw: true
+  sharp: true
+  unrs-resolver: true
+  '@prisma/engines': true
+  prisma: true
 patchedDependencies:
   molstar: patches/molstar.patch

@@ -5,9 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  molstar:
-    hash: a80c534bab8094a7ca7103c40d6638c0f7127db69d2ac212a1ce6a951f3bc3da
-    path: patches/molstar.patch
+  molstar: a80c534bab8094a7ca7103c40d6638c0f7127db69d2ac212a1ce6a951f3bc3da
 
 importers:
 

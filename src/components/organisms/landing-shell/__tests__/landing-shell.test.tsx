@@ -18,9 +18,7 @@ function Genomes() {
 const config: OrganismLandingConfig = {
   displayName: "Bacteria",
   taxonId: 2,
-  pubmedTerm: "Bacteria",
   accent: "bacteria",
-  externalTools: [],
   metadataFields: [],
   defaultView: "overview",
 };

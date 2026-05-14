@@ -8,9 +8,13 @@ on:
 permissions:
   contents: write
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   sync-linux-snapshots:
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.59.1-jammy
 
     steps:
       - name: Code Checkout
@@ -30,17 +34,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-linux-all-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            playwright-linux-all-
-
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium firefox webkit
-
       - name: Build app
         run: pnpm build
 
@@ -51,16 +44,18 @@ jobs:
           WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
 
       - name: Regenerate linux snapshots
-        run: pnpm e2e:update-snapshots --project=chromium --project=firefox --project=webkit --grep "visual regression"
+        run: pnpm e2e:update-snapshots --project=chromium --project=firefox --project=webkit --grep "visual regression|matches the visual snapshot"
         env:
           CI: "true"
+          HOME: /root
           WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
 
       - name: Commit updated snapshots
         env:
           BRANCH_REF: ${{ github.ref }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global --add safe.directory "$(pwd)"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add e2e/__snapshots__/
           git diff --staged --quiet || (git commit -m "chore: update linux e2e snapshots" && git push origin "HEAD:$BRANCH_REF")

@@ -17,18 +17,10 @@ import {
   Waypoints,
 } from "lucide-react";
 
-import { PlaceholderView } from "@/components/organisms/shared/placeholder-view";
+import { makePlaceholderView as placeholderView } from "@/components/organisms/shared/make-placeholder-view";
 import type { OrganismLandingView } from "@/components/organisms/types";
 
 import { OverviewView } from "../views/overview";
-
-function placeholderView(title: string, description?: string) {
-  function BacteriaPlaceholderView() {
-    return <PlaceholderView title={title} description={description} />;
-  }
-  BacteriaPlaceholderView.displayName = `${title.replaceAll(" ", "")}View`;
-  return BacteriaPlaceholderView;
-}
 
 export const bacteriaNavItems: OrganismLandingView[] = [
   {

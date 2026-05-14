@@ -276,7 +276,6 @@ function annotationData(arcs: DonutPieArcDatum[]): AnnotationDatum[] {
 
 export function DonutChart({ title, data }: DonutChartProps) {
   const slices = chartData(data);
-  const _total = slices.reduce((sum, datum) => sum + datum.value, 0);
   const colorScale = scaleOrdinal<string, string>({
     domain: slices.map((datum) => datum.id),
     range: chartColors,

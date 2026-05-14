@@ -1,0 +1,23 @@
+DESIGN.md
+  s_69801b243c7e9a::t_fc60ad2a570af8 851-852
+  s_69801b243c7e9a::t_a6366856abe6e7 315-323
+  s_69801b243c7e9a::t_1a83783b6af410 1-29,31-254,309-314,324-850,853-857
+  s_69801b243c7e9a::t_3ed90dab92bdbe 255-308
+  s_69801b243c7e9a::t_2b9ffdfd12763e 30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "61c395080f97259503ab8d36505c8a10f7645793",
+  "prompts": {},
+  "sessions": {
+    "s_69801b243c7e9a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "37a9d603-1139-486b-9d70-fb24895efd1f",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

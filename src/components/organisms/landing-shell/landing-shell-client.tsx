@@ -1,5 +1,6 @@
 "use client";
 
+import { useHotkey } from "@tanstack/react-hotkeys";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, type ReactNode } from "react";
 
@@ -28,6 +29,8 @@ export function LandingShellClient({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [navCollapsed, setNavCollapsed] = useState(false);
+
+  useHotkey("Mod+B", () => setNavCollapsed((current) => !current));
 
   function handleViewChange(nextView: OrganismViewKey) {
     const params = new URLSearchParams(searchParams?.toString() ?? "");

@@ -44,6 +44,16 @@ export const virusFamilies: VirusFamiliesColumn[] = [
     ],
   },
   {
+    group: "Double-Stranded DNA",
+    families: [
+      { name: "Adenoviridae", taxonId: 10508 },
+      { name: "Asfarviridae", taxonId: 137992 },
+      { name: "Herpesvirales", taxonId: 548681 },
+      { name: "Polyomaviridae", taxonId: 151341 },
+      { name: "Poxviridae", taxonId: 10240 },
+    ],
+  },
+  {
     group: null,
     subGroups: [
       {
@@ -57,16 +67,6 @@ export const virusFamilies: VirusFamiliesColumn[] = [
       {
         label: "Partially Double-Stranded DNA",
         families: [{ name: "Hepadnaviridae", taxonId: 10404 }],
-      },
-      {
-        label: "Double-Stranded DNA",
-        families: [
-          { name: "Adenoviridae", taxonId: 10508 },
-          { name: "Asfarviridae", taxonId: 137992 },
-          { name: "Herpesvirales", taxonId: 548681 },
-          { name: "Polyomaviridae", taxonId: 151341 },
-          { name: "Poxviridae", taxonId: 10240 },
-        ],
       },
     ],
   },

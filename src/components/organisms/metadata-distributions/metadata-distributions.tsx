@@ -22,7 +22,7 @@ export async function MetadataDistributions({
   const facets = await fetchOrganismMetadataFacets(taxonId, fields);
 
   return (
-    <section className="flex flex-col gap-3">
+    <section className="@container flex flex-col gap-3">
       <div>
         <h2 className="text-2xl font-semibold tracking-normal">
           Metadata Distributions
@@ -31,7 +31,7 @@ export async function MetadataDistributions({
           Top metadata buckets for available genome records.
         </p>
       </div>
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-3">
+      <div className="grid grid-cols-1 gap-3 @[640px]:grid-cols-2 @[1080px]:grid-cols-3">
         {fields.map((field) => (
           <DonutChart
             key={field}

@@ -287,7 +287,7 @@ export function DonutChart({ title, data }: DonutChartProps) {
   return (
     <Card className="relative rounded-lg" size="sm">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle className="text-lg!">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         {slices.length === 0 ? (
@@ -300,7 +300,7 @@ export function DonutChart({ title, data }: DonutChartProps) {
               viewBox={`0 0 ${chartWidth} ${chartHeight}`}
               role="img"
               aria-label={`${title} distribution`}
-              className="mx-auto w-full max-w-full"
+              className="mx-auto w-full max-w-135"
             >
               <Group top={chartCenterY} left={chartCenterX}>
                 <Pie<DonutChartDatum>

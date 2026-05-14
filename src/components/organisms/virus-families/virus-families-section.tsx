@@ -7,6 +7,10 @@ function familyHref(taxonId: number) {
 }
 
 export function VirusFamiliesSection() {
+  // col3 is the mixed group (DS-RNA, SS-DNA, Partially DS-DNA)
+  // At lg it renders below DS-DNA; at xl+ it becomes its own 4th column.
+  const col3 = virusFamilies[3];
+
   return (
     <section className="flex flex-col gap-3">
       <div>
@@ -17,11 +21,11 @@ export function VirusFamiliesSection() {
           Common viral family groupings organized by genome type.
         </p>
       </div>
-      <div className="grid gap-3 lg:grid-cols-3">
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {virusFamilies.map((column, index) => (
           <div
             key={column.group ?? `mixed-${index}`}
-            className="flex min-w-0 flex-col gap-3"
+            className={`flex min-w-0 flex-col gap-3${index === 3 ? " hidden md:flex lg:hidden xl:flex" : ""}`}
           >
             {column.group === null ? (
               column.subGroups.map((subGroup) => (
@@ -54,6 +58,26 @@ export function VirusFamiliesSection() {
                     />
                   ))}
                 </div>
+                {index === 2 && col3 && col3.group === null && (
+                  <div className="hidden flex-col gap-3 lg:flex xl:hidden">
+                    {col3.subGroups.map((subGroup) => (
+                      <div key={subGroup.label} className="flex flex-col gap-3">
+                        <h3 className="text-muted-foreground px-0.5 text-sm font-semibold">
+                          {subGroup.label}
+                        </h3>
+                        <div className="flex flex-col gap-2">
+                          {subGroup.families.map((family) => (
+                            <GeneraCard
+                              key={family.name}
+                              name={family.name}
+                              href={familyHref(family.taxonId)}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </>
             )}
           </div>

@@ -82,6 +82,36 @@ describe("api/e2e-mock catch-all — enabled", () => {
     });
   });
 
+  it("GET returns viruses summary fixtures for taxonId 10239", async () => {
+    const resp = await GET(
+      mockNextRequest({
+        url: "http://localhost:3020/api/e2e-mock/bvbrc-website/data/summary_by_taxon/10239",
+      }),
+      ctx(["bvbrc-website", "data", "summary_by_taxon", "10239"]),
+    );
+
+    expect(resp.status).toBe(200);
+    expect(await resp.json()).toMatchObject({
+      count: 890123,
+      unique_family: 212,
+    });
+  });
+
+  it("GET returns all organisms summary fixtures for taxonId 131567", async () => {
+    const resp = await GET(
+      mockNextRequest({
+        url: "http://localhost:3020/api/e2e-mock/bvbrc-website/data/summary_by_taxon/131567",
+      }),
+      ctx(["bvbrc-website", "data", "summary_by_taxon", "131567"]),
+    );
+
+    expect(resp.status).toBe(200);
+    expect(await resp.json()).toMatchObject({
+      count: 9800000,
+      unique_family: 1204,
+    });
+  });
+
   it("GET returns SOLR-shaped bacteria genome facet fixtures", async () => {
     const resp = await GET(
       mockNextRequest({
@@ -98,6 +128,42 @@ describe("api/e2e-mock catch-all — enabled", () => {
     });
     expect(body.facet_counts.facet_fields.genus).toEqual(
       expect.arrayContaining(["Escherichia", 128450]),
+    );
+  });
+
+  it("GET returns SOLR-shaped family facet fixtures", async () => {
+    const resp = await GET(
+      mockNextRequest({
+        url: "http://localhost:3020/api/e2e-mock/bvbrc-website/genome/?eq(taxon_lineage_ids,10239)&limit(1)&facet%28%28field%2Cfamily%29%2C%28limit%2C24%29%2C%28mincount%2C1%29%29",
+      }),
+      ctx(["bvbrc-website", "genome"]),
+    );
+
+    expect(resp.status).toBe(200);
+    const body = await resp.json();
+    expect(body).toMatchObject({
+      facet_counts: { facet_fields: { family: expect.any(Array) } },
+    });
+    expect(body.facet_counts.facet_fields.family).toEqual(
+      expect.arrayContaining(["Coronaviridae", 180204]),
+    );
+  });
+
+  it("GET returns SOLR-shaped host_group facet fixtures", async () => {
+    const resp = await GET(
+      mockNextRequest({
+        url: "http://localhost:3020/api/e2e-mock/bvbrc-website/genome/?eq(taxon_lineage_ids,131567)&limit(1)&facet%28%28field%2Chost_group%29%2C%28limit%2C24%29%2C%28mincount%2C1%29%29",
+      }),
+      ctx(["bvbrc-website", "genome"]),
+    );
+
+    expect(resp.status).toBe(200);
+    const body = await resp.json();
+    expect(body).toMatchObject({
+      facet_counts: { facet_fields: { host_group: expect.any(Array) } },
+    });
+    expect(body.facet_counts.facet_fields.host_group).toEqual(
+      expect.arrayContaining(["Human", 512004]),
     );
   });
 

@@ -1,0 +1,21 @@
+src/app/organisms/bacteria/_components/nav-items.tsx
+  s_fc534cb61de93e::t_09a2d25b1d3b2c 20
+src/app/organisms/all/_components/nav-items.tsx
+  s_fc534cb61de93e::t_0ae20a7341357b 20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "e5adb0af64f2b93765bf45e0b4d1c832882d45cd",
+  "prompts": {},
+  "sessions": {
+    "s_fc534cb61de93e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f761112e-dfaa-4575-9af1-1bf07f393973",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

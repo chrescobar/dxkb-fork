@@ -49,12 +49,6 @@ const organismItems: {
     target: "_self",
   },
   {
-    title: "Fungi",
-    href: "/organisms/fungi",
-    description: "Webpage for all fungi.",
-    target: "_self",
-  },
-  {
     title: "Browse All",
     href: "/organisms/all",
     description: "Webpage for all organisms.",

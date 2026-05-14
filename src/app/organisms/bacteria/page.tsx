@@ -1,6 +1,6 @@
 import { OrganismLandingShell } from "@/components/organisms/landing-shell/landing-shell";
 
-import { getBacteriaSidebarNavItems } from "./_components/sidebar-nav-items";
+import { bacteriaNavItems } from "./_components/nav-items";
 import { bacteriaLandingConfig } from "./_config";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +19,7 @@ export default async function BacteriaPage({ searchParams }: BacteriaPageProps) 
   return (
     <OrganismLandingShell
       config={bacteriaLandingConfig}
-      views={getBacteriaSidebarNavItems()}
+      views={bacteriaNavItems}
       activeViewKey={activeViewKey}
     />
   );

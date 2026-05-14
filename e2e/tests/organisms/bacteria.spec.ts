@@ -19,8 +19,6 @@ test.describe("bacteria organism landing page", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Bacteria" })).toBeVisible();
     await expect(landing.getKpi("Genomes")).toContainText("1,337,420");
     await expect(landing.getGenusCard("Escherichia")).toContainText("128,450 genomes");
-    await expect(page.getByRole("link", { name: /BEI Resources/ })).toBeVisible();
-    await expect(page.getByRole("link", { name: /Comparative genomics/ })).toBeVisible();
     await landing.expectDonut("Genus");
     await landing.expectDonut("Host");
     await landing.expectDonut("Isolation Country");

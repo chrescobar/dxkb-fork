@@ -1,12 +1,18 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState } from "react";
 
 import type {
   OrganismLandingNavItem,
   OrganismViewKey,
 } from "@/components/organisms/types";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 interface LandingNavProps {
@@ -24,6 +30,10 @@ export function LandingNav({
   onChange,
   onCollapseToggle,
 }: LandingNavProps) {
+  const [isMac] = useState(() => /Mac|iPhone|iPad|iPod/i.test(navigator.userAgent));
+
+  const shortcutKey = isMac ? "⌘B" : "Ctrl+B";
+
   return (
     <nav
       aria-label="Organism views"
@@ -38,20 +48,29 @@ export function LandingNav({
             Views
           </h2>
         )}
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          aria-label={
-            collapsed
-              ? "Expand organism navigation"
-              : "Collapse organism navigation"
-          }
-          onClick={onCollapseToggle}
-          className={collapsed ? "mx-auto" : "ml-auto"}
-        >
-          {collapsed ? <ChevronRight /> : <ChevronLeft />}
-        </Button>
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                aria-label={
+                  collapsed
+                    ? "Expand organism navigation"
+                    : "Collapse organism navigation"
+                }
+                onClick={onCollapseToggle}
+                className={collapsed ? "mx-auto" : "ml-auto"}
+              >
+                {collapsed ? <ChevronRight /> : <ChevronLeft />}
+              </Button>
+            }
+          />
+          <TooltipContent side="right">
+            {collapsed ? "Expand" : "Collapse"} ({shortcutKey})
+          </TooltipContent>
+        </Tooltip>
       </div>
       <div className="flex flex-col gap-1 p-2.5 pt-0">
         {items.map((item) => {

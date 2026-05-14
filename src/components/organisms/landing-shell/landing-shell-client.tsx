@@ -1,15 +1,14 @@
 "use client";
 
+import { useHotkey } from "@tanstack/react-hotkeys";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 import { LandingNav } from "./landing-nav";
 import type {
   OrganismLandingNavItem,
   OrganismViewKey,
 } from "@/components/organisms/types";
-
-const collapseStorageKey = "dxkb.organismLanding.navCollapsed";
 
 interface LandingShellClientProps {
   displayName: string;
@@ -30,24 +29,8 @@ export function LandingShellClient({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [navCollapsed, setNavCollapsed] = useState(false);
-  const hasLoadedNavPreference = useRef(false);
 
-  useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
-      hasLoadedNavPreference.current = true;
-      setNavCollapsed(
-        window.localStorage.getItem(collapseStorageKey) === "true",
-      );
-    });
-    return () => window.cancelAnimationFrame(frame);
-  }, []);
-
-  useEffect(() => {
-    if (!hasLoadedNavPreference.current) {
-      return;
-    }
-    window.localStorage.setItem(collapseStorageKey, String(navCollapsed));
-  }, [navCollapsed]);
+  useHotkey("Mod+B", () => setNavCollapsed((current) => !current));
 
   function handleViewChange(nextView: OrganismViewKey) {
     const params = new URLSearchParams(searchParams?.toString() ?? "");

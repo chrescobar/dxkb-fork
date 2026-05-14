@@ -16,8 +16,7 @@ export function PlaceholderView({ title, description }: PlaceholderViewProps) {
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>
-          {description ??
-            "This view is a placeholder while the Bacteria landing page tabs are brought online."}
+          {description ?? "This view is coming soon."}
         </CardDescription>
       </CardHeader>
     </Card>

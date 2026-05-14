@@ -31,18 +31,10 @@ export interface OrganismLandingNavItem {
   icon: ReactNode;
 }
 
-export interface ExternalToolResource {
-  label: string;
-  href: string;
-  description?: string;
-}
-
 export interface OrganismLandingConfig {
   displayName: string;
   taxonId: number;
-  pubmedTerm: string;
   accent: "bacteria" | "viruses" | "fungi";
-  externalTools: ExternalToolResource[];
   metadataFields: string[];
   defaultView?: OrganismViewKey;
 }

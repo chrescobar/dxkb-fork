@@ -27,9 +27,7 @@ describe("BacteriaPage", () => {
 
     expect(screen.getAllByText("AMR Phenotypes")).toHaveLength(2);
     expect(
-      screen.getByText(
-        /This view is a placeholder while the Bacteria landing page tabs are/,
-      ),
+      screen.getByText(/This view is coming soon/),
     ).toBeInTheDocument();
   });
 });

@@ -2,12 +2,12 @@ packages:
   - .
 allowBuilds:
   '@parcel/watcher': true
+  '@prisma/engines': true
   '@scarf/scarf': true
   esbuild: true
   msw: true
+  prisma: true
   sharp: true
   unrs-resolver: true
-  '@prisma/engines': true
-  prisma: true
 patchedDependencies:
   molstar: patches/molstar.patch

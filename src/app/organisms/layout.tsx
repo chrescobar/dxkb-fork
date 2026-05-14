@@ -1,7 +1,7 @@
 import Footer from "@/components/footers/footer";
 import Navbar from "@/components/navbars/navbar";
 
-export default function BacteriaLayout({
+export default function OrganismsLayout({
   children,
 }: {
   children: React.ReactNode;

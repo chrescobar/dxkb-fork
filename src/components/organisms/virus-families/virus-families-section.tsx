@@ -1,9 +1,37 @@
 import { GeneraCard } from "@/components/organisms/genera-grid/genera-card";
 
-import { virusFamilies } from "./virus-families-data";
+import { type VirusFamiliesColumn, virusFamilies } from "./virus-families-data";
 
 function familyHref(taxonId: number) {
   return `https://www.bv-brc.org/view/Taxonomy/${taxonId}#view_tab=overview`;
+}
+
+type VirusFamilySubGroup = Extract<
+  VirusFamiliesColumn,
+  { group: null }
+>["subGroups"][number];
+
+function SubGroups({ subGroups }: { subGroups: VirusFamilySubGroup[] }) {
+  return (
+    <>
+      {subGroups.map((subGroup) => (
+        <div key={subGroup.label} className="flex flex-col gap-3">
+          <h3 className="text-muted-foreground px-0.5 text-sm font-semibold">
+            {subGroup.label}
+          </h3>
+          <div className="flex flex-col gap-2">
+            {subGroup.families.map((family) => (
+              <GeneraCard
+                key={family.name}
+                name={family.name}
+                href={familyHref(family.taxonId)}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
+    </>
+  );
 }
 
 export function VirusFamiliesSection() {
@@ -28,22 +56,7 @@ export function VirusFamiliesSection() {
             className={`flex min-w-0 flex-col gap-3${index === 3 ? " hidden md:flex lg:hidden xl:flex" : ""}`}
           >
             {column.group === null ? (
-              column.subGroups.map((subGroup) => (
-                <div key={subGroup.label} className="flex flex-col gap-3">
-                  <h3 className="text-muted-foreground px-0.5 text-sm font-semibold">
-                    {subGroup.label}
-                  </h3>
-                  <div className="flex flex-col gap-2">
-                    {subGroup.families.map((family) => (
-                      <GeneraCard
-                        key={family.name}
-                        name={family.name}
-                        href={familyHref(family.taxonId)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))
+              <SubGroups subGroups={column.subGroups} />
             ) : (
               <>
                 <h3 className="text-muted-foreground px-0.5 text-sm font-semibold">
@@ -60,22 +73,7 @@ export function VirusFamiliesSection() {
                 </div>
                 {index === 2 && col3 && col3.group === null && (
                   <div className="hidden flex-col gap-3 lg:flex xl:hidden">
-                    {col3.subGroups.map((subGroup) => (
-                      <div key={subGroup.label} className="flex flex-col gap-3">
-                        <h3 className="text-muted-foreground px-0.5 text-sm font-semibold">
-                          {subGroup.label}
-                        </h3>
-                        <div className="flex flex-col gap-2">
-                          {subGroup.families.map((family) => (
-                            <GeneraCard
-                              key={family.name}
-                              name={family.name}
-                              href={familyHref(family.taxonId)}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    ))}
+                    <SubGroups subGroups={col3.subGroups} />
                   </div>
                 )}
               </>

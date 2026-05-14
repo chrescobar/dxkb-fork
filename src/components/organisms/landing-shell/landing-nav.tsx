@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type {
   OrganismLandingNavItem,
@@ -30,7 +30,10 @@ export function LandingNav({
   onChange,
   onCollapseToggle,
 }: LandingNavProps) {
-  const [isMac] = useState(() => /Mac|iPhone|iPad|iPod/i.test(navigator.userAgent));
+  const [isMac, setIsMac] = useState(false);
+  useEffect(() => {
+    setIsMac(/Mac|iPhone|iPad|iPod/i.test(navigator.userAgent));
+  }, []);
 
   const shortcutKey = isMac ? "⌘B" : "Ctrl+B";
 

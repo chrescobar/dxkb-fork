@@ -1,0 +1,52 @@
+src/components/organisms/genera-grid/featured-all-organisms-data.ts
+  s_7c8ffb341af8e3::t_0941eaaa217911 38
+  s_7c8ffb341af8e3::t_d8503a8d999b99 2-5,48
+  s_7c8ffb341af8e3::t_b45c2302d1eb51 1,6-26,28-37,39-42,47
+  s_7c8ffb341af8e3::t_cc4a181e77c9b8 27
+  s_7c8ffb341af8e3::t_af7276784dcca2 43-46
+src/app/organisms/all/page.tsx
+  s_63f878f1116cc9::t_419698c46baa7b 1-26
+src/app/organisms/all/_config.ts
+  s_63f878f1116cc9::t_96756c9badcf24 1-9
+src/app/organisms/all/views/overview.tsx
+  s_7c8ffb341af8e3::t_89bbb3cb4302a9 6
+  s_7c8ffb341af8e3::t_03d26f3841b250 34-35
+  s_63f878f1116cc9::t_fb48d0a4f5a993 1-4,7-32,44-46
+  s_7c8ffb341af8e3::t_2bec96b08d454d 5,33,36-43
+src/components/navbars/desktop-navbar.tsx
+  s_63f878f1116cc9::t_1a7435ffd89d64 70
+src/app/organisms/all/__tests__/page.test.tsx
+  s_63f878f1116cc9::t_fd278f2169e458 1-33
+src/components/organisms/genera-grid/genera-card.tsx
+  s_7c8ffb341af8e3::t_c0747c570f1c84 15-22,25-26,32
+src/components/organisms/genera-grid/featured-organism-categories-grid.tsx
+  s_7c8ffb341af8e3::t_caed85d598c57b 1-37
+src/app/organisms/all/_components/nav-items.tsx
+  s_63f878f1116cc9::t_1cd42871c619ed 1-130
+src/components/organisms/types.ts
+  s_63f878f1116cc9::t_0cfb6685e8032b 37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "82fc5f71946fe9e6d3dc1984f04733ee08c87a67",
+  "prompts": {},
+  "sessions": {
+    "s_63f878f1116cc9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7b90c07a-10a2-428c-9513-3ab27dfe78f7",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_7c8ffb341af8e3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "674dded0-3784-40cb-a6d9-2269c0d6eebc",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

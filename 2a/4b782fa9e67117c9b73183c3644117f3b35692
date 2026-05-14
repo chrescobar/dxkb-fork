@@ -1,0 +1,22 @@
+src/components/organisms/landing-shell/landing-nav.tsx
+  s_4944b7475778b0::t_a43b281c550e82 33-36
+  s_4944b7475778b0::t_9fb0dde9cb7cfc 4
+src/components/organisms/virus-families/virus-families-section.tsx
+  s_4944b7475778b0::t_9f8db5eb199ea8 3,9-36,59,76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "2a4b782fa9e67117c9b73183c3644117f3b35692",
+  "prompts": {},
+  "sessions": {
+    "s_4944b7475778b0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ee987ea-3f77-4fa7-8c68-1cfc792d570a",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

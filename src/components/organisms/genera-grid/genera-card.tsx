@@ -16,7 +16,7 @@ function parseViewTab(href: string): string {
   try {
     return new URLSearchParams(new URL(href).hash.slice(1)).get("view_tab") ?? "genomes";
   } catch {
-    return "overview";
+    return "genomes";
   }
 }
 

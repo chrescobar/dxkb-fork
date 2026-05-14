@@ -34,7 +34,7 @@ export interface OrganismLandingNavItem {
 export interface OrganismLandingConfig {
   displayName: string;
   taxonId: number;
-  accent: "bacteria" | "viruses" | "fungi";
+  accent: "bacteria" | "viruses" | "fungi" | "all";
   metadataFields: string[];
   defaultView?: OrganismViewKey;
 }

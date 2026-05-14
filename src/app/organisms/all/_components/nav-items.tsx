@@ -22,7 +22,7 @@ import type { OrganismLandingView } from "@/components/organisms/types";
 
 import { OverviewView } from "../views/overview";
 
-export const bacteriaNavItems: OrganismLandingView[] = [
+export const allNavItems: OrganismLandingView[] = [
   {
     key: "overview",
     label: "Overview",
@@ -33,28 +33,19 @@ export const bacteriaNavItems: OrganismLandingView[] = [
     key: "phylogeny",
     label: "Phylogeny",
     icon: <Network />,
-    Component: placeholderView(
-      "Phylogeny",
-      "Phylogeny data and visualization are planned for a follow-up view.",
-    ),
+    Component: placeholderView("Phylogeny"),
   },
   {
     key: "taxonomy",
     label: "Taxonomy",
     icon: <Binary />,
-    Component: placeholderView(
-      "Taxonomy",
-      "Taxonomy browsing is stubbed while the overview data panels are brought online.",
-    ),
+    Component: placeholderView("Taxonomy"),
   },
   {
     key: "genomes",
     label: "Genomes",
     icon: <Dna />,
-    Component: placeholderView(
-      "Genomes",
-      "Genome table filtering and pagination are planned for a dedicated follow-up view.",
-    ),
+    Component: placeholderView("Genomes"),
   },
   {
     key: "amr-phenotypes",

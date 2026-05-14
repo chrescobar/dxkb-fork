@@ -60,6 +60,26 @@ const bacteriaSummaryFixture = {
   PDB: 9821,
 };
 
+const virusesSummaryFixture = {
+  count: 890123,
+  unique_family: 212,
+  unique_genus: 2841,
+  unique_species: 14302,
+  CDS: 12803441,
+  mat_peptide: 419820,
+  PDB: 3201,
+};
+
+const allOrganismsSummaryFixture = {
+  count: 9800000,
+  unique_family: 1204,
+  unique_genus: 41200,
+  unique_species: 510000,
+  CDS: 980000000,
+  mat_peptide: 450000,
+  PDB: 21000,
+};
+
 const bacteriaTaxonomyFixture = {
   taxon_id: 2,
   taxon_name: "Bacteria",
@@ -68,7 +88,7 @@ const bacteriaTaxonomyFixture = {
   genomes: 1337420,
 };
 
-const bacteriaFacetFixtures: Record<string, (string | number)[]> = {
+const sharedFacetFixtures: Record<string, (string | number)[]> = {
   genus: [
     "Escherichia",
     128450,
@@ -133,6 +153,18 @@ const bacteriaFacetFixtures: Record<string, (string | number)[]> = {
     "Environment",
     14420,
   ],
+  host_group: [
+    "Human",
+    512004,
+    "Animal",
+    231880,
+    "Environment",
+    98120,
+    "Plant",
+    41230,
+    "Insect",
+    29801,
+  ],
   isolation_country: [
     "United States",
     290442,
@@ -146,6 +178,28 @@ const bacteriaFacetFixtures: Record<string, (string | number)[]> = {
     56640,
     "Brazil",
     42801,
+  ],
+  family: [
+    "Coronaviridae",
+    180204,
+    "Flaviviridae",
+    98041,
+    "Orthomyxoviridae",
+    84312,
+    "Paramyxoviridae",
+    61203,
+    "Retroviridae",
+    52810,
+    "Rhabdoviridae",
+    41002,
+    "Herpesviridae",
+    38901,
+    "Adenoviridae",
+    29410,
+    "Poxviridae",
+    21034,
+    "Picornaviridae",
+    18920,
   ],
 };
 
@@ -165,12 +219,12 @@ function facetFieldFromRequest(request: NextRequest): string | null {
   return null;
 }
 
-function solrFacet(field: string) {
+function solrFacet(field: string, count: number) {
   return {
-    response: { numFound: bacteriaSummaryFixture.count, docs: [] },
+    response: { numFound: count, docs: [] },
     facet_counts: {
       facet_fields: {
-        [field]: bacteriaFacetFixtures[field] ?? [],
+        [field]: sharedFacetFixtures[field] ?? [],
       },
     },
   };
@@ -182,10 +236,18 @@ function maybeBvBrcWebsite(path: string, request: NextRequest): unknown | null {
   const endpoint = segments.slice(1).join("/");
 
   if (endpoint === "data/summary_by_taxon/2") return bacteriaSummaryFixture;
+  if (endpoint === "data/summary_by_taxon/10239") return virusesSummaryFixture;
+  if (endpoint === "data/summary_by_taxon/131567") return allOrganismsSummaryFixture;
   if (endpoint === "taxonomy/2") return bacteriaTaxonomyFixture;
   if (endpoint === "genome") {
     const field = facetFieldFromRequest(request);
-    return field ? solrFacet(field) : {};
+    if (!field) return {};
+    const url = new URL(request.url);
+    const query = decodeURIComponent(url.search);
+    let count = bacteriaSummaryFixture.count;
+    if (query.includes("10239")) count = virusesSummaryFixture.count;
+    else if (query.includes("131567")) count = allOrganismsSummaryFixture.count;
+    return solrFacet(field, count);
   }
 
   return null;

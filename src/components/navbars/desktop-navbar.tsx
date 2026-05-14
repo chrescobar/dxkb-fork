@@ -67,7 +67,7 @@ const DesktopNavbar = () => {
                   Organisms
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <ul className="grid w-70 gap-3 p-4 md:w-90 md:grid-cols-2 lg:w-120">
+                  <ul className="grid w-56 gap-3 p-4">
                     {organismItems.map((organism) => (
                       <ListItem
                         key={organism.title}

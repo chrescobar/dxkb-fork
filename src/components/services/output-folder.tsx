@@ -1,37 +1,23 @@
 "use client";
 
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React from "react";
 
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
-import { checkWorkspaceObjectExists } from "@/lib/services/workspace/validation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { HelpCircle } from "lucide-react";
-
-const debounceMs = 350;
-const nameTakenMessage =
-  "An object with this name already exists in the selected folder.";
 
 interface OutputFolderProps {
   title?: boolean;
   required?: boolean;
   tooltipContent?: boolean;
   placeholder?: string;
-  buttonIcon?: React.ReactNode;
   value?: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
   variant?: "default" | "name";
-  outputFolderPath?: string;
-  onValidationChange?: (valid: boolean) => void;
-}
-
-function buildFullPath(outputFolderPath: string, name: string): string {
-  const base = outputFolderPath.replace(/\/$/, "");
-  const trimmed = name.trim();
-  return trimmed ? `${base}/${trimmed}` : "";
 }
 
 const OutputFolder = ({
@@ -43,83 +29,7 @@ const OutputFolder = ({
   onChange,
   disabled = false,
   variant = "default",
-  outputFolderPath = "",
-  onValidationChange,
 }: OutputFolderProps) => {
-  const [isChecking, setIsChecking] = useState(false);
-  const [nameTaken, setNameTaken] = useState(false);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
-  // Stable ref so onValidationChange never appears in effect/callback deps,
-  // preventing re-render loops when the prop is an inline arrow function.
-  const onValidationChangeRef = useRef(onValidationChange);
-  useLayoutEffect(() => {
-    onValidationChangeRef.current = onValidationChange;
-  });
-
-  const runCheck = useCallback(
-    async (folderPath: string, name: string) => {
-      const fullPath = buildFullPath(folderPath, name);
-      if (!fullPath) {
-        setNameTaken(false);
-        onValidationChangeRef.current?.(true);
-        return;
-      }
-
-      abortControllerRef.current?.abort();
-      const controller = new AbortController();
-      abortControllerRef.current = controller;
-      setIsChecking(true);
-      setNameTaken(false);
-
-      const exists = await checkWorkspaceObjectExists(fullPath, {
-        signal: controller.signal,
-      });
-
-      if (controller.signal.aborted) {
-        return;
-      }
-
-      setIsChecking(false);
-      setNameTaken(exists);
-      onValidationChangeRef.current?.(!exists);
-    },
-    [],
-  );
-
-  const needsValidation = variant === "name" && !!outputFolderPath?.trim() && !!value?.trim();
-  const [prevNeedsValidation, setPrevNeedsValidation] = useState(needsValidation);
-  if (prevNeedsValidation && !needsValidation) {
-    setPrevNeedsValidation(needsValidation);
-    setIsChecking(false);
-    setNameTaken(false);
-  } else if (prevNeedsValidation !== needsValidation) {
-    setPrevNeedsValidation(needsValidation);
-  }
-
-  useEffect(() => {
-    if (!needsValidation) {
-      onValidationChangeRef.current?.(true);
-      return;
-    }
-
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-
-    debounceRef.current = setTimeout(() => {
-      debounceRef.current = null;
-      runCheck(outputFolderPath, value);
-    }, debounceMs);
-
-    return () => {
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-      }
-      abortControllerRef.current?.abort();
-    };
-  }, [needsValidation, outputFolderPath, value, runCheck]);
-
   const resolvedTitle = variant === "default" ? "Output Folder" : "Output Name";
 
   const resolvedPlaceholder =
@@ -171,16 +81,10 @@ const OutputFolder = ({
                 value={value}
                 onChange={(e) => onChange?.(e.target.value)}
                 disabled={disabled}
-                aria-invalid={nameTaken}
               />
             </div>
           )}
         </div>
-        {variant === "name" && !isChecking && nameTaken && (
-          <p className="text-sm text-destructive" role="alert">
-            {nameTakenMessage}
-          </p>
-        )}
       </div>
     </div>
   );

@@ -36,7 +36,7 @@ import {
   metaCATSInput,
 } from "@/lib/services/info/meta-cats";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import OutputFolder from "@/components/services/output-folder";
+import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { WorkspaceObject } from "@/lib/services/workspace/types";
@@ -93,9 +93,6 @@ export default function MetaCATSPage() {
   const [_selectedGroupFileObject, setSelectedGroupFileObject] =
     useState<WorkspaceObject | null>(null);
 
-  // General state
-  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
-
   const form = useForm({
     defaultValues: defaultMetaCatsFormValues as MetaCatsFormData,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -127,7 +124,6 @@ export default function MetaCATSPage() {
     () => rawFeatureGroups || [],
     [rawFeatureGroups],
   );
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
   const runtime = useServiceRuntime({
@@ -470,33 +466,7 @@ export default function MetaCATSPage() {
               </form.Field>
 
               <div className="flex flex-col space-y-4">
-                <form.Field name="output_path">
-                  {(field) => (
-                    <FieldItem>
-                      <OutputFolder
-                        required={true}
-                        value={field.state.value}
-                        onChange={field.handleChange}
-                      />
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-                <form.Field name="output_file">
-                  {(field) => (
-                    <FieldItem>
-                      <OutputFolder
-                        variant="name"
-                        required={true}
-                        value={field.state.value}
-                        onChange={field.handleChange}
-                        outputFolderPath={outputPath}
-                        onValidationChange={setIsOutputNameValid}
-                      />
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
+                <OutputLocationFields form={form} required={true} />
               </div>
             </div>
           </CardContent>
@@ -1000,7 +970,7 @@ export default function MetaCATSPage() {
           </Button>
           <Button
             type="submit"
-            disabled={isSubmitting || !canSubmit || !isOutputNameValid}
+            disabled={isSubmitting || !canSubmit}
           >
             {isSubmitting ? <Spinner /> : null}
             Submit

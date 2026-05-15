@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, Fragment } from "react";
+import { useCallback, Fragment } from "react";
 import { useForm, useStore } from "@tanstack/react-form";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,7 +20,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 import { ServiceHeader } from "@/components/services/service-header";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import OutputFolder from "@/components/services/output-folder";
+import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
@@ -66,10 +66,7 @@ export default function SubspeciesClassificationPage() {
     },
   });
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
-
-  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
   const inputSource = useStore(form.store, (s) => s.values.input_source);
 
@@ -100,7 +97,6 @@ export default function SubspeciesClassificationPage() {
 
   const handleReset = () => {
     form.reset(defaultSubspeciesClassificationFormValues);
-    setIsOutputNameValid(true);
   };
 
   const runtime = useServiceRuntime({
@@ -302,38 +298,7 @@ export default function SubspeciesClassificationPage() {
                 )}
               </form.Field>
 
-              <div className="service-card-row">
-                <div className="service-card-row-item">
-                  <form.Field name="output_path">
-                    {(field) => (
-                      <FieldItem>
-                        <OutputFolder
-                          value={field.state.value}
-                          onChange={(value) => field.handleChange(value)}
-                        />
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-                </div>
-
-                <div className="service-card-row-item">
-                  <form.Field name="output_file">
-                    {(field) => (
-                      <FieldItem>
-                        <OutputFolder
-                          variant="name"
-                          value={field.state.value}
-                          onChange={(value) => field.handleChange(value)}
-                          outputFolderPath={outputPath}
-                          onValidationChange={setIsOutputNameValid}
-                        />
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-                </div>
-              </div>
+              <OutputLocationFields form={form} />
             </CardContent>
           </Card>
         </div>
@@ -347,7 +312,7 @@ export default function SubspeciesClassificationPage() {
 
             <Button
               type="submit"
-              disabled={isSubmitting || !canSubmit || !isOutputNameValid}
+              disabled={isSubmitting || !canSubmit}
             >
               {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
               Submit

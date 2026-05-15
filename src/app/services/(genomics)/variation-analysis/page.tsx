@@ -244,7 +244,7 @@ export default function VariationAnalysisPage() {
                   <Label className="service-card-label">
                     Single Read Library
                   </Label>
-                  <div className="bg-border mx-4 h-[1px] flex-1" />
+                  <div className="bg-border mx-4 h-px flex-1" />
                   <Button
                     type="button"
                     variant="outline"

@@ -26,7 +26,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { ChevronDown } from "lucide-react";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import OutputFolder from "@/components/services/output-folder";
+import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { WorkspaceObject } from "@/lib/services/workspace/types";
@@ -87,7 +87,6 @@ export default function MSAandSNPAnalysisPage() {
       numseq: number;
     } | null>(null);
   const [showStrategy, setShowStrategy] = useState(false);
-  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
   const [isValidatingGenomeGroup, setIsValidatingGenomeGroup] = useState(false);
 
   function handleReset() {
@@ -135,7 +134,6 @@ export default function MSAandSNPAnalysisPage() {
     () => rawSelectGenomegroup || [],
     [rawSelectGenomegroup],
   );
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
   const runtime = useServiceRuntime({
@@ -1312,33 +1310,7 @@ export default function MSAandSNPAnalysisPage() {
               )}
 
               <div className="flex flex-col space-y-4">
-                <form.Field name="output_path">
-                  {(field) => (
-                    <FieldItem>
-                      <OutputFolder
-                        required={true}
-                        value={field.state.value}
-                        onChange={field.handleChange}
-                      />
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-                <form.Field name="output_file">
-                  {(field) => (
-                    <FieldItem>
-                      <OutputFolder
-                        variant="name"
-                        required={true}
-                        value={field.state.value}
-                        onChange={field.handleChange}
-                        outputFolderPath={outputPath}
-                        onValidationChange={setIsOutputNameValid}
-                      />
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
+                <OutputLocationFields form={form} required={true} />
               </div>
             </div>
           </CardContent>
@@ -1351,7 +1323,7 @@ export default function MSAandSNPAnalysisPage() {
           </Button>
           <Button
             type="submit"
-            disabled={isSubmitting || !canSubmit || !isOutputNameValid}
+            disabled={isSubmitting || !canSubmit}
           >
             {isSubmitting ? <Spinner /> : null}
             Submit

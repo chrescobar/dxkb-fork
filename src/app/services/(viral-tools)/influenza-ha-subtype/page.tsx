@@ -12,7 +12,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 import { ServiceHeader } from "@/components/services/service-header";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import OutputFolder from "@/components/services/output-folder";
+import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
@@ -49,11 +49,9 @@ export default function HASubtypeNumberingPage() {
     },
   });
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
   const watchedTypes = useStore(form.store, (s) => s.values.types);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
-  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
   const [fastaValidationMessage, setFastaValidationMessage] = useState("");
   const [isFastaValid, setIsFastaValid] = useState(false);
 
@@ -84,7 +82,6 @@ export default function HASubtypeNumberingPage() {
 
   const handleReset = () => {
     form.reset(defaultInfluenzaHaSubtypeFormValues);
-    setIsOutputNameValid(true);
     setFastaValidationMessage("");
     setIsFastaValid(false);
   };
@@ -99,7 +96,7 @@ export default function HASubtypeNumberingPage() {
   const isFastaDataInvalid =
     inputSource === "fasta_data" && !!fastaData?.trim() && !isFastaValid;
   const isSubmitDisabled = Boolean(
-    !canSubmit || !isOutputNameValid || isSubmitting || isFastaDataInvalid,
+    !canSubmit || isSubmitting || isFastaDataInvalid,
   );
 
   return (
@@ -309,32 +306,7 @@ export default function HASubtypeNumberingPage() {
                 )}
               </form.Field>
 
-              <form.Field name="output_path">
-                {(field) => (
-                  <FieldItem className="w-full">
-                    <OutputFolder
-                      value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
-                    />
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
-
-              <form.Field name="output_file">
-                {(field) => (
-                  <FieldItem className="w-full">
-                    <OutputFolder
-                      variant="name"
-                      value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
-                      outputFolderPath={outputPath}
-                      onValidationChange={setIsOutputNameValid}
-                    />
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
+              <OutputLocationFields form={form} />
             </CardContent>
           </Card>
         </div>

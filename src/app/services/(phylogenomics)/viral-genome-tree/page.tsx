@@ -35,7 +35,7 @@ import {
   phylogeneticTreeAlignmentParameters,
   phylogeneticTreeTreeParameters,
 } from "@/lib/services/info/phylogenetic-tree";
-import OutputFolder from "@/components/services/output-folder";
+import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { WorkspaceObject } from "@/lib/services/workspace/types";
@@ -81,7 +81,6 @@ export default function ViralGenomeTreePage() {
   const [selectedMetadataField, setSelectedMetadataField] =
     useState<string>("");
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
   const [isValidatingGenomeGroup, setIsValidatingGenomeGroup] = useState(false);
 
   const form = useForm({
@@ -97,7 +96,6 @@ export default function ViralGenomeTreePage() {
   });
 
   const sequences = useStore(form.store, (s) => s.values.sequences);
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
   // Update metadata fields in form when they change
@@ -706,33 +704,7 @@ export default function ViralGenomeTreePage() {
                 </form.Field>
 
                 <div className="flex flex-col space-y-4">
-                  <form.Field name="output_path">
-                    {(field) => (
-                      <FieldItem>
-                        <OutputFolder
-                          required={true}
-                          value={field.state.value}
-                          onChange={field.handleChange}
-                        />
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-                  <form.Field name="output_file">
-                    {(field) => (
-                      <FieldItem>
-                        <OutputFolder
-                          variant="name"
-                          required={true}
-                          value={field.state.value}
-                          onChange={field.handleChange}
-                          outputFolderPath={outputPath}
-                          onValidationChange={setIsOutputNameValid}
-                        />
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
+                  <OutputLocationFields form={form} required={true} />
                 </div>
               </div>
             </CardContent>
@@ -850,7 +822,7 @@ export default function ViralGenomeTreePage() {
           </Button>
           <Button
             type="submit"
-            disabled={isSubmitting || !canSubmit || !isOutputNameValid}
+            disabled={isSubmitting || !canSubmit}
           >
             {isSubmitting ? <Spinner /> : null}
             Submit

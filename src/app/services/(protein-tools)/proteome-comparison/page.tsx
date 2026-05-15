@@ -29,7 +29,7 @@ import {
   proteomeComparisonReferenceGenome,
 } from "@/lib/services/info/proteome-comparison";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import OutputFolder from "@/components/services/output-folder";
+import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { WorkspaceObject } from "@/lib/services/workspace/types";
@@ -78,9 +78,6 @@ export default function ProteomeComparisonPage() {
   // State for advanced parameters visibility
   const [showAdvancedParams, setShowAdvancedParams] = useState(false);
 
-  // State for submission
-  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
-
   const form = useForm({
     defaultValues:
       defaultProteomeComparisonFormValues as ProteomeComparisonFormData,
@@ -117,7 +114,6 @@ export default function ProteomeComparisonPage() {
     () => rawComparisonItems || [],
     [rawComparisonItems],
   );
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
   // Calculate total genome count (accounting for genome groups)
@@ -378,33 +374,7 @@ export default function ProteomeComparisonPage() {
               <CardContent className="service-card-content">
                 <div className="space-y-4">
                   <div className="flex flex-col space-y-4">
-                    <form.Field name="output_path">
-                      {(field) => (
-                        <FieldItem>
-                          <OutputFolder
-                            required={true}
-                            value={field.state.value}
-                            onChange={field.handleChange}
-                          />
-                          <FieldErrors field={field} />
-                        </FieldItem>
-                      )}
-                    </form.Field>
-                    <form.Field name="output_file">
-                      {(field) => (
-                        <FieldItem>
-                          <OutputFolder
-                            variant="name"
-                            required={true}
-                            value={field.state.value}
-                            onChange={field.handleChange}
-                            outputFolderPath={outputPath}
-                            onValidationChange={setIsOutputNameValid}
-                          />
-                          <FieldErrors field={field} />
-                        </FieldItem>
-                      )}
-                    </form.Field>
+                    <OutputLocationFields form={form} required={true} />
                   </div>
 
                   {/* Advanced Parameters */}
@@ -803,7 +773,7 @@ export default function ProteomeComparisonPage() {
           </Button>
           <Button
             type="submit"
-            disabled={isSubmitting || !canSubmit || !isOutputNameValid}
+            disabled={isSubmitting || !canSubmit}
           >
             {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
             Submit

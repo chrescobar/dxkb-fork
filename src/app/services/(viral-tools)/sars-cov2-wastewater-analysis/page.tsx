@@ -34,7 +34,7 @@ import { ServiceHeader } from "@/components/services/service-header";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import SraRunAccessionWithValidation from "@/components/services/sra-run-accession-with-validation";
 import SelectedItemsTable from "@/components/services/selected-items-table";
-import OutputFolder from "@/components/services/output-folder";
+import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
@@ -95,7 +95,6 @@ export default function SarsCov2WastewaterAnalysisPage() {
     },
   });
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
   const [pairedRead1, setPairedRead1] = useState<string | null>(null);
@@ -105,7 +104,6 @@ export default function SarsCov2WastewaterAnalysisPage() {
   const [currentSampleDate, setCurrentSampleDate] = useState("");
   const skipSraNormalization = useRef(false);
   const [sraResetKey, setSraResetKey] = useState(0);
-  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
   const primers = useStore(form.store, (s) => s.values.primers);
   const primerVersionOpts =
@@ -566,31 +564,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
               </div>
 
               <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
-                <form.Field name="output_path">
-                  {(field) => (
-                    <FieldItem className="flex-1">
-                      <OutputFolder
-                        value={field.state.value}
-                        onChange={(value) => field.handleChange(value)}
-                      />
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-                <form.Field name="output_file">
-                  {(field) => (
-                    <FieldItem className="flex-1">
-                      <OutputFolder
-                        variant="name"
-                        value={field.state.value}
-                        onChange={(value) => field.handleChange(value)}
-                        outputFolderPath={outputPath}
-                        onValidationChange={setIsOutputNameValid}
-                      />
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
+                <OutputLocationFields form={form} />
               </div>
             </CardContent>
           </Card>
@@ -604,7 +578,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting || !canSubmit || !isOutputNameValid}
+              disabled={isSubmitting || !canSubmit}
             >
               {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
               Submit

@@ -35,7 +35,7 @@ import { ServiceHeader } from "@/components/services/service-header";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import SraRunAccessionWithValidation from "@/components/services/sra-run-accession-with-validation";
 import SelectedItemsTable from "@/components/services/selected-items-table";
-import OutputFolder from "@/components/services/output-folder";
+import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { TaxonNameSelector } from "@/components/taxonomy/taxon-name-selector";
@@ -99,7 +99,6 @@ export default function SarsCov2GenomeAnalysisPage() {
     },
   });
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
   const [pairedRead1, setPairedRead1] = useState<string | null>(null);
@@ -110,7 +109,6 @@ export default function SarsCov2GenomeAnalysisPage() {
   const [singlePlatform, setSinglePlatform] =
     useState<SarsCov2Platform>("illumina");
   const [sraResetKey, setSraResetKey] = useState(0);
-  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
   const inputType = useStore(form.store, (s) => s.values.input_type);
   const recipe = useStore(form.store, (s) => s.values.recipe);
@@ -739,33 +737,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                 )}
               </form.Field>
 
-              <form.Field name="output_path">
-                {(field) => (
-                  <FieldItem>
-                    <OutputFolder
-                      value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
-                    />
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
-
-              <form.Field name="output_file">
-                {(field) => (
-                  <FieldItem>
-                    <OutputFolder
-                      variant="name"
-                      value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
-                      outputFolderPath={outputPath}
-                      onValidationChange={setIsOutputNameValid}
-                      disabled={true}
-                    />
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
+              <OutputLocationFields form={form} disabled={true} />
             </CardContent>
           </Card>
         </div>
@@ -778,7 +750,7 @@ export default function SarsCov2GenomeAnalysisPage() {
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting || !canSubmit || !isOutputNameValid}
+              disabled={isSubmitting || !canSubmit}
             >
               {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
               Submit

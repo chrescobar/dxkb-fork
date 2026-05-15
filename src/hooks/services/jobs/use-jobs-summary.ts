@@ -6,10 +6,10 @@ interface JobsSummaryData {
   appSummary: Record<string, number>;
 }
 
-export function useJobsSummary(includeArchived: boolean) {
+export function useJobsSummary(includeArchived: boolean, refetchInterval = 30_000) {
   return useApiQuery<JobsSummaryData>({
     queryKey: ["jobs-summary", includeArchived],
-    refetchInterval: 30_000,
+    refetchInterval,
     refetchIntervalInBackground: false,
     queryFn: async () => {
       const data = await apiCall<{

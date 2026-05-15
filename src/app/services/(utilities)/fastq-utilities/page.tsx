@@ -33,7 +33,7 @@ import { ServiceHeader } from "@/components/services/service-header";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import SraRunAccessionWithValidation from "@/components/services/sra-run-accession-with-validation";
 import SelectedItemsTable from "@/components/services/selected-items-table";
-import OutputFolder from "@/components/services/output-folder";
+import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { SingleGenomeSelector } from "@/components/services/single-genome-selector";
@@ -91,9 +91,6 @@ export default function FastqUtilitiesPage() {
     [],
   );
 
-  // Output name uniqueness (variant="name"); valid until check says otherwise
-  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
-
   const handleReset = () => {
     form.reset(defaultFastqUtilitiesFormValues as FastqUtilitiesFormData);
     setLibraries([]);
@@ -115,7 +112,6 @@ export default function FastqUtilitiesPage() {
     },
   });
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
   const recipe = useStore(form.store, (s) => s.values.recipe);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
@@ -309,31 +305,7 @@ export default function FastqUtilitiesPage() {
             </CardHeader>
 
             <CardContent className="service-card-content">
-              <form.Field name="output_path">
-                {(field) => (
-                  <FieldItem className="w-full">
-                    <OutputFolder
-                      value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
-                    />
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
-              <form.Field name="output_file">
-                {(field) => (
-                  <FieldItem className="w-full">
-                    <OutputFolder
-                      variant="name"
-                      value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
-                      outputFolderPath={outputPath}
-                      onValidationChange={setIsOutputNameValid}
-                    />
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
+              <OutputLocationFields form={form} />
             </CardContent>
           </Card>
         </div>
@@ -627,7 +599,7 @@ export default function FastqUtilitiesPage() {
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting || !canSubmit || !isOutputNameValid}
+              disabled={isSubmitting || !canSubmit}
             >
               {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
               Submit

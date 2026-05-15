@@ -36,7 +36,7 @@ import {
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import SraRunAccessionWithValidation from "@/components/services/sra-run-accession-with-validation";
 import SelectedItemsTable from "@/components/services/selected-items-table";
-import OutputFolder from "@/components/services/output-folder";
+import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
 import { toast } from "sonner";
@@ -70,7 +70,6 @@ export default function VariationAnalysisPage() {
   const [pairedRead1, setPairedRead1] = useState<string | null>(null);
   const [pairedRead2, setPairedRead2] = useState<string | null>(null);
   const [singleRead, setSingleRead] = useState<string | null>(null);
-  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
   const [sraResetKey, setSraResetKey] = useState(0);
 
   const form = useForm({
@@ -166,7 +165,6 @@ export default function VariationAnalysisPage() {
     });
   };
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
   return (
@@ -412,36 +410,7 @@ export default function VariationAnalysisPage() {
                   )}
                 </form.Field>
 
-                {/* Output Folder */}
-                <form.Field name="output_path">
-                  {(field) => (
-                    <FieldItem>
-                      <OutputFolder
-                        required={true}
-                        value={field.state.value}
-                        onChange={field.handleChange}
-                      />
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-
-                {/* Output Name */}
-                <form.Field name="output_file">
-                  {(field) => (
-                    <FieldItem>
-                      <OutputFolder
-                        variant="name"
-                        required={true}
-                        value={field.state.value}
-                        onChange={field.handleChange}
-                        outputFolderPath={outputPath}
-                        onValidationChange={setIsOutputNameValid}
-                      />
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
+                <OutputLocationFields form={form} required />
               </div>
             </CardContent>
           </Card>
@@ -496,7 +465,7 @@ export default function VariationAnalysisPage() {
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting || !canSubmit || !isOutputNameValid}
+              disabled={isSubmitting || !canSubmit}
             >
               {isSubmitting ? <Spinner /> : null}
               Submit

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useForm, useStore } from "@tanstack/react-form";
 import { ServiceHeader } from "@/components/services/service-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,7 +20,7 @@ import {
   genomeAnnotationParameters,
 } from "@/lib/services/info/genome-annotation";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import OutputFolder from "@/components/services/output-folder";
+import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { WorkspaceObject } from "@/lib/services/workspace/types";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
@@ -54,8 +54,6 @@ import { Spinner } from "@/components/ui/spinner";
 import { Label } from "@/components/ui/label";
 
 const GenomeAnnotationContent = () => {
-  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
-
   const form = useForm({
     defaultValues:
       defaultGenomeAnnotationFormValues as GenomeAnnotationFormData,
@@ -109,7 +107,6 @@ const GenomeAnnotationContent = () => {
   };
 
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
 
   return (
     <section>
@@ -330,37 +327,7 @@ const GenomeAnnotationContent = () => {
                 )}
               </form.Field>
 
-              {/* Output Folder */}
-              <form.Field name="output_path">
-                {(field) => (
-                  <FieldItem>
-                    <OutputFolder
-                      required={true}
-                      value={field.state.value}
-                      onChange={field.handleChange}
-                    />
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
-
-              {/* Output File Name */}
-              <form.Field name="output_file">
-                {(field) => (
-                  <FieldItem>
-                    <OutputFolder
-                      variant="name"
-                      required={false}
-                      value={field.state.value}
-                      onChange={field.handleChange}
-                      disabled={true}
-                      outputFolderPath={outputPath}
-                      onValidationChange={setIsOutputNameValid}
-                    />
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
+              <OutputLocationFields form={form} required disabled />
             </div>
           </CardContent>
         </Card>
@@ -378,7 +345,7 @@ const GenomeAnnotationContent = () => {
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting || !canSubmit || !isOutputNameValid}
+              disabled={isSubmitting || !canSubmit}
             >
               {isSubmitting ? <Spinner /> : null}
               Annotate

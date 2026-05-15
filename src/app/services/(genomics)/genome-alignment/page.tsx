@@ -23,7 +23,7 @@ import { ChevronDown } from "lucide-react";
 import { ServiceHeader } from "@/components/services/service-header";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import SelectedItemsTable from "@/components/services/selected-items-table";
-import OutputFolder from "@/components/services/output-folder";
+import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { WorkspaceObject } from "@/lib/services/workspace/types";
 import { Spinner } from "@/components/ui/spinner";
@@ -57,7 +57,6 @@ const maxGenomes = 20;
 export default function GenomeAlignmentServicePage() {
   const [selectedGenomes, setSelectedGenomes] = useState<GenomeSummary[]>([]);
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
   const [isFetchingGroup, setIsFetchingGroup] = useState(false);
   const [lastSelectedGroup, setLastSelectedGroup] = useState<string | null>(null);
   const [selectedGenomeGroup, setSelectedGenomeGroup] = useState<WorkspaceObject | null>(null);
@@ -72,7 +71,6 @@ export default function GenomeAlignmentServicePage() {
 
   const manualSeedWeight = useStore(form.store, (s) => s.values.manual_seed_weight);
   const seedWeightValue = useStore(form.store, (s) => s.values.seed_weight) ?? 15;
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
 
   useEffect(() => {
     const genomeIds = selectedGenomes.map((genome) => genome.genome_id);
@@ -359,34 +357,7 @@ export default function GenomeAlignmentServicePage() {
           </CardHeader>
 
           <CardContent className="service-card-content space-y-6">
-            <form.Field name="output_path">
-              {(field) => (
-                <FieldItem>
-                  <OutputFolder
-                    required
-                    value={field.state.value}
-                    onChange={field.handleChange}
-                  />
-                  <FieldErrors field={field} />
-                </FieldItem>
-              )}
-            </form.Field>
-
-            <form.Field name="output_file">
-              {(field) => (
-                <FieldItem>
-                  <OutputFolder
-                    variant="name"
-                    required
-                    value={field.state.value}
-                    onChange={field.handleChange}
-                    outputFolderPath={outputPath}
-                    onValidationChange={setIsOutputNameValid}
-                  />
-                  <FieldErrors field={field} />
-                </FieldItem>
-              )}
-            </form.Field>
+            <OutputLocationFields form={form} required />
 
             <Collapsible
               open={showAdvanced}
@@ -490,7 +461,7 @@ export default function GenomeAlignmentServicePage() {
           >
             Reset
           </Button>
-          <Button type="submit" disabled={isSubmitting || !hasMinimumGenomes || !isOutputNameValid}>
+          <Button type="submit" disabled={isSubmitting || !hasMinimumGenomes}>
             {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
             Submit
           </Button>

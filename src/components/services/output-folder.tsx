@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
@@ -50,13 +50,19 @@ const OutputFolder = ({
   const [nameTaken, setNameTaken] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  // Stable ref so onValidationChange never appears in effect/callback deps,
+  // preventing re-render loops when the prop is an inline arrow function.
+  const onValidationChangeRef = useRef(onValidationChange);
+  useLayoutEffect(() => {
+    onValidationChangeRef.current = onValidationChange;
+  });
 
   const runCheck = useCallback(
     async (folderPath: string, name: string) => {
       const fullPath = buildFullPath(folderPath, name);
       if (!fullPath) {
         setNameTaken(false);
-        onValidationChange?.(true);
+        onValidationChangeRef.current?.(true);
         return;
       }
 
@@ -76,9 +82,9 @@ const OutputFolder = ({
 
       setIsChecking(false);
       setNameTaken(exists);
-      onValidationChange?.(!exists);
+      onValidationChangeRef.current?.(!exists);
     },
-    [onValidationChange],
+    [],
   );
 
   const needsValidation = variant === "name" && !!outputFolderPath?.trim() && !!value?.trim();
@@ -93,7 +99,7 @@ const OutputFolder = ({
 
   useEffect(() => {
     if (!needsValidation) {
-      onValidationChange?.(true);
+      onValidationChangeRef.current?.(true);
       return;
     }
 
@@ -112,7 +118,7 @@ const OutputFolder = ({
       }
       abortControllerRef.current?.abort();
     };
-  }, [needsValidation, outputFolderPath, value, runCheck, onValidationChange]);
+  }, [needsValidation, outputFolderPath, value, runCheck]);
 
   const resolvedTitle = variant === "default" ? "Output Folder" : "Output Name";
 

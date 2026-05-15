@@ -29,7 +29,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { ServiceHeader } from "@/components/services/service-header";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import OutputFolder from "@/components/services/output-folder";
+import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -57,7 +57,6 @@ import { WorkspaceObject } from "@/lib/services/workspace/types";
 
 export default function PrimerDesignServicePage() {
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
   // Store values for each input type separately
   const [sequenceTextValue, setSequenceTextValue] = useState("");
   const [sequenceTextId, setSequenceTextId] = useState("");
@@ -97,7 +96,6 @@ export default function PrimerDesignServicePage() {
 
   const inputType = useStore(form.store, (s) => s.values.input_type);
   const sequenceInput = useStore(form.store, (s) => s.values.sequence_input);
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
   const sequenceValidation = useMemo(() => {
@@ -926,34 +924,7 @@ export default function PrimerDesignServicePage() {
             <CardTitle className="service-card-title">Output</CardTitle>
           </CardHeader>
           <CardContent className="service-card-content space-y-3 pt-1">
-            <form.Field name="output_path">
-              {(field) => (
-                <FieldItem>
-                  <OutputFolder
-                    required
-                    value={field.state.value}
-                    onChange={field.handleChange}
-                  />
-                  <FieldErrors field={field} />
-                </FieldItem>
-              )}
-            </form.Field>
-
-            <form.Field name="output_file">
-              {(field) => (
-                <FieldItem>
-                  <OutputFolder
-                    variant="name"
-                    required
-                    value={field.state.value}
-                    onChange={(value) => field.handleChange(value)}
-                    outputFolderPath={outputPath}
-                    onValidationChange={setIsOutputNameValid}
-                  />
-                  <FieldErrors field={field} />
-                </FieldItem>
-              )}
-            </form.Field>
+            <OutputLocationFields form={form} required />
           </CardContent>
         </Card>
 
@@ -963,7 +934,7 @@ export default function PrimerDesignServicePage() {
           </Button>
           <Button
             type="submit"
-            disabled={runtime.isSubmitting || !canSubmit || !isOutputNameValid}
+            disabled={runtime.isSubmitting || !canSubmit}
           >
             {runtime.isSubmitting && <Spinner className="mr-2 h-4 w-4" />}
             Submit

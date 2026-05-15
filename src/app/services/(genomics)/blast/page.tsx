@@ -29,7 +29,7 @@ import {
   blastServiceDatabaseSource,
   blastServiceDatabaseType,
 } from "@/lib/services/info/blast";
-import OutputFolder from "@/components/services/output-folder";
+import { OutputLocationFields } from "@/components/services/output-location-fields";
 import {
   RequiredFormLabel,
   RequiredFormLabelInfo,
@@ -62,7 +62,6 @@ import { Label } from "@/components/ui/label";
 
 export default function BlastServicePage() {
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
   const form = useForm({
     defaultValues: defaultBlastFormValues as BlastFormData,
@@ -91,7 +90,6 @@ export default function BlastServicePage() {
   );
   const dbType = useStore(form.store, (s) => s.values.db_type);
   const inputSource = useStore(form.store, (s) => s.values.input_source);
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
   const { fastaValidationResult, isFastaValid, handleFastaValidationChange } =
     useFastaValidation(form, currentBlastProgram);
@@ -668,40 +666,7 @@ export default function BlastServicePage() {
               </div>
             </div>
 
-            <div className="service-card-row">
-              <div className="service-card-row-item">
-                <form.Field name="output_path">
-                  {(field) => (
-                    <FieldItem>
-                      <OutputFolder
-                        required={true}
-                        value={field.state.value}
-                        onChange={field.handleChange}
-                      />
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-              </div>
-
-              <div className="service-card-row-item">
-                <form.Field name="output_file">
-                  {(field) => (
-                    <FieldItem>
-                      <OutputFolder
-                        variant="name"
-                        required={true}
-                        value={field.state.value}
-                        onChange={field.handleChange}
-                        outputFolderPath={outputPath}
-                        onValidationChange={setIsOutputNameValid}
-                      />
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-              </div>
-            </div>
+            <OutputLocationFields form={form} required />
 
             <Collapsible
               open={showAdvanced}
@@ -803,9 +768,7 @@ export default function BlastServicePage() {
             </Button>
             <Button
               type="submit"
-              disabled={
-                runtime.isSubmitting || !canSubmit || !isOutputNameValid
-              }
+              disabled={runtime.isSubmitting || !canSubmit}
             >
               {runtime.isSubmitting ? <Spinner /> : null}
               Submit

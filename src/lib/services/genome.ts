@@ -294,7 +294,10 @@ export async function validateViralGenomes(
   }
 }
 
-export async function fetchGenomeGroupMembers(path: string): Promise<GenomeSummary[]> {
+export async function fetchGenomeGroupMembers(
+  path: string,
+  options: { signal?: AbortSignal } = {},
+): Promise<GenomeSummary[]> {
   if (!path) {
     return [];
   }
@@ -315,6 +318,7 @@ export async function fetchGenomeGroupMembers(path: string): Promise<GenomeSumma
           },
         ],
       }),
+      signal: options.signal,
     });
 
     if (!response.ok) {
@@ -339,7 +343,7 @@ export async function fetchGenomeGroupMembers(path: string): Promise<GenomeSumma
 
     const genomeIds: string[] = decoded.id_list.genome_id.filter((id: unknown) => typeof id === "string");
 
-    return fetchGenomesByIds(genomeIds);
+    return fetchGenomesByIds(genomeIds, { signal: options.signal });
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
       return [];

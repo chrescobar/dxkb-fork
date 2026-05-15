@@ -1,5 +1,9 @@
 packages:
   - .
+minimumReleaseAge: 10080
+minimumReleaseAgeExclude:
+- next
+- react
 allowBuilds:
   '@parcel/watcher': true
   '@prisma/engines': true

@@ -46,7 +46,7 @@ import {
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import SraRunAccessionWithValidation from "@/components/services/sra-run-accession-with-validation";
 import SelectedItemsTable from "@/components/services/selected-items-table";
-import OutputFolder from "@/components/services/output-folder";
+import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { Library } from "@/types/services";
 import { NumberInput } from "@/components/ui/number-input";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
@@ -104,7 +104,6 @@ export default function GenomeAssemblyPage() {
   const [pairedRead1, setPairedRead1] = useState<string | null>(null);
   const [pairedRead2, setPairedRead2] = useState<string | null>(null);
   const [singleRead, setSingleRead] = useState<string | null>(null);
-  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
   const [sraResetKey, setSraResetKey] = useState(0);
 
   const form = useForm({
@@ -180,7 +179,6 @@ export default function GenomeAssemblyPage() {
   const recipe = useStore(form.store, (s) => s.values.recipe);
   const showGenomeSizeField = recipe === "canu";
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
   const handlePairedLibraryAdd = () => {
@@ -423,36 +421,7 @@ export default function GenomeAssemblyPage() {
                   )}
                 </form.Field>
 
-                {/* Output Folder */}
-                <form.Field name="output_path">
-                  {(field) => (
-                    <FieldItem>
-                      <OutputFolder
-                        required={true}
-                        value={field.state.value}
-                        onChange={(value) => field.handleChange(value)}
-                      />
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-
-                {/* Output Name */}
-                <form.Field name="output_file">
-                  {(field) => (
-                    <FieldItem>
-                      <OutputFolder
-                        variant="name"
-                        required={true}
-                        value={field.state.value}
-                        onChange={(value) => field.handleChange(value)}
-                        outputFolderPath={outputPath}
-                        onValidationChange={setIsOutputNameValid}
-                      />
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
+                <OutputLocationFields form={form} required />
 
                 {/* Genome Size (for Canu only) */}
                 {showGenomeSizeField && (
@@ -785,9 +754,7 @@ export default function GenomeAssemblyPage() {
             </Button>
             <Button
               type="submit"
-              disabled={
-                runtime.isSubmitting || !canSubmit || !isOutputNameValid
-              }
+              disabled={runtime.isSubmitting || !canSubmit}
             >
               {runtime.isSubmitting ? <Spinner /> : null}
               Assemble

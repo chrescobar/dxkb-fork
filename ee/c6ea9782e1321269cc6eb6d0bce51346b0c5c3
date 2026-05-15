@@ -1,0 +1,84 @@
+src/lib/services/service-query-keys.ts
+  s_4d018d10280b4f::t_f3a9ea20e51419 1-6
+src/lib/forms/__tests__/output-name-validator.test.ts
+  s_4d018d10280b4f::t_748e2751db984e 1-151
+src/app/services/(genomics)/variation-analysis/page.tsx
+  s_4d018d10280b4f::t_a56aaa06c03a5b 468
+  s_4d018d10280b4f::t_fa1df1b0ff4519 413
+  s_4d018d10280b4f::t_c2ca3c26f7dde5 39
+src/components/services/output-location-fields.tsx
+  s_4d018d10280b4f::t_a8e3b2aff78262 13,15,17
+  s_4d018d10280b4f::t_9266fe8b11cff1 34-35
+  s_4d018d10280b4f::t_6b70194b7cfe57 1-2,5-7,16,18-30,38-39,41-51,74-77
+  s_4d018d10280b4f::t_0e1bd3ba96173c 40
+  s_4d018d10280b4f::t_357f51370a194f 8-10,52
+  s_4d018d10280b4f::t_3f4c38b9c02ed1 12
+  s_4d018d10280b4f::t_ae17a477cf0053 3-4,11,14,31-33,36-37,53-73
+src/hooks/services/use-cached-feature-group-loader.ts
+  s_4d018d10280b4f::t_5ed68fc7c134ef 1-34
+src/hooks/services/use-genome-group-members.ts
+  s_4d018d10280b4f::t_a31122fab5b35a 1-10,12-15
+  s_4d018d10280b4f::t_11aa9640cda5be 11
+src/app/services/(genomics)/genome-alignment/page.tsx
+  s_4d018d10280b4f::t_a2b6214f247658 464
+  s_4d018d10280b4f::t_877ebbc57b42fd 26
+  s_4d018d10280b4f::t_62d432c20c5dad 360
+src/lib/forms/output-name-validator.ts
+  s_4d018d10280b4f::t_d3b613cc13ca88 1-47
+src/app/services/(genomics)/primer-design/page.tsx
+  s_4d018d10280b4f::t_1f8b2ded1ebbfc 32
+  s_4d018d10280b4f::t_accd29a55b8f1a 937
+  s_4d018d10280b4f::t_adf0a4e6baadcc 927
+src/components/services/output-folder.tsx
+  s_4d018d10280b4f::t_fd87f6f1b28a32 3
+  s_4d018d10280b4f::t_c6886585893c97 102,121
+  s_4d018d10280b4f::t_12f501d06cfce6 53-54,56-58
+  s_4d018d10280b4f::t_346705cead3ab6 55,65,85,87
+src/app/services/(genomics)/blast/page.tsx
+  s_4d018d10280b4f::t_79ce6a593400c2 669
+  s_4d018d10280b4f::t_c37dc5a4578b67 771
+  s_4d018d10280b4f::t_cba27461929993 32
+src/hooks/services/use-feature-group-members.ts
+  s_4d018d10280b4f::t_4e0ecb721746cf 11
+  s_4d018d10280b4f::t_174d47708ab098 1-10,12-15
+src/components/services/__tests__/output-location-fields.test.tsx
+  s_4d018d10280b4f::t_d9add6752204d0 1-2,4-29,32,34-35,37-52,54-119
+  s_4d018d10280b4f::t_015e5925bbb17a 30,36
+  s_4d018d10280b4f::t_126e1badbdd3bc 31
+  s_4d018d10280b4f::t_c36a8f357a2c75 33
+  s_4d018d10280b4f::t_57ade4b2c8db1d 3
+  s_4d018d10280b4f::t_a50804ae44085c 53
+src/lib/services/genome.ts
+  s_4d018d10280b4f::t_63b46874fc6d44 297-300,321,346
+src/app/services/(genomics)/genome-annotation/page.tsx
+  s_4d018d10280b4f::t_3f0c5159fad1fb 3
+  s_4d018d10280b4f::t_844863c4909030 23
+  s_4d018d10280b4f::t_2bf4f7a052b6a1 348
+  s_4d018d10280b4f::t_e4109296b3b55a 330
+src/hooks/services/__tests__/use-cached-genome-group-loader.test.tsx
+  s_4d018d10280b4f::t_d34d61d0ec4114 2-96,98,102-107,110-111,114-115,117-118,120-126,128,132-133,135-141,150-151
+  s_4d018d10280b4f::t_74e2739c7da7de 1,97,99-101,108,112-113,116,119,127,129-131,134,142-149
+  s_4d018d10280b4f::t_8a8c64811e6f25 109
+src/app/services/(genomics)/genome-assembly/page.tsx
+  s_4d018d10280b4f::t_dbdabba933d3f0 757
+  s_4d018d10280b4f::t_6dd0f93e9ffc6e 49
+  s_4d018d10280b4f::t_e505b93967f492 424
+src/hooks/services/use-cached-genome-group-loader.ts
+  s_4d018d10280b4f::t_fe541e36c25e92 1-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "eec6ea9782e1321269cc6eb6d0bce51346b0c5c3",
+  "prompts": {},
+  "sessions": {
+    "s_4d018d10280b4f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ad7de452-4810-471e-a842-7701a42253a8",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,109 @@
+src/app/services/(genomics)/primer-design/__tests__/primer-design-tabs.test.tsx
+  s_7610b0d83f8a29::t_41a2f0393cb0aa 291-293
+  s_7610b0d83f8a29::t_cda30e405cc645 1-275,277-278,280-290,294-330
+  s_7610b0d83f8a29::t_d4d4519cf58be7 276,279
+src/app/services/(metagenomics)/taxonomic-classification/__tests__/taxonomic-classification-parameters-card.test.tsx
+  s_7610b0d83f8a29::t_b61fbce7aa7ad6 141,143-145,162,164-166
+  s_7610b0d83f8a29::t_6512493f06eace 1-7,34-94,96,98-112,115-121,124-140,142,146-161,163,167-187
+  s_7610b0d83f8a29::t_ac50cab211dc10 113-114,122-123
+  s_7610b0d83f8a29::t_bf64b694fdd1bd 95,97
+  s_7610b0d83f8a29::t_183c9dd65ab18f 8-33
+src/app/services/(protein-tools)/msa-snp-analysis/__tests__/msa-cards.test.tsx
+  s_7610b0d83f8a29::t_735e03bb8720d2 472
+  s_7610b0d83f8a29::t_6d16f183870b03 523-528
+  s_7610b0d83f8a29::t_f20001e1082e96 2,4-10,15-30,32-79,82-98,101-106,108-112,117-128,130-136,138-158,160-172,174-176,178-180,182,184-189,191-219,222-228,230-274,276-280,287-341,344-354,357-373,376-379,381-390,395-397,399-408,412-431,434-452,454,456-471,473,475-489,491,493-504,506,508-522,529-530
+  s_7610b0d83f8a29::t_cc01a438179a2a 159
+  s_7610b0d83f8a29::t_d7eeda1c7cd65f 490
+  s_7610b0d83f8a29::t_8c12ae680c162b 3
+  s_7610b0d83f8a29::t_a0a20fdcbe127c 190
+  s_7610b0d83f8a29::t_edf9df224515a7 11-13,31
+  s_7610b0d83f8a29::t_5f4d2b1be75054 220-221,229
+  s_7610b0d83f8a29::t_6473fa0f09f159 455
+  s_7610b0d83f8a29::t_d5357b23eccbd9 173,183
+  s_7610b0d83f8a29::t_71bc79700b5972 129,137
+  s_7610b0d83f8a29::t_e45d5467bbad35 14
+  s_7610b0d83f8a29::t_237a51e24c909b 80-81
+  s_7610b0d83f8a29::t_bdb7494e8a757a 107
+  s_7610b0d83f8a29::t_2a2508bf9e79ec 1
+  s_7610b0d83f8a29::t_a08986c0d264d4 99-100
+  s_7610b0d83f8a29::t_b3b64efa6b2068 374-375,380,391-394,398,409-411
+  s_7610b0d83f8a29::t_fc0b3095706fcf 275,281-286
+  s_7610b0d83f8a29::t_e75e9fc0c564e3 432-433,453
+  s_7610b0d83f8a29::t_9b98eb878e661d 474
+  s_7610b0d83f8a29::t_b7447747e3c80c 492,507
+  s_7610b0d83f8a29::t_68b6f87b58ef84 505
+  s_7610b0d83f8a29::t_9e0779f1e20ab2 113-116
+  s_7610b0d83f8a29::t_c3d19ac2a3f398 177,181
+  s_7610b0d83f8a29::t_bbd47ed48dee24 342-343,355-356
+src/lib/services/__tests__/service-query-keys.test.ts
+  s_7610b0d83f8a29::t_d9b0fcb7596706 1-30
+src/app/services/(metagenomics)/metagenomic-binning/__tests__/metagenomic-binning-cards.test.tsx
+  s_7610b0d83f8a29::t_aee0de14daa813 66-67,74
+  s_7610b0d83f8a29::t_514851602daac8 9-34
+  s_7610b0d83f8a29::t_9235dd6f69103a 122-124
+  s_7610b0d83f8a29::t_9f852f7bf7f984 1-8,35-65,68-73,75,77-121,125-135,137-141,143-147,150-170,172-173
+  s_7610b0d83f8a29::t_d0402a5350963c 76
+  s_7610b0d83f8a29::t_3c9c18830c7328 148-149
+  s_7610b0d83f8a29::t_4c12d5e8c1b64e 171
+  s_7610b0d83f8a29::t_7f961dcbfdc98d 136
+  s_7610b0d83f8a29::t_bf0583e7ead6a1 142
+src/app/services/(genomics)/blast/__tests__/blast-cards.test.tsx
+  s_7610b0d83f8a29::t_ec7442e2d4b356 223-224
+  s_7610b0d83f8a29::t_2d50c191563b49 1-58,64-69,71,73-110,114-132,134-146,148-222,225-242,244-245
+  s_7610b0d83f8a29::t_43ecfc97c6b23d 59-63,70
+  s_7610b0d83f8a29::t_d4b9820e0916d7 243
+  s_7610b0d83f8a29::t_aaa3af0ce9e05e 72
+  s_7610b0d83f8a29::t_e2706cd23d0648 111-113
+  s_7610b0d83f8a29::t_343a15ed677654 133,147
+src/app/services/(viral-tools)/sars-cov2-genome-analysis/__tests__/sars-cov2-start-with-card.test.tsx
+  s_7610b0d83f8a29::t_e1831901351a7d 23-24,30,37,46
+  s_7610b0d83f8a29::t_b0c955a3fea041 39,48
+  s_7610b0d83f8a29::t_565e6d8f523d01 1-22,25-29,31-36,38,40-45,47,49-50
+src/app/services/(protein-tools)/gene-protein-tree/__tests__/gene-protein-tree-cards.test.tsx
+  s_7610b0d83f8a29::t_409500dfd0801f 292-294
+  s_7610b0d83f8a29::t_5baccb28a2da6b 357-359
+  s_7610b0d83f8a29::t_1cb17a51d758bb 108-110,116-127,129-130
+  s_7610b0d83f8a29::t_0efc0e6b10329b 58,64,76
+  s_7610b0d83f8a29::t_a5b80c966f420e 245-247
+  s_7610b0d83f8a29::t_abdad9ed1bcb6e 94-95
+  s_7610b0d83f8a29::t_c44dd549082d6d 1-57,59-63,65-75,77-93,96-107,111-115,128,131-173,176-244,248-256,260-291,295-356,360-363
+  s_7610b0d83f8a29::t_37b4c1bd7ce1a6 257-259
+  s_7610b0d83f8a29::t_e6330f8ce2fe14 174-175
+src/hooks/services/__tests__/use-cached-feature-group-loader.test.tsx
+  s_7610b0d83f8a29::t_e4720247e32239 1-134
+src/app/services/(protein-tools)/meta-cats/__tests__/meta-cats-cards.test.tsx
+  s_7610b0d83f8a29::t_07a04d2b204449 105
+  s_7610b0d83f8a29::t_b6015108b10066 257-260,265-266,287,297
+  s_7610b0d83f8a29::t_6976e873dc847e 165-167
+  s_7610b0d83f8a29::t_20fd51ecaa23d7 173
+  s_7610b0d83f8a29::t_bd24ceb2c8dda8 3
+  s_7610b0d83f8a29::t_7e255e4e2a8fd9 188-190
+  s_7610b0d83f8a29::t_e4ebf0f3fd74c6 193,204
+  s_7610b0d83f8a29::t_a62a39abdd0d13 1-2,4-104,106-164,168-172,174-187,191-192,194-203,205-210,212-221,223,225-256,261-264,267-286,288-296,298-299
+  s_7610b0d83f8a29::t_04f3fd38949b21 211,222,224
+src/hooks/services/__tests__/use-feature-group-members.test.tsx
+  s_7610b0d83f8a29::t_00eae8fd87f201 1-77
+src/app/services/(genomics)/genome-assembly/__tests__/genome-assembly-parameters-card.test.tsx
+  s_7610b0d83f8a29::t_71681ff68035e8 181
+  s_7610b0d83f8a29::t_a6ae1570ea6c35 157-158
+  s_7610b0d83f8a29::t_0a04f5a7a99106 1-7,34-156,159-180,182-183
+  s_7610b0d83f8a29::t_7d421d86a34841 8-33
+src/hooks/services/__tests__/use-genome-group-members.test.tsx
+  s_7610b0d83f8a29::t_81100342e5714a 1-85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.9",
+  "base_commit_sha": "17339dd3e381de54cbfb23a87c4c0723f0600232",
+  "prompts": {},
+  "sessions": {
+    "s_7610b0d83f8a29": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "75f13008-379d-42e4-b22e-429684dc0082",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

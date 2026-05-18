@@ -12,7 +12,7 @@ import {
 
 import type { OrganismLandingView } from "@/components/organisms/types";
 
-import { OverviewView } from "../views/overview";
+import { OverviewView } from "./views/overview";
 import {
   DomainsAndMotifsView,
   EpitopesView,
@@ -22,7 +22,7 @@ import {
   ProteinsView,
   ProteinStructuresView,
   TaxonomyView,
-} from "../views/placeholder";
+} from "./views/placeholder";
 
 export const virusNavItems: OrganismLandingView[] = [
   {

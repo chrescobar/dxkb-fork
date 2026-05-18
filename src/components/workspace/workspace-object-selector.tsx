@@ -362,13 +362,15 @@ export function WorkspaceObjectSelector({
             }}
             onKeyDown={(e) => {
               if (!showDropdown || displayObjects.length === 0) {
-                // If no dropdown but we have a selected object, allow Enter to confirm selection
-                if (e.key === "Enter" && selectedObject) {
+                // Only confirm-and-reset on Enter for the output-folder pattern
+                // (onObjectSelect without onSelectedObjectChange). When onSelectedObjectChange
+                // is provided the selection is already committed; Enter should bubble so the
+                // surrounding form can submit normally.
+                if (e.key === "Enter" && selectedObject && !onSelectedObjectChange) {
                   e.preventDefault();
                   onObjectSelect?.(selectedObject);
                   setSearchQuery("");
                   setSelectedObject(null);
-                  onSelectedObjectChange?.(null);
                 }
                 return;
               }

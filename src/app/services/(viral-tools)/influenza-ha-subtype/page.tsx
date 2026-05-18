@@ -51,6 +51,7 @@ export default function HASubtypeNumberingPage() {
 
   const watchedTypes = useStore(form.store, (s) => s.values.types);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const isFormValidating = useStore(form.store, (s) => s.isValidating);
 
   const [fastaValidationMessage, setFastaValidationMessage] = useState("");
   const [isFastaValid, setIsFastaValid] = useState(false);
@@ -96,7 +97,7 @@ export default function HASubtypeNumberingPage() {
   const isFastaDataInvalid =
     inputSource === "fasta_data" && !!fastaData?.trim() && !isFastaValid;
   const isSubmitDisabled = Boolean(
-    !canSubmit || isSubmitting || isFastaDataInvalid,
+    !canSubmit || isFormValidating || isSubmitting || isFastaDataInvalid,
   );
 
   return (
@@ -196,7 +197,7 @@ export default function HASubtypeNumberingPage() {
                     <FieldItem>
                       <Textarea
                         placeholder="Enter one or more protein sequences in FASTA format."
-                        className="service-card-textarea min-h-[175px] font-mono text-sm"
+                        className="service-card-textarea min-h-44 font-mono text-sm"
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
                         onBlur={() => {
@@ -274,7 +275,7 @@ export default function HASubtypeNumberingPage() {
                     <Label className="service-card-label">
                       Conversion Sequence Numbering Scheme
                     </Label>
-                    <div className="bg-muted/50 grid max-h-[220px] grid-cols-2 gap-2 overflow-y-auto rounded-md border p-4 md:grid-cols-4">
+                    <div className="bg-muted/50 grid max-h-55 grid-cols-2 gap-2 overflow-y-auto rounded-md border p-4 md:grid-cols-4">
                       {HaReferenceTypes.map((scheme) => (
                         <div
                           className="flex items-center gap-2"
@@ -306,7 +307,7 @@ export default function HASubtypeNumberingPage() {
                 )}
               </form.Field>
 
-              <OutputLocationFields form={form} />
+              <OutputLocationFields form={form} required />
             </CardContent>
           </Card>
         </div>

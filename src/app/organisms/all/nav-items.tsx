@@ -20,7 +20,7 @@ import {
 import { makePlaceholderView as placeholderView } from "@/components/organisms/shared/make-placeholder-view";
 import type { OrganismLandingView } from "@/components/organisms/types";
 
-import { OverviewView } from "../views/overview";
+import { OverviewView } from "./views/overview";
 
 export const allNavItems: OrganismLandingView[] = [
   {

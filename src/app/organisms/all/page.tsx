@@ -1,6 +1,6 @@
 import { OrganismLandingShell } from "@/components/organisms/landing-shell/landing-shell";
 
-import { allNavItems } from "./_components/nav-items";
+import { allNavItems } from "./nav-items";
 import { allOrganismsLandingConfig } from "./_config";
 
 export const dynamic = "force-dynamic";

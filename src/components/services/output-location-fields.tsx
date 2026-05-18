@@ -52,6 +52,11 @@ export function OutputLocationFields({
         ...prev,
         errorMap: { ...prev?.errorMap, onChange: error },
       }));
+    const setFieldValidating = (validating: boolean) =>
+      (form as any).setFieldMeta(outputNameName, (prev: any) => ({
+        ...prev,
+        isValidating: validating,
+      }));
     /* eslint-enable @typescript-eslint/no-explicit-any */
 
     if (!basePath || !name) {
@@ -61,6 +66,10 @@ export function OutputLocationFields({
 
     if (debounceRef.current) clearTimeout(debounceRef.current);
     abortRef.current?.abort();
+
+    // Mark the field as validating immediately so canSubmit is false for the
+    // entire pending window (debounce + HTTP), not just after a conflict is found.
+    setFieldValidating(true);
 
     debounceRef.current = setTimeout(async () => {
       const controller = new AbortController();
@@ -72,12 +81,14 @@ export function OutputLocationFields({
 
       if (controller.signal.aborted) return;
 
+      setFieldValidating(false);
       setError(exists ? nameTakenMessage : undefined);
     }, debounceMs);
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
       abortRef.current?.abort();
+      setFieldValidating(false);
     };
   }, [outputPath, outputName, form, outputNameName]);
 

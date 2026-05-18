@@ -4,6 +4,7 @@ minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
 - next
 - react
+- react-dom
 allowBuilds:
   '@parcel/watcher': true
   '@prisma/engines': true

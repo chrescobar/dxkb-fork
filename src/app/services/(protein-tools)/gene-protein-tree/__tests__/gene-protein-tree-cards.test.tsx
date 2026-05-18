@@ -4,7 +4,7 @@ import { useForm } from "@tanstack/react-form";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { GeneProteinTreeInputCard } from "@/app/services/(protein-tools)/gene-protein-tree/gene-protein-tree-input-card";
-import { GeneProteinTreeAlignmentParametersCard } from "@/app/services/(protein-tools)/gene-protein-tree/gene-protein-tree-alignment-parameters-card";
+import { AlignmentParametersCard } from "@/components/services/alignment-parameters-card";
 import { GeneProteinTreeTreeParametersCard } from "@/app/services/(protein-tools)/gene-protein-tree/gene-protein-tree-tree-parameters-card";
 import { GeneProteinTreeMetadataOptions } from "@/app/services/(protein-tools)/gene-protein-tree/gene-protein-tree-metadata-options";
 
@@ -187,12 +187,12 @@ function AlignmentParamsWrapper() {
   });
   return (
     <Wrapper>
-      <GeneProteinTreeAlignmentParametersCard form={form as never} />
+      <AlignmentParametersCard form={form as never} />
     </Wrapper>
   );
 }
 
-describe("GeneProteinTreeAlignmentParametersCard", () => {
+describe("AlignmentParametersCard", () => {
   it("renders Trim Ends of Alignment Threshold select", () => {
     render(<AlignmentParamsWrapper />);
 

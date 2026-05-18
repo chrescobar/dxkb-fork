@@ -36,7 +36,7 @@ import {
 import { geneProteinTreeService } from "@/lib/forms/(protein-tools)/gene-protein-tree/gene-protein-tree-service";
 import { phylogeneticTreeInfo } from "@/lib/services/info/phylogenetic-tree";
 import { GeneProteinTreeInputCard } from "./gene-protein-tree-input-card";
-import { GeneProteinTreeAlignmentParametersCard } from "./gene-protein-tree-alignment-parameters-card";
+import { AlignmentParametersCard } from "@/components/services/alignment-parameters-card";
 import { GeneProteinTreeTreeParametersCard } from "./gene-protein-tree-tree-parameters-card";
 import { GeneProteinTreeMetadataOptions } from "./gene-protein-tree-metadata-options";
 
@@ -319,7 +319,7 @@ export default function GeneProteinTreePage() {
         />
 
         <div className="space-y-4">
-          <GeneProteinTreeAlignmentParametersCard form={form} />
+          <AlignmentParametersCard form={form} />
           <GeneProteinTreeTreeParametersCard
             form={form}
             substitutionModelOptions={substitutionModelOptions}

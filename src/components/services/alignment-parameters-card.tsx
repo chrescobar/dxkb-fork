@@ -1,6 +1,7 @@
 "use client";
 
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Select,
@@ -11,20 +12,31 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import { RequiredFormCardTitle, RequiredFormLabel } from "@/components/forms/required-form-components";
+import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { phylogeneticTreeAlignmentParameters } from "@/lib/services/info/phylogenetic-tree";
-import { thresholdOptions } from "@/lib/forms/(protein-tools)/gene-protein-tree/gene-protein-tree-form-schema";
+
+const thresholdOptions = [
+  "0",
+  "0.1",
+  "0.2",
+  "0.3",
+  "0.4",
+  "0.5",
+  "0.6",
+  "0.7",
+  "0.8",
+  "0.9",
+  "1",
+];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface ServiceForm { Field: any }
 
-interface GeneProteinTreeAlignmentParametersCardProps {
+interface AlignmentParametersCardProps {
   form: ServiceForm;
 }
 
-export function GeneProteinTreeAlignmentParametersCard({
-  form,
-}: GeneProteinTreeAlignmentParametersCardProps) {
+export function AlignmentParametersCard({ form }: AlignmentParametersCardProps) {
   return (
     <Card>
       <CardHeader className="service-card-header">
@@ -44,9 +56,9 @@ export function GeneProteinTreeAlignmentParametersCard({
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {(field: any) => (
               <FieldItem>
-                <RequiredFormLabel className="service-card-label">
+                <Label className="service-card-label">
                   Trim Ends of Alignment Threshold
-                </RequiredFormLabel>
+                </Label>
                 <Select
                   items={thresholdOptions.map((v) => ({ value: v, label: v }))}
                   value={field.state.value}
@@ -76,9 +88,9 @@ export function GeneProteinTreeAlignmentParametersCard({
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {(field: any) => (
               <FieldItem>
-                <RequiredFormLabel className="service-card-label">
+                <Label className="service-card-label">
                   Remove Gappy Sequences Threshold
-                </RequiredFormLabel>
+                </Label>
                 <Select
                   items={thresholdOptions.map((v) => ({ value: v, label: v }))}
                   value={field.state.value}

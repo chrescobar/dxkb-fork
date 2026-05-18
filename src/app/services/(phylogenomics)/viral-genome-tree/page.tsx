@@ -32,10 +32,10 @@ import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import {
   phylogeneticTreeInfo,
   phylogeneticTreeInput,
-  phylogeneticTreeAlignmentParameters,
   phylogeneticTreeTreeParameters,
 } from "@/lib/services/info/phylogenetic-tree";
 import { OutputLocationFields } from "@/components/services/output-location-fields";
+import { AlignmentParametersCard } from "@/components/services/alignment-parameters-card";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { WorkspaceObject } from "@/lib/services/workspace/types";
@@ -538,90 +538,7 @@ export default function ViralGenomeTreePage() {
         </Card>
 
         <div className="space-y-4">
-          <Card>
-            <CardHeader className="service-card-header">
-              <RequiredFormCardTitle className="service-card-title">
-                Alignment Parameters
-                <DialogInfoPopup
-                  title={phylogeneticTreeAlignmentParameters.title}
-                  description={phylogeneticTreeAlignmentParameters.description}
-                  sections={phylogeneticTreeAlignmentParameters.sections}
-                />
-              </RequiredFormCardTitle>
-            </CardHeader>
-
-            <CardContent className="service-card-content">
-              <div className="space-y-4">
-                <form.Field name="trim_threshold">
-                  {(field) => (
-                    <FieldItem>
-                      <Label className="service-card-label">
-                        Trim Ends of Alignment Threshold
-                      </Label>
-                      <Select
-                        items={ViralGenomeTree.thresholdOptions.map((v) => ({
-                          value: v,
-                          label: v,
-                        }))}
-                        value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
-                      >
-                        <SelectTrigger className="service-card-select-trigger">
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            {ViralGenomeTree.thresholdOptions.map((value) => (
-                              <SelectItem key={value} value={value}>
-                                {value}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-
-                <form.Field name="gap_threshold">
-                  {(field) => (
-                    <FieldItem>
-                      <Label className="service-card-label">
-                        Remove Gappy Sequences Threshold
-                      </Label>
-                      <Select
-                        items={ViralGenomeTree.thresholdOptions.map((v) => ({
-                          value: v,
-                          label: v,
-                        }))}
-                        value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
-                      >
-                        <SelectTrigger className="service-card-select-trigger">
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            {ViralGenomeTree.thresholdOptions.map((value) => (
-                              <SelectItem key={value} value={value}>
-                                {value}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-              </div>
-            </CardContent>
-          </Card>
+          <AlignmentParametersCard form={form} />
 
           <Card>
             <CardHeader className="service-card-header">
@@ -746,7 +663,7 @@ export default function ViralGenomeTreePage() {
                       <SelectTrigger className="service-card-select-trigger">
                         <SelectValue placeholder="Select field" />
                       </SelectTrigger>
-                      <SelectContent className="max-h-[600px]">
+                      <SelectContent className="max-h-150">
                         <SelectGroup>
                           {availableMetadataOptions.map((field) => {
                             // Check if this is a label (section header)

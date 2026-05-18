@@ -1,6 +1,6 @@
 import { OrganismLandingShell } from "@/components/organisms/landing-shell/landing-shell";
 
-import { virusNavItems } from "./_components/nav-items";
+import { virusNavItems } from "./nav-items";
 import { virusesLandingConfig } from "./_config";
 
 export const dynamic = "force-dynamic";

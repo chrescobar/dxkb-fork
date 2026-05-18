@@ -1,0 +1,282 @@
+.bacteria-page {
+  --bacteria-radius: 0.65rem;
+
+  --bacteria-surface-1: linear-gradient(135deg, #1f3a73 0%, #2a5098 50%, #4a7bd1 100%);
+  --bacteria-surface-2: linear-gradient(135deg, #245c4a 0%, #3a8b6a 50%, #6dba93 100%);
+  --bacteria-surface-3: linear-gradient(135deg, #6a3469 0%, #8a4a8c 50%, #b07cb2 100%);
+  --bacteria-surface-4: linear-gradient(135deg, #b04527 0%, #d65f3c 50%, #f08c63 100%);
+  --bacteria-surface-5: linear-gradient(135deg, #1a525b 0%, #2a7d8a 50%, #4eaab8 100%);
+  --bacteria-surface-6: linear-gradient(135deg, #7a5c1c 0%, #b08a30 50%, #e8c466 100%);
+
+  --bacteria-c1: oklch(0.646 0.222 41.116);
+  --bacteria-c2: oklch(0.6 0.118 184.704);
+  --bacteria-c3: oklch(0.398 0.07 227.392);
+  --bacteria-c4: oklch(0.828 0.189 84.429);
+  --bacteria-c5: oklch(0.769 0.188 70.08);
+
+  background-color: var(--background);
+  font-feature-settings: 'ss01';
+}
+
+.bacteria-page .bacteria-tabular { font-variant-numeric: tabular-nums; }
+
+.bacteria-page .bacteria-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--bacteria-radius);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  transition: box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+}
+.bacteria-page .bacteria-card-hover:hover {
+  box-shadow: 0 4px 14px -3px rgb(0 0 0 / 0.10), 0 2px 4px -1px rgb(0 0 0 / 0.06);
+}
+
+.bacteria-page .bacteria-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--muted);
+  color: var(--foreground);
+}
+.bacteria-page .bacteria-badge-primary { background: color-mix(in oklch, var(--primary) 12%, transparent); color: var(--primary); }
+.bacteria-page .bacteria-badge-accent { background: var(--accent); color: var(--accent-foreground); }
+
+.bacteria-page .bacteria-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  height: 36px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: all 0.16s ease;
+  cursor: pointer;
+}
+.bacteria-page .bacteria-btn-primary { background: var(--primary); color: var(--primary-foreground); }
+.bacteria-page .bacteria-btn-primary:hover { background: color-mix(in oklch, var(--primary) 90%, black); }
+.bacteria-page .bacteria-btn-outline { background: transparent; border: 1px solid var(--border); color: var(--foreground); }
+.bacteria-page .bacteria-btn-outline:hover { background: var(--muted); }
+
+.bacteria-page .bacteria-tab-strip {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.bacteria-page .bacteria-tab-strip::-webkit-scrollbar {
+  display: none;
+}
+.bacteria-page .bacteria-tab {
+  padding: 0 14px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  border-bottom: 2px solid transparent;
+  transition: color 0.16s ease, border-color 0.16s ease;
+  margin-bottom: -1px;
+}
+.bacteria-page .bacteria-tab:hover { color: var(--foreground); }
+.bacteria-page .bacteria-tab[data-active="true"] { color: var(--primary); border-bottom-color: var(--primary); }
+
+.bacteria-page .bacteria-genus-hero {
+  position: relative;
+  border-radius: var(--bacteria-radius);
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--border);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  display: flex;
+  flex-direction: column;
+}
+.bacteria-page .bacteria-genus-hero:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px -8px rgb(0 0 0 / 0.16);
+}
+.bacteria-page .bacteria-genus-hero .surface {
+  position: relative;
+  aspect-ratio: 5 / 3;
+  overflow: hidden;
+}
+.bacteria-page .bacteria-genus-hero .surface .bg {
+  position: absolute;
+  inset: 0;
+  background-image: var(--bacteria-pattern, none), var(--bacteria-surface, none);
+  background-color: var(--bacteria-surface-base, transparent);
+  transition: transform 0.5s ease;
+}
+.bacteria-page .bacteria-genus-hero:hover .surface .bg { transform: scale(1.05); }
+.bacteria-page .bacteria-genus-hero .overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.10) 60%, rgba(0,0,0,0) 100%);
+}
+.bacteria-page .bacteria-genus-hero .content {
+  position: absolute;
+  inset: 0;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: white;
+}
+
+.bacteria-page .bacteria-surface-1 { --bacteria-surface: var(--bacteria-surface-1); }
+.bacteria-page .bacteria-surface-2 { --bacteria-surface: var(--bacteria-surface-2); }
+.bacteria-page .bacteria-surface-3 { --bacteria-surface: var(--bacteria-surface-3); }
+.bacteria-page .bacteria-surface-4 { --bacteria-surface: var(--bacteria-surface-4); }
+.bacteria-page .bacteria-surface-5 { --bacteria-surface: var(--bacteria-surface-5); }
+.bacteria-page .bacteria-surface-6 { --bacteria-surface: var(--bacteria-surface-6); }
+
+.bacteria-page .bacteria-pattern-cocci {
+  --bacteria-pattern:
+    radial-gradient(circle at 18% 22%, rgba(255,255,255,0.18) 8px, transparent 9px),
+    radial-gradient(circle at 38% 32%, rgba(255,255,255,0.18) 6px, transparent 7px),
+    radial-gradient(circle at 60% 22%, rgba(255,255,255,0.18) 7px, transparent 8px),
+    radial-gradient(circle at 78% 38%, rgba(255,255,255,0.18) 6px, transparent 7px),
+    radial-gradient(circle at 28% 58%, rgba(255,255,255,0.16) 7px, transparent 8px),
+    radial-gradient(circle at 50% 62%, rgba(255,255,255,0.18) 8px, transparent 9px),
+    radial-gradient(circle at 70% 60%, rgba(255,255,255,0.16) 7px, transparent 8px);
+}
+.bacteria-page .bacteria-pattern-rods {
+  --bacteria-pattern: linear-gradient(15deg,
+    transparent 10%,
+    rgba(255,255,255,0.12) 10% 12%,
+    transparent 12% 30%,
+    rgba(255,255,255,0.12) 30% 32%,
+    transparent 32% 50%,
+    rgba(255,255,255,0.10) 50% 52%,
+    transparent 52% 70%,
+    rgba(255,255,255,0.12) 70% 72%,
+    transparent 72%);
+}
+.bacteria-page .bacteria-pattern-helix {
+  --bacteria-pattern: repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,0.10) 0 4px, transparent 4px 14px);
+}
+
+.bacteria-page .bacteria-stat-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.bacteria-page .bacteria-stat-row:last-child { border-bottom: 0; }
+.bacteria-page .bacteria-stat-row .label { font-size: 13px; color: var(--muted-foreground); font-weight: 500; }
+.bacteria-page .bacteria-stat-row .value { font-size: 18px; font-weight: 600; }
+
+.bacteria-page .bacteria-genus-row {
+  display: grid;
+  grid-template-columns: 28px 28px 1fr 110px 80px 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.16s ease;
+}
+.bacteria-page .bacteria-genus-row:hover { background: var(--muted); }
+.bacteria-page .bacteria-genus-row:last-child { border-bottom: 0; }
+
+.bacteria-page .bacteria-genus-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: var(--bacteria-surface, none);
+}
+
+.bacteria-page .bacteria-bar-track {
+  background: color-mix(in oklch, var(--foreground) 8%, transparent);
+  height: 5px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.bacteria-page .bacteria-bar-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 3px;
+}
+
+.bacteria-page .bacteria-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card);
+  color: var(--muted-foreground);
+  transition: all 0.16s ease;
+}
+.bacteria-page .bacteria-icon-btn:hover {
+  background: var(--muted);
+  color: var(--foreground);
+  border-color: var(--ring);
+}
+.bacteria-page .bacteria-icon-btn[data-active="true"] {
+  background: color-mix(in oklch, var(--primary) 10%, transparent);
+  color: var(--primary);
+  border-color: color-mix(in oklch, var(--primary) 25%, transparent);
+}
+
+.bacteria-page .bacteria-legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 12.5px;
+}
+.bacteria-page .bacteria-legend-row .swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.bacteria-page .bacteria-pub-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.bacteria-page .bacteria-pub-item:last-child { border-bottom: 0; }
+.bacteria-page .bacteria-pub-item:hover .bacteria-pub-title { color: var(--primary); }
+.bacteria-page .bacteria-pub-title {
+  font-weight: 500;
+  line-height: 1.4;
+  transition: color 0.16s ease;
+}
+
+.bacteria-page .bacteria-section-error {
+  border: 1px dashed color-mix(in oklch, var(--destructive) 40%, transparent);
+  background: color-mix(in oklch, var(--destructive) 6%, transparent);
+  border-radius: var(--bacteria-radius);
+  padding: 16px;
+  font-size: 12.5px;
+  color: var(--destructive);
+}
+.bacteria-page .bacteria-section-error pre {
+  margin-top: 8px;
+  padding: 8px;
+  background: var(--card);
+  border-radius: 4px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--muted-foreground);
+}

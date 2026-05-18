@@ -1,0 +1,123 @@
+src/app/organisms/bacteria/_components/recent-pubmed.tsx
+  2638901d0a2433db 6
+  47e869e4b9f7ba48 1-5,7-36
+src/hooks/services/use-msa-reference-options.ts
+  s_ec31f1709b75b5::t_a9c965f831867f 1-23,25-62,67-98,103-152
+  s_ec31f1709b75b5::t_38fa6951e6fb11 24
+  s_ec31f1709b75b5::t_364d87dad59a0d 99-102
+  s_ec31f1709b75b5::t_33b9837181cfd7 63-66
+src/app/organisms/bacteria/_components/metadata-distributions.tsx
+  47e869e4b9f7ba48 1-135
+src/app/organisms/bacteria/_components/tab-strip.tsx
+  47e869e4b9f7ba48 1-17
+src/app/organisms/bacteria/_components/api-snippet.tsx
+  47e869e4b9f7ba48 1-10,12-24
+  2638901d0a2433db 11
+src/app/organisms/bacteria/_components/donut-chart.tsx
+  47e869e4b9f7ba48 1-55
+src/app/organisms/bacteria/bacteria.css
+  2638901d0a2433db 180
+  47e869e4b9f7ba48 1-179,181-282
+src/app/organisms/bacteria/_components/section-skeletons.tsx
+  47e869e4b9f7ba48 1-102
+src/hooks/services/use-genome-selection.ts
+  s_ec31f1709b75b5::t_c0061038ff75c2 1-9,12-163
+  s_ec31f1709b75b5::t_0f33af15402f8a 10-11
+src/lib/services/bacteria.ts
+  47e869e4b9f7ba48 1-269
+src/app/organisms/bacteria/_components/section-error.tsx
+  47e869e4b9f7ba48 1-18
+src/app/organisms/bacteria/_data/sidebars.ts
+  47e869e4b9f7ba48 1-71
+src/app/services/(genomics)/genome-alignment/page.tsx
+  s_ec31f1709b75b5::t_5c83908135721e 3,48-49,69-76,101-103,117,123,129,132,184-185,206,209,217,223,225,238
+src/app/organisms/bacteria/_data/metadata-distributions.ts
+  47e869e4b9f7ba48 1-8
+src/app/organisms/bacteria/_lib/format.ts
+  47e869e4b9f7ba48 1-13
+src/app/organisms/bacteria/_data/tabs.ts
+  47e869e4b9f7ba48 1-24
+src/app/services/(protein-tools)/msa-snp-analysis/msa-start-with-card.tsx
+  s_ec31f1709b75b5::t_5a56dafbc31af2 1-35,38-67
+  s_ec31f1709b75b5::t_d2e664fde3d1a3 36-37
+src/app/organisms/bacteria/layout.tsx
+  47e869e4b9f7ba48 1-18
+src/app/organisms/bacteria/_components/external-tools-card.tsx
+  47e869e4b9f7ba48 1-5,7-26
+  2638901d0a2433db 6
+src/app/organisms/bacteria/_components/header-strip.tsx
+  47e869e4b9f7ba48 1-81
+src/app/services/(protein-tools)/msa-snp-analysis/page.tsx
+  s_ec31f1709b75b5::t_c70a3e666eda8c 24-27,91,287-292,294-312,314-319,321,323,325-327,329-331,334-335,338-344,347,349-352,354-359,361-367,370-386,410-447
+  s_ec31f1709b75b5::t_5c83908135721e 23,65,82-90,92,101-104
+src/hooks/services/__tests__/use-msa-reference-options.test.tsx
+  s_ec31f1709b75b5::t_979fcd2f44128a 1-302
+src/hooks/services/__tests__/use-genome-selection.test.tsx
+  s_ec31f1709b75b5::t_78e051a331d707 1-180
+src/app/organisms/bacteria/_components/featured-genera.tsx
+  47e869e4b9f7ba48 1-46,48-71,73-76,78-80,84-93
+  2638901d0a2433db 47,72,77,81-83
+src/app/services/(protein-tools)/msa-snp-analysis/msa-parameters-card.tsx
+  s_ec31f1709b75b5::t_acc7f7c52305b8 1-44,47-63,66-73,75-126,129-131,133-173
+  s_ec31f1709b75b5::t_c0e1d34e4f1b08 45-46,64-65,74,127-128,132
+src/app/organisms/bacteria/_components/promo-card.tsx
+  47e869e4b9f7ba48 1-5,7-38
+  2638901d0a2433db 6
+src/app/organisms/bacteria/_components/featured-workflows.tsx
+  47e869e4b9f7ba48 1-12,14-39
+  2638901d0a2433db 13
+src/app/organisms/bacteria/_components/genera-table.tsx
+  2638901d0a2433db 63
+  47e869e4b9f7ba48 1-62,64-117
+src/app/organisms/bacteria/_components/data-summary-card.tsx
+  47e869e4b9f7ba48 1-58
+src/app/services/(protein-tools)/msa-snp-analysis/msa-reference-sequence-card.tsx
+  s_ec31f1709b75b5::t_1b6bcb79e4bd84 1-70,73-75,77-143,145-208,211-241,243-298,301-334,337-348
+  s_ec31f1709b75b5::t_0ec688bc854842 242
+  s_ec31f1709b75b5::t_7e4f8a44e4fe90 71-72,76,209-210,299-300,335-336
+  s_ec31f1709b75b5::t_e73b34f32281db 144
+src/app/services/(protein-tools)/msa-snp-analysis/msa-select-sequences-card.tsx
+  s_ec31f1709b75b5::t_1f7245aaf8da15 1-54,57-74,77-79,81,83-133,136-159,162-164,166-204,207-254,257-290,293-340,343-353
+  s_ec31f1709b75b5::t_bfff82e26c1474 55-56,75-76,80,82,134-135,160-161,165,205-206,255-256,291-292,341-342
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.9",
+  "base_commit_sha": "352621f0e10f753a1a05a9fa46867d993c3dc9f8",
+  "prompts": {
+    "2638901d0a2433db": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dfdc6-4c24-7fe2-9309-9e9e8ed4e532",
+        "model": "gpt-5.5"
+      },
+      "human_author": null,
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 13,
+      "overriden_lines": 0
+    },
+    "47e869e4b9f7ba48": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "41fca322-e611-4238-82ad-d99acbcca4e3",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": null,
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 1518,
+      "overriden_lines": 6
+    }
+  },
+  "sessions": {
+    "s_ec31f1709b75b5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3fc02201-dab7-403f-ab6f-ef638d584eff",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -2,11 +2,6 @@
 
 import { useState } from "react";
 import { useForm, useStore } from "@tanstack/react-form";
-import {
-  FieldItem,
-  FieldLabel,
-  FieldErrors,
-} from "@/components/ui/tanstack-form";
 import { ServiceHeader } from "@/components/services/service-header";
 import {
   Card,
@@ -18,37 +13,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { HelpCircle, ChevronDown } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
-import {
-  genomeAssemblyInfo,
-  genomeAssemblyParameters,
-  readInputFileInfo,
-} from "@/lib/services/info/genome-assembly";
+import { HelpCircle } from "lucide-react";
+import { genomeAssemblyInfo, readInputFileInfo } from "@/lib/services/info/genome-assembly";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import SraRunAccessionWithValidation from "@/components/services/sra-run-accession-with-validation";
 import SelectedItemsTable from "@/components/services/selected-items-table";
-import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { Library } from "@/types/services";
-import { NumberInput } from "@/components/ui/number-input";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
 import { toast } from "sonner";
@@ -58,15 +33,9 @@ import {
   type GenomeAssemblyFormData,
   type LibraryItem,
 } from "@/lib/forms/(genomics)/genome-assembly/genome-assembly-form-schema";
-import {
-  calculateGenomeSize,
-  genomeAssemblyRecipes,
-  genomeSizeUnitOptions,
-} from "@/lib/forms/(genomics)/genome-assembly/genome-assembly-form-utils";
 import { genomeAssemblyService } from "@/lib/forms/(genomics)/genome-assembly/genome-assembly-service";
 import {
   RequiredFormCardTitle,
-  RequiredFormLabel,
 } from "@/components/forms/required-form-components";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { WorkspaceObject } from "@/lib/services/workspace/types";
@@ -78,6 +47,7 @@ import {
   getSingleLibraryName,
   useTanstackLibrarySelection,
 } from "@/lib/forms/tanstack-library-selection";
+import { GenomeAssemblyParametersCard } from "./genome-assembly-parameters-card";
 
 function mapAssemblyLibraryToItem(library: Library): LibraryItem {
   if (library.type === "paired") {
@@ -178,7 +148,6 @@ export default function GenomeAssemblyPage() {
 
   const recipe = useStore(form.store, (s) => s.values.recipe);
   const showGenomeSizeField = recipe === "canu";
-
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
   const handlePairedLibraryAdd = () => {
@@ -242,7 +211,6 @@ export default function GenomeAssemblyPage() {
         }}
         className="grid grid-cols-1 gap-6 md:grid-cols-12"
       >
-        {/* Left Column */}
         <div className="space-y-6 md:col-span-7">
           {/* Input Files Card */}
           <Card>
@@ -258,12 +226,9 @@ export default function GenomeAssemblyPage() {
             </CardHeader>
 
             <CardContent className="service-card-content space-y-6">
-              {/* Paired Read Library */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <Label className="service-card-label">
-                    Paired Read Library
-                  </Label>
+                  <Label className="service-card-label">Paired Read Library</Label>
                   <div className="bg-border mx-4 h-px flex-1" />
                   <Button
                     type="button"
@@ -277,15 +242,13 @@ export default function GenomeAssemblyPage() {
                   </Button>
                 </div>
                 <div className="space-y-3">
-                  <div>
-                    <WorkspaceObjectSelector
-                      preset="reads"
-                      placeholder="Select READ FILE 1..."
-                      onObjectSelect={(object: WorkspaceObject) => {
-                        setPairedRead1(object.path);
-                      }}
-                    />
-                  </div>
+                  <WorkspaceObjectSelector
+                    preset="reads"
+                    placeholder="Select READ FILE 1..."
+                    onObjectSelect={(object: WorkspaceObject) => {
+                      setPairedRead1(object.path);
+                    }}
+                  />
                   <WorkspaceObjectSelector
                     preset="reads"
                     placeholder="Select READ FILE 2..."
@@ -296,12 +259,9 @@ export default function GenomeAssemblyPage() {
                 </div>
               </div>
 
-              {/* Single Read Library */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <Label className="service-card-label">
-                    Single Read Library
-                  </Label>
+                  <Label className="service-card-label">Single Read Library</Label>
                   <div className="bg-border mx-4 h-px flex-1" />
                   <Button
                     type="button"
@@ -323,7 +283,6 @@ export default function GenomeAssemblyPage() {
                 />
               </div>
 
-              {/* SRA Run Accession */}
               <SraRunAccessionWithValidation
                 key={sraResetKey}
                 title="SRA Run Accession"
@@ -334,6 +293,7 @@ export default function GenomeAssemblyPage() {
               />
             </CardContent>
           </Card>
+
           {/* Selected Libraries (mobile) */}
           <div className="md:hidden">
             <Card className="h-full">
@@ -346,10 +306,7 @@ export default function GenomeAssemblyPage() {
                         <HelpCircle className="service-card-tooltip-icon" />
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>
-                          Read files placed here will contribute to a single
-                          analysis.
-                        </p>
+                        <p>Read files placed here will contribute to a single analysis.</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -358,7 +315,6 @@ export default function GenomeAssemblyPage() {
                   Place read files here using the arrow buttons.
                 </CardDescription>
               </CardHeader>
-
               <CardContent className="service-card-content">
                 <SelectedItemsTable
                   items={selectedLibraries.map((library) => ({
@@ -373,336 +329,22 @@ export default function GenomeAssemblyPage() {
             </Card>
           </div>
 
-          {/* Parameters Card */}
-          <Card>
-            <CardHeader className="service-card-header">
-              <CardTitle className="service-card-title">
-                Parameters
-                <DialogInfoPopup
-                  title={genomeAssemblyParameters.title}
-                  description={genomeAssemblyParameters.description}
-                  sections={genomeAssemblyParameters.sections}
-                />
-              </CardTitle>
-            </CardHeader>
-
-            <CardContent className="service-card-content">
-              <div className="space-y-6">
-                {/* Assembly Strategy */}
-                <form.Field name="recipe">
-                  {(field) => (
-                    <FieldItem>
-                      <RequiredFormLabel>Assembly Strategy</RequiredFormLabel>
-                      <Select
-                        items={genomeAssemblyRecipes}
-                        value={field.state.value}
-                        onValueChange={(value) =>
-                          field.handleChange(value as string)
-                        }
-                      >
-                        <SelectTrigger aria-label="Assembly strategy" className="service-card-select-trigger">
-                          <SelectValue placeholder="Select strategy" />
-                        </SelectTrigger>
-                        <SelectContent className="service-card-select-content">
-                          <SelectGroup>
-                            {genomeAssemblyRecipes.map((recipe) => (
-                              <SelectItem
-                                key={recipe.value}
-                                value={recipe.value}
-                              >
-                                {recipe.label}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-
-                <OutputLocationFields form={form} required />
-
-                {/* Genome Size (for Canu only) */}
-                {showGenomeSizeField && (
-                  <form.Field name="genome_size">
-                    {(field) => (
-                      <FieldItem>
-                        <FieldLabel
-                          field={field}
-                          className="service-card-label"
-                        >
-                          Estimated Genome Size
-                        </FieldLabel>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="number"
-                            value={expectedGenomeSize}
-                            onChange={(e) => {
-                              const value = parseInt(e.target.value);
-                              setExpectedGenomeSize(value);
-                              const calculatedSize = calculateGenomeSize(
-                                value,
-                                genomeSizeUnit,
-                              );
-                              field.handleChange(calculatedSize);
-                            }}
-                            className="service-card-input flex-1"
-                            min={genomeSizeUnit === "M" ? 1 : 100}
-                            max={genomeSizeUnit === "M" ? 10 : 10000}
-                          />
-                          <span className="text-lg">&times;</span>
-                          <Select
-                            items={genomeSizeUnitOptions}
-                            value={genomeSizeUnit}
-                            onValueChange={(value) => {
-                              if (value == null) return;
-                              setGenomeSizeUnit(value as "M" | "K");
-                              if (value === "M") {
-                                setExpectedGenomeSize(5);
-                                field.handleChange(5000000);
-                              } else {
-                                setExpectedGenomeSize(500);
-                                field.handleChange(500000);
-                              }
-                            }}
-                          >
-                            <SelectTrigger aria-label="Genome size unit" className="service-card-select-trigger w-20">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                {genomeSizeUnitOptions.map((option) => (
-                                  <SelectItem
-                                    key={option.value}
-                                    value={option.value}
-                                  >
-                                    {option.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-                )}
-
-                {/* Advanced Options */}
-                <Collapsible
-                  open={showAdvanced}
-                  onOpenChange={setShowAdvanced}
-                  className="service-collapsible-container"
-                >
-                  <CollapsibleTrigger className="service-collapsible-trigger">
-                    Advanced Options
-                    <ChevronDown
-                      className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
-                    />
-                  </CollapsibleTrigger>
-
-                  <CollapsibleContent className="service-collapsible-content">
-                    {/* Read Processing */}
-                    <div className="space-y-4">
-                      <Label className="service-card-label">
-                        Read Processing
-                      </Label>
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                        <form.Field name="normalize">
-                          {(field) => (
-                            <FieldItem className="flex flex-col items-start justify-between">
-                              <FieldLabel
-                                field={field}
-                                className="service-card-sublabel"
-                              >
-                                Normalize Illumina Reads
-                              </FieldLabel>
-                              <Switch
-                                checked={field.state.value}
-                                onCheckedChange={(checked) =>
-                                  field.handleChange(checked)
-                                }
-                              />
-                            </FieldItem>
-                          )}
-                        </form.Field>
-
-                        <form.Field name="trim">
-                          {(field) => (
-                            <FieldItem className="flex flex-col items-start justify-between">
-                              <FieldLabel
-                                field={field}
-                                className="service-card-sublabel"
-                              >
-                                Trim Short Reads
-                              </FieldLabel>
-                              <Switch
-                                checked={field.state.value}
-                                onCheckedChange={(checked) =>
-                                  field.handleChange(checked)
-                                }
-                              />
-                            </FieldItem>
-                          )}
-                        </form.Field>
-
-                        <form.Field name="filtlong">
-                          {(field) => (
-                            <FieldItem className="flex flex-col items-start justify-between">
-                              <FieldLabel
-                                field={field}
-                                className="service-card-sublabel"
-                              >
-                                Filter Long Reads
-                              </FieldLabel>
-                              <Switch
-                                checked={field.state.value}
-                                onCheckedChange={(checked) =>
-                                  field.handleChange(checked)
-                                }
-                              />
-                            </FieldItem>
-                          )}
-                        </form.Field>
-                      </div>
-                    </div>
-
-                    {/* Genome Parameters */}
-                    <div className="space-y-4">
-                      <Label className="service-card-label">
-                        Genome Parameters
-                      </Label>
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <form.Field name="target_depth">
-                          {(field) => (
-                            <FieldItem>
-                              <FieldLabel
-                                field={field}
-                                className="service-card-sublabel"
-                              >
-                                Target Genome Coverage
-                              </FieldLabel>
-                              <NumberInput
-                                value={field.state.value}
-                                onValueChange={field.handleChange}
-                                min={100}
-                                max={500}
-                                stepper={50}
-                              />
-                              <FieldErrors field={field} />
-                            </FieldItem>
-                          )}
-                        </form.Field>
-                      </div>
-                    </div>
-
-                    {/* Assembly Polishing */}
-                    <div className="space-y-4">
-                      <Label className="service-card-label">
-                        Assembly Polishing
-                      </Label>
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <form.Field name="racon_iter">
-                          {(field) => (
-                            <FieldItem>
-                              <FieldLabel
-                                field={field}
-                                className="service-card-sublabel"
-                              >
-                                Racon Iterations
-                              </FieldLabel>
-                              <NumberInput
-                                value={field.state.value}
-                                onValueChange={field.handleChange}
-                                min={0}
-                                max={4}
-                              />
-                              <FieldErrors field={field} />
-                            </FieldItem>
-                          )}
-                        </form.Field>
-
-                        <form.Field name="pilon_iter">
-                          {(field) => (
-                            <FieldItem>
-                              <FieldLabel
-                                field={field}
-                                className="service-card-sublabel"
-                              >
-                                Pilon Iterations
-                              </FieldLabel>
-                              <NumberInput
-                                value={field.state.value}
-                                onValueChange={field.handleChange}
-                                min={0}
-                                max={4}
-                              />
-                              <FieldErrors field={field} />
-                            </FieldItem>
-                          )}
-                        </form.Field>
-                      </div>
-                    </div>
-
-                    {/* Assembly Thresholds */}
-                    <div className="space-y-4">
-                      <Label className="service-card-label">
-                        Assembly Thresholds
-                      </Label>
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <form.Field name="min_contig_len">
-                          {(field) => (
-                            <FieldItem>
-                              <FieldLabel
-                                field={field}
-                                className="service-card-sublabel"
-                              >
-                                Min. contig length
-                              </FieldLabel>
-                              <NumberInput
-                                value={field.state.value}
-                                onValueChange={field.handleChange}
-                                min={100}
-                                max={100000}
-                                stepper={10}
-                              />
-                              <FieldErrors field={field} />
-                            </FieldItem>
-                          )}
-                        </form.Field>
-
-                        <form.Field name="min_contig_cov">
-                          {(field) => (
-                            <FieldItem>
-                              <FieldLabel
-                                field={field}
-                                className="service-card-sublabel"
-                              >
-                                Min. contig coverage
-                              </FieldLabel>
-                              <NumberInput
-                                value={field.state.value}
-                                onValueChange={field.handleChange}
-                                min={0}
-                                max={100000}
-                                stepper={5}
-                              />
-                              <FieldErrors field={field} />
-                            </FieldItem>
-                          )}
-                        </form.Field>
-                      </div>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-              </div>
-            </CardContent>
-          </Card>
+          <GenomeAssemblyParametersCard
+            form={form}
+            showGenomeSizeField={showGenomeSizeField}
+            genomeSizeUnit={genomeSizeUnit}
+            expectedGenomeSize={expectedGenomeSize}
+            showAdvanced={showAdvanced}
+            onExpectedGenomeSizeChange={(value) => setExpectedGenomeSize(value)}
+            onGenomeSizeUnitChange={(unit) => {
+              setGenomeSizeUnit(unit);
+              setExpectedGenomeSize(unit === "M" ? 5 : 500);
+            }}
+            onShowAdvancedChange={setShowAdvanced}
+          />
         </div>
 
-        {/* Right Column - Selected Libraries */}
+        {/* Right Column - Selected Libraries (desktop) */}
         <div className="hidden md:col-span-5 md:block">
           <Card className="h-full">
             <CardHeader className="service-card-header">
@@ -714,10 +356,7 @@ export default function GenomeAssemblyPage() {
                       <HelpCircle className="service-card-tooltip-icon" />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>
-                        Read files placed here will contribute to a single
-                        analysis.
-                      </p>
+                      <p>Read files placed here will contribute to a single analysis.</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -726,7 +365,6 @@ export default function GenomeAssemblyPage() {
                 Place read files here using the arrow buttons.
               </CardDescription>
             </CardHeader>
-
             <CardContent className="service-card-content">
               <SelectedItemsTable
                 items={selectedLibraries.map((library) => ({
@@ -741,7 +379,6 @@ export default function GenomeAssemblyPage() {
           </Card>
         </div>
 
-        {/* Form Controls */}
         <div className="service-form-controls md:col-span-12">
           <div className="flex items-center gap-2">
             <Button
@@ -752,10 +389,7 @@ export default function GenomeAssemblyPage() {
             >
               Reset
             </Button>
-            <Button
-              type="submit"
-              disabled={runtime.isSubmitting || !canSubmit}
-            >
+            <Button type="submit" disabled={runtime.isSubmitting || !canSubmit}>
               {runtime.isSubmitting ? <Spinner /> : null}
               Assemble
             </Button>

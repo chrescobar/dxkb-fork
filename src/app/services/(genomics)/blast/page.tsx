@@ -1,51 +1,18 @@
 "use client";
 
 import { useForm, useStore } from "@tanstack/react-form";
-import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { ServiceHeader } from "@/components/services/service-header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { ChevronDown } from "lucide-react";
-import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import {
-  blastServiceInfo,
-  blastServiceSearchProgram,
-  blastServiceInputSource,
-  blastServiceDatabaseSource,
-  blastServiceDatabaseType,
-} from "@/lib/services/info/blast";
-import { OutputLocationFields } from "@/components/services/output-location-fields";
-import {
-  RequiredFormLabel,
-  RequiredFormLabelInfo,
-  RequiredFormCardTitle,
-} from "@/components/forms/required-form-components";
-import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
-import type { WorkspaceSelectorPreset } from "@/components/workspace/workspace-selector-presets";
-import { WorkspaceObject } from "@/lib/services/workspace/types";
-import { blastPrecomputedDatabases } from "@/types/services";
+import { JobParamsDialog } from "@/components/services/job-params-dialog";
+import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
+import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
 import {
   useBlastDatabaseTypes,
   useBlastProgramTracking,
   useFastaValidation,
   resolveDbSource,
-  maxHitsOptionsBlast,
-  evalueOptionsBlast,
 } from "@/lib/forms/(genomics)/blast/blast-form-utils";
 import { blastService } from "@/lib/forms/(genomics)/blast/blast-service";
 import {
@@ -53,12 +20,11 @@ import {
   defaultBlastFormValues,
   type BlastFormData,
 } from "@/lib/forms/(genomics)/blast/blast-form-schema";
-import { JobParamsDialog } from "@/components/services/job-params-dialog";
-import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
-import { FastaTextarea } from "@/components/services/fasta-textarea";
-import { toast } from "sonner";
-import { Spinner } from "@/components/ui/spinner";
-import { Label } from "@/components/ui/label";
+import type { WorkspaceSelectorPreset } from "@/components/workspace/workspace-selector-presets";
+import { blastServiceInfo } from "@/lib/services/info/blast";
+import { BlastSearchProgramCard } from "./blast-search-program-card";
+import { BlastInputSourceCard } from "./blast-input-source-card";
+import { BlastParametersCard } from "./blast-parameters-card";
 
 export default function BlastServicePage() {
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -93,34 +59,23 @@ export default function BlastServicePage() {
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
   const { fastaValidationResult, isFastaValid, handleFastaValidationChange } =
     useFastaValidation(form, currentBlastProgram);
+
   const dbFastaPreset = useMemo<WorkspaceSelectorPreset>(() => {
-    if (dbPrecomputedDatabase !== "selFasta") {
-      return "featureFasta";
-    }
-    return dbType === "faa"
-      ? "featureProteinFasta"
-      : "featureDnaFastaOrContigs";
+    if (dbPrecomputedDatabase !== "selFasta") return "featureFasta";
+    return dbType === "faa" ? "featureProteinFasta" : "featureDnaFastaOrContigs";
   }, [dbPrecomputedDatabase, dbType]);
 
   const inputFastaPreset = useMemo<WorkspaceSelectorPreset>(() => {
     switch (currentBlastProgram) {
-      case "blastp":
-        return "featureProteinFasta";
-      case "blastn":
-        return "featureDnaFastaOrContigs";
-      case "blastx":
-        return "featureDnaFastaOrContigs";
-      case "tblastn":
-        return "featureProteinFasta";
-      default:
-        return "featureFasta";
+      case "blastp": return "featureProteinFasta";
+      case "blastn": return "featureDnaFastaOrContigs";
+      case "blastx": return "featureDnaFastaOrContigs";
+      case "tblastn": return "featureProteinFasta";
+      default: return "featureFasta";
     }
   }, [currentBlastProgram]);
 
-  const previousProgramRef =
-    useRef<BlastFormData["blast_program"]>(currentBlastProgram);
-
-  // Suppresses the program-change clear effect while a rerun is writing fields.
+  const previousProgramRef = useRef<BlastFormData["blast_program"]>(currentBlastProgram);
   const isApplyingRerunRef = useRef(false);
 
   useEffect(() => {
@@ -159,27 +114,16 @@ export default function BlastServicePage() {
           form.setFieldValue("blast_program", rerunData.blast_program as never);
         }
         if (rerunData.db_precomputed_database) {
-          // The backend may store precomputed database IDs with underscores (e.g. "bacteria_archaea")
-          // but the schema expects hyphens (e.g. "bacteria-archaea").
-          const rawDb = String(rerunData.db_precomputed_database).replace(
-            /_/g,
-            "-",
-          );
+          const rawDb = String(rerunData.db_precomputed_database).replace(/_/g, "-");
           const dbPrecomp = rawDb as BlastFormData["db_precomputed_database"];
           form.setFieldValue("db_precomputed_database", dbPrecomp);
           form.setFieldValue("db_source", resolveDbSource(dbPrecomp));
         }
         if (rerunData.blast_max_hits != null) {
-          form.setFieldValue(
-            "blast_max_hits",
-            rerunData.blast_max_hits as number,
-          );
+          form.setFieldValue("blast_max_hits", rerunData.blast_max_hits as number);
         }
         if (rerunData.blast_evalue_cutoff != null) {
-          form.setFieldValue(
-            "blast_evalue_cutoff",
-            Number(rerunData.blast_evalue_cutoff),
-          );
+          form.setFieldValue("blast_evalue_cutoff", Number(rerunData.blast_evalue_cutoff));
         }
       },
     },
@@ -190,25 +134,16 @@ export default function BlastServicePage() {
     setShowAdvanced(false);
   };
 
-  const handleInputSourceChange = (
-    newSource: BlastFormData["input_source"],
-  ) => {
+  const handleInputSourceChange = (newSource: BlastFormData["input_source"]) => {
     const preservedFastaData = String(
       (form.state.values as Record<string, unknown>).input_fasta_data ?? "",
     );
-
     form.setFieldValue("input_fasta_data", "");
     form.setFieldValue("input_fasta_file", "");
     form.setFieldValue("input_feature_group", "");
 
-    switch (newSource) {
-      case "fasta_data":
-        form.setFieldValue("input_fasta_data", preservedFastaData);
-        break;
-      case "fasta_file":
-        break;
-      case "feature_group":
-        break;
+    if (newSource === "fasta_data") {
+      form.setFieldValue("input_fasta_data", preservedFastaData);
     }
   };
 
@@ -243,519 +178,29 @@ export default function BlastServicePage() {
         }}
         className="service-form-section"
       >
-        {/* Search Program Card */}
-        <Card>
-          <CardHeader className="service-card-header">
-            <RequiredFormCardTitle className="service-card-title">
-              Search Program
-              <DialogInfoPopup
-                title={blastServiceSearchProgram.title}
-                description={blastServiceSearchProgram.description}
-                sections={blastServiceSearchProgram.sections}
-              />
-            </RequiredFormCardTitle>
-          </CardHeader>
+        <BlastSearchProgramCard form={form} />
 
-          <CardContent className="service-card-content">
-            <form.Field name="blast_program">
-              {(field) => (
-                <FieldItem>
-                  <RadioGroup
-                    value={field.state.value}
-                    onValueChange={field.handleChange}
-                    className="grid w-full grid-cols-1 gap-4 md:grid-cols-2"
-                  >
-                    <div className="flex items-center gap-3">
-                      <RadioGroupItem value="blastn" id="blastn" />
-                      <Label
-                        htmlFor="blastn"
-                        className="service-radio-group-label"
-                      >
-                        BLASTN (nucleotide → nucleotide database)
-                      </Label>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <RadioGroupItem value="blastp" id="blastp" />
-                      <Label
-                        htmlFor="blastp"
-                        className="service-radio-group-label"
-                      >
-                        BLASTP (protein → protein database)
-                      </Label>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <RadioGroupItem value="blastx" id="blastx" />
-                      <Label
-                        htmlFor="blastx"
-                        className="service-radio-group-label"
-                      >
-                        BLASTX (translated nucleotide → protein database)
-                      </Label>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <RadioGroupItem value="tblastn" id="tblastn" />
-                      <Label
-                        htmlFor="tblastn"
-                        className="service-radio-group-label"
-                      >
-                        tBLASTn (protein → translated nucleotide database)
-                      </Label>
-                    </div>
-                  </RadioGroup>
-                  <FieldErrors field={field} />
-                </FieldItem>
-              )}
-            </form.Field>
-          </CardContent>
-        </Card>
+        <BlastInputSourceCard
+          form={form}
+          inputSource={inputSource}
+          inputFastaPreset={inputFastaPreset}
+          currentBlastProgram={currentBlastProgram}
+          isFastaValid={isFastaValid}
+          onInputSourceChange={handleInputSourceChange}
+          onFastaValidationChange={(isValid, result) => handleFastaValidationChange(isValid, result)}
+        />
 
-        {/* Input Source Card */}
-        <Card>
-          <CardHeader className="service-card-header">
-            <RequiredFormCardTitle className="service-card-title">
-              Input Source
-              <DialogInfoPopup
-                title={blastServiceInputSource.title}
-                description={blastServiceInputSource.description}
-                sections={blastServiceInputSource.sections}
-              />
-            </RequiredFormCardTitle>
-          </CardHeader>
+        <BlastParametersCard
+          form={form}
+          dbPrecomputedDatabase={dbPrecomputedDatabase}
+          availableDatabaseTypes={availableDatabaseTypes}
+          currentBlastProgram={currentBlastProgram}
+          dbFastaPreset={dbFastaPreset}
+          showAdvanced={showAdvanced}
+          onShowAdvancedChange={setShowAdvanced}
+          onDatabaseSourceChange={handleDatabaseSourceChange}
+        />
 
-          <CardContent className="service-card-content">
-            <form.Field name="input_source">
-              {(field) => (
-                <div className="space-y-6">
-                  <FieldItem>
-                    <RadioGroup
-                      onValueChange={(value) => {
-                        field.handleChange(
-                          value as BlastFormData["input_source"],
-                        );
-                        handleInputSourceChange(
-                          value as BlastFormData["input_source"],
-                        );
-                      }}
-                      value={field.state.value}
-                      className="service-radio-group-horizontal"
-                    >
-                      <div className="flex items-center gap-3">
-                        <RadioGroupItem value="fasta_data" id="fastaSequence" />
-                        <Label htmlFor="fastaSequence">Enter sequence</Label>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <RadioGroupItem value="fasta_file" id="fastaFile" />
-                        <Label htmlFor="fastaFile">Select FASTA file</Label>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <RadioGroupItem
-                          value="feature_group"
-                          id="featureGroup"
-                        />
-                        <Label htmlFor="featureGroup">
-                          Select feature group
-                        </Label>
-                      </div>
-                    </RadioGroup>
-                    <FieldErrors field={field} />
-                  </FieldItem>
-
-                  <div
-                    className={
-                      inputSource === "fasta_data"
-                        ? "service-card-content-grid-item"
-                        : "hidden"
-                    }
-                  >
-                    <form.Field name="input_fasta_data">
-                      {(fastaField) => (
-                        <FieldItem>
-                          <FastaTextarea
-                            value={fastaField.state.value ?? ""}
-                            onChange={fastaField.handleChange}
-                            inputType={currentBlastProgram}
-                            onValidationChange={handleFastaValidationChange}
-                            required={true}
-                            showValidationStatus={true}
-                          />
-                          <FieldErrors field={fastaField} />
-                        </FieldItem>
-                      )}
-                    </form.Field>
-                  </div>
-
-                  <div
-                    className={
-                      inputSource === "fasta_file"
-                        ? "service-card-content-grid-item"
-                        : "hidden"
-                    }
-                  >
-                    <form.Field name="input_fasta_file">
-                      {(fileField) => (
-                        <FieldItem>
-                          <WorkspaceObjectSelector
-                            preset={inputFastaPreset}
-                            placeholder="Select a FASTA file to search..."
-                            value={fileField.state.value}
-                            onObjectSelect={(object: WorkspaceObject) => {
-                              fileField.handleChange(object.path);
-                            }}
-                          />
-                          <FieldErrors field={fileField} />
-                        </FieldItem>
-                      )}
-                    </form.Field>
-                  </div>
-
-                  <div
-                    className={
-                      inputSource === "feature_group"
-                        ? "service-card-content-grid-item mb-4"
-                        : "hidden"
-                    }
-                  >
-                    <form.Field name="input_feature_group">
-                      {(groupField) => (
-                        <FieldItem>
-                          <WorkspaceObjectSelector
-                            preset="featureGroup"
-                            placeholder="Select a feature group to search..."
-                            value={groupField.state.value}
-                            onObjectSelect={(object: WorkspaceObject) => {
-                              groupField.handleChange(object.path);
-                            }}
-                          />
-                          <FieldErrors field={groupField} />
-                        </FieldItem>
-                      )}
-                    </form.Field>
-                  </div>
-                </div>
-              )}
-            </form.Field>
-          </CardContent>
-        </Card>
-
-        {/* Output Settings Card */}
-        <Card>
-          <CardHeader className="service-card-header">
-            <CardTitle className="service-card-title">Parameters</CardTitle>
-          </CardHeader>
-
-          <CardContent className="service-card-content">
-            <div className="service-card-row">
-              <form.Field name="db_precomputed_database">
-                {(field) => (
-                  <FieldItem className="w-full">
-                    <div className="service-card-row-item">
-                      <RequiredFormLabelInfo
-                        label="Database Source"
-                        infoPopup={blastServiceDatabaseSource}
-                      />
-                      <Select
-                        items={blastPrecomputedDatabases}
-                        value={field.state.value}
-                        onValueChange={(value) => {
-                          field.handleChange(
-                            value as BlastFormData["db_precomputed_database"],
-                          );
-                          handleDatabaseSourceChange(
-                            value as BlastFormData["db_precomputed_database"],
-                          );
-                        }}
-                      >
-                        <SelectTrigger className="service-card-select-trigger">
-                          <SelectValue placeholder="Select database source" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            {blastPrecomputedDatabases.map((dbSource) => (
-                              <SelectItem
-                                key={dbSource.value}
-                                value={dbSource.value}
-                              >
-                                {dbSource.label}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
-
-              <form.Field name="db_type">
-                {(field) => (
-                  <FieldItem className="w-full">
-                    <div className="service-card-row-item">
-                      <RequiredFormLabelInfo
-                        label="Database Type"
-                        infoPopup={blastServiceDatabaseType}
-                      />
-                      <Select
-                        items={availableDatabaseTypes}
-                        key={`${currentBlastProgram}-${dbPrecomputedDatabase}-${availableDatabaseTypes.length}`}
-                        value={field.state.value || ""}
-                        onValueChange={(value) => {
-                          if (value != null)
-                            field.handleChange(
-                              value as BlastFormData["db_type"],
-                            );
-                        }}
-                      >
-                        <SelectTrigger className="service-card-select-trigger">
-                          <SelectValue placeholder="Select database type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            {availableDatabaseTypes.map((dbTypeOption) => (
-                              <SelectItem
-                                key={dbTypeOption.value}
-                                value={dbTypeOption.value}
-                              >
-                                {dbTypeOption.label}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
-            </div>
-
-            {/* Database Source Card */}
-            {/* OPTIMIZE: Can be optimized by conditionally rendering the divs based on the db_precomputed_database value
-            instead of loading all the divs and hiding them based on the value */}
-            <div className="service-card-row">
-              <div className="service-card-row-item">
-                <div
-                  className={
-                    dbPrecomputedDatabase === "selGenome"
-                      ? "service-card-content-grid-item"
-                      : "hidden"
-                  }
-                >
-                  <RequiredFormLabel className="service-card-label">
-                    Select a genome
-                  </RequiredFormLabel>
-                  <form.Field name="db_genome_list">
-                    {(field) => (
-                      <FieldItem>
-                        <WorkspaceObjectSelector
-                          preset="unspecified"
-                          placeholder="Genome..."
-                          onObjectSelect={(object: WorkspaceObject) => {
-                            field.handleChange([object.path]);
-                          }}
-                        />
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-                </div>
-
-                <div
-                  className={
-                    dbPrecomputedDatabase === "selGroup"
-                      ? "service-card-content-grid-item"
-                      : "hidden"
-                  }
-                >
-                  <RequiredFormLabel className="service-card-label">
-                    Select a genome group
-                  </RequiredFormLabel>
-                  <form.Field name="db_genome_group">
-                    {(field) => (
-                      <FieldItem>
-                        <WorkspaceObjectSelector
-                          preset="genomeGroup"
-                          placeholder="Genome group..."
-                          onObjectSelect={(object: WorkspaceObject) => {
-                            field.handleChange(object.path);
-                          }}
-                        />
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-                </div>
-
-                <div
-                  className={
-                    dbPrecomputedDatabase === "selFeatureGroup"
-                      ? "service-card-content-grid-item"
-                      : "hidden"
-                  }
-                >
-                  <RequiredFormLabel className="service-card-label">
-                    Select a feature group
-                  </RequiredFormLabel>
-                  <form.Field name="db_feature_group">
-                    {(field) => (
-                      <FieldItem>
-                        <WorkspaceObjectSelector
-                          preset="featureGroup"
-                          placeholder="Feature group..."
-                          onObjectSelect={(object: WorkspaceObject) => {
-                            field.handleChange(object.path);
-                          }}
-                        />
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-                </div>
-
-                <div
-                  className={
-                    dbPrecomputedDatabase === "selTaxon"
-                      ? "service-card-content-grid-item"
-                      : "hidden"
-                  }
-                >
-                  <RequiredFormLabel className="service-card-label">
-                    Select a taxon
-                  </RequiredFormLabel>
-                  <form.Field name="db_taxon_list">
-                    {(field) => (
-                      <FieldItem>
-                        <WorkspaceObjectSelector
-                          preset="unspecified"
-                          placeholder="Taxon..."
-                          onObjectSelect={(object: WorkspaceObject) => {
-                            field.handleChange([object.path]);
-                          }}
-                        />
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-                </div>
-
-                <div
-                  className={
-                    dbPrecomputedDatabase === "selFasta"
-                      ? "service-card-content-grid-item"
-                      : "hidden"
-                  }
-                >
-                  <RequiredFormLabel className="service-card-label">
-                    Select a FASTA file
-                  </RequiredFormLabel>
-                  <form.Field name="db_fasta_file">
-                    {(field) => (
-                      <FieldItem>
-                        <WorkspaceObjectSelector
-                          preset={dbFastaPreset}
-                          placeholder="FASTA file..."
-                          onObjectSelect={(object: WorkspaceObject) => {
-                            field.handleChange(object.path);
-                          }}
-                        />
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-                </div>
-              </div>
-            </div>
-
-            <OutputLocationFields form={form} required />
-
-            <Collapsible
-              open={showAdvanced}
-              onOpenChange={setShowAdvanced}
-              className="service-collapsible-container"
-            >
-              <CollapsibleTrigger className="service-collapsible-trigger">
-                Advanced Options
-                <ChevronDown
-                  className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
-                />
-              </CollapsibleTrigger>
-
-              <CollapsibleContent className="service-collapsible-content">
-                <div className="service-card-content-grid">
-                  <form.Field name="blast_max_hits">
-                    {(field) => (
-                      <FieldItem className="service-card-content-grid-item">
-                        <Label
-                          htmlFor="blast_max_hits"
-                          className="service-card-label"
-                        >
-                          Max Hits
-                        </Label>
-                        <Select
-                          items={maxHitsOptionsBlast}
-                          value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null && field.handleChange(Number(value))
-                          }
-                        >
-                          <SelectTrigger className="service-card-select-trigger">
-                            <SelectValue placeholder="Select max hits" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              {maxHitsOptionsBlast.map((o) => (
-                                <SelectItem key={o.value} value={o.value}>
-                                  {o.label}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-
-                  <form.Field name="blast_evalue_cutoff">
-                    {(field) => (
-                      <FieldItem className="service-card-content-grid-item">
-                        <Label
-                          htmlFor="blast_evalue_cutoff"
-                          className="service-card-label"
-                        >
-                          E-Value Threshold
-                        </Label>
-                        <Select
-                          items={evalueOptionsBlast}
-                          value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null && field.handleChange(Number(value))
-                          }
-                        >
-                          <SelectTrigger className="service-card-select-trigger">
-                            <SelectValue placeholder="Select E-Value Threshold" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              {evalueOptionsBlast.map((o) => (
-                                <SelectItem key={o.value} value={o.value}>
-                                  {o.label}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-                </div>
-              </CollapsibleContent>
-            </Collapsible>
-          </CardContent>
-        </Card>
-
-        {/* Form Controls */}
         <div className="service-form-controls">
           <div className="flex items-center gap-2">
             <Button
@@ -766,10 +211,7 @@ export default function BlastServicePage() {
             >
               Reset
             </Button>
-            <Button
-              type="submit"
-              disabled={runtime.isSubmitting || !canSubmit}
-            >
+            <Button type="submit" disabled={runtime.isSubmitting || !canSubmit}>
               {runtime.isSubmitting ? <Spinner /> : null}
               Submit
             </Button>

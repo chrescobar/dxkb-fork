@@ -1,62 +1,16 @@
 "use client";
 
 import { useForm, useStore } from "@tanstack/react-form";
-import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { ServiceHeader } from "@/components/services/service-header";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { ChevronDown, Plus, X, ArrowRight } from "lucide-react";
-import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import {
-  phylogeneticTreeInfo,
-  phylogeneticTreeInput,
-  phylogeneticTreeAlignmentParameters,
-  phylogeneticTreeTreeParameters,
-} from "@/lib/services/info/phylogenetic-tree";
-import { OutputLocationFields } from "@/components/services/output-location-fields";
-import {
-  RequiredFormCardTitle,
-  RequiredFormLabel,
-} from "@/components/forms/required-form-components";
-import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
-import type { WorkspaceSelectorPreset } from "@/components/workspace/workspace-selector-presets";
-import { WorkspaceObject } from "@/lib/services/workspace/types";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
 import { normalizeToArray } from "@/lib/rerun-utility";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
-import SelectedItemsTable from "@/components/services/selected-items-table";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import type { WorkspaceSelectorPreset } from "@/components/workspace/workspace-selector-presets";
+import type { WorkspaceObject } from "@/lib/services/workspace/types";
 import {
   defaultMetadataFields,
   type GeneProteinTreeFormData,
@@ -65,7 +19,6 @@ import {
   dnaModels,
   proteinModels,
   type SequenceItem,
-  thresholdOptions,
   getMetadataSelectOptions,
   isMetadataLabel,
 } from "@/lib/forms/(protein-tools)/gene-protein-tree/gene-protein-tree-form-schema";
@@ -81,6 +34,11 @@ import {
   getDisplayName,
 } from "@/lib/forms/(protein-tools)/gene-protein-tree/gene-protein-tree-form-utils";
 import { geneProteinTreeService } from "@/lib/forms/(protein-tools)/gene-protein-tree/gene-protein-tree-service";
+import { phylogeneticTreeInfo } from "@/lib/services/info/phylogenetic-tree";
+import { GeneProteinTreeInputCard } from "./gene-protein-tree-input-card";
+import { GeneProteinTreeAlignmentParametersCard } from "./gene-protein-tree-alignment-parameters-card";
+import { GeneProteinTreeTreeParametersCard } from "./gene-protein-tree-tree-parameters-card";
+import { GeneProteinTreeMetadataOptions } from "./gene-protein-tree-metadata-options";
 
 interface MetadataField {
   id: string;
@@ -98,8 +56,7 @@ export default function GeneProteinTreePage() {
   const [metadataFields, setMetadataFields] = useState<MetadataField[]>(
     defaultMetadataFields,
   );
-  const [selectedMetadataField, setSelectedMetadataField] =
-    useState<string>("");
+  const [selectedMetadataField, setSelectedMetadataField] = useState<string>("");
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   const form = useForm({
@@ -123,15 +80,12 @@ export default function GeneProteinTreePage() {
   const skipAlphabetEffect = useRef(false);
   const prevAlphabetRef = useRef(alphabet);
 
-  // Reset model and clear incompatible sequences when alphabet changes
   useEffect(() => {
     const alphabetChanged = prevAlphabetRef.current !== alphabet;
     prevAlphabetRef.current = alphabet;
 
-    // Nothing to do if alphabet didn't actually change (e.g. sequences dependency triggered this)
     if (!alphabetChanged) return;
 
-    // Skip when a rerun just set alphabet — rerun effect will set substitution_model itself
     if (skipAlphabetEffect.current) {
       skipAlphabetEffect.current = false;
       return;
@@ -141,7 +95,6 @@ export default function GeneProteinTreePage() {
       alphabet === "DNA" ? dnaModels[0].value : proteinModels[0].value;
     form.setFieldValue("substitution_model", resetModel);
 
-    // Clear sequences that don't match the new alphabet
     const isDNA = alphabet === "DNA";
     const validTypes = isDNA
       ? ["feature_group", "aligned_dna_fasta", "feature_dna_fasta"]
@@ -162,7 +115,6 @@ export default function GeneProteinTreePage() {
     });
   }, [alphabet, form, sequences]);
 
-  // Update metadata fields in form when they change
   useEffect(() => {
     const selectedFields = metadataFields
       .filter((field) => field.selected)
@@ -186,31 +138,22 @@ export default function GeneProteinTreePage() {
           );
         }
         if (rerunData.trim_threshold != null) {
-          form.setFieldValue(
-            "trim_threshold",
-            String(rerunData.trim_threshold),
-          );
+          form.setFieldValue("trim_threshold", String(rerunData.trim_threshold));
         }
         if (rerunData.gap_threshold != null) {
           form.setFieldValue("gap_threshold", String(rerunData.gap_threshold));
         }
 
-        const sequences = normalizeToArray<SequenceItem>(rerunData.sequences);
-        if (sequences.length > 0) {
-          form.setFieldValue("sequences", sequences);
+        const seqs = normalizeToArray<SequenceItem>(rerunData.sequences);
+        if (seqs.length > 0) {
+          form.setFieldValue("sequences", seqs);
         }
 
-        const featureFields = normalizeToArray<string>(
-          rerunData.feature_metadata_fields,
-        );
-        const genomeFields = normalizeToArray<string>(
-          rerunData.genome_metadata_fields,
-        );
+        const featureFields = normalizeToArray<string>(rerunData.feature_metadata_fields);
+        const genomeFields = normalizeToArray<string>(rerunData.genome_metadata_fields);
         const allMetadataFieldIds = [...featureFields, ...genomeFields];
         if (allMetadataFieldIds.length > 0) {
-          setMetadataFields(
-            allMetadataFieldIds.map((id) => createMetadataField(id)),
-          );
+          setMetadataFields(allMetadataFieldIds.map((id) => createMetadataField(id)));
         }
       },
     },
@@ -218,20 +161,14 @@ export default function GeneProteinTreePage() {
   const { isSubmitting, jobParamsDialogProps } = runtime;
 
   const selectedMetadataIds = useMemo(
-    () =>
-      new Set(
-        metadataFields.filter((field) => field.selected).map((f) => f.id),
-      ),
+    () => new Set(metadataFields.filter((f) => f.selected).map((f) => f.id)),
     [metadataFields],
   );
 
-  // Always show all metadata fields with labels, excluding already selected ones
   const availableMetadataOptions = useMemo(() => {
     const allOptions = getMetadataSelectOptions(formatMetadataLabel);
     return allOptions.filter(
-      (option) =>
-        option.isLabel || // Always show section labels
-        !selectedMetadataIds.has(option.value), // Hide already selected fields
+      (option) => option.isLabel || !selectedMetadataIds.has(option.value),
     );
   }, [selectedMetadataIds]);
 
@@ -255,7 +192,7 @@ export default function GeneProteinTreePage() {
       type = alphabet === "DNA" ? "feature_dna_fasta" : "feature_protein_fasta";
     }
 
-    if (!selectedObject || !selectedObject.path) {
+    if (!selectedObject?.path) {
       toast.error("No object selected", {
         description: "Please select a workspace object before adding.",
         closeButton: true,
@@ -263,11 +200,9 @@ export default function GeneProteinTreePage() {
       return;
     }
 
-    const inputValue = selectedObject.path;
-
     const currentSequences = form.state.values.sequences;
 
-    if (checkDuplicateSequence(currentSequences, inputValue, type)) {
+    if (checkDuplicateSequence(currentSequences, selectedObject.path, type)) {
       toast.error("Duplicate selection detected", {
         description: `${getSequenceTypeLabel(type, alphabet as Alphabet)} is already selected.`,
         closeButton: true,
@@ -283,25 +218,25 @@ export default function GeneProteinTreePage() {
       return;
     }
 
-    const newSequence = createSequenceItem(inputValue, type);
-
-    form.setFieldValue("sequences", [...currentSequences, newSequence]);
+    form.setFieldValue("sequences", [
+      ...currentSequences,
+      createSequenceItem(selectedObject.path, type),
+    ]);
 
     if (source === "feature") setSelectedFeatureGroupObject(null);
     if (source === "aligned") setSelectedAlignedFastaObject(null);
     if (source === "unaligned") setSelectedUnalignedFastaObject(null);
   }
 
-  function removeSequence(index: number) {
+  function removeSequence(id: string) {
     const currentSequences = form.state.values.sequences;
     form.setFieldValue(
       "sequences",
-      removeSequenceAtIndex(currentSequences, index),
+      removeSequenceAtIndex(currentSequences, parseInt(id, 10)),
     );
   }
 
   function handleMetadataSelection(value: string) {
-    // Don't allow selection of label items
     if (isMetadataLabel(value)) {
       setSelectedMetadataField("");
       return;
@@ -315,9 +250,7 @@ export default function GeneProteinTreePage() {
       setSelectedMetadataField("");
       return;
     }
-
-    const newField = createMetadataField(selectedMetadataField);
-    setMetadataFields((prev) => [newField, ...prev]);
+    setMetadataFields((prev) => [createMetadataField(selectedMetadataField), ...prev]);
     setSelectedMetadataField("");
   }
 
@@ -369,440 +302,46 @@ export default function GeneProteinTreePage() {
         }}
         className="grid grid-cols-1 gap-4 md:grid-cols-2"
       >
-        <Card>
-          <CardHeader className="service-card-header">
-            <RequiredFormCardTitle className="service-card-title">
-              Input
-              <DialogInfoPopup
-                title={phylogeneticTreeInput.title}
-                description={phylogeneticTreeInput.description}
-                sections={phylogeneticTreeInput.sections}
-              />
-            </RequiredFormCardTitle>
-            <CardDescription>
-              Choose fasta file or features for tree.
-            </CardDescription>
-          </CardHeader>
-
-          <CardContent className="service-card-content">
-            <div className="space-y-4">
-              <form.Field name="alphabet">
-                {(field) => (
-                  <FieldItem>
-                    <RadioGroup
-                      value={field.state.value}
-                      onValueChange={(value) =>
-                        value != null &&
-                        field.handleChange(
-                          value as GeneProteinTreeFormData["alphabet"],
-                        )
-                      }
-                      className="service-radio-group-horizontal"
-                    >
-                      <div className="flex items-center gap-3">
-                        <RadioGroupItem value="DNA" id="DNA" />
-                        <Label htmlFor="DNA">DNA</Label>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <RadioGroupItem value="Protein" id="Protein" />
-                        <Label htmlFor="Protein">Protein</Label>
-                      </div>
-                    </RadioGroup>
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
-
-              <div className="space-y-2">
-                <Label className="service-card-label">Feature Group</Label>
-                <div className="flex gap-2">
-                  <WorkspaceObjectSelector
-                    preset="featureGroup"
-                    placeholder="Optional"
-                    onSelectedObjectChange={(
-                      object: WorkspaceObject | null,
-                    ) => {
-                      setSelectedFeatureGroupObject(object);
-                    }}
-                    value={selectedFeatureGroupObject?.path}
-                    className="flex-1"
-                  />
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="outline"
-                    onClick={() => handleAddSequence("feature")}
-                    disabled={!selectedFeatureGroupObject}
-                  >
-                    <Plus size={16} />
-                  </Button>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="service-card-label">
-                  DNA/Protein Aligned FASTA
-                </Label>
-                <div className="flex gap-2">
-                  <WorkspaceObjectSelector
-                    preset={alignedFastaPreset}
-                    placeholder="Optional"
-                    onSelectedObjectChange={(
-                      object: WorkspaceObject | null,
-                    ) => {
-                      setSelectedAlignedFastaObject(object);
-                    }}
-                    value={selectedAlignedFastaObject?.path}
-                    className="flex-1"
-                  />
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="outline"
-                    onClick={() => handleAddSequence("aligned")}
-                    disabled={!selectedAlignedFastaObject}
-                  >
-                    <Plus size={16} />
-                  </Button>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="service-card-label">
-                  DNA/Protein Unaligned FASTA
-                </Label>
-                <div className="flex gap-2">
-                  <WorkspaceObjectSelector
-                    preset={unalignedFastaPreset}
-                    placeholder="Optional"
-                    onSelectedObjectChange={(
-                      object: WorkspaceObject | null,
-                    ) => {
-                      setSelectedUnalignedFastaObject(object);
-                    }}
-                    value={selectedUnalignedFastaObject?.path}
-                    className="flex-1"
-                  />
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="outline"
-                    onClick={() => handleAddSequence("unaligned")}
-                    disabled={!selectedUnalignedFastaObject}
-                  >
-                    <Plus size={16} />
-                  </Button>
-                </div>
-              </div>
-
-              <form.Field name="sequences">
-                {(field) => (
-                  <FieldItem>
-                    <SelectedItemsTable
-                      title="Selected file / feature group"
-                      items={selectedItemsForTable}
-                      onRemove={(id) => removeSequence(parseInt(id, 10))}
-                      className="max-h-84 overflow-y-auto"
-                      allowDuplicates={false}
-                      description="No mixing of DNA and Protein FASTA files is allowed."
-                    />
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
-            </div>
-          </CardContent>
-        </Card>
+        <GeneProteinTreeInputCard
+          form={form}
+          alphabet={alphabet}
+          alignedFastaPreset={alignedFastaPreset}
+          unalignedFastaPreset={unalignedFastaPreset}
+          selectedFeatureGroupObject={selectedFeatureGroupObject}
+          selectedAlignedFastaObject={selectedAlignedFastaObject}
+          selectedUnalignedFastaObject={selectedUnalignedFastaObject}
+          selectedItemsForTable={selectedItemsForTable}
+          onFeatureGroupChange={setSelectedFeatureGroupObject}
+          onAlignedFastaChange={setSelectedAlignedFastaObject}
+          onUnalignedFastaChange={setSelectedUnalignedFastaObject}
+          onAddSequence={handleAddSequence}
+          onRemoveSequence={removeSequence}
+        />
 
         <div className="space-y-4">
-          <Card>
-            <CardHeader className="service-card-header">
-              <RequiredFormCardTitle className="service-card-title">
-                Alignment Parameters
-                <DialogInfoPopup
-                  title={phylogeneticTreeAlignmentParameters.title}
-                  description={phylogeneticTreeAlignmentParameters.description}
-                  sections={phylogeneticTreeAlignmentParameters.sections}
-                />
-              </RequiredFormCardTitle>
-            </CardHeader>
-
-            <CardContent className="service-card-content">
-              <div className="space-y-4">
-                <form.Field name="trim_threshold">
-                  {(field) => (
-                    <FieldItem>
-                      <RequiredFormLabel className="service-card-label">
-                        Trim Ends of Alignment Threshold
-                      </RequiredFormLabel>
-                      <Select
-                        items={thresholdOptions.map((v) => ({
-                          value: v,
-                          label: v,
-                        }))}
-                        value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
-                      >
-                        <SelectTrigger className="service-card-select-trigger">
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            {thresholdOptions.map((value) => (
-                              <SelectItem key={value} value={value}>
-                                {value}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-
-                <form.Field name="gap_threshold">
-                  {(field) => (
-                    <FieldItem>
-                      <RequiredFormLabel className="service-card-label">
-                        Remove Gappy Sequences Threshold
-                      </RequiredFormLabel>
-                      <Select
-                        items={thresholdOptions.map((v) => ({
-                          value: v,
-                          label: v,
-                        }))}
-                        value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
-                      >
-                        <SelectTrigger className="service-card-select-trigger">
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            {thresholdOptions.map((value) => (
-                              <SelectItem key={value} value={value}>
-                                {value}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="service-card-header">
-              <RequiredFormCardTitle className="service-card-title">
-                Tree Parameters
-                <DialogInfoPopup
-                  title={phylogeneticTreeTreeParameters.title}
-                  description={phylogeneticTreeTreeParameters.description}
-                  sections={phylogeneticTreeTreeParameters.sections}
-                />
-              </RequiredFormCardTitle>
-            </CardHeader>
-
-            <CardContent className="service-card-content">
-              <div className="space-y-4">
-                <form.Field name="recipe">
-                  {(field) => (
-                    <FieldItem>
-                      <RadioGroup
-                        value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null &&
-                          field.handleChange(
-                            value as GeneProteinTreeFormData["recipe"],
-                          )
-                        }
-                        className="service-radio-group-horizontal"
-                      >
-                        <div className="flex items-center gap-3">
-                          <RadioGroupItem value="RAxML" id="raxml" />
-                          <Label htmlFor="raxml">RAxML</Label>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <RadioGroupItem value="PhyML" id="phyml" />
-                          <Label htmlFor="phyml">PhyML</Label>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <RadioGroupItem value="FastTree" id="fasttree" />
-                          <Label htmlFor="fasttree">FastTree</Label>
-                        </div>
-                      </RadioGroup>
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-
-                <form.Field name="substitution_model">
-                  {(field) => (
-                    <FieldItem>
-                      <RequiredFormLabel className="service-card-label">
-                        Model
-                      </RequiredFormLabel>
-                      <Select
-                        items={substitutionModelOptions.map((m) => ({
-                          value: m.value,
-                          label: m.label,
-                        }))}
-                        value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
-                      >
-                        <SelectTrigger
-                          id="model"
-                          className="service-card-select-trigger"
-                        >
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            {substitutionModelOptions.map((model) => (
-                              <SelectItem key={model.value} value={model.value}>
-                                {model.label}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-
-                <div className="flex flex-col space-y-4">
-                  <OutputLocationFields form={form} required={true} />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <GeneProteinTreeAlignmentParametersCard form={form} />
+          <GeneProteinTreeTreeParametersCard
+            form={form}
+            substitutionModelOptions={substitutionModelOptions}
+          />
         </div>
 
-        <Collapsible
-          open={showAdvanced}
-          onOpenChange={setShowAdvanced}
-          className="service-collapsible-container col-span-2"
-        >
-          <CollapsibleTrigger className="service-collapsible-trigger">
-            Metadata Options
-            <ChevronDown
-              className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
-            />
-          </CollapsibleTrigger>
-
-          <CollapsibleContent className="service-collapsible-content">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div className="space-y-4">
-                <div>
-                  <Label>Metadata Table Fields</Label>
-                  <p className="text-muted-foreground pt-2 pb-4 text-sm">
-                    These fields will appear as options in the phyloxml
-                    visualization
-                  </p>
-
-                  <div className="flex gap-2">
-                    <Select
-                      items={availableMetadataOptions
-                        .filter((f) => !f.isLabel)
-                        .map((f) => ({ value: f.value, label: f.label }))}
-                      value={selectedMetadataField}
-                      onValueChange={(value) =>
-                        value != null && handleMetadataSelection(value)
-                      }
-                    >
-                      <SelectTrigger className="service-card-select-trigger">
-                        <SelectValue placeholder="Select field" />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-[600px]">
-                        <SelectGroup>
-                          {availableMetadataOptions.map((field) => {
-                            // Check if this is a label (section header)
-                            if (field.isLabel) {
-                              return (
-                                <SelectLabel
-                                  key={field.value}
-                                  className="border-border mb-1 border-b pb-1.5 font-medium"
-                                >
-                                  {field.label}
-                                </SelectLabel>
-                              );
-                            }
-                            return (
-                              <SelectItem key={field.value} value={field.value}>
-                                {field.label}
-                              </SelectItem>
-                            );
-                          })}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      size="icon"
-                      variant="outline"
-                      onClick={addMetadataField}
-                      disabled={!selectedMetadataField}
-                    >
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <Table className="mt-2">
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="h-8 py-1">Field</TableHead>
-                      <TableHead className="h-8 w-24 py-1 text-center">
-                        Remove
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {metadataFields
-                      .filter((field) => field.selected)
-                      .map((field) => (
-                        <TableRow key={field.id} className="h-8">
-                          <TableCell className="py-1">{field.name}</TableCell>
-                          <TableCell className="py-1 text-center">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => removeMetadataField(field.id)}
-                              className="text-destructive hover:text-destructive/90 h-6 w-6"
-                            >
-                              <X size={14} />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
+        <GeneProteinTreeMetadataOptions
+          showAdvanced={showAdvanced}
+          onShowAdvancedChange={setShowAdvanced}
+          metadataFields={metadataFields}
+          selectedMetadataField={selectedMetadataField}
+          availableMetadataOptions={availableMetadataOptions}
+          onMetadataSelection={handleMetadataSelection}
+          onAddMetadataField={addMetadataField}
+          onRemoveMetadataField={removeMetadataField}
+        />
 
         <div className="service-form-controls col-span-2">
           <Button type="button" variant="outline" onClick={handleReset}>
             Reset
           </Button>
-          <Button
-            type="submit"
-            disabled={isSubmitting || !canSubmit}
-          >
+          <Button type="submit" disabled={isSubmitting || !canSubmit}>
             {isSubmitting ? <Spinner /> : null}
             Submit
           </Button>

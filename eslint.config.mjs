@@ -3,6 +3,10 @@ import { defineConfig } from "eslint/config";
 import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
 import nextTypescript from "eslint-config-next/typescript";
 import tseslint from "typescript-eslint";
+import { fileURLToPath } from "url";
+import path from "path";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(
   {
@@ -24,6 +28,11 @@ export default defineConfig(
   {
     files: ["**/*.{ts,tsx}"],
     extends: [tseslint.configs.strict, tseslint.configs.stylistic],
+    languageOptions: {
+      parserOptions: {
+        tsconfigRootDir: __dirname,
+      },
+    },
     rules: {
       // note you must disable the base rule
       // as it can report incorrect errors

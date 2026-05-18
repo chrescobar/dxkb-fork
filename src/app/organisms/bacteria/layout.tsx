@@ -1,5 +1,3 @@
-import Navbar from "@/components/navbars/navbar";
-import Footer from "@/components/footers/footer";
 import "./bacteria.css";
 
 export const metadata = {
@@ -8,11 +6,5 @@ export const metadata = {
 };
 
 export default function BacteriaLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="bacteria-page grow flex flex-col">{children}</main>
-      <Footer />
-    </div>
-  );
+  return <div className="bacteria-page flex grow flex-col">{children}</div>;
 }

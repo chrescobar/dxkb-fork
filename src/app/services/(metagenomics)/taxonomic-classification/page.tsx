@@ -2,30 +2,17 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useForm, useStore } from "@tanstack/react-form";
-import {
-  FieldItem,
-  FieldLabel,
-  FieldErrors,
-} from "@/components/ui/tanstack-form";
+import { FieldErrors } from "@/components/ui/tanstack-form";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Tooltip,
   TooltipContent,
@@ -39,7 +26,6 @@ import { ServiceHeader } from "@/components/services/service-header";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import SraRunAccessionWithValidation from "@/components/services/sra-run-accession-with-validation";
 import SelectedItemsTable from "@/components/services/selected-items-table";
-import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
@@ -55,11 +41,6 @@ import {
 import {
   taxonomyClassificationInfo,
   taxonomyClassificationInput,
-  taxonomyClassificationParameters,
-  taxonomyClassificationAnalysisType,
-  taxonomyClassificationDatabase,
-  taxonomyClassificationFilterHostReads,
-  taxonomyClassificatioConfidenceInterval,
 } from "@/lib/services/info/taxonomic-classification";
 
 import {
@@ -69,16 +50,12 @@ import {
   sixteenSAnalysisTypeOptions,
   wgsDatabaseOptions,
   sixteenSDatabaseOptions,
-  hostGenomeOptions,
-  confidenceIntervalOptions,
   type TaxonomicClassificationFormData,
   type LibraryItem,
 } from "@/lib/forms/(metagenomics)/taxonomic-classification/taxonomic-classification-form-schema";
 import {
   getDefaultAnalysisType,
   getDefaultDatabase,
-  isHostFilteringAvailable,
-  isAnalysisTypeSelectable,
 } from "@/lib/forms/(metagenomics)/taxonomic-classification/taxonomic-classification-form-utils";
 import { taxonomicClassificationService } from "@/lib/forms/(metagenomics)/taxonomic-classification/taxonomic-classification-service";
 import {
@@ -91,6 +68,7 @@ import { getLibraryTypeLabel } from "@/lib/forms/shared-schemas";
 
 import type { WorkspaceObject } from "@/lib/services/workspace/types";
 import type { Library } from "@/types/services";
+import { TaxonomicClassificationParametersCard } from "./taxonomic-classification-parameters-card";
 
 export default function TaxonomicClassificationPage() {
   // Read input state
@@ -508,381 +486,12 @@ export default function TaxonomicClassificationPage() {
 
         {/* Parameters Section */}
         <div className="md:col-span-12">
-          <Card>
-            <CardHeader className="service-card-header">
-              <RequiredFormCardTitle className="service-card-title">
-                Parameters
-                <DialogInfoPopup
-                  title={taxonomyClassificationParameters.title}
-                  description={taxonomyClassificationParameters.description}
-                  sections={taxonomyClassificationParameters.sections}
-                />
-              </RequiredFormCardTitle>
-            </CardHeader>
-
-            <CardContent>
-              <div className="space-y-6">
-                {/* Sequencing Type */}
-                <div className="w-full">
-                  <form.Field name="sequence_type">
-                    {(field) => (
-                      <FieldItem>
-                        <FieldLabel
-                          field={field}
-                          className="service-card-label"
-                        >
-                          Sequencing Type
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger>
-                                <HelpCircle className="service-card-tooltip-icon ml-2" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>
-                                  Select the sequencing type according to your
-                                  input reads
-                                </p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </FieldLabel>
-
-                        <RadioGroup
-                          value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null &&
-                            field.handleChange(
-                              value as TaxonomicClassificationFormData["sequence_type"],
-                            )
-                          }
-                          className="service-radio-group-horizontal"
-                        >
-                          <div className="flex items-center gap-3">
-                            <RadioGroupItem value="wgs" id="wgs" />
-                            <Label htmlFor="wgs" className="text-sm">
-                              Whole Genome Sequencing (WGS)
-                            </Label>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <RadioGroupItem value="16s" id="16s" />
-                            <Label htmlFor="16s" className="text-sm">
-                              16S Ribosomal RNA
-                            </Label>
-                          </div>
-                        </RadioGroup>
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-                </div>
-
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  {/* Analysis Type */}
-                  <div className="service-card-content-grid-item">
-                    <form.Field name="analysis_type">
-                      {(field) => (
-                        <FieldItem>
-                          <FieldLabel
-                            field={field}
-                            className="service-card-label"
-                          >
-                            Analysis Type
-                            <DialogInfoPopup
-                              title={taxonomyClassificationAnalysisType.title}
-                              description={
-                                taxonomyClassificationAnalysisType.description
-                              }
-                              sections={
-                                taxonomyClassificationAnalysisType.sections
-                              }
-                              className="ml-2"
-                            />
-                          </FieldLabel>
-                          <Select
-                            items={analysisTypeOptions}
-                            value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(
-                                value as TaxonomicClassificationFormData["analysis_type"],
-                              )
-                            }
-                            disabled={!isAnalysisTypeSelectable(sequenceType)}
-                          >
-                            <SelectTrigger className="service-card-select-trigger">
-                              <SelectValue placeholder="Select analysis type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                {analysisTypeOptions.map((option) => (
-                                  <SelectItem
-                                    key={option.value}
-                                    value={option.value}
-                                  >
-                                    {option.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                          <FieldErrors field={field} />
-                        </FieldItem>
-                      )}
-                    </form.Field>
-                  </div>
-
-                  {/* Database */}
-                  <div className="service-card-content-grid-item">
-                    <form.Field name="database">
-                      {(field) => (
-                        <FieldItem>
-                          <FieldLabel
-                            field={field}
-                            className="service-card-label"
-                          >
-                            Database
-                            <DialogInfoPopup
-                              title={taxonomyClassificationDatabase.title}
-                              description={
-                                taxonomyClassificationDatabase.description
-                              }
-                              sections={taxonomyClassificationDatabase.sections}
-                              className="ml-2"
-                            />
-                          </FieldLabel>
-                          <Select
-                            items={databaseOptions}
-                            value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(
-                                value as TaxonomicClassificationFormData["database"],
-                              )
-                            }
-                          >
-                            <SelectTrigger className="service-card-select-trigger">
-                              <SelectValue placeholder="Select database" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                {databaseOptions.map((option) => (
-                                  <SelectItem
-                                    key={option.value}
-                                    value={option.value}
-                                  >
-                                    {option.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                          <FieldErrors field={field} />
-                        </FieldItem>
-                      )}
-                    </form.Field>
-                  </div>
-
-                  {/* Filter Host Reads */}
-                  <div className="service-card-content-grid-item">
-                    <form.Field name="host_genome">
-                      {(field) => (
-                        <FieldItem>
-                          <FieldLabel
-                            field={field}
-                            className="service-card-label"
-                          >
-                            Filter Host Reads
-                            <DialogInfoPopup
-                              title={
-                                taxonomyClassificationFilterHostReads.title
-                              }
-                              description={
-                                taxonomyClassificationFilterHostReads.description
-                              }
-                              className="ml-2"
-                            />
-                          </FieldLabel>
-                          <Select
-                            items={hostGenomeOptions}
-                            value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(
-                                value as TaxonomicClassificationFormData["host_genome"],
-                              )
-                            }
-                            disabled={!isHostFilteringAvailable(sequenceType)}
-                          >
-                            <SelectTrigger className="service-card-select-trigger">
-                              <SelectValue placeholder="Select filter option" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                {hostGenomeOptions.map((option) => (
-                                  <SelectItem
-                                    key={option.value}
-                                    value={option.value}
-                                  >
-                                    {option.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                          <FieldErrors field={field} />
-                        </FieldItem>
-                      )}
-                    </form.Field>
-                  </div>
-
-                  {/* Confidence Interval */}
-                  <div className="service-card-content-grid-item">
-                    <form.Field name="confidence_interval">
-                      {(field) => (
-                        <FieldItem>
-                          <FieldLabel
-                            field={field}
-                            className="service-card-label"
-                          >
-                            Confidence Interval
-                            <DialogInfoPopup
-                              title={
-                                taxonomyClassificatioConfidenceInterval.title
-                              }
-                              description={
-                                taxonomyClassificatioConfidenceInterval.description
-                              }
-                              className="ml-2"
-                            />
-                          </FieldLabel>
-                          <Select
-                            items={confidenceIntervalOptions}
-                            value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null && field.handleChange(value)
-                            }
-                          >
-                            <SelectTrigger className="service-card-select-trigger">
-                              <SelectValue placeholder="Select confidence interval" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                {confidenceIntervalOptions.map((option) => (
-                                  <SelectItem
-                                    key={option.value}
-                                    value={option.value}
-                                  >
-                                    {option.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                          <FieldErrors field={field} />
-                        </FieldItem>
-                      )}
-                    </form.Field>
-                  </div>
-
-                  {/* Save Classified Sequences */}
-                  <div className="service-card-content-grid-item">
-                    <form.Field name="save_classified_sequences">
-                      {(field) => (
-                        <FieldItem>
-                          <FieldLabel
-                            field={field}
-                            className="service-card-label"
-                          >
-                            Save Classified Sequences
-                          </FieldLabel>
-                          <RadioGroup
-                            value={field.state.value ? "yes" : "no"}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(value === "yes")
-                            }
-                            className="service-radio-group-horizontal"
-                          >
-                            <div className="flex items-center gap-3">
-                              <RadioGroupItem value="no" id="classified-no" />
-                              <Label
-                                htmlFor="classified-no"
-                                className="text-sm"
-                              >
-                                No
-                              </Label>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <RadioGroupItem value="yes" id="classified-yes" />
-                              <Label
-                                htmlFor="classified-yes"
-                                className="text-sm"
-                              >
-                                Yes
-                              </Label>
-                            </div>
-                          </RadioGroup>
-                          <FieldErrors field={field} />
-                        </FieldItem>
-                      )}
-                    </form.Field>
-                  </div>
-
-                  {/* Save Unclassified Sequences */}
-                  <div className="service-card-content-grid-item">
-                    <form.Field name="save_unclassified_sequences">
-                      {(field) => (
-                        <FieldItem>
-                          <FieldLabel
-                            field={field}
-                            className="service-card-label"
-                          >
-                            Save Unclassified Sequences
-                          </FieldLabel>
-                          <RadioGroup
-                            value={field.state.value ? "yes" : "no"}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(value === "yes")
-                            }
-                            className="service-radio-group-horizontal"
-                          >
-                            <div className="flex items-center gap-3">
-                              <RadioGroupItem value="no" id="unclassified-no" />
-                              <Label
-                                htmlFor="unclassified-no"
-                                className="text-sm"
-                              >
-                                No
-                              </Label>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <RadioGroupItem
-                                value="yes"
-                                id="unclassified-yes"
-                              />
-                              <Label
-                                htmlFor="unclassified-yes"
-                                className="text-sm"
-                              >
-                                Yes
-                              </Label>
-                            </div>
-                          </RadioGroup>
-                          <FieldErrors field={field} />
-                        </FieldItem>
-                      )}
-                    </form.Field>
-                  </div>
-                </div>
-
-                {/* Output Configuration */}
-                <div className="flex flex-col space-y-4">
-                  <OutputLocationFields form={form} required={true} />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <TaxonomicClassificationParametersCard
+            form={form}
+            sequenceType={sequenceType}
+            analysisTypeOptions={analysisTypeOptions}
+            databaseOptions={databaseOptions}
+          />
         </div>
 
         {/* Form Controls */}

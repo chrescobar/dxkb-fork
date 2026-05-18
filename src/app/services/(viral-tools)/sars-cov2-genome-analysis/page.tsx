@@ -27,7 +27,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ChevronRight, HelpCircle } from "lucide-react";
 import { toast } from "sonner";
 
@@ -47,7 +46,6 @@ import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
 import {
   sarsCov2GenomeAnalysisInfo,
   sarsCov2GenomeAnalysisParameters,
-  sarsCov2GenomeAnalysisStartWith,
   readInputFileInfo,
 } from "@/lib/services/info/sars-cov2-genome-analysis";
 
@@ -82,6 +80,7 @@ import {
   sarsCov2PairedPlatformOptions,
   sarsCov2SinglePlatformOptions,
 } from "@/lib/forms/(viral-tools)/sars-cov2-genome-analysis/sars-cov2-genome-analysis-form-schema";
+import { SarsCov2StartWithCard } from "./sars-cov2-start-with-card";
 
 const quickReference =
   "https://www.bv-brc.org/docs/quick_references/services/sars_cov_2_assembly_annotation_service.html";
@@ -237,43 +236,7 @@ export default function SarsCov2GenomeAnalysisPage() {
       >
         {/* Start With */}
         <div className="md:col-span-12">
-          <Card>
-            <CardHeader className="service-card-header">
-              <RequiredFormCardTitle className="service-card-title">
-                Start With
-                <DialogInfoPopup
-                  title={sarsCov2GenomeAnalysisStartWith.title}
-                  description={sarsCov2GenomeAnalysisStartWith.description}
-                  sections={sarsCov2GenomeAnalysisStartWith.sections}
-                />
-              </RequiredFormCardTitle>
-            </CardHeader>
-            <CardContent className="service-card-content">
-              <form.Field name="input_type">
-                {(field) => (
-                  <FieldItem>
-                    <RadioGroup
-                      value={field.state.value}
-                      onValueChange={(value) =>
-                        value != null && field.handleChange(value)
-                      }
-                      className="service-radio-group-horizontal"
-                    >
-                      <div className="service-radio-group-item flex items-center gap-2">
-                        <RadioGroupItem value="reads" id="start-reads" />
-                        <Label htmlFor="start-reads">Read File</Label>
-                      </div>
-                      <div className="service-radio-group-item flex items-center gap-2">
-                        <RadioGroupItem value="contigs" id="start-contigs" />
-                        <Label htmlFor="start-contigs">Assembled Contigs</Label>
-                      </div>
-                    </RadioGroup>
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
-            </CardContent>
-          </Card>
+          <SarsCov2StartWithCard form={form} />
         </div>
 
         {/* Parameters */}

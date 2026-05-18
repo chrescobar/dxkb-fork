@@ -22,7 +22,6 @@ interface BlastInputSourceCardProps {
   inputSource: BlastFormData["input_source"];
   inputFastaPreset: WorkspaceSelectorPreset;
   currentBlastProgram: BlastFormData["blast_program"];
-  isFastaValid: boolean;
   onInputSourceChange: (source: BlastFormData["input_source"]) => void;
   onFastaValidationChange: (isValid: boolean, result: FastaValidationResult | null) => void;
 }

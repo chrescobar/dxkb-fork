@@ -27,10 +27,6 @@ import { MsaReferenceSequenceCard } from "./msa-reference-sequence-card";
 import { MsaParametersCard } from "./msa-parameters-card";
 
 export default function MSAandSNPAnalysisPage() {
-  const [_selectedFeatureGroupObject, setSelectedFeatureGroupObject] =
-    useState<WorkspaceObject | null>(null);
-  const [_selectedGenomeGroupObject, setSelectedGenomeGroupObject] =
-    useState<WorkspaceObject | null>(null);
   const [selectedFastaObject, setSelectedFastaObject] =
     useState<WorkspaceObject | null>(null);
   const [selectedAlignedFastaObject, setSelectedAlignedFastaObject] =
@@ -53,8 +49,6 @@ export default function MSAandSNPAnalysisPage() {
 
   function handleReset() {
     form.reset(MsaSnpAnalysis.defaultMsaSnpAnalysisFormValues);
-    setSelectedFeatureGroupObject(null);
-    setSelectedGenomeGroupObject(null);
     setSelectedFastaObject(null);
     setSelectedAlignedFastaObject(null);
     setFastaInputText("");
@@ -314,7 +308,6 @@ export default function MSAandSNPAnalysisPage() {
   // The genome group selection handler stays in the page (it does fetching/validation)
   const handleInputGenomeGroupSelect = async (object: WorkspaceObject | null) => {
     if (!object || !object.path) {
-      setSelectedGenomeGroupObject(null);
       return;
     }
 
@@ -369,7 +362,6 @@ export default function MSAandSNPAnalysisPage() {
 
       // Replace the existing group (only one group allowed)
       form.setFieldValue("select_genomegroup", [inputValue]);
-      setSelectedGenomeGroupObject(null);
     } catch (error) {
       console.error("Failed to validate genome group:", error);
       const errorMessage =
@@ -426,7 +418,7 @@ export default function MSAandSNPAnalysisPage() {
           selectGenomegroup={selectGenomegroup}
           onGenomeGroupSelect={handleInputGenomeGroupSelect}
           onInputTypeChange={handleInputTypeChange}
-          setSelectedFeatureGroupObject={setSelectedFeatureGroupObject}
+
         />
 
         <MsaReferenceSequenceCard

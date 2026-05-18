@@ -94,7 +94,7 @@ export function GeneProteinTreeMetadataOptions({
                   <SelectTrigger className="service-card-select-trigger">
                     <SelectValue placeholder="Select field" />
                   </SelectTrigger>
-                  <SelectContent className="max-h-[600px]">
+                  <SelectContent className="max-h-150">
                     <SelectGroup>
                       {availableMetadataOptions.map((field) => {
                         if (field.isLabel) {

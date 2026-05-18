@@ -55,8 +55,6 @@ interface MetaCatsInputCardProps {
   autoGrouping: UseMetaCatsAutoGroupingReturn;
   selectedFeatureGroupObject: WorkspaceObject | null;
   setSelectedFeatureGroupObject: (object: WorkspaceObject | null) => void;
-  onAlignmentFileChange: (object: WorkspaceObject | null) => void;
-  onGroupFileChange: (object: WorkspaceObject | null) => void;
   onSelectAllRows: (checked: boolean) => void;
   onRowSelect: (id: string) => void;
   onAddFeatureGroup: () => void;
@@ -69,8 +67,6 @@ export function MetaCatsInputCard({
   autoGrouping,
   selectedFeatureGroupObject,
   setSelectedFeatureGroupObject,
-  onAlignmentFileChange,
-  onGroupFileChange,
   onSelectAllRows,
   onRowSelect,
   onAddFeatureGroup,
@@ -513,8 +509,6 @@ export function MetaCatsInputCard({
           {inputType === "files" && (
             <MetaCatsAlignmentCard
               form={form}
-              onAlignmentFileChange={onAlignmentFileChange}
-              onGroupFileChange={onGroupFileChange}
               alignmentFileValue={alignmentFileValue}
               groupFileValue={groupFileValue}
             />

@@ -10,16 +10,12 @@ interface ServiceForm { Field: any; setFieldValue: (...args: any[]) => void }
 
 interface MetaCatsAlignmentCardProps {
   form: ServiceForm;
-  onAlignmentFileChange: (object: WorkspaceObject | null) => void;
-  onGroupFileChange: (object: WorkspaceObject | null) => void;
   alignmentFileValue: string;
   groupFileValue: string;
 }
 
 export function MetaCatsAlignmentCard({
   form,
-  onAlignmentFileChange,
-  onGroupFileChange,
   alignmentFileValue,
   groupFileValue,
 }: MetaCatsAlignmentCardProps) {
@@ -41,7 +37,6 @@ export function MetaCatsAlignmentCard({
                   field.handleChange("");
                   form.setFieldValue("alignment_type", "");
                 }
-                onAlignmentFileChange(object);
               }}
               value={alignmentFileValue}
             />
@@ -64,7 +59,6 @@ export function MetaCatsAlignmentCard({
                 } else {
                   field.handleChange("");
                 }
-                onGroupFileChange(object);
               }}
               value={groupFileValue}
             />

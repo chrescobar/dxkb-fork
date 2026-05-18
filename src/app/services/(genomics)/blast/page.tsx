@@ -185,7 +185,6 @@ export default function BlastServicePage() {
           inputSource={inputSource}
           inputFastaPreset={inputFastaPreset}
           currentBlastProgram={currentBlastProgram}
-          isFastaValid={isFastaValid}
           onInputSourceChange={handleInputSourceChange}
           onFastaValidationChange={(isValid, result) => handleFastaValidationChange(isValid, result)}
         />

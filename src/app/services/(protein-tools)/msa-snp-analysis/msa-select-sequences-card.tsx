@@ -33,7 +33,6 @@ interface MsaSelectSequencesCardProps {
   selectGenomegroup: string[];
   onGenomeGroupSelect: (object: WorkspaceObject | null) => Promise<void>;
   onInputTypeChange: (prevType: string | undefined, newType: string) => void;
-  setSelectedFeatureGroupObject: (obj: WorkspaceObject | null) => void;
 }
 
 export function MsaSelectSequencesCard({
@@ -50,7 +49,6 @@ export function MsaSelectSequencesCard({
   selectGenomegroup,
   onGenomeGroupSelect,
   onInputTypeChange,
-  setSelectedFeatureGroupObject,
 }: MsaSelectSequencesCardProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const inputType = useStore(form.store, (s: any) => s.values.input_type as MsaSnpAnalysis.MsaSnpAnalysisFormData["input_type"]);
@@ -142,12 +140,10 @@ export function MsaSelectSequencesCard({
                         ) => {
                           if (!object || !object.path) {
                             field.handleChange("");
-                            setSelectedFeatureGroupObject(null);
                             return;
                           }
 
                           field.handleChange(object.path);
-                          setSelectedFeatureGroupObject(object);
                         }}
                         value={field.state.value}
                       />

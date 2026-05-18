@@ -17,7 +17,6 @@ describe("useMetaCatsYearRanges", () => {
       useMetaCatsYearRanges({
         form,
         yearRangesFieldName: "year_ranges",
-        metadataGroupFieldName: "metadata_group",
       }),
     );
 
@@ -32,7 +31,6 @@ describe("useMetaCatsYearRanges", () => {
       useMetaCatsYearRanges({
         form,
         yearRangesFieldName: "year_ranges",
-        metadataGroupFieldName: "metadata_group",
       }),
     );
 
@@ -51,7 +49,6 @@ describe("useMetaCatsYearRanges", () => {
       useMetaCatsYearRanges({
         form,
         yearRangesFieldName: "year_ranges",
-        metadataGroupFieldName: "metadata_group",
       }),
     );
 
@@ -69,7 +66,6 @@ describe("useMetaCatsYearRanges", () => {
       useMetaCatsYearRanges({
         form,
         yearRangesFieldName: "year_ranges",
-        metadataGroupFieldName: "metadata_group",
       }),
     );
 
@@ -87,7 +83,6 @@ describe("useMetaCatsYearRanges", () => {
       useMetaCatsYearRanges({
         form,
         yearRangesFieldName: "year_ranges",
-        metadataGroupFieldName: "metadata_group",
       }),
     );
 
@@ -111,7 +106,6 @@ describe("useMetaCatsYearRanges", () => {
       useMetaCatsYearRanges({
         form,
         yearRangesFieldName: "year_ranges",
-        metadataGroupFieldName: "metadata_group",
       }),
     );
 

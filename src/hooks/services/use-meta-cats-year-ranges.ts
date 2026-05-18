@@ -6,7 +6,6 @@ import { validateYearRanges } from "@/lib/forms/(protein-tools)/meta-cats/meta-c
 interface UseMetaCatsYearRangesOptions {
   form: { setFieldValue: (...args: any[]) => void };
   yearRangesFieldName: string;
-  metadataGroupFieldName: string;
 }
 
 export interface UseMetaCatsYearRangesReturn {

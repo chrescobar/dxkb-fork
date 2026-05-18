@@ -28,11 +28,6 @@ export default function MetaCATSPage() {
   const [selectedFeatureGroupObject, setSelectedFeatureGroupObject] =
     useState<WorkspaceObject | null>(null);
 
-  const [_selectedAlignmentFileObject, setSelectedAlignmentFileObject] =
-    useState<WorkspaceObject | null>(null);
-  const [_selectedGroupFileObject, setSelectedGroupFileObject] =
-    useState<WorkspaceObject | null>(null);
-
   const form = useForm({
     defaultValues: defaultMetaCatsFormValues as MetaCatsFormData,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,7 +40,6 @@ export default function MetaCATSPage() {
   const yearRanges = useMetaCatsYearRanges({
     form,
     yearRangesFieldName: "year_ranges",
-    metadataGroupFieldName: "metadata_group",
   });
 
   const autoGrouping = useMetaCatsAutoGrouping({
@@ -60,8 +54,6 @@ export default function MetaCATSPage() {
   const handleReset = useCallback(() => {
     form.reset(defaultMetaCatsFormValues);
     setSelectedFeatureGroupObject(null);
-    setSelectedAlignmentFileObject(null);
-    setSelectedGroupFileObject(null);
     yearRanges.reset();
     autoGrouping.reset();
   }, [form, yearRanges, autoGrouping]);
@@ -211,8 +203,7 @@ export default function MetaCATSPage() {
           autoGrouping={autoGrouping}
           selectedFeatureGroupObject={selectedFeatureGroupObject}
           setSelectedFeatureGroupObject={setSelectedFeatureGroupObject}
-          onAlignmentFileChange={setSelectedAlignmentFileObject}
-          onGroupFileChange={setSelectedGroupFileObject}
+
           onSelectAllRows={handleSelectAllRows}
           onRowSelect={handleRowSelect}
           onAddFeatureGroup={handleAddFeatureGroup}

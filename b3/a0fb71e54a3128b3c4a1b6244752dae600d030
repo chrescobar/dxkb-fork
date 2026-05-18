@@ -1,0 +1,75 @@
+pnpm-workspace.yaml
+  s_05eba655cc8fd2::t_e24878dd4d8599 7
+src/app/organisms/all/page.tsx
+  s_05eba655cc8fd2::t_3478c15bcd8637 3
+src/app/organisms/bacteria/page.tsx
+  s_05eba655cc8fd2::t_7eb506d98e935b 3
+src/app/services/(phylogenomics)/viral-genome-tree/page.tsx
+  s_97c0d6f3d0b95f::t_52e5ea70e6c0c0 541
+  s_97c0d6f3d0b95f::t_551788922197e6 38
+src/components/workspace/workspace-object-selector.tsx
+  s_97c0d6f3d0b95f::t_94af5a7ff70fca 365-369
+src/app/organisms/all/nav-items.tsx
+  s_05eba655cc8fd2::t_9ff4a9e0422402 1-122
+src/app/organisms/viruses/page.tsx
+  s_05eba655cc8fd2::t_c01e3724cc1a3c 3
+src/components/services/alignment-parameters-card.tsx
+  s_97c0d6f3d0b95f::t_27b52139bf0efa 1-122
+src/app/organisms/bacteria/nav-items.tsx
+  s_05eba655cc8fd2::t_9ff4a9e0422402 1-131
+src/app/services/(protein-tools)/gene-protein-tree/page.tsx
+  s_97c0d6f3d0b95f::t_61732308df6cb0 322
+  s_97c0d6f3d0b95f::t_0fc5ab857dfd63 39
+src/app/services/(protein-tools)/gene-protein-tree/__tests__/gene-protein-tree-cards.test.tsx
+  s_97c0d6f3d0b95f::t_e295419344e296 190
+  s_97c0d6f3d0b95f::t_480c3c3aed6e18 195
+  s_97c0d6f3d0b95f::t_705fd092d256ce 7
+src/components/services/output-location-fields.tsx
+  s_05eba655cc8fd2::t_7496b1e866c6e4 55-59,70-73,84,91
+src/app/services/(viral-tools)/influenza-ha-subtype/page.tsx
+  s_c8acdb6e643d84::t_417bad798653ce 54
+  s_c8acdb6e643d84::t_abaf240f1ed1e1 100
+  s_62df377362c31f::t_1e766f3bb4f6a9 310
+src/app/organisms/viruses/nav-items.tsx
+  s_05eba655cc8fd2::t_9ff4a9e0422402 1-82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.9",
+  "base_commit_sha": "b3a0fb71e54a3128b3c4a1b6244752dae600d030",
+  "prompts": {},
+  "sessions": {
+    "s_05eba655cc8fd2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "762cc377-577b-45d2-b0f6-b96670463fbe",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_62df377362c31f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4bd8dc43-ebc4-4d5b-860a-30c22afe79a0",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_97c0d6f3d0b95f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "328eac86-0506-4c50-b6bc-f01a37e7f889",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_c8acdb6e643d84": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2c72146e-b9af-4d7a-82a8-52fe194711ae",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

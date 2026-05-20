@@ -31,7 +31,7 @@ export function WithGenomePanel({
 
   const hasSelection = selectedIds.length > 0;
 
-  const DataAPI = process.env.NEXT_PUBLIC_DATA_API!;
+  const DataAPI = process.env.NEXT_PUBLIC_DATA_API;
 
   const idFieldMap: Record<string, string> = {
     genome: "genome_id",

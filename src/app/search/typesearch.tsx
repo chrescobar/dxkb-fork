@@ -53,7 +53,6 @@ function TabsRenderer({
   selectedIds,
   isAllPagesSelected,
   setIsAllPagesSelected,
-  totalItems,
   setTotalItems
 }: TabsRendererProps) {
   // Whenever urlType (searchtype) changes, set the active tab.

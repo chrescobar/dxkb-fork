@@ -601,7 +601,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
       const idField = idFieldMap[resource] ?? "id";
 
-      const idFilter = selectedIds!
+      const idFilter = (selectedIds ?? [])
         .map((id) => `eq(${idField},${id})`)
         .join(",");
 
@@ -612,9 +612,8 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       await fetch(`${DataAPI}/${resource}/?${query}`, {
         headers: { 
           Accept: "application/json",
-          'Range': `items=0-${selectedIds!.length}`,
-          'X-Range': `items=0-${selectedIds!.length}`,
-        },
+          'Range': `items=0-${(selectedIds ?? []).length}`,
+          'X-Range': `items=0-${(selectedIds ?? []).length}`,        },
       })
         .then((res) => {
           if (!res.ok) throw new Error("Failed to fetch selected rows");

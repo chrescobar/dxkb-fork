@@ -1,7 +1,6 @@
 "use client";
 
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Select,
@@ -12,22 +11,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
+import {
+  RequiredFormCardTitle,
+  RequiredFormLabel,
+} from "@/components/forms/required-form-components";
 import { phylogeneticTreeAlignmentParameters } from "@/lib/services/info/phylogenetic-tree";
-
-const thresholdOptions = [
-  "0",
-  "0.1",
-  "0.2",
-  "0.3",
-  "0.4",
-  "0.5",
-  "0.6",
-  "0.7",
-  "0.8",
-  "0.9",
-  "1",
-];
+import { thresholdOptions } from "@/lib/forms/shared-schemas";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface ServiceForm { Field: any }
@@ -56,9 +45,9 @@ export function AlignmentParametersCard({ form }: AlignmentParametersCardProps) 
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {(field: any) => (
               <FieldItem>
-                <Label className="service-card-label">
+                <RequiredFormLabel className="service-card-label">
                   Trim Ends of Alignment Threshold
-                </Label>
+                </RequiredFormLabel>
                 <Select
                   items={thresholdOptions.map((v) => ({ value: v, label: v }))}
                   value={field.state.value}
@@ -88,9 +77,9 @@ export function AlignmentParametersCard({ form }: AlignmentParametersCardProps) 
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {(field: any) => (
               <FieldItem>
-                <Label className="service-card-label">
+                <RequiredFormLabel className="service-card-label">
                   Remove Gappy Sequences Threshold
-                </Label>
+                </RequiredFormLabel>
                 <Select
                   items={thresholdOptions.map((v) => ({ value: v, label: v }))}
                   value={field.state.value}

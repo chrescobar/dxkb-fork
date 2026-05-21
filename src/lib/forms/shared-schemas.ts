@@ -88,6 +88,24 @@ export const libraryWithAssemblyOptionsSchema = baseLibrarySchema.extend({
 export type LibraryWithAssemblyOptions = z.infer<typeof libraryWithAssemblyOptionsSchema>;
 
 // -----------------------------------------------------------------------------
+// Alignment Parameters
+// -----------------------------------------------------------------------------
+
+export const thresholdOptions = [
+  "0",
+  "0.1",
+  "0.2",
+  "0.3",
+  "0.4",
+  "0.5",
+  "0.6",
+  "0.7",
+  "0.8",
+  "0.9",
+  "1.0",
+] as const;
+
+// -----------------------------------------------------------------------------
 // Display Utilities
 // -----------------------------------------------------------------------------
 

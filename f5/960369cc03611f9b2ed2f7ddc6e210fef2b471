@@ -1,0 +1,32 @@
+src/lib/forms/shared-schemas.ts
+  s_101db3232cb650::t_f0fc2fdc9cf51d 91-107
+src/components/services/alignment-parameters-card.tsx
+  s_0d0e6aed9421cd::t_c3851055da790c 14-17
+  s_0d0e6aed9421cd::t_445e678ea19746 48,80
+  s_0d0e6aed9421cd::t_98abae22956190 50,82
+  s_101db3232cb650::t_6bdaac2d636fb0 19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.11",
+  "base_commit_sha": "f5960369cc03611f9b2ed2f7ddc6e210fef2b471",
+  "prompts": {},
+  "sessions": {
+    "s_0d0e6aed9421cd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "60987ee7-23c1-4f55-847e-23420e685c36",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_101db3232cb650": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "56ea1bb8-5849-4e74-afe9-7bbe1f529f2e",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

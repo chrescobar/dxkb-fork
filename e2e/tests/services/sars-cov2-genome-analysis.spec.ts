@@ -105,6 +105,20 @@ test.describe("sars-cov2-genome-analysis — render", () => {
         ...authSessionOverrides,
         ...buildWorkspaceOverrides(),
         ...buildJobsOverrides(),
+        // Default form values for scientific_name and taxonomy_id are non-empty,
+        // so TaxonNameSelector / TaxIDSelector fire taxonomy requests on mount.
+        {
+          url: "/api/services/taxonomy",
+          method: "GET",
+          body: [
+            {
+              taxon_id: 2697049,
+              taxon_name:
+                "Severe acute respiratory syndrome coronavirus 2",
+              taxon_rank: "species",
+            },
+          ],
+        },
         ...journeyOverrides,
       ],
     });

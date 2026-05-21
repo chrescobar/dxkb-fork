@@ -16,7 +16,7 @@ test.describe("taxonomic-classification — WGS paired-end submission", () => {
           output_path: "/e2e-test-user@patricbrc.org/home",
           output_file: "tc-e2e",
           sequence_type: "wgs",
-          analysis_type: "default",
+          analysis_type: "microbiome",
           database: "bvbrc",
           confidence_interval: "0.1",
           host_genome: "no_host",

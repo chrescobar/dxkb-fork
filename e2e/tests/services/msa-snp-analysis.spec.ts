@@ -106,10 +106,10 @@ test.describe("msa-snp-analysis — render", () => {
     await form.goto("/services/msa-snp-analysis");
     await expect(form.heading).toBeVisible();
     await expect(
-      page.getByRole("radio", { name: /unaligned sequences/i }),
+      page.getByRole("radio", { name: /unaligned sequences/i }).first(),
     ).toBeVisible();
     await expect(
-      page.getByRole("radio", { name: /aligned sequences/i }),
+      page.getByRole("radio", { name: /aligned sequences/i }).first(),
     ).toBeVisible();
   });
 });

@@ -26,21 +26,21 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ChevronRight, HelpCircle, Plus, X } from "lucide-react";
+import { HelpCircle, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { ServiceHeader } from "@/components/services/service-header";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import SraRunAccessionWithValidation from "@/components/services/sra-run-accession-with-validation";
 import SelectedItemsTable from "@/components/services/selected-items-table";
 import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
-import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
+import { LibraryInputCard } from "@/components/services/library-input-card";
 import { SingleGenomeSelector } from "@/components/services/single-genome-selector";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { Spinner } from "@/components/ui/spinner";
 
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
+import { useLibraryInputState } from "@/hooks/services/use-library-input-state";
 import {
   fastqUtilitiesInfo,
   fastqUtilitiesParameters,
@@ -71,37 +71,18 @@ import {
   buildBaseLibraryItem,
   getPairedLibraryName,
   getSingleLibraryName,
-  useTanstackLibrarySelection,
 } from "@/lib/forms/tanstack-library-selection";
 import { getLibraryTypeLabel } from "@/lib/forms/shared-schemas";
 
-import type { WorkspaceObject } from "@/lib/services/workspace/types";
-
 export default function FastqUtilitiesPage() {
-  // Read input state
-  const [pairedRead1, setPairedRead1] = useState<string | null>(null);
-  const [pairedRead2, setPairedRead2] = useState<string | null>(null);
-  const [singleRead, setSingleRead] = useState<string | null>(null);
+  // Platform state for library inputs
   const [singlePlatform, setSinglePlatform] = useState<Platform>("illumina");
-  const [sraResetKey, setSraResetKey] = useState(0);
 
   // Pipeline state
   const [selectedAction, setSelectedAction] = useState<PipelineAction | "">("");
   const [pipelineActions, setPipelineActions] = useState<PipelineActionItem[]>(
     [],
   );
-
-  const handleReset = () => {
-    form.reset(defaultFastqUtilitiesFormValues as FastqUtilitiesFormData);
-    setLibraries([]);
-    setPairedRead1(null);
-    setPairedRead2(null);
-    setSingleRead(null);
-    setSinglePlatform("illumina");
-    setPipelineActions([]);
-    setSelectedAction("");
-    setSraResetKey((k) => k + 1);
-  };
 
   const form = useForm({
     defaultValues: defaultFastqUtilitiesFormValues as FastqUtilitiesFormData,
@@ -118,13 +99,18 @@ export default function FastqUtilitiesPage() {
   // Check if align is selected (to show/require target genome)
   const alignSelected = isAlignSelected(recipe);
 
-  const {
-    selectedLibraries,
-    addPairedLibrary,
-    addSingleLibrary,
-    removeLibrary,
-    setLibraries,
-  } = useTanstackLibrarySelection<LibraryItem>({
+  const handleLibraryError = (message: string) => {
+    if (
+      message === "This paired library has already been added" ||
+      message === "This single library has already been added"
+    ) {
+      toast.error("Duplicate library", { description: message });
+      return;
+    }
+    toast.error(message);
+  };
+
+  const libraryInput = useLibraryInputState<LibraryItem>({
     form,
     mapLibraryToItem: (library) => ({
       ...buildBaseLibraryItem(library),
@@ -137,7 +123,42 @@ export default function FastqUtilitiesPage() {
       single: "single_end_libs",
       srr: "srr_ids",
     },
+    buildPairedLibrary: (read1, read2, id) => ({
+      library: {
+        id,
+        name: getPairedLibraryName(read1, read2),
+        type: "paired",
+        files: [read1, read2],
+      },
+    }),
+    buildSingleLibrary: (read) => {
+      if (!singlePlatform) {
+        return { error: "Platform must be selected for single read library" };
+      }
+      return {
+        library: {
+          id: read,
+          name: getSingleLibraryName(read),
+          type: "single",
+          files: [read],
+          platform: singlePlatform,
+        },
+      };
+    },
+    duplicateMatcher: (library, read) =>
+      library.id === read && library.type === "single",
+    onPairedError: handleLibraryError,
+    onSingleError: handleLibraryError,
   });
+
+  const handleReset = () => {
+    form.reset(defaultFastqUtilitiesFormValues as FastqUtilitiesFormData);
+    libraryInput.setLibraries([]);
+    libraryInput.resetInputState();
+    setSinglePlatform("illumina");
+    setPipelineActions([]);
+    setSelectedAction("");
+  };
 
   const runtime = useServiceRuntime({
     definition: fastqUtilitiesService,
@@ -151,7 +172,7 @@ export default function FastqUtilitiesPage() {
         }
         return {};
       },
-      syncLibraries: setLibraries,
+      syncLibraries: libraryInput.setLibraries,
       onApply: (rerunData, form) => {
         // Backend rerun params may serialize a single action as a string and use Title Case.
         const rawRecipe = rerunData.recipe;
@@ -174,63 +195,6 @@ export default function FastqUtilitiesPage() {
     },
   });
   const { isSubmitting, jobParamsDialogProps } = runtime;
-
-  const handleLibraryError = (message: string) => {
-    if (
-      message === "This paired library has already been added" ||
-      message === "This single library has already been added"
-    ) {
-      toast.error("Duplicate library", { description: message });
-      return;
-    }
-    toast.error(message);
-  };
-
-  const handlePairedLibraryAdd = () => {
-    addPairedLibrary({
-      read1: pairedRead1,
-      read2: pairedRead2,
-      buildLibrary: (read1, read2, id) => ({
-        library: {
-          id,
-          name: getPairedLibraryName(read1, read2),
-          type: "paired",
-          files: [read1, read2],
-        },
-      }),
-      onError: handleLibraryError,
-      onAfterAdd: () => {
-        setPairedRead1(null);
-        setPairedRead2(null);
-      },
-    });
-  };
-
-  const handleSingleLibraryAdd = () => {
-    addSingleLibrary({
-      read: singleRead,
-      buildLibrary: (read) => {
-        if (!singlePlatform) {
-          return { error: "Platform must be selected for single read library" };
-        }
-        return {
-          library: {
-            id: read,
-            name: getSingleLibraryName(read),
-            type: "single",
-            files: [read],
-            platform: singlePlatform,
-          },
-        };
-      },
-      duplicateMatcher: (library, read) =>
-        library.id === read && library.type === "single",
-      onError: handleLibraryError,
-      onAfterAdd: () => {
-        setSingleRead(null);
-      },
-    });
-  };
 
   // Handle adding pipeline action
   const handleAddPipelineAction = () => {
@@ -431,128 +395,50 @@ export default function FastqUtilitiesPage() {
 
         {/* Input Library Section */}
         <div className="md:col-span-7">
-          <Card>
-            <CardHeader className="service-card-header">
-              <RequiredFormCardTitle className="service-card-title">
-                Input Library
-                <DialogInfoPopup
-                  title={readInputFileInfo.title}
-                  description={readInputFileInfo.description}
-                  sections={readInputFileInfo.sections}
-                />
-              </RequiredFormCardTitle>
-            </CardHeader>
-
-            <CardContent className="service-card-content space-y-6">
-              {/* Paired Read Library */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="service-card-label">
-                    Paired Read Library
-                  </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={handlePairedLibraryAdd}
-                    disabled={!pairedRead1 || !pairedRead2}
-                  >
-                    <ChevronRight size={16} />
-                  </Button>
-                </div>
-                <div className="space-y-3">
-                  <WorkspaceObjectSelector
-                    preset="reads"
-                    placeholder="Select READ FILE 1..."
-                    value={pairedRead1 ?? ""}
-                    onObjectSelect={(object: WorkspaceObject) => {
-                      setPairedRead1(object.path);
-                    }}
-                  />
-                  <WorkspaceObjectSelector
-                    preset="reads"
-                    placeholder="Select READ FILE 2..."
-                    value={pairedRead2 ?? ""}
-                    onObjectSelect={(object: WorkspaceObject) => {
-                      setPairedRead2(object.path);
-                    }}
-                  />
-                </div>
+          <LibraryInputCard
+            title="Input Library"
+            infoPopup={readInputFileInfo}
+            pairedRead1={libraryInput.pairedRead1}
+            pairedRead2={libraryInput.pairedRead2}
+            singleRead={libraryInput.singleRead}
+            sraResetKey={libraryInput.sraResetKey}
+            selectedLibraries={libraryInput.selectedLibraries}
+            setPairedRead1={libraryInput.setPairedRead1}
+            setPairedRead2={libraryInput.setPairedRead2}
+            setSingleRead={libraryInput.setSingleRead}
+            setLibraries={libraryInput.setLibraries}
+            onPairedAdd={libraryInput.handlePairedLibraryAdd}
+            onSingleAdd={libraryInput.handleSingleLibraryAdd}
+            singleAddDisabled={!libraryInput.singleRead || !singlePlatform}
+            singleExtras={
+              <div>
+                <Label className="service-card-sublabel">Platform</Label>
+                <Select
+                  items={platformOptions}
+                  value={singlePlatform}
+                  onValueChange={(value) =>
+                    value != null && setSinglePlatform(value as Platform)
+                  }
+                >
+                  <SelectTrigger className="service-card-select-trigger">
+                    <SelectValue placeholder="Select a Platform..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {platformOptions.map((platform) => (
+                        <SelectItem
+                          key={platform.value}
+                          value={platform.value}
+                        >
+                          {platform.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
-
-              {/* Single Read Library */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="service-card-label">
-                    Single Read Library
-                  </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={handleSingleLibraryAdd}
-                    disabled={!singleRead || !singlePlatform}
-                  >
-                    <ChevronRight size={16} />
-                  </Button>
-                </div>
-                <div>
-                  <Label className="service-card-sublabel">Platform</Label>
-                  <Select
-                    items={platformOptions}
-                    value={singlePlatform}
-                    onValueChange={(value) =>
-                      value != null && setSinglePlatform(value as Platform)
-                    }
-                  >
-                    <SelectTrigger className="service-card-select-trigger">
-                      <SelectValue placeholder="Select a Platform..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {platformOptions.map((platform) => (
-                          <SelectItem
-                            key={platform.value}
-                            value={platform.value}
-                          >
-                            {platform.label}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <WorkspaceObjectSelector
-                  preset="reads"
-                  placeholder="Select READ FILE..."
-                  value={singleRead ?? ""}
-                  onObjectSelect={(object: WorkspaceObject) => {
-                    setSingleRead(object.path);
-                  }}
-                />
-              </div>
-
-              {/* SRA Run Accession */}
-              <SraRunAccessionWithValidation
-                key={sraResetKey}
-                title="SRA Run Accession"
-                placeholder="SRR..."
-                selectedLibraries={selectedLibraries}
-                setSelectedLibraries={setLibraries}
-                allowDuplicates={false}
-              />
-
-              <form.Field name="paired_end_libs">
-                {(field) => (
-                  <FieldItem>
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
-            </CardContent>
-          </Card>
+            }
+          />
         </div>
 
         {/* Selected Libraries Section */}
@@ -579,12 +465,12 @@ export default function FastqUtilitiesPage() {
 
             <CardContent className="service-card-content">
               <SelectedItemsTable
-                items={selectedLibraries.map((library) => ({
+                items={libraryInput.selectedLibraries.map((library) => ({
                   id: library.id,
                   name: library.name,
                   type: getLibraryTypeLabel(library.type),
                 }))}
-                onRemove={removeLibrary}
+                onRemove={libraryInput.removeLibrary}
                 className="max-h-80 overflow-y-auto"
               />
             </CardContent>

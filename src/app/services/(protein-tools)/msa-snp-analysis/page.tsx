@@ -1,18 +1,14 @@
 "use client";
 
 import { useForm, useStore } from "@tanstack/react-form";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
+import { useViralGenomeGroupValidation } from "@/hooks/services/use-viral-genome-group-validation";
 import { normalizeToArray } from "@/lib/rerun-utility";
 import { ServiceHeader } from "@/components/services/service-header";
 import { Button } from "@/components/ui/button";
 import { WorkspaceObject } from "@/lib/services/workspace/types";
-import {
-  fetchGenomeGroupMembers,
-  validateViralGenomes,
-} from "@/lib/services/genome";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
-import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import {
   msaSNPAnalysisInfo,
@@ -45,7 +41,11 @@ export default function MSAandSNPAnalysisPage() {
       numseq: number;
     } | null>(null);
   const [showStrategy, setShowStrategy] = useState(false);
-  const [isValidatingGenomeGroup, setIsValidatingGenomeGroup] = useState(false);
+
+  const groupValidation = useViralGenomeGroupValidation({
+    maxGenomes: MsaSnpAnalysis.maxGenomes,
+    maxGenomeLength: MsaSnpAnalysis.maxGenomeLength,
+  });
 
   function handleReset() {
     form.reset(MsaSnpAnalysis.defaultMsaSnpAnalysisFormValues);
@@ -294,6 +294,19 @@ export default function MSAandSNPAnalysisPage() {
     }
   };
 
+  const handleAlignerChange = useCallback(
+    (newAligner: MsaSnpAnalysis.MsaSnpAnalysisFormData["aligner"]) => {
+      form.setFieldValue("aligner", newAligner as never);
+      if (newAligner === "Muscle") {
+        form.setFieldValue("strategy", undefined as never);
+        setShowStrategy(false);
+      } else {
+        form.setFieldValue("strategy", "auto" as never);
+      }
+    },
+    [form],
+  );
+
   // Called by MsaSelectSequencesCard when input_type changes
   const handleInputTypeChange = (prevType: string | undefined, newType: string) => {
     if (prevType !== newType) {
@@ -305,75 +318,11 @@ export default function MSAandSNPAnalysisPage() {
     }
   };
 
-  // The genome group selection handler stays in the page (it does fetching/validation)
   const handleInputGenomeGroupSelect = async (object: WorkspaceObject | null) => {
-    if (!object || !object.path) {
-      return;
-    }
-
-    const inputValue = object.path;
-
-    setIsValidatingGenomeGroup(true);
-
-    try {
-      // Fetch genome group members to get genome IDs
-      const genomes = await fetchGenomeGroupMembers(inputValue);
-
-      if (genomes.length === 0) {
-        toast.error("Empty genome group", {
-          description: "The selected genome group is empty.",
-          closeButton: true,
-        });
-        setIsValidatingGenomeGroup(false);
-        return;
-      }
-
-      if (genomes.length > MsaSnpAnalysis.maxGenomes) {
-        toast.error("Genome group too large", {
-          description: `The genome group has ${genomes.length} genomes, but the maximum is ${MsaSnpAnalysis.maxGenomes}.`,
-          closeButton: true,
-        });
-        setIsValidatingGenomeGroup(false);
-        return;
-      }
-
-      const genomeIds = genomes.map((g) => g.genome_id);
-
-      // Validate viral genomes
-      const validation = await validateViralGenomes(genomeIds, {
-        maxGenomeLength: MsaSnpAnalysis.maxGenomeLength,
-      });
-
-      if (!validation.allValid) {
-        const errorMessages = Object.values(validation.errors).filter(Boolean);
-        const errorMsg =
-          errorMessages.length > 0
-            ? errorMessages.join("\n")
-            : "Invalid genome group. Please check that all genomes are viruses with single contigs.";
-
-        toast.error("Genome group validation failed", {
-          description: errorMsg,
-          duration: 10000,
-          closeButton: true,
-        });
-        setIsValidatingGenomeGroup(false);
-        return;
-      }
-
-      // Replace the existing group (only one group allowed)
-      form.setFieldValue("select_genomegroup", [inputValue]);
-    } catch (error) {
-      console.error("Failed to validate genome group:", error);
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Failed to validate genome group";
-      toast.error("Validation error", {
-        description: errorMessage,
-        closeButton: true,
-      });
-    } finally {
-      setIsValidatingGenomeGroup(false);
+    if (!object?.path) return;
+    const result = await groupValidation.validate(object.path);
+    if (result.status === "ok") {
+      form.setFieldValue("select_genomegroup", [object.path] as never);
     }
   };
 
@@ -414,7 +363,7 @@ export default function MSAandSNPAnalysisPage() {
           setSelectedFastaObject={setSelectedFastaObject}
           selectedAlignedFastaObject={selectedAlignedFastaObject}
           setSelectedAlignedFastaObject={setSelectedAlignedFastaObject}
-          isValidatingGenomeGroup={isValidatingGenomeGroup}
+          isValidatingGenomeGroup={groupValidation.isValidating}
           selectGenomegroup={selectGenomegroup}
           onGenomeGroupSelect={handleInputGenomeGroupSelect}
           onInputTypeChange={handleInputTypeChange}
@@ -436,6 +385,7 @@ export default function MSAandSNPAnalysisPage() {
           inputStatus={inputStatus}
           showStrategy={showStrategy}
           setShowStrategy={setShowStrategy}
+          onAlignerChange={handleAlignerChange}
         />
 
         {/* Form Controls */}

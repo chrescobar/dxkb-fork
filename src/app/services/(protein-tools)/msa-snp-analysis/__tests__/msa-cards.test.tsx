@@ -256,6 +256,7 @@ function MsaParametersCardWrapper({
         inputStatus={inputStatus}
         showStrategy={showStrategy}
         setShowStrategy={vi.fn()}
+        onAlignerChange={vi.fn()}
       />
     </Wrapper>
   );

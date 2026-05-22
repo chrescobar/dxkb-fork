@@ -45,12 +45,10 @@ import type { UseMetaCatsYearRangesReturn } from "@/hooks/services/use-meta-cats
 import type { UseMetaCatsAutoGroupingReturn } from "@/hooks/services/use-meta-cats-auto-grouping";
 import type { WorkspaceObject } from "@/lib/services/workspace/types";
 import { MetaCatsAlignmentCard } from "./meta-cats-alignment-card";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface ServiceForm { Field: any; store: any; setFieldValue: (...args: any[]) => void; state: any }
+import type { ServiceCardForm } from "@/lib/services/service-definition";
 
 interface MetaCatsInputCardProps {
-  form: ServiceForm;
+  form: ServiceCardForm<MetaCatsFormData>;
   yearRanges: UseMetaCatsYearRangesReturn;
   autoGrouping: UseMetaCatsAutoGroupingReturn;
   selectedFeatureGroupObject: WorkspaceObject | null;
@@ -511,6 +509,9 @@ export function MetaCatsInputCard({
               form={form}
               alignmentFileValue={alignmentFileValue}
               groupFileValue={groupFileValue}
+              onAlignmentFileChange={(path, type) => {
+                form.setFieldValue("alignment_type", type as never);
+              }}
             />
           )}
         </div>

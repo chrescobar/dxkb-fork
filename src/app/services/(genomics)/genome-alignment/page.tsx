@@ -63,6 +63,7 @@ export default function GenomeAlignmentServicePage() {
     },
   });
 
+  const canSubmit = useStore(form.store, (s) => s.canSubmit);
   const manualSeedWeight = useStore(form.store, (s) => s.values.manual_seed_weight);
   const seedWeightValue = useStore(form.store, (s) => s.values.seed_weight) ?? 15;
 
@@ -371,7 +372,7 @@ export default function GenomeAlignmentServicePage() {
           >
             Reset
           </Button>
-          <Button type="submit" disabled={isSubmitting || !hasMinimumGenomes}>
+          <Button type="submit" disabled={isSubmitting || !canSubmit || !hasMinimumGenomes}>
             {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
             Submit
           </Button>

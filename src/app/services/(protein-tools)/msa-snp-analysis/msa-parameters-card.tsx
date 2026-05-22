@@ -25,15 +25,14 @@ import { RequiredFormCardTitle } from "@/components/forms/required-form-componen
 import { msaSNPAnalysisParameters } from "@/lib/services/info/msa-snp-analysis";
 import * as MsaSnpAnalysis from "@/lib/forms/(protein-tools)/msa-snp-analysis/msa-snp-analysis-form-schema";
 import { msaSNPAnalysisAligners } from "@/lib/forms/(protein-tools)/msa-snp-analysis/msa-snp-analysis-form-utils";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface ServiceForm { Field: any; store: any }
+import type { ServiceCardForm } from "@/lib/services/service-definition";
 
 interface MsaParametersCardProps {
-  form: ServiceForm;
+  form: ServiceCardForm<MsaSnpAnalysis.MsaSnpAnalysisFormData>;
   inputStatus: string;
   showStrategy: boolean;
   setShowStrategy: (show: boolean) => void;
+  onAlignerChange: (aligner: MsaSnpAnalysis.MsaSnpAnalysisFormData["aligner"]) => void;
 }
 
 export function MsaParametersCard({
@@ -41,6 +40,7 @@ export function MsaParametersCard({
   inputStatus,
   showStrategy,
   setShowStrategy,
+  onAlignerChange,
 }: MsaParametersCardProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const aligner = useStore(form.store, (s: any) => s.values.aligner as MsaSnpAnalysis.MsaSnpAnalysisFormData["aligner"]);
@@ -73,18 +73,7 @@ export function MsaParametersCard({
                   value={field.state.value}
                   onValueChange={(value: string) => {
                     if (value == null) return;
-                    field.handleChange(
-                      value as MsaSnpAnalysis.MsaSnpAnalysisFormData["aligner"],
-                    );
-                    // Reset strategy when aligner changes to Muscle
-                    if (value === "Muscle") {
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      (form as any).setFieldValue("strategy", undefined);
-                      setShowStrategy(false);
-                    } else {
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      (form as any).setFieldValue("strategy", "auto");
-                    }
+                    onAlignerChange(value as MsaSnpAnalysis.MsaSnpAnalysisFormData["aligner"]);
                   }}
                 >
                   <SelectTrigger className="service-card-select-trigger">

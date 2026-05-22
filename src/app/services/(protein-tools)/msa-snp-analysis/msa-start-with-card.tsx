@@ -8,12 +8,10 @@ import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { msaSNPAnalysisStartWith } from "@/lib/services/info/msa-snp-analysis";
 import * as MsaSnpAnalysis from "@/lib/forms/(protein-tools)/msa-snp-analysis/msa-snp-analysis-form-schema";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface ServiceForm { Field: any; store: any }
+import type { ServiceCardForm } from "@/lib/services/service-definition";
 
 interface MsaStartWithCardProps {
-  form: ServiceForm;
+  form: ServiceCardForm<MsaSnpAnalysis.MsaSnpAnalysisFormData>;
   onStatusChange: (prevStatus: string, newStatus: string) => void;
 }
 

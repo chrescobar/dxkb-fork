@@ -7,12 +7,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import { metagenomicBinningStartWith } from "@/lib/services/info/metagenomic-binning";
 import type { MetagenomicBinningFormData } from "@/lib/forms/(metagenomics)/metagenomic-binning/metagenomic-binning-form-schema";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface ServiceForm { Field: any }
+import type { ServiceCardForm } from "@/lib/services/service-definition";
 
 interface MetagenomicBinningStartWithCardProps {
-  form: ServiceForm;
+  form: ServiceCardForm<MetagenomicBinningFormData>;
 }
 
 export function MetagenomicBinningStartWithCard({

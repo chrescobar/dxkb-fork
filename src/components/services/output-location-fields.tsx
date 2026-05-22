@@ -6,31 +6,27 @@ import { useStore } from "@tanstack/react-form";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import OutputFolder from "@/components/services/output-folder";
 import { checkWorkspaceObjectExists } from "@/lib/services/workspace/validation";
+import type { ServiceCardForm } from "@/lib/services/service-definition";
 
 const debounceMs = 350;
 const nameTakenMessage =
   "An object with this name already exists in the selected folder.";
 
-// Only Field and store are needed from the form API; keep this minimal
-// so all concrete ReactFormExtendedApi<T> instances are assignable.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface ServiceForm { Field: any; store: any }
-
-interface OutputLocationFieldsProps {
-  form: ServiceForm;
+interface OutputLocationFieldsProps<TForm extends Record<string, unknown>> {
+  form: ServiceCardForm<TForm>;
   outputPathName?: string;
   outputNameName?: string;
   required?: boolean;
   disabled?: boolean;
 }
 
-export function OutputLocationFields({
+export function OutputLocationFields<TForm extends Record<string, unknown>>({
   form,
   outputPathName = "output_path",
   outputNameName = "output_file",
   required = false,
   disabled = false,
-}: OutputLocationFieldsProps) {
+}: OutputLocationFieldsProps<TForm>) {
   // Subscribe to both fields so the check re-runs when either changes.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const outputPath = useStore(form.store, (s: any) => (s.values[outputPathName] as string) ?? "");
@@ -45,7 +41,7 @@ export function OutputLocationFields({
     const name = outputName.trim();
 
     // setFieldMeta expects DeepKeys<T>, not string. The `any` cast is necessary
-    // here because ServiceForm intentionally avoids the generic form type.
+    // here because ServiceCardForm intentionally avoids typing setFieldMeta.
     /* eslint-disable @typescript-eslint/no-explicit-any */
     const setError = (error: string | undefined) =>
       (form as any).setFieldMeta(outputNameName, (prev: any) => ({

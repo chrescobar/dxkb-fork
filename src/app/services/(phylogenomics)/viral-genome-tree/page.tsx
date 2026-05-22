@@ -40,12 +40,9 @@ import { RequiredFormCardTitle } from "@/components/forms/required-form-componen
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { WorkspaceObject } from "@/lib/services/workspace/types";
 
-import {
-  fetchGenomeGroupMembers,
-  validateViralGenomes,
-} from "@/lib/services/genome";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
+import { useViralGenomeGroupValidation } from "@/hooks/services/use-viral-genome-group-validation";
 import { normalizeToArray } from "@/lib/rerun-utility";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
@@ -81,7 +78,13 @@ export default function ViralGenomeTreePage() {
   const [selectedMetadataField, setSelectedMetadataField] =
     useState<string>("");
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [isValidatingGenomeGroup, setIsValidatingGenomeGroup] = useState(false);
+
+  // TODO: Make this validation faster, it takes a while to validate currently.
+  // Slowdown seems to be in the 'validate-viral' API call.
+  const groupValidation = useViralGenomeGroupValidation({
+    maxGenomes: ViralGenomeTree.maxSequences,
+    maxGenomeLength: ViralGenomeTree.maxGenomeLength,
+  });
 
   const form = useForm({
     defaultValues:
@@ -97,6 +100,16 @@ export default function ViralGenomeTreePage() {
 
   const sequences = useStore(form.store, (s) => s.values.sequences);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
+
+  function handleReset() {
+    form.reset(ViralGenomeTree.defaultViralGenomeTreeFormValues);
+    setSelectedGenomeGroupObject(null);
+    setSelectedAlignedFastaObject(null);
+    setSelectedUnalignedFastaObject(null);
+    setMetadataFields(ViralGenomeTree.defaultMetadataFields as MetadataField[]);
+    setSelectedMetadataField("");
+    setShowAdvanced(false);
+  }
 
   // Update metadata fields in form when they change
   useEffect(() => {
@@ -168,10 +181,8 @@ export default function ViralGenomeTreePage() {
     );
   }, [selectedMetadataIds]);
 
-  // TODO: Make this validation faster, it takes a while to validate currently.
-  // Slowdown seems to be in the 'validate-viral' API call.
   async function handleAddGenomeGroup() {
-    if (!selectedGenomeGroupObject || !selectedGenomeGroupObject.path) {
+    if (!selectedGenomeGroupObject?.path) {
       toast.error("No object selected", {
         description: "Please select a workspace object before adding.",
         closeButton: true,
@@ -182,7 +193,6 @@ export default function ViralGenomeTreePage() {
     const inputValue = selectedGenomeGroupObject.path;
     const currentSequences = form.state.values.sequences;
 
-    // Check for duplicate genome group
     if (
       ViralGenomeTreeUtils.checkDuplicateSequence(
         currentSequences,
@@ -205,73 +215,19 @@ export default function ViralGenomeTreePage() {
       return;
     }
 
-    setIsValidatingGenomeGroup(true);
+    const result = await groupValidation.validate(inputValue);
+    if (result.status !== "ok") return;
 
-    try {
-      // Fetch genome group members to get genome IDs
-      const genomes = await fetchGenomeGroupMembers(inputValue);
-
-      if (genomes.length === 0) {
-        toast.error("Empty genome group", {
-          description: "The selected genome group is empty.",
-          closeButton: true,
-        });
-        setIsValidatingGenomeGroup(false);
-        return;
-      }
-
-      const genomeIds = genomes.map((g) => g.genome_id);
-
-      // Validate viral genomes
-      const validation = await validateViralGenomes(genomeIds, {
-        maxGenomeLength: 250000,
-      });
-
-      if (!validation.allValid) {
-        const errorMessages = Object.values(validation.errors).filter(Boolean);
-        const errorMsg =
-          errorMessages.length > 0
-            ? errorMessages.join("\n")
-            : "Invalid genome group. Please check that all genomes are viruses with single contigs.";
-
-        toast.error("Genome group validation failed", {
-          description: errorMsg,
-          duration: 10000,
-          closeButton: true,
-        });
-        setIsValidatingGenomeGroup(false);
-        return;
-      }
-
-      // Check for duplicate genome IDs within already selected sequences
-      // (This would require fetching genome IDs from other genome groups, which is complex)
-      // For now, we'll just add the group if validation passes
-
-      const newSequence = ViralGenomeTreeUtils.createSequenceItem(
-        inputValue,
-        "genome_group",
-      );
-
-      form.setFieldValue("sequences", [...currentSequences, newSequence]);
-      setSelectedGenomeGroupObject(null);
-
-      toast.success("Genome group added", {
-        description: `Added genome group with ${genomeIds.length} genome${genomeIds.length === 1 ? "" : "s"}.`,
-        closeButton: true,
-      });
-    } catch (error) {
-      console.error("Failed to validate genome group:", error);
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Failed to validate genome group";
-      toast.error("Validation error", {
-        description: errorMessage,
-        closeButton: true,
-      });
-    } finally {
-      setIsValidatingGenomeGroup(false);
-    }
+    const newSequence = ViralGenomeTreeUtils.createSequenceItem(
+      inputValue,
+      "genome_group",
+    );
+    form.setFieldValue("sequences", [...currentSequences, newSequence]);
+    setSelectedGenomeGroupObject(null);
+    toast.success("Genome group added", {
+      description: `Added genome group with ${result.genomeIds.length} genome${result.genomeIds.length === 1 ? "" : "s"}.`,
+      closeButton: true,
+    });
   }
 
   function handleAddSequence(source: "aligned" | "unaligned") {
@@ -371,16 +327,6 @@ export default function ViralGenomeTreePage() {
     );
   }
 
-  function handleReset() {
-    form.reset(ViralGenomeTree.defaultViralGenomeTreeFormValues);
-    setSelectedGenomeGroupObject(null);
-    setSelectedAlignedFastaObject(null);
-    setSelectedUnalignedFastaObject(null);
-    setMetadataFields(ViralGenomeTree.defaultMetadataFields as MetadataField[]);
-    setSelectedMetadataField("");
-    setShowAdvanced(false);
-  }
-
   const selectedItemsForTable = useMemo(
     () =>
       sequences.map((seq, index) => ({
@@ -450,10 +396,10 @@ export default function ViralGenomeTreePage() {
                     variant="outline"
                     onClick={handleAddGenomeGroup}
                     disabled={
-                      !selectedGenomeGroupObject || isValidatingGenomeGroup
+                      !selectedGenomeGroupObject || groupValidation.isValidating
                     }
                   >
-                    {isValidatingGenomeGroup ? (
+                    {groupValidation.isValidating ? (
                       <Spinner className="h-4 w-4" />
                     ) : (
                       <Plus size={16} />
@@ -482,7 +428,7 @@ export default function ViralGenomeTreePage() {
                     variant="outline"
                     onClick={() => handleAddSequence("aligned")}
                     disabled={
-                      !selectedAlignedFastaObject || isValidatingGenomeGroup
+                      !selectedAlignedFastaObject || groupValidation.isValidating
                     }
                   >
                     <Plus size={16} />
@@ -510,7 +456,7 @@ export default function ViralGenomeTreePage() {
                     variant="outline"
                     onClick={() => handleAddSequence("unaligned")}
                     disabled={
-                      !selectedUnalignedFastaObject || isValidatingGenomeGroup
+                      !selectedUnalignedFastaObject || groupValidation.isValidating
                     }
                   >
                     <Plus size={16} />

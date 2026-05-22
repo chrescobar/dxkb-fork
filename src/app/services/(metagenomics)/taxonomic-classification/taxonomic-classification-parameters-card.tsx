@@ -38,12 +38,10 @@ import {
   isHostFilteringAvailable,
   isAnalysisTypeSelectable,
 } from "@/lib/forms/(metagenomics)/taxonomic-classification/taxonomic-classification-form-utils";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface ServiceForm { Field: any; store: any; setFieldValue: (...args: any[]) => void; state: any }
+import type { ServiceCardForm } from "@/lib/services/service-definition";
 
 interface TaxonomicClassificationParametersCardProps {
-  form: ServiceForm;
+  form: ServiceCardForm<TaxonomicClassificationFormData>;
   sequenceType: TaxonomicClassificationFormData["sequence_type"];
   analysisTypeOptions: readonly { readonly value: string; readonly label: string }[];
   databaseOptions: readonly { readonly value: string; readonly label: string }[];

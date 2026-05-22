@@ -8,12 +8,11 @@ import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { metaCATSParameters } from "@/lib/services/info/meta-cats";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface ServiceForm { Field: any; store: any; setFieldValue: (...args: any[]) => void; state: any }
+import type { ServiceCardForm } from "@/lib/services/service-definition";
+import type { MetaCatsFormData } from "@/lib/forms/(protein-tools)/meta-cats/meta-cats-form-schema";
 
 interface MetaCatsParametersCardProps {
-  form: ServiceForm;
+  form: ServiceCardForm<MetaCatsFormData>;
 }
 
 export function MetaCatsParametersCard({ form }: MetaCatsParametersCardProps) {

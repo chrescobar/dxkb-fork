@@ -1,44 +1,10 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { http, HttpResponse } from "msw";
-import React from "react";
 
 import GeneProteinTreePage from "@/app/services/(protein-tools)/gene-protein-tree/page";
-import { ServiceDebuggingProvider } from "@/contexts/service-debugging-context";
-import { AuthBoundary } from "@/lib/auth/provider";
-import { memoryAuthAdapter } from "@/lib/auth/adapters/memory";
 import { server } from "@/test-helpers/msw-server";
-
-function Providers({ children }: { children: React.ReactNode }) {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
-  });
-  const port = memoryAuthAdapter({
-    initialSession: {
-      username: "testuser",
-      email: "test@example.com",
-      token: "test-token",
-      email_verified: true,
-    },
-    onRequest: (input, init) => fetch(input, init),
-  });
-  return (
-    <QueryClientProvider client={queryClient}>
-      <AuthBoundary
-        port={port}
-        initialUser={{
-          username: "testuser",
-          email: "test@example.com",
-          token: "test-token",
-          email_verified: true,
-        }}
-      >
-        <ServiceDebuggingProvider>{children}</ServiceDebuggingProvider>
-      </AuthBoundary>
-    </QueryClientProvider>
-  );
-}
+import { ServicePageProviders as Providers } from "@/test-helpers/service-page-providers";
 
 /**
  * The page-level alphabet toggle is the only meaningful divergence between this form and the

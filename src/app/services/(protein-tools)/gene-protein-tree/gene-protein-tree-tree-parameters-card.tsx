@@ -17,12 +17,10 @@ import { RequiredFormCardTitle, RequiredFormLabel } from "@/components/forms/req
 import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { phylogeneticTreeTreeParameters } from "@/lib/services/info/phylogenetic-tree";
 import type { GeneProteinTreeFormData } from "@/lib/forms/(protein-tools)/gene-protein-tree/gene-protein-tree-form-schema";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface ServiceForm { Field: any; store: any; setFieldValue: (...args: any[]) => void; state: any }
+import type { ServiceCardForm } from "@/lib/services/service-definition";
 
 interface GeneProteinTreeTreeParametersCardProps {
-  form: ServiceForm;
+  form: ServiceCardForm<GeneProteinTreeFormData>;
   substitutionModelOptions: readonly { readonly value: string; readonly label: string }[];
 }
 

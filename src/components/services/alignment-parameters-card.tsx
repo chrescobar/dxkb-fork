@@ -17,15 +17,13 @@ import {
 } from "@/components/forms/required-form-components";
 import { phylogeneticTreeAlignmentParameters } from "@/lib/services/info/phylogenetic-tree";
 import { thresholdOptions } from "@/lib/forms/shared-schemas";
+import type { ServiceCardForm } from "@/lib/services/service-definition";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface ServiceForm { Field: any }
-
-interface AlignmentParametersCardProps {
-  form: ServiceForm;
+interface AlignmentParametersCardProps<TForm extends Record<string, unknown>> {
+  form: ServiceCardForm<TForm>;
 }
 
-export function AlignmentParametersCard({ form }: AlignmentParametersCardProps) {
+export function AlignmentParametersCard<TForm extends Record<string, unknown>>({ form }: AlignmentParametersCardProps<TForm>) {
   return (
     <Card>
       <CardHeader className="service-card-header">

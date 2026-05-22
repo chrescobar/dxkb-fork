@@ -27,22 +27,24 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ChevronRight, HelpCircle } from "lucide-react";
+import { HelpCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { ServiceHeader } from "@/components/services/service-header";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import SraRunAccessionWithValidation from "@/components/services/sra-run-accession-with-validation";
 import SelectedItemsTable from "@/components/services/selected-items-table";
 import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
+import { LibraryInputCard } from "@/components/services/library-input-card";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
+import type { WorkspaceObject } from "@/lib/services/workspace/types";
 import { TaxonNameSelector } from "@/components/taxonomy/taxon-name-selector";
 import { TaxIDSelector } from "@/components/taxonomy/tax-id-selector";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { Spinner } from "@/components/ui/spinner";
 
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
+import { useLibraryInputState } from "@/hooks/services/use-library-input-state";
 import {
   sarsCov2GenomeAnalysisInfo,
   sarsCov2GenomeAnalysisParameters,
@@ -60,6 +62,8 @@ import {
   type SarsCov2LibraryItem,
   type SarsCov2Platform,
   type Primers,
+  sarsCov2PairedPlatformOptions,
+  sarsCov2SinglePlatformOptions,
 } from "@/lib/forms/(viral-tools)/sars-cov2-genome-analysis/sars-cov2-genome-analysis-form-schema";
 import {
   computeOutputName,
@@ -71,15 +75,9 @@ import {
 import { sarsCov2GenomeAnalysisService } from "@/lib/forms/(viral-tools)/sars-cov2-genome-analysis/sars-cov2-genome-analysis-service";
 import {
   buildBaseLibraryItem,
-  useTanstackLibrarySelection,
 } from "@/lib/forms/tanstack-library-selection";
 import { getLibraryTypeLabel } from "@/lib/forms/shared-schemas";
 
-import type { WorkspaceObject } from "@/lib/services/workspace/types";
-import {
-  sarsCov2PairedPlatformOptions,
-  sarsCov2SinglePlatformOptions,
-} from "@/lib/forms/(viral-tools)/sars-cov2-genome-analysis/sars-cov2-genome-analysis-form-schema";
 import { SarsCov2StartWithCard } from "./sars-cov2-start-with-card";
 
 const quickReference =
@@ -100,14 +98,10 @@ export default function SarsCov2GenomeAnalysisPage() {
 
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
-  const [pairedRead1, setPairedRead1] = useState<string | null>(null);
-  const [pairedRead2, setPairedRead2] = useState<string | null>(null);
   const [pairedPlatform, setPairedPlatform] =
     useState<SarsCov2Platform>("illumina");
-  const [singleRead, setSingleRead] = useState<string | null>(null);
   const [singlePlatform, setSinglePlatform] =
     useState<SarsCov2Platform>("illumina");
-  const [sraResetKey, setSraResetKey] = useState(0);
 
   const inputType = useStore(form.store, (s) => s.values.input_type);
   const recipe = useStore(form.store, (s) => s.values.recipe);
@@ -119,13 +113,11 @@ export default function SarsCov2GenomeAnalysisPage() {
   const primerVersionOpts =
     primerVersionOptions[primers] ?? primerVersionOptions.ARTIC;
 
-  const {
-    selectedLibraries,
-    addPairedLibrary,
-    addSingleLibrary,
-    removeLibrary,
-    setLibraries,
-  } = useTanstackLibrarySelection<SarsCov2LibraryItem>({
+  const handleLibraryError = (message: string) => {
+    handleLibraryErrorUtil(message, toast);
+  };
+
+  const libraryInput = useLibraryInputState<SarsCov2LibraryItem>({
     form,
     mapLibraryToItem: (library) => ({
       ...buildBaseLibraryItem(library),
@@ -138,6 +130,11 @@ export default function SarsCov2GenomeAnalysisPage() {
       single: "single_end_libs",
       srr: "srr_ids",
     },
+    buildPairedLibrary: getPairedLibraryBuildFn(pairedPlatform),
+    buildSingleLibrary: getSingleLibraryBuildFn(singlePlatform),
+    duplicateMatcher: singleLibraryDuplicateMatcher,
+    onPairedError: handleLibraryError,
+    onSingleError: handleLibraryError,
   });
 
   useEffect(() => {
@@ -159,44 +156,12 @@ export default function SarsCov2GenomeAnalysisPage() {
     }
   }, [primers, showPrimersSection, form]);
 
-  const handleLibraryError = (message: string) => {
-    handleLibraryErrorUtil(message, toast);
-  };
-
-  const handlePairedLibraryAdd = () => {
-    addPairedLibrary({
-      read1: pairedRead1,
-      read2: pairedRead2,
-      buildLibrary: getPairedLibraryBuildFn(pairedPlatform),
-      onError: handleLibraryError,
-      onAfterAdd: () => {
-        setPairedRead1(null);
-        setPairedRead2(null);
-      },
-    });
-  };
-
-  const handleSingleLibraryAdd = () => {
-    addSingleLibrary({
-      read: singleRead,
-      buildLibrary: getSingleLibraryBuildFn(singlePlatform),
-      duplicateMatcher: singleLibraryDuplicateMatcher,
-      onError: handleLibraryError,
-      onAfterAdd: () => {
-        setSingleRead(null);
-      },
-    });
-  };
-
   const handleReset = () => {
     form.reset(defaultSarsCov2GenomeAnalysisFormValues);
-    setLibraries([]);
-    setPairedRead1(null);
-    setPairedRead2(null);
-    setSingleRead(null);
+    libraryInput.setLibraries([]);
+    libraryInput.resetInputState();
     setPairedPlatform("illumina");
     setSinglePlatform("illumina");
-    setSraResetKey((k) => k + 1);
   };
 
   const runtime = useServiceRuntime({
@@ -211,7 +176,7 @@ export default function SarsCov2GenomeAnalysisPage() {
         }
         return {};
       },
-      syncLibraries: setLibraries,
+      syncLibraries: libraryInput.setLibraries,
     },
   });
   const { isSubmitting, jobParamsDialogProps } = runtime;
@@ -239,155 +204,82 @@ export default function SarsCov2GenomeAnalysisPage() {
           <SarsCov2StartWithCard form={form} />
         </div>
 
-        {/* Parameters */}
+        {/* Input Library (when reads) */}
         {inputType === "reads" && (
           <div className="md:col-span-6">
-            <Card>
-              <CardHeader className="service-card-header">
-                <RequiredFormCardTitle className="service-card-title">
-                  Input Library
-                  <DialogInfoPopup
-                    title={readInputFileInfo.title}
-                    description={readInputFileInfo.description}
-                    sections={readInputFileInfo.sections}
-                  />
-                </RequiredFormCardTitle>
-              </CardHeader>
-              <CardContent className="service-card-content space-y-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <Label className="service-card-label">
-                      Paired Read Library
-                    </Label>
-                    <div className="bg-border mx-4 h-px flex-1" />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      onClick={handlePairedLibraryAdd}
-                      disabled={!pairedRead1 || !pairedRead2}
-                    >
-                      <ChevronRight size={16} />
-                    </Button>
-                  </div>
-                  <div className="space-y-3">
-                    <WorkspaceObjectSelector
-                      preset="reads"
-                      placeholder="Select READ FILE 1..."
-                      value={pairedRead1 ?? ""}
-                      onObjectSelect={(object: WorkspaceObject) =>
-                        setPairedRead1(object.path)
-                      }
-                    />
-                    <WorkspaceObjectSelector
-                      preset="reads"
-                      placeholder="Select READ FILE 2..."
-                      value={pairedRead2 ?? ""}
-                      onObjectSelect={(object: WorkspaceObject) =>
-                        setPairedRead2(object.path)
-                      }
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="service-card-sublabel">Platform</Label>
-                    <Select
-                      items={sarsCov2PairedPlatformOptions}
-                      value={pairedPlatform}
-                      onValueChange={(v) => {
-                        if (v == null) return;
-                        setPairedPlatform(v as SarsCov2Platform);
-                      }}
-                    >
-                      <SelectTrigger className="service-card-select-trigger">
-                        <SelectValue placeholder="Select a platform..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {sarsCov2PairedPlatformOptions.map((platform) => (
-                            <SelectItem
-                              key={platform.value}
-                              value={platform.value}
-                            >
-                              {platform.label}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <Label className="service-card-label">
-                        Single Read Library
-                      </Label>
-                      <div className="bg-border mx-4 h-px flex-1" />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={handleSingleLibraryAdd}
-                        disabled={!singleRead}
-                      >
-                        <ChevronRight size={16} />
-                      </Button>
-                    </div>
-                    <WorkspaceObjectSelector
-                      preset="reads"
-                      placeholder="Select READ FILE..."
-                      value={singleRead ?? ""}
-                      onObjectSelect={(object: WorkspaceObject) =>
-                        setSingleRead(object.path)
-                      }
-                    />
-                    <div className="space-y-2">
-                      <Label className="service-card-sublabel">Platform</Label>
-                      <Select
-                        items={sarsCov2SinglePlatformOptions}
-                        value={singlePlatform}
-                        onValueChange={(v) => {
-                          if (v == null) return;
-                          setSinglePlatform(v as SarsCov2Platform);
-                        }}
-                      >
-                        <SelectTrigger className="service-card-select-trigger">
-                          <SelectValue placeholder="Select a platform..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            {sarsCov2SinglePlatformOptions.map((platform) => (
-                              <SelectItem
-                                key={platform.value}
-                                value={platform.value}
-                              >
-                                {platform.label}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
+            <LibraryInputCard
+              title="Input Library"
+              infoPopup={readInputFileInfo}
+              pairedRead1={libraryInput.pairedRead1}
+              pairedRead2={libraryInput.pairedRead2}
+              singleRead={libraryInput.singleRead}
+              sraResetKey={libraryInput.sraResetKey}
+              selectedLibraries={libraryInput.selectedLibraries}
+              setPairedRead1={libraryInput.setPairedRead1}
+              setPairedRead2={libraryInput.setPairedRead2}
+              setSingleRead={libraryInput.setSingleRead}
+              setLibraries={libraryInput.setLibraries}
+              onPairedAdd={libraryInput.handlePairedLibraryAdd}
+              onSingleAdd={libraryInput.handleSingleLibraryAdd}
+              pairedExtras={
+                <div className="space-y-2">
+                  <Label className="service-card-sublabel">Platform</Label>
+                  <Select
+                    items={sarsCov2PairedPlatformOptions}
+                    value={pairedPlatform}
+                    onValueChange={(v) => {
+                      if (v == null) return;
+                      setPairedPlatform(v as SarsCov2Platform);
+                    }}
+                  >
+                    <SelectTrigger className="service-card-select-trigger">
+                      <SelectValue placeholder="Select a platform..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {sarsCov2PairedPlatformOptions.map((platform) => (
+                          <SelectItem
+                            key={platform.value}
+                            value={platform.value}
+                          >
+                            {platform.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </div>
-
-                <SraRunAccessionWithValidation
-                  key={sraResetKey}
-                  title="SRA Run Accession"
-                  placeholder="SRR..."
-                  selectedLibraries={selectedLibraries}
-                  setSelectedLibraries={setLibraries}
-                  allowDuplicates={false}
-                />
-
-                <form.Field name="paired_end_libs">
-                  {(field) => (
-                    <FieldItem>
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-              </CardContent>
-            </Card>
+              }
+              singleExtras={
+                <div className="space-y-2">
+                  <Label className="service-card-sublabel">Platform</Label>
+                  <Select
+                    items={sarsCov2SinglePlatformOptions}
+                    value={singlePlatform}
+                    onValueChange={(v) => {
+                      if (v == null) return;
+                      setSinglePlatform(v as SarsCov2Platform);
+                    }}
+                  >
+                    <SelectTrigger className="service-card-select-trigger">
+                      <SelectValue placeholder="Select a platform..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {sarsCov2SinglePlatformOptions.map((platform) => (
+                          <SelectItem
+                            key={platform.value}
+                            value={platform.value}
+                          >
+                            {platform.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              }
+            />
           </div>
         )}
 
@@ -415,12 +307,12 @@ export default function SarsCov2GenomeAnalysisPage() {
               </CardHeader>
               <CardContent className="service-card-content">
                 <SelectedItemsTable
-                  items={selectedLibraries.map((lib) => ({
+                  items={libraryInput.selectedLibraries.map((lib) => ({
                     id: lib.id,
                     name: lib.name,
                     type: getLibraryTypeLabel(lib.type),
                   }))}
-                  onRemove={removeLibrary}
+                  onRemove={libraryInput.removeLibrary}
                   className="max-h-80 overflow-y-auto"
                 />
               </CardContent>

@@ -264,6 +264,7 @@ function MetaCatsAlignmentWrapper() {
         form={form as never}
         alignmentFileValue={alignmentFileValue}
         groupFileValue={groupFileValue}
+        onAlignmentFileChange={vi.fn()}
       />
     </Wrapper>
   );

@@ -24,12 +24,10 @@ import {
   minContigCoverageMax,
   type MetagenomicBinningFormData,
 } from "@/lib/forms/(metagenomics)/metagenomic-binning/metagenomic-binning-form-schema";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface ServiceForm { Field: any; store: any; setFieldValue: (...args: any[]) => void; state: any }
+import type { ServiceCardForm } from "@/lib/services/service-definition";
 
 interface MetagenomicBinningParametersCardProps {
-  form: ServiceForm;
+  form: ServiceCardForm<MetagenomicBinningFormData>;
   startWith: MetagenomicBinningFormData["start_with"];
   metaspadesDisabled: boolean;
   showAdvanced: boolean;

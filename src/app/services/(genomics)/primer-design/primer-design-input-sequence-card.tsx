@@ -26,9 +26,7 @@ import { primerDesignInputSequence } from "@/lib/services/info/primer-design";
 import { markerLabels, type MarkerType } from "@/lib/forms/(genomics)/primer-design/primer-design-form-utils";
 import type { PrimerDesignFormData } from "@/lib/forms/(genomics)/primer-design/primer-design-form-schema";
 import type { WorkspaceObject } from "@/lib/services/workspace/types";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface ServiceForm { Field: any }
+import type { ServiceCardForm } from "@/lib/services/service-definition";
 
 interface SequenceValidation {
   isValid: boolean;
@@ -36,7 +34,7 @@ interface SequenceValidation {
 }
 
 interface PrimerDesignInputSequenceCardProps {
-  form: ServiceForm;
+  form: ServiceCardForm<PrimerDesignFormData>;
   inputType: PrimerDesignFormData["input_type"];
   sequenceValidation: SequenceValidation | null;
   showAdvanced: boolean;

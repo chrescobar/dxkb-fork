@@ -11,7 +11,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import {
   Tooltip,
   TooltipContent,
@@ -20,13 +19,13 @@ import {
 } from "@/components/ui/tooltip";
 import { HelpCircle } from "lucide-react";
 import { genomeAssemblyInfo, readInputFileInfo } from "@/lib/services/info/genome-assembly";
-import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import SraRunAccessionWithValidation from "@/components/services/sra-run-accession-with-validation";
 import SelectedItemsTable from "@/components/services/selected-items-table";
 import { Library } from "@/types/services";
+import { toast } from "sonner";
+import { LibraryInputCard } from "@/components/services/library-input-card";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
-import { toast } from "sonner";
+import { useLibraryInputState } from "@/hooks/services/use-library-input-state";
 import {
   genomeAssemblyFormSchema,
   defaultGenomeAssemblyFormValues,
@@ -34,18 +33,11 @@ import {
   type LibraryItem,
 } from "@/lib/forms/(genomics)/genome-assembly/genome-assembly-form-schema";
 import { genomeAssemblyService } from "@/lib/forms/(genomics)/genome-assembly/genome-assembly-service";
-import {
-  RequiredFormCardTitle,
-} from "@/components/forms/required-form-components";
-import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
-import { WorkspaceObject } from "@/lib/services/workspace/types";
-import { ChevronRight } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import {
   buildBaseLibraryItem,
   getPairedLibraryName,
   getSingleLibraryName,
-  useTanstackLibrarySelection,
 } from "@/lib/forms/tanstack-library-selection";
 import { GenomeAssemblyParametersCard } from "./genome-assembly-parameters-card";
 
@@ -71,10 +63,6 @@ export default function GenomeAssemblyPage() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [genomeSizeUnit, setGenomeSizeUnit] = useState<"M" | "K">("M");
   const [expectedGenomeSize, setExpectedGenomeSize] = useState(5);
-  const [pairedRead1, setPairedRead1] = useState<string | null>(null);
-  const [pairedRead2, setPairedRead2] = useState<string | null>(null);
-  const [singleRead, setSingleRead] = useState<string | null>(null);
-  const [sraResetKey, setSraResetKey] = useState(0);
 
   const form = useForm({
     defaultValues: defaultGenomeAssemblyFormValues as GenomeAssemblyFormData,
@@ -95,13 +83,7 @@ export default function GenomeAssemblyPage() {
     },
   });
 
-  const {
-    selectedLibraries,
-    addPairedLibrary,
-    addSingleLibrary,
-    removeLibrary,
-    setLibraries,
-  } = useTanstackLibrarySelection<LibraryItem>({
+  const libraryInput = useLibraryInputState<LibraryItem>({
     form,
     mapLibraryToItem: mapAssemblyLibraryToItem,
     fields: {
@@ -109,7 +91,36 @@ export default function GenomeAssemblyPage() {
       single: "single_end_libs",
       srr: "srr_ids",
     },
+    buildPairedLibrary: (read1, read2, id) => ({
+      library: {
+        id,
+        name: getPairedLibraryName(read1, read2),
+        type: "paired",
+        files: [read1, read2],
+        platform: "infer",
+        interleaved: false,
+        read_orientation_outward: false,
+      },
+    }),
+    buildSingleLibrary: (read) => ({
+      library: {
+        id: read,
+        name: getSingleLibraryName(read),
+        type: "single",
+        files: [read],
+        platform: "infer",
+      },
+    }),
   });
+
+  function handleReset() {
+    form.reset(defaultGenomeAssemblyFormValues);
+    libraryInput.setLibraries([]);
+    libraryInput.resetInputState();
+    setShowAdvanced(false);
+    setGenomeSizeUnit("M");
+    setExpectedGenomeSize(5);
+  }
 
   const runtime = useServiceRuntime({
     definition: genomeAssemblyService,
@@ -130,67 +141,13 @@ export default function GenomeAssemblyPage() {
         }
         return {};
       },
-      syncLibraries: setLibraries,
+      syncLibraries: libraryInput.setLibraries,
     },
   });
-
-  function handleReset() {
-    form.reset(defaultGenomeAssemblyFormValues);
-    setLibraries([]);
-    setShowAdvanced(false);
-    setGenomeSizeUnit("M");
-    setExpectedGenomeSize(5);
-    setPairedRead1(null);
-    setPairedRead2(null);
-    setSingleRead(null);
-    setSraResetKey((k) => k + 1);
-  }
 
   const recipe = useStore(form.store, (s) => s.values.recipe);
   const showGenomeSizeField = recipe === "canu";
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
-
-  const handlePairedLibraryAdd = () => {
-    addPairedLibrary({
-      read1: pairedRead1,
-      read2: pairedRead2,
-      buildLibrary: (read1, read2, id) => ({
-        library: {
-          id,
-          name: getPairedLibraryName(read1, read2),
-          type: "paired",
-          files: [read1, read2],
-          platform: "infer",
-          interleaved: false,
-          read_orientation_outward: false,
-        },
-      }),
-      onError: toast.error,
-      onAfterAdd: () => {
-        setPairedRead1(null);
-        setPairedRead2(null);
-      },
-    });
-  };
-
-  const handleSingleLibraryAdd = () => {
-    addSingleLibrary({
-      read: singleRead,
-      buildLibrary: (read) => ({
-        library: {
-          id: read,
-          name: getSingleLibraryName(read),
-          type: "single",
-          files: [read],
-          platform: "infer",
-        },
-      }),
-      onError: toast.error,
-      onAfterAdd: () => {
-        setSingleRead(null);
-      },
-    });
-  };
 
   return (
     <section>
@@ -213,86 +170,21 @@ export default function GenomeAssemblyPage() {
       >
         <div className="space-y-6 md:col-span-7">
           {/* Input Files Card */}
-          <Card>
-            <CardHeader className="service-card-header">
-              <RequiredFormCardTitle className="service-card-title">
-                Input Files
-                <DialogInfoPopup
-                  title={readInputFileInfo.title}
-                  description={readInputFileInfo.description}
-                  sections={readInputFileInfo.sections}
-                />
-              </RequiredFormCardTitle>
-            </CardHeader>
-
-            <CardContent className="service-card-content space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="service-card-label">Paired Read Library</Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    aria-label="Add paired read library to selected libraries"
-                    onClick={handlePairedLibraryAdd}
-                    disabled={!pairedRead1 || !pairedRead2}
-                  >
-                    <ChevronRight size={16} />
-                  </Button>
-                </div>
-                <div className="space-y-3">
-                  <WorkspaceObjectSelector
-                    preset="reads"
-                    placeholder="Select READ FILE 1..."
-                    onObjectSelect={(object: WorkspaceObject) => {
-                      setPairedRead1(object.path);
-                    }}
-                  />
-                  <WorkspaceObjectSelector
-                    preset="reads"
-                    placeholder="Select READ FILE 2..."
-                    onObjectSelect={(object: WorkspaceObject) => {
-                      setPairedRead2(object.path);
-                    }}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="service-card-label">Single Read Library</Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    aria-label="Add single read library to selected libraries"
-                    onClick={handleSingleLibraryAdd}
-                    disabled={!singleRead}
-                  >
-                    <ChevronRight size={16} />
-                  </Button>
-                </div>
-                <WorkspaceObjectSelector
-                  preset="reads"
-                  placeholder="Select READ FILE..."
-                  onObjectSelect={(object: WorkspaceObject) => {
-                    setSingleRead(object.path);
-                  }}
-                />
-              </div>
-
-              <SraRunAccessionWithValidation
-                key={sraResetKey}
-                title="SRA Run Accession"
-                placeholder="SRR..."
-                selectedLibraries={selectedLibraries}
-                setSelectedLibraries={setLibraries}
-                allowDuplicates={false}
-              />
-            </CardContent>
-          </Card>
+          <LibraryInputCard
+            title="Input Files"
+            infoPopup={readInputFileInfo}
+            pairedRead1={libraryInput.pairedRead1}
+            pairedRead2={libraryInput.pairedRead2}
+            singleRead={libraryInput.singleRead}
+            sraResetKey={libraryInput.sraResetKey}
+            selectedLibraries={libraryInput.selectedLibraries}
+            setPairedRead1={libraryInput.setPairedRead1}
+            setPairedRead2={libraryInput.setPairedRead2}
+            setSingleRead={libraryInput.setSingleRead}
+            setLibraries={libraryInput.setLibraries}
+            onPairedAdd={libraryInput.handlePairedLibraryAdd}
+            onSingleAdd={libraryInput.handleSingleLibraryAdd}
+          />
 
           {/* Selected Libraries (mobile) */}
           <div className="md:hidden">
@@ -317,12 +209,12 @@ export default function GenomeAssemblyPage() {
               </CardHeader>
               <CardContent className="service-card-content">
                 <SelectedItemsTable
-                  items={selectedLibraries.map((library) => ({
+                  items={libraryInput.selectedLibraries.map((library) => ({
                     id: library.id,
                     name: library.name,
                     type: library.type,
                   }))}
-                  onRemove={removeLibrary}
+                  onRemove={libraryInput.removeLibrary}
                   className="max-h-84 overflow-y-auto"
                 />
               </CardContent>
@@ -367,12 +259,12 @@ export default function GenomeAssemblyPage() {
             </CardHeader>
             <CardContent className="service-card-content">
               <SelectedItemsTable
-                items={selectedLibraries.map((library) => ({
+                items={libraryInput.selectedLibraries.map((library) => ({
                   id: library.id,
                   name: library.name,
                   type: library.type,
                 }))}
-                onRemove={removeLibrary}
+                onRemove={libraryInput.removeLibrary}
                 className="max-h-84 overflow-y-auto"
               />
             </CardContent>

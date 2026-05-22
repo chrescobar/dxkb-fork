@@ -34,12 +34,11 @@ import {
   genomeSizeUnitOptions,
   calculateGenomeSize,
 } from "@/lib/forms/(genomics)/genome-assembly/genome-assembly-form-utils";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface ServiceForm { Field: any; store: any; setFieldValue: (...args: any[]) => void; state: any }
+import type { ServiceCardForm } from "@/lib/services/service-definition";
+import type { GenomeAssemblyFormData } from "@/lib/forms/(genomics)/genome-assembly/genome-assembly-form-schema";
 
 interface GenomeAssemblyParametersCardProps {
-  form: ServiceForm;
+  form: ServiceCardForm<GenomeAssemblyFormData>;
   showGenomeSizeField: boolean;
   genomeSizeUnit: "M" | "K";
   expectedGenomeSize: number;

@@ -33,12 +33,10 @@ import { maxHitsOptionsBlast, evalueOptionsBlast } from "@/lib/forms/(genomics)/
 import type { BlastFormData } from "@/lib/forms/(genomics)/blast/blast-form-schema";
 import type { WorkspaceSelectorPreset } from "@/components/workspace/workspace-selector-presets";
 import type { WorkspaceObject } from "@/lib/services/workspace/types";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface ServiceForm { Field: any; store: any; setFieldValue: (...args: any[]) => void; state: any }
+import type { ServiceCardForm } from "@/lib/services/service-definition";
 
 interface BlastParametersCardProps {
-  form: ServiceForm;
+  form: ServiceCardForm<BlastFormData>;
   dbPrecomputedDatabase: BlastFormData["db_precomputed_database"];
   availableDatabaseTypes: { value: string; label: string }[];
   currentBlastProgram: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
 import { useDebugParamsPreview } from "@/hooks/services/use-debug-params-preview";
 import { useRerunForm } from "@/hooks/services/use-rerun-form";
@@ -102,10 +102,7 @@ export function useServiceRuntime<
     serviceName: definition.serviceName,
   });
 
-  const mergedRerun = useMemo(
-    () => mergeServiceRerunConfig(definition.rerun, rerun),
-    [definition.rerun, rerun],
-  );
+  const mergedRerun = mergeServiceRerunConfig(definition.rerun, rerun);
 
   useRerunForm<TRerun, TForm>({
     ...mergedRerun,

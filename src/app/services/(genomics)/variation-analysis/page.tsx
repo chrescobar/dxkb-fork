@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useForm, useStore } from "@tanstack/react-form";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { ServiceHeader } from "@/components/services/service-header";
@@ -12,7 +11,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -27,18 +25,19 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { HelpCircle, ChevronRight } from "lucide-react";
+import { HelpCircle } from "lucide-react";
 import {
   variationAnalysisInfo,
   variationAnalysisParameters,
   readInputFileInfo,
 } from "@/lib/services/info/variation-analysis";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import SraRunAccessionWithValidation from "@/components/services/sra-run-accession-with-validation";
 import SelectedItemsTable from "@/components/services/selected-items-table";
 import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
+import { LibraryInputCard } from "@/components/services/library-input-card";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
+import { useLibraryInputState } from "@/hooks/services/use-library-input-state";
 import { toast } from "sonner";
 import {
   variationAnalysisFormSchema,
@@ -51,27 +50,16 @@ import {
   variationAnalysisCallers,
 } from "@/lib/forms/(genomics)/variation-analysis/variation-analysis-form-utils";
 import { variationAnalysisService } from "@/lib/forms/(genomics)/variation-analysis/variation-analysis-service";
-import {
-  RequiredFormCardTitle,
-  RequiredFormLabel,
-} from "@/components/forms/required-form-components";
-import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
-import { WorkspaceObject } from "@/lib/services/workspace/types";
+import { RequiredFormLabel } from "@/components/forms/required-form-components";
 import { SingleGenomeSelector } from "@/components/services/single-genome-selector";
 import { Spinner } from "@/components/ui/spinner";
 import {
   buildBaseLibraryItem,
   getPairedLibraryName,
   getSingleLibraryName,
-  useTanstackLibrarySelection,
 } from "@/lib/forms/tanstack-library-selection";
 
 export default function VariationAnalysisPage() {
-  const [pairedRead1, setPairedRead1] = useState<string | null>(null);
-  const [pairedRead2, setPairedRead2] = useState<string | null>(null);
-  const [singleRead, setSingleRead] = useState<string | null>(null);
-  const [sraResetKey, setSraResetKey] = useState(0);
-
   const form = useForm({
     defaultValues: defaultVariationAnalysisFormValues,
     validators: { onChange: variationAnalysisFormSchema },
@@ -91,13 +79,7 @@ export default function VariationAnalysisPage() {
     },
   });
 
-  const {
-    selectedLibraries,
-    addPairedLibrary,
-    addSingleLibrary,
-    removeLibrary,
-    setLibraries,
-  } = useTanstackLibrarySelection<VariationLibraryItem>({
+  const libraryInput = useLibraryInputState<VariationLibraryItem>({
     form,
     mapLibraryToItem: buildBaseLibraryItem,
     fields: {
@@ -105,7 +87,29 @@ export default function VariationAnalysisPage() {
       single: "single_end_libs",
       srr: "srr_ids",
     },
+    buildPairedLibrary: (read1, read2, id) => ({
+      library: {
+        id,
+        name: getPairedLibraryName(read1, read2),
+        type: "paired",
+        files: [read1, read2],
+      },
+    }),
+    buildSingleLibrary: (read) => ({
+      library: {
+        id: read,
+        name: getSingleLibraryName(read),
+        type: "single",
+        files: [read],
+      },
+    }),
   });
+
+  function handleReset() {
+    form.reset(defaultVariationAnalysisFormValues);
+    libraryInput.setLibraries([]);
+    libraryInput.resetInputState();
+  }
 
   const runtime = useServiceRuntime({
     definition: variationAnalysisService,
@@ -113,57 +117,10 @@ export default function VariationAnalysisPage() {
     onSuccess: handleReset,
     rerun: {
       libraries: ["paired", "single", "sra"],
-      syncLibraries: setLibraries,
+      syncLibraries: libraryInput.setLibraries,
     },
   });
   const { isSubmitting, jobParamsDialogProps } = runtime;
-
-  function handleReset() {
-    form.reset(defaultVariationAnalysisFormValues);
-    setLibraries([]);
-    setPairedRead1(null);
-    setPairedRead2(null);
-    setSingleRead(null);
-    setSraResetKey((k) => k + 1);
-  }
-
-  const handlePairedLibraryAdd = () => {
-    addPairedLibrary({
-      read1: pairedRead1,
-      read2: pairedRead2,
-      buildLibrary: (read1, read2, id) => ({
-        library: {
-          id,
-          name: getPairedLibraryName(read1, read2),
-          type: "paired",
-          files: [read1, read2],
-        },
-      }),
-      onError: toast.error,
-      onAfterAdd: () => {
-        setPairedRead1(null);
-        setPairedRead2(null);
-      },
-    });
-  };
-
-  const handleSingleLibraryAdd = () => {
-    addSingleLibrary({
-      read: singleRead,
-      buildLibrary: (read) => ({
-        library: {
-          id: read,
-          name: getSingleLibraryName(read),
-          type: "single",
-          files: [read],
-        },
-      }),
-      onError: toast.error,
-      onAfterAdd: () => {
-        setSingleRead(null);
-      },
-    });
-  };
 
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
@@ -188,93 +145,21 @@ export default function VariationAnalysisPage() {
         {/* Left Column */}
         <div className="space-y-6 md:col-span-7">
           {/* Input Files Card */}
-          <Card>
-            <CardHeader className="service-card-header">
-              <RequiredFormCardTitle className="service-card-title">
-                Input File
-                <DialogInfoPopup
-                  title={readInputFileInfo.title}
-                  description={readInputFileInfo.description}
-                  sections={readInputFileInfo.sections}
-                />
-              </RequiredFormCardTitle>
-            </CardHeader>
-
-            <CardContent className="service-card-content space-y-6">
-              {/* Paired Read Library */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="service-card-label">
-                    Paired Read Library
-                  </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={handlePairedLibraryAdd}
-                    disabled={!pairedRead1 || !pairedRead2}
-                  >
-                    <ChevronRight size={16} />
-                  </Button>
-                </div>
-                <div className="space-y-3">
-                  <div>
-                    <WorkspaceObjectSelector
-                      preset="reads"
-                      placeholder="Select READ FILE 1..."
-                      onObjectSelect={(object: WorkspaceObject) => {
-                        setPairedRead1(object.path);
-                      }}
-                    />
-                  </div>
-                  <WorkspaceObjectSelector
-                    preset="reads"
-                    placeholder="Select READ FILE 2..."
-                    onObjectSelect={(object: WorkspaceObject) => {
-                      setPairedRead2(object.path);
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Single Read Library */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="service-card-label">
-                    Single Read Library
-                  </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={handleSingleLibraryAdd}
-                    disabled={!singleRead}
-                  >
-                    <ChevronRight size={16} />
-                  </Button>
-                </div>
-                <WorkspaceObjectSelector
-                  preset="reads"
-                  placeholder="Select READ FILE..."
-                  onObjectSelect={(object: WorkspaceObject) => {
-                    setSingleRead(object.path);
-                  }}
-                />
-              </div>
-
-              {/* SRA Run Accession */}
-              <SraRunAccessionWithValidation
-                key={sraResetKey}
-                title="SRA Run Accession"
-                placeholder="SRR..."
-                selectedLibraries={selectedLibraries}
-                setSelectedLibraries={setLibraries}
-                allowDuplicates={false}
-              />
-            </CardContent>
-          </Card>
+          <LibraryInputCard
+            title="Input File"
+            infoPopup={readInputFileInfo}
+            pairedRead1={libraryInput.pairedRead1}
+            pairedRead2={libraryInput.pairedRead2}
+            singleRead={libraryInput.singleRead}
+            sraResetKey={libraryInput.sraResetKey}
+            selectedLibraries={libraryInput.selectedLibraries}
+            setPairedRead1={libraryInput.setPairedRead1}
+            setPairedRead2={libraryInput.setPairedRead2}
+            setSingleRead={libraryInput.setSingleRead}
+            setLibraries={libraryInput.setLibraries}
+            onPairedAdd={libraryInput.handlePairedLibraryAdd}
+            onSingleAdd={libraryInput.handleSingleLibraryAdd}
+          />
 
           {/* Selected Libraries (mobile) */}
           <div className="md:hidden">
@@ -300,12 +185,12 @@ export default function VariationAnalysisPage() {
 
               <CardContent className="service-card-content">
                 <SelectedItemsTable
-                  items={selectedLibraries.map((library) => ({
+                  items={libraryInput.selectedLibraries.map((library) => ({
                     id: library.id,
                     name: library.name,
                     type: library.type,
                   }))}
-                  onRemove={removeLibrary}
+                  onRemove={libraryInput.removeLibrary}
                   className="max-h-84 overflow-y-auto"
                 />
               </CardContent>
@@ -440,12 +325,12 @@ export default function VariationAnalysisPage() {
 
             <CardContent className="service-card-content">
               <SelectedItemsTable
-                items={selectedLibraries.map((library) => ({
+                items={libraryInput.selectedLibraries.map((library) => ({
                   id: library.id,
                   name: library.name,
                   type: library.type,
                 }))}
-                onRemove={removeLibrary}
+                onRemove={libraryInput.removeLibrary}
                 className="max-h-84 overflow-y-auto"
               />
             </CardContent>

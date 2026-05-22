@@ -48,14 +48,13 @@ export default defineConfig({
         "src/**/types/**",
         "src/components/ui/**",
       ],
-      // Floors set just below the measured baseline so unrelated PRs don't
-      // randomly trip on rounding drift. Bump these incrementally as new tests
-      // raise the measured numbers.
+      // Floors are (measured − 1) as of 2026-05-22 (DXKBCORE-150 remediation).
+      // Bump these incrementally as new tests raise the measured numbers; never lower them.
       thresholds: {
-        lines: 81,
-        statements: 80,
-        functions: 84,
-        branches: 70,
+        lines: 83,
+        statements: 81,
+        functions: 83,
+        branches: 71,
       },
     },
   },

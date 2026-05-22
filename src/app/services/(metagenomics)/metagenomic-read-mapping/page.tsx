@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useForm, useStore } from "@tanstack/react-form";
 import {
   FieldItem,
@@ -31,20 +30,20 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ChevronRight, HelpCircle } from "lucide-react";
-import { toast } from "sonner";
+import { HelpCircle } from "lucide-react";
 
 import { ServiceHeader } from "@/components/services/service-header";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import SraRunAccessionWithValidation from "@/components/services/sra-run-accession-with-validation";
 import SelectedItemsTable from "@/components/services/selected-items-table";
 import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
+import { LibraryInputCard } from "@/components/services/library-input-card";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { Spinner } from "@/components/ui/spinner";
 
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
+import { useLibraryInputState } from "@/hooks/services/use-library-input-state";
 import {
   metagenomicReadMappingInfo,
   metagenomicReadMappingParameters,
@@ -63,28 +62,12 @@ import {
   buildBaseLibraryItem,
   getPairedLibraryName,
   getSingleLibraryName,
-  useTanstackLibrarySelection,
 } from "@/lib/forms/tanstack-library-selection";
 import { getLibraryTypeLabel } from "@/lib/forms/shared-schemas";
 
 import type { WorkspaceObject } from "@/lib/services/workspace/types";
 
 export default function MetagenomicReadMappingPage() {
-  // Read input state
-  const [pairedRead1, setPairedRead1] = useState<string | null>(null);
-  const [pairedRead2, setPairedRead2] = useState<string | null>(null);
-  const [singleRead, setSingleRead] = useState<string | null>(null);
-  const [sraResetKey, setSraResetKey] = useState(0);
-
-  const handleReset = () => {
-    form.reset(defaultMetagenomicReadMappingFormValues);
-    setLibraries([]);
-    setPairedRead1(null);
-    setPairedRead2(null);
-    setSingleRead(null);
-    setSraResetKey((k) => k + 1);
-  };
-
   const form = useForm({
     defaultValues:
       defaultMetagenomicReadMappingFormValues as MetagenomicReadMappingFormData,
@@ -97,13 +80,7 @@ export default function MetagenomicReadMappingPage() {
   const geneSetType = useStore(form.store, (s) => s.values.gene_set_type);
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
-  const {
-    selectedLibraries,
-    addPairedLibrary,
-    addSingleLibrary,
-    removeLibrary,
-    setLibraries,
-  } = useTanstackLibrarySelection<LibraryItem>({
+  const libraryInput = useLibraryInputState<LibraryItem>({
     form,
     mapLibraryToItem: buildBaseLibraryItem,
     fields: {
@@ -111,7 +88,29 @@ export default function MetagenomicReadMappingPage() {
       single: "single_end_libs",
       srr: "srr_ids",
     },
+    buildPairedLibrary: (read1, read2, id) => ({
+      library: {
+        id,
+        name: getPairedLibraryName(read1, read2),
+        type: "paired",
+        files: [read1, read2],
+      },
+    }),
+    buildSingleLibrary: (read) => ({
+      library: {
+        id: read,
+        name: getSingleLibraryName(read),
+        type: "single",
+        files: [read],
+      },
+    }),
   });
+
+  const handleReset = () => {
+    form.reset(defaultMetagenomicReadMappingFormValues);
+    libraryInput.setLibraries([]);
+    libraryInput.resetInputState();
+  };
 
   const runtime = useServiceRuntime({
     definition: metagenomicReadMappingService,
@@ -119,48 +118,10 @@ export default function MetagenomicReadMappingPage() {
     onSuccess: handleReset,
     rerun: {
       libraries: ["paired", "single", "sra"],
-      syncLibraries: setLibraries,
+      syncLibraries: libraryInput.setLibraries,
     },
   });
   const { isSubmitting, jobParamsDialogProps } = runtime;
-
-  const handlePairedLibraryAdd = () => {
-    addPairedLibrary({
-      read1: pairedRead1,
-      read2: pairedRead2,
-      buildLibrary: (read1, read2, id) => ({
-        library: {
-          id,
-          name: getPairedLibraryName(read1, read2),
-          type: "paired",
-          files: [read1, read2],
-        },
-      }),
-      onError: toast.error,
-      onAfterAdd: () => {
-        setPairedRead1(null);
-        setPairedRead2(null);
-      },
-    });
-  };
-
-  const handleSingleLibraryAdd = () => {
-    addSingleLibrary({
-      read: singleRead,
-      buildLibrary: (read) => ({
-        library: {
-          id: read,
-          name: getSingleLibraryName(read),
-          type: "single",
-          files: [read],
-        },
-      }),
-      onError: toast.error,
-      onAfterAdd: () => {
-        setSingleRead(null);
-      },
-    });
-  };
 
   return (
     <section>
@@ -184,98 +145,21 @@ export default function MetagenomicReadMappingPage() {
       >
         {/* Input File Section */}
         <div className="md:col-span-7">
-          <Card className="h-full">
-            <CardHeader className="service-card-header">
-              <RequiredFormCardTitle className="service-card-title">
-                Input File
-                <DialogInfoPopup
-                  title={readInputFileInfo.title}
-                  description={readInputFileInfo.description}
-                  sections={readInputFileInfo.sections}
-                />
-              </RequiredFormCardTitle>
-            </CardHeader>
-
-            <CardContent className="service-card-content space-y-6">
-              {/* Paired Read Library */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="service-card-label">
-                    Paired Read Library
-                  </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={handlePairedLibraryAdd}
-                    disabled={!pairedRead1 || !pairedRead2}
-                  >
-                    <ChevronRight size={16} />
-                  </Button>
-                </div>
-                <div className="space-y-3">
-                  <WorkspaceObjectSelector
-                    preset="reads"
-                    placeholder="Select READ FILE 1..."
-                    value={pairedRead1 ?? ""}
-                    onObjectSelect={(object: WorkspaceObject) => {
-                      setPairedRead1(object.path);
-                    }}
-                  />
-                  <WorkspaceObjectSelector
-                    preset="reads"
-                    placeholder="Select READ FILE 2..."
-                    value={pairedRead2 ?? ""}
-                    onObjectSelect={(object: WorkspaceObject) => {
-                      setPairedRead2(object.path);
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Single Read Library */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="service-card-label">
-                    Single Read Library
-                  </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={handleSingleLibraryAdd}
-                    disabled={!singleRead}
-                  >
-                    <ChevronRight size={16} />
-                  </Button>
-                </div>
-                <WorkspaceObjectSelector
-                  preset="reads"
-                  placeholder="Select READ FILE..."
-                  value={singleRead ?? ""}
-                  onObjectSelect={(object: WorkspaceObject) => {
-                    setSingleRead(object.path);
-                  }}
-                />
-              </div>
-
-              {/* SRA Run Accession - key forces remount on reset to clear internal textbox state */}
-              <SraRunAccessionWithValidation
-                key={sraResetKey}
-                title="SRA Run Accession"
-                placeholder="SRR..."
-                selectedLibraries={selectedLibraries}
-                setSelectedLibraries={setLibraries}
-                allowDuplicates={false}
-              />
-
-              <form.Field name="paired_end_libs">
-                {(field) => <FieldErrors field={field} />}
-              </form.Field>
-            </CardContent>
-          </Card>
+          <LibraryInputCard
+            title="Input File"
+            infoPopup={readInputFileInfo}
+            pairedRead1={libraryInput.pairedRead1}
+            pairedRead2={libraryInput.pairedRead2}
+            singleRead={libraryInput.singleRead}
+            sraResetKey={libraryInput.sraResetKey}
+            selectedLibraries={libraryInput.selectedLibraries}
+            setPairedRead1={libraryInput.setPairedRead1}
+            setPairedRead2={libraryInput.setPairedRead2}
+            setSingleRead={libraryInput.setSingleRead}
+            setLibraries={libraryInput.setLibraries}
+            onPairedAdd={libraryInput.handlePairedLibraryAdd}
+            onSingleAdd={libraryInput.handleSingleLibraryAdd}
+          />
         </div>
 
         {/* Selected Libraries Section */}
@@ -302,12 +186,12 @@ export default function MetagenomicReadMappingPage() {
 
             <CardContent className="service-card-content">
               <SelectedItemsTable
-                items={selectedLibraries.map((library) => ({
+                items={libraryInput.selectedLibraries.map((library) => ({
                   id: library.id,
                   name: library.name,
                   type: getLibraryTypeLabel(library.type),
                 }))}
-                onRemove={removeLibrary}
+                onRemove={libraryInput.removeLibrary}
               />
             </CardContent>
           </Card>

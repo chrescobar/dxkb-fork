@@ -4,20 +4,21 @@ import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { Label } from "@/components/ui/label";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import type { WorkspaceObject } from "@/lib/services/workspace/types";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface ServiceForm { Field: any; setFieldValue: (...args: any[]) => void }
+import type { ServiceCardForm } from "@/lib/services/service-definition";
+import type { MetaCatsFormData } from "@/lib/forms/(protein-tools)/meta-cats/meta-cats-form-schema";
 
 interface MetaCatsAlignmentCardProps {
-  form: ServiceForm;
+  form: ServiceCardForm<MetaCatsFormData>;
   alignmentFileValue: string;
   groupFileValue: string;
+  onAlignmentFileChange: (path: string, type: string) => void;
 }
 
 export function MetaCatsAlignmentCard({
   form,
   alignmentFileValue,
   groupFileValue,
+  onAlignmentFileChange,
 }: MetaCatsAlignmentCardProps) {
   return (
     <div className="mt-4 space-y-4">
@@ -30,13 +31,10 @@ export function MetaCatsAlignmentCard({
               preset="alignedFasta"
               placeholder="Select alignment file"
               onSelectedObjectChange={(object: WorkspaceObject | null) => {
-                if (object?.path) {
-                  field.handleChange(object.path);
-                  form.setFieldValue("alignment_type", object.type || "");
-                } else {
-                  field.handleChange("");
-                  form.setFieldValue("alignment_type", "");
-                }
+                const path = object?.path ?? "";
+                const type = object?.type ?? "";
+                field.handleChange(path);
+                onAlignmentFileChange(path, type);
               }}
               value={alignmentFileValue}
             />

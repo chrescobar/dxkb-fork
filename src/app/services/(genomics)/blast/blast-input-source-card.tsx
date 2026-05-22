@@ -13,12 +13,10 @@ import type { WorkspaceSelectorPreset } from "@/components/workspace/workspace-s
 import type { WorkspaceObject } from "@/lib/services/workspace/types";
 import type { BlastFormData } from "@/lib/forms/(genomics)/blast/blast-form-schema";
 import type { FastaValidationResult } from "@/lib/fasta-validation";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface ServiceForm { Field: any }
+import type { ServiceCardForm } from "@/lib/services/service-definition";
 
 interface BlastInputSourceCardProps {
-  form: ServiceForm;
+  form: ServiceCardForm<BlastFormData>;
   inputSource: BlastFormData["input_source"];
   inputFastaPreset: WorkspaceSelectorPreset;
   currentBlastProgram: BlastFormData["blast_program"];

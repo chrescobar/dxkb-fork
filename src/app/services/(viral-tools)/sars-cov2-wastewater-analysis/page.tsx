@@ -27,20 +27,20 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ChevronRight, HelpCircle } from "lucide-react";
+import { HelpCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { ServiceHeader } from "@/components/services/service-header";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import SraRunAccessionWithValidation from "@/components/services/sra-run-accession-with-validation";
 import SelectedItemsTable from "@/components/services/selected-items-table";
 import { OutputLocationFields } from "@/components/services/output-location-fields";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
-import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
+import { LibraryInputCard } from "@/components/services/library-input-card";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { Spinner } from "@/components/ui/spinner";
 
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
+import { useLibraryInputState } from "@/hooks/services/use-library-input-state";
 import {
   sarsCov2WastewaterAnalysisInfo,
   sarsCov2WastewaterAnalysisInputLib,
@@ -72,11 +72,9 @@ import {
 import { sarsCov2WastewaterAnalysisService } from "@/lib/forms/(viral-tools)/sars-cov2-wastewater-analysis/sars-cov2-wastewater-analysis-service";
 import {
   buildBaseLibraryItem,
-  useTanstackLibrarySelection,
 } from "@/lib/forms/tanstack-library-selection";
 import { getLibraryTypeLabel } from "@/lib/forms/shared-schemas";
 
-import type { WorkspaceObject } from "@/lib/services/workspace/types";
 import type { Library } from "@/types/services";
 
 const quickReference =
@@ -97,25 +95,15 @@ export default function SarsCov2WastewaterAnalysisPage() {
 
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
-  const [pairedRead1, setPairedRead1] = useState<string | null>(null);
-  const [pairedRead2, setPairedRead2] = useState<string | null>(null);
-  const [singleRead, setSingleRead] = useState<string | null>(null);
   const [currentSampleId, setCurrentSampleId] = useState("");
   const [currentSampleDate, setCurrentSampleDate] = useState("");
   const skipSraNormalization = useRef(false);
-  const [sraResetKey, setSraResetKey] = useState(0);
 
   const primers = useStore(form.store, (s) => s.values.primers);
   const primerVersionOpts =
     primerVersionOptions[primers] ?? primerVersionOptions.ARTIC;
 
-  const {
-    selectedLibraries,
-    addPairedLibrary,
-    addSingleLibrary,
-    removeLibrary,
-    setLibraries,
-  } = useTanstackLibrarySelection<SarsCov2WastewaterLibraryItem, SrrLibItem>({
+  const libraryInput = useLibraryInputState<SarsCov2WastewaterLibraryItem, SrrLibItem>({
     form,
     mapLibraryToItem: (library) => ({
       ...buildBaseLibraryItem(library),
@@ -159,6 +147,25 @@ export default function SarsCov2WastewaterAnalysisPage() {
         return lib;
       });
     },
+    buildPairedLibrary: (read1, read2, id) => {
+      const { sampleId, sampleLevelDate } = resolveSampleIdAndDate(
+        currentSampleId,
+        currentSampleDate,
+        read1,
+      );
+      return getPairedLibraryBuildFn(sampleId, sampleLevelDate)(read1, read2, id);
+    },
+    buildSingleLibrary: (read) => {
+      const { sampleId, sampleLevelDate } = resolveSampleIdAndDate(
+        currentSampleId,
+        currentSampleDate,
+        read,
+      );
+      return getSingleLibraryBuildFn(sampleId, sampleLevelDate)(read);
+    },
+    duplicateMatcher: singleLibraryDuplicateMatcher,
+    onPairedError: (msg) => handleLibraryErrorUtil(msg, toast),
+    onSingleError: (msg) => handleLibraryErrorUtil(msg, toast),
   });
 
   useEffect(() => {
@@ -173,56 +180,52 @@ export default function SarsCov2WastewaterAnalysisPage() {
     }
   }, [primers, form]);
 
-  const handlePairedRead1Select = (path: string) => {
-    setPairedRead1(path);
-    setCurrentSampleId(getDefaultSampleIdFromPath(path));
-  };
-
-  const handleSingleReadSelect = (path: string) => {
-    setSingleRead(path);
-    setCurrentSampleId(getDefaultSampleIdFromPath(path));
-  };
-
+  // Custom paired add handler to clear sample ID after adding
   const handlePairedLibraryAdd = () => {
-    const { sampleId, sampleLevelDate } = resolveSampleIdAndDate(
-      currentSampleId,
-      currentSampleDate,
-      pairedRead1 ?? undefined,
-    );
-    addPairedLibrary({
-      read1: pairedRead1,
-      read2: pairedRead2,
-      buildLibrary: getPairedLibraryBuildFn(sampleId, sampleLevelDate),
+    libraryInput.addPairedLibrary({
+      read1: libraryInput.pairedRead1,
+      read2: libraryInput.pairedRead2,
+      buildLibrary: (read1, read2, id) => {
+        const { sampleId, sampleLevelDate } = resolveSampleIdAndDate(
+          currentSampleId,
+          currentSampleDate,
+          read1,
+        );
+        return getPairedLibraryBuildFn(sampleId, sampleLevelDate)(read1, read2, id);
+      },
       onError: (msg) => handleLibraryErrorUtil(msg, toast),
       onAfterAdd: () => {
-        setPairedRead1(null);
-        setPairedRead2(null);
+        libraryInput.setPairedRead1(null);
+        libraryInput.setPairedRead2(null);
         setCurrentSampleId("");
       },
     });
   };
 
+  // Custom single add handler to clear sample ID after adding
   const handleSingleLibraryAdd = () => {
-    const { sampleId, sampleLevelDate } = resolveSampleIdAndDate(
-      currentSampleId,
-      currentSampleDate,
-      singleRead ?? undefined,
-    );
-    addSingleLibrary({
-      read: singleRead,
-      buildLibrary: getSingleLibraryBuildFn(sampleId, sampleLevelDate),
+    libraryInput.addSingleLibrary({
+      read: libraryInput.singleRead,
+      buildLibrary: (read) => {
+        const { sampleId, sampleLevelDate } = resolveSampleIdAndDate(
+          currentSampleId,
+          currentSampleDate,
+          read,
+        );
+        return getSingleLibraryBuildFn(sampleId, sampleLevelDate)(read);
+      },
       duplicateMatcher: singleLibraryDuplicateMatcher,
       onError: (msg) => handleLibraryErrorUtil(msg, toast),
       onAfterAdd: () => {
-        setSingleRead(null);
+        libraryInput.setSingleRead(null);
         setCurrentSampleId("");
       },
     });
   };
 
   const handleSetSelectedLibraries = (libs: Library[]) => {
-    const newSraLibs = findNewSraLibraries(libs, selectedLibraries);
-    setLibraries(libs);
+    const newSraLibs = findNewSraLibraries(libs, libraryInput.selectedLibraries);
+    libraryInput.setLibraries(libs);
     if (newSraLibs.length > 0) {
       setCurrentSampleId("");
       setCurrentSampleDate("");
@@ -237,13 +240,10 @@ export default function SarsCov2WastewaterAnalysisPage() {
 
   const handleReset = () => {
     form.reset(defaultSarsCov2WastewaterAnalysisFormValues);
-    setLibraries([]);
-    setPairedRead1(null);
-    setPairedRead2(null);
-    setSingleRead(null);
+    libraryInput.setLibraries([]);
+    libraryInput.resetInputState();
     setCurrentSampleId("");
     setCurrentSampleDate("");
-    setSraResetKey((k) => k + 1);
   };
 
   const runtime = useServiceRuntime({
@@ -266,7 +266,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
       },
       syncLibraries: (libs) => {
         skipSraNormalization.current = true;
-        setLibraries(libs);
+        libraryInput.setLibraries(libs);
       },
     },
   });
@@ -292,193 +292,122 @@ export default function SarsCov2WastewaterAnalysisPage() {
       >
         {/* Input Library */}
         <div className="md:col-span-6">
-          <Card>
-            <CardHeader className="service-card-header">
-              <RequiredFormCardTitle className="service-card-title">
-                Input Library Selection
-                <DialogInfoPopup
-                  title={sarsCov2WastewaterAnalysisInputLib.title}
-                  description={sarsCov2WastewaterAnalysisInputLib.description}
-                  sections={sarsCov2WastewaterAnalysisInputLib.sections}
-                />
-              </RequiredFormCardTitle>
-              <CardDescription className="text-xs">
-                Send to selected libraries using the arrow buttons.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="service-card-content space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="service-card-label">
-                    Paired Read Library
-                  </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={handlePairedLibraryAdd}
-                    disabled={!pairedRead1 || !pairedRead2}
-                  >
-                    <ChevronRight size={16} />
-                  </Button>
+          <LibraryInputCard
+            title="Input Library Selection"
+            infoPopup={sarsCov2WastewaterAnalysisInputLib}
+            pairedRead1={libraryInput.pairedRead1}
+            pairedRead2={libraryInput.pairedRead2}
+            singleRead={libraryInput.singleRead}
+            sraResetKey={libraryInput.sraResetKey}
+            selectedLibraries={libraryInput.selectedLibraries}
+            setPairedRead1={(path) => {
+              libraryInput.setPairedRead1(path);
+              if (path) setCurrentSampleId(getDefaultSampleIdFromPath(path));
+            }}
+            setPairedRead2={libraryInput.setPairedRead2}
+            setSingleRead={(path) => {
+              libraryInput.setSingleRead(path);
+              if (path) setCurrentSampleId(getDefaultSampleIdFromPath(path));
+            }}
+            setLibraries={handleSetSelectedLibraries}
+            onPairedAdd={handlePairedLibraryAdd}
+            onSingleAdd={handleSingleLibraryAdd}
+            onSraChange={handleSraAccessionChange}
+            sraExtras={
+              <>
+                <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
+                  <div className="flex-1 space-y-2">
+                    <Label className="service-card-label">Primers</Label>
+                    <form.Field name="primers">
+                      {(field) => (
+                        <FieldItem>
+                          <Select
+                            items={primerOptions}
+                            value={field.state.value}
+                            onValueChange={(v) =>
+                              v != null && field.handleChange(v as Primers)
+                            }
+                          >
+                            <SelectTrigger className="service-card-select-trigger">
+                              <SelectValue placeholder="Select primers" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                {primerOptions.map((primer) => (
+                                  <SelectItem
+                                    key={primer.value}
+                                    value={primer.value}
+                                  >
+                                    {primer.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                          <FieldErrors field={field} />
+                        </FieldItem>
+                      )}
+                    </form.Field>
+                  </div>
+                  <div className="w-full space-y-2 sm:w-32">
+                    <Label className="service-card-label">Version</Label>
+                    <form.Field name="primer_version">
+                      {(field) => (
+                        <FieldItem>
+                          <Select
+                            items={primerVersionOpts}
+                            value={field.state.value}
+                            onValueChange={(value) =>
+                              value != null && field.handleChange(value)
+                            }
+                          >
+                            <SelectTrigger className="service-card-select-trigger">
+                              <SelectValue placeholder="Version" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                {primerVersionOpts.map((version) => (
+                                  <SelectItem
+                                    key={version.value}
+                                    value={version.value}
+                                  >
+                                    {version.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                          <FieldErrors field={field} />
+                        </FieldItem>
+                      )}
+                    </form.Field>
+                  </div>
                 </div>
-                <div className="space-y-3">
-                  <WorkspaceObjectSelector
-                    preset="reads"
-                    placeholder="Select READ FILE 1..."
-                    value={pairedRead1 ?? ""}
-                    onObjectSelect={(object: WorkspaceObject) =>
-                      handlePairedRead1Select(object.path)
-                    }
+
+                <div className="space-y-2">
+                  <Label className="service-card-label">Sample Identifier</Label>
+                  <Input
+                    className="service-card-input"
+                    placeholder="SAMPLE ID"
+                    value={currentSampleId}
+                    onChange={(e) => setCurrentSampleId(e.target.value)}
                   />
-                  <WorkspaceObjectSelector
-                    preset="reads"
-                    placeholder="Select READ FILE 2..."
-                    value={pairedRead2 ?? ""}
-                    onObjectSelect={(object: WorkspaceObject) =>
-                      setPairedRead2(object.path)
-                    }
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="service-card-label">
+                    Sample Date (optional)
+                  </Label>
+                  <Input
+                    className="service-card-input"
+                    placeholder="MM/DD/YYYY"
+                    value={currentSampleDate}
+                    onChange={(e) => setCurrentSampleDate(e.target.value)}
                   />
                 </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="service-card-label">
-                    Single Read Library
-                  </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={handleSingleLibraryAdd}
-                    disabled={!singleRead}
-                  >
-                    <ChevronRight size={16} />
-                  </Button>
-                </div>
-                <WorkspaceObjectSelector
-                  preset="reads"
-                  placeholder="Select READ FILE..."
-                  value={singleRead ?? ""}
-                  onObjectSelect={(object: WorkspaceObject) =>
-                    handleSingleReadSelect(object.path)
-                  }
-                />
-              </div>
-
-              <SraRunAccessionWithValidation
-                key={sraResetKey}
-                title="SRA Run Accession"
-                placeholder="SRR..."
-                selectedLibraries={selectedLibraries}
-                setSelectedLibraries={handleSetSelectedLibraries}
-                allowDuplicates={false}
-                onChange={handleSraAccessionChange}
-              />
-
-              <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
-                <div className="flex-1 space-y-2">
-                  <Label className="service-card-label">Primers</Label>
-                  <form.Field name="primers">
-                    {(field) => (
-                      <FieldItem>
-                        <Select
-                          items={primerOptions}
-                          value={field.state.value}
-                          onValueChange={(v) =>
-                            v != null && field.handleChange(v as Primers)
-                          }
-                        >
-                          <SelectTrigger className="service-card-select-trigger">
-                            <SelectValue placeholder="Select primers" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              {primerOptions.map((primer) => (
-                                <SelectItem
-                                  key={primer.value}
-                                  value={primer.value}
-                                >
-                                  {primer.label}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-                </div>
-                <div className="w-full space-y-2 sm:w-32">
-                  <Label className="service-card-label">Version</Label>
-                  <form.Field name="primer_version">
-                    {(field) => (
-                      <FieldItem>
-                        <Select
-                          items={primerVersionOpts}
-                          value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null && field.handleChange(value)
-                          }
-                        >
-                          <SelectTrigger className="service-card-select-trigger">
-                            <SelectValue placeholder="Version" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              {primerVersionOpts.map((version) => (
-                                <SelectItem
-                                  key={version.value}
-                                  value={version.value}
-                                >
-                                  {version.label}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="service-card-label">Sample Identifier</Label>
-                <Input
-                  className="service-card-input"
-                  placeholder="SAMPLE ID"
-                  value={currentSampleId}
-                  onChange={(e) => setCurrentSampleId(e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label className="service-card-label">
-                  Sample Date (optional)
-                </Label>
-                <Input
-                  className="service-card-input"
-                  placeholder="MM/DD/YYYY"
-                  value={currentSampleDate}
-                  onChange={(e) => setCurrentSampleDate(e.target.value)}
-                />
-              </div>
-
-              <form.Field name="paired_end_libs">
-                {(field) => (
-                  <FieldItem>
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
-            </CardContent>
-          </Card>
+              </>
+            }
+          />
         </div>
 
         {/* Selected Libraries */}
@@ -504,12 +433,12 @@ export default function SarsCov2WastewaterAnalysisPage() {
             </CardHeader>
             <CardContent className="service-card-content">
               <SelectedItemsTable
-                items={selectedLibraries.map((lib) => ({
+                items={libraryInput.selectedLibraries.map((lib) => ({
                   id: lib.id,
                   name: lib.name,
                   type: getLibraryTypeLabel(lib.type),
                 }))}
-                onRemove={removeLibrary}
+                onRemove={libraryInput.removeLibrary}
                 className="max-h-80 overflow-y-auto"
               />
             </CardContent>

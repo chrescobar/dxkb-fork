@@ -20,12 +20,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import type { UseMsaReferenceOptionsReturn } from "@/hooks/services/use-msa-reference-options";
 import * as MsaSnpAnalysis from "@/lib/forms/(protein-tools)/msa-snp-analysis/msa-snp-analysis-form-schema";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface ServiceForm { Field: any; store: any }
+import type { ServiceCardForm } from "@/lib/services/service-definition";
 
 interface MsaReferenceSequenceCardProps {
-  form: ServiceForm;
+  form: ServiceCardForm<MsaSnpAnalysis.MsaSnpAnalysisFormData>;
   referenceOptions: UseMsaReferenceOptionsReturn;
   availableRefTypes: MsaSnpAnalysis.MsaSnpAnalysisFormData["ref_type"][];
   selectGenomegroup: string[];
@@ -80,8 +78,7 @@ export function MsaReferenceSequenceCard({
                     );
                     // Clear ref_string when changing ref_type
                     if (value === "none" || value === "first") {
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      (form as any).setFieldValue("ref_string", "");
+                      form.setFieldValue("ref_string", "");
                       setSelectedFeatureId("");
                       setSelectedGenomeId("");
                       setReferenceFastaText("");
@@ -152,8 +149,7 @@ export function MsaReferenceSequenceCard({
                     selectedFeature?.patric_id ||
                     selectedFeature?.feature_id ||
                     value;
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  (form as any).setFieldValue("ref_string", refValue);
+                  form.setFieldValue("ref_string", refValue);
                 }}
                 disabled={isLoadingFeatures}
               >
@@ -242,8 +238,7 @@ export function MsaReferenceSequenceCard({
                 onValueChange={(value: string | null) => {
                   if (value == null) return;
                   setSelectedGenomeId(value);
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  (form as any).setFieldValue("ref_string", value);
+                  form.setFieldValue("ref_string", value);
                 }}
                 disabled={isLoadingGenomes}
               >

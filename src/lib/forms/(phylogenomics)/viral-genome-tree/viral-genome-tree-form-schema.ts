@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export const maxGenomeLength = 250_000;
+
 // Sequence type enum for viral genome tree (genome groups and FASTA files)
 export const viralGenomeSequenceTypeSchema = z.enum([
   "genome_group",

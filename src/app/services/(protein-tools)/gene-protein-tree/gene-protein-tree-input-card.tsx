@@ -14,9 +14,7 @@ import { phylogeneticTreeInput } from "@/lib/services/info/phylogenetic-tree";
 import type { WorkspaceObject } from "@/lib/services/workspace/types";
 import type { WorkspaceSelectorPreset } from "@/components/workspace/workspace-selector-presets";
 import type { GeneProteinTreeFormData } from "@/lib/forms/(protein-tools)/gene-protein-tree/gene-protein-tree-form-schema";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface ServiceForm { Field: any }
+import type { ServiceCardForm } from "@/lib/services/service-definition";
 
 interface SelectedItem {
   id: string;
@@ -26,7 +24,7 @@ interface SelectedItem {
 }
 
 interface GeneProteinTreeInputCardProps {
-  form: ServiceForm;
+  form: ServiceCardForm<GeneProteinTreeFormData>;
   alphabet: GeneProteinTreeFormData["alphabet"];
   alignedFastaPreset: WorkspaceSelectorPreset;
   unalignedFastaPreset: WorkspaceSelectorPreset;

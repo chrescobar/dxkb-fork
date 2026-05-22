@@ -15,12 +15,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { msaSNPAnalysisSelectSequences } from "@/lib/services/info/msa-snp-analysis";
 import * as MsaSnpAnalysis from "@/lib/forms/(protein-tools)/msa-snp-analysis/msa-snp-analysis-form-schema";
 import * as MsaSnpAnalysisUtils from "@/lib/forms/(protein-tools)/msa-snp-analysis/msa-snp-analysis-form-utils";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface ServiceForm { Field: any; store: any }
+import type { ServiceCardForm } from "@/lib/services/service-definition";
 
 interface MsaSelectSequencesCardProps {
-  form: ServiceForm;
+  form: ServiceCardForm<MsaSnpAnalysis.MsaSnpAnalysisFormData>;
   inputStatus: string;
   fastaInputText: string;
   setFastaInputText: (text: string) => void;
@@ -241,8 +239,7 @@ export function MsaSelectSequencesCard({
                       inputValue,
                       type,
                     );
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    (form as any).setFieldValue("fasta_files", [newFile]);
+                    form.setFieldValue("fasta_files", [newFile]);
                     setSelectedFastaObject(null);
                   }}
                   value={selectedFastaObject?.path}
@@ -327,8 +324,7 @@ export function MsaSelectSequencesCard({
                   inputValue,
                   type,
                 );
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                (form as any).setFieldValue("fasta_files", [newFile]);
+                form.setFieldValue("fasta_files", [newFile]);
                 setSelectedAlignedFastaObject(null);
               }}
               value={selectedAlignedFastaObject?.path}

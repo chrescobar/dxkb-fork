@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { useForm, useStore } from "@tanstack/react-form";
 import { ServiceHeader } from "@/components/services/service-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -69,32 +68,6 @@ const GenomeAnnotationContent = () => {
       await runtime.submitFormData(value);
     },
   });
-
-  const watchedValues = useStore(form.store, (s) => s.values);
-  const previousValuesRef = useRef<GenomeAnnotationFormData>(watchedValues);
-
-  // Log form changes to console
-  useEffect(() => {
-    const previousValues = previousValuesRef.current;
-    const currentValues = watchedValues;
-
-    // Compare each field and log changes
-    Object.keys(currentValues).forEach((key) => {
-      const fieldKey = key as keyof GenomeAnnotationFormData;
-      const prevValue = previousValues[fieldKey];
-      const currValue = currentValues[fieldKey];
-
-      if (JSON.stringify(prevValue) !== JSON.stringify(currValue)) {
-        console.log(`Form field changed: ${fieldKey}`, {
-          previous: prevValue,
-          current: currValue,
-        });
-      }
-    });
-
-    // Update ref with current values
-    previousValuesRef.current = currentValues;
-  }, [watchedValues]);
 
   const runtime = useServiceRuntime({
     definition: genomeAnnotationService,

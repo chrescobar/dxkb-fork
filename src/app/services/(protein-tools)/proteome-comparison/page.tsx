@@ -3,41 +3,14 @@
 import { useState, useCallback, useMemo } from "react";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
 import { useForm, useStore } from "@tanstack/react-form";
-import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { ServiceHeader } from "@/components/services/service-header";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { NumberInput } from "@/components/ui/number-input";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { ChevronDown, Plus } from "lucide-react";
 import {
   proteomeComparisonInfo,
-  proteomeComparisonParameters,
-  proteomeComparisonComparisonGenomes,
-  proteomeComparisonReferenceGenome,
 } from "@/lib/services/info/proteome-comparison";
-import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import { OutputLocationFields } from "@/components/services/output-location-fields";
-import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
-import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
-import { WorkspaceObject } from "@/lib/services/workspace/types";
-import { SingleGenomeSelector } from "@/components/services/single-genome-selector";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
-import SelectedItemsTable from "@/components/services/selected-items-table";
 import {
   getGenomeIdsFromGroup,
   fetchGenomesByIds,
@@ -47,24 +20,24 @@ import {
   defaultProteomeComparisonFormValues,
   maxComparisonGenomes,
   type ProteomeComparisonFormData,
-  type ComparisonItem,
 } from "@/lib/forms/(protein-tools)/proteome-comparison/proteome-comparison-form-schema";
 import {
-  getProteomeComparisonDisplayName,
   createGenomeComparisonItem,
   createFastaComparisonItem,
   createFeatureGroupComparisonItem,
   createGenomeGroupComparisonItem,
   isDuplicateComparisonItem,
-  getComparisonItemTypeLabel,
   countTotalComparisonGenomes,
   removeComparisonItemById,
   validateGenomeGroupAddition,
 } from "@/lib/forms/(protein-tools)/proteome-comparison/proteome-comparison-form-utils";
 import { proteomeComparisonService } from "@/lib/forms/(protein-tools)/proteome-comparison/proteome-comparison-service";
+import type { WorkspaceObject } from "@/lib/services/workspace/types";
+import { ProteomeComparisonParametersCard } from "./proteome-comparison-parameters-card";
+import { ProteomeComparisonReferenceGenomeCard } from "./proteome-comparison-reference-genome-card";
+import { ProteomeComparisonComparisonGenomesCard } from "./proteome-comparison-comparison-genomes-card";
 
 export default function ProteomeComparisonPage() {
-  // State for comparison genome selectors
   const [selectedCompGenomeId, setSelectedCompGenomeId] = useState<string>("");
   const [selectedCompFasta, setSelectedCompFasta] =
     useState<WorkspaceObject | null>(null);
@@ -74,8 +47,6 @@ export default function ProteomeComparisonPage() {
     useState<WorkspaceObject | null>(null);
   const [isLoadingGenomeGroup, setIsLoadingGenomeGroup] = useState(false);
   const [isLoadingCompGenome, setIsLoadingCompGenome] = useState(false);
-
-  // State for advanced parameters visibility
   const [showAdvancedParams, setShowAdvancedParams] = useState(false);
 
   const form = useForm({
@@ -88,7 +59,6 @@ export default function ProteomeComparisonPage() {
     },
   });
 
-  // Handle reset
   const handleReset = useCallback(() => {
     form.reset(defaultProteomeComparisonFormValues);
     setSelectedCompGenomeId("");
@@ -105,7 +75,6 @@ export default function ProteomeComparisonPage() {
   });
   const { isSubmitting, jobParamsDialogProps } = runtime;
 
-  // Watch form values
   const rawComparisonItems = useStore(
     form.store,
     (s) => s.values.comparison_items,
@@ -115,11 +84,29 @@ export default function ProteomeComparisonPage() {
     [rawComparisonItems],
   );
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
-
-  // Calculate total genome count (accounting for genome groups)
   const totalGenomeCount = countTotalComparisonGenomes(comparisonItems);
 
-  // Handle adding comparison genome
+  // Cross-field reference type change: sets ref_source_type and clears sibling fields
+  const handleReferenceTypeChange = useCallback(
+    (type: "genome" | "fasta" | "feature_group", value: string) => {
+      form.setFieldValue("ref_source_type", type as never);
+      if (type === "genome") {
+        form.setFieldValue("ref_fasta_file", "" as never);
+        form.setFieldValue("ref_feature_group", "" as never);
+      } else if (type === "fasta") {
+        form.setFieldValue("ref_genome_id", "" as never);
+        form.setFieldValue("ref_genome_name", "" as never);
+        form.setFieldValue("ref_feature_group", "" as never);
+      } else {
+        form.setFieldValue("ref_genome_id", "" as never);
+        form.setFieldValue("ref_genome_name", "" as never);
+        form.setFieldValue("ref_fasta_file", "" as never);
+      }
+      void value; // value used by caller (field.handleChange already called)
+    },
+    [form],
+  );
+
   const handleAddCompGenome = useCallback(async () => {
     if (!selectedCompGenomeId || selectedCompGenomeId.trim() === "") {
       toast.error("No genome selected", {
@@ -139,12 +126,7 @@ export default function ProteomeComparisonPage() {
 
     const currentItems = form.state.values.comparison_items || [];
 
-    // Check for duplicates by genome_id
-    if (
-      isDuplicateComparisonItem(currentItems, {
-        genome_id: selectedCompGenomeId,
-      })
-    ) {
+    if (isDuplicateComparisonItem(currentItems, { genome_id: selectedCompGenomeId })) {
       toast.error("Duplicate genome", {
         description: "This genome is already in the comparison list.",
         closeButton: true,
@@ -153,27 +135,15 @@ export default function ProteomeComparisonPage() {
     }
 
     setIsLoadingCompGenome(true);
-
     try {
-      // Fetch the genome name from the API
       const genomes = await fetchGenomesByIds([selectedCompGenomeId]);
       const genomeName =
         genomes.length > 0 ? genomes[0].genome_name : selectedCompGenomeId;
-
-      const newItem = createGenomeComparisonItem(
-        selectedCompGenomeId,
-        genomeName,
-      );
-
+      const newItem = createGenomeComparisonItem(selectedCompGenomeId, genomeName);
       form.setFieldValue("comparison_items", [...currentItems, newItem]);
       setSelectedCompGenomeId("");
-    } catch (error) {
-      console.error("Failed to fetch genome info:", error);
-      // Fall back to using the genome ID as the name
-      const newItem = createGenomeComparisonItem(
-        selectedCompGenomeId,
-        selectedCompGenomeId,
-      );
+    } catch {
+      const newItem = createGenomeComparisonItem(selectedCompGenomeId, selectedCompGenomeId);
       form.setFieldValue("comparison_items", [...currentItems, newItem]);
       setSelectedCompGenomeId("");
     } finally {
@@ -181,7 +151,6 @@ export default function ProteomeComparisonPage() {
     }
   }, [selectedCompGenomeId, totalGenomeCount, form]);
 
-  // Handle adding comparison fasta
   const handleAddCompFasta = useCallback(() => {
     if (!selectedCompFasta?.path) {
       toast.error("No FASTA file selected", {
@@ -214,7 +183,6 @@ export default function ProteomeComparisonPage() {
     setSelectedCompFasta(null);
   }, [selectedCompFasta, totalGenomeCount, form]);
 
-  // Handle adding comparison feature group
   const handleAddCompFeatureGroup = useCallback(() => {
     if (!selectedCompFeatureGroup?.path) {
       toast.error("No feature group selected", {
@@ -233,9 +201,7 @@ export default function ProteomeComparisonPage() {
     }
 
     const currentItems = form.state.values.comparison_items || [];
-    const newItem = createFeatureGroupComparisonItem(
-      selectedCompFeatureGroup.path,
-    );
+    const newItem = createFeatureGroupComparisonItem(selectedCompFeatureGroup.path);
 
     if (isDuplicateComparisonItem(currentItems, newItem)) {
       toast.error("Duplicate feature group", {
@@ -249,7 +215,6 @@ export default function ProteomeComparisonPage() {
     setSelectedCompFeatureGroup(null);
   }, [selectedCompFeatureGroup, totalGenomeCount, form]);
 
-  // Handle adding comparison genome group
   const handleAddCompGenomeGroup = useCallback(async () => {
     if (!selectedCompGenomeGroup?.path) {
       toast.error("No genome group selected", {
@@ -260,12 +225,8 @@ export default function ProteomeComparisonPage() {
     }
 
     setIsLoadingGenomeGroup(true);
-
     try {
-      // Fetch genome IDs from the group
-      const genomeIds = await getGenomeIdsFromGroup(
-        selectedCompGenomeGroup.path,
-      );
+      const genomeIds = await getGenomeIdsFromGroup(selectedCompGenomeGroup.path);
 
       if (genomeIds.length === 0) {
         toast.error("Empty genome group", {
@@ -276,13 +237,7 @@ export default function ProteomeComparisonPage() {
       }
 
       const currentItems = form.state.values.comparison_items || [];
-
-      // Validate if adding would exceed max
-      const validation = validateGenomeGroupAddition(
-        currentItems,
-        genomeIds,
-        maxComparisonGenomes,
-      );
+      const validation = validateGenomeGroupAddition(currentItems, genomeIds, maxComparisonGenomes);
 
       if (!validation.valid) {
         toast.error("Cannot add genome group", {
@@ -292,10 +247,7 @@ export default function ProteomeComparisonPage() {
         return;
       }
 
-      const newItem = createGenomeGroupComparisonItem(
-        selectedCompGenomeGroup.path,
-        genomeIds,
-      );
+      const newItem = createGenomeGroupComparisonItem(selectedCompGenomeGroup.path, genomeIds);
 
       if (isDuplicateComparisonItem(currentItems, newItem)) {
         toast.error("Duplicate genome group", {
@@ -307,12 +259,10 @@ export default function ProteomeComparisonPage() {
 
       form.setFieldValue("comparison_items", [...currentItems, newItem]);
       setSelectedCompGenomeGroup(null);
-
       toast.success(`Added genome group with ${genomeIds.length} genome(s)`, {
         closeButton: true,
       });
     } catch (error) {
-      console.error("Failed to add genome group:", error);
       const errorMessage =
         error instanceof Error ? error.message : "Failed to add genome group";
       toast.error("Failed to add genome group", {
@@ -324,12 +274,13 @@ export default function ProteomeComparisonPage() {
     }
   }, [selectedCompGenomeGroup, form]);
 
-  // Handle removing comparison item
   const handleRemoveComparisonItem = useCallback(
     (itemId: string) => {
       const currentItems = form.state.values.comparison_items || [];
-      const updatedItems = removeComparisonItemById(currentItems, itemId);
-      form.setFieldValue("comparison_items", updatedItems);
+      form.setFieldValue(
+        "comparison_items",
+        removeComparisonItemById(currentItems, itemId),
+      );
     },
     [form],
   );
@@ -356,425 +307,46 @@ export default function ProteomeComparisonPage() {
         className="flex flex-col gap-4"
       >
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {/* Left Column */}
           <div className="flex flex-col gap-6">
-            {/* Parameters Card */}
-            <Card>
-              <CardHeader className="service-card-header">
-                <CardTitle className="service-card-title">
-                  Parameters
-                  <DialogInfoPopup
-                    title={proteomeComparisonParameters.title}
-                    description={proteomeComparisonParameters.description}
-                    sections={proteomeComparisonParameters.sections}
-                  />
-                </CardTitle>
-              </CardHeader>
+            <ProteomeComparisonParametersCard
+              form={form}
+              showAdvancedParams={showAdvancedParams}
+              onShowAdvancedChange={setShowAdvancedParams}
+            />
 
-              <CardContent className="service-card-content">
-                <div className="space-y-4">
-                  <div className="flex flex-col space-y-4">
-                    <OutputLocationFields form={form} required={true} />
-                  </div>
-
-                  {/* Advanced Parameters */}
-                  <Collapsible
-                    open={showAdvancedParams}
-                    onOpenChange={setShowAdvancedParams}
-                    className="service-collapsible-container"
-                  >
-                    <CollapsibleTrigger className="service-collapsible-trigger text-sm font-medium">
-                      Advanced Parameters (Optional)
-                      <ChevronDown
-                        className={`h-4 w-4 transition-transform ${showAdvancedParams ? "rotate-180 transform" : ""}`}
-                      />
-                    </CollapsibleTrigger>
-
-                    <CollapsibleContent className="service-collapsible-content">
-                      <div className="service-card-content-grid">
-                        <form.Field name="min_seq_cov">
-                          {(field) => (
-                            <FieldItem>
-                              <Label className="service-card-sublabel">
-                                Minimum % Coverage
-                              </Label>
-                              <NumberInput
-                                name={field.name}
-                                value={field.state.value}
-                                min={10}
-                                max={100}
-                                stepper={5}
-                                onValueChange={(value) => {
-                                  if (value !== undefined)
-                                    field.handleChange(value);
-                                }}
-                                className="bg-muted service-card-input relative [appearance:textfield] rounded-r-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                              />
-                              <FieldErrors field={field} />
-                            </FieldItem>
-                          )}
-                        </form.Field>
-
-                        <form.Field name="max_e_val">
-                          {(field) => (
-                            <FieldItem>
-                              <Label className="service-card-sublabel">
-                                BLAST E-Value
-                              </Label>
-                              <Input
-                                value={field.state.value}
-                                onChange={(e) =>
-                                  field.handleChange(e.target.value)
-                                }
-                                placeholder="1e-5"
-                                className="service-card-input"
-                              />
-                              <FieldErrors field={field} />
-                            </FieldItem>
-                          )}
-                        </form.Field>
-
-                        <form.Field name="min_ident">
-                          {(field) => (
-                            <FieldItem>
-                              <Label className="service-card-sublabel">
-                                Minimum % Identity
-                              </Label>
-                              <NumberInput
-                                name={field.name}
-                                value={field.state.value}
-                                min={10}
-                                max={100}
-                                stepper={5}
-                                onValueChange={(value) => {
-                                  if (value !== undefined)
-                                    field.handleChange(value);
-                                }}
-                                className="bg-muted service-card-input relative [appearance:textfield] rounded-r-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                              />
-                              <FieldErrors field={field} />
-                            </FieldItem>
-                          )}
-                        </form.Field>
-                      </div>
-                    </CollapsibleContent>
-                  </Collapsible>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Reference Genome Card */}
-            <Card>
-              <CardHeader className="service-card-header">
-                <RequiredFormCardTitle className="service-card-title">
-                  Reference Genome
-                  <DialogInfoPopup
-                    title={proteomeComparisonReferenceGenome.title}
-                    description={proteomeComparisonReferenceGenome.description}
-                    sections={proteomeComparisonReferenceGenome.sections}
-                  />
-                </RequiredFormCardTitle>
-                <CardDescription>
-                  Select 1 reference genome from the following options
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent className="service-card-content">
-                <div className="space-y-4">
-                  {/* Reference Genome Selector */}
-                  <form.Field name="ref_genome_id">
-                    {(field) => (
-                      <FieldItem>
-                        <Label className="service-card-label">
-                          Select a Genome
-                        </Label>
-                        <SingleGenomeSelector
-                          placeholder="e.g. Mycobacterium tuberculosis H37Rv"
-                          value={field.state.value ?? ""}
-                          onChange={(genomeId) => {
-                            field.handleChange(genomeId);
-                            form.setFieldValue("ref_source_type", "genome");
-                            // Clear other reference fields
-                            form.setFieldValue("ref_fasta_file", "");
-                            form.setFieldValue("ref_feature_group", "");
-                          }}
-                        />
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-
-                  {/* Reference FASTA File */}
-                  <form.Field name="ref_fasta_file">
-                    {(field) => (
-                      <FieldItem>
-                        <Label className="service-card-label">
-                          Or a Protein FASTA File
-                        </Label>
-                        <WorkspaceObjectSelector
-                          preset="featureProteinFasta"
-                          placeholder="Select protein FASTA file (Optional)"
-                          value={field.state.value}
-                          onSelectedObjectChange={(
-                            object: WorkspaceObject | null,
-                          ) => {
-                            if (object?.path) {
-                              field.handleChange(object.path);
-                              form.setFieldValue("ref_source_type", "fasta");
-                              // Clear other reference fields
-                              form.setFieldValue("ref_genome_id", "");
-                              form.setFieldValue("ref_genome_name", "");
-                              form.setFieldValue("ref_feature_group", "");
-                            } else {
-                              field.handleChange("");
-                            }
-                          }}
-                        />
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-
-                  {/* Reference Feature Group */}
-                  <form.Field name="ref_feature_group">
-                    {(field) => (
-                      <FieldItem>
-                        <Label className="service-card-label">
-                          Or a Feature Group
-                        </Label>
-                        <WorkspaceObjectSelector
-                          preset="featureGroup"
-                          placeholder="Select feature group (Optional)"
-                          value={field.state.value}
-                          onSelectedObjectChange={(
-                            object: WorkspaceObject | null,
-                          ) => {
-                            if (object?.path) {
-                              field.handleChange(object.path);
-                              form.setFieldValue(
-                                "ref_source_type",
-                                "feature_group",
-                              );
-                              // Clear other reference fields
-                              form.setFieldValue("ref_genome_id", "");
-                              form.setFieldValue("ref_genome_name", "");
-                              form.setFieldValue("ref_fasta_file", "");
-                            } else {
-                              field.handleChange("");
-                            }
-                          }}
-                        />
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-                </div>
-              </CardContent>
-            </Card>
+            <ProteomeComparisonReferenceGenomeCard
+              form={form}
+              onReferenceTypeChange={handleReferenceTypeChange}
+            />
           </div>
 
-          {/* Right Column - Comparison Genomes */}
-          <Card>
-            <CardHeader className="service-card-header">
-              <RequiredFormCardTitle className="service-card-title">
-                Comparison Genomes
-                <DialogInfoPopup
-                  title={proteomeComparisonComparisonGenomes.title}
-                  description={proteomeComparisonComparisonGenomes.description}
-                  sections={proteomeComparisonComparisonGenomes.sections}
-                />
-              </RequiredFormCardTitle>
-              <CardDescription>
-                Add up to {maxComparisonGenomes} genomes to compare (use plus
-                buttons to add)
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent className="service-card-content">
-              <div className="space-y-4">
-                {/* Select Genome */}
-                <div className="space-y-2">
-                  <Label className="service-card-label">Select Genome</Label>
-                  <div className="flex gap-2">
-                    <div className="flex-1">
-                      <SingleGenomeSelector
-                        placeholder="Select genome"
-                        value={selectedCompGenomeId}
-                        onChange={(genomeId) => {
-                          setSelectedCompGenomeId(genomeId);
-                        }}
-                      />
-                    </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      onClick={handleAddCompGenome}
-                      disabled={
-                        !selectedCompGenomeId ||
-                        totalGenomeCount >= maxComparisonGenomes ||
-                        isLoadingCompGenome
-                      }
-                    >
-                      {isLoadingCompGenome ? (
-                        <Spinner className="h-4 w-4" />
-                      ) : (
-                        <Plus className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Select Protein FASTA File */}
-                <div className="space-y-2">
-                  <Label className="service-card-label">
-                    And/Or Select Protein FASTA File
-                  </Label>
-                  <div className="flex gap-2">
-                    <div className="flex-1">
-                      <WorkspaceObjectSelector
-                        preset="featureProteinFasta"
-                        placeholder="Select protein FASTA file (Optional)"
-                        value={selectedCompFasta?.path}
-                        onSelectedObjectChange={(
-                          object: WorkspaceObject | null,
-                        ) => {
-                          setSelectedCompFasta(object);
-                        }}
-                      />
-                    </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      onClick={handleAddCompFasta}
-                      disabled={
-                        !selectedCompFasta ||
-                        totalGenomeCount >= maxComparisonGenomes
-                      }
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Select Feature Group */}
-                <div className="space-y-2">
-                  <Label className="service-card-label">
-                    And/Or Select Feature Group
-                  </Label>
-                  <div className="flex gap-2">
-                    <div className="flex-1">
-                      <WorkspaceObjectSelector
-                        preset="featureGroup"
-                        placeholder="Select feature group (Optional)"
-                        value={selectedCompFeatureGroup?.path}
-                        onSelectedObjectChange={(
-                          object: WorkspaceObject | null,
-                        ) => {
-                          setSelectedCompFeatureGroup(object);
-                        }}
-                      />
-                    </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      onClick={handleAddCompFeatureGroup}
-                      disabled={
-                        !selectedCompFeatureGroup ||
-                        totalGenomeCount >= maxComparisonGenomes
-                      }
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Select Genome Group */}
-                <div className="space-y-2">
-                  <Label className="service-card-label">
-                    And/Or Select Genome Group
-                  </Label>
-                  <div className="flex gap-2">
-                    <div className="flex-1">
-                      <WorkspaceObjectSelector
-                        preset="genomeGroup"
-                        placeholder="Select genome group (Optional)"
-                        value={selectedCompGenomeGroup?.path}
-                        onSelectedObjectChange={(
-                          object: WorkspaceObject | null,
-                        ) => {
-                          setSelectedCompGenomeGroup(object);
-                        }}
-                      />
-                    </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      onClick={handleAddCompGenomeGroup}
-                      disabled={
-                        !selectedCompGenomeGroup ||
-                        totalGenomeCount >= maxComparisonGenomes ||
-                        isLoadingGenomeGroup
-                      }
-                    >
-                      {isLoadingGenomeGroup ? (
-                        <Spinner className="h-4 w-4" />
-                      ) : (
-                        <Plus className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Selected Genome Table */}
-                <div className="space-y-2">
-                  <SelectedItemsTable
-                    title="Selected Genome Table"
-                    items={comparisonItems.map((item: ComparisonItem) => ({
-                      id: item.id,
-                      name: getProteomeComparisonDisplayName(item.name),
-                      type: getComparisonItemTypeLabel(item.type),
-                      description:
-                        item.type === "genome_group" && item.genome_ids
-                          ? `${item.genome_ids.length} genome(s)`
-                          : undefined,
-                    }))}
-                    onRemove={handleRemoveComparisonItem}
-                    emptyMessage="No genomes selected. Add genomes using the options above."
-                    className="max-h-80 overflow-y-auto"
-                  />
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">
-                      {totalGenomeCount} / {maxComparisonGenomes} genome(s)
-                      selected
-                    </span>
-                  </div>
-
-                  <form.Field name="comparison_items">
-                    {(field) => (
-                      <FieldItem>
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <ProteomeComparisonComparisonGenomesCard
+            form={form}
+            selectedCompGenomeId={selectedCompGenomeId}
+            setSelectedCompGenomeId={setSelectedCompGenomeId}
+            selectedCompFasta={selectedCompFasta}
+            setSelectedCompFasta={setSelectedCompFasta}
+            selectedCompFeatureGroup={selectedCompFeatureGroup}
+            setSelectedCompFeatureGroup={setSelectedCompFeatureGroup}
+            selectedCompGenomeGroup={selectedCompGenomeGroup}
+            setSelectedCompGenomeGroup={setSelectedCompGenomeGroup}
+            isLoadingGenomeGroup={isLoadingGenomeGroup}
+            isLoadingCompGenome={isLoadingCompGenome}
+            comparisonItems={comparisonItems}
+            totalGenomeCount={totalGenomeCount}
+            onAddCompGenome={handleAddCompGenome}
+            onAddCompFasta={handleAddCompFasta}
+            onAddCompFeatureGroup={handleAddCompFeatureGroup}
+            onAddCompGenomeGroup={handleAddCompGenomeGroup}
+            onRemoveComparisonItem={handleRemoveComparisonItem}
+          />
         </div>
 
-        {/* Form Controls */}
         <div className="service-form-controls">
           <Button type="button" variant="outline" onClick={handleReset}>
             Reset
           </Button>
-          <Button
-            type="submit"
-            disabled={isSubmitting || !canSubmit}
-          >
+          <Button type="submit" disabled={isSubmitting || !canSubmit}>
             {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
             Submit
           </Button>

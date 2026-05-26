@@ -91,6 +91,9 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
   const [internalRowSelection, setInternalRowSelection] = useState({});
   const rowSelection = controlledRowSelection !== undefined ? controlledRowSelection : internalRowSelection;
 
+  // Store the original order of selected items to maintain consistency
+  const [selectedItemsOrder, setSelectedItemsOrder] = useState<Map<string, number>>(new Map());
+
   // Pagination state: support both controlled (via pageIndex/pageSize props)
   // and uncontrolled usage. If parent provides pageIndex/pageSize we treat
   // pagination as controlled for that value; otherwise we keep internal state
@@ -99,6 +102,21 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     pageIndex: pageIndex ?? 0,
     pageSize: pageSize ?? 200,
   }));
+
+  const idFieldMap: Record<string, string> = {
+    genome: "genome_id",
+    genome_sequence: "sequence_id",
+    genome_feature: "patric_id",
+    strain: "strain",
+    epitope: "epitope_id",
+    protein_structure: "pdb_id",
+    taxonomy: "taxon_id",
+    experiment: "exp_id",
+    bioset: "bioset_id",
+  };
+
+  // IMPORTANT: replace `resource` with whatever your prop is actually called
+  const idField = idFieldMap[resource] ?? "id";
 
   // Sync when parent provides controlled pageIndex/pageSize values
   useEffect(() => {
@@ -321,6 +339,19 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
         onAllPagesSelectionChange?.(false);
       }
       
+      // Update the order map for selected items
+      const newOrderMap = new Map(selectedItemsOrder);
+      Object.keys(newSelection).forEach((rowId) => {
+        if (newSelection[rowId] && !selectedItemsOrder.has(rowId)) {
+          // Add new selections with their current order
+          newOrderMap.set(rowId, newOrderMap.size);
+        } else if (!newSelection[rowId]) {
+          // Remove deselected items
+          newOrderMap.delete(rowId);
+        }
+      });
+      setSelectedItemsOrder(newOrderMap);
+      
       // If controlled, call the parent handler
       if (onRowSelectionChange) {
         onRowSelectionChange(newSelection);
@@ -400,7 +431,8 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     enableRowSelection: true,
     enableSortingRemoval: false,
     enableMultiRowSelection: true,
-    getRowId: (row, index) => String((row as any).genome_id ?? `${index}`)
+//    getRowId: (row, index) => String((row as any).genome_id ?? `${index}`)
+    getRowId: (row) => String((row as any)[idField]),
   });
 
 
@@ -420,10 +452,11 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
   const rows = table.getRowModel().rows;
 
   const rowVirtualizer = useVirtualizer({
-    count: rows.length,
+    count: table.getRowModel().rows.length,
     getScrollElement: () => tableContainerRef.current,
     estimateSize: () => 24,
     overscan: 10,
+    getItemKey: (index) => table.getRowModel().rows[index]?.id,
   });
   const virtualRows = rowVirtualizer.getVirtualItems();
   const totalSize = rowVirtualizer.getTotalSize();
@@ -624,9 +657,18 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
             ? data
             : data.items ?? data.response ?? data.rows ?? [];
 
+          // Sort the rows based on the original selection order
+          const sortedRows = rowsArray.sort((a, b) => {
+            const aId = String(a[idField]);
+            const bId = String(b[idField]);
+            const aOrder = selectedItemsOrder.get(aId) ?? Number.MAX_VALUE;
+            const bOrder = selectedItemsOrder.get(bId) ?? Number.MAX_VALUE;
+            return aOrder - bOrder;
+          });
+
           const content = [
             headers.join(','),
-            ...rowsArray.map(row =>
+            ...sortedRows.map(row =>
               visibleCols.map(col => {
                 const val = row[col.id];
                 return typeof val === 'string'
@@ -949,7 +991,8 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
               ) : (
                 // If there ARE results...
                 virtualRows.map((virtualRow) => {
-                  const row = rows[virtualRow.index];
+//                  const row = rows[virtualRow.index];
+                  const row = table.getRowModel().rows[virtualRow.index];
                   return (
                     <TableRow
                       key={row.id}

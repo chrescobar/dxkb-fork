@@ -93,7 +93,22 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   }
   const pageSize = 200;
 
-  const [sorting, setSorting] = useState<SortingState>([]);
+  // Initialize with a default sort by ID field to ensure consistent ordering
+  const idFieldMap: Record<string, string> = {
+    genome: "genome_id",
+    genome_sequence: "sequence_id",
+    genome_feature: "patric_id",
+    strain: "strain",
+    epitope: "epitope_id",
+    protein_structure: "pdb_id",
+    taxonomy: "taxon_id",
+    experiment: "exp_id",
+    bioset: "bioset_id",
+  };
+  const defaultIdField = idFieldMap[resource] ?? "id";
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: defaultIdField, desc: false }
+  ]);
   const [columnOrder, setColumnOrder] = useState<string[]>([]);
   const [internalPageIndex, setInternalPageIndex] = useState(0);
   const pageIndex = controlledPageIndex !== undefined ? controlledPageIndex : internalPageIndex;
@@ -110,7 +125,20 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   if (prevResource !== resource || prevCleanQ !== cleanQ) {
     setPrevResource(resource);
     setPrevCleanQ(cleanQ);
-    setSorting([]);
+    // Reset to default sort when resource or query changes
+    const idFieldMap: Record<string, string> = {
+      genome: "genome_id",
+      genome_sequence: "sequence_id",
+      genome_feature: "patric_id",
+      strain: "strain",
+      epitope: "epitope_id",
+      protein_structure: "pdb_id",
+      taxonomy: "taxon_id",
+      experiment: "exp_id",
+      bioset: "bioset_id",
+    };
+    const defaultIdField = idFieldMap[resource] ?? "id";
+    setSorting([{ id: defaultIdField, desc: false }]);
     setResetNonce((n) => n + 1);
   }
 
@@ -199,14 +227,30 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       if (totalItems === 0) return [];
 
       // Derive sort param from sortingKey (already in queryKey) to avoid stale closure
+      // Always apply a sort to ensure consistent ordering
       const sortParam = sortingKey !== "none"
         ? (() => { const [field, dir] = sortingKey.split(":"); return `${dir === "desc" ? "-" : "+"}${field}`; })()
-        : null;
+        : (() => {
+            // Default sort by ID field if no sorting is specified
+            const idFieldMap: Record<string, string> = {
+              genome: "genome_id",
+              genome_sequence: "sequence_id",
+              genome_feature: "patric_id",
+              strain: "strain",
+              epitope: "epitope_id",
+              protein_structure: "pdb_id",
+              taxonomy: "taxon_id",
+              experiment: "exp_id",
+              bioset: "bioset_id",
+            };
+            const defaultIdField = idFieldMap[resource] ?? "id";
+            return `+${defaultIdField}`;
+          })();
       const start = pageIndex * pageSize;
       const end = start + pageSize;
 
       const baseURL = `${DataAPI}/${resource}/?${combinedQuery}`;
-      const url = sortParam ? `${baseURL}&sort(${sortParam})` : baseURL;
+      const url = `${baseURL}&sort(${sortParam})`;
 
       const res = await fetch(url, {
         headers: {

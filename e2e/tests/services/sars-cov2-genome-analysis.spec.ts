@@ -98,6 +98,100 @@ test.describe("sars-cov2-genome-analysis — contigs mode submission", () => {
   });
 });
 
+test.describe("sars-cov2-genome-analysis — tutorial walkthrough (debug mode)", () => {
+  // Tutorial: https://www.bv-brc.org/docs/tutorial/sars_cov_2_assembly_annotation/sars_cov_2_assembly_annotation.html
+  //
+  // The BV-BRC SARS-CoV-2 tutorial is a generic UI walkthrough — no concrete
+  // read files, recipe choice, primers, or output name are given. The inputs
+  // below use the `reads` start-with branch with a representative Illumina
+  // paired-end pair, recipe="onecodex" (matches defaults), primers="ARTIC",
+  // primer_version="V5.3.2" — exercising the rerun.fields end-to-end and
+  // complementing the existing `contigs` mode submission test.
+  //
+  // Fields exercised: input_type, my_label, output_path, output_file, recipe,
+  // primers, primer_version (per service rerun.fields). paired_end_libs flow
+  // through the page-level rerun libraries extension.
+  const sc2TutorialOutputFile =
+    "Severe acute respiratory syndrome coronavirus 2 tutorial-label";
+
+  const tutorialRerunPayload = {
+    input_type: "reads",
+    my_label: "tutorial-label",
+    output_path: "/e2e-test-user@patricbrc.org/home",
+    output_file: sc2TutorialOutputFile,
+    recipe: "onecodex",
+    primers: "ARTIC",
+    primer_version: "V5.3.2",
+    taxonomy_id: "2697049",
+    paired_end_libs: [
+      {
+        read1: "/e2e-test-user@patricbrc.org/home/sc2_tutorial_R1.fq",
+        read2: "/e2e-test-user@patricbrc.org/home/sc2_tutorial_R2.fq",
+        platform: "illumina",
+      },
+    ],
+  };
+
+  test("submitting in debug mode renders the tutorial-derived params in JobParamsDialog", async ({
+    page,
+  }) => {
+    await applyBackendMocks(page, {
+      overrides: [
+        ...buildWorkspaceOverrides(),
+        ...buildJobsOverrides(),
+        // Taxonomy lookup fires during rerun onApply to hydrate scientific_name.
+        {
+          url: "/api/services/taxonomy",
+          method: "GET",
+          body: [
+            {
+              taxon_id: 2697049,
+              taxon_name:
+                "Severe acute respiratory syndrome coronavirus 2",
+              taxon_rank: "species",
+            },
+          ],
+        },
+        ...journeyOverrides,
+      ],
+    });
+
+    const form = new ServiceFormPage(page, /sars-cov-?2 genome analysis/i);
+    await form.enableDebugMode();
+    await form.seedRerun(tutorialRerunPayload);
+    await form.goto(
+      "/services/sars-cov2-genome-analysis?rerun_key=e2e-rerun",
+    );
+
+    await expect(
+      page.getByRole("button", { name: /^submit$/i }),
+    ).toBeEnabled({ timeout: 10_000 });
+
+    await form.submit(/^submit$/i);
+
+    const params = await form.readSubmittedParams(
+      "ComprehensiveSARS2Analysis",
+    );
+    expect(params).toMatchObject({
+      input_type: "reads",
+      recipe: "onecodex",
+      primers: "ARTIC",
+      primer_version: "V5.3.2",
+      taxonomy_id: "2697049",
+      output_path: "/e2e-test-user@patricbrc.org/home",
+      output_file: sc2TutorialOutputFile,
+      scientific_name: sc2TutorialOutputFile,
+      paired_end_libs: [
+        expect.objectContaining({
+          read1: "/e2e-test-user@patricbrc.org/home/sc2_tutorial_R1.fq",
+          read2: "/e2e-test-user@patricbrc.org/home/sc2_tutorial_R2.fq",
+          platform: "illumina",
+        }),
+      ],
+    });
+  });
+});
+
 test.describe("sars-cov2-genome-analysis — render", () => {
   test("renders heading and start-with card radio options", async ({ page }) => {
     await applyBackendMocks(page, {

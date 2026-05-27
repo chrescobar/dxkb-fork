@@ -96,3 +96,58 @@ test.describe("metagenomic-binning submission", () => {
     });
   });
 });
+
+test.describe("metagenomic-binning — tutorial walkthrough (debug mode)", () => {
+  // Tutorial: https://www.bv-brc.org/docs/tutorial/metagenomic_binning/metagenomic_binning.html
+  //
+  // The BV-BRC metagenomic-binning tutorial is a generic UI walkthrough — no
+  // concrete read files, contigs path, or output name are given. The inputs
+  // below use the `contigs` start-with branch (simpler, no library hydration)
+  // with `organism: "both"` (the default).
+  //
+  // Fields exercised: output_path, output_file, start_with, organism, contigs.
+  // The rerun also declares `assembler`, `genome_group`, `min_contig_len`,
+  // `min_contig_cov` but for contigs-mode the transform drops `assembler`.
+  const tutorialRerunPayload = {
+    output_path: "/e2e-test-user@patricbrc.org/home",
+    output_file: "tutorial-binning",
+    start_with: "contigs",
+    assembler: "auto",
+    organism: "both",
+    contigs: "/e2e-test-user@patricbrc.org/home/tutorial_assembly.fasta",
+  };
+
+  test("submitting in debug mode renders the tutorial-derived params in JobParamsDialog", async ({
+    page,
+  }) => {
+    await applyBackendMocks(page, {
+      overrides: [
+        ...buildWorkspaceOverrides(),
+        ...buildJobsOverrides(),
+        ...journeyOverrides,
+      ],
+    });
+
+    const form = new ServiceFormPage(page, /metagenomic binning/i);
+    await form.enableDebugMode();
+    await form.seedRerun(tutorialRerunPayload);
+    await form.goto("/services/metagenomic-binning?rerun_key=e2e-rerun");
+
+    await expect(
+      page.getByRole("button", { name: /^submit$/i }),
+    ).toBeEnabled({ timeout: 10_000 });
+
+    await form.submit(/^submit$/i);
+
+    const params = await form.readSubmittedParams("MetagenomeBinning");
+    expect(params).toMatchObject({
+      output_path: "/e2e-test-user@patricbrc.org/home",
+      output_file: "tutorial-binning",
+      contigs: "/e2e-test-user@patricbrc.org/home/tutorial_assembly.fasta",
+      // organism="both" emits both perform_bacterial_annotation and viral flags.
+      perform_bacterial_annotation: true,
+      perform_viral_annotation: true,
+      perform_viral_binning: true,
+    });
+  });
+});

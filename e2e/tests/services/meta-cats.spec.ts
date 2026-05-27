@@ -154,6 +154,65 @@ test.describe("meta-cats — feature-groups mode submission", () => {
   });
 });
 
+test.describe("meta-cats — tutorial walkthrough (debug mode)", () => {
+  // Tutorial: https://www.bv-brc.org/docs/tutorial/metacats/metacats.html
+  //
+  // The BV-BRC Meta-CATS tutorial is a generic UI walkthrough — no concrete
+  // alignment file, group file, or output name are given. The inputs below
+  // use the simplest path: input_type="files" with placeholder alignment +
+  // group files. group_alphabet="na" matches a typical nucleotide alignment.
+  //
+  // Fields exercised: output_path, output_file, input_type, group_alphabet.
+  // The service rerun also declares `metadata_group` and `auto_alphabet`
+  // (auto-mode-only). alignment_file/group_file flow through the page-level
+  // onApply rerun extension.
+  const tutorialRerunPayload = {
+    output_path: "/e2e-test-user@patricbrc.org/home",
+    output_file: "tutorial-metacats",
+    input_type: "files",
+    alignment_file:
+      "/e2e-test-user@patricbrc.org/home/tutorial_alignment.fasta",
+    group_file: "/e2e-test-user@patricbrc.org/home/tutorial_groups.tsv",
+    group_alphabet: "na",
+    auto_alphabet: "na",
+  };
+
+  test("submitting in debug mode renders the tutorial-derived params in JobParamsDialog", async ({
+    page,
+  }) => {
+    await applyBackendMocks(page, {
+      overrides: [
+        ...buildWorkspaceOverrides(),
+        ...buildJobsOverrides(),
+        ...journeyOverrides,
+      ],
+    });
+
+    const form = new ServiceFormPage(page, /meta-cats/i);
+    await form.enableDebugMode();
+    await form.seedRerun(tutorialRerunPayload);
+    await form.goto("/services/meta-cats?rerun_key=e2e-rerun");
+
+    await expect(
+      page.getByRole("button", { name: /^submit$/i }),
+    ).toBeEnabled({ timeout: 10_000 });
+
+    await form.submit(/^submit$/i);
+
+    const params = await form.readSubmittedParams("MetaCATS");
+    expect(params).toMatchObject({
+      output_path: "/e2e-test-user@patricbrc.org/home",
+      output_file: "tutorial-metacats",
+      input_type: "files",
+      alignment_file:
+        "/e2e-test-user@patricbrc.org/home/tutorial_alignment.fasta",
+      group_file: "/e2e-test-user@patricbrc.org/home/tutorial_groups.tsv",
+      // No alignment_type set, transform defaults to "na" alphabet.
+      alphabet: "na",
+    });
+  });
+});
+
 test.describe("meta-cats — render", () => {
   test("renders heading and p-value field", async ({ page }) => {
     await applyBackendMocks(page, {

@@ -133,6 +133,83 @@ test.describe("genome assembly submission", () => {
   });
 });
 
+test.describe("genome assembly — tutorial walkthrough (debug mode)", () => {
+  // Tutorial: https://www.bv-brc.org/docs/tutorial/genome_assembly/assembly.html
+  //
+  // The BV-BRC tutorial for genome-assembly is a feature walkthrough rather
+  // than a worked example — it does not give a concrete SRR accession,
+  // recipe choice, or output name. The inputs below are a representative
+  // paired-end Unicycler run derived from the form's `defaultValues` and the
+  // canonical paired-end shape used elsewhere in this suite.
+  //
+  // Fields exercised by this walkthrough: output_path, output_file, recipe,
+  // paired_end_libs (via the page's rerun `libraries: ["paired", ...]`
+  // override + `getLibraryExtra`).
+  //
+  // NOT covered (rerun config does not declare them — see
+  // `genome-assembly-service.ts` and the page-level rerun extension):
+  //   - genome_size, trim, normalize, filtlong, target_depth,
+  //     racon_iter, pilon_iter, min_contig_len, min_contig_cov
+  //   These would need UI driving or a per-test onApply override.
+  const tutorialRerunPayload = {
+    output_path: "/e2e-test-user@patricbrc.org/home",
+    output_file: "tutorial-assembly",
+    recipe: "unicycler",
+    paired_end_libs: [
+      {
+        read1: "/e2e-test-user@patricbrc.org/home/tutorial_R1.fq",
+        read2: "/e2e-test-user@patricbrc.org/home/tutorial_R2.fq",
+        platform: "illumina",
+        interleaved: false,
+        read_orientation_outward: false,
+      },
+    ],
+  };
+
+  test("submitting in debug mode renders the tutorial-derived params in JobParamsDialog", async ({
+    page,
+  }) => {
+    // Debug mode short-circuits the POST to /api/services/app-service/submit,
+    // so jobs/workspace mocks only need to cover the chrome (sidebar count,
+    // output-folder autocomplete) — no `submitResponse` needed.
+    await applyBackendMocks(page, {
+      overrides: [
+        ...buildWorkspaceOverrides(),
+        ...buildJobsOverrides(),
+        ...journeyOverrides,
+      ],
+    });
+
+    const form = new ServiceFormPage(page, /genome assembly/i);
+    await form.enableDebugMode();
+    await form.seedRerun(tutorialRerunPayload);
+    await form.goto("/services/genome-assembly?rerun_key=e2e-rerun");
+
+    // Proxy for "rerun has been applied" — the output-name input is the
+    // last field hydrated alongside paired_end_libs via syncLibraries.
+    await expect(page.getByPlaceholder(/select output name/i)).toHaveValue(
+      "tutorial-assembly",
+    );
+    await expect(page.getByRole("button", { name: /assemble/i })).toBeEnabled();
+
+    await form.submit(/assemble/i);
+
+    const params = await form.readSubmittedParams("GenomeAssembly2");
+    expect(params).toMatchObject({
+      output_path: "/e2e-test-user@patricbrc.org/home",
+      output_file: "tutorial-assembly",
+      recipe: "unicycler",
+      paired_end_libs: [
+        expect.objectContaining({
+          read1: "/e2e-test-user@patricbrc.org/home/tutorial_R1.fq",
+          read2: "/e2e-test-user@patricbrc.org/home/tutorial_R2.fq",
+          platform: "illumina",
+        }),
+      ],
+    });
+  });
+});
+
 // Drives the genome-assembly form-load journey against post-auth traffic
 // recorded in `service-submit.har`. The submission POST itself isn't
 // recorded — the recorder explicitly avoids it (a real submit would create

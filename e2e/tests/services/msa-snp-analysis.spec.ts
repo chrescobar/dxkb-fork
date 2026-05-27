@@ -91,6 +91,76 @@ test.describe("msa-snp-analysis — FASTA file input submission", () => {
   });
 });
 
+test.describe("msa-snp-analysis — tutorial walkthrough (debug mode)", () => {
+  // Tutorial: https://www.bv-brc.org/docs/tutorial/msa_snp_variation/msa_snp_variation.html
+  //
+  // The BV-BRC MSA tutorial is a generic UI walkthrough — no concrete FASTA,
+  // ref_type, or output name are given. Defaults: aligner=Mafft, alphabet=dna
+  // (auto-detected for nucleotide FASTA), ref_type=none. The inputs below
+  // use the `unaligned` + `input_fasta` path mirroring the existing fixture
+  // tests, with the rerun.fields explicitly hydrated.
+  //
+  // Fields exercised: input_status, alphabet, ref_type, aligner, output_path,
+  // output_file (per service rerun.fields). fasta_files flows through the
+  // page-level onApply rerun extension.
+  const tutorialRerunPayload = {
+    output_path: "/e2e-test-user@patricbrc.org/home",
+    output_file: "tutorial-msa",
+    input_status: "unaligned",
+    input_type: "input_fasta",
+    fasta_files: [
+      {
+        file: "/e2e-test-user@patricbrc.org/home/tutorial_sequences.fasta",
+        type: "feature_dna_fasta",
+      },
+    ],
+    ref_type: "none",
+    aligner: "Mafft",
+    alphabet: "dna",
+  };
+
+  test("submitting in debug mode renders the tutorial-derived params in JobParamsDialog", async ({
+    page,
+  }) => {
+    await applyBackendMocks(page, {
+      overrides: [
+        ...buildWorkspaceOverrides(),
+        ...buildJobsOverrides(),
+        ...journeyOverrides,
+      ],
+    });
+
+    const form = new ServiceFormPage(page, /msa.*snp|msa.*variation/i);
+    await form.enableDebugMode();
+    await form.seedRerun(tutorialRerunPayload);
+    await form.goto("/services/msa-snp-analysis?rerun_key=e2e-rerun");
+
+    await expect(
+      page.getByRole("button", { name: /^submit$/i }),
+    ).toBeEnabled({ timeout: 10_000 });
+
+    await form.submit(/^submit$/i);
+
+    const params = await form.readSubmittedParams("MSA");
+    expect(params).toMatchObject({
+      input_status: "unaligned",
+      input_type: "input_fasta",
+      ref_type: "none",
+      aligner: "Mafft",
+      output_path: "/e2e-test-user@patricbrc.org/home",
+      output_file: "tutorial-msa",
+      fasta_files: [
+        expect.objectContaining({
+          file: "/e2e-test-user@patricbrc.org/home/tutorial_sequences.fasta",
+          type: "feature_dna_fasta",
+        }),
+      ],
+      // alphabet is auto-detected from feature_dna_fasta as "dna".
+      alphabet: "dna",
+    });
+  });
+});
+
 test.describe("msa-snp-analysis — render", () => {
   test("renders heading and start-with card radio options", async ({ page }) => {
     await applyBackendMocks(page, {

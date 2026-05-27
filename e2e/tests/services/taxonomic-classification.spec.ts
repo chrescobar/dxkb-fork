@@ -92,6 +92,78 @@ test.describe("taxonomic-classification — WGS paired-end submission", () => {
   });
 });
 
+test.describe("taxonomic-classification — tutorial walkthrough (debug mode)", () => {
+  // Tutorial: https://www.bv-brc.org/docs/tutorial/taxonomic_classification/taxonomic_classification.html
+  //
+  // The BV-BRC taxonomic-classification tutorial is a generic UI walkthrough —
+  // no concrete read files, accession, or output name are given. The inputs
+  // below use the WGS paired-end branch with the default `microbiome` analysis
+  // and `bvbrc` database. confidence_interval=0.1 matches the form default.
+  //
+  // Fields exercised: output_path, output_file, analysis_type, database,
+  // host_genome, confidence_interval (per service rerun.fields) + paired-end
+  // libraries via the page's rerun libraries extension. sequence_type is
+  // hydrated by the rerun onApply when present.
+  const tutorialRerunPayload = {
+    output_path: "/e2e-test-user@patricbrc.org/home",
+    output_file: "tutorial-taxonomic",
+    sequence_type: "wgs",
+    analysis_type: "microbiome",
+    database: "bvbrc",
+    host_genome: "no_host",
+    confidence_interval: "0.1",
+    paired_end_libs: [
+      {
+        read1: "/e2e-test-user@patricbrc.org/home/tutorial_R1.fq",
+        read2: "/e2e-test-user@patricbrc.org/home/tutorial_R2.fq",
+        sample_id: "tutorial-sample",
+      },
+    ],
+  };
+
+  test("submitting in debug mode renders the tutorial-derived params in JobParamsDialog", async ({
+    page,
+  }) => {
+    await applyBackendMocks(page, {
+      overrides: [
+        ...buildWorkspaceOverrides(),
+        ...buildJobsOverrides(),
+        ...journeyOverrides,
+      ],
+    });
+
+    const form = new ServiceFormPage(page, /taxonomic classification/i);
+    await form.enableDebugMode();
+    await form.seedRerun(tutorialRerunPayload);
+    await form.goto(
+      "/services/taxonomic-classification?rerun_key=e2e-rerun",
+    );
+
+    await expect(
+      page.getByRole("button", { name: /^submit$/i }),
+    ).toBeEnabled({ timeout: 10_000 });
+
+    await form.submit(/^submit$/i);
+
+    const params = await form.readSubmittedParams("TaxonomicClassification");
+    expect(params).toMatchObject({
+      output_path: "/e2e-test-user@patricbrc.org/home",
+      output_file: "tutorial-taxonomic",
+      analysis_type: "microbiome",
+      database: "bvbrc",
+      host_genome: "no_host",
+      confidence_interval: "0.1",
+      sequence_type: "wgs",
+      paired_end_libs: [
+        expect.objectContaining({
+          read1: "/e2e-test-user@patricbrc.org/home/tutorial_R1.fq",
+          read2: "/e2e-test-user@patricbrc.org/home/tutorial_R2.fq",
+        }),
+      ],
+    });
+  });
+});
+
 test.describe("taxonomic-classification — render", () => {
   test("renders heading, sequencing type radio, and parameters card", async ({
     page,

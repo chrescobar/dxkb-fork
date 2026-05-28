@@ -1,0 +1,73 @@
+src/app/api/auth/forget-password/__tests__/route.test.ts
+  s_2fc35222768469::t_ba8bc48e7024c3 21,25,42,46,62,66,84,88,103,107,110,122,125-126
+src/lib/auth/server/__tests__/respond.test.ts
+  s_2fc35222768469::t_78978f002c208e 82,88
+  s_2fc35222768469::t_4b22c85c81eb41 39
+src/components/settings/preferences-form.tsx
+  s_2fc35222768469::t_865385b2a9ea29 58
+src/app/api/auth/send-verification-email/route.ts
+  s_2fc35222768469::t_e09d7785542f77 2-3,5-7
+src/app/api/auth/profile/route.ts
+  s_2fc35222768469::t_9a3010da2a666c 4-5,8-11,13,15-16,19-20,24,26-32,34-36,38-39,41-42,45-46
+src/app/api/auth/ensure-workspace/route.ts
+  s_2fc35222768469::t_1ef64cb71a3e1a 8-13
+src/app/api/auth/sign-up/email/__tests__/route.test.ts
+  s_2fc35222768469::t_e552574842cfee 165
+  s_2fc35222768469::t_2d7fa661d8ee92 3
+  s_2fc35222768469::t_e5c151199767f8 258-272
+  s_2fc35222768469::t_26bfe78f6d4598 145
+src/app/api/auth/forget-password/route.ts
+  s_2fc35222768469::t_63f23a285e5286 1,3-10
+src/app/api/auth/change-password/route.ts
+  s_2fc35222768469::t_297b0ef568ebce 1,3-14
+docs/auth-api.md
+  s_2fc35222768469::t_440849f79ab5cc 1-157
+src/lib/auth/server/respond.ts
+  s_2fc35222768469::t_55212cb13dae6e 6,12,14-15,23,25-26
+src/app/api/auth/sign-in/email/route.ts
+  s_2fc35222768469::t_d9a6339a243e1e 4,6-9
+src/app/api/auth/sign-in/email/__tests__/route.test.ts
+  s_2fc35222768469::t_6bd88ba2afb2cb 3,65,109,113,126,145,149,153-165
+src/hooks/services/workspace/use-ensure-user-workspace.ts
+  s_2fc35222768469::t_029a6f8556e056 48,52
+src/app/api/auth/change-password/__tests__/route.test.ts
+  s_2fc35222768469::t_81738aaf2a4d9d 61,65
+  s_2fc35222768469::t_2ce051f1ced1ba 123,129
+  s_2fc35222768469::t_53ecbb1fafb181 145,149
+  s_2fc35222768469::t_cbe0f79193fee6 46,50
+  s_2fc35222768469::t_cf992639f0adc6 87
+src/components/settings/profile-form.tsx
+  s_2fc35222768469::t_d2cbe661b8c7fb 64
+src/components/settings/password-change-form.tsx
+  s_2fc35222768469::t_fea9b38f7104fe 45
+src/lib/auth/adapters/http.ts
+  s_2fc35222768469::t_85187e7e06316e 34,36
+src/app/api/auth/verify-email-token/route.ts
+  s_2fc35222768469::t_2a821d6078873f 1,3-14
+src/app/api/auth/profile/__tests__/route.test.ts
+  s_2fc35222768469::t_4c9f9d6d87013f 105
+  s_2fc35222768469::t_79e65786fa7aa3 120
+  s_2fc35222768469::t_8b3a552b414745 233
+  s_2fc35222768469::t_fad29a8e5aca55 253
+  s_2fc35222768469::t_a436dd25180a98 211
+src/app/api/auth/su-login/route.ts
+  s_2fc35222768469::t_48772220f31182 1,4,6-7,11
+src/app/api/auth/sign-up/email/route.ts
+  s_2fc35222768469::t_a39811892932ef 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "b5375d518a8f9eb83a4f3013e3284d18f1d8f143",
+  "prompts": {},
+  "sessions": {
+    "s_2fc35222768469": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0b61b431-a856-4eea-8e11-581102eea85a",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

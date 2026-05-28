@@ -3,7 +3,6 @@ import { getRequiredEnv } from "@/lib/env";
 export const numberFormatter = new Intl.NumberFormat("en-US");
 
 export const organismBvBrcRevalidateSeconds = 86400;
-export const organismPubMedRevalidateSeconds = 3600;
 
 export function organismFetchCacheInit(
   revalidateSeconds: number,

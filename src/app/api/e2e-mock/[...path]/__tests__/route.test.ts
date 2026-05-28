@@ -167,19 +167,6 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
   });
 
-  it("GET returns PubMed eutils fixtures", async () => {
-    const resp = await GET(
-      mockNextRequest({
-        url: "http://localhost:3020/api/e2e-mock/pubmed/esearch.fcgi?term=Bacteria",
-      }),
-      ctx(["pubmed", "esearch.fcgi"]),
-    );
-
-    expect(resp.status).toBe(200);
-    const body = await resp.json();
-    expect(body.esearchresult.idlist).toContain("41000001");
-  });
-
   it("POST returns 200 with JSON-RPC-shaped empty result", async () => {
     const resp = await POST(
       mockNextRequest({

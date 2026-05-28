@@ -41,6 +41,7 @@ Requires **Node v24** (`nvm use 24`). Vitest 4 / rolldown needs Node >= 22.
 - Auth state lives in `AuthContext`, hydrated from `user_profile` and `user_id` cookies on the server
 - Protected routes: `/services/*` and `/workspace/*` — middleware in `src/proxy.ts` checks for `bvbrc_token` + `bvbrc_user_id` cookies
 - When applicable, use the better-auth stateless functions for auth operations
+- `/api/auth/*` wire contract (envelope shapes, rules, endpoint table): see `docs/auth-api.md`
 
 **Backend communication**
 

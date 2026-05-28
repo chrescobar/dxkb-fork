@@ -70,7 +70,7 @@ All status mapping flows through `statusFor()` in `src/lib/auth/server/errors.ts
 | POST | `/api/auth/change-password` | Ack | `{currentPassword, newPassword}` | `{success: true}` | Yes (cookie) |
 | GET | `/api/auth/profile` | Passthrough | — | upstream profile JSON | Yes (cookie) |
 | POST | `/api/auth/profile` | Ack | JSON Patch array | `{success: true}` | Yes (cookie) |
-| POST | `/api/auth/su-login` | Session | `{targetUser, password}` | `{user, session}` | No |
+| POST | `/api/auth/su-login` | Session | `{targetUser, password}` | `{user, session}` | Yes (cookie) |
 | POST | `/api/auth/su-exit` | Session | — | `{user, session}` | Yes (cookie) |
 | POST | `/api/auth/ensure-workspace` | Exception | — | `{success: true, created, failures}` | Yes (cookie) |
 

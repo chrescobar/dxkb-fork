@@ -253,63 +253,6 @@ function maybeBvBrcWebsite(path: string, request: NextRequest): unknown | null {
   return null;
 }
 
-function maybePubMed(path: string): unknown | null {
-  const segments = path.split("/").filter(Boolean);
-  if (segments[0] !== "pubmed") return null;
-
-  if (segments[1] === "esearch.fcgi") {
-    return {
-      esearchresult: {
-        idlist: ["41000001", "41000002", "41000003", "41000004", "41000005"],
-      },
-    };
-  }
-
-  if (segments[1] === "esummary.fcgi") {
-    return {
-      result: {
-        uids: ["41000001", "41000002", "41000003", "41000004", "41000005"],
-        "41000001": {
-          uid: "41000001",
-          title: "Comparative genomics reveals conserved bacterial stress response pathways",
-          source: "J Bacteriol",
-          sortpubdate: "2026/04/18 00:00",
-          authors: [{ name: "Smith J" }, { name: "Patel R" }],
-        },
-        "41000002": {
-          uid: "41000002",
-          title: "Mobile resistance elements across clinical Enterobacteriaceae isolates",
-          source: "Microb Genom",
-          sortpubdate: "2026/03/27 00:00",
-          authors: [{ name: "Chen L" }, { name: "Garcia M" }],
-        },
-        "41000003": {
-          uid: "41000003",
-          title: "Host-associated bacterial genome variation in public surveillance datasets",
-          source: "Nat Microbiol",
-          sortpubdate: "2026/03/02 00:00",
-          authors: [{ name: "Nguyen T" }, { name: "Khan A" }],
-        },
-        "41000004": {
-          uid: "41000004",
-          title: "Taxonomic breadth of bacterial plasmid annotations in reference genomes",
-          source: "Nucleic Acids Res",
-          sortpubdate: "2026/02/10 00:00",
-          authors: [{ name: "Brown E" }, { name: "Ibrahim S" }],
-        },
-        "41000005": {
-          uid: "41000005",
-          title: "Environmental sampling expands bacterial pangenome diversity estimates",
-          source: "ISME J",
-          sortpubdate: "2026/01/21 00:00",
-          authors: [{ name: "Lopez A" }, { name: "Wilson P" }],
-        },
-      },
-    };
-  }
-
-  return null;
-}
 
 export async function GET(
   request: NextRequest,
@@ -320,8 +263,6 @@ export async function GET(
   logHit("GET", path);
   const bvBrcWebsite = maybeBvBrcWebsite(path, request);
   if (bvBrcWebsite) return NextResponse.json(bvBrcWebsite);
-  const pubMed = maybePubMed(path);
-  if (pubMed) return NextResponse.json(pubMed);
   const solr = maybeSolrCount(path);
   if (solr) return NextResponse.json(solr);
   return NextResponse.json({});

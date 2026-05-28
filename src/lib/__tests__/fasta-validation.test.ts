@@ -1,4 +1,4 @@
-import { cleanFasta, isDNA, validateFasta, validateFastaForBlast, getBlastFastaErrorMessage } from "@/lib/fasta-validation";
+import { cleanFasta, isDNA, validateFasta, validateFastaForBlast, getFastaErrorMessage } from "@/lib/fasta-validation";
 
 describe("FASTA Validation", () => {
   describe("cleanFasta", () => {
@@ -140,7 +140,7 @@ describe("FASTA Validation", () => {
     });
   });
 
-  describe("getBlastFastaErrorMessage", () => {
+  describe("getFastaErrorMessage", () => {
     it("returns nucleotide-specific message for need_dna status", () => {
       const result = {
         valid: false,
@@ -149,7 +149,7 @@ describe("FASTA Validation", () => {
         message: "Too few nucleotide letters on line 2.",
         trimFasta: "",
       };
-      const msg = getBlastFastaErrorMessage(result, "blastn");
+      const msg = getFastaErrorMessage(result, "BLASTN");
       expect(msg).toBe(
         "BLASTN requires nucleotide sequences. Too few nucleotide letters on line 2.",
       );
@@ -163,13 +163,13 @@ describe("FASTA Validation", () => {
         message: 'A fasta record is at least two lines and starts with ">".',
         trimFasta: "",
       };
-      const msg = getBlastFastaErrorMessage(result, "blastn");
+      const msg = getFastaErrorMessage(result, "BLASTN");
       expect(msg).toBe(
         'A fasta record is at least two lines and starts with ">".',
       );
     });
 
-    it("uppercases the input type in the message", () => {
+    it("uses the display name verbatim in the message", () => {
       const result = {
         valid: false,
         status: "need_dna",
@@ -177,8 +177,22 @@ describe("FASTA Validation", () => {
         message: "error",
         trimFasta: "",
       };
-      const msg = getBlastFastaErrorMessage(result, "blastx");
+      const msg = getFastaErrorMessage(result, "BLASTX");
       expect(msg).toContain("BLASTX");
+    });
+
+    it("works with non-BLAST program names", () => {
+      const result = {
+        valid: false,
+        status: "need_dna",
+        numseq: 0,
+        message: "Too few nucleotide letters on line 2.",
+        trimFasta: "",
+      };
+      const msg = getFastaErrorMessage(result, "Subspecies Classification");
+      expect(msg).toBe(
+        "Subspecies Classification requires nucleotide sequences. Too few nucleotide letters on line 2.",
+      );
     });
   });
 

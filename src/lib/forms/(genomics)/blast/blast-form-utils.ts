@@ -3,7 +3,7 @@ import { useStore, type AnyFormApi } from "@tanstack/react-form";
 
 import type { BlastFormData } from "./blast-form-schema";
 import { blastPrecomputedDatabases, blastDatabaseTypes, blastDatabaseTypeMap } from "@/types/services";
-import { validateFastaForBlast, getBlastFastaErrorMessage } from "@/lib/fasta-validation";
+import { validateFastaForBlast } from "@/lib/fasta-validation";
 import type { FastaValidationResult } from "@/lib/fasta-validation";
 
 // Flat partial of all BlastFormData fields — discriminated-union-aware Partial
@@ -55,26 +55,6 @@ export function getDefaultBlastDatabaseType(
   const availableTypes =
     blastDatabaseTypeMap[inputType]?.[dbSource] || blastDatabaseTypes.map((t) => t.value);
   return availableTypes[0] || "fna";
-}
-
-/**
- * Validates FASTA input for BLAST services
- */
-export function validateBlastFastaInput(
-  fastaText: string,
-  inputType: "blastn" | "blastp" | "blastx" | "tblastn",
-): { isValid: boolean; message: string } {
-  if (!fastaText.trim()) {
-    return { isValid: false, message: "FASTA input is required" };
-  }
-
-  const result = validateFastaForBlast(fastaText, inputType);
-  const message = getBlastFastaErrorMessage(result, inputType);
-
-  return {
-    isValid: result.valid,
-    message: result.valid ? "" : message,
-  };
 }
 
 /**

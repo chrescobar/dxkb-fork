@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo } from "react";
 import {
   validateFastaForBlast,
-  getBlastFastaErrorMessage,
+  getFastaErrorMessage,
   FastaValidationResult,
 } from "@/lib/fasta-validation";
 
@@ -71,7 +71,7 @@ export function useFastaValidation({
 
   const errorMessage = useMemo(() => {
     if (!validationResult) return "";
-    return getBlastFastaErrorMessage(validationResult, inputType);
+    return getFastaErrorMessage(validationResult, inputType.toUpperCase());
   }, [validationResult, inputType]);
 
   return {

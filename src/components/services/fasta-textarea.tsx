@@ -6,7 +6,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 import {
   validateFastaForBlast,
-  getBlastFastaErrorMessage,
+  getFastaErrorMessage,
   FastaValidationResult,
 } from "@/lib/fasta-validation";
 
@@ -104,7 +104,7 @@ export const FastaTextarea = React.memo(function FastaTextarea({
       return "";
     }
 
-    return getBlastFastaErrorMessage(validationResult, inputType);
+    return getFastaErrorMessage(validationResult, inputType.toUpperCase());
   };
 
   const errorMessage = getErrorMessage();

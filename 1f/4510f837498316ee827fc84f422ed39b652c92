@@ -1,0 +1,34 @@
+src/lib/fasta-validation.ts
+  s_1bd3c6b393d1ed::t_96863e791ec3d5 214,216,219
+src/hooks/use-fasta-validation.ts
+  s_1bd3c6b393d1ed::t_070e2c435ef17a 6
+  s_1bd3c6b393d1ed::t_c7365ae30eac2f 74
+src/app/services/(viral-tools)/subspecies-classification/page.tsx
+  s_1bd3c6b393d1ed::t_ecd32f92966872 76
+  s_1bd3c6b393d1ed::t_186c56aa596850 80,83
+  s_1bd3c6b393d1ed::t_6a2055920c48c7 42
+src/lib/__tests__/fasta-validation.test.ts
+  s_1bd3c6b393d1ed::t_145918ea9791e9 143,152,166,172,180,183-195
+  s_1bd3c6b393d1ed::t_715fb953d5d2e6 1
+src/lib/forms/(genomics)/blast/blast-form-utils.ts
+  s_1bd3c6b393d1ed::t_33d4f0f956cd0c 6
+src/components/services/fasta-textarea.tsx
+  s_1bd3c6b393d1ed::t_53d5076a564fea 107
+  s_1bd3c6b393d1ed::t_8a2bb67bc42454 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "1f4510f837498316ee827fc84f422ed39b652c92",
+  "prompts": {},
+  "sessions": {
+    "s_1bd3c6b393d1ed": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "da612218-6c6d-44fb-bf17-8ed2bf2918e0",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

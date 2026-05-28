@@ -1,46 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { authAdmin } from "@/lib/auth/server/instance";
+import { respondWithAck } from "@/lib/auth/server/respond";
+import { withErrorHandling } from "@/lib/auth/server/errors";
 
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const verificationToken = searchParams.get("token");
-    const verificationUsername = searchParams.get("username");
-
-    if (!verificationToken || !verificationUsername) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Verification token and username are required",
-        },
-        { status: 400 },
-      );
-    }
-
-    const result = await authAdmin.verifyEmailToken(
-      verificationToken,
-      verificationUsername,
-    );
-
-    if (result.error) {
-      return NextResponse.json(
-        { success: false, message: result.error.message },
-        { status: result.error.status ?? 500 },
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: "Email verified successfully",
-    });
-  } catch (error) {
-    console.error("Email verification error:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Internal server error during email verification",
-      },
-      { status: 500 },
-    );
-  }
-}
+export const GET = withErrorHandling(async (request: NextRequest) => {
+  const { searchParams } = new URL(request.url);
+  return respondWithAck(
+    await authAdmin.verifyEmailToken(
+      searchParams.get("token") ?? "",
+      searchParams.get("username") ?? "",
+    ),
+  );
+});

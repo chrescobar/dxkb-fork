@@ -1,5 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
+import { NextRequest } from "next/server";
 
 const { mockCookieStore } = vi.hoisted(() => ({
   mockCookieStore: { get: vi.fn(), set: vi.fn() },
@@ -141,7 +142,7 @@ describe("POST /api/auth/sign-up/email", () => {
     const data = await response.json();
 
     expect(response.status).toBe(400);
-    expect(data.message).toMatch(/passwords do not match/i);
+    expect(data.error).toMatch(/passwords do not match/i);
     expect(upstreamCalled).toBe(false);
     expect(mockCookieStore.set).not.toHaveBeenCalled();
   });
@@ -161,7 +162,7 @@ describe("POST /api/auth/sign-up/email", () => {
     const data = await response.json();
 
     expect(response.status).toBe(409);
-    expect(data.message).toBe("Username already taken");
+    expect(data.error).toBe("Username already taken");
     expect(mockCookieStore.set).not.toHaveBeenCalled();
   });
 
@@ -253,5 +254,20 @@ describe("POST /api/auth/sign-up/email", () => {
     expect(setNames).toContain("bvbrc_user_id");
 
     consoleErrorSpy.mockRestore();
+  });
+
+  it("returns 400 with a validation error when body is malformed JSON", async () => {
+    const request = new NextRequest("http://localhost:3019/api/auth/sign-up/email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{invalid-json",
+    });
+    const response = await POST(request, {});
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data.error).toMatch(/username.*email.*password are required/i);
+    expect(data.code).toBe("validation");
+    expect(mockCookieStore.set).not.toHaveBeenCalled();
   });
 });

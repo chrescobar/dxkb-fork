@@ -61,7 +61,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
 
         if (!response.ok) {
           const err = await response.json().catch(() => null);
-          toast.error(err?.message || "Failed to update profile.");
+          toast.error(err?.error ?? err?.message ?? "Failed to update profile.");
           return;
         }
 

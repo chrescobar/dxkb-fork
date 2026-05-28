@@ -36,7 +36,7 @@ describe("respondWithSession", () => {
     });
     expect(response.status).toBe(401);
     const body = await response.json();
-    expect(body).toEqual({ message: "bad login" });
+    expect(body).toEqual({ error: "bad login", code: "unauthenticated" });
   });
 
   it("uses explicit status when provided", async () => {
@@ -79,12 +79,12 @@ describe("respondWithAck", () => {
     expect(await response.json()).toEqual({ success: true });
   });
 
-  it("returns { message } with mapped status on error", async () => {
+  it("returns { error, code } with mapped status on error", async () => {
     const response = respondWithAck({
       data: null,
       error: { code: "unauthorized", message: "nope" },
     });
     expect(response.status).toBe(401);
-    expect(await response.json()).toEqual({ message: "nope" });
+    expect(await response.json()).toEqual({ error: "nope", code: "unauthenticated" });
   });
 });

@@ -1,5 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
+import { NextRequest } from "next/server";
 
 const { mockCookieStore } = vi.hoisted(() => ({
   mockCookieStore: { get: vi.fn(), set: vi.fn() },
@@ -61,7 +62,7 @@ describe("POST /api/auth/sign-in/email", () => {
       method: "POST",
       body: { username: "alice", password: "password1234" },
     });
-    const response = await POST(request);
+    const response = await POST(request, {});
     const data = await response.json();
 
     expect(response.status).toBe(200);
@@ -105,11 +106,11 @@ describe("POST /api/auth/sign-in/email", () => {
       method: "POST",
       body: { username: "alice", password: "wrong" },
     });
-    const response = await POST(request);
+    const response = await POST(request, {});
     const data = await response.json();
 
     expect(response.status).toBe(401);
-    expect(data.message).toMatch(/invalid credentials/i);
+    expect(data.error).toMatch(/invalid credentials/i);
     expect(mockCookieStore.set).not.toHaveBeenCalled();
   });
 
@@ -122,7 +123,7 @@ describe("POST /api/auth/sign-in/email", () => {
       method: "POST",
       body: { username: "alice", password: "password1234" },
     });
-    const response = await POST(request);
+    const response = await POST(request, {});
 
     expect(response.status).toBe(503);
     expect(mockCookieStore.set).not.toHaveBeenCalled();
@@ -141,12 +142,27 @@ describe("POST /api/auth/sign-in/email", () => {
       method: "POST",
       body: { username: "alice" },
     });
-    const response = await POST(request);
+    const response = await POST(request, {});
     const data = await response.json();
 
     expect(response.status).toBe(400);
-    expect(data.message).toMatch(/username and password are required/i);
+    expect(data.error).toMatch(/username and password are required/i);
     expect(upstreamCalled).toBe(false);
+    expect(mockCookieStore.set).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 with a validation error when body is malformed JSON", async () => {
+    const request = new NextRequest("http://localhost:3019/api/auth/sign-in/email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{invalid-json",
+    });
+    const response = await POST(request, {});
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data.error).toMatch(/username and password are required/i);
+    expect(data.code).toBe("validation");
     expect(mockCookieStore.set).not.toHaveBeenCalled();
   });
 });

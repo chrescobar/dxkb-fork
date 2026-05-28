@@ -31,9 +31,9 @@ async function errorFromResponse(
   response: Response,
   fallback: string,
 ): Promise<AuthError> {
-  const body = (await response.json().catch(() => ({}))) as { message?: string };
+  const body = (await response.json().catch(() => ({}))) as { error?: string; message?: string };
   return {
-    message: body.message ?? fallback,
+    message: body.error ?? body.message ?? fallback,
     code: codeFromStatus(response.status),
     status: response.status,
   };

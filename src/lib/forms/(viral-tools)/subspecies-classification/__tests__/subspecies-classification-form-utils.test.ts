@@ -1,60 +1,8 @@
 vi.mock("./subspecies-classification-form-schema", () => ({}));
-vi.mock("@/lib/fasta-validation", () => ({
-  validateFasta: vi.fn(() => ({
-    valid: true,
-    message: "",
-    status: "valid_dna",
-  })),
-}));
 
 import {
-  getSubspeciesFastaMessage,
   transformSubspeciesClassificationParams,
 } from "../subspecies-classification-form-utils";
-
-describe("getSubspeciesFastaMessage", () => {
-  it("prefixes message with program name when status is need_dna", () => {
-    const result = getSubspeciesFastaMessage({
-      valid: false,
-      message: "Protein sequences detected.",
-      status: "need_dna",
-    } as never);
-
-    expect(result).toBe(
-      "Subspecies Classification requires nucleotide sequences. Protein sequences detected.",
-    );
-  });
-
-  it("returns message as-is for valid_dna status", () => {
-    const result = getSubspeciesFastaMessage({
-      valid: true,
-      message: "Valid FASTA sequence.",
-      status: "valid_dna",
-    } as never);
-
-    expect(result).toBe("Valid FASTA sequence.");
-  });
-
-  it("returns message as-is for other statuses", () => {
-    const result = getSubspeciesFastaMessage({
-      valid: false,
-      message: "Invalid format.",
-      status: "invalid",
-    } as never);
-
-    expect(result).toBe("Invalid format.");
-  });
-
-  it("returns empty message when message is empty and status is not need_dna", () => {
-    const result = getSubspeciesFastaMessage({
-      valid: true,
-      message: "",
-      status: "valid_dna",
-    } as never);
-
-    expect(result).toBe("");
-  });
-});
 
 describe("transformSubspeciesClassificationParams", () => {
   const baseData = {

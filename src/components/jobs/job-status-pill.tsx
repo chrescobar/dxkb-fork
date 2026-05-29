@@ -26,8 +26,8 @@ function formatJobTime(job: JobListItem): string {
     return formatElapsedSeconds(job.elapsed_time);
   }
   if (job.completed_time) {
-    const secondsAgo = Math.floor((Date.now() - new Date(job.completed_time).getTime()) / 1000);
-    if (secondsAgo >= 0 && secondsAgo < 60) return "just now";
+    const secondsAgo = Math.max(0, Math.floor((Date.now() - new Date(job.completed_time).getTime()) / 1000));
+    if (secondsAgo < 60) return "just now";
     if (secondsAgo < 3600) return `${Math.floor(secondsAgo / 60)}m ago`;
     if (secondsAgo < 86400) return `${Math.floor(secondsAgo / 3600)}h ago`;
     return `${Math.floor(secondsAgo / 86400)}d ago`;

@@ -2,17 +2,13 @@
 
 import { useCallback, useMemo } from "react";
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
-import {
-  toWorkspaceItem,
-  type WorkspaceItem,
-} from "@/lib/services/workspace/domain";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import type { ListPermissionsResult } from "@/lib/services/workspace/domain";
 import { workspaceQueryKeys } from "@/lib/services/workspace/workspace-query-keys";
 import { buildHomePath } from "@/lib/services/workspace/path-utils";
 import { safeDecode } from "@/lib/url";
 import type { WorkspaceRepository } from "@/lib/services/workspace/workspace-repository";
 import { useWorkspaceRepository } from "@/contexts/workspace-repository-context";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
 
 /**
  * Discriminated mode describing what the browser wants to show. Keep these
@@ -277,9 +273,3 @@ export function useWorkspaceDirectory(
   };
 }
 
-/** Helper used during migration: converts an incoming `WorkspaceBrowserItem` list to canonical items. */
-export function browserItemsToCanonical(
-  items: WorkspaceBrowserItem[],
-): WorkspaceItem[] {
-  return items.map(toWorkspaceItem);
-}

@@ -1,5 +1,5 @@
 import { renderHook, act } from "@testing-library/react";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { useWorkspaceSelection } from "@/hooks/services/workspace/use-workspace-selection";
 
 vi.mock("@/lib/workspace/table-selection", () => ({
@@ -11,18 +11,18 @@ vi.mock("@/lib/workspace/table-selection", () => ({
 }));
 
 const makeItem = (
-  overrides: Partial<WorkspaceBrowserItem>,
-): WorkspaceBrowserItem =>
+  overrides: Partial<WorkspaceItem>,
+): WorkspaceItem =>
   ({
     name: "file.txt",
     path: "/test/file.txt",
     type: "contigs",
     ...overrides,
-  }) as WorkspaceBrowserItem;
+  }) as WorkspaceItem;
 
 describe("useWorkspaceSelection", () => {
   const defaultProps = {
-    processedItems: [] as WorkspaceBrowserItem[],
+    processedItems: [] as WorkspaceItem[],
     panelManuallyHidden: false,
     setPanelExpanded: vi.fn(),
   };
@@ -78,8 +78,8 @@ describe("useWorkspaceSelection", () => {
   });
 
   it("syncs selected items when processedItems reference changes", () => {
-    const itemV1 = makeItem({ name: "data.txt", path: "/test/data.txt", size: 100 } as Partial<WorkspaceBrowserItem>);
-    const itemV2 = makeItem({ name: "data.txt", path: "/test/data.txt", size: 200 } as Partial<WorkspaceBrowserItem>);
+    const itemV1 = makeItem({ name: "data.txt", path: "/test/data.txt", size: 100 } as Partial<WorkspaceItem>);
+    const itemV2 = makeItem({ name: "data.txt", path: "/test/data.txt", size: 200 } as Partial<WorkspaceItem>);
 
     const initialProps = {
       ...defaultProps,

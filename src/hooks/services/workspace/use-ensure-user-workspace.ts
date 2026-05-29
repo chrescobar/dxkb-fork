@@ -45,10 +45,11 @@ export function useEnsureUserWorkspace(
       });
       if (!response.ok) {
         const body = (await response.json().catch(() => ({}))) as {
+          error?: string;
           message?: string;
         };
         throw new Error(
-          body.message || `ensure-workspace failed (${response.status})`,
+          body.error ?? body.message ?? `ensure-workspace failed (${response.status})`,
         );
       }
       return response.json();

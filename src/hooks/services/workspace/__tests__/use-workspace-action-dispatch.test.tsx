@@ -1,7 +1,7 @@
 import { renderHook, act, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { InMemoryWorkspaceRepository } from "@/lib/services/workspace/adapters/in-memory-workspace-repository";
 import { WorkspaceRepositoryProvider } from "@/contexts/workspace-repository-context";
 import { useWorkspaceActionDispatch } from "@/hooks/services/workspace/use-workspace-action-dispatch";
@@ -43,7 +43,7 @@ vi.mock("@/lib/services/workspace/favorites", () => ({
 
 vi.mock("@/lib/services/workspace/helpers", () => ({
   expandDownloadPaths: vi.fn(
-    (downloadable: WorkspaceBrowserItem[]) =>
+    (downloadable: WorkspaceItem[]) =>
       downloadable.map((item) => item.path),
   ),
   getSiblingJobResultPathForDotFolder: vi.fn(() => null),
@@ -58,24 +58,21 @@ vi.mock("@/lib/services/workspace/utils", () => ({
 }));
 
 const makeItem = (
-  overrides: Partial<WorkspaceBrowserItem>,
-): WorkspaceBrowserItem =>
+  overrides: Partial<WorkspaceItem>,
+): WorkspaceItem =>
   ({
     id: "test-id",
     name: "file.txt",
     path: "/user@bvbrc/home/file.txt",
     type: "contigs",
-    creation_time: "2025-01-01T00:00:00Z",
-    link_reference: "",
-    owner_id: "user@bvbrc",
+    createdAt: "2025-01-01T00:00:00Z",
+    linkReference: "",
+    ownerId: "user@bvbrc",
     size: 100,
-    userMeta: {},
-    autoMeta: {},
-    user_permission: "rw",
-    global_permission: "n",
+    permissions: { user: "rw", global: "n" },
     timestamp: 0,
     ...overrides,
-  }) as WorkspaceBrowserItem;
+  }) as WorkspaceItem;
 
 describe("useWorkspaceActionDispatch", () => {
   function createDefaultOptions() {
@@ -88,7 +85,7 @@ describe("useWorkspaceActionDispatch", () => {
           mutations: { retry: false },
         },
       }),
-      items: [] as WorkspaceBrowserItem[],
+      items: [] as WorkspaceItem[],
     };
   }
 

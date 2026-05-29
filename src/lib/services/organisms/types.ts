@@ -23,15 +23,6 @@ export interface OrganismGenusFacet {
 
 export type OrganismMetadataFacets = Record<string, OrganismGenusFacet[]>;
 
-export interface OrganismPubMedArticle {
-  pmid: string;
-  title: string;
-  authors: string[];
-  journal: string;
-  date: string;
-  url: string;
-}
-
 export interface OrganismFetchOptions {
   signal?: AbortSignal;
 }

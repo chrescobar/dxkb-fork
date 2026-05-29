@@ -42,7 +42,7 @@ export function PasswordChangeForm() {
 
         if (!response.ok) {
           const err = await response.json().catch(() => null);
-          toast.error(err?.message || "Failed to change password.");
+          toast.error(err?.error ?? err?.message ?? "Failed to change password.");
           return;
         }
 

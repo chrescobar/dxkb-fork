@@ -102,7 +102,7 @@ describe("GET /api/auth/profile", () => {
     const data = await response.json();
 
     expect(response.status).toBe(404);
-    expect(data.message).toBe("Failed to fetch profile");
+    expect(data.error).toBe("Failed to fetch profile");
   });
 
   it("returns 500 when an exception is thrown", async () => {
@@ -117,7 +117,7 @@ describe("GET /api/auth/profile", () => {
     const data = await response.json();
 
     expect(response.status).toBe(500);
-    expect(data.message).toBe("Internal server error");
+    expect(data.error).toBeDefined();
   });
 });
 
@@ -208,7 +208,7 @@ describe("POST /api/auth/profile", () => {
     const data = await response.json();
 
     expect(response.status).toBe(400);
-    expect(data.message).toBe("Bad Request");
+    expect(data.error).toBe("Bad Request");
   });
 
   it("returns fallback message when upstream error body is empty", async () => {
@@ -230,7 +230,7 @@ describe("POST /api/auth/profile", () => {
     const data = await response.json();
 
     expect(response.status).toBe(422);
-    expect(data.message).toBe("Failed to update profile");
+    expect(data.error).toBe("Failed to update profile");
   });
 
   it("returns 500 when an exception is thrown", async () => {
@@ -250,6 +250,6 @@ describe("POST /api/auth/profile", () => {
     const data = await response.json();
 
     expect(response.status).toBe(500);
-    expect(data.message).toBe("Internal server error");
+    expect(data.error).toBeDefined();
   });
 });

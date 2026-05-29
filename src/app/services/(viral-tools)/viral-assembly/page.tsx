@@ -61,7 +61,7 @@ import type { WorkspaceObject } from "@/lib/services/workspace/types";
 const tutorial =
   "https://www.bv-brc.org/docs/tutorial/viral_assembly/assembly.html";
 
-export const ViralAssemblyPage = function ViralAssemblyPage() {
+const ViralAssemblyPage = function ViralAssemblyPage() {
   const form = useForm({
     defaultValues: defaultViralAssemblyFormValues as ViralAssemblyFormData,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,15 +1,14 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { useWorkspaceRepository } from "@/contexts/workspace-repository-context";
-import { toWorkspaceBrowserItem } from "@/lib/services/workspace/domain";
 import { workspaceQueryKeys } from "@/lib/services/workspace/workspace-query-keys";
 
 interface UseSharedWithUserOptions {
   username: string;
   enabled?: boolean;
-  initialData?: WorkspaceBrowserItem[];
+  initialData?: WorkspaceItem[];
 }
 
 export function useSharedWithUser({
@@ -19,19 +18,17 @@ export function useSharedWithUser({
 }: UseSharedWithUserOptions) {
   const repository = useWorkspaceRepository("authenticated");
 
-  return useQuery<WorkspaceBrowserItem[], Error>({
+  return useQuery<WorkspaceItem[], Error>({
     queryKey: workspaceQueryKeys.sharedRoot(username),
     queryFn: async () => {
       const items = await repository.listDirectory({ path: "/" });
-      return items
-        .filter((item) => {
-          const globalPermission = item.permissions?.global ?? "";
-          const userPermission = item.permissions?.user ?? "";
-          if (globalPermission !== "n") return false;
-          if (userPermission === "o" && globalPermission === "n") return false;
-          return true;
-        })
-        .map(toWorkspaceBrowserItem);
+      return items.filter((item) => {
+        const globalPermission = item.permissions?.global ?? "";
+        const userPermission = item.permissions?.user ?? "";
+        if (globalPermission !== "n") return false;
+        if (userPermission === "o" && globalPermission === "n") return false;
+        return true;
+      });
     },
     enabled: enabled && !!username,
     initialData,
@@ -42,7 +39,7 @@ export function useSharedWithUser({
 interface UseUserWorkspacesOptions {
   username: string;
   enabled?: boolean;
-  initialData?: WorkspaceBrowserItem[];
+  initialData?: WorkspaceItem[];
 }
 
 export function useUserWorkspaces({
@@ -52,15 +49,14 @@ export function useUserWorkspaces({
 }: UseUserWorkspacesOptions) {
   const repository = useWorkspaceRepository("authenticated");
 
-  return useQuery<WorkspaceBrowserItem[], Error>({
+  return useQuery<WorkspaceItem[], Error>({
     queryKey: workspaceQueryKeys.userRoot(username),
     queryFn: async () => {
       const decoded = decodeURIComponent(username);
       const userSegment = decoded.includes("@")
         ? decoded
         : `${decoded}@bvbrc`;
-      const items = await repository.listDirectory({ path: `/${userSegment}` });
-      return items.map(toWorkspaceBrowserItem);
+      return repository.listDirectory({ path: `/${userSegment}` });
     },
     enabled: enabled && !!username,
     initialData,

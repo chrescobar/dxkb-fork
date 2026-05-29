@@ -105,7 +105,7 @@ describe("WorkspaceApiClient", () => {
       expect(result).toEqual([]);
     });
 
-    it("processes Workspace.ls results through metaListToObj", async () => {
+    it("processes Workspace.ls results through parseTupleToRawObject", async () => {
       const lsResult = [
         {
           "/user/home/": [

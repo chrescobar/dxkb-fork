@@ -1,5 +1,5 @@
 import { WorkspaceMethod } from "./types";
-import { metaListToObj } from "./helpers";
+import { parseTupleToRawObject } from "./adapters/parsers";
 
 /**
  * Base client for making JSON-RPC requests to the Workspace API
@@ -126,7 +126,7 @@ export class WorkspaceApiClient {
 
       // Map results using metaListToObj (same as original)
       res = res.map((r: unknown) => {
-        return metaListToObj(r as unknown[]);
+        return parseTupleToRawObject(r as unknown[]);
       });
 
       // Hidden files/folders (names starting with .) are not filtered here;

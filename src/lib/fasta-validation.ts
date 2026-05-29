@@ -211,15 +211,12 @@ export function validateFastaForBlast(
   return validateFasta(fastaText, expectedSeqType);
 }
 
-/**
- * Gets appropriate error message for BLAST program requirements
- */
-export function getBlastFastaErrorMessage(
+export function getFastaErrorMessage(
   validationResult: FastaValidationResult,
-  inputType: string,
+  programDisplayName: string,
 ): string {
   if (validationResult.status === "need_dna") {
-    return `${inputType.toUpperCase()} requires nucleotide sequences. ${validationResult.message}`;
+    return `${programDisplayName} requires nucleotide sequences. ${validationResult.message}`;
   }
 
   return validationResult.message;

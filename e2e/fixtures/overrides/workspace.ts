@@ -36,8 +36,8 @@ export const mockWorkspaceItems = [
 ];
 
 /**
- * Matches the tuple shape parsed by `metaListToObj` in
- * src/lib/services/workspace/helpers.ts: [name, type, parent, creation_time, id, owner_id, size,
+ * Matches the tuple shape parsed by `parseTupleToRawObject` in
+ * src/lib/services/workspace/adapters/parsers.ts: [name, type, parent, creation_time, id, owner_id, size,
  * userMeta, autoMeta, user_perm, global_perm, link_reference].
  */
 export interface TupleItem {

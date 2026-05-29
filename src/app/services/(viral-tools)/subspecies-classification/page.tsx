@@ -39,10 +39,7 @@ import {
   subspeciesVirusTypeOptions,
   type SubspeciesClassificationFormData,
 } from "@/lib/forms/(viral-tools)/subspecies-classification/subspecies-classification-form-schema";
-import {
-  validateSubspeciesFasta,
-  getSubspeciesFastaMessage,
-} from "@/lib/forms/(viral-tools)/subspecies-classification/subspecies-classification-form-utils";
+import { validateFasta, getFastaErrorMessage } from "@/lib/fasta-validation";
 import { subspeciesClassificationService } from "@/lib/forms/(viral-tools)/subspecies-classification/subspecies-classification-service";
 
 import type { WorkspaceObject } from "@/lib/services/workspace/types";
@@ -76,14 +73,14 @@ export default function SubspeciesClassificationPage() {
   const handleFastaBlur = useCallback(() => {
     const value = form.state.values.input_fasta_data ?? "";
     if (!value.trim()) return;
-    const result = validateSubspeciesFasta(value);
+    const result = validateFasta(value, "dna");
     if (!result.valid) {
       form.setFieldMeta("input_fasta_data", (prev) => ({
         ...prev,
-        errors: [getSubspeciesFastaMessage(result)],
+        errors: [getFastaErrorMessage(result, "Subspecies Classification")],
         errorMap: {
           ...prev.errorMap,
-          onChange: getSubspeciesFastaMessage(result),
+          onChange: getFastaErrorMessage(result, "Subspecies Classification"),
         },
       }));
     } else {

@@ -10,7 +10,7 @@ import {
 import { InMemoryWorkspaceRepository } from "@/lib/services/workspace/adapters/in-memory-workspace-repository";
 import { WorkspaceApiError } from "@/lib/services/workspace/domain";
 import { WorkspaceRepositoryProvider } from "@/contexts/workspace-repository-context";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import {
   useWorkspaceDialogHandlers,
   type UseWorkspaceDialogHandlersOptions,
@@ -57,24 +57,21 @@ vi.mock("@/lib/utils", () => ({
 }));
 
 const makeItem = (
-  overrides: Partial<WorkspaceBrowserItem>,
-): WorkspaceBrowserItem =>
+  overrides: Partial<WorkspaceItem>,
+): WorkspaceItem =>
   ({
     id: "item-1",
     name: "file.txt",
     path: "/testuser/home/file.txt",
     type: "contigs",
-    creation_time: "2025-01-01",
-    link_reference: "",
-    owner_id: "testuser",
+    createdAt: "2025-01-01",
+    linkReference: "",
+    ownerId: "testuser",
     size: 100,
-    userMeta: {},
-    autoMeta: {},
-    user_permission: "o",
-    global_permission: "n",
+    permissions: { user: "o", global: "n" },
     timestamp: 0,
     ...overrides,
-  }) as WorkspaceBrowserItem;
+  }) as WorkspaceItem;
 
 function defaultOptions(
   overrides?: Partial<UseWorkspaceDialogHandlersOptions>,

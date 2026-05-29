@@ -16,6 +16,39 @@ describe("InMemoryWorkspaceRepository", () => {
     expect(items[0]?.path).toBe("/user@bvbrc/home/a.fa");
   });
 
+  it("returns WorkspaceItem with camelCase fields from fixture", async () => {
+    const repo = new InMemoryWorkspaceRepository({
+      directories: {
+        "/user@bvbrc/home": [
+          {
+            name: "data.fa",
+            type: "contigs",
+            ownerId: "owner@bvbrc",
+            createdAt: "2026-01-01T00:00:00Z",
+            userPermission: "w",
+            globalPermission: "n",
+            size: 512,
+          },
+        ],
+      },
+    });
+    const [item] = await repo.listDirectory({ path: "/user@bvbrc/home" });
+    expect(item).toEqual(
+      expect.objectContaining({
+        name: "data.fa",
+        type: "contigs",
+        ownerId: "owner@bvbrc",
+        createdAt: "2026-01-01T00:00:00Z",
+        size: 512,
+        permissions: { user: "w", global: "n" },
+      }),
+    );
+    // Verify no snake_case fields bleed through
+    expect(item).not.toHaveProperty("owner_id");
+    expect(item).not.toHaveProperty("creation_time");
+    expect(item).not.toHaveProperty("user_permission");
+  });
+
   it("filters listDirectory by query.type and query.name", async () => {
     const repo = new InMemoryWorkspaceRepository({
       directories: {

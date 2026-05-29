@@ -9,10 +9,10 @@ import { Button } from "@/components/ui/button";
 import { triggerDownload } from "@/lib/utils";
 import { formatFileSize } from "@/lib/services/workspace/helpers";
 import { getProxyUrl } from "@/components/workspace/file-viewer/file-viewer-registry";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 interface WorkspaceItemHeaderProps {
-  item: WorkspaceBrowserItem;
+  item: WorkspaceItem;
   onClose?: () => void;
   children?: React.ReactNode;
 }

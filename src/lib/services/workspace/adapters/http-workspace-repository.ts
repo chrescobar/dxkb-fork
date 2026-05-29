@@ -14,9 +14,7 @@ import type {
   WorkspaceMetadata,
   WorkspaceReadOptions,
 } from "../domain";
-import { toWorkspaceItem } from "../domain";
 import { parseWorkspaceGetSingle } from "../helpers";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
 import type {
   ArchiveRequest,
   ArchiveResult,
@@ -25,7 +23,6 @@ import type {
   WorkspaceRepository,
 } from "../workspace-repository";
 import {
-  lsToWorkspaceItems,
   parseDuResult,
   parseListPermissions,
   parseLsResult,
@@ -65,8 +62,7 @@ export class HttpWorkspaceRepository implements WorkspaceRepository {
       baseUrl: this.baseUrl,
       silent,
     });
-    const items = parseLsResult(rawResult, path);
-    return lsToWorkspaceItems(items);
+    return parseLsResult(rawResult, path);
   }
 
   async getMetadata(
@@ -291,12 +287,12 @@ export class HttpWorkspaceRepository implements WorkspaceRepository {
       baseUrl: this.baseUrl,
     });
 
-    let items: WorkspaceBrowserItem[] = parseLsResult(rawResult, fullPath);
+    let items = parseLsResult(rawResult, fullPath);
     if (input.types && input.types.length > 0) {
       const allowed = new Set(input.types);
       items = items.filter((obj) => allowed.has(obj.type));
     }
-    return items.map(toWorkspaceItem);
+    return items;
   }
 
   async diskUsage(

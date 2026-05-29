@@ -14,13 +14,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { WorkspaceMiniBrowser } from "./workspace-mini-browser";
-import { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { isFolder } from "@/lib/services/workspace/utils";
 
 export interface CopyToDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  sourceItems: WorkspaceBrowserItem[];
+  sourceItems: WorkspaceItem[];
   currentUserWorkspaceRoot: string;
   onConfirm: (destinationPath: string, filenameOverride?: string) => Promise<void>;
   isCopying: boolean;

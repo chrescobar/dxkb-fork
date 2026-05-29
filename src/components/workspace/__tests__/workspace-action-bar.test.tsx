@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { WorkspaceActionBar } from "../workspace-action-bar";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 vi.mock("@/components/ui/button", () => ({
   Button: ({
@@ -59,20 +59,19 @@ vi.mock("lucide-react", () => {
 });
 
 const makeItem = (
-  overrides?: Partial<WorkspaceBrowserItem>,
-): WorkspaceBrowserItem =>
+  overrides?: Partial<WorkspaceItem>,
+): WorkspaceItem =>
   ({
     id: "id-1",
     path: "/user/home/data.fasta",
     name: "data.fasta",
     type: "contigs",
     size: 1024,
-    creation_time: "2024-01-01",
-    owner_id: "user@bvbrc",
-    user_permission: "o",
-    global_permission: "n",
+    createdAt: "2024-01-01",
+    ownerId: "user@bvbrc",
+    permissions: { user: "o", global: "n" },
     ...overrides,
-  }) as WorkspaceBrowserItem;
+  }) as WorkspaceItem;
 
 const defaultProps = {
   workspaceGuideUrl: "https://example.com/guide",

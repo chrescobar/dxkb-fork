@@ -12,29 +12,9 @@ import type {
   JobResultSysMeta,
 } from "./types";
 import { isFolder, isFolderType } from "./utils";
-import type {
-  WorkspaceBrowserItem,
-  WorkspaceBrowserSort,
-} from "@/types/workspace-browser";
+import type { WorkspaceItem } from "./domain";
+import type { WorkspaceSortConfig } from "@/types/workspace-browser";
 import { hasWorkspaceWritePermission } from "./path-utils";
-
-export function metaListToObj(list: unknown[]) {
-  return {
-    id: list[4],
-    path: String(list[2] ?? "") + String(list[0] ?? ""),
-    name: list[0],
-    type: list[1],
-    creation_time: list[3],
-    link_reference: list[11],
-    owner_id: list[5],
-    size: Number(list[6]) || 0,
-    userMeta: list[7],
-    autoMeta: list[8],
-    user_permission: list[9],
-    global_permission: list[10],
-    timestamp: Date.parse(String(list[3])),
-  };
-}
 
 /**
  * Parse raw Workspace.get result for a single path into ResolvedPathObject.
@@ -140,27 +120,22 @@ export function validateWorkspaceObjectTypes(types: string[]): {
   return { valid, invalid };
 }
 
-export function hasWriteAccess(item: WorkspaceBrowserItem): boolean {
+export function hasWriteAccess(item: WorkspaceItem): boolean {
   return hasWorkspaceWritePermission(
-    item.user_permission,
-    item.global_permission,
+    item.permissions?.user,
+    item.permissions?.global,
   );
 }
 
 export function sortItems(
-  items: WorkspaceBrowserItem[],
-  sort: WorkspaceBrowserSort,
-): WorkspaceBrowserItem[] {
+  items: WorkspaceItem[],
+  sort: WorkspaceSortConfig,
+): WorkspaceItem[] {
   return [...items].sort((a, b) => {
     const aIsFolder = isFolderType(a.type);
     const bIsFolder = isFolderType(b.type);
 
     if (aIsFolder !== bIsFolder) return aIsFolder ? -1 : 1;
-
-    // Uncomment to mix folders with other items when sorting
-    // if (sort.field !== "name" && sort.field !== "type") {
-    //   if (aIsFolder !== bIsFolder) return aIsFolder ? -1 : 1;
-    // }
 
     let comparison = 0;
     switch (sort.field) {
@@ -172,10 +147,10 @@ export function sortItems(
       case "size":
         comparison = (a.size ?? 0) - (b.size ?? 0);
         break;
-      case "owner_id":
-        comparison = (a.owner_id ?? "").localeCompare(b.owner_id ?? "");
+      case "ownerId":
+        comparison = (a.ownerId ?? "").localeCompare(b.ownerId ?? "");
         break;
-      case "creation_time":
+      case "createdAt":
         comparison = (a.timestamp ?? 0) - (b.timestamp ?? 0);
         break;
       case "type":
@@ -245,9 +220,7 @@ export function dedupeKeepOrder(values: string[]): string[] {
  * Returns normalized paths for items that are folders (type folder/directory/modelfolder).
  * Used to know which paths to check for "non-empty" when confirming delete.
  */
-export function getFolderPathsFromItems(
-  items: WorkspaceBrowserItem[],
-): string[] {
+export function getFolderPathsFromItems(items: WorkspaceItem[]): string[] {
   const paths: string[] = [];
   for (const item of items) {
     if (!item.path || !isFolder(item.type)) continue;
@@ -263,7 +236,7 @@ export function getFolderPathsFromItems(
  */
 export async function getNonEmptyFolderPaths(
   folderPaths: string[],
-  listFolder: (path: string) => Promise<WorkspaceBrowserItem[]>,
+  listFolder: (path: string) => Promise<WorkspaceItem[]>,
   options?: { signal?: AbortSignal },
 ): Promise<string[]> {
   if (options?.signal?.aborted) {
@@ -280,7 +253,6 @@ export async function getNonEmptyFolderPaths(
         return listing.length > 0 ? folderPath : null;
       } catch (err) {
         if (err instanceof DOMException && err.name === "AbortError") throw err;
-        // Treat fetch failure as empty so the dialog is not blocked
         return null;
       }
     }),
@@ -295,7 +267,7 @@ export async function getNonEmptyFolderPaths(
  */
 export function getSiblingJobResultPathForDotFolder(
   dotFolderPath: string,
-  items: WorkspaceBrowserItem[],
+  items: WorkspaceItem[],
 ): string | null {
   const normalized = normalizeWsPath(dotFolderPath);
   if (!normalized) return null;
@@ -320,8 +292,8 @@ export function getSiblingJobResultPathForDotFolder(
  * handling job_result dot-folders and sibling job_result paths. Returns deduplicated paths.
  */
 export function expandDownloadPaths(
-  downloadableItems: WorkspaceBrowserItem[],
-  items: WorkspaceBrowserItem[],
+  downloadableItems: WorkspaceItem[],
+  items: WorkspaceItem[],
 ): string[] {
   const expandedPaths = downloadableItems.flatMap((item) => {
     const p = normalizeWsPath(item.path ?? "");
@@ -357,7 +329,7 @@ export interface EnsureDestinationWriteAccessResult {
  */
 export async function ensureDestinationWriteAccess(
   destinationPath: string,
-  listFolder: (path: string) => Promise<WorkspaceBrowserItem[]>,
+  listFolder: (path: string) => Promise<WorkspaceItem[]>,
 ): Promise<EnsureDestinationWriteAccessResult> {
   const normalized = normalizeWsPath(destinationPath);
   const lastSlash = normalized.lastIndexOf("/");
@@ -381,7 +353,6 @@ export async function ensureDestinationWriteAccess(
       return { ok: true };
     }
 
-    // Destination is a new name (not in listing); check write access on the parent.
     if (parentPath === "/" || !parentPath) {
       return {
         ok: false,

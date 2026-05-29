@@ -8,7 +8,6 @@
  * below.
  */
 
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
 import type { ResolvedPathObject, WorkspaceObject } from "./types";
 import { isFolder, isFolderType, normalizeWorkspaceObjectType } from "./utils";
 
@@ -27,7 +26,7 @@ export interface WorkspaceItemPermissions {
   global?: string;
 }
 
-export type WorkspaceItemRaw = WorkspaceBrowserItem | ResolvedPathObject;
+export type WorkspaceItemRaw = ResolvedPathObject | Record<string, unknown>;
 export type WorkspaceMetadataRaw = unknown[] | null;
 
 /**
@@ -172,72 +171,6 @@ export function normalizeWorkspaceType(type: string): string {
 // --------------------
 // Conversions
 // --------------------
-
-/** Convert a `WorkspaceBrowserItem` (raw ls tuple) into a canonical `WorkspaceItem`. */
-export function toWorkspaceItem(item: WorkspaceBrowserItem): WorkspaceItem {
-  return {
-    id: String(item.id ?? ""),
-    name: String(item.name ?? ""),
-    path: String(item.path ?? ""),
-    type: String(item.type ?? ""),
-    size: Number(item.size ?? 0),
-    ownerId: item.owner_id ? String(item.owner_id) : undefined,
-    createdAt: item.creation_time ? String(item.creation_time) : undefined,
-    timestamp: typeof item.timestamp === "number" ? item.timestamp : undefined,
-    permissions: {
-      user: item.user_permission ? String(item.user_permission) : undefined,
-      global: item.global_permission
-        ? String(item.global_permission)
-        : undefined,
-    },
-    userMeta: item.userMeta,
-    autoMeta: item.autoMeta,
-    linkReference: item.link_reference
-      ? String(item.link_reference)
-      : undefined,
-    raw: item,
-  };
-}
-
-function isWorkspaceBrowserRaw(
-  raw: WorkspaceItemRaw | undefined,
-): raw is WorkspaceBrowserItem {
-  return (
-    !!raw &&
-    typeof raw === "object" &&
-    ("autoMeta" in raw ||
-      "user_permission" in raw ||
-      "global_permission" in raw)
-  );
-}
-
-/**
- * Convert a canonical `WorkspaceItem` back into the transport-shaped
- * `WorkspaceBrowserItem`. Used during migration while some components still
- * consume the old model.
- */
-export function toWorkspaceBrowserItem(
-  item: WorkspaceItem,
-): WorkspaceBrowserItem {
-  if (isWorkspaceBrowserRaw(item.raw)) {
-    return item.raw;
-  }
-  return {
-    id: item.id,
-    path: item.path,
-    name: item.name,
-    type: item.type,
-    creation_time: item.createdAt ?? "",
-    link_reference: item.linkReference ?? "",
-    owner_id: item.ownerId ?? "",
-    size: item.size,
-    userMeta: item.userMeta ?? {},
-    autoMeta: item.autoMeta ?? {},
-    user_permission: item.permissions?.user ?? "",
-    global_permission: item.permissions?.global ?? "",
-    timestamp: item.timestamp ?? 0,
-  };
-}
 
 /**
  * Convert a canonical `WorkspaceItem` into the legacy `WorkspaceObject` shape.

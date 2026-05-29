@@ -4,10 +4,10 @@ import { useMemo, useCallback } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { WorkspaceItemIcon, type FolderIconVariant } from "./workspace-item-icon";
 import type {
-  WorkspaceBrowserItem,
   SortField,
-  WorkspaceBrowserSort,
+  WorkspaceSortConfig,
 } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { formatFileSize, formatDate, formatOwner } from "@/lib/services/workspace/helpers";
 import { isFolderType } from "@/lib/services/workspace/utils";
 
@@ -15,14 +15,14 @@ import { isFolderType } from "@/lib/services/workspace/utils";
 export const columnClassMap: Record<string, string> = {
   name: "",
   size: "",
-  owner_id: "hidden md:table-cell",
-  creation_time: "hidden sm:table-cell",
+  ownerId: "hidden md:table-cell",
+  createdAt: "hidden sm:table-cell",
   members: "",
   type: "hidden lg:table-cell",
 };
 
 export function formatMemberCount(count: number): string {
-  if (count <= 0) return "\u2014";
+  if (count <= 0) return "—";
   if (count === 1) return "Only me";
   return `${count} members`;
 }
@@ -30,8 +30,8 @@ export function formatMemberCount(count: number): string {
 const emptyFavorites: string[] = [];
 
 export function useWorkspaceColumns(
-  sort: WorkspaceBrowserSort,
-  onSortChange: (sort: WorkspaceBrowserSort) => void,
+  sort: WorkspaceSortConfig,
+  onSortChange: (sort: WorkspaceSortConfig) => void,
   memberCountByPath: Record<string, number> | undefined,
   favoritePaths: string[] = emptyFavorites,
 ) {
@@ -50,7 +50,7 @@ export function useWorkspaceColumns(
     [sort.field, sort.direction, onSortChange],
   );
 
-  const columns = useMemo<ColumnDef<WorkspaceBrowserItem>[]>(() => {
+  const columns = useMemo<ColumnDef<WorkspaceItem>[]>(() => {
     const favoriteSet = new Set(favoritePaths);
     return [
       {
@@ -62,7 +62,7 @@ export function useWorkspaceColumns(
           const isNavigable = isFolderType(item.type);
           let variant: FolderIconVariant = "default";
           if (isNavigable) {
-            if (item.global_permission === "r") variant = "public";
+            if (item.permissions?.global === "r") variant = "public";
             else if (favoriteSet.has(item.path)) variant = "favorite";
             else if ((memberCountByPath?.[item.path] ?? 0) > 1) variant = "shared";
           }
@@ -96,28 +96,28 @@ export function useWorkspaceColumns(
         enableResizing: true,
       },
       {
-        id: "owner_id",
-        accessorKey: "owner_id",
+        id: "ownerId",
+        accessorKey: "ownerId",
         header: "Owner",
         cell: ({ getValue }) => (
           <span className="text-muted-foreground block truncate">
             {formatOwner(String(getValue() ?? ""))}
           </span>
         ),
-        meta: { className: columnClassMap.owner_id, sortField: "owner_id" as SortField },
+        meta: { className: columnClassMap.ownerId, sortField: "ownerId" as SortField },
         size: 70,
         enableResizing: true,
       },
       {
-        id: "creation_time",
-        accessorKey: "creation_time",
+        id: "createdAt",
+        accessorKey: "createdAt",
         header: "Created",
         cell: ({ getValue }) => (
           <span className="text-muted-foreground block truncate">
             {formatDate(String(getValue() ?? ""))}
           </span>
         ),
-        meta: { className: columnClassMap.creation_time, sortField: "creation_time" as SortField },
+        meta: { className: columnClassMap.createdAt, sortField: "createdAt" as SortField },
         size: 80,
         enableResizing: true,
       },
@@ -128,7 +128,7 @@ export function useWorkspaceColumns(
           const count = memberCountByPath?.[row.original.path];
           return (
             <span className="text-muted-foreground block truncate">
-              {count != null ? formatMemberCount(count) : "\u2014"}
+              {count != null ? formatMemberCount(count) : "—"}
             </span>
           );
         },

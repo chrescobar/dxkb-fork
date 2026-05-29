@@ -6,7 +6,7 @@ import { flexRender } from "@tanstack/react-table";
 import { FolderUp, Users } from "lucide-react";
 import clsx from "clsx";
 import { TableCell, TableRow } from "@/components/ui/table";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { isFolderType } from "@/lib/services/workspace/utils";
 import { columnClassMap } from "./workspace-table-columns";
 
@@ -88,15 +88,15 @@ export function ParentRow(
 }
 
 interface DataRowProps {
-  row: Row<WorkspaceBrowserItem>;
+  row: Row<WorkspaceItem>;
   useSelectionMode: boolean;
   isSelected: boolean;
   onSelect?: (
-    item: WorkspaceBrowserItem,
+    item: WorkspaceItem,
     modifiers?: { ctrlOrMeta: boolean; shift: boolean },
   ) => void;
-  onItemClick: (item: WorkspaceBrowserItem) => void;
-  onItemDoubleClick?: (item: WorkspaceBrowserItem) => void;
+  onItemClick: (item: WorkspaceItem) => void;
+  onItemDoubleClick?: (item: WorkspaceItem) => void;
 }
 
 export function DataRow({

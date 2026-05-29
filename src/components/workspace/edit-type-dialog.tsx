@@ -18,13 +18,13 @@ import {
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { editTypeOptions } from "@/lib/services/workspace/types";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 export interface EditTypeDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   /** Single item whose type is being changed */
-  item: WorkspaceBrowserItem | null;
+  item: WorkspaceItem | null;
   onConfirm: (newType: string) => Promise<void>;
   isUpdating: boolean;
 }
@@ -39,7 +39,7 @@ function EditTypeForm({
   onConfirm,
   isUpdating,
 }: {
-  item: WorkspaceBrowserItem;
+  item: WorkspaceItem;
   onOpenChange: (open: boolean) => void;
   onConfirm: (newType: string) => Promise<void>;
   isUpdating: boolean;

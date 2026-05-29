@@ -82,6 +82,14 @@ describe("workspace adapters/parsers", () => {
       );
     });
 
+    it("populates the raw field with the legacy transport object", () => {
+      const raw = [{ "/user@bvbrc/home": [lsTuple] }];
+      const items = parseLsResult(raw, "/user@bvbrc/home");
+      expect(items[0]?.raw).toEqual(
+        expect.objectContaining({ id: "id-1", name: "file.fa" }),
+      );
+    });
+
     it("returns empty when path is missing", () => {
       expect(parseLsResult([{ "/other": [] }], "/user")).toEqual([]);
     });

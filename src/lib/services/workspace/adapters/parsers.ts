@@ -53,6 +53,7 @@ function parseTupleToWorkspaceItem(tuple: unknown[]): WorkspaceItem {
     userMeta: (tuple[7] as Record<string, unknown>) ?? undefined,
     autoMeta: (tuple[8] as Record<string, unknown>) ?? undefined,
     linkReference: tuple[11] ? String(tuple[11]) : undefined,
+    raw: parseTupleToRawObject(tuple),
   };
 }
 

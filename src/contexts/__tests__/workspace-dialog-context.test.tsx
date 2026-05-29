@@ -1,7 +1,6 @@
 import { renderHook, act } from "@testing-library/react";
 import React from "react";
-
-vi.mock("@/types/workspace-browser", () => ({}));
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 import {
   WorkspaceDialogProvider,
@@ -49,8 +48,8 @@ describe("WorkspaceDialogContext", () => {
     const { result } = renderHook(() => useWorkspaceDialog(), { wrapper });
 
     const items = [
-      { name: "file.txt", path: "/test/file.txt" },
-    ] as unknown as import("@/types/workspace-browser").WorkspaceBrowserItem[];
+      { id: "1", name: "file.txt", path: "/test/file.txt", type: "contigs", size: 0 },
+    ] as WorkspaceItem[];
 
     act(() => {
       result.current.dispatch({ type: "OPEN_DELETE", items });
@@ -85,8 +84,8 @@ describe("WorkspaceDialogContext", () => {
     const { result } = renderHook(() => useWorkspaceDialog(), { wrapper });
 
     const items = [
-      { name: "folder", path: "/test/folder" },
-    ] as unknown as import("@/types/workspace-browser").WorkspaceBrowserItem[];
+      { id: "1", name: "folder", path: "/test/folder", type: "folder", size: 0 },
+    ] as WorkspaceItem[];
 
     act(() => {
       result.current.dispatch({ type: "OPEN_DELETE", items });
@@ -159,8 +158,8 @@ describe("WorkspaceDialogContext", () => {
     const { result } = renderHook(() => useWorkspaceDialog(), { wrapper });
 
     const items = [
-      { name: "file.txt", path: "/test/file.txt" },
-    ] as unknown as import("@/types/workspace-browser").WorkspaceBrowserItem[];
+      { id: "1", name: "file.txt", path: "/test/file.txt", type: "contigs", size: 0 },
+    ] as WorkspaceItem[];
 
     act(() => {
       result.current.dispatch({ type: "OPEN_COPY", items, mode: "move" });
@@ -178,7 +177,7 @@ describe("WorkspaceDialogContext", () => {
   it("OPEN_EDIT_TYPE sets editType dialog with item", () => {
     const { result } = renderHook(() => useWorkspaceDialog(), { wrapper });
 
-    const item = { name: "file.txt", path: "/test/file.txt" } as unknown as import("@/types/workspace-browser").WorkspaceBrowserItem;
+    const item = { id: "1", name: "file.txt", path: "/test/file.txt", type: "contigs", size: 0 } as WorkspaceItem;
 
     act(() => {
       result.current.dispatch({ type: "OPEN_EDIT_TYPE", item });

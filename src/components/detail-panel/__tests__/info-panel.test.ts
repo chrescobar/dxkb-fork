@@ -1,22 +1,19 @@
 import { getItemFullPath } from "../info-panel";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 function makeItem(
-  overrides: Partial<WorkspaceBrowserItem>,
-): WorkspaceBrowserItem {
+  overrides: Partial<WorkspaceItem>,
+): WorkspaceItem {
   return {
     id: "id-1",
     path: "/user/home/test",
     name: "test",
     type: "contigs",
-    creation_time: "2024-01-01T00:00:00Z",
-    link_reference: "",
-    owner_id: "user@test.com",
+    createdAt: "2024-01-01T00:00:00Z",
+    linkReference: "",
+    ownerId: "user@test.com",
     size: 100,
-    userMeta: {},
-    autoMeta: {},
-    user_permission: "o",
-    global_permission: "r",
+    permissions: { user: "o", global: "r" },
     timestamp: Date.parse("2024-01-01T00:00:00Z"),
     ...overrides,
   };
@@ -55,7 +52,6 @@ describe("getItemFullPath", () => {
 
   it("handles missing name", () => {
     const item = makeItem({ path: "/user/home", name: "" });
-    // Empty name results in trailing slash (path + "/" + "")
     expect(getItemFullPath(item)).toBe("/user/home/");
   });
 
@@ -71,7 +67,6 @@ describe("getItemFullPath", () => {
 
   it("handles whitespace-only name", () => {
     const item = makeItem({ path: "/user/home", name: "   " });
-    // Whitespace trims to empty, produces trailing slash
     expect(getItemFullPath(item)).toBe("/user/home/");
   });
 
@@ -84,7 +79,6 @@ describe("getItemFullPath", () => {
   it("handles null-ish name gracefully", () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const item = makeItem({ path: "/user/home", name: null as any });
-    // null coerces to "" via fallback, produces trailing slash
     expect(getItemFullPath(item)).toBe("/user/home/");
   });
 });

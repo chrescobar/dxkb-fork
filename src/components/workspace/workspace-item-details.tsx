@@ -24,10 +24,10 @@ import { formatDate, formatOwner } from "@/lib/services/workspace/helpers";
 import { useWorkspaceRepository } from "@/contexts/workspace-repository-context";
 import { workspaceQueryKeys } from "@/lib/services/workspace/workspace-query-keys";
 import { editTypeOptions } from "@/lib/services/workspace/types";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 interface WorkspaceItemDetailsProps {
-  item: WorkspaceBrowserItem;
+  item: WorkspaceItem;
   defaultExpanded?: boolean;
   children?: React.ReactNode;
 }
@@ -113,11 +113,11 @@ export function WorkspaceItemDetails({
         <dl className="grid gap-1.5">
           <div>
             <dt className="text-muted-foreground">Owner</dt>
-            <dd className="break-all">{formatOwner(item.owner_id)}</dd>
+            <dd className="break-all">{formatOwner(item.ownerId ?? "")}</dd>
           </div>
           <div>
             <dt className="text-muted-foreground">Created</dt>
-            <dd>{formatDate(item.creation_time)}</dd>
+            <dd>{formatDate(item.createdAt ?? "")}</dd>
           </div>
           <div>
             <dt className="text-muted-foreground">Path</dt>

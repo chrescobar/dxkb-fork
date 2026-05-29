@@ -1,6 +1,6 @@
 "use client";
 
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { resolveViewer, iframeNeedsScripts } from "./file-viewer-registry";
 import { TextViewer } from "./viewers/text-viewer";
 import { JsonViewer } from "./viewers/json-viewer";
@@ -11,7 +11,7 @@ import { IframeViewer } from "./viewers/iframe-viewer";
 import { FallbackViewer } from "./viewers/fallback-viewer";
 
 interface FileViewerContentProps {
-  item: WorkspaceBrowserItem;
+  item: WorkspaceItem;
 }
 
 export function FileViewerContent({ item }: FileViewerContentProps) {

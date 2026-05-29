@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { WorkspaceItemHeader } from "../workspace-item-header";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 const mockTriggerDownload = vi.fn();
 
@@ -20,17 +20,17 @@ vi.mock("@/lib/services/workspace/helpers", () => ({
   formatFileSize: vi.fn((bytes: number) => (bytes ? `${bytes} B` : "")),
 }));
 
-const makeItem = (overrides?: Partial<WorkspaceBrowserItem>): WorkspaceBrowserItem =>
+const makeItem = (overrides?: Partial<WorkspaceItem>): WorkspaceItem =>
   ({
     id: "id-1",
     path: "/user/home/data.fasta",
     name: "data.fasta",
     type: "contigs",
     size: 1024,
-    creation_time: "2024-01-01",
-    owner_id: "user@test.com",
+    createdAt: "2024-01-01",
+    ownerId: "user@test.com",
     ...overrides,
-  }) as WorkspaceBrowserItem;
+  }) as WorkspaceItem;
 
 describe("WorkspaceItemHeader", () => {
   beforeEach(() => {

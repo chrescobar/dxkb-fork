@@ -3,12 +3,9 @@
 import { useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { useWorkspaceRepository } from "@/contexts/workspace-repository-context";
-import {
-  toWorkspaceBrowserItem,
-  WorkspaceApiError,
-} from "@/lib/services/workspace/domain";
+import { WorkspaceApiError } from "@/lib/services/workspace/domain";
 import {
   getFolderPathsFromItems,
   getNonEmptyFolderPaths,
@@ -56,10 +53,7 @@ export function useWorkspaceDialogHandlers(options: UseWorkspaceDialogHandlersOp
     const folderPaths = getFolderPathsFromItems(deleteItems);
     if (folderPaths.length === 0) return;
     const controller = new AbortController();
-    const listFolder = async (p: string) => {
-      const items = await repository.listDirectory({ path: p, silent: true });
-      return items.map(toWorkspaceBrowserItem);
-    };
+    const listFolder = (p: string) => repository.listDirectory({ path: p, silent: true });
     void getNonEmptyFolderPaths(folderPaths, listFolder, {
       signal: controller.signal,
     })
@@ -69,7 +63,7 @@ export function useWorkspaceDialogHandlers(options: UseWorkspaceDialogHandlersOp
   }, [deleteItems, repository, dispatch]);
 
   const deleteMutation = useMutation({
-    mutationFn: async (items: WorkspaceBrowserItem[]) => {
+    mutationFn: async (items: WorkspaceItem[]) => {
       const paths = items
         .map((item) => item.path)
         .filter((p): p is string => Boolean(p));
@@ -259,10 +253,7 @@ export function useWorkspaceDialogHandlers(options: UseWorkspaceDialogHandlersOp
       );
       return;
     }
-    const listFolder = async (p: string) => {
-      const items = await repository.listDirectory({ path: p, silent: true });
-      return items.map(toWorkspaceBrowserItem);
-    };
+    const listFolder = (p: string) => repository.listDirectory({ path: p, silent: true });
     const result = await ensureDestinationWriteAccess(base, listFolder);
     if (!result.ok) {
       toast.error(result.errorMessage);

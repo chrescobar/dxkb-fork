@@ -6,7 +6,7 @@ import {TooltipProvider, Tooltip, TooltipTrigger, TooltipContent} from "@/compon
 import { Box, Download, Trash2, Pencil, Copy, Move, Star, BookOpen, Type, Share2, type LucideIcon } from "lucide-react";
 
 import { findProtectedFolders } from "@/lib/services/workspace/protected-folders";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 const writePermissions = new Set(["o", "a", "w"]);
 
@@ -56,7 +56,7 @@ const actionConfig: ActionConfig[] = [
 
 function getSelectionDisabledTooltip(
   action: ActionConfig,
-  selection: WorkspaceBrowserItem[],
+  selection: WorkspaceItem[],
 ): string | undefined {
   if (action.id === "editType" && selection.some((s) => s.type === "job_result")) {
     return 'Cannot change "job_result" type';
@@ -72,7 +72,7 @@ function getSelectionDisabledTooltip(
 
 function isActionValidForSelection(
   action: ActionConfig,
-  selection: WorkspaceBrowserItem[],
+  selection: WorkspaceItem[],
 ): boolean {
   if (action.id === "guide") return true;
   if (selection.length === 0) return false;
@@ -88,7 +88,7 @@ function isActionValidForSelection(
 
   if (action.requireWrite) {
     const hasWrite = selection.every((s) =>
-      writePermissions.has(s.user_permission ?? ""),
+      writePermissions.has(s.permissions?.user ?? ""),
     );
     if (!hasWrite) return false;
   }
@@ -97,7 +97,7 @@ function isActionValidForSelection(
 }
 
 export interface WorkspaceActionBarProps {
-  selection: WorkspaceBrowserItem[];
+  selection: WorkspaceItem[];
   /** URL opened when the Guide button is clicked (from env WORKSPACE_GUIDE_URL). */
   workspaceGuideUrl: string;
   currentPath?: string;
@@ -109,7 +109,7 @@ export interface WorkspaceActionBarProps {
   isCurrentSelectionFavorite?: boolean;
   /** When true, only show read-only actions (guide + download). Used for public workspace browsing. */
   readOnly?: boolean;
-  onAction?: (actionId: WorkspaceActionId, selection: WorkspaceBrowserItem[]) => void;
+  onAction?: (actionId: WorkspaceActionId, selection: WorkspaceItem[]) => void;
 }
 
 const readOnlyAllowedActions = new Set(["guide", "download"]);

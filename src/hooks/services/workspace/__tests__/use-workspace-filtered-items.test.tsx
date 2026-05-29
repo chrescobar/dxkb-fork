@@ -1,5 +1,5 @@
 import { renderHook } from "@testing-library/react";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { useWorkspaceFilteredItems } from "@/hooks/services/workspace/use-workspace-filtered-items";
 
 vi.mock("@/lib/services/workspace/helpers", () => ({
@@ -7,14 +7,14 @@ vi.mock("@/lib/services/workspace/helpers", () => ({
 }));
 
 const makeItem = (
-  overrides: Partial<WorkspaceBrowserItem>,
-): WorkspaceBrowserItem =>
+  overrides: Partial<WorkspaceItem>,
+): WorkspaceItem =>
   ({
     name: "file.txt",
     path: "/test/file.txt",
     type: "contigs",
     ...overrides,
-  }) as WorkspaceBrowserItem;
+  }) as WorkspaceItem;
 
 const defaultOptions = {
   showHiddenFiles: true,

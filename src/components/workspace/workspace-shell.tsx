@@ -17,12 +17,12 @@ import { DetailPanel } from "@/components/detail-panel";
 import { isViewableType } from "@/components/workspace/file-viewer/file-viewer-registry";
 import { isFolderType } from "@/lib/services/workspace/utils";
 import { FileViewerPanel } from "@/components/workspace/file-viewer/file-viewer-panel";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 interface WorkspaceShellProps {
   children: ReactNode;
   actionBar: ReactNode;
-  selectedItems: WorkspaceBrowserItem[];
+  selectedItems: WorkspaceItem[];
 }
 
 export function WorkspaceShell({

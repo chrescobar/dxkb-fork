@@ -1,13 +1,54 @@
 import {
-  lsToWorkspaceItems,
   parseDuResult,
   parseListPermissions,
   parseLsResult,
   parseLsResultLoose,
+  parseTupleToRawObject,
   parseUploadNode,
 } from "@/lib/services/workspace/adapters/parsers";
 
 describe("workspace adapters/parsers", () => {
+  describe("parseTupleToRawObject", () => {
+    it("maps array indices to untyped record correctly", () => {
+      const list = [
+        "myfile.fasta",    // 0: name
+        "contigs",         // 1: type
+        "/user/home/",     // 2: parent path
+        "2024-01-15",      // 3: creation_time
+        "abc123",          // 4: id
+        "owner@test.com",  // 5: owner_id
+        1024,              // 6: size
+        { key: "val" },    // 7: userMeta
+        {},                // 8: autoMeta
+        "o",               // 9: user_permission
+        "r",               // 10: global_permission
+        null,              // 11: link_reference
+      ];
+      const obj = parseTupleToRawObject(list);
+      expect(obj.id).toBe("abc123");
+      expect(obj.name).toBe("myfile.fasta");
+      expect(obj.type).toBe("contigs");
+      expect(obj.creation_time).toBe("2024-01-15");
+      expect(obj.owner_id).toBe("owner@test.com");
+      expect(obj.size).toBe(1024);
+      expect(obj.user_permission).toBe("o");
+      expect(obj.global_permission).toBe("r");
+      expect(obj.link_reference).toBeNull();
+    });
+
+    it("builds path from parent + name", () => {
+      const list = ["file.txt", "txt", "/user/home/", "", "", "", 0, {}, {}, "", "", null];
+      const obj = parseTupleToRawObject(list);
+      expect(obj.path).toBe("/user/home/file.txt");
+    });
+
+    it("coerces null size to 0", () => {
+      const list = ["file.txt", "txt", "/user/home/", "", "", "", null, {}, {}, "", "", null];
+      const obj = parseTupleToRawObject(list);
+      expect(obj.size).toBe(0);
+    });
+  });
+
   describe("parseLsResult", () => {
     const lsTuple = [
       "file.fa", // 0 name
@@ -24,7 +65,7 @@ describe("workspace adapters/parsers", () => {
       "", // 11 link_reference
     ];
 
-    it("maps tuples to WorkspaceBrowserItem for the requested path", () => {
+    it("maps tuples to WorkspaceItem for the requested path", () => {
       const raw = [{ "/user@bvbrc/home": [lsTuple] }];
       const items = parseLsResult(raw, "/user@bvbrc/home");
       expect(items).toHaveLength(1);
@@ -35,7 +76,17 @@ describe("workspace adapters/parsers", () => {
           type: "contigs",
           path: "/user@bvbrc/home/file.fa",
           size: 123,
+          ownerId: "user@bvbrc",
+          permissions: { user: "o", global: "n" },
         }),
+      );
+    });
+
+    it("populates the raw field with the legacy transport object", () => {
+      const raw = [{ "/user@bvbrc/home": [lsTuple] }];
+      const items = parseLsResult(raw, "/user@bvbrc/home");
+      expect(items[0]?.raw).toEqual(
+        expect.objectContaining({ id: "id-1", name: "file.fa" }),
       );
     });
 
@@ -53,36 +104,6 @@ describe("workspace adapters/parsers", () => {
       const raw = [{ "/some/path": [lsTuple] }];
       expect(parseLsResultLoose(raw)).toHaveLength(1);
       expect(parseLsResultLoose([{}])).toEqual([]);
-    });
-  });
-
-  describe("lsToWorkspaceItems", () => {
-    it("converts to canonical items and keeps raw reference", () => {
-      const browserItem = {
-        id: "id-1",
-        name: "file.fa",
-        path: "/user@bvbrc/home/file.fa",
-        type: "contigs",
-        creation_time: "2026-04-01",
-        link_reference: "",
-        owner_id: "user@bvbrc",
-        size: 123,
-        userMeta: {},
-        autoMeta: {},
-        user_permission: "o",
-        global_permission: "n",
-        timestamp: 1712000000000,
-      };
-      const items = lsToWorkspaceItems([browserItem]);
-      expect(items[0]).toEqual(
-        expect.objectContaining({
-          id: "id-1",
-          path: "/user@bvbrc/home/file.fa",
-          type: "contigs",
-          ownerId: "user@bvbrc",
-        }),
-      );
-      expect(items[0]?.raw).toBe(browserItem);
     });
   });
 

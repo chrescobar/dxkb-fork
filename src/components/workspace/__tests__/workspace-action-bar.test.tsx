@@ -208,4 +208,47 @@ describe("WorkspaceActionBar", () => {
       expect(deleteButton).not.toBeDisabled();
     });
   });
+
+  describe("read-only permission restrictions", () => {
+    it("hides DELETE when user has read-only permission", () => {
+      const readOnlyItem = makeItem({
+        permissions: { user: "r", global: "n" },
+      });
+      render(<WorkspaceActionBar {...defaultProps} selection={[readOnlyItem]} />);
+      expect(screen.queryByRole("button", { name: /delete/i })).not.toBeInTheDocument();
+    });
+
+    it("hides MOVE when user has read-only permission", () => {
+      const readOnlyItem = makeItem({
+        permissions: { user: "r", global: "n" },
+      });
+      render(<WorkspaceActionBar {...defaultProps} selection={[readOnlyItem]} />);
+      expect(screen.queryByRole("button", { name: /move/i })).not.toBeInTheDocument();
+    });
+
+    it("hides EDIT TYPE when user has read-only permission", () => {
+      const readOnlyItem = makeItem({
+        permissions: { user: "r", global: "n" },
+      });
+      render(<WorkspaceActionBar {...defaultProps} selection={[readOnlyItem]} />);
+      expect(screen.queryByRole("button", { name: /edit type/i })).not.toBeInTheDocument();
+    });
+
+    it("shows DELETE when permissions.user is owner ('o')", () => {
+      const ownerItem = makeItem({
+        permissions: { user: "o", global: "n" },
+      });
+      render(<WorkspaceActionBar {...defaultProps} selection={[ownerItem]} />);
+      expect(screen.getByRole("button", { name: /delete/i })).toBeInTheDocument();
+    });
+
+    it("hides DELETE when permissions.user is read-only even if global is writable", () => {
+      // Action bar checks permissions.user only — global permission is not consulted here
+      const globalWriteItem = makeItem({
+        permissions: { user: "r", global: "w" },
+      });
+      render(<WorkspaceActionBar {...defaultProps} selection={[globalWriteItem]} />);
+      expect(screen.queryByRole("button", { name: /delete/i })).not.toBeInTheDocument();
+    });
+  });
 });

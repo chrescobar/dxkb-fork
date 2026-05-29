@@ -52,7 +52,7 @@ import { encodeWorkspaceSegment, noop, workspaceUsername } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 type PublicWorkspaceLevel = "root" | "user" | "path";
 
-function pickDirectoryMode(options: {
+export function pickDirectoryMode(options: {
   mode: WorkspaceViewMode;
   username: string;
   path: string;

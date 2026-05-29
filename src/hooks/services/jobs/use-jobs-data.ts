@@ -13,6 +13,7 @@ interface UseJobsDataParams {
   startTime?: string;
   endTime?: string;
   refetchInterval?: number;
+  enabled?: boolean;
 }
 
 interface UseJobsDataResult {
@@ -26,6 +27,7 @@ export function useJobsData(params: UseJobsDataParams) {
     sortField, sortOrder, app,
     startTime, endTime,
     refetchInterval = 10_000,
+    enabled = true,
   } = params;
 
   return useApiQuery<UseJobsDataResult>({
@@ -33,6 +35,7 @@ export function useJobsData(params: UseJobsDataParams) {
       "jobs-filtered", offset, limit, includeArchived,
       sortField, sortOrder, app, startTime, endTime,
     ],
+    enabled,
     placeholderData: keepPreviousData,
     refetchInterval,
     refetchIntervalInBackground: false,

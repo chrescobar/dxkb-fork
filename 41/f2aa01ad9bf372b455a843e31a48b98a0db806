@@ -1,0 +1,85 @@
+e2e/tests/services/fastq-utilities.spec.ts
+  s_d92f830fde5a01::t_168ac210c37afe 1-87
+e2e/tests/services/subspecies-classification.spec.ts
+  s_d92f830fde5a01::t_faeefb930c10dd 1-62
+e2e/tests/services/similar-genome-finder.spec.ts
+  s_d92f830fde5a01::t_46ee580b70d56e 64-65,67
+  s_d92f830fde5a01::t_1065bca85a4607 6
+  s_d92f830fde5a01::t_02aed91eb51769 49-52
+  s_d92f830fde5a01::t_4541b7f0186c9f 1-5,7-48,53-63,71-94
+  s_d92f830fde5a01::t_93da2203394f8b 66,68-70
+e2e/tests/services/blast.spec.ts
+  s_d92f830fde5a01::t_ce3efb442dde7b 51,53
+  s_d92f830fde5a01::t_0f2400d5549c13 1-50,52,54-72
+src/contexts/service-debugging-context.tsx
+  s_d92f830fde5a01::t_a1360adf31b56e 3-11,26-34,36-40,43-57
+e2e/tests/services/sars-cov2-genome-analysis.spec.ts
+  s_d92f830fde5a01::t_a1360adf31b56e 101-194
+src/contexts/__tests__/service-debugging-context.test.tsx
+  s_d92f830fde5a01::t_a1360adf31b56e 9-10,16-19,58-93
+e2e/tests/services/msa-snp-analysis.spec.ts
+  s_d92f830fde5a01::t_a1360adf31b56e 94-163
+e2e/fixtures/overrides/public-data.ts
+  s_d92f830fde5a01::t_65be29de6bb127 37-46
+  s_d92f830fde5a01::t_08002707d4c12c 6-7,9-12,14-16,18-36,72
+  s_d92f830fde5a01::t_1b811d2d373984 47-48,55,57,61
+  s_d92f830fde5a01::t_3fd571dfbc8c0a 49-54,56,58-60
+  s_d92f830fde5a01::t_b555e75ea39cf6 1-5,8,13,17
+  s_d92f830fde5a01::t_73e9ab329d0b44 62-71
+e2e/tests/services/influenza-ha-subtype.spec.ts
+  s_d92f830fde5a01::t_1c5e5cfb63ada6 1-13,18,20,22,27-58,62-67
+  s_d92f830fde5a01::t_d5b5a521312625 14-17,19,21,23-26
+  s_d92f830fde5a01::t_914b4abb4d2b8c 59-61
+e2e/tests/services/viral-assembly.spec.ts
+  s_d92f830fde5a01::t_997a4feb30363a 1-5,7-41,45-69
+  s_d92f830fde5a01::t_ccc600d11ca655 42-44
+  s_d92f830fde5a01::t_8f85b5e1add60e 6
+e2e/tests/services/taxonomic-classification.spec.ts
+  s_d92f830fde5a01::t_a1360adf31b56e 95-166
+e2e/tests/services/metagenomic-binning.spec.ts
+  s_d92f830fde5a01::t_a1360adf31b56e 99-153
+e2e/fixtures/overrides/index.ts
+  s_d92f830fde5a01::t_a1360adf31b56e 34
+e2e/pages/service-form-page.ts
+  s_d92f830fde5a01::t_a1360adf31b56e 28-82
+e2e/tests/services/genome-annotation.spec.ts
+  s_d92f830fde5a01::t_2ae63fd2570f13 6,20-23
+  s_d92f830fde5a01::t_a91df5d165fcae 42
+  s_d92f830fde5a01::t_be725b8e5e436a 1-5,7-19,24-41,43-70
+e2e/tests/services/gene-protein-tree.spec.ts
+  s_d92f830fde5a01::t_8469cc54173380 1-89
+e2e/tests/services/proteome-comparison.spec.ts
+  s_d92f830fde5a01::t_af5bae720e87d2 1-86
+e2e/tests/services/sars-cov2-wastewater-analysis.spec.ts
+  s_d92f830fde5a01::t_ef6b6925d7504c 1-79
+e2e/tests/services/viral-genome-tree.spec.ts
+  s_d92f830fde5a01::t_b59f03d68112ab 1-90
+e2e/tests/services/genome-assembly.spec.ts
+  s_d92f830fde5a01::t_a1360adf31b56e 136-212
+e2e/tests/services/genome-alignment.spec.ts
+  s_d92f830fde5a01::t_8b59f8699d2556 1-68
+e2e/tests/services/variation-analysis.spec.ts
+  s_d92f830fde5a01::t_66e960b6587d1c 1-86
+e2e/tests/services/primer-design.spec.ts
+  s_d92f830fde5a01::t_a1360adf31b56e 81-151
+e2e/tests/services/metagenomic-read-mapping.spec.ts
+  s_d92f830fde5a01::t_3bd1bb09d28753 1-81
+e2e/tests/services/meta-cats.spec.ts
+  s_d92f830fde5a01::t_a1360adf31b56e 157-215
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "41f2aa01ad9bf372b455a843e31a48b98a0db806",
+  "prompts": {},
+  "sessions": {
+    "s_d92f830fde5a01": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "73c5fbdd-0177-4455-b3d0-204475babbbb",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

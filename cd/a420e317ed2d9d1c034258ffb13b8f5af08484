@@ -1,0 +1,25 @@
+e2e/mocks/backends.ts
+  s_226a38b9355def::t_6813f76449fcb5 139-140
+  s_226a38b9355def::t_109054eaed1699 194,207
+  s_226a38b9355def::t_133cefa1277e96 48-59
+e2e/tests/services/tree-services.spec.ts
+  s_226a38b9355def::t_0facf30c408ad4 117
+e2e/tests/services/genome-assembly.spec.ts
+  s_226a38b9355def::t_a7f8386f81fd54 111
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "cda420e317ed2d9d1c034258ffb13b8f5af08484",
+  "prompts": {},
+  "sessions": {
+    "s_226a38b9355def": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5bbcf61c-998d-42ad-9086-90dfbd65bcae",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

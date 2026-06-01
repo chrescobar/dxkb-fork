@@ -1,0 +1,23 @@
+e2e/tests/services/sars-cov2-genome-analysis.spec.ts
+  s_6ddf8b3723b353::t_4aa2e54612fdd1 108-121
+e2e/tests/services/taxonomic-classification.spec.ts
+  s_6ddf8b3723b353::t_b60a81bdac42a2 19
+e2e/tests/services/msa-snp-analysis.spec.ts
+  s_6ddf8b3723b353::t_ba6944da748d2d 109,112
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.11",
+  "base_commit_sha": "5e2963fd0fbac92e2a742fe2b6dfee7cac4fc6e9",
+  "prompts": {},
+  "sessions": {
+    "s_6ddf8b3723b353": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "63a0d28c-49c4-48c4-9885-da6cf2385e58",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

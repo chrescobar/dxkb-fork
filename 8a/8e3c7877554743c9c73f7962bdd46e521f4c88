@@ -1,0 +1,19 @@
+src/components/organisms/genera-grid/genera-card.tsx
+  s_2932cd227b7020::t_e53302cd4e81a3 17-18,26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "8a8e3c7877554743c9c73f7962bdd46e521f4c88",
+  "prompts": {},
+  "sessions": {
+    "s_2932cd227b7020": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d27f983-cf91-423e-9245-99737ddb0621",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

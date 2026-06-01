@@ -1,0 +1,31 @@
+e2e/scripts/har-overrides.ts
+  41eacd2f5db8ec24 205-252
+e2e/tests/services/genome-assembly.spec.ts
+  41eacd2f5db8ec24 147-152
+e2e/scripts/__tests__/har-overrides.test.ts
+  41eacd2f5db8ec24 7,254-324
+e2e/scripts/journeys/README.md
+  41eacd2f5db8ec24 12-27,85-87
+e2e/tests/workspace-upload.spec.ts
+  41eacd2f5db8ec24 8,72-75,115-121
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "5092a648e9dfae05574b93568cc6f988c9d3974c",
+  "prompts": {
+    "41eacd2f5db8ec24": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "858fe1ea-0253-4786-9ba1-610b734f8c9c",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 157,
+      "total_deletions": 16,
+      "accepted_lines": 157,
+      "overriden_lines": 0
+    }
+  }
+}

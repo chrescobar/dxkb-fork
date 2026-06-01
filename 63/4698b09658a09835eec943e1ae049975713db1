@@ -1,0 +1,21 @@
+src/lib/services/workspace/adapters/parsers.ts
+  s_57e0169917a711::t_c359fbfa47d346 56
+src/lib/services/workspace/adapters/__tests__/parsers.test.ts
+  s_57e0169917a711::t_366ac6747de4b0 85-92
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "634698b09658a09835eec943e1ae049975713db1",
+  "prompts": {},
+  "sessions": {
+    "s_57e0169917a711": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e20b45da-c1c1-49a8-8b29-9ff3ef1e9fbe",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

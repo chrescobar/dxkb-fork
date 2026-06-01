@@ -1,0 +1,44 @@
+e2e/scripts/__tests__/record-har.test.ts
+  f401794ab8cd20b2 1-194
+e2e/tests/jobs-lifecycle.spec.ts
+  f401794ab8cd20b2 229,234-239
+e2e/scripts/record-har.ts
+  f401794ab8cd20b2 64,90-91,97-108,118,122-131,134,290-298
+e2e/scripts/har-overrides.ts
+  f401794ab8cd20b2 43-61,106-108
+e2e/tests/workspace-upload.spec.ts
+  f401794ab8cd20b2 83-88
+e2e/README.md
+  f401794ab8cd20b2 114
+e2e/tests/workspace-viewer.spec.ts
+  f401794ab8cd20b2 108-113
+e2e/tests/workspace-browse.spec.ts
+  f401794ab8cd20b2 199-205
+e2e/scripts/__tests__/har-overrides.test.ts
+  f401794ab8cd20b2 168-199
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "bfab4577ba8ebbb3fbdfc2f8478461879e223e4c",
+  "prompts": {
+    "f401794ab8cd20b2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ead685a6-06cb-44cd-ae46-6a487cb0d19e",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 311,
+      "total_deletions": 33,
+      "accepted_lines": 311,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_e893c4a39fbc49": {
+      "author": "Chris Escobar"
+    }
+  }
+}

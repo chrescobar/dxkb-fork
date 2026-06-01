@@ -1,0 +1,31 @@
+src/components/statistics/db-statistics-shell.tsx
+  8f3f3d1ed5462497 1-17
+src/components/ui/command.tsx
+  8f3f3d1ed5462497 189,192-193,204-211,221
+src/components/navbars/desktop-navbar.tsx
+  8f3f3d1ed5462497 32-37,91-121,123-125
+src/components/statistics/db-statistics-skeleton.tsx
+  8f3f3d1ed5462497 1,3,7-11,13-14
+src/components/statistics/db-statistics.tsx
+  8f3f3d1ed5462497 1,29-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "99bdb358b7c02dfc1a44621bcc36858780678bcc",
+  "prompts": {
+    "8f3f3d1ed5462497": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f0987ecb-ca09-4af0-b8a4-899fdceb4895",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 88,
+      "total_deletions": 80,
+      "accepted_lines": 88,
+      "overriden_lines": 0
+    }
+  }
+}

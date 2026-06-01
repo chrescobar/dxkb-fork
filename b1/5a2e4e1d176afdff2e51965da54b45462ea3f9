@@ -1,0 +1,19 @@
+e2e/tests/organisms/bacteria.spec.ts
+  s_9113a68f52adf6::t_ab5c26fc39d977 37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "b15a2e4e1d176afdff2e51965da54b45462ea3f9",
+  "prompts": {},
+  "sessions": {
+    "s_9113a68f52adf6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "62d7f0a2-71c6-4f2d-9119-09829bdc4127",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

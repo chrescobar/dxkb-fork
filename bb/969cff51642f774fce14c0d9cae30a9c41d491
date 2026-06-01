@@ -1,0 +1,19 @@
+src/app/globals.css
+  s_4d4f6f06c71e59::t_63d05a96fa83fa 246,254,258,262,267
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "bb969cff51642f774fce14c0d9cae30a9c41d491",
+  "prompts": {},
+  "sessions": {
+    "s_4d4f6f06c71e59": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a9b9b3a2-fa67-4427-a205-2af7835409d8",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

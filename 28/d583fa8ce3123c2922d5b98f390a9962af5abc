@@ -1,0 +1,30 @@
+src/lib/auth/server/errors.ts
+  bb585a1be49b97af 8-37,96-103
+src/lib/api/__tests__/server.test.ts
+  bb585a1be49b97af 97-123
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "28d583fa8ce3123c2922d5b98f390a9962af5abc",
+  "prompts": {
+    "bb585a1be49b97af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "521cf992-2104-4d48-b312-099051157c9a",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 65,
+      "total_deletions": 0,
+      "accepted_lines": 65,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_e893c4a39fbc49": {
+      "author": "Chris Escobar"
+    }
+  }
+}

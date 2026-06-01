@@ -1,0 +1,11 @@
+src/components/organisms/pubmed-feed/pubmed-feed.tsx
+  ai_agent 43
+e2e/tests/organisms/bacteria.spec.ts
+  ai_agent 46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "1ea6d51db6121dbf9a0e0d402abe663aa9fea678",
+  "prompts": {}
+}

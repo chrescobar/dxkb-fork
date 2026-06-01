@@ -1,0 +1,74 @@
+src/app/organisms/bacteria/layout.tsx
+  s_08b65c3cfca4d1::t_64926651efa943 9
+src/app/services/(metagenomics)/metagenomic-binning/metagenomic-binning-parameters-card.tsx
+  s_08b65c3cfca4d1::t_24a3ae63631a42 1-277
+src/app/services/(metagenomics)/metagenomic-binning/metagenomic-binning-start-with-card.tsx
+  s_08b65c3cfca4d1::t_a134b467c60dc4 1-65
+src/app/services/(protein-tools)/gene-protein-tree/gene-protein-tree-metadata-options.tsx
+  s_08b65c3cfca4d1::t_e038fe5b931b72 1-166
+src/app/services/(genomics)/blast/blast-parameters-card.tsx
+  s_08b65c3cfca4d1::t_c4323636d324fc 4
+  s_08b65c3cfca4d1::t_22cb51d2aa90b3 1-3,5-19,21-378
+  s_08b65c3cfca4d1::t_f4d82899f2afda 20
+src/app/services/(protein-tools)/gene-protein-tree/page.tsx
+  s_08b65c3cfca4d1::t_364a97f835e3e6 12-13,37-41,59,141,147-149,152-153,156,164,171,195,205,221-224,231,235,253,305-319,322-326,329-338,344
+eslint.config.mjs
+  s_08b65c3cfca4d1::t_94e90d54ef3fd0 31-35
+  s_08b65c3cfca4d1::t_4ca107ded1d9e1 6-9
+src/app/services/(protein-tools)/gene-protein-tree/gene-protein-tree-tree-parameters-card.tsx
+  s_08b65c3cfca4d1::t_5be6865cc602fa 26
+  s_08b65c3cfca4d1::t_0f8c301eeaaacf 1-25,27-120
+src/app/services/README.md
+  s_08b65c3cfca4d1::t_0e1e5821a94331 1-205
+src/app/services/(metagenomics)/taxonomic-classification/taxonomic-classification-parameters-card.tsx
+  s_08b65c3cfca4d1::t_8b9c730663a2de 48-49
+  s_08b65c3cfca4d1::t_3662cb089141aa 1-47,50-358
+src/app/services/(genomics)/primer-design/page.tsx
+  s_08b65c3cfca4d1::t_962594fa9b5817 11,28-29,90,101,118,128,131,169,176,187-202,209-210,214,218,220,228,237,245-246,275-287,302
+src/app/services/(metagenomics)/metagenomic-binning/page.tsx
+  s_08b65c3cfca4d1::t_386084b2f1a37b 5,9,21,34,52-53,63,101-102,148-157,181,202,236,328,332,347-353,361
+src/app/services/(genomics)/blast/page.tsx
+  s_08b65c3cfca4d1::t_324173a894e212 7-10,23-27,62,64-65,70-74,78,117,123,126,137,145-146,181-189,191-202,214
+  s_08b65c3cfca4d1::t_0c1a3de7669d75 190
+src/app/services/(protein-tools)/gene-protein-tree/gene-protein-tree-alignment-parameters-card.tsx
+  s_08b65c3cfca4d1::t_229a94ce64073c 1-110
+src/app/services/(protein-tools)/gene-protein-tree/gene-protein-tree-input-card.tsx
+  s_08b65c3cfca4d1::t_01a3184b698a20 1-191
+src/app/services/(viral-tools)/sars-cov2-genome-analysis/sars-cov2-start-with-card.tsx
+  s_08b65c3cfca4d1::t_eff586a4589add 1-59
+src/app/services/(metagenomics)/taxonomic-classification/page.tsx
+  s_08b65c3cfca4d1::t_b788c847ad76eb 489-493
+  s_08b65c3cfca4d1::t_0bc79faf86b3f9 494
+  s_08b65c3cfca4d1::t_9d82aad9d77d54 71
+  s_08b65c3cfca4d1::t_ded9a6c2328a0c 5,9
+src/app/services/(viral-tools)/sars-cov2-genome-analysis/page.tsx
+  s_08b65c3cfca4d1::t_836eb9aac60685 239
+  s_08b65c3cfca4d1::t_c88ce58671cb78 83
+src/app/services/(genomics)/blast/blast-input-source-card.tsx
+  s_08b65c3cfca4d1::t_30de82b42407e5 15,24,27
+  s_08b65c3cfca4d1::t_2bcd4d4f5425d7 1-14,16-23,25-26,28-161
+src/app/services/(genomics)/genome-assembly/page.tsx
+  s_08b65c3cfca4d1::t_a327e19a7ebd29 21-22,50,231,245-251,264,296,309,332-344,347,359,392
+src/app/services/(genomics)/blast/blast-search-program-card.tsx
+  s_08b65c3cfca4d1::t_094c32b2f521d9 1-77
+src/app/services/(genomics)/primer-design/primer-design-input-sequence-card.tsx
+  s_08b65c3cfca4d1::t_270c3300592657 1-591
+src/app/services/(genomics)/genome-assembly/genome-assembly-parameters-card.tsx
+  s_08b65c3cfca4d1::t_f3e73ac2dc43af 1-316
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.9",
+  "base_commit_sha": "649ad75b997504ad415e2d4c5f442a5f1e4f6fad",
+  "prompts": {},
+  "sessions": {
+    "s_08b65c3cfca4d1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d32f2808-1ca9-4c9a-abe0-5ae63f783cfc",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

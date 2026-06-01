@@ -1,0 +1,141 @@
+src/lib/services/workspace/adapters/http-workspace-repository.ts
+  s_2279e32e0c395c::t_4157614f34e277 65
+  s_2279e32e0c395c::t_0622c68cb99dfc 290,295
+src/hooks/services/workspace/use-shared-with-user.ts
+  s_2279e32e0c395c::t_93916a77e2e534 4,11,21,25-31,42,52,59
+src/lib/services/workspace/__tests__/helpers.test.ts
+  s_2279e32e0c395c::t_09e713e41e2deb 21,23,29-30,32,112,117,122,127,132,137,178-179,523-524,526-529,673,682,694,705
+src/hooks/services/workspace/use-workspace-selection.ts
+  s_2279e32e0c395c::t_e0167f8ffcde6a 4,12,22,46
+src/components/workspace/__tests__/workspace-action-bar.test.tsx
+  s_2279e32e0c395c::t_577d87a79050a0 62-63,70-72,74
+  s_2279e32e0c395c::t_319637d17f7c6b 4
+src/lib/services/workspace/adapters/__tests__/parsers.test.ts
+  s_2279e32e0c395c::t_fb6dc50356ad2a 6,11-51,68,79-80
+src/lib/services/workspace/__tests__/domain.test.ts
+  s_2279e32e0c395c::t_f9e470f8736a41 8,10,16-17,19,28,35
+src/lib/services/workspace/adapters/in-memory-workspace-repository.ts
+  s_2279e32e0c395c::t_6c29ed96c6c206 180
+  s_2279e32e0c395c::t_0bf4b7c379457a 430
+  s_2279e32e0c395c::t_56d6bdf4a8005c 17
+  s_2279e32e0c395c::t_68c12f2feb462e 77,89-91,95-98
+  s_2279e32e0c395c::t_17aeda1b6646b5 192
+src/hooks/services/workspace/use-workspace-action-dispatch.ts
+  s_2279e32e0c395c::t_a7b26beb7f37e3 6,24,65,88
+src/contexts/workspace-dialog-context.tsx
+  s_2279e32e0c395c::t_cea1852e75993c 11,14-16,28,30-31
+src/hooks/services/workspace/__tests__/use-workspace-filtered-items.test.tsx
+  s_2279e32e0c395c::t_43471dc9bd6b53 2
+  s_2279e32e0c395c::t_8710eb5b05602b 10-11,17
+src/components/workspace/workspace-action-bar.tsx
+  s_2279e32e0c395c::t_89ae173d934c6b 91
+  s_2279e32e0c395c::t_b7200d8ec22c33 59,75,100,112
+  s_2279e32e0c395c::t_dce048c94aa6d9 9
+src/hooks/services/workspace/__tests__/use-workspace-selection.test.tsx
+  s_2279e32e0c395c::t_2ba9bf7b4d0602 14-15,21,25,81-82
+  s_2279e32e0c395c::t_b7a7c237543755 2
+src/lib/workspace/__tests__/table-selection.test.ts
+  s_2279e32e0c395c::t_bb4552dda26223 1,4
+src/components/workspace/__tests__/workspace-item-details.test.tsx
+  s_2279e32e0c395c::t_01d8bcb21957d8 55,62-63,65
+  s_2279e32e0c395c::t_541a9f05c6c4a0 84
+  s_2279e32e0c395c::t_8f6dcef8836bf3 4
+src/components/workspace/workspace-table-columns.tsx
+  s_2279e32e0c395c::t_b4318e33225a6e 8,10,18-19,25,33-34,53,65,99-100,107,112-113,120,131
+src/lib/services/workspace/helpers.ts
+  s_2279e32e0c395c::t_621cbd1bfa114f 15-16,123,125-126,131-133,150-151,153,223,239,270,295-296,332
+src/hooks/services/workspace/use-workspace-dialog-handlers.ts
+  s_2279e32e0c395c::t_c6d6fc8dfea000 6,8,56,66,256
+src/hooks/services/workspace/__tests__/use-workspace-action-dispatch.test.tsx
+  s_2279e32e0c395c::t_7a3ef825779c02 4
+  s_2279e32e0c395c::t_00510bf5fad1dd 46,61-62,75,88
+  s_2279e32e0c395c::t_b27420ee317ee3 68-70,72
+src/components/workspace/workspace-shell.tsx
+  s_2279e32e0c395c::t_5d8b3cb408d73a 20
+  s_2279e32e0c395c::t_466d403c75b896 25
+src/components/workspace/file-viewer/file-viewer-panel.tsx
+  s_2279e32e0c395c::t_fa977f864d736c 17
+  s_2279e32e0c395c::t_ae314c2838e3af 8
+src/components/workspace/workspace-file-table.tsx
+  s_2279e32e0c395c::t_2b9e2d4f32d340 37-38
+  s_2279e32e0c395c::t_5fcac0280fde52 47-48
+  s_2279e32e0c395c::t_c92e40750d511b 31,44,56,59,117,186,194,248,275
+  s_2279e32e0c395c::t_75ec17bc24d4f3 13,16
+src/hooks/services/workspace/use-workspace-navigation.ts
+  s_2279e32e0c395c::t_d8162a247c2114 4-5,30,63
+src/types/workspace-browser.ts
+  s_2279e32e0c395c::t_3e496a9e0c99e8 3,6
+src/components/workspace/workspace-browser.tsx
+  s_2279e32e0c395c::t_43fc745b38bc53 8,13-16,48,55-108,117,166,205,217-225,228,234-237,244,380,382,527
+src/contexts/__tests__/workspace-dialog-context.test.tsx
+  s_2279e32e0c395c::t_4e9d5bf40de3f4 3,51-52,87-88,161-162,180
+src/components/workspace/workspace-mini-browser.tsx
+  s_2279e32e0c395c::t_3efb2e4aa621fd 22,109,118,144,155,161,397,400
+src/components/workspace/edit-type-dialog.tsx
+  s_2279e32e0c395c::t_61e61003d85d43 27,42
+  s_2279e32e0c395c::t_c6e0a68ac3d792 21
+src/lib/services/workspace/client.ts
+  s_2279e32e0c395c::t_75431d5c56e84b 2
+  s_2279e32e0c395c::t_53c5ba5e79b5a1 129
+src/components/workspace/workspace-item-details.tsx
+  s_2279e32e0c395c::t_f23e94be59dd48 27
+  s_2279e32e0c395c::t_8709f534b2e6a2 30
+  s_2279e32e0c395c::t_57ef99e77428fc 116,120
+src/components/workspace/file-viewer/file-viewer-content.tsx
+  s_2279e32e0c395c::t_eaf0b44f102eed 14
+  s_2279e32e0c395c::t_cf9b4a5e3caaff 3
+src/components/detail-panel/__tests__/info-panel.test.ts
+  s_2279e32e0c395c::t_6285431a229886 2,5-6,12-14,16
+src/lib/services/workspace/domain.ts
+  s_2279e32e0c395c::t_811a5e5f7b93ae 29
+src/hooks/services/workspace/use-workspace-filtered-items.ts
+  s_2279e32e0c395c::t_74c24b0d6dae5b 5-6,9,14,16
+src/hooks/services/workspace/__tests__/use-workspace-navigation.test.tsx
+  s_2279e32e0c395c::t_aae6eec70b8fab 2
+  s_2279e32e0c395c::t_d3059c27d71f20 15-16,22
+src/components/workspace/workspace-table-rows.tsx
+  s_2279e32e0c395c::t_b6c056aecb20f6 9
+  s_2279e32e0c395c::t_4490059c514790 91,95,98-99
+src/components/detail-panel/info-panel.tsx
+  s_2279e32e0c395c::t_4f5a56eef8d2a0 70-71
+  s_2279e32e0c395c::t_1539de65e89fa1 20
+  s_2279e32e0c395c::t_d644d108dfee7c 28,30,40,54,56
+src/lib/workspace/table-selection.ts
+  s_2279e32e0c395c::t_387c33cc592ee3 1,17,26-27,29,46
+e2e/fixtures/overrides/workspace.ts
+  s_2279e32e0c395c::t_fe71051541b6fa 39-40
+src/lib/services/workspace/__tests__/client.test.ts
+  s_2279e32e0c395c::t_17ecb2ac07aef4 108
+src/hooks/services/workspace/use-workspace-directory.ts
+  s_2279e32e0c395c::t_1113ea590c90fc 5
+src/lib/services/workspace/adapters/parsers.ts
+  s_2279e32e0c395c::t_77bc1a806942a1 10-57,67,73,81,90
+src/components/workspace/workspace-item-header.tsx
+  s_2279e32e0c395c::t_f6d871bd474b9f 15
+  s_2279e32e0c395c::t_7aa2600f60b077 12
+src/components/workspace/__tests__/workspace-item-header.test.tsx
+  s_2279e32e0c395c::t_5e7003e63d15fb 23,30-31,33
+  s_2279e32e0c395c::t_e65c13b7e2e443 3
+src/hooks/services/workspace/__tests__/use-workspace-dialog-handlers.test.tsx
+  s_2279e32e0c395c::t_f08f9264a94019 60-61,67-69,71,74
+  s_2279e32e0c395c::t_c1220dd0192c60 13
+src/components/workspace/copy-to-dialog.tsx
+  s_2279e32e0c395c::t_88d2ed56f46b9b 17
+  s_2279e32e0c395c::t_ad65d2887ccae2 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "e0312bda379f1379be767a01585a82bb9c173cb6",
+  "prompts": {},
+  "sessions": {
+    "s_2279e32e0c395c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1d25033a-ff4d-418b-a31c-f81e041f3d37",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

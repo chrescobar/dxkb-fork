@@ -1,0 +1,67 @@
+src/components/organisms/genera-grid/genera-card.tsx
+  s_538d5e22277cb1::t_59634fafdd6e35 27,36-37,39,42,46
+  s_538d5e22277cb1::t_2e51ed50e64ba2 6,21-25,28-30,32-35,41,43-44,48-50
+  s_70d5b66a423b92::t_7d00731e11d6f1 5,18,26,31,38,40
+src/components/organisms/data-summary/data-summary-skeleton.tsx
+  s_538d5e22277cb1::t_57013de34d2739 7
+  s_538d5e22277cb1::t_bec2bbcaabefa9 5
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_538d5e22277cb1::t_e43359a924ce97 7-10,36-38,68-69
+  s_538d5e22277cb1::t_97fd9773d906dd 59
+src/app/organisms/bacteria/views/overview.tsx
+  s_70d5b66a423b92::t_36049d5187b97c 68
+  s_70d5b66a423b92::t_abbb6ec26bc06d 62
+src/components/organisms/landing-shell/landing-nav.tsx
+  s_538d5e22277cb1::t_40bda40fab2808 32,35,56
+  s_538d5e22277cb1::t_e43359a924ce97 5-8,31,37,45-49
+src/components/organisms/genera-grid/genera-grid.tsx
+  s_538d5e22277cb1::t_59634fafdd6e35 34
+  s_538d5e22277cb1::t_47f1cd6ee55e2d 38
+src/app/organisms/bacteria/layout.tsx
+  s_538d5e22277cb1::t_e43359a924ce97 12
+src/components/organisms/genera-grid/__tests__/genera-card.test.tsx
+  s_70d5b66a423b92::t_55f602c7b354c9 22-24
+  s_70d5b66a423b92::t_7d00731e11d6f1 16-21,25
+src/components/organisms/facet-label.ts
+  s_70d5b66a423b92::t_7d00731e11d6f1 1-6
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  s_70d5b66a423b92::t_7d00731e11d6f1 8,39-44
+  s_70d5b66a423b92::t_55f602c7b354c9 49-51,69-71,76-78,130-133,142-143,153
+  s_70d5b66a423b92::t_145e820459e00a 80,128,141
+src/components/organisms/metadata-distributions/__tests__/donut-chart.test.tsx
+  s_70d5b66a423b92::t_55f602c7b354c9 21-23,29-31,51-53
+  s_70d5b66a423b92::t_7d00731e11d6f1 41-47
+src/components/organisms/landing-shell/landing-shell-skeleton.tsx
+  s_538d5e22277cb1::t_90a4139c75afdb 5-6
+src/components/organisms/metadata-distributions/metadata-distributions.tsx
+  s_70d5b66a423b92::t_145e820459e00a 25-28,32
+src/components/organisms/data-summary/data-summary.tsx
+  s_538d5e22277cb1::t_2805388790024b 57-58
+  s_538d5e22277cb1::t_5bb9295940bbab 64
+  s_538d5e22277cb1::t_42e6553ad0e9f1 1,13-27,29-38,60
+  s_538d5e22277cb1::t_d7b5855fae48b6 49-56,59,61-63,65-67,69-71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "d872d65ad1f556e6d0bd70043eb8a086295ebdee",
+  "prompts": {},
+  "sessions": {
+    "s_538d5e22277cb1": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e0311-8f59-7a41-9af0-51e04d62b760",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_70d5b66a423b92": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e03e3-6dd9-7ca1-a9d1-2784660bb1a1",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

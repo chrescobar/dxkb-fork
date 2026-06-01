@@ -1,0 +1,25 @@
+e2e/tests/search-keyboard.spec.ts
+  072488eab3d79eac 147-150,153,163,174,191,218
+e2e/tests/a11y.spec.ts
+  072488eab3d79eac 181-188
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "81f0c855559dfb487db88aad4727555734a18ed3",
+  "prompts": {
+    "072488eab3d79eac": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8d0f5f3e-f230-4024-a81a-de8ff4f40da2",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 17,
+      "total_deletions": 0,
+      "accepted_lines": 17,
+      "overriden_lines": 0
+    }
+  }
+}

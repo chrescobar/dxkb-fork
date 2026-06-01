@@ -1,0 +1,22 @@
+src/components/organisms/metadata-distributions/__tests__/donut-chart.test.tsx
+  s_9b95271fdac7d3::t_6db4b521d7179c 212-231
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  s_9b95271fdac7d3::t_ef3b2e50ca2f27 50,55-63,128-157,159-179,368-369,373-380,406-434
+  s_9b95271fdac7d3::t_ff0dbbf064f3aa 158,180-182,190-191,367,383
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "b2a7fac535cfb77078d6ae45f885e6fd300ccb9e",
+  "prompts": {},
+  "sessions": {
+    "s_9b95271fdac7d3": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e187a-2a84-7890-a4a7-aab6bfc1f0ca",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

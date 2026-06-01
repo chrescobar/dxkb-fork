@@ -1,0 +1,89 @@
+src/app/services/(metagenomics)/taxonomic-classification/page.tsx
+  cd6c95f3b4c44a6b 209
+src/lib/services/workspace/adapters/in-memory-workspace-repository.ts
+  5c5de4a4f99d7e76 101-121,176-177
+  cd6c95f3b4c44a6b 171-172,174,417,429
+src/components/workspace/workspace-mini-browser.tsx
+  cd6c95f3b4c44a6b 35,402
+src/app/services/(viral-tools)/viral-assembly/page.tsx
+  cd6c95f3b4c44a6b 32,85
+src/hooks/services/workspace/use-workspace-browser-directory.ts
+  cd6c95f3b4c44a6b 143-144
+src/app/services/(metagenomics)/metagenomic-binning/page.tsx
+  cd6c95f3b4c44a6b 133
+src/app/services/(genomics)/variation-analysis/page.tsx
+  cd6c95f3b4c44a6b 117
+src/hooks/services/workspace/use-workspace-directory.ts
+  cd6c95f3b4c44a6b 12,52
+src/lib/forms/__tests__/tanstack-library-selection.test.ts
+  cd6c95f3b4c44a6b 434-435,447
+src/app/services/(genomics)/blast/page.tsx
+  5c5de4a4f99d7e76 102-104
+src/app/services/(viral-tools)/sars-cov2-wastewater-analysis/page.tsx
+  cd6c95f3b4c44a6b 148-150,152
+src/app/services/(genomics)/genome-assembly/page.tsx
+  cd6c95f3b4c44a6b 164
+src/app/services/(metagenomics)/metagenomic-read-mapping/page.tsx
+  cd6c95f3b4c44a6b 125
+src/app/services/(utilities)/fastq-utilities/page.tsx
+  cd6c95f3b4c44a6b 158
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "bdedb5456464caa0af29eb321143e6f730172c68",
+  "prompts": {
+    "419a5305e23edd86": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1121456-7439-418d-8199-1af302a01764",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    },
+    "5c5de4a4f99d7e76": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a2f15dc9-6589-483c-a080-dce4fe084518",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 29,
+      "total_deletions": 4,
+      "accepted_lines": 29,
+      "overriden_lines": 0
+    },
+    "b186c38203232bc3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2477c54-328c-477b-9f1e-c2ec999db01a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    },
+    "cd6c95f3b4c44a6b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6737c9e1-6894-4a41-b6c1-946abe30e348",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 157,
+      "total_deletions": 213,
+      "accepted_lines": 125,
+      "overriden_lines": 0
+    }
+  }
+}

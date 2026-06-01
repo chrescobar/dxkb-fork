@@ -1,0 +1,28 @@
+e2e/tests/services/primer-design.spec.ts
+  s_c0880cebbd2cfd::t_6e323e9fa14b78 1-105
+e2e/tests/services/sars-cov2-genome-analysis.spec.ts
+  s_c0880cebbd2cfd::t_03b531fcad2958 1-122
+e2e/tests/services/meta-cats.spec.ts
+  s_c0880cebbd2cfd::t_633db49e2fbb7f 171
+  s_c0880cebbd2cfd::t_493e388959f90c 1-170,172-182
+e2e/tests/services/msa-snp-analysis.spec.ts
+  s_c0880cebbd2cfd::t_f2ead6305ce24a 1-115
+e2e/tests/services/taxonomic-classification.spec.ts
+  s_c0880cebbd2cfd::t_50cd414a186b99 1-119
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.9",
+  "base_commit_sha": "6b2250357742c052668d11216303c171a6356fc6",
+  "prompts": {},
+  "sessions": {
+    "s_c0880cebbd2cfd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4d95bfd3-8b77-4007-b751-eca0b00df93f",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

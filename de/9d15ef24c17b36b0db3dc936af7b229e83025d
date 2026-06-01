@@ -1,0 +1,11 @@
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  ai_agent 288
+src/components/organisms/shared/section-error.tsx
+  ai_agent 32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "de9d15ef24c17b36b0db3dc936af7b229e83025d",
+  "prompts": {}
+}

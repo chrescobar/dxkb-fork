@@ -1,0 +1,74 @@
+e2e/fixtures/hars/auth-sign-in.har
+  d7def80b58f249d5 1-376
+.github/workflows/e2e-har-refresh.yml
+  d7def80b58f249d5 1-121
+e2e/scripts/journeys/auth-sign-in.ts
+  d7def80b58f249d5 1-3,8
+  e09a30ecb999e535 4-7,9
+e2e/README.md
+  d7def80b58f249d5 96-124
+e2e/scripts/har-constants.ts
+  d7def80b58f249d5 1-9
+e2e/scripts/journeys/README.md
+  d7def80b58f249d5 1-5,11-32,35-39
+  b7f8e2a02754105c 6-10,33-34
+e2e/tests/auth.spec.ts
+  b7f8e2a02754105c 100,117-121
+  d7def80b58f249d5 87-99,101-116,122-123
+e2e/scripts/record-har.ts
+  d7def80b58f249d5 1,4,7-19,24-156,169-185,210-217,222-224,227-235,237,239-244,249-260,262-265
+  b7f8e2a02754105c 20-23
+e2e/mocks/backends.ts
+  d7def80b58f249d5 3,6-7,142-144,152-160
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "f388a143756b6cf14a45791a83f457ec81da10fe",
+  "prompts": {
+    "b7f8e2a02754105c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9fc3de5d-337a-414c-ae0e-450c7579f826",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 17,
+      "total_deletions": 7,
+      "accepted_lines": 17,
+      "overriden_lines": 0
+    },
+    "d7def80b58f249d5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "22c28f0e-7b47-414c-a0c1-a9315fa424de",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 3900,
+      "total_deletions": 2795,
+      "accepted_lines": 826,
+      "overriden_lines": 0
+    },
+    "e09a30ecb999e535": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7cbef038-0d32-4ae5-8500-ad2cf9a8460c",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 128,
+      "total_deletions": 273,
+      "accepted_lines": 128,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_e893c4a39fbc49": {
+      "author": "Chris Escobar"
+    }
+  }
+}

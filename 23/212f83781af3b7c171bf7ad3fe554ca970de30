@@ -1,0 +1,23 @@
+src/components/ui/command.tsx
+  8872e1f1ffdc2c3d 108,152,203,246
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "23212f83781af3b7c171bf7ad3fe554ca970de30",
+  "prompts": {
+    "8872e1f1ffdc2c3d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "49e6242c-db92-4233-8161-32203c725f89",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 4,
+      "total_deletions": 4,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    }
+  }
+}

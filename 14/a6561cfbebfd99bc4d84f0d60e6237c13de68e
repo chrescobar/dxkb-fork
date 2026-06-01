@@ -1,0 +1,26 @@
+src/components/workspace/workspace-browser.tsx
+  s_2279e32e0c395c::t_eabbb922b0b9ed 55
+src/components/workspace/__tests__/workspace-action-bar.test.tsx
+  s_2279e32e0c395c::t_bcc3f0ebae0cef 245-247,250-251
+  s_2279e32e0c395c::t_155cef9978cd3c 211-244,248-249,252-253
+src/components/workspace/__tests__/workspace-browser-pick-mode.test.ts
+  s_2279e32e0c395c::t_5c7f7bd3ff9919 1-138
+src/lib/services/workspace/adapters/__tests__/in-memory-workspace-repository.test.ts
+  s_2279e32e0c395c::t_6f346ccc373815 19-51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "14a6561cfbebfd99bc4d84f0d60e6237c13de68e",
+  "prompts": {},
+  "sessions": {
+    "s_2279e32e0c395c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1d25033a-ff4d-418b-a31c-f81e041f3d37",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

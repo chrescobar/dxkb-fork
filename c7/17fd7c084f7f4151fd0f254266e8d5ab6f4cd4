@@ -1,0 +1,65 @@
+src/lib/forms/(genomics)/genome-alignment/__tests__/genome-alignment-form-schema.test.ts
+  972e6ae395244d07 14-18
+src/lib/forms/(protein-tools)/proteome-comparison/__tests__/proteome-comparison-form-schema.test.ts
+  972e6ae395244d07 22-26
+src/lib/forms/(metagenomics)/metagenomic-binning/__tests__/metagenomic-binning-form-schema.test.ts
+  972e6ae395244d07 22-26
+src/lib/forms/(viral-tools)/sars-cov2-wastewater-analysis/__tests__/sars-cov2-wastewater-analysis-form-schema.test.ts
+  972e6ae395244d07 10-18,22-26
+src/lib/forms/(viral-tools)/influenza-ha-subtype/__tests__/influenza-ha-subtype-form-schema.test.ts
+  972e6ae395244d07 14-18
+e2e/tests/workspace-browse.spec.ts
+  972e6ae395244d07 57-59,135-141
+e2e/fixtures/overrides/workspace.ts
+  972e6ae395244d07 345-353,409
+src/lib/forms/(genomics)/variation-analysis/__tests__/variation-analysis-form-schema.test.ts
+  972e6ae395244d07 23-27
+src/lib/forms/(protein-tools)/msa-snp-analysis/__tests__/msa-snp-analysis-form-schema.test.ts
+  972e6ae395244d07 14-18
+src/lib/forms/(viral-tools)/viral-assembly/__tests__/viral-assembly-form-schema.test.ts
+  972e6ae395244d07 22-26
+e2e/tests/workspace-actions.spec.ts
+  972e6ae395244d07 7,76-78,91,169-171,255-257,331-333
+src/lib/forms/(metagenomics)/metagenomic-read-mapping/__tests__/metagenomic-read-mapping-form-schema.test.ts
+  972e6ae395244d07 22-26
+src/lib/forms/(utilities)/fastq-utilities/__tests__/fastq-utilities-form-schema.test.ts
+  972e6ae395244d07 23-27
+src/lib/forms/(genomics)/primer-design/__tests__/primer-design-form-schema.test.ts
+  972e6ae395244d07 14-18
+src/lib/forms/(protein-tools)/meta-cats/__tests__/meta-cats-form-schema.test.ts
+  972e6ae395244d07 10-25,29-33
+src/lib/forms/(viral-tools)/subspecies-classification/__tests__/subspecies-classification-form-schema.test.ts
+  972e6ae395244d07 10,14-18
+src/lib/forms/(genomics)/genome-annotation/__tests__/genome-annotation-form-schema.test.ts
+  972e6ae395244d07 17-21
+src/lib/forms/(phylogenomics)/viral-genome-tree/__tests__/viral-genome-tree-form-schema.test.ts
+  972e6ae395244d07 10-12,16-20
+src/lib/forms/(genomics)/genome-assembly/__tests__/genome-assembly-form-schema.test.ts
+  972e6ae395244d07 22-26
+src/lib/forms/(protein-tools)/gene-protein-tree/__tests__/gene-protein-tree-form-schema.test.ts
+  972e6ae395244d07 16-20
+src/lib/forms/(metagenomics)/taxonomic-classification/__tests__/taxonomic-classification-form-schema.test.ts
+  972e6ae395244d07 24-28
+src/lib/forms/(viral-tools)/sars-cov2-genome-analysis/__tests__/sars-cov2-genome-analysis-form-schema.test.ts
+  972e6ae395244d07 23-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "c717fd7c084f7f4151fd0f254266e8d5ab6f4cd4",
+  "prompts": {
+    "972e6ae395244d07": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aef23f4b-410a-489c-9e47-a3918cb5d5a9",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 159,
+      "total_deletions": 18,
+      "accepted_lines": 158,
+      "overriden_lines": 0
+    }
+  }
+}

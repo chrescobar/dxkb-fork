@@ -1,0 +1,73 @@
+vitest.config.mts
+  403a3dd47e7c5cf8 38-44,55-58
+src/lib/forms/(genomics)/variation-analysis/__tests__/variation-analysis-form-schema.test.ts
+  403a3dd47e7c5cf8 1-45
+src/lib/forms/(metagenomics)/metagenomic-read-mapping/__tests__/metagenomic-read-mapping-form-schema.test.ts
+  403a3dd47e7c5cf8 1-45
+e2e/fixtures/overrides/workspace.ts
+  403a3dd47e7c5cf8 140-147,384-386,403
+src/lib/forms/(metagenomics)/taxonomic-classification/__tests__/taxonomic-classification-form-schema.test.ts
+  403a3dd47e7c5cf8 1-46
+e2e/tests/services/genome-input-services.spec.ts
+  403a3dd47e7c5cf8 66-73
+src/lib/forms/(viral-tools)/influenza-ha-subtype/__tests__/influenza-ha-subtype-form-schema.test.ts
+  403a3dd47e7c5cf8 1-44
+src/lib/forms/(utilities)/fastq-utilities/__tests__/fastq-utilities-form-schema.test.ts
+  403a3dd47e7c5cf8 1-45
+src/lib/forms/(protein-tools)/meta-cats/__tests__/meta-cats-form-schema.test.ts
+  403a3dd47e7c5cf8 1-33
+src/lib/forms/(genomics)/genome-annotation/__tests__/genome-annotation-form-schema.test.ts
+  403a3dd47e7c5cf8 1-47
+src/lib/forms/(protein-tools)/msa-snp-analysis/__tests__/msa-snp-analysis-form-schema.test.ts
+  403a3dd47e7c5cf8 1-36
+src/lib/forms/(viral-tools)/sars-cov2-wastewater-analysis/__tests__/sars-cov2-wastewater-analysis-form-schema.test.ts
+  403a3dd47e7c5cf8 1-35
+src/lib/forms/(metagenomics)/metagenomic-binning/__tests__/metagenomic-binning-form-schema.test.ts
+  403a3dd47e7c5cf8 1-53
+e2e/tests/workspace-actions.spec.ts
+  403a3dd47e7c5cf8 75-76,89,167-169,253-255,329-331
+src/lib/forms/(genomics)/blast/__tests__/blast-form-schema.test.ts
+  403a3dd47e7c5cf8 1-58
+src/lib/forms/(protein-tools)/proteome-comparison/__tests__/proteome-comparison-form-schema.test.ts
+  403a3dd47e7c5cf8 1-54
+src/lib/forms/(genomics)/genome-alignment/__tests__/genome-alignment-form-schema.test.ts
+  403a3dd47e7c5cf8 1-36
+src/lib/forms/(viral-tools)/viral-assembly/__tests__/viral-assembly-form-schema.test.ts
+  403a3dd47e7c5cf8 1-44
+src/lib/forms/(protein-tools)/gene-protein-tree/__tests__/gene-protein-tree-form-schema.test.ts
+  403a3dd47e7c5cf8 1-38
+e2e/tests/workspace-browse.spec.ts
+  403a3dd47e7c5cf8 56-58,133-136
+src/lib/forms/(genomics)/primer-design/__tests__/primer-design-form-schema.test.ts
+  403a3dd47e7c5cf8 1-36
+src/lib/forms/(genomics)/genome-assembly/__tests__/genome-assembly-form-schema.test.ts
+  403a3dd47e7c5cf8 1-44
+src/lib/forms/(genomics)/similar-genome-finder/__tests__/similar-genome-finder-form-schema.test.ts
+  403a3dd47e7c5cf8 1-33
+src/lib/forms/(phylogenomics)/viral-genome-tree/__tests__/viral-genome-tree-form-schema.test.ts
+  403a3dd47e7c5cf8 1-35
+src/lib/forms/(viral-tools)/sars-cov2-genome-analysis/__tests__/sars-cov2-genome-analysis-form-schema.test.ts
+  403a3dd47e7c5cf8 1-45
+src/lib/forms/(viral-tools)/subspecies-classification/__tests__/subspecies-classification-form-schema.test.ts
+  403a3dd47e7c5cf8 1-35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "c78616abe1275c7d15ca2a8de7612bd2a2870984",
+  "prompts": {
+    "403a3dd47e7c5cf8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b78fd685-e9bc-4881-8cbe-aaafbfadf6b2",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 949,
+      "total_deletions": 20,
+      "accepted_lines": 937,
+      "overriden_lines": 0
+    }
+  }
+}

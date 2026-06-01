@@ -1,0 +1,34 @@
+.github/workflows/pnpm-test.yml
+  b6bef19dcba4456e 14-17
+src/components/services/sra-run-accession-with-validation.tsx
+  b6bef19dcba4456e 16-17
+.github/workflows/pnpm-lint.yml
+  b6bef19dcba4456e 15-17
+.github/workflows/pnpm-build.yml
+  b6bef19dcba4456e 15-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "519873a98244ff49d50b58349a029c20101bf4ff",
+  "prompts": {
+    "b6bef19dcba4456e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "df7f7c38-1772-4cd3-aaf0-18f1f8ef76f4",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 12,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_e893c4a39fbc49": {
+      "author": "Chris Escobar"
+    }
+  }
+}

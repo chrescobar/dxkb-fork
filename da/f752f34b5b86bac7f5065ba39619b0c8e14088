@@ -1,0 +1,28 @@
+src/hooks/services/jobs/__tests__/use-jobs-summary.test.tsx
+  s_baca1bee226caa::t_264af2aeed3462 65-83
+e2e/tests/jobs.spec.ts
+  s_baca1bee226caa::t_3649b3e74d05a2 23-39
+src/components/jobs/__tests__/job-status-pill.test.tsx
+  s_baca1bee226caa::t_4fd7aef49db4fa 1-197
+src/components/jobs/job-status-pill.tsx
+  s_baca1bee226caa::t_845112009d8453 13,30,50-56,58,65,68,81-82,96-105,107-138
+src/hooks/services/jobs/use-jobs-data.ts
+  s_baca1bee226caa::t_f0d07dd2f744be 16
+  s_baca1bee226caa::t_9bed97b8f5180b 30,38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "daf752f34b5b86bac7f5065ba39619b0c8e14088",
+  "prompts": {},
+  "sessions": {
+    "s_baca1bee226caa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "728d091f-eb61-4141-8ac4-024e020e72cc",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

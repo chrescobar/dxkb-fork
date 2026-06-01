@@ -1,0 +1,19 @@
+package.json
+  s_d97fa0b15c10c3::t_3f642b1c1d1adf 123-132
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "c6b0deebe592661e0f2bdd4622773e8f583660b5",
+  "prompts": {},
+  "sessions": {
+    "s_d97fa0b15c10c3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc3cdfda-9e2c-44be-94d0-e7765be455ae",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

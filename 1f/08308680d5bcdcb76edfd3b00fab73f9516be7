@@ -1,0 +1,26 @@
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  s_12af596e2aefe4::t_8d1a27f500a263 42-43,46-47,49-53
+  s_12af596e2aefe4::t_76f8b271dff72d 148,150-151,154,341,348
+  s_12af596e2aefe4::t_71830143c5c4bd 3,143-147,149,152-153,155-158,331,334-340,342,344-345,397
+  s_12af596e2aefe4::t_d4caa4ab8591c7 221
+  s_12af596e2aefe4::t_84041b5d8b4662 58-59
+src/components/organisms/metadata-distributions/__tests__/donut-chart.test.tsx
+  s_12af596e2aefe4::t_e8ec135ba4e286 26,98,112,116,118,120-121,155,164
+  s_12af596e2aefe4::t_d034e93314f9b4 27-38,48-49,52,122-154,156,158-163
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "1f08308680d5bcdcb76edfd3b00fab73f9516be7",
+  "prompts": {},
+  "sessions": {
+    "s_12af596e2aefe4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e1855-29b4-7a71-8936-db4a79578210",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

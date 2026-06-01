@@ -1,0 +1,20 @@
+src/app/(footer)/funding/page.tsx
+  s_5cba89d72e852a::t_00fc9c7d76b35d 7-8
+  s_5cba89d72e852a::t_9fac5e9ddbdaef 3,16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "c4c2d936e8d88f83085512ec62014bf877277953",
+  "prompts": {},
+  "sessions": {
+    "s_5cba89d72e852a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc37e3fa-df2f-4464-85ea-9be659680839",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

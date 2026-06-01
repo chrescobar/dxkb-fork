@@ -1,0 +1,55 @@
+e2e/fixtures/hars/workspace-viewer.har
+  04286249b7332d0d 14-1101
+e2e/scripts/seed-account.ts
+  e09a30ecb999e535 1-141
+e2e/fixtures/hars/service-submit.har
+  04286249b7332d0d 14-967
+e2e/fixtures/hars/jobs-lifecycle.har
+  04286249b7332d0d 14-858
+e2e/fixtures/hars/workspace-browse.har
+  04286249b7332d0d 14-858
+e2e/fixtures/hars/workspace-upload.har
+  04286249b7332d0d 14-1861
+e2e/scripts/journeys/_helpers/sign-in.ts
+  e09a30ecb999e535 62-69,73-82,84-85,88
+e2e/scripts/record-har.ts
+  e09a30ecb999e535 78-80,85,92-93,99-105,244,253-254,256-257,262-265,270-273
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "8e36e0cf70b17ba8d1f481cf94cd4187ea0a4a5f",
+  "prompts": {
+    "04286249b7332d0d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dd494-c2b8-7891-9422-1895f09e3d77",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 1443,
+      "total_deletions": 197,
+      "accepted_lines": 1443,
+      "overriden_lines": 0
+    },
+    "e09a30ecb999e535": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7cbef038-0d32-4ae5-8500-ad2cf9a8460c",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 320,
+      "total_deletions": 121,
+      "accepted_lines": 293,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_e893c4a39fbc49": {
+      "author": "Chris Escobar"
+    }
+  }
+}

@@ -1,0 +1,69 @@
+src/app/services/(phylogenomics)/viral-genome-tree/page.tsx
+  s_ec31f1709b75b5::t_483d29ba6192b2 825
+  s_ec31f1709b75b5::t_3ce03204f3845a 707
+  s_ec31f1709b75b5::t_913ede4ad04d80 38
+src/components/services/output-location-fields.tsx
+  s_ec31f1709b75b5::t_5ce50163591cac 3,52,54
+  s_ec31f1709b75b5::t_e5e1d5c0914cbd 47-49,55
+  s_ec31f1709b75b5::t_a5b451dd29f951 50,53,56-58,75,82
+  s_ec31f1709b75b5::t_5c8b19e433bebe 108
+  s_ec31f1709b75b5::t_a186f2190ee0c6 8,10,34-46,59-74,76-81
+  s_ec31f1709b75b5::t_2c57c994ac90a9 51
+src/app/services/(viral-tools)/influenza-ha-subtype/page.tsx
+  s_ec31f1709b75b5::t_cac443d452176b 15
+  s_ec31f1709b75b5::t_e08332b42cba7f 309
+  s_ec31f1709b75b5::t_65aeae1dc18b71 99
+src/app/services/(protein-tools)/meta-cats/page.tsx
+  s_ec31f1709b75b5::t_413d6e4cab0e52 973
+  s_ec31f1709b75b5::t_20ed38620e5eba 469
+  s_ec31f1709b75b5::t_aeb3da740f17a4 39
+src/app/services/(genomics)/variation-analysis/page.tsx
+  ai_agent 247
+src/app/services/(viral-tools)/subspecies-classification/page.tsx
+  s_ec31f1709b75b5::t_0c75e08ba8e803 23
+  s_ec31f1709b75b5::t_7399157462c452 315
+  s_ec31f1709b75b5::t_998728668af545 3
+  s_ec31f1709b75b5::t_0d0f28326a31fb 301
+src/app/services/(protein-tools)/gene-protein-tree/page.tsx
+  s_ec31f1709b75b5::t_d343be2c1e4045 38
+  s_ec31f1709b75b5::t_f559b0cb23c4eb 686
+  s_ec31f1709b75b5::t_6669ef3e30820f 804
+src/app/services/(protein-tools)/msa-snp-analysis/page.tsx
+  s_ec31f1709b75b5::t_0f2a4e76b6742e 1313
+  s_ec31f1709b75b5::t_34c0a0a483d261 29
+  s_ec31f1709b75b5::t_cbdcc3953b2f28 1326
+src/app/services/(viral-tools)/sars-cov2-genome-analysis/page.tsx
+  s_ec31f1709b75b5::t_2fbf3024ff690d 753
+  s_ec31f1709b75b5::t_aa290a1da9604f 38
+  s_ec31f1709b75b5::t_381bcef364a7c8 740
+src/components/services/output-folder.tsx
+  s_ec31f1709b75b5::t_e2e6a29c264b64 3
+src/app/services/(viral-tools)/viral-assembly/page.tsx
+  s_ec31f1709b75b5::t_e5b4b972ed0e34 22
+  s_ec31f1709b75b5::t_9532b95a0ede01 420
+  s_ec31f1709b75b5::t_0199e3cbc442f2 433
+src/app/services/(protein-tools)/proteome-comparison/page.tsx
+  s_ec31f1709b75b5::t_3c502e244917da 776
+  s_ec31f1709b75b5::t_c52f785b1381d9 32
+  s_ec31f1709b75b5::t_cf2b6cb1d2b50a 377
+src/app/services/(viral-tools)/sars-cov2-wastewater-analysis/page.tsx
+  s_ec31f1709b75b5::t_a2d5ec6f051a0d 37
+  s_ec31f1709b75b5::t_4498c2d5261ba2 567
+  s_ec31f1709b75b5::t_cdf93f9998c2d3 581
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "befe620c147d4231a743efa1ef0ae996c219c592",
+  "prompts": {},
+  "sessions": {
+    "s_ec31f1709b75b5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3fc02201-dab7-403f-ab6f-ef638d584eff",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

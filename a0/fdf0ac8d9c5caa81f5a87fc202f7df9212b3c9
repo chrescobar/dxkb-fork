@@ -1,0 +1,19 @@
+pnpm-workspace.yaml
+  s_d97fa0b15c10c3::t_520b3c18317340 3-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "a0fdf0ac8d9c5caa81f5a87fc202f7df9212b3c9",
+  "prompts": {},
+  "sessions": {
+    "s_d97fa0b15c10c3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc3cdfda-9e2c-44be-94d0-e7765be455ae",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

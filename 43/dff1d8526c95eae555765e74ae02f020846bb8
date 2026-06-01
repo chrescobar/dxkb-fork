@@ -1,0 +1,62 @@
+src/hooks/services/workspace/use-workspace-object-search.ts
+  1563c2cb0f4644c1 41-42
+src/lib/services/workspace/domain.ts
+  1563c2cb0f4644c1 23,47
+src/lib/services/workspace/index.ts
+  1563c2cb0f4644c1 1-11,13-16,18-22
+src/components/workspace/upload-dialog.tsx
+  1563c2cb0f4644c1 21,52,110-114,116,133,148
+src/components/workspace/workspace-mini-browser.tsx
+  1563c2cb0f4644c1 25,148
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "43dff1d8526c95eae555765e74ae02f020846bb8",
+  "prompts": {
+    "1563c2cb0f4644c1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "259cff15-4125-44d5-97c4-14619d3fec75",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 447,
+      "overriden_lines": 0
+    },
+    "419a5305e23edd86": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1121456-7439-418d-8199-1af302a01764",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    },
+    "b186c38203232bc3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2477c54-328c-477b-9f1e-c2ec999db01a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Chris Escobar",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_e893c4a39fbc49": {
+      "author": "Chris Escobar"
+    }
+  }
+}

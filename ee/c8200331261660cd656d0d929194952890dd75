@@ -1,0 +1,14 @@
+.claude/CLAUDE.md
+  h_e893c4a39fbc49 114-118
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "eec8200331261660cd656d0d929194952890dd75",
+  "prompts": {},
+  "humans": {
+    "h_e893c4a39fbc49": {
+      "author": "Chris Escobar"
+    }
+  }
+}

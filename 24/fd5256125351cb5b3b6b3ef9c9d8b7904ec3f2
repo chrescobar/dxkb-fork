@@ -1,0 +1,24 @@
+src/app/organisms/bacteria/views/overview.tsx
+  s_2333c7443aac3f::t_c36c63ae57e903 52-57,59-61,63-65
+src/app/organisms/viruses/page.tsx
+  s_2333c7443aac3f::t_1f9716c389b701 1
+  s_2333c7443aac3f::t_829709e2d732c9 20
+src/app/organisms/viruses/views/overview.tsx
+  s_2333c7443aac3f::t_0566eebe4fde04 45-46,48-52,54-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "24fd5256125351cb5b3b6b3ef9c9d8b7904ec3f2",
+  "prompts": {},
+  "sessions": {
+    "s_2333c7443aac3f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7b81ed23-e83b-46ba-b16b-d7b5b5f11b2f",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

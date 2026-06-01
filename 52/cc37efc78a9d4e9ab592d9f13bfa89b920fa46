@@ -1,0 +1,31 @@
+.github/workflows/pnpm-lint.yml
+  ai_agent 18-20
+.github/workflows/pnpm-test.yml
+  ai_agent 18-20
+.prettierrc
+  ai_agent 1-9
+.github/workflows/e2e-har-refresh.yml
+  ai_agent 33-35
+.github/workflows/pnpm-build.yml
+  ai_agent 18-20
+.github/workflows/sync-linux-snapshots.yml
+  ai_agent 11-13,17,47,50,57-59
+src/app/globals.css
+  ai_agent 49,84,141-142,164,168,188,196,241,246,254,258,262,267,279,287,291,295,307,319,323,327,335,339,347,351,355,399,411,427,431,447,459,467,471,475,479,483,514,523,527,531,539,556,572,579,583,587,595,599,607,611,617,629,637,642,654,666,683,687,691,695,699,712,721,725,730,734,738,742,747,797-798
+.github/workflows/pnpm-e2e.yml
+  ai_agent 18-20,31,71,95,132
+.github/workflows/pnpm-typecheck.yml
+  ai_agent 18-20
+src/app/(footer)/funding/page.tsx
+  ai_agent 3,7-8,16,26
+src/app/(footer)/about/page.tsx
+  ai_agent 29
+src/components/footers/footer.tsx
+  ai_agent 49-56,62,64-65,120,150,162-165
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "52cc37efc78a9d4e9ab592d9f13bfa89b920fa46",
+  "prompts": {}
+}

@@ -1,0 +1,19 @@
+src/components/ui/calendar.tsx
+  s_b9cd57b69cade8::t_bbcbf4b96757f4 90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "a6d551c158ed54cb761aa6ce57c0fb0fe1e8fcae",
+  "prompts": {},
+  "sessions": {
+    "s_b9cd57b69cade8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "183cc2cc-9945-4d9b-b887-16cc4a16ccbb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

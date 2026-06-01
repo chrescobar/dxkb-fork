@@ -73,9 +73,11 @@ interface DataTableProps {
   onDownloadAll?: (format: 'csv' | 'txt', visibleColumns: string[] | null) => void;
   // Loading indicator: parent can set this while data is being fetched
   isLoading?: boolean;
+
+  onActiveRowChange?: (id: string | null) => void;
 }
 
-export function DataTable({ id: _id, data, columns, totalItems, resource, onSelectionChange, onGenomeSelect, selectedIds, pageIndex, pageSize, onPageChange, sorting:controlledSorting, onSortingChange, columnOrder, onColumnOrderChange, columnVisibility: controlledVisibility, onColumnVisibilityChange: onColumnVisibilityChangeProp, rowSelection: controlledRowSelection, onRowSelectionChange, isAllPagesSelected = false, onAllPagesSelectionChange, totalSelectedCount, onDownloadAll, isLoading = false }: DataTableProps) {
+export function DataTable({ id: _id, data, columns, totalItems, resource, onSelectionChange, onGenomeSelect, selectedIds, pageIndex, pageSize, onPageChange, sorting:controlledSorting, onSortingChange, columnOrder, onColumnOrderChange, columnVisibility: controlledVisibility, onColumnVisibilityChange: onColumnVisibilityChangeProp, rowSelection: controlledRowSelection, onRowSelectionChange, isAllPagesSelected = false, onAllPagesSelectionChange, totalSelectedCount, onDownloadAll, isLoading = false, onActiveRowChange }: DataTableProps) {
 
   const [columnSizing, setColumnSizing] = useState<Record<string, number>>({});
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>(
@@ -192,9 +194,12 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                   // If all pages are selected, deselect all (including cross-page)
                   onAllPagesSelectionChange?.(false);
                   table.toggleAllRowsSelected(false);
-                  // Clear all row selections
+                  // Clear all row selections and notify parent (controlled case)
                   if (onRowSelectionChange) {
                     onRowSelectionChange({});
+                  } else {
+                    // ensure internal selection is cleared
+                    table.setRowSelection({});
                   }
                 } else if (allPageRowsSelected) {
                   // If all rows on current page are selected, clicking again deselects current page
@@ -237,6 +242,10 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
                 const lastSelectedIndex = lastSelectedIndexRef.current;
 
+                // Determine whether this click will select or deselect the row based on current state
+                const wasSelected = row.getIsSelected();
+                const willSelect = !wasSelected;
+
                 if (isShift && lastSelectedIndex !== null && lastSelectedIndex !== currentIndex) {
                   const start = Math.min(lastSelectedIndex, currentIndex);
                   const end = Math.max(lastSelectedIndex, currentIndex);
@@ -254,22 +263,25 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                     ...newSelection,
                   }));
                 } else {
-                  const isSelected = row.getIsSelected();
                   table.setRowSelection((prev) => ({
                     ...prev,
-                    [row.id]: !isSelected,
+                    [row.id]: willSelect,
                   }));
                 }
 
                 // ✅ Set synchronously
                 lastSelectedIndexRef.current = currentIndex;
 
-                // After updating rowSelection...
-                if (row.getIsSelected()) {
+                // After updating rowSelection, invoke handlers based on the intended new selection state
+                const idVal = (row.original as any)[idField] ?? (row.original as any)?.genome_id ?? null;
+                if (!willSelect) {
+                  console.log('DataTable: checkbox deselect', { id: idVal, rowId: row.id });
                   onGenomeSelect?.(null); // deselecting, so clear
-                } else {
-                  const genomeId = row.original?.genome_id;
-                  if (genomeId != null) onGenomeSelect?.(String(genomeId));
+                  onActiveRowChange?.(null);
+                } else if (idVal != null) {
+                  console.log('DataTable: checkbox select', { id: idVal, rowId: row.id });
+                  onGenomeSelect?.(String(idVal));
+                  onActiveRowChange?.(String(idVal));
                 }
               }}
               className="cursor-pointer m-0 p-0"
@@ -363,8 +375,8 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       if (onSelectionChange) {
         const selectedRows = Object.keys(newSelection)
           .filter((key) => newSelection[key])
-          .map((key) => data[parseInt(key, 10)])
-          .filter(Boolean);
+          .map((key) => table.getRowModel().rows.find(r => r.id === key)?.original)
+          .filter((row): row is Record<string, unknown> => row !== undefined);
         onSelectionChange(selectedRows);
       }
     },
@@ -712,17 +724,16 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
   // Now that all the setup is done, let's render the table!
   return (
-    <div className="flex flex-col h-full w-full text-xs relative items-center border-0">{/* This is the main container. Full width and content centered. */}
+    <div className="flex min-h-0 flex-1 flex-col w-full text-xs relative items-center border-0 overflow-hidden">{/* This is the main container. Full width and content centered. */}
       {/* Banner for selecting all results across pages */}
       {!isAllPagesSelected && table.getIsAllPageRowsSelected() && (
-        <div className="w-full bg-blue-50 border border-blue-200 px-4 py-2 mb-2 flex items-center justify-between">
+          <div className="w-full bg-blue-50 border border-blue-200 px-4 py-2 mb-2 flex items-center justify-between">
           <span className="text-blue-700">
             All {data.length} results on this page are selected.
           </span>
           <button 
             onClick={(e) => {
               e.stopPropagation();
-              e.preventDefault();
               onAllPagesSelectionChange?.(true);
             }}
             className="text-blue-700 underline hover:text-blue-900 font-semibold cursor-pointer"
@@ -851,7 +862,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           Download Displayed Columns Only
         </label>
       </div>
-      <div className="w-full flex flex-col border border-gray-500 rounded relative h-full overflow-hidden"> {/* This is the main container, which contains both the table and the pagination footer */}
+      <div className="w-full flex flex-col border border-gray-500 rounded relative max-h-[65vh] overflow-hidden"> {/* This is the main container, which contains both the table and the pagination footer. Limit height to ~65% of viewport so the footer remains visible and the table body becomes scrollable. */}
 
         <div
           className="flex-1 overflow-auto relative"
@@ -996,6 +1007,19 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                   return (
                     <TableRow
                       key={row.id}
+                      // Clicking a row should notify listeners about the active row (used to open side panels).
+                      // If the click originated from a checkbox/input, avoid double-handling because
+                      // the checkbox click handler already calls onActiveRowChange/onGenomeSelect.
+                      onClick={(e) => {
+                        if ((e.target as HTMLElement).closest('input[type="checkbox"]')) return;
+                        const idVal = (row.original as any)[idField];
+                        const genomeId = idVal ?? (row.original as any)?.genome_id ?? null;
+                        console.log('DataTable: row click', { genomeId, rowId: row.id });
+                        if (genomeId != null) {
+                          onGenomeSelect?.(String(genomeId));
+                          onActiveRowChange?.(String(genomeId));
+                        }
+                      }}
                       style={{
                         position: 'absolute',
                         transform: `translateY(${virtualRow.start}px)`,

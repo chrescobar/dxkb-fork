@@ -75,7 +75,7 @@ export function WithGenomePanel({
   });
 
   return (
-    <div className="flex h-[calc(100vh-140px)] min-h-0 flex-col overflow-hidden px-[10px] mt-[10px]">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-[10px] mt-[10px]">
       <div className="flex min-h-0 flex-1 overflow-hidden">
         <div
           className={`flex min-h-0 flex-col overflow-hidden ${

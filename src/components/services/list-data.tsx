@@ -114,18 +114,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const pageIndex = controlledPageIndex !== undefined ? controlledPageIndex : internalPageIndex;
   const setPageIndex = onPageChange || setInternalPageIndex;
 
-  // Reset sorting and selection when resource/query actually changes.
-  // Local state resets run during render (React's derived-state pattern);
-  // parent-owned callbacks (setRowSelection when controlled, onSelectionChange)
-  // are deferred to an effect to avoid render-phase updates on other components.
-  const [prevResource, setPrevResource] = useState(resource);
-  const [prevCleanQ, setPrevCleanQ] = useState(cleanQ);
-  const [resetNonce, setResetNonce] = useState(0);
-
-  if (prevResource !== resource || prevCleanQ !== cleanQ) {
-    setPrevResource(resource);
-    setPrevCleanQ(cleanQ);
-    // Reset to default sort when resource or query changes
+  useEffect(() => {
     const idFieldMap: Record<string, string> = {
       genome: "genome_id",
       genome_sequence: "sequence_id",
@@ -137,22 +126,20 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       experiment: "exp_id",
       bioset: "bioset_id",
     };
-    const defaultIdField = idFieldMap[resource] ?? "id";
-    setSorting([{ id: defaultIdField, desc: false }]);
-    setResetNonce((n) => n + 1);
-  }
 
-  useEffect(() => {
-    if (resetNonce === 0) return;
-    setRowSelection({});
-    onSelectionChange?.([]);
-  }, [resetNonce, setRowSelection, onSelectionChange]);
+    const defaultIdField = idFieldMap[resource] ?? "id";
+
+    setSorting([{ id: defaultIdField, desc: false }]);
+
+    // Do not auto-clear selection here; let user actions control selection
+    // to avoid transient UI wipes when data re-fetches occur.
+  }, [resource]);
 
   const setSortingAndResetPage = useCallback((newSorting: SortingState) => {
     setSorting(newSorting);
     setPageIndex(0);
-    setRowSelection({});
-    onSelectionChange?.([]); // Clear selection in parent too
+//    setRowSelection({});
+//    onSelectionChange?.([]); // Clear selection in parent too
   }, [onSelectionChange, setPageIndex, setRowSelection]);
 
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean> | null>(null);
@@ -280,9 +267,11 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   }
 
   const handleRowSelectionChange = (newSelection: Record<string, boolean>) => {
+    // Apply new selection from table. Avoiding aggressive ignores here so
+    // header "select all" and explicit deselect actions work reliably.
     setRowSelection(newSelection);
-    
-    // Clear all pages selection when individual rows are selected/deselected
+
+    // Clear all pages selection when individual rows change
     if (isAllPagesSelected) {
       setIsAllPagesSelected(false);
     }
@@ -290,7 +279,6 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     const selectedIds = Object.keys(newSelection)
       .filter((id) => newSelection[id]);
 
-    // 🚨 IMPORTANT: this is the ONLY thing parent should receive
     onSelectionChange?.(selectedIds);
   };
 
@@ -398,7 +386,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   }
 
   return (
-    <div className="h-full flex flex-col overflow-hidden">
+    <div className="h-full flex flex-col min-h-0 overflow-hidden">
       <FilterBar
         facetFields={facetFields}
         resource={resource}
@@ -406,8 +394,8 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
         onFilterChange={(rql) => {
           setFilter(rql);
           setPageIndex(0);          // ✅ reset pagination
-          setRowSelection({});      // ✅ clear selection
-          onSelectionChange?.([]);  // ✅ clear parent selection
+//          setRowSelection({});      // ✅ clear selection
+//          onSelectionChange?.([]);  // ✅ clear parent selection
           setIsAllPagesSelected(false); // ✅ clear all pages selection
         }}
       />

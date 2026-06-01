@@ -12,7 +12,10 @@ function ResizablePanelGroup({
     <ResizablePrimitive.Group
       data-slot="resizable-panel-group"
       className={cn(
-        "flex h-full w-full aria-[orientation=vertical]:flex-col",
+        // Use flex-1 + min-h-0 so the group respects parent flex sizing
+        // instead of forcing full viewport height via h-full which can
+        // cause descendants to expand beyond intended bounds.
+        "flex flex-1 min-h-0 w-full aria-[orientation=vertical]:flex-col",
         className
       )}
       {...props}

@@ -39,7 +39,7 @@ export function JobStatusPill() {
   const { isAuthenticated } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
-  const { data: summary } = useJobsSummary(false, 10_000);
+  const { data: summary } = useJobsSummary(false);
   const taskSummary = summary?.taskSummary ?? {};
 
   const completedCount = taskSummary["completed"] ?? 0;
@@ -55,13 +55,15 @@ export function JobStatusPill() {
     { key: "queued", count: queuedCount, icon: Clock, className: "text-white/60" },
   ].filter(({ count }) => count > 0);
 
+  const activeRefetchInterval = runningCount > 0 || queuedCount > 0 ? 3_000 : 30_000;
+
   const { data: jobsResult, isPending } = useJobsData({
     offset: 0,
     limit: 5,
     includeArchived: false,
     sortField: "submit_time",
     sortOrder: "desc",
-    refetchInterval: 10_000,
+    refetchInterval: activeRefetchInterval,
     enabled: displayableCount > 0,
   });
 

@@ -65,7 +65,7 @@ export function UserAvatarDropdown() {
                 </Avatar>
               )}
             </DropdownMenuTrigger>
-            <DropdownMenuContent side="bottom" sideOffset={8} align="end" className="w-[200px]">
+            <DropdownMenuContent side="bottom" sideOffset={8} align="end" className="w-50">
               <DropdownMenuGroup>
                 <DropdownMenuLabel>User Actions</DropdownMenuLabel>
               </DropdownMenuGroup>

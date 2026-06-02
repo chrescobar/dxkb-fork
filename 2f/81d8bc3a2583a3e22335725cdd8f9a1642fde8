@@ -1,0 +1,45 @@
+src/hooks/services/jobs/use-jobs-data.ts
+  s_62ab50d2e7eb50::t_bb176d2e9cc0bf 56-57
+src/hooks/services/jobs/__tests__/use-jobs-summary.test.tsx
+  s_0a6336c4585f3f::t_00d3acff42e8fe 65,75
+src/hooks/services/use-service-form-submission.ts
+  s_e9ec4175cf3642::t_10bd8638f3f014 40-41
+  s_e9ec4175cf3642::t_6a340e76fbcc91 23
+  s_e9ec4175cf3642::t_d55351d9c33959 4
+src/hooks/services/jobs/use-jobs-summary.ts
+  s_0a6336c4585f3f::t_dad962db8ebe54 9-11,14-20
+src/components/workspace/workspace-browser.tsx
+  s_62ab50d2e7eb50::t_7bf991356617fb 237
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "2f81d8bc3a2583a3e22335725cdd8f9a1642fde8",
+  "prompts": {},
+  "sessions": {
+    "s_0a6336c4585f3f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "04e38d77-df9d-4c16-8a13-9fe035b4dbcd",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_62ab50d2e7eb50": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e3c4e3c1-357b-410b-96eb-2152b98bcb29",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_e9ec4175cf3642": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "48b1cab7-3f30-496d-a780-fab47e611acf",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

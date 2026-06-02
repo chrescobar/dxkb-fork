@@ -119,21 +119,25 @@ export function GenomeShell({
   }
 
   return (
-    <div className="h-screen flex overflow-hidden">
+    // Use flex-1 + min-h-0 instead of h-screen so the shell doesn't force
+    // the page height when the side panel is shown. This keeps the vertical
+    // action strip the same height as the table and prevents the footer from
+    // being pushed down.
+    <div className="flex-1 min-h-0 w-full flex overflow-hidden max-h-screen">
       {/* Remount the group whenever panelExpanded or hasSidePanel changes so
           default sizes are applied consistently (avoids the 0->small size
           when toggling visibility). */}
       <ResizablePanelGroup
         key={`resizable-${panelExpanded}-${hasSidePanel}`}
         orientation="horizontal"
-        className="flex-1 min-h-0 w-full flex"
+        className="flex-1 min-h-0 w-full flex h-full max-h-screen"
       >
         <ResizablePanel
           defaultSize={80}
           minSize="20%"
-          className="flex min-h-0 min-w-0 overflow-hidden"
+          className="flex min-h-0 min-w-0 h-full max-h-screen overflow-hidden"
         >
-          <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div className="flex flex-col flex-1 min-h-0 h-full max-h-screen overflow-auto">
             {children}
           </div>
 
@@ -148,9 +152,9 @@ export function GenomeShell({
           defaultSize={20}
           minSize="20%"
           maxSize="60%"
-          className="min-h-0 flex flex-col overflow-hidden"
+          className="min-h-0 flex flex-col h-full max-h-screen overflow-hidden"
         >
-          <div className="flex flex-col min-h-0 flex-1 overflow-hidden">
+          <div className="flex flex-col min-h-0 flex-1 h-full max-h-screen overflow-auto">
             {sidePanel}
           </div>
         </ResizablePanel>

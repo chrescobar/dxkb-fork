@@ -9,6 +9,7 @@ import { Providers } from "./providers";
 import { AuthBoundary } from "@/lib/auth/provider";
 import { auth } from "@/lib/auth/server/instance";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { DebugLoader } from "@/components/debug-loader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,12 +41,15 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} min-h-full`}
       suppressHydrationWarning
     >
-      <body className="min-h-screen">
+      <body className="h-screen overflow-hidden">
+        <div className="h-full overflow-auto">
         <Providers>
           <ThemeProvider>
             <AuthBoundary initialUser={initialUser}>
               <TooltipProvider>
                 {children}
+                {/* Dev-only debug loader: safe to include in dev; no runtime UI */}
+                <DebugLoader />
               </TooltipProvider>
             </AuthBoundary>
             <ThemeSwitcher />
@@ -58,6 +62,7 @@ export default async function RootLayout({
           </ThemeProvider>
           <TailwindIndicator />
         </Providers>
+        </div>
       </body>
     </html>
   );

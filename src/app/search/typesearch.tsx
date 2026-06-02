@@ -252,7 +252,11 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
 
   // Main return: 
   return (
-    <div className="flex min-h-0 flex-1">
+    // Ensure this container fills the available height so child panels using
+    // h-full can correctly constrain their inner scroll areas. Without an
+    // explicit h-full some descendants may compute height auto and allow
+    // children to expand the page (pushing the footer).
+    <div className="flex min-h-0 flex-1 h-full">
       <GenomeShell
         hasSidePanel={!!activeGenomeId}
         sidePanel={

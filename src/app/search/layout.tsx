@@ -10,7 +10,7 @@ export default function VirusesLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
-      <main className="flex flex-1 flex-col">
+      <main className="flex flex-1 flex-col min-h-0">
         <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
       </main>
       <Footer />

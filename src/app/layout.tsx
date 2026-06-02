@@ -48,7 +48,6 @@ export default async function RootLayout({
               <TooltipProvider>
                 {children}
                 {/* Dev-only debug loader: safe to include in dev; no runtime UI */}
-                <DebugLoader />
               </TooltipProvider>
               <CommandPalette />
             </AuthBoundary>

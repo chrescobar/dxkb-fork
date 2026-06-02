@@ -41,8 +41,7 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} min-h-full`}
       suppressHydrationWarning
     >
-      <body className="h-screen overflow-hidden">
-        <div className="h-full overflow-auto">
+      <body className="min-h-screen">
         <Providers>
           <ThemeProvider>
             <AuthBoundary initialUser={initialUser}>
@@ -62,7 +61,6 @@ export default async function RootLayout({
           </ThemeProvider>
           <TailwindIndicator />
         </Providers>
-        </div>
       </body>
     </html>
   );

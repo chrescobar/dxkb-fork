@@ -15,7 +15,7 @@ import { strainFields } from "@/constants/datafields/strain";
 import { surveillanceFields } from "@/constants/datafields/surveillance";
 import { taxonomyFields } from "@/constants/datafields/taxonomy";
 import { Button } from "@/components/ui/button";
-import { DetailPanel, type DetailField } from "@/components/detail-panel";
+import { DetailPanel, type DetailField } from "./index";
 import { formatOwner, formatFileSize } from "@/lib/services/workspace/helpers";
 import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
 import { WorkspaceItemHeader } from "@/components/workspace/workspace-item-header";

@@ -33,7 +33,7 @@ export function SuBanner() {
         variant="outline"
         size="sm"
         className="ml-1 h-6 border-accent-foreground/30 bg-transparent px-2 text-xs hover:bg-accent-foreground/10"
-        onClick={() => suExit()}
+        onClick={() => void suExit()}
       >
         Exit SU
       </Button>

@@ -1,0 +1,19 @@
+src/components/navbars/__tests__/user-avatar-dropdown.test.tsx
+  s_f975be3169b5ee::t_ab1fa9d085bb87 1-132
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "fd48416535544c523ec1386de59027aef3285e3d",
+  "prompts": {},
+  "sessions": {
+    "s_f975be3169b5ee": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ff210a89-faa1-45ab-95d7-f986376fa652",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

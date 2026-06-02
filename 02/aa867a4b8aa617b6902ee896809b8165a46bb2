@@ -1,0 +1,21 @@
+e2e/tests/search-keyboard.spec.ts
+  s_e092591115ecc5::t_e2022bc6f15667 166-168
+e2e/tests/workspace-actions.spec.ts
+  s_e092591115ecc5::t_d3e0f89f62f448 406-409
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "02aa867a4b8aa617b6902ee896809b8165a46bb2",
+  "prompts": {},
+  "sessions": {
+    "s_e092591115ecc5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b52205a1-e591-4704-914e-7beb4f8c1cff",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

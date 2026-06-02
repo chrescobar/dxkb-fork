@@ -53,7 +53,8 @@ export function useJobsData(params: UseJobsDataParams) {
         },
       );
       const raw = Array.isArray(data.jobs) ? data.jobs : [];
-      const jobs = (Array.isArray(raw[0]) ? raw[0] : raw) as JobListItem[];
+      const rawJobs = (Array.isArray(raw[0]) ? raw[0] : raw) as Record<string, unknown>[];
+      const jobs = rawJobs.map((j) => ({ ...j, id: String(j.id ?? "") })) as JobListItem[];
       const totalTasks = typeof data.totalTasks === "number" ? data.totalTasks : 0;
       return { jobs, totalTasks };
     },

@@ -6,10 +6,18 @@ interface JobsSummaryData {
   appSummary: Record<string, number>;
 }
 
-export function useJobsSummary(includeArchived: boolean, refetchInterval = 30_000) {
+const activeStatuses = ["running", "in-progress", "queued", "pending"];
+
+export function useJobsSummary(includeArchived: boolean) {
   return useApiQuery<JobsSummaryData>({
     queryKey: ["jobs-summary", includeArchived],
-    refetchInterval,
+    refetchInterval: (query) => {
+      const data = query.state.data as JobsSummaryData | undefined;
+      if (!data) return 5_000;
+      const { taskSummary } = data;
+      const hasActive = activeStatuses.some((s) => (taskSummary[s] ?? 0) > 0);
+      return hasActive ? 3_000 : 30_000;
+    },
     refetchIntervalInBackground: false,
     queryFn: async () => {
       const data = await apiCall<{

@@ -62,7 +62,7 @@ describe("useJobsSummary", () => {
     expect(result.current.data).toEqual({ taskSummary, appSummary });
   });
 
-  it("accepts a custom refetchInterval without breaking data fetching", async () => {
+  it("returns active job data correctly", async () => {
     const taskSummary = { running: 1 };
     const appSummary = { GenomeAssembly2: 1 };
 
@@ -72,7 +72,7 @@ describe("useJobsSummary", () => {
       }),
     );
 
-    const { result } = renderHook(() => useJobsSummary(false, 10_000), {
+    const { result } = renderHook(() => useJobsSummary(false), {
       wrapper: createWrapper(),
     });
 

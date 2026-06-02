@@ -51,7 +51,9 @@ export function UserAvatarDropdown() {
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger
               nativeButton={false}
-              render={<div className="flex size-full items-center justify-center" />}
+              render={
+                <div className="flex size-full items-center justify-center" />
+              }
             >
               {isImpersonating ? (
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-600">
@@ -65,35 +67,52 @@ export function UserAvatarDropdown() {
                 </Avatar>
               )}
             </DropdownMenuTrigger>
-            <DropdownMenuContent side="bottom" sideOffset={8} align="end" className="w-[200px]">
+            <DropdownMenuContent
+              side="bottom"
+              sideOffset={8}
+              align="end"
+              className="w-60"
+            >
               <DropdownMenuGroup>
-                <DropdownMenuLabel>User Actions</DropdownMenuLabel>
+                <DropdownMenuLabel className="text-foreground truncate text-sm">
+                  Hello, <span className="font-semibold">{user?.username}</span>
+                  !
+                </DropdownMenuLabel>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem
-                  render={<Link href={wsUsername ? `/workspace/${encodeWorkspaceSegment(wsUsername)}/home` : "/workspace"} />}
+                  render={
+                    <Link
+                      href={
+                        wsUsername
+                          ? `/workspace/${encodeWorkspaceSegment(wsUsername)}/home`
+                          : "/workspace"
+                      }
+                    />
+                  }
                 >
                   <NotebookPen className="text-foreground h-4 w-4" />
                   {isImpersonating
                     ? `${user?.username}'s Workspace`
                     : "My Workspace"}
                 </DropdownMenuItem>
+
                 <DropdownMenuItem render={<Link href="/jobs" />}>
                   <BriefcaseBusiness className="text-foreground h-4 w-4" />
-                  {isImpersonating
-                    ? `${user?.username}'s Jobs`
-                    : "My Jobs"}
+                  {isImpersonating ? `${user?.username}'s Jobs` : "My Jobs"}
                 </DropdownMenuItem>
-                <DropdownMenuItem render={<Link href="/settings" />}>
-                  <Settings className="text-foreground h-4 w-4" />
-                  Settings
-                </DropdownMenuItem>
+
                 <DropdownMenuItem onClick={() => sendVerificationEmail()}>
                   <span className="flex items-center gap-2">
                     <Mail className="text-foreground h-4 w-4" />
                     Resend Verification Email
                   </span>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem render={<Link href="/settings" />}>
+                  <Settings className="text-foreground h-4 w-4" />
+                  Settings
                 </DropdownMenuItem>
 
                 {isAdmin && !isImpersonating && (
@@ -119,7 +138,7 @@ export function UserAvatarDropdown() {
                 <DropdownMenuSeparator />
                 <SignoutButton
                   variant="ghost"
-                  className="h-auto w-full justify-start gap-2 rounded-md border-none px-1.5 py-1 text-sm shadow-none hover:bg-secondary/80 focus:bg-secondary/80"
+                  className="hover:bg-secondary/80 focus:bg-secondary/80 h-auto w-full justify-start gap-2 rounded-md border-none px-1.5 py-1 text-sm shadow-none"
                 />
               </DropdownMenuGroup>
             </DropdownMenuContent>

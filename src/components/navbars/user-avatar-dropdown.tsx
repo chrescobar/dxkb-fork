@@ -75,7 +75,7 @@ export function UserAvatarDropdown() {
             >
               <DropdownMenuGroup>
                 <DropdownMenuLabel className="text-foreground truncate text-sm">
-                  Hello, <span className="font-semibold">{user?.username}</span>
+                  Hello, <span className="font-semibold">{user?.username ?? "User"}</span>
                   !
                 </DropdownMenuLabel>
               </DropdownMenuGroup>

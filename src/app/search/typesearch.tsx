@@ -1,11 +1,12 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { ListData } from "@/components/services/list-data";
 import { GenomeShell } from "@/components/genome/genome-shell";
 import { GenomeDetailPanel } from "@/components/genome/genome-detail-panel";
+import { SearchActionBar } from "@/components/search/search-action-bar";
 
 // ---- Props interface ----
 export interface TypeSearchProps {
@@ -80,21 +81,11 @@ function TabsRenderer({
     setSelectedIds([]);
   };
 
-  useEffect(() => {
-    // Debug: selectedIds state for development; remove before merging
-    // console.log("selectedIds", selectedIds);
-  }, [selectedIds]);
-
-  useEffect(() => {
-    // Debug: rowSelection state for development; remove before merging
-    // console.log("rowSelection", rowSelection);
-  }, [rowSelection]);
-
   return (
     <Tabs value={activeTab} onValueChange={handleTabChange} className="flex flex-1 min-h-0 flex-col overflow-hidden">
       <TabsList className="pb-0 mb-0 bg-background">
         {Object.entries(tabsForType).map(([term, label]) => (
-          <TabsTrigger key={term} value={term} className="...">
+          <TabsTrigger key={term} value={term}>
             {label}
           </TabsTrigger>
         ))}
@@ -171,16 +162,6 @@ function TabsRenderer({
 
 export function TypeSearch({ q, searchtype }: TypeSearchProps) {
   const searchParams = useSearchParams();
-  
-  console.log("TypeSearch render");
-
-  useEffect(() => {
-    console.log("TypeSearch mounted");
-
-    return () => {
-      console.log("TypeSearch unmounted");
-    };
-  }, []);
 
   // Derive URL params directly to avoid extra state + rerender loops.
   const urlQ = q ?? searchParams.get("q") ?? "";
@@ -250,7 +231,20 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
   // viewing details.
   const activeGenomeId = selectedIds.length > 0 ? selectedIds[selectedIds.length - 1] : null;
 
-  // Main return: 
+  const guideUrls: Record<string, string> = {
+    genome: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/genome_table.html",
+    strain: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/strains.html",
+    genome_feature: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/features.html",
+    protein_feature: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/features.html",
+    epitope: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/epitopes.html",
+    protein_structure: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/protein_structures.html",
+    surveillance: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/surveillance_data.html",
+    serology: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/serology_data.html",
+    taxonomy: "https://www.bv-brc.org/docs/quick_references/",
+    experiment: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/experiments_comparisons_tables.html",
+  };
+
+  // Main return:
   return (
     // Ensure this container fills the available height so child panels using
     // h-full can correctly constrain their inner scroll areas. Without an
@@ -259,6 +253,13 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
     <div className="flex min-h-0 flex-1 h-full">
       <GenomeShell
         hasSidePanel={!!activeGenomeId}
+        actionBar={
+          <SearchActionBar
+            selectedCount={selectedIds.length}
+            searchType={activeTab}
+            guideUrl={guideUrls[activeTab]}
+          />
+        }
         sidePanel={
           <GenomeDetailPanel
             genomeId={activeGenomeId}

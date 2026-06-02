@@ -275,11 +275,9 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                 // After updating rowSelection, invoke handlers based on the intended new selection state
                 const idVal = (row.original as any)[idField] ?? (row.original as any)?.genome_id ?? null;
                 if (!willSelect) {
-                  console.log('DataTable: checkbox deselect', { id: idVal, rowId: row.id });
                   onGenomeSelect?.(null); // deselecting, so clear
                   onActiveRowChange?.(null);
                 } else if (idVal != null) {
-                  console.log('DataTable: checkbox select', { id: idVal, rowId: row.id });
                   onGenomeSelect?.(String(idVal));
                   onActiveRowChange?.(String(idVal));
                 }
@@ -1014,7 +1012,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                         if ((e.target as HTMLElement).closest('input[type="checkbox"]')) return;
                         const idVal = (row.original as any)[idField];
                         const genomeId = idVal ?? (row.original as any)?.genome_id ?? null;
-                        console.log('DataTable: row click', { genomeId, rowId: row.id });
                         if (genomeId != null) {
                           onGenomeSelect?.(String(genomeId));
                           onActiveRowChange?.(String(genomeId));

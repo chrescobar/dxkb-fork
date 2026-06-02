@@ -45,7 +45,7 @@ export function GenomeDetailPanel({
       const idField = idFieldMap[activeTab] ?? "id";
 
       const res = await fetch(
-        `${DataAPI}/${activeTab}/?eq(${idField},${genomeId})`
+        `${DataAPI}/${activeTab}/?eq(${idField},${encodeURIComponent(genomeId)})`
       );
 
       if (!res.ok) {

@@ -10,23 +10,19 @@ import {
 
 import { Button } from "@/components/ui/button";
 
-import {
-  PanelRightClose,
-  PanelRightOpen,
-  Download,
-  FlaskConical,
-  Dna,
-} from "lucide-react";
+import { PanelRightClose, PanelRightOpen } from "lucide-react";
 
 interface GenomeShellProps {
   children: ReactNode;
   sidePanel: ReactNode;
+  actionBar?: ReactNode;
   hasSidePanel?: boolean;
 }
 
 export function GenomeShell({
   children,
   sidePanel,
+  actionBar,
   hasSidePanel = true,
 }: GenomeShellProps) {
   const [panelExpanded, setPanelExpanded] = useState(false);
@@ -76,34 +72,8 @@ export function GenomeShell({
         )}
       </div>
 
-      {/* Future action buttons */}
-      <div className="flex flex-1 flex-col items-center gap-2 py-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          disabled
-          title="Coming soon"
-        >
-          <Download className="h-4 w-4" />
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="icon"
-          disabled
-          title="Coming soon"
-        >
-          <FlaskConical className="h-4 w-4" />
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="icon"
-          disabled
-          title="Coming soon"
-        >
-          <Dna className="h-4 w-4" />
-        </Button>
+      <div className="scrollbar-themed min-h-0 flex-1 overflow-y-auto px-1.5 py-2">
+        {actionBar}
       </div>
     </div>
   );

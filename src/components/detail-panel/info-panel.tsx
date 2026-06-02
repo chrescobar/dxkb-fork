@@ -17,7 +17,7 @@ import { taxonomyFields } from "@/constants/datafields/taxonomy";
 import { Button } from "@/components/ui/button";
 import { DetailPanel, type DetailField } from "./index";
 import { formatOwner, formatFileSize } from "@/lib/services/workspace/helpers";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { WorkspaceItemHeader } from "@/components/workspace/workspace-item-header";
 import { WorkspaceItemDetails } from "@/components/workspace/workspace-item-details";
 
@@ -25,9 +25,9 @@ export type InfoPanelProps =
   | {
       variant: "workspace";
       /** When multiple items are selected, single-file details are not shown. */
-      selection: WorkspaceBrowserItem[];
+      selection: WorkspaceItem[];
       onClose?: () => void;
-      onAction?: (actionId: string, selection: WorkspaceBrowserItem[]) => void;
+      onAction?: (actionId: string, selection: WorkspaceItem[]) => void;
     }
   | {
       variant?: "search";
@@ -41,7 +41,7 @@ export type InfoPanelProps =
 
 
 /** Build the full path to a workspace item (parent + name) for API calls like Workspace.du. */
-export function getItemFullPath(item: WorkspaceBrowserItem): string {
+export function getItemFullPath(item: WorkspaceItem): string {
   const rawPath = (item.path ?? "").replace(/\/+$/, "").replace(/\/+/g, "/");
   const name = (item.name ?? "").trim();
   const segmentSuffix = `/${name}`;
@@ -55,9 +55,9 @@ function WorkspaceItemDetailContent({
   workspaceItem,
   onClose,
 }: {
-  workspaceItem: WorkspaceBrowserItem;
+  workspaceItem: WorkspaceItem;
   onClose?: () => void;
-  onAction?: (actionId: string, selection: WorkspaceBrowserItem[]) => void;
+  onAction?: (actionId: string, selection: WorkspaceItem[]) => void;
 }) {
   const fullPath = getItemFullPath(workspaceItem);
 
@@ -71,8 +71,8 @@ function WorkspaceItemDetailContent({
         <div>
           <dt className="text-muted-foreground">Workspace Members</dt>
           <dd>
-            {formatOwner(workspaceItem.owner_id)}
-            {workspaceItem.user_permission === "o" ? " (me) – Owner" : " – Owner"}
+            {formatOwner(workspaceItem.ownerId ?? "")}
+            {workspaceItem.permissions?.user === "o" ? " (me) – Owner" : " – Owner"}
           </dd>
         </div>
         <div>

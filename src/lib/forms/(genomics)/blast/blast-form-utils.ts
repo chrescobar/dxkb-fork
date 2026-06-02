@@ -3,8 +3,32 @@ import { useStore, type AnyFormApi } from "@tanstack/react-form";
 
 import type { BlastFormData } from "./blast-form-schema";
 import { blastPrecomputedDatabases, blastDatabaseTypes, blastDatabaseTypeMap } from "@/types/services";
-import { validateFastaForBlast, getBlastFastaErrorMessage } from "@/lib/fasta-validation";
+import { validateFastaForBlast } from "@/lib/fasta-validation";
 import type { FastaValidationResult } from "@/lib/fasta-validation";
+
+// Flat partial of all BlastFormData fields — discriminated-union-aware Partial
+// hides input_fasta_*/db_* fields, so we expose them all as optional here for
+// helpers that build/merge override objects.
+type BlastFormDataPartial = Partial<{
+  input_type: BlastFormData["input_type"];
+  db_type: BlastFormData["db_type"];
+  db_source: BlastFormData["db_source"];
+  db_precomputed_database: BlastFormData["db_precomputed_database"];
+  blast_program: BlastFormData["blast_program"];
+  output_file: string;
+  output_path: string;
+  blast_max_hits: number;
+  blast_evalue_cutoff: number;
+  input_source: "fasta_data" | "fasta_file" | "feature_group";
+  input_fasta_data: string;
+  input_fasta_file: string;
+  input_feature_group: string;
+  db_genome_list: string[];
+  db_genome_group: string;
+  db_feature_group: string;
+  db_taxon_list: string[];
+  db_fasta_file: string;
+}>;
 
 /**
  * Get available database types for BLAST based on the selected program and database source
@@ -31,26 +55,6 @@ export function getDefaultBlastDatabaseType(
   const availableTypes =
     blastDatabaseTypeMap[inputType]?.[dbSource] || blastDatabaseTypes.map((t) => t.value);
   return availableTypes[0] || "fna";
-}
-
-/**
- * Validates FASTA input for BLAST services
- */
-export function validateBlastFastaInput(
-  fastaText: string,
-  inputType: "blastn" | "blastp" | "blastx" | "tblastn",
-): { isValid: boolean; message: string } {
-  if (!fastaText.trim()) {
-    return { isValid: false, message: "FASTA input is required" };
-  }
-
-  const result = validateFastaForBlast(fastaText, inputType);
-  const message = getBlastFastaErrorMessage(result, inputType);
-
-  return {
-    isValid: result.valid,
-    message: result.valid ? "" : message,
-  };
 }
 
 /**
@@ -206,8 +210,8 @@ export function createBlastFormValues(
 export function createInputSourceOverrides(
   newSource: BlastFormData["input_source"],
   preservedFastaData = "",
-): Partial<BlastFormData> {
-  const baseOverrides: Partial<BlastFormData> = {
+): BlastFormDataPartial {
+  const baseOverrides: BlastFormDataPartial = {
     input_source: newSource,
   };
 
@@ -228,8 +232,8 @@ export function createInputSourceOverrides(
  */
 export function createDatabaseSourceOverrides(
   newDBPrecomputedDatabase: BlastFormData["db_precomputed_database"],
-  preservedInputFields: Partial<BlastFormData>,
-): Partial<BlastFormData> {
+  preservedInputFields: BlastFormDataPartial,
+): BlastFormDataPartial {
   const selectedDb = blastPrecomputedDatabases.find(
     (db) => db.value === newDBPrecomputedDatabase,
   );
@@ -238,7 +242,7 @@ export function createDatabaseSourceOverrides(
     throw new Error(`Invalid database source: ${newDBPrecomputedDatabase}`);
   }
 
-  const baseOverrides: Partial<BlastFormData> = {
+  const baseOverrides: BlastFormDataPartial = {
     ...preservedInputFields,
     db_source: resolveDbSource(newDBPrecomputedDatabase),
     db_precomputed_database: newDBPrecomputedDatabase,
@@ -270,8 +274,8 @@ export function createDatabaseSourceOverrides(
  * Extracts input-related fields from form values for preservation
  */
 export function extractInputFields(
-  values: Partial<BlastFormData>,
-): Partial<BlastFormData> {
+  values: BlastFormDataPartial,
+): BlastFormDataPartial {
   return {
     input_source: values.input_source,
     input_fasta_data: String((values as Record<string, unknown>).input_fasta_data ?? ""),

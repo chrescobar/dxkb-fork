@@ -3,100 +3,36 @@ import {
   isWorkspaceFolder,
   isWorkspaceFolderLike,
   normalizeWorkspaceType,
-  toWorkspaceBrowserItem,
-  toWorkspaceItem,
   toWorkspaceObject,
 } from "@/lib/services/workspace/domain";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
-function makeBrowserItem(
-  overrides: Partial<WorkspaceBrowserItem> = {},
-): WorkspaceBrowserItem {
+function makeItem(overrides: Partial<WorkspaceItem> = {}): WorkspaceItem {
   return {
     id: "abc",
     path: "/user@bvbrc/home/file.fa",
     name: "file.fa",
     type: "contigs",
-    creation_time: "2026-04-01T12:00:00Z",
-    link_reference: "",
-    owner_id: "user@bvbrc",
+    createdAt: "2026-04-01T12:00:00Z",
+    ownerId: "user@bvbrc",
     size: 123,
-    userMeta: {},
-    autoMeta: {},
-    user_permission: "o",
-    global_permission: "n",
+    permissions: { user: "o", global: "n" },
     timestamp: 1712000000000,
     ...overrides,
   };
 }
 
 describe("workspace domain", () => {
-  describe("toWorkspaceItem", () => {
-    it("maps WorkspaceBrowserItem fields into canonical item", () => {
-      const input = makeBrowserItem();
-      const item = toWorkspaceItem(input);
-      expect(item).toEqual(
-        expect.objectContaining({
-          id: "abc",
-          name: "file.fa",
-          path: "/user@bvbrc/home/file.fa",
-          type: "contigs",
-          size: 123,
-          ownerId: "user@bvbrc",
-          createdAt: "2026-04-01T12:00:00Z",
-          timestamp: 1712000000000,
-          permissions: { user: "o", global: "n" },
-        }),
-      );
-      expect(item.raw).toBe(input);
-    });
-
-    it("coerces null/undefined fields into safe defaults", () => {
-      const input = makeBrowserItem({ owner_id: "", link_reference: "", user_permission: "", global_permission: "" });
-      const item = toWorkspaceItem(input);
-      expect(item.ownerId).toBeUndefined();
-      expect(item.linkReference).toBeUndefined();
-      expect(item.permissions).toEqual({ user: undefined, global: undefined });
-    });
-  });
-
-  describe("toWorkspaceBrowserItem", () => {
-    it("round-trips with toWorkspaceItem via raw", () => {
-      const original = makeBrowserItem();
-      const roundTripped = toWorkspaceBrowserItem(toWorkspaceItem(original));
-      expect(roundTripped).toBe(original);
-    });
-
-    it("produces a transport shape when raw is missing", () => {
-      const item = toWorkspaceItem(makeBrowserItem());
-      item.raw = undefined;
-      const out = toWorkspaceBrowserItem(item);
-      expect(out).toEqual(
-        expect.objectContaining({
-          id: "abc",
-          name: "file.fa",
-          path: "/user@bvbrc/home/file.fa",
-          type: "contigs",
-          size: 123,
-          owner_id: "user@bvbrc",
-          creation_time: "2026-04-01T12:00:00Z",
-          user_permission: "o",
-          global_permission: "n",
-        }),
-      );
-    });
-  });
-
   describe("toWorkspaceObject", () => {
     it("preserves raw type string (not narrowed)", () => {
-      const item = toWorkspaceItem(makeBrowserItem({ type: "genome_group" }));
+      const item = makeItem({ type: "genome_group" });
       const obj = toWorkspaceObject(item);
       expect(obj.type).toBe("genome_group");
       expect(obj.isDirectory).toBe(true);
     });
 
     it("marks plain files as non-directory", () => {
-      const item = toWorkspaceItem(makeBrowserItem({ type: "contigs" }));
+      const item = makeItem({ type: "contigs" });
       const obj = toWorkspaceObject(item);
       expect(obj.isDirectory).toBe(false);
     });

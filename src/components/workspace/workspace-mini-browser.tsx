@@ -19,9 +19,8 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { WorkspaceItemIcon } from "./workspace-item-icon";
-import { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { useWorkspaceRepository } from "@/contexts/workspace-repository-context";
-import { toWorkspaceBrowserItem } from "@/lib/services/workspace/domain";
 import { workspaceQueryKeys } from "@/lib/services/workspace/workspace-query-keys";
 import {
   useSharedWithUser,
@@ -107,10 +106,7 @@ export function WorkspaceMiniBrowser({
   const repository = useWorkspaceRepository("authenticated");
   const pathQuery = useQuery({
     queryKey: workspaceQueryKeys.miniBrowser(currentPath),
-    queryFn: async () => {
-      const items = await repository.listDirectory({ path: currentPath });
-      return items.map(toWorkspaceBrowserItem) as WorkspaceBrowserItem[];
-    },
+    queryFn: () => repository.listDirectory({ path: currentPath }),
     enabled: !!currentPath && !isAtRoot,
     staleTime: 60 * 1000,
   });
@@ -119,7 +115,7 @@ export function WorkspaceMiniBrowser({
     if (!isAtRoot) return [];
     const userData = userWorkspacesQuery.data ?? [];
     const shared = (sharedQuery.data ?? []).filter(hasWriteAccess);
-    const byPath = new Map<string, WorkspaceBrowserItem>();
+    const byPath = new Map<string, WorkspaceItem>();
     for (const item of [...userData, ...shared]) {
       if (!byPath.has(item.path)) byPath.set(item.path, item);
     }
@@ -145,7 +141,7 @@ export function WorkspaceMiniBrowser({
     if (!showHidden) {
       list = list.filter((item) => !(item.name ?? "").startsWith("."));
     }
-    const sortCompare = (a: WorkspaceBrowserItem, b: WorkspaceBrowserItem) => {
+    const sortCompare = (a: WorkspaceItem, b: WorkspaceItem) => {
       const aFolder = isFolderType(a.type);
       const bFolder = isFolderType(b.type);
       if (aFolder !== bFolder) return aFolder ? -1 : 1;
@@ -156,13 +152,13 @@ export function WorkspaceMiniBrowser({
     return [...list].sort(sortCompare);
   }, [items, mode, showHidden]);
 
-  const handleFolderDoubleClick = (item: WorkspaceBrowserItem) => {
+  const handleFolderDoubleClick = (item: WorkspaceItem) => {
     if (isFolderType(item.type)) {
       setCurrentPath(item.path);
     }
   };
 
-  const handleFolderClick = (item: WorkspaceBrowserItem) => {
+  const handleFolderClick = (item: WorkspaceItem) => {
     if (isFolderType(item.type)) {
       onSelectPath(item.path);
     }
@@ -251,7 +247,6 @@ export function WorkspaceMiniBrowser({
             ? 0
             : Math.min(currentIndex + 1, navigationTargets.length - 1);
       } else {
-        // ArrowUp without Shift: clamp at the first row (no wrapping)
         if (currentIndex <= 0) {
           nextIndex = 0;
         } else {
@@ -291,7 +286,6 @@ export function WorkspaceMiniBrowser({
     );
     if (!row) return;
 
-    // Defer so DOM has the new focus/selection; use "start" so first row scrolls into view
     const id = requestAnimationFrame(() => {
       row.scrollIntoView({ block: "center", inline: "start" });
     });
@@ -302,7 +296,6 @@ export function WorkspaceMiniBrowser({
     <div className={cn("flex flex-col gap-2", className)}>
       <div
         ref={tableContainerRef}
-        role="grid"
         tabIndex={0}
         aria-label="Workspace destination browser"
         className="scrollbar-themed focus-visible:ring-ring flex h-full min-h-0 flex-col overflow-auto rounded-md border outline-none focus-visible:ring-2"
@@ -401,10 +394,10 @@ export function WorkspaceMiniBrowser({
                         : formatFileSize(item.size ?? 0)}
                     </TableCell>
                     <TableCell className="hidden pl-3 text-sm md:table-cell">
-                      {formatOwner(item.owner_id ?? "")}
+                      {formatOwner(item.ownerId ?? "")}
                     </TableCell>
                     <TableCell className="hidden pl-3 text-sm lg:table-cell">
-                      {formatDate(item.creation_time ?? "")}
+                      {formatDate(item.createdAt ?? "")}
                     </TableCell>
                   </TableRow>
                 );

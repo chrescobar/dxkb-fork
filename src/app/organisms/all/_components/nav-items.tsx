@@ -1,0 +1,122 @@
+import {
+  Activity,
+  Atom,
+  Binary,
+  Blocks,
+  Database,
+  Dna,
+  FlaskConical,
+  Handshake,
+  Layers,
+  ListTree,
+  Microscope,
+  Network,
+  Puzzle,
+  Route,
+  ShieldCheck,
+  Waypoints,
+} from "lucide-react";
+
+import { makePlaceholderView as placeholderView } from "@/components/organisms/shared/make-placeholder-view";
+import type { OrganismLandingView } from "@/components/organisms/types";
+
+import { OverviewView } from "../views/overview";
+
+export const allNavItems: OrganismLandingView[] = [
+  {
+    key: "overview",
+    label: "Overview",
+    icon: <Blocks />,
+    Component: OverviewView,
+  },
+  {
+    key: "phylogeny",
+    label: "Phylogeny",
+    icon: <Network />,
+    Component: placeholderView("Phylogeny"),
+  },
+  {
+    key: "taxonomy",
+    label: "Taxonomy",
+    icon: <Binary />,
+    Component: placeholderView("Taxonomy"),
+  },
+  {
+    key: "genomes",
+    label: "Genomes",
+    icon: <Dna />,
+    Component: placeholderView("Genomes"),
+  },
+  {
+    key: "amr-phenotypes",
+    label: "AMR Phenotypes",
+    icon: <ShieldCheck />,
+    Component: placeholderView("AMR Phenotypes"),
+  },
+  {
+    key: "sequences",
+    label: "Sequences",
+    icon: <Database />,
+    Component: placeholderView("Sequences"),
+  },
+  {
+    key: "features",
+    label: "Features",
+    icon: <ListTree />,
+    Component: placeholderView("Features"),
+  },
+  {
+    key: "proteins",
+    label: "Proteins",
+    icon: <Atom />,
+    Component: placeholderView("Proteins"),
+  },
+  {
+    key: "protein-structures",
+    label: "Protein Structures",
+    icon: <Waypoints />,
+    Component: placeholderView("Protein Structures"),
+  },
+  {
+    key: "specialty-genes",
+    label: "Specialty Genes",
+    icon: <Microscope />,
+    Component: placeholderView("Specialty Genes"),
+  },
+  {
+    key: "domains-and-motifs",
+    label: "Domains and Motifs",
+    icon: <Puzzle />,
+    Component: placeholderView("Domains and Motifs"),
+  },
+  {
+    key: "epitopes",
+    label: "Epitopes",
+    icon: <Activity />,
+    Component: placeholderView("Epitopes"),
+  },
+  {
+    key: "pathways",
+    label: "Pathways",
+    icon: <Route />,
+    Component: placeholderView("Pathways"),
+  },
+  {
+    key: "subsystems",
+    label: "Subsystems",
+    icon: <Layers />,
+    Component: placeholderView("Subsystems"),
+  },
+  {
+    key: "experiments",
+    label: "Experiments",
+    icon: <FlaskConical />,
+    Component: placeholderView("Experiments"),
+  },
+  {
+    key: "interactions",
+    label: "Interactions",
+    icon: <Handshake />,
+    Component: placeholderView("Interactions"),
+  },
+];

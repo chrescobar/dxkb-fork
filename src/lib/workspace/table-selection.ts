@@ -1,4 +1,4 @@
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 /**
  * Normalizes a path for consistent comparison in selection (matches table display order).
@@ -14,7 +14,7 @@ export interface SelectionModifiers {
 }
 
 export interface SelectionResult {
-  nextSelection: WorkspaceBrowserItem[];
+  nextSelection: WorkspaceItem[];
   nextAnchorPath: string | null;
 }
 
@@ -23,10 +23,10 @@ export interface SelectionResult {
  * Used for normal click (replace), Ctrl/Cmd+click (toggle), and Shift+click (range).
  */
 export function computeNextSelection(
-  orderedItems: WorkspaceBrowserItem[],
-  currentSelection: WorkspaceBrowserItem[],
+  orderedItems: WorkspaceItem[],
+  currentSelection: WorkspaceItem[],
   anchorPath: string | null,
-  clickedItem: WorkspaceBrowserItem,
+  clickedItem: WorkspaceItem,
   modifiers: SelectionModifiers,
 ): SelectionResult {
   const clickedPath = normalizePath(clickedItem.path);
@@ -43,7 +43,7 @@ export function computeNextSelection(
       currentSelection.map((s) => normalizePath(s.path)),
     );
     const isSelected = currentPaths.has(clickedPath);
-    let nextSelection: WorkspaceBrowserItem[];
+    let nextSelection: WorkspaceItem[];
     if (isSelected) {
       nextSelection = currentSelection.filter(
         (s) => normalizePath(s.path) !== clickedPath,
@@ -66,7 +66,6 @@ export function computeNextSelection(
   );
 
   if (anchorIndex < 0 || clickedIndex < 0) {
-    // Anchor not in list or clicked not in list: treat as single select
     return {
       nextSelection: [clickedItem],
       nextAnchorPath: clickedPath,

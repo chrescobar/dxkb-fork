@@ -9,7 +9,7 @@ import { Providers } from "./providers";
 import { AuthBoundary } from "@/lib/auth/provider";
 import { auth } from "@/lib/auth/server/instance";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { DebugLoader } from "@/components/debug-loader";
+import { CommandPalette } from "@/components/search/command-palette";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,6 +50,7 @@ export default async function RootLayout({
                 {/* Dev-only debug loader: safe to include in dev; no runtime UI */}
                 <DebugLoader />
               </TooltipProvider>
+              <CommandPalette />
             </AuthBoundary>
             <ThemeSwitcher />
             <Toaster

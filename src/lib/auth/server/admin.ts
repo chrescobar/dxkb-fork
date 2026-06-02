@@ -8,6 +8,9 @@ import type {
 import { ok, fail, forwardError } from "./result";
 import { sessionMaxAgeMs } from "./envelope";
 import { extractRealmFromToken } from "./token";
+import { ensureUserWorkspace } from "@/lib/services/workspace/setup";
+import { createServerWorkspaceRpc } from "@/lib/services/workspace/server-rpc";
+import { getDefaultRealm } from "@/lib/services/workspace/realm";
 import type {
   IdentityProviderPort,
   SessionIdentity,
@@ -75,6 +78,7 @@ function buildBaseUser(
     last_name: profile?.last_name || "",
     email_verified: profile?.email_verified || false,
     realm,
+    roles: profile?.roles ?? [],
     token: "",
   };
 }
@@ -127,6 +131,19 @@ export function createAuthAdmin(ports: AuthAdminPorts): AuthAdmin {
     const userId = deriveUserId(input.username, profile?.id);
 
     await session.write(buildSessionIdentity(token, userId, realm));
+
+    try {
+      await ensureUserWorkspace({
+        rpc: createServerWorkspaceRpc(token),
+        userId,
+        realm: realm ?? getDefaultRealm(),
+      });
+    } catch (cause) {
+      console.error("Failed to provision workspace for new user", {
+        userId,
+        cause,
+      });
+    }
 
     return ok({
       ...buildBaseUser(input.username, realm, profile),
@@ -195,7 +212,6 @@ export function createAuthAdmin(ports: AuthAdminPorts): AuthAdmin {
 
     return ok({
       ...buildBaseUser(targetUser, targetRealm, targetProfile),
-      roles: targetProfile?.roles || [],
       isImpersonating: true,
       originalUsername: current.userId,
     });
@@ -212,10 +228,7 @@ export function createAuthAdmin(ports: AuthAdminPorts): AuthAdmin {
 
     const profile = await identity.fetchProfile(backup.userId, backup.token);
 
-    return ok({
-      ...buildBaseUser(backup.userId, backup.realm, profile),
-      roles: profile?.roles || [],
-    });
+    return ok(buildBaseUser(backup.userId, backup.realm, profile));
   }
 
   async function requestPasswordReset(
@@ -309,7 +322,6 @@ export function createAuthAdmin(ports: AuthAdminPorts): AuthAdmin {
 
     return ok({
       ...buildBaseUser(current.userId, current.realm, profile),
-      roles: profile.roles,
       ...(backup
         ? { isImpersonating: true, originalUsername: backup.userId }
         : {}),

@@ -10,7 +10,7 @@ import {
 import { InMemoryWorkspaceRepository } from "@/lib/services/workspace/adapters/in-memory-workspace-repository";
 import { WorkspaceApiError } from "@/lib/services/workspace/domain";
 import { WorkspaceRepositoryProvider } from "@/contexts/workspace-repository-context";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import {
   useWorkspaceDialogHandlers,
   type UseWorkspaceDialogHandlersOptions,
@@ -57,24 +57,21 @@ vi.mock("@/lib/utils", () => ({
 }));
 
 const makeItem = (
-  overrides: Partial<WorkspaceBrowserItem>,
-): WorkspaceBrowserItem =>
+  overrides: Partial<WorkspaceItem>,
+): WorkspaceItem =>
   ({
     id: "item-1",
     name: "file.txt",
     path: "/testuser/home/file.txt",
     type: "contigs",
-    creation_time: "2025-01-01",
-    link_reference: "",
-    owner_id: "testuser",
+    createdAt: "2025-01-01",
+    linkReference: "",
+    ownerId: "testuser",
     size: 100,
-    userMeta: {},
-    autoMeta: {},
-    user_permission: "o",
-    global_permission: "n",
+    permissions: { user: "o", global: "n" },
     timestamp: 0,
     ...overrides,
-  }) as WorkspaceBrowserItem;
+  }) as WorkspaceItem;
 
 function defaultOptions(
   overrides?: Partial<UseWorkspaceDialogHandlersOptions>,
@@ -532,5 +529,68 @@ describe("useWorkspaceDialogHandlers", () => {
 
     expect(mockDispatch).toHaveBeenCalledWith({ type: "CLOSE" });
     expect(repo.calls.some((c) => c.method === "copy")).toBe(false);
+  });
+
+  it("handleConfirmDelete shows protected-folder toast and skips repository.delete", async () => {
+    const protectedItem = makeItem({
+      name: "Genome Groups",
+      path: "/testuser/home/Genome Groups",
+      type: "folder",
+    });
+    mockActiveDialog.value = {
+      type: "delete",
+      items: [protectedItem],
+      nonEmptyPaths: [],
+    };
+    const repo = new InMemoryWorkspaceRepository();
+
+    const { result } = renderHook(
+      () => useWorkspaceDialogHandlers(defaultOptions()),
+      { wrapper: makeWrapper(repo) },
+    );
+
+    await act(async () => {
+      await result.current.handleConfirmDelete();
+    });
+
+    expect(toast.error).toHaveBeenCalledWith(
+      "Sorry, you can't delete that…",
+      expect.objectContaining({
+        description: expect.stringContaining("Genome Groups"),
+      }),
+    );
+    expect(mockDispatch).toHaveBeenCalledWith({ type: "CLOSE" });
+    expect(repo.calls.some((c) => c.method === "delete")).toBe(false);
+  });
+
+  it("handleConfirmDelete with a mixed selection blocks the entire delete", async () => {
+    const protectedItem = makeItem({
+      name: "home",
+      path: "/testuser/home",
+      type: "folder",
+    });
+    const ordinaryItem = makeItem({
+      name: "My Project",
+      path: "/testuser/home/My Project",
+      type: "folder",
+    });
+    mockActiveDialog.value = {
+      type: "delete",
+      items: [ordinaryItem, protectedItem],
+      nonEmptyPaths: [],
+    };
+    const repo = new InMemoryWorkspaceRepository();
+
+    const { result } = renderHook(
+      () => useWorkspaceDialogHandlers(defaultOptions()),
+      { wrapper: makeWrapper(repo) },
+    );
+
+    await act(async () => {
+      await result.current.handleConfirmDelete();
+    });
+
+    expect(toast.error).toHaveBeenCalled();
+    expect(repo.calls.some((c) => c.method === "delete")).toBe(false);
   });
 });

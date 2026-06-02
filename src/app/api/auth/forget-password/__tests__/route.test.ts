@@ -18,11 +18,11 @@ describe("POST /api/auth/forget-password", () => {
       body: {},
     });
 
-    const response = await POST(request);
+    const response = await POST(request, {});
     const data = await response.json();
 
     expect(response.status).toBe(400);
-    expect(data.message).toBe("Email or username is required");
+    expect(data.error).toBe("Email or username is required");
   });
 
   it("accepts usernameOrEmail field", async () => {
@@ -39,12 +39,11 @@ describe("POST /api/auth/forget-password", () => {
       body: { usernameOrEmail: "testuser" },
     });
 
-    const response = await POST(request);
+    const response = await POST(request, {});
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.success).toBe(true);
-    expect(data.message).toBe("Password reset email sent successfully");
+    expect(data).toEqual({ success: true });
     expect(handlerCalled).toBe(true);
   });
 
@@ -60,11 +59,11 @@ describe("POST /api/auth/forget-password", () => {
       body: { email: "test@example.com" },
     });
 
-    const response = await POST(request);
+    const response = await POST(request, {});
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.success).toBe(true);
+    expect(data).toEqual({ success: true });
   });
 
   it("returns upstream error with message from JSON response", async () => {
@@ -82,12 +81,11 @@ describe("POST /api/auth/forget-password", () => {
       body: { usernameOrEmail: "unknown" },
     });
 
-    const response = await POST(request);
+    const response = await POST(request, {});
     const data = await response.json();
 
     expect(response.status).toBe(404);
-    expect(data.success).toBe(false);
-    expect(data.message).toBe("User not found");
+    expect(data.error).toBe("User not found");
   });
 
   it("returns default error message when upstream JSON parse fails", async () => {
@@ -102,15 +100,14 @@ describe("POST /api/auth/forget-password", () => {
       body: { usernameOrEmail: "testuser" },
     });
 
-    const response = await POST(request);
+    const response = await POST(request, {});
     const data = await response.json();
 
     expect(response.status).toBe(500);
-    expect(data.success).toBe(false);
-    expect(data.message).toBe("Failed to send password reset email");
+    expect(data.error).toBe("Failed to send password reset email");
   });
 
-  it("returns 503 when an exception is thrown", async () => {
+  it("returns 502 when a network exception is thrown", async () => {
     server.use(
       http.post("https://auth.test/reset", () => {
         return HttpResponse.error();
@@ -122,11 +119,10 @@ describe("POST /api/auth/forget-password", () => {
       body: { usernameOrEmail: "testuser" },
     });
 
-    const response = await POST(request);
+    const response = await POST(request, {});
     const data = await response.json();
 
-    expect(response.status).toBe(503);
-    expect(data.success).toBe(false);
-    expect(data.message).toBe("Password reset service unavailable");
+    expect(response.status).toBe(502);
+    expect(data).toMatchObject({ code: "upstream" });
   });
 });

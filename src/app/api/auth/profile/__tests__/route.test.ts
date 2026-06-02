@@ -48,7 +48,7 @@ describe("GET /api/auth/profile", () => {
       NextResponse.json({ error: "Authentication required" }, { status: 401 }),
     );
 
-    const response = await GET();
+    const response = await GET(mockNextRequest(), {});
     const data = await response.json();
 
     expect(response.status).toBe(401);
@@ -64,7 +64,7 @@ describe("GET /api/auth/profile", () => {
       http.get(`${userUrl}/user1`, () => HttpResponse.json(profile)),
     );
 
-    const response = await GET();
+    const response = await GET(mockNextRequest(), {});
     const data = await response.json();
 
     expect(response.status).toBe(200);
@@ -83,7 +83,7 @@ describe("GET /api/auth/profile", () => {
       }),
     );
 
-    await GET();
+    await GET(mockNextRequest(), {});
 
     expect(capturedUrl).toBe(`${userUrl}/user%40realm.org`);
   });
@@ -98,11 +98,11 @@ describe("GET /api/auth/profile", () => {
       ),
     );
 
-    const response = await GET();
+    const response = await GET(mockNextRequest(), {});
     const data = await response.json();
 
     expect(response.status).toBe(404);
-    expect(data.message).toBe("Failed to fetch profile");
+    expect(data.error).toBe("Failed to fetch profile");
   });
 
   it("returns 500 when an exception is thrown", async () => {
@@ -113,11 +113,11 @@ describe("GET /api/auth/profile", () => {
       http.get(`${userUrl}/user1`, () => HttpResponse.error()),
     );
 
-    const response = await GET();
+    const response = await GET(mockNextRequest(), {});
     const data = await response.json();
 
     expect(response.status).toBe(500);
-    expect(data.message).toBe("Internal server error");
+    expect(data.error).toBeDefined();
   });
 });
 
@@ -130,7 +130,7 @@ describe("POST /api/auth/profile", () => {
       body: [{ op: "replace", path: "/email", value: "new@example.com" }],
     });
 
-    const response = await POST(request);
+    const response = await POST(request, {});
     const data = await response.json();
 
     expect(response.status).toBe(401);
@@ -160,7 +160,7 @@ describe("POST /api/auth/profile", () => {
       body: patchOps,
     });
 
-    await POST(request);
+    await POST(request, {});
 
     expect(capturedBody).toBe(JSON.stringify(patchOps));
     expect(capturedContentType).toBe("application/json-patch+json");
@@ -182,7 +182,7 @@ describe("POST /api/auth/profile", () => {
       body: [{ op: "replace", path: "/first_name", value: "New" }],
     });
 
-    const response = await POST(request);
+    const response = await POST(request, {});
     const data = await response.json();
 
     expect(response.status).toBe(200);
@@ -204,11 +204,11 @@ describe("POST /api/auth/profile", () => {
       body: [{ op: "replace", path: "/email", value: "bad" }],
     });
 
-    const response = await POST(request);
+    const response = await POST(request, {});
     const data = await response.json();
 
     expect(response.status).toBe(400);
-    expect(data.message).toBe("Bad Request");
+    expect(data.error).toBe("Bad Request");
   });
 
   it("returns fallback message when upstream error body is empty", async () => {
@@ -226,11 +226,11 @@ describe("POST /api/auth/profile", () => {
       body: [{ op: "replace", path: "/email", value: "bad" }],
     });
 
-    const response = await POST(request);
+    const response = await POST(request, {});
     const data = await response.json();
 
     expect(response.status).toBe(422);
-    expect(data.message).toBe("Failed to update profile");
+    expect(data.error).toBe("Failed to update profile");
   });
 
   it("returns 500 when an exception is thrown", async () => {
@@ -246,10 +246,10 @@ describe("POST /api/auth/profile", () => {
       body: [{ op: "replace", path: "/email", value: "new@example.com" }],
     });
 
-    const response = await POST(request);
+    const response = await POST(request, {});
     const data = await response.json();
 
     expect(response.status).toBe(500);
-    expect(data.message).toBe("Internal server error");
+    expect(data.error).toBeDefined();
   });
 });

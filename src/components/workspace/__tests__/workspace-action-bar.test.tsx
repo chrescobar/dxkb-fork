@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { WorkspaceActionBar } from "../workspace-action-bar";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 vi.mock("@/components/ui/button", () => ({
   Button: ({
@@ -59,20 +59,19 @@ vi.mock("lucide-react", () => {
 });
 
 const makeItem = (
-  overrides?: Partial<WorkspaceBrowserItem>,
-): WorkspaceBrowserItem =>
+  overrides?: Partial<WorkspaceItem>,
+): WorkspaceItem =>
   ({
     id: "id-1",
     path: "/user/home/data.fasta",
     name: "data.fasta",
     type: "contigs",
     size: 1024,
-    creation_time: "2024-01-01",
-    owner_id: "user@bvbrc",
-    user_permission: "o",
-    global_permission: "n",
+    createdAt: "2024-01-01",
+    ownerId: "user@bvbrc",
+    permissions: { user: "o", global: "n" },
     ...overrides,
-  }) as WorkspaceBrowserItem;
+  }) as WorkspaceItem;
 
 const defaultProps = {
   workspaceGuideUrl: "https://example.com/guide",
@@ -137,6 +136,119 @@ describe("WorkspaceActionBar", () => {
         "editType",
         expect.anything(),
       );
+    });
+  });
+
+  describe("protected folder restrictions", () => {
+    it("disables the DELETE button when the selection contains the home folder", () => {
+      const homeItem = makeItem({
+        type: "folder",
+        name: "home",
+        path: "/alice@bvbrc/home",
+      });
+      render(<WorkspaceActionBar {...defaultProps} selection={[homeItem]} />);
+      const deleteButton = screen.getByRole("button", { name: /delete/i });
+      expect(deleteButton).toBeDisabled();
+    });
+
+    it("disables the DELETE button when the selection contains a protected sub-folder", () => {
+      const genomeGroups = makeItem({
+        type: "folder",
+        name: "Genome Groups",
+        path: "/alice@bvbrc/home/Genome Groups",
+      });
+      render(<WorkspaceActionBar {...defaultProps} selection={[genomeGroups]} />);
+      const deleteButton = screen.getByRole("button", { name: /delete/i });
+      expect(deleteButton).toBeDisabled();
+    });
+
+    it("shows the protected-folder tooltip on the disabled DELETE button", () => {
+      const genomeGroups = makeItem({
+        type: "folder",
+        name: "Genome Groups",
+        path: "/alice@bvbrc/home/Genome Groups",
+      });
+      render(<WorkspaceActionBar {...defaultProps} selection={[genomeGroups]} />);
+      const tooltips = screen.getAllByTestId("tooltip-content");
+      const protectedTooltip = tooltips.find((el) =>
+        el.textContent?.includes("essential"),
+      );
+      expect(protectedTooltip).toBeDefined();
+    });
+
+    it("disables DELETE when a protected folder is in a multi-selection alongside deletable items", () => {
+      const protectedItem = makeItem({
+        type: "folder",
+        name: "Genome Groups",
+        path: "/alice@bvbrc/home/Genome Groups",
+      });
+      const ordinaryItem = makeItem({
+        type: "folder",
+        name: "My Project",
+        path: "/alice@bvbrc/home/My Project",
+      });
+      render(
+        <WorkspaceActionBar
+          {...defaultProps}
+          selection={[ordinaryItem, protectedItem]}
+        />,
+      );
+      const deleteButton = screen.getByRole("button", { name: /delete/i });
+      expect(deleteButton).toBeDisabled();
+    });
+
+    it("does not disable DELETE for a non-protected folder inside home", () => {
+      const ordinaryItem = makeItem({
+        type: "folder",
+        name: "My Project",
+        path: "/alice@bvbrc/home/My Project",
+      });
+      render(<WorkspaceActionBar {...defaultProps} selection={[ordinaryItem]} />);
+      const deleteButton = screen.getByRole("button", { name: /delete/i });
+      expect(deleteButton).not.toBeDisabled();
+    });
+  });
+
+  describe("read-only permission restrictions", () => {
+    it("hides DELETE when user has read-only permission", () => {
+      const readOnlyItem = makeItem({
+        permissions: { user: "r", global: "n" },
+      });
+      render(<WorkspaceActionBar {...defaultProps} selection={[readOnlyItem]} />);
+      expect(screen.queryByRole("button", { name: /delete/i })).not.toBeInTheDocument();
+    });
+
+    it("hides MOVE when user has read-only permission", () => {
+      const readOnlyItem = makeItem({
+        permissions: { user: "r", global: "n" },
+      });
+      render(<WorkspaceActionBar {...defaultProps} selection={[readOnlyItem]} />);
+      expect(screen.queryByRole("button", { name: /move/i })).not.toBeInTheDocument();
+    });
+
+    it("hides EDIT TYPE when user has read-only permission", () => {
+      const readOnlyItem = makeItem({
+        permissions: { user: "r", global: "n" },
+      });
+      render(<WorkspaceActionBar {...defaultProps} selection={[readOnlyItem]} />);
+      expect(screen.queryByRole("button", { name: /edit type/i })).not.toBeInTheDocument();
+    });
+
+    it("shows DELETE when permissions.user is owner ('o')", () => {
+      const ownerItem = makeItem({
+        permissions: { user: "o", global: "n" },
+      });
+      render(<WorkspaceActionBar {...defaultProps} selection={[ownerItem]} />);
+      expect(screen.getByRole("button", { name: /delete/i })).toBeInTheDocument();
+    });
+
+    it("hides DELETE when permissions.user is read-only even if global is writable", () => {
+      // Action bar checks permissions.user only — global permission is not consulted here
+      const globalWriteItem = makeItem({
+        permissions: { user: "r", global: "w" },
+      });
+      render(<WorkspaceActionBar {...defaultProps} selection={[globalWriteItem]} />);
+      expect(screen.queryByRole("button", { name: /delete/i })).not.toBeInTheDocument();
     });
   });
 });

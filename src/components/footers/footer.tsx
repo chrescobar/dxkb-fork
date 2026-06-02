@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { SiGithub, SiFacebook, SiInstagram, SiYoutube, SiX } from "@icons-pack/react-simple-icons";
+import {
+  SiGithub,
+  SiFacebook,
+  SiInstagram,
+  SiYoutube,
+  SiX,
+} from "@icons-pack/react-simple-icons";
 import Logo from "@/components/ui/logo";
 import ThemeContent from "@/components/ui/theme-content";
 
@@ -29,16 +35,6 @@ const footerLinks: FooterSection[] = [
     links: [
       { name: "Funding", url: "/funding" },
       { name: "Our Team", url: "/team" },
-      { name: "Source Code", url: "https://github.com/CEPI-dxkb" },
-    ],
-  },
-  {
-    title: "FAQ",
-    titleUrl: "/faq",
-    links: [
-      { name: "Documentation", url: "https://docs.dxkb.org" },
-      { name: "Related Resources", url: "/related-resources" },
-      { name: "Tutorials", url: "https://docs.dxkb.org/bv-brc/resources" },
     ],
   },
   {
@@ -51,12 +47,23 @@ const footerLinks: FooterSection[] = [
     ],
   },
   {
+    title: "FAQ",
+    titleUrl: "/faq",
+    links: [
+      { name: "Documentation", url: "https://docs.dxkb.org" },
+      { name: "Related Resources", url: "/related-resources" },
+    ],
+  },
+  {
     title: "HELP",
     titleUrl: "/help",
     links: [
       { name: "Contact Us", url: "/contact" },
-      { name: "Instructional Videos", url: "https://docs.dxkb.org/bv-brc/resources" },
       { name: "Privacy Policy", url: "/privacy-policy" },
+      {
+        name: "Walkthroughs",
+        url: "https://docs.dxkb.org/docs/bv-brc/resources",
+      },
     ],
   },
 ];
@@ -110,7 +117,7 @@ const Footer = () => {
                 <span className="sr-only">Instagram</span>
               </Link>
               <Link
-                href="https://github.com"
+                href="https://github.com/CEPI-dxkb"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={socialLinkClassName}
@@ -140,18 +147,22 @@ const Footer = () => {
                     href={section.titleUrl}
                     {...(isExternalUrl(section.titleUrl) && {
                       target: "_blank",
+                      rel: "noopener noreferrer",
                     })}
                   >
                     {section.title}
                   </Link>
                 </h4>
-                <ul className="space-y-4 md:space-y-6 mb-2">
+                <ul className="mb-2 space-y-4 md:space-y-6">
                   {section.links.map((link) => (
                     <li key={link.name}>
                       <Link
                         href={link.url}
                         className="footer-link"
-                        {...(isExternalUrl(link.url) && { target: "_blank" })}
+                        {...(isExternalUrl(link.url) && {
+                          target: "_blank",
+                          rel: "noopener noreferrer",
+                        })}
                       >
                         {link.name}
                       </Link>

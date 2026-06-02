@@ -95,9 +95,10 @@ export function SearchBar({
         >
           <SelectTrigger
             id="searchtype"
+            aria-label="Search type"
             className={`${size === "lg" ? "h-auto py-6" : ""} text-sm min-w-[120px] rounded-l-md rounded-r-none border-0 border-r border-input bg-background text-foreground shadow-none focus:ring-0`}
           >
-            <SelectValue />
+            <SelectValue aria-label="Search type" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
@@ -119,13 +120,15 @@ export function SearchBar({
             onChange={(e) => setInputValue(e.target.value)}
           />
           {showIcon && (
-            <Search
-              className="absolute top-1/2 left-3 -translate-y-1/2 transform text-primary pointer-events-none"
-              size={18}
-            />
+            <button
+              type="submit"
+              className="absolute top-1/2 left-3 -translate-y-1/2 transform text-primary hover:text-primary/80 transition-colors cursor-pointer"
+              aria-label="Search"
+            >
+              <Search size={18} />
+            </button>
           )}
         </div>
-        <button type="submit" className="sr-only">Search</button>
       </div>
     </form>
   );

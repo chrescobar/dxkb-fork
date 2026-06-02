@@ -2,17 +2,18 @@
 
 import { useMemo } from "react";
 import { sortItems } from "@/lib/services/workspace/helpers";
-import type { WorkspaceBrowserItem, WorkspaceBrowserSort } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
+import type { WorkspaceSortConfig } from "@/types/workspace-browser";
 
 export function useWorkspaceFilteredItems(
-  items: WorkspaceBrowserItem[],
+  items: WorkspaceItem[],
   options: {
     showHiddenFiles: boolean;
     typeFilter: string;
     searchQuery: string;
-    sort: WorkspaceBrowserSort;
+    sort: WorkspaceSortConfig;
   },
-): WorkspaceBrowserItem[] {
+): WorkspaceItem[] {
   const { showHiddenFiles, typeFilter, searchQuery, sort } = options;
 
   return useMemo(() => {

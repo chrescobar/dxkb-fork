@@ -46,10 +46,17 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
     );
   };
 
+  // Parent passes onFilterChange inline (new ref every render); keep it in a
+  // ref so the effect only fires on filter-state changes, not on every render.
+  const onFilterChangeRef = useRef(onFilterChange);
+  useEffect(() => {
+    onFilterChangeRef.current = onFilterChange;
+  });
+
   // emit filter upward
   useEffect(() => {
     const rql = buildRql({ selected, keywords });
-    onFilterChange?.(rql);
+    onFilterChangeRef.current?.(rql);
   }, [selected, keywords]);
 
   useEffect(() => {

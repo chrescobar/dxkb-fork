@@ -55,7 +55,7 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
 
       if (!response.ok) {
         const err = await response.json();
-        toast.error(err.message || "Failed to update preferences.");
+        toast.error(err.error ?? err.message ?? "Failed to update preferences.");
         return;
       }
 

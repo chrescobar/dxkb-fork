@@ -14,8 +14,8 @@ import type {
   WorkspaceMetadata,
   WorkspaceReadOptions,
 } from "../domain";
-import { WorkspaceApiError, toWorkspaceItem } from "../domain";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import { WorkspaceApiError } from "../domain";
+import { assertNoProtectedFolders } from "../protected-folders";
 import type {
   ArchiveRequest,
   ArchiveResult,
@@ -74,7 +74,7 @@ function toBrowserItem(
   parent: string,
   fixture: InMemoryFixtureItem,
   index: number,
-): WorkspaceBrowserItem {
+): WorkspaceItem {
   const parentNormalized = normalize(parent);
   const fullPath =
     parentNormalized === "/"
@@ -86,14 +86,16 @@ function toBrowserItem(
     name: fixture.name,
     path: fullPath,
     type: fixture.type,
-    creation_time: createdAt,
-    link_reference: "",
-    owner_id: fixture.ownerId ?? "test-user@bvbrc",
+    createdAt,
+    linkReference: "",
+    ownerId: fixture.ownerId ?? "test-user@bvbrc",
     size: fixture.size ?? 0,
     userMeta: {},
     autoMeta: {},
-    user_permission: fixture.userPermission ?? "o",
-    global_permission: fixture.globalPermission ?? "n",
+    permissions: {
+      user: fixture.userPermission ?? "o",
+      global: fixture.globalPermission ?? "n",
+    },
     timestamp: fixture.timestamp ?? Date.parse(createdAt),
   };
 }
@@ -175,7 +177,7 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
       const fixtureIndex = siblings.findIndex((f) => f.name === name);
       const fixture = fixtureIndex >= 0 ? siblings[fixtureIndex] : null;
       const object = fixture
-        ? toWorkspaceItem(toBrowserItem(parent, fixture, fixtureIndex))
+        ? toBrowserItem(parent, fixture, fixtureIndex)
         : null;
       const raw = fixture ? [toGetTuple(parent, fixture, fixtureIndex)] : null;
       return { path: normalized, object, raw };
@@ -187,7 +189,7 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
     this.throwIfConfigured("listDirectory");
     const items = this.directories[normalize(input.path)] ?? [];
     const mapped = items.map((f, i) =>
-      toWorkspaceItem(toBrowserItem(input.path, f, i)),
+      toBrowserItem(input.path, f, i),
     );
     const types = input.query?.type;
     const allowed = types && types.length > 0 ? new Set(types) : null;
@@ -284,6 +286,7 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
   }
 
   async delete(paths: string[], options?: DeleteOptions): Promise<void> {
+    assertNoProtectedFolders(paths);
     this.calls.push({ method: "delete", paths, options });
     this.throwIfConfigured("delete");
     for (const path of paths) {
@@ -424,7 +427,7 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
       seen.add(dir);
       const children = this.directories[dir] ?? [];
       children.forEach((f, i) => {
-        const item = toWorkspaceItem(toBrowserItem(dir, f, i));
+        const item = toBrowserItem(dir, f, i);
         const isFolderLike = /folder|job_result|modelfolder|group/.test(
           item.type,
         );

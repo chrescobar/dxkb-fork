@@ -47,8 +47,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-
-[data-theme='dxkb-light'] {
+[data-theme="dxkb-light"] {
   --radius: 0.65rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -83,7 +82,7 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-[data-theme='dxkb-dark'] {
+[data-theme="dxkb-dark"] {
   --radius: 1rem;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -140,7 +139,8 @@
 /* Themed scrollbars: use --muted-foreground so they match light/dark theme */
 .scrollbar-themed {
   scrollbar-width: thin;
-  scrollbar-color: color-mix(in oklch, var(--muted-foreground) 25%, transparent) transparent;
+  scrollbar-color: color-mix(in oklch, var(--muted-foreground) 25%, transparent)
+    transparent;
 }
 
 .scrollbar-themed::-webkit-scrollbar {
@@ -162,11 +162,11 @@
 }
 
 .about-section {
-  @apply mx-8 my-16 grid w-[calc(100%-4rem)] max-w-[1200px] grid-cols-1 items-center gap-8 lg:mx-auto lg:w-[90%] lg:grid-cols-2 lg:gap-16;
+  @apply mx-8 my-16 grid w-[calc(100%-4rem)] max-w-300 grid-cols-1 items-center gap-8 lg:mx-auto lg:w-[90%] lg:grid-cols-2 lg:gap-16;
 }
 
 .funding-section {
-  @apply bg-card mx-auto my-24 flex flex-row items-center justify-center gap-16 rounded-xl p-8 align-middle text-lg border shadow-lg max-w-7xl;
+  @apply bg-card mx-auto my-24 flex max-w-7xl flex-row items-center justify-center gap-16 rounded-xl border p-8 align-middle text-lg shadow-lg;
 }
 
 .team-section {
@@ -186,7 +186,7 @@
 }
 
 .link {
-  @apply px-0 transition-all duration-300 text-blue-600;
+  @apply px-0 text-blue-600 transition-all duration-300;
 }
 
 .link:hover {
@@ -194,7 +194,7 @@
 }
 
 .icon-link {
-  @apply text-white h-8 w-8;
+  @apply h-8 w-8 text-white;
 }
 
 .icon-link:hover {
@@ -239,12 +239,12 @@
 }
 
 .accordion-content {
-  @apply text-muted-foreground px-4 pb-4 pt-2;
+  @apply text-muted-foreground px-4 pt-2 pb-4;
 }
 
 /* Shared Card Grid Layout Styles */
 .card-container {
-  @apply container mx-auto my-12 w-[85%] max-w-xl space-y-12 py-8;
+  @apply container mx-auto my-12 w-[90%] max-w-7xl space-y-12 py-8;
 }
 
 .section-title {
@@ -252,20 +252,20 @@
 }
 
 .card-grid-two {
-  @apply grid grid-cols-1 gap-24 sm:grid-cols-2;
+  @apply grid grid-cols-1 gap-8 sm:grid-cols-2;
 }
 
 .card-grid-three {
-  @apply grid grid-cols-1 gap-16 sm:grid-cols-2 lg:grid-cols-3;
+  @apply grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3;
 }
 
 .card-grid-four {
-  @apply grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4;
+  @apply grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4;
 }
 
 /* Shared Card Component Styles */
 .card-base {
-  @apply bg-card h-full w-full items-center justify-center overflow-hidden rounded-lg shadow-sm transition-all duration-300 hover:shadow-md;
+  @apply bg-card border-border/50 flex h-full w-full flex-col overflow-hidden rounded-lg border shadow-sm transition-all duration-300 hover:shadow-md;
 }
 
 .card-image {
@@ -277,24 +277,23 @@
 }
 
 .card-content {
-  @apply p-4 group-hover:text-accent;
+  @apply group-hover:text-accent p-4;
 }
 
 .card-title {
   @apply text-secondary group-hover:text-accent font-semibold transition-all duration-300;
 }
 
-
 .card-description {
-  @apply text-muted-foreground mt-2 line-clamp-2 text-sm group-hover:text-foreground transition-all duration-300;
+  @apply text-muted-foreground group-hover:text-foreground mt-2 line-clamp-2 text-sm transition-all duration-300;
 }
 
 .card-label {
-  @apply text-sm font-medium text-foreground text-left mb-1;
+  @apply text-foreground mb-1 text-left text-sm font-medium;
 }
 
 .card-sublabel {
-  @apply mb-1 p-1 block text-left text-sm font-medium text-foreground;
+  @apply text-foreground mb-1 block p-1 text-left text-sm font-medium;
 }
 
 .card-input {
@@ -306,7 +305,7 @@
 }
 
 .radio-group-item-container {
-  @apply mb-4 flex text-foreground gap-8;
+  @apply text-foreground mb-4 flex gap-8;
 }
 
 .radio-group-item-container label {
@@ -318,15 +317,15 @@
 }
 
 .mobile-nav-section-header {
-  @apply text-sm font-semibold text-foreground uppercase tracking-wider mb-2;
+  @apply text-foreground mb-2 text-sm font-semibold tracking-wider uppercase;
 }
 
 .mobile-nav-divider-title {
-  @apply text-[13px] font-medium bg-primary text-foreground px-2 py-1 rounded mb-1 flex items-center gap-1;
+  @apply bg-primary text-foreground mb-1 flex items-center gap-1 rounded px-2 py-1 text-[13px] font-medium;
 }
 
 .mobile-nav-link {
-  @apply text-sm text-foreground/90 rounded-md block py-1.5 px-2 font-medium;
+  @apply text-foreground/90 block rounded-md px-2 py-1.5 text-sm font-medium;
 }
 
 .mobile-nav-link:hover {
@@ -334,11 +333,11 @@
 }
 
 .search-results-card-title {
-  @apply font-semibold text-secondary hover:underline hover:cursor-pointer;
+  @apply text-secondary font-semibold hover:cursor-pointer hover:underline;
 }
 
 .search-result-header {
-  @apply font-medium text-foreground hover:underline hover:cursor-pointer w-fit;
+  @apply text-foreground w-fit font-medium hover:cursor-pointer hover:underline;
 }
 
 .search-result-description p {
@@ -346,15 +345,15 @@
 }
 
 .search-result-description a {
-  @apply text-foreground hover:underline hover:cursor-pointer;
+  @apply text-foreground hover:cursor-pointer hover:underline;
 }
 
 .search-result-metadata p {
-  @apply mt-2 space-y-1 text-sm text-muted-foreground;
+  @apply text-muted-foreground mt-2 space-y-1 text-sm;
 }
 
 .service-container {
-  @apply max-w-6xl mx-auto px-4 py-8;
+  @apply mx-auto max-w-6xl px-4 py-8;
 }
 
 .service-header {
@@ -370,7 +369,7 @@
 }
 
 .service-header a {
-  @apply inline-flex items-center text-blue-500 hover:text-blue-700;
+  @apply inline-flex items-center text-blue-700 hover:text-blue-900;
 }
 
 .service-header-title {
@@ -390,7 +389,7 @@
 }
 
 .service-header-description a {
-  @apply inline-flex items-center text-blue-500 hover:text-blue-700;
+  @apply inline-flex items-center text-blue-700 hover:text-blue-900;
 }
 
 .service-header-tooltip {
@@ -398,7 +397,7 @@
 }
 
 .service-radio-group {
-  @apply flex flex-col sm:flex-row gap-4;
+  @apply flex flex-col gap-4 sm:flex-row;
 }
 
 .service-radio-group-horizontal {
@@ -410,7 +409,7 @@
 }
 
 .service-radio-group-item {
-  @apply flex items-center space-x-2 justify-start;
+  @apply flex items-center justify-start space-x-2;
 }
 
 .service-radio-group-item label {
@@ -426,11 +425,11 @@
 }
 
 .service-collapsible-container {
-  @apply w-full rounded-md border p-2 bg-card;
+  @apply bg-card w-full rounded-md border p-2;
 }
 
 .service-collapsible-header {
-  @apply flex flex-row justify-between w-full;
+  @apply flex w-full flex-row justify-between;
 }
 
 /* Smooth open/close animation for Base UI Collapsible Panel */
@@ -446,7 +445,7 @@
 }
 
 .service-collapsible-content {
-  @apply w-full py-2 px-2 space-y-4;
+  @apply w-full space-y-4 px-2 py-2;
 }
 
 .service-collapsible-trigger {
@@ -458,7 +457,7 @@
 }
 
 .service-card-content-grid {
-  @apply grid grid-cols-1 gap-4 md:grid-cols-2 px-2;
+  @apply grid grid-cols-1 gap-4 px-2 md:grid-cols-2;
 }
 
 .service-card-content-grid-item {
@@ -466,23 +465,23 @@
 }
 
 .service-card-row {
-  @apply flex flex-col sm:flex-row gap-4 md:gap-6 w-full;
+  @apply flex w-full flex-col gap-4 sm:flex-row md:gap-6;
 }
 
 .service-card-row-item {
-  @apply flex flex-col gap-2 w-full;
+  @apply flex w-full flex-col gap-2;
 }
 
 .service-card-content-col {
-  @apply flex flex-col gap-2 w-full;
+  @apply flex w-full flex-col gap-2;
 }
 
 .service-form-controls {
-  @apply flex flex-row justify-end gap-4 mt-4;
+  @apply mt-4 flex flex-row justify-end gap-4;
 }
 
 .service-card-input {
-  @apply w-full flex-1 bg-input text-sm transition-all duration-300;
+  @apply bg-input w-full flex-1 text-sm transition-all duration-300;
 }
 
 .service-card-input:hover {
@@ -513,7 +512,7 @@
   @apply absolute top-2.5 right-3 h-4 w-4 text-gray-400;
 }
 
-.service-card-input-group  {
+.service-card-input-group {
   @apply flex space-x-2;
 }
 
@@ -522,15 +521,15 @@
 }
 
 .service-card-title {
-  @apply text-lg font-semibold gap-2 flex items-center;
+  @apply flex items-center gap-2 text-lg font-semibold;
 }
 
 .service-card-label {
-  @apply text-sm font-medium mb-2 block;
+  @apply mb-2 block text-sm font-medium;
 }
 
 .service-card-sublabel {
-  @apply text-sm font-normal mb-2 block text-foreground/70;
+  @apply text-foreground/70 mb-2 block text-sm font-normal;
 }
 
 .service-card-tooltip-icon {
@@ -538,7 +537,7 @@
 }
 
 .service-card-textarea {
-  @apply bg-muted min-h-48 max-h-96 text-sm font-mono overflow-y-auto transition-all duration-300;
+  @apply bg-muted max-h-96 min-h-48 overflow-y-auto font-mono text-sm transition-all duration-300;
   overflow-x: auto;
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -555,7 +554,7 @@
 }
 
 .service-card-select-trigger {
-  @apply w-full bg-muted transition-all duration-300;
+  @apply bg-muted w-full transition-all duration-300;
 }
 
 .service-card-select-trigger:hover {
@@ -571,22 +570,22 @@
 }
 
 .service-table {
-  @apply overflow-hidden rounded-md border bg-muted;
+  @apply bg-muted overflow-hidden rounded-md border;
 }
 .service-table-none {
   @apply rounded-md border bg-gray-50 p-4 text-center text-gray-500 italic;
 }
 
 .service-table-header {
-  @apply grid grid-cols-[2fr_1fr_auto] bg-gray-100 p-2 text-sm font-medium ;
+  @apply grid grid-cols-[2fr_1fr_auto] bg-gray-100 p-2 text-sm font-medium;
 }
 
 .service-table-body {
-  @apply divide-y divide-gray-200 divide-x;
+  @apply divide-x divide-y divide-gray-200;
 }
 
 .service-table-row {
-  @apply grid grid-cols-[2fr_1fr_auto] items-center p-2 gap-2 text-sm divide-x-2 divide-gray-200;
+  @apply grid grid-cols-[2fr_1fr_auto] items-center gap-2 divide-x-2 divide-gray-200 p-2 text-sm;
 }
 
 .service-subsection {
@@ -594,11 +593,11 @@
 }
 
 .footer-header {
-  @apply text-secondary font-bold mt-2 mb-4 md:mb-6;
+  @apply mt-2 mb-4 font-bold text-white md:mb-6;
 }
 
 .footer-header:hover {
-  @apply text-accent underline cursor-pointer transition-all duration-300;
+  @apply text-accent cursor-pointer underline transition-all duration-300;
 }
 
 .footer-link {
@@ -606,17 +605,17 @@
 }
 
 .footer-link:hover {
-  @apply text-accent underline font-semibold;
+  @apply text-accent underline;
 }
 
 .auth-container {
-  @apply max-w-2xl mx-auto px-4 py-8 w-full;
+  @apply mx-auto w-full max-w-2xl px-4 py-8;
 }
 
 /* Citation Styles */
 /* Citation Metrics */
 .citation-metrics-grid {
-  @apply grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4;
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4;
 }
 
 .citation-metrics-card {
@@ -628,7 +627,7 @@
 }
 
 .citation-metrics-icon {
-  @apply h-4 w-4 text-muted-foreground;
+  @apply text-muted-foreground h-4 w-4;
 }
 
 .citation-metrics-value {
@@ -636,12 +635,12 @@
 }
 
 .citation-metrics-description {
-  @apply text-xs text-muted-foreground;
+  @apply text-muted-foreground text-xs;
 }
 
 /* Citation Timeline */
 .timeline-container {
-  @apply h-[250px] w-full;
+  @apply h-62.5 w-full;
 }
 
 .timeline-bar-container {
@@ -653,7 +652,7 @@
 }
 
 .timeline-bar {
-  @apply w-full bg-primary rounded-t-lg min-h-5;
+  @apply bg-primary min-h-5 w-full rounded-t-lg;
 }
 
 .timeline-label {
@@ -665,7 +664,7 @@
 }
 
 .timeline-count {
-  @apply text-xs text-muted-foreground;
+  @apply text-muted-foreground text-xs;
 }
 
 /* Citation Cards */
@@ -682,23 +681,23 @@
 }
 
 .citation-card-title {
-  @apply text-xl font-semibold tracking-tight no-underline flex items-center gap-1 hover:underline;
+  @apply flex items-center gap-1 text-xl font-semibold tracking-tight no-underline hover:underline;
 }
 
 .citation-card-meta {
-  @apply text-sm font-medium mt-1;
+  @apply mt-1 text-sm font-medium;
 }
 
 .citation-card-journal {
-  @apply text-sm text-muted-foreground italic mt-1;
+  @apply text-muted-foreground mt-1 text-sm italic;
 }
 
 .citation-card-abstract {
-  @apply text-sm mt-2;
+  @apply mt-2 text-sm;
 }
 
 .citation-card-actions {
-  @apply flex items-center gap-2 mt-2;
+  @apply mt-2 flex items-center gap-2;
 }
 
 /* Filters and Search */
@@ -711,7 +710,7 @@
 }
 
 .citation-search-icon {
-  @apply absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground;
+  @apply text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4;
 }
 
 .citation-search-input {
@@ -720,33 +719,33 @@
 
 /* Impact Factor Distribution */
 .impact-distribution {
-  @apply h-[250px] w-full;
+  @apply h-62.5 w-full;
 }
 
 .impact-bar {
-  @apply w-full bg-primary rounded-t-lg min-h-5;
+  @apply bg-primary min-h-5 w-full rounded-t-lg;
 }
 
 /* Author Network */
 .author-network {
-  @apply h-[300px] w-full flex items-center justify-center relative bg-muted/20 rounded-lg;
+  @apply bg-muted/20 relative flex h-75 w-full items-center justify-center rounded-lg;
 }
 
 .author-node {
-  @apply absolute transform -translate-x-1/2 -translate-y-1/2;
+  @apply absolute -translate-x-1/2 -translate-y-1/2 transform;
 }
 
 .author-connection {
-  @apply absolute bg-muted h-0.5 z-0;
+  @apply bg-muted absolute z-0 h-0.5;
 }
 
 .author-bubble {
-  @apply rounded-full flex flex-col items-center justify-center p-2 shadow-md bg-card border z-10 relative;
+  @apply bg-card relative z-10 flex flex-col items-center justify-center rounded-full border p-2 shadow-md;
 }
 
 /* Common Layout */
 .citation-page-container {
-  @apply max-w-7xl mx-auto px-4 py-10 md:px-6;
+  @apply mx-auto max-w-7xl px-4 py-10 md:px-6;
 }
 
 .citation-page-header {
@@ -796,8 +795,8 @@
   }
 }
 
-.table th[data-pinned='left'],
-.table td[data-pinned='left'] {
+.table th[data-pinned="left"],
+.table td[data-pinned="left"] {
   position: sticky;
   left: 0;
   z-index: 10;

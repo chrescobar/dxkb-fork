@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 import { useMutation, type QueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { useWorkspaceRepository } from "@/contexts/workspace-repository-context";
 import { triggerDownload } from "@/lib/utils";
 import {
@@ -21,7 +21,7 @@ export interface UseWorkspaceActionDispatchOptions {
   currentUser: string;
   myWorkspaceRoot: string;
   queryClient: QueryClient;
-  items: WorkspaceBrowserItem[];
+  items: WorkspaceItem[];
   /** When true, dispatch download through the public (unauthenticated) repository. */
   isPublic?: boolean;
 }
@@ -62,7 +62,7 @@ export function useWorkspaceActionDispatch({
       downloadable,
     }: {
       mappedPaths: string[];
-      downloadable: WorkspaceBrowserItem[];
+      downloadable: WorkspaceItem[];
     }) => {
       const urlArrays = await repository.getDownloadUrls(mappedPaths);
       return { urlArrays, downloadable };
@@ -85,7 +85,7 @@ export function useWorkspaceActionDispatch({
   const { mutate: downloadMutate } = downloadMutation;
 
   const handleAction = useCallback(
-    async (actionId: string, selection: WorkspaceBrowserItem[]) => {
+    async (actionId: string, selection: WorkspaceItem[]) => {
       if (actionId === "delete") {
         dispatch({ type: "OPEN_DELETE", items: selection });
         return;

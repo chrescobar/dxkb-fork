@@ -1,0 +1,24 @@
+src/components/auth/su-banner.tsx
+  s_9195f20c2a941a::t_453ac51d0abdf6 8,12
+  s_9195f20c2a941a::t_095445bf03a190 19
+src/components/auth/su-login-dialog.tsx
+  s_9195f20c2a941a::t_a51ad94e02fdfc 30
+  s_9195f20c2a941a::t_9271106808ee41 47
+  s_9195f20c2a941a::t_f8d480ce551145 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "31e7c3c3b357eb340179f7b16457677a499cce07",
+  "prompts": {},
+  "sessions": {
+    "s_9195f20c2a941a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "09599757-cd00-4a02-b686-82e1a7659542",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

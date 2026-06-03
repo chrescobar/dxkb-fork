@@ -80,6 +80,7 @@ function TabsRenderer({
     setActiveTab(newTab);
     setRowSelection({});
     setSelectedIds([]);
+    setIsAllPagesSelected(false);
   };
 
   return (

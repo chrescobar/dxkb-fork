@@ -24,7 +24,7 @@ export function GenomeDetailPanel({
   const hasSelection = selectedIds.length > 0;
 
   // Only fetch when exactly ONE row is selected
-  const { data: selectedRow, isLoading } = useQuery({
+  const { data: selectedRow, isLoading, error } = useQuery({
     queryKey: ["selected-row", activeTab, genomeId],
     enabled: !!genomeId && selectedIds.length === 1,
 
@@ -59,6 +59,14 @@ export function GenomeDetailPanel({
     return (
       <div className="p-4 text-sm text-muted-foreground">
         No rows selected
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 text-sm text-destructive">
+        {error.message}
       </div>
     );
   }

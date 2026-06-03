@@ -352,10 +352,10 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
         query={combinedQuery}
         onFilterChange={(rql) => {
           setFilter(rql);
-          setPageIndex(0);          // ✅ reset pagination
-//          setRowSelection({});      // ✅ clear selection
-//          onSelectionChange?.([]);  // ✅ clear parent selection
-          setIsAllPagesSelected(false); // ✅ clear all pages selection
+          setPageIndex(0);
+          setRowSelection({});
+          onSelectionChange?.([]);
+          setIsAllPagesSelected(false);
         }}
       />
 

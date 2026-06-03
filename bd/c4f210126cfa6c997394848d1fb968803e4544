@@ -1,0 +1,35 @@
+src/components/organisms/geo-distribution/color-scale.ts
+  s_98c4556e291931::t_238193c7b41ab6 14-17
+src/components/organisms/geo-distribution/choropleth-svg.tsx
+  s_98c4556e291931::t_5d18b1002cdd6d 225,231,244
+  s_98c4556e291931::t_984e5935f534a8 61
+  s_98c4556e291931::t_f1651df9099f60 345-352
+  s_98c4556e291931::t_e1c93847e90843 9,102-111,113-224,226-230,232-243,245-290,309,354,362,365,383-386,402-435,437-444,446-468
+  s_98c4556e291931::t_b63cc51c9bb6de 357-358
+  s_98c4556e291931::t_bcc0774a3ba8c8 363-364
+  s_98c4556e291931::t_ba1971e70cb38d 62
+  s_98c4556e291931::t_8a9eb593075112 69-91
+  s_98c4556e291931::t_3cde784ce21a4f 436
+  s_98c4556e291931::t_a98cc0bc5705c9 112
+  s_98c4556e291931::t_54b415fcbd356f 15
+src/components/organisms/geo-distribution/geo-distribution-skeleton.tsx
+  s_98c4556e291931::t_8726fd518e9f62 7
+src/components/organisms/geo-distribution/map-tooltip.tsx
+  s_98c4556e291931::t_47d325341a037a 31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "bdc4f210126cfa6c997394848d1fb968803e4544",
+  "prompts": {},
+  "sessions": {
+    "s_98c4556e291931": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d50ff54-ed98-4b70-b4b2-5f30d47dce2c",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

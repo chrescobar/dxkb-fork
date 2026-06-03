@@ -88,6 +88,15 @@ const bacteriaTaxonomyFixture = {
   genomes: 1337420,
 };
 
+const brucellaTaxonomyFixture = {
+  taxon_id: 234,
+  taxon_name: "Brucella",
+  lineage_names: ["cellular organisms", "Bacteria", "Pseudomonadota", "Alphaproteobacteria", "Hyphomicrobiales", "Brucellaceae", "Brucella"],
+  lineage_ids: [131567, 2, 1224, 28211, 356, 118882, 234],
+  taxon_rank: "genus",
+  genomes: 1909,
+};
+
 const sharedFacetFixtures: Record<string, (string | number)[]> = {
   genus: [
     "Escherichia",
@@ -138,6 +147,36 @@ const sharedFacetFixtures: Record<string, (string | number)[]> = {
     5488,
     "Rickettsia",
     4312,
+  ],
+  isolation_country_geo: [
+    "USA",
+    260,
+    "China",
+    260,
+    "Italy",
+    188,
+    "India",
+    108,
+    "Israel",
+    107,
+  ],
+  state_province: [
+    "Wyoming",
+    48,
+    "Idaho",
+    35,
+    "Texas",
+    24,
+    "Montana",
+    23,
+    "Georgia",
+    16,
+  ],
+  county: [
+    "Los Angeles",
+    12,
+    "Harris",
+    8,
   ],
   host_name: [
     "Homo sapiens",
@@ -219,12 +258,58 @@ function facetFieldFromRequest(request: NextRequest): string | null {
   return null;
 }
 
+function pivotKeyFromRequest(request: NextRequest): { primary: string; secondary: string } | null {
+  const url = new URL(request.url);
+  const candidates = [
+    url.search,
+    ...Array.from(url.searchParams.keys()),
+    ...Array.from(url.searchParams.values()),
+  ].map((value) => { try { return decodeURIComponent(value); } catch { return value; } });
+
+  for (const candidate of candidates) {
+    const match = candidate.match(/\(pivot,\(([^,]+),([^)]+)\)\)/);
+    if (match?.[1] && match?.[2]) return { primary: match[1], secondary: match[2] };
+  }
+
+  return null;
+}
+
+function solrPivot(primary: string, secondary: string) {
+  const counts = sharedFacetFixtures[primary === "isolation_country" ? "isolation_country_geo" : primary] ?? [];
+  const pivots: { field: string; value: string; count: number; pivot: { field: string; value: string; count: number }[] }[] = [];
+  for (let i = 0; i < counts.length; i += 2) {
+    const value = counts[i] as string;
+    const count = counts[i + 1] as number;
+    pivots.push({
+      field: primary,
+      value,
+      count,
+      pivot: [
+        { field: secondary, value: secondary === "genus" ? "Brucella" : "Cattle", count },
+      ],
+    });
+  }
+  return {
+    response: { numFound: pivots.reduce((sum, p) => sum + p.count, 0), docs: [] },
+    facet_counts: {
+      facet_pivot: {
+        [`${primary},${secondary}`]: pivots,
+      },
+    },
+  };
+}
+
 function solrFacet(field: string, count: number) {
+  // The geographic isolation_country fixture uses different fixture data than
+  // the metadata-distribution one (real values from BV-BRC for Brucella), so
+  // detect "geo" callers by their use of the geo-specific pivot helpers.
+  // Here we serve the regular fixture by name and a richer one keyed on _geo.
+  const values = sharedFacetFixtures[field] ?? [];
   return {
     response: { numFound: count, docs: [] },
     facet_counts: {
       facet_fields: {
-        [field]: sharedFacetFixtures[field] ?? [],
+        [field]: values,
       },
     },
   };
@@ -239,7 +324,15 @@ function maybeBvBrcWebsite(path: string, request: NextRequest): unknown | null {
   if (endpoint === "data/summary_by_taxon/10239") return virusesSummaryFixture;
   if (endpoint === "data/summary_by_taxon/131567") return allOrganismsSummaryFixture;
   if (endpoint === "taxonomy/2") return bacteriaTaxonomyFixture;
-  if (endpoint === "genome") {
+  if (endpoint === "taxonomy/234") return brucellaTaxonomyFixture;
+  if (endpoint === "genome" || endpoint === "genome/") {
+    const pivot = pivotKeyFromRequest(request);
+    if (pivot) {
+      // Geographic pivot calls — only emit data for the geo fields the map cares about.
+      const supportedPrimaries = new Set(["isolation_country", "state_province", "county"]);
+      if (supportedPrimaries.has(pivot.primary)) return solrPivot(pivot.primary, pivot.secondary);
+      return { response: { numFound: 0, docs: [] }, facet_counts: { facet_pivot: {} } };
+    }
     const field = facetFieldFromRequest(request);
     if (!field) return {};
     const url = new URL(request.url);
@@ -247,6 +340,18 @@ function maybeBvBrcWebsite(path: string, request: NextRequest): unknown | null {
     let count = bacteriaSummaryFixture.count;
     if (query.includes("10239")) count = virusesSummaryFixture.count;
     else if (query.includes("131567")) count = allOrganismsSummaryFixture.count;
+    // For the geo country facet, swap in the geo-specific fixture so the
+    // choropleth has realistic, lookup-table-matching country names.
+    if (field === "isolation_country" && query.includes("234")) {
+      return {
+        response: { numFound: count, docs: [] },
+        facet_counts: {
+          facet_fields: {
+            isolation_country: sharedFacetFixtures.isolation_country_geo,
+          },
+        },
+      };
+    }
     return solrFacet(field, count);
   }
 

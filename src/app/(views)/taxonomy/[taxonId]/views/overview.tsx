@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 
+import { GeoDistribution } from "@/components/organisms/geo-distribution/geo-distribution";
+import { GeoDistributionSkeleton } from "@/components/organisms/geo-distribution/geo-distribution-skeleton";
 import { MetadataDistributions } from "@/components/organisms/metadata-distributions/metadata-distributions";
 import { MetadataDistributionsSkeleton } from "@/components/organisms/metadata-distributions/metadata-distributions-skeleton";
 import { ReferenceGenomes } from "@/components/organisms/reference-genomes/reference-genomes";
@@ -23,6 +25,12 @@ async function MetadataDistributionsBoundary() {
   );
 }
 
+async function GeoDistributionBoundary() {
+  return withSectionError(() =>
+    GeoDistribution({ taxonId: config.taxonId, accent: config.accent }),
+  );
+}
+
 async function ReferenceGenomesBoundary() {
   return withSectionError(() => ReferenceGenomes({ taxonId: config.taxonId }));
 }
@@ -37,6 +45,20 @@ export function OverviewView() {
       <Suspense fallback={<MetadataDistributionsSkeleton />}>
         <MetadataDistributionsBoundary />
       </Suspense>
+
+      <section className="flex flex-col gap-3">
+        <div>
+          <h2 className="text-2xl font-semibold tracking-normal">
+            Geographic Distribution
+          </h2>
+          <p className="text-muted-foreground text-base">
+            Genome counts by country, US state, and county.
+          </p>
+        </div>
+        <Suspense fallback={<GeoDistributionSkeleton />}>
+          <GeoDistributionBoundary />
+        </Suspense>
+      </section>
 
       <section className="flex flex-col gap-3">
         <div>

@@ -91,3 +91,57 @@ export function parseSolrFacetList(payload: Record<string, unknown>, field: stri
 export function buildGenomeFacetUrl(baseUrl: string, taxonId: number, field: string, limit: number): string {
   return `${baseUrl}/genome/?eq(taxon_lineage_ids,${taxonId})&limit(1)&facet((field,${field}),(limit,${limit}),(mincount,1))`;
 }
+
+export function buildGenomeGeoFacetUrl(baseUrl: string, taxonId: number, field: string, limit?: number): string {
+  const limitClause = limit ? `,(limit,${limit})` : "";
+  return `${baseUrl}/genome/?eq(genome_id,*)&genome(eq(taxon_lineage_ids,${taxonId}))&facet((field,${field}),(mincount,1)${limitClause})&limit(0)`;
+}
+
+export function buildGenomeGeoPivotUrl(baseUrl: string, taxonId: number, primary: string, secondary: string, limit?: number): string {
+  const limitClause = limit ? `,(limit,${limit})` : "";
+  return `${baseUrl}/genome/?eq(genome_id,*)&genome(eq(taxon_lineage_ids,${taxonId}))&facet((pivot,(${primary},${secondary})),(mincount,1)${limitClause})&limit(0)`;
+}
+
+interface PivotEntry {
+  value?: unknown;
+  count?: unknown;
+  pivot?: unknown;
+}
+
+export function parseSolrFacetPivot(payload: Record<string, unknown>, pivotKey: string): Record<string, Record<string, number>> {
+  const facetCounts = payload.facet_counts;
+  if (!facetCounts || typeof facetCounts !== "object" || Array.isArray(facetCounts)) {
+    throw new Error(`Unexpected SOLR response shape: missing facet_counts`);
+  }
+
+  const facetPivot = (facetCounts as Record<string, unknown>).facet_pivot;
+  if (!facetPivot || typeof facetPivot !== "object" || Array.isArray(facetPivot)) {
+    throw new Error(`Unexpected SOLR response shape: missing facet_pivot`);
+  }
+
+  const rawPivot = (facetPivot as Record<string, unknown>)[pivotKey];
+  if (!Array.isArray(rawPivot)) {
+    throw new Error(`Unexpected SOLR response shape: missing ${pivotKey} pivot`);
+  }
+
+  const result: Record<string, Record<string, number>> = {};
+  for (const entry of rawPivot as PivotEntry[]) {
+    if (!entry || typeof entry !== "object") continue;
+    const name = entry.value;
+    if (typeof name !== "string" || name.length === 0) continue;
+    const inner: Record<string, number> = {};
+    if (Array.isArray(entry.pivot)) {
+      for (const sub of entry.pivot as PivotEntry[]) {
+        if (!sub || typeof sub !== "object") continue;
+        const subName = sub.value;
+        const subCount = sub.count;
+        if (typeof subName !== "string" || subName.length === 0) continue;
+        if (typeof subCount === "number" && Number.isFinite(subCount)) {
+          inner[subName] = subCount;
+        }
+      }
+    }
+    result[name] = inner;
+  }
+  return result;
+}

@@ -1,0 +1,70 @@
+package.json
+  s_98c4556e291931::t_2f4ce5b368e84d 105
+  s_98c4556e291931::t_99312e2b55025f 51,60,88
+  s_98c4556e291931::t_21757ab255262e 59
+src/lib/services/organisms/types.ts
+  s_98c4556e291931::t_06451ec96a2b09 30-45
+src/lib/services/organisms/utils.ts
+  s_98c4556e291931::t_d727c25db90ea5 94-147
+src/components/organisms/geo-distribution/geo-distribution-skeleton.tsx
+  s_98c4556e291931::t_0c5d2e70c2c26d 1-10
+src/components/organisms/geo-distribution/geo-distribution.tsx
+  s_98c4556e291931::t_c453182c9d162b 1-28
+src/components/organisms/geo-distribution/types.ts
+  s_98c4556e291931::t_e1e39f88aa7223 1-11
+src/lib/services/organisms/geo-distribution.ts
+  s_98c4556e291931::t_cf9d58e25f4c42 1-122
+src/components/organisms/geo-distribution/choropleth-svg.tsx
+  s_98c4556e291931::t_5a3cbdb3e2864a 3-15,18,21-27,29-40,44-56,59-64,67,70-74,78-93,95-111,114-122,127,129-137,139-144,147,149-152,155-163,165-289,291,293-406,409
+  s_98c4556e291931::t_4a83fafabf8be2 68-69
+  s_98c4556e291931::t_d1bafec7a1a826 1-2,16-17,19-20,28,41-43,57-58,65-66,75-77,94,112-113,123-126,128,138,153-154,164,290,292,407-408
+  s_98c4556e291931::t_b04fe03559c1f3 145-146,148
+e2e/tests/taxonomy-map.spec.ts
+  s_98c4556e291931::t_01ae935a7b0e51 35-37,41
+  s_98c4556e291931::t_936f557b03b768 1-34,38-40,42-52
+src/components/organisms/geo-distribution/map-controls.tsx
+  s_98c4556e291931::t_c41323f5e97856 1-112
+src/app/(views)/taxonomy/[taxonId]/views/overview.tsx
+  s_98c4556e291931::t_dceb22f8dc1a81 3-4,28-33,49-61
+src/lib/services/organisms/__tests__/geo-distribution.test.ts
+  s_98c4556e291931::t_b6dc5dbcb4c827 1-190
+public/maps/countries-110m.json
+  s_98c4556e291931::t_fb3c8fb8d22559 1
+src/components/organisms/geo-distribution/__tests__/color-scale.test.ts
+  s_98c4556e291931::t_24fb101793d9c9 1-112
+src/components/organisms/geo-distribution/color-scale.ts
+  s_98c4556e291931::t_92e8562d3fc4dd 1-127
+public/maps/counties-10m.json
+  s_98c4556e291931::t_fb3c8fb8d22559 1
+src/components/organisms/metadata-distributions/__tests__/metadata-distributions.test.tsx
+  s_98c4556e291931::t_e5cb2c9106a8b2 29
+src/app/api/e2e-mock/[...path]/route.ts
+  s_98c4556e291931::t_6bbe699d5c4a2a 91-99
+  s_98c4556e291931::t_e4fe8248d5ea6a 261-301
+  s_98c4556e291931::t_741c5ae3b31a34 327-335,343-354
+  s_98c4556e291931::t_486a289841314f 151-180
+  s_98c4556e291931::t_94fb24a33f73c5 303-307,312
+src/components/organisms/geo-distribution/color-legend.tsx
+  s_98c4556e291931::t_d26b1371f739aa 1-31
+src/components/organisms/geo-distribution/geo-distribution-client.tsx
+  s_98c4556e291931::t_f08aa72140d804 1-2,7-10,17,21-26,35,116,188-190,192,200,235-238
+  s_98c4556e291931::t_0e0c3f5509b181 3-6,11-16,18-20,27-34,36-115,117-187,191,193-199,201-234
+src/components/organisms/geo-distribution/map-tooltip.tsx
+  s_98c4556e291931::t_0ca7198761bff2 1-68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "9dcca1286627cf300b04d84423a06136dd8d5b87",
+  "prompts": {},
+  "sessions": {
+    "s_98c4556e291931": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d50ff54-ed98-4b70-b4b2-5f30d47dce2c",
+        "model": "unknown"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

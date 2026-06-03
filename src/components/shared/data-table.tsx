@@ -273,7 +273,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                 lastSelectedIndexRef.current = currentIndex;
 
                 // After updating rowSelection, invoke handlers based on the intended new selection state
-                const idVal = (row.original as any)[idField] ?? (row.original as any)?.genome_id ?? null;
+                const idVal = row.original[idField] ?? row.original['genome_id'] ?? null;
                 if (!willSelect) {
                   onGenomeSelect?.(null); // deselecting, so clear
                   onActiveRowChange?.(null);
@@ -442,7 +442,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     enableSortingRemoval: false,
     enableMultiRowSelection: true,
 //    getRowId: (row, index) => String((row as any).genome_id ?? `${index}`)
-    getRowId: (row) => String((row as any)[idField]),
+    getRowId: (row) => String(row[idField]),
   });
 
 
@@ -663,7 +663,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           return res.json();
         })
         .then((data) => {
-          const rowsArray: any[] = Array.isArray(data)
+          const rowsArray: Record<string, unknown>[] = Array.isArray(data)
             ? data
             : data.items ?? data.response ?? data.rows ?? [];
 
@@ -1010,8 +1010,8 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                       // the checkbox click handler already calls onActiveRowChange/onGenomeSelect.
                       onClick={(e) => {
                         if ((e.target as HTMLElement).closest('input[type="checkbox"]')) return;
-                        const idVal = (row.original as any)[idField];
-                        const genomeId = idVal ?? (row.original as any)?.genome_id ?? null;
+                        const idVal = row.original[idField];
+                        const genomeId = idVal ?? row.original['genome_id'] ?? null;
                         if (genomeId != null) {
                           onGenomeSelect?.(String(genomeId));
                           onActiveRowChange?.(String(genomeId));

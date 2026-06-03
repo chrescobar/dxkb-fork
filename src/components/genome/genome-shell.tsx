@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 import {
   ResizableHandle,
@@ -25,23 +25,16 @@ export function GenomeShell({
   actionBar,
   hasSidePanel = true,
 }: GenomeShellProps) {
-  const [panelExpanded, setPanelExpanded] = useState(false);
-
-  // If the parent indicates there is an active side panel (e.g. a selected genome),
-  // ensure the panel is expanded so the user sees the details. If there is no
-  // active item, collapse the panel.
-  // NOTE: only auto-expand when the parent reports an active item. Do not
-  // automatically collapse when there is no active item so user-controlled
-  // "Show"/"Hide" persists. This allows the user to open the panel first
-  // (showing "No rows selected") and then select rows while keeping the
-  // panel at the configured default width.
-  useEffect(() => {
+  // Initialize open when a side panel item is active; don't auto-close on deselect
+  // so the user's manual toggle is respected.
+  const [panelExpanded, setPanelExpanded] = useState(hasSidePanel);
+  const [prevHasSidePanel, setPrevHasSidePanel] = useState(hasSidePanel);
+  if (prevHasSidePanel !== hasSidePanel) {
+    setPrevHasSidePanel(hasSidePanel);
     if (hasSidePanel) {
       setPanelExpanded(true);
     }
-    // intentionally do NOT setPanelExpanded(false) when hasSidePanel becomes false
-    // so the user's manual toggle is respected.
-  }, [hasSidePanel]);
+  }
 
   const actionStrip = (
     <div className="bg-muted/30 flex flex-col w-[72px] shrink-0 border-l min-h-0">

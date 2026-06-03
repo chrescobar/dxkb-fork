@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { ListData } from "@/components/services/list-data";
 import { GenomeShell } from "@/components/genome/genome-shell";
@@ -56,6 +56,7 @@ function TabsRenderer({
   setIsAllPagesSelected,
   setTotalItems,
 }: TabsRendererProps) {
+  const clearTimeoutRef = useRef<number | null>(null);
   // Whenever urlType (searchtype) changes, set the active tab.
   // If urlType matches one of the tabs (term), set that; otherwise pick the first tab.
   useEffect(() => {
@@ -109,20 +110,19 @@ function TabsRenderer({
               // selection which would immediately clear the user's
               // cross-page selection; to avoid that we wait briefly before
               // clearing so a follow-up selection can cancel the clear.
-              const clearRef = (TabsRenderer as any).__clearTimeoutRef ??= { current: null as number | null };
 
               // If there is a pending clear, cancel it whenever we get a new event
-              if (clearRef.current) {
-                window.clearTimeout(clearRef.current);
-                clearRef.current = null;
+              if (clearTimeoutRef.current) {
+                window.clearTimeout(clearTimeoutRef.current);
+                clearTimeoutRef.current = null;
               }
 
               if (ids.length === 0) {
                 // Schedule clearing after a short delay unless another
                 // selection arrives.
-                clearRef.current = window.setTimeout(() => {
+                clearTimeoutRef.current = window.setTimeout(() => {
                   setSelectedIds([]);
-                  clearRef.current = null;
+                  clearTimeoutRef.current = null;
                 }, 120) as unknown as number;
                 return;
               }
@@ -216,13 +216,16 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
   const [isAllPagesSelected, setIsAllPagesSelected] = useState(false);
   const [totalItems, setTotalItems] = useState(0);
 
-  useEffect(() => {
+  const urlKey = `${urlType}::${urlQ}`;
+  const [prevUrlKey, setPrevUrlKey] = useState(urlKey);
+  if (prevUrlKey !== urlKey) {
+    setPrevUrlKey(urlKey);
     setRowSelection({});
     setSelectedIds([]);
     setPageIndex(0);
     setIsAllPagesSelected(false);
     setTotalItems(0);
-  }, [urlType, urlQ]);
+  }
 
   const [activeTab, setActiveTab] = useState(tablist[0]);
   // Keep the side panel open for multi-selection: use the last selected id

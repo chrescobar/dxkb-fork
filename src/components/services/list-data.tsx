@@ -114,33 +114,18 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const pageIndex = controlledPageIndex !== undefined ? controlledPageIndex : internalPageIndex;
   const setPageIndex = onPageChange || setInternalPageIndex;
 
-  useEffect(() => {
-    const idFieldMap: Record<string, string> = {
-      genome: "genome_id",
-      genome_sequence: "sequence_id",
-      genome_feature: "patric_id",
-      strain: "strain",
-      epitope: "epitope_id",
-      protein_structure: "pdb_id",
-      taxonomy: "taxon_id",
-      experiment: "exp_id",
-      bioset: "bioset_id",
-    };
-
-    const defaultIdField = idFieldMap[resource] ?? "id";
-
-    setSorting([{ id: defaultIdField, desc: false }]);
-
-    // Do not auto-clear selection here; let user actions control selection
-    // to avoid transient UI wipes when data re-fetches occur.
-  }, [resource]);
+  const [prevResource, setPrevResource] = useState(resource);
+  if (prevResource !== resource) {
+    setPrevResource(resource);
+    setSorting([{ id: idFieldMap[resource] ?? "id", desc: false }]);
+  }
 
   const setSortingAndResetPage = useCallback((newSorting: SortingState) => {
     setSorting(newSorting);
     setPageIndex(0);
 //    setRowSelection({});
 //    onSelectionChange?.([]); // Clear selection in parent too
-  }, [onSelectionChange, setPageIndex, setRowSelection]);
+  }, [setPageIndex]);
 
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean> | null>(null);
 

@@ -42,37 +42,40 @@ export function OverviewView() {
         <TaxonomySummaryBoundary />
       </Suspense>
 
+      <div className="flex flex-col gap-8 xl:flex-row xl:items-stretch">
+        <section className="flex w-full flex-col gap-3 xl:w-[70%]">
+          <div>
+            <h2 className="text-lg font-semibold tracking-normal">
+              Geographic Distribution
+            </h2>
+            <p className="text-muted-foreground text-sm">
+              Genome counts by country, US state, and county.
+            </p>
+          </div>
+          <Suspense fallback={<GeoDistributionSkeleton />}>
+            <GeoDistributionBoundary />
+          </Suspense>
+        </section>
+
+        <section className="flex w-full flex-col gap-3 xl:h-182 xl:w-[30%] xl:overflow-hidden">
+          <div>
+            <h2 className="text-lg font-semibold tracking-normal">
+              Reference & Representative Genomes
+            </h2>
+            <p className="text-muted-foreground text-sm">
+              Curated reference and representative genome records for this
+              taxon.
+            </p>
+          </div>
+          <Suspense fallback={<ReferenceGenomesSkeleton />}>
+            <ReferenceGenomesBoundary />
+          </Suspense>
+        </section>
+      </div>
+
       <Suspense fallback={<MetadataDistributionsSkeleton />}>
         <MetadataDistributionsBoundary />
       </Suspense>
-
-      <section className="flex flex-col gap-3">
-        <div>
-          <h2 className="text-2xl font-semibold tracking-normal">
-            Geographic Distribution
-          </h2>
-          <p className="text-muted-foreground text-base">
-            Genome counts by country, US state, and county.
-          </p>
-        </div>
-        <Suspense fallback={<GeoDistributionSkeleton />}>
-          <GeoDistributionBoundary />
-        </Suspense>
-      </section>
-
-      <section className="flex flex-col gap-3">
-        <div>
-          <h2 className="text-2xl font-semibold tracking-normal">
-            Reference & Representative Genomes
-          </h2>
-          <p className="text-muted-foreground text-base">
-            Curated reference and representative genome records for this taxon.
-          </p>
-        </div>
-        <Suspense fallback={<ReferenceGenomesSkeleton />}>
-          <ReferenceGenomesBoundary />
-        </Suspense>
-      </section>
     </div>
   );
 }

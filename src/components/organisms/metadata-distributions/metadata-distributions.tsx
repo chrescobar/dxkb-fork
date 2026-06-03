@@ -26,10 +26,10 @@ export async function MetadataDistributions({
   return (
     <section className="@container flex flex-col gap-3">
       <div>
-        <h2 className="text-2xl font-semibold tracking-normal">
+        <h2 className="text-lg font-semibold tracking-normal">
           Metadata Distributions
         </h2>
-        <p className="text-muted-foreground text-base">
+        <p className="text-muted-foreground text-sm">
           Top metadata buckets for available genome records.
         </p>
       </div>

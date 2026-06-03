@@ -74,7 +74,7 @@ export function MapControls({
           }}
         >
           <SelectTrigger className="h-7 min-w-[160px] text-xs">
-            <SelectValue placeholder="Drill into state…" />
+            <SelectValue placeholder="View state…" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>

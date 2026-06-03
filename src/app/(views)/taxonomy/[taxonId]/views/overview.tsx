@@ -42,31 +42,14 @@ export function OverviewView() {
         <TaxonomySummaryBoundary />
       </Suspense>
 
-      <div className="flex flex-col gap-8 xl:flex-row xl:items-stretch">
-        <section className="flex w-full flex-col gap-3 xl:w-[70%]">
-          <div>
-            <h2 className="text-lg font-semibold tracking-normal">
-              Geographic Distribution
-            </h2>
-            <p className="text-muted-foreground text-sm">
-              Genome counts by country, US state, and county.
-            </p>
-          </div>
+      <div className="flex flex-col gap-8 xl:flex-row xl:items-stretch xl:max-h-167">
+        <section className="flex w-full flex-col xl:w-[70%]">
           <Suspense fallback={<GeoDistributionSkeleton />}>
             <GeoDistributionBoundary />
           </Suspense>
         </section>
 
-        <section className="flex w-full flex-col gap-3 xl:h-182 xl:w-[30%] xl:overflow-hidden">
-          <div>
-            <h2 className="text-lg font-semibold tracking-normal">
-              Reference & Representative Genomes
-            </h2>
-            <p className="text-muted-foreground text-sm">
-              Curated reference and representative genome records for this
-              taxon.
-            </p>
-          </div>
+        <section className="flex w-full flex-col xl:w-[30%] xl:min-w-0">
           <Suspense fallback={<ReferenceGenomesSkeleton />}>
             <ReferenceGenomesBoundary />
           </Suspense>

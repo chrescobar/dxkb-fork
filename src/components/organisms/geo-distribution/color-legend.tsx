@@ -25,7 +25,7 @@ export function ColorLegend({ maxCount, accent }: ColorLegendProps) {
         aria-hidden
       />
       <span className="tabular-nums">{numberFormatter.format(maxCount)}</span>
-      <span className="ml-1">genomes</span>
+      <span className="ml-1">Genomes</span>
     </div>
   );
 }

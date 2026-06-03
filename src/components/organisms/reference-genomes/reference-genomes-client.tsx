@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Table,
@@ -43,12 +44,13 @@ function GenomeRows({ genomes }: { genomes: ReferenceGenome[] }) {
           {g.reference_genome}
         </Badge>
       </TableCell>
-      <TableCell className="py-1 px-3">
+      <TableCell className="overflow-hidden py-1 px-3">
         <Link
           href={`https://www.bv-brc.org/view/Genome/${g.genome_id}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-primary hover:underline text-sm"
+          className="text-primary hover:underline text-sm block truncate"
+          title={g.genome_name}
         >
           {g.genome_name}
         </Link>
@@ -72,13 +74,13 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
     sortDir === "asc" ? ArrowUp : sortDir === "desc" ? ArrowDown : ArrowUpDown;
 
   return (
-    <ScrollArea className="h-80 rounded-md border bg-white xl:min-h-0 xl:flex-1 **:data-[slot=scroll-area-scrollbar]:z-20 **:data-[slot=scroll-area-thumb]:bg-foreground/25">
-      <Table disableScrollWrapper>
+    <ScrollArea className="h-80 overflow-hidden rounded-t-lg xl:min-h-0 xl:flex-1 **:data-[slot=scroll-area-scrollbar]:z-20 **:data-[slot=scroll-area-thumb]:bg-foreground/25">
+      <Table disableScrollWrapper className="table-fixed">
         <TableHeader className="sticky top-0 z-10 bg-muted">
           <TableRow className="h-8">
-            <TableHead className="w-32 border-r py-1 px-3 text-xs">Type</TableHead>
+            <TableHead className="w-28 border-r py-1 px-3 text-xs">Type</TableHead>
             <TableHead
-              className="cursor-pointer select-none py-1 px-3 text-xs"
+              className="cursor-pointer select-none overflow-hidden py-1 px-3 text-xs"
               onClick={() =>
                 setSortDir((d) => (d === "asc" ? "desc" : "asc"))
               }
@@ -105,27 +107,34 @@ export function ReferenceGenomesClient({ genomes }: { genomes: ReferenceGenome[]
   );
 
   return (
-    <Tabs defaultValue="all" className="xl:flex xl:min-h-0 xl:flex-1 xl:flex-col">
-      <TabsList className="h-7">
-        <TabsTrigger value="all" className="text-xs px-2">
-          All ({genomes.length})
-        </TabsTrigger>
-        {types.map((type) => (
-          <TabsTrigger key={type} value={type} className="text-xs px-2">
-            {type} ({byType[type].length})
-          </TabsTrigger>
-        ))}
-      </TabsList>
+    <Card className="rounded-lg xl:flex-1 xl:min-h-0" size="sm">
+      <Tabs defaultValue="all" className="xl:flex xl:min-h-0 xl:flex-1 xl:flex-col">
+        <CardHeader className="pb-0">
+          <CardTitle className="text-base!">Reference &amp; Representative Genomes</CardTitle>
+          <TabsList className="mt-2 w-full">
+            <TabsTrigger value="all" className="flex-1 text-xs">
+              All ({genomes.length})
+            </TabsTrigger>
+            {types.map((type) => (
+              <TabsTrigger key={type} value={type} className="flex-1 text-xs">
+                {type} ({byType[type].length})
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </CardHeader>
 
-      <TabsContent value="all" className="xl:flex xl:min-h-0 xl:flex-1 xl:flex-col">
-        <GenomeTable genomes={genomes} />
-      </TabsContent>
+        <CardContent className="p-0 xl:flex xl:min-h-0 xl:flex-1 xl:flex-col">
+          <TabsContent value="all" className="xl:flex xl:min-h-0 xl:flex-1 xl:flex-col mt-0">
+            <GenomeTable genomes={genomes} />
+          </TabsContent>
 
-      {types.map((type) => (
-        <TabsContent key={type} value={type} className="xl:flex xl:min-h-0 xl:flex-1 xl:flex-col">
-          <GenomeTable genomes={byType[type]} />
-        </TabsContent>
-      ))}
-    </Tabs>
+          {types.map((type) => (
+            <TabsContent key={type} value={type} className="xl:flex xl:min-h-0 xl:flex-1 xl:flex-col mt-0">
+              <GenomeTable genomes={byType[type]} />
+            </TabsContent>
+          ))}
+        </CardContent>
+      </Tabs>
+    </Card>
   );
 }

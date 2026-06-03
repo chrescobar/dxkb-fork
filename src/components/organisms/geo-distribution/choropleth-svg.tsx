@@ -6,11 +6,13 @@ import { Zoom } from "@visx/zoom";
 import { Maximize2, Minus, Plus } from "lucide-react";
 import {
   forwardRef,
+  memo,
   useCallback,
   useImperativeHandle,
   useMemo,
   useRef,
   useState,
+  type RefObject,
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import * as topojson from "topojson-client";
@@ -38,24 +40,6 @@ type StateFeature = GeoJSON.Feature<GeoJSON.Geometry, NamedFeatureProps> & {
 type CountyFeature = StateFeature;
 type CountryFeature = StateFeature;
 
-interface ChoroplethSvgProps {
-  data: OrganismGeoDistribution;
-  colorScale: ColorScale;
-  mapState: GeoMapState;
-  onSelectState: (fips: string, name: string) => void;
-  onSwitchToUs: () => void;
-  worldTopo: TopologyLike | null;
-  worldTopoLoading: boolean;
-  worldTopoError: string | null;
-  countyTopo: TopologyLike | null;
-  countyTopoError: string | null;
-  onHoverChange: (
-    payload: HoverPayload | null,
-    event: ReactPointerEvent<SVGPathElement>,
-  ) => void;
-  onLeaveMap: () => void;
-}
-
 export interface HoverPayload {
   view: GeoMapView;
   name: string;
@@ -74,12 +58,35 @@ export interface ChoroplethHandle {
   reset: () => void;
 }
 
-const mapHeight = 480;
-const padding = 16;
+const mapHeight = 560;
+const countyPadding = 48;
 
 function featureName(feature: NamedFeatureProps | undefined): string {
   if (!feature) return "";
   return feature.name ?? feature.NAME ?? "";
+}
+
+// Detect features whose coordinates span the antimeridian (180°/-180° boundary).
+// These features have both positive longitudes (> 0°) AND very-negative longitudes
+// (< -160°), which only happens for things like Alaska's Aleutians West Census Area.
+// Using them in geoMercator().fitExtent() produces a near-global bounding box, making
+// the state drill-down map tiny and mis-positioned.
+function crossesAntimeridian(feature: GeoJSON.Feature): boolean {
+  let hasPositive = false;
+  let hasVeryNegative = false;
+  function scan(coords: unknown): void {
+    if (!Array.isArray(coords)) return;
+    if (typeof coords[0] === "number") {
+      const lon = coords[0] as number;
+      if (lon > 0) hasPositive = true;
+      if (lon < -160) hasVeryNegative = true;
+    } else {
+      for (const c of coords) scan(c);
+    }
+  }
+  const geom = feature.geometry as GeoJSON.Geometry & { coordinates?: unknown };
+  if (geom?.coordinates) scan(geom.coordinates);
+  return hasPositive && hasVeryNegative;
 }
 
 function extractFeatures(topo: TopologyLike, objectKey: string): StateFeature[] {
@@ -90,6 +97,195 @@ function extractFeatures(topo: TopologyLike, objectKey: string): StateFeature[] 
     NamedFeatureProps
   >;
   return fc.features as StateFeature[];
+}
+
+type HoverHandler = (payload: HoverPayload | null, event: ReactPointerEvent<SVGPathElement>) => void;
+
+// ─── Memoized layer components ────────────────────────────────────────────────
+// Each layer is wrapped in React.memo so path computation only runs when actual
+// data changes, not on every zoom drag frame. The isDraggingRef lets handlers
+// check drag state without the ref itself triggering re-renders.
+
+interface LayerCommonProps {
+  data: OrganismGeoDistribution;
+  colorScale: ColorScale;
+  isDraggingRef: RefObject<boolean>;
+  onHoverChange: HoverHandler;
+}
+
+const WorldCountriesLayer = memo(function WorldCountriesLayer({
+  countryFeatures,
+  scale,
+  width,
+  data,
+  colorScale,
+  isDraggingRef,
+  onHoverChange,
+  onSwitchToUs,
+}: LayerCommonProps & {
+  countryFeatures: CountryFeature[];
+  scale: number;
+  width: number;
+  onSwitchToUs: () => void;
+}) {
+  return (
+    <NaturalEarth<CountryFeature>
+      data={countryFeatures}
+      scale={scale}
+      translate={[width / 2, mapHeight / 2]}
+    >
+      {({ features }) =>
+        features.map(({ feature, path }, index) => {
+          const name = featureName(feature.properties);
+          const count = lookupCountryCount(name, data.countryData);
+          const dataKey = resolveCountryDataKey(name, data.countryData) ?? name;
+          const meta = data.countryMeta[dataKey];
+          const interactable = isUsaTopoName(name);
+          return (
+            <path
+              key={`${name}-${index}`}
+              d={path ?? ""}
+              fill={colorScale(count)}
+              stroke="#94a3b8"
+              strokeWidth={0.4}
+              style={{ cursor: interactable ? "pointer" : "default" }}
+              onPointerMove={(event) => {
+                if (isDraggingRef.current) return;
+                onHoverChange(
+                  { view: "world", name, count, genera: meta?.genera ?? {}, hosts: meta?.hosts ?? {} },
+                  event,
+                );
+              }}
+              onPointerLeave={() => onHoverChange(null, {} as ReactPointerEvent<SVGPathElement>)}
+              onClick={() => { if (interactable) onSwitchToUs(); }}
+            />
+          );
+        })
+      }
+    </NaturalEarth>
+  );
+});
+
+const UsStatesLayer = memo(function UsStatesLayer({
+  stateFeatures,
+  scale,
+  width,
+  data,
+  colorScale,
+  isDraggingRef,
+  onHoverChange,
+  onSelectState,
+}: LayerCommonProps & {
+  stateFeatures: StateFeature[];
+  scale: number;
+  width: number;
+  onSelectState: (fips: string, name: string) => void;
+}) {
+  return (
+    <AlbersUsa<StateFeature>
+      data={stateFeatures}
+      scale={scale}
+      translate={[width / 2, mapHeight / 2]}
+    >
+      {({ features }) =>
+        features.map(({ feature, path }, index) => {
+          const name = featureName(feature.properties);
+          const count = data.stateData[name] ?? 0;
+          const meta = data.stateMeta[name];
+          return (
+            <path
+              key={`${name}-${index}`}
+              d={path ?? ""}
+              fill={colorScale(count)}
+              stroke="#94a3b8"
+              strokeWidth={0.5}
+              style={{ cursor: "pointer" }}
+              onPointerMove={(event) => {
+                if (isDraggingRef.current) return;
+                onHoverChange(
+                  { view: "us", name, count, genera: meta?.genera ?? {}, hosts: meta?.hosts ?? {} },
+                  event,
+                );
+              }}
+              onPointerLeave={() => onHoverChange(null, {} as ReactPointerEvent<SVGPathElement>)}
+              onClick={() => {
+                const fips = String(feature.id ?? "").padStart(2, "0");
+                if (fips) onSelectState(fips, name);
+              }}
+            />
+          );
+        })
+      }
+    </AlbersUsa>
+  );
+});
+
+interface CountiesLayerProps extends LayerCommonProps {
+  countyFeatures: CountyFeature[];
+  fitBoundsFeatures: CountyFeature[];
+  fitExtent: [[number, number], [number, number]];
+}
+
+const StateCountiesLayer = memo(function StateCountiesLayer({
+  countyFeatures,
+  fitBoundsFeatures,
+  fitExtent,
+  data,
+  colorScale,
+  isDraggingRef,
+  onHoverChange,
+}: CountiesLayerProps) {
+  const projection = useCallback(() => geoMercator(), []);
+
+  return (
+    <CustomProjection<CountyFeature>
+      data={countyFeatures}
+      projection={projection}
+      fitExtent={[fitExtent, { type: "FeatureCollection", features: fitBoundsFeatures } as never]}
+    >
+      {({ features }) =>
+        features.map(({ feature, path }, index) => {
+          const name = featureName(feature.properties);
+          const count = data.countyData[name] ?? 0;
+          const meta = data.countyMeta[name];
+          return (
+            <path
+              key={`${name}-${feature.id ?? index}`}
+              d={path ?? ""}
+              fill={colorScale(count)}
+              stroke="#94a3b8"
+              strokeWidth={0.3}
+              onPointerMove={(event) => {
+                if (isDraggingRef.current) return;
+                onHoverChange(
+                  { view: "state", name, count, genera: meta?.genera ?? {}, hosts: meta?.hosts ?? {} },
+                  event,
+                );
+              }}
+              onPointerLeave={() => onHoverChange(null, {} as ReactPointerEvent<SVGPathElement>)}
+            />
+          );
+        })
+      }
+    </CustomProjection>
+  );
+});
+
+// ─── Main component ────────────────────────────────────────────────────────────
+
+interface ChoroplethSvgProps {
+  data: OrganismGeoDistribution;
+  colorScale: ColorScale;
+  mapState: GeoMapState;
+  onSelectState: (fips: string, name: string) => void;
+  onSwitchToUs: () => void;
+  worldTopo: TopologyLike | null;
+  worldTopoLoading: boolean;
+  worldTopoError: string | null;
+  countyTopo: TopologyLike | null;
+  countyTopoError: string | null;
+  onHoverChange: HoverHandler;
+  onLeaveMap: () => void;
 }
 
 export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(function ChoroplethSvg(
@@ -109,16 +305,14 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
   }: ChoroplethSvgProps,
   ref,
 ) {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(800);
+  const isDraggingRef = useRef(false);
   const zoomImperativeRef = useRef<{
     reset: () => void;
     scale: (args: { scaleX: number; scaleY: number }) => void;
   } | null>(null);
 
-  // ResizeObserver via callback ref so we attach exactly once
   const setContainer = useCallback((node: HTMLDivElement | null) => {
-    containerRef.current = node;
     if (!node) return;
     const ro = new ResizeObserver((entries) => {
       const next = entries[0]?.contentRect?.width;
@@ -148,188 +342,27 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
     return all.filter((feature) => String(feature.id ?? "").startsWith(fips));
   }, [countyTopo, mapState.selectedStateFips]);
 
-  const countyProjection = useCallback(() => {
-    return geoMercator();
-  }, []);
+  // Features used only for fitExtent bounds — excludes any that cross the antimeridian
+  // (e.g. Alaska's Aleutians West Census Area) which otherwise produce a near-global
+  // bounding box that makes the drill-down map tiny and mis-positioned.
+  const countyFitFeatures = useMemo<CountyFeature[]>(() => {
+    if (countyFeatures.length === 0) return countyFeatures;
+    const safe = countyFeatures.filter((f) => !crossesAntimeridian(f));
+    return safe.length > 0 ? safe : countyFeatures;
+  }, [countyFeatures]);
 
-  const countyFitExtent = useMemo<
-    [[number, number], [number, number]] | null
-  >(() => {
+  const countyFitExtent = useMemo<[[number, number], [number, number]] | null>(() => {
     if (countyFeatures.length === 0) return null;
     return [
-      [padding, padding],
-      [Math.max(width - padding, padding + 1), mapHeight - padding],
+      [countyPadding, countyPadding],
+      [Math.max(width - countyPadding, countyPadding + 1), mapHeight - countyPadding],
     ];
   }, [countyFeatures.length, width]);
 
-  const renderBody = () => {
-    if (mapState.view === "world") {
-      if (worldTopoLoading) {
-        return (
-          <div className="text-muted-foreground absolute inset-0 flex items-center justify-center text-sm">
-            Loading world map…
-          </div>
-        );
-      }
-      if (worldTopoError) {
-        return (
-          <div className="text-muted-foreground absolute inset-0 flex items-center justify-center text-sm">
-            Could not load world map data.
-          </div>
-        );
-      }
-      if (countryFeatures.length === 0) return null;
-      return (
-        <NaturalEarth<CountryFeature>
-          data={countryFeatures}
-          scale={width / 6.3}
-          translate={[width / 2, mapHeight / 2 + 30]}
-        >
-          {({ features }) =>
-            features.map(({ feature, path }, index) => {
-              const name = featureName(feature.properties);
-              const count = lookupCountryCount(name, data.countryData);
-              const dataKey = resolveCountryDataKey(name, data.countryData) ?? name;
-              const meta = data.countryMeta[dataKey];
-              const interactable = isUsaTopoName(name);
-              return (
-                <path
-                  key={`${name}-${index}`}
-                  d={path ?? ""}
-                  fill={colorScale(count)}
-                  stroke="var(--border)"
-                  strokeWidth={0.4}
-                  style={{ cursor: interactable ? "pointer" : "default" }}
-                  onPointerMove={(event) =>
-                    onHoverChange(
-                      {
-                        view: "world",
-                        name,
-                        count,
-                        genera: meta?.genera ?? {},
-                        hosts: meta?.hosts ?? {},
-                      },
-                      event,
-                    )
-                  }
-                  onPointerLeave={() => onHoverChange(null, {} as ReactPointerEvent<SVGPathElement>)}
-                  onClick={() => {
-                    if (interactable) onSwitchToUs();
-                  }}
-                />
-              );
-            })
-          }
-        </NaturalEarth>
-      );
-    }
-
-    if (mapState.view === "us") {
-      if (countyTopoError) {
-        return (
-          <div className="text-muted-foreground absolute inset-0 flex items-center justify-center text-sm">
-            Could not load US map data.
-          </div>
-        );
-      }
-      if (stateFeatures.length === 0) return null;
-      return (
-        <AlbersUsa<StateFeature>
-          data={stateFeatures}
-          scale={width * 1.2}
-          translate={[width / 2, mapHeight / 2]}
-        >
-          {({ features }) =>
-            features.map(({ feature, path }, index) => {
-              const name = featureName(feature.properties);
-              const count = data.stateData[name] ?? 0;
-              const meta = data.stateMeta[name];
-              return (
-                <path
-                  key={`${name}-${index}`}
-                  d={path ?? ""}
-                  fill={colorScale(count)}
-                  stroke="var(--border)"
-                  strokeWidth={0.5}
-                  style={{ cursor: "pointer" }}
-                  onPointerMove={(event) =>
-                    onHoverChange(
-                      {
-                        view: "us",
-                        name,
-                        count,
-                        genera: meta?.genera ?? {},
-                        hosts: meta?.hosts ?? {},
-                      },
-                      event,
-                    )
-                  }
-                  onPointerLeave={() => onHoverChange(null, {} as ReactPointerEvent<SVGPathElement>)}
-                  onClick={() => {
-                    const fips = String(feature.id ?? "").padStart(2, "0");
-                    if (fips) onSelectState(fips, name);
-                  }}
-                />
-              );
-            })
-          }
-        </AlbersUsa>
-      );
-    }
-
-    // state view
-    if (countyTopoError) {
-      return (
-        <div className="text-muted-foreground absolute inset-0 flex items-center justify-center text-sm">
-          Could not load US map data.
-        </div>
-      );
-    }
-    if (countyFeatures.length === 0 || !countyFitExtent) {
-      return (
-        <div className="text-muted-foreground absolute inset-0 flex items-center justify-center text-sm">
-          Select a state to drill into county-level data.
-        </div>
-      );
-    }
-    return (
-      <CustomProjection<CountyFeature>
-        data={countyFeatures}
-        projection={countyProjection}
-        fitExtent={[countyFitExtent, { type: "FeatureCollection", features: countyFeatures } as never]}
-      >
-        {({ features }) =>
-          features.map(({ feature, path }, index) => {
-            const name = featureName(feature.properties);
-            const count = data.countyData[name] ?? 0;
-            const meta = data.countyMeta[name];
-            return (
-              <path
-                key={`${name}-${feature.id ?? index}`}
-                d={path ?? ""}
-                fill={colorScale(count)}
-                stroke="var(--border)"
-                strokeWidth={0.3}
-                onPointerMove={(event) =>
-                  onHoverChange(
-                    {
-                      view: "state",
-                      name,
-                      count,
-                      genera: meta?.genera ?? {},
-                      hosts: meta?.hosts ?? {},
-                    },
-                    event,
-                  )
-                }
-                onPointerLeave={() => onHoverChange(null, {} as ReactPointerEvent<SVGPathElement>)}
-              />
-            );
-          })
-        }
-      </CustomProjection>
-    );
-  };
+  // AlbersUsa standard: scale=1070 at translate [487,305] fits US in ~960×600.
+  // Tie to mapHeight so the full US (including Alaska/Hawaii insets) fits vertically.
+  const albersScale = mapHeight * 1.55;
+  const worldScale = Math.min(width / 6.3, mapHeight * 0.29);
 
   return (
     <div
@@ -347,10 +380,10 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
         scaleYMax={10}
       >
         {(zoom) => {
-          zoomImperativeRef.current = {
-            reset: zoom.reset,
-            scale: zoom.scale,
-          };
+          // Update ref every frame — no setState so no re-render cascade.
+          isDraggingRef.current = zoom.isDragging;
+          zoomImperativeRef.current = { reset: zoom.reset, scale: zoom.scale };
+
           return (
             <>
               <svg
@@ -366,8 +399,73 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
                   zoom.scale({ scaleX: next, scaleY: next });
                 }}
               >
-                <g transform={zoom.toString()}>{renderBody()}</g>
+                <g transform={zoom.toString()}>
+                  {mapState.view === "world" && (
+                    worldTopoLoading ? null :
+                    worldTopoError ? null :
+                    countryFeatures.length > 0 ? (
+                      <WorldCountriesLayer
+                        countryFeatures={countryFeatures}
+                        scale={worldScale}
+                        width={width}
+                        data={data}
+                        colorScale={colorScale}
+                        isDraggingRef={isDraggingRef}
+                        onHoverChange={onHoverChange}
+                        onSwitchToUs={onSwitchToUs}
+                      />
+                    ) : null
+                  )}
+
+                  {mapState.view === "us" && !countyTopoError && stateFeatures.length > 0 && (
+                    <UsStatesLayer
+                      stateFeatures={stateFeatures}
+                      scale={albersScale}
+                      width={width}
+                      data={data}
+                      colorScale={colorScale}
+                      isDraggingRef={isDraggingRef}
+                      onHoverChange={onHoverChange}
+                      onSelectState={onSelectState}
+                    />
+                  )}
+
+                  {mapState.view === "state" && !countyTopoError && countyFeatures.length > 0 && countyFitExtent && (
+                    <StateCountiesLayer
+                      countyFeatures={countyFeatures}
+                      fitBoundsFeatures={countyFitFeatures}
+                      fitExtent={countyFitExtent}
+                      data={data}
+                      colorScale={colorScale}
+                      isDraggingRef={isDraggingRef}
+                      onHoverChange={onHoverChange}
+                    />
+                  )}
+                </g>
               </svg>
+
+              {/* Overlay messages rendered outside the zoom SVG */}
+              {mapState.view === "world" && worldTopoLoading && (
+                <div className="text-muted-foreground pointer-events-none absolute inset-0 flex items-center justify-center text-sm">
+                  Loading world map…
+                </div>
+              )}
+              {mapState.view === "world" && worldTopoError && (
+                <div className="text-muted-foreground pointer-events-none absolute inset-0 flex items-center justify-center text-sm">
+                  Could not load world map data.
+                </div>
+              )}
+              {mapState.view === "us" && countyTopoError && (
+                <div className="text-muted-foreground pointer-events-none absolute inset-0 flex items-center justify-center text-sm">
+                  Could not load US map data.
+                </div>
+              )}
+              {mapState.view === "state" && !countyTopoError && (countyFeatures.length === 0 || !countyFitExtent) && (
+                <div className="text-muted-foreground pointer-events-none absolute inset-0 flex items-center justify-center text-sm">
+                  Select a state to drill into county-level data.
+                </div>
+              )}
+
               <div className="absolute right-3 bottom-3 flex flex-col gap-1">
                 <Button
                   type="button"

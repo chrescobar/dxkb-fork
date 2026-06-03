@@ -28,7 +28,7 @@ export function MapTooltip({ data }: MapTooltipProps) {
   const hosts = topItems(data.hosts);
 
   return (
-    <div className="text-foreground min-w-[180px] max-w-[260px] text-xs">
+    <div className="text-foreground w-max max-w-[240px] text-xs">
       <div className="font-semibold text-sm">{data.name || "Unknown"}</div>
       <div className="text-muted-foreground tabular-nums">
         {numberFormatter.format(total)} {total === 1 ? "genome" : "genomes"}

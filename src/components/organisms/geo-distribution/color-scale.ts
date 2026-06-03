@@ -11,10 +11,10 @@ interface AccentPalette {
 }
 
 export const accentPalettes: Record<AccentKey, AccentPalette> = {
-  bacteria: { light: "#dbeafe", dark: "#1d4ed8", zero: "#f1f5f9" },
-  viruses: { light: "#fce7f3", dark: "#9d174d", zero: "#f1f5f9" },
-  fungi: { light: "#fef3c7", dark: "#b45309", zero: "#f1f5f9" },
-  all: { light: "#dcfce7", dark: "#15803d", zero: "#f1f5f9" },
+  bacteria: { light: "#dbeafe", dark: "#1d4ed8", zero: "#eaeff7" },
+  viruses: { light: "#fce7f3", dark: "#9d174d", zero: "#f0ebf0" },
+  fungi: { light: "#fef3c7", dark: "#b45309", zero: "#f0ede5" },
+  all: { light: "#dcfce7", dark: "#15803d", zero: "#e5f0eb" },
 };
 
 export type ColorScale = (count: number) => string;

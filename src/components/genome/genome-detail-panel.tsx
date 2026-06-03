@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { InfoPanel } from "@/components/detail-panel/info-panel";
+import { getIdField } from "@/constants/resources";
 
 interface GenomeDetailPanelProps {
   genomeId: string | null;
@@ -20,18 +21,6 @@ export function GenomeDetailPanel({
 }: GenomeDetailPanelProps) {
   const DataAPI = process.env.NEXT_PUBLIC_DATA_API;
 
-  const idFieldMap: Record<string, string> = {
-    genome: "genome_id",
-    genome_sequence: "sequence_id",
-    genome_feature: "patric_id",
-    strain: "strain",
-    epitope: "epitope_id",
-    protein_structure: "pdb_id",
-    taxonomy: "taxon_id",
-    experiment: "exp_id",
-    bioset: "bioset_id",
-  };
-
   const hasSelection = selectedIds.length > 0;
 
   // Only fetch when exactly ONE row is selected
@@ -42,7 +31,7 @@ export function GenomeDetailPanel({
     queryFn: async () => {
       if (!genomeId) return null;
 
-      const idField = idFieldMap[activeTab] ?? "id";
+      const idField = getIdField(activeTab);
 
       const res = await fetch(
         `${DataAPI}/${activeTab}/?eq(${idField},${encodeURIComponent(genomeId)})`

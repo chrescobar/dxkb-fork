@@ -7,6 +7,7 @@ import { SortingState, RowSelectionState } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { noop } from "@/lib/utils";
 import { FilterBar } from "@/components/filterbar/filter-bar";
+import { getIdField } from "@/constants/resources";
 
 interface ColumnInfo {
   id: string;
@@ -93,19 +94,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   }
   const pageSize = 200;
 
-  // Initialize with a default sort by ID field to ensure consistent ordering
-  const idFieldMap: Record<string, string> = {
-    genome: "genome_id",
-    genome_sequence: "sequence_id",
-    genome_feature: "patric_id",
-    strain: "strain",
-    epitope: "epitope_id",
-    protein_structure: "pdb_id",
-    taxonomy: "taxon_id",
-    experiment: "exp_id",
-    bioset: "bioset_id",
-  };
-  const defaultIdField = idFieldMap[resource] ?? "id";
+  const defaultIdField = getIdField(resource);
   const [sorting, setSorting] = useState<SortingState>([
     { id: defaultIdField, desc: false }
   ]);
@@ -117,7 +106,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const [prevResource, setPrevResource] = useState(resource);
   if (prevResource !== resource) {
     setPrevResource(resource);
-    setSorting([{ id: idFieldMap[resource] ?? "id", desc: false }]);
+    setSorting([{ id: getIdField(resource), desc: false }]);
   }
 
   const setSortingAndResetPage = useCallback((newSorting: SortingState) => {
@@ -202,22 +191,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       // Always apply a sort to ensure consistent ordering
       const sortParam = sortingKey !== "none"
         ? (() => { const [field, dir] = sortingKey.split(":"); return `${dir === "desc" ? "-" : "+"}${field}`; })()
-        : (() => {
-            // Default sort by ID field if no sorting is specified
-            const idFieldMap: Record<string, string> = {
-              genome: "genome_id",
-              genome_sequence: "sequence_id",
-              genome_feature: "patric_id",
-              strain: "strain",
-              epitope: "epitope_id",
-              protein_structure: "pdb_id",
-              taxonomy: "taxon_id",
-              experiment: "exp_id",
-              bioset: "bioset_id",
-            };
-            const defaultIdField = idFieldMap[resource] ?? "id";
-            return `+${defaultIdField}`;
-          })();
+        : `+${getIdField(resource)}`;
       const start = pageIndex * pageSize;
       const end = start + pageSize;
 

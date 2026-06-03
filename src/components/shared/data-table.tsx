@@ -12,6 +12,7 @@ import {
 
 import { useMemo, useRef, useState, useEffect } from "react";
 import { noop } from "@/lib/utils";
+import { getIdField } from "@/constants/resources";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 
@@ -105,20 +106,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     pageSize: pageSize ?? 200,
   }));
 
-  const idFieldMap: Record<string, string> = {
-    genome: "genome_id",
-    genome_sequence: "sequence_id",
-    genome_feature: "patric_id",
-    strain: "strain",
-    epitope: "epitope_id",
-    protein_structure: "pdb_id",
-    taxonomy: "taxon_id",
-    experiment: "exp_id",
-    bioset: "bioset_id",
-  };
-
-  // IMPORTANT: replace `resource` with whatever your prop is actually called
-  const idField = idFieldMap[resource] ?? "id";
+  const idField = getIdField(resource);
 
   // Sync when parent provides controlled pageIndex/pageSize values
   useEffect(() => {
@@ -630,19 +618,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     if (onlySelected) {
       if (!isAllPagesSelected && (!selectedIds || selectedIds.length === 0)) return;
 
-      const idFieldMap: Record<string, string> = {
-        genome: "genome_id",
-        genome_sequence: "sequence_id",
-        genome_feature: "patric_id",
-        strain: "strain",
-        epitope: "epitope_id",
-        protein_structure: "pdb_id",
-        taxonomy: "taxon_id",
-        experiment: "exp_id",
-        bioset: "bioset_id",
-      };
-
-      const idField = idFieldMap[resource] ?? "id";
+      const idField = getIdField(resource);
 
       const idFilter = (selectedIds ?? [])
         .map((id) => `eq(${idField},${id})`)

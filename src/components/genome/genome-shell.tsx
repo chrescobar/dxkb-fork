@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { usePanelRef } from "react-resizable-panels";
 
 import {
   ResizableHandle,
@@ -36,8 +37,20 @@ export function GenomeShell({
     }
   }
 
+  const sidePanelRef = usePanelRef();
+
+  // Imperatively expand/collapse the side panel so children never unmount.
+  // Calling an imperative method from an effect is fine — this is not setState.
+  useEffect(() => {
+    if (panelExpanded) {
+      sidePanelRef.current?.expand();
+    } else {
+      sidePanelRef.current?.collapse();
+    }
+  }, [panelExpanded, sidePanelRef]);
+
   const actionStrip = (
-    <div className="bg-muted/30 flex flex-col w-[72px] shrink-0 border-l min-h-0">
+    <div className="bg-muted flex flex-col w-[72px] shrink-0 border-l min-h-0 h-full">
       {/* Top toggle button */}
       <div className="border-b p-2">
         {panelExpanded ? (
@@ -71,32 +84,12 @@ export function GenomeShell({
     </div>
   );
 
-  if (!panelExpanded) {
-    return (
-      <div className="flex-1 min-h-0 w-full overflow-hidden flex">
-        <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-              {children}
-        </div>
-
-        <aside className="shrink-0">
-          {actionStrip}
-        </aside>
-      </div>
-    );
-  }
-
   return (
     <div className="flex-1 min-h-0 w-full flex overflow-hidden">
-      {/* Remount the group whenever panelExpanded or hasSidePanel changes so
-          default sizes are applied consistently (avoids the 0->small size
-          when toggling visibility). */}
-      <ResizablePanelGroup
-        key={`resizable-${panelExpanded}-${hasSidePanel}`}
-        orientation="horizontal"
-        className="h-full min-h-0 w-full"
-      >
+      <ResizablePanelGroup orientation="horizontal" className="h-full min-h-0 w-full">
+        {/* Main content — always at this tree position so ListData never remounts */}
         <ResizablePanel
-          defaultSize={80}
+          defaultSize={hasSidePanel ? 80 : 100}
           minSize="20%"
           className="flex min-h-0 min-w-0 overflow-hidden"
         >
@@ -109,17 +102,20 @@ export function GenomeShell({
           </aside>
         </ResizablePanel>
 
-        <ResizableHandle withHandle />
+        {/* Hide the drag handle when collapsed so users can't accidentally expand */}
+        <ResizableHandle withHandle className={panelExpanded ? "" : "hidden"} />
 
+        {/* Side panel — collapsible to 0 so it stays mounted but takes no space */}
         <ResizablePanel
-          defaultSize={20}
+          panelRef={sidePanelRef}
+          collapsible
+          collapsedSize={0}
+          defaultSize={hasSidePanel ? 20 : 0}
           minSize="20%"
           maxSize="60%"
           className="relative min-h-0 overflow-hidden"
         >
-          {/* absolute inset-0 breaks the h-full chain dependency — the panel's
-              flex-computed bounds become the containing block, so DetailPanel's
-              h-full resolves without needing a definite height all the way up. */}
+          {/* absolute inset-0 breaks the h-full chain dependency */}
           <div className="absolute inset-0 flex flex-col overflow-hidden">
             {sidePanel}
           </div>

@@ -15,6 +15,11 @@ function parseLineageNames(value: unknown): string[] {
   return value.filter((entry): entry is string => typeof entry === "string" && entry.length > 0);
 }
 
+function parseLineageIds(value: unknown): number[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((entry): entry is number => typeof entry === "number");
+}
+
 export async function fetchOrganismTaxonomy(
   taxonId: number,
   options: OrganismFetchOptions = {},
@@ -37,6 +42,7 @@ export async function fetchOrganismTaxonomy(
     taxonId: requiredNumber(payload.taxon_id ?? payload.taxonId ?? taxonId, "taxon_id"),
     taxonName: requiredString(payload.taxon_name ?? payload.taxonName, "taxon_name"),
     lineageNames: parseLineageNames(payload.lineage_names ?? payload.lineageNames),
+    lineageIds: parseLineageIds(payload.lineage_ids ?? payload.lineageIds),
     taxonRank: requiredString(payload.taxon_rank ?? payload.taxonRank, "taxon_rank"),
     genomes: numberOrNull(payload.genomes, "genomes"),
   };

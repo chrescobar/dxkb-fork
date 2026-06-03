@@ -4,9 +4,11 @@ import { DonutChart } from "./donut-chart";
 
 const fieldLabels: Record<string, string> = {
   genus: "Genus",
-  host_name: "Host",
-  host_group: "Host",
+  host_name: "Host Name",
+  host_group: "Host Group",
   isolation_country: "Isolation Country",
+  isolation_source: "Isolation Source",
+  collection_year: "Collection Year",
   family: "Family",
 };
 

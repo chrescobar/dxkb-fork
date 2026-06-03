@@ -5,5 +5,5 @@ export const brucellaTaxonomyConfig: OrganismLandingConfig = {
   taxonId: 234,
   accent: "bacteria",
   defaultView: "overview",
-  metadataFields: ["host_name", "isolation_country", "isolation_source"],
+  metadataFields: ["host_group", "isolation_country", "collection_year"],
 };

@@ -15,6 +15,7 @@ interface LandingShellClientProps {
   activeView: OrganismViewKey;
   defaultView: OrganismViewKey;
   navItems: readonly OrganismLandingNavItem[];
+  headerContent?: ReactNode;
   children: ReactNode;
 }
 
@@ -23,6 +24,7 @@ export function LandingShellClient({
   activeView: serverActiveView,
   defaultView,
   navItems,
+  headerContent,
   children,
 }: LandingShellClientProps) {
   const router = useRouter();
@@ -54,12 +56,14 @@ export function LandingShellClient({
       />
       <section className="min-w-0 flex-1">
         <div className="bg-card mb-4 flex items-center justify-between rounded-lg border px-5 py-3 shadow-sm">
-          <div>
-            <p className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase">
-              Organisms
-            </p>
-            <h1 className="text-2xl font-bold tracking-tight">{displayName}</h1>
-          </div>
+          {headerContent ?? (
+            <div>
+              <p className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase">
+                Organisms
+              </p>
+              <h1 className="text-2xl font-bold tracking-tight">{displayName}</h1>
+            </div>
+          )}
         </div>
         {children}
       </section>

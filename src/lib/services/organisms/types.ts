@@ -12,6 +12,7 @@ export interface OrganismTaxonomy {
   taxonId: number;
   taxonName: string;
   lineageNames: string[];
+  lineageIds: number[];
   taxonRank: string;
   genomes: number | null;
 }

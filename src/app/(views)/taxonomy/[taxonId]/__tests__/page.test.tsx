@@ -2,6 +2,17 @@ import { render, screen } from "@testing-library/react";
 
 import TaxonomyPage from "../page";
 
+vi.mock("@/lib/services/organisms/taxonomy", () => ({
+  fetchOrganismTaxonomy: vi.fn().mockResolvedValue({
+    taxonId: 234,
+    taxonName: "Brucella",
+    lineageNames: ["Bacteria", "Pseudomonadota", "Brucella"],
+    lineageIds: [2, 1224, 234],
+    taxonRank: "genus",
+    genomes: 1909,
+  }),
+}));
+
 describe("TaxonomyPage", () => {
   it("renders the heading for Brucella", async () => {
     const node = await TaxonomyPage({

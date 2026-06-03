@@ -31,6 +31,7 @@ describe("fetchOrganismTaxonomy", () => {
       taxonId: 2,
       taxonName: "Bacteria",
       lineageNames: ["cellular organisms", "Bacteria"],
+      lineageIds: [],
       taxonRank: "superkingdom",
       genomes: 99,
     });

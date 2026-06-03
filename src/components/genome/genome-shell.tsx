@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
-import { usePanelRef } from "react-resizable-panels";
+import { useState, type ReactNode } from "react";
 
 import {
   ResizableHandle,
@@ -36,18 +35,6 @@ export function GenomeShell({
       setPanelExpanded(true);
     }
   }
-
-  const sidePanelRef = usePanelRef();
-
-  // Imperatively expand/collapse the side panel so children never unmount.
-  // Calling an imperative method from an effect is fine — this is not setState.
-  useEffect(() => {
-    if (panelExpanded) {
-      sidePanelRef.current?.expand();
-    } else {
-      sidePanelRef.current?.collapse();
-    }
-  }, [panelExpanded, sidePanelRef]);
 
   const actionStrip = (
     <div className="bg-muted flex flex-col w-[72px] shrink-0 border-l min-h-0 h-full">
@@ -87,9 +74,13 @@ export function GenomeShell({
   return (
     <div className="flex-1 min-h-0 w-full flex overflow-hidden">
       <ResizablePanelGroup orientation="horizontal" className="h-full min-h-0 w-full">
-        {/* Main content — always at this tree position so ListData never remounts */}
+        {/*
+          The first panel is always mounted so children (the data table) never
+          remounts and TanStack Query never re-fires on panel open/close.
+          The second panel is conditionally rendered; when absent the first
+          panel naturally fills 100% of the group with no flash.
+        */}
         <ResizablePanel
-          defaultSize={hasSidePanel ? 80 : 100}
           minSize="20%"
           className="flex min-h-0 min-w-0 overflow-hidden"
         >
@@ -102,24 +93,23 @@ export function GenomeShell({
           </aside>
         </ResizablePanel>
 
-        {/* Hide the drag handle when collapsed so users can't accidentally expand */}
-        <ResizableHandle withHandle className={panelExpanded ? "" : "hidden"} />
+        {panelExpanded && (
+          <>
+            <ResizableHandle withHandle />
 
-        {/* Side panel — collapsible to 0 so it stays mounted but takes no space */}
-        <ResizablePanel
-          panelRef={sidePanelRef}
-          collapsible
-          collapsedSize={0}
-          defaultSize={hasSidePanel ? 20 : 0}
-          minSize="20%"
-          maxSize="60%"
-          className="relative min-h-0 overflow-hidden"
-        >
-          {/* absolute inset-0 breaks the h-full chain dependency */}
-          <div className="absolute inset-0 flex flex-col overflow-hidden">
-            {sidePanel}
-          </div>
-        </ResizablePanel>
+            <ResizablePanel
+              defaultSize={20}
+              minSize="20%"
+              maxSize="60%"
+              className="relative min-h-0 overflow-hidden"
+            >
+              {/* absolute inset-0 breaks the h-full chain dependency */}
+              <div className="absolute inset-0 flex flex-col overflow-hidden">
+                {sidePanel}
+              </div>
+            </ResizablePanel>
+          </>
+        )}
       </ResizablePanelGroup>
     </div>
   );

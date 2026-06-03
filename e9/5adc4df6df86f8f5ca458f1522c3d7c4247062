@@ -1,0 +1,36 @@
+src/components/organisms/geo-distribution/map-controls.tsx
+  s_5aea3afaa903c1::t_345fc45f9f29e0 77
+src/app/(views)/taxonomy/[taxonId]/views/overview.tsx
+  s_5aea3afaa903c1::t_4bd9f2eb12dac6 48,62
+  s_5aea3afaa903c1::t_750fb80e0ea64f 70-72
+  s_5aea3afaa903c1::t_48b369a5d986e1 51,65
+  s_5aea3afaa903c1::t_508a81a3a46361 47,49-50,52-59,61,63-64,66-69,73-75
+src/components/organisms/reference-genomes/reference-genomes-client.tsx
+  s_5aea3afaa903c1::t_31b60077468b89 30
+  s_5aea3afaa903c1::t_688278093704b7 38
+  s_5aea3afaa903c1::t_e1019c8fab5e48 75
+  s_5aea3afaa903c1::t_fc5988d3d5b3a0 77
+  s_5aea3afaa903c1::t_246f44790a8801 3-4,6,61-73,80-90,94
+  s_5aea3afaa903c1::t_8f9de728a9f4a1 79,93
+  s_5aea3afaa903c1::t_f5a590269637a8 108,120,125
+src/components/organisms/metadata-distributions/metadata-distributions.tsx
+  s_5aea3afaa903c1::t_66607de74abb42 29,32
+src/components/ui/scroll-area.tsx
+  s_5aea3afaa903c1::t_8bcd5aa3222aeb 42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "e95adc4df6df86f8f5ca458f1522c3d7c4247062",
+  "prompts": {},
+  "sessions": {
+    "s_5aea3afaa903c1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d40e4155-e4a5-4166-bbbe-95e7a6d7e2f0",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

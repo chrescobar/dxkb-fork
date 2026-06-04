@@ -1,0 +1,21 @@
+src/components/organisms/metadata-distributions/__tests__/collection-year-bar-chart.test.tsx
+  s_e8248782abc67c::t_6073bd162900ff 1-72
+src/components/organisms/metadata-distributions/collection-year-bar-chart.tsx
+  s_e8248782abc67c::t_995ac9a4ec261d 1-185
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "fc7cd899034ae5332aa4bf070e90d850623f7a78",
+  "prompts": {},
+  "sessions": {
+    "s_e8248782abc67c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "117dcae9-0199-436f-bce8-63252d3a1290",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

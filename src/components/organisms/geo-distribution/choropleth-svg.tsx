@@ -3,7 +3,7 @@
 import { AlbersUsa, CustomProjection, NaturalEarth } from "@visx/geo";
 import { geoMercator } from "@visx/vendor/d3-geo";
 import { Zoom } from "@visx/zoom";
-import { Maximize2, Minus, Plus } from "lucide-react";
+import { Minus, Plus, RotateCcw } from "lucide-react";
 import {
   forwardRef,
   memo,
@@ -507,7 +507,7 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
                   className="shadow-sm"
                   onClick={() => zoom.reset()}
                 >
-                  <Maximize2 />
+                  <RotateCcw />
                 </Button>
               </div>
             </>

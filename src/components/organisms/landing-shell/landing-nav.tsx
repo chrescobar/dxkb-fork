@@ -44,7 +44,7 @@ export function LandingNav({
     >
       <div className="flex items-center justify-between gap-2 p-2.5">
         {!collapsed && (
-          <h2 className="text-muted-foreground truncate text-sm font-semibold">
+          <h2 className="text-muted-foreground truncate text-sm font-semibold pl-[9px]">
             Views
           </h2>
         )}
@@ -84,8 +84,7 @@ export function LandingNav({
               title={collapsed ? item.label : undefined}
               onClick={() => onChange(item.key)}
               className={cn(
-                "justify-start",
-                collapsed && "justify-center px-0",
+                "justify-start px-2",
                 isActive && "font-semibold",
               )}
             >

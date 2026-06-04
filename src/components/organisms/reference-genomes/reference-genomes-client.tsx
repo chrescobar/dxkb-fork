@@ -36,13 +36,15 @@ function GenomeRows({ genomes }: { genomes: ReferenceGenome[] }) {
   }
   return genomes.map((g) => (
     <TableRow key={g.genome_id} className="h-8">
-      <TableCell className="w-32 border-r py-1 px-3">
-        <Badge
-          variant={badgeVariantForType[g.reference_genome] ?? "outline"}
-          className="text-[11px]"
-        >
-          {g.reference_genome}
-        </Badge>
+      <TableCell className="w-36 border-r py-1 px-3">
+        <div className="flex items-center justify-center">
+          <Badge
+            variant={badgeVariantForType[g.reference_genome] ?? "outline"}
+            className="text-[11px]"
+          >
+            {g.reference_genome}
+          </Badge>
+        </div>
       </TableCell>
       <TableCell className="overflow-hidden py-1 px-3">
         <Link
@@ -78,7 +80,7 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
       <Table disableScrollWrapper className="table-fixed">
         <TableHeader className="sticky top-0 z-10 bg-muted">
           <TableRow className="h-8">
-            <TableHead className="w-28 border-r py-1 px-3 text-xs">Type</TableHead>
+            <TableHead className="w-36 border-r py-1 px-3 text-xs text-center">Type</TableHead>
             <TableHead
               className="cursor-pointer select-none overflow-hidden py-1 px-3 text-xs"
               onClick={() =>

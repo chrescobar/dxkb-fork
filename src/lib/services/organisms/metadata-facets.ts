@@ -13,7 +13,7 @@ async function fetchMetadataFacet(
   baseUrl: string,
   taxonId: number,
   field: string,
-  limit: number,
+  limit: number | undefined,
   signal: AbortSignal | undefined,
 ) {
   const response = await fetch(buildGenomeFacetUrl(baseUrl, taxonId, field, limit), {
@@ -37,9 +37,17 @@ export async function fetchOrganismMetadataFacets(
   options: OrganismFetchOptions & { limit?: number } = {},
 ): Promise<OrganismMetadataFacets> {
   const baseUrl = getBvBrcWebsiteApiBaseUrl();
-  const limit = options.limit ?? 12;
+  const defaultLimit = options.limit ?? 12;
   const settled = await Promise.allSettled(
-    fields.map((field) => fetchMetadataFacet(baseUrl, taxonId, field, limit, options.signal)),
+    fields.map((field) =>
+      fetchMetadataFacet(
+        baseUrl,
+        taxonId,
+        field,
+        field === "collection_year" ? undefined : defaultLimit,
+        options.signal,
+      ),
+    ),
   );
 
   const failed = settled.find((result) => result.status === "rejected");

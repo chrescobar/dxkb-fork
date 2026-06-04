@@ -88,8 +88,9 @@ export function parseSolrFacetList(payload: Record<string, unknown>, field: stri
   return values;
 }
 
-export function buildGenomeFacetUrl(baseUrl: string, taxonId: number, field: string, limit: number): string {
-  return `${baseUrl}/genome/?eq(taxon_lineage_ids,${taxonId})&limit(1)&facet((field,${field}),(limit,${limit}),(mincount,1))`;
+export function buildGenomeFacetUrl(baseUrl: string, taxonId: number, field: string, limit?: number): string {
+  const limitClause = limit ? `,(limit,${limit})` : "";
+  return `${baseUrl}/genome/?eq(taxon_lineage_ids,${taxonId})&limit(1)&facet((field,${field})${limitClause},(mincount,1))`;
 }
 
 export function buildGenomeGeoFacetUrl(baseUrl: string, taxonId: number, field: string, limit?: number): string {

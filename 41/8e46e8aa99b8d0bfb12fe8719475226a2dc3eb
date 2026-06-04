@@ -1,0 +1,22 @@
+src/components/organisms/metadata-distributions/collection-year-bar-chart.tsx
+  s_e8248782abc67c::t_995ac9a4ec261d 1-133,135-185
+  s_e8248782abc67c::t_360424ec3e1939 134
+src/components/organisms/metadata-distributions/__tests__/collection-year-bar-chart.test.tsx
+  s_e8248782abc67c::t_6073bd162900ff 1-72
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "418e46e8aa99b8d0bfb12fe8719475226a2dc3eb",
+  "prompts": {},
+  "sessions": {
+    "s_e8248782abc67c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "117dcae9-0199-436f-bce8-63252d3a1290",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": null
+    }
+  }
+}

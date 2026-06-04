@@ -379,7 +379,7 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
   return (
     <div
       ref={setContainer}
-      className="bg-muted/30 relative w-full overflow-hidden rounded-md"
+      className="bg-muted/30 relative w-full overflow-hidden rounded-md flex items-center justify-center"
       style={{ height: mapHeight }}
       onPointerLeave={onLeaveMap}
     >
@@ -399,12 +399,12 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
           return (
             <>
               <svg
-                viewBox={`0 0 ${width} ${mapHeight}`}
-                preserveAspectRatio="xMidYMid meet"
+                width={width}
+                height={mapHeight}
                 ref={zoom.containerRef}
                 role="img"
                 aria-label="Genome distribution map"
-                style={{ width: "100%", height: mapHeight, cursor: zoom.isDragging ? "grabbing" : "grab", touchAction: "none" }}
+                style={{ flexShrink: 0, cursor: zoom.isDragging ? "grabbing" : "grab", touchAction: "none" }}
                 onWheel={(event) => {
                   event.preventDefault();
                   const next = event.deltaY < 0 ? 1.15 : 1 / 1.15;

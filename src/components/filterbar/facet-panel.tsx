@@ -71,7 +71,6 @@ export function FacetPanel({
     if (!DataAPI) return;
     if (!resource) return;
     if (!fields || fields.length === 0) {
-      console.warn("FacetPanel: fields not ready yet — skipping fetch");
       return;
     }
 
@@ -121,7 +120,6 @@ export function FacetPanel({
           .join("&");
 
         const url = `${DataAPI}/${resource}/?${RQLstring}`;
-        console.log("Fetching facets with URL:", url);
         // ---------------------------------------------------
         // FETCH
         // ---------------------------------------------------

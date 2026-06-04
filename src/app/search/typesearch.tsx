@@ -1,10 +1,12 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { ListData } from "@/components/services/list-data";
-import { WithGenomePanel } from "@/components/layouts/WithGenomePanel";
+import { GenomeShell } from "@/components/genome/genome-shell";
+import { GenomeDetailPanel } from "@/components/genome/genome-detail-panel";
+import { SearchActionBar } from "@/components/search/search-action-bar";
 
 // ---- Props interface ----
 export interface TypeSearchProps {
@@ -26,7 +28,12 @@ interface TabsRendererProps {
   setRowSelection: (sel: Record<string, boolean>) => void;
   pageIndex: number;
   setPageIndex: (page: number) => void;
-  setSelectedRows: (rows: unknown[]) => void;
+  setSelectedIds: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedIds: string[];
+  isAllPagesSelected: boolean;
+  setIsAllPagesSelected: (selected: boolean) => void;
+  totalItems: number;
+  setTotalItems: (total: number) => void;
 }
 
 // IMPORTANT: This must be defined at module scope (not inside TypeSearch),
@@ -43,8 +50,13 @@ function TabsRenderer({
   setRowSelection,
   pageIndex,
   setPageIndex,
-  setSelectedRows,
+  setSelectedIds,
+  selectedIds,
+  isAllPagesSelected,
+  setIsAllPagesSelected,
+  setTotalItems,
 }: TabsRendererProps) {
+  const clearTimeoutRef = useRef<number | null>(null);
   // Whenever urlType (searchtype) changes, set the active tab.
   // If urlType matches one of the tabs (term), set that; otherwise pick the first tab.
   useEffect(() => {
@@ -67,14 +79,15 @@ function TabsRenderer({
   const handleTabChange = (newTab: string) => {
     setActiveTab(newTab);
     setRowSelection({});
-    setSelectedRows([]);
+    setSelectedIds([]);
+    setIsAllPagesSelected(false);
   };
 
   return (
-    <Tabs value={activeTab} onValueChange={handleTabChange} className="h-[85vh]">
+    <Tabs value={activeTab} onValueChange={handleTabChange} className="flex flex-1 min-h-0 flex-col overflow-hidden">
       <TabsList className="pb-0 mb-0 bg-background">
         {Object.entries(tabsForType).map(([term, label]) => (
-          <TabsTrigger key={term} value={term} className="...">
+          <TabsTrigger key={term} value={term}>
             {label}
           </TabsTrigger>
         ))}
@@ -84,16 +97,63 @@ function TabsRenderer({
         <TabsContent
           key={term}
           value={term}
-          className="border-0 mt-0 px-0 pt-[5px] flex-1 flex flex-col overflow-hidden"
+          className="mt-0 flex min-h-0 flex-1 flex-col overflow-hidden border-0 px-0 pt-[5px]"
         >
           <ListData
             resource={term}
             q={fullQ}
-            onSelectionChange={(rows) => setSelectedRows(Array.isArray(rows) ? (rows as Record<string, unknown>[]) : [])}
+            selectedIds={selectedIds}
+            onSelectionChange={(ids) => {
+              if (!Array.isArray(ids)) return;
+
+              // Debounce handling of empty selection notifications. Some
+              // interactions/firehose events can emit a transient empty
+              // selection which would immediately clear the user's
+              // cross-page selection; to avoid that we wait briefly before
+              // clearing so a follow-up selection can cancel the clear.
+
+              // If there is a pending clear, cancel it whenever we get a new event
+              if (clearTimeoutRef.current) {
+                window.clearTimeout(clearTimeoutRef.current);
+                clearTimeoutRef.current = null;
+              }
+
+              if (ids.length === 0) {
+                // Schedule clearing after a short delay unless another
+                // selection arrives.
+                clearTimeoutRef.current = window.setTimeout(() => {
+                  setSelectedIds([]);
+                  clearTimeoutRef.current = null;
+                }, 120) as unknown as number;
+                return;
+              }
+
+              // Immediate merge for non-empty updates
+              setSelectedIds((prev) => {
+                const next = new Set(prev);
+
+                // Add new ones
+                ids.forEach((id) => {
+                  if (id) next.add(id);
+                });
+
+                // Remove ones that are no longer selected on this page
+                prev.forEach((id) => {
+                  if (!ids.includes(id)) {
+                    next.delete(id);
+                  }
+                });
+
+                return Array.from(next);
+              });
+            }}            
             rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
             pageIndex={pageIndex}
             onPageChange={setPageIndex}
+            isAllPagesSelected={isAllPagesSelected}
+            onAllPagesSelectionChange={setIsAllPagesSelected}
+            onTotalItemsChange={setTotalItems}
           />
         </TabsContent>
       ))}
@@ -151,41 +211,88 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
   const tabsForType = searchTypes[thistype] ?? searchTypes["genome"];
   const tablist = Object.keys(tabsForType);
 
-  const [selectedRows, setSelectedRows] = useState<Record<string, unknown>[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [pageIndex, setPageIndex] = useState(0);
-  const [prevUrlKey, setPrevUrlKey] = useState(`${urlType}|${urlQ}`);
+  const [isAllPagesSelected, setIsAllPagesSelected] = useState(false);
+  const [totalItems, setTotalItems] = useState(0);
 
-  const urlKey = `${urlType}|${urlQ}`;
-  if (urlKey !== prevUrlKey) {
+  const urlKey = `${urlType}::${urlQ}`;
+  const [prevUrlKey, setPrevUrlKey] = useState(urlKey);
+  if (prevUrlKey !== urlKey) {
     setPrevUrlKey(urlKey);
     setRowSelection({});
-    setSelectedRows([]);
+    setSelectedIds([]);
     setPageIndex(0);
+    setIsAllPagesSelected(false);
+    setTotalItems(0);
   }
 
-  // Main return: hand off rendering to WithGenomePanel which provides activeTab & setter
+  const [activeTab, setActiveTab] = useState(tablist[0]);
+  // Keep the side panel open for multi-selection: use the last selected id
+  // as the active genome shown in the panel. This prevents the panel from
+  // collapsing whenever the user selects an additional row while already
+  // viewing details.
+  const activeGenomeId = selectedIds.length > 0 ? selectedIds[selectedIds.length - 1] : null;
+
+  const guideUrls: Record<string, string> = {
+    genome: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/genome_table.html",
+    strain: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/strains.html",
+    genome_feature: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/features.html",
+    protein_feature: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/features.html",
+    epitope: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/epitopes.html",
+    protein_structure: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/protein_structures.html",
+    surveillance: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/surveillance_data.html",
+    serology: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/serology_data.html",
+    taxonomy: "https://www.bv-brc.org/docs/quick_references/",
+    experiment: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/experiments_comparisons_tables.html",
+  };
+
+  // Main return:
   return (
-    <WithGenomePanel
-      tabs={tablist}
-      selectedRows={selectedRows}
-      setSelectedRows={setSelectedRows}
-    >
-      {({ activeTab, setActiveTab }) => (
-        <TabsRenderer
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          urlType={urlType}
-          urlQ={urlQ}
-          tabsForType={tabsForType}
-          tablist={tablist}
-          rowSelection={rowSelection}
-          setRowSelection={setRowSelection}
-          pageIndex={pageIndex}
-          setPageIndex={setPageIndex}
-          setSelectedRows={(rows) => setSelectedRows(Array.isArray(rows) ? (rows as Record<string, unknown>[]) : [])}
-        />
-      )}
-    </WithGenomePanel>
+    // Ensure this container fills the available height so child panels using
+    // h-full can correctly constrain their inner scroll areas. Without an
+    // explicit h-full some descendants may compute height auto and allow
+    // children to expand the page (pushing the footer).
+    <div className="flex min-h-0 flex-1 h-full">
+      <GenomeShell
+        hasSidePanel={!!activeGenomeId}
+        actionBar={
+          <SearchActionBar
+            selectedCount={selectedIds.length}
+            searchType={activeTab}
+            guideUrl={guideUrls[activeTab]}
+          />
+        }
+        sidePanel={
+          <GenomeDetailPanel
+            genomeId={activeGenomeId}
+            activeTab={activeTab}
+            selectedIds={selectedIds}
+            isAllPagesSelected={isAllPagesSelected}
+            totalItems={totalItems}
+          />
+        }
+        >
+          <TabsRenderer
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            urlType={urlType}
+            urlQ={urlQ}
+            tabsForType={tabsForType}
+            tablist={tablist}
+            rowSelection={rowSelection}
+            setRowSelection={setRowSelection}
+            pageIndex={pageIndex}
+            setPageIndex={setPageIndex}
+            setSelectedIds={setSelectedIds}
+            selectedIds={selectedIds}
+            isAllPagesSelected={isAllPagesSelected}
+            setIsAllPagesSelected={setIsAllPagesSelected}
+            totalItems={totalItems}
+            setTotalItems={setTotalItems}
+          />
+      </GenomeShell>
+    </div>
   );
 }

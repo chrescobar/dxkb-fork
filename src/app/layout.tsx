@@ -47,6 +47,7 @@ export default async function RootLayout({
             <AuthBoundary initialUser={initialUser}>
               <TooltipProvider>
                 {children}
+                {/* Dev-only debug loader: safe to include in dev; no runtime UI */}
               </TooltipProvider>
               <CommandPalette />
             </AuthBoundary>

@@ -1,0 +1,23 @@
+src/lib/services/organisms/metadata-facets.ts
+  s_e8248782abc67c::t_80b5d425bd25aa 16
+  s_e8248782abc67c::t_485513d3a5603d 40,42-50
+src/lib/services/organisms/utils.ts
+  s_e8248782abc67c::t_b521e2544e139e 91-92
+  s_e8248782abc67c::t_0c7c0dbecb44ec 93
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "665e0e09d2bfdf359ecddc07a84cf688a7840fe3",
+  "prompts": {},
+  "sessions": {
+    "s_e8248782abc67c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "117dcae9-0199-436f-bce8-63252d3a1290",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

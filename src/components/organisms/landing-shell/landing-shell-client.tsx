@@ -2,7 +2,7 @@
 
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { startTransition, useState, type ReactNode } from "react";
 
 import { LandingNav } from "./landing-nav";
 import type {
@@ -32,7 +32,7 @@ export function LandingShellClient({
   const searchParams = useSearchParams();
   const [navCollapsed, setNavCollapsed] = useState(false);
 
-  useHotkey("Mod+B", () => setNavCollapsed((current) => !current));
+  useHotkey("Mod+B", () => startTransition(() => setNavCollapsed((c) => !c)));
 
   function handleViewChange(nextView: OrganismViewKey) {
     const params = new URLSearchParams(searchParams?.toString() ?? "");
@@ -52,7 +52,7 @@ export function LandingShellClient({
         activeView={serverActiveView}
         collapsed={navCollapsed}
         onChange={handleViewChange}
-        onCollapseToggle={() => setNavCollapsed((current) => !current)}
+        onCollapseToggle={() => startTransition(() => setNavCollapsed((c) => !c))}
       />
       <section className="min-w-0 flex-1">
         <div className="bg-card mb-4 flex items-center justify-between rounded-lg border px-5 py-3 shadow-sm">

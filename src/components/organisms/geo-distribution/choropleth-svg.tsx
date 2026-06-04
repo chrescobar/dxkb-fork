@@ -311,12 +311,24 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
     reset: () => void;
     scale: (args: { scaleX: number; scaleY: number }) => void;
   } | null>(null);
+  const resizeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isFirstObservationRef = useRef(true);
 
   const setContainer = useCallback((node: HTMLDivElement | null) => {
     if (!node) return;
     const ro = new ResizeObserver((entries) => {
       const next = entries[0]?.contentRect?.width;
-      if (next && next > 0) setWidth(next);
+      if (!next || next <= 0) return;
+      // Fire immediately on first observation so initial render has correct width.
+      // Debounce all subsequent events so the SVG doesn't re-render on every frame
+      // of a CSS width transition (e.g. collapsing the nav sidebar).
+      if (isFirstObservationRef.current) {
+        isFirstObservationRef.current = false;
+        setWidth(next);
+        return;
+      }
+      if (resizeTimerRef.current) clearTimeout(resizeTimerRef.current);
+      resizeTimerRef.current = setTimeout(() => setWidth(next), 20);
     });
     ro.observe(node);
   }, []);
@@ -387,12 +399,12 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
           return (
             <>
               <svg
-                width={width}
-                height={mapHeight}
+                viewBox={`0 0 ${width} ${mapHeight}`}
+                preserveAspectRatio="xMidYMid meet"
                 ref={zoom.containerRef}
                 role="img"
                 aria-label="Genome distribution map"
-                style={{ cursor: zoom.isDragging ? "grabbing" : "grab", touchAction: "none" }}
+                style={{ width: "100%", height: mapHeight, cursor: zoom.isDragging ? "grabbing" : "grab", touchAction: "none" }}
                 onWheel={(event) => {
                   event.preventDefault();
                   const next = event.deltaY < 0 ? 1.15 : 1 / 1.15;

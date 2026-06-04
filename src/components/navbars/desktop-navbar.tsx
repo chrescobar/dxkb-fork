@@ -28,6 +28,7 @@ import {
   workspaceUsername,
 } from "@/components/navbars/workspace-dropdown-content";
 import { SuBanner } from "@/components/auth/su-banner";
+import { JobStatusPill } from "@/components/jobs/job-status-pill";
 
 const serviceEntries = Object.entries(serviceItems);
 const serviceColumns = [
@@ -203,7 +204,12 @@ const DesktopNavbar = () => {
               </>
             )}
 
-            {!isLoading && isAuthenticated && <UserAvatarDropdown />}
+            {!isLoading && isAuthenticated && (
+              <>
+                <JobStatusPill />
+                <UserAvatarDropdown />
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -108,7 +108,7 @@ test.describe("genome assembly submission", () => {
     // The submission success toast surfaces a "View Job" action that pushes /jobs. Click it
     // (instead of asserting an automatic redirect — the app does not auto-navigate) and verify
     // the freshly-submitted job is rendered in the list.
-    await page.getByRole("button", { name: /view job/i }).click();
+    await page.getByRole("button", { name: "View Job", exact: true }).click();
     await expect(page).toHaveURL(/\/jobs(?:\?|$|\/)/);
     const jobs = new JobsListPage(page);
     await jobs.waitForRows();

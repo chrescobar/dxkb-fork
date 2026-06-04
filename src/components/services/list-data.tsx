@@ -7,6 +7,7 @@ import { SortingState, RowSelectionState } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { noop } from "@/lib/utils";
 import { FilterBar } from "@/components/filterbar/filter-bar";
+import { getIdField } from "@/constants/resources";
 
 interface ColumnInfo {
   id: string;
@@ -28,14 +29,18 @@ interface RawField {
 interface ListDataProps { 
   q: string; 
   resource: string; // 'genome', 'gene', etc.
-  onSelectionChange?: (rows: unknown[]) => void;
+  onSelectionChange?: (ids: string[]) => void;
   rowSelection?: Record<string, boolean>;
   onRowSelectionChange?: (selection: Record<string, boolean>) => void;
   pageIndex?: number;
   onPageChange?: (page: number) => void;
+  selectedIds?: string[];
+  isAllPagesSelected?: boolean;
+  onAllPagesSelectionChange?: (selected: boolean) => void;
+  onTotalItemsChange?: (total: number) => void;
 }
 
-export function ListData({ q, resource, onSelectionChange, rowSelection: controlledRowSelection, onRowSelectionChange, pageIndex: controlledPageIndex, onPageChange }: ListDataProps) {
+export function ListData({ q, resource, onSelectionChange, rowSelection: controlledRowSelection, onRowSelectionChange, pageIndex: controlledPageIndex, onPageChange, selectedIds, isAllPagesSelected: controlledIsAllPagesSelected, onAllPagesSelectionChange, onTotalItemsChange }: ListDataProps) {
   const [fields, setFields] = useState<ColumnInfo[]>([]);
   
   // Use controlled rowSelection if provided, otherwise use internal state
@@ -43,6 +48,9 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const rowSelection = controlledRowSelection !== undefined ? controlledRowSelection : internalRowSelection;
   const setRowSelection = onRowSelectionChange || setInternalRowSelection;
   const [filter, setFilter] = useState('');
+  const [internalIsAllPagesSelected, setInternalIsAllPagesSelected] = useState(false);
+  const isAllPagesSelected = controlledIsAllPagesSelected !== undefined ? controlledIsAllPagesSelected : internalIsAllPagesSelected;
+  const setIsAllPagesSelected = onAllPagesSelectionChange || setInternalIsAllPagesSelected;
 
   useEffect(() => {
     (async () => {
@@ -86,39 +94,27 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   }
   const pageSize = 200;
 
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const defaultIdField = getIdField(resource);
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: defaultIdField, desc: false }
+  ]);
   const [columnOrder, setColumnOrder] = useState<string[]>([]);
   const [internalPageIndex, setInternalPageIndex] = useState(0);
   const pageIndex = controlledPageIndex !== undefined ? controlledPageIndex : internalPageIndex;
   const setPageIndex = onPageChange || setInternalPageIndex;
 
-  // Reset sorting and selection when resource/query actually changes.
-  // Local state resets run during render (React's derived-state pattern);
-  // parent-owned callbacks (setRowSelection when controlled, onSelectionChange)
-  // are deferred to an effect to avoid render-phase updates on other components.
   const [prevResource, setPrevResource] = useState(resource);
-  const [prevCleanQ, setPrevCleanQ] = useState(cleanQ);
-  const [resetNonce, setResetNonce] = useState(0);
-
-  if (prevResource !== resource || prevCleanQ !== cleanQ) {
+  if (prevResource !== resource) {
     setPrevResource(resource);
-    setPrevCleanQ(cleanQ);
-    setSorting([]);
-    setResetNonce((n) => n + 1);
+    setSorting([{ id: getIdField(resource), desc: false }]);
   }
-
-  useEffect(() => {
-    if (resetNonce === 0) return;
-    setRowSelection({});
-    onSelectionChange?.([]);
-  }, [resetNonce, setRowSelection, onSelectionChange]);
 
   const setSortingAndResetPage = useCallback((newSorting: SortingState) => {
     setSorting(newSorting);
     setPageIndex(0);
-    setRowSelection({});
-    onSelectionChange?.([]); // Clear selection in parent too
-  }, [onSelectionChange, setPageIndex, setRowSelection]);
+//    setRowSelection({});
+//    onSelectionChange?.([]); // Clear selection in parent too
+  }, [setPageIndex]);
 
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean> | null>(null);
 
@@ -170,6 +166,13 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   // Compute totalItems safely
   const totalItems = metaData?.response?.numFound ?? 0;
 
+  // Notify parent when totalItems changes
+  useEffect(() => {
+    if (onTotalItemsChange && totalItems !== undefined) {
+      onTotalItemsChange(totalItems);
+    }
+  }, [totalItems, onTotalItemsChange]);
+
   // Fetch current page of data
   const { data: pageData, isLoading: dataLoading, error: dataError, isFetching: dataFetching } = useQuery({
     queryKey: [
@@ -185,14 +188,15 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       if (totalItems === 0) return [];
 
       // Derive sort param from sortingKey (already in queryKey) to avoid stale closure
+      // Always apply a sort to ensure consistent ordering
       const sortParam = sortingKey !== "none"
         ? (() => { const [field, dir] = sortingKey.split(":"); return `${dir === "desc" ? "-" : "+"}${field}`; })()
-        : null;
+        : `+${getIdField(resource)}`;
       const start = pageIndex * pageSize;
       const end = start + pageSize;
 
       const baseURL = `${DataAPI}/${resource}/?${combinedQuery}`;
-      const url = sortParam ? `${baseURL}&sort(${sortParam})` : baseURL;
+      const url = `${baseURL}&sort(${sortParam})`;
 
       const res = await fetch(url, {
         headers: {
@@ -222,30 +226,53 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   }
 
   const handleRowSelectionChange = (newSelection: Record<string, boolean>) => {
+    // Apply new selection from table. Avoiding aggressive ignores here so
+    // header "select all" and explicit deselect actions work reliably.
     setRowSelection(newSelection);
+
+    // Clear all pages selection when individual rows change
+    if (isAllPagesSelected) {
+      setIsAllPagesSelected(false);
+    }
+
+    const selectedIds = Object.keys(newSelection)
+      .filter((id) => newSelection[id]);
+
+    onSelectionChange?.(selectedIds);
+  };
+
+  const handleAllPagesSelectionChange = (selected: boolean) => {
+    setIsAllPagesSelected(selected);
+    onAllPagesSelectionChange?.(selected);
     
-    // Convert to selected rows array and notify parent
-    const selectedRowsData = Object.keys(newSelection)
-      .filter(k => newSelection[k])
-      .map((key) => (pageData ?? [])[parseInt(key, 10)])
-      .filter(Boolean);
-    
-    onSelectionChange?.(selectedRowsData);
+    if (selected) {
+      // When selecting all pages, notify parent with all item IDs
+      // For now, we'll just set the flag - actual implementation would need to fetch all IDs
+    } else {
+      // When deselecting all pages, clear selection
+      setRowSelection({});
+      onSelectionChange?.([]);
+    }
   };
 
   const handlePageChange = (newPage: number) => {
-    // Clear selections when page changes
-    setRowSelection({});
-    onSelectionChange?.([]); // Clear selection in parent too
     // Update page index (this will call parent's setPageIndex if controlled)
     setPageIndex(newPage);
   };
 
-  async function handleDownloadAll(format: 'csv' | 'txt', visibleColumns: string[] | null) {
+  async function handleDownloadAll(format: 'csv' | 'txt', visibleColumns: string[] | null): Promise<void> {
     if (!totalItems) {
       console.warn('No totalItems available for download');
       return;
     }
+    
+    // Check if totalItems exceeds the download limit
+    const DOWNLOAD_LIMIT = 50000;
+    if (totalItems > DOWNLOAD_LIMIT) {
+      alert(`The download limit is ${DOWNLOAD_LIMIT.toLocaleString()} rows. Your query returned ${totalItems.toLocaleString()} rows. Please refine your search to download fewer results.`);
+      return;
+    }
+    
     try {
       const baseURL = `${DataAPI}/${resource}/?${combinedQuery}`;
       const res = await fetch(baseURL, {
@@ -309,6 +336,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     } catch (err) {
       console.error('Download all failed:', err);
       alert('Failed to download all results. See console for details.');
+      throw err; // Re-throw to allow the DataTable to handle the error
     }
   }
 
@@ -317,16 +345,17 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   }
 
   return (
-    <div className="h-full flex flex-col overflow-hidden">
+    <div className="h-full flex flex-col min-h-0 overflow-hidden">
       <FilterBar
         facetFields={facetFields}
         resource={resource}
         query={combinedQuery}
         onFilterChange={(rql) => {
           setFilter(rql);
-          setPageIndex(0);          // ✅ reset pagination
-          setRowSelection({});      // ✅ clear selection
-          onSelectionChange?.([]);  // ✅ clear parent selection
+          setPageIndex(0);
+          setRowSelection({});
+          onSelectionChange?.([]);
+          setIsAllPagesSelected(false);
         }}
       />
 
@@ -352,8 +381,11 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
             onColumnOrderChange={setColumnOrder}
             columnVisibility={columnVisibility}
             onColumnVisibilityChange={setColumnVisibility}
+            isAllPagesSelected={isAllPagesSelected}
+            onAllPagesSelectionChange={handleAllPagesSelectionChange}
             onDownloadAll={handleDownloadAll}
             isLoading={metaLoading || dataLoading || dataFetching}
+            selectedIds={selectedIds ?? []}
           />
         )}
       </div>

@@ -234,7 +234,7 @@ export function WorkspaceBrowser({
     permissions: currentDirPermissions,
   } = directoryResult;
 
-  const items = enabled ? rawItems : [];
+  const items = useMemo(() => (enabled ? rawItems : []), [enabled, rawItems]);
 
   const isOwnHome = mode === "home" && isUrlCurrentUser;
   const homeAppearsEmpty =

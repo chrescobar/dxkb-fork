@@ -45,6 +45,18 @@ export interface BackendMockOptions {
   strict?: boolean;
 }
 
+// Default overrides merged into every applyBackendMocks call. Tests can override
+// individual entries by placing their own override earlier in the array (first match wins).
+// Add entries here for any navbar/layout component that fetches on every page load so
+// tests that don't care about that data don't have to mock it themselves.
+const defaultOverrides: JsonOverride[] = [
+  {
+    url: "/api/services/app-service/jobs/summary",
+    method: "POST",
+    body: { taskSummary: {}, appSummary: {} },
+  },
+];
+
 // Per-page log of backend requests the strict guard aborted. Populated inside the
 // strict route handler and drained by verifyNoUnmockedBackendRequests() — which the
 // custom `test` fixture below calls on teardown.
@@ -124,6 +136,8 @@ function parseJsonBody(raw: string | null): unknown {
  */
 export async function applyBackendMocks(page: Page, options: BackendMockOptions = {}): Promise<void> {
   const { har, overrides = [], strict = true } = options;
+  // Merge defaults after caller overrides so caller-provided entries win (first match wins).
+  const effectiveOverrides = [...overrides, ...defaultOverrides];
   const appHost = resolveAppHost();
 
   // 1. Strict guard — registered FIRST so it runs LAST (routes are LIFO).
@@ -177,7 +191,7 @@ export async function applyBackendMocks(page: Page, options: BackendMockOptions 
   }
 
   // 3. Overrides — registered LAST so they run FIRST. These win over HAR and strict.
-  if (overrides.length > 0) {
+  if (effectiveOverrides.length > 0) {
     const callCounts = new WeakMap<JsonOverride, { value: number }>();
     const counterFor = (o: JsonOverride) => {
       let counter = callCounts.get(o);
@@ -190,7 +204,7 @@ export async function applyBackendMocks(page: Page, options: BackendMockOptions 
     await page.route("**/*", async (route: Route) => {
       const request = route.request();
       const parsedBody = parseJsonBody(request.postData());
-      const override = overrides.find((o) =>
+      const override = effectiveOverrides.find((o) =>
         matchesOverride(o, request.url(), request.method(), parsedBody),
       );
       if (!override) {

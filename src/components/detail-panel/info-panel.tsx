@@ -15,7 +15,7 @@ import { strainFields } from "@/constants/datafields/strain";
 import { surveillanceFields } from "@/constants/datafields/surveillance";
 import { taxonomyFields } from "@/constants/datafields/taxonomy";
 import { Button } from "@/components/ui/button";
-import { DetailPanel, type DetailField } from "@/components/detail-panel";
+import { DetailPanel, type DetailField } from "./index";
 import { formatOwner, formatFileSize } from "@/lib/services/workspace/helpers";
 import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { WorkspaceItemHeader } from "@/components/workspace/workspace-item-header";
@@ -31,8 +31,12 @@ export type InfoPanelProps =
     }
   | {
       variant?: "search";
-      rows: Record<string, unknown>[];
+      selectedIds: string[];
       activeTab: string;
+      selectedRow?: Record<string, unknown> | null;
+      isLoading?: boolean;
+      isAllPagesSelected?: boolean;
+      totalItems?: number;
     };
 
 
@@ -128,7 +132,12 @@ export function InfoPanel(props: InfoPanelProps) {
     );
   }
 
-  const { rows, activeTab } = props;
+  const { selectedIds, activeTab, selectedRow, isLoading } = props;
+
+  if (selectedIds.length === 1 && isLoading) {
+    return <div className="p-4 text-sm">Loading...</div>;
+  }
+
   let order: string[] = [];
   let fieldFile = {};
   let allowedFields: string[] = [];
@@ -264,8 +273,8 @@ export function InfoPanel(props: InfoPanelProps) {
 
   return (
     <DetailPanel>
-      <DetailPanel.Header title={String(rows[0]?.[panelTitleField] ?? "")} />
-      {rows.length === 1 ? (
+      <DetailPanel.Header title={selectedIds.length === 1 ? String(selectedRow?.[panelTitleField] ?? "") : ""} />
+      {selectedIds.length === 1 ? (
         <>
           {order.map((group) => {
             const items = (grouped[group] || []).filter((item) =>
@@ -275,12 +284,10 @@ export function InfoPanel(props: InfoPanelProps) {
 
             const fields: DetailField[] = items.map((item) => {
               const fieldId = String(item.id);
-              const rawValue = rows[0]?.[fieldId];
-
+              const rawValue = selectedRow?.[fieldId];
               if (item.link) {
                 const resolved = toAbsoluteUrl(
-                  resolveLink(String(item.link), rows[0], fieldId)
-                );
+                  resolveLink(String(item.link), selectedRow ?? {}, fieldId)                );
 
                 if (item.linkType === "button") {
                   return {
@@ -322,7 +329,11 @@ export function InfoPanel(props: InfoPanelProps) {
           })}
         </>
       ) : (
-        <p className="px-4 py-2 text-xs">{rows.length} rows selected</p>
+        <p className="px-4 py-2 text-xs">
+          {props.isAllPagesSelected && props.totalItems
+            ? `All ${props.totalItems.toLocaleString()} rows selected`
+            : `${selectedIds.length} rows selected`}
+        </p>
       )}
     </DetailPanel>
   );

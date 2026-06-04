@@ -403,6 +403,10 @@ test.describe("workspace actions", () => {
     // so use page.getByRole (not dialog.getByRole) to find them.
     await dialog.getByRole("combobox").click();
     await page.getByRole("option", { name: /^contigs$/i }).click();
+    // base-ui renders the listbox in a portal outside the dialog. In WebKit, the portal
+    // overlay can remain in the DOM after selection and block the Save button's click
+    // stabilisation check. Wait for the option to fully detach before proceeding.
+    await expect(page.getByRole("option", { name: /^contigs$/i })).not.toBeAttached();
 
     // Register the request watcher BEFORE clicking Save so we don't race the POST.
     const updateRequestPromise = page.waitForRequest((req) => {

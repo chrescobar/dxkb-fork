@@ -18,11 +18,9 @@ export default function GlobalSearch () {
 
       // replace some special characters
       query = query.replace(/'/g, '').replace(/:/g, ' ');
-      // console.log("query", query);
 
       // replace special words/characters: (+), (-), +, - , <, >, /, \ with a space as they are causing solr query problems when included in the keywords
       query =  query.replace(/\(\+\)/g, ' ').replace(/\(-\)/g, ' ').replace(/,|\+|-|=|<|>|\\|\//g, ' ');
-      // console.log("query", query);
 
       // When query phrase is quoted, the whole phrase should be search as one keyword unless it contains (), {}, []
       // e.g. "EC 2.1.1.1" should be search as "EC 3.2.1.1" not "EC AND 3.2.1.1"
@@ -70,7 +68,6 @@ export default function GlobalSearch () {
         ) {
           return <TypeSearch q={query} searchtype={searchtype} />;
         } else {
-          console.log("Do Search: ", searchtype, query);
           return <div>Fallback search</div>;
         }
 

@@ -5,15 +5,18 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth/hooks";
 import { authAdmin } from "@/lib/auth/advanced";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function SuBanner() {
   const { isImpersonating, user } = useAuth();
+  const queryClient = useQueryClient();
   const suExit = async () => {
     const { data, error } = await authAdmin.impersonate.exit();
     if (error) {
       toast.error("Failed to exit impersonation");
       return;
     }
+    void queryClient.resetQueries();
     if (data) toast.success("Returned to your account");
   };
 
@@ -30,7 +33,7 @@ export function SuBanner() {
         variant="outline"
         size="sm"
         className="ml-1 h-6 border-accent-foreground/30 bg-transparent px-2 text-xs hover:bg-accent-foreground/10"
-        onClick={() => suExit()}
+        onClick={() => void suExit()}
       >
         Exit SU
       </Button>

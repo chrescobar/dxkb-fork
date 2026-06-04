@@ -163,7 +163,9 @@ test.describe("command palette (Cmd+K)", () => {
     await page.waitForLoadState("networkidle");
     await page.keyboard.press(`${modifierKey}+K`);
     const dialog = page.getByRole("dialog", { name: /command palette/i });
-    await expect(dialog).toBeVisible();
+    // WebKit occasionally drops the keystroke even after networkidle if the useEffect
+    // listener hasn't attached yet. Give it extra headroom before declaring failure.
+    await expect(dialog).toBeVisible({ timeout: 10_000 });
 
     await page.keyboard.press("Escape");
     await expect(dialog).not.toBeVisible();

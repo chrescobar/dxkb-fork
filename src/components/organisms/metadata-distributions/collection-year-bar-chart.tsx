@@ -1,0 +1,185 @@
+"use client";
+
+import { Group } from "@visx/group";
+import { scaleBand, scaleLinear } from "@visx/scale";
+import { useTooltip } from "@visx/tooltip";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { numberFormatter } from "@/lib/services/organisms/utils";
+
+interface YearDatum {
+  year: number;
+  count: number;
+}
+
+interface CollectionYearBarChartProps {
+  title: string;
+  data: { label: string; value: number }[];
+}
+
+const chartWidth = 540;
+const chartHeight = 220;
+const marginTop = 10;
+const marginRight = 20;
+const marginBottom = 50;
+const marginLeft = 54;
+const innerWidth = chartWidth - marginLeft - marginRight;
+const innerHeight = chartHeight - marginTop - marginBottom;
+
+function parseYearData(data: { label: string; value: number }[]): YearDatum[] {
+  return data
+    .filter((d) => Number.isInteger(Number(d.label)) && d.label.trim() !== "")
+    .map((d) => ({ year: Number(d.label), count: d.value }))
+    .sort((a, b) => a.year - b.year);
+}
+
+export function CollectionYearBarChart({
+  title,
+  data,
+}: CollectionYearBarChartProps) {
+  const yearData = parseYearData(data);
+  const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
+    useTooltip<YearDatum>();
+
+  const xScale = scaleBand<number>({
+    domain: yearData.map((d) => d.year),
+    range: [0, innerWidth],
+    padding: 0.25,
+  });
+
+  const maxCount = Math.max(...yearData.map((d) => d.count), 1);
+  const yScale = scaleLinear<number>({
+    domain: [0, maxCount],
+    range: [innerHeight, 0],
+    nice: true,
+  });
+
+  const yTicks = yScale.ticks(4);
+  const shouldRotate = yearData.length >= 8;
+
+  return (
+    <Card className="relative rounded-lg" size="sm">
+      <CardHeader>
+        <CardTitle className="text-lg!">{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {yearData.length === 0 ? (
+          <p className="text-muted-foreground text-sm">
+            No distribution data was returned.
+          </p>
+        ) : (
+          <div className="min-w-0 overflow-hidden">
+            <svg
+              viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+              role="img"
+              aria-label={`${title} distribution`}
+              className="mx-auto w-full max-w-135"
+            >
+              <Group left={marginLeft} top={marginTop}>
+                {yTicks.map((tick) => (
+                  <g key={tick}>
+                    <line
+                      x1={0}
+                      x2={innerWidth}
+                      y1={yScale(tick)}
+                      y2={yScale(tick)}
+                      stroke="var(--border)"
+                      strokeWidth={1}
+                    />
+                    <text
+                      x={-6}
+                      y={yScale(tick)}
+                      textAnchor="end"
+                      dominantBaseline="middle"
+                      fontSize={11}
+                      className="fill-muted-foreground tabular-nums"
+                    >
+                      {numberFormatter.format(tick)}
+                    </text>
+                  </g>
+                ))}
+
+                {yearData.map((d) => {
+                  const barX = xScale(d.year) ?? 0;
+                  const barWidth = xScale.bandwidth();
+                  const barY = yScale(d.count) ?? 0;
+                  const barHeight = innerHeight - barY;
+                  const label = `${d.year}: ${numberFormatter.format(d.count)}`;
+                  const labelX = barX + barWidth / 2;
+
+                  return (
+                    <g key={d.year}>
+                      <rect
+                        x={barX}
+                        y={barY}
+                        width={barWidth}
+                        height={barHeight}
+                        fill="var(--chart-1)"
+                        rx={2}
+                        tabIndex={0}
+                        aria-label={label}
+                        onMouseMove={(event) =>
+                          showTooltip({
+                            tooltipData: d,
+                            tooltipLeft: event.clientX,
+                            tooltipTop: event.clientY,
+                          })
+                        }
+                        onFocus={(event) => {
+                          const rect =
+                            event.currentTarget.getBoundingClientRect();
+                          showTooltip({
+                            tooltipData: d,
+                            tooltipLeft: rect.left + rect.width / 2,
+                            tooltipTop: rect.top + rect.height / 2,
+                          });
+                        }}
+                        onMouseLeave={hideTooltip}
+                        onBlur={hideTooltip}
+                      >
+                        <title>{label}</title>
+                      </rect>
+                      <text
+                        x={labelX}
+                        y={innerHeight + 10}
+                        textAnchor={shouldRotate ? "end" : "middle"}
+                        dominantBaseline={shouldRotate ? "middle" : "hanging"}
+                        fontSize={11}
+                        className="fill-muted-foreground tabular-nums"
+                        transform={
+                          shouldRotate
+                            ? `rotate(-45, ${labelX}, ${innerHeight + 10})`
+                            : undefined
+                        }
+                      >
+                        {d.year}
+                      </text>
+                    </g>
+                  );
+                })}
+
+                <line
+                  x1={0}
+                  x2={innerWidth}
+                  y1={innerHeight}
+                  y2={innerHeight}
+                  stroke="var(--border)"
+                  strokeWidth={1}
+                />
+              </Group>
+            </svg>
+          </div>
+        )}
+      </CardContent>
+      {tooltipData && (
+        <div
+          role="status"
+          className="bg-popover text-popover-foreground pointer-events-none fixed rounded-md border px-2 py-1 text-xs shadow-md"
+          style={{ left: tooltipLeft ?? 0, top: tooltipTop ?? 0 }}
+        >
+          {tooltipData.year}: {numberFormatter.format(tooltipData.count)}
+        </div>
+      )}
+    </Card>
+  );
+}

@@ -1,5 +1,7 @@
 "use client";
 
+import { useRef } from "react";
+
 import { Group } from "@visx/group";
 import { scaleBand, scaleLinear } from "@visx/scale";
 import { useTooltip } from "@visx/tooltip";
@@ -44,6 +46,7 @@ export function CollectionYearBarChart({
   title,
   data,
 }: CollectionYearBarChartProps) {
+  const svgRef = useRef<SVGSVGElement>(null);
   const yearData = parseYearData(data);
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
     useTooltip<YearDatum>();
@@ -77,6 +80,7 @@ export function CollectionYearBarChart({
         ) : (
           <div className="min-w-0 overflow-hidden">
             <svg
+              ref={svgRef}
               viewBox={`0 0 ${chartWidth} ${chartHeight}`}
               role="img"
               aria-label={`${title} distribution`}
@@ -124,13 +128,6 @@ export function CollectionYearBarChart({
                       rx={2}
                       tabIndex={0}
                       aria-label={label}
-                      onMouseMove={(event) =>
-                        showTooltip({
-                          tooltipData: d,
-                          tooltipLeft: event.clientX,
-                          tooltipTop: event.clientY,
-                        })
-                      }
                       onFocus={(event) => {
                         const rect =
                           event.currentTarget.getBoundingClientRect();
@@ -140,7 +137,6 @@ export function CollectionYearBarChart({
                           tooltipTop: rect.top + rect.height / 2,
                         });
                       }}
-                      onMouseLeave={hideTooltip}
                       onBlur={hideTooltip}
                     >
                       <title>{label}</title>
@@ -173,6 +169,54 @@ export function CollectionYearBarChart({
                   y2={innerHeight}
                   stroke="var(--border)"
                   strokeWidth={1}
+                />
+
+                {tooltipData && (
+                  <line
+                    x1={(xScale(tooltipData.year) ?? 0) + xScale.bandwidth() / 2}
+                    x2={(xScale(tooltipData.year) ?? 0) + xScale.bandwidth() / 2}
+                    y1={0}
+                    y2={innerHeight}
+                    stroke="var(--muted-foreground)"
+                    strokeWidth={1}
+                    strokeDasharray="3,3"
+                    pointerEvents="none"
+                  />
+                )}
+
+                <rect
+                  data-testid="chart-overlay"
+                  x={0}
+                  y={0}
+                  width={innerWidth}
+                  height={innerHeight}
+                  fill="transparent"
+                  onMouseMove={(event) => {
+                    const svgRect = svgRef.current?.getBoundingClientRect();
+                    const scaleX =
+                      svgRect && svgRect.width > 0
+                        ? chartWidth / svgRect.width
+                        : 1;
+                    const mouseX = svgRect
+                      ? (event.clientX - svgRect.left) * scaleX - marginLeft
+                      : event.clientX - marginLeft;
+                    const index = Math.max(
+                      0,
+                      Math.min(
+                        yearData.length - 1,
+                        Math.round(mouseX / xScale.step()),
+                      ),
+                    );
+                    const d = yearData[index];
+                    if (d) {
+                      showTooltip({
+                        tooltipData: d,
+                        tooltipLeft: event.clientX,
+                        tooltipTop: event.clientY,
+                      });
+                    }
+                  }}
+                  onMouseLeave={hideTooltip}
                 />
               </Group>
             </svg>

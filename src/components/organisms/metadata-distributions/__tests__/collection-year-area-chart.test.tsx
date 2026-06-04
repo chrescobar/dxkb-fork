@@ -49,7 +49,7 @@ describe("CollectionYearAreaChart", () => {
       />,
     );
 
-    fireEvent.mouseMove(screen.getByLabelText("2021: 42"), {
+    fireEvent.mouseMove(screen.getByTestId("chart-overlay"), {
       clientX: 10,
       clientY: 10,
     });

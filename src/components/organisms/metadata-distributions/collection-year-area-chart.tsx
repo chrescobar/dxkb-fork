@@ -20,14 +20,21 @@ interface CollectionYearAreaChartProps {
 }
 
 const chartWidth = 540;
-const chartHeight = 220;
+const chartHeight = 260;
 const marginTop = 10;
 const marginRight = 20;
-const marginBottom = 40;
+const marginBottom = 32;
 const marginLeft = 54;
 const innerWidth = chartWidth - marginLeft - marginRight;
 const innerHeight = chartHeight - marginTop - marginBottom;
 const gradientId = "collection-year-area-gradient";
+
+function labelStep(count: number): number {
+  if (count <= 15) return 1;
+  if (count <= 30) return 2;
+  if (count <= 60) return 5;
+  return 10;
+}
 
 function parseYearData(data: { label: string; value: number }[]): YearDatum[] {
   return data
@@ -59,7 +66,7 @@ export function CollectionYearAreaChart({
   });
 
   const yTicks = yScale.ticks(4);
-  const skipEveryOther = yearData.length > 8;
+  const step = labelStep(yearData.length);
 
   return (
     <Card className="relative rounded-lg" size="sm">
@@ -77,7 +84,7 @@ export function CollectionYearAreaChart({
               viewBox={`0 0 ${chartWidth} ${chartHeight}`}
               role="img"
               aria-label={`${title} distribution`}
-              className="mx-auto w-full max-w-135"
+              className="w-full"
             >
               <defs>
                 <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
@@ -176,13 +183,14 @@ export function CollectionYearAreaChart({
                 })}
 
                 {yearData.map((d, i) => {
-                  if (skipEveryOther && i % 2 !== 0) return null;
+                  if (i % step !== 0) return null;
                   return (
                     <text
-                      key={d.year}
+                      key={`label-${d.year}`}
                       x={xScale(d.year) ?? 0}
-                      y={innerHeight + 16}
+                      y={innerHeight + 12}
                       textAnchor="middle"
+                      dominantBaseline="hanging"
                       fontSize={11}
                       className="fill-muted-foreground tabular-nums"
                     >

@@ -18,13 +18,20 @@ interface CollectionYearBarChartProps {
 }
 
 const chartWidth = 540;
-const chartHeight = 220;
+const chartHeight = 260;
 const marginTop = 10;
 const marginRight = 20;
-const marginBottom = 50;
+const marginBottom = 32;
 const marginLeft = 54;
 const innerWidth = chartWidth - marginLeft - marginRight;
 const innerHeight = chartHeight - marginTop - marginBottom;
+
+function labelStep(count: number): number {
+  if (count <= 15) return 1;
+  if (count <= 30) return 2;
+  if (count <= 60) return 5;
+  return 10;
+}
 
 function parseYearData(data: { label: string; value: number }[]): YearDatum[] {
   return data
@@ -55,7 +62,7 @@ export function CollectionYearBarChart({
   });
 
   const yTicks = yScale.ticks(4);
-  const shouldRotate = yearData.length >= 8;
+  const step = labelStep(yearData.length);
 
   return (
     <Card className="relative rounded-lg" size="sm">
@@ -73,7 +80,7 @@ export function CollectionYearBarChart({
               viewBox={`0 0 ${chartWidth} ${chartHeight}`}
               role="img"
               aria-label={`${title} distribution`}
-              className="mx-auto w-full max-w-135"
+              className="w-full"
             >
               <Group left={marginLeft} top={marginTop}>
                 {yTicks.map((tick) => (
@@ -105,56 +112,57 @@ export function CollectionYearBarChart({
                   const barY = yScale(d.count) ?? 0;
                   const barHeight = innerHeight - barY;
                   const label = `${d.year}: ${numberFormatter.format(d.count)}`;
-                  const labelX = barX + barWidth / 2;
 
                   return (
-                    <g key={d.year}>
-                      <rect
-                        x={barX}
-                        y={barY}
-                        width={barWidth}
-                        height={barHeight}
-                        fill="var(--chart-1)"
-                        rx={2}
-                        tabIndex={0}
-                        aria-label={label}
-                        onMouseMove={(event) =>
-                          showTooltip({
-                            tooltipData: d,
-                            tooltipLeft: event.clientX,
-                            tooltipTop: event.clientY,
-                          })
-                        }
-                        onFocus={(event) => {
-                          const rect =
-                            event.currentTarget.getBoundingClientRect();
-                          showTooltip({
-                            tooltipData: d,
-                            tooltipLeft: rect.left + rect.width / 2,
-                            tooltipTop: rect.top + rect.height / 2,
-                          });
-                        }}
-                        onMouseLeave={hideTooltip}
-                        onBlur={hideTooltip}
-                      >
-                        <title>{label}</title>
-                      </rect>
-                      <text
-                        x={labelX}
-                        y={innerHeight + 10}
-                        textAnchor={shouldRotate ? "end" : "middle"}
-                        dominantBaseline={shouldRotate ? "middle" : "hanging"}
-                        fontSize={11}
-                        className="fill-muted-foreground tabular-nums"
-                        transform={
-                          shouldRotate
-                            ? `rotate(-45, ${labelX}, ${innerHeight + 10})`
-                            : undefined
-                        }
-                      >
-                        {d.year}
-                      </text>
-                    </g>
+                    <rect
+                      key={d.year}
+                      x={barX}
+                      y={barY}
+                      width={barWidth}
+                      height={barHeight}
+                      fill="var(--chart-1)"
+                      rx={2}
+                      tabIndex={0}
+                      aria-label={label}
+                      onMouseMove={(event) =>
+                        showTooltip({
+                          tooltipData: d,
+                          tooltipLeft: event.clientX,
+                          tooltipTop: event.clientY,
+                        })
+                      }
+                      onFocus={(event) => {
+                        const rect =
+                          event.currentTarget.getBoundingClientRect();
+                        showTooltip({
+                          tooltipData: d,
+                          tooltipLeft: rect.left + rect.width / 2,
+                          tooltipTop: rect.top + rect.height / 2,
+                        });
+                      }}
+                      onMouseLeave={hideTooltip}
+                      onBlur={hideTooltip}
+                    >
+                      <title>{label}</title>
+                    </rect>
+                  );
+                })}
+
+                {yearData.map((d, i) => {
+                  if (i % step !== 0) return null;
+                  const labelX = (xScale(d.year) ?? 0) + xScale.bandwidth() / 2;
+                  return (
+                    <text
+                      key={`label-${d.year}`}
+                      x={labelX}
+                      y={innerHeight + 12}
+                      textAnchor="middle"
+                      dominantBaseline="hanging"
+                      fontSize={11}
+                      className="fill-muted-foreground tabular-nums"
+                    >
+                      {d.year}
+                    </text>
                   );
                 })}
 

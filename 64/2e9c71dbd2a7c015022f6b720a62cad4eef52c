@@ -1,0 +1,19 @@
+src/components/organisms/metadata-distributions/metadata-distributions.tsx
+  s_e8248782abc67c::t_820b4c2678f0e9 3-4,39-62
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "642e9c71dbd2a7c015022f6b720a62cad4eef52c",
+  "prompts": {},
+  "sessions": {
+    "s_e8248782abc67c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "117dcae9-0199-436f-bce8-63252d3a1290",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

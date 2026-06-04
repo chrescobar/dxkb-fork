@@ -1,0 +1,42 @@
+src/components/organisms/geo-distribution/choropleth-svg.tsx
+  s_32f8bd9cbec557::t_69022f84c9de67 6
+  s_32f8bd9cbec557::t_94667861028b53 510
+src/components/organisms/landing-shell/landing-nav.tsx
+  s_a3a90496b4d742::t_2ed65e43005fcd 47
+  s_a3a90496b4d742::t_69f823191a5895 87
+src/components/organisms/reference-genomes/reference-genomes-client.tsx
+  s_1b0725a6e47417::t_cb4b7f472afff9 83
+  s_1b0725a6e47417::t_c17c87bab8d999 39-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "8c7f4bd24ddd08e651571bf310d226b9d44ad303",
+  "prompts": {},
+  "sessions": {
+    "s_1b0725a6e47417": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "639f88f6-145c-4186-9e4a-cf30ddec2528",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_32f8bd9cbec557": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e5e79e95-d3e8-45c1-b6c8-95b41a3ccabf",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_a3a90496b4d742": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "55c5c021-3e0f-405a-a8d2-76571ae08dfb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

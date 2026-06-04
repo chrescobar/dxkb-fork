@@ -62,6 +62,25 @@ describe("useJobsSummary", () => {
     expect(result.current.data).toEqual({ taskSummary, appSummary });
   });
 
+  it("returns active job data correctly", async () => {
+    const taskSummary = { running: 1 };
+    const appSummary = { GenomeAssembly2: 1 };
+
+    server.use(
+      http.post("/api/services/app-service/jobs/summary", () => {
+        return HttpResponse.json({ taskSummary, appSummary });
+      }),
+    );
+
+    const { result } = renderHook(() => useJobsSummary(false), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.data).toEqual({ taskSummary, appSummary });
+  });
+
   it("throws ApiCallError on HTTP error", async () => {
     server.use(
       http.post("/api/services/app-service/jobs/summary", () => {

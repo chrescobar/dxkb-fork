@@ -114,7 +114,7 @@ test.describe("viral genome tree submission (representative for tree-services fa
       type: "genome_group",
     });
 
-    await page.getByRole("button", { name: /view job/i }).click();
+    await page.getByRole("button", { name: "View Job", exact: true }).click();
     await expect(page).toHaveURL(/\/jobs(?:\?|$|\/)/);
     const jobs = new JobsListPage(page);
     await jobs.waitForRows();

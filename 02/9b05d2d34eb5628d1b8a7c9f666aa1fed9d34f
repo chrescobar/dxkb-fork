@@ -1,0 +1,20 @@
+src/components/organisms/geo-distribution/choropleth-svg.tsx
+  s_32f8bd9cbec557::t_8266c9c59ecea8 382
+  s_32f8bd9cbec557::t_efab804886a5c3 402-403,407
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "029b05d2d34eb5628d1b8a7c9f666aa1fed9d34f",
+  "prompts": {},
+  "sessions": {
+    "s_32f8bd9cbec557": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e5e79e95-d3e8-45c1-b6c8-95b41a3ccabf",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

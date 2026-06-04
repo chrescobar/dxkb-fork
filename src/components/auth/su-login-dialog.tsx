@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 import {
   Dialog,
@@ -26,6 +27,7 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
   const [targetUser, setTargetUser] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const queryClient = useQueryClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +44,7 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
       toast.error(error.message || "SU login failed");
       return;
     }
+    void queryClient.resetQueries();
     onOpenChange(false);
     setTargetUser("");
     setPassword("");

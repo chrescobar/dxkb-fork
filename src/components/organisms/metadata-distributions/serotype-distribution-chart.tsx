@@ -155,7 +155,7 @@ export function SerotypeDistributionChart({
               >
                 {(barStacks) =>
                   barStacks.map((barStack) => {
-                    const svIdx = data.serovars.indexOf(barStack.key);
+                    const svIdx = barStack.index;
                     const isActive = currentActive === svIdx;
                     const isDimmed = currentActive !== null && !isActive;
 
@@ -259,6 +259,7 @@ export function SerotypeDistributionChart({
                 key={sv}
                 type="button"
                 data-active={isActive ? "true" : undefined}
+                aria-pressed={lockedIdx === idx}
                 aria-label={sv}
                 className={cn(
                   "flex cursor-default items-center gap-1.5 rounded-full border px-2 py-0.5 text-[10px] transition-colors",

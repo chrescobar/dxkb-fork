@@ -43,8 +43,8 @@ const chartColors = [
   "var(--chart-9)", "var(--chart-10)",
 ];
 
-const tooltipOffsetX = 12;
-const tooltipOffsetY = -44;
+const tooltipOffsetX = 16;
+const tooltipOffsetY = 16;
 
 export function SerotypeDistributionChart({
   title,

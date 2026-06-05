@@ -1,0 +1,41 @@
+src/components/organisms/metadata-distributions/collection-year-area-chart.tsx
+  s_2784a28a153005::t_78db3d7161ce79 207-225
+  s_db2b6205c4f16f::t_1b35c5b15fb50d 265-266
+  s_db2b6205c4f16f::t_bed878dd911e0b 12
+src/components/organisms/metadata-distributions/serotype-distribution-chart.tsx
+  s_db2b6205c4f16f::t_f797d029c0810c 350-357
+  s_db2b6205c4f16f::t_a8c5b38da70ad3 12
+src/lib/services/organisms/utils.ts
+  s_db2b6205c4f16f::t_035029c8b84526 149-167,169-180
+  s_db2b6205c4f16f::t_7d928561601d09 168
+src/components/organisms/metadata-distributions/collection-year-bar-chart.tsx
+  s_2784a28a153005::t_4553aca13566db 175-177,179,181-182
+  s_db2b6205c4f16f::t_b1882c3d055a94 229-230
+  s_2784a28a153005::t_0174750ccef773 180
+  s_db2b6205c4f16f::t_9687e651013265 10
+  s_2784a28a153005::t_54d0b385c99583 178
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "30adea6f6043e2a5e32747fb995491ecbed59e78",
+  "prompts": {},
+  "sessions": {
+    "s_2784a28a153005": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a7dbc528-cf6f-435c-81d0-e3fee3b7fe7b",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_db2b6205c4f16f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "190320ce-178d-4b58-bb8c-96b550454399",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

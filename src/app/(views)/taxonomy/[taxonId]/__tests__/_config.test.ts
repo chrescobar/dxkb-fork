@@ -46,6 +46,19 @@ describe("buildTaxonomyConfig", () => {
   it("falls back to a placeholder displayName when taxon is null", () => {
     const config = buildTaxonomyConfig(999, null);
     expect(config.displayName).toBe("Taxon 999");
-    expect(config.accent).toBe("bacteria");
+    // null taxon → empty lineage → no Viruses/Fungi/Bacteria match → "all"
+    expect(config.accent).toBe("all");
+  });
+
+  it("returns 'all' accent for organisms outside Bacteria/Viruses/Fungi lineages", () => {
+    const config = buildTaxonomyConfig(2157, {
+      taxonId: 2157,
+      taxonName: "Archaea",
+      taxonRank: "superkingdom",
+      lineageNames: ["Archaea"],
+      lineageIds: [2157],
+      genomes: 1000,
+    });
+    expect(config.accent).toBe("all");
   });
 });

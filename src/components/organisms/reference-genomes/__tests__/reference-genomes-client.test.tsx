@@ -2,6 +2,32 @@ import { fireEvent, render, screen } from "@testing-library/react";
 
 import { ReferenceGenomesClient } from "../reference-genomes-client";
 
+// useVirtualizer measures the scroll container via ResizeObserver / getBoundingClientRect,
+// neither of which works in jsdom. Mock it to return all items synchronously so tests
+// can assert on row content and sort order without fighting the virtualizer's async
+// measurement lifecycle.
+vi.mock("@tanstack/react-virtual", () => ({
+  useVirtualizer: ({
+    count,
+    estimateSize,
+  }: {
+    count: number;
+    estimateSize: () => number;
+  }) => ({
+    getVirtualItems: () =>
+      Array.from({ length: count }, (_, index) => ({
+        index,
+        start: index * estimateSize(),
+        size: estimateSize(),
+        end: (index + 1) * estimateSize(),
+        key: index,
+        lane: 0,
+      })),
+    getTotalSize: () => count * estimateSize(),
+    measure: vi.fn(),
+  }),
+}));
+
 const genomes = [
   { genome_id: "234.1", genome_name: "Charlie strain", reference_genome: "Reference" },
   { genome_id: "234.2", genome_name: "Alpha strain", reference_genome: "Reference" },

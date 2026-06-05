@@ -1,0 +1,26 @@
+src/components/organisms/metadata-distributions/serotype-distribution-chart.tsx
+  s_db2b6205c4f16f::t_c6058cee19f696 15-25
+  s_db2b6205c4f16f::t_deb5e0df9e1256 56,58
+  s_db2b6205c4f16f::t_a8e61a2878a911 161-174
+  s_db2b6205c4f16f::t_8827a339985dc6 175,203,217-272
+  s_db2b6205c4f16f::t_ced702d3aeba87 3
+  s_db2b6205c4f16f::t_16060823d3fd85 120
+  s_db2b6205c4f16f::t_576c038d08e658 338,342,348-364
+  s_db2b6205c4f16f::t_984c1287f001d2 53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "cd9913ecd3bf11b43831354160041165010fefd2",
+  "prompts": {},
+  "sessions": {
+    "s_db2b6205c4f16f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "190320ce-178d-4b58-bb8c-96b550454399",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -37,5 +37,6 @@ describe("MetadataDistributions", () => {
 
     expect(screen.getByRole("img", { name: "Genus distribution" })).toBeInTheDocument();
     expect(screen.getByRole("img", { name: "Host Name distribution" })).toBeInTheDocument();
+    expect(screen.getByTestId("serotype-chart")).toBeInTheDocument();
   });
 });

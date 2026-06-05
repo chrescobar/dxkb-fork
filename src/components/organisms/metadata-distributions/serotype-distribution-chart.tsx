@@ -9,7 +9,7 @@ import { useTooltip } from "@visx/tooltip";
 
 import { Card, CardContent } from "@/components/ui/card";
 import type { SerotypeDistributionData, SerotypeYear } from "@/lib/services/organisms/types";
-import { numberFormatter } from "@/lib/services/organisms/utils";
+import { chartTooltipStyle, numberFormatter } from "@/lib/services/organisms/utils";
 import { cn } from "@/lib/utils";
 
 interface ColumnTooltipRow {
@@ -347,26 +347,14 @@ export function SerotypeDistributionChart({
         <div
           role="status"
           className="bg-popover text-popover-foreground pointer-events-none fixed z-50 rounded-md border px-3 py-2 text-xs shadow-md"
-          style={(() => {
-            const cx = tooltipLeft ?? 0;
-            const cy = tooltipTop ?? 0;
-            const vw = typeof window !== "undefined" ? window.innerWidth : 9999;
-            const vh =
-              typeof window !== "undefined" ? window.innerHeight : 9999;
-            // Estimated tooltip size — flip if it would overflow the viewport
-            const tw = 160;
-            const th = 20 + tooltipData.rows.length * 22;
-            return {
-              left:
-                cx + tooltipOffsetX + tw > vw
-                  ? cx - tooltipOffsetX - tw
-                  : cx + tooltipOffsetX,
-              top:
-                cy + tooltipOffsetY + th > vh
-                  ? cy - tooltipOffsetY - th
-                  : cy + tooltipOffsetY,
-            };
-          })()}
+          style={chartTooltipStyle(
+            tooltipLeft ?? 0,
+            tooltipTop ?? 0,
+            160,
+            20 + tooltipData.rows.length * 22,
+            tooltipOffsetX,
+            tooltipOffsetY,
+          )}
         >
           <p className="text-foreground mb-1.5 font-semibold">
             {tooltipData.year}

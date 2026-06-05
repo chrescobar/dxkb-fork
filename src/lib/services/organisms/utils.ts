@@ -146,3 +146,35 @@ export function parseSolrFacetPivot(payload: Record<string, unknown>, pivotKey: 
   }
   return result;
 }
+
+/**
+ * Calculates a fixed-position tooltip style that flips horizontally or
+ * vertically when the tooltip would overflow the viewport edge.
+ *
+ * @param cx - cursor clientX
+ * @param cy - cursor clientY
+ * @param estimatedWidth - estimated tooltip width in px
+ * @param estimatedHeight - estimated tooltip height in px
+ * @param offsetX - preferred x offset from cursor (positive = right)
+ * @param offsetY - preferred y offset from cursor (negative = above)
+ */
+export function chartTooltipStyle(
+  cx: number,
+  cy: number,
+  estimatedWidth: number,
+  estimatedHeight: number,
+  offsetX = 12,
+  offsetY = -36,
+): { left: number; top: number } {
+  const vw = typeof window !== "undefined" ? window.innerWidth : 9999;
+  const vh = typeof window !== "undefined" ? window.innerHeight : 9999;
+  const left =
+    cx + offsetX + estimatedWidth > vw ? cx - offsetX - estimatedWidth : cx + offsetX;
+  const top =
+    cy + offsetY < 0
+      ? cy + Math.abs(offsetY)
+      : cy + offsetY + estimatedHeight > vh
+        ? cy - Math.abs(offsetY) - estimatedHeight
+        : cy + offsetY;
+  return { left, top };
+}

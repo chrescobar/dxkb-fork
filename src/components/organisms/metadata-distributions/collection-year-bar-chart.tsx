@@ -7,7 +7,7 @@ import { scaleBand, scaleLinear } from "@visx/scale";
 import { useTooltip } from "@visx/tooltip";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { numberFormatter } from "@/lib/services/organisms/utils";
+import { chartTooltipStyle, numberFormatter } from "@/lib/services/organisms/utils";
 
 interface YearDatum {
   year: number;
@@ -172,14 +172,14 @@ export function CollectionYearBarChart({
                 />
 
                 {tooltipData && (
-                  <line
-                    x1={(xScale(tooltipData.year) ?? 0) + xScale.bandwidth() / 2}
-                    x2={(xScale(tooltipData.year) ?? 0) + xScale.bandwidth() / 2}
-                    y1={0}
-                    y2={innerHeight}
-                    stroke="var(--muted-foreground)"
-                    strokeWidth={1}
-                    strokeDasharray="3,3"
+                  <rect
+                    x={(xScale(tooltipData.year) ?? 0) - xScale.step() * 0.125}
+                    y={0}
+                    width={xScale.step()}
+                    height={innerHeight}
+                    fill="var(--primary)"
+                    fillOpacity={0.12}
+                    rx={3}
                     pointerEvents="none"
                   />
                 )}
@@ -226,8 +226,8 @@ export function CollectionYearBarChart({
       {tooltipData && (
         <div
           role="status"
-          className="bg-popover text-popover-foreground pointer-events-none fixed rounded-md border px-2 py-1 text-xs shadow-md"
-          style={{ left: tooltipLeft ?? 0, top: tooltipTop ?? 0 }}
+          className="bg-popover text-popover-foreground pointer-events-none fixed z-50 rounded-md border px-2 py-1 text-xs shadow-md"
+          style={chartTooltipStyle(tooltipLeft ?? 0, tooltipTop ?? 0, 150, 28)}
         >
           {tooltipData.year}: {numberFormatter.format(tooltipData.count)}
         </div>

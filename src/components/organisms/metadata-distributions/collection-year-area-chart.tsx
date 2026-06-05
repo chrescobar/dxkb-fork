@@ -9,7 +9,7 @@ import { useTooltip } from "@visx/tooltip";
 import { curveMonotoneX } from "@visx/vendor/d3-shape";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { numberFormatter } from "@/lib/services/organisms/utils";
+import { chartTooltipStyle, numberFormatter } from "@/lib/services/organisms/utils";
 
 interface YearDatum {
   year: number;
@@ -204,18 +204,25 @@ export function CollectionYearAreaChart({
                   strokeWidth={1}
                 />
 
-                {tooltipData && (
-                  <line
-                    x1={xScale(tooltipData.year) ?? 0}
-                    x2={xScale(tooltipData.year) ?? 0}
-                    y1={0}
-                    y2={innerHeight}
-                    stroke="var(--muted-foreground)"
-                    strokeWidth={1}
-                    strokeDasharray="3,3"
-                    pointerEvents="none"
-                  />
-                )}
+                {tooltipData && (() => {
+                  const hx = xScale(tooltipData.year) ?? 0;
+                  const colW =
+                    yearData.length > 1
+                      ? innerWidth / (yearData.length - 1)
+                      : innerWidth;
+                  return (
+                    <rect
+                      x={hx - colW / 2}
+                      y={0}
+                      width={colW}
+                      height={innerHeight}
+                      fill="var(--primary)"
+                      fillOpacity={0.12}
+                      rx={3}
+                      pointerEvents="none"
+                    />
+                  );
+                })()}
 
                 <rect
                   data-testid="chart-overlay"
@@ -255,8 +262,8 @@ export function CollectionYearAreaChart({
       {tooltipData && (
         <div
           role="status"
-          className="bg-popover text-popover-foreground pointer-events-none fixed rounded-md border px-2 py-1 text-xs shadow-md"
-          style={{ left: tooltipLeft ?? 0, top: tooltipTop ?? 0 }}
+          className="bg-popover text-popover-foreground pointer-events-none fixed z-50 rounded-md border px-2 py-1 text-xs shadow-md"
+          style={chartTooltipStyle(tooltipLeft ?? 0, tooltipTop ?? 0, 150, 28)}
         >
           {tooltipData.year}: {numberFormatter.format(tooltipData.count)}
         </div>

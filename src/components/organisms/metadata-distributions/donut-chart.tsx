@@ -12,8 +12,8 @@ import {
   chartColors as sharedChartColors,
   chartTooltipStyle,
   donutFallbackColor,
-  numberFormatter,
-} from "@/lib/services/organisms/utils";
+} from "@/lib/services/organisms/chart-utils";
+import { numberFormatter } from "@/lib/services/organisms/utils";
 
 import { ChartLegendPill } from "./_shared/chart-legend-pill";
 

@@ -9,11 +9,8 @@ import { useTooltip } from "@visx/tooltip";
 
 import { Card, CardContent } from "@/components/ui/card";
 import type { SerotypeDistributionData, SerotypeYear } from "@/lib/services/organisms/types";
-import {
-  chartColors,
-  chartTooltipStyle,
-  numberFormatter,
-} from "@/lib/services/organisms/utils";
+import { chartColors, chartTooltipStyle } from "@/lib/services/organisms/chart-utils";
+import { numberFormatter } from "@/lib/services/organisms/utils";
 
 import { ChartLegendPill } from "./_shared/chart-legend-pill";
 import {

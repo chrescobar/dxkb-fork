@@ -7,7 +7,8 @@ import { scaleBand, scaleLinear } from "@visx/scale";
 import { useTooltip } from "@visx/tooltip";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { chartTooltipStyle, numberFormatter } from "@/lib/services/organisms/utils";
+import { chartTooltipStyle } from "@/lib/services/organisms/chart-utils";
+import { numberFormatter } from "@/lib/services/organisms/utils";
 
 import {
   chartMarginLeft,

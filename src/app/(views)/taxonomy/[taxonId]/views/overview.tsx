@@ -10,15 +10,17 @@ import { withSectionError } from "@/components/organisms/shared/with-section-err
 import { TaxonomySummary } from "@/components/organisms/taxonomy-summary/taxonomy-summary";
 import { TaxonomySummarySkeleton } from "@/components/organisms/taxonomy-summary/taxonomy-summary-skeleton";
 import type { OrganismLandingConfig } from "@/components/organisms/types";
+import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 
 interface OverviewViewProps {
   config: OrganismLandingConfig;
+  taxon: OrganismTaxonomy | null;
   showSerotype?: boolean;
 }
 
-export function makeOverviewView({ config, showSerotype }: OverviewViewProps) {
+export function makeOverviewView({ config, taxon, showSerotype }: OverviewViewProps) {
   async function TaxonomySummaryBoundary() {
-    return withSectionError(() => TaxonomySummary({ taxonId: config.taxonId }));
+    return withSectionError(() => TaxonomySummary({ taxonId: config.taxonId, taxon }));
   }
 
   async function MetadataDistributionsBoundary() {

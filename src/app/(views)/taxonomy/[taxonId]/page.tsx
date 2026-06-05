@@ -36,7 +36,7 @@ export default async function TaxonomyPage({ params, searchParams }: TaxonomyPag
   const taxon = await fetchOrganismTaxonomy(taxonId).catch(() => null);
   const config = buildTaxonomyConfig(taxonId, taxon);
   const showSerotype = serotypeTaxa.has(taxonId);
-  const navItems = buildTaxonomyNavItems(config, showSerotype);
+  const navItems = buildTaxonomyNavItems(config, showSerotype, taxon);
 
   return (
     <OrganismLandingShell

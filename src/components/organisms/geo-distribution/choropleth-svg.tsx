@@ -135,7 +135,7 @@ function ChoroplethPath({
     <path
       d={pathD}
       fill={fill}
-      stroke="#94a3b8"
+      stroke="#475569"
       strokeWidth={strokeWidth}
       style={cursor ? { cursor } : undefined}
       onPointerMove={(event) => {
@@ -190,7 +190,7 @@ const WorldCountriesLayer = memo(function WorldCountriesLayer({
               key={`${name}-${index}`}
               pathD={path ?? ""}
               fill={colorScale(count)}
-              strokeWidth={0.4}
+              strokeWidth={0.6}
               cursor={interactable ? "pointer" : "default"}
               isDraggingRef={isDraggingRef}
               payload={{ view: "world", name, count, genera: meta?.genera ?? {}, hosts: meta?.hosts ?? {} }}
@@ -237,7 +237,7 @@ const UsStatesLayer = memo(function UsStatesLayer({
               key={`${name}-${index}`}
               pathD={path ?? ""}
               fill={colorScale(count)}
-              strokeWidth={0.5}
+              strokeWidth={0.75}
               cursor="pointer"
               isDraggingRef={isDraggingRef}
               payload={{ view: "us", name, count, genera: meta?.genera ?? {}, hosts: meta?.hosts ?? {} }}
@@ -289,7 +289,7 @@ const StateCountiesLayer = memo(function StateCountiesLayer({
               key={`${name}-${feature.id ?? index}`}
               pathD={path ?? ""}
               fill={colorScale(count)}
-              strokeWidth={0.3}
+              strokeWidth={0.5}
               isDraggingRef={isDraggingRef}
               payload={{ view: "state", name, count, genera: meta?.genera ?? {}, hosts: meta?.hosts ?? {} }}
               onHoverEnter={onHoverEnter}

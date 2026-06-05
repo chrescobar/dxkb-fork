@@ -1,25 +1,29 @@
 import { Card } from "@/components/ui/card";
 import { fetchOrganismSummary } from "@/lib/services/organisms/summary";
-import { fetchOrganismTaxonomy } from "@/lib/services/organisms/taxonomy";
+import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 import { numberFormatter } from "@/lib/services/organisms/utils";
 
 function formatCount(value: number | null): string {
   return value === null ? "-" : numberFormatter.format(value);
 }
 
-export async function TaxonomySummary({ taxonId }: { taxonId: number }) {
-  // allSettled: failing one endpoint shouldn't blank the entire summary card.
-  const [summaryResult, taxonResult] = await Promise.allSettled([
-    fetchOrganismSummary(taxonId),
-    fetchOrganismTaxonomy(taxonId),
-  ]);
+export async function TaxonomySummary({
+  taxonId,
+  taxon,
+}: {
+  taxonId: number;
+  taxon: OrganismTaxonomy | null;
+}) {
+  // allSettled: failing the summary endpoint shouldn't blank the entire card.
+  const summaryResult = await fetchOrganismSummary(taxonId).then(
+    (value) => ({ status: "fulfilled" as const, value }),
+    (reason) => ({ status: "rejected" as const, reason }),
+  );
 
   const summary = summaryResult.status === "fulfilled" ? summaryResult.value : null;
-  const taxon = taxonResult.status === "fulfilled" ? taxonResult.value : null;
 
   if (!summary && !taxon) {
     if (summaryResult.status === "rejected") throw summaryResult.reason;
-    if (taxonResult.status === "rejected") throw taxonResult.reason;
   }
 
   const metrics: { label: string; value: string; description: string }[] = [

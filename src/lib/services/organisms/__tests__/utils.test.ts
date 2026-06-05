@@ -1,12 +1,10 @@
 import { http, HttpResponse } from "msw";
 
+import { chartColors, chartTooltipStyle, donutFallbackColor } from "@/lib/services/organisms/chart-utils";
 import {
   buildGenomeFacetUrl,
   buildGenomeGeoFacetUrl,
   buildGenomeGeoPivotUrl,
-  chartColors,
-  chartTooltipStyle,
-  donutFallbackColor,
   fetchOrganismSolrJson,
   numberOrNull,
   parseSolrFacetList,

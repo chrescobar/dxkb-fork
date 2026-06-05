@@ -8,7 +8,8 @@ function accentForLineage(
 ): OrganismLandingConfig["accent"] {
   if (lineageNames.includes("Viruses")) return "viruses";
   if (lineageNames.includes("Fungi")) return "fungi";
-  return "bacteria";
+  if (lineageNames.includes("Bacteria")) return "bacteria";
+  return "all";
 }
 
 export function buildTaxonomyConfig(

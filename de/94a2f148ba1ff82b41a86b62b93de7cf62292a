@@ -1,0 +1,19 @@
+src/lib/services/organisms/utils.ts
+  s_db2b6205c4f16f::t_7d4aa0a6ae3a2f 154-156,159,171,174-181,188-189
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "de94a2f148ba1ff82b41a86b62b93de7cf62292a",
+  "prompts": {},
+  "sessions": {
+    "s_db2b6205c4f16f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "190320ce-178d-4b58-bb8c-96b550454399",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

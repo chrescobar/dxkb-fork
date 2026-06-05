@@ -1,0 +1,61 @@
+src/app/(views)/taxonomy/[taxonId]/__tests__/page.test.tsx
+  s_3e7cbfe8a8c7c1::t_0daf1032ffa1e9 19-25
+  s_3e7cbfe8a8c7c1::t_56e2f46d4bd5f6 16-18,26
+  s_3e7cbfe8a8c7c1::t_d01cf0de270704 67-99
+src/components/organisms/metadata-distributions/_shared/__tests__/use-svg-band-pointer.test.ts
+  s_3e7cbfe8a8c7c1::t_ed27c854de6b4e 1-72
+src/components/organisms/landing-shell/__tests__/landing-nav.test.tsx
+  s_3e7cbfe8a8c7c1::t_eb858ac1754b9d 61-88
+src/lib/services/organisms/__tests__/serotype-distribution.test.ts
+  s_3e7cbfe8a8c7c1::t_422802064c22ea 167-197
+src/lib/services/organisms/__tests__/geo-distribution.test.ts
+  s_3e7cbfe8a8c7c1::t_35a8f15aef7198 174-200
+src/lib/services/organisms/__tests__/utils.test.ts
+  s_3e7cbfe8a8c7c1::t_67b3cafd56e93e 1-270
+src/components/organisms/metadata-distributions/__tests__/donut-chart.test.tsx
+  s_3e7cbfe8a8c7c1::t_4f40f06f151aca 187,192-195,201-204,206-212
+  s_3e7cbfe8a8c7c1::t_c1043182efd125 149-156,158-186,188-191,196-200,205,213
+  s_3e7cbfe8a8c7c1::t_93278accdd9704 157
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_3e7cbfe8a8c7c1::t_47461815995e03 216-269
+src/components/organisms/taxonomy-summary/__tests__/taxonomy-summary.test.tsx
+  s_3e7cbfe8a8c7c1::t_2027367be25d38 1-94
+src/app/(views)/taxonomy/[taxonId]/__tests__/_config.test.ts
+  s_3e7cbfe8a8c7c1::t_eabf63bf1b2636 1-51
+e2e/tests/taxonomy-map.spec.ts
+  s_3e7cbfe8a8c7c1::t_e92a2eb75d14dc 55-96
+src/components/organisms/metadata-distributions/_shared/__tests__/year-data.test.ts
+  s_3e7cbfe8a8c7c1::t_0795a637d737ce 1-52
+src/components/organisms/__tests__/taxon-breadcrumb.test.tsx
+  s_3e7cbfe8a8c7c1::t_67392d18f919ca 1-126
+src/components/organisms/shared/__tests__/default-nav-items.test.tsx
+  s_3e7cbfe8a8c7c1::t_567486b0ffed1b 46-48,58-59,67-69,79-81,89-91
+  s_3e7cbfe8a8c7c1::t_5d4aead06b1094 1-45,49-57,60-66,71-78,83-88,93-95
+  s_3e7cbfe8a8c7c1::t_ec1b5ea2667b21 70,82,92
+src/components/organisms/reference-genomes/__tests__/reference-genomes-client.test.tsx
+  s_3e7cbfe8a8c7c1::t_af00033c63fd6b 2-32,36-50,52-61,63-81
+  s_3e7cbfe8a8c7c1::t_447b485835bfee 51
+  s_3e7cbfe8a8c7c1::t_fb2e8a4e5ab6bb 62
+  s_3e7cbfe8a8c7c1::t_d932521c0c748a 1
+  s_3e7cbfe8a8c7c1::t_4a1cb78d2e685a 33-35
+src/components/organisms/metadata-distributions/_shared/__tests__/chart-legend-pill.test.tsx
+  s_3e7cbfe8a8c7c1::t_8bd9e0c27f1993 1-122
+src/components/organisms/metadata-distributions/_shared/__tests__/y-axis-ticks.test.tsx
+  s_3e7cbfe8a8c7c1::t_525c64a7f8d1c8 1-36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "b3401f8762d07337cbd328bea85f43b1a32f3adf",
+  "prompts": {},
+  "sessions": {
+    "s_3e7cbfe8a8c7c1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0130b1b3-d5ec-4024-b499-1e6a550706eb",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

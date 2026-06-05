@@ -8,7 +8,7 @@ const chartCenter = chartSize / 2;
 const outerRadius = 66;
 
 describe("DonutChart", () => {
-  it("renders top four slices and an Others bucket", () => {
+  it("renders top nine slices and an Others bucket", () => {
     render(
       <DonutChart
         title="Genus"
@@ -19,6 +19,11 @@ describe("DonutChart", () => {
           { label: "D", value: 7 },
           { label: "E", value: 6 },
           { label: "F", value: 5 },
+          { label: "G", value: 4 },
+          { label: "H", value: 3 },
+          { label: "I", value: 2 },
+          { label: "J", value: 2 },
+          { label: "K", value: 1 },
         ]}
       />,
     );
@@ -27,9 +32,9 @@ describe("DonutChart", () => {
       screen.getByRole("img", { name: "Genus distribution" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Others")).toBeInTheDocument();
-    // Both the SVG path and the legend chip carry the same aria-label
+    // A–I are shown individually; J(2)+K(1)=3 collapse into Others
     expect(
-      within(screen.getByRole("img")).getByLabelText("Others: 11"),
+      within(screen.getByRole("img")).getByLabelText("Others: 3"),
     ).toBeInTheDocument();
   });
 
@@ -44,10 +49,17 @@ describe("DonutChart", () => {
           { label: "C", value: 7 },
           { label: "D", value: 6 },
           { label: "E", value: 5 },
+          { label: "F", value: 4 },
+          { label: "G", value: 3 },
+          { label: "H", value: 2 },
+          { label: "I", value: 2 },
+          { label: "J", value: 1 },
         ]}
       />,
     );
 
+    // "Others" is one of the top 9 shown items; the aggregate bucket for the
+    // remaining items must pick the fallback label "Other values" to avoid collision.
     expect(screen.getByText("Others")).toBeInTheDocument();
     expect(screen.getByText("Other values")).toBeInTheDocument();
   });

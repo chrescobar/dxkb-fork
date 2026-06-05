@@ -32,8 +32,23 @@ interface DonutChartProps {
   layout?: "bottom" | "side";
 }
 
-// Donut uses 5 distinct accents plus a muted color for the "Others" bucket.
-const donutPalette = [...sharedChartColors.slice(0, 5), donutFallbackColor];
+// Donut uses up to 10 distinct accents plus a muted color for the "Others" bucket.
+// chart-1..5 are brand-derived per theme (primary/secondary/accent/violet/coral);
+// chart-6..10 are shared fills from globals.css.
+// Sequence (dxkb): navy(267)→amber(37)→teal(195)→coral(15)→gold(85)→pink(340)→green(140)→violet(310)→orange(50)→cyan-green(175)→gray
+const donutPalette = [
+  sharedChartColors[0], // chart-1:  primary      h≈267
+  sharedChartColors[1], // chart-2:  secondary    h≈37
+  sharedChartColors[5], // chart-6:  teal         h=195
+  sharedChartColors[4], // chart-5:  coral        h≈15
+  sharedChartColors[2], // chart-3:  gold         h≈85
+  sharedChartColors[8], // chart-9:  pink         h=340
+  sharedChartColors[7], // chart-8:  green        h=140
+  sharedChartColors[3], // chart-4:  violet       h≈310
+  sharedChartColors[6], // chart-7:  orange       h=50
+  sharedChartColors[9], // chart-10: cyan-green   h=175
+  donutFallbackColor,
+];
 
 const chartSize = 160;
 const chartCenter = chartSize / 2;
@@ -66,11 +81,11 @@ function chartData(data: DonutDatum[]): DonutChartDatum[] {
       label: facetDisplayLabel(datum.label),
     }));
 
-  if (positive.length <= 5) return positive;
+  if (positive.length <= 10) return positive;
 
-  const top = positive.slice(0, 4);
+  const top = positive.slice(0, 9);
   const otherValue = positive
-    .slice(4)
+    .slice(9)
     .reduce((sum, datum) => sum + datum.value, 0);
 
   return [
@@ -205,14 +220,10 @@ export function DonutChart({ title, data, layout = "bottom" }: DonutChartProps) 
     const svgEl = svgRef.current;
     if (!svgEl) return;
 
-    const ctm = svgEl.getScreenCTM();
-    if (!ctm) return;
-    const { x: svgPtX, y: svgPtY } = new DOMPoint(
-      event.clientX,
-      event.clientY,
-    ).matrixTransform(ctm.inverse());
-    const svgX = svgPtX - chartCenter;
-    const svgY = svgPtY - chartCenter;
+    const rect = svgEl.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+    const svgX = ((event.clientX - rect.left) / rect.width) * chartSize - chartCenter;
+    const svgY = ((event.clientY - rect.top) / rect.height) * chartSize - chartCenter;
     const dist = Math.sqrt(svgX * svgX + svgY * svgY);
 
     // Only activate within the ring — inner hole and outside edge are dead zones
@@ -305,6 +316,8 @@ export function DonutChart({ title, data, layout = "bottom" }: DonutChartProps) 
                           suppressHydrationWarning
                           d={arc.pathD}
                           fill={arc.color}
+                          stroke={arc.color}
+                          strokeWidth={0.5}
                           aria-label={accessibleLabel}
                           style={{
                             opacity: isDimmed ? 0.2 : 1,

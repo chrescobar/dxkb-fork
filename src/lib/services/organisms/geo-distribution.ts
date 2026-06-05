@@ -6,35 +6,19 @@ import type {
 import {
   buildGenomeGeoFacetUrl,
   buildGenomeGeoPivotUrl,
+  fetchOrganismSolrJson,
   getBvBrcWebsiteApiBaseUrl,
-  organismBvBrcRevalidateSeconds,
-  organismFetchCacheInit,
   parseSolrFacetList,
   parseSolrFacetPivot,
-  readJsonObject,
-  responseErrorMessage,
 } from "./utils";
 
 const countryLimit = 300;
 const stateLimit = 100;
 const countyLimit = 1000;
 
-async function fetchSolr(url: string, signal: AbortSignal | undefined, source: string): Promise<Record<string, unknown>> {
-  const response = await fetch(url, {
-    method: "GET",
-    headers: { Accept: "application/solr+json" },
-    signal,
-    ...organismFetchCacheInit(organismBvBrcRevalidateSeconds),
-  });
-  if (!response.ok) {
-    throw new Error(`${source}: ${await responseErrorMessage(response)}`);
-  }
-  return readJsonObject(response, source);
-}
-
 async function fetchField(baseUrl: string, taxonId: number, field: string, limit: number | undefined, signal: AbortSignal | undefined): Promise<Record<string, number>> {
   const url = buildGenomeGeoFacetUrl(baseUrl, taxonId, field, limit);
-  const payload = await fetchSolr(url, signal, `genome ${field} facet`);
+  const payload = await fetchOrganismSolrJson(url, `genome ${field} facet`, signal);
   const list = parseSolrFacetList(payload, field);
   const map: Record<string, number> = {};
   for (const item of list) {
@@ -45,14 +29,22 @@ async function fetchField(baseUrl: string, taxonId: number, field: string, limit
 
 async function fetchPivot(baseUrl: string, taxonId: number, primary: string, secondary: string, limit: number | undefined, signal: AbortSignal | undefined): Promise<Record<string, Record<string, number>>> {
   const url = buildGenomeGeoPivotUrl(baseUrl, taxonId, primary, secondary, limit);
-  const payload = await fetchSolr(url, signal, `genome ${primary},${secondary} pivot`);
+  const payload = await fetchOrganismSolrJson(url, `genome ${primary},${secondary} pivot`, signal);
   return parseSolrFacetPivot(payload, `${primary},${secondary}`);
 }
 
 async function fetchPivotOrEmpty(baseUrl: string, taxonId: number, primary: string, secondary: string, limit: number | undefined, signal: AbortSignal | undefined): Promise<Record<string, Record<string, number>>> {
   try {
     return await fetchPivot(baseUrl, taxonId, primary, secondary, limit, signal);
-  } catch {
+  } catch (err) {
+    // AbortError must propagate so callers can short-circuit on cancellation.
+    if (err instanceof DOMException && err.name === "AbortError") throw err;
+    if (err instanceof Error && err.name === "AbortError") throw err;
+    // Pivots are best-effort enrichment data. Log so operators have a signal
+    // that a tooltip's "Top Genera"/"Top Hosts" section is empty due to error
+    // rather than missing data.
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn(`[geo-distribution] pivot ${primary},${secondary} failed: ${message}`);
     return {};
   }
 }

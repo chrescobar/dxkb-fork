@@ -46,4 +46,58 @@ describe("fetchOrganismTaxonomy", () => {
 
     await expect(fetchOrganismTaxonomy(2)).rejects.toThrow("taxonomy unavailable");
   });
+
+  it("parses numeric lineage_ids returned as numbers", async () => {
+    server.use(
+      http.get(`${baseUrl}/taxonomy/234`, () =>
+        HttpResponse.json({
+          taxon_id: 234,
+          taxon_name: "Brucella",
+          lineage_names: ["cellular organisms", "Bacteria", "Brucella"],
+          lineage_ids: [131567, 2, 234],
+          taxon_rank: "genus",
+          genomes: 1909,
+        }),
+      ),
+    );
+
+    const result = await fetchOrganismTaxonomy(234);
+    expect(result.lineageIds).toEqual([131567, 2, 234]);
+  });
+
+  it("coerces string lineage_ids to numbers (application/solr+json shape)", async () => {
+    server.use(
+      http.get(`${baseUrl}/taxonomy/234`, () =>
+        HttpResponse.json({
+          taxon_id: 234,
+          taxon_name: "Brucella",
+          lineage_names: ["Bacteria", "Brucella"],
+          lineage_ids: ["2", "234"],
+          taxon_rank: "genus",
+          genomes: 1909,
+        }),
+      ),
+    );
+
+    const result = await fetchOrganismTaxonomy(234);
+    expect(result.lineageIds).toEqual([2, 234]);
+  });
+
+  it("drops non-numeric lineage_ids entries", async () => {
+    server.use(
+      http.get(`${baseUrl}/taxonomy/234`, () =>
+        HttpResponse.json({
+          taxon_id: 234,
+          taxon_name: "Brucella",
+          lineage_names: ["Bacteria", "Brucella"],
+          lineage_ids: [2, "not-a-number", null, 234],
+          taxon_rank: "genus",
+          genomes: 1909,
+        }),
+      ),
+    );
+
+    const result = await fetchOrganismTaxonomy(234);
+    expect(result.lineageIds).toEqual([2, 234]);
+  });
 });

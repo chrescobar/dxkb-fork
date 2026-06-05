@@ -9,56 +9,65 @@ import { ReferenceGenomesSkeleton } from "@/components/organisms/reference-genom
 import { withSectionError } from "@/components/organisms/shared/with-section-error";
 import { TaxonomySummary } from "@/components/organisms/taxonomy-summary/taxonomy-summary";
 import { TaxonomySummarySkeleton } from "@/components/organisms/taxonomy-summary/taxonomy-summary-skeleton";
+import type { OrganismLandingConfig } from "@/components/organisms/types";
 
-import { brucellaTaxonomyConfig as config } from "../_config";
-
-async function TaxonomySummaryBoundary() {
-  return withSectionError(() => TaxonomySummary({ taxonId: config.taxonId }));
+interface OverviewViewProps {
+  config: OrganismLandingConfig;
+  showSerotype?: boolean;
 }
 
-async function MetadataDistributionsBoundary() {
-  return withSectionError(() =>
-    MetadataDistributions({
-      taxonId: config.taxonId,
-      fields: config.metadataFields,
-    }),
-  );
-}
+export function makeOverviewView({ config, showSerotype }: OverviewViewProps) {
+  async function TaxonomySummaryBoundary() {
+    return withSectionError(() => TaxonomySummary({ taxonId: config.taxonId }));
+  }
 
-async function GeoDistributionBoundary() {
-  return withSectionError(() =>
-    GeoDistribution({ taxonId: config.taxonId, accent: config.accent }),
-  );
-}
+  async function MetadataDistributionsBoundary() {
+    return withSectionError(() =>
+      MetadataDistributions({
+        taxonId: config.taxonId,
+        fields: config.metadataFields,
+        showSerotype,
+      }),
+    );
+  }
 
-async function ReferenceGenomesBoundary() {
-  return withSectionError(() => ReferenceGenomes({ taxonId: config.taxonId }));
-}
+  async function GeoDistributionBoundary() {
+    return withSectionError(() =>
+      GeoDistribution({ taxonId: config.taxonId, accent: config.accent }),
+    );
+  }
 
-export function OverviewView() {
-  return (
-    <div className="flex flex-col gap-8">
-      <Suspense fallback={<TaxonomySummarySkeleton />}>
-        <TaxonomySummaryBoundary />
-      </Suspense>
+  async function ReferenceGenomesBoundary() {
+    return withSectionError(() => ReferenceGenomes({ taxonId: config.taxonId }));
+  }
 
-      <div className="flex flex-col gap-8 xl:flex-row xl:items-stretch xl:max-h-167">
-        <section className="flex w-full flex-col xl:w-[70%]">
-          <Suspense fallback={<GeoDistributionSkeleton />}>
-            <GeoDistributionBoundary />
-          </Suspense>
-        </section>
+  function OverviewView() {
+    return (
+      <div className="flex flex-col gap-8">
+        <Suspense fallback={<TaxonomySummarySkeleton />}>
+          <TaxonomySummaryBoundary />
+        </Suspense>
 
-        <section className="flex w-full flex-col xl:w-[30%] xl:min-w-0">
-          <Suspense fallback={<ReferenceGenomesSkeleton />}>
-            <ReferenceGenomesBoundary />
-          </Suspense>
-        </section>
+        <div className="flex flex-col gap-8 xl:flex-row xl:items-stretch xl:max-h-167">
+          <section className="flex w-full flex-col xl:w-[70%]">
+            <Suspense fallback={<GeoDistributionSkeleton />}>
+              <GeoDistributionBoundary />
+            </Suspense>
+          </section>
+
+          <section className="flex w-full flex-col xl:w-[30%] xl:min-w-0">
+            <Suspense fallback={<ReferenceGenomesSkeleton />}>
+              <ReferenceGenomesBoundary />
+            </Suspense>
+          </section>
+        </div>
+
+        <Suspense fallback={<MetadataDistributionsSkeleton />}>
+          <MetadataDistributionsBoundary />
+        </Suspense>
       </div>
+    );
+  }
 
-      <Suspense fallback={<MetadataDistributionsSkeleton />}>
-        <MetadataDistributionsBoundary />
-      </Suspense>
-    </div>
-  );
+  return OverviewView;
 }

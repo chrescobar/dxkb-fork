@@ -8,7 +8,14 @@ import { useTooltip } from "@visx/tooltip";
 import { facetDisplayLabel } from "@/components/organisms/facet-label";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { numberFormatter } from "@/lib/services/organisms/utils";
+import {
+  chartColors as sharedChartColors,
+  chartTooltipStyle,
+  donutFallbackColor,
+  numberFormatter,
+} from "@/lib/services/organisms/utils";
+
+import { ChartLegendPill } from "./_shared/chart-legend-pill";
 
 interface DonutDatum {
   label: string;
@@ -25,22 +32,16 @@ interface DonutChartProps {
   layout?: "bottom" | "side";
 }
 
-const chartColors = [
-  "var(--chart-1)",
-  "var(--chart-2)",
-  "var(--chart-3)",
-  "var(--chart-4)",
-  "var(--chart-5)",
-  "var(--muted-foreground)",
-];
+// Donut uses 5 distinct accents plus a muted color for the "Others" bucket.
+const donutPalette = [...sharedChartColors.slice(0, 5), donutFallbackColor];
 
 const chartSize = 160;
 const chartCenter = chartSize / 2;
 const outerRadius = 66;
 const innerRadius = 38;
 const popDistance = 4;
-const tooltipOffsetX = 12;
-const tooltipOffsetY = -36;
+const tooltipEstimatedWidth = 160;
+const tooltipEstimatedHeight = 32;
 const aggregateLabel = "Others";
 const fallbackAggregateLabel = "Other values";
 
@@ -90,6 +91,24 @@ function arcPath(
   startAngle: number,
   endAngle: number,
 ): string {
+  const sweep = endAngle - startAngle;
+  const f = (n: number) => Math.round(n * 1000) / 1000;
+
+  // Full-circle slice (single positive datum): SVG arc with identical start/end
+  // points renders nothing. Build the ring as two semicircles using even-odd fill.
+  if (sweep >= Math.PI * 2 - 1e-6) {
+    return [
+      `M ${f(outerR)} 0`,
+      `A ${outerR} ${outerR} 0 1 1 ${f(-outerR)} 0`,
+      `A ${outerR} ${outerR} 0 1 1 ${f(outerR)} 0`,
+      "Z",
+      `M ${f(innerR)} 0`,
+      `A ${innerR} ${innerR} 0 1 0 ${f(-innerR)} 0`,
+      `A ${innerR} ${innerR} 0 1 0 ${f(innerR)} 0`,
+      "Z",
+    ].join(" ");
+  }
+
   const pt = (radius: number, angle: number) => ({
     x: radius * Math.sin(angle),
     y: -radius * Math.cos(angle),
@@ -100,8 +119,7 @@ function arcPath(
   const innerEnd   = pt(innerR, endAngle);
   const innerStart = pt(innerR, startAngle);
 
-  const large = endAngle - startAngle > Math.PI ? 1 : 0;
-  const f = (n: number) => Math.round(n * 1000) / 1000;
+  const large = sweep > Math.PI ? 1 : 0;
   const p = ({ x, y }: { x: number; y: number }) => `${f(x)} ${f(y)}`;
 
   return [
@@ -153,7 +171,7 @@ export function DonutChart({ title, data, layout = "bottom" }: DonutChartProps) 
   const slices = chartData(data);
   const colorScale = scaleOrdinal<string, string>({
     domain: slices.map((datum) => datum.id),
-    range: chartColors,
+    range: donutPalette,
   });
   const arcData = buildArcData(slices, (id) => colorScale(id));
   const total = slices.reduce((sum, d) => sum + d.value, 0);
@@ -166,6 +184,19 @@ export function DonutChart({ title, data, layout = "bottom" }: DonutChartProps) 
   const deactivate = () => {
     setActiveId(null);
     hideTooltip();
+  };
+
+  const showTooltipForArc = (arc: ArcDatum, clientX: number, clientY: number) => {
+    setActiveId(arc.slice.id);
+    showTooltip({
+      tooltipData: {
+        label: arc.slice.label,
+        value: arc.slice.value,
+        pct: Math.round((arc.slice.value / total) * 100),
+      },
+      tooltipLeft: clientX,
+      tooltipTop: clientY,
+    });
   };
 
   const handleOverlayMouseMove = (
@@ -192,16 +223,7 @@ export function DonutChart({ title, data, layout = "bottom" }: DonutChartProps) 
       let a = angle;
       if (a < arc.startAngle) a += Math.PI * 2;
       if (a >= arc.startAngle && a <= arc.endAngle) {
-        setActiveId(arc.slice.id);
-        showTooltip({
-          tooltipData: {
-            label: arc.slice.label,
-            value: arc.slice.value,
-            pct: Math.round((arc.slice.value / total) * 100),
-          },
-          tooltipLeft: event.clientX,
-          tooltipTop: event.clientY,
-        });
+        showTooltipForArc(arc, event.clientX, event.clientY);
         return;
       }
     }
@@ -312,40 +334,27 @@ export function DonutChart({ title, data, layout = "bottom" }: DonutChartProps) 
                 style={{ animation: "donut-legend-up 0.4s 0.4s ease-out both" }}
               >
                 {arcData.map((arc) => (
-                  <button
+                  <ChartLegendPill
                     key={arc.slice.id}
-                    type="button"
-                    aria-label={`${arc.slice.label}: ${numberFormatter.format(arc.slice.value)}`}
-                    className={cn(
-                      "flex w-full cursor-default items-center gap-1.5 rounded px-1.5 py-0.5 text-[10px] transition-colors",
-                      activeId === arc.slice.id
-                        ? "text-foreground"
-                        : "text-muted-foreground",
-                    )}
-                    style={
-                      activeId === arc.slice.id
-                        ? {
-                            backgroundColor: `color-mix(in srgb, ${arc.color} 12%, transparent)`,
-                          }
-                        : undefined
-                    }
-                    onMouseEnter={() => setActiveId(arc.slice.id)}
-                    onMouseLeave={() => setActiveId(null)}
-                    onFocus={() => setActiveId(arc.slice.id)}
-                    onBlur={() => setActiveId(null)}
+                    label={arc.slice.label}
+                    color={arc.color}
+                    active={activeId === arc.slice.id}
+                    variant="row"
+                    ariaLabel={`${arc.slice.label}: ${numberFormatter.format(arc.slice.value)}`}
+                    onActivate={() => setActiveId(arc.slice.id)}
+                    onDeactivate={() => setActiveId(null)}
+                    onFocus={(event) => {
+                      const rect = event.currentTarget.getBoundingClientRect();
+                      showTooltipForArc(arc, rect.right, rect.top);
+                    }}
                   >
-                    <span
-                      className="inline-block h-1.5 w-1.5 shrink-0 rounded-full"
-                      style={{ background: arc.color }}
-                      aria-hidden="true"
-                    />
                     <span className="min-w-0 flex-1 truncate text-left">
                       {arc.slice.label}
                     </span>
                     <span className="tabular-nums">
                       {numberFormatter.format(arc.slice.value)}
                     </span>
-                  </button>
+                  </ChartLegendPill>
                 ))}
               </div>
             ) : (
@@ -354,36 +363,19 @@ export function DonutChart({ title, data, layout = "bottom" }: DonutChartProps) 
                 style={{ animation: "donut-legend-up 0.4s 0.4s ease-out both" }}
               >
                 {arcData.map((arc) => (
-                  <button
+                  <ChartLegendPill
                     key={arc.slice.id}
-                    type="button"
-                    aria-label={`${arc.slice.label}: ${numberFormatter.format(arc.slice.value)}`}
-                    className={cn(
-                      "flex cursor-default items-center gap-1.5 rounded-full border px-2 py-0.5 text-[10px] transition-colors",
-                      activeId === arc.slice.id
-                        ? "text-foreground"
-                        : "border-border text-muted-foreground",
-                    )}
-                    style={
-                      activeId === arc.slice.id
-                        ? {
-                            borderColor: arc.color,
-                            backgroundColor: `color-mix(in srgb, ${arc.color} 12%, transparent)`,
-                          }
-                        : undefined
-                    }
-                    onMouseEnter={() => setActiveId(arc.slice.id)}
-                    onMouseLeave={() => setActiveId(null)}
-                    onFocus={() => setActiveId(arc.slice.id)}
-                    onBlur={() => setActiveId(null)}
-                  >
-                    <span
-                      className="inline-block h-1.5 w-1.5 shrink-0 rounded-full"
-                      style={{ background: arc.color }}
-                      aria-hidden="true"
-                    />
-                    {arc.slice.label}
-                  </button>
+                    label={arc.slice.label}
+                    color={arc.color}
+                    active={activeId === arc.slice.id}
+                    ariaLabel={`${arc.slice.label}: ${numberFormatter.format(arc.slice.value)}`}
+                    onActivate={() => setActiveId(arc.slice.id)}
+                    onDeactivate={() => setActiveId(null)}
+                    onFocus={(event) => {
+                      const rect = event.currentTarget.getBoundingClientRect();
+                      showTooltipForArc(arc, rect.right, rect.top);
+                    }}
+                  />
                 ))}
               </div>
             )}
@@ -393,11 +385,13 @@ export function DonutChart({ title, data, layout = "bottom" }: DonutChartProps) 
       {tooltipData && (
         <div
           role="status"
-          className="bg-popover text-popover-foreground pointer-events-none fixed rounded-md border px-2 py-1 text-xs shadow-md"
-          style={{
-            left: (tooltipLeft ?? 0) + tooltipOffsetX,
-            top: (tooltipTop ?? 0) + tooltipOffsetY,
-          }}
+          className="bg-popover text-popover-foreground pointer-events-none fixed z-50 rounded-md border px-2 py-1 text-xs shadow-md"
+          style={chartTooltipStyle(
+            tooltipLeft ?? 0,
+            tooltipTop ?? 0,
+            tooltipEstimatedWidth,
+            tooltipEstimatedHeight,
+          )}
         >
           {tooltipData.label}: {numberFormatter.format(tooltipData.value)}
           <span className="text-muted-foreground ml-1">

@@ -9,8 +9,23 @@ import { useTooltip } from "@visx/tooltip";
 
 import { Card, CardContent } from "@/components/ui/card";
 import type { SerotypeDistributionData, SerotypeYear } from "@/lib/services/organisms/types";
-import { chartTooltipStyle, numberFormatter } from "@/lib/services/organisms/utils";
-import { cn } from "@/lib/utils";
+import {
+  chartColors,
+  chartTooltipStyle,
+  numberFormatter,
+} from "@/lib/services/organisms/utils";
+
+import { ChartLegendPill } from "./_shared/chart-legend-pill";
+import {
+  chartMarginLeft,
+  chartMarginTop,
+  chartWidth,
+  stackedChartHeight,
+  stackedInnerHeight,
+  yearInnerWidth,
+} from "./_shared/chart-dimensions";
+import { nearestBandIndex } from "./_shared/use-svg-band-pointer";
+import { YAxisTicks } from "./_shared/y-axis-ticks";
 
 interface ColumnTooltipRow {
   serovar: string;
@@ -28,20 +43,10 @@ interface BarStackChartProps {
   data: SerotypeDistributionData;
 }
 
-const chartWidth = 540;
-const chartHeight = 300;
-const marginTop = 10;
-const marginRight = 20;
-const marginBottom = 32;
-const marginLeft = 54;
-const innerWidth = chartWidth - marginLeft - marginRight;
-const innerHeight = chartHeight - marginTop - marginBottom;
-
-const chartColors = [
-  "var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)",
-  "var(--chart-5)", "var(--chart-6)", "var(--chart-7)", "var(--chart-8)",
-  "var(--chart-9)", "var(--chart-10)",
-];
+interface Highlight {
+  idx: number;
+  locked: boolean;
+}
 
 const tooltipOffsetX = 16;
 const tooltipOffsetY = 16;
@@ -51,8 +56,7 @@ export function BarStackChart({
   data,
 }: BarStackChartProps) {
   const svgRef = useRef<SVGSVGElement>(null);
-  const [activeIdx, setActiveIdx] = useState<number | null>(null);
-  const [lockedIdx, setLockedIdx] = useState<number | null>(null);
+  const [highlight, setHighlight] = useState<Highlight | null>(null);
   const [hoveredYear, setHoveredYear] = useState<number | null>(null);
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
     useTooltip<ColumnTooltipData>();
@@ -70,11 +74,11 @@ export function BarStackChart({
     );
   }
 
-  const currentActive = lockedIdx !== null ? lockedIdx : activeIdx;
+  const activeIdx = highlight?.idx ?? null;
 
   const xScale = scaleBand<number>({
     domain: data.years.map((y) => y.year),
-    range: [0, innerWidth],
+    range: [0, yearInnerWidth],
     padding: 0.25,
   });
 
@@ -87,7 +91,7 @@ export function BarStackChart({
 
   const yScale = scaleLinear<number>({
     domain: [0, yMax],
-    range: [innerHeight, 0],
+    range: [stackedInnerHeight, 0],
     nice: true,
   });
 
@@ -98,17 +102,20 @@ export function BarStackChart({
 
   const yTicks = yScale.ticks(4);
 
-  function handlePillMouseEnter(idx: number) {
-    if (lockedIdx === null) setActiveIdx(idx);
+  function activatePill(idx: number) {
+    if (highlight?.locked) return;
+    setHighlight({ idx, locked: false });
   }
 
-  function handlePillMouseLeave() {
-    if (lockedIdx === null) setActiveIdx(null);
+  function deactivatePill() {
+    if (highlight?.locked) return;
+    setHighlight(null);
   }
 
-  function handlePillClick(idx: number) {
-    setLockedIdx((prev) => (prev === idx ? null : idx));
-    setActiveIdx(null);
+  function togglePillLock(idx: number) {
+    setHighlight((prev) =>
+      prev?.locked && prev.idx === idx ? null : { idx, locked: true },
+    );
   }
 
   return (
@@ -118,42 +125,20 @@ export function BarStackChart({
         <div className="min-w-0 overflow-hidden pt-2">
           <svg
             ref={svgRef}
-            viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+            viewBox={`0 0 ${chartWidth} ${stackedChartHeight}`}
             role="img"
             aria-label={`${title} distribution`}
             className="w-full"
           >
-            <Group left={marginLeft} top={marginTop}>
-              {/* Y-axis grid + ticks */}
-              {yTicks.map((tick) => (
-                <g key={tick}>
-                  <line
-                    x1={0}
-                    x2={innerWidth}
-                    y1={yScale(tick)}
-                    y2={yScale(tick)}
-                    stroke="var(--border)"
-                    strokeWidth={1}
-                  />
-                  <text
-                    x={-6}
-                    y={yScale(tick)}
-                    textAnchor="end"
-                    dominantBaseline="middle"
-                    fontSize={11}
-                    className="fill-muted-foreground tabular-nums"
-                  >
-                    {numberFormatter.format(tick)}
-                  </text>
-                </g>
-              ))}
+            <Group left={chartMarginLeft} top={chartMarginTop}>
+              <YAxisTicks ticks={yTicks} yScale={yScale} innerWidth={yearInnerWidth} />
 
               {/* X-axis baseline */}
               <line
                 x1={0}
-                x2={innerWidth}
-                y1={innerHeight}
-                y2={innerHeight}
+                x2={yearInnerWidth}
+                y1={stackedInnerHeight}
+                y2={stackedInnerHeight}
                 stroke="var(--border)"
                 strokeWidth={1}
               />
@@ -164,7 +149,7 @@ export function BarStackChart({
                   x={(xScale(hoveredYear) ?? 0) - xScale.step() * 0.125}
                   y={0}
                   width={xScale.step()}
-                  height={innerHeight}
+                  height={stackedInnerHeight}
                   fill="var(--primary)"
                   fillOpacity={0.08}
                   rx={3}
@@ -184,8 +169,8 @@ export function BarStackChart({
                 {(barStacks) =>
                   barStacks.map((barStack) => {
                     const svIdx = barStack.index;
-                    const isActive = currentActive === svIdx;
-                    const isDimmed = currentActive !== null && !isActive;
+                    const isActive = activeIdx === svIdx;
+                    const isDimmed = activeIdx !== null && !isActive;
 
                     return barStack.bars.map((bar) => {
                       const count = bar.bar.data[barStack.key] ?? 0;
@@ -224,31 +209,18 @@ export function BarStackChart({
                 data-testid="chart-overlay"
                 x={0}
                 y={0}
-                width={innerWidth}
-                height={innerHeight}
+                width={yearInnerWidth}
+                height={stackedInnerHeight}
                 fill="transparent"
                 onMouseMove={(event) => {
-                  const svgEl = svgRef.current;
-                  if (!svgEl) return;
-                  const rect = svgEl.getBoundingClientRect();
-                  const scaleX = rect.width > 0 ? chartWidth / rect.width : 1;
-                  const mouseX =
-                    (event.clientX - rect.left) * scaleX - marginLeft;
-                  // Find the year whose band center is closest to mouseX.
-                  // scaleBand bands don't start at multiples of step (paddingOuter
-                  // shifts the first band), so nearest-center is the correct approach.
-                  const halfBand = xScale.bandwidth() / 2;
-                  let closestIdx = 0;
-                  let closestDist = Infinity;
-                  data.years.forEach((y, idx) => {
-                    const center = (xScale(y.year) ?? 0) + halfBand;
-                    const dist = Math.abs(mouseX - center);
-                    if (dist < closestDist) {
-                      closestDist = dist;
-                      closestIdx = idx;
-                    }
-                  });
-                  const yearEntry = data.years[closestIdx];
+                  const idx = nearestBandIndex(
+                    event,
+                    svgRef,
+                    xScale,
+                    data.years.map((y) => y.year),
+                  );
+                  if (idx === null) return;
+                  const yearEntry = data.years[idx];
                   if (!yearEntry) return;
                   setHoveredYear(yearEntry.year);
                   showTooltip({
@@ -273,8 +245,7 @@ export function BarStackChart({
                 }}
                 onClick={() => {
                   // Click in empty space releases any serovar lock
-                  setLockedIdx(null);
-                  setActiveIdx(null);
+                  setHighlight(null);
                 }}
               />
 
@@ -285,7 +256,7 @@ export function BarStackChart({
                   <text
                     key={`xlabel-${d.year}`}
                     x={x}
-                    y={innerHeight + 18}
+                    y={stackedInnerHeight + 18}
                     textAnchor="middle"
                     fontSize={11}
                     className="fill-muted-foreground tabular-nums"
@@ -301,42 +272,20 @@ export function BarStackChart({
         {/* Legend pills */}
         <div className="mt-2 flex flex-wrap gap-1.5">
           {data.serovars.map((sv, idx) => {
-            const isActive = currentActive === idx;
-            const isDimmed = currentActive !== null && !isActive;
+            const isActive = activeIdx === idx;
+            const isDimmed = activeIdx !== null && !isActive;
             return (
-              <button
+              <ChartLegendPill
                 key={sv}
-                type="button"
-                data-active={isActive ? "true" : undefined}
-                aria-pressed={lockedIdx === idx}
-                aria-label={sv}
-                className={cn(
-                  "flex cursor-default items-center gap-1.5 rounded-full border px-2 py-0.5 text-[10px] transition-colors",
-                  isDimmed
-                    ? "border-border text-muted-foreground opacity-30"
-                    : isActive
-                      ? "text-foreground"
-                      : "border-border text-muted-foreground",
-                )}
-                style={
-                  isActive
-                    ? {
-                        borderColor: colorScale(sv),
-                        backgroundColor: `color-mix(in srgb, ${colorScale(sv)} 12%, transparent)`,
-                      }
-                    : undefined
-                }
-                onMouseEnter={() => handlePillMouseEnter(idx)}
-                onMouseLeave={handlePillMouseLeave}
-                onClick={() => handlePillClick(idx)}
-              >
-                <span
-                  className="inline-block h-1.5 w-1.5 shrink-0 rounded-full"
-                  style={{ background: colorScale(sv) }}
-                  aria-hidden="true"
-                />
-                {sv}
-              </button>
+                label={sv}
+                color={colorScale(sv)}
+                active={isActive}
+                dimmed={isDimmed}
+                ariaPressed={highlight?.locked === true && highlight.idx === idx}
+                onActivate={() => activatePill(idx)}
+                onDeactivate={deactivatePill}
+                onClick={() => togglePillLock(idx)}
+              />
             );
           })}
         </div>

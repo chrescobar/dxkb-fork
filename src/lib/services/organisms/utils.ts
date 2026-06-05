@@ -2,6 +2,23 @@ import { getRequiredEnv } from "@/lib/env";
 
 export const numberFormatter = new Intl.NumberFormat("en-US");
 
+// Shared chart palette. Charts that need fewer colors (e.g. donut → 5 + Others)
+// take a `slice()` rather than maintaining their own copy.
+export const chartColors = [
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
+  "var(--chart-6)",
+  "var(--chart-7)",
+  "var(--chart-8)",
+  "var(--chart-9)",
+  "var(--chart-10)",
+];
+
+export const donutFallbackColor = "var(--muted-foreground)";
+
 export const organismBvBrcRevalidateSeconds = 86400;
 
 export function organismFetchCacheInit(
@@ -22,6 +39,28 @@ export async function responseErrorMessage(response: Response): Promise<string> 
   return body.trim() || `${response.status} ${response.statusText}`.trim();
 }
 
+/**
+ * Standard SOLR/BV-BRC fetch wrapper. Centralizes Accept header, cache init,
+ * error message extraction, and JSON-object validation so callers can stay
+ * focused on URL construction and payload parsing.
+ */
+export async function fetchOrganismSolrJson(
+  url: string,
+  source: string,
+  signal?: AbortSignal,
+): Promise<Record<string, unknown>> {
+  const response = await fetch(url, {
+    method: "GET",
+    headers: { Accept: "application/solr+json" },
+    signal,
+    ...organismFetchCacheInit(organismBvBrcRevalidateSeconds),
+  });
+  if (!response.ok) {
+    throw new Error(`${source}: ${await responseErrorMessage(response)}`);
+  }
+  return readJsonObject(response, source);
+}
+
 export async function readJsonObject(response: Response, source: string): Promise<Record<string, unknown>> {
   const payload = (await response.json().catch((error: unknown) => {
     const message = error instanceof Error ? error.message : String(error);
@@ -37,6 +76,11 @@ export async function readJsonObject(response: Response, source: string): Promis
 
 export function numberOrNull(value: unknown, field: string): number | null {
   if (value === null || value === undefined || value === "") return null;
+  // Reject booleans, arrays, and objects up front: `Number(true) === 1`,
+  // `Number([5]) === 5`, both pass `Number.isFinite` and silently corrupt data.
+  if (typeof value !== "number" && typeof value !== "string") {
+    throw new Error(`Unexpected BV-BRC response shape: ${field} is not numeric`);
+  }
   const numeric = typeof value === "number" ? value : Number(value);
   if (!Number.isFinite(numeric)) {
     throw new Error(`Unexpected BV-BRC response shape: ${field} is not numeric`);
@@ -89,17 +133,17 @@ export function parseSolrFacetList(payload: Record<string, unknown>, field: stri
 }
 
 export function buildGenomeFacetUrl(baseUrl: string, taxonId: number, field: string, limit?: number): string {
-  const limitClause = limit ? `,(limit,${limit})` : "";
+  const limitClause = typeof limit === "number" && limit > 0 ? `,(limit,${limit})` : "";
   return `${baseUrl}/genome/?eq(taxon_lineage_ids,${taxonId})&limit(1)&facet((field,${field})${limitClause},(mincount,1))`;
 }
 
 export function buildGenomeGeoFacetUrl(baseUrl: string, taxonId: number, field: string, limit?: number): string {
-  const limitClause = limit ? `,(limit,${limit})` : "";
+  const limitClause = typeof limit === "number" && limit > 0 ? `,(limit,${limit})` : "";
   return `${baseUrl}/genome/?eq(genome_id,*)&genome(eq(taxon_lineage_ids,${taxonId}))&facet((field,${field}),(mincount,1)${limitClause})&limit(0)`;
 }
 
 export function buildGenomeGeoPivotUrl(baseUrl: string, taxonId: number, primary: string, secondary: string, limit?: number): string {
-  const limitClause = limit ? `,(limit,${limit})` : "";
+  const limitClause = typeof limit === "number" && limit > 0 ? `,(limit,${limit})` : "";
   return `${baseUrl}/genome/?eq(genome_id,*)&genome(eq(taxon_lineage_ids,${taxonId}))&facet((pivot,(${primary},${secondary})),(mincount,1)${limitClause})&limit(0)`;
 }
 
@@ -128,8 +172,15 @@ export function parseSolrFacetPivot(payload: Record<string, unknown>, pivotKey: 
   const result: Record<string, Record<string, number>> = {};
   for (const entry of rawPivot as PivotEntry[]) {
     if (!entry || typeof entry !== "object") continue;
-    const name = entry.value;
-    if (typeof name !== "string" || name.length === 0) continue;
+    // SOLR may emit numeric outer keys (e.g. collection_year) as numbers OR
+    // strings depending on field type; coerce to string for the result map.
+    let name: string | null = null;
+    if (typeof entry.value === "string" && entry.value.length > 0) {
+      name = entry.value;
+    } else if (typeof entry.value === "number" && Number.isFinite(entry.value)) {
+      name = String(entry.value);
+    }
+    if (name === null) continue;
     const inner: Record<string, number> = {};
     if (Array.isArray(entry.pivot)) {
       for (const sub of entry.pivot as PivotEntry[]) {
@@ -139,6 +190,9 @@ export function parseSolrFacetPivot(payload: Record<string, unknown>, pivotKey: 
         if (typeof subName !== "string" || subName.length === 0) continue;
         if (typeof subCount === "number" && Number.isFinite(subCount)) {
           inner[subName] = subCount;
+        } else if (typeof subCount === "string") {
+          const numeric = Number(subCount);
+          if (Number.isFinite(numeric)) inner[subName] = numeric;
         }
       }
     }

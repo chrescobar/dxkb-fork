@@ -74,6 +74,13 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
 
   const SortIcon =
     sortDir === "asc" ? ArrowUp : sortDir === "desc" ? ArrowDown : ArrowUpDown;
+  const ariaSort =
+    sortDir === "asc" ? "ascending" : sortDir === "desc" ? "descending" : "none";
+
+  // Cycle null → asc → desc → null so the user can return to insertion order.
+  function cycleSort() {
+    setSortDir((d) => (d === null ? "asc" : d === "asc" ? "desc" : null));
+  }
 
   return (
     <ScrollArea className="h-80 overflow-hidden rounded-t-lg xl:min-h-0 xl:flex-1 **:data-[slot=scroll-area-scrollbar]:z-20 **:data-[slot=scroll-area-thumb]:bg-foreground/25">
@@ -82,15 +89,18 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
           <TableRow className="h-8">
             <TableHead className="w-36 border-r py-1 px-3 text-xs text-center">Type</TableHead>
             <TableHead
-              className="cursor-pointer select-none overflow-hidden py-1 px-3 text-xs"
-              onClick={() =>
-                setSortDir((d) => (d === "asc" ? "desc" : "asc"))
-              }
+              aria-sort={ariaSort}
+              className="overflow-hidden p-0 text-xs"
             >
-              <span className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={cycleSort}
+                aria-label={`Sort by genome name (${ariaSort})`}
+                className="flex w-full cursor-pointer select-none items-center gap-1 px-3 py-1 text-left"
+              >
                 Genome Name
                 <SortIcon className="size-3 shrink-0" />
-              </span>
+              </button>
             </TableHead>
           </TableRow>
         </TableHeader>

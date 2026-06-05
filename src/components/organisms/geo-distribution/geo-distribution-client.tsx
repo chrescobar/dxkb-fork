@@ -1,7 +1,8 @@
 "use client";
 
 import { TooltipWithBounds, useTooltip } from "@visx/tooltip";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useCallback, useMemo, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import * as topojson from "topojson-client";
 
@@ -32,6 +33,12 @@ interface TopologyLike {
 
 const tooltipOffset = 14;
 
+async function fetchTopoJson(url: string): Promise<TopologyLike> {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`${url}: ${response.status}`);
+  return (await response.json()) as TopologyLike;
+}
+
 export function GeoDistributionClient({ data, accent }: GeoDistributionClientProps) {
   const [mapState, setMapState] = useState<GeoMapState>({
     view: "us",
@@ -39,68 +46,59 @@ export function GeoDistributionClient({ data, accent }: GeoDistributionClientPro
     selectedStateName: null,
   });
 
-  const [countyTopo, setCountyTopo] = useState<TopologyLike | null>(null);
-  const [countyTopoError, setCountyTopoError] = useState<string | null>(null);
-  const [worldTopo, setWorldTopo] = useState<TopologyLike | null>(null);
-  const [worldTopoError, setWorldTopoError] = useState<string | null>(null);
-  const [worldTopoLoading, setWorldTopoLoading] = useState(false);
-  const worldFetchStartedRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const choroplethRef = useRef<ChoroplethHandle>(null);
 
-  useEffect(() => {
-    let cancelled = false;
-    fetch("/maps/counties-10m.json")
-      .then((response) => {
-        if (!response.ok) throw new Error(`counties-10m: ${response.status}`);
-        return response.json() as Promise<TopologyLike>;
-      })
-      .then((topo) => {
-        if (!cancelled) setCountyTopo(topo);
-      })
-      .catch((error: unknown) => {
-        if (!cancelled) {
-          setCountyTopoError(error instanceof Error ? error.message : String(error));
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  // States-only TopoJSON loads on mount for the default US view. The full
+  // counties topology is much larger (~842 KB) and is only fetched when the
+  // user drills into a state.
+  const statesQuery = useQuery({
+    queryKey: ["geo-distribution", "states-topo"],
+    queryFn: () => fetchTopoJson("/maps/states-10m.json"),
+    staleTime: Infinity,
+    gcTime: Infinity,
+  });
 
-  // Lazy-load the world topo only when the user first opens the world view.
-  useEffect(() => {
-    if (mapState.view !== "world" || worldFetchStartedRef.current) return;
-    worldFetchStartedRef.current = true;
-    setWorldTopoLoading(true);
-    let cancelled = false;
-    fetch("/maps/countries-110m.json")
-      .then((response) => {
-        if (!response.ok) throw new Error(`countries-110m: ${response.status}`);
-        return response.json() as Promise<TopologyLike>;
-      })
-      .then((topo) => {
-        if (!cancelled) {
-          setWorldTopo(topo);
-          setWorldTopoLoading(false);
-        }
-      })
-      .catch((error: unknown) => {
-        if (!cancelled) {
-          setWorldTopoError(error instanceof Error ? error.message : String(error));
-          setWorldTopoLoading(false);
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [mapState.view]);
+  const countiesQuery = useQuery({
+    queryKey: ["geo-distribution", "counties-topo"],
+    queryFn: () => fetchTopoJson("/maps/counties-10m.json"),
+    enabled: mapState.view === "state",
+    staleTime: Infinity,
+    gcTime: Infinity,
+  });
+
+  const worldQuery = useQuery({
+    queryKey: ["geo-distribution", "world-topo"],
+    queryFn: () => fetchTopoJson("/maps/countries-110m.json"),
+    enabled: mapState.view === "world",
+    staleTime: Infinity,
+    gcTime: Infinity,
+  });
+
+  const stateTopo = statesQuery.data ?? null;
+  const countyTopo = countiesQuery.data ?? null;
+  const worldTopo = worldQuery.data ?? null;
+  const stateTopoError = statesQuery.error
+    ? statesQuery.error instanceof Error
+      ? statesQuery.error.message
+      : String(statesQuery.error)
+    : null;
+  const countyTopoError = countiesQuery.error
+    ? countiesQuery.error instanceof Error
+      ? countiesQuery.error.message
+      : String(countiesQuery.error)
+    : null;
+  const worldTopoError = worldQuery.error
+    ? worldQuery.error instanceof Error
+      ? worldQuery.error.message
+      : String(worldQuery.error)
+    : null;
 
   const stateOptions = useMemo(() => {
-    if (!countyTopo) return [];
-    const object = countyTopo.objects.states as unknown;
+    if (!stateTopo) return [];
+    const object = stateTopo.objects.states as unknown;
     if (!object) return [];
-    const fc = topojson.feature(countyTopo as never, object as never) as unknown as GeoJSON.FeatureCollection<
+    const fc = topojson.feature(stateTopo as never, object as never) as unknown as GeoJSON.FeatureCollection<
       GeoJSON.Geometry,
       { name?: string }
     >;
@@ -111,7 +109,7 @@ export function GeoDistributionClient({ data, accent }: GeoDistributionClientPro
       }))
       .filter((option) => option.fips && option.name)
       .sort((a, b) => a.name.localeCompare(b.name));
-  }, [countyTopo]);
+  }, [stateTopo]);
 
   const colorScale = useMemo(() => makeColorScale(data.maxCount, accent), [data.maxCount, accent]);
 
@@ -208,9 +206,12 @@ export function GeoDistributionClient({ data, accent }: GeoDistributionClientPro
             onSelectState={handleSelectState}
             onSwitchToUs={() => handleViewChange("us")}
             worldTopo={worldTopo}
-            worldTopoLoading={worldTopoLoading}
+            worldTopoLoading={worldQuery.isLoading}
             worldTopoError={worldTopoError}
+            stateTopo={stateTopo}
+            stateTopoError={stateTopoError}
             countyTopo={countyTopo}
+            countyTopoLoading={countiesQuery.isLoading}
             countyTopoError={countyTopoError}
             onHoverChange={handleHoverChange}
             onLeaveMap={hideTooltip}

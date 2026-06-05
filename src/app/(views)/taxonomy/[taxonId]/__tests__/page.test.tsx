@@ -16,6 +16,7 @@ vi.mock("@/lib/services/organisms/taxonomy", () => ({
 describe("TaxonomyPage", () => {
   it("renders the heading for Brucella", async () => {
     const node = await TaxonomyPage({
+      params: Promise.resolve({ taxonId: "234" }),
       searchParams: Promise.resolve({ view: "taxonomy" }),
     });
 
@@ -28,6 +29,7 @@ describe("TaxonomyPage", () => {
 
   it("renders the taxonomy stub view when view=taxonomy", async () => {
     const node = await TaxonomyPage({
+      params: Promise.resolve({ taxonId: "234" }),
       searchParams: Promise.resolve({ view: "taxonomy" }),
     });
 
@@ -40,6 +42,7 @@ describe("TaxonomyPage", () => {
 
   it("renders placeholder stub for amr-phenotypes view", async () => {
     const node = await TaxonomyPage({
+      params: Promise.resolve({ taxonId: "234" }),
       searchParams: Promise.resolve({ view: "amr-phenotypes" }),
     });
 

@@ -30,7 +30,11 @@ export function LandingNav({
   onChange,
   onCollapseToggle,
 }: LandingNavProps) {
-  const [isMac] = useState(() => /Mac|iPhone|iPad|iPod/i.test(navigator.userAgent));
+  const [isMac] = useState(
+    () =>
+      typeof navigator !== "undefined" &&
+      /Mac|iPhone|iPad|iPod/i.test(navigator.userAgent),
+  );
 
   const shortcutKey = isMac ? "⌘B" : "Ctrl+B";
 

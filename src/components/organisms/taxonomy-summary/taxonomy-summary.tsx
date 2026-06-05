@@ -8,19 +8,28 @@ function formatCount(value: number | null): string {
 }
 
 export async function TaxonomySummary({ taxonId }: { taxonId: number }) {
-  const [summary, taxon] = await Promise.all([
+  // allSettled: failing one endpoint shouldn't blank the entire summary card.
+  const [summaryResult, taxonResult] = await Promise.allSettled([
     fetchOrganismSummary(taxonId),
     fetchOrganismTaxonomy(taxonId),
   ]);
 
+  const summary = summaryResult.status === "fulfilled" ? summaryResult.value : null;
+  const taxon = taxonResult.status === "fulfilled" ? taxonResult.value : null;
+
+  if (!summary && !taxon) {
+    if (summaryResult.status === "rejected") throw summaryResult.reason;
+    if (taxonResult.status === "rejected") throw taxonResult.reason;
+  }
+
   const metrics: { label: string; value: string; description: string }[] = [
-    { label: "Taxon ID", value: String(taxon.taxonId), description: "NCBI taxonomy identifier" },
-    { label: "Taxon Name", value: taxon.taxonName, description: "Scientific name of the taxon" },
-    { label: "Taxon Rank", value: taxon.taxonRank, description: "Taxonomic rank" },
-    { label: "Species", value: formatCount(summary.uniqueSpecies), description: "Unique taxonomy species" },
-    { label: "Genomes / Segments", value: formatCount(summary.count), description: "Assembled genome records" },
-    { label: "Protein Coding Genes (CDS)", value: formatCount(summary.cds), description: "Coding sequences" },
-    { label: "3D Protein Structures (PDB)", value: formatCount(summary.pdb), description: "Protein structure links" },
+    { label: "Taxon ID", value: taxon ? String(taxon.taxonId) : String(taxonId), description: "NCBI taxonomy identifier" },
+    { label: "Taxon Name", value: taxon?.taxonName ?? "-", description: "Scientific name of the taxon" },
+    { label: "Taxon Rank", value: taxon?.taxonRank ?? "-", description: "Taxonomic rank" },
+    { label: "Species", value: formatCount(summary?.uniqueSpecies ?? null), description: "Unique taxonomy species" },
+    { label: "Genomes / Segments", value: formatCount(summary?.count ?? null), description: "Assembled genome records" },
+    { label: "Protein Coding Genes (CDS)", value: formatCount(summary?.cds ?? null), description: "Coding sequences" },
+    { label: "3D Protein Structures (PDB)", value: formatCount(summary?.pdb ?? null), description: "Protein structure links" },
   ];
 
   return (

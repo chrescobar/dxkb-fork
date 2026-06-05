@@ -17,7 +17,19 @@ function parseLineageNames(value: unknown): string[] {
 
 function parseLineageIds(value: unknown): number[] {
   if (!Array.isArray(value)) return [];
-  return value.filter((entry): entry is number => typeof entry === "number");
+  const ids: number[] = [];
+  for (const entry of value) {
+    if (typeof entry === "number" && Number.isFinite(entry)) {
+      ids.push(entry);
+      continue;
+    }
+    // SOLR with `application/solr+json` commonly serializes longs as strings.
+    if (typeof entry === "string" && entry.length > 0) {
+      const numeric = Number(entry);
+      if (Number.isFinite(numeric)) ids.push(numeric);
+    }
+  }
+  return ids;
 }
 
 export async function fetchOrganismTaxonomy(

@@ -1,51 +1,24 @@
-import type { SerotypeDistributionData, SerotypeYear } from "./types";
+import type { OrganismFetchOptions, SerotypeDistributionData, SerotypeYear } from "./types";
 import {
+  fetchOrganismSolrJson,
   getBvBrcWebsiteApiBaseUrl,
-  organismBvBrcRevalidateSeconds,
-  organismFetchCacheInit,
-  readJsonObject,
-  responseErrorMessage,
+  parseSolrFacetPivot,
 } from "./utils";
-
-interface PivotEntry {
-  value?: unknown;
-  pivot?: PivotEntry[];
-  count?: unknown;
-}
 
 function parseSerotypeDistributionPivot(
   payload: Record<string, unknown>,
 ): { year: number; serovars: Record<string, number> }[] {
-  const facetCounts = payload.facet_counts;
-  if (!facetCounts || typeof facetCounts !== "object" || Array.isArray(facetCounts)) {
-    throw new Error("Unexpected SOLR response shape: missing facet_counts");
+  // Use the shared facet-pivot parser; serotype just narrows the outer key from
+  // string to numeric year. SOLR with `application/solr+json` may emit those
+  // years as strings, so coerce here.
+  const generic = parseSolrFacetPivot(payload, "collection_year,serovar");
+  const rows: { year: number; serovars: Record<string, number> }[] = [];
+  for (const [outerKey, inner] of Object.entries(generic)) {
+    const year = Number(outerKey);
+    if (!Number.isInteger(year)) continue;
+    rows.push({ year, serovars: inner });
   }
-
-  const facetPivot = (facetCounts as Record<string, unknown>).facet_pivot;
-  if (!facetPivot || typeof facetPivot !== "object" || Array.isArray(facetPivot)) {
-    throw new Error("Unexpected SOLR response shape: missing facet_pivot");
-  }
-
-  const rawPivot = (facetPivot as Record<string, unknown>)["collection_year,serovar"];
-  if (!Array.isArray(rawPivot)) return [];
-
-  return (rawPivot as PivotEntry[]).flatMap((entry) => {
-    const year = entry.value;
-    if (typeof year !== "number" || !Number.isInteger(year)) return [];
-
-    const serovars: Record<string, number> = {};
-    if (Array.isArray(entry.pivot)) {
-      for (const sub of entry.pivot as PivotEntry[]) {
-        const sv = sub.value;
-        const count = sub.count;
-        if (typeof sv !== "string" || sv.length === 0) continue;
-        if (typeof count === "number" && Number.isFinite(count)) {
-          serovars[sv] = count;
-        }
-      }
-    }
-    return [{ year, serovars }];
-  });
+  return rows;
 }
 
 function transformPivot(
@@ -87,23 +60,18 @@ function transformPivot(
 
 export async function fetchSerotypeDistribution(
   taxonId: number,
+  options: OrganismFetchOptions = {},
 ): Promise<SerotypeDistributionData> {
   const baseUrl = getBvBrcWebsiteApiBaseUrl();
   const url =
     `${baseUrl}/genome/?eq(taxon_lineage_ids,${taxonId})` +
     `&facet((pivot,(collection_year,serovar)),(mincount,1))&limit(0)`;
 
-  const response = await fetch(url, {
-    method: "GET",
-    headers: { Accept: "application/solr+json" },
-    ...organismFetchCacheInit(organismBvBrcRevalidateSeconds),
-  });
-
-  if (!response.ok) {
-    throw new Error(await responseErrorMessage(response));
-  }
-
-  const payload = await readJsonObject(response, "serotype distribution pivot");
+  const payload = await fetchOrganismSolrJson(
+    url,
+    "serotype distribution pivot",
+    options.signal,
+  );
   const rows = parseSerotypeDistributionPivot(payload);
   return transformPivot(rows);
 }

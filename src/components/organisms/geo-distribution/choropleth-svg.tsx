@@ -8,6 +8,7 @@ import {
   forwardRef,
   memo,
   useCallback,
+  useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -99,18 +100,60 @@ function extractFeatures(topo: TopologyLike, objectKey: string): StateFeature[] 
   return fc.features as StateFeature[];
 }
 
-type HoverHandler = (payload: HoverPayload | null, event: ReactPointerEvent<SVGPathElement>) => void;
+type HoverEnter = (payload: HoverPayload, event: ReactPointerEvent<SVGPathElement>) => void;
+type HoverLeave = () => void;
 
 // ─── Memoized layer components ────────────────────────────────────────────────
 // Each layer is wrapped in React.memo so path computation only runs when actual
 // data changes, not on every zoom drag frame. The isDraggingRef lets handlers
 // check drag state without the ref itself triggering re-renders.
 
+interface ChoroplethPathProps {
+  pathD: string;
+  fill: string;
+  strokeWidth: number;
+  cursor?: "pointer" | "default";
+  isDraggingRef: RefObject<boolean>;
+  payload: HoverPayload;
+  onHoverEnter: HoverEnter;
+  onHoverLeave: HoverLeave;
+  onClick?: () => void;
+}
+
+function ChoroplethPath({
+  pathD,
+  fill,
+  strokeWidth,
+  cursor,
+  isDraggingRef,
+  payload,
+  onHoverEnter,
+  onHoverLeave,
+  onClick,
+}: ChoroplethPathProps) {
+  return (
+    <path
+      d={pathD}
+      fill={fill}
+      stroke="#94a3b8"
+      strokeWidth={strokeWidth}
+      style={cursor ? { cursor } : undefined}
+      onPointerMove={(event) => {
+        if (isDraggingRef.current) return;
+        onHoverEnter(payload, event);
+      }}
+      onPointerLeave={onHoverLeave}
+      onClick={onClick}
+    />
+  );
+}
+
 interface LayerCommonProps {
   data: OrganismGeoDistribution;
   colorScale: ColorScale;
   isDraggingRef: RefObject<boolean>;
-  onHoverChange: HoverHandler;
+  onHoverEnter: HoverEnter;
+  onHoverLeave: HoverLeave;
 }
 
 const WorldCountriesLayer = memo(function WorldCountriesLayer({
@@ -120,7 +163,8 @@ const WorldCountriesLayer = memo(function WorldCountriesLayer({
   data,
   colorScale,
   isDraggingRef,
-  onHoverChange,
+  onHoverEnter,
+  onHoverLeave,
   onSwitchToUs,
 }: LayerCommonProps & {
   countryFeatures: CountryFeature[];
@@ -142,22 +186,17 @@ const WorldCountriesLayer = memo(function WorldCountriesLayer({
           const meta = data.countryMeta[dataKey];
           const interactable = isUsaTopoName(name);
           return (
-            <path
+            <ChoroplethPath
               key={`${name}-${index}`}
-              d={path ?? ""}
+              pathD={path ?? ""}
               fill={colorScale(count)}
-              stroke="#94a3b8"
               strokeWidth={0.4}
-              style={{ cursor: interactable ? "pointer" : "default" }}
-              onPointerMove={(event) => {
-                if (isDraggingRef.current) return;
-                onHoverChange(
-                  { view: "world", name, count, genera: meta?.genera ?? {}, hosts: meta?.hosts ?? {} },
-                  event,
-                );
-              }}
-              onPointerLeave={() => onHoverChange(null, {} as ReactPointerEvent<SVGPathElement>)}
-              onClick={() => { if (interactable) onSwitchToUs(); }}
+              cursor={interactable ? "pointer" : "default"}
+              isDraggingRef={isDraggingRef}
+              payload={{ view: "world", name, count, genera: meta?.genera ?? {}, hosts: meta?.hosts ?? {} }}
+              onHoverEnter={onHoverEnter}
+              onHoverLeave={onHoverLeave}
+              onClick={interactable ? onSwitchToUs : undefined}
             />
           );
         })
@@ -173,7 +212,8 @@ const UsStatesLayer = memo(function UsStatesLayer({
   data,
   colorScale,
   isDraggingRef,
-  onHoverChange,
+  onHoverEnter,
+  onHoverLeave,
   onSelectState,
 }: LayerCommonProps & {
   stateFeatures: StateFeature[];
@@ -193,21 +233,16 @@ const UsStatesLayer = memo(function UsStatesLayer({
           const count = data.stateData[name] ?? 0;
           const meta = data.stateMeta[name];
           return (
-            <path
+            <ChoroplethPath
               key={`${name}-${index}`}
-              d={path ?? ""}
+              pathD={path ?? ""}
               fill={colorScale(count)}
-              stroke="#94a3b8"
               strokeWidth={0.5}
-              style={{ cursor: "pointer" }}
-              onPointerMove={(event) => {
-                if (isDraggingRef.current) return;
-                onHoverChange(
-                  { view: "us", name, count, genera: meta?.genera ?? {}, hosts: meta?.hosts ?? {} },
-                  event,
-                );
-              }}
-              onPointerLeave={() => onHoverChange(null, {} as ReactPointerEvent<SVGPathElement>)}
+              cursor="pointer"
+              isDraggingRef={isDraggingRef}
+              payload={{ view: "us", name, count, genera: meta?.genera ?? {}, hosts: meta?.hosts ?? {} }}
+              onHoverEnter={onHoverEnter}
+              onHoverLeave={onHoverLeave}
               onClick={() => {
                 const fips = String(feature.id ?? "").padStart(2, "0");
                 if (fips) onSelectState(fips, name);
@@ -233,7 +268,8 @@ const StateCountiesLayer = memo(function StateCountiesLayer({
   data,
   colorScale,
   isDraggingRef,
-  onHoverChange,
+  onHoverEnter,
+  onHoverLeave,
 }: CountiesLayerProps) {
   const projection = useCallback(() => geoMercator(), []);
 
@@ -249,20 +285,15 @@ const StateCountiesLayer = memo(function StateCountiesLayer({
           const count = data.countyData[name] ?? 0;
           const meta = data.countyMeta[name];
           return (
-            <path
+            <ChoroplethPath
               key={`${name}-${feature.id ?? index}`}
-              d={path ?? ""}
+              pathD={path ?? ""}
               fill={colorScale(count)}
-              stroke="#94a3b8"
               strokeWidth={0.3}
-              onPointerMove={(event) => {
-                if (isDraggingRef.current) return;
-                onHoverChange(
-                  { view: "state", name, count, genera: meta?.genera ?? {}, hosts: meta?.hosts ?? {} },
-                  event,
-                );
-              }}
-              onPointerLeave={() => onHoverChange(null, {} as ReactPointerEvent<SVGPathElement>)}
+              isDraggingRef={isDraggingRef}
+              payload={{ view: "state", name, count, genera: meta?.genera ?? {}, hosts: meta?.hosts ?? {} }}
+              onHoverEnter={onHoverEnter}
+              onHoverLeave={onHoverLeave}
             />
           );
         })
@@ -282,9 +313,12 @@ interface ChoroplethSvgProps {
   worldTopo: TopologyLike | null;
   worldTopoLoading: boolean;
   worldTopoError: string | null;
+  stateTopo: TopologyLike | null;
+  stateTopoError: string | null;
   countyTopo: TopologyLike | null;
+  countyTopoLoading: boolean;
   countyTopoError: string | null;
-  onHoverChange: HoverHandler;
+  onHoverChange: (payload: HoverPayload | null, event: ReactPointerEvent<SVGPathElement>) => void;
   onLeaveMap: () => void;
 }
 
@@ -298,49 +332,66 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
     worldTopo,
     worldTopoLoading,
     worldTopoError,
+    stateTopo,
+    stateTopoError,
     countyTopo,
+    countyTopoLoading,
     countyTopoError,
     onHoverChange,
     onLeaveMap,
   }: ChoroplethSvgProps,
   ref,
 ) {
+  const hoverEnter = useCallback<HoverEnter>(
+    (payload, event) => onHoverChange(payload, event),
+    [onHoverChange],
+  );
+  const hoverLeave = useCallback<HoverLeave>(
+    () => onLeaveMap(),
+    [onLeaveMap],
+  );
   const [width, setWidth] = useState(800);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const isDraggingRef = useRef(false);
   const zoomImperativeRef = useRef<{
     reset: () => void;
     scale: (args: { scaleX: number; scaleY: number }) => void;
   } | null>(null);
-  const resizeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isFirstObservationRef = useRef(true);
 
-  const setContainer = useCallback((node: HTMLDivElement | null) => {
+  useEffect(() => {
+    const node = containerRef.current;
     if (!node) return;
+    let isFirstObservation = true;
+    let resizeTimer: ReturnType<typeof setTimeout> | null = null;
     const ro = new ResizeObserver((entries) => {
       const next = entries[0]?.contentRect?.width;
       if (!next || next <= 0) return;
       // Fire immediately on first observation so initial render has correct width.
       // Debounce all subsequent events so the SVG doesn't re-render on every frame
       // of a CSS width transition (e.g. collapsing the nav sidebar).
-      if (isFirstObservationRef.current) {
-        isFirstObservationRef.current = false;
+      if (isFirstObservation) {
+        isFirstObservation = false;
         setWidth(next);
         return;
       }
-      if (resizeTimerRef.current) clearTimeout(resizeTimerRef.current);
-      resizeTimerRef.current = setTimeout(() => setWidth(next), 20);
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => setWidth(next), 20);
     });
     ro.observe(node);
+    return () => {
+      ro.disconnect();
+      if (resizeTimer) clearTimeout(resizeTimer);
+    };
   }, []);
 
   useImperativeHandle(ref, () => ({
     reset: () => zoomImperativeRef.current?.reset(),
-  }));
+  }), []);
 
   const stateFeatures = useMemo<StateFeature[]>(() => {
-    if (!countyTopo) return [];
-    return extractFeatures(countyTopo, "states");
-  }, [countyTopo]);
+    if (!stateTopo) return [];
+    return extractFeatures(stateTopo, "states");
+  }, [stateTopo]);
 
   const countryFeatures = useMemo<CountryFeature[]>(() => {
     if (!worldTopo) return [];
@@ -378,7 +429,7 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
 
   return (
     <div
-      ref={setContainer}
+      ref={containerRef}
       className="bg-muted/30 relative w-full overflow-hidden rounded-md flex items-center justify-center"
       style={{ height: mapHeight }}
       onPointerLeave={onLeaveMap}
@@ -423,13 +474,14 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
                         data={data}
                         colorScale={colorScale}
                         isDraggingRef={isDraggingRef}
-                        onHoverChange={onHoverChange}
+                        onHoverEnter={hoverEnter}
+                        onHoverLeave={hoverLeave}
                         onSwitchToUs={onSwitchToUs}
                       />
                     ) : null
                   )}
 
-                  {mapState.view === "us" && !countyTopoError && stateFeatures.length > 0 && (
+                  {mapState.view === "us" && !stateTopoError && stateFeatures.length > 0 && (
                     <UsStatesLayer
                       stateFeatures={stateFeatures}
                       scale={albersScale}
@@ -437,12 +489,13 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
                       data={data}
                       colorScale={colorScale}
                       isDraggingRef={isDraggingRef}
-                      onHoverChange={onHoverChange}
+                      onHoverEnter={hoverEnter}
+                        onHoverLeave={hoverLeave}
                       onSelectState={onSelectState}
                     />
                   )}
 
-                  {mapState.view === "state" && !countyTopoError && countyFeatures.length > 0 && countyFitExtent && (
+                  {mapState.view === "state" && !countyTopoError && !countyTopoLoading && countyFeatures.length > 0 && countyFitExtent && (
                     <StateCountiesLayer
                       countyFeatures={countyFeatures}
                       fitBoundsFeatures={countyFitFeatures}
@@ -450,7 +503,8 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
                       data={data}
                       colorScale={colorScale}
                       isDraggingRef={isDraggingRef}
-                      onHoverChange={onHoverChange}
+                      onHoverEnter={hoverEnter}
+                        onHoverLeave={hoverLeave}
                     />
                   )}
                 </g>
@@ -467,12 +521,22 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
                   Could not load world map data.
                 </div>
               )}
-              {mapState.view === "us" && countyTopoError && (
+              {mapState.view === "us" && stateTopoError && (
                 <div className="text-muted-foreground pointer-events-none absolute inset-0 flex items-center justify-center text-sm">
                   Could not load US map data.
                 </div>
               )}
-              {mapState.view === "state" && !countyTopoError && (countyFeatures.length === 0 || !countyFitExtent) && (
+              {mapState.view === "state" && countyTopoLoading && (
+                <div className="text-muted-foreground pointer-events-none absolute inset-0 flex items-center justify-center text-sm">
+                  Loading county map…
+                </div>
+              )}
+              {mapState.view === "state" && countyTopoError && (
+                <div className="text-muted-foreground pointer-events-none absolute inset-0 flex items-center justify-center text-sm">
+                  Could not load county map data.
+                </div>
+              )}
+              {mapState.view === "state" && !countyTopoError && !countyTopoLoading && (countyFeatures.length === 0 || !countyFitExtent) && (
                 <div className="text-muted-foreground pointer-events-none absolute inset-0 flex items-center justify-center text-sm">
                   Select a state to drill into county-level data.
                 </div>

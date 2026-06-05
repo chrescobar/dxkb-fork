@@ -26,7 +26,10 @@ test.describe("taxonomy geographic distribution map", () => {
     await expect(svg).toBeVisible();
     const statePaths = svg.locator("path");
     await expect(statePaths.first()).toBeAttached();
-    await expect(statePaths).toHaveCount(56, { timeout: 10_000 });
+    // us-atlas states-10m.json includes the 50 states + DC + territories.
+    // Lower bound only: a topology data update should not invalidate this test.
+    await expect.poll(async () => statePaths.count(), { timeout: 10_000 }).toBeGreaterThan(50);
+    const baselineCount = await statePaths.count();
 
     // Drill into Wyoming via the dropdown (most resilient to TopoJSON path ordering)
     await mapSection.getByRole("combobox").click();
@@ -35,11 +38,11 @@ test.describe("taxonomy geographic distribution map", () => {
     // The drill-down pill appears (exit button is its distinguishing element)
     const exitButton = mapSection.getByRole("button", { name: /Exit Wyoming/ });
     await expect(exitButton).toBeVisible();
-    await expect(svg.locator("path")).not.toHaveCount(56);
+    await expect(svg.locator("path")).not.toHaveCount(baselineCount);
 
     // Exit drill-down via the pill's X button
     await exitButton.click();
-    await expect(svg.locator("path")).toHaveCount(56);
+    await expect(svg.locator("path")).toHaveCount(baselineCount);
 
     // Switch to the World view — triggers lazy-load of countries-110m.json
     await mapSection.getByRole("button", { name: "World" }).click();

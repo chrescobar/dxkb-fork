@@ -11,39 +11,23 @@ import { curveMonotoneX } from "@visx/vendor/d3-shape";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { chartTooltipStyle, numberFormatter } from "@/lib/services/organisms/utils";
 
-interface YearDatum {
-  year: number;
-  count: number;
-}
+import {
+  chartMarginLeft,
+  chartMarginTop,
+  chartWidth,
+  yearChartHeight,
+  yearInnerHeight,
+  yearInnerWidth,
+} from "./_shared/chart-dimensions";
+import { YAxisTicks } from "./_shared/y-axis-ticks";
+import { labelStep, parseYearData, type YearDatum } from "./_shared/year-data";
 
 interface AreaChartProps {
   title: string;
   data: { label: string; value: number }[];
 }
 
-const chartWidth = 540;
-const chartHeight = 260;
-const marginTop = 10;
-const marginRight = 20;
-const marginBottom = 32;
-const marginLeft = 54;
-const innerWidth = chartWidth - marginLeft - marginRight;
-const innerHeight = chartHeight - marginTop - marginBottom;
 const gradientId = "collection-year-area-gradient";
-
-function labelStep(count: number): number {
-  if (count <= 15) return 1;
-  if (count <= 30) return 2;
-  if (count <= 60) return 5;
-  return 10;
-}
-
-function parseYearData(data: { label: string; value: number }[]): YearDatum[] {
-  return data
-    .filter((d) => Number.isInteger(Number(d.label)) && d.label.trim() !== "")
-    .map((d) => ({ year: Number(d.label), count: d.value }))
-    .sort((a, b) => a.year - b.year);
-}
 
 export function AreaChart({
   title,
@@ -58,13 +42,13 @@ export function AreaChart({
   const xMax = yearData.length > 0 ? yearData[yearData.length - 1].year : 1;
   const xScale = scaleLinear<number>({
     domain: [xMin, xMax],
-    range: [0, innerWidth],
+    range: [0, yearInnerWidth],
   });
 
   const maxCount = Math.max(...yearData.map((d) => d.count), 1);
   const yScale = scaleLinear<number>({
     domain: [0, maxCount],
-    range: [innerHeight, 0],
+    range: [yearInnerHeight, 0],
     nice: true,
   });
 
@@ -85,7 +69,7 @@ export function AreaChart({
           <div className="min-w-0 overflow-hidden">
             <svg
               ref={svgRef}
-              viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+              viewBox={`0 0 ${chartWidth} ${yearChartHeight}`}
               role="img"
               aria-label={`${title} distribution`}
               className="w-full"
@@ -104,29 +88,8 @@ export function AreaChart({
                   />
                 </linearGradient>
               </defs>
-              <Group left={marginLeft} top={marginTop}>
-                {yTicks.map((tick) => (
-                  <g key={tick}>
-                    <line
-                      x1={0}
-                      x2={innerWidth}
-                      y1={yScale(tick)}
-                      y2={yScale(tick)}
-                      stroke="var(--border)"
-                      strokeWidth={1}
-                    />
-                    <text
-                      x={-6}
-                      y={yScale(tick)}
-                      textAnchor="end"
-                      dominantBaseline="middle"
-                      fontSize={11}
-                      className="fill-muted-foreground tabular-nums"
-                    >
-                      {numberFormatter.format(tick)}
-                    </text>
-                  </g>
-                ))}
+              <Group left={chartMarginLeft} top={chartMarginTop}>
+                <YAxisTicks ticks={yTicks} yScale={yScale} innerWidth={yearInnerWidth} />
 
                 <AreaClosed<YearDatum>
                   data={yearData}
@@ -184,7 +147,7 @@ export function AreaChart({
                     <text
                       key={`label-${d.year}`}
                       x={xScale(d.year) ?? 0}
-                      y={innerHeight + 12}
+                      y={yearInnerHeight + 12}
                       textAnchor="middle"
                       dominantBaseline="hanging"
                       fontSize={11}
@@ -197,25 +160,22 @@ export function AreaChart({
 
                 <line
                   x1={0}
-                  x2={innerWidth}
-                  y1={innerHeight}
-                  y2={innerHeight}
+                  x2={yearInnerWidth}
+                  y1={yearInnerHeight}
+                  y2={yearInnerHeight}
                   stroke="var(--border)"
                   strokeWidth={1}
                 />
 
-                {tooltipData && (() => {
+                {tooltipData && yearData.length > 1 && (() => {
                   const hx = xScale(tooltipData.year) ?? 0;
-                  const colW =
-                    yearData.length > 1
-                      ? innerWidth / (yearData.length - 1)
-                      : innerWidth;
+                  const colW = yearInnerWidth / (yearData.length - 1);
                   return (
                     <rect
                       x={hx - colW / 2}
                       y={0}
                       width={colW}
-                      height={innerHeight}
+                      height={yearInnerHeight}
                       fill="var(--primary)"
                       fillOpacity={0.12}
                       rx={3}
@@ -228,8 +188,8 @@ export function AreaChart({
                   data-testid="chart-overlay"
                   x={0}
                   y={0}
-                  width={innerWidth}
-                  height={innerHeight}
+                  width={yearInnerWidth}
+                  height={yearInnerHeight}
                   fill="transparent"
                   onMouseMove={(event) => {
                     const svgRect = svgRef.current?.getBoundingClientRect();
@@ -238,8 +198,8 @@ export function AreaChart({
                         ? chartWidth / svgRect.width
                         : 1;
                     const mouseX = svgRect
-                      ? (event.clientX - svgRect.left) * scaleX - marginLeft
-                      : event.clientX - marginLeft;
+                      ? (event.clientX - svgRect.left) * scaleX - chartMarginLeft
+                      : event.clientX - chartMarginLeft;
                     const yearValue = xScale.invert(mouseX);
                     const nearest = yearData.reduce((a, b) =>
                       Math.abs(b.year - yearValue) < Math.abs(a.year - yearValue)

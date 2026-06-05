@@ -315,6 +315,13 @@ function solrFacet(field: string, count: number) {
   };
 }
 
+const referenceGenomesFixture: Record<string, unknown>[] = [
+  { genome_id: "234.1", genome_name: "Brucella suis 1330", reference_genome: "Reference" },
+  { genome_id: "234.2", genome_name: "Brucella abortus 2308", reference_genome: "Reference" },
+  { genome_id: "234.3", genome_name: "Brucella melitensis 16M", reference_genome: "Representative" },
+  { genome_id: "234.4", genome_name: "Brucella canis ATCC 23365", reference_genome: "Representative" },
+];
+
 function maybeBvBrcWebsite(path: string, request: NextRequest): unknown | null {
   const segments = path.split("/").filter(Boolean);
   if (segments[0] !== "bvbrc-website") return null;
@@ -326,6 +333,20 @@ function maybeBvBrcWebsite(path: string, request: NextRequest): unknown | null {
   if (endpoint === "taxonomy/2") return bacteriaTaxonomyFixture;
   if (endpoint === "taxonomy/234") return brucellaTaxonomyFixture;
   if (endpoint === "genome" || endpoint === "genome/") {
+    const url = new URL(request.url);
+    const query = decodeURIComponent(url.search);
+
+    // Reference-genomes endpoint: BV-BRC returns a bare array of docs
+    // (json(nl,map)), not the SOLR envelope shape.
+    if (query.includes("reference_genome,*") && query.includes("select(")) {
+      return referenceGenomesFixture;
+    }
+
+    // Use a strict regex to avoid substring collisions as fixture IDs grow
+    // (e.g. "234" should not match a taxon "1234").
+    const taxonMatch = query.match(/eq\(taxon_lineage_ids,(\d+)\)/);
+    const taxonId = taxonMatch ? Number(taxonMatch[1]) : null;
+
     const pivot = pivotKeyFromRequest(request);
     if (pivot) {
       // Geographic pivot calls — only emit data for the geo fields the map cares about.
@@ -335,14 +356,12 @@ function maybeBvBrcWebsite(path: string, request: NextRequest): unknown | null {
     }
     const field = facetFieldFromRequest(request);
     if (!field) return {};
-    const url = new URL(request.url);
-    const query = decodeURIComponent(url.search);
     let count = bacteriaSummaryFixture.count;
-    if (query.includes("10239")) count = virusesSummaryFixture.count;
-    else if (query.includes("131567")) count = allOrganismsSummaryFixture.count;
+    if (taxonId === 10239) count = virusesSummaryFixture.count;
+    else if (taxonId === 131567) count = allOrganismsSummaryFixture.count;
     // For the geo country facet, swap in the geo-specific fixture so the
     // choropleth has realistic, lookup-table-matching country names.
-    if (field === "isolation_country" && query.includes("234")) {
+    if (field === "isolation_country" && taxonId === 234) {
       return {
         response: { numFound: count, docs: [] },
         facet_counts: {

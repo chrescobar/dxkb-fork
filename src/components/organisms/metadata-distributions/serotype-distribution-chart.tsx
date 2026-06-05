@@ -346,11 +346,27 @@ export function SerotypeDistributionChart({
       {tooltipData && (
         <div
           role="status"
-          className="bg-popover text-popover-foreground pointer-events-none fixed rounded-md border px-3 py-2 text-xs shadow-md"
-          style={{
-            left: (tooltipLeft ?? 0) + tooltipOffsetX,
-            top: (tooltipTop ?? 0) + tooltipOffsetY,
-          }}
+          className="bg-popover text-popover-foreground pointer-events-none fixed z-50 rounded-md border px-3 py-2 text-xs shadow-md"
+          style={(() => {
+            const cx = tooltipLeft ?? 0;
+            const cy = tooltipTop ?? 0;
+            const vw = typeof window !== "undefined" ? window.innerWidth : 9999;
+            const vh =
+              typeof window !== "undefined" ? window.innerHeight : 9999;
+            // Estimated tooltip size — flip if it would overflow the viewport
+            const tw = 160;
+            const th = 20 + tooltipData.rows.length * 22;
+            return {
+              left:
+                cx + tooltipOffsetX + tw > vw
+                  ? cx - tooltipOffsetX - tw
+                  : cx + tooltipOffsetX,
+              top:
+                cy + tooltipOffsetY + th > vh
+                  ? cy - tooltipOffsetY - th
+                  : cy + tooltipOffsetY,
+            };
+          })()}
         >
           <p className="text-foreground mb-1.5 font-semibold">
             {tooltipData.year}

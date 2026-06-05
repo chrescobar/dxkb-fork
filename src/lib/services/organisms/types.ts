@@ -43,3 +43,13 @@ export interface OrganismGeoDistribution {
   countyMeta: Record<string, OrganismGeoLocationMeta>;
   maxCount: number;
 }
+
+export interface SerotypeYear {
+  year: number;
+  [serovar: string]: number;
+}
+
+export interface SerotypeDistributionData {
+  years: SerotypeYear[];
+  serovars: string[];
+}

@@ -1,8 +1,10 @@
 import { fetchOrganismMetadataFacets } from "@/lib/services/organisms/metadata-facets";
+import { fetchSerotypeDistribution } from "@/lib/services/organisms/serotype-distribution";
 
 import { CollectionYearAreaChart } from "./collection-year-area-chart";
 import { CollectionYearBarChart } from "./collection-year-bar-chart";
 import { DonutChart } from "./donut-chart";
+import { SerotypeDistributionChart } from "./serotype-distribution-chart";
 
 const fieldLabels: Record<string, string> = {
   genus: "Genus",
@@ -23,7 +25,10 @@ export async function MetadataDistributions({
   taxonId,
   fields,
 }: MetadataDistributionsProps) {
-  const facets = await fetchOrganismMetadataFacets(taxonId, fields);
+  const [facets, serotypeData] = await Promise.all([
+    fetchOrganismMetadataFacets(taxonId, fields),
+    fetchSerotypeDistribution(taxonId),
+  ]);
 
   return (
     <section className="@container flex flex-col gap-3">
@@ -58,8 +63,14 @@ export async function MetadataDistributions({
             ];
           }
 
-          return [<DonutChart key={field} title={title} data={data} />];
+          return [
+            <DonutChart key={field} title={title} data={data} layout="side" />,
+          ];
         })}
+        <SerotypeDistributionChart
+          title="Serotype Distribution (Last 10 Years)"
+          data={serotypeData}
+        />
       </div>
     </section>
   );

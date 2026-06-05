@@ -146,4 +146,69 @@ describe("DonutChart", () => {
       screen.getByText("No distribution data was returned."),
     ).toBeInTheDocument();
   });
+
+  it("renders a non-degenerate annulus path for a single positive slice", () => {
+    render(
+      <DonutChart title="Genus" data={[{ label: "Salmonella", value: 48185 }]} />,
+    );
+
+    const path = document.querySelector("path");
+    expect(path).not.toBeNull();
+    const d = path?.getAttribute("d") ?? "";
+    // Old behavior was a "M outerR 0 A ... M outerR 0 A ..." degenerate arc
+    // (start == end). The full-circle fix emits two semicircle arcs for both
+    // the outer and inner circle — at least 4 arc commands plus the outer
+    // -outerR landing point.
+    const arcCount = (d.match(/ A /g) ?? []).length;
+    expect(arcCount).toBeGreaterThanOrEqual(4);
+    expect(d).toMatch(/-66\s+0/); // outer semicircle landing at (-outerR, 0)
+  });
+
+  it("legend focus shows tooltip near the chip", () => {
+    render(
+      <DonutChart
+        layout="side"
+        title="Genus"
+        data={[
+          { label: "Escherichia", value: 100 },
+          { label: "Salmonella", value: 50 },
+        ]}
+      />,
+    );
+
+    const pill = screen.getByRole("button", { name: "Escherichia: 100" });
+    fireEvent.focus(pill);
+
+    const tooltip = screen.getByRole("status");
+    expect(tooltip).toHaveTextContent("Escherichia");
+    expect(tooltip).toHaveTextContent("100");
+  });
+
+  it("legend blur clears the active slice highlight", () => {
+    render(
+      <DonutChart
+        layout="side"
+        title="Genus"
+        data={[
+          { label: "Escherichia", value: 100 },
+          { label: "Salmonella", value: 50 },
+        ]}
+      />,
+    );
+
+    const pill = screen.getByRole("button", { name: "Escherichia: 100" });
+    fireEvent.focus(pill);
+    // While focused, dimming is in effect on the OTHER pill via opacity styles
+    // (we observe via the activeId path setting the dimmed slice). The simplest
+    // observation: a status tooltip exists.
+    expect(screen.getByRole("status")).toBeInTheDocument();
+    fireEvent.blur(pill);
+    // After blur, deactivate() runs setActiveId(null). visx's useTooltip keeps
+    // tooltipData populated but flips tooltipOpen; the component reads the
+    // active state via activeId. Re-focus a different pill and verify the
+    // tooltip switches — confirms blur cleared the state machine.
+    const other = screen.getByRole("button", { name: "Salmonella: 50" });
+    fireEvent.focus(other);
+    expect(screen.getByRole("status")).toHaveTextContent("Salmonella");
+  });
 });

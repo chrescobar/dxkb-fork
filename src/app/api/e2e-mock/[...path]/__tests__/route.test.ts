@@ -213,4 +213,58 @@ describe("api/e2e-mock catch-all — enabled", () => {
     expect(resp.status).toBe(200);
     expect(await resp.json()).toEqual({});
   });
+
+  it("GET returns the reference_genome array fixture (not a SOLR envelope)", async () => {
+    const resp = await GET(
+      mockNextRequest({
+        url: "http://localhost:3020/api/e2e-mock/bvbrc-website/genome/?eq(taxon_lineage_ids,234)&eq(reference_genome,*)&select(reference_genome,genome_name,genome_id)&limit(25000)",
+      }),
+      ctx(["bvbrc-website", "genome"]),
+    );
+
+    expect(resp.status).toBe(200);
+    const body = await resp.json();
+    expect(Array.isArray(body)).toBe(true);
+    expect(body[0]).toMatchObject({
+      genome_id: expect.stringMatching(/^234\./),
+      genome_name: expect.any(String),
+      reference_genome: expect.stringMatching(/Reference|Representative/),
+    });
+  });
+
+  it("GET disambiguates taxon IDs by regex, not substring", async () => {
+    // taxon "234" is a substring of "1234" — the old code would have matched both
+    // and returned the geo-specific fixture for "1234". With regex matching,
+    // a taxon ID of "1234" falls through to the default fixture.
+    const resp = await GET(
+      mockNextRequest({
+        url: "http://localhost:3020/api/e2e-mock/bvbrc-website/genome/?eq(taxon_lineage_ids,1234)&facet%28%28field%2Cisolation_country%29%2C%28mincount%2C1%29%29",
+      }),
+      ctx(["bvbrc-website", "genome"]),
+    );
+
+    expect(resp.status).toBe(200);
+    const body = await resp.json();
+    // Should be the default isolation_country fixture (uses long country names)
+    // not the geo-specific one keyed at taxonId=234.
+    expect(body.facet_counts.facet_fields.isolation_country).toEqual(
+      expect.arrayContaining(["United States", 290442]),
+    );
+  });
+
+  it("GET applies the geo-specific isolation_country fixture only for taxonId=234", async () => {
+    const resp = await GET(
+      mockNextRequest({
+        url: "http://localhost:3020/api/e2e-mock/bvbrc-website/genome/?eq(taxon_lineage_ids,234)&facet%28%28field%2Cisolation_country%29%2C%28mincount%2C1%29%29",
+      }),
+      ctx(["bvbrc-website", "genome"]),
+    );
+
+    expect(resp.status).toBe(200);
+    const body = await resp.json();
+    // Geo fixture uses 3-letter or short country names ("USA", "China", "Italy")
+    expect(body.facet_counts.facet_fields.isolation_country).toEqual(
+      expect.arrayContaining(["USA", 260]),
+    );
+  });
 });

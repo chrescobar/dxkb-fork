@@ -171,6 +171,33 @@ describe("fetchOrganismGeoDistribution", () => {
     expect(result.maxCount).toBe(999);
   });
 
+  it("re-throws AbortError from a pivot fetch instead of swallowing it", async () => {
+    server.use(
+      http.get(`${baseUrl}/genome/`, ({ request }) => {
+        const query = new URL(request.url).search;
+        if (query.includes("(field,isolation_country)")) {
+          return HttpResponse.json(fieldFacet("isolation_country", ["USA", 1]));
+        }
+        if (query.includes("(field,state_province)")) {
+          return HttpResponse.json(fieldFacet("state_province", []));
+        }
+        if (query.includes("(field,county)")) {
+          return HttpResponse.json(fieldFacet("county", []));
+        }
+        // For pivots, hang long enough to be cancellable.
+        return new Promise<Response>((resolve) =>
+          setTimeout(() => resolve(HttpResponse.json({ response: { numFound: 0 }, facet_counts: { facet_pivot: {} } })), 1000),
+        );
+      }),
+    );
+
+    const controller = new AbortController();
+    const promise = fetchOrganismGeoDistribution(234, { signal: controller.signal });
+    // Allow the field fetches to start before we abort.
+    queueMicrotask(() => controller.abort());
+    await expect(promise).rejects.toThrow();
+  });
+
   it("returns maxCount=0 when the taxon has no geographic data", async () => {
     server.use(
       http.get(`${baseUrl}/genome/`, () =>

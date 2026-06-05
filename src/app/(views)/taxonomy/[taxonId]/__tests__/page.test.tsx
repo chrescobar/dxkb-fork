@@ -13,6 +13,17 @@ vi.mock("@/lib/services/organisms/taxonomy", () => ({
   }),
 }));
 
+const notFoundSpy = vi.fn(() => {
+  throw new Error("NEXT_NOT_FOUND");
+});
+vi.mock("next/navigation", () => ({
+  notFound: () => notFoundSpy(),
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn() }),
+  usePathname: () => "/taxonomy/234",
+  useSearchParams: () => new URLSearchParams(),
+  redirect: vi.fn(),
+}));
+
 describe("TaxonomyPage", () => {
   it("renders the heading for Brucella", async () => {
     const node = await TaxonomyPage({
@@ -52,5 +63,38 @@ describe("TaxonomyPage", () => {
     expect(
       screen.getByText(/This view is coming soon/),
     ).toBeInTheDocument();
+  });
+
+  it("calls notFound for non-numeric taxonId", async () => {
+    notFoundSpy.mockClear();
+    await expect(
+      TaxonomyPage({
+        params: Promise.resolve({ taxonId: "not-a-number" }),
+        searchParams: Promise.resolve({}),
+      }),
+    ).rejects.toThrow("NEXT_NOT_FOUND");
+    expect(notFoundSpy).toHaveBeenCalled();
+  });
+
+  it("calls notFound for negative taxonId", async () => {
+    notFoundSpy.mockClear();
+    await expect(
+      TaxonomyPage({
+        params: Promise.resolve({ taxonId: "-5" }),
+        searchParams: Promise.resolve({}),
+      }),
+    ).rejects.toThrow("NEXT_NOT_FOUND");
+    expect(notFoundSpy).toHaveBeenCalled();
+  });
+
+  it("calls notFound for taxonId of 0", async () => {
+    notFoundSpy.mockClear();
+    await expect(
+      TaxonomyPage({
+        params: Promise.resolve({ taxonId: "0" }),
+        searchParams: Promise.resolve({}),
+      }),
+    ).rejects.toThrow("NEXT_NOT_FOUND");
+    expect(notFoundSpy).toHaveBeenCalled();
   });
 });

@@ -52,4 +52,46 @@ test.describe("taxonomy geographic distribution map", () => {
     const worldPathCount = await svg.locator("path").count();
     expect(worldPathCount).toBeGreaterThan(100);
   });
+
+  test("lazy-loads the counties topology only when a state is selected", async ({ page }) => {
+    // Track which topo files the browser requests over the page's lifetime.
+    const fetchedTopos: string[] = [];
+    page.on("response", (response) => {
+      const url = response.url();
+      if (/\/maps\/.+\.json$/.test(url)) fetchedTopos.push(url);
+    });
+
+    await page.goto("/taxonomy/234");
+    const mapSection = page
+      .locator("section")
+      .filter({ has: page.getByRole("heading", { level: 2, name: "Geographic Distribution" }) });
+    await expect(mapSection.getByRole("img", { name: "Genome distribution map" })).toBeVisible();
+
+    // After initial render: states-10m.json must be fetched. The much larger
+    // counties-10m.json must NOT be fetched until a state is selected.
+    await expect.poll(() => fetchedTopos.some((url) => url.endsWith("/maps/states-10m.json"))).toBe(true);
+    expect(fetchedTopos.some((url) => url.endsWith("/maps/counties-10m.json"))).toBe(false);
+
+    // Drill into a state — should trigger the counties fetch.
+    await mapSection.getByRole("combobox").click();
+    await page.getByRole("option", { name: "Wyoming" }).click();
+    await page.waitForResponse((response) => response.url().endsWith("/maps/counties-10m.json"));
+    expect(fetchedTopos.some((url) => url.endsWith("/maps/counties-10m.json"))).toBe(true);
+  });
+
+  test("breadcrumb ancestor links navigate to the corresponding /taxonomy/<id>", async ({ page }) => {
+    await page.goto("/taxonomy/234");
+
+    // The taxon-breadcrumb shows ancestors as links. From Brucella, the bvbrc-website
+    // fixture exposes a Bacteria ancestor with id=2.
+    const bacteriaLink = page.getByRole("link", { name: "Bacteria" });
+    await expect(bacteriaLink).toBeVisible();
+    await expect(bacteriaLink).toHaveAttribute("href", "/taxonomy/2");
+
+    // Clicking should navigate to the bacteria page (also a /taxonomy/<id> route).
+    await bacteriaLink.click();
+    await expect(page).toHaveURL(/\/taxonomy\/2/);
+    // The shell mounts the same OrganismLandingShell with a refreshed taxon header.
+    await expect(page.getByRole("heading", { level: 1, name: "Bacteria" })).toBeVisible();
+  });
 });

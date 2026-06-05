@@ -1,0 +1,270 @@
+import { http, HttpResponse } from "msw";
+
+import {
+  buildGenomeFacetUrl,
+  buildGenomeGeoFacetUrl,
+  buildGenomeGeoPivotUrl,
+  chartColors,
+  chartTooltipStyle,
+  donutFallbackColor,
+  fetchOrganismSolrJson,
+  numberOrNull,
+  parseSolrFacetList,
+  parseSolrFacetPivot,
+  requiredNumber,
+  requiredString,
+} from "@/lib/services/organisms/utils";
+import { server } from "@/test-helpers/msw-server";
+
+const baseUrl = "https://bvbrc.test/api-for-website";
+
+describe("numberOrNull", () => {
+  it("returns null for null, undefined, empty string", () => {
+    expect(numberOrNull(null, "x")).toBeNull();
+    expect(numberOrNull(undefined, "x")).toBeNull();
+    expect(numberOrNull("", "x")).toBeNull();
+  });
+
+  it("accepts numbers and numeric strings", () => {
+    expect(numberOrNull(42, "x")).toBe(42);
+    expect(numberOrNull("42", "x")).toBe(42);
+    expect(numberOrNull("3.14", "x")).toBe(3.14);
+  });
+
+  it("rejects booleans even though Number(true) === 1", () => {
+    expect(() => numberOrNull(true, "flag")).toThrow(/flag is not numeric/);
+    expect(() => numberOrNull(false, "flag")).toThrow(/flag is not numeric/);
+  });
+
+  it("rejects arrays even though Number([5]) === 5", () => {
+    expect(() => numberOrNull([5], "field")).toThrow(/field is not numeric/);
+    expect(() => numberOrNull([], "field")).toThrow(/field is not numeric/);
+  });
+
+  it("rejects objects", () => {
+    expect(() => numberOrNull({}, "field")).toThrow(/field is not numeric/);
+  });
+
+  it("throws when the numeric coercion produces NaN", () => {
+    expect(() => numberOrNull("not a number", "x")).toThrow(/x is not numeric/);
+  });
+});
+
+describe("requiredNumber / requiredString", () => {
+  it("requiredNumber throws on missing", () => {
+    expect(() => requiredNumber(null, "x")).toThrow(/x is missing/);
+  });
+
+  it("requiredString throws on missing or empty", () => {
+    expect(() => requiredString("", "x")).toThrow(/x is missing/);
+    expect(() => requiredString(null, "x")).toThrow(/x is missing/);
+    expect(requiredString("hello", "x")).toBe("hello");
+  });
+});
+
+describe("buildGenomeFacetUrl", () => {
+  it("omits the limit clause when limit is undefined", () => {
+    const url = buildGenomeFacetUrl(baseUrl, 234, "genus");
+    expect(url).not.toContain("(limit,");
+  });
+
+  it("omits the limit clause when limit is 0 (was a truthiness trap)", () => {
+    const url = buildGenomeFacetUrl(baseUrl, 234, "genus", 0);
+    expect(url).not.toContain("(limit,");
+  });
+
+  it("includes the limit clause when limit is positive", () => {
+    const url = buildGenomeFacetUrl(baseUrl, 234, "genus", 12);
+    expect(url).toContain("(limit,12)");
+  });
+});
+
+describe("buildGenomeGeoFacetUrl / buildGenomeGeoPivotUrl", () => {
+  it("omits the limit clause when limit is 0", () => {
+    expect(buildGenomeGeoFacetUrl(baseUrl, 234, "isolation_country", 0)).not.toContain("(limit,");
+    expect(buildGenomeGeoPivotUrl(baseUrl, 234, "a", "b", 0)).not.toContain("(limit,");
+  });
+
+  it("includes the limit clause when limit is positive", () => {
+    expect(buildGenomeGeoFacetUrl(baseUrl, 234, "isolation_country", 300)).toContain("(limit,300)");
+    expect(buildGenomeGeoPivotUrl(baseUrl, 234, "a", "b", 500)).toContain("(limit,500)");
+  });
+});
+
+describe("parseSolrFacetList", () => {
+  it("parses [name, count] pairs", () => {
+    const payload = {
+      facet_counts: { facet_fields: { genus: ["Escherichia", 20, "Salmonella", 10] } },
+    };
+    expect(parseSolrFacetList(payload, "genus")).toEqual([
+      { name: "Escherichia", count: 20 },
+      { name: "Salmonella", count: 10 },
+    ]);
+  });
+
+  it("throws on missing facet_counts", () => {
+    expect(() => parseSolrFacetList({}, "genus")).toThrow(/missing facet_counts/);
+  });
+
+  it("throws on missing facet_fields", () => {
+    expect(() => parseSolrFacetList({ facet_counts: {} }, "genus")).toThrow(/missing facet_fields/);
+  });
+
+  it("throws when the field facet is absent", () => {
+    expect(() =>
+      parseSolrFacetList({ facet_counts: { facet_fields: {} } }, "genus"),
+    ).toThrow(/missing genus facet/);
+  });
+
+  it("coerces string counts via requiredNumber", () => {
+    const payload = {
+      facet_counts: { facet_fields: { genus: ["Escherichia", "20"] } },
+    };
+    expect(parseSolrFacetList(payload, "genus")).toEqual([{ name: "Escherichia", count: 20 }]);
+  });
+});
+
+describe("parseSolrFacetPivot", () => {
+  it("parses outer string keys with inner counts", () => {
+    const payload = {
+      facet_counts: {
+        facet_pivot: {
+          "country,genus": [
+            { value: "USA", count: 100, pivot: [{ value: "Brucella", count: 60 }] },
+          ],
+        },
+      },
+    };
+    expect(parseSolrFacetPivot(payload, "country,genus")).toEqual({
+      USA: { Brucella: 60 },
+    });
+  });
+
+  it("coerces numeric outer keys to strings (collection_year shape)", () => {
+    const payload = {
+      facet_counts: {
+        facet_pivot: {
+          "collection_year,serovar": [
+            { value: 2023, pivot: [{ value: "Sv1", count: 10 }] },
+            { value: 2024, pivot: [{ value: "Sv1", count: 5 }] },
+          ],
+        },
+      },
+    };
+    expect(parseSolrFacetPivot(payload, "collection_year,serovar")).toEqual({
+      "2023": { Sv1: 10 },
+      "2024": { Sv1: 5 },
+    });
+  });
+
+  it("coerces string sub-counts", () => {
+    const payload = {
+      facet_counts: {
+        facet_pivot: {
+          "country,genus": [
+            { value: "USA", pivot: [{ value: "Brucella", count: "60" }] },
+          ],
+        },
+      },
+    };
+    expect(parseSolrFacetPivot(payload, "country,genus")).toEqual({
+      USA: { Brucella: 60 },
+    });
+  });
+
+  it("throws when the pivot key is absent", () => {
+    expect(() =>
+      parseSolrFacetPivot({ facet_counts: { facet_pivot: {} } }, "a,b"),
+    ).toThrow(/missing a,b pivot/);
+  });
+});
+
+describe("fetchOrganismSolrJson", () => {
+  beforeEach(() => {
+    process.env.BVBRC_WEBSITE_API_URL = baseUrl;
+  });
+  afterEach(() => {
+    delete process.env.BVBRC_WEBSITE_API_URL;
+  });
+
+  it("sets Accept: application/solr+json and returns the parsed object", async () => {
+    let receivedAccept = "";
+    server.use(
+      http.get(`${baseUrl}/genome/`, ({ request }) => {
+        receivedAccept = request.headers.get("Accept") ?? "";
+        return HttpResponse.json({ ok: true });
+      }),
+    );
+
+    const result = await fetchOrganismSolrJson(`${baseUrl}/genome/`, "test");
+    expect(receivedAccept).toBe("application/solr+json");
+    expect(result).toEqual({ ok: true });
+  });
+
+  it("propagates AbortSignal", async () => {
+    server.use(
+      http.get(`${baseUrl}/genome/`, async () => {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        return HttpResponse.json({});
+      }),
+    );
+
+    const controller = new AbortController();
+    controller.abort();
+    await expect(
+      fetchOrganismSolrJson(`${baseUrl}/genome/`, "test", controller.signal),
+    ).rejects.toThrow();
+  });
+
+  it("prefixes the error message with the source on a non-ok response", async () => {
+    server.use(
+      http.get(`${baseUrl}/genome/`, () =>
+        HttpResponse.text("upstream down", { status: 503 }),
+      ),
+    );
+
+    await expect(fetchOrganismSolrJson(`${baseUrl}/genome/`, "geo facet")).rejects.toThrow(
+      "geo facet: upstream down",
+    );
+  });
+});
+
+describe("chartTooltipStyle", () => {
+  it("uses left+top when the tooltip fits to the right and below the cursor", () => {
+    Object.defineProperty(window, "innerWidth", { value: 1000, configurable: true });
+    Object.defineProperty(window, "innerHeight", { value: 800, configurable: true });
+
+    const style = chartTooltipStyle(100, 200, 150, 30);
+    expect(style).toEqual({ left: 112, top: 164 });
+  });
+
+  it("flips to right anchor when the tooltip would overflow to the right", () => {
+    Object.defineProperty(window, "innerWidth", { value: 200, configurable: true });
+    Object.defineProperty(window, "innerHeight", { value: 800, configurable: true });
+
+    const style = chartTooltipStyle(180, 100, 150, 30);
+    expect(style.left).toBeUndefined();
+    expect(style.right).toBeDefined();
+  });
+
+  it("flips top when the tooltip would overflow above the viewport", () => {
+    Object.defineProperty(window, "innerWidth", { value: 1000, configurable: true });
+    Object.defineProperty(window, "innerHeight", { value: 800, configurable: true });
+
+    const style = chartTooltipStyle(100, 10, 150, 30);
+    // offsetY default = -36; 10 + -36 < 0 so it flips downward
+    expect(style.top).toBeGreaterThan(10);
+  });
+});
+
+describe("chart palette exports", () => {
+  it("exports 10 chart colors", () => {
+    expect(chartColors).toHaveLength(10);
+    expect(chartColors[0]).toBe("var(--chart-1)");
+    expect(chartColors[9]).toBe("var(--chart-10)");
+  });
+
+  it("exports a fallback color for donut Others", () => {
+    expect(donutFallbackColor).toBe("var(--muted-foreground)");
+  });
+});

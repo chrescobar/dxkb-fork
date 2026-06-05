@@ -164,4 +164,35 @@ describe("fetchSerotypeDistribution", () => {
       "upstream timeout",
     );
   });
+
+  it("coerces numeric years emitted as strings (application/solr+json)", async () => {
+    server.use(
+      http.get(`${baseUrl}/genome/`, () =>
+        HttpResponse.json(
+          pivotResponse([
+            { value: "2023", pivot: [{ value: "Sv1", count: 10 }] },
+            { value: "2024", pivot: [{ value: "Sv1", count: 5 }] },
+          ]),
+        ),
+      ),
+    );
+
+    const result = await fetchSerotypeDistribution(1);
+    expect(result.years.map((y) => y.year)).toEqual([2023, 2024]);
+  });
+
+  it("propagates AbortSignal cancellation", async () => {
+    server.use(
+      http.get(`${baseUrl}/genome/`, async () => {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        return HttpResponse.json(pivotResponse([]));
+      }),
+    );
+
+    const controller = new AbortController();
+    controller.abort();
+    await expect(
+      fetchSerotypeDistribution(1, { signal: controller.signal }),
+    ).rejects.toThrow();
+  });
 });

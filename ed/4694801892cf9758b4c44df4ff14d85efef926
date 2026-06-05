@@ -1,0 +1,22 @@
+src/components/organisms/metadata-distributions/serotype-distribution-chart.tsx
+  s_db2b6205c4f16f::t_6b854357c73cc4 1-318
+src/components/organisms/metadata-distributions/__tests__/serotype-distribution-chart.test.tsx
+  s_db2b6205c4f16f::t_2d7b7fbf59afb3 65,80,95,111
+  s_db2b6205c4f16f::t_604938e832977c 1-64,66-79,81-94,96-110,112-118
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "ed4694801892cf9758b4c44df4ff14d85efef926",
+  "prompts": {},
+  "sessions": {
+    "s_db2b6205c4f16f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "190320ce-178d-4b58-bb8c-96b550454399",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -15,7 +15,7 @@ interface PivotEntry {
 
 function parseSerotypeDistributionPivot(
   payload: Record<string, unknown>,
-): Array<{ year: number; serovars: Record<string, number> }> {
+): { year: number; serovars: Record<string, number> }[] {
   const facetCounts = payload.facet_counts;
   if (!facetCounts || typeof facetCounts !== "object" || Array.isArray(facetCounts)) {
     throw new Error("Unexpected SOLR response shape: missing facet_counts");
@@ -49,7 +49,7 @@ function parseSerotypeDistributionPivot(
 }
 
 function transformPivot(
-  rows: Array<{ year: number; serovars: Record<string, number> }>,
+  rows: { year: number; serovars: Record<string, number> }[],
 ): SerotypeDistributionData {
   if (rows.length === 0) return { years: [], serovars: [] };
 

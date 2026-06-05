@@ -234,14 +234,21 @@ export function SerotypeDistributionChart({
                   const scaleX = rect.width > 0 ? chartWidth / rect.width : 1;
                   const mouseX =
                     (event.clientX - rect.left) * scaleX - marginLeft;
-                  const colIndex = Math.max(
-                    0,
-                    Math.min(
-                      data.years.length - 1,
-                      Math.round(mouseX / xScale.step()),
-                    ),
-                  );
-                  const yearEntry = data.years[colIndex];
+                  // Find the year whose band center is closest to mouseX.
+                  // scaleBand bands don't start at multiples of step (paddingOuter
+                  // shifts the first band), so nearest-center is the correct approach.
+                  const halfBand = xScale.bandwidth() / 2;
+                  let closestIdx = 0;
+                  let closestDist = Infinity;
+                  data.years.forEach((y, idx) => {
+                    const center = (xScale(y.year) ?? 0) + halfBand;
+                    const dist = Math.abs(mouseX - center);
+                    if (dist < closestDist) {
+                      closestDist = dist;
+                      closestIdx = idx;
+                    }
+                  });
+                  const yearEntry = data.years[closestIdx];
                   if (!yearEntry) return;
                   setHoveredYear(yearEntry.year);
                   showTooltip({

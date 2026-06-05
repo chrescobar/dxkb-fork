@@ -1,4 +1,10 @@
 @import "tailwindcss";
+@import "../styles/debug-outline.css";
+@import "../styles/themes/zinc-theme.css";
+@import "../styles/themes/orange-theme.css";
+@import "../styles/themes/violet-theme.css";
+@import "../styles/themes/bvbrc-theme.css";
+@import "../styles/molstar-theme.css";
 
 @keyframes donut-slice-in {
   from {
@@ -21,12 +27,7 @@
     transform: translateY(0);
   }
 }
-@import "../styles/debug-outline.css";
-@import "../styles/themes/zinc-theme.css";
-@import "../styles/themes/orange-theme.css";
-@import "../styles/themes/violet-theme.css";
-@import "../styles/themes/bvbrc-theme.css";
-@import "../styles/molstar-theme.css";
+
 @plugin "tailwindcss-animate";
 @custom-variant dark (&:is([data-theme$="-dark"] *));
 

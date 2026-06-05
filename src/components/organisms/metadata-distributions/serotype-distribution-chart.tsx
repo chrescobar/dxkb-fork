@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { Group } from "@visx/group";
 import { scaleBand, scaleLinear, scaleOrdinal } from "@visx/scale";
@@ -11,6 +11,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import type { SerotypeDistributionData, SerotypeYear } from "@/lib/services/organisms/types";
 import { numberFormatter } from "@/lib/services/organisms/utils";
 import { cn } from "@/lib/utils";
+
+interface ColumnTooltipRow {
+  serovar: string;
+  count: number;
+  color: string;
+}
+
+interface ColumnTooltipData {
+  year: number;
+  rows: ColumnTooltipRow[];
+}
 
 interface SerotypeDistributionChartProps {
   title: string;
@@ -39,10 +50,12 @@ export function SerotypeDistributionChart({
   title,
   data,
 }: SerotypeDistributionChartProps) {
+  const svgRef = useRef<SVGSVGElement>(null);
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const [lockedIdx, setLockedIdx] = useState<number | null>(null);
+  const [hoveredYear, setHoveredYear] = useState<number | null>(null);
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
-    useTooltip<{ serovar: string; year: number; count: number; pct: number }>();
+    useTooltip<ColumnTooltipData>();
 
   if (data.years.length === 0) {
     return (
@@ -104,6 +117,7 @@ export function SerotypeDistributionChart({
         <p className="text-sm font-semibold">{title}</p>
         <div className="min-w-0 overflow-hidden pt-2">
           <svg
+            ref={svgRef}
             viewBox={`0 0 ${chartWidth} ${chartHeight}`}
             role="img"
             aria-label={`${title} distribution`}
@@ -144,7 +158,21 @@ export function SerotypeDistributionChart({
                 strokeWidth={1}
               />
 
-              {/* Stacked bars */}
+              {/* Column hover highlight — rendered behind the bars */}
+              {hoveredYear !== null && (
+                <rect
+                  x={(xScale(hoveredYear) ?? 0) - xScale.step() * 0.125}
+                  y={0}
+                  width={xScale.step()}
+                  height={innerHeight}
+                  fill="var(--primary)"
+                  fillOpacity={0.08}
+                  rx={3}
+                  pointerEvents="none"
+                />
+              )}
+
+              {/* Stacked bars — pointer-events handled by overlay below */}
               <BarStack<SerotypeYear, string>
                 data={data.years}
                 keys={data.serovars}
@@ -160,17 +188,8 @@ export function SerotypeDistributionChart({
                     const isDimmed = currentActive !== null && !isActive;
 
                     return barStack.bars.map((bar) => {
-                      const yearTotal = data.serovars.reduce(
-                        (s, sv) => s + (bar.bar.data[sv] ?? 0),
-                        0,
-                      );
                       const count = bar.bar.data[barStack.key] ?? 0;
-                      const pct =
-                        yearTotal > 0
-                          ? Math.round((count / yearTotal) * 100)
-                          : 0;
                       const label = `${barStack.key}: ${numberFormatter.format(count)}`;
-
                       return (
                         <rect
                           key={`bar-${barStack.index}-${bar.index}`}
@@ -181,44 +200,10 @@ export function SerotypeDistributionChart({
                           fill={bar.color}
                           rx={barStack.index === barStacks.length - 1 ? 2 : 0}
                           aria-label={label}
+                          pointerEvents="none"
                           style={{
                             opacity: isDimmed ? 0.12 : 1,
                             transition: "opacity 160ms ease",
-                          }}
-                          onMouseEnter={(event) => {
-                            if (lockedIdx === null) setActiveIdx(svIdx);
-                            showTooltip({
-                              tooltipData: {
-                                serovar: barStack.key,
-                                year: bar.bar.data.year,
-                                count,
-                                pct,
-                              },
-                              tooltipLeft: event.clientX,
-                              tooltipTop: event.clientY,
-                            });
-                          }}
-                          onMouseMove={(event) => {
-                            showTooltip({
-                              tooltipData: {
-                                serovar: barStack.key,
-                                year: bar.bar.data.year,
-                                count,
-                                pct,
-                              },
-                              tooltipLeft: event.clientX,
-                              tooltipTop: event.clientY,
-                            });
-                          }}
-                          onMouseLeave={() => {
-                            if (lockedIdx === null) setActiveIdx(null);
-                            hideTooltip();
-                          }}
-                          onClick={() => {
-                            setLockedIdx((prev) =>
-                              prev === svIdx ? null : svIdx,
-                            );
-                            setActiveIdx(null);
                           }}
                         >
                           <title>{label}</title>
@@ -228,6 +213,63 @@ export function SerotypeDistributionChart({
                   })
                 }
               </BarStack>
+
+              {/*
+               * Transparent overlay — covers the full inner chart area.
+               * Detects mouse position to determine the nearest year column,
+               * then shows the column highlight and tooltip for the whole area
+               * (not just where bars exist). Click locks/unlocks a serovar.
+               */}
+              <rect
+                data-testid="chart-overlay"
+                x={0}
+                y={0}
+                width={innerWidth}
+                height={innerHeight}
+                fill="transparent"
+                onMouseMove={(event) => {
+                  const svgEl = svgRef.current;
+                  if (!svgEl) return;
+                  const rect = svgEl.getBoundingClientRect();
+                  const scaleX = rect.width > 0 ? chartWidth / rect.width : 1;
+                  const mouseX =
+                    (event.clientX - rect.left) * scaleX - marginLeft;
+                  const colIndex = Math.max(
+                    0,
+                    Math.min(
+                      data.years.length - 1,
+                      Math.round(mouseX / xScale.step()),
+                    ),
+                  );
+                  const yearEntry = data.years[colIndex];
+                  if (!yearEntry) return;
+                  setHoveredYear(yearEntry.year);
+                  showTooltip({
+                    tooltipData: {
+                      year: yearEntry.year,
+                      rows: data.serovars
+                        .map((sv) => ({
+                          serovar: sv,
+                          count: yearEntry[sv] ?? 0,
+                          color: colorScale(sv),
+                        }))
+                        .filter((r) => r.count > 0)
+                        .sort((a, b) => b.count - a.count),
+                    },
+                    tooltipLeft: event.clientX,
+                    tooltipTop: event.clientY,
+                  });
+                }}
+                onMouseLeave={() => {
+                  setHoveredYear(null);
+                  hideTooltip();
+                }}
+                onClick={() => {
+                  // Click in empty space releases any serovar lock
+                  setLockedIdx(null);
+                  setActiveIdx(null);
+                }}
+              />
 
               {/* X-axis year labels */}
               {data.years.map((d) => {
@@ -293,25 +335,33 @@ export function SerotypeDistributionChart({
         </div>
       </CardContent>
 
-      {/* Tooltip */}
+      {/* Tooltip — shows all serovars for the hovered year */}
       {tooltipData && (
         <div
           role="status"
-          className="bg-popover text-popover-foreground pointer-events-none fixed rounded-md border px-2 py-1 text-xs shadow-md"
+          className="bg-popover text-popover-foreground pointer-events-none fixed rounded-md border px-3 py-2 text-xs shadow-md"
           style={{
             left: (tooltipLeft ?? 0) + tooltipOffsetX,
             top: (tooltipTop ?? 0) + tooltipOffsetY,
           }}
         >
-          <span
-            className="mr-1 inline-block h-2 w-2 rounded-full"
-            style={{ background: colorScale(tooltipData.serovar) }}
-          />
-          {tooltipData.serovar}
-          <span className="text-muted-foreground ml-1">
-            {tooltipData.year} · {numberFormatter.format(tooltipData.count)}{" "}
-            ({tooltipData.pct}%)
-          </span>
+          <p className="text-foreground mb-1.5 font-semibold">
+            {tooltipData.year}
+          </p>
+          <div className="flex flex-col gap-1">
+            {tooltipData.rows.map(({ serovar, count, color }) => (
+              <div key={serovar} className="flex items-center gap-2">
+                <span
+                  className="inline-block h-2 w-2 shrink-0 rounded-full"
+                  style={{ background: color }}
+                />
+                <span className="text-muted-foreground flex-1">{serovar}</span>
+                <span className="tabular-nums font-semibold">
+                  {numberFormatter.format(count)}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </Card>

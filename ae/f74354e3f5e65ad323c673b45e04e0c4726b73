@@ -1,0 +1,43 @@
+src/app/(views)/taxonomy/[taxonId]/_config.ts
+  s_bdd5a267088c18::t_b16687069dc832 11-12
+src/components/organisms/taxonomy-summary/__tests__/taxonomy-summary.test.tsx
+  s_bdd5a267088c18::t_b16687069dc832 10-18,25,36,48,55,66,75,78
+src/app/(views)/taxonomy/[taxonId]/views/overview.tsx
+  s_bdd5a267088c18::t_b16687069dc832 13,17,21,23
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  s_bdd5a267088c18::t_b16687069dc832 15-16
+src/app/(views)/taxonomy/[taxonId]/_components/nav-items.tsx
+  s_bdd5a267088c18::t_b16687069dc832 3,10,13
+src/app/(views)/taxonomy/[taxonId]/page.tsx
+  s_bdd5a267088c18::t_b16687069dc832 39
+src/components/organisms/metadata-distributions/bar-chart.tsx
+  s_bdd5a267088c18::t_b16687069dc832 10-11
+src/lib/services/organisms/chart-utils.ts
+  s_bdd5a267088c18::t_4df87f122eec6a 1-58
+src/components/organisms/metadata-distributions/bar-stack-chart.tsx
+  s_bdd5a267088c18::t_b16687069dc832 12-13
+src/components/organisms/metadata-distributions/area-chart.tsx
+  s_bdd5a267088c18::t_b16687069dc832 12-13
+src/components/organisms/taxonomy-summary/taxonomy-summary.tsx
+  s_bdd5a267088c18::t_b16687069dc832 3,10-21
+src/components/organisms/geo-distribution/choropleth-svg.tsx
+  s_bdd5a267088c18::t_b16687069dc832 138,193,240,292
+src/lib/services/organisms/__tests__/utils.test.ts
+  s_bdd5a267088c18::t_b16687069dc832 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "aef74354e3f5e65ad323c673b45e04e0c4726b73",
+  "prompts": {},
+  "sessions": {
+    "s_bdd5a267088c18": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fa84a32f-cab8-4d6f-a243-7b9e7fb01e2f",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

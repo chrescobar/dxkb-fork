@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
+import { useVirtualizer } from "@tanstack/react-virtual";
 import Link from "next/link";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -17,6 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 import type { ReferenceGenome } from "@/lib/services/organisms/reference-genomes";
 
 const badgeVariantForType: Record<string, "default" | "secondary" | "outline"> = {
@@ -24,45 +25,12 @@ const badgeVariantForType: Record<string, "default" | "secondary" | "outline"> =
   Representative: "secondary",
 };
 
-function GenomeRows({ genomes }: { genomes: ReferenceGenome[] }) {
-  if (genomes.length === 0) {
-    return (
-      <TableRow>
-        <TableCell colSpan={2} className="text-muted-foreground py-4 text-center text-sm">
-          No genomes in this category.
-        </TableCell>
-      </TableRow>
-    );
-  }
-  return genomes.map((g) => (
-    <TableRow key={g.genome_id} className="h-8">
-      <TableCell className="w-36 border-r py-1 px-3">
-        <div className="flex items-center justify-center">
-          <Badge
-            variant={badgeVariantForType[g.reference_genome] ?? "outline"}
-            className="text-[11px]"
-          >
-            {g.reference_genome}
-          </Badge>
-        </div>
-      </TableCell>
-      <TableCell className="overflow-hidden py-1 px-3">
-        <Link
-          href={`https://www.bv-brc.org/view/Genome/${g.genome_id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-primary hover:underline text-sm block truncate"
-          title={g.genome_name}
-        >
-          {g.genome_name}
-        </Link>
-      </TableCell>
-    </TableRow>
-  ));
-}
+const rowHeight = 32; // h-8
 
 function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
+  "use no memo";
   const [sortDir, setSortDir] = useState<"asc" | "desc" | null>(null);
+  const parentRef = useRef<HTMLDivElement>(null);
 
   const sorted =
     sortDir === null
@@ -71,6 +39,13 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
           const cmp = a.genome_name.localeCompare(b.genome_name);
           return sortDir === "asc" ? cmp : -cmp;
         });
+
+  const rowVirtualizer = useVirtualizer({
+    count: sorted.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => rowHeight,
+    overscan: 15,
+  });
 
   const SortIcon =
     sortDir === "asc" ? ArrowUp : sortDir === "desc" ? ArrowDown : ArrowUpDown;
@@ -82,8 +57,18 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
     setSortDir((d) => (d === null ? "asc" : d === "asc" ? "desc" : null));
   }
 
+  const virtualItems = rowVirtualizer.getVirtualItems();
+  const paddingTop = virtualItems[0]?.start ?? 0;
+  const paddingBottom =
+    virtualItems.length > 0
+      ? rowVirtualizer.getTotalSize() - (virtualItems[virtualItems.length - 1]?.end ?? 0)
+      : 0;
+
   return (
-    <ScrollArea className="h-80 overflow-hidden rounded-t-lg xl:min-h-0 xl:flex-1 **:data-[slot=scroll-area-scrollbar]:z-20 **:data-[slot=scroll-area-thumb]:bg-foreground/25">
+    <div
+      ref={parentRef}
+      className="h-80 overflow-auto rounded-t-lg xl:min-h-0 xl:flex-1 scrollbar-thin"
+    >
       <Table disableScrollWrapper className="table-fixed">
         <TableHeader className="sticky top-0 z-10 bg-muted">
           <TableRow className="h-8">
@@ -104,11 +89,53 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
             </TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody className="[&_tr:nth-child(even)]:bg-muted/20">
-          <GenomeRows genomes={sorted} />
+        <TableBody>
+          {sorted.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={2} className="text-muted-foreground py-4 text-center text-sm">
+                No genomes in this category.
+              </TableCell>
+            </TableRow>
+          ) : (
+            <>
+              {paddingTop > 0 && <tr style={{ height: paddingTop }} />}
+              {virtualItems.map((virtualItem) => {
+                const g = sorted[virtualItem.index];
+                return (
+                  <TableRow
+                    key={g.genome_id}
+                    className={cn("h-8", virtualItem.index % 2 === 1 && "bg-muted/20")}
+                  >
+                    <TableCell className="w-36 border-r py-1 px-3">
+                      <div className="flex items-center justify-center">
+                        <Badge
+                          variant={badgeVariantForType[g.reference_genome] ?? "outline"}
+                          className="text-[11px]"
+                        >
+                          {g.reference_genome}
+                        </Badge>
+                      </div>
+                    </TableCell>
+                    <TableCell className="overflow-hidden py-1 px-3">
+                      <Link
+                        href={`https://www.bv-brc.org/view/Genome/${g.genome_id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline text-sm block truncate"
+                        title={g.genome_name}
+                      >
+                        {g.genome_name}
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+              {paddingBottom > 0 && <tr style={{ height: paddingBottom }} />}
+            </>
+          )}
         </TableBody>
       </Table>
-    </ScrollArea>
+    </div>
   );
 }
 

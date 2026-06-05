@@ -23,7 +23,7 @@ interface ColumnTooltipData {
   rows: ColumnTooltipRow[];
 }
 
-interface SerotypeDistributionChartProps {
+interface BarStackChartProps {
   title: string;
   data: SerotypeDistributionData;
 }
@@ -46,10 +46,10 @@ const chartColors = [
 const tooltipOffsetX = 16;
 const tooltipOffsetY = 16;
 
-export function SerotypeDistributionChart({
+export function BarStackChart({
   title,
   data,
-}: SerotypeDistributionChartProps) {
+}: BarStackChartProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const [lockedIdx, setLockedIdx] = useState<number | null>(null);

@@ -1,10 +1,10 @@
 import { fetchOrganismMetadataFacets } from "@/lib/services/organisms/metadata-facets";
 import { fetchSerotypeDistribution } from "@/lib/services/organisms/serotype-distribution";
 
-import { CollectionYearAreaChart } from "./collection-year-area-chart";
-import { CollectionYearBarChart } from "./collection-year-bar-chart";
+import { AreaChart } from "./area-chart";
+import { BarChart } from "./bar-chart";
+import { BarStackChart } from "./bar-stack-chart";
 import { DonutChart } from "./donut-chart";
-import { SerotypeDistributionChart } from "./serotype-distribution-chart";
 
 const fieldLabels: Record<string, string> = {
   genus: "Genus",
@@ -50,12 +50,12 @@ export async function MetadataDistributions({
 
           if (field === "collection_year") {
             return [
-              <CollectionYearBarChart
+              <BarChart
                 key={`${field}-bar`}
                 title={`${title} (Bar)`}
                 data={data}
               />,
-              <CollectionYearAreaChart
+              <AreaChart
                 key={`${field}-area`}
                 title={`${title} (Area)`}
                 data={data}
@@ -67,7 +67,7 @@ export async function MetadataDistributions({
             <DonutChart key={field} title={title} data={data} layout="side" />,
           ];
         })}
-        <SerotypeDistributionChart
+        <BarStackChart
           title="Serotype Distribution (Last 10 Years)"
           data={serotypeData}
         />

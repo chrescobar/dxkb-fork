@@ -1,11 +1,11 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 
-import { CollectionYearBarChart } from "../collection-year-bar-chart";
+import { BarChart } from "../bar-chart";
 
-describe("CollectionYearBarChart", () => {
+describe("BarChart", () => {
   it("renders a bar for each valid year, sorted chronologically", () => {
     render(
-      <CollectionYearBarChart
+      <BarChart
         title="Collection Year"
         data={[
           { label: "2020", value: 100 },
@@ -25,7 +25,7 @@ describe("CollectionYearBarChart", () => {
 
   it("filters out non-integer labels", () => {
     render(
-      <CollectionYearBarChart
+      <BarChart
         title="Collection Year"
         data={[
           { label: "2020", value: 100 },
@@ -43,7 +43,7 @@ describe("CollectionYearBarChart", () => {
 
   it("shows tooltip on hover", () => {
     render(
-      <CollectionYearBarChart
+      <BarChart
         title="Collection Year"
         data={[{ label: "2021", value: 42 }]}
       />,
@@ -59,7 +59,7 @@ describe("CollectionYearBarChart", () => {
 
   it("renders empty state when no valid data", () => {
     render(
-      <CollectionYearBarChart
+      <BarChart
         title="Collection Year"
         data={[{ label: "unknown", value: 5 }]}
       />,

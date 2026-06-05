@@ -10,8 +10,8 @@ vi.mock("@/lib/services/organisms/serotype-distribution", () => ({
   fetchSerotypeDistribution: vi.fn(),
 }));
 
-vi.mock("../serotype-distribution-chart", () => ({
-  SerotypeDistributionChart: () => <div data-testid="serotype-chart" />,
+vi.mock("../bar-stack-chart", () => ({
+  BarStackChart: () => <div data-testid="serotype-chart" />,
 }));
 
 import { MetadataDistributions } from "../metadata-distributions";

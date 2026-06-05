@@ -1,56 +1,11 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { hydrateRoot } from "react-dom/client";
-import { renderToString } from "react-dom/server";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 
 import { DonutChart } from "../donut-chart";
 
-beforeAll(() => {
-  const svgElementPrototype = SVGElement.prototype as SVGElement & {
-    getComputedTextLength?: () => number;
-  };
-
-  if (!svgElementPrototype.getComputedTextLength) {
-    Object.defineProperty(svgElementPrototype, "getComputedTextLength", {
-      configurable: true,
-      value() {
-        return (this.textContent ?? "").length * 8;
-      },
-    });
-  }
-});
-
-beforeEach(() => {
-  vi.spyOn(console, "warn").mockImplementation(() => undefined);
-});
-
-function connectorEndpoints(path: SVGPathElement) {
-  const points = connectorPoints(path);
-  const start = points[0];
-  const end = points.at(-1);
-
-  if (!start || !end) {
-    throw new Error("Connector path did not include start and end points");
-  }
-
-  return { start, end };
-}
-
-function connectorPoints(path: SVGPathElement) {
-  const points = [
-    ...(path.getAttribute("d") ?? "").matchAll(
-      /[ML](-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g,
-    ),
-  ].map((match) => ({
-    x: Number(match[1]),
-    y: Number(match[2]),
-  }));
-
-  if (points.length < 2) {
-    throw new Error("Connector path did not include enough points");
-  }
-
-  return points;
-}
+// Constants mirrored from the component for hit-test coordinate calculations
+const chartSize = 160;
+const chartCenter = chartSize / 2;
+const outerRadius = 66;
 
 describe("DonutChart", () => {
   it("renders top four slices and an Others bucket", () => {
@@ -72,7 +27,10 @@ describe("DonutChart", () => {
       screen.getByRole("img", { name: "Genus distribution" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Others")).toBeInTheDocument();
-    expect(screen.getByLabelText("Others: 11")).toBeInTheDocument(); // E (6) + F (5)
+    // Both the SVG path and the legend chip carry the same aria-label
+    expect(
+      within(screen.getByRole("img")).getByLabelText("Others: 11"),
+    ).toBeInTheDocument();
   });
 
   it("uses a collision-free label for the aggregate bucket", () => {
@@ -92,184 +50,93 @@ describe("DonutChart", () => {
 
     expect(screen.getByText("Others")).toBeInTheDocument();
     expect(screen.getByText("Other values")).toBeInTheDocument();
-    expect(screen.getByText("11")).toBeInTheDocument();
   });
 
-  it("keeps annotation connectors on the same side as their slice", () => {
-    render(
-      <DonutChart
-        title="Host"
-        data={[
-          { label: "Others", value: 229915 },
-          { label: "Lab", value: 203257 },
-          { label: "Avian", value: 556736 },
-          { label: "Nonhuman Mammal", value: 702930 },
-          { label: "Human", value: 12245319 },
-        ]}
-      />,
-    );
-
-    const connectorEndpointsByPath = [
-      ...document.querySelectorAll<SVGPathElement>(
-        ".visx-annotation-connector",
-      ),
-    ].map(connectorEndpoints);
-
-    expect(connectorEndpointsByPath).toHaveLength(5);
-    expect(
-      connectorEndpointsByPath.every(
-        ({ start, end }) => Math.sign(start.x) === Math.sign(end.x),
-      ),
-    ).toBe(true);
-  });
-
-  it("keeps label markers vertical while connectors meet them at a slant", () => {
-    render(
-      <DonutChart
-        title="Host"
-        data={[
-          { label: "Others", value: 229915 },
-          { label: "Lab", value: 203257 },
-          { label: "Avian", value: 556736 },
-          { label: "Nonhuman Mammal", value: 702930 },
-          { label: "Human", value: 12245319 },
-        ]}
-      />,
-    );
-
-    const markers = [
-      ...document.querySelectorAll<SVGLineElement>(
-        ".metadata-distribution-label-marker",
-      ),
-    ];
-    const connectors = [
-      ...document.querySelectorAll<SVGPathElement>(
-        ".visx-annotation-connector",
-      ),
-    ];
-
-    expect(markers).toHaveLength(5);
-    expect(
-      markers.every(
-        (marker) => marker.getAttribute("x1") === marker.getAttribute("x2"),
-      ),
-    ).toBe(true);
-    expect(
-      connectors.every((connector) => {
-        const points = connectorPoints(connector);
-        const penultimate = points.at(-2);
-        const end = points.at(-1);
-        return Boolean(penultimate && end && penultimate.x !== end.x);
-      }),
-    ).toBe(true);
-  });
-
-  it("shows tooltip content on hover", () => {
+  it("shows tooltip content on hover over the ring", () => {
     render(
       <DonutChart title="Host" data={[{ label: "Homo sapiens", value: 12 }]} />,
     );
 
-    fireEvent.mouseMove(screen.getByLabelText("Homo sapiens: 12"), {
-      clientX: 10,
-      clientY: 10,
-    });
-
-    expect(screen.getByRole("status")).toHaveTextContent("Homo sapiens: 12");
-  });
-
-  it("shows tooltip content on focus and positions it near the arc", () => {
-    render(
-      <DonutChart title="Host" data={[{ label: "Homo sapiens", value: 12 }]} />,
-    );
-
-    const arc = screen.getByLabelText("Homo sapiens: 12");
-    vi.spyOn(arc, "getBoundingClientRect").mockReturnValue({
-      left: 100,
-      top: 200,
-      right: 150,
-      bottom: 250,
-      width: 50,
-      height: 50,
-      x: 100,
-      y: 200,
+    const svg = document.querySelector("svg");
+    expect(svg).not.toBeNull();
+    vi.spyOn(svg as SVGSVGElement, "getBoundingClientRect").mockReturnValue({
+      left: 0,
+      top: 0,
+      width: chartSize,
+      height: chartSize,
+      right: chartSize,
+      bottom: chartSize,
+      x: 0,
+      y: 0,
       toJSON: () => ({}),
     } as DOMRect);
 
-    fireEvent.focus(arc);
+    // clientX=80,clientY=25 → svgX=0, svgY=-55 → dist=55 (inside ring: 38<55<66)
+    fireEvent.mouseMove(screen.getByTestId("chart-overlay"), {
+      clientX: chartCenter,
+      clientY: chartCenter - outerRadius + 17,
+    });
 
-    const tooltip = screen.getByRole("status");
-    expect(tooltip).toHaveTextContent("Homo sapiens: 12");
-    expect(tooltip).toHaveStyle({ left: "125px", top: "225px" });
+    expect(screen.getByRole("status")).toHaveTextContent("Homo sapiens");
+    expect(screen.getByRole("status")).toHaveTextContent("12");
+  });
+
+  it("hides tooltip when hovering the inner hole", () => {
+    render(
+      <DonutChart title="Host" data={[{ label: "Homo sapiens", value: 12 }]} />,
+    );
+
+    const svg = document.querySelector("svg");
+    expect(svg).not.toBeNull();
+    vi.spyOn(svg as SVGSVGElement, "getBoundingClientRect").mockReturnValue({
+      left: 0,
+      top: 0,
+      width: chartSize,
+      height: chartSize,
+      right: chartSize,
+      bottom: chartSize,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    } as DOMRect);
+
+    const overlay = screen.getByTestId("chart-overlay");
+
+    // First hover the ring to show tooltip
+    fireEvent.mouseMove(overlay, {
+      clientX: chartCenter,
+      clientY: chartCenter - outerRadius + 17,
+    });
+    expect(screen.getByRole("status")).toBeInTheDocument();
+
+    // Then move into the inner hole — clientX=80, clientY=80 → dist=0 < innerRadius
+    fireEvent.mouseMove(overlay, {
+      clientX: chartCenter,
+      clientY: chartCenter,
+    });
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
 
   it("renders blank labels as Unspecified", () => {
     render(<DonutChart title="Host" data={[{ label: "", value: 76420 }]} />);
 
     expect(screen.getByText("Unspecified")).toBeInTheDocument();
-    expect(screen.getByLabelText("Unspecified: 76,420")).toBeInTheDocument();
+    expect(
+      within(screen.getByRole("img")).getByLabelText("Unspecified: 76,420"),
+    ).toBeInTheDocument();
   });
 
-  it("positions values below wrapped labels", () => {
+  it("renders title attributes on arc paths for screen readers", () => {
     render(
-      <DonutChart
-        title="Host"
-        data={[{ label: "Human, Homo sapiens", value: 6 }]}
-      />,
-    );
-
-    const wrappedLine = screen.getByText("sapiens");
-    const valueLabel = document.querySelector<SVGTextElement>(
-      ".metadata-distribution-value-label",
-    );
-
-    expect(screen.getByText("Human, Homo")).toBeInTheDocument();
-    expect(valueLabel).not.toBeNull();
-    expect(Number(valueLabel?.getAttribute("y"))).toBeGreaterThan(
-      Number(wrappedLine.getAttribute("y")),
-    );
-  });
-
-  it("server-renders annotation titles as text", () => {
-    const markup = renderToString(
       <DonutChart
         title="Genus"
         data={[{ label: "Salmonella", value: 48185 }]}
       />,
     );
 
-    expect(markup).toContain("<title>Salmonella: 48,185</title>");
-  });
-
-  it("hydrates long wrapped labels without changing server text nodes", async () => {
-    const data = [{ label: "Human, Homo sapiens", value: 12 }];
-    const originalDocument = globalThis.document;
-
-    vi.stubGlobal("document", undefined);
-    let markup: string;
-    try {
-      markup = renderToString(<DonutChart title="Host" data={data} />);
-    } finally {
-      vi.stubGlobal("document", originalDocument);
-    }
-
-    const container = originalDocument.createElement("div");
-    container.innerHTML = markup;
-
-    vi.mocked(console.error).mockClear();
-    const root = hydrateRoot(
-      container,
-      <DonutChart title="Host" data={data} />,
-    );
-
-    await new Promise((resolve) => setTimeout(resolve, 0));
-
-    const hydrationErrors = vi
-      .mocked(console.error)
-      .mock.calls.flat()
-      .filter((message) => String(message).includes("Hydration failed"));
-
-    expect(hydrationErrors).toHaveLength(0);
-    root.unmount();
+    expect(
+      document.querySelector("path > title"),
+    ).toHaveTextContent("Salmonella: 48,185");
   });
 
   it("renders an empty state", () => {

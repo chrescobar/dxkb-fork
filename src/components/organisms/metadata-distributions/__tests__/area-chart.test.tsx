@@ -1,11 +1,11 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 
-import { CollectionYearAreaChart } from "../collection-year-area-chart";
+import { AreaChart } from "../area-chart";
 
-describe("CollectionYearAreaChart", () => {
+describe("AreaChart", () => {
   it("renders dots for each valid year, sorted chronologically", () => {
     render(
-      <CollectionYearAreaChart
+      <AreaChart
         title="Collection Year"
         data={[
           { label: "2020", value: 100 },
@@ -25,7 +25,7 @@ describe("CollectionYearAreaChart", () => {
 
   it("filters out non-integer labels", () => {
     render(
-      <CollectionYearAreaChart
+      <AreaChart
         title="Collection Year"
         data={[
           { label: "2020", value: 100 },
@@ -43,7 +43,7 @@ describe("CollectionYearAreaChart", () => {
 
   it("shows tooltip on hover", () => {
     render(
-      <CollectionYearAreaChart
+      <AreaChart
         title="Collection Year"
         data={[{ label: "2021", value: 42 }]}
       />,
@@ -59,7 +59,7 @@ describe("CollectionYearAreaChart", () => {
 
   it("renders empty state when no valid data", () => {
     render(
-      <CollectionYearAreaChart
+      <AreaChart
         title="Collection Year"
         data={[{ label: "unknown", value: 5 }]}
       />,

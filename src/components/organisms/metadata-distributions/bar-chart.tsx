@@ -3,10 +3,8 @@
 import { useRef } from "react";
 
 import { Group } from "@visx/group";
-import { scaleLinear } from "@visx/scale";
-import { AreaClosed, LinePath } from "@visx/shape";
+import { scaleBand, scaleLinear } from "@visx/scale";
 import { useTooltip } from "@visx/tooltip";
-import { curveMonotoneX } from "@visx/vendor/d3-shape";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { chartTooltipStyle, numberFormatter } from "@/lib/services/organisms/utils";
@@ -16,7 +14,7 @@ interface YearDatum {
   count: number;
 }
 
-interface CollectionYearAreaChartProps {
+interface BarChartProps {
   title: string;
   data: { label: string; value: number }[];
 }
@@ -29,7 +27,6 @@ const marginBottom = 32;
 const marginLeft = 54;
 const innerWidth = chartWidth - marginLeft - marginRight;
 const innerHeight = chartHeight - marginTop - marginBottom;
-const gradientId = "collection-year-area-gradient";
 
 function labelStep(count: number): number {
   if (count <= 15) return 1;
@@ -45,20 +42,19 @@ function parseYearData(data: { label: string; value: number }[]): YearDatum[] {
     .sort((a, b) => a.year - b.year);
 }
 
-export function CollectionYearAreaChart({
+export function BarChart({
   title,
   data,
-}: CollectionYearAreaChartProps) {
+}: BarChartProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const yearData = parseYearData(data);
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
     useTooltip<YearDatum>();
 
-  const xMin = yearData.length > 0 ? yearData[0].year : 0;
-  const xMax = yearData.length > 0 ? yearData[yearData.length - 1].year : 1;
-  const xScale = scaleLinear<number>({
-    domain: [xMin, xMax],
+  const xScale = scaleBand<number>({
+    domain: yearData.map((d) => d.year),
     range: [0, innerWidth],
+    padding: 0.25,
   });
 
   const maxCount = Math.max(...yearData.map((d) => d.count), 1);
@@ -90,20 +86,6 @@ export function CollectionYearAreaChart({
               aria-label={`${title} distribution`}
               className="w-full"
             >
-              <defs>
-                <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="0%"
-                    stopColor="var(--chart-1)"
-                    stopOpacity={0.4}
-                  />
-                  <stop
-                    offset="100%"
-                    stopColor="var(--chart-1)"
-                    stopOpacity={0}
-                  />
-                </linearGradient>
-              </defs>
               <Group left={marginLeft} top={marginTop}>
                 {yTicks.map((tick) => (
                   <g key={tick}>
@@ -128,38 +110,22 @@ export function CollectionYearAreaChart({
                   </g>
                 ))}
 
-                <AreaClosed<YearDatum>
-                  data={yearData}
-                  x={(d) => xScale(d.year) ?? 0}
-                  y={(d) => yScale(d.count) ?? 0}
-                  yScale={yScale}
-                  fill={`url(#${gradientId})`}
-                  curve={curveMonotoneX}
-                />
-
-                <LinePath<YearDatum>
-                  data={yearData}
-                  x={(d) => xScale(d.year) ?? 0}
-                  y={(d) => yScale(d.count) ?? 0}
-                  stroke="var(--chart-1)"
-                  strokeWidth={2}
-                  curve={curveMonotoneX}
-                />
-
                 {yearData.map((d) => {
-                  const cx = xScale(d.year) ?? 0;
-                  const cy = yScale(d.count) ?? 0;
+                  const barX = xScale(d.year) ?? 0;
+                  const barWidth = xScale.bandwidth();
+                  const barY = yScale(d.count) ?? 0;
+                  const barHeight = innerHeight - barY;
                   const label = `${d.year}: ${numberFormatter.format(d.count)}`;
 
                   return (
-                    <circle
+                    <rect
                       key={d.year}
-                      cx={cx}
-                      cy={cy}
-                      r={4}
+                      x={barX}
+                      y={barY}
+                      width={barWidth}
+                      height={barHeight}
                       fill="var(--chart-1)"
-                      stroke="var(--card)"
-                      strokeWidth={2}
+                      rx={2}
                       tabIndex={0}
                       aria-label={label}
                       onFocus={(event) => {
@@ -174,16 +140,17 @@ export function CollectionYearAreaChart({
                       onBlur={hideTooltip}
                     >
                       <title>{label}</title>
-                    </circle>
+                    </rect>
                   );
                 })}
 
                 {yearData.map((d, i) => {
                   if (i % step !== 0) return null;
+                  const labelX = (xScale(d.year) ?? 0) + xScale.bandwidth() / 2;
                   return (
                     <text
                       key={`label-${d.year}`}
-                      x={xScale(d.year) ?? 0}
+                      x={labelX}
                       y={innerHeight + 12}
                       textAnchor="middle"
                       dominantBaseline="hanging"
@@ -204,25 +171,18 @@ export function CollectionYearAreaChart({
                   strokeWidth={1}
                 />
 
-                {tooltipData && (() => {
-                  const hx = xScale(tooltipData.year) ?? 0;
-                  const colW =
-                    yearData.length > 1
-                      ? innerWidth / (yearData.length - 1)
-                      : innerWidth;
-                  return (
-                    <rect
-                      x={hx - colW / 2}
-                      y={0}
-                      width={colW}
-                      height={innerHeight}
-                      fill="var(--primary)"
-                      fillOpacity={0.12}
-                      rx={3}
-                      pointerEvents="none"
-                    />
-                  );
-                })()}
+                {tooltipData && (
+                  <rect
+                    x={(xScale(tooltipData.year) ?? 0) - xScale.step() * 0.125}
+                    y={0}
+                    width={xScale.step()}
+                    height={innerHeight}
+                    fill="var(--primary)"
+                    fillOpacity={0.12}
+                    rx={3}
+                    pointerEvents="none"
+                  />
+                )}
 
                 <rect
                   data-testid="chart-overlay"
@@ -240,17 +200,21 @@ export function CollectionYearAreaChart({
                     const mouseX = svgRect
                       ? (event.clientX - svgRect.left) * scaleX - marginLeft
                       : event.clientX - marginLeft;
-                    const yearValue = xScale.invert(mouseX);
-                    const nearest = yearData.reduce((a, b) =>
-                      Math.abs(b.year - yearValue) < Math.abs(a.year - yearValue)
-                        ? b
-                        : a,
+                    const index = Math.max(
+                      0,
+                      Math.min(
+                        yearData.length - 1,
+                        Math.round(mouseX / xScale.step()),
+                      ),
                     );
-                    showTooltip({
-                      tooltipData: nearest,
-                      tooltipLeft: event.clientX,
-                      tooltipTop: event.clientY,
-                    });
+                    const d = yearData[index];
+                    if (d) {
+                      showTooltip({
+                        tooltipData: d,
+                        tooltipLeft: event.clientX,
+                        tooltipTop: event.clientY,
+                      });
+                    }
                   }}
                   onMouseLeave={hideTooltip}
                 />

@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 
-import { SerotypeDistributionChart } from "../serotype-distribution-chart";
+import { BarStackChart } from "../bar-stack-chart";
 import type { SerotypeDistributionData } from "@/lib/services/organisms/types";
 
 const twoYearData: SerotypeDistributionData = {
@@ -11,10 +11,10 @@ const twoYearData: SerotypeDistributionData = {
   ],
 };
 
-describe("SerotypeDistributionChart", () => {
+describe("BarStackChart", () => {
   it("renders empty state when no years", () => {
     render(
-      <SerotypeDistributionChart
+      <BarStackChart
         title="Serotype Distribution (Last 10 Years)"
         data={{ years: [], serovars: [] }}
       />,
@@ -28,7 +28,7 @@ describe("SerotypeDistributionChart", () => {
 
   it("renders an SVG with the correct aria-label", () => {
     render(
-      <SerotypeDistributionChart
+      <BarStackChart
         title="Serotype Distribution (Last 10 Years)"
         data={twoYearData}
       />,
@@ -43,7 +43,7 @@ describe("SerotypeDistributionChart", () => {
 
   it("renders one legend pill per serovar", () => {
     render(
-      <SerotypeDistributionChart
+      <BarStackChart
         title="Serotype Distribution (Last 10 Years)"
         data={twoYearData}
       />,
@@ -56,7 +56,7 @@ describe("SerotypeDistributionChart", () => {
 
   it("hovering a legend pill activates that serovar", () => {
     render(
-      <SerotypeDistributionChart
+      <BarStackChart
         title="Serotype Distribution (Last 10 Years)"
         data={twoYearData}
       />,
@@ -71,7 +71,7 @@ describe("SerotypeDistributionChart", () => {
 
   it("leaving a legend pill clears the active state", () => {
     render(
-      <SerotypeDistributionChart
+      <BarStackChart
         title="Serotype Distribution (Last 10 Years)"
         data={twoYearData}
       />,
@@ -86,7 +86,7 @@ describe("SerotypeDistributionChart", () => {
 
   it("clicking a legend pill locks the active state through mouseleave", () => {
     render(
-      <SerotypeDistributionChart
+      <BarStackChart
         title="Serotype Distribution (Last 10 Years)"
         data={twoYearData}
       />,
@@ -102,7 +102,7 @@ describe("SerotypeDistributionChart", () => {
 
   it("clicking a locked pill a second time releases the lock", () => {
     render(
-      <SerotypeDistributionChart
+      <BarStackChart
         title="Serotype Distribution (Last 10 Years)"
         data={twoYearData}
       />,

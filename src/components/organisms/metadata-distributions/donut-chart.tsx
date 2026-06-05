@@ -1,12 +1,13 @@
 "use client";
 
-import { Group } from "@visx/group";
+import { useRef, useState } from "react";
+
 import { scaleOrdinal } from "@visx/scale";
-import { Pie } from "@visx/shape";
 import { useTooltip } from "@visx/tooltip";
 
 import { facetDisplayLabel } from "@/components/organisms/facet-label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import { numberFormatter } from "@/lib/services/organisms/utils";
 
 interface DonutDatum {
@@ -18,15 +19,10 @@ interface DonutChartDatum extends DonutDatum {
   id: string;
 }
 
-interface DonutPieArcDatum {
-  data: DonutChartDatum;
-  startAngle: number;
-  endAngle: number;
-}
-
 interface DonutChartProps {
   title: string;
   data: DonutDatum[];
+  layout?: "bottom" | "side";
 }
 
 const chartColors = [
@@ -38,56 +34,25 @@ const chartColors = [
   "var(--muted-foreground)",
 ];
 
-const chartWidth = 540;
-const chartHeight = 260;
-const chartCenterX = chartWidth / 2;
-const chartCenterY = chartHeight / 2;
-const outerRadius = 104;
-const innerRadius = 58;
-const subjectRadius = outerRadius + 2;
-const labelTop = 14;
-const labelBottom = chartHeight - 14;
-const labelMinGap = 58;
-const naturalYScale = 104;
-const labelWidth = 132;
-const labelAnchorGap = 6;
-const connectorMeetSlant = 10;
-const titleFontSize = 14;
-const titleLineHeight = 16;
-const titleBaselineOffset = 12;
-const valueFontSize = 12;
-const valueLineHeight = 14;
-const valueBaselineOffset = 10;
-const titleValueGap = 2;
-const averageTitleCharacterWidth = 7.5;
-const maxTitleLines = 2;
-const rightLabelX = chartWidth - 24 - labelWidth;
-const leftLabelX = 24 + labelWidth;
-const svgPrecision = 1000;
+const chartSize = 160;
+const chartCenter = chartSize / 2;
+const outerRadius = 66;
+const innerRadius = 38;
+const popDistance = 4;
+const tooltipOffsetX = 12;
+const tooltipOffsetY = -36;
 const aggregateLabel = "Others";
 const fallbackAggregateLabel = "Other values";
-const pieStartAngle = (150 * Math.PI) / 180;
-const pieEndAngle = pieStartAngle + Math.PI * 2;
-
-interface AnnotationDatum {
-  arc: DonutPieArcDatum;
-  labelY: number;
-  side: "left" | "right";
-  subjectX: number;
-  subjectY: number;
-}
 
 function uniqueAggregateLabel(labels: readonly string[]): string {
   const existingLabels = new Set(labels);
   if (!existingLabels.has(aggregateLabel)) return aggregateLabel;
   if (!existingLabels.has(fallbackAggregateLabel))
     return fallbackAggregateLabel;
-
   let suffix = 2;
   while (existingLabels.has(`${fallbackAggregateLabel} ${suffix}`)) {
     suffix += 1;
   }
-
   return `${fallbackAggregateLabel} ${suffix}`;
 }
 
@@ -117,328 +82,311 @@ function chartData(data: DonutDatum[]): DonutChartDatum[] {
   ];
 }
 
-function clamp(value: number, min: number, max: number) {
-  return Math.min(Math.max(value, min), max);
-}
+// Standard donut arc path. Paths are centered at (0,0); the parent <g> handles
+// translation to the chart center.
+function arcPath(
+  innerR: number,
+  outerR: number,
+  startAngle: number,
+  endAngle: number,
+): string {
+  const pt = (radius: number, angle: number) => ({
+    x: radius * Math.sin(angle),
+    y: -radius * Math.cos(angle),
+  });
 
-function roundSvgNumber(value: number) {
-  return Math.round(value * svgPrecision) / svgPrecision;
-}
+  const outerStart = pt(outerR, startAngle);
+  const outerEnd   = pt(outerR, endAngle);
+  const innerEnd   = pt(innerR, endAngle);
+  const innerStart = pt(innerR, startAngle);
 
-function truncateLine(line: string, maxLength: number) {
-  if (line.length <= maxLength) return line;
-  if (maxLength <= 3) return line.slice(0, maxLength);
-  return `${line.slice(0, maxLength - 3).trimEnd()}...`;
-}
-
-function splitLongWord(word: string, maxLength: number) {
-  const chunks: string[] = [];
-
-  for (let index = 0; index < word.length; index += maxLength) {
-    chunks.push(word.slice(index, index + maxLength));
-  }
-
-  return chunks;
-}
-
-function wrapLabelText(label: string) {
-  const maxLineLength = Math.max(
-    1,
-    Math.floor(labelWidth / averageTitleCharacterWidth),
-  );
-  const words = label.trim().split(/\s+/).filter(Boolean);
-  const lines: string[] = [];
-  let currentLine = "";
-
-  for (const word of words) {
-    const candidates =
-      word.length > maxLineLength ? splitLongWord(word, maxLineLength) : [word];
-
-    for (const candidate of candidates) {
-      const nextLine = currentLine ? `${currentLine} ${candidate}` : candidate;
-
-      if (nextLine.length <= maxLineLength) {
-        currentLine = nextLine;
-      } else {
-        if (currentLine) lines.push(currentLine);
-        currentLine = candidate;
-      }
-    }
-  }
-
-  if (currentLine) lines.push(currentLine);
-  if (lines.length === 0) return [label];
-  if (lines.length <= maxTitleLines) return lines;
+  const large = endAngle - startAngle > Math.PI ? 1 : 0;
+  const f = (n: number) => Math.round(n * 1000) / 1000;
+  const p = ({ x, y }: { x: number; y: number }) => `${f(x)} ${f(y)}`;
 
   return [
-    ...lines.slice(0, maxTitleLines - 1),
-    truncateLine(lines.slice(maxTitleLines - 1).join(" "), maxLineLength),
-  ];
+    `M ${p(outerStart)}`,
+    `A ${outerR} ${outerR} 0 ${large} 1 ${p(outerEnd)}`,
+    `L ${p(innerEnd)}`,
+    `A ${innerR} ${innerR} 0 ${large} 0 ${p(innerStart)}`,
+    "Z",
+  ].join(" ");
 }
 
-function annotationLabelBlockHeight(titleLines: readonly string[]) {
-  return titleLines.length * titleLineHeight + titleValueGap + valueLineHeight;
+interface ArcDatum {
+  slice: DonutChartDatum;
+  startAngle: number;
+  endAngle: number;
+  pathD: string;
+  popX: number;
+  popY: number;
+  color: string;
 }
 
-function connectorPath(
-  subjectX: number,
-  subjectY: number,
-  labelX: number,
-  labelY: number,
-  side: AnnotationDatum["side"],
-) {
-  const slantOffset =
-    side === "right" ? connectorMeetSlant : -connectorMeetSlant;
+function buildArcData(
+  slices: DonutChartDatum[],
+  getColor: (id: string) => string,
+): ArcDatum[] {
+  const total = slices.reduce((sum, d) => sum + d.value, 0);
+  let angle = -Math.PI / 2;
 
-  return [
-    `M${subjectX},${subjectY}`,
-    `L${roundSvgNumber(labelX - slantOffset)},${subjectY}`,
-    `L${roundSvgNumber(labelX)},${roundSvgNumber(labelY)}`,
-  ].join("");
-}
-
-function distributeLabelYs(naturalYs: number[]): number[] {
-  const n = naturalYs.length;
-  if (n === 0) return [];
-  if (n === 1) return [...naturalYs];
-
-  const range = labelBottom - labelTop;
-  if ((n - 1) * labelMinGap > range) {
-    return Array.from(
-      { length: n },
-      (_, i) => labelTop + (range * i) / (n - 1),
-    );
-  }
-
-  const positions = [...naturalYs];
-
-  for (let i = 1; i < n; i++) {
-    if (positions[i] - positions[i - 1] < labelMinGap) {
-      positions[i] = positions[i - 1] + labelMinGap;
-    }
-  }
-
-  if (positions[n - 1] > labelBottom) {
-    positions[n - 1] = labelBottom;
-    for (let i = n - 2; i >= 0; i--) {
-      if (positions[i + 1] - positions[i] < labelMinGap) {
-        positions[i] = positions[i + 1] - labelMinGap;
-      }
-    }
-  }
-
-  if (positions[0] < labelTop) {
-    positions[0] = labelTop;
-    for (let i = 1; i < n; i++) {
-      if (positions[i] - positions[i - 1] < labelMinGap) {
-        positions[i] = positions[i - 1] + labelMinGap;
-      }
-    }
-  }
-
-  return positions;
-}
-
-function annotationData(arcs: DonutPieArcDatum[]): AnnotationDatum[] {
-  const positioned = arcs.map((arc) => {
-    const midpoint = (arc.startAngle + arc.endAngle) / 2;
-    const xOffset = Math.sin(midpoint);
-    const yOffset = -Math.cos(midpoint);
+  return slices.map((slice) => {
+    const full = (slice.value / total) * Math.PI * 2;
+    const startAngle = angle;
+    const endAngle = angle + full;
+    const midAngle = (startAngle + endAngle) / 2;
+    angle += full;
 
     return {
-      arc,
-      labelY: clamp(
-        chartCenterY + yOffset * naturalYScale,
-        labelTop,
-        labelBottom,
-      ),
-      side: xOffset >= 0 ? ("right" as const) : ("left" as const),
-      subjectX: roundSvgNumber(chartCenterX + xOffset * subjectRadius),
-      subjectY: roundSvgNumber(chartCenterY + yOffset * subjectRadius),
+      slice,
+      startAngle,
+      endAngle,
+      pathD: arcPath(innerRadius, outerRadius, startAngle, endAngle),
+      popX: Math.sin(midAngle) * popDistance,
+      popY: -Math.cos(midAngle) * popDistance,
+      color: getColor(slice.id),
     };
-  });
-
-  return (["left", "right"] as const).flatMap((side) => {
-    const group = positioned
-      .filter((datum) => datum.side === side)
-      .sort((a, b) => a.subjectY - b.subjectY);
-
-    if (group.length === 0) return [];
-
-    const positions = distributeLabelYs(group.map((datum) => datum.labelY));
-
-    return group.map((datum, index) => ({
-      ...datum,
-      labelY: roundSvgNumber(positions[index]),
-    }));
   });
 }
 
-export function DonutChart({ title, data }: DonutChartProps) {
+export function DonutChart({ title, data, layout = "bottom" }: DonutChartProps) {
   const slices = chartData(data);
   const colorScale = scaleOrdinal<string, string>({
     domain: slices.map((datum) => datum.id),
     range: chartColors,
   });
+  const arcData = buildArcData(slices, (id) => colorScale(id));
+  const total = slices.reduce((sum, d) => sum + d.value, 0);
+
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
-    useTooltip<DonutDatum>();
+    useTooltip<DonutDatum & { pct: number }>();
+
+  const deactivate = () => {
+    setActiveId(null);
+    hideTooltip();
+  };
+
+  const handleOverlayMouseMove = (
+    event: React.MouseEvent<SVGCircleElement>,
+  ) => {
+    const svgEl = svgRef.current;
+    if (!svgEl) return;
+
+    const rect = svgEl.getBoundingClientRect();
+    const svgX =
+      ((event.clientX - rect.left) / rect.width) * chartSize - chartCenter;
+    const svgY =
+      ((event.clientY - rect.top) / rect.height) * chartSize - chartCenter;
+    const dist = Math.sqrt(svgX * svgX + svgY * svgY);
+
+    // Only activate within the ring — inner hole and outside edge are dead zones
+    if (dist < innerRadius || dist > outerRadius) {
+      deactivate();
+      return;
+    }
+
+    const angle = Math.atan2(svgX, -svgY); // angle from 12 o'clock, clockwise
+    for (const arc of arcData) {
+      let a = angle;
+      if (a < arc.startAngle) a += Math.PI * 2;
+      if (a >= arc.startAngle && a <= arc.endAngle) {
+        setActiveId(arc.slice.id);
+        showTooltip({
+          tooltipData: {
+            label: arc.slice.label,
+            value: arc.slice.value,
+            pct: Math.round((arc.slice.value / total) * 100),
+          },
+          tooltipLeft: event.clientX,
+          tooltipTop: event.clientY,
+        });
+        return;
+      }
+    }
+    // Cursor is in a gap — keep current active slice without flickering
+    if (tooltipData) {
+      showTooltip({
+        tooltipData,
+        tooltipLeft: event.clientX,
+        tooltipTop: event.clientY,
+      });
+    }
+  };
 
   return (
     <Card className="relative rounded-lg" size="sm">
-      <CardHeader>
-        <CardTitle className="text-lg!">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-1 flex-col">
+        <p className="text-sm font-semibold">{title}</p>
         {slices.length === 0 ? (
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground mt-1 text-sm">
             No distribution data was returned.
           </p>
         ) : (
-          <div className="min-w-0 overflow-hidden">
+          <div
+            className={cn(
+              "flex flex-1 gap-3 pt-2",
+              layout === "side"
+                ? "min-h-0 flex-row items-stretch"
+                : "flex-col items-center justify-center",
+            )}
+          >
+            {/*
+             * Side layout: SVG takes half the card width and the full available
+             * height. preserveAspectRatio="xMidYMid meet" (SVG default) renders
+             * the donut as large as possible within that rectangle — no wrapper
+             * div needed, no fixed cap that prevents growth on wide monitors.
+             */}
             <svg
-              viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+              ref={svgRef}
+              viewBox={`0 0 ${chartSize} ${chartSize}`}
               role="img"
               aria-label={`${title} distribution`}
-              className="mx-auto w-full max-w-135"
+              className={cn(
+                "shrink-0",
+                layout === "side" ? "h-full w-1/2" : "w-full max-w-40",
+              )}
+              style={{ overflow: "visible" }}
             >
-              <Group top={chartCenterY} left={chartCenterX}>
-                <Pie<DonutChartDatum>
-                  data={slices}
-                  pieValue={(datum) => datum.value}
-                  outerRadius={outerRadius}
-                  innerRadius={innerRadius}
-                  padAngle={0.012}
-                  startAngle={pieStartAngle}
-                  endAngle={pieEndAngle}
-                >
-                  {(pie) => (
-                    <>
-                      {pie.arcs.map((arc) => {
-                        const accessibleLabel = `${arc.data.label}: ${numberFormatter.format(arc.data.value)}`;
+              <g transform={`translate(${chartCenter},${chartCenter})`}>
+                {arcData.map((arc, index) => {
+                  const isActive = activeId === arc.slice.id;
+                  const isDimmed = activeId !== null && !isActive;
+                  const accessibleLabel = `${arc.slice.label}: ${numberFormatter.format(arc.slice.value)}`;
 
-                        return (
-                          <path
-                            key={arc.data.id}
-                            suppressHydrationWarning
-                            d={pie.path(arc) ?? undefined}
-                            fill={colorScale(arc.data.id)}
-                            stroke="var(--card)"
-                            strokeWidth={2}
-                            tabIndex={0}
-                            aria-label={accessibleLabel}
-                            onMouseMove={(event) =>
-                              showTooltip({
-                                tooltipData: arc.data,
-                                tooltipLeft: event.clientX,
-                                tooltipTop: event.clientY,
-                              })
-                            }
-                            onFocus={(event) => {
-                              const rect =
-                                event.currentTarget.getBoundingClientRect();
-                              showTooltip({
-                                tooltipData: arc.data,
-                                tooltipLeft: rect.left + rect.width / 2,
-                                tooltipTop: rect.top + rect.height / 2,
-                              });
-                            }}
-                            onMouseLeave={hideTooltip}
-                            onBlur={hideTooltip}
-                          >
-                            <title>{accessibleLabel}</title>
-                          </path>
-                        );
-                      })}
-                      {annotationData(pie.arcs).map((datum) => {
-                        const isRight = datum.side === "right";
-                        const labelX = isRight ? rightLabelX : leftLabelX;
-                        const valueLabel = numberFormatter.format(
-                          datum.arc.data.value,
-                        );
-
-                        const subjectX = datum.subjectX - chartCenterX;
-                        const subjectY = datum.subjectY - chartCenterY;
-                        const labelXRelative = labelX - chartCenterX;
-                        const labelYRelative = datum.labelY - chartCenterY;
-                        const labelLeftXRelative = isRight
-                          ? labelXRelative + labelAnchorGap
-                          : labelXRelative - labelAnchorGap - labelWidth;
-                        const titleLines = wrapLabelText(datum.arc.data.label);
-                        const labelBlockHeight =
-                          annotationLabelBlockHeight(titleLines);
-                        const labelTopYRelative =
-                          labelYRelative - labelBlockHeight / 2;
-                        const textAnchor = isRight ? "start" : "end";
-                        const textX = isRight
-                          ? labelLeftXRelative
-                          : labelLeftXRelative + labelWidth;
-                        const valueY =
-                          labelTopYRelative +
-                          titleLines.length * titleLineHeight +
-                          titleValueGap +
-                          valueBaselineOffset;
-
-                        return (
-                          <g key={`annotation-${datum.arc.data.id}`}>
-                            <path
-                              className="visx-annotation-connector"
-                              d={connectorPath(
-                                subjectX,
-                                subjectY,
-                                labelXRelative,
-                                labelYRelative,
-                                datum.side,
-                              )}
-                              stroke={colorScale(datum.arc.data.id)}
-                              strokeWidth={1.25}
-                              fill="none"
-                            />
-                            <line
-                              className="metadata-distribution-label-marker"
-                              x1={labelXRelative}
-                              y1={labelTopYRelative}
-                              x2={labelXRelative}
-                              y2={labelTopYRelative + labelBlockHeight}
-                              stroke={colorScale(datum.arc.data.id)}
-                              strokeWidth={2}
-                            />
-                            <text
-                              className="metadata-distribution-title-label fill-foreground font-semibold"
-                              textAnchor={textAnchor}
-                              fontSize={titleFontSize}
-                            >
-                              {titleLines.map((line, index) => (
-                                <tspan
-                                  key={`${datum.arc.data.id}-title-${index}`}
-                                  className="metadata-distribution-title-line"
-                                  x={textX}
-                                  y={
-                                    labelTopYRelative +
-                                    titleBaselineOffset +
-                                    index * titleLineHeight
-                                  }
-                                >
-                                  {line}
-                                </tspan>
-                              ))}
-                            </text>
-                            <text
-                              className="metadata-distribution-value-label fill-muted-foreground tabular-nums"
-                              textAnchor={textAnchor}
-                              fontSize={valueFontSize}
-                              x={textX}
-                              y={valueY}
-                            >
-                              {valueLabel}
-                            </text>
-                          </g>
-                        );
-                      })}
-                    </>
-                  )}
-                </Pie>
-              </Group>
+                  return (
+                    <g
+                      key={arc.slice.id}
+                      style={{
+                        transform: isActive
+                          ? `translate(${arc.popX}px, ${arc.popY}px)`
+                          : undefined,
+                        transition: "transform 180ms ease-out",
+                      }}
+                    >
+                      {/*
+                       * Inner <g> owns the entrance scale animation.
+                       * Keeping it separate from the pop translate <g> above avoids
+                       * the CSS animation overriding the inline transform on hover.
+                       */}
+                      <g
+                        style={{
+                          transformOrigin: "0 0",
+                          animation: `donut-slice-in 0.38s ease-out ${index * 0.07}s both`,
+                        }}
+                      >
+                        <path
+                          suppressHydrationWarning
+                          d={arc.pathD}
+                          fill={arc.color}
+                          aria-label={accessibleLabel}
+                          style={{
+                            opacity: isDimmed ? 0.2 : 1,
+                            transition: "opacity 160ms ease",
+                          }}
+                        >
+                          <title>{accessibleLabel}</title>
+                        </path>
+                      </g>
+                    </g>
+                  );
+                })}
+                {/*
+                 * Single transparent overlay intercepts all mouse events.
+                 * Angle + distance math in onMouseMove eliminates gap/hole flicker.
+                 */}
+                <circle
+                  data-testid="chart-overlay"
+                  r={outerRadius}
+                  fill="transparent"
+                  onMouseMove={handleOverlayMouseMove}
+                  onMouseLeave={deactivate}
+                />
+              </g>
             </svg>
+
+            {layout === "side" ? (
+              <div
+                className="flex min-w-0 flex-1 flex-col justify-center gap-0.5"
+                style={{ animation: "donut-legend-up 0.4s 0.4s ease-out both" }}
+              >
+                {arcData.map((arc) => (
+                  <button
+                    key={arc.slice.id}
+                    type="button"
+                    aria-label={`${arc.slice.label}: ${numberFormatter.format(arc.slice.value)}`}
+                    className={cn(
+                      "flex w-full cursor-default items-center gap-1.5 rounded px-1.5 py-0.5 text-[10px] transition-colors",
+                      activeId === arc.slice.id
+                        ? "text-foreground"
+                        : "text-muted-foreground",
+                    )}
+                    style={
+                      activeId === arc.slice.id
+                        ? {
+                            backgroundColor: `color-mix(in srgb, ${arc.color} 12%, transparent)`,
+                          }
+                        : undefined
+                    }
+                    onMouseEnter={() => setActiveId(arc.slice.id)}
+                    onMouseLeave={() => setActiveId(null)}
+                    onFocus={() => setActiveId(arc.slice.id)}
+                    onBlur={() => setActiveId(null)}
+                  >
+                    <span
+                      className="inline-block h-1.5 w-1.5 shrink-0 rounded-full"
+                      style={{ background: arc.color }}
+                      aria-hidden="true"
+                    />
+                    <span className="min-w-0 flex-1 truncate text-left">
+                      {arc.slice.label}
+                    </span>
+                    <span className="tabular-nums">
+                      {numberFormatter.format(arc.slice.value)}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div
+                className="flex flex-wrap justify-center gap-1.5"
+                style={{ animation: "donut-legend-up 0.4s 0.4s ease-out both" }}
+              >
+                {arcData.map((arc) => (
+                  <button
+                    key={arc.slice.id}
+                    type="button"
+                    aria-label={`${arc.slice.label}: ${numberFormatter.format(arc.slice.value)}`}
+                    className={cn(
+                      "flex cursor-default items-center gap-1.5 rounded-full border px-2 py-0.5 text-[10px] transition-colors",
+                      activeId === arc.slice.id
+                        ? "text-foreground"
+                        : "border-border text-muted-foreground",
+                    )}
+                    style={
+                      activeId === arc.slice.id
+                        ? {
+                            borderColor: arc.color,
+                            backgroundColor: `color-mix(in srgb, ${arc.color} 12%, transparent)`,
+                          }
+                        : undefined
+                    }
+                    onMouseEnter={() => setActiveId(arc.slice.id)}
+                    onMouseLeave={() => setActiveId(null)}
+                    onFocus={() => setActiveId(arc.slice.id)}
+                    onBlur={() => setActiveId(null)}
+                  >
+                    <span
+                      className="inline-block h-1.5 w-1.5 shrink-0 rounded-full"
+                      style={{ background: arc.color }}
+                      aria-hidden="true"
+                    />
+                    {arc.slice.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </CardContent>
@@ -446,9 +394,15 @@ export function DonutChart({ title, data }: DonutChartProps) {
         <div
           role="status"
           className="bg-popover text-popover-foreground pointer-events-none fixed rounded-md border px-2 py-1 text-xs shadow-md"
-          style={{ left: tooltipLeft ?? 0, top: tooltipTop ?? 0 }}
+          style={{
+            left: (tooltipLeft ?? 0) + tooltipOffsetX,
+            top: (tooltipTop ?? 0) + tooltipOffsetY,
+          }}
         >
           {tooltipData.label}: {numberFormatter.format(tooltipData.value)}
+          <span className="text-muted-foreground ml-1">
+            ({tooltipData.pct}%)
+          </span>
         </div>
       )}
     </Card>

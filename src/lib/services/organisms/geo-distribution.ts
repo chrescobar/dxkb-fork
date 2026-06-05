@@ -82,10 +82,13 @@ export async function fetchOrganismGeoDistribution(
   const baseUrl = getBvBrcWebsiteApiBaseUrl();
   const { signal } = options;
 
-  const [countryData, stateData, countyData] = await Promise.all([
+  const [countryData, stateData, countyPivot] = await Promise.all([
     fetchField(baseUrl, taxonId, "isolation_country", countryLimit, signal),
     fetchField(baseUrl, taxonId, "state_province", stateLimit, signal),
-    fetchField(baseUrl, taxonId, "county", countyLimit, signal),
+    // Pivot on state_province→county so each county is scoped to its state.
+    // A flat `county` facet would merge same-named counties across states
+    // (e.g. "Washington County" exists in 31 states) into a single key.
+    fetchPivotOrEmpty(baseUrl, taxonId, "state_province", "county", countyLimit, signal),
   ]);
 
   const [
@@ -102,13 +105,25 @@ export async function fetchOrganismGeoDistribution(
     fetchPivotOrEmpty(baseUrl, taxonId, "county", "genus", countyLimit, signal),
   ]);
 
+  // Build compound-keyed county maps: "StateName|CountyName" → value.
+  // This ensures "Washington County, PA" and "Washington County, MD" are kept separate.
+  const countyData: Record<string, number> = {};
+  const countyMeta: Record<string, OrganismGeoLocationMeta> = {};
+  for (const [stateName, counties] of Object.entries(countyPivot)) {
+    for (const [countyName, count] of Object.entries(counties)) {
+      const key = `${stateName}|${countyName}`;
+      countyData[key] = count;
+      countyMeta[key] = { count, genera: countyGenera[countyName] ?? {}, hosts: {} };
+    }
+  }
+
   return {
     countryData,
     countryMeta: buildMeta(countryData, countryGenera, countryHosts),
     stateData,
     stateMeta: buildMeta(stateData, stateGenera, stateHosts),
     countyData,
-    countyMeta: buildMeta(countyData, countyGenera, {}),
+    countyMeta,
     maxCount: deriveMaxCount(countryData, stateData, countyData),
   };
 }

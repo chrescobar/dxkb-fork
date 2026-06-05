@@ -24,6 +24,18 @@ describe("parseYearData", () => {
     expect(result).toEqual([{ year: 2020, count: 5 }]);
   });
 
+  it("drops year 0 (unknown/missing year sentinel)", () => {
+    const result = parseYearData([
+      { label: "0", value: 42 },
+      { label: "2020", value: 5 },
+      { label: "2021", value: 8 },
+    ]);
+    expect(result).toEqual([
+      { year: 2020, count: 5 },
+      { year: 2021, count: 8 },
+    ]);
+  });
+
   it("returns [] for empty input", () => {
     expect(parseYearData([])).toEqual([]);
   });

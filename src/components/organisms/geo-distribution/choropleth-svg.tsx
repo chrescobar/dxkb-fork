@@ -259,6 +259,7 @@ interface CountiesLayerProps extends LayerCommonProps {
   countyFeatures: CountyFeature[];
   fitBoundsFeatures: CountyFeature[];
   fitExtent: [[number, number], [number, number]];
+  selectedStateName: string | null;
 }
 
 const StateCountiesLayer = memo(function StateCountiesLayer({
@@ -270,6 +271,7 @@ const StateCountiesLayer = memo(function StateCountiesLayer({
   isDraggingRef,
   onHoverEnter,
   onHoverLeave,
+  selectedStateName,
 }: CountiesLayerProps) {
   const projection = useCallback(() => geoMercator(), []);
 
@@ -282,8 +284,9 @@ const StateCountiesLayer = memo(function StateCountiesLayer({
       {({ features }) =>
         features.map(({ feature, path }, index) => {
           const name = featureName(feature.properties);
-          const count = data.countyData[name] ?? 0;
-          const meta = data.countyMeta[name];
+          const key = selectedStateName ? `${selectedStateName}|${name}` : name;
+          const count = data.countyData[key] ?? 0;
+          const meta = data.countyMeta[key];
           return (
             <ChoroplethPath
               key={`${name}-${feature.id ?? index}`}
@@ -505,6 +508,7 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
                       isDraggingRef={isDraggingRef}
                       onHoverEnter={hoverEnter}
                         onHoverLeave={hoverLeave}
+                      selectedStateName={mapState.selectedStateName}
                     />
                   )}
                 </g>

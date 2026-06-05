@@ -48,7 +48,7 @@ function pivotFacet(pivotKey: string, rows: { value: string; count: number; pivo
 interface RouteOverrides {
   countryStatus?: number;
   stateStatus?: number;
-  countyStatus?: number;
+  countyPivotStatus?: number;
   pivotStatus?: number;
 }
 
@@ -62,10 +62,6 @@ function defaultGenomeRouter(overrides: RouteOverrides = {}) {
     if (query.includes("(field,state_province)")) {
       if (overrides.stateStatus) return HttpResponse.text("state failed", { status: overrides.stateStatus });
       return HttpResponse.json(fieldFacet("state_province", ["Wyoming", 48, "Idaho", 35, "Texas", 24]));
-    }
-    if (query.includes("(field,county)")) {
-      if (overrides.countyStatus) return HttpResponse.text("county failed", { status: overrides.countyStatus });
-      return HttpResponse.json(fieldFacet("county", []));
     }
     if (query.includes("(pivot,(isolation_country,genus))")) {
       if (overrides.pivotStatus) return HttpResponse.text("pivot failed", { status: overrides.pivotStatus });
@@ -99,6 +95,21 @@ function defaultGenomeRouter(overrides: RouteOverrides = {}) {
         ]),
       );
     }
+    if (query.includes("(pivot,(state_province,county))")) {
+      if (overrides.countyPivotStatus) return HttpResponse.text("county failed", { status: overrides.countyPivotStatus });
+      return HttpResponse.json(pivotFacet("state_province,county", [
+        {
+          value: "Wyoming",
+          count: 48,
+          pivot: [{ value: "Park", count: 30 }, { value: "Teton", count: 18 }],
+        },
+        {
+          value: "Idaho",
+          count: 35,
+          pivot: [{ value: "Park", count: 35 }],
+        },
+      ]));
+    }
     if (query.includes("(pivot,(county,genus))")) {
       if (overrides.pivotStatus) return HttpResponse.text("pivot failed", { status: overrides.pivotStatus });
       return HttpResponse.json(pivotFacet("county,genus", []));
@@ -114,7 +125,7 @@ describe("fetchOrganismGeoDistribution", () => {
 
     expect(result.countryData).toEqual({ USA: 260, China: 260, Italy: 188 });
     expect(result.stateData).toEqual({ Wyoming: 48, Idaho: 35, Texas: 24 });
-    expect(result.countyData).toEqual({});
+    expect(result.countyData).toEqual({ "Wyoming|Park": 30, "Wyoming|Teton": 18, "Idaho|Park": 35 });
     expect(result.maxCount).toBe(260);
     expect(result.countryMeta.USA).toEqual({
       count: 260,
@@ -126,6 +137,38 @@ describe("fetchOrganismGeoDistribution", () => {
       genera: { Brucella: 48 },
       hosts: { Cattle: 30 },
     });
+  });
+
+  it("scopes county counts by state so same-named counties in different states are kept separate", async () => {
+    server.use(
+      http.get(`${baseUrl}/genome/`, ({ request }) => {
+        const query = new URL(request.url).search;
+        if (query.includes("(field,isolation_country)")) {
+          return HttpResponse.json(fieldFacet("isolation_country", []));
+        }
+        if (query.includes("(field,state_province)")) {
+          return HttpResponse.json(fieldFacet("state_province", []));
+        }
+        if (query.includes("(pivot,(state_province,county))")) {
+          return HttpResponse.json(pivotFacet("state_province,county", [
+            { value: "Pennsylvania", count: 5, pivot: [{ value: "Washington", count: 5 }] },
+            { value: "Maryland", count: 2, pivot: [{ value: "Washington", count: 2 }] },
+          ]));
+        }
+        if (query.includes("(pivot,")) {
+          return HttpResponse.json({ response: { numFound: 0 }, facet_counts: { facet_pivot: {} } });
+        }
+        return HttpResponse.text("unknown", { status: 400 });
+      }),
+    );
+
+    const result = await fetchOrganismGeoDistribution(234);
+    expect(result.countyData["Pennsylvania|Washington"]).toBe(5);
+    expect(result.countyData["Maryland|Washington"]).toBe(2);
+    // A plain "Washington" key must not exist
+    expect(result.countyData["Washington"]).toBeUndefined();
+    expect(result.countyMeta["Pennsylvania|Washington"]).toEqual(expect.objectContaining({ count: 5 }));
+    expect(result.countyMeta["Maryland|Washington"]).toEqual(expect.objectContaining({ count: 2 }));
   });
 
   it("throws when a required field facet fails", async () => {
@@ -157,8 +200,10 @@ describe("fetchOrganismGeoDistribution", () => {
         if (query.includes("(field,state_province)")) {
           return HttpResponse.json(fieldFacet("state_province", ["Texas", 999]));
         }
-        if (query.includes("(field,county)")) {
-          return HttpResponse.json(fieldFacet("county", ["Harris", 7]));
+        if (query.includes("(pivot,(state_province,county))")) {
+          return HttpResponse.json(pivotFacet("state_province,county", [
+            { value: "Texas", count: 7, pivot: [{ value: "Harris", count: 7 }] },
+          ]));
         }
         if (query.includes("(pivot,")) {
           return HttpResponse.json({ response: { numFound: 0 }, facet_counts: { facet_pivot: {} } });
@@ -181,10 +226,7 @@ describe("fetchOrganismGeoDistribution", () => {
         if (query.includes("(field,state_province)")) {
           return HttpResponse.json(fieldFacet("state_province", []));
         }
-        if (query.includes("(field,county)")) {
-          return HttpResponse.json(fieldFacet("county", []));
-        }
-        // For pivots, hang long enough to be cancellable.
+        // For pivots (including state_province,county), hang long enough to be cancellable.
         return new Promise<Response>((resolve) =>
           setTimeout(() => resolve(HttpResponse.json({ response: { numFound: 0 }, facet_counts: { facet_pivot: {} } })), 1000),
         );
@@ -203,7 +245,7 @@ describe("fetchOrganismGeoDistribution", () => {
       http.get(`${baseUrl}/genome/`, () =>
         HttpResponse.json({
           response: { numFound: 0 },
-          facet_counts: { facet_fields: { isolation_country: [], state_province: [], county: [] }, facet_pivot: {} },
+          facet_counts: { facet_fields: { isolation_country: [], state_province: [] }, facet_pivot: { "state_province,county": [] } },
         }),
       ),
     );

@@ -5,7 +5,7 @@ export interface YearDatum {
 
 export function parseYearData(data: { label: string; value: number }[]): YearDatum[] {
   return data
-    .filter((d) => Number.isInteger(Number(d.label)) && d.label.trim() !== "")
+    .filter((d) => Number.isInteger(Number(d.label)) && d.label.trim() !== "" && Number(d.label) > 0)
     .map((d) => ({ year: Number(d.label), count: d.value }))
     .sort((a, b) => a.year - b.year);
 }

@@ -3,15 +3,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function ReferenceGenomesSkeleton() {
   return (
-    <Card className="rounded-lg" size="sm">
-      <CardHeader className="flex flex-row items-center justify-between gap-2 pb-3">
-        <Skeleton className="h-6 w-56" />
-        <Skeleton className="h-7 w-32 rounded-md" />
+    <Card className="rounded-lg xl:flex-1 xl:min-h-0" size="sm">
+      <CardHeader className="pb-0">
+        <Skeleton className="h-5 w-52" />
+        <Skeleton className="mt-2 h-8 w-full rounded-lg" />
       </CardHeader>
-      <CardContent className="pt-0">
-        <div className="flex flex-col gap-1">
+      <CardContent className="p-0 xl:flex xl:min-h-0 xl:flex-1 xl:flex-col">
+        <div className="flex h-80 flex-col gap-1 xl:h-auto xl:flex-1 xl:min-h-0 overflow-hidden">
           {Array.from({ length: 8 }).map((_, index) => (
-            <Skeleton key={index} className="h-8 rounded-sm" />
+            <Skeleton key={index} className="h-8 shrink-0 rounded-sm" />
           ))}
         </div>
       </CardContent>

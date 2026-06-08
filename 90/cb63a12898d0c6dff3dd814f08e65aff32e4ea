@@ -1,0 +1,21 @@
+src/app/(views)/taxonomy/[taxonId]/__tests__/_config.test.ts
+  s_c95e9f239ff8fd::t_d6361bd4ac2106 18-25
+src/app/(views)/taxonomy/[taxonId]/_config.ts
+  s_c95e9f239ff8fd::t_1fb5a05501e526 4-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "90cb63a12898d0c6dff3dd814f08e65aff32e4ea",
+  "prompts": {},
+  "sessions": {
+    "s_c95e9f239ff8fd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "094f0737-c187-421e-8dc9-65a158af2ee9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

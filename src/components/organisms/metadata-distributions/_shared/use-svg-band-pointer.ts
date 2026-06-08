@@ -14,9 +14,10 @@ export function nearestBandIndex<T extends { toString(): string }>(
   xScale: ScaleBand<T>,
   data: readonly T[],
   marginLeft: number = chartMarginLeft,
+  viewBoxWidth: number = chartWidth,
 ): number | null {
   const svgRect = svgRef.current?.getBoundingClientRect();
-  const scaleX = svgRect && svgRect.width > 0 ? chartWidth / svgRect.width : 1;
+  const scaleX = svgRect && svgRect.width > 0 ? viewBoxWidth / svgRect.width : 1;
   const mouseX = svgRect
     ? (event.clientX - svgRect.left) * scaleX - marginLeft
     : event.clientX - marginLeft;

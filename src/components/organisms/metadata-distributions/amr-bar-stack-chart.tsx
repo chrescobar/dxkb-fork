@@ -215,6 +215,8 @@ export function AmrBarStackChart({ title, data }: AmrBarStackChartProps) {
                     svgRef,
                     xScale,
                     sortedRows.map((r) => r.antibiotic),
+                    chartMarginLeft,
+                    amrChartWidth,
                   );
                   if (idx === null) return;
                   const row = sortedRows[idx];

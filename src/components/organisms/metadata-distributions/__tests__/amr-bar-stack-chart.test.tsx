@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 
 import type { AmrDistributionData } from "@/lib/services/organisms/types";
 
@@ -87,5 +87,21 @@ describe("AmrBarStackChart", () => {
     expect(screen.getByRole("button", { name: "Resistant" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Susceptible" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Intermediate" })).toBeInTheDocument();
+  });
+
+  it("renders a tooltip when the overlay receives a mousemove", () => {
+    render(
+      <AmrBarStackChart
+        title="Antimicrobial Resistance Profile"
+        data={sampleData}
+      />,
+    );
+
+    const overlay = screen.getByTestId("amr-chart-overlay");
+    fireEvent.mouseMove(overlay, { clientX: 50, clientY: 50 });
+    expect(screen.getByRole("status")).toBeInTheDocument();
+
+    fireEvent.mouseLeave(overlay);
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
 });

@@ -4,13 +4,14 @@ interface YAxisTicksProps {
   ticks: number[];
   yScale: (value: number) => number;
   innerWidth: number;
+  tickClassName?: string;
 }
 
-export function YAxisTicks({ ticks, yScale, innerWidth }: YAxisTicksProps) {
+export function YAxisTicks({ ticks, yScale, innerWidth, tickClassName }: YAxisTicksProps) {
   return (
     <>
       {ticks.map((tick) => (
-        <g key={tick}>
+        <g key={tick} className={tickClassName}>
           <line
             x1={0}
             x2={innerWidth}

@@ -63,7 +63,10 @@ export function MapControls({
         </div>
       )}
 
-      {showDropdown && stateOptions.length > 0 && (
+      <div className={cn(
+        "overflow-hidden transition-[max-width,opacity] duration-200 ease-in-out",
+        showDropdown && stateOptions.length > 0 ? "max-w-[220px] opacity-100" : "max-w-0 opacity-0 pointer-events-none",
+      )}>
         <Select
           items={stateOptions.map((option) => ({ value: option.fips, label: option.name }))}
           value={mapState.selectedStateFips ?? ""}
@@ -86,7 +89,7 @@ export function MapControls({
             </SelectGroup>
           </SelectContent>
         </Select>
-      )}
+      </div>
     </div>
   );
 }
@@ -104,7 +107,7 @@ function PillButton({ active, onClick, children }: PillButtonProps) {
       variant={active ? "default" : "ghost"}
       size="xs"
       onClick={onClick}
-      className={cn("text-xs", active && "shadow-sm")}
+      className={cn("text-xs transition-colors duration-150", active && "shadow-sm")}
     >
       {children}
     </Button>

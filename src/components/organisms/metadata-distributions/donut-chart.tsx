@@ -8,6 +8,7 @@ import { useTooltip } from "@visx/tooltip";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { facetDisplayLabel } from "@/components/organisms/facet-label";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import {
@@ -311,43 +312,48 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
         <div className="flex items-start gap-2">
           <p className="text-sm font-semibold shrink-0 max-w-[60%]">{title}</p>
           {tabs && tabs.length > 1 && (
-            <div className="flex flex-1 min-w-0 items-center gap-0.5">
+            <div className="bg-muted/50 ml-auto flex min-w-0 items-center gap-0.5 rounded-md p-0.5">
               {(() => {
                 const scrollable = canScrollLeft || canScrollRight;
                 return (
                   <>
-                    <button
-                      type="button"
-                      onClick={() => scrollTabsBy(-80)}
-                      aria-label="Scroll tabs left"
+                    <div
                       className={cn(
-                        "shrink-0 rounded border border-input bg-background px-1.5 py-0.5 text-xs text-foreground hover:bg-accent hover:text-accent-foreground",
-                        !scrollable ? "hidden" : (!canScrollLeft && "invisible pointer-events-none"),
+                        "shrink-0 overflow-hidden",
+                        !scrollable
+                          ? "hidden"
+                          : "transition-[max-width,opacity] duration-300 ease-in-out",
+                        scrollable && (canScrollLeft ? "max-w-6 opacity-100" : "max-w-0 opacity-0"),
                       )}
                     >
-                      <ChevronLeft className="h-3.5 w-3.5" />
-                    </button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-xs"
+                        onClick={() => scrollTabsBy(-80)}
+                        aria-label="Scroll tabs left"
+                      >
+                        <ChevronLeft className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
                     <div
                       ref={tabsScrollRef}
                       className="flex min-w-0 flex-1 overflow-x-auto"
                       style={{ scrollbarWidth: "none" }}
                     >
-                      <div className="flex flex-nowrap gap-1 ml-auto">
+                      <div className="flex flex-nowrap items-center gap-0.5">
                         {tabs.map((tab, i) => (
-                          <button
+                          <Button
                             key={tab.label}
                             type="button"
+                            variant={i === activeTabIndex ? "default" : "ghost"}
+                            size="xs"
                             aria-pressed={i === activeTabIndex}
                             onClick={() => handleTabChange(i)}
-                            className={cn(
-                              "shrink-0 rounded px-2 py-0.5 text-xs font-medium transition-colors",
-                              i === activeTabIndex
-                                ? "bg-primary text-primary-foreground"
-                                : "border border-input text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                            )}
+                            className="shrink-0"
                           >
                             {tab.label}
-                          </button>
+                          </Button>
                         ))}
                       </div>
                     </div>
@@ -357,17 +363,18 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
                         !scrollable
                           ? "hidden"
                           : "transition-[max-width,opacity] duration-300 ease-in-out",
-                        scrollable && (canScrollRight ? "max-w-8 opacity-100" : "max-w-0 opacity-0"),
+                        scrollable && (canScrollRight ? "max-w-6 opacity-100" : "max-w-0 opacity-0"),
                       )}
                     >
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
+                        size="icon-xs"
                         onClick={() => scrollTabsBy(80)}
                         aria-label="Scroll tabs right"
-                        className="rounded border border-input bg-background px-1.5 py-0.5 text-xs text-foreground hover:bg-accent hover:text-accent-foreground"
                       >
                         <ChevronRight className="h-3.5 w-3.5" />
-                      </button>
+                      </Button>
                     </div>
                   </>
                 );

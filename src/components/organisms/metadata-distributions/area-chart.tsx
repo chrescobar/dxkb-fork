@@ -3,7 +3,7 @@
 import { useId, useRef } from "react";
 
 import { Group } from "@visx/group";
-import { scaleLinear } from "@visx/scale";
+import { scaleBand, scaleLinear } from "@visx/scale";
 import { AreaClosed, LinePath } from "@visx/shape";
 import { useTooltip } from "@visx/tooltip";
 import { curveMonotoneX } from "@visx/vendor/d3-shape";
@@ -21,6 +21,7 @@ import {
   yearInnerWidth,
 } from "./_shared/chart-dimensions";
 import { ChartStatusMessage } from "./_shared/chart-status-message";
+import { nearestBandIndex } from "./_shared/use-svg-band-pointer";
 import { YAxisTicks } from "./_shared/y-axis-ticks";
 import { labelStep, parseYearData, type YearDatum } from "./_shared/year-data";
 
@@ -45,11 +46,10 @@ export function AreaChart({
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
     useTooltip<YearDatum>();
 
-  const xMin = yearData.length > 0 ? yearData[0].year : 0;
-  const xMax = yearData.length > 0 ? yearData[yearData.length - 1].year : 1;
-  const xScale = scaleLinear<number>({
-    domain: [xMin, xMax],
+  const xScale = scaleBand<number>({
+    domain: yearData.map((d) => d.year),
     range: [0, yearInnerWidth],
+    padding: 0.25,
   });
 
   const maxCount = Math.max(...yearData.map((d) => d.count), 1);
@@ -98,7 +98,7 @@ export function AreaChart({
 
                 <AreaClosed<YearDatum>
                   data={yearData}
-                  x={(d) => xScale(d.year) ?? 0}
+                  x={(d) => (xScale(d.year) ?? 0) + xScale.bandwidth() / 2}
                   y={(d) => yScale(d.count) ?? 0}
                   yScale={yScale}
                   fill={`url(#${gradientId})`}
@@ -107,7 +107,7 @@ export function AreaChart({
 
                 <LinePath<YearDatum>
                   data={yearData}
-                  x={(d) => xScale(d.year) ?? 0}
+                  x={(d) => (xScale(d.year) ?? 0) + xScale.bandwidth() / 2}
                   y={(d) => yScale(d.count) ?? 0}
                   stroke="var(--chart-1)"
                   strokeWidth={2}
@@ -115,7 +115,7 @@ export function AreaChart({
                 />
 
                 {yearData.map((d) => {
-                  const cx = xScale(d.year) ?? 0;
+                  const cx = (xScale(d.year) ?? 0) + xScale.bandwidth() / 2;
                   const cy = yScale(d.count) ?? 0;
                   const label = `${d.year}: ${numberFormatter.format(d.count)}`;
 
@@ -151,7 +151,7 @@ export function AreaChart({
                   return (
                     <text
                       key={`label-${d.year}`}
-                      x={xScale(d.year) ?? 0}
+                      x={(xScale(d.year) ?? 0) + xScale.bandwidth() / 2}
                       y={yearInnerHeight + 12}
                       textAnchor="middle"
                       dominantBaseline="hanging"
@@ -172,22 +172,18 @@ export function AreaChart({
                   strokeWidth={1}
                 />
 
-                {tooltipData && yearData.length > 1 && (() => {
-                  const hx = xScale(tooltipData.year) ?? 0;
-                  const colW = yearInnerWidth / (yearData.length - 1);
-                  return (
-                    <rect
-                      x={hx - colW / 2}
-                      y={0}
-                      width={colW}
-                      height={yearInnerHeight}
-                      fill="var(--primary)"
-                      fillOpacity={0.12}
-                      rx={3}
-                      pointerEvents="none"
-                    />
-                  );
-                })()}
+                {tooltipData && (
+                  <rect
+                    x={(xScale(tooltipData.year) ?? 0) - xScale.step() * 0.125}
+                    y={0}
+                    width={xScale.step()}
+                    height={yearInnerHeight}
+                    fill="var(--primary)"
+                    fillOpacity={0.12}
+                    rx={3}
+                    pointerEvents="none"
+                  />
+                )}
 
                 <rect
                   data-testid="chart-overlay"
@@ -197,25 +193,15 @@ export function AreaChart({
                   height={yearInnerHeight}
                   fill="transparent"
                   onMouseMove={(event) => {
-                    const svgRect = svgRef.current?.getBoundingClientRect();
-                    const scaleX =
-                      svgRect && svgRect.width > 0
-                        ? chartWidth / svgRect.width
-                        : 1;
-                    const mouseX = svgRect
-                      ? (event.clientX - svgRect.left) * scaleX - chartMarginLeft
-                      : event.clientX - chartMarginLeft;
-                    const yearValue = xScale.invert(mouseX);
-                    const nearest = yearData.reduce((a, b) =>
-                      Math.abs(b.year - yearValue) < Math.abs(a.year - yearValue)
-                        ? b
-                        : a,
-                    );
-                    showTooltip({
-                      tooltipData: nearest,
-                      tooltipLeft: event.clientX,
-                      tooltipTop: event.clientY,
-                    });
+                    const idx = nearestBandIndex(event, svgRef, xScale, yearData.map((d) => d.year));
+                    const d = idx !== null ? yearData[idx] : undefined;
+                    if (d) {
+                      showTooltip({
+                        tooltipData: d,
+                        tooltipLeft: event.clientX,
+                        tooltipTop: event.clientY,
+                      });
+                    }
                   }}
                   onMouseLeave={hideTooltip}
                 />

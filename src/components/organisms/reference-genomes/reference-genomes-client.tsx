@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import Link from "next/link";
@@ -31,6 +31,18 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
   "use no memo";
   const [sortDir, setSortDir] = useState<"asc" | "desc" | null>(null);
   const parentRef = useRef<HTMLDivElement>(null);
+  const [containerHeight, setContainerHeight] = useState(320); // h-80 default
+
+  useEffect(() => {
+    const node = parentRef.current;
+    if (!node) return;
+    const ro = new ResizeObserver(([entry]) => {
+      const h = entry?.contentRect?.height;
+      if (h && h > 0) setContainerHeight(h);
+    });
+    ro.observe(node);
+    return () => ro.disconnect();
+  }, []);
 
   const sorted =
     sortDir === null
@@ -64,6 +76,7 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
     virtualItems.length > 0
       ? rowVirtualizer.getTotalSize() - (virtualItems[virtualItems.length - 1]?.end ?? 0)
       : 0;
+  const fillerCount = Math.max(0, Math.floor((containerHeight - rowHeight) / rowHeight) - sorted.length);
 
   return (
     <div
@@ -132,6 +145,15 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
                 );
               })}
               {paddingBottom > 0 && <tr style={{ height: paddingBottom }} />}
+              {Array.from({ length: fillerCount }, (_, i) => (
+                <TableRow
+                  key={`filler-${i}`}
+                  className={cn("h-8", (sorted.length + i) % 2 === 1 && "bg-muted/20")}
+                >
+                  <TableCell className="w-36 border-r py-1 px-3" />
+                  <TableCell className="py-1 px-3" />
+                </TableRow>
+              ))}
             </>
           )}
         </TableBody>

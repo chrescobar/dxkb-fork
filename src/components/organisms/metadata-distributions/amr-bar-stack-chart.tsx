@@ -7,6 +7,7 @@ import { scaleBand, scaleLinear, scaleOrdinal } from "@visx/scale";
 import { BarStack } from "@visx/shape";
 import { useTooltip } from "@visx/tooltip";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type {
   AmrAntibioticRow,
@@ -19,12 +20,12 @@ import { numberFormatter } from "@/lib/services/organisms/utils";
 import { ChartLegendPill } from "./_shared/chart-legend-pill";
 import { ChartStatusMessage } from "./_shared/chart-status-message";
 import {
+  amrChartHeight,
   amrChartWidth,
+  amrInnerHeight,
   amrInnerWidth,
   chartMarginLeft,
   chartMarginTop,
-  stackedChartHeight,
-  stackedInnerHeight,
 } from "./_shared/chart-dimensions";
 import { useStackedChartHighlight } from "./_shared/use-stacked-chart-highlight";
 import { nearestBandIndex } from "./_shared/use-svg-band-pointer";
@@ -56,29 +57,25 @@ function ToggleRow<T extends string>({
 }: ToggleRowProps<T>) {
   return (
     <div className="flex items-center gap-2">
-      <span className="text-muted-foreground">{label}</span>
+      <span className="text-muted-foreground text-xs">{label}</span>
       <div
         role="group"
         aria-label={label}
-        className="inline-flex overflow-hidden rounded-md border"
+        className="bg-muted/50 inline-flex items-center gap-0.5 rounded-md p-0.5"
       >
         {options.map((opt) => {
           const pressed = opt.value === value;
           return (
-            <button
+            <Button
               key={opt.value}
               type="button"
+              variant={pressed ? "default" : "ghost"}
+              size="xs"
               aria-pressed={pressed}
               onClick={() => onChange(opt.value)}
-              className={
-                "px-2 py-0.5 text-xs transition-colors " +
-                (pressed
-                  ? "bg-foreground text-background"
-                  : "bg-background text-muted-foreground hover:text-foreground")
-              }
             >
               {opt.label}
-            </button>
+            </Button>
           );
         })}
       </div>
@@ -169,7 +166,7 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
 
   const yScale = scaleLinear<number>({
     domain: [0, yMax],
-    range: [stackedInnerHeight, 0],
+    range: [amrInnerHeight, 0],
     nice: true,
   });
 
@@ -185,42 +182,63 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
     <Card className="relative rounded-lg" size="sm">
       <CardContent className="flex flex-1 flex-col">
         <p className="text-sm font-semibold">{title}</p>
-        <nav className="mt-2 flex flex-wrap items-center gap-4 text-xs">
-          <ToggleRow
-            label="Scale"
-            options={[
-              { value: "counts", label: "Counts" },
-              { value: "percent", label: "Percent" },
-            ]}
-            value={scale}
-            onChange={setScale}
-          />
-          <ToggleRow
-            label="Order"
-            options={[
-              { value: "count", label: "Count" },
-              { value: "name", label: "Name" },
-            ]}
-            value={order}
-            onChange={setOrder}
-          />
+        <nav className="mt-2 flex flex-wrap items-center justify-between gap-4 text-xs">
+          <div className="flex flex-wrap items-center gap-4">
+            <ToggleRow
+              label="Scale"
+              options={[
+                { value: "counts", label: "Counts" },
+                { value: "percent", label: "Percent" },
+              ]}
+              value={scale}
+              onChange={setScale}
+            />
+            <ToggleRow
+              label="Order"
+              options={[
+                { value: "count", label: "Count" },
+                { value: "name", label: "Name" },
+              ]}
+              value={order}
+              onChange={setOrder}
+            />
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {phenotypes.map((p, idx) => {
+              const isActive = activeIdx === idx;
+              const isDimmed = activeIdx !== null && !isActive;
+              return (
+                <ChartLegendPill
+                  key={p}
+                  label={p}
+                  color={colorScale(p)}
+                  active={isActive}
+                  dimmed={isDimmed}
+                  ariaPressed={highlight.pressedFor(idx)}
+                  onActivate={() => highlight.activatePill(idx)}
+                  onDeactivate={highlight.deactivatePill}
+                  onClick={() => highlight.togglePillLock(idx)}
+                />
+              );
+            })}
+          </div>
         </nav>
         <div className="min-w-0 overflow-hidden pt-2">
           <svg
             ref={svgRef}
-            viewBox={`0 0 ${amrChartWidth} ${stackedChartHeight}`}
+            viewBox={`0 0 ${amrChartWidth} ${amrChartHeight}`}
             role="img"
             aria-label={`${title} distribution`}
             className="w-full"
           >
             <Group left={chartMarginLeft} top={chartMarginTop}>
-              <YAxisTicks ticks={yTicks} yScale={yScale} innerWidth={amrInnerWidth} />
+              <YAxisTicks ticks={yTicks} yScale={yScale} innerWidth={amrInnerWidth} tickClassName="animate-in fade-in duration-200" />
 
               <line
                 x1={0}
                 x2={amrInnerWidth}
-                y1={stackedInnerHeight}
-                y2={stackedInnerHeight}
+                y1={amrInnerHeight}
+                y2={amrInnerHeight}
                 stroke="var(--border)"
                 strokeWidth={1}
               />
@@ -230,7 +248,7 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
                   x={(xScale(hoveredAntibiotic) ?? 0) - xScale.step() * 0.125}
                   y={0}
                   width={xScale.step()}
-                  height={stackedInnerHeight}
+                  height={amrInnerHeight}
                   fill="var(--primary)"
                   fillOpacity={0.08}
                   rx={3}
@@ -261,17 +279,18 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
                       return (
                         <rect
                           key={`bar-${barStack.index}-${bar.index}`}
-                          x={bar.x}
-                          y={bar.y}
-                          height={Math.max(bar.height, 0)}
-                          width={bar.width}
                           fill={bar.color}
                           rx={barStack.index === barStacks.length - 1 ? 2 : 0}
                           aria-label={label}
                           pointerEvents="none"
                           style={{
+                            x: bar.x,
+                            y: bar.y,
+                            height: Math.max(bar.height, 0),
+                            width: bar.width,
                             opacity: isDimmed ? 0.12 : 1,
-                            transition: "opacity 160ms ease",
+                            transition:
+                              "x 280ms cubic-bezier(0.4,0,0.2,1), y 280ms cubic-bezier(0.4,0,0.2,1), height 280ms cubic-bezier(0.4,0,0.2,1), opacity 160ms ease",
                           }}
                         >
                           <title>{label}</title>
@@ -287,7 +306,7 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
                 x={0}
                 y={0}
                 width={amrInnerWidth}
-                height={stackedInnerHeight}
+                height={amrInnerHeight}
                 fill="transparent"
                 onMouseMove={(event) => {
                   const idx = nearestBandIndex(
@@ -327,15 +346,18 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
 
               {sortedRows.map((r) => {
                 const x = (xScale(r.antibiotic) ?? 0) + xScale.bandwidth() / 2;
+                const label = r.antibiotic.length > 16
+                  ? r.antibiotic.slice(0, 15) + "…"
+                  : r.antibiotic;
                 return (
                   <text
                     key={`xlabel-${r.antibiotic}`}
-                    transform={`translate(${x},${stackedInnerHeight + 6}) rotate(-45)`}
+                    transform={`translate(${x},${amrInnerHeight + 6}) rotate(-45)`}
                     textAnchor="end"
                     fontSize={11}
-                    className="fill-muted-foreground"
+                    className="fill-muted-foreground capitalize"
                   >
-                    {r.antibiotic}
+                    {label}
                   </text>
                 );
               })}
@@ -343,25 +365,6 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
           </svg>
         </div>
 
-        <div className="mt-2 flex flex-wrap gap-1.5">
-          {phenotypes.map((p, idx) => {
-            const isActive = activeIdx === idx;
-            const isDimmed = activeIdx !== null && !isActive;
-            return (
-              <ChartLegendPill
-                key={p}
-                label={p}
-                color={colorScale(p)}
-                active={isActive}
-                dimmed={isDimmed}
-                ariaPressed={highlight.pressedFor(idx)}
-                onActivate={() => highlight.activatePill(idx)}
-                onDeactivate={highlight.deactivatePill}
-                onClick={() => highlight.togglePillLock(idx)}
-              />
-            );
-          })}
-        </div>
       </CardContent>
 
       {tooltipData && (
@@ -377,7 +380,7 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
             tooltipOffsetY,
           )}
         >
-          <p className="text-foreground mb-1.5 font-semibold">
+          <p className="text-foreground mb-1.5 font-semibold capitalize">
             {tooltipData.antibiotic}
           </p>
           <div className="flex flex-col gap-1">

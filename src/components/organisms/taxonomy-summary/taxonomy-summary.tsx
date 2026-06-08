@@ -29,7 +29,7 @@ export async function TaxonomySummary({
   const metrics: { label: string; value: string; description: string }[] = [
     { label: "Taxon ID", value: taxon ? String(taxon.taxonId) : String(taxonId), description: "NCBI taxonomy identifier" },
     { label: "Taxon Name", value: taxon?.taxonName ?? "-", description: "Scientific name of the taxon" },
-    { label: "Taxon Rank", value: taxon?.taxonRank ?? "-", description: "Taxonomic rank" },
+    { label: "Taxon Rank", value: taxon?.taxonRank ? taxon.taxonRank.charAt(0).toUpperCase() + taxon.taxonRank.slice(1) : "-", description: "Taxonomic rank" },
     { label: "Species", value: formatCount(summary?.uniqueSpecies ?? null), description: "Unique taxonomy species" },
     { label: "Genomes / Segments", value: formatCount(summary?.count ?? null), description: "Assembled genome records" },
     { label: "Protein Coding Genes (CDS)", value: formatCount(summary?.cds ?? null), description: "Coding sequences" },
@@ -48,7 +48,7 @@ export async function TaxonomySummary({
             {metric.label}
           </p>
           <p
-            className="text-lg leading-tight font-bold tracking-tight whitespace-nowrap"
+            className="text-lg leading-tight font-bold tracking-tight break-words"
             title={metric.value}
           >
             {metric.value}

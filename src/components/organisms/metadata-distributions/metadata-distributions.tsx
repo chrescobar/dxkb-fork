@@ -128,14 +128,16 @@ export async function MetadataDistributions({
           Top metadata buckets for available genome records.
         </p>
       </div>
-      {showAmr && (
-        <AmrBarStackChart
-          title="Antimicrobial Resistance Profile"
-          data={amr.data}
-          errorMessage={amr.errorMessage}
-        />
-      )}
       <div className="grid grid-cols-1 gap-3 @[640px]:grid-cols-2 @[1080px]:grid-cols-3">
+        {showAmr && (
+          <div className="@[1080px]:col-span-2">
+            <AmrBarStackChart
+              title="Antimicrobial Resistance Profile"
+              data={amr.data}
+              errorMessage={amr.errorMessage}
+            />
+          </div>
+        )}
         {fields.flatMap((field) => {
           const title = fieldLabels[field] ?? field;
           const data = (facets[field] ?? []).map((facet) => ({

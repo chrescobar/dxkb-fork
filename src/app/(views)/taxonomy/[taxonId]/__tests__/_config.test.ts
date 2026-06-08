@@ -14,6 +14,7 @@ describe("buildTaxonomyConfig", () => {
       displayName: "Brucella",
       taxonId: 234,
       accent: "bacteria",
+      showAmr: true,
       defaultView: "overview",
       metadataFields: [
         "host_group",
@@ -24,6 +25,41 @@ describe("buildTaxonomyConfig", () => {
         "serovar",
       ],
     });
+  });
+
+  it("sets showAmr=true for bacterial lineages", () => {
+    const config = buildTaxonomyConfig(234, {
+      taxonId: 234,
+      taxonName: "Brucella",
+      taxonRank: "genus",
+      lineageNames: ["Bacteria", "Brucella"],
+      lineageIds: [2, 234],
+      genomes: 1909,
+    });
+    expect(config.showAmr).toBe(true);
+  });
+
+  it("sets showAmr=false for non-bacterial lineages", () => {
+    const viral = buildTaxonomyConfig(10239, {
+      taxonId: 10239,
+      taxonName: "Viruses",
+      taxonRank: "superkingdom",
+      lineageNames: ["Viruses"],
+      lineageIds: [10239],
+      genomes: 0,
+    });
+    const archaea = buildTaxonomyConfig(2157, {
+      taxonId: 2157,
+      taxonName: "Archaea",
+      taxonRank: "superkingdom",
+      lineageNames: ["Archaea"],
+      lineageIds: [2157],
+      genomes: 1000,
+    });
+    const missing = buildTaxonomyConfig(999, null);
+    expect(viral.showAmr).toBe(false);
+    expect(archaea.showAmr).toBe(false);
+    expect(missing.showAmr).toBe(false);
   });
 
   it("returns a Viruses accent when 'Viruses' appears in the lineage", () => {

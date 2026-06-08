@@ -222,10 +222,14 @@ export function DonutChart({ title, data, layout = "bottom" }: DonutChartProps) 
 
     const rect = svgEl.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
-    const scaleX = chartSize / rect.width;
-    const scaleY = chartSize / rect.height;
-    const svgX = (event.clientX - rect.left) * scaleX - chartCenter;
-    const svgY = (event.clientY - rect.top) * scaleY - chartCenter;
+    // xMidYMid meet applies a single uniform scale; compute it from whichever
+    // axis is the bottleneck and subtract the resulting letterbox offset before
+    // mapping to SVG space.
+    const uniformScale = Math.min(rect.width / chartSize, rect.height / chartSize);
+    const letterboxX = (rect.width - chartSize * uniformScale) / 2;
+    const letterboxY = (rect.height - chartSize * uniformScale) / 2;
+    const svgX = (event.clientX - rect.left - letterboxX) / uniformScale - chartCenter;
+    const svgY = (event.clientY - rect.top - letterboxY) / uniformScale - chartCenter;
     const dist = Math.sqrt(svgX * svgX + svgY * svgY);
 
     // Only activate within the ring — inner hole and outside edge are dead zones

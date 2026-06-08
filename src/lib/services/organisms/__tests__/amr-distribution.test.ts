@@ -140,7 +140,7 @@ describe("fetchAmrPhenotypeDistribution", () => {
     );
 
     await expect(fetchAmrPhenotypeDistribution(197)).rejects.toThrow(
-      "upstream timeout",
+      "amr phenotype distribution: upstream timeout",
     );
   });
 

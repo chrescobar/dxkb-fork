@@ -170,6 +170,7 @@ describe("MetadataDistributions", () => {
     await renderServer(MetadataDistributions({ taxonId: 1, fields: [] }));
 
     expect(fetchAmrPhenotypeDistribution).not.toHaveBeenCalled();
+    expect(amrSpy).not.toHaveBeenCalled();
     expect(screen.queryByTestId("amr-chart")).not.toBeInTheDocument();
   });
 

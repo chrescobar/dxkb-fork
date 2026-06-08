@@ -1,12 +1,12 @@
-import { fetchOrganismMetadataFacets } from "@/lib/services/organisms/metadata-facets";
-import { fetchSerotypeDistribution } from "@/lib/services/organisms/serotype-distribution";
-import { fetchTaxonomicDistribution } from "@/lib/services/organisms/taxonomic-distribution";
+import { fetchAmrPhenotypeDistribution } from "@/lib/services/organisms/amr-distribution";
 import {
   fetchCgmlstHcDistribution,
   hcLevels,
 } from "@/lib/services/organisms/cgmlst-distribution";
-import { fetchAmrPhenotypeDistribution } from "@/lib/services/organisms/amr-distribution";
 import type { CgmlstHcDistribution } from "@/lib/services/organisms/cgmlst-distribution";
+import { fetchOrganismMetadataFacets } from "@/lib/services/organisms/metadata-facets";
+import { fetchSerotypeDistribution } from "@/lib/services/organisms/serotype-distribution";
+import { fetchTaxonomicDistribution } from "@/lib/services/organisms/taxonomic-distribution";
 import type {
   AmrDistributionData,
   SerotypeDistributionData,

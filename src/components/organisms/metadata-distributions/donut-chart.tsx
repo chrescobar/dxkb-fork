@@ -1,9 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { scaleOrdinal } from "@visx/scale";
 import { useTooltip } from "@visx/tooltip";
+
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { facetDisplayLabel } from "@/components/organisms/facet-label";
 import { Card, CardContent } from "@/components/ui/card";
@@ -212,6 +214,34 @@ export function DonutChart({ title, data, tabs, layout = "bottom" }: DonutChartP
     hideTooltip();
   };
 
+  const tabsScrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  useEffect(() => {
+    const el = tabsScrollRef.current;
+    if (!el) return;
+    const check = () => {
+      setCanScrollLeft(el.scrollLeft > 0);
+      setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+    };
+    check();
+    el.addEventListener("scroll", check);
+    if (typeof ResizeObserver !== "undefined") {
+      const ro = new ResizeObserver(check);
+      ro.observe(el);
+      return () => {
+        ro.disconnect();
+        el.removeEventListener("scroll", check);
+      };
+    }
+    return () => el.removeEventListener("scroll", check);
+  }, [tabs]);
+
+  const scrollTabsBy = (delta: number) => {
+    tabsScrollRef.current?.scrollBy({ left: delta, behavior: "smooth" });
+  };
+
   const deactivate = () => {
     setActiveId(null);
     hideTooltip();
@@ -276,27 +306,73 @@ export function DonutChart({ title, data, tabs, layout = "bottom" }: DonutChartP
   return (
     <Card className="relative rounded-lg" size="sm">
       <CardContent className="flex flex-1 flex-col">
-        <p className="text-sm font-semibold">{title}</p>
-        {tabs && tabs.length > 1 && (
-          <div className="mt-1 flex flex-wrap gap-1">
-            {tabs.map((tab, i) => (
-              <button
-                key={tab.label}
-                type="button"
-                aria-pressed={i === activeTabIndex}
-                onClick={() => handleTabChange(i)}
-                className={cn(
-                  "rounded px-2 py-0.5 text-xs font-medium transition-colors",
-                  i === activeTabIndex
-                    ? "bg-primary text-primary-foreground"
-                    : "border border-input text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                )}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        )}
+        <div className="flex items-start gap-2">
+          <p className="text-sm font-semibold shrink-0 max-w-[60%]">{title}</p>
+          {tabs && tabs.length > 1 && (
+            <div className="flex flex-1 min-w-0 items-center gap-0.5">
+              {(() => {
+                const scrollable = canScrollLeft || canScrollRight;
+                return (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => scrollTabsBy(-80)}
+                      aria-label="Scroll tabs left"
+                      className={cn(
+                        "shrink-0 rounded border border-input bg-background px-1.5 py-0.5 text-xs text-foreground hover:bg-accent hover:text-accent-foreground",
+                        !scrollable ? "hidden" : (!canScrollLeft && "invisible pointer-events-none"),
+                      )}
+                    >
+                      <ChevronLeft className="h-3.5 w-3.5" />
+                    </button>
+                    <div
+                      ref={tabsScrollRef}
+                      className="flex min-w-0 flex-1 overflow-x-auto"
+                      style={{ scrollbarWidth: "none" }}
+                    >
+                      <div className="flex flex-nowrap gap-1 ml-auto">
+                        {tabs.map((tab, i) => (
+                          <button
+                            key={tab.label}
+                            type="button"
+                            aria-pressed={i === activeTabIndex}
+                            onClick={() => handleTabChange(i)}
+                            className={cn(
+                              "shrink-0 rounded px-2 py-0.5 text-xs font-medium transition-colors",
+                              i === activeTabIndex
+                                ? "bg-primary text-primary-foreground"
+                                : "border border-input text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                            )}
+                          >
+                            {tab.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div
+                      className={cn(
+                        "shrink-0 overflow-hidden",
+                        !scrollable
+                          ? "hidden"
+                          : "transition-[max-width,opacity] duration-300 ease-in-out",
+                        scrollable && (canScrollRight ? "max-w-8 opacity-100" : "max-w-0 opacity-0"),
+                      )}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => scrollTabsBy(80)}
+                        aria-label="Scroll tabs right"
+                        className="rounded border border-input bg-background px-1.5 py-0.5 text-xs text-foreground hover:bg-accent hover:text-accent-foreground"
+                      >
+                        <ChevronRight className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+          )}
+        </div>
         {slices.length === 0 ? (
           <p className="text-muted-foreground mt-1 text-sm">
             No distribution data was returned.

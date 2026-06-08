@@ -55,7 +55,7 @@ export function BarChart({
   return (
     <Card className="relative rounded-lg" size="sm">
       <CardHeader>
-        <CardTitle className="text-lg!">{title}</CardTitle>
+        <CardTitle className="text-sm! font-semibold!">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         {yearData.length === 0 ? (

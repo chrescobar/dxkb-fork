@@ -1,0 +1,61 @@
+src/components/organisms/taxonomy-summary/taxonomy-summary.tsx
+  s_4e485ddc205c7c::t_a39d60f9cae3f5 32
+  s_4e485ddc205c7c::t_23cb71e5462d70 51
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  s_4e485ddc205c7c::t_a95db776285994 11
+  s_4e485ddc205c7c::t_1781a1a1c63d5b 346,349-350,353,356
+  s_4e485ddc205c7c::t_353481e154922e 315,344,366
+  s_4e485ddc205c7c::t_14cc4b4717ee59 369,371-372,377
+  s_4e485ddc205c7c::t_efa756383dcc82 320,322-326,329-338
+src/components/organisms/metadata-distributions/amr-bar-stack-chart.tsx
+  s_4e485ddc205c7c::t_ab7c01a80ba0a7 60,64,69,72-73,78
+  s_4e485ddc205c7c::t_14c1b9336bac75 349-351,360
+  s_4e485ddc205c7c::t_7ee9b62ac84ff7 235
+  s_4e485ddc205c7c::t_7d855f7247ea0d 169,240-241,251,309,355
+  s_4e485ddc205c7c::t_2a4503119892cb 383
+  s_4e485ddc205c7c::t_ec7e18c745050b 23,25
+  s_4e485ddc205c7c::t_9eecde491b2ad7 185-205
+  s_4e485ddc205c7c::t_3d4342b00918e1 287-290,292-293
+  s_4e485ddc205c7c::t_a29c8a04f108c6 358
+  s_4e485ddc205c7c::t_0f06cff9dbd52d 206-224
+  s_4e485ddc205c7c::t_ec61d3d6ee7130 229
+  s_4e485ddc205c7c::t_d58dfa8e42e408 10
+src/components/organisms/reference-genomes/reference-genomes-client.tsx
+  s_4e485ddc205c7c::t_deeb463f62f4f2 148-156
+  s_4e485ddc205c7c::t_96e2e7296acd79 3
+  s_4e485ddc205c7c::t_35ac81a6f4c33c 34-45
+  s_4e485ddc205c7c::t_6b915395671659 79
+src/components/organisms/metadata-distributions/metadata-distributions.tsx
+  s_4e485ddc205c7c::t_1ee7efaa66c2da 132-140
+src/components/organisms/metadata-distributions/_shared/chart-dimensions.ts
+  s_4e485ddc205c7c::t_0890e9725cff97 16-17,21-22
+  s_4e485ddc205c7c::t_5fae1100089e82 20
+src/components/organisms/metadata-distributions/_shared/y-axis-ticks.tsx
+  s_4e485ddc205c7c::t_c83e4b83b4e092 7,10,14
+src/components/organisms/geo-distribution/map-controls.tsx
+  s_4e485ddc205c7c::t_08ae7ddcb7e4e9 110
+  s_4e485ddc205c7c::t_f6a50c93444982 66-69,92
+src/components/organisms/metadata-distributions/area-chart.tsx
+  s_4e485ddc205c7c::t_d0b41182a35433 24
+  s_4e485ddc205c7c::t_a054a974af16b2 154
+  s_4e485ddc205c7c::t_34ab98e8d5551b 101,110,118
+  s_4e485ddc205c7c::t_2e55c57329af0c 175-186,196-204
+  s_4e485ddc205c7c::t_e00226b96511c8 49-50,52
+  s_4e485ddc205c7c::t_ead0da3d12ab89 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "f68e7f0820c670c9a366e4d00a50ec3aa4de35f9",
+  "prompts": {},
+  "sessions": {
+    "s_4e485ddc205c7c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d9ebcda7-3b6e-4f04-a0c0-1e0e36934c6e",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

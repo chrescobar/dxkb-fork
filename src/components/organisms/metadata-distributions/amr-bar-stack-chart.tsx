@@ -54,19 +54,22 @@ function ToggleRow<T extends string>({
   return (
     <div className="flex items-center gap-2">
       <span className="text-muted-foreground">{label}</span>
-      <div role="radiogroup" aria-label={label} className="inline-flex overflow-hidden rounded-md border">
+      <div
+        role="group"
+        aria-label={label}
+        className="inline-flex overflow-hidden rounded-md border"
+      >
         {options.map((opt) => {
-          const checked = opt.value === value;
+          const pressed = opt.value === value;
           return (
             <button
               key={opt.value}
               type="button"
-              role="radio"
-              aria-checked={checked}
+              aria-pressed={pressed}
               onClick={() => onChange(opt.value)}
               className={
                 "px-2 py-0.5 text-xs transition-colors " +
-                (checked
+                (pressed
                   ? "bg-foreground text-background"
                   : "bg-background text-muted-foreground hover:text-foreground")
               }
@@ -406,7 +409,9 @@ export function AmrBarStackChart({ title, data }: AmrBarStackChartProps) {
                 />
                 <span className="text-muted-foreground flex-1">{phenotype}</span>
                 <span className="tabular-nums font-semibold">
-                  {numberFormatter.format(count)}
+                  {scale === "percent"
+                    ? `${count}%`
+                    : numberFormatter.format(count)}
                 </span>
               </div>
             ))}

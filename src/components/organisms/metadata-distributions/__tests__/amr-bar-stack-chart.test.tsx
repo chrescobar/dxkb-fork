@@ -113,10 +113,10 @@ describe("AmrBarStackChart", () => {
       />,
     );
 
-    expect(screen.getByRole("radio", { name: "Counts" })).toBeChecked();
-    expect(screen.getByRole("radio", { name: "Percent" })).not.toBeChecked();
-    expect(screen.getByRole("radio", { name: "Count" })).toBeChecked();
-    expect(screen.getByRole("radio", { name: "Name" })).not.toBeChecked();
+    expect(screen.getByRole("button", { name: "Counts" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "Percent" })).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByRole("button", { name: "Count" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "Name" })).toHaveAttribute("aria-pressed", "false");
   });
 
   it("switches y-axis tick labels to percent (0/25/50/75/100) when Percent is selected", () => {
@@ -127,7 +127,7 @@ describe("AmrBarStackChart", () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole("radio", { name: "Percent" }));
+    fireEvent.click(screen.getByRole("button", { name: "Percent" }));
 
     const svg = screen.getByRole("img");
     const tickTexts = within(svg).getAllByText(/^(0|25|50|75|100)$/);
@@ -145,7 +145,7 @@ describe("AmrBarStackChart", () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole("radio", { name: "Name" }));
+    fireEvent.click(screen.getByRole("button", { name: "Name" }));
 
     const svg = screen.getByRole("img");
     const labels = within(svg)
@@ -162,7 +162,7 @@ describe("AmrBarStackChart", () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole("radio", { name: "Percent" }));
+    fireEvent.click(screen.getByRole("button", { name: "Percent" }));
 
     // ciprofloxacin: Resistant=5815, Susceptible=12336, total=18151
     //   → R = 5815/18151 ≈ 32.0%, S = 12336/18151 ≈ 68.0%

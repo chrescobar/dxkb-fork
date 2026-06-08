@@ -1,0 +1,21 @@
+src/lib/services/organisms/cgmlst-distribution.ts
+  s_c95e9f239ff8fd::t_84b578a6dae860 1-45
+src/lib/services/organisms/__tests__/cgmlst-distribution.test.ts
+  s_c95e9f239ff8fd::t_0f1c49e763f67d 1-72
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "0238aa17d33a12f7dbe59ce6359236e2572ef98c",
+  "prompts": {},
+  "sessions": {
+    "s_c95e9f239ff8fd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "094f0737-c187-421e-8dc9-65a158af2ee9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

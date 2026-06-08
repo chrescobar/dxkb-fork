@@ -17,7 +17,7 @@ import { numberFormatter } from "@/lib/services/organisms/utils";
 
 import { ChartLegendPill } from "./_shared/chart-legend-pill";
 
-interface DonutDatum {
+export interface DonutDatum {
   label: string;
   value: number;
 }
@@ -26,9 +26,15 @@ interface DonutChartDatum extends DonutDatum {
   id: string;
 }
 
+export interface DonutChartTab {
+  label: string;
+  data: DonutDatum[];
+}
+
 interface DonutChartProps {
   title: string;
-  data: DonutDatum[];
+  data?: DonutDatum[];
+  tabs?: DonutChartTab[];
   layout?: "bottom" | "side";
 }
 
@@ -182,8 +188,12 @@ function buildArcData(
   });
 }
 
-export function DonutChart({ title, data, layout = "bottom" }: DonutChartProps) {
-  const slices = chartData(data);
+export function DonutChart({ title, data, tabs, layout = "bottom" }: DonutChartProps) {
+  const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
+  const activeData: DonutDatum[] = tabs
+    ? (tabs[activeTabIndex]?.data ?? [])
+    : (data ?? []);
+  const slices = chartData(activeData);
   const colorScale = scaleOrdinal<string, string>({
     domain: slices.map((datum) => datum.id),
     range: donutPalette,
@@ -195,6 +205,12 @@ export function DonutChart({ title, data, layout = "bottom" }: DonutChartProps) 
   const [activeId, setActiveId] = useState<string | null>(null);
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
     useTooltip<DonutDatum & { pct: number }>();
+
+  const handleTabChange = (index: number) => {
+    setActiveTabIndex(index);
+    setActiveId(null);
+    hideTooltip();
+  };
 
   const deactivate = () => {
     setActiveId(null);
@@ -261,6 +277,26 @@ export function DonutChart({ title, data, layout = "bottom" }: DonutChartProps) 
     <Card className="relative rounded-lg" size="sm">
       <CardContent className="flex flex-1 flex-col">
         <p className="text-sm font-semibold">{title}</p>
+        {tabs && tabs.length > 1 && (
+          <div className="mt-1 flex flex-wrap gap-1">
+            {tabs.map((tab, i) => (
+              <button
+                key={tab.label}
+                type="button"
+                aria-pressed={i === activeTabIndex}
+                onClick={() => handleTabChange(i)}
+                className={cn(
+                  "rounded px-2 py-0.5 text-xs font-medium transition-colors",
+                  i === activeTabIndex
+                    ? "bg-primary text-primary-foreground"
+                    : "border border-input text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        )}
         {slices.length === 0 ? (
           <p className="text-muted-foreground mt-1 text-sm">
             No distribution data was returned.

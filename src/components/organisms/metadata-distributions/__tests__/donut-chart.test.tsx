@@ -223,4 +223,48 @@ describe("DonutChart", () => {
     fireEvent.focus(other);
     expect(screen.getByRole("status")).toHaveTextContent("Salmonella");
   });
+
+  it("renders tab buttons when tabs prop is provided", () => {
+    render(
+      <DonutChart
+        title="Taxonomic Distribution"
+        tabs={[
+          { label: "Genus", data: [{ label: "Brucella", value: 100 }] },
+          { label: "Species", data: [{ label: "B. abortus", value: 50 }] },
+        ]}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "Genus" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Species" })).toBeInTheDocument();
+    // First tab active by default — first tab's data is shown
+    expect(
+      within(screen.getByRole("img")).getByLabelText("Brucella: 100"),
+    ).toBeInTheDocument();
+  });
+
+  it("clicking an inactive tab switches the chart data", () => {
+    render(
+      <DonutChart
+        title="Taxonomic Distribution"
+        tabs={[
+          { label: "Genus", data: [{ label: "Brucella", value: 100 }] },
+          { label: "Species", data: [{ label: "B. abortus", value: 50 }] },
+        ]}
+      />,
+    );
+
+    // Initial: Genus data visible
+    expect(
+      within(screen.getByRole("img")).getByLabelText("Brucella: 100"),
+    ).toBeInTheDocument();
+
+    // Click Species tab
+    fireEvent.click(screen.getByRole("button", { name: "Species" }));
+
+    // Now: Species data visible
+    expect(
+      within(screen.getByRole("img")).getByLabelText("B. abortus: 50"),
+    ).toBeInTheDocument();
+  });
 });

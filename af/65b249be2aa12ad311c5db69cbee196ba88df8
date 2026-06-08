@@ -1,0 +1,19 @@
+src/components/organisms/metadata-distributions/_shared/chart-dimensions.ts
+  s_470f7c47158956::t_a391bb5178c39b 13-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "af65b249be2aa12ad311c5db69cbee196ba88df8",
+  "prompts": {},
+  "sessions": {
+    "s_470f7c47158956": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7886de1f-7dcc-4020-804a-37b0db4fffef",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

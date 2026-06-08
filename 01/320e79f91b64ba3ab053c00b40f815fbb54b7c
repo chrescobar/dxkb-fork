@@ -1,0 +1,21 @@
+src/lib/services/organisms/__tests__/taxonomic-distribution.test.ts
+  s_c95e9f239ff8fd::t_7e7c9266d86997 1-77
+src/lib/services/organisms/taxonomic-distribution.ts
+  s_c95e9f239ff8fd::t_5d9b72a57ac748 1-36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "01320e79f91b64ba3ab053c00b40f815fbb54b7c",
+  "prompts": {},
+  "sessions": {
+    "s_c95e9f239ff8fd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "094f0737-c187-421e-8dc9-65a158af2ee9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -53,3 +53,17 @@ export interface SerotypeDistributionData {
   years: SerotypeYear[];
   serovars: string[];
 }
+
+export type AmrPhenotype = "Resistant" | "Susceptible" | "Intermediate";
+
+export interface AmrAntibioticRow {
+  antibiotic: string;
+  Resistant: number;
+  Susceptible: number;
+  Intermediate: number;
+  total: number;
+}
+
+export interface AmrDistributionData {
+  antibiotics: AmrAntibioticRow[];
+}

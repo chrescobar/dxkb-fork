@@ -2,15 +2,40 @@ import { render, screen } from "@testing-library/react";
 
 import TaxonomyPage from "../page";
 
+const fetchOrganismTaxonomyMock = vi.fn();
+
 vi.mock("@/lib/services/organisms/taxonomy", () => ({
-  fetchOrganismTaxonomy: vi.fn().mockResolvedValue({
-    taxonId: 234,
-    taxonName: "Brucella",
-    lineageNames: ["Bacteria", "Pseudomonadota", "Brucella"],
-    lineageIds: [2, 1224, 234],
-    taxonRank: "genus",
-    genomes: 1909,
-  }),
+  fetchOrganismTaxonomy: (...args: unknown[]) => fetchOrganismTaxonomyMock(...args),
+}));
+
+const bacterialTaxon = {
+  taxonId: 234,
+  taxonName: "Brucella",
+  lineageNames: ["Bacteria", "Pseudomonadota", "Brucella"],
+  lineageIds: [2, 1224, 234],
+  taxonRank: "genus",
+  genomes: 1909,
+};
+
+const viralTaxon = {
+  taxonId: 11320,
+  taxonName: "Influenza A virus",
+  lineageNames: ["Viruses", "Orthomyxoviridae", "Influenza A virus"],
+  lineageIds: [10239, 11308, 11320],
+  taxonRank: "species",
+  genomes: 1834418,
+};
+
+beforeEach(() => {
+  fetchOrganismTaxonomyMock.mockResolvedValue(bacterialTaxon);
+});
+
+const metadataSpy = vi.fn();
+vi.mock("@/components/organisms/metadata-distributions/metadata-distributions", () => ({
+  MetadataDistributions: (props: Record<string, unknown>) => {
+    metadataSpy(props);
+    return <div data-testid="metadata-distributions" />;
+  },
 }));
 
 const notFoundSpy = vi.fn(() => {
@@ -96,5 +121,48 @@ describe("TaxonomyPage", () => {
       }),
     ).rejects.toThrow("NEXT_NOT_FOUND");
     expect(notFoundSpy).toHaveBeenCalled();
+  });
+
+  it("passes showAmr=true for bacterial taxa", async () => {
+    metadataSpy.mockClear();
+    const node = await TaxonomyPage({
+      params: Promise.resolve({ taxonId: "234" }),
+      searchParams: Promise.resolve({}),
+    });
+    render(node);
+
+    expect(metadataSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ showAmr: true }),
+    );
+  });
+
+  it("passes showAmr=false for viral taxa", async () => {
+    fetchOrganismTaxonomyMock.mockResolvedValueOnce(viralTaxon);
+    metadataSpy.mockClear();
+
+    const node = await TaxonomyPage({
+      params: Promise.resolve({ taxonId: "11320" }),
+      searchParams: Promise.resolve({}),
+    });
+    render(node);
+
+    expect(metadataSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ showAmr: false }),
+    );
+  });
+
+  it("passes showAmr=false when the taxon fetch returns null", async () => {
+    fetchOrganismTaxonomyMock.mockRejectedValueOnce(new Error("nope"));
+    metadataSpy.mockClear();
+
+    const node = await TaxonomyPage({
+      params: Promise.resolve({ taxonId: "999" }),
+      searchParams: Promise.resolve({}),
+    });
+    render(node);
+
+    expect(metadataSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ showAmr: false }),
+    );
   });
 });

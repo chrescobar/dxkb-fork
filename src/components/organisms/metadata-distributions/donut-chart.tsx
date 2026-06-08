@@ -220,10 +220,14 @@ export function DonutChart({ title, data, layout = "bottom" }: DonutChartProps) 
     const svgEl = svgRef.current;
     if (!svgEl) return;
 
-    const rect = svgEl.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) return;
-    const svgX = ((event.clientX - rect.left) / rect.width) * chartSize - chartCenter;
-    const svgY = ((event.clientY - rect.top) / rect.height) * chartSize - chartCenter;
+    const ctm = svgEl.getScreenCTM();
+    if (!ctm) return;
+    const pt = svgEl.createSVGPoint();
+    pt.x = event.clientX;
+    pt.y = event.clientY;
+    const svgPt = pt.matrixTransform(ctm.inverse());
+    const svgX = svgPt.x - chartCenter;
+    const svgY = svgPt.y - chartCenter;
     const dist = Math.sqrt(svgX * svgX + svgY * svgY);
 
     // Only activate within the ring — inner hole and outside edge are dead zones

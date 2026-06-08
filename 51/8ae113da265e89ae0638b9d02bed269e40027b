@@ -1,0 +1,29 @@
+src/components/organisms/geo-distribution/geo-distribution-client.tsx
+  s_e3e625e27a6c6d::t_2560689c74fa02 190
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  s_eed2325cea288b::t_0975409987f22d 223-230
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "518ae113da265e89ae0638b9d02bed269e40027b",
+  "prompts": {},
+  "sessions": {
+    "s_e3e625e27a6c6d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3b0c876b-0261-462e-9ab7-0a2171a7e83b",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_eed2325cea288b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "28177dff-e85c-4bb6-9cbe-0a37a5e0874f",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

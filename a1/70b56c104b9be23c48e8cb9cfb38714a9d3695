@@ -1,0 +1,21 @@
+src/lib/__tests__/recent-workspace-folders.test.ts
+  s_e3e625e27a6c6d::t_ec97c289558b44 8-23
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  s_e3e625e27a6c6d::t_78faf15b18a6b4 223-228
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "a170b56c104b9be23c48e8cb9cfb38714a9d3695",
+  "prompts": {},
+  "sessions": {
+    "s_e3e625e27a6c6d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3b0c876b-0261-462e-9ab7-0a2171a7e83b",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

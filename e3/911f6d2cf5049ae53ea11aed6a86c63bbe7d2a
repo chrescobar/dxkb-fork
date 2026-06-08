@@ -1,0 +1,23 @@
+src/components/organisms/metadata-distributions/metadata-distributions.tsx
+  s_c95e9f239ff8fd::t_28a39dcb681e39 3-8,21,23,26,36-38,42,49-57,64,74-91,135-165
+  s_c95e9f239ff8fd::t_eb052b0774b0f9 39-41
+src/components/organisms/metadata-distributions/__tests__/metadata-distributions.test.tsx
+  s_c95e9f239ff8fd::t_7fceb8c1a9896d 145-148
+  s_c95e9f239ff8fd::t_52b2973e641474 13-21,34-45,114-144
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "e3911f6d2cf5049ae53ea11aed6a86c63bbe7d2a",
+  "prompts": {},
+  "sessions": {
+    "s_c95e9f239ff8fd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "094f0737-c187-421e-8dc9-65a158af2ee9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": null
+    }
+  }
+}

@@ -16,9 +16,10 @@ interface OverviewViewProps {
   config: OrganismLandingConfig;
   taxon: OrganismTaxonomy | null;
   showSerotype?: boolean;
+  showAmr?: boolean;
 }
 
-export function makeOverviewView({ config, taxon, showSerotype }: OverviewViewProps) {
+export function makeOverviewView({ config, taxon, showSerotype, showAmr: _showAmr }: OverviewViewProps) {
   async function TaxonomySummaryBoundary() {
     return withSectionError(() => TaxonomySummary({ taxonId: config.taxonId, taxon }));
   }

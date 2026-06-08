@@ -10,6 +10,13 @@ export function buildTaxonomyNavItems(
   taxon: OrganismTaxonomy | null,
 ): OrganismLandingView[] {
   return buildOrganismNavItems({
-    overview: { Component: makeOverviewView({ config, taxon, showSerotype }) },
+    overview: {
+      Component: makeOverviewView({
+        config,
+        taxon,
+        showSerotype,
+        showAmr: config.showAmr ?? false,
+      }),
+    },
   });
 }

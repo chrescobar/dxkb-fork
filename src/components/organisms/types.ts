@@ -36,5 +36,6 @@ export interface OrganismLandingConfig {
   taxonId: number;
   accent: "bacteria" | "viruses" | "fungi" | "all";
   metadataFields: string[];
+  showAmr?: boolean;
   defaultView?: OrganismViewKey;
 }

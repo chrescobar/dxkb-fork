@@ -19,6 +19,10 @@ function accentForLineage(
   return "all";
 }
 
+function showAmrForLineage(lineageNames: readonly string[]): boolean {
+  return lineageNames.includes("Bacteria");
+}
+
 export function buildTaxonomyConfig(
   taxonId: number,
   taxon: OrganismTaxonomy | null,
@@ -27,6 +31,7 @@ export function buildTaxonomyConfig(
     displayName: taxon?.taxonName ?? `Taxon ${taxonId}`,
     taxonId,
     accent: accentForLineage(taxon?.lineageNames ?? []),
+    showAmr: showAmrForLineage(taxon?.lineageNames ?? []),
     defaultView: "overview",
     metadataFields: defaultMetadataFields,
   };

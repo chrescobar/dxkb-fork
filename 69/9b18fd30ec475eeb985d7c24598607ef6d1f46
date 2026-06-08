@@ -1,0 +1,21 @@
+src/lib/services/organisms/__tests__/amr-distribution.test.ts
+  s_470f7c47158956::t_340e6aebb992bb 1-176
+src/lib/services/organisms/amr-distribution.ts
+  s_470f7c47158956::t_09ff18fad75431 1-58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "699b18fd30ec475eeb985d7c24598607ef6d1f46",
+  "prompts": {},
+  "sessions": {
+    "s_470f7c47158956": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7886de1f-7dcc-4020-804a-37b0db4fffef",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

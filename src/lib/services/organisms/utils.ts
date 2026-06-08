@@ -44,6 +44,32 @@ export async function fetchOrganismSolrJson(
   return readJsonObject(response, source);
 }
 
+/**
+ * POST variant of fetchOrganismSolrJson. Used by BV-BRC endpoints (e.g.
+ * genome_amr) that require an RQL body via POST instead of GET query params.
+ */
+export async function fetchOrganismSolrJsonPost(
+  url: string,
+  body: string,
+  source: string,
+  signal?: AbortSignal,
+): Promise<Record<string, unknown>> {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Accept: "application/solr+json",
+      "Content-Type": "application/rqlquery+x-www-form-urlencoded",
+    },
+    body,
+    signal,
+    ...organismFetchCacheInit(organismBvBrcRevalidateSeconds),
+  });
+  if (!response.ok) {
+    throw new Error(`${source}: ${await responseErrorMessage(response)}`);
+  }
+  return readJsonObject(response, source);
+}
+
 export async function readJsonObject(response: Response, source: string): Promise<Record<string, unknown>> {
   const payload = (await response.json().catch((error: unknown) => {
     const message = error instanceof Error ? error.message : String(error);

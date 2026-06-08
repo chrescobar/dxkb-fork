@@ -6,6 +6,7 @@ import {
   buildGenomeGeoFacetUrl,
   buildGenomeGeoPivotUrl,
   fetchOrganismSolrJson,
+  fetchOrganismSolrJsonPost,
   numberOrNull,
   parseSolrFacetList,
   parseSolrFacetPivot,
@@ -264,5 +265,53 @@ describe("chart palette exports", () => {
 
   it("exports a fallback color for donut Others", () => {
     expect(donutFallbackColor).toBe("var(--muted-foreground)");
+  });
+});
+
+describe("fetchOrganismSolrJsonPost", () => {
+  const url = "https://bvbrc.test/api-for-website/genome_amr/";
+
+  it("POSTs the body with rqlquery content-type and solr Accept header", async () => {
+    let capturedMethod = "";
+    let capturedBody = "";
+    let capturedAccept = "";
+    let capturedContentType = "";
+
+    server.use(
+      http.post(url, async ({ request }) => {
+        capturedMethod = request.method;
+        capturedBody = await request.text();
+        capturedAccept = request.headers.get("Accept") ?? "";
+        capturedContentType = request.headers.get("Content-Type") ?? "";
+        return HttpResponse.json({ ok: true });
+      }),
+    );
+
+    await fetchOrganismSolrJsonPost(url, "eq(genome_id,*)", "amr test");
+
+    expect(capturedMethod).toBe("POST");
+    expect(capturedBody).toBe("eq(genome_id,*)");
+    expect(capturedAccept).toBe("application/solr+json");
+    expect(capturedContentType).toBe("application/rqlquery+x-www-form-urlencoded");
+  });
+
+  it("throws the upstream error message on non-ok response", async () => {
+    server.use(
+      http.post(url, () => HttpResponse.text("upstream timeout", { status: 504 })),
+    );
+
+    await expect(
+      fetchOrganismSolrJsonPost(url, "body", "amr test"),
+    ).rejects.toThrow("upstream timeout");
+  });
+
+  it("rejects malformed JSON responses", async () => {
+    server.use(
+      http.post(url, () => HttpResponse.text("not json", { status: 200 })),
+    );
+
+    await expect(
+      fetchOrganismSolrJsonPost(url, "body", "amr test"),
+    ).rejects.toThrow("amr test");
   });
 });

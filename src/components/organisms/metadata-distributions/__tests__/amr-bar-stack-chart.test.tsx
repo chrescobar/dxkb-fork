@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 
 import type { AmrDistributionData } from "@/lib/services/organisms/types";
 
@@ -103,5 +103,80 @@ describe("AmrBarStackChart", () => {
 
     fireEvent.mouseLeave(overlay);
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
+  });
+
+  it("renders Scale and Order toolbar controls", () => {
+    render(
+      <AmrBarStackChart
+        title="Antimicrobial Resistance Profile"
+        data={sampleData}
+      />,
+    );
+
+    expect(screen.getByRole("radio", { name: "Counts" })).toBeChecked();
+    expect(screen.getByRole("radio", { name: "Percent" })).not.toBeChecked();
+    expect(screen.getByRole("radio", { name: "Count" })).toBeChecked();
+    expect(screen.getByRole("radio", { name: "Name" })).not.toBeChecked();
+  });
+
+  it("switches y-axis tick labels to percent (0/25/50/75/100) when Percent is selected", () => {
+    render(
+      <AmrBarStackChart
+        title="Antimicrobial Resistance Profile"
+        data={sampleData}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("radio", { name: "Percent" }));
+
+    const svg = screen.getByRole("img");
+    const tickTexts = within(svg).getAllByText(/^(0|25|50|75|100)$/);
+    const tickValues = tickTexts.map((el) => el.textContent);
+    expect(tickValues).toEqual(
+      expect.arrayContaining(["0", "25", "50", "75", "100"]),
+    );
+  });
+
+  it("sorts antibiotic labels alphabetically when Name is selected", () => {
+    render(
+      <AmrBarStackChart
+        title="Antimicrobial Resistance Profile"
+        data={sampleData}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("radio", { name: "Name" }));
+
+    const svg = screen.getByRole("img");
+    const labels = within(svg)
+      .getAllByText(/^(azithromycin|ciprofloxacin|florfenicol)$/)
+      .map((el) => el.textContent);
+    expect(labels).toEqual(["azithromycin", "ciprofloxacin", "florfenicol"]);
+  });
+
+  it("Percent mode normalises each bar so segments sum to 100", () => {
+    render(
+      <AmrBarStackChart
+        title="Antimicrobial Resistance Profile"
+        data={sampleData}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("radio", { name: "Percent" }));
+
+    // ciprofloxacin: Resistant=5815, Susceptible=12336, total=18151
+    //   → R = 5815/18151 ≈ 32.0%, S = 12336/18151 ≈ 68.0%
+    // Each rect is tagged with aria-label `${phenotype}: ${value}%` in percent mode.
+    const labels = screen
+      .getAllByLabelText(/^(Resistant|Susceptible|Intermediate): /, {
+        selector: "rect",
+      })
+      .map((el) => el.getAttribute("aria-label"));
+    expect(labels).toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(/^Resistant: 32(\.\d+)?%$/),
+        expect.stringMatching(/^Susceptible: 68(\.\d+)?%$/),
+      ]),
+    );
   });
 });

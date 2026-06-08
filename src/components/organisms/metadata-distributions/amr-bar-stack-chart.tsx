@@ -33,6 +33,53 @@ interface AmrBarStackChartProps {
   data: AmrDistributionData;
 }
 
+interface ToggleOption<T extends string> {
+  value: T;
+  label: string;
+}
+
+interface ToggleRowProps<T extends string> {
+  label: string;
+  options: readonly ToggleOption<T>[];
+  value: T;
+  onChange: (next: T) => void;
+}
+
+function ToggleRow<T extends string>({
+  label,
+  options,
+  value,
+  onChange,
+}: ToggleRowProps<T>) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-muted-foreground">{label}</span>
+      <div role="radiogroup" aria-label={label} className="inline-flex overflow-hidden rounded-md border">
+        {options.map((opt) => {
+          const checked = opt.value === value;
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              role="radio"
+              aria-checked={checked}
+              onClick={() => onChange(opt.value)}
+              className={
+                "px-2 py-0.5 text-xs transition-colors " +
+                (checked
+                  ? "bg-foreground text-background"
+                  : "bg-background text-muted-foreground hover:text-foreground")
+              }
+            >
+              {opt.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 interface Highlight {
   idx: number;
   locked: boolean;
@@ -67,14 +114,40 @@ export function AmrBarStackChart({ title, data }: AmrBarStackChartProps) {
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
     useTooltip<ColumnTooltipData>();
 
-  const sortedRows = useMemo(() => data.antibiotics, [data.antibiotics]);
+  const [scale, setScale] = useState<"counts" | "percent">("counts");
+  const [order, setOrder] = useState<"name" | "count">("count");
 
-  const yMax = useMemo(
-    () => Math.max(...sortedRows.map((r) => r.total), 1),
-    [sortedRows],
-  );
+  const sortedRows = useMemo(() => {
+    if (order === "name") {
+      return [...data.antibiotics].sort((a, b) =>
+        a.antibiotic.localeCompare(b.antibiotic),
+      );
+    }
+    return data.antibiotics;
+  }, [data.antibiotics, order]);
 
-  if (sortedRows.length === 0) {
+  const displayRows = useMemo<AmrAntibioticRow[]>(() => {
+    if (scale === "counts") return sortedRows;
+    return sortedRows.map((row) => {
+      if (row.total === 0) return row;
+      const pct = (n: number) =>
+        Math.round((n / row.total) * 1000) / 10; // 1 decimal place
+      return {
+        antibiotic: row.antibiotic,
+        Resistant: pct(row.Resistant),
+        Susceptible: pct(row.Susceptible),
+        Intermediate: pct(row.Intermediate),
+        total: 100,
+      };
+    });
+  }, [sortedRows, scale]);
+
+  const yMax = useMemo(() => {
+    if (scale === "percent") return 100;
+    return Math.max(...sortedRows.map((r) => r.total), 1);
+  }, [sortedRows, scale]);
+
+  if (data.antibiotics.length === 0) {
     return (
       <Card className="relative rounded-lg" size="sm">
         <CardContent className="flex flex-1 flex-col">
@@ -106,7 +179,8 @@ export function AmrBarStackChart({ title, data }: AmrBarStackChartProps) {
     range: chartColors.slice(0, phenotypes.length),
   });
 
-  const yTicks = yScale.ticks(4);
+  const yTicks =
+    scale === "percent" ? [0, 25, 50, 75, 100] : yScale.ticks(4);
 
   function activatePill(idx: number) {
     if (highlight?.locked) return;
@@ -128,6 +202,26 @@ export function AmrBarStackChart({ title, data }: AmrBarStackChartProps) {
     <Card className="relative rounded-lg" size="sm">
       <CardContent className="flex flex-1 flex-col">
         <p className="text-sm font-semibold">{title}</p>
+        <nav className="mt-2 flex flex-wrap items-center gap-4 text-xs">
+          <ToggleRow
+            label="Scale"
+            options={[
+              { value: "counts", label: "Counts" },
+              { value: "percent", label: "Percent" },
+            ]}
+            value={scale}
+            onChange={setScale}
+          />
+          <ToggleRow
+            label="Order"
+            options={[
+              { value: "count", label: "Count" },
+              { value: "name", label: "Name" },
+            ]}
+            value={order}
+            onChange={setOrder}
+          />
+        </nav>
         <div className="min-w-0 overflow-hidden pt-2">
           <svg
             ref={svgRef}
@@ -162,7 +256,7 @@ export function AmrBarStackChart({ title, data }: AmrBarStackChartProps) {
               )}
 
               <BarStack<AmrAntibioticRow, AmrPhenotype>
-                data={sortedRows}
+                data={displayRows}
                 keys={[...phenotypes]}
                 x={(d) => d.antibiotic}
                 xScale={xScale}
@@ -177,7 +271,10 @@ export function AmrBarStackChart({ title, data }: AmrBarStackChartProps) {
 
                     return barStack.bars.map((bar) => {
                       const count = bar.bar.data[barStack.key];
-                      const label = `${barStack.key}: ${numberFormatter.format(count)}`;
+                      const label =
+                        scale === "percent"
+                          ? `${barStack.key}: ${count}%`
+                          : `${barStack.key}: ${numberFormatter.format(count)}`;
                       return (
                         <rect
                           key={`bar-${barStack.index}-${bar.index}`}
@@ -228,7 +325,7 @@ export function AmrBarStackChart({ title, data }: AmrBarStackChartProps) {
                       rows: phenotypes
                         .map((p) => ({
                           phenotype: p,
-                          count: row[p],
+                          count: displayRows[idx]?.[p] ?? 0,
                           color: colorScale(p),
                         }))
                         .filter((r) => r.count > 0)

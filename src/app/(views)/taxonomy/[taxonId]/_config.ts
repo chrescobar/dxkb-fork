@@ -1,7 +1,14 @@
 import type { OrganismLandingConfig } from "@/components/organisms/types";
 import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 
-const defaultMetadataFields = ["host_group", "isolation_country", "collection_year"];
+const defaultMetadataFields = [
+  "host_group",
+  "isolation_country",
+  "collection_year",
+  "host_common_name",
+  "isolation_source",
+  "serovar",
+];
 
 function accentForLineage(
   lineageNames: readonly string[],

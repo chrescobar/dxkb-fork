@@ -15,7 +15,14 @@ describe("buildTaxonomyConfig", () => {
       taxonId: 234,
       accent: "bacteria",
       defaultView: "overview",
-      metadataFields: ["host_group", "isolation_country", "collection_year"],
+      metadataFields: [
+        "host_group",
+        "isolation_country",
+        "collection_year",
+        "host_common_name",
+        "isolation_source",
+        "serovar",
+      ],
     });
   });
 

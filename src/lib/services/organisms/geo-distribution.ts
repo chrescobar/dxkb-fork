@@ -5,11 +5,13 @@ import type {
 } from "./types";
 import {
   buildGenomeGeoFacetUrl,
+  buildGenomeGeoPivot3Url,
   buildGenomeGeoPivotUrl,
   fetchOrganismSolrJson,
   getBvBrcWebsiteApiBaseUrl,
   parseSolrFacetList,
   parseSolrFacetPivot,
+  parseSolrFacetPivot3,
 } from "./utils";
 
 const countryLimit = 300;
@@ -45,6 +47,20 @@ async function fetchPivotOrEmpty(baseUrl: string, taxonId: number, primary: stri
     // rather than missing data.
     const message = err instanceof Error ? err.message : String(err);
     console.warn(`[geo-distribution] pivot ${primary},${secondary} failed: ${message}`);
+    return {};
+  }
+}
+
+async function fetchPivot3OrEmpty(baseUrl: string, taxonId: number, primary: string, secondary: string, tertiary: string, limit: number | undefined, signal: AbortSignal | undefined): Promise<Record<string, Record<string, Record<string, number>>>> {
+  const url = buildGenomeGeoPivot3Url(baseUrl, taxonId, primary, secondary, tertiary, limit);
+  try {
+    const payload = await fetchOrganismSolrJson(url, `genome ${primary},${secondary},${tertiary} pivot`, signal);
+    return parseSolrFacetPivot3(payload, `${primary},${secondary},${tertiary}`);
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") throw err;
+    if (err instanceof Error && err.name === "AbortError") throw err;
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn(`[geo-distribution] pivot ${primary},${secondary},${tertiary} failed: ${message}`);
     return {};
   }
 }
@@ -102,7 +118,10 @@ export async function fetchOrganismGeoDistribution(
     fetchPivotOrEmpty(baseUrl, taxonId, "isolation_country", "host_common_name", undefined, signal),
     fetchPivotOrEmpty(baseUrl, taxonId, "state_province", "genus", undefined, signal),
     fetchPivotOrEmpty(baseUrl, taxonId, "state_province", "host_common_name", undefined, signal),
-    fetchPivotOrEmpty(baseUrl, taxonId, "county", "genus", countyLimit, signal),
+    // 3-level pivot so each county genus map is scoped to its state. A flat
+    // `county,genus` pivot would merge same-named counties (e.g. "Washington
+    // County" in 31 states) into one merged genus breakdown.
+    fetchPivot3OrEmpty(baseUrl, taxonId, "state_province", "county", "genus", countyLimit, signal),
   ]);
 
   // Build compound-keyed county maps: "StateName|CountyName" → value.
@@ -113,7 +132,11 @@ export async function fetchOrganismGeoDistribution(
     for (const [countyName, count] of Object.entries(counties)) {
       const key = `${stateName}|${countyName}`;
       countyData[key] = count;
-      countyMeta[key] = { count, genera: countyGenera[countyName] ?? {}, hosts: {} };
+      countyMeta[key] = {
+        count,
+        genera: countyGenera[stateName]?.[countyName] ?? {},
+        hosts: {},
+      };
     }
   }
 

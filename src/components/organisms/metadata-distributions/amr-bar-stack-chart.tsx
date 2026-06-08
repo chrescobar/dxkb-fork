@@ -17,6 +17,7 @@ import { chartColors, chartTooltipStyle } from "@/lib/services/organisms/chart-u
 import { numberFormatter } from "@/lib/services/organisms/utils";
 
 import { ChartLegendPill } from "./_shared/chart-legend-pill";
+import { ChartStatusMessage } from "./_shared/chart-status-message";
 import {
   amrChartWidth,
   amrInnerWidth,
@@ -25,12 +26,14 @@ import {
   stackedChartHeight,
   stackedInnerHeight,
 } from "./_shared/chart-dimensions";
+import { useStackedChartHighlight } from "./_shared/use-stacked-chart-highlight";
 import { nearestBandIndex } from "./_shared/use-svg-band-pointer";
 import { YAxisTicks } from "./_shared/y-axis-ticks";
 
 interface AmrBarStackChartProps {
   title: string;
   data: AmrDistributionData;
+  errorMessage?: string;
 }
 
 interface ToggleOption<T extends string> {
@@ -83,11 +86,6 @@ function ToggleRow<T extends string>({
   );
 }
 
-interface Highlight {
-  idx: number;
-  locked: boolean;
-}
-
 interface ColumnTooltipRow {
   phenotype: AmrPhenotype;
   count: number;
@@ -108,9 +106,9 @@ const phenotypes: readonly AmrPhenotype[] = [
 const tooltipOffsetX = 16;
 const tooltipOffsetY = 16;
 
-export function AmrBarStackChart({ title, data }: AmrBarStackChartProps) {
+export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChartProps) {
   const svgRef = useRef<SVGSVGElement>(null);
-  const [highlight, setHighlight] = useState<Highlight | null>(null);
+  const highlight = useStackedChartHighlight();
   const [hoveredAntibiotic, setHoveredAntibiotic] = useState<string | null>(
     null,
   );
@@ -150,20 +148,18 @@ export function AmrBarStackChart({ title, data }: AmrBarStackChartProps) {
     return Math.max(...sortedRows.map((r) => r.total), 1);
   }, [sortedRows, scale]);
 
-  if (data.antibiotics.length === 0) {
+  if (errorMessage || data.antibiotics.length === 0) {
     return (
       <Card className="relative rounded-lg" size="sm">
         <CardContent className="flex flex-1 flex-col">
           <p className="text-sm font-semibold">{title}</p>
-          <p className="text-muted-foreground mt-1 text-sm">
-            No distribution data was returned.
-          </p>
+          <ChartStatusMessage errorMessage={errorMessage} />
         </CardContent>
       </Card>
     );
   }
 
-  const activeIdx = highlight?.idx ?? null;
+  const activeIdx = highlight.activeIdx;
 
   const xScale = scaleBand<string>({
     domain: sortedRows.map((r) => r.antibiotic),
@@ -184,22 +180,6 @@ export function AmrBarStackChart({ title, data }: AmrBarStackChartProps) {
 
   const yTicks =
     scale === "percent" ? [0, 25, 50, 75, 100] : yScale.ticks(4);
-
-  function activatePill(idx: number) {
-    if (highlight?.locked) return;
-    setHighlight({ idx, locked: false });
-  }
-
-  function deactivatePill() {
-    if (highlight?.locked) return;
-    setHighlight(null);
-  }
-
-  function togglePillLock(idx: number) {
-    setHighlight((prev) =>
-      prev?.locked && prev.idx === idx ? null : { idx, locked: true },
-    );
-  }
 
   return (
     <Card className="relative rounded-lg" size="sm">
@@ -342,7 +322,7 @@ export function AmrBarStackChart({ title, data }: AmrBarStackChartProps) {
                   setHoveredAntibiotic(null);
                   hideTooltip();
                 }}
-                onClick={() => setHighlight(null)}
+                onClick={() => highlight.clearHighlight()}
               />
 
               {sortedRows.map((r) => {
@@ -374,10 +354,10 @@ export function AmrBarStackChart({ title, data }: AmrBarStackChartProps) {
                 color={colorScale(p)}
                 active={isActive}
                 dimmed={isDimmed}
-                ariaPressed={highlight?.locked === true && highlight.idx === idx}
-                onActivate={() => activatePill(idx)}
-                onDeactivate={deactivatePill}
-                onClick={() => togglePillLock(idx)}
+                ariaPressed={highlight.pressedFor(idx)}
+                onActivate={() => highlight.activatePill(idx)}
+                onDeactivate={highlight.deactivatePill}
+                onClick={() => highlight.togglePillLock(idx)}
               />
             );
           })}

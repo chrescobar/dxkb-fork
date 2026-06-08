@@ -84,6 +84,7 @@ const bacteriaTaxonomyFixture = {
   taxon_id: 2,
   taxon_name: "Bacteria",
   lineage_names: ["cellular organisms", "Bacteria"],
+  lineage_ids: [131567, 2],
   taxon_rank: "superkingdom",
   genomes: 1337420,
 };
@@ -258,7 +259,13 @@ function facetFieldFromRequest(request: NextRequest): string | null {
   return null;
 }
 
-function pivotKeyFromRequest(request: NextRequest): { primary: string; secondary: string } | null {
+interface PivotKey {
+  primary: string;
+  secondary: string;
+  tertiary?: string;
+}
+
+function pivotKeyFromRequest(request: NextRequest): PivotKey | null {
   const url = new URL(request.url);
   const candidates = [
     url.search,
@@ -267,12 +274,34 @@ function pivotKeyFromRequest(request: NextRequest): { primary: string; secondary
   ].map((value) => { try { return decodeURIComponent(value); } catch { return value; } });
 
   for (const candidate of candidates) {
-    const match = candidate.match(/\(pivot,\(([^,]+),([^)]+)\)\)/);
+    // `[^,)]+` prevents `(...,foo)),(mincount,1)` from being misread as a
+    // 3-level pivot by greedily consuming the close paren of the inner pivot.
+    const triple = candidate.match(/\(pivot,\(([^,)]+),([^,)]+),([^,)]+)\)\)/);
+    if (triple?.[1] && triple?.[2] && triple?.[3]) {
+      return { primary: triple[1], secondary: triple[2], tertiary: triple[3] };
+    }
+    const match = candidate.match(/\(pivot,\(([^,)]+),([^,)]+)\)\)/);
     if (match?.[1] && match?.[2]) return { primary: match[1], secondary: match[2] };
   }
 
   return null;
 }
+
+// Shared county fixture consumed by BOTH the 2-level state_province,county pivot
+// AND the 3-level state_province,county,genus pivot. Having a single source of
+// truth ensures county names match across both pivots so fetchOrganismGeoDistribution
+// can successfully join count data to tooltip genera. "Park" county appears in
+// both Wyoming and Idaho to exercise state-scoped lookups (same county name,
+// different state → different genus set).
+const countyGeoFixtures: { state: string; county: string; count: number; genus: string }[] = [
+  { state: "Wyoming", county: "Park",        count: 30, genus: "Brucella" },
+  { state: "Wyoming", county: "Teton",       count: 18, genus: "Bordetella" },
+  { state: "Idaho",   county: "Ada",         count: 22, genus: "Brucella" },
+  { state: "Idaho",   county: "Park",        count: 13, genus: "Listeria" },
+  { state: "Texas",   county: "Harris",      count: 14, genus: "Brucella" },
+  { state: "Montana", county: "Yellowstone", count: 12, genus: "Bordetella" },
+  { state: "Georgia", county: "Fulton",      count: 9,  genus: "Listeria" },
+];
 
 function solrPivot(primary: string, secondary: string) {
   const counts = sharedFacetFixtures[primary === "isolation_country" ? "isolation_country_geo" : primary] ?? [];
@@ -285,7 +314,7 @@ function solrPivot(primary: string, secondary: string) {
       value,
       count,
       pivot: [
-        { field: secondary, value: secondary === "genus" ? "Brucella" : "Cattle", count },
+        { field: secondary, value: secondary === "genus" ? "Brucella" : "Human", count },
       ],
     });
   }
@@ -294,6 +323,98 @@ function solrPivot(primary: string, secondary: string) {
     facet_counts: {
       facet_pivot: {
         [`${primary},${secondary}`]: pivots,
+      },
+    },
+  };
+}
+
+function solrStateCountyPivot(fixtures: typeof countyGeoFixtures) {
+  const byState = new Map<string, { county: string; count: number }[]>();
+  for (const row of fixtures) {
+    const counties = byState.get(row.state) ?? [];
+    counties.push({ county: row.county, count: row.count });
+    byState.set(row.state, counties);
+  }
+  const pivots = Array.from(byState.entries()).map(([state, counties]) => ({
+    field: "state_province",
+    value: state,
+    count: counties.reduce((s, c) => s + c.count, 0),
+    pivot: counties.map((c) => ({ field: "county", value: c.county, count: c.count })),
+  }));
+  return {
+    response: { numFound: pivots.reduce((sum, p) => sum + p.count, 0), docs: [] },
+    facet_counts: {
+      facet_pivot: {
+        "state_province,county": pivots,
+      },
+    },
+  };
+}
+
+function solrStateCountyGenusPivot(fixtures: typeof countyGeoFixtures) {
+  const byState = new Map<string, { county: string; count: number; genus: string }[]>();
+  for (const row of fixtures) {
+    const counties = byState.get(row.state) ?? [];
+    counties.push({ county: row.county, count: row.count, genus: row.genus });
+    byState.set(row.state, counties);
+  }
+  const pivots = Array.from(byState.entries()).map(([state, counties]) => ({
+    field: "state_province",
+    value: state,
+    count: counties.reduce((s, c) => s + c.count, 0),
+    pivot: counties.map((c) => ({
+      field: "county",
+      value: c.county,
+      count: c.count,
+      pivot: [{ field: "genus", value: c.genus, count: c.count }],
+    })),
+  }));
+  return {
+    response: { numFound: pivots.reduce((sum, p) => sum + p.count, 0), docs: [] },
+    facet_counts: {
+      facet_pivot: {
+        "state_province,county,genus": pivots,
+      },
+    },
+  };
+}
+
+// Exact pivot keys the app constructs today. Anything not in this set returns
+// 400 so e2e surfaces typos in pivot field names instead of silently rendering
+// synthesized data for a shape the app never asks for. Update this when a new
+// pivot caller is added (cross-reference the `(pivot,(` matches in
+// src/lib/services/organisms/).
+const supportedPivotKeys = new Set<string>([
+  "isolation_country,genus",
+  "isolation_country,host_common_name",
+  "state_province,genus",
+  "state_province,host_common_name",
+  "state_province,county",
+  "state_province,county,genus",
+  "collection_year,serovar",
+]);
+
+function solrSerotypePivot() {
+  // collection_year,serovar uses numeric outer keys in real SOLR responses;
+  // the parser at parseSolrFacetPivot coerces them to string keys. Build a
+  // small window of years × two serovars so the serotype reducer in
+  // src/lib/services/organisms/serotype-distribution.ts has something to
+  // collapse into "top serovars" rows.
+  const years = [2019, 2020, 2021, 2022, 2023];
+  const pivots = years.map((year, idx) => ({
+    field: "collection_year",
+    value: year,
+    count: 100 + idx * 10,
+    pivot: [
+      { field: "serovar", value: "Typhimurium", count: 60 + idx * 5 },
+      { field: "serovar", value: "Enteritidis", count: 40 + idx * 5 },
+    ],
+  }));
+  return {
+    response: { numFound: pivots.reduce((sum, p) => sum + p.count, 0), docs: [] },
+    facet_counts: {
+      facet_pivot: {
+        "collection_year,serovar": pivots,
       },
     },
   };
@@ -322,16 +443,87 @@ const referenceGenomesFixture: Record<string, unknown>[] = [
   { genome_id: "234.4", genome_name: "Brucella canis ATCC 23365", reference_genome: "Representative" },
 ];
 
-function maybeBvBrcWebsite(path: string, request: NextRequest): unknown | null {
+const amrAntibioticFixtures: { antibiotic: string; Resistant: number; Susceptible: number; Intermediate: number }[] = [
+  { antibiotic: "ampicillin", Resistant: 75, Susceptible: 40, Intermediate: 5 },
+  { antibiotic: "ciprofloxacin", Resistant: 30, Susceptible: 60, Intermediate: 10 },
+  { antibiotic: "tetracycline", Resistant: 45, Susceptible: 50, Intermediate: 5 },
+  { antibiotic: "streptomycin", Resistant: 20, Susceptible: 70, Intermediate: 10 },
+];
+
+function buildAmrFixtureBody(): Record<string, unknown> {
+  const pivots = amrAntibioticFixtures.map((row) => {
+    const innerPivots = [
+      { field: "resistant_phenotype", value: "Resistant", count: row.Resistant },
+      { field: "resistant_phenotype", value: "Susceptible", count: row.Susceptible },
+      { field: "resistant_phenotype", value: "Intermediate", count: row.Intermediate },
+    ].filter((p) => p.count > 0);
+    return {
+      field: "antibiotic",
+      value: row.antibiotic,
+      count: row.Resistant + row.Susceptible + row.Intermediate,
+      pivot: innerPivots,
+    };
+  });
+  return {
+    response: { numFound: pivots.reduce((sum, p) => sum + p.count, 0), docs: [] },
+    facet_counts: {
+      facet_pivot: {
+        "antibiotic,resistant_phenotype": pivots,
+      },
+    },
+  };
+}
+
+interface AmrPostValidation {
+  ok: boolean;
+  reason?: string;
+}
+
+function validateAmrPostBody(body: string): AmrPostValidation {
+  const requiredFragments = [
+    "eq(taxon_lineage_ids,",
+    "in(resistant_phenotype,",
+    "facet((pivot,(antibiotic,resistant_phenotype))",
+  ];
+  for (const fragment of requiredFragments) {
+    if (!body.includes(fragment)) {
+      return { ok: false, reason: `missing required RQL fragment: ${fragment}` };
+    }
+  }
+  return { ok: true };
+}
+
+async function maybeBvBrcWebsitePost(path: string, request: NextRequest): Promise<BvBrcResult | null> {
   const segments = path.split("/").filter(Boolean);
   if (segments[0] !== "bvbrc-website") return null;
   const endpoint = segments.slice(1).join("/");
 
-  if (endpoint === "data/summary_by_taxon/2") return bacteriaSummaryFixture;
-  if (endpoint === "data/summary_by_taxon/10239") return virusesSummaryFixture;
-  if (endpoint === "data/summary_by_taxon/131567") return allOrganismsSummaryFixture;
-  if (endpoint === "taxonomy/2") return bacteriaTaxonomyFixture;
-  if (endpoint === "taxonomy/234") return brucellaTaxonomyFixture;
+  if (endpoint === "genome_amr" || endpoint === "genome_amr/") {
+    const body = await request.clone().text();
+    const validation = validateAmrPostBody(body);
+    if (!validation.ok) {
+      return { kind: "unhandled", reason: validation.reason ?? "invalid amr body" };
+    }
+    return { kind: "ok", body: buildAmrFixtureBody() };
+  }
+
+  return null;
+}
+
+type BvBrcResult =
+  | { kind: "ok"; body: unknown }
+  | { kind: "unhandled"; reason: string };
+
+function maybeBvBrcWebsite(path: string, request: NextRequest): BvBrcResult | null {
+  const segments = path.split("/").filter(Boolean);
+  if (segments[0] !== "bvbrc-website") return null;
+  const endpoint = segments.slice(1).join("/");
+
+  if (endpoint === "data/summary_by_taxon/2") return { kind: "ok", body: bacteriaSummaryFixture };
+  if (endpoint === "data/summary_by_taxon/10239") return { kind: "ok", body: virusesSummaryFixture };
+  if (endpoint === "data/summary_by_taxon/131567") return { kind: "ok", body: allOrganismsSummaryFixture };
+  if (endpoint === "taxonomy/2") return { kind: "ok", body: bacteriaTaxonomyFixture };
+  if (endpoint === "taxonomy/234") return { kind: "ok", body: brucellaTaxonomyFixture };
   if (endpoint === "genome" || endpoint === "genome/") {
     const url = new URL(request.url);
     const query = decodeURIComponent(url.search);
@@ -339,7 +531,7 @@ function maybeBvBrcWebsite(path: string, request: NextRequest): unknown | null {
     // Reference-genomes endpoint: BV-BRC returns a bare array of docs
     // (json(nl,map)), not the SOLR envelope shape.
     if (query.includes("reference_genome,*") && query.includes("select(")) {
-      return referenceGenomesFixture;
+      return { kind: "ok", body: referenceGenomesFixture };
     }
 
     // Use a strict regex to avoid substring collisions as fixture IDs grow
@@ -349,29 +541,51 @@ function maybeBvBrcWebsite(path: string, request: NextRequest): unknown | null {
 
     const pivot = pivotKeyFromRequest(request);
     if (pivot) {
-      // Geographic pivot calls — only emit data for the geo fields the map cares about.
-      const supportedPrimaries = new Set(["isolation_country", "state_province", "county"]);
-      if (supportedPrimaries.has(pivot.primary)) return solrPivot(pivot.primary, pivot.secondary);
-      return { response: { numFound: 0, docs: [] }, facet_counts: { facet_pivot: {} } };
+      const pivotKey = pivot.tertiary
+        ? `${pivot.primary},${pivot.secondary},${pivot.tertiary}`
+        : `${pivot.primary},${pivot.secondary}`;
+      if (!supportedPivotKeys.has(pivotKey)) {
+        return { kind: "unhandled", reason: `unsupported pivot key '${pivotKey}'` };
+      }
+      if (pivotKey === "collection_year,serovar") {
+        return { kind: "ok", body: solrSerotypePivot() };
+      }
+      if (pivotKey === "state_province,county,genus") {
+        return { kind: "ok", body: solrStateCountyGenusPivot(countyGeoFixtures) };
+      }
+      if (pivot.tertiary) {
+        // This branch is unreachable today — supportedPivotKeys only allows
+        // state_province,county,genus as a 3-level pivot, which is handled above.
+        // Kept as a safety net if a new 3-level pivot is ever added without a
+        // dedicated builder.
+        return { kind: "unhandled", reason: `no dedicated builder for 3-level pivot '${pivotKey}'` };
+      }
+      if (pivotKey === "state_province,county") {
+        return { kind: "ok", body: solrStateCountyPivot(countyGeoFixtures) };
+      }
+      return { kind: "ok", body: solrPivot(pivot.primary, pivot.secondary) };
     }
     const field = facetFieldFromRequest(request);
-    if (!field) return {};
+    if (!field) {
+      return { kind: "unhandled", reason: "no pivot or facet field" };
+    }
     let count = bacteriaSummaryFixture.count;
     if (taxonId === 10239) count = virusesSummaryFixture.count;
     else if (taxonId === 131567) count = allOrganismsSummaryFixture.count;
-    // For the geo country facet, swap in the geo-specific fixture so the
-    // choropleth has realistic, lookup-table-matching country names.
     if (field === "isolation_country" && taxonId === 234) {
       return {
-        response: { numFound: count, docs: [] },
-        facet_counts: {
-          facet_fields: {
-            isolation_country: sharedFacetFixtures.isolation_country_geo,
+        kind: "ok",
+        body: {
+          response: { numFound: count, docs: [] },
+          facet_counts: {
+            facet_fields: {
+              isolation_country: sharedFacetFixtures.isolation_country_geo,
+            },
           },
         },
       };
     }
-    return solrFacet(field, count);
+    return { kind: "ok", body: solrFacet(field, count) };
   }
 
   return null;
@@ -386,11 +600,49 @@ export async function GET(
   const path = await resolvePath(context.params);
   logHit("GET", path);
   const bvBrcWebsite = maybeBvBrcWebsite(path, request);
-  if (bvBrcWebsite) return NextResponse.json(bvBrcWebsite);
+  if (bvBrcWebsite) {
+    if (bvBrcWebsite.kind === "unhandled") {
+      // Fail loudly so e2e tests surface fixture gaps instead of silently
+      // rendering empty data.
+      return NextResponse.json(
+        {
+          error: "e2e-mock: unhandled bvbrc-website/genome query",
+          reason: bvBrcWebsite.reason,
+          query: new URL(request.url).search,
+        },
+        { status: 400 },
+      );
+    }
+    return NextResponse.json(bvBrcWebsite.body);
+  }
   const solr = maybeSolrCount(path);
   if (solr) return NextResponse.json(solr);
   return NextResponse.json({});
 }
+
+// Permissive POST fallback is reserved for the known JSON-RPC / service
+// namespaces wired through .env.e2e.test so an unexpected POST routed through
+// this mock fails loudly rather than silently returning success. The
+// `bvbrc-website` namespace is intentionally excluded from this fallback —
+// the only supported POST endpoint there is `genome_amr`, which is handled
+// explicitly by `maybeBvBrcWebsitePost` above this fallback. Every other
+// `bvbrc-website` POST still fails loudly.
+const postAllowedNamespaces = new Set([
+  "workspace",
+  "app-service",
+  "service",
+  "services",
+  "data",
+  "data-service",
+  "sra-validation",
+  "minhash",
+  "user",
+  "user-auth",
+  "user-register",
+  "user-password-reset",
+  "user-verification",
+  "upload",
+]);
 
 export async function POST(
   request: NextRequest,
@@ -408,6 +660,29 @@ export async function POST(
   }
 
   logHit("POST", path, rpcMethod ? `method=${rpcMethod}` : "");
+
+  const bvBrcWebsitePost = await maybeBvBrcWebsitePost(path, request);
+  if (bvBrcWebsitePost) {
+    if (bvBrcWebsitePost.kind === "unhandled") {
+      return NextResponse.json(
+        {
+          error: "e2e-mock: invalid bvbrc-website/genome_amr POST",
+          reason: bvBrcWebsitePost.reason,
+        },
+        { status: 400 },
+      );
+    }
+    return NextResponse.json(bvBrcWebsitePost.body);
+  }
+
+  const firstSegment = path.split("/").filter(Boolean)[0] ?? "";
+  if (!postAllowedNamespaces.has(firstSegment)) {
+    return NextResponse.json(
+      { error: "e2e-mock: unhandled POST endpoint", path },
+      { status: 400 },
+    );
+  }
+
   return NextResponse.json({ id: 1, jsonrpc: "2.0", result: [[]] });
 }
 

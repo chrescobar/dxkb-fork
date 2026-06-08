@@ -1,6 +1,9 @@
 import { http, HttpResponse } from "msw";
 
-import { fetchOrganismTaxonomy } from "@/lib/services/organisms/taxonomy";
+import {
+  TaxonomyNotFoundError,
+  fetchOrganismTaxonomy,
+} from "@/lib/services/organisms/taxonomy";
 import { server } from "@/test-helpers/msw-server";
 
 const baseUrl = "https://bvbrc.test/api-for-website";
@@ -45,6 +48,18 @@ describe("fetchOrganismTaxonomy", () => {
     );
 
     await expect(fetchOrganismTaxonomy(2)).rejects.toThrow("taxonomy unavailable");
+  });
+
+  it("throws TaxonomyNotFoundError on 404", async () => {
+    server.use(
+      http.get(`${baseUrl}/taxonomy/9999`, () =>
+        HttpResponse.text("not found", { status: 404 }),
+      ),
+    );
+
+    await expect(fetchOrganismTaxonomy(9999)).rejects.toBeInstanceOf(
+      TaxonomyNotFoundError,
+    );
   });
 
   it("parses numeric lineage_ids returned as numbers", async () => {

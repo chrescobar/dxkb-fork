@@ -68,28 +68,36 @@ export type NavItemOverride =
 
 export type NavItemOverrides = Partial<Record<OrganismViewKey, NavItemOverride>>;
 
+interface BuildOrganismNavItemsOptions {
+  exclude?: readonly OrganismViewKey[];
+}
+
 export function buildOrganismNavItems(
   overrides: NavItemOverrides = {},
+  options: BuildOrganismNavItemsOptions = {},
 ): OrganismLandingView[] {
-  return defaultViewDescriptors.map((descriptor) => {
-    const override = overrides[descriptor.key];
-    if (override && "Component" in override && override.Component) {
+  const excluded = new Set(options.exclude ?? []);
+  return defaultViewDescriptors
+    .filter((descriptor) => !excluded.has(descriptor.key))
+    .map((descriptor) => {
+      const override = overrides[descriptor.key];
+      if (override && "Component" in override && override.Component) {
+        return {
+          key: descriptor.key,
+          label: descriptor.label,
+          icon: descriptor.icon,
+          Component: override.Component,
+        };
+      }
+      const description =
+        override && "description" in override
+          ? override.description
+          : descriptor.description;
       return {
         key: descriptor.key,
         label: descriptor.label,
         icon: descriptor.icon,
-        Component: override.Component,
+        Component: placeholderView(descriptor.label, description),
       };
-    }
-    const description =
-      override && "description" in override
-        ? override.description
-        : descriptor.description;
-    return {
-      key: descriptor.key,
-      label: descriptor.label,
-      icon: descriptor.icon,
-      Component: placeholderView(descriptor.label, description),
-    };
-  });
+    });
 }

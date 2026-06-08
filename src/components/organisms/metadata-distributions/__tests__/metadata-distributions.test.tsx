@@ -105,7 +105,7 @@ describe("MetadataDistributions", () => {
     );
   });
 
-  it("still renders facet charts when the serotype fetch fails", async () => {
+  it("still renders facet charts when the serotype fetch fails and propagates the error message", async () => {
     vi.mocked(fetchOrganismMetadataFacets).mockResolvedValueOnce({
       genus: [{ name: "Salmonella", count: 99 }],
     });
@@ -120,9 +120,12 @@ describe("MetadataDistributions", () => {
     expect(screen.getByRole("img", { name: "Genus distribution" })).toBeInTheDocument();
     expect(screen.getByTestId("serotype-chart")).toBeInTheDocument();
     expect(barStackSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ data: { years: [], serovars: [] } }),
+      expect.objectContaining({
+        data: { years: [], serovars: [] },
+        errorMessage: "boom",
+      }),
     );
-    expect(warnSpy).toHaveBeenCalled();
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("boom"));
     warnSpy.mockRestore();
   });
 
@@ -145,7 +148,7 @@ describe("MetadataDistributions", () => {
     expect(screen.getByText("cgMLST HC Distribution")).toBeInTheDocument();
   });
 
-  it("still renders when the taxonomic distribution fetch fails", async () => {
+  it("still renders when the taxonomic distribution fetch fails and shows an inline error", async () => {
     vi.mocked(fetchOrganismMetadataFacets).mockResolvedValueOnce({
       genus: [{ name: "Brucella", count: 100 }],
     });
@@ -156,10 +159,24 @@ describe("MetadataDistributions", () => {
 
     expect(screen.getByRole("img", { name: "Genus distribution" })).toBeInTheDocument();
     expect(screen.getByText("Taxonomic Distribution")).toBeInTheDocument();
+    expect(screen.getByText(/Could not load: taxonomic boom/)).toBeInTheDocument();
     expect(warnSpy).toHaveBeenCalledWith(
-      expect.stringContaining("taxonomic distribution fetch failed"),
-      expect.anything(),
+      expect.stringContaining("taxonomic boom"),
     );
+    warnSpy.mockRestore();
+  });
+
+  it("shows an inline error in the cgMLST card when its fetch fails", async () => {
+    vi.mocked(fetchOrganismMetadataFacets).mockResolvedValueOnce({});
+    vi.mocked(fetchCgmlstHcDistribution).mockReset();
+    vi.mocked(fetchCgmlstHcDistribution).mockRejectedValueOnce(new Error("cgmlst boom"));
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+
+    await renderServer(MetadataDistributions({ taxonId: 234, fields: [] }));
+
+    expect(screen.getByText("cgMLST HC Distribution")).toBeInTheDocument();
+    expect(screen.getByText(/Could not load: cgmlst boom/)).toBeInTheDocument();
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("cgmlst boom"));
     warnSpy.mockRestore();
   });
 
@@ -204,7 +221,7 @@ describe("MetadataDistributions", () => {
     );
   });
 
-  it("falls back to empty AMR data when the AMR fetch fails", async () => {
+  it("falls back to empty AMR data when the AMR fetch fails and surfaces the error", async () => {
     vi.mocked(fetchOrganismMetadataFacets).mockResolvedValueOnce({});
     vi.mocked(fetchAmrPhenotypeDistribution).mockRejectedValueOnce(
       new Error("amr boom"),
@@ -218,11 +235,13 @@ describe("MetadataDistributions", () => {
 
     expect(screen.getByTestId("amr-chart")).toBeInTheDocument();
     expect(amrSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ data: { antibiotics: [] } }),
+      expect.objectContaining({
+        data: { antibiotics: [] },
+        errorMessage: "amr boom",
+      }),
     );
     expect(warnSpy).toHaveBeenCalledWith(
-      expect.stringContaining("amr phenotype distribution fetch failed"),
-      expect.anything(),
+      expect.stringContaining("amr boom"),
     );
     warnSpy.mockRestore();
   });

@@ -43,7 +43,7 @@ describe("fetchCgmlstHcDistribution", () => {
     expect(Object.keys(result)).toHaveLength(7);
   });
 
-  it("degrades one failing HC level to an empty array without rejecting the call", async () => {
+  it("rejects when any HC level fetch fails so the caller can surface a real error", async () => {
     server.use(
       http.get(`${baseUrl}/genome/`, ({ request }) => {
         const url = new URL(request.url);
@@ -58,15 +58,6 @@ describe("fetchCgmlstHcDistribution", () => {
       }),
     );
 
-    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
-    const result = await fetchCgmlstHcDistribution(234);
-
-    expect(result.hc2).toEqual([]);
-    expect(result.hc0).toEqual([{ name: "1", count: 100 }]);
-    expect(warnSpy).toHaveBeenCalledWith(
-      expect.stringContaining("hc2"),
-      expect.anything(),
-    );
-    warnSpy.mockRestore();
+    await expect(fetchCgmlstHcDistribution(234)).rejects.toThrow("hc2 error");
   });
 });

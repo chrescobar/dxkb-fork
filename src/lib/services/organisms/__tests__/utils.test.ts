@@ -4,12 +4,14 @@ import { chartColors, chartTooltipStyle, donutFallbackColor } from "@/lib/servic
 import {
   buildGenomeFacetUrl,
   buildGenomeGeoFacetUrl,
+  buildGenomeGeoPivot3Url,
   buildGenomeGeoPivotUrl,
   fetchOrganismSolrJson,
   fetchOrganismSolrJsonPost,
   numberOrNull,
   parseSolrFacetList,
   parseSolrFacetPivot,
+  parseSolrFacetPivot3,
   requiredNumber,
   requiredString,
 } from "@/lib/services/organisms/utils";
@@ -87,6 +89,23 @@ describe("buildGenomeGeoFacetUrl / buildGenomeGeoPivotUrl", () => {
   it("includes the limit clause when limit is positive", () => {
     expect(buildGenomeGeoFacetUrl(baseUrl, 234, "isolation_country", 300)).toContain("(limit,300)");
     expect(buildGenomeGeoPivotUrl(baseUrl, 234, "a", "b", 500)).toContain("(limit,500)");
+  });
+});
+
+describe("buildGenomeGeoPivot3Url", () => {
+  it("emits a 3-field pivot clause", () => {
+    const url = buildGenomeGeoPivot3Url(baseUrl, 234, "state_province", "county", "genus");
+    expect(url).toContain("(pivot,(state_province,county,genus))");
+  });
+
+  it("appends the limit clause when positive", () => {
+    const url = buildGenomeGeoPivot3Url(baseUrl, 234, "a", "b", "c", 1000);
+    expect(url).toContain("(limit,1000)");
+  });
+
+  it("omits the limit clause when limit is 0", () => {
+    const url = buildGenomeGeoPivot3Url(baseUrl, 234, "a", "b", "c", 0);
+    expect(url).not.toContain("(limit,");
   });
 });
 
@@ -175,6 +194,82 @@ describe("parseSolrFacetPivot", () => {
     expect(() =>
       parseSolrFacetPivot({ facet_counts: { facet_pivot: {} } }, "a,b"),
     ).toThrow(/missing a,b pivot/);
+  });
+});
+
+describe("parseSolrFacetPivot3", () => {
+  it("parses 3-level nested pivot into a nested map", () => {
+    const payload = {
+      facet_counts: {
+        facet_pivot: {
+          "state_province,county,genus": [
+            {
+              value: "Wyoming",
+              count: 48,
+              pivot: [
+                {
+                  value: "Park",
+                  count: 30,
+                  pivot: [{ value: "Brucella", count: 30 }],
+                },
+                {
+                  value: "Teton",
+                  count: 18,
+                  pivot: [{ value: "Brucella", count: 18 }],
+                },
+              ],
+            },
+          ],
+        },
+      },
+    };
+    expect(parseSolrFacetPivot3(payload, "state_province,county,genus")).toEqual({
+      Wyoming: {
+        Park: { Brucella: 30 },
+        Teton: { Brucella: 18 },
+      },
+    });
+  });
+
+  it("treats missing inner pivot arrays as empty leaves", () => {
+    const payload = {
+      facet_counts: {
+        facet_pivot: {
+          "a,b,c": [
+            { value: "Outer", count: 5, pivot: [{ value: "Middle", count: 5 }] },
+          ],
+        },
+      },
+    };
+    expect(parseSolrFacetPivot3(payload, "a,b,c")).toEqual({
+      Outer: { Middle: {} },
+    });
+  });
+
+  it("coerces string leaf counts", () => {
+    const payload = {
+      facet_counts: {
+        facet_pivot: {
+          "a,b,c": [
+            {
+              value: "Outer",
+              pivot: [
+                { value: "Middle", pivot: [{ value: "Leaf", count: "12" }] },
+              ],
+            },
+          ],
+        },
+      },
+    };
+    expect(parseSolrFacetPivot3(payload, "a,b,c")).toEqual({
+      Outer: { Middle: { Leaf: 12 } },
+    });
+  });
+
+  it("throws when the pivot key is absent", () => {
+    expect(() =>
+      parseSolrFacetPivot3({ facet_counts: { facet_pivot: {} } }, "a,b,c"),
+    ).toThrow(/missing a,b,c pivot/);
   });
 });
 

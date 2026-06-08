@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useId, useRef } from "react";
 
 import { Group } from "@visx/group";
 import { scaleLinear } from "@visx/scale";
@@ -20,21 +20,27 @@ import {
   yearInnerHeight,
   yearInnerWidth,
 } from "./_shared/chart-dimensions";
+import { ChartStatusMessage } from "./_shared/chart-status-message";
 import { YAxisTicks } from "./_shared/y-axis-ticks";
 import { labelStep, parseYearData, type YearDatum } from "./_shared/year-data";
 
 interface AreaChartProps {
   title: string;
   data: { label: string; value: number }[];
+  errorMessage?: string;
 }
-
-const gradientId = "collection-year-area-gradient";
 
 export function AreaChart({
   title,
   data,
+  errorMessage,
 }: AreaChartProps) {
   const svgRef = useRef<SVGSVGElement>(null);
+  // Per-instance gradient id so multiple AreaCharts on one page do not collide
+  // in the SVG id namespace. Strip colons because url(#:r1:) is invalid in
+  // some SVG selector contexts.
+  const reactId = useId().replaceAll(":", "");
+  const gradientId = `collection-year-area-gradient-${reactId}`;
   const yearData = parseYearData(data);
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
     useTooltip<YearDatum>();
@@ -62,10 +68,8 @@ export function AreaChart({
         <CardTitle className="text-sm! font-semibold!">{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        {yearData.length === 0 ? (
-          <p className="text-muted-foreground text-sm">
-            No distribution data was returned.
-          </p>
+        {errorMessage || yearData.length === 0 ? (
+          <ChartStatusMessage errorMessage={errorMessage} />
         ) : (
           <div className="min-w-0 overflow-hidden">
             <svg

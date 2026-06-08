@@ -18,6 +18,7 @@ import {
 import { numberFormatter } from "@/lib/services/organisms/utils";
 
 import { ChartLegendPill } from "./_shared/chart-legend-pill";
+import { ChartStatusMessage } from "./_shared/chart-status-message";
 
 export interface DonutDatum {
   label: string;
@@ -38,6 +39,7 @@ interface DonutChartProps {
   data?: DonutDatum[];
   tabs?: DonutChartTab[];
   layout?: "bottom" | "side";
+  errorMessage?: string;
 }
 
 // Donut uses up to 10 distinct accents plus a muted color for the "Others" bucket.
@@ -190,7 +192,7 @@ function buildArcData(
   });
 }
 
-export function DonutChart({ title, data, tabs, layout = "bottom" }: DonutChartProps) {
+export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage }: DonutChartProps) {
   const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
   const activeData: DonutDatum[] = tabs
     ? (tabs[activeTabIndex]?.data ?? [])
@@ -373,10 +375,8 @@ export function DonutChart({ title, data, tabs, layout = "bottom" }: DonutChartP
             </div>
           )}
         </div>
-        {slices.length === 0 ? (
-          <p className="text-muted-foreground mt-1 text-sm">
-            No distribution data was returned.
-          </p>
+        {errorMessage || slices.length === 0 ? (
+          <ChartStatusMessage errorMessage={errorMessage} />
         ) : (
           <div
             className={cn(

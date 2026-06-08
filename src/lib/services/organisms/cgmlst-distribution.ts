@@ -19,7 +19,11 @@ export async function fetchCgmlstHcDistribution(
 ): Promise<CgmlstHcDistribution> {
   const baseUrl = getBvBrcWebsiteApiBaseUrl();
 
-  const results = await Promise.allSettled(
+  // No internal allSettled — let any per-level failure surface to the caller
+  // (e.g. `MetadataDistributions`) which already wraps in `Promise.allSettled`
+  // and decides how to degrade. Swallowing here too would hide errors twice
+  // and prevent the panel from showing a real error message.
+  const lists = await Promise.all(
     hcLevels.map((level) =>
       fetchOrganismSolrJson(
         buildGenomeFacetUrl(baseUrl, taxonId, `cgmlst_${level}`, 10),
@@ -30,16 +34,6 @@ export async function fetchCgmlstHcDistribution(
   );
 
   return Object.fromEntries(
-    hcLevels.map((level, i) => {
-      const result = results[i];
-      if (result.status === "rejected") {
-        console.warn(
-          `[cgmlst-distribution] ${level} fetch failed for taxonId=${taxonId}:`,
-          result.reason,
-        );
-        return [level, []];
-      }
-      return [level, result.value];
-    }),
+    hcLevels.map((level, i) => [level, lists[i]]),
   ) as CgmlstHcDistribution;
 }

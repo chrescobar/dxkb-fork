@@ -13,6 +13,7 @@ import { chartColors, chartTooltipStyle } from "@/lib/services/organisms/chart-u
 import { numberFormatter } from "@/lib/services/organisms/utils";
 
 import { ChartLegendPill } from "./_shared/chart-legend-pill";
+import { ChartStatusMessage } from "./_shared/chart-status-message";
 import {
   chartMarginLeft,
   chartMarginTop,
@@ -21,6 +22,7 @@ import {
   stackedInnerHeight,
   yearInnerWidth,
 } from "./_shared/chart-dimensions";
+import { useStackedChartHighlight } from "./_shared/use-stacked-chart-highlight";
 import { nearestBandIndex } from "./_shared/use-svg-band-pointer";
 import { YAxisTicks } from "./_shared/y-axis-ticks";
 
@@ -38,11 +40,7 @@ interface ColumnTooltipData {
 interface BarStackChartProps {
   title: string;
   data: SerotypeDistributionData;
-}
-
-interface Highlight {
-  idx: number;
-  locked: boolean;
+  errorMessage?: string;
 }
 
 const tooltipOffsetX = 16;
@@ -51,27 +49,26 @@ const tooltipOffsetY = 16;
 export function BarStackChart({
   title,
   data,
+  errorMessage,
 }: BarStackChartProps) {
   const svgRef = useRef<SVGSVGElement>(null);
-  const [highlight, setHighlight] = useState<Highlight | null>(null);
+  const highlight = useStackedChartHighlight();
   const [hoveredYear, setHoveredYear] = useState<number | null>(null);
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
     useTooltip<ColumnTooltipData>();
 
-  if (data.years.length === 0) {
+  if (errorMessage || data.years.length === 0) {
     return (
       <Card className="relative rounded-lg" size="sm">
         <CardContent className="flex flex-1 flex-col">
           <p className="text-sm font-semibold">{title}</p>
-          <p className="text-muted-foreground mt-1 text-sm">
-            No distribution data was returned.
-          </p>
+          <ChartStatusMessage errorMessage={errorMessage} />
         </CardContent>
       </Card>
     );
   }
 
-  const activeIdx = highlight?.idx ?? null;
+  const activeIdx = highlight.activeIdx;
 
   const xScale = scaleBand<number>({
     domain: data.years.map((y) => y.year),
@@ -98,22 +95,6 @@ export function BarStackChart({
   });
 
   const yTicks = yScale.ticks(4);
-
-  function activatePill(idx: number) {
-    if (highlight?.locked) return;
-    setHighlight({ idx, locked: false });
-  }
-
-  function deactivatePill() {
-    if (highlight?.locked) return;
-    setHighlight(null);
-  }
-
-  function togglePillLock(idx: number) {
-    setHighlight((prev) =>
-      prev?.locked && prev.idx === idx ? null : { idx, locked: true },
-    );
-  }
 
   return (
     <Card className="relative rounded-lg" size="sm">
@@ -242,7 +223,7 @@ export function BarStackChart({
                 }}
                 onClick={() => {
                   // Click in empty space releases any serovar lock
-                  setHighlight(null);
+                  highlight.clearHighlight();
                 }}
               />
 
@@ -278,10 +259,10 @@ export function BarStackChart({
                 color={colorScale(sv)}
                 active={isActive}
                 dimmed={isDimmed}
-                ariaPressed={highlight?.locked === true && highlight.idx === idx}
-                onActivate={() => activatePill(idx)}
-                onDeactivate={deactivatePill}
-                onClick={() => togglePillLock(idx)}
+                ariaPressed={highlight.pressedFor(idx)}
+                onActivate={() => highlight.activatePill(idx)}
+                onDeactivate={highlight.deactivatePill}
+                onClick={() => highlight.togglePillLock(idx)}
               />
             );
           })}

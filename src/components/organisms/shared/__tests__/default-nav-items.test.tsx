@@ -92,4 +92,22 @@ describe("buildOrganismNavItems", () => {
     render(<Comp />);
     expect(screen.getByText(/Phylogeny data and visualization/)).toBeInTheDocument();
   });
+
+  it("exclude removes the listed keys from the returned list", () => {
+    const items = buildOrganismNavItems({}, { exclude: ["amr-phenotypes"] });
+    expect(items).toHaveLength(15);
+    expect(items.find((i) => i.key === "amr-phenotypes")).toBeUndefined();
+  });
+
+  it("exclude accepts multiple keys", () => {
+    const items = buildOrganismNavItems({}, { exclude: ["amr-phenotypes", "epitopes"] });
+    expect(items).toHaveLength(14);
+    expect(items.find((i) => i.key === "amr-phenotypes")).toBeUndefined();
+    expect(items.find((i) => i.key === "epitopes")).toBeUndefined();
+  });
+
+  it("omitting the options object preserves all default items", () => {
+    const items = buildOrganismNavItems({ overview: { Component: CustomOverview } });
+    expect(items).toHaveLength(16);
+  });
 });

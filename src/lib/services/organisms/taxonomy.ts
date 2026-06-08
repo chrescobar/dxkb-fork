@@ -32,6 +32,13 @@ function parseLineageIds(value: unknown): number[] {
   return ids;
 }
 
+export class TaxonomyNotFoundError extends Error {
+  constructor(public readonly taxonId: number) {
+    super(`taxonomy/${taxonId}: not found`);
+    this.name = "TaxonomyNotFoundError";
+  }
+}
+
 export async function fetchOrganismTaxonomy(
   taxonId: number,
   options: OrganismFetchOptions = {},
@@ -43,6 +50,10 @@ export async function fetchOrganismTaxonomy(
     signal: options.signal,
     ...organismFetchCacheInit(organismBvBrcRevalidateSeconds),
   });
+
+  if (response.status === 404) {
+    throw new TaxonomyNotFoundError(taxonId);
+  }
 
   if (!response.ok) {
     throw new Error(await responseErrorMessage(response));

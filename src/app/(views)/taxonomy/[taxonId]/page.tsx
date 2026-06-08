@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 
 import { TaxonBreadcrumb } from "@/components/organisms/taxon-breadcrumb";
 import { OrganismLandingShell } from "@/components/organisms/landing-shell/landing-shell";
-import { fetchOrganismTaxonomy } from "@/lib/services/organisms/taxonomy";
+import { TaxonomyNotFoundError, fetchOrganismTaxonomy } from "@/lib/services/organisms/taxonomy";
+import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 
 import { buildTaxonomyNavItems } from "./_components/nav-items";
 import { buildTaxonomyConfig } from "./_config";
@@ -33,7 +34,15 @@ export default async function TaxonomyPage({ params, searchParams }: TaxonomyPag
   const viewParam = resolvedSearchParams?.view;
   const activeViewKey = Array.isArray(viewParam) ? viewParam[0] : viewParam;
 
-  const taxon = await fetchOrganismTaxonomy(taxonId).catch(() => null);
+  let taxon: OrganismTaxonomy;
+  try {
+    taxon = await fetchOrganismTaxonomy(taxonId);
+  } catch (err) {
+    if (err instanceof TaxonomyNotFoundError) {
+      notFound();
+    }
+    throw err;
+  }
   const config = buildTaxonomyConfig(taxonId, taxon);
   const showSerotype = serotypeTaxa.has(taxonId);
   const navItems = buildTaxonomyNavItems(config, showSerotype, taxon);

@@ -156,13 +156,35 @@ export function buildGenomeGeoPivotUrl(baseUrl: string, taxonId: number, primary
   return `${baseUrl}/genome/?eq(genome_id,*)&genome(eq(taxon_lineage_ids,${taxonId}))&facet((pivot,(${primary},${secondary})),(mincount,1)${limitClause})&limit(0)`;
 }
 
+export function buildGenomeGeoPivot3Url(baseUrl: string, taxonId: number, primary: string, secondary: string, tertiary: string, limit?: number): string {
+  const limitClause = typeof limit === "number" && limit > 0 ? `,(limit,${limit})` : "";
+  return `${baseUrl}/genome/?eq(genome_id,*)&genome(eq(taxon_lineage_ids,${taxonId}))&facet((pivot,(${primary},${secondary},${tertiary})),(mincount,1)${limitClause})&limit(0)`;
+}
+
 interface PivotEntry {
   value?: unknown;
   count?: unknown;
   pivot?: unknown;
 }
 
-export function parseSolrFacetPivot(payload: Record<string, unknown>, pivotKey: string): Record<string, Record<string, number>> {
+function pivotEntryName(entry: PivotEntry): string | null {
+  // SOLR emits numeric outer keys (e.g. collection_year) as numbers OR
+  // strings depending on field type; coerce to string for the result map.
+  if (typeof entry.value === "string" && entry.value.length > 0) return entry.value;
+  if (typeof entry.value === "number" && Number.isFinite(entry.value)) return String(entry.value);
+  return null;
+}
+
+function pivotEntryCount(entry: PivotEntry): number | null {
+  if (typeof entry.count === "number" && Number.isFinite(entry.count)) return entry.count;
+  if (typeof entry.count === "string") {
+    const numeric = Number(entry.count);
+    if (Number.isFinite(numeric)) return numeric;
+  }
+  return null;
+}
+
+function readFacetPivotArray(payload: Record<string, unknown>, pivotKey: string): PivotEntry[] {
   const facetCounts = payload.facet_counts;
   if (!facetCounts || typeof facetCounts !== "object" || Array.isArray(facetCounts)) {
     throw new Error(`Unexpected SOLR response shape: missing facet_counts`);
@@ -178,31 +200,24 @@ export function parseSolrFacetPivot(payload: Record<string, unknown>, pivotKey: 
     throw new Error(`Unexpected SOLR response shape: missing ${pivotKey} pivot`);
   }
 
+  return rawPivot as PivotEntry[];
+}
+
+export function parseSolrFacetPivot(payload: Record<string, unknown>, pivotKey: string): Record<string, Record<string, number>> {
+  const rawPivot = readFacetPivotArray(payload, pivotKey);
   const result: Record<string, Record<string, number>> = {};
-  for (const entry of rawPivot as PivotEntry[]) {
+  for (const entry of rawPivot) {
     if (!entry || typeof entry !== "object") continue;
-    // SOLR may emit numeric outer keys (e.g. collection_year) as numbers OR
-    // strings depending on field type; coerce to string for the result map.
-    let name: string | null = null;
-    if (typeof entry.value === "string" && entry.value.length > 0) {
-      name = entry.value;
-    } else if (typeof entry.value === "number" && Number.isFinite(entry.value)) {
-      name = String(entry.value);
-    }
+    const name = pivotEntryName(entry);
     if (name === null) continue;
     const inner: Record<string, number> = {};
     if (Array.isArray(entry.pivot)) {
       for (const sub of entry.pivot as PivotEntry[]) {
         if (!sub || typeof sub !== "object") continue;
-        const subName = sub.value;
-        const subCount = sub.count;
-        if (typeof subName !== "string" || subName.length === 0) continue;
-        if (typeof subCount === "number" && Number.isFinite(subCount)) {
-          inner[subName] = subCount;
-        } else if (typeof subCount === "string") {
-          const numeric = Number(subCount);
-          if (Number.isFinite(numeric)) inner[subName] = numeric;
-        }
+        const subName = pivotEntryName(sub);
+        if (subName === null) continue;
+        const subCount = pivotEntryCount(sub);
+        if (subCount !== null) inner[subName] = subCount;
       }
     }
     result[name] = inner;
@@ -210,3 +225,33 @@ export function parseSolrFacetPivot(payload: Record<string, unknown>, pivotKey: 
   return result;
 }
 
+export function parseSolrFacetPivot3(payload: Record<string, unknown>, pivotKey: string): Record<string, Record<string, Record<string, number>>> {
+  const rawPivot = readFacetPivotArray(payload, pivotKey);
+  const result: Record<string, Record<string, Record<string, number>>> = {};
+  for (const entry of rawPivot) {
+    if (!entry || typeof entry !== "object") continue;
+    const outerName = pivotEntryName(entry);
+    if (outerName === null) continue;
+    const middle: Record<string, Record<string, number>> = {};
+    if (Array.isArray(entry.pivot)) {
+      for (const sub of entry.pivot as PivotEntry[]) {
+        if (!sub || typeof sub !== "object") continue;
+        const middleName = pivotEntryName(sub);
+        if (middleName === null) continue;
+        const leaf: Record<string, number> = {};
+        if (Array.isArray(sub.pivot)) {
+          for (const leafEntry of sub.pivot as PivotEntry[]) {
+            if (!leafEntry || typeof leafEntry !== "object") continue;
+            const leafName = pivotEntryName(leafEntry);
+            if (leafName === null) continue;
+            const leafCount = pivotEntryCount(leafEntry);
+            if (leafCount !== null) leaf[leafName] = leafCount;
+          }
+        }
+        middle[middleName] = leaf;
+      }
+    }
+    result[outerName] = middle;
+  }
+  return result;
+}

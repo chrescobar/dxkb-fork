@@ -1,12 +1,20 @@
 import { render, screen } from "@testing-library/react";
 
 import TaxonomyPage from "../page";
+import { TaxonomyNotFoundError } from "@/lib/services/organisms/taxonomy";
 
 const fetchOrganismTaxonomyMock = vi.fn();
 
-vi.mock("@/lib/services/organisms/taxonomy", () => ({
-  fetchOrganismTaxonomy: (...args: unknown[]) => fetchOrganismTaxonomyMock(...args),
-}));
+vi.mock("@/lib/services/organisms/taxonomy", async () => {
+  const actual =
+    await vi.importActual<typeof import("@/lib/services/organisms/taxonomy")>(
+      "@/lib/services/organisms/taxonomy",
+    );
+  return {
+    ...actual,
+    fetchOrganismTaxonomy: (...args: unknown[]) => fetchOrganismTaxonomyMock(...args),
+  };
+});
 
 const bacterialTaxon = {
   taxonId: 234,
@@ -90,6 +98,18 @@ describe("TaxonomyPage", () => {
     ).toBeInTheDocument();
   });
 
+  it("omits the AMR Phenotypes nav for viral taxa", async () => {
+    fetchOrganismTaxonomyMock.mockResolvedValueOnce(viralTaxon);
+    const node = await TaxonomyPage({
+      params: Promise.resolve({ taxonId: "11320" }),
+      searchParams: Promise.resolve({}),
+    });
+
+    render(node);
+
+    expect(screen.queryByText("AMR Phenotypes")).not.toBeInTheDocument();
+  });
+
   it("calls notFound for non-numeric taxonId", async () => {
     notFoundSpy.mockClear();
     await expect(
@@ -151,18 +171,29 @@ describe("TaxonomyPage", () => {
     );
   });
 
-  it("passes showAmr=false when the taxon fetch returns null", async () => {
-    fetchOrganismTaxonomyMock.mockRejectedValueOnce(new Error("nope"));
-    metadataSpy.mockClear();
+  it("calls notFound when fetchOrganismTaxonomy throws TaxonomyNotFoundError", async () => {
+    notFoundSpy.mockClear();
+    fetchOrganismTaxonomyMock.mockRejectedValueOnce(new TaxonomyNotFoundError(999));
 
-    const node = await TaxonomyPage({
-      params: Promise.resolve({ taxonId: "999" }),
-      searchParams: Promise.resolve({}),
-    });
-    render(node);
+    await expect(
+      TaxonomyPage({
+        params: Promise.resolve({ taxonId: "999" }),
+        searchParams: Promise.resolve({}),
+      }),
+    ).rejects.toThrow("NEXT_NOT_FOUND");
+    expect(notFoundSpy).toHaveBeenCalled();
+  });
 
-    expect(metadataSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ showAmr: false }),
-    );
+  it("re-throws when fetchOrganismTaxonomy throws a non-404 error", async () => {
+    notFoundSpy.mockClear();
+    fetchOrganismTaxonomyMock.mockRejectedValueOnce(new Error("upstream 500"));
+
+    await expect(
+      TaxonomyPage({
+        params: Promise.resolve({ taxonId: "999" }),
+        searchParams: Promise.resolve({}),
+      }),
+    ).rejects.toThrow("upstream 500");
+    expect(notFoundSpy).not.toHaveBeenCalled();
   });
 });

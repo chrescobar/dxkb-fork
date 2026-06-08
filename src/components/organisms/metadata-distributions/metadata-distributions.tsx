@@ -48,6 +48,22 @@ function emptyCgmlst(): CgmlstHcDistribution {
   ) as unknown as CgmlstHcDistribution;
 }
 
+interface OptionalChartState<T> {
+  data: T;
+  errorMessage?: string;
+}
+
+function settledToChart<T>(
+  result: PromiseSettledResult<T>,
+  fallback: T,
+): OptionalChartState<T> {
+  if (result.status === "fulfilled") return { data: result.value };
+  const reason = result.reason;
+  const message =
+    reason instanceof Error ? reason.message : String(reason ?? "unknown error");
+  return { data: fallback, errorMessage: message };
+}
+
 export async function MetadataDistributions({
   taxonId,
   fields,
@@ -67,45 +83,38 @@ export async function MetadataDistributions({
         : Promise.resolve(emptyAmrData),
     ]);
 
+  // The facets panel is the spine of this section — if it fails we can't lay
+  // out the rest of the grid, so propagate to the route's error boundary.
   if (facetsResult.status === "rejected") {
     throw facetsResult.reason;
   }
 
   const facets = facetsResult.value;
+  const serotype = settledToChart(serotypeResult, emptySerotypeData);
+  const taxonomic = settledToChart(taxonomicResult, emptyTaxonomic);
+  const cgmlst = settledToChart(cgmlstResult, emptyCgmlst());
+  const amr = settledToChart(amrResult, emptyAmrData);
 
-  const serotypeData =
-    serotypeResult.status === "fulfilled" ? serotypeResult.value : emptySerotypeData;
-  if (serotypeResult.status === "rejected" && showSerotype) {
+  // Console signals for ops/log aggregation — the user-visible error message
+  // is shown inline in the corresponding chart card.
+  if (serotype.errorMessage && showSerotype) {
     console.warn(
-      `[metadata-distributions] serotype fetch failed for taxonId=${taxonId}:`,
-      serotypeResult.reason,
+      `[metadata-distributions] serotype fetch failed for taxonId=${taxonId}: ${serotype.errorMessage}`,
     );
   }
-
-  const taxonomicData =
-    taxonomicResult.status === "fulfilled" ? taxonomicResult.value : emptyTaxonomic;
-  if (taxonomicResult.status === "rejected") {
+  if (taxonomic.errorMessage) {
     console.warn(
-      `[metadata-distributions] taxonomic distribution fetch failed for taxonId=${taxonId}:`,
-      taxonomicResult.reason,
+      `[metadata-distributions] taxonomic distribution fetch failed for taxonId=${taxonId}: ${taxonomic.errorMessage}`,
     );
   }
-
-  const cgmlstData =
-    cgmlstResult.status === "fulfilled" ? cgmlstResult.value : emptyCgmlst();
-  if (cgmlstResult.status === "rejected") {
+  if (cgmlst.errorMessage) {
     console.warn(
-      `[metadata-distributions] cgMLST distribution fetch failed for taxonId=${taxonId}:`,
-      cgmlstResult.reason,
+      `[metadata-distributions] cgMLST distribution fetch failed for taxonId=${taxonId}: ${cgmlst.errorMessage}`,
     );
   }
-
-  const amrData =
-    amrResult.status === "fulfilled" ? amrResult.value : emptyAmrData;
-  if (amrResult.status === "rejected" && showAmr) {
+  if (amr.errorMessage && showAmr) {
     console.warn(
-      `[metadata-distributions] amr phenotype distribution fetch failed for taxonId=${taxonId}:`,
-      amrResult.reason,
+      `[metadata-distributions] amr phenotype distribution fetch failed for taxonId=${taxonId}: ${amr.errorMessage}`,
     );
   }
 
@@ -122,7 +131,8 @@ export async function MetadataDistributions({
       {showAmr && (
         <AmrBarStackChart
           title="Antimicrobial Resistance Profile"
-          data={amrData}
+          data={amr.data}
+          errorMessage={amr.errorMessage}
         />
       )}
       <div className="grid grid-cols-1 gap-3 @[640px]:grid-cols-2 @[1080px]:grid-cols-3">
@@ -155,7 +165,8 @@ export async function MetadataDistributions({
         {showSerotype && (
           <BarStackChart
             title="Serotype Distribution (Last 10 Years)"
-            data={serotypeData}
+            data={serotype.data}
+            errorMessage={serotype.errorMessage}
           />
         )}
         <DonutChart
@@ -163,31 +174,33 @@ export async function MetadataDistributions({
           tabs={[
             {
               label: "Genus",
-              data: taxonomicData.genus.map((f) => ({
+              data: taxonomic.data.genus.map((f) => ({
                 label: f.name,
                 value: f.count,
               })),
             },
             {
               label: "Species",
-              data: taxonomicData.species.map((f) => ({
+              data: taxonomic.data.species.map((f) => ({
                 label: f.name,
                 value: f.count,
               })),
             },
           ]}
           layout="side"
+          errorMessage={taxonomic.errorMessage}
         />
         <DonutChart
           title="cgMLST HC Distribution"
           tabs={hcLevels.map((level) => ({
             label: level.toUpperCase(),
-            data: cgmlstData[level].map((f) => ({
+            data: cgmlst.data[level].map((f) => ({
               label: f.name,
               value: f.count,
             })),
           }))}
           layout="side"
+          errorMessage={cgmlst.errorMessage}
         />
       </div>
     </section>

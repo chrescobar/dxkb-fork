@@ -45,6 +45,43 @@ function pivotFacet(pivotKey: string, rows: { value: string; count: number; pivo
   };
 }
 
+interface PivotLeaf {
+  value: string;
+  count: number;
+}
+
+interface PivotMiddle {
+  value: string;
+  count: number;
+  pivot: PivotLeaf[];
+}
+
+function pivot3Facet(pivotKey: string, rows: { value: string; count: number; pivot: PivotMiddle[] }[]) {
+  const fields = pivotKey.split(",");
+  return {
+    response: { numFound: 100 },
+    facet_counts: {
+      facet_pivot: {
+        [pivotKey]: rows.map((row) => ({
+          field: fields[0],
+          value: row.value,
+          count: row.count,
+          pivot: row.pivot.map((middle) => ({
+            field: fields[1],
+            value: middle.value,
+            count: middle.count,
+            pivot: middle.pivot.map((leaf) => ({
+              field: fields[2],
+              value: leaf.value,
+              count: leaf.count,
+            })),
+          })),
+        })),
+      },
+    },
+  };
+}
+
 interface RouteOverrides {
   countryStatus?: number;
   stateStatus?: number;
@@ -110,9 +147,18 @@ function defaultGenomeRouter(overrides: RouteOverrides = {}) {
         },
       ]));
     }
-    if (query.includes("(pivot,(county,genus))")) {
+    if (query.includes("(pivot,(state_province,county,genus))")) {
       if (overrides.pivotStatus) return HttpResponse.text("pivot failed", { status: overrides.pivotStatus });
-      return HttpResponse.json(pivotFacet("county,genus", []));
+      return HttpResponse.json(pivot3Facet("state_province,county,genus", [
+        {
+          value: "Wyoming",
+          count: 48,
+          pivot: [
+            { value: "Park", count: 30, pivot: [{ value: "Brucella", count: 30 }] },
+            { value: "Teton", count: 18, pivot: [{ value: "Brucella", count: 18 }] },
+          ],
+        },
+      ]));
     }
     return HttpResponse.text("unknown facet query", { status: 400 });
   });
@@ -137,9 +183,14 @@ describe("fetchOrganismGeoDistribution", () => {
       genera: { Brucella: 48 },
       hosts: { Cattle: 30 },
     });
+    expect(result.countyMeta["Wyoming|Park"]).toEqual({
+      count: 30,
+      genera: { Brucella: 30 },
+      hosts: {},
+    });
   });
 
-  it("scopes county counts by state so same-named counties in different states are kept separate", async () => {
+  it("scopes county counts and genera by state so same-named counties in different states are kept separate", async () => {
     server.use(
       http.get(`${baseUrl}/genome/`, ({ request }) => {
         const query = new URL(request.url).search;
@@ -148,6 +199,20 @@ describe("fetchOrganismGeoDistribution", () => {
         }
         if (query.includes("(field,state_province)")) {
           return HttpResponse.json(fieldFacet("state_province", []));
+        }
+        if (query.includes("(pivot,(state_province,county,genus))")) {
+          return HttpResponse.json(pivot3Facet("state_province,county,genus", [
+            {
+              value: "Pennsylvania",
+              count: 5,
+              pivot: [{ value: "Washington", count: 5, pivot: [{ value: "Escherichia", count: 5 }] }],
+            },
+            {
+              value: "Maryland",
+              count: 2,
+              pivot: [{ value: "Washington", count: 2, pivot: [{ value: "Salmonella", count: 2 }] }],
+            },
+          ]));
         }
         if (query.includes("(pivot,(state_province,county))")) {
           return HttpResponse.json(pivotFacet("state_province,county", [
@@ -167,8 +232,9 @@ describe("fetchOrganismGeoDistribution", () => {
     expect(result.countyData["Maryland|Washington"]).toBe(2);
     // A plain "Washington" key must not exist
     expect(result.countyData["Washington"]).toBeUndefined();
-    expect(result.countyMeta["Pennsylvania|Washington"]).toEqual(expect.objectContaining({ count: 5 }));
-    expect(result.countyMeta["Maryland|Washington"]).toEqual(expect.objectContaining({ count: 2 }));
+    // Genera must be state-scoped — same-named counties get different genera
+    expect(result.countyMeta["Pennsylvania|Washington"].genera).toEqual({ Escherichia: 5 });
+    expect(result.countyMeta["Maryland|Washington"].genera).toEqual({ Salmonella: 2 });
   });
 
   it("throws when a required field facet fails", async () => {

@@ -18,6 +18,7 @@ import {
   yearInnerHeight,
   yearInnerWidth,
 } from "./_shared/chart-dimensions";
+import { ChartStatusMessage } from "./_shared/chart-status-message";
 import { nearestBandIndex } from "./_shared/use-svg-band-pointer";
 import { YAxisTicks } from "./_shared/y-axis-ticks";
 import { labelStep, parseYearData, type YearDatum } from "./_shared/year-data";
@@ -25,11 +26,13 @@ import { labelStep, parseYearData, type YearDatum } from "./_shared/year-data";
 interface BarChartProps {
   title: string;
   data: { label: string; value: number }[];
+  errorMessage?: string;
 }
 
 export function BarChart({
   title,
   data,
+  errorMessage,
 }: BarChartProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const yearData = parseYearData(data);
@@ -58,10 +61,8 @@ export function BarChart({
         <CardTitle className="text-sm! font-semibold!">{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        {yearData.length === 0 ? (
-          <p className="text-muted-foreground text-sm">
-            No distribution data was returned.
-          </p>
+        {errorMessage || yearData.length === 0 ? (
+          <ChartStatusMessage errorMessage={errorMessage} />
         ) : (
           <div className="min-w-0 overflow-hidden">
             <svg

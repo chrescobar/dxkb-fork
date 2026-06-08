@@ -5,9 +5,14 @@ import {
   fetchCgmlstHcDistribution,
   hcLevels,
 } from "@/lib/services/organisms/cgmlst-distribution";
+import { fetchAmrPhenotypeDistribution } from "@/lib/services/organisms/amr-distribution";
 import type { CgmlstHcDistribution } from "@/lib/services/organisms/cgmlst-distribution";
-import type { SerotypeDistributionData } from "@/lib/services/organisms/types";
+import type {
+  AmrDistributionData,
+  SerotypeDistributionData,
+} from "@/lib/services/organisms/types";
 
+import { AmrBarStackChart } from "./amr-bar-stack-chart";
 import { AreaChart } from "./area-chart";
 import { BarChart } from "./bar-chart";
 import { BarStackChart } from "./bar-stack-chart";
@@ -30,9 +35,11 @@ interface MetadataDistributionsProps {
   taxonId: number;
   fields: string[];
   showSerotype?: boolean;
+  showAmr?: boolean;
 }
 
 const emptySerotypeData: SerotypeDistributionData = { years: [], serovars: [] };
+const emptyAmrData: AmrDistributionData = { antibiotics: [] };
 const emptyTaxonomic = { genus: [], species: [] };
 
 function emptyCgmlst(): CgmlstHcDistribution {
@@ -45,8 +52,9 @@ export async function MetadataDistributions({
   taxonId,
   fields,
   showSerotype = false,
+  showAmr = false,
 }: MetadataDistributionsProps) {
-  const [facetsResult, serotypeResult, taxonomicResult, cgmlstResult] =
+  const [facetsResult, serotypeResult, taxonomicResult, cgmlstResult, amrResult] =
     await Promise.allSettled([
       fetchOrganismMetadataFacets(taxonId, fields),
       showSerotype
@@ -54,6 +62,9 @@ export async function MetadataDistributions({
         : Promise.resolve(emptySerotypeData),
       fetchTaxonomicDistribution(taxonId),
       fetchCgmlstHcDistribution(taxonId),
+      showAmr
+        ? fetchAmrPhenotypeDistribution(taxonId)
+        : Promise.resolve(emptyAmrData),
     ]);
 
   if (facetsResult.status === "rejected") {
@@ -89,6 +100,15 @@ export async function MetadataDistributions({
     );
   }
 
+  const amrData =
+    amrResult.status === "fulfilled" ? amrResult.value : emptyAmrData;
+  if (amrResult.status === "rejected" && showAmr) {
+    console.warn(
+      `[metadata-distributions] amr phenotype distribution fetch failed for taxonId=${taxonId}:`,
+      amrResult.reason,
+    );
+  }
+
   return (
     <section className="@container flex flex-col gap-3">
       <div>
@@ -99,6 +119,12 @@ export async function MetadataDistributions({
           Top metadata buckets for available genome records.
         </p>
       </div>
+      {showAmr && (
+        <AmrBarStackChart
+          title="Antimicrobial Resistance Profile"
+          data={amrData}
+        />
+      )}
       <div className="grid grid-cols-1 gap-3 @[640px]:grid-cols-2 @[1080px]:grid-cols-3">
         {fields.flatMap((field) => {
           const title = fieldLabels[field] ?? field;

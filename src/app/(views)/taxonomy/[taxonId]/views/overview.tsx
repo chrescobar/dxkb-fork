@@ -19,7 +19,7 @@ interface OverviewViewProps {
   showAmr?: boolean;
 }
 
-export function makeOverviewView({ config, taxon, showSerotype, showAmr: _showAmr }: OverviewViewProps) {
+export function makeOverviewView({ config, taxon, showSerotype, showAmr }: OverviewViewProps) {
   async function TaxonomySummaryBoundary() {
     return withSectionError(() => TaxonomySummary({ taxonId: config.taxonId, taxon }));
   }
@@ -30,6 +30,7 @@ export function makeOverviewView({ config, taxon, showSerotype, showAmr: _showAm
         taxonId: config.taxonId,
         fields: config.metadataFields,
         showSerotype,
+        showAmr,
       }),
     );
   }

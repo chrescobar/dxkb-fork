@@ -19,6 +19,10 @@ vi.mock("@/lib/services/organisms/cgmlst-distribution", () => ({
   hcLevels: ["hc0", "hc2", "hc5", "hc10", "hc20", "hc50", "hc100"],
 }));
 
+vi.mock("@/lib/services/organisms/amr-distribution", () => ({
+  fetchAmrPhenotypeDistribution: vi.fn(),
+}));
+
 const barStackSpy = vi.fn();
 
 vi.mock("../bar-stack-chart", () => ({
@@ -28,11 +32,21 @@ vi.mock("../bar-stack-chart", () => ({
   },
 }));
 
+const amrSpy = vi.fn();
+
+vi.mock("../amr-bar-stack-chart", () => ({
+  AmrBarStackChart: (props: { title: string; data: unknown }) => {
+    amrSpy(props);
+    return <div data-testid="amr-chart" data-title={props.title} />;
+  },
+}));
+
 import { MetadataDistributions } from "../metadata-distributions";
 import { fetchOrganismMetadataFacets } from "@/lib/services/organisms/metadata-facets";
 import { fetchSerotypeDistribution } from "@/lib/services/organisms/serotype-distribution";
 import { fetchTaxonomicDistribution } from "@/lib/services/organisms/taxonomic-distribution";
 import { fetchCgmlstHcDistribution } from "@/lib/services/organisms/cgmlst-distribution";
+import { fetchAmrPhenotypeDistribution } from "@/lib/services/organisms/amr-distribution";
 
 const emptyTaxonomic = { genus: [], species: [] };
 const emptyCgmlst = {
@@ -144,6 +158,69 @@ describe("MetadataDistributions", () => {
     expect(screen.getByText("Taxonomic Distribution")).toBeInTheDocument();
     expect(warnSpy).toHaveBeenCalledWith(
       expect.stringContaining("taxonomic distribution fetch failed"),
+      expect.anything(),
+    );
+    warnSpy.mockRestore();
+  });
+
+  it("does not fetch or render the AMR chart by default", async () => {
+    vi.mocked(fetchOrganismMetadataFacets).mockResolvedValueOnce({});
+    amrSpy.mockClear();
+
+    await renderServer(MetadataDistributions({ taxonId: 1, fields: [] }));
+
+    expect(fetchAmrPhenotypeDistribution).not.toHaveBeenCalled();
+    expect(screen.queryByTestId("amr-chart")).not.toBeInTheDocument();
+  });
+
+  it("fetches and renders the AMR chart when showAmr is enabled", async () => {
+    const amrData = {
+      antibiotics: [
+        {
+          antibiotic: "ciprofloxacin",
+          Resistant: 1,
+          Susceptible: 2,
+          Intermediate: 0,
+          total: 3,
+        },
+      ],
+    };
+    vi.mocked(fetchOrganismMetadataFacets).mockResolvedValueOnce({});
+    vi.mocked(fetchAmrPhenotypeDistribution).mockResolvedValueOnce(amrData);
+    amrSpy.mockClear();
+
+    await renderServer(
+      MetadataDistributions({ taxonId: 197, fields: [], showAmr: true }),
+    );
+
+    expect(fetchAmrPhenotypeDistribution).toHaveBeenCalledWith(197);
+    expect(screen.getByTestId("amr-chart")).toBeInTheDocument();
+    expect(amrSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: "Antimicrobial Resistance Profile",
+        data: amrData,
+      }),
+    );
+  });
+
+  it("falls back to empty AMR data when the AMR fetch fails", async () => {
+    vi.mocked(fetchOrganismMetadataFacets).mockResolvedValueOnce({});
+    vi.mocked(fetchAmrPhenotypeDistribution).mockRejectedValueOnce(
+      new Error("amr boom"),
+    );
+    amrSpy.mockClear();
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+
+    await renderServer(
+      MetadataDistributions({ taxonId: 197, fields: [], showAmr: true }),
+    );
+
+    expect(screen.getByTestId("amr-chart")).toBeInTheDocument();
+    expect(amrSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ data: { antibiotics: [] } }),
+    );
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining("amr phenotype distribution fetch failed"),
       expect.anything(),
     );
     warnSpy.mockRestore();

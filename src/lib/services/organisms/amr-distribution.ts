@@ -1,0 +1,58 @@
+import type {
+  AmrAntibioticRow,
+  AmrDistributionData,
+  OrganismFetchOptions,
+} from "./types";
+import {
+  fetchOrganismSolrJsonPost,
+  getBvBrcWebsiteApiBaseUrl,
+  parseSolrFacetPivot,
+} from "./utils";
+
+const pivotKey = "antibiotic,resistant_phenotype";
+
+function buildBody(taxonId: number): string {
+  return (
+    "eq(genome_id,*)" +
+    `&genome(eq(taxon_lineage_ids,${taxonId}))` +
+    "&in(resistant_phenotype,(Resistant,Susceptible,Intermediate))" +
+    "&limit(1)" +
+    "&facet((pivot,(antibiotic,resistant_phenotype)),(mincount,1),(limit,-1))" +
+    "&json(nl,map)"
+  );
+}
+
+function toRow(
+  antibiotic: string,
+  phenotypes: Record<string, number>,
+): AmrAntibioticRow {
+  const Resistant = phenotypes.Resistant ?? 0;
+  const Susceptible = phenotypes.Susceptible ?? 0;
+  const Intermediate = phenotypes.Intermediate ?? 0;
+  return {
+    antibiotic,
+    Resistant,
+    Susceptible,
+    Intermediate,
+    total: Resistant + Susceptible + Intermediate,
+  };
+}
+
+export async function fetchAmrPhenotypeDistribution(
+  taxonId: number,
+  options: OrganismFetchOptions = {},
+): Promise<AmrDistributionData> {
+  const baseUrl = getBvBrcWebsiteApiBaseUrl();
+  const url = `${baseUrl}/genome_amr/`;
+  const payload = await fetchOrganismSolrJsonPost(
+    url,
+    buildBody(taxonId),
+    "amr phenotype distribution",
+    options.signal,
+  );
+  const pivot = parseSolrFacetPivot(payload, pivotKey);
+  const antibiotics = Object.entries(pivot)
+    .map(([name, phenotypes]) => toRow(name, phenotypes))
+    .sort((a, b) => b.total - a.total);
+  return { antibiotics };
+}

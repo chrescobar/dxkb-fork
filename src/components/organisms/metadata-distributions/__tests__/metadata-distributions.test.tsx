@@ -27,6 +27,7 @@ import { MetadataDistributions } from "../metadata-distributions";
 import { fetchOrganismMetadataFacets } from "@/lib/services/organisms/metadata-facets";
 import { fetchTaxonomicDistribution } from "@/lib/services/organisms/taxonomic-distribution";
 import { fetchAmrPhenotypeDistribution } from "@/lib/services/organisms/amr-distribution";
+import { taxonomicDistributionSentinel } from "@/components/organisms/types";
 
 const emptyTaxonomic = { genus: [], species: [] };
 
@@ -83,6 +84,43 @@ describe("MetadataDistributions", () => {
       expect.stringContaining("taxonomic boom"),
     );
     warnSpy.mockRestore();
+  });
+
+  it("renders the Taxonomic Distribution chart at the sentinel position and excludes the sentinel from the facets fetch", async () => {
+    vi.mocked(fetchOrganismMetadataFacets).mockResolvedValueOnce({
+      host_common_name: [{ name: "Human", count: 50 }],
+    });
+    vi.mocked(fetchTaxonomicDistribution).mockResolvedValueOnce({
+      genus: [{ name: "Brucella", count: 100 }],
+      species: [],
+    });
+
+    await renderServer(
+      MetadataDistributions({
+        taxonId: 42,
+        fields: ["host_common_name", taxonomicDistributionSentinel],
+      }),
+    );
+
+    expect(screen.getByText("Taxonomic Distribution")).toBeInTheDocument();
+    // Sentinel must be stripped before hitting the facets API
+    expect(fetchOrganismMetadataFacets).toHaveBeenCalledWith(42, ["host_common_name"]);
+    // No duplicate — the fallback render at the end is suppressed when sentinel is present
+    expect(screen.getAllByText("Taxonomic Distribution")).toHaveLength(1);
+  });
+
+  it("renders the sequencing_centers field with the 'Sequencing Centers' label", async () => {
+    vi.mocked(fetchOrganismMetadataFacets).mockResolvedValueOnce({
+      sequencing_centers: [{ name: "NCBI", count: 100 }],
+    });
+
+    await renderServer(
+      MetadataDistributions({ taxonId: 1, fields: ["sequencing_centers"] }),
+    );
+
+    expect(
+      screen.getByRole("img", { name: "Sequencing Centers distribution" }),
+    ).toBeInTheDocument();
   });
 
   it("does not fetch or render the AMR chart by default", async () => {

@@ -1,4 +1,20 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
+
+// Make framer-motion's animate call onUpdate(1) and onComplete immediately so
+// animation-driven arc paths are fully rendered in synchronous tests.
+vi.mock("framer-motion", () => ({
+  animate: vi.fn(
+    (
+      _from: number,
+      to: number,
+      opts: { onUpdate?: (v: number) => void; onComplete?: () => void } = {},
+    ) => {
+      opts.onUpdate?.(to);
+      opts.onComplete?.();
+      return { stop: vi.fn() };
+    },
+  ),
+}));
 
 import { DonutChart } from "../donut-chart";
 
@@ -6,6 +22,19 @@ import { DonutChart } from "../donut-chart";
 const chartSize = 160;
 const chartCenter = chartSize / 2;
 const outerRadius = 66;
+
+// Make requestAnimationFrame synchronous so animation useEffect completes
+// immediately on render.
+beforeEach(() => {
+  vi.spyOn(window, "requestAnimationFrame").mockImplementation(
+    (cb: FrameRequestCallback) => { cb(0); return 0; },
+  );
+  vi.spyOn(window, "cancelAnimationFrame").mockImplementation(vi.fn());
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe("DonutChart", () => {
   it("renders top nine slices and an Others bucket", () => {
@@ -94,6 +123,8 @@ describe("DonutChart", () => {
   });
 
   it("hides tooltip when hovering the inner hole", () => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+
     render(
       <DonutChart title="Host" data={[{ label: "Homo sapiens", value: 12 }]} />,
     );
@@ -126,7 +157,11 @@ describe("DonutChart", () => {
       clientX: chartCenter,
       clientY: chartCenter,
     });
+    // deactivate() schedules a 40ms timer — advance past it
+    act(() => { vi.advanceTimersByTime(50); });
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
+
+    vi.useRealTimers();
   });
 
   it("renders blank labels as Unspecified", () => {
@@ -176,7 +211,7 @@ describe("DonutChart", () => {
     expect(d).toMatch(/-66\s+0/); // outer semicircle landing at (-outerR, 0)
   });
 
-  it("legend focus shows tooltip near the chip", () => {
+  it("legend pill mouse enter activates the slice highlight", () => {
     render(
       <DonutChart
         layout="side"
@@ -189,14 +224,14 @@ describe("DonutChart", () => {
     );
 
     const pill = screen.getByRole("button", { name: "Escherichia: 100" });
-    fireEvent.focus(pill);
-
-    const tooltip = screen.getByRole("status");
-    expect(tooltip).toHaveTextContent("Escherichia");
-    expect(tooltip).toHaveTextContent("100");
+    expect(pill).not.toHaveAttribute("data-active");
+    fireEvent.mouseEnter(pill);
+    expect(pill).toHaveAttribute("data-active", "true");
   });
 
-  it("legend blur clears the active slice highlight", () => {
+  it("legend blur clears the active slice highlight after the deactivate delay", () => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+
     render(
       <DonutChart
         layout="side"
@@ -209,19 +244,17 @@ describe("DonutChart", () => {
     );
 
     const pill = screen.getByRole("button", { name: "Escherichia: 100" });
-    fireEvent.focus(pill);
-    // While focused, dimming is in effect on the OTHER pill via opacity styles
-    // (we observe via the activeId path setting the dimmed slice). The simplest
-    // observation: a status tooltip exists.
-    expect(screen.getByRole("status")).toBeInTheDocument();
+    fireEvent.mouseEnter(pill);
+    expect(pill).toHaveAttribute("data-active", "true");
+
     fireEvent.blur(pill);
-    // After blur, deactivate() runs setActiveId(null). visx's useTooltip keeps
-    // tooltipData populated but flips tooltipOpen; the component reads the
-    // active state via activeId. Re-focus a different pill and verify the
-    // tooltip switches — confirms blur cleared the state machine.
-    const other = screen.getByRole("button", { name: "Salmonella: 50" });
-    fireEvent.focus(other);
-    expect(screen.getByRole("status")).toHaveTextContent("Salmonella");
+    // deactivate() uses a 40ms timer — highlight should still be present before it fires
+    expect(pill).toHaveAttribute("data-active", "true");
+
+    act(() => { vi.advanceTimersByTime(50); });
+    expect(pill).not.toHaveAttribute("data-active");
+
+    vi.useRealTimers();
   });
 
   it("renders tab buttons when tabs prop is provided", () => {

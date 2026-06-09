@@ -251,11 +251,12 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
   const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
   const [hiddenIds, setHiddenIds] = useState<ReadonlySet<string>>(new Set());
 
-  const activeData: DonutDatum[] = tabs
-    ? (tabs[activeTabIndex]?.data ?? [])
-    : (data ?? []);
-
-  const slices = useMemo(() => chartData(activeData), [activeData]);
+  const slices = useMemo(() => {
+    const activeData: DonutDatum[] = tabs
+      ? (tabs[activeTabIndex]?.data ?? [])
+      : (data ?? []);
+    return chartData(activeData);
+  }, [tabs, activeTabIndex, data]);
   const colorScale = useMemo(
     () => scaleOrdinal<string, string>({ domain: slices.map((d) => d.id), range: donutPalette }),
     [slices],
@@ -281,8 +282,8 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
     const target = arcData;
     const interp = buildInterpData(prev, target);
     setDisplayedArcs(interpolateArcData(prev, target, 0));
-    let raf1: number, raf2: number;
-    raf1 = requestAnimationFrame(() => {
+    let raf2: number;
+    const raf1 = requestAnimationFrame(() => {
       raf2 = requestAnimationFrame(() => {
         animRef.current = animate(0, 1, {
           duration: 0.5,

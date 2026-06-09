@@ -39,13 +39,11 @@ test.describe("taxonomy geographic distribution map", () => {
     await mapSection.getByRole("combobox").click();
     await page.getByRole("option", { name: "Wyoming" }).click();
 
-    // The drill-down pill appears (exit button is its distinguishing element)
-    const exitButton = mapSection.getByRole("button", { name: /Exit Wyoming/ });
-    await expect(exitButton).toBeVisible();
+    // County paths loaded — count differs from the US-states baseline
     await expect(svg.locator("path")).not.toHaveCount(baselineCount);
 
-    // Exit drill-down via the pill's X button
-    await exitButton.click();
+    // Exit drill-down by switching back to United States view
+    await mapSection.getByRole("button", { name: "United States" }).click();
     await expect(svg.locator("path")).toHaveCount(baselineCount);
 
     // Switch to the World view — triggers lazy-load of countries-110m.json

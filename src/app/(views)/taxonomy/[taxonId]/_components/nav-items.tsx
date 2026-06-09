@@ -10,7 +10,6 @@ import { makeOverviewView } from "../views/overview";
 
 export function buildTaxonomyNavItems(
   config: OrganismLandingConfig,
-  showSerotype: boolean,
   taxon: OrganismTaxonomy | null,
 ): OrganismLandingView[] {
   // Hide views that don't apply to the lineage. AMR Phenotypes is a bacteria
@@ -25,7 +24,6 @@ export function buildTaxonomyNavItems(
         Component: makeOverviewView({
           config,
           taxon,
-          showSerotype,
           showAmr: config.showAmr ?? false,
         }),
       },

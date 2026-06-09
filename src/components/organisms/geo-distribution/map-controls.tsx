@@ -1,7 +1,5 @@
 "use client";
 
-import { X } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -25,7 +23,6 @@ interface MapControlsProps {
   stateOptions: StateOption[];
   onViewChange: (view: GeoMapView) => void;
   onSelectState: (fips: string, name: string) => void;
-  onClearState: () => void;
 }
 
 export function MapControls({
@@ -33,10 +30,8 @@ export function MapControls({
   stateOptions,
   onViewChange,
   onSelectState,
-  onClearState,
 }: MapControlsProps) {
-  const showStatePill = mapState.view === "state" && mapState.selectedStateName;
-  const showDropdown = mapState.view === "us" || mapState.view === "state";
+  const isStateView = mapState.view === "state";
 
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -47,25 +42,14 @@ export function MapControls({
         <PillButton active={mapState.view === "us"} onClick={() => onViewChange("us")}>
           United States
         </PillButton>
+        <PillButton active={isStateView} onClick={() => onViewChange("state")}>
+          State
+        </PillButton>
       </div>
-
-      {showStatePill && (
-        <div className="bg-primary/10 text-primary inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium">
-          <span>{mapState.selectedStateName}</span>
-          <button
-            type="button"
-            aria-label={`Exit ${mapState.selectedStateName} drill-down`}
-            onClick={onClearState}
-            className="hover:bg-primary/20 -mr-1 rounded p-0.5"
-          >
-            <X className="size-3" />
-          </button>
-        </div>
-      )}
 
       <div className={cn(
         "overflow-hidden transition-[max-width,opacity] duration-200 ease-in-out",
-        showDropdown && stateOptions.length > 0 ? "max-w-[220px] opacity-100" : "max-w-0 opacity-0 pointer-events-none",
+        isStateView && stateOptions.length > 0 ? "max-w-[220px] opacity-100" : "max-w-0 opacity-0 pointer-events-none",
       )}>
         <Select
           items={stateOptions.map((option) => ({ value: option.fips, label: option.name }))}

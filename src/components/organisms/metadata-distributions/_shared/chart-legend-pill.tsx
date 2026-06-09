@@ -40,31 +40,32 @@ export function ChartLegendPill({
       data-active={active ? "true" : undefined}
       className={cn(
         "flex cursor-default items-center gap-1.5 transition-colors",
-        isPill ? "text-[10px]" : "text-xs",
+        isPill ? "text-xs" : "text-[12px]",
         isPill
           ? "rounded-full border px-2 py-0.5"
           : "w-full rounded px-1.5 py-0.5",
-        dimmed
+        dimmed && active
           ? isPill
-            ? "border-border text-muted-foreground opacity-30"
-            : "text-muted-foreground opacity-30"
+            ? "border-border text-foreground/40 opacity-40"
+            : "text-foreground/40 opacity-40"
+          : dimmed
+          ? isPill
+            ? "border-border text-foreground/40 opacity-30"
+            : "text-foreground/40 opacity-30"
           : active
             ? "text-foreground"
             : isPill
-              ? "border-border text-muted-foreground"
-              : "text-muted-foreground",
+              ? "border-border text-foreground/70"
+              : "text-foreground/70",
       )}
       style={
-        active
+        active && !dimmed
           ? isPill
-            ? {
-                borderColor: color,
-                backgroundColor: `color-mix(in srgb, ${color} 12%, transparent)`,
-              }
-            : {
-                backgroundColor: `color-mix(in srgb, ${color} 12%, transparent)`,
-              }
-          : undefined
+            ? { borderColor: color, backgroundColor: `color-mix(in srgb, ${color} 12%, transparent)` }
+            : { backgroundColor: `color-mix(in srgb, ${color} 12%, transparent)` }
+          : active && dimmed
+            ? { backgroundColor: "color-mix(in srgb, var(--foreground) 30%, transparent)" }
+            : undefined
       }
       onMouseEnter={onActivate}
       onMouseLeave={onDeactivate}

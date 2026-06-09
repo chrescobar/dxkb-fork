@@ -147,10 +147,12 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
 
   if (errorMessage || data.antibiotics.length === 0) {
     return (
-      <Card className="relative rounded-lg" size="sm">
+      <Card className="relative rounded-lg flex-1" size="sm">
         <CardContent className="flex flex-1 flex-col">
           <p className="text-sm font-semibold">{title}</p>
-          <ChartStatusMessage errorMessage={errorMessage} />
+          <div className="flex flex-1 items-center justify-center">
+            <ChartStatusMessage errorMessage={errorMessage} />
+          </div>
         </CardContent>
       </Card>
     );
@@ -179,58 +181,59 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
     scale === "percent" ? [0, 25, 50, 75, 100] : yScale.ticks(4);
 
   return (
-    <Card className="relative rounded-lg" size="sm">
+    <Card className="relative rounded-lg flex-1" size="sm">
       <CardContent className="flex flex-1 flex-col">
         <p className="text-sm font-semibold">{title}</p>
-        <nav className="mt-2 flex flex-wrap items-center justify-between gap-4 text-xs">
-          <div className="flex flex-wrap items-center gap-4">
-            <ToggleRow
-              label="Scale"
-              options={[
-                { value: "counts", label: "Counts" },
-                { value: "percent", label: "Percent" },
-              ]}
-              value={scale}
-              onChange={setScale}
-            />
-            <ToggleRow
-              label="Order"
-              options={[
-                { value: "count", label: "Count" },
-                { value: "name", label: "Name" },
-              ]}
-              value={order}
-              onChange={setOrder}
-            />
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {phenotypes.map((p, idx) => {
-              const isActive = activeIdx === idx;
-              const isDimmed = activeIdx !== null && !isActive;
-              return (
-                <ChartLegendPill
-                  key={p}
-                  label={p}
-                  color={colorScale(p)}
-                  active={isActive}
-                  dimmed={isDimmed}
-                  ariaPressed={highlight.pressedFor(idx)}
-                  onActivate={() => highlight.activatePill(idx)}
-                  onDeactivate={highlight.deactivatePill}
-                  onClick={() => highlight.togglePillLock(idx)}
-                />
-              );
-            })}
-          </div>
-        </nav>
-        <div className="min-w-0 overflow-hidden pt-2">
-          <svg
-            ref={svgRef}
-            viewBox={`0 0 ${amrChartWidth} ${amrChartHeight}`}
-            role="img"
-            aria-label={`${title} distribution`}
-            className="w-full"
-          >
+        <div className="mx-auto w-full max-w-[920px]">
+          <nav className="mt-2 flex flex-wrap items-center justify-between gap-4 text-xs">
+            <div className="flex flex-wrap items-center gap-4">
+              <ToggleRow
+                label="Scale"
+                options={[
+                  { value: "counts", label: "Counts" },
+                  { value: "percent", label: "Percent" },
+                ]}
+                value={scale}
+                onChange={setScale}
+              />
+              <ToggleRow
+                label="Order"
+                options={[
+                  { value: "count", label: "Count" },
+                  { value: "name", label: "Name" },
+                ]}
+                value={order}
+                onChange={setOrder}
+              />
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {phenotypes.map((p, idx) => {
+                const isActive = activeIdx === idx;
+                const isDimmed = activeIdx !== null && !isActive;
+                return (
+                  <ChartLegendPill
+                    key={p}
+                    label={p}
+                    color={colorScale(p)}
+                    active={isActive}
+                    dimmed={isDimmed}
+                    ariaPressed={highlight.pressedFor(idx)}
+                    onActivate={() => highlight.activatePill(idx)}
+                    onDeactivate={highlight.deactivatePill}
+                    onClick={() => highlight.togglePillLock(idx)}
+                  />
+                );
+              })}
+            </div>
+          </nav>
+          <div className="overflow-x-auto pt-2">
+            <svg
+              ref={svgRef}
+              viewBox={`0 0 ${amrChartWidth} ${amrChartHeight}`}
+              role="img"
+              aria-label={`${title} distribution`}
+              className="w-full min-w-[560px]"
+            >
             <Group left={chartMarginLeft} top={chartMarginTop}>
               <YAxisTicks ticks={yTicks} yScale={yScale} innerWidth={amrInnerWidth} tickClassName="animate-in fade-in duration-200" />
 
@@ -362,7 +365,8 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
                 );
               })}
             </Group>
-          </svg>
+            </svg>
+          </div>
         </div>
 
       </CardContent>

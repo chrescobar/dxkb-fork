@@ -130,11 +130,9 @@ export function GeoDistributionClient({ data, accent }: GeoDistributionClientPro
       if (view === "world") {
         return { view: "world", selectedStateFips: null, selectedStateName: null };
       }
-      // view === "state" — keep existing selection if present, else stay on us
-      if (prev.selectedStateFips) {
-        return { ...prev, view: "state" };
-      }
-      return prev;
+      // view === "state" — default to Illinois if no state is already selected
+      if (prev.selectedStateFips) return { ...prev, view: "state" };
+      return { view: "state", selectedStateFips: "17", selectedStateName: "Illinois" };
     });
     hideTooltip();
     choroplethRef.current?.reset();
@@ -148,12 +146,6 @@ export function GeoDistributionClient({ data, accent }: GeoDistributionClientPro
     },
     [hideTooltip],
   );
-
-  const handleClearState = useCallback(() => {
-    setMapState({ view: "us", selectedStateFips: null, selectedStateName: null });
-    hideTooltip();
-    choroplethRef.current?.reset();
-  }, [hideTooltip]);
 
   const handleHoverChange = useCallback(
     (payload: HoverPayload | null, event: ReactPointerEvent<SVGPathElement>) => {
@@ -193,7 +185,6 @@ export function GeoDistributionClient({ data, accent }: GeoDistributionClientPro
           stateOptions={stateOptions}
           onViewChange={handleViewChange}
           onSelectState={handleSelectState}
-          onClearState={handleClearState}
         />
       </CardHeader>
       <CardContent className="relative">

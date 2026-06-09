@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+import { animate } from "framer-motion";
 
 import { scaleOrdinal } from "@visx/scale";
 import { useTooltip } from "@visx/tooltip";
@@ -193,28 +195,145 @@ function buildArcData(
   });
 }
 
+interface AnimatedArcDatum extends ArcDatum {
+  opacity: number;
+}
+
+function interpolateArcData(prev: AnimatedArcDatum[], target: ArcDatum[], t: number): AnimatedArcDatum[] {
+  const result: AnimatedArcDatum[] = [];
+  for (const toArc of target) {
+    const fromArc = prev.find((a) => a.slice.id === toArc.slice.id);
+    if (fromArc) {
+      const s = fromArc.startAngle + (toArc.startAngle - fromArc.startAngle) * t;
+      const e = fromArc.endAngle + (toArc.endAngle - fromArc.endAngle) * t;
+      result.push({ ...toArc, startAngle: s, endAngle: e, pathD: e - s > 0.001 ? arcPath(innerRadius, outerRadius, s, e) : "M 0 0", opacity: 1 });
+    } else {
+      const mid = (toArc.startAngle + toArc.endAngle) / 2;
+      const s = mid + (toArc.startAngle - mid) * t;
+      const e = mid + (toArc.endAngle - mid) * t;
+      result.push({ ...toArc, startAngle: s, endAngle: e, pathD: e - s > 0.001 ? arcPath(innerRadius, outerRadius, s, e) : "M 0 0", opacity: t });
+    }
+  }
+  for (const fromArc of prev) {
+    if (!target.find((a) => a.slice.id === fromArc.slice.id)) {
+      const mid = (fromArc.startAngle + fromArc.endAngle) / 2;
+      const s = fromArc.startAngle + (mid - fromArc.startAngle) * t;
+      const e = fromArc.endAngle + (mid - fromArc.endAngle) * t;
+      result.push({ ...fromArc, startAngle: s, endAngle: e, pathD: e - s > 0.001 ? arcPath(innerRadius, outerRadius, s, e) : "M 0 0", opacity: 1 - t });
+    }
+  }
+  return result;
+}
+
+interface ArcInterp { id: string; fromStart: number; toStart: number; fromEnd: number; toEnd: number; fromOpacity: number; toOpacity: number; }
+
+function buildInterpData(prev: AnimatedArcDatum[], target: ArcDatum[]): ArcInterp[] {
+  const result: ArcInterp[] = [];
+  for (const toArc of target) {
+    const fromArc = prev.find((a) => a.slice.id === toArc.slice.id);
+    if (fromArc) {
+      result.push({ id: toArc.slice.id, fromStart: fromArc.startAngle, toStart: toArc.startAngle, fromEnd: fromArc.endAngle, toEnd: toArc.endAngle, fromOpacity: fromArc.opacity, toOpacity: 1 });
+    } else {
+      const mid = (toArc.startAngle + toArc.endAngle) / 2;
+      result.push({ id: toArc.slice.id, fromStart: mid, toStart: toArc.startAngle, fromEnd: mid, toEnd: toArc.endAngle, fromOpacity: 0, toOpacity: 1 });
+    }
+  }
+  for (const fromArc of prev) {
+    if (!target.find((a) => a.slice.id === fromArc.slice.id)) {
+      const mid = (fromArc.startAngle + fromArc.endAngle) / 2;
+      result.push({ id: fromArc.slice.id, fromStart: fromArc.startAngle, toStart: mid, fromEnd: fromArc.endAngle, toEnd: mid, fromOpacity: fromArc.opacity, toOpacity: 0 });
+    }
+  }
+  return result;
+}
+
 export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage }: DonutChartProps) {
   const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
+  const [hiddenIds, setHiddenIds] = useState<ReadonlySet<string>>(new Set());
+
   const activeData: DonutDatum[] = tabs
     ? (tabs[activeTabIndex]?.data ?? [])
     : (data ?? []);
-  const slices = chartData(activeData);
-  const colorScale = scaleOrdinal<string, string>({
-    domain: slices.map((datum) => datum.id),
-    range: donutPalette,
-  });
-  const arcData = buildArcData(slices, (id) => colorScale(id));
-  const total = slices.reduce((sum, d) => sum + d.value, 0);
+
+  const slices = useMemo(() => chartData(activeData), [activeData]);
+  const colorScale = useMemo(
+    () => scaleOrdinal<string, string>({ domain: slices.map((d) => d.id), range: donutPalette }),
+    [slices],
+  );
+  const visibleSlices = useMemo(
+    () => slices.filter((s) => !hiddenIds.has(s.id)),
+    [slices, hiddenIds],
+  );
+  const arcData = useMemo(
+    () => buildArcData(visibleSlices, (id) => colorScale(id)),
+    [visibleSlices, colorScale],
+  );
+  const total = visibleSlices.reduce((sum, d) => sum + d.value, 0);
+
+  const [displayedArcs, setDisplayedArcs] = useState<AnimatedArcDatum[]>([]);
+  const prevArcsRef = useRef<AnimatedArcDatum[]>([]);
+  const pathRefs = useRef(new Map<string, SVGPathElement>());
+  const animRef = useRef<ReturnType<typeof animate> | null>(null);
+
+  useEffect(() => {
+    animRef.current?.stop();
+    const prev = prevArcsRef.current;
+    const target = arcData;
+    const interp = buildInterpData(prev, target);
+    setDisplayedArcs(interpolateArcData(prev, target, 0));
+    let raf1: number, raf2: number;
+    raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        animRef.current = animate(0, 1, {
+          duration: 0.5,
+          ease: [0.22, 1, 0.36, 1],
+          onUpdate(t) {
+            for (const arc of interp) {
+              const el = pathRefs.current.get(arc.id);
+              if (!el) continue;
+              const s = arc.fromStart + (arc.toStart - arc.fromStart) * t;
+              const e = arc.fromEnd + (arc.toEnd - arc.fromEnd) * t;
+              el.setAttribute("d", e - s > 0.001 ? arcPath(innerRadius, outerRadius, s, e) : "M 0 0");
+              el.style.opacity = String(arc.fromOpacity + (arc.toOpacity - arc.fromOpacity) * t);
+            }
+          },
+          onComplete() {
+            const final = target.map((a) => ({ ...a, opacity: 1 }));
+            setDisplayedArcs(final);
+            prevArcsRef.current = final;
+          },
+        });
+      });
+    });
+    return () => { cancelAnimationFrame(raf1); cancelAnimationFrame(raf2); animRef.current?.stop(); };
+  }, [arcData]);
 
   const svgRef = useRef<SVGSVGElement>(null);
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const activeId = hoveredId;
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
     useTooltip<DonutDatum & { pct: number }>();
 
   const handleTabChange = (index: number) => {
     setActiveTabIndex(index);
-    setActiveId(null);
+    setHoveredId(null);
+    setHiddenIds(new Set());
     hideTooltip();
+  };
+
+  const toggleSlice = (id: string) => {
+    hideTooltip();
+    setHiddenIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+        setHoveredId(id); // keep cursor active immediately after unhiding
+      } else {
+        next.add(id);
+        setHoveredId(null);
+      }
+      return next;
+    });
   };
 
   const tabsScrollRef = useRef<HTMLDivElement>(null);
@@ -245,13 +364,24 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
     tabsScrollRef.current?.scrollBy({ left: delta, behavior: "smooth" });
   };
 
+  const deactivateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const activateHover = (id: string) => {
+    if (deactivateTimer.current) {
+      clearTimeout(deactivateTimer.current);
+      deactivateTimer.current = null;
+    }
+    setHoveredId(id);
+  };
+
   const deactivate = () => {
-    setActiveId(null);
-    hideTooltip();
+    deactivateTimer.current = setTimeout(() => {
+      setHoveredId(null);
+      hideTooltip();
+    }, 40);
   };
 
   const showTooltipForArc = (arc: ArcDatum, clientX: number, clientY: number) => {
-    setActiveId(arc.slice.id);
     showTooltip({
       tooltipData: {
         label: arc.slice.label,
@@ -293,6 +423,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
       if (a < arc.startAngle) a += Math.PI * 2;
       if (a >= arc.startAngle && a <= arc.endAngle) {
         showTooltipForArc(arc, event.clientX, event.clientY);
+        activateHover(arc.slice.id);
         return;
       }
     }
@@ -411,47 +542,29 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
               style={{ overflow: "visible" }}
             >
               <g transform={`translate(${chartCenter},${chartCenter})`}>
-                {arcData.map((arc, index) => {
+                {displayedArcs.map((arc) => {
                   const isActive = activeId === arc.slice.id;
-                  const isDimmed = activeId !== null && !isActive;
                   const accessibleLabel = `${arc.slice.label}: ${numberFormatter.format(arc.slice.value)}`;
-
                   return (
                     <g
                       key={arc.slice.id}
                       style={{
-                        transform: isActive
-                          ? `translate(${arc.popX}px, ${arc.popY}px)`
-                          : undefined,
+                        transform: isActive ? `translate(${arc.popX}px, ${arc.popY}px)` : undefined,
                         transition: "transform 180ms ease-out",
                       }}
                     >
-                      {/*
-                       * Inner <g> owns the entrance scale animation.
-                       * Keeping it separate from the pop translate <g> above avoids
-                       * the CSS animation overriding the inline transform on hover.
-                       */}
-                      <g
-                        style={{
-                          transformOrigin: "0 0",
-                          animation: `donut-slice-in 0.38s ease-out ${index * 0.07}s both`,
-                        }}
+                      <path
+                        ref={(el) => { if (el) pathRefs.current.set(arc.slice.id, el); else pathRefs.current.delete(arc.slice.id); }}
+                        suppressHydrationWarning
+                        d={arc.pathD}
+                        fill={arc.color}
+                        stroke={arc.color}
+                        strokeWidth={0.5}
+                        aria-label={accessibleLabel}
+                        style={{ opacity: arc.opacity }}
                       >
-                        <path
-                          suppressHydrationWarning
-                          d={arc.pathD}
-                          fill={arc.color}
-                          stroke={arc.color}
-                          strokeWidth={0.5}
-                          aria-label={accessibleLabel}
-                          style={{
-                            opacity: isDimmed ? 0.2 : 1,
-                            transition: "opacity 160ms ease",
-                          }}
-                        >
-                          <title>{accessibleLabel}</title>
-                        </path>
-                      </g>
+                        <title>{accessibleLabel}</title>
+                      </path>
                     </g>
                   );
                 })}
@@ -474,50 +587,52 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
                 className="flex min-w-0 flex-1 flex-col justify-center gap-0.5"
                 style={{ animation: "donut-legend-up 0.4s 0.4s ease-out both" }}
               >
-                {arcData.map((arc) => (
-                  <ChartLegendPill
-                    key={arc.slice.id}
-                    label={arc.slice.label}
-                    color={arc.color}
-                    active={activeId === arc.slice.id}
-                    variant="row"
-                    ariaLabel={`${arc.slice.label}: ${numberFormatter.format(arc.slice.value)}`}
-                    onActivate={() => setActiveId(arc.slice.id)}
-                    onDeactivate={() => setActiveId(null)}
-                    onFocus={(event) => {
-                      const rect = event.currentTarget.getBoundingClientRect();
-                      showTooltipForArc(arc, rect.right, rect.top);
-                    }}
-                  >
-                    <span className="min-w-0 flex-1 truncate text-left">
-                      {arc.slice.label}
-                    </span>
-                    <span className="tabular-nums">
-                      {numberFormatter.format(arc.slice.value)}
-                    </span>
-                  </ChartLegendPill>
-                ))}
+                {slices.map((slice) => {
+                  const isHidden = hiddenIds.has(slice.id);
+                  return (
+                    <ChartLegendPill
+                      key={slice.id}
+                      label={slice.label}
+                      color={colorScale(slice.id)}
+                      active={activeId === slice.id}
+                      dimmed={isHidden}
+                      variant="row"
+                      ariaLabel={`${slice.label}: ${numberFormatter.format(slice.value)}`}
+                      onActivate={() => activateHover(slice.id)}
+                      onDeactivate={deactivate}
+                      onClick={() => toggleSlice(slice.id)}
+                    >
+                      <span className="min-w-0 flex-1 truncate text-left">
+                        {slice.label}
+                      </span>
+                      <span className="tabular-nums">
+                        {numberFormatter.format(slice.value)}
+                      </span>
+                    </ChartLegendPill>
+                  );
+                })}
               </div>
             ) : (
               <div
                 className="flex flex-wrap justify-center gap-1.5"
                 style={{ animation: "donut-legend-up 0.4s 0.4s ease-out both" }}
               >
-                {arcData.map((arc) => (
-                  <ChartLegendPill
-                    key={arc.slice.id}
-                    label={arc.slice.label}
-                    color={arc.color}
-                    active={activeId === arc.slice.id}
-                    ariaLabel={`${arc.slice.label}: ${numberFormatter.format(arc.slice.value)}`}
-                    onActivate={() => setActiveId(arc.slice.id)}
-                    onDeactivate={() => setActiveId(null)}
-                    onFocus={(event) => {
-                      const rect = event.currentTarget.getBoundingClientRect();
-                      showTooltipForArc(arc, rect.right, rect.top);
-                    }}
-                  />
-                ))}
+                {slices.map((slice) => {
+                  const isHidden = hiddenIds.has(slice.id);
+                  return (
+                    <ChartLegendPill
+                      key={slice.id}
+                      label={slice.label}
+                      color={colorScale(slice.id)}
+                      active={activeId === slice.id}
+                      dimmed={isHidden}
+                      ariaLabel={`${slice.label}: ${numberFormatter.format(slice.value)}`}
+                      onActivate={() => activateHover(slice.id)}
+                      onDeactivate={deactivate}
+                      onClick={() => toggleSlice(slice.id)}
+                    />
+                  );
+                })}
               </div>
             )}
           </div>

@@ -39,3 +39,7 @@ export interface OrganismLandingConfig {
   showAmr?: boolean;
   defaultView?: OrganismViewKey;
 }
+
+// Sentinel that can be placed in metadataFields to position the Taxonomic
+// Distribution chart within the grid. Without it the chart renders last.
+export const taxonomicDistributionSentinel = "_taxonomic_distribution";

@@ -241,6 +241,26 @@ const sharedFacetFixtures: Record<string, (string | number)[]> = {
     "Picornaviridae",
     18920,
   ],
+  sequencing_centers: [
+    "SC",
+    353,
+    "Centers for Disease Control and Prevention",
+    264,
+    "University of Helsinki",
+    245,
+    "University of California at Davis",
+    154,
+    "FDA/CFSAN",
+    125,
+    "Swansea University",
+    118,
+    "Michigan State University",
+    94,
+    "US Food and Drug Administration",
+    88,
+    "USDA FSIS",
+    78,
+  ],
 };
 
 function facetFieldFromRequest(request: NextRequest): string | null {

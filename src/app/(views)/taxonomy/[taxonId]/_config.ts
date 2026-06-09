@@ -1,13 +1,15 @@
+import { taxonomicDistributionSentinel } from "@/components/organisms/types";
 import type { OrganismLandingConfig } from "@/components/organisms/types";
 import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 
 const defaultMetadataFields = [
+  "host_common_name",
   "host_group",
   "isolation_country",
-  "collection_year",
-  "host_common_name",
   "isolation_source",
-  "serovar",
+  taxonomicDistributionSentinel,
+  "sequencing_centers",
+  "collection_year",
 ];
 
 function accentForLineage(

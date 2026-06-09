@@ -17,12 +17,6 @@ interface TaxonomyPageProps {
   }>;
 }
 
-// Taxa that publish a serovar pivot in BV-BRC SOLR. Other taxa get a blank
-// chart whose only content is "No distribution data was returned."
-const serotypeTaxa = new Set<number>([
-  590, // Salmonella
-]);
-
 export default async function TaxonomyPage({ params, searchParams }: TaxonomyPageProps) {
   const { taxonId: rawTaxonId } = await params;
   const taxonId = Number(rawTaxonId);
@@ -44,8 +38,7 @@ export default async function TaxonomyPage({ params, searchParams }: TaxonomyPag
     throw err;
   }
   const config = buildTaxonomyConfig(taxonId, taxon);
-  const showSerotype = serotypeTaxa.has(taxonId);
-  const navItems = buildTaxonomyNavItems(config, showSerotype, taxon);
+  const navItems = buildTaxonomyNavItems(config, taxon);
 
   return (
     <OrganismLandingShell

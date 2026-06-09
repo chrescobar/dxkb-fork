@@ -15,11 +15,10 @@ import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 interface OverviewViewProps {
   config: OrganismLandingConfig;
   taxon: OrganismTaxonomy | null;
-  showSerotype?: boolean;
   showAmr?: boolean;
 }
 
-export function makeOverviewView({ config, taxon, showSerotype, showAmr }: OverviewViewProps) {
+export function makeOverviewView({ config, taxon, showAmr }: OverviewViewProps) {
   async function TaxonomySummaryBoundary() {
     return withSectionError(() => TaxonomySummary({ taxonId: config.taxonId, taxon }));
   }
@@ -29,7 +28,6 @@ export function makeOverviewView({ config, taxon, showSerotype, showAmr }: Overv
       MetadataDistributions({
         taxonId: config.taxonId,
         fields: config.metadataFields,
-        showSerotype,
         showAmr,
       }),
     );

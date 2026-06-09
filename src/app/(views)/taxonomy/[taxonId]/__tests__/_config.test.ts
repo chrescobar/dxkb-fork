@@ -1,3 +1,4 @@
+import { taxonomicDistributionSentinel } from "@/components/organisms/types";
 import { buildTaxonomyConfig } from "../_config";
 
 describe("buildTaxonomyConfig", () => {
@@ -17,12 +18,13 @@ describe("buildTaxonomyConfig", () => {
       showAmr: true,
       defaultView: "overview",
       metadataFields: [
+        "host_common_name",
         "host_group",
         "isolation_country",
-        "collection_year",
-        "host_common_name",
         "isolation_source",
-        "serovar",
+        taxonomicDistributionSentinel,
+        "sequencing_centers",
+        "collection_year",
       ],
     });
   });

@@ -10,13 +10,13 @@ interface ChartStatusMessageProps {
 export function ChartStatusMessage({ errorMessage }: ChartStatusMessageProps) {
   if (errorMessage) {
     return (
-      <p className="text-destructive mt-1 text-sm">
+      <p className="text-destructive text-sm">
         Could not load: {errorMessage}
       </p>
     );
   }
   return (
-    <p className="text-muted-foreground mt-1 text-sm">
+    <p className="text-muted-foreground text-sm">
       No distribution data was returned.
     </p>
   );

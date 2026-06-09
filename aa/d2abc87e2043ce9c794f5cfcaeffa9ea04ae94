@@ -1,0 +1,23 @@
+e2e/tests/taxonomy-map.spec.ts
+  s_bf39507f9913fa::t_6c658331cbbe7c 78,81
+  s_bf39507f9913fa::t_dcba4bf8da80ac 34-36
+src/components/organisms/geo-distribution/map-controls.tsx
+  s_bf39507f9913fa::t_5ebe3547bec414 79-92
+  s_bf39507f9913fa::t_a0d7bf3c3f7791 3-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "aad2abc87e2043ce9c794f5cfcaeffa9ea04ae94",
+  "prompts": {},
+  "sessions": {
+    "s_bf39507f9913fa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6a32c73d-ce47-4a19-803a-7250b4431288",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

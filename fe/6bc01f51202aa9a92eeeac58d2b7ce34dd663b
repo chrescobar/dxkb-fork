@@ -1,0 +1,42 @@
+e2e/tests/taxonomy-map.spec.ts
+  s_76a09c72f7dd52::t_746a9e9d333b5e 91
+  s_76a09c72f7dd52::t_255f6e97ee683f 76-77,80-83
+src/app/(views)/taxonomy/[taxonId]/__tests__/page.test.tsx
+  s_56ca911283c03e::t_97e86a9509c94c 6-12
+src/components/organisms/reference-genomes/reference-genomes-client.tsx
+  s_7b93594d23347d::t_7fee176d7ec466 39
+src/components/organisms/taxonomy-summary/__tests__/taxonomy-summary.test.tsx
+  s_76a09c72f7dd52::t_3f8f55ce80fd0d 39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "fe6bc01f51202aa9a92eeeac58d2b7ce34dd663b",
+  "prompts": {},
+  "sessions": {
+    "s_56ca911283c03e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f493e76f-f8cf-420e-a5bf-7e355fec4510",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_76a09c72f7dd52": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7d19d2dd-946b-490a-a842-1a325b44dc62",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_7b93594d23347d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ff58c9f-d380-4de9-94e4-f5ffd81c88a7",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

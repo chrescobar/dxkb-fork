@@ -3,7 +3,13 @@ import { render, screen } from "@testing-library/react";
 import TaxonomyPage from "../page";
 import { TaxonomyNotFoundError } from "@/lib/services/organisms/taxonomy";
 
-const fetchOrganismTaxonomyMock = vi.fn();
+const { fetchOrganismTaxonomyMock, metadataSpy, notFoundSpy } = vi.hoisted(() => ({
+  fetchOrganismTaxonomyMock: vi.fn(),
+  metadataSpy: vi.fn(),
+  notFoundSpy: vi.fn(() => {
+    throw new Error("NEXT_NOT_FOUND");
+  }),
+}));
 
 vi.mock("@/lib/services/organisms/taxonomy", async () => {
   const actual =
@@ -38,7 +44,6 @@ beforeEach(() => {
   fetchOrganismTaxonomyMock.mockResolvedValue(bacterialTaxon);
 });
 
-const metadataSpy = vi.fn();
 vi.mock("@/components/organisms/metadata-distributions/metadata-distributions", () => ({
   MetadataDistributions: (props: Record<string, unknown>) => {
     metadataSpy(props);
@@ -46,9 +51,6 @@ vi.mock("@/components/organisms/metadata-distributions/metadata-distributions", 
   },
 }));
 
-const notFoundSpy = vi.fn(() => {
-  throw new Error("NEXT_NOT_FOUND");
-});
 vi.mock("next/navigation", () => ({
   notFound: () => notFoundSpy(),
   useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn() }),

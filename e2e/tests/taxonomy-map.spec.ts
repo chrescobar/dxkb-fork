@@ -73,10 +73,14 @@ test.describe("taxonomy geographic distribution map", () => {
     expect(fetchedTopos.some((url) => url.endsWith("/maps/counties-10m.json"))).toBe(false);
 
     // Drill into a state — should trigger the counties fetch.
+    // Use expect.poll on the already-registered response listener instead of waitForResponse
+    // to avoid a race where the local static file responds before the waiter is attached.
     await mapSection.getByRole("combobox").click();
     await page.getByRole("option", { name: "Wyoming" }).click();
-    await page.waitForResponse((response) => response.url().endsWith("/maps/counties-10m.json"));
-    expect(fetchedTopos.some((url) => url.endsWith("/maps/counties-10m.json"))).toBe(true);
+    await expect.poll(
+      () => fetchedTopos.some((url) => url.endsWith("/maps/counties-10m.json")),
+      { timeout: 30_000 },
+    ).toBe(true);
   });
 
   test("breadcrumb ancestor links navigate to the corresponding /taxonomy/<id>", async ({ page }) => {
@@ -84,7 +88,7 @@ test.describe("taxonomy geographic distribution map", () => {
 
     // The taxon-breadcrumb shows ancestors as links. From Brucella, the bvbrc-website
     // fixture exposes a Bacteria ancestor with id=2.
-    const bacteriaLink = page.getByRole("link", { name: "Bacteria" });
+    const bacteriaLink = page.getByRole("link", { name: "Bacteria", exact: true });
     await expect(bacteriaLink).toBeVisible();
     await expect(bacteriaLink).toHaveAttribute("href", "/taxonomy/2");
 

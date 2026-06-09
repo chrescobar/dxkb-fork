@@ -36,7 +36,7 @@ describe("TaxonomySummary", () => {
     await renderServer(TaxonomySummary({ taxonId: 234, taxon: brucellaTaxon }));
 
     expect(screen.getByText("Brucella")).toBeInTheDocument();
-    expect(screen.getByText("genus")).toBeInTheDocument();
+    expect(screen.getByText("Genus")).toBeInTheDocument();
     expect(screen.getByText("1,909")).toBeInTheDocument();
     expect(screen.getByText("1,000,000")).toBeInTheDocument();
     expect(screen.getByText("50")).toBeInTheDocument();

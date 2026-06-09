@@ -36,6 +36,7 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
   useEffect(() => {
     const node = parentRef.current;
     if (!node) return;
+    if (typeof ResizeObserver === "undefined") return;
     const ro = new ResizeObserver(([entry]) => {
       const h = entry?.contentRect?.height;
       if (h && h > 0) setContainerHeight(h);

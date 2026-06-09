@@ -1,5 +1,7 @@
 "use client";
 
+import { X } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -74,6 +76,20 @@ export function MapControls({
           </SelectContent>
         </Select>
       </div>
+
+      {isStateView && mapState.selectedStateName && (
+        <Button
+          type="button"
+          variant="secondary"
+          size="xs"
+          onClick={() => onViewChange("us")}
+          aria-label={`Exit ${mapState.selectedStateName}`}
+          className="gap-1.5 text-xs"
+        >
+          <span>{mapState.selectedStateName}</span>
+          <X className="h-3 w-3 shrink-0" />
+        </Button>
+      )}
     </div>
   );
 }

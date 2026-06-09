@@ -31,7 +31,9 @@ test.describe("taxonomy geographic distribution map", () => {
     await expect.poll(async () => statePaths.count(), { timeout: 10_000 }).toBeGreaterThan(50);
     const baselineCount = await statePaths.count();
 
-    // Drill into Wyoming via the dropdown (most resilient to TopoJSON path ordering)
+    // Drill into Wyoming via the dropdown (most resilient to TopoJSON path ordering).
+    // Switch to State view first so the combobox becomes interactive.
+    await mapSection.getByRole("button", { name: "State" }).click();
     await mapSection.getByRole("combobox").click();
     await page.getByRole("option", { name: "Wyoming" }).click();
 
@@ -73,8 +75,10 @@ test.describe("taxonomy geographic distribution map", () => {
     expect(fetchedTopos.some((url) => url.endsWith("/maps/counties-10m.json"))).toBe(false);
 
     // Drill into a state — should trigger the counties fetch.
+    // Switch to State view first so the combobox becomes interactive.
     // Use expect.poll on the already-registered response listener instead of waitForResponse
     // to avoid a race where the local static file responds before the waiter is attached.
+    await mapSection.getByRole("button", { name: "State" }).click();
     await mapSection.getByRole("combobox").click();
     await page.getByRole("option", { name: "Wyoming" }).click();
     await expect.poll(

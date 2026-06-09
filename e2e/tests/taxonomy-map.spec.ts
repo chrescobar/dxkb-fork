@@ -13,9 +13,11 @@ test.describe("taxonomy geographic distribution map", () => {
   test("renders the US choropleth, drills into a state, and lazy-loads the world view", async ({ page }) => {
     await page.goto("/taxonomy/234");
 
-    // Section heading and toolbar are visible
+    // Card heading and toolbar are visible.
+    // Use [data-slot='card'] instead of 'section' because 'section' matches nested
+    // layout ancestors that also contain this heading, causing strict-mode violations.
     const mapSection = page
-      .locator("section")
+      .locator("[data-slot='card']")
       .filter({ has: page.getByRole("heading", { level: 2, name: "Geographic Distribution" }) });
     await expect(mapSection.getByRole("heading", { level: 2, name: "Geographic Distribution" })).toBeVisible();
     await expect(mapSection.getByRole("button", { name: "World" })).toBeVisible();
@@ -33,7 +35,7 @@ test.describe("taxonomy geographic distribution map", () => {
 
     // Drill into Wyoming via the dropdown (most resilient to TopoJSON path ordering).
     // Switch to State view first so the combobox becomes interactive.
-    await mapSection.getByRole("button", { name: "State" }).click();
+    await mapSection.getByRole("button", { name: "State", exact: true }).click();
     await mapSection.getByRole("combobox").click();
     await page.getByRole("option", { name: "Wyoming" }).click();
 
@@ -65,7 +67,7 @@ test.describe("taxonomy geographic distribution map", () => {
 
     await page.goto("/taxonomy/234");
     const mapSection = page
-      .locator("section")
+      .locator("[data-slot='card']")
       .filter({ has: page.getByRole("heading", { level: 2, name: "Geographic Distribution" }) });
     await expect(mapSection.getByRole("img", { name: "Genome distribution map" })).toBeVisible();
 
@@ -78,7 +80,7 @@ test.describe("taxonomy geographic distribution map", () => {
     // Switch to State view first so the combobox becomes interactive.
     // Use expect.poll on the already-registered response listener instead of waitForResponse
     // to avoid a race where the local static file responds before the waiter is attached.
-    await mapSection.getByRole("button", { name: "State" }).click();
+    await mapSection.getByRole("button", { name: "State", exact: true }).click();
     await mapSection.getByRole("combobox").click();
     await page.getByRole("option", { name: "Wyoming" }).click();
     await expect.poll(

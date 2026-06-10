@@ -1,0 +1,34 @@
+src/lib/forms/(metagenomics)/taxonomic-classification/taxonomic-classification-form-schema.ts
+  s_0d580176ec0ea8::t_315aa922146046 89,98,106,118,126
+src/lib/forms/(viral-tools)/viral-assembly/viral-assembly-form-schema.ts
+  s_0d580176ec0ea8::t_f6524db825556b 69,75,81
+src/lib/forms/(metagenomics)/metagenomic-binning/metagenomic-binning-form-schema.ts
+  s_0d580176ec0ea8::t_60a3264c621ab1 63,73
+src/lib/forms/(viral-tools)/subspecies-classification/subspecies-classification-form-schema.ts
+  s_0d580176ec0ea8::t_1f4d49542f2e15 62,72
+src/lib/forms/(utilities)/fastq-utilities/fastq-utilities-form-schema.ts
+  s_0d580176ec0ea8::t_157e65eebfcd90 64,74
+src/lib/forms/(viral-tools)/sars-cov2-genome-analysis/sars-cov2-genome-analysis-form-schema.ts
+  s_0d580176ec0ea8::t_eb1e77476783b4 143,151,159
+  s_0d580176ec0ea8::t_79b9b17d3cd7df 40
+src/lib/forms/(viral-tools)/influenza-ha-subtype/influenza-ha-subtype-form-schema.ts
+  s_0d580176ec0ea8::t_9938dbaed589ca 26,34,42
+src/lib/forms/(metagenomics)/metagenomic-read-mapping/metagenomic-read-mapping-form-schema.ts
+  s_0d580176ec0ea8::t_00f4ec3b69975b 41,51,61,71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "e16885633504190441fea12dc13a2649a0018e14",
+  "prompts": {},
+  "sessions": {
+    "s_0d580176ec0ea8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ca49035-a1d3-487e-9d2f-5fd0bae8a7fb",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

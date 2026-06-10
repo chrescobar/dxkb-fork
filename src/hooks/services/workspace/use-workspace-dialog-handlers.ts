@@ -207,19 +207,19 @@ export function useWorkspaceDialogHandlers(options: UseWorkspaceDialogHandlersOp
     },
   });
 
-  const handleConfirmDelete = async () => {
-    if (activeDialog?.type !== "delete") return;
+  const handleConfirmDelete = (): Promise<void> => {
+    if (activeDialog?.type !== "delete") return Promise.resolve();
     const items = activeDialog.items;
     if (items.length === 0) {
       dispatch({ type: "CLOSE" });
-      return;
+      return Promise.resolve();
     }
     const paths = items
       .map((item) => item.path)
       .filter((p): p is string => Boolean(p));
     if (paths.length === 0) {
       dispatch({ type: "CLOSE" });
-      return;
+      return Promise.resolve();
     }
     const protectedPaths = findProtectedFolders(paths);
     if (protectedPaths.length > 0) {
@@ -227,9 +227,10 @@ export function useWorkspaceDialogHandlers(options: UseWorkspaceDialogHandlersOp
         description: formatProtectedFolderToastDescription(protectedPaths),
       });
       dispatch({ type: "CLOSE" });
-      return;
+      return Promise.resolve();
     }
     deleteMutation.mutate(items);
+    return Promise.resolve();
   };
 
   const handleCopyConfirm = async (destinationPath: string, filenameOverride?: string) => {
@@ -280,27 +281,30 @@ export function useWorkspaceDialogHandlers(options: UseWorkspaceDialogHandlersOp
     copyMutation.mutate({ objects, isMove, firstDestName, destinationPath });
   };
 
-  const handleCreateFolder = async (folderName: string) => {
+  const handleCreateFolder = (folderName: string): Promise<void> => {
     const name = folderName.trim();
-    if (!name) return;
+    if (!name) return Promise.resolve();
     const safeName = sanitizePathSegment(name);
-    if (!safeName) return;
+    if (!safeName) return Promise.resolve();
     createFolderMutation.mutate(safeName);
+    return Promise.resolve();
   };
 
-  const handleCreateWorkspace = async (workspaceName: string) => {
+  const handleCreateWorkspace = (workspaceName: string): Promise<void> => {
     const name = workspaceName.trim();
-    if (!name) return;
+    if (!name) return Promise.resolve();
     const safeName = sanitizePathSegment(name);
-    if (!safeName) return;
+    if (!safeName) return Promise.resolve();
     createWorkspaceMutation.mutate(safeName);
+    return Promise.resolve();
   };
 
-  const handleEditTypeConfirm = async (newType: string) => {
-    if (activeDialog?.type !== "editType") return;
+  const handleEditTypeConfirm = (newType: string): Promise<void> => {
+    if (activeDialog?.type !== "editType") return Promise.resolve();
     const item = activeDialog.item;
-    if (!item?.path) return;
+    if (!item?.path) return Promise.resolve();
     editTypeMutation.mutate({ path: item.path, newType, itemName: item.name });
+    return Promise.resolve();
   };
 
   const isDialogLoading =

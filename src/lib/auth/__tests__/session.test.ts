@@ -53,7 +53,7 @@ describe("serverAuthenticatedFetch", () => {
 
     let capturedRequest: { url: string; headers: Headers } | undefined;
     server.use(
-      http.get("https://api.example.com/data", async ({ request }) => {
+      http.get("https://api.example.com/data", ({ request }) => {
         capturedRequest = {
           url: request.url,
           headers: request.headers,

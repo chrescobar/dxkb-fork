@@ -100,7 +100,7 @@ describe("AppService", () => {
       server.use(
         http.get(
           "https://p3.theseed.org/services/app_service/task_info/123/stdout",
-          async ({ request }) => {
+          ({ request }) => {
             capturedRequest = {
               url: request.url,
               headers: request.headers,

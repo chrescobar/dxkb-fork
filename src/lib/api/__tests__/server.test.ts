@@ -137,8 +137,8 @@ describe("withAuth", () => {
       return undefined;
     });
 
-    const handler = withAuth(async (_req, { token }) => {
-      return NextResponse.json({ received: token });
+    const handler = withAuth((_req, { token }) => {
+      return Promise.resolve(NextResponse.json({ received: token }));
     });
 
     const response = await handler(makeRequest(), {});
@@ -149,8 +149,8 @@ describe("withAuth", () => {
   it("returns 401 when not authenticated", async () => {
     mockCookieStore.get.mockReturnValue(undefined);
 
-    const handler = withAuth(async () => {
-      return NextResponse.json({ should: "not reach" });
+    const handler = withAuth(() => {
+      return Promise.resolve(NextResponse.json({ should: "not reach" }));
     });
 
     const response = await handler(makeRequest(), {});
@@ -165,7 +165,7 @@ describe("withAuth", () => {
       return undefined;
     });
 
-    const handler = withAuth(async () => {
+    const handler = withAuth(() => {
       throw new Error("handler exploded");
     });
 
@@ -187,8 +187,8 @@ describe("withOptionalAuth", () => {
   it("injects token as undefined when not authenticated", async () => {
     mockCookieStore.get.mockReturnValue(undefined);
 
-    const handler = withOptionalAuth(async (_req, { token }) => {
-      return NextResponse.json({ token: token ?? "none" });
+    const handler = withOptionalAuth((_req, { token }) => {
+      return Promise.resolve(NextResponse.json({ token: token ?? "none" }));
     });
 
     const response = await handler(makeRequest(), {});
@@ -203,8 +203,8 @@ describe("withOptionalAuth", () => {
       return undefined;
     });
 
-    const handler = withOptionalAuth(async (_req, { token }) => {
-      return NextResponse.json({ token });
+    const handler = withOptionalAuth((_req, { token }) => {
+      return Promise.resolve(NextResponse.json({ token }));
     });
 
     const response = await handler(makeRequest(), {});
@@ -222,8 +222,8 @@ describe("withErrorHandling", () => {
   }
 
   it("passes through the handler response on success", async () => {
-    const handler = withErrorHandling(async () => {
-      return NextResponse.json({ ok: true });
+    const handler = withErrorHandling(() => {
+      return Promise.resolve(NextResponse.json({ ok: true }));
     });
 
     const response = await handler(makeRequest(), {});
@@ -233,7 +233,7 @@ describe("withErrorHandling", () => {
   });
 
   it("catches thrown errors and returns errorResponse", async () => {
-    const handler = withErrorHandling(async () => {
+    const handler = withErrorHandling(() => {
       throw new Error("boom");
     });
 
@@ -246,8 +246,8 @@ describe("withErrorHandling", () => {
   it("does not read auth cookies", async () => {
     mockCookieStore.get.mockClear();
 
-    const handler = withErrorHandling(async () => {
-      return NextResponse.json({ ok: true });
+    const handler = withErrorHandling(() => {
+      return Promise.resolve(NextResponse.json({ ok: true }));
     });
 
     await handler(makeRequest(), {});

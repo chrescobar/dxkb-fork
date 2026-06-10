@@ -39,7 +39,7 @@ describe("respondWithSession", () => {
     expect(body).toEqual({ error: "bad login", code: "unauthenticated" });
   });
 
-  it("uses explicit status when provided", async () => {
+  it("uses explicit status when provided", () => {
     const response = respondWithSession({
       data: null,
       error: { code: "validation", message: "bad", status: 422 },
@@ -47,7 +47,7 @@ describe("respondWithSession", () => {
     expect(response.status).toBe(422);
   });
 
-  it("maps forbidden to 403", async () => {
+  it("maps forbidden to 403", () => {
     const response = respondWithSession({
       data: null,
       error: { code: "forbidden", message: "nope" },
@@ -55,7 +55,7 @@ describe("respondWithSession", () => {
     expect(response.status).toBe(403);
   });
 
-  it("maps validation to 400", async () => {
+  it("maps validation to 400", () => {
     const response = respondWithSession({
       data: null,
       error: { code: "validation", message: "fix me" },
@@ -63,7 +63,7 @@ describe("respondWithSession", () => {
     expect(response.status).toBe(400);
   });
 
-  it("maps service_unavailable to 503", async () => {
+  it("maps service_unavailable to 503", () => {
     const response = respondWithSession({
       data: null,
       error: { code: "service_unavailable", message: "down" },

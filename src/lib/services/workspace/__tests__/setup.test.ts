@@ -33,19 +33,23 @@ function createFakeRpc(options: FakeRpcOptions = {}): {
   const calls: RecordedCall[] = [];
   let createIndex = 0;
   const port: WorkspaceRpcPort = {
-    async call<T>(method: string, params: unknown[]): Promise<T> {
-      calls.push({ method, params });
-      if (method === "Workspace.ls") {
-        if (options.lsThrow) throw new Error(options.lsThrow);
-        return (options.lsResult ?? [{}]) as T;
+    call<T>(method: string, params: unknown[]): Promise<T> {
+      try {
+        calls.push({ method, params });
+        if (method === "Workspace.ls") {
+          if (options.lsThrow) throw new Error(options.lsThrow);
+          return Promise.resolve((options.lsResult ?? [{}]) as T);
+        }
+        if (method === "Workspace.create") {
+          const error = options.createErrors?.[createIndex];
+          createIndex += 1;
+          if (error) throw new Error(error);
+          return Promise.resolve([[]] as T);
+        }
+        throw new Error(`Unexpected method ${method}`);
+      } catch (err) {
+        return Promise.reject(err);
       }
-      if (method === "Workspace.create") {
-        const error = options.createErrors?.[createIndex];
-        createIndex += 1;
-        if (error) throw new Error(error);
-        return [[]] as T;
-      }
-      throw new Error(`Unexpected method ${method}`);
     },
   };
   return { port, calls };

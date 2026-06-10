@@ -256,7 +256,7 @@ describe("useServiceRuntime", () => {
     const capture = { current: noopSetters, ready: false };
     const submitSpy = vi.fn();
     server.use(
-      http.post("*/api/services/app-service/submit", async () => {
+      http.post("*/api/services/app-service/submit", () => {
         submitSpy();
         return HttpResponse.json({ job: [{ id: "job-123" }] });
       }),

@@ -80,7 +80,7 @@ describe("POST /api/services/minhash", () => {
 
     let capturedHeaders: Headers | undefined;
     server.use(
-      http.post("http://mock-minhash", async ({ request }) => {
+      http.post("http://mock-minhash", ({ request }) => {
         capturedHeaders = request.headers;
         return HttpResponse.json({ result: "ok" });
       }),

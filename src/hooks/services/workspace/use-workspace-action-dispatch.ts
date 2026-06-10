@@ -85,7 +85,7 @@ export function useWorkspaceActionDispatch({
   const { mutate: downloadMutate } = downloadMutation;
 
   const handleAction = useCallback(
-    async (actionId: string, selection: WorkspaceItem[]) => {
+    (actionId: string, selection: WorkspaceItem[]) => {
       if (actionId === "delete") {
         dispatch({ type: "OPEN_DELETE", items: selection });
         return;

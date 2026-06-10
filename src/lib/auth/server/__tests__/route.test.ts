@@ -89,7 +89,7 @@ describe("auth.hasSession", () => {
 describe("auth.route", () => {
   it("returns 401 when no session exists", async () => {
     const { auth } = buildAuthority();
-    const handler = vi.fn(async () => NextResponse.json({ ok: true }));
+    const handler = vi.fn(() => Promise.resolve(NextResponse.json({ ok: true })));
     const wrapped = auth.route(handler);
 
     const req = new NextRequest("http://localhost/api/x");
@@ -108,7 +108,7 @@ describe("auth.route", () => {
       expiresAt: Date.now(),
     });
 
-    const handler = vi.fn(async (_req, ctx) => NextResponse.json(ctx));
+    const handler = vi.fn((_req: NextRequest, ctx: Record<string, unknown>) => Promise.resolve(NextResponse.json(ctx)));
     const wrapped = auth.route(handler);
 
     const req = new NextRequest("http://localhost/api/x");
@@ -159,7 +159,7 @@ describe("auth.route", () => {
       expiresAt: Date.now(),
     });
 
-    const wrapped = auth.route(async () => {
+    const wrapped = auth.route(() => {
       throw NextResponse.json({ error: "forced" }, { status: 418 });
     });
 
@@ -178,7 +178,7 @@ describe("auth.route", () => {
       expiresAt: Date.now(),
     });
 
-    const wrapped = auth.route(async () => {
+    const wrapped = auth.route(() => {
       throw new Error("boom");
     });
 

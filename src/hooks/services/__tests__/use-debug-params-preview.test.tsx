@@ -52,7 +52,7 @@ function wrapperWithToggle(capture: { current: DebugSetters; ready: boolean }) {
 
 describe("useDebugParamsPreview", () => {
   it("calls submit with unchanged params when debug off and no containerBuildId", async () => {
-    const submit = vi.fn(async () => undefined);
+    const submit = vi.fn(() => Promise.resolve());
     const { result } = renderHook(
       () => useDebugParamsPreview({ serviceName: "GenomeAssembly2" }),
       { wrapper },
@@ -76,7 +76,7 @@ describe("useDebugParamsPreview", () => {
     await waitFor(() => { expect(capture.ready).toBe(true); });
     act(() => { capture.current.setContainerBuildId("build-42"); });
 
-    const submit = vi.fn(async () => undefined);
+    const submit = vi.fn(() => Promise.resolve());
     await act(async () => {
       await result.current.previewOrPassthrough({ foo: "bar" }, submit);
     });
@@ -94,7 +94,7 @@ describe("useDebugParamsPreview", () => {
     await waitFor(() => { expect(capture.ready).toBe(true); });
     act(() => { capture.current.setContainerBuildId("latest version"); });
 
-    const submit = vi.fn(async () => undefined);
+    const submit = vi.fn(() => Promise.resolve());
     await act(async () => {
       await result.current.previewOrPassthrough({ foo: "bar" }, submit);
     });
@@ -112,7 +112,7 @@ describe("useDebugParamsPreview", () => {
     await waitFor(() => { expect(capture.ready).toBe(true); });
     act(() => { capture.current.setIsDebugMode(true); });
 
-    const submit = vi.fn(async () => undefined);
+    const submit = vi.fn(() => Promise.resolve());
     await act(async () => {
       await result.current.previewOrPassthrough({ foo: "bar" }, submit);
     });

@@ -1,0 +1,94 @@
+src/app/services/(viral-tools)/sars-cov2-genome-analysis/page.tsx
+  s_0d580176ec0ea8::t_bb04c9ebb99d11 260-262
+  s_0d580176ec0ea8::t_326253475d98cb 525-527
+  s_0d580176ec0ea8::t_6e53910c262b9b 558-560
+  s_0d580176ec0ea8::t_c4590c023c624b 591-593
+src/app/services/(metagenomics)/metagenomic-read-mapping/page.tsx
+  s_0d580176ec0ea8::t_cf7815c5b6dec4 349-354
+  s_0d580176ec0ea8::t_37f21cc408912f 409-411
+src/app/services/(viral-tools)/influenza-ha-subtype/page.tsx
+  s_0d580176ec0ea8::t_d50e538947e093 161-163
+src/app/services/(metagenomics)/taxonomic-classification/page.tsx
+  s_0d580176ec0ea8::t_243fe5c9ffa7f7 756-758
+  s_0d580176ec0ea8::t_20481d72a61cf1 556-561
+  s_0d580176ec0ea8::t_517966e2784171 706-708
+  s_0d580176ec0ea8::t_baf6df4bff008a 608-610
+  s_0d580176ec0ea8::t_f8be0a2e6a3719 795-797,838-840
+  s_0d580176ec0ea8::t_a3af2c202981ae 657-659
+src/app/services/(genomics)/blast/page.tsx
+  s_0d580176ec0ea8::t_e8f785c18f2ea5 767-769
+  s_0d580176ec0ea8::t_f4ab004e4fc043 733-735
+src/app/services/(protein-tools)/msa-snp-analysis/page.tsx
+  s_0d580176ec0ea8::t_129626e81a5d2d 1281-1286
+  s_0d580176ec0ea8::t_64a1ad77f67c99 653-658
+src/components/workspace/upload-dialog.tsx
+  s_0d580176ec0ea8::t_9704d34495197e 174-176
+src/hooks/services/workspace/__tests__/use-workspace-action-dispatch.test.tsx
+  s_0d580176ec0ea8::t_207ebbc4f4b1f6 106,125,145,165,184,204,228,246,271,291,313,331,349,374,395,420,445,465
+src/lib/__tests__/utils.test.ts
+  s_0d580176ec0ea8::t_f667bbc94683e3 37-38
+src/app/services/(metagenomics)/metagenomic-binning/page.tsx
+  s_0d580176ec0ea8::t_9cc40323dcf9f6 466-471
+  s_0d580176ec0ea8::t_0413cfc30a07db 520-525
+  s_0d580176ec0ea8::t_93bc566821b0e3 235-240
+src/components/jobs/jobs-toolbar.tsx
+  s_0d580176ec0ea8::t_4e6c973a129c75 102-104
+  s_0d580176ec0ea8::t_e21d7032f7f997 126-128
+src/app/services/(phylogenomics)/viral-genome-tree/page.tsx
+  s_0d580176ec0ea8::t_a120478065ba64 570-572,604-606
+  s_0d580176ec0ea8::t_ebf811f06d2566 771-773
+  s_0d580176ec0ea8::t_e14bae1dc02ae4 648-653
+  s_0d580176ec0ea8::t_9196795f3c8046 684-686
+src/app/services/(viral-tools)/viral-assembly/page.tsx
+  s_0d580176ec0ea8::t_25aa3162a30000 400-402
+  s_0d580176ec0ea8::t_24752d9300ccc8 253-255
+  s_0d580176ec0ea8::t_50f8eecf97f7bf 368-370
+src/components/jobs/jobs-pagination.tsx
+  s_0d580176ec0ea8::t_a09fae6472a18f 85-87
+src/components/jobs/jobs-date-filter.tsx
+  s_0d580176ec0ea8::t_0818955c49ec0a 201-203
+src/app/services/(genomics)/variation-analysis/page.tsx
+  s_0d580176ec0ea8::t_7a5de2d20f7a40 358-360
+src/app/services/(protein-tools)/meta-cats/page.tsx
+  s_0d580176ec0ea8::t_20b3273ae1212c 527-532
+  s_0d580176ec0ea8::t_c6e7c562ca1d8e 673-675,877-879
+src/app/services/(viral-tools)/subspecies-classification/page.tsx
+  s_0d580176ec0ea8::t_7bf6de2f84d251 276-278
+src/app/services/(genomics)/similar-genome-finder/page.tsx
+  s_0d580176ec0ea8::t_acec2424b9a5ab 269-271
+  s_0d580176ec0ea8::t_28ca710636e7aa 306-308
+  s_0d580176ec0ea8::t_fb42c682810f69 343-345
+src/app/services/(protein-tools)/gene-protein-tree/page.tsx
+  s_0d580176ec0ea8::t_9baee87f753320 397-402
+  s_0d580176ec0ea8::t_c57a0eb6fc9bd6 750-752
+  s_0d580176ec0ea8::t_2f4b06c6e1aedd 625-630
+  s_0d580176ec0ea8::t_e88baf473f304f 547-549,581-583
+  s_0d580176ec0ea8::t_f9771fb597d2fb 663-665
+src/components/workspace/download-options-dialog.tsx
+  s_0d580176ec0ea8::t_0528af7c1e8d99 161-163
+src/app/services/(utilities)/fastq-utilities/page.tsx
+  s_0d580176ec0ea8::t_c0507815fe0daa 534-536
+  s_0d580176ec0ea8::t_d5d0650d6a75cc 362-364
+src/components/shared/data-table.tsx
+  s_0d580176ec0ea8::t_60317c4185c504 592,596,603,605
+src/app/services/(viral-tools)/sars-cov2-wastewater-analysis/page.tsx
+  s_0d580176ec0ea8::t_b37770c83a579b 394-396
+  s_0d580176ec0ea8::t_2cc8414b5f7df4 543-545
+  s_0d580176ec0ea8::t_9d31021abfd1d4 427-429
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "4881f944fe666e44598b3914c68092479ea4b60a",
+  "prompts": {},
+  "sessions": {
+    "s_0d580176ec0ea8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ca49035-a1d3-487e-9d2f-5fd0bae8a7fb",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,46 @@
+src/components/search/search-bar.tsx
+  s_e90fd97cd831aa::t_043a426743ff5c 99
+src/components/services/job-params-dialog.tsx
+  s_e90fd97cd831aa::t_6b324e028990e4 27
+src/components/workspace/upload-dialog.tsx
+  s_e90fd97cd831aa::t_e3a066872bb8cf 199,261
+src/components/genome/genome-shell.tsx
+  s_e90fd97cd831aa::t_264b4d3e8f3d28 40
+src/components/jobs/jobs-shell.tsx
+  s_e90fd97cd831aa::t_ca1f9fb2dab0a4 39
+src/app/settings/page.tsx
+  s_e90fd97cd831aa::t_2b2159c82b675f 32-33
+eslint.config.mjs
+  s_e90fd97cd831aa::t_a2dac839811bbe 30-32
+  s_e90fd97cd831aa::t_56062c9cf8920e 42
+src/components/workspace/workspace-action-bar.tsx
+  s_e90fd97cd831aa::t_56cc4fecd0c9fa 154
+src/components/workspace/workspace-shell.tsx
+  s_e90fd97cd831aa::t_ca1f9fb2dab0a4 43
+src/components/navbars/mobile-navbar.tsx
+  s_e90fd97cd831aa::t_d64672e65c27f1 104
+src/components/shared/data-table.tsx
+  s_e90fd97cd831aa::t_903b08bf470bcd 747
+src/components/jobs/jobs-action-bar.tsx
+  s_e90fd97cd831aa::t_56cc4fecd0c9fa 95
+src/components/filterbar/facet-column.tsx
+  s_e90fd97cd831aa::t_75bf4fd35e9e25 15,22,31
+src/components/search/search-action-bar.tsx
+  s_e90fd97cd831aa::t_56cc4fecd0c9fa 250
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "88eac8a7d7ba2672962c217bb229fa669a6b7971",
+  "prompts": {},
+  "sessions": {
+    "s_e90fd97cd831aa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3c2666fb-2103-4431-9c54-cbbde39b1f04",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

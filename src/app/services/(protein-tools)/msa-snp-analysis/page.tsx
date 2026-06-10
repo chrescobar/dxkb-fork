@@ -1,6 +1,7 @@
 "use client";
 
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { useState, useMemo, useEffect } from "react";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
@@ -122,12 +123,12 @@ export default function MSAandSNPAnalysisPage() {
     },
   });
 
-  const inputStatus = useStore(form.store, (s) => s.values.input_status);
-  const inputType = useStore(form.store, (s) => s.values.input_type);
-  const refType = useStore(form.store, (s) => s.values.ref_type);
-  const aligner = useStore(form.store, (s) => s.values.aligner);
-  const featureGroup = useStore(form.store, (s) => s.values.feature_groups);
-  const rawSelectGenomegroup = useStore(
+  const inputStatus = useSelector(form.store, (s) => s.values.input_status);
+  const inputType = useSelector(form.store, (s) => s.values.input_type);
+  const refType = useSelector(form.store, (s) => s.values.ref_type);
+  const aligner = useSelector(form.store, (s) => s.values.aligner);
+  const featureGroup = useSelector(form.store, (s) => s.values.feature_groups);
+  const rawSelectGenomegroup = useSelector(
     form.store,
     (s) => s.values.select_genomegroup,
   );
@@ -135,8 +136,8 @@ export default function MSAandSNPAnalysisPage() {
     () => rawSelectGenomegroup || [],
     [rawSelectGenomegroup],
   );
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const runtime = useServiceRuntime({
     definition: msaSnpAnalysisService,

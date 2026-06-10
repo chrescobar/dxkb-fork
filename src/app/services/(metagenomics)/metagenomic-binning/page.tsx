@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import {
   FieldItem,
   FieldLabel,
@@ -103,10 +104,10 @@ export default function MetagenomicBinningPage() {
     },
   });
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const startWith = useStore(form.store, (s) => s.values.start_with);
-  const assembler = useStore(form.store, (s) => s.values.assembler);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const startWith = useSelector(form.store, (s) => s.values.start_with);
+  const assembler = useSelector(form.store, (s) => s.values.assembler);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const {
     selectedLibraries,

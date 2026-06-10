@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import {
   FieldItem,
   FieldLabel,
@@ -177,11 +178,11 @@ export default function GenomeAssemblyPage() {
     setSraResetKey((k) => k + 1);
   }
 
-  const recipe = useStore(form.store, (s) => s.values.recipe);
+  const recipe = useSelector(form.store, (s) => s.values.recipe);
   const showGenomeSizeField = recipe === "canu";
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const handlePairedLibraryAdd = () => {
     addPairedLibrary({

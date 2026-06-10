@@ -1,6 +1,7 @@
 "use client";
 
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { useState, useMemo, useEffect } from "react";
 import { ServiceHeader } from "@/components/services/service-header";
@@ -96,9 +97,9 @@ export default function ViralGenomeTreePage() {
     },
   });
 
-  const sequences = useStore(form.store, (s) => s.values.sequences);
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const sequences = useSelector(form.store, (s) => s.values.sequences);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   // Update metadata fields in form when they change
   useEffect(() => {

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import {
   Card,
@@ -115,9 +116,9 @@ export default function FastqUtilitiesPage() {
     },
   });
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const recipe = useStore(form.store, (s) => s.values.recipe);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const recipe = useSelector(form.store, (s) => s.values.recipe);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   // Check if align is selected (to show/require target genome)
   const alignSelected = isAlignSelected(recipe);

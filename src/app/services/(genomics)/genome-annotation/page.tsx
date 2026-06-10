@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { ServiceHeader } from "@/components/services/service-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -72,7 +73,7 @@ const GenomeAnnotationContent = () => {
     },
   });
 
-  const watchedValues = useStore(form.store, (s) => s.values);
+  const watchedValues = useSelector(form.store, (s) => s.values);
   const previousValuesRef = useRef<GenomeAnnotationFormData>(watchedValues);
 
   // Log form changes to console
@@ -108,8 +109,8 @@ const GenomeAnnotationContent = () => {
     form.reset(defaultGenomeAnnotationFormValues);
   };
 
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
 
   return (
     <section>

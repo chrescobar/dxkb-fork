@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -49,16 +50,16 @@ export default function HASubtypeNumberingPage() {
     },
   });
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const watchedTypes = useStore(form.store, (s) => s.values.types);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const watchedTypes = useSelector(form.store, (s) => s.values.types);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
   const [fastaValidationMessage, setFastaValidationMessage] = useState("");
   const [isFastaValid, setIsFastaValid] = useState(false);
 
-  const inputSource = useStore(form.store, (s) => s.values.input_source);
-  const fastaData = useStore(form.store, (s) => s.values.input_fasta_data);
+  const inputSource = useSelector(form.store, (s) => s.values.input_source);
+  const fastaData = useSelector(form.store, (s) => s.values.input_fasta_data);
 
   const validateFastaData = useCallback(() => {
     const trimmed = fastaData?.trim() ?? "";

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import {
   FieldItem,
   FieldLabel,
@@ -136,7 +137,7 @@ export default function SimilarGenomeFinderServicePage() {
     },
   });
 
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const runtime = useServiceRuntime({
     definition: similarGenomeFinderService,

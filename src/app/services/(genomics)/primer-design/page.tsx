@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import {
   FieldItem,
   FieldLabel,
@@ -95,10 +96,10 @@ export default function PrimerDesignServicePage() {
     },
   });
 
-  const inputType = useStore(form.store, (s) => s.values.input_type);
-  const sequenceInput = useStore(form.store, (s) => s.values.sequence_input);
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const inputType = useSelector(form.store, (s) => s.values.input_type);
+  const sequenceInput = useSelector(form.store, (s) => s.values.sequence_input);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const sequenceValidation = useMemo(() => {
     if (inputType === "workplace_fasta" || !sequenceInput) return null;

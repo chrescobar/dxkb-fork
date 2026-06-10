@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import {
   Card,
@@ -70,9 +71,9 @@ export default function GenomeAlignmentServicePage() {
     },
   });
 
-  const manualSeedWeight = useStore(form.store, (s) => s.values.manual_seed_weight);
-  const seedWeightValue = useStore(form.store, (s) => s.values.seed_weight) ?? 15;
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
+  const manualSeedWeight = useSelector(form.store, (s) => s.values.manual_seed_weight);
+  const seedWeightValue = useSelector(form.store, (s) => s.values.seed_weight) ?? 15;
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
 
   useEffect(() => {
     const genomeIds = selectedGenomes.map((genome) => genome.genome_id);

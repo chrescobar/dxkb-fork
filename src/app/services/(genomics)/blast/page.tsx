@@ -1,6 +1,7 @@
 "use client";
 
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { ServiceHeader } from "@/components/services/service-header";
@@ -85,14 +86,14 @@ export default function BlastServicePage() {
 
   const availableDatabaseTypes = useBlastDatabaseTypes(form);
   const currentBlastProgram = useBlastProgramTracking(form);
-  const dbPrecomputedDatabase = useStore(
+  const dbPrecomputedDatabase = useSelector(
     form.store,
     (s) => s.values.db_precomputed_database,
   );
-  const dbType = useStore(form.store, (s) => s.values.db_type);
-  const inputSource = useStore(form.store, (s) => s.values.input_source);
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const dbType = useSelector(form.store, (s) => s.values.db_type);
+  const inputSource = useSelector(form.store, (s) => s.values.input_source);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
   const { fastaValidationResult, isFastaValid, handleFastaValidationChange } =
     useFastaValidation(form, currentBlastProgram);
   const dbFastaPreset = useMemo<WorkspaceSelectorPreset>(() => {

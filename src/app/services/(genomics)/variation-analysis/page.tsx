@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { ServiceHeader } from "@/components/services/service-header";
 import {
@@ -166,8 +167,8 @@ export default function VariationAnalysisPage() {
     });
   };
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   return (
     <section>

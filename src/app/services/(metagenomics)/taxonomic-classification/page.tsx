@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import {
   FieldItem,
   FieldLabel,
@@ -118,9 +119,9 @@ export default function TaxonomicClassificationPage() {
     },
   });
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const sequenceType = useStore(form.store, (s) => s.values.sequence_type);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const sequenceType = useSelector(form.store, (s) => s.values.sequence_type);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   // Update analysis type and database when sequence type changes
   useEffect(() => {

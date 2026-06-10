@@ -2,7 +2,8 @@
 
 import { useState, useCallback, useMemo } from "react";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { ServiceHeader } from "@/components/services/service-header";
 import {
@@ -109,7 +110,7 @@ export default function ProteomeComparisonPage() {
   const { isSubmitting, jobParamsDialogProps } = runtime;
 
   // Watch form values
-  const rawComparisonItems = useStore(
+  const rawComparisonItems = useSelector(
     form.store,
     (s) => s.values.comparison_items,
   );
@@ -117,8 +118,8 @@ export default function ProteomeComparisonPage() {
     () => rawComparisonItems || [],
     [rawComparisonItems],
   );
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   // Calculate total genome count (accounting for genome groups)
   const totalGenomeCount = countTotalComparisonGenomes(comparisonItems);

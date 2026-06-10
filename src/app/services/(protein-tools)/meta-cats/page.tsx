@@ -3,7 +3,8 @@
 import { useState, useCallback, useMemo } from "react";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
 import { normalizeToArray } from "@/lib/rerun-utility";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { ServiceHeader } from "@/components/services/service-header";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -118,17 +119,17 @@ export default function MetaCATSPage() {
     setYearRangesValidation(null);
   }, [form]);
 
-  const inputType = useStore(form.store, (s) => s.values.input_type);
-  const metadataGroup = useStore(form.store, (s) => s.values.metadata_group);
-  const rawAutoGroups = useStore(form.store, (s) => s.values.auto_groups);
+  const inputType = useSelector(form.store, (s) => s.values.input_type);
+  const metadataGroup = useSelector(form.store, (s) => s.values.metadata_group);
+  const rawAutoGroups = useSelector(form.store, (s) => s.values.auto_groups);
   const autoGroups = useMemo(() => rawAutoGroups || [], [rawAutoGroups]);
-  const rawFeatureGroups = useStore(form.store, (s) => s.values.groups);
+  const rawFeatureGroups = useSelector(form.store, (s) => s.values.groups);
   const featureGroups = useMemo(
     () => rawFeatureGroups || [],
     [rawFeatureGroups],
   );
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const runtime = useServiceRuntime({
     definition: metaCatsService,

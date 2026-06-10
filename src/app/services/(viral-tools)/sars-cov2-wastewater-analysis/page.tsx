@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import {
   Card,
@@ -95,8 +96,8 @@ export default function SarsCov2WastewaterAnalysisPage() {
     },
   });
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const [pairedRead1, setPairedRead1] = useState<string | null>(null);
   const [pairedRead2, setPairedRead2] = useState<string | null>(null);
@@ -107,7 +108,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
   const [sraResetKey, setSraResetKey] = useState(0);
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  const primers = useStore(form.store, (s) => s.values.primers);
+  const primers = useSelector(form.store, (s) => s.values.primers);
   const primerVersionOpts =
     primerVersionOptions[primers] ?? primerVersionOptions.ARTIC;
 

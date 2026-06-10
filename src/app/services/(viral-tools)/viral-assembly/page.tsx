@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -78,9 +79,9 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
   const [sraResetKey, setSraResetKey] = useState(0);
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  const inputType = useStore(form.store, (s) => s.values.input_type);
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const inputType = useSelector(form.store, (s) => s.values.input_type);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const { selectedLibraries, setLibraries } =
     useTanstackLibrarySelection<ViralAssemblyLibraryItem>({

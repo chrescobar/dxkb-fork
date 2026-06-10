@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { useStore, type AnyFormApi } from "@tanstack/react-form";
+import { type AnyFormApi } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 
 import type { BlastFormData } from "./blast-form-schema";
 import { blastPrecomputedDatabases, blastDatabaseTypes, blastDatabaseTypeMap } from "@/types/services";
@@ -288,9 +289,9 @@ export function extractInputFields(
  * Custom hook to manage BLAST database type availability
  */
 export function useBlastDatabaseTypes(form: AnyFormApi) {
-  const blastProgram = useStore(form.store, (s) => s.values.blast_program);
-  const dbPrecomputedDatabase = useStore(form.store, (s) => s.values.db_precomputed_database);
-  const dbType = useStore(form.store, (s) => s.values.db_type);
+  const blastProgram = useSelector(form.store, (s) => s.values.blast_program);
+  const dbPrecomputedDatabase = useSelector(form.store, (s) => s.values.db_precomputed_database);
+  const dbType = useSelector(form.store, (s) => s.values.db_type);
 
   const availableDatabaseTypes = useMemo(() => {
     if (blastProgram && dbPrecomputedDatabase) {
@@ -328,7 +329,7 @@ export function useBlastDatabaseTypes(form: AnyFormApi) {
  * Custom hook to track BLAST program changes
  */
 export function useBlastProgramTracking(form: AnyFormApi) {
-  const currentBlastProgram = useStore(form.store, (s) => s.values.blast_program);
+  const currentBlastProgram = useSelector(form.store, (s) => s.values.blast_program);
   return currentBlastProgram || "blastn";
 }
 

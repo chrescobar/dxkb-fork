@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback, Fragment } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -63,12 +64,12 @@ export default function SubspeciesClassificationPage() {
     },
   });
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  const inputSource = useStore(form.store, (s) => s.values.input_source);
+  const inputSource = useSelector(form.store, (s) => s.values.input_source);
 
   const handleFastaBlur = useCallback(() => {
     const value = form.state.values.input_fasta_data ?? "";

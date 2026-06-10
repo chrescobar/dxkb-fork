@@ -1,6 +1,7 @@
 "use client";
 
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { ServiceHeader } from "@/components/services/service-header";
@@ -112,10 +113,10 @@ export default function GeneProteinTreePage() {
     },
   });
 
-  const alphabet = useStore(form.store, (s) => s.values.alphabet);
-  const sequences = useStore(form.store, (s) => s.values.sequences);
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const alphabet = useSelector(form.store, (s) => s.values.alphabet);
+  const sequences = useSelector(form.store, (s) => s.values.sequences);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const substitutionModelOptions = useMemo(
     () => (alphabet === "DNA" ? dnaModels : proteinModels),

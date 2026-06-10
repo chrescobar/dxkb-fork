@@ -1,0 +1,19 @@
+.gitignore
+  s_e90fd97cd831aa::t_474df02d6b8e39 66-70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "a412c1bde07a386846e44b000a3c34685e42330a",
+  "prompts": {},
+  "sessions": {
+    "s_e90fd97cd831aa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3c2666fb-2103-4431-9c54-cbbde39b1f04",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

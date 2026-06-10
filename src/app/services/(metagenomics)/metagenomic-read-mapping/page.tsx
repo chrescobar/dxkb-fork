@@ -346,12 +346,12 @@ export default function MetagenomicReadMappingPage() {
                         </FieldLabel>
                         <RadioGroup
                           value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null &&
-                            field.handleChange(
-                              value as MetagenomicReadMappingFormData["gene_set_type"],
-                            )
-                          }
+                          onValueChange={(value) => {
+                            if (value != null)
+                              field.handleChange(
+                                value as MetagenomicReadMappingFormData["gene_set_type"],
+                              );
+                          }}
                           className="service-radio-group-horizontal"
                         >
                           <div className="flex items-center gap-3">
@@ -406,12 +406,9 @@ export default function MetagenomicReadMappingPage() {
                           <Select
                             items={predefinedGeneSetOptions}
                             value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(
-                                value,
-                              )
-                            }
+                            onValueChange={(value) => {
+                              if (value != null) field.handleChange(value);
+                            }}
                           >
                             <SelectTrigger className="service-card-select-trigger">
                               <SelectValue placeholder="Select Gene Set" />

@@ -589,20 +589,20 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           : allCols.filter(col => col.id !== '__select__');
         
         const visibleColumnIds = visibleCols.map(col => col.id);
-        await onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
+        onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
         setDownloadingButton(null);
         return;
       }
-      
+
       // If downloading all data and onDownloadAll is provided, use it
       if (!onlySelected && onDownloadAll) {
         const allCols = table.getAllLeafColumns();
         const visibleCols = onlyVisibleColumns
           ? allCols.filter(col => col.getIsVisible() && col.id !== '__select__')
           : allCols.filter(col => col.id !== '__select__');
-        
+
         const visibleColumnIds = visibleCols.map(col => col.id);
-        await onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
+        onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
         setDownloadingButton(null);
         return;
       }

@@ -355,9 +355,9 @@ export default function VariationAnalysisPage() {
                       <Select
                         items={variationAnalysisMappers}
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
+                        onValueChange={(value) => {
+                          if (value != null) field.handleChange(value);
+                        }}
                       >
                         <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="Select aligner" />
@@ -388,9 +388,9 @@ export default function VariationAnalysisPage() {
                       <Select
                         items={variationAnalysisCallers}
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
+                        onValueChange={(value) => {
+                          if (value != null) field.handleChange(value);
+                        }}
                       >
                         <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="Select SNP caller" />

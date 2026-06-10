@@ -394,12 +394,12 @@ export default function GeneProteinTreePage() {
                   <FieldItem>
                     <RadioGroup
                       value={field.state.value}
-                      onValueChange={(value) =>
-                        value != null &&
-                        field.handleChange(
-                          value as GeneProteinTreeFormData["alphabet"],
-                        )
-                      }
+                      onValueChange={(value) => {
+                        if (value != null)
+                          field.handleChange(
+                            value as GeneProteinTreeFormData["alphabet"],
+                          );
+                      }}
                       className="service-radio-group-horizontal"
                     >
                       <div className="flex items-center gap-3">
@@ -544,9 +544,9 @@ export default function GeneProteinTreePage() {
                           label: v,
                         }))}
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
+                        onValueChange={(value) => {
+                          if (value != null) field.handleChange(value);
+                        }}
                       >
                         <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="Select" />
@@ -578,9 +578,9 @@ export default function GeneProteinTreePage() {
                           label: v,
                         }))}
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
+                        onValueChange={(value) => {
+                          if (value != null) field.handleChange(value);
+                        }}
                       >
                         <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="Select" />
@@ -622,12 +622,12 @@ export default function GeneProteinTreePage() {
                     <FieldItem>
                       <RadioGroup
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null &&
-                          field.handleChange(
-                            value as GeneProteinTreeFormData["recipe"],
-                          )
-                        }
+                        onValueChange={(value) => {
+                          if (value != null)
+                            field.handleChange(
+                              value as GeneProteinTreeFormData["recipe"],
+                            );
+                        }}
                         className="service-radio-group-horizontal"
                       >
                         <div className="flex items-center gap-3">
@@ -660,9 +660,9 @@ export default function GeneProteinTreePage() {
                           label: m.label,
                         }))}
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
+                        onValueChange={(value) => {
+                          if (value != null) field.handleChange(value);
+                        }}
                       >
                         <SelectTrigger
                           id="model"
@@ -747,9 +747,9 @@ export default function GeneProteinTreePage() {
                         .filter((f) => !f.isLabel)
                         .map((f) => ({ value: f.value, label: f.label }))}
                       value={selectedMetadataField}
-                      onValueChange={(value) =>
-                        value != null && handleMetadataSelection(value)
-                      }
+                      onValueChange={(value) => {
+                        if (value != null) handleMetadataSelection(value);
+                      }}
                     >
                       <SelectTrigger className="service-card-select-trigger">
                         <SelectValue placeholder="Select field" />

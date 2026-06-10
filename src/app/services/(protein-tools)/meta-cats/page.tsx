@@ -524,12 +524,12 @@ export default function MetaCATSPage() {
                   <FieldItem>
                     <RadioGroup
                       value={field.state.value}
-                      onValueChange={(value) =>
-                        value != null &&
-                        field.handleChange(
-                          value as MetaCatsFormData["input_type"],
-                        )
-                      }
+                      onValueChange={(value) => {
+                        if (value != null)
+                          field.handleChange(
+                            value as MetaCatsFormData["input_type"],
+                          );
+                      }}
                       className="service-radio-group-horizontal"
                     >
                       <div className="flex items-center gap-3">
@@ -670,10 +670,9 @@ export default function MetaCATSPage() {
                       <FieldItem>
                         <RadioGroup
                           value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null &&
-                            field.handleChange(value as "na" | "aa")
-                          }
+                          onValueChange={(value) => {
+                            if (value != null) field.handleChange(value as "na" | "aa");
+                          }}
                           className="service-radio-group-horizontal"
                         >
                           <div className="flex items-center gap-3">
@@ -875,10 +874,9 @@ export default function MetaCATSPage() {
                       <FieldItem>
                         <RadioGroup
                           value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null &&
-                            field.handleChange(value as "na" | "aa")
-                          }
+                          onValueChange={(value) => {
+                            if (value != null) field.handleChange(value as "na" | "aa");
+                          }}
                           className="service-radio-group-horizontal"
                         >
                           <div className="flex items-center gap-3">

@@ -250,9 +250,9 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
                   <FieldItem>
                     <RadioGroup
                       value={field.state.value}
-                      onValueChange={(value) =>
-                        value != null && field.handleChange(value)
-                      }
+                      onValueChange={(value) => {
+                        if (value != null) field.handleChange(value);
+                      }}
                       className="service-radio-group-horizontal"
                     >
                       <div className="service-radio-group-item flex items-center gap-2">
@@ -365,9 +365,9 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
                         <Select
                           items={strategyOptions}
                           value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null && field.handleChange(value)
-                          }
+                          onValueChange={(value) => {
+                            if (value != null) field.handleChange(value);
+                          }}
                         >
                           <SelectTrigger className="service-card-select-trigger">
                             <SelectValue placeholder="Select strategy" />
@@ -397,9 +397,9 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
                         <Select
                           items={moduleOptions}
                           value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null && field.handleChange(value)
-                          }
+                          onValueChange={(value) => {
+                            if (value != null) field.handleChange(value);
+                          }}
                         >
                           <SelectTrigger className="service-card-select-trigger">
                             <SelectValue placeholder="Select" />

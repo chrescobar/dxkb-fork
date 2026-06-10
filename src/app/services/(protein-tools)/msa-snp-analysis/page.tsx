@@ -650,12 +650,12 @@ export default function MSAandSNPAnalysisPage() {
                         <FieldItem>
                           <RadioGroup
                             value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(
-                                value as MsaSnpAnalysis.MsaSnpAnalysisFormData["alphabet"],
-                              )
-                            }
+                            onValueChange={(value) => {
+                              if (value != null)
+                                field.handleChange(
+                                  value as MsaSnpAnalysis.MsaSnpAnalysisFormData["alphabet"],
+                                );
+                            }}
                             className="service-radio-group-horizontal"
                           >
                             <div className="flex items-center gap-3">
@@ -1278,12 +1278,12 @@ export default function MSAandSNPAnalysisPage() {
                         <FieldItem>
                           <RadioGroup
                             value={field.state.value || "auto"}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(
-                                value as MsaSnpAnalysis.MsaSnpAnalysisFormData["strategy"],
-                              )
-                            }
+                            onValueChange={(value) => {
+                              if (value != null)
+                                field.handleChange(
+                                  value as MsaSnpAnalysis.MsaSnpAnalysisFormData["strategy"],
+                                );
+                            }}
                             className="grid w-full gap-2 p-2"
                           >
                             {MsaSnpAnalysis.strategyOptions.map((option) => (

@@ -99,9 +99,9 @@ export function JobsToolbar({
             })),
           ]}
           value={serviceFilter}
-          onValueChange={(value) =>
-            value != null && onServiceFilterChange(value)
-          }
+          onValueChange={(value) => {
+            if (value != null) onServiceFilterChange(value);
+          }}
         >
           <SelectTrigger aria-label="Filter by service" className="w-68">
             <SelectValue placeholder="Service" />
@@ -123,9 +123,9 @@ export function JobsToolbar({
         <Select
           items={statusOptions}
           value={statusFilter}
-          onValueChange={(value) =>
-            value != null && onStatusFilterChange(value)
-          }
+          onValueChange={(value) => {
+            if (value != null) onStatusFilterChange(value);
+          }}
         >
           <SelectTrigger aria-label="Filter by status" className="w-40">
             <SelectValue placeholder="Status" />

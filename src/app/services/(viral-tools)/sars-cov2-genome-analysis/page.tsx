@@ -257,9 +257,9 @@ export default function SarsCov2GenomeAnalysisPage() {
                   <FieldItem>
                     <RadioGroup
                       value={field.state.value}
-                      onValueChange={(value) =>
-                        value != null && field.handleChange(value)
-                      }
+                      onValueChange={(value) => {
+                        if (value != null) field.handleChange(value);
+                      }}
                       className="service-radio-group-horizontal"
                     >
                       <div className="service-radio-group-item flex items-center gap-2">
@@ -522,9 +522,9 @@ export default function SarsCov2GenomeAnalysisPage() {
                           <Select
                             items={recipeOptions}
                             value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null && field.handleChange(value)
-                            }
+                            onValueChange={(value) => {
+                              if (value != null) field.handleChange(value);
+                            }}
                           >
                             <SelectTrigger className="service-card-select-trigger">
                               <SelectValue placeholder="Select strategy" />
@@ -555,9 +555,9 @@ export default function SarsCov2GenomeAnalysisPage() {
                               <Select
                                 items={primerOptions}
                                 value={field.state.value}
-                                onValueChange={(v) =>
-                                  v != null && field.handleChange(v)
-                                }
+                                onValueChange={(v) => {
+                                  if (v != null) field.handleChange(v);
+                                }}
                               >
                                 <SelectTrigger className="service-card-select-trigger">
                                   <SelectValue placeholder="Select primers" />
@@ -588,9 +588,9 @@ export default function SarsCov2GenomeAnalysisPage() {
                               <Select
                                 items={primerVersionOpts}
                                 value={field.state.value}
-                                onValueChange={(value) =>
-                                  value != null && field.handleChange(value)
-                                }
+                                onValueChange={(value) => {
+                                  if (value != null) field.handleChange(value);
+                                }}
                               >
                                 <SelectTrigger className="service-card-select-trigger">
                                   <SelectValue placeholder="Version" />

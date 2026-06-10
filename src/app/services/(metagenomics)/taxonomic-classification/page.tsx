@@ -553,12 +553,12 @@ export default function TaxonomicClassificationPage() {
 
                         <RadioGroup
                           value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null &&
-                            field.handleChange(
-                              value as TaxonomicClassificationFormData["sequence_type"],
-                            )
-                          }
+                          onValueChange={(value) => {
+                            if (value != null)
+                              field.handleChange(
+                                value as TaxonomicClassificationFormData["sequence_type"],
+                              );
+                          }}
                           className="service-radio-group-horizontal"
                         >
                           <div className="flex items-center gap-3">
@@ -605,12 +605,9 @@ export default function TaxonomicClassificationPage() {
                           <Select
                             items={analysisTypeOptions}
                             value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(
-                                value,
-                              )
-                            }
+                            onValueChange={(value) => {
+                              if (value != null) field.handleChange(value);
+                            }}
                             disabled={!isAnalysisTypeSelectable(sequenceType)}
                           >
                             <SelectTrigger className="service-card-select-trigger">
@@ -657,12 +654,9 @@ export default function TaxonomicClassificationPage() {
                           <Select
                             items={databaseOptions}
                             value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(
-                                value,
-                              )
-                            }
+                            onValueChange={(value) => {
+                              if (value != null) field.handleChange(value);
+                            }}
                           >
                             <SelectTrigger className="service-card-select-trigger">
                               <SelectValue placeholder="Select database" />
@@ -709,12 +703,9 @@ export default function TaxonomicClassificationPage() {
                           <Select
                             items={hostGenomeOptions}
                             value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(
-                                value,
-                              )
-                            }
+                            onValueChange={(value) => {
+                              if (value != null) field.handleChange(value);
+                            }}
                             disabled={!isHostFilteringAvailable(sequenceType)}
                           >
                             <SelectTrigger className="service-card-select-trigger">
@@ -762,9 +753,9 @@ export default function TaxonomicClassificationPage() {
                           <Select
                             items={confidenceIntervalOptions}
                             value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null && field.handleChange(value)
-                            }
+                            onValueChange={(value) => {
+                              if (value != null) field.handleChange(value);
+                            }}
                           >
                             <SelectTrigger className="service-card-select-trigger">
                               <SelectValue placeholder="Select confidence interval" />
@@ -801,10 +792,9 @@ export default function TaxonomicClassificationPage() {
                           </FieldLabel>
                           <RadioGroup
                             value={field.state.value ? "yes" : "no"}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(value === "yes")
-                            }
+                            onValueChange={(value) => {
+                              if (value != null) field.handleChange(value === "yes");
+                            }}
                             className="service-radio-group-horizontal"
                           >
                             <div className="flex items-center gap-3">
@@ -845,10 +835,9 @@ export default function TaxonomicClassificationPage() {
                           </FieldLabel>
                           <RadioGroup
                             value={field.state.value ? "yes" : "no"}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(value === "yes")
-                            }
+                            onValueChange={(value) => {
+                              if (value != null) field.handleChange(value === "yes");
+                            }}
                             className="service-radio-group-horizontal"
                           >
                             <div className="flex items-center gap-3">

@@ -103,7 +103,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
 
     await act(async () => {
-      await result.current.handleAction("delete", selection);
+      result.current.handleAction("delete", selection);
     });
 
     expect(mockDispatch).toHaveBeenCalledWith({
@@ -122,7 +122,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
 
     await act(async () => {
-      await result.current.handleAction("copy", selection);
+      result.current.handleAction("copy", selection);
     });
 
     expect(mockDispatch).toHaveBeenCalledWith({
@@ -142,7 +142,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
 
     await act(async () => {
-      await result.current.handleAction("move", selection);
+      result.current.handleAction("move", selection);
     });
 
     expect(mockDispatch).toHaveBeenCalledWith({
@@ -162,7 +162,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
 
     await act(async () => {
-      await result.current.handleAction("editType", [item]);
+      result.current.handleAction("editType", [item]);
     });
 
     expect(mockDispatch).toHaveBeenCalledWith({
@@ -181,7 +181,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
 
     await act(async () => {
-      await result.current.handleAction("editType", [item]);
+      result.current.handleAction("editType", [item]);
     });
 
     expect(mockDispatch).not.toHaveBeenCalled();
@@ -201,7 +201,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
 
     await act(async () => {
-      await result.current.handleAction("favorite", [folderItem]);
+      result.current.handleAction("favorite", [folderItem]);
     });
 
     await waitFor(() => {
@@ -225,7 +225,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
 
     await act(async () => {
-      await result.current.handleAction("favorite", [fileItem]);
+      result.current.handleAction("favorite", [fileItem]);
     });
 
     expect(mockedToggleFavorite).not.toHaveBeenCalled();
@@ -243,7 +243,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
 
     await act(async () => {
-      await result.current.handleAction("download", [forbiddenItem]);
+      result.current.handleAction("download", [forbiddenItem]);
     });
 
     expect(toast.error).toHaveBeenCalledWith(
@@ -268,7 +268,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
 
     await act(async () => {
-      await result.current.handleAction("download", [fileItem]);
+      result.current.handleAction("download", [fileItem]);
     });
 
     await waitFor(() => {
@@ -288,7 +288,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
 
     await act(async () => {
-      await result.current.handleAction("viewer3d", [pdbItem]);
+      result.current.handleAction("viewer3d", [pdbItem]);
     });
 
     expect(openSpy).toHaveBeenCalledWith(
@@ -310,7 +310,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
 
     await act(async () => {
-      await result.current.handleAction("viewer3d", [item]);
+      result.current.handleAction("viewer3d", [item]);
     });
 
     expect(openSpy).not.toHaveBeenCalled();
@@ -328,7 +328,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
 
     await act(async () => {
-      await result.current.handleAction("unknownAction", selection);
+      result.current.handleAction("unknownAction", selection);
     });
 
     expect(mockDispatch).not.toHaveBeenCalled();
@@ -346,7 +346,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
 
     await act(async () => {
-      await result.current.handleAction("download", [folderItem]);
+      result.current.handleAction("download", [folderItem]);
     });
 
     expect(mockDispatch).toHaveBeenCalledWith(
@@ -371,7 +371,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
 
     await act(async () => {
-      await result.current.handleAction("download", items);
+      result.current.handleAction("download", items);
     });
 
     expect(mockDispatch).toHaveBeenCalledWith(
@@ -392,7 +392,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
 
     await act(async () => {
-      await result.current.handleAction("download", [jobItem]);
+      result.current.handleAction("download", [jobItem]);
     });
 
     expect(mockDispatch).toHaveBeenCalledWith(
@@ -417,7 +417,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
 
     await act(async () => {
-      await result.current.handleAction("download", [dotFolder]);
+      result.current.handleAction("download", [dotFolder]);
     });
 
     expect(mockDispatch).toHaveBeenCalledWith(
@@ -442,7 +442,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
 
     await act(async () => {
-      await result.current.handleAction("favorite", [folderItem]);
+      result.current.handleAction("favorite", [folderItem]);
     });
 
     expect(mockedToggleFavorite).not.toHaveBeenCalled();
@@ -462,7 +462,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
 
     await act(async () => {
-      await result.current.handleAction("favorite", [folderItem]);
+      result.current.handleAction("favorite", [folderItem]);
     });
 
     expect(mockedToggleFavorite).not.toHaveBeenCalled();

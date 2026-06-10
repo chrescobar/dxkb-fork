@@ -359,10 +359,9 @@ export default function FastqUtilitiesPage() {
                   <Select
                     items={pipelineActionOptions}
                     value={selectedAction}
-                    onValueChange={(value) =>
-                      value != null &&
-                      setSelectedAction(value)
-                    }
+                    onValueChange={(value) => {
+                      if (value != null) setSelectedAction(value);
+                    }}
                   >
                     <SelectTrigger className="service-card-select-trigger">
                       <SelectValue placeholder="Select Action" />
@@ -532,9 +531,9 @@ export default function FastqUtilitiesPage() {
                   <Select
                     items={platformOptions}
                     value={singlePlatform}
-                    onValueChange={(value) =>
-                      value != null && setSinglePlatform(value)
-                    }
+                    onValueChange={(value) => {
+                      if (value != null) setSinglePlatform(value);
+                    }}
                   >
                     <SelectTrigger className="service-card-select-trigger">
                       <SelectValue placeholder="Select a Platform..." />

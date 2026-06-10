@@ -266,10 +266,9 @@ export default function SimilarGenomeFinderServicePage() {
                             <Select
                               items={maxHitsOptions}
                               value={(field.state.value ?? 10).toString()}
-                              onValueChange={(value) =>
-                                value != null &&
-                                field.handleChange(parseInt(value, 10))
-                              }
+                              onValueChange={(value) => {
+                                if (value != null) field.handleChange(parseInt(value, 10));
+                              }}
                             >
                               <SelectTrigger className="service-card-select-trigger">
                                 <SelectValue placeholder="Select max hits" />
@@ -304,10 +303,9 @@ export default function SimilarGenomeFinderServicePage() {
                             <Select
                               items={pValueOptions}
                               value={field.state.value?.toString() ?? "1"}
-                              onValueChange={(value) =>
-                                value != null &&
-                                field.handleChange(parseFloat(value))
-                              }
+                              onValueChange={(value) => {
+                                if (value != null) field.handleChange(parseFloat(value));
+                              }}
                             >
                               <SelectTrigger className="service-card-select-trigger">
                                 <SelectValue placeholder="Select P-value" />
@@ -342,10 +340,9 @@ export default function SimilarGenomeFinderServicePage() {
                             <Select
                               items={distanceOptions}
                               value={field.state.value?.toString() ?? "1"}
-                              onValueChange={(value) =>
-                                value != null &&
-                                field.handleChange(parseFloat(value))
-                              }
+                              onValueChange={(value) => {
+                                if (value != null) field.handleChange(parseFloat(value));
+                              }}
                             >
                               <SelectTrigger className="service-card-select-trigger">
                                 <SelectValue placeholder="Select distance" />

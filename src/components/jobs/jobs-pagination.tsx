@@ -82,9 +82,9 @@ export function JobsPagination({
         <Select
           items={pageSizeItems}
           value={String(limit)}
-          onValueChange={(value) =>
-            value != null && onPageSizeChange(Number(value))
-          }
+          onValueChange={(value) => {
+            if (value != null) onPageSizeChange(Number(value));
+          }}
         >
           <SelectTrigger aria-label="Items per page" className="mr-1 h-7 w-20 text-xs">
             <SelectValue />

@@ -158,9 +158,9 @@ export default function HASubtypeNumberingPage() {
                   <FieldItem>
                     <RadioGroup
                       value={field.state.value}
-                      onValueChange={(value) =>
-                        value != null && field.handleChange(value)
-                      }
+                      onValueChange={(value) => {
+                        if (value != null) field.handleChange(value);
+                      }}
                       className="service-radio-group-horizontal"
                     >
                       <div className="service-radio-group-item">

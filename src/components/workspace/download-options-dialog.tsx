@@ -158,7 +158,9 @@ function DownloadOptionsForm({
           </label>
           <Select
             value={archiveType}
-            onValueChange={(value) => value != null && setArchiveType(value)}
+            onValueChange={(value) => {
+              if (value != null) setArchiveType(value);
+            }}
             disabled={isSubmitting}
           >
             <SelectTrigger id="download-archive-type" className="w-full">

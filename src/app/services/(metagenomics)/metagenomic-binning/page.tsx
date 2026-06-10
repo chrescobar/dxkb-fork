@@ -232,12 +232,12 @@ export default function MetagenomicBinningPage() {
                   <FieldItem>
                     <RadioGroup
                       value={field.state.value}
-                      onValueChange={(value) =>
-                        value != null &&
-                        field.handleChange(
-                          value as MetagenomicBinningFormData["start_with"],
-                        )
-                      }
+                      onValueChange={(value) => {
+                        if (value != null)
+                          field.handleChange(
+                            value as MetagenomicBinningFormData["start_with"],
+                          );
+                      }}
                       className="service-radio-group-horizontal"
                     >
                       <div className="flex items-center gap-3">
@@ -463,12 +463,12 @@ export default function MetagenomicBinningPage() {
                             </FieldLabel>
                             <RadioGroup
                               value={field.state.value}
-                              onValueChange={(value) =>
-                                value != null &&
-                                field.handleChange(
-                                  value as MetagenomicBinningFormData["assembler"],
-                                )
-                              }
+                              onValueChange={(value) => {
+                                if (value != null)
+                                  field.handleChange(
+                                    value as MetagenomicBinningFormData["assembler"],
+                                  );
+                              }}
                               className="service-radio-group-horizontal"
                             >
                               <div className="flex items-center gap-3">
@@ -517,12 +517,12 @@ export default function MetagenomicBinningPage() {
                           </FieldLabel>
                           <RadioGroup
                             value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(
-                                value as MetagenomicBinningFormData["organism"],
-                              )
-                            }
+                            onValueChange={(value) => {
+                              if (value != null)
+                                field.handleChange(
+                                  value as MetagenomicBinningFormData["organism"],
+                                );
+                            }}
                             className="service-radio-group-horizontal"
                           >
                             <div className="flex items-center gap-3">

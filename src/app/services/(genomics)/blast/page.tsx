@@ -730,9 +730,9 @@ export default function BlastServicePage() {
                         <Select
                           items={maxHitsOptionsBlast}
                           value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null && field.handleChange(Number(value))
-                          }
+                          onValueChange={(value) => {
+                            if (value != null) field.handleChange(Number(value));
+                          }}
                         >
                           <SelectTrigger className="service-card-select-trigger">
                             <SelectValue placeholder="Select max hits" />
@@ -764,9 +764,9 @@ export default function BlastServicePage() {
                         <Select
                           items={evalueOptionsBlast}
                           value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null && field.handleChange(Number(value))
-                          }
+                          onValueChange={(value) => {
+                            if (value != null) field.handleChange(Number(value));
+                          }}
                         >
                           <SelectTrigger className="service-card-select-trigger">
                             <SelectValue placeholder="Select E-Value Threshold" />

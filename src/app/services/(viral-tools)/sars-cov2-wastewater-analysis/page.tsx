@@ -391,9 +391,9 @@ export default function SarsCov2WastewaterAnalysisPage() {
                         <Select
                           items={primerOptions}
                           value={field.state.value}
-                          onValueChange={(v) =>
-                            v != null && field.handleChange(v)
-                          }
+                          onValueChange={(v) => {
+                            if (v != null) field.handleChange(v);
+                          }}
                         >
                           <SelectTrigger className="service-card-select-trigger">
                             <SelectValue placeholder="Select primers" />
@@ -424,9 +424,9 @@ export default function SarsCov2WastewaterAnalysisPage() {
                         <Select
                           items={primerVersionOpts}
                           value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null && field.handleChange(value)
-                          }
+                          onValueChange={(value) => {
+                            if (value != null) field.handleChange(value);
+                          }}
                         >
                           <SelectTrigger className="service-card-select-trigger">
                             <SelectValue placeholder="Version" />
@@ -540,9 +540,9 @@ export default function SarsCov2WastewaterAnalysisPage() {
                       <Select
                         items={recipeOptions}
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
+                        onValueChange={(value) => {
+                          if (value != null) field.handleChange(value);
+                        }}
                       >
                         <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="Select strategy" />

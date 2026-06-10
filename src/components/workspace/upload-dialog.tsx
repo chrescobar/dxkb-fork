@@ -171,7 +171,9 @@ export function UploadDialog({
             </span>
             <Select
               value={uploadType}
-              onValueChange={(v) => v != null && setUploadType(v)}
+              onValueChange={(v) => {
+                if (v != null) setUploadType(v);
+              }}
               items={uploadTypeOptions}
             >
               <SelectTrigger className="w-full">

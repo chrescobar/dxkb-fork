@@ -25,8 +25,8 @@ const ResultsOverview = ({ isLoading, searchResults, labelsByType }: ResultsOver
             <p className="text-muted-foreground">Loading results...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-y-2 text-primary">
-            <div className="space-y-2 sm:border-r border-border sm:pr-8">
+          <div className="grid grid-cols-1 gap-y-2 text-primary sm:grid-cols-3">
+            <div className="space-y-2 border-border sm:border-r sm:pr-8">
               {searchTypes.slice(0, 5).map((type) => (
                 <div key={type} className="flex items-center justify-between">
                   <span className="text-foreground">{labelsByType[type]}:</span>
@@ -42,7 +42,7 @@ const ResultsOverview = ({ isLoading, searchResults, labelsByType }: ResultsOver
                 </div>
               ))}
             </div>
-            <div className="space-y-2 sm:border-l border-border sm:pl-8">
+            <div className="space-y-2 border-border sm:border-l sm:pl-8">
               {searchTypes.slice(10, 15).map((type) => (
                 <div key={type} className="flex items-center justify-between">
                   <span className="text-foreground">{labelsByType[type]}:</span>

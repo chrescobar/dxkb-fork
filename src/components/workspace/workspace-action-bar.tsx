@@ -151,7 +151,7 @@ export function WorkspaceActionBar({
             <Button
               key={action.id}
               variant="secondary"
-              className="h-[60px] w-full flex-col gap-1 font-normal"
+              className="h-15 w-full flex-col gap-1 font-normal"
               disabled={disabled}
               onClick={() =>
                 action.id === "guide"
@@ -160,13 +160,13 @@ export function WorkspaceActionBar({
               }
             >
               {showSpinner ? (
-                <Spinner className="h-4 w-4 shrink-0" />
+                <Spinner className="size-4 shrink-0" />
               ) : showFilledStar ? (
-                <Star className="h-4 w-4 shrink-0 fill-current" />
+                <Star className="size-4 shrink-0 fill-current" />
               ) : (
-                <Icon className="h-4 w-4 shrink-0" />
+                <Icon className="size-4 shrink-0" />
               )}
-              <span className="text-[11px] font-medium leading-tight">{action.label}</span>
+              <span className="text-[11px] leading-tight font-medium">{action.label}</span>
             </Button>
           );
           return tooltipText && disabled ? (

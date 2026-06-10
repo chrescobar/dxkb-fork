@@ -209,7 +209,7 @@ export default function VariationAnalysisPage() {
                   <Label className="service-card-label">
                     Paired Read Library
                   </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
+                  <div className="mx-4 h-px flex-1 bg-border" />
                   <Button
                     type="button"
                     variant="outline"
@@ -246,7 +246,7 @@ export default function VariationAnalysisPage() {
                   <Label className="service-card-label">
                     Single Read Library
                   </Label>
-                  <div className="bg-border mx-4 h-[1px] flex-1" />
+                  <div className="mx-4 h-px flex-1 bg-border" />
                   <Button
                     type="button"
                     variant="outline"

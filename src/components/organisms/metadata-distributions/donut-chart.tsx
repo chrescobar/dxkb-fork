@@ -290,7 +290,7 @@ export function DonutChart({ title, data }: DonutChartProps) {
       </CardHeader>
       <CardContent>
         {slices.length === 0 ? (
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             No distribution data was returned.
           </p>
         ) : (
@@ -445,7 +445,7 @@ export function DonutChart({ title, data }: DonutChartProps) {
       {tooltipData && (
         <div
           role="status"
-          className="bg-popover text-popover-foreground pointer-events-none fixed rounded-md border px-2 py-1 text-xs shadow-md"
+          className="pointer-events-none fixed rounded-md border bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md"
           style={{ left: tooltipLeft ?? 0, top: tooltipTop ?? 0 }}
         >
           {tooltipData.label}: {numberFormatter.format(tooltipData.value)}

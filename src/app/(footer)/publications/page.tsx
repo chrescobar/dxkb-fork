@@ -177,9 +177,9 @@ export default function PublicationsListView() {
   };
 
   return (
-    <div className="flex flex-col space-y-8 min-h-screen">
+    <div className="flex min-h-screen flex-col space-y-8">
       <FooterHeader title="Publications" />
-      <section className="container mx-auto py-10 px-4 md:px-6">
+      <section className="container mx-auto px-4 py-10 md:px-6">
         <div className="flex flex-col space-y-8">
           <div className="space-y-2">
             {/* <h1 className="text-3xl font-bold tracking-tight">Publications</h1> */}
@@ -188,13 +188,13 @@ export default function PublicationsListView() {
             </p>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex flex-col gap-6 lg:flex-row">
             {/* Filters sidebar */}
-            <div className="w-full lg:w-64 shrink-0">
+            <div className="w-full shrink-0 lg:w-64">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg flex items-center">
-                    <Filter className="h-4 w-4 mr-2" />
+                  <CardTitle className="flex items-center text-lg">
+                    <Filter className="mr-2 size-4" />
                     Filters
                   </CardTitle>
                 </CardHeader>
@@ -377,7 +377,7 @@ export default function PublicationsListView() {
             <div className="flex-1">
               <div className="mb-6 flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                 <div className="relative w-full sm:w-96">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute top-2.5 left-2.5 size-4 text-muted-foreground" />
                   <Input
                     type="search"
                     placeholder="Search by title, author, or keyword..."
@@ -397,8 +397,8 @@ export default function PublicationsListView() {
                     defaultValue="newest"
                     onValueChange={(value) => setSortOption(value ?? "")}
                   >
-                    <SelectTrigger className="w-[180px]">
-                      <SortDesc className="mr-2 h-4 w-4" />
+                    <SelectTrigger className="w-45">
+                      <SortDesc className="mr-2 size-4" />
                       <SelectValue placeholder="Sort by" />
                     </SelectTrigger>
                     <SelectContent>
@@ -411,7 +411,7 @@ export default function PublicationsListView() {
                     </SelectContent>
                   </Select>
                   <Button variant="outline" size="icon">
-                    <Download className="h-4 w-4" data-icon="inline-start" />
+                    <Download className="size-4" data-icon="inline-start" />
                   </Button>
                 </div>
               </div>
@@ -424,20 +424,20 @@ export default function PublicationsListView() {
                         <Card key={publication.id} className="overflow-hidden">
                           <div className="px-6">
                             <div className="flex flex-col space-y-1.5">
-                              <div className="flex items-center gap-2 flex-wrap">
+                              <div className="flex flex-wrap items-center gap-2">
                                 <Badge variant="outline">{publication.type}</Badge>
                                 <Badge variant="secondary">{publication.year}</Badge>
-                                <span className="text-sm text-muted-foreground ml-auto">
+                                <span className="ml-auto text-sm text-muted-foreground">
                                   {publication.citations} citations
                                 </span>
                               </div>
                               <Link href={`/publications/${publication.id}`} className="hover:underline">
-                                <h3 className="text-xl font-semibold tracking-tight mt-2">{publication.title}</h3>
+                                <h3 className="mt-2 text-xl font-semibold tracking-tight">{publication.title}</h3>
                               </Link>
                               <p className="text-sm font-medium">{publication.authors}</p>
                               <p className="text-sm text-muted-foreground italic">{publication.journal}</p>
-                              <p className="text-sm mt-2">{publication.abstract}</p>
-                              <div className="flex items-center gap-2 mt-4">
+                              <p className="mt-2 text-sm">{publication.abstract}</p>
+                              <div className="mt-4 flex items-center gap-2">
                                 <Link
                                   href={`/publications/${publication.id}`}
                                   className={buttonVariants({ variant: "outline", size: "sm" })}
@@ -453,7 +453,7 @@ export default function PublicationsListView() {
                                   View Original
                                 </a>
                                 <Button variant="outline" size="sm">
-                                  <Download className="h-3.5 w-3.5" data-icon="inline-start" />
+                                  <Download className="size-3.5" data-icon="inline-start" />
                                   Cite
                                 </Button>
                               </div>
@@ -508,7 +508,7 @@ export default function PublicationsListView() {
                     )}
                   </>
                 ) : (
-                  <div className="text-center py-10">
+                  <div className="py-10 text-center">
                     <p className="text-muted-foreground">No publications found matching your search criteria.</p>
                     <Button
                       variant="outline"

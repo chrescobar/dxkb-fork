@@ -49,7 +49,7 @@ export function CreateFolderDialog({
         <DialogTitle className="text-start">Create Folder</DialogTitle>
         <div className="flex flex-col gap-2 py-2">
           <label
-            className="text-muted-foreground text-xs font-medium"
+            className="text-xs font-medium text-muted-foreground"
             htmlFor="create-folder-input"
           >
             Folder name
@@ -79,7 +79,7 @@ export function CreateFolderDialog({
           <Button onClick={handleCreate} disabled={!canCreate}>
             {isCreating ? (
               <>
-                <Spinner className="mr-2 h-3.5 w-3.5 shrink-0" />
+                <Spinner className="mr-2 size-3.5 shrink-0" />
                 Creating…
               </>
             ) : (

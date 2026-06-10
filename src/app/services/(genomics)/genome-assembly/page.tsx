@@ -266,7 +266,7 @@ export default function GenomeAssemblyPage() {
                   <Label className="service-card-label">
                     Paired Read Library
                   </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
+                  <div className="mx-4 h-px flex-1 bg-border" />
                   <Button
                     type="button"
                     variant="outline"
@@ -304,7 +304,7 @@ export default function GenomeAssemblyPage() {
                   <Label className="service-card-label">
                     Single Read Library
                   </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
+                  <div className="mx-4 h-px flex-1 bg-border" />
                   <Button
                     type="button"
                     variant="outline"
@@ -530,7 +530,7 @@ export default function GenomeAssemblyPage() {
                   <CollapsibleTrigger className="service-collapsible-trigger">
                     Advanced Options
                     <ChevronDown
-                      className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
+                      className={`size-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
                     />
                   </CollapsibleTrigger>
 

@@ -16,7 +16,7 @@ const StatisticCard = ({ definition, count }: StatisticCardProps) => {
   const displayValue = count === null ? "—" : numberFormatter.format(count);
   return (
     <div>
-      <div className="text-4xl font-bold mb-2">{displayValue}</div>
+      <div className="mb-2 text-4xl font-bold">{displayValue}</div>
       <div>{definition.label}</div>
     </div>
   );

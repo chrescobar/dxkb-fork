@@ -46,7 +46,7 @@ export function UserAvatarDropdown() {
 
   return (
     <>
-      <div className="hover:bg-foreground/10 flex items-center space-x-2 rounded-md px-1 py-1">
+      <div className="flex items-center space-x-2 rounded-md p-1 hover:bg-foreground/10">
         <div className="size-8 shrink-0 overflow-hidden rounded-full **:data-[slot=dropdown-menu-trigger]:size-full **:data-[slot=dropdown-menu-trigger]:min-w-0">
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger
@@ -56,11 +56,11 @@ export function UserAvatarDropdown() {
               }
             >
               {isImpersonating ? (
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-600">
-                  <ShieldUser className="h-5 w-5 text-white" />
+                <div className="flex size-8 items-center justify-center rounded-full bg-red-600">
+                  <ShieldUser className="size-5 text-white" />
                 </div>
               ) : (
-                <Avatar className="h-8 w-8">
+                <Avatar className="size-8">
                   <AvatarFallback className="bg-white/10 text-white">
                     {user?.username?.charAt(0).toUpperCase() || "U"}
                   </AvatarFallback>
@@ -74,7 +74,7 @@ export function UserAvatarDropdown() {
               className="w-60"
             >
               <DropdownMenuGroup>
-                <DropdownMenuLabel className="text-foreground truncate text-sm">
+                <DropdownMenuLabel className="truncate text-sm text-foreground">
                   Hello, <span className="font-semibold">{user?.username ?? "User"}</span>
                   !
                 </DropdownMenuLabel>
@@ -92,26 +92,26 @@ export function UserAvatarDropdown() {
                     />
                   }
                 >
-                  <NotebookPen className="text-foreground h-4 w-4" />
+                  <NotebookPen className="size-4 text-foreground" />
                   {isImpersonating
                     ? `${user?.username}'s Workspace`
                     : "My Workspace"}
                 </DropdownMenuItem>
 
                 <DropdownMenuItem render={<Link href="/jobs" />}>
-                  <BriefcaseBusiness className="text-foreground h-4 w-4" />
+                  <BriefcaseBusiness className="size-4 text-foreground" />
                   {isImpersonating ? `${user?.username}'s Jobs` : "My Jobs"}
                 </DropdownMenuItem>
 
                 <DropdownMenuItem onClick={() => sendVerificationEmail()}>
                   <span className="flex items-center gap-2">
-                    <Mail className="text-foreground h-4 w-4" />
+                    <Mail className="size-4 text-foreground" />
                     Resend Verification Email
                   </span>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem render={<Link href="/settings" />}>
-                  <Settings className="text-foreground h-4 w-4" />
+                  <Settings className="size-4 text-foreground" />
                   Settings
                 </DropdownMenuItem>
 
@@ -119,7 +119,7 @@ export function UserAvatarDropdown() {
                   <>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => setSuDialogOpen(true)}>
-                      <LogIn className="text-foreground h-4 w-4" />
+                      <LogIn className="size-4 text-foreground" />
                       SU Login
                     </DropdownMenuItem>
                   </>
@@ -129,7 +129,7 @@ export function UserAvatarDropdown() {
                   <>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => suExit()}>
-                      <LogOut className="text-foreground h-4 w-4" />
+                      <LogOut className="size-4 text-foreground" />
                       Exit SU
                     </DropdownMenuItem>
                   </>
@@ -138,7 +138,7 @@ export function UserAvatarDropdown() {
                 <DropdownMenuSeparator />
                 <SignoutButton
                   variant="ghost"
-                  className="hover:bg-secondary/80 focus:bg-secondary/80 h-auto w-full justify-start gap-2 rounded-md border-none px-1.5 py-1 text-sm shadow-none"
+                  className="h-auto w-full justify-start gap-2 rounded-md border-none px-1.5 py-1 text-sm shadow-none hover:bg-secondary/80 focus:bg-secondary/80"
                 />
               </DropdownMenuGroup>
             </DropdownMenuContent>

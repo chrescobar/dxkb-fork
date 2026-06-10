@@ -74,13 +74,13 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
   }, []);
 
   return (
-    <div className="flex flex-col gap-1 p-1 text-sm mt-0 mb-2">
+    <div className="mt-0 mb-2 flex flex-col gap-1 p-1 text-sm">
       
       {/* TOP ROW */}
       <div className="flex items-start justify-between gap-2">
         
         {/* LEFT SIDE */}
-        <div className="flex flex-col gap-1 flex-1">
+        <div className="flex flex-1 flex-col gap-1">
           <KeywordSearch
             value={keywords.join(" ")}
             onChange={(val) => setKeywords(val.split(" ").filter(Boolean))}
@@ -102,19 +102,19 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
                   <Button
                     variant="outline"
                     onClick={() => setFacetMenuOpen((prev) => !prev)}
-                    className="text-xs px-2 py-1 border border-gray-400 rounded hover:bg-gray-700"
+                    className="rounded border border-gray-400 px-2 py-1 text-xs hover:bg-gray-700"
                   >
                     Facets ⚙
                   </Button>
 
               {facetMenuOpen && (
-                <div className="absolute right-0 mt-1 w-56 max-h-64 overflow-y-auto bg-gray-800 border border-gray-600 rounded shadow-lg z-[9999]">
+                <div className="absolute right-0 z-[9999] mt-1 max-h-64 w-56 overflow-y-auto rounded border border-gray-600 bg-gray-800 shadow-lg">
                   {localFacetFields
                     .filter((f) => f.facet)
                     .map((f) => (
                       <label
                         key={f.id}
-                        className="flex items-center gap-2 px-2 py-1 text-xs hover:bg-gray-700 cursor-pointer"
+                        className="flex cursor-pointer items-center gap-2 px-2 py-1 text-xs hover:bg-gray-700"
                       >
                         <input
                           type="checkbox"
@@ -134,9 +134,9 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
             variant="outline"
             onClick={clearAll}
             disabled={selected.length === 0 && keywords.length === 0}
-            className={`text-xs px-2 py-1 border rounded whitespace-nowrap ${
+            className={`rounded border px-2 py-1 text-xs whitespace-nowrap ${
               selected.length === 0 && keywords.length === 0
-                ? "border-gray-600 text-gray-500 cursor-not-allowed"
+                ? "cursor-not-allowed border-gray-600 text-gray-500"
                 : "border-red-400 text-red-300 hover:bg-red-900"
             }`}          
           >
@@ -148,7 +148,7 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
             <Button
               variant="outline"
               onClick={() => setShowFacets((prev) => !prev)}
-              className="text-xs px-2 py-1 border border-gray-400 rounded hover:bg-gray-700 whitespace-nowrap"
+              className="rounded border border-gray-400 px-2 py-1 text-xs whitespace-nowrap hover:bg-gray-700"
           >
             {showFacets ? "Hide Filters" : "Show Filters"}
           </Button>

@@ -105,15 +105,15 @@ function processQuery(query: string) {
 function getDataTypeIcon(dataType: string) {
   switch (dataType) {
     case "genome":
-      return <Dna className="h-5 w-5" />;
+      return <Dna className="size-5" />;
     case "genome_feature":
-      return <Bug className="h-5 w-5" />;
+      return <Bug className="size-5" />;
     case "surveillance":
-      return <Activity className="h-5 w-5" />;
+      return <Activity className="size-5" />;
     case "genome_sequence":
-      return <Database className="h-5 w-5" />;
+      return <Database className="size-5" />;
     default:
-      return <Microscope className="h-5 w-5" />;
+      return <Microscope className="size-5" />;
   }
 }
 
@@ -434,7 +434,7 @@ function SearchResultsContent({ query }: { query: string }) {
               return (
                 <Card
                   key={dataType}
-                  className="bg-card text-card-foreground gap-0 rounded-lg border py-0 shadow-sm px-4"
+                  className="gap-0 rounded-lg border bg-card px-4 py-0 text-card-foreground shadow-sm"
                 >
                   <CardHeader className="flex flex-row items-center justify-between border-b p-6">
                     <div className="flex items-center gap-2">
@@ -443,7 +443,7 @@ function SearchResultsContent({ query }: { query: string }) {
                         {labelsByType[dataType]}
                       </CardTitle>
                     </div>
-                    <Badge className="bg-secondary h-8 max-w-fit min-w-8 font-semibold text-white">
+                    <Badge className="h-8 max-w-fit min-w-8 bg-secondary font-semibold text-white">
                       {numFound}
                     </Badge>
                   </CardHeader>

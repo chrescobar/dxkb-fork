@@ -56,7 +56,7 @@ export async function DataSummary({ taxonId }: { taxonId: number }) {
             className="min-w-0 gap-0 rounded-md px-2.5 py-1.5 shadow-none"
             title={metric.description}
           >
-            <p className="text-muted-foreground text-[11px] font-bold uppercase tracking-wider">
+            <p className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">
               {metric.label}
             </p>
             <p

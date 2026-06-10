@@ -280,7 +280,7 @@ export function TaxonNameSelector({
   return (
     <div className={cn("relative w-full", className)}>
       <div ref={inputRef} className="relative">
-        <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+        <SearchIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder={placeholder}
           value={inputValue}
@@ -291,7 +291,7 @@ export function TaxonNameSelector({
             setTimeout(() => setShowDropdown(false), 200);
           }}
           className={cn(
-            "w-full pr-10 pl-10",
+            "w-full px-10",
             touched && !isValid && "border-destructive",
           )}
           disabled={disabled}
@@ -299,22 +299,22 @@ export function TaxonNameSelector({
         <Button
           type="button"
           onClick={handleManualDropdownToggle}
-          className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 transition-colors"
+          className="absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
         >
           <ChevronDownIcon
-            className={`h-4 w-4 transition-transform ${showDropdown ? "rotate-180" : ""}`}
+            className={`size-4 transition-transform ${showDropdown ? "rotate-180" : ""}`}
           />
         </Button>
 
         {/* Live Search Dropdown */}
         {showDropdown && (
-          <div className="bg-popover scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/20 hover:scrollbar-thumb-muted-foreground/40 dark:scrollbar-thumb-muted-foreground/30 dark:hover:scrollbar-thumb-muted-foreground/50 absolute top-full right-0 left-0 z-50 mt-1 max-h-64 overflow-y-auto rounded-md border shadow-md">
+          <div className="absolute inset-x-0 top-full z-50 mt-1 max-h-64 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent overflow-y-auto rounded-md border bg-popover shadow-md hover:scrollbar-thumb-muted-foreground/40 dark:scrollbar-thumb-muted-foreground/30 dark:hover:scrollbar-thumb-muted-foreground/50">
             {error ? (
-              <div className="text-destructive p-4 text-sm">Error: {error}</div>
+              <div className="p-4 text-sm text-destructive">Error: {error}</div>
             ) : loading ? (
               <div className="flex items-center justify-center p-4">
-                <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                <span className="text-muted-foreground text-sm">
+                <Loader2Icon className="mr-2 size-4 animate-spin" />
+                <span className="text-sm text-muted-foreground">
                   Searching...
                 </span>
               </div>
@@ -322,14 +322,14 @@ export function TaxonNameSelector({
               displayResults.map((item) => (
                 <div
                   key={item.taxon_id}
-                  className="hover:bg-accent flex cursor-pointer items-center justify-between p-2"
+                  className="flex cursor-pointer items-center justify-between p-2 hover:bg-accent"
                   onClick={() => handleSelect(item)}
                 >
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">
                       [{item.taxon_rank || "unknown"}] {item.taxon_name}
                     </p>
-                    <div className="text-muted-foreground flex items-center gap-2 text-xs">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <span>ID: {item.taxon_id}</span>
                       {item.division && <span>• {item.division}</span>}
                     </div>
@@ -337,7 +337,7 @@ export function TaxonNameSelector({
                 </div>
               ))
             ) : (
-              <p className="text-muted-foreground py-4 text-center text-sm">
+              <p className="py-4 text-center text-sm text-muted-foreground">
                 {searchQuery
                   ? `No taxonomy found for: ${searchQuery}`
                   : "No results found"}
@@ -348,7 +348,7 @@ export function TaxonNameSelector({
       </div>
 
       {touched && required && !isValid && (
-        <p className="text-destructive mt-1 text-sm">
+        <p className="mt-1 text-sm text-destructive">
           Taxonomy Name must be provided.
         </p>
       )}

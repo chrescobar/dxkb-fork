@@ -23,7 +23,7 @@ const Funding = () => {
           id="funding-content"
           className="flex flex-col gap-8 text-sm md:text-lg"
         >
-          <Image src={logoSrc} alt="CEPI Logo" width={246} height={74} className="w-auto h-16" />
+          <Image src={logoSrc} alt="CEPI Logo" width={246} height={74} className="h-16 w-auto" />
           <p>
             This project is supported by the Coalition for Epidemic Preparedness
             Innovations (CEPI) under the Disease X Program. We gratefully

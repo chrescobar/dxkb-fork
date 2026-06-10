@@ -371,7 +371,7 @@ export function JobsBrowser() {
       <TableRow>
         <TableCell
           colSpan={colSpan}
-          className="text-muted-foreground py-12 pl-6 text-center"
+          className="py-12 pl-6 text-center text-muted-foreground"
         >
           {searchQuery || statusFilter !== "all" || serviceFilter !== "all"
             ? "No jobs match your filters"
@@ -409,12 +409,12 @@ export function JobsBrowser() {
         {/* Header + toolbar */}
         <div className="min-w-0 shrink-0 space-y-4 overflow-hidden p-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-foreground text-2xl font-bold">Jobs</h1>
+            <h1 className="text-2xl font-bold text-foreground">Jobs</h1>
           </div>
 
           {error && (
             <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
+              <AlertCircle className="size-4" />
               <AlertDescription>
                 Error loading jobs: {error.message}
               </AlertDescription>

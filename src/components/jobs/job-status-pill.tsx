@@ -82,7 +82,7 @@ export function JobStatusPill() {
           >
             {statusGroups.map(({ key, count, icon: Icon, className }) => (
               <span key={key} className="flex items-center gap-1">
-                <Icon className={cn("h-3.5 w-3.5", className)} />
+                <Icon className={cn("size-3.5", className)} />
                 <span className="text-sm">{count}</span>
               </span>
             ))}
@@ -99,7 +99,7 @@ export function JobStatusPill() {
           <PopoverTitle className="text-sm font-medium">My Jobs</PopoverTitle>
           <Link
             href="/jobs"
-            className="text-muted-foreground hover:text-foreground text-xs transition-colors"
+            className="text-xs text-muted-foreground transition-colors hover:text-foreground"
             onClick={() => setIsOpen(false)}
           >
             View all →
@@ -108,11 +108,11 @@ export function JobStatusPill() {
 
         <div className="divide-y">
           {isPending ? (
-            <p className="text-muted-foreground px-3 py-4 text-center text-sm">
+            <p className="px-3 py-4 text-center text-sm text-muted-foreground">
               Loading…
             </p>
           ) : jobs.length === 0 ? (
-            <p className="text-muted-foreground px-3 py-4 text-center text-sm">
+            <p className="px-3 py-4 text-center text-sm text-muted-foreground">
               No recent jobs
             </p>
           ) : (
@@ -125,12 +125,12 @@ export function JobStatusPill() {
                   className="flex items-center gap-2 px-3 py-2"
                 >
                   <Icon
-                    className={cn("h-4 w-4 shrink-0", config?.className)}
+                    className={cn("size-4 shrink-0", config?.className)}
                   />
                   <span className="min-w-0 flex-1 truncate text-sm">
                     {formatServiceName(job.app)}
                   </span>
-                  <span className="text-muted-foreground shrink-0 text-xs">
+                  <span className="shrink-0 text-xs text-muted-foreground">
                     {formatJobTime(job)}
                   </span>
                 </div>

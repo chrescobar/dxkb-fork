@@ -768,8 +768,8 @@ export default function MSAandSNPAnalysisPage() {
                       value={selectGenomegroup[0]}
                     />
                     {isValidatingGenomeGroup && (
-                      <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                        <Spinner className="h-4 w-4" />
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Spinner className="size-4" />
                         <span>Validating genome group...</span>
                       </div>
                     )}
@@ -1027,13 +1027,13 @@ export default function MSAandSNPAnalysisPage() {
                     <SelectContent>
                       {isLoadingFeatures ? (
                         <div className="flex items-center justify-center p-4">
-                          <Spinner className="mr-2 h-4 w-4" />
-                          <span className="text-muted-foreground text-sm">
+                          <Spinner className="mr-2 size-4" />
+                          <span className="text-sm text-muted-foreground">
                             Loading features...
                           </span>
                         </div>
                       ) : featureOptions.length === 0 ? (
-                        <div className="text-muted-foreground p-4 text-center text-sm">
+                        <div className="p-4 text-center text-sm text-muted-foreground">
                           No features found in the selected feature group
                         </div>
                       ) : (
@@ -1056,8 +1056,8 @@ export default function MSAandSNPAnalysisPage() {
                     </SelectContent>
                   </Select>
                   {isLoadingFeatures && (
-                    <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                      <Spinner className="h-4 w-4" />
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Spinner className="size-4" />
                       <span>Loading features from feature group...</span>
                     </div>
                   )}
@@ -1115,13 +1115,13 @@ export default function MSAandSNPAnalysisPage() {
                     <SelectContent>
                       {isLoadingGenomes ? (
                         <div className="flex items-center justify-center p-4">
-                          <Spinner className="mr-2 h-4 w-4" />
-                          <span className="text-muted-foreground text-sm">
+                          <Spinner className="mr-2 size-4" />
+                          <span className="text-sm text-muted-foreground">
                             Loading genomes...
                           </span>
                         </div>
                       ) : genomeOptions.length === 0 ? (
-                        <div className="text-muted-foreground p-4 text-center text-sm">
+                        <div className="p-4 text-center text-sm text-muted-foreground">
                           No genomes found in the selected genome group
                         </div>
                       ) : (
@@ -1144,8 +1144,8 @@ export default function MSAandSNPAnalysisPage() {
                     </SelectContent>
                   </Select>
                   {isLoadingGenomes && (
-                    <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                      <Spinner className="h-4 w-4" />
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Spinner className="size-4" />
                       <span>Loading genomes from genome group...</span>
                     </div>
                   )}
@@ -1267,7 +1267,7 @@ export default function MSAandSNPAnalysisPage() {
                   <CollapsibleTrigger className="service-collapsible-trigger text-sm font-medium">
                     Strategy Options
                     <ChevronDown
-                      className={`h-4 w-4 transition-transform ${showStrategy ? "rotate-180 transform" : ""}`}
+                      className={`size-4 transition-transform ${showStrategy ? "rotate-180 transform" : ""}`}
                     />
                   </CollapsibleTrigger>
 

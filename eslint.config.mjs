@@ -2,7 +2,12 @@ import eslint from "@eslint/js";
 import { defineConfig } from "eslint/config";
 import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
 import nextTypescript from "eslint-config-next/typescript";
+import tailwind from "eslint-plugin-tailwindcss";
 import tseslint from "typescript-eslint";
+import { dirname, resolve } from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(
   {
@@ -20,6 +25,23 @@ export default defineConfig(
   eslint.configs.recommended,
   ...nextCoreWebVitals,
   ...nextTypescript,
+  tailwind.configs.recommended,
+  {
+    plugins: {
+      tailwindcss: tailwind,
+    },
+    settings: {
+      tailwindcss: {
+        cssConfigPath: resolve(__dirname, "src/app/globals.css"),
+        functions: ["cn", "cva", "clsx", "twMerge", "classnames", "ctl", "tv", "tw"],
+      },
+    },
+    rules: {
+      // Custom classes defined in globals.css are valid — the plugin can't parse @apply-based class definitions
+      "tailwindcss/no-custom-classname": "off",
+      "tailwindcss/no-arbitrary-value": "off",
+    },
+  },
   {
     files: ["**/*.{ts,tsx}"],
     extends: [tseslint.configs.strict, tseslint.configs.stylistic],

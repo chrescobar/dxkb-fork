@@ -72,8 +72,8 @@ export function JobsPagination({
   const pageNumbers = getPageNumbers(page, totalPages);
 
   return (
-    <div className="flex items-center justify-between px-2 py-2">
-      <span className="text-muted-foreground text-xs">
+    <div className="flex items-center justify-between p-2">
+      <span className="text-xs text-muted-foreground">
         {totalTasks === 0
           ? "No jobs found"
           : <>Showing {offset + 1}{"\u2013"}{offset + totalOnPage} of {totalTasks} jobs</>}
@@ -102,17 +102,17 @@ export function JobsPagination({
         <Button
           variant="outline"
           aria-label="Previous page"
-          className="h-9 w-9 rounded-lg p-0"
+          className="size-9 rounded-lg p-0"
           onClick={onPrevious}
           disabled={!hasPrevious}
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="size-4" />
         </Button>
         {pageNumbers.map((p, i) =>
           p === "ellipsis" ? (
             <span
               key={`ellipsis-${i}`}
-              className="text-muted-foreground flex h-9 w-9 items-center justify-center text-sm"
+              className="flex size-9 items-center justify-center text-sm text-muted-foreground"
             >
               ...
             </span>
@@ -122,7 +122,7 @@ export function JobsPagination({
               variant={p === page ? "default" : "outline"}
               aria-label={`Page ${p}`}
               aria-current={p === page ? "page" : undefined}
-              className="h-9 w-9 rounded-lg p-0 text-sm"
+              className="size-9 rounded-lg p-0 text-sm"
               onClick={() => onPageChange(p)}
             >
               {p}
@@ -132,11 +132,11 @@ export function JobsPagination({
         <Button
           variant="outline"
           aria-label="Next page"
-          className="h-9 w-9 rounded-lg p-0"
+          className="size-9 rounded-lg p-0"
           onClick={onNext}
           disabled={!hasNext}
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="size-4" />
         </Button>
       </div>
     </div>

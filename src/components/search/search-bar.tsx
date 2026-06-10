@@ -87,7 +87,7 @@ export function SearchBar({
       <Suspense fallback={null}>
         <SearchParamsSync onQueryChange={handleQueryChange} onSearchTypeChange={handleSearchTypeChange} />
       </Suspense>
-      <div className="relative flex w-full h-full items-stretch rounded-md border border-input bg-background overflow-hidden">
+      <div className="relative flex size-full items-stretch overflow-hidden rounded-md border border-input bg-background">
         <Select
           items={searchTypes.map((option) => ({ value: option.id, label: option.typeTitle }))}
           value={selected}
@@ -96,7 +96,7 @@ export function SearchBar({
           <SelectTrigger
             id="searchtype"
             aria-label="Search type"
-            className={`${size === "lg" ? "h-auto py-6" : ""} text-sm min-w-[120px] rounded-l-md rounded-r-none border-0 border-r border-input bg-background text-foreground shadow-none focus:ring-0`}
+            className={`${size === "lg" ? "h-auto py-6" : ""} min-w-30 rounded-l-md rounded-r-none border-0 border-r border-input bg-background text-sm text-foreground shadow-none focus:ring-0`}
           >
             <SelectValue aria-label="Search type" />
           </SelectTrigger>
@@ -111,18 +111,18 @@ export function SearchBar({
           </SelectContent>
         </Select>
 
-        <div className="relative flex-1 min-w-0">
+        <div className="relative min-w-0 flex-1">
           <Input
             type="text"
             placeholder={placeholder}
-            className={`${size === "lg" ? "py-6" : ""} ${showIcon ? "pl-10" : ""} rounded-l-none rounded-r-md border-0 bg-background text-foreground shadow-none focus-visible:ring-0 w-full`}
+            className={`${size === "lg" ? "py-6" : ""} ${showIcon ? "pl-10" : ""} w-full rounded-l-none rounded-r-md border-0 bg-background text-foreground shadow-none focus-visible:ring-0`}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
           />
           {showIcon && (
             <button
               type="submit"
-              className="absolute top-1/2 left-3 -translate-y-1/2 transform text-primary hover:text-primary/80 transition-colors cursor-pointer"
+              className="absolute top-1/2 left-3 -translate-y-1/2 transform cursor-pointer text-primary transition-colors hover:text-primary/80"
               aria-label="Search"
             >
               <Search size={18} />

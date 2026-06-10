@@ -122,7 +122,7 @@ export default function CitationsMetricsPage() {
 
         {/* Time Range Filter */}
         <div className="citation-filters">
-          <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-x-2 md:space-y-0">
+          <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-y-0 md:space-x-2">
             <Select
               items={[
                 { value: "all", label: "All Time" },
@@ -147,7 +147,7 @@ export default function CitationsMetricsPage() {
               value={yearRange}
               onValueChange={(value) => setYearRange(value ?? "")}
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-45">
                 <SelectValue placeholder="Select year range" />
               </SelectTrigger>
               <SelectContent>
@@ -233,19 +233,19 @@ export default function CitationsMetricsPage() {
           </TabsList>
 
           {/* Citation Trends Tab */}
-          <TabsContent value="trends" className="space-y-6 mt-6">
+          <TabsContent value="trends" className="mt-6 space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Citation Growth Over Time</CardTitle>
                 <CardDescription>Number of papers citing our knowledge base by year</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-[250px] w-full">
+                <div className="h-62.5 w-full">
                   <div className="flex h-full items-end gap-2">
                     {uniqueYears.map((year) => (
                       <div key={year} className="relative flex flex-1 flex-col items-center">
                         <div
-                          className="w-full bg-primary rounded-t"
+                          className="w-full rounded-t bg-primary"
                           style={{
                             height: `${(metricsByYear[year].count / Math.max(...Object.values(metricsByYear).map((m) => m.count))) * 100}%`,
                             minHeight: "20px",
@@ -253,7 +253,7 @@ export default function CitationsMetricsPage() {
                         />
                         <div className="absolute bottom-0 w-full">
                           <div
-                            className="w-full bg-primary/30 rounded-t"
+                            className="w-full rounded-t bg-primary/30"
                             style={{
                               height: `${(metricsByYear[year].totalCitations / Math.max(...Object.values(metricsByYear).map((m) => m.totalCitations || 1))) * 80}%`,
                               minHeight: "5px",
@@ -268,13 +268,13 @@ export default function CitationsMetricsPage() {
                     ))}
                   </div>
                 </div>
-                <div className="flex justify-center mt-4 items-center text-sm text-muted-foreground">
-                  <div className="flex items-center mr-4">
-                    <div className="w-3 h-3 bg-primary rounded mr-1"></div>
+                <div className="mt-4 flex items-center justify-center text-sm text-muted-foreground">
+                  <div className="mr-4 flex items-center">
+                    <div className="mr-1 size-3 rounded bg-primary"></div>
                     <span>Citing Papers</span>
                   </div>
                   <div className="flex items-center">
-                    <div className="w-3 h-3 bg-primary/30 rounded mr-1"></div>
+                    <div className="mr-1 size-3 rounded bg-primary/30"></div>
                     <span>Total Citations Received</span>
                   </div>
                 </div>
@@ -302,8 +302,8 @@ export default function CitationsMetricsPage() {
                               {count} ({percentage}%)
                             </span>
                           </div>
-                          <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                            <div className="h-full bg-primary rounded-full" style={{ width: `${percentage}%` }} />
+                          <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                            <div className="h-full rounded-full bg-primary" style={{ width: `${percentage}%` }} />
                           </div>
                         </div>
                       )
@@ -318,7 +318,7 @@ export default function CitationsMetricsPage() {
                   <CardDescription>How impact factor has changed over time</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-[200px] w-full">
+                  <div className="h-50 w-full">
                     <div className="flex h-full items-end gap-2">
                       {uniqueYears.map((year) => {
                         const avgImpact = metricsByYear[year].avgImpact
@@ -329,7 +329,7 @@ export default function CitationsMetricsPage() {
                         return (
                           <div key={year} className="relative flex flex-1 flex-col items-center">
                             <div
-                              className="w-full bg-primary/70 rounded-t"
+                              className="w-full rounded-t bg-primary/70"
                               style={{
                                 height: `${(avgImpact / (maxImpact || 1)) * 100}%`,
                                 minHeight: "20px",
@@ -350,19 +350,19 @@ export default function CitationsMetricsPage() {
           </TabsContent>
 
           {/* Impact Analysis Tab */}
-          <TabsContent value="impact" className="space-y-6 mt-6">
+          <TabsContent value="impact" className="mt-6 space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Impact Factor Distribution</CardTitle>
                 <CardDescription>Distribution of citations by journal impact factor</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-[250px] w-full">
+                <div className="h-50 w-full">
                   <div className="flex h-full items-end gap-2">
                     {impactFactorRanges.map((item) => (
                       <div key={item.range} className="relative flex flex-1 flex-col items-center">
                         <div
-                          className="w-full bg-primary rounded-t"
+                          className="w-full rounded-t bg-primary"
                           style={{
                             height: `${(item.count / Math.max(...impactFactorRanges.map((r) => r.count || 1))) * 100}%`,
                             minHeight: "20px",
@@ -392,13 +392,13 @@ export default function CitationsMetricsPage() {
                       .slice(0, 5)
                       .map((citation, index) => (
                         <div key={citation.id} className="flex items-start space-x-2">
-                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-xs font-medium">
+                          <div className="flex size-6 items-center justify-center rounded-full bg-muted text-xs font-medium">
                             {index + 1}
                           </div>
                           <div className="space-y-1">
                             <Link
                               href={citation.doi}
-                              className="text-sm font-medium hover:underline line-clamp-1"
+                              className="line-clamp-1 text-sm font-medium hover:underline"
                               target="_blank"
                             >
                               {citation.title}
@@ -427,13 +427,13 @@ export default function CitationsMetricsPage() {
                       .slice(0, 5)
                       .map((citation, index) => (
                         <div key={citation.id} className="flex items-start space-x-2">
-                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-xs font-medium">
+                          <div className="flex size-6 items-center justify-center rounded-full bg-muted text-xs font-medium">
                             {index + 1}
                           </div>
                           <div className="space-y-1">
                             <Link
                               href={citation.doi}
-                              className="text-sm font-medium hover:underline line-clamp-1"
+                              className="line-clamp-1 text-sm font-medium hover:underline"
                               target="_blank"
                             >
                               {citation.title}
@@ -453,19 +453,19 @@ export default function CitationsMetricsPage() {
           </TabsContent>
 
           {/* Author Analysis Tab */}
-          <TabsContent value="authors" className="space-y-6 mt-6">
+          <TabsContent value="authors" className="mt-6 space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Top Citing Authors</CardTitle>
                 <CardDescription>Authors who cite our knowledge base most frequently</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-[250px] w-full">
+                <div className="h-62.5 w-full">
                   <div className="flex h-full items-end gap-2">
                     {topAuthors.map((author) => (
                       <div key={author.name} className="relative flex flex-1 flex-col items-center">
                         <div
-                          className="w-full bg-primary rounded-t"
+                          className="w-full rounded-t bg-primary"
                           style={{
                             height: `${(author.count / Math.max(...topAuthors.map((a) => a.count))) * 100}%`,
                             minHeight: "20px",
@@ -488,13 +488,13 @@ export default function CitationsMetricsPage() {
                 <CardDescription>Frequent collaborators citing our knowledge base</CardDescription>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="h-[300px] w-full flex items-center justify-center relative bg-muted/20 rounded-lg">
+                <div className="relative flex h-75 w-full items-center justify-center rounded-lg bg-muted/20">
                   {/* Center node representing your knowledge base */}
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-                    <div className="h-16 w-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground shadow-lg">
-                      <BookOpen className="h-8 w-8" />
+                  <div className="absolute top-1/2 left-1/2 z-10 -translate-1/2 transform">
+                    <div className="flex size-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">
+                      <BookOpen className="size-8" />
                     </div>
-                    <div className="text-center mt-2 font-medium text-sm">Knowledge Base</div>
+                    <div className="mt-2 text-center text-sm font-medium">Knowledge Base</div>
                   </div>
 
                   {/* Author nodes */}
@@ -511,7 +511,7 @@ export default function CitationsMetricsPage() {
                     return (
                       <div
                         key={author.name}
-                        className="absolute transform -translate-x-1/2 -translate-y-1/2"
+                        className="absolute -translate-1/2 transform"
                         style={{
                           left: `calc(50% + ${x}px)`,
                           top: `calc(50% + ${y}px)`,
@@ -533,7 +533,7 @@ export default function CitationsMetricsPage() {
 
                         {/* Author node */}
                         <div
-                          className="rounded-full flex flex-col items-center justify-center p-2 shadow-md bg-card border"
+                          className="flex flex-col items-center justify-center rounded-full border bg-card p-2 shadow-md"
                           style={{
                             height: `${size}px`,
                             width: `${size}px`,
@@ -541,15 +541,15 @@ export default function CitationsMetricsPage() {
                             position: "relative",
                           }}
                         >
-                          <Users className="h-4 w-4 mb-1 text-muted-foreground" />
-                          <span className="text-xs text-center font-medium">{author.name}</span>
+                          <Users className="mb-1 size-4 text-muted-foreground" />
+                          <span className="text-center text-xs font-medium">{author.name}</span>
                           <span className="text-xs">{author.count}</span>
                         </div>
                       </div>
                     )
                   })}
                 </div>
-                <div className="text-center mt-4 text-sm text-muted-foreground">
+                <div className="mt-4 text-center text-sm text-muted-foreground">
                   <p>This visualization shows the top authors who cite our knowledge base and their relationships.</p>
                 </div>
               </CardContent>
@@ -559,7 +559,7 @@ export default function CitationsMetricsPage() {
 
         {/* Recent High-Impact Citations */}
         <div>
-          <h2 className="text-xl font-semibold mb-4">Recent High-Impact Citations</h2>
+          <h2 className="mb-4 text-xl font-semibold">Recent High-Impact Citations</h2>
           <div className="space-y-4">
             {filteredCitations
               .filter((c) => c.impactFactor > 4)
@@ -576,7 +576,7 @@ export default function CitationsMetricsPage() {
                         </div>
                         <div className="flex items-center gap-2">
                           <Badge variant="outline" className="flex items-center gap-1">
-                            <BarChart3 className="h-3 w-3" data-icon="inline-start" />
+                            <BarChart3 className="size-3" data-icon="inline-start" />
                             IF: {citation.impactFactor.toFixed(1)}
                           </Badge>
                           <Badge variant="outline" className="flex items-center gap-1">
@@ -589,18 +589,18 @@ export default function CitationsMetricsPage() {
                         <Link
                           href={citation.doi}
                           target="_blank"
-                          className="text-xl font-semibold tracking-tight hover:underline flex items-center gap-1"
+                          className="flex items-center gap-1 text-xl font-semibold tracking-tight hover:underline"
                         >
                           {citation.title}
-                          <ExternalLink className="h-4 w-4 inline-block ml-1" />
+                          <ExternalLink className="ml-1 inline-block size-4" />
                         </Link>
-                        <p className="text-sm font-medium mt-1">{citation.authors}</p>
-                        <p className="text-sm text-muted-foreground italic mt-1">{citation.journal}</p>
+                        <p className="mt-1 text-sm font-medium">{citation.authors}</p>
+                        <p className="mt-1 text-sm text-muted-foreground italic">{citation.journal}</p>
                       </div>
 
-                      <p className="text-sm mt-2">{citation.abstract}</p>
+                      <p className="mt-2 text-sm">{citation.abstract}</p>
 
-                      <div className="flex items-center gap-2 mt-2">
+                      <div className="mt-2 flex items-center gap-2">
                         <a
                           href={citation.doi}
                           target="_blank"
@@ -610,7 +610,7 @@ export default function CitationsMetricsPage() {
                           View Paper
                         </a>
                         <Button variant="outline" size="sm">
-                          <Download className="h-3.5 w-3.5" data-icon="inline-start" />
+                          <Download className="size-3.5" data-icon="inline-start" />
                           Export Citation
                         </Button>
                       </div>

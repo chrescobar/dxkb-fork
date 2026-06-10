@@ -711,7 +711,7 @@ export default function BlastServicePage() {
               <CollapsibleTrigger className="service-collapsible-trigger">
                 Advanced Options
                 <ChevronDown
-                  className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
+                  className={`size-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
                 />
               </CollapsibleTrigger>
 

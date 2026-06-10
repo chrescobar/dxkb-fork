@@ -205,7 +205,7 @@ const GenomeAnnotationContent = () => {
               <div className="flex flex-col gap-4 sm:flex-row">
                 <form.Field name="scientific_name">
                   {(field) => (
-                    <FieldItem className="sm:w-[75%]">
+                    <FieldItem className="sm:w-9/12">
                       <Label className="gap-1">
                         Taxonomy Name
                         <TooltipProvider>
@@ -270,7 +270,7 @@ const GenomeAnnotationContent = () => {
                     // Get scientific_name to populate taxon_name in the selector
                     const scientificName = form.state.values.scientific_name;
                     return (
-                      <FieldItem className="sm:w-[25%]">
+                      <FieldItem className="sm:w-3/12">
                         <FieldLabel field={field}>Taxonomy ID</FieldLabel>
                         <TaxIDSelector
                           value={

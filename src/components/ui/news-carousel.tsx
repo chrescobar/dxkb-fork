@@ -49,8 +49,8 @@ const newsItems = [
 
 const NewsCarousel = () => {
   return (
-    <section id="news-carousel-container" className="items-center max-w-7xl mx-auto my-16">
-      <h3 className="text-2xl font-bold text-center mb-6">News</h3>
+    <section id="news-carousel-container" className="mx-auto my-16 max-w-7xl items-center">
+      <h3 className="mb-6 text-center text-2xl font-bold">News</h3>
 
       <Carousel
         opts={{
@@ -61,11 +61,11 @@ const NewsCarousel = () => {
       >
         <CarouselContent className="-ml-2 md:-ml-4">
           {newsItems.map((item, index) => (
-            <CarouselItem key={index} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/4">
+            <CarouselItem key={index} className="pl-2 md:basis-1/2 md:pl-4 lg:basis-1/4">
               <div className="p-1">
                 <Card className="h-96 w-full overflow-hidden p-0">
-                  <CardContent id={`news-card-${index}`} className="flex flex-col aspect-square w-full h-full p-0">
-                    <div className="h-2/3 w-full relative" id={`news-image-${index}`}>
+                  <CardContent id={`news-card-${index}`} className="flex aspect-square size-full flex-col p-0">
+                    <div className="relative h-2/3 w-full" id={`news-image-${index}`}>
                       <Image
                         src={item.image}
                         alt={item.title}
@@ -80,8 +80,8 @@ const NewsCarousel = () => {
                       <a href={item.link} className="news-link">
                         <h4 className="font-bold">{item.title}</h4>
                       </a>
-                      <p className="text-sm text-foreground mb-2">{item.section}</p>
-                      <p className="text-sm text-muted-foreground line-clamp-3">
+                      <p className="mb-2 text-sm text-foreground">{item.section}</p>
+                      <p className="line-clamp-3 text-sm text-muted-foreground">
                         {item.description}
                       </p>
                     </div>

@@ -135,7 +135,7 @@ function InteractiveCsvViewer({
 
   if (loading) {
     return (
-      <div className="flex h-full w-full items-center justify-center gap-2 text-muted-foreground">
+      <div className="flex size-full items-center justify-center gap-2 text-muted-foreground">
         Loading... <Spinner />
       </div>
     );
@@ -143,7 +143,7 @@ function InteractiveCsvViewer({
 
   if (displayError) {
     return (
-      <div className="flex h-full w-full items-center justify-center text-destructive">
+      <div className="flex size-full items-center justify-center text-destructive">
         {displayError}
       </div>
     );
@@ -151,29 +151,29 @@ function InteractiveCsvViewer({
 
   if (records.length === 0) {
     return (
-      <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+      <div className="flex size-full items-center justify-center text-muted-foreground">
         No data found
       </div>
     );
   }
 
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className="flex size-full flex-col">
       <div className="flex items-center gap-2 border-b border-border px-3 py-1.5 text-xs text-muted-foreground">
         {records.length} rows · {columnNames.length} columns
       </div>
       <div
         ref={scrollContainerRef}
-        className="h-full w-full overflow-auto"
+        className="size-full overflow-auto"
       >
         <table className="w-full text-sm">
-          <thead className="bg-muted sticky top-0 z-10">
+          <thead className="sticky top-0 z-10 bg-muted">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="cursor-pointer select-none border-b border-border px-3 py-2 text-left font-medium"
+                    className="cursor-pointer border-b border-border px-3 py-2 text-left font-medium select-none"
                     onClick={header.column.getToggleSortingHandler()}
                   >
                     {flexRender(

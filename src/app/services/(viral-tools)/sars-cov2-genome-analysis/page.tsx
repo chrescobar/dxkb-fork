@@ -298,7 +298,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                     <Label className="service-card-label">
                       Paired Read Library
                     </Label>
-                    <div className="bg-border mx-4 h-px flex-1" />
+                    <div className="mx-4 h-px flex-1 bg-border" />
                     <Button
                       type="button"
                       variant="outline"
@@ -360,7 +360,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                       <Label className="service-card-label">
                         Single Read Library
                       </Label>
-                      <div className="bg-border mx-4 h-px flex-1" />
+                      <div className="mx-4 h-px flex-1 bg-border" />
                       <Button
                         type="button"
                         variant="outline"
@@ -780,7 +780,7 @@ export default function SarsCov2GenomeAnalysisPage() {
               type="submit"
               disabled={isSubmitting || !canSubmit || !isOutputNameValid}
             >
-              {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
+              {isSubmitting ? <Spinner className="mr-2 size-4" /> : null}
               Submit
             </Button>
           </div>

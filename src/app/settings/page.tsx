@@ -29,8 +29,8 @@ export default function SettingsPage() {
   if (isLoading) {
     return (
       <div className="grid gap-6">
-        <Skeleton className="h-[480px] w-full rounded-xl" />
-        <Skeleton className="h-[320px] w-full rounded-xl" />
+        <Skeleton className="h-120 w-full rounded-xl" />
+        <Skeleton className="h-80 w-full rounded-xl" />
       </div>
     );
   }
@@ -38,7 +38,7 @@ export default function SettingsPage() {
   if (isError || !profile) {
     return (
       <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
+        <AlertCircle className="size-4" />
         <AlertDescription>
           Failed to load your profile. Please try refreshing the page.
         </AlertDescription>

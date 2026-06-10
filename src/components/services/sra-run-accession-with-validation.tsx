@@ -344,10 +344,10 @@ const SraRunAccessionWithValidation = ({
               {label ?? (
                 <Label className="service-card-label">{title}</Label>
               )}
-              <div className="bg-border mx-4 h-px flex-1" />
+              <div className="mx-4 h-px flex-1 bg-border" />
             </>
           ) : (
-            <div className="bg-border mx-4 h-px flex-1" />
+            <div className="mx-4 h-px flex-1 bg-border" />
           )}
           {showAddButton &&
             (addButton ?? (
@@ -359,7 +359,7 @@ const SraRunAccessionWithValidation = ({
                 disabled={!sraAccession.trim() || disabled || isValidating}
               >
                 {isValidating ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="size-4 animate-spin" />
                 ) : (
                   <ChevronRight size={16} />
                 )}

@@ -31,7 +31,7 @@ export function GeneraCard({ name, href, count }: GeneraCardProps) {
         href={href}
         {...(isExternal && { target: "_blank", rel: "noopener noreferrer" })}
         aria-label={`View ${displayName} ${viewTab}`}
-        className="hover:bg-muted/40 flex min-h-12 items-center gap-2.5 px-2.5 py-1.5 transition-colors"
+        className="flex min-h-12 items-center gap-2.5 px-2.5 py-1.5 transition-colors hover:bg-muted/40"
       >
         <Avatar
           size={28}
@@ -47,14 +47,14 @@ export function GeneraCard({ name, href, count }: GeneraCardProps) {
             {displayName}
           </h3>
           {count !== undefined && (
-            <p className="text-muted-foreground text-[11px] leading-tight">
+            <p className="text-[11px] leading-tight text-muted-foreground">
               {numberFormatter.format(count)} genomes
             </p>
           )}
         </div>
         <ArrowRight
           size={14}
-          className="text-muted-foreground/50 shrink-0"
+          className="shrink-0 text-muted-foreground/50"
           aria-hidden="true"
         />
       </Link>

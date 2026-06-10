@@ -91,13 +91,13 @@ export function CopyToDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="scrollbar-themed flex max-h-[90vh] md:max-h-[70vh] h-full max-w-lg flex-col overflow-hidden sm:max-w-xl md:max-w-2xl lg:max-w-4xl">
+      <DialogContent className="scrollbar-themed flex h-full max-h-[90vh] max-w-lg flex-col overflow-hidden sm:max-w-xl md:max-h-[70vh] md:max-w-2xl lg:max-w-4xl">
         <DialogHeader className="shrink-0">
           <DialogTitle className="pr-8">{title}</DialogTitle>
         </DialogHeader>
         <div className="-mx-4 flex min-h-0 flex-1 flex-col gap-4 px-4 pt-1">
           <div className="flex shrink-0 flex-col gap-2">
-            <Label className="text-muted-foreground text-xs font-medium">
+            <Label className="text-xs font-medium text-muted-foreground">
               Destination
             </Label>
             <Input
@@ -109,7 +109,7 @@ export function CopyToDialog({
 
           <div className="flex shrink-0 flex-col gap-2">
             <Label
-              className="text-muted-foreground text-xs font-medium"
+              className="text-xs font-medium text-muted-foreground"
               htmlFor="copy-dialog-filename"
             >
               Filename
@@ -164,7 +164,7 @@ export function CopyToDialog({
           >
             {isCopying ? (
               <>
-                <Spinner className="mr-2 h-3.5 w-3.5 shrink-0" />
+                <Spinner className="mr-2 size-3.5 shrink-0" />
                 {mode === "move" ? "Moving…" : "Copying…"}
               </>
             ) : mode === "move" ? (

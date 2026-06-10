@@ -232,7 +232,7 @@ export default function SimilarGenomeFinderServicePage() {
                 <CollapsibleTrigger className="service-collapsible-trigger">
                   Advanced Options
                   <ChevronDown
-                    className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
+                    className={`size-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
                   />
                 </CollapsibleTrigger>
 
@@ -475,8 +475,8 @@ export default function SimilarGenomeFinderServicePage() {
                 Reset
               </Button>
               <Button type="submit" disabled={isSubmitting || !canSubmit}>
-                {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
-                <Search className="mr-2 h-4 w-4" />
+                {isSubmitting ? <Spinner className="mr-2 size-4" /> : null}
+                <Search className="mr-2 size-4" />
                 Search
               </Button>
             </div>

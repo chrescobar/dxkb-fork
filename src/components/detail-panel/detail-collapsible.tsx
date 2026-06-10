@@ -33,9 +33,9 @@ export function DetailCollapsibleSection({
           className="flex min-w-0 flex-1 items-center gap-2 px-3 py-2 text-left text-xs font-semibold"
         >
           {expanded ? (
-            <ChevronDown className="h-3.5 w-3.5 shrink-0" />
+            <ChevronDown className="size-3.5 shrink-0" />
           ) : (
-            <ChevronRight className="h-3.5 w-3.5 shrink-0" />
+            <ChevronRight className="size-3.5 shrink-0" />
           )}
           {label}
         </button>

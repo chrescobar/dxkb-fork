@@ -3,44 +3,44 @@ import { MapPin, ExternalLink } from "lucide-react";
 
 const Offices = () => {
   return (
-    <section className="py-12 bg-background">
+    <section className="bg-background py-12">
           <div className="container mx-auto px-4">
-            <div className="max-w-6xl mx-auto">
-              <h2 className="text-2xl font-bold mb-8 text-center">Visit Our Offices</h2>
-              <div className="bg-gray-200 rounded-lg overflow-hidden h-96 mb-8">
+            <div className="mx-auto max-w-6xl">
+              <h2 className="mb-8 text-center text-2xl font-bold">Visit Our Offices</h2>
+              <div className="mb-8 h-96 overflow-hidden rounded-lg bg-gray-200">
                 {/* This would be replaced with an actual map component */}
-                <div className="w-full h-full flex items-center justify-center bg-gray-300">
+                <div className="flex size-full items-center justify-center bg-gray-300">
                   <div className="text-center">
-                    <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                    <MapPin className="mx-auto mb-2 size-12 text-muted-foreground" />
                     <p className="text-muted-foreground">Interactive Map Would Be Displayed Here</p>
                     <Button variant="outline" className="mt-4">
-                      <ExternalLink className="h-4 w-4 mr-2" />
+                      <ExternalLink className="mr-2 size-4" />
                       View Full Map
                     </Button>
                   </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-background p-6 rounded-lg shadow-sm">
-                  <h3 className="font-bold text-lg mb-2">Cambridge, MA</h3>
-                  <p className="text-muted-foreground mb-4">123 Science Way, Cambridge, MA 02142, USA</p>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                <div className="rounded-lg bg-background p-6 shadow-sm">
+                  <h3 className="mb-2 text-lg font-bold">Cambridge, MA</h3>
+                  <p className="mb-4 text-muted-foreground">123 Science Way, Cambridge, MA 02142, USA</p>
                   <Button variant="outline" size="sm" className="w-full">
                     Get Directions
                   </Button>
                 </div>
 
-                <div className="bg-background p-6 rounded-lg shadow-sm">
-                  <h3 className="font-bold text-lg mb-2">Oxford, UK</h3>
-                  <p className="text-muted-foreground mb-4">45 Research Boulevard, Oxford, UK OX1 2JD</p>
+                <div className="rounded-lg bg-background p-6 shadow-sm">
+                  <h3 className="mb-2 text-lg font-bold">Oxford, UK</h3>
+                  <p className="mb-4 text-muted-foreground">45 Research Boulevard, Oxford, UK OX1 2JD</p>
                   <Button variant="outline" size="sm" className="w-full">
                     Get Directions
                   </Button>
                 </div>
 
-                <div className="bg-background p-6 rounded-lg shadow-sm">
-                  <h3 className="font-bold text-lg mb-2">Singapore</h3>
-                  <p className="text-muted-foreground mb-4">78 Innovation Road, Singapore 138632</p>
+                <div className="rounded-lg bg-background p-6 shadow-sm">
+                  <h3 className="mb-2 text-lg font-bold">Singapore</h3>
+                  <p className="mb-4 text-muted-foreground">78 Innovation Road, Singapore 138632</p>
                   <Button variant="outline" size="sm" className="w-full">
                     Get Directions
                   </Button>

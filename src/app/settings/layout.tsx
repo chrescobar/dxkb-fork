@@ -7,10 +7,10 @@ interface SettingsLayoutProps {
 
 export default function SettingsLayout({ children }: SettingsLayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <Navbar />
-      <main className="grow flex py-8">
-        <div className="container max-w-2xl mx-auto">{children}</div>
+      <main className="flex grow py-8">
+        <div className="container mx-auto max-w-2xl">{children}</div>
       </main>
       <Footer />
     </div>

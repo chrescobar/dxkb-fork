@@ -9,7 +9,7 @@ export default function OrganismsLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
-      <main className="bg-muted/30 flex grow py-4">{children}</main>
+      <main className="flex grow bg-muted/30 py-4">{children}</main>
       <Footer />
     </div>
   );

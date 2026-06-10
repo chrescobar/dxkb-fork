@@ -55,7 +55,7 @@ const FAQ = () => {
   return (
     <div className="flex w-full flex-col items-center">
       <FooterHeader title="FAQs" />
-      <div className="container mx-auto w-[95%] max-w-7xl py-8 my-12">
+      <div className="container mx-auto my-12 w-11/12 max-w-7xl py-8">
         {Object.entries(faqSections).map(([section, questions]) => (
           <div key={section} className="section-content">
             <h2 className="section-content-header">{section}</h2>

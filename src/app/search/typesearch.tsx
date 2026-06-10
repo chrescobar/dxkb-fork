@@ -84,8 +84,8 @@ function TabsRenderer({
   };
 
   return (
-    <Tabs value={activeTab} onValueChange={handleTabChange} className="flex flex-1 min-h-0 flex-col overflow-hidden">
-      <TabsList className="pb-0 mb-0 bg-background">
+    <Tabs value={activeTab} onValueChange={handleTabChange} className="flex min-h-0 flex-1 flex-col overflow-hidden">
+      <TabsList className="mb-0 bg-background pb-0">
         {Object.entries(tabsForType).map(([term, label]) => (
           <TabsTrigger key={term} value={term}>
             {label}
@@ -97,7 +97,7 @@ function TabsRenderer({
         <TabsContent
           key={term}
           value={term}
-          className="mt-0 flex min-h-0 flex-1 flex-col overflow-hidden border-0 px-0 pt-[5px]"
+          className="mt-0 flex min-h-0 flex-1 flex-col overflow-hidden border-0 px-0 pt-1"
         >
           <ListData
             resource={term}
@@ -254,7 +254,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
     // h-full can correctly constrain their inner scroll areas. Without an
     // explicit h-full some descendants may compute height auto and allow
     // children to expand the page (pushing the footer).
-    <div className="flex min-h-0 flex-1 h-full">
+    <div className="flex h-full min-h-0 flex-1">
       <GenomeShell
         hasSidePanel={!!activeGenomeId}
         actionBar={

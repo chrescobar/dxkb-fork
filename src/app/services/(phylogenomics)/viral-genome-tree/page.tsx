@@ -456,7 +456,7 @@ export default function ViralGenomeTreePage() {
                     }
                   >
                     {isValidatingGenomeGroup ? (
-                      <Spinner className="h-4 w-4" />
+                      <Spinner className="size-4" />
                     ) : (
                       <Plus size={16} />
                     )}
@@ -747,7 +747,7 @@ export default function ViralGenomeTreePage() {
           <CollapsibleTrigger className="service-collapsible-trigger">
             Metadata Options
             <ChevronDown
-              className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
+              className={`size-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
             />
           </CollapsibleTrigger>
 
@@ -756,7 +756,7 @@ export default function ViralGenomeTreePage() {
               <div className="space-y-4">
                 <div>
                   <Label>Metadata Table Fields</Label>
-                  <p className="text-muted-foreground pt-2 pb-4 text-sm">
+                  <p className="pt-2 pb-4 text-sm text-muted-foreground">
                     These fields will appear as options in the phyloxml
                     visualization
                   </p>
@@ -774,7 +774,7 @@ export default function ViralGenomeTreePage() {
                       <SelectTrigger className="service-card-select-trigger">
                         <SelectValue placeholder="Select field" />
                       </SelectTrigger>
-                      <SelectContent className="max-h-[600px]">
+                      <SelectContent className="max-h-150">
                         <SelectGroup>
                           {availableMetadataOptions.map((field) => {
                             // Check if this is a label (section header)
@@ -782,7 +782,7 @@ export default function ViralGenomeTreePage() {
                               return (
                                 <SelectLabel
                                   key={field.value}
-                                  className="border-border mb-1 border-b pb-1.5 font-medium"
+                                  className="mb-1 border-b border-border pb-1.5 font-medium"
                                 >
                                   {field.label}
                                 </SelectLabel>
@@ -803,7 +803,7 @@ export default function ViralGenomeTreePage() {
                       onClick={addMetadataField}
                       disabled={!selectedMetadataField}
                     >
-                      <ArrowRight className="h-4 w-4" />
+                      <ArrowRight className="size-4" />
                     </Button>
                   </div>
                 </div>
@@ -830,7 +830,7 @@ export default function ViralGenomeTreePage() {
                               variant="ghost"
                               size="icon"
                               onClick={() => removeMetadataField(field.id)}
-                              className="text-destructive hover:text-destructive/90 h-6 w-6"
+                              className="size-6 text-destructive hover:text-destructive/90"
                             >
                               <X size={14} />
                             </Button>

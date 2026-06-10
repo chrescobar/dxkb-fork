@@ -7,7 +7,7 @@ import type { UserProfile } from "@/lib/auth/types";
 // ============================================================================
 
 export const profileFormSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: z.email("Invalid email address"),
   first_name: z.string().min(1, "First name is required"),
   middle_name: z.string(),
   last_name: z.string().min(1, "Last name is required"),

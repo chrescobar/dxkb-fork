@@ -25,7 +25,7 @@ export const POST = withAuth(async (request: NextRequest, { token }) => {
   const parsed = requestSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "Invalid request parameters", details: parsed.error.flatten() },
+      { error: "Invalid request parameters", details: z.treeifyError(parsed.error) },
       { status: 400 },
     );
   }

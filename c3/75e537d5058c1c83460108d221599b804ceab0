@@ -1,0 +1,140 @@
+src/components/workspace/workspace-item-header.tsx
+  s_0d580176ec0ea8::t_cf589dcd757ea3 59
+src/components/settings/preferences-form.tsx
+  s_0d580176ec0ea8::t_30ff1789974724 113
+src/hooks/services/use-service-form-submission.ts
+  s_0d580176ec0ea8::t_055431f4355ef4 37,40-41
+src/app/services/(metagenomics)/metagenomic-read-mapping/page.tsx
+  s_0d580176ec0ea8::t_858bd8e6e0007b 185
+src/app/services/(viral-tools)/sars-cov2-genome-analysis/page.tsx
+  s_0d580176ec0ea8::t_f6500a02ed73c0 237
+src/components/filterbar/facet-panel.tsx
+  s_0d580176ec0ea8::t_5c0a4dc8cc6804 156
+src/components/settings/password-change-form.tsx
+  s_0d580176ec0ea8::t_995fe17b6930a6 73
+src/components/auth/su-login-dialog.tsx
+  s_0d580176ec0ea8::t_a2e0f45deec680 90
+src/app/services/(protein-tools)/meta-cats/page.tsx
+  s_0d580176ec0ea8::t_325b7c137fcf2c 433
+  s_0d580176ec0ea8::t_e7bc086d9eaeac 653
+src/components/search/command-palette.tsx
+  s_0d580176ec0ea8::t_57dbfa7a601e58 110,113
+  s_0d580176ec0ea8::t_bebcc650f3a293 123-130
+src/components/search/welcome-search.tsx
+  s_0d580176ec0ea8::t_a4e30e28965782 34
+src/app/(auth)/sign-up/page.tsx
+  s_0d580176ec0ea8::t_a679dbd9bfba9f 127
+src/app/services/(metagenomics)/metagenomic-binning/page.tsx
+  s_0d580176ec0ea8::t_d55e2afe469330 211
+src/app/services/(viral-tools)/influenza-ha-subtype/page.tsx
+  s_0d580176ec0ea8::t_37f0950bee37fb 137
+src/app/services/(metagenomics)/taxonomic-classification/page.tsx
+  s_0d580176ec0ea8::t_3aaf2f978b28eb 333
+src/components/services/output-folder.tsx
+  s_0d580176ec0ea8::t_724b875d363efa 106
+src/app/services/(protein-tools)/gene-protein-tree/page.tsx
+  s_0d580176ec0ea8::t_56eb46524995d0 371
+src/app/allTermSearchResults.tsx
+  s_0d580176ec0ea8::t_cf6f635fcdf8e4 394
+src/components/search/search-bar.tsx
+  s_0d580176ec0ea8::t_1f86ba6244c598 71,74
+src/app/services/(genomics)/primer-design/page.tsx
+  s_0d580176ec0ea8::t_a27b4abf180c6e 337
+src/components/settings/profile-form.tsx
+  s_0d580176ec0ea8::t_94e758028c983e 95
+src/app/services/(genomics)/similar-genome-finder/page.tsx
+  s_0d580176ec0ea8::t_205b8b21f11d97 169
+src/app/services/(viral-tools)/sars-cov2-wastewater-analysis/page.tsx
+  s_0d580176ec0ea8::t_9659728e91374d 292
+src/components/auth/signout-button.tsx
+  s_0d580176ec0ea8::t_2137e7a18fee2e 86
+  s_0d580176ec0ea8::t_15795884a79c24 118
+src/components/workspace/file-viewer/viewers/codemirror-viewer.tsx
+  s_0d580176ec0ea8::t_831ab2e9217da8 342
+  s_0d580176ec0ea8::t_58b373342d53c9 377
+src/app/services/(genomics)/variation-analysis/page.tsx
+  s_0d580176ec0ea8::t_9ed3ec10b9a72b 187
+src/components/services/single-genome-selector.tsx
+  s_0d580176ec0ea8::t_d87da4c4de7296 405,429
+src/components/services/list-data.tsx
+  s_0d580176ec0ea8::t_cdf7c6a02c55b2 386
+  s_0d580176ec0ea8::t_84f32fda8404b9 56
+src/components/shared/data-table.tsx
+  s_0d580176ec0ea8::t_96c3923b425e5d 818
+  s_0d580176ec0ea8::t_e24e26b1ee53cb 781
+  s_0d580176ec0ea8::t_424d1507610afc 792
+  s_0d580176ec0ea8::t_7a54b117724967 807
+src/app/services/(protein-tools)/proteome-comparison/page.tsx
+  s_0d580176ec0ea8::t_67948cb7cee76a 747
+  s_0d580176ec0ea8::t_113e98ecfba11c 359
+  s_0d580176ec0ea8::t_7051c5a8523f91 643
+src/components/workspace/file-viewer/viewers/use-molstar-plugin.ts
+  s_0d580176ec0ea8::t_e0dd9290ae52e4 115
+src/components/navbars/user-avatar-dropdown.tsx
+  s_0d580176ec0ea8::t_c035681ffcf9ce 131
+  s_0d580176ec0ea8::t_fa49a6d0feebfd 106
+src/app/services/(genomics)/genome-alignment/page.tsx
+  s_0d580176ec0ea8::t_6c6c7c7089147f 302
+  s_0d580176ec0ea8::t_8265713922f133 254
+  s_0d580176ec0ea8::t_3e663f29c50522 291
+src/app/services/(phylogenomics)/viral-genome-tree/page.tsx
+  s_0d580176ec0ea8::t_8b21bfcda22709 415
+  s_0d580176ec0ea8::t_96d0b09e854802 454
+src/app/services/(utilities)/fastq-utilities/page.tsx
+  s_0d580176ec0ea8::t_fc2a78f4c97145 295
+src/components/workspace/download-options-dialog.tsx
+  s_0d580176ec0ea8::t_8322162c461f56 189
+  s_0d580176ec0ea8::t_e8f0bc14991036 136
+src/components/workspace/workspace-dialogs.tsx
+  s_0d580176ec0ea8::t_98b1fb59ad0687 92
+src/app/(auth)/forgot-password/page.tsx
+  s_0d580176ec0ea8::t_a7e64fc1c64f6f 126
+src/app/services/(protein-tools)/msa-snp-analysis/page.tsx
+  s_0d580176ec0ea8::t_d8a41a07e98786 351
+  s_0d580176ec0ea8::t_01c2d694277c1c 474
+  s_0d580176ec0ea8::t_2224b730bfa570 425
+  s_0d580176ec0ea8::t_9ca69b8b313526 683
+  s_0d580176ec0ea8::t_b27af9a571d048 695-760,763,766
+src/app/services/(genomics)/blast/page.tsx
+  s_0d580176ec0ea8::t_5b4e16242ef9f6 245
+src/components/services/sra-run-accession-with-validation.tsx
+  s_0d580176ec0ea8::t_fa246a0d87f961 334
+  s_0d580176ec0ea8::t_d757c49f2fb87c 290
+  s_0d580176ec0ea8::t_5446c0fab09746 358
+src/components/workspace/file-viewer/viewers/__tests__/expandable-viewer-wrapper.test.tsx
+  s_0d580176ec0ea8::t_5cbe483f515f1c 70,93,114,130,134
+src/components/workspace/edit-type-dialog.tsx
+  s_0d580176ec0ea8::t_71abb1276a9c27 113
+src/components/services/genome-name-selector.tsx
+  s_0d580176ec0ea8::t_0a687b6f34ed02 362
+  s_0d580176ec0ea8::t_0add0ff4141eff 243,269
+src/app/(auth)/sign-in/page.tsx
+  s_0d580176ec0ea8::t_fe2caf488ad10b 89
+src/app/services/(viral-tools)/subspecies-classification/page.tsx
+  s_0d580176ec0ea8::t_5d13e17a97ea6f 151
+src/app/services/(genomics)/genome-annotation/page.tsx
+  s_0d580176ec0ea8::t_690583bdfefac8 131
+src/app/services/(genomics)/genome-assembly/page.tsx
+  s_0d580176ec0ea8::t_360316ea0d3608 244
+src/components/workspace/create-workspace-dialog.tsx
+  s_0d580176ec0ea8::t_e4a399e29f488c 87
+  s_0d580176ec0ea8::t_3744bc02cfcb39 74
+src/app/services/(viral-tools)/viral-assembly/page.tsx
+  s_0d580176ec0ea8::t_16c4738c95296e 230
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "c375e537d5058c1c83460108d221599b804ceab0",
+  "prompts": {},
+  "sessions": {
+    "s_0d580176ec0ea8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ca49035-a1d3-487e-9d2f-5fd0bae8a7fb",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

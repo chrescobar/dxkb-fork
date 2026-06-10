@@ -1,0 +1,21 @@
+src/app/api/services/app-service/jobs/enumerate-tasks-filtered/route.ts
+  s_0d580176ec0ea8::t_f53bb83483f2dc 28
+src/lib/forms/settings/settings-form-utils.ts
+  s_0d580176ec0ea8::t_29917002d91fca 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "a1c1c5ae386646d222c63882a9b5f61a473cc8d4",
+  "prompts": {},
+  "sessions": {
+    "s_0d580176ec0ea8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ca49035-a1d3-487e-9d2f-5fd0bae8a7fb",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

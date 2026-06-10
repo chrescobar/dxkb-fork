@@ -184,7 +184,7 @@ const Updates = () => {
       <FooterHeader title="Updates" />
 
       <div className="mx-auto grid w-full max-w-7xl gap-8 p-4 md:p-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-200">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-[1fr_300px]">
           {/* Sidebar - Calendar & Events */}
           <div className="order-1 flex w-full flex-col space-y-8 self-start md:sticky md:top-8 md:order-2 md:w-75">
             <Card className="w-full p-0">

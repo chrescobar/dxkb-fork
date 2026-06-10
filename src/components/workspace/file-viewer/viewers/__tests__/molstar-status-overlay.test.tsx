@@ -61,7 +61,7 @@ describe("MolstarStatusOverlay", () => {
     );
 
     const icon = container.querySelector("svg");
-    expect(icon?.classList.contains("h-8")).toBe(true);
+    expect(icon?.classList.contains("size-8")).toBe(true);
 
     const message = screen.getByText("Error");
     expect(message.classList.contains("max-w-xs")).toBe(true);
@@ -73,7 +73,7 @@ describe("MolstarStatusOverlay", () => {
     );
 
     const icon = container.querySelector("svg");
-    expect(icon?.classList.contains("h-10")).toBe(true);
+    expect(icon?.classList.contains("size-10")).toBe(true);
 
     const message = screen.getByText("Error");
     expect(message.classList.contains("max-w-sm")).toBe(true);

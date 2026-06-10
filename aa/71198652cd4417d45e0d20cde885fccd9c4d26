@@ -1,0 +1,33 @@
+src/components/workspace/file-viewer/viewers/csv-viewer.tsx
+  s_0d580176ec0ea8::t_79e5f3338bbd00 68
+src/lib/services/workspace/adapters/__tests__/http-workspace-repository.test.ts
+  s_0d580176ec0ea8::t_13836f34ff7be2 194
+src/components/services/single-genome-selector.tsx
+  s_0d580176ec0ea8::t_fb08b32b9b041c 194
+  s_0d580176ec0ea8::t_5ebe28d8db9348 340
+  s_0d580176ec0ea8::t_0a1f0024c4d09b 133
+src/components/shared/data-table.tsx
+  s_0d580176ec0ea8::t_6eca441db7e93f 671
+e2e/scripts/record-har.ts
+  s_0d580176ec0ea8::t_3e8690bd565110 288
+e2e/scripts/seed-account.ts
+  s_0d580176ec0ea8::t_84446bc59799a1 129
+src/components/services/genome-name-selector.tsx
+  s_0d580176ec0ea8::t_bf4f5dc2874ca8 102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "aa71198652cd4417d45e0d20cde885fccd9c4d26",
+  "prompts": {},
+  "sessions": {
+    "s_0d580176ec0ea8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ca49035-a1d3-487e-9d2f-5fd0bae8a7fb",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

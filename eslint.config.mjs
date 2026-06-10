@@ -39,12 +39,19 @@ export default defineConfig(
     rules: {
       // Custom classes defined in globals.css are valid — the plugin can't parse @apply-based class definitions
       "tailwindcss/no-custom-classname": "off",
-      "tailwindcss/no-arbitrary-value": "off",
+      // Too noisy — many legitimate arbitrary values have no preset equivalent (e.g. min(), vh+rem combos, percentages)
+      // "tailwindcss/no-arbitrary-value": "on",
     },
   },
   {
     files: ["**/*.{ts,tsx}"],
-    extends: [tseslint.configs.strict, tseslint.configs.stylistic],
+    extends: [tseslint.configs.strictTypeChecked, tseslint.configs.stylistic],
+    languageOptions: {
+      parserOptions: {
+        project: true,
+        tsconfigRootDir: __dirname,
+      },
+    },
     rules: {
       // note you must disable the base rule
       // as it can report incorrect errors

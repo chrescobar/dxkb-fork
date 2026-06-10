@@ -1,0 +1,22 @@
+src/app/(footer)/updates/page.tsx
+  s_8c6eb0d0ea58ce::t_677cd33a6bac4d 187
+src/components/workspace/file-viewer/viewers/__tests__/molstar-status-overlay.test.tsx
+  s_8c6eb0d0ea58ce::t_0ae90b4982c6c2 64
+  s_8c6eb0d0ea58ce::t_5e8e3fe367501b 76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "b266f94a6b9cb6ed7b7222c1499d6722f515dd9e",
+  "prompts": {},
+  "sessions": {
+    "s_8c6eb0d0ea58ce": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "980f78c4-701a-4474-8f61-79072b4cdf71",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

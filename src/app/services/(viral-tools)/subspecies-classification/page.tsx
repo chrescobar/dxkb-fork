@@ -148,7 +148,7 @@ export default function SubspeciesClassificationPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="grid grid-cols-1 gap-6 md:grid-cols-12"
       >

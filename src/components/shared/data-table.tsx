@@ -778,7 +778,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
           {/* Download buttons */}
           <Button
-            onClick={() => handleDownload('csv')}
+            onClick={() => { void handleDownload('csv'); }}
             className="mx-2 rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
             disabled={downloadingButton !== null}
           >
@@ -789,7 +789,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
             )}
           </Button>
           <Button
-            onClick={() => handleDownload('txt')}
+            onClick={() => { void handleDownload('txt'); }}
             className="mr-2 rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
             disabled={downloadingButton !== null}
           >
@@ -804,7 +804,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           {((selectedIds?.length ?? 0) > 0 || isAllPagesSelected) && ( 
             <>
               <Button
-                onClick={() => handleDownload('csv', true)}
+                onClick={() => { void handleDownload('csv', true); }}
                 className="mr-2 rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
                 disabled={downloadingButton !== null}
               >
@@ -815,7 +815,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                 )}
               </Button>
               <Button
-                onClick={() => handleDownload('txt', true)}
+                onClick={() => { void handleDownload('txt', true); }}
                 className="mr-2 rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
                 disabled={downloadingButton !== null}
               >

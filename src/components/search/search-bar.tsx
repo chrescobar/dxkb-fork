@@ -68,10 +68,10 @@ export function SearchBar({
     e.preventDefault();
     if (!inputValue.trim()) return;
 
-    router.push(
+    void router.push(
       `/search?q=${encodeURIComponent(inputValue)}&searchtype=${selected}`
     );
-    queryClient.invalidateQueries({
+    void queryClient.invalidateQueries({
       predicate: (query) => {
         const key = query.queryKey[0];
         return (

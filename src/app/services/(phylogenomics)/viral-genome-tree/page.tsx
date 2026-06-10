@@ -412,7 +412,7 @@ export default function ViralGenomeTreePage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="grid grid-cols-1 gap-4 md:grid-cols-2"
       >
@@ -451,7 +451,7 @@ export default function ViralGenomeTreePage() {
                     type="button"
                     size="icon"
                     variant="outline"
-                    onClick={handleAddGenomeGroup}
+                    onClick={() => { void handleAddGenomeGroup(); }}
                     disabled={
                       !selectedGenomeGroupObject || isValidatingGenomeGroup
                     }

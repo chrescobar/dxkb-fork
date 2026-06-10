@@ -110,7 +110,7 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
 
           <Button
             type="button"
-            onClick={handleSave}
+            onClick={() => { void handleSave(); }}
             disabled={isSubmitting}
             className="w-fit"
           >

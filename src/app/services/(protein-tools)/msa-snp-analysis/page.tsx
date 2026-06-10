@@ -348,7 +348,7 @@ export default function MSAandSNPAnalysisPage() {
       }
     }
 
-    loadFeatures();
+    void loadFeatures();
 
     return () => {
       if (abortController) {
@@ -422,7 +422,7 @@ export default function MSAandSNPAnalysisPage() {
       setIsLoadingGenomes(false);
     }
 
-    loadGenomes();
+    void loadGenomes();
 
     return () => {
       if (abortController) {
@@ -471,7 +471,7 @@ export default function MSAandSNPAnalysisPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="flex flex-col gap-4"
       >
@@ -680,7 +680,7 @@ export default function MSAandSNPAnalysisPage() {
                     <WorkspaceObjectSelector
                       preset="genomeGroup"
                       placeholder="Select viral genome group"
-                      onSelectedObjectChange={async (
+                      onSelectedObjectChange={(
                         object: WorkspaceObject | null,
                       ) => {
                         if (!object || !object.path) {
@@ -692,79 +692,78 @@ export default function MSAandSNPAnalysisPage() {
 
                         setIsValidatingGenomeGroup(true);
 
-                        try {
-                          // Fetch genome group members to get genome IDs
-                          const genomes =
-                            await fetchGenomeGroupMembers(inputValue);
+                        void (async () => {
+                          try {
+                            // Fetch genome group members to get genome IDs
+                            const genomes =
+                              await fetchGenomeGroupMembers(inputValue);
 
-                          if (genomes.length === 0) {
-                            toast.error("Empty genome group", {
-                              description:
-                                "The selected genome group is empty.",
+                            if (genomes.length === 0) {
+                              toast.error("Empty genome group", {
+                                description:
+                                  "The selected genome group is empty.",
+                                closeButton: true,
+                              });
+                              return;
+                            }
+
+                            if (genomes.length > MsaSnpAnalysis.maxGenomes) {
+                              toast.error("Genome group too large", {
+                                description: `The genome group has ${genomes.length} genomes, but the maximum is ${MsaSnpAnalysis.maxGenomes}.`,
+                                closeButton: true,
+                              });
+                              return;
+                            }
+
+                            const genomeIds = genomes.map((g) => g.genome_id);
+
+                            // Validate viral genomes
+                            const validation = await validateViralGenomes(
+                              genomeIds,
+                              {
+                                maxGenomeLength: MsaSnpAnalysis.maxGenomeLength,
+                              },
+                            );
+
+                            if (!validation.allValid) {
+                              const errorMessages = Object.values(
+                                validation.errors,
+                              ).filter(Boolean);
+                              const errorMsg =
+                                errorMessages.length > 0
+                                  ? errorMessages.join("\n")
+                                  : "Invalid genome group. Please check that all genomes are viruses with single contigs.";
+
+                              toast.error("Genome group validation failed", {
+                                description: errorMsg,
+                                duration: 10000,
+                                closeButton: true,
+                              });
+                              return;
+                            }
+
+                            // Replace the existing group (only one group allowed)
+                            form.setFieldValue("select_genomegroup", [
+                              inputValue,
+                            ]);
+                            setSelectedGenomeGroupObject(null);
+                          } catch (error) {
+                            console.error(
+                              "Failed to validate genome group:",
+                              error,
+                            );
+                            const errorMessage =
+                              error instanceof Error
+                                ? error.message
+                                : "Failed to validate genome group";
+                            toast.error("Validation error", {
+                              description: errorMessage,
                               closeButton: true,
                             });
+                          } finally {
                             setIsValidatingGenomeGroup(false);
-                            return;
                           }
-
-                          if (genomes.length > MsaSnpAnalysis.maxGenomes) {
-                            toast.error("Genome group too large", {
-                              description: `The genome group has ${genomes.length} genomes, but the maximum is ${MsaSnpAnalysis.maxGenomes}.`,
-                              closeButton: true,
-                            });
-                            setIsValidatingGenomeGroup(false);
-                            return;
-                          }
-
-                          const genomeIds = genomes.map((g) => g.genome_id);
-
-                          // Validate viral genomes
-                          const validation = await validateViralGenomes(
-                            genomeIds,
-                            {
-                              maxGenomeLength: MsaSnpAnalysis.maxGenomeLength,
-                            },
-                          );
-
-                          if (!validation.allValid) {
-                            const errorMessages = Object.values(
-                              validation.errors,
-                            ).filter(Boolean);
-                            const errorMsg =
-                              errorMessages.length > 0
-                                ? errorMessages.join("\n")
-                                : "Invalid genome group. Please check that all genomes are viruses with single contigs.";
-
-                            toast.error("Genome group validation failed", {
-                              description: errorMsg,
-                              duration: 10000,
-                              closeButton: true,
-                            });
-                            setIsValidatingGenomeGroup(false);
-                            return;
-                          }
-
-                          // Replace the existing group (only one group allowed)
-                          form.setFieldValue("select_genomegroup", [
-                            inputValue,
-                          ]);
-                          setSelectedGenomeGroupObject(null);
-                        } catch (error) {
-                          console.error(
-                            "Failed to validate genome group:",
-                            error,
-                          );
-                          const errorMessage =
-                            error instanceof Error
-                              ? error.message
-                              : "Failed to validate genome group";
-                          toast.error("Validation error", {
-                            description: errorMessage,
-                            closeButton: true,
-                          });
-                        } finally {
-                          setIsValidatingGenomeGroup(false);
-                        }
+                        })();
                       }}
                       value={selectGenomegroup[0]}
                     />

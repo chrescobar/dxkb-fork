@@ -391,7 +391,7 @@ function SearchResultsContent({ query }: { query: string }) {
 
   useEffect(() => {
     if (query) {
-      queueMicrotask(() => fetchSearchResults(query));
+      queueMicrotask(() => { void fetchSearchResults(query); });
     }
   }, [query]);
 

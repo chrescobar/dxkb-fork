@@ -402,7 +402,7 @@ export function SingleGenomeSelector({
     if (!showDropdown || suggestions.length === 0) {
       if (event.key === "Enter") {
         event.preventDefault();
-        handleManualSelect();
+        void handleManualSelect();
       }
       return;
     }
@@ -426,7 +426,7 @@ export function SingleGenomeSelector({
           const genome = suggestions[highlightedIndex];
           handleDropdownClick(genome);
         } else {
-          handleManualSelect();
+          void handleManualSelect();
         }
         break;
       case "Escape":

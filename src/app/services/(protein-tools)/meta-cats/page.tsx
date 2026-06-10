@@ -430,7 +430,7 @@ export default function MetaCATSPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="flex flex-col gap-4"
       >
@@ -650,7 +650,7 @@ export default function MetaCATSPage() {
                         type="button"
                         variant="outline"
                         size="icon"
-                        onClick={handleAddAutoFeatureGroup}
+                        onClick={() => { void handleAddAutoFeatureGroup(); }}
                         disabled={
                           !selectedAutoFeatureGroupObject || isLoadingAutoGroup
                         }

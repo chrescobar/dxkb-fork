@@ -133,7 +133,7 @@ function DownloadOptionsForm({
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
-                if (canSubmit) handleSubmit();
+                if (canSubmit) void handleSubmit();
               }
             }}
             aria-invalid={!!validationError}
@@ -186,7 +186,7 @@ function DownloadOptionsForm({
         >
           Cancel
         </Button>
-        <Button onClick={handleSubmit} disabled={!canSubmit}>
+        <Button onClick={() => { void handleSubmit(); }} disabled={!canSubmit}>
           {isSubmitting ? (
             <Spinner className="size-4 shrink-0" />
           ) : (

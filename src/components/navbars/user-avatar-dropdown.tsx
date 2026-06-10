@@ -103,7 +103,7 @@ export function UserAvatarDropdown() {
                   {isImpersonating ? `${user?.username}'s Jobs` : "My Jobs"}
                 </DropdownMenuItem>
 
-                <DropdownMenuItem onClick={() => sendVerificationEmail()}>
+                <DropdownMenuItem onClick={() => { void sendVerificationEmail(); }}>
                   <span className="flex items-center gap-2">
                     <Mail className="size-4 text-foreground" />
                     Resend Verification Email
@@ -128,7 +128,7 @@ export function UserAvatarDropdown() {
                 {isImpersonating && (
                   <>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => suExit()}>
+                    <DropdownMenuItem onClick={() => { void suExit(); }}>
                       <LogOut className="size-4 text-foreground" />
                       Exit SU
                     </DropdownMenuItem>

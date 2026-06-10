@@ -110,7 +110,7 @@ function EditTypeForm({
         >
           Cancel
         </Button>
-        <Button onClick={handleSave} disabled={!canSave}>
+        <Button onClick={() => { void handleSave(); }} disabled={!canSave}>
           {isUpdating ? (
             <>
               <Spinner className="mr-2 size-3.5 shrink-0" />

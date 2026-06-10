@@ -31,7 +31,7 @@ const WelcomeSearch = () => {
                   <span
                     role="button"
                     tabIndex={0}
-                    onClick={e => { e.preventDefault(); sendVerificationEmail(); }}
+                    onClick={e => { e.preventDefault(); void sendVerificationEmail(); }}
                     className="cursor-pointer text-inherit underline hover:text-foreground focus:underline focus:outline-none"
                     style={{ font: "inherit" }}
                   >

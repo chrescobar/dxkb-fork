@@ -53,7 +53,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const setIsAllPagesSelected = onAllPagesSelectionChange || setInternalIsAllPagesSelected;
 
   useEffect(() => {
-    (async () => {
+    void (async () => {
       try {
         const mod = await import(`@/constants/datafields/${resource}`);
         const fieldObj = mod[`${resource}Fields`];
@@ -383,7 +383,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
             onColumnVisibilityChange={setColumnVisibility}
             isAllPagesSelected={isAllPagesSelected}
             onAllPagesSelectionChange={handleAllPagesSelectionChange}
-            onDownloadAll={handleDownloadAll}
+            onDownloadAll={(format, visibleColumns) => { void handleDownloadAll(format, visibleColumns); }}
             isLoading={metaLoading || dataLoading || dataFetching}
             selectedIds={selectedIds ?? []}
           />

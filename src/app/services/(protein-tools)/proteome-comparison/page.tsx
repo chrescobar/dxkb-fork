@@ -356,7 +356,7 @@ export default function ProteomeComparisonPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="flex flex-col gap-4"
       >
@@ -640,7 +640,7 @@ export default function ProteomeComparisonPage() {
                       type="button"
                       variant="outline"
                       size="icon"
-                      onClick={handleAddCompGenome}
+                      onClick={() => { void handleAddCompGenome(); }}
                       disabled={
                         !selectedCompGenomeId ||
                         totalGenomeCount >= maxComparisonGenomes ||
@@ -744,7 +744,7 @@ export default function ProteomeComparisonPage() {
                       type="button"
                       variant="outline"
                       size="icon"
-                      onClick={handleAddCompGenomeGroup}
+                      onClick={() => { void handleAddCompGenomeGroup(); }}
                       disabled={
                         !selectedCompGenomeGroup ||
                         totalGenomeCount >= maxComparisonGenomes ||

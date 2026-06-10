@@ -107,10 +107,10 @@ export function CommandPalette() {
     const trimmed = inputValue.trim();
     if (!trimmed) return;
     runCommand(() => {
-      router.push(
+      void router.push(
         `/search?q=${encodeURIComponent(trimmed)}&searchtype=everything`,
       );
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         predicate: (query) => {
           const key = query.queryKey[0];
           return key === "genome-meta" || key === "genome-full";
@@ -120,12 +120,14 @@ export function CommandPalette() {
   }, [inputValue, queryClient, router, runCommand]);
 
   const handleSignOut = useCallback(() => {
-    runCommand(async () => {
-      try {
-        await signOut();
-      } finally {
-        router.push("/");
-      }
+    runCommand(() => {
+      void (async () => {
+        try {
+          await signOut();
+        } finally {
+          void router.push("/");
+        }
+      })();
     });
   }, [router, runCommand, signOut]);
 

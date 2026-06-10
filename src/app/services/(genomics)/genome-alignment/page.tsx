@@ -251,7 +251,7 @@ export default function GenomeAlignmentServicePage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="service-form-section"
       >
@@ -288,7 +288,7 @@ export default function GenomeAlignmentServicePage() {
                   <WorkspaceObjectSelector
                     preset="genomeGroup"
                     placeholder="Select a genome group from your workspace"
-                    onObjectSelect={handleGenomeGroupSelect}
+                    onObjectSelect={(obj) => { void handleGenomeGroupSelect(obj); }}
                     onSelectedObjectChange={setSelectedGenomeGroup}
                   />
                 </div>
@@ -299,7 +299,7 @@ export default function GenomeAlignmentServicePage() {
                   disabled={!selectedGenomeGroup}
                   onClick={() => {
                     if (selectedGenomeGroup) {
-                      handleGenomeGroupSelect(selectedGenomeGroup);
+                      void handleGenomeGroupSelect(selectedGenomeGroup);
                       setSelectedGenomeGroup(null);
                     }
                   }}

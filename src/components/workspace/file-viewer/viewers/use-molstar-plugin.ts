@@ -112,7 +112,7 @@ export function useMolstarPlugin(
       }
     }
 
-    init();
+    void init();
 
     return () => {
       disposed = true;

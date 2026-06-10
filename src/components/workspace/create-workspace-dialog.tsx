@@ -71,7 +71,7 @@ function CreateWorkspaceForm({
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
-              if (canCreate) handleCreate();
+              if (canCreate) void handleCreate();
             }
           }}
         />
@@ -84,7 +84,7 @@ function CreateWorkspaceForm({
         >
           Cancel
         </Button>
-        <Button onClick={handleCreate} disabled={!canCreate}>
+        <Button onClick={() => { void handleCreate(); }} disabled={!canCreate}>
           {isCreating ? (
             <>
               <Spinner className="mr-2 size-3.5 shrink-0" />

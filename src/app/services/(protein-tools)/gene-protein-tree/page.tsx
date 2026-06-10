@@ -368,7 +368,7 @@ export default function GeneProteinTreePage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="grid grid-cols-1 gap-4 md:grid-cols-2"
       >

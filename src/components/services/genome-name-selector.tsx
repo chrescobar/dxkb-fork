@@ -240,7 +240,7 @@ export function GenomeNameSelector({
     if (!showDropdown || suggestions.length === 0) {
       if (event.key === "Enter") {
         event.preventDefault();
-        handleManualAdd();
+        void handleManualAdd();
       }
       return;
     }
@@ -266,7 +266,7 @@ export function GenomeNameSelector({
             handleDropdownClick(genome);
           }
         } else {
-          handleManualAdd();
+          void handleManualAdd();
         }
         break;
       case "Escape":
@@ -359,7 +359,7 @@ export function GenomeNameSelector({
           size="icon"
           variant="outline"
           disabled={selectionDisabled || isLoading}
-          onClick={handleManualAdd}
+          onClick={() => { void handleManualAdd(); }}
         >
           {isLoading ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
         </Button>

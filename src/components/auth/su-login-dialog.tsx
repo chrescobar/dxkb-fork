@@ -87,7 +87,7 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={(e) => { void handleSubmit(e); }} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="su-target-user">User to Impersonate</Label>
               <Input

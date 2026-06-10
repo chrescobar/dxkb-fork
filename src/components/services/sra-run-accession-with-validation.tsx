@@ -287,7 +287,7 @@ const SraRunAccessionWithValidation = ({
     }
 
     const timer = setTimeout(() => {
-      validateAccession(trimmed).then((result) => {
+      void validateAccession(trimmed).then((result) => {
         // When there's no add button, auto-add the valid SRA so the form becomes valid (keep input visible)
         if (result && !showAddButton) {
           const libs = selectedLibrariesRef.current;
@@ -331,7 +331,7 @@ const SraRunAccessionWithValidation = ({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !showAddButton) {
       e.preventDefault();
-      handleAdd();
+      void handleAdd();
     }
   };
 
@@ -355,7 +355,7 @@ const SraRunAccessionWithValidation = ({
                 variant="outline"
                 size="icon"
                 aria-label="Add SRA run accession to selected libraries"
-                onClick={handleAdd}
+                onClick={() => { void handleAdd(); }}
                 disabled={!sraAccession.trim() || disabled || isValidating}
               >
                 {isValidating ? (

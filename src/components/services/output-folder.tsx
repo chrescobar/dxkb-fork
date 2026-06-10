@@ -103,7 +103,7 @@ const OutputFolder = ({
 
     debounceRef.current = setTimeout(() => {
       debounceRef.current = null;
-      runCheck(outputFolderPath, value);
+      void runCheck(outputFolderPath, value);
     }, debounceMs);
 
     return () => {

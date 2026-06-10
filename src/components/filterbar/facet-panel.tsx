@@ -153,7 +153,7 @@ export function FacetPanel({
       }
     };
 
-    fetchFacets();
+    void fetchFacets();
   }, [fields, query, resource, DataAPI, selected]);
 
   return (

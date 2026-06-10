@@ -339,7 +339,7 @@ export function CodeMirrorViewer({
 
           if (loaded >= largeFileThreshold) {
             wasTruncated = true;
-            reader.cancel();
+            void reader.cancel();
             break;
           }
         }
@@ -374,7 +374,7 @@ export function CodeMirrorViewer({
       }
     }
 
-    init();
+    void init();
 
     return () => {
       destroyed = true;

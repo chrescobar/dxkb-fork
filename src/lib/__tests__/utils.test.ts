@@ -34,7 +34,8 @@ describe("noop", () => {
   });
 
   it("returns undefined", () => {
-    // noop returns void; calling it and discarding is the correct usage
+    // noop's declared return type is void; calling it as a standalone statement
+    // verifies it executes without throwing. The void return type is checked by TS.
     noop();
   });
 });

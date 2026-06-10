@@ -53,9 +53,9 @@ export function LandingShellClient({
         onCollapseToggle={() => setNavCollapsed((current) => !current)}
       />
       <section className="min-w-0 flex-1">
-        <div className="bg-card mb-4 flex items-center justify-between rounded-lg border px-5 py-3 shadow-sm">
+        <div className="mb-4 flex items-center justify-between rounded-lg border bg-card px-5 py-3 shadow-sm">
           <div>
-            <p className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase">
+            <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
               Organisms
             </p>
             <h1 className="text-2xl font-bold tracking-tight">{displayName}</h1>

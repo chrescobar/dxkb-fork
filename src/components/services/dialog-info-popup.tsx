@@ -31,9 +31,9 @@ export function DialogInfoPopup({
             aria-label={`More info: ${title}`}
             className={cn(
               isHeader
-                ? "h-8 w-8 rounded-full p-2 text-primary font-bold"
-                : "h-5 w-5 rounded-full p-0.5",
-              "hover:bg-accent hover:text-accent-foreground hover:cursor-pointer",
+                ? "size-8 rounded-full p-2 font-bold text-primary"
+                : "size-5 rounded-full p-0.5",
+              "hover:cursor-pointer hover:bg-accent hover:text-accent-foreground",
               className,
               triggerProps.className,
             )}
@@ -46,7 +46,7 @@ export function DialogInfoPopup({
       <DialogContent className="sm:max-w-xl">
         <DialogHeader className="w-full">
           <DialogTitle className="text-2xl font-semibold">{title}</DialogTitle>
-          <DialogDescription className="text-foreground/70 overflow-x-auto break-all">{description}</DialogDescription>
+          <DialogDescription className="overflow-x-auto break-all text-foreground/70">{description}</DialogDescription>
         </DialogHeader>
         {sections.length > 0 && (
           <div className="max-h-128 space-y-4 overflow-y-auto rounded-md border bg-card p-4 py-4">
@@ -56,7 +56,7 @@ export function DialogInfoPopup({
                 <h3 className="text-base font-semibold text-foreground">{section.header}</h3>
               )}
               {section.description && (
-                <p className="text-muted-foreground text-sm">
+                <p className="text-sm text-muted-foreground">
                   {section.description}
                 </p>
               )}
@@ -67,7 +67,7 @@ export function DialogInfoPopup({
                       <h5 className="text-sm font-medium">
                         {subsection.subheader}
                       </h5>
-                      <p className="text-muted-foreground text-sm mb-2 ml-4">
+                      <p className="mb-2 ml-4 text-sm text-muted-foreground">
                         {subsection.subdescription}
                       </p>
                     </div>

@@ -97,11 +97,11 @@ export function JobsActionBar({
               onClick={() => onAction(action.id, selection)}
             >
               {loading ? (
-                <Spinner className="h-4 w-4 shrink-0" />
+                <Spinner className="size-4 shrink-0" />
               ) : (
-                <Icon className="h-4 w-4 shrink-0" />
+                <Icon className="size-4 shrink-0" />
               )}
-              <span className="text-[11px] font-medium leading-none text-center text-wrap">
+              <span className="text-center text-[11px] leading-none font-medium text-wrap">
                 {action.label}
               </span>
             </Button>

@@ -13,20 +13,20 @@ const ContactForm = () => {
   return (
     <section className="py-12">
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="mx-auto max-w-6xl">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
               {/* Contact Info Sidebar */}
               <div className="md:col-span-1">
                 <div className="sticky top-24">
-                  <h2 className="text-xl font-bold mb-6">Contact Information</h2>
+                  <h2 className="mb-6 text-xl font-bold">Contact Information</h2>
 
                   <div className="space-y-6">
                     <div className="flex items-start">
-                      <div className="bg-secondary/20 p-3 rounded-full mr-4">
-                        <Mail className="h-5 w-5 text-secondary" />
+                      <div className="mr-4 rounded-full bg-secondary/20 p-3">
+                        <Mail className="size-5 text-secondary" />
                       </div>
                       <div>
-                        <h3 className="font-medium mb-1">Email</h3>
+                        <h3 className="mb-1 font-medium">Email</h3>
                         <a href="mailto:contact@virusdb.org" className="text-link hover:underline">
                           contact@virusdb.org
                         </a>
@@ -34,24 +34,24 @@ const ContactForm = () => {
                     </div>
 
                     <div className="flex items-start">
-                      <div className="bg-secondary/20 p-3 rounded-full mr-4">
-                        <Phone className="h-5 w-5 text-secondary" />
+                      <div className="mr-4 rounded-full bg-secondary/20 p-3">
+                        <Phone className="size-5 text-secondary" />
                       </div>
                       <div>
-                        <h3 className="font-medium mb-1">Phone</h3>
+                        <h3 className="mb-1 font-medium">Phone</h3>
                         <a href="tel:+18005551234" className="text-link hover:underline">
                           +1 (800) 555-1234
                         </a>
-                        <p className="text-sm text-muted-foreground mt-1">Mon-Fri, 9am-5pm EST</p>
+                        <p className="mt-1 text-sm text-muted-foreground">Mon-Fri, 9am-5pm EST</p>
                       </div>
                     </div>
 
                     <div className="flex items-start">
-                      <div className="bg-secondary/20 p-3 rounded-full mr-4">
-                        <MapPin className="h-5 w-5 text-secondary" />
+                      <div className="mr-4 rounded-full bg-secondary/20 p-3">
+                        <MapPin className="size-5 text-secondary" />
                       </div>
                       <div>
-                        <h3 className="font-medium mb-1">Main Office</h3>
+                        <h3 className="mb-1 font-medium">Main Office</h3>
                         <p className="text-muted-foreground">123 Science Way, Cambridge, MA 02142, USA</p>
                       </div>
                     </div>
@@ -59,43 +59,43 @@ const ContactForm = () => {
 
                   <Separator className="my-8" />
 
-                  <h3 className="font-medium mb-4">Follow Us</h3>
+                  <h3 className="mb-4 font-medium">Follow Us</h3>
                   <div className="flex space-x-4">
                     <a
                       href="#"
-                      className="flex items-center justify-center size-11 rounded-full bg-accent/20 hover:bg-accent/40 transition-colors duration-200"
+                      className="flex size-11 items-center justify-center rounded-full bg-accent/20 transition-colors duration-200 hover:bg-accent/40"
                     >
-                      <SiX className="h-5 w-5 text-accent" />
+                      <SiX className="size-5 text-accent" />
                     </a>
                     <a
                       href="#"
-                      className="flex items-center justify-center size-11 rounded-full bg-accent/20 hover:bg-accent/40 transition-colors duration-200"
+                      className="flex size-11 items-center justify-center rounded-full bg-accent/20 transition-colors duration-200 hover:bg-accent/40"
                     >
-                      <LinkedInIcon className="h-5 w-5 text-accent" />
+                      <LinkedInIcon className="size-5 text-accent" />
                     </a>
                     <a
                       href="#"
-                      className="flex items-center justify-center size-11 rounded-full bg-accent/20 hover:bg-accent/40 transition-colors duration-200"
+                      className="flex size-11 items-center justify-center rounded-full bg-accent/20 transition-colors duration-200 hover:bg-accent/40"
                     >
-                      <SiGithub className="h-5 w-5 text-accent" />
+                      <SiGithub className="size-5 text-accent" />
                     </a>
                   </div>
 
                   <Separator className="my-8" />
 
-                  <div className="bg-secondary/20 rounded-lg p-6">
-                    <h3 className="font-medium mb-2">Support Hours</h3>
+                  <div className="rounded-lg bg-secondary/20 p-6">
+                    <h3 className="mb-2 font-medium">Support Hours</h3>
                     <div className="space-y-2">
                       <div className="flex items-center">
-                        <Clock className="h-4 w-4 text-secondary mr-2" />
+                        <Clock className="mr-2 size-4 text-secondary" />
                         <span className="text-sm">Monday - Friday: 9:00 AM - 5:00 PM (EST)</span>
                       </div>
                       <div className="flex items-center">
-                        <Clock className="h-4 w-4 text-secondary mr-2" />
+                        <Clock className="mr-2 size-4 text-secondary" />
                         <span className="text-sm">Saturday: 10:00 AM - 2:00 PM (EST)</span>
                       </div>
                       <div className="flex items-center">
-                        <Clock className="h-4 w-4 text-secondary mr-2" />
+                        <Clock className="mr-2 size-4 text-secondary" />
                         <span className="text-sm">Sunday: Closed</span>
                       </div>
                     </div>
@@ -107,14 +107,14 @@ const ContactForm = () => {
               <div className="md:col-span-2">
                 <Card>
                   <CardContent className="px-8 py-4">
-                    <h2 className="text-xl font-bold mb-6">Send Us a Message</h2>
+                    <h2 className="mb-6 text-xl font-bold">Send Us a Message</h2>
                     <form className="space-y-6">
                       <div className="space-y-4">
                         <div>
                           <Label htmlFor="inquiry-type" className="text-base font-medium">
                             What can we help you with?
                           </Label>
-                          <RadioGroup defaultValue="general" className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <RadioGroup defaultValue="general" className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
                             <div className="flex items-center gap-3">
                               <RadioGroupItem value="general" id="general" />
                               <Label htmlFor="general" className="font-normal">
@@ -142,7 +142,7 @@ const ContactForm = () => {
                           </RadioGroup>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                           <div className="space-y-2">
                             <Label htmlFor="name" className="text-sm font-medium">
                               Full Name
@@ -157,7 +157,7 @@ const ContactForm = () => {
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                           <div className="space-y-2">
                             <Label htmlFor="institution" className="text-sm font-medium">
                               Institution/Organization
@@ -203,7 +203,7 @@ const ContactForm = () => {
                       </div>
 
                       <div className="pt-2">
-                        <Button className="w-full bg-secondary hover:bg-secondary py-6">Submit Message</Button>
+                        <Button className="w-full bg-secondary py-6 hover:bg-secondary">Submit Message</Button>
                       </div>
                     </form>
                   </CardContent>

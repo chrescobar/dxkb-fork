@@ -23,7 +23,7 @@ export function CitationCard({ citation }: CitationCardProps) {
             </div>
             <div className="citation-card-badges">
               <Badge variant="outline" className="flex items-center gap-1">
-                <BarChart className="h-3 w-3" data-icon="inline-start" />
+                <BarChart className="size-3" data-icon="inline-start" />
                 IF: {citation.impactFactor.toFixed(1)}
               </Badge>
               <Badge variant="outline" className="flex items-center gap-1">
@@ -39,7 +39,7 @@ export function CitationCard({ citation }: CitationCardProps) {
               className="citation-card-title"
             >
               {citation.title}
-              <ExternalLink className="h-4 w-4 inline-block ml-1" />
+              <ExternalLink className="ml-1 inline-block size-4" />
             </Link>
             <p className="citation-card-meta">{citation.authors}</p>
             <p className="citation-card-journal">{citation.journal}</p>
@@ -57,7 +57,7 @@ export function CitationCard({ citation }: CitationCardProps) {
               View Paper
             </a>
             <Button variant="outline" size="sm">
-              <Download className="h-3.5 w-3.5" data-icon="inline-start" />
+              <Download className="size-3.5" data-icon="inline-start" />
               Export Citation
             </Button>
           </div>

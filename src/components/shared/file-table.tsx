@@ -101,13 +101,13 @@ function SortIcon({
 }) {
   if (currentSort.field !== field) {
     return (
-      <ArrowUpDown className="text-muted-foreground/50 ml-1 inline-block h-3 w-3 align-middle" />
+      <ArrowUpDown className="ml-1 inline-block size-3 align-middle text-muted-foreground/50" />
     );
   }
   return currentSort.direction === "asc" ? (
-    <ArrowUp className="ml-1 inline-block h-3 w-3 align-middle" />
+    <ArrowUp className="ml-1 inline-block size-3 align-middle" />
   ) : (
-    <ArrowDown className="ml-1 inline-block h-3 w-3 align-middle" />
+    <ArrowDown className="ml-1 inline-block size-3 align-middle" />
   );
 }
 
@@ -170,7 +170,7 @@ function DraggableTableHeader({
           <button
             type="button"
             onClick={() => onSort(sortField)}
-            className="hover:bg-primary/10 focus-visible:ring-primary cursor-pointer rounded p-0.5 select-none focus:outline-none focus-visible:ring-2"
+            className="cursor-pointer rounded p-0.5 select-none hover:bg-primary/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label={`Sort by ${label}`}
           >
             <SortIcon field={sortField} currentSort={sort} />
@@ -184,9 +184,9 @@ function DraggableTableHeader({
             onTouchStart={header.getResizeHandler()}
             onDoubleClick={() => header.column.resetSize()}
             className={cn(
-              "border-border absolute top-0 right-0 z-10 h-full w-2 cursor-col-resize border-r",
-              "hover:bg-primary/15 hover:border-primary/50",
-              header.column.getIsResizing() && "bg-primary/25 border-primary h-9",
+              "absolute top-0 right-0 z-10 h-full w-2 cursor-col-resize border-r border-border",
+              "hover:border-primary/50 hover:bg-primary/15",
+              header.column.getIsResizing() && "h-9 border-primary bg-primary/25",
             )}
             style={{
               transform: "translateX(50%)",
@@ -379,7 +379,7 @@ function DataTableInner<T>(
       >
         <div className="relative min-w-max" style={columnSizeVars}>
           <Table disableScrollWrapper>
-            <TableHeader className="border-border bg-background sticky top-0 z-20 border-b shadow-sm [&_tr]:bg-background">
+            <TableHeader className="sticky top-0 z-20 border-b border-border bg-background shadow-sm [&_tr]:bg-background">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id} className="bg-background">
                   <SortableContext

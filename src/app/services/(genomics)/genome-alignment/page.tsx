@@ -303,17 +303,17 @@ export default function GenomeAlignmentServicePage() {
                     }
                   }}
                 >
-                  <Plus className="h-4 w-4" />
+                  <Plus className="size-4" />
                 </Button>
               </div>
               {isFetchingGroup && (
-                <div className="text-muted-foreground flex items-center gap-2 text-xs">
-                  <Spinner className="h-3 w-3" />
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Spinner className="size-3" />
                   Loading genomes from workspace group...
                 </div>
               )}
               {lastSelectedGroup && !isFetchingGroup && (
-                <p className="text-muted-foreground text-xs">
+                <p className="text-xs text-muted-foreground">
                   Last group added: {lastSelectedGroup}
                 </p>
               )}
@@ -332,7 +332,7 @@ export default function GenomeAlignmentServicePage() {
                       className="max-h-84 overflow-y-auto"
                     />
                     {!hasMinimumGenomes && (
-                      <p className="text-muted-foreground mt-2 text-xs">
+                      <p className="mt-2 text-xs text-muted-foreground">
                         Select at least two genomes to enable submission.
                       </p>
                     )}
@@ -396,7 +396,7 @@ export default function GenomeAlignmentServicePage() {
               <CollapsibleTrigger className="service-collapsible-trigger">
                 Advanced Options
                 <ChevronDown
-                  className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
+                  className={`size-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
                 />
               </CollapsibleTrigger>
 
@@ -409,7 +409,7 @@ export default function GenomeAlignmentServicePage() {
                           <Label className="service-card-label">
                             Manually Set Seed Weight
                           </Label>
-                          <p className="text-muted-foreground text-sm">
+                          <p className="text-sm text-muted-foreground">
                             Enable to specify the seed weight used by progressiveMauve.
                           </p>
                         </div>
@@ -434,7 +434,7 @@ export default function GenomeAlignmentServicePage() {
                           <Label className="service-card-label">
                             Seed Weight
                           </Label>
-                          <span className="text-muted-foreground text-sm">
+                          <span className="text-sm text-muted-foreground">
                             {field.state.value ?? seedWeightValue}
                           </span>
                         </div>
@@ -450,7 +450,7 @@ export default function GenomeAlignmentServicePage() {
                             )
                           }
                         />
-                        <div className="text-muted-foreground flex justify-between text-xs">
+                        <div className="flex justify-between text-xs text-muted-foreground">
                           <span>3</span>
                           <span>21</span>
                         </div>
@@ -491,7 +491,7 @@ export default function GenomeAlignmentServicePage() {
             Reset
           </Button>
           <Button type="submit" disabled={isSubmitting || !hasMinimumGenomes || !isOutputNameValid}>
-            {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
+            {isSubmitting ? <Spinner className="mr-2 size-4" /> : null}
             Submit
           </Button>
         </div>

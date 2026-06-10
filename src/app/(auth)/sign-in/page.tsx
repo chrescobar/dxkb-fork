@@ -72,7 +72,7 @@ function SigninForm() {
   });
 
   return (
-    <div className="bg-background flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="mb-2 space-y-1">
           <CardTitle className="text-center text-2xl font-bold">
@@ -92,7 +92,7 @@ function SigninForm() {
           >
             {error && (
               <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
+                <AlertCircle className="size-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
@@ -102,7 +102,7 @@ function SigninForm() {
                 <FieldItem>
                   <RequiredFormLabel>Username or email</RequiredFormLabel>
                   <div className="relative">
-                    <User className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
+                    <User className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
                     <Input
                       placeholder="Enter your username or email"
                       id={field.name}
@@ -123,17 +123,17 @@ function SigninForm() {
                 <FieldItem>
                   <div className="flex items-center justify-between">
                     <RequiredFormLabel>Password</RequiredFormLabel>
-                    <p className="text-primary text-xs">
+                    <p className="text-xs text-primary">
                       <Link
                         href="/forgot-password"
-                        className="hover:text-secondary transition-all duration-300 hover:font-medium"
+                        className="transition-all duration-300 hover:font-medium hover:text-secondary"
                       >
                         Forgot your password?
                       </Link>
                     </p>
                   </div>
                   <div className="relative">
-                    <Lock className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
+                    <Lock className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
                     <Input
                       id={field.name}
                       name={field.name}
@@ -142,7 +142,7 @@ function SigninForm() {
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
-                      className="pr-10 pl-10"
+                      className="px-10"
                       required
                     />
                     <Button
@@ -153,9 +153,9 @@ function SigninForm() {
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
+                        <EyeOff className="size-4" />
                       ) : (
-                        <Eye className="h-4 w-4" />
+                        <Eye className="size-4" />
                       )}
                       <span className="sr-only">
                         {showPassword ? "Hide password" : "Show password"}
@@ -174,7 +174,7 @@ function SigninForm() {
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 size-4 animate-spin" />
                   Signing in...
                 </>
               ) : (
@@ -184,16 +184,16 @@ function SigninForm() {
           </form>
 
           <div className="mt-6 space-y-2 text-center">
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground">
               Don&apos;t have an account?{" "}
               <Link
                 href="/sign-up"
-                className="text-primary hover:text-secondary font-medium transition-all duration-300 hover:font-medium"
+                className="font-medium text-primary transition-all duration-300 hover:font-medium hover:text-secondary"
               >
                 Sign up on DXKB
               </Link>
             </p>
-            <p className="text-muted-foreground mt-6 text-xs">
+            <p className="mt-6 text-xs text-muted-foreground">
               <span className="font-bold">Note: </span>
               You may use your DXKB or BV-BRC username or email to sign in to
               this resource if you already had an account on one of those
@@ -211,7 +211,7 @@ export default function SigninPage() {
   return (
     <Suspense
       fallback={
-        <div className="bg-background flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
           <Card className="w-full max-w-md">
             <CardHeader className="mb-2 space-y-1">
               <CardTitle className="text-center text-2xl font-bold">
@@ -223,7 +223,7 @@ export default function SigninPage() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin" />
+                <Loader2 className="size-6 animate-spin" />
               </div>
             </CardContent>
           </Card>

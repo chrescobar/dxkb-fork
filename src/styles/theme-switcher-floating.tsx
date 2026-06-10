@@ -43,10 +43,10 @@ export function ThemeSwitcher() {
               variant="default"
               size="icon"
               aria-label="Open theme switcher"
-              className="bg-primary hover:bg-foreground border border-accent h-12 w-12 rounded-full shadow-lg transition-all duration-200 hover:shadow-xl"
+              className="size-12 rounded-full border border-accent bg-primary shadow-lg transition-all duration-200 hover:bg-foreground hover:shadow-xl"
               onClick={() => setIsOpen(!isOpen)}
             >
-              <Palette className="h-5 w-5" />
+              <Palette className="size-5" />
             </Button>
           }
         />
@@ -86,12 +86,12 @@ export function ThemeSwitcher() {
               >
                 {currentMode === "light" ? (
                   <>
-                    <Sun className="mr-2 h-4 w-4" />
+                    <Sun className="mr-2 size-4" />
                     Light
                   </>
                 ) : (
                   <>
-                    <Moon className="mr-2 h-4 w-4" />
+                    <Moon className="mr-2 size-4" />
                     Dark
                   </>
                 )}
@@ -100,7 +100,7 @@ export function ThemeSwitcher() {
 
             {/* Current Theme Display */}
             <div className="border-t pt-2">
-              <p className="text-muted-foreground text-xs">
+              <p className="text-xs text-muted-foreground">
                 Current:{" "}
                 <span className="font-medium capitalize">
                   {currentBase} {currentMode}

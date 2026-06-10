@@ -69,7 +69,7 @@ export default function CitationsTimelinePage() {
 
         {/* Filters and Search */}
         <div className="citation-filters">
-          <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-x-2 md:space-y-0">
+          <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-y-0 md:space-x-2">
             <Select
               items={[
                 { value: "all", label: "All Types" },
@@ -103,7 +103,7 @@ export default function CitationsTimelinePage() {
               onValueChange={(value) => setSortOption(value ?? "")}
             >
               <SelectTrigger className="w-[180px]">
-                <SortDesc className="mr-2 h-4 w-4" />
+                <SortDesc className="mr-2 size-4" />
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
@@ -135,8 +135,8 @@ export default function CitationsTimelinePage() {
               <div key={year} className="relative">
                 <div className="sticky top-0 z-10 bg-background py-3">
                   <div className="flex items-center">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                      <Calendar className="h-5 w-5" />
+                    <div className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                      <Calendar className="size-5" />
                     </div>
                     <h2 className="ml-4 text-xl font-semibold">{year}</h2>
                     <Badge className="ml-2">{citationsByYear[year].length} citations</Badge>
@@ -147,7 +147,7 @@ export default function CitationsTimelinePage() {
                 <div className="mt-6 space-y-6 pl-14">
                   {citationsByYear[year].map((citation) => (
                     <div key={citation.id} className="relative">
-                      <div className="absolute -left-9 mt-1 h-4 w-4 rounded-full border-2 border-primary bg-background"></div>
+                      <div className="absolute -left-9 mt-1 size-4 rounded-full border-2 border-primary bg-background"></div>
                       <Card>
                         <CardContent className="p-6">
                           <div className="citation-card">
@@ -172,7 +172,7 @@ export default function CitationsTimelinePage() {
                                 className="citation-card-title"
                               >
                                 {citation.title}
-                                <ExternalLink className="h-4 w-4 inline-block ml-1 flex-shrink-0" />
+                                <ExternalLink className="ml-1 inline-block size-4 flex-shrink-0" />
                               </Link>
                               <p className="citation-card-meta">{citation.authors}</p>
                               <p className="citation-card-journal">{citation.journal}</p>
@@ -190,7 +190,7 @@ export default function CitationsTimelinePage() {
                                 View Paper
                               </a>
                               <Button variant="outline" size="sm">
-                                <Download className="h-3.5 w-3.5" data-icon="inline-start" />
+                                <Download className="size-3.5" data-icon="inline-start" />
                                 Export Citation
                               </Button>
                             </div>
@@ -204,7 +204,7 @@ export default function CitationsTimelinePage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-10">
+          <div className="py-10 text-center">
             <p className="text-muted-foreground">No citations found matching your search criteria.</p>
             <Button
               variant="outline"

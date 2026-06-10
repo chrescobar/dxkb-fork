@@ -73,7 +73,7 @@ export function ServiceHeader({
                   {index > 0 && index === resourceLinks.length - 1 && (resourceLinks.length > 2 ? ", and " : " and ")}
                   <a href={link.href} target="_blank" rel="noopener">
                     {link.label}
-                    <ExternalLink className="ml-1 h-3 w-3" />
+                    <ExternalLink className="ml-1 size-3" />
                   </a>
                 </span>
               ))}

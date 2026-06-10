@@ -18,7 +18,7 @@ function CopyButton({ text }: { text: string }) {
     <Button
       variant="ghost"
       size="sm"
-      className="relative h-6 w-6 p-0"
+      className="relative size-6 p-0"
       onClick={() => {
         void navigator.clipboard.writeText(text).then(() => {
           setCopied(true);
@@ -27,14 +27,14 @@ function CopyButton({ text }: { text: string }) {
       }}
       title="Copy to clipboard"
     >
-      <span className="relative inline-flex h-3.5 w-3.5 items-center justify-center">
+      <span className="relative inline-flex size-3.5 items-center justify-center">
         <Copy
-          className={`absolute h-3.5 w-3.5 transition-all duration-200 ${
+          className={`absolute size-3.5 transition-all duration-200 ${
             copied ? "scale-0 opacity-0" : "scale-100 opacity-100"
           }`}
         />
         <Check
-          className={`absolute h-3.5 w-3.5 text-green-500 transition-all duration-200 ${
+          className={`absolute size-3.5 text-green-500 transition-all duration-200 ${
             copied ? "scale-100 opacity-100" : "scale-0 opacity-0"
           }`}
         />
@@ -57,12 +57,12 @@ function OutputSection({
 
   return (
     <Collapsible open={expanded} onOpenChange={setExpanded} className="border-t first:border-t-0">
-      <div className="flex w-full items-center bg-muted/60 hover:bg-muted pr-2">
+      <div className="flex w-full items-center bg-muted/60 pr-2 hover:bg-muted">
         <CollapsibleTrigger className="flex min-w-0 flex-1 items-center gap-2 px-3 py-2 text-left text-xs font-semibold">
           {expanded ? (
-            <ChevronDown className="h-3.5 w-3.5 shrink-0" />
+            <ChevronDown className="size-3.5 shrink-0" />
           ) : (
-            <ChevronRight className="h-3.5 w-3.5 shrink-0" />
+            <ChevronRight className="size-3.5 shrink-0" />
           )}
           {label}
         </CollapsibleTrigger>
@@ -71,15 +71,15 @@ function OutputSection({
       <CollapsibleContent>
         <div className="bg-muted/20 p-3">
           {isLoading ? (
-            <p className="text-muted-foreground text-xs">Loading…</p>
+            <p className="text-xs text-muted-foreground">Loading…</p>
           ) : error ? (
-            <p className="text-destructive text-xs">Failed to load output</p>
+            <p className="text-xs text-destructive">Failed to load output</p>
           ) : data ? (
-            <pre className="scrollbar-themed max-h-[32rem] overflow-auto whitespace-pre font-mono text-[10px] leading-relaxed">
+            <pre className="scrollbar-themed max-h-[32rem] overflow-auto font-mono text-[10px] leading-relaxed whitespace-pre">
               {data}
             </pre>
           ) : (
-            <p className="text-muted-foreground text-xs italic">No output</p>
+            <p className="text-xs text-muted-foreground italic">No output</p>
           )}
         </div>
       </CollapsibleContent>
@@ -111,7 +111,7 @@ export function JobDetailsPanel({ job }: { job: JobListItem }) {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <div className="flex items-center justify-between border-b px-4 pt-3 pb-3">
+      <div className="flex items-center justify-between border-b px-4 py-3">
         <h3 className="truncate font-semibold">{job.id}</h3>
         <StatusBadge status={job.status} />
       </div>
@@ -124,11 +124,11 @@ export function JobDetailsPanel({ job }: { job: JobListItem }) {
             </div>
             <div>
               <dt className="font-semibold">Application</dt>
-              <dd className="break-all font-mono text-muted-foreground">{job.app}</dd>
+              <dd className="font-mono break-all text-muted-foreground">{job.app}</dd>
             </div>
             <div>
               <dt className="font-semibold">Job ID</dt>
-              <dd className="break-all font-mono text-muted-foreground">{job.id}</dd>
+              <dd className="font-mono break-all text-muted-foreground">{job.id}</dd>
             </div>
             <div>
               <dt className="font-semibold">Submitted</dt>
@@ -149,7 +149,7 @@ export function JobDetailsPanel({ job }: { job: JobListItem }) {
             {job.output_path && (
               <div>
                 <dt className="font-semibold">Output Path</dt>
-                <dd className="break-all font-mono text-muted-foreground">{job.output_path}</dd>
+                <dd className="font-mono break-all text-muted-foreground">{job.output_path}</dd>
               </div>
             )}
           </dl>

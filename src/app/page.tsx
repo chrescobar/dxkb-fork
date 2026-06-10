@@ -11,10 +11,10 @@ import DBStatisticsSkeleton from "@/components/statistics/db-statistics-skeleton
 
 export default function Home() {
   return (
-    <div className="bg-background flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
 
-      <main className="bg-background grow">
+      <main className="grow bg-background">
         <WelcomeSearch />
         <NewsCarousel />
         <QuickViralLinks />

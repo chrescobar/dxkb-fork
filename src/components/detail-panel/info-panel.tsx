@@ -111,7 +111,7 @@ export function InfoPanel(props: InfoPanelProps) {
     const hasSingleSelection = selection.length === 1;
 
     return (
-      <div className="flex h-full w-full flex-col overflow-hidden">
+      <div className="flex size-full flex-col overflow-hidden">
         {isMultiSelect ? (
           <div className="px-4 py-2">
             <DetailPanel.Header title={`${selection.length} items selected`} />
@@ -296,7 +296,7 @@ export function InfoPanel(props: InfoPanelProps) {
                     render: () => (
                       <Button
                         onClick={() => window.open(resolved, "_blank", "noopener,noreferrer")}
-                        className="text-sm border-black bg-primary text-secondary py-1 px-2 rounded"
+                        className="rounded border-black bg-primary px-2 py-1 text-sm text-secondary"
                       >
                         {String(item.linkText ?? "View")}
                       </Button>

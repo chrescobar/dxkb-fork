@@ -21,7 +21,7 @@ export function FeaturedOrganismsGrid({
       <div>
         <h2 className="text-2xl font-semibold tracking-normal">{title}</h2>
         {subtitle && (
-          <p className="text-muted-foreground text-base">{subtitle}</p>
+          <p className="text-base text-muted-foreground">{subtitle}</p>
         )}
       </div>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-2">

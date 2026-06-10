@@ -22,17 +22,17 @@ export function VerticalMenu({ items, isCollapsed }: NavMenuProps) {
           onClick={item.onClick}
           variant="ghost"
           className={cn(
-            "min-w-10 justify-start h-10 p-2 transition-[width] duration-300 ease-in-out",
-            item.isActive && "bg-gray-300 hover:bg-gray-300 text-secondary hover:text-secondary/50",
-            !item.isActive && "text-gray-700 hover:text-primary hover:bg-gray-200",
+            "h-10 min-w-10 justify-start p-2 transition-[width] duration-300 ease-in-out",
+            item.isActive && "bg-gray-300 text-secondary hover:bg-gray-300 hover:text-secondary/50",
+            !item.isActive && "text-gray-700 hover:bg-gray-200 hover:text-primary",
             isCollapsed && "w-10",
             !isCollapsed && "w-full"
 
           )}
           title={isCollapsed ? item.label : undefined}
         >
-          <div className="flex items-center gap-2 h-full">
-            <span className="shrink-0 w-6 h-6 flex items-center justify-center">{item.icon}</span>
+          <div className="flex h-full items-center gap-2">
+            <span className="flex size-6 shrink-0 items-center justify-center">{item.icon}</span>
             <span className={`
               overflow-hidden whitespace-nowrap
               transition-[width,opacity] duration-300 ease-in-out

@@ -208,7 +208,7 @@ export default function HASubtypeNumberingPage() {
                         }}
                       />
                       {fastaValidationMessage ? (
-                        <p className="text-destructive text-sm">
+                        <p className="text-sm text-destructive">
                           {fastaValidationMessage}
                         </p>
                       ) : null}
@@ -277,7 +277,7 @@ export default function HASubtypeNumberingPage() {
                     <Label className="service-card-label">
                       Conversion Sequence Numbering Scheme
                     </Label>
-                    <div className="bg-muted/50 grid max-h-[220px] grid-cols-2 gap-2 overflow-y-auto rounded-md border p-4 md:grid-cols-4">
+                    <div className="grid max-h-[220px] grid-cols-2 gap-2 overflow-y-auto rounded-md border bg-muted/50 p-4 md:grid-cols-4">
                       {HaReferenceTypes.map((scheme) => (
                         <div
                           className="flex items-center gap-2"
@@ -346,7 +346,7 @@ export default function HASubtypeNumberingPage() {
               Reset
             </Button>
             <Button type="submit" disabled={isSubmitDisabled}>
-              {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
+              {isSubmitting ? <Spinner className="mr-2 size-4" /> : null}
               Submit
             </Button>
           </div>

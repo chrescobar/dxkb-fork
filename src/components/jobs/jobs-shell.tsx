@@ -36,30 +36,30 @@ export function JobsShell({
   );
 
   const actionStrip = (
-    <div className="border-border/50 bg-muted/50 flex h-full w-[80px] shrink-0 flex-col rounded-l-lg border-r py-2">
+    <div className="flex h-full w-[80px] shrink-0 flex-col rounded-l-lg border-r border-border/50 bg-muted/50 py-2">
       <div className="relative mx-0.5 mb-1 h-8 shrink-0">
         <Button
           variant="ghost"
           size="sm"
-          className={`absolute inset-0 h-full w-full justify-start gap-1 font-normal ${
+          className={`absolute inset-0 size-full justify-start gap-1 font-normal ${
             panelExpanded ? "pointer-events-none opacity-0" : "opacity-100"
           }`}
           onClick={() => detailsPanelRef.current?.expand()}
           title="Show details panel"
         >
-          <PanelRightOpen className="h-4 w-4 shrink-0" />
+          <PanelRightOpen className="size-4 shrink-0" />
           Show
         </Button>
         <Button
           variant="ghost"
           size="sm"
-          className={`absolute inset-0 h-full w-full justify-start gap-1 font-normal ${
+          className={`absolute inset-0 size-full justify-start gap-1 font-normal ${
             panelExpanded ? "opacity-100" : "pointer-events-none opacity-0"
           }`}
           onClick={() => detailsPanelRef.current?.collapse()}
           title="Hide panel"
         >
-          <PanelRightClose className="h-4 w-4 shrink-0" />
+          <PanelRightClose className="size-4 shrink-0" />
           Hide
         </Button>
       </div>
@@ -72,7 +72,7 @@ export function JobsShell({
   return (
     <ResizablePanelGroup
       orientation="horizontal"
-      className="h-full min-h-0 w-full"
+      className="size-full min-h-0"
     >
       <ResizablePanel
         id={jobsPanelIds.main}
@@ -83,7 +83,7 @@ export function JobsShell({
         <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           {children}
         </div>
-        <aside className="bg-muted/30 flex min-h-full shrink-0 rounded-tl-lg rounded-bl-lg border-l">
+        <aside className="flex min-h-full shrink-0 rounded-l-lg border-l bg-muted/30">
           {actionStrip}
         </aside>
       </ResizablePanel>

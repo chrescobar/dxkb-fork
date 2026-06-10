@@ -166,7 +166,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
         const isIndeterminate = !isAllPagesSelected && somePageRowsSelected;
         
         return (
-          <div className="flex justify-center items-center w-full h-full relative">
+          <div className="relative flex size-full items-center justify-center">
             <input
               type="checkbox"
               checked={isChecked}
@@ -197,11 +197,11 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                   table.toggleAllRowsSelected(true);
                 }
               }}
-              className="cursor-pointer m-0 p-0"
+              className="m-0 cursor-pointer p-0"
               title={isAllPagesSelected ? "Click to deselect all results" : (allPageRowsSelected ? "Click to deselect this page" : "Click to select all on this page")}
             />
             {isAllPagesSelected && (
-              <div className="absolute -bottom-5 left-1/2 transform -translate-x-1/2 text-[10px] text-blue-600 whitespace-nowrap z-50">
+              <div className="absolute -bottom-5 left-1/2 z-50 -translate-x-1/2 transform text-[10px] whitespace-nowrap text-blue-600">
                 All {totalItems} selected
               </div>
             )}
@@ -210,7 +210,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       },
       cell: ({ row, table }) => {
         return (
-          <div className="flex justify-center items-center w-full h-full">
+          <div className="flex size-full items-center justify-center">
             <input
               type="checkbox"
               checked={row.getIsSelected()}
@@ -270,7 +270,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                   onActiveRowChange?.(String(idVal));
                 }
               }}
-              className="cursor-pointer m-0 p-0"
+              className="m-0 cursor-pointer p-0"
             />
           </div>
         );
@@ -700,10 +700,10 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
   // Now that all the setup is done, let's render the table!
   return (
-    <div className="flex min-h-0 flex-1 flex-col w-full text-xs relative items-center border-0 overflow-hidden">{/* This is the main container. Full width and content centered. */}
+    <div className="relative flex min-h-0 w-full flex-1 flex-col items-center overflow-hidden border-0 text-xs">{/* This is the main container. Full width and content centered. */}
       {/* Banner for selecting all results across pages */}
       {!isAllPagesSelected && table.getIsAllPageRowsSelected() && (
-          <div className="w-full bg-blue-50 border border-blue-200 px-4 py-2 mb-2 flex items-center justify-between">
+          <div className="mb-2 flex w-full items-center justify-between border border-blue-200 bg-blue-50 px-4 py-2">
           <span className="text-blue-700">
             All {data.length} results on this page are selected.
           </span>
@@ -712,16 +712,16 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
               e.stopPropagation();
               onAllPagesSelectionChange?.(true);
             }}
-            className="text-blue-700 underline hover:text-blue-900 font-semibold cursor-pointer"
+            className="cursor-pointer font-semibold text-blue-700 underline hover:text-blue-900"
           >
             Select all {totalItems} results across all pages
           </button>
         </div>
       )}
       {isAllPagesSelected && (
-        <div className="w-full bg-blue-100 border border-blue-300 px-4 py-2 mb-2">
+        <div className="mb-2 w-full border border-blue-300 bg-blue-100 px-4 py-2">
           <div className="flex items-center justify-between">
-            <span className="text-blue-800 font-semibold">
+            <span className="font-semibold text-blue-800">
               All {totalItems} results are selected across all pages.
             </span>
             <button 
@@ -734,34 +734,34 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                   onRowSelectionChange({});
                 }
               }}
-              className="text-blue-700 underline hover:text-blue-900 cursor-pointer"
+              className="cursor-pointer text-blue-700 underline hover:text-blue-900"
             >
               Clear selection
             </button>
           </div>
-          <div className="text-xs text-blue-700 mt-1">
+          <div className="mt-1 text-xs text-blue-700">
             Note: Checkboxes on other pages may not appear checked for performance reasons, but all rows are selected.
           </div>
         </div>
       )}
-      <div className="w-[100%] flex justify-end mb-2 z-50 px-5" ref={controlsRef}>
+      <div className="z-50 mb-2 flex w-[100%] justify-end px-5" ref={controlsRef}>
           <div className="relative inline-block text-left" ref={columnMenuRef}> {/* This is the button for changing the visibility of columns in the table */}
             <Button
-              className="flex justify-end w-full rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2"
+              className="mr-2 flex w-full justify-end rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
               onClick={() => setShowColumnMenu(prev => !prev)}
             >
               Columns ▾
             </Button>
 
             {showColumnMenu && (
-              <div className="absolute left-0 mt-1 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-                <div className="py-1 max-h-64 overflow-auto text-xs">
+              <div className="ring-opacity-5 absolute left-0 z-50 mt-1 w-40 rounded-md bg-white shadow-lg ring-1 ring-black">
+                <div className="max-h-64 overflow-auto py-1 text-xs">
                   {table.getAllColumns()
                     .filter(col => col.id !== '__select__')
                     .map((column) => (
                       <label
                         key={column.id}
-                        className="flex items-center space-x-2 px-2 py-1 hover:bg-muted-foreground cursor-pointer text-black"
+                        className="flex cursor-pointer items-center space-x-2 px-2 py-1 text-black hover:bg-muted-foreground"
                       >
                         <input
                           type="checkbox"
@@ -779,7 +779,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           {/* Download buttons */}
           <Button
             onClick={() => handleDownload('csv')}
-            className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2 ml-2"
+            className="mx-2 rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
             disabled={downloadingButton !== null}
           >
             {downloadingButton === 'csv-all' ? (
@@ -790,7 +790,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           </Button>
           <Button
             onClick={() => handleDownload('txt')}
-            className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2"
+            className="mr-2 rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
             disabled={downloadingButton !== null}
           >
             {downloadingButton === 'txt-all' ? (
@@ -805,7 +805,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
             <>
               <Button
                 onClick={() => handleDownload('csv', true)}
-                className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2"
+                className="mr-2 rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
                 disabled={downloadingButton !== null}
               >
                 {downloadingButton === 'csv-selected' ? (
@@ -816,7 +816,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
               </Button>
               <Button
                 onClick={() => handleDownload('txt', true)}
-                className="rounded border border-gray-400 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 mr-2"
+                className="mr-2 rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
                 disabled={downloadingButton !== null}
               >
                 {downloadingButton === 'txt-selected' ? (
@@ -828,7 +828,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
             </>
           )}
         
-        <label className="flex items-center text-xs text-foreground ml-4">
+        <label className="ml-4 flex items-center text-xs text-foreground">
           <input
             type="checkbox"
             checked={onlyVisibleColumns}
@@ -838,10 +838,10 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           Download Displayed Columns Only
         </label>
       </div>
-      <div className="w-full flex flex-col border border-gray-500 rounded relative h-[65vh] overflow-hidden"> {/* This is the main container, which contains both the table and the pagination footer. Use a fixed height (65vh) so the table area is strictly constrained and cannot expand the page. */}
+      <div className="relative flex h-[65vh] w-full flex-col overflow-hidden rounded border border-gray-500"> {/* This is the main container, which contains both the table and the pagination footer. Use a fixed height (65vh) so the table area is strictly constrained and cannot expand the page. */}
 
         <div
-          className="flex-1 overflow-auto relative"
+          className="relative flex-1 overflow-auto"
           ref={tableContainerRef}
           style={{
             maxHeight: '100%',
@@ -850,22 +850,22 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           }}
         >
           {isLoading && (
-            <div className="absolute inset-0 z-40 bg-white/60 flex items-center justify-center">
+            <div className="absolute inset-0 z-40 flex items-center justify-center bg-white/60">
               <div className="flex flex-col items-center gap-2">
-                <div className="w-8 h-8 border-4 border-t-transparent border-blue-600 rounded-full animate-spin" />
+                <div className="size-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
                 <div className="text-sm text-foreground">Loading…</div>
               </div>
             </div>
           )}
-          <div className="min-w-max relative" style={columnSizeVars}>
+          <div className="relative min-w-max" style={columnSizeVars}>
             <Table 
-              className="w-full table-auto text-xs border-collapse relative" 
+              className="relative w-full table-auto border-collapse text-xs" 
               style={{ borderSpacing: 0 }}
               disableScrollWrapper={true}
             >
               <TableHeader
                 ref={headerRef}
-                className="bg-primary text-secondary uppercase border-black"
+                className="border-black bg-primary text-secondary uppercase"
                 style={{
                   position: 'sticky',
                   top: 0,
@@ -873,7 +873,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                 }}
               >
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="flex border-t border-b border-black bg-primary">
+                  <TableRow key={headerGroup.id} className="flex border-y border-black bg-primary">
                     {headerGroup.headers.map((header) => {
                       const column = header.column;
                       return (
@@ -881,10 +881,10 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                           key={header.id}
                           colSpan={header.colSpan}
                           className={clsx(
-                            'border-r border-l border-black bg-primary text-secondary relative',
+                            'relative border-x border-black bg-primary text-secondary',
                             column.id === '__select__'
-                              ? 'p-0 flex justify-center items-center' // ✅ center checkbox
-                              : 'px-2 py-0 text-sm font-bold leading-none align-middle cursor-pointer'
+                              ? 'flex items-center justify-center p-0' // ✅ center checkbox
+                              : 'cursor-pointer px-2 py-0 align-middle text-sm leading-none font-bold'
                           )}
                           style={{
                             width: `var(--col-${column.id}-size)`,
@@ -909,13 +909,13 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                         >
                           {column.id === '__select__' ? (
                             // Checkbox column - no sorting or dragging
-                            <div className="flex items-center justify-center w-full h-full py-0">
+                            <div className="flex size-full items-center justify-center py-0">
                               {flexRender(header.column.columnDef.header, header.getContext())}
                             </div>
                           ) : (
                             // Regular column - sortable and draggable
                             <div 
-                              className="flex items-center justify-between w-full h-full py-0 relative"
+                              className="relative flex size-full items-center justify-between py-0"
                               draggable={true}
                               onDragStart={(e) => handleDragStart(e, column.id)}
                               onDragOver={handleDragOver}
@@ -927,9 +927,9 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                                 backgroundColor: draggedColumn && draggedColumn !== column.id ? 'transparent' : '',
                               }}
                             >
-                              <div className="flex items-center gap-2 flex-1">
+                              <div className="flex flex-1 items-center gap-2">
                                 <span className="select-none">{flexRender(header.column.columnDef.header, header.getContext())}</span>
-                                <div className="flex flex-col justify-center items-center">
+                                <div className="flex flex-col items-center justify-center">
                                   {column.getIsSorted() === 'asc' ? (
                                     <span className="text-xs">▲</span>
                                   ) : column.getIsSorted() === 'desc' ? (
@@ -945,7 +945,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                                     e.stopPropagation();
                                     handleResizeStart(e, header);
                                   }}
-                                  className="absolute top-0 right-0 w-2 h-full cursor-col-resize z-30 hover:bg-blue-300"
+                                  className="absolute top-0 right-0 z-30 h-full w-2 cursor-col-resize hover:bg-blue-300"
                                   style={{ transform: 'translateX(50%)' }}
                                 />
                               )}
@@ -966,10 +966,10 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                 className="relative z-10 border-collapse gap-0"
               >
                 {rows.length === 0 ? (
-                <TableRow className="flex w-full h-24 items-center justify-center">
+                <TableRow className="flex h-24 w-full items-center justify-center">
                   <TableCell
                     colSpan={table.getVisibleLeafColumns().length}
-                    className="text-left w-full border-t border-black py-8 text-xl font-semibold text-foreground"
+                    className="w-full border-t border-black py-8 text-left text-xl font-semibold text-foreground"
                     style={{ justifyContent: 'left' }}
                   >
                     No results
@@ -1013,7 +1013,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
                           key={cell.id}
-                          className='py-1 border border-primary'
+                          className='border border-primary py-1'
                           style={{
                             width: `var(--col-${cell.column.id}-size)`,
                             minWidth: `var(--col-${cell.column.id}-size)`,
@@ -1039,14 +1039,14 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
             <div
               ref={resizeLineRef}
-              className="absolute top-0 bottom-0 w-[2px] bg-blue-600 opacity-50 pointer-events-none z-40"
+              className="pointer-events-none absolute inset-y-0 z-40 w-[2px] bg-blue-600 opacity-50"
               style={{ display: 'none' }}
             />
           </div>
         </div>
 
-        <div className="bg-secondary py-3 border-t z-10 shadow-sm border-black w-full" ref={footerRef}>
-          <div className="flex flex-col md:flex-row justify-between items-center px-4 space-y-2 md:space-y-0">
+        <div className="z-10 w-full border-t border-black bg-secondary py-3 shadow-sm" ref={footerRef}>
+          <div className="flex flex-col items-center justify-between space-y-2 px-4 md:flex-row md:space-y-0">
             <div>
               {(() => {
                 const pageIndex = table.getState().pagination.pageIndex;
@@ -1065,7 +1065,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                   <div className="flex flex-col gap-1">
                     <div>Showing {start}-{end} of {totalRows} results</div>
                     {selectedCount > 0 && (
-                      <div className="text-blue-600 font-semibold">
+                      <div className="font-semibold text-blue-600">
                         {isAllPagesSelected 
                           ? `All ${totalItems} results selected` 
                           : `${selectedCount} selected`}
@@ -1082,7 +1082,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
                 }}
                 disabled={!table.getCanPreviousPage()}
-                className="px-2 py-1 border border-primary disabled:opacity-50"
+                className="border border-primary px-2 py-1 disabled:opacity-50"
               >
                 {'Prev'}
               </Button>
@@ -1111,7 +1111,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
         
                         }}
                         className={clsx(
-                          'px-3 py-1 border mx-1 bg-background text-foreground',
+                          'mx-1 border bg-background px-3 py-1 text-foreground',
                           currentPage === page ? 'bg-muted-foreground font-bold' : 'bg-background'
                         )}
                       >
@@ -1128,7 +1128,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
                 }}
                 disabled={!table.getCanNextPage()}
-                className="px-2 py-1 border border-primary disabled:opacity-50"
+                className="border border-primary px-2 py-1 disabled:opacity-50"
               >
                 {'Next'}
               </Button>

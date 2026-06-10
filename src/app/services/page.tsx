@@ -43,7 +43,7 @@ export default function ServicesIndexPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <h1 className="text-3xl font-semibold">Services</h1>
-      <p className="text-muted-foreground mt-2">
+      <p className="mt-2 text-muted-foreground">
         Browse bioinformatics services by category.
       </p>
       <ul className="mt-8 grid gap-4 sm:grid-cols-2">
@@ -52,7 +52,7 @@ export default function ServicesIndexPage() {
             <Link href={c.href} className="font-medium hover:underline">
               {c.label}
             </Link>
-            <p className="text-muted-foreground mt-1 text-sm">{c.description}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{c.description}</p>
           </li>
         ))}
       </ul>

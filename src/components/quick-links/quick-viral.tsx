@@ -11,11 +11,11 @@ import { Box } from "lucide-react";
 
 const QuickViralLinks = () => {
   return (
-    <section className="py-12 bg-background">
+    <section className="bg-background py-12">
       <div className="container mx-auto px-4">
-        <h2 className="text-2xl font-bold mb-8 text-center">Quick Access to Viral Data</h2>
+        <h2 className="mb-8 text-center text-2xl font-bold">Quick Access to Viral Data</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           <Card>
             <CardHeader>
               <CardTitle>Viral Genomes</CardTitle>
@@ -26,7 +26,7 @@ const QuickViralLinks = () => {
                 <li className="flex justify-between">
                   <div className="flex items-center gap-2">
                     {/* <Image src={GenomeIcon} alt="Genome" width={16} height={16} className="fill-accent"/> */}
-                    <GenomeIcon className="w-4 h-4" />
+                    <GenomeIcon className="size-4" />
                     <span>Complete Genomes</span>
                   </div>
                   <Badge className="bg-accent text-foreground">24,891</Badge>
@@ -34,7 +34,7 @@ const QuickViralLinks = () => {
                 <li className="flex justify-between">
                   <div className="flex items-center gap-2">
                     {/* <Image src={PartialSeqIcon} alt="Partial Sequence" width={16} height={16} /> */}
-                    <PartialSeqIcon className="w-4 h-4" />
+                    <PartialSeqIcon className="size-4" />
                     <span>Partial Sequences</span>
                   </div>
                   <Badge className="bg-accent text-foreground">103,457</Badge>
@@ -42,13 +42,13 @@ const QuickViralLinks = () => {
                 <li className="flex justify-between">
                   <div className="flex items-center gap-2">
                     {/* <Image src={SequenceIcon} alt="Sequence" width={16} height={16} /> */}
-                    <SequenceIcon className="w-4 h-4" />
+                    <SequenceIcon className="size-4" />
                     <span>Reference Sequences</span>
                   </div>
                   <Badge className="bg-accent text-foreground">1,204</Badge>
                 </li>
               </ul>
-              <Button variant="outline" className="w-full mt-4">
+              <Button variant="outline" className="mt-4 w-full">
                 Browse Genomes
               </Button>
             </CardContent>
@@ -64,7 +64,7 @@ const QuickViralLinks = () => {
                 <li className="flex justify-between">
                   <div className="flex items-center gap-2">
                     {/* <Image src={ProteinIcon} alt="Protein" width={16} height={16} /> */}
-                    <ProteinIcon className="w-4 h-4" />
+                    <ProteinIcon className="size-4" />
                     <span>Structural Proteins</span>
                   </div>
                   <Badge className="bg-accent text-foreground">18,742</Badge>
@@ -72,20 +72,20 @@ const QuickViralLinks = () => {
                 <li className="flex justify-between">
                   <div className="flex items-center gap-2">
                     {/* <Image src={EnzymeIcon} alt="Enzyme" width={16} height={16} /> */}
-                    <EnzymeIcon className="w-4 h-4" />
+                    <EnzymeIcon className="size-4" />
                     <span>Enzymes</span>
                   </div>
                   <Badge className="bg-accent text-foreground">31,205</Badge>
                 </li>
                 <li className="flex justify-between">
                   <div className="flex items-center gap-2">
-                    <Box className="justify-start w-4 h-4" />
+                    <Box className="size-4 justify-start" />
                     <span>3D Structures</span>
                   </div>
                   <Badge className="bg-accent text-foreground [data-theme='dxkb-dark']:text-black">5,891</Badge>
                 </li>
               </ul>
-              <Button variant="outline" className="w-full mt-4">
+              <Button variant="outline" className="mt-4 w-full">
                 Browse Proteins
               </Button>
             </CardContent>
@@ -157,7 +157,7 @@ const QuickViralLinks = () => {
                   <span>Protein Structure Prediction</span>
                 </li>
               </ul>
-              <Button variant="outline" className="w-full mt-4">
+              <Button variant="outline" className="mt-4 w-full">
                 Access Tools
               </Button>
             </CardContent>

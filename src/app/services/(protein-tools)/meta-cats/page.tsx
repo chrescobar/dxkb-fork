@@ -462,7 +462,7 @@ export default function MetaCATSPage() {
                       onValueChange={(value) => {
                         if (value !== undefined) field.handleChange(value);
                       }}
-                      className="bg-muted service-card-input relative max-w-32 [appearance:textfield] rounded-r-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      className="service-card-input relative max-w-32 [appearance:textfield] rounded-r-none bg-muted [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     />
                     <FieldErrors field={field} />
                   </FieldItem>
@@ -655,9 +655,9 @@ export default function MetaCATSPage() {
                         }
                       >
                         {isLoadingAutoGroup ? (
-                          <Spinner className="h-4 w-4" />
+                          <Spinner className="size-4" />
                         ) : (
-                          <Plus className="h-4 w-4" />
+                          <Plus className="size-4" />
                         )}
                       </Button>
                     </div>
@@ -772,7 +772,7 @@ export default function MetaCATSPage() {
                             <TableRow>
                               <TableCell
                                 colSpan={6}
-                                className="text-muted-foreground py-8 text-center"
+                                className="py-8 text-center text-muted-foreground"
                               >
                                 No features added. Select a feature group and
                                 click + to add.
@@ -808,7 +808,7 @@ export default function MetaCATSPage() {
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground text-xs">
+                      <span className="text-xs text-muted-foreground">
                         {autoGroups.length} item(s), {selectedGridRows.size}{" "}
                         selected
                       </span>
@@ -819,7 +819,7 @@ export default function MetaCATSPage() {
                         onClick={handleDeleteSelectedRows}
                         disabled={selectedGridRows.size === 0}
                       >
-                        <Trash2 className="mr-2 h-4 w-4" />
+                        <Trash2 className="mr-2 size-4" />
                         Delete Rows
                       </Button>
                     </div>
@@ -863,7 +863,7 @@ export default function MetaCATSPage() {
                         onClick={handleAddFeatureGroup}
                         disabled={!selectedFeatureGroupObject}
                       >
-                        <Plus className="h-4 w-4" />
+                        <Plus className="size-4" />
                       </Button>
                     </div>
                   </div>

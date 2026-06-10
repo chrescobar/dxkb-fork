@@ -62,8 +62,8 @@ function SpecialRow({
           >
             {cell.id === "name" ? (
               <div className="flex items-center gap-2">
-                <Icon className="h-4 w-4 shrink-0 text-amber-500" />
-                <span className="text-muted-foreground font-medium italic">
+                <Icon className="size-4 shrink-0 text-amber-500" />
+                <span className="font-medium text-muted-foreground italic">
                   {label}
                 </span>
               </div>
@@ -187,7 +187,7 @@ export function EmptyRow({ colSpan }: EmptyRowProps) {
     <TableRow className="pl-6">
       <TableCell
         colSpan={colSpan}
-        className="text-muted-foreground py-12 pl-6 text-center"
+        className="py-12 pl-6 text-center text-muted-foreground"
       >
         This folder is empty
       </TableCell>

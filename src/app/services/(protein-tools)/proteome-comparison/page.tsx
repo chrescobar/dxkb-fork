@@ -416,7 +416,7 @@ export default function ProteomeComparisonPage() {
                     <CollapsibleTrigger className="service-collapsible-trigger text-sm font-medium">
                       Advanced Parameters (Optional)
                       <ChevronDown
-                        className={`h-4 w-4 transition-transform ${showAdvancedParams ? "rotate-180 transform" : ""}`}
+                        className={`size-4 transition-transform ${showAdvancedParams ? "rotate-180 transform" : ""}`}
                       />
                     </CollapsibleTrigger>
 
@@ -438,7 +438,7 @@ export default function ProteomeComparisonPage() {
                                   if (value !== undefined)
                                     field.handleChange(value);
                                 }}
-                                className="bg-muted service-card-input relative [appearance:textfield] rounded-r-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                className="service-card-input relative [appearance:textfield] rounded-r-none bg-muted [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                               />
                               <FieldErrors field={field} />
                             </FieldItem>
@@ -480,7 +480,7 @@ export default function ProteomeComparisonPage() {
                                   if (value !== undefined)
                                     field.handleChange(value);
                                 }}
-                                className="bg-muted service-card-input relative [appearance:textfield] rounded-r-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                className="service-card-input relative [appearance:textfield] rounded-r-none bg-muted [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                               />
                               <FieldErrors field={field} />
                             </FieldItem>
@@ -647,9 +647,9 @@ export default function ProteomeComparisonPage() {
                       }
                     >
                       {isLoadingCompGenome ? (
-                        <Spinner className="h-4 w-4" />
+                        <Spinner className="size-4" />
                       ) : (
-                        <Plus className="h-4 w-4" />
+                        <Plus className="size-4" />
                       )}
                     </Button>
                   </div>
@@ -683,7 +683,7 @@ export default function ProteomeComparisonPage() {
                         totalGenomeCount >= maxComparisonGenomes
                       }
                     >
-                      <Plus className="h-4 w-4" />
+                      <Plus className="size-4" />
                     </Button>
                   </div>
                 </div>
@@ -716,7 +716,7 @@ export default function ProteomeComparisonPage() {
                         totalGenomeCount >= maxComparisonGenomes
                       }
                     >
-                      <Plus className="h-4 w-4" />
+                      <Plus className="size-4" />
                     </Button>
                   </div>
                 </div>
@@ -751,9 +751,9 @@ export default function ProteomeComparisonPage() {
                       }
                     >
                       {isLoadingGenomeGroup ? (
-                        <Spinner className="h-4 w-4" />
+                        <Spinner className="size-4" />
                       ) : (
-                        <Plus className="h-4 w-4" />
+                        <Plus className="size-4" />
                       )}
                     </Button>
                   </div>
@@ -805,7 +805,7 @@ export default function ProteomeComparisonPage() {
             type="submit"
             disabled={isSubmitting || !canSubmit || !isOutputNameValid}
           >
-            {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
+            {isSubmitting ? <Spinner className="mr-2 size-4" /> : null}
             Submit
           </Button>
         </div>

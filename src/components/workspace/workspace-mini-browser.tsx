@@ -298,7 +298,7 @@ export function WorkspaceMiniBrowser({
         ref={tableContainerRef}
         tabIndex={0}
         aria-label="Workspace destination browser"
-        className="scrollbar-themed focus-visible:ring-ring flex h-full min-h-0 flex-col overflow-auto rounded-md border outline-none focus-visible:ring-2"
+        className="scrollbar-themed flex h-full min-h-0 flex-col overflow-auto rounded-md border outline-none focus-visible:ring-2 focus-visible:ring-ring"
         onKeyDown={handleKeyDown}
         onPointerDownCapture={() => tableContainerRef.current?.focus()}
       >
@@ -319,15 +319,15 @@ export function WorkspaceMiniBrowser({
               <TableRow
                 data-row-key="parent"
                 className={cn(
-                  "hover:bg-muted/50 cursor-pointer",
+                  "cursor-pointer hover:bg-muted/50",
                   focusedRow === "parent" && "bg-muted",
                 )}
                 onClick={handleParentClick}
               >
                 <TableCell className="pl-3" colSpan={4}>
                   <div className="flex items-center gap-2">
-                    <FolderUp className="text-muted-foreground h-4 w-4 shrink-0" />
-                    <span className="text-muted-foreground text-sm">
+                    <FolderUp className="size-4 shrink-0 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">
                       {parentRowLabel}
                     </span>
                   </div>
@@ -340,7 +340,7 @@ export function WorkspaceMiniBrowser({
                 <TableRow key={i}>
                   <TableCell className="pl-3">
                     <div className="flex items-center gap-2">
-                      <Skeleton className="h-4 w-4" />
+                      <Skeleton className="size-4" />
                       <Skeleton className="h-4 w-32" />
                     </div>
                   </TableCell>
@@ -357,7 +357,7 @@ export function WorkspaceMiniBrowser({
               ))
             ) : error ? (
               <TableRow>
-                <TableCell className="text-destructive pl-3" colSpan={4}>
+                <TableCell className="pl-3 text-destructive" colSpan={4}>
                   Failed to load folder contents.
                 </TableCell>
               </TableRow>
@@ -373,7 +373,7 @@ export function WorkspaceMiniBrowser({
                     key={item.id ?? item.path}
                     data-row-key={normalizePath(item.path)}
                     className={cn(
-                      "hover:bg-muted/50 cursor-pointer",
+                      "cursor-pointer hover:bg-muted/50",
                       isFolderType(item.type) &&
                         isSelected &&
                         focusedRow !== "parent" &&

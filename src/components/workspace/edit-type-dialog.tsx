@@ -75,7 +75,7 @@ function EditTypeForm({
       <DialogTitle>Change Object Type</DialogTitle>
       <div className="flex flex-col gap-2 py-2">
         <label
-          className="text-muted-foreground text-xs font-medium"
+          className="text-xs font-medium text-muted-foreground"
           htmlFor="edit-type-select"
         >
           Select a new type…
@@ -98,7 +98,7 @@ function EditTypeForm({
             </SelectGroup>
           </SelectContent>
         </Select>
-        <p className="text-muted-foreground text-xs">
+        <p className="text-xs text-muted-foreground">
           Changing type for: {item.name ?? "item"}
         </p>
       </div>
@@ -113,7 +113,7 @@ function EditTypeForm({
         <Button onClick={handleSave} disabled={!canSave}>
           {isUpdating ? (
             <>
-              <Spinner className="mr-2 h-3.5 w-3.5 shrink-0" />
+              <Spinner className="mr-2 size-3.5 shrink-0" />
               Saving…
             </>
           ) : (

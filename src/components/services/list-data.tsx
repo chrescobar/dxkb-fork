@@ -345,7 +345,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   }
 
   return (
-    <div className="h-full flex flex-col min-h-0 overflow-hidden">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden">
       <FilterBar
         facetFields={facetFields}
         resource={resource}

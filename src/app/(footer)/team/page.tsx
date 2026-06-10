@@ -68,7 +68,7 @@ const Team = () => {
         <div className="team-section" key={institution.name}>
           <div
             id={`${institution.name.toLowerCase().replace(/\s+/g, "-")}-team`}
-            className="container mx-auto flex w-full flex-col items-center justify-center gap-6 text-sm sm:gap-8 md:text-lg bg-card rounded-lg p-4 border shadow-lg"
+            className="container mx-auto flex w-full flex-col items-center justify-center gap-6 rounded-lg border bg-card p-4 text-sm shadow-lg sm:gap-8 md:text-lg"
           >
             <div className="relative h-[75px] w-full max-w-[300px] sm:h-[100px] sm:max-w-[400px]">
               <Image
@@ -86,7 +86,7 @@ const Team = () => {
               {teamMembers.map((member) => (
                 <div
                   key={member.name.toLowerCase().replace(/\s+/g, "-")}
-                  className="team-member bg-background rounded-lg p-2 shadow-sm transition-shadow duration-200 hover:shadow-md sm:p-4"
+                  className="team-member rounded-lg bg-background p-2 shadow-sm transition-shadow duration-200 hover:shadow-md sm:p-4"
                 >
                   <div className="relative aspect-square w-full overflow-hidden rounded-full">
                     <Image
@@ -100,7 +100,7 @@ const Team = () => {
                   <h3 className="mt-2 text-center font-semibold">
                     {member.name}
                   </h3>
-                  <p className="text-muted-foreground text-center text-sm">
+                  <p className="text-center text-sm text-muted-foreground">
                     {member.role}
                   </p>
                 </div>

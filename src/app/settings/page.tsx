@@ -38,7 +38,7 @@ export default function SettingsPage() {
   if (isError || !profile) {
     return (
       <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
+        <AlertCircle className="size-4" />
         <AlertDescription>
           Failed to load your profile. Please try refreshing the page.
         </AlertDescription>

@@ -77,7 +77,7 @@ export function WorkspaceItemIcon({ type, className, variant = "default" }: Work
   return (
     <Icon
       className={cn(
-        "h-4 w-4 shrink-0",
+        "size-4 shrink-0",
         isFolderLike ? "text-amber-500" : "text-muted-foreground",
         className,
       )}

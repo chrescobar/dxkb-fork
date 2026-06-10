@@ -198,7 +198,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           <Button
             type="button"
             aria-label="Increase value"
-            className="border-input h-4 rounded-l-none rounded-br-none border-b-[0.5px] border-l-0 px-2 focus-visible:relative"
+            className="h-4 rounded-l-none rounded-br-none border-b-[0.5px] border-l-0 border-input px-2 focus-visible:relative"
             variant="outline"
             onMouseDown={() => startContinuousChange("up")}
             onMouseUp={stopContinuousChange}
@@ -210,7 +210,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           <Button
             type="button"
             aria-label="Decrease value"
-            className="border-input h-4 rounded-l-none rounded-tr-none border-t-[0.5px] border-l-0 px-2 focus-visible:relative"
+            className="h-4 rounded-l-none rounded-tr-none border-t-[0.5px] border-l-0 border-input px-2 focus-visible:relative"
             variant="outline"
             onMouseDown={() => startContinuousChange("down")}
             onMouseUp={stopContinuousChange}

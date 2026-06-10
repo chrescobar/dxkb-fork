@@ -87,7 +87,7 @@ export function useWorkspaceColumns(
         accessorKey: "size",
         header: "Size",
         cell: ({ getValue }) => (
-          <span className="text-muted-foreground block truncate">
+          <span className="block truncate text-muted-foreground">
             {formatFileSize(Number(getValue()) || 0)}
           </span>
         ),
@@ -100,7 +100,7 @@ export function useWorkspaceColumns(
         accessorKey: "ownerId",
         header: "Owner",
         cell: ({ getValue }) => (
-          <span className="text-muted-foreground block truncate">
+          <span className="block truncate text-muted-foreground">
             {formatOwner(String(getValue() ?? ""))}
           </span>
         ),
@@ -113,7 +113,7 @@ export function useWorkspaceColumns(
         accessorKey: "createdAt",
         header: "Created",
         cell: ({ getValue }) => (
-          <span className="text-muted-foreground block truncate">
+          <span className="block truncate text-muted-foreground">
             {formatDate(String(getValue() ?? ""))}
           </span>
         ),
@@ -127,7 +127,7 @@ export function useWorkspaceColumns(
         cell: ({ row }) => {
           const count = memberCountByPath?.[row.original.path];
           return (
-            <span className="text-muted-foreground block truncate">
+            <span className="block truncate text-muted-foreground">
               {count != null ? formatMemberCount(count) : "—"}
             </span>
           );
@@ -141,7 +141,7 @@ export function useWorkspaceColumns(
         accessorKey: "type",
         header: "Type",
         cell: ({ getValue }) => (
-          <span className="text-muted-foreground block truncate">
+          <span className="block truncate text-muted-foreground">
             {String(getValue() ?? "")}
           </span>
         ),

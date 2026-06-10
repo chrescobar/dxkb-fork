@@ -36,11 +36,11 @@ export function PasswordInput({
         type="button"
         variant="ghost"
         size="sm"
-        className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+        className="absolute top-0 right-0 h-full px-3 hover:bg-transparent"
         onClick={() => setVisible(!visible)}
         aria-label={visible ? `Hide ${label}` : `Show ${label}`}
       >
-        {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+        {visible ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
       </Button>
     </div>
   );

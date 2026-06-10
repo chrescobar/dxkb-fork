@@ -199,7 +199,7 @@ export default function CitationsPage() {
 
         {/* Filters and Search */}
         <div className="citation-filters">
-          <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-x-2 md:space-y-0">
+          <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-y-0 md:space-x-2">
             <Select
               items={[
                 { value: "all", label: "All Years" },
@@ -228,7 +228,7 @@ export default function CitationsPage() {
               onValueChange={(value) => setSortOption(value ?? "")}
             >
               <SelectTrigger className="w-[180px]">
-                <SortDesc className="mr-2 h-4 w-4" />
+                <SortDesc className="mr-2 size-4" />
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
@@ -266,7 +266,7 @@ export default function CitationsPage() {
               {paginatedCitations.length > 0 ? (
                 paginatedCitations.map((citation) => <CitationCard key={citation.id} citation={citation} />)
               ) : (
-                <div className="text-center py-10">
+                <div className="py-10 text-center">
                   <p className="text-muted-foreground">No citations found matching your search criteria.</p>
                   <Button
                     variant="outline"
@@ -364,7 +364,7 @@ function CitationCard({ citation }: { citation: Citation }) {
             </div>
             <div className="citation-card-badges">
               <Badge variant="outline" className="flex items-center gap-1">
-                <BarChart className="h-3 w-3" data-icon="inline-start" />
+                <BarChart className="size-3" data-icon="inline-start" />
                 IF: {citation.impactFactor.toFixed(1)}
               </Badge>
               <Badge variant="outline" className="flex items-center gap-1">
@@ -380,7 +380,7 @@ function CitationCard({ citation }: { citation: Citation }) {
               className="citation-card-title"
             >
               {citation.title}
-              <ExternalLink className="h-4 w-4 inline-block ml-1" />
+              <ExternalLink className="ml-1 inline-block size-4" />
             </Link>
             <p className="citation-card-meta">{citation.authors}</p>
             <p className="citation-card-journal">{citation.journal}</p>
@@ -398,7 +398,7 @@ function CitationCard({ citation }: { citation: Citation }) {
               View Paper
             </a>
             <Button variant="outline" size="sm">
-              <Download className="h-3.5 w-3.5" data-icon="inline-start" />
+              <Download className="size-3.5" data-icon="inline-start" />
               Export Citation
             </Button>
           </div>

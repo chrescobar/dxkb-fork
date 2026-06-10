@@ -288,7 +288,7 @@ export function GenomeNameSelector({
       {title && <Label className="service-card-label">{title}</Label>}
       <div className="flex items-start gap-2">
         <div className="relative flex-1">
-          <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             ref={inputRef}
             value={query}
@@ -302,17 +302,17 @@ export function GenomeNameSelector({
             }}
             onFocus={() => setShowDropdown(true)}
             onKeyDown={handleKeyDown}
-            className="w-full pr-10 pl-10"
+            className="w-full px-10"
           />
           {showDropdown && (suggestions.length > 0 || isLoading || error || showEmptyState) && (
-            <div ref={dropdownRef} className="bg-popover scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/20 hover:scrollbar-thumb-muted-foreground/40 absolute z-50 mt-1 max-h-64 w-full overflow-y-auto rounded-md border shadow-md">
+            <div ref={dropdownRef} className="absolute z-50 mt-1 max-h-64 w-full scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent overflow-y-auto rounded-md border bg-popover shadow-md hover:scrollbar-thumb-muted-foreground/40">
               {isLoading ? (
                 <div className="flex items-center justify-center p-4">
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  <span className="text-muted-foreground text-sm">Searching...</span>
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  <span className="text-sm text-muted-foreground">Searching...</span>
                 </div>
               ) : error ? (
-                <div className="text-destructive p-4 text-sm">{error}</div>
+                <div className="p-4 text-sm text-destructive">{error}</div>
               ) : suggestions.length > 0 ? (
                 suggestions.map((genome, index) => {
                   const isDuplicate = existingGenomeIds.has(genome.genome_id);
@@ -339,7 +339,7 @@ export function GenomeNameSelector({
                       <span className="truncate text-sm font-medium">
                         {genome.genome_name}
                       </span>
-                      <span className="text-muted-foreground text-xs">
+                      <span className="text-xs text-muted-foreground">
                         {genome.genome_id}
                         {genome.strain ? ` • ${genome.strain}` : ""}
                       </span>
@@ -347,7 +347,7 @@ export function GenomeNameSelector({
                   );
                 })
               ) : showEmptyState ? (
-                <p className="text-muted-foreground py-4 text-center text-sm">
+                <p className="py-4 text-center text-sm text-muted-foreground">
                   No genomes found for {'"'}{query.trim()}{'"'}
                 </p>
               ) : null}
@@ -361,13 +361,13 @@ export function GenomeNameSelector({
           disabled={selectionDisabled || isLoading}
           onClick={handleManualAdd}
         >
-          {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+          {isLoading ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
         </Button>
       </div>
       {helperText && (
-        <p className="text-muted-foreground text-xs">{helperText}</p>
+        <p className="text-xs text-muted-foreground">{helperText}</p>
       )}
-      <p className="text-muted-foreground text-xs">
+      <p className="text-xs text-muted-foreground">
         Selected {selectedGenomeIds.length}/{maxSelections}
       </p>
     </div>

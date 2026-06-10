@@ -20,7 +20,7 @@ export function DetailKeyValueTable({ fields }: { fields: DetailField[] }) {
 
   if (visibleFields.length === 0) {
     return (
-      <p className="text-muted-foreground px-2 py-1 text-xs italic">
+      <p className="px-2 py-1 text-xs text-muted-foreground italic">
         None available
       </p>
     );
@@ -57,10 +57,10 @@ export function DetailKeyValueTable({ fields }: { fields: DetailField[] }) {
 
           return (
             <tr key={label} className="border-b last:border-b-0">
-              <td className="text-muted-foreground w-[40%] px-3 py-1.5 text-xs font-medium align-top">
+              <td className="w-[40%] px-3 py-1.5 align-top text-xs font-medium text-muted-foreground">
                 {label}
               </td>
-              <td className="break-all px-3 py-1.5 text-xs align-top">
+              <td className="px-3 py-1.5 align-top text-xs break-all">
                 {display}
               </td>
             </tr>

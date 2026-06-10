@@ -12,21 +12,21 @@ const PrivacyPolicy = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row gap-8">
+        <div className="flex flex-col gap-8 md:flex-row">
           {/* Sidebar */}
           <PrivacySidebar />
 
           {/* Main Content */}
-          <main className="flex-grow max-w-3xl">
+          <main className="max-w-3xl flex-grow">
             <section id="introduction" className="mb-10">
-              <div className="bg-secondary/20 border-l-4 border-secondary p-4 mb-6">
+              <div className="mb-6 border-l-4 border-secondary bg-secondary/20 p-4">
                 <p className="text-secondary">
                   This Privacy Policy was last updated on <strong>April 8, 2023</strong>. Please read it carefully as it
                   affects your rights and how your data is handled.
                 </p>
               </div>
 
-              <p className="text-lg text-muted-foreground mb-6">
+              <p className="mb-6 text-lg text-muted-foreground">
                 At VirusDB, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose,
                 and safeguard your information when you visit our website or use our services. Please read this privacy
                 policy carefully. If you do not agree with the terms of this privacy policy, please do not access the
@@ -36,9 +36,9 @@ const PrivacyPolicy = () => {
 
             {privacyPolicySections.map((section) => (
               <section id={section.title.toLowerCase().replace(/\s+/g, '-')} key={section.id}>
-                <div className="flex items-center mb-4">
-                  <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center mr-3" key={section.id}>
-                    <span className="text-secondary font-bold">{section.id}</span>
+                <div className="mb-4 flex items-center">
+                  <div className="mr-3 flex size-8 items-center justify-center rounded-full bg-secondary/20" key={section.id}>
+                    <span className="font-bold text-secondary">{section.id}</span>
                   </div>
                   <h2 className="text-xl font-bold">{section.title}</h2>
                 </div>
@@ -49,9 +49,9 @@ const PrivacyPolicy = () => {
 
             <Separator className="my-8" />
 
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <Button variant="outline" size="sm">
-                <ArrowUp className="h-4 w-4 mr-2" />
+                <ArrowUp className="mr-2 size-4" />
                 Back to Top
               </Button>
               <div className="text-sm text-foreground">© 2023 VirusDB. All rights reserved.</div>

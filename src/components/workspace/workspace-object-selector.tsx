@@ -334,7 +334,7 @@ export function WorkspaceObjectSelector({
       {/* Validation Error Alert */}
       {validationError && (
         <Alert variant="destructive" className="mb-2">
-          <AlertCircle className="h-4 w-4" />
+          <AlertCircle className="size-4" />
           <AlertDescription>{validationError}</AlertDescription>
         </Alert>
       )}
@@ -343,7 +343,7 @@ export function WorkspaceObjectSelector({
       <div className="flex flex-row items-center gap-2">
         {/* Search Input with Dropdown */}
         <div ref={inputRef} className="relative flex-1">
-          <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             ref={inputElementRef}
             placeholder={placeholder}
@@ -414,7 +414,7 @@ export function WorkspaceObjectSelector({
                   break;
               }
             }}
-            className="service-card-input w-full pr-10 pl-10"
+            className="service-card-input w-full px-10"
           />
           {/* Manual Dropdown Trigger */}
           <Button
@@ -422,10 +422,10 @@ export function WorkspaceObjectSelector({
             aria-label={showDropdown ? "Hide suggestions" : "Show suggestions"}
             aria-expanded={showDropdown}
             onClick={handleManualDropdownToggle}
-            className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 transition-colors"
+            className="absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
           >
             <ChevronDown
-              className={`h-4 w-4 transition-transform ${showDropdown ? "rotate-180" : ""}`}
+              className={`size-4 transition-transform ${showDropdown ? "rotate-180" : ""}`}
             />
           </Button>
 
@@ -436,7 +436,7 @@ export function WorkspaceObjectSelector({
             createPortal(
               <div
                 ref={dropdownRef}
-                className="bg-popover scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/20 hover:scrollbar-thumb-muted-foreground/40 dark:scrollbar-thumb-muted-foreground/30 dark:hover:scrollbar-thumb-muted-foreground/50 fixed z-25 overflow-y-auto rounded-md border shadow-md"
+                className="fixed z-25 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent overflow-y-auto rounded-md border bg-popover shadow-md hover:scrollbar-thumb-muted-foreground/40 dark:scrollbar-thumb-muted-foreground/30 dark:hover:scrollbar-thumb-muted-foreground/50"
                 style={{
                   ...(dropdownPosition.openUpward
                     ? { bottom: dropdownRect.bottom, top: "auto" }
@@ -449,7 +449,7 @@ export function WorkspaceObjectSelector({
                 {error ? (
                   <div className="p-4">
                     <Alert variant="destructive">
-                      <AlertCircle className="h-4 w-4" />
+                      <AlertCircle className="size-4" />
                       <AlertDescription>
                         Failed to load workspace objects: {error}
                       </AlertDescription>
@@ -457,8 +457,8 @@ export function WorkspaceObjectSelector({
                   </div>
                 ) : loading ? (
                   <div className="flex items-center justify-center p-4">
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    <span className="text-muted-foreground text-sm">
+                    <Loader2 className="mr-2 size-4 animate-spin" />
+                    <span className="text-sm text-muted-foreground">
                       Loading...
                     </span>
                   </div>
@@ -481,7 +481,7 @@ export function WorkspaceObjectSelector({
                           itemRefs.current[index] = el;
                         }}
                         className={cn(
-                          "hover:bg-accent flex cursor-pointer items-center justify-between p-2",
+                          "flex cursor-pointer items-center justify-between p-2 hover:bg-accent",
                           isHighlighted && "bg-accent"
                         )}
                         onClick={() => {
@@ -494,7 +494,7 @@ export function WorkspaceObjectSelector({
                           <p className="truncate text-sm font-medium">
                             {object.name}
                           </p>
-                          <p className="text-muted-foreground truncate text-xs">
+                          <p className="truncate text-xs text-muted-foreground">
                             {cleanPath}
                           </p>
                         </div>
@@ -502,7 +502,7 @@ export function WorkspaceObjectSelector({
                     );
                   })
                 ) : (
-                  <p className="text-muted-foreground py-4 text-center text-sm">
+                  <p className="py-4 text-center text-sm text-muted-foreground">
                     {searchQuery
                       ? "No objects found matching your search"
                       : "No objects found"}
@@ -524,7 +524,7 @@ export function WorkspaceObjectSelector({
                 aria-label="Browse workspace"
                 className="shrink-0"
               >
-                <FolderOpen className="h-4 w-4" />
+                <FolderOpen className="size-4" />
               </Button>
             )}
           />
@@ -535,13 +535,13 @@ export function WorkspaceObjectSelector({
             <div className="space-y-4">
               {/* Placeholder content for workspace browser */}
               <div className="rounded-lg border p-8 text-center">
-                <FolderOpen className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
+                <FolderOpen className="mx-auto mb-4 size-12 text-muted-foreground" />
                 <h3 className="mb-2 text-lg font-medium">Workspace Browser</h3>
-                <p className="text-muted-foreground mb-4">
+                <p className="mb-4 text-muted-foreground">
                   This will be the full workspace browser interface where users
                   can navigate folders, upload files, and select objects.
                 </p>
-                <div className="text-muted-foreground text-sm">
+                <div className="text-sm text-muted-foreground">
                   <p>Features to be implemented:</p>
                   <ul className="mt-2 list-inside list-disc space-y-1">
                     <li>Folder navigation with breadcrumbs</li>

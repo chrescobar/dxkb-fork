@@ -258,13 +258,13 @@ export function SearchActionBar({
               }}
             >
               {showSpinner ? (
-                <Spinner className="h-4 w-4 shrink-0" />
+                <Spinner className="size-4 shrink-0" />
               ) : action.letter ? (
-                <span className="text-2xl font-black leading-none">{action.letter}</span>
+                <span className="text-2xl leading-none font-black">{action.letter}</span>
               ) : Icon ? (
-                <Icon className="h-4 w-4 shrink-0" />
+                <Icon className="size-4 shrink-0" />
               ) : null}
-              <span className={`w-full break-words text-center font-medium leading-tight ${action.labelClassName ?? "text-[11px]"}`}>
+              <span className={`w-full text-center leading-tight font-medium break-words ${action.labelClassName ?? "text-[11px]"}`}>
                 {action.label.split("\n").map((line, i) => (
                   <span key={i} className="block">{line}</span>
                 ))}

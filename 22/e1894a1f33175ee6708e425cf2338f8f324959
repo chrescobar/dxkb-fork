@@ -1,0 +1,63 @@
+src/app/services/(genomics)/genome-annotation/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 4-5,76,112-113
+src/app/services/(viral-tools)/sars-cov2-genome-analysis/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 4-5,103-104,116-120
+src/app/services/(metagenomics)/metagenomic-binning/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 4-5,107-110
+src/app/services/(protein-tools)/meta-cats/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 6-7,122-124,126,131-132
+src/app/services/(viral-tools)/influenza-ha-subtype/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 4-5,53-55,61-62
+src/app/services/(viral-tools)/viral-assembly/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 4-5,82-84
+src/app/services/(protein-tools)/msa-snp-analysis/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 3-4,126-131,139-140
+src/app/services/(protein-tools)/gene-protein-tree/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 3-4,116-119
+src/app/services/(genomics)/variation-analysis/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 4-5,170-171
+src/app/services/(genomics)/genome-alignment/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 4-5,74-76
+src/app/services/(utilities)/fastq-utilities/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 4-5,119-121
+src/app/services/(viral-tools)/sars-cov2-wastewater-analysis/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 4-5,99-100,111
+src/app/services/(genomics)/primer-design/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 4-5,99-102
+src/app/services/(viral-tools)/subspecies-classification/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 4-5,67-68,72
+src/app/services/(metagenomics)/taxonomic-classification/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 4-5,122-124
+src/app/services/(protein-tools)/proteome-comparison/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 5-6,113,121-122
+src/lib/forms/(genomics)/blast/blast-form-utils.ts
+  s_0d580176ec0ea8::t_94f38880d5aa5d 2-3,292-294,332
+src/app/services/(genomics)/similar-genome-finder/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 4-5,140
+package.json
+  s_0d580176ec0ea8::t_13c5fa1f68357a 45
+src/app/services/(genomics)/blast/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 3-4,89,93-96
+src/app/services/(phylogenomics)/viral-genome-tree/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 3-4,100-102
+src/app/services/(metagenomics)/metagenomic-read-mapping/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 4-5,100-102
+src/app/services/(genomics)/genome-assembly/page.tsx
+  s_0d580176ec0ea8::t_94f38880d5aa5d 4-5,181,184-185
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "22e1894a1f33175ee6708e425cf2338f8f324959",
+  "prompts": {},
+  "sessions": {
+    "s_0d580176ec0ea8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ca49035-a1d3-487e-9d2f-5fd0bae8a7fb",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

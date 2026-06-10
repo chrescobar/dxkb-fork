@@ -668,7 +668,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
           downloadFile(`${resource}-selected.${format}`, content);
         })
-        .catch((err) => {
+        .catch((err: unknown) => {
           console.error("Download selected failed:", err);
         })
         .finally(() => {

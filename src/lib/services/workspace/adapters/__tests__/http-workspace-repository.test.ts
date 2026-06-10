@@ -191,7 +191,7 @@ describe("HttpWorkspaceRepository", () => {
 
     const error = await repository
       .listDirectory({ path: "/p" })
-      .catch((err) => err);
+      .catch((err: unknown) => err);
     expect(error).toBeInstanceOf(WorkspaceApiError);
     expect((error as WorkspaceApiError).method).toBe("Workspace.ls");
   });

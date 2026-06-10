@@ -99,7 +99,7 @@ export function GenomeNameSelector({
             setSuggestions(results);
           }
         })
-        .catch((fetchError) => {
+        .catch((fetchError: unknown) => {
           if (controller.signal.aborted) {
             return;
           }

@@ -130,7 +130,7 @@ export function SingleGenomeSelector({
               setSelectedGenome(null);
             }
           })
-          .catch(() => {
+          .catch((_err: unknown) => {
             // On error, show the ID
             setQuery(value);
             setSelectedGenome(null);
@@ -191,7 +191,7 @@ export function SingleGenomeSelector({
             console.log("suggestions are:", results);
           }
         })
-        .catch((fetchError) => {
+        .catch((fetchError: unknown) => {
           if (controller.signal.aborted) {
             console.log("request aborted");
             return;
@@ -337,7 +337,7 @@ export function SingleGenomeSelector({
             updateSuggestions(results);
           }
         })
-        .catch((fetchError) => {
+        .catch((fetchError: unknown) => {
           if (controller.signal.aborted) {
             return;
           }

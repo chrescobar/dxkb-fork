@@ -285,7 +285,7 @@ async function main(): Promise<void> {
 // exercise sanitizeHar / assertNoSensitiveData directly; without the guard the
 // recorder would launch a browser whenever the test file is loaded.
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main().catch((error) => {
+  main().catch((error: unknown) => {
     console.error(error);
     process.exit(1);
   });

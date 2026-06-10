@@ -126,7 +126,7 @@ async function ensureReadmeInFixtures(
   await existingRow.first().waitFor({ state: "visible", timeout: 30_000 });
 }
 
-main().catch((error) => {
+main().catch((error: unknown) => {
   console.error(error);
   process.exit(1);
 });

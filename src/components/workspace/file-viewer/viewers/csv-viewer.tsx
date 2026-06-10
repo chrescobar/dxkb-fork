@@ -65,7 +65,7 @@ function InteractiveCsvViewer({
         return res.text();
       })
       .then((text) => { setContent(text); })
-      .catch((err) => {
+      .catch((err: unknown) => {
         if (err instanceof DOMException && err.name === "AbortError") return;
         setError(err instanceof Error ? err.message : "Unknown error");
       })

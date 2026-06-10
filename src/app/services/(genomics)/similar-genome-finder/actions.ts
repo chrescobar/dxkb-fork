@@ -121,7 +121,7 @@ async function fetchGenomeDetails(
             v !== null && v !== undefined ? String(v) : "",
           ]),
         ) as Record<string, string>)
-      : ({} as Record<string, string>),
+      : ({}),
   );
   return { ok: true, genomes };
 }
@@ -136,7 +136,7 @@ function getMinhashRowsAndIds(result: unknown): {
   let minhashRows = parseMinhashResultPayload(result);
   let genomeIds = minhashRows
     .map((r) => r.genome_id?.trim())
-    .filter(Boolean) as string[];
+    .filter(Boolean);
 
   if (
     minhashRows.length > 0 &&
@@ -152,14 +152,14 @@ function getMinhashRowsAndIds(result: unknown): {
         | unknown[]
         | undefined;
       const ids = Array.isArray(idList)
-        ? (idList as unknown[])
+        ? (idList)
             .map((x) =>
               x !== null && x !== undefined ? String(x).trim() : "",
             )
             .filter(Boolean)
         : [];
       if (ids.length >= minhashRows.length) {
-        genomeIds = ids.slice(0, minhashRows.length) as string[];
+        genomeIds = ids.slice(0, minhashRows.length);
         minhashRows = minhashRows.map((row, i) => ({
           ...row,
           genome_id: genomeIds[i] ?? row.genome_id,

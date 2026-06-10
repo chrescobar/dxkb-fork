@@ -56,11 +56,11 @@ function SigninForm() {
     defaultValues: {
       username: "",
       password: "",
-    } as FormValues,
+    },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: formSchema as any, onSubmit: formSchema as any },
     onSubmit: async ({ value }) => {
-      const { error: signInError } = await signIn(value as FormValues);
+      const { error: signInError } = await signIn(value);
       if (signInError) {
         setError(signInError.message || "Invalid username or password");
         return;
@@ -108,7 +108,7 @@ function SigninForm() {
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                     />
@@ -140,7 +140,7 @@ function SigninForm() {
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="px-10"
                       required
@@ -150,7 +150,7 @@ function SigninForm() {
                       variant="ghost"
                       size="icon"
                       className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={() => { setShowPassword(!showPassword); }}
                     >
                       {showPassword ? (
                         <EyeOff className="size-4" />

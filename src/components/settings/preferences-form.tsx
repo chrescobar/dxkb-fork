@@ -95,7 +95,7 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
                   variant="ghost"
                   size="icon"
                   className="size-9 shrink-0"
-                  onClick={() => setDefaultJobFolder("")}
+                  onClick={() => { setDefaultJobFolder(""); }}
                   aria-label="Clear default job output folder"
                 >
                   <X className="size-4" />

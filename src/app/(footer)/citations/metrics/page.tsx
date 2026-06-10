@@ -145,7 +145,7 @@ export default function CitationsMetricsPage() {
                 ...uniqueYears.map((year) => ({ value: String(year) + "-" + String(year), label: String(year) })),
               ]}
               value={yearRange}
-              onValueChange={(value) => setYearRange(value ?? "")}
+              onValueChange={(value) => { setYearRange(value ?? ""); }}
             >
               <SelectTrigger className="w-45">
                 <SelectValue placeholder="Select year range" />

@@ -89,10 +89,10 @@ export default function MetagenomicReadMappingPage() {
 
   const form = useForm({
     defaultValues:
-      defaultMetagenomicReadMappingFormValues as MetagenomicReadMappingFormData,
+      defaultMetagenomicReadMappingFormValues,
     validators: { onChange: metagenomicReadMappingFormSchema },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as MetagenomicReadMappingFormData);
+      await runtime.submitFormData(value);
     },
   });
 
@@ -408,7 +408,7 @@ export default function MetagenomicReadMappingPage() {
                             onValueChange={(value) =>
                               value != null &&
                               field.handleChange(
-                                value as MetagenomicReadMappingFormData["gene_set_name"],
+                                value,
                               )
                             }
                           >

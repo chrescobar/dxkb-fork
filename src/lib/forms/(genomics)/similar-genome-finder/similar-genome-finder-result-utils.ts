@@ -53,7 +53,7 @@ function extractMinhashArray(payload: unknown): unknown[] {
     if (Array.isArray(r[0])) return r[0] as unknown[];
     if (Array.isArray(r.genome_id ?? r.genomeId)) return columnarToRows(r);
     const values = Object.values(r);
-    if (values.length > 0 && Array.isArray(values[0])) return values.flat() as unknown[];
+    if (values.length > 0 && Array.isArray(values[0])) return values.flat();
   }
   if (Array.isArray(obj.data)) return obj.data;
   if (Array.isArray(obj.hits)) return obj.hits;

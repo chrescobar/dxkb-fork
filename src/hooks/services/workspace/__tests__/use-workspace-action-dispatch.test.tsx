@@ -72,7 +72,7 @@ const makeItem = (
     permissions: { user: "rw", global: "n" },
     timestamp: 0,
     ...overrides,
-  }) as WorkspaceItem;
+  });
 
 describe("useWorkspaceActionDispatch", () => {
   function createDefaultOptions() {

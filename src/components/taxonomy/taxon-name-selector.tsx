@@ -188,7 +188,7 @@ export function TaxonNameSelector({
     const timeoutId = setTimeout(() => {
       setDebouncedQuery(searchQuery);
     }, 300);
-    return () => clearTimeout(timeoutId);
+    return () => { clearTimeout(timeoutId); };
   }, [searchQuery]);
 
   // Stabilize filter flags for queryKey
@@ -198,7 +198,7 @@ export function TaxonNameSelector({
     data: results = [],
     isLoading: loading,
     error: queryError,
-  } = useQuery<TaxonomyItem[], Error>({
+  } = useQuery<TaxonomyItem[]>({
     queryKey: ["taxonomy-search-name", debouncedQuery, filterKey],
     queryFn: ({ signal }) =>
       searchTaxonByName(
@@ -284,11 +284,11 @@ export function TaxonNameSelector({
         <Input
           placeholder={placeholder}
           value={inputValue}
-          onChange={(e) => handleSearchChange(e.target.value)}
-          onFocus={() => setShowDropdown(searchQuery.length > 0)}
+          onChange={(e) => { handleSearchChange(e.target.value); }}
+          onFocus={() => { setShowDropdown(searchQuery.length > 0); }}
           onBlur={() => {
             setTouched(true);
-            setTimeout(() => setShowDropdown(false), 200);
+            setTimeout(() => { setShowDropdown(false); }, 200);
           }}
           className={cn(
             "w-full px-10",
@@ -323,7 +323,7 @@ export function TaxonNameSelector({
                 <div
                   key={item.taxon_id}
                   className="flex cursor-pointer items-center justify-between p-2 hover:bg-accent"
-                  onClick={() => handleSelect(item)}
+                  onClick={() => { handleSelect(item); }}
                 >
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">

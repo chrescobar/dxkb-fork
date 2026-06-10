@@ -51,7 +51,7 @@ export function parseWorkspaceGetSingle(
 
   if (resolved.type === "job_result") {
     resolved.taskData = userMeta.task_data as JobResultTaskData | undefined;
-    resolved.jobSysMeta = sysMeta as JobResultSysMeta;
+    resolved.jobSysMeta = sysMeta;
   }
 
   return resolved;

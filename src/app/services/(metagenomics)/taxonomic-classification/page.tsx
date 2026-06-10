@@ -111,10 +111,10 @@ export default function TaxonomicClassificationPage() {
 
   const form = useForm({
     defaultValues:
-      defaultTaxonomicClassificationFormValues as TaxonomicClassificationFormData,
+      defaultTaxonomicClassificationFormValues,
     validators: { onChange: taxonomicClassificationFormSchema },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as TaxonomicClassificationFormData);
+      await runtime.submitFormData(value);
     },
   });
 
@@ -393,7 +393,7 @@ export default function TaxonomicClassificationPage() {
                   <Input
                     value={pairedSampleId}
                     onChange={(e) =>
-                      handleSampleIdChange("paired", e.target.value)
+                      { handleSampleIdChange("paired", e.target.value); }
                     }
                     placeholder="Sample ID"
                     className="service-card-input mt-1.5 font-mono text-sm"
@@ -434,7 +434,7 @@ export default function TaxonomicClassificationPage() {
                   <Input
                     value={singleSampleId}
                     onChange={(e) =>
-                      handleSampleIdChange("single", e.target.value)
+                      { handleSampleIdChange("single", e.target.value); }
                     }
                     placeholder="Sample ID"
                     className="service-card-input mt-1.5 font-mono text-sm"
@@ -461,7 +461,7 @@ export default function TaxonomicClassificationPage() {
                 </Label>
                 <Input
                   value={srrSampleId}
-                  onChange={(e) => handleSampleIdChange("srr", e.target.value)}
+                  onChange={(e) => { handleSampleIdChange("srr", e.target.value); }}
                   placeholder="Sample ID"
                   className="service-card-input mt-1.5 font-mono text-sm"
                 />
@@ -607,7 +607,7 @@ export default function TaxonomicClassificationPage() {
                             onValueChange={(value) =>
                               value != null &&
                               field.handleChange(
-                                value as TaxonomicClassificationFormData["analysis_type"],
+                                value,
                               )
                             }
                             disabled={!isAnalysisTypeSelectable(sequenceType)}
@@ -659,7 +659,7 @@ export default function TaxonomicClassificationPage() {
                             onValueChange={(value) =>
                               value != null &&
                               field.handleChange(
-                                value as TaxonomicClassificationFormData["database"],
+                                value,
                               )
                             }
                           >
@@ -711,7 +711,7 @@ export default function TaxonomicClassificationPage() {
                             onValueChange={(value) =>
                               value != null &&
                               field.handleChange(
-                                value as TaxonomicClassificationFormData["host_genome"],
+                                value,
                               )
                             }
                             disabled={!isHostFilteringAvailable(sequenceType)}

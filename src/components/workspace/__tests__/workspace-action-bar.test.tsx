@@ -71,7 +71,7 @@ const makeItem = (
     ownerId: "user@bvbrc",
     permissions: { user: "o", global: "n" },
     ...overrides,
-  }) as WorkspaceItem;
+  });
 
 const defaultProps = {
   workspaceGuideUrl: "https://example.com/guide",

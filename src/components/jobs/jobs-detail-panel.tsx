@@ -22,7 +22,7 @@ function CopyButton({ text }: { text: string }) {
       onClick={() => {
         void navigator.clipboard.writeText(text).then(() => {
           setCopied(true);
-          setTimeout(() => setCopied(false), 1500);
+          setTimeout(() => { setCopied(false); }, 1500);
         }).catch(() => { /* clipboard error ignored */ });
       }}
       title="Copy to clipboard"

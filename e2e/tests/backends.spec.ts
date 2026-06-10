@@ -95,7 +95,7 @@ test.describe("applyBackendMocks", () => {
     // may fire its own /api calls (e.g. /api/auth/get-session) that strict also records.
     const leaks = getUnmockedBackendRequests(page);
     expect(leaks.some((r) => r.includes("/api/services/unmocked-endpoint"))).toBe(true);
-    expect(() => verifyNoUnmockedBackendRequests(page)).toThrow(/unmocked backend request/);
+    expect(() => { verifyNoUnmockedBackendRequests(page); }).toThrow(/unmocked backend request/);
   });
 
   test("verifyNoUnmockedBackendRequests is a no-op when nothing leaked", async ({ page }) => {
@@ -103,7 +103,7 @@ test.describe("applyBackendMocks", () => {
     // Stay on about:blank — no browser requests means nothing for strict to record.
     // This exercises the empty-leak path in isolation from any app hydration fetches.
     expect(getUnmockedBackendRequests(page)).toEqual([]);
-    expect(() => verifyNoUnmockedBackendRequests(page)).not.toThrow();
+    expect(() => { verifyNoUnmockedBackendRequests(page); }).not.toThrow();
   });
 
   test("strict mode lets non-backend navigation pass through", async ({ page, baseURL }) => {

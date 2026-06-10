@@ -18,7 +18,7 @@ import {
 
 const { mockDispatch, mockActiveDialog } = vi.hoisted(() => ({
   mockDispatch: vi.fn(),
-  mockActiveDialog: { value: null as unknown },
+  mockActiveDialog: { value: null },
 }));
 
 vi.mock("@/contexts/workspace-dialog-context", () => ({
@@ -71,7 +71,7 @@ const makeItem = (
     permissions: { user: "o", global: "n" },
     timestamp: 0,
     ...overrides,
-  }) as WorkspaceItem;
+  });
 
 function defaultOptions(
   overrides?: Partial<UseWorkspaceDialogHandlersOptions>,

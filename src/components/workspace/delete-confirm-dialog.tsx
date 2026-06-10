@@ -69,7 +69,7 @@ export function DeleteConfirmDialog({
               id="delete-acknowledge"
               checked={acknowledgeChecked}
               onCheckedChange={(checked) =>
-                setAcknowledgeChecked(checked === true)
+                { setAcknowledgeChecked(checked); }
               }
               disabled={isDeleting}
             />
@@ -85,7 +85,7 @@ export function DeleteConfirmDialog({
           <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
           <AlertDialogAction
             variant="destructive"
-            onClick={() => void onConfirmDelete()}
+            onClick={() => { onConfirmDelete(); }}
             disabled={isDeleting || !canDelete}
           >
             {isDeleting ? (

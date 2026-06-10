@@ -290,7 +290,7 @@ export function UploadDialog({
         <DialogFooter showCloseButton={false}>
           <Button
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={() => { onOpenChange(false); }}
             disabled={isUploading}
           >
             Cancel

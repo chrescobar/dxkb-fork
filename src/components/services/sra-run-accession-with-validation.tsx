@@ -301,7 +301,7 @@ const SraRunAccessionWithValidation = ({
       });
     }, validationDebounceMs);
 
-    return () => clearTimeout(timer);
+    return () => { clearTimeout(timer); };
   }, [sraAccession, validateAccession, showAddButton, applyValidationResult]);
 
   const handleAdd = useCallback(async () => {

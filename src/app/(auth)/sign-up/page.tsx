@@ -87,14 +87,14 @@ function SignupForm() {
       interests: "",
       password: "",
       password_repeat: "",
-    } as FormValues,
+    },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: formSchema as any, onSubmit: formSchema as any },
     onSubmit: async ({ value }) => {
       setIsSubmitting(true);
       try {
         const { error: signUpError } = await authAccount.signUp(
-          value as FormValues,
+          value,
         );
         if (signUpError) {
           setError(signUpError.message || "Sign up failed. Please try again.");
@@ -146,7 +146,7 @@ function SignupForm() {
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                     />
@@ -167,7 +167,7 @@ function SignupForm() {
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                       disabled={isLoading}
@@ -189,7 +189,7 @@ function SignupForm() {
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                       disabled={isLoading}
@@ -211,7 +211,7 @@ function SignupForm() {
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                     />
@@ -232,7 +232,7 @@ function SignupForm() {
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                     />
@@ -253,7 +253,7 @@ function SignupForm() {
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                     />
@@ -274,7 +274,7 @@ function SignupForm() {
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                     />
@@ -295,7 +295,7 @@ function SignupForm() {
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="max-h-32 pl-10"
                     />
@@ -317,7 +317,7 @@ function SignupForm() {
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter a password"
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="px-10"
                       required
@@ -327,7 +327,7 @@ function SignupForm() {
                       variant="ghost"
                       size="icon"
                       className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={() => { setShowPassword(!showPassword); }}
                     >
                       {showPassword ? (
                         <EyeOff className="size-4" />
@@ -356,7 +356,7 @@ function SignupForm() {
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Enter a password"
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="px-10"
                       required
@@ -367,7 +367,7 @@ function SignupForm() {
                       size="icon"
                       className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
                       onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
+                        { setShowConfirmPassword(!showConfirmPassword); }
                       }
                     >
                       {showConfirmPassword ? (

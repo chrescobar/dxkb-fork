@@ -37,8 +37,8 @@ export function mockNextRequest(
     init.body = JSON.stringify(body);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test-only helper; Next.js RequestInit differs from standard
-  return new NextRequest(finalUrl, init as any);
+   
+  return new NextRequest(finalUrl, init);
 }
 
 /**

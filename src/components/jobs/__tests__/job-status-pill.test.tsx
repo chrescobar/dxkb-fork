@@ -9,7 +9,7 @@ const { mockAuth } = vi.hoisted(() => ({
   mockAuth: {
     isAuthenticated: true,
     user: { username: "test-user" },
-    status: "authed" as "loading" | "authed" | "guest",
+    status: "authed",
     signOut: vi.fn(),
   },
 }));

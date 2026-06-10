@@ -73,8 +73,8 @@ describe("useDebugParamsPreview", () => {
       { wrapper: wrapperWithToggle(capture) },
     );
 
-    await waitFor(() => expect(capture.ready).toBe(true));
-    act(() => capture.current.setContainerBuildId("build-42"));
+    await waitFor(() => { expect(capture.ready).toBe(true); });
+    act(() => { capture.current.setContainerBuildId("build-42"); });
 
     const submit = vi.fn(async () => undefined);
     await act(async () => {
@@ -91,8 +91,8 @@ describe("useDebugParamsPreview", () => {
       { wrapper: wrapperWithToggle(capture) },
     );
 
-    await waitFor(() => expect(capture.ready).toBe(true));
-    act(() => capture.current.setContainerBuildId("latest version"));
+    await waitFor(() => { expect(capture.ready).toBe(true); });
+    act(() => { capture.current.setContainerBuildId("latest version"); });
 
     const submit = vi.fn(async () => undefined);
     await act(async () => {
@@ -109,8 +109,8 @@ describe("useDebugParamsPreview", () => {
       { wrapper: wrapperWithToggle(capture) },
     );
 
-    await waitFor(() => expect(capture.ready).toBe(true));
-    act(() => capture.current.setIsDebugMode(true));
+    await waitFor(() => { expect(capture.ready).toBe(true); });
+    act(() => { capture.current.setIsDebugMode(true); });
 
     const submit = vi.fn(async () => undefined);
     await act(async () => {

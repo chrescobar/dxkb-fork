@@ -88,10 +88,10 @@ export default function SimilarGenomeFinderServicePage() {
 
   const form = useForm({
     defaultValues:
-      defaultSimilarGenomeFinderFormValues as SimilarGenomeFinderFormData,
+      defaultSimilarGenomeFinderFormValues,
     validators: { onChange: similarGenomeFinderFormSchema },
     onSubmit: async ({ value }) => {
-      const data = value as SimilarGenomeFinderFormData;
+      const data = value;
 
       // In debug mode, use the hook to show the params dialog
       if (isDebugMode) {
@@ -383,7 +383,7 @@ export default function SimilarGenomeFinderServicePage() {
                                   name="include_bacterial"
                                   checked={field.state.value}
                                   onCheckedChange={(checked) =>
-                                    field.handleChange(checked)
+                                    { field.handleChange(checked); }
                                   }
                                 />
                                 <Label
@@ -405,7 +405,7 @@ export default function SimilarGenomeFinderServicePage() {
                                   name="include_viral"
                                   checked={field.state.value}
                                   onCheckedChange={(checked) =>
-                                    field.handleChange(checked)
+                                    { field.handleChange(checked); }
                                   }
                                 />
                                 <Label
@@ -429,7 +429,7 @@ export default function SimilarGenomeFinderServicePage() {
                                 <RadioGroup
                                   value={field.state.value}
                                   onValueChange={(value) =>
-                                    field.handleChange(value)
+                                    { field.handleChange(value); }
                                   }
                                   className="grid w-full gap-2"
                                 >

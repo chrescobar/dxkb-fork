@@ -38,7 +38,7 @@ export function getPairedLibraryBuildFn(
       type: "paired",
       files: [read1, read2],
       platform,
-    } as Library,
+    },
   });
 }
 
@@ -59,7 +59,7 @@ export function getSingleLibraryBuildFn(
         type: "single",
         files: [read],
         platform,
-      } as Library,
+      },
     };
   };
 }

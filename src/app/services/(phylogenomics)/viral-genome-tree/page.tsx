@@ -86,12 +86,12 @@ export default function ViralGenomeTreePage() {
 
   const form = useForm({
     defaultValues:
-      ViralGenomeTree.defaultViralGenomeTreeFormValues as ViralGenomeTree.ViralGenomeTreeFormData,
+      ViralGenomeTree.defaultViralGenomeTreeFormValues,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: ViralGenomeTree.viralGenomeTreeFormSchema as any },
     onSubmit: async ({ value }) => {
       await runtime.submitFormData(
-        value as ViralGenomeTree.ViralGenomeTreeFormData,
+        value,
       );
     },
   });
@@ -117,13 +117,13 @@ export default function ViralGenomeTreePage() {
         if (rerunData.trim_threshold != null) {
           form.setFieldValue(
             "trim_threshold",
-            String(rerunData.trim_threshold) as never,
+            String(rerunData.trim_threshold),
           );
         }
         if (rerunData.gap_threshold != null) {
           form.setFieldValue(
             "gap_threshold",
-            String(rerunData.gap_threshold) as never,
+            String(rerunData.gap_threshold),
           );
         }
 
@@ -132,7 +132,7 @@ export default function ViralGenomeTreePage() {
             rerunData.sequences,
           );
         if (sequences.length > 0) {
-          form.setFieldValue("sequences", sequences as never);
+          form.setFieldValue("sequences", sequences);
         }
 
         const genomeMetadataFieldIds = normalizeToArray<string>(
@@ -378,7 +378,7 @@ export default function ViralGenomeTreePage() {
     setSelectedGenomeGroupObject(null);
     setSelectedAlignedFastaObject(null);
     setSelectedUnalignedFastaObject(null);
-    setMetadataFields(ViralGenomeTree.defaultMetadataFields as MetadataField[]);
+    setMetadataFields(ViralGenomeTree.defaultMetadataFields);
     setSelectedMetadataField("");
     setShowAdvanced(false);
   }
@@ -482,7 +482,7 @@ export default function ViralGenomeTreePage() {
                     type="button"
                     size="icon"
                     variant="outline"
-                    onClick={() => handleAddSequence("aligned")}
+                    onClick={() => { handleAddSequence("aligned"); }}
                     disabled={
                       !selectedAlignedFastaObject || isValidatingGenomeGroup
                     }
@@ -510,7 +510,7 @@ export default function ViralGenomeTreePage() {
                     type="button"
                     size="icon"
                     variant="outline"
-                    onClick={() => handleAddSequence("unaligned")}
+                    onClick={() => { handleAddSequence("unaligned"); }}
                     disabled={
                       !selectedUnalignedFastaObject || isValidatingGenomeGroup
                     }
@@ -526,7 +526,7 @@ export default function ViralGenomeTreePage() {
                     <SelectedItemsTable
                       title="Selected genome group / FASTA files"
                       items={selectedItemsForTable}
-                      onRemove={(id) => removeSequence(parseInt(id, 10))}
+                      onRemove={(id) => { removeSequence(parseInt(id, 10)); }}
                       className="max-h-84 overflow-y-auto"
                       allowDuplicates={false}
                       description="Selected genome groups and FASTA files will be used to construct the phylogenetic tree."
@@ -829,7 +829,7 @@ export default function ViralGenomeTreePage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => removeMetadataField(field.id)}
+                              onClick={() => { removeMetadataField(field.id); }}
                               className="size-6 text-destructive hover:text-destructive/90"
                             >
                               <X size={14} />

@@ -441,7 +441,7 @@ const MobileNavbar = () => {
               variant="ghost"
               size="sm"
               className="text-primary-foreground hover:bg-white/15"
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              onClick={() => { setIsSearchOpen(!isSearchOpen); }}
               aria-label={isSearchOpen ? "Close search" : "Open search"}
             >
               {isSearchOpen ? <ChevronUp size={18} /> : <Search size={18} />}

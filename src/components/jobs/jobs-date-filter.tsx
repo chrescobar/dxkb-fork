@@ -218,7 +218,7 @@ export function JobsDateFilter({
             <button
               type="button"
               className="ml-auto text-xs text-destructive hover:underline"
-              onClick={() => resetFilter(false)}
+              onClick={() => { resetFilter(false); }}
             >
               Clear
             </button>

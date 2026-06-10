@@ -12,7 +12,7 @@ export function useJobsSummary(includeArchived: boolean) {
   return useApiQuery<JobsSummaryData>({
     queryKey: ["jobs-summary", includeArchived],
     refetchInterval: (query) => {
-      const data = query.state.data as JobsSummaryData | undefined;
+      const data = query.state.data;
       if (!data) return 5_000;
       const { taskSummary } = data;
       const hasActive = activeStatuses.some((s) => (taskSummary[s] ?? 0) > 0);

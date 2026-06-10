@@ -57,9 +57,9 @@ export function useWorkspaceDialogHandlers(options: UseWorkspaceDialogHandlersOp
     void getNonEmptyFolderPaths(folderPaths, listFolder, {
       signal: controller.signal,
     })
-      .then((paths) => dispatch({ type: "SET_DELETE_NON_EMPTY_PATHS", paths }))
+      .then((paths) => { dispatch({ type: "SET_DELETE_NON_EMPTY_PATHS", paths }); })
       .catch(() => { /* abort errors ignored */ });
-    return () => controller.abort();
+    return () => { controller.abort(); };
   }, [deleteItems, repository, dispatch]);
 
   const deleteMutation = useMutation({

@@ -268,7 +268,7 @@ async function verifyEmailToken(
 ): Promise<Result<void>> {
   const timeoutMs = 15_000;
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  const timeoutId = setTimeout(() => { controller.abort(); }, timeoutMs);
 
   try {
     const response = await fetch(getRequiredEnv("USER_VERIFICATION_URL"), {

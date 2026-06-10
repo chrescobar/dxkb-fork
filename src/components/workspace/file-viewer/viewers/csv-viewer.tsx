@@ -64,7 +64,7 @@ function InteractiveCsvViewer({
         if (!res.ok) throw new Error(`Failed to fetch file: ${res.status}`);
         return res.text();
       })
-      .then((text) => setContent(text))
+      .then((text) => { setContent(text); })
       .catch((err) => {
         if (err instanceof DOMException && err.name === "AbortError") return;
         setError(err instanceof Error ? err.message : "Unknown error");
@@ -73,7 +73,7 @@ function InteractiveCsvViewer({
         if (!controller.signal.aborted) setLoading(false);
       });
 
-    return () => controller.abort();
+    return () => { controller.abort(); };
   }, [filePath]);
 
   const { records, columnNames, parseError } = useMemo(() => {
@@ -86,11 +86,11 @@ function InteractiveCsvViewer({
         columns: true,
         skip_empty_lines: true,
         relax_column_count: true,
-      }) as Record<string, string>[];
+      });
 
       const names =
         parsed.length > 0
-          ? Object.keys(parsed[0] as Record<string, string>)
+          ? Object.keys(parsed[0])
           : [];
 
       return { records: parsed, columnNames: names, parseError: null };

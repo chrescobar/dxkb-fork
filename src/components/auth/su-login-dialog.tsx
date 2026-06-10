@@ -94,7 +94,7 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
                 id="su-target-user"
                 placeholder="User id for other account"
                 value={targetUser}
-                onChange={(e) => setTargetUser(e.target.value)}
+                onChange={(e) => { setTargetUser(e.target.value); }}
                 autoComplete="off"
                 disabled={isSubmitting}
               />
@@ -107,7 +107,7 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
                 type="password"
                 placeholder="Your admin password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => { setPassword(e.target.value); }}
                 autoComplete="off"
                 disabled={isSubmitting}
               />

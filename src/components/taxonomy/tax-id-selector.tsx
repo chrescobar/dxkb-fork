@@ -72,10 +72,10 @@ export function TaxIDSelector({
     const timeoutId = setTimeout(() => {
       setDebouncedQuery(searchQuery);
     }, 300);
-    return () => clearTimeout(timeoutId);
+    return () => { clearTimeout(timeoutId); };
   }, [searchQuery]);
 
-  const { data: results = [], isLoading: loading, error: queryError } = useQuery<TaxonomyItem[], Error>({
+  const { data: results = [], isLoading: loading, error: queryError } = useQuery<TaxonomyItem[]>({
     queryKey: ["taxonomy-search-id", resolvedApiServiceUrl, debouncedQuery, queryFilter],
     queryFn: ({ signal }) => searchTaxonById(resolvedApiServiceUrl, debouncedQuery, queryFilter, signal),
     enabled: !!debouncedQuery.trim() && !disabled,
@@ -158,7 +158,7 @@ export function TaxIDSelector({
             disabled && !value ? "Select a taxon name first" : placeholder
           }
           value={inputValue}
-          onChange={(e) => handleSearchChange(e.target.value)}
+          onChange={(e) => { handleSearchChange(e.target.value); }}
           onFocus={() => {
             if (!disabled) {
               setShowDropdown(searchQuery.length > 0);
@@ -167,7 +167,7 @@ export function TaxIDSelector({
           onBlur={() => {
             setTouched(true);
             if (!disabled) {
-              setTimeout(() => setShowDropdown(false), 200);
+              setTimeout(() => { setShowDropdown(false); }, 200);
             }
           }}
           className={cn(
@@ -208,7 +208,7 @@ export function TaxIDSelector({
                 <div
                   key={item.taxon_id}
                   className="flex cursor-pointer items-center justify-between p-2 hover:bg-accent"
-                  onClick={() => handleSelect(item)}
+                  onClick={() => { handleSelect(item); }}
                 >
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">

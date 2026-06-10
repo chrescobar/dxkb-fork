@@ -40,7 +40,7 @@ export function getPairedLibraryBuildFn(): (
       name: getPairedLibraryName(read1, read2),
       type: "paired",
       files: [read1, read2],
-    } as Library,
+    },
   });
 }
 
@@ -55,7 +55,7 @@ export function getSingleLibraryBuildFn(): (read: string) => BuildLibraryResult 
       name: getSingleLibraryName(read),
       type: "single",
       files: [read],
-    } as Library,
+    },
   });
 }
 

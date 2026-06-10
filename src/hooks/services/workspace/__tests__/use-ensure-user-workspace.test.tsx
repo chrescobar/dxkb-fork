@@ -31,11 +31,11 @@ describe("useEnsureUserWorkspace", () => {
 
     renderHook(
       () =>
-        useEnsureUserWorkspace({
+        { useEnsureUserWorkspace({
           enabled: false,
           listError: new Error("_ERROR_User lacks permission"),
           homeAppearsEmpty: true,
-        }),
+        }); },
       { wrapper: createQueryClientWrapper() },
     );
 
@@ -49,15 +49,15 @@ describe("useEnsureUserWorkspace", () => {
 
     renderHook(
       () =>
-        useEnsureUserWorkspace({
+        { useEnsureUserWorkspace({
           enabled: true,
           listError: new Error("_ERROR_User lacks permission for /alice@bvbrc/home/"),
           homeAppearsEmpty: false,
-        }),
+        }); },
       { wrapper: createQueryClientWrapper() },
     );
 
-    await waitFor(() => expect(tracker.calls).toBe(1));
+    await waitFor(() => { expect(tracker.calls).toBe(1); });
   });
 
   it("fires when homeAppearsEmpty is true even without an error", async () => {
@@ -66,15 +66,15 @@ describe("useEnsureUserWorkspace", () => {
 
     renderHook(
       () =>
-        useEnsureUserWorkspace({
+        { useEnsureUserWorkspace({
           enabled: true,
           listError: null,
           homeAppearsEmpty: true,
-        }),
+        }); },
       { wrapper: createQueryClientWrapper() },
     );
 
-    await waitFor(() => expect(tracker.calls).toBe(1));
+    await waitFor(() => { expect(tracker.calls).toBe(1); });
   });
 
   it("does not fire on unrelated errors", async () => {
@@ -83,11 +83,11 @@ describe("useEnsureUserWorkspace", () => {
 
     renderHook(
       () =>
-        useEnsureUserWorkspace({
+        { useEnsureUserWorkspace({
           enabled: true,
           listError: new Error("Network unreachable"),
           homeAppearsEmpty: false,
-        }),
+        }); },
       { wrapper: createQueryClientWrapper() },
     );
 
@@ -117,22 +117,22 @@ describe("useEnsureUserWorkspace", () => {
     };
     const { rerender } = renderHook(
       (props: HookProps) =>
-        useEnsureUserWorkspace({
+        { useEnsureUserWorkspace({
           enabled: true,
           listError: props.listError,
           homeAppearsEmpty: props.homeAppearsEmpty,
-        }),
+        }); },
       {
         wrapper: createQueryClientWrapper(),
         initialProps,
       },
     );
 
-    await waitFor(() => expect(calls).toBe(1));
+    await waitFor(() => { expect(calls).toBe(1); });
 
     rerender({ listError: null, homeAppearsEmpty: true });
 
-    await waitFor(() => expect(calls).toBe(2));
+    await waitFor(() => { expect(calls).toBe(2); });
   });
 
   it("only fires once across re-renders", async () => {
@@ -149,18 +149,18 @@ describe("useEnsureUserWorkspace", () => {
     };
     const { rerender } = renderHook(
       (props: HookProps) =>
-        useEnsureUserWorkspace({
+        { useEnsureUserWorkspace({
           enabled: true,
           listError: props.listError,
           homeAppearsEmpty: props.homeAppearsEmpty,
-        }),
+        }); },
       {
         wrapper: createQueryClientWrapper(),
         initialProps,
       },
     );
 
-    await waitFor(() => expect(tracker.calls).toBe(1));
+    await waitFor(() => { expect(tracker.calls).toBe(1); });
 
     rerender({
       listError: new Error("_ERROR_User lacks permission"),

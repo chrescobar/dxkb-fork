@@ -100,7 +100,7 @@ export function JobStatusPill() {
           <Link
             href="/jobs"
             className="text-xs text-muted-foreground transition-colors hover:text-foreground"
-            onClick={() => setIsOpen(false)}
+            onClick={() => { setIsOpen(false); }}
           >
             View all →
           </Link>

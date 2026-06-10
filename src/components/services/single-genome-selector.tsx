@@ -116,7 +116,7 @@ export function SingleGenomeSelector({
       }
       // If we have a genome ID but no matching selectedGenome, fetch it
       if (!selectedGenome || selectedGenome.genome_id !== value) {
-        queueMicrotask(() => setIsLoading(true));
+        queueMicrotask(() => { setIsLoading(true); });
         fetchGenomesByIds([value])
           .then((results) => {
             if (results.length > 0) {
@@ -280,7 +280,7 @@ export function SingleGenomeSelector({
 
   useEffect(() => {
     if (!showDropdown) return;
-    const handleUpdate = () => updateDropdownLayout();
+    const handleUpdate = () => { updateDropdownLayout(); };
     window.addEventListener("scroll", handleUpdate, true);
     window.addEventListener("resize", handleUpdate);
     return () => {
@@ -526,7 +526,7 @@ export function SingleGenomeSelector({
                       onClick={() => {
                         handleDropdownClick(genome);
                       }}
-                      onMouseEnter={() => setHighlightedIndex(index)}
+                      onMouseEnter={() => { setHighlightedIndex(index); }}
                     >
                       <span className="flex items-center gap-1 truncate text-sm font-medium">
                         {genome.public === false && (

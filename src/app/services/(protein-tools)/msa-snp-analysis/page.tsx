@@ -112,12 +112,12 @@ export default function MSAandSNPAnalysisPage() {
 
   const form = useForm({
     defaultValues:
-      MsaSnpAnalysis.defaultMsaSnpAnalysisFormValues as MsaSnpAnalysis.MsaSnpAnalysisFormData,
+      MsaSnpAnalysis.defaultMsaSnpAnalysisFormValues,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: MsaSnpAnalysis.msaSnpAnalysisFormSchema as any },
     onSubmit: async ({ value }) => {
       await runtime.submitFormData(
-        value as MsaSnpAnalysis.MsaSnpAnalysisFormData,
+        value,
       );
     },
   });
@@ -158,10 +158,10 @@ export default function MSAandSNPAnalysisPage() {
             rawInputType === "input_sequence"
           ) {
             inputTypeValue =
-              rawInputType as MsaSnpAnalysis.MsaSnpAnalysisFormData["input_type"];
+              rawInputType;
           }
           if (inputTypeValue) {
-            form.setFieldValue("input_type", inputTypeValue as never);
+            form.setFieldValue("input_type", inputTypeValue);
           }
         }
 
@@ -169,7 +169,7 @@ export default function MSAandSNPAnalysisPage() {
           rerunData.feature_groups,
         );
         if (featureGroupsRaw.length > 0) {
-          form.setFieldValue("feature_groups", featureGroupsRaw[0] as never);
+          form.setFieldValue("feature_groups", featureGroupsRaw[0]);
         }
 
         const selectGenomegroupRaw = normalizeToArray<string>(
@@ -178,7 +178,7 @@ export default function MSAandSNPAnalysisPage() {
         if (selectGenomegroupRaw.length > 0) {
           form.setFieldValue(
             "select_genomegroup",
-            selectGenomegroupRaw as never,
+            selectGenomegroupRaw,
           );
         }
 
@@ -186,7 +186,7 @@ export default function MSAandSNPAnalysisPage() {
           rerunData.fasta_files,
         );
         if (fastaFilesRaw.length > 0) {
-          form.setFieldValue("fasta_files", fastaFilesRaw as never);
+          form.setFieldValue("fasta_files", fastaFilesRaw);
         }
 
         if (
@@ -195,14 +195,14 @@ export default function MSAandSNPAnalysisPage() {
         ) {
           const text = rerunData.fasta_keyboard_input;
           setFastaInputText(text);
-          form.setFieldValue("fasta_keyboard_input", text as never);
+          form.setFieldValue("fasta_keyboard_input", text);
         }
 
         if (
           typeof rerunData.ref_string === "string" &&
           rerunData.ref_string.trim() !== ""
         ) {
-          form.setFieldValue("ref_string", rerunData.ref_string as never);
+          form.setFieldValue("ref_string", rerunData.ref_string);
           const resolvedRefType = rerunData.ref_type as string | undefined;
           if (resolvedRefType === "feature_id") {
             setSelectedFeatureId(rerunData.ref_string);
@@ -214,7 +214,7 @@ export default function MSAandSNPAnalysisPage() {
         }
 
         if (rerunData.aligner === "Muscle") {
-          form.setFieldValue("strategy", undefined as never);
+          form.setFieldValue("strategy", undefined);
         } else {
           const strategyVal = (rerunData.strategy ||
             rerunData.strategy_settings) as string | undefined;
@@ -231,7 +231,7 @@ export default function MSAandSNPAnalysisPage() {
   // Update strategy visibility based on aligner
   useEffect(() => {
     if (aligner === "Muscle" || inputStatus === "aligned") {
-      queueMicrotask(() => setShowStrategy(false));
+      queueMicrotask(() => { setShowStrategy(false); });
     }
   }, [aligner, inputStatus]);
 
@@ -239,7 +239,7 @@ export default function MSAandSNPAnalysisPage() {
   useEffect(() => {
     if (!fastaInputText.trim()) {
       form.setFieldValue("fasta_keyboard_input", "");
-      queueMicrotask(() => setFastaValidationResult(null));
+      queueMicrotask(() => { setFastaValidationResult(null); });
       return;
     }
 
@@ -251,13 +251,13 @@ export default function MSAandSNPAnalysisPage() {
     );
 
     queueMicrotask(() =>
-      setFastaValidationResult({
+      { setFastaValidationResult({
         valid: validation.valid && validation.meetsMinSequenceRequirement,
         message: validation.meetsMinSequenceRequirement
           ? validation.message
           : `At least ${hasReference ? "one" : "two"} sequence(s) are required.`,
         numseq: validation.numseq,
-      }),
+      }); },
     );
 
     if (validation.valid && validation.meetsMinSequenceRequirement) {
@@ -274,7 +274,7 @@ export default function MSAandSNPAnalysisPage() {
       if (refType === "string") {
         form.setFieldValue("ref_string", "");
       }
-      queueMicrotask(() => setReferenceFastaValidationResult(null));
+      queueMicrotask(() => { setReferenceFastaValidationResult(null); });
       return;
     }
 
@@ -282,13 +282,13 @@ export default function MSAandSNPAnalysisPage() {
       MsaSnpAnalysisUtils.validateReferenceFasta(referenceFastaText);
 
     queueMicrotask(() =>
-      setReferenceFastaValidationResult({
+      { setReferenceFastaValidationResult({
         valid: validation.valid && validation.isSingleSequence,
         message: validation.isSingleSequence
           ? validation.message
           : "Only one sequence is allowed.",
         numseq: validation.numseq,
-      }),
+      }); },
     );
 
     if (validation.valid && validation.isSingleSequence) {
@@ -836,7 +836,7 @@ export default function MSAandSNPAnalysisPage() {
                   <div className="space-y-2">
                     <Textarea
                       value={fastaInputText}
-                      onChange={(e) => setFastaInputText(e.target.value)}
+                      onChange={(e) => { setFastaInputText(e.target.value); }}
                       placeholder="Enter FASTA records of sequences to align"
                       className="service-card-textarea"
                       rows={10}
@@ -1164,7 +1164,7 @@ export default function MSAandSNPAnalysisPage() {
                 <div className="space-y-2">
                   <Textarea
                     value={referenceFastaText}
-                    onChange={(e) => setReferenceFastaText(e.target.value)}
+                    onChange={(e) => { setReferenceFastaText(e.target.value); }}
                     placeholder="Enter a FASTA record of a reference sequence to align"
                     className="service-card-textarea"
                     rows={10}
@@ -1225,7 +1225,7 @@ export default function MSAandSNPAnalysisPage() {
                       onValueChange={(value) => {
                         if (value == null) return;
                         field.handleChange(
-                          value as MsaSnpAnalysis.MsaSnpAnalysisFormData["aligner"],
+                          value,
                         );
                         // Reset strategy when aligner changes to Muscle
                         if (value === "Muscle") {

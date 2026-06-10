@@ -92,7 +92,7 @@ export function WorkspaceToolbar({
         <Input
           placeholder="Search files..."
           value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
+          onChange={(e) => { onSearchChange(e.target.value); }}
           className="pl-9"
         />
       </div>
@@ -139,7 +139,7 @@ export function WorkspaceToolbar({
       <div className="flex flex-wrap items-center gap-2">
         <Button
           variant="outline"
-          onClick={() => onShowHiddenFilesChange(!showHiddenFiles)}
+          onClick={() => { onShowHiddenFilesChange(!showHiddenFiles); }}
           title={showHiddenFiles ? "Hide dotfiles and hidden items" : "Show hidden files (e.g. .folder)"}
           aria-pressed={showHiddenFiles}
         >

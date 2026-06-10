@@ -312,11 +312,11 @@ export function useBlastDatabaseTypes(form: AnyFormApi) {
         );
 
         if (defaultType) {
-          form.setFieldValue("db_type", defaultType as BlastFormData["db_type"]);
+          form.setFieldValue("db_type", defaultType);
         }
       } else if (availableDatabaseTypes.length > 0 && !dbType) {
         const firstType = availableDatabaseTypes[0].value;
-        form.setFieldValue("db_type", firstType as BlastFormData["db_type"]);
+        form.setFieldValue("db_type", firstType);
       }
     }
   }, [blastProgram, dbPrecomputedDatabase, dbType, form, availableDatabaseTypes]);

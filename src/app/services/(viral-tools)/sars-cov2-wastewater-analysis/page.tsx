@@ -87,11 +87,11 @@ const tutorial =
 export default function SarsCov2WastewaterAnalysisPage() {
   const form = useForm({
     defaultValues:
-      defaultSarsCov2WastewaterAnalysisFormValues as SarsCov2WastewaterAnalysisFormData,
+      defaultSarsCov2WastewaterAnalysisFormValues,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: sarsCov2WastewaterAnalysisFormSchema as any },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as SarsCov2WastewaterAnalysisFormData);
+      await runtime.submitFormData(value);
     },
   });
 
@@ -195,7 +195,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
       read1: pairedRead1,
       read2: pairedRead2,
       buildLibrary: getPairedLibraryBuildFn(sampleId, sampleLevelDate),
-      onError: (msg) => handleLibraryErrorUtil(msg, toast),
+      onError: (msg) => { handleLibraryErrorUtil(msg, toast); },
       onAfterAdd: () => {
         setPairedRead1(null);
         setPairedRead2(null);
@@ -214,7 +214,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
       read: singleRead,
       buildLibrary: getSingleLibraryBuildFn(sampleId, sampleLevelDate),
       duplicateMatcher: singleLibraryDuplicateMatcher,
-      onError: (msg) => handleLibraryErrorUtil(msg, toast),
+      onError: (msg) => { handleLibraryErrorUtil(msg, toast); },
       onAfterAdd: () => {
         setSingleRead(null);
         setCurrentSampleId("");
@@ -331,7 +331,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                     placeholder="Select READ FILE 1..."
                     value={pairedRead1 ?? ""}
                     onObjectSelect={(object: WorkspaceObject) =>
-                      handlePairedRead1Select(object.path)
+                      { handlePairedRead1Select(object.path); }
                     }
                   />
                   <WorkspaceObjectSelector
@@ -339,7 +339,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                     placeholder="Select READ FILE 2..."
                     value={pairedRead2 ?? ""}
                     onObjectSelect={(object: WorkspaceObject) =>
-                      setPairedRead2(object.path)
+                      { setPairedRead2(object.path); }
                     }
                   />
                 </div>
@@ -366,7 +366,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                   placeholder="Select READ FILE..."
                   value={singleRead ?? ""}
                   onObjectSelect={(object: WorkspaceObject) =>
-                    handleSingleReadSelect(object.path)
+                    { handleSingleReadSelect(object.path); }
                   }
                 />
               </div>
@@ -391,7 +391,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                           items={primerOptions}
                           value={field.state.value}
                           onValueChange={(v) =>
-                            v != null && field.handleChange(v as Primers)
+                            v != null && field.handleChange(v)
                           }
                         >
                           <SelectTrigger className="service-card-select-trigger">
@@ -456,7 +456,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                   className="service-card-input"
                   placeholder="SAMPLE ID"
                   value={currentSampleId}
-                  onChange={(e) => setCurrentSampleId(e.target.value)}
+                  onChange={(e) => { setCurrentSampleId(e.target.value); }}
                 />
               </div>
 
@@ -468,7 +468,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                   className="service-card-input"
                   placeholder="MM/DD/YYYY"
                   value={currentSampleDate}
-                  onChange={(e) => setCurrentSampleDate(e.target.value)}
+                  onChange={(e) => { setCurrentSampleDate(e.target.value); }}
                 />
               </div>
 
@@ -571,7 +571,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                     <FieldItem className="flex-1">
                       <OutputFolder
                         value={field.state.value}
-                        onChange={(value) => field.handleChange(value)}
+                        onChange={(value) => { field.handleChange(value); }}
                       />
                       <FieldErrors field={field} />
                     </FieldItem>
@@ -583,7 +583,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                       <OutputFolder
                         variant="name"
                         value={field.state.value}
-                        onChange={(value) => field.handleChange(value)}
+                        onChange={(value) => { field.handleChange(value); }}
                         outputFolderPath={outputPath}
                         onValidationChange={setIsOutputNameValid}
                       />

@@ -262,7 +262,7 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
       type: input.type,
       overwrite: input.overwrite,
     });
-    this.throwIfConfigured("saveObject" as CallRecord["method"]);
+    this.throwIfConfigured("saveObject");
     const normalized = normalize(input.path);
     const parent = normalize(
       normalized.slice(0, normalized.lastIndexOf("/")) || "/",

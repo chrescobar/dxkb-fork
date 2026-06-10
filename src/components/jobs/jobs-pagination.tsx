@@ -123,7 +123,7 @@ export function JobsPagination({
               aria-label={`Page ${p}`}
               aria-current={p === page ? "page" : undefined}
               className="size-9 rounded-lg p-0 text-sm"
-              onClick={() => onPageChange(p)}
+              onClick={() => { onPageChange(p); }}
             >
               {p}
             </Button>

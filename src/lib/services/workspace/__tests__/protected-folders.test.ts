@@ -78,7 +78,7 @@ describe("findProtectedFolders", () => {
 describe("assertNoProtectedFolders", () => {
   it("does nothing when no paths are protected", () => {
     expect(() =>
-      assertNoProtectedFolders(["/alice@bvbrc/home/My Project"]),
+      { assertNoProtectedFolders(["/alice@bvbrc/home/My Project"]); },
     ).not.toThrow();
   });
 

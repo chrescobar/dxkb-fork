@@ -152,9 +152,7 @@ export function DataRow({
       aria-selected={useSelectionMode ? isSelected : undefined}
     >
       {row.getVisibleCells().map((cell) => {
-        const meta = cell.column.columnDef.meta as
-          | { className?: string }
-          | undefined;
+        const meta = cell.column.columnDef.meta;
         const className = clsx(
           cell.column.id === "name" ? "pl-6" : "pl-2",
           "overflow-hidden",

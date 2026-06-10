@@ -91,11 +91,11 @@ const tutorial =
 export default function SarsCov2GenomeAnalysisPage() {
   const form = useForm({
     defaultValues:
-      defaultSarsCov2GenomeAnalysisFormValues as SarsCov2GenomeAnalysisFormData,
+      defaultSarsCov2GenomeAnalysisFormValues,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: sarsCov2GenomeAnalysisFormSchema as any },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as SarsCov2GenomeAnalysisFormData);
+      await runtime.submitFormData(value);
     },
   });
 
@@ -315,7 +315,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                       placeholder="Select READ FILE 1..."
                       value={pairedRead1 ?? ""}
                       onObjectSelect={(object: WorkspaceObject) =>
-                        setPairedRead1(object.path)
+                        { setPairedRead1(object.path); }
                       }
                     />
                     <WorkspaceObjectSelector
@@ -323,7 +323,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                       placeholder="Select READ FILE 2..."
                       value={pairedRead2 ?? ""}
                       onObjectSelect={(object: WorkspaceObject) =>
-                        setPairedRead2(object.path)
+                        { setPairedRead2(object.path); }
                       }
                     />
                   </div>
@@ -334,7 +334,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                       value={pairedPlatform}
                       onValueChange={(v) => {
                         if (v == null) return;
-                        setPairedPlatform(v as SarsCov2Platform);
+                        setPairedPlatform(v);
                       }}
                     >
                       <SelectTrigger className="service-card-select-trigger">
@@ -376,7 +376,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                       placeholder="Select READ FILE..."
                       value={singleRead ?? ""}
                       onObjectSelect={(object: WorkspaceObject) =>
-                        setSingleRead(object.path)
+                        { setSingleRead(object.path); }
                       }
                     />
                     <div className="space-y-2">
@@ -386,7 +386,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                         value={singlePlatform}
                         onValueChange={(v) => {
                           if (v == null) return;
-                          setSinglePlatform(v as SarsCov2Platform);
+                          setSinglePlatform(v);
                         }}
                       >
                         <SelectTrigger className="service-card-select-trigger">
@@ -486,7 +486,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                         placeholder="Select or Upload Contigs to your workspace for Annotation"
                         value={field.state.value ?? ""}
                         onObjectSelect={(object: WorkspaceObject) =>
-                          field.handleChange(object.path)
+                          { field.handleChange(object.path); }
                         }
                       />
                       <FieldErrors field={field} />
@@ -555,7 +555,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                                 items={primerOptions}
                                 value={field.state.value}
                                 onValueChange={(v) =>
-                                  v != null && field.handleChange(v as Primers)
+                                  v != null && field.handleChange(v)
                                 }
                               >
                                 <SelectTrigger className="service-card-select-trigger">
@@ -744,7 +744,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                   <FieldItem>
                     <OutputFolder
                       value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
+                      onChange={(value) => { field.handleChange(value); }}
                     />
                     <FieldErrors field={field} />
                   </FieldItem>
@@ -757,7 +757,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                     <OutputFolder
                       variant="name"
                       value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
+                      onChange={(value) => { field.handleChange(value); }}
                       outputFolderPath={outputPath}
                       onValidationChange={setIsOutputNameValid}
                       disabled={true}

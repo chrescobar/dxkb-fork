@@ -117,7 +117,7 @@ export function CopyToDialog({
             <Input
               id="copy-dialog-filename"
               value={customFilename}
-              onChange={(e) => setCustomFilename(e.target.value)}
+              onChange={(e) => { setCustomFilename(e.target.value); }}
               placeholder={
                 mode === "move"
                   ? "Name for the moved file"
@@ -142,7 +142,7 @@ export function CopyToDialog({
               <Checkbox
                 checked={showAllFiles}
                 onCheckedChange={(checked) =>
-                  setShowAllFiles(checked === true)
+                  { setShowAllFiles(checked); }
                 }
               />
               <span>Show all files and folders</span>
@@ -153,7 +153,7 @@ export function CopyToDialog({
         <DialogFooter className="shrink-0">
           <Button
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={() => { onOpenChange(false); }}
             disabled={isCopying}
           >
             Cancel

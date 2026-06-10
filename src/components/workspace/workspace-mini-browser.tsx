@@ -180,7 +180,7 @@ export function WorkspaceMiniBrowser({
 
   const handleParentClick = useCallback(() => {
     if (isInSharedFolder && pathSegments.length <= 2) {
-      setCurrentPath(workspaceRoot as string);
+      setCurrentPath(workspaceRoot);
       return;
     }
     const parentSegments = pathSegments.slice(0, -1);
@@ -289,7 +289,7 @@ export function WorkspaceMiniBrowser({
     const id = requestAnimationFrame(() => {
       row.scrollIntoView({ block: "center", inline: "start" });
     });
-    return () => cancelAnimationFrame(id);
+    return () => { cancelAnimationFrame(id); };
   }, [focusedRow, selectedPath]);
 
   return (
@@ -379,8 +379,8 @@ export function WorkspaceMiniBrowser({
                         focusedRow !== "parent" &&
                         "bg-muted",
                     )}
-                    onClick={() => handleFolderClick(item)}
-                    onDoubleClick={() => handleFolderDoubleClick(item)}
+                    onClick={() => { handleFolderClick(item); }}
+                    onDoubleClick={() => { handleFolderDoubleClick(item); }}
                   >
                     <TableCell className="pl-3">
                       <div className="flex items-center gap-2">

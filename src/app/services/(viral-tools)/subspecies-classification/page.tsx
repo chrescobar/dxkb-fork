@@ -55,11 +55,11 @@ const subspeciesSpeciesSeparatorBeforeIndex = new Set([5, 7, 17, 21, 23, 24]);
 export default function SubspeciesClassificationPage() {
   const form = useForm({
     defaultValues:
-      defaultSubspeciesClassificationFormValues as SubspeciesClassificationFormData,
+      defaultSubspeciesClassificationFormValues,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: subspeciesClassificationFormSchema as any },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as SubspeciesClassificationFormData);
+      await runtime.submitFormData(value);
     },
   });
 
@@ -218,7 +218,7 @@ export default function SubspeciesClassificationPage() {
                         placeholder="Enter one or more query nucleotide or protein sequences to search. Requires FASTA format."
                         className="min-h-44 font-mono text-xs"
                         value={field.state.value ?? ""}
-                        onChange={(e) => field.handleChange(e.target.value)}
+                        onChange={(e) => { field.handleChange(e.target.value); }}
                         onBlur={() => {
                           field.handleBlur();
                           handleFastaBlur();
@@ -239,7 +239,7 @@ export default function SubspeciesClassificationPage() {
                         placeholder="Select or upload FASTA file to your workspace."
                         value={field.state.value ?? ""}
                         onObjectSelect={(object: WorkspaceObject) =>
-                          field.handleChange(object.path)
+                          { field.handleChange(object.path); }
                         }
                       />
                       <FieldErrors field={field} />
@@ -306,7 +306,7 @@ export default function SubspeciesClassificationPage() {
                       <FieldItem>
                         <OutputFolder
                           value={field.state.value}
-                          onChange={(value) => field.handleChange(value)}
+                          onChange={(value) => { field.handleChange(value); }}
                         />
                         <FieldErrors field={field} />
                       </FieldItem>
@@ -321,7 +321,7 @@ export default function SubspeciesClassificationPage() {
                         <OutputFolder
                           variant="name"
                           value={field.state.value}
-                          onChange={(value) => field.handleChange(value)}
+                          onChange={(value) => { field.handleChange(value); }}
                           outputFolderPath={outputPath}
                           onValidationChange={setIsOutputNameValid}
                         />

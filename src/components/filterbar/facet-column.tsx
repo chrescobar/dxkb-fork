@@ -27,7 +27,7 @@ export function FacetColumn({ field, items, onSelect }: FacetColumnProps) {
         {items.map((item) => (
           <button
             key={item.value}
-            onClick={() => onSelect(field.id, item.value)}
+            onClick={() => { onSelect(field.id, item.value); }}
             className="rounded px-1 py-0.5 text-left hover:bg-gray-700"
           >
             {item.label} ({item.count})

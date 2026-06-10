@@ -104,11 +104,11 @@ export default function GeneProteinTreePage() {
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
   const form = useForm({
-    defaultValues: defaultGeneProteinTreeFormValues as GeneProteinTreeFormData,
+    defaultValues: defaultGeneProteinTreeFormValues,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: geneProteinTreeFormSchema as any },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as GeneProteinTreeFormData);
+      await runtime.submitFormData(value);
     },
   });
 
@@ -271,7 +271,7 @@ export default function GeneProteinTreePage() {
 
     if (checkDuplicateSequence(currentSequences, inputValue, type)) {
       toast.error("Duplicate selection detected", {
-        description: `${getSequenceTypeLabel(type, alphabet as Alphabet)} is already selected.`,
+        description: `${getSequenceTypeLabel(type, alphabet)} is already selected.`,
         closeButton: true,
       });
       return;
@@ -346,7 +346,7 @@ export default function GeneProteinTreePage() {
       sequences.map((seq, index) => ({
         id: `${index}`,
         name: getDisplayName(seq.filename.split("/").pop() || seq.filename),
-        type: getSequenceTypeLabel(seq.type, alphabet as Alphabet),
+        type: getSequenceTypeLabel(seq.type, alphabet),
         description: seq.filename,
       })),
     [alphabet, sequences],
@@ -433,7 +433,7 @@ export default function GeneProteinTreePage() {
                     type="button"
                     size="icon"
                     variant="outline"
-                    onClick={() => handleAddSequence("feature")}
+                    onClick={() => { handleAddSequence("feature"); }}
                     disabled={!selectedFeatureGroupObject}
                   >
                     <Plus size={16} />
@@ -461,7 +461,7 @@ export default function GeneProteinTreePage() {
                     type="button"
                     size="icon"
                     variant="outline"
-                    onClick={() => handleAddSequence("aligned")}
+                    onClick={() => { handleAddSequence("aligned"); }}
                     disabled={!selectedAlignedFastaObject}
                   >
                     <Plus size={16} />
@@ -489,7 +489,7 @@ export default function GeneProteinTreePage() {
                     type="button"
                     size="icon"
                     variant="outline"
-                    onClick={() => handleAddSequence("unaligned")}
+                    onClick={() => { handleAddSequence("unaligned"); }}
                     disabled={!selectedUnalignedFastaObject}
                   >
                     <Plus size={16} />
@@ -503,7 +503,7 @@ export default function GeneProteinTreePage() {
                     <SelectedItemsTable
                       title="Selected file / feature group"
                       items={selectedItemsForTable}
-                      onRemove={(id) => removeSequence(parseInt(id, 10))}
+                      onRemove={(id) => { removeSequence(parseInt(id, 10)); }}
                       className="max-h-84 overflow-y-auto"
                       allowDuplicates={false}
                       description="No mixing of DNA and Protein FASTA files is allowed."
@@ -808,7 +808,7 @@ export default function GeneProteinTreePage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => removeMetadataField(field.id)}
+                              onClick={() => { removeMetadataField(field.id); }}
                               className="size-6 text-destructive hover:text-destructive/90"
                             >
                               <X size={14} />

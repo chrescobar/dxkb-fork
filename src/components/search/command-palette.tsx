@@ -72,7 +72,7 @@ export function CommandPalette() {
       }
     };
 
-    const onOpen = () => handleOpenChange(true);
+    const onOpen = () => { handleOpenChange(true); };
 
     document.addEventListener("keydown", onKeyDown);
     window.addEventListener(COMMAND_PALETTE_OPEN_EVENT, onOpen);
@@ -170,7 +170,7 @@ export function CommandPalette() {
             <CommandItem
               value="home"
               description="Global dashboard and situational overview"
-              onSelect={() => navigate("/")}
+              onSelect={() => { navigate("/"); }}
             >
               <Home />
               <span>Home</span>
@@ -183,7 +183,7 @@ export function CommandPalette() {
                     value="workspace"
                     description="Your files and saved analyses"
                     onSelect={() =>
-                      navigate(`/workspace/${encodedUsername}/home`)
+                      { navigate(`/workspace/${encodedUsername}/home`); }
                     }
                   >
                     <Folder />
@@ -193,7 +193,7 @@ export function CommandPalette() {
                 <CommandItem
                   value="jobs"
                   description="Monitor running and completed jobs"
-                  onSelect={() => navigate("/jobs")}
+                  onSelect={() => { navigate("/jobs"); }}
                 >
                   <Briefcase />
                   <span>Jobs</span>
@@ -201,7 +201,7 @@ export function CommandPalette() {
                 <CommandItem
                   value="settings"
                   description="Account, preferences, and integrations"
-                  onSelect={() => navigate("/settings")}
+                  onSelect={() => { navigate("/settings"); }}
                 >
                   <Settings />
                   <span>Settings</span>
@@ -220,7 +220,7 @@ export function CommandPalette() {
                 <CommandItem
                   value="sign in"
                   description="Access your workspace and tools"
-                  onSelect={() => navigate("/sign-in")}
+                  onSelect={() => { navigate("/sign-in"); }}
                 >
                   <LogIn />
                   <span>Sign in</span>
@@ -228,7 +228,7 @@ export function CommandPalette() {
                 <CommandItem
                   value="sign up"
                   description="Create a new BV-BRC account"
-                  onSelect={() => navigate("/sign-up")}
+                  onSelect={() => { navigate("/sign-up"); }}
                 >
                   <UserPlus />
                   <span>Sign up</span>
@@ -243,7 +243,7 @@ export function CommandPalette() {
                 <CommandItem
                   key={item.href}
                   value={`${section.title} ${item.title}`}
-                  onSelect={() => navigate(item.href, item.target)}
+                  onSelect={() => { navigate(item.href, item.target); }}
                 >
                   <span>{item.title}</span>
                 </CommandItem>

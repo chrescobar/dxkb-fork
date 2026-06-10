@@ -88,6 +88,6 @@ beforeEach(() => {
 
 // MSW server lifecycle — strict mode rejects any unhandled fetch calls
 import { server } from "@/test-helpers/msw-server";
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
+beforeAll(() => { server.listen({ onUnhandledRequest: "error" }); });
+afterEach(() => { server.resetHandlers(); });
+afterAll(() => { server.close(); });

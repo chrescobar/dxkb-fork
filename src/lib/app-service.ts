@@ -131,7 +131,7 @@ export class AppService {
     const raw = (await this.client.call(
       "AppService.enumerate_tasks_filtered",
       [offset, limit, opts],
-    )) as unknown[];
+    ));
     // Backend returns [[...jobs], totalTasks]
     const jobs = Array.isArray(raw[0]) ? raw[0] : raw;
     const totalTasks = typeof raw[1] === "number" ? raw[1] : 0;

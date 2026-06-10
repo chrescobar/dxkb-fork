@@ -63,11 +63,11 @@ const tutorial =
 
 const ViralAssemblyPage = function ViralAssemblyPage() {
   const form = useForm({
-    defaultValues: defaultViralAssemblyFormValues as ViralAssemblyFormData,
+    defaultValues: defaultViralAssemblyFormValues,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: viralAssemblyFormSchema as any },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as ViralAssemblyFormData);
+      await runtime.submitFormData(value);
     },
   });
 
@@ -83,7 +83,7 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
   const canSubmit = useStore(form.store, (s) => s.canSubmit);
 
   const { selectedLibraries, setLibraries } =
-    useTanstackLibrarySelection<ViralAssemblyLibraryItem, string>({
+    useTanstackLibrarySelection<ViralAssemblyLibraryItem>({
       form,
       mapLibraryToItem: buildBaseLibraryItem,
       fields: {
@@ -193,16 +193,16 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
         const srrId = rerunData.srr_id as string | undefined;
 
         if (pairedLib?.read1 && pairedLib?.read2) {
-          form.setFieldValue("input_type", "paired" as never);
+          form.setFieldValue("input_type", "paired");
           setPairedRead1(pairedLib.read1);
           setPairedRead2(pairedLib.read2);
           setLibraries(buildPairedLibraries({ paired_end_libs: [pairedLib] }));
         } else if (singleLib?.read) {
-          form.setFieldValue("input_type", "single" as never);
+          form.setFieldValue("input_type", "single");
           setSingleRead(singleLib.read);
           setLibraries(buildSingleLibraries({ single_end_libs: [singleLib] }));
         } else if (srrId) {
-          form.setFieldValue("input_type", "srr_accession" as never);
+          form.setFieldValue("input_type", "srr_accession");
           setSraDefaultValue(srrId);
           // SraRunAccessionWithValidation reads defaultValue once on mount.
           setSraResetKey((k) => k + 1);
@@ -285,7 +285,7 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
                   placeholder="Select READ FILE 1..."
                   value={pairedRead1 ?? ""}
                   onObjectSelect={(object: WorkspaceObject) =>
-                    setPairedRead1(object.path)
+                    { setPairedRead1(object.path); }
                   }
                 />
                 <WorkspaceObjectSelector
@@ -293,7 +293,7 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
                   placeholder="Select READ FILE 2..."
                   value={pairedRead2 ?? ""}
                   onObjectSelect={(object: WorkspaceObject) =>
-                    setPairedRead2(object.path)
+                    { setPairedRead2(object.path); }
                   }
                 />
               </div>
@@ -307,7 +307,7 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
                   placeholder="Select READ FILE..."
                   value={singleRead ?? ""}
                   onObjectSelect={(object: WorkspaceObject) =>
-                    setSingleRead(object.path)
+                    { setSingleRead(object.path); }
                   }
                 />
               </div>
@@ -425,7 +425,7 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
                   <FieldItem>
                     <OutputFolder
                       value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
+                      onChange={(value) => { field.handleChange(value); }}
                     />
                     <FieldErrors field={field} />
                   </FieldItem>
@@ -438,7 +438,7 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
                     <OutputFolder
                       variant="name"
                       value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
+                      onChange={(value) => { field.handleChange(value); }}
                       outputFolderPath={outputPath}
                       onValidationChange={setIsOutputNameValid}
                     />

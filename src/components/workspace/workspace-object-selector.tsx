@@ -259,7 +259,7 @@ export function WorkspaceObjectSelector({
       const raf = requestAnimationFrame(() => {
         updateDropdownLayout();
       });
-      return () => cancelAnimationFrame(raf);
+      return () => { cancelAnimationFrame(raf); };
     }
     setDropdownRect(null);
   }, [showDropdown, updateDropdownLayout]);
@@ -267,7 +267,7 @@ export function WorkspaceObjectSelector({
   // Update portal position on scroll/resize so dropdown stays aligned
   React.useEffect(() => {
     if (!showDropdown) return;
-    const handleUpdate = () => updateDropdownLayout();
+    const handleUpdate = () => { updateDropdownLayout(); };
     window.addEventListener("scroll", handleUpdate, true);
     window.addEventListener("resize", handleUpdate);
     return () => {
@@ -488,7 +488,7 @@ export function WorkspaceObjectSelector({
                           const immediateSelect = !onSelectedObjectChange;
                           handleObjectClick(object, immediateSelect);
                         }}
-                        onMouseEnter={() => setHighlightedIndex(index)}
+                        onMouseEnter={() => { setHighlightedIndex(index); }}
                       >
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium">

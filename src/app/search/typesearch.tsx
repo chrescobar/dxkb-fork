@@ -124,7 +124,7 @@ function TabsRenderer({
                 clearTimeoutRef.current = window.setTimeout(() => {
                   setSelectedIds([]);
                   clearTimeoutRef.current = null;
-                }, 120) as unknown as number;
+                }, 120);
                 return;
               }
 

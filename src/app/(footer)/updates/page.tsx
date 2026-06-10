@@ -208,7 +208,7 @@ const Updates = () => {
                 {upcomingEvents.map((event, index) => (
                   <div
                     key={index}
-                    onClick={() => setDate(getEventDate(event.date))}
+                    onClick={() => { setDate(getEventDate(event.date)); }}
                     className={cn(
                       "flex cursor-pointer items-start gap-4 border-t px-4 py-3 transition-colors",
                       isSelectedDateEvent(event.date) ? "bg-secondary/40" : "hover:bg-secondary/20"

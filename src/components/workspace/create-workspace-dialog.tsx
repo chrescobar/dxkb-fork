@@ -65,7 +65,7 @@ function CreateWorkspaceForm({
         <Input
           id="create-workspace-input"
           value={workspaceName}
-          onChange={(e) => setWorkspaceName(e.target.value)}
+          onChange={(e) => { setWorkspaceName(e.target.value); }}
           placeholder="My Workspace"
           disabled={isCreating}
           onKeyDown={(e) => {
@@ -79,7 +79,7 @@ function CreateWorkspaceForm({
       <DialogFooter showCloseButton={false}>
         <Button
           variant="outline"
-          onClick={() => onOpenChange(false)}
+          onClick={() => { onOpenChange(false); }}
           disabled={isCreating}
         >
           Cancel

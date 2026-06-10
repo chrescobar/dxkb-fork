@@ -30,7 +30,7 @@ const makeItem = (overrides?: Partial<WorkspaceItem>): WorkspaceItem =>
     createdAt: "2024-01-01",
     ownerId: "user@test.com",
     ...overrides,
-  }) as WorkspaceItem;
+  });
 
 describe("WorkspaceItemHeader", () => {
   beforeEach(() => {

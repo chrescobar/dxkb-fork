@@ -82,7 +82,7 @@ function EditTypeForm({
         </label>
         <Select
           value={selectedType}
-          onValueChange={(value) => setSelectedType(value ?? "")}
+          onValueChange={(value) => { setSelectedType(value ?? ""); }}
           disabled={isUpdating}
         >
           <SelectTrigger id="edit-type-select" className="w-full">
@@ -105,7 +105,7 @@ function EditTypeForm({
       <DialogFooter showCloseButton={false}>
         <Button
           variant="outline"
-          onClick={() => onOpenChange(false)}
+          onClick={() => { onOpenChange(false); }}
           disabled={isUpdating}
         >
           Cancel

@@ -200,7 +200,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
             aria-label="Increase value"
             className="h-4 rounded-l-none rounded-br-none border-b-[0.5px] border-l-0 border-input px-2 focus-visible:relative"
             variant="outline"
-            onMouseDown={() => startContinuousChange("up")}
+            onMouseDown={() => { startContinuousChange("up"); }}
             onMouseUp={stopContinuousChange}
             onMouseLeave={stopContinuousChange}
             disabled={value === max}
@@ -212,7 +212,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
             aria-label="Decrease value"
             className="h-4 rounded-l-none rounded-tr-none border-t-[0.5px] border-l-0 border-input px-2 focus-visible:relative"
             variant="outline"
-            onMouseDown={() => startContinuousChange("down")}
+            onMouseDown={() => { startContinuousChange("down"); }}
             onMouseUp={stopContinuousChange}
             onMouseLeave={stopContinuousChange}
             disabled={value === min}

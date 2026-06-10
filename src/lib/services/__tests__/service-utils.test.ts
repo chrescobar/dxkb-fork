@@ -118,7 +118,7 @@ describe("submitServiceJob", () => {
   });
 
   it("uses fallback message for non-Error exceptions", async () => {
-    vi.spyOn(globalThis, "fetch").mockRejectedValueOnce("string error" as never);
+    vi.spyOn(globalThis, "fetch").mockRejectedValueOnce("string error");
 
     const result = await submitServiceJob(appName, appParams);
 

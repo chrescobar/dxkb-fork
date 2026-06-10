@@ -245,14 +245,14 @@ export function InfoPanel(props: InfoPanelProps) {
     };
   });
 
-  const grouped = displayColumns.reduce(
+  const grouped = displayColumns.reduce<Record<string, DisplayColumn[]>>(
     (acc: Record<string, DisplayColumn[]>, item) => {
       const g = String(item.group ?? "");
       if (!acc[g]) acc[g] = [];
       acc[g].push(item);
       return acc;
     },
-    {} as Record<string, DisplayColumn[]>
+    {}
   );
 
   function resolveLink(template: string, row: Record<string, unknown>, fallbackField: string) {

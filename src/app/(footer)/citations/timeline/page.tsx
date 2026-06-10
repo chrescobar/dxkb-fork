@@ -78,7 +78,7 @@ export default function CitationsTimelinePage() {
                 { value: "Book Chapter", label: "Book Chapters" },
               ]}
               defaultValue="all"
-              onValueChange={(value) => setTypeFilter(value ?? "")}
+              onValueChange={(value) => { setTypeFilter(value ?? ""); }}
             >
               <SelectTrigger className="w-45">
                 <SelectValue placeholder="Publication Type" />
@@ -100,7 +100,7 @@ export default function CitationsTimelinePage() {
                 { value: "impact", label: "Highest Impact" },
               ]}
               defaultValue="newest"
-              onValueChange={(value) => setSortOption(value ?? "")}
+              onValueChange={(value) => { setSortOption(value ?? ""); }}
             >
               <SelectTrigger className="w-45">
                 <SortDesc className="mr-2 size-4" />
@@ -123,7 +123,7 @@ export default function CitationsTimelinePage() {
               placeholder="Search citations..."
               className="citation-search-input"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => { setSearchQuery(e.target.value); }}
             />
           </div>
         </div>

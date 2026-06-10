@@ -152,7 +152,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
   }, [showColumnMenu]);
 
   
-  const columnDefs = useMemo<ColumnDef<Record<string, unknown>, unknown>[]>(() => {
+  const columnDefs = useMemo<ColumnDef<Record<string, unknown>>[]>(() => {
     const checkboxColumn: ColumnDef<Record<string, unknown>> = {
       id: '__select__',
       header: ({ table }) => {
@@ -218,7 +218,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
               onClick={(e) => {
                 e.stopPropagation();
 
-                const isShift = (e as React.MouseEvent<HTMLInputElement>).shiftKey;
+                const isShift = (e).shiftKey;
                 const allRows = table.getRowModel().rows;
                 const currentRowId = row.id;
                 const currentIndex = allRows.findIndex(r => r.id === currentRowId);
@@ -748,7 +748,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           <div className="relative inline-block text-left" ref={columnMenuRef}> {/* This is the button for changing the visibility of columns in the table */}
             <Button
               className="mr-2 flex w-full justify-end rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
-              onClick={() => setShowColumnMenu(prev => !prev)}
+              onClick={() => { setShowColumnMenu(prev => !prev); }}
             >
               Columns ▾
             </Button>
@@ -766,7 +766,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                         <input
                           type="checkbox"
                           checked={column.getIsVisible()}
-                          onChange={() => column.toggleVisibility()}
+                          onChange={() => { column.toggleVisibility(); }}
                         />
                         <span>{column.columnDef.header as string}</span>
                       </label>
@@ -832,7 +832,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           <input
             type="checkbox"
             checked={onlyVisibleColumns}
-            onChange={() => setOnlyVisibleColumns(prev => !prev)}
+            onChange={() => { setOnlyVisibleColumns(prev => !prev); }}
             className="mr-1"
           />
           Download Displayed Columns Only
@@ -917,9 +917,9 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                             <div 
                               className="relative flex size-full items-center justify-between py-0"
                               draggable={true}
-                              onDragStart={(e) => handleDragStart(e, column.id)}
+                              onDragStart={(e) => { handleDragStart(e, column.id); }}
                               onDragOver={handleDragOver}
-                              onDrop={(e) => handleDrop(e, column.id)}
+                              onDrop={(e) => { handleDrop(e, column.id); }}
                               onDragEnd={handleDragEnd}
                               style={{
                                 cursor: 'move',

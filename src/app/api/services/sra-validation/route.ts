@@ -22,7 +22,7 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
 
   const url = `${getRequiredEnv("SRA_VALIDATION_URL")}?retmax=10&db=sra&id=${accession}`;
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 15000);
+  const timeoutId = setTimeout(() => { controller.abort(); }, 15000);
 
   try {
     const response = await fetch(url, {

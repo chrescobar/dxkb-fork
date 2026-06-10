@@ -189,9 +189,8 @@ export function useWorkspaceDirectory(
 
   const enabled = options.enabled ?? true;
 
-  const listingQuery: UseQueryResult<WorkspaceItem[], Error> = useQuery<
-    WorkspaceItem[],
-    Error
+  const listingQuery: UseQueryResult<WorkspaceItem[]> = useQuery<
+    WorkspaceItem[]
   >({
     queryKey: modeQueryKey(mode),
     queryFn: () => fetchModeItems(repository, mode),
@@ -203,7 +202,7 @@ export function useWorkspaceDirectory(
   const items = useMemo(() => listingQuery.data ?? [], [listingQuery.data]);
   const itemPaths = useMemo(() => items.map((i) => i.path), [items]);
 
-  const permissionsQuery = useQuery<ListPermissionsResult, Error>({
+  const permissionsQuery = useQuery<ListPermissionsResult>({
     queryKey: workspaceQueryKeys.permissions(itemPaths),
     queryFn: () => repository.listPermissions(itemPaths),
     enabled: enabled && isAuthenticatedMode(mode) && itemPaths.length > 0,
@@ -212,7 +211,7 @@ export function useWorkspaceDirectory(
   });
 
   const currentPath = modeDirectoryPath(mode);
-  const currentPathPermissionsQuery = useQuery<ListPermissionsResult, Error>({
+  const currentPathPermissionsQuery = useQuery<ListPermissionsResult>({
     queryKey: currentPath
       ? workspaceQueryKeys.permissions([currentPath])
       : workspaceQueryKeys.permissions([]),

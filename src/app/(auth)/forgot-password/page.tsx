@@ -50,7 +50,7 @@ export default function ForgotPasswordPage() {
   const form = useForm({
     defaultValues: {
       usernameOrEmail: "",
-    } as FormValues,
+    },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: formSchema as any, onSubmit: formSchema as any },
     onSubmit: async ({ value }) => {
@@ -58,7 +58,7 @@ export default function ForgotPasswordPage() {
       setIsSubmitting(true);
       try {
         const { error: resetError } = await authAccount.requestPasswordReset(
-          (value as FormValues).usernameOrEmail,
+          (value).usernameOrEmail,
         );
         if (resetError) {
           setError("An unexpected error occurred. Please try again.");
@@ -145,7 +145,7 @@ export default function ForgotPasswordPage() {
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                     />

@@ -141,7 +141,7 @@ export async function serverAuthenticatedFetch(
     throw new Error("Not authenticated");
   }
 
-  const callerHeaders = new Headers(options.headers as HeadersInit);
+  const callerHeaders = new Headers(options.headers);
   if (!callerHeaders.has("Content-Type")) {
     callerHeaders.set("Content-Type", "application/json");
   }

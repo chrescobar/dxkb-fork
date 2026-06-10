@@ -206,7 +206,7 @@ export default function CitationsPage() {
                 ...uniqueYears.map((year) => ({ value: year.toString(), label: year.toString() })),
               ]}
               defaultValue="all"
-              onValueChange={(value) => setYearFilter(value ?? "")}
+              onValueChange={(value) => { setYearFilter(value ?? ""); }}
             >
               <SelectTrigger className="w-45">
                 <SelectValue placeholder="Filter by Year" />
@@ -225,7 +225,7 @@ export default function CitationsPage() {
             <Select
               items={sortOptions}
               value={sortOption}
-              onValueChange={(value) => setSortOption(value ?? "")}
+              onValueChange={(value) => { setSortOption(value ?? ""); }}
             >
               <SelectTrigger className="w-45">
                 <SortDesc className="mr-2 size-4" />
@@ -249,7 +249,7 @@ export default function CitationsPage() {
               placeholder="Search citations..."
               className="citation-search-input"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => { setSearchQuery(e.target.value); }}
             />
           </div>
         </div>

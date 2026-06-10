@@ -327,11 +327,11 @@ export function DonutChart({ title, data }: DonutChartProps) {
                             tabIndex={0}
                             aria-label={accessibleLabel}
                             onMouseMove={(event) =>
-                              showTooltip({
+                              { showTooltip({
                                 tooltipData: arc.data,
                                 tooltipLeft: event.clientX,
                                 tooltipTop: event.clientY,
-                              })
+                              }); }
                             }
                             onFocus={(event) => {
                               const rect =

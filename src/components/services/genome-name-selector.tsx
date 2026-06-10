@@ -300,7 +300,7 @@ export function GenomeNameSelector({
               setHighlightedIndex(-1); // Reset highlight when typing
               setShowDropdown(true);
             }}
-            onFocus={() => setShowDropdown(true)}
+            onFocus={() => { setShowDropdown(true); }}
             onKeyDown={handleKeyDown}
             className="w-full px-10"
           />
@@ -334,7 +334,7 @@ export function GenomeNameSelector({
                           handleDropdownClick(genome);
                         }
                       }}
-                      onMouseEnter={() => setHighlightedIndex(index)}
+                      onMouseEnter={() => { setHighlightedIndex(index); }}
                     >
                       <span className="truncate text-sm font-medium">
                         {genome.genome_name}

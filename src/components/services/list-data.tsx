@@ -62,7 +62,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
           return;
         }
         setFields(
-          (Object.values(fieldObj) as RawField[])
+          (Object.values(fieldObj))
             .filter((f) => f.show_in_table !== false)
             .map((f) => ({
               id: String(f.field ?? ""),
@@ -121,7 +121,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   if (fields.length > 0 && columnVisibility === null) {
     const vis: Record<string, boolean> = { __select__: true };
     fields.forEach(f => {
-      vis[f.id] = f.visible !== false;
+      vis[f.id] = f.visible;
     });
     setColumnVisibility(vis);
   }

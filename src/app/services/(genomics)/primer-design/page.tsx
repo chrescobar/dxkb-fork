@@ -72,11 +72,11 @@ export default function PrimerDesignServicePage() {
   });
 
   const form = useForm({
-    defaultValues: defaultPrimerDesignFormValues as PrimerDesignFormData,
+    defaultValues: defaultPrimerDesignFormValues,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: primerDesignFormSchema as any },
     onSubmit: async ({ value }) => {
-      const data = value as PrimerDesignFormData;
+      const data = value;
 
       if (data.input_type === "sequence_text") {
         const validation = validatePrimerDesignSequence(data.sequence_input);
@@ -204,7 +204,7 @@ export default function PrimerDesignServicePage() {
       include: ["{", "}"],
     } as const;
 
-    const [openMarker, closeMarker] = markers[marker as keyof typeof markers];
+    const [openMarker, closeMarker] = markers[marker];
     const markedSequence =
       currentSequence.slice(0, start) +
       openMarker +
@@ -255,14 +255,14 @@ export default function PrimerDesignServicePage() {
           inputTypeVal === "sequence_text" ||
           inputTypeVal === "workplace_fasta"
         ) {
-          form.setFieldValue("input_type", inputTypeVal as never);
+          form.setFieldValue("input_type", inputTypeVal);
         }
 
         if (inputTypeVal === "workplace_fasta") {
           const path =
             typeof d.sequence_input === "string" ? d.sequence_input : "";
           isRestoringValueRef.current = true;
-          form.setFieldValue("sequence_input", path as never);
+          form.setFieldValue("sequence_input", path);
           setWorkspaceFastaValue(path);
           setTimeout(() => {
             isRestoringValueRef.current = false;
@@ -271,8 +271,8 @@ export default function PrimerDesignServicePage() {
           const seq =
             typeof d.sequence_input === "string" ? d.sequence_input : "";
           const seqId = typeof d.SEQUENCE_ID === "string" ? d.SEQUENCE_ID : "";
-          form.setFieldValue("sequence_input", seq as never);
-          form.setFieldValue("SEQUENCE_ID", seqId as never);
+          form.setFieldValue("sequence_input", seq);
+          form.setFieldValue("SEQUENCE_ID", seqId);
           setSequenceTextValue(seq);
           setSequenceTextId(seqId);
         }
@@ -280,7 +280,7 @@ export default function PrimerDesignServicePage() {
         if (typeof d.PRIMER_PICK_INTERNAL_OLIGO === "boolean") {
           form.setFieldValue(
             "PRIMER_PICK_INTERNAL_OLIGO",
-            d.PRIMER_PICK_INTERNAL_OLIGO as never,
+            d.PRIMER_PICK_INTERNAL_OLIGO,
           );
         }
 
@@ -289,17 +289,17 @@ export default function PrimerDesignServicePage() {
             const val = Array.isArray(d[field])
               ? (d[field] as string[])
               : typeof d[field] === "string"
-                ? (d[field] as string).trim().split(/\s+/).filter(Boolean)
+                ? (d[field]).trim().split(/\s+/).filter(Boolean)
                 : undefined;
             if (val !== undefined) {
-              form.setFieldValue(field, val as never);
+              form.setFieldValue(field, val);
             }
           }
         }
 
         for (const field of primerScalarFields) {
           if (d[field] !== undefined) {
-            form.setFieldValue(field, String(d[field]) as never);
+            form.setFieldValue(field, String(d[field]));
           }
         }
 
@@ -421,7 +421,7 @@ export default function PrimerDesignServicePage() {
                         id={field.name}
                         value={field.state.value}
                         onChange={(event) =>
-                          handleSequenceValueChange(event.target.value)
+                          { handleSequenceValueChange(event.target.value); }
                         }
                         onSelect={handleSequenceSelect}
                         onKeyUp={handleSequenceSelect}
@@ -456,7 +456,7 @@ export default function PrimerDesignServicePage() {
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={() => updateSequenceWithMarkers(markerKey)}
+                        onClick={() => { updateSequenceWithMarkers(markerKey); }}
                       >
                         {markerLabels[markerKey]}
                       </Button>
@@ -465,7 +465,7 @@ export default function PrimerDesignServicePage() {
                       type="button"
                       variant="outline"
                       size="sm"
-                      onClick={() => updateSequenceWithMarkers("clear")}
+                      onClick={() => { updateSequenceWithMarkers("clear"); }}
                     >
                       Clear markers
                     </Button>
@@ -527,7 +527,7 @@ export default function PrimerDesignServicePage() {
                   </FieldLabel>
                   <Switch
                     checked={field.state.value ? true : false}
-                    onCheckedChange={(checked) => field.handleChange(checked)}
+                    onCheckedChange={(checked) => { field.handleChange(checked); }}
                   />
                   <FieldErrors field={field} />
                 </FieldItem>
@@ -946,7 +946,7 @@ export default function PrimerDesignServicePage() {
                     variant="name"
                     required
                     value={field.state.value}
-                    onChange={(value) => field.handleChange(value)}
+                    onChange={(value) => { field.handleChange(value); }}
                     outputFolderPath={outputPath}
                     onValidationChange={setIsOutputNameValid}
                   />

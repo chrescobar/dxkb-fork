@@ -77,7 +77,7 @@ export default function VariationAnalysisPage() {
     defaultValues: defaultVariationAnalysisFormValues,
     validators: { onChange: variationAnalysisFormSchema },
     onSubmit: async ({ value }) => {
-      const data = value as VariationAnalysisFormData;
+      const data = value;
 
       const hasPaired = data.paired_end_libs && data.paired_end_libs.length > 0;
       const hasSingle = data.single_end_libs && data.single_end_libs.length > 0;

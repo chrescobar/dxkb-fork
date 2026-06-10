@@ -12,7 +12,7 @@ export interface WorkspaceDuResult {
 
 export function useWorkspaceDu(path: string | null) {
   const repository = useWorkspaceRepository("authenticated");
-  return useQuery<WorkspaceDuResult, Error>({
+  return useQuery<WorkspaceDuResult>({
     queryKey: workspaceQueryKeys.du(path ?? ""),
     queryFn: async () => {
       if (!path) return { sizeBytes: 0, files: 0, folders: 0 };

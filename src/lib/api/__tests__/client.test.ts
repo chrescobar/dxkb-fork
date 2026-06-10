@@ -13,7 +13,7 @@ function installAuthStore(
   return store;
 }
 
-afterEach(() => setActiveAuthStore(null));
+afterEach(() => { setActiveAuthStore(null); });
 
 describe("apiCall", () => {
   it("sends a POST with credentials and JSON content-type", async () => {

@@ -108,10 +108,10 @@ export default function GenomeAssemblyPage() {
   const [sraResetKey, setSraResetKey] = useState(0);
 
   const form = useForm({
-    defaultValues: defaultGenomeAssemblyFormValues as GenomeAssemblyFormData,
+    defaultValues: defaultGenomeAssemblyFormValues,
     validators: { onChange: genomeAssemblyFormSchema },
     onSubmit: async ({ value }) => {
-      const data = value as GenomeAssemblyFormData;
+      const data = value;
 
       const hasPaired = data.paired_end_libs && data.paired_end_libs.length > 0;
       const hasSingle = data.single_end_libs && data.single_end_libs.length > 0;
@@ -399,7 +399,7 @@ export default function GenomeAssemblyPage() {
                         items={genomeAssemblyRecipes}
                         value={field.state.value}
                         onValueChange={(value) =>
-                          field.handleChange(value as string)
+                          { field.handleChange(value as string); }
                         }
                       >
                         <SelectTrigger aria-label="Assembly strategy" className="service-card-select-trigger">
@@ -430,7 +430,7 @@ export default function GenomeAssemblyPage() {
                       <OutputFolder
                         required={true}
                         value={field.state.value}
-                        onChange={(value) => field.handleChange(value)}
+                        onChange={(value) => { field.handleChange(value); }}
                       />
                       <FieldErrors field={field} />
                     </FieldItem>
@@ -445,7 +445,7 @@ export default function GenomeAssemblyPage() {
                         variant="name"
                         required={true}
                         value={field.state.value}
-                        onChange={(value) => field.handleChange(value)}
+                        onChange={(value) => { field.handleChange(value); }}
                         outputFolderPath={outputPath}
                         onValidationChange={setIsOutputNameValid}
                       />
@@ -488,7 +488,7 @@ export default function GenomeAssemblyPage() {
                             value={genomeSizeUnit}
                             onValueChange={(value) => {
                               if (value == null) return;
-                              setGenomeSizeUnit(value as "M" | "K");
+                              setGenomeSizeUnit(value);
                               if (value === "M") {
                                 setExpectedGenomeSize(5);
                                 field.handleChange(5000000);
@@ -553,7 +553,7 @@ export default function GenomeAssemblyPage() {
                               <Switch
                                 checked={field.state.value}
                                 onCheckedChange={(checked) =>
-                                  field.handleChange(checked)
+                                  { field.handleChange(checked); }
                                 }
                               />
                             </FieldItem>
@@ -572,7 +572,7 @@ export default function GenomeAssemblyPage() {
                               <Switch
                                 checked={field.state.value}
                                 onCheckedChange={(checked) =>
-                                  field.handleChange(checked)
+                                  { field.handleChange(checked); }
                                 }
                               />
                             </FieldItem>
@@ -591,7 +591,7 @@ export default function GenomeAssemblyPage() {
                               <Switch
                                 checked={field.state.value}
                                 onCheckedChange={(checked) =>
-                                  field.handleChange(checked)
+                                  { field.handleChange(checked); }
                                 }
                               />
                             </FieldItem>

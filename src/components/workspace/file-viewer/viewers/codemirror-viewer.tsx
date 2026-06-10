@@ -396,7 +396,7 @@ export function CodeMirrorViewer({
     return (
       <div className="flex size-full flex-col items-center justify-center gap-3">
         <p className="text-destructive">{errorMsg}</p>
-        <Button variant="outline" onClick={() => window.location.reload()}>
+        <Button variant="outline" onClick={() => { window.location.reload(); }}>
           Retry
         </Button>
       </div>
@@ -421,7 +421,7 @@ export function CodeMirrorViewer({
             variant="ghost"
             size="sm"
             className="h-auto px-2 py-0.5 text-xs font-bold hover:bg-accent/90 hover:text-white"
-            onClick={() => triggerDownload(getProxyUrl(filePath))}
+            onClick={() => { triggerDownload(getProxyUrl(filePath)); }}
           >
             Download full file
           </Button>

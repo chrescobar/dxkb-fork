@@ -97,11 +97,11 @@ export default function MetaCATSPage() {
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
   const form = useForm({
-    defaultValues: defaultMetaCatsFormValues as MetaCatsFormData,
+    defaultValues: defaultMetaCatsFormValues,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: metaCatsFormSchema as any },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as MetaCatsFormData);
+      await runtime.submitFormData(value);
     },
   });
 
@@ -137,14 +137,14 @@ export default function MetaCATSPage() {
     rerun: {
       onApply: (rerunData, form) => {
         if (typeof rerunData.p_value === "number") {
-          form.setFieldValue("p_value", rerunData.p_value as never);
+          form.setFieldValue("p_value", rerunData.p_value);
         }
 
         if (
           typeof rerunData.year_ranges === "string" &&
           rerunData.year_ranges.trim() !== ""
         ) {
-          form.setFieldValue("year_ranges", rerunData.year_ranges as never);
+          form.setFieldValue("year_ranges", rerunData.year_ranges);
           setYearRangesInput(rerunData.year_ranges);
         }
 
@@ -164,16 +164,16 @@ export default function MetaCATSPage() {
                 genbank_accessions: item.genbank_accessions ?? "",
               }),
             );
-          form.setFieldValue("auto_groups", mappedAutoGroups as never);
+          form.setFieldValue("auto_groups", mappedAutoGroups);
           const uniqueGroupNames = Array.from(
             new Set(mappedAutoGroups.map((item) => item.group).filter(Boolean)),
-          ) as string[];
+          );
           setGroupNames(uniqueGroupNames);
         }
 
         const groupsRaw = normalizeToArray<string>(rerunData.groups);
         if (groupsRaw.length > 0) {
-          form.setFieldValue("groups", groupsRaw as never);
+          form.setFieldValue("groups", groupsRaw);
         }
 
         if (
@@ -182,14 +182,14 @@ export default function MetaCATSPage() {
         ) {
           form.setFieldValue(
             "alignment_file",
-            rerunData.alignment_file as never,
+            rerunData.alignment_file,
           );
         }
         if (
           typeof rerunData.group_file === "string" &&
           rerunData.group_file.trim() !== ""
         ) {
-          form.setFieldValue("group_file", rerunData.group_file as never);
+          form.setFieldValue("group_file", rerunData.group_file);
         }
       },
     },
@@ -609,7 +609,7 @@ export default function MetaCATSPage() {
                         <Input
                           value={yearRangesInput}
                           onChange={(e) =>
-                            handleYearRangesChange(e.target.value)
+                            { handleYearRangesChange(e.target.value); }
                           }
                           placeholder="1998,1999-2005,2006"
                           className="service-card-input"
@@ -700,7 +700,7 @@ export default function MetaCATSPage() {
                         }))}
                         value={selectedGroupName}
                         onValueChange={(value) =>
-                          setSelectedGroupName(value ?? "")
+                          { setSelectedGroupName(value ?? ""); }
                         }
                       >
                         <SelectTrigger className="service-card-select-trigger flex-1">
@@ -787,7 +787,7 @@ export default function MetaCATSPage() {
                                     name={`row-${item.id}-checkbox`}
                                     checked={selectedGridRows.has(item.id)}
                                     onCheckedChange={() =>
-                                      handleRowSelect(item.id)
+                                      { handleRowSelect(item.id); }
                                     }
                                   />
                                 </TableCell>

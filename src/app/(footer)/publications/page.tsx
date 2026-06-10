@@ -207,7 +207,7 @@ export default function PublicationsListView() {
                           id="journal"
                           name="journal"
                           checked={typeFilters.journal}
-                          onCheckedChange={() => handleTypeFilterChange("journal")}
+                          onCheckedChange={() => { handleTypeFilterChange("journal"); }}
                         />
                         <Label htmlFor="journal" className="text-sm font-normal">
                           Journal Articles
@@ -218,7 +218,7 @@ export default function PublicationsListView() {
                           id="conference"
                           name="conference"
                           checked={typeFilters.conference}
-                          onCheckedChange={() => handleTypeFilterChange("conference")}
+                          onCheckedChange={() => { handleTypeFilterChange("conference"); }}
                         />
                         <Label htmlFor="conference" className="text-sm font-normal">
                           Conference Papers
@@ -229,7 +229,7 @@ export default function PublicationsListView() {
                           id="book"
                           name="book"
                           checked={typeFilters.book}
-                          onCheckedChange={() => handleTypeFilterChange("book")}
+                          onCheckedChange={() => { handleTypeFilterChange("book"); }}
                         />
                         <Label htmlFor="book" className="text-sm font-normal">
                           Book Chapters
@@ -240,7 +240,7 @@ export default function PublicationsListView() {
                           id="preprint"
                           name="preprint"
                           checked={typeFilters.preprint}
-                          onCheckedChange={() => handleTypeFilterChange("preprint")}
+                          onCheckedChange={() => { handleTypeFilterChange("preprint"); }}
                         />
                         <Label htmlFor="preprint" className="text-sm font-normal">
                           Preprints
@@ -263,7 +263,7 @@ export default function PublicationsListView() {
                           placeholder="2020"
                           className="h-8"
                           value={yearRange.from}
-                          onChange={(e) => handleYearChange("from", e.target.value)}
+                          onChange={(e) => { handleYearChange("from", e.target.value); }}
                         />
                       </div>
                       <div className="space-y-1">
@@ -275,7 +275,7 @@ export default function PublicationsListView() {
                           placeholder="2023"
                           className="h-8"
                           value={yearRange.to}
-                          onChange={(e) => handleYearChange("to", e.target.value)}
+                          onChange={(e) => { handleYearChange("to", e.target.value); }}
                         />
                       </div>
                     </div>
@@ -291,7 +291,7 @@ export default function PublicationsListView() {
                           id="medicine"
                           name="medicine"
                           checked={fieldFilters.medicine}
-                          onCheckedChange={() => handleFieldFilterChange("medicine")}
+                          onCheckedChange={() => { handleFieldFilterChange("medicine"); }}
                         />
                         <Label htmlFor="medicine" className="text-sm font-normal">
                           Medicine
@@ -302,7 +302,7 @@ export default function PublicationsListView() {
                           id="computer-science"
                           name="computer-science"
                           checked={fieldFilters.computerScience}
-                          onCheckedChange={() => handleFieldFilterChange("computerScience")}
+                          onCheckedChange={() => { handleFieldFilterChange("computerScience"); }}
                         />
                         <Label htmlFor="computer-science" className="text-sm font-normal">
                           Computer Science
@@ -313,7 +313,7 @@ export default function PublicationsListView() {
                           id="biology"
                           name="biology"
                           checked={fieldFilters.biology}
-                          onCheckedChange={() => handleFieldFilterChange("biology")}
+                          onCheckedChange={() => { handleFieldFilterChange("biology"); }}
                         />
                         <Label htmlFor="biology" className="text-sm font-normal">
                           Biology
@@ -324,7 +324,7 @@ export default function PublicationsListView() {
                           id="education"
                           name="education"
                           checked={fieldFilters.education}
-                          onCheckedChange={() => handleFieldFilterChange("education")}
+                          onCheckedChange={() => { handleFieldFilterChange("education"); }}
                         />
                         <Label htmlFor="education" className="text-sm font-normal">
                           Education
@@ -335,7 +335,7 @@ export default function PublicationsListView() {
                           id="climate"
                           name="climate"
                           checked={fieldFilters.climate}
-                          onCheckedChange={() => handleFieldFilterChange("climate")}
+                          onCheckedChange={() => { handleFieldFilterChange("climate"); }}
                         />
                         <Label htmlFor="climate" className="text-sm font-normal">
                           Climate Science
@@ -383,7 +383,7 @@ export default function PublicationsListView() {
                     placeholder="Search by title, author, or keyword..."
                     className="w-full pl-8"
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => { setSearchQuery(e.target.value); }}
                   />
                 </div>
                 <div className="flex items-center space-x-2">
@@ -395,7 +395,7 @@ export default function PublicationsListView() {
                       { value: "title", label: "Title (A-Z)" },
                     ]}
                     defaultValue="newest"
-                    onValueChange={(value) => setSortOption(value ?? "")}
+                    onValueChange={(value) => { setSortOption(value ?? ""); }}
                   >
                     <SelectTrigger className="w-45">
                       <SortDesc className="mr-2 size-4" />
@@ -469,7 +469,7 @@ export default function PublicationsListView() {
                           <PaginationContent>
                             <PaginationItem>
                               <PaginationPrevious
-                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                onClick={() => { setCurrentPage(p => Math.max(1, p - 1)); }}
                                 className={cn(
                                   "cursor-pointer",
                                   currentPage === 1 && "pointer-events-none opacity-50"
@@ -484,7 +484,7 @@ export default function PublicationsListView() {
                                 ) : (
                                   <PaginationLink
                                     isActive={page === currentPage}
-                                    onClick={() => setCurrentPage(page as number)}
+                                    onClick={() => { setCurrentPage(page as number); }}
                                     className="cursor-pointer"
                                   >
                                     {page}
@@ -495,7 +495,7 @@ export default function PublicationsListView() {
 
                             <PaginationItem>
                               <PaginationNext
-                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                onClick={() => { setCurrentPage(p => Math.min(totalPages, p + 1)); }}
                                 className={cn(
                                   "cursor-pointer",
                                   currentPage === totalPages && "pointer-events-none opacity-50"

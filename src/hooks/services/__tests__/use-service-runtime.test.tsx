@@ -271,7 +271,7 @@ describe("useServiceRuntime", () => {
       { wrapper: wrapper(capture) },
     );
 
-    await waitFor(() => expect(capture.ready).toBe(true));
+    await waitFor(() => { expect(capture.ready).toBe(true); });
     act(() => {
       capture.current.setIsDebugMode(true);
       capture.current.setContainerBuildId("build-42");

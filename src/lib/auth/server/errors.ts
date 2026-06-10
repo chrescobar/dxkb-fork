@@ -112,13 +112,13 @@ export function errorResponse(
 
   if (error instanceof Error) {
     return NextResponse.json(
-      { error: error.message, code: "upstream" as ApiErrorCode },
+      { error: error.message, code: "upstream" },
       { status: fallbackStatus },
     );
   }
 
   return NextResponse.json(
-    { error: "Unknown error", code: "unknown" as ApiErrorCode },
+    { error: "Unknown error", code: "unknown" },
     { status: fallbackStatus },
   );
 }

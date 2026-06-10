@@ -196,7 +196,7 @@ describe("auth.fetch", () => {
 
   beforeEach(() => {
     fetchSpy.mockReset();
-    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+    globalThis.fetch = fetchSpy;
   });
   afterEach(() => {
     globalThis.fetch = originalFetch;

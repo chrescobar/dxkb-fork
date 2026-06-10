@@ -12,7 +12,7 @@ describe("getRequiredEnv", () => {
   });
 
   it("throws when the env var is missing (undefined)", () => {
-    vi.stubEnv("TEST_VAR", undefined as unknown as string);
+    vi.stubEnv("TEST_VAR", undefined);
 
     expect(() => getRequiredEnv("TEST_VAR")).toThrow(
       "Missing required environment variable: TEST_VAR",

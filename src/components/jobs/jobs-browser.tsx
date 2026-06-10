@@ -59,20 +59,18 @@ const JobDataRow = React.memo(function JobDataRow({
         isSelected ? "border-l-primary bg-muted" : "border-l-transparent",
       )}
       onClick={(e) =>
-        onSelect(row.original, {
+        { onSelect(row.original, {
           ctrlOrMeta: e.ctrlKey || e.metaKey,
-        })
+        }); }
       }
-      onDoubleClick={() => onDoubleClick(row.original)}
+      onDoubleClick={() => { onDoubleClick(row.original); }}
       onMouseDown={(e) => {
         if (e.shiftKey || e.ctrlKey || e.metaKey) e.preventDefault();
       }}
       aria-selected={isSelected}
     >
       {row.getVisibleCells().map((cell, cellIndex) => {
-        const meta = cell.column.columnDef.meta as
-          | { className?: string }
-          | undefined;
+        const meta = cell.column.columnDef.meta;
         const className = clsx(
           cellIndex === 0 ? "pl-6" : "pl-2",
           "overflow-hidden",
@@ -310,7 +308,7 @@ export function JobsBrowser() {
           break;
         case "rerun":
           rerunJob(
-            job.parameters as Record<string, unknown>,
+            job.parameters,
             job.app,
           );
           break;
@@ -488,7 +486,7 @@ export function JobsBrowser() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction onClick={() => setShowJobNotFound(false)}>
+            <AlertDialogAction onClick={() => { setShowJobNotFound(false); }}>
               OK
             </AlertDialogAction>
           </AlertDialogFooter>

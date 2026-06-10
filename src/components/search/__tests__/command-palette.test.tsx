@@ -20,7 +20,7 @@ const { mockPush, mockAuth } = vi.hoisted(() => ({
   mockAuth: {
     isAuthenticated: false,
     user: null as { username?: string; realm?: string } | null,
-    status: "guest" as "loading" | "authed" | "guest",
+    status: "guest",
     signOut: vi.fn().mockResolvedValue(undefined),
   },
 }));

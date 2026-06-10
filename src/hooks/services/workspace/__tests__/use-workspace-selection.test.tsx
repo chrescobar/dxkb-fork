@@ -78,8 +78,8 @@ describe("useWorkspaceSelection", () => {
   });
 
   it("syncs selected items when processedItems reference changes", () => {
-    const itemV1 = makeItem({ name: "data.txt", path: "/test/data.txt", size: 100 } as Partial<WorkspaceItem>);
-    const itemV2 = makeItem({ name: "data.txt", path: "/test/data.txt", size: 200 } as Partial<WorkspaceItem>);
+    const itemV1 = makeItem({ name: "data.txt", path: "/test/data.txt", size: 100 });
+    const itemV2 = makeItem({ name: "data.txt", path: "/test/data.txt", size: 200 });
 
     const initialProps = {
       ...defaultProps,

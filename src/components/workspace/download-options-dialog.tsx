@@ -179,7 +179,7 @@ function DownloadOptionsForm({
       <DialogFooter showCloseButton={false}>
         <Button
           variant="outline"
-          onClick={() => onOpenChange(false)}
+          onClick={() => { onOpenChange(false); }}
           disabled={isSubmitting}
         >
           Cancel

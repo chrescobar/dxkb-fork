@@ -30,7 +30,7 @@ export function LandingShellClient({
   const searchParams = useSearchParams();
   const [navCollapsed, setNavCollapsed] = useState(false);
 
-  useHotkey("Mod+B", () => setNavCollapsed((current) => !current));
+  useHotkey("Mod+B", () => { setNavCollapsed((current) => !current); });
 
   function handleViewChange(nextView: OrganismViewKey) {
     const params = new URLSearchParams(searchParams?.toString() ?? "");
@@ -50,7 +50,7 @@ export function LandingShellClient({
         activeView={serverActiveView}
         collapsed={navCollapsed}
         onChange={handleViewChange}
-        onCollapseToggle={() => setNavCollapsed((current) => !current)}
+        onCollapseToggle={() => { setNavCollapsed((current) => !current); }}
       />
       <section className="min-w-0 flex-1">
         <div className="mb-4 flex items-center justify-between rounded-lg border bg-card px-5 py-3 shadow-sm">

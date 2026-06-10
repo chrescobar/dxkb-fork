@@ -95,7 +95,7 @@ export default function FastqUtilitiesPage() {
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
   const handleReset = () => {
-    form.reset(defaultFastqUtilitiesFormValues as FastqUtilitiesFormData);
+    form.reset(defaultFastqUtilitiesFormValues);
     setLibraries([]);
     setPairedRead1(null);
     setPairedRead2(null);
@@ -107,11 +107,11 @@ export default function FastqUtilitiesPage() {
   };
 
   const form = useForm({
-    defaultValues: defaultFastqUtilitiesFormValues as FastqUtilitiesFormData,
+    defaultValues: defaultFastqUtilitiesFormValues,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: fastqUtilitiesFormSchema as any },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as FastqUtilitiesFormData);
+      await runtime.submitFormData(value);
     },
   });
 
@@ -172,7 +172,7 @@ export default function FastqUtilitiesPage() {
             createPipelineActionItem(action, i),
           );
           setPipelineActions(actions);
-          form.setFieldValue("recipe", actionItemsToRecipe(actions) as never);
+          form.setFieldValue("recipe", actionItemsToRecipe(actions));
         }
       },
     },
@@ -314,7 +314,7 @@ export default function FastqUtilitiesPage() {
                   <FieldItem className="w-full">
                     <OutputFolder
                       value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
+                      onChange={(value) => { field.handleChange(value); }}
                     />
                     <FieldErrors field={field} />
                   </FieldItem>
@@ -326,7 +326,7 @@ export default function FastqUtilitiesPage() {
                     <OutputFolder
                       variant="name"
                       value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
+                      onChange={(value) => { field.handleChange(value); }}
                       outputFolderPath={outputPath}
                       onValidationChange={setIsOutputNameValid}
                     />
@@ -360,7 +360,7 @@ export default function FastqUtilitiesPage() {
                     value={selectedAction}
                     onValueChange={(value) =>
                       value != null &&
-                      setSelectedAction(value as PipelineAction)
+                      setSelectedAction(value)
                     }
                   >
                     <SelectTrigger className="service-card-select-trigger">
@@ -414,7 +414,7 @@ export default function FastqUtilitiesPage() {
                         variant="ghost"
                         size="icon"
                         className="size-6"
-                        onClick={() => handleRemovePipelineAction(action.id)}
+                        onClick={() => { handleRemovePipelineAction(action.id); }}
                       >
                         <X className="size-3" />
                       </Button>
@@ -532,7 +532,7 @@ export default function FastqUtilitiesPage() {
                     items={platformOptions}
                     value={singlePlatform}
                     onValueChange={(value) =>
-                      value != null && setSinglePlatform(value as Platform)
+                      value != null && setSinglePlatform(value)
                     }
                   >
                     <SelectTrigger className="service-card-select-trigger">

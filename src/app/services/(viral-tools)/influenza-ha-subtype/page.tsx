@@ -41,11 +41,11 @@ const tutorial =
 export default function HASubtypeNumberingPage() {
   const form = useForm({
     defaultValues:
-      defaultInfluenzaHaSubtypeFormValues as InfluenzaHaSubtypeFormData,
+      defaultInfluenzaHaSubtypeFormValues,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: influenzaHaSubtypeFormSchema as any },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as InfluenzaHaSubtypeFormData);
+      await runtime.submitFormData(value);
     },
   });
 
@@ -201,7 +201,7 @@ export default function HASubtypeNumberingPage() {
                         placeholder="Enter one or more protein sequences in FASTA format."
                         className="service-card-textarea min-h-44 font-mono text-sm"
                         value={field.state.value}
-                        onChange={(e) => field.handleChange(e.target.value)}
+                        onChange={(e) => { field.handleChange(e.target.value); }}
                         onBlur={() => {
                           field.handleBlur();
                           validateFastaData();
@@ -227,7 +227,7 @@ export default function HASubtypeNumberingPage() {
                         placeholder="Select or upload FASTA file..."
                         value={field.state.value}
                         onSelectedObjectChange={(obj) =>
-                          field.handleChange(obj?.path ?? "")
+                          { field.handleChange(obj?.path ?? ""); }
                         }
                       />
                       <FieldErrors field={field} />
@@ -245,7 +245,7 @@ export default function HASubtypeNumberingPage() {
                         placeholder="Select a feature group..."
                         value={field.state.value}
                         onSelectedObjectChange={(obj) =>
-                          field.handleChange(obj?.path ?? "")
+                          { field.handleChange(obj?.path ?? ""); }
                         }
                       />
                       <FieldErrors field={field} />
@@ -314,7 +314,7 @@ export default function HASubtypeNumberingPage() {
                   <FieldItem className="w-full">
                     <OutputFolder
                       value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
+                      onChange={(value) => { field.handleChange(value); }}
                     />
                     <FieldErrors field={field} />
                   </FieldItem>
@@ -327,7 +327,7 @@ export default function HASubtypeNumberingPage() {
                     <OutputFolder
                       variant="name"
                       value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
+                      onChange={(value) => { field.handleChange(value); }}
                       outputFolderPath={outputPath}
                       onValidationChange={setIsOutputNameValid}
                     />

@@ -96,10 +96,10 @@ export default function MetagenomicBinningPage() {
 
   const form = useForm({
     defaultValues:
-      defaultMetagenomicBinningFormValues as MetagenomicBinningFormData,
+      defaultMetagenomicBinningFormValues,
     validators: { onChange: metagenomicBinningFormSchema },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as MetagenomicBinningFormData);
+      await runtime.submitFormData(value);
     },
   });
 
@@ -595,7 +595,7 @@ export default function MetagenomicBinningPage() {
                         <Input
                           name={field.name}
                           value={field.state.value ?? ""}
-                          onChange={(e) => field.handleChange(e.target.value)}
+                          onChange={(e) => { field.handleChange(e.target.value); }}
                           onBlur={field.handleBlur}
                           placeholder="My Genome Group"
                           className="service-card-input"
@@ -683,7 +683,7 @@ export default function MetagenomicBinningPage() {
                               name="disable_dangling"
                               checked={field.state.value}
                               onCheckedChange={(checked) =>
-                                field.handleChange(!!checked)
+                                { field.handleChange(!!checked); }
                               }
                               className="mb-2 bg-white"
                             />

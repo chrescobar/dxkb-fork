@@ -66,7 +66,7 @@ export default function GenomeAlignmentServicePage() {
     defaultValues: defaultGenomeAlignmentFormValues,
     validators: { onChange: genomeAlignmentFormSchema },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as GenomeAlignmentFormData);
+      await runtime.submitFormData(value);
     },
   });
 
@@ -175,7 +175,7 @@ export default function GenomeAlignmentServicePage() {
         if (rerunData.manual_seed_weight != null) {
           form.setFieldValue(
             "manual_seed_weight",
-            rerunBooleanValue(rerunData.manual_seed_weight) as never,
+            rerunBooleanValue(rerunData.manual_seed_weight),
           );
         }
         if (rerunData.seed_weight != null) {
@@ -190,7 +190,7 @@ export default function GenomeAlignmentServicePage() {
           : [];
         if (genomeIds.length > 0) {
           fetchGenomesByIds(genomeIds)
-            .then((genomes) => setSelectedGenomes(genomes))
+            .then((genomes) => { setSelectedGenomes(genomes); })
             .catch(() => {
               toast.error("Could not restore genomes from previous job", {
                 description: "Please re-add your genomes manually.",
@@ -417,7 +417,7 @@ export default function GenomeAlignmentServicePage() {
                           id="manual-seed-weight"
                           checked={field.state.value}
                           onCheckedChange={(checked) =>
-                            field.handleChange(checked)
+                            { field.handleChange(checked); }
                           }
                         />
                       </div>
@@ -445,9 +445,9 @@ export default function GenomeAlignmentServicePage() {
                           max={21}
                           step={1}
                           onValueChange={(value) =>
-                            field.handleChange(
+                            { field.handleChange(
                               Array.isArray(value) ? value[0] : value,
-                            )
+                            ); }
                           }
                         />
                         <div className="flex justify-between text-xs text-muted-foreground">

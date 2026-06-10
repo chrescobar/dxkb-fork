@@ -83,11 +83,11 @@ export default function ProteomeComparisonPage() {
 
   const form = useForm({
     defaultValues:
-      defaultProteomeComparisonFormValues as ProteomeComparisonFormData,
+      defaultProteomeComparisonFormValues,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validators: { onChange: proteomeComparisonFormSchema as any },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as ProteomeComparisonFormData);
+      await runtime.submitFormData(value);
     },
   });
 
@@ -454,7 +454,7 @@ export default function ProteomeComparisonPage() {
                               <Input
                                 value={field.state.value}
                                 onChange={(e) =>
-                                  field.handleChange(e.target.value)
+                                  { field.handleChange(e.target.value); }
                                 }
                                 placeholder="1e-5"
                                 className="service-card-input"

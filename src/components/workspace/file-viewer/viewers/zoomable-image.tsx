@@ -26,7 +26,7 @@ export function ZoomableImage({ src, alt, toolbarLeading }: ZoomableImageProps) 
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  onClick={() => zoomIn()}
+                  onClick={() => { zoomIn(); }}
                   title="Zoom in"
                 >
                   <ZoomIn />
@@ -34,7 +34,7 @@ export function ZoomableImage({ src, alt, toolbarLeading }: ZoomableImageProps) 
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  onClick={() => zoomOut()}
+                  onClick={() => { zoomOut(); }}
                   title="Zoom out"
                 >
                   <ZoomOut />
@@ -42,7 +42,7 @@ export function ZoomableImage({ src, alt, toolbarLeading }: ZoomableImageProps) 
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  onClick={() => resetTransform()}
+                  onClick={() => { resetTransform(); }}
                   title="Reset"
                 >
                   <RotateCcw />

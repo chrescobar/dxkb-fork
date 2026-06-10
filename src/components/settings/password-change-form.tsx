@@ -81,7 +81,7 @@ export function PasswordChangeForm() {
                 <PasswordInput
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={(e) => { field.handleChange(e.target.value); }}
                   onBlur={field.handleBlur}
                   label="current password"
                 />
@@ -97,7 +97,7 @@ export function PasswordChangeForm() {
                 <PasswordInput
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={(e) => { field.handleChange(e.target.value); }}
                   onBlur={field.handleBlur}
                   label="new password"
                 />
@@ -113,7 +113,7 @@ export function PasswordChangeForm() {
                 <PasswordInput
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={(e) => { field.handleChange(e.target.value); }}
                   onBlur={field.handleBlur}
                   label="confirm password"
                 />

@@ -165,7 +165,7 @@ describe("assertNoSensitiveData", () => {
   it("passes when the file contains no sensitive markers", () => {
     const harPath = path.join(tmpDir, "clean.har");
     fs.writeFileSync(harPath, JSON.stringify({ log: { entries: [] } }));
-    expect(() => assertNoSensitiveData(harPath, "liveuser", "livepass")).not.toThrow();
+    expect(() => { assertNoSensitiveData(harPath, "liveuser", "livepass"); }).not.toThrow();
   });
 
   it("detects credentials in their JSON-escaped on-disk form", () => {
@@ -179,7 +179,7 @@ describe("assertNoSensitiveData", () => {
       JSON.stringify({ log: { entries: [{ note: `leak:${trickyPassword}` }] } }),
     );
 
-    expect(() => assertNoSensitiveData(harPath, "", trickyPassword)).toThrow(
+    expect(() => { assertNoSensitiveData(harPath, "", trickyPassword); }).toThrow(
       /live password appears in HAR/,
     );
     // The assertion deletes the file when it finds violations.
@@ -189,6 +189,6 @@ describe("assertNoSensitiveData", () => {
   it("detects BV-BRC-shaped session tokens", () => {
     const harPath = path.join(tmpDir, "token.har");
     fs.writeFileSync(harPath, '{"x":"un=foo|sig=deadbeefdeadbeefdeadbeefdeadbeef"}');
-    expect(() => assertNoSensitiveData(harPath, "", "")).toThrow(/sig=<hex>/);
+    expect(() => { assertNoSensitiveData(harPath, "", ""); }).toThrow(/sig=<hex>/);
   });
 });

@@ -91,7 +91,7 @@ export function SearchBar({
         <Select
           items={searchTypes.map((option) => ({ value: option.id, label: option.typeTitle }))}
           value={selected}
-          onValueChange={(value) => setSelected(value ?? "everything")}
+          onValueChange={(value) => { setSelected(value ?? "everything"); }}
         >
           <SelectTrigger
             id="searchtype"
@@ -117,7 +117,7 @@ export function SearchBar({
             placeholder={placeholder}
             className={`${size === "lg" ? "py-6" : ""} ${showIcon ? "pl-10" : ""} w-full rounded-l-none rounded-r-md border-0 bg-background text-foreground shadow-none focus-visible:ring-0`}
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={(e) => { setInputValue(e.target.value); }}
           />
           {showIcon && (
             <button

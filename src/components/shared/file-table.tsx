@@ -138,9 +138,7 @@ function DraggableTableHeader({
     zIndex: isDragging ? 1 : 0,
   };
 
-  const meta = header.column.columnDef.meta as
-    | { className?: string; sortField?: string }
-    | undefined;
+  const meta = header.column.columnDef.meta;
   const isFirst = header.index === 0;
   const className = clsx(
     isFirst ? "pl-6" : "pl-2",
@@ -169,7 +167,7 @@ function DraggableTableHeader({
         {sortField && (
           <button
             type="button"
-            onClick={() => onSort(sortField)}
+            onClick={() => { onSort(sortField); }}
             className="cursor-pointer rounded p-0.5 select-none hover:bg-primary/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label={`Sort by ${label}`}
           >
@@ -182,7 +180,7 @@ function DraggableTableHeader({
             aria-orientation="vertical"
             onMouseDown={header.getResizeHandler()}
             onTouchStart={header.getResizeHandler()}
-            onDoubleClick={() => header.column.resetSize()}
+            onDoubleClick={() => { header.column.resetSize(); }}
             className={cn(
               "absolute top-0 right-0 z-10 h-full w-2 cursor-col-resize border-r border-border",
               "hover:border-primary/50 hover:bg-primary/15",

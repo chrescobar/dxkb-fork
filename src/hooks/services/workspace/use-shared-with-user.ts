@@ -18,7 +18,7 @@ export function useSharedWithUser({
 }: UseSharedWithUserOptions) {
   const repository = useWorkspaceRepository("authenticated");
 
-  return useQuery<WorkspaceItem[], Error>({
+  return useQuery<WorkspaceItem[]>({
     queryKey: workspaceQueryKeys.sharedRoot(username),
     queryFn: async () => {
       const items = await repository.listDirectory({ path: "/" });
@@ -49,7 +49,7 @@ export function useUserWorkspaces({
 }: UseUserWorkspacesOptions) {
   const repository = useWorkspaceRepository("authenticated");
 
-  return useQuery<WorkspaceItem[], Error>({
+  return useQuery<WorkspaceItem[]>({
     queryKey: workspaceQueryKeys.userRoot(username),
     queryFn: async () => {
       const decoded = decodeURIComponent(username);

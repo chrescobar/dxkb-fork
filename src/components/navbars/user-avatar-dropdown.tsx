@@ -118,7 +118,7 @@ export function UserAvatarDropdown() {
                 {isAdmin && !isImpersonating && (
                   <>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => setSuDialogOpen(true)}>
+                    <DropdownMenuItem onClick={() => { setSuDialogOpen(true); }}>
                       <LogIn className="size-4 text-foreground" />
                       SU Login
                     </DropdownMenuItem>

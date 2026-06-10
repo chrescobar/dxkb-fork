@@ -58,7 +58,7 @@ const GenomeAnnotationContent = () => {
 
   const form = useForm({
     defaultValues:
-      defaultGenomeAnnotationFormValues as GenomeAnnotationFormData,
+      defaultGenomeAnnotationFormValues,
     validators: { onChange: completeGenomeAnnotationSchema },
     onSubmit: async ({ value }) => {
       // Validate my label for slashes
@@ -178,9 +178,9 @@ const GenomeAnnotationContent = () => {
                       items={genomeAnnotationRecipes}
                       value={field.state.value}
                       onValueChange={(val) =>
-                        field.handleChange(
+                        { field.handleChange(
                           val as GenomeAnnotationFormData["recipe"],
-                        )
+                        ); }
                       }
                     >
                       <SelectTrigger className="service-card-select-trigger">

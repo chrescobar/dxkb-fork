@@ -68,7 +68,7 @@ export default function BlastServicePage() {
     defaultValues: defaultBlastFormValues as BlastFormData,
     validators: { onChange: completeFormSchema, onSubmit: completeFormSchema },
     onSubmit: async ({ value }) => {
-      const data = value as BlastFormData;
+      const data = value;
 
       if (data.input_source === "fasta_data" && data.input_fasta_data) {
         if (!isFastaValid) {
@@ -504,7 +504,7 @@ export default function BlastServicePage() {
                         onValueChange={(value) => {
                           if (value != null)
                             field.handleChange(
-                              value as BlastFormData["db_type"],
+                              value,
                             );
                         }}
                       >

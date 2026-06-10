@@ -111,7 +111,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                   id={field.name}
                   type="email"
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={(e) => { field.handleChange(e.target.value); }}
                   onBlur={field.handleBlur}
                 />
                 <FieldErrors field={field} />
@@ -127,7 +127,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 <Input
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={(e) => { field.handleChange(e.target.value); }}
                   onBlur={field.handleBlur}
                 />
                 <FieldErrors field={field} />
@@ -143,7 +143,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 <Input
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={(e) => { field.handleChange(e.target.value); }}
                   onBlur={field.handleBlur}
                 />
                 <FieldErrors field={field} />
@@ -159,7 +159,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 <Input
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={(e) => { field.handleChange(e.target.value); }}
                   onBlur={field.handleBlur}
                 />
                 <FieldErrors field={field} />
@@ -175,7 +175,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 <Input
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={(e) => { field.handleChange(e.target.value); }}
                   onBlur={field.handleBlur}
                 />
                 <FieldErrors field={field} />
@@ -191,7 +191,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 <Input
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={(e) => { field.handleChange(e.target.value); }}
                   onBlur={field.handleBlur}
                 />
                 <FieldErrors field={field} />
@@ -207,7 +207,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 <Textarea
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={(e) => { field.handleChange(e.target.value); }}
                   onBlur={field.handleBlur}
                   rows={3}
                 />

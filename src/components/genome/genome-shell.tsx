@@ -44,7 +44,7 @@ export function GenomeShell({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setPanelExpanded(false)}
+            onClick={() => { setPanelExpanded(false); }}
             title="Hide panel"
             className="flex h-auto w-full flex-col items-center gap-0 px-1 py-2"
           >
@@ -55,7 +55,7 @@ export function GenomeShell({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setPanelExpanded(true)}
+            onClick={() => { setPanelExpanded(true); }}
             title="Show panel"
             className="flex h-auto w-full flex-col items-center gap-0 px-1 py-2"
           >

@@ -81,7 +81,7 @@ export function JobsToolbar({
         <Input
           placeholder="Search by name, ID, or service..."
           value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
+          onChange={(e) => { onSearchChange(e.target.value); }}
           className="pl-10"
         />
       </div>
@@ -154,7 +154,7 @@ export function JobsToolbar({
             id="include-archived"
             checked={includeArchived}
             onCheckedChange={(checked) =>
-              onIncludeArchivedChange(checked === true)
+              { onIncludeArchivedChange(checked); }
             }
           />
           <Label

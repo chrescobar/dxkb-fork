@@ -21,7 +21,7 @@ export function SvgViewer({ filePath, fileName }: SvgViewerProps) {
       <Button
         variant={viewMode === "image" ? "default" : "ghost"}
         size="sm"
-        onClick={() => setViewMode("image")}
+        onClick={() => { setViewMode("image"); }}
       >
         <ImageIcon className="mr-1 size-4" />
         Image
@@ -29,7 +29,7 @@ export function SvgViewer({ filePath, fileName }: SvgViewerProps) {
       <Button
         variant={viewMode === "code" ? "default" : "ghost"}
         size="sm"
-        onClick={() => setViewMode("code")}
+        onClick={() => { setViewMode("code"); }}
       >
         <Code className="mr-1 size-4" />
         Code

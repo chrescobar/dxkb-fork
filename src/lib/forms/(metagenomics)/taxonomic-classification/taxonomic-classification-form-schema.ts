@@ -86,7 +86,7 @@ export const taxonomicClassificationFormSchema = z
 
     if (!hasPaired && !hasSingle && !hasSrr) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: "At least one library (paired, single, or SRA) must be provided",
         path: ["paired_end_libs"],
       });
@@ -95,7 +95,7 @@ export const taxonomicClassificationFormSchema = z
     // Validate analysis type based on sequence type
     if (data.sequence_type === "16s" && data.analysis_type !== "default") {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: "16S sequencing only supports Default analysis type",
         path: ["analysis_type"],
       });
@@ -103,7 +103,7 @@ export const taxonomicClassificationFormSchema = z
 
     if (data.sequence_type === "wgs" && data.analysis_type === "default") {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: "WGS sequencing does not support Default analysis type",
         path: ["analysis_type"],
       });
@@ -115,7 +115,7 @@ export const taxonomicClassificationFormSchema = z
 
     if (data.sequence_type === "wgs" && !wgsDatabases.includes(data.database)) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: "WGS sequencing requires BV-BRC or Kraken2 Standard database",
         path: ["database"],
       });
@@ -123,7 +123,7 @@ export const taxonomicClassificationFormSchema = z
 
     if (data.sequence_type === "16s" && !sixteenSDatabases.includes(data.database)) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: "16S sequencing requires SILVA or Greengenes database",
         path: ["database"],
       });

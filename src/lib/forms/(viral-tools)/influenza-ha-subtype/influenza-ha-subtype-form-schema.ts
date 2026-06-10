@@ -23,7 +23,7 @@ export const influenzaHaSubtypeFormSchema = z
     if (data.input_source === "fasta_data") {
       if (!data.input_fasta_data?.trim()) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: "Enter at least one protein sequence in FASTA format",
           path: ["input_fasta_data"],
         });
@@ -31,7 +31,7 @@ export const influenzaHaSubtypeFormSchema = z
     } else if (data.input_source === "fasta_file") {
       if (!data.input_fasta_file?.trim()) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: "Select a FASTA file from your workspace",
           path: ["input_fasta_file"],
         });
@@ -39,7 +39,7 @@ export const influenzaHaSubtypeFormSchema = z
     } else if (data.input_source === "feature_group") {
       if (!data.input_feature_group?.trim()) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: "Select a feature group from your workspace",
           path: ["input_feature_group"],
         });

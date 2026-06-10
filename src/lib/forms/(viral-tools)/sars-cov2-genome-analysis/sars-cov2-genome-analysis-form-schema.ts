@@ -37,7 +37,7 @@ export const sarsCov2LibrarySchema = baseLibrarySchema
       data.platform === undefined
     ) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: "Platform is required for paired and single library types",
         path: ["platform"],
       });
@@ -140,7 +140,7 @@ export const sarsCov2GenomeAnalysisFormSchema = z
       const hasSrr = data.srr_ids && data.srr_ids.length > 0;
       if (!hasPaired && !hasSingle && !hasSrr) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: "At least one library (paired, single, or SRA) must be provided",
           path: ["paired_end_libs"],
         });
@@ -148,7 +148,7 @@ export const sarsCov2GenomeAnalysisFormSchema = z
     } else {
       if (!data.contigs || data.contigs.trim() === "") {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: "Contigs file is required when starting with Assembled Contigs",
           path: ["contigs"],
         });
@@ -156,7 +156,7 @@ export const sarsCov2GenomeAnalysisFormSchema = z
     }
     if (data.my_label && (data.my_label.includes("/") || data.my_label.includes("\\"))) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: "Slashes are not allowed in My Label",
         path: ["my_label"],
       });

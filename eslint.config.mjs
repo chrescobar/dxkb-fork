@@ -33,6 +33,10 @@ export default defineConfig(
         functions: ["cn", "cva", "clsx", "twMerge", "classnames", "ctl", "tv", "tw"],
       },
     },
+    rules: {
+      // Custom classes defined in globals.css are valid — the plugin can't parse @apply-based class definitions
+      "tailwindcss/no-custom-classname": "off",
+    },
   },
   {
     files: ["**/*.{ts,tsx}"],

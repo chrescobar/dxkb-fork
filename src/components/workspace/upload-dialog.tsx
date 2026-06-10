@@ -196,7 +196,7 @@ export function UploadDialog({
               role="button"
               tabIndex={0}
               className={cn(
-                "flex min-h-[120px] flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border bg-muted/30 p-4 transition-colors",
+                "flex min-h-30 flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border bg-muted/30 p-4 transition-colors",
                 "outline-none hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring",
                 isDragActive && "bg-muted/50",
               )}
@@ -258,7 +258,7 @@ export function UploadDialog({
                   ) : (
                     files.map((file) => (
                       <tr key={file.name} className="border-t border-border/50">
-                        <td className="max-w-[180px] truncate px-2 py-1.5">
+                        <td className="max-w-45 truncate px-2 py-1.5">
                           {file.name}
                         </td>
                         <td className="px-2 py-1.5">{uploadType}</td>

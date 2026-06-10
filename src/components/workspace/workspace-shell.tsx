@@ -40,7 +40,7 @@ export function WorkspaceShell({
   } = useWorkspacePanel();
 
   const actionStrip = (
-    <div className="flex h-full w-[80px] shrink-0 flex-col rounded-l-lg border-r border-border/50 bg-muted/50 py-2">
+    <div className="flex h-full w-20 shrink-0 flex-col rounded-l-lg border-r border-border/50 bg-muted/50 py-2">
       <div className="relative mx-0.5 mb-1 h-8 shrink-0">
         <Button
           variant="ghost"

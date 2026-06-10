@@ -101,7 +101,7 @@ function SubSectionTrigger({ children }: { children: React.ReactNode }) {
 function SubSectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center py-2.5">
-      <span className="flex flex-1 items-center gap-1.5 text-[14px] font-semibold text-foreground/85">
+      <span className="flex flex-1 items-center gap-1.5 text-sm font-semibold text-foreground/85">
         {children}
       </span>
     </div>

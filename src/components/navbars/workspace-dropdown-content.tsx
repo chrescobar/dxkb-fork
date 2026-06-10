@@ -54,7 +54,7 @@ export function WorkspaceDropdownContent({
   const { workspaces, data } = workspaceNavItems;
 
   return (
-    <div className="p-2 lg:w-[500px]">
+    <div className="p-2 lg:w-125">
       {/* Top: static sections in 2 columns */}
       <div className="grid grid-cols-2 gap-2">
         {/* Left column: Workspaces */}

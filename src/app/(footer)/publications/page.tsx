@@ -397,7 +397,7 @@ export default function PublicationsListView() {
                     defaultValue="newest"
                     onValueChange={(value) => setSortOption(value ?? "")}
                   >
-                    <SelectTrigger className="w-[180px]">
+                    <SelectTrigger className="w-45">
                       <SortDesc className="mr-2 size-4" />
                       <SelectValue placeholder="Sort by" />
                     </SelectTrigger>

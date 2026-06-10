@@ -75,7 +75,7 @@ function OutputSection({
           ) : error ? (
             <p className="text-xs text-destructive">Failed to load output</p>
           ) : data ? (
-            <pre className="scrollbar-themed max-h-[32rem] overflow-auto font-mono text-[10px] leading-relaxed whitespace-pre">
+            <pre className="scrollbar-themed max-h-128 overflow-auto font-mono text-[10px] leading-relaxed whitespace-pre">
               {data}
             </pre>
           ) : (

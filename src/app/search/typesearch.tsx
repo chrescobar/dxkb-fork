@@ -97,7 +97,7 @@ function TabsRenderer({
         <TabsContent
           key={term}
           value={term}
-          className="mt-0 flex min-h-0 flex-1 flex-col overflow-hidden border-0 px-0 pt-[5px]"
+          className="mt-0 flex min-h-0 flex-1 flex-col overflow-hidden border-0 px-0 pt-1"
         >
           <ListData
             resource={term}

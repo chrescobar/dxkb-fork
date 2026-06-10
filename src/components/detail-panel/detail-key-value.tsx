@@ -57,7 +57,7 @@ export function DetailKeyValueTable({ fields }: { fields: DetailField[] }) {
 
           return (
             <tr key={label} className="border-b last:border-b-0">
-              <td className="w-[40%] px-3 py-1.5 align-top text-xs font-medium text-muted-foreground">
+              <td className="w-2/5 px-3 py-1.5 align-top text-xs font-medium text-muted-foreground">
                 {label}
               </td>
               <td className="px-3 py-1.5 align-top text-xs break-all">

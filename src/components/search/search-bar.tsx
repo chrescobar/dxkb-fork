@@ -96,7 +96,7 @@ export function SearchBar({
           <SelectTrigger
             id="searchtype"
             aria-label="Search type"
-            className={`${size === "lg" ? "h-auto py-6" : ""} min-w-[120px] rounded-l-md rounded-r-none border-0 border-r border-input bg-background text-sm text-foreground shadow-none focus:ring-0`}
+            className={`${size === "lg" ? "h-auto py-6" : ""} min-w-30 rounded-l-md rounded-r-none border-0 border-r border-input bg-background text-sm text-foreground shadow-none focus:ring-0`}
           >
             <SelectValue aria-label="Search type" />
           </SelectTrigger>

@@ -199,7 +199,7 @@ export default function HASubtypeNumberingPage() {
                     <FieldItem>
                       <Textarea
                         placeholder="Enter one or more protein sequences in FASTA format."
-                        className="service-card-textarea min-h-[175px] font-mono text-sm"
+                        className="service-card-textarea min-h-44 font-mono text-sm"
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
                         onBlur={() => {
@@ -277,7 +277,7 @@ export default function HASubtypeNumberingPage() {
                     <Label className="service-card-label">
                       Conversion Sequence Numbering Scheme
                     </Label>
-                    <div className="grid max-h-[220px] grid-cols-2 gap-2 overflow-y-auto rounded-md border bg-muted/50 p-4 md:grid-cols-4">
+                    <div className="grid max-h-55 grid-cols-2 gap-2 overflow-y-auto rounded-md border bg-muted/50 p-4 md:grid-cols-4">
                       {HaReferenceTypes.map((scheme) => (
                         <div
                           className="flex items-center gap-2"

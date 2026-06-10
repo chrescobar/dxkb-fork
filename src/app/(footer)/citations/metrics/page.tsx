@@ -147,7 +147,7 @@ export default function CitationsMetricsPage() {
               value={yearRange}
               onValueChange={(value) => setYearRange(value ?? "")}
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-45">
                 <SelectValue placeholder="Select year range" />
               </SelectTrigger>
               <SelectContent>
@@ -240,7 +240,7 @@ export default function CitationsMetricsPage() {
                 <CardDescription>Number of papers citing our knowledge base by year</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-[250px] w-full">
+                <div className="h-62.5 w-full">
                   <div className="flex h-full items-end gap-2">
                     {uniqueYears.map((year) => (
                       <div key={year} className="relative flex flex-1 flex-col items-center">
@@ -318,7 +318,7 @@ export default function CitationsMetricsPage() {
                   <CardDescription>How impact factor has changed over time</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-[200px] w-full">
+                  <div className="h-50 w-full">
                     <div className="flex h-full items-end gap-2">
                       {uniqueYears.map((year) => {
                         const avgImpact = metricsByYear[year].avgImpact
@@ -357,7 +357,7 @@ export default function CitationsMetricsPage() {
                 <CardDescription>Distribution of citations by journal impact factor</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-[250px] w-full">
+                <div className="h-50 w-full">
                   <div className="flex h-full items-end gap-2">
                     {impactFactorRanges.map((item) => (
                       <div key={item.range} className="relative flex flex-1 flex-col items-center">
@@ -460,7 +460,7 @@ export default function CitationsMetricsPage() {
                 <CardDescription>Authors who cite our knowledge base most frequently</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-[250px] w-full">
+                <div className="h-62.5 w-full">
                   <div className="flex h-full items-end gap-2">
                     {topAuthors.map((author) => (
                       <div key={author.name} className="relative flex flex-1 flex-col items-center">
@@ -488,7 +488,7 @@ export default function CitationsMetricsPage() {
                 <CardDescription>Frequent collaborators citing our knowledge base</CardDescription>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="relative flex h-[300px] w-full items-center justify-center rounded-lg bg-muted/20">
+                <div className="relative flex h-75 w-full items-center justify-center rounded-lg bg-muted/20">
                   {/* Center node representing your knowledge base */}
                   <div className="absolute top-1/2 left-1/2 z-10 -translate-1/2 transform">
                     <div className="flex size-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">

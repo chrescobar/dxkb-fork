@@ -70,7 +70,7 @@ const Team = () => {
             id={`${institution.name.toLowerCase().replace(/\s+/g, "-")}-team`}
             className="container mx-auto flex w-full flex-col items-center justify-center gap-6 rounded-lg border bg-card p-4 text-sm shadow-lg sm:gap-8 md:text-lg"
           >
-            <div className="relative h-[75px] w-full max-w-[300px] sm:h-[100px] sm:max-w-[400px]">
+            <div className="relative h-18 w-full max-w-75 sm:h-25 sm:max-w-100">
               <Image
                 src={institution.image}
                 alt={`${institution.name} Logo`}

@@ -247,7 +247,7 @@ export function SearchActionBar({
             <Button
               key={action.id}
               variant="secondary"
-              className="h-[60px] w-full flex-col gap-1 overflow-hidden px-1 font-normal"
+              className="h-15 w-full flex-col gap-1 overflow-hidden px-1 font-normal"
               disabled={disabled}
               onClick={() => {
                 if (action.id === "guide") {

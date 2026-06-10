@@ -184,9 +184,9 @@ const Updates = () => {
       <FooterHeader title="Updates" />
 
       <div className="mx-auto grid w-full max-w-7xl gap-8 p-4 md:p-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-[1fr_300px]">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-200">
           {/* Sidebar - Calendar & Events */}
-          <div className="order-1 flex w-full flex-col space-y-8 self-start md:sticky md:top-8 md:order-2 md:w-[300px]">
+          <div className="order-1 flex w-full flex-col space-y-8 self-start md:sticky md:top-8 md:order-2 md:w-75">
             <Card className="w-full p-0">
               <div className="w-full p-3">
                 <Calendar
@@ -204,7 +204,7 @@ const Updates = () => {
               <div className="px-4">
                 <h2 className="font-semibold">Upcoming Events</h2>
               </div>
-              <ScrollArea className="h-[300px] md:h-[400px]">
+              <ScrollArea className="h-75 md:h-100">
                 {upcomingEvents.map((event, index) => (
                   <div
                     key={index}

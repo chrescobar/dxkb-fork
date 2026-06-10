@@ -8,7 +8,7 @@ export default function Loading() {
         </div>
 
         <div className="flex items-center justify-between">
-          <div className="h-10 w-[180px] animate-pulse rounded bg-muted" />
+          <div className="h-10 w-45 animate-pulse rounded bg-muted" />
           <div className="h-9 w-32 animate-pulse rounded bg-muted" />
         </div>
 
@@ -29,7 +29,7 @@ export default function Loading() {
           <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
             <div className="space-y-4 p-6">
               <div className="h-6 w-32 animate-pulse rounded bg-muted" />
-              <div className="h-[250px] w-full animate-pulse rounded bg-muted" />
+              <div className="h-62.5 w-full animate-pulse rounded bg-muted" />
             </div>
           </div>
         </div>

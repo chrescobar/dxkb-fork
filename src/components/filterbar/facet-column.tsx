@@ -12,14 +12,14 @@ interface FacetColumnProps {
 
 export function FacetColumn({ field, items, onSelect }: FacetColumnProps) {
   return (
-    <div className="min-w-[200px] text-[12px] text-white">
+    <div className="min-w-50 text-xs text-white">
       {/* Title */}
       <div className="mb-2 border-b border-gray-500 font-semibold">
         {field.label}
       </div>
 
       {/* Values */}
-      <div className="flex max-h-[70px] flex-col overflow-y-auto">
+      <div className="flex max-h-17.5 flex-col overflow-y-auto">
         {items.length === 0 && (
           <div className="text-gray-400">No values</div>
         )}
@@ -28,7 +28,7 @@ export function FacetColumn({ field, items, onSelect }: FacetColumnProps) {
           <button
             key={item.value}
             onClick={() => onSelect(field.id, item.value)}
-            className="rounded px-1 py-[2px] text-left hover:bg-gray-700"
+            className="rounded px-1 py-0.5 text-left hover:bg-gray-700"
           >
             {item.label} ({item.count})
           </button>

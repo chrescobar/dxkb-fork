@@ -9,8 +9,8 @@ export default function Loading() {
 
         <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
           <div className="flex space-x-2">
-            <div className="h-10 w-[180px] animate-pulse rounded bg-muted" />
-            <div className="h-10 w-[180px] animate-pulse rounded bg-muted" />
+            <div className="h-10 w-45 animate-pulse rounded bg-muted" />
+            <div className="h-10 w-45 animate-pulse rounded bg-muted" />
           </div>
           <div className="h-10 w-64 animate-pulse rounded bg-muted" />
         </div>

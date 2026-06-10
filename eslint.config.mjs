@@ -27,6 +27,9 @@ export default defineConfig(
   ...nextTypescript,
   tailwind.configs.recommended,
   {
+    plugins: {
+      tailwindcss: tailwind,
+    },
     settings: {
       tailwindcss: {
         cssConfigPath: resolve(__dirname, "src/app/globals.css"),
@@ -36,6 +39,7 @@ export default defineConfig(
     rules: {
       // Custom classes defined in globals.css are valid — the plugin can't parse @apply-based class definitions
       "tailwindcss/no-custom-classname": "off",
+      "tailwindcss/no-arbitrary-value": "off",
     },
   },
   {

@@ -29,8 +29,8 @@ export default function SettingsPage() {
   if (isLoading) {
     return (
       <div className="grid gap-6">
-        <Skeleton className="h-[480px] w-full rounded-xl" />
-        <Skeleton className="h-[320px] w-full rounded-xl" />
+        <Skeleton className="h-120 w-full rounded-xl" />
+        <Skeleton className="h-80 w-full rounded-xl" />
       </div>
     );
   }

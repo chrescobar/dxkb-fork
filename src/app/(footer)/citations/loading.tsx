@@ -22,7 +22,7 @@ export default function Loading() {
         <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
           <div className="space-y-4 p-6">
             <div className="h-6 w-32 animate-pulse rounded bg-muted" />
-            <div className="h-[200px] w-full animate-pulse rounded bg-muted" />
+            <div className="h-50 w-full animate-pulse rounded bg-muted" />
           </div>
         </div>
 

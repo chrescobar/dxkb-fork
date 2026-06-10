@@ -37,7 +37,7 @@ export function GenomeShell({
   }
 
   const actionStrip = (
-    <div className="flex h-full min-h-0 w-[72px] shrink-0 flex-col border-l bg-muted">
+    <div className="flex h-full min-h-0 w-18 shrink-0 flex-col border-l bg-muted">
       {/* Top toggle button */}
       <div className="border-b p-2">
         {panelExpanded ? (

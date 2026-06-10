@@ -744,7 +744,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           </div>
         </div>
       )}
-      <div className="z-50 mb-2 flex w-[100%] justify-end px-5" ref={controlsRef}>
+      <div className="z-50 mb-2 flex w-full justify-end px-5" ref={controlsRef}>
           <div className="relative inline-block text-left" ref={columnMenuRef}> {/* This is the button for changing the visibility of columns in the table */}
             <Button
               className="mr-2 flex w-full justify-end rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"

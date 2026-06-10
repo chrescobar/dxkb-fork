@@ -151,7 +151,7 @@ export function WorkspaceActionBar({
             <Button
               key={action.id}
               variant="secondary"
-              className="h-[60px] w-full flex-col gap-1 font-normal"
+              className="h-15 w-full flex-col gap-1 font-normal"
               disabled={disabled}
               onClick={() =>
                 action.id === "guide"

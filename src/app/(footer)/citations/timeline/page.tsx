@@ -80,7 +80,7 @@ export default function CitationsTimelinePage() {
               defaultValue="all"
               onValueChange={(value) => setTypeFilter(value ?? "")}
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-45">
                 <SelectValue placeholder="Publication Type" />
               </SelectTrigger>
               <SelectContent>
@@ -102,7 +102,7 @@ export default function CitationsTimelinePage() {
               defaultValue="newest"
               onValueChange={(value) => setSortOption(value ?? "")}
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-45">
                 <SortDesc className="mr-2 size-4" />
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
@@ -172,7 +172,7 @@ export default function CitationsTimelinePage() {
                                 className="citation-card-title"
                               >
                                 {citation.title}
-                                <ExternalLink className="ml-1 inline-block size-4 flex-shrink-0" />
+                                <ExternalLink className="ml-1 inline-block size-4 shrink-0" />
                               </Link>
                               <p className="citation-card-meta">{citation.authors}</p>
                               <p className="citation-card-journal">{citation.journal}</p>

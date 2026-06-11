@@ -695,7 +695,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
       {tooltipData && (
         <div
           role="status"
-          className="pointer-events-none fixed z-50 rounded-md border border-black bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md"
+          className="pointer-events-none fixed z-50 rounded-md border border-foreground/80 bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md"
           style={
             activationSource === "legend"
               // Center exactly on the anchor via transform (avoids width-

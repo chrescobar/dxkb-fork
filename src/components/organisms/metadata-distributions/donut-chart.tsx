@@ -419,12 +419,14 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
     const uniformScale = Math.min(rect.width / chartSize, rect.height / chartSize);
     const letterboxX = (rect.width - chartSize * uniformScale) / 2;
     const letterboxY = (rect.height - chartSize * uniformScale) / 2;
-    // Anchor at the inner edge of the arc at its midAngle — always
-    // unambiguously inside the slice. Include the pop translation so the
-    // caret points at the visually-displaced arc, not the base SVG position.
+    // Anchor at the highest (minimum-Y) point of the arc face at midAngle,
+    // accounting for pop translation. For upper-half arcs (cos > 0) the outer
+    // rim is higher on screen than the inner rim, so use outerRadius. For
+    // lower-half arcs (cos < 0) the inner rim is higher; use innerRadius.
     const midAngle = (arc.startAngle + arc.endAngle) / 2;
-    const svgX = Math.sin(midAngle) * innerRadius + chartCenter + arc.popX;
-    const svgY = -Math.cos(midAngle) * innerRadius + chartCenter + arc.popY;
+    const anchorRadius = Math.cos(midAngle) > 0 ? outerRadius : innerRadius;
+    const svgX = Math.sin(midAngle) * anchorRadius + chartCenter + arc.popX;
+    const svgY = -Math.cos(midAngle) * anchorRadius + chartCenter + arc.popY;
     const clientX = rect.left + letterboxX + svgX * uniformScale;
     const clientY = rect.top + letterboxY + svgY * uniformScale;
     // Clamp the tooltip center to stay within the SVG bounds so it doesn't

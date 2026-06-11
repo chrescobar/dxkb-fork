@@ -128,8 +128,8 @@ describe("ChartLegendPill", () => {
         color="#abc"
         active={false}
         variant="row"
-        onActivate={() => {}}
-        onDeactivate={() => {}}
+        onActivate={vi.fn()}
+        onDeactivate={vi.fn()}
       >
         <span>COVID-19 UK</span>
         <span>410,373</span>
@@ -148,8 +148,8 @@ describe("ChartLegendPill", () => {
         active={false}
         variant="row"
         ariaLabel="COVID-19 UK: 410,373"
-        onActivate={() => {}}
-        onDeactivate={() => {}}
+        onActivate={vi.fn()}
+        onDeactivate={vi.fn()}
       >
         <span>COVID-19 UK</span>
         <span>410,373</span>
@@ -168,8 +168,8 @@ describe("ChartLegendPill", () => {
         label="Alpha"
         color="oklch(0.85 0.18 90)"
         active={false}
-        onActivate={() => {}}
-        onDeactivate={() => {}}
+        onActivate={vi.fn()}
+        onDeactivate={vi.fn()}
       />,
     );
 

@@ -179,4 +179,17 @@ describe("AmrBarStackChart", () => {
       ]),
     );
   });
+
+  it("renders the title as an h3 heading in the happy path (WCAG 1.3.1)", () => {
+    render(
+      <AmrBarStackChart
+        title="AMR Profile"
+        data={sampleData}
+      />,
+    );
+
+    expect(
+      screen.getByRole("heading", { level: 3, name: "AMR Profile" }),
+    ).toBeInTheDocument();
+  });
 });

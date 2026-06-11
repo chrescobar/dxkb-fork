@@ -115,4 +115,17 @@ describe("BarStackChart", () => {
 
     expect(sv1Pill).not.toHaveAttribute("data-active", "true");
   });
+
+  it("renders the title as an h3 heading in the happy path (WCAG 1.3.1)", () => {
+    render(
+      <BarStackChart
+        title="Serotype History"
+        data={twoYearData}
+      />,
+    );
+
+    expect(
+      screen.getByRole("heading", { level: 3, name: "Serotype History" }),
+    ).toBeInTheDocument();
+  });
 });

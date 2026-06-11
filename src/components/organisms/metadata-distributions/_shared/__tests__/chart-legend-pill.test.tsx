@@ -119,4 +119,45 @@ describe("ChartLegendPill", () => {
     );
     expect(screen.getByText("Custom content")).toBeInTheDocument();
   });
+
+  it("uses visible children as the accessible name in row variant (WCAG 2.5.3)", () => {
+    render(
+      <ChartLegendPill
+        label="COVID-19 UK"
+        color="#abc"
+        active={false}
+        variant="row"
+        onActivate={() => {}}
+        onDeactivate={() => {}}
+      >
+        <span>COVID-19 UK</span>
+        <span>410,373</span>
+      </ChartLegendPill>,
+    );
+
+    const button = screen.getByRole("button");
+    expect(button).toHaveAccessibleName(/COVID-19 UK.*410,373/);
+  });
+
+  it("does not let ariaLabel shadow visible children (WCAG 2.5.3 regression)", () => {
+    render(
+      <ChartLegendPill
+        label="COVID-19 UK"
+        color="#abc"
+        active={false}
+        variant="row"
+        ariaLabel="COVID-19 UK: 410,373"
+        onActivate={() => {}}
+        onDeactivate={() => {}}
+      >
+        <span>COVID-19 UK</span>
+        <span>410,373</span>
+      </ChartLegendPill>,
+    );
+
+    const button = screen.getByRole("button");
+    expect(button.getAttribute("aria-label")).toBeNull();
+    expect(button).toHaveTextContent("COVID-19 UK");
+    expect(button).toHaveTextContent("410,373");
+  });
 });

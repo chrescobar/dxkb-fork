@@ -36,7 +36,7 @@ export function ChartLegendPill({
     <button
       type="button"
       aria-pressed={ariaPressed}
-      aria-label={ariaLabel ?? label}
+      aria-label={children ? undefined : (ariaLabel ?? label)}
       data-active={active ? "true" : undefined}
       className={cn(
         "flex cursor-default items-center gap-1.5 transition-colors",

@@ -67,7 +67,7 @@ const chartSize = 160;
 const chartCenter = chartSize / 2;
 const outerRadius = 66;
 const innerRadius = 38;
-const popDistance = 4;
+const popDistance = 8;
 const tooltipEstimatedWidth = 160;
 const tooltipEstimatedHeight = 32;
 const aggregateLabel = "Others";
@@ -311,6 +311,9 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
 
   const svgRef = useRef<SVGSVGElement>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [activationSource, setActivationSource] = useState<"cursor" | "legend">(
+    "cursor",
+  );
   const activeId = hoveredId;
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
     useTooltip<DonutDatum & { pct: number }>();
@@ -412,10 +415,10 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
     const uniformScale = Math.min(rect.width / chartSize, rect.height / chartSize);
     const letterboxX = (rect.width - chartSize * uniformScale) / 2;
     const letterboxY = (rect.height - chartSize * uniformScale) / 2;
-    // Outer-edge midpoint in SVG space, then back to client coords. Add a
-    // small radial nudge so the tooltip clears the popped slice.
+    // Anchor at the popped slice's outer-edge midpoint, so the tooltip sits
+    // touching the arc rather than floating away from it.
     const midAngle = (arc.startAngle + arc.endAngle) / 2;
-    const anchorRadius = outerRadius + popDistance + 6;
+    const anchorRadius = outerRadius + popDistance;
     const svgX = Math.sin(midAngle) * anchorRadius + chartCenter;
     const svgY = -Math.cos(midAngle) * anchorRadius + chartCenter;
     const clientX = rect.left + letterboxX + svgX * uniformScale;
@@ -424,6 +427,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
   };
 
   const activateFromLegend = (id: string) => {
+    setActivationSource("legend");
     activateHover(id);
     const arc = arcData.find((a) => a.slice.id === id);
     if (arc) showTooltipForArcAnchoredToSvg(arc);
@@ -458,6 +462,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
       let a = angle;
       if (a < arc.startAngle) a += Math.PI * 2;
       if (a >= arc.startAngle && a <= arc.endAngle) {
+        setActivationSource("cursor");
         showTooltipForArc(arc, event.clientX, event.clientY);
         activateHover(arc.slice.id);
         return;
@@ -684,6 +689,12 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
             tooltipTop ?? 0,
             tooltipEstimatedWidth,
             tooltipEstimatedHeight,
+            // Legend activation anchors at the popped arc's outer-midpoint; a
+            // tight offset keeps the tooltip touching the slice. Cursor
+            // activation keeps the larger nudge so the tooltip doesn't sit
+            // under the user's pointer.
+            activationSource === "legend" ? 4 : 12,
+            activationSource === "legend" ? 4 : -36,
           )}
         >
           {tooltipData.label}: {numberFormatter.format(tooltipData.value)}

@@ -707,6 +707,35 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
             activationSource === "legend" ? 4 : -36,
           )}
         >
+          {/* Caret pointing toward the arc. A 12×12 square rotated 45° sits
+              half-inside the tooltip so its two outer border edges form an
+              arrow. Direction flips based on which half of the circle the arc
+              is on. Not shown for cursor-driven tooltips (cursor context is
+              already clear from pointer position). */}
+          {activationSource === "legend" && (
+            <span
+              aria-hidden="true"
+              className="absolute size-3 bg-popover"
+              style={{
+                top: "50%",
+                transform: "translateY(-50%) rotate(45deg)",
+                // Only the two outer edges form the visible arrow. The global
+                // `* { border-color: --border }` rule pre-fills all sides, so
+                // we must explicitly silence the inner sides with transparent.
+                ...(legendArcOnRight
+                  ? {
+                      right: -7,
+                      borderTopWidth: 1, borderRightWidth: 1,
+                      borderBottomColor: "transparent", borderLeftColor: "transparent",
+                    }
+                  : {
+                      left: -7,
+                      borderBottomWidth: 1, borderLeftWidth: 1,
+                      borderTopColor: "transparent", borderRightColor: "transparent",
+                    }),
+              }}
+            />
+          )}
           {tooltipData.label}: {numberFormatter.format(tooltipData.value)}
           <span className="ml-1 text-muted-foreground">
             ({tooltipData.pct}%)

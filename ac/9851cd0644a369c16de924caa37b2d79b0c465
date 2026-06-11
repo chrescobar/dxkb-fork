@@ -1,0 +1,24 @@
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  s_4bc2e7ba8a3e1e::t_7bba1da1c9711c 465
+  s_4bc2e7ba8a3e1e::t_b35d78c2d2d768 314-316
+  s_4bc2e7ba8a3e1e::t_2a67c0179ab64d 418-419,421
+  s_4bc2e7ba8a3e1e::t_5f43947b65b199 70
+  s_4bc2e7ba8a3e1e::t_795e7f0db1d91d 430
+  s_4bc2e7ba8a3e1e::t_a3ee00164f0bde 692-697
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "ac9851cd0644a369c16de924caa37b2d79b0c465",
+  "prompts": {},
+  "sessions": {
+    "s_4bc2e7ba8a3e1e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ab5b8c6a-fa85-4368-a4f0-f5d8f1c92c09",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

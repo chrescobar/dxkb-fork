@@ -161,4 +161,23 @@ describe("ChartLegendPill", () => {
     expect(button).toHaveTextContent("COVID-19 UK");
     expect(button).toHaveTextContent("410,373");
   });
+
+  it("renders the swatch with a contrast-meeting border (WCAG 1.4.11)", () => {
+    render(
+      <ChartLegendPill
+        label="Alpha"
+        color="oklch(0.85 0.18 90)"
+        active={false}
+        onActivate={() => {}}
+        onDeactivate={() => {}}
+      />,
+    );
+
+    const swatch = screen
+      .getByRole("button")
+      .querySelector('span[aria-hidden="true"]');
+
+    expect(swatch).not.toBeNull();
+    expect(swatch?.getAttribute("style")).toMatch(/border:\s*1px solid/);
+  });
 });

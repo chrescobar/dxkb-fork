@@ -75,7 +75,10 @@ export function ChartLegendPill({
     >
       <span
         className="inline-block h-1.5 w-1.5 shrink-0 rounded-full"
-        style={{ background: color }}
+        style={{
+          background: color,
+          border: "1px solid color-mix(in srgb, var(--foreground) 70%, transparent)",
+        }}
         aria-hidden="true"
       />
       {children ?? label}

@@ -301,6 +301,19 @@ describe("DonutChart", () => {
     ).toBeInTheDocument();
   });
 
+  it("renders the title as an h3 heading (WCAG 1.3.1)", () => {
+    render(
+      <DonutChart
+        title="Genus"
+        data={[{ label: "Alpha", value: 10 }]}
+      />,
+    );
+
+    expect(
+      screen.getByRole("heading", { level: 3, name: "Genus" }),
+    ).toBeInTheDocument();
+  });
+
   it("exposes aria-pressed on legend pills and toggles on click (WCAG 4.1.2)", () => {
     render(
       <DonutChart

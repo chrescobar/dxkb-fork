@@ -6,7 +6,7 @@ import { Group } from "@visx/group";
 import { scaleBand, scaleLinear } from "@visx/scale";
 import { useTooltip } from "@visx/tooltip";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { chartTooltipStyle } from "@/lib/services/organisms/chart-utils";
 import { numberFormatter } from "@/lib/services/organisms/utils";
 
@@ -58,7 +58,7 @@ export function BarChart({
   return (
     <Card className="relative rounded-lg" size="sm">
       <CardHeader>
-        <CardTitle className="text-sm! font-semibold!">{title}</CardTitle>
+        <h3 className="text-sm font-semibold m-0">{title}</h3>
       </CardHeader>
       <CardContent>
         {errorMessage || yearData.length === 0 ? (

@@ -442,7 +442,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
     <Card className="relative rounded-lg" size="sm">
       <CardContent className="flex flex-1 flex-col">
         <div className="flex items-start gap-2">
-          <p className="text-sm font-semibold shrink-0 max-w-[60%]">{title}</p>
+          <h3 className="text-sm font-semibold shrink-0 max-w-[60%] m-0">{title}</h3>
           {tabs && tabs.length > 1 && (
             <div className="bg-muted/50 ml-auto flex min-w-0 items-center gap-0.5 rounded-md p-0.5">
               {(() => {

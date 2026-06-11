@@ -149,7 +149,7 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
     return (
       <Card className="relative rounded-lg flex-1" size="sm">
         <CardContent className="flex flex-1 flex-col">
-          <p className="text-sm font-semibold">{title}</p>
+          <h3 className="text-sm font-semibold m-0">{title}</h3>
           <div className="flex flex-1 items-center justify-center">
             <ChartStatusMessage errorMessage={errorMessage} />
           </div>

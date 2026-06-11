@@ -1,0 +1,24 @@
+src/components/organisms/metadata-distributions/__tests__/donut-chart.test.tsx
+  s_4bc2e7ba8a3e1e::t_4be45619bbf44f 226
+  s_4bc2e7ba8a3e1e::t_1bf2aa4636f6e6 246
+src/components/organisms/metadata-distributions/_shared/__tests__/chart-legend-pill.test.tsx
+  s_4bc2e7ba8a3e1e::t_532b52a4dfe0a8 121
+src/components/organisms/metadata-distributions/_shared/chart-legend-pill.tsx
+  s_4bc2e7ba8a3e1e::t_532b52a4dfe0a8 1,39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "937e4f158a4544dd47e23717fcfbcdaaa9d3fc66",
+  "prompts": {},
+  "sessions": {
+    "s_4bc2e7ba8a3e1e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ab5b8c6a-fa85-4368-a4f0-f5d8f1c92c09",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -112,7 +112,7 @@ export async function MetadataDistributions({
   );
 
   return (
-    <section className="@container flex flex-col gap-3">
+    <section className="@container flex flex-col gap-3" data-testid="metadata-distributions">
       <div>
         <h2 className="text-lg font-semibold tracking-normal">
           Metadata Distributions

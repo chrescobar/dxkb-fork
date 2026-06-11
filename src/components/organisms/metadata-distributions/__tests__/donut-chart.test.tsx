@@ -223,7 +223,7 @@ describe("DonutChart", () => {
       />,
     );
 
-    const pill = screen.getByRole("button", { name: "Escherichia: 100" });
+    const pill = screen.getByRole("button", { name: /Escherichia/ });
     expect(pill).not.toHaveAttribute("data-active");
     fireEvent.mouseEnter(pill);
     expect(pill).toHaveAttribute("data-active", "true");
@@ -243,7 +243,7 @@ describe("DonutChart", () => {
       />,
     );
 
-    const pill = screen.getByRole("button", { name: "Escherichia: 100" });
+    const pill = screen.getByRole("button", { name: /Escherichia/ });
     fireEvent.mouseEnter(pill);
     expect(pill).toHaveAttribute("data-active", "true");
 

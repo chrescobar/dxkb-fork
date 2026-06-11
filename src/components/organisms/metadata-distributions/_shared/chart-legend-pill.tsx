@@ -1,4 +1,4 @@
-import type { FocusEvent } from "react";
+import { Children, type FocusEvent } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -36,7 +36,7 @@ export function ChartLegendPill({
     <button
       type="button"
       aria-pressed={ariaPressed}
-      aria-label={children ? undefined : (ariaLabel ?? label)}
+      aria-label={Children.count(children) > 0 ? undefined : (ariaLabel ?? label)}
       data-active={active ? "true" : undefined}
       className={cn(
         "flex cursor-default items-center gap-1.5 transition-colors",

@@ -118,6 +118,7 @@ describe("ChartLegendPill", () => {
       </ChartLegendPill>,
     );
     expect(screen.getByText("Custom content")).toBeInTheDocument();
+    expect(screen.getByRole("button").getAttribute("aria-label")).toBeNull();
   });
 
   it("uses visible children as the accessible name in row variant (WCAG 2.5.3)", () => {

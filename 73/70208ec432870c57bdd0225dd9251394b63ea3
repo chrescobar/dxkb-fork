@@ -1,0 +1,21 @@
+src/components/organisms/metadata-distributions/_shared/chart-legend-pill.tsx
+  s_4bc2e7ba8a3e1e::t_f2872c16912c5a 72-75
+src/components/organisms/metadata-distributions/_shared/__tests__/chart-legend-pill.test.tsx
+  s_4bc2e7ba8a3e1e::t_e82643f10e4a54 78-95
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "7370208ec432870c57bdd0225dd9251394b63ea3",
+  "prompts": {},
+  "sessions": {
+    "s_4bc2e7ba8a3e1e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ab5b8c6a-fa85-4368-a4f0-f5d8f1c92c09",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

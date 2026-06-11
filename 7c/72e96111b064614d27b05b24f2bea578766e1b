@@ -1,0 +1,28 @@
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  s_4bc2e7ba8a3e1e::t_74157451d0ca06 445
+src/components/organisms/metadata-distributions/bar-stack-chart.tsx
+  s_4bc2e7ba8a3e1e::t_275c71f2e43504 64
+src/components/organisms/metadata-distributions/__tests__/donut-chart.test.tsx
+  s_4bc2e7ba8a3e1e::t_d8ab01775765f8 304-316
+src/components/organisms/metadata-distributions/amr-bar-stack-chart.tsx
+  s_4bc2e7ba8a3e1e::t_84b277cc4e7df8 152
+src/components/organisms/metadata-distributions/bar-chart.tsx
+  s_4bc2e7ba8a3e1e::t_83a31e1f05a0fb 61
+  s_4bc2e7ba8a3e1e::t_6f09b3abee25ec 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "7c72e96111b064614d27b05b24f2bea578766e1b",
+  "prompts": {},
+  "sessions": {
+    "s_4bc2e7ba8a3e1e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ab5b8c6a-fa85-4368-a4f0-f5d8f1c92c09",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

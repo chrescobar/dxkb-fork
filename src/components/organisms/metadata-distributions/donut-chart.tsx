@@ -598,7 +598,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
                       active={activeId === slice.id}
                       dimmed={isHidden}
                       variant="row"
-                      ariaLabel={`${slice.label}: ${numberFormatter.format(slice.value)}`}
+                      ariaPressed={!isHidden}
                       onActivate={() => activateHover(slice.id)}
                       onDeactivate={deactivate}
                       onClick={() => toggleSlice(slice.id)}
@@ -627,6 +627,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
                       color={colorScale(slice.id)}
                       active={activeId === slice.id}
                       dimmed={isHidden}
+                      ariaPressed={!isHidden}
                       ariaLabel={`${slice.label}: ${numberFormatter.format(slice.value)}`}
                       onActivate={() => activateHover(slice.id)}
                       onDeactivate={deactivate}

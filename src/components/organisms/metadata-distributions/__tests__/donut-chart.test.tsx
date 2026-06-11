@@ -300,4 +300,26 @@ describe("DonutChart", () => {
       within(screen.getByRole("img")).getByLabelText("B. abortus: 50"),
     ).toBeInTheDocument();
   });
+
+  it("exposes aria-pressed on legend pills and toggles on click (WCAG 4.1.2)", () => {
+    render(
+      <DonutChart
+        title="Genus"
+        data={[
+          { label: "Alpha", value: 10 },
+          { label: "Beta", value: 5 },
+        ]}
+        layout="side"
+      />,
+    );
+
+    const alphaPill = screen.getByRole("button", { name: /Alpha/ });
+    expect(alphaPill).toHaveAttribute("aria-pressed", "true");
+
+    fireEvent.click(alphaPill);
+    expect(alphaPill).toHaveAttribute("aria-pressed", "false");
+
+    fireEvent.click(alphaPill);
+    expect(alphaPill).toHaveAttribute("aria-pressed", "true");
+  });
 });

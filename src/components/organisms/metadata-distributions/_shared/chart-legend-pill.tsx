@@ -69,7 +69,10 @@ export function ChartLegendPill({
       }
       onMouseEnter={onActivate}
       onMouseLeave={onDeactivate}
-      onFocus={onFocus}
+      onFocus={(event) => {
+        onActivate();
+        onFocus?.(event);
+      }}
       onBlur={onDeactivate}
       onClick={onClick}
     >

@@ -75,6 +75,24 @@ describe("ChartLegendPill", () => {
     expect(onDeactivate).toHaveBeenCalledTimes(2);
   });
 
+  it("calls onActivate on focus so keyboard users get the same hover behavior", () => {
+    const onActivate = vi.fn();
+    const onFocus = vi.fn();
+    render(
+      <ChartLegendPill
+        label="Sv1"
+        color="red"
+        active={false}
+        onActivate={onActivate}
+        onDeactivate={vi.fn()}
+        onFocus={onFocus}
+      />,
+    );
+    fireEvent.focus(screen.getByRole("button"));
+    expect(onActivate).toHaveBeenCalledTimes(1);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+  });
+
   it("calls onClick when clicked", () => {
     const onClick = vi.fn();
     render(

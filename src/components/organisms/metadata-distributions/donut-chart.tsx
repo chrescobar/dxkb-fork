@@ -314,9 +314,10 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
   const [activationSource, setActivationSource] = useState<"cursor" | "legend">(
     "cursor",
   );
-  // When a legend pill activates a right-half arc, the tooltip must grow
-  // leftward (into the chart area) so it doesn't cover the legend column.
+  // legendArcOnRight: arc is in the right half → tooltip grows leftward (away from legend).
+  // legendArcOnBottom: arc is in the bottom half → tooltip floats ABOVE anchor with a ▼ caret.
   const [legendArcOnRight, setLegendArcOnRight] = useState(false);
+  const [legendArcOnBottom, setLegendArcOnBottom] = useState(false);
   const activeId = hoveredId;
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
     useTooltip<DonutDatum & { pct: number }>();
@@ -426,10 +427,11 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
     const svgY = -Math.cos(midAngle) * anchorRadius + chartCenter;
     const clientX = rect.left + letterboxX + svgX * uniformScale;
     const clientY = rect.top + letterboxY + svgY * uniformScale;
-    // Track which half of the circle the arc is on so the render can flip the
-    // tooltip leftward for right-side arcs, keeping it inside the SVG region
-    // and away from the legend column.
+    // Track arc quadrant so the caret and Y-offset can be chosen correctly.
+    // Right-half: tooltip grows leftward, caret points ► (right).
+    // Bottom-half: tooltip floats ABOVE anchor, caret points ▼ (down).
     setLegendArcOnRight(Math.sin(midAngle) > 0);
+    setLegendArcOnBottom(Math.cos(midAngle) < 0);
     showTooltipForArc(arc, clientX, clientY);
   };
 
@@ -704,7 +706,12 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
               : tooltipEstimatedWidth,
             tooltipEstimatedHeight,
             activationSource === "legend" ? 4 : 12,
-            activationSource === "legend" ? 4 : -36,
+            // Bottom-half arcs: float tooltip ABOVE anchor so it doesn't
+            // spill below the card. Negative offsetY moves it up by
+            // (height + gap), putting the bottom of the tooltip near the arc.
+            activationSource === "legend"
+              ? (legendArcOnBottom ? -(tooltipEstimatedHeight + 8) : 4)
+              : -36,
           )}
         >
           {/* Caret pointing toward the arc. A 12×12 square rotated 45° sits
@@ -716,24 +723,34 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
             <span
               aria-hidden="true"
               className="absolute size-3 bg-popover"
-              style={{
-                top: "50%",
-                transform: "translateY(-50%) rotate(45deg)",
-                // Only the two outer edges form the visible arrow. The global
-                // `* { border-color: --border }` rule pre-fills all sides, so
-                // we must explicitly silence the inner sides with transparent.
-                ...(legendArcOnRight
-                  ? {
+              style={
+                legendArcOnBottom
+                  ? // Bottom-half arc: tooltip ABOVE anchor → caret at bottom center ▼
+                    {
+                      bottom: -7,
+                      left: "50%",
+                      transform: "translateX(-50%) rotate(45deg)",
+                      borderRightWidth: 1, borderBottomWidth: 1,
+                      borderTopColor: "transparent", borderLeftColor: "transparent",
+                    }
+                  : legendArcOnRight
+                  ? // Top-right arc: tooltip to the left → caret on right ►
+                    {
+                      top: "50%",
                       right: -7,
+                      transform: "translateY(-50%) rotate(45deg)",
                       borderTopWidth: 1, borderRightWidth: 1,
                       borderBottomColor: "transparent", borderLeftColor: "transparent",
                     }
-                  : {
+                  : // Top-left arc: tooltip to the right → caret on left ◄
+                    {
+                      top: "50%",
                       left: -7,
+                      transform: "translateY(-50%) rotate(45deg)",
                       borderBottomWidth: 1, borderLeftWidth: 1,
                       borderTopColor: "transparent", borderRightColor: "transparent",
-                    }),
-              }}
+                    }
+              }
             />
           )}
           {tooltipData.label}: {numberFormatter.format(tooltipData.value)}

@@ -1,0 +1,413 @@
+src/components/ui/radio-group.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 13,24,31,33
+src/components/ui/alert-dialog.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 33,55,85,100,126
+src/components/workspace/file-viewer/viewers/zoomable-image.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 19,63
+src/components/ui/dropdown-menu.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 44,67,88,113,135,159,166,201,207,227,240
+src/components/workspace/workspace-table-columns.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 90,103,116,130,144
+src/app/services/(genomics)/blast/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 714
+src/components/ui/carousel.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 188,218
+src/app/(auth)/layout.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 10,12
+src/components/jobs/jobs-browser.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 374,412,417
+src/styles/theme-switcher-floating.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 46,49,89,94,103
+src/app/viewer/structure/[[...path]]/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 57,61,71
+src/app/services/(metagenomics)/metagenomic-binning/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 282,319,618,719
+src/components/ui/date-picker-input.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 181,185,206
+src/components/workspace/workspace-breadcrumbs.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 59,64,76-77,83,85,96,98,104,113,136,139,145,154,171,175,178,182,198,200,206,216
+src/components/detail-panel/detail-header.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 12
+src/app/(footer)/privacy-policy/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 15,20,22,29,39-41,52,54
+src/components/ui/logo.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 48
+src/components/workspace/edit-type-dialog.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 78,101,116
+src/components/search/welcome-search.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 23,35,55,67,72,78,84,90,96,138,160,163,168
+src/components/detail-panel/detail-key-value.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 23,60,63
+src/app/(footer)/citations/components/citation-nav.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 13
+src/app/jobs/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 9
+src/app/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 14,17
+src/app/services/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 46,55
+src/components/ui/button.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 9,14,16-17
+src/components/workspace/file-viewer/viewers/csv-viewer.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 138,146,154,161,167,170,176
+eslint.config.mjs
+  s_c61a03cbec0020::t_05a850d6be3933 5,7-10,28-44
+src/app/(footer)/faq/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 58
+src/app/(footer)/help/components/contact-us.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 8-10,14,17,48
+src/components/workspace/file-viewer/viewers/__tests__/molstar-status-overlay.test.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 64,76
+src/components/organisms/genera-grid/featured-organisms-grid.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 24
+src/app/services/(viral-tools)/sars-cov2-genome-analysis/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 301,363,783
+src/app/services/(genomics)/genome-alignment/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 306,310-311,316,335,399,412,437,453,494
+src/app/services/(genomics)/genome-annotation/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 208,273
+src/components/jobs/jobs-shell.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 39,44,50,56,62,75,86
+src/components/search/results-overview.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 28-29,45
+src/components/ui/pagination.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 29,115
+src/components/headers/footer-header.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 9,11
+src/components/ui/sheet.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 30,52,69,79,89,102
+src/components/ui/tanstack-form.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 63
+src/components/workspace/file-viewer/viewers/codemirror-viewer.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 397,407
+src/components/shared/file-table.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 104,108,110,173,187-189,382
+src/components/ui/select.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 44,52,86,105,120,125,140,153,169
+src/components/ui/alert.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 7,13,58
+src/app/services/(utilities)/fastq-utilities/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 389,397,408,416,419,481,518,632
+src/app/(footer)/help/components/help-faqs.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 6,8,10-11
+src/components/ui/popover.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 40
+src/components/workspace/create-folder-dialog.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 52,82
+src/app/(footer)/citations/timeline/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 72,83,105-106,138-139,150,175,193,207
+src/components/services/list-data.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 348
+src/components/services/service-header.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 76
+src/components/ui/slider.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 37,40,51
+src/components/ui/tooltip.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 53,59
+src/components/workspace/workspace-browser.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 428,529,542
+src/components/workspace/upload-dialog.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 161,164,169,192,199-200,225,229,232,236,239,242,253,261,266,271,279,301
+src/components/organisms/genera-grid/genera-grid.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 34
+src/components/ui/news-carousel.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 52-53,64,67-68,83-84
+src/components/filterbar/filter-bar.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 77,83,105,111,117,137,139,151
+src/app/(footer)/team/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 71,73,89,103
+src/components/workspace/workspace-item-details.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 96,98,124
+src/components/workspace/workspace-item-icon.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 80
+src/components/services/dialog-info-popup.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 34-36,49,59,70
+src/app/services/(protein-tools)/meta-cats/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 465,658,660,775,811,822,866
+src/app/settings/layout.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 10,12-13
+src/components/ui/theme-content.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 30
+src/components/navbars/user-avatar-dropdown.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 49,59-60,63,77,95,102,108,114,122,132,141
+src/app/services/(protein-tools)/proteome-comparison/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 419,441,483,650,652,686,719,754,756,808
+src/app/services/(genomics)/variation-analysis/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 212,249
+src/app/(footer)/funding/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 26
+src/app/settings/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 32-33,41
+src/app/organisms/layout.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 12
+src/app/(footer)/related-resources/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 67
+src/components/filterbar/selected-filters.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 19
+src/components/organisms/shared/section-error.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 32
+src/components/timeline/timeline.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 32
+src/components/ui/command.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 28,58,78,124,152,165,185,234,248
+src/app/(footer)/contact/components/contact-form.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 16-17,21,25-26,29,37-38,41,45,50-51,54,62,66,68,72,74,78,80,86-87,90,94,98,110,117,145,160,206
+src/app/services/(viral-tools)/viral-assembly/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 463
+src/components/workspace/workspace-shell.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 43,48,57,63,72,106,114,118,128,142
+src/app/services/(protein-tools)/msa-snp-analysis/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 771-772,1030-1031,1036,1059-1060,1118-1119,1124,1147-1148,1270
+src/components/services/debugging-panel.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 77,94
+src/components/taxonomy/tax-id-selector.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 154,175,186,189,196,198,201-202,210,218,226,237
+src/components/workspace/file-viewer/viewers/svg-viewer.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 26,34,42
+src/components/workspace/download-options-dialog.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 119,145,154,189
+src/app/services/(viral-tools)/sars-cov2-wastewater-analysis/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 317,353,609
+src/app/services/(viral-tools)/influenza-ha-subtype/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 202,211,280,349
+src/components/statistics/db-statistics-shell.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 5,7,9
+src/app/(auth)/sign-up/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 113,133,143,164,186,208,229,250,271,292,313,322,333,335,352,361,374,376,398,414,426
+src/components/workspace/workspace-table-rows.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 65-66,190
+src/components/navbars/desktop-navbar.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 48-49,64,96,109,114,236
+src/app/(footer)/privacy-policy/components/privacy-sidebar.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 15,19,32-33,39,47-49,52
+src/components/ui/badge.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 8,14
+src/components/ui/accordion.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 38,59,64
+src/components/ui/input.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 12
+src/components/jobs/jobs-pagination.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 75-76,105,109,115,125,135,139
+src/components/jobs/jobs-action-bar.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 95,100,102,104
+src/app/services/(phylogenomics)/viral-genome-tree/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 459,750,759,777,785,806,833
+src/app/services/(metagenomics)/metagenomic-read-mapping/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 209,246,541
+src/app/(footer)/publications/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 180,182,191,193,196-197,380,400-401,414,427,430,435,439-440,456,511
+src/components/auth/su-login-dialog.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 77,79
+src/components/shared/data-table.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 169,200,204,213,273,703,706,715,722,724,737,742,747,750,757-758,764,782,793,808,819,831,841,844,853,855,860,862,868,876,884,886-887,912,918,930,932,948,969,972,1016,1042,1048-1049,1068,1085,1114,1131
+src/components/ui/separator.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 17
+src/app/(footer)/citations/timeline/loading.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 3,6-7,12-13,15,25-27,37-38,41-42,44-47,49-50
+src/components/filterbar/facet-panel.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 160
+src/components/filterbar/facet-column.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 15,17,22,31
+src/components/workspace/delete-confirm-dialog.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 93
+src/components/ui/avatar.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 20,33,49,62,78,93
+src/components/workspace/workspace-object-selector.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 337,346,417,425,428,439,452,460-461,484,497,505,527,538,540,544
+src/components/ui/table.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 52,62,72,95
+src/app/services/(protein-tools)/gene-protein-tree/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 729,738,756,764,785,812
+src/app/services/(genomics)/similar-genome-finder/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 235,478-479
+src/components/detail-panel/detail-collapsible.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 36,38
+src/app/(footer)/citations/metrics/loading.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 3,6-7,10-12,19-22,28,30-32,41,44-45,47-50,52-53
+src/components/ui/progress.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 32,48,67
+src/app/(auth)/sign-in/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 75,95,105,126,129,136,145,156,158,177,187,191,196,214,226
+src/app/(footer)/help/components/help-topics.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 8-9,12,56,98
+src/components/search/search-bar.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 90,99,114,118,125
+src/components/jobs/job-status-pill.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 85,102,111,115,128,133
+src/components/workspace/job-metadata-card.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 39,67,69,78,88,90
+src/app/(footer)/citations/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 202,211,230-231,269,367,383,401
+src/components/genome/genome-shell.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 40,49,51,60,62,75-76,87
+src/components/quick-links/quick-viral.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 14,16,18,29,37,45,51,67,75,82,88,160
+src/components/organisms/genera-grid/genera-card.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 34,50,57
+src/components/settings/password-input.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 39,43
+src/components/ui/label.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 12
+src/components/workspace/file-viewer/viewers/molstar-status-overlay.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 25,40
+src/components/workspace/file-viewer/viewers/structure-viewer.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 28,31
+src/components/ui/navigation-menu.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 37,59,87,111,116,131,145,150
+src/components/detail-panel/detail-empty-state.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 3
+src/app/(auth)/forgot-password/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 76,101,111,132,142,160,165,176,178
+src/app/services/layout.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 17,19
+src/components/research/research-updates.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 8,10,13,33,45,69,81,103,114
+src/components/workspace/file-viewer/viewers/fallback-viewer.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 25-26
+src/app/services/(metagenomics)/taxonomic-classification/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 356,410,927
+src/components/workspace/file-viewer/viewers/iframe-viewer.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 25
+src/components/auth/su-banner.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 27
+src/components/ui/skeleton.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 7
+src/components/services/selected-items-table.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 56,65,91,95,114,119,128
+src/components/ui/quick-links.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 36-38,40,55,67
+src/app/(footer)/citations/components/CitationCard.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 26,42,60
+src/components/ui/dialog.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 33,53,79,97,127
+src/components/detail-panel/info-panel.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 114,299
+src/components/ui/switch.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 19,26
+src/components/workspace/workspace-action-bar.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 154,163,165,167,169
+src/app/allTermSearchResults.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 108,110,112,114,116,437,446
+src/components/workspace/create-workspace-dialog.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 60,90
+src/app/(footer)/contact/components/offices.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 6,8-10,12,14,17,24-27,33-35,41-43
+src/components/jobs/jobs-toolbar.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 80,164,172,176,178,184,186,193,195,201,203,212,224
+src/components/navbars/workspace-dropdown-content.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 57,92,136,148
+src/app/search/layout.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 13
+src/components/ui/hover-card.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 41
+src/components/services/single-genome-selector.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 452,483,487,497,507-508,511,523,533,537,545,554
+src/components/ui/resizable.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 18,41,47
+src/app/services/(genomics)/primer-design/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 433,512,723,968
+src/components/taxonomy/taxon-name-selector.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 283,294,302,305,311,313,316-317,325,332,340,351
+src/app/services/(genomics)/genome-assembly/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 269,307,533
+src/components/jobs/jobs-date-filter.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 168-169,172,176,183,189,220
+src/components/heros/welcome-hero.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 6-8
+src/components/genome/genome-detail-panel.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 75-76
+src/components/heros/basic-hero.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 5-6
+src/components/services/genome-name-selector.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 291,305,308,311-312,315,342,350,364,368,370
+src/components/workspace/copy-to-dialog.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 94,100,112,167
+src/components/workspace/workspace-mini-browser.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 301,322,329-330,343,360,376
+src/app/(footer)/updates/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 187,189,207,213,222,227,239
+src/app/services/(viral-tools)/subspecies-classification/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 349
+src/components/ui/tabs.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 18,27,61,63-64,76
+src/components/ui/number-input.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 201,213
+src/components/services/job-params-dialog.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 27,35
+src/components/organisms/data-summary/data-summary.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 59
+src/components/search/search-action-bar.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 250,261,263,265,267
+src/components/services/sra-run-accession-with-validation.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 347,350,362
+src/components/ui/textarea.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 10
+src/components/settings/preferences-form.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 97,101,105
+src/components/heros/help-hero.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 8-9,11,14-17
+src/app/(footer)/about/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 29
+src/components/navbars/mobile-navbar.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 74-75,85,96,104,124,128,158,202-203,252,270,309,347,401,423
+src/app/(footer)/citations/loading.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 3,6-7,14-17,23-25,33,36-37,39-42,44-45
+src/components/organisms/genera-grid/featured-organism-categories-grid.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 19,24
+src/components/statistics/db-statistics-skeleton.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 10-11
+src/components/organisms/virus-families/virus-families-section.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 19,48,62
+src/components/statistics/db-statistics.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 19
+src/components/ui/calendar.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 34,49,52,54,59,64,68,72,76,80,84,87,93,96,98,102,106,113,118,122,212
+src/components/ui/input-group.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 17,26,30-31,33,35,67,108,123,136
+package.json
+  s_c61a03cbec0020::t_05a850d6be3933 111
+src/components/ui/tailwind-indicator.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 5
+src/components/ui/checkbox.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 13,20
+src/components/workspace/file-viewer/viewers/expandable-viewer-wrapper.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 92,110,117,128
+src/components/workspace/workspace-toolbar.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 91,115,127,147,149,161,176,195
+src/app/search/typesearch.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 87-88,100,257
+src/components/footers/footer.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 98,107,116,125,134
+src/components/auth/signout-button.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 67,69,121
+src/components/jobs/jobs-detail-panel.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 21,30,32,37,60,63,65,74,76,78,82,114,127,131,152
+src/app/(footer)/citations/metrics/page.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 125,150,236,243,248,256,271-273,277,305-306,321,332,353,360,365,395,401,430,436,456,463,468,491,493-495,497,514,536,544-545,552,562,579,592,595,597-598,601,603,613
+src/components/services/search-read-library.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 84
+src/components/ui/vertical-menu.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 25-27,34-35
+src/components/ui/card.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 14,25,47,80
+src/components/filterbar/keyword-search.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 12
+src/components/jobs/jobs-table-columns.tsx
+  s_c61a03cbec0020::t_05a850d6be3933 16-17,60,91,106,119,132
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "c53409285904f166b03c212fc2245b61b78cce69",
+  "prompts": {},
+  "sessions": {
+    "s_c61a03cbec0020": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "214ca2b6-3b12-4a50-9d94-558b28f1ff46",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

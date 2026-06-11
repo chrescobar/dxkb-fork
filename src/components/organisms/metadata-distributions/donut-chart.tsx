@@ -703,7 +703,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
               ? {
                   position: "fixed" as const,
                   left: `${tooltipLeft ?? 0}px`,
-                  top: `${(tooltipTop ?? 0) - tooltipEstimatedHeight - 9}px`,
+                  top: `${(tooltipTop ?? 0) - tooltipEstimatedHeight - 4}px`,
                   transform: "translateX(-50%)",
                 }
               : chartTooltipStyle(

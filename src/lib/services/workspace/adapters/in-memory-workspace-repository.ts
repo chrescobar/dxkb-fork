@@ -82,7 +82,7 @@ function toBrowserItem(
       : `${parentNormalized}/${fixture.name}`;
   const createdAt = fixture.createdAt ?? "2026-01-01T00:00:00Z";
   return {
-    id: `${fullPath}#${index}`,
+    id: `${fullPath}#${String(index)}`,
     name: fixture.name,
     path: fullPath,
     type: fixture.type,
@@ -117,7 +117,7 @@ function toGetTuple(
     fixture.type,
     parentWithSlash,
     createdAt,
-    `${parentWithSlash}${fixture.name}#${index}`,
+    `${parentWithSlash}${fixture.name}#${String(index)}`,
     fixture.ownerId ?? "test-user@bvbrc",
     fixture.size ?? 0,
     {},

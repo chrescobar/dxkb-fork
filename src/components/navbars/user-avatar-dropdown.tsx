@@ -94,13 +94,13 @@ export function UserAvatarDropdown() {
                 >
                   <NotebookPen className="size-4 text-foreground" />
                   {isImpersonating
-                    ? `${user?.username}'s Workspace`
+                    ? `${user?.username ?? ""}'s Workspace`
                     : "My Workspace"}
                 </DropdownMenuItem>
 
                 <DropdownMenuItem render={<Link href="/jobs" />}>
                   <BriefcaseBusiness className="size-4 text-foreground" />
-                  {isImpersonating ? `${user?.username}'s Jobs` : "My Jobs"}
+                  {isImpersonating ? `${user?.username ?? ""}'s Jobs` : "My Jobs"}
                 </DropdownMenuItem>
 
                 <DropdownMenuItem onClick={() => { void sendVerificationEmail(); }}>

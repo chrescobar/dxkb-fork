@@ -255,7 +255,7 @@ export function verifyNoUnmockedBackendRequests(page: Page): void {
   const list = leaks.map((r) => `  - ${r}`).join("\n");
   unmockedBackendRequests.set(page, []);
   throw new Error(
-    `applyBackendMocks/strict: ${leaks.length} unmocked backend request(s) leaked during this test:\n${list}`,
+    `applyBackendMocks/strict: ${String(leaks.length)} unmocked backend request(s) leaked during this test:\n${list}`,
   );
 }
 

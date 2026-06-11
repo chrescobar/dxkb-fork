@@ -86,8 +86,8 @@ export function CopyToDialog({
   const n = sourceItems.length;
   const title =
     mode === "move"
-      ? `Move contents of ${n} ${n === 1 ? "item" : "items"} to…`
-      : `Copy contents of ${n} ${n === 1 ? "item" : "items"} to…`;
+      ? `Move contents of ${String(n)} ${n === 1 ? "item" : "items"} to…`
+      : `Copy contents of ${String(n)} ${n === 1 ? "item" : "items"} to…`;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

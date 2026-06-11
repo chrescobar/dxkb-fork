@@ -19,7 +19,7 @@ export function getBvBrcWebsiteApiBaseUrl(): string {
 
 export async function responseErrorMessage(response: Response): Promise<string> {
   const body = await response.text().catch(() => "");
-  return body.trim() || `${response.status} ${response.statusText}`.trim();
+  return body.trim() || `${String(response.status)} ${response.statusText}`.trim();
 }
 
 export async function readJsonObject(response: Response, source: string): Promise<Record<string, unknown>> {
@@ -89,5 +89,5 @@ export function parseSolrFacetList(payload: Record<string, unknown>, field: stri
 }
 
 export function buildGenomeFacetUrl(baseUrl: string, taxonId: number, field: string, limit: number): string {
-  return `${baseUrl}/genome/?eq(taxon_lineage_ids,${taxonId})&limit(1)&facet((field,${field}),(limit,${limit}),(mincount,1))`;
+  return `${baseUrl}/genome/?eq(taxon_lineage_ids,${String(taxonId)})&limit(1)&facet((field,${field}),(limit,${String(limit)}),(mincount,1))`;
 }

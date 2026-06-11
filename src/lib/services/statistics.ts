@@ -61,7 +61,7 @@ async function fetchCount(
 
   if (!response.ok) {
     const body = await response.text().catch(() => "");
-    const detail = body.trim() || `${response.status} ${response.statusText}`;
+    const detail = body.trim() || `${String(response.status)} ${response.statusText}`;
     throw new Error(detail);
   }
 

@@ -124,7 +124,7 @@ describe("checkFastaFileLimit", () => {
 
   it("returns false even with many files", () => {
     const files = Array.from({ length: 100 }, (_, i) => ({
-      file: `/workspace/seq${i}.fasta`,
+      file: `/workspace/seq${String(i)}.fasta`,
       type: "feature_protein_fasta" as const,
     }));
     expect(checkFastaFileLimit(files)).toBe(false);

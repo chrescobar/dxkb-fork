@@ -123,7 +123,7 @@ describe("getPreviewUrl", () => {
   it("builds preview URL with default maxBytes", () => {
     const url = getPreviewUrl("/user@bvbrc/home/file.fasta");
     expect(url).toBe(
-      `/api/workspace/preview/user@bvbrc/home/file.fasta?maxBytes=${previewMaxBytes}`,
+      `/api/workspace/preview/user@bvbrc/home/file.fasta?maxBytes=${String(previewMaxBytes)}`,
     );
   });
 

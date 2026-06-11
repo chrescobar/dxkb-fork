@@ -114,7 +114,7 @@ export default function SimilarGenomeFinderServicePage() {
           toast.success("Similar Genome Finder completed successfully!", {
             description:
               response.rows.length > 0
-                ? `Results returned from Minhash service (${response.rows.length} genome${response.rows.length === 1 ? "" : "s"})`
+                ? `Results returned from Minhash service (${String(response.rows.length)} genome${response.rows.length === 1 ? "" : "s"})`
                 : "Results returned from Minhash service",
             closeButton: true,
           });

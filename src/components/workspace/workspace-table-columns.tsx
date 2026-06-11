@@ -24,7 +24,7 @@ export const columnClassMap: Record<string, string> = {
 export function formatMemberCount(count: number): string {
   if (count <= 0) return "—";
   if (count === 1) return "Only me";
-  return `${count} members`;
+  return `${String(count)} members`;
 }
 
 const emptyFavorites: string[] = [];

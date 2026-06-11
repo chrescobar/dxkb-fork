@@ -114,7 +114,7 @@ describe("addRecentFolder", () => {
 
   it("trims to maxItems per user", () => {
     for (let i = 0; i < 10; i++) {
-      addRecentFolder(`/user@bvbrc/home/folder${i}`, "/user@bvbrc");
+      addRecentFolder(`/user@bvbrc/home/folder${String(i)}`, "/user@bvbrc");
     }
     const result = getRecentFolders();
     expect(result).toHaveLength(5);
@@ -123,7 +123,7 @@ describe("addRecentFolder", () => {
 
   it("respects custom maxItems", () => {
     for (let i = 0; i < 5; i++) {
-      addRecentFolder(`/user@bvbrc/home/folder${i}`, "/user@bvbrc", 3);
+      addRecentFolder(`/user@bvbrc/home/folder${String(i)}`, "/user@bvbrc", 3);
     }
     expect(getRecentFolders()).toHaveLength(3);
   });
@@ -131,7 +131,7 @@ describe("addRecentFolder", () => {
   it("preserves other users' entries when trimming", () => {
     addRecentFolder("/other@bvbrc/home/their-folder", "/other@bvbrc");
     for (let i = 0; i < 6; i++) {
-      addRecentFolder(`/user@bvbrc/home/folder${i}`, "/user@bvbrc");
+      addRecentFolder(`/user@bvbrc/home/folder${String(i)}`, "/user@bvbrc");
     }
     const all = getRecentFolders();
     expect(all.some((f) => f.path === "/other@bvbrc/home/their-folder")).toBe(

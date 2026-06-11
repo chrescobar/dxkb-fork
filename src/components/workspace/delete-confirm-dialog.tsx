@@ -43,7 +43,7 @@ export function DeleteConfirmDialog({
       ? "item"
       : pendingDeleteSelection.length === 1
         ? pendingDeleteSelection[0]?.name ?? "item"
-        : `${pendingDeleteSelection.length} items`;
+        : `${String(pendingDeleteSelection.length)} items`;
 
   const requiresAcknowledgment = nonEmptyFolderPathsInDelete.length > 0;
   const canDelete =

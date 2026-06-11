@@ -259,7 +259,7 @@ export default function ViralGenomeTreePage() {
       setSelectedGenomeGroupObject(null);
 
       toast.success("Genome group added", {
-        description: `Added genome group with ${genomeIds.length} genome${genomeIds.length === 1 ? "" : "s"}.`,
+        description: `Added genome group with ${String(genomeIds.length)} genome${genomeIds.length === 1 ? "" : "s"}.`,
         closeButton: true,
       });
     } catch (error) {
@@ -387,7 +387,7 @@ export default function ViralGenomeTreePage() {
   const selectedItemsForTable = useMemo(
     () =>
       sequences.map((seq, index) => ({
-        id: `${index}`,
+        id: `${String(index)}`,
         name: ViralGenomeTreeUtils.getDisplayName(
           seq.filename.split("/").pop() || seq.filename,
         ),

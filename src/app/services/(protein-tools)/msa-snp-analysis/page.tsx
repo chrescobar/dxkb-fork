@@ -709,7 +709,7 @@ export default function MSAandSNPAnalysisPage() {
 
                             if (genomes.length > MsaSnpAnalysis.maxGenomes) {
                               toast.error("Genome group too large", {
-                                description: `The genome group has ${genomes.length} genomes, but the maximum is ${MsaSnpAnalysis.maxGenomes}.`,
+                                description: `The genome group has ${String(genomes.length)} genomes, but the maximum is ${String(MsaSnpAnalysis.maxGenomes)}.`,
                                 closeButton: true,
                               });
                               return;
@@ -851,7 +851,7 @@ export default function MSAandSNPAnalysisPage() {
                       >
                         <AlertDescription className="text-sm">
                           {fastaValidationResult.valid
-                            ? `✓ Valid FASTA with ${fastaValidationResult.numseq} sequence${fastaValidationResult.numseq !== 1 ? "s" : ""}`
+                            ? `✓ Valid FASTA with ${String(fastaValidationResult.numseq)} sequence${fastaValidationResult.numseq !== 1 ? "s" : ""}`
                             : fastaValidationResult.message}
                         </AlertDescription>
                       </Alert>
@@ -1179,7 +1179,7 @@ export default function MSAandSNPAnalysisPage() {
                     >
                       <AlertDescription className="text-sm">
                         {referenceFastaValidationResult.valid
-                          ? `✓ Valid FASTA with ${referenceFastaValidationResult.numseq} sequence`
+                          ? `✓ Valid FASTA with ${String(referenceFastaValidationResult.numseq)} sequence`
                           : referenceFastaValidationResult.message}
                       </AlertDescription>
                     </Alert>

@@ -147,7 +147,7 @@ export default function GenomeAlignmentServicePage() {
         }
 
         toast.success(
-          `Added ${genomesToAdd.length} genome${
+          `Added ${String(genomesToAdd.length)} genome${
             genomesToAdd.length === 1 ? "" : "s"
           } from ${object.name ?? "genome group"}`,
         );

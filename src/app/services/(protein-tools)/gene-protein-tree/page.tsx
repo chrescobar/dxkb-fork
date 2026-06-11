@@ -345,7 +345,7 @@ export default function GeneProteinTreePage() {
   const selectedItemsForTable = useMemo(
     () =>
       sequences.map((seq, index) => ({
-        id: `${index}`,
+        id: `${String(index)}`,
         name: getDisplayName(seq.filename.split("/").pop() || seq.filename),
         type: getSequenceTypeLabel(seq.type, alphabet),
         description: seq.filename,

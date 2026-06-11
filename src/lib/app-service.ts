@@ -85,7 +85,7 @@ export class AppService {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${String(response.status)}`);
       }
 
       return await response.text();

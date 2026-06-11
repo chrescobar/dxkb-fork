@@ -64,8 +64,8 @@ const NewsCarousel = () => {
             <CarouselItem key={index} className="pl-2 md:basis-1/2 md:pl-4 lg:basis-1/4">
               <div className="p-1">
                 <Card className="h-96 w-full overflow-hidden p-0">
-                  <CardContent id={`news-card-${index}`} className="flex aspect-square size-full flex-col p-0">
-                    <div className="relative h-2/3 w-full" id={`news-image-${index}`}>
+                  <CardContent id={`news-card-${String(index)}`} className="flex aspect-square size-full flex-col p-0">
+                    <div className="relative h-2/3 w-full" id={`news-image-${String(index)}`}>
                       <Image
                         src={item.image}
                         alt={item.title}

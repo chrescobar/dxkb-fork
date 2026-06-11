@@ -115,7 +115,7 @@ export function JobsBrowser() {
 
   const dateParams = useMemo(() => {
     const toLocalDate = (d: Date) =>
-      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      `${String(d.getFullYear())}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
     const startTime = dateFrom ? toLocalDate(dateFrom) : undefined;
     let endTime: string | undefined;
@@ -386,7 +386,7 @@ export function JobsBrowser() {
       <JobDetailsPanel job={selectedJobs[0]} />
     ) : selectedJobs.length > 1 ? (
       <DetailPanel.EmptyState
-        message={`${selectedJobs.length} jobs selected`}
+        message={`${String(selectedJobs.length)} jobs selected`}
       />
     ) : (
       <DetailPanel.EmptyState message="Select a job to view details" />

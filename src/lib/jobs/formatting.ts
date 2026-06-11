@@ -27,7 +27,7 @@ export function formatElapsedSeconds(seconds: number | undefined): string {
   const total = Math.round(seconds);
   const m = Math.floor(total / 60);
   const s = total % 60;
-  return m > 0 ? `${m}m${s}s` : `${s}s`;
+  return m > 0 ? `${String(m)}m${String(s)}s` : `${String(s)}s`;
 }
 
 export function formatUnixTimestamp(ts: number | undefined): string {

@@ -12,8 +12,8 @@ vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 vi.mock("@/lib/forms/tanstack-library-selection", () => ({
   getPairedLibraryId: (read1: string, read2: string) => `${read1}${read2}`,
   getPairedLibraryName: (read1: string, read2: string) =>
-    `P(${read1.split("/").pop()}, ${read2.split("/").pop()})`,
-  getSingleLibraryName: (read: string) => `S(${read.split("/").pop()})`,
+    `P(${read1.split("/").pop() ?? ""}, ${read2.split("/").pop() ?? ""})`,
+  getSingleLibraryName: (read: string) => `S(${read.split("/").pop() ?? ""})`,
 }));
 
 describe("rerunBooleanValue", () => {

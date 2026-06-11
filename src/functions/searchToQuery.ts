@@ -36,7 +36,7 @@ export function searchToQuery(expression: string, field?: string): string {
           subExp = "";
           expField = "";
         } else {
-          throw Error("Unexpected ')' at character " + i);
+          throw Error(`Unexpected ')' at character ${String(i)}`);
         }
         break;
 
@@ -113,7 +113,7 @@ export function searchToQuery(expression: string, field?: string): string {
           expField = exp;
           exp = "";
         } else {
-          throw Error("Unexpected ':' at character " + i);
+          throw Error(`Unexpected ':' at character ${String(i)}`);
         }
         break;
 

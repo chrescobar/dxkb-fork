@@ -101,14 +101,14 @@ export const metaCatsFormSchema = z
       if (uniqueGroups.size < minGroups) {
         ctx.addIssue({
           code: "custom",
-          message: `At least ${minGroups} different groups are required`,
+          message: `At least ${String(minGroups)} different groups are required`,
           path: ["auto_groups"],
         });
       }
       if (uniqueGroups.size > maxGroups) {
         ctx.addIssue({
           code: "custom",
-          message: `Maximum ${maxGroups} groups are allowed`,
+          message: `Maximum ${String(maxGroups)} groups are allowed`,
           path: ["auto_groups"],
         });
       }
@@ -128,14 +128,14 @@ export const metaCatsFormSchema = z
       if (data.groups.length < minGroups) {
         ctx.addIssue({
           code: "custom",
-          message: `At least ${minGroups} feature groups are required`,
+          message: `At least ${String(minGroups)} feature groups are required`,
           path: ["groups"],
         });
       }
       if (data.groups.length > maxGroups) {
         ctx.addIssue({
           code: "custom",
-          message: `Maximum ${maxGroups} feature groups are allowed`,
+          message: `Maximum ${String(maxGroups)} feature groups are allowed`,
           path: ["groups"],
         });
       }

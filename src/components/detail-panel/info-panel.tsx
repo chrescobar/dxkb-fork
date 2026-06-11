@@ -114,7 +114,7 @@ export function InfoPanel(props: InfoPanelProps) {
       <div className="flex size-full flex-col overflow-hidden">
         {isMultiSelect ? (
           <div className="px-4 py-2">
-            <DetailPanel.Header title={`${selection.length} items selected`} />
+            <DetailPanel.Header title={`${String(selection.length)} items selected`} />
             <DetailPanel.EmptyState message="Select a single item to view details" />
           </div>
         ) : hasSingleSelection ? (
@@ -332,7 +332,7 @@ export function InfoPanel(props: InfoPanelProps) {
         <p className="px-4 py-2 text-xs">
           {props.isAllPagesSelected && props.totalItems
             ? `All ${props.totalItems.toLocaleString()} rows selected`
-            : `${selectedIds.length} rows selected`}
+            : `${String(selectedIds.length)} rows selected`}
         </p>
       )}
     </DetailPanel>

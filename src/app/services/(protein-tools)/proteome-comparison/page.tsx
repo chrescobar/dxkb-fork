@@ -136,7 +136,7 @@ export default function ProteomeComparisonPage() {
 
     if (totalGenomeCount >= maxComparisonGenomes) {
       toast.error("Maximum genomes reached", {
-        description: `Maximum of ${maxComparisonGenomes} comparison genomes allowed.`,
+        description: `Maximum of ${String(maxComparisonGenomes)} comparison genomes allowed.`,
         closeButton: true,
       });
       return;
@@ -198,7 +198,7 @@ export default function ProteomeComparisonPage() {
 
     if (totalGenomeCount >= maxComparisonGenomes) {
       toast.error("Maximum genomes reached", {
-        description: `Maximum of ${maxComparisonGenomes} comparison genomes allowed.`,
+        description: `Maximum of ${String(maxComparisonGenomes)} comparison genomes allowed.`,
         closeButton: true,
       });
       return;
@@ -231,7 +231,7 @@ export default function ProteomeComparisonPage() {
 
     if (totalGenomeCount >= maxComparisonGenomes) {
       toast.error("Maximum genomes reached", {
-        description: `Maximum of ${maxComparisonGenomes} comparison genomes allowed.`,
+        description: `Maximum of ${String(maxComparisonGenomes)} comparison genomes allowed.`,
         closeButton: true,
       });
       return;
@@ -313,7 +313,7 @@ export default function ProteomeComparisonPage() {
       form.setFieldValue("comparison_items", [...currentItems, newItem]);
       setSelectedCompGenomeGroup(null);
 
-      toast.success(`Added genome group with ${genomeIds.length} genome(s)`, {
+      toast.success(`Added genome group with ${String(genomeIds.length)} genome(s)`, {
         closeButton: true,
       });
     } catch (error) {
@@ -770,7 +770,7 @@ export default function ProteomeComparisonPage() {
                       type: getComparisonItemTypeLabel(item.type),
                       description:
                         item.type === "genome_group" && item.genome_ids
-                          ? `${item.genome_ids.length} genome(s)`
+                          ? `${String(item.genome_ids.length)} genome(s)`
                           : undefined,
                     }))}
                     onRemove={handleRemoveComparisonItem}

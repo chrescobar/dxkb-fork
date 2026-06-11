@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
       }
       console.error("Public workspace API error:", response.status, response.statusText, apiResponse);
       return NextResponse.json(
-        { error: `BV-BRC API error: ${response.status} ${response.statusText}` },
+        { error: `BV-BRC API error: ${String(response.status)} ${response.statusText}` },
         { status: response.status },
       );
     }

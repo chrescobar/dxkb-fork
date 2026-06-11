@@ -137,7 +137,7 @@ export function UploadDialog({
       }
       if (!hasError) {
         toast.success("Upload complete", {
-          description: `${files.length} file(s) uploaded.`,
+          description: `${String(files.length)} file(s) uploaded.`,
         });
         onUploadComplete();
       }

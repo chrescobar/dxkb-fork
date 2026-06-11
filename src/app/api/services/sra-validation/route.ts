@@ -41,7 +41,7 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
         );
       }
       return NextResponse.json(
-        { error: `NCBI API error: ${response.status} ${response.statusText}` },
+        { error: `NCBI API error: ${String(response.status)} ${response.statusText}` },
         { status: response.status },
       );
     }

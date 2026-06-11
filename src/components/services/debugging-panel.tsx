@@ -24,7 +24,7 @@ export function DebuggingPanel() {
 
   // Sync local state with context when dialog opens
   const [prevSyncKey, setPrevSyncKey] = useState("");
-  const syncKey = isOpen ? `${isDebugMode}-${containerBuildId}` : "";
+  const syncKey = isOpen ? `${String(isDebugMode)}-${containerBuildId}` : "";
   if (syncKey && syncKey !== prevSyncKey) {
     setPrevSyncKey(syncKey);
     setLocalDebugMode(isDebugMode);

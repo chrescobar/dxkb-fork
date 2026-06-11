@@ -77,7 +77,7 @@ export async function resolveWorkspaceDownload(
     );
     return NextResponse.json(
       {
-        error: `BV-BRC API error: ${wsResponse.status} ${wsResponse.statusText}`,
+        error: `BV-BRC API error: ${String(wsResponse.status)} ${wsResponse.statusText}`,
       },
       { status: wsResponse.status },
     );

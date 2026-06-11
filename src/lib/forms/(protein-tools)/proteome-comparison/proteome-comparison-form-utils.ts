@@ -11,7 +11,7 @@ export function createComparisonItemId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return crypto.randomUUID();
   }
-  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  return `${String(Date.now())}-${Math.random().toString(16).slice(2)}`;
 }
 
 /**
@@ -252,7 +252,7 @@ export function validateGenomeGroupAddition(
   if (totalAfterAdd > maxGenomes) {
     return {
       valid: false,
-      message: `Adding this genome group would exceed the maximum of ${maxGenomes} genomes. Current: ${currentCount}, Group size: ${newGenomeIds.length}`,
+      message: `Adding this genome group would exceed the maximum of ${String(maxGenomes)} genomes. Current: ${String(currentCount)}, Group size: ${String(newGenomeIds.length)}`,
     };
   }
 

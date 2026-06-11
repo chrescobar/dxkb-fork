@@ -20,7 +20,7 @@ export const GET = withAuth(async (request: NextRequest, { token }) => {
 
   if (!trimmedQuery) {
     // Blank query - return all genomes with filters (no search filter)
-    queryString = `?or(eq(public,true),eq(public,false))&in(superkingdom,(Eukaryota,Bacteria,Viruses))&select(genome_id,genome_name,public,owner,reference_genome,strain,superkingdom)&limit(${limit})`;
+    queryString = `?or(eq(public,true),eq(public,false))&in(superkingdom,(Eukaryota,Bacteria,Viruses))&select(genome_id,genome_name,public,owner,reference_genome,strain,superkingdom)&limit(${String(limit)})`;
   } else {
     // Has query - apply search filter
     const sanitized = sanitizeQuery(trimmedQuery);
@@ -30,7 +30,7 @@ export const GET = withAuth(async (request: NextRequest, { token }) => {
     }
 
     const wildcard = `*${sanitized}*`;
-    queryString = `?or(eq(genome_name,${wildcard}),eq(genome_id,${wildcard}))&or(eq(public,true),eq(public,false))&in(superkingdom,(Eukaryota,Bacteria,Viruses))&select(genome_id,genome_name,public,owner,reference_genome,strain,superkingdom)&limit(${limit})`;
+    queryString = `?or(eq(genome_name,${wildcard}),eq(genome_id,${wildcard}))&or(eq(public,true),eq(public,false))&in(superkingdom,(Eukaryota,Bacteria,Viruses))&select(genome_id,genome_name,public,owner,reference_genome,strain,superkingdom)&limit(${String(limit)})`;
   }
 
   const url = `${getRequiredEnv("NEXT_PUBLIC_DATA_API")}/genome/${queryString}`;
@@ -48,7 +48,7 @@ export const GET = withAuth(async (request: NextRequest, { token }) => {
     console.error("Genome search error:", response.status, errorText);
     return NextResponse.json(
       {
-        error: `BV-BRC genome search failed: ${response.status} ${response.statusText}`,
+        error: `BV-BRC genome search failed: ${String(response.status)} ${response.statusText}`,
       },
       { status: response.status },
     );

@@ -3,7 +3,7 @@ import { GeneraCard } from "@/components/organisms/genera-grid/genera-card";
 import { type VirusFamiliesColumn, virusFamilies } from "./virus-families-data";
 
 function familyHref(taxonId: number) {
-  return `https://www.bv-brc.org/view/Taxonomy/${taxonId}#view_tab=overview`;
+  return `https://www.bv-brc.org/view/Taxonomy/${String(taxonId)}#view_tab=overview`;
 }
 
 type VirusFamilySubGroup = Extract<
@@ -52,7 +52,7 @@ export function VirusFamiliesSection() {
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {virusFamilies.map((column, index) => (
           <div
-            key={column.group ?? `mixed-${index}`}
+            key={column.group ?? `mixed-${String(index)}`}
             className={`flex min-w-0 flex-col gap-3${index === 3 ? " hidden md:flex lg:hidden xl:flex" : ""}`}
           >
             {column.group === null ? (

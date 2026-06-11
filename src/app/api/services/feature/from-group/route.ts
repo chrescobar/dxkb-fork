@@ -33,7 +33,7 @@ export const POST = withAuth(async (request: NextRequest, { token }) => {
     console.error("Feature group lookup error:", response.status, errorText);
     return NextResponse.json(
       {
-        error: `BV-BRC feature lookup failed: ${response.status} ${response.statusText}`,
+        error: `BV-BRC feature lookup failed: ${String(response.status)} ${response.statusText}`,
       },
       { status: response.status },
     );

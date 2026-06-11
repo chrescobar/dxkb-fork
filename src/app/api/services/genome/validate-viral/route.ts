@@ -21,7 +21,7 @@ export const POST = withAuth(async (request: NextRequest, { token }) => {
   }
 
   // Query with fields needed for viral genome validation
-  const queryString = `?in(genome_id,(${inClause}))&select(genome_id,superkingdom,genome_length,contigs)&limit(${Math.min(genomeIds.length, 5000)})`;
+  const queryString = `?in(genome_id,(${inClause}))&select(genome_id,superkingdom,genome_length,contigs)&limit(${String(Math.min(genomeIds.length, 5000))})`;
   const url = `${getRequiredEnv("NEXT_PUBLIC_DATA_API")}/genome/${queryString}`;
 
   const response = await fetch(url, {
@@ -37,7 +37,7 @@ export const POST = withAuth(async (request: NextRequest, { token }) => {
     console.error("Genome validation error:", response.status, errorText);
     return NextResponse.json(
       {
-        error: `BV-BRC genome validation failed: ${response.status} ${response.statusText}`,
+        error: `BV-BRC genome validation failed: ${String(response.status)} ${response.statusText}`,
       },
       { status: response.status },
     );

@@ -500,7 +500,7 @@ export default function BlastServicePage() {
                       />
                       <Select
                         items={availableDatabaseTypes}
-                        key={`${currentBlastProgram}-${dbPrecomputedDatabase}-${availableDatabaseTypes.length}`}
+                        key={`${String(currentBlastProgram)}-${dbPrecomputedDatabase}-${String(availableDatabaseTypes.length)}`}
                         value={field.state.value || ""}
                         onValueChange={(value) => {
                           if (value != null)

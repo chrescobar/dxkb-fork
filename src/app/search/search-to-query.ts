@@ -82,7 +82,7 @@ function parseExpression(
           state.subExp = "";
           state.expField = "";
         } else {
-          throw new Error(`Unexpected ')' at character ${i}`);
+          throw new Error(`Unexpected ')' at character ${String(i)}`);
         }
         break;
 
@@ -159,7 +159,7 @@ function parseExpression(
           state.expField = state.exp;
           state.exp = "";
         } else {
-          throw new Error(`Unexpected ':' at character ${i}`);
+          throw new Error(`Unexpected ':' at character ${String(i)}`);
         }
         break;
 

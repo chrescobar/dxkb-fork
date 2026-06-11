@@ -279,7 +279,7 @@ export async function validateViralGenomes(
       if (genome.genome_length !== undefined && genome.genome_length > maxGenomeLength) {
         allValid = false;
         if (!errors.genomelength_error) {
-          errors.genomelength_error = `Error: genome exceeds maximum length ${maxGenomeLength}. First occurrence for genome_id: ${genome.genome_id}`;
+          errors.genomelength_error = `Error: genome exceeds maximum length ${String(maxGenomeLength)}. First occurrence for genome_id: ${genome.genome_id}`;
         }
       }
     });

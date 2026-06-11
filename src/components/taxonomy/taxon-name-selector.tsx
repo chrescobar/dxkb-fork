@@ -150,7 +150,7 @@ async function searchTaxonByName(
   });
 
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    throw new Error(`HTTP error! status: ${String(response.status)}`);
   }
 
   return response.json();
@@ -192,7 +192,7 @@ export function TaxonNameSelector({
   }, [searchQuery]);
 
   // Stabilize filter flags for queryKey
-  const filterKey = `${includeEukaryotes}-${includeBacteria}-${includeViruses}-${setBacteriophage}-${segmentWildcard}`;
+  const filterKey = `${String(includeEukaryotes)}-${String(includeBacteria)}-${String(includeViruses)}-${String(setBacteriophage)}-${String(segmentWildcard)}`;
 
   const {
     data: results = [],

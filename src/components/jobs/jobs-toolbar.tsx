@@ -94,7 +94,7 @@ export function JobsToolbar({
             ...availableServices.map((s) => ({
               value: s,
               label: appSummary?.[s] != null
-                ? `${formatServiceName(s)} (${appSummary[s]})`
+                ? `${formatServiceName(s)} (${String(appSummary[s])})`
                 : formatServiceName(s),
             })),
           ]}
@@ -112,7 +112,7 @@ export function JobsToolbar({
               {availableServices.map((app) => (
                 <SelectItem key={app} value={app}>
                   {formatServiceName(app)}
-                  {appSummary?.[app] != null && ` (${appSummary[app]})`}
+                  {appSummary?.[app] != null && ` (${String(appSummary[app])})`}
                 </SelectItem>
               ))}
             </SelectGroup>

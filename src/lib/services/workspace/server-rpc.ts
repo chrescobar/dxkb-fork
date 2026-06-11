@@ -42,7 +42,7 @@ export function createServerWorkspaceRpc(token: string): WorkspaceRpcPort {
         }
         throw new Error(
           upstreamMessage ||
-            `Workspace API HTTP ${response.status} ${response.statusText}`,
+            `Workspace API HTTP ${String(response.status)} ${response.statusText}`,
         );
       }
 

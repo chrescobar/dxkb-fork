@@ -89,7 +89,7 @@ export const POST = auth.route(async (request: NextRequest, { token }) => {
       const sanitized = sanitizeUpstreamError(apiResponse);
       return NextResponse.json(
         {
-          error: `BV-BRC API error: ${response.status} ${response.statusText}`,
+          error: `BV-BRC API error: ${String(response.status)} ${response.statusText}`,
           ...(sanitized && { apiResponse: sanitized }),
         },
         { status: response.status },

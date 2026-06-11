@@ -6,7 +6,7 @@ import { auth } from "@/lib/auth/server/instance";
  * Base URL for PATRIC/BV-BRC genome API (e.g. https://patricbrc.org/api or BV-BRC equivalent).
  * Genome endpoint: ${BVBRC_WEBSITE_API_URL}/genome/
  */
-const genomeWebsiteApi = `${process.env.BVBRC_WEBSITE_API_URL}/genome/`;
+const genomeWebsiteApi = `${process.env.BVBRC_WEBSITE_API_URL ?? ""}/genome/`;
 
 const maxRows = 25_000;
 
@@ -74,7 +74,7 @@ export const POST = auth.route(async (request: NextRequest, { token }) => {
       console.error("Genome website query error:", response.status, errorText);
       return NextResponse.json(
         {
-          error: `BV-BRC genome query failed: ${response.status} ${response.statusText}`,
+          error: `BV-BRC genome query failed: ${String(response.status)} ${response.statusText}`,
         },
         { status: response.status },
       );

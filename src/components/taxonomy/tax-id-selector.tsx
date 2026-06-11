@@ -39,7 +39,7 @@ async function searchTaxonById(
   });
 
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    throw new Error(`HTTP error! status: ${String(response.status)}`);
   }
 
   const data = await response.json();

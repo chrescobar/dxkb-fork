@@ -22,7 +22,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
       ? body.error
       : typeof body.message === "string"
         ? body.message
-        : `HTTP ${response.status} ${response.statusText}`;
+        : `HTTP ${String(response.status)} ${response.statusText}`;
 
   throw new ApiCallError({
     message,

@@ -275,7 +275,7 @@ export default function MetaCATSPage() {
       setSelectedAutoFeatureGroupObject(null);
 
       if (newAutoGroups.length > 0) {
-        toast.success(`Added ${newAutoGroups.length} feature(s)`, {
+        toast.success(`Added ${String(newAutoGroups.length)} feature(s)`, {
           closeButton: true,
         });
       } else {
@@ -313,7 +313,7 @@ export default function MetaCATSPage() {
     setGroupNames(remainingGroupNames);
     setSelectedGridRows(new Set());
 
-    toast.success(`Deleted ${selectedGridRows.size} row(s)`, {
+    toast.success(`Deleted ${String(selectedGridRows.size)} row(s)`, {
       closeButton: true,
     });
   }, [selectedGridRows, form]);
@@ -339,7 +339,7 @@ export default function MetaCATSPage() {
     newGroupNames.add(selectedGroupName);
     setGroupNames(Array.from(newGroupNames));
 
-    toast.success(`Changed group for ${selectedGridRows.size} row(s)`, {
+    toast.success(`Changed group for ${String(selectedGridRows.size)} row(s)`, {
       closeButton: true,
     });
   }, [selectedGroupName, selectedGridRows, form, groupNames]);
@@ -394,7 +394,7 @@ export default function MetaCATSPage() {
     // Check max limit
     if (currentFeatureGroups.length >= maxGroups) {
       toast.error("Maximum groups reached", {
-        description: `Maximum of ${maxGroups} feature groups allowed.`,
+        description: `Maximum of ${String(maxGroups)} feature groups allowed.`,
         closeButton: true,
       });
       return;
@@ -741,7 +741,7 @@ export default function MetaCATSPage() {
                         }`}
                       >
                         {autoGroups.length > 0 &&
-                          `Max groups ${maxGroups}. Current ${uniqueGroupCount} group(s).`}
+                          `Max groups ${String(maxGroups)}. Current ${String(uniqueGroupCount)} group(s).`}
                       </span>
                     </div>
 

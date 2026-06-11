@@ -152,7 +152,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const { data: metaData, isLoading: metaLoading, error: metaError } = useQuery({
     queryKey: ['genome-meta', resource, combinedQuery, searchtype],
     queryFn: async () => {
-      const baseURL = `${DataAPI}/${resource}/?${combinedQuery}`;
+      const baseURL = `${DataAPI ?? ""}/${resource}/?${combinedQuery}`;
       const res = await fetch(`${baseURL}&limit(1)`, {
         headers: { 'Accept': 'application/solr+json' }
       });
@@ -195,15 +195,15 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       const start = pageIndex * pageSize;
       const end = start + pageSize;
 
-      const baseURL = `${DataAPI}/${resource}/?${combinedQuery}`;
+      const baseURL = `${DataAPI ?? ""}/${resource}/?${combinedQuery}`;
       const url = `${baseURL}&sort(${sortParam})`;
 
       const res = await fetch(url, {
         headers: {
           'Content-type': 'application/rqlquery+x-www-form-urlencoded',
           'Accept': 'application/json',
-          'Range': `items=${start}-${end}`,
-          'X-Range': `items=${start}-${end}`,
+          'Range': `items=${String(start)}-${String(end)}`,
+          'X-Range': `items=${String(start)}-${String(end)}`,
         }
       });
       if (!res.ok) throw new Error('Failed to fetch genome data');
@@ -269,21 +269,21 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     // Check if totalItems exceeds the download limit
     const DOWNLOAD_LIMIT = 50000;
     if (totalItems > DOWNLOAD_LIMIT) {
-      alert(`The download limit is ${DOWNLOAD_LIMIT.toLocaleString()} rows. Your query returned ${totalItems.toLocaleString()} rows. Please refine your search to download fewer results.`);
+      alert(`The download limit is ${DOWNLOAD_LIMIT.toLocaleString()} rows. Your query returned ${String(totalItems)} rows. Please refine your search to download fewer results.`);
       return;
     }
     
     try {
-      const baseURL = `${DataAPI}/${resource}/?${combinedQuery}`;
+      const baseURL = `${DataAPI ?? ""}/${resource}/?${combinedQuery}`;
       const res = await fetch(baseURL, {
         headers: {
           'Content-type': 'application/rqlquery+x-www-form-urlencoded',
           'Accept': 'application/json',
-          'Range': `items=0-${totalItems}`,
-          'X-Range': `items=0-${totalItems}`,
+          'Range': `items=0-${String(totalItems)}`,
+          'X-Range': `items=0-${String(totalItems)}`,
         },
       });
-      if (!res.ok) throw new Error(`Failed to fetch all data: ${res.status} ${res.statusText}`);
+      if (!res.ok) throw new Error(`Failed to fetch all data: ${String(res.status)} ${res.statusText}`);
       const allData = await res.json();
 
       const rowsArray: unknown[] = Array.isArray(allData) ? allData : (allData.items ?? allData.response ?? allData.rows ?? []);

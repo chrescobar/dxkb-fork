@@ -300,7 +300,7 @@ function DataTableInner<T>(
   const columnSizeVars = useMemo(() => {
     const colSizes: Record<string, string> = {};
     for (const col of table.getAllFlatColumns()) {
-      colSizes[`--col-${col.id}-size`] = `${col.getSize()}px`;
+      colSizes[`--col-${col.id}-size`] = `${String(col.getSize())}px`;
     }
     return colSizes;
     // eslint-disable-next-line react-hooks/exhaustive-deps -- table is unstable from useReactTable

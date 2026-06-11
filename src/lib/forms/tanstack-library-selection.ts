@@ -66,11 +66,11 @@ export function getPairedLibraryId(read1: string, read2: string): string {
 }
 
 export function getPairedLibraryName(read1: string, read2: string): string {
-  return `P(${read1.split("/").pop()}, ${read2.split("/").pop()})`;
+  return `P(${read1.split("/").pop() ?? ""}, ${read2.split("/").pop() ?? ""})`;
 }
 
 export function getSingleLibraryName(read: string): string {
-  return `S(${read.split("/").pop()})`;
+  return `S(${read.split("/").pop() ?? ""})`;
 }
 
 export function findNewSraLibraries(

@@ -107,7 +107,7 @@ export function useWorkspaceDialogHandlers(options: UseWorkspaceDialogHandlersOp
             .join("; ")
         : objects.length === 1
           ? `${base}/${firstDestName}`
-          : `${base} (${objects.length} items)`;
+          : `${base} (${String(objects.length)} items)`;
       toast.success(isMove ? "Move Successful" : "Copy Successful", {
         description,
       });
@@ -197,7 +197,7 @@ export function useWorkspaceDialogHandlers(options: UseWorkspaceDialogHandlersOp
       dispatch({ type: "CLOSE" });
       invalidateWorkspaceQueries(queryClient);
       toast.success("Object type updated", {
-        description: `${itemName} is now type "${newType}".`,
+        description: `${itemName ?? ""} is now type "${newType}".`,
       });
     },
     onError: (err) => {

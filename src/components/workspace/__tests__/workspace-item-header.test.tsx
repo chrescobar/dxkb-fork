@@ -17,7 +17,7 @@ vi.mock("@/components/workspace/file-viewer/file-viewer-registry", () => ({
 }));
 
 vi.mock("@/lib/services/workspace/helpers", () => ({
-  formatFileSize: vi.fn((bytes: number) => (bytes ? `${bytes} B` : "")),
+  formatFileSize: vi.fn((bytes: number) => (bytes ? `${String(bytes)} B` : "")),
 }));
 
 const makeItem = (overrides?: Partial<WorkspaceItem>): WorkspaceItem =>

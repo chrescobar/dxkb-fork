@@ -17,7 +17,7 @@ export function buildRql({ selected, keywords }) {
     const expr =
       f.op === "between"
         ? `between(${encodeRqlField(f.field)},${encodeRqlValue(f.value[0])},${encodeRqlValue(f.value[1])})`
-        : `${f.op}(${encodeRqlField(f.field)},${encodeRqlValue(String(f.value))})`;
+        : `${String(f.op)}(${encodeRqlField(f.field)},${encodeRqlValue(String(f.value))})`;
 
     if (!grouped[f.field]) grouped[f.field] = [];
     grouped[f.field].push(expr);
@@ -29,12 +29,12 @@ export function buildRql({ selected, keywords }) {
 
   if (keywords.length) {
     const kw = keywords.map((k) => {
-      const raw = `${k}*`;
+      const raw = `${String(k)}*`;
       const encoded = encodeRqlValue(raw);
       return `keyword(${encoded})`;
     });
 
-    parts.push(kw.length === 1 ? kw[0] : `and(${kw.join(",")})`);
+    parts.push(kw.length === 1 ? kw[0] : `and(${String(kw.join(","))})`);
   }
 
   if (!parts.length) return "";

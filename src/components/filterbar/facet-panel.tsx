@@ -107,7 +107,7 @@ export function FacetPanel({
 
         const facetStr = `facet(${facetFieldsStr},(mincount,1),(limit,100))`;
         const filterStr = selected
-          .map(f => `eq(${f.field},${f.value})`)
+          .map(f => `eq(${f.field},${String(f.value)})`)
           .join(",");
           
         const RQLstring = [

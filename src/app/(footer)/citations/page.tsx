@@ -184,7 +184,7 @@ export default function CitationsPage() {
                     <div
                       className="timeline-bar"
                       style={{
-                        height: `${(citationsByYear[year] / Math.max(...Object.values(citationsByYear))) * 100}%`,
+                        height: `${String((citationsByYear[year] / Math.max(...Object.values(citationsByYear))) * 100)}%`,
                       }}
                     />
                     <div className="timeline-label">

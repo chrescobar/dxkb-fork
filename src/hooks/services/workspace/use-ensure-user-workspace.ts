@@ -49,7 +49,7 @@ export function useEnsureUserWorkspace(
           message?: string;
         };
         throw new Error(
-          body.error ?? body.message ?? `ensure-workspace failed (${response.status})`,
+          body.error ?? body.message ?? `ensure-workspace failed (${String(response.status)})`,
         );
       }
       return response.json();

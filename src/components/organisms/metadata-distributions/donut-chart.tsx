@@ -84,11 +84,11 @@ function uniqueAggregateLabel(labels: readonly string[]): string {
     return fallbackAggregateLabel;
 
   let suffix = 2;
-  while (existingLabels.has(`${fallbackAggregateLabel} ${suffix}`)) {
+  while (existingLabels.has(`${fallbackAggregateLabel} ${String(suffix)}`)) {
     suffix += 1;
   }
 
-  return `${fallbackAggregateLabel} ${suffix}`;
+  return `${fallbackAggregateLabel} ${String(suffix)}`;
 }
 
 function chartData(data: DonutDatum[]): DonutChartDatum[] {
@@ -96,7 +96,7 @@ function chartData(data: DonutDatum[]): DonutChartDatum[] {
     .filter((datum) => datum.value > 0)
     .map((datum, index) => ({
       ...datum,
-      id: `bucket-${index}`,
+      id: `bucket-${String(index)}`,
       label: facetDisplayLabel(datum.label),
     }));
 
@@ -191,9 +191,9 @@ function connectorPath(
     side === "right" ? connectorMeetSlant : -connectorMeetSlant;
 
   return [
-    `M${subjectX},${subjectY}`,
-    `L${roundSvgNumber(labelX - slantOffset)},${subjectY}`,
-    `L${roundSvgNumber(labelX)},${roundSvgNumber(labelY)}`,
+    `M${String(subjectX)},${String(subjectY)}`,
+    `L${String(roundSvgNumber(labelX - slantOffset))},${String(subjectY)}`,
+    `L${String(roundSvgNumber(labelX))},${String(roundSvgNumber(labelY))}`,
   ].join("");
 }
 
@@ -296,7 +296,7 @@ export function DonutChart({ title, data }: DonutChartProps) {
         ) : (
           <div className="min-w-0 overflow-hidden">
             <svg
-              viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+              viewBox={`0 0 ${String(chartWidth)} ${String(chartHeight)}`}
               role="img"
               aria-label={`${title} distribution`}
               className="mx-auto w-full max-w-135"
@@ -409,7 +409,7 @@ export function DonutChart({ title, data }: DonutChartProps) {
                             >
                               {titleLines.map((line, index) => (
                                 <tspan
-                                  key={`${datum.arc.data.id}-title-${index}`}
+                                  key={`${datum.arc.data.id}-title-${String(index)}`}
                                   className="metadata-distribution-title-line"
                                   x={textX}
                                   y={

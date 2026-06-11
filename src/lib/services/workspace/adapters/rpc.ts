@@ -60,7 +60,7 @@ export async function rpc<T = unknown>({
       const message =
         getErrorMessage(apiResponse) ||
         getErrorMessage(errorValue) ||
-        `HTTP error! status: ${response.status}`;
+        `HTTP error! status: ${String(response.status)}`;
       throw new WorkspaceApiError(message, method, apiResponse);
     }
 

@@ -48,7 +48,7 @@ export class JsonRpcClient {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${String(response.status)}`);
       }
 
       const jsonResponse: JsonRpcResponse<T> = await response.json();
@@ -92,7 +92,7 @@ export class JsonRpcClient {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${String(response.status)}`);
       }
 
       const jsonResponses: JsonRpcResponse<T>[] = await response.json();

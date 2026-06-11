@@ -476,7 +476,7 @@ export function WorkspaceObjectSelector({
 
                     return (
                       <div
-                        key={`${object.id}-${index}`}
+                        key={`${object.id}-${String(index)}`}
                         ref={(el) => {
                           itemRefs.current[index] = el;
                         }}

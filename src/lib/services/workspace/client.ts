@@ -43,7 +43,7 @@ export class WorkspaceApiClient {
         const errorData = await response.json().catch(() => ({}));
         const err = new Error(
           (errorData as { error?: string }).error ||
-            `HTTP error! status: ${response.status}`,
+            `HTTP error! status: ${String(response.status)}`,
         ) as Error & { apiResponse?: unknown };
         err.apiResponse = (errorData as { apiResponse?: unknown }).apiResponse ?? errorData;
         throw err;

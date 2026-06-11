@@ -61,7 +61,7 @@ function InteractiveCsvViewer({
 
     fetch(getProxyUrl(filePath), { signal: controller.signal })
       .then((res) => {
-        if (!res.ok) throw new Error(`Failed to fetch file: ${res.status}`);
+        if (!res.ok) throw new Error(`Failed to fetch file: ${String(res.status)}`);
         return res.text();
       })
       .then((text) => { setContent(text); })

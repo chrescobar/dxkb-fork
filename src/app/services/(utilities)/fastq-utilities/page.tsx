@@ -246,7 +246,7 @@ export default function FastqUtilitiesPage() {
 
     if (pipelineActions.length >= maxPipelineActions) {
       toast.error("Maximum actions reached", {
-        description: `You can add up to ${maxPipelineActions} pipeline actions`,
+        description: `You can add up to ${String(maxPipelineActions)} pipeline actions`,
       });
       return;
     }
@@ -405,7 +405,7 @@ export default function FastqUtilitiesPage() {
                     >
                       <div className="flex items-center gap-2">
                         <span
-                          className={`size-3 rounded-full ${action.color}`}
+                          className={`size-3 rounded-full ${action.color ?? ""}`}
                         />
                         <span className="text-sm">{action.label}</span>
                       </div>

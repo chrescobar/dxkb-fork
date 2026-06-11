@@ -36,7 +36,7 @@ export function searchToQueryWithOr(expression: string, field?: string): string 
           subExp = "";
           expField = "";
         } else {
-          throw Error("Unexpected ')' at character " + i);
+          throw Error(`Unexpected ')' at character ${String(i)}`);
         }
         break;
 
@@ -118,7 +118,7 @@ export function searchToQueryWithOr(expression: string, field?: string): string 
           expField = exp;
           exp = "";
         } else {
-          throw Error("Unexpected ':' at character " + i);
+          throw Error(`Unexpected ':' at character ${String(i)}`);
         }
         break;
 

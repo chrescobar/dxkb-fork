@@ -19,7 +19,7 @@ export const POST = withAuth(async (request: NextRequest, { token }) => {
     return NextResponse.json({ results: [] });
   }
 
-  const queryString = `?in(genome_id,(${inClause}))&select(genome_id,genome_name,public,owner,reference_genome,strain,superkingdom)&limit(${Math.min(genomeIds.length, 100)})`;
+  const queryString = `?in(genome_id,(${inClause}))&select(genome_id,genome_name,public,owner,reference_genome,strain,superkingdom)&limit(${String(Math.min(genomeIds.length, 100))})`;
   const url = `${getRequiredEnv("NEXT_PUBLIC_DATA_API")}/genome/${queryString}`;
 
   const response = await fetch(url, {
@@ -35,7 +35,7 @@ export const POST = withAuth(async (request: NextRequest, { token }) => {
     console.error("Genome lookup error:", response.status, errorText);
     return NextResponse.json(
       {
-        error: `BV-BRC genome lookup failed: ${response.status} ${response.statusText}`,
+        error: `BV-BRC genome lookup failed: ${String(response.status)} ${response.statusText}`,
       },
       { status: response.status },
     );

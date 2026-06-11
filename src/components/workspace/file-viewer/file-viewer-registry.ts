@@ -218,6 +218,6 @@ export function getPreviewUrl(
   filePath: string,
   maxBytes: number = previewMaxBytes,
 ): string {
-  return `/api/workspace/preview/${encodePath(filePath)}?maxBytes=${maxBytes}`;
+  return `/api/workspace/preview/${encodePath(filePath)}?maxBytes=${String(maxBytes)}`;
 }
 

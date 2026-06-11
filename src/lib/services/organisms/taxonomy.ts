@@ -20,7 +20,7 @@ export async function fetchOrganismTaxonomy(
   options: OrganismFetchOptions = {},
 ): Promise<OrganismTaxonomy> {
   const baseUrl = getBvBrcWebsiteApiBaseUrl();
-  const response = await fetch(`${baseUrl}/taxonomy/${taxonId}`, {
+  const response = await fetch(`${baseUrl}/taxonomy/${String(taxonId)}`, {
     method: "GET",
     headers: { Accept: "application/json" },
     signal: options.signal,
@@ -31,7 +31,7 @@ export async function fetchOrganismTaxonomy(
     throw new Error(await responseErrorMessage(response));
   }
 
-  const payload = await readJsonObject(response, `taxonomy/${taxonId}`);
+  const payload = await readJsonObject(response, `taxonomy/${String(taxonId)}`);
 
   return {
     taxonId: requiredNumber(payload.taxon_id ?? payload.taxonId ?? taxonId, "taxon_id"),

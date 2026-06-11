@@ -287,7 +287,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           const value = info.getValue();
           if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(value)) {
             const date = new Date(value);
-            return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+            return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getFullYear())}`;
           }
           return value;
         },
@@ -441,7 +441,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     const headers = table.getFlatHeaders();
     const colSizes: Record<string, string> = {};
     for (const header of headers) {
-      colSizes[`--col-${header.column.id}-size`] = `${header.column.getSize()}px`;
+      colSizes[`--col-${header.column.id}-size`] = `${String(header.column.getSize())}px`;
     }
     return colSizes;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -473,7 +473,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     const tableRect = tableEl.getBoundingClientRect();
 
     if (resizeLineRef.current) { // Make the ghost line appear
-      resizeLineRef.current.style.left = `${colElement.getBoundingClientRect().right - tableRect.left}px`;
+      resizeLineRef.current.style.left = `${String(colElement.getBoundingClientRect().right - tableRect.left)}px`;
       resizeLineRef.current.style.display = 'block';
     }
 
@@ -482,7 +482,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       const newSize = Math.max(40, startSize + delta);
 
       if (resizeLineRef.current) { // Make the ghost line move
-        resizeLineRef.current.style.left = `${colElement.getBoundingClientRect().left - tableRect.left + newSize}px`;
+        resizeLineRef.current.style.left = `${String(colElement.getBoundingClientRect().left - tableRect.left + newSize)}px`;
       }
     };
 
@@ -628,12 +628,12 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
       const DataAPI = process.env.NEXT_PUBLIC_DATA_API;
 
-      await fetch(`${DataAPI}/${resource}/?${query}`, {
+      await fetch(`${DataAPI ?? ""}/${resource}/?${query}`, {
         headers: {
           'Content-type': 'application/rqlquery+x-www-form-urlencoded',
           Accept: "application/json",
-          'Range': `items=0-${(selectedIds ?? []).length}`,
-          'X-Range': `items=0-${(selectedIds ?? []).length}`,
+          'Range': `items=0-${String((selectedIds ?? []).length)}`,
+          'X-Range': `items=0-${String((selectedIds ?? []).length)}`,
         },
       })
         .then((res) => {
@@ -997,7 +997,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                       }}
                       style={{
                         position: 'absolute',
-                        transform: `translateY(${virtualRow.start}px)`,
+                        transform: `translateY(${String(virtualRow.start)}px)`,
                         left: 0,
                         right: 0,
                         display: 'flex',
@@ -1067,8 +1067,8 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                     {selectedCount > 0 && (
                       <div className="font-semibold text-blue-600">
                         {isAllPagesSelected 
-                          ? `All ${totalItems} results selected` 
-                          : `${selectedCount} selected`}
+                          ? `All ${String(totalItems)} results selected`
+                          : `${String(selectedCount)} selected`}
                       </div>
                     )}
                   </div>

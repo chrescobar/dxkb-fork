@@ -283,7 +283,7 @@ export function CodeMirrorViewer({
         });
 
         if (!response.ok) {
-          throw new Error(`Failed to load file (HTTP ${response.status})`);
+          throw new Error(`Failed to load file (HTTP ${String(response.status)})`);
         }
 
         const contentLength = response.headers.get("Content-Length");

@@ -4,10 +4,10 @@ import type { ResolvedPathObject } from "@/lib/services/workspace/types";
 
 vi.mock("@/lib/jobs/formatting", () => ({
   formatElapsedSeconds: vi.fn((s: number | undefined) =>
-    s != null ? `${s}s` : "—",
+    s != null ? `${String(s)}s` : "—",
   ),
   formatUnixTimestamp: vi.fn((ts: number | undefined) =>
-    ts != null ? `ts:${ts}` : "—",
+    ts != null ? `ts:${String(ts)}` : "—",
   ),
 }));
 

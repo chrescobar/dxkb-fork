@@ -47,7 +47,7 @@ export function searchToQueryWithQuoteAnd(
           subExp = "";
           expField = "";
         } else {
-          throw Error("Unexpected ')' at character " + i);
+          throw Error(`Unexpected ')' at character ${String(i)}`);
         }
         break;
 
@@ -129,7 +129,7 @@ export function searchToQueryWithQuoteAnd(
           expField = exp;
           exp = "";
         } else {
-          throw Error("Unexpected ':' at character " + i);
+          throw Error(`Unexpected ':' at character ${String(i)}`);
         }
         break;
 

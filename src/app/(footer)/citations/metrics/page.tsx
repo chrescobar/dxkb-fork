@@ -130,7 +130,7 @@ export default function CitationsMetricsPage() {
                   ? [
                       {
                         value: String(uniqueYears[0]) + "-" + String(uniqueYears[uniqueYears.length - 1]),
-                        label: `${uniqueYears[0]} - ${uniqueYears[uniqueYears.length - 1]}`,
+                        label: `${String(uniqueYears[0])} - ${String(uniqueYears[uniqueYears.length - 1])}`,
                       },
                       ...(uniqueYears.length > 2
                         ? [
@@ -247,7 +247,7 @@ export default function CitationsMetricsPage() {
                         <div
                           className="w-full rounded-t bg-primary"
                           style={{
-                            height: `${(metricsByYear[year].count / Math.max(...Object.values(metricsByYear).map((m) => m.count))) * 100}%`,
+                            height: `${String((metricsByYear[year].count / Math.max(...Object.values(metricsByYear).map((m) => m.count))) * 100)}%`,
                             minHeight: "20px",
                           }}
                         />
@@ -255,7 +255,7 @@ export default function CitationsMetricsPage() {
                           <div
                             className="w-full rounded-t bg-primary/30"
                             style={{
-                              height: `${(metricsByYear[year].totalCitations / Math.max(...Object.values(metricsByYear).map((m) => m.totalCitations || 1))) * 80}%`,
+                              height: `${String((metricsByYear[year].totalCitations / Math.max(...Object.values(metricsByYear).map((m) => m.totalCitations || 1))) * 80)}%`,
                               minHeight: "5px",
                             }}
                           />
@@ -303,7 +303,7 @@ export default function CitationsMetricsPage() {
                             </span>
                           </div>
                           <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                            <div className="h-full rounded-full bg-primary" style={{ width: `${percentage}%` }} />
+                            <div className="h-full rounded-full bg-primary" style={{ width: `${String(percentage)}%` }} />
                           </div>
                         </div>
                       )
@@ -331,7 +331,7 @@ export default function CitationsMetricsPage() {
                             <div
                               className="w-full rounded-t bg-primary/70"
                               style={{
-                                height: `${(avgImpact / (maxImpact || 1)) * 100}%`,
+                                height: `${String((avgImpact / (maxImpact || 1)) * 100)}%`,
                                 minHeight: "20px",
                               }}
                             />
@@ -364,7 +364,7 @@ export default function CitationsMetricsPage() {
                         <div
                           className="w-full rounded-t bg-primary"
                           style={{
-                            height: `${(item.count / Math.max(...impactFactorRanges.map((r) => r.count || 1))) * 100}%`,
+                            height: `${String((item.count / Math.max(...impactFactorRanges.map((r) => r.count || 1))) * 100)}%`,
                             minHeight: "20px",
                           }}
                         />
@@ -467,7 +467,7 @@ export default function CitationsMetricsPage() {
                         <div
                           className="w-full rounded-t bg-primary"
                           style={{
-                            height: `${(author.count / Math.max(...topAuthors.map((a) => a.count))) * 100}%`,
+                            height: `${String((author.count / Math.max(...topAuthors.map((a) => a.count))) * 100)}%`,
                             minHeight: "20px",
                           }}
                         />
@@ -513,18 +513,18 @@ export default function CitationsMetricsPage() {
                         key={author.name}
                         className="absolute -translate-1/2 transform"
                         style={{
-                          left: `calc(50% + ${x}px)`,
-                          top: `calc(50% + ${y}px)`,
+                          left: `calc(50% + ${String(x)}px)`,
+                          top: `calc(50% + ${String(y)}px)`,
                         }}
                       >
                         {/* Line connecting to center */}
                         <div
                           className="absolute bg-muted"
                           style={{
-                            width: `${Math.sqrt(x * x + y * y)}px`,
+                            width: `${String(Math.sqrt(x * x + y * y))}px`,
                             height: "2px",
                             transformOrigin: "0 0",
-                            transform: `rotate(${Math.atan2(y, x)}rad)`,
+                            transform: `rotate(${String(Math.atan2(y, x))}rad)`,
                             left: "50%",
                             top: "50%",
                             zIndex: 0,
@@ -535,8 +535,8 @@ export default function CitationsMetricsPage() {
                         <div
                           className="flex flex-col items-center justify-center rounded-full border bg-card p-2 shadow-md"
                           style={{
-                            height: `${size}px`,
-                            width: `${size}px`,
+                            height: `${String(size)}px`,
+                            width: `${String(size)}px`,
                             zIndex: 5,
                             position: "relative",
                           }}

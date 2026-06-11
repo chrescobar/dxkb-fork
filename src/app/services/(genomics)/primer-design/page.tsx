@@ -430,7 +430,7 @@ export default function PrimerDesignServicePage() {
                         className="service-card-textarea"
                       />
                       {sequenceValidation && !sequenceValidation.isValid && (
-                        <p className="text-destructive text-sm">
+                        <p className="text-sm text-destructive">
                           {sequenceValidation.message}
                         </p>
                       )}
@@ -509,7 +509,7 @@ export default function PrimerDesignServicePage() {
                           }
                         }}
                       />
-                      <p className="text-muted-foreground text-xs">
+                      <p className="text-xs text-muted-foreground">
                         Note: only the first FASTA record will be used.
                       </p>
                       <FieldErrors field={field} />
@@ -720,7 +720,7 @@ export default function PrimerDesignServicePage() {
               <CollapsibleTrigger className="service-collapsible-trigger">
                 Advanced Options
                 <ChevronDown
-                  className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
+                  className={`size-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
                 />
               </CollapsibleTrigger>
 
@@ -965,7 +965,7 @@ export default function PrimerDesignServicePage() {
             type="submit"
             disabled={runtime.isSubmitting || !canSubmit || !isOutputNameValid}
           >
-            {runtime.isSubmitting && <Spinner className="mr-2 h-4 w-4" />}
+            {runtime.isSubmitting && <Spinner className="mr-2 size-4" />}
             Submit
           </Button>
         </div>

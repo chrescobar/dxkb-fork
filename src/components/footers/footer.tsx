@@ -95,7 +95,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className={socialLinkClassName}
               >
-                <SiX className="h-4 w-4" data-icon="inline-start" />
+                <SiX className="size-4" data-icon="inline-start" />
                 <span className="sr-only">X</span>
               </Link>
               <Link
@@ -104,7 +104,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className={socialLinkClassName}
               >
-                <SiFacebook className="h-4 w-4" data-icon="inline-start" />
+                <SiFacebook className="size-4" data-icon="inline-start" />
                 <span className="sr-only">Facebook</span>
               </Link>
               <Link
@@ -113,7 +113,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className={socialLinkClassName}
               >
-                <SiInstagram className="h-4 w-4" data-icon="inline-start" />
+                <SiInstagram className="size-4" data-icon="inline-start" />
                 <span className="sr-only">Instagram</span>
               </Link>
               <Link
@@ -122,7 +122,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className={socialLinkClassName}
               >
-                <SiGithub className="h-4 w-4" data-icon="inline-start" />
+                <SiGithub className="size-4" data-icon="inline-start" />
                 <span className="sr-only">GitHub</span>
               </Link>
               <Link
@@ -131,7 +131,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className={socialLinkClassName}
               >
-                <SiYoutube className="h-4 w-4" data-icon="inline-start" />
+                <SiYoutube className="size-4" data-icon="inline-start" />
                 <span className="sr-only">YouTube</span>
               </Link>
             </div>

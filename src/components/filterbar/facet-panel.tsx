@@ -157,7 +157,7 @@ export function FacetPanel({
   }, [fields, query, resource, DataAPI, selected]);
 
   return (
-    <div className="flex gap-3 overflow-x-auto max-h-[120px] overflow-y-auto bg-gray-800 p-2 rounded text-[11px]">
+    <div className="flex max-h-30 gap-3 overflow-auto rounded bg-gray-800 p-2 text-[11px]">
       {fields
       .filter(f => visibleFacets.includes(f.id))
       .map((field) => (

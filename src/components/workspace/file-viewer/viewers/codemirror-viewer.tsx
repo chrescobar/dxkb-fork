@@ -394,7 +394,7 @@ export function CodeMirrorViewer({
 
   if (status === "error") {
     return (
-      <div className="flex h-full w-full flex-col items-center justify-center gap-3">
+      <div className="flex size-full flex-col items-center justify-center gap-3">
         <p className="text-destructive">{errorMsg}</p>
         <Button variant="outline" onClick={() => window.location.reload()}>
           Retry
@@ -404,7 +404,7 @@ export function CodeMirrorViewer({
   }
 
   return (
-    <div className="relative flex h-full w-full flex-col">
+    <div className="relative flex size-full flex-col">
       {status === "streaming" && progress.bytesLoaded > 0 && (
         <LoadingProgress
           bytesLoaded={progress.bytesLoaded}

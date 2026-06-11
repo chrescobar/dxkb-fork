@@ -74,9 +74,9 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
           </h3>
 
           <div className="flex gap-3 rounded-lg border border-amber-300 bg-amber-50 p-3 dark:border-amber-700 dark:bg-amber-950/40">
-            <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />
+            <ShieldAlert className="mt-0.5 size-5 shrink-0 text-amber-600 dark:text-amber-400" />
             <div className="text-sm">
-              <p className="font-bold italic text-amber-800 dark:text-amber-300">
+              <p className="font-bold text-amber-800 italic dark:text-amber-300">
                 WARNING &mdash; With great power comes great responsibility...
               </p>
               <p className="mt-1 text-amber-700 dark:text-amber-400">

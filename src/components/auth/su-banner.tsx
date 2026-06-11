@@ -24,7 +24,7 @@ export function SuBanner() {
 
   return (
     <div className="flex items-center justify-center gap-2 bg-accent px-4 py-1.5 text-sm font-medium text-accent-foreground">
-      <ShieldAlert className="h-4 w-4 shrink-0" />
+      <ShieldAlert className="size-4 shrink-0" />
       <span>
         You are impersonating{" "}
         <strong>{user?.username}</strong>.

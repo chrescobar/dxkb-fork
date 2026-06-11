@@ -22,7 +22,7 @@ export function MolstarStatusOverlay({
   if (status === "loading" || status === "initializing") {
     return (
       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-background/80 backdrop-blur-sm">
-        <Spinner className="h-5 w-5 text-muted-foreground" />
+        <Spinner className="size-5 text-muted-foreground" />
         <p className="text-sm text-muted-foreground">
           {status === "loading"
             ? "Loading viewer\u2026"
@@ -37,7 +37,7 @@ export function MolstarStatusOverlay({
       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-background">
         <div className="flex flex-col items-center gap-2 text-center">
           <AlertCircle
-            className={compact ? "h-8 w-8 text-destructive" : "h-10 w-10 text-destructive"}
+            className={compact ? "size-8 text-destructive" : "size-10 text-destructive"}
           />
           <p
             className={

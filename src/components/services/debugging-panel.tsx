@@ -74,7 +74,7 @@ export function DebuggingPanel() {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-125">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             Debugging Panel
@@ -91,7 +91,7 @@ export function DebuggingPanel() {
             />
             <Label
               htmlFor="debug-mode"
-              className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              className="text-sm leading-none font-normal peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
               Don&apos;t Submit Jobs (print to params to console)
             </Label>

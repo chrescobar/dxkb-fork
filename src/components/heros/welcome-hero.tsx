@@ -3,9 +3,9 @@ import ThemeContent from "@/components/ui/theme-content";
 
 const WelcomeHero = () => {
   return (
-    <section className="text-center py-16">
-      <h1 className="text-4xl font-bold mb-4">Welcome to the</h1>
-      <h2 className="text-3xl font-bold mb-8">
+    <section className="py-16 text-center">
+      <h1 className="mb-4 text-4xl font-bold">Welcome to the</h1>
+      <h2 className="mb-8 text-3xl font-bold">
         <ThemeContent type="site-name" as="span" />
       </h2>
       <SearchBar />

@@ -90,7 +90,7 @@ export function DeleteConfirmDialog({
           >
             {isDeleting ? (
               <>
-                <Spinner className="mr-2 h-3.5 w-3.5 shrink-0" />
+                <Spinner className="mr-2 size-3.5 shrink-0" />
                 Deleting…
               </>
             ) : (

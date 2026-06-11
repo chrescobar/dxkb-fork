@@ -37,7 +37,7 @@ export function GenomeShell({
   }
 
   const actionStrip = (
-    <div className="bg-muted flex flex-col w-[72px] shrink-0 border-l min-h-0 h-full">
+    <div className="flex h-full min-h-0 w-18 shrink-0 flex-col border-l bg-muted">
       {/* Top toggle button */}
       <div className="border-b p-2">
         {panelExpanded ? (
@@ -46,9 +46,9 @@ export function GenomeShell({
             size="sm"
             onClick={() => setPanelExpanded(false)}
             title="Hide panel"
-            className="flex flex-col items-center gap-0 h-auto py-2 px-1 w-full"
+            className="flex h-auto w-full flex-col items-center gap-0 px-1 py-2"
           >
-            <PanelRightClose className="h-4 w-4" />
+            <PanelRightClose className="size-4" />
             <span className="text-xs">Hide</span>
           </Button>
         ) : (
@@ -57,9 +57,9 @@ export function GenomeShell({
             size="sm"
             onClick={() => setPanelExpanded(true)}
             title="Show panel"
-            className="flex flex-col items-center gap-0 h-auto py-2 px-1 w-full"
+            className="flex h-auto w-full flex-col items-center gap-0 px-1 py-2"
           >
-            <PanelRightOpen className="h-4 w-4" />
+            <PanelRightOpen className="size-4" />
             <span className="text-xs">Show</span>
           </Button>
         )}
@@ -72,8 +72,8 @@ export function GenomeShell({
   );
 
   return (
-    <div className="flex-1 min-h-0 w-full flex overflow-hidden">
-      <ResizablePanelGroup orientation="horizontal" className="h-full min-h-0 w-full">
+    <div className="flex min-h-0 w-full flex-1 overflow-hidden">
+      <ResizablePanelGroup orientation="horizontal" className="size-full min-h-0">
         {/*
           The first panel is always mounted so children (the data table) never
           remounts and TanStack Query never re-fires on panel open/close.
@@ -84,7 +84,7 @@ export function GenomeShell({
           minSize="20%"
           className="flex min-h-0 min-w-0 overflow-hidden"
         >
-          <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
             {children}
           </div>
 

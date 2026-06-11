@@ -9,7 +9,7 @@ export function KeywordSearch({ value, onChange }: KeywordSearchProps) {
   return (
             <Input
               type="search"
-              className="border px-2 py-1 w-80 border-primary text-primary-background"
+              className="text-primary-background w-80 border border-primary px-2 py-1"
               placeholder="Search keywords..."
               value={value}
               onChange={(e) => onChange(e.target.value)}

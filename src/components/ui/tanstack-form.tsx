@@ -60,7 +60,7 @@ function FieldErrors({
   return (
     <p
       data-slot="form-message"
-      className={cn("text-destructive text-sm", className)}
+      className={cn("text-sm text-destructive", className)}
     >
       {message}
     </p>

@@ -6,7 +6,7 @@ import { JobsBrowser } from "@/components/jobs/jobs-browser";
 
 function JobsPageSkeleton() {
   return (
-    <div className="flex h-full min-h-0 w-full flex-col">
+    <div className="flex size-full min-h-0 flex-col">
       <div className="space-y-4 p-4">
         <Skeleton className="h-8 w-32" />
         <Skeleton className="h-10 w-full" />

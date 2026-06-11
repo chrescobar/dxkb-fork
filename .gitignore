@@ -69,3 +69,5 @@ next-env.d.ts
 .screenshots/
 
 # Superpowers
+.superpowers/
+docs/superpowers

@@ -81,7 +81,7 @@ const SearchReadLibrary = ({
           {title && (
             <Label className="service-card-label">{title}</Label>
           )}
-          <div className="bg-border mx-4 h-[1px] flex-1" />
+          <div className="mx-4 h-px flex-1 bg-border" />
           <Button
             variant="outline"
             size="icon"

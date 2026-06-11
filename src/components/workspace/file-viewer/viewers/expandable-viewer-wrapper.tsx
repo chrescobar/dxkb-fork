@@ -89,7 +89,7 @@ export function ExpandableViewerWrapper({
       className={
         expanded
           ? `fixed inset-0 z-50 flex flex-col bg-background transition-opacity duration-200 ease-out ${entering || leaving ? "opacity-0" : "opacity-100"}`
-          : "relative h-full w-full"
+          : "relative size-full"
       }
     >
       {expanded && (
@@ -107,14 +107,14 @@ export function ExpandableViewerWrapper({
                 onClick={collapse}
                 title="Collapse"
               >
-                <Minimize2 className="h-4 w-4" />
+                <Minimize2 className="size-4" />
               </Button>
             </div>
           </div>
           <Separator />
         </>
       )}
-      <div className={expanded ? "min-h-0 flex-1" : "h-full w-full"}>
+      <div className={expanded ? "min-h-0 flex-1" : "size-full"}>
         {children}
       </div>
       {!expanded && (
@@ -125,7 +125,7 @@ export function ExpandableViewerWrapper({
           onClick={expand}
           title="Expand to full screen"
         >
-          <Maximize2 className="h-4 w-4" />
+          <Maximize2 className="size-4" />
         </Button>
       )}
     </div>

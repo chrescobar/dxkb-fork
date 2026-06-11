@@ -13,8 +13,8 @@ function StatusCell({ status }: { status: JobStatus }) {
   const Icon = config.icon;
   return (
     <div className="flex items-center gap-1.5">
-      <Icon className={`h-3.5 w-3.5 shrink-0 ${config.className}`} />
-      <span className="text-muted-foreground truncate text-xs">
+      <Icon className={`size-3.5 shrink-0 ${config.className}`} />
+      <span className="truncate text-xs text-muted-foreground">
         {config.label}
       </span>
     </div>
@@ -57,7 +57,7 @@ export function useJobsColumns(
         header: "ID",
         cell: ({ getValue }) => (
           <span
-            className="text-muted-foreground block truncate font-mono text-xs"
+            className="block truncate font-mono text-xs text-muted-foreground"
             title={String(getValue())}
           >
             {String(getValue())}
@@ -88,7 +88,7 @@ export function useJobsColumns(
         header: "Output Name",
         cell: ({ row }) => (
           <span
-            className="text-muted-foreground block truncate"
+            className="block truncate text-muted-foreground"
             title={getOutputName(row.original)}
           >
             {getOutputName(row.original)}
@@ -103,7 +103,7 @@ export function useJobsColumns(
         accessorKey: "submit_time",
         header: "Submit",
         cell: ({ getValue }) => (
-          <span className="text-muted-foreground block truncate">
+          <span className="block truncate text-muted-foreground">
             {formatDate(String(getValue() ?? ""))}
           </span>
         ),
@@ -116,7 +116,7 @@ export function useJobsColumns(
         accessorKey: "start_time",
         header: "Start",
         cell: ({ getValue }) => (
-          <span className="text-muted-foreground block truncate">
+          <span className="block truncate text-muted-foreground">
             {getValue() ? formatDate(String(getValue())) : "\u2014"}
           </span>
         ),
@@ -129,7 +129,7 @@ export function useJobsColumns(
         accessorKey: "completed_time",
         header: "Completed",
         cell: ({ getValue }) => (
-          <span className="text-muted-foreground block truncate">
+          <span className="block truncate text-muted-foreground">
             {getValue() ? formatDate(String(getValue())) : "\u2014"}
           </span>
         ),

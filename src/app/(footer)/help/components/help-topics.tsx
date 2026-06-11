@@ -5,11 +5,11 @@ const HelpTopics = () => {
   return (
     <section className="py-12">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-8 text-center">Help Topics</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <h2 className="mb-8 text-center text-2xl font-bold">Help Topics</h2>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <Card>
               <CardHeader className="pb-4">
-                <div className="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center mb-4">
+                <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-secondary/20">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -53,7 +53,7 @@ const HelpTopics = () => {
 
             <Card>
               <CardHeader className="pb-4">
-                <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center mb-4">
+                <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-accent/20">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -95,7 +95,7 @@ const HelpTopics = () => {
 
             <Card>
               <CardHeader className="pb-4">
-                <div className="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center mb-4">
+                <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-secondary/20">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"

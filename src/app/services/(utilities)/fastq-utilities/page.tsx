@@ -386,7 +386,7 @@ export default function FastqUtilitiesPage() {
                       pipelineActions.length >= maxPipelineActions
                     }
                   >
-                    <Plus className="h-4 w-4" />
+                    <Plus className="size-4" />
                   </Button>
                 </div>
               </div>
@@ -394,7 +394,7 @@ export default function FastqUtilitiesPage() {
               {/* Pipeline Actions List */}
               <div className="mt-4 space-y-2">
                 {pipelineActions.length === 0 ? (
-                  <p className="text-muted-foreground py-4 text-center text-sm">
+                  <p className="py-4 text-center text-sm text-muted-foreground">
                     No actions added yet
                   </p>
                 ) : (
@@ -405,7 +405,7 @@ export default function FastqUtilitiesPage() {
                     >
                       <div className="flex items-center gap-2">
                         <span
-                          className={`h-3 w-3 rounded-full ${action.color}`}
+                          className={`size-3 rounded-full ${action.color}`}
                         />
                         <span className="text-sm">{action.label}</span>
                       </div>
@@ -413,10 +413,10 @@ export default function FastqUtilitiesPage() {
                         type="button"
                         variant="ghost"
                         size="icon"
-                        className="h-6 w-6"
+                        className="size-6"
                         onClick={() => handleRemovePipelineAction(action.id)}
                       >
-                        <X className="h-3 w-3" />
+                        <X className="size-3" />
                       </Button>
                     </div>
                   ))
@@ -478,7 +478,7 @@ export default function FastqUtilitiesPage() {
                   <Label className="service-card-label">
                     Paired Read Library
                   </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
+                  <div className="mx-4 h-px flex-1 bg-border" />
                   <Button
                     type="button"
                     variant="outline"
@@ -515,7 +515,7 @@ export default function FastqUtilitiesPage() {
                   <Label className="service-card-label">
                     Single Read Library
                   </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
+                  <div className="mx-4 h-px flex-1 bg-border" />
                   <Button
                     type="button"
                     variant="outline"
@@ -629,7 +629,7 @@ export default function FastqUtilitiesPage() {
               type="submit"
               disabled={isSubmitting || !canSubmit || !isOutputNameValid}
             >
-              {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
+              {isSubmitting ? <Spinner className="mr-2 size-4" /> : null}
               Submit
             </Button>
           </div>

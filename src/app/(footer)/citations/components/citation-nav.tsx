@@ -10,7 +10,7 @@ export function CitationNav() {
   const pathname = usePathname()
 
   return (
-    <div className="flex items-center space-x-1 bg-muted/40 p-1 rounded-lg w-fit">
+    <div className="flex w-fit items-center space-x-1 rounded-lg bg-muted/40 p-1">
       <Link
         href="/citations"
         className={cn(buttonVariants({ variant: pathname === "/citations" ? "default" : "ghost", size: "sm" }), "rounded-md")}

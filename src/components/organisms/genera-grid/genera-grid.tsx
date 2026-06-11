@@ -31,7 +31,7 @@ export async function GeneraGrid({ taxonId, limit = 24 }: GeneraGridProps) {
     <section className="flex flex-col gap-3">
       <div>
         <h2 className="text-2xl font-semibold tracking-normal">Top Genera</h2>
-        <p className="text-muted-foreground text-base">
+        <p className="text-base text-muted-foreground">
           Ranked by available genome records.
         </p>
       </div>

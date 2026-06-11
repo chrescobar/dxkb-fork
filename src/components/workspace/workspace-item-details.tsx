@@ -93,9 +93,9 @@ export function WorkspaceItemDetails({
 
   return (
     <DetailPanel.CollapsibleSection label="Details" defaultExpanded={defaultExpanded}>
-      <div className="space-y-3 px-3 py-3 text-xs border-b">
+      <div className="space-y-3 border-b p-3 text-xs">
         <div className="flex items-center gap-2">
-          <WorkspaceItemIcon type={item.type} className="h-5 w-5 shrink-0" />
+          <WorkspaceItemIcon type={item.type} className="size-5 shrink-0" />
           {isJobResult ? (
             <TooltipProvider>
               <Tooltip>
@@ -121,7 +121,7 @@ export function WorkspaceItemDetails({
           </div>
           <div>
             <dt className="text-muted-foreground">Path</dt>
-            <dd className="break-all font-mono text-[11px]">{item.path}</dd>
+            <dd className="font-mono text-[11px] break-all">{item.path}</dd>
           </div>
           {children}
         </dl>

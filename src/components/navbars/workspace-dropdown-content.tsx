@@ -54,7 +54,7 @@ export function WorkspaceDropdownContent({
   const { workspaces, data } = workspaceNavItems;
 
   return (
-    <div className="p-2 lg:w-[500px]">
+    <div className="p-2 lg:w-125">
       {/* Top: static sections in 2 columns */}
       <div className="grid grid-cols-2 gap-2">
         {/* Left column: Workspaces */}
@@ -89,7 +89,7 @@ export function WorkspaceDropdownContent({
             {/* Favorite Folders */}
             <div>
               <SectionHeader>
-                Favorite Folders <Star className="h-4 w-4 text-amber-400" fill="currentColor" />
+                Favorite Folders <Star className="size-4 text-amber-400" fill="currentColor" />
               </SectionHeader>
               {favoritesLoading ? (
                 <div className="space-y-1 p-2">
@@ -133,7 +133,7 @@ export function WorkspaceDropdownContent({
 
 function SectionHeader({ children }: { children: React.ReactNode }) {
   return (
-    <h4 className="bg-primary my-0.5 flex items-center gap-1 rounded-md p-2 text-sm font-bold text-white">
+    <h4 className="my-0.5 flex items-center gap-1 rounded-md bg-primary p-2 text-sm font-bold text-white">
       {children}
     </h4>
   );
@@ -145,7 +145,7 @@ function NavItem({ href, title }: { href: string; title: string }) {
       render={
         <Link
           href={href}
-          className="hover:bg-secondary/20 my-0.5 block truncate p-2 font-medium"
+          className="my-0.5 block truncate p-2 font-medium hover:bg-secondary/20"
         />
       }
     >

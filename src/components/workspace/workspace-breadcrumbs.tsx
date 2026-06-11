@@ -56,12 +56,12 @@ export function WorkspaceBreadcrumbs({
       <nav aria-label="Workspace path" className="flex flex-wrap items-center gap-1 text-sm">
         <Link
           href={usernameRootHref}
-          className="text-foreground font-medium transition-colors hover:text-foreground"
+          className="font-medium text-foreground transition-colors hover:text-foreground"
         >
           {formatSegmentLabel(safeUsername, currentUsername)}
         </Link>
         {itemCount !== undefined && (
-          <span className="text-muted-foreground ml-2 text-xs">
+          <span className="ml-2 text-xs text-muted-foreground">
             ({itemCount} {itemCount === 1 ? "item" : "items"})
           </span>
         )}
@@ -73,16 +73,16 @@ export function WorkspaceBreadcrumbs({
     return (
       <nav aria-label="Workspace path" className="flex flex-wrap items-center gap-1 text-sm">
         {segments.length === 0 ? (
-          <span className="text-foreground flex items-center gap-1 font-medium">
-            <Globe className="h-3.5 w-3.5" />
+          <span className="flex items-center gap-1 font-medium text-foreground">
+            <Globe className="size-3.5" />
             <span>Public Workspaces</span>
           </span>
         ) : (
           <Link
             href="/workspace/public"
-            className="text-muted-foreground flex items-center gap-1 font-medium transition-colors hover:text-foreground"
+            className="flex items-center gap-1 font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
-            <Globe className="h-3.5 w-3.5" />
+            <Globe className="size-3.5" />
             <span>Public Workspaces</span>
           </Link>
         )}
@@ -93,15 +93,15 @@ export function WorkspaceBreadcrumbs({
 
           return (
             <span key={href} className="flex items-center gap-1">
-              <ChevronRight className="text-muted-foreground h-3.5 w-3.5" />
+              <ChevronRight className="size-3.5 text-muted-foreground" />
               {isLast ? (
-                <span className="text-foreground font-medium">
+                <span className="font-medium text-foreground">
                   {formatSegmentLabel(segment, currentUsername)}
                 </span>
               ) : (
                 <Link
                   href={href}
-                  className="text-muted-foreground font-medium transition-colors hover:text-foreground"
+                  className="font-medium text-muted-foreground transition-colors hover:text-foreground"
                 >
                   {formatSegmentLabel(segment, currentUsername)}
                 </Link>
@@ -110,7 +110,7 @@ export function WorkspaceBreadcrumbs({
           );
         })}
         {itemCount !== undefined && (
-          <span className="text-muted-foreground ml-2 text-xs">
+          <span className="ml-2 text-xs text-muted-foreground">
             ({itemCount} {itemCount === 1 ? "item" : "items"})
           </span>
         )}
@@ -133,16 +133,16 @@ export function WorkspaceBreadcrumbs({
           return (
             <span key={href} className="flex items-center gap-1">
               {index > 0 && (
-                <ChevronRight className="text-muted-foreground h-3.5 w-3.5" />
+                <ChevronRight className="size-3.5 text-muted-foreground" />
               )}
               {isLast ? (
-                <span className="text-foreground font-medium">
+                <span className="font-medium text-foreground">
                   {formatSegmentLabel(segment, currentUsername)}
                 </span>
               ) : (
                 <Link
                   href={href}
-                  className="text-muted-foreground font-medium transition-colors hover:text-foreground"
+                  className="font-medium text-muted-foreground transition-colors hover:text-foreground"
                 >
                   {formatSegmentLabel(segment, currentUsername)}
                 </Link>
@@ -151,7 +151,7 @@ export function WorkspaceBreadcrumbs({
           );
         })}
         {itemCount !== undefined && (
-          <span className="text-muted-foreground ml-2 text-xs">
+          <span className="ml-2 text-xs text-muted-foreground">
             ({itemCount} {itemCount === 1 ? "item" : "items"})
           </span>
         )}
@@ -168,18 +168,18 @@ export function WorkspaceBreadcrumbs({
           segments.length === 0 ? "text-foreground" : "text-muted-foreground",
         )}
       >
-        <Home className="h-3.5 w-3.5" />
+        <Home className="size-3.5" />
         <span>{formatSegmentLabel(safeUsername, currentUsername)}</span>
       </Link>
 
-      <ChevronRight className="text-muted-foreground h-3.5 w-3.5" />
+      <ChevronRight className="size-3.5 text-muted-foreground" />
 
       {segments.length === 0 ? (
-        <span className="text-foreground font-medium">home</span>
+        <span className="font-medium text-foreground">home</span>
       ) : (
         <Link
           href={homeBase}
-          className="text-muted-foreground font-medium transition-colors hover:text-foreground"
+          className="font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
           home
         </Link>
@@ -195,15 +195,15 @@ export function WorkspaceBreadcrumbs({
 
         return (
           <span key={href} className="flex items-center gap-1">
-            <ChevronRight className="text-muted-foreground h-3.5 w-3.5" />
+            <ChevronRight className="size-3.5 text-muted-foreground" />
             {isLast ? (
-              <span className="text-foreground font-medium">
+              <span className="font-medium text-foreground">
                 {formatSegmentLabel(segment, currentUsername)}
               </span>
             ) : (
               <Link
                 href={href}
-                className="text-muted-foreground font-medium transition-colors hover:text-foreground"
+                className="font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 {formatSegmentLabel(segment, currentUsername)}
               </Link>
@@ -213,7 +213,7 @@ export function WorkspaceBreadcrumbs({
       })}
 
       {itemCount !== undefined && (
-        <span className="text-muted-foreground ml-2 text-xs">
+        <span className="ml-2 text-xs text-muted-foreground">
           ({itemCount} {itemCount === 1 ? "item" : "items"})
         </span>
       )}

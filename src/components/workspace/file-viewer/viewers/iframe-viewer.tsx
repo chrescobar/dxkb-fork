@@ -22,7 +22,7 @@ export function IframeViewer({ filePath, allowScripts = false }: IframeViewerPro
     <iframe
       src={getProxyUrl(filePath)}
       sandbox={getSandbox(fileName, allowScripts)}
-      className="h-full w-full border-0"
+      className="size-full border-0"
       title={fileName}
     />
   );

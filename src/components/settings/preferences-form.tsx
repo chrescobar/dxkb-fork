@@ -94,15 +94,15 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9 shrink-0"
+                  className="size-9 shrink-0"
                   onClick={() => setDefaultJobFolder("")}
                   aria-label="Clear default job output folder"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="size-4" />
                 </Button>
               )}
             </div>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground">
               Set a default folder for job outputs. Leave empty to use home
               folder.
             </p>

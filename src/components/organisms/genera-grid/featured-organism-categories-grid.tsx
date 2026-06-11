@@ -16,12 +16,12 @@ export function FeaturedOrganismCategoriesGrid({
     <section className="flex flex-col gap-5">
       <div>
         <h2 className="text-2xl font-semibold tracking-normal">{title}</h2>
-        {subtitle && <p className="text-muted-foreground text-base">{subtitle}</p>}
+        {subtitle && <p className="text-base text-muted-foreground">{subtitle}</p>}
       </div>
       <div className="flex flex-col gap-5">
         {categories.map((cat) => (
           <div key={cat.title} className="flex flex-col gap-2">
-            <h3 className="text-muted-foreground text-xs font-semibold tracking-widest uppercase">
+            <h3 className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
               {cat.title}
             </h3>
             <div className="grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-2">

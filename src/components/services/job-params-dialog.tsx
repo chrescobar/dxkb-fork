@@ -24,7 +24,7 @@ export function JobParamsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[700px] max-h-[80vh]">
+      <DialogContent className="max-h-[80vh] sm:max-w-175">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between pr-6">
             {serviceName} Submission Params:
@@ -32,7 +32,7 @@ export function JobParamsDialog({
         </DialogHeader>
 
         <div className="mt-4 overflow-x-auto">
-          <pre className="bg-muted p-4 rounded-md max-h-[60vh] text-sm font-mono overflow-x-scroll">
+          <pre className="max-h-[60vh] overflow-x-scroll rounded-md bg-muted p-4 font-mono text-sm">
             {formattedParams}
           </pre>
         </div>

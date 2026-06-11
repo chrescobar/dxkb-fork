@@ -314,6 +314,9 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
   const [activationSource, setActivationSource] = useState<"cursor" | "legend">(
     "cursor",
   );
+  // When a legend pill activates a right-half arc, the tooltip must grow
+  // leftward (into the chart area) so it doesn't cover the legend column.
+  const [legendArcOnRight, setLegendArcOnRight] = useState(false);
   const activeId = hoveredId;
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
     useTooltip<DonutDatum & { pct: number }>();
@@ -423,6 +426,10 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
     const svgY = -Math.cos(midAngle) * anchorRadius + chartCenter;
     const clientX = rect.left + letterboxX + svgX * uniformScale;
     const clientY = rect.top + letterboxY + svgY * uniformScale;
+    // Track which half of the circle the arc is on so the render can flip the
+    // tooltip leftward for right-side arcs, keeping it inside the SVG region
+    // and away from the legend column.
+    setLegendArcOnRight(Math.sin(midAngle) > 0);
     showTooltipForArc(arc, clientX, clientY);
   };
 
@@ -687,12 +694,15 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
           style={chartTooltipStyle(
             tooltipLeft ?? 0,
             tooltipTop ?? 0,
-            tooltipEstimatedWidth,
+            // For a right-half arc activated from the legend, force the
+            // horizontal flip in chartTooltipStyle by passing an enormous
+            // estimated width. The flip uses CSS `right` positioning so the
+            // tooltip grows leftward from the anchor — staying inside the SVG
+            // and away from the legend column regardless of label length.
+            activationSource === "legend" && legendArcOnRight
+              ? 9999
+              : tooltipEstimatedWidth,
             tooltipEstimatedHeight,
-            // Legend activation anchors at the popped arc's outer-midpoint; a
-            // tight offset keeps the tooltip touching the slice. Cursor
-            // activation keeps the larger nudge so the tooltip doesn't sit
-            // under the user's pointer.
             activationSource === "legend" ? 4 : 12,
             activationSource === "legend" ? 4 : -36,
           )}

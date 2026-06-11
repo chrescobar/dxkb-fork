@@ -314,10 +314,10 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
   const [activationSource, setActivationSource] = useState<"cursor" | "legend">(
     "cursor",
   );
-  // legendArcOnRight: arc is in the right half → tooltip grows leftward (away from legend).
-  // legendArcOnBottom: arc is in the bottom half → tooltip floats ABOVE anchor with a ▼ caret.
-  const [legendArcOnRight, setLegendArcOnRight] = useState(false);
-  const [legendArcOnBottom, setLegendArcOnBottom] = useState(false);
+  // Horizontal offset (px) of the ▼ caret from the tooltip center.
+  // Non-zero only when the tooltip is pushed horizontally to stay within
+  // the SVG bounds (prevents overlap with the legend column).
+  const [legendCaretOffsetPx, setLegendCaretOffsetPx] = useState(0);
   const activeId = hoveredId;
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
     useTooltip<DonutDatum & { pct: number }>();
@@ -419,20 +419,21 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
     const uniformScale = Math.min(rect.width / chartSize, rect.height / chartSize);
     const letterboxX = (rect.width - chartSize * uniformScale) / 2;
     const letterboxY = (rect.height - chartSize * uniformScale) / 2;
-    // Anchor at the popped slice's outer-edge midpoint, so the tooltip sits
-    // touching the arc rather than floating away from it.
+    // Anchor at the inner edge of the arc at its midAngle — always
+    // unambiguously inside the slice. Include the pop translation so the
+    // caret points at the visually-displaced arc, not the base SVG position.
     const midAngle = (arc.startAngle + arc.endAngle) / 2;
-    const anchorRadius = outerRadius + popDistance;
-    const svgX = Math.sin(midAngle) * anchorRadius + chartCenter;
-    const svgY = -Math.cos(midAngle) * anchorRadius + chartCenter;
+    const svgX = Math.sin(midAngle) * innerRadius + chartCenter + arc.popX;
+    const svgY = -Math.cos(midAngle) * innerRadius + chartCenter + arc.popY;
     const clientX = rect.left + letterboxX + svgX * uniformScale;
     const clientY = rect.top + letterboxY + svgY * uniformScale;
-    // Track arc quadrant so the caret and Y-offset can be chosen correctly.
-    // Right-half: tooltip grows leftward, caret points ► (right).
-    // Bottom-half: tooltip floats ABOVE anchor, caret points ▼ (down).
-    setLegendArcOnRight(Math.sin(midAngle) > 0);
-    setLegendArcOnBottom(Math.cos(midAngle) < 0);
-    showTooltipForArc(arc, clientX, clientY);
+    // Clamp the tooltip center to stay within the SVG bounds so it doesn't
+    // extend into the legend column. Shift the caret by the same amount so
+    // it still points at the arc's actual position.
+    const half = tooltipEstimatedWidth / 2;
+    const clampedX = Math.max(rect.left + half, Math.min(clientX, rect.right - half));
+    setLegendCaretOffsetPx(clientX - clampedX);
+    showTooltipForArc(arc, clampedX, clientY);
   };
 
   const activateFromLegend = (id: string) => {
@@ -692,65 +693,42 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
       {tooltipData && (
         <div
           role="status"
-          className="pointer-events-none fixed z-50 rounded-md border bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md"
-          style={chartTooltipStyle(
-            tooltipLeft ?? 0,
-            tooltipTop ?? 0,
-            // For a right-half arc activated from the legend, force the
-            // horizontal flip in chartTooltipStyle by passing an enormous
-            // estimated width. The flip uses CSS `right` positioning so the
-            // tooltip grows leftward from the anchor — staying inside the SVG
-            // and away from the legend column regardless of label length.
-            activationSource === "legend" && legendArcOnRight
-              ? 9999
-              : tooltipEstimatedWidth,
-            tooltipEstimatedHeight,
-            activationSource === "legend" ? 4 : 12,
-            // Bottom-half arcs: float tooltip ABOVE anchor so it doesn't
-            // spill below the card. Negative offsetY moves it up by
-            // (height + gap), putting the bottom of the tooltip near the arc.
+          className="pointer-events-none fixed z-50 rounded-md border border-black bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md"
+          style={
             activationSource === "legend"
-              ? (legendArcOnBottom ? -(tooltipEstimatedHeight + 8) : 4)
-              : -36,
-          )}
+              // Center exactly on the anchor via transform (avoids width-
+              // estimation error) and float above with room for the ▼ caret.
+              ? {
+                  position: "fixed" as const,
+                  left: `${tooltipLeft ?? 0}px`,
+                  top: `${(tooltipTop ?? 0) - tooltipEstimatedHeight - 9}px`,
+                  transform: "translateX(-50%)",
+                }
+              : chartTooltipStyle(
+                  tooltipLeft ?? 0,
+                  tooltipTop ?? 0,
+                  tooltipEstimatedWidth,
+                  tooltipEstimatedHeight,
+                  12,
+                  -36,
+                )
+          }
         >
-          {/* Caret pointing toward the arc. A 12×12 square rotated 45° sits
-              half-inside the tooltip so its two outer border edges form an
-              arrow. Direction flips based on which half of the circle the arc
-              is on. Not shown for cursor-driven tooltips (cursor context is
-              already clear from pointer position). */}
+          {/* ▼ caret at tooltip bottom, pointing down toward the arc.
+              calc(50% + offset) shifts the caret when the tooltip is pushed
+              sideways to stay within the SVG bounds, so it still points at
+              the arc rather than the tooltip center. */}
           {activationSource === "legend" && (
             <span
               aria-hidden="true"
-              className="absolute size-3 bg-popover"
-              style={
-                legendArcOnBottom
-                  ? // Bottom-half arc: tooltip ABOVE anchor → caret at bottom center ▼
-                    {
-                      bottom: -7,
-                      left: "50%",
-                      transform: "translateX(-50%) rotate(45deg)",
-                      borderRightWidth: 1, borderBottomWidth: 1,
-                      borderTopColor: "transparent", borderLeftColor: "transparent",
-                    }
-                  : legendArcOnRight
-                  ? // Top-right arc: tooltip to the left → caret on right ►
-                    {
-                      top: "50%",
-                      right: -7,
-                      transform: "translateY(-50%) rotate(45deg)",
-                      borderTopWidth: 1, borderRightWidth: 1,
-                      borderBottomColor: "transparent", borderLeftColor: "transparent",
-                    }
-                  : // Top-left arc: tooltip to the right → caret on left ◄
-                    {
-                      top: "50%",
-                      left: -7,
-                      transform: "translateY(-50%) rotate(45deg)",
-                      borderBottomWidth: 1, borderLeftWidth: 1,
-                      borderTopColor: "transparent", borderRightColor: "transparent",
-                    }
-              }
+              className="absolute size-3 bg-popover border border-foreground/80"
+              style={{
+                bottom: -7,
+                left: `calc(50% + ${legendCaretOffsetPx}px)`,
+                transform: "translateX(-50%) rotate(45deg)",
+                borderRightWidth: 1, borderBottomWidth: 1,
+                borderTopColor: "transparent", borderLeftColor: "transparent",
+              }}
             />
           )}
           {tooltipData.label}: {numberFormatter.format(tooltipData.value)}

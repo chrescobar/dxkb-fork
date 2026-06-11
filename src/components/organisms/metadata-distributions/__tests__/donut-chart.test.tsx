@@ -335,4 +335,50 @@ describe("DonutChart", () => {
     fireEvent.click(alphaPill);
     expect(alphaPill).toHaveAttribute("aria-pressed", "true");
   });
+
+  it("shows the tooltip when a legend pill is focused (WCAG 1.4.13)", () => {
+    render(
+      <DonutChart
+        title="Genus"
+        data={[
+          { label: "Alpha", value: 75 },
+          { label: "Beta", value: 25 },
+        ]}
+        layout="side"
+      />,
+    );
+
+    // No tooltip before focus
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+
+    fireEvent.focus(screen.getByRole("button", { name: /Alpha/ }));
+
+    // Tooltip should now be present with the slice's label, value, and percentage
+    const tooltip = screen.getByRole("status");
+    expect(tooltip).toHaveTextContent("Alpha");
+    expect(tooltip).toHaveTextContent("75");
+    expect(tooltip).toHaveTextContent("75%");
+  });
+
+  it("shows the tooltip on legend mouse hover, not just on chart hover", () => {
+    render(
+      <DonutChart
+        title="Genus"
+        data={[
+          { label: "Alpha", value: 60 },
+          { label: "Beta", value: 40 },
+        ]}
+        layout="side"
+      />,
+    );
+
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+
+    fireEvent.mouseEnter(screen.getByRole("button", { name: /Beta/ }));
+
+    const tooltip = screen.getByRole("status");
+    expect(tooltip).toHaveTextContent("Beta");
+    expect(tooltip).toHaveTextContent("40");
+    expect(tooltip).toHaveTextContent("40%");
+  });
 });

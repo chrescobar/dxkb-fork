@@ -394,6 +394,41 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
     });
   };
 
+  // Anchor the tooltip to the arc's outer-edge midpoint. Used when the user
+  // activates a slice via legend hover or keyboard focus, where no cursor
+  // coordinate is available. Without this, keyboard users see the slice pop
+  // but miss the percentage + count that mouse users get — violates WCAG
+  // 1.4.13 (Content on Hover or Focus).
+  const showTooltipForArcAnchoredToSvg = (arc: ArcDatum) => {
+    const svgEl = svgRef.current;
+    const rect = svgEl?.getBoundingClientRect();
+    // If the SVG has no measurable layout (jsdom under tests, or pre-mount),
+    // still show the tooltip — `chartTooltipStyle` will clamp it to viewport.
+    if (!rect || !rect.width || !rect.height) {
+      showTooltipForArc(arc, 0, 0);
+      return;
+    }
+
+    const uniformScale = Math.min(rect.width / chartSize, rect.height / chartSize);
+    const letterboxX = (rect.width - chartSize * uniformScale) / 2;
+    const letterboxY = (rect.height - chartSize * uniformScale) / 2;
+    // Outer-edge midpoint in SVG space, then back to client coords. Add a
+    // small radial nudge so the tooltip clears the popped slice.
+    const midAngle = (arc.startAngle + arc.endAngle) / 2;
+    const anchorRadius = outerRadius + popDistance + 6;
+    const svgX = Math.sin(midAngle) * anchorRadius + chartCenter;
+    const svgY = -Math.cos(midAngle) * anchorRadius + chartCenter;
+    const clientX = rect.left + letterboxX + svgX * uniformScale;
+    const clientY = rect.top + letterboxY + svgY * uniformScale;
+    showTooltipForArc(arc, clientX, clientY);
+  };
+
+  const activateFromLegend = (id: string) => {
+    activateHover(id);
+    const arc = arcData.find((a) => a.slice.id === id);
+    if (arc) showTooltipForArcAnchoredToSvg(arc);
+  };
+
   const handleOverlayMouseMove = (
     event: React.MouseEvent<SVGCircleElement>,
   ) => {
@@ -599,7 +634,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
                       dimmed={isHidden}
                       variant="row"
                       ariaPressed={!isHidden}
-                      onActivate={() => activateHover(slice.id)}
+                      onActivate={() => activateFromLegend(slice.id)}
                       onDeactivate={deactivate}
                       onClick={() => toggleSlice(slice.id)}
                     >
@@ -629,7 +664,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
                       dimmed={isHidden}
                       ariaPressed={!isHidden}
                       ariaLabel={`${slice.label}: ${numberFormatter.format(slice.value)}`}
-                      onActivate={() => activateHover(slice.id)}
+                      onActivate={() => activateFromLegend(slice.id)}
                       onDeactivate={deactivate}
                       onClick={() => toggleSlice(slice.id)}
                     />

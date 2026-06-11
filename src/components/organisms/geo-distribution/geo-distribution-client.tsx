@@ -212,14 +212,14 @@ export function GeoDistributionClient({ data, accent }: GeoDistributionClientPro
               left={tooltipLeft}
               top={tooltipTop}
               unstyled
-              className="bg-popover text-popover-foreground pointer-events-none absolute z-10 rounded-md border p-2 shadow-md"
+              className="pointer-events-none absolute z-10 rounded-md border bg-popover p-2 text-popover-foreground shadow-md"
             >
               <MapTooltip data={tooltipData} />
             </TooltipWithBounds>
           )}
         </div>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-          <span className="text-muted-foreground text-xs">
+          <span className="text-xs text-muted-foreground">
             {helperMessage}
           </span>
           <ColorLegend maxCount={data.maxCount} accent={accent} />

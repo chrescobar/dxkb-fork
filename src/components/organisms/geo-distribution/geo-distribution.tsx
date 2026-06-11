@@ -16,7 +16,7 @@ export async function GeoDistribution({ taxonId, accent }: GeoDistributionProps)
     return (
       <Card className="rounded-lg" size="sm">
         <CardContent>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             No geographic distribution data is available for this taxon.
           </p>
         </CardContent>

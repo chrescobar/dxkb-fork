@@ -50,7 +50,7 @@ export function makeOverviewView({ config, taxon, showAmr }: OverviewViewProps) 
           <TaxonomySummaryBoundary />
         </Suspense>
 
-        <div className="flex flex-col gap-8 xl:flex-row xl:items-stretch xl:max-h-167">
+        <div className="flex flex-col gap-8 xl:max-h-167 xl:flex-row xl:items-stretch">
           <section className="flex w-full flex-col xl:w-[70%]">
             <Suspense fallback={<GeoDistributionSkeleton />}>
               <GeoDistributionBoundary />

@@ -61,7 +61,7 @@ export function BarStackChart({
     return (
       <Card className="relative rounded-lg" size="sm">
         <CardContent className="flex flex-1 flex-col">
-          <h3 className="text-sm font-semibold m-0">{title}</h3>
+          <h3 className="m-0 text-sm font-semibold">{title}</h3>
           <ChartStatusMessage errorMessage={errorMessage} />
         </CardContent>
       </Card>
@@ -99,7 +99,7 @@ export function BarStackChart({
   return (
     <Card className="relative rounded-lg" size="sm">
       <CardContent className="flex flex-1 flex-col">
-        <h3 className="text-sm font-semibold m-0">{title}</h3>
+        <h3 className="m-0 text-sm font-semibold">{title}</h3>
         <div className="min-w-0 overflow-hidden pt-2">
           <svg
             ref={svgRef}
@@ -273,7 +273,7 @@ export function BarStackChart({
       {tooltipData && (
         <div
           role="status"
-          className="bg-popover text-popover-foreground pointer-events-none fixed z-50 rounded-md border px-3 py-2 text-xs shadow-md"
+          className="pointer-events-none fixed z-50 rounded-md border bg-popover px-3 py-2 text-xs text-popover-foreground shadow-md"
           style={chartTooltipStyle(
             tooltipLeft ?? 0,
             tooltipTop ?? 0,
@@ -283,18 +283,18 @@ export function BarStackChart({
             tooltipOffsetY,
           )}
         >
-          <p className="text-foreground mb-1.5 font-semibold">
+          <p className="mb-1.5 font-semibold text-foreground">
             {tooltipData.year}
           </p>
           <div className="flex flex-col gap-1">
             {tooltipData.rows.map(({ serovar, count, color }) => (
               <div key={serovar} className="flex items-center gap-2">
                 <span
-                  className="inline-block h-2 w-2 shrink-0 rounded-full"
+                  className="inline-block size-2 shrink-0 rounded-full"
                   style={{ background: color }}
                 />
-                <span className="text-muted-foreground flex-1">{serovar}</span>
-                <span className="tabular-nums font-semibold">
+                <span className="flex-1 text-muted-foreground">{serovar}</span>
+                <span className="font-semibold tabular-nums">
                   {numberFormatter.format(count)}
                 </span>
               </div>

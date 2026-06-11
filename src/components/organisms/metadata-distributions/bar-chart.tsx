@@ -58,7 +58,7 @@ export function BarChart({
   return (
     <Card className="relative rounded-lg" size="sm">
       <CardHeader>
-        <h3 className="text-sm font-semibold m-0">{title}</h3>
+        <h3 className="m-0 text-sm font-semibold">{title}</h3>
       </CardHeader>
       <CardContent>
         {errorMessage || yearData.length === 0 ? (
@@ -177,7 +177,7 @@ export function BarChart({
       {tooltipData && (
         <div
           role="status"
-          className="bg-popover text-popover-foreground pointer-events-none fixed z-50 rounded-md border px-2 py-1 text-xs shadow-md"
+          className="pointer-events-none fixed z-50 rounded-md border bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md"
           style={chartTooltipStyle(tooltipLeft ?? 0, tooltipTop ?? 0, 150, 28)}
         >
           {tooltipData.year}: {numberFormatter.format(tooltipData.count)}

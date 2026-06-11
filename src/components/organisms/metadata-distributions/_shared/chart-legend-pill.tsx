@@ -77,7 +77,7 @@ export function ChartLegendPill({
       onClick={onClick}
     >
       <span
-        className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+        className="inline-block size-2.5 shrink-0 rounded-full"
         style={{
           background: color,
           border: "1px solid color-mix(in srgb, var(--foreground) 70%, transparent)",

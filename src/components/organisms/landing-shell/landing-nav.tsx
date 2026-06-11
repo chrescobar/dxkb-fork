@@ -42,13 +42,13 @@ export function LandingNav({
     <nav
       aria-label="Organism views"
       className={cn(
-        "bg-card text-card-foreground h-fit shrink-0 rounded-lg border shadow-sm transition-[width] duration-150 ease-out sticky top-4",
+        "sticky top-4 h-fit shrink-0 rounded-lg border bg-card text-card-foreground shadow-sm transition-[width] duration-150 ease-out",
         collapsed ? "w-14" : "w-56",
       )}
     >
       <div className="flex items-center justify-between gap-2 p-2.5">
         {!collapsed && (
-          <h2 className="text-muted-foreground truncate text-sm font-semibold pl-2">
+          <h2 className="truncate pl-2 text-sm font-semibold text-muted-foreground">
             Views
           </h2>
         )}

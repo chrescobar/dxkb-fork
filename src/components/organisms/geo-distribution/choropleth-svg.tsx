@@ -168,7 +168,7 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
   return (
     <div
       ref={containerRef}
-      className="bg-muted/30 relative w-full overflow-hidden rounded-md flex items-center justify-center"
+      className="relative flex w-full items-center justify-center overflow-hidden rounded-md bg-muted/30"
       style={{ height: mapHeight }}
       onPointerLeave={onLeaveMap}
     >
@@ -251,32 +251,32 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
 
               {/* Overlay messages rendered outside the zoom SVG */}
               {mapState.view === "world" && worldTopoLoading && (
-                <div className="text-muted-foreground pointer-events-none absolute inset-0 flex items-center justify-center text-sm">
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">
                   Loading world map…
                 </div>
               )}
               {mapState.view === "world" && worldTopoError && (
-                <div className="text-muted-foreground pointer-events-none absolute inset-0 flex items-center justify-center text-sm">
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">
                   Could not load world map data.
                 </div>
               )}
               {mapState.view === "us" && stateTopoError && (
-                <div className="text-muted-foreground pointer-events-none absolute inset-0 flex items-center justify-center text-sm">
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">
                   Could not load US map data.
                 </div>
               )}
               {mapState.view === "state" && countyTopoLoading && (
-                <div className="text-muted-foreground pointer-events-none absolute inset-0 flex items-center justify-center text-sm">
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">
                   Loading county map…
                 </div>
               )}
               {mapState.view === "state" && countyTopoError && (
-                <div className="text-muted-foreground pointer-events-none absolute inset-0 flex items-center justify-center text-sm">
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">
                   Could not load county map data.
                 </div>
               )}
               {mapState.view === "state" && !countyTopoError && !countyTopoLoading && (countyFeatures.length === 0 || !countyFitExtent) && (
-                <div className="text-muted-foreground pointer-events-none absolute inset-0 flex items-center justify-center text-sm">
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">
                   Select a state to drill into county-level data.
                 </div>
               )}

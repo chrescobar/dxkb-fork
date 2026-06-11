@@ -35,7 +35,7 @@ export function MapControls({
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <div className="bg-muted/50 inline-flex items-center gap-0.5 rounded-md p-0.5">
+      <div className="inline-flex items-center gap-0.5 rounded-md bg-muted/50 p-0.5">
         <PillButton active={mapState.view === "world"} onClick={() => onViewChange("world")}>
           World
         </PillButton>
@@ -49,7 +49,7 @@ export function MapControls({
 
       <div className={cn(
         "overflow-hidden transition-[max-width,opacity] duration-200 ease-in-out",
-        isStateView && stateOptions.length > 0 ? "max-w-[220px] opacity-100" : "max-w-0 opacity-0 pointer-events-none",
+        isStateView && stateOptions.length > 0 ? "max-w-[220px] opacity-100" : "pointer-events-none max-w-0 opacity-0",
       )}>
         <Select
           items={stateOptions.map((option) => ({ value: option.fips, label: option.name }))}

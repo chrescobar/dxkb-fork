@@ -82,12 +82,12 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
   return (
     <div
       ref={parentRef}
-      className="h-80 overflow-auto rounded-t-lg xl:min-h-0 xl:flex-1 scrollbar-thin"
+      className="h-80 scrollbar-thin overflow-auto rounded-t-lg xl:min-h-0 xl:flex-1"
     >
       <Table disableScrollWrapper className="table-fixed">
         <TableHeader className="sticky top-0 z-10 bg-muted">
           <TableRow className="h-8">
-            <TableHead className="w-36 border-r py-1 px-3 text-xs text-center">Type</TableHead>
+            <TableHead className="w-36 border-r px-3 py-1 text-center text-xs">Type</TableHead>
             <TableHead
               aria-sort={ariaSort}
               className="overflow-hidden p-0 text-xs"
@@ -96,7 +96,7 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
                 type="button"
                 onClick={cycleSort}
                 aria-label={`Sort by genome name (${ariaSort})`}
-                className="flex w-full cursor-pointer select-none items-center gap-1 px-3 py-1 text-left"
+                className="flex w-full cursor-pointer items-center gap-1 px-3 py-1 text-left select-none"
               >
                 Genome Name
                 <SortIcon className="size-3 shrink-0" />
@@ -107,7 +107,7 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
         <TableBody>
           {sorted.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={2} className="text-muted-foreground py-4 text-center text-sm">
+              <TableCell colSpan={2} className="py-4 text-center text-sm text-muted-foreground">
                 No genomes in this category.
               </TableCell>
             </TableRow>
@@ -121,7 +121,7 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
                     key={g.genome_id}
                     className={cn("h-8", virtualItem.index % 2 === 1 && "bg-muted/20")}
                   >
-                    <TableCell className="w-36 border-r py-1 px-3">
+                    <TableCell className="w-36 border-r px-3 py-1">
                       <div className="flex items-center justify-center">
                         <Badge
                           variant={badgeVariantForType[g.reference_genome] ?? "outline"}
@@ -131,12 +131,12 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
                         </Badge>
                       </div>
                     </TableCell>
-                    <TableCell className="overflow-hidden py-1 px-3">
+                    <TableCell className="overflow-hidden px-3 py-1">
                       <Link
                         href={`https://www.bv-brc.org/view/Genome/${g.genome_id}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-primary hover:underline text-sm block truncate"
+                        className="block truncate text-sm text-primary hover:underline"
                         title={g.genome_name}
                       >
                         {g.genome_name}
@@ -151,8 +151,8 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
                   key={`filler-${i}`}
                   className={cn("h-8", (sorted.length + i) % 2 === 1 && "bg-muted/20")}
                 >
-                  <TableCell className="w-36 border-r py-1 px-3" />
-                  <TableCell className="py-1 px-3" />
+                  <TableCell className="w-36 border-r px-3 py-1" />
+                  <TableCell className="px-3 py-1" />
                 </TableRow>
               ))}
             </>
@@ -170,7 +170,7 @@ export function ReferenceGenomesClient({ genomes }: { genomes: ReferenceGenome[]
   );
 
   return (
-    <Card className="rounded-lg xl:flex-1 xl:min-h-0" size="sm">
+    <Card className="rounded-lg xl:min-h-0 xl:flex-1" size="sm">
       <Tabs defaultValue="all" className="xl:flex xl:min-h-0 xl:flex-1 xl:flex-col">
         <CardHeader className="pb-0">
           <CardTitle className="text-base!">Reference &amp; Representative Genomes</CardTitle>
@@ -187,12 +187,12 @@ export function ReferenceGenomesClient({ genomes }: { genomes: ReferenceGenome[]
         </CardHeader>
 
         <CardContent className="p-0 xl:flex xl:min-h-0 xl:flex-1 xl:flex-col">
-          <TabsContent value="all" className="xl:flex xl:min-h-0 xl:flex-1 xl:flex-col mt-0">
+          <TabsContent value="all" className="mt-0 xl:flex xl:min-h-0 xl:flex-1 xl:flex-col">
             <GenomeTable genomes={genomes} />
           </TabsContent>
 
           {types.map((type) => (
-            <TabsContent key={type} value={type} className="xl:flex xl:min-h-0 xl:flex-1 xl:flex-col mt-0">
+            <TabsContent key={type} value={type} className="mt-0 xl:flex xl:min-h-0 xl:flex-1 xl:flex-col">
               <GenomeTable genomes={byType[type]} />
             </TabsContent>
           ))}

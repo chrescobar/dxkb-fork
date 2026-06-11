@@ -442,9 +442,9 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
     <Card className="relative rounded-lg" size="sm">
       <CardContent className="flex flex-1 flex-col">
         <div className="flex items-start gap-2">
-          <h3 className="text-sm font-semibold shrink-0 max-w-[60%] m-0">{title}</h3>
+          <h3 className="m-0 max-w-[60%] shrink-0 text-sm font-semibold">{title}</h3>
           {tabs && tabs.length > 1 && (
-            <div className="bg-muted/50 ml-auto flex min-w-0 items-center gap-0.5 rounded-md p-0.5">
+            <div className="ml-auto flex min-w-0 items-center gap-0.5 rounded-md bg-muted/50 p-0.5">
               {(() => {
                 const scrollable = canScrollLeft || canScrollRight;
                 return (
@@ -465,7 +465,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
                         onClick={() => scrollTabsBy(-80)}
                         aria-label="Scroll tabs left"
                       >
-                        <ChevronLeft className="h-3.5 w-3.5" />
+                        <ChevronLeft className="size-3.5" />
                       </Button>
                     </div>
                     <div
@@ -505,7 +505,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
                         onClick={() => scrollTabsBy(80)}
                         aria-label="Scroll tabs right"
                       >
-                        <ChevronRight className="h-3.5 w-3.5" />
+                        <ChevronRight className="size-3.5" />
                       </Button>
                     </div>
                   </>
@@ -643,7 +643,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
       {tooltipData && (
         <div
           role="status"
-          className="bg-popover text-popover-foreground pointer-events-none fixed z-50 rounded-md border px-2 py-1 text-xs shadow-md"
+          className="pointer-events-none fixed z-50 rounded-md border bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md"
           style={chartTooltipStyle(
             tooltipLeft ?? 0,
             tooltipTop ?? 0,
@@ -652,7 +652,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
           )}
         >
           {tooltipData.label}: {numberFormatter.format(tooltipData.value)}
-          <span className="text-muted-foreground ml-1">
+          <span className="ml-1 text-muted-foreground">
             ({tooltipData.pct}%)
           </span>
         </div>

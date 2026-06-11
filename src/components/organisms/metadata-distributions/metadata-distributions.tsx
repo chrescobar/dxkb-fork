@@ -117,7 +117,7 @@ export async function MetadataDistributions({
         <h2 className="text-lg font-semibold tracking-normal">
           Metadata Distributions
         </h2>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           Top metadata buckets for available genome records.
         </p>
       </div>

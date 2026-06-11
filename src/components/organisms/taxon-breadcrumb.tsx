@@ -23,7 +23,7 @@ export function TaxonBreadcrumb({ taxon, displayName }: TaxonBreadcrumbProps) {
   if (!taxon) {
     return (
       <div>
-        <p className="text-foreground text-[12px] font-bold tracking-widest uppercase">
+        <p className="text-[12px] font-bold tracking-widest text-foreground uppercase">
           Taxon View
         </p>
         <h1 className="text-2xl font-bold tracking-tight">{displayName}</h1>
@@ -38,7 +38,7 @@ export function TaxonBreadcrumb({ taxon, displayName }: TaxonBreadcrumbProps) {
 
   return (
     <div>
-      <p className="text-foreground text-[12px] font-bold tracking-widest uppercase">
+      <p className="text-[12px] font-bold tracking-widest text-foreground uppercase">
         Taxon View
       </p>
       <div className="flex flex-wrap items-baseline gap-x-1 text-sm">
@@ -49,7 +49,7 @@ export function TaxonBreadcrumb({ taxon, displayName }: TaxonBreadcrumbProps) {
             ) : (
               <Link
                 href={`/taxonomy/${id}`}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-muted-foreground transition-colors hover:text-foreground"
               >
                 {name}
               </Link>
@@ -57,11 +57,11 @@ export function TaxonBreadcrumb({ taxon, displayName }: TaxonBreadcrumbProps) {
             <span className="text-muted-foreground/50 select-none">»</span>
           </span>
         ))}
-        <h1 className="text-secondary inline text-sm font-bold leading-none m-0">
+        <h1 className="m-0 inline text-sm leading-none font-bold text-secondary">
           {currentName}
         </h1>
         {taxon.genomes !== null && taxon.genomes > 0 && (
-          <span className="text-muted-foreground text-xs">
+          <span className="text-xs text-muted-foreground">
             ({numberFormatter.format(taxon.genomes)} Genomes)
           </span>
         )}

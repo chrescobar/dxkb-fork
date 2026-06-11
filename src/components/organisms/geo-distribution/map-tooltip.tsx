@@ -28,20 +28,20 @@ export function MapTooltip({ data }: MapTooltipProps) {
   const hosts = topItems(data.hosts);
 
   return (
-    <div className="text-foreground w-max max-w-[240px] text-xs">
-      <div className="font-semibold text-sm">{data.name || "Unknown"}</div>
+    <div className="w-max max-w-[240px] text-xs text-foreground">
+      <div className="text-sm font-semibold">{data.name || "Unknown"}</div>
       <div className="text-muted-foreground tabular-nums">
         {numberFormatter.format(total)} {total === 1 ? "genome" : "genomes"}
       </div>
       {genera.length > 0 && (
-        <div className="border-border/40 mt-2 border-t pt-2">
-          <div className="text-muted-foreground mb-1 text-[10px] font-semibold uppercase tracking-wide">
+        <div className="mt-2 border-t border-border/40 pt-2">
+          <div className="mb-1 text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">
             Top Genera
           </div>
           {genera.map(([name, value]) => (
             <div key={name} className="flex justify-between gap-2 tabular-nums">
-              <span className="italic truncate">{name}</span>
-              <span className="text-muted-foreground shrink-0">
+              <span className="truncate italic">{name}</span>
+              <span className="shrink-0 text-muted-foreground">
                 {numberFormatter.format(value)} ({percent(value, total)})
               </span>
             </div>
@@ -49,14 +49,14 @@ export function MapTooltip({ data }: MapTooltipProps) {
         </div>
       )}
       {hosts.length > 0 && (
-        <div className="border-border/40 mt-2 border-t pt-2">
-          <div className="text-muted-foreground mb-1 text-[10px] font-semibold uppercase tracking-wide">
+        <div className="mt-2 border-t border-border/40 pt-2">
+          <div className="mb-1 text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">
             Top Hosts
           </div>
           {hosts.map(([name, value]) => (
             <div key={name} className="flex justify-between gap-2 tabular-nums">
               <span className="truncate">{name}</span>
-              <span className="text-muted-foreground shrink-0">
+              <span className="shrink-0 text-muted-foreground">
                 {numberFormatter.format(value)} ({percent(value, total)})
               </span>
             </div>

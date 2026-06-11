@@ -14,7 +14,7 @@ export function ColorLegend({ maxCount, accent }: ColorLegendProps) {
   const palette = accentPalettes[accent] ?? accentPalettes.all;
 
   return (
-    <div className="text-muted-foreground flex items-center gap-2 text-xs">
+    <div className="flex items-center gap-2 text-xs text-muted-foreground">
       <span className="tabular-nums">0</span>
       <div
         className="h-2 w-40 rounded-sm border"

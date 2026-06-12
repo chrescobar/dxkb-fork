@@ -1,0 +1,258 @@
+src/app/services/(viral-tools)/viral-assembly/page.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 196
+src/components/ui/carousel.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 103,114
+src/components/taxonomy/tax-id-selector.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 57
+src/components/shared/file-table.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 311,409
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 36
+src/components/shared/data-table.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 425,468,697,1106
+src/hooks/services/workspace/use-workspace-directory.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 72
+src/lib/services/workspace/adapters/__tests__/http-workspace-repository.test.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 108-109,150-154
+src/components/services/sra-run-accession-with-validation.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 16,312
+src/styles/theme-content.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 22,75,83
+src/lib/services/workspace/helpers.ts
+  s_0d580176ec0ea8::t_6bdb15ab06d800 200-201
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 37-38,67-68,143,148,157,285-286,300,303,306,344,368
+src/lib/forms/(genomics)/genome-alignment/genome-alignment-form-utils.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 18
+src/components/workspace/workspace-file-table.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 98,175-176,272
+src/lib/forms/(protein-tools)/msa-snp-analysis/msa-snp-analysis-form-utils.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 138-139,145-146
+  s_0d580176ec0ea8::t_90b0d97ca274fc 11,16
+src/lib/auth/events.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 44
+src/hooks/services/workspace/use-shared-with-user.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 29
+src/lib/recent-workspace-folders.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 30
+src/hooks/services/workspace/use-workspace-filtered-items.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 24-25,37
+src/components/workspace/file-viewer/viewers/csv-viewer.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 204-205
+src/components/navbars/user-avatar-dropdown.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 42,65
+e2e/fixtures/overrides/workspace.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 214
+src/components/services/list-data.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 65,90,155,198
+src/lib/forms/(genomics)/genome-annotation/genome-annotation-form-schema.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 45-47,49,51
+src/app/services/(genomics)/primer-design/page.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 83,95,171-172,561,690
+src/app/services/(viral-tools)/sars-cov2-genome-analysis/page.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 123,147,154
+src/app/search/typesearch.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 63
+src/components/filterbar/facet-panel.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 36-37,60,73,166
+src/lib/services/workspace/utils.ts
+  s_0d580176ec0ea8::t_bfa8b1d37f24ec 18-19
+src/lib/forms/(viral-tools)/viral-assembly/viral-assembly-form-utils.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 87,98-99
+src/components/workspace/workspace-action-bar.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 83
+src/lib/forms/(genomics)/primer-design/primer-design-form-schema.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 69,72,95
+src/app/workspace/[username]/[folder]/[[...path]]/page.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 17-18
+src/app/services/(genomics)/variation-analysis/page.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 339
+src/lib/services/genome.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 32,55,73,122,178,251,333
+src/lib/services/workspace/adapters/__tests__/in-memory-workspace-repository.test.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 153-155
+src/lib/services/workspace/protected-folders.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 29-34
+src/components/ui/date-picker-input.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 56,75
+src/components/jobs/jobs-browser.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 173,185,281,283,303
+src/components/workspace/workspace-mini-browser.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 139,142,148,373,394
+src/lib/forms/(protein-tools)/msa-snp-analysis/msa-snp-analysis-form-schema.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 122-123,181-182
+src/lib/forms/(viral-tools)/subspecies-classification/subspecies-classification-form-utils.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 18-19
+src/lib/__tests__/utils.test.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 22
+src/lib/services/workspace/adapters/parsers.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 53-60
+src/lib/forms/(protein-tools)/proteome-comparison/proteome-comparison-form-utils.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 226,228,232
+src/app/services/(protein-tools)/msa-snp-analysis/page.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 377-378,1084
+src/components/filterbar/filter-utils.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 14,22-24,27
+src/lib/forms/(protein-tools)/proteome-comparison/proteome-comparison-form-schema.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 68-69
+src/components/auth/su-banner.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 20
+src/lib/forms/(viral-tools)/sars-cov2-genome-analysis/sars-cov2-genome-analysis-form-utils.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 99
+src/lib/services/workspace/path-utils.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 46
+src/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-schema.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 107-108
+src/components/workspace/workspace-object-selector.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 298,390-393,463
+src/app/services/(viral-tools)/influenza-ha-subtype/page.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 65,101
+src/components/organisms/metadata-distributions/__tests__/donut-chart.test.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 31
+src/lib/jobs/formatting.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 20
+src/lib/forms/(viral-tools)/influenza-ha-subtype/influenza-ha-subtype-form-schema.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 24,32,39-41
+src/lib/auth/server/adapters/bvbrc-identity.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 47,98
+src/components/search/__tests__/command-palette.test.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 11-12,15
+src/components/services/selected-items-table.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 102
+src/app/api/auth/change-password/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_e2a3643db8041d 96-97
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 95
+src/hooks/services/use-rerun-form.ts
+  s_0d580176ec0ea8::t_c36832f6238abf 148-150
+  s_0d580176ec0ea8::t_7f7c61ba30b147 145-147,151-152
+src/components/workspace/workspace-item-icon.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 21
+src/app/services/(genomics)/blast/page.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 375,502
+src/components/settings/profile-form.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 44
+src/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-result-utils.ts
+  s_0d580176ec0ea8::t_1e48e45ed034da 28-31
+src/components/workspace/workspace-item-details.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 44,71
+src/components/workspace/edit-type-dialog.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 47,102
+src/app/services/(genomics)/similar-genome-finder/actions.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 138
+src/lib/forms/(metagenomics)/metagenomic-read-mapping/metagenomic-read-mapping-form-utils.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 38-39
+src/hooks/services/workspace/use-workspace-selection.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 17-26,31,53
+src/app/services/(viral-tools)/sars-cov2-wastewater-analysis/page.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 112,167-172
+src/components/workspace/delete-confirm-dialog.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 49
+e2e/scripts/journeys/jobs-lifecycle.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 28
+src/components/workspace/file-viewer/viewers/use-molstar-plugin.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 41-45,58,87,108,111,122
+src/lib/forms/(protein-tools)/meta-cats/meta-cats-form-utils.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 181-182
+src/app/(footer)/citations/timeline/page.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 50
+src/hooks/services/workspace/use-workspace-dialog-handlers.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 264,268,305
+src/components/ui/tanstack-form.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 56
+src/lib/forms/(genomics)/genome-alignment/genome-alignment-form-schema.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 38
+src/app/api/services/workspace/route.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 13,17,22,66
+src/components/workspace/file-viewer/file-viewer-registry.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 21,53
+src/lib/services/workspace/adapters/in-memory-workspace-repository.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 261,321-324,491-499
+src/lib/services/workspace/client.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 108,123,142-143
+src/app/services/(utilities)/fastq-utilities/page.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 137,217-225
+src/app/services/(genomics)/similar-genome-finder/page.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 195,198,217,268,305,342
+src/components/workspace/__tests__/workspace-action-bar.test.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 105,174
+src/lib/forms/(genomics)/primer-design/primer-design-form-utils.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 380
+src/components/ui/number-input.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 127,166,170
+src/app/services/(genomics)/genome-alignment/page.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 109,152
+src/components/workspace/upload-dialog.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 65
+src/components/services/output-folder.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 84
+src/styles/logo-utils.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 23,67
+src/app/allTermSearchResults.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 400,403-404,429-430
+src/components/jobs/jobs-toolbar.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 48
+src/lib/auth/adapters/http.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 98
+src/components/filterbar/filter-bar.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 29,59
+src/hooks/services/workspace/__tests__/use-workspace-dialog-handlers.test.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 21
+src/components/workspace/workspace-browser.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 343,380,416
+src/components/workspace/file-viewer/viewers/codemirror-languages.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 10
+src/lib/forms/tanstack-library-selection.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 127-128
+src/app/api/services/minhash/route.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 38
+src/components/jobs/job-status-pill.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 5,121,128
+src/hooks/services/workspace/use-workspace-du.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 20
+src/lib/forms/(genomics)/primer-design/primer-design-service.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 13
+src/components/detail-panel/info-panel.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 87,235,242-244,248-249
+  s_0d580176ec0ea8::t_82c8d6fcc56bf4 45-48
+src/app/(footer)/citations/utils/metrics.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 16
+e2e/scripts/journeys/_helpers/sign-in.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 39
+src/app/services/(protein-tools)/proteome-comparison/page.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 118,145,207,240,283,335
+src/lib/forms/settings/settings-form-utils.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 71
+src/components/organisms/virus-families/virus-families-section.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 74
+src/lib/forms/(metagenomics)/metagenomic-binning/metagenomic-binning-form-utils.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 53-54
+src/hooks/services/workspace/use-workspace-action-dispatch.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 102,109,116,133,157
+src/components/search/command-palette.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 66
+e2e/scripts/journeys/workspace-browse.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 35
+src/lib/forms/(viral-tools)/influenza-ha-subtype/influenza-ha-subtype-form-utils.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 31-32
+src/lib/forms/(genomics)/blast/blast-form-utils.ts
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 41-42,57-59,149
+src/components/workspace/workspace-table-rows.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 79
+src/components/workspace/file-viewer/viewers/codemirror-viewer.tsx
+  s_0d580176ec0ea8::t_ac1cd4a3cbd2e3 156,248-252,269,300,320,334,354,369,384,393
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "9675e9596291cd38de52ec842732d5f784b0bbd7",
+  "prompts": {},
+  "sessions": {
+    "s_0d580176ec0ea8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ca49035-a1d3-487e-9d2f-5fd0bae8a7fb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

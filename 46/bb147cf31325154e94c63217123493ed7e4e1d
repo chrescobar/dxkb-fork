@@ -1,0 +1,86 @@
+src/app/api/services/genome/search/route.ts
+  s_0d580176ec0ea8::t_6f12dfeb47b83e 57
+  s_0d580176ec0ea8::t_0766ad69dc3a04 58
+src/app/api/services/minhash/route.ts
+  s_0d580176ec0ea8::t_549a1cd19a7d19 34
+src/app/api/services/feature/from-group/route.ts
+  s_0d580176ec0ea8::t_18851130f07168 12
+  s_0d580176ec0ea8::t_5beeb91afac4e2 47
+  s_0d580176ec0ea8::t_e462641e634bfc 46
+  s_0d580176ec0ea8::t_c0389ea12a0918 5-7,10-11
+src/app/api/workspace/resolve-download.ts
+  s_0d580176ec0ea8::t_696c0f5c3c588a 47
+  s_0d580176ec0ea8::t_c4dc8fd870eda8 87
+  s_0d580176ec0ea8::t_3c6c231c165d08 3
+src/app/api/services/app-service/submit/route.ts
+  s_0d580176ec0ea8::t_0e4597bf0c6420 5-10,17,21,41
+src/app/api/services/genome/website-query/route.ts
+  s_0d580176ec0ea8::t_515848c84ccd20 45
+  s_0d580176ec0ea8::t_a9b0f0bb639feb 87-89
+  s_0d580176ec0ea8::t_3fdcb928882d5e 90
+  s_0d580176ec0ea8::t_15f28f05958911 46
+src/app/api/auth/forget-password/route.ts
+  s_0d580176ec0ea8::t_f934c1909302ea 6-10,12-13,15,17-19
+  s_0d580176ec0ea8::t_6231c2ccb34ac2 14,16
+src/app/api/services/app-service/jobs/app-summary/route.ts
+  s_0d580176ec0ea8::t_c9a6ad8002e1c6 5-8,14
+src/app/api/services/genome/validate-viral/route.ts
+  s_0d580176ec0ea8::t_fcea5d748b021b 50
+  s_0d580176ec0ea8::t_399dfecd5205dc 13
+  s_0d580176ec0ea8::t_a5f8e2269cf6ff 7-10,12,14
+  s_0d580176ec0ea8::t_cd7849a3dfcca7 51
+src/app/api/services/genome/get-all-ids/route.ts
+  s_0d580176ec0ea8::t_2a17e71a6e004d 47
+  s_0d580176ec0ea8::t_3e7d1fe50726a6 12-13
+  s_0d580176ec0ea8::t_5a31148f188302 48
+  s_0d580176ec0ea8::t_80e672c480a4cf 5-7,11
+src/app/api/services/app-service/jobs/summary/route.ts
+  s_0d580176ec0ea8::t_0fbfb6be31a470 5-8,14
+src/app/api/services/taxonomy/route.ts
+  s_0d580176ec0ea8::t_855e7a27a5e76d 30
+src/app/api/services/workspace/route.ts
+  s_0d580176ec0ea8::t_13b1608e47af45 38
+  s_0d580176ec0ea8::t_bc86a88b0b1766 99
+src/app/api/auth/su-login/route.ts
+  s_0d580176ec0ea8::t_1e392eba836cf8 6-10,12,14-17
+src/app/api/services/app-service/jobs/task-summary/route.ts
+  s_0d580176ec0ea8::t_62d9550efe1984 5-8,14
+src/app/api/workspace/public/route.ts
+  s_0d580176ec0ea8::t_65247f1b63d389 73
+  s_0d580176ec0ea8::t_685af9bc1223d9 15
+  s_0d580176ec0ea8::t_e43314f79a9648 18
+src/app/api/auth/sign-in/email/route.ts
+  s_0d580176ec0ea8::t_057f5eea0e82a9 5,8
+src/app/api/auth/sign-up/email/route.ts
+  s_0d580176ec0ea8::t_c64426348d1429 5,8-9
+src/app/api/services/workspace/upload/route.ts
+  s_0d580176ec0ea8::t_f58e9d5e73d185 82
+src/app/api/services/app-service/jobs/enumerate-tasks-filtered/route.ts
+  s_0d580176ec0ea8::t_6ddd646a2a1d3e 24
+src/app/api/auth/change-password/route.ts
+  s_0d580176ec0ea8::t_322917c506d924 6-10,12
+  s_0d580176ec0ea8::t_676a3a8ffcf53c 15-16
+src/app/api/services/genome/by-ids/route.ts
+  s_0d580176ec0ea8::t_57c320935a67d3 6-9,11,13
+  s_0d580176ec0ea8::t_e58ba18055c6ca 12
+  s_0d580176ec0ea8::t_6bcd01941a675b 48
+  s_0d580176ec0ea8::t_587cef9e9dd46e 49
+src/app/api/e2e-mock/[...path]/route.ts
+  s_0d580176ec0ea8::t_8da1e780949531 233
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "46bb147cf31325154e94c63217123493ed7e4e1d",
+  "prompts": {},
+  "sessions": {
+    "s_0d580176ec0ea8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ca49035-a1d3-487e-9d2f-5fd0bae8a7fb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

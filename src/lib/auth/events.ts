@@ -51,7 +51,7 @@ export function createAuthEventBus(): AuthEventBus {
         try {
           (handler as AuthEventHandler<typeof event>)(payload);
         } catch (err) {
-          console.error(`auth event handler "${String(event)}" threw:`, err);
+          console.error(`auth event handler "${event}" threw:`, err);
         }
       }
     },

@@ -730,7 +730,7 @@ export default function BlastServicePage() {
                           items={maxHitsOptionsBlast}
                           value={field.state.value}
                           onValueChange={(value) => {
-                            if (value != null) field.handleChange(Number(value));
+                            if (value != null) field.handleChange(value);
                           }}
                         >
                           <SelectTrigger className="service-card-select-trigger">
@@ -764,7 +764,7 @@ export default function BlastServicePage() {
                           items={evalueOptionsBlast}
                           value={field.state.value}
                           onValueChange={(value) => {
-                            if (value != null) field.handleChange(Number(value));
+                            if (value != null) field.handleChange(value);
                           }}
                         >
                           <SelectTrigger className="service-card-select-trigger">

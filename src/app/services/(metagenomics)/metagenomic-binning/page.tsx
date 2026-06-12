@@ -684,7 +684,7 @@ export default function MetagenomicBinningPage() {
                               name="disable_dangling"
                               checked={field.state.value}
                               onCheckedChange={(checked) =>
-                                { field.handleChange(!!checked); }
+                                { field.handleChange(checked); }
                               }
                               className="mb-2 bg-white"
                             />

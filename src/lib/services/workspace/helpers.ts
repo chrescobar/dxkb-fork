@@ -64,8 +64,8 @@ export function parseWorkspaceGetSingle(
 export function getJobResultDotPath(
   resolved: Pick<ResolvedPathObject, "path" | "name">,
 ): string {
-  const fullPath = String(resolved.path ?? "").replace(/\/+$/, "");
-  const name = String(resolved.name ?? "").replace(/^\/+|\/+$/g, "");
+  const fullPath = (resolved.path ?? "").replace(/\/+$/, "");
+  const name = (resolved.name ?? "").replace(/^\/+|\/+$/g, "");
 
   const fallbackName = fullPath.split("/").filter(Boolean).pop() ?? "";
   const dotName = name || fallbackName;
@@ -282,7 +282,7 @@ export function getSiblingJobResultPathForDotFolder(
   const sibling = items.find(
     (it) =>
       normalizeWsPath(it.path ?? "") === siblingNormalized &&
-      String(it.type ?? "").toLowerCase() === "job_result",
+      (it.type ?? "").toLowerCase() === "job_result",
   );
   return sibling ? siblingNormalized : null;
 }
@@ -299,10 +299,10 @@ export function expandDownloadPaths(
     const p = normalizeWsPath(item.path ?? "");
     if (!p) return [];
 
-    const type = String(item.type ?? "").toLowerCase();
+    const type = (item.type ?? "").toLowerCase();
     if (type === "job_result") {
       const name =
-        String(item.name ?? "").trim() ||
+        (item.name ?? "").trim() ||
         p.split("/").filter(Boolean).pop() ||
         "";
       const dotPath = normalizeWsPath(getJobResultDotPath({ path: p, name }));

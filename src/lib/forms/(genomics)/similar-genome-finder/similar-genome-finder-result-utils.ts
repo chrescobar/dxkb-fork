@@ -116,7 +116,7 @@ export function mergeGenomeResults(
   const byId = new Map<string, Record<string, string>>();
   for (const row of genomeApiResults) {
     const id = row.genome_id;
-    if (id) byId.set(String(id).trim(), row);
+    if (id) byId.set(id.trim(), row);
   }
 
   function getFirstNonEmptyString(

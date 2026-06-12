@@ -179,7 +179,7 @@ test.describe("workspace browse", () => {
     const objects = body.params?.[0]?.objects ?? [];
     const tuple = objects[0] as [string, string, unknown, string];
     // The 4th tuple slot is the JSON body; it must contain the toggled folder path.
-    const content = JSON.parse(String(tuple[3])) as { folders?: string[] };
+    const content = JSON.parse(tuple[3]) as { folders?: string[] };
     expect(content.folders).toContain(`${e2eHomePath}/Datasets`);
     expect(body.params?.[0]?.overwrite).toBe(1);
   });

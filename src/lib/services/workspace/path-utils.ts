@@ -93,8 +93,8 @@ export function hasWorkspaceWritePermission(
   userPermission: string | undefined,
   globalPermission: string | undefined,
 ): boolean {
-  const user = String(userPermission ?? "");
-  const global = String(globalPermission ?? "");
+  const user = userPermission ?? "";
+  const global = globalPermission ?? "";
   return ["o", "a", "w"].some(
     (permission) =>
       user === permission ||

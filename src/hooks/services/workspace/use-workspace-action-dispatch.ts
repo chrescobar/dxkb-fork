@@ -149,15 +149,15 @@ export function useWorkspaceActionDispatch({
         return;
       }
       const single = downloadable.length === 1 ? downloadable[0] : null;
-      const singleType = String(single?.type ?? "").toLowerCase();
+      const singleType = (single?.type ?? "").toLowerCase();
       const defaultName =
         singleType === "job_result"
-          ? String(single?.name ?? "").replace(/^\./, "").trim() || "archive"
-          : single?.name != null && String(single.name).startsWith(".")
+          ? (single?.name ?? "").replace(/^\./, "").trim() || "archive"
+          : single?.name != null && single.name.startsWith(".")
             ? (getSiblingJobResultPathForDotFolder(single.path ?? "", items)?.split("/").filter(Boolean).pop() ??
-                String(single.name).replace(/^\./, "")).trim() || "archive"
+                single.name.replace(/^\./, "")).trim() || "archive"
             : single?.name != null
-              ? String(single.name).trim() || "archive"
+              ? single.name.trim() || "archive"
               : "archive";
 
       dispatch({ type: "OPEN_DOWNLOAD_OPTIONS", paths: mappedPaths, defaultName });

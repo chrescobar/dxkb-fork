@@ -99,9 +99,8 @@ export default function HASubtypeNumberingPage() {
 
   const isFastaDataInvalid =
     inputSource === "fasta_data" && !!fastaData?.trim() && !isFastaValid;
-  const isSubmitDisabled = Boolean(
-    !canSubmit || !isOutputNameValid || isSubmitting || isFastaDataInvalid,
-  );
+  const isSubmitDisabled =
+    !canSubmit || !isOutputNameValid || isSubmitting || isFastaDataInvalid;
 
   return (
     <section>

@@ -244,7 +244,7 @@ export function CommandPalette() {
               {section.items.map((item) => (
                 <CommandItem
                   key={item.href}
-                  value={`${String(section.title)} ${String(item.title)}`}
+                  value={`${section.title} ${item.title}`}
                   onSelect={() => { navigate(item.href, item.target); }}
                 >
                   <span>{item.title}</span>

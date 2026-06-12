@@ -30,7 +30,11 @@ export function LandingNav({
   onChange,
   onCollapseToggle,
 }: LandingNavProps) {
-  const [isMac] = useState(() => /Mac|iPhone|iPad|iPod/i.test(navigator.userAgent));
+  const [isMac] = useState(
+    () =>
+      typeof navigator !== "undefined" &&
+      /Mac|iPhone|iPad|iPod/i.test(navigator.userAgent),
+  );
 
   const shortcutKey = isMac ? "⌘B" : "Ctrl+B";
 
@@ -38,13 +42,13 @@ export function LandingNav({
     <nav
       aria-label="Organism views"
       className={cn(
-        "sticky top-4 h-fit shrink-0 rounded-lg border bg-card text-card-foreground shadow-sm transition-[width] duration-200",
+        "sticky top-4 h-fit shrink-0 rounded-lg border bg-card text-card-foreground shadow-sm transition-[width] duration-150 ease-out",
         collapsed ? "w-14" : "w-56",
       )}
     >
       <div className="flex items-center justify-between gap-2 p-2.5">
         {!collapsed && (
-          <h2 className="truncate text-sm font-semibold text-muted-foreground">
+          <h2 className="truncate pl-2 text-sm font-semibold text-muted-foreground">
             Views
           </h2>
         )}
@@ -84,8 +88,7 @@ export function LandingNav({
               title={collapsed ? item.label : undefined}
               onClick={() => onChange(item.key)}
               className={cn(
-                "justify-start",
-                collapsed && "justify-center px-0",
+                "justify-start px-2",
                 isActive && "font-semibold",
               )}
             >

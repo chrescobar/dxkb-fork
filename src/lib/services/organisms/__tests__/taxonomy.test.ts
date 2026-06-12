@@ -1,6 +1,9 @@
 import { http, HttpResponse } from "msw";
 
-import { fetchOrganismTaxonomy } from "@/lib/services/organisms/taxonomy";
+import {
+  TaxonomyNotFoundError,
+  fetchOrganismTaxonomy,
+} from "@/lib/services/organisms/taxonomy";
 import { server } from "@/test-helpers/msw-server";
 
 const baseUrl = "https://bvbrc.test/api-for-website";
@@ -31,6 +34,7 @@ describe("fetchOrganismTaxonomy", () => {
       taxonId: 2,
       taxonName: "Bacteria",
       lineageNames: ["cellular organisms", "Bacteria"],
+      lineageIds: [],
       taxonRank: "superkingdom",
       genomes: 99,
     });
@@ -44,5 +48,71 @@ describe("fetchOrganismTaxonomy", () => {
     );
 
     await expect(fetchOrganismTaxonomy(2)).rejects.toThrow("taxonomy unavailable");
+  });
+
+  it("throws TaxonomyNotFoundError on 404", async () => {
+    server.use(
+      http.get(`${baseUrl}/taxonomy/9999`, () =>
+        HttpResponse.text("not found", { status: 404 }),
+      ),
+    );
+
+    await expect(fetchOrganismTaxonomy(9999)).rejects.toBeInstanceOf(
+      TaxonomyNotFoundError,
+    );
+  });
+
+  it("parses numeric lineage_ids returned as numbers", async () => {
+    server.use(
+      http.get(`${baseUrl}/taxonomy/234`, () =>
+        HttpResponse.json({
+          taxon_id: 234,
+          taxon_name: "Brucella",
+          lineage_names: ["cellular organisms", "Bacteria", "Brucella"],
+          lineage_ids: [131567, 2, 234],
+          taxon_rank: "genus",
+          genomes: 1909,
+        }),
+      ),
+    );
+
+    const result = await fetchOrganismTaxonomy(234);
+    expect(result.lineageIds).toEqual([131567, 2, 234]);
+  });
+
+  it("coerces string lineage_ids to numbers (application/solr+json shape)", async () => {
+    server.use(
+      http.get(`${baseUrl}/taxonomy/234`, () =>
+        HttpResponse.json({
+          taxon_id: 234,
+          taxon_name: "Brucella",
+          lineage_names: ["Bacteria", "Brucella"],
+          lineage_ids: ["2", "234"],
+          taxon_rank: "genus",
+          genomes: 1909,
+        }),
+      ),
+    );
+
+    const result = await fetchOrganismTaxonomy(234);
+    expect(result.lineageIds).toEqual([2, 234]);
+  });
+
+  it("drops non-numeric lineage_ids entries", async () => {
+    server.use(
+      http.get(`${baseUrl}/taxonomy/234`, () =>
+        HttpResponse.json({
+          taxon_id: 234,
+          taxon_name: "Brucella",
+          lineage_names: ["Bacteria", "Brucella"],
+          lineage_ids: [2, "not-a-number", null, 234],
+          taxon_rank: "genus",
+          genomes: 1909,
+        }),
+      ),
+    );
+
+    const result = await fetchOrganismTaxonomy(234);
+    expect(result.lineageIds).toEqual([2, 234]);
   });
 });

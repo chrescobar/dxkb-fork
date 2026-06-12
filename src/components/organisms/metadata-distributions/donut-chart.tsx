@@ -1,15 +1,29 @@
 "use client";
 
-import { Group } from "@visx/group";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+import { animate } from "framer-motion";
+
 import { scaleOrdinal } from "@visx/scale";
-import { Pie } from "@visx/shape";
 import { useTooltip } from "@visx/tooltip";
 
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
 import { facetDisplayLabel } from "@/components/organisms/facet-label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import {
+  chartColors as sharedChartColors,
+  chartTooltipStyle,
+  donutFallbackColor,
+} from "@/lib/services/organisms/chart-utils";
 import { numberFormatter } from "@/lib/services/organisms/utils";
 
-interface DonutDatum {
+import { ChartLegendPill } from "./_shared/chart-legend-pill";
+import { ChartStatusMessage } from "./_shared/chart-status-message";
+
+export interface DonutDatum {
   label: string;
   value: number;
 }
@@ -18,76 +32,56 @@ interface DonutChartDatum extends DonutDatum {
   id: string;
 }
 
-interface DonutPieArcDatum {
-  data: DonutChartDatum;
-  startAngle: number;
-  endAngle: number;
+export interface DonutChartTab {
+  label: string;
+  data: DonutDatum[];
 }
 
 interface DonutChartProps {
   title: string;
-  data: DonutDatum[];
+  data?: DonutDatum[];
+  tabs?: DonutChartTab[];
+  layout?: "bottom" | "side";
+  errorMessage?: string;
 }
 
-const chartColors = [
-  "var(--chart-1)",
-  "var(--chart-2)",
-  "var(--chart-3)",
-  "var(--chart-4)",
-  "var(--chart-5)",
-  "var(--muted-foreground)",
+// Donut uses up to 10 distinct accents plus a muted color for the "Others" bucket.
+// chart-1..5 are brand-derived per theme (primary/secondary/accent/violet/coral);
+// chart-6..10 are shared fills from globals.css.
+// Sequence (dxkb): navy(267)→amber(37)→teal(195)→coral(15)→gold(85)→pink(340)→green(140)→violet(310)→orange(50)→cyan-green(175)→gray
+const donutPalette = [
+  sharedChartColors[0], // chart-1:  primary      h≈267
+  sharedChartColors[1], // chart-2:  secondary    h≈37
+  sharedChartColors[5], // chart-6:  teal         h=195
+  sharedChartColors[4], // chart-5:  coral        h≈15
+  sharedChartColors[2], // chart-3:  gold         h≈85
+  sharedChartColors[8], // chart-9:  pink         h=340
+  sharedChartColors[7], // chart-8:  green        h=140
+  sharedChartColors[3], // chart-4:  violet       h≈310
+  sharedChartColors[6], // chart-7:  orange       h=50
+  sharedChartColors[9], // chart-10: cyan-green   h=175
+  donutFallbackColor,
 ];
 
-const chartWidth = 540;
-const chartHeight = 260;
-const chartCenterX = chartWidth / 2;
-const chartCenterY = chartHeight / 2;
-const outerRadius = 104;
-const innerRadius = 58;
-const subjectRadius = outerRadius + 2;
-const labelTop = 14;
-const labelBottom = chartHeight - 14;
-const labelMinGap = 58;
-const naturalYScale = 104;
-const labelWidth = 132;
-const labelAnchorGap = 6;
-const connectorMeetSlant = 10;
-const titleFontSize = 14;
-const titleLineHeight = 16;
-const titleBaselineOffset = 12;
-const valueFontSize = 12;
-const valueLineHeight = 14;
-const valueBaselineOffset = 10;
-const titleValueGap = 2;
-const averageTitleCharacterWidth = 7.5;
-const maxTitleLines = 2;
-const rightLabelX = chartWidth - 24 - labelWidth;
-const leftLabelX = 24 + labelWidth;
-const svgPrecision = 1000;
+const chartSize = 160;
+const chartCenter = chartSize / 2;
+const outerRadius = 66;
+const innerRadius = 38;
+const popDistance = 8;
+const tooltipEstimatedWidth = 160;
+const tooltipEstimatedHeight = 32;
 const aggregateLabel = "Others";
 const fallbackAggregateLabel = "Other values";
-const pieStartAngle = (150 * Math.PI) / 180;
-const pieEndAngle = pieStartAngle + Math.PI * 2;
-
-interface AnnotationDatum {
-  arc: DonutPieArcDatum;
-  labelY: number;
-  side: "left" | "right";
-  subjectX: number;
-  subjectY: number;
-}
 
 function uniqueAggregateLabel(labels: readonly string[]): string {
   const existingLabels = new Set(labels);
   if (!existingLabels.has(aggregateLabel)) return aggregateLabel;
   if (!existingLabels.has(fallbackAggregateLabel))
     return fallbackAggregateLabel;
-
   let suffix = 2;
   while (existingLabels.has(`${fallbackAggregateLabel} ${suffix}`)) {
     suffix += 1;
   }
-
   return `${fallbackAggregateLabel} ${suffix}`;
 }
 
@@ -100,11 +94,11 @@ function chartData(data: DonutDatum[]): DonutChartDatum[] {
       label: facetDisplayLabel(datum.label),
     }));
 
-  if (positive.length <= 5) return positive;
+  if (positive.length <= 10) return positive;
 
-  const top = positive.slice(0, 4);
+  const top = positive.slice(0, 9);
   const otherValue = positive
-    .slice(4)
+    .slice(9)
     .reduce((sum, datum) => sum + datum.value, 0);
 
   return [
@@ -117,338 +111,632 @@ function chartData(data: DonutDatum[]): DonutChartDatum[] {
   ];
 }
 
-function clamp(value: number, min: number, max: number) {
-  return Math.min(Math.max(value, min), max);
-}
+// Standard donut arc path. Paths are centered at (0,0); the parent <g> handles
+// translation to the chart center.
+function arcPath(
+  innerR: number,
+  outerR: number,
+  startAngle: number,
+  endAngle: number,
+): string {
+  const sweep = endAngle - startAngle;
+  const f = (n: number) => Math.round(n * 1000) / 1000;
 
-function roundSvgNumber(value: number) {
-  return Math.round(value * svgPrecision) / svgPrecision;
-}
-
-function truncateLine(line: string, maxLength: number) {
-  if (line.length <= maxLength) return line;
-  if (maxLength <= 3) return line.slice(0, maxLength);
-  return `${line.slice(0, maxLength - 3).trimEnd()}...`;
-}
-
-function splitLongWord(word: string, maxLength: number) {
-  const chunks: string[] = [];
-
-  for (let index = 0; index < word.length; index += maxLength) {
-    chunks.push(word.slice(index, index + maxLength));
+  // Full-circle slice (single positive datum): SVG arc with identical start/end
+  // points renders nothing. Build the ring as two semicircles using even-odd fill.
+  if (sweep >= Math.PI * 2 - 1e-6) {
+    return [
+      `M ${f(outerR)} 0`,
+      `A ${outerR} ${outerR} 0 1 1 ${f(-outerR)} 0`,
+      `A ${outerR} ${outerR} 0 1 1 ${f(outerR)} 0`,
+      "Z",
+      `M ${f(innerR)} 0`,
+      `A ${innerR} ${innerR} 0 1 0 ${f(-innerR)} 0`,
+      `A ${innerR} ${innerR} 0 1 0 ${f(innerR)} 0`,
+      "Z",
+    ].join(" ");
   }
 
-  return chunks;
-}
+  const pt = (radius: number, angle: number) => ({
+    x: radius * Math.sin(angle),
+    y: -radius * Math.cos(angle),
+  });
 
-function wrapLabelText(label: string) {
-  const maxLineLength = Math.max(
-    1,
-    Math.floor(labelWidth / averageTitleCharacterWidth),
-  );
-  const words = label.trim().split(/\s+/).filter(Boolean);
-  const lines: string[] = [];
-  let currentLine = "";
+  const outerStart = pt(outerR, startAngle);
+  const outerEnd   = pt(outerR, endAngle);
+  const innerEnd   = pt(innerR, endAngle);
+  const innerStart = pt(innerR, startAngle);
 
-  for (const word of words) {
-    const candidates =
-      word.length > maxLineLength ? splitLongWord(word, maxLineLength) : [word];
-
-    for (const candidate of candidates) {
-      const nextLine = currentLine ? `${currentLine} ${candidate}` : candidate;
-
-      if (nextLine.length <= maxLineLength) {
-        currentLine = nextLine;
-      } else {
-        if (currentLine) lines.push(currentLine);
-        currentLine = candidate;
-      }
-    }
-  }
-
-  if (currentLine) lines.push(currentLine);
-  if (lines.length === 0) return [label];
-  if (lines.length <= maxTitleLines) return lines;
+  const large = sweep > Math.PI ? 1 : 0;
+  const p = ({ x, y }: { x: number; y: number }) => `${f(x)} ${f(y)}`;
 
   return [
-    ...lines.slice(0, maxTitleLines - 1),
-    truncateLine(lines.slice(maxTitleLines - 1).join(" "), maxLineLength),
-  ];
+    `M ${p(outerStart)}`,
+    `A ${outerR} ${outerR} 0 ${large} 1 ${p(outerEnd)}`,
+    `L ${p(innerEnd)}`,
+    `A ${innerR} ${innerR} 0 ${large} 0 ${p(innerStart)}`,
+    "Z",
+  ].join(" ");
 }
 
-function annotationLabelBlockHeight(titleLines: readonly string[]) {
-  return titleLines.length * titleLineHeight + titleValueGap + valueLineHeight;
+interface ArcDatum {
+  slice: DonutChartDatum;
+  startAngle: number;
+  endAngle: number;
+  pathD: string;
+  popX: number;
+  popY: number;
+  color: string;
 }
 
-function connectorPath(
-  subjectX: number,
-  subjectY: number,
-  labelX: number,
-  labelY: number,
-  side: AnnotationDatum["side"],
-) {
-  const slantOffset =
-    side === "right" ? connectorMeetSlant : -connectorMeetSlant;
+function buildArcData(
+  slices: DonutChartDatum[],
+  getColor: (id: string) => string,
+): ArcDatum[] {
+  const total = slices.reduce((sum, d) => sum + d.value, 0);
+  let angle = -Math.PI / 2;
 
-  return [
-    `M${subjectX},${subjectY}`,
-    `L${roundSvgNumber(labelX - slantOffset)},${subjectY}`,
-    `L${roundSvgNumber(labelX)},${roundSvgNumber(labelY)}`,
-  ].join("");
-}
-
-function distributeLabelYs(naturalYs: number[]): number[] {
-  const n = naturalYs.length;
-  if (n === 0) return [];
-  if (n === 1) return [...naturalYs];
-
-  const range = labelBottom - labelTop;
-  if ((n - 1) * labelMinGap > range) {
-    return Array.from(
-      { length: n },
-      (_, i) => labelTop + (range * i) / (n - 1),
-    );
-  }
-
-  const positions = [...naturalYs];
-
-  for (let i = 1; i < n; i++) {
-    if (positions[i] - positions[i - 1] < labelMinGap) {
-      positions[i] = positions[i - 1] + labelMinGap;
-    }
-  }
-
-  if (positions[n - 1] > labelBottom) {
-    positions[n - 1] = labelBottom;
-    for (let i = n - 2; i >= 0; i--) {
-      if (positions[i + 1] - positions[i] < labelMinGap) {
-        positions[i] = positions[i + 1] - labelMinGap;
-      }
-    }
-  }
-
-  if (positions[0] < labelTop) {
-    positions[0] = labelTop;
-    for (let i = 1; i < n; i++) {
-      if (positions[i] - positions[i - 1] < labelMinGap) {
-        positions[i] = positions[i - 1] + labelMinGap;
-      }
-    }
-  }
-
-  return positions;
-}
-
-function annotationData(arcs: DonutPieArcDatum[]): AnnotationDatum[] {
-  const positioned = arcs.map((arc) => {
-    const midpoint = (arc.startAngle + arc.endAngle) / 2;
-    const xOffset = Math.sin(midpoint);
-    const yOffset = -Math.cos(midpoint);
+  return slices.map((slice) => {
+    const full = (slice.value / total) * Math.PI * 2;
+    const startAngle = angle;
+    const endAngle = angle + full;
+    const midAngle = (startAngle + endAngle) / 2;
+    angle += full;
 
     return {
-      arc,
-      labelY: clamp(
-        chartCenterY + yOffset * naturalYScale,
-        labelTop,
-        labelBottom,
-      ),
-      side: xOffset >= 0 ? ("right" as const) : ("left" as const),
-      subjectX: roundSvgNumber(chartCenterX + xOffset * subjectRadius),
-      subjectY: roundSvgNumber(chartCenterY + yOffset * subjectRadius),
+      slice,
+      startAngle,
+      endAngle,
+      pathD: arcPath(innerRadius, outerRadius, startAngle, endAngle),
+      popX: Math.sin(midAngle) * popDistance,
+      popY: -Math.cos(midAngle) * popDistance,
+      color: getColor(slice.id),
     };
-  });
-
-  return (["left", "right"] as const).flatMap((side) => {
-    const group = positioned
-      .filter((datum) => datum.side === side)
-      .sort((a, b) => a.subjectY - b.subjectY);
-
-    if (group.length === 0) return [];
-
-    const positions = distributeLabelYs(group.map((datum) => datum.labelY));
-
-    return group.map((datum, index) => ({
-      ...datum,
-      labelY: roundSvgNumber(positions[index]),
-    }));
   });
 }
 
-export function DonutChart({ title, data }: DonutChartProps) {
-  const slices = chartData(data);
-  const colorScale = scaleOrdinal<string, string>({
-    domain: slices.map((datum) => datum.id),
-    range: chartColors,
-  });
+interface AnimatedArcDatum extends ArcDatum {
+  opacity: number;
+}
+
+function interpolateArcData(prev: AnimatedArcDatum[], target: ArcDatum[], t: number): AnimatedArcDatum[] {
+  const result: AnimatedArcDatum[] = [];
+  for (const toArc of target) {
+    const fromArc = prev.find((a) => a.slice.id === toArc.slice.id);
+    if (fromArc) {
+      const s = fromArc.startAngle + (toArc.startAngle - fromArc.startAngle) * t;
+      const e = fromArc.endAngle + (toArc.endAngle - fromArc.endAngle) * t;
+      result.push({ ...toArc, startAngle: s, endAngle: e, pathD: e - s > 0.001 ? arcPath(innerRadius, outerRadius, s, e) : "M 0 0", opacity: 1 });
+    } else {
+      const mid = (toArc.startAngle + toArc.endAngle) / 2;
+      const s = mid + (toArc.startAngle - mid) * t;
+      const e = mid + (toArc.endAngle - mid) * t;
+      result.push({ ...toArc, startAngle: s, endAngle: e, pathD: e - s > 0.001 ? arcPath(innerRadius, outerRadius, s, e) : "M 0 0", opacity: t });
+    }
+  }
+  for (const fromArc of prev) {
+    if (!target.find((a) => a.slice.id === fromArc.slice.id)) {
+      const mid = (fromArc.startAngle + fromArc.endAngle) / 2;
+      const s = fromArc.startAngle + (mid - fromArc.startAngle) * t;
+      const e = fromArc.endAngle + (mid - fromArc.endAngle) * t;
+      result.push({ ...fromArc, startAngle: s, endAngle: e, pathD: e - s > 0.001 ? arcPath(innerRadius, outerRadius, s, e) : "M 0 0", opacity: 1 - t });
+    }
+  }
+  return result;
+}
+
+interface ArcInterp { id: string; fromStart: number; toStart: number; fromEnd: number; toEnd: number; fromOpacity: number; toOpacity: number; }
+
+function buildInterpData(prev: AnimatedArcDatum[], target: ArcDatum[]): ArcInterp[] {
+  const result: ArcInterp[] = [];
+  for (const toArc of target) {
+    const fromArc = prev.find((a) => a.slice.id === toArc.slice.id);
+    if (fromArc) {
+      result.push({ id: toArc.slice.id, fromStart: fromArc.startAngle, toStart: toArc.startAngle, fromEnd: fromArc.endAngle, toEnd: toArc.endAngle, fromOpacity: fromArc.opacity, toOpacity: 1 });
+    } else {
+      const mid = (toArc.startAngle + toArc.endAngle) / 2;
+      result.push({ id: toArc.slice.id, fromStart: mid, toStart: toArc.startAngle, fromEnd: mid, toEnd: toArc.endAngle, fromOpacity: 0, toOpacity: 1 });
+    }
+  }
+  for (const fromArc of prev) {
+    if (!target.find((a) => a.slice.id === fromArc.slice.id)) {
+      const mid = (fromArc.startAngle + fromArc.endAngle) / 2;
+      result.push({ id: fromArc.slice.id, fromStart: fromArc.startAngle, toStart: mid, fromEnd: fromArc.endAngle, toEnd: mid, fromOpacity: fromArc.opacity, toOpacity: 0 });
+    }
+  }
+  return result;
+}
+
+export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage }: DonutChartProps) {
+  const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
+  const [hiddenIds, setHiddenIds] = useState<ReadonlySet<string>>(new Set());
+
+  const slices = useMemo(() => {
+    const activeData: DonutDatum[] = tabs
+      ? (tabs[activeTabIndex]?.data ?? [])
+      : (data ?? []);
+    return chartData(activeData);
+  }, [tabs, activeTabIndex, data]);
+  const colorScale = useMemo(
+    () => scaleOrdinal<string, string>({ domain: slices.map((d) => d.id), range: donutPalette }),
+    [slices],
+  );
+  const visibleSlices = useMemo(
+    () => slices.filter((s) => !hiddenIds.has(s.id)),
+    [slices, hiddenIds],
+  );
+  const arcData = useMemo(
+    () => buildArcData(visibleSlices, (id) => colorScale(id)),
+    [visibleSlices, colorScale],
+  );
+  const total = visibleSlices.reduce((sum, d) => sum + d.value, 0);
+
+  const [displayedArcs, setDisplayedArcs] = useState<AnimatedArcDatum[]>([]);
+  const prevArcsRef = useRef<AnimatedArcDatum[]>([]);
+  const pathRefs = useRef(new Map<string, SVGPathElement>());
+  const animRef = useRef<ReturnType<typeof animate> | null>(null);
+
+  useEffect(() => {
+    animRef.current?.stop();
+    const prev = prevArcsRef.current;
+    const target = arcData;
+    const interp = buildInterpData(prev, target);
+    setDisplayedArcs(interpolateArcData(prev, target, 0));
+    let raf2: number;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        animRef.current = animate(0, 1, {
+          duration: 0.5,
+          ease: [0.22, 1, 0.36, 1],
+          onUpdate(t) {
+            for (const arc of interp) {
+              const el = pathRefs.current.get(arc.id);
+              if (!el) continue;
+              const s = arc.fromStart + (arc.toStart - arc.fromStart) * t;
+              const e = arc.fromEnd + (arc.toEnd - arc.fromEnd) * t;
+              el.setAttribute("d", e - s > 0.001 ? arcPath(innerRadius, outerRadius, s, e) : "M 0 0");
+              el.style.opacity = String(arc.fromOpacity + (arc.toOpacity - arc.fromOpacity) * t);
+            }
+          },
+          onComplete() {
+            const final = target.map((a) => ({ ...a, opacity: 1 }));
+            setDisplayedArcs(final);
+            prevArcsRef.current = final;
+          },
+        });
+      });
+    });
+    return () => { cancelAnimationFrame(raf1); cancelAnimationFrame(raf2); animRef.current?.stop(); };
+  }, [arcData]);
+
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [activationSource, setActivationSource] = useState<"cursor" | "legend">(
+    "cursor",
+  );
+  // Horizontal offset (px) of the ▼ caret from the tooltip center.
+  // Non-zero only when the tooltip is pushed horizontally to stay within
+  // the SVG bounds (prevents overlap with the legend column).
+  const [legendCaretOffsetPx, setLegendCaretOffsetPx] = useState(0);
+  const activeId = hoveredId;
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
-    useTooltip<DonutDatum>();
+    useTooltip<DonutDatum & { pct: number }>();
+
+  const handleTabChange = (index: number) => {
+    setActiveTabIndex(index);
+    setHoveredId(null);
+    setHiddenIds(new Set());
+    hideTooltip();
+  };
+
+  const toggleSlice = (id: string) => {
+    hideTooltip();
+    setHiddenIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+        setHoveredId(id); // keep cursor active immediately after unhiding
+      } else {
+        next.add(id);
+        setHoveredId(null);
+      }
+      return next;
+    });
+  };
+
+  const tabsScrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  useEffect(() => {
+    const el = tabsScrollRef.current;
+    if (!el) return;
+    const check = () => {
+      setCanScrollLeft(el.scrollLeft > 0);
+      setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+    };
+    check();
+    el.addEventListener("scroll", check);
+    if (typeof ResizeObserver !== "undefined") {
+      const ro = new ResizeObserver(check);
+      ro.observe(el);
+      return () => {
+        ro.disconnect();
+        el.removeEventListener("scroll", check);
+      };
+    }
+    return () => el.removeEventListener("scroll", check);
+  }, [tabs]);
+
+  const scrollTabsBy = (delta: number) => {
+    tabsScrollRef.current?.scrollBy({ left: delta, behavior: "smooth" });
+  };
+
+  const deactivateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const activateHover = (id: string) => {
+    if (deactivateTimer.current) {
+      clearTimeout(deactivateTimer.current);
+      deactivateTimer.current = null;
+    }
+    setHoveredId(id);
+  };
+
+  const deactivate = () => {
+    deactivateTimer.current = setTimeout(() => {
+      setHoveredId(null);
+      hideTooltip();
+    }, 40);
+  };
+
+  const showTooltipForArc = (arc: ArcDatum, clientX: number, clientY: number) => {
+    showTooltip({
+      tooltipData: {
+        label: arc.slice.label,
+        value: arc.slice.value,
+        pct: Math.round((arc.slice.value / total) * 100),
+      },
+      tooltipLeft: clientX,
+      tooltipTop: clientY,
+    });
+  };
+
+  // Anchor the tooltip to the arc's outer-edge midpoint. Used when the user
+  // activates a slice via legend hover or keyboard focus, where no cursor
+  // coordinate is available. Without this, keyboard users see the slice pop
+  // but miss the percentage + count that mouse users get — violates WCAG
+  // 1.4.13 (Content on Hover or Focus).
+  const showTooltipForArcAnchoredToSvg = (arc: ArcDatum) => {
+    const svgEl = svgRef.current;
+    const rect = svgEl?.getBoundingClientRect();
+    // If the SVG has no measurable layout (jsdom under tests, or pre-mount),
+    // still show the tooltip — `chartTooltipStyle` will clamp it to viewport.
+    if (!rect || !rect.width || !rect.height) {
+      showTooltipForArc(arc, 0, 0);
+      return;
+    }
+
+    const uniformScale = Math.min(rect.width / chartSize, rect.height / chartSize);
+    const letterboxX = (rect.width - chartSize * uniformScale) / 2;
+    const letterboxY = (rect.height - chartSize * uniformScale) / 2;
+    // Anchor at the highest (minimum-Y) point of the arc face at midAngle,
+    // accounting for pop translation. For upper-half arcs (cos > 0) the outer
+    // rim is higher on screen than the inner rim, so use outerRadius. For
+    // lower-half arcs (cos < 0) the inner rim is higher; use innerRadius.
+    const midAngle = (arc.startAngle + arc.endAngle) / 2;
+    const anchorRadius = Math.cos(midAngle) > 0 ? outerRadius : innerRadius;
+    const svgX = Math.sin(midAngle) * anchorRadius + chartCenter + arc.popX;
+    const svgY = -Math.cos(midAngle) * anchorRadius + chartCenter + arc.popY;
+    const clientX = rect.left + letterboxX + svgX * uniformScale;
+    const clientY = rect.top + letterboxY + svgY * uniformScale;
+    // Clamp the tooltip center to stay within the SVG bounds so it doesn't
+    // extend into the legend column. Shift the caret by the same amount so
+    // it still points at the arc's actual position.
+    const half = tooltipEstimatedWidth / 2;
+    const clampedX = Math.max(rect.left + half, Math.min(clientX, rect.right - half));
+    setLegendCaretOffsetPx(clientX - clampedX);
+    showTooltipForArc(arc, clampedX, clientY);
+  };
+
+  const activateFromLegend = (id: string) => {
+    setActivationSource("legend");
+    activateHover(id);
+    const arc = arcData.find((a) => a.slice.id === id);
+    if (arc) showTooltipForArcAnchoredToSvg(arc);
+  };
+
+  const handleOverlayMouseMove = (
+    event: React.MouseEvent<SVGCircleElement>,
+  ) => {
+    const svgEl = svgRef.current;
+    if (!svgEl) return;
+
+    const rect = svgEl.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    // xMidYMid meet applies a single uniform scale; compute it from whichever
+    // axis is the bottleneck and subtract the resulting letterbox offset before
+    // mapping to SVG space.
+    const uniformScale = Math.min(rect.width / chartSize, rect.height / chartSize);
+    const letterboxX = (rect.width - chartSize * uniformScale) / 2;
+    const letterboxY = (rect.height - chartSize * uniformScale) / 2;
+    const svgX = (event.clientX - rect.left - letterboxX) / uniformScale - chartCenter;
+    const svgY = (event.clientY - rect.top - letterboxY) / uniformScale - chartCenter;
+    const dist = Math.sqrt(svgX * svgX + svgY * svgY);
+
+    // Only activate within the ring — inner hole and outside edge are dead zones
+    if (dist < innerRadius || dist > outerRadius) {
+      deactivate();
+      return;
+    }
+
+    const angle = Math.atan2(svgX, -svgY); // angle from 12 o'clock, clockwise
+    for (const arc of arcData) {
+      let a = angle;
+      if (a < arc.startAngle) a += Math.PI * 2;
+      if (a >= arc.startAngle && a <= arc.endAngle) {
+        setActivationSource("cursor");
+        showTooltipForArc(arc, event.clientX, event.clientY);
+        activateHover(arc.slice.id);
+        return;
+      }
+    }
+    // Cursor is in a gap — keep current active slice without flickering
+    if (tooltipData) {
+      showTooltip({
+        tooltipData,
+        tooltipLeft: event.clientX,
+        tooltipTop: event.clientY,
+      });
+    }
+  };
 
   return (
     <Card className="relative rounded-lg" size="sm">
-      <CardHeader>
-        <CardTitle className="text-lg!">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {slices.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            No distribution data was returned.
-          </p>
+      <CardContent className="flex flex-1 flex-col">
+        <div className="flex items-start gap-2">
+          <h3 className="m-0 max-w-[60%] shrink-0 text-sm font-semibold">{title}</h3>
+          {tabs && tabs.length > 1 && (
+            <div className="ml-auto flex min-w-0 items-center gap-0.5 rounded-md bg-muted/50 p-0.5">
+              {(() => {
+                const scrollable = canScrollLeft || canScrollRight;
+                return (
+                  <>
+                    <div
+                      className={cn(
+                        "shrink-0 overflow-hidden",
+                        !scrollable
+                          ? "hidden"
+                          : "transition-[max-width,opacity] duration-300 ease-in-out",
+                        scrollable && (canScrollLeft ? "max-w-6 opacity-100" : "max-w-0 opacity-0"),
+                      )}
+                    >
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-xs"
+                        onClick={() => scrollTabsBy(-80)}
+                        aria-label="Scroll tabs left"
+                      >
+                        <ChevronLeft className="size-3.5" />
+                      </Button>
+                    </div>
+                    <div
+                      ref={tabsScrollRef}
+                      className="flex min-w-0 flex-1 overflow-x-auto"
+                      style={{ scrollbarWidth: "none" }}
+                    >
+                      <div className="flex flex-nowrap items-center gap-0.5">
+                        {tabs.map((tab, i) => (
+                          <Button
+                            key={tab.label}
+                            type="button"
+                            variant={i === activeTabIndex ? "default" : "ghost"}
+                            size="xs"
+                            aria-pressed={i === activeTabIndex}
+                            onClick={() => handleTabChange(i)}
+                            className="shrink-0"
+                          >
+                            {tab.label}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                    <div
+                      className={cn(
+                        "shrink-0 overflow-hidden",
+                        !scrollable
+                          ? "hidden"
+                          : "transition-[max-width,opacity] duration-300 ease-in-out",
+                        scrollable && (canScrollRight ? "max-w-6 opacity-100" : "max-w-0 opacity-0"),
+                      )}
+                    >
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-xs"
+                        onClick={() => scrollTabsBy(80)}
+                        aria-label="Scroll tabs right"
+                      >
+                        <ChevronRight className="size-3.5" />
+                      </Button>
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+          )}
+        </div>
+        {errorMessage || slices.length === 0 ? (
+          <ChartStatusMessage errorMessage={errorMessage} />
         ) : (
-          <div className="min-w-0 overflow-hidden">
+          <div
+            className={cn(
+              "flex flex-1 gap-3 pt-2",
+              layout === "side"
+                ? "min-h-0 flex-row items-stretch"
+                : "flex-col items-center justify-center",
+            )}
+          >
+            {/*
+             * Side layout: SVG takes half the card width and the full available
+             * height. preserveAspectRatio="xMidYMid meet" (SVG default) renders
+             * the donut as large as possible within that rectangle — no wrapper
+             * div needed, no fixed cap that prevents growth on wide monitors.
+             */}
             <svg
-              viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+              ref={svgRef}
+              viewBox={`0 0 ${chartSize} ${chartSize}`}
               role="img"
               aria-label={`${title} distribution`}
-              className="mx-auto w-full max-w-135"
+              className={cn(
+                "shrink-0",
+                layout === "side" ? "h-full w-1/2" : "w-full max-w-40",
+              )}
+              style={{ overflow: "visible" }}
             >
-              <Group top={chartCenterY} left={chartCenterX}>
-                <Pie<DonutChartDatum>
-                  data={slices}
-                  pieValue={(datum) => datum.value}
-                  outerRadius={outerRadius}
-                  innerRadius={innerRadius}
-                  padAngle={0.012}
-                  startAngle={pieStartAngle}
-                  endAngle={pieEndAngle}
-                >
-                  {(pie) => (
-                    <>
-                      {pie.arcs.map((arc) => {
-                        const accessibleLabel = `${arc.data.label}: ${numberFormatter.format(arc.data.value)}`;
-
-                        return (
-                          <path
-                            key={arc.data.id}
-                            suppressHydrationWarning
-                            d={pie.path(arc) ?? undefined}
-                            fill={colorScale(arc.data.id)}
-                            stroke="var(--card)"
-                            strokeWidth={2}
-                            tabIndex={0}
-                            aria-label={accessibleLabel}
-                            onMouseMove={(event) =>
-                              showTooltip({
-                                tooltipData: arc.data,
-                                tooltipLeft: event.clientX,
-                                tooltipTop: event.clientY,
-                              })
-                            }
-                            onFocus={(event) => {
-                              const rect =
-                                event.currentTarget.getBoundingClientRect();
-                              showTooltip({
-                                tooltipData: arc.data,
-                                tooltipLeft: rect.left + rect.width / 2,
-                                tooltipTop: rect.top + rect.height / 2,
-                              });
-                            }}
-                            onMouseLeave={hideTooltip}
-                            onBlur={hideTooltip}
-                          >
-                            <title>{accessibleLabel}</title>
-                          </path>
-                        );
-                      })}
-                      {annotationData(pie.arcs).map((datum) => {
-                        const isRight = datum.side === "right";
-                        const labelX = isRight ? rightLabelX : leftLabelX;
-                        const valueLabel = numberFormatter.format(
-                          datum.arc.data.value,
-                        );
-
-                        const subjectX = datum.subjectX - chartCenterX;
-                        const subjectY = datum.subjectY - chartCenterY;
-                        const labelXRelative = labelX - chartCenterX;
-                        const labelYRelative = datum.labelY - chartCenterY;
-                        const labelLeftXRelative = isRight
-                          ? labelXRelative + labelAnchorGap
-                          : labelXRelative - labelAnchorGap - labelWidth;
-                        const titleLines = wrapLabelText(datum.arc.data.label);
-                        const labelBlockHeight =
-                          annotationLabelBlockHeight(titleLines);
-                        const labelTopYRelative =
-                          labelYRelative - labelBlockHeight / 2;
-                        const textAnchor = isRight ? "start" : "end";
-                        const textX = isRight
-                          ? labelLeftXRelative
-                          : labelLeftXRelative + labelWidth;
-                        const valueY =
-                          labelTopYRelative +
-                          titleLines.length * titleLineHeight +
-                          titleValueGap +
-                          valueBaselineOffset;
-
-                        return (
-                          <g key={`annotation-${datum.arc.data.id}`}>
-                            <path
-                              className="visx-annotation-connector"
-                              d={connectorPath(
-                                subjectX,
-                                subjectY,
-                                labelXRelative,
-                                labelYRelative,
-                                datum.side,
-                              )}
-                              stroke={colorScale(datum.arc.data.id)}
-                              strokeWidth={1.25}
-                              fill="none"
-                            />
-                            <line
-                              className="metadata-distribution-label-marker"
-                              x1={labelXRelative}
-                              y1={labelTopYRelative}
-                              x2={labelXRelative}
-                              y2={labelTopYRelative + labelBlockHeight}
-                              stroke={colorScale(datum.arc.data.id)}
-                              strokeWidth={2}
-                            />
-                            <text
-                              className="metadata-distribution-title-label fill-foreground font-semibold"
-                              textAnchor={textAnchor}
-                              fontSize={titleFontSize}
-                            >
-                              {titleLines.map((line, index) => (
-                                <tspan
-                                  key={`${datum.arc.data.id}-title-${index}`}
-                                  className="metadata-distribution-title-line"
-                                  x={textX}
-                                  y={
-                                    labelTopYRelative +
-                                    titleBaselineOffset +
-                                    index * titleLineHeight
-                                  }
-                                >
-                                  {line}
-                                </tspan>
-                              ))}
-                            </text>
-                            <text
-                              className="metadata-distribution-value-label fill-muted-foreground tabular-nums"
-                              textAnchor={textAnchor}
-                              fontSize={valueFontSize}
-                              x={textX}
-                              y={valueY}
-                            >
-                              {valueLabel}
-                            </text>
-                          </g>
-                        );
-                      })}
-                    </>
-                  )}
-                </Pie>
-              </Group>
+              <g transform={`translate(${chartCenter},${chartCenter})`}>
+                {displayedArcs.map((arc) => {
+                  const isActive = activeId === arc.slice.id;
+                  const accessibleLabel = `${arc.slice.label}: ${numberFormatter.format(arc.slice.value)}`;
+                  return (
+                    <g
+                      key={arc.slice.id}
+                      style={{
+                        transform: isActive ? `translate(${arc.popX}px, ${arc.popY}px)` : undefined,
+                        transition: "transform 180ms ease-out",
+                      }}
+                    >
+                      <path
+                        ref={(el) => { if (el) pathRefs.current.set(arc.slice.id, el); else pathRefs.current.delete(arc.slice.id); }}
+                        suppressHydrationWarning
+                        d={arc.pathD}
+                        fill={arc.color}
+                        stroke={arc.color}
+                        strokeWidth={0.5}
+                        aria-label={accessibleLabel}
+                        style={{ opacity: arc.opacity }}
+                      >
+                        <title>{accessibleLabel}</title>
+                      </path>
+                    </g>
+                  );
+                })}
+                {/*
+                 * Single transparent overlay intercepts all mouse events.
+                 * Angle + distance math in onMouseMove eliminates gap/hole flicker.
+                 */}
+                <circle
+                  data-testid="chart-overlay"
+                  r={outerRadius}
+                  fill="transparent"
+                  onMouseMove={handleOverlayMouseMove}
+                  onMouseLeave={deactivate}
+                />
+              </g>
             </svg>
+
+            {layout === "side" ? (
+              <div
+                className="flex min-w-0 flex-1 flex-col justify-center gap-0.5"
+                style={{ animation: "donut-legend-up 0.4s 0.4s ease-out both" }}
+              >
+                {slices.map((slice) => {
+                  const isHidden = hiddenIds.has(slice.id);
+                  return (
+                    <ChartLegendPill
+                      key={slice.id}
+                      label={slice.label}
+                      color={colorScale(slice.id)}
+                      active={activeId === slice.id}
+                      dimmed={isHidden}
+                      variant="row"
+                      ariaPressed={!isHidden}
+                      onActivate={() => activateFromLegend(slice.id)}
+                      onDeactivate={deactivate}
+                      onClick={() => toggleSlice(slice.id)}
+                    >
+                      <span className="min-w-0 flex-1 truncate text-left">
+                        {slice.label}
+                      </span>
+                      <span className="tabular-nums">
+                        {numberFormatter.format(slice.value)}
+                      </span>
+                    </ChartLegendPill>
+                  );
+                })}
+              </div>
+            ) : (
+              <div
+                className="flex flex-wrap justify-center gap-1.5"
+                style={{ animation: "donut-legend-up 0.4s 0.4s ease-out both" }}
+              >
+                {slices.map((slice) => {
+                  const isHidden = hiddenIds.has(slice.id);
+                  return (
+                    <ChartLegendPill
+                      key={slice.id}
+                      label={slice.label}
+                      color={colorScale(slice.id)}
+                      active={activeId === slice.id}
+                      dimmed={isHidden}
+                      ariaPressed={!isHidden}
+                      ariaLabel={`${slice.label}: ${numberFormatter.format(slice.value)}`}
+                      onActivate={() => activateFromLegend(slice.id)}
+                      onDeactivate={deactivate}
+                      onClick={() => toggleSlice(slice.id)}
+                    />
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
       </CardContent>
       {tooltipData && (
         <div
           role="status"
-          className="pointer-events-none fixed rounded-md border bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md"
-          style={{ left: tooltipLeft ?? 0, top: tooltipTop ?? 0 }}
+          className="pointer-events-none fixed z-50 rounded-md border border-foreground/80 bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md"
+          style={
+            activationSource === "legend"
+              // Center exactly on the anchor via transform (avoids width-
+              // estimation error) and float above with room for the ▼ caret.
+              ? {
+                  position: "fixed" as const,
+                  left: `${tooltipLeft ?? 0}px`,
+                  top: `${(tooltipTop ?? 0) - tooltipEstimatedHeight - 4}px`,
+                  transform: "translateX(-50%)",
+                }
+              : chartTooltipStyle(
+                  tooltipLeft ?? 0,
+                  tooltipTop ?? 0,
+                  tooltipEstimatedWidth,
+                  tooltipEstimatedHeight,
+                  12,
+                  -36,
+                )
+          }
         >
+          {/* ▼ caret at tooltip bottom, pointing down toward the arc.
+              calc(50% + offset) shifts the caret when the tooltip is pushed
+              sideways to stay within the SVG bounds, so it still points at
+              the arc rather than the tooltip center. */}
+          {activationSource === "legend" && (
+            <span
+              aria-hidden="true"
+              className="absolute size-3 bg-popover border border-foreground/80"
+              style={{
+                bottom: -7,
+                left: `calc(50% + ${legendCaretOffsetPx}px)`,
+                transform: "translateX(-50%) rotate(45deg)",
+                borderRightWidth: 1, borderBottomWidth: 1,
+                borderTopColor: "transparent", borderLeftColor: "transparent",
+              }}
+            />
+          )}
           {tooltipData.label}: {numberFormatter.format(tooltipData.value)}
+          <span className="ml-1 text-muted-foreground">
+            ({tooltipData.pct}%)
+          </span>
         </div>
       )}
     </Card>

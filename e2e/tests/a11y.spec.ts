@@ -158,6 +158,54 @@ test.describe("a11y axe sweep", () => {
     });
   }
 
+  test("taxonomy overview metadata-distributions are free of fixed WCAG violations", async ({
+    page,
+    context,
+  }) => {
+    await context.clearCookies();
+    await applyBackendMocks(page, {
+      overrides: [...workspaceOverrides, ...permissiveBackendOverrides],
+    });
+    await page.goto("/taxonomy/234");
+
+    // The section's <h2> renders synchronously on the server, then the
+    // chart cards stream in. Wait for at least one chart to mount so axe
+    // doesn't scan an empty grid.
+    await page.getByRole("heading", { level: 2, name: /Metadata Distributions/ })
+      .waitFor({ timeout: 10_000 });
+    await page.waitForLoadState("networkidle");
+
+    const results = await new AxeBuilder({ page })
+      .include('[data-testid="metadata-distributions"]')
+      .withTags(axeTags)
+      .disableRules(knownBaselineViolations)
+      .analyze();
+
+    // Lock the four WCAG rules we fixed in this branch. Other violations
+    // (if any) elsewhere on the page are caught by the broader sweep.
+    // - label-content-name-mismatch: WCAG 2.5.3 (Task 1 — ChartLegendPill accessible name)
+    // - aria-toggle-field-name:      WCAG 4.1.2 (Task 2 — aria-pressed legend toggles)
+    // - non-text-contrast:           WCAG 1.4.11 (Task 3 — swatch 3:1-contrast border)
+    // - heading-order:               WCAG 1.3.1  (Task 5 — chart card titles promoted to h3)
+    const blockedRules = new Set([
+      "label-content-name-mismatch",
+      "aria-toggle-field-name",
+      "non-text-contrast",
+      "heading-order",
+    ]);
+    const regressions = results.violations.filter((v) =>
+      blockedRules.has(v.id),
+    );
+    expect(
+      regressions,
+      regressions.length === 0
+        ? undefined
+        : `${regressions.length} WCAG regression(s) in metadata-distributions:\n${regressions
+            .map((v) => `  - ${v.id}: ${v.help} (${v.nodes.length} node(s))`)
+            .join("\n")}`,
+    ).toEqual([]);
+  });
+
   test("command palette (open) has no serious or critical violations", async ({
     page,
   }) => {

@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import { LandingShellClient } from "./landing-shell-client";
 import type {
   OrganismLandingConfig,
@@ -10,6 +12,7 @@ interface OrganismLandingShellProps {
   config: OrganismLandingConfig;
   views: readonly OrganismLandingView[];
   activeViewKey?: string;
+  headerContent?: ReactNode;
 }
 
 function isOrganismViewKey(
@@ -23,6 +26,7 @@ export function OrganismLandingShell({
   config,
   views,
   activeViewKey,
+  headerContent,
 }: OrganismLandingShellProps) {
   const defaultView = config.defaultView ?? "overview";
   const resolvedKey = isOrganismViewKey(activeViewKey, views)
@@ -42,6 +46,7 @@ export function OrganismLandingShell({
       activeView={activeView.key}
       defaultView={defaultView}
       navItems={navItems}
+      headerContent={headerContent}
     >
       <ActiveViewComponent />
     </LandingShellClient>

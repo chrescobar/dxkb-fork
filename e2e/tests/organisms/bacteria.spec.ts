@@ -20,7 +20,7 @@ test.describe("bacteria organism landing page", () => {
     await expect(landing.getKpi("Genomes")).toContainText("1,337,420");
     await expect(landing.getGenusCard("Escherichia")).toContainText("128,450 genomes");
     await landing.expectDonut("Genus");
-    await landing.expectDonut("Host");
+    await landing.expectDonut("Host Name");
     await landing.expectDonut("Isolation Country");
 
     await page.getByRole("button", { name: /Phylogeny/ }).click();

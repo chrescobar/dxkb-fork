@@ -58,4 +58,32 @@ describe("LandingNav", () => {
     expect(screen.queryByText("Views")).not.toBeInTheDocument();
     expect(screen.getByTitle("Overview")).toBeInTheDocument();
   });
+
+  it("does not crash when navigator is undefined (SSR-safe initializer)", () => {
+    const originalDescriptor = Object.getOwnPropertyDescriptor(globalThis, "navigator");
+    // jsdom defines `navigator` as a configurable getter; we can delete it
+    // temporarily to simulate the Node SSR environment.
+    Object.defineProperty(globalThis, "navigator", {
+      value: undefined,
+      configurable: true,
+    });
+
+    try {
+      expect(() =>
+        render(
+          <LandingNav
+            items={items}
+            activeView="overview"
+            collapsed={false}
+            onChange={vi.fn()}
+            onCollapseToggle={vi.fn()}
+          />,
+        ),
+      ).not.toThrow();
+    } finally {
+      if (originalDescriptor) {
+        Object.defineProperty(globalThis, "navigator", originalDescriptor);
+      }
+    }
+  });
 });

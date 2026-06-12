@@ -5,6 +5,22 @@ import {
   clearRecentFolders,
 } from "@/lib/recent-workspace-folders";
 
+// Node 24 exposes globalThis.localStorage as undefined unless --localstorage-file is
+// provided, which prevents jsdom from overriding it. Stub a real in-memory store so
+// the module under test and the beforeEach calls work correctly in both environments.
+const localStorageMock = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: (key: string) => store[key] ?? null,
+    setItem: (key: string, value: string) => { store[key] = String(value); },
+    removeItem: (key: string) => { const { [key]: _, ...rest } = store; store = rest; },
+    clear: () => { store = {}; },
+    key: (n: number) => Object.keys(store)[n] ?? null,
+    get length() { return Object.keys(store).length; },
+  } as Storage;
+})();
+vi.stubGlobal("localStorage", localStorageMock);
+
 const storageKey = "dxkb-recent-workspace-folders";
 
 describe("getWorkspaceFolderDisplayName", () => {

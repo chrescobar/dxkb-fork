@@ -1,0 +1,23 @@
+src/app/api/services/minhash/route.ts
+  s_0d580176ec0ea8::t_2433af80d976bc 38
+src/app/api/auth/forget-password/route.ts
+  s_0d580176ec0ea8::t_74d5c39805fb0e 13
+src/app/api/services/workspace/route.ts
+  s_0d580176ec0ea8::t_fca5c9f0424b1e 63,66-68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "3707174b491ba4486fd84828ae646f19abaef54e",
+  "prompts": {},
+  "sessions": {
+    "s_0d580176ec0ea8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ca49035-a1d3-487e-9d2f-5fd0bae8a7fb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

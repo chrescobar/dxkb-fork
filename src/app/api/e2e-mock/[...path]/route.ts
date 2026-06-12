@@ -230,7 +230,7 @@ function solrFacet(field: string, count: number) {
   };
 }
 
-function maybeBvBrcWebsite(path: string, request: NextRequest): unknown | null {
+function maybeBvBrcWebsite(path: string, request: NextRequest): unknown {
   const segments = path.split("/").filter(Boolean);
   if (segments[0] !== "bvbrc-website") return null;
   const endpoint = segments.slice(1).join("/");

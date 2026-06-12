@@ -42,8 +42,8 @@ function escapeSolrTerm(value: string): string {
 
 export const POST = auth.route(async (request: NextRequest, { token }) => {
   try {
-    const body = await request.json().catch(() => ({}));
-    const genomeIds: string[] = Array.isArray(body?.genome_ids)
+    const body = (await request.json().catch(() => ({}))) as { genome_ids?: unknown };
+    const genomeIds: string[] = Array.isArray(body.genome_ids)
       ? (body.genome_ids as string[]).map((id: unknown) => String(id).trim())
       : [];
 
@@ -84,8 +84,10 @@ export const POST = auth.route(async (request: NextRequest, { token }) => {
     const text = await response.text();
 
     if (contentType.includes("application/json")) {
-      const data = JSON.parse(text);
-      const results = Array.isArray(data) ? data : data?.items ?? data?.results ?? [];
+      const data = JSON.parse(text) as unknown[] | { items?: unknown[]; results?: unknown[] };
+      const results = Array.isArray(data)
+        ? data
+        : data.items ?? data.results ?? [];
       return NextResponse.json({ results });
     }
 

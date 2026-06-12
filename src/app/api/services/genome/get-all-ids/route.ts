@@ -2,14 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { withAuth } from "@/lib/auth/server/instance";
 import { getRequiredEnv } from "@/lib/env";
 
+interface GetAllIdsBody {
+  limit?: unknown;
+}
 
 export const POST = withAuth(async (request: NextRequest, { token }) => {
   // Parse optional limit from request body (default: 10000, max: 10000)
-  const body = await request.json().catch(() => ({}));
-  const requestedLimit = Number.parseInt(
-    body?.limit?.toString() || "10000",
-    10,
-  );
+  const body = (await request.json().catch(() => ({}))) as GetAllIdsBody;
+  const rawLimit = typeof body.limit === "string" || typeof body.limit === "number" ? body.limit : 10000;
+  const requestedLimit = Number.parseInt(String(rawLimit), 10);
   const limit = Number.isFinite(requestedLimit)
     ? Math.min(Math.max(requestedLimit, 1), 10000)
     : 10000;
@@ -43,8 +44,8 @@ export const POST = withAuth(async (request: NextRequest, { token }) => {
     );
   }
 
-  const data = await response.json();
-  const results = Array.isArray(data) ? data : data?.items || [];
+  const data = (await response.json()) as unknown[] | { items?: unknown[] };
+  const results = Array.isArray(data) ? data : data.items ?? [];
 
   return NextResponse.json({ results });
 });

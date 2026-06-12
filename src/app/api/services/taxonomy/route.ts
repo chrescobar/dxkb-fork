@@ -27,6 +27,6 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
     );
   }
 
-  const data = await response.json();
+  const data: unknown = await response.json();
   return NextResponse.json(data);
 });

@@ -4,10 +4,14 @@ import { getRequiredEnv } from "@/lib/env";
 import type { ViralGenomeValidationResult } from "@/lib/services/genome";
 import { buildGenomeInClause } from "../utils";
 
+interface ValidateViralBody {
+  genome_ids?: unknown;
+}
+
 export const POST = withAuth(async (request: NextRequest, { token }) => {
-  const body = await request.json();
-  const genomeIds: string[] = Array.isArray(body?.genome_ids)
-    ? body.genome_ids
+  const body = (await request.json()) as ValidateViralBody;
+  const genomeIds: string[] = Array.isArray(body.genome_ids)
+    ? (body.genome_ids as string[])
     : [];
 
   if (genomeIds.length === 0) {
@@ -43,8 +47,8 @@ export const POST = withAuth(async (request: NextRequest, { token }) => {
     );
   }
 
-  const data = await response.json();
-  const results: ViralGenomeValidationResult[] = Array.isArray(data) ? data : data?.items || [];
+  const data = (await response.json()) as ViralGenomeValidationResult[] | { items?: ViralGenomeValidationResult[] };
+  const results: ViralGenomeValidationResult[] = Array.isArray(data) ? data : data.items ?? [];
 
   return NextResponse.json({ results });
 });

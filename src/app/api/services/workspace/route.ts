@@ -35,7 +35,7 @@ function sanitizeUpstreamError(raw: unknown): SanitizedApiError | null {
  */
 export const POST = auth.route(async (request: NextRequest, { token }) => {
   try {
-    const body = await request.json();
+    const body = (await request.json()) as { method?: unknown; params?: unknown };
     const { method, params } = body;
 
     if (!method) {
@@ -96,7 +96,7 @@ export const POST = auth.route(async (request: NextRequest, { token }) => {
       );
     }
 
-    const data = await response.json();
+    const data: unknown = await response.json();
     return NextResponse.json(data);
   } catch (error) {
     console.error("Workspace API error:", error);

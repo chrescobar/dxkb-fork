@@ -54,8 +54,8 @@ export const GET = withAuth(async (request: NextRequest, { token }) => {
     );
   }
 
-  const data = await response.json();
-  const results = Array.isArray(data) ? data : data?.items || [];
+  const data = (await response.json()) as unknown[] | { items?: unknown[] };
+  const results = Array.isArray(data) ? data : data.items ?? [];
 
   return NextResponse.json({ results });
 });

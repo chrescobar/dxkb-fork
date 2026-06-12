@@ -12,10 +12,10 @@ const allowedMethods = new Set(["Workspace.ls", "Workspace.get"]);
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = (await request.json()) as { method?: unknown; params?: unknown };
     const { method, params } = body;
 
-    if (!method) {
+    if (typeof method !== "string" || !method) {
       return NextResponse.json(
         { error: "method is required" },
         { status: 400 },
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const data = await response.json();
+    const data: unknown = await response.json();
     return NextResponse.json(data);
   } catch (error) {
     console.error("Public workspace API error:", error);

@@ -79,7 +79,7 @@ export const POST = auth.route(async (request: NextRequest, { token }) => {
       );
     }
 
-    const data = await response.json().catch(() => ({}));
+    const data: unknown = await response.json().catch(() => ({}));
     return NextResponse.json(data);
   } catch (error) {
     console.error("Workspace upload proxy error:", error);

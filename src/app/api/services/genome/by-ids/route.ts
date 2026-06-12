@@ -3,10 +3,14 @@ import { withAuth } from "@/lib/auth/server/instance";
 import { getRequiredEnv } from "@/lib/env";
 import { buildGenomeInClause } from "../utils";
 
+interface GenomeByIdsBody {
+  genome_ids?: unknown;
+}
+
 export const POST = withAuth(async (request: NextRequest, { token }) => {
-  const body = await request.json();
-  const genomeIds: string[] = Array.isArray(body?.genome_ids)
-    ? body.genome_ids
+  const body = (await request.json()) as GenomeByIdsBody;
+  const genomeIds: string[] = Array.isArray(body.genome_ids)
+    ? (body.genome_ids as string[])
     : [];
 
   if (genomeIds.length === 0) {
@@ -41,8 +45,8 @@ export const POST = withAuth(async (request: NextRequest, { token }) => {
     );
   }
 
-  const data = await response.json();
-  const results = Array.isArray(data) ? data : data?.items || [];
+  const data = (await response.json()) as unknown[] | { items?: unknown[] };
+  const results = Array.isArray(data) ? data : data.items ?? [];
 
   return NextResponse.json({ results });
 });

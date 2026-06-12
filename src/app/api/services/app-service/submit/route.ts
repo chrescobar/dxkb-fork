@@ -2,17 +2,23 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAppService } from "@/lib/app-service";
 import { withAuth } from "@/lib/auth/server/instance";
 
+interface SubmitRequestBody {
+  app_name?: unknown;
+  app_params?: unknown;
+  context?: { base_url?: string };
+}
+
 /**
  * Submit a service job
  * POST /api/services/app-service/submit
  */
 export const POST = withAuth(async (request: NextRequest, { token }) => {
   // Parse request body
-  const body = await request.json();
+  const body = (await request.json()) as SubmitRequestBody;
   const { app_name, app_params, context } = body;
 
   // Validate required fields
-  if (!app_name) {
+  if (!app_name || typeof app_name !== "string") {
     return NextResponse.json(
       { error: "app_name is required" },
       { status: 400 },
@@ -32,7 +38,7 @@ export const POST = withAuth(async (request: NextRequest, { token }) => {
   // Submit the service job
   const result = await appService.submitService({
     app_name,
-    app_params,
+    app_params: app_params as Record<string, unknown>,
     context,
   });
 

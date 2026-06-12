@@ -1,0 +1,102 @@
+src/lib/forms/(protein-tools)/proteome-comparison/__tests__/proteome-comparison-form-utils.test.ts
+  s_0d580176ec0ea8::t_3085b90cc3aabc 205
+  s_0d580176ec0ea8::t_d8902a9ff7b5d5 61,84,106,124
+src/lib/services/workspace/helpers.ts
+  s_0d580176ec0ea8::t_9624c28196fe8a 26,28
+src/lib/services/feature.ts
+  s_0d580176ec0ea8::t_b23e70c7bf8dd4 57-58,62-63
+src/lib/services/workspace/adapters/rpc.ts
+  s_0d580176ec0ea8::t_e71b979553fc84 54-55,57
+src/lib/app-service.ts
+  s_0d580176ec0ea8::t_8fae37034a1a80 14
+  s_0d580176ec0ea8::t_e343e9e16256f6 132,135
+  s_0d580176ec0ea8::t_ed821625f5715a 137
+src/lib/services/workspace/setup.ts
+  s_0d580176ec0ea8::t_b793787b5e1b4b 43,51-52
+src/lib/__tests__/utils.test.ts
+  s_0d580176ec0ea8::t_8d91c1fac8d5f5 61-62
+src/lib/jsonrpc-client.ts
+  s_0d580176ec0ea8::t_a7c611e119d226 128
+  s_0d580176ec0ea8::t_1ccca0582d97be 98
+  s_0d580176ec0ea8::t_7d0c21f33f0c76 54
+src/lib/__tests__/jsonrpc-client.test.ts
+  s_0d580176ec0ea8::t_b459a474eca63e 20
+src/lib/services/workspace/__tests__/favorites.test.ts
+  s_0d580176ec0ea8::t_bf27e4f5d853d7 124,126
+  s_0d580176ec0ea8::t_042f8ec63b8eb9 154-155
+src/lib/services/workspace/favorites.ts
+  s_0d580176ec0ea8::t_962d6ff4c713ff 27,29,31
+src/lib/auth/server/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_2f9952035007db 189
+  s_0d580176ec0ea8::t_41b7ed2cea30cb 118
+  s_0d580176ec0ea8::t_0640384388b8c9 163
+  s_0d580176ec0ea8::t_239b330ec1400b 162,170
+src/lib/services/workspace/__tests__/helpers.test.ts
+  s_0d580176ec0ea8::t_94701bbbfa772d 56-57
+src/lib/services/workspace/__tests__/utils.test.ts
+  s_0d580176ec0ea8::t_9317170e727beb 14-15
+src/lib/api/__tests__/server.test.ts
+  s_0d580176ec0ea8::t_fc8fc5892e502b 145,158,174
+  s_0d580176ec0ea8::t_92c8027e06cd91 17,29,42,52,66,76,85,92,104,120
+  s_0d580176ec0ea8::t_ff87a73877e762 196,211
+  s_0d580176ec0ea8::t_b74da7b2c486c3 231,242
+src/lib/auth/__tests__/session.test.ts
+  s_0d580176ec0ea8::t_df34a9a8a8a670 304
+  s_0d580176ec0ea8::t_535f111c46f708 266
+src/lib/services/genome.ts
+  s_0d580176ec0ea8::t_5abb5f2a3dece4 176
+  s_0d580176ec0ea8::t_5ff297908294c1 333
+  s_0d580176ec0ea8::t_7952bfdf02ff35 202
+  s_0d580176ec0ea8::t_4d6581ddf32000 122
+  s_0d580176ec0ea8::t_28eea1d3b971b8 110-111,115
+  s_0d580176ec0ea8::t_466f5267c82867 207
+  s_0d580176ec0ea8::t_6faa1c0d89cc4b 185
+  s_0d580176ec0ea8::t_a806bf20a3727d 321-322,326,342
+src/lib/forms/(genomics)/blast/blast-form-utils.ts
+  s_0d580176ec0ea8::t_437447c2297501 353-354
+  s_0d580176ec0ea8::t_efd2e78eca4e10 352
+  s_0d580176ec0ea8::t_40e98b44b83140 293-295
+  s_0d580176ec0ea8::t_8734a79a1ed810 333
+src/lib/forms/(genomics)/blast/__tests__/blast-form-utils.test.ts
+  s_0d580176ec0ea8::t_125c75c68d963d 468
+  s_0d580176ec0ea8::t_5fa4e2441bcdff 288
+src/lib/services/__tests__/service-utils.test.ts
+  s_0d580176ec0ea8::t_3c203b901b6d8b 63,80
+src/lib/forms/(protein-tools)/msa-snp-analysis/__tests__/msa-snp-analysis-form-utils.test.ts
+  s_0d580176ec0ea8::t_49be00d93e2dc4 46
+src/lib/services/workspace/client.ts
+  s_0d580176ec0ea8::t_96044c6519216e 45,48
+  s_0d580176ec0ea8::t_aeab9bc910928b 43
+  s_0d580176ec0ea8::t_10105cd9d5e976 52-55,60,72-73,76,103-104,113,117,119,123,125
+src/lib/services/workspace/adapters/http-workspace-repository.ts
+  s_0d580176ec0ea8::t_e7320aa241ef51 39,41
+src/lib/__tests__/app-service.test.ts
+  s_0d580176ec0ea8::t_e128c396731f3b 19
+src/lib/services/workspace/adapters/parsers.ts
+  s_0d580176ec0ea8::t_6d5337dd46c7f2 76,90,108,119,121,123,134
+src/lib/auth/server/__tests__/respond.test.ts
+  s_0d580176ec0ea8::t_1abfda415df7b2 79,88
+  s_0d580176ec0ea8::t_59a07c0f12c3b9 19,28,38
+src/lib/services/organisms/utils.ts
+  s_0d580176ec0ea8::t_98d20f9cb82168 80-81
+src/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-result-utils.ts
+  s_0d580176ec0ea8::t_d7347c620da5e3 26
+  s_0d580176ec0ea8::t_ae7d4f7468dc49 130
+  s_0d580176ec0ea8::t_7dbe119be13c4c 97-99,101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "eba62eae8f48d4e477f85123ca0335667ad19a8b",
+  "prompts": {},
+  "sessions": {
+    "s_0d580176ec0ea8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ca49035-a1d3-487e-9d2f-5fd0bae8a7fb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

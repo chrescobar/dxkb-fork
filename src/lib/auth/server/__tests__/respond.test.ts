@@ -16,7 +16,7 @@ describe("respondWithSession", () => {
   it("returns { user, session } envelope with 200 on success", async () => {
     const response = respondWithSession({ data: aliceUser, error: null });
     expect(response.status).toBe(200);
-    const body = await response.json();
+    const body = await response.json() as { user: AuthUser; session: { token: string; expiresAt: string } };
     expect(body.user).toEqual(aliceUser);
     expect(body.session.token).toBe("");
     expect(typeof body.session.expiresAt).toBe("string");
@@ -25,7 +25,7 @@ describe("respondWithSession", () => {
   it("returns { user: null, session: null } when data is null", async () => {
     const response = respondWithSession({ data: null, error: null });
     expect(response.status).toBe(200);
-    const body = await response.json();
+    const body = await response.json() as { user: null; session: null };
     expect(body).toEqual({ user: null, session: null });
   });
 
@@ -35,7 +35,7 @@ describe("respondWithSession", () => {
       error: { code: "invalid_credentials", message: "bad login" },
     });
     expect(response.status).toBe(401);
-    const body = await response.json();
+    const body = await response.json() as { error: string; code: string };
     expect(body).toEqual({ error: "bad login", code: "unauthenticated" });
   });
 
@@ -76,7 +76,7 @@ describe("respondWithAck", () => {
   it("returns { success: true } on success", async () => {
     const response = respondWithAck({ data: undefined, error: null });
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ success: true });
+    expect(await response.json() as { success: boolean }).toEqual({ success: true });
   });
 
   it("returns { error, code } with mapped status on error", async () => {
@@ -85,6 +85,6 @@ describe("respondWithAck", () => {
       error: { code: "unauthorized", message: "nope" },
     });
     expect(response.status).toBe(401);
-    expect(await response.json()).toEqual({ error: "nope", code: "unauthenticated" });
+    expect(await response.json() as { error: string; code: string }).toEqual({ error: "nope", code: "unauthenticated" });
   });
 });

@@ -263,7 +263,7 @@ describe("requireAuth", () => {
     expect(result).toBeInstanceOf(Response);
     const response = result as Response;
     expect(response.status).toBe(401);
-    const body = await response.json();
+    const body = await response.json() as { error: string };
     expect(body).toEqual({ error: "Authentication required" });
   });
 
@@ -301,7 +301,7 @@ describe("requireAuthToken", () => {
     expect(result).toBeInstanceOf(Response);
     const response = result as Response;
     expect(response.status).toBe(401);
-    const body = await response.json();
+    const body = await response.json() as { error: string };
     expect(body).toEqual({ error: "Authentication required" });
   });
 });

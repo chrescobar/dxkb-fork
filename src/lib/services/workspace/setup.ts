@@ -40,7 +40,7 @@ function parseExistingFolderNames(
   homePath: string,
 ): Set<string> {
   if (!Array.isArray(rawResult)) return new Set();
-  const map = rawResult[0];
+  const map: unknown = rawResult[0];
   if (!map || typeof map !== "object") return new Set();
   const items = (map as Record<string, unknown>)[homePath];
   if (!Array.isArray(items)) return new Set();
@@ -48,8 +48,8 @@ function parseExistingFolderNames(
   const names = new Set<string>();
   for (const item of items) {
     if (!Array.isArray(item) || item.length < 2) continue;
-    const name = item[0];
-    const type = item[1];
+    const name: unknown = item[0];
+    const type: unknown = item[1];
     if (typeof name === "string" && type === "folder") names.add(name);
   }
   return names;

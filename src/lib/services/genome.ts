@@ -107,19 +107,19 @@ export async function getGenomeIdsFromGroup(
     });
 
     if (!response.ok) {
-      const errorBody = await response.json().catch(() => ({}));
-      const message = errorBody?.error || "Failed to load genome group";
+      const errorBody = (await response.json().catch(() => ({}))) as { error?: string };
+      const message = errorBody.error || "Failed to load genome group";
       throw new Error(message);
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as unknown;
     const entry = extractWorkspaceGetEntry(data);
 
     if (!entry) {
       throw new Error("Invalid workspace response for genome group");
     }
 
-    const rawData = Array.isArray(entry) ? entry[1] : (entry as { data?: unknown }).data ?? null;
+    const rawData: unknown = Array.isArray(entry) ? entry[1] : (entry as { data?: unknown }).data ?? null;
     const decoded = decodeGroupData(rawData) as { id_list?: { genome_id?: string[] } } | null;
 
     if (!decoded?.id_list?.genome_id) {
@@ -173,7 +173,7 @@ function decodeGroupData(raw: unknown): unknown {
   return null;
 }
 
-function extractWorkspaceGetEntry(responseData: unknown): unknown | null {
+function extractWorkspaceGetEntry(responseData: unknown): unknown {
   const data = responseData as { result?: unknown[] };
   const container = data.result?.[0];
 
@@ -182,7 +182,7 @@ function extractWorkspaceGetEntry(responseData: unknown): unknown | null {
   }
 
   if (Array.isArray(container)) {
-    const entry = container[0];
+    const entry: unknown = container[0];
     if (Array.isArray(entry)) {
       return entry;
     }
@@ -199,12 +199,12 @@ function extractWorkspaceGetEntry(responseData: unknown): unknown | null {
   }
 
   if (typeof container === "object") {
-    const firstValue = Object.values(container)[0];
+    const firstValue = Object.values(container as Record<string, unknown>)[0];
     if (Array.isArray(firstValue)) {
       return firstValue[0];
     }
     if (firstValue && typeof firstValue === "object" && "data" in firstValue && "metadata" in firstValue) {
-      return [(firstValue as { metadata: unknown; data: unknown }).metadata, (firstValue as { metadata: unknown; data: unknown }).data];
+      return [firstValue.metadata, firstValue.data];
     }
   }
 
@@ -318,19 +318,19 @@ export async function fetchGenomeGroupMembers(path: string): Promise<GenomeSumma
     });
 
     if (!response.ok) {
-      const errorBody = await response.json().catch(() => ({}));
-      const message = errorBody?.error || "Failed to load genome group";
+      const errorBody = (await response.json().catch(() => ({}))) as { error?: string };
+      const message = errorBody.error || "Failed to load genome group";
       throw new Error(message);
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as unknown;
     const entry = extractWorkspaceGetEntry(data);
 
     if (!entry) {
       throw new Error("Invalid workspace response for genome group");
     }
 
-    const rawData = Array.isArray(entry) ? entry[1] : (entry as { data?: unknown }).data ?? null;
+    const rawData: unknown = Array.isArray(entry) ? entry[1] : (entry as { data?: unknown }).data ?? null;
     const decoded = decodeGroupData(rawData) as { id_list?: { genome_id?: string[] } } | null;
 
     if (!decoded?.id_list?.genome_id) {
@@ -339,7 +339,7 @@ export async function fetchGenomeGroupMembers(path: string): Promise<GenomeSumma
 
     const genomeIds: string[] = decoded.id_list.genome_id.filter((id: unknown) => typeof id === "string");
 
-    return fetchGenomesByIds(genomeIds);
+    return await fetchGenomesByIds(genomeIds);
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
       return [];

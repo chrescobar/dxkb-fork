@@ -115,7 +115,7 @@ describe("auth.route", () => {
     const response = await wrapped(req, {});
 
     expect(response.status).toBe(200);
-    const body = await response.json();
+    const body = await response.json() as { token: string; userId: string; realm: string };
     expect(body).toEqual(
       expect.objectContaining({
         token: "alice-token",
@@ -159,14 +159,15 @@ describe("auth.route", () => {
       expiresAt: Date.now(),
     });
 
-    const wrapped = auth.route(() => {
+    const wrapped = auth.route((): never => {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error -- testing that auth.route passes thrown Response objects through unchanged
       throw NextResponse.json({ error: "forced" }, { status: 418 });
     });
 
     const response = await wrapped(new NextRequest("http://localhost/"), {});
 
     expect(response.status).toBe(418);
-    const body = await response.json();
+    const body = await response.json() as { error: string };
     expect(body).toEqual({ error: "forced" });
   });
 
@@ -185,7 +186,7 @@ describe("auth.route", () => {
     const response = await wrapped(new NextRequest("http://localhost/"), {});
 
     expect(response.status).toBe(500);
-    const body = await response.json();
+    const body = await response.json() as { error: string };
     expect(body.error).toBe("boom");
   });
 });

@@ -77,8 +77,8 @@ export function parseSolrFacetList(payload: Record<string, unknown>, field: stri
 
   const values: { name: string; count: number }[] = [];
   for (let index = 0; index < rawFacet.length; index += 2) {
-    const name = rawFacet[index];
-    const count = rawFacet[index + 1];
+    const name: unknown = rawFacet[index];
+    const count: unknown = rawFacet[index + 1];
     if (typeof name !== "string") {
       throw new Error(`Unexpected SOLR response shape: ${field} facet label is invalid`);
     }

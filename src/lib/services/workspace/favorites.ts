@@ -24,11 +24,11 @@ export function getPreferencesDirPath(userId: string): string {
  */
 function parseGetFileContent(result: unknown): string | null {
   if (!Array.isArray(result) || result.length === 0) return null;
-  const first = result[0];
+  const first: unknown = result[0];
   if (!Array.isArray(first) || first.length === 0) return null;
-  const pair = first[0];
+  const pair: unknown = first[0];
   if (!Array.isArray(pair) || pair.length < 2) return null;
-  const content = pair[1];
+  const content: unknown = pair[1];
   return typeof content === "string" ? content : null;
 }
 

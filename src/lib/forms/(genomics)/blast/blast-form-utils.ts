@@ -290,9 +290,9 @@ export function extractInputFields(
  * Custom hook to manage BLAST database type availability
  */
 export function useBlastDatabaseTypes(form: AnyFormApi) {
-  const blastProgram = useSelector(form.store, (s) => s.values.blast_program);
-  const dbPrecomputedDatabase = useSelector(form.store, (s) => s.values.db_precomputed_database);
-  const dbType = useSelector(form.store, (s) => s.values.db_type);
+  const blastProgram = useSelector(form.store, (s) => (s.values as BlastFormData).blast_program);
+  const dbPrecomputedDatabase = useSelector(form.store, (s) => (s.values as BlastFormData).db_precomputed_database);
+  const dbType = useSelector(form.store, (s) => (s.values as BlastFormData).db_type);
 
   const availableDatabaseTypes = useMemo(() => {
     if (blastProgram && dbPrecomputedDatabase) {
@@ -330,7 +330,7 @@ export function useBlastDatabaseTypes(form: AnyFormApi) {
  * Custom hook to track BLAST program changes
  */
 export function useBlastProgramTracking(form: AnyFormApi) {
-  const currentBlastProgram = useSelector(form.store, (s) => s.values.blast_program);
+  const currentBlastProgram = useSelector(form.store, (s) => (s.values as BlastFormData).blast_program);
   return currentBlastProgram || "blastn";
 }
 
@@ -349,8 +349,9 @@ export function useFastaValidation(form: AnyFormApi, currentBlastProgram: BlastF
 
   if (prevProgram !== currentBlastProgram) {
     setPrevProgram(currentBlastProgram);
-    const currentFastaData = form.state.values.input_fasta_data;
-    if (currentFastaData && form.state.values.input_source === "fasta_data") {
+    const values = form.state.values as BlastFormDataPartial;
+    const currentFastaData = values.input_fasta_data;
+    if (currentFastaData && values.input_source === "fasta_data") {
       const result = validateFastaForBlast(currentFastaData, currentBlastProgram);
       setFastaValidationResult(result);
       setIsFastaValid(result.valid);

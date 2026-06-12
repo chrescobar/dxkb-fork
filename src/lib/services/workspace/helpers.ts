@@ -23,9 +23,9 @@ export function parseWorkspaceGetSingle(
   raw: WorkspaceGetRawResult,
   pathIndex = 0,
 ): ResolvedPathObject | null {
-  const pathResults = raw[0];
+  const pathResults: unknown = raw[0];
   if (!Array.isArray(pathResults)) return null;
-  const objectsAtPath = pathResults[pathIndex];
+  const objectsAtPath: unknown = pathResults[pathIndex];
   if (!Array.isArray(objectsAtPath) || objectsAtPath.length === 0) return null;
   const list = objectsAtPath[0] as unknown[];
   if (!Array.isArray(list)) return null;

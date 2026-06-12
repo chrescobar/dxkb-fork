@@ -17,8 +17,7 @@ vi.mock("@/lib/env", () => ({
 describe("JsonRpcClient", () => {
   beforeEach(() => {
     // Reset the static requestId to get deterministic ids across tests.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (JsonRpcClient as any).requestId = 1;
+    (JsonRpcClient as unknown as { requestId: number }).requestId = 1;
   });
 
   describe("constructor", () => {

@@ -23,7 +23,7 @@ function columnarToRows(result: Record<string, unknown>): unknown[] {
   const dist = (result.distance ?? result.dist) as unknown[] | undefined;
   const pval = (result.pvalue ?? result.p_value) as unknown[] | undefined;
   const cnt = (result.counts ?? result.kmer_count) as unknown[] | undefined;
-  return arr.map((id, i) => ({
+  return arr.map((id: unknown, i) => ({
     genome_id: id,
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     genome_name: (result.genome_name as unknown[])?.[i], // runtime guard: field may be absent in API response
@@ -94,11 +94,11 @@ export function parseMinhashResultPayload(
     const genomeId =
       getFirstDefined(row, "genome_id", "genomeId", "genome ID", "id", "ref", "reference") ??
       (arrRow[0] !== undefined ? String(arrRow[0]) : "");
-    const distanceVal = getFirstDefined(row, "distance") ?? arrRow[1];
-    const pvalueVal = getFirstDefined(row, "pvalue", "p_value") ?? arrRow[2];
-    const countsVal = getFirstDefined(row, "counts", "kmer_count") ?? arrRow[3];
+    const distanceVal: unknown = getFirstDefined(row, "distance") ?? arrRow[1];
+    const pvalueVal: unknown = getFirstDefined(row, "pvalue", "p_value") ?? arrRow[2];
+    const countsVal: unknown = getFirstDefined(row, "counts", "kmer_count") ?? arrRow[3];
     return {
-      genome_id: String(genomeId as string | number | boolean),
+      genome_id: String(genomeId),
       genome_name: String((getFirstDefined(row, "genome_name", "genomeName", "genome name") as string | number | undefined) ?? ""),
       organism_name: String(
         (getFirstDefined(row, "organism_name", "organismName", "organism name", "organism") as string | number | undefined) ?? "",
@@ -127,7 +127,7 @@ export function mergeGenomeResults(
   ): string {
     for (const k of keys) {
       const v = getFirstDefined(row, k);
-      if (v != null && String(v as string | number).trim() !== "") return String(v as string | number);
+      if (v != null && String(v).trim() !== "") return String(v);
     }
     return "";
   }

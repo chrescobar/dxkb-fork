@@ -43,8 +43,7 @@ describe("getFastaFileTypeLabel", () => {
   });
 
   it("returns the raw type string for an unknown type", () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(getFastaFileTypeLabel("unknown_type" as any)).toBe("unknown_type");
+    expect(getFastaFileTypeLabel("unknown_type")).toBe("unknown_type");
   });
 });
 

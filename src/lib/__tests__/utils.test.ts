@@ -58,10 +58,8 @@ describe("sanitizePathSegment", () => {
   });
 
   it("returns empty string for non-string input", () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(sanitizePathSegment(123 as any)).toBe("");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(sanitizePathSegment(null as any)).toBe("");
+    expect(sanitizePathSegment(123 as unknown as string)).toBe("");
+    expect(sanitizePathSegment(null as unknown as string)).toBe("");
   });
 
   it("passes through normal strings unchanged", () => {

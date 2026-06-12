@@ -36,9 +36,9 @@ function getWorkspaceGetPathRaw(
   pathIndex: number,
 ): unknown[] | null {
   if (!Array.isArray(raw)) return null;
-  const pathResults = raw[0];
+  const pathResults: unknown = raw[0];
   if (!Array.isArray(pathResults)) return null;
-  const objectsAtPath = pathResults[pathIndex];
+  const objectsAtPath: unknown = pathResults[pathIndex];
   return Array.isArray(objectsAtPath) ? objectsAtPath : null;
 }
 

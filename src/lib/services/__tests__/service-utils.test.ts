@@ -60,7 +60,7 @@ describe("submitServiceJob", () => {
     expect(result).toEqual(
       expect.objectContaining({
         success: false,
-        error: expect.stringMatching(/^HTTP 500/),
+        error: expect.stringMatching(/^HTTP 500/) as string,
       }),
     );
   });
@@ -77,7 +77,7 @@ describe("submitServiceJob", () => {
     expect(result).toEqual(
       expect.objectContaining({
         success: false,
-        error: expect.stringContaining("fetch"),
+        error: expect.stringContaining("fetch") as string,
       }),
     );
   });

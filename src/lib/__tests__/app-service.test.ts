@@ -16,8 +16,7 @@ describe("AppService", () => {
 
   beforeEach(() => {
     service = new AppService("test-token");
-    mockClient = (createBvBrcClient as ReturnType<typeof vi.fn>).mock.results[0]
-      .value;
+    mockClient = ((createBvBrcClient as ReturnType<typeof vi.fn>).mock.results[0] as { value: typeof mockClient }).value;
   });
 
   describe("constructor", () => {

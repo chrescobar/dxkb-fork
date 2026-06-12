@@ -1,0 +1,62 @@
+src/lib/services/workspace/adapters/parsers.ts
+  s_0d580176ec0ea8::t_b7635853c3487e 16-17,37-39,41,44,46,50-51,55
+src/components/jobs/jobs-browser.tsx
+  s_0d580176ec0ea8::t_b7635853c3487e 185,281,283
+e2e/fixtures/overrides/workspace.ts
+  s_0d580176ec0ea8::t_b7635853c3487e 312-313
+src/lib/services/workspace/helpers.ts
+  s_0d580176ec0ea8::t_b7635853c3487e 34-35,42,44-46
+src/lib/forms/(genomics)/genome-annotation/genome-annotation-service.ts
+  s_0d580176ec0ea8::t_b7635853c3487e 22
+src/components/workspace/workspace-table-columns.tsx
+  s_0d580176ec0ea8::t_b7635853c3487e 104,117,145
+src/app/services/(genomics)/blast/page.tsx
+  s_0d580176ec0ea8::t_b7635853c3487e 167,199-200
+src/hooks/services/jobs/use-jobs-data.ts
+  s_0d580176ec0ea8::t_b7635853c3487e 57
+src/app/services/(protein-tools)/gene-protein-tree/page.tsx
+  s_0d580176ec0ea8::t_b7635853c3487e 194,198
+src/components/jobs/jobs-table-columns.tsx
+  s_0d580176ec0ea8::t_bef40edb71d577 77
+  s_0d580176ec0ea8::t_b7635853c3487e 79,107
+src/lib/jobs/formatting.ts
+  s_0d580176ec0ea8::t_b7635853c3487e 20
+src/app/allTermSearchResults.tsx
+  s_0d580176ec0ea8::t_b7635853c3487e 173,189,454
+src/lib/forms/(protein-tools)/meta-cats/meta-cats-form-utils.ts
+  s_0d580176ec0ea8::t_b7635853c3487e 276
+src/components/detail-panel/info-panel.tsx
+  s_0d580176ec0ea8::t_b7635853c3487e 250,261,276,290,301
+src/app/services/(genomics)/similar-genome-finder/actions.ts
+  s_0d580176ec0ea8::t_b7635853c3487e 121,157
+src/app/services/(phylogenomics)/viral-genome-tree/page.tsx
+  s_0d580176ec0ea8::t_b7635853c3487e 121,127
+src/components/services/list-data.tsx
+  s_0d580176ec0ea8::t_b7635853c3487e 312,323
+src/app/services/(genomics)/primer-design/page.tsx
+  s_0d580176ec0ea8::t_b7635853c3487e 303
+src/lib/forms/(genomics)/blast/blast-form-utils.ts
+  s_0d580176ec0ea8::t_b7635853c3487e 192-194,282-284
+src/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-result-utils.ts
+  s_0d580176ec0ea8::t_b7635853c3487e 99-100,102,128
+src/lib/forms/(viral-tools)/sars-cov2-genome-analysis/sars-cov2-genome-analysis-service.ts
+  s_0d580176ec0ea8::t_b7635853c3487e 34
+src/components/shared/data-table.tsx
+  s_0d580176ec0ea8::t_b7635853c3487e 269-270,662-665,995-996
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "da042a934fa2fb5ee11125deacc6a44dc7b69438",
+  "prompts": {},
+  "sessions": {
+    "s_0d580176ec0ea8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ca49035-a1d3-487e-9d2f-5fd0bae8a7fb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

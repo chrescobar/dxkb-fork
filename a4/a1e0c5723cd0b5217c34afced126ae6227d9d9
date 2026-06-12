@@ -1,0 +1,41 @@
+src/lib/auth/events.ts
+  s_0d580176ec0ea8::t_8fc69df81fa39b 54
+src/lib/services/workspace/path-utils.ts
+  s_0d580176ec0ea8::t_9c275728f7fc86 96-97
+src/lib/services/workspace/helpers.ts
+  s_0d580176ec0ea8::t_fa92f8a72e5884 67-68
+  s_0d580176ec0ea8::t_f7b64e256721de 285
+  s_0d580176ec0ea8::t_ce9f595b86ac41 302,305
+src/app/services/(genomics)/blast/page.tsx
+  s_0d580176ec0ea8::t_0907427b6f8a8d 733,767
+src/components/search/command-palette.tsx
+  s_0d580176ec0ea8::t_ad74d6e903c692 247
+src/hooks/services/workspace/use-workspace-action-dispatch.ts
+  s_0d580176ec0ea8::t_77a4f20d3a8648 152,155-156,158,160
+e2e/tests/workspace-browse.spec.ts
+  s_0d580176ec0ea8::t_25d2f9988f2e0c 182
+src/app/services/(metagenomics)/metagenomic-binning/page.tsx
+  s_0d580176ec0ea8::t_91a0169b315488 687
+src/lib/auth/session.ts
+  s_0d580176ec0ea8::t_d5f79874c7f0a9 57
+src/app/services/(viral-tools)/influenza-ha-subtype/page.tsx
+  s_0d580176ec0ea8::t_71fb8145daf932 102-103
+src/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-result-utils.ts
+  s_0d580176ec0ea8::t_57c321663005b9 119
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "a4a1e0c5723cd0b5217c34afced126ae6227d9d9",
+  "prompts": {},
+  "sessions": {
+    "s_0d580176ec0ea8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ca49035-a1d3-487e-9d2f-5fd0bae8a7fb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

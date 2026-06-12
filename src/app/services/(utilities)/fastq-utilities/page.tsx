@@ -55,7 +55,6 @@ import {
   pipelineActionOptions,
   platformOptions,
   maxPipelineActions,
-  type FastqUtilitiesFormData,
   type LibraryItem,
   type PipelineActionItem,
   type PipelineAction,

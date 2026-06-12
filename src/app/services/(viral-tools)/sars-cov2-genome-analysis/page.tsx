@@ -59,10 +59,8 @@ import {
   primerOptions,
   primerVersionOptions,
   defaultPrimerVersion,
-  type SarsCov2GenomeAnalysisFormData,
   type SarsCov2LibraryItem,
   type SarsCov2Platform,
-  type Primers,
 } from "@/lib/forms/(viral-tools)/sars-cov2-genome-analysis/sars-cov2-genome-analysis-form-schema";
 import {
   computeOutputName,

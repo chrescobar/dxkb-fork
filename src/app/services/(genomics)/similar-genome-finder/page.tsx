@@ -51,7 +51,6 @@ import {
   maxHitsOptions,
   pValueOptions,
   distanceOptions,
-  type SimilarGenomeFinderFormData,
 } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-schema";
 import { buildMinhashServicePayload } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-utils";
 import { similarGenomeFinderService } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-service";

@@ -40,7 +40,6 @@ import {
 import {
   defaultGenomeAlignmentFormValues,
   genomeAlignmentFormSchema,
-  type GenomeAlignmentFormData,
 } from "@/lib/forms/(genomics)/genome-alignment/genome-alignment-form-schema";
 import { genomeAlignmentService } from "@/lib/forms/(genomics)/genome-alignment/genome-alignment-service";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";

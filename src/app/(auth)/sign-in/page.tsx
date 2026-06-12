@@ -31,8 +31,6 @@ const formSchema = z.object({
   }),
 });
 
-type FormValues = z.infer<typeof formSchema>;
-
 function SigninForm() {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);

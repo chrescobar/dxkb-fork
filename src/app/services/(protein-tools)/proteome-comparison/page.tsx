@@ -47,7 +47,6 @@ import {
   proteomeComparisonFormSchema,
   defaultProteomeComparisonFormValues,
   maxComparisonGenomes,
-  type ProteomeComparisonFormData,
   type ComparisonItem,
 } from "@/lib/forms/(protein-tools)/proteome-comparison/proteome-comparison-form-schema";
 import {

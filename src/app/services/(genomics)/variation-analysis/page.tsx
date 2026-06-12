@@ -44,7 +44,6 @@ import { toast } from "sonner";
 import {
   variationAnalysisFormSchema,
   defaultVariationAnalysisFormValues,
-  type VariationAnalysisFormData,
   type VariationLibraryItem,
 } from "@/lib/forms/(genomics)/variation-analysis/variation-analysis-form-schema";
 import {

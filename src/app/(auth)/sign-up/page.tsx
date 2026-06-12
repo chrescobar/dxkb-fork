@@ -56,8 +56,6 @@ const formSchema = z
     error: "Passwords do not match",
   });
 
-type FormValues = z.infer<typeof formSchema>;
-
 function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);

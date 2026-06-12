@@ -34,7 +34,7 @@ export function UserAvatarDropdown() {
   const { user, isAdmin, isImpersonating } = useAuth();
   const sendVerificationEmail = () => authAccount.sendVerificationEmail();
   const suExit = async () => {
-    const { data, error } = await authAdmin.impersonate.exit();
+    const { error } = await authAdmin.impersonate.exit();
     if (error) {
       toast.error("Failed to exit impersonation");
       return;

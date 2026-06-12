@@ -9,7 +9,6 @@ import type {
   WorkspaceGetRawResult,
   ResolvedPathObject,
   JobResultTaskData,
-  JobResultSysMeta,
 } from "./types";
 import { isFolder, isFolderType } from "./utils";
 import type { WorkspaceItem } from "./domain";

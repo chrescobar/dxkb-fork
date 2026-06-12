@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import { JsonRpcError, jsonRpcErrorCodes } from "@/lib/jsonrpc-client";
 import type { AuthErrorCode } from "@/lib/auth/port";
 import { statusToErrorCode } from "@/lib/api/types";
-import type { ApiErrorCode } from "@/lib/api/types";
 
 const authErrorCodes: readonly AuthErrorCode[] = [
   "invalid_credentials",

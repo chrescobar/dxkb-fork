@@ -38,7 +38,6 @@ import {
   subspeciesClassificationFormSchema,
   defaultSubspeciesClassificationFormValues,
   subspeciesVirusTypeOptions,
-  type SubspeciesClassificationFormData,
 } from "@/lib/forms/(viral-tools)/subspecies-classification/subspecies-classification-form-schema";
 import { validateFasta, getFastaErrorMessage } from "@/lib/fasta-validation";
 import { subspeciesClassificationService } from "@/lib/forms/(viral-tools)/subspecies-classification/subspecies-classification-service";

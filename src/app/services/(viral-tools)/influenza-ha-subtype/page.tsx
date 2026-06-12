@@ -30,7 +30,6 @@ import { HaReferenceTypes } from "@/types/services";
 import {
   influenzaHaSubtypeFormSchema,
   defaultInfluenzaHaSubtypeFormValues,
-  type InfluenzaHaSubtypeFormData,
 } from "@/lib/forms/(viral-tools)/influenza-ha-subtype/influenza-ha-subtype-form-schema";
 import { influenzaHaSubtypeService } from "@/lib/forms/(viral-tools)/influenza-ha-subtype/influenza-ha-subtype-service";
 

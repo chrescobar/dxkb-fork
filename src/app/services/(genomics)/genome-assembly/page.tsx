@@ -56,7 +56,6 @@ import { toast } from "sonner";
 import {
   genomeAssemblyFormSchema,
   defaultGenomeAssemblyFormValues,
-  type GenomeAssemblyFormData,
   type LibraryItem,
 } from "@/lib/forms/(genomics)/genome-assembly/genome-assembly-form-schema";
 import {

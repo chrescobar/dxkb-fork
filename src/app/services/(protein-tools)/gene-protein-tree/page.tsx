@@ -73,7 +73,6 @@ import {
 import {
   formatMetadataLabel,
   getSequenceTypeLabel,
-  type Alphabet,
   checkDuplicateSequence,
   checkSequenceLimit,
   createSequenceItem,

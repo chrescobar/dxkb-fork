@@ -43,7 +43,6 @@ import {
   defaultViralAssemblyFormValues,
   strategyOptions,
   moduleOptions,
-  type ViralAssemblyFormData,
   type ViralAssemblyLibraryItem,
 } from "@/lib/forms/(viral-tools)/viral-assembly/viral-assembly-form-schema";
 import {

@@ -1,0 +1,133 @@
+src/app/api/services/taxonomy/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_3607b22420417d 111
+  s_0d580176ec0ea8::t_c5821f94183649 91
+src/app/api/services/app-service/jobs/summary/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_7e37cd44a4bef1 107
+  s_0d580176ec0ea8::t_86eca9a7c713cf 34,52-55
+src/app/api/auth/forget-password/route.ts
+  s_0d580176ec0ea8::t_2f8d7d585b26db 8-9,15-19
+src/app/api/workspace/public/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_22829649925235 160
+  s_0d580176ec0ea8::t_5482d525c92b7f 30,43
+  s_0d580176ec0ea8::t_21cc1c0fd6c2e9 62
+src/app/api/services/minhash/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_df998e1d7f91e3 34
+src/app/api/services/app-service/jobs/app-summary/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_8ccd6a74cccf95 33,49
+  s_0d580176ec0ea8::t_f9db211327ffbf 80
+src/app/api/services/app-service/jobs/enumerate-tasks-filtered/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_2789fd93832658 190
+  s_0d580176ec0ea8::t_16a0ae6a05955f 153
+  s_0d580176ec0ea8::t_6a754155d7a88d 33,50,67,84
+src/app/api/services/feature/from-group/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_f663749e1ced63 118
+src/app/api/services/genome/search/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_3c3cf3f4a42289 205
+src/app/api/workspace/view/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_c2d83a0b5ca8d2 112
+src/app/api/services/genome/get-all-ids/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_a7d45b73c78344 113
+src/app/api/auth/sign-out/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_b7e704b5b1a12f 19
+  s_0d580176ec0ea8::t_555ed0d637bbd3 27
+src/app/api/services/app-service/jobs/[id]/stdout/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_fb3dcc57cdb371 36
+  s_0d580176ec0ea8::t_295e92f2459697 72
+src/app/api/services/genome/by-ids/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_6229485bfbcfa1 164
+src/app/api/workspace/preview/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_475d2bb2fe6c4b 240
+src/app/api/auth/forget-password/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_1a825422d73b1e 85
+  s_0d580176ec0ea8::t_6e2c041034104f 104
+  s_0d580176ec0ea8::t_1ab23d3dfdea2d 123
+  s_0d580176ec0ea8::t_72dc5e07e302c4 22
+  s_0d580176ec0ea8::t_79f8edab581e07 43
+  s_0d580176ec0ea8::t_685b604576a6e6 63
+src/app/api/services/app-service/jobs/[id]/kill/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_a7ec59edee8aec 78
+  s_0d580176ec0ea8::t_3747ea89eb3bcd 36,52
+src/app/api/services/sra-validation/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_30bfe8c53a4432 88
+  s_0d580176ec0ea8::t_d256aca7a450fc 38
+  s_0d580176ec0ea8::t_90bd15e78b30a2 109
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_24a44c9075615c 201
+  s_0d580176ec0ea8::t_85be88ed280013 170
+  s_0d580176ec0ea8::t_77d33f95857efe 78
+  s_0d580176ec0ea8::t_a1ce44c6ef295a 130
+  s_0d580176ec0ea8::t_471959eace4c3f 109
+  s_0d580176ec0ea8::t_3e81bb1113bfb0 33
+  s_0d580176ec0ea8::t_e492ac72ece791 211
+  s_0d580176ec0ea8::t_ca4d8ae23d9289 166-168,172
+  s_0d580176ec0ea8::t_b0648c4eff21b2 221
+  s_0d580176ec0ea8::t_b2a507dd5e75ac 94
+  s_0d580176ec0ea8::t_c761d7b65df270 124-127,132
+  s_0d580176ec0ea8::t_88192c9238a78d 188
+  s_0d580176ec0ea8::t_10f4688f302c8e 66
+  s_0d580176ec0ea8::t_f0d45383023737 146-148,152
+  s_0d580176ec0ea8::t_06c7106796232d 150
+src/app/api/auth/sign-up/email/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_370fa8f0e9be0e 145
+  s_0d580176ec0ea8::t_fe302077343581 165
+  s_0d580176ec0ea8::t_3aa97445d3c551 247
+  s_0d580176ec0ea8::t_5a2040406ef932 269
+  s_0d580176ec0ea8::t_6fc7174a63d2f8 111,255
+  s_0d580176ec0ea8::t_5fd7c7716d70a2 97-100,128
+src/app/api/services/app-service/jobs/[id]/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_0c8951a7d193ca 101
+  s_0d580176ec0ea8::t_a644b1db1d088d 36,56
+src/app/api/services/app-service/jobs/[id]/stderr/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_b8082db0d0a215 72
+  s_0d580176ec0ea8::t_39ea7f3f401a04 36
+src/app/api/auth/change-password/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_c3ab953f7d3a97 47
+  s_0d580176ec0ea8::t_0c4e47b8a216e1 126
+  s_0d580176ec0ea8::t_ed4eda9d31269c 88
+  s_0d580176ec0ea8::t_a7d2208c1c5cc9 62
+  s_0d580176ec0ea8::t_56bffc53df3a04 148
+src/test-helpers/api-route-helpers.ts
+  s_0d580176ec0ea8::t_ba562ef0c8be35 65-66
+src/app/api/services/app-service/jobs/task-summary/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_1d56c5ec8e03d1 80
+  s_0d580176ec0ea8::t_776a6d173d32d0 33,49
+src/app/api/auth/profile/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_a7936b3c57efd2 230
+  s_0d580176ec0ea8::t_0df303411d86ae 134
+  s_0d580176ec0ea8::t_1d630aec01536e 52,68
+  s_0d580176ec0ea8::t_377235125f40bd 102
+  s_0d580176ec0ea8::t_275e1522a79fe6 186
+  s_0d580176ec0ea8::t_ebd24a902e89cb 208
+  s_0d580176ec0ea8::t_2f887fbf789f6e 117
+  s_0d580176ec0ea8::t_78d4eaa16f3dfe 250
+src/app/api/auth/sign-in/email/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_d509fff1443479 149
+  s_0d580176ec0ea8::t_47471a245f49ca 164
+  s_0d580176ec0ea8::t_a38d92765577bf 113
+  s_0d580176ec0ea8::t_908c0f829303bf 66-69,100
+  s_0d580176ec0ea8::t_071ec35d2f3b7d 32
+src/app/api/services/app-service/submit/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_55bb7425642e3a 45,62,77,92,112
+  s_0d580176ec0ea8::t_5df31704780586 155,179,197
+src/app/api/services/genome/validate-viral/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_1ce744ca9f0f8e 152
+src/app/api/auth/ensure-workspace/__tests__/route.test.ts
+  s_0d580176ec0ea8::t_fcc2632a287894 84-88
+  s_0d580176ec0ea8::t_f7c90c94bc7063 157-161,166
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "db220edbf3b2c242de7a9a1f987a5c4b1ff4b90d",
+  "prompts": {},
+  "sessions": {
+    "s_0d580176ec0ea8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ca49035-a1d3-487e-9d2f-5fd0bae8a7fb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

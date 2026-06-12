@@ -60,10 +60,12 @@ export const POST = auth.route(async (request: NextRequest, { token }) => {
     });
 
     if (!response.ok) {
+      const firstParam = Array.isArray(params) ? params[0] : undefined;
       const isPreferencesGet =
         method === "Workspace.get" &&
-        Array.isArray(params) &&
-        (params[0] as { objects?: unknown[] }).objects?.some((path: unknown) => {
+        typeof firstParam === "object" &&
+        firstParam !== null &&
+        (firstParam as { objects?: unknown[] }).objects?.some((path: unknown) => {
           if (typeof path !== "string") return false;
           return (
             path.endsWith("/home/.preferences/favorites.json") ||

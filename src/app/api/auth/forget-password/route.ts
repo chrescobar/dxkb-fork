@@ -5,16 +5,11 @@ import { withErrorHandling } from "@/lib/auth/server/errors";
 
 interface ForgetPasswordBody {
   usernameOrEmail?: unknown;
-  email?: unknown;
 }
 
 export const POST = withErrorHandling(async (request: NextRequest) => {
   const body = (await request.json().catch(() => ({}))) as ForgetPasswordBody;
   const identifier =
-    typeof body.usernameOrEmail === "string"
-      ? body.usernameOrEmail
-      : typeof body.email === "string"
-        ? body.email
-        : "";
+    typeof body.usernameOrEmail === "string" ? body.usernameOrEmail : "";
   return respondWithAck(await authAdmin.requestPasswordReset(identifier));
 });

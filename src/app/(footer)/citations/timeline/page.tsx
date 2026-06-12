@@ -47,6 +47,7 @@ export default function CitationsTimelinePage() {
   // Group citations by year for timeline view
   const citationsByYear: Record<number, typeof citationsData> = {}
   sortedCitations.forEach((citation) => {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Record<number,…> index returns undefined at runtime for unseen keys; this is a standard accumulator initialization guard
     if (!citationsByYear[citation.year]) {
       citationsByYear[citation.year] = []
     }

@@ -15,7 +15,8 @@ const folderObjectTypes = new Set([
 ]);
 
 export function normalizeWorkspaceObjectType(type: string): string {
-  return (type ?? "").toLowerCase();
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  return (type ?? "").toLowerCase(); // runtime guard: API responses may return null type fields
 }
 
 export function isFolderType(type: string): boolean {

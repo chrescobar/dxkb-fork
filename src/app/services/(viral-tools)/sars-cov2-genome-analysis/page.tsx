@@ -120,8 +120,7 @@ export default function SarsCov2GenomeAnalysisPage() {
   const myLabel = useSelector(form.store, (s) => s.values.my_label);
 
   const showPrimersSection = recipe === "onecodex";
-  const primerVersionOpts =
-    primerVersionOptions[primers] ?? primerVersionOptions.ARTIC;
+  const primerVersionOpts = primerVersionOptions[primers];
 
   const {
     selectedLibraries,
@@ -145,14 +144,14 @@ export default function SarsCov2GenomeAnalysisPage() {
   });
 
   useEffect(() => {
-    const outputName = computeOutputName(scientificName ?? "", myLabel ?? "");
+    const outputName = computeOutputName(scientificName, myLabel);
     if (outputName) {
       form.setFieldValue("output_file", outputName);
     }
   }, [scientificName, myLabel, form]);
 
   useEffect(() => {
-    if (showPrimersSection && primers) {
+    if (showPrimersSection) {
       const defaultVersion = defaultPrimerVersion[primers];
       if (
         defaultVersion &&

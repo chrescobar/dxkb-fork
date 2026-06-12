@@ -42,8 +42,10 @@ export type InfoPanelProps =
 
 /** Build the full path to a workspace item (parent + name) for API calls like Workspace.du. */
 export function getItemFullPath(item: WorkspaceItem): string {
-  const rawPath = (item.path ?? "").replace(/\/+$/, "").replace(/\/+/g, "/");
-  const name = (item.name ?? "").trim();
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const rawPath = (item.path ?? "").replace(/\/+$/, "").replace(/\/+/g, "/"); // runtime guard: API can return null
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const name = (item.name ?? "").trim(); // runtime guard: API can return null
   const segmentSuffix = `/${name}`;
   const nameAlreadyInPath = rawPath === name || rawPath.endsWith(segmentSuffix);
   const fullPath = (nameAlreadyInPath ? rawPath : `${rawPath}/${name}`).replace(/\/+/g, "/");
@@ -82,9 +84,7 @@ function WorkspaceItemDetailContent({
               ? "Loading…"
               : diskUsageError
                 ? "—"
-                : diskUsage !== undefined
-                  ? formatFileSize(diskUsage.sizeBytes, { showZero: true })
-                  : "—"}
+                : formatFileSize(diskUsage.sizeBytes, { showZero: true })}
           </dd>
         </div>
         {diskUsage !== undefined && (
@@ -232,21 +232,21 @@ export function InfoPanel(props: InfoPanelProps) {
     linkType?: unknown;
     linkText?: unknown;
   }
-  const displayColumns: DisplayColumn[] = Object.values(fieldFile ?? {}).map((obj) => {
+  const displayColumns: DisplayColumn[] = Object.values(fieldFile).map((obj) => {
     const o = obj as Record<string, unknown>;
     return {
       id: o.field,
       label: o.label,
       visible: !o.hidden,
       group: o.group,
-      link: o?.link,
-      linkType: o?.linkType,
-      linkText: o?.linkText,
+      link: o.link,
+      linkType: o.linkType,
+      linkText: o.linkText,
     };
   });
 
-  const grouped = displayColumns.reduce<Record<string, DisplayColumn[]>>(
-    (acc: Record<string, DisplayColumn[]>, item) => {
+  const grouped = displayColumns.reduce<Record<string, DisplayColumn[] | undefined>>(
+    (acc: Record<string, DisplayColumn[] | undefined>, item) => {
       const g = (item.group as string | undefined) ?? "";
       if (!acc[g]) acc[g] = [];
       acc[g].push(item);

@@ -361,7 +361,6 @@ export default function MSAandSNPAnalysisPage() {
   useEffect(() => {
     const shouldFetch =
       refType === "genome_id" &&
-      selectGenomegroup &&
       selectGenomegroup.length > 0;
 
     if (!shouldFetch) {
@@ -375,8 +374,8 @@ export default function MSAandSNPAnalysisPage() {
     let abortController: AbortController | null = null;
 
     async function loadGenomes() {
-      // TypeScript guard: ensure genome group is defined
-      if (!selectGenomegroup || selectGenomegroup.length === 0) {
+      // Guard: ensure genome group is non-empty
+      if (selectGenomegroup.length === 0) {
         return;
       }
 
@@ -1082,7 +1081,7 @@ export default function MSAandSNPAnalysisPage() {
                       // Check if a valid genome group is selected before allowing dropdown to open
                       if (
                         open &&
-                        (!selectGenomegroup || selectGenomegroup.length === 0)
+                        selectGenomegroup.length === 0
                       ) {
                         toast.error("Genome Group required", {
                           description:

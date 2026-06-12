@@ -17,7 +17,6 @@ import type {
   SessionStoragePort,
 } from "./ports";
 
-const allowAdminToAdminImpersonation = true;
 
 export interface AuthAdmin {
   signIn(credentials: SigninCredentials): Promise<Result<AuthUser>>;
@@ -197,13 +196,6 @@ export function createAuthAdmin(ports: AuthAdminPorts): AuthAdmin {
       targetUser,
       targetToken,
     );
-
-    if (
-      !allowAdminToAdminImpersonation &&
-      targetProfile?.roles?.includes("admin")
-    ) {
-      return fail("forbidden", "Cannot impersonate another admin", 403);
-    }
 
     await session.writeBackup(current);
     await session.write(

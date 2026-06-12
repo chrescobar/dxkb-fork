@@ -65,7 +65,8 @@ export const proteomeComparisonFormSchema = z
           path: ["ref_fasta_file"],
         });
       }
-    } else if (data.ref_source_type === "feature_group") {
+    } else {
+      // data.ref_source_type === "feature_group"
       if (!data.ref_feature_group || data.ref_feature_group.trim() === "") {
         ctx.addIssue({
           code: "custom",

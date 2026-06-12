@@ -66,10 +66,10 @@ export const primerDesignFormSchema = z
     }
   });
 
-export const defaultPrimerDesignFormValues = {
+export const defaultPrimerDesignFormValues: Partial<PrimerDesignFormData> = {
   output_file: "",
   output_path: "",
-  input_type: "sequence_text" as const,
+  input_type: "sequence_text",
   sequence_input: "",
   SEQUENCE_ID: "",
   SEQUENCE_TARGET: [],
@@ -92,7 +92,7 @@ export const defaultPrimerDesignFormValues = {
   PRIMER_SALT_DIVALENT: "1.5",
   PRIMER_DNA_CONC: "50.0",
   PRIMER_DNTP_CONC: "0.6",
-} satisfies Partial<z.infer<typeof primerDesignFormSchema>>;
+};
 
 export type PrimerDesignFormData = z.infer<typeof primerDesignFormSchema>;
 

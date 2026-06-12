@@ -340,7 +340,7 @@ export function WorkspaceBrowser({
   });
 
   const isCurrentSelectionFavorite =
-    primaryItem?.path != null && favoritePaths.includes(primaryItem.path);
+    primaryItem != null && favoritePaths.includes(primaryItem.path);
 
   useEffect(() => {
     if (selectedItems.length === 0) return;
@@ -377,7 +377,7 @@ export function WorkspaceBrowser({
   const pathNotFound = useMemo(() => {
     if (isPublic || !path || path.trim() === "") return false;
     if (resolveQuery.isError) return true;
-    if (enabled && error && !resolveQuery.isLoading && !resolveQuery.isError) return true;
+    if (enabled && error && !resolveQuery.isLoading) return true;
     return false;
   }, [isPublic, path, resolveQuery.isError, resolveQuery.isLoading, enabled, error]);
 
@@ -413,8 +413,7 @@ export function WorkspaceBrowser({
     !isPublic &&
     path &&
     path.trim() !== "" &&
-    resolveQuery.isLoading &&
-    !resolveQuery.isError
+    resolveQuery.isLoading
   ) {
     return loadingSkeleton(isHome ? "home" : "shared");
   }

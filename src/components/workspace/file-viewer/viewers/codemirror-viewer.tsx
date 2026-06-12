@@ -153,7 +153,7 @@ function startThemeObserver() {
     lastDark = dark;
     const ext = highlightExtFor(dark);
     for (const entry of viewCache.values()) {
-      entry.view?.dispatch({ effects: highlightCompartment.reconfigure(ext) });
+      entry.view.dispatch({ effects: highlightCompartment.reconfigure(ext) });
     }
   }).observe(document.documentElement, {
     attributes: true,
@@ -245,7 +245,11 @@ export function CodeMirrorViewer({
     }
 
     // No cache hit — create a new EditorView and start streaming
-    let destroyed = false;
+    // `isDestroyed` reads through a function call so TypeScript cannot narrow the
+    // return value to `false` after a guard — the cleanup callback can set it to
+    // `true` at any await boundary and all subsequent checks are genuinely needed.
+    const lifecycle = { destroyed: false };
+    const isDestroyed = (): boolean => lifecycle.destroyed;
     const controller = new AbortController();
     const wrapper = document.createElement("div");
     wrapper.style.height = "100%";
@@ -262,7 +266,7 @@ export function CodeMirrorViewer({
 
     async function init() {
       const langExt = await getLanguageExtension(fileName);
-      if (destroyed) return;
+      if (isDestroyed()) return;
 
       const extensions = [...readOnlyExtensions];
       if (foldable) extensions.push(...foldExtensions);
@@ -293,7 +297,7 @@ export function CodeMirrorViewer({
         const body = response.body;
         if (!body) {
           const text = await response.text();
-          if (destroyed || !view) return;
+          if (isDestroyed()) return;
           view.dispatch({ changes: { from: 0, insert: text } });
           if (startFolded) foldAll(view);
           entry.status = "done";
@@ -313,7 +317,7 @@ export function CodeMirrorViewer({
 
         function flushToEditor() {
           rafScheduled = false;
-          if (destroyed || !view || pendingText.length === 0) return;
+          if (isDestroyed() || pendingText.length === 0) return;
           const text = pendingText;
           const from = docLength;
           pendingText = "";
@@ -327,7 +331,7 @@ export function CodeMirrorViewer({
         for (;;) {
           const { done, value } = await reader.read();
           if (done) break;
-          if (destroyed) return;
+          if (isDestroyed()) return;
 
           loaded += value.byteLength;
           pendingText += decoder.decode(value, { stream: true });
@@ -347,7 +351,7 @@ export function CodeMirrorViewer({
         pendingText += decoder.decode();
         flushToEditor();
 
-        if (!destroyed) {
+        if (!isDestroyed()) {
           if (wasTruncated) {
             const divider = "─".repeat(60);
             const sizeLabel = fileSizeRef.current ? formatFileSize(fileSizeRef.current) : "full file";
@@ -362,7 +366,7 @@ export function CodeMirrorViewer({
         }
       } catch (err) {
         if (err instanceof DOMException && err.name === "AbortError") return;
-        if (!destroyed) {
+        if (!isDestroyed()) {
           entry.status = "error";
           setErrorMsg(
             err instanceof Error ? err.message : "An unknown error occurred",
@@ -377,7 +381,7 @@ export function CodeMirrorViewer({
     void init();
 
     return () => {
-      destroyed = true;
+      lifecycle.destroyed = true;
       // Detach wrapper from container but keep it alive in cache
       if (wrapper.parentNode === container) {
         container.removeChild(wrapper);
@@ -386,7 +390,7 @@ export function CodeMirrorViewer({
       // Anything else (loading, streaming) must be aborted and removed.
       if (entry.status !== "done") {
         controller.abort();
-        if (entry.view) entry.view.destroy();
+        entry.view.destroy();
         viewCache.delete(filePath);
       }
     };

@@ -192,10 +192,10 @@ export default function SimilarGenomeFinderServicePage() {
                     </FieldLabel>
                     <SingleGenomeSelector
                       placeholder="e.g. Mycobacterium tuberculosis H37Rv"
-                      value={field.state.value ?? ""}
+                      value={field.state.value}
                       onChange={(value) => {
                         field.handleChange(value);
-                        if (value?.trim()) {
+                        if (value.trim()) {
                           form.setFieldValue("fasta_file", "");
                         }
                       }}
@@ -214,7 +214,7 @@ export default function SimilarGenomeFinderServicePage() {
                     <WorkspaceObjectSelector
                       preset="contigsOrReads"
                       placeholder="Select a FASTA/FASTQ file..."
-                      value={field.state.value ?? ""}
+                      value={field.state.value}
                       onObjectSelect={(object: WorkspaceObject) => {
                         field.handleChange(object.path);
                         form.setFieldValue("selectedGenomeId", "");
@@ -265,7 +265,7 @@ export default function SimilarGenomeFinderServicePage() {
                             </FieldLabel>
                             <Select
                               items={maxHitsOptions}
-                              value={(field.state.value ?? 10).toString()}
+                              value={field.state.value.toString()}
                               onValueChange={(value) => {
                                 if (value != null) field.handleChange(parseInt(value, 10));
                               }}
@@ -302,7 +302,7 @@ export default function SimilarGenomeFinderServicePage() {
                             </FieldLabel>
                             <Select
                               items={pValueOptions}
-                              value={field.state.value?.toString() ?? "1"}
+                              value={field.state.value.toString()}
                               onValueChange={(value) => {
                                 if (value != null) field.handleChange(parseFloat(value));
                               }}
@@ -339,7 +339,7 @@ export default function SimilarGenomeFinderServicePage() {
                             </FieldLabel>
                             <Select
                               items={distanceOptions}
-                              value={field.state.value?.toString() ?? "1"}
+                              value={field.state.value.toString()}
                               onValueChange={(value) => {
                                 if (value != null) field.handleChange(parseFloat(value));
                               }}

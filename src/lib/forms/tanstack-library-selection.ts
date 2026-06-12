@@ -124,7 +124,8 @@ export function useTanstackLibrarySelection<LibraryItem, SrrItem = string>(
           pairedLibs.push(cfg.mapLibraryToItem(lib));
         } else if (lib.type === "single") {
           singleLibs.push(cfg.mapLibraryToItem(lib));
-        } else if (lib.type === "sra") {
+        } else {
+          // lib.type === "sra"
           if (cfg.mapSraLibraryToItem) {
             srrItems.push(cfg.mapSraLibraryToItem(lib));
           } else {

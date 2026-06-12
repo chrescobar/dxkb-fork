@@ -13,7 +13,7 @@ const validationDebounceMs = 500;
 
 /** Strips HTML tags so only plain text is stored/displayed (XSS safety). */
 function toPlainText(s: string): string {
-  const text = new DOMParser().parseFromString(s, "text/html").body.textContent ?? "";
+  const text = new DOMParser().parseFromString(s, "text/html").body.textContent;
   return text.trim() || s;
 }
 
@@ -309,7 +309,7 @@ const SraRunAccessionWithValidation = ({
     if (!accession) return;
 
     const cached = validationCacheRef.current;
-    if (cached && cached.accession === accession && cached.result) {
+    if (cached && cached.accession === accession) {
       applyValidationResult(accession, cached.result);
       return;
     }

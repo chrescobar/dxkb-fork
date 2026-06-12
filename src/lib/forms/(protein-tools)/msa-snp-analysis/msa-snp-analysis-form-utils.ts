@@ -8,12 +8,12 @@ export const msaSNPAnalysisAligners = [
 ];
 
 // Utility functions
-export function getFastaFileTypeLabel(type: FastaFileItem["type"]): string {
+export function getFastaFileTypeLabel(type: FastaFileItem["type"] | string): string {
   if (type === "feature_protein_fasta") return "Protein FASTA";
   if (type === "feature_dna_fasta") return "DNA FASTA";
   if (type === "aligned_protein_fasta") return "Aligned Protein FASTA";
   if (type === "aligned_dna_fasta") return "Aligned DNA FASTA";
-  return type;
+  return type; // passthrough for unknown types (e.g. in tests)
 }
 
 export function getDisplayName(name: string): string {
@@ -135,14 +135,15 @@ export function transformMsaSnpAnalysisParams(
         if (data.fasta_files && data.fasta_files.length > 0) {
           params.fasta_files = data.fasta_files;
         }
-      } else if (data.input_type === "input_sequence") {
+      } else {
+        // data.input_type === "input_sequence"
         if (data.fasta_keyboard_input) {
           params.fasta_keyboard_input = data.fasta_keyboard_input.trim();
         }
       }
     }
-  } else if (data.input_status === "aligned") {
-    // For aligned sequences, only fasta_files is needed
+  } else {
+    // data.input_status === "aligned" — only fasta_files is needed
     if (data.fasta_files && data.fasta_files.length > 0) {
       params.fasta_files = data.fasta_files;
     }

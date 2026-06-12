@@ -18,7 +18,7 @@ import {
 import { cn } from "@/lib/utils";
 import { isFolderType, normalizeWorkspaceObjectType } from "@/lib/services/workspace/utils";
 
-const typeIconMap: Record<string, LucideIcon> = {
+const typeIconMap: Partial<Record<string, LucideIcon>> = {
   folder: Folder,
   directory: Folder,
   job_result: BriefcaseMedical,

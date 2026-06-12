@@ -105,7 +105,7 @@ export class WorkspaceApiClient {
       let targetPath: string | null = null;
       let res: unknown[] = [];
 
-      if (method === "Workspace.ls" && (params[0] as { paths?: string[] })?.paths) {
+      if (method === "Workspace.ls" && (params[0] as { paths?: string[] }).paths) {
         // Find the path that was requested in the parameters
         const requestedPath = (params[0] as { paths: string[] }).paths[0];
         if (result.result[0][requestedPath]) {
@@ -120,7 +120,7 @@ export class WorkspaceApiClient {
         }
       }
 
-      if (!targetPath || !res) {
+      if (!targetPath) {
         return [] as T;
       }
 
@@ -139,8 +139,8 @@ export class WorkspaceApiClient {
         console.error(`Failed to call ${method}:`, error);
         console.error("Error details:", {
           message: error instanceof Error ? error.message : String(error),
-          status: (error as { status?: number })?.status,
-          response: (error as { response?: unknown })?.response,
+          status: (error as { status?: number }).status,
+          response: (error as { response?: unknown }).response,
         });
       }
       throw error;

@@ -17,7 +17,7 @@ export function SuBanner() {
       return;
     }
     void queryClient.resetQueries();
-    if (data) toast.success("Returned to your account");
+    toast.success("Returned to your account");
   };
 
   if (!isImpersonating) return null;

@@ -25,8 +25,10 @@ function columnarToRows(result: Record<string, unknown>): unknown[] {
   const cnt = (result.counts ?? result.kmer_count) as unknown[] | undefined;
   return arr.map((id, i) => ({
     genome_id: id,
-    genome_name: (result.genome_name as unknown[])?.[i],
-    organism_name: (result.organism_name as unknown[])?.[i],
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    genome_name: (result.genome_name as unknown[])?.[i], // runtime guard: field may be absent in API response
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    organism_name: (result.organism_name as unknown[])?.[i], // runtime guard: field may be absent
     distance: dist?.[i],
     pvalue: pval?.[i],
     counts: cnt?.[i],

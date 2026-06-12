@@ -29,7 +29,7 @@ export async function fetchGenomeSuggestions(
       { q: trimmed || "", limit },
       { signal },
     );
-    return Array.isArray(data?.results) ? data.results : [];
+    return Array.isArray(data.results) ? data.results : [];
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
       return [];
@@ -52,7 +52,7 @@ export async function fetchGenomesByIds(
       { genome_ids: uniqueIds },
       { signal: options.signal },
     );
-    return Array.isArray(data?.results) ? data.results : [];
+    return Array.isArray(data.results) ? data.results : [];
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
       return [];
@@ -70,7 +70,7 @@ export async function fetchAllGenomeIds(
       {},
       { signal: options.signal },
     );
-    return Array.isArray(data?.results) ? data.results : [];
+    return Array.isArray(data.results) ? data.results : [];
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
       return [];
@@ -119,7 +119,7 @@ export async function getGenomeIdsFromGroup(
       throw new Error("Invalid workspace response for genome group");
     }
 
-    const rawData = Array.isArray(entry) ? entry[1] : (entry as { data?: unknown })?.data ?? null;
+    const rawData = Array.isArray(entry) ? entry[1] : (entry as { data?: unknown }).data ?? null;
     const decoded = decodeGroupData(rawData) as { id_list?: { genome_id?: string[] } } | null;
 
     if (!decoded?.id_list?.genome_id) {
@@ -175,7 +175,7 @@ function decodeGroupData(raw: unknown): unknown {
 
 function extractWorkspaceGetEntry(responseData: unknown): unknown | null {
   const data = responseData as { result?: unknown[] };
-  const container = data?.result?.[0];
+  const container = data.result?.[0];
 
   if (!container) {
     return null;
@@ -248,7 +248,7 @@ export async function validateViralGenomes(
       { genome_ids: uniqueIds },
       { signal },
     );
-    const results: ViralGenomeValidationResult[] = Array.isArray(data?.results) ? data.results : [];
+    const results: ViralGenomeValidationResult[] = Array.isArray(data.results) ? data.results : [];
 
     const errors: ViralGenomeValidationErrors = {};
     let allValid = true;
@@ -330,7 +330,7 @@ export async function fetchGenomeGroupMembers(path: string): Promise<GenomeSumma
       throw new Error("Invalid workspace response for genome group");
     }
 
-    const rawData = Array.isArray(entry) ? entry[1] : (entry as { data?: unknown })?.data ?? null;
+    const rawData = Array.isArray(entry) ? entry[1] : (entry as { data?: unknown }).data ?? null;
     const decoded = decodeGroupData(rawData) as { id_list?: { genome_id?: string[] } } | null;
 
     if (!decoded?.id_list?.genome_id) {

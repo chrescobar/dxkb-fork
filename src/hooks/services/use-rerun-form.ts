@@ -142,14 +142,14 @@ export function useRerunForm<
           getLibraryExtra ? (lib) => getLibraryExtra(lib, kind) : undefined,
         ),
       );
-      if (builtLibs.length > 0) {
-        if (syncLibraries) {
-          syncLibraries(builtLibs);
-        } else {
-          console.warn(
-            "[useRerunForm] libraries were configured but syncLibraries is missing; built libraries were not applied.",
-          );
-        }
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (!syncLibraries) {
+        // runtime guard: syncLibraries can be omitted when libraries is passed without it (e.g. in tests)
+        console.warn(
+          "[useRerunForm] libraries were configured but syncLibraries is missing; built libraries were not applied.",
+        );
+      } else if (builtLibs.length > 0) {
+        syncLibraries(builtLibs);
       }
     }
 

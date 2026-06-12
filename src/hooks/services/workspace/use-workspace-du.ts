@@ -17,8 +17,8 @@ export function useWorkspaceDu(path: string | null) {
     queryFn: async () => {
       if (!path) return { sizeBytes: 0, files: 0, folders: 0 };
       const entries = await repository.diskUsage([path], true, { silent: true });
+      if (entries.length === 0) return { sizeBytes: 0, files: 0, folders: 0 };
       const entry = entries[0];
-      if (!entry) return { sizeBytes: 0, files: 0, folders: 0 };
       return {
         sizeBytes: typeof entry[1] === "number" ? entry[1] : 0,
         files: typeof entry[2] === "number" ? entry[2] : 0,

@@ -201,7 +201,8 @@ function InteractiveCsvViewer({
             )}
             {virtualizer.getVirtualItems().map((virtualRow) => {
               const row = rows[virtualRow.index];
-              if (!row) return null;
+              // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+              if (!row) return null; // runtime guard: virtualizer index may exceed rows array
               return (
                 <tr
                   key={row.id}

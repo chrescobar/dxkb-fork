@@ -92,7 +92,9 @@ describe("POST /api/auth/change-password", () => {
     expect(capturedAuthorization).toBe("valid-token");
     expect(capturedContentType).toBe("application/json");
 
-    const parsedBody = JSON.parse(capturedBody ?? "{}") as {
+    expect(capturedBody).not.toBeNull();
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const parsedBody = JSON.parse(capturedBody ?? "{}") as { // capturedBody assigned inside MSW handler closure
       jsonrpc?: string;
       method?: string;
       params?: unknown[];

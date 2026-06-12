@@ -43,7 +43,7 @@ export function computeWorkspacePaths({
     : `/${username}`;
   const currentDirectoryPath =
     mode === "home"
-      ? `${currentUserWorkspaceRoot}/home${fullPath ? fullPath : ""}`
+      ? `${currentUserWorkspaceRoot}/home${fullPath}`
       : fullPath;
   return { currentDirectoryPath, currentUserWorkspaceRoot, fullPath };
 }
@@ -80,7 +80,6 @@ export function canWriteToCurrentDir({
   if (!currentDirPermissions) return false;
   const perms =
     currentDirPermissions[decodedFullPath] ?? currentDirPermissions[fullPath];
-  if (!perms) return false;
   const writePerms = new Set(["w", "a", "o"]);
   return perms.some(
     ([user, perm]) =>

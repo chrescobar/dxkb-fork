@@ -21,8 +21,8 @@ export function useWorkspaceFilteredItems(
 
     if (!showHiddenFiles) {
       filtered = filtered.filter((item) => {
-        const name = item.name ?? "";
-        const lastSegment = item.path?.split("/").filter(Boolean).pop() ?? "";
+        const name = item.name;
+        const lastSegment = item.path.split("/").filter(Boolean).pop() ?? "";
         return !name.startsWith(".") && !lastSegment.startsWith(".");
       });
     }
@@ -34,7 +34,7 @@ export function useWorkspaceFilteredItems(
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter((item) =>
-        item.name?.toLowerCase().includes(query),
+        item.name.toLowerCase().includes(query),
       );
     }
 

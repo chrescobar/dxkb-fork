@@ -99,7 +99,7 @@ const SelectedItemsTable = ({
             <div className="divide-y">
               {items.map((item) => (
                 <div
-                  key={`${item.id ?? ""}${item.type ?? ""}`}
+                  key={`${item.id}${item.type ?? ""}`}
                   className="flex items-center justify-between bg-muted px-4 py-2 hover:bg-secondary/20"
                 >
                   <div className="flex items-center gap-2">

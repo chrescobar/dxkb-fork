@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Briefcase, CheckCircle2, Clock, Loader2 } from "lucide-react";
+import { CheckCircle2, Clock, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth/hooks";
 import { useJobsSummary } from "@/hooks/services/jobs/use-jobs-summary";
@@ -118,14 +118,14 @@ export function JobStatusPill() {
           ) : (
             jobs.map((job) => {
               const config = statusConfig[job.status];
-              const Icon = config?.icon ?? Briefcase;
+              const Icon = config.icon;
               return (
                 <div
                   key={job.id}
                   className="flex items-center gap-2 px-3 py-2"
                 >
                   <Icon
-                    className={cn("size-4 shrink-0", config?.className)}
+                    className={cn("size-4 shrink-0", config.className)}
                   />
                   <span className="min-w-0 flex-1 truncate text-sm">
                     {formatServiceName(job.app)}

@@ -15,7 +15,8 @@ export function transformSubspeciesClassificationParams(
 
   if (data.input_source === "fasta_data") {
     params.input_fasta_data = (data.input_fasta_data ?? "").trim();
-  } else if (data.input_source === "fasta_file") {
+  } else {
+    // data.input_source === "fasta_file"
     const file = (data.input_fasta_file ?? "").trim();
     params.input_fasta_file = file;
   }

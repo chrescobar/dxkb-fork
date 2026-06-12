@@ -11,7 +11,7 @@ function encodeRqlValue(val: string) {
 
 export function buildRql({ selected, keywords }) {
   const parts: string[] = [];
-  const grouped: Record<string, string[]> = {};
+  const grouped = new Map<string, string[]>();
 
   selected.forEach((f) => {
     const expr =
@@ -19,11 +19,12 @@ export function buildRql({ selected, keywords }) {
         ? `between(${encodeRqlField(f.field)},${encodeRqlValue(f.value[0])},${encodeRqlValue(f.value[1])})`
         : `${String(f.op)}(${encodeRqlField(f.field)},${encodeRqlValue(String(f.value))})`;
 
-    if (!grouped[f.field]) grouped[f.field] = [];
-    grouped[f.field].push(expr);
+    const bucket = grouped.get(f.field) ?? [];
+    bucket.push(expr);
+    grouped.set(f.field, bucket);
   });
 
-  Object.values(grouped).forEach((arr) => {
+  grouped.forEach((arr) => {
     parts.push(arr.length === 1 ? arr[0] : `or(${arr.join(",")})`);
   });
 

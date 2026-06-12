@@ -104,8 +104,8 @@ export const defaultSimilarGenomeFinderFormValues = {
   max_pvalue: 1,
   max_distance: 1,
   max_hits: 50,
-  include_bacterial: true,
-  include_viral: true,
+  include_bacterial: true as boolean,
+  include_viral: true as boolean,
   scope: "reference" as const,
 } satisfies Partial<z.infer<typeof similarGenomeFinderFormSchema>>;
 

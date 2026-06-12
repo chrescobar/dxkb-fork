@@ -80,7 +80,7 @@ export default function PrimerDesignServicePage() {
       const data = value;
 
       if (data.input_type === "sequence_text") {
-        const validation = validatePrimerDesignSequence(data.sequence_input);
+        const validation = validatePrimerDesignSequence(data.sequence_input ?? "");
 
         if (!validation.isValid) {
           toast.error(validation.message);
@@ -92,7 +92,7 @@ export default function PrimerDesignServicePage() {
         }
       }
 
-      await runtime.submitFormData(data);
+      await runtime.submitFormData(data as PrimerDesignFormData);
     },
   });
 
@@ -168,8 +168,8 @@ export default function PrimerDesignServicePage() {
   ) {
     const target = event.currentTarget;
     selectionRangeRef.current = {
-      start: target.selectionStart ?? 0,
-      end: target.selectionEnd ?? 0,
+      start: target.selectionStart,
+      end: target.selectionEnd,
     };
   }
 
@@ -558,11 +558,7 @@ export default function PrimerDesignServicePage() {
                     </TooltipProvider>
                   </div>
                   <Input
-                    value={
-                      Array.isArray(field.state.value)
-                        ? field.state.value.join(" ")
-                        : field.state.value || ""
-                    }
+                    value={(field.state.value ?? []).join(" ")}
                     onChange={(e) => {
                       const value = e.target.value;
                       field.handleChange(
@@ -691,11 +687,7 @@ export default function PrimerDesignServicePage() {
                       <div className="flex items-center gap-2">
                         <span>{prefix}</span>
                         <Input
-                          value={
-                            Array.isArray(field.state.value)
-                              ? field.state.value.join(" ")
-                              : field.state.value || ""
-                          }
+                          value={(field.state.value ?? []).join(" ")}
                           onChange={(e) => {
                             const value = e.target.value;
                             field.handleChange(

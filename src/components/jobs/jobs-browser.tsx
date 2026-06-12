@@ -170,7 +170,7 @@ export function JobsBrowser() {
   // Note: serviceFilter is handled server-side via the `app` param in useJobsData
   const filteredJobs = useMemo(() => {
     return jobs.filter((job) => {
-      if (!job?.id || !job?.app) return false;
+      if (!job.id || !job.app) return false;
 
       if (statusFilter !== "all") {
         const isRunning =
@@ -182,7 +182,7 @@ export function JobsBrowser() {
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
         const outputName =
-          job.output_file ?? ((job.parameters?.output_file as string | undefined) ?? "");
+          job.output_file ?? ((job.parameters.output_file as string | undefined) ?? "");
         const matches =
           job.id.toLowerCase().includes(q) ||
           job.app.toLowerCase().includes(q) ||
@@ -278,9 +278,9 @@ export function JobsBrowser() {
   const handleDoubleClick = useCallback(
     (job: JobListItem) => {
       const outputPath =
-        job.output_path ?? ((job.parameters?.output_path as string | undefined) ?? "");
+        job.output_path ?? ((job.parameters.output_path as string | undefined) ?? "");
       const outputFile =
-        job.output_file ?? ((job.parameters?.output_file as string | undefined) ?? "");
+        job.output_file ?? ((job.parameters.output_file as string | undefined) ?? "");
 
       if (outputPath && outputFile) {
         const fullPath = `${outputPath}/${outputFile}`;
@@ -300,8 +300,8 @@ export function JobsBrowser() {
   // Actions
   const handleAction = useCallback(
     (actionId: string, selection: JobListItem[]) => {
+      if (selection.length === 0) return;
       const job = selection[0];
-      if (!job) return;
       switch (actionId) {
         case "view":
           handleDoubleClick(job);

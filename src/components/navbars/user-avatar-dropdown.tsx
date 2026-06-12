@@ -39,7 +39,7 @@ export function UserAvatarDropdown() {
       toast.error("Failed to exit impersonation");
       return;
     }
-    if (data) toast.success("Returned to your account");
+    toast.success("Returned to your account");
   };
   const wsUsername = workspaceUsername(user);
   const [suDialogOpen, setSuDialogOpen] = useState(false);
@@ -62,7 +62,7 @@ export function UserAvatarDropdown() {
               ) : (
                 <Avatar className="size-8">
                   <AvatarFallback className="bg-white/10 text-white">
-                    {user?.username?.charAt(0).toUpperCase() || "U"}
+                    {user?.username.charAt(0).toUpperCase() ?? "U"}
                   </AvatarFallback>
                 </Avatar>
               )}

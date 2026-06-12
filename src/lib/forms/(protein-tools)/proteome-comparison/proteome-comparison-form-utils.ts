@@ -223,17 +223,13 @@ export function transformProteomeComparisonParams(
   }
 
   // Add advanced parameters (convert percentages to decimals)
-  if (data.min_seq_cov !== undefined) {
-    params.min_seq_cov = data.min_seq_cov / 100;
-  }
+  params.min_seq_cov = data.min_seq_cov / 100;
 
-  if (data.max_e_val) {
+  if (data.max_e_val.trim()) {
     params.max_e_val = data.max_e_val.trim();
   }
 
-  if (data.min_ident !== undefined) {
-    params.min_ident = data.min_ident / 100;
-  }
+  params.min_ident = data.min_ident / 100;
 
   return params;
 }

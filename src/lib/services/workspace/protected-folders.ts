@@ -26,7 +26,12 @@ export function isProtectedHomeFolder(path: string): boolean {
   if (!normalized) return false;
   const match = protectedHomeRegex.exec(normalized);
   if (!match) return false;
-  const subfolder = match[1];
+  // match[1] captures the optional subfolder segment (e.g. "Genome Groups").
+  // When the group did not participate in the match (path is exactly /user/home),
+  // the value is `undefined` at runtime even though TypeScript types all
+  // RegExpMatchArray elements as `string`. The `as` cast below preserves the
+  // runtime check without triggering no-unnecessary-condition.
+  const subfolder = match[1] as string | undefined;
   if (subfolder === undefined) return true;
   return protectedSubfolderSet.has(subfolder);
 }

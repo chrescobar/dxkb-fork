@@ -261,11 +261,11 @@ export function useWorkspaceDialogHandlers(options: UseWorkspaceDialogHandlersOp
       return;
     }
     const firstDestName =
-      filenameOverride ?? pendingCopySelection[0]?.name ?? "";
+      filenameOverride ?? pendingCopySelection[0].name;
     const objects: [string, string][] = pendingCopySelection
       .map((item, index) => {
         const src = item.path;
-        if (!src || item.name == null) return null;
+        if (!src) return null;
         const name =
           index === 0 && filenameOverride != null
             ? filenameOverride
@@ -302,7 +302,7 @@ export function useWorkspaceDialogHandlers(options: UseWorkspaceDialogHandlersOp
   const handleEditTypeConfirm = (newType: string): Promise<void> => {
     if (activeDialog?.type !== "editType") return Promise.resolve();
     const item = activeDialog.item;
-    if (!item?.path) return Promise.resolve();
+    if (!item.path) return Promise.resolve();
     editTypeMutation.mutate({ path: item.path, newType, itemName: item.name });
     return Promise.resolve();
   };

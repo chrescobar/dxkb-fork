@@ -62,7 +62,7 @@ export function UploadDialog({
   }
 
   const addFiles = React.useCallback((newFiles: FileList | File[]) => {
-    const list = Array.from(newFiles).filter((f) => f.name && f.size !== undefined);
+    const list = Array.from(newFiles).filter((f) => f.name);
     setFiles((prev) => {
       const byName = new Map(prev.map((f) => [f.name, f]));
       list.forEach((f) => byName.set(f.name, f));

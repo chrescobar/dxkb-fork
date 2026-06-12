@@ -62,7 +62,7 @@ export default function HASubtypeNumberingPage() {
   const fastaData = useSelector(form.store, (s) => s.values.input_fasta_data);
 
   const validateFastaData = useCallback(() => {
-    const trimmed = fastaData?.trim() ?? "";
+    const trimmed = fastaData.trim();
     if (!trimmed) {
       setFastaValidationMessage("");
       setIsFastaValid(false);
@@ -98,7 +98,7 @@ export default function HASubtypeNumberingPage() {
   const { isSubmitting, jobParamsDialogProps } = runtime;
 
   const isFastaDataInvalid =
-    inputSource === "fasta_data" && !!fastaData?.trim() && !isFastaValid;
+    inputSource === "fasta_data" && !!fastaData.trim() && !isFastaValid;
   const isSubmitDisabled =
     !canSubmit || !isOutputNameValid || isSubmitting || isFastaDataInvalid;
 

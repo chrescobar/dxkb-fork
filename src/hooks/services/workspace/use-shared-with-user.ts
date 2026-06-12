@@ -26,7 +26,7 @@ export function useSharedWithUser({
         const globalPermission = item.permissions?.global ?? "";
         const userPermission = item.permissions?.user ?? "";
         if (globalPermission !== "n") return false;
-        if (userPermission === "o" && globalPermission === "n") return false;
+        if (userPermission === "o") return false;
         return true;
       });
     },

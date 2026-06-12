@@ -26,7 +26,7 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
   const [keywords, setKeywords] = useState<string[]>([]);
   const [selected, setSelected] = useState<SelectedFilter[]>([]);
   const [showFacets, setShowFacets] = useState(false);
-  const [localFacetFields, setLocalFacetFields] = useState<ColumnField[]>(() => facetFields ?? []);
+  const [localFacetFields, setLocalFacetFields] = useState<ColumnField[]>(() => facetFields);
   const [facetMenuOpen, setFacetMenuOpen] = useState(false);
   const facetMenuRef = useRef<HTMLDivElement | null>(null);
   const clearAll = () => {
@@ -56,7 +56,7 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
   // emit filter upward
   useEffect(() => {
     const rql = buildRql({ selected, keywords });
-    onFilterChangeRef.current?.(rql);
+    onFilterChangeRef.current(rql);
   }, [selected, keywords]);
 
   useEffect(() => {

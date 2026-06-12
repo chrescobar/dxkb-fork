@@ -60,7 +60,7 @@ function TabsRenderer({
   // Whenever urlType (searchtype) changes, set the active tab.
   // If urlType matches one of the tabs (term), set that; otherwise pick the first tab.
   useEffect(() => {
-    const desired = urlType ?? "genome";
+    const desired = urlType || "genome";
     const targetTab = tablist.includes(desired) ? desired : tablist[0];
     if (targetTab && targetTab !== activeTab) {
       setActiveTab(targetTab);

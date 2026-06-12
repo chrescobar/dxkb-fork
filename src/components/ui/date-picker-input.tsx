@@ -53,7 +53,7 @@ export function DatePickerInput({
   onDateChange,
   placeholder,
 }: DatePickerInputProps) {
-  const fmt = formatMap[format] || formatMap["MM/DD/YYYY"];
+  const fmt = formatMap[format];
   const [date, setDate] = React.useState<Date | undefined>(value);
   const [inputValue, setInputValue] = React.useState<string>(
     value ? formatDateFns(value, fmt.dateFns) : "",
@@ -72,7 +72,7 @@ export function DatePickerInput({
     if (value === undefined) {
       setDate(undefined);
       setInputValue("");
-    } else if (value) {
+    } else {
       setDate(value);
       setInputValue(formatDateFns(value, fmt.dateFns));
       setCalendarMonth(value);

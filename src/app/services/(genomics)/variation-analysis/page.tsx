@@ -336,7 +336,7 @@ export default function VariationAnalysisPage() {
                     <FieldItem>
                       <RequiredFormLabel>Target Genome</RequiredFormLabel>
                       <SingleGenomeSelector
-                        value={field.state.value ?? ""}
+                        value={field.state.value}
                         onChange={(genomeId) => {
                           field.handleChange(genomeId);
                         }}

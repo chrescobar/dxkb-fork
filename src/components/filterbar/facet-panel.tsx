@@ -33,8 +33,8 @@ function parseFacetCounts(
 ): Record<string, FacetItem[]> {
   const out: Record<string, FacetItem[]> = {};
 
-  Object.keys(facets || {}).forEach((cat) => {
-    const data = facets[cat] || [];
+  Object.keys(facets).forEach((cat) => {
+    const data = facets[cat];
     out[cat] = [];
 
     for (let i = 0; i < data.length - 1; i += 2) {
@@ -57,7 +57,7 @@ export function FacetPanel({
   onSelect,
   selected,
 }: FacetPanelProps) {
-  const [facets, setFacets] = useState<Record<string, FacetItem[]>>({});
+  const [facets, setFacets] = useState<Partial<Record<string, FacetItem[]>>>({});
   const DataAPI = process.env.NEXT_PUBLIC_DATA_API;
   const requestId = useRef(0);
 
@@ -70,7 +70,7 @@ export function FacetPanel({
   useEffect(() => {
     if (!DataAPI) return;
     if (!resource) return;
-    if (!fields || fields.length === 0) {
+    if (fields.length === 0) {
       return;
     }
 
@@ -84,7 +84,6 @@ export function FacetPanel({
         // ---------------------------------------------------
         const validFields = fields
           .filter((f): f is ColumnField =>
-            f &&
             typeof f.id === "string" &&
             f.id.trim().length > 0
           )
@@ -164,7 +163,7 @@ export function FacetPanel({
         <FacetColumn
           key={field.id}
           field={field}
-          items={facets[field.id] || []}
+          items={facets[field.id] ?? []}
           onSelect={onSelect}
         />
       ))}

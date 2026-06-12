@@ -41,7 +41,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       middle_name: profile.middle_name ?? "",
       last_name: profile.last_name,
       affiliation: profile.affiliation ?? "",
-      organisms: profile.organisms ?? "",
+      organisms: profile.organisms,
       interests: profile.interests ?? "",
     } satisfies ProfileFormData,
     onSubmit: async ({ value }) => {

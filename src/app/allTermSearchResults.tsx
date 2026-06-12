@@ -397,11 +397,11 @@ function SearchResultsContent({ query }: { query: string }) {
 
   // Filter out empty results and sort by numFound
   const validResults = Object.entries(searchResults)
-    .filter(([_, data]) => data?.result?.response?.numFound > 0)
+    .filter(([_, data]) => data.result.response.numFound > 0)
     .sort(
       ([_, a], [__, b]) =>
-        (b?.result?.response?.numFound || 0) -
-        (a?.result?.response?.numFound || 0),
+        b.result.response.numFound -
+        a.result.response.numFound,
     );
 
   // Add this before the return statement
@@ -426,8 +426,8 @@ function SearchResultsContent({ query }: { query: string }) {
 
           <div className="space-y-8">
             {validResults.map(([dataType, data]) => {
-              const docs = data.result.response?.docs || [];
-              const numFound = data.result.response?.numFound || 0;
+              const docs = data.result.response.docs;
+              const numFound = data.result.response.numFound;
 
               if (numFound === 0) return null;
 

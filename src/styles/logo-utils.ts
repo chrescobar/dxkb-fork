@@ -20,7 +20,7 @@ export type LogoVariant =
   | "sponsor-logo-white";
 
 // Define logo naming patterns for each folder
-const logoNamingPatterns: Record<string, Record<LogoVariant, string>> = {
+const logoNamingPatterns: Partial<Record<string, Record<LogoVariant, string>>> = {
   generic: {
     logo: "xkb-logo.svg",
     "logo-white": "xkb-logo-white.svg",
@@ -64,7 +64,7 @@ export function getLogoFolder(theme: string): string {
 export function getLogoPath(theme: string, variant: LogoVariant): string {
   const folder = getLogoFolder(theme);
   const fileName =
-    logoNamingPatterns[folder]?.[variant] || logoNamingPatterns.dxkb[variant];
+    logoNamingPatterns[folder]?.[variant] ?? logoNamingPatterns.dxkb?.[variant] ?? "";
   return `/logos/${folder}/${fileName}`;
 }
 

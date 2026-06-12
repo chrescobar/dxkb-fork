@@ -81,7 +81,7 @@ const OutputFolder = ({
     [onValidationChange],
   );
 
-  const needsValidation = variant === "name" && !!outputFolderPath?.trim() && !!value?.trim();
+  const needsValidation = variant === "name" && !!outputFolderPath.trim() && !!value.trim();
   const [prevNeedsValidation, setPrevNeedsValidation] = useState(needsValidation);
   if (prevNeedsValidation && !needsValidation) {
     setPrevNeedsValidation(needsValidation);

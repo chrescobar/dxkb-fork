@@ -10,16 +10,16 @@ interface SanitizedApiError {
 
 function sanitizeUpstreamError(raw: unknown): SanitizedApiError | null {
   if (raw == null) return null;
-  const obj = typeof raw === "object" && raw !== null ? raw : null;
+  const obj = typeof raw === "object" ? raw : null;
   if (!obj) return null;
   const code =
     typeof (obj as { error?: { code?: unknown } }).error === "object" &&
-    (obj as { error: { code?: unknown } }).error !== null
+    (obj as { error?: { code?: unknown } }).error != null
       ? (obj as { error: { code?: unknown } }).error.code
       : (obj as { code?: unknown }).code;
   const message =
     typeof (obj as { error?: { message?: unknown } }).error === "object" &&
-    (obj as { error: { message?: unknown } }).error !== null
+    (obj as { error?: { message?: unknown } }).error != null
       ? (obj as { error: { message?: unknown } }).error.message
       : (obj as { message?: unknown }).message;
   const sanitized: SanitizedApiError = {};
@@ -63,7 +63,7 @@ export const POST = auth.route(async (request: NextRequest, { token }) => {
       const isPreferencesGet =
         method === "Workspace.get" &&
         Array.isArray(params) &&
-        (params[0] as { objects?: unknown[] })?.objects?.some?.((path: unknown) => {
+        (params[0] as { objects?: unknown[] }).objects?.some((path: unknown) => {
           if (typeof path !== "string") return false;
           return (
             path.endsWith("/home/.preferences/favorites.json") ||

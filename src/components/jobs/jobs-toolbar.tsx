@@ -45,7 +45,7 @@ interface JobsToolbarProps {
   onIncludeArchivedChange: (value: boolean) => void;
   onRefresh: () => void;
   isRefreshing: boolean;
-  statusSummary?: Record<string, number>;
+  statusSummary?: Record<string, number | undefined>;
   dataUpdatedAt?: number;
   dateFrom: Date | undefined;
   dateTo: Date | undefined;

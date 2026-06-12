@@ -44,7 +44,7 @@ async function authenticate(
     }
 
     const body = await response.text();
-    const rawToken = response.headers.get("Authorization") ?? body ?? "";
+    const rawToken = response.headers.get("Authorization") ?? body;
     const token = rawToken.trim();
     if (!token) {
       return fail(
@@ -95,7 +95,7 @@ async function signUp(
     }
 
     const body = await response.text();
-    const rawToken = response.headers.get("Authorization") ?? body ?? "";
+    const rawToken = response.headers.get("Authorization") ?? body;
     const token = rawToken.trim();
     if (!token) {
       return fail(

@@ -135,7 +135,7 @@ function getMinhashRowsAndIds(result: unknown): {
 } {
   let minhashRows = parseMinhashResultPayload(result);
   let genomeIds = minhashRows
-    .map((r) => r.genome_id?.trim())
+    .map((r) => r.genome_id.trim())
     .filter(Boolean);
 
   if (

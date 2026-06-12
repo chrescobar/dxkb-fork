@@ -69,7 +69,7 @@ async function fetchSharedRoot(
     const g = item.permissions?.global ?? "";
     const u = item.permissions?.user ?? "";
     if (g !== "n") return false;
-    if (u === "o" && g === "n") return false;
+    if (u === "o") return false;
     return true;
   });
   const byPath = new Map<string, WorkspaceItem>();

@@ -46,8 +46,7 @@ export function DeleteConfirmDialog({
         : `${String(pendingDeleteSelection.length)} items`;
 
   const requiresAcknowledgment = nonEmptyFolderPathsInDelete.length > 0;
-  const canDelete =
-    !requiresAcknowledgment || (requiresAcknowledgment && acknowledgeChecked);
+  const canDelete = !requiresAcknowledgment || acknowledgeChecked;
 
   return (
     <AlertDialog open={open} onOpenChange={handleOpenChange}>

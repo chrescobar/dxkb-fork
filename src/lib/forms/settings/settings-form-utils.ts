@@ -68,7 +68,7 @@ export function buildProfilePatches(
 
   for (const field of editableProfileFields) {
     const oldVal = original[field] ?? "";
-    const newVal = updated[field] ?? "";
+    const newVal = updated[field];
     if (oldVal !== newVal) {
       patches.push({ op: "replace", path: `/${field}`, value: newVal });
     }

@@ -28,7 +28,7 @@ function connectorEndpoints(path: SVGPathElement) {
   const start = points[0];
   const end = points.at(-1);
 
-  if (!start || !end) {
+  if (!end) {
     throw new Error("Connector path did not include start and end points");
   }
 

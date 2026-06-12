@@ -19,7 +19,7 @@ describe("cn", () => {
   });
 
   it("handles conditional classes", () => {
-    const condition = false;
+    const condition = false as boolean;
     expect(cn("base", condition && "hidden", "extra")).toBe("base extra");
   });
 

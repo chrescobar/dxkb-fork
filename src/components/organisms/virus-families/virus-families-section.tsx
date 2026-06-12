@@ -71,7 +71,7 @@ export function VirusFamiliesSection() {
                     />
                   ))}
                 </div>
-                {index === 2 && col3 && col3.group === null && (
+                {index === 2 && col3.group === null && (
                   <div className="hidden flex-col gap-3 lg:flex xl:hidden">
                     <SubGroups subGroups={col3.subGroups} />
                   </div>

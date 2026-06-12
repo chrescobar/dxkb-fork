@@ -41,7 +41,7 @@ export function WorkspaceItemDetails({
   const repository = useWorkspaceRepository("authenticated");
 
   const typeOptions = useMemo(() => {
-    const currentType = item.type ?? "";
+    const currentType = item.type;
     const set = new Set(editTypeOptions);
     if (currentType && !set.has(currentType)) {
       return [currentType, ...editTypeOptions].sort((a, b) => a.localeCompare(b));
@@ -68,7 +68,7 @@ export function WorkspaceItemDetails({
 
   const selectEl = (
     <Select
-      value={(editTypeMutation.isPending ? editTypeMutation.variables : item.type) ?? ""}
+      value={editTypeMutation.isPending ? editTypeMutation.variables : item.type}
       onValueChange={(value) => {
         if (value && value !== item.type) {
           editTypeMutation.mutate(value);

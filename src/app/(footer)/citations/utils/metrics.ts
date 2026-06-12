@@ -13,6 +13,7 @@ export function calculateMetrics(citations: Citation[]) {
   // Calculate metrics by year
   const metricsByYear: Record<number, YearMetrics> = {};
   citations.forEach((citation) => {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Record<number,…> index returns undefined at runtime for unseen keys; this is a standard accumulator initialization guard
     if (!metricsByYear[citation.year]) {
       metricsByYear[citation.year] = {
         count: 0,

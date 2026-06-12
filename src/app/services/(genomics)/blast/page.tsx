@@ -139,7 +139,6 @@ export default function BlastServicePage() {
 
     if (
       previousProgram !== currentBlastProgram &&
-      previousProgram !== undefined &&
       !isApplyingRerunRef.current &&
       form.getFieldValue("input_fasta_file") !== ""
     ) {
@@ -373,7 +372,7 @@ export default function BlastServicePage() {
                       {(fastaField) => (
                         <FieldItem>
                           <FastaTextarea
-                            value={fastaField.state.value ?? ""}
+                            value={fastaField.state.value}
                             onChange={fastaField.handleChange}
                             inputType={currentBlastProgram}
                             onValidationChange={handleFastaValidationChange}
@@ -500,7 +499,7 @@ export default function BlastServicePage() {
                       <Select
                         items={availableDatabaseTypes}
                         key={`${String(currentBlastProgram)}-${dbPrecomputedDatabase}-${String(availableDatabaseTypes.length)}`}
-                        value={field.state.value || ""}
+                        value={field.state.value}
                         onValueChange={(value) => {
                           if (value != null)
                             field.handleChange(

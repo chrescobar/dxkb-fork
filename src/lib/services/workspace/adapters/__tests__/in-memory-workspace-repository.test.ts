@@ -150,9 +150,9 @@ describe("InMemoryWorkspaceRepository", () => {
       },
     });
     const [meta] = await repo.getMetadata(["/u/home/second.fa"]);
-    const rawTuple = (meta?.raw as unknown[][])?.[0];
-    expect(meta?.object?.id).toBe("/u/home/second.fa#1");
-    expect(rawTuple?.[4]).toBe("/u/home/second.fa#1");
+    const rawTuple = (meta.raw as unknown[][])[0];
+    expect(meta.object?.id).toBe("/u/home/second.fa#1");
+    expect(rawTuple[4]).toBe("/u/home/second.fa#1");
   });
 
   it("rejects delete of protected folders without recording the call or mutating fixtures", async () => {

@@ -193,7 +193,7 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
           | undefined;
         const srrId = rerunData.srr_id as string | undefined;
 
-        if (pairedLib?.read1 && pairedLib?.read2) {
+        if (pairedLib?.read1 && pairedLib.read2) {
           form.setFieldValue("input_type", "paired");
           setPairedRead1(pairedLib.read1);
           setPairedRead2(pairedLib.read2);

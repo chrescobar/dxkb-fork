@@ -53,7 +53,7 @@ function FieldErrors({
   const message =
     typeof firstError === "string"
       ? firstError
-      : (firstError as { message?: string })?.message ?? "";
+      : (firstError as { message?: string }).message ?? "";
 
   if (!message) return null;
 

@@ -136,16 +136,16 @@ export function WorkspaceMiniBrowser({
   const displayItems = useMemo(() => {
     let list = items;
     if (mode === "folders-only") {
-      list = list.filter((item) => isFolder(item.type ?? ""));
+      list = list.filter((item) => isFolder(item.type));
     }
     if (!showHidden) {
-      list = list.filter((item) => !(item.name ?? "").startsWith("."));
+      list = list.filter((item) => !item.name.startsWith("."));
     }
     const sortCompare = (a: WorkspaceItem, b: WorkspaceItem) => {
       const aFolder = isFolderType(a.type);
       const bFolder = isFolderType(b.type);
       if (aFolder !== bFolder) return aFolder ? -1 : 1;
-      return (a.name ?? "").localeCompare(b.name ?? "", undefined, {
+      return a.name.localeCompare(b.name, undefined, {
         sensitivity: "base",
       });
     };
@@ -370,7 +370,7 @@ export function WorkspaceMiniBrowser({
                     item.path === selectedPath.replace(/\/+$/, ""));
                 return (
                   <TableRow
-                    key={item.id ?? item.path}
+                    key={item.id}
                     data-row-key={normalizePath(item.path)}
                     className={cn(
                       "cursor-pointer hover:bg-muted/50",
@@ -391,7 +391,7 @@ export function WorkspaceMiniBrowser({
                     <TableCell className="hidden pl-3 text-sm sm:table-cell">
                       {isFolderType(item.type)
                         ? "—"
-                        : formatFileSize(item.size ?? 0)}
+                        : formatFileSize(item.size)}
                     </TableCell>
                     <TableCell className="hidden pl-3 text-sm md:table-cell">
                       {formatOwner(item.ownerId ?? "")}

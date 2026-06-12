@@ -134,7 +134,7 @@ export default function FastqUtilitiesPage() {
     mapLibraryToItem: (library) => ({
       ...buildBaseLibraryItem(library),
       ...(library.type === "single" && {
-        platform: (library.platform as Platform) ?? "illumina",
+        platform: (library.platform ?? "illumina") as Platform,
       }),
     }),
     fields: {
@@ -214,20 +214,15 @@ export default function FastqUtilitiesPage() {
   const handleSingleLibraryAdd = () => {
     addSingleLibrary({
       read: singleRead,
-      buildLibrary: (read) => {
-        if (!singlePlatform) {
-          return { error: "Platform must be selected for single read library" };
-        }
-        return {
-          library: {
-            id: read,
-            name: getSingleLibraryName(read),
-            type: "single",
-            files: [read],
-            platform: singlePlatform,
-          },
-        };
-      },
+      buildLibrary: (read) => ({
+        library: {
+          id: read,
+          name: getSingleLibraryName(read),
+          type: "single",
+          files: [read],
+          platform: singlePlatform,
+        },
+      }),
       duplicateMatcher: (library, read) =>
         library.id === read && library.type === "single",
       onError: handleLibraryError,

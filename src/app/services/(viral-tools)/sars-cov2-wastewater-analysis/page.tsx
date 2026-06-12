@@ -109,8 +109,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
   const primers = useSelector(form.store, (s) => s.values.primers);
-  const primerVersionOpts =
-    primerVersionOptions[primers] ?? primerVersionOptions.ARTIC;
+  const primerVersionOpts = primerVersionOptions[primers];
 
   const {
     selectedLibraries,
@@ -165,14 +164,12 @@ export default function SarsCov2WastewaterAnalysisPage() {
   });
 
   useEffect(() => {
-    if (primers) {
-      const defaultVersion = defaultPrimerVersion[primers];
-      if (
-        defaultVersion &&
-        form.state.values.primer_version !== defaultVersion
-      ) {
-        form.setFieldValue("primer_version", defaultVersion);
-      }
+    const defaultVersion = defaultPrimerVersion[primers];
+    if (
+      defaultVersion &&
+      form.state.values.primer_version !== defaultVersion
+    ) {
+      form.setFieldValue("primer_version", defaultVersion);
     }
   }, [primers, form]);
 

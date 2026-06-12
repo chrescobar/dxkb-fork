@@ -96,7 +96,7 @@ export function computeOutputName(scientificName: string, myLabel: string): stri
 export function transformSarsCov2GenomeAnalysisParams(
   data: SarsCov2GenomeAnalysisFormData
 ): Record<string, unknown> {
-  const outputName = data.output_file?.trim() || computeOutputName(data.scientific_name, data.my_label);
+  const outputName = data.output_file.trim() || computeOutputName(data.scientific_name, data.my_label);
 
   const params: Record<string, unknown> = {
     input_type: data.input_type,

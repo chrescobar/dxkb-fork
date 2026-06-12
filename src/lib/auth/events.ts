@@ -41,7 +41,7 @@ export function createAuthEventBus(): AuthEventBus {
       }
       set.add(handler as AuthEventHandler<AuthEventName>);
       return () => {
-        set?.delete(handler as AuthEventHandler<AuthEventName>);
+        set.delete(handler as AuthEventHandler<AuthEventName>);
       };
     },
     emit(event, payload) {

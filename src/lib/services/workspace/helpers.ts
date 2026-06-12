@@ -34,8 +34,8 @@ export function parseWorkspaceGetSingle(
   const parent = (list[2] as string | undefined) ?? "";
   const name = (list[0] as string | undefined) ?? "";
   const fullPath = (parent + name).replace(/\/+/g, "/");
-  const userMeta = (list[7] as Record<string, unknown>) ?? {};
-  const sysMeta = (list[8] as Record<string, unknown>) ?? {};
+  const userMeta = (list[7] as Record<string, unknown> | undefined) ?? {};
+  const sysMeta = (list[8] as Record<string, unknown> | undefined) ?? {};
 
   const resolved: ResolvedPathObject = {
     name,
@@ -64,8 +64,8 @@ export function parseWorkspaceGetSingle(
 export function getJobResultDotPath(
   resolved: Pick<ResolvedPathObject, "path" | "name">,
 ): string {
-  const fullPath = (resolved.path ?? "").replace(/\/+$/, "");
-  const name = (resolved.name ?? "").replace(/^\/+|\/+$/g, "");
+  const fullPath = resolved.path.replace(/\/+$/, "");
+  const name = resolved.name.replace(/^\/+|\/+$/g, "");
 
   const fallbackName = fullPath.split("/").filter(Boolean).pop() ?? "";
   const dotName = name || fallbackName;
@@ -140,12 +140,12 @@ export function sortItems(
     let comparison = 0;
     switch (sort.field) {
       case "name":
-        comparison = (a.name ?? "").localeCompare(b.name ?? "", undefined, {
+        comparison = a.name.localeCompare(b.name, undefined, {
           sensitivity: "base",
         });
         break;
       case "size":
-        comparison = (a.size ?? 0) - (b.size ?? 0);
+        comparison = a.size - b.size;
         break;
       case "ownerId":
         comparison = (a.ownerId ?? "").localeCompare(b.ownerId ?? "");
@@ -154,7 +154,7 @@ export function sortItems(
         comparison = (a.timestamp ?? 0) - (b.timestamp ?? 0);
         break;
       case "type":
-        comparison = (a.type ?? "").localeCompare(b.type ?? "");
+        comparison = a.type.localeCompare(b.type);
         break;
       default:
         comparison = 0;
@@ -197,7 +197,8 @@ export function formatFileSize(
 }
 
 export function normalizeWsPath(p: string): string {
-  const trimmed = (p ?? "").trim();
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const trimmed = (p ?? "").trim(); // runtime guard: API can return null for path fields
   if (!trimmed) return "";
   const withLeading = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
   return withLeading.replace(/\/+$/, "").replace(/\/+/g, "/");
@@ -281,8 +282,8 @@ export function getSiblingJobResultPathForDotFolder(
   const siblingNormalized = normalizeWsPath(siblingPath);
   const sibling = items.find(
     (it) =>
-      normalizeWsPath(it.path ?? "") === siblingNormalized &&
-      (it.type ?? "").toLowerCase() === "job_result",
+      normalizeWsPath(it.path) === siblingNormalized &&
+      it.type.toLowerCase() === "job_result",
   );
   return sibling ? siblingNormalized : null;
 }
@@ -296,13 +297,13 @@ export function expandDownloadPaths(
   items: WorkspaceItem[],
 ): string[] {
   const expandedPaths = downloadableItems.flatMap((item) => {
-    const p = normalizeWsPath(item.path ?? "");
+    const p = normalizeWsPath(item.path);
     if (!p) return [];
 
-    const type = (item.type ?? "").toLowerCase();
+    const type = item.type.toLowerCase();
     if (type === "job_result") {
       const name =
-        (item.name ?? "").trim() ||
+        item.name.trim() ||
         p.split("/").filter(Boolean).pop() ||
         "";
       const dotPath = normalizeWsPath(getJobResultDotPath({ path: p, name }));
@@ -340,7 +341,7 @@ export async function ensureDestinationWriteAccess(
     const listing = await listFolder(parentPath);
 
     const target = listing.find(
-      (item) => normalizeWsPath(item.path ?? "") === normalized,
+      (item) => normalizeWsPath(item.path) === normalized,
     );
 
     if (target) {
@@ -364,7 +365,7 @@ export async function ensureDestinationWriteAccess(
     const parentListing = await listFolder(grandparentPath);
     const parentItem = parentListing.find(
       (item) =>
-        normalizeWsPath(item.path ?? "") === normalizeWsPath(parentPath),
+        normalizeWsPath(item.path) === normalizeWsPath(parentPath),
     );
     if (!parentItem || !hasWriteAccess(parentItem)) {
       return {

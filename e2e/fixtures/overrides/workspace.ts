@@ -211,6 +211,7 @@ function findKnownItem(
       if (`${parentNoTrailing}/${item.name}` === fullPath) return item;
     }
   }
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Record<string,…> index returns undefined at runtime for missing keys; the type doesn't capture that
   if (pathItems[fullPath]) {
     const lastSlash = fullPath.lastIndexOf("/");
     const name = lastSlash >= 0 ? fullPath.slice(lastSlash + 1) : fullPath;

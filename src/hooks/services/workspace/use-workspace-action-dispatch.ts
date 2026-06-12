@@ -99,21 +99,21 @@ export function useWorkspaceActionDispatch({
         return;
       }
       if (actionId === "editType") {
-        const single = selection[0] ?? null;
+        const single = selection.at(0);
         if (single?.path) {
           dispatch({ type: "OPEN_EDIT_TYPE", item: single });
         }
         return;
       }
       if (actionId === "viewer3d") {
-        const single = selection[0] ?? null;
+        const single = selection.at(0);
         if (single?.path) {
           window.open(getStructureViewerUrl(single.path), "_blank", "noopener,noreferrer");
         }
         return;
       }
       if (actionId === "favorite") {
-        const single = selection[0] ?? null;
+        const single = selection.at(0);
         if (
           !currentUser ||
           !myWorkspaceRoot ||
@@ -130,7 +130,7 @@ export function useWorkspaceActionDispatch({
         (item) =>
           Boolean(item.path) &&
           !(forbiddenDownloadTypes as readonly string[]).includes(
-            (item.type ?? "").toLowerCase(),
+            item.type.toLowerCase(),
           ),
       );
       if (downloadable.length === 0) {
@@ -154,7 +154,7 @@ export function useWorkspaceActionDispatch({
         singleType === "job_result"
           ? (single?.name ?? "").replace(/^\./, "").trim() || "archive"
           : single?.name != null && single.name.startsWith(".")
-            ? (getSiblingJobResultPathForDotFolder(single.path ?? "", items)?.split("/").filter(Boolean).pop() ??
+            ? (getSiblingJobResultPathForDotFolder(single.path, items)?.split("/").filter(Boolean).pop() ??
                 single.name.replace(/^\./, "")).trim() || "archive"
             : single?.name != null
               ? single.name.trim() || "archive"

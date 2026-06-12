@@ -27,10 +27,6 @@ import {
   type DataTableHandle,
 } from "@/components/shared/file-table";
 
-/** Stable empty array for table data fallback (avoids infinite re-renders per TanStack Data guide). */
-const emptyItems: WorkspaceItem[] = [];
-
-
 const defaultColumnOrder = [
   "name",
   "size",
@@ -99,7 +95,7 @@ export const WorkspaceDataTable = forwardRef<
     [path],
   );
   const selectedPathSet = useMemo(
-    () => new Set((selectedPaths ?? []).map(normalizePath)),
+    () => new Set(selectedPaths.map(normalizePath)),
     [selectedPaths],
   );
   const safeUsername = sanitizePathSegment(username);
@@ -176,9 +172,8 @@ export const WorkspaceDataTable = forwardRef<
   const parentOffset = showParentRow ? 1 : 0;
 
   const getFocusedIndex = useCallback(() => {
-    const paths = selectedPaths ?? [];
-    if (paths.length === 0) return -1;
-    const normalizedFocus = normalizePath(paths[paths.length - 1]);
+    if (selectedPaths.length === 0) return -1;
+    const normalizedFocus = normalizePath(selectedPaths[selectedPaths.length - 1]);
     return items.findIndex((i) => normalizePath(i.path) === normalizedFocus);
   }, [selectedPaths, items]);
 
@@ -274,7 +269,7 @@ export const WorkspaceDataTable = forwardRef<
   return (
     <DataTable<WorkspaceItem>
       ref={dataTableRef}
-      data={items ?? emptyItems}
+      data={items}
       columns={columns}
       defaultColumnOrder={defaultColumnOrder}
       isLoading={isLoading}

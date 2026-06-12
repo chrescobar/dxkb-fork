@@ -84,7 +84,7 @@ export function transformViralAssemblyParams(
   // Only include the library type that matches the selected input type
   if (data.input_type === "paired") {
     const firstPaired = data.paired_end_libs?.[0];
-    if (firstPaired?.read1 != null && firstPaired?.read2 != null) {
+    if (firstPaired?.read1 != null && firstPaired.read2 != null) {
       params.paired_end_lib = {
         read1: firstPaired.read1,
         read2: firstPaired.read2,
@@ -95,7 +95,8 @@ export function transformViralAssemblyParams(
     if (firstSingle?.read != null) {
       params.single_end_lib = { read: firstSingle.read };
     }
-  } else if (data.input_type === "srr_accession") {
+  } else {
+    // data.input_type === "srr_accession"
     const firstSrr = data.srr_ids?.[0];
     if (firstSrr != null) {
       params.srr_id = firstSrr;

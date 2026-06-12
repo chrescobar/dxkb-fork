@@ -308,7 +308,7 @@ function DataTableInner<T>(
 
   const handleColumnDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
-    if (active && over && active.id !== over.id) {
+    if (over && active.id !== over.id) {
       setColumnOrder((prev) => {
         const oldIndex = prev.indexOf(active.id as string);
         const newIndex = prev.indexOf(over.id as string);
@@ -406,7 +406,7 @@ function DataTableInner<T>(
               ) : (
                 <>
                   {renderLeadingRows?.(columnOrder)}
-                  {data.length === 0 && !isLoading ? (
+                  {data.length === 0 ? (
                     renderEmptyState ? (
                       renderEmptyState(table.getAllLeafColumns().length)
                     ) : null

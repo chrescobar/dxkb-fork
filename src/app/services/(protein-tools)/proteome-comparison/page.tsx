@@ -115,7 +115,7 @@ export default function ProteomeComparisonPage() {
     (s) => s.values.comparison_items,
   );
   const comparisonItems = useMemo(
-    () => rawComparisonItems || [],
+    () => rawComparisonItems,
     [rawComparisonItems],
   );
   const outputPath = useSelector(form.store, (s) => s.values.output_path);
@@ -142,7 +142,7 @@ export default function ProteomeComparisonPage() {
       return;
     }
 
-    const currentItems = form.state.values.comparison_items || [];
+    const currentItems = form.state.values.comparison_items;
 
     // Check for duplicates by genome_id
     if (
@@ -204,7 +204,7 @@ export default function ProteomeComparisonPage() {
       return;
     }
 
-    const currentItems = form.state.values.comparison_items || [];
+    const currentItems = form.state.values.comparison_items;
     const newItem = createFastaComparisonItem(selectedCompFasta.path);
 
     if (isDuplicateComparisonItem(currentItems, newItem)) {
@@ -237,7 +237,7 @@ export default function ProteomeComparisonPage() {
       return;
     }
 
-    const currentItems = form.state.values.comparison_items || [];
+    const currentItems = form.state.values.comparison_items;
     const newItem = createFeatureGroupComparisonItem(
       selectedCompFeatureGroup.path,
     );
@@ -280,7 +280,7 @@ export default function ProteomeComparisonPage() {
         return;
       }
 
-      const currentItems = form.state.values.comparison_items || [];
+      const currentItems = form.state.values.comparison_items;
 
       // Validate if adding would exceed max
       const validation = validateGenomeGroupAddition(
@@ -332,7 +332,7 @@ export default function ProteomeComparisonPage() {
   // Handle removing comparison item
   const handleRemoveComparisonItem = useCallback(
     (itemId: string) => {
-      const currentItems = form.state.values.comparison_items || [];
+      const currentItems = form.state.values.comparison_items;
       const updatedItems = removeComparisonItemById(currentItems, itemId);
       form.setFieldValue("comparison_items", updatedItems);
     },

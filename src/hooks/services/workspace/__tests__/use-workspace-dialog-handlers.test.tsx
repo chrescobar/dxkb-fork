@@ -18,7 +18,7 @@ import {
 
 const { mockDispatch, mockActiveDialog } = vi.hoisted(() => ({
   mockDispatch: vi.fn(),
-  mockActiveDialog: { value: null },
+  mockActiveDialog: { value: null as Record<string, unknown> | null },
 }));
 
 vi.mock("@/contexts/workspace-dialog-context", () => ({

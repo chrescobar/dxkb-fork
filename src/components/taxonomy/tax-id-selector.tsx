@@ -8,8 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TaxonomyItem, TaxonomySelectorProps } from "@/types";
 
-/** Default: use Next.js API route so the client does not need BVBRC_WEBSITE_API_URL */
-const defaultTaxonomyApiUrl = "/api/services/taxonomy";
 
 interface TaxIDSelectorProps extends TaxonomySelectorProps {
   apiServiceUrl?: string;
@@ -56,7 +54,7 @@ export function TaxIDSelector({
   apiServiceUrl = "/api/services/taxonomy",
   queryFilter,
 }: TaxIDSelectorProps) {
-  const resolvedApiServiceUrl = apiServiceUrl ?? defaultTaxonomyApiUrl;
+  const resolvedApiServiceUrl = apiServiceUrl;
   const [showDropdown, setShowDropdown] = useState(false);
   // Initialize searchQuery from value prop to ensure SSR/client hydration match
   const [searchQuery, setSearchQuery] = useState(

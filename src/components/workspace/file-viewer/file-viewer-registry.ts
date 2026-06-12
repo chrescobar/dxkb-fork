@@ -18,7 +18,7 @@ export type ViewerCategory =
 // Workspace object type -> viewer
 // ---------------------------------------------------------------------------
 
-const typeToViewer: Record<string, ViewerCategory> = {
+const typeToViewer: Partial<Record<string, ViewerCategory>> = {
   txt: "text",
   gff: "text",
   aligned_dna_fasta: "text",
@@ -50,7 +50,7 @@ const typeToViewer: Record<string, ViewerCategory> = {
 // File extension -> viewer
 // ---------------------------------------------------------------------------
 
-const extensionToViewer: Record<string, ViewerCategory> = {
+const extensionToViewer: Partial<Record<string, ViewerCategory>> = {
   ".txt": "text",
   ".log": "text",
   ".fa": "text",

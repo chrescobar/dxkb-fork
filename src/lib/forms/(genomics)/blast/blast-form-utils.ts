@@ -38,7 +38,8 @@ export function getAvailableBlastDatabaseTypes(
   inputType: string,
   dbSource: string,
 ) {
-  const availableTypes = blastDatabaseTypeMap[inputType]?.[dbSource] || [];
+  const dbTypeMap = (blastDatabaseTypeMap as Record<string, Record<string, string[]> | undefined>)[inputType];
+  const availableTypes = dbTypeMap?.[dbSource] ?? [];
   const filtered = blastDatabaseTypes.filter((dbType) =>
     availableTypes.includes(dbType.value),
   );
@@ -53,9 +54,9 @@ export function getDefaultBlastDatabaseType(
   inputType: string,
   dbSource: string,
 ): string {
-  const availableTypes =
-    blastDatabaseTypeMap[inputType]?.[dbSource] || blastDatabaseTypes.map((t) => t.value);
-  return availableTypes[0] || "fna";
+  const dbTypeMap = (blastDatabaseTypeMap as Record<string, Record<string, string[]> | undefined>)[inputType];
+  const availableTypes = dbTypeMap?.[dbSource] ?? blastDatabaseTypes.map((t) => t.value);
+  return availableTypes[0] ?? "fna";
 }
 
 /**
@@ -145,7 +146,7 @@ function resolveInputType(
 export function resolveDbSource(
   database: BlastFormData["db_precomputed_database"] | undefined,
 ): BlastFormData["db_source"] {
-  return dbSourceMap[database || "bacteria-archaea"] || "precomputed_database";
+  return dbSourceMap[database ?? "bacteria-archaea"];
 }
 
 /**

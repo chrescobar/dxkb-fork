@@ -17,7 +17,7 @@ export function formatServiceName(app: string): string {
 
 export function getOutputName(job: JobListItem): string {
   const outputFile =
-    job.output_file ?? ((job.parameters?.output_file as string | undefined) ?? "");
+    job.output_file ?? ((job.parameters.output_file as string | undefined) ?? "");
   if (outputFile) return outputFile;
   return "\u2014";
 }

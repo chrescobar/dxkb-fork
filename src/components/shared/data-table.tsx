@@ -422,7 +422,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     } : undefined,
     manualPagination: true,
     manualSorting: true,
-    pageCount: Math.ceil(totalItems / (pagination.pageSize ?? 200)),
+    pageCount: Math.ceil(totalItems / pagination.pageSize),
     columnResizeMode: 'onEnd',
     enableColumnResizing: true,
     getCoreRowModel: getCoreRowModel(),
@@ -465,7 +465,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     const startX = event.clientX;
     const column = header.column;
     const startSize = column.getSize();
-    const colElement = event.currentTarget.closest('th') as HTMLElement;
+    const colElement = event.currentTarget.closest('th');
     if (!colElement) return;
 
     const tableEl = colElement.closest('table');
@@ -694,7 +694,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       )
     ].join('\n');
 
-    downloadFile(`${resource}${onlySelected ? '-selected' : ''}.${format}`, content);
+    downloadFile(`${resource}.${format}`, content);
     setDownloadingButton(null);
     } catch (error) {
       console.error("Download failed:", error);
@@ -1103,7 +1103,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                 const uniquePages = [...new Set(pages)].sort((a, b) => a - b);
 
                 return uniquePages.map((page, idx) => {
-                  const prev = uniquePages[idx - 1];
+                  const prev = idx > 0 ? uniquePages[idx - 1] : undefined;
                   const showDots = prev !== undefined && page - prev > 1;
                   return (
                     <span key={page}>

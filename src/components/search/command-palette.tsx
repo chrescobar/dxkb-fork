@@ -63,7 +63,7 @@ export function CommandPalette() {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       // Case-insensitive: CapsLock or Playwright's `Meta+K` send key="K".
-      if (event.key?.toLowerCase() === "k" && (event.metaKey || event.ctrlKey)) {
+      if (event.key.toLowerCase() === "k" && (event.metaKey || event.ctrlKey)) {
         event.preventDefault();
         // Reset stale input so reopening always starts clean; setInputValue
         // here runs from an event handler, not an effect body.

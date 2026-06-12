@@ -36,7 +36,7 @@ export async function signIn(page: Page, env: JourneyEnv): Promise<void> {
         (b) =>
           b instanceof HTMLButtonElement &&
           !b.disabled &&
-          /^sign in$/i.test(b.textContent?.trim() ?? ""),
+          /^sign in$/i.test(b.textContent.trim()),
       );
     },
     null,

@@ -33,7 +33,7 @@ export function LandingShellClient({
   useHotkey("Mod+B", () => { setNavCollapsed((current) => !current); });
 
   function handleViewChange(nextView: OrganismViewKey) {
-    const params = new URLSearchParams(searchParams?.toString() ?? "");
+    const params = new URLSearchParams(searchParams.toString());
     if (nextView === defaultView) {
       params.delete("view");
     } else {

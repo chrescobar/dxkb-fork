@@ -106,7 +106,7 @@ export default function GenomeAlignmentServicePage() {
   };
 
   const handleGenomeGroupSelect = async (object: WorkspaceObject) => {
-    if (!object?.path) {
+    if (!object.path) {
       toast.error("Invalid genome group selection");
       return;
     }
@@ -149,7 +149,7 @@ export default function GenomeAlignmentServicePage() {
         toast.success(
           `Added ${String(genomesToAdd.length)} genome${
             genomesToAdd.length === 1 ? "" : "s"
-          } from ${object.name ?? "genome group"}`,
+          } from ${object.name}`,
         );
 
         return [...previous, ...genomesToAdd];

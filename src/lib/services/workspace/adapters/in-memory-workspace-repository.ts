@@ -258,7 +258,7 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
         children.push({ name, type: "folder" });
         this.directories[parent] = children;
       }
-      if (!this.directories[normalized]) this.directories[normalized] = [];
+      if (!(normalized in this.directories)) this.directories[normalized] = [];
     });
   }
 
@@ -318,9 +318,10 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
           normalized.slice(0, normalized.lastIndexOf("/")) || "/",
         );
         const name = normalized.split("/").filter(Boolean).pop() ?? "";
-        const children = this.directories[parent];
-        if (children) {
-          this.directories[parent] = children.filter((c) => c.name !== name);
+        if (parent in this.directories) {
+          this.directories[parent] = this.directories[parent].filter(
+            (c) => c.name !== name,
+          );
         }
         this.directories = Object.fromEntries(
           Object.entries(this.directories).filter(([key]) => key !== normalized),
@@ -487,9 +488,15 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
       this.calls.push({ method: "diskUsage", paths, recursive });
       this.throwIfConfigured("diskUsage");
       return paths.map((path) => {
-        const entry = this.diskUsageMap[normalize(path)];
-        if (entry)
-          return [path, ...entry] as [string, number, number, number, string];
+        const key = normalize(path);
+        if (key in this.diskUsageMap)
+          return [path, ...this.diskUsageMap[key]] as [
+            string,
+            number,
+            number,
+            number,
+            string,
+          ];
         return [path, 0, 0, 0, ""];
       });
     });

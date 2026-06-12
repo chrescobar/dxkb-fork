@@ -178,7 +178,8 @@ export function transformMetaCatsParams(
   } else if (data.input_type === "groups") {
     params.alphabet = data.group_alphabet === "aa" ? "aa" : "na";
     params.groups = data.groups;
-  } else if (data.input_type === "files") {
+  } else {
+    // data.input_type === "files"
     params.alignment_file = data.alignment_file;
     params.group_file = data.group_file;
 

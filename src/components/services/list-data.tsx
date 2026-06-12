@@ -62,7 +62,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
           return;
         }
         setFields(
-          (Object.values(fieldObj))
+          (Object.values(fieldObj) as RawField[])
             .filter((f) => f.show_in_table !== false)
             .map((f) => ({
               id: String(f.field ?? ""),
@@ -87,7 +87,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
 
   const searchParams = useSearchParams();
   const searchtype = searchParams.get('searchtype') ?? '';
-  const cleanQ = q?.split('#')[0] ?? '';
+  const cleanQ = q.split('#')[0];
   const DataAPI = process.env.NEXT_PUBLIC_DATA_API;
   if (!DataAPI) {
     throw new Error('NEXT_PUBLIC_DATA_API environment variable is not configured');
@@ -152,7 +152,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const { data: metaData, isLoading: metaLoading, error: metaError } = useQuery({
     queryKey: ['genome-meta', resource, combinedQuery, searchtype],
     queryFn: async () => {
-      const baseURL = `${DataAPI ?? ""}/${resource}/?${combinedQuery}`;
+      const baseURL = `${DataAPI}/${resource}/?${combinedQuery}`;
       const res = await fetch(`${baseURL}&limit(1)`, {
         headers: { 'Accept': 'application/solr+json' }
       });
@@ -195,7 +195,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       const start = pageIndex * pageSize;
       const end = start + pageSize;
 
-      const baseURL = `${DataAPI ?? ""}/${resource}/?${combinedQuery}`;
+      const baseURL = `${DataAPI}/${resource}/?${combinedQuery}`;
       const url = `${baseURL}&sort(${sortParam})`;
 
       const res = await fetch(url, {

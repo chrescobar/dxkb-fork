@@ -74,9 +74,9 @@ export function useJobsColumns(
         cell: ({ getValue }) => (
           <span
             className="block truncate font-medium"
-            title={String(getValue())}
+            title={(getValue() as string | undefined) ?? ""}
           >
-            {formatServiceName(String(getValue() ?? ""))}
+            {formatServiceName((getValue() as string | undefined) ?? "")}
           </span>
         ),
         meta: { className: "", sortField: "app" },
@@ -104,7 +104,7 @@ export function useJobsColumns(
         header: "Submit",
         cell: ({ getValue }) => (
           <span className="block truncate text-muted-foreground">
-            {formatDate(String(getValue() ?? ""))}
+            {formatDate((getValue() as string | undefined) ?? "")}
           </span>
         ),
         meta: { className: "", sortField: "submit_time" },

@@ -13,8 +13,8 @@ import type { WorkspaceItem } from "../domain";
  */
 export function parseTupleToRawObject(list: unknown[]): Record<string, unknown> {
   const name = list[0];
-  const parent = String(list[2] ?? "");
-  const nameStr = String(name ?? "");
+  const parent = (list[2] as string | undefined) ?? "";
+  const nameStr = (name as string | undefined) ?? "";
   return {
     id: list[4],
     path: parent + nameStr,
@@ -34,25 +34,25 @@ export function parseTupleToRawObject(list: unknown[]): Record<string, unknown> 
 
 /** Convert a raw ls tuple directly to a canonical `WorkspaceItem`. */
 function parseTupleToWorkspaceItem(tuple: unknown[]): WorkspaceItem {
-  const name = String(tuple[0] ?? "");
-  const parent = String(tuple[2] ?? "");
-  const createdAt = tuple[3] ? String(tuple[3]) : undefined;
+  const name = (tuple[0] as string | undefined) ?? "";
+  const parent = (tuple[2] as string | undefined) ?? "";
+  const createdAt = tuple[3] ? (tuple[3] as string) : undefined;
   return {
-    id: String(tuple[4] ?? ""),
+    id: (tuple[4] as string | undefined) ?? "",
     name,
     path: parent + name,
-    type: String(tuple[1] ?? ""),
+    type: (tuple[1] as string | undefined) ?? "",
     size: Number(tuple[6]) || 0,
-    ownerId: tuple[5] ? String(tuple[5]) : undefined,
+    ownerId: tuple[5] ? (tuple[5] as string) : undefined,
     createdAt,
     timestamp: createdAt ? Date.parse(createdAt) : undefined,
     permissions: {
-      user: tuple[9] ? String(tuple[9]) : undefined,
-      global: tuple[10] ? String(tuple[10]) : undefined,
+      user: tuple[9] ? (tuple[9] as string) : undefined,
+      global: tuple[10] ? (tuple[10] as string) : undefined,
     },
     userMeta: (tuple[7] as Record<string, unknown>) ?? undefined,
     autoMeta: (tuple[8] as Record<string, unknown>) ?? undefined,
-    linkReference: tuple[11] ? String(tuple[11]) : undefined,
+    linkReference: tuple[11] ? (tuple[11] as string) : undefined,
     raw: parseTupleToRawObject(tuple),
   };
 }

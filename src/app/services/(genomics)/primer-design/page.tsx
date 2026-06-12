@@ -300,7 +300,7 @@ export default function PrimerDesignServicePage() {
 
         for (const field of primerScalarFields) {
           if (d[field] !== undefined) {
-            form.setFieldValue(field, String(d[field]));
+            form.setFieldValue(field, String(d[field] as string | number | boolean));
           }
         }
 

@@ -182,7 +182,7 @@ export function JobsBrowser() {
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
         const outputName =
-          job.output_file ?? String(job.parameters?.output_file ?? "");
+          job.output_file ?? ((job.parameters?.output_file as string | undefined) ?? "");
         const matches =
           job.id.toLowerCase().includes(q) ||
           job.app.toLowerCase().includes(q) ||
@@ -278,9 +278,9 @@ export function JobsBrowser() {
   const handleDoubleClick = useCallback(
     (job: JobListItem) => {
       const outputPath =
-        job.output_path ?? String(job.parameters?.output_path ?? "");
+        job.output_path ?? ((job.parameters?.output_path as string | undefined) ?? "");
       const outputFile =
-        job.output_file ?? String(job.parameters?.output_file ?? "");
+        job.output_file ?? ((job.parameters?.output_file as string | undefined) ?? "");
 
       if (outputPath && outputFile) {
         const fullPath = `${outputPath}/${outputFile}`;

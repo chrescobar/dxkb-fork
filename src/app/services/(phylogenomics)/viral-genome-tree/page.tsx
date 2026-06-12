@@ -118,13 +118,13 @@ export default function ViralGenomeTreePage() {
         if (rerunData.trim_threshold != null) {
           form.setFieldValue(
             "trim_threshold",
-            String(rerunData.trim_threshold),
+            String(rerunData.trim_threshold as string | number),
           );
         }
         if (rerunData.gap_threshold != null) {
           form.setFieldValue(
             "gap_threshold",
-            String(rerunData.gap_threshold),
+            String(rerunData.gap_threshold as string | number),
           );
         }
 

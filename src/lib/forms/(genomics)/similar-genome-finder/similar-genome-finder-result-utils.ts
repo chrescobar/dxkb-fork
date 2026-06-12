@@ -96,10 +96,10 @@ export function parseMinhashResultPayload(
     const pvalueVal = getFirstDefined(row, "pvalue", "p_value") ?? arrRow[2];
     const countsVal = getFirstDefined(row, "counts", "kmer_count") ?? arrRow[3];
     return {
-      genome_id: String(genomeId),
-      genome_name: String(getFirstDefined(row, "genome_name", "genomeName", "genome name") ?? ""),
+      genome_id: String(genomeId as string | number | boolean),
+      genome_name: String((getFirstDefined(row, "genome_name", "genomeName", "genome name") as string | number | undefined) ?? ""),
       organism_name: String(
-        getFirstDefined(row, "organism_name", "organismName", "organism name", "organism") ?? "",
+        (getFirstDefined(row, "organism_name", "organismName", "organism name", "organism") as string | number | undefined) ?? "",
       ),
       distance: parseNum(distanceVal),
       pvalue: parseNum(pvalueVal),
@@ -125,7 +125,7 @@ export function mergeGenomeResults(
   ): string {
     for (const k of keys) {
       const v = getFirstDefined(row, k);
-      if (v != null && String(v).trim() !== "") return String(v);
+      if (v != null && String(v as string | number).trim() !== "") return String(v as string | number);
     }
     return "";
   }

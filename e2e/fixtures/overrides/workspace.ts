@@ -309,8 +309,8 @@ export function buildWorkspaceOverrides(
         | { objects?: unknown[][] }
         | undefined;
       const firstObject = params?.objects?.[0];
-      const fullPath = Array.isArray(firstObject) ? String(firstObject[0]) : "";
-      const type = Array.isArray(firstObject) ? String(firstObject[1] ?? "unspecified") : "unspecified";
+      const fullPath = Array.isArray(firstObject) ? String(firstObject[0] as string | number | undefined ?? "") : "";
+      const type = Array.isArray(firstObject) ? ((firstObject[1] as string | undefined) ?? "unspecified") : "unspecified";
       const lastSlash = fullPath.lastIndexOf("/");
       const name = lastSlash >= 0 ? fullPath.slice(lastSlash + 1) : fullPath || "uploaded";
       const parentPath = lastSlash > 0 ? fullPath.slice(0, lastSlash) : e2eHomePath;

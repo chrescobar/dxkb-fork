@@ -118,7 +118,7 @@ async function fetchGenomeDetails(
       ? (Object.fromEntries(
           Object.entries(r as Record<string, unknown>).map(([k, v]) => [
             k,
-            v !== null && v !== undefined ? String(v) : "",
+            v !== null && v !== undefined ? String(v as string | number | boolean) : "",
           ]),
         ) as Record<string, string>)
       : ({}),
@@ -154,7 +154,7 @@ function getMinhashRowsAndIds(result: unknown): {
       const ids = Array.isArray(idList)
         ? (idList)
             .map((x) =>
-              x !== null && x !== undefined ? String(x).trim() : "",
+              x !== null && x !== undefined ? String(x as string | number | boolean).trim() : "",
             )
             .filter(Boolean)
         : [];

@@ -309,7 +309,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
           const cleaned = s.replace(/\r\n|\n|\r/g, ' ');
           return `"${cleaned.replace(/"/g, '""')}"`;
         }
-        return String(val);
+        return String(val as string | number | boolean);
       };
 
       const contentRows = rowsArray.map((row: unknown) => {
@@ -320,7 +320,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
             if (format === 'csv') return escapeValue(val);
             if (val === undefined || val === null) return '';
             if (typeof val === 'object') return JSON.stringify(val).replace(/\r\n|\n|\r/g, ' ');
-            return String(val).replace(/\r\n|\n|\r/g, ' ');
+            return String(val as string | number | boolean).replace(/\r\n|\n|\r/g, ' ');
           })
           .join(separator);
       });

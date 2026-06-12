@@ -266,8 +266,8 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                   onGenomeSelect?.(null); // deselecting, so clear
                   onActiveRowChange?.(null);
                 } else if (idVal != null) {
-                  onGenomeSelect?.(String(idVal));
-                  onActiveRowChange?.(String(idVal));
+                  onGenomeSelect?.(String(idVal as string | number));
+                  onActiveRowChange?.(String(idVal as string | number));
                 }
               }}
               className="m-0 cursor-pointer p-0"
@@ -659,9 +659,10 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
             ...sortedRows.map(row =>
               visibleCols.map(col => {
                 const val = row[col.id];
-                return typeof val === 'string'
-                  ? `"${val.replace(/"/g, '""')}"`
-                  : val ?? '';
+                if (typeof val === 'string') return `"${val.replace(/"/g, '""')}"`;
+                if (val == null) return '';
+                if (typeof val === 'object') return `"${JSON.stringify(val).replace(/"/g, '""')}"`;
+                return String(val as number | boolean);
               }).join(',')
             )
           ].join('\n');
@@ -991,8 +992,8 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                         const idVal = row.original[idField];
                         const genomeId = idVal ?? row.original['genome_id'] ?? null;
                         if (genomeId != null) {
-                          onGenomeSelect?.(String(genomeId));
-                          onActiveRowChange?.(String(genomeId));
+                          onGenomeSelect?.(String(genomeId as string | number));
+                          onActiveRowChange?.(String(genomeId as string | number));
                         }
                       }}
                       style={{

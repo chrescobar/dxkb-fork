@@ -31,19 +31,19 @@ export function parseWorkspaceGetSingle(
   const list = objectsAtPath[0] as unknown[];
   if (!Array.isArray(list)) return null;
 
-  const parent = String(list[2] ?? "");
-  const name = String(list[0] ?? "");
+  const parent = (list[2] as string | undefined) ?? "";
+  const name = (list[0] as string | undefined) ?? "";
   const fullPath = (parent + name).replace(/\/+/g, "/");
   const userMeta = (list[7] as Record<string, unknown>) ?? {};
   const sysMeta = (list[8] as Record<string, unknown>) ?? {};
 
   const resolved: ResolvedPathObject = {
     name,
-    type: String(list[1] ?? ""),
+    type: (list[1] as string | undefined) ?? "",
     path: fullPath,
-    creation_time: String(list[3] ?? ""),
-    id: String(list[4] ?? ""),
-    owner_id: String(list[5] ?? ""),
+    creation_time: (list[3] as string | undefined) ?? "",
+    id: (list[4] as string | undefined) ?? "",
+    owner_id: (list[5] as string | undefined) ?? "",
     size: Number(list[6]) || 0,
     userMeta,
     sysMeta,

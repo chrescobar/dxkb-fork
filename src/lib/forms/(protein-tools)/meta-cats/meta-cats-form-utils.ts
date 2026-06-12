@@ -273,7 +273,7 @@ export function buildMetaCatsAutoGroupsFromGenomes(args: {
 
   genomes.forEach((genome) => {
     const metadataValue = genome[metadataGroup];
-    const metadataStr = metadataValue !== undefined ? String(metadataValue) : "";
+    const metadataStr = metadataValue !== undefined ? String(metadataValue as string | number | boolean) : "";
 
     let groupValue = metadataStr;
     if (metadataGroup === "collection_year" && parsedRanges.length > 0) {

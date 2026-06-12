@@ -247,7 +247,7 @@ export function InfoPanel(props: InfoPanelProps) {
 
   const grouped = displayColumns.reduce<Record<string, DisplayColumn[]>>(
     (acc: Record<string, DisplayColumn[]>, item) => {
-      const g = String(item.group ?? "");
+      const g = (item.group as string | undefined) ?? "";
       if (!acc[g]) acc[g] = [];
       acc[g].push(item);
       return acc;
@@ -258,7 +258,7 @@ export function InfoPanel(props: InfoPanelProps) {
   function resolveLink(template: string, row: Record<string, unknown>, fallbackField: string) {
     return template.replace(/{([^}]+)}/g, (_, key: string) => {
       const value = row[key] ?? row[fallbackField] ?? "";
-      return encodeURIComponent(String(value));
+      return encodeURIComponent(String(value as string | number | boolean));
     });
   }
 
@@ -273,7 +273,7 @@ export function InfoPanel(props: InfoPanelProps) {
 
   return (
     <DetailPanel>
-      <DetailPanel.Header title={selectedIds.length === 1 ? String(selectedRow?.[panelTitleField] ?? "") : ""} />
+      <DetailPanel.Header title={selectedIds.length === 1 ? ((selectedRow?.[panelTitleField] as string | undefined) ?? "") : ""} />
       {selectedIds.length === 1 ? (
         <>
           {order.map((group) => {
@@ -287,7 +287,7 @@ export function InfoPanel(props: InfoPanelProps) {
               const rawValue = selectedRow?.[fieldId];
               if (item.link) {
                 const resolved = toAbsoluteUrl(
-                  resolveLink(String(item.link), selectedRow ?? {}, fieldId)                );
+                  resolveLink(item.link as string, selectedRow ?? {}, fieldId)                );
 
                 if (item.linkType === "button") {
                   return {
@@ -298,7 +298,7 @@ export function InfoPanel(props: InfoPanelProps) {
                         onClick={() => window.open(resolved, "_blank", "noopener,noreferrer")}
                         className="rounded border-black bg-primary px-2 py-1 text-sm text-secondary"
                       >
-                        {String(item.linkText ?? "View")}
+                        {(item.linkText as string | undefined) ?? "View"}
                       </Button>
                     ),
                   };

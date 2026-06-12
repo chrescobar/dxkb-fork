@@ -164,7 +164,7 @@ export default function BlastServicePage() {
         if (rerunData.db_precomputed_database) {
           // The backend may store precomputed database IDs with underscores (e.g. "bacteria_archaea")
           // but the schema expects hyphens (e.g. "bacteria-archaea").
-          const rawDb = String(rerunData.db_precomputed_database).replace(
+          const rawDb = String(rerunData.db_precomputed_database as string | number).replace(
             /_/g,
             "-",
           );
@@ -196,9 +196,8 @@ export default function BlastServicePage() {
   const handleInputSourceChange = (
     newSource: BlastFormData["input_source"],
   ) => {
-    const preservedFastaData = String(
-      (form.state.values as Record<string, unknown>).input_fasta_data ?? "",
-    );
+    const preservedFastaData =
+      ((form.state.values as Record<string, unknown>).input_fasta_data as string | undefined) ?? "";
 
     form.setFieldValue("input_fasta_data", "");
     form.setFieldValue("input_fasta_file", "");

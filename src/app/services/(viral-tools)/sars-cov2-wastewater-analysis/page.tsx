@@ -87,8 +87,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
   const form = useForm({
     defaultValues:
       defaultSarsCov2WastewaterAnalysisFormValues,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: sarsCov2WastewaterAnalysisFormSchema as any },
+    validators: { onChange: sarsCov2WastewaterAnalysisFormSchema },
     onSubmit: async ({ value }) => {
       await runtime.submitFormData(value);
     },

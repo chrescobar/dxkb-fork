@@ -44,6 +44,7 @@ import {
   strategyOptions,
   moduleOptions,
   type ViralAssemblyLibraryItem,
+  type ViralAssemblyFormData,
 } from "@/lib/forms/(viral-tools)/viral-assembly/viral-assembly-form-schema";
 import {
   getPairedLibraryBuildFn,
@@ -64,8 +65,7 @@ const tutorial =
 const ViralAssemblyPage = function ViralAssemblyPage() {
   const form = useForm({
     defaultValues: defaultViralAssemblyFormValues,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: viralAssemblyFormSchema as any },
+    validators: { onChange: viralAssemblyFormSchema  },
     onSubmit: async ({ value }) => {
       await runtime.submitFormData(value);
     },
@@ -250,7 +250,7 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
                     <RadioGroup
                       value={field.state.value}
                       onValueChange={(value) => {
-                        if (value != null) field.handleChange(value);
+                        if (value != null) field.handleChange(value as ViralAssemblyFormData["input_type"]);
                       }}
                       className="service-radio-group-horizontal"
                     >

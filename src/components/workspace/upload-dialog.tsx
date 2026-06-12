@@ -124,9 +124,9 @@ export function UploadDialog({
           body: formData,
         });
         if (!res.ok) {
-          const err = await res.json().catch(() => ({ error: res.statusText }));
+          const err = await (res.json() as Promise<{ error?: string }>).catch(() => ({ error: res.statusText }));
           toast.error(`Upload failed: ${file.name}`, {
-            description: (err as { error?: string }).error ?? res.statusText,
+            description: err.error ?? res.statusText,
           });
           hasError = true;
           break;

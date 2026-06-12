@@ -108,8 +108,7 @@ export default function FastqUtilitiesPage() {
 
   const form = useForm({
     defaultValues: defaultFastqUtilitiesFormValues,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: fastqUtilitiesFormSchema as any },
+    validators: { onChange: fastqUtilitiesFormSchema },
     onSubmit: async ({ value }) => {
       await runtime.submitFormData(value);
     },

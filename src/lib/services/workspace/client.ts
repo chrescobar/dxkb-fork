@@ -110,7 +110,7 @@ export class WorkspaceApiClient {
       let targetPath: string | null = null;
       let res: unknown[] = [];
 
-      const lsMap = lsResult[0] as Record<string, unknown[]>;
+      const lsMap = lsResult[0] as Record<string, unknown[] | undefined>;
       if (method === "Workspace.ls" && (params[0] as { paths?: string[] }).paths) {
         // Find the path that was requested in the parameters
         const requestedPath = (params[0] as { paths: string[] }).paths[0];

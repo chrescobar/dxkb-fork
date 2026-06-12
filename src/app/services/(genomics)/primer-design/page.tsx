@@ -74,8 +74,7 @@ export default function PrimerDesignServicePage() {
 
   const form = useForm({
     defaultValues: defaultPrimerDesignFormValues,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: primerDesignFormSchema as any },
+    validators: { onChange: primerDesignFormSchema },
     onSubmit: async ({ value }) => {
       const data = value;
 

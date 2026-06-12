@@ -172,7 +172,7 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
     try {
       return Promise.resolve(fn());
     } catch (err) {
-      return Promise.reject(err);
+      return Promise.reject(err instanceof Error ? err : new Error(String(err)));
     }
   }
 

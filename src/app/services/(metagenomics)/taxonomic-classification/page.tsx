@@ -615,7 +615,7 @@ export default function TaxonomicClassificationPage() {
                             </SelectTrigger>
                             <SelectContent>
                               <SelectGroup>
-                                {analysisTypeOptions.map((option) => (
+                                {analysisTypeOptions.map((option: { value: string; label: string }) => (
                                   <SelectItem
                                     key={option.value}
                                     value={option.value}
@@ -663,7 +663,7 @@ export default function TaxonomicClassificationPage() {
                             </SelectTrigger>
                             <SelectContent>
                               <SelectGroup>
-                                {databaseOptions.map((option) => (
+                                {databaseOptions.map((option: { value: string; label: string }) => (
                                   <SelectItem
                                     key={option.value}
                                     value={option.value}

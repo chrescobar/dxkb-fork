@@ -42,15 +42,15 @@ type UseRerunFormOptions<
  * a fresh 8-char UUID per rerun, so they don't collide and they evaporate on
  * tab close.
  */
-function useRerunData<T extends Record<string, unknown>>(): T | null {
-  const [rerunData] = useState<T | null>(() => {
+function useRerunData(): Record<string, unknown> | null {
+  const [rerunData] = useState<Record<string, unknown> | null>(() => {
     if (typeof window === "undefined") return null;
     const key = new URLSearchParams(window.location.search).get("rerun_key");
     if (!key) return null;
     const stored = sessionStorage.getItem(key);
     if (!stored) return null;
     try {
-      return JSON.parse(stored) as T;
+      return JSON.parse(stored) as Record<string, unknown>;
     } catch {
       console.error(
         "[useRerunForm] Failed to parse rerun data from sessionStorage",
@@ -99,7 +99,7 @@ export function useRerunForm<
     defaultOutputPath,
   } = options;
 
-  const rerunData = useRerunData<T>();
+  const rerunData = useRerunData() as T | null;
   const rerunApplied = useRef(false);
   const defaultPathApplied = useRef(false);
 
@@ -108,7 +108,7 @@ export function useRerunForm<
     queryFn: async () => {
       const res = await apiFetch("/api/auth/profile");
       if (!res.ok) throw new Error("Failed to load profile");
-      return res.json();
+      return res.json() as Promise<UserProfile>;
     },
     staleTime: 5 * 60 * 1000,
     enabled: defaultOutputPath !== null && !rerunData,

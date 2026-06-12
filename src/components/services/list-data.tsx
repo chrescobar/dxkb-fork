@@ -55,18 +55,18 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   useEffect(() => {
     void (async () => {
       try {
-        const mod = await import(`@/constants/datafields/${resource}`);
+        const mod = await import(`@/constants/datafields/${resource}`) as Record<string, Record<string, RawField> | undefined>;
         const fieldObj = mod[`${resource}Fields`];
         if (!fieldObj) {
           console.error(`No fields definition found for resource: ${resource}`);
           return;
         }
         setFields(
-          (Object.values(fieldObj) as RawField[])
+          Object.values(fieldObj)
             .filter((f) => f.show_in_table !== false)
             .map((f) => ({
-              id: String(f.field ?? ""),
-              label: String(f.label ?? ""),
+              id: f.field ?? "",
+              label: f.label ?? "",
               visible: !f.hidden,
               facet: f.facet ?? false,
               facet_hidden: f.facet_hidden ?? true,
@@ -148,8 +148,10 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     return `and(${cleanQ},${filter})`;
   }, [cleanQ, filter]);
 
+  interface MetaResponse { response?: { numFound?: number } }
+
   // Fetch metadata (numFound)
-  const { data: metaData, isLoading: metaLoading, error: metaError } = useQuery({
+  const { data: metaData, isLoading: metaLoading, error: metaError } = useQuery<MetaResponse>({
     queryKey: ['genome-meta', resource, combinedQuery, searchtype],
     queryFn: async () => {
       const baseURL = `${DataAPI}/${resource}/?${combinedQuery}`;
@@ -157,7 +159,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
         headers: { 'Accept': 'application/solr+json' }
       });
       if (!res.ok) throw new Error('Failed to fetch metadata');
-      return res.json();
+      return res.json() as Promise<MetaResponse>;
     },
     staleTime: 0,
     refetchOnMount: true,
@@ -168,13 +170,13 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
 
   // Notify parent when totalItems changes
   useEffect(() => {
-    if (onTotalItemsChange && totalItems !== undefined) {
+    if (onTotalItemsChange) {
       onTotalItemsChange(totalItems);
     }
   }, [totalItems, onTotalItemsChange]);
 
   // Fetch current page of data
-  const { data: pageData, isLoading: dataLoading, error: dataError, isFetching: dataFetching } = useQuery({
+  const { data: pageData, isLoading: dataLoading, error: dataError, isFetching: dataFetching } = useQuery<Record<string, unknown>[]>({
     queryKey: [
       'genome-full',
       resource,
@@ -207,8 +209,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
         }
       });
       if (!res.ok) throw new Error('Failed to fetch genome data');
-      const data = await res.json();
-      return data;
+      return res.json() as Promise<Record<string, unknown>[]>;
     },
     enabled: totalItems > 0,
     placeholderData: (previousData) => previousData,
@@ -284,9 +285,10 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
         },
       });
       if (!res.ok) throw new Error(`Failed to fetch all data: ${String(res.status)} ${res.statusText}`);
-      const allData = await res.json();
+      const allData = await (res.json() as Promise<unknown>);
 
-      const rowsArray: unknown[] = Array.isArray(allData) ? allData : (allData.items ?? allData.response ?? allData.rows ?? []);
+      const allDataObj = allData as Record<string, unknown>;
+      const rowsArray: unknown[] = Array.isArray(allData) ? allData : ((allDataObj.items ?? allDataObj.response ?? allDataObj.rows ?? []) as unknown[]);
       const colsToExport = (visibleColumns && visibleColumns.length > 0)
         ? visibleColumns
         : fields.map((c) => c.id);
@@ -309,7 +311,9 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
           const cleaned = s.replace(/\r\n|\n|\r/g, ' ');
           return `"${cleaned.replace(/"/g, '""')}"`;
         }
-        return String(val as string | number | boolean);
+        if (typeof val === 'symbol') return val.description ?? val.toString();
+        if (typeof val === 'number' || typeof val === 'bigint' || typeof val === 'boolean') return String(val);
+        return '';
       };
 
       const contentRows = rowsArray.map((row: unknown) => {
@@ -320,7 +324,8 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
             if (format === 'csv') return escapeValue(val);
             if (val === undefined || val === null) return '';
             if (typeof val === 'object') return JSON.stringify(val).replace(/\r\n|\n|\r/g, ' ');
-            return String(val as string | number | boolean).replace(/\r\n|\n|\r/g, ' ');
+            if (typeof val === 'number' || typeof val === 'boolean' || typeof val === 'bigint' || typeof val === 'string') return String(val).replace(/\r\n|\n|\r/g, ' ');
+            return '';
           })
           .join(separator);
       });

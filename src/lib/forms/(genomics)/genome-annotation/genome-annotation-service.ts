@@ -19,7 +19,10 @@ export const genomeAnnotationService =
         const label =
           typeof rerunData.my_label === "string" ? rerunData.my_label : "";
         if (rerunData.taxonomy_id) {
-          applyTaxonomyIdWithLookup(String(rerunData.taxonomy_id as string | number), form);
+          applyTaxonomyIdWithLookup(
+            typeof rerunData.taxonomy_id === 'string' ? rerunData.taxonomy_id : (typeof rerunData.taxonomy_id === 'number' ? String(rerunData.taxonomy_id) : ""),
+            form,
+          );
           if (label) {
             form.setFieldValue("my_label", label);
           }

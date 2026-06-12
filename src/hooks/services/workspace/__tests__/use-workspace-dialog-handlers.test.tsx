@@ -556,7 +556,7 @@ describe("useWorkspaceDialogHandlers", () => {
     expect(toast.error).toHaveBeenCalledWith(
       "Sorry, you can't delete that…",
       expect.objectContaining({
-        description: expect.stringContaining("Genome Groups"),
+        description: expect.stringContaining("Genome Groups") as string,
       }),
     );
     expect(mockDispatch).toHaveBeenCalledWith({ type: "CLOSE" });

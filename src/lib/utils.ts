@@ -52,8 +52,8 @@ export function workspaceUsername(user: { username?: string; realm?: string } | 
 /**
  * Returns the first non-null/undefined value for the given keys on the object.
  */
-export function getFirstDefined<T extends Record<string, unknown>>(
-  obj: T,
+export function getFirstDefined(
+  obj: Record<string, unknown>,
   ...keys: string[]
 ): unknown {
   for (const k of keys) {

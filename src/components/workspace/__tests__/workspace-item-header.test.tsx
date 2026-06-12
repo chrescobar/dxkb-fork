@@ -8,7 +8,7 @@ vi.mock("@/lib/utils", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/lib/utils")>();
   return {
     ...actual,
-    triggerDownload: (...args: unknown[]) => mockTriggerDownload(...args),
+    triggerDownload: (...args: unknown[]): void => { mockTriggerDownload(...args); },
   };
 });
 

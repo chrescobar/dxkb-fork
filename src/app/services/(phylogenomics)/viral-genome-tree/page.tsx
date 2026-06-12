@@ -88,8 +88,7 @@ export default function ViralGenomeTreePage() {
   const form = useForm({
     defaultValues:
       ViralGenomeTree.defaultViralGenomeTreeFormValues,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: ViralGenomeTree.viralGenomeTreeFormSchema as any },
+    validators: { onChange: ViralGenomeTree.viralGenomeTreeFormSchema },
     onSubmit: async ({ value }) => {
       await runtime.submitFormData(
         value,
@@ -387,7 +386,7 @@ export default function ViralGenomeTreePage() {
   const selectedItemsForTable = useMemo(
     () =>
       sequences.map((seq, index) => ({
-        id: `${String(index)}`,
+        id: String(index),
         name: ViralGenomeTreeUtils.getDisplayName(
           seq.filename.split("/").pop() || seq.filename,
         ),

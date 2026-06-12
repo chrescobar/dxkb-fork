@@ -75,7 +75,7 @@ export function WorkspaceMiniBrowser({
   const [currentPath, setCurrentPath] = useState(initialPath);
   const [prevInitialPath, setPrevInitialPath] = useState(initialPath);
   const tableContainerRef = useRef<HTMLDivElement>(null);
-  const [focusedRow, setFocusedRow] = useState<"parent" | string | null>(null);
+  const [focusedRow, setFocusedRow] = useState<string | null>(null);
 
   if (prevInitialPath !== initialPath) {
     setPrevInitialPath(initialPath);
@@ -194,8 +194,8 @@ export function WorkspaceMiniBrowser({
     [displayItems],
   );
 
-  const navigationTargets = useMemo<("parent" | string)[]>(() => {
-    const targets: ("parent" | string)[] = [];
+  const navigationTargets = useMemo<string[]>(() => {
+    const targets: string[] = [];
     if (showParentRow) {
       targets.push("parent");
     }

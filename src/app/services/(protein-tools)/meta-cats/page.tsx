@@ -99,8 +99,7 @@ export default function MetaCATSPage() {
 
   const form = useForm({
     defaultValues: defaultMetaCatsFormValues,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: metaCatsFormSchema as any },
+    validators: { onChange: metaCatsFormSchema },
     onSubmit: async ({ value }) => {
       await runtime.submitFormData(value);
     },
@@ -149,20 +148,18 @@ export default function MetaCATSPage() {
           setYearRangesInput(rerunData.year_ranges);
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const autoGroupsRaw = normalizeToArray<any>(rerunData.auto_groups);
+        const autoGroupsRaw = normalizeToArray<Record<string, unknown>>(rerunData.auto_groups);
         if (autoGroupsRaw.length > 0) {
           const mappedAutoGroups: MetaCatsFormData["auto_groups"] =
             autoGroupsRaw.map(
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (item: any) => ({
+              (item) => ({
                 id: crypto.randomUUID(),
-                patric_id: item.patric_id ?? item.id ?? "",
-                metadata: item.metadata ?? "",
-                group: item.group ?? item.grp ?? "",
-                genome_id: item.genome_id ?? item.g_id ?? "",
-                strain: item.strain ?? "",
-                genbank_accessions: item.genbank_accessions ?? "",
+                patric_id: (item.patric_id ?? item.id ?? "") as string,
+                metadata: (item.metadata ?? "") as string,
+                group: (item.group ?? item.grp ?? "") as string,
+                genome_id: (item.genome_id ?? item.g_id ?? "") as string,
+                strain: (item.strain ?? "") as string,
+                genbank_accessions: (item.genbank_accessions ?? "") as string,
               }),
             );
           form.setFieldValue("auto_groups", mappedAutoGroups);

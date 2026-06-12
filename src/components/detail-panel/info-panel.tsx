@@ -258,7 +258,8 @@ export function InfoPanel(props: InfoPanelProps) {
   function resolveLink(template: string, row: Record<string, unknown>, fallbackField: string) {
     return template.replace(/{([^}]+)}/g, (_, key: string) => {
       const value = row[key] ?? row[fallbackField] ?? "";
-      return encodeURIComponent(String(value as string | number | boolean));
+      const primitive = typeof value === "string" || typeof value === "number" || typeof value === "boolean" ? value : "";
+      return encodeURIComponent(String(primitive));
     });
   }
 

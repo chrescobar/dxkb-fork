@@ -426,7 +426,7 @@ export default function SimilarGenomeFinderServicePage() {
                                 <RadioGroup
                                   value={field.state.value}
                                   onValueChange={(value) =>
-                                    { field.handleChange(value); }
+                                    { field.handleChange(value as "reference"); }
                                   }
                                   className="grid w-full gap-2"
                                 >

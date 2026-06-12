@@ -89,7 +89,7 @@ export function parseLsResultLoose(rawResult: unknown): WorkspaceItem[] {
   if (!Array.isArray(rawResult) || rawResult.length === 0) return [];
   const pathsMap: unknown = rawResult[0];
   if (!pathsMap || typeof pathsMap !== "object") return [];
-  const keys = Object.keys(pathsMap as Record<string, unknown>);
+  const keys = Object.keys(pathsMap);
   const first = keys[0];
   if (!first) return [];
   const entries = (pathsMap as Record<string, unknown>)[first];

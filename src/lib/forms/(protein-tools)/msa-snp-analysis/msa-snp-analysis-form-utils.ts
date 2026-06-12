@@ -8,7 +8,7 @@ export const msaSNPAnalysisAligners = [
 ];
 
 // Utility functions
-export function getFastaFileTypeLabel(type: FastaFileItem["type"] | string): string {
+export function getFastaFileTypeLabel(type: string): string {
   if (type === "feature_protein_fasta") return "Protein FASTA";
   if (type === "feature_dna_fasta") return "DNA FASTA";
   if (type === "aligned_protein_fasta") return "Aligned Protein FASTA";

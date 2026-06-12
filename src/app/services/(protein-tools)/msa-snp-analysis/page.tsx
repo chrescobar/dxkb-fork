@@ -114,8 +114,7 @@ export default function MSAandSNPAnalysisPage() {
   const form = useForm({
     defaultValues:
       MsaSnpAnalysis.defaultMsaSnpAnalysisFormValues,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: MsaSnpAnalysis.msaSnpAnalysisFormSchema as any },
+    validators: { onChange: MsaSnpAnalysis.msaSnpAnalysisFormSchema },
     onSubmit: async ({ value }) => {
       await runtime.submitFormData(
         value,

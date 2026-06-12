@@ -61,7 +61,7 @@ async function fetchMinhashResults(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-  const result = await res.json().catch(() => ({}));
+  const result = await (res.json() as Promise<unknown>).catch(() => ({}));
   const errorMessage = extractMinhashError(result);
 
   if (!res.ok) {
@@ -100,7 +100,7 @@ async function fetchGenomeDetails(
       body: JSON.stringify({ genome_ids: genomeIds }),
     },
   );
-  const genomeData = await genomeRes.json().catch(() => ({}));
+  const genomeData = await (genomeRes.json() as Promise<unknown>).catch(() => ({}));
   if (!genomeRes.ok) {
     return {
       ok: false,

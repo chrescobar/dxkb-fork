@@ -163,7 +163,7 @@ export default function BlastServicePage() {
         if (rerunData.db_precomputed_database) {
           // The backend may store precomputed database IDs with underscores (e.g. "bacteria_archaea")
           // but the schema expects hyphens (e.g. "bacteria-archaea").
-          const rawDb = String(rerunData.db_precomputed_database as string | number).replace(
+          const rawDb = (rerunData.db_precomputed_database as string).replace(
             /_/g,
             "-",
           );
@@ -498,7 +498,7 @@ export default function BlastServicePage() {
                       />
                       <Select
                         items={availableDatabaseTypes}
-                        key={`${String(currentBlastProgram)}-${dbPrecomputedDatabase}-${String(availableDatabaseTypes.length)}`}
+                        key={`${currentBlastProgram}-${dbPrecomputedDatabase}-${String(availableDatabaseTypes.length)}`}
                         value={field.state.value}
                         onValueChange={(value) => {
                           if (value != null)

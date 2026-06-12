@@ -84,8 +84,7 @@ export default function ProteomeComparisonPage() {
   const form = useForm({
     defaultValues:
       defaultProteomeComparisonFormValues,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: proteomeComparisonFormSchema as any },
+    validators: { onChange: proteomeComparisonFormSchema },
     onSubmit: async ({ value }) => {
       await runtime.submitFormData(value);
     },

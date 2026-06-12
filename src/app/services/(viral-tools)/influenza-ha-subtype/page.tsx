@@ -30,6 +30,7 @@ import { HaReferenceTypes } from "@/types/services";
 import {
   influenzaHaSubtypeFormSchema,
   defaultInfluenzaHaSubtypeFormValues,
+  type InfluenzaHaSubtypeFormData,
 } from "@/lib/forms/(viral-tools)/influenza-ha-subtype/influenza-ha-subtype-form-schema";
 import { influenzaHaSubtypeService } from "@/lib/forms/(viral-tools)/influenza-ha-subtype/influenza-ha-subtype-service";
 
@@ -42,8 +43,7 @@ export default function HASubtypeNumberingPage() {
   const form = useForm({
     defaultValues:
       defaultInfluenzaHaSubtypeFormValues,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: influenzaHaSubtypeFormSchema as any },
+    validators: { onChange: influenzaHaSubtypeFormSchema  },
     onSubmit: async ({ value }) => {
       await runtime.submitFormData(value);
     },
@@ -157,7 +157,7 @@ export default function HASubtypeNumberingPage() {
                     <RadioGroup
                       value={field.state.value}
                       onValueChange={(value) => {
-                        if (value != null) field.handleChange(value);
+                        if (value != null) field.handleChange(value as InfluenzaHaSubtypeFormData["input_source"]);
                       }}
                       className="service-radio-group-horizontal"
                     >

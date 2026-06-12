@@ -105,8 +105,7 @@ export default function GeneProteinTreePage() {
 
   const form = useForm({
     defaultValues: defaultGeneProteinTreeFormValues,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: geneProteinTreeFormSchema as any },
+    validators: { onChange: geneProteinTreeFormSchema },
     onSubmit: async ({ value }) => {
       await runtime.submitFormData(value);
     },
@@ -344,7 +343,7 @@ export default function GeneProteinTreePage() {
   const selectedItemsForTable = useMemo(
     () =>
       sequences.map((seq, index) => ({
-        id: `${String(index)}`,
+        id: String(index),
         name: getDisplayName(seq.filename.split("/").pop() || seq.filename),
         type: getSequenceTypeLabel(seq.type, alphabet),
         description: seq.filename,
@@ -654,7 +653,7 @@ export default function GeneProteinTreePage() {
                         Model
                       </RequiredFormLabel>
                       <Select
-                        items={substitutionModelOptions.map((m) => ({
+                        items={substitutionModelOptions.map((m: { value: string; label: string }) => ({
                           value: m.value,
                           label: m.label,
                         }))}
@@ -671,7 +670,7 @@ export default function GeneProteinTreePage() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            {substitutionModelOptions.map((model) => (
+                            {substitutionModelOptions.map((model: { value: string; label: string }) => (
                               <SelectItem key={model.value} value={model.value}>
                                 {model.label}
                               </SelectItem>

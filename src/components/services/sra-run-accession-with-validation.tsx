@@ -228,8 +228,8 @@ const SraRunAccessionWithValidation = ({
         );
 
         if (!response.ok) {
-          const errorData = await response.json();
-          const rawError = errorData?.error != null ? String(errorData.error) : "";
+          const errorData = await (response.json() as Promise<{ error?: unknown }>);
+          const rawError = errorData.error != null ? (typeof errorData.error === 'string' ? errorData.error : JSON.stringify(errorData.error)) : "";
           const plainError = rawError ? toPlainText(rawError) : `Your input ${accession} is not valid`;
           if (response.status >= 400 && response.status < 500) {
             setValidationMessage(plainError);
@@ -240,7 +240,7 @@ const SraRunAccessionWithValidation = ({
           return null;
         }
 
-        const data = await response.json();
+        const data = await (response.json() as Promise<{ timeout?: boolean; xml?: string }>);
 
         if (data.timeout) {
           setValidationMessage("Timeout exceeded.");
@@ -249,7 +249,7 @@ const SraRunAccessionWithValidation = ({
           return validationCacheRef.current.result;
         }
 
-        const { title: studyTitle, runs, isValid } = parseXmlAndExtract(data.xml);
+        const { title: studyTitle, runs, isValid } = parseXmlAndExtract(data.xml ?? "");
         if (!isValid || runs.length === 0) {
           setValidationMessage("The accession is not a run id.");
           setIsValidSra(false);

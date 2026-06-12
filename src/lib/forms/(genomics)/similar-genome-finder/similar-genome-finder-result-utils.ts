@@ -98,7 +98,7 @@ export function parseMinhashResultPayload(
     const pvalueVal: unknown = getFirstDefined(row, "pvalue", "p_value") ?? arrRow[2];
     const countsVal: unknown = getFirstDefined(row, "counts", "kmer_count") ?? arrRow[3];
     return {
-      genome_id: String(genomeId),
+      genome_id: typeof genomeId === 'string' ? genomeId : (typeof genomeId === 'number' || typeof genomeId === 'boolean' ? String(genomeId) : ""),
       genome_name: String((getFirstDefined(row, "genome_name", "genomeName", "genome name") as string | number | undefined) ?? ""),
       organism_name: String(
         (getFirstDefined(row, "organism_name", "organismName", "organism name", "organism") as string | number | undefined) ?? "",
@@ -126,8 +126,8 @@ export function mergeGenomeResults(
     ...keys: string[]
   ): string {
     for (const k of keys) {
-      const v = getFirstDefined(row, k);
-      if (v != null && String(v).trim() !== "") return String(v);
+      const v = getFirstDefined(row, k) as string | undefined;
+      if (v != null && v.trim() !== "") return v;
     }
     return "";
   }

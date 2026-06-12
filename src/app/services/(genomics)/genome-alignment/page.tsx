@@ -446,7 +446,7 @@ export default function GenomeAlignmentServicePage() {
                           step={1}
                           onValueChange={(value) =>
                             { field.handleChange(
-                              Array.isArray(value) ? value[0] : value,
+                              (Array.isArray(value) ? value[0] : value) as number,
                             ); }
                           }
                         />

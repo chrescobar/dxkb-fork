@@ -7,7 +7,8 @@ vi.mock("@/lib/services/workspace/client", () => ({
   workspaceApi: { makeRequest: vi.fn() },
 }));
 
-const mockMakeRequest = workspaceApi.makeRequest as ReturnType<typeof vi.fn>;
+// eslint-disable-next-line @typescript-eslint/unbound-method -- vi.fn() mock does not use `this`
+const mockMakeRequest = vi.mocked(workspaceApi).makeRequest;
 
 describe("shared workspace functions", () => {
   describe("getWorkspaceMetadata", () => {

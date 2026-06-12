@@ -135,8 +135,7 @@ export function useMolstarPlugin(
     const observer = new ResizeObserver(() => {
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (pluginRef.current as any)?.canvas3d?.handleResize();
+        (pluginRef.current as { canvas3d?: { handleResize?: () => void } } | null)?.canvas3d?.handleResize?.();
       });
     });
 

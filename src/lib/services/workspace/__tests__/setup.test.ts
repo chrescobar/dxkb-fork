@@ -48,7 +48,7 @@ function createFakeRpc(options: FakeRpcOptions = {}): {
         }
         throw new Error(`Unexpected method ${method}`);
       } catch (err) {
-        return Promise.reject(err);
+        return Promise.reject(err instanceof Error ? err : new Error(String(err)));
       }
     },
   };

@@ -30,8 +30,10 @@ export const sarsCov2GenomeAnalysisService =
       onApply: (rerunData, form) => {
         if (!rerunData.taxonomy_id) return;
         const outputFile = rerunData.output_file as string | undefined;
+        const rawTaxId = rerunData.taxonomy_id;
+        const taxonomyId = typeof rawTaxId === 'string' ? rawTaxId : (typeof rawTaxId === 'number' ? String(rawTaxId) : "");
         applyTaxonomyIdWithLookup(
-          String(rerunData.taxonomy_id as string | number),
+          taxonomyId,
           form,
           (taxonName) => {
             if (!outputFile) return;

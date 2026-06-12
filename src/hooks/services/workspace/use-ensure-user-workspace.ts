@@ -52,7 +52,7 @@ export function useEnsureUserWorkspace(
           body.error ?? body.message ?? `ensure-workspace failed (${String(response.status)})`,
         );
       }
-      return response.json();
+      return response.json() as Promise<void>;
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: workspaceQueryKeys.all });

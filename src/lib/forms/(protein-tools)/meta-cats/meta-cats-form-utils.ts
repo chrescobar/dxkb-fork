@@ -71,7 +71,7 @@ export function getYearGroupLabels(ranges: number[][]): string[] {
   for (let i = 1; i < ranges.length - 1; i++) {
     const range = ranges[i];
     if (range.length === 1) {
-      labels.push(`${String(range[0])}`);
+      labels.push(String(range[0]));
     } else {
       labels.push(`${String(range[0])}-${String(range[1])}`);
     }
@@ -274,7 +274,9 @@ export function buildMetaCatsAutoGroupsFromGenomes(args: {
 
   genomes.forEach((genome) => {
     const metadataValue = genome[metadataGroup];
-    const metadataStr = metadataValue !== undefined ? String(metadataValue as string | number | boolean) : "";
+    const metadataStr = metadataValue !== undefined && metadataValue !== null
+      ? (typeof metadataValue === 'string' ? metadataValue : (typeof metadataValue === 'number' || typeof metadataValue === 'boolean' ? String(metadataValue) : JSON.stringify(metadataValue)))
+      : "";
 
     let groupValue = metadataStr;
     if (metadataGroup === "collection_year" && parsedRanges.length > 0) {

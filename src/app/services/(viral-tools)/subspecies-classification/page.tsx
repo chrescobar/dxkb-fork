@@ -38,6 +38,7 @@ import {
   subspeciesClassificationFormSchema,
   defaultSubspeciesClassificationFormValues,
   subspeciesVirusTypeOptions,
+  type SubspeciesClassificationFormData,
 } from "@/lib/forms/(viral-tools)/subspecies-classification/subspecies-classification-form-schema";
 import { validateFasta, getFastaErrorMessage } from "@/lib/fasta-validation";
 import { subspeciesClassificationService } from "@/lib/forms/(viral-tools)/subspecies-classification/subspecies-classification-service";
@@ -56,8 +57,7 @@ export default function SubspeciesClassificationPage() {
   const form = useForm({
     defaultValues:
       defaultSubspeciesClassificationFormValues,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: subspeciesClassificationFormSchema as any },
+    validators: { onChange: subspeciesClassificationFormSchema  },
     onSubmit: async ({ value }) => {
       await runtime.submitFormData(value);
     },
@@ -172,7 +172,7 @@ export default function SubspeciesClassificationPage() {
                       value={field.state.value}
                       onValueChange={(v) => {
                         if (v == null) return;
-                        field.handleChange(v);
+                        field.handleChange(v as SubspeciesClassificationFormData["input_source"]);
                         if (v === "fasta_file") {
                           form.setFieldMeta("input_fasta_data", (prev) => ({
                             ...prev,

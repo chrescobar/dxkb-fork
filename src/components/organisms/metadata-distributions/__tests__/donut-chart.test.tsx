@@ -12,8 +12,8 @@ beforeAll(() => {
   if (!svgElementPrototype.getComputedTextLength) {
     Object.defineProperty(svgElementPrototype, "getComputedTextLength", {
       configurable: true,
-      value() {
-        return (this.textContent ?? "").length * 8;
+      value(this: SVGElement) {
+        return (this.textContent || "").length * 8;
       },
     });
   }

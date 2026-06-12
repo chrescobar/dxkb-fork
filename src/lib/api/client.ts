@@ -42,7 +42,9 @@ export async function apiCall<T>(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      ...init?.headers,
+      ...(init?.headers instanceof Headers || Array.isArray(init?.headers)
+        ? {}
+        : init?.headers),
     },
     body: JSON.stringify(body),
   });

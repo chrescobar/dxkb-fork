@@ -60,7 +60,7 @@ export const POST = auth.route(async (request: NextRequest, { token }) => {
     });
 
     if (!response.ok) {
-      const firstParam = Array.isArray(params) ? params[0] : undefined;
+      const firstParam: unknown = Array.isArray(params) ? params[0] : undefined;
       const isPreferencesGet =
         method === "Workspace.get" &&
         typeof firstParam === "object" &&

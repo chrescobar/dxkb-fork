@@ -294,31 +294,24 @@ export function useBlastDatabaseTypes(form: AnyFormApi) {
   const dbPrecomputedDatabase = useSelector(form.store, (s) => (s.values as BlastFormData).db_precomputed_database);
   const dbType = useSelector(form.store, (s) => (s.values as BlastFormData).db_type);
 
-  const availableDatabaseTypes = useMemo(() => {
-    if (blastProgram && dbPrecomputedDatabase) {
-      return getAvailableBlastDatabaseTypes(blastProgram, dbPrecomputedDatabase);
-    }
-    return getAvailableBlastDatabaseTypes("blastn", "bacteria-archaea");
-  }, [blastProgram, dbPrecomputedDatabase]);
+  const availableDatabaseTypes = useMemo(
+    () => getAvailableBlastDatabaseTypes(blastProgram, dbPrecomputedDatabase),
+    [blastProgram, dbPrecomputedDatabase],
+  );
 
   useEffect(() => {
-    if (blastProgram && dbPrecomputedDatabase) {
-      const isCurrentTypeAvailable = availableDatabaseTypes.some(
-        (type) => type.value === dbType,
+    const isCurrentTypeAvailable = availableDatabaseTypes.some(
+      (type) => type.value === dbType,
+    );
+
+    if (!isCurrentTypeAvailable && availableDatabaseTypes.length > 0) {
+      const defaultType = getDefaultBlastDatabaseType(
+        blastProgram,
+        dbPrecomputedDatabase,
       );
 
-      if (!isCurrentTypeAvailable && availableDatabaseTypes.length > 0) {
-        const defaultType = getDefaultBlastDatabaseType(
-          blastProgram,
-          dbPrecomputedDatabase,
-        );
-
-        if (defaultType) {
-          form.setFieldValue("db_type", defaultType);
-        }
-      } else if (availableDatabaseTypes.length > 0 && !dbType) {
-        const firstType = availableDatabaseTypes[0].value;
-        form.setFieldValue("db_type", firstType);
+      if (defaultType) {
+        form.setFieldValue("db_type", defaultType);
       }
     }
   }, [blastProgram, dbPrecomputedDatabase, dbType, form, availableDatabaseTypes]);
@@ -331,7 +324,7 @@ export function useBlastDatabaseTypes(form: AnyFormApi) {
  */
 export function useBlastProgramTracking(form: AnyFormApi) {
   const currentBlastProgram = useSelector(form.store, (s) => (s.values as BlastFormData).blast_program);
-  return currentBlastProgram || "blastn";
+  return currentBlastProgram;
 }
 
 /**

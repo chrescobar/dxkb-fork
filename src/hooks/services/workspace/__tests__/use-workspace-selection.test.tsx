@@ -3,7 +3,7 @@ import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { useWorkspaceSelection } from "@/hooks/services/workspace/use-workspace-selection";
 
 vi.mock("@/lib/workspace/table-selection", () => ({
-  computeNextSelection: vi.fn((_ordered, _current, _anchor, clicked) => ({
+  computeNextSelection: vi.fn((_ordered, _current, _anchor, clicked: WorkspaceItem) => ({
     nextSelection: [clicked],
     nextAnchorPath: clicked.path,
   })),

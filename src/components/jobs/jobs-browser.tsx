@@ -70,11 +70,11 @@ const JobDataRow = React.memo(function JobDataRow({
       aria-selected={isSelected}
     >
       {row.getVisibleCells().map((cell, cellIndex) => {
-        const meta = cell.column.columnDef.meta;
+        const metaCls = (cell.column.columnDef.meta as Record<string, unknown> | undefined)?.className as string | undefined;
         const className = clsx(
           cellIndex === 0 ? "pl-6" : "pl-2",
           "overflow-hidden",
-          meta?.className ?? "",
+          metaCls ?? "",
         );
         return (
           <TableCell

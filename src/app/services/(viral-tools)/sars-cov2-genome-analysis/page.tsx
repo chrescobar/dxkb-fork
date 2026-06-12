@@ -61,6 +61,7 @@ import {
   defaultPrimerVersion,
   type SarsCov2LibraryItem,
   type SarsCov2Platform,
+  type SarsCov2GenomeAnalysisFormData,
 } from "@/lib/forms/(viral-tools)/sars-cov2-genome-analysis/sars-cov2-genome-analysis-form-schema";
 import {
   computeOutputName,
@@ -91,8 +92,7 @@ export default function SarsCov2GenomeAnalysisPage() {
   const form = useForm({
     defaultValues:
       defaultSarsCov2GenomeAnalysisFormValues,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: sarsCov2GenomeAnalysisFormSchema as any },
+    validators: { onChange: sarsCov2GenomeAnalysisFormSchema  },
     onSubmit: async ({ value }) => {
       await runtime.submitFormData(value);
     },
@@ -255,7 +255,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                     <RadioGroup
                       value={field.state.value}
                       onValueChange={(value) => {
-                        if (value != null) field.handleChange(value);
+                        if (value != null) field.handleChange(value as SarsCov2GenomeAnalysisFormData["input_type"]);
                       }}
                       className="service-radio-group-horizontal"
                     >

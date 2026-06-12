@@ -101,8 +101,8 @@ describe("StructureViewer", () => {
 
     await waitFor(() => {
       expect(mockDownload).toHaveBeenCalledWith(
-        expect.objectContaining({ url: expect.stringContaining("model.pdb") }),
-        expect.anything(),
+        expect.objectContaining({ url: expect.stringContaining("model.pdb") as string }),
+        expect.anything() as unknown,
       );
     });
 
@@ -135,11 +135,11 @@ describe("StructureViewer", () => {
                 regionState: expect.objectContaining({
                   left: "hidden",
                   right: "hidden",
-                }),
-              }),
-            }),
-          }),
-        }),
+                }) as Record<string, string>,
+              }) as Record<string, unknown>,
+            }) as Record<string, unknown>,
+          }) as Record<string, unknown>,
+        }) as Record<string, unknown>,
       );
     });
   });

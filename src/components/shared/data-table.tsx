@@ -686,7 +686,10 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       ...rowsToExport.map(row =>
         visibleCols.map(col => {
           const val = row.getValue(col.id);
-          return typeof val === 'string' ? `"${val.replace(/"/g, '""')}"` : val;
+          if (typeof val === 'string') return `"${val.replace(/"/g, '""')}"`;
+          if (val == null) return '';
+          if (typeof val === 'object') return `"${JSON.stringify(val).replace(/"/g, '""')}"`;
+          return String(val as number | boolean);
         }).join(',')
       )
     ].join('\n');

@@ -149,7 +149,7 @@ describe("POST /api/services/genome/validate-viral", () => {
 
     expect(res.status).toBe(500);
     expect(await json(res)).toEqual(
-      expect.objectContaining({ error: expect.stringContaining("validation failed") }),
+      expect.objectContaining({ error: expect.stringContaining("validation failed") as unknown }),
     );
   });
 });

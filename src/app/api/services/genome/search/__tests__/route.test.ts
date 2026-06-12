@@ -202,7 +202,7 @@ describe("GET /api/services/genome/search", () => {
 
     expect(res.status).toBe(503);
     expect(await json(res)).toEqual(
-      expect.objectContaining({ error: expect.stringContaining("failed") }),
+      expect.objectContaining({ error: expect.stringContaining("failed") as unknown }),
     );
   });
 });

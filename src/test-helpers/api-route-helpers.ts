@@ -62,6 +62,6 @@ export function makeRouteContext(id: string) {
   return { params: Promise.resolve({ id }) };
 }
 
-export async function json(res: Response) {
-  return res.json();
+export async function json<T = unknown>(res: Response): Promise<T> {
+  return (await res.json()) as T;
 }

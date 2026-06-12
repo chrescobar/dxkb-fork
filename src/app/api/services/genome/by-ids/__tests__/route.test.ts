@@ -161,7 +161,7 @@ describe("POST /api/services/genome/by-ids", () => {
 
     expect(res.status).toBe(502);
     expect(await json(res)).toEqual(
-      expect.objectContaining({ error: expect.stringContaining("failed") }),
+      expect.objectContaining({ error: expect.stringContaining("failed") as unknown }),
     );
   });
 });

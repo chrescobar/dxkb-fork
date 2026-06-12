@@ -110,7 +110,7 @@ describe("POST /api/services/genome/get-all-ids", () => {
 
     expect(res.status).toBe(500);
     expect(await json(res)).toEqual(
-      expect.objectContaining({ error: expect.stringContaining("failed") }),
+      expect.objectContaining({ error: expect.stringContaining("failed") as unknown }),
     );
   });
 });

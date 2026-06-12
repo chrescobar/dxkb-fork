@@ -35,7 +35,7 @@ describe("GET /api/services/sra-validation", () => {
     expect(res.status).toBe(400);
     expect(await json(res)).toEqual(
       expect.objectContaining({
-        error: expect.stringContaining("Invalid accession format"),
+        error: expect.stringContaining("Invalid accession format") as unknown,
       }),
     );
   });
@@ -85,7 +85,7 @@ describe("GET /api/services/sra-validation", () => {
     expect(res.status).toBe(400);
     expect(await json(res)).toEqual(
       expect.objectContaining({
-        error: expect.stringContaining("not valid"),
+        error: expect.stringContaining("not valid") as unknown,
       }),
     );
   });
@@ -106,7 +106,7 @@ describe("GET /api/services/sra-validation", () => {
     expect(res.status).toBe(503);
     expect(await json(res)).toEqual(
       expect.objectContaining({
-        error: expect.stringContaining("NCBI API error"),
+        error: expect.stringContaining("NCBI API error") as unknown,
       }),
     );
   });

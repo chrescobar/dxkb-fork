@@ -19,7 +19,7 @@ describe("POST /api/auth/forget-password", () => {
     });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(400);
     expect(data.error).toBe("Email or username is required");
@@ -40,7 +40,7 @@ describe("POST /api/auth/forget-password", () => {
     });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { success?: boolean };
 
     expect(response.status).toBe(200);
     expect(data).toEqual({ success: true });
@@ -60,7 +60,7 @@ describe("POST /api/auth/forget-password", () => {
     });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { success?: boolean };
 
     expect(response.status).toBe(200);
     expect(data).toEqual({ success: true });
@@ -82,7 +82,7 @@ describe("POST /api/auth/forget-password", () => {
     });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(404);
     expect(data.error).toBe("User not found");
@@ -101,7 +101,7 @@ describe("POST /api/auth/forget-password", () => {
     });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(500);
     expect(data.error).toBe("Failed to send password reset email");
@@ -120,7 +120,7 @@ describe("POST /api/auth/forget-password", () => {
     });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { code?: string };
 
     expect(response.status).toBe(502);
     expect(data).toMatchObject({ code: "upstream" });

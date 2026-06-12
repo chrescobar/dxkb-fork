@@ -30,7 +30,7 @@ describe("api/e2e-mock catch-all — guard", () => {
         ctx(["foo"]),
       );
       expect(getResp.status).toBe(404);
-      expect(await getResp.json()).toEqual({ error: "Mock endpoint disabled" });
+      expect((await getResp.json()) as unknown).toEqual({ error: "Mock endpoint disabled" });
 
       const postResp = await POST(
         mockNextRequest({ method: "POST", body: { method: "x" }, url: "http://localhost:3020/api/e2e-mock/foo" }),
@@ -63,7 +63,7 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    expect(await resp.json()).toEqual({});
+    expect((await resp.json()) as unknown).toEqual({});
   });
 
   it("GET returns bacteria summary fixtures for the BV-BRC website mock", async () => {
@@ -75,7 +75,7 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    expect(await resp.json()).toMatchObject({
+    expect((await resp.json()) as unknown).toMatchObject({
       count: 1337420,
       unique_genus: 5432,
       PDB: 9821,
@@ -91,7 +91,7 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    expect(await resp.json()).toMatchObject({
+    expect((await resp.json()) as unknown).toMatchObject({
       count: 890123,
       unique_family: 212,
     });
@@ -106,7 +106,7 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    expect(await resp.json()).toMatchObject({
+    expect((await resp.json()) as unknown).toMatchObject({
       count: 9800000,
       unique_family: 1204,
     });
@@ -121,12 +121,15 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    const body = await resp.json();
+    const body = (await resp.json()) as {
+      response?: { numFound?: number };
+      facet_counts?: { facet_fields?: { genus?: unknown[] } };
+    };
     expect(body).toMatchObject({
       response: { numFound: 1337420 },
-      facet_counts: { facet_fields: { genus: expect.any(Array) } },
+      facet_counts: { facet_fields: { genus: expect.any(Array) as unknown } },
     });
-    expect(body.facet_counts.facet_fields.genus).toEqual(
+    expect(body.facet_counts?.facet_fields?.genus).toEqual(
       expect.arrayContaining(["Escherichia", 128450]),
     );
   });
@@ -140,11 +143,13 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    const body = await resp.json();
+    const body = (await resp.json()) as {
+      facet_counts?: { facet_fields?: { family?: unknown[] } };
+    };
     expect(body).toMatchObject({
-      facet_counts: { facet_fields: { family: expect.any(Array) } },
+      facet_counts: { facet_fields: { family: expect.any(Array) as unknown } },
     });
-    expect(body.facet_counts.facet_fields.family).toEqual(
+    expect(body.facet_counts?.facet_fields?.family).toEqual(
       expect.arrayContaining(["Coronaviridae", 180204]),
     );
   });
@@ -158,11 +163,13 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    const body = await resp.json();
+    const body = (await resp.json()) as {
+      facet_counts?: { facet_fields?: { host_group?: unknown[] } };
+    };
     expect(body).toMatchObject({
-      facet_counts: { facet_fields: { host_group: expect.any(Array) } },
+      facet_counts: { facet_fields: { host_group: expect.any(Array) as unknown } },
     });
-    expect(body.facet_counts.facet_fields.host_group).toEqual(
+    expect(body.facet_counts?.facet_fields?.host_group).toEqual(
       expect.arrayContaining(["Human", 512004]),
     );
   });
@@ -178,7 +185,7 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    expect(await resp.json()).toEqual({ id: 1, jsonrpc: "2.0", result: [[]] });
+    expect((await resp.json()) as unknown).toEqual({ id: 1, jsonrpc: "2.0", result: [[]] });
   });
 
   it("POST handles non-JSON bodies without throwing", async () => {
@@ -191,7 +198,7 @@ describe("api/e2e-mock catch-all — enabled", () => {
     const resp = await POST(request as unknown as Parameters<typeof POST>[0], ctx(["upload"]));
 
     expect(resp.status).toBe(200);
-    expect(await resp.json()).toEqual({ id: 1, jsonrpc: "2.0", result: [[]] });
+    expect((await resp.json()) as unknown).toEqual({ id: 1, jsonrpc: "2.0", result: [[]] });
   });
 
   it("PUT returns 200 with empty object", async () => {
@@ -201,7 +208,7 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    expect(await resp.json()).toEqual({});
+    expect((await resp.json()) as unknown).toEqual({});
   });
 
   it("DELETE returns 200 with empty object", async () => {
@@ -211,6 +218,6 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    expect(await resp.json()).toEqual({});
+    expect((await resp.json()) as unknown).toEqual({});
   });
 });

@@ -49,7 +49,7 @@ describe("GET /api/auth/profile", () => {
     );
 
     const response = await GET(mockNextRequest(), {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(401);
     expect(data.error).toBe("Authentication required");
@@ -65,7 +65,7 @@ describe("GET /api/auth/profile", () => {
     );
 
     const response = await GET(mockNextRequest(), {});
-    const data = await response.json();
+    const data = (await response.json()) as typeof profile;
 
     expect(response.status).toBe(200);
     expect(data).toEqual(profile);
@@ -99,7 +99,7 @@ describe("GET /api/auth/profile", () => {
     );
 
     const response = await GET(mockNextRequest(), {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(404);
     expect(data.error).toBe("Failed to fetch profile");
@@ -114,7 +114,7 @@ describe("GET /api/auth/profile", () => {
     );
 
     const response = await GET(mockNextRequest(), {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(500);
     expect(data.error).toBeDefined();
@@ -131,7 +131,7 @@ describe("POST /api/auth/profile", () => {
     });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(401);
     expect(data.error).toBe("Authentication required");
@@ -183,7 +183,7 @@ describe("POST /api/auth/profile", () => {
     });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { success?: boolean };
 
     expect(response.status).toBe(200);
     expect(data.success).toBe(true);
@@ -205,7 +205,7 @@ describe("POST /api/auth/profile", () => {
     });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(400);
     expect(data.error).toBe("Bad Request");
@@ -227,7 +227,7 @@ describe("POST /api/auth/profile", () => {
     });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(422);
     expect(data.error).toBe("Failed to update profile");
@@ -247,7 +247,7 @@ describe("POST /api/auth/profile", () => {
     });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(500);
     expect(data.error).toBeDefined();

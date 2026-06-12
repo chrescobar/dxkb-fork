@@ -109,7 +109,7 @@ describe("GET /api/workspace/view/[...path]", () => {
     const res = await GET(req, makeParams(["user", "home", "file.txt"]));
 
     expect(res.status).toBe(500);
-    const body = await res.json();
+    const body = (await res.json()) as { error?: string };
     expect(body.error).toBe("Internal server error");
   });
 

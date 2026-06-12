@@ -44,7 +44,7 @@ describe("POST /api/auth/change-password", () => {
 
     const request = mockNextRequest({ method: "POST", body: {} });
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(400);
     expect(data.error).toBe("Current password and new password are required");
@@ -59,7 +59,7 @@ describe("POST /api/auth/change-password", () => {
       body: { currentPassword: "old", newPassword: "newSecret123" },
     });
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(401);
     expect(data.error).toMatch(/authentication required/i);
@@ -85,7 +85,7 @@ describe("POST /api/auth/change-password", () => {
       body: { currentPassword: "old", newPassword: "newSecret123" },
     });
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { success?: boolean };
 
     expect(response.status).toBe(200);
     expect(data).toEqual({ success: true });
@@ -123,7 +123,7 @@ describe("POST /api/auth/change-password", () => {
       body: { currentPassword: "wrong", newPassword: "newSecret123" },
     });
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     // bvbrcIdentity.changePassword maps a JSON-RPC error envelope to fail("validation", msg, 400)
     // and the route surfaces error.status (400) directly.
@@ -145,7 +145,7 @@ describe("POST /api/auth/change-password", () => {
       body: { currentPassword: "old", newPassword: "newSecret123" },
     });
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(403);
     expect(data.error).toBe("Forbidden");

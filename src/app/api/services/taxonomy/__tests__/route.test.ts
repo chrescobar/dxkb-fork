@@ -88,7 +88,7 @@ describe("GET /api/services/taxonomy", () => {
     expect(res.status).toBe(502);
     expect(await json(res)).toEqual(
       expect.objectContaining({
-        error: expect.stringContaining("Taxonomy API error"),
+        error: expect.stringContaining("Taxonomy API error") as unknown,
       }),
     );
   });
@@ -108,7 +108,7 @@ describe("GET /api/services/taxonomy", () => {
 
     expect(res.status).toBe(500);
     expect(await json(res)).toEqual(
-      expect.objectContaining({ error: expect.any(String) }),
+      expect.objectContaining({ error: expect.any(String) as unknown }),
     );
   });
 });

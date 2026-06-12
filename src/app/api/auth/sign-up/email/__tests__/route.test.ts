@@ -94,7 +94,10 @@ describe("POST /api/auth/sign-up/email", () => {
 
     const request = mockNextRequest({ method: "POST", body: signupBody });
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as {
+      user?: Record<string, unknown>;
+      session?: { expiresAt?: string; token?: string };
+    };
 
     expect(response.status).toBe(200);
     expect(upstreamRegisterContentType).toBe("application/x-www-form-urlencoded");
@@ -105,7 +108,7 @@ describe("POST /api/auth/sign-up/email", () => {
     expect(upstreamRegisterBody).toContain("password=securePass1%21");
     expect(upstreamRegisterBody).toContain("password_repeat=securePass1%21");
 
-    const setNames = mockCookieStore.set.mock.calls.map((call) => call[0]);
+    const setNames = mockCookieStore.set.mock.calls.map((call) => call[0] as string);
     expect(setNames).toContain("bvbrc_token");
     expect(setNames).toContain("bvbrc_user_id");
     const tokenCall = mockCookieStore.set.mock.calls.find(
@@ -122,7 +125,7 @@ describe("POST /api/auth/sign-up/email", () => {
       email_verified: false,
     });
     expect(data.session).toHaveProperty("expiresAt");
-    expect(data.session.token).toBe("");
+    expect(data.session?.token).toBe("");
   });
 
   it("returns 400 when passwords do not match without calling upstream and without writing cookies", async () => {
@@ -139,7 +142,7 @@ describe("POST /api/auth/sign-up/email", () => {
       body: { ...signupBody, password_repeat: "different" },
     });
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(400);
     expect(data.error).toMatch(/passwords do not match/i);
@@ -159,7 +162,7 @@ describe("POST /api/auth/sign-up/email", () => {
 
     const request = mockNextRequest({ method: "POST", body: signupBody });
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(409);
     expect(data.error).toBe("Username already taken");
@@ -241,7 +244,7 @@ describe("POST /api/auth/sign-up/email", () => {
       mockNextRequest({ method: "POST", body: signupBody }),
       {},
     );
-    const data = await response.json();
+    const data = (await response.json()) as { user?: Record<string, unknown> };
 
     expect(response.status).toBe(200);
     expect(data.user).toMatchObject({ username: "bob" });
@@ -249,7 +252,7 @@ describe("POST /api/auth/sign-up/email", () => {
     // Cookies must still be set so the user is signed in even though the
     // workspace setup failed — Path C is the recovery mechanism on first
     // workspace visit.
-    const setNames = mockCookieStore.set.mock.calls.map((call) => call[0]);
+    const setNames = mockCookieStore.set.mock.calls.map((call) => call[0] as string);
     expect(setNames).toContain("bvbrc_token");
     expect(setNames).toContain("bvbrc_user_id");
 
@@ -263,7 +266,7 @@ describe("POST /api/auth/sign-up/email", () => {
       body: "{invalid-json",
     });
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string; code?: string };
 
     expect(response.status).toBe(400);
     expect(data.error).toMatch(/username.*email.*password are required/i);

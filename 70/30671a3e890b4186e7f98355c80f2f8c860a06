@@ -1,0 +1,21 @@
+src/hooks/services/use-rerun-form.ts
+  s_0d580176ec0ea8::t_35d3416a446bbe 145
+src/components/detail-panel/info-panel.tsx
+  s_0d580176ec0ea8::t_840b18c4658641 45-48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "7030671a3e890b4186e7f98355c80f2f8c860a06",
+  "prompts": {},
+  "sessions": {
+    "s_0d580176ec0ea8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ca49035-a1d3-487e-9d2f-5fd0bae8a7fb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

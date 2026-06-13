@@ -134,16 +134,16 @@ export function FacetPanel({
           throw new Error("Failed to fetch facets");
         }
 
-        const json = await res.json();
+        const json = await res.json() as { facet_counts?: { facet_fields?: Record<string, (string | number)[]> } } | null | undefined;
 
         // ---------------------------------------------------
         // PARSE RESPONSE
         // ---------------------------------------------------
  // 🚨 ignore stale responses
         if (currentRequest !== requestId.current) return;
-        
+
         const parsed = parseFacetCounts(
-          json?.facet_counts?.facet_fields || {}
+          json?.facet_counts?.facet_fields ?? {}
         );
 
         setFacets(parsed);

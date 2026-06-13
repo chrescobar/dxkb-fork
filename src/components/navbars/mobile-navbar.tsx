@@ -24,6 +24,7 @@ import {
   organismItems,
   serviceItems,
   workspaceNavItems,
+  type NavSection,
 } from "@/components/navbars/navbar-links";
 import {
   workspaceUsername,
@@ -268,7 +269,7 @@ const MobileNavbar = () => {
                   </SectionTrigger>
                   <CollapsibleContent className="*:data-[slot=collapsible-divider]:hidden">
                     <div className="flex flex-col gap-1.5 px-5 pt-2 pb-3">
-                      {Object.entries(serviceItems).map(([key, section]) => (
+                      {(Object.entries(serviceItems) as unknown as [string, NavSection][]).map(([key, section]) => (
                         <Collapsible key={key} className="group/sub">
                           <DecoratedSubSection>
                             <SubSectionTrigger>{section.title}</SubSectionTrigger>

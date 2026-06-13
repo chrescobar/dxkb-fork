@@ -107,6 +107,7 @@ export function createAuthHelpers(
   async function requireSessionInner(): Promise<SessionIdentity> {
     const session = await readSessionCached();
     if (!session) {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error -- intentional: route handlers catch NextResponse throws as their error-return mechanism
       throw unauthenticatedResponse();
     }
     return session;

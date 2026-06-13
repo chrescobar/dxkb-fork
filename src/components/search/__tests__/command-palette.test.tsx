@@ -9,7 +9,7 @@ class ResizeObserverStub {
   disconnect = vi.fn();
 }
 // jsdom does not ship ResizeObserver or scrollIntoView; stub both unconditionally.
-globalThis.ResizeObserver = ResizeObserverStub as unknown as typeof ResizeObserver;
+globalThis.ResizeObserver = ResizeObserverStub;
 // jsdom's HTMLElement.scrollIntoView is undefined; cmdk calls it when the
 // active item changes.
 Element.prototype.scrollIntoView = vi.fn();

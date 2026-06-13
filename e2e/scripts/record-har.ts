@@ -107,7 +107,7 @@ export function sanitizeHar(
   // in a future schema bump — without enumerating fields by hand.
   fs.writeFileSync(
     harPath,
-    JSON.stringify(har, (_key, value) => (typeof value === "string" ? scrub(value) : value), 2),
+    JSON.stringify(har, (_key, value: unknown) => (typeof value === "string" ? scrub(value) : value), 2),
   );
   assertNoSensitiveData(harPath, user, password);
 }
@@ -276,7 +276,9 @@ async function main(): Promise<void> {
 
   if (driverError) {
     // Re-throw after sanitizing so the recorder still exits non-zero.
-    throw driverError;
+    throw driverError instanceof Error
+      ? driverError
+      : new Error(`HAR driver failed: ${typeof driverError === "string" ? driverError : JSON.stringify(driverError)}`);
   }
   console.log(`HAR saved to ${harPath}`);
 }

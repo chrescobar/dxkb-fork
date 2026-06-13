@@ -153,7 +153,7 @@ async function searchTaxonByName(
     throw new Error(`HTTP error! status: ${String(response.status)}`);
   }
 
-  return response.json();
+  return response.json() as Promise<TaxonomyItem[]>;
 }
 
 export function TaxonNameSelector({

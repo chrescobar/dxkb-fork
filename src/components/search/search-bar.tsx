@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent, useEffect, useCallback, Suspense } from "react";
+import { useState, useEffect, useCallback, Suspense, type SyntheticEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -64,11 +64,11 @@ export function SearchBar({
     setSelected(value);
   }, []);
 
-  const handleSearch = (e: FormEvent) => {
+  const handleSearch = (e: SyntheticEvent) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
 
-    void router.push(
+    router.push(
       `/search?q=${encodeURIComponent(inputValue)}&searchtype=${selected}`
     );
     void queryClient.invalidateQueries({

@@ -112,7 +112,7 @@ export function mockWorkspaceGetContent(content: string): unknown {
  */
 export function workspaceRpcOverride(
   rpcMethod: string,
-  body: unknown,
+  body: string | object,
 ): JsonOverride {
   return {
     url: /\/api\/services\/workspace(?:$|\?)/,

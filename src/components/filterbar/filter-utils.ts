@@ -9,15 +9,21 @@ function encodeRqlValue(val: string) {
     ;
 }
 
-export function buildRql({ selected, keywords }) {
+interface RqlFilter {
+  op: string;
+  field: string;
+  value: string | [string, string];
+}
+
+export function buildRql({ selected, keywords }: { selected: RqlFilter[]; keywords: string[] }) {
   const parts: string[] = [];
   const grouped = new Map<string, string[]>();
 
   selected.forEach((f) => {
     const expr =
       f.op === "between"
-        ? `between(${encodeRqlField(f.field)},${encodeRqlValue(f.value[0])},${encodeRqlValue(f.value[1])})`
-        : `${String(f.op)}(${encodeRqlField(f.field)},${encodeRqlValue(String(f.value))})`;
+        ? `between(${encodeRqlField(f.field)},${encodeRqlValue((f.value as [string, string])[0])},${encodeRqlValue((f.value as [string, string])[1])})`
+        : `${f.op}(${encodeRqlField(f.field)},${encodeRqlValue(String(f.value))})`;
 
     const bucket = grouped.get(f.field) ?? [];
     bucket.push(expr);
@@ -30,12 +36,12 @@ export function buildRql({ selected, keywords }) {
 
   if (keywords.length) {
     const kw = keywords.map((k) => {
-      const raw = `${String(k)}*`;
+      const raw = `${k}*`;
       const encoded = encodeRqlValue(raw);
       return `keyword(${encoded})`;
     });
 
-    parts.push(kw.length === 1 ? kw[0] : `and(${String(kw.join(","))})`);
+    parts.push(kw.length === 1 ? kw[0] : `and(${kw.join(",")})`);
   }
 
   if (!parts.length) return "";

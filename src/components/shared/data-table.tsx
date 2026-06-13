@@ -8,6 +8,8 @@ import {
   SortingState,
   PaginationState,
   Header,
+  type CellContext,
+  type Row as TanStackRow,
 } from "@tanstack/react-table";
 
 import { useMemo, useRef, useState, useEffect } from "react";
@@ -265,9 +267,9 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                 if (!willSelect) {
                   onGenomeSelect?.(null); // deselecting, so clear
                   onActiveRowChange?.(null);
-                } else if (idVal != null) {
-                  onGenomeSelect?.(String(idVal as string | number));
-                  onActiveRowChange?.(String(idVal as string | number));
+                } else if (idVal != null && (typeof idVal === 'string' || typeof idVal === 'number')) {
+                  onGenomeSelect?.(String(idVal));
+                  onActiveRowChange?.(String(idVal));
                 }
               }}
               className="m-0 cursor-pointer p-0"
@@ -283,7 +285,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       ...columns.map((col) => ({
         accessorKey: col.id,
         header: col.label,
-        cell: (info) => {
+        cell: (info: CellContext<Record<string, unknown>, unknown>) => {
           const value = info.getValue();
           if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(value)) {
             const date = new Date(value);
@@ -294,18 +296,18 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
         size: 200,
         enableResizing: true,
         enableSorting: true,
-        sortingFn: (rowA, rowB, columnId) => {
-          const a = rowA.getValue(columnId);
-          const b = rowB.getValue(columnId);
-      
+        sortingFn: (rowA: TanStackRow<Record<string, unknown>>, rowB: TanStackRow<Record<string, unknown>>, columnId: string) => {
+          const a = rowA.getValue<unknown>(columnId);
+          const b = rowB.getValue<unknown>(columnId);
+
           // Treat empty/undefined/null as "last"
           const aIsEmpty = a === undefined || a === null || a === '';
           const bIsEmpty = b === undefined || b === null || b === '';
-      
+
           if (aIsEmpty && bIsEmpty) return 0;
           if (aIsEmpty) return 1;
           if (bIsEmpty) return -1;
-      
+
           // Normal string/number compare
           return a > b ? 1 : a < b ? -1 : 0;
         },
@@ -640,10 +642,15 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           if (!res.ok) throw new Error("Failed to fetch selected rows");
           return res.json();
         })
-        .then((data) => {
-          const rowsArray: Record<string, unknown>[] = Array.isArray(data)
-            ? data
-            : data.items ?? data.response ?? data.rows ?? [];
+        .then((data: unknown) => {
+          type RowBag = Record<string, unknown>;
+          interface ResponseShape { items?: RowBag[]; response?: RowBag[]; rows?: RowBag[] }
+          const rowsArray: RowBag[] = Array.isArray(data)
+            ? (data as RowBag[])
+            : ((data as ResponseShape).items ??
+               (data as ResponseShape).response ??
+               (data as ResponseShape).rows ??
+               []);
 
           // Sort the rows based on the original selection order
           const sortedRows = rowsArray.sort((a, b) => {
@@ -662,7 +669,8 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                 if (typeof val === 'string') return `"${val.replace(/"/g, '""')}"`;
                 if (val == null) return '';
                 if (typeof val === 'object') return `"${JSON.stringify(val).replace(/"/g, '""')}"`;
-                return String(val as number | boolean);
+                if (typeof val === 'number' || typeof val === 'boolean' || typeof val === 'bigint') return String(val);
+                return '';
               }).join(',')
             )
           ].join('\n');
@@ -685,11 +693,12 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       headers.join(','),
       ...rowsToExport.map(row =>
         visibleCols.map(col => {
-          const val = row.getValue(col.id);
+          const val = row.getValue<unknown>(col.id);
           if (typeof val === 'string') return `"${val.replace(/"/g, '""')}"`;
           if (val == null) return '';
           if (typeof val === 'object') return `"${JSON.stringify(val).replace(/"/g, '""')}"`;
-          return String(val as number | boolean);
+          if (typeof val === 'number' || typeof val === 'boolean' || typeof val === 'bigint') return String(val);
+          return '';
         }).join(',')
       )
     ].join('\n');
@@ -994,9 +1003,9 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                         if ((e.target as HTMLElement).closest('input[type="checkbox"]')) return;
                         const idVal = row.original[idField];
                         const genomeId = idVal ?? row.original['genome_id'] ?? null;
-                        if (genomeId != null) {
-                          onGenomeSelect?.(String(genomeId as string | number));
-                          onActiveRowChange?.(String(genomeId as string | number));
+                        if (genomeId != null && (typeof genomeId === 'string' || typeof genomeId === 'number')) {
+                          onGenomeSelect?.(String(genomeId));
+                          onActiveRowChange?.(String(genomeId));
                         }
                       }}
                       style={{

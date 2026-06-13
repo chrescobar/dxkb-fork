@@ -17,7 +17,7 @@ import {
 import { useAuth } from "@/lib/auth/hooks";
 import { encodeWorkspaceSegment } from "@/lib/utils";
 import { workspaceUsername } from "@/components/navbars/workspace-dropdown-content";
-import { serviceItems } from "@/components/navbars/navbar-links";
+import { serviceItems, type NavSection } from "@/components/navbars/navbar-links";
 import {
   Command,
   CommandDialog,
@@ -107,7 +107,7 @@ export function CommandPalette() {
     const trimmed = inputValue.trim();
     if (!trimmed) return;
     runCommand(() => {
-      void router.push(
+      router.push(
         `/search?q=${encodeURIComponent(trimmed)}&searchtype=everything`,
       );
       void queryClient.invalidateQueries({
@@ -125,7 +125,7 @@ export function CommandPalette() {
         try {
           await signOut();
         } finally {
-          void router.push("/");
+          router.push("/");
         }
       })();
     });
@@ -239,7 +239,7 @@ export function CommandPalette() {
             )}
           </CommandGroup>
 
-          {Object.entries(serviceItems).map(([key, section]) => (
+          {(Object.entries(serviceItems) as unknown as [string, NavSection][]).map(([key, section]) => (
             <CommandGroup key={key} heading={section.title}>
               {section.items.map((item) => (
                 <CommandItem

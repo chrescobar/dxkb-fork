@@ -55,8 +55,7 @@ function SigninForm() {
       username: "",
       password: "",
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: formSchema as any, onSubmit: formSchema as any },
+    validators: { onChange: formSchema },
     onSubmit: async ({ value }) => {
       const { error: signInError } = await signIn(value);
       if (signInError) {

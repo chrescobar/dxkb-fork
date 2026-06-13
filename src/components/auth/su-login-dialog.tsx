@@ -29,7 +29,7 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const queryClient = useQueryClient();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
 
     if (!targetUser.trim() || !password) return;

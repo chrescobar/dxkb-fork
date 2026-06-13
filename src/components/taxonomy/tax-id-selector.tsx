@@ -40,8 +40,8 @@ async function searchTaxonById(
     throw new Error(`HTTP error! status: ${String(response.status)}`);
   }
 
-  const data = await response.json();
-  return data?.response?.docs || [];
+  const data = await response.json() as { response?: { docs?: unknown[] } };
+  return (data.response?.docs ?? []) as TaxonomyItem[];
 }
 
 export function TaxIDSelector({

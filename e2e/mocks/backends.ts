@@ -28,6 +28,7 @@ export interface JsonOverride {
    * returns the body for that call — used when a single mock needs to evolve between calls
    * (e.g. a workspace listing that gains a new row after an upload completes).
    */
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents -- body must accept any JSON-serializable value; the union with unknown is intentional to allow typed objects without index signatures
   body?: unknown | ((ctx: JsonOverrideBodyContext) => unknown);
   headers?: Record<string, string>;
   /**
@@ -212,13 +213,12 @@ export async function applyBackendMocks(page: Page, options: BackendMockOptions 
         return;
       }
       const counter = counterFor(override);
-      const resolvedBody =
-        typeof override.body === "function"
-          ? (override.body as (ctx: JsonOverrideBodyContext) => unknown)({
-              parsedBody,
-              callIndex: counter.value,
-            })
-          : override.body;
+      const bodyFn = typeof override.body === "function"
+        ? (override.body as (ctx: JsonOverrideBodyContext) => unknown)
+        : null;
+      const resolvedBody: unknown = bodyFn
+        ? bodyFn({ parsedBody, callIndex: counter.value })
+        : override.body;
       counter.value += 1;
       await route.fulfill({
         status: override.status ?? 200,

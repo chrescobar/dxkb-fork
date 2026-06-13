@@ -289,5 +289,16 @@ const workspaceNavItems: Record<string, WorkspaceNavSection> = {
   },
 };
 
+export interface NavItem {
+  title: string;
+  href: string;
+  target: "_self" | "_blank";
+}
+
+export interface NavSection {
+  title: string;
+  items: NavItem[];
+}
+
 export type { WorkspaceNavItem, WorkspaceNavSection };
 export { resourcesItems, organismItems, serviceItems, workspaceNavItems };

@@ -41,17 +41,17 @@ export function GenomeDetailPanel({
         throw new Error("Failed to fetch selected row");
       }
 
-      const data = await res.json();
+      const data = await res.json() as unknown[] | { items?: unknown[]; response?: { docs?: unknown[] } };
 
       // normalize different API shapes
-      const row =
+      const row: unknown =
         Array.isArray(data)
           ? data[0]
-          : data?.items?.[0] ??
-            data?.response?.docs?.[0] ??
+          : (data as { items?: unknown[] }).items?.[0] ??
+            (data as { response?: { docs?: unknown[] } }).response?.docs?.[0] ??
             null;
 
-      return row;
+      return row as Record<string, unknown> | null;
     },
   });
 

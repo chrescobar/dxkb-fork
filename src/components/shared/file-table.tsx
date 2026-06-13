@@ -138,15 +138,15 @@ function DraggableTableHeader({
     zIndex: isDragging ? 1 : 0,
   };
 
-  const meta = header.column.columnDef.meta;
+  const meta = header.column.columnDef.meta as { className?: string; sortField?: string };
   const isFirst = header.index === 0;
   const className = clsx(
     isFirst ? "pl-6" : "pl-2",
     "relative bg-background",
-    meta?.className ?? "",
+    meta.className ?? "",
   );
 
-  const sortField = meta?.sortField;
+  const sortField = meta.sortField;
   const label = header.column.columnDef.header as string;
 
   return (

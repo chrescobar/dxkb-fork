@@ -8,6 +8,7 @@ import {
   resourcesItems,
   organismItems,
   serviceItems,
+  type NavSection,
 } from "@/components/navbars/navbar-links";
 import {
   NavigationMenu,
@@ -30,7 +31,7 @@ import {
 import { SuBanner } from "@/components/auth/su-banner";
 import { JobStatusPill } from "@/components/jobs/job-status-pill";
 
-const serviceEntries = Object.entries(serviceItems);
+const serviceEntries = Object.entries(serviceItems) as unknown as [string, NavSection][];
 const serviceColumns = [
   serviceEntries.slice(0, Math.ceil(serviceEntries.length / 2)),
   serviceEntries.slice(Math.ceil(serviceEntries.length / 2)),

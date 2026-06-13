@@ -1,0 +1,79 @@
+src/app/(auth)/sign-up/page.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 89
+src/components/search/command-palette.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 20,110,128,242
+src/app/settings/page.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 25
+e2e/scripts/record-har.ts
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 110,279-281
+e2e/fixtures/overrides/workspace.ts
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 115
+src/components/genome/genome-detail-panel.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 44,47,50-51,54
+src/components/taxonomy/taxon-name-selector.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 156
+e2e/tests/auth.spec.ts
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 114
+src/components/settings/password-change-form.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 44
+src/components/shared/data-table.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 11-12,270-272,288,299-302,306,310,645-653,672-673,696,700-701,1006-1008
+src/components/search/__tests__/command-palette.test.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 12
+src/components/filterbar/filter-utils.ts
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 12-18,25-26,39,44
+src/components/filterbar/facet-panel.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 137,144,146
+next.config.ts
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 8,10-16,25,27,42-48,54-56
+src/app/(auth)/sign-in/page.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 58
+src/components/shared/file-table.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 141,146,149
+src/components/settings/profile-form.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 63
+src/components/search/search-bar.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 3,67,71
+src/components/navbars/mobile-navbar.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 27,272
+src/app/allTermSearchResults.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 172-173,189,381
+src/app/(auth)/forgot-password/page.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 52
+src/components/auth/su-login-dialog.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 32
+src/components/navbars/desktop-navbar.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 11,34
+e2e/mocks/backends.ts
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 31,216-221
+e2e/scripts/__tests__/har-overrides.test.ts
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 8,138-140,143
+src/lib/auth/server/instance.ts
+  s_0d580176ec0ea8::t_2362154b6845e0 12
+src/lib/auth/server/route.ts
+  s_0d580176ec0ea8::t_369ff91ba55644 110
+src/components/taxonomy/tax-id-selector.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 43-44
+e2e/scripts/har-overrides.ts
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 4,221,253,255
+src/components/settings/preferences-form.tsx
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 57
+src/components/navbars/navbar-links.ts
+  s_0d580176ec0ea8::t_6ffedc5bb3a558 292-302
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "e68faa89c5c88fc1730fc502f97fa4fb8240357d",
+  "prompts": {},
+  "sessions": {
+    "s_0d580176ec0ea8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ca49035-a1d3-487e-9d2f-5fd0bae8a7fb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

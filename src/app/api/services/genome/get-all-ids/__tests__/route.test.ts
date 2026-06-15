@@ -96,6 +96,39 @@ describe("POST /api/services/genome/get-all-ids", () => {
     expect(await json(res)).toEqual({ results: genomes });
   });
 
+  it("returns empty array when backend responds with null", async () => {
+    mockGetAuthToken.mockResolvedValue("token");
+
+    server.use(
+      http.get("http://mock-api/genome/", () => {
+        return HttpResponse.json(null);
+      }),
+    );
+
+    const req = mockNextRequest({ method: "POST", body: {} });
+    const res = await POST(req, {});
+
+    expect(res.status).toBe(200);
+    expect(await json(res)).toEqual({ results: [] });
+  });
+
+  it("returns results from items envelope when backend wraps response in an object", async () => {
+    mockGetAuthToken.mockResolvedValue("token");
+
+    const genomes = [{ genome_id: "1.1" }];
+    server.use(
+      http.get("http://mock-api/genome/", () => {
+        return HttpResponse.json({ items: genomes });
+      }),
+    );
+
+    const req = mockNextRequest({ method: "POST", body: {} });
+    const res = await POST(req, {});
+
+    expect(res.status).toBe(200);
+    expect(await json(res)).toEqual({ results: genomes });
+  });
+
   it("returns upstream error on non-ok response", async () => {
     mockGetAuthToken.mockResolvedValue("token");
 

@@ -12,7 +12,7 @@ import {
   type Row as TanStackRow,
 } from "@tanstack/react-table";
 
-import { useMemo, useRef, useState, useEffect } from "react";
+import { useCallback, useMemo, useRef, useState, useEffect } from "react";
 import { noop } from "@/lib/utils";
 import { getIdField } from "@/constants/resources";
 
@@ -152,7 +152,78 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     };
   }, [showColumnMenu]);
 
-  
+
+  const renderCheckboxCell = useCallback(
+    ({ row, table }: CellContext<Record<string, unknown>, unknown>) => {
+      return (
+        <div className="flex size-full items-center justify-center">
+          <input
+            type="checkbox"
+            checked={row.getIsSelected()}
+            onChange={noop}
+            onClick={(e) => {
+              e.stopPropagation();
+
+              const isShift = (e).shiftKey;
+              const allRows = table.getRowModel().rows;
+              const currentRowId = row.id;
+              const currentIndex = allRows.findIndex(r => r.id === currentRowId);
+
+              if (currentIndex === -1) {
+                console.warn('Could not find current row index');
+                return;
+              }
+
+              const lastSelectedIndex = lastSelectedIndexRef.current;
+
+              // Determine whether this click will select or deselect the row based on current state
+              const wasSelected = row.getIsSelected();
+              const willSelect = !wasSelected;
+
+              if (isShift && lastSelectedIndex !== null && lastSelectedIndex !== currentIndex) {
+                const start = Math.min(lastSelectedIndex, currentIndex);
+                const end = Math.max(lastSelectedIndex, currentIndex);
+
+                const newSelection: Record<string, boolean> = {};
+                for (let i = start; i <= end; i++) {
+                  const rowId = allRows[i]?.id;
+                  if (rowId) {
+                    newSelection[rowId] = true;
+                  }
+                }
+
+                table.setRowSelection((prev) => ({
+                  ...prev,
+                  ...newSelection,
+                }));
+              } else {
+                table.setRowSelection((prev) => ({
+                  ...prev,
+                  [row.id]: willSelect,
+                }));
+              }
+
+              // ✅ Set synchronously
+              lastSelectedIndexRef.current = currentIndex;
+
+              // After updating rowSelection, invoke handlers based on the intended new selection state
+              const idVal = row.original[idField] ?? row.original['genome_id'] ?? null;
+              if (!willSelect) {
+                onGenomeSelect?.(null); // deselecting, so clear
+                onActiveRowChange?.(null);
+              } else if (idVal != null && (typeof idVal === 'string' || typeof idVal === 'number')) {
+                onGenomeSelect?.(String(idVal));
+                onActiveRowChange?.(String(idVal));
+              }
+            }}
+            className="m-0 cursor-pointer p-0"
+          />
+        </div>
+      );
+    },
+    [idField, onGenomeSelect, onActiveRowChange],
+  );
+
   const columnDefs = useMemo<ColumnDef<Record<string, unknown>>[]>(() => {
     const checkboxColumn: ColumnDef<Record<string, unknown>> = {
       id: '__select__',
@@ -160,12 +231,12 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
         // Check if all rows on current page are selected
         const allPageRowsSelected = table.getIsAllPageRowsSelected();
         const somePageRowsSelected = table.getIsSomePageRowsSelected();
-        
+
         // Determine checkbox state - if all pages selected, always show checked
         // Otherwise show the state of the current page
         const isChecked = isAllPagesSelected || allPageRowsSelected;
         const isIndeterminate = !isAllPagesSelected && somePageRowsSelected;
-        
+
         return (
           <div className="relative flex size-full items-center justify-center">
             <input
@@ -178,7 +249,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
               }}
               onChange={(e) => {
                 e.stopPropagation();
-                
+
                 if (isAllPagesSelected) {
                   // If all pages are selected, deselect all (including cross-page)
                   onAllPagesSelectionChange?.(false);
@@ -209,73 +280,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           </div>
         );
       },
-      cell: ({ row, table }) => {
-        return (
-          <div className="flex size-full items-center justify-center">
-            <input
-              type="checkbox"
-              checked={row.getIsSelected()}
-              onChange={noop}
-              onClick={(e) => {
-                e.stopPropagation();
-
-                const isShift = (e).shiftKey;
-                const allRows = table.getRowModel().rows;
-                const currentRowId = row.id;
-                const currentIndex = allRows.findIndex(r => r.id === currentRowId);
-
-                if (currentIndex === -1) {
-                  console.warn('Could not find current row index');
-                  return;
-                }
-
-                const lastSelectedIndex = lastSelectedIndexRef.current;
-
-                // Determine whether this click will select or deselect the row based on current state
-                const wasSelected = row.getIsSelected();
-                const willSelect = !wasSelected;
-
-                if (isShift && lastSelectedIndex !== null && lastSelectedIndex !== currentIndex) {
-                  const start = Math.min(lastSelectedIndex, currentIndex);
-                  const end = Math.max(lastSelectedIndex, currentIndex);
-
-                  const newSelection: Record<string, boolean> = {};
-                  for (let i = start; i <= end; i++) {
-                    const rowId = allRows[i]?.id;
-                    if (rowId) {
-                      newSelection[rowId] = true;
-                    }
-                  }
-
-                  table.setRowSelection((prev) => ({
-                    ...prev,
-                    ...newSelection,
-                  }));
-                } else {
-                  table.setRowSelection((prev) => ({
-                    ...prev,
-                    [row.id]: willSelect,
-                  }));
-                }
-
-                // ✅ Set synchronously
-                lastSelectedIndexRef.current = currentIndex;
-
-                // After updating rowSelection, invoke handlers based on the intended new selection state
-                const idVal = row.original[idField] ?? row.original['genome_id'] ?? null;
-                if (!willSelect) {
-                  onGenomeSelect?.(null); // deselecting, so clear
-                  onActiveRowChange?.(null);
-                } else if (idVal != null && (typeof idVal === 'string' || typeof idVal === 'number')) {
-                  onGenomeSelect?.(String(idVal));
-                  onActiveRowChange?.(String(idVal));
-                }
-              }}
-              className="m-0 cursor-pointer p-0"
-            />
-          </div>
-        );
-      },
+      cell: renderCheckboxCell,
       enableResizing: false,
       size: 40,
     };
@@ -312,8 +317,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
         },
       }))
     ];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [columns]);
+  }, [columns, isAllPagesSelected, onAllPagesSelectionChange, onRowSelectionChange, renderCheckboxCell, totalItems]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -435,18 +439,10 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
   });
 
 
-  const columnSizingState = table.getState().columnSizing;
-  const columnSizingInfoState = table.getState().columnSizingInfo;
-
-  const columnSizeVars = useMemo(() => {
-    const headers = table.getFlatHeaders();
-    const colSizes: Record<string, string> = {};
-    for (const header of headers) {
-      colSizes[`--col-${header.column.id}-size`] = `${String(header.column.getSize())}px`;
-    }
-    return colSizes;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [columnSizingState, columnSizingInfoState]);
+  const columnSizeVars: Record<string, string> = {};
+  for (const header of table.getFlatHeaders()) {
+    columnSizeVars[`--col-${header.column.id}-size`] = `${String(header.column.getSize())}px`;
+  }
 
   const rows = table.getRowModel().rows;
 

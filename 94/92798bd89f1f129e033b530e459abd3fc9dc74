@@ -1,0 +1,23 @@
+src/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-result-utils.ts
+  s_3d5671008e42f1::t_f41e221723fccd 19-22,25,27-31
+  s_3d5671008e42f1::t_9082708b116cf9 34-35
+src/components/workspace/file-viewer/viewers/csv-viewer.tsx
+  s_3d5671008e42f1::t_f261fe61f8b739 207
+  s_3d5671008e42f1::t_5ae572274c19c6 208
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "9492798bd89f1f129e033b530e459abd3fc9dc74",
+  "prompts": {},
+  "sessions": {
+    "s_3d5671008e42f1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d765f9e-0d58-49a8-a7aa-221c0476363d",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

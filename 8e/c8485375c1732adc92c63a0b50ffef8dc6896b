@@ -1,0 +1,23 @@
+src/hooks/services/__tests__/use-service-runtime.test.tsx
+  s_3d5671008e42f1::t_a1066ae792f068 197
+src/lib/services/workspace/__tests__/shared.test.ts
+  s_3d5671008e42f1::t_8876aff169afc8 5-6,9-10
+src/lib/services/workspace/__tests__/favorites.test.ts
+  s_3d5671008e42f1::t_39e0b2305e8620 8-9,12-14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "8ec8485375c1732adc92c63a0b50ffef8dc6896b",
+  "prompts": {},
+  "sessions": {
+    "s_3d5671008e42f1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d765f9e-0d58-49a8-a7aa-221c0476363d",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

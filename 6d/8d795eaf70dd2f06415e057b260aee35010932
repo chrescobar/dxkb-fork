@@ -1,0 +1,23 @@
+src/components/organisms/geo-distribution/state-counties-layer.tsx
+  s_3897ea567147a5::t_daa0cb224fe052 53
+src/components/organisms/geo-distribution/us-states-layer.tsx
+  s_3897ea567147a5::t_3f3bd090e5d091 50
+src/components/organisms/geo-distribution/world-countries-layer.tsx
+  s_3897ea567147a5::t_a9f5d857bcb56f 56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "6d8d795eaf70dd2f06415e057b260aee35010932",
+  "prompts": {},
+  "sessions": {
+    "s_3897ea567147a5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "62060826-8608-4bb1-b852-a163c6b98b53",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

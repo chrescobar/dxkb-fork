@@ -68,14 +68,16 @@ describe("POST /api/auth/change-password", () => {
   it("forwards the JSON-RPC setPassword body with the session token as the Authorization header to USER_URL on success", async () => {
     setSessionCookies("valid-token", "alice");
 
-    let capturedAuthorization: string | null = null;
-    let capturedContentType: string | null = null;
-    let capturedBody: string | null = null;
+    const captured: {
+      authorization: string | null;
+      contentType: string | null;
+      body: string | null;
+    } = { authorization: null, contentType: null, body: null };
     server.use(
       http.post(`${userUrl}/`, async ({ request }) => {
-        capturedAuthorization = request.headers.get("Authorization");
-        capturedContentType = request.headers.get("Content-Type");
-        capturedBody = await request.text();
+        captured.authorization = request.headers.get("Authorization");
+        captured.contentType = request.headers.get("Content-Type");
+        captured.body = await request.text();
         return HttpResponse.json({ id: 1, jsonrpc: "2.0", result: null });
       }),
     );
@@ -89,12 +91,12 @@ describe("POST /api/auth/change-password", () => {
 
     expect(response.status).toBe(200);
     expect(data).toEqual({ success: true });
-    expect(capturedAuthorization).toBe("valid-token");
-    expect(capturedContentType).toBe("application/json");
+    expect(captured.authorization).toBe("valid-token");
+    expect(captured.contentType).toBe("application/json");
 
-    expect(capturedBody).not.toBeNull();
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const parsedBody = JSON.parse(capturedBody ?? "{}") as { // capturedBody assigned inside MSW handler closure
+    expect(captured.body).not.toBeNull();
+    if (captured.body === null) throw new Error("captured.body never set");
+    const parsedBody = JSON.parse(captured.body) as {
       jsonrpc?: string;
       method?: string;
       params?: unknown[];

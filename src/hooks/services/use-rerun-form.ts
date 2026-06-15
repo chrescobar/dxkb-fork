@@ -142,7 +142,6 @@ export function useRerunForm<
           getLibraryExtra ? (lib) => getLibraryExtra(lib, kind) : undefined,
         ),
       );
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- runtime guard: syncLibraries can be omitted when libraries is passed without it (e.g. in tests)
       if (!syncLibraries) {
         console.warn(
           "[useRerunForm] libraries were configured but syncLibraries is missing; built libraries were not applied.",

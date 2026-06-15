@@ -1,6 +1,6 @@
 "use client";
 
-import React, {
+import {
   useCallback,
   forwardRef,
   useImperativeHandle,
@@ -110,22 +110,25 @@ export const WorkspaceDataTable = forwardRef<
       ? `/workspace/${encodeWorkspaceSegment(sanitizePathSegment(sharedRootUsername))}`
       : sharedBase;
 
-  function handleItemClick(item: WorkspaceItem) {
-    if (!isFolderType(item.type)) return;
-    if (viewMode === "public") {
-      const encoded = buildEncodedSegmentPath(parsePathSegments(item.path));
-      router.push(`/workspace/public/${encoded}`);
-    } else if (viewMode === "shared") {
-      const encoded = buildEncodedSegmentPath(parsePathSegments(item.path));
-      router.push(`/workspace/${encoded}`);
-    } else {
-      const segments = path
-        ? path.split("/").map(sanitizePathSegment).filter(Boolean)
-        : [];
-      segments.push(sanitizePathSegment(item.name));
-      router.push(`${homeBase}/${buildEncodedSegmentPath(segments)}`);
-    }
-  }
+  const handleItemClick = useCallback(
+    (item: WorkspaceItem) => {
+      if (!isFolderType(item.type)) return;
+      if (viewMode === "public") {
+        const encoded = buildEncodedSegmentPath(parsePathSegments(item.path));
+        router.push(`/workspace/public/${encoded}`);
+      } else if (viewMode === "shared") {
+        const encoded = buildEncodedSegmentPath(parsePathSegments(item.path));
+        router.push(`/workspace/${encoded}`);
+      } else {
+        const segments = path
+          ? path.split("/").map(sanitizePathSegment).filter(Boolean)
+          : [];
+        segments.push(sanitizePathSegment(item.name));
+        router.push(`${homeBase}/${buildEncodedSegmentPath(segments)}`);
+      }
+    },
+    [viewMode, path, homeBase, router],
+  );
 
   const handleParentClick = useCallback(() => {
     if (viewMode === "public") {
@@ -257,8 +260,7 @@ export const WorkspaceDataTable = forwardRef<
         ))}
       </>
     ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- handleItemClick changes every render (uses path)
-    [useSelectionMode, selectedPathSet, onSelect, onItemDoubleClick, path, viewMode, homeBase],
+    [useSelectionMode, selectedPathSet, onSelect, onItemDoubleClick, handleItemClick],
   );
 
   const renderEmptyState = useCallback(

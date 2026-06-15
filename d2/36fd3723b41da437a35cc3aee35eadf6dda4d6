@@ -1,0 +1,29 @@
+src/lib/services/workspace/path-utils.ts
+  s_70ff99509a5b1d::t_91ea44dc9d50ad 83
+src/components/workspace/file-viewer/viewers/codemirror-viewer.tsx
+  s_cebb509ae4a470::t_856eea2747f39f 393
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "d236fd3723b41da437a35cc3aee35eadf6dda4d6",
+  "prompts": {},
+  "sessions": {
+    "s_70ff99509a5b1d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "19333a7d-d73f-41b8-9e41-89d0b1e3f647",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_cebb509ae4a470": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "97013f2f-1232-481c-8123-e3c2cf90c63f",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

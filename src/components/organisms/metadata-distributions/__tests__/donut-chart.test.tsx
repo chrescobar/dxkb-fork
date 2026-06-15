@@ -110,7 +110,7 @@ describe("DonutChart", () => {
       x: 0,
       y: 0,
       toJSON: () => ({}),
-    } as DOMRect);
+    });
 
     // clientX=80,clientY=25 → svgX=0, svgY=-55 → dist=55 (inside ring: 38<55<66)
     fireEvent.mouseMove(screen.getByTestId("chart-overlay"), {
@@ -131,7 +131,8 @@ describe("DonutChart", () => {
 
     const svg = document.querySelector("svg");
     expect(svg).not.toBeNull();
-    vi.spyOn(svg as SVGSVGElement, "getBoundingClientRect").mockReturnValue({
+    if (!svg) throw new Error("svg not found");
+    vi.spyOn(svg, "getBoundingClientRect").mockReturnValue({
       left: 0,
       top: 0,
       width: chartSize,
@@ -141,7 +142,7 @@ describe("DonutChart", () => {
       x: 0,
       y: 0,
       toJSON: () => ({}),
-    } as DOMRect);
+    });
 
     const overlay = screen.getByTestId("chart-overlay");
 

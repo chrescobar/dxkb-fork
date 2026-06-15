@@ -9,7 +9,7 @@ export interface FeaturedOrganismCategory {
 }
 
 function bvbrcTaxonUrl(taxonId: number): string {
-  return `https://www.bv-brc.org/view/Taxonomy/${taxonId}#view_tab=overview`;
+  return `https://www.bv-brc.org/view/Taxonomy/${String(taxonId)}#view_tab=overview`;
 }
 
 export const featuredAllOrganisms: FeaturedOrganismCategory[] = [

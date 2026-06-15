@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import { JsonRpcError, jsonRpcErrorCodes } from "@/lib/jsonrpc-client";
 import type { AuthErrorCode } from "@/lib/auth/port";
 import { statusToErrorCode } from "@/lib/api/types";
-import type { ApiErrorCode } from "@/lib/api/types";
 
 const authErrorCodes: readonly AuthErrorCode[] = [
   "invalid_credentials",
@@ -112,13 +111,13 @@ export function errorResponse(
 
   if (error instanceof Error) {
     return NextResponse.json(
-      { error: error.message, code: "upstream" as ApiErrorCode },
+      { error: error.message, code: "upstream" },
       { status: fallbackStatus },
     );
   }
 
   return NextResponse.json(
-    { error: "Unknown error", code: "unknown" as ApiErrorCode },
+    { error: "Unknown error", code: "unknown" },
     { status: fallbackStatus },
   );
 }

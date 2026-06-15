@@ -20,7 +20,7 @@ export const accentPalettes: Record<AccentKey, AccentPalette> = {
 export type ColorScale = (count: number) => string;
 
 export function makeColorScale(maxCount: number, accent: AccentKey): ColorScale {
-  const palette = accentPalettes[accent] ?? accentPalettes.all;
+  const palette = accentPalettes[accent];
   if (maxCount <= 0) return () => palette.zero;
   const logMax = Math.log10(maxCount + 1);
   const interpolator = interpolateRgb(palette.light, palette.dark);
@@ -34,7 +34,7 @@ export function makeColorScale(maxCount: number, accent: AccentKey): ColorScale 
 // disagree are listed; entries that match directly (e.g. "France", "Germany")
 // fall through to the direct lookup. Sourced from world-atlas Natural Earth
 // names paired against BV-BRC `isolation_country` values.
-export const countryNameAliases: Record<string, readonly string[]> = {
+export const countryNameAliases: Partial<Record<string, readonly string[]>> = {
   "United States of America": ["USA", "United States", "US"],
   Russia: ["Russian Federation"],
   "Czech Republic": ["Czechia"],

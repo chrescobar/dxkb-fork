@@ -71,7 +71,7 @@ const makeItem = (
     ownerId: "user@bvbrc",
     permissions: { user: "o", global: "n" },
     ...overrides,
-  }) as WorkspaceItem;
+  });
 
 const defaultProps = {
   workspaceGuideUrl: "https://example.com/guide",
@@ -102,7 +102,7 @@ describe("WorkspaceActionBar", () => {
       );
       const tooltipContent = screen.getAllByTestId("tooltip-content");
       const editTypeTooltip = tooltipContent.find((el) =>
-        el.textContent?.includes('Cannot change "job_result" type'),
+        el.textContent.includes('Cannot change "job_result" type'),
       );
       expect(editTypeTooltip).toBeDefined();
     });
@@ -171,7 +171,7 @@ describe("WorkspaceActionBar", () => {
       render(<WorkspaceActionBar {...defaultProps} selection={[genomeGroups]} />);
       const tooltips = screen.getAllByTestId("tooltip-content");
       const protectedTooltip = tooltips.find((el) =>
-        el.textContent?.includes("essential"),
+        el.textContent.includes("essential"),
       );
       expect(protectedTooltip).toBeDefined();
     });

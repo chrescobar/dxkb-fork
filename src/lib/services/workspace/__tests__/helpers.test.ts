@@ -53,10 +53,8 @@ describe("normalizeWsPath", () => {
   });
 
   it("handles null-ish values", () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(normalizeWsPath(null as any)).toBe("");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(normalizeWsPath(undefined as any)).toBe("");
+    expect(normalizeWsPath(null)).toBe("");
+    expect(normalizeWsPath(undefined)).toBe("");
   });
 
   it("handles whitespace-only input", () => {

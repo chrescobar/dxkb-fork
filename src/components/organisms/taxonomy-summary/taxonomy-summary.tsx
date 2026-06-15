@@ -17,7 +17,7 @@ export async function TaxonomySummary({
   // allSettled: failing the summary endpoint shouldn't blank the entire card.
   const summaryResult = await fetchOrganismSummary(taxonId).then(
     (value) => ({ status: "fulfilled" as const, value }),
-    (reason) => ({ status: "rejected" as const, reason }),
+    (reason: unknown) => ({ status: "rejected" as const, reason }),
   );
 
   const summary = summaryResult.status === "fulfilled" ? summaryResult.value : null;

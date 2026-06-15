@@ -18,7 +18,7 @@ export async function fetchReferenceGenomes(
 ): Promise<ReferenceGenome[]> {
   const baseUrl = getBvBrcWebsiteApiBaseUrl();
   const query = [
-    `eq(taxon_lineage_ids,${taxonId})`,
+    `eq(taxon_lineage_ids,${String(taxonId)})`,
     `eq(reference_genome,*)`,
     `select(reference_genome,genome_name,genome_id)`,
     `limit(25000)`,
@@ -44,7 +44,7 @@ export async function fetchReferenceGenomes(
 
   return payload.map((doc: unknown, index: number) => {
     if (!doc || typeof doc !== "object" || Array.isArray(doc)) {
-      throw new Error(`reference-genomes: unexpected doc shape at index ${index}`);
+      throw new Error(`reference-genomes: unexpected doc shape at index ${String(index)}`);
     }
     const d = doc as Record<string, unknown>;
     return {

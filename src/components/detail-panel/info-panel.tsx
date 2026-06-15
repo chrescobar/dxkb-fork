@@ -1,4 +1,3 @@
-import React from "react";
 import { useWorkspaceDu } from "@/hooks/services/workspace/use-workspace-du";
 
 import { genomeFields } from "@/constants/datafields/genome";
@@ -41,7 +40,12 @@ export type InfoPanelProps =
 
 
 /** Build the full path to a workspace item (parent + name) for API calls like Workspace.du. */
-export function getItemFullPath(item: WorkspaceItem): string {
+export function getItemFullPath(
+  item: Omit<WorkspaceItem, "path" | "name"> & {
+    path?: string | null;
+    name?: string | null;
+  },
+): string {
   const rawPath = (item.path ?? "").replace(/\/+$/, "").replace(/\/+/g, "/");
   const name = (item.name ?? "").trim();
   const segmentSuffix = `/${name}`;
@@ -82,9 +86,7 @@ function WorkspaceItemDetailContent({
               ? "Loading…"
               : diskUsageError
                 ? "—"
-                : diskUsage !== undefined
-                  ? formatFileSize(diskUsage.sizeBytes, { showZero: true })
-                  : "—"}
+                : formatFileSize(diskUsage.sizeBytes, { showZero: true })}
           </dd>
         </div>
         {diskUsage !== undefined && (
@@ -114,7 +116,7 @@ export function InfoPanel(props: InfoPanelProps) {
       <div className="flex size-full flex-col overflow-hidden">
         {isMultiSelect ? (
           <div className="px-4 py-2">
-            <DetailPanel.Header title={`${selection.length} items selected`} />
+            <DetailPanel.Header title={`${String(selection.length)} items selected`} />
             <DetailPanel.EmptyState message="Select a single item to view details" />
           </div>
         ) : hasSingleSelection ? (
@@ -232,33 +234,34 @@ export function InfoPanel(props: InfoPanelProps) {
     linkType?: unknown;
     linkText?: unknown;
   }
-  const displayColumns: DisplayColumn[] = Object.values(fieldFile ?? {}).map((obj) => {
+  const displayColumns: DisplayColumn[] = Object.values(fieldFile).map((obj) => {
     const o = obj as Record<string, unknown>;
     return {
       id: o.field,
       label: o.label,
       visible: !o.hidden,
       group: o.group,
-      link: o?.link,
-      linkType: o?.linkType,
-      linkText: o?.linkText,
+      link: o.link,
+      linkType: o.linkType,
+      linkText: o.linkText,
     };
   });
 
-  const grouped = displayColumns.reduce(
-    (acc: Record<string, DisplayColumn[]>, item) => {
-      const g = String(item.group ?? "");
+  const grouped = displayColumns.reduce<Record<string, DisplayColumn[] | undefined>>(
+    (acc: Record<string, DisplayColumn[] | undefined>, item) => {
+      const g = (item.group as string | undefined) ?? "";
       if (!acc[g]) acc[g] = [];
       acc[g].push(item);
       return acc;
     },
-    {} as Record<string, DisplayColumn[]>
+    {}
   );
 
   function resolveLink(template: string, row: Record<string, unknown>, fallbackField: string) {
     return template.replace(/{([^}]+)}/g, (_, key: string) => {
       const value = row[key] ?? row[fallbackField] ?? "";
-      return encodeURIComponent(String(value));
+      const primitive = typeof value === "string" || typeof value === "number" || typeof value === "boolean" ? value : "";
+      return encodeURIComponent(String(primitive));
     });
   }
 
@@ -273,7 +276,7 @@ export function InfoPanel(props: InfoPanelProps) {
 
   return (
     <DetailPanel>
-      <DetailPanel.Header title={selectedIds.length === 1 ? String(selectedRow?.[panelTitleField] ?? "") : ""} />
+      <DetailPanel.Header title={selectedIds.length === 1 ? ((selectedRow?.[panelTitleField] as string | undefined) ?? "") : ""} />
       {selectedIds.length === 1 ? (
         <>
           {order.map((group) => {
@@ -287,7 +290,7 @@ export function InfoPanel(props: InfoPanelProps) {
               const rawValue = selectedRow?.[fieldId];
               if (item.link) {
                 const resolved = toAbsoluteUrl(
-                  resolveLink(String(item.link), selectedRow ?? {}, fieldId)                );
+                  resolveLink(item.link as string, selectedRow ?? {}, fieldId)                );
 
                 if (item.linkType === "button") {
                   return {
@@ -298,7 +301,7 @@ export function InfoPanel(props: InfoPanelProps) {
                         onClick={() => window.open(resolved, "_blank", "noopener,noreferrer")}
                         className="rounded border-black bg-primary px-2 py-1 text-sm text-secondary"
                       >
-                        {String(item.linkText ?? "View")}
+                        {(item.linkText as string | undefined) ?? "View"}
                       </Button>
                     ),
                   };
@@ -332,7 +335,7 @@ export function InfoPanel(props: InfoPanelProps) {
         <p className="px-4 py-2 text-xs">
           {props.isAllPagesSelected && props.totalItems
             ? `All ${props.totalItems.toLocaleString()} rows selected`
-            : `${selectedIds.length} rows selected`}
+            : `${String(selectedIds.length)} rows selected`}
         </p>
       )}
     </DetailPanel>

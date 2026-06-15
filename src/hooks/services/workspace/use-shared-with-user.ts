@@ -18,7 +18,7 @@ export function useSharedWithUser({
 }: UseSharedWithUserOptions) {
   const repository = useWorkspaceRepository("authenticated");
 
-  return useQuery<WorkspaceItem[], Error>({
+  return useQuery<WorkspaceItem[]>({
     queryKey: workspaceQueryKeys.sharedRoot(username),
     queryFn: async () => {
       const items = await repository.listDirectory({ path: "/" });
@@ -26,7 +26,7 @@ export function useSharedWithUser({
         const globalPermission = item.permissions?.global ?? "";
         const userPermission = item.permissions?.user ?? "";
         if (globalPermission !== "n") return false;
-        if (userPermission === "o" && globalPermission === "n") return false;
+        if (userPermission === "o") return false;
         return true;
       });
     },
@@ -49,7 +49,7 @@ export function useUserWorkspaces({
 }: UseUserWorkspacesOptions) {
   const repository = useWorkspaceRepository("authenticated");
 
-  return useQuery<WorkspaceItem[], Error>({
+  return useQuery<WorkspaceItem[]>({
     queryKey: workspaceQueryKeys.userRoot(username),
     queryFn: async () => {
       const decoded = decodeURIComponent(username);

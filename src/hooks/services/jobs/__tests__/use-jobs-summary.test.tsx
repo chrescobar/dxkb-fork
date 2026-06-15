@@ -34,7 +34,7 @@ describe("useJobsSummary", () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => { expect(result.current.isSuccess).toBe(true); });
 
     expect(result.current.data).toEqual({ taskSummary, appSummary });
     expect(capturedBody).toEqual(expect.objectContaining({ include_archived: false }));
@@ -57,7 +57,7 @@ describe("useJobsSummary", () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => { expect(result.current.isSuccess).toBe(true); });
 
     expect(result.current.data).toEqual({ taskSummary, appSummary });
   });
@@ -76,7 +76,7 @@ describe("useJobsSummary", () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => { expect(result.current.isSuccess).toBe(true); });
 
     expect(result.current.data).toEqual({ taskSummary, appSummary });
   });
@@ -92,7 +92,7 @@ describe("useJobsSummary", () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => expect(result.current.isError).toBe(true));
+    await waitFor(() => { expect(result.current.isError).toBe(true); });
 
     expect(result.current.error).toBeInstanceOf(ApiCallError);
     expect(result.current.error?.status).toBe(502);

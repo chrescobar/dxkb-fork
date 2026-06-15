@@ -194,7 +194,7 @@ describe("useServiceRuntime", () => {
       serviceName: "GenomeAssembly2",
       displayName: "Genome Assembly",
       defaultValues: { output_path: "", output_file: "", flag: false },
-      transformParams: exampleDefinition.transformParams,
+      transformParams: (data) => exampleDefinition.transformParams(data),
       rerun: {
         defaultOutputPath: null,
         onApply: definitionOnApply,
@@ -256,7 +256,7 @@ describe("useServiceRuntime", () => {
     const capture = { current: noopSetters, ready: false };
     const submitSpy = vi.fn();
     server.use(
-      http.post("*/api/services/app-service/submit", async () => {
+      http.post("*/api/services/app-service/submit", () => {
         submitSpy();
         return HttpResponse.json({ job: [{ id: "job-123" }] });
       }),
@@ -271,7 +271,7 @@ describe("useServiceRuntime", () => {
       { wrapper: wrapper(capture) },
     );
 
-    await waitFor(() => expect(capture.ready).toBe(true));
+    await waitFor(() => { expect(capture.ready).toBe(true); });
     act(() => {
       capture.current.setIsDebugMode(true);
       capture.current.setContainerBuildId("build-42");

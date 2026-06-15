@@ -44,7 +44,7 @@ function EditTypeForm({
   onConfirm: (newType: string) => Promise<void>;
   isUpdating: boolean;
 }) {
-  const currentType = item.type ?? "";
+  const currentType = item.type;
   const [selectedType, setSelectedType] = React.useState(currentType);
 
   const handleSave = React.useCallback(async () => {
@@ -82,7 +82,7 @@ function EditTypeForm({
         </label>
         <Select
           value={selectedType}
-          onValueChange={(value) => setSelectedType(value ?? "")}
+          onValueChange={(value) => { setSelectedType(value ?? ""); }}
           disabled={isUpdating}
         >
           <SelectTrigger id="edit-type-select" className="w-full">
@@ -99,18 +99,18 @@ function EditTypeForm({
           </SelectContent>
         </Select>
         <p className="text-xs text-muted-foreground">
-          Changing type for: {item.name ?? "item"}
+          Changing type for: {item.name}
         </p>
       </div>
       <DialogFooter showCloseButton={false}>
         <Button
           variant="outline"
-          onClick={() => onOpenChange(false)}
+          onClick={() => { onOpenChange(false); }}
           disabled={isUpdating}
         >
           Cancel
         </Button>
-        <Button onClick={handleSave} disabled={!canSave}>
+        <Button onClick={() => { void handleSave(); }} disabled={!canSave}>
           {isUpdating ? (
             <>
               <Spinner className="mr-2 size-3.5 shrink-0" />

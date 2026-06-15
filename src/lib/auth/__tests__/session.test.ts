@@ -53,7 +53,7 @@ describe("serverAuthenticatedFetch", () => {
 
     let capturedRequest: { url: string; headers: Headers } | undefined;
     server.use(
-      http.get("https://api.example.com/data", async ({ request }) => {
+      http.get("https://api.example.com/data", ({ request }) => {
         capturedRequest = {
           url: request.url,
           headers: request.headers,
@@ -263,7 +263,7 @@ describe("requireAuth", () => {
     expect(result).toBeInstanceOf(Response);
     const response = result as Response;
     expect(response.status).toBe(401);
-    const body = await response.json();
+    const body = await response.json() as { error: string };
     expect(body).toEqual({ error: "Authentication required" });
   });
 
@@ -301,7 +301,7 @@ describe("requireAuthToken", () => {
     expect(result).toBeInstanceOf(Response);
     const response = result as Response;
     expect(response.status).toBe(401);
-    const body = await response.json();
+    const body = await response.json() as { error: string };
     expect(body).toEqual({ error: "Authentication required" });
   });
 });

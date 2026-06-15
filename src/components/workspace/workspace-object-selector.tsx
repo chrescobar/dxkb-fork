@@ -259,7 +259,7 @@ export function WorkspaceObjectSelector({
       const raf = requestAnimationFrame(() => {
         updateDropdownLayout();
       });
-      return () => cancelAnimationFrame(raf);
+      return () => { cancelAnimationFrame(raf); };
     }
     setDropdownRect(null);
   }, [showDropdown, updateDropdownLayout]);
@@ -267,7 +267,7 @@ export function WorkspaceObjectSelector({
   // Update portal position on scroll/resize so dropdown stays aligned
   React.useEffect(() => {
     if (!showDropdown) return;
-    const handleUpdate = () => updateDropdownLayout();
+    const handleUpdate = () => { updateDropdownLayout(); };
     window.addEventListener("scroll", handleUpdate, true);
     window.addEventListener("resize", handleUpdate);
     return () => {
@@ -278,9 +278,6 @@ export function WorkspaceObjectSelector({
 
   // Use filtered objects from hook, with manual trigger override
   const displayObjects = React.useMemo(() => {
-    if (!filteredObjects || !Array.isArray(filteredObjects)) {
-      return []; // Return empty array if filteredObjects is undefined or not an array
-    }
     if (isManualTrigger) {
       return objects; // Show all objects when manually triggered
     }
@@ -298,7 +295,7 @@ export function WorkspaceObjectSelector({
     const valueChanged = previousValueRef.current !== value;
     if (valueChanged) previousValueRef.current = value;
 
-    if (value && objects && objects.length > 0) {
+    if (value && objects.length > 0) {
       // Only update if value changed or this value hasn't been resolved yet
       // (handles the case where objects load after the initial render)
       if (valueChanged || resolvedValueRef.current !== value) {
@@ -390,12 +387,10 @@ export function WorkspaceObjectSelector({
                   e.preventDefault();
                   if (highlightedIndex >= 0 && highlightedIndex < displayObjects.length) {
                     const object = displayObjects[highlightedIndex];
-                    if (object) {
-                      // If onSelectedObjectChange is provided, use the '+' pattern (don't immediately select)
-                      // Otherwise, immediately select (for OutputFolder use case)
-                      const immediateSelect = !onSelectedObjectChange;
-                      handleObjectClick(object, immediateSelect);
-                    }
+                    // If onSelectedObjectChange is provided, use the '+' pattern (don't immediately select)
+                    // Otherwise, immediately select (for OutputFolder use case)
+                    const immediateSelect = !onSelectedObjectChange;
+                    handleObjectClick(object, immediateSelect);
                   } else if (selectedObject) {
                     // If no highlight but we have a selected object, confirm it
                     // If onSelectedObjectChange is provided, use the '+' pattern (don't immediately select)
@@ -464,10 +459,8 @@ export function WorkspaceObjectSelector({
                   </div>
                 ) : displayObjects.length > 0 ? (
                   displayObjects.map((object, index) => {
-                    if (!object) return null;
-
                     const cleanPath =
-                      object.path?.replace(/^\/[^/]+@[^/]+/, "") ||
+                      object.path.replace(/^\/[^/]+@[^/]+/, "") ||
                       object.path ||
                       object.name ||
                       "Unnamed Object";
@@ -476,7 +469,7 @@ export function WorkspaceObjectSelector({
 
                     return (
                       <div
-                        key={`${object.id}-${index}`}
+                        key={`${object.id}-${String(index)}`}
                         ref={(el) => {
                           itemRefs.current[index] = el;
                         }}
@@ -488,7 +481,7 @@ export function WorkspaceObjectSelector({
                           const immediateSelect = !onSelectedObjectChange;
                           handleObjectClick(object, immediateSelect);
                         }}
-                        onMouseEnter={() => setHighlightedIndex(index)}
+                        onMouseEnter={() => { setHighlightedIndex(index); }}
                       >
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium">

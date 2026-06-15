@@ -22,7 +22,7 @@ export default function SettingsPage() {
     queryFn: async () => {
       const res = await apiFetch("/api/auth/profile");
       if (!res.ok) throw new Error("Failed to load profile");
-      return res.json();
+      return res.json() as Promise<UserProfile>;
     },
   });
 

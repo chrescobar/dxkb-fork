@@ -45,6 +45,6 @@ export function useStackedChartHighlight(): StackedChartHighlight {
         prev?.locked && prev.idx === idx ? null : { idx, locked: true },
       );
     },
-    clearHighlight: () => setHighlight(null),
+    clearHighlight: () => { setHighlight(null); },
   };
 }

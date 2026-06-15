@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import type { JsonOverride } from "../mocks/backends";
+import type { JsonOverride, JsonOverrideBodyContext } from "../mocks/backends";
 
 interface HarHeader {
   name: string;
@@ -218,7 +218,7 @@ export function harOverridesFor(harPath: string): JsonOverride[] {
       body:
         bodies.length === 1
           ? bodies[0]
-          : ({ callIndex }) => bodies[Math.min(callIndex, bodies.length - 1)],
+          : ({ callIndex }: JsonOverrideBodyContext) => bodies[Math.min(callIndex, bodies.length - 1)],
     };
 
     if (group.rpcMethod !== null) {
@@ -250,9 +250,9 @@ export function uploadedFilenameFromHar(harPath: string): string {
     const rpc = parseRpcRequest(entry.request.postData?.text);
     if (rpc?.method !== "Workspace.create") continue;
     if (!Array.isArray(rpc.params)) continue;
-    const first = rpc.params[0] as { objects?: unknown } | undefined;
+    const first = rpc.params[0] as { objects?: unknown[] } | undefined;
     if (!first || !Array.isArray(first.objects)) continue;
-    const obj = first.objects[0];
+    const obj: unknown = first.objects[0];
     if (!Array.isArray(obj) || typeof obj[0] !== "string") continue;
     const basename = obj[0].split("/").pop();
     if (basename) return basename;

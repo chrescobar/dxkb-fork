@@ -116,7 +116,7 @@ describe("fetchSerotypeDistribution", () => {
   it("limits serovars to top 10 by total count", async () => {
     // 12 distinct serovars
     const pivot = Array.from({ length: 12 }, (_, i) => ({
-      value: `Sv${i + 1}`,
+      value: `Sv${String(i + 1)}`,
       count: 12 - i, // Sv1=12, Sv2=11, ... Sv12=1
     }));
 

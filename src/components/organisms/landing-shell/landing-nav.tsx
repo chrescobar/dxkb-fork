@@ -86,7 +86,7 @@ export function LandingNav({
               variant={isActive ? "secondary" : "ghost"}
               aria-current={isActive ? "page" : undefined}
               title={collapsed ? item.label : undefined}
-              onClick={() => onChange(item.key)}
+              onClick={() => { onChange(item.key); }}
               className={cn(
                 "justify-start px-2",
                 isActive && "font-semibold",

@@ -11,7 +11,7 @@ interface ColorLegendProps {
 }
 
 export function ColorLegend({ maxCount, accent }: ColorLegendProps) {
-  const palette = accentPalettes[accent] ?? accentPalettes.all;
+  const palette = accentPalettes[accent];
 
   return (
     <div className="flex items-center gap-2 text-xs text-muted-foreground">

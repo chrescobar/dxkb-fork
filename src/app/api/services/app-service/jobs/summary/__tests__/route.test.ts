@@ -31,7 +31,7 @@ describe("POST /api/services/app-service/jobs/summary", () => {
     const request = mockNextRequest({ method: "POST", body: {} });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(401);
     expect(data).toEqual(
@@ -49,7 +49,10 @@ describe("POST /api/services/app-service/jobs/summary", () => {
     const request = mockNextRequest({ method: "POST", body: {} });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as {
+      taskSummary?: typeof taskData;
+      appSummary?: typeof appData;
+    };
 
     expect(response.status).toBe(200);
     expect(data).toEqual({ taskSummary: taskData, appSummary: appData });
@@ -101,7 +104,7 @@ describe("POST /api/services/app-service/jobs/summary", () => {
     const request = mockNextRequest({ method: "POST", body: {} });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(500);
     expect(data).toEqual(

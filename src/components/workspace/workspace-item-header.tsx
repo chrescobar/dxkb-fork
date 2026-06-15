@@ -56,7 +56,7 @@ export function WorkspaceItemHeader({
         <Button variant="ghost" size="icon-sm" onClick={handleDownload} title="Download file">
           <Download />
         </Button>
-        <Button variant="ghost" size="icon-sm" onClick={handleCopyPath} title="Copy path">
+        <Button variant="ghost" size="icon-sm" onClick={() => { void handleCopyPath(); }} title="Copy path">
           <ClipboardCopy />
         </Button>
         {children}

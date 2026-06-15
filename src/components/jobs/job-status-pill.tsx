@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Briefcase, CheckCircle2, Clock, Loader2 } from "lucide-react";
+import { CheckCircle2, Clock, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth/hooks";
 import { useJobsSummary } from "@/hooks/services/jobs/use-jobs-summary";
@@ -28,9 +28,9 @@ function formatJobTime(job: JobListItem): string {
   if (job.completed_time) {
     const secondsAgo = Math.max(0, Math.floor((Date.now() - new Date(job.completed_time).getTime()) / 1000));
     if (secondsAgo < 60) return "just now";
-    if (secondsAgo < 3600) return `${Math.floor(secondsAgo / 60)}m ago`;
-    if (secondsAgo < 86400) return `${Math.floor(secondsAgo / 3600)}h ago`;
-    return `${Math.floor(secondsAgo / 86400)}d ago`;
+    if (secondsAgo < 3600) return `${String(Math.floor(secondsAgo / 60))}m ago`;
+    if (secondsAgo < 86400) return `${String(Math.floor(secondsAgo / 3600))}h ago`;
+    return `${String(Math.floor(secondsAgo / 86400))}d ago`;
   }
   return "";
 }
@@ -100,7 +100,7 @@ export function JobStatusPill() {
           <Link
             href="/jobs"
             className="text-xs text-muted-foreground transition-colors hover:text-foreground"
-            onClick={() => setIsOpen(false)}
+            onClick={() => { setIsOpen(false); }}
           >
             View all →
           </Link>
@@ -118,14 +118,14 @@ export function JobStatusPill() {
           ) : (
             jobs.map((job) => {
               const config = statusConfig[job.status];
-              const Icon = config?.icon ?? Briefcase;
+              const Icon = config.icon;
               return (
                 <div
                   key={job.id}
                   className="flex items-center gap-2 px-3 py-2"
                 >
                   <Icon
-                    className={cn("size-4 shrink-0", config?.className)}
+                    className={cn("size-4 shrink-0", config.className)}
                   />
                   <span className="min-w-0 flex-1 truncate text-sm">
                     {formatServiceName(job.app)}

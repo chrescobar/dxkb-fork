@@ -181,7 +181,7 @@ export function toWorkspaceObject(item: WorkspaceItem): WorkspaceObject {
   return {
     id: item.id,
     name: item.name,
-    type: item.type as WorkspaceObject["type"],
+    type: item.type,
     size: item.size,
     modified: item.createdAt,
     path: item.path,

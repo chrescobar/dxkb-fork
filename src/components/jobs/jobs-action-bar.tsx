@@ -94,7 +94,7 @@ export function JobsActionBar({
               variant="secondary"
               className="h-15 w-full flex-col gap-1 font-normal whitespace-normal"
               disabled={disabled}
-              onClick={() => onAction(action.id, selection)}
+              onClick={() => { onAction(action.id, selection); }}
             >
               {loading ? (
                 <Spinner className="size-4 shrink-0" />

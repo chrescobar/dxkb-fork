@@ -29,7 +29,7 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const queryClient = useQueryClient();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
 
     if (!targetUser.trim() || !password) return;
@@ -87,14 +87,14 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={(e) => { void handleSubmit(e); }} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="su-target-user">User to Impersonate</Label>
               <Input
                 id="su-target-user"
                 placeholder="User id for other account"
                 value={targetUser}
-                onChange={(e) => setTargetUser(e.target.value)}
+                onChange={(e) => { setTargetUser(e.target.value); }}
                 autoComplete="off"
                 disabled={isSubmitting}
               />
@@ -107,7 +107,7 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
                 type="password"
                 placeholder="Your admin password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => { setPassword(e.target.value); }}
                 autoComplete="off"
                 disabled={isSubmitting}
               />

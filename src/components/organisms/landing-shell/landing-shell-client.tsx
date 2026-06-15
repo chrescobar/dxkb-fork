@@ -32,10 +32,12 @@ export function LandingShellClient({
   const searchParams = useSearchParams();
   const [navCollapsed, setNavCollapsed] = useState(false);
 
-  useHotkey("Mod+B", () => startTransition(() => setNavCollapsed((c) => !c)));
+  useHotkey("Mod+B", () => {
+    startTransition(() => { setNavCollapsed((current) => !current); });
+  });
 
   function handleViewChange(nextView: OrganismViewKey) {
-    const params = new URLSearchParams(searchParams?.toString() ?? "");
+    const params = new URLSearchParams(searchParams.toString());
     if (nextView === defaultView) {
       params.delete("view");
     } else {
@@ -52,7 +54,9 @@ export function LandingShellClient({
         activeView={serverActiveView}
         collapsed={navCollapsed}
         onChange={handleViewChange}
-        onCollapseToggle={() => startTransition(() => setNavCollapsed((c) => !c))}
+        onCollapseToggle={() => {
+          startTransition(() => { setNavCollapsed((current) => !current); });
+        }}
       />
       <section className="min-w-0 flex-1">
         <div className="mb-4 flex items-center justify-between rounded-lg border bg-card px-5 py-3 shadow-sm">

@@ -13,8 +13,8 @@ import type { WorkspaceItem } from "../domain";
  */
 export function parseTupleToRawObject(list: unknown[]): Record<string, unknown> {
   const name = list[0];
-  const parent = String(list[2] ?? "");
-  const nameStr = String(name ?? "");
+  const parent = (list[2] as string | undefined) ?? "";
+  const nameStr = (name as string | undefined) ?? "";
   return {
     id: list[4],
     path: parent + nameStr,
@@ -34,25 +34,31 @@ export function parseTupleToRawObject(list: unknown[]): Record<string, unknown> 
 
 /** Convert a raw ls tuple directly to a canonical `WorkspaceItem`. */
 function parseTupleToWorkspaceItem(tuple: unknown[]): WorkspaceItem {
-  const name = String(tuple[0] ?? "");
-  const parent = String(tuple[2] ?? "");
-  const createdAt = tuple[3] ? String(tuple[3]) : undefined;
+  const name = (tuple[0] as string | undefined) ?? "";
+  const parent = (tuple[2] as string | undefined) ?? "";
+  const createdAt = tuple[3] ? (tuple[3] as string) : undefined;
   return {
-    id: String(tuple[4] ?? ""),
+    id: (tuple[4] as string | undefined) ?? "",
     name,
     path: parent + name,
-    type: String(tuple[1] ?? ""),
+    type: (tuple[1] as string | undefined) ?? "",
     size: Number(tuple[6]) || 0,
-    ownerId: tuple[5] ? String(tuple[5]) : undefined,
+    ownerId: tuple[5] ? (tuple[5] as string) : undefined,
     createdAt,
     timestamp: createdAt ? Date.parse(createdAt) : undefined,
     permissions: {
-      user: tuple[9] ? String(tuple[9]) : undefined,
-      global: tuple[10] ? String(tuple[10]) : undefined,
+      user: tuple[9] ? (tuple[9] as string) : undefined,
+      global: tuple[10] ? (tuple[10] as string) : undefined,
     },
-    userMeta: (tuple[7] as Record<string, unknown>) ?? undefined,
-    autoMeta: (tuple[8] as Record<string, unknown>) ?? undefined,
-    linkReference: tuple[11] ? String(tuple[11]) : undefined,
+    userMeta:
+      tuple[7] != null && typeof tuple[7] === "object"
+        ? (tuple[7] as Record<string, unknown>)
+        : undefined,
+    autoMeta:
+      tuple[8] != null && typeof tuple[8] === "object"
+        ? (tuple[8] as Record<string, unknown>)
+        : undefined,
+    linkReference: tuple[11] ? (tuple[11] as string) : undefined,
     raw: parseTupleToRawObject(tuple),
   };
 }
@@ -67,7 +73,7 @@ export function parseLsResult(
   requestedPath: string,
 ): WorkspaceItem[] {
   if (!Array.isArray(rawResult) || rawResult.length === 0) return [];
-  const pathsMap = rawResult[0];
+  const pathsMap: unknown = rawResult[0];
   if (!pathsMap || typeof pathsMap !== "object") return [];
   const entries = (pathsMap as Record<string, unknown>)[requestedPath];
   if (!Array.isArray(entries)) return [];
@@ -81,9 +87,9 @@ export function parseLsResult(
  */
 export function parseLsResultLoose(rawResult: unknown): WorkspaceItem[] {
   if (!Array.isArray(rawResult) || rawResult.length === 0) return [];
-  const pathsMap = rawResult[0];
+  const pathsMap: unknown = rawResult[0];
   if (!pathsMap || typeof pathsMap !== "object") return [];
-  const keys = Object.keys(pathsMap as Record<string, unknown>);
+  const keys = Object.keys(pathsMap);
   const first = keys[0];
   if (!first) return [];
   const entries = (pathsMap as Record<string, unknown>)[first];
@@ -99,7 +105,7 @@ export function parseListPermissions(
   rawResult: unknown,
 ): Record<string, [string, string][]> {
   if (!Array.isArray(rawResult) || rawResult.length === 0) return {};
-  const map = rawResult[0];
+  const map: unknown = rawResult[0];
   if (!map || typeof map !== "object") return {};
   return map as Record<string, [string, string][]>;
 }
@@ -110,11 +116,11 @@ export function parseListPermissions(
  */
 export function parseUploadNode(rawResult: unknown): string | null {
   if (!Array.isArray(rawResult) || rawResult.length === 0) return null;
-  const outer = rawResult[0];
+  const outer: unknown = rawResult[0];
   if (!Array.isArray(outer) || outer.length === 0) return null;
-  const tuple = outer[0];
+  const tuple: unknown = outer[0];
   if (!Array.isArray(tuple)) return null;
-  const link = tuple[11];
+  const link: unknown = tuple[11];
   return typeof link === "string" ? link : null;
 }
 
@@ -125,7 +131,7 @@ export function parseDuResult(
   rawResult: unknown,
 ): [string, number, number, number, string][] {
   if (!Array.isArray(rawResult) || rawResult.length === 0) return [];
-  const inner = rawResult[0];
+  const inner: unknown = rawResult[0];
   if (!Array.isArray(inner)) return [];
   return inner as [string, number, number, number, string][];
 }

@@ -16,7 +16,7 @@ describe("respondWithSession", () => {
   it("returns { user, session } envelope with 200 on success", async () => {
     const response = respondWithSession({ data: aliceUser, error: null });
     expect(response.status).toBe(200);
-    const body = await response.json();
+    const body = await response.json() as { user: AuthUser; session: { token: string; expiresAt: string } };
     expect(body.user).toEqual(aliceUser);
     expect(body.session.token).toBe("");
     expect(typeof body.session.expiresAt).toBe("string");
@@ -25,7 +25,7 @@ describe("respondWithSession", () => {
   it("returns { user: null, session: null } when data is null", async () => {
     const response = respondWithSession({ data: null, error: null });
     expect(response.status).toBe(200);
-    const body = await response.json();
+    const body = await response.json() as { user: null; session: null };
     expect(body).toEqual({ user: null, session: null });
   });
 
@@ -35,11 +35,11 @@ describe("respondWithSession", () => {
       error: { code: "invalid_credentials", message: "bad login" },
     });
     expect(response.status).toBe(401);
-    const body = await response.json();
+    const body = await response.json() as { error: string; code: string };
     expect(body).toEqual({ error: "bad login", code: "unauthenticated" });
   });
 
-  it("uses explicit status when provided", async () => {
+  it("uses explicit status when provided", () => {
     const response = respondWithSession({
       data: null,
       error: { code: "validation", message: "bad", status: 422 },
@@ -47,7 +47,7 @@ describe("respondWithSession", () => {
     expect(response.status).toBe(422);
   });
 
-  it("maps forbidden to 403", async () => {
+  it("maps forbidden to 403", () => {
     const response = respondWithSession({
       data: null,
       error: { code: "forbidden", message: "nope" },
@@ -55,7 +55,7 @@ describe("respondWithSession", () => {
     expect(response.status).toBe(403);
   });
 
-  it("maps validation to 400", async () => {
+  it("maps validation to 400", () => {
     const response = respondWithSession({
       data: null,
       error: { code: "validation", message: "fix me" },
@@ -63,7 +63,7 @@ describe("respondWithSession", () => {
     expect(response.status).toBe(400);
   });
 
-  it("maps service_unavailable to 503", async () => {
+  it("maps service_unavailable to 503", () => {
     const response = respondWithSession({
       data: null,
       error: { code: "service_unavailable", message: "down" },
@@ -76,7 +76,7 @@ describe("respondWithAck", () => {
   it("returns { success: true } on success", async () => {
     const response = respondWithAck({ data: undefined, error: null });
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ success: true });
+    expect(await response.json() as { success: boolean }).toEqual({ success: true });
   });
 
   it("returns { error, code } with mapped status on error", async () => {
@@ -85,6 +85,6 @@ describe("respondWithAck", () => {
       error: { code: "unauthorized", message: "nope" },
     });
     expect(response.status).toBe(401);
-    expect(await response.json()).toEqual({ error: "nope", code: "unauthenticated" });
+    expect(await response.json() as { error: string; code: string }).toEqual({ error: "nope", code: "unauthenticated" });
   });
 });

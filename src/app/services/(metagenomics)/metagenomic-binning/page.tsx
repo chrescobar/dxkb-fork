@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import {
   FieldItem,
   FieldLabel,
@@ -96,17 +97,17 @@ export default function MetagenomicBinningPage() {
 
   const form = useForm({
     defaultValues:
-      defaultMetagenomicBinningFormValues as MetagenomicBinningFormData,
+      defaultMetagenomicBinningFormValues,
     validators: { onChange: metagenomicBinningFormSchema },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as MetagenomicBinningFormData);
+      await runtime.submitFormData(value);
     },
   });
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const startWith = useStore(form.store, (s) => s.values.start_with);
-  const assembler = useStore(form.store, (s) => s.values.assembler);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const startWith = useSelector(form.store, (s) => s.values.start_with);
+  const assembler = useSelector(form.store, (s) => s.values.assembler);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const {
     selectedLibraries,
@@ -207,7 +208,7 @@ export default function MetagenomicBinningPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="grid grid-cols-1 gap-6 md:grid-cols-12"
       >
@@ -231,12 +232,12 @@ export default function MetagenomicBinningPage() {
                   <FieldItem>
                     <RadioGroup
                       value={field.state.value}
-                      onValueChange={(value) =>
-                        value != null &&
-                        field.handleChange(
-                          value as MetagenomicBinningFormData["start_with"],
-                        )
-                      }
+                      onValueChange={(value) => {
+                        if (value != null)
+                          field.handleChange(
+                            value as MetagenomicBinningFormData["start_with"],
+                          );
+                      }}
                       className="service-radio-group-horizontal"
                     >
                       <div className="flex items-center gap-3">
@@ -462,12 +463,12 @@ export default function MetagenomicBinningPage() {
                             </FieldLabel>
                             <RadioGroup
                               value={field.state.value}
-                              onValueChange={(value) =>
-                                value != null &&
-                                field.handleChange(
-                                  value as MetagenomicBinningFormData["assembler"],
-                                )
-                              }
+                              onValueChange={(value) => {
+                                if (value != null)
+                                  field.handleChange(
+                                    value as MetagenomicBinningFormData["assembler"],
+                                  );
+                              }}
                               className="service-radio-group-horizontal"
                             >
                               <div className="flex items-center gap-3">
@@ -516,12 +517,12 @@ export default function MetagenomicBinningPage() {
                           </FieldLabel>
                           <RadioGroup
                             value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(
-                                value as MetagenomicBinningFormData["organism"],
-                              )
-                            }
+                            onValueChange={(value) => {
+                              if (value != null)
+                                field.handleChange(
+                                  value as MetagenomicBinningFormData["organism"],
+                                );
+                            }}
                             className="service-radio-group-horizontal"
                           >
                             <div className="flex items-center gap-3">
@@ -595,7 +596,7 @@ export default function MetagenomicBinningPage() {
                         <Input
                           name={field.name}
                           value={field.state.value ?? ""}
-                          onChange={(e) => field.handleChange(e.target.value)}
+                          onChange={(e) => { field.handleChange(e.target.value); }}
                           onBlur={field.handleBlur}
                           placeholder="My Genome Group"
                           className="service-card-input"
@@ -683,7 +684,7 @@ export default function MetagenomicBinningPage() {
                               name="disable_dangling"
                               checked={field.state.value}
                               onCheckedChange={(checked) =>
-                                field.handleChange(!!checked)
+                                { field.handleChange(checked); }
                               }
                               className="mb-2 bg-white"
                             />

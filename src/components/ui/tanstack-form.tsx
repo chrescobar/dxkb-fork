@@ -28,7 +28,7 @@ function FieldLabel({
     <Label
       data-slot="form-label"
       data-error={hasError}
-      htmlFor={field.name}
+      htmlFor={field.name as string}
       className={cn("data-[error=true]:text-destructive", className)}
       {...props}
     />
@@ -49,11 +49,11 @@ function FieldErrors({
   if (!field.state.meta.isTouched && field.form.state.submissionAttempts === 0)
     return null;
 
-  const firstError = errors[0];
+  const firstError = errors[0] as string | { message?: string };
   const message =
     typeof firstError === "string"
       ? firstError
-      : (firstError as { message?: string })?.message ?? "";
+      : firstError.message ?? "";
 
   if (!message) return null;
 

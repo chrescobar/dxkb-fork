@@ -50,15 +50,15 @@ export const StateCountiesLayer = memo(function StateCountiesLayer({
           const name = featureName(feature.properties);
           const key = selectedStateName ? `${selectedStateName}|${name}` : name;
           const count = data.countyData[key] ?? 0;
-          const meta = data.countyMeta[key];
+          const meta = data.countyMeta[key] ?? { count: 0, genera: {}, hosts: {} };
           return (
             <ChoroplethPath
-              key={`${name}-${feature.id ?? index}`}
+              key={`${name}-${String(feature.id ?? index)}`}
               pathD={path ?? ""}
               fill={colorScale(count)}
               strokeWidth={0.5}
               isDraggingRef={isDraggingRef}
-              payload={{ view: "state", name, count, genera: meta?.genera ?? {}, hosts: meta?.hosts ?? {} }}
+              payload={{ view: "state", name, count, genera: meta.genera, hosts: meta.hosts }}
               onHoverEnter={onHoverEnter}
               onHoverLeave={onHoverLeave}
             />

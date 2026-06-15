@@ -45,7 +45,7 @@ interface JobsToolbarProps {
   onIncludeArchivedChange: (value: boolean) => void;
   onRefresh: () => void;
   isRefreshing: boolean;
-  statusSummary?: Record<string, number>;
+  statusSummary?: Record<string, number | undefined>;
   dataUpdatedAt?: number;
   dateFrom: Date | undefined;
   dateTo: Date | undefined;
@@ -81,7 +81,7 @@ export function JobsToolbar({
         <Input
           placeholder="Search by name, ID, or service..."
           value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
+          onChange={(e) => { onSearchChange(e.target.value); }}
           className="pl-10"
         />
       </div>
@@ -94,14 +94,14 @@ export function JobsToolbar({
             ...availableServices.map((s) => ({
               value: s,
               label: appSummary?.[s] != null
-                ? `${formatServiceName(s)} (${appSummary[s]})`
+                ? `${formatServiceName(s)} (${String(appSummary[s])})`
                 : formatServiceName(s),
             })),
           ]}
           value={serviceFilter}
-          onValueChange={(value) =>
-            value != null && onServiceFilterChange(value)
-          }
+          onValueChange={(value) => {
+            if (value != null) onServiceFilterChange(value);
+          }}
         >
           <SelectTrigger aria-label="Filter by service" className="w-68">
             <SelectValue placeholder="Service" />
@@ -112,7 +112,7 @@ export function JobsToolbar({
               {availableServices.map((app) => (
                 <SelectItem key={app} value={app}>
                   {formatServiceName(app)}
-                  {appSummary?.[app] != null && ` (${appSummary[app]})`}
+                  {appSummary?.[app] != null && ` (${String(appSummary[app])})`}
                 </SelectItem>
               ))}
             </SelectGroup>
@@ -123,9 +123,9 @@ export function JobsToolbar({
         <Select
           items={statusOptions}
           value={statusFilter}
-          onValueChange={(value) =>
-            value != null && onStatusFilterChange(value)
-          }
+          onValueChange={(value) => {
+            if (value != null) onStatusFilterChange(value);
+          }}
         >
           <SelectTrigger aria-label="Filter by status" className="w-40">
             <SelectValue placeholder="Status" />
@@ -154,7 +154,7 @@ export function JobsToolbar({
             id="include-archived"
             checked={includeArchived}
             onCheckedChange={(checked) =>
-              onIncludeArchivedChange(checked === true)
+              { onIncludeArchivedChange(checked); }
             }
           />
           <Label

@@ -50,7 +50,8 @@ export function transformMetagenomicBinningParams(
     params.perform_bacterial_binning = false;
     params.perform_viral_annotation = true;
     params.perform_viral_binning = true;
-  } else if (data.organism === "both") {
+  } else {
+    // data.organism === "both"
     params.perform_bacterial_annotation = true;
     params.perform_viral_annotation = true;
     params.perform_viral_binning = true;

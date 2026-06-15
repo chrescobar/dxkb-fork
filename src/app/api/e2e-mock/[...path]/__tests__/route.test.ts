@@ -9,6 +9,20 @@ function ctx(path: string[]): RouteContext {
   return { params: Promise.resolve({ path }) };
 }
 
+interface SolrPivotEntry {
+  field: string;
+  value: string | number;
+  pivot?: SolrPivotEntry[];
+  count?: number;
+}
+
+interface SolrFacetBody {
+  facet_counts: {
+    facet_fields: Record<string, (string | number)[]>;
+    facet_pivot: Record<string, SolrPivotEntry[]>;
+  };
+}
+
 const originalMockEnabled = process.env.E2E_MOCK_ENABLED;
 
 afterEach(() => {
@@ -30,7 +44,7 @@ describe("api/e2e-mock catch-all — guard", () => {
         ctx(["foo"]),
       );
       expect(getResp.status).toBe(404);
-      expect(await getResp.json()).toEqual({ error: "Mock endpoint disabled" });
+      expect((await getResp.json()) as unknown).toEqual({ error: "Mock endpoint disabled" });
 
       const postResp = await POST(
         mockNextRequest({ method: "POST", body: { method: "x" }, url: "http://localhost:3020/api/e2e-mock/foo" }),
@@ -63,7 +77,7 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    expect(await resp.json()).toEqual({});
+    expect((await resp.json()) as unknown).toEqual({});
   });
 
   it("GET returns bacteria summary fixtures for the BV-BRC website mock", async () => {
@@ -75,7 +89,7 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    expect(await resp.json()).toMatchObject({
+    expect((await resp.json()) as unknown).toMatchObject({
       count: 1337420,
       unique_genus: 5432,
       PDB: 9821,
@@ -91,7 +105,7 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    expect(await resp.json()).toMatchObject({
+    expect((await resp.json()) as unknown).toMatchObject({
       count: 890123,
       unique_family: 212,
     });
@@ -106,7 +120,7 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    expect(await resp.json()).toMatchObject({
+    expect((await resp.json()) as unknown).toMatchObject({
       count: 9800000,
       unique_family: 1204,
     });
@@ -121,12 +135,15 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    const body = await resp.json();
+    const body = (await resp.json()) as {
+      response?: { numFound?: number };
+      facet_counts?: { facet_fields?: { genus?: unknown[] } };
+    };
     expect(body).toMatchObject({
       response: { numFound: 1337420 },
-      facet_counts: { facet_fields: { genus: expect.any(Array) } },
+      facet_counts: { facet_fields: { genus: expect.any(Array) as unknown } },
     });
-    expect(body.facet_counts.facet_fields.genus).toEqual(
+    expect(body.facet_counts?.facet_fields?.genus).toEqual(
       expect.arrayContaining(["Escherichia", 128450]),
     );
   });
@@ -140,11 +157,13 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    const body = await resp.json();
+    const body = (await resp.json()) as {
+      facet_counts?: { facet_fields?: { family?: unknown[] } };
+    };
     expect(body).toMatchObject({
-      facet_counts: { facet_fields: { family: expect.any(Array) } },
+      facet_counts: { facet_fields: { family: expect.any(Array) as unknown } },
     });
-    expect(body.facet_counts.facet_fields.family).toEqual(
+    expect(body.facet_counts?.facet_fields?.family).toEqual(
       expect.arrayContaining(["Coronaviridae", 180204]),
     );
   });
@@ -158,11 +177,13 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    const body = await resp.json();
+    const body = (await resp.json()) as {
+      facet_counts?: { facet_fields?: { host_group?: unknown[] } };
+    };
     expect(body).toMatchObject({
-      facet_counts: { facet_fields: { host_group: expect.any(Array) } },
+      facet_counts: { facet_fields: { host_group: expect.any(Array) as unknown } },
     });
-    expect(body.facet_counts.facet_fields.host_group).toEqual(
+    expect(body.facet_counts?.facet_fields?.host_group).toEqual(
       expect.arrayContaining(["Human", 512004]),
     );
   });
@@ -178,7 +199,7 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    expect(await resp.json()).toEqual({ id: 1, jsonrpc: "2.0", result: [[]] });
+    expect((await resp.json()) as unknown).toEqual({ id: 1, jsonrpc: "2.0", result: [[]] });
   });
 
   it("POST handles non-JSON bodies without throwing", async () => {
@@ -191,7 +212,7 @@ describe("api/e2e-mock catch-all — enabled", () => {
     const resp = await POST(request as unknown as Parameters<typeof POST>[0], ctx(["upload"]));
 
     expect(resp.status).toBe(200);
-    expect(await resp.json()).toEqual({ id: 1, jsonrpc: "2.0", result: [[]] });
+    expect((await resp.json()) as unknown).toEqual({ id: 1, jsonrpc: "2.0", result: [[]] });
   });
 
   it("PUT returns 200 with empty object", async () => {
@@ -201,7 +222,7 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    expect(await resp.json()).toEqual({});
+    expect((await resp.json()) as unknown).toEqual({});
   });
 
   it("DELETE returns 200 with empty object", async () => {
@@ -211,7 +232,7 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    expect(await resp.json()).toEqual({});
+    expect((await resp.json()) as unknown).toEqual({});
   });
 
   it("GET returns the reference_genome array fixture (not a SOLR envelope)", async () => {
@@ -223,12 +244,12 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    const body = await resp.json();
+    const body = (await resp.json()) as Record<string, unknown>[];
     expect(Array.isArray(body)).toBe(true);
     expect(body[0]).toMatchObject({
-      genome_id: expect.stringMatching(/^234\./),
-      genome_name: expect.any(String),
-      reference_genome: expect.stringMatching(/Reference|Representative/),
+      genome_id: expect.stringMatching(/^234\./) as unknown,
+      genome_name: expect.any(String) as unknown,
+      reference_genome: expect.stringMatching(/Reference|Representative/) as unknown,
     });
   });
 
@@ -244,7 +265,7 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    const body = await resp.json();
+    const body = (await resp.json()) as SolrFacetBody;
     // Should be the default isolation_country fixture (uses long country names)
     // not the geo-specific one keyed at taxonId=234.
     expect(body.facet_counts.facet_fields.isolation_country).toEqual(
@@ -261,7 +282,7 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    const body = await resp.json();
+    const body = (await resp.json()) as SolrFacetBody;
     // Geo fixture uses 3-letter or short country names ("USA", "China", "Italy")
     expect(body.facet_counts.facet_fields.isolation_country).toEqual(
       expect.arrayContaining(["USA", 260]),
@@ -283,9 +304,9 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    const body = await resp.json();
+    const body = (await resp.json()) as SolrFacetBody;
     expect(body.facet_counts.facet_pivot[pivotKey]).toEqual(
-      expect.arrayContaining([expect.objectContaining({ field: expect.any(String) })]),
+      expect.arrayContaining([expect.objectContaining({ field: expect.any(String) as unknown })]),
     );
   });
 
@@ -298,15 +319,15 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    const body = await resp.json();
+    const body = (await resp.json()) as SolrFacetBody;
     const pivot = body.facet_counts.facet_pivot["collection_year,serovar"];
     expect(Array.isArray(pivot)).toBe(true);
     expect(pivot[0]).toMatchObject({
       field: "collection_year",
-      value: expect.any(Number),
+      value: expect.any(Number) as unknown,
       pivot: expect.arrayContaining([
         expect.objectContaining({ field: "serovar", value: "Typhimurium" }),
-      ]),
+      ]) as unknown,
     });
   });
 
@@ -319,9 +340,9 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(400);
-    expect(await resp.json()).toMatchObject({
-      error: expect.stringContaining("unhandled bvbrc-website/genome query"),
-      reason: expect.stringContaining("unsupported pivot key 'state_province,wrong_field'"),
+    expect((await resp.json()) as unknown).toMatchObject({
+      error: expect.stringContaining("unhandled bvbrc-website/genome query") as unknown,
+      reason: expect.stringContaining("unsupported pivot key 'state_province,wrong_field'") as unknown,
     });
   });
 
@@ -334,9 +355,9 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(400);
-    expect(await resp.json()).toMatchObject({
-      error: expect.stringContaining("unhandled bvbrc-website/genome query"),
-      reason: expect.stringContaining("unsupported pivot key 'state_province,county,wrong_field'"),
+    expect((await resp.json()) as unknown).toMatchObject({
+      error: expect.stringContaining("unhandled bvbrc-website/genome query") as unknown,
+      reason: expect.stringContaining("unsupported pivot key 'state_province,county,wrong_field'") as unknown,
     });
   });
 
@@ -349,18 +370,18 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    const body = await resp.json();
+    const body = (await resp.json()) as SolrFacetBody;
     const pivot = body.facet_counts.facet_pivot["state_province,county,genus"];
     expect(Array.isArray(pivot)).toBe(true);
     expect(pivot[0]).toMatchObject({
       field: "state_province",
-      value: expect.any(String),
+      value: expect.any(String) as unknown,
       pivot: expect.arrayContaining([
         expect.objectContaining({
           field: "county",
-          pivot: expect.arrayContaining([expect.objectContaining({ field: "genus", value: "Brucella" })]),
+          pivot: expect.arrayContaining([expect.objectContaining({ field: "genus", value: "Brucella" })]) as unknown,
         }),
-      ]),
+      ]) as unknown,
     });
   });
 
@@ -378,12 +399,12 @@ describe("api/e2e-mock catch-all — enabled", () => {
       ctx(["bvbrc-website", "genome"]),
     );
 
-    const twoBody = await twoLevelResp.json();
-    const threeBody = await threeLevelResp.json();
+    const twoBody = (await twoLevelResp.json()) as SolrFacetBody;
+    const threeBody = (await threeLevelResp.json()) as SolrFacetBody;
 
     interface PivotEntry { value: string; pivot?: PivotEntry[] }
-    const twoLevel: PivotEntry[] = twoBody.facet_counts.facet_pivot["state_province,county"] as PivotEntry[];
-    const threeLevel: PivotEntry[] = threeBody.facet_counts.facet_pivot["state_province,county,genus"] as PivotEntry[];
+    const twoLevel: PivotEntry[] = twoBody.facet_counts.facet_pivot["state_province,county"] as unknown as PivotEntry[];
+    const threeLevel: PivotEntry[] = threeBody.facet_counts.facet_pivot["state_province,county,genus"] as unknown as PivotEntry[];
 
     for (const stateEntry of twoLevel) {
       const matchingThreeState = threeLevel.find((e) => e.value === stateEntry.value);
@@ -402,9 +423,9 @@ describe("api/e2e-mock catch-all — enabled", () => {
       }),
       ctx(["bvbrc-website", "genome"]),
     );
-    const body = await resp.json();
+    const body = (await resp.json()) as SolrFacetBody;
     interface PivotEntry { value: string; pivot?: PivotEntry[] }
-    const pivot: PivotEntry[] = body.facet_counts.facet_pivot["state_province,county"] as PivotEntry[];
+    const pivot: PivotEntry[] = body.facet_counts.facet_pivot["state_province,county"] as unknown as PivotEntry[];
 
     const countyToStates = new Map<string, string[]>();
     for (const stateEntry of pivot) {
@@ -428,8 +449,8 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(400);
-    expect(await resp.json()).toMatchObject({
-      error: expect.stringContaining("unhandled bvbrc-website/genome query"),
+    expect((await resp.json()) as unknown).toMatchObject({
+      error: expect.stringContaining("unhandled bvbrc-website/genome query") as unknown,
     });
   });
 
@@ -442,7 +463,7 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    expect(await resp.json()).toMatchObject({
+    expect((await resp.json()) as unknown).toMatchObject({
       taxon_id: 2,
       taxon_name: "Bacteria",
       lineage_ids: [131567, 2],
@@ -460,8 +481,8 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(400);
-    expect(await resp.json()).toMatchObject({
-      error: expect.stringContaining("unhandled POST endpoint"),
+    expect((await resp.json()) as unknown).toMatchObject({
+      error: expect.stringContaining("unhandled POST endpoint") as unknown,
       path: "mystery-endpoint",
     });
   });
@@ -487,15 +508,15 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    const payload = await resp.json();
+    const payload = (await resp.json()) as SolrFacetBody;
     const pivot = payload.facet_counts.facet_pivot["antibiotic,resistant_phenotype"];
     expect(Array.isArray(pivot)).toBe(true);
     expect(pivot[0]).toMatchObject({
       field: "antibiotic",
-      value: expect.any(String),
+      value: expect.any(String) as unknown,
       pivot: expect.arrayContaining([
         expect.objectContaining({ field: "resistant_phenotype", value: "Resistant" }),
-      ]),
+      ]) as unknown,
     });
   });
 
@@ -521,9 +542,9 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(400);
-    expect(await resp.json()).toMatchObject({
-      error: expect.stringContaining("invalid bvbrc-website/genome_amr POST"),
-      reason: expect.stringContaining("facet((pivot,(antibiotic,resistant_phenotype))"),
+    expect((await resp.json()) as unknown).toMatchObject({
+      error: expect.stringContaining("invalid bvbrc-website/genome_amr POST") as unknown,
+      reason: expect.stringContaining("facet((pivot,(antibiotic,resistant_phenotype))") as unknown,
     });
   });
 });

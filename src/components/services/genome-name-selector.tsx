@@ -99,7 +99,7 @@ export function GenomeNameSelector({
             setSuggestions(results);
           }
         })
-        .catch((fetchError) => {
+        .catch((fetchError: unknown) => {
           if (controller.signal.aborted) {
             return;
           }
@@ -240,7 +240,7 @@ export function GenomeNameSelector({
     if (!showDropdown || suggestions.length === 0) {
       if (event.key === "Enter") {
         event.preventDefault();
-        handleManualAdd();
+        void handleManualAdd();
       }
       return;
     }
@@ -266,7 +266,7 @@ export function GenomeNameSelector({
             handleDropdownClick(genome);
           }
         } else {
-          handleManualAdd();
+          void handleManualAdd();
         }
         break;
       case "Escape":
@@ -300,7 +300,7 @@ export function GenomeNameSelector({
               setHighlightedIndex(-1); // Reset highlight when typing
               setShowDropdown(true);
             }}
-            onFocus={() => setShowDropdown(true)}
+            onFocus={() => { setShowDropdown(true); }}
             onKeyDown={handleKeyDown}
             className="w-full px-10"
           />
@@ -334,7 +334,7 @@ export function GenomeNameSelector({
                           handleDropdownClick(genome);
                         }
                       }}
-                      onMouseEnter={() => setHighlightedIndex(index)}
+                      onMouseEnter={() => { setHighlightedIndex(index); }}
                     >
                       <span className="truncate text-sm font-medium">
                         {genome.genome_name}
@@ -359,7 +359,7 @@ export function GenomeNameSelector({
           size="icon"
           variant="outline"
           disabled={selectionDisabled || isLoading}
-          onClick={handleManualAdd}
+          onClick={() => { void handleManualAdd(); }}
         >
           {isLoading ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
         </Button>

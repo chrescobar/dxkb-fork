@@ -30,11 +30,11 @@ export function useJobResultData({
   const dotPath =
     resolvedJobMeta != null ? getJobResultDotPath(resolvedJobMeta) : "";
 
-  const dotGetQuery = useQuery<ResolvedPathObject | null, Error>({
+  const dotGetQuery = useQuery<ResolvedPathObject | null>({
     queryKey: workspaceQueryKeys.jobResultResolved(dotPath),
     queryFn: async () => {
       const raw = await getWorkspaceMetadata([dotPath]);
-      return parseWorkspaceGetSingle(raw as unknown[], 0);
+      return parseWorkspaceGetSingle(raw, 0);
     },
     enabled: enabled && !!dotPath,
     staleTime: 2 * 60 * 1000,

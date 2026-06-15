@@ -19,13 +19,13 @@ export function LoadingProgress({
       <div className="h-1.5 min-w-24 flex-1 overflow-hidden rounded-full bg-muted">
         <div
           className="h-full rounded-full bg-primary transition-all duration-150"
-          style={{ width: percentage !== null ? `${percentage}%` : "100%" }}
+          style={{ width: percentage !== null ? `${String(percentage)}%` : "100%" }}
         />
       </div>
       <span className="shrink-0 tabular-nums">
         {formatFileSize(bytesLoaded)}
         {totalBytes !== null ? ` / ${formatFileSize(totalBytes)}` : ""}
-        {percentage !== null ? ` (${percentage}%)` : ""}
+        {percentage !== null ? ` (${String(percentage)}%)` : ""}
       </span>
     </div>
   );

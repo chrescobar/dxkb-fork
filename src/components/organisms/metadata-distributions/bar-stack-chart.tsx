@@ -103,7 +103,7 @@ export function BarStackChart({
         <div className="min-w-0 overflow-hidden pt-2">
           <svg
             ref={svgRef}
-            viewBox={`0 0 ${chartWidth} ${stackedChartHeight}`}
+            viewBox={`0 0 ${String(chartWidth)} ${String(stackedChartHeight)}`}
             role="img"
             aria-label={`${title} distribution`}
             className="w-full"
@@ -155,7 +155,7 @@ export function BarStackChart({
                       const label = `${barStack.key}: ${numberFormatter.format(count)}`;
                       return (
                         <rect
-                          key={`bar-${barStack.index}-${bar.index}`}
+                          key={`bar-${String(barStack.index)}-${String(bar.index)}`}
                           x={bar.x}
                           y={bar.y}
                           height={Math.max(bar.height, 0)}
@@ -199,7 +199,6 @@ export function BarStackChart({
                   );
                   if (idx === null) return;
                   const yearEntry = data.years[idx];
-                  if (!yearEntry) return;
                   setHoveredYear(yearEntry.year);
                   showTooltip({
                     tooltipData: {
@@ -232,7 +231,7 @@ export function BarStackChart({
                 const x = (xScale(d.year) ?? 0) + xScale.bandwidth() / 2;
                 return (
                   <text
-                    key={`xlabel-${d.year}`}
+                    key={`xlabel-${String(d.year)}`}
                     x={x}
                     y={stackedInnerHeight + 18}
                     textAnchor="middle"
@@ -260,9 +259,9 @@ export function BarStackChart({
                 active={isActive}
                 dimmed={isDimmed}
                 ariaPressed={highlight.pressedFor(idx)}
-                onActivate={() => highlight.activatePill(idx)}
+                onActivate={() => { highlight.activatePill(idx); }}
                 onDeactivate={highlight.deactivatePill}
-                onClick={() => highlight.togglePillLock(idx)}
+                onClick={() => { highlight.togglePillLock(idx); }}
               />
             );
           })}

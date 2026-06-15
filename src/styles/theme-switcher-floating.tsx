@@ -44,7 +44,7 @@ export function ThemeSwitcher() {
               size="icon"
               aria-label="Open theme switcher"
               className="size-12 rounded-full border border-accent bg-primary shadow-lg transition-all duration-200 hover:bg-foreground hover:shadow-xl"
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={() => { setIsOpen(!isOpen); }}
             >
               <Palette className="size-5" />
             </Button>
@@ -66,7 +66,7 @@ export function ThemeSwitcher() {
                     key={base}
                     variant={currentBase === base ? "default" : "outline"}
                     size="sm"
-                    onClick={() => handleThemeChange(base)}
+                    onClick={() => { handleThemeChange(base); }}
                     className="capitalize"
                   >
                     {base}

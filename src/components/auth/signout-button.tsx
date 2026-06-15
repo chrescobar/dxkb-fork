@@ -83,7 +83,7 @@ export function SignoutButton({
         size={size}
         disabled={isSigningOut}
         className={className}
-        onClick={handleSignout}
+        onClick={() => { void handleSignout(); }}
       >
         {triggerChildren}
       </Button>
@@ -115,7 +115,7 @@ export function SignoutButton({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleSignout} disabled={isSigningOut}>
+          <AlertDialogAction onClick={() => { void handleSignout(); }} disabled={isSigningOut}>
             {isSigningOut ? (
               <>
                 <Loader2 className="mr-2 size-4 animate-spin" />

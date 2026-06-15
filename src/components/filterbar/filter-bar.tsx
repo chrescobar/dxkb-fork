@@ -26,7 +26,7 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
   const [keywords, setKeywords] = useState<string[]>([]);
   const [selected, setSelected] = useState<SelectedFilter[]>([]);
   const [showFacets, setShowFacets] = useState(false);
-  const [localFacetFields, setLocalFacetFields] = useState<ColumnField[]>(() => facetFields ?? []);
+  const [localFacetFields, setLocalFacetFields] = useState<ColumnField[]>(() => facetFields);
   const [facetMenuOpen, setFacetMenuOpen] = useState(false);
   const facetMenuRef = useRef<HTMLDivElement | null>(null);
   const clearAll = () => {
@@ -56,7 +56,7 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
   // emit filter upward
   useEffect(() => {
     const rql = buildRql({ selected, keywords });
-    onFilterChangeRef.current?.(rql);
+    onFilterChangeRef.current(rql);
   }, [selected, keywords]);
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () => { document.removeEventListener("mousedown", handleClickOutside); };
   }, []);
 
   return (
@@ -83,7 +83,7 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
         <div className="flex flex-1 flex-col gap-1">
           <KeywordSearch
             value={keywords.join(" ")}
-            onChange={(val) => setKeywords(val.split(" ").filter(Boolean))}
+            onChange={(val) => { setKeywords(val.split(" ").filter(Boolean)); }}
           />
 
           <SelectedFilters
@@ -101,7 +101,7 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
             <div className="relative" ref={facetMenuRef}>
                   <Button
                     variant="outline"
-                    onClick={() => setFacetMenuOpen((prev) => !prev)}
+                    onClick={() => { setFacetMenuOpen((prev) => !prev); }}
                     className="rounded border border-gray-400 px-2 py-1 text-xs hover:bg-gray-700"
                   >
                     Facets ⚙
@@ -119,7 +119,7 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
                         <input
                           type="checkbox"
                           checked={!f.facet_hidden}
-                          onChange={() => toggleFacetVisibility(f.id)}
+                          onChange={() => { toggleFacetVisibility(f.id); }}
                         />
                         {f.label}
                       </label>
@@ -147,7 +147,7 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
           {/* SHOW/HIDE FILTERS */}
             <Button
               variant="outline"
-              onClick={() => setShowFacets((prev) => !prev)}
+              onClick={() => { setShowFacets((prev) => !prev); }}
               className="rounded border border-gray-400 px-2 py-1 text-xs whitespace-nowrap hover:bg-gray-700"
           >
             {showFacets ? "Hide Filters" : "Show Filters"}

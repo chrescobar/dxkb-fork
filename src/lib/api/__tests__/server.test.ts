@@ -14,7 +14,7 @@ describe("errorResponse", () => {
   it("preserves a plain Error message with status 500", async () => {
     const response = errorResponse(new Error("something broke"));
     expect(response.status).toBe(500);
-    const body = await response.json();
+    const body = await response.json() as { error: string; code: string };
     expect(body).toEqual(
       expect.objectContaining({
         error: "something broke",
@@ -26,7 +26,7 @@ describe("errorResponse", () => {
   it("preserves the Error message when the fallback status is 4xx", async () => {
     const response = errorResponse(new Error("not found"), 404);
     expect(response.status).toBe(404);
-    const body = await response.json();
+    const body = await response.json() as { error: string; code: string };
     expect(body).toEqual(
       expect.objectContaining({ error: "not found", code: "upstream" }),
     );
@@ -39,7 +39,7 @@ describe("errorResponse", () => {
     );
     const response = errorResponse(rpcError);
     expect(response.status).toBe(500);
-    const body = await response.json();
+    const body = await response.json() as { error: string };
     expect(body.error).toBe("db host=prod-replica timeout");
   });
 
@@ -49,7 +49,7 @@ describe("errorResponse", () => {
     });
     const response = errorResponse(rpcError);
     expect(response.status).toBe(404);
-    const body = await response.json();
+    const body = await response.json() as { error: string; code: string; details: unknown };
     expect(body).toEqual(
       expect.objectContaining({
         error: "Not found",
@@ -63,7 +63,7 @@ describe("errorResponse", () => {
     const rpcError = new JsonRpcError("Access denied", jsonRpcErrorCodes.UNAUTHORIZED);
     const response = errorResponse(rpcError);
     expect(response.status).toBe(401);
-    const body = await response.json();
+    const body = await response.json() as { code: string };
     expect(body.code).toBe("unauthenticated");
   });
 
@@ -73,7 +73,7 @@ describe("errorResponse", () => {
     });
     const response = errorResponse(rpcError);
     expect(response.status).toBe(400);
-    const body = await response.json();
+    const body = await response.json() as { code: string; details: unknown };
     expect(body.code).toBe("validation");
     expect(body.details).toEqual({ field: "genome_id" });
   });
@@ -82,14 +82,14 @@ describe("errorResponse", () => {
     const rpcError = new JsonRpcError("Internal error", jsonRpcErrorCodes.INTERNAL_ERROR);
     const response = errorResponse(rpcError);
     expect(response.status).toBe(500);
-    const body = await response.json();
+    const body = await response.json() as { code: string };
     expect(body.code).toBe("upstream");
   });
 
   it("handles non-Error values", async () => {
     const response = errorResponse("string error");
     expect(response.status).toBe(500);
-    const body = await response.json();
+    const body = await response.json() as { error: string; code: string };
     expect(body).toEqual(
       expect.objectContaining({ error: "Unknown error", code: "unknown" }),
     );
@@ -101,7 +101,7 @@ describe("errorResponse", () => {
       code: "invalid_credentials",
     });
     expect(response.status).toBe(401);
-    const body = await response.json();
+    const body = await response.json() as { error: string; code: string };
     expect(body).toEqual(
       expect.objectContaining({
         error: "Invalid credentials",
@@ -117,7 +117,7 @@ describe("errorResponse", () => {
       status: 422,
     });
     expect(response.status).toBe(422);
-    const body = await response.json();
+    const body = await response.json() as { error: string; code: string };
     expect(body.error).toBe("Conflict");
     expect(body.code).toBe("validation");
   });
@@ -137,25 +137,25 @@ describe("withAuth", () => {
       return undefined;
     });
 
-    const handler = withAuth(async (_req, { token }) => {
-      return NextResponse.json({ received: token });
+    const handler = withAuth((_req, { token }) => {
+      return Promise.resolve(NextResponse.json({ received: token }));
     });
 
     const response = await handler(makeRequest(), {});
-    const body = await response.json();
+    const body = await response.json() as { received: string };
     expect(body.received).toBe("test-token-value");
   });
 
   it("returns 401 when not authenticated", async () => {
     mockCookieStore.get.mockReturnValue(undefined);
 
-    const handler = withAuth(async () => {
-      return NextResponse.json({ should: "not reach" });
+    const handler = withAuth(() => {
+      return Promise.resolve(NextResponse.json({ should: "not reach" }));
     });
 
     const response = await handler(makeRequest(), {});
     expect(response.status).toBe(401);
-    const body = await response.json();
+    const body = await response.json() as { error: string };
     expect(body.error).toBe("Authentication required");
   });
 
@@ -165,13 +165,13 @@ describe("withAuth", () => {
       return undefined;
     });
 
-    const handler = withAuth(async () => {
+    const handler = withAuth(() => {
       throw new Error("handler exploded");
     });
 
     const response = await handler(makeRequest(), {});
     expect(response.status).toBe(500);
-    const body = await response.json();
+    const body = await response.json() as { error: string };
     expect(body.error).toBe("handler exploded");
   });
 });
@@ -187,13 +187,13 @@ describe("withOptionalAuth", () => {
   it("injects token as undefined when not authenticated", async () => {
     mockCookieStore.get.mockReturnValue(undefined);
 
-    const handler = withOptionalAuth(async (_req, { token }) => {
-      return NextResponse.json({ token: token ?? "none" });
+    const handler = withOptionalAuth((_req, { token }) => {
+      return Promise.resolve(NextResponse.json({ token: token ?? "none" }));
     });
 
     const response = await handler(makeRequest(), {});
     expect(response.status).toBe(200);
-    const body = await response.json();
+    const body = await response.json() as { token: string };
     expect(body.token).toBe("none");
   });
 
@@ -203,12 +203,12 @@ describe("withOptionalAuth", () => {
       return undefined;
     });
 
-    const handler = withOptionalAuth(async (_req, { token }) => {
-      return NextResponse.json({ token });
+    const handler = withOptionalAuth((_req, { token }) => {
+      return Promise.resolve(NextResponse.json({ token }));
     });
 
     const response = await handler(makeRequest(), {});
-    const body = await response.json();
+    const body = await response.json() as { token: string };
     expect(body.token).toBe("my-token");
   });
 });
@@ -222,32 +222,32 @@ describe("withErrorHandling", () => {
   }
 
   it("passes through the handler response on success", async () => {
-    const handler = withErrorHandling(async () => {
-      return NextResponse.json({ ok: true });
+    const handler = withErrorHandling(() => {
+      return Promise.resolve(NextResponse.json({ ok: true }));
     });
 
     const response = await handler(makeRequest(), {});
     expect(response.status).toBe(200);
-    const body = await response.json();
+    const body = await response.json() as { ok: boolean };
     expect(body.ok).toBe(true);
   });
 
   it("catches thrown errors and returns errorResponse", async () => {
-    const handler = withErrorHandling(async () => {
+    const handler = withErrorHandling(() => {
       throw new Error("boom");
     });
 
     const response = await handler(makeRequest(), {});
     expect(response.status).toBe(500);
-    const body = await response.json();
+    const body = await response.json() as { error: string };
     expect(body.error).toBe("boom");
   });
 
   it("does not read auth cookies", async () => {
     mockCookieStore.get.mockClear();
 
-    const handler = withErrorHandling(async () => {
-      return NextResponse.json({ ok: true });
+    const handler = withErrorHandling(() => {
+      return Promise.resolve(NextResponse.json({ ok: true }));
     });
 
     await handler(makeRequest(), {});

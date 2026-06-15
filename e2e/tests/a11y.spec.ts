@@ -89,10 +89,10 @@ function summarizeViolations(
 
   if (advisory.length > 0) {
     const summary = advisory
-      .map((v) => `  - [${v.impact ?? "minor"}] ${v.id}: ${v.help} (${v.nodes.length} node${v.nodes.length === 1 ? "" : "s"})`)
+      .map((v) => `  - [${v.impact ?? "minor"}] ${v.id}: ${v.help} (${String(v.nodes.length)} node${v.nodes.length === 1 ? "" : "s"})`)
       .join("\n");
     console.warn(
-      `[a11y] ${routeName}: ${advisory.length} non-blocking violation(s):\n${summary}`,
+      `[a11y] ${routeName}: ${String(advisory.length)} non-blocking violation(s):\n${summary}`,
     );
   }
 
@@ -102,7 +102,7 @@ function summarizeViolations(
         .slice(0, 3)
         .map((n) => `      ${n.target.join(" ")}`)
         .join("\n");
-      return `  - [${v.impact}] ${v.id}: ${v.help}\n${targets}`;
+      return `  - [${v.impact ?? ""}] ${v.id}: ${v.help}\n${targets}`;
     })
     .join("\n");
 
@@ -153,7 +153,7 @@ test.describe("a11y axe sweep", () => {
         blocking,
         blocking.length === 0
           ? undefined
-          : `${blocking.length} blocking a11y violation(s) on ${route.name}:\n${blockingSummary}`,
+          : `${String(blocking.length)} blocking a11y violation(s) on ${route.name}:\n${blockingSummary}`,
       ).toEqual([]);
     });
   }
@@ -200,8 +200,8 @@ test.describe("a11y axe sweep", () => {
       regressions,
       regressions.length === 0
         ? undefined
-        : `${regressions.length} WCAG regression(s) in metadata-distributions:\n${regressions
-            .map((v) => `  - ${v.id}: ${v.help} (${v.nodes.length} node(s))`)
+        : `${String(regressions.length)} WCAG regression(s) in metadata-distributions:\n${regressions
+            .map((v) => `  - ${v.id}: ${v.help} (${String(v.nodes.length)} node(s))`)
             .join("\n")}`,
     ).toEqual([]);
   });
@@ -248,7 +248,7 @@ test.describe("a11y axe sweep", () => {
       blocking,
       blocking.length === 0
         ? undefined
-        : `${blocking.length} blocking a11y violation(s) on command palette:\n${blockingSummary}`,
+        : `${String(blocking.length)} blocking a11y violation(s) on command palette:\n${blockingSummary}`,
     ).toEqual([]);
   });
 });

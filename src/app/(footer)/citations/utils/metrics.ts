@@ -11,23 +11,20 @@ export function calculateMetrics(citations: Citation[]) {
   });
 
   // Calculate metrics by year
-  const metricsByYear: Record<number, YearMetrics> = {};
+  const metricsByYear: Partial<Record<number, YearMetrics>> = {};
   citations.forEach((citation) => {
-    if (!metricsByYear[citation.year]) {
-      metricsByYear[citation.year] = {
-        count: 0,
-        totalCitations: 0,
-        avgImpact: 0,
-      };
-    }
-    metricsByYear[citation.year].count++;
-    metricsByYear[citation.year].totalCitations += citation.citationCount;
-    metricsByYear[citation.year].avgImpact += citation.impactFactor;
+    const existing = metricsByYear[citation.year];
+    const entry = existing ?? { count: 0, totalCitations: 0, avgImpact: 0 };
+    entry.count += 1;
+    entry.totalCitations += citation.citationCount;
+    entry.avgImpact += citation.impactFactor;
+    metricsByYear[citation.year] = entry;
   });
 
   // Calculate average impact factor for each year
   Object.keys(metricsByYear).forEach((year) => {
     const yearMetrics = metricsByYear[Number(year)];
+    if (!yearMetrics) return;
     yearMetrics.avgImpact = yearMetrics.avgImpact / yearMetrics.count;
   });
 

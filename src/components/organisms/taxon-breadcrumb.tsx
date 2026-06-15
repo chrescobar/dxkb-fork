@@ -43,12 +43,12 @@ export function TaxonBreadcrumb({ taxon, displayName }: TaxonBreadcrumbProps) {
       </p>
       <div className="flex flex-wrap items-baseline gap-x-1 text-sm">
         {ancestors.map(({ name, id }, index) => (
-          <span key={id ?? `name-${index}`} className="flex items-baseline gap-x-1">
+          <span key={id ?? `name-${String(index)}`} className="flex items-baseline gap-x-1">
             {id === null ? (
               <span className="text-muted-foreground">{name}</span>
             ) : (
               <Link
-                href={`/taxonomy/${id}`}
+                href={`/taxonomy/${String(id)}`}
                 className="text-muted-foreground transition-colors hover:text-foreground"
               >
                 {name}

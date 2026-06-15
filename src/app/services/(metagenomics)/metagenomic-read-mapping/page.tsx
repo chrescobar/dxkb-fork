@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import {
   FieldItem,
   FieldLabel,
@@ -89,16 +90,16 @@ export default function MetagenomicReadMappingPage() {
 
   const form = useForm({
     defaultValues:
-      defaultMetagenomicReadMappingFormValues as MetagenomicReadMappingFormData,
+      defaultMetagenomicReadMappingFormValues,
     validators: { onChange: metagenomicReadMappingFormSchema },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as MetagenomicReadMappingFormData);
+      await runtime.submitFormData(value);
     },
   });
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const geneSetType = useStore(form.store, (s) => s.values.gene_set_type);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const geneSetType = useSelector(form.store, (s) => s.values.gene_set_type);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const {
     selectedLibraries,
@@ -181,7 +182,7 @@ export default function MetagenomicReadMappingPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="grid grid-cols-1 gap-6 md:grid-cols-12"
       >
@@ -345,12 +346,12 @@ export default function MetagenomicReadMappingPage() {
                         </FieldLabel>
                         <RadioGroup
                           value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null &&
-                            field.handleChange(
-                              value as MetagenomicReadMappingFormData["gene_set_type"],
-                            )
-                          }
+                          onValueChange={(value) => {
+                            if (value != null)
+                              field.handleChange(
+                                value as MetagenomicReadMappingFormData["gene_set_type"],
+                              );
+                          }}
                           className="service-radio-group-horizontal"
                         >
                           <div className="flex items-center gap-3">
@@ -405,12 +406,9 @@ export default function MetagenomicReadMappingPage() {
                           <Select
                             items={predefinedGeneSetOptions}
                             value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(
-                                value as MetagenomicReadMappingFormData["gene_set_name"],
-                              )
-                            }
+                            onValueChange={(value) => {
+                              if (value != null) field.handleChange(value);
+                            }}
                           >
                             <SelectTrigger className="service-card-select-trigger">
                               <SelectValue placeholder="Select Gene Set" />

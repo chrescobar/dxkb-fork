@@ -293,16 +293,16 @@ describe("fetchOrganismGeoDistribution", () => {
           return HttpResponse.json(fieldFacet("state_province", []));
         }
         // For pivots (including state_province,county), hang long enough to be cancellable.
-        return new Promise<Response>((resolve) =>
-          setTimeout(() => resolve(HttpResponse.json({ response: { numFound: 0 }, facet_counts: { facet_pivot: {} } })), 1000),
-        );
+        return new Promise<Response>((resolve) => {
+          setTimeout(() => { resolve(HttpResponse.json({ response: { numFound: 0 }, facet_counts: { facet_pivot: {} } })); }, 1000);
+        });
       }),
     );
 
     const controller = new AbortController();
     const promise = fetchOrganismGeoDistribution(234, { signal: controller.signal });
     // Allow the field fetches to start before we abort.
-    queueMicrotask(() => controller.abort());
+    queueMicrotask(() => { controller.abort(); });
     await expect(promise).rejects.toThrow();
   });
 

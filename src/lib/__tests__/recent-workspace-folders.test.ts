@@ -12,7 +12,7 @@ const localStorageMock = (() => {
   let store: Record<string, string> = {};
   return {
     getItem: (key: string) => store[key] ?? null,
-    setItem: (key: string, value: string) => { store[key] = String(value); },
+    setItem: (key: string, value: string) => { store[key] = value; },
     removeItem: (key: string) => { const { [key]: _, ...rest } = store; store = rest; },
     clear: () => { store = {}; },
     key: (n: number) => Object.keys(store)[n] ?? null,
@@ -130,7 +130,7 @@ describe("addRecentFolder", () => {
 
   it("trims to maxItems per user", () => {
     for (let i = 0; i < 10; i++) {
-      addRecentFolder(`/user@bvbrc/home/folder${i}`, "/user@bvbrc");
+      addRecentFolder(`/user@bvbrc/home/folder${String(i)}`, "/user@bvbrc");
     }
     const result = getRecentFolders();
     expect(result).toHaveLength(5);
@@ -139,7 +139,7 @@ describe("addRecentFolder", () => {
 
   it("respects custom maxItems", () => {
     for (let i = 0; i < 5; i++) {
-      addRecentFolder(`/user@bvbrc/home/folder${i}`, "/user@bvbrc", 3);
+      addRecentFolder(`/user@bvbrc/home/folder${String(i)}`, "/user@bvbrc", 3);
     }
     expect(getRecentFolders()).toHaveLength(3);
   });
@@ -147,7 +147,7 @@ describe("addRecentFolder", () => {
   it("preserves other users' entries when trimming", () => {
     addRecentFolder("/other@bvbrc/home/their-folder", "/other@bvbrc");
     for (let i = 0; i < 6; i++) {
-      addRecentFolder(`/user@bvbrc/home/folder${i}`, "/user@bvbrc");
+      addRecentFolder(`/user@bvbrc/home/folder${String(i)}`, "/user@bvbrc");
     }
     const all = getRecentFolders();
     expect(all.some((f) => f.path === "/other@bvbrc/home/their-folder")).toBe(

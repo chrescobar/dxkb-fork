@@ -19,6 +19,25 @@ export interface JsonOverrideBodyContext {
   callIndex: number;
 }
 
+/**
+ * Response body shape for a {@link JsonOverride}. Covers every JSON-serializable
+ * primitive, plain object, and array — plus a factory function that receives
+ * `{ parsedBody, callIndex }` and returns the body for that call. The factory
+ * branch lets a single mock evolve between calls (e.g. a workspace listing that
+ * gains a new row after an upload completes).
+ *
+ * `object` is intentional (not `Record<string, unknown>`) so typed object
+ * literals without an index signature — `MockJob`, `mockUserProfile`, etc. —
+ * satisfy this alias without per-call-site casts.
+ */
+export type JsonOverrideBody =
+  | object
+  | string
+  | number
+  | boolean
+  | null
+  | ((ctx: JsonOverrideBodyContext) => unknown);
+
 export interface JsonOverride {
   url: string | RegExp;
   method?: string;
@@ -28,7 +47,7 @@ export interface JsonOverride {
    * returns the body for that call — used when a single mock needs to evolve between calls
    * (e.g. a workspace listing that gains a new row after an upload completes).
    */
-  body?: unknown | ((ctx: JsonOverrideBodyContext) => unknown);
+  body?: JsonOverrideBody;
   headers?: Record<string, string>;
   /**
    * Optional predicate against the parsed JSON request body. Lets multiple overrides share the
@@ -212,13 +231,12 @@ export async function applyBackendMocks(page: Page, options: BackendMockOptions 
         return;
       }
       const counter = counterFor(override);
-      const resolvedBody =
-        typeof override.body === "function"
-          ? (override.body as (ctx: JsonOverrideBodyContext) => unknown)({
-              parsedBody,
-              callIndex: counter.value,
-            })
-          : override.body;
+      const bodyFn = typeof override.body === "function"
+        ? (override.body as (ctx: JsonOverrideBodyContext) => unknown)
+        : null;
+      const resolvedBody: unknown = bodyFn
+        ? bodyFn({ parsedBody, callIndex: counter.value })
+        : override.body;
       counter.value += 1;
       await route.fulfill({
         status: override.status ?? 200,
@@ -255,7 +273,7 @@ export function verifyNoUnmockedBackendRequests(page: Page): void {
   const list = leaks.map((r) => `  - ${r}`).join("\n");
   unmockedBackendRequests.set(page, []);
   throw new Error(
-    `applyBackendMocks/strict: ${leaks.length} unmocked backend request(s) leaked during this test:\n${list}`,
+    `applyBackendMocks/strict: ${String(leaks.length)} unmocked backend request(s) leaked during this test:\n${list}`,
   );
 }
 

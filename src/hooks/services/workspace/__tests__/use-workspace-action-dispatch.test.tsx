@@ -72,7 +72,7 @@ const makeItem = (
     permissions: { user: "rw", global: "n" },
     timestamp: 0,
     ...overrides,
-  }) as WorkspaceItem;
+  });
 
 describe("useWorkspaceActionDispatch", () => {
   function createDefaultOptions() {
@@ -93,7 +93,7 @@ describe("useWorkspaceActionDispatch", () => {
     vi.clearAllMocks();
   });
 
-  it("dispatches OPEN_DELETE for delete action", async () => {
+  it("dispatches OPEN_DELETE for delete action", () => {
     const options = createDefaultOptions();
     const selection = [makeItem({ name: "toDelete.txt", path: "/user@bvbrc/home/toDelete.txt" })];
 
@@ -102,8 +102,8 @@ describe("useWorkspaceActionDispatch", () => {
       { wrapper: makeWrapper(new InMemoryWorkspaceRepository()) },
     );
 
-    await act(async () => {
-      await result.current.handleAction("delete", selection);
+    act(() => {
+      result.current.handleAction("delete", selection);
     });
 
     expect(mockDispatch).toHaveBeenCalledWith({
@@ -112,7 +112,7 @@ describe("useWorkspaceActionDispatch", () => {
     });
   });
 
-  it("dispatches OPEN_COPY with mode copy for copy action", async () => {
+  it("dispatches OPEN_COPY with mode copy for copy action", () => {
     const options = createDefaultOptions();
     const selection = [makeItem({ name: "toCopy.txt" })];
 
@@ -121,8 +121,8 @@ describe("useWorkspaceActionDispatch", () => {
       { wrapper: makeWrapper(new InMemoryWorkspaceRepository()) },
     );
 
-    await act(async () => {
-      await result.current.handleAction("copy", selection);
+    act(() => {
+      result.current.handleAction("copy", selection);
     });
 
     expect(mockDispatch).toHaveBeenCalledWith({
@@ -132,7 +132,7 @@ describe("useWorkspaceActionDispatch", () => {
     });
   });
 
-  it("dispatches OPEN_COPY with mode move for move action", async () => {
+  it("dispatches OPEN_COPY with mode move for move action", () => {
     const options = createDefaultOptions();
     const selection = [makeItem({ name: "toMove.txt" })];
 
@@ -141,8 +141,8 @@ describe("useWorkspaceActionDispatch", () => {
       { wrapper: makeWrapper(new InMemoryWorkspaceRepository()) },
     );
 
-    await act(async () => {
-      await result.current.handleAction("move", selection);
+    act(() => {
+      result.current.handleAction("move", selection);
     });
 
     expect(mockDispatch).toHaveBeenCalledWith({
@@ -152,7 +152,7 @@ describe("useWorkspaceActionDispatch", () => {
     });
   });
 
-  it("dispatches OPEN_EDIT_TYPE for editType action with valid item", async () => {
+  it("dispatches OPEN_EDIT_TYPE for editType action with valid item", () => {
     const options = createDefaultOptions();
     const item = makeItem({ name: "data.csv", path: "/user@bvbrc/home/data.csv", type: "csv" });
 
@@ -161,8 +161,8 @@ describe("useWorkspaceActionDispatch", () => {
       { wrapper: makeWrapper(new InMemoryWorkspaceRepository()) },
     );
 
-    await act(async () => {
-      await result.current.handleAction("editType", [item]);
+    act(() => {
+      result.current.handleAction("editType", [item]);
     });
 
     expect(mockDispatch).toHaveBeenCalledWith({
@@ -171,7 +171,7 @@ describe("useWorkspaceActionDispatch", () => {
     });
   });
 
-  it("does not dispatch for editType when selection[0] has no path", async () => {
+  it("does not dispatch for editType when selection[0] has no path", () => {
     const options = createDefaultOptions();
     const item = makeItem({ name: "nopath.txt", path: "" });
 
@@ -180,8 +180,8 @@ describe("useWorkspaceActionDispatch", () => {
       { wrapper: makeWrapper(new InMemoryWorkspaceRepository()) },
     );
 
-    await act(async () => {
-      await result.current.handleAction("editType", [item]);
+    act(() => {
+      result.current.handleAction("editType", [item]);
     });
 
     expect(mockDispatch).not.toHaveBeenCalled();
@@ -200,8 +200,8 @@ describe("useWorkspaceActionDispatch", () => {
       { wrapper: makeWrapper(new InMemoryWorkspaceRepository()) },
     );
 
-    await act(async () => {
-      await result.current.handleAction("favorite", [folderItem]);
+    act(() => {
+      result.current.handleAction("favorite", [folderItem]);
     });
 
     await waitFor(() => {
@@ -224,8 +224,8 @@ describe("useWorkspaceActionDispatch", () => {
       { wrapper: makeWrapper(new InMemoryWorkspaceRepository()) },
     );
 
-    await act(async () => {
-      await result.current.handleAction("favorite", [fileItem]);
+    act(() => {
+      result.current.handleAction("favorite", [fileItem]);
     });
 
     expect(mockedToggleFavorite).not.toHaveBeenCalled();
@@ -242,14 +242,14 @@ describe("useWorkspaceActionDispatch", () => {
       { wrapper: makeWrapper(new InMemoryWorkspaceRepository()) },
     );
 
-    await act(async () => {
-      await result.current.handleAction("download", [forbiddenItem]);
+    act(() => {
+      result.current.handleAction("download", [forbiddenItem]);
     });
 
     expect(toast.error).toHaveBeenCalledWith(
       "Nothing to download for this selection.",
       expect.objectContaining({
-        description: expect.stringContaining("not downloadable"),
+        description: expect.stringContaining("not downloadable") as string,
       }),
     );
   });
@@ -267,8 +267,8 @@ describe("useWorkspaceActionDispatch", () => {
       { wrapper: makeWrapper(repo) },
     );
 
-    await act(async () => {
-      await result.current.handleAction("download", [fileItem]);
+    act(() => {
+      result.current.handleAction("download", [fileItem]);
     });
 
     await waitFor(() => {
@@ -277,7 +277,7 @@ describe("useWorkspaceActionDispatch", () => {
     });
   });
 
-  it("opens 3D viewer in new tab for viewer3d action", async () => {
+  it("opens 3D viewer in new tab for viewer3d action", () => {
     const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
     const options = createDefaultOptions();
     const pdbItem = makeItem({ name: "model.pdb", path: "/user@bvbrc/home/model.pdb", type: "pdb" });
@@ -287,8 +287,8 @@ describe("useWorkspaceActionDispatch", () => {
       { wrapper: makeWrapper(new InMemoryWorkspaceRepository()) },
     );
 
-    await act(async () => {
-      await result.current.handleAction("viewer3d", [pdbItem]);
+    act(() => {
+      result.current.handleAction("viewer3d", [pdbItem]);
     });
 
     expect(openSpy).toHaveBeenCalledWith(
@@ -299,7 +299,7 @@ describe("useWorkspaceActionDispatch", () => {
     openSpy.mockRestore();
   });
 
-  it("does not open viewer3d when selection has no path", async () => {
+  it("does not open viewer3d when selection has no path", () => {
     const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
     const options = createDefaultOptions();
     const item = makeItem({ name: "model.pdb", path: "", type: "pdb" });
@@ -309,15 +309,15 @@ describe("useWorkspaceActionDispatch", () => {
       { wrapper: makeWrapper(new InMemoryWorkspaceRepository()) },
     );
 
-    await act(async () => {
-      await result.current.handleAction("viewer3d", [item]);
+    act(() => {
+      result.current.handleAction("viewer3d", [item]);
     });
 
     expect(openSpy).not.toHaveBeenCalled();
     openSpy.mockRestore();
   });
 
-  it("ignores unknown action ids", async () => {
+  it("ignores unknown action ids", () => {
     const options = createDefaultOptions();
     const selection = [makeItem({})];
     const repo = new InMemoryWorkspaceRepository();
@@ -327,15 +327,15 @@ describe("useWorkspaceActionDispatch", () => {
       { wrapper: makeWrapper(repo) },
     );
 
-    await act(async () => {
-      await result.current.handleAction("unknownAction", selection);
+    act(() => {
+      result.current.handleAction("unknownAction", selection);
     });
 
     expect(mockDispatch).not.toHaveBeenCalled();
     expect(repo.calls.some((c) => c.method === "getDownloadUrls")).toBe(false);
   });
 
-  it("download: folder item dispatches OPEN_DOWNLOAD_OPTIONS", async () => {
+  it("download: folder item dispatches OPEN_DOWNLOAD_OPTIONS", () => {
     const options = createDefaultOptions();
     const folderItem = makeItem({ name: "myFolder", path: "/user@bvbrc/home/myFolder", type: "folder" });
     options.items = [folderItem];
@@ -345,8 +345,8 @@ describe("useWorkspaceActionDispatch", () => {
       { wrapper: makeWrapper(new InMemoryWorkspaceRepository()) },
     );
 
-    await act(async () => {
-      await result.current.handleAction("download", [folderItem]);
+    act(() => {
+      result.current.handleAction("download", [folderItem]);
     });
 
     expect(mockDispatch).toHaveBeenCalledWith(
@@ -357,7 +357,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
   });
 
-  it("download: multiple items dispatches OPEN_DOWNLOAD_OPTIONS", async () => {
+  it("download: multiple items dispatches OPEN_DOWNLOAD_OPTIONS", () => {
     const options = createDefaultOptions();
     const items = [
       makeItem({ name: "a.txt", path: "/user@bvbrc/home/a.txt" }),
@@ -370,8 +370,8 @@ describe("useWorkspaceActionDispatch", () => {
       { wrapper: makeWrapper(new InMemoryWorkspaceRepository()) },
     );
 
-    await act(async () => {
-      await result.current.handleAction("download", items);
+    act(() => {
+      result.current.handleAction("download", items);
     });
 
     expect(mockDispatch).toHaveBeenCalledWith(
@@ -381,7 +381,7 @@ describe("useWorkspaceActionDispatch", () => {
     );
   });
 
-  it("download: job_result item uses name without leading dot", async () => {
+  it("download: job_result item uses name without leading dot", () => {
     const options = createDefaultOptions();
     const jobItem = makeItem({ name: ".assembly_results", path: "/user@bvbrc/home/.assembly_results", type: "job_result" });
     options.items = [jobItem];
@@ -391,8 +391,8 @@ describe("useWorkspaceActionDispatch", () => {
       { wrapper: makeWrapper(new InMemoryWorkspaceRepository()) },
     );
 
-    await act(async () => {
-      await result.current.handleAction("download", [jobItem]);
+    act(() => {
+      result.current.handleAction("download", [jobItem]);
     });
 
     expect(mockDispatch).toHaveBeenCalledWith(
@@ -416,8 +416,8 @@ describe("useWorkspaceActionDispatch", () => {
       { wrapper: makeWrapper(new InMemoryWorkspaceRepository()) },
     );
 
-    await act(async () => {
-      await result.current.handleAction("download", [dotFolder]);
+    act(() => {
+      result.current.handleAction("download", [dotFolder]);
     });
 
     expect(mockDispatch).toHaveBeenCalledWith(
@@ -441,8 +441,8 @@ describe("useWorkspaceActionDispatch", () => {
       { wrapper: makeWrapper(new InMemoryWorkspaceRepository()) },
     );
 
-    await act(async () => {
-      await result.current.handleAction("favorite", [folderItem]);
+    act(() => {
+      result.current.handleAction("favorite", [folderItem]);
     });
 
     expect(mockedToggleFavorite).not.toHaveBeenCalled();
@@ -461,8 +461,8 @@ describe("useWorkspaceActionDispatch", () => {
       { wrapper: makeWrapper(new InMemoryWorkspaceRepository()) },
     );
 
-    await act(async () => {
-      await result.current.handleAction("favorite", [folderItem]);
+    act(() => {
+      result.current.handleAction("favorite", [folderItem]);
     });
 
     expect(mockedToggleFavorite).not.toHaveBeenCalled();

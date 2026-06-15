@@ -2,7 +2,7 @@ import { renderHook } from "@testing-library/react";
 import { useAuthStyles } from "@/hooks/use-auth-styles";
 
 const { mockAuth } = vi.hoisted(() => ({
-  mockAuth: { isAuthenticated: false, status: "guest" as "loading" | "authed" | "guest" },
+  mockAuth: { isAuthenticated: false, status: "guest" },
 }));
 vi.mock("@/lib/auth/hooks", () => ({
   useAuth: () => mockAuth,

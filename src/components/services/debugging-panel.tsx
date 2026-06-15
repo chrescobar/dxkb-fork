@@ -24,7 +24,7 @@ export function DebuggingPanel() {
 
   // Sync local state with context when dialog opens
   const [prevSyncKey, setPrevSyncKey] = useState("");
-  const syncKey = isOpen ? `${isDebugMode}-${containerBuildId}` : "";
+  const syncKey = isOpen ? `${String(isDebugMode)}-${containerBuildId}` : "";
   if (syncKey && syncKey !== prevSyncKey) {
     setPrevSyncKey(syncKey);
     setLocalDebugMode(isDebugMode);
@@ -87,7 +87,7 @@ export function DebuggingPanel() {
               id="debug-mode"
               name="debug-mode"
               checked={localDebugMode}
-              onCheckedChange={(checked) => setLocalDebugMode(checked)}
+              onCheckedChange={(checked) => { setLocalDebugMode(checked); }}
             />
             <Label
               htmlFor="debug-mode"
@@ -105,7 +105,7 @@ export function DebuggingPanel() {
               id="container-build-id"
               type="text"
               value={localContainerId}
-              onChange={(e) => setLocalContainerId(e.target.value)}
+              onChange={(e) => { setLocalContainerId(e.target.value); }}
               placeholder="Enter container build ID"
               className="w-full"
             />

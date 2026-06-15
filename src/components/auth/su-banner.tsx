@@ -11,13 +11,13 @@ export function SuBanner() {
   const { isImpersonating, user } = useAuth();
   const queryClient = useQueryClient();
   const suExit = async () => {
-    const { data, error } = await authAdmin.impersonate.exit();
+    const { error } = await authAdmin.impersonate.exit();
     if (error) {
       toast.error("Failed to exit impersonation");
       return;
     }
     void queryClient.resetQueries();
-    if (data) toast.success("Returned to your account");
+    toast.success("Returned to your account");
   };
 
   if (!isImpersonating) return null;

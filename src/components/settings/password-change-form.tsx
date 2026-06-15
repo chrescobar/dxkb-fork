@@ -41,7 +41,7 @@ export function PasswordChangeForm() {
         });
 
         if (!response.ok) {
-          const err = await response.json().catch(() => null);
+          const err = await response.json().catch(() => null) as { error?: string; message?: string } | null;
           toast.error(err?.error ?? err?.message ?? "Failed to change password.");
           return;
         }
@@ -70,7 +70,7 @@ export function PasswordChangeForm() {
           onSubmit={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            form.handleSubmit();
+            void form.handleSubmit();
           }}
           className="grid gap-4"
         >
@@ -81,7 +81,7 @@ export function PasswordChangeForm() {
                 <PasswordInput
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={(e) => { field.handleChange(e.target.value); }}
                   onBlur={field.handleBlur}
                   label="current password"
                 />
@@ -97,7 +97,7 @@ export function PasswordChangeForm() {
                 <PasswordInput
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={(e) => { field.handleChange(e.target.value); }}
                   onBlur={field.handleBlur}
                   label="new password"
                 />
@@ -113,7 +113,7 @@ export function PasswordChangeForm() {
                 <PasswordInput
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={(e) => { field.handleChange(e.target.value); }}
                   onBlur={field.handleBlur}
                   label="confirm password"
                 />

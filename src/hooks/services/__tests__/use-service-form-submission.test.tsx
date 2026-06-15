@@ -128,9 +128,9 @@ describe("useServiceFormSubmission", () => {
       await result.current.submit({});
     });
 
-    await waitFor(() => expect(result.current.isSubmitting).toBe(true));
+    await waitFor(() => { expect(result.current.isSubmitting).toBe(true); });
     resolve();
     await promise;
-    await waitFor(() => expect(result.current.isSubmitting).toBe(false));
+    await waitFor(() => { expect(result.current.isSubmitting).toBe(false); });
   });
 });

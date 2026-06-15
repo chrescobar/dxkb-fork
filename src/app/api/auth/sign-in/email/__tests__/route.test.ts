@@ -29,7 +29,7 @@ afterEach(() => {
 });
 
 function setNamesFromCalls(): string[] {
-  return mockCookieStore.set.mock.calls.map((call) => call[0]);
+  return mockCookieStore.set.mock.calls.map((call) => call[0] as string);
 }
 
 describe("POST /api/auth/sign-in/email", () => {
@@ -63,7 +63,10 @@ describe("POST /api/auth/sign-in/email", () => {
       body: { username: "alice", password: "password1234" },
     });
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as {
+      user?: Record<string, unknown>;
+      session?: { expiresAt?: string; token?: string };
+    };
 
     expect(response.status).toBe(200);
     expect(upstreamAuthContentType).toBe("application/x-www-form-urlencoded");
@@ -94,7 +97,7 @@ describe("POST /api/auth/sign-in/email", () => {
       email_verified: true,
     });
     expect(data.session).toHaveProperty("expiresAt");
-    expect(data.session.token).toBe("");
+    expect(data.session?.token).toBe("");
   });
 
   it("maps upstream 401 to 401 and does not write session cookies", async () => {
@@ -107,7 +110,7 @@ describe("POST /api/auth/sign-in/email", () => {
       body: { username: "alice", password: "wrong" },
     });
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(401);
     expect(data.error).toMatch(/invalid credentials/i);
@@ -143,7 +146,7 @@ describe("POST /api/auth/sign-in/email", () => {
       body: { username: "alice" },
     });
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(400);
     expect(data.error).toMatch(/username and password are required/i);
@@ -158,7 +161,7 @@ describe("POST /api/auth/sign-in/email", () => {
       body: "{invalid-json",
     });
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string; code?: string };
 
     expect(response.status).toBe(400);
     expect(data.error).toMatch(/username and password are required/i);

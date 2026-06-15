@@ -79,10 +79,10 @@ function uniqueAggregateLabel(labels: readonly string[]): string {
   if (!existingLabels.has(fallbackAggregateLabel))
     return fallbackAggregateLabel;
   let suffix = 2;
-  while (existingLabels.has(`${fallbackAggregateLabel} ${suffix}`)) {
+  while (existingLabels.has(`${fallbackAggregateLabel} ${String(suffix)}`)) {
     suffix += 1;
   }
-  return `${fallbackAggregateLabel} ${suffix}`;
+  return `${fallbackAggregateLabel} ${String(suffix)}`;
 }
 
 function chartData(data: DonutDatum[]): DonutChartDatum[] {
@@ -90,7 +90,7 @@ function chartData(data: DonutDatum[]): DonutChartDatum[] {
     .filter((datum) => datum.value > 0)
     .map((datum, index) => ({
       ...datum,
-      id: `bucket-${index}`,
+      id: `bucket-${String(index)}`,
       label: facetDisplayLabel(datum.label),
     }));
 
@@ -126,13 +126,13 @@ function arcPath(
   // points renders nothing. Build the ring as two semicircles using even-odd fill.
   if (sweep >= Math.PI * 2 - 1e-6) {
     return [
-      `M ${f(outerR)} 0`,
-      `A ${outerR} ${outerR} 0 1 1 ${f(-outerR)} 0`,
-      `A ${outerR} ${outerR} 0 1 1 ${f(outerR)} 0`,
+      `M ${String(f(outerR))} 0`,
+      `A ${String(outerR)} ${String(outerR)} 0 1 1 ${String(f(-outerR))} 0`,
+      `A ${String(outerR)} ${String(outerR)} 0 1 1 ${String(f(outerR))} 0`,
       "Z",
-      `M ${f(innerR)} 0`,
-      `A ${innerR} ${innerR} 0 1 0 ${f(-innerR)} 0`,
-      `A ${innerR} ${innerR} 0 1 0 ${f(innerR)} 0`,
+      `M ${String(f(innerR))} 0`,
+      `A ${String(innerR)} ${String(innerR)} 0 1 0 ${String(f(-innerR))} 0`,
+      `A ${String(innerR)} ${String(innerR)} 0 1 0 ${String(f(innerR))} 0`,
       "Z",
     ].join(" ");
   }
@@ -148,13 +148,13 @@ function arcPath(
   const innerStart = pt(innerR, startAngle);
 
   const large = sweep > Math.PI ? 1 : 0;
-  const p = ({ x, y }: { x: number; y: number }) => `${f(x)} ${f(y)}`;
+  const p = ({ x, y }: { x: number; y: number }) => `${String(f(x))} ${String(f(y))}`;
 
   return [
     `M ${p(outerStart)}`,
-    `A ${outerR} ${outerR} 0 ${large} 1 ${p(outerEnd)}`,
+    `A ${String(outerR)} ${String(outerR)} 0 ${String(large)} 1 ${p(outerEnd)}`,
     `L ${p(innerEnd)}`,
-    `A ${innerR} ${innerR} 0 ${large} 0 ${p(innerStart)}`,
+    `A ${String(innerR)} ${String(innerR)} 0 ${String(large)} 0 ${p(innerStart)}`,
     "Z",
   ].join(" ");
 }
@@ -365,7 +365,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
         el.removeEventListener("scroll", check);
       };
     }
-    return () => el.removeEventListener("scroll", check);
+    return () => { el.removeEventListener("scroll", check); };
   }, [tabs]);
 
   const scrollTabsBy = (delta: number) => {
@@ -514,7 +514,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
                         type="button"
                         variant="ghost"
                         size="icon-xs"
-                        onClick={() => scrollTabsBy(-80)}
+                        onClick={() => { scrollTabsBy(-80); }}
                         aria-label="Scroll tabs left"
                       >
                         <ChevronLeft className="size-3.5" />
@@ -533,7 +533,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
                             variant={i === activeTabIndex ? "default" : "ghost"}
                             size="xs"
                             aria-pressed={i === activeTabIndex}
-                            onClick={() => handleTabChange(i)}
+                            onClick={() => { handleTabChange(i); }}
                             className="shrink-0"
                           >
                             {tab.label}
@@ -554,7 +554,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
                         type="button"
                         variant="ghost"
                         size="icon-xs"
-                        onClick={() => scrollTabsBy(80)}
+                        onClick={() => { scrollTabsBy(80); }}
                         aria-label="Scroll tabs right"
                       >
                         <ChevronRight className="size-3.5" />
@@ -585,7 +585,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
              */}
             <svg
               ref={svgRef}
-              viewBox={`0 0 ${chartSize} ${chartSize}`}
+              viewBox={`0 0 ${String(chartSize)} ${String(chartSize)}`}
               role="img"
               aria-label={`${title} distribution`}
               className={cn(
@@ -594,7 +594,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
               )}
               style={{ overflow: "visible" }}
             >
-              <g transform={`translate(${chartCenter},${chartCenter})`}>
+              <g transform={`translate(${String(chartCenter)},${String(chartCenter)})`}>
                 {displayedArcs.map((arc) => {
                   const isActive = activeId === arc.slice.id;
                   const accessibleLabel = `${arc.slice.label}: ${numberFormatter.format(arc.slice.value)}`;
@@ -602,7 +602,7 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
                     <g
                       key={arc.slice.id}
                       style={{
-                        transform: isActive ? `translate(${arc.popX}px, ${arc.popY}px)` : undefined,
+                        transform: isActive ? `translate(${String(arc.popX)}px, ${String(arc.popY)}px)` : undefined,
                         transition: "transform 180ms ease-out",
                       }}
                     >
@@ -651,9 +651,9 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
                       dimmed={isHidden}
                       variant="row"
                       ariaPressed={!isHidden}
-                      onActivate={() => activateFromLegend(slice.id)}
+                      onActivate={() => { activateFromLegend(slice.id); }}
                       onDeactivate={deactivate}
-                      onClick={() => toggleSlice(slice.id)}
+                      onClick={() => { toggleSlice(slice.id); }}
                     >
                       <span className="min-w-0 flex-1 truncate text-left">
                         {slice.label}
@@ -681,9 +681,9 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
                       dimmed={isHidden}
                       ariaPressed={!isHidden}
                       ariaLabel={`${slice.label}: ${numberFormatter.format(slice.value)}`}
-                      onActivate={() => activateFromLegend(slice.id)}
+                      onActivate={() => { activateFromLegend(slice.id); }}
                       onDeactivate={deactivate}
-                      onClick={() => toggleSlice(slice.id)}
+                      onClick={() => { toggleSlice(slice.id); }}
                     />
                   );
                 })}
@@ -702,8 +702,8 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
               // estimation error) and float above with room for the ▼ caret.
               ? {
                   position: "fixed" as const,
-                  left: `${tooltipLeft ?? 0}px`,
-                  top: `${(tooltipTop ?? 0) - tooltipEstimatedHeight - 4}px`,
+                  left: `${String(tooltipLeft ?? 0)}px`,
+                  top: `${String((tooltipTop ?? 0) - tooltipEstimatedHeight - 4)}px`,
                   transform: "translateX(-50%)",
                 }
               : chartTooltipStyle(
@@ -723,10 +723,10 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
           {activationSource === "legend" && (
             <span
               aria-hidden="true"
-              className="absolute size-3 bg-popover border border-foreground/80"
+              className="absolute size-3 border border-foreground/80 bg-popover"
               style={{
                 bottom: -7,
-                left: `calc(50% + ${legendCaretOffsetPx}px)`,
+                left: `calc(50% + ${String(legendCaretOffsetPx)}px)`,
                 transform: "translateX(-50%) rotate(45deg)",
                 borderRightWidth: 1, borderBottomWidth: 1,
                 borderTopColor: "transparent", borderLeftColor: "transparent",

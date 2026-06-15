@@ -67,7 +67,7 @@ export function BarChart({
           <div className="min-w-0 overflow-hidden">
             <svg
               ref={svgRef}
-              viewBox={`0 0 ${chartWidth} ${yearChartHeight}`}
+              viewBox={`0 0 ${String(chartWidth)} ${String(yearChartHeight)}`}
               role="img"
               aria-label={`${title} distribution`}
               className="w-full"
@@ -78,9 +78,9 @@ export function BarChart({
                 {yearData.map((d) => {
                   const barX = xScale(d.year) ?? 0;
                   const barWidth = xScale.bandwidth();
-                  const barY = yScale(d.count) ?? 0;
+                  const barY = yScale(d.count);
                   const barHeight = yearInnerHeight - barY;
-                  const label = `${d.year}: ${numberFormatter.format(d.count)}`;
+                  const label = `${String(d.year)}: ${numberFormatter.format(d.count)}`;
 
                   return (
                     <rect
@@ -114,7 +114,7 @@ export function BarChart({
                   const labelX = (xScale(d.year) ?? 0) + xScale.bandwidth() / 2;
                   return (
                     <text
-                      key={`label-${d.year}`}
+                      key={`label-${String(d.year)}`}
                       x={labelX}
                       y={yearInnerHeight + 12}
                       textAnchor="middle"

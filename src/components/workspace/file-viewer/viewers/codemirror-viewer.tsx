@@ -167,7 +167,7 @@ function startThemeObserver() {
 // ---------------------------------------------------------------------------
 
 interface CachedEntry {
-  view: EditorView;
+  view: EditorView | null;
   wrapper: HTMLDivElement;
   status: "loading" | "streaming" | "done" | "error";
   abort: AbortController;
@@ -184,7 +184,7 @@ function evictOldest() {
   for (const [key, entry] of viewCache) {
     if (!entry.wrapper.isConnected) {
       entry.abort.abort();
-      entry.view.destroy();
+      entry.view?.destroy();
       viewCache.delete(key);
       if (viewCache.size <= maxCacheSize) return;
     }
@@ -196,7 +196,7 @@ function evictOldest() {
     if (oldest) {
       const [key, entry] = oldest;
       entry.abort.abort();
-      entry.view.destroy();
+      entry.view?.destroy();
       viewCache.delete(key);
     }
   }
@@ -245,7 +245,11 @@ export function CodeMirrorViewer({
     }
 
     // No cache hit — create a new EditorView and start streaming
-    let destroyed = false;
+    // `isDestroyed` reads through a function call so TypeScript cannot narrow the
+    // return value to `false` after a guard — the cleanup callback can set it to
+    // `true` at any await boundary and all subsequent checks are genuinely needed.
+    const lifecycle = { destroyed: false };
+    const isDestroyed = (): boolean => lifecycle.destroyed;
     const controller = new AbortController();
     const wrapper = document.createElement("div");
     wrapper.style.height = "100%";
@@ -253,7 +257,7 @@ export function CodeMirrorViewer({
     container.appendChild(wrapper);
 
     const entry: CachedEntry = {
-      view: null as unknown as EditorView,
+      view: null,
       wrapper,
       status: "loading",
       abort: controller,
@@ -262,7 +266,7 @@ export function CodeMirrorViewer({
 
     async function init() {
       const langExt = await getLanguageExtension(fileName);
-      if (destroyed) return;
+      if (isDestroyed()) return;
 
       const extensions = [...readOnlyExtensions];
       if (foldable) extensions.push(...foldExtensions);
@@ -283,7 +287,7 @@ export function CodeMirrorViewer({
         });
 
         if (!response.ok) {
-          throw new Error(`Failed to load file (HTTP ${response.status})`);
+          throw new Error(`Failed to load file (HTTP ${String(response.status)})`);
         }
 
         const contentLength = response.headers.get("Content-Length");
@@ -293,7 +297,7 @@ export function CodeMirrorViewer({
         const body = response.body;
         if (!body) {
           const text = await response.text();
-          if (destroyed || !view) return;
+          if (isDestroyed()) return;
           view.dispatch({ changes: { from: 0, insert: text } });
           if (startFolded) foldAll(view);
           entry.status = "done";
@@ -313,7 +317,7 @@ export function CodeMirrorViewer({
 
         function flushToEditor() {
           rafScheduled = false;
-          if (destroyed || !view || pendingText.length === 0) return;
+          if (isDestroyed() || pendingText.length === 0) return;
           const text = pendingText;
           const from = docLength;
           pendingText = "";
@@ -327,7 +331,7 @@ export function CodeMirrorViewer({
         for (;;) {
           const { done, value } = await reader.read();
           if (done) break;
-          if (destroyed) return;
+          if (isDestroyed()) return;
 
           loaded += value.byteLength;
           pendingText += decoder.decode(value, { stream: true });
@@ -339,7 +343,7 @@ export function CodeMirrorViewer({
 
           if (loaded >= largeFileThreshold) {
             wasTruncated = true;
-            reader.cancel();
+            void reader.cancel();
             break;
           }
         }
@@ -347,7 +351,7 @@ export function CodeMirrorViewer({
         pendingText += decoder.decode();
         flushToEditor();
 
-        if (!destroyed) {
+        if (!isDestroyed()) {
           if (wasTruncated) {
             const divider = "─".repeat(60);
             const sizeLabel = fileSizeRef.current ? formatFileSize(fileSizeRef.current) : "full file";
@@ -362,7 +366,7 @@ export function CodeMirrorViewer({
         }
       } catch (err) {
         if (err instanceof DOMException && err.name === "AbortError") return;
-        if (!destroyed) {
+        if (!isDestroyed()) {
           entry.status = "error";
           setErrorMsg(
             err instanceof Error ? err.message : "An unknown error occurred",
@@ -374,10 +378,10 @@ export function CodeMirrorViewer({
       }
     }
 
-    init();
+    void init();
 
     return () => {
-      destroyed = true;
+      lifecycle.destroyed = true;
       // Detach wrapper from container but keep it alive in cache
       if (wrapper.parentNode === container) {
         container.removeChild(wrapper);
@@ -386,7 +390,7 @@ export function CodeMirrorViewer({
       // Anything else (loading, streaming) must be aborted and removed.
       if (entry.status !== "done") {
         controller.abort();
-        if (entry.view) entry.view.destroy();
+        entry.view?.destroy();
         viewCache.delete(filePath);
       }
     };
@@ -396,7 +400,7 @@ export function CodeMirrorViewer({
     return (
       <div className="flex size-full flex-col items-center justify-center gap-3">
         <p className="text-destructive">{errorMsg}</p>
-        <Button variant="outline" onClick={() => window.location.reload()}>
+        <Button variant="outline" onClick={() => { window.location.reload(); }}>
           Retry
         </Button>
       </div>
@@ -421,7 +425,7 @@ export function CodeMirrorViewer({
             variant="ghost"
             size="sm"
             className="h-auto px-2 py-0.5 text-xs font-bold hover:bg-accent/90 hover:text-white"
-            onClick={() => triggerDownload(getProxyUrl(filePath))}
+            onClick={() => { triggerDownload(getProxyUrl(filePath)); }}
           >
             Download full file
           </Button>

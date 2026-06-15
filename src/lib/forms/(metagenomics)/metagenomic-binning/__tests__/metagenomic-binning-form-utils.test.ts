@@ -20,7 +20,7 @@ describe("transformMetagenomicBinningParams", () => {
   };
 
   it("returns basic fields (output_path, output_file)", () => {
-    const result = transformMetagenomicBinningParams(baseData as never);
+    const result = transformMetagenomicBinningParams(baseData);
 
     expect(result).toEqual(
       expect.objectContaining({
@@ -32,27 +32,27 @@ describe("transformMetagenomicBinningParams", () => {
 
   it("trims output_file whitespace", () => {
     const data = { ...baseData, output_file: "  binning_result  " };
-    const result = transformMetagenomicBinningParams(data as never);
+    const result = transformMetagenomicBinningParams(data);
 
     expect(result.output_file).toBe("binning_result");
   });
 
   it("includes genome_group when present and non-empty", () => {
     const data = { ...baseData, genome_group: "my_group" };
-    const result = transformMetagenomicBinningParams(data as never);
+    const result = transformMetagenomicBinningParams(data);
 
     expect(result.genome_group).toBe("my_group");
   });
 
   it("does not include genome_group when empty", () => {
-    const result = transformMetagenomicBinningParams(baseData as never);
+    const result = transformMetagenomicBinningParams(baseData);
 
     expect(result).not.toHaveProperty("genome_group");
   });
 
   it("does not include genome_group when only whitespace", () => {
     const data = { ...baseData, genome_group: "   " };
-    const result = transformMetagenomicBinningParams(data as never);
+    const result = transformMetagenomicBinningParams(data);
 
     expect(result).not.toHaveProperty("genome_group");
   });
@@ -89,13 +89,13 @@ describe("transformMetagenomicBinningParams", () => {
         ...baseData,
         srr_ids: ["SRR123456", "SRR789012"],
       };
-      const result = transformMetagenomicBinningParams(data as never);
+      const result = transformMetagenomicBinningParams(data);
 
       expect(result.srr_ids).toEqual(["SRR123456", "SRR789012"]);
     });
 
     it("does not include empty library arrays", () => {
-      const result = transformMetagenomicBinningParams(baseData as never);
+      const result = transformMetagenomicBinningParams(baseData);
 
       expect(result).not.toHaveProperty("paired_end_libs");
       expect(result).not.toHaveProperty("single_end_libs");
@@ -103,7 +103,7 @@ describe("transformMetagenomicBinningParams", () => {
     });
 
     it("includes assembler for reads", () => {
-      const result = transformMetagenomicBinningParams(baseData as never);
+      const result = transformMetagenomicBinningParams(baseData);
 
       expect(result.assembler).toBe("auto");
     });
@@ -116,7 +116,7 @@ describe("transformMetagenomicBinningParams", () => {
         start_with: "contigs" as const,
         contigs: "/workspace/contigs.fa",
       };
-      const result = transformMetagenomicBinningParams(data as never);
+      const result = transformMetagenomicBinningParams(data);
 
       expect(result.contigs).toBe("/workspace/contigs.fa");
       expect(result).not.toHaveProperty("paired_end_libs");
@@ -129,7 +129,7 @@ describe("transformMetagenomicBinningParams", () => {
   describe("organism selection", () => {
     it("sets perform_bacterial_annotation for bacteria", () => {
       const data = { ...baseData, organism: "bacteria" as const };
-      const result = transformMetagenomicBinningParams(data as never);
+      const result = transformMetagenomicBinningParams(data);
 
       expect(result.perform_bacterial_annotation).toBe(true);
       expect(result).not.toHaveProperty("perform_viral_annotation");
@@ -138,7 +138,7 @@ describe("transformMetagenomicBinningParams", () => {
 
     it("sets viral annotation and binning for viral", () => {
       const data = { ...baseData, organism: "viral" as const };
-      const result = transformMetagenomicBinningParams(data as never);
+      const result = transformMetagenomicBinningParams(data);
 
       expect(result.perform_viral_annotation).toBe(true);
       expect(result.perform_viral_binning).toBe(true);
@@ -148,7 +148,7 @@ describe("transformMetagenomicBinningParams", () => {
 
     it("sets both annotations for both", () => {
       const data = { ...baseData, organism: "both" as const };
-      const result = transformMetagenomicBinningParams(data as never);
+      const result = transformMetagenomicBinningParams(data);
 
       expect(result.perform_bacterial_annotation).toBe(true);
       expect(result.perform_viral_annotation).toBe(true);
@@ -158,7 +158,7 @@ describe("transformMetagenomicBinningParams", () => {
 
   describe("advanced parameters", () => {
     it("includes min_contig_len and min_contig_cov", () => {
-      const result = transformMetagenomicBinningParams(baseData as never);
+      const result = transformMetagenomicBinningParams(baseData);
 
       expect(result.min_contig_len).toBe(300);
       expect(result.min_contig_cov).toBe(5);
@@ -166,13 +166,13 @@ describe("transformMetagenomicBinningParams", () => {
 
     it("sets danglen to 0 when disable_dangling is true", () => {
       const data = { ...baseData, disable_dangling: true };
-      const result = transformMetagenomicBinningParams(data as never);
+      const result = transformMetagenomicBinningParams(data);
 
       expect(result.danglen).toBe(0);
     });
 
     it("does not include danglen when disable_dangling is false", () => {
-      const result = transformMetagenomicBinningParams(baseData as never);
+      const result = transformMetagenomicBinningParams(baseData);
 
       expect(result).not.toHaveProperty("danglen");
     });

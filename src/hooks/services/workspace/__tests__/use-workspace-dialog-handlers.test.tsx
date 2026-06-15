@@ -18,7 +18,7 @@ import {
 
 const { mockDispatch, mockActiveDialog } = vi.hoisted(() => ({
   mockDispatch: vi.fn(),
-  mockActiveDialog: { value: null as unknown },
+  mockActiveDialog: { value: null as Record<string, unknown> | null },
 }));
 
 vi.mock("@/contexts/workspace-dialog-context", () => ({
@@ -71,7 +71,7 @@ const makeItem = (
     permissions: { user: "o", global: "n" },
     timestamp: 0,
     ...overrides,
-  }) as WorkspaceItem;
+  });
 
 function defaultOptions(
   overrides?: Partial<UseWorkspaceDialogHandlersOptions>,
@@ -556,7 +556,7 @@ describe("useWorkspaceDialogHandlers", () => {
     expect(toast.error).toHaveBeenCalledWith(
       "Sorry, you can't delete that…",
       expect.objectContaining({
-        description: expect.stringContaining("Genome Groups"),
+        description: expect.stringContaining("Genome Groups") as string,
       }),
     );
     expect(mockDispatch).toHaveBeenCalledWith({ type: "CLOSE" });

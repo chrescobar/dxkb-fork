@@ -54,7 +54,7 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
       });
 
       if (!response.ok) {
-        const err = await response.json();
+        const err = await response.json() as { error?: string; message?: string };
         toast.error(err.error ?? err.message ?? "Failed to update preferences.");
         return;
       }
@@ -95,7 +95,7 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
                   variant="ghost"
                   size="icon"
                   className="size-9 shrink-0"
-                  onClick={() => setDefaultJobFolder("")}
+                  onClick={() => { setDefaultJobFolder(""); }}
                   aria-label="Clear default job output folder"
                 >
                   <X className="size-4" />
@@ -110,7 +110,7 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
 
           <Button
             type="button"
-            onClick={handleSave}
+            onClick={() => { void handleSave(); }}
             disabled={isSubmitting}
             className="w-fit"
           >

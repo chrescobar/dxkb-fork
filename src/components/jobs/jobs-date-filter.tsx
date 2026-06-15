@@ -198,9 +198,9 @@ export function JobsDateFilter({
             <Select
               items={conditionOptions}
               value={condition}
-              onValueChange={(value) =>
-                value != null && handleConditionChange(value)
-              }
+              onValueChange={(value) => {
+                if (value != null) handleConditionChange(value);
+              }}
             >
               <SelectTrigger className="h-8 w-auto gap-1 text-xs">
                 <SelectValue />
@@ -218,7 +218,7 @@ export function JobsDateFilter({
             <button
               type="button"
               className="ml-auto text-xs text-destructive hover:underline"
-              onClick={() => resetFilter(false)}
+              onClick={() => { resetFilter(false); }}
             >
               Clear
             </button>

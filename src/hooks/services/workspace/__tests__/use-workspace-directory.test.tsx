@@ -39,7 +39,7 @@ describe("useWorkspaceDirectory", () => {
       () => useWorkspaceDirectory({ kind: "home", username: "alice", path: "" }),
       { wrapper: makeWrapper(repo) },
     );
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    await waitFor(() => { expect(result.current.isLoading).toBe(false); });
     expect(result.current.items.map((i) => i.name)).toEqual(["file.fa", "sub"]);
   });
 
@@ -67,7 +67,7 @@ describe("useWorkspaceDirectory", () => {
       () => useWorkspaceDirectory({ kind: "sharedRoot", currentUser: "alice" }),
       { wrapper: makeWrapper(repo) },
     );
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    await waitFor(() => { expect(result.current.isLoading).toBe(false); });
     const names = result.current.items.map((i) => i.name).sort();
     expect(names).toContain("owned-ws");
     expect(names).toContain("sharedByBob");
@@ -90,7 +90,7 @@ describe("useWorkspaceDirectory", () => {
       () => useWorkspaceDirectory({ kind: "sharedPath", fullPath: "/bob@bvbrc/shared" }),
       { wrapper: makeWrapper(repo) },
     );
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    await waitFor(() => { expect(result.current.isLoading).toBe(false); });
     expect(result.current.items).toHaveLength(1);
     await waitFor(() => {
       expect(result.current.memberCountByPath?.["/bob@bvbrc/shared/doc.txt"]).toBe(2);
@@ -110,7 +110,7 @@ describe("useWorkspaceDirectory", () => {
       () => useWorkspaceDirectory({ kind: "publicRoot" }),
       { wrapper: makeWrapper(repo, repo) },
     );
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    await waitFor(() => { expect(result.current.isLoading).toBe(false); });
     expect(result.current.items.map((i) => i.name)).toEqual(["public-one"]);
   });
 

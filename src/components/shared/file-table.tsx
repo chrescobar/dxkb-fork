@@ -138,17 +138,15 @@ function DraggableTableHeader({
     zIndex: isDragging ? 1 : 0,
   };
 
-  const meta = header.column.columnDef.meta as
-    | { className?: string; sortField?: string }
-    | undefined;
+  const meta = header.column.columnDef.meta as { className?: string; sortField?: string };
   const isFirst = header.index === 0;
   const className = clsx(
     isFirst ? "pl-6" : "pl-2",
     "relative bg-background",
-    meta?.className ?? "",
+    meta.className ?? "",
   );
 
-  const sortField = meta?.sortField;
+  const sortField = meta.sortField;
   const label = header.column.columnDef.header as string;
 
   return (
@@ -169,7 +167,7 @@ function DraggableTableHeader({
         {sortField && (
           <button
             type="button"
-            onClick={() => onSort(sortField)}
+            onClick={() => { onSort(sortField); }}
             className="cursor-pointer rounded p-0.5 select-none hover:bg-primary/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label={`Sort by ${label}`}
           >
@@ -182,7 +180,7 @@ function DraggableTableHeader({
             aria-orientation="vertical"
             onMouseDown={header.getResizeHandler()}
             onTouchStart={header.getResizeHandler()}
-            onDoubleClick={() => header.column.resetSize()}
+            onDoubleClick={() => { header.column.resetSize(); }}
             className={cn(
               "absolute top-0 right-0 z-10 h-full w-2 cursor-col-resize border-r border-border",
               "hover:border-primary/50 hover:bg-primary/15",
@@ -271,6 +269,7 @@ function DataTableInner<T>(
   }: DataTableProps<T>,
   ref: React.Ref<DataTableHandle>,
 ) {
+  "use no memo";
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const [columnOrder, setColumnOrder] = useState<string[]>(defaultColumnOrder);
 
@@ -278,7 +277,6 @@ function DataTableInner<T>(
     focus: () => tableContainerRef.current?.focus(),
   }));
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable<T>({
     data,
     columns,
@@ -297,20 +295,14 @@ function DataTableInner<T>(
     enableColumnResizing: true,
   });
 
-  const columnSizingState = table.getState().columnSizing;
-  const columnSizingInfoState = table.getState().columnSizingInfo;
-  const columnSizeVars = useMemo(() => {
-    const colSizes: Record<string, string> = {};
-    for (const col of table.getAllFlatColumns()) {
-      colSizes[`--col-${col.id}-size`] = `${col.getSize()}px`;
-    }
-    return colSizes;
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- table is unstable from useReactTable
-  }, [columns, columnSizingState, columnSizingInfoState]);
+  const columnSizeVars: Record<string, string> = {};
+  for (const col of table.getAllFlatColumns()) {
+    columnSizeVars[`--col-${col.id}-size`] = `${String(col.getSize())}px`;
+  }
 
   const handleColumnDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
-    if (active && over && active.id !== over.id) {
+    if (over && active.id !== over.id) {
       setColumnOrder((prev) => {
         const oldIndex = prev.indexOf(active.id as string);
         const newIndex = prev.indexOf(over.id as string);
@@ -408,7 +400,7 @@ function DataTableInner<T>(
               ) : (
                 <>
                   {renderLeadingRows?.(columnOrder)}
-                  {data.length === 0 && !isLoading ? (
+                  {data.length === 0 ? (
                     renderEmptyState ? (
                       renderEmptyState(table.getAllLeafColumns().length)
                     ) : null

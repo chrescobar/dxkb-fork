@@ -38,11 +38,11 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
     if (!node) return;
     if (typeof ResizeObserver === "undefined") return;
     const ro = new ResizeObserver(([entry]) => {
-      const h = entry?.contentRect?.height;
+      const h = entry.contentRect.height;
       if (h && h > 0) setContainerHeight(h);
     });
     ro.observe(node);
-    return () => ro.disconnect();
+    return () => { ro.disconnect(); };
   }, []);
 
   const sorted =
@@ -148,7 +148,7 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
               {paddingBottom > 0 && <tr style={{ height: paddingBottom }} />}
               {Array.from({ length: fillerCount }, (_, i) => (
                 <TableRow
-                  key={`filler-${i}`}
+                  key={`filler-${String(i)}`}
                   className={cn("h-8", (sorted.length + i) % 2 === 1 && "bg-muted/20")}
                 >
                   <TableCell className="w-36 border-r px-3 py-1" />

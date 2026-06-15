@@ -19,7 +19,7 @@ export function getBvBrcWebsiteApiBaseUrl(): string {
 
 export async function responseErrorMessage(response: Response): Promise<string> {
   const body = await response.text().catch(() => "");
-  return body.trim() || `${response.status} ${response.statusText}`.trim();
+  return body.trim() || `${String(response.status)} ${response.statusText}`.trim();
 }
 
 /**
@@ -130,8 +130,8 @@ export function parseSolrFacetList(payload: Record<string, unknown>, field: stri
 
   const values: { name: string; count: number }[] = [];
   for (let index = 0; index < rawFacet.length; index += 2) {
-    const name = rawFacet[index];
-    const count = rawFacet[index + 1];
+    const name: unknown = rawFacet[index];
+    const count: unknown = rawFacet[index + 1];
     if (typeof name !== "string") {
       throw new Error(`Unexpected SOLR response shape: ${field} facet label is invalid`);
     }
@@ -142,23 +142,23 @@ export function parseSolrFacetList(payload: Record<string, unknown>, field: stri
 }
 
 export function buildGenomeFacetUrl(baseUrl: string, taxonId: number, field: string, limit?: number): string {
-  const limitClause = typeof limit === "number" && limit > 0 ? `,(limit,${limit})` : "";
-  return `${baseUrl}/genome/?eq(taxon_lineage_ids,${taxonId})&limit(1)&facet((field,${field})${limitClause},(mincount,1))`;
+  const limitClause = typeof limit === "number" && limit > 0 ? `,(limit,${String(limit)})` : "";
+  return `${baseUrl}/genome/?eq(taxon_lineage_ids,${String(taxonId)})&limit(1)&facet((field,${field})${limitClause},(mincount,1))`;
 }
 
 export function buildGenomeGeoFacetUrl(baseUrl: string, taxonId: number, field: string, limit?: number): string {
-  const limitClause = typeof limit === "number" && limit > 0 ? `,(limit,${limit})` : "";
-  return `${baseUrl}/genome/?eq(genome_id,*)&genome(eq(taxon_lineage_ids,${taxonId}))&facet((field,${field}),(mincount,1)${limitClause})&limit(0)`;
+  const limitClause = typeof limit === "number" && limit > 0 ? `,(limit,${String(limit)})` : "";
+  return `${baseUrl}/genome/?eq(genome_id,*)&genome(eq(taxon_lineage_ids,${String(taxonId)}))&facet((field,${field}),(mincount,1)${limitClause})&limit(0)`;
 }
 
 export function buildGenomeGeoPivotUrl(baseUrl: string, taxonId: number, primary: string, secondary: string, limit?: number): string {
-  const limitClause = typeof limit === "number" && limit > 0 ? `,(limit,${limit})` : "";
-  return `${baseUrl}/genome/?eq(genome_id,*)&genome(eq(taxon_lineage_ids,${taxonId}))&facet((pivot,(${primary},${secondary})),(mincount,1)${limitClause})&limit(0)`;
+  const limitClause = typeof limit === "number" && limit > 0 ? `,(limit,${String(limit)})` : "";
+  return `${baseUrl}/genome/?eq(genome_id,*)&genome(eq(taxon_lineage_ids,${String(taxonId)}))&facet((pivot,(${primary},${secondary})),(mincount,1)${limitClause})&limit(0)`;
 }
 
 export function buildGenomeGeoPivot3Url(baseUrl: string, taxonId: number, primary: string, secondary: string, tertiary: string, limit?: number): string {
-  const limitClause = typeof limit === "number" && limit > 0 ? `,(limit,${limit})` : "";
-  return `${baseUrl}/genome/?eq(genome_id,*)&genome(eq(taxon_lineage_ids,${taxonId}))&facet((pivot,(${primary},${secondary},${tertiary})),(mincount,1)${limitClause})&limit(0)`;
+  const limitClause = typeof limit === "number" && limit > 0 ? `,(limit,${String(limit)})` : "";
+  return `${baseUrl}/genome/?eq(genome_id,*)&genome(eq(taxon_lineage_ids,${String(taxonId)}))&facet((pivot,(${primary},${secondary},${tertiary})),(mincount,1)${limitClause})&limit(0)`;
 }
 
 interface PivotEntry {
@@ -207,13 +207,13 @@ export function parseSolrFacetPivot(payload: Record<string, unknown>, pivotKey: 
   const rawPivot = readFacetPivotArray(payload, pivotKey);
   const result: Record<string, Record<string, number>> = {};
   for (const entry of rawPivot) {
-    if (!entry || typeof entry !== "object") continue;
+    if (typeof entry !== "object") continue;
     const name = pivotEntryName(entry);
     if (name === null) continue;
     const inner: Record<string, number> = {};
     if (Array.isArray(entry.pivot)) {
       for (const sub of entry.pivot as PivotEntry[]) {
-        if (!sub || typeof sub !== "object") continue;
+        if (typeof sub !== "object") continue;
         const subName = pivotEntryName(sub);
         if (subName === null) continue;
         const subCount = pivotEntryCount(sub);
@@ -229,19 +229,19 @@ export function parseSolrFacetPivot3(payload: Record<string, unknown>, pivotKey:
   const rawPivot = readFacetPivotArray(payload, pivotKey);
   const result: Record<string, Record<string, Record<string, number>>> = {};
   for (const entry of rawPivot) {
-    if (!entry || typeof entry !== "object") continue;
+    if (typeof entry !== "object") continue;
     const outerName = pivotEntryName(entry);
     if (outerName === null) continue;
     const middle: Record<string, Record<string, number>> = {};
     if (Array.isArray(entry.pivot)) {
       for (const sub of entry.pivot as PivotEntry[]) {
-        if (!sub || typeof sub !== "object") continue;
+        if (typeof sub !== "object") continue;
         const middleName = pivotEntryName(sub);
         if (middleName === null) continue;
         const leaf: Record<string, number> = {};
         if (Array.isArray(sub.pivot)) {
           for (const leafEntry of sub.pivot as PivotEntry[]) {
-            if (!leafEntry || typeof leafEntry !== "object") continue;
+            if (typeof leafEntry !== "object") continue;
             const leafName = pivotEntryName(leafEntry);
             if (leafName === null) continue;
             const leafCount = pivotEntryCount(leafEntry);

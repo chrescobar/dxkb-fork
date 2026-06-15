@@ -18,7 +18,7 @@ vi.mock("@/lib/services/organisms/taxonomy", async () => {
     );
   return {
     ...actual,
-    fetchOrganismTaxonomy: (...args: unknown[]) => fetchOrganismTaxonomyMock(...args),
+    fetchOrganismTaxonomy: (...args: unknown[]) => fetchOrganismTaxonomyMock(...args) as unknown,
   };
 });
 

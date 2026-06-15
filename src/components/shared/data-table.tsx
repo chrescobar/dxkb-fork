@@ -8,9 +8,11 @@ import {
   SortingState,
   PaginationState,
   Header,
+  type CellContext,
+  type Row as TanStackRow,
 } from "@tanstack/react-table";
 
-import { useMemo, useRef, useState, useEffect } from "react";
+import { useCallback, useMemo, useRef, useState, useEffect } from "react";
 import { noop } from "@/lib/utils";
 import { getIdField } from "@/constants/resources";
 
@@ -79,6 +81,7 @@ interface DataTableProps {
 }
 
 export function DataTable({ id: _id, data, columns, totalItems, resource, onSelectionChange, onGenomeSelect, selectedIds, pageIndex, pageSize, onPageChange, sorting:controlledSorting, onSortingChange, columnOrder, onColumnOrderChange, columnVisibility: controlledVisibility, onColumnVisibilityChange: onColumnVisibilityChangeProp, rowSelection: controlledRowSelection, onRowSelectionChange, isAllPagesSelected = false, onAllPagesSelectionChange, totalSelectedCount, onDownloadAll, isLoading = false, onActiveRowChange }: DataTableProps) {
+  "use no memo";
 
   const [columnSizing, setColumnSizing] = useState<Record<string, number>>({});
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>(
@@ -110,13 +113,12 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
   // Sync when parent provides controlled pageIndex/pageSize values
   useEffect(() => {
-    if (pageIndex !== undefined && pageIndex !== pagination.pageIndex) {
-      setPagination((prev) => ({ ...prev, pageIndex }));
-    }
-    if (pageSize !== undefined && pageSize !== pagination.pageSize) {
-      setPagination((prev) => ({ ...prev, pageSize }));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setPagination((prev) => {
+      const next = { ...prev };
+      if (pageIndex !== undefined && pageIndex !== prev.pageIndex) next.pageIndex = pageIndex;
+      if (pageSize !== undefined && pageSize !== prev.pageSize) next.pageSize = pageSize;
+      return next;
+    });
   }, [pageIndex, pageSize]);
 
   const lastSelectedIndexRef = useRef<number | null>(null);
@@ -151,20 +153,91 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     };
   }, [showColumnMenu]);
 
-  
-  const columnDefs = useMemo<ColumnDef<Record<string, unknown>, unknown>[]>(() => {
+
+  const renderCheckboxCell = useCallback(
+    ({ row, table }: CellContext<Record<string, unknown>, unknown>) => {
+      return (
+        <div className="flex size-full items-center justify-center">
+          <input
+            type="checkbox"
+            checked={row.getIsSelected()}
+            onChange={noop}
+            onClick={(e) => {
+              e.stopPropagation();
+
+              const isShift = (e).shiftKey;
+              const allRows = table.getRowModel().rows;
+              const currentRowId = row.id;
+              const currentIndex = allRows.findIndex(r => r.id === currentRowId);
+
+              if (currentIndex === -1) {
+                console.warn('Could not find current row index');
+                return;
+              }
+
+              const lastSelectedIndex = lastSelectedIndexRef.current;
+
+              // Determine whether this click will select or deselect the row based on current state
+              const wasSelected = row.getIsSelected();
+              const willSelect = !wasSelected;
+
+              if (isShift && lastSelectedIndex !== null && lastSelectedIndex !== currentIndex) {
+                const start = Math.min(lastSelectedIndex, currentIndex);
+                const end = Math.max(lastSelectedIndex, currentIndex);
+
+                const newSelection: Record<string, boolean> = {};
+                for (let i = start; i <= end; i++) {
+                  const rowId = allRows[i]?.id;
+                  if (rowId) {
+                    newSelection[rowId] = true;
+                  }
+                }
+
+                table.setRowSelection((prev) => ({
+                  ...prev,
+                  ...newSelection,
+                }));
+              } else {
+                table.setRowSelection((prev) => ({
+                  ...prev,
+                  [row.id]: willSelect,
+                }));
+              }
+
+              // ✅ Set synchronously
+              lastSelectedIndexRef.current = currentIndex;
+
+              // After updating rowSelection, invoke handlers based on the intended new selection state
+              const idVal = row.original[idField] ?? row.original['genome_id'] ?? null;
+              if (!willSelect) {
+                onGenomeSelect?.(null); // deselecting, so clear
+                onActiveRowChange?.(null);
+              } else if (idVal != null && (typeof idVal === 'string' || typeof idVal === 'number')) {
+                onGenomeSelect?.(String(idVal));
+                onActiveRowChange?.(String(idVal));
+              }
+            }}
+            className="m-0 cursor-pointer p-0"
+          />
+        </div>
+      );
+    },
+    [idField, onGenomeSelect, onActiveRowChange],
+  );
+
+  const columnDefs = useMemo<ColumnDef<Record<string, unknown>>[]>(() => {
     const checkboxColumn: ColumnDef<Record<string, unknown>> = {
       id: '__select__',
       header: ({ table }) => {
         // Check if all rows on current page are selected
         const allPageRowsSelected = table.getIsAllPageRowsSelected();
         const somePageRowsSelected = table.getIsSomePageRowsSelected();
-        
+
         // Determine checkbox state - if all pages selected, always show checked
         // Otherwise show the state of the current page
         const isChecked = isAllPagesSelected || allPageRowsSelected;
         const isIndeterminate = !isAllPagesSelected && somePageRowsSelected;
-        
+
         return (
           <div className="relative flex size-full items-center justify-center">
             <input
@@ -177,7 +250,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
               }}
               onChange={(e) => {
                 e.stopPropagation();
-                
+
                 if (isAllPagesSelected) {
                   // If all pages are selected, deselect all (including cross-page)
                   onAllPagesSelectionChange?.(false);
@@ -208,73 +281,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           </div>
         );
       },
-      cell: ({ row, table }) => {
-        return (
-          <div className="flex size-full items-center justify-center">
-            <input
-              type="checkbox"
-              checked={row.getIsSelected()}
-              onChange={noop}
-              onClick={(e) => {
-                e.stopPropagation();
-
-                const isShift = (e as React.MouseEvent<HTMLInputElement>).shiftKey;
-                const allRows = table.getRowModel().rows;
-                const currentRowId = row.id;
-                const currentIndex = allRows.findIndex(r => r.id === currentRowId);
-
-                if (currentIndex === -1) {
-                  console.warn('Could not find current row index');
-                  return;
-                }
-
-                const lastSelectedIndex = lastSelectedIndexRef.current;
-
-                // Determine whether this click will select or deselect the row based on current state
-                const wasSelected = row.getIsSelected();
-                const willSelect = !wasSelected;
-
-                if (isShift && lastSelectedIndex !== null && lastSelectedIndex !== currentIndex) {
-                  const start = Math.min(lastSelectedIndex, currentIndex);
-                  const end = Math.max(lastSelectedIndex, currentIndex);
-
-                  const newSelection: Record<string, boolean> = {};
-                  for (let i = start; i <= end; i++) {
-                    const rowId = allRows[i]?.id;
-                    if (rowId) {
-                      newSelection[rowId] = true;
-                    }
-                  }
-
-                  table.setRowSelection((prev) => ({
-                    ...prev,
-                    ...newSelection,
-                  }));
-                } else {
-                  table.setRowSelection((prev) => ({
-                    ...prev,
-                    [row.id]: willSelect,
-                  }));
-                }
-
-                // ✅ Set synchronously
-                lastSelectedIndexRef.current = currentIndex;
-
-                // After updating rowSelection, invoke handlers based on the intended new selection state
-                const idVal = row.original[idField] ?? row.original['genome_id'] ?? null;
-                if (!willSelect) {
-                  onGenomeSelect?.(null); // deselecting, so clear
-                  onActiveRowChange?.(null);
-                } else if (idVal != null) {
-                  onGenomeSelect?.(String(idVal));
-                  onActiveRowChange?.(String(idVal));
-                }
-              }}
-              className="m-0 cursor-pointer p-0"
-            />
-          </div>
-        );
-      },
+      cell: renderCheckboxCell,
       enableResizing: false,
       size: 40,
     };
@@ -283,38 +290,36 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       ...columns.map((col) => ({
         accessorKey: col.id,
         header: col.label,
-        cell: (info) => {
+        cell: (info: CellContext<Record<string, unknown>, unknown>) => {
           const value = info.getValue();
           if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(value)) {
             const date = new Date(value);
-            return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+            return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getFullYear())}`;
           }
           return value;
         },
         size: 200,
         enableResizing: true,
         enableSorting: true,
-        sortingFn: (rowA, rowB, columnId) => {
-          const a = rowA.getValue(columnId);
-          const b = rowB.getValue(columnId);
-      
+        sortingFn: (rowA: TanStackRow<Record<string, unknown>>, rowB: TanStackRow<Record<string, unknown>>, columnId: string) => {
+          const a = rowA.getValue<unknown>(columnId);
+          const b = rowB.getValue<unknown>(columnId);
+
           // Treat empty/undefined/null as "last"
           const aIsEmpty = a === undefined || a === null || a === '';
           const bIsEmpty = b === undefined || b === null || b === '';
-      
+
           if (aIsEmpty && bIsEmpty) return 0;
           if (aIsEmpty) return 1;
           if (bIsEmpty) return -1;
-      
+
           // Normal string/number compare
           return a > b ? 1 : a < b ? -1 : 0;
         },
       }))
     ];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [columns]);
+  }, [columns, isAllPagesSelected, onAllPagesSelectionChange, onRowSelectionChange, renderCheckboxCell, totalItems]);
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns: columnDefs,
@@ -422,7 +427,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     } : undefined,
     manualPagination: true,
     manualSorting: true,
-    pageCount: Math.ceil(totalItems / (pagination.pageSize ?? 200)),
+    pageCount: Math.ceil(totalItems / pagination.pageSize),
     columnResizeMode: 'onEnd',
     enableColumnResizing: true,
     getCoreRowModel: getCoreRowModel(),
@@ -434,18 +439,10 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
   });
 
 
-  const columnSizingState = table.getState().columnSizing;
-  const columnSizingInfoState = table.getState().columnSizingInfo;
-
-  const columnSizeVars = useMemo(() => {
-    const headers = table.getFlatHeaders();
-    const colSizes: Record<string, string> = {};
-    for (const header of headers) {
-      colSizes[`--col-${header.column.id}-size`] = `${header.column.getSize()}px`;
-    }
-    return colSizes;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [columnSizingState, columnSizingInfoState]);
+  const columnSizeVars: Record<string, string> = {};
+  for (const header of table.getFlatHeaders()) {
+    columnSizeVars[`--col-${header.column.id}-size`] = `${String(header.column.getSize())}px`;
+  }
 
   const rows = table.getRowModel().rows;
 
@@ -465,7 +462,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     const startX = event.clientX;
     const column = header.column;
     const startSize = column.getSize();
-    const colElement = event.currentTarget.closest('th') as HTMLElement;
+    const colElement = event.currentTarget.closest('th');
     if (!colElement) return;
 
     const tableEl = colElement.closest('table');
@@ -473,7 +470,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     const tableRect = tableEl.getBoundingClientRect();
 
     if (resizeLineRef.current) { // Make the ghost line appear
-      resizeLineRef.current.style.left = `${colElement.getBoundingClientRect().right - tableRect.left}px`;
+      resizeLineRef.current.style.left = `${String(colElement.getBoundingClientRect().right - tableRect.left)}px`;
       resizeLineRef.current.style.display = 'block';
     }
 
@@ -482,7 +479,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       const newSize = Math.max(40, startSize + delta);
 
       if (resizeLineRef.current) { // Make the ghost line move
-        resizeLineRef.current.style.left = `${colElement.getBoundingClientRect().left - tableRect.left + newSize}px`;
+        resizeLineRef.current.style.left = `${String(colElement.getBoundingClientRect().left - tableRect.left + newSize)}px`;
       }
     };
 
@@ -589,20 +586,20 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           : allCols.filter(col => col.id !== '__select__');
         
         const visibleColumnIds = visibleCols.map(col => col.id);
-        await onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
+        onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
         setDownloadingButton(null);
         return;
       }
-      
+
       // If downloading all data and onDownloadAll is provided, use it
       if (!onlySelected && onDownloadAll) {
         const allCols = table.getAllLeafColumns();
         const visibleCols = onlyVisibleColumns
           ? allCols.filter(col => col.getIsVisible() && col.id !== '__select__')
           : allCols.filter(col => col.id !== '__select__');
-        
+
         const visibleColumnIds = visibleCols.map(col => col.id);
-        await onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
+        onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
         setDownloadingButton(null);
         return;
       }
@@ -628,22 +625,27 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
       const DataAPI = process.env.NEXT_PUBLIC_DATA_API;
 
-      await fetch(`${DataAPI}/${resource}/?${query}`, {
+      await fetch(`${DataAPI ?? ""}/${resource}/?${query}`, {
         headers: {
           'Content-type': 'application/rqlquery+x-www-form-urlencoded',
           Accept: "application/json",
-          'Range': `items=0-${(selectedIds ?? []).length}`,
-          'X-Range': `items=0-${(selectedIds ?? []).length}`,
+          'Range': `items=0-${String((selectedIds ?? []).length)}`,
+          'X-Range': `items=0-${String((selectedIds ?? []).length)}`,
         },
       })
         .then((res) => {
           if (!res.ok) throw new Error("Failed to fetch selected rows");
           return res.json();
         })
-        .then((data) => {
-          const rowsArray: Record<string, unknown>[] = Array.isArray(data)
-            ? data
-            : data.items ?? data.response ?? data.rows ?? [];
+        .then((data: unknown) => {
+          type RowBag = Record<string, unknown>;
+          interface ResponseShape { items?: RowBag[]; response?: RowBag[]; rows?: RowBag[] }
+          const rowsArray: RowBag[] = Array.isArray(data)
+            ? (data as RowBag[])
+            : ((data as ResponseShape).items ??
+               (data as ResponseShape).response ??
+               (data as ResponseShape).rows ??
+               []);
 
           // Sort the rows based on the original selection order
           const sortedRows = rowsArray.sort((a, b) => {
@@ -659,16 +661,18 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
             ...sortedRows.map(row =>
               visibleCols.map(col => {
                 const val = row[col.id];
-                return typeof val === 'string'
-                  ? `"${val.replace(/"/g, '""')}"`
-                  : val ?? '';
+                if (typeof val === 'string') return `"${val.replace(/"/g, '""')}"`;
+                if (val == null) return '';
+                if (typeof val === 'object') return `"${JSON.stringify(val).replace(/"/g, '""')}"`;
+                if (typeof val === 'number' || typeof val === 'boolean' || typeof val === 'bigint') return String(val);
+                return '';
               }).join(',')
             )
           ].join('\n');
 
           downloadFile(`${resource}-selected.${format}`, content);
         })
-        .catch((err) => {
+        .catch((err: unknown) => {
           console.error("Download selected failed:", err);
         })
         .finally(() => {
@@ -684,13 +688,17 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       headers.join(','),
       ...rowsToExport.map(row =>
         visibleCols.map(col => {
-          const val = row.getValue(col.id);
-          return typeof val === 'string' ? `"${val.replace(/"/g, '""')}"` : val;
+          const val = row.getValue<unknown>(col.id);
+          if (typeof val === 'string') return `"${val.replace(/"/g, '""')}"`;
+          if (val == null) return '';
+          if (typeof val === 'object') return `"${JSON.stringify(val).replace(/"/g, '""')}"`;
+          if (typeof val === 'number' || typeof val === 'boolean' || typeof val === 'bigint') return String(val);
+          return '';
         }).join(',')
       )
     ].join('\n');
 
-    downloadFile(`${resource}${onlySelected ? '-selected' : ''}.${format}`, content);
+    downloadFile(`${resource}.${format}`, content);
     setDownloadingButton(null);
     } catch (error) {
       console.error("Download failed:", error);
@@ -748,7 +756,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           <div className="relative inline-block text-left" ref={columnMenuRef}> {/* This is the button for changing the visibility of columns in the table */}
             <Button
               className="mr-2 flex w-full justify-end rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
-              onClick={() => setShowColumnMenu(prev => !prev)}
+              onClick={() => { setShowColumnMenu(prev => !prev); }}
             >
               Columns ▾
             </Button>
@@ -766,7 +774,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                         <input
                           type="checkbox"
                           checked={column.getIsVisible()}
-                          onChange={() => column.toggleVisibility()}
+                          onChange={() => { column.toggleVisibility(); }}
                         />
                         <span>{column.columnDef.header as string}</span>
                       </label>
@@ -778,7 +786,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
           {/* Download buttons */}
           <Button
-            onClick={() => handleDownload('csv')}
+            onClick={() => { void handleDownload('csv'); }}
             className="mx-2 rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
             disabled={downloadingButton !== null}
           >
@@ -789,7 +797,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
             )}
           </Button>
           <Button
-            onClick={() => handleDownload('txt')}
+            onClick={() => { void handleDownload('txt'); }}
             className="mr-2 rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
             disabled={downloadingButton !== null}
           >
@@ -804,7 +812,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           {((selectedIds?.length ?? 0) > 0 || isAllPagesSelected) && ( 
             <>
               <Button
-                onClick={() => handleDownload('csv', true)}
+                onClick={() => { void handleDownload('csv', true); }}
                 className="mr-2 rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
                 disabled={downloadingButton !== null}
               >
@@ -815,7 +823,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                 )}
               </Button>
               <Button
-                onClick={() => handleDownload('txt', true)}
+                onClick={() => { void handleDownload('txt', true); }}
                 className="mr-2 rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
                 disabled={downloadingButton !== null}
               >
@@ -832,7 +840,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           <input
             type="checkbox"
             checked={onlyVisibleColumns}
-            onChange={() => setOnlyVisibleColumns(prev => !prev)}
+            onChange={() => { setOnlyVisibleColumns(prev => !prev); }}
             className="mr-1"
           />
           Download Displayed Columns Only
@@ -917,9 +925,9 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                             <div 
                               className="relative flex size-full items-center justify-between py-0"
                               draggable={true}
-                              onDragStart={(e) => handleDragStart(e, column.id)}
+                              onDragStart={(e) => { handleDragStart(e, column.id); }}
                               onDragOver={handleDragOver}
-                              onDrop={(e) => handleDrop(e, column.id)}
+                              onDrop={(e) => { handleDrop(e, column.id); }}
                               onDragEnd={handleDragEnd}
                               style={{
                                 cursor: 'move',
@@ -990,14 +998,14 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                         if ((e.target as HTMLElement).closest('input[type="checkbox"]')) return;
                         const idVal = row.original[idField];
                         const genomeId = idVal ?? row.original['genome_id'] ?? null;
-                        if (genomeId != null) {
+                        if (genomeId != null && (typeof genomeId === 'string' || typeof genomeId === 'number')) {
                           onGenomeSelect?.(String(genomeId));
                           onActiveRowChange?.(String(genomeId));
                         }
                       }}
                       style={{
                         position: 'absolute',
-                        transform: `translateY(${virtualRow.start}px)`,
+                        transform: `translateY(${String(virtualRow.start)}px)`,
                         left: 0,
                         right: 0,
                         display: 'flex',
@@ -1039,7 +1047,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
             <div
               ref={resizeLineRef}
-              className="pointer-events-none absolute inset-y-0 z-40 w-[2px] bg-blue-600 opacity-50"
+              className="pointer-events-none absolute inset-y-0 z-40 w-0.5 bg-blue-600 opacity-50"
               style={{ display: 'none' }}
             />
           </div>
@@ -1067,8 +1075,8 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                     {selectedCount > 0 && (
                       <div className="font-semibold text-blue-600">
                         {isAllPagesSelected 
-                          ? `All ${totalItems} results selected` 
-                          : `${selectedCount} selected`}
+                          ? `All ${String(totalItems)} results selected`
+                          : `${String(selectedCount)} selected`}
                       </div>
                     )}
                   </div>
@@ -1099,7 +1107,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                 const uniquePages = [...new Set(pages)].sort((a, b) => a - b);
 
                 return uniquePages.map((page, idx) => {
-                  const prev = uniquePages[idx - 1];
+                  const prev = idx > 0 ? uniquePages[idx - 1] : undefined;
                   const showDots = prev !== undefined && page - prev > 1;
                   return (
                     <span key={page}>

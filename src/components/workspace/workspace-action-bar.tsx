@@ -80,7 +80,7 @@ function isActionValidForSelection(
   const typesMatch =
     action.validTypes === "*" ||
     selection.every((s) =>
-      (action.validTypes as string[]).includes(s.type ?? ""),
+      (action.validTypes as string[]).includes(s.type),
     );
   if (!typesMatch) return false;
 

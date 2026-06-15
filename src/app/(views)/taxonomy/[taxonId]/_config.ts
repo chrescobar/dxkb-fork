@@ -30,7 +30,7 @@ export function buildTaxonomyConfig(
   taxon: OrganismTaxonomy | null,
 ): OrganismLandingConfig {
   return {
-    displayName: taxon?.taxonName ?? `Taxon ${taxonId}`,
+    displayName: taxon?.taxonName ?? `Taxon ${String(taxonId)}`,
     taxonId,
     accent: accentForLineage(taxon?.lineageNames ?? []),
     showAmr: showAmrForLineage(taxon?.lineageNames ?? []),

@@ -9,7 +9,6 @@ import type {
   WorkspaceGetRawResult,
   ResolvedPathObject,
   JobResultTaskData,
-  JobResultSysMeta,
 } from "./types";
 import { isFolder, isFolderType } from "./utils";
 import type { WorkspaceItem } from "./domain";
@@ -24,26 +23,26 @@ export function parseWorkspaceGetSingle(
   raw: WorkspaceGetRawResult,
   pathIndex = 0,
 ): ResolvedPathObject | null {
-  const pathResults = raw[0];
+  const pathResults: unknown = raw[0];
   if (!Array.isArray(pathResults)) return null;
-  const objectsAtPath = pathResults[pathIndex];
+  const objectsAtPath: unknown = pathResults[pathIndex];
   if (!Array.isArray(objectsAtPath) || objectsAtPath.length === 0) return null;
   const list = objectsAtPath[0] as unknown[];
   if (!Array.isArray(list)) return null;
 
-  const parent = String(list[2] ?? "");
-  const name = String(list[0] ?? "");
+  const parent = (list[2] as string | undefined) ?? "";
+  const name = (list[0] as string | undefined) ?? "";
   const fullPath = (parent + name).replace(/\/+/g, "/");
-  const userMeta = (list[7] as Record<string, unknown>) ?? {};
-  const sysMeta = (list[8] as Record<string, unknown>) ?? {};
+  const userMeta = (list[7] as Record<string, unknown> | undefined) ?? {};
+  const sysMeta = (list[8] as Record<string, unknown> | undefined) ?? {};
 
   const resolved: ResolvedPathObject = {
     name,
-    type: String(list[1] ?? ""),
+    type: (list[1] as string | undefined) ?? "",
     path: fullPath,
-    creation_time: String(list[3] ?? ""),
-    id: String(list[4] ?? ""),
-    owner_id: String(list[5] ?? ""),
+    creation_time: (list[3] as string | undefined) ?? "",
+    id: (list[4] as string | undefined) ?? "",
+    owner_id: (list[5] as string | undefined) ?? "",
     size: Number(list[6]) || 0,
     userMeta,
     sysMeta,
@@ -51,7 +50,7 @@ export function parseWorkspaceGetSingle(
 
   if (resolved.type === "job_result") {
     resolved.taskData = userMeta.task_data as JobResultTaskData | undefined;
-    resolved.jobSysMeta = sysMeta as JobResultSysMeta;
+    resolved.jobSysMeta = sysMeta;
   }
 
   return resolved;
@@ -64,8 +63,8 @@ export function parseWorkspaceGetSingle(
 export function getJobResultDotPath(
   resolved: Pick<ResolvedPathObject, "path" | "name">,
 ): string {
-  const fullPath = String(resolved.path ?? "").replace(/\/+$/, "");
-  const name = String(resolved.name ?? "").replace(/^\/+|\/+$/g, "");
+  const fullPath = resolved.path.replace(/\/+$/, "");
+  const name = resolved.name.replace(/^\/+|\/+$/g, "");
 
   const fallbackName = fullPath.split("/").filter(Boolean).pop() ?? "";
   const dotName = name || fallbackName;
@@ -140,12 +139,12 @@ export function sortItems(
     let comparison = 0;
     switch (sort.field) {
       case "name":
-        comparison = (a.name ?? "").localeCompare(b.name ?? "", undefined, {
+        comparison = a.name.localeCompare(b.name, undefined, {
           sensitivity: "base",
         });
         break;
       case "size":
-        comparison = (a.size ?? 0) - (b.size ?? 0);
+        comparison = a.size - b.size;
         break;
       case "ownerId":
         comparison = (a.ownerId ?? "").localeCompare(b.ownerId ?? "");
@@ -154,7 +153,7 @@ export function sortItems(
         comparison = (a.timestamp ?? 0) - (b.timestamp ?? 0);
         break;
       case "type":
-        comparison = (a.type ?? "").localeCompare(b.type ?? "");
+        comparison = a.type.localeCompare(b.type);
         break;
       default:
         comparison = 0;
@@ -187,7 +186,7 @@ export function formatFileSize(
   { showZero = false }: { showZero?: boolean } = {},
 ): string {
   if (!bytes || bytes === 0) return showZero ? "0 B" : "";
-  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024) return `${String(bytes)} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   if (bytes < 1024 * 1024 * 1024)
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
@@ -196,8 +195,8 @@ export function formatFileSize(
   return `${(bytes / (1024 * 1024 * 1024 * 1024)).toFixed(2)} TB`;
 }
 
-export function normalizeWsPath(p: string): string {
-  const trimmed = (p ?? "").trim();
+export function normalizeWsPath(p: string | null | undefined): string {
+  const trimmed = (p ?? "").trim(); // runtime guard: API can return null for path fields
   if (!trimmed) return "";
   const withLeading = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
   return withLeading.replace(/\/+$/, "").replace(/\/+/g, "/");
@@ -281,8 +280,8 @@ export function getSiblingJobResultPathForDotFolder(
   const siblingNormalized = normalizeWsPath(siblingPath);
   const sibling = items.find(
     (it) =>
-      normalizeWsPath(it.path ?? "") === siblingNormalized &&
-      String(it.type ?? "").toLowerCase() === "job_result",
+      normalizeWsPath(it.path) === siblingNormalized &&
+      it.type.toLowerCase() === "job_result",
   );
   return sibling ? siblingNormalized : null;
 }
@@ -296,13 +295,13 @@ export function expandDownloadPaths(
   items: WorkspaceItem[],
 ): string[] {
   const expandedPaths = downloadableItems.flatMap((item) => {
-    const p = normalizeWsPath(item.path ?? "");
+    const p = normalizeWsPath(item.path);
     if (!p) return [];
 
-    const type = String(item.type ?? "").toLowerCase();
+    const type = item.type.toLowerCase();
     if (type === "job_result") {
       const name =
-        String(item.name ?? "").trim() ||
+        item.name.trim() ||
         p.split("/").filter(Boolean).pop() ||
         "";
       const dotPath = normalizeWsPath(getJobResultDotPath({ path: p, name }));
@@ -340,7 +339,7 @@ export async function ensureDestinationWriteAccess(
     const listing = await listFolder(parentPath);
 
     const target = listing.find(
-      (item) => normalizeWsPath(item.path ?? "") === normalized,
+      (item) => normalizeWsPath(item.path) === normalized,
     );
 
     if (target) {
@@ -364,7 +363,7 @@ export async function ensureDestinationWriteAccess(
     const parentListing = await listFolder(grandparentPath);
     const parentItem = parentListing.find(
       (item) =>
-        normalizeWsPath(item.path ?? "") === normalizeWsPath(parentPath),
+        normalizeWsPath(item.path) === normalizeWsPath(parentPath),
     );
     if (!parentItem || !hasWriteAccess(parentItem)) {
       return {

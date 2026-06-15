@@ -139,8 +139,8 @@ export function WorkspaceBrowser({
 
   const [authChecked, setAuthChecked] = useState(false);
   useEffect(() => {
-    const t = setTimeout(() => setAuthChecked(true), 800);
-    return () => clearTimeout(t);
+    const t = setTimeout(() => { setAuthChecked(true); }, 800);
+    return () => { clearTimeout(t); };
   }, []);
 
   const [dismissedPath, setDismissedPath] = useState<string | null>(null);
@@ -340,18 +340,18 @@ export function WorkspaceBrowser({
   });
 
   const isCurrentSelectionFavorite =
-    primaryItem?.path != null && favoritePaths.includes(primaryItem.path);
+    primaryItem != null && favoritePaths.includes(primaryItem.path);
 
   useEffect(() => {
     if (selectedItems.length === 0) return;
     const id = setTimeout(() => tableRef.current?.focus(), 50);
-    return () => clearTimeout(id);
+    return () => { clearTimeout(id); };
   }, [selectedItems]);
 
   useEffect(() => {
     if (resolveQuery.isLoading) return;
     const id = setTimeout(() => tableRef.current?.focus(), 100);
-    return () => clearTimeout(id);
+    return () => { clearTimeout(id); };
   }, [path, mode, resolveQuery.isLoading]);
 
   useEffect(() => {
@@ -377,7 +377,7 @@ export function WorkspaceBrowser({
   const pathNotFound = useMemo(() => {
     if (isPublic || !path || path.trim() === "") return false;
     if (resolveQuery.isError) return true;
-    if (enabled && error && !resolveQuery.isLoading && !resolveQuery.isError) return true;
+    if (enabled && error && !resolveQuery.isLoading) return true;
     return false;
   }, [isPublic, path, resolveQuery.isError, resolveQuery.isLoading, enabled, error]);
 
@@ -413,8 +413,7 @@ export function WorkspaceBrowser({
     !isPublic &&
     path &&
     path.trim() !== "" &&
-    resolveQuery.isLoading &&
-    !resolveQuery.isError
+    resolveQuery.isLoading
   ) {
     return loadingSkeleton(isHome ? "home" : "shared");
   }
@@ -509,18 +508,18 @@ export function WorkspaceBrowser({
           onShowHiddenFilesChange={isJobResultView ? noop : setShowHiddenFiles}
           onNewFolder={
             !isPublic && !isJobResultView && (isHome || canWriteToCurrentDir)
-              ? () => dialogDispatch({ type: "OPEN_CREATE_FOLDER" })
+              ? () => { dialogDispatch({ type: "OPEN_CREATE_FOLDER" }); }
               : undefined
           }
           onUpload={
             !isPublic && !isJobResultView && (isHome || canWriteToCurrentDir)
-              ? () => dialogDispatch({ type: "OPEN_UPLOAD" })
+              ? () => { dialogDispatch({ type: "OPEN_UPLOAD" }); }
               : undefined
           }
           isAtRoot={isAtSharedRoot}
           onNewWorkspace={
             !isPublic && !isJobResultView && isAtSharedRoot
-              ? () => dialogDispatch({ type: "OPEN_CREATE_WORKSPACE" })
+              ? () => { dialogDispatch({ type: "OPEN_CREATE_WORKSPACE" }); }
               : undefined
           }
         />

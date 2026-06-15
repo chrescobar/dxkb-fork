@@ -24,7 +24,7 @@ export const columnClassMap: Record<string, string> = {
 export function formatMemberCount(count: number): string {
   if (count <= 0) return "—";
   if (count === 1) return "Only me";
-  return `${count} members`;
+  return `${String(count)} members`;
 }
 
 const emptyFavorites: string[] = [];
@@ -101,7 +101,7 @@ export function useWorkspaceColumns(
         header: "Owner",
         cell: ({ getValue }) => (
           <span className="block truncate text-muted-foreground">
-            {formatOwner(String(getValue() ?? ""))}
+            {formatOwner((getValue() as string | undefined) ?? "")}
           </span>
         ),
         meta: { className: columnClassMap.ownerId, sortField: "ownerId" as SortField },
@@ -114,7 +114,7 @@ export function useWorkspaceColumns(
         header: "Created",
         cell: ({ getValue }) => (
           <span className="block truncate text-muted-foreground">
-            {formatDate(String(getValue() ?? ""))}
+            {formatDate((getValue() as string | undefined) ?? "")}
           </span>
         ),
         meta: { className: columnClassMap.createdAt, sortField: "createdAt" as SortField },
@@ -142,7 +142,7 @@ export function useWorkspaceColumns(
         header: "Type",
         cell: ({ getValue }) => (
           <span className="block truncate text-muted-foreground">
-            {String(getValue() ?? "")}
+            {(getValue() as string | undefined) ?? ""}
           </span>
         ),
         meta: { className: columnClassMap.type, sortField: "type" as SortField },

@@ -1,6 +1,7 @@
 "use client";
 
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { ServiceHeader } from "@/components/services/service-header";
@@ -72,7 +73,6 @@ import {
 import {
   formatMetadataLabel,
   getSequenceTypeLabel,
-  type Alphabet,
   checkDuplicateSequence,
   checkSequenceLimit,
   createSequenceItem,
@@ -104,18 +104,17 @@ export default function GeneProteinTreePage() {
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
   const form = useForm({
-    defaultValues: defaultGeneProteinTreeFormValues as GeneProteinTreeFormData,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: geneProteinTreeFormSchema as any },
+    defaultValues: defaultGeneProteinTreeFormValues,
+    validators: { onChange: geneProteinTreeFormSchema },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as GeneProteinTreeFormData);
+      await runtime.submitFormData(value);
     },
   });
 
-  const alphabet = useStore(form.store, (s) => s.values.alphabet);
-  const sequences = useStore(form.store, (s) => s.values.sequences);
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const alphabet = useSelector(form.store, (s) => s.values.alphabet);
+  const sequences = useSelector(form.store, (s) => s.values.sequences);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const substitutionModelOptions = useMemo(
     () => (alphabet === "DNA" ? dnaModels : proteinModels),
@@ -190,11 +189,11 @@ export default function GeneProteinTreePage() {
         if (rerunData.trim_threshold != null) {
           form.setFieldValue(
             "trim_threshold",
-            String(rerunData.trim_threshold),
+            String(rerunData.trim_threshold as string | number),
           );
         }
         if (rerunData.gap_threshold != null) {
-          form.setFieldValue("gap_threshold", String(rerunData.gap_threshold));
+          form.setFieldValue("gap_threshold", String(rerunData.gap_threshold as string | number));
         }
 
         const sequences = normalizeToArray<SequenceItem>(rerunData.sequences);
@@ -271,7 +270,7 @@ export default function GeneProteinTreePage() {
 
     if (checkDuplicateSequence(currentSequences, inputValue, type)) {
       toast.error("Duplicate selection detected", {
-        description: `${getSequenceTypeLabel(type, alphabet as Alphabet)} is already selected.`,
+        description: `${getSequenceTypeLabel(type, alphabet)} is already selected.`,
         closeButton: true,
       });
       return;
@@ -344,9 +343,9 @@ export default function GeneProteinTreePage() {
   const selectedItemsForTable = useMemo(
     () =>
       sequences.map((seq, index) => ({
-        id: `${index}`,
+        id: String(index),
         name: getDisplayName(seq.filename.split("/").pop() || seq.filename),
-        type: getSequenceTypeLabel(seq.type, alphabet as Alphabet),
+        type: getSequenceTypeLabel(seq.type, alphabet),
         description: seq.filename,
       })),
     [alphabet, sequences],
@@ -367,7 +366,7 @@ export default function GeneProteinTreePage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="grid grid-cols-1 gap-4 md:grid-cols-2"
       >
@@ -393,12 +392,12 @@ export default function GeneProteinTreePage() {
                   <FieldItem>
                     <RadioGroup
                       value={field.state.value}
-                      onValueChange={(value) =>
-                        value != null &&
-                        field.handleChange(
-                          value as GeneProteinTreeFormData["alphabet"],
-                        )
-                      }
+                      onValueChange={(value) => {
+                        if (value != null)
+                          field.handleChange(
+                            value as GeneProteinTreeFormData["alphabet"],
+                          );
+                      }}
                       className="service-radio-group-horizontal"
                     >
                       <div className="flex items-center gap-3">
@@ -433,7 +432,7 @@ export default function GeneProteinTreePage() {
                     type="button"
                     size="icon"
                     variant="outline"
-                    onClick={() => handleAddSequence("feature")}
+                    onClick={() => { handleAddSequence("feature"); }}
                     disabled={!selectedFeatureGroupObject}
                   >
                     <Plus size={16} />
@@ -461,7 +460,7 @@ export default function GeneProteinTreePage() {
                     type="button"
                     size="icon"
                     variant="outline"
-                    onClick={() => handleAddSequence("aligned")}
+                    onClick={() => { handleAddSequence("aligned"); }}
                     disabled={!selectedAlignedFastaObject}
                   >
                     <Plus size={16} />
@@ -489,7 +488,7 @@ export default function GeneProteinTreePage() {
                     type="button"
                     size="icon"
                     variant="outline"
-                    onClick={() => handleAddSequence("unaligned")}
+                    onClick={() => { handleAddSequence("unaligned"); }}
                     disabled={!selectedUnalignedFastaObject}
                   >
                     <Plus size={16} />
@@ -503,7 +502,7 @@ export default function GeneProteinTreePage() {
                     <SelectedItemsTable
                       title="Selected file / feature group"
                       items={selectedItemsForTable}
-                      onRemove={(id) => removeSequence(parseInt(id, 10))}
+                      onRemove={(id) => { removeSequence(parseInt(id, 10)); }}
                       className="max-h-84 overflow-y-auto"
                       allowDuplicates={false}
                       description="No mixing of DNA and Protein FASTA files is allowed."
@@ -543,9 +542,9 @@ export default function GeneProteinTreePage() {
                           label: v,
                         }))}
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
+                        onValueChange={(value) => {
+                          if (value != null) field.handleChange(value);
+                        }}
                       >
                         <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="Select" />
@@ -577,9 +576,9 @@ export default function GeneProteinTreePage() {
                           label: v,
                         }))}
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
+                        onValueChange={(value) => {
+                          if (value != null) field.handleChange(value);
+                        }}
                       >
                         <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="Select" />
@@ -621,12 +620,12 @@ export default function GeneProteinTreePage() {
                     <FieldItem>
                       <RadioGroup
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null &&
-                          field.handleChange(
-                            value as GeneProteinTreeFormData["recipe"],
-                          )
-                        }
+                        onValueChange={(value) => {
+                          if (value != null)
+                            field.handleChange(
+                              value as GeneProteinTreeFormData["recipe"],
+                            );
+                        }}
                         className="service-radio-group-horizontal"
                       >
                         <div className="flex items-center gap-3">
@@ -654,14 +653,14 @@ export default function GeneProteinTreePage() {
                         Model
                       </RequiredFormLabel>
                       <Select
-                        items={substitutionModelOptions.map((m) => ({
+                        items={substitutionModelOptions.map((m: { value: string; label: string }) => ({
                           value: m.value,
                           label: m.label,
                         }))}
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
+                        onValueChange={(value) => {
+                          if (value != null) field.handleChange(value);
+                        }}
                       >
                         <SelectTrigger
                           id="model"
@@ -671,7 +670,7 @@ export default function GeneProteinTreePage() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            {substitutionModelOptions.map((model) => (
+                            {substitutionModelOptions.map((model: { value: string; label: string }) => (
                               <SelectItem key={model.value} value={model.value}>
                                 {model.label}
                               </SelectItem>
@@ -746,9 +745,9 @@ export default function GeneProteinTreePage() {
                         .filter((f) => !f.isLabel)
                         .map((f) => ({ value: f.value, label: f.label }))}
                       value={selectedMetadataField}
-                      onValueChange={(value) =>
-                        value != null && handleMetadataSelection(value)
-                      }
+                      onValueChange={(value) => {
+                        if (value != null) handleMetadataSelection(value);
+                      }}
                     >
                       <SelectTrigger className="service-card-select-trigger">
                         <SelectValue placeholder="Select field" />
@@ -808,7 +807,7 @@ export default function GeneProteinTreePage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => removeMetadataField(field.id)}
+                              onClick={() => { removeMetadataField(field.id); }}
                               className="size-6 text-destructive hover:text-destructive/90"
                             >
                               <X size={14} />

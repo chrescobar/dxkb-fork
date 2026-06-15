@@ -39,12 +39,19 @@ export default defineConfig(
     rules: {
       // Custom classes defined in globals.css are valid — the plugin can't parse @apply-based class definitions
       "tailwindcss/no-custom-classname": "off",
-      "tailwindcss/no-arbitrary-value": "off",
+      // Too noisy — many legitimate arbitrary values have no preset equivalent (e.g. min(), vh+rem combos, percentages)
+      // "tailwindcss/no-arbitrary-value": "on",
     },
   },
   {
     files: ["**/*.{ts,tsx}"],
-    extends: [tseslint.configs.strict, tseslint.configs.stylistic],
+    extends: [tseslint.configs.strictTypeChecked, tseslint.configs.stylistic],
+    languageOptions: {
+      parserOptions: {
+        project: true,
+        tsconfigRootDir: __dirname,
+      },
+    },
     rules: {
       // note you must disable the base rule
       // as it can report incorrect errors
@@ -63,6 +70,20 @@ export default defineConfig(
           ignoreRestArgs: true,
         },
       ],
+    },
+  },
+  {
+    // TanStack Table's useReactTable returns functions that can't be safely memoized,
+    // so React Compiler skips these components. The "use no memo" directive is in place
+    // at each call site. Silencing the rule here keeps the signal useful elsewhere —
+    // a new file using an incompatible hook without mitigation will still warn.
+    files: [
+      "src/components/shared/data-table.tsx",
+      "src/components/shared/file-table.tsx",
+      "src/components/workspace/file-viewer/viewers/csv-viewer.tsx",
+    ],
+    rules: {
+      "react-hooks/incompatible-library": "off",
     },
   },
 );

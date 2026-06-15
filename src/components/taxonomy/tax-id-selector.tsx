@@ -8,8 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TaxonomyItem, TaxonomySelectorProps } from "@/types";
 
-/** Default: use Next.js API route so the client does not need BVBRC_WEBSITE_API_URL */
-const defaultTaxonomyApiUrl = "/api/services/taxonomy";
 
 interface TaxIDSelectorProps extends TaxonomySelectorProps {
   apiServiceUrl?: string;
@@ -39,11 +37,11 @@ async function searchTaxonById(
   });
 
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    throw new Error(`HTTP error! status: ${String(response.status)}`);
   }
 
-  const data = await response.json();
-  return data?.response?.docs || [];
+  const data = await response.json() as { response?: { docs?: unknown[] } };
+  return (data.response?.docs ?? []) as TaxonomyItem[];
 }
 
 export function TaxIDSelector({
@@ -56,7 +54,7 @@ export function TaxIDSelector({
   apiServiceUrl = "/api/services/taxonomy",
   queryFilter,
 }: TaxIDSelectorProps) {
-  const resolvedApiServiceUrl = apiServiceUrl ?? defaultTaxonomyApiUrl;
+  const resolvedApiServiceUrl = apiServiceUrl;
   const [showDropdown, setShowDropdown] = useState(false);
   // Initialize searchQuery from value prop to ensure SSR/client hydration match
   const [searchQuery, setSearchQuery] = useState(
@@ -72,10 +70,10 @@ export function TaxIDSelector({
     const timeoutId = setTimeout(() => {
       setDebouncedQuery(searchQuery);
     }, 300);
-    return () => clearTimeout(timeoutId);
+    return () => { clearTimeout(timeoutId); };
   }, [searchQuery]);
 
-  const { data: results = [], isLoading: loading, error: queryError } = useQuery<TaxonomyItem[], Error>({
+  const { data: results = [], isLoading: loading, error: queryError } = useQuery<TaxonomyItem[]>({
     queryKey: ["taxonomy-search-id", resolvedApiServiceUrl, debouncedQuery, queryFilter],
     queryFn: ({ signal }) => searchTaxonById(resolvedApiServiceUrl, debouncedQuery, queryFilter, signal),
     enabled: !!debouncedQuery.trim() && !disabled,
@@ -158,7 +156,7 @@ export function TaxIDSelector({
             disabled && !value ? "Select a taxon name first" : placeholder
           }
           value={inputValue}
-          onChange={(e) => handleSearchChange(e.target.value)}
+          onChange={(e) => { handleSearchChange(e.target.value); }}
           onFocus={() => {
             if (!disabled) {
               setShowDropdown(searchQuery.length > 0);
@@ -167,7 +165,7 @@ export function TaxIDSelector({
           onBlur={() => {
             setTouched(true);
             if (!disabled) {
-              setTimeout(() => setShowDropdown(false), 200);
+              setTimeout(() => { setShowDropdown(false); }, 200);
             }
           }}
           className={cn(
@@ -208,7 +206,7 @@ export function TaxIDSelector({
                 <div
                   key={item.taxon_id}
                   className="flex cursor-pointer items-center justify-between p-2 hover:bg-accent"
-                  onClick={() => handleSelect(item)}
+                  onClick={() => { handleSelect(item); }}
                 >
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">

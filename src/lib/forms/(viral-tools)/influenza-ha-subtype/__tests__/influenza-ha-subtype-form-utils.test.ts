@@ -14,7 +14,7 @@ describe("transformHaSubtypeParams", () => {
   };
 
   it("includes basic fields in the output", () => {
-    const result = transformHaSubtypeParams(baseData as never);
+    const result = transformHaSubtypeParams(baseData);
 
     expect(result).toEqual(
       expect.objectContaining({
@@ -27,7 +27,7 @@ describe("transformHaSubtypeParams", () => {
   });
 
   it("includes input_fasta_data when input_source is fasta_data", () => {
-    const result = transformHaSubtypeParams(baseData as never);
+    const result = transformHaSubtypeParams(baseData);
 
     expect(result.input_fasta_data).toBe(">seq1\nATCG");
   });
@@ -38,7 +38,7 @@ describe("transformHaSubtypeParams", () => {
       input_fasta_data: "ATCGATCG",
     };
 
-    const result = transformHaSubtypeParams(data as never);
+    const result = transformHaSubtypeParams(data);
 
     expect(result.input_fasta_data).toBe(">fasta_record1\nATCGATCG");
   });
@@ -49,7 +49,7 @@ describe("transformHaSubtypeParams", () => {
       input_fasta_data: ">my_header\nATCGATCG",
     };
 
-    const result = transformHaSubtypeParams(data as never);
+    const result = transformHaSubtypeParams(data);
 
     expect(result.input_fasta_data).toBe(">my_header\nATCGATCG");
   });
@@ -61,7 +61,7 @@ describe("transformHaSubtypeParams", () => {
       input_fasta_file: "/ws/sequences.fa",
     };
 
-    const result = transformHaSubtypeParams(data as never);
+    const result = transformHaSubtypeParams(data);
 
     expect(result.input_fasta_file).toBe("/ws/sequences.fa");
     expect(result).not.toHaveProperty("input_fasta_data");
@@ -74,7 +74,7 @@ describe("transformHaSubtypeParams", () => {
       input_feature_group: "/ws/feature_group.json",
     };
 
-    const result = transformHaSubtypeParams(data as never);
+    const result = transformHaSubtypeParams(data);
 
     expect(result.input_feature_group).toBe("/ws/feature_group.json");
     expect(result).not.toHaveProperty("input_fasta_data");
@@ -88,7 +88,7 @@ describe("transformHaSubtypeParams", () => {
       output_path: "  /workspace/user/home  ",
     };
 
-    const result = transformHaSubtypeParams(data as never);
+    const result = transformHaSubtypeParams(data);
 
     expect(result.output_file).toBe("ha-test");
     expect(result.output_path).toBe("/workspace/user/home");

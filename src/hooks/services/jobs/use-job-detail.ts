@@ -6,7 +6,7 @@ import { activeJobStatuses } from "@/lib/jobs/constants";
 export function useJobDetail(jobId: string | null) {
   return useApiQuery<JobDetails>({
     queryKey: ["job-detail", jobId],
-    queryFn: () => apiGet<JobDetails>(`/api/services/app-service/jobs/${jobId}`),
+    queryFn: () => apiGet<JobDetails>(`/api/services/app-service/jobs/${jobId ?? ""}`),
     enabled: !!jobId,
     staleTime: 30_000,
     refetchInterval: (query) => {
@@ -26,7 +26,7 @@ export function useJobOutput(
   return useApiQuery<string>({
     queryKey: ["job-output", jobId, outputType],
     queryFn: () =>
-      apiGet<string>(`/api/services/app-service/jobs/${jobId}/${outputType}`),
+      apiGet<string>(`/api/services/app-service/jobs/${jobId ?? ""}/${outputType}`),
     enabled: !!jobId && enabled,
     staleTime: 60_000,
   });

@@ -71,14 +71,12 @@ describe("getItemFullPath", () => {
   });
 
   it("handles null-ish path gracefully", () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const item = makeItem({ path: null as any, name: "file.txt" });
+    const item = makeItem({ path: null as unknown as string, name: "file.txt" });
     expect(getItemFullPath(item)).toBe("/file.txt");
   });
 
   it("handles null-ish name gracefully", () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const item = makeItem({ path: "/user/home", name: null as any });
+    const item = makeItem({ path: "/user/home", name: null as unknown as string });
     expect(getItemFullPath(item)).toBe("/user/home/");
   });
 });

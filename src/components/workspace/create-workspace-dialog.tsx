@@ -65,13 +65,13 @@ function CreateWorkspaceForm({
         <Input
           id="create-workspace-input"
           value={workspaceName}
-          onChange={(e) => setWorkspaceName(e.target.value)}
+          onChange={(e) => { setWorkspaceName(e.target.value); }}
           placeholder="My Workspace"
           disabled={isCreating}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
-              if (canCreate) handleCreate();
+              if (canCreate) void handleCreate();
             }
           }}
         />
@@ -79,12 +79,12 @@ function CreateWorkspaceForm({
       <DialogFooter showCloseButton={false}>
         <Button
           variant="outline"
-          onClick={() => onOpenChange(false)}
+          onClick={() => { onOpenChange(false); }}
           disabled={isCreating}
         >
           Cancel
         </Button>
-        <Button onClick={handleCreate} disabled={!canCreate}>
+        <Button onClick={() => { void handleCreate(); }} disabled={!canCreate}>
           {isCreating ? (
             <>
               <Spinner className="mr-2 size-3.5 shrink-0" />

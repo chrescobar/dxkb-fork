@@ -8,7 +8,7 @@ vi.mock("@/lib/utils", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/lib/utils")>();
   return {
     ...actual,
-    triggerDownload: (...args: unknown[]) => mockTriggerDownload(...args),
+    triggerDownload: (...args: unknown[]): void => { mockTriggerDownload(...args); },
   };
 });
 
@@ -17,7 +17,7 @@ vi.mock("@/components/workspace/file-viewer/file-viewer-registry", () => ({
 }));
 
 vi.mock("@/lib/services/workspace/helpers", () => ({
-  formatFileSize: vi.fn((bytes: number) => (bytes ? `${bytes} B` : "")),
+  formatFileSize: vi.fn((bytes: number) => (bytes ? `${String(bytes)} B` : "")),
 }));
 
 const makeItem = (overrides?: Partial<WorkspaceItem>): WorkspaceItem =>
@@ -30,7 +30,7 @@ const makeItem = (overrides?: Partial<WorkspaceItem>): WorkspaceItem =>
     createdAt: "2024-01-01",
     ownerId: "user@test.com",
     ...overrides,
-  }) as WorkspaceItem;
+  });
 
 describe("WorkspaceItemHeader", () => {
   beforeEach(() => {

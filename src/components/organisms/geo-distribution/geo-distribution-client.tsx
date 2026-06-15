@@ -35,7 +35,7 @@ const tooltipOffset = 14;
 
 async function fetchTopoJson(url: string): Promise<TopologyLike> {
   const response = await fetch(url);
-  if (!response.ok) throw new Error(`${url}: ${response.status}`);
+  if (!response.ok) throw new Error(`${url}: ${String(response.status)}`);
   return (await response.json()) as TopologyLike;
 }
 
@@ -96,7 +96,7 @@ export function GeoDistributionClient({ data, accent }: GeoDistributionClientPro
 
   const stateOptions = useMemo(() => {
     if (!stateTopo) return [];
-    const object = stateTopo.objects.states as unknown;
+    const object = stateTopo.objects.states;
     if (!object) return [];
     const fc = topojson.feature(stateTopo as never, object as never) as unknown as GeoJSON.FeatureCollection<
       GeoJSON.Geometry,
@@ -105,7 +105,7 @@ export function GeoDistributionClient({ data, accent }: GeoDistributionClientPro
     return fc.features
       .map((feature) => ({
         fips: String((feature as { id?: string | number }).id ?? "").padStart(2, "0"),
-        name: feature.properties?.name ?? "",
+        name: feature.properties.name ?? "",
       }))
       .filter((option) => option.fips && option.name)
       .sort((a, b) => a.name.localeCompare(b.name));
@@ -195,7 +195,7 @@ export function GeoDistributionClient({ data, accent }: GeoDistributionClientPro
             colorScale={colorScale}
             mapState={mapState}
             onSelectState={handleSelectState}
-            onSwitchToUs={() => handleViewChange("us")}
+            onSwitchToUs={() => { handleViewChange("us"); }}
             worldTopo={worldTopo}
             worldTopoLoading={worldQuery.isLoading}
             worldTopoError={worldTopoError}

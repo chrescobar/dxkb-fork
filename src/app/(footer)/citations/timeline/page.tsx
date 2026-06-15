@@ -45,12 +45,11 @@ export default function CitationsTimelinePage() {
   })
 
   // Group citations by year for timeline view
-  const citationsByYear: Record<number, typeof citationsData> = {}
+  const citationsByYear: Partial<Record<number, typeof citationsData>> = {}
   sortedCitations.forEach((citation) => {
-    if (!citationsByYear[citation.year]) {
-      citationsByYear[citation.year] = []
-    }
-    citationsByYear[citation.year].push(citation)
+    const list = citationsByYear[citation.year] ?? []
+    list.push(citation)
+    citationsByYear[citation.year] = list
   })
 
   // Get years in order based on sort
@@ -78,7 +77,7 @@ export default function CitationsTimelinePage() {
                 { value: "Book Chapter", label: "Book Chapters" },
               ]}
               defaultValue="all"
-              onValueChange={(value) => setTypeFilter(value ?? "")}
+              onValueChange={(value) => { setTypeFilter(value ?? ""); }}
             >
               <SelectTrigger className="w-45">
                 <SelectValue placeholder="Publication Type" />
@@ -100,7 +99,7 @@ export default function CitationsTimelinePage() {
                 { value: "impact", label: "Highest Impact" },
               ]}
               defaultValue="newest"
-              onValueChange={(value) => setSortOption(value ?? "")}
+              onValueChange={(value) => { setSortOption(value ?? ""); }}
             >
               <SelectTrigger className="w-45">
                 <SortDesc className="mr-2 size-4" />
@@ -123,7 +122,7 @@ export default function CitationsTimelinePage() {
               placeholder="Search citations..."
               className="citation-search-input"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => { setSearchQuery(e.target.value); }}
             />
           </div>
         </div>
@@ -139,13 +138,13 @@ export default function CitationsTimelinePage() {
                       <Calendar className="size-5" />
                     </div>
                     <h2 className="ml-4 text-xl font-semibold">{year}</h2>
-                    <Badge className="ml-2">{citationsByYear[year].length} citations</Badge>
+                    <Badge className="ml-2">{(citationsByYear[year] ?? []).length} citations</Badge>
                   </div>
                   <Separator className="mt-4" />
                 </div>
 
                 <div className="mt-6 space-y-6 pl-14">
-                  {citationsByYear[year].map((citation) => (
+                  {(citationsByYear[year] ?? []).map((citation) => (
                     <div key={citation.id} className="relative">
                       <div className="absolute -left-9 mt-1 size-4 rounded-full border-2 border-primary bg-background"></div>
                       <Card>

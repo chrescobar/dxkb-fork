@@ -1,6 +1,7 @@
 "use client";
 
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { ServiceHeader } from "@/components/services/service-header";
@@ -68,7 +69,7 @@ export default function BlastServicePage() {
     defaultValues: defaultBlastFormValues as BlastFormData,
     validators: { onChange: completeFormSchema, onSubmit: completeFormSchema },
     onSubmit: async ({ value }) => {
-      const data = value as BlastFormData;
+      const data = value;
 
       if (data.input_source === "fasta_data" && data.input_fasta_data) {
         if (!isFastaValid) {
@@ -85,14 +86,14 @@ export default function BlastServicePage() {
 
   const availableDatabaseTypes = useBlastDatabaseTypes(form);
   const currentBlastProgram = useBlastProgramTracking(form);
-  const dbPrecomputedDatabase = useStore(
+  const dbPrecomputedDatabase = useSelector(
     form.store,
     (s) => s.values.db_precomputed_database,
   );
-  const dbType = useStore(form.store, (s) => s.values.db_type);
-  const inputSource = useStore(form.store, (s) => s.values.input_source);
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const dbType = useSelector(form.store, (s) => s.values.db_type);
+  const inputSource = useSelector(form.store, (s) => s.values.input_source);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
   const { fastaValidationResult, isFastaValid, handleFastaValidationChange } =
     useFastaValidation(form, currentBlastProgram);
   const dbFastaPreset = useMemo<WorkspaceSelectorPreset>(() => {
@@ -138,7 +139,6 @@ export default function BlastServicePage() {
 
     if (
       previousProgram !== currentBlastProgram &&
-      previousProgram !== undefined &&
       !isApplyingRerunRef.current &&
       form.getFieldValue("input_fasta_file") !== ""
     ) {
@@ -163,7 +163,7 @@ export default function BlastServicePage() {
         if (rerunData.db_precomputed_database) {
           // The backend may store precomputed database IDs with underscores (e.g. "bacteria_archaea")
           // but the schema expects hyphens (e.g. "bacteria-archaea").
-          const rawDb = String(rerunData.db_precomputed_database).replace(
+          const rawDb = (rerunData.db_precomputed_database as string).replace(
             /_/g,
             "-",
           );
@@ -195,9 +195,8 @@ export default function BlastServicePage() {
   const handleInputSourceChange = (
     newSource: BlastFormData["input_source"],
   ) => {
-    const preservedFastaData = String(
-      (form.state.values as Record<string, unknown>).input_fasta_data ?? "",
-    );
+    const preservedFastaData =
+      ((form.state.values as Record<string, unknown>).input_fasta_data as string | undefined) ?? "";
 
     form.setFieldValue("input_fasta_data", "");
     form.setFieldValue("input_fasta_file", "");
@@ -241,7 +240,7 @@ export default function BlastServicePage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="service-form-section"
       >
@@ -373,7 +372,7 @@ export default function BlastServicePage() {
                       {(fastaField) => (
                         <FieldItem>
                           <FastaTextarea
-                            value={fastaField.state.value ?? ""}
+                            value={fastaField.state.value}
                             onChange={fastaField.handleChange}
                             inputType={currentBlastProgram}
                             onValidationChange={handleFastaValidationChange}
@@ -499,12 +498,12 @@ export default function BlastServicePage() {
                       />
                       <Select
                         items={availableDatabaseTypes}
-                        key={`${currentBlastProgram}-${dbPrecomputedDatabase}-${availableDatabaseTypes.length}`}
-                        value={field.state.value || ""}
+                        key={`${currentBlastProgram}-${dbPrecomputedDatabase}-${String(availableDatabaseTypes.length)}`}
+                        value={field.state.value}
                         onValueChange={(value) => {
                           if (value != null)
                             field.handleChange(
-                              value as BlastFormData["db_type"],
+                              value,
                             );
                         }}
                       >
@@ -729,9 +728,9 @@ export default function BlastServicePage() {
                         <Select
                           items={maxHitsOptionsBlast}
                           value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null && field.handleChange(Number(value))
-                          }
+                          onValueChange={(value) => {
+                            if (value != null) field.handleChange(value);
+                          }}
                         >
                           <SelectTrigger className="service-card-select-trigger">
                             <SelectValue placeholder="Select max hits" />
@@ -763,9 +762,9 @@ export default function BlastServicePage() {
                         <Select
                           items={evalueOptionsBlast}
                           value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null && field.handleChange(Number(value))
-                          }
+                          onValueChange={(value) => {
+                            if (value != null) field.handleChange(value);
+                          }}
                         >
                           <SelectTrigger className="service-card-select-trigger">
                             <SelectValue placeholder="Select E-Value Threshold" />

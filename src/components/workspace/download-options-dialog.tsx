@@ -133,7 +133,7 @@ function DownloadOptionsForm({
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
-                if (canSubmit) handleSubmit();
+                if (canSubmit) void handleSubmit();
               }
             }}
             aria-invalid={!!validationError}
@@ -158,7 +158,9 @@ function DownloadOptionsForm({
           </label>
           <Select
             value={archiveType}
-            onValueChange={(value) => value != null && setArchiveType(value)}
+            onValueChange={(value) => {
+              if (value != null) setArchiveType(value);
+            }}
             disabled={isSubmitting}
           >
             <SelectTrigger id="download-archive-type" className="w-full">
@@ -179,12 +181,12 @@ function DownloadOptionsForm({
       <DialogFooter showCloseButton={false}>
         <Button
           variant="outline"
-          onClick={() => onOpenChange(false)}
+          onClick={() => { onOpenChange(false); }}
           disabled={isSubmitting}
         >
           Cancel
         </Button>
-        <Button onClick={handleSubmit} disabled={!canSubmit}>
+        <Button onClick={() => { void handleSubmit(); }} disabled={!canSubmit}>
           {isSubmitting ? (
             <Spinner className="size-4 shrink-0" />
           ) : (

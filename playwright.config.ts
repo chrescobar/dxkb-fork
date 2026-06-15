@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const port = Number(process.env.E2E_PORT ?? 3020);
-const baseURL = process.env.E2E_BASE_URL ?? `http://127.0.0.1:${port}`;
+const baseURL = process.env.E2E_BASE_URL ?? `http://127.0.0.1:${String(port)}`;
 const isCi = Boolean(process.env.CI);
 
 // The wrapper loads .env.e2e.local (gitignored, dev overrides) + .env.e2e.test
@@ -15,7 +15,7 @@ const isCi = Boolean(process.env.CI);
 // spams "JSON-RPC call failed: HTTP error! status: 500". We can't use node's
 // --env-file flag directly: it leaks into NODE_OPTIONS and Next's worker
 // threads reject NODE_OPTIONS containing --env-file.
-const webServerCommand = `node e2e/scripts/start-webserver.mjs ${port}`;
+const webServerCommand = `node e2e/scripts/start-webserver.mjs ${String(port)}`;
 
 export default defineConfig({
   testDir: "./e2e",

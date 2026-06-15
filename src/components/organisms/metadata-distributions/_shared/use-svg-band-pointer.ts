@@ -25,7 +25,7 @@ export function nearestBandIndex<T extends { toString(): string }>(
   let closestIdx = -1;
   let closestDist = Infinity;
   data.forEach((datum, idx) => {
-    const center = (xScale(datum as never) ?? 0) + halfBand;
+    const center = (xScale(datum) ?? 0) + halfBand;
     const dist = Math.abs(mouseX - center);
     if (dist < closestDist) {
       closestDist = dist;

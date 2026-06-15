@@ -32,7 +32,7 @@ export const drive: JourneyDriver = async (page, env) => {
   await page.waitForFunction(
     () => {
       const rows = document.querySelectorAll("tbody tr");
-      const text = document.body.textContent?.toLowerCase() ?? "";
+      const text = document.body.textContent.toLowerCase();
       const empty = text.includes("this folder is empty");
       const error = text.includes("failed to load workspace contents");
       if (error) throw new Error("Workspace.ls returned an error during recording");

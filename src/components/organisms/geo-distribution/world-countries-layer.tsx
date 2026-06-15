@@ -53,17 +53,17 @@ export const WorldCountriesLayer = memo(function WorldCountriesLayer({
           const name = featureName(feature.properties);
           const count = lookupCountryCount(name, data.countryData);
           const dataKey = resolveCountryDataKey(name, data.countryData) ?? name;
-          const meta = data.countryMeta[dataKey];
+          const meta = data.countryMeta[dataKey] ?? { count: 0, genera: {}, hosts: {} };
           const interactable = isUsaTopoName(name);
           return (
             <ChoroplethPath
-              key={`${name}-${index}`}
+              key={`${name}-${String(index)}`}
               pathD={path ?? ""}
               fill={colorScale(count)}
               strokeWidth={0.6}
               cursor={interactable ? "pointer" : "default"}
               isDraggingRef={isDraggingRef}
-              payload={{ view: "world", name, count, genera: meta?.genera ?? {}, hosts: meta?.hosts ?? {} }}
+              payload={{ view: "world", name, count, genera: meta.genera, hosts: meta.hosts }}
               onHoverEnter={onHoverEnter}
               onHoverLeave={onHoverLeave}
               onClick={interactable ? onSwitchToUs : undefined}

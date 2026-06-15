@@ -16,8 +16,7 @@ describe("AppService", () => {
 
   beforeEach(() => {
     service = new AppService("test-token");
-    mockClient = (createBvBrcClient as ReturnType<typeof vi.fn>).mock.results[0]
-      .value;
+    mockClient = ((createBvBrcClient as ReturnType<typeof vi.fn>).mock.results[0] as { value: typeof mockClient }).value;
   });
 
   describe("constructor", () => {
@@ -100,7 +99,7 @@ describe("AppService", () => {
       server.use(
         http.get(
           "https://p3.theseed.org/services/app_service/task_info/123/stdout",
-          async ({ request }) => {
+          ({ request }) => {
             capturedRequest = {
               url: request.url,
               headers: request.headers,

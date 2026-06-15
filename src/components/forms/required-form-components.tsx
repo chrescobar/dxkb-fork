@@ -8,7 +8,7 @@ export function RequiredFormCardTitle({
   children: React.ReactNode;
 }) {
   return (
-    <CardTitle className={`gap-1 ${className}`}>
+    <CardTitle className={`gap-1 ${className ?? ""}`}>
       {children}
       <span className="text-red-500">*</span>
     </CardTitle>
@@ -32,7 +32,7 @@ export function RequiredFormLabelInfo({
 }: RequiredFormLabelInfoProps) {
   return (
     <div className="flex flex-row items-center gap-1">
-      <Label className={`service-card-label !mb-0 ${className}`}>
+      <Label className={`service-card-label !mb-0 ${className ?? ""}`}>
         {label}
       </Label>
       <DialogInfoPopup
@@ -53,7 +53,7 @@ export function RequiredFormLabel({
   children: React.ReactNode;
 }) {
   return (
-    <Label className={`gap-1 ${className}`}>
+    <Label className={`gap-1 ${className ?? ""}`}>
       {children}
       <span className="gap-1 text-red-500">*</span>
     </Label>

@@ -5,8 +5,15 @@ import pkg from "./package.json" with { type: "json" };
 interface WebpackRuleLike {
   test?: { test?(s: string): boolean };
   issuer?: unknown;
-  resourceQuery?: unknown;
+  resourceQuery?: { not?: unknown[] } | RegExp;
   exclude?: RegExp;
+  use?: string[];
+}
+
+interface WebpackConfig {
+  module: {
+    rules: WebpackRuleLike[];
+  };
 }
 
 const nextConfig: NextConfig = {
@@ -15,9 +22,9 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_APP_VERSION: pkg.version,
   },
 
-  webpack(config) {
+  webpack(config: WebpackConfig): WebpackConfig {
     // Grab the existing rule that handles SVG imports
-    const fileLoaderRule = config.module.rules.find((rule: WebpackRuleLike) =>
+    const fileLoaderRule = config.module.rules.find((rule) =>
       rule.test?.test?.(".svg"),
     );
 
@@ -32,14 +39,21 @@ const nextConfig: NextConfig = {
       // Convert all other *.svg imports to React components
       {
         test: /\.svg$/i,
-        issuer: fileLoaderRule.issuer,
-        resourceQuery: { not: [...fileLoaderRule.resourceQuery.not, /url/] }, // exclude if *.svg?url
+        issuer: fileLoaderRule?.issuer,
+        resourceQuery: {
+          not: [
+            ...((fileLoaderRule?.resourceQuery as { not?: unknown[] } | undefined)?.not ?? []),
+            /url/,
+          ],
+        }, // exclude if *.svg?url
         use: ["@svgr/webpack"],
       },
     );
 
     // Modify the file loader rule to ignore *.svg, since we have it handled now.
-    fileLoaderRule.exclude = /\.svg$/i;
+    if (fileLoaderRule) {
+      fileLoaderRule.exclude = /\.svg$/i;
+    }
 
     return config;
   },

@@ -65,7 +65,8 @@ export const proteomeComparisonFormSchema = z
           path: ["ref_fasta_file"],
         });
       }
-    } else if (data.ref_source_type === "feature_group") {
+    } else {
+      // data.ref_source_type === "feature_group"
       if (!data.ref_feature_group || data.ref_feature_group.trim() === "") {
         ctx.addIssue({
           code: "custom",
@@ -79,7 +80,7 @@ export const proteomeComparisonFormSchema = z
     if (data.comparison_items.length < 1) {
       ctx.addIssue({
         code: "custom",
-        message: `At least ${minComparisonGenomes} comparison genome must be added`,
+        message: `At least ${String(minComparisonGenomes)} comparison genome must be added`,
         path: ["comparison_items"],
       });
     }
@@ -88,7 +89,7 @@ export const proteomeComparisonFormSchema = z
     if (data.comparison_items.length > maxComparisonGenomes) {
       ctx.addIssue({
         code: "custom",
-        message: `Maximum ${maxComparisonGenomes} comparison genomes allowed`,
+        message: `Maximum ${String(maxComparisonGenomes)} comparison genomes allowed`,
         path: ["comparison_items"],
       });
     }

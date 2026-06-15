@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth/server/instance";
+import { HttpResponseError } from "@/lib/auth/server/route";
 import { getRequiredEnv } from "@/lib/env";
 
 const allowedMethods = new Set(["Workspace.ls", "Workspace.get"]);
@@ -12,10 +13,10 @@ const allowedMethods = new Set(["Workspace.ls", "Workspace.get"]);
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = (await request.json()) as { method?: unknown; params?: unknown };
     const { method, params } = body;
 
-    if (!method) {
+    if (typeof method !== "string" || !method) {
       return NextResponse.json(
         { error: "method is required" },
         { status: 400 },
@@ -34,7 +35,12 @@ export async function POST(request: NextRequest) {
       const session = await auth.requireSession();
       authToken = session.token;
     } catch (error) {
-      if (!(error instanceof Response)) throw error;
+      if (
+        !(error instanceof HttpResponseError) &&
+        !(error instanceof Response)
+      ) {
+        throw error;
+      }
     }
 
     const headers: Record<string, string> = {
@@ -65,12 +71,12 @@ export async function POST(request: NextRequest) {
       }
       console.error("Public workspace API error:", response.status, response.statusText, apiResponse);
       return NextResponse.json(
-        { error: `BV-BRC API error: ${response.status} ${response.statusText}` },
+        { error: `BV-BRC API error: ${String(response.status)} ${response.statusText}` },
         { status: response.status },
       );
     }
 
-    const data = await response.json();
+    const data: unknown = await response.json();
     return NextResponse.json(data);
   } catch (error) {
     console.error("Public workspace API error:", error);

@@ -25,7 +25,7 @@ export const drive: JourneyDriver = async (page, env) => {
   await page.waitForFunction(
     () => {
       const rows = document.querySelectorAll("tbody tr");
-      const text = document.body.textContent?.toLowerCase() ?? "";
+      const text = document.body.textContent.toLowerCase();
       return rows.length > 0 || text.includes("no jobs");
     },
     null,

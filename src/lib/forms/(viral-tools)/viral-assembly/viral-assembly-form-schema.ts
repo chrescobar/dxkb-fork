@@ -66,19 +66,19 @@ export const viralAssemblyFormSchema = z
     const hasSrr = data.srr_ids && data.srr_ids.length > 0;
     if (data.input_type === "paired" && !hasPaired) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: "At least one paired read library must be provided",
         path: ["paired_end_libs"],
       });
     } else if (data.input_type === "single" && !hasSingle) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: "At least one single read library must be provided",
         path: ["single_end_libs"],
       });
     } else if (data.input_type === "srr_accession" && !hasSrr) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: "At least one SRA run accession must be provided",
         path: ["srr_ids"],
       });

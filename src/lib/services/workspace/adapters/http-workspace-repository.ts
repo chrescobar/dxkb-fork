@@ -36,9 +36,9 @@ function getWorkspaceGetPathRaw(
   pathIndex: number,
 ): unknown[] | null {
   if (!Array.isArray(raw)) return null;
-  const pathResults = raw[0];
+  const pathResults: unknown = raw[0];
   if (!Array.isArray(pathResults)) return null;
-  const objectsAtPath = pathResults[pathIndex];
+  const objectsAtPath: unknown = pathResults[pathIndex];
   return Array.isArray(objectsAtPath) ? objectsAtPath : null;
 }
 
@@ -56,7 +56,7 @@ export class HttpWorkspaceRepository implements WorkspaceRepository {
 
   async listDirectory(input: ListDirectoryInput): Promise<WorkspaceItem[]> {
     const { path, silent, ...rest } = input;
-    const rawResult = await rpc<unknown>({
+    const rawResult = await rpc({
       method: "Workspace.ls",
       params: [{ paths: [path], ...rest }],
       baseUrl: this.baseUrl,
@@ -107,7 +107,7 @@ export class HttpWorkspaceRepository implements WorkspaceRepository {
     options?: WorkspaceReadOptions,
   ): Promise<unknown> {
     if (paths.length === 0) return [];
-    return rpc<unknown>({
+    return rpc({
       method: "Workspace.get",
       params: [
         {
@@ -122,7 +122,7 @@ export class HttpWorkspaceRepository implements WorkspaceRepository {
 
   async listPermissions(paths: string[]): Promise<ListPermissionsResult> {
     if (paths.length === 0) return {};
-    const raw = await rpc<unknown>({
+    const raw = await rpc({
       method: "Workspace.list_permissions",
       params: [{ objects: paths }],
       baseUrl: this.baseUrl,
@@ -131,7 +131,7 @@ export class HttpWorkspaceRepository implements WorkspaceRepository {
   }
 
   async createFolder(path: string): Promise<void> {
-    await rpc<unknown>({
+    await rpc({
       method: "Workspace.create",
       params: [{ objects: [[path, "Directory"]] }],
       baseUrl: this.baseUrl,
@@ -144,7 +144,7 @@ export class HttpWorkspaceRepository implements WorkspaceRepository {
       ? input.directoryPath
       : `${input.directoryPath}/`;
     const fullPath = dir + input.filename;
-    const raw = await rpc<unknown>({
+    const raw = await rpc({
       method: "Workspace.create",
       params: [
         {
@@ -170,7 +170,7 @@ export class HttpWorkspaceRepository implements WorkspaceRepository {
     overwrite?: boolean;
     meta?: Record<string, unknown>;
   }): Promise<void> {
-    await rpc<unknown>({
+    await rpc({
       method: "Workspace.create",
       params: [
         {
@@ -186,7 +186,7 @@ export class HttpWorkspaceRepository implements WorkspaceRepository {
   async delete(paths: string[], options?: DeleteOptions): Promise<void> {
     if (paths.length === 0) return;
     assertNoProtectedFolders(paths);
-    await rpc<unknown>({
+    await rpc({
       method: "Workspace.delete",
       params: [
         {
@@ -202,7 +202,7 @@ export class HttpWorkspaceRepository implements WorkspaceRepository {
 
   async copy(input: CopyInput): Promise<void> {
     if (input.pairs.length === 0) return;
-    await rpc<unknown>({
+    await rpc({
       method: "Workspace.copy",
       params: [
         {
@@ -218,7 +218,7 @@ export class HttpWorkspaceRepository implements WorkspaceRepository {
   }
 
   async updateObjectType(path: string, newType: string): Promise<void> {
-    await rpc<unknown>({
+    await rpc({
       method: "Workspace.update_metadata",
       params: [{ objects: [[path, {}, newType]] }],
       baseUrl: this.baseUrl,
@@ -228,7 +228,7 @@ export class HttpWorkspaceRepository implements WorkspaceRepository {
 
   async updateAutoMetadata(paths: string[]): Promise<void> {
     if (paths.length === 0) return;
-    await rpc<unknown>({
+    await rpc({
       method: "Workspace.update_auto_meta",
       params: [{ objects: paths }],
       baseUrl: this.baseUrl,
@@ -273,7 +273,7 @@ export class HttpWorkspaceRepository implements WorkspaceRepository {
     if (input.types && input.types.length > 0) query.type = input.types;
     if (input.name) query.name = input.name;
 
-    const rawResult = await rpc<unknown>({
+    const rawResult = await rpc({
       method: "Workspace.ls",
       params: [
         {
@@ -301,7 +301,7 @@ export class HttpWorkspaceRepository implements WorkspaceRepository {
     options?: { silent?: boolean },
   ): Promise<[string, number, number, number, string][]> {
     if (paths.length === 0) return [];
-    const raw = await rpc<unknown>({
+    const raw = await rpc({
       method: "Workspace.du",
       params: [{ paths, recursive }],
       baseUrl: this.baseUrl,

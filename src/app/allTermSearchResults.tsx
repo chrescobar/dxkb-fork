@@ -169,8 +169,8 @@ function getFormattedContent(doc: Record<string, unknown>, dataType: string) {
               Genome ID: {R(doc.genome_id)} | {R(doc.contigs)} Contigs
             </p>
             <p>
-              SEQUENCED: {doc.completion_date != null ? new Date(doc.completion_date as string | number).toLocaleDateString() : ""}{" "}
-              {doc.sequencing_centers ? `by ${String(doc.sequencing_centers)}` : ""}
+              SEQUENCED: {doc.completion_date != null ? new Date(doc.completion_date as string).toLocaleDateString() : ""}{" "}
+              {doc.sequencing_centers ? `by ${Array.isArray(doc.sequencing_centers) ? (doc.sequencing_centers as string[]).join(", ") : (doc.sequencing_centers as string)}` : ""}
             </p>
             {doc.collection_date != null && <p>COLLECTED: {R(doc.collection_date)}</p>}
             {doc.host_name != null && <p>HOST: {R(doc.host_name)}</p>}
@@ -186,7 +186,7 @@ function getFormattedContent(doc: Record<string, unknown>, dataType: string) {
       return (
         <>
           <h3 className="search-result-header">
-            {R(doc.product) || R(doc.feature_type)} {doc.gene != null && ` | ${String(doc.gene)}`}
+            {R(doc.product) || R(doc.feature_type)} {doc.gene != null && ` | ${doc.gene as string}`}
           </h3>
           <div className="search-result-metadata">
             <p>{R(doc.genome_name)}</p>
@@ -378,7 +378,7 @@ function SearchResultsContent({ query }: { query: string }) {
       });
 
 
-      const data = await response.json();
+      const data = await response.json() as SearchResults;
       setSearchResults(data);
     } catch (error) {
       console.error("Error fetching search results:", error);
@@ -391,17 +391,17 @@ function SearchResultsContent({ query }: { query: string }) {
 
   useEffect(() => {
     if (query) {
-      queueMicrotask(() => fetchSearchResults(query));
+      queueMicrotask(() => { void fetchSearchResults(query); });
     }
   }, [query]);
 
   // Filter out empty results and sort by numFound
   const validResults = Object.entries(searchResults)
-    .filter(([_, data]) => data?.result?.response?.numFound > 0)
+    .filter(([_, data]) => data.result.response.numFound > 0)
     .sort(
       ([_, a], [__, b]) =>
-        (b?.result?.response?.numFound || 0) -
-        (a?.result?.response?.numFound || 0),
+        b.result.response.numFound -
+        a.result.response.numFound,
     );
 
   // Add this before the return statement
@@ -426,8 +426,8 @@ function SearchResultsContent({ query }: { query: string }) {
 
           <div className="space-y-8">
             {validResults.map(([dataType, data]) => {
-              const docs = data.result.response?.docs || [];
-              const numFound = data.result.response?.numFound || 0;
+              const docs = data.result.response.docs;
+              const numFound = data.result.response.numFound;
 
               if (numFound === 0) return null;
 
@@ -451,7 +451,7 @@ function SearchResultsContent({ query }: { query: string }) {
                     {docs.map((docUnknown, index) => {
                       const doc = docUnknown as Record<string, unknown>;
                       return (
-                        <div key={String(doc.id ?? index)} className="py-6">
+                        <div key={(doc.id as string | number | undefined) ?? index} className="py-6">
                           {getFormattedContent(doc, dataType)}
                         </div>
                       );

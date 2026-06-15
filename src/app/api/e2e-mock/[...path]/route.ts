@@ -297,11 +297,11 @@ function pivotKeyFromRequest(request: NextRequest): PivotKey | null {
     // `[^,)]+` prevents `(...,foo)),(mincount,1)` from being misread as a
     // 3-level pivot by greedily consuming the close paren of the inner pivot.
     const triple = candidate.match(/\(pivot,\(([^,)]+),([^,)]+),([^,)]+)\)\)/);
-    if (triple?.[1] && triple?.[2] && triple?.[3]) {
+    if (triple?.[1] && triple[2] && triple[3]) {
       return { primary: triple[1], secondary: triple[2], tertiary: triple[3] };
     }
     const match = candidate.match(/\(pivot,\(([^,)]+),([^,)]+)\)\)/);
-    if (match?.[1] && match?.[2]) return { primary: match[1], secondary: match[2] };
+    if (match?.[1] && match[2]) return { primary: match[1], secondary: match[2] };
   }
 
   return null;

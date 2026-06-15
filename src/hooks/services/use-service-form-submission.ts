@@ -34,11 +34,11 @@ export function useServiceFormSubmission(
         description: jobId ? `Job ID: ${jobId}` : "Job submitted successfully",
         closeButton: true,
         ...(jobId && {
-          action: { label: "View Job", onClick: () => router.push(`/jobs`) },
+          action: { label: "View Job", onClick: () => { router.push("/jobs"); } },
         }),
       });
-      queryClient.invalidateQueries({ queryKey: ["jobs-summary"] });
-      queryClient.invalidateQueries({ queryKey: ["jobs-filtered"] });
+      void queryClient.invalidateQueries({ queryKey: ["jobs-summary"] });
+      void queryClient.invalidateQueries({ queryKey: ["jobs-filtered"] });
       onSuccess?.();
     },
     onError: (error) => {

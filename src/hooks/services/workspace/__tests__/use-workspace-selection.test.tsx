@@ -3,7 +3,7 @@ import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { useWorkspaceSelection } from "@/hooks/services/workspace/use-workspace-selection";
 
 vi.mock("@/lib/workspace/table-selection", () => ({
-  computeNextSelection: vi.fn((_ordered, _current, _anchor, clicked) => ({
+  computeNextSelection: vi.fn((_ordered, _current, _anchor, clicked: WorkspaceItem) => ({
     nextSelection: [clicked],
     nextAnchorPath: clicked.path,
   })),
@@ -78,8 +78,8 @@ describe("useWorkspaceSelection", () => {
   });
 
   it("syncs selected items when processedItems reference changes", () => {
-    const itemV1 = makeItem({ name: "data.txt", path: "/test/data.txt", size: 100 } as Partial<WorkspaceItem>);
-    const itemV2 = makeItem({ name: "data.txt", path: "/test/data.txt", size: 200 } as Partial<WorkspaceItem>);
+    const itemV1 = makeItem({ name: "data.txt", path: "/test/data.txt", size: 100 });
+    const itemV2 = makeItem({ name: "data.txt", path: "/test/data.txt", size: 200 });
 
     const initialProps = {
       ...defaultProps,

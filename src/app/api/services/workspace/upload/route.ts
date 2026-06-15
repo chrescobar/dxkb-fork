@@ -74,12 +74,12 @@ export const POST = auth.route(async (request: NextRequest, { token }) => {
         // leave as text
       }
       return NextResponse.json(
-        { error: `Shock upload failed: ${response.status} ${response.statusText}`, details: body },
+        { error: `Shock upload failed: ${String(response.status)} ${response.statusText}`, details: body },
         { status: response.status },
       );
     }
 
-    const data = await response.json().catch(() => ({}));
+    const data: unknown = await response.json().catch(() => ({}));
     return NextResponse.json(data);
   } catch (error) {
     console.error("Workspace upload proxy error:", error);

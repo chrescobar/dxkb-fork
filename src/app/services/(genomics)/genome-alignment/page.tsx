@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import {
   Card,
@@ -39,7 +40,6 @@ import {
 import {
   defaultGenomeAlignmentFormValues,
   genomeAlignmentFormSchema,
-  type GenomeAlignmentFormData,
 } from "@/lib/forms/(genomics)/genome-alignment/genome-alignment-form-schema";
 import { genomeAlignmentService } from "@/lib/forms/(genomics)/genome-alignment/genome-alignment-service";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
@@ -66,13 +66,13 @@ export default function GenomeAlignmentServicePage() {
     defaultValues: defaultGenomeAlignmentFormValues,
     validators: { onChange: genomeAlignmentFormSchema },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as GenomeAlignmentFormData);
+      await runtime.submitFormData(value);
     },
   });
 
-  const manualSeedWeight = useStore(form.store, (s) => s.values.manual_seed_weight);
-  const seedWeightValue = useStore(form.store, (s) => s.values.seed_weight) ?? 15;
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
+  const manualSeedWeight = useSelector(form.store, (s) => s.values.manual_seed_weight);
+  const seedWeightValue = useSelector(form.store, (s) => s.values.seed_weight) ?? 15;
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
 
   useEffect(() => {
     const genomeIds = selectedGenomes.map((genome) => genome.genome_id);
@@ -105,7 +105,7 @@ export default function GenomeAlignmentServicePage() {
   };
 
   const handleGenomeGroupSelect = async (object: WorkspaceObject) => {
-    if (!object?.path) {
+    if (!object.path) {
       toast.error("Invalid genome group selection");
       return;
     }
@@ -146,9 +146,9 @@ export default function GenomeAlignmentServicePage() {
         }
 
         toast.success(
-          `Added ${genomesToAdd.length} genome${
+          `Added ${String(genomesToAdd.length)} genome${
             genomesToAdd.length === 1 ? "" : "s"
-          } from ${object.name ?? "genome group"}`,
+          } from ${object.name}`,
         );
 
         return [...previous, ...genomesToAdd];
@@ -175,7 +175,7 @@ export default function GenomeAlignmentServicePage() {
         if (rerunData.manual_seed_weight != null) {
           form.setFieldValue(
             "manual_seed_weight",
-            rerunBooleanValue(rerunData.manual_seed_weight) as never,
+            rerunBooleanValue(rerunData.manual_seed_weight),
           );
         }
         if (rerunData.seed_weight != null) {
@@ -190,7 +190,7 @@ export default function GenomeAlignmentServicePage() {
           : [];
         if (genomeIds.length > 0) {
           fetchGenomesByIds(genomeIds)
-            .then((genomes) => setSelectedGenomes(genomes))
+            .then((genomes) => { setSelectedGenomes(genomes); })
             .catch(() => {
               toast.error("Could not restore genomes from previous job", {
                 description: "Please re-add your genomes manually.",
@@ -250,7 +250,7 @@ export default function GenomeAlignmentServicePage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="service-form-section"
       >
@@ -287,7 +287,7 @@ export default function GenomeAlignmentServicePage() {
                   <WorkspaceObjectSelector
                     preset="genomeGroup"
                     placeholder="Select a genome group from your workspace"
-                    onObjectSelect={handleGenomeGroupSelect}
+                    onObjectSelect={(obj) => { void handleGenomeGroupSelect(obj); }}
                     onSelectedObjectChange={setSelectedGenomeGroup}
                   />
                 </div>
@@ -298,7 +298,7 @@ export default function GenomeAlignmentServicePage() {
                   disabled={!selectedGenomeGroup}
                   onClick={() => {
                     if (selectedGenomeGroup) {
-                      handleGenomeGroupSelect(selectedGenomeGroup);
+                      void handleGenomeGroupSelect(selectedGenomeGroup);
                       setSelectedGenomeGroup(null);
                     }
                   }}
@@ -417,7 +417,7 @@ export default function GenomeAlignmentServicePage() {
                           id="manual-seed-weight"
                           checked={field.state.value}
                           onCheckedChange={(checked) =>
-                            field.handleChange(checked)
+                            { field.handleChange(checked); }
                           }
                         />
                       </div>
@@ -445,9 +445,9 @@ export default function GenomeAlignmentServicePage() {
                           max={21}
                           step={1}
                           onValueChange={(value) =>
-                            field.handleChange(
-                              Array.isArray(value) ? value[0] : value,
-                            )
+                            { field.handleChange(
+                              (Array.isArray(value) ? value[0] : value) as number,
+                            ); }
                           }
                         />
                         <div className="flex justify-between text-xs text-muted-foreground">

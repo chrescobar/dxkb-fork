@@ -72,7 +72,7 @@ function ToggleRow<T extends string>({
               variant={pressed ? "default" : "ghost"}
               size="xs"
               aria-pressed={pressed}
-              onClick={() => onChange(opt.value)}
+              onClick={() => { onChange(opt.value); }}
             >
               {opt.label}
             </Button>
@@ -218,9 +218,9 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
                     active={isActive}
                     dimmed={isDimmed}
                     ariaPressed={highlight.pressedFor(idx)}
-                    onActivate={() => highlight.activatePill(idx)}
+                    onActivate={() => { highlight.activatePill(idx); }}
                     onDeactivate={highlight.deactivatePill}
-                    onClick={() => highlight.togglePillLock(idx)}
+                    onClick={() => { highlight.togglePillLock(idx); }}
                   />
                 );
               })}
@@ -229,7 +229,7 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
           <div className="overflow-x-auto pt-2">
             <svg
               ref={svgRef}
-              viewBox={`0 0 ${amrChartWidth} ${amrChartHeight}`}
+              viewBox={`0 0 ${String(amrChartWidth)} ${String(amrChartHeight)}`}
               role="img"
               aria-label={`${title} distribution`}
               className="w-full min-w-[560px]"
@@ -277,11 +277,11 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
                       const count = bar.bar.data[barStack.key];
                       const label =
                         scale === "percent"
-                          ? `${barStack.key}: ${count}%`
+                          ? `${barStack.key}: ${String(count)}%`
                           : `${barStack.key}: ${numberFormatter.format(count)}`;
                       return (
                         <rect
-                          key={`bar-${barStack.index}-${bar.index}`}
+                          key={`bar-${String(barStack.index)}-${String(bar.index)}`}
                           fill={bar.color}
                           rx={barStack.index === barStacks.length - 1 ? 2 : 0}
                           aria-label={label}
@@ -322,7 +322,6 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
                   );
                   if (idx === null) return;
                   const row = sortedRows[idx];
-                  if (!row) return;
                   setHoveredAntibiotic(row.antibiotic);
                   showTooltip({
                     tooltipData: {
@@ -330,7 +329,7 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
                       rows: phenotypes
                         .map((p) => ({
                           phenotype: p,
-                          count: displayRows[idx]?.[p] ?? 0,
+                          count: displayRows[idx][p],
                           color: colorScale(p),
                         }))
                         .filter((r) => r.count > 0)
@@ -344,7 +343,7 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
                   setHoveredAntibiotic(null);
                   hideTooltip();
                 }}
-                onClick={() => highlight.clearHighlight()}
+                onClick={() => { highlight.clearHighlight(); }}
               />
 
               {sortedRows.map((r) => {
@@ -355,7 +354,7 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
                 return (
                   <text
                     key={`xlabel-${r.antibiotic}`}
-                    transform={`translate(${x},${amrInnerHeight + 6}) rotate(-45)`}
+                    transform={`translate(${String(x)},${String(amrInnerHeight + 6)}) rotate(-45)`}
                     textAnchor="end"
                     fontSize={11}
                     className="fill-muted-foreground capitalize"
@@ -397,7 +396,7 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
                 <span className="flex-1 text-muted-foreground">{phenotype}</span>
                 <span className="font-semibold tabular-nums">
                   {scale === "percent"
-                    ? `${count}%`
+                    ? `${String(count)}%`
                     : numberFormatter.format(count)}
                 </span>
               </div>

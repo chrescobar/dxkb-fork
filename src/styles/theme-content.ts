@@ -19,7 +19,7 @@ export type ContentType =
   | "funding-statement";
 
 // Define content for each theme
-const themeContent: Record<string, Record<ContentType, string>> = {
+const themeContent: Partial<Record<string, Record<ContentType, string>>> = {
   generic: {
     "welcome-title": "Welcome to the XKnowledge Base",
     "welcome-subtitle":
@@ -72,7 +72,7 @@ export function getThemeContent(
   contentType: ContentType,
 ): string {
   const folder = getContentFolder(theme);
-  return themeContent[folder]?.[contentType] || themeContent.dxkb[contentType];
+  return themeContent[folder]?.[contentType] ?? themeContent.dxkb?.[contentType] ?? "";
 }
 
 /**
@@ -80,7 +80,7 @@ export function getThemeContent(
  */
 export function getAllThemeContent(theme: string): Record<ContentType, string> {
   const folder = getContentFolder(theme);
-  return themeContent[folder] || themeContent.dxkb;
+  return (themeContent[folder] ?? themeContent.dxkb) as Record<ContentType, string>;
 }
 
 /**

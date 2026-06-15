@@ -33,8 +33,8 @@ function parseFacetCounts(
 ): Record<string, FacetItem[]> {
   const out: Record<string, FacetItem[]> = {};
 
-  Object.keys(facets || {}).forEach((cat) => {
-    const data = facets[cat] || [];
+  Object.keys(facets).forEach((cat) => {
+    const data = facets[cat];
     out[cat] = [];
 
     for (let i = 0; i < data.length - 1; i += 2) {
@@ -57,7 +57,7 @@ export function FacetPanel({
   onSelect,
   selected,
 }: FacetPanelProps) {
-  const [facets, setFacets] = useState<Record<string, FacetItem[]>>({});
+  const [facets, setFacets] = useState<Partial<Record<string, FacetItem[]>>>({});
   const DataAPI = process.env.NEXT_PUBLIC_DATA_API;
   const requestId = useRef(0);
 
@@ -70,7 +70,7 @@ export function FacetPanel({
   useEffect(() => {
     if (!DataAPI) return;
     if (!resource) return;
-    if (!fields || fields.length === 0) {
+    if (fields.length === 0) {
       return;
     }
 
@@ -84,7 +84,6 @@ export function FacetPanel({
         // ---------------------------------------------------
         const validFields = fields
           .filter((f): f is ColumnField =>
-            f &&
             typeof f.id === "string" &&
             f.id.trim().length > 0
           )
@@ -107,7 +106,7 @@ export function FacetPanel({
 
         const facetStr = `facet(${facetFieldsStr},(mincount,1),(limit,100))`;
         const filterStr = selected
-          .map(f => `eq(${f.field},${f.value})`)
+          .map(f => `eq(${f.field},${String(f.value)})`)
           .join(",");
           
         const RQLstring = [
@@ -135,16 +134,16 @@ export function FacetPanel({
           throw new Error("Failed to fetch facets");
         }
 
-        const json = await res.json();
+        const json = await res.json() as { facet_counts?: { facet_fields?: Record<string, (string | number)[]> } } | null | undefined;
 
         // ---------------------------------------------------
         // PARSE RESPONSE
         // ---------------------------------------------------
  // 🚨 ignore stale responses
         if (currentRequest !== requestId.current) return;
-        
+
         const parsed = parseFacetCounts(
-          json?.facet_counts?.facet_fields || {}
+          json?.facet_counts?.facet_fields ?? {}
         );
 
         setFacets(parsed);
@@ -153,7 +152,7 @@ export function FacetPanel({
       }
     };
 
-    fetchFacets();
+    void fetchFacets();
   }, [fields, query, resource, DataAPI, selected]);
 
   return (
@@ -164,7 +163,7 @@ export function FacetPanel({
         <FacetColumn
           key={field.id}
           field={field}
-          items={facets[field.id] || []}
+          items={facets[field.id] ?? []}
           onSelect={onSelect}
         />
       ))}

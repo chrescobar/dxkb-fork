@@ -285,8 +285,7 @@ describe("createInputSourceOverrides", () => {
   });
 
   it("returns only input_source for unknown source type", () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result = createInputSourceOverrides("unknown" as any);
+    const result = createInputSourceOverrides("unknown" as "fasta_data");
     expect(result).toEqual({ input_source: "unknown" });
   });
 });
@@ -466,8 +465,7 @@ describe("createDatabaseSourceOverrides", () => {
 
   it("throws for invalid database source", () => {
     expect(() =>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      createDatabaseSourceOverrides("nonexistent" as any, {}),
+      createDatabaseSourceOverrides("nonexistent" as "bacteria-archaea", {}),
     ).toThrow("Invalid database source: nonexistent");
   });
 });

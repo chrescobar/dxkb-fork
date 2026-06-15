@@ -112,7 +112,7 @@ export function mockWorkspaceGetContent(content: string): unknown {
  */
 export function workspaceRpcOverride(
   rpcMethod: string,
-  body: unknown,
+  body: string | object,
 ): JsonOverride {
   return {
     url: /\/api\/services\/workspace(?:$|\?)/,
@@ -202,10 +202,11 @@ const favoritesPath = `/${e2eUsername}/home/.preferences/favorites.json`;
  * Returns null when no match is found so callers can fall back to a 500 "not found" response.
  */
 function findKnownItem(
-  pathItems: Record<string, TupleItem[]>,
+  pathItems: Partial<Record<string, TupleItem[]>>,
   fullPath: string,
 ): TupleItem | null {
   for (const [parent, items] of Object.entries(pathItems)) {
+    if (!items) continue;
     const parentNoTrailing = parent.replace(/\/+$/, "");
     for (const item of items) {
       if (`${parentNoTrailing}/${item.name}` === fullPath) return item;
@@ -309,8 +310,8 @@ export function buildWorkspaceOverrides(
         | { objects?: unknown[][] }
         | undefined;
       const firstObject = params?.objects?.[0];
-      const fullPath = Array.isArray(firstObject) ? String(firstObject[0]) : "";
-      const type = Array.isArray(firstObject) ? String(firstObject[1] ?? "unspecified") : "unspecified";
+      const fullPath = Array.isArray(firstObject) ? String(firstObject[0] as string | number | undefined ?? "") : "";
+      const type = Array.isArray(firstObject) ? ((firstObject[1] as string | undefined) ?? "unspecified") : "unspecified";
       const lastSlash = fullPath.lastIndexOf("/");
       const name = lastSlash >= 0 ? fullPath.slice(lastSlash + 1) : fullPath || "uploaded";
       const parentPath = lastSlash > 0 ? fullPath.slice(0, lastSlash) : e2eHomePath;

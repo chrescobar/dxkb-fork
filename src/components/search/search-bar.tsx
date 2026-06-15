@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent, useEffect, useCallback, Suspense } from "react";
+import { useState, useEffect, useCallback, Suspense, type SyntheticEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -64,14 +64,14 @@ export function SearchBar({
     setSelected(value);
   }, []);
 
-  const handleSearch = (e: FormEvent) => {
+  const handleSearch = (e: SyntheticEvent) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
 
     router.push(
       `/search?q=${encodeURIComponent(inputValue)}&searchtype=${selected}`
     );
-    queryClient.invalidateQueries({
+    void queryClient.invalidateQueries({
       predicate: (query) => {
         const key = query.queryKey[0];
         return (
@@ -91,7 +91,7 @@ export function SearchBar({
         <Select
           items={searchTypes.map((option) => ({ value: option.id, label: option.typeTitle }))}
           value={selected}
-          onValueChange={(value) => setSelected(value ?? "everything")}
+          onValueChange={(value) => { setSelected(value ?? "everything"); }}
         >
           <SelectTrigger
             id="searchtype"
@@ -117,7 +117,7 @@ export function SearchBar({
             placeholder={placeholder}
             className={`${size === "lg" ? "py-6" : ""} ${showIcon ? "pl-10" : ""} w-full rounded-l-none rounded-r-md border-0 bg-background text-foreground shadow-none focus-visible:ring-0`}
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={(e) => { setInputValue(e.target.value); }}
           />
           {showIcon && (
             <button

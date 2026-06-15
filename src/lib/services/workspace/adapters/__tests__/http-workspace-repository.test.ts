@@ -105,8 +105,8 @@ describe("HttpWorkspaceRepository", () => {
     );
 
     const [meta] = await repository.getMetadata(["/user@bvbrc/home/file.fa"]);
-    expect(meta?.path).toBe("/user@bvbrc/home/file.fa");
-    expect(meta?.object).toEqual(
+    expect(meta.path).toBe("/user@bvbrc/home/file.fa");
+    expect(meta.object).toEqual(
       expect.objectContaining({ id: "id-1", type: "contigs", size: 123 }),
     );
   });
@@ -147,11 +147,11 @@ describe("HttpWorkspaceRepository", () => {
       "/user@bvbrc/home/file-b.fa",
     ]);
 
-    expect(first?.raw).toEqual([firstTuple]);
-    expect(second?.raw).toEqual([secondTuple]);
-    expect(first?.raw).not.toEqual(second?.raw);
-    expect(first?.object?.raw).toEqual(expect.objectContaining({ id: "id-a" }));
-    expect(second?.object?.raw).toEqual(
+    expect(first.raw).toEqual([firstTuple]);
+    expect(second.raw).toEqual([secondTuple]);
+    expect(first.raw).not.toEqual(second.raw);
+    expect(first.object?.raw).toEqual(expect.objectContaining({ id: "id-a" }));
+    expect(second.object?.raw).toEqual(
       expect.objectContaining({ id: "id-b" }),
     );
   });
@@ -191,7 +191,7 @@ describe("HttpWorkspaceRepository", () => {
 
     const error = await repository
       .listDirectory({ path: "/p" })
-      .catch((err) => err);
+      .catch((err: unknown) => err);
     expect(error).toBeInstanceOf(WorkspaceApiError);
     expect((error as WorkspaceApiError).method).toBe("Workspace.ls");
   });

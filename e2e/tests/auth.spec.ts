@@ -111,7 +111,7 @@ test.describe("auth (signed out)", () => {
     await signIn.fill("e2e-test-user", "REDACTED-PASSWORD");
     await signIn.submit();
     const res = await signInResponse;
-    const body = await res.json();
+    const body = await res.json() as { user: unknown; session: unknown };
     expect(body.user).toMatchObject({
       username: "e2e-test-user",
       realm: "bvbrc",

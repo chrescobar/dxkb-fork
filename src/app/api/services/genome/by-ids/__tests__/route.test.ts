@@ -94,7 +94,7 @@ describe("POST /api/services/genome/by-ids", () => {
       }),
     );
 
-    const ids = Array.from({ length: 3 }, (_, i) => `${i}.1`);
+    const ids = Array.from({ length: 3 }, (_, i) => `${String(i)}.1`);
     const req = mockNextRequest({
       method: "POST",
       body: { genome_ids: ids },
@@ -161,7 +161,7 @@ describe("POST /api/services/genome/by-ids", () => {
 
     expect(res.status).toBe(502);
     expect(await json(res)).toEqual(
-      expect.objectContaining({ error: expect.stringContaining("failed") }),
+      expect.objectContaining({ error: expect.stringContaining("failed") as unknown }),
     );
   });
 });

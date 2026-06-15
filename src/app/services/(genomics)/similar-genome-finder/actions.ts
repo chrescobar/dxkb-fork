@@ -61,7 +61,7 @@ async function fetchMinhashResults(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-  const result = await res.json().catch(() => ({}));
+  const result = await (res.json() as Promise<unknown>).catch(() => ({}));
   const errorMessage = extractMinhashError(result);
 
   if (!res.ok) {
@@ -100,7 +100,7 @@ async function fetchGenomeDetails(
       body: JSON.stringify({ genome_ids: genomeIds }),
     },
   );
-  const genomeData = await genomeRes.json().catch(() => ({}));
+  const genomeData = await (genomeRes.json() as Promise<unknown>).catch(() => ({}));
   if (!genomeRes.ok) {
     return {
       ok: false,
@@ -118,10 +118,10 @@ async function fetchGenomeDetails(
       ? (Object.fromEntries(
           Object.entries(r as Record<string, unknown>).map(([k, v]) => [
             k,
-            v !== null && v !== undefined ? String(v) : "",
+            v !== null && v !== undefined ? String(v as string | number | boolean) : "",
           ]),
         ) as Record<string, string>)
-      : ({} as Record<string, string>),
+      : ({}),
   );
   return { ok: true, genomes };
 }
@@ -135,8 +135,8 @@ function getMinhashRowsAndIds(result: unknown): {
 } {
   let minhashRows = parseMinhashResultPayload(result);
   let genomeIds = minhashRows
-    .map((r) => r.genome_id?.trim())
-    .filter(Boolean) as string[];
+    .map((r) => r.genome_id.trim())
+    .filter(Boolean);
 
   if (
     minhashRows.length > 0 &&
@@ -152,14 +152,14 @@ function getMinhashRowsAndIds(result: unknown): {
         | unknown[]
         | undefined;
       const ids = Array.isArray(idList)
-        ? (idList as unknown[])
+        ? (idList)
             .map((x) =>
-              x !== null && x !== undefined ? String(x).trim() : "",
+              x !== null && x !== undefined ? String(x as string | number | boolean).trim() : "",
             )
             .filter(Boolean)
         : [];
       if (ids.length >= minhashRows.length) {
-        genomeIds = ids.slice(0, minhashRows.length) as string[];
+        genomeIds = ids.slice(0, minhashRows.length);
         minhashRows = minhashRows.map((row, i) => ({
           ...row,
           genome_id: genomeIds[i] ?? row.genome_id,

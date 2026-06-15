@@ -42,7 +42,7 @@ describe("POST /api/services/app-service/submit", () => {
     });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(401);
     expect(data).toEqual(
@@ -59,7 +59,7 @@ describe("POST /api/services/app-service/submit", () => {
     });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(400);
     expect(data).toEqual({ error: "app_name is required" });
@@ -74,7 +74,7 @@ describe("POST /api/services/app-service/submit", () => {
     });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(400);
     expect(data).toEqual({ error: "app_params must be an object" });
@@ -89,7 +89,7 @@ describe("POST /api/services/app-service/submit", () => {
     });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(400);
     expect(data).toEqual({ error: "app_params must be an object" });
@@ -109,7 +109,7 @@ describe("POST /api/services/app-service/submit", () => {
     });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { success?: boolean; job?: typeof mockResult };
 
     expect(response.status).toBe(200);
     expect(data).toEqual({ success: true, job: mockResult });
@@ -152,7 +152,7 @@ describe("POST /api/services/app-service/submit", () => {
     });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string; code?: string; details?: unknown };
 
     expect(response.status).toBe(500);
     expect(data).toEqual(
@@ -176,7 +176,7 @@ describe("POST /api/services/app-service/submit", () => {
     });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(500);
     expect(data).toEqual(
@@ -194,7 +194,7 @@ describe("POST /api/services/app-service/submit", () => {
     });
 
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string; code?: string };
 
     expect(response.status).toBe(500);
     expect(data).toEqual(

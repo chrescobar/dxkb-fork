@@ -36,13 +36,13 @@ export function MapControls({
   return (
     <div className="flex flex-wrap items-center gap-2">
       <div className="inline-flex items-center gap-0.5 rounded-md bg-muted/50 p-0.5">
-        <PillButton active={mapState.view === "world"} onClick={() => onViewChange("world")}>
+        <PillButton active={mapState.view === "world"} onClick={() => { onViewChange("world"); }}>
           World
         </PillButton>
-        <PillButton active={mapState.view === "us"} onClick={() => onViewChange("us")}>
+        <PillButton active={mapState.view === "us"} onClick={() => { onViewChange("us"); }}>
           United States
         </PillButton>
-        <PillButton active={isStateView} onClick={() => onViewChange("state")}>
+        <PillButton active={isStateView} onClick={() => { onViewChange("state"); }}>
           State
         </PillButton>
       </div>

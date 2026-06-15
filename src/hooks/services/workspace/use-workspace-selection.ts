@@ -14,11 +14,21 @@ export interface UseWorkspaceSelectionOptions {
   setPanelExpanded: (v: boolean) => void;
 }
 
+export interface UseWorkspaceSelectionReturn {
+  selectedItems: WorkspaceItem[];
+  anchorPath: string | null;
+  selectedPaths: string[];
+  /** Last selected item, or null when nothing is selected. */
+  primaryItem: WorkspaceItem | null;
+  handleSelectItem: (item: WorkspaceItem, modifiers?: SelectionModifiers) => void;
+  clearSelection: () => void;
+}
+
 export function useWorkspaceSelection({
   processedItems,
   panelManuallyHidden,
   setPanelExpanded,
-}: UseWorkspaceSelectionOptions) {
+}: UseWorkspaceSelectionOptions): UseWorkspaceSelectionReturn {
   const [selectedItems, setSelectedItems] = useState<WorkspaceItem[]>([]);
   const [anchorPath, setAnchorPath] = useState<string | null>(null);
 
@@ -40,7 +50,7 @@ export function useWorkspaceSelection({
     [selectedItems],
   );
 
-  const primaryItem = selectedItems[selectedItems.length - 1] ?? null;
+  const primaryItem: WorkspaceItem | null = selectedItems[selectedItems.length - 1] ?? null;
 
   const handleSelectItem = useCallback(
     (item: WorkspaceItem, modifiers?: SelectionModifiers) => {

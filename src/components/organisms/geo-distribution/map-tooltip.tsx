@@ -19,7 +19,7 @@ function topItems(record: Record<string, number>): [string, number][] {
 
 function percent(part: number, total: number): string {
   if (!total) return "0%";
-  return `${Math.round((part / total) * 100)}%`;
+  return `${String(Math.round((part / total) * 100))}%`;
 }
 
 export function MapTooltip({ data }: MapTooltipProps) {

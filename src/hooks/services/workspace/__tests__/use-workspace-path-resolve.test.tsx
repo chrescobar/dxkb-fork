@@ -37,7 +37,7 @@ describe("useWorkspacePathResolve", () => {
       { wrapper },
     );
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => { expect(result.current.isSuccess).toBe(true); });
 
     expect(getWorkspaceMetadata).toHaveBeenCalledWith(["/user/home/myFile"], { silent: true });
     expect(parseWorkspaceGetSingle).toHaveBeenCalledWith(rawResult, 0);
@@ -54,7 +54,7 @@ describe("useWorkspacePathResolve", () => {
       { wrapper },
     );
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => { expect(result.current.isSuccess).toBe(true); });
     expect(result.current.data).toBeNull();
   });
 

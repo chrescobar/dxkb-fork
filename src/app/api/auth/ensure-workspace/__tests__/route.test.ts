@@ -81,7 +81,11 @@ describe("POST /api/auth/ensure-workspace", () => {
     );
 
     const response = await POST(mockNextRequest({ method: "POST" }), {});
-    const data = await response.json();
+    const data = (await response.json()) as {
+      success?: boolean;
+      created?: string[];
+      failures?: Record<string, string>;
+    };
 
     expect(response.status).toBe(200);
     expect(data.success).toBe(true);
@@ -150,12 +154,16 @@ describe("POST /api/auth/ensure-workspace", () => {
     );
 
     const response = await POST(mockNextRequest({ method: "POST" }), {});
-    const data = await response.json();
+    const data = (await response.json()) as {
+      success?: boolean;
+      created?: string[];
+      failures?: Record<string, string>;
+    };
 
     expect(response.status).toBe(200);
     expect(data.success).toBe(true);
     expect(data.created).toEqual(["/alice@bvbrc/home/"]);
-    expect(Object.values(data.failures)).toContain(
+    expect(Object.values(data.failures ?? {})).toContain(
       "Sub-folder batch upstream failure",
     );
   });

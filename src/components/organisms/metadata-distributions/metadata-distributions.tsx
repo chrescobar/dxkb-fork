@@ -40,9 +40,15 @@ function settledToChart<T>(
   fallback: T,
 ): OptionalChartState<T> {
   if (result.status === "fulfilled") return { data: result.value };
-  const reason = result.reason;
+  const reason: unknown = result.reason;
   const message =
-    reason instanceof Error ? reason.message : String(reason ?? "unknown error");
+    reason instanceof Error
+      ? reason.message
+      : reason === null || reason === undefined
+        ? "unknown error"
+        : typeof reason === "string" || typeof reason === "number" || typeof reason === "boolean"
+          ? String(reason)
+          : JSON.stringify(reason);
   return { data: fallback, errorMessage: message };
 }
 
@@ -75,12 +81,12 @@ export async function MetadataDistributions({
 
   if (taxonomic.errorMessage) {
     console.warn(
-      `[metadata-distributions] taxonomic distribution fetch failed for taxonId=${taxonId}: ${taxonomic.errorMessage}`,
+      `[metadata-distributions] taxonomic distribution fetch failed for taxonId=${String(taxonId)}: ${taxonomic.errorMessage}`,
     );
   }
   if (amr.errorMessage && showAmr) {
     console.warn(
-      `[metadata-distributions] amr phenotype distribution fetch failed for taxonId=${taxonId}: ${amr.errorMessage}`,
+      `[metadata-distributions] amr phenotype distribution fetch failed for taxonId=${String(taxonId)}: ${amr.errorMessage}`,
     );
   }
 

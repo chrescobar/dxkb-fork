@@ -36,7 +36,7 @@ export function CreateFolderDialog({
     const name = folderName.trim();
     if (!name || isCreating) return;
     onCreateFolder(name).then(
-      () => onOpenChange(false),
+      () => { onOpenChange(false); },
       () => { /* error handled elsewhere */ },
     );
   }, [folderName, isCreating, onCreateFolder, onOpenChange]);
@@ -57,7 +57,7 @@ export function CreateFolderDialog({
           <Input
             id="create-folder-input"
             value={folderName}
-            onChange={(e) => setFolderName(e.target.value)}
+            onChange={(e) => { setFolderName(e.target.value); }}
             placeholder="My Folder"
             disabled={isCreating}
             onKeyDown={(e) => {
@@ -71,7 +71,7 @@ export function CreateFolderDialog({
         <DialogFooter showCloseButton={false}>
           <Button
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={() => { onOpenChange(false); }}
             disabled={isCreating}
           >
             Cancel

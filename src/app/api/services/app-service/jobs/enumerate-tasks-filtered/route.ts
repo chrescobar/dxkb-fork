@@ -21,11 +21,11 @@ const requestSchema = z.object({
  * POST /api/services/app-service/jobs/enumerate-tasks-filtered
  */
 export const POST = withAuth(async (request: NextRequest, { token }) => {
-  const body = await request.json();
+  const body: unknown = await request.json();
   const parsed = requestSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "Invalid request parameters", details: parsed.error.flatten() },
+      { error: "Invalid request parameters", details: z.treeifyError(parsed.error) },
       { status: 400 },
     );
   }

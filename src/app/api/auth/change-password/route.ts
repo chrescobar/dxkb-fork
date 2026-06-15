@@ -3,12 +3,17 @@ import { authAdmin } from "@/lib/auth/server/instance";
 import { respondWithAck } from "@/lib/auth/server/respond";
 import { withErrorHandling } from "@/lib/auth/server/errors";
 
+interface ChangePasswordBody {
+  currentPassword?: unknown;
+  newPassword?: unknown;
+}
+
 export const POST = withErrorHandling(async (request: NextRequest) => {
-  const body = await request.json().catch(() => ({}));
+  const body = (await request.json().catch(() => ({}))) as ChangePasswordBody;
   return respondWithAck(
     await authAdmin.changePassword(
-      typeof body?.currentPassword === "string" ? body.currentPassword : "",
-      typeof body?.newPassword === "string" ? body.newPassword : "",
+      typeof body.currentPassword === "string" ? body.currentPassword : "",
+      typeof body.newPassword === "string" ? body.newPassword : "",
     ),
   );
 });

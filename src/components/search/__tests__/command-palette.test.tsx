@@ -8,19 +8,18 @@ class ResizeObserverStub {
   unobserve = vi.fn();
   disconnect = vi.fn();
 }
-globalThis.ResizeObserver ??= ResizeObserverStub as unknown as typeof ResizeObserver;
+// jsdom does not ship ResizeObserver or scrollIntoView; stub both unconditionally.
+globalThis.ResizeObserver = ResizeObserverStub;
 // jsdom's HTMLElement.scrollIntoView is undefined; cmdk calls it when the
 // active item changes.
-if (!Element.prototype.scrollIntoView) {
-  Element.prototype.scrollIntoView = vi.fn();
-}
+Element.prototype.scrollIntoView = vi.fn();
 
 const { mockPush, mockAuth } = vi.hoisted(() => ({
   mockPush: vi.fn(),
   mockAuth: {
     isAuthenticated: false,
     user: null as { username?: string; realm?: string } | null,
-    status: "guest" as "loading" | "authed" | "guest",
+    status: "guest",
     signOut: vi.fn().mockResolvedValue(undefined),
   },
 }));

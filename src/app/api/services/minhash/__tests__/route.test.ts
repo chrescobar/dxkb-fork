@@ -31,7 +31,7 @@ describe("POST /api/services/minhash", () => {
     expect(res.status).toBe(500);
     expect(await json(res)).toEqual(
       expect.objectContaining({
-        error: expect.stringContaining("MINHASH_SERVICE_URL"),
+        error: expect.stringContaining("MINHASH_SERVICE_URL") as unknown,
       }),
     );
   });
@@ -80,7 +80,7 @@ describe("POST /api/services/minhash", () => {
 
     let capturedHeaders: Headers | undefined;
     server.use(
-      http.post("http://mock-minhash", async ({ request }) => {
+      http.post("http://mock-minhash", ({ request }) => {
         capturedHeaders = request.headers;
         return HttpResponse.json({ result: "ok" });
       }),

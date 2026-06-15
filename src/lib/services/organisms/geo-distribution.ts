@@ -132,9 +132,13 @@ export async function fetchOrganismGeoDistribution(
     for (const [countyName, count] of Object.entries(counties)) {
       const key = `${stateName}|${countyName}`;
       countyData[key] = count;
+      const generaForState = (countyGenera as Partial<typeof countyGenera>)[stateName];
+      const generaForCounty = generaForState
+        ? (generaForState as Partial<typeof generaForState>)[countyName]
+        : undefined;
       countyMeta[key] = {
         count,
-        genera: countyGenera[stateName]?.[countyName] ?? {},
+        genera: generaForCounty ?? {},
         hosts: {},
       };
     }

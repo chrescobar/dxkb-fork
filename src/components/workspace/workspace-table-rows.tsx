@@ -76,7 +76,7 @@ function SpecialRow({
 }
 
 export function LeadingRow(
-  props: Omit<SpecialRowProps, "icon"> & { label?: string },
+  props: Omit<SpecialRowProps, "icon" | "label"> & { label?: string },
 ) {
   return <SpecialRow {...props} icon={Users} label={props.label ?? "View Shared Folders"} />;
 }
@@ -152,13 +152,11 @@ export function DataRow({
       aria-selected={useSelectionMode ? isSelected : undefined}
     >
       {row.getVisibleCells().map((cell) => {
-        const meta = cell.column.columnDef.meta as
-          | { className?: string }
-          | undefined;
+        const metaCls = (cell.column.columnDef.meta as Record<string, unknown> | undefined)?.className as string | undefined;
         const className = clsx(
           cell.column.id === "name" ? "pl-6" : "pl-2",
           "overflow-hidden",
-          meta?.className ?? "",
+          metaCls ?? "",
         );
         return (
           <TableCell

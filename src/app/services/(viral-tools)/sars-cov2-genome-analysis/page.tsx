@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import {
   Card,
@@ -58,10 +59,9 @@ import {
   primerOptions,
   primerVersionOptions,
   defaultPrimerVersion,
-  type SarsCov2GenomeAnalysisFormData,
   type SarsCov2LibraryItem,
   type SarsCov2Platform,
-  type Primers,
+  type SarsCov2GenomeAnalysisFormData,
 } from "@/lib/forms/(viral-tools)/sars-cov2-genome-analysis/sars-cov2-genome-analysis-form-schema";
 import {
   computeOutputName,
@@ -91,16 +91,15 @@ const tutorial =
 export default function SarsCov2GenomeAnalysisPage() {
   const form = useForm({
     defaultValues:
-      defaultSarsCov2GenomeAnalysisFormValues as SarsCov2GenomeAnalysisFormData,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: sarsCov2GenomeAnalysisFormSchema as any },
+      defaultSarsCov2GenomeAnalysisFormValues,
+    validators: { onChange: sarsCov2GenomeAnalysisFormSchema  },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as SarsCov2GenomeAnalysisFormData);
+      await runtime.submitFormData(value);
     },
   });
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const [pairedRead1, setPairedRead1] = useState<string | null>(null);
   const [pairedRead2, setPairedRead2] = useState<string | null>(null);
@@ -112,15 +111,14 @@ export default function SarsCov2GenomeAnalysisPage() {
   const [sraResetKey, setSraResetKey] = useState(0);
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  const inputType = useStore(form.store, (s) => s.values.input_type);
-  const recipe = useStore(form.store, (s) => s.values.recipe);
-  const primers = useStore(form.store, (s) => s.values.primers);
-  const scientificName = useStore(form.store, (s) => s.values.scientific_name);
-  const myLabel = useStore(form.store, (s) => s.values.my_label);
+  const inputType = useSelector(form.store, (s) => s.values.input_type);
+  const recipe = useSelector(form.store, (s) => s.values.recipe);
+  const primers = useSelector(form.store, (s) => s.values.primers);
+  const scientificName = useSelector(form.store, (s) => s.values.scientific_name);
+  const myLabel = useSelector(form.store, (s) => s.values.my_label);
 
   const showPrimersSection = recipe === "onecodex";
-  const primerVersionOpts =
-    primerVersionOptions[primers] ?? primerVersionOptions.ARTIC;
+  const primerVersionOpts = primerVersionOptions[primers];
 
   const {
     selectedLibraries,
@@ -144,14 +142,14 @@ export default function SarsCov2GenomeAnalysisPage() {
   });
 
   useEffect(() => {
-    const outputName = computeOutputName(scientificName ?? "", myLabel ?? "");
+    const outputName = computeOutputName(scientificName, myLabel);
     if (outputName) {
       form.setFieldValue("output_file", outputName);
     }
   }, [scientificName, myLabel, form]);
 
   useEffect(() => {
-    if (showPrimersSection && primers) {
+    if (showPrimersSection) {
       const defaultVersion = defaultPrimerVersion[primers];
       if (
         defaultVersion &&
@@ -233,7 +231,7 @@ export default function SarsCov2GenomeAnalysisPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="grid grid-cols-1 gap-6 md:grid-cols-12"
       >
@@ -256,9 +254,9 @@ export default function SarsCov2GenomeAnalysisPage() {
                   <FieldItem>
                     <RadioGroup
                       value={field.state.value}
-                      onValueChange={(value) =>
-                        value != null && field.handleChange(value)
-                      }
+                      onValueChange={(value) => {
+                        if (value != null) field.handleChange(value as SarsCov2GenomeAnalysisFormData["input_type"]);
+                      }}
                       className="service-radio-group-horizontal"
                     >
                       <div className="service-radio-group-item flex items-center gap-2">
@@ -315,7 +313,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                       placeholder="Select READ FILE 1..."
                       value={pairedRead1 ?? ""}
                       onObjectSelect={(object: WorkspaceObject) =>
-                        setPairedRead1(object.path)
+                        { setPairedRead1(object.path); }
                       }
                     />
                     <WorkspaceObjectSelector
@@ -323,7 +321,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                       placeholder="Select READ FILE 2..."
                       value={pairedRead2 ?? ""}
                       onObjectSelect={(object: WorkspaceObject) =>
-                        setPairedRead2(object.path)
+                        { setPairedRead2(object.path); }
                       }
                     />
                   </div>
@@ -334,7 +332,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                       value={pairedPlatform}
                       onValueChange={(v) => {
                         if (v == null) return;
-                        setPairedPlatform(v as SarsCov2Platform);
+                        setPairedPlatform(v);
                       }}
                     >
                       <SelectTrigger className="service-card-select-trigger">
@@ -376,7 +374,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                       placeholder="Select READ FILE..."
                       value={singleRead ?? ""}
                       onObjectSelect={(object: WorkspaceObject) =>
-                        setSingleRead(object.path)
+                        { setSingleRead(object.path); }
                       }
                     />
                     <div className="space-y-2">
@@ -386,7 +384,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                         value={singlePlatform}
                         onValueChange={(v) => {
                           if (v == null) return;
-                          setSinglePlatform(v as SarsCov2Platform);
+                          setSinglePlatform(v);
                         }}
                       >
                         <SelectTrigger className="service-card-select-trigger">
@@ -486,7 +484,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                         placeholder="Select or Upload Contigs to your workspace for Annotation"
                         value={field.state.value ?? ""}
                         onObjectSelect={(object: WorkspaceObject) =>
-                          field.handleChange(object.path)
+                          { field.handleChange(object.path); }
                         }
                       />
                       <FieldErrors field={field} />
@@ -521,9 +519,9 @@ export default function SarsCov2GenomeAnalysisPage() {
                           <Select
                             items={recipeOptions}
                             value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null && field.handleChange(value)
-                            }
+                            onValueChange={(value) => {
+                              if (value != null) field.handleChange(value);
+                            }}
                           >
                             <SelectTrigger className="service-card-select-trigger">
                               <SelectValue placeholder="Select strategy" />
@@ -554,9 +552,9 @@ export default function SarsCov2GenomeAnalysisPage() {
                               <Select
                                 items={primerOptions}
                                 value={field.state.value}
-                                onValueChange={(v) =>
-                                  v != null && field.handleChange(v as Primers)
-                                }
+                                onValueChange={(v) => {
+                                  if (v != null) field.handleChange(v);
+                                }}
                               >
                                 <SelectTrigger className="service-card-select-trigger">
                                   <SelectValue placeholder="Select primers" />
@@ -587,9 +585,9 @@ export default function SarsCov2GenomeAnalysisPage() {
                               <Select
                                 items={primerVersionOpts}
                                 value={field.state.value}
-                                onValueChange={(value) =>
-                                  value != null && field.handleChange(value)
-                                }
+                                onValueChange={(value) => {
+                                  if (value != null) field.handleChange(value);
+                                }}
                               >
                                 <SelectTrigger className="service-card-select-trigger">
                                   <SelectValue placeholder="Version" />
@@ -744,7 +742,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                   <FieldItem>
                     <OutputFolder
                       value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
+                      onChange={(value) => { field.handleChange(value); }}
                     />
                     <FieldErrors field={field} />
                   </FieldItem>
@@ -757,7 +755,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                     <OutputFolder
                       variant="name"
                       value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
+                      onChange={(value) => { field.handleChange(value); }}
                       outputFolderPath={outputPath}
                       onValidationChange={setIsOutputNameValid}
                       disabled={true}

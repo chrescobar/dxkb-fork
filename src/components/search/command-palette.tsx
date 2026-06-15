@@ -17,7 +17,7 @@ import {
 import { useAuth } from "@/lib/auth/hooks";
 import { encodeWorkspaceSegment } from "@/lib/utils";
 import { workspaceUsername } from "@/components/navbars/workspace-dropdown-content";
-import { serviceItems } from "@/components/navbars/navbar-links";
+import { serviceItems, type NavSection } from "@/components/navbars/navbar-links";
 import {
   Command,
   CommandDialog,
@@ -63,7 +63,7 @@ export function CommandPalette() {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       // Case-insensitive: CapsLock or Playwright's `Meta+K` send key="K".
-      if (event.key?.toLowerCase() === "k" && (event.metaKey || event.ctrlKey)) {
+      if (event.key.toLowerCase() === "k" && (event.metaKey || event.ctrlKey)) {
         event.preventDefault();
         // Reset stale input so reopening always starts clean; setInputValue
         // here runs from an event handler, not an effect body.
@@ -72,7 +72,7 @@ export function CommandPalette() {
       }
     };
 
-    const onOpen = () => handleOpenChange(true);
+    const onOpen = () => { handleOpenChange(true); };
 
     document.addEventListener("keydown", onKeyDown);
     window.addEventListener(COMMAND_PALETTE_OPEN_EVENT, onOpen);
@@ -110,7 +110,7 @@ export function CommandPalette() {
       router.push(
         `/search?q=${encodeURIComponent(trimmed)}&searchtype=everything`,
       );
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         predicate: (query) => {
           const key = query.queryKey[0];
           return key === "genome-meta" || key === "genome-full";
@@ -120,12 +120,14 @@ export function CommandPalette() {
   }, [inputValue, queryClient, router, runCommand]);
 
   const handleSignOut = useCallback(() => {
-    runCommand(async () => {
-      try {
-        await signOut();
-      } finally {
-        router.push("/");
-      }
+    runCommand(() => {
+      void (async () => {
+        try {
+          await signOut();
+        } finally {
+          router.push("/");
+        }
+      })();
     });
   }, [router, runCommand, signOut]);
 
@@ -170,7 +172,7 @@ export function CommandPalette() {
             <CommandItem
               value="home"
               description="Global dashboard and situational overview"
-              onSelect={() => navigate("/")}
+              onSelect={() => { navigate("/"); }}
             >
               <Home />
               <span>Home</span>
@@ -183,7 +185,7 @@ export function CommandPalette() {
                     value="workspace"
                     description="Your files and saved analyses"
                     onSelect={() =>
-                      navigate(`/workspace/${encodedUsername}/home`)
+                      { navigate(`/workspace/${encodedUsername}/home`); }
                     }
                   >
                     <Folder />
@@ -193,7 +195,7 @@ export function CommandPalette() {
                 <CommandItem
                   value="jobs"
                   description="Monitor running and completed jobs"
-                  onSelect={() => navigate("/jobs")}
+                  onSelect={() => { navigate("/jobs"); }}
                 >
                   <Briefcase />
                   <span>Jobs</span>
@@ -201,7 +203,7 @@ export function CommandPalette() {
                 <CommandItem
                   value="settings"
                   description="Account, preferences, and integrations"
-                  onSelect={() => navigate("/settings")}
+                  onSelect={() => { navigate("/settings"); }}
                 >
                   <Settings />
                   <span>Settings</span>
@@ -220,7 +222,7 @@ export function CommandPalette() {
                 <CommandItem
                   value="sign in"
                   description="Access your workspace and tools"
-                  onSelect={() => navigate("/sign-in")}
+                  onSelect={() => { navigate("/sign-in"); }}
                 >
                   <LogIn />
                   <span>Sign in</span>
@@ -228,7 +230,7 @@ export function CommandPalette() {
                 <CommandItem
                   value="sign up"
                   description="Create a new BV-BRC account"
-                  onSelect={() => navigate("/sign-up")}
+                  onSelect={() => { navigate("/sign-up"); }}
                 >
                   <UserPlus />
                   <span>Sign up</span>
@@ -237,13 +239,13 @@ export function CommandPalette() {
             )}
           </CommandGroup>
 
-          {Object.entries(serviceItems).map(([key, section]) => (
+          {(Object.entries(serviceItems) as unknown as [string, NavSection][]).map(([key, section]) => (
             <CommandGroup key={key} heading={section.title}>
               {section.items.map((item) => (
                 <CommandItem
                   key={item.href}
                   value={`${section.title} ${item.title}`}
-                  onSelect={() => navigate(item.href, item.target)}
+                  onSelect={() => { navigate(item.href, item.target); }}
                 >
                   <span>{item.title}</span>
                 </CommandItem>

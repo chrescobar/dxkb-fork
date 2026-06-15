@@ -7,7 +7,7 @@ import type { LanguageSupport } from "@codemirror/language";
 
 type LanguageLoader = () => Promise<LanguageSupport>;
 
-const extensionToLanguage: Record<string, LanguageLoader> = {
+const extensionToLanguage: Partial<Record<string, LanguageLoader>> = {
   ".json": () => import("@codemirror/lang-json").then((m) => m.json()),
   ".xml": () => import("@codemirror/lang-xml").then((m) => m.xml()),
   ".py": () => import("@codemirror/lang-python").then((m) => m.python()),

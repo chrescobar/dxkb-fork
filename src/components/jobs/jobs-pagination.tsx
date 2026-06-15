@@ -82,9 +82,9 @@ export function JobsPagination({
         <Select
           items={pageSizeItems}
           value={String(limit)}
-          onValueChange={(value) =>
-            value != null && onPageSizeChange(Number(value))
-          }
+          onValueChange={(value) => {
+            if (value != null) onPageSizeChange(Number(value));
+          }}
         >
           <SelectTrigger aria-label="Items per page" className="mr-1 h-7 w-20 text-xs">
             <SelectValue />
@@ -111,7 +111,7 @@ export function JobsPagination({
         {pageNumbers.map((p, i) =>
           p === "ellipsis" ? (
             <span
-              key={`ellipsis-${i}`}
+              key={`ellipsis-${String(i)}`}
               className="flex size-9 items-center justify-center text-sm text-muted-foreground"
             >
               ...
@@ -120,10 +120,10 @@ export function JobsPagination({
             <Button
               key={p}
               variant={p === page ? "default" : "outline"}
-              aria-label={`Page ${p}`}
+              aria-label={`Page ${String(p)}`}
               aria-current={p === page ? "page" : undefined}
               className="size-9 rounded-lg p-0 text-sm"
-              onClick={() => onPageChange(p)}
+              onClick={() => { onPageChange(p); }}
             >
               {p}
             </Button>

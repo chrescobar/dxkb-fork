@@ -16,7 +16,7 @@ describe("transformSubspeciesClassificationParams", () => {
 
   it("includes basic fields in the output", () => {
     const result = transformSubspeciesClassificationParams(
-      baseData as never,
+      baseData,
     );
 
     expect(result).toEqual(
@@ -31,7 +31,7 @@ describe("transformSubspeciesClassificationParams", () => {
 
   it("includes input_fasta_data when input_source is fasta_data", () => {
     const result = transformSubspeciesClassificationParams(
-      baseData as never,
+      baseData,
     );
 
     expect(result.input_fasta_data).toBe(">seq1\nATCGATCG");
@@ -43,7 +43,7 @@ describe("transformSubspeciesClassificationParams", () => {
       input_fasta_data: "  >seq1\nATCG  ",
     };
 
-    const result = transformSubspeciesClassificationParams(data as never);
+    const result = transformSubspeciesClassificationParams(data);
 
     expect(result.input_fasta_data).toBe(">seq1\nATCG");
   });
@@ -55,7 +55,7 @@ describe("transformSubspeciesClassificationParams", () => {
       input_fasta_file: "/ws/sequences.fa",
     };
 
-    const result = transformSubspeciesClassificationParams(data as never);
+    const result = transformSubspeciesClassificationParams(data);
 
     expect(result.input_fasta_file).toBe("/ws/sequences.fa");
     expect(result).not.toHaveProperty("input_fasta_data");
@@ -68,14 +68,14 @@ describe("transformSubspeciesClassificationParams", () => {
       input_fasta_file: "  /ws/sequences.fa  ",
     };
 
-    const result = transformSubspeciesClassificationParams(data as never);
+    const result = transformSubspeciesClassificationParams(data);
 
     expect(result.input_fasta_file).toBe("/ws/sequences.fa");
   });
 
   it("does not include fasta_file key when input_source is fasta_data", () => {
     const result = transformSubspeciesClassificationParams(
-      baseData as never,
+      baseData,
     );
 
     expect(result).not.toHaveProperty("input_fasta_file");
@@ -89,7 +89,7 @@ describe("transformSubspeciesClassificationParams", () => {
       output_file: "  test  ",
     };
 
-    const result = transformSubspeciesClassificationParams(data as never);
+    const result = transformSubspeciesClassificationParams(data);
 
     expect(result.virus_type).toBe("SARS-CoV-2");
     expect(result.output_path).toBe("/workspace/user");

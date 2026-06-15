@@ -208,7 +208,7 @@ describe("useRerunForm", () => {
     await waitFor(() => {
       expect(onApply).toHaveBeenCalledTimes(1);
     });
-    const [rerunDataArg, formArg, libsArg] = onApply.mock.calls[0];
+    const [rerunDataArg, formArg, libsArg] = onApply.mock.calls[0] as [unknown, unknown, unknown[]];
     expect(rerunDataArg).toMatchObject({ output_path: "/ws/out" });
     expect(formArg).toBe(form);
     expect(libsArg).toHaveLength(1);

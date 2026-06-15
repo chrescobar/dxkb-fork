@@ -44,7 +44,7 @@ describe("POST /api/auth/change-password", () => {
 
     const request = mockNextRequest({ method: "POST", body: {} });
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(400);
     expect(data.error).toBe("Current password and new password are required");
@@ -59,7 +59,7 @@ describe("POST /api/auth/change-password", () => {
       body: { currentPassword: "old", newPassword: "newSecret123" },
     });
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(401);
     expect(data.error).toMatch(/authentication required/i);
@@ -68,14 +68,16 @@ describe("POST /api/auth/change-password", () => {
   it("forwards the JSON-RPC setPassword body with the session token as the Authorization header to USER_URL on success", async () => {
     setSessionCookies("valid-token", "alice");
 
-    let capturedAuthorization: string | null = null;
-    let capturedContentType: string | null = null;
-    let capturedBody: string | null = null;
+    const captured: {
+      authorization: string | null;
+      contentType: string | null;
+      body: string | null;
+    } = { authorization: null, contentType: null, body: null };
     server.use(
       http.post(`${userUrl}/`, async ({ request }) => {
-        capturedAuthorization = request.headers.get("Authorization");
-        capturedContentType = request.headers.get("Content-Type");
-        capturedBody = await request.text();
+        captured.authorization = request.headers.get("Authorization");
+        captured.contentType = request.headers.get("Content-Type");
+        captured.body = await request.text();
         return HttpResponse.json({ id: 1, jsonrpc: "2.0", result: null });
       }),
     );
@@ -85,14 +87,16 @@ describe("POST /api/auth/change-password", () => {
       body: { currentPassword: "old", newPassword: "newSecret123" },
     });
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { success?: boolean };
 
     expect(response.status).toBe(200);
     expect(data).toEqual({ success: true });
-    expect(capturedAuthorization).toBe("valid-token");
-    expect(capturedContentType).toBe("application/json");
+    expect(captured.authorization).toBe("valid-token");
+    expect(captured.contentType).toBe("application/json");
 
-    const parsedBody = JSON.parse(capturedBody ?? "{}") as {
+    expect(captured.body).not.toBeNull();
+    if (captured.body === null) throw new Error("captured.body never set");
+    const parsedBody = JSON.parse(captured.body) as {
       jsonrpc?: string;
       method?: string;
       params?: unknown[];
@@ -121,7 +125,7 @@ describe("POST /api/auth/change-password", () => {
       body: { currentPassword: "wrong", newPassword: "newSecret123" },
     });
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     // bvbrcIdentity.changePassword maps a JSON-RPC error envelope to fail("validation", msg, 400)
     // and the route surfaces error.status (400) directly.
@@ -143,7 +147,7 @@ describe("POST /api/auth/change-password", () => {
       body: { currentPassword: "old", newPassword: "newSecret123" },
     });
     const response = await POST(request, {});
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(403);
     expect(data.error).toBe("Forbidden");

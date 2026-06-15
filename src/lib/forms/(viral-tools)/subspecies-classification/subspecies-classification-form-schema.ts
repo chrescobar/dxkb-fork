@@ -59,7 +59,7 @@ export const subspeciesClassificationFormSchema = z
       const trimmed = (data.input_fasta_data ?? "").trim();
       if (!trimmed) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: "Sequence is required when entering sequence",
           path: ["input_fasta_data"],
         });
@@ -69,7 +69,7 @@ export const subspeciesClassificationFormSchema = z
       const file = (data.input_fasta_file ?? "").trim();
       if (!file) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: "FASTA file is required when selecting a file",
           path: ["input_fasta_file"],
         });

@@ -14,7 +14,7 @@ const pivotKey = "antibiotic,resistant_phenotype";
 function buildBody(taxonId: number): string {
   return (
     "eq(genome_id,*)" +
-    `&genome(eq(taxon_lineage_ids,${taxonId}))` +
+    `&genome(eq(taxon_lineage_ids,${String(taxonId)}))` +
     "&in(resistant_phenotype,(Resistant,Susceptible,Intermediate))" +
     "&limit(1)" +
     "&facet((pivot,(antibiotic,resistant_phenotype)),(mincount,1),(limit,-1))" +
@@ -27,7 +27,7 @@ function buildBody(taxonId: number): string {
 
 function toRow(
   antibiotic: string,
-  phenotypes: Record<string, number>,
+  phenotypes: Partial<Record<string, number>>,
 ): AmrAntibioticRow {
   const Resistant = phenotypes.Resistant ?? 0;
   const Susceptible = phenotypes.Susceptible ?? 0;

@@ -35,7 +35,7 @@ export const genomeAlignmentFormSchema = z
       });
     }
 
-    if (data.manual_seed_weight && (data.seed_weight === undefined || data.seed_weight === null)) {
+    if (data.manual_seed_weight && data.seed_weight === undefined) {
       ctx.addIssue({
         code: "custom",
         message: "Seed weight is required when manual mode is enabled",

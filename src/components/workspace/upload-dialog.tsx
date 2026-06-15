@@ -62,7 +62,7 @@ export function UploadDialog({
   }
 
   const addFiles = React.useCallback((newFiles: FileList | File[]) => {
-    const list = Array.from(newFiles).filter((f) => f.name && f.size !== undefined);
+    const list = Array.from(newFiles).filter((f) => f.name);
     setFiles((prev) => {
       const byName = new Map(prev.map((f) => [f.name, f]));
       list.forEach((f) => byName.set(f.name, f));
@@ -124,9 +124,9 @@ export function UploadDialog({
           body: formData,
         });
         if (!res.ok) {
-          const err = await res.json().catch(() => ({ error: res.statusText }));
+          const err = await (res.json() as Promise<{ error?: string }>).catch(() => ({ error: res.statusText }));
           toast.error(`Upload failed: ${file.name}`, {
-            description: (err as { error?: string }).error ?? res.statusText,
+            description: err.error ?? res.statusText,
           });
           hasError = true;
           break;
@@ -137,7 +137,7 @@ export function UploadDialog({
       }
       if (!hasError) {
         toast.success("Upload complete", {
-          description: `${files.length} file(s) uploaded.`,
+          description: `${String(files.length)} file(s) uploaded.`,
         });
         onUploadComplete();
       }
@@ -171,7 +171,9 @@ export function UploadDialog({
             </span>
             <Select
               value={uploadType}
-              onValueChange={(v) => v != null && setUploadType(v)}
+              onValueChange={(v) => {
+                if (v != null) setUploadType(v);
+              }}
               items={uploadTypeOptions}
             >
               <SelectTrigger className="w-full">
@@ -290,7 +292,7 @@ export function UploadDialog({
         <DialogFooter showCloseButton={false}>
           <Button
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={() => { onOpenChange(false); }}
             disabled={isUploading}
           >
             Cancel

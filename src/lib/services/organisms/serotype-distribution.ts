@@ -64,7 +64,7 @@ export async function fetchSerotypeDistribution(
 ): Promise<SerotypeDistributionData> {
   const baseUrl = getBvBrcWebsiteApiBaseUrl();
   const url =
-    `${baseUrl}/genome/?eq(taxon_lineage_ids,${taxonId})` +
+    `${baseUrl}/genome/?eq(taxon_lineage_ids,${String(taxonId)})` +
     `&facet((pivot,(collection_year,serovar)),(mincount,1))&limit(0)`;
 
   const payload = await fetchOrganismSolrJson(

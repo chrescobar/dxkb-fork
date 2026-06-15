@@ -5,6 +5,7 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { harOverridesFor, uploadedFilenameFromHar } from "../har-overrides";
+import type { JsonOverrideBodyContext } from "../../mocks/backends";
 
 interface MinimalEntry {
   request: { method: string; url: string; postData?: { text: string } };
@@ -134,11 +135,12 @@ describe("harOverridesFor", () => {
     expect(overrides).toHaveLength(1);
     const body = overrides[0].body;
     if (typeof body !== "function") throw new Error("expected body function");
-    expect(body({ callIndex: 0, parsedBody: null })).toBe('{"result":"before"}');
-    expect(body({ callIndex: 1, parsedBody: null })).toBe('{"result":"after"}');
+    const bodyFn = body as (ctx: JsonOverrideBodyContext) => unknown;
+    expect(bodyFn({ callIndex: 0, parsedBody: null })).toBe('{"result":"before"}');
+    expect(bodyFn({ callIndex: 1, parsedBody: null })).toBe('{"result":"after"}');
     // Beyond the recorded sequence, freeze on the last entry rather than
     // returning undefined and serving an empty body.
-    expect(body({ callIndex: 7, parsedBody: null })).toBe('{"result":"after"}');
+    expect(bodyFn({ callIndex: 7, parsedBody: null })).toBe('{"result":"after"}');
   });
 
   it("strips sensitive headers and preserves the rest", () => {

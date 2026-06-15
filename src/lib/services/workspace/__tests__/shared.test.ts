@@ -1,13 +1,14 @@
 import {
   getWorkspaceMetadata,
 } from "@/lib/services/workspace/shared";
-import { workspaceApi } from "@/lib/services/workspace/client";
 
-vi.mock("@/lib/services/workspace/client", () => ({
-  workspaceApi: { makeRequest: vi.fn() },
+const { mockMakeRequest } = vi.hoisted(() => ({
+  mockMakeRequest: vi.fn(),
 }));
 
-const mockMakeRequest = workspaceApi.makeRequest as ReturnType<typeof vi.fn>;
+vi.mock("@/lib/services/workspace/client", () => ({
+  workspaceApi: { makeRequest: mockMakeRequest },
+}));
 
 describe("shared workspace functions", () => {
   describe("getWorkspaceMetadata", () => {

@@ -13,7 +13,7 @@ export async function fetchOrganismSummary(
   options: OrganismFetchOptions = {},
 ): Promise<OrganismSummary> {
   const baseUrl = getBvBrcWebsiteApiBaseUrl();
-  const response = await fetch(`${baseUrl}/data/summary_by_taxon/${taxonId}`, {
+  const response = await fetch(`${baseUrl}/data/summary_by_taxon/${String(taxonId)}`, {
     method: "GET",
     headers: { Accept: "application/json" },
     signal: options.signal,

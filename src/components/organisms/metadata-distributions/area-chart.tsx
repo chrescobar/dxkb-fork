@@ -74,7 +74,7 @@ export function AreaChart({
           <div className="min-w-0 overflow-hidden">
             <svg
               ref={svgRef}
-              viewBox={`0 0 ${chartWidth} ${yearChartHeight}`}
+              viewBox={`0 0 ${String(chartWidth)} ${String(yearChartHeight)}`}
               role="img"
               aria-label={`${title} distribution`}
               className="w-full"
@@ -99,7 +99,7 @@ export function AreaChart({
                 <AreaClosed<YearDatum>
                   data={yearData}
                   x={(d) => (xScale(d.year) ?? 0) + xScale.bandwidth() / 2}
-                  y={(d) => yScale(d.count) ?? 0}
+                  y={(d) => yScale(d.count)}
                   yScale={yScale}
                   fill={`url(#${gradientId})`}
                   curve={curveMonotoneX}
@@ -108,7 +108,7 @@ export function AreaChart({
                 <LinePath<YearDatum>
                   data={yearData}
                   x={(d) => (xScale(d.year) ?? 0) + xScale.bandwidth() / 2}
-                  y={(d) => yScale(d.count) ?? 0}
+                  y={(d) => yScale(d.count)}
                   stroke="var(--chart-1)"
                   strokeWidth={2}
                   curve={curveMonotoneX}
@@ -116,8 +116,8 @@ export function AreaChart({
 
                 {yearData.map((d) => {
                   const cx = (xScale(d.year) ?? 0) + xScale.bandwidth() / 2;
-                  const cy = yScale(d.count) ?? 0;
-                  const label = `${d.year}: ${numberFormatter.format(d.count)}`;
+                  const cy = yScale(d.count);
+                  const label = `${String(d.year)}: ${numberFormatter.format(d.count)}`;
 
                   return (
                     <circle
@@ -150,7 +150,7 @@ export function AreaChart({
                   if (i % step !== 0) return null;
                   return (
                     <text
-                      key={`label-${d.year}`}
+                      key={`label-${String(d.year)}`}
                       x={(xScale(d.year) ?? 0) + xScale.bandwidth() / 2}
                       y={yearInnerHeight + 12}
                       textAnchor="middle"

@@ -29,7 +29,7 @@ export function DetailCollapsibleSection({
     <div className="border-t">
       <div className={`flex w-full items-center ${headerClass}`}>
         <button
-          onClick={() => setExpanded((v) => !v)}
+          onClick={() => { setExpanded((v) => !v); }}
           className="flex min-w-0 flex-1 items-center gap-2 px-3 py-2 text-left text-xs font-semibold"
         >
           {expanded ? (

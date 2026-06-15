@@ -82,7 +82,7 @@ describe("useJobResultData", () => {
     );
 
     await waitFor(() =>
-      expect(result.current.dotMetaQuery.isSuccess).toBe(true),
+      { expect(result.current.dotMetaQuery.isSuccess).toBe(true); },
     );
 
     expect(getWorkspaceMetadata).toHaveBeenCalledWith([dotPath]);

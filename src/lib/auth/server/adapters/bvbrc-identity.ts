@@ -44,7 +44,7 @@ async function authenticate(
     }
 
     const body = await response.text();
-    const rawToken = response.headers.get("Authorization") ?? body ?? "";
+    const rawToken = response.headers.get("Authorization") ?? body;
     const token = rawToken.trim();
     if (!token) {
       return fail(
@@ -95,7 +95,7 @@ async function signUp(
     }
 
     const body = await response.text();
-    const rawToken = response.headers.get("Authorization") ?? body ?? "";
+    const rawToken = response.headers.get("Authorization") ?? body;
     const token = rawToken.trim();
     if (!token) {
       return fail(
@@ -268,7 +268,7 @@ async function verifyEmailToken(
 ): Promise<Result<void>> {
   const timeoutMs = 15_000;
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  const timeoutId = setTimeout(() => { controller.abort(); }, timeoutMs);
 
   try {
     const response = await fetch(getRequiredEnv("USER_VERIFICATION_URL"), {

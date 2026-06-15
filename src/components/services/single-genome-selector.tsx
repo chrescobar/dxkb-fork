@@ -47,6 +47,11 @@ function shouldSearch(query: string, minLength: number): boolean {
   return trimmed.length >= minLength;
 }
 
+// Check if a string looks like a genome ID (numeric pattern like "123.45")
+function isGenomeId(str: string): boolean {
+  return /^[0-9]+(\.[0-9]+)?$/.test(str.trim());
+}
+
 export function SingleGenomeSelector({
   title,
   placeholder = "e.g. Mycobacterium tuberculosis H37Rv",
@@ -78,6 +83,14 @@ export function SingleGenomeSelector({
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const latestAbortController = useRef<AbortController | null>(null);
   const selectedGenomeIdRef = useRef<string | null>(null);
+  const queryRef = useRef(query);
+  const selectedGenomeRef = useRef(selectedGenome);
+  useEffect(() => {
+    queryRef.current = query;
+  }, [query]);
+  useEffect(() => {
+    selectedGenomeRef.current = selectedGenome;
+  }, [selectedGenome]);
 
   // Whenever suggestions change, the highlighted index and item refs must reset
   // together. Bundling them here avoids deriving state from state via an Effect
@@ -88,16 +101,11 @@ export function SingleGenomeSelector({
     setHighlightedIndex(-1);
   }, []);
 
-  // Check if a string looks like a genome ID (numeric pattern like "123.45")
-  const isGenomeId = (str: string): boolean => {
-    return /^[0-9]+(\.[0-9]+)?$/.test(str.trim());
-  };
-
   // Sync query with value prop, but preserve genome name if value is a genome ID
   useEffect(() => {
     // If value is empty, clear query
     if (!value) {
-      if (query) {
+      if (queryRef.current) {
         queueMicrotask(() => {
           setQuery("");
           setSelectedGenome(null);
@@ -110,13 +118,16 @@ export function SingleGenomeSelector({
     // If value is a genome ID and we have a matching selectedGenome, keep the genome name displayed
     if (isGenomeId(value)) {
       // Check both state and ref to handle race conditions
-      if ((selectedGenome && selectedGenome.genome_id === value) || selectedGenomeIdRef.current === value) {
+      if (
+        (selectedGenomeRef.current && selectedGenomeRef.current.genome_id === value) ||
+        selectedGenomeIdRef.current === value
+      ) {
         // Keep the genome name displayed, don't overwrite with ID
         return;
       }
       // If we have a genome ID but no matching selectedGenome, fetch it
-      if (!selectedGenome || selectedGenome.genome_id !== value) {
-        queueMicrotask(() => setIsLoading(true));
+      if (!selectedGenomeRef.current || selectedGenomeRef.current.genome_id !== value) {
+        queueMicrotask(() => { setIsLoading(true); });
         fetchGenomesByIds([value])
           .then((results) => {
             if (results.length > 0) {
@@ -130,7 +141,7 @@ export function SingleGenomeSelector({
               setSelectedGenome(null);
             }
           })
-          .catch(() => {
+          .catch((_err: unknown) => {
             // On error, show the ID
             setQuery(value);
             setSelectedGenome(null);
@@ -144,20 +155,23 @@ export function SingleGenomeSelector({
 
     // If value is not a genome ID (or is a name), sync normally
     // But only if it's different from current query and not matching selectedGenome
-    if (value !== query) {
+    if (value !== queryRef.current) {
       // If we have a selectedGenome and the value matches its name, keep it
-      if (selectedGenome && value === selectedGenome.genome_name) {
+      if (selectedGenomeRef.current && value === selectedGenomeRef.current.genome_name) {
         return;
       }
       // Otherwise, update query and clear selectedGenome if value doesn't match
       queueMicrotask(() => {
         setQuery(value);
-        if (selectedGenome && value !== selectedGenome.genome_id && value !== selectedGenome.genome_name) {
+        if (
+          selectedGenomeRef.current &&
+          value !== selectedGenomeRef.current.genome_id &&
+          value !== selectedGenomeRef.current.genome_name
+        ) {
           setSelectedGenome(null);
         }
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   useEffect(() => {
@@ -191,7 +205,7 @@ export function SingleGenomeSelector({
             console.log("suggestions are:", results);
           }
         })
-        .catch((fetchError) => {
+        .catch((fetchError: unknown) => {
           if (controller.signal.aborted) {
             console.log("request aborted");
             return;
@@ -280,7 +294,7 @@ export function SingleGenomeSelector({
 
   useEffect(() => {
     if (!showDropdown) return;
-    const handleUpdate = () => updateDropdownLayout();
+    const handleUpdate = () => { updateDropdownLayout(); };
     window.addEventListener("scroll", handleUpdate, true);
     window.addEventListener("resize", handleUpdate);
     return () => {
@@ -337,7 +351,7 @@ export function SingleGenomeSelector({
             updateSuggestions(results);
           }
         })
-        .catch((fetchError) => {
+        .catch((fetchError: unknown) => {
           if (controller.signal.aborted) {
             return;
           }
@@ -402,7 +416,7 @@ export function SingleGenomeSelector({
     if (!showDropdown || suggestions.length === 0) {
       if (event.key === "Enter") {
         event.preventDefault();
-        handleManualSelect();
+        void handleManualSelect();
       }
       return;
     }
@@ -426,7 +440,7 @@ export function SingleGenomeSelector({
           const genome = suggestions[highlightedIndex];
           handleDropdownClick(genome);
         } else {
-          handleManualSelect();
+          void handleManualSelect();
         }
         break;
       case "Escape":
@@ -526,7 +540,7 @@ export function SingleGenomeSelector({
                       onClick={() => {
                         handleDropdownClick(genome);
                       }}
-                      onMouseEnter={() => setHighlightedIndex(index)}
+                      onMouseEnter={() => { setHighlightedIndex(index); }}
                     >
                       <span className="flex items-center gap-1 truncate text-sm font-medium">
                         {genome.public === false && (

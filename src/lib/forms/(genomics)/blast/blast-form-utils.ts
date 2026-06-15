@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { useStore, type AnyFormApi } from "@tanstack/react-form";
+import { type AnyFormApi } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 
 import type { BlastFormData } from "./blast-form-schema";
 import { blastPrecomputedDatabases, blastDatabaseTypes, blastDatabaseTypeMap } from "@/types/services";
@@ -37,7 +38,8 @@ export function getAvailableBlastDatabaseTypes(
   inputType: string,
   dbSource: string,
 ) {
-  const availableTypes = blastDatabaseTypeMap[inputType]?.[dbSource] || [];
+  const dbTypeMap = (blastDatabaseTypeMap as Record<string, Record<string, string[]> | undefined>)[inputType];
+  const availableTypes = dbTypeMap?.[dbSource] ?? [];
   const filtered = blastDatabaseTypes.filter((dbType) =>
     availableTypes.includes(dbType.value),
   );
@@ -52,9 +54,9 @@ export function getDefaultBlastDatabaseType(
   inputType: string,
   dbSource: string,
 ): string {
-  const availableTypes =
-    blastDatabaseTypeMap[inputType]?.[dbSource] || blastDatabaseTypes.map((t) => t.value);
-  return availableTypes[0] || "fna";
+  const dbTypeMap = (blastDatabaseTypeMap as Record<string, Record<string, string[]> | undefined>)[inputType];
+  const availableTypes = dbTypeMap?.[dbSource] ?? blastDatabaseTypes.map((t) => t.value);
+  return availableTypes[0] ?? "fna";
 }
 
 /**
@@ -144,7 +146,7 @@ function resolveInputType(
 export function resolveDbSource(
   database: BlastFormData["db_precomputed_database"] | undefined,
 ): BlastFormData["db_source"] {
-  return dbSourceMap[database || "bacteria-archaea"] || "precomputed_database";
+  return dbSourceMap[database ?? "bacteria-archaea"];
 }
 
 /**
@@ -188,9 +190,9 @@ export function createBlastFormValues(
     db_precomputed_database: dbPrecomputedDatabase,
 
     // Input source fields - handle discriminated union properly
-    input_fasta_data: String((currentValues as Record<string, unknown>).input_fasta_data ?? ""),
-    input_fasta_file: String((currentValues as Record<string, unknown>).input_fasta_file ?? ""),
-    input_feature_group: String((currentValues as Record<string, unknown>).input_feature_group ?? ""),
+    input_fasta_data: ((currentValues as Record<string, unknown>).input_fasta_data as string | undefined) ?? "",
+    input_fasta_file: ((currentValues as Record<string, unknown>).input_fasta_file as string | undefined) ?? "",
+    input_feature_group: ((currentValues as Record<string, unknown>).input_feature_group as string | undefined) ?? "",
 
     // Database conditional fields
     db_genome_list: currentValues.db_genome_list || [],
@@ -278,9 +280,9 @@ export function extractInputFields(
 ): BlastFormDataPartial {
   return {
     input_source: values.input_source,
-    input_fasta_data: String((values as Record<string, unknown>).input_fasta_data ?? ""),
-    input_fasta_file: String((values as Record<string, unknown>).input_fasta_file ?? ""),
-    input_feature_group: String((values as Record<string, unknown>).input_feature_group ?? ""),
+    input_fasta_data: ((values as Record<string, unknown>).input_fasta_data as string | undefined) ?? "",
+    input_fasta_file: ((values as Record<string, unknown>).input_fasta_file as string | undefined) ?? "",
+    input_feature_group: ((values as Record<string, unknown>).input_feature_group as string | undefined) ?? "",
   };
 }
 
@@ -288,35 +290,28 @@ export function extractInputFields(
  * Custom hook to manage BLAST database type availability
  */
 export function useBlastDatabaseTypes(form: AnyFormApi) {
-  const blastProgram = useStore(form.store, (s) => s.values.blast_program);
-  const dbPrecomputedDatabase = useStore(form.store, (s) => s.values.db_precomputed_database);
-  const dbType = useStore(form.store, (s) => s.values.db_type);
+  const blastProgram = useSelector(form.store, (s) => (s.values as BlastFormData).blast_program);
+  const dbPrecomputedDatabase = useSelector(form.store, (s) => (s.values as BlastFormData).db_precomputed_database);
+  const dbType = useSelector(form.store, (s) => (s.values as BlastFormData).db_type);
 
-  const availableDatabaseTypes = useMemo(() => {
-    if (blastProgram && dbPrecomputedDatabase) {
-      return getAvailableBlastDatabaseTypes(blastProgram, dbPrecomputedDatabase);
-    }
-    return getAvailableBlastDatabaseTypes("blastn", "bacteria-archaea");
-  }, [blastProgram, dbPrecomputedDatabase]);
+  const availableDatabaseTypes = useMemo(
+    () => getAvailableBlastDatabaseTypes(blastProgram, dbPrecomputedDatabase),
+    [blastProgram, dbPrecomputedDatabase],
+  );
 
   useEffect(() => {
-    if (blastProgram && dbPrecomputedDatabase) {
-      const isCurrentTypeAvailable = availableDatabaseTypes.some(
-        (type) => type.value === dbType,
+    const isCurrentTypeAvailable = availableDatabaseTypes.some(
+      (type) => type.value === dbType,
+    );
+
+    if (!isCurrentTypeAvailable && availableDatabaseTypes.length > 0) {
+      const defaultType = getDefaultBlastDatabaseType(
+        blastProgram,
+        dbPrecomputedDatabase,
       );
 
-      if (!isCurrentTypeAvailable && availableDatabaseTypes.length > 0) {
-        const defaultType = getDefaultBlastDatabaseType(
-          blastProgram,
-          dbPrecomputedDatabase,
-        );
-
-        if (defaultType) {
-          form.setFieldValue("db_type", defaultType as BlastFormData["db_type"]);
-        }
-      } else if (availableDatabaseTypes.length > 0 && !dbType) {
-        const firstType = availableDatabaseTypes[0].value;
-        form.setFieldValue("db_type", firstType as BlastFormData["db_type"]);
+      if (defaultType) {
+        form.setFieldValue("db_type", defaultType);
       }
     }
   }, [blastProgram, dbPrecomputedDatabase, dbType, form, availableDatabaseTypes]);
@@ -328,8 +323,8 @@ export function useBlastDatabaseTypes(form: AnyFormApi) {
  * Custom hook to track BLAST program changes
  */
 export function useBlastProgramTracking(form: AnyFormApi) {
-  const currentBlastProgram = useStore(form.store, (s) => s.values.blast_program);
-  return currentBlastProgram || "blastn";
+  const currentBlastProgram = useSelector(form.store, (s) => (s.values as BlastFormData).blast_program);
+  return currentBlastProgram;
 }
 
 /**
@@ -347,8 +342,9 @@ export function useFastaValidation(form: AnyFormApi, currentBlastProgram: BlastF
 
   if (prevProgram !== currentBlastProgram) {
     setPrevProgram(currentBlastProgram);
-    const currentFastaData = form.state.values.input_fasta_data;
-    if (currentFastaData && form.state.values.input_source === "fasta_data") {
+    const values = form.state.values as BlastFormDataPartial;
+    const currentFastaData = values.input_fasta_data;
+    if (currentFastaData && values.input_source === "fasta_data") {
       const result = validateFastaForBlast(currentFastaData, currentBlastProgram);
       setFastaValidationResult(result);
       setIsFastaValid(result.valid);

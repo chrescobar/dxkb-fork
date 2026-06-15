@@ -28,8 +28,6 @@ const formSchema = z.object({
   }),
 });
 
-type FormValues = z.infer<typeof formSchema>;
-
 export default function ForgotPasswordPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -50,15 +48,14 @@ export default function ForgotPasswordPage() {
   const form = useForm({
     defaultValues: {
       usernameOrEmail: "",
-    } as FormValues,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: formSchema as any, onSubmit: formSchema as any },
+    },
+    validators: { onChange: formSchema },
     onSubmit: async ({ value }) => {
       setError("");
       setIsSubmitting(true);
       try {
         const { error: resetError } = await authAccount.requestPasswordReset(
-          (value as FormValues).usernameOrEmail,
+          (value).usernameOrEmail,
         );
         if (resetError) {
           setError("An unexpected error occurred. Please try again.");
@@ -123,7 +120,7 @@ export default function ForgotPasswordPage() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              form.handleSubmit();
+              void form.handleSubmit();
             }}
             className="space-y-4"
           >
@@ -145,7 +142,7 @@ export default function ForgotPasswordPage() {
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                     />

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -42,8 +43,8 @@ import {
   defaultViralAssemblyFormValues,
   strategyOptions,
   moduleOptions,
-  type ViralAssemblyFormData,
   type ViralAssemblyLibraryItem,
+  type ViralAssemblyFormData,
 } from "@/lib/forms/(viral-tools)/viral-assembly/viral-assembly-form-schema";
 import {
   getPairedLibraryBuildFn,
@@ -63,11 +64,10 @@ const tutorial =
 
 const ViralAssemblyPage = function ViralAssemblyPage() {
   const form = useForm({
-    defaultValues: defaultViralAssemblyFormValues as ViralAssemblyFormData,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: viralAssemblyFormSchema as any },
+    defaultValues: defaultViralAssemblyFormValues,
+    validators: { onChange: viralAssemblyFormSchema  },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as ViralAssemblyFormData);
+      await runtime.submitFormData(value);
     },
   });
 
@@ -78,12 +78,12 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
   const [sraResetKey, setSraResetKey] = useState(0);
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  const inputType = useStore(form.store, (s) => s.values.input_type);
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const inputType = useSelector(form.store, (s) => s.values.input_type);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const { selectedLibraries, setLibraries } =
-    useTanstackLibrarySelection<ViralAssemblyLibraryItem, string>({
+    useTanstackLibrarySelection<ViralAssemblyLibraryItem>({
       form,
       mapLibraryToItem: buildBaseLibraryItem,
       fields: {
@@ -192,17 +192,17 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
           | undefined;
         const srrId = rerunData.srr_id as string | undefined;
 
-        if (pairedLib?.read1 && pairedLib?.read2) {
-          form.setFieldValue("input_type", "paired" as never);
+        if (pairedLib?.read1 && pairedLib.read2) {
+          form.setFieldValue("input_type", "paired");
           setPairedRead1(pairedLib.read1);
           setPairedRead2(pairedLib.read2);
           setLibraries(buildPairedLibraries({ paired_end_libs: [pairedLib] }));
         } else if (singleLib?.read) {
-          form.setFieldValue("input_type", "single" as never);
+          form.setFieldValue("input_type", "single");
           setSingleRead(singleLib.read);
           setLibraries(buildSingleLibraries({ single_end_libs: [singleLib] }));
         } else if (srrId) {
-          form.setFieldValue("input_type", "srr_accession" as never);
+          form.setFieldValue("input_type", "srr_accession");
           setSraDefaultValue(srrId);
           // SraRunAccessionWithValidation reads defaultValue once on mount.
           setSraResetKey((k) => k + 1);
@@ -226,7 +226,7 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="grid grid-cols-1 gap-6 md:grid-cols-12"
       >
@@ -249,9 +249,9 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
                   <FieldItem>
                     <RadioGroup
                       value={field.state.value}
-                      onValueChange={(value) =>
-                        value != null && field.handleChange(value)
-                      }
+                      onValueChange={(value) => {
+                        if (value != null) field.handleChange(value as ViralAssemblyFormData["input_type"]);
+                      }}
                       className="service-radio-group-horizontal"
                     >
                       <div className="service-radio-group-item flex items-center gap-2">
@@ -285,7 +285,7 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
                   placeholder="Select READ FILE 1..."
                   value={pairedRead1 ?? ""}
                   onObjectSelect={(object: WorkspaceObject) =>
-                    setPairedRead1(object.path)
+                    { setPairedRead1(object.path); }
                   }
                 />
                 <WorkspaceObjectSelector
@@ -293,7 +293,7 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
                   placeholder="Select READ FILE 2..."
                   value={pairedRead2 ?? ""}
                   onObjectSelect={(object: WorkspaceObject) =>
-                    setPairedRead2(object.path)
+                    { setPairedRead2(object.path); }
                   }
                 />
               </div>
@@ -307,7 +307,7 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
                   placeholder="Select READ FILE..."
                   value={singleRead ?? ""}
                   onObjectSelect={(object: WorkspaceObject) =>
-                    setSingleRead(object.path)
+                    { setSingleRead(object.path); }
                   }
                 />
               </div>
@@ -364,9 +364,9 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
                         <Select
                           items={strategyOptions}
                           value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null && field.handleChange(value)
-                          }
+                          onValueChange={(value) => {
+                            if (value != null) field.handleChange(value);
+                          }}
                         >
                           <SelectTrigger className="service-card-select-trigger">
                             <SelectValue placeholder="Select strategy" />
@@ -396,9 +396,9 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
                         <Select
                           items={moduleOptions}
                           value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null && field.handleChange(value)
-                          }
+                          onValueChange={(value) => {
+                            if (value != null) field.handleChange(value);
+                          }}
                         >
                           <SelectTrigger className="service-card-select-trigger">
                             <SelectValue placeholder="Select" />
@@ -425,7 +425,7 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
                   <FieldItem>
                     <OutputFolder
                       value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
+                      onChange={(value) => { field.handleChange(value); }}
                     />
                     <FieldErrors field={field} />
                   </FieldItem>
@@ -438,7 +438,7 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
                     <OutputFolder
                       variant="name"
                       value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
+                      onChange={(value) => { field.handleChange(value); }}
                       outputFolderPath={outputPath}
                       onValidationChange={setIsOutputNameValid}
                     />

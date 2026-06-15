@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
 import { CodeMirrorViewer } from "../codemirror-viewer";
+import { getLanguageExtension } from "../codemirror-languages";
 
 const mockTriggerDownload = vi.fn();
 
@@ -10,7 +11,7 @@ vi.mock("@/lib/utils", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/lib/utils")>();
   return {
     ...actual,
-    triggerDownload: (...args: unknown[]) => mockTriggerDownload(...args),
+    triggerDownload: (...args: unknown[]): void => { mockTriggerDownload(...args); },
   };
 });
 
@@ -148,6 +149,25 @@ describe("CodeMirrorViewer", () => {
     expect(
       screen.queryByText("Download full file"),
     ).not.toBeInTheDocument();
+  });
+
+  it("does not throw when unmounted before language extension resolves", async () => {
+    let resolveLanguage!: (value: null) => void;
+    vi.mocked(getLanguageExtension).mockImplementationOnce(
+      () => new Promise<null>((resolve) => { resolveLanguage = resolve; }),
+    );
+
+    const { unmount } = render(
+      <CodeMirrorViewer filePath="/user/race.txt" fileName="race.txt" />,
+    );
+
+    // Unmount while getLanguageExtension is still pending — entry.view is null at this point.
+    // Without the ?. guard this would throw: "Cannot read properties of null (reading 'destroy')"
+    expect(() => { unmount(); }).not.toThrow();
+
+    // Let init() reach the isDestroyed() guard and exit cleanly
+    resolveLanguage(null);
+    await Promise.resolve();
   });
 
   it("download button in truncation banner triggers download", async () => {

@@ -16,17 +16,23 @@ export interface SimilarGenomeFinderResultRow {
 /**
  * Convert columnar result { genome_id: [...], distance: [...] } to row array.
  */
+function asUnknownArray(value: unknown): unknown[] | undefined {
+  return Array.isArray(value) ? (value as unknown[]) : undefined;
+}
+
 function columnarToRows(result: Record<string, unknown>): unknown[] {
   const ids = result.genome_id ?? result.genomeId ?? result.id;
-  const arr = Array.isArray(ids) ? ids : [];
+  const arr = Array.isArray(ids) ? (ids as unknown[]) : [];
   if (arr.length === 0) return [];
-  const dist = (result.distance ?? result.dist) as unknown[] | undefined;
-  const pval = (result.pvalue ?? result.p_value) as unknown[] | undefined;
-  const cnt = (result.counts ?? result.kmer_count) as unknown[] | undefined;
-  return arr.map((id, i) => ({
+  const dist = asUnknownArray(result.distance) ?? asUnknownArray(result.dist);
+  const pval = asUnknownArray(result.pvalue) ?? asUnknownArray(result.p_value);
+  const cnt = asUnknownArray(result.counts) ?? asUnknownArray(result.kmer_count);
+  const names = asUnknownArray(result.genome_name);
+  const organisms = asUnknownArray(result.organism_name);
+  return arr.map((id: unknown, i) => ({
     genome_id: id,
-    genome_name: (result.genome_name as unknown[])?.[i],
-    organism_name: (result.organism_name as unknown[])?.[i],
+    genome_name: names?.[i],
+    organism_name: organisms?.[i],
     distance: dist?.[i],
     pvalue: pval?.[i],
     counts: cnt?.[i],
@@ -53,7 +59,7 @@ function extractMinhashArray(payload: unknown): unknown[] {
     if (Array.isArray(r[0])) return r[0] as unknown[];
     if (Array.isArray(r.genome_id ?? r.genomeId)) return columnarToRows(r);
     const values = Object.values(r);
-    if (values.length > 0 && Array.isArray(values[0])) return values.flat() as unknown[];
+    if (values.length > 0 && Array.isArray(values[0])) return values.flat();
   }
   if (Array.isArray(obj.data)) return obj.data;
   if (Array.isArray(obj.hits)) return obj.hits;
@@ -92,14 +98,14 @@ export function parseMinhashResultPayload(
     const genomeId =
       getFirstDefined(row, "genome_id", "genomeId", "genome ID", "id", "ref", "reference") ??
       (arrRow[0] !== undefined ? String(arrRow[0]) : "");
-    const distanceVal = getFirstDefined(row, "distance") ?? arrRow[1];
-    const pvalueVal = getFirstDefined(row, "pvalue", "p_value") ?? arrRow[2];
-    const countsVal = getFirstDefined(row, "counts", "kmer_count") ?? arrRow[3];
+    const distanceVal: unknown = getFirstDefined(row, "distance") ?? arrRow[1];
+    const pvalueVal: unknown = getFirstDefined(row, "pvalue", "p_value") ?? arrRow[2];
+    const countsVal: unknown = getFirstDefined(row, "counts", "kmer_count") ?? arrRow[3];
     return {
-      genome_id: String(genomeId),
-      genome_name: String(getFirstDefined(row, "genome_name", "genomeName", "genome name") ?? ""),
+      genome_id: typeof genomeId === 'string' ? genomeId : (typeof genomeId === 'number' || typeof genomeId === 'boolean' ? String(genomeId) : ""),
+      genome_name: String((getFirstDefined(row, "genome_name", "genomeName", "genome name") as string | number | undefined) ?? ""),
       organism_name: String(
-        getFirstDefined(row, "organism_name", "organismName", "organism name", "organism") ?? "",
+        (getFirstDefined(row, "organism_name", "organismName", "organism name", "organism") as string | number | undefined) ?? "",
       ),
       distance: parseNum(distanceVal),
       pvalue: parseNum(pvalueVal),
@@ -116,7 +122,7 @@ export function mergeGenomeResults(
   const byId = new Map<string, Record<string, string>>();
   for (const row of genomeApiResults) {
     const id = row.genome_id;
-    if (id) byId.set(String(id).trim(), row);
+    if (id) byId.set(id.trim(), row);
   }
 
   function getFirstNonEmptyString(
@@ -124,8 +130,8 @@ export function mergeGenomeResults(
     ...keys: string[]
   ): string {
     for (const k of keys) {
-      const v = getFirstDefined(row, k);
-      if (v != null && String(v).trim() !== "") return String(v);
+      const v = getFirstDefined(row, k) as string | undefined;
+      if (v != null && v.trim() !== "") return v;
     }
     return "";
   }

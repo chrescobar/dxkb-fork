@@ -27,7 +27,7 @@ describe("POST /api/workspace/public", () => {
     const request = mockNextRequest({ method: "POST", body: {} });
 
     const response = await POST(request);
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(400);
     expect(data.error).toBe("method is required");
@@ -40,7 +40,7 @@ describe("POST /api/workspace/public", () => {
     });
 
     const response = await POST(request);
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(403);
     expect(data.error).toBe("Method not allowed for public access");
@@ -59,7 +59,7 @@ describe("POST /api/workspace/public", () => {
     });
 
     const response = await POST(request);
-    const data = await response.json();
+    const data = (await response.json()) as typeof upstreamResult;
 
     expect(response.status).toBe(200);
     expect(data).toEqual(upstreamResult);
@@ -157,7 +157,7 @@ describe("POST /api/workspace/public", () => {
     });
 
     const response = await POST(request);
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(500);
     expect(data.error).toBe("Internal server error");

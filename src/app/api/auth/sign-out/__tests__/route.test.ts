@@ -16,7 +16,7 @@ beforeEach(() => {
 describe("POST /api/auth/sign-out", () => {
   it("clears every session and impersonation cookie via cookieSession.clear() and returns { success: true }", async () => {
     const response = await POST();
-    const data = await response.json();
+    const data = (await response.json()) as { success?: boolean };
 
     expect(response.status).toBe(200);
     expect(data).toEqual({ success: true });
@@ -24,7 +24,7 @@ describe("POST /api/auth/sign-out", () => {
     // cookieSession.clear() expires all session and impersonation cookies. Asserting on
     // the full set ensures a regression that drops one of them (e.g. the vestigial
     // bvbrc_user_profile cookie) trips the test rather than silently leaking session state.
-    const clearedNames = mockCookieStore.set.mock.calls.map((call) => call[0]);
+    const clearedNames = mockCookieStore.set.mock.calls.map((call) => call[0] as string);
     expect(clearedNames).toEqual(
       expect.arrayContaining([
         "bvbrc_token",

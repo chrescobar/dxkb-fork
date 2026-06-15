@@ -19,7 +19,7 @@ export function SelectedFilters({ selected, onRemove }: SelectedFiltersProps) {
           className="text-primary-background flex items-center gap-2 rounded border-2 border-primary px-2 py-1"
         >
           <span>{f.field}: {String(f.value)}</span>
-          <button onClick={() => onRemove(idx)}>✕</button>
+          <button onClick={() => { onRemove(idx); }}>✕</button>
         </div>
       ))}
     </div>

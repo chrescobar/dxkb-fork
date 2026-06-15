@@ -81,7 +81,7 @@ export function buildOrganismNavItems(
     .filter((descriptor) => !excluded.has(descriptor.key))
     .map((descriptor) => {
       const override = overrides[descriptor.key];
-      if (override && "Component" in override && override.Component) {
+      if (override && "Component" in override) {
         return {
           key: descriptor.key,
           label: descriptor.label,

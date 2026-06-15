@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import {
   FieldItem,
   FieldLabel,
@@ -50,7 +51,6 @@ import {
   maxHitsOptions,
   pValueOptions,
   distanceOptions,
-  type SimilarGenomeFinderFormData,
 } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-schema";
 import { buildMinhashServicePayload } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-utils";
 import { similarGenomeFinderService } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-service";
@@ -88,10 +88,10 @@ export default function SimilarGenomeFinderServicePage() {
 
   const form = useForm({
     defaultValues:
-      defaultSimilarGenomeFinderFormValues as SimilarGenomeFinderFormData,
+      defaultSimilarGenomeFinderFormValues,
     validators: { onChange: similarGenomeFinderFormSchema },
     onSubmit: async ({ value }) => {
-      const data = value as SimilarGenomeFinderFormData;
+      const data = value;
 
       // In debug mode, use the hook to show the params dialog
       if (isDebugMode) {
@@ -113,7 +113,7 @@ export default function SimilarGenomeFinderServicePage() {
           toast.success("Similar Genome Finder completed successfully!", {
             description:
               response.rows.length > 0
-                ? `Results returned from Minhash service (${response.rows.length} genome${response.rows.length === 1 ? "" : "s"})`
+                ? `Results returned from Minhash service (${String(response.rows.length)} genome${response.rows.length === 1 ? "" : "s"})`
                 : "Results returned from Minhash service",
             closeButton: true,
           });
@@ -136,7 +136,7 @@ export default function SimilarGenomeFinderServicePage() {
     },
   });
 
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const runtime = useServiceRuntime({
     definition: similarGenomeFinderService,
@@ -165,7 +165,7 @@ export default function SimilarGenomeFinderServicePage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="grid grid-cols-1 gap-6 md:grid-cols-12"
       >
@@ -191,10 +191,10 @@ export default function SimilarGenomeFinderServicePage() {
                     </FieldLabel>
                     <SingleGenomeSelector
                       placeholder="e.g. Mycobacterium tuberculosis H37Rv"
-                      value={field.state.value ?? ""}
+                      value={field.state.value}
                       onChange={(value) => {
                         field.handleChange(value);
-                        if (value?.trim()) {
+                        if (value.trim()) {
                           form.setFieldValue("fasta_file", "");
                         }
                       }}
@@ -213,7 +213,7 @@ export default function SimilarGenomeFinderServicePage() {
                     <WorkspaceObjectSelector
                       preset="contigsOrReads"
                       placeholder="Select a FASTA/FASTQ file..."
-                      value={field.state.value ?? ""}
+                      value={field.state.value}
                       onObjectSelect={(object: WorkspaceObject) => {
                         field.handleChange(object.path);
                         form.setFieldValue("selectedGenomeId", "");
@@ -264,11 +264,10 @@ export default function SimilarGenomeFinderServicePage() {
                             </FieldLabel>
                             <Select
                               items={maxHitsOptions}
-                              value={(field.state.value ?? 10).toString()}
-                              onValueChange={(value) =>
-                                value != null &&
-                                field.handleChange(parseInt(value, 10))
-                              }
+                              value={field.state.value.toString()}
+                              onValueChange={(value) => {
+                                if (value != null) field.handleChange(parseInt(value, 10));
+                              }}
                             >
                               <SelectTrigger className="service-card-select-trigger">
                                 <SelectValue placeholder="Select max hits" />
@@ -302,11 +301,10 @@ export default function SimilarGenomeFinderServicePage() {
                             </FieldLabel>
                             <Select
                               items={pValueOptions}
-                              value={field.state.value?.toString() ?? "1"}
-                              onValueChange={(value) =>
-                                value != null &&
-                                field.handleChange(parseFloat(value))
-                              }
+                              value={field.state.value.toString()}
+                              onValueChange={(value) => {
+                                if (value != null) field.handleChange(parseFloat(value));
+                              }}
                             >
                               <SelectTrigger className="service-card-select-trigger">
                                 <SelectValue placeholder="Select P-value" />
@@ -340,11 +338,10 @@ export default function SimilarGenomeFinderServicePage() {
                             </FieldLabel>
                             <Select
                               items={distanceOptions}
-                              value={field.state.value?.toString() ?? "1"}
-                              onValueChange={(value) =>
-                                value != null &&
-                                field.handleChange(parseFloat(value))
-                              }
+                              value={field.state.value.toString()}
+                              onValueChange={(value) => {
+                                if (value != null) field.handleChange(parseFloat(value));
+                              }}
                             >
                               <SelectTrigger className="service-card-select-trigger">
                                 <SelectValue placeholder="Select distance" />
@@ -383,7 +380,7 @@ export default function SimilarGenomeFinderServicePage() {
                                   name="include_bacterial"
                                   checked={field.state.value}
                                   onCheckedChange={(checked) =>
-                                    field.handleChange(checked)
+                                    { field.handleChange(checked); }
                                   }
                                 />
                                 <Label
@@ -405,7 +402,7 @@ export default function SimilarGenomeFinderServicePage() {
                                   name="include_viral"
                                   checked={field.state.value}
                                   onCheckedChange={(checked) =>
-                                    field.handleChange(checked)
+                                    { field.handleChange(checked); }
                                   }
                                 />
                                 <Label
@@ -429,7 +426,7 @@ export default function SimilarGenomeFinderServicePage() {
                                 <RadioGroup
                                   value={field.state.value}
                                   onValueChange={(value) =>
-                                    field.handleChange(value)
+                                    { field.handleChange(value as "reference"); }
                                   }
                                   className="grid w-full gap-2"
                                 >

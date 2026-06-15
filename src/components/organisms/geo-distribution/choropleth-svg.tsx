@@ -81,11 +81,11 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
   ref,
 ) {
   const hoverEnter = useCallback<HoverEnter>(
-    (payload, event) => onHoverChange(payload, event),
+    (payload, event) => { onHoverChange(payload, event); },
     [onHoverChange],
   );
   const hoverLeave = useCallback<HoverLeave>(
-    () => onLeaveMap(),
+    () => { onLeaveMap(); },
     [onLeaveMap],
   );
   const [width, setWidth] = useState(800);
@@ -113,7 +113,7 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
         return;
       }
       if (resizeTimer) clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => setWidth(next), 20);
+      resizeTimer = setTimeout(() => { setWidth(next); }, 20);
     });
     ro.observe(node);
     return () => {
@@ -288,7 +288,7 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
                   size="icon-sm"
                   aria-label="Zoom in"
                   className="shadow-sm"
-                  onClick={() => zoom.scale({ scaleX: 1.4, scaleY: 1.4 })}
+                  onClick={() => { zoom.scale({ scaleX: 1.4, scaleY: 1.4 }); }}
                 >
                   <Plus />
                 </Button>
@@ -298,7 +298,7 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
                   size="icon-sm"
                   aria-label="Zoom out"
                   className="shadow-sm"
-                  onClick={() => zoom.scale({ scaleX: 1 / 1.4, scaleY: 1 / 1.4 })}
+                  onClick={() => { zoom.scale({ scaleX: 1 / 1.4, scaleY: 1 / 1.4 }); }}
                 >
                   <Minus />
                 </Button>
@@ -308,7 +308,7 @@ export const ChoroplethSvg = forwardRef<ChoroplethHandle, ChoroplethSvgProps>(fu
                   size="icon-sm"
                   aria-label="Reset zoom"
                   className="shadow-sm"
-                  onClick={() => zoom.reset()}
+                  onClick={() => { zoom.reset(); }}
                 >
                   <RotateCcw />
                 </Button>

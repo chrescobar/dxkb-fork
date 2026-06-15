@@ -62,7 +62,7 @@ const makeItem = (overrides?: Partial<WorkspaceItem>): WorkspaceItem =>
     createdAt: "2024-01-01",
     ownerId: "user@bvbrc",
     ...overrides,
-  }) as WorkspaceItem;
+  });
 
 function renderWithQueryClient(ui: React.ReactElement) {
   const queryClient = new QueryClient({

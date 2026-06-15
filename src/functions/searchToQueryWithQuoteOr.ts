@@ -39,7 +39,7 @@ export function searchToQueryWithQuoteOr(expression: string, field?: string): st
           subExp = '';
           expField = '';
         } else {
-          throw Error(`Unexpected ')' at character ${i}`);
+          throw Error(`Unexpected ')' at character ${String(i)}`);
         }
         break;
 
@@ -116,7 +116,7 @@ export function searchToQueryWithQuoteOr(expression: string, field?: string): st
           expField = exp;
           exp = '';
         } else {
-          throw Error(`Unexpected ':' at character ${i}`);
+          throw Error(`Unexpected ':' at character ${String(i)}`);
         }
         break;
 
@@ -140,7 +140,7 @@ export function searchToQueryWithQuoteOr(expression: string, field?: string): st
       }
       preOp = false;
     } else {
-      let e;
+      let e: string;
 
       if (expField) {
         e = `eq(${encodeURIComponent(expField)},${encodeURIComponent(exp)})`;

@@ -1,6 +1,7 @@
 "use client";
 
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { useState, useMemo, useEffect } from "react";
 import { ServiceHeader } from "@/components/services/service-header";
@@ -86,19 +87,18 @@ export default function ViralGenomeTreePage() {
 
   const form = useForm({
     defaultValues:
-      ViralGenomeTree.defaultViralGenomeTreeFormValues as ViralGenomeTree.ViralGenomeTreeFormData,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: ViralGenomeTree.viralGenomeTreeFormSchema as any },
+      ViralGenomeTree.defaultViralGenomeTreeFormValues,
+    validators: { onChange: ViralGenomeTree.viralGenomeTreeFormSchema },
     onSubmit: async ({ value }) => {
       await runtime.submitFormData(
-        value as ViralGenomeTree.ViralGenomeTreeFormData,
+        value,
       );
     },
   });
 
-  const sequences = useStore(form.store, (s) => s.values.sequences);
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const sequences = useSelector(form.store, (s) => s.values.sequences);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   // Update metadata fields in form when they change
   useEffect(() => {
@@ -117,13 +117,13 @@ export default function ViralGenomeTreePage() {
         if (rerunData.trim_threshold != null) {
           form.setFieldValue(
             "trim_threshold",
-            String(rerunData.trim_threshold) as never,
+            String(rerunData.trim_threshold as string | number),
           );
         }
         if (rerunData.gap_threshold != null) {
           form.setFieldValue(
             "gap_threshold",
-            String(rerunData.gap_threshold) as never,
+            String(rerunData.gap_threshold as string | number),
           );
         }
 
@@ -132,7 +132,7 @@ export default function ViralGenomeTreePage() {
             rerunData.sequences,
           );
         if (sequences.length > 0) {
-          form.setFieldValue("sequences", sequences as never);
+          form.setFieldValue("sequences", sequences);
         }
 
         const genomeMetadataFieldIds = normalizeToArray<string>(
@@ -258,7 +258,7 @@ export default function ViralGenomeTreePage() {
       setSelectedGenomeGroupObject(null);
 
       toast.success("Genome group added", {
-        description: `Added genome group with ${genomeIds.length} genome${genomeIds.length === 1 ? "" : "s"}.`,
+        description: `Added genome group with ${String(genomeIds.length)} genome${genomeIds.length === 1 ? "" : "s"}.`,
         closeButton: true,
       });
     } catch (error) {
@@ -378,7 +378,7 @@ export default function ViralGenomeTreePage() {
     setSelectedGenomeGroupObject(null);
     setSelectedAlignedFastaObject(null);
     setSelectedUnalignedFastaObject(null);
-    setMetadataFields(ViralGenomeTree.defaultMetadataFields as MetadataField[]);
+    setMetadataFields(ViralGenomeTree.defaultMetadataFields);
     setSelectedMetadataField("");
     setShowAdvanced(false);
   }
@@ -386,7 +386,7 @@ export default function ViralGenomeTreePage() {
   const selectedItemsForTable = useMemo(
     () =>
       sequences.map((seq, index) => ({
-        id: `${index}`,
+        id: String(index),
         name: ViralGenomeTreeUtils.getDisplayName(
           seq.filename.split("/").pop() || seq.filename,
         ),
@@ -411,7 +411,7 @@ export default function ViralGenomeTreePage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="grid grid-cols-1 gap-4 md:grid-cols-2"
       >
@@ -450,7 +450,7 @@ export default function ViralGenomeTreePage() {
                     type="button"
                     size="icon"
                     variant="outline"
-                    onClick={handleAddGenomeGroup}
+                    onClick={() => { void handleAddGenomeGroup(); }}
                     disabled={
                       !selectedGenomeGroupObject || isValidatingGenomeGroup
                     }
@@ -482,7 +482,7 @@ export default function ViralGenomeTreePage() {
                     type="button"
                     size="icon"
                     variant="outline"
-                    onClick={() => handleAddSequence("aligned")}
+                    onClick={() => { handleAddSequence("aligned"); }}
                     disabled={
                       !selectedAlignedFastaObject || isValidatingGenomeGroup
                     }
@@ -510,7 +510,7 @@ export default function ViralGenomeTreePage() {
                     type="button"
                     size="icon"
                     variant="outline"
-                    onClick={() => handleAddSequence("unaligned")}
+                    onClick={() => { handleAddSequence("unaligned"); }}
                     disabled={
                       !selectedUnalignedFastaObject || isValidatingGenomeGroup
                     }
@@ -526,7 +526,7 @@ export default function ViralGenomeTreePage() {
                     <SelectedItemsTable
                       title="Selected genome group / FASTA files"
                       items={selectedItemsForTable}
-                      onRemove={(id) => removeSequence(parseInt(id, 10))}
+                      onRemove={(id) => { removeSequence(parseInt(id, 10)); }}
                       className="max-h-84 overflow-y-auto"
                       allowDuplicates={false}
                       description="Selected genome groups and FASTA files will be used to construct the phylogenetic tree."
@@ -566,9 +566,9 @@ export default function ViralGenomeTreePage() {
                           label: v,
                         }))}
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
+                        onValueChange={(value) => {
+                          if (value != null) field.handleChange(value);
+                        }}
                       >
                         <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="Select" />
@@ -600,9 +600,9 @@ export default function ViralGenomeTreePage() {
                           label: v,
                         }))}
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
+                        onValueChange={(value) => {
+                          if (value != null) field.handleChange(value);
+                        }}
                       >
                         <SelectTrigger className="service-card-select-trigger">
                           <SelectValue placeholder="Select" />
@@ -644,12 +644,12 @@ export default function ViralGenomeTreePage() {
                     <FieldItem>
                       <RadioGroup
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null &&
-                          field.handleChange(
-                            value as ViralGenomeTree.ViralGenomeTreeFormData["recipe"],
-                          )
-                        }
+                        onValueChange={(value) => {
+                          if (value != null)
+                            field.handleChange(
+                              value as ViralGenomeTree.ViralGenomeTreeFormData["recipe"],
+                            );
+                        }}
                         className="service-radio-group-horizontal"
                       >
                         <div className="flex items-center gap-3">
@@ -680,9 +680,9 @@ export default function ViralGenomeTreePage() {
                           label: m.label,
                         }))}
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
+                        onValueChange={(value) => {
+                          if (value != null) field.handleChange(value);
+                        }}
                       >
                         <SelectTrigger
                           id="model"
@@ -767,9 +767,9 @@ export default function ViralGenomeTreePage() {
                         .filter((f) => !f.isLabel)
                         .map((f) => ({ value: f.value, label: f.label }))}
                       value={selectedMetadataField}
-                      onValueChange={(value) =>
-                        value != null && handleMetadataSelection(value)
-                      }
+                      onValueChange={(value) => {
+                        if (value != null) handleMetadataSelection(value);
+                      }}
                     >
                       <SelectTrigger className="service-card-select-trigger">
                         <SelectValue placeholder="Select field" />
@@ -829,7 +829,7 @@ export default function ViralGenomeTreePage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => removeMetadataField(field.id)}
+                              onClick={() => { removeMetadataField(field.id); }}
                               className="size-6 text-destructive hover:text-destructive/90"
                             >
                               <X size={14} />

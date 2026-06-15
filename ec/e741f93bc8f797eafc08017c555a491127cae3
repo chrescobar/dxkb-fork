@@ -1,0 +1,19 @@
+eslint.config.mjs
+  s_374566102cf319::t_3b1c1f3db0dfcc 76-80,85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "ece741f93bc8f797eafc08017c555a491127cae3",
+  "prompts": {},
+  "sessions": {
+    "s_374566102cf319": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1514081a-3a6d-4818-9a6f-1cf3e778cc85",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

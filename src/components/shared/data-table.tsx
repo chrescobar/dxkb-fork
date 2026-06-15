@@ -112,13 +112,12 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
   // Sync when parent provides controlled pageIndex/pageSize values
   useEffect(() => {
-    if (pageIndex !== undefined && pageIndex !== pagination.pageIndex) {
-      setPagination((prev) => ({ ...prev, pageIndex }));
-    }
-    if (pageSize !== undefined && pageSize !== pagination.pageSize) {
-      setPagination((prev) => ({ ...prev, pageSize }));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setPagination((prev) => {
+      const next = { ...prev };
+      if (pageIndex !== undefined && pageIndex !== prev.pageIndex) next.pageIndex = pageIndex;
+      if (pageSize !== undefined && pageSize !== prev.pageSize) next.pageSize = pageSize;
+      return next;
+    });
   }, [pageIndex, pageSize]);
 
   const lastSelectedIndexRef = useRef<number | null>(null);

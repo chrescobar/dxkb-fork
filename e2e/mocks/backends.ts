@@ -19,6 +19,25 @@ export interface JsonOverrideBodyContext {
   callIndex: number;
 }
 
+/**
+ * Response body shape for a {@link JsonOverride}. Covers every JSON-serializable
+ * primitive, plain object, and array — plus a factory function that receives
+ * `{ parsedBody, callIndex }` and returns the body for that call. The factory
+ * branch lets a single mock evolve between calls (e.g. a workspace listing that
+ * gains a new row after an upload completes).
+ *
+ * `object` is intentional (not `Record<string, unknown>`) so typed object
+ * literals without an index signature — `MockJob`, `mockUserProfile`, etc. —
+ * satisfy this alias without per-call-site casts.
+ */
+export type JsonOverrideBody =
+  | object
+  | string
+  | number
+  | boolean
+  | null
+  | ((ctx: JsonOverrideBodyContext) => unknown);
+
 export interface JsonOverride {
   url: string | RegExp;
   method?: string;
@@ -28,8 +47,7 @@ export interface JsonOverride {
    * returns the body for that call — used when a single mock needs to evolve between calls
    * (e.g. a workspace listing that gains a new row after an upload completes).
    */
-  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents -- body must accept any JSON-serializable value; the union with unknown is intentional to allow typed objects without index signatures
-  body?: unknown | ((ctx: JsonOverrideBodyContext) => unknown);
+  body?: JsonOverrideBody;
   headers?: Record<string, string>;
   /**
    * Optional predicate against the parsed JSON request body. Lets multiple overrides share the

@@ -194,8 +194,7 @@ describe("useServiceRuntime", () => {
       serviceName: "GenomeAssembly2",
       displayName: "Genome Assembly",
       defaultValues: { output_path: "", output_file: "", flag: false },
-      // eslint-disable-next-line @typescript-eslint/unbound-method -- transformParams is a plain arrow function that does not use `this`
-      transformParams: exampleDefinition.transformParams,
+      transformParams: (data) => exampleDefinition.transformParams(data),
       rerun: {
         defaultOutputPath: null,
         onApply: definitionOnApply,

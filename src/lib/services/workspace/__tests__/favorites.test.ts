@@ -4,14 +4,14 @@ import {
   loadFavorites,
   toggleFavorite,
 } from "@/lib/services/workspace/favorites";
-import { workspaceApi } from "@/lib/services/workspace/client";
 
-vi.mock("@/lib/services/workspace/client", () => ({
-  workspaceApi: { makeRequest: vi.fn() },
+const { mockMakeRequest } = vi.hoisted(() => ({
+  mockMakeRequest: vi.fn(),
 }));
 
-// eslint-disable-next-line @typescript-eslint/unbound-method -- vi.fn() mock does not use `this`
-const mockMakeRequest = vi.mocked(workspaceApi).makeRequest;
+vi.mock("@/lib/services/workspace/client", () => ({
+  workspaceApi: { makeRequest: mockMakeRequest },
+}));
 
 describe("favorites", () => {
   describe("getFavoritesFilePath", () => {

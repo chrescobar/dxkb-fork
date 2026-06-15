@@ -1,0 +1,19 @@
+.claude/CLAUDE.md
+  s_374566102cf319::t_eb496b142fba0e 91-99
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "58eca7b5d238c8c0b74bb0cb1baad21abfb6cf36",
+  "prompts": {},
+  "sessions": {
+    "s_374566102cf319": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1514081a-3a6d-4818-9a6f-1cf3e778cc85",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

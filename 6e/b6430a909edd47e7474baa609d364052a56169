@@ -1,0 +1,27 @@
+src/contexts/workspace-panel-context.tsx
+  s_374566102cf319::t_94651517996367 54,58,60-70
+src/hooks/services/workspace/use-workspace-filtered-items.ts
+  s_374566102cf319::t_94651517996367 18,20-26,28-30,32-37,39
+src/components/filterbar/facet-panel.tsx
+  s_374566102cf319::t_94651517996367 3,64-66
+src/app/services/(genomics)/blast/page.tsx
+  s_374566102cf319::t_94651517996367 6,99-104,106,119
+src/components/ui/carousel.tsx
+  s_374566102cf319::t_94651517996367 70,72,74,76-86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "6eb6430a909edd47e7474baa609d364052a56169",
+  "prompts": {},
+  "sessions": {
+    "s_374566102cf319": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1514081a-3a6d-4818-9a6f-1cf3e778cc85",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

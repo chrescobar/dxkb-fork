@@ -24,6 +24,13 @@ export async function fetchTaxonNameById(
   }
 }
 
+interface TaxonomyForm {
+  setFieldValue: (
+    field: "taxonomy_id" | "scientific_name",
+    value: string,
+  ) => void;
+}
+
 /**
  * Sets `taxonomy_id` immediately, then looks up the taxon name and sets
  * `scientific_name` when resolved. Services with extra post-resolution work
@@ -34,8 +41,7 @@ export async function fetchTaxonNameById(
  */
 export function applyTaxonomyIdWithLookup(
   taxonomyId: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: { setFieldValue: (field: any, value: any) => void },
+  form: TaxonomyForm,
   onResolved?: (taxonName: string) => void,
 ): void {
   form.setFieldValue("taxonomy_id", taxonomyId);

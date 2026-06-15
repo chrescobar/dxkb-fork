@@ -1,0 +1,322 @@
+e2e/tests/taxonomy-map.spec.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-105
+src/app/(views)/taxonomy/[taxonId]/views/overview.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-75
+src/components/organisms/metadata-distributions/_shared/use-stacked-chart-highlight.ts
+  s_3d5671008e42f1::t_1decdb2161686f 48
+  s_3d5671008e42f1::t_0af49217991e98 1-47,49-50
+public/maps/countries-110m.json
+  s_3d5671008e42f1::t_0af49217991e98 1
+src/app/(views)/taxonomy/[taxonId]/_config.ts
+  s_3d5671008e42f1::t_5e8e730bc5211b 33
+  s_3d5671008e42f1::t_0af49217991e98 1-32,34-40
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_3d5671008e42f1::t_1451de596b51d9 484
+  s_3d5671008e42f1::t_43bbd88750d376 309
+  s_3d5671008e42f1::t_dae62038757f58 358
+  s_3d5671008e42f1::t_296ec798038812 516,519
+  s_3d5671008e42f1::t_2f32a855b67f28 545
+  s_3d5671008e42f1::t_c80441bf0bb6ee 373
+  s_3d5671008e42f1::t_62f492e41646f9 466
+  s_3d5671008e42f1::t_ffdbbf392b5844 247
+  s_3d5671008e42f1::t_0af49217991e98 237-246,248-249,253-267,269-284,286-306,308,310-321,323-326,328-329,331-342,346-357,361-372,374-377,379-381,383,385-401,404-405,408-425,427,429-451,454-465,467-483,486-510,512-515,517-518,520-544,548-549
+  s_3d5671008e42f1::t_19c423cb75964d 307
+  s_3d5671008e42f1::t_2d73882b0afd05 359-360
+  s_3d5671008e42f1::t_a2353c2bf6ab1c 322
+  s_3d5671008e42f1::t_aabbadb565466b 402-403,406-407
+  s_3d5671008e42f1::t_7a972facc4a86c 327,330
+  s_3d5671008e42f1::t_a3eb78347d0e14 343
+  s_3d5671008e42f1::t_824372d78afdfa 511
+  s_3d5671008e42f1::t_3e36352bd09911 250-252
+  s_3d5671008e42f1::t_d9010014e78895 546-547
+  s_3d5671008e42f1::t_bfa73822495dc9 344-345
+  s_3d5671008e42f1::t_a080d8f63f7a81 485
+  s_3d5671008e42f1::t_0dd4fa23f9b7ed 285
+  s_3d5671008e42f1::t_3f72dfcd72250a 452
+  s_3d5671008e42f1::t_7cbdf743d0c466 378,382,384
+  s_3d5671008e42f1::t_7e3173efe97556 21
+  s_3d5671008e42f1::t_682268bf64c79e 268
+  s_3d5671008e42f1::t_7e4c8994a54dc3 426,428
+  s_3d5671008e42f1::t_ce368b0bc9fd7d 453
+  s_3d5671008e42f1::t_2e64e6dbbb2976 12-20,22-25
+src/app/globals.css
+  s_3d5671008e42f1::t_0af49217991e98 8-30,59-63,98-107,127,138-147
+src/components/organisms/geo-distribution/us-states-layer.tsx
+  s_3d5671008e42f1::t_faa3c91e39cbeb 59
+  s_3d5671008e42f1::t_0af49217991e98 1-52,54-58,60-72
+  s_3d5671008e42f1::t_f97ac61bce08a8 53
+src/components/organisms/metadata-distributions/_shared/chart-status-message.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-23
+src/components/organisms/metadata-distributions/_shared/__tests__/y-axis-ticks.test.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-36
+src/components/organisms/metadata-distributions/_shared/use-svg-band-pointer.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-27,29-36
+  s_3d5671008e42f1::t_2173ba7261d93a 28
+src/components/organisms/geo-distribution/__tests__/topology-utils.test.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-65
+src/components/organisms/metadata-distributions/_shared/__tests__/year-data.test.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-64
+src/components/organisms/metadata-distributions/metadata-distributions.tsx
+  s_3d5671008e42f1::t_141d3219477214 49-51
+  s_3d5671008e42f1::t_9d6ae06af467e3 43
+  s_3d5671008e42f1::t_051d7e89150a0b 84
+  s_3d5671008e42f1::t_17315eaf40d74f 89
+  s_3d5671008e42f1::t_b02edb34043627 44-48
+  s_3d5671008e42f1::t_0af49217991e98 1,3-4,6-9,14-17,19-20,22,28-42,52,58,60-83,85-88,90-118,121,123,126,130-165
+src/components/ui/scroll-area.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1,3-4,6,28,52,55
+src/components/organisms/landing-shell/landing-shell.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-2,15,29,49
+src/components/organisms/metadata-distributions/__tests__/metadata-distributions.test.tsx
+  s_3d5671008e42f1::t_0af49217991e98 9-25,28-36,55-189
+src/lib/services/organisms/__tests__/amr-distribution.test.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-176
+.gitignore
+  s_3d5671008e42f1::t_0af49217991e98 53-55,73
+e2e/tests/organisms/all.spec.ts
+  s_3d5671008e42f1::t_0af49217991e98 24
+src/components/organisms/shared/__tests__/default-nav-items.test.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-113
+src/components/organisms/geo-distribution/topology-utils.ts
+  s_3d5671008e42f1::t_4a8e11e86447b0 49,55
+  s_3d5671008e42f1::t_2f46687053ef88 32,37-38,45
+  s_3d5671008e42f1::t_7d1c193d2cb3e2 36,44
+  s_3d5671008e42f1::t_0af49217991e98 1-31,33-35,39-43,46-48,50-54,56
+src/components/organisms/geo-distribution/choropleth-path.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-59
+public/maps/states-10m.json
+  s_3d5671008e42f1::t_0af49217991e98 1
+src/components/organisms/geo-distribution/__tests__/color-scale.test.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-112
+src/components/organisms/shared/default-nav-items.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-83,85-103
+  s_3d5671008e42f1::t_9f3ba08d3957f0 84
+src/app/organisms/bacteria/_components/nav-items.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1,6-8
+src/lib/services/organisms/__tests__/cgmlst-distribution.test.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-63
+src/components/organisms/genera-grid/featured-genera-data.ts
+  s_3d5671008e42f1::t_0af49217991e98 25
+src/lib/services/organisms/__tests__/taxonomic-distribution.test.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-77
+src/components/organisms/metadata-distributions/__tests__/amr-bar-stack-chart.test.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-195
+src/components/organisms/metadata-distributions/_shared/__tests__/use-svg-band-pointer.test.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-72
+src/components/organisms/metadata-distributions/amr-bar-stack-chart.tsx
+  s_3d5671008e42f1::t_eb145e740ddf47 332
+  s_3d5671008e42f1::t_0af49217991e98 1-74,76-220,222,224-231,233-279,281-283,285-331,333-345,347-356,358-398,400-409
+  s_3d5671008e42f1::t_0f3b584d8cc233 75
+  s_3d5671008e42f1::t_7e589b5b6ef946 280
+  s_3d5671008e42f1::t_fa263bd14987a1 221,223
+  s_3d5671008e42f1::t_89f62d5d7b9ed8 346
+  s_3d5671008e42f1::t_2b6727f135508a 399
+  s_3d5671008e42f1::t_c19913a984ec40 284
+  s_3d5671008e42f1::t_d1e41c8c42fccc 357
+  s_3d5671008e42f1::t_15a3be1273d70e 232
+src/lib/services/organisms/reference-genomes.ts
+  s_3d5671008e42f1::t_208af5bdf4c9a3 21
+  s_3d5671008e42f1::t_5e0ddffbe1102c 47
+  s_3d5671008e42f1::t_0af49217991e98 1-20,22-46,48-56
+src/lib/services/organisms/serotype-distribution.ts
+  s_3d5671008e42f1::t_bda326349b4a6c 67
+  s_3d5671008e42f1::t_0af49217991e98 1-66,68-77
+src/styles/themes/bvbrc-theme.css
+  s_3d5671008e42f1::t_0af49217991e98 21-30,50,61-70
+src/styles/themes/orange-theme.css
+  s_3d5671008e42f1::t_0af49217991e98 26-30,50,66-70
+src/lib/services/organisms/metadata-facets.ts
+  s_3d5671008e42f1::t_0af49217991e98 4,13,16-18,20,30,32-40
+src/components/organisms/geo-distribution/geo-distribution.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-28
+src/lib/services/organisms/taxonomy.ts
+  s_3d5671008e42f1::t_cceff9719b72b7 37
+  s_3d5671008e42f1::t_0af49217991e98 18-36,38-41,54-57,68
+src/lib/services/organisms/types.ts
+  s_3d5671008e42f1::t_0af49217991e98 15,30-68
+src/lib/services/organisms/amr-distribution.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-16,18-29,31,35-61
+  s_3d5671008e42f1::t_e047a93be5f3d2 17
+  s_3d5671008e42f1::t_94eefff6bc065b 30,32-34
+src/components/organisms/metadata-distributions/__tests__/area-chart.test.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-72
+src/components/organisms/taxon-breadcrumb.tsx
+  s_3d5671008e42f1::t_072f60ab25ed4b 46
+  s_3d5671008e42f1::t_60d8a4325abf69 51
+  s_3d5671008e42f1::t_0af49217991e98 1-45,47-50,52-71
+src/lib/services/organisms/__tests__/serotype-distribution.test.ts
+  s_3d5671008e42f1::t_7ba583df1dd680 119
+  s_3d5671008e42f1::t_0af49217991e98 1-118,120-198
+src/styles/themes/violet-theme.css
+  s_3d5671008e42f1::t_0af49217991e98 26-30,50,66-70
+src/components/organisms/geo-distribution/color-legend.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-13,15-31
+  s_3d5671008e42f1::t_8827ef85741732 14
+src/components/organisms/metadata-distributions/area-chart.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-76,78-101,103-110,112-118,121-152,154-224
+  s_3d5671008e42f1::t_1b794f901c11c3 102,111
+  s_3d5671008e42f1::t_aad5ad3a1845f1 77
+  s_3d5671008e42f1::t_c3aeb36c4154a2 119-120
+  s_3d5671008e42f1::t_996429089f1e4e 153
+src/app/(views)/taxonomy/[taxonId]/page.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-56
+src/components/organisms/facet-label.ts
+  s_3d5671008e42f1::t_0af49217991e98 5-6
+src/components/organisms/__tests__/taxon-breadcrumb.test.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-126
+src/app/organisms/all/_components/nav-items.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1,6-12
+src/lib/services/organisms/__tests__/taxonomy.test.ts
+  s_3d5671008e42f1::t_0af49217991e98 3-6,37,52-116
+src/components/organisms/reference-genomes/reference-genomes.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-8
+src/components/organisms/geo-distribution/geo-distribution-skeleton.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-22
+src/components/organisms/geo-distribution/color-scale.ts
+  s_3d5671008e42f1::t_787c01810cbdef 108
+  s_3d5671008e42f1::t_beabb319c74c4b 85
+  s_3d5671008e42f1::t_0af49217991e98 1-22,24-36,38-84,86-107,109-127
+  s_3d5671008e42f1::t_80a1a53358a86a 37
+  s_3d5671008e42f1::t_f3aba5ea4f502e 23
+src/components/organisms/reference-genomes/reference-genomes-client.tsx
+  s_3d5671008e42f1::t_e5e6e8eb059659 41,45
+  s_3d5671008e42f1::t_5a81bdffd35f70 151
+  s_3d5671008e42f1::t_0af49217991e98 1-40,42-44,46-150,152-203
+src/components/organisms/geo-distribution/map-controls.tsx
+  s_3d5671008e42f1::t_0a6ec09203f27d 39,42,45
+  s_3d5671008e42f1::t_0af49217991e98 1-38,40-41,43-44,46-100
+src/components/organisms/metadata-distributions/_shared/year-data.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-19
+src/lib/__tests__/recent-workspace-folders.test.ts
+  s_3d5671008e42f1::t_0af49217991e98 8-14,16-23
+  s_3d5671008e42f1::t_9ed24bd3334635 15
+src/components/organisms/geo-distribution/map-tooltip.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-21,23-68
+  s_3d5671008e42f1::t_1933381d9a70c5 22
+src/components/organisms/taxonomy-summary/taxonomy-summary.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-19,21-60
+  s_3d5671008e42f1::t_b6c80e5f80d962 20
+e2e/tests/a11y.spec.ts
+  s_3d5671008e42f1::t_0af49217991e98 161-202,205-208
+  s_3d5671008e42f1::t_17619dd481e526 203-204
+src/components/organisms/types.ts
+  s_3d5671008e42f1::t_0af49217991e98 39,42-45
+src/lib/services/organisms/chart-utils.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-58
+src/components/organisms/geo-distribution/map-constants.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-2
+src/components/organisms/metadata-distributions/__tests__/bar-stack-chart.test.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-131
+src/lib/services/organisms/__tests__/geo-distribution.test.ts
+  s_3d5671008e42f1::t_08f49f16de54a0 296-298
+  s_3d5671008e42f1::t_0af49217991e98 1-295,299-304,306-325
+  s_3d5671008e42f1::t_93dd39169ebeb4 305
+src/components/organisms/reference-genomes/__tests__/reference-genomes-client.test.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-107
+src/components/organisms/geo-distribution/types.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-11
+src/styles/themes/zinc-theme.css
+  s_3d5671008e42f1::t_0af49217991e98 26-30,66-70
+.claude/CLAUDE.md
+  s_3d5671008e42f1::t_0af49217991e98 130-133
+src/components/organisms/geo-distribution/state-counties-layer.tsx
+  s_3d5671008e42f1::t_d6b12311dffc04 61
+  s_3d5671008e42f1::t_0af49217991e98 1-55,57-60,62-70
+  s_3d5671008e42f1::t_456f4e1b544da0 56
+src/components/organisms/geo-distribution/world-countries-layer.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-59,61-65,67-76
+  s_3d5671008e42f1::t_bad0b7eacf8e9d 66
+  s_3d5671008e42f1::t_9b8e4b3c1fe697 60
+src/lib/services/organisms/cgmlst-distribution.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-39
+src/components/organisms/reference-genomes/reference-genomes-skeleton.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-20
+src/components/organisms/geo-distribution/geo-distribution-client.tsx
+  s_3d5671008e42f1::t_c243ddf91cc4b4 108
+  s_3d5671008e42f1::t_ec083b8832c8ab 38
+  s_3d5671008e42f1::t_526e039514d0aa 99
+  s_3d5671008e42f1::t_0af49217991e98 1-37,39-98,100-107,109-197,199-230
+  s_3d5671008e42f1::t_f3e094c57152f7 198
+src/components/organisms/metadata-distributions/_shared/__tests__/chart-legend-pill.test.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-201
+src/components/organisms/metadata-distributions/_shared/chart-dimensions.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-22
+src/app/(views)/taxonomy/[taxonId]/__tests__/page.test.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-20,22-201
+  s_3d5671008e42f1::t_1d92dff84538dd 21
+src/components/organisms/metadata-distributions/_shared/chart-legend-pill.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-90
+src/components/organisms/landing-shell/__tests__/landing-nav.test.tsx
+  s_3d5671008e42f1::t_0af49217991e98 61-88
+src/components/organisms/metadata-distributions/_shared/y-axis-ticks.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-37
+src/lib/services/organisms/geo-distribution.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-134,139-140,142-156
+  s_3d5671008e42f1::t_ccf40d2b3cf25d 141
+  s_3d5671008e42f1::t_77f1f7a11b1b88 135-138
+src/components/organisms/taxonomy-summary/taxonomy-summary-skeleton.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-11
+src/app/(views)/taxonomy/layout.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-16
+src/components/organisms/geo-distribution/choropleth-svg.tsx
+  s_3d5671008e42f1::t_7a6d520473b26c 311
+  s_3d5671008e42f1::t_7c3ea8ac21a906 84,88
+  s_3d5671008e42f1::t_52fef81de3b68d 301
+  s_3d5671008e42f1::t_0af49217991e98 1-83,85-87,89-115,117-290,292-300,302-310,312-322
+  s_3d5671008e42f1::t_a45812040b53d9 291
+  s_3d5671008e42f1::t_d7d758b961a4b2 116
+src/components/organisms/taxonomy-summary/__tests__/taxonomy-summary.test.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-80
+e2e/tests/organisms/viruses.spec.ts
+  s_3d5671008e42f1::t_0af49217991e98 25
+package.json
+  s_3d5671008e42f1::t_0af49217991e98 52,60-61,89,106
+src/app/(views)/taxonomy/[taxonId]/_components/nav-items.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-33
+e2e/tests/organisms/bacteria.spec.ts
+  s_3d5671008e42f1::t_0af49217991e98 23
+public/maps/counties-10m.json
+  s_3d5671008e42f1::t_0af49217991e98 1
+src/components/organisms/landing-shell/landing-nav.tsx
+  s_3d5671008e42f1::t_0af49217991e98 33-37,45,51,91
+src/components/organisms/metadata-distributions/bar-chart.tsx
+  s_3d5671008e42f1::t_367290b069e0b4 117
+  s_3d5671008e42f1::t_69e2907209a4ef 70
+  s_3d5671008e42f1::t_04dc895b0a4a70 81,83
+  s_3d5671008e42f1::t_0af49217991e98 1-69,71-80,82,84-116,118-188
+src/components/organisms/metadata-distributions/bar-stack-chart.tsx
+  s_3d5671008e42f1::t_91e6504c1581e0 262,264
+  s_3d5671008e42f1::t_07af3f9ef11b9e 106
+  s_3d5671008e42f1::t_d3aa7527c520f6 234
+  s_3d5671008e42f1::t_e0855a0a019da9 158
+  s_3d5671008e42f1::t_0af49217991e98 1-105,107-157,159-233,235-261,263,265-306
+src/app/(views)/taxonomy/[taxonId]/__tests__/_config.test.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-109
+src/lib/services/organisms/__tests__/utils.test.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-412
+src/lib/services/organisms/taxonomic-distribution.ts
+  s_3d5671008e42f1::t_0af49217991e98 1-36
+docs/geo-distribution-map-react-guide.md
+  s_3d5671008e42f1::t_0af49217991e98 1-873
+src/components/organisms/metadata-distributions/_shared/__tests__/use-stacked-chart-highlight.test.ts
+  s_3d5671008e42f1::t_2c28a93d4cc717 15,23-24,30,39-40,47-48,55-56,63-64,71-72
+  s_3d5671008e42f1::t_0af49217991e98 1-14,16-22,25-29,31-38,41-46,49-54,57-62,65-70,73-76
+src/components/organisms/metadata-distributions/__tests__/bar-chart.test.tsx
+  s_3d5671008e42f1::t_0af49217991e98 1-72
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "5f57d0006b0b69c483262894e455485646c7a247",
+  "prompts": {},
+  "sessions": {
+    "s_3d5671008e42f1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d765f9e-0d58-49a8-a7aa-221c0476363d",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

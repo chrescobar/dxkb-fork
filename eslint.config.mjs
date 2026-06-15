@@ -73,14 +73,16 @@ export default defineConfig(
     },
   },
   {
-    // TanStack Table's useReactTable returns functions that can't be safely memoized,
-    // so React Compiler skips these components. The "use no memo" directive is in place
-    // at each call site. Silencing the rule here keeps the signal useful elsewhere —
-    // a new file using an incompatible hook without mitigation will still warn.
+    // TanStack Table's useReactTable and TanStack Virtual's useVirtualizer return
+    // functions and refs that can't be safely memoized, so React Compiler skips these
+    // components. The "use no memo" directive is in place at each call site. Silencing
+    // the rule here keeps the signal useful elsewhere — a new file using an
+    // incompatible hook without mitigation will still warn.
     files: [
       "src/components/shared/data-table.tsx",
       "src/components/shared/file-table.tsx",
       "src/components/workspace/file-viewer/viewers/csv-viewer.tsx",
+      "src/components/organisms/reference-genomes/reference-genomes-client.tsx",
     ],
     rules: {
       "react-hooks/incompatible-library": "off",

@@ -1,0 +1,24 @@
+src/lib/recent-workspace-folders.ts
+  s_0d580176ec0ea8::t_3d8fc412523419 27,30-31
+vitest.setup.ts
+  s_0d580176ec0ea8::t_600f8ed53fa52e 16
+  s_0d580176ec0ea8::t_5deebcebc66889 10
+  s_0d580176ec0ea8::t_2e918028b7be31 9
+  s_0d580176ec0ea8::t_765cf77660791c 4-8,11-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "6669923b65ffd4039051bc67a5ef1e8878e4e9f5",
+  "prompts": {},
+  "sessions": {
+    "s_0d580176ec0ea8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ca49035-a1d3-487e-9d2f-5fd0bae8a7fb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -140,3 +140,33 @@ Requires **Node v24** (`nvm use 24`). Vitest 4 / rolldown needs Node >= 22.
 
 # Playwright
   - All screenshots used for MCP debugging (`playwright, chrome-devtoolsm, etc.`) should be saved into `.screenshots/`. Do NOT commit these screenshots to the repository or save them into any other directory.
+
+## graphify
+
+This project has a knowledge graph at `graphify-out/` with god nodes, community structure, and cross-file relationships.
+
+### Daily agent workflow (the important rules)
+- For codebase questions, first run `graphify query "<question>"` when `graphify-out/graph.json` exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than `GRAPH_REPORT.md` or raw grep output.
+- If `graphify-out/wiki/index.md` exists, use it for broad navigation instead of raw source browsing. (It does not exist by default — it is only generated when `/graphify --wiki` has been run.)
+- Read `graphify-out/GRAPH_REPORT.md` only for broad architecture review or when `query` / `path` / `explain` do not surface enough context.
+- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost). This re-extracts only changed files using the on-disk `cache/`, so it is fast and free.
+
+### What lives in `graphify-out/`
+- `graph.html` — interactive graph visualization; open directly in any browser, no server needed
+- `graph.json` — raw graph data (nodes, edges, communities) consumed by `graphify query`
+- `GRAPH_REPORT.md` — human-readable audit (community labels, god nodes, surprising connections, suggested questions)
+- `cost.json` — cumulative token spend across runs
+- `cache/` — extraction cache that backs `graphify update`; never delete unless re-running from scratch
+- `wiki/` — only present when `--wiki` has been run; one article per community
+
+### When to use which mode
+- `graphify update .` after a code change — fast, deterministic, no Claude tokens.
+- `/graphify .` (full rebuild) only when the corpus has changed substantially (mass refactor, dependency churn, new doc/image files). Semantic extraction costs Claude tokens.
+- `/graphify add <url>` to pull an external article, doc, or web page into the corpus and re-graph; use sparingly.
+
+### Optional: post-commit auto-rebuild
+A post-commit git hook can run `graphify update .` automatically. Install only if explicitly requested — see `references/hooks.md` in the graphify skill. It is opt-in because (a) it adds latency to every commit and (b) `update` must be re-run on the worktree, not on a detached commit.
+
+### Notes
+- Graphify's `detect` step already excludes common build artifacts (`.next/`, `node_modules/`, snapshots, lockfiles, binary blobs). Do not maintain a manual exclude list unless something noisy slips through.
+- `graphify-out/` itself is auto-excluded — converted sidecars never re-enter the corpus.

@@ -1,0 +1,21 @@
+src/components/workspace/workspace-file-table.tsx
+  s_3d5671008e42f1::t_a29b75e8573fa9 263
+  s_3d5671008e42f1::t_aa7b28dafaabff 3
+  s_3d5671008e42f1::t_58e995bbe187ef 113-131
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "89c242f5bb172a831079e86d10d8dfe80312b76e",
+  "prompts": {},
+  "sessions": {
+    "s_3d5671008e42f1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d765f9e-0d58-49a8-a7aa-221c0476363d",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": null
+    }
+  }
+}

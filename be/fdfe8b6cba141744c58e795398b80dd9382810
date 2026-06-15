@@ -1,0 +1,22 @@
+src/__tests__/react-compiler-config.test.ts
+  s_374566102cf319::t_179f6788c226ac 81
+  s_374566102cf319::t_4e265de950058a 17,23-24
+  s_374566102cf319::t_857d6b0930566d 66
+  s_374566102cf319::t_219ea200e12178 1-16,18-22,25-65,67-80,82-90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "befdfe8b6cba141744c58e795398b80dd9382810",
+  "prompts": {},
+  "sessions": {
+    "s_374566102cf319": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1514081a-3a6d-4818-9a6f-1cf3e778cc85",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

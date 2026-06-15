@@ -1,0 +1,19 @@
+src/lib/forms/taxonomy-lookup.ts
+  s_3d5671008e42f1::t_7db7965f3604b9 27-33,44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "126f1f766a8a965529c7059b998d359a006df7dc",
+  "prompts": {},
+  "sessions": {
+    "s_3d5671008e42f1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d765f9e-0d58-49a8-a7aa-221c0476363d",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+src/lib/services/service-definition.ts
+  s_3d5671008e42f1::t_9cbfebe63ab5aa 40
+src/app/api/auth/change-password/__tests__/route.test.ts
+  s_3d5671008e42f1::t_319ccdb6359874 94-95,97-99
+  s_3d5671008e42f1::t_dc1e73d1cb51f4 71-75,78-80
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "2b5b7ec87710e25b10850adc4eeadbdef4676924",
+  "prompts": {},
+  "sessions": {
+    "s_3d5671008e42f1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d765f9e-0d58-49a8-a7aa-221c0476363d",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

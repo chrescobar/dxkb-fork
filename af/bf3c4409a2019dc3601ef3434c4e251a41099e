@@ -1,0 +1,25 @@
+src/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-schema.ts
+  s_0d580176ec0ea8::t_7a651cb10b6ce1 37-38,43
+  s_0d580176ec0ea8::t_f4a4718b4bfcdc 108
+src/app/api/services/genome/website-query/route.ts
+  s_0d580176ec0ea8::t_ee5e3e7a8bf753 29
+  s_0d580176ec0ea8::t_116f8ae9f467cc 18
+src/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-utils.ts
+  s_0d580176ec0ea8::t_bd1c2e5ba583e2 82,85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "afbf3c4409a2019dc3601ef3434c4e251a41099e",
+  "prompts": {},
+  "sessions": {
+    "s_0d580176ec0ea8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ca49035-a1d3-487e-9d2f-5fd0bae8a7fb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

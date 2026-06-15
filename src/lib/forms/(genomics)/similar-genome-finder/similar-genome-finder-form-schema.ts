@@ -34,14 +34,13 @@ export const similarGenomeFinderFormSchema = z
     selectedGenomeId: z.string(),
     fasta_file: z.string(),
 
-    // Output (optional - removed from UI but kept in schema for backend)
-    output_path: z.string().optional(),
+    // Output (always provided by form as "" when not filled in)
+    output_path: z.string(),
     output_file: z
       .string()
       .refine((value) => !value || !outputNameInvalidChars.test(value), {
           error: "Output name cannot contain slashes"
-    })
-      .optional(),
+    }),
 
     // Parameters
     max_pvalue: z.number().refine(
@@ -106,7 +105,7 @@ export const defaultSimilarGenomeFinderFormValues = {
   max_hits: 50,
   include_bacterial: true as boolean,
   include_viral: true as boolean,
-  scope: "reference" as const,
+  scope: "reference" as "reference" | "all",
 } satisfies Partial<z.infer<typeof similarGenomeFinderFormSchema>>;
 
 export type SimilarGenomeFinderFormData = z.infer<

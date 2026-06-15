@@ -15,7 +15,7 @@ function csvToJson(csvText: string): Record<string, string>[] {
   if (trimmed.length === 0) return [];
 
   try {
-    const records = parse(trimmed, {
+    const records = parse<Record<string, string>>(trimmed, {
       columns: true,
       skip_empty_lines: true,
       trim: true,
@@ -26,7 +26,7 @@ function csvToJson(csvText: string): Record<string, string>[] {
     return records.map((row) => {
       const out: Record<string, string> = {};
       for (const [k, v] of Object.entries(row)) {
-        out[k] = v ?? "";
+        out[k] = v;
       }
       return out;
     });

@@ -79,10 +79,10 @@ export function transformSimilarGenomeFinderParams(
     include_viral: data.include_viral ? 1 : 0,
   };
 
-  if (data.output_path?.trim()) {
+  if (data.output_path.trim()) {
     params.output_path = data.output_path.trim();
   }
-  if (data.output_file?.trim()) {
+  if (data.output_file.trim()) {
     params.output_file = data.output_file.trim();
   }
 

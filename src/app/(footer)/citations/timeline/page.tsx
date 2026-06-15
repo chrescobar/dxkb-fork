@@ -45,13 +45,11 @@ export default function CitationsTimelinePage() {
   })
 
   // Group citations by year for timeline view
-  const citationsByYear: Record<number, typeof citationsData> = {}
+  const citationsByYear: Partial<Record<number, typeof citationsData>> = {}
   sortedCitations.forEach((citation) => {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Record<number,…> index returns undefined at runtime for unseen keys; this is a standard accumulator initialization guard
-    if (!citationsByYear[citation.year]) {
-      citationsByYear[citation.year] = []
-    }
-    citationsByYear[citation.year].push(citation)
+    const list = citationsByYear[citation.year] ?? []
+    list.push(citation)
+    citationsByYear[citation.year] = list
   })
 
   // Get years in order based on sort
@@ -140,13 +138,13 @@ export default function CitationsTimelinePage() {
                       <Calendar className="size-5" />
                     </div>
                     <h2 className="ml-4 text-xl font-semibold">{year}</h2>
-                    <Badge className="ml-2">{citationsByYear[year].length} citations</Badge>
+                    <Badge className="ml-2">{(citationsByYear[year] ?? []).length} citations</Badge>
                   </div>
                   <Separator className="mt-4" />
                 </div>
 
                 <div className="mt-6 space-y-6 pl-14">
-                  {citationsByYear[year].map((citation) => (
+                  {(citationsByYear[year] ?? []).map((citation) => (
                     <div key={citation.id} className="relative">
                       <div className="absolute -left-9 mt-1 size-4 rounded-full border-2 border-primary bg-background"></div>
                       <Card>

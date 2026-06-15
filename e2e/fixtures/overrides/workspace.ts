@@ -202,16 +202,16 @@ const favoritesPath = `/${e2eUsername}/home/.preferences/favorites.json`;
  * Returns null when no match is found so callers can fall back to a 500 "not found" response.
  */
 function findKnownItem(
-  pathItems: Record<string, TupleItem[]>,
+  pathItems: Partial<Record<string, TupleItem[]>>,
   fullPath: string,
 ): TupleItem | null {
   for (const [parent, items] of Object.entries(pathItems)) {
+    if (!items) continue;
     const parentNoTrailing = parent.replace(/\/+$/, "");
     for (const item of items) {
       if (`${parentNoTrailing}/${item.name}` === fullPath) return item;
     }
   }
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Record<string,…> index returns undefined at runtime for missing keys; the type doesn't capture that
   if (pathItems[fullPath]) {
     const lastSlash = fullPath.lastIndexOf("/");
     const name = lastSlash >= 0 ? fullPath.slice(lastSlash + 1) : fullPath;

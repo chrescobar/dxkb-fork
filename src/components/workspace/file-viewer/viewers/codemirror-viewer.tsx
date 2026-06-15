@@ -390,7 +390,7 @@ export function CodeMirrorViewer({
       // Anything else (loading, streaming) must be aborted and removed.
       if (entry.status !== "done") {
         controller.abort();
-        entry.view.destroy();
+        entry.view?.destroy();
         viewCache.delete(filePath);
       }
     };

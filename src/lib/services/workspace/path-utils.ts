@@ -80,6 +80,7 @@ export function canWriteToCurrentDir({
   if (!currentDirPermissions) return false;
   const perms =
     currentDirPermissions[decodedFullPath] ?? currentDirPermissions[fullPath];
+  if (!perms) return false;
   const writePerms = new Set(["w", "a", "o"]);
   return perms.some(
     ([user, perm]) =>

@@ -22,7 +22,7 @@ export const featuredGenera: FeaturedGenus[] = [
   },
   {
     name: "Brucella",
-    href: "https://www.bv-brc.org/view/Taxonomy/234#view_tab=overview",
+    href: "/taxonomy/234",
   },
   {
     name: "Burkholderia",

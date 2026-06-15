@@ -2,7 +2,7 @@
 
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { startTransition, useState, type ReactNode } from "react";
 
 import { LandingNav } from "./landing-nav";
 import type {
@@ -15,6 +15,7 @@ interface LandingShellClientProps {
   activeView: OrganismViewKey;
   defaultView: OrganismViewKey;
   navItems: readonly OrganismLandingNavItem[];
+  headerContent?: ReactNode;
   children: ReactNode;
 }
 
@@ -23,6 +24,7 @@ export function LandingShellClient({
   activeView: serverActiveView,
   defaultView,
   navItems,
+  headerContent,
   children,
 }: LandingShellClientProps) {
   const router = useRouter();
@@ -30,7 +32,9 @@ export function LandingShellClient({
   const searchParams = useSearchParams();
   const [navCollapsed, setNavCollapsed] = useState(false);
 
-  useHotkey("Mod+B", () => { setNavCollapsed((current) => !current); });
+  useHotkey("Mod+B", () => {
+    startTransition(() => { setNavCollapsed((current) => !current); });
+  });
 
   function handleViewChange(nextView: OrganismViewKey) {
     const params = new URLSearchParams(searchParams.toString());
@@ -50,16 +54,20 @@ export function LandingShellClient({
         activeView={serverActiveView}
         collapsed={navCollapsed}
         onChange={handleViewChange}
-        onCollapseToggle={() => { setNavCollapsed((current) => !current); }}
+        onCollapseToggle={() => {
+          startTransition(() => { setNavCollapsed((current) => !current); });
+        }}
       />
       <section className="min-w-0 flex-1">
         <div className="mb-4 flex items-center justify-between rounded-lg border bg-card px-5 py-3 shadow-sm">
-          <div>
-            <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-              Organisms
-            </p>
-            <h1 className="text-2xl font-bold tracking-tight">{displayName}</h1>
-          </div>
+          {headerContent ?? (
+            <div>
+              <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
+                Organisms
+              </p>
+              <h1 className="text-2xl font-bold tracking-tight">{displayName}</h1>
+            </div>
+          )}
         </div>
         {children}
       </section>

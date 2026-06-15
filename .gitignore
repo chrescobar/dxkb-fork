@@ -50,6 +50,9 @@ next-env.d.ts
 .claude/scheduled_tasks.lock
 /plans/
 /reports/
+.superpowers
+/docs/superpowers
+
 
 # Playwright MCP
 .playwright-mcp

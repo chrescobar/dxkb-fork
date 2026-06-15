@@ -21,7 +21,7 @@ test.describe("all organisms landing page", () => {
     await expect(landing.getKpi("Genomes")).toContainText("9,800,000");
     await expect(page.getByRole("heading", { name: "Featured Organisms" })).toBeVisible();
     await expect(page.getByRole("heading", { level: 3, name: "The Three Domains" })).toBeVisible();
-    await landing.expectDonut("Host");
+    await landing.expectDonut("Host Group");
     await landing.expectDonut("Isolation Country");
 
     await page.getByRole("button", { name: /Phylogeny/ }).click();

@@ -22,7 +22,7 @@ test.describe("viruses organism landing page", () => {
     await expect(page.getByRole("heading", { name: "Virus Families" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Featured Viruses" })).toBeVisible();
     await landing.expectDonut("Family");
-    await landing.expectDonut("Host");
+    await landing.expectDonut("Host Group");
     await landing.expectDonut("Isolation Country");
 
     await page.getByRole("button", { name: /Taxonomy/ }).click();

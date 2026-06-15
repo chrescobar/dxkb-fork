@@ -1,0 +1,76 @@
+"use client";
+
+import { NaturalEarth } from "@visx/geo";
+import { memo, type RefObject } from "react";
+
+import type { OrganismGeoDistribution } from "@/lib/services/organisms/types";
+
+import {
+  ChoroplethPath,
+  type HoverEnter,
+  type HoverLeave,
+} from "./choropleth-path";
+import {
+  isUsaTopoName,
+  lookupCountryCount,
+  resolveCountryDataKey,
+  type ColorScale,
+} from "./color-scale";
+import { mapHeight } from "./map-constants";
+import { featureName, type CountryFeature } from "./topology-utils";
+
+interface WorldCountriesLayerProps {
+  countryFeatures: CountryFeature[];
+  scale: number;
+  width: number;
+  data: OrganismGeoDistribution;
+  colorScale: ColorScale;
+  isDraggingRef: RefObject<boolean>;
+  onHoverEnter: HoverEnter;
+  onHoverLeave: HoverLeave;
+  onSwitchToUs: () => void;
+}
+
+export const WorldCountriesLayer = memo(function WorldCountriesLayer({
+  countryFeatures,
+  scale,
+  width,
+  data,
+  colorScale,
+  isDraggingRef,
+  onHoverEnter,
+  onHoverLeave,
+  onSwitchToUs,
+}: WorldCountriesLayerProps) {
+  return (
+    <NaturalEarth<CountryFeature>
+      data={countryFeatures}
+      scale={scale}
+      translate={[width / 2, mapHeight / 2]}
+    >
+      {({ features }) =>
+        features.map(({ feature, path }, index) => {
+          const name = featureName(feature.properties);
+          const count = lookupCountryCount(name, data.countryData);
+          const dataKey = resolveCountryDataKey(name, data.countryData) ?? name;
+          const meta = data.countryMeta[dataKey];
+          const interactable = isUsaTopoName(name);
+          return (
+            <ChoroplethPath
+              key={`${name}-${String(index)}`}
+              pathD={path ?? ""}
+              fill={colorScale(count)}
+              strokeWidth={0.6}
+              cursor={interactable ? "pointer" : "default"}
+              isDraggingRef={isDraggingRef}
+              payload={{ view: "world", name, count, genera: meta.genera, hosts: meta.hosts }}
+              onHoverEnter={onHoverEnter}
+              onHoverLeave={onHoverLeave}
+              onClick={interactable ? onSwitchToUs : undefined}
+            />
+          );
+        })
+      }
+    </NaturalEarth>
+  );
+});

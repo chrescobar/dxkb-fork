@@ -47,7 +47,7 @@ export const UsStatesLayer = memo(function UsStatesLayer({
         features.map(({ feature, path }, index) => {
           const name = featureName(feature.properties);
           const count = data.stateData[name] ?? 0;
-          const meta = data.stateMeta[name];
+          const meta = data.stateMeta[name] ?? { count: 0, genera: {}, hosts: {} };
           return (
             <ChoroplethPath
               key={`${name}-${String(index)}`}

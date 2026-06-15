@@ -50,7 +50,7 @@ export const StateCountiesLayer = memo(function StateCountiesLayer({
           const name = featureName(feature.properties);
           const key = selectedStateName ? `${selectedStateName}|${name}` : name;
           const count = data.countyData[key] ?? 0;
-          const meta = data.countyMeta[key];
+          const meta = data.countyMeta[key] ?? { count: 0, genera: {}, hosts: {} };
           return (
             <ChoroplethPath
               key={`${name}-${String(feature.id ?? index)}`}

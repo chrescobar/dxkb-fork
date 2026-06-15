@@ -53,7 +53,7 @@ export const WorldCountriesLayer = memo(function WorldCountriesLayer({
           const name = featureName(feature.properties);
           const count = lookupCountryCount(name, data.countryData);
           const dataKey = resolveCountryDataKey(name, data.countryData) ?? name;
-          const meta = data.countryMeta[dataKey];
+          const meta = data.countryMeta[dataKey] ?? { count: 0, genera: {}, hosts: {} };
           const interactable = isUsaTopoName(name);
           return (
             <ChoroplethPath

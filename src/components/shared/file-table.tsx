@@ -269,6 +269,7 @@ function DataTableInner<T>(
   }: DataTableProps<T>,
   ref: React.Ref<DataTableHandle>,
 ) {
+  "use no memo";
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const [columnOrder, setColumnOrder] = useState<string[]>(defaultColumnOrder);
 
@@ -276,7 +277,6 @@ function DataTableInner<T>(
     focus: () => tableContainerRef.current?.focus(),
   }));
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable<T>({
     data,
     columns,

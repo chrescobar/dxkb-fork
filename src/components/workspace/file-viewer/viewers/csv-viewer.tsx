@@ -118,7 +118,6 @@ function InteractiveCsvViewer({
     });
   }, [columnNames]);
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: records,
     columns,

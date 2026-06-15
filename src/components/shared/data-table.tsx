@@ -81,6 +81,7 @@ interface DataTableProps {
 }
 
 export function DataTable({ id: _id, data, columns, totalItems, resource, onSelectionChange, onGenomeSelect, selectedIds, pageIndex, pageSize, onPageChange, sorting:controlledSorting, onSortingChange, columnOrder, onColumnOrderChange, columnVisibility: controlledVisibility, onColumnVisibilityChange: onColumnVisibilityChangeProp, rowSelection: controlledRowSelection, onRowSelectionChange, isAllPagesSelected = false, onAllPagesSelectionChange, totalSelectedCount, onDownloadAll, isLoading = false, onActiveRowChange }: DataTableProps) {
+  "use no memo";
 
   const [columnSizing, setColumnSizing] = useState<Record<string, number>>({});
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>(
@@ -319,7 +320,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     ];
   }, [columns, isAllPagesSelected, onAllPagesSelectionChange, onRowSelectionChange, renderCheckboxCell, totalItems]);
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns: columnDefs,
@@ -1047,7 +1047,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
             <div
               ref={resizeLineRef}
-              className="pointer-events-none absolute inset-y-0 z-40 w-[2px] bg-blue-600 opacity-50"
+              className="pointer-events-none absolute inset-y-0 z-40 w-0.5 bg-blue-600 opacity-50"
               style={{ display: 'none' }}
             />
           </div>

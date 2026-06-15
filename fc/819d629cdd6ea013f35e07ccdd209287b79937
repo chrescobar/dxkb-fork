@@ -1,0 +1,19 @@
+package.json
+  s_374566102cf319::t_78246077b521ad 48,109
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "fc819d629cdd6ea013f35e07ccdd209287b79937",
+  "prompts": {},
+  "sessions": {
+    "s_374566102cf319": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1514081a-3a6d-4818-9a6f-1cf3e778cc85",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

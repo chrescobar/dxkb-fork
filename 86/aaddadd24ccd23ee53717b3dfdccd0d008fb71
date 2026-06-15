@@ -1,0 +1,30 @@
+src/app/api/workspace/resolve-download.ts
+  s_3d5671008e42f1::t_0916174a8ac3fd 3
+  s_3d5671008e42f1::t_a5d804e97aeb83 51
+src/app/api/workspace/public/route.ts
+  s_3d5671008e42f1::t_66e5cb0db9c4f3 38-43
+  s_3d5671008e42f1::t_763e9a06f11457 3
+src/lib/auth/server/route.ts
+  s_3d5671008e42f1::t_920c5bdb5e0a1d 186
+  s_3d5671008e42f1::t_7997639c1cef20 46-63
+  s_3d5671008e42f1::t_1bedc27950fb57 128
+src/lib/auth/server/__tests__/route.test.ts
+  s_3d5671008e42f1::t_56e0ae47dd52e3 89-95
+  s_3d5671008e42f1::t_61a4fa40187141 170
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "86aaddadd24ccd23ee53717b3dfdccd0d008fb71",
+  "prompts": {},
+  "sessions": {
+    "s_3d5671008e42f1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d765f9e-0d58-49a8-a7aa-221c0476363d",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -44,8 +44,8 @@ export const POST = withAuth(async (request: NextRequest, { token }) => {
     );
   }
 
-  const data = (await response.json()) as unknown[] | { items?: unknown[] };
-  const results = Array.isArray(data) ? data : data.items ?? [];
+  const data = (await response.json()) as unknown[] | { items?: unknown[] } | null;
+  const results = Array.isArray(data) ? data : (data?.items ?? []);
 
   return NextResponse.json({ results });
 });

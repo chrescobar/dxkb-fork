@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth/server/instance";
-import type { Session } from "@/lib/auth/server/route";
+import { HttpResponseError, type Session } from "@/lib/auth/server/route";
 import { getRequiredEnv } from "@/lib/env";
 import { getMimeType } from "@/components/workspace/file-viewer/file-viewer-registry";
 import { safeDecode } from "@/lib/url";
@@ -48,6 +48,7 @@ export async function resolveWorkspaceDownload(
   try {
     session = await auth.requireSession();
   } catch (error) {
+    if (error instanceof HttpResponseError) return error.response;
     if (error instanceof Response) return error as NextResponse;
     throw error;
   }

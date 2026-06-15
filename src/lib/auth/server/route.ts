@@ -43,6 +43,24 @@ export interface CreateAuthHelpersOptions {
   session: SessionStoragePort;
 }
 
+/**
+ * Error carrier that wraps a NextResponse so it can be `throw`n through code
+ * paths that flow back to a `route()`-wrapped handler. The wrapper's catch
+ * unwraps this and returns `response` to the client. Exposes `status` so
+ * call sites that previously inspected the thrown NextResponse's `status`
+ * (e.g. `auth.fetch`/`auth.requireSession` consumers) continue to work.
+ */
+export class HttpResponseError extends Error {
+  constructor(public readonly response: NextResponse) {
+    super(`HTTP ${String(response.status)}`);
+    this.name = "HttpResponseError";
+  }
+
+  get status(): number {
+    return this.response.status;
+  }
+}
+
 function unauthenticatedResponse(): NextResponse {
   return NextResponse.json(
     { error: "Authentication required", code: "unauthenticated" },
@@ -107,8 +125,7 @@ export function createAuthHelpers(
   async function requireSessionInner(): Promise<SessionIdentity> {
     const session = await readSessionCached();
     if (!session) {
-      // eslint-disable-next-line @typescript-eslint/only-throw-error -- intentional: route handlers catch NextResponse throws as their error-return mechanism
-      throw unauthenticatedResponse();
+      throw new HttpResponseError(unauthenticatedResponse());
     }
     return session;
   }
@@ -166,6 +183,7 @@ export function createAuthHelpers(
             realm: session.realm,
           });
         } catch (error) {
+          if (error instanceof HttpResponseError) return error.response;
           if (error instanceof Response) return error as NextResponse;
           console.error("Route handler error:", error);
           return errorResponse(error);

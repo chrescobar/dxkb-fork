@@ -53,7 +53,6 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
           return sortDir === "asc" ? cmp : -cmp;
         });
 
-  // eslint-disable-next-line react-hooks/incompatible-library -- "use no memo" above already opts this component out of React Compiler; useVirtualizer returns refs/functions that can't be safely memoized
   const rowVirtualizer = useVirtualizer({
     count: sorted.length,
     getScrollElement: () => parentRef.current,

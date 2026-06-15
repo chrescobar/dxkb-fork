@@ -88,6 +88,15 @@ Requires **Node v24** (`nvm use 24`). Vitest 4 / rolldown needs Node >= 22.
 - SVG imports handled via `@svgr/webpack` (use `import Icon from './file.svg'` or `'./file.svg?url'` for raw URL)
 - `sonner` for toast notifications; `lucide-react` for icons
 
+**React Compiler**
+
+- The [React Compiler](https://react.dev/learn/react-compiler) is enabled via `reactCompiler: true` in `next.config.ts`. Components in this codebase are auto-memoized at build time — manual `useMemo`/`useCallback`/`React.memo` calls are no longer required for routine cases.
+- **Do not bulk-remove existing memoization.** Per official guidance, removing memoization from already-shipped code can change compilation output. Leave existing call sites in place; only remove memoization deliberately and with test coverage. Known failure mode: removing `useMemo` from a context provider's `value` object breaks downstream consumers that have `"use no memo"` (the compiler does NOT auto-memoize context values for opted-out subtrees) — a pilot sweep on 2026-06-15 hit exactly this and regressed 19 workspace e2e tests.
+- **For new code**, rely on the compiler. Reach for `useMemo`/`useCallback` only when you need precise control (e.g. an effect dependency must be stable across the *exact* same input identity).
+- **Opt-out pattern.** When a component uses a hook the compiler can't safely memoize (TanStack Table's `useReactTable`, TanStack Virtual's `useVirtualizer`, and similar libraries that return new ref-bearing objects on every render), add `"use no memo";` as the first statement inside the component function body. Existing examples: `src/components/shared/data-table.tsx`, `src/components/shared/file-table.tsx`, `src/components/workspace/file-viewer/viewers/csv-viewer.tsx`, `src/components/organisms/reference-genomes/reference-genomes-client.tsx`.
+- **ESLint companion.** `eslint-plugin-react-hooks@7+` (loaded via `eslint-config-next`) emits `react-hooks/incompatible-library` for components the compiler had to skip. Treat that lint message as the canonical signal to add (or move) a `"use no memo"` directive. The rule is selectively silenced in `eslint.config.mjs` for the four files above — extend that list when adding new opt-outs, do not blanket-disable.
+- **Verifying.** Optimized components display a `Memo ✨` badge in React DevTools. Compiled bundles include `Symbol.for("react.memo_cache_sentinel")` cache slots — `grep -l 'react.memo_cache_sentinel' .next/static/chunks -r | head -3` confirms the plugin ran. (Note: Turbopack inlines the `react/compiler-runtime` import rather than preserving the string, so grepping for the import name will return zero matches even when the compiler is active.)
+
 ### Path aliases
 
 - Imports to `src/` should use the `@/` alias.

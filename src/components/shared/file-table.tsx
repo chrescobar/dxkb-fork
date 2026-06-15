@@ -295,16 +295,10 @@ function DataTableInner<T>(
     enableColumnResizing: true,
   });
 
-  const columnSizingState = table.getState().columnSizing;
-  const columnSizingInfoState = table.getState().columnSizingInfo;
-  const columnSizeVars = useMemo(() => {
-    const colSizes: Record<string, string> = {};
-    for (const col of table.getAllFlatColumns()) {
-      colSizes[`--col-${col.id}-size`] = `${String(col.getSize())}px`;
-    }
-    return colSizes;
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- table is unstable from useReactTable
-  }, [columns, columnSizingState, columnSizingInfoState]);
+  const columnSizeVars: Record<string, string> = {};
+  for (const col of table.getAllFlatColumns()) {
+    columnSizeVars[`--col-${col.id}-size`] = `${String(col.getSize())}px`;
+  }
 
   const handleColumnDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;

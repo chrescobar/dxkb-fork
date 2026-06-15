@@ -24,10 +24,11 @@ export function getRecentFolders(userPrefix?: string): RecentFolder[] {
   try {
     const raw = localStorage.getItem(storageKey);
     if (!raw) return [];
-    const parsed = JSON.parse(raw) as RecentFolder[];
+    const parsed = JSON.parse(raw) as (RecentFolder | null | undefined)[];
     if (!Array.isArray(parsed)) return [];
     const folders = parsed.filter(
-      (f) => typeof f.path === "string" && typeof f.visitedAt === "number",
+      (f): f is RecentFolder =>
+        f != null && typeof f.path === "string" && typeof f.visitedAt === "number",
     );
     if (!userPrefix) return folders;
     const prefix = userPrefix.startsWith("/") ? userPrefix : `/${userPrefix}`;

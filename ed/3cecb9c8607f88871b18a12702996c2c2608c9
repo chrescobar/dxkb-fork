@@ -1,0 +1,19 @@
+src/app/api/services/genome/get-all-ids/route.ts
+  s_de9855d5747546::t_8061d6e2b8b468 47-48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "ed3cecb9c8607f88871b18a12702996c2c2608c9",
+  "prompts": {},
+  "sessions": {
+    "s_de9855d5747546": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6ea73420-9e92-4dde-838c-5e9acf65eca8",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

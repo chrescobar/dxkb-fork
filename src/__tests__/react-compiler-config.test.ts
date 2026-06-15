@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 
 const repoRoot = resolve(__dirname, "..", "..");
@@ -15,13 +15,13 @@ function readRepoFile(relPath: string): string {
 }
 
 function* walkFiles(dir: string, extensions: readonly string[]): Generator<string> {
-  for (const entry of readdirSync(dir)) {
-    const full = join(dir, entry);
-    const stats = statSync(full);
-    if (stats.isDirectory()) {
-      if (entry === "node_modules" || entry === ".next" || entry.startsWith("__")) continue;
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      if (entry.name === "node_modules" || entry.name === ".next" || entry.name.startsWith("__"))
+        continue;
       yield* walkFiles(full, extensions);
-    } else if (extensions.some((ext) => entry.endsWith(ext))) {
+    } else if (extensions.some((ext) => entry.name.endsWith(ext))) {
       yield full;
     }
   }
@@ -54,9 +54,25 @@ describe("React Compiler configuration", () => {
 
     const blockMatch = /"react-hooks\/incompatible-library":\s*"off"/.exec(eslintConfig);
     expect(blockMatch).not.toBeNull();
-    const blockStart = eslintConfig.lastIndexOf("files: [", blockMatch?.index);
-    const blockEnd = eslintConfig.indexOf("]", blockStart);
-    const block = eslintConfig.slice(blockStart, blockEnd);
+    const arrayStart = eslintConfig.lastIndexOf("files: [", blockMatch?.index);
+    const openBracket = eslintConfig.indexOf("[", arrayStart);
+    // Walk forward tracking bracket depth so paths containing "]" (e.g. Next.js
+    // dynamic-route segments like "[id]") don't truncate the captured block.
+    let depth = 0;
+    let arrayEnd = -1;
+    for (let i = openBracket; i < eslintConfig.length; i++) {
+      const ch = eslintConfig[i];
+      if (ch === "[") depth++;
+      else if (ch === "]") {
+        depth--;
+        if (depth === 0) {
+          arrayEnd = i;
+          break;
+        }
+      }
+    }
+    expect(arrayEnd).toBeGreaterThan(openBracket);
+    const block = eslintConfig.slice(openBracket, arrayEnd);
     const declaredPaths = [...block.matchAll(/"([^"]+\.tsx?)"/g)].map((m) => m[1]);
     expect(declaredPaths).toEqual([...optOutFiles]);
   });

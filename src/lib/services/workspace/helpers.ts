@@ -195,8 +195,7 @@ export function formatFileSize(
   return `${(bytes / (1024 * 1024 * 1024 * 1024)).toFixed(2)} TB`;
 }
 
-export function normalizeWsPath(p: string): string {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+export function normalizeWsPath(p: string | null | undefined): string {
   const trimmed = (p ?? "").trim(); // runtime guard: API can return null for path fields
   if (!trimmed) return "";
   const withLeading = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;

@@ -53,8 +53,8 @@ describe("normalizeWsPath", () => {
   });
 
   it("handles null-ish values", () => {
-    expect(normalizeWsPath(null as unknown as string)).toBe("");
-    expect(normalizeWsPath(undefined as unknown as string)).toBe("");
+    expect(normalizeWsPath(null)).toBe("");
+    expect(normalizeWsPath(undefined)).toBe("");
   });
 
   it("handles whitespace-only input", () => {

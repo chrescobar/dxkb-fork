@@ -14,15 +14,16 @@ const folderObjectTypes = new Set([
   "modelfolder",
 ]);
 
-export function normalizeWorkspaceObjectType(type: string): string {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+export function normalizeWorkspaceObjectType(
+  type: string | null | undefined,
+): string {
   return (type ?? "").toLowerCase(); // runtime guard: API responses may return null type fields
 }
 
-export function isFolderType(type: string): boolean {
+export function isFolderType(type: string | null | undefined): boolean {
   return folderLikeObjectTypes.has(normalizeWorkspaceObjectType(type));
 }
 
-export function isFolder(type: string): boolean {
+export function isFolder(type: string | null | undefined): boolean {
   return folderObjectTypes.has(normalizeWorkspaceObjectType(type));
 }

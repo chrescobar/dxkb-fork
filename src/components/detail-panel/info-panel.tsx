@@ -1,4 +1,3 @@
-import React from "react";
 import { useWorkspaceDu } from "@/hooks/services/workspace/use-workspace-du";
 
 import { genomeFields } from "@/constants/datafields/genome";
@@ -41,10 +40,13 @@ export type InfoPanelProps =
 
 
 /** Build the full path to a workspace item (parent + name) for API calls like Workspace.du. */
-export function getItemFullPath(item: WorkspaceItem): string {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- runtime guard: API can return null for path fields even when typed string
+export function getItemFullPath(
+  item: Omit<WorkspaceItem, "path" | "name"> & {
+    path?: string | null;
+    name?: string | null;
+  },
+): string {
   const rawPath = (item.path ?? "").replace(/\/+$/, "").replace(/\/+/g, "/");
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- runtime guard: API can return null for name fields even when typed string
   const name = (item.name ?? "").trim();
   const segmentSuffix = `/${name}`;
   const nameAlreadyInPath = rawPath === name || rawPath.endsWith(segmentSuffix);

@@ -11,8 +11,8 @@ describe("normalizeWorkspaceObjectType", () => {
   });
 
   it("handles null/undefined gracefully", () => {
-    expect(normalizeWorkspaceObjectType(null as unknown as string)).toBe("");
-    expect(normalizeWorkspaceObjectType(undefined as unknown as string)).toBe("");
+    expect(normalizeWorkspaceObjectType(null)).toBe("");
+    expect(normalizeWorkspaceObjectType(undefined)).toBe("");
   });
 
   it("returns empty string for empty input", () => {

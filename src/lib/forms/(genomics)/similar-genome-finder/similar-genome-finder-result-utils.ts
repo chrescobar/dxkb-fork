@@ -16,19 +16,23 @@ export interface SimilarGenomeFinderResultRow {
 /**
  * Convert columnar result { genome_id: [...], distance: [...] } to row array.
  */
+function asUnknownArray(value: unknown): unknown[] | undefined {
+  return Array.isArray(value) ? (value as unknown[]) : undefined;
+}
+
 function columnarToRows(result: Record<string, unknown>): unknown[] {
   const ids = result.genome_id ?? result.genomeId ?? result.id;
-  const arr = Array.isArray(ids) ? ids : [];
+  const arr = Array.isArray(ids) ? (ids as unknown[]) : [];
   if (arr.length === 0) return [];
-  const dist = (result.distance ?? result.dist) as unknown[] | undefined;
-  const pval = (result.pvalue ?? result.p_value) as unknown[] | undefined;
-  const cnt = (result.counts ?? result.kmer_count) as unknown[] | undefined;
+  const dist = asUnknownArray(result.distance) ?? asUnknownArray(result.dist);
+  const pval = asUnknownArray(result.pvalue) ?? asUnknownArray(result.p_value);
+  const cnt = asUnknownArray(result.counts) ?? asUnknownArray(result.kmer_count);
+  const names = asUnknownArray(result.genome_name);
+  const organisms = asUnknownArray(result.organism_name);
   return arr.map((id: unknown, i) => ({
     genome_id: id,
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    genome_name: (result.genome_name as unknown[])?.[i], // runtime guard: field may be absent in API response
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    organism_name: (result.organism_name as unknown[])?.[i], // runtime guard: field may be absent
+    genome_name: names?.[i],
+    organism_name: organisms?.[i],
     distance: dist?.[i],
     pvalue: pval?.[i],
     counts: cnt?.[i],

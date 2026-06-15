@@ -1,0 +1,25 @@
+src/hooks/services/use-rerun-form.ts
+  s_3d5671008e42f1::t_2f266f805d229e 122-142,146-156,160,166-167,170,173,178,182
+src/app/search/typesearch.tsx
+  s_3d5671008e42f1::t_9c31a85d512be1 4
+  s_3d5671008e42f1::t_f66ccd91ecfe08 60,73
+src/components/services/single-genome-selector.tsx
+  s_3d5671008e42f1::t_23de13184b07a6 86-93,108,121-124,129,158,160,166-170
+  s_3d5671008e42f1::t_239405ea7802a3 50-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "e089bcc1dbd6d97267dc425c564fa8052beb5a7f",
+  "prompts": {},
+  "sessions": {
+    "s_3d5671008e42f1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d765f9e-0d58-49a8-a7aa-221c0476363d",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -78,8 +78,9 @@ export function canWriteToCurrentDir({
     decodedFullPath.startsWith(`/${currentUser}/`);
   if (isOwnedPath) return true;
   if (!currentDirPermissions) return false;
-  const perms =
-    currentDirPermissions[decodedFullPath] ?? currentDirPermissions[fullPath];
+  const perms = (
+    currentDirPermissions[decodedFullPath] ?? currentDirPermissions[fullPath]
+  ) as [string, string][] | undefined;
   if (!perms) return false;
   const writePerms = new Set(["w", "a", "o"]);
   return perms.some(

@@ -153,7 +153,7 @@ function startThemeObserver() {
     lastDark = dark;
     const ext = highlightExtFor(dark);
     for (const entry of viewCache.values()) {
-      entry.view.dispatch({ effects: highlightCompartment.reconfigure(ext) });
+      entry.view?.dispatch({ effects: highlightCompartment.reconfigure(ext) });
     }
   }).observe(document.documentElement, {
     attributes: true,
@@ -167,7 +167,7 @@ function startThemeObserver() {
 // ---------------------------------------------------------------------------
 
 interface CachedEntry {
-  view: EditorView;
+  view: EditorView | null;
   wrapper: HTMLDivElement;
   status: "loading" | "streaming" | "done" | "error";
   abort: AbortController;
@@ -184,7 +184,7 @@ function evictOldest() {
   for (const [key, entry] of viewCache) {
     if (!entry.wrapper.isConnected) {
       entry.abort.abort();
-      entry.view.destroy();
+      entry.view?.destroy();
       viewCache.delete(key);
       if (viewCache.size <= maxCacheSize) return;
     }
@@ -196,7 +196,7 @@ function evictOldest() {
     if (oldest) {
       const [key, entry] = oldest;
       entry.abort.abort();
-      entry.view.destroy();
+      entry.view?.destroy();
       viewCache.delete(key);
     }
   }
@@ -257,7 +257,7 @@ export function CodeMirrorViewer({
     container.appendChild(wrapper);
 
     const entry: CachedEntry = {
-      view: null as unknown as EditorView,
+      view: null,
       wrapper,
       status: "loading",
       abort: controller,

@@ -163,7 +163,7 @@ describe("CodeMirrorViewer", () => {
 
     // Unmount while getLanguageExtension is still pending — entry.view is null at this point.
     // Without the ?. guard this would throw: "Cannot read properties of null (reading 'destroy')"
-    expect(() => unmount()).not.toThrow();
+    expect(() => { unmount(); }).not.toThrow();
 
     // Let init() reach the isDestroyed() guard and exit cleanly
     resolveLanguage(null);

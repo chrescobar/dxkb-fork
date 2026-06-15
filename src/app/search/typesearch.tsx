@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { ListData } from "@/components/services/list-data";
 import { GenomeShell } from "@/components/genome/genome-shell";
@@ -57,6 +57,7 @@ function TabsRenderer({
   setTotalItems,
 }: TabsRendererProps) {
   const clearTimeoutRef = useRef<number | null>(null);
+  const tablistKey = useMemo(() => tablist.join(","), [tablist]);
   // Whenever urlType (searchtype) changes, set the active tab.
   // If urlType matches one of the tabs (term), set that; otherwise pick the first tab.
   useEffect(() => {
@@ -69,8 +70,7 @@ function TabsRenderer({
     if (!urlType && urlQ && tablist[0] !== activeTab) {
       setActiveTab(tablist[0]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [urlType, urlQ, tablist.join(",")]);
+  }, [urlType, urlQ, tablistKey, tablist, activeTab, setActiveTab]);
 
   const encodedQ = encodeURIComponent(urlQ);
   const fullQ = "keyword(" + encodedQ + ")";

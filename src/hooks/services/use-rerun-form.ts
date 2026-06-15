@@ -119,40 +119,67 @@ export function useRerunForm<
   // matters as a trigger. Callers pass inline arrays/callbacks (fields, libraries,
   // getLibraryExtra, syncLibraries, onApply) that change identity every render —
   // including them as deps would re-schedule this effect on every parent render
-  // for no benefit. The closure captures the latest values when the effect fires.
+  // for no benefit. The optionsRef captures the latest values; the effect reads
+  // through the ref so the dep list can honestly be `[rerunData]`.
+  const optionsRef = useRef({
+    fields,
+    libraries,
+    getLibraryExtra,
+    syncLibraries,
+    onApply,
+    form,
+  });
+  useEffect(() => {
+    optionsRef.current = {
+      fields,
+      libraries,
+      getLibraryExtra,
+      syncLibraries,
+      onApply,
+      form,
+    };
+  });
+
   useEffect(() => {
     if (!rerunData || rerunApplied.current) return;
     rerunApplied.current = true;
+    const {
+      fields: rerunFields,
+      libraries: rerunLibs,
+      getLibraryExtra: getExtra,
+      syncLibraries: sync,
+      onApply: applyHandler,
+      form: formApi,
+    } = optionsRef.current;
 
-    if (fields) {
-      for (const field of fields) {
+    if (rerunFields) {
+      for (const field of rerunFields) {
         const value = rerunData[field];
         if (value !== undefined) {
           const formField = field as ServiceFormField<TForm>;
-          form.setFieldValue(formField, value as TForm[typeof formField]);
+          formApi.setFieldValue(formField, value as TForm[typeof formField]);
         }
       }
     }
 
     let builtLibs: Library[] = [];
-    if (libraries && libraries.length > 0) {
-      builtLibs = libraries.flatMap((kind) =>
+    if (rerunLibs && rerunLibs.length > 0) {
+      builtLibs = rerunLibs.flatMap((kind) =>
         libraryBuilders[kind](
           rerunData,
-          getLibraryExtra ? (lib) => getLibraryExtra(lib, kind) : undefined,
+          getExtra ? (lib) => getExtra(lib, kind) : undefined,
         ),
       );
-      if (!syncLibraries) {
+      if (!sync) {
         console.warn(
           "[useRerunForm] libraries were configured but syncLibraries is missing; built libraries were not applied.",
         );
       } else if (builtLibs.length > 0) {
-        syncLibraries(builtLibs);
+        sync(builtLibs);
       }
     }
 
-    onApply?.(rerunData, form, builtLibs);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    applyHandler?.(rerunData, formApi, builtLibs);
   }, [rerunData]);
 
   useEffect(() => {

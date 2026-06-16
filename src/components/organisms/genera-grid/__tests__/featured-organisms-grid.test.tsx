@@ -3,8 +3,8 @@ import { render, screen } from "@testing-library/react";
 import { FeaturedOrganismsGrid } from "../featured-organisms-grid";
 
 const data = [
-  { name: "SARS-CoV-2", href: "https://www.bv-brc.org/view/Taxonomy/2697049#view_tab=overview" },
-  { name: "Influenza A virus", href: "https://www.bv-brc.org/view/Taxonomy/197911#view_tab=overview" },
+  { name: "SARS-CoV-2", href: "/taxonomy/2697049" },
+  { name: "Influenza A virus", href: "/taxonomy/197911" },
 ];
 
 describe("FeaturedOrganismsGrid", () => {

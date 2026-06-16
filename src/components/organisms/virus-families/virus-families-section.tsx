@@ -3,7 +3,7 @@ import { GeneraCard } from "@/components/organisms/genera-grid/genera-card";
 import { type VirusFamiliesColumn, virusFamilies } from "./virus-families-data";
 
 function familyHref(taxonId: number) {
-  return `https://www.bv-brc.org/view/Taxonomy/${String(taxonId)}#view_tab=overview`;
+  return `/taxonomy/${String(taxonId)}`;
 }
 
 type VirusFamilySubGroup = Extract<

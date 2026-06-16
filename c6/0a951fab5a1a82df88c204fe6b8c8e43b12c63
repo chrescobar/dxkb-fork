@@ -1,0 +1,19 @@
+src/app/(views)/__tests__/scaffold-routes.test.tsx
+  s_47d575bab5f9a4::t_99594a47c82618 44-53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "c60a951fab5a1a82df88c204fe6b8c8e43b12c63",
+  "prompts": {},
+  "sessions": {
+    "s_47d575bab5f9a4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ae906701-58a4-4409-bee9-c36555eb3b3e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

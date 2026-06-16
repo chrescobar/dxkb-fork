@@ -1,3 +1,5 @@
+import { taxonomyHref as taxonUrl } from "@/lib/views/hrefs";
+
 export interface FeaturedOrganismEntry {
   name: string;
   href: string;
@@ -6,10 +8,6 @@ export interface FeaturedOrganismEntry {
 export interface FeaturedOrganismCategory {
   title: string;
   organisms: FeaturedOrganismEntry[];
-}
-
-function taxonUrl(taxonId: number): string {
-  return `/taxonomy/${String(taxonId)}`;
 }
 
 export const featuredAllOrganisms: FeaturedOrganismCategory[] = [

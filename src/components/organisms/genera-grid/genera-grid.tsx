@@ -5,6 +5,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { fetchOrganismGenera } from "@/lib/services/organisms/genera";
+import { genomeListHref } from "@/lib/views/hrefs";
+import { rqlEq } from "@/lib/views/rql";
 
 import { GeneraCard } from "./genera-card";
 
@@ -41,7 +43,7 @@ export async function GeneraGrid({ taxonId, limit = 24 }: GeneraGridProps) {
             key={genus.name}
             name={genus.name}
             count={genus.count}
-            href={`/genome?rql=eq(genus,${encodeURIComponent(genus.name)})`}
+            href={genomeListHref({ rql: rqlEq("genus", genus.name) })}
           />
         ))}
       </div>

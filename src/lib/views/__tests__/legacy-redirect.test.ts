@@ -33,4 +33,10 @@ describe("mapLegacyViewPath", () => {
   it("returns null for a non-/view path", () => {
     expect(mapLegacyViewPath("/genome/123", "")).toBeNull();
   });
+  it("maps a list legacy path with named params (not RQL) using URLSearchParams encoding", () => {
+    expect(mapLegacyViewPath("/view/GenomeList/", "keyword=mycobacterium tuberculosis")).toEqual({
+      pathname: "/genome",
+      search: "keyword=mycobacterium+tuberculosis",
+    });
+  });
 });

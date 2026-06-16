@@ -46,9 +46,14 @@ test.describe("taxonomy geographic distribution map", () => {
     await mapSection.getByRole("button", { name: "United States" }).click();
     await expect(svg.locator("path")).toHaveCount(baselineCount);
 
-    // Switch to the World view — triggers lazy-load of countries-110m.json
+    // Switch to the World view — triggers lazy-load of countries-110m.json.
+    // Register the waiter before the click to avoid a race where Firefox serves
+    // the local static file before waitForResponse is attached.
+    const countriesResponse = page.waitForResponse((response) =>
+      response.url().endsWith("/maps/countries-110m.json"),
+    );
     await mapSection.getByRole("button", { name: "World" }).click();
-    await page.waitForResponse((response) => response.url().endsWith("/maps/countries-110m.json"));
+    await countriesResponse;
     // World choropleth has many country paths
     await expect(svg.locator("path").first()).toBeAttached();
     const worldPathCount = await svg.locator("path").count();

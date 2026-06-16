@@ -1,0 +1,99 @@
+import type { ViewRegistry, ViewTypeEntry } from "./view-types";
+
+export const viewRegistry = {
+  taxonomy: {
+    segment: "taxonomy",
+    label: "Taxonomy",
+    legacySingular: "Taxonomy",
+    legacyList: "TaxonList",
+    searchType: "taxonomy",
+    singular: { idParam: "taxonId", idKind: "int", defaultTab: "overview" },
+    list: { endpoint: "taxonomy", defaultTab: "taxons", friendlyParams: ["keyword", "taxon_id"] },
+  },
+  genome: {
+    segment: "genome",
+    label: "Genome",
+    legacySingular: "Genome",
+    legacyList: "GenomeList",
+    searchType: "genome",
+    singular: { idParam: "genomeId", idKind: "string", defaultTab: "overview" },
+    list: { endpoint: "genome", defaultTab: "genomes", friendlyParams: ["keyword", "taxon_id"] },
+  },
+  feature: {
+    segment: "feature",
+    label: "Feature",
+    legacySingular: "Feature",
+    legacyList: "FeatureList",
+    searchType: "genome_feature",
+    singular: { idParam: "featureId", idKind: "string", defaultTab: "overview" },
+    list: { endpoint: "genome_feature", defaultTab: "overview", friendlyParams: ["keyword", "genome_id"] },
+  },
+  epitope: {
+    segment: "epitope",
+    label: "Epitope",
+    legacySingular: "Epitope",
+    legacyList: "EpitopeList",
+    searchType: "epitope",
+    singular: { idParam: "epitopeId", idKind: "string", defaultTab: "overview" },
+    list: { endpoint: "epitope", defaultTab: "epitope", friendlyParams: ["keyword", "taxon_id"] },
+  },
+  surveillance: {
+    segment: "surveillance",
+    label: "Surveillance",
+    legacySingular: "Surveillance",
+    legacyList: "SurveillanceList",
+    searchType: "surveillance",
+    singular: { idParam: "sampleId", idKind: "string", defaultTab: "overview" },
+    list: { endpoint: "surveillance", defaultTab: "surveillance", friendlyParams: ["keyword", "pathogen_test_type"] },
+  },
+  serology: {
+    segment: "serology",
+    label: "Serology",
+    legacySingular: "Serology",
+    legacyList: "SerologyList",
+    searchType: "serology",
+    singular: { idParam: "sampleId", idKind: "string", defaultTab: "overview" },
+    list: { endpoint: "serology", defaultTab: "serology", friendlyParams: ["keyword", "test_type"] },
+  },
+  strain: {
+    segment: "strain",
+    label: "Strain",
+    legacyList: "StrainList",
+    searchType: "strain",
+    list: { endpoint: "strain", defaultTab: "strain", friendlyParams: ["keyword", "taxon_id"] },
+  },
+  "domains-and-motifs": {
+    segment: "domains-and-motifs",
+    label: "Domains and Motifs",
+    legacyList: "DomainsAndMotifsList",
+    searchType: "protein_feature",
+    list: { endpoint: "protein_feature", defaultTab: "proteinFeatures", friendlyParams: ["keyword", "genome_id"] },
+  },
+  "protein-structure": {
+    segment: "protein-structure",
+    label: "Protein Structures",
+    legacySingular: "ProteinStructure",
+    legacyList: "ProteinStructureList",
+    searchType: "protein_structure",
+    singular: { idParam: "accession", idKind: "none", defaultTab: "overview" },
+    list: { endpoint: "protein_structure", defaultTab: "structures", friendlyParams: ["keyword", "taxon_id"] },
+  },
+  experiment: {
+    segment: "experiment",
+    label: "Experiment",
+    legacyList: "ExperimentList",
+    searchType: "experiment",
+    list: { endpoint: "experiment", defaultTab: "experiments", friendlyParams: ["keyword", "taxon_id"] },
+  },
+} satisfies ViewRegistry;
+
+export const viewSegments = Object.keys(viewRegistry);
+
+/** Legacy BV-BRC view name → new segment. Derived so it cannot drift from routes. */
+export const legacyToSegment: Record<string, string> = Object.fromEntries(
+  Object.values(viewRegistry as ViewRegistry).flatMap((entry: ViewTypeEntry) =>
+    [entry.legacySingular, entry.legacyList]
+      .filter((name): name is string => Boolean(name))
+      .map((name) => [name, entry.segment]),
+  ),
+);

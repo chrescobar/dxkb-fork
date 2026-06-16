@@ -24,3 +24,22 @@ it("does nothing when there is no legacy hash", () => {
   render(<LegacyHashAdapter />);
   expect(replaceStateSpy).not.toHaveBeenCalled();
 });
+
+it("promotes a non-false filter to ?filter=", () => {
+  window.location.hash = "#view_tab=overview&filter=true";
+  render(<LegacyHashAdapter />);
+  expect(replaceStateSpy).toHaveBeenCalled();
+  const url = String(replaceStateSpy.mock.calls[0][2]);
+  expect(url).toContain("tab=overview");
+  expect(url).toContain("filter=true");
+  expect(url).not.toContain("view_tab");
+});
+
+it("does not promote filter=false (legacy default-off sentinel)", () => {
+  window.location.hash = "#view_tab=overview&filter=false";
+  render(<LegacyHashAdapter />);
+  expect(replaceStateSpy).toHaveBeenCalled();
+  const url = String(replaceStateSpy.mock.calls[0][2]);
+  expect(url).toContain("tab=overview");
+  expect(url).not.toContain("filter");
+});

@@ -41,3 +41,13 @@ it("strain list renders (list-only type)", async () => {
   render(await StrainListPage({ searchParams: Promise.resolve({ keyword: "H1N1" }) }));
   expect(screen.getByText("keyword(H1N1)")).toBeInTheDocument();
 });
+
+it("genome singular calls notFound for an empty id", async () => {
+  await expect(
+    GenomePage({
+      params: Promise.resolve({ genomeId: "" }),
+      searchParams: Promise.resolve({}),
+    }),
+  ).rejects.toThrow("NEXT_NOT_FOUND");
+  expect(notFoundSpy).toHaveBeenCalled();
+});

@@ -5,7 +5,7 @@ import BacteriaPage from "../page";
 describe("BacteriaPage", () => {
   it("renders the selected stub view through the shared shell", async () => {
     const node = await BacteriaPage({
-      searchParams: Promise.resolve({ view: "taxonomy" }),
+      searchParams: Promise.resolve({ tab: "taxonomy" }),
     });
 
     render(node);
@@ -20,7 +20,7 @@ describe("BacteriaPage", () => {
 
   it("renders legacy placeholder tabs through URL state", async () => {
     const node = await BacteriaPage({
-      searchParams: Promise.resolve({ view: "amr-phenotypes" }),
+      searchParams: Promise.resolve({ tab: "amr-phenotypes" }),
     });
 
     render(node);

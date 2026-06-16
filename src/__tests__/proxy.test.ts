@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
-import { proxy } from "../proxy";
+import { config, proxy } from "../proxy";
+import { viewSegments } from "@/lib/views/view-registry";
 
 /** Helper to build a NextRequest with optional cookies */
 function buildRequest(
@@ -228,6 +229,18 @@ describe("proxy", () => {
       const response = proxy(request);
       expect(response.status).not.toBe(308);
       expect(response.headers.get("x-middleware-next")).toBe("1");
+    });
+  });
+
+  // The matcher must stay a static literal (Next.js cannot compute it from
+  // viewSegments at runtime), so it is hand-mirrored in proxy.ts. This guard fails
+  // when a new registry entry is added without its matcher line — preventing the
+  // ?view=→?tab= rewrite from silently skipping the new segment.
+  describe("view-segment matcher drift guard", () => {
+    it("includes a matcher line for every view segment", () => {
+      for (const segment of viewSegments) {
+        expect(config.matcher).toContain(`/${segment}/:path*`);
+      }
     });
   });
 });

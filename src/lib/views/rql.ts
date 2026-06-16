@@ -6,11 +6,27 @@ function firstValue(value: string | string[] | undefined): string | undefined {
 }
 
 /**
+ * Escape RQL-special characters in a value so a value like `flu)` or `a,b` cannot
+ * break out of its clause. RQL reserves `,`, `(`, `)` — percent-encode them per the
+ * BV-BRC convention. Plain alphanumeric values pass through unchanged.
+ */
+export function escapeRqlValue(value: string): string {
+  return value.replace(/,/g, "%2C").replace(/\(/g, "%28").replace(/\)/g, "%29");
+}
+
+/** Build a single `eq(field,value)` clause with the value escaped. */
+export function rqlEq(field: string, value: string): string {
+  return `eq(${field},${escapeRqlValue(value)})`;
+}
+
+/** Build a single `keyword(value)` clause with the value escaped. */
+export function rqlKeyword(value: string): string {
+  return `keyword(${escapeRqlValue(value)})`;
+}
+
+/**
  * Build an RQL string from allow-listed friendly params. `keyword` → keyword(), others → eq().
- *
- * @todo Values are interpolated raw. Before this string is sent to the BV-BRC backend
- * (out-of-scope data-fetch task), escape RQL-special characters (`,`, `(`, `)`) in values
- * so a value like `flu)` or `a,b` cannot corrupt the query.
+ * Values are escaped via {@link escapeRqlValue} so user-supplied params cannot corrupt the query.
  */
 export function friendlyParamsToRql(
   params: SearchParamsRecord,
@@ -20,7 +36,7 @@ export function friendlyParamsToRql(
   for (const name of allowed) {
     const raw = firstValue(params[name]);
     if (raw === undefined || raw === "") continue;
-    clauses.push(name === "keyword" ? `keyword(${raw})` : `eq(${name},${raw})`);
+    clauses.push(name === "keyword" ? rqlKeyword(raw) : rqlEq(name, raw));
   }
   if (clauses.length === 0) return "";
   if (clauses.length === 1) return clauses[0];

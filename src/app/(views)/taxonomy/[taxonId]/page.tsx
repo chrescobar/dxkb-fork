@@ -5,6 +5,8 @@ import { OrganismLandingShell } from "@/components/organisms/landing-shell/landi
 import { TaxonomyNotFoundError, fetchOrganismTaxonomy } from "@/lib/services/organisms/taxonomy";
 import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 
+import { firstSearchParam } from "@/lib/views/search-params";
+
 import { buildTaxonomyNavItems } from "./_components/nav-items";
 import { buildTaxonomyConfig } from "./_config";
 
@@ -24,9 +26,7 @@ export default async function TaxonomyPage({ params, searchParams }: TaxonomyPag
     notFound();
   }
 
-  const resolvedSearchParams = await searchParams;
-  const tabParam = resolvedSearchParams?.tab;
-  const activeViewKey = Array.isArray(tabParam) ? tabParam[0] : tabParam;
+  const activeViewKey = firstSearchParam(await searchParams, "tab");
 
   let taxon: OrganismTaxonomy;
   try {

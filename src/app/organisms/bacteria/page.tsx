@@ -1,4 +1,5 @@
 import { OrganismLandingShell } from "@/components/organisms/landing-shell/landing-shell";
+import { firstSearchParam } from "@/lib/views/search-params";
 
 import { bacteriaNavItems } from "./_components/nav-items";
 import { bacteriaLandingConfig } from "./_config";
@@ -12,9 +13,7 @@ interface BacteriaPageProps {
 }
 
 export default async function BacteriaPage({ searchParams }: BacteriaPageProps) {
-  const resolvedSearchParams = await searchParams;
-  const tabParam = resolvedSearchParams?.tab;
-  const activeViewKey = Array.isArray(tabParam) ? tabParam[0] : tabParam;
+  const activeViewKey = firstSearchParam(await searchParams, "tab");
 
   return (
     <OrganismLandingShell

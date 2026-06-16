@@ -27,12 +27,20 @@ describe("GeneraCard", () => {
 
   it("renders without count as a featured card (no genome count line)", () => {
     const href = "/taxonomy/561";
-    render(<GeneraCard name="Escherichia" href={href} />);
+    render(<GeneraCard name="Escherichia" href={href} viewLabel="overview" />);
 
     expect(screen.getByText("Escherichia")).toBeInTheDocument();
     expect(screen.queryByText(/genomes/)).not.toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: "View Escherichia overview" }),
     ).toHaveAttribute("href", "/taxonomy/561");
+  });
+
+  it("defaults the aria-label suffix to genomes when viewLabel is omitted", () => {
+    render(<GeneraCard name="Escherichia" href="/genome?rql=eq(genus,Escherichia)" />);
+
+    expect(
+      screen.getByRole("link", { name: "View Escherichia genomes" }),
+    ).toHaveAttribute("href", "/genome?rql=eq(genus,Escherichia)");
   });
 });

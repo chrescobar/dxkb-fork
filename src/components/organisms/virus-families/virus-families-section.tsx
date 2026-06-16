@@ -1,10 +1,7 @@
 import { GeneraCard } from "@/components/organisms/genera-grid/genera-card";
+import { taxonomyHref as familyHref } from "@/lib/views/hrefs";
 
 import { type VirusFamiliesColumn, virusFamilies } from "./virus-families-data";
-
-function familyHref(taxonId: number) {
-  return `/taxonomy/${String(taxonId)}`;
-}
 
 type VirusFamilySubGroup = Extract<
   VirusFamiliesColumn,
@@ -25,6 +22,7 @@ function SubGroups({ subGroups }: { subGroups: VirusFamilySubGroup[] }) {
                 key={family.name}
                 name={family.name}
                 href={familyHref(family.taxonId)}
+                viewLabel="overview"
               />
             ))}
           </div>

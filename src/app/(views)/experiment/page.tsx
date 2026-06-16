@@ -1,13 +1,6 @@
 // src/app/(views)/experiment/page.tsx
-import { renderListShell } from "@/lib/views/render-list";
+import { makeListPage } from "@/lib/views/page-factory";
 import { viewRegistry } from "@/lib/views/view-registry";
 
 export const dynamic = "force-dynamic";
-
-interface PageProps {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}
-
-export default async function ExperimentListPage({ searchParams }: PageProps) {
-  return renderListShell(viewRegistry.experiment, await searchParams);
-}
+export default makeListPage(viewRegistry.experiment);

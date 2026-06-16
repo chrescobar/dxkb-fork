@@ -3,6 +3,8 @@ import { GeneraCard } from "./genera-card";
 interface FeaturedOrganism {
   name: string;
   href: string;
+  /** aria-label suffix; defaults to "overview" (taxonomy targets). Genome targets pass "genomes". */
+  viewLabel?: string;
 }
 
 interface FeaturedOrganismsGridProps {
@@ -26,7 +28,12 @@ export function FeaturedOrganismsGrid({
       </div>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-2">
         {data.map((item) => (
-          <GeneraCard key={item.name} name={item.name} href={item.href} />
+          <GeneraCard
+            key={item.name}
+            name={item.name}
+            href={item.href}
+            viewLabel={item.viewLabel ?? "overview"}
+          />
         ))}
       </div>
     </section>

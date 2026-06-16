@@ -1,0 +1,24 @@
+src/lib/views/__tests__/legacy-hash-adapter.test.tsx
+  s_47d575bab5f9a4::t_17183975e0fc26 8
+  s_47d575bab5f9a4::t_d14d7e97e12c11 1-7,9-26
+src/lib/views/legacy-hash-adapter.tsx
+  s_47d575bab5f9a4::t_0c12b462ed0146 1-29
+src/app/(views)/layout.tsx
+  s_47d575bab5f9a4::t_fd6e9ead9911de 1-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "c570a89d1874b846cfa6653fad2cbda6f62435bc",
+  "prompts": {},
+  "sessions": {
+    "s_47d575bab5f9a4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ae906701-58a4-4409-bee9-c36555eb3b3e",
+        "model": "unknown"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

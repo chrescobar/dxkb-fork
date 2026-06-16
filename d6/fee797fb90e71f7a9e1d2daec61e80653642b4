@@ -1,0 +1,19 @@
+.github/workflows/pnpm-e2e.yml
+  s_70120c5eb0d20b::t_3d469c3f897d22 95
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "d6fee797fb90e71f7a9e1d2daec61e80653642b4",
+  "prompts": {},
+  "sessions": {
+    "s_70120c5eb0d20b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2c198609-d805-4a10-9b81-f8ac09eccee6",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

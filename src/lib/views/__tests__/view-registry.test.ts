@@ -35,6 +35,7 @@ describe("viewRegistry", () => {
     const names = Object.values(reg).flatMap((e) =>
       [e.legacySingular, e.legacyList].filter(Boolean) as string[],
     );
+    expect(names.length).toBeGreaterThanOrEqual(10);
     expect(new Set(names).size).toBe(names.length); // unique
     for (const name of names) {
       expect(legacyToSegment[name]).toBeDefined();

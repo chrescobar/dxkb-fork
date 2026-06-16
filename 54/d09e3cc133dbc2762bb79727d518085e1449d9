@@ -1,0 +1,21 @@
+src/app/(views)/taxonomy/page.tsx
+  s_47d575bab5f9a4::t_34ce313eced08b 1-13
+src/app/(views)/taxonomy/__tests__/list-page.test.tsx
+  s_47d575bab5f9a4::t_b8e9cd704a467f 1-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "54d09e3cc133dbc2762bb79727d518085e1449d9",
+  "prompts": {},
+  "sessions": {
+    "s_47d575bab5f9a4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ae906701-58a4-4409-bee9-c36555eb3b3e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

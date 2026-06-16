@@ -1,0 +1,19 @@
+src/lib/views/__tests__/legacy-hash-adapter.test.tsx
+  s_47d575bab5f9a4::t_73c4fa45808cdf 27-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "b5751ae9055d021f7e63d55dcae15816b7bd172b",
+  "prompts": {},
+  "sessions": {
+    "s_47d575bab5f9a4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ae906701-58a4-4409-bee9-c36555eb3b3e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

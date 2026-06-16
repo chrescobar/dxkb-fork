@@ -1,4 +1,5 @@
 import { legacyToSegment, viewRegistry } from "./view-registry";
+import type { ViewTypeEntry } from "./view-types";
 
 export interface MappedPath {
   pathname: string;
@@ -18,9 +19,9 @@ export function mapLegacyViewPath(pathname: string, rawSearch: string): MappedPa
   const segment = legacyToSegment[legacyName];
   if (!segment) return null;
 
-  const entry = viewRegistry[segment as keyof typeof viewRegistry];
+  const entry = viewRegistry[segment as keyof typeof viewRegistry] as ViewTypeEntry;
   const idParts = parts.slice(2); // remaining path segments after the view name
-  const isList = legacyName === entry.legacyList;
+  const isList = entry.legacyList !== undefined && legacyName === entry.legacyList;
 
   if (isList || idParts.length === 0) {
     // List view: the legacy raw query string is an RQL expression (if present).

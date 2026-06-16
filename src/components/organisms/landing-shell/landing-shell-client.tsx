@@ -39,9 +39,9 @@ export function LandingShellClient({
   function handleViewChange(nextView: OrganismViewKey) {
     const params = new URLSearchParams(searchParams.toString());
     if (nextView === defaultView) {
-      params.delete("view");
+      params.delete("tab");
     } else {
-      params.set("view", nextView);
+      params.set("tab", nextView);
     }
     const queryString = params.toString();
     router.push(queryString ? `${pathname}?${queryString}` : pathname);

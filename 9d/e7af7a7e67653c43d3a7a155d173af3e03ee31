@@ -1,0 +1,36 @@
+src/components/organisms/genera-grid/genera-grid.tsx
+  s_47d575bab5f9a4::t_045b291291ea60 44
+src/components/organisms/genera-grid/featured-viruses-data.ts
+  s_47d575bab5f9a4::t_e5bdf417a49377 9,11,14-23
+src/components/organisms/genera-grid/featured-genera-data.ts
+  s_47d575bab5f9a4::t_2dda5bab47bcc8 7-30
+src/components/organisms/genera-grid/__tests__/featured-organisms-grid.test.tsx
+  s_47d575bab5f9a4::t_42281429f9b740 6-7
+src/components/organisms/genera-grid/__tests__/featured-organism-categories-grid.test.tsx
+  s_47d575bab5f9a4::t_b8bc698026bec3 9-10,16
+src/components/organisms/genera-grid/genera-card.tsx
+  s_47d575bab5f9a4::t_02d89a7ead29e0 16-26
+src/components/organisms/genera-grid/featured-all-organisms-data.ts
+  s_47d575bab5f9a4::t_279ed3fe777da9 11-12
+  s_47d575bab5f9a4::t_f1c3cf4690888a 19-21,27-29,35-38,44-45
+src/components/organisms/virus-families/virus-families-section.tsx
+  s_47d575bab5f9a4::t_4f5359481276a1 6
+src/components/organisms/genera-grid/__tests__/genera-card.test.tsx
+  s_47d575bab5f9a4::t_70f13f5594d207 6-7,14,17-18,25,29,36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "9de7af7a7e67653c43d3a7a155d173af3e03ee31",
+  "prompts": {},
+  "sessions": {
+    "s_47d575bab5f9a4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ae906701-58a4-4409-bee9-c36555eb3b3e",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

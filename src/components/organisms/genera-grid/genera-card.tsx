@@ -13,6 +13,17 @@ interface GeneraCardProps {
 }
 
 function parseViewTab(href: string): string {
+  if (href.startsWith("/taxonomy/")) {
+    try {
+      return new URL(href, "http://localhost").searchParams.get("tab") ?? "overview";
+    } catch {
+      return "overview";
+    }
+  }
+  if (href.startsWith("/genome")) {
+    return "genomes";
+  }
+  // Legacy absolute BV-BRC URLs with #view_tab= hash
   try {
     return new URLSearchParams(new URL(href).hash.slice(1)).get("view_tab") ?? "genomes";
   } catch {

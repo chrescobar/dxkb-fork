@@ -4,100 +4,28 @@ export interface FeaturedGenus {
 }
 
 export const featuredGenera: FeaturedGenus[] = [
-  {
-    name: "Acinetobacter",
-    href: "https://www.bv-brc.org/view/Taxonomy/469#view_tab=overview",
-  },
-  {
-    name: "Bacillus",
-    href: "https://www.bv-brc.org/view/Taxonomy/1386#view_tab=overview",
-  },
-  {
-    name: "Bartonella",
-    href: "https://www.bv-brc.org/view/Taxonomy/773#view_tab=overview",
-  },
-  {
-    name: "Borreliella",
-    href: "https://www.bv-brc.org/view/Taxonomy/64895#view_tab=overview",
-  },
-  {
-    name: "Brucella",
-    href: "/taxonomy/234",
-  },
-  {
-    name: "Burkholderia",
-    href: "https://www.bv-brc.org/view/Taxonomy/32008#view_tab=overview",
-  },
-  {
-    name: "Campylobacter",
-    href: "https://www.bv-brc.org/view/Taxonomy/194#view_tab=overview",
-  },
-  {
-    name: "Chlamydia",
-    href: "https://www.bv-brc.org/view/Taxonomy/810#view_tab=overview",
-  },
-  {
-    name: "Clostridium",
-    href: "https://www.bv-brc.org/view/Taxonomy/1485#view_tab=overview",
-  },
-  {
-    name: "Coxiella",
-    href: "https://www.bv-brc.org/view/Taxonomy/776#view_tab=overview",
-  },
-  {
-    name: "Ehrlichia",
-    href: "https://www.bv-brc.org/view/Taxonomy/943#view_tab=overview",
-  },
-  {
-    name: "Escherichia",
-    href: "https://www.bv-brc.org/view/Taxonomy/561#view_tab=overview",
-  },
-  {
-    name: "Francisella",
-    href: "https://www.bv-brc.org/view/Taxonomy/262#view_tab=overview",
-  },
-  {
-    name: "Helicobacter",
-    href: "https://www.bv-brc.org/view/Taxonomy/209#view_tab=overview",
-  },
-  {
-    name: "Listeria",
-    href: "https://www.bv-brc.org/view/Taxonomy/1637#view_tab=overview",
-  },
-  {
-    name: "Mycobacterium",
-    href: "https://www.bv-brc.org/view/Taxonomy/1763#view_tab=overview",
-  },
-  {
-    name: "Pseudomonas",
-    href: "https://www.bv-brc.org/view/Taxonomy/286#view_tab=overview",
-  },
-  {
-    name: "Rickettsia",
-    href: "https://www.bv-brc.org/view/Taxonomy/780#view_tab=overview",
-  },
-  {
-    name: "Salmonella",
-    href: "https://www.bv-brc.org/view/Taxonomy/590#view_tab=overview",
-  },
-  {
-    name: "Shigella",
-    href: "https://www.bv-brc.org/view/Taxonomy/620#view_tab=overview",
-  },
-  {
-    name: "Staphylococcus",
-    href: "https://www.bv-brc.org/view/Taxonomy/1279#view_tab=overview",
-  },
-  {
-    name: "Streptococcus",
-    href: "https://www.bv-brc.org/view/Taxonomy/1301#view_tab=overview",
-  },
-  {
-    name: "Vibrio",
-    href: "https://www.bv-brc.org/view/Taxonomy/662#view_tab=overview",
-  },
-  {
-    name: "Yersinia",
-    href: "https://www.bv-brc.org/view/Taxonomy/629#view_tab=overview",
-  },
+  { name: "Acinetobacter", href: "/taxonomy/469" },
+  { name: "Bacillus", href: "/taxonomy/1386" },
+  { name: "Bartonella", href: "/taxonomy/773" },
+  { name: "Borreliella", href: "/taxonomy/64895" },
+  { name: "Brucella", href: "/taxonomy/234" },
+  { name: "Burkholderia", href: "/taxonomy/32008" },
+  { name: "Campylobacter", href: "/taxonomy/194" },
+  { name: "Chlamydia", href: "/taxonomy/810" },
+  { name: "Clostridium", href: "/taxonomy/1485" },
+  { name: "Coxiella", href: "/taxonomy/776" },
+  { name: "Ehrlichia", href: "/taxonomy/943" },
+  { name: "Escherichia", href: "/taxonomy/561" },
+  { name: "Francisella", href: "/taxonomy/262" },
+  { name: "Helicobacter", href: "/taxonomy/209" },
+  { name: "Listeria", href: "/taxonomy/1637" },
+  { name: "Mycobacterium", href: "/taxonomy/1763" },
+  { name: "Pseudomonas", href: "/taxonomy/286" },
+  { name: "Rickettsia", href: "/taxonomy/780" },
+  { name: "Salmonella", href: "/taxonomy/590" },
+  { name: "Shigella", href: "/taxonomy/620" },
+  { name: "Staphylococcus", href: "/taxonomy/1279" },
+  { name: "Streptococcus", href: "/taxonomy/1301" },
+  { name: "Vibrio", href: "/taxonomy/662" },
+  { name: "Yersinia", href: "/taxonomy/629" },
 ];

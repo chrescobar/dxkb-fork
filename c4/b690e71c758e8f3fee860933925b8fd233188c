@@ -1,0 +1,19 @@
+e2e/tests/taxonomy-map.spec.ts
+  s_70120c5eb0d20b::t_189b4fc66bf239 49-54,56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "c4b690e71c758e8f3fee860933925b8fd233188c",
+  "prompts": {},
+  "sessions": {
+    "s_70120c5eb0d20b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2c198609-d805-4a10-9b81-f8ac09eccee6",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

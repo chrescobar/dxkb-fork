@@ -54,6 +54,9 @@ export function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
+// NOTE: the view segment paths below mirror `viewSegments` in view-registry.ts.
+// Next.js requires a statically analyzable matcher literal — it cannot be computed
+// from viewSegments at runtime, so the list is intentionally duplicated here.
 export const config = {
   matcher: [
     "/api/protected/:path*",

@@ -199,6 +199,13 @@ describe("proxy", () => {
       expect(loc.searchParams.get("tab")).toBe("genomes");
       expect(loc.searchParams.get("view")).toBeNull();
     });
+
+    it("does not redirect ?view= on a non-(views) path", () => {
+      const request = buildRequest("/search?view=genomes");
+      const response = proxy(request);
+      expect(response.status).not.toBe(308);
+      expect(response.headers.get("x-middleware-next")).toBe("1");
+    });
   });
 
   describe("legacy /view/* redirect", () => {
@@ -220,6 +227,7 @@ describe("proxy", () => {
       const request = buildRequest("/view/Nonsense/1");
       const response = proxy(request);
       expect(response.status).not.toBe(308);
+      expect(response.headers.get("x-middleware-next")).toBe("1");
     });
   });
 });

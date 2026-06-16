@@ -188,4 +188,38 @@ describe("proxy", () => {
       expect(response.status).toBe(307);
     });
   });
+
+  describe("view→tab redirect", () => {
+    it("redirects ?view= to ?tab= on a (views) route", () => {
+      const request = buildRequest("/taxonomy/234?view=genomes");
+      const response = proxy(request);
+      expect(response.status).toBe(308);
+      const loc = getRedirectLocation(response);
+      expect(loc.pathname).toBe("/taxonomy/234");
+      expect(loc.searchParams.get("tab")).toBe("genomes");
+      expect(loc.searchParams.get("view")).toBeNull();
+    });
+  });
+
+  describe("legacy /view/* redirect", () => {
+    it("redirects a singular legacy path", () => {
+      const request = buildRequest("/view/Genome/59201.7581");
+      const response = proxy(request);
+      expect(response.status).toBe(308);
+      expect(getRedirectLocation(response).pathname).toBe("/genome/59201.7581");
+    });
+    it("redirects a list legacy path into ?rql=", () => {
+      const request = buildRequest("/view/GenomeList/?eq(taxon_id,1763)");
+      const response = proxy(request);
+      expect(response.status).toBe(308);
+      const loc = getRedirectLocation(response);
+      expect(loc.pathname).toBe("/genome");
+      expect(loc.searchParams.get("rql")).toBe("eq(taxon_id,1763)");
+    });
+    it("passes through an unknown legacy view name (no redirect)", () => {
+      const request = buildRequest("/view/Nonsense/1");
+      const response = proxy(request);
+      expect(response.status).not.toBe(308);
+    });
+  });
 });

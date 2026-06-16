@@ -49,7 +49,7 @@
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.14.2",
     "@visx/annotation": "^4.0.0",
-    "@visx/geo": "4.0.0",
+    "@visx/geo": "^4.0.0",
     "@visx/group": "^4.0.0",
     "@visx/legend": "^4.0.0",
     "@visx/responsive": "^4.0.0",

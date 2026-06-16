@@ -91,7 +91,7 @@ export const viewSegments = Object.keys(viewRegistry);
 
 /** Legacy BV-BRC view name → new segment. Derived so it cannot drift from routes. */
 export const legacyToSegment: Record<string, string> = Object.fromEntries(
-  Object.values(viewRegistry as ViewRegistry).flatMap((entry: ViewTypeEntry) =>
+  (Object.values(viewRegistry) as ViewTypeEntry[]).flatMap((entry) =>
     [entry.legacySingular, entry.legacyList]
       .filter((name): name is string => Boolean(name))
       .map((name) => [name, entry.segment]),

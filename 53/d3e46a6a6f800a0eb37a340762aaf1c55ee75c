@@ -1,0 +1,100 @@
+src/components/organisms/genera-grid/__tests__/genera-card.test.tsx
+  s_93aaa418613147::t_c740f7c7cc0e50 30,38-44
+src/app/(views)/feature/page.tsx
+  s_93aaa418613147::t_7e28521ce862f9 2,6
+src/app/(views)/genome/page.tsx
+  s_93aaa418613147::t_9a191298d546d3 2,6
+src/app/(views)/feature/[featureId]/page.tsx
+  s_93aaa418613147::t_56f05dfc11c441 2,6
+src/lib/views/search-params.ts
+  s_93aaa418613147::t_58acb220a01f95 1-13
+src/app/(views)/taxonomy/page.tsx
+  s_93aaa418613147::t_2e6346cb377215 2,6
+src/components/organisms/genera-grid/featured-organism-categories-grid.tsx
+  s_93aaa418613147::t_1a44a433dfe33c 29
+src/app/(views)/domains-and-motifs/page.tsx
+  s_93aaa418613147::t_b7ba9e8e0511a0 2,6
+src/components/organisms/genera-grid/featured-viruses-data.ts
+  s_93aaa418613147::t_eef55ecfebcc79 6-7,12-13,18,24
+  s_93aaa418613147::t_3bd09da0a52955 1-2,10-11,20,26-33
+src/app/(views)/serology/[sampleId]/page.tsx
+  s_93aaa418613147::t_5c91cc5428d057 2,6
+src/lib/views/hrefs.ts
+  s_93aaa418613147::t_ffaebaedf6523e 1-18
+src/components/organisms/genera-grid/featured-all-organisms-data.ts
+  s_93aaa418613147::t_0c5e539c7cceaf 1-2
+src/app/organisms/all/page.tsx
+  s_93aaa418613147::t_aebe2caa6e38d5 16
+  s_93aaa418613147::t_90437ab4c656bb 2
+src/components/organisms/genera-grid/genera-grid.tsx
+  s_93aaa418613147::t_a6f7df34ed7092 8-9
+  s_93aaa418613147::t_f2e51ea9c4c3c6 46
+src/lib/views/__tests__/rql.test.ts
+  s_93aaa418613147::t_443f46174eca44 1-22
+src/app/organisms/viruses/page.tsx
+  s_93aaa418613147::t_82d15be49d726a 16
+  s_93aaa418613147::t_0b1494fa975ff4 2
+src/app/(views)/epitope/page.tsx
+  s_93aaa418613147::t_e02a34f95bc0a8 2,6
+src/app/(views)/strain/page.tsx
+  s_93aaa418613147::t_18c5aae6ee5cef 2,6
+src/app/(views)/surveillance/page.tsx
+  s_93aaa418613147::t_155cafe799ad21 2,6
+src/components/organisms/genera-grid/genera-card.tsx
+  s_93aaa418613147::t_310189de85e5f8 13-14,17,24
+src/app/(views)/genome/[genomeId]/page.tsx
+  s_93aaa418613147::t_2c6299ca21d550 2,6
+src/lib/views/rql.ts
+  s_93aaa418613147::t_3409ccb184e0ec 9-26,29,39
+src/app/(views)/taxonomy/[taxonId]/page.tsx
+  s_93aaa418613147::t_4a756c7b007e0d 29
+  s_93aaa418613147::t_9ef92e826874ea 8-9
+src/lib/views/view-registry.ts
+  s_93aaa418613147::t_e463ae4a4fad8d 3-10
+src/components/organisms/virus-families/virus-families-section.tsx
+  s_93aaa418613147::t_5b15fa7d3ee0b4 25
+  s_93aaa418613147::t_ca269fef601308 2
+src/lib/views/__tests__/hrefs.test.ts
+  s_93aaa418613147::t_ad91c2cb86928d 1-17,19-22,24-25,27-28
+  s_93aaa418613147::t_b5321b8791f890 18,23,26
+src/lib/views/page-factory.tsx
+  s_93aaa418613147::t_658a55a03df984 1-28
+src/app/(views)/epitope/[epitopeId]/page.tsx
+  s_93aaa418613147::t_900bf38a734008 2,6
+src/app/(views)/experiment/page.tsx
+  s_93aaa418613147::t_4d62ce8fd29da5 2,6
+src/lib/views/__tests__/page-factory.test.tsx
+  s_93aaa418613147::t_7aa9644f09b08e 3-22,25-28,30-45
+  s_93aaa418613147::t_0e0209606c907e 1-2,23-24,29
+src/app/organisms/bacteria/page.tsx
+  s_93aaa418613147::t_99ff7b31dd5ec2 2
+  s_93aaa418613147::t_5b05d90d8d5772 16
+src/__tests__/proxy.test.ts
+  s_93aaa418613147::t_f975e329e1ad9d 234-245
+  s_93aaa418613147::t_38d572ed4f1962 2-3
+src/app/(views)/surveillance/[sampleId]/page.tsx
+  s_93aaa418613147::t_68f0e3cb3ac32d 2,6
+src/app/(views)/serology/page.tsx
+  s_93aaa418613147::t_9607a36f6d2c4f 2,6
+src/components/organisms/genera-grid/featured-organisms-grid.tsx
+  s_93aaa418613147::t_6ed33b352380d7 6-7
+  s_93aaa418613147::t_16c7939bca46e1 31-36
+src/lib/views/__tests__/search-params.test.ts
+  s_93aaa418613147::t_e7db51bbdc2de3 1-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "53d3e46a6a6f800a0eb37a340762aaf1c55ee75c",
+  "prompts": {},
+  "sessions": {
+    "s_93aaa418613147": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "30b0b768-e00e-4dd4-95c9-8445afce4698",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -63,7 +63,7 @@ describe("TaxonomyPage", () => {
   it("renders the heading for Brucella", async () => {
     const node = await TaxonomyPage({
       params: Promise.resolve({ taxonId: "234" }),
-      searchParams: Promise.resolve({ view: "taxonomy" }),
+      searchParams: Promise.resolve({ tab: "taxonomy" }),
     });
 
     render(node);
@@ -73,10 +73,10 @@ describe("TaxonomyPage", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders the taxonomy stub view when view=taxonomy", async () => {
+  it("renders the taxonomy stub view when tab=taxonomy", async () => {
     const node = await TaxonomyPage({
       params: Promise.resolve({ taxonId: "234" }),
-      searchParams: Promise.resolve({ view: "taxonomy" }),
+      searchParams: Promise.resolve({ tab: "taxonomy" }),
     });
 
     render(node);
@@ -89,7 +89,7 @@ describe("TaxonomyPage", () => {
   it("renders placeholder stub for amr-phenotypes view", async () => {
     const node = await TaxonomyPage({
       params: Promise.resolve({ taxonId: "234" }),
-      searchParams: Promise.resolve({ view: "amr-phenotypes" }),
+      searchParams: Promise.resolve({ tab: "amr-phenotypes" }),
     });
 
     render(node);

@@ -5,7 +5,7 @@ import VirusesPage from "../page";
 describe("VirusesPage", () => {
   it("renders the selected stub view through the shared shell", async () => {
     const node = await VirusesPage({
-      searchParams: Promise.resolve({ view: "taxonomy" }),
+      searchParams: Promise.resolve({ tab: "taxonomy" }),
     });
 
     render(node);
@@ -20,7 +20,7 @@ describe("VirusesPage", () => {
 
   it("renders legacy placeholder tabs through URL state", async () => {
     const node = await VirusesPage({
-      searchParams: Promise.resolve({ view: "features" }),
+      searchParams: Promise.resolve({ tab: "features" }),
     });
 
     render(node);

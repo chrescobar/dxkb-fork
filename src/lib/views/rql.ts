@@ -5,7 +5,13 @@ function firstValue(value: string | string[] | undefined): string | undefined {
   return value;
 }
 
-/** Build an RQL string from allow-listed friendly params. `keyword` → keyword(), others → eq(). */
+/**
+ * Build an RQL string from allow-listed friendly params. `keyword` → keyword(), others → eq().
+ *
+ * @todo Values are interpolated raw. Before this string is sent to the BV-BRC backend
+ * (out-of-scope data-fetch task), escape RQL-special characters (`,`, `(`, `)`) in values
+ * so a value like `flu)` or `a,b` cannot corrupt the query.
+ */
 export function friendlyParamsToRql(
   params: SearchParamsRecord,
   allowed: readonly string[],

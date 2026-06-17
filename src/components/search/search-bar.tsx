@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { searchTypes } from "@/constants/searchInfo";
+import { searchTypes } from "@/constants/search-info";
 import { Input } from "@/components/ui/input";
 
 import { Search } from "lucide-react";

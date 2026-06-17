@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { TypeSearch } from "@/app/search/typesearch";
-import { SearchResults } from "@/app/allTermSearchResults";
+import { SearchResults } from "@/app/all-term-search-results";
 
 export default function GlobalSearch () {
 

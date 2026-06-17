@@ -26,11 +26,11 @@ test.describe("viruses organism landing page", () => {
     await landing.expectDonut("Isolation Country");
 
     await page.getByRole("button", { name: /Taxonomy/ }).click();
-    await expect(page).toHaveURL(/view=taxonomy/);
+    await expect(page).toHaveURL(/tab=taxonomy/);
     await expect(page.getByText("This view is coming soon")).toBeVisible();
 
     await page.getByRole("button", { name: /Genomes/ }).click();
-    await expect(page).toHaveURL(/view=genomes/);
+    await expect(page).toHaveURL(/tab=genomes/);
     await expect(page.getByText("This view is coming soon")).toBeVisible();
   });
 

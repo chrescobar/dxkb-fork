@@ -48,6 +48,12 @@ describe("resolveListQuery", () => {
   it("falls back to friendly params when no rql", () => {
     expect(resolveListQuery({ keyword: "flu" }, ["keyword"])).toBe("keyword(flu)");
   });
+  it("falls back to ?filter= when no rql= (promoted from legacy hash)", () => {
+    expect(resolveListQuery({ filter: 'eq(feature_type,"CDS")' }, ["keyword"])).toBe('eq(feature_type,"CDS")');
+  });
+  it("prefers rql= over filter=", () => {
+    expect(resolveListQuery({ rql: "eq(public,false)", filter: "eq(genus,Foo)" }, ["keyword"])).toBe("eq(public,false)");
+  });
   it("takes the first value when a param repeats", () => {
     expect(resolveListQuery({ keyword: ["a", "b"] }, ["keyword"])).toBe("keyword(a)");
   });

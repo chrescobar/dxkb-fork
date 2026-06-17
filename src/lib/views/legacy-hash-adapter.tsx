@@ -1,4 +1,3 @@
-// src/lib/views/legacy-hash-adapter.tsx
 "use client";
 
 import { useEffect } from "react";
@@ -16,11 +15,15 @@ export function LegacyHashAdapter() {
     const hashParams = new URLSearchParams(hash);
     const tab = hashParams.get("view_tab");
     const filter = hashParams.get("filter");
-    if (tab === null && filter === null) return;
+    const accession = hashParams.get("accession");
+    const path = hashParams.get("path");
+    if (tab === null && filter === null && accession === null && path === null) return;
 
     const url = new URL(window.location.href);
     if (tab !== null) url.searchParams.set("tab", tab);
     if (filter !== null && filter !== "false") url.searchParams.set("filter", filter);
+    if (accession !== null) url.searchParams.set("accession", accession);
+    if (path !== null) url.searchParams.set("path", path);
     url.hash = "";
     window.history.replaceState(window.history.state, "", url.toString());
   }, []);

@@ -9,11 +9,14 @@ export const dynamic = "force-dynamic";
 interface BacteriaPageProps {
   searchParams?: Promise<{
     tab?: string | string[];
+    view?: string | string[];
   }>;
 }
 
 export default async function BacteriaPage({ searchParams }: BacteriaPageProps) {
-  const activeViewKey = firstSearchParam(await searchParams, "tab");
+  const resolvedParams = await searchParams;
+  const activeViewKey =
+    firstSearchParam(resolvedParams, "tab") ?? firstSearchParam(resolvedParams, "view");
 
   return (
     <OrganismLandingShell

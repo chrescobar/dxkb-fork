@@ -30,4 +30,29 @@ describe("VirusesPage", () => {
       screen.getByText(/This view is coming soon/),
     ).toBeInTheDocument();
   });
+
+  it("falls back to legacy ?view= param when ?tab= is absent", async () => {
+    const node = await VirusesPage({
+      searchParams: Promise.resolve({ view: "features" }),
+    });
+
+    render(node);
+
+    expect(screen.getAllByText("Features")).toHaveLength(2);
+    expect(
+      screen.getByText(/This view is coming soon/),
+    ).toBeInTheDocument();
+  });
+
+  it("prefers ?tab= over ?view= when both are present", async () => {
+    const node = await VirusesPage({
+      searchParams: Promise.resolve({ tab: "taxonomy", view: "features" }),
+    });
+
+    render(node);
+
+    expect(screen.getByText(/This view is coming soon/)).toBeInTheDocument();
+    // "Features" appears once (nav link) not twice (nav + active heading) — taxonomy won
+    expect(screen.queryAllByText("Features")).toHaveLength(1);
+  });
 });

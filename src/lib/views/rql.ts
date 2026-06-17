@@ -24,6 +24,12 @@ export function rqlKeyword(value: string): string {
   return `keyword(${escapeRqlValue(value)})`;
 }
 
+/** Combine two or more RQL clauses with `and(...)`. */
+export function rqlAnd(...clauses: string[]): string {
+  if (clauses.length === 1) return clauses[0];
+  return `and(${clauses.join(",")})`;
+}
+
 /**
  * Build an RQL string from allow-listed friendly params. `keyword` → keyword(), others → eq().
  * Values are escaped via {@link escapeRqlValue} so user-supplied params cannot corrupt the query.
@@ -43,12 +49,17 @@ export function friendlyParamsToRql(
   return `and(${clauses.join(",")})`;
 }
 
-/** Resolve a list view's RQL: explicit ?rql= wins; otherwise compose friendly params. */
+/**
+ * Resolve a list view's RQL: explicit ?rql= wins; ?filter= (promoted from legacy
+ * hash by LegacyHashAdapter) is the next fallback; otherwise compose friendly params.
+ */
 export function resolveListQuery(
   params: SearchParamsRecord,
   allowed: readonly string[],
 ): string {
   const rql = firstValue(params.rql);
   if (rql !== undefined && rql !== "") return rql;
+  const filter = firstValue(params.filter);
+  if (filter !== undefined && filter !== "") return filter;
   return friendlyParamsToRql(params, allowed);
 }

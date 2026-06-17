@@ -1,0 +1,80 @@
+src/components/ui/__a11y__/button.a11y.test.tsx
+  s_b9eefbc8672fd1::t_f97f7927606599 12
+  s_b9eefbc8672fd1::t_e81b9fbb372e2b 1-11,13-41,43-55
+  s_b9eefbc8672fd1::t_d69d0711335a1e 42
+e2e/a11y/theme.ts
+  s_b9eefbc8672fd1::t_cd1ebeab59a38f 1-34
+.github/workflows/pnpm-a11y.yml
+  s_b9eefbc8672fd1::t_dab4d08c480cb5 1-213
+  s_b9eefbc8672fd1::t_1e822e01a3c78f 214-238
+e2e/a11y/report.ts
+  s_b9eefbc8672fd1::t_38816a43a439ac 1-25
+e2e/a11y/settle.ts
+  s_b9eefbc8672fd1::t_ec92432c587353 1-25
+package.json
+  s_b9eefbc8672fd1::t_e7b74e4cfa65c0 21-29
+  s_b9eefbc8672fd1::t_faba407e8a1896 116,119,136
+  s_b9eefbc8672fd1::t_52016844404c1a 117
+src/test-helpers/render-with-theme.tsx
+  s_b9eefbc8672fd1::t_90d06276c145a9 1-41,43-76
+  s_b9eefbc8672fd1::t_dd390cdcf8f7e1 42
+e2e/tests/a11y/reduced-motion.spec.ts
+  s_b9eefbc8672fd1::t_53de9ba58edf13 1-88
+playwright.config.ts
+  s_b9eefbc8672fd1::t_264863cf85ce6f 22-23
+e2e/a11y/gate.ts
+  s_b9eefbc8672fd1::t_3be7ddcf3ffa99 1-46
+e2e/tests/a11y/routes-sweep.spec.ts
+  s_b9eefbc8672fd1::t_19ec3cd86514ce 14,16-17,21-22,25,28-60,63,65,67,71-72,74,76,82,86,89,96,99-108,115-116,126,136,176-177,196-197,210,214
+  s_b9eefbc8672fd1::t_04387242a494f9 1-13,15,18-20,23-24,26-27,61-62,64,66,68-70,73,75,77-81,83-85,87-88,90-95,97-98,109-114,117-125,127-135,137-175,178-195,198-209,211-213,215-217
+vitest.config.mts
+  s_b9eefbc8672fd1::t_de5270d038ac40 32-33
+e2e/a11y/axe-scan.ts
+  s_b9eefbc8672fd1::t_3725e78ab73376 1-51,53-77
+  s_b9eefbc8672fd1::t_e8f8f122082865 52
+vitest.a11y.config.mts
+  s_b9eefbc8672fd1::t_a9cdf72e30fd0e 1-2,4-23,26-30
+  s_b9eefbc8672fd1::t_52e97055106a1d 3,24-25
+src/components/ui/__a11y__/form-fields.a11y.test.tsx
+  s_b9eefbc8672fd1::t_f97f7927606599 14,64
+  s_b9eefbc8672fd1::t_3825bdc5e9c020 48,97
+  s_b9eefbc8672fd1::t_65a1d8f2c23792 1-13,15-47,49-63,65-96,98-110
+e2e/tests/a11y/coverage.meta.spec.ts
+  s_b9eefbc8672fd1::t_69fa180fdda5be 1-49
+playwright.a11y.config.ts
+  s_b9eefbc8672fd1::t_50b00f616a51f6 32
+  s_b9eefbc8672fd1::t_4ebbe2951c896e 1-31,33-95
+docs/a11y-manual-checklist.md
+  s_b9eefbc8672fd1::t_2c40f9ac985ba7 1-96
+e2e/tests/a11y/keyboard.spec.ts
+  s_b9eefbc8672fd1::t_49cf8ab326777e 1-234
+e2e/a11y/routes.ts
+  s_b9eefbc8672fd1::t_5f0a76c6f06358 447-448
+  s_b9eefbc8672fd1::t_e69dc45e83c572 1-3,5-10,12-17,20-21,30,33,36-37,40-42,446
+  s_b9eefbc8672fd1::t_5c87f8b38cb495 213
+  s_b9eefbc8672fd1::t_c3130ca159cb1f 4,11,18-19,22-29,31-32,34-35,38-39,43-212,214-445,449-517
+e2e/a11y/baseline.ts
+  s_b9eefbc8672fd1::t_d9a424c4370fcd 17
+  s_b9eefbc8672fd1::t_3a769c20f9beb7 1-16,20,24-78
+  s_b9eefbc8672fd1::t_25bae1d008986a 18-19,21-23
+e2e/a11y/README.md
+  s_b9eefbc8672fd1::t_db6d27cca12ccd 1-75
+e2e/tests/a11y/deep-tier.spec.ts
+  s_b9eefbc8672fd1::t_987c200d67caba 1-324
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "a3c882b143a6f0145ac2392a16c2dbe9b662fd67",
+  "prompts": {},
+  "sessions": {
+    "s_b9eefbc8672fd1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cc21a817-17d7-45ac-a0ee-927eafc38c53",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

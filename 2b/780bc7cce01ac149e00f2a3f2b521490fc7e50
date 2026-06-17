@@ -1,0 +1,23 @@
+e2e/tests/organisms/all.spec.ts
+  s_4bb8550239af96::t_b0841f7fe34983 28,32
+e2e/tests/organisms/viruses.spec.ts
+  s_4bb8550239af96::t_d42e7c6b6b4ab3 29,33
+e2e/tests/organisms/bacteria.spec.ts
+  s_4bb8550239af96::t_3cddf18617058b 27,31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "2b780bc7cce01ac149e00f2a3f2b521490fc7e50",
+  "prompts": {},
+  "sessions": {
+    "s_4bb8550239af96": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4d56feef-187f-4f9f-a5cb-e68305049bc0",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

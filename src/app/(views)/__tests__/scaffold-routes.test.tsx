@@ -1,4 +1,3 @@
-// src/app/(views)/__tests__/scaffold-routes.test.tsx
 import { render, screen } from "@testing-library/react";
 
 const { notFoundSpy } = vi.hoisted(() => ({

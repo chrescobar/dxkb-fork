@@ -1,4 +1,3 @@
-// src/app/(views)/genome/[genomeId]/page.tsx
 import { makeSingularPage } from "@/lib/views/page-factory";
 import { viewRegistry } from "@/lib/views/view-registry";
 

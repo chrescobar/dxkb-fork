@@ -24,16 +24,30 @@ export function mapLegacyViewPath(pathname: string, rawSearch: string): MappedPa
   const isList = entry.legacyList !== undefined && legacyName === entry.legacyList;
 
   if (isList || idParts.length === 0) {
-    // List view: the legacy raw query string is an RQL expression (if present).
+    // List view: the legacy raw query string may be raw RQL, named params, or a mix
+    // (e.g. "eq(genome_id,83332.12)&filter=%22CDS%22"). Split on & and classify each
+    // segment individually so named params like filter= are not swallowed into rql=.
     if (!rawSearch) return { pathname: `/${segment}`, search: "" };
-    // If it already looks like key=value named params, pass through; else treat as RQL.
-    const looksNamed = /^[A-Za-z_][A-Za-z0-9_]*=/.test(rawSearch);
-    if (looksNamed) {
-      return { pathname: `/${segment}`, search: new URLSearchParams(rawSearch).toString() };
+    const rqlParts: string[] = [];
+    const namedParts: string[] = [];
+    for (const seg of rawSearch.split("&")) {
+      if (!seg) continue;
+      if (/^[A-Za-z_][A-Za-z0-9_]*=/.test(seg)) {
+        namedParts.push(seg);
+      } else {
+        rqlParts.push(seg);
+      }
     }
-    // encodeURIComponent (not URLSearchParams) keeps RQL parens literal and only
-    // encodes the comma, which round-trips cleanly and stays readable.
-    return { pathname: `/${segment}`, search: `rql=${encodeURIComponent(rawSearch)}` };
+    const searchParts: string[] = [];
+    if (rqlParts.length > 0) {
+      // encodeURIComponent keeps RQL parens literal and only encodes the comma,
+      // which round-trips cleanly and stays readable.
+      searchParts.push(`rql=${encodeURIComponent(rqlParts.join("&"))}`);
+    }
+    if (namedParts.length > 0) {
+      searchParts.push(new URLSearchParams(namedParts.join("&")).toString());
+    }
+    return { pathname: `/${segment}`, search: searchParts.join("&") };
   }
 
   // Singular view: keep the id in the path, preserve named query params verbatim.

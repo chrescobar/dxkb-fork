@@ -1,4 +1,3 @@
-// src/app/(views)/protein-structure/page.tsx
 import { renderListShell } from "@/lib/views/render-list";
 import { renderSingularShell } from "@/lib/views/render-singular";
 import { viewRegistry } from "@/lib/views/view-registry";

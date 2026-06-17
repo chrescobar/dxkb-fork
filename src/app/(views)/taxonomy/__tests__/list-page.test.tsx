@@ -1,4 +1,3 @@
-// src/app/(views)/taxonomy/__tests__/list-page.test.tsx
 import { render, screen } from "@testing-library/react";
 import TaxonomyListPage from "../page";
 

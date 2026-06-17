@@ -1,4 +1,3 @@
-// src/app/(views)/genome/page.tsx
 import { makeListPage } from "@/lib/views/page-factory";
 import { viewRegistry } from "@/lib/views/view-registry";
 

@@ -39,4 +39,12 @@ describe("mapLegacyViewPath", () => {
       search: "keyword=mycobacterium+tuberculosis",
     });
   });
+  it("splits mixed RQL + named param so filter= is not swallowed into rql=", () => {
+    expect(
+      mapLegacyViewPath("/view/FeatureList/", 'eq(genome_id,83332.12)&filter="CDS"'),
+    ).toEqual({
+      pathname: "/feature",
+      search: 'rql=eq(genome_id%2C83332.12)&filter=%22CDS%22',
+    });
+  });
 });

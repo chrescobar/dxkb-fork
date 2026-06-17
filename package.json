@@ -18,7 +18,15 @@
     "e2e:codegen": "playwright codegen http://127.0.0.1:3020",
     "e2e:report": "playwright show-report",
     "e2e:update-snapshots": "playwright test --update-snapshots",
-    "e2e:record": "tsx e2e/scripts/record-har.ts"
+    "e2e:record": "tsx e2e/scripts/record-har.ts",
+    "a11y": "playwright test --config playwright.a11y.config.ts --project=a11y-chromium",
+    "a11y:routes": "playwright test --config playwright.a11y.config.ts --project=a11y-chromium tests/a11y/routes-sweep.spec.ts",
+    "a11y:deep": "playwright test --config playwright.a11y.config.ts --project=a11y-chromium tests/a11y/deep-tier.spec.ts",
+    "a11y:keyboard": "playwright test --config playwright.a11y.config.ts --project=a11y-chromium tests/a11y/keyboard.spec.ts",
+    "a11y:primitives": "vitest run --config vitest.a11y.config.mts",
+    "a11y:motion": "playwright test --config playwright.a11y.config.ts --project=a11y-chromium tests/a11y/reduced-motion.spec.ts",
+    "a11y:tripwire": "playwright test --config playwright.a11y.config.ts --project=a11y-webkit-tripwire --project=a11y-firefox-tripwire",
+    "a11y:report": "playwright show-report --config playwright.a11y.config.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
@@ -105,7 +113,10 @@
     "@types/react-dom": "^19.2.3",
     "@types/topojson-client": "^3.1.5",
     "@vitejs/plugin-react": "^6.0.2",
+    "@vitest/browser": "^4.1.9",
+    "@vitest/browser-playwright": "^4.1.9",
     "@vitest/coverage-v8": "^4.1.8",
+    "axe-core": "^4.12.1",
     "babel-plugin-react-compiler": "^1.0.0",
     "baseline-browser-mapping": "^2.10.37",
     "eslint": "^9.39.4",
@@ -122,6 +133,7 @@
     "typescript-eslint": "^8.61.0",
     "vite": "^8.0.16",
     "vitest": "^4.1.8",
+    "vitest-browser-react": "^2.2.0",
     "wait-on": "^9.0.10"
   },
   "prettier": {

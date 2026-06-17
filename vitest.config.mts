@@ -29,6 +29,8 @@ export default defineConfig({
       "e2e/mocks/**",
       "e2e/fixtures/**",
       "e2e/__snapshots__/**",
+      // Browser-mode a11y primitive specs — run via pnpm a11y:primitives (vitest.a11y.config.mts).
+      "src/**/__a11y__/**",
     ],
     css: false,
     pool: "forks",

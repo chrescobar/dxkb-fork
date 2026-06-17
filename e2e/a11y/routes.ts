@@ -1,0 +1,517 @@
+import type { Page } from "@playwright/test";
+
+export interface RouteVariant {
+  /** Appended to parent name: e.g. "virus" → scanned as "taxonomy/virus". */
+  nameSuffix: string;
+  path: string;
+  prepare?: (page: Page) => Promise<void>;
+}
+
+export interface RouteEntry {
+  /** Unique name — baseline key (route dimension). */
+  name: string;
+  /** URL path to navigate to. */
+  path: string;
+  /** Skip auth cookies + use unauthenticated session override. Default: false. */
+  unauthenticated?: boolean;
+  /**
+   * Always redirects — counted in meta-test accounting but NOT scanned.
+   * The redirect target must be covered by another entry in this table.
+   */
+  redirectOnly?: boolean;
+  /** Add workspace RPC overrides to mock stack. */
+  needsWorkspace?: boolean;
+  /** Add jobs overrides to mock stack. */
+  needsJobs?: boolean;
+  /** Include in webkit/firefox thin tripwire project. */
+  tripwire?: boolean;
+  /** Include in mobile-thin project (375px viewport). */
+  mobile?: boolean;
+  /**
+   * page.tsx paths (relative to src/app/) this entry covers via redirect or same-component.
+   * Used by coverage.meta.spec.ts for full page.tsx accounting.
+   */
+  covers?: string[];
+  /** Variants for dynamic routes — one scan per variant. */
+  variants?: RouteVariant[];
+  /**
+   * Extra settle hook. Called AFTER awaitSettled() for route-specific waiting
+   * (e.g. waitForURL after redirect, element waits for streamed content).
+   */
+  prepare?: (page: Page) => Promise<void>;
+}
+
+// e2e test username — matches auth cookie values set in backends.ts
+const e2eUsername = "e2e-test-user@patricbrc.org";
+
+export const routes: RouteEntry[] = [
+  // ── Public / home ────────────────────────────────────────────────────────────
+  {
+    name: "home",
+    path: "/",
+    unauthenticated: true,
+    tripwire: true,
+    mobile: true,
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
+  },
+
+  // ── Auth pages ────────────────────────────────────────────────────────────────
+  {
+    name: "sign-in",
+    path: "/sign-in",
+    unauthenticated: true,
+    tripwire: true,
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+      await page.getByRole("button", { name: /sign in/i }).waitFor({ state: "visible" });
+    },
+  },
+  {
+    name: "sign-up",
+    path: "/sign-up",
+    unauthenticated: true,
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
+  },
+  {
+    name: "forgot-password",
+    path: "/forgot-password",
+    unauthenticated: true,
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
+  },
+
+  // ── Footer / static pages (unauthenticated) ─────────────────────────────────
+  {
+    name: "about",
+    path: "/about",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "citations",
+    path: "/citations",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "citations-metrics",
+    path: "/citations/metrics",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "citations-timeline",
+    path: "/citations/timeline",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "contact",
+    path: "/contact",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "faq",
+    path: "/faq",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "funding",
+    path: "/funding",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "help",
+    path: "/help",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "news",
+    path: "/news",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "privacy-policy",
+    path: "/privacy-policy",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "publications",
+    path: "/publications",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "related-resources",
+    path: "/related-resources",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "team",
+    path: "/team",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "updates",
+    path: "/updates",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+
+  // ── Organism landing pages ────────────────────────────────────────────────────
+  {
+    name: "organisms-all",
+    path: "/organisms/all",
+    unauthenticated: true,
+    tripwire: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "organisms-bacteria",
+    path: "/organisms/bacteria",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "organisms-viruses",
+    path: "/organisms/viruses",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+
+  // ── Search ───────────────────────────────────────────────────────────────────
+  {
+    name: "search",
+    path: "/search",
+    unauthenticated: true,
+    tripwire: true,
+    mobile: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+
+  // ── Taxonomy (dynamic — two variants for multi-param coverage) ───────────────
+  {
+    name: "taxonomy",
+    path: "/taxonomy/234",
+    unauthenticated: true,
+    prepare: async (page) => {
+      // The section's <h2> renders synchronously; chart cards stream in after.
+      await page.getByRole("heading", { level: 2, name: /Metadata Distributions/ })
+        .waitFor({ timeout: 10_000 }).catch(() => undefined);
+      await page.waitForLoadState("networkidle");
+    },
+    variants: [
+      {
+        nameSuffix: "virus",
+        path: "/taxonomy/234",
+        prepare: async (page) => {
+          await page.waitForLoadState("networkidle");
+        },
+      },
+      {
+        nameSuffix: "bacteria",
+        path: "/taxonomy/1763",
+        prepare: async (page) => {
+          await page.waitForLoadState("networkidle");
+        },
+      },
+    ],
+  },
+
+  // ── Jobs ─────────────────────────────────────────────────────────────────────
+  {
+    name: "jobs",
+    path: "/jobs",
+    needsJobs: true,
+    tripwire: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+
+  // ── Settings ─────────────────────────────────────────────────────────────────
+  {
+    name: "settings",
+    path: "/settings",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+
+  // ── Services index ───────────────────────────────────────────────────────────
+  {
+    name: "services",
+    path: "/services",
+    tripwire: true,
+    mobile: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+
+  // ── Genomics service forms ───────────────────────────────────────────────────
+  {
+    name: "genome-assembly",
+    path: "/services/genome-assembly",
+    tripwire: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "genome-annotation",
+    path: "/services/genome-annotation",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "genome-alignment",
+    path: "/services/genome-alignment",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "blast",
+    path: "/services/blast",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "primer-design",
+    path: "/services/primer-design",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "similar-genome-finder",
+    path: "/services/similar-genome-finder",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "variation-analysis",
+    path: "/services/variation-analysis",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+
+  // ── Metagenomics service forms ───────────────────────────────────────────────
+  {
+    name: "metagenomic-binning",
+    path: "/services/metagenomic-binning",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "metagenomic-read-mapping",
+    path: "/services/metagenomic-read-mapping",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "taxonomic-classification",
+    path: "/services/taxonomic-classification",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+
+  // ── Phylogenomics service forms ──────────────────────────────────────────────
+  {
+    name: "viral-genome-tree",
+    path: "/services/viral-genome-tree",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+
+  // ── Protein tools service forms ──────────────────────────────────────────────
+  {
+    name: "gene-protein-tree",
+    path: "/services/gene-protein-tree",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "meta-cats",
+    path: "/services/meta-cats",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "msa-snp-analysis",
+    path: "/services/msa-snp-analysis",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "proteome-comparison",
+    path: "/services/proteome-comparison",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+
+  // ── Utilities service forms ──────────────────────────────────────────────────
+  {
+    name: "fastq-utilities",
+    path: "/services/fastq-utilities",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+
+  // ── Viral tools service forms ────────────────────────────────────────────────
+  {
+    name: "influenza-ha-subtype",
+    path: "/services/influenza-ha-subtype",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "sars-cov2-genome-analysis",
+    path: "/services/sars-cov2-genome-analysis",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "sars-cov2-wastewater-analysis",
+    path: "/services/sars-cov2-wastewater-analysis",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "subspecies-classification",
+    path: "/services/subspecies-classification",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "viral-assembly",
+    path: "/services/viral-assembly",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+
+  // ── Workspace (authenticated) ────────────────────────────────────────────────
+  // Navigating to /workspace triggers a server redirect to /workspace/username/home.
+  // The prepare hook waits for the redirect so the scan runs on the workspace browser.
+  // This single entry covers: workspace/page.tsx AND workspace/[username]/home/[[...path]]/page.tsx
+  // AND workspace/[username]/[folder]/[[...path]]/page.tsx (same component, different root).
+  {
+    name: "workspace",
+    path: "/workspace",
+    needsWorkspace: true,
+    tripwire: true,
+    mobile: true,
+    covers: [
+      "workspace/page.tsx",
+      "workspace/[username]/home/[[...path]]/page.tsx",
+      "workspace/[username]/[folder]/[[...path]]/page.tsx",
+    ],
+    prepare: async (page) => {
+      await page.waitForURL(/\/workspace\/[^/]+\/home/, { timeout: 10_000 });
+      await page.getByPlaceholder(/search files/i).waitFor({ timeout: 10_000 });
+      await page.waitForLoadState("networkidle");
+    },
+  },
+  // Public workspace listing (no auth required to VIEW, but authenticated user sees their context)
+  {
+    name: "workspace-public",
+    path: "/workspace/public",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "workspace-public-user",
+    path: `/workspace/public/${e2eUsername}`,
+    covers: ["workspace/public/[username]/[...path]/page.tsx"],
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "workspace-shared",
+    path: "/workspace/shared",
+    needsWorkspace: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "workspace-workshop",
+    path: "/workspace/workshop",
+    needsWorkspace: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+
+  // Redirect-only workspace routes — not scanned, just counted for meta-test accounting.
+  {
+    name: "workspace-home-redirect",
+    path: "/workspace/home",
+    redirectOnly: true,
+    covers: ["workspace/home/[[...path]]/page.tsx"],
+  },
+  {
+    name: "workspace-username-redirect",
+    path: `/workspace/${e2eUsername}`,
+    redirectOnly: true,
+    covers: ["workspace/[username]/page.tsx"],
+  },
+
+  // ── Structure viewer ─────────────────────────────────────────────────────────
+  // Molstar 3D canvas is excluded from axe; the wrapper element must carry an accessible name.
+  {
+    name: "structure-viewer",
+    path: "/viewer/structure",
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+];
+
+// All src/app page.tsx paths (relative to src/app/) covered by this route table.
+// coverage.meta.spec.ts globs the actual files and diffs against this set.
+export const coveredPageFiles = new Set<string>([
+  // Root
+  "page.tsx",
+  // Auth
+  "(auth)/sign-in/page.tsx",
+  "(auth)/sign-up/page.tsx",
+  "(auth)/forgot-password/page.tsx",
+  // Footer / static
+  "(footer)/about/page.tsx",
+  "(footer)/citations/page.tsx",
+  "(footer)/citations/metrics/page.tsx",
+  "(footer)/citations/timeline/page.tsx",
+  "(footer)/contact/page.tsx",
+  "(footer)/faq/page.tsx",
+  "(footer)/funding/page.tsx",
+  "(footer)/help/page.tsx",
+  "(footer)/news/page.tsx",
+  "(footer)/privacy-policy/page.tsx",
+  "(footer)/publications/page.tsx",
+  "(footer)/related-resources/page.tsx",
+  "(footer)/team/page.tsx",
+  "(footer)/updates/page.tsx",
+  // Taxonomy (views)
+  "(views)/taxonomy/[taxonId]/page.tsx",
+  // Organisms
+  "organisms/all/page.tsx",
+  "organisms/bacteria/page.tsx",
+  "organisms/viruses/page.tsx",
+  // Jobs / search / settings
+  "jobs/page.tsx",
+  "search/page.tsx",
+  "settings/page.tsx",
+  // Services
+  "services/page.tsx",
+  "services/(genomics)/blast/page.tsx",
+  "services/(genomics)/genome-alignment/page.tsx",
+  "services/(genomics)/genome-annotation/page.tsx",
+  "services/(genomics)/genome-assembly/page.tsx",
+  "services/(genomics)/primer-design/page.tsx",
+  "services/(genomics)/similar-genome-finder/page.tsx",
+  "services/(genomics)/variation-analysis/page.tsx",
+  "services/(metagenomics)/metagenomic-binning/page.tsx",
+  "services/(metagenomics)/metagenomic-read-mapping/page.tsx",
+  "services/(metagenomics)/taxonomic-classification/page.tsx",
+  "services/(phylogenomics)/viral-genome-tree/page.tsx",
+  "services/(protein-tools)/gene-protein-tree/page.tsx",
+  "services/(protein-tools)/meta-cats/page.tsx",
+  "services/(protein-tools)/msa-snp-analysis/page.tsx",
+  "services/(protein-tools)/proteome-comparison/page.tsx",
+  "services/(utilities)/fastq-utilities/page.tsx",
+  "services/(viral-tools)/influenza-ha-subtype/page.tsx",
+  "services/(viral-tools)/sars-cov2-genome-analysis/page.tsx",
+  "services/(viral-tools)/sars-cov2-wastewater-analysis/page.tsx",
+  "services/(viral-tools)/subspecies-classification/page.tsx",
+  "services/(viral-tools)/viral-assembly/page.tsx",
+  // Structure viewer
+  "viewer/structure/[[...path]]/page.tsx",
+  // Workspace
+  "workspace/page.tsx",
+  "workspace/home/[[...path]]/page.tsx",           // redirectOnly
+  "workspace/[username]/page.tsx",                 // redirectOnly
+  "workspace/[username]/home/[[...path]]/page.tsx",
+  "workspace/[username]/[folder]/[[...path]]/page.tsx",
+  "workspace/public/page.tsx",
+  "workspace/public/[username]/page.tsx",
+  "workspace/public/[username]/[...path]/page.tsx",
+  "workspace/shared/[[...path]]/page.tsx",
+  "workspace/workshop/page.tsx",
+]);

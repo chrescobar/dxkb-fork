@@ -1,0 +1,238 @@
+name: Accessibility (WCAG 2.1 AA) Tests
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+    branches:
+      - main
+      - test
+      - dev
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+concurrency:
+  group: a11y-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  # One job per spec file — parallel CI runtime (plan Q16).
+  a11y-routes-sweep:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.61.0-jammy
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build app
+        run: pnpm build
+        env:
+          WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
+
+      - name: Set up auth state
+        run: playwright test --config playwright.a11y.config.ts --project=a11y-setup-signed-in
+        env:
+          CI: "true"
+          WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
+
+      - name: Run routes sweep (chromium)
+        run: pnpm a11y:routes
+        env:
+          CI: "true"
+          HOME: /root
+          WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
+
+      - name: Upload a11y report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: a11y-report-routes-sweep
+          path: |
+            a11y-report/
+            a11y-results/
+          retention-days: 14
+
+  a11y-deep-tier:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.61.0-jammy
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build app
+        run: pnpm build
+        env:
+          WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
+
+      - name: Set up auth state
+        run: playwright test --config playwright.a11y.config.ts --project=a11y-setup-signed-in
+        env:
+          CI: "true"
+          WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
+
+      - name: Run deep-tier tests (chromium)
+        run: pnpm a11y:deep
+        env:
+          CI: "true"
+          HOME: /root
+          WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
+
+      - name: Upload a11y report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: a11y-report-deep-tier
+          path: |
+            a11y-report/
+            a11y-results/
+          retention-days: 14
+
+  a11y-keyboard:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.61.0-jammy
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build app
+        run: pnpm build
+        env:
+          WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
+
+      - name: Set up auth state
+        run: playwright test --config playwright.a11y.config.ts --project=a11y-setup-signed-in
+        env:
+          CI: "true"
+          WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
+
+      - name: Run keyboard tests (chromium)
+        run: pnpm a11y:keyboard
+        env:
+          CI: "true"
+          HOME: /root
+          WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
+
+      - name: Upload a11y report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: a11y-report-keyboard
+          path: |
+            a11y-report/
+            a11y-results/
+          retention-days: 14
+
+  a11y-tripwire:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.61.0-jammy
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build app
+        run: pnpm build
+        env:
+          WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
+
+      - name: Set up auth state
+        run: playwright test --config playwright.a11y.config.ts --project=a11y-setup-signed-in
+        env:
+          CI: "true"
+          WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
+
+      - name: Run cross-engine tripwire (webkit + firefox)
+        run: pnpm a11y:tripwire
+        env:
+          CI: "true"
+          HOME: /root
+          WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
+
+      - name: Upload a11y report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: a11y-report-tripwire
+          path: |
+            a11y-report/
+            a11y-results/
+          retention-days: 14
+
+  a11y-primitives:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.61.0-jammy
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run primitive a11y tests (Vitest browser mode)
+        run: pnpm a11y:primitives
+        env:
+          CI: "true"
+          HOME: /root

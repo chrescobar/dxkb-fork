@@ -38,6 +38,7 @@ export function LandingShellClient({
 
   function handleViewChange(nextView: OrganismViewKey) {
     const params = new URLSearchParams(searchParams.toString());
+    params.delete("view");
     if (nextView === defaultView) {
       params.delete("tab");
     } else {

@@ -60,6 +60,6 @@ export function resolveListQuery(
   const rql = firstValue(params.rql);
   if (rql !== undefined && rql !== "") return rql;
   const filter = firstValue(params.filter);
-  if (filter !== undefined && filter !== "") return filter;
+  if (filter !== undefined && filter !== "" && filter.includes("(")) return filter;
   return friendlyParamsToRql(params, allowed);
 }

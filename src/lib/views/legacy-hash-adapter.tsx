@@ -1,14 +1,18 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 /**
  * Legacy BV-BRC put the active tab in the URL hash (#view_tab=x), which the server
  * cannot read. After a legacy /view/* link is server-redirected (proxy.ts), this client
- * component rewrites any leftover #view_tab= (and #filter=) into the new ?tab= query
- * param via history.replaceState — no reload.
+ * component promotes any leftover #view_tab= (and #filter=, #accession=, #path=) into
+ * the new ?tab= query param via router.replace so that Next.js re-renders with the
+ * correct searchParams and the right tab is active without a manual reload.
  */
 export function LegacyHashAdapter() {
+  const router = useRouter();
+
   useEffect(() => {
     const hash = window.location.hash.replace(/^#/, "");
     if (!hash) return;
@@ -25,8 +29,8 @@ export function LegacyHashAdapter() {
     if (accession !== null) url.searchParams.set("accession", accession);
     if (path !== null) url.searchParams.set("path", path);
     url.hash = "";
-    window.history.replaceState(window.history.state, "", url.toString());
-  }, []);
+    router.replace(url.pathname + url.search);
+  }, [router]);
 
   return null;
 }

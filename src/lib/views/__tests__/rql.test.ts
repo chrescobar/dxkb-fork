@@ -51,6 +51,10 @@ describe("resolveListQuery", () => {
   it("falls back to ?filter= when no rql= (promoted from legacy hash)", () => {
     expect(resolveListQuery({ filter: 'eq(feature_type,"CDS")' }, ["keyword"])).toBe('eq(feature_type,"CDS")');
   });
+  it("ignores ?filter= that is not RQL (FeatureList feature-type token, not an RQL expression)", () => {
+    expect(resolveListQuery({ filter: '"CDS"' }, ["keyword"])).toBe("");
+    expect(resolveListQuery({ filter: "CDS" }, ["keyword"])).toBe("");
+  });
   it("prefers rql= over filter=", () => {
     expect(resolveListQuery({ rql: "eq(public,false)", filter: "eq(genus,Foo)" }, ["keyword"])).toBe("eq(public,false)");
   });

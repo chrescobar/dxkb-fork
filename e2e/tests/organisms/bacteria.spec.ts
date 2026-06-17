@@ -24,11 +24,11 @@ test.describe("bacteria organism landing page", () => {
     await landing.expectDonut("Isolation Country");
 
     await page.getByRole("button", { name: /Phylogeny/ }).click();
-    await expect(page).toHaveURL(/view=phylogeny/);
+    await expect(page).toHaveURL(/tab=phylogeny/);
     await expect(page.getByText("Phylogeny data and visualization")).toBeVisible();
 
     await page.getByRole("button", { name: /Genomes/ }).click();
-    await expect(page).toHaveURL(/view=genomes/);
+    await expect(page).toHaveURL(/tab=genomes/);
     await expect(page.getByText("Genome table filtering and pagination")).toBeVisible();
   });
 

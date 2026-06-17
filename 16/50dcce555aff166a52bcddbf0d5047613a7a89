@@ -1,0 +1,68 @@
+src/app/organisms/bacteria/page.tsx
+  s_317fe5d959887d::t_b55e297832a02e 12,17-19
+src/app/organisms/viruses/page.tsx
+  s_317fe5d959887d::t_dc274a67cf03eb 12,17-19
+src/lib/views/__tests__/rql.test.ts
+  s_b4fb47d502d3da::t_3849978fb80d5a 51-56
+src/components/organisms/genera-grid/featured-genera-data.ts
+  s_d70c7427b7740d::t_39f7f07275c307 1-2,9-32
+src/lib/views/legacy-hash-adapter.tsx
+  s_317fe5d959887d::t_04bc0560632aee 18-20,25-26
+src/lib/views/rql.ts
+  s_b4fb47d502d3da::t_2bea91c5288a47 52-55,62-63
+  s_d70c7427b7740d::t_bbcebd9a103b93 27-32
+src/components/organisms/genera-grid/genera-grid.tsx
+  s_d70c7427b7740d::t_33137bc5f13cfe 9
+  s_d70c7427b7740d::t_3e7945552382f7 46-51
+src/app/organisms/all/page.tsx
+  s_317fe5d959887d::t_7f04241b4a0bc5 12,17-19
+src/app/organisms/viruses/__tests__/page.test.tsx
+  s_317fe5d959887d::t_6558dddd377f58 33-54,57
+  s_317fe5d959887d::t_8362b84eff385f 55-56
+src/lib/views/__tests__/legacy-hash-adapter.test.tsx
+  s_317fe5d959887d::t_541817266e34c6 45-69
+src/lib/views/legacy-redirect.ts
+  s_a794fd0dc1da83::t_b85679b6c28c6e 27-29,31-39,41-50
+src/lib/views/__tests__/legacy-redirect.test.ts
+  s_a794fd0dc1da83::t_cbd8dc653ca2f1 42-49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "1650dcce555aff166a52bcddbf0d5047613a7a89",
+  "prompts": {},
+  "sessions": {
+    "s_317fe5d959887d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "58650b92-70a3-49de-a35c-b00dbb7f6830",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_a794fd0dc1da83": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8c000b8d-f035-43ab-9889-6db3beed9a86",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_b4fb47d502d3da": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7b2827d9-2e63-4b65-be60-370e1df689a9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_d70c7427b7740d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "17572738-ff04-43ec-9222-f5bbe607582e",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

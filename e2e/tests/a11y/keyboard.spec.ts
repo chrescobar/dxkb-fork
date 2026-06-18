@@ -129,11 +129,16 @@ test.describe("keyboard: workspace dialogs (WCAG 2.1.2 — no trap)", () => {
     await expect(dialog).toBeVisible();
 
     // Verify focus is trapped inside the dialog while open.
+    // FloatingFocusManager inserts focus-guard sentinels as siblings of [role='dialog']
+    // (outside the role boundary) and redirects via requestAnimationFrame. Include them
+    // in the "inside" check so the assertion doesn't race the async rAF redirect.
     for (let i = 0; i < 5; i++) {
       await page.keyboard.press("Tab");
       const focusInsideDialog = await page.evaluate(() => {
         const dialog = document.querySelector("[role='dialog']");
-        return dialog?.contains(document.activeElement) ?? false;
+        const activeEl = document.activeElement;
+        const isFocusGuard = activeEl?.hasAttribute("data-base-ui-focus-guard") ?? false;
+        return (dialog?.contains(activeEl) ?? false) || isFocusGuard;
       });
       expect(focusInsideDialog, `Tab ${String(i + 1)}: focus escaped the dialog (WCAG 2.1.2 violation)`).toBe(true);
     }
@@ -152,7 +157,7 @@ test.describe("keyboard: workspace dialogs (WCAG 2.1.2 — no trap)", () => {
     await page.waitForLoadState("networkidle");
 
     await wp.openUpload();
-    const dialog = page.getByRole("dialog").filter({ hasText: /^upload$/i });
+    const dialog = page.getByRole("dialog").filter({ has: page.getByRole("heading", { name: /^upload$/i }) });
     await expect(dialog).toBeVisible();
 
     await page.keyboard.press("Escape");

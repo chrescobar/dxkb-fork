@@ -56,7 +56,7 @@ test.describe("a11y deep tier: service forms", () => {
     await page.waitForLoadState("networkidle");
 
     // Submit with empty required fields to trigger inline validation errors.
-    await page.getByRole("button", { name: /submit/i }).click();
+    await page.getByRole("button", { name: /assemble/i }).click();
     // Give validation messages time to render.
     await page.waitForTimeout(300);
 
@@ -199,6 +199,7 @@ test.describe("a11y deep tier: jobs", () => {
       app: "GenomeAssembly",
       status: "failed",
       submit_time: "2026-04-01T09:00:00Z",
+      parameters: {},
     };
     await applyBackendMocks(page, {
       overrides: [
@@ -209,6 +210,7 @@ test.describe("a11y deep tier: jobs", () => {
     });
     const jobs = new JobsListPage(page);
     await jobs.goto();
+    await page.waitForLoadState("networkidle");
     await jobs.waitForRows();
 
     await forEachTheme(page, async (theme) => {
@@ -222,6 +224,7 @@ test.describe("a11y deep tier: jobs", () => {
       app: mockJobs[1].app,
       status: "running",
       submit_time: mockJobs[1].submit_time,
+      parameters: {},
     };
     await applyBackendMocks(page, {
       overrides: [
@@ -232,6 +235,7 @@ test.describe("a11y deep tier: jobs", () => {
     });
     const jobs = new JobsListPage(page);
     await jobs.goto();
+    await page.waitForLoadState("networkidle");
     await jobs.waitForRows();
 
     await jobs.selectJob(runningJob.id);

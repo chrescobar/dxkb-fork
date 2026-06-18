@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
-import { proxy } from "../proxy";
+import { config, proxy } from "../proxy";
+import { viewSegments } from "@/lib/views/view-registry";
 
 /** Helper to build a NextRequest with optional cookies */
 function buildRequest(
@@ -186,6 +187,60 @@ describe("proxy", () => {
       const response = proxy(request);
 
       expect(response.status).toBe(307);
+    });
+  });
+
+  describe("view→tab redirect", () => {
+    it("redirects ?view= to ?tab= on a (views) route", () => {
+      const request = buildRequest("/taxonomy/234?view=genomes");
+      const response = proxy(request);
+      expect(response.status).toBe(308);
+      const loc = getRedirectLocation(response);
+      expect(loc.pathname).toBe("/taxonomy/234");
+      expect(loc.searchParams.get("tab")).toBe("genomes");
+      expect(loc.searchParams.get("view")).toBeNull();
+    });
+
+    it("does not redirect ?view= on a non-(views) path", () => {
+      const request = buildRequest("/search?view=genomes");
+      const response = proxy(request);
+      expect(response.status).not.toBe(308);
+      expect(response.headers.get("x-middleware-next")).toBe("1");
+    });
+  });
+
+  describe("legacy /view/* redirect", () => {
+    it("redirects a singular legacy path", () => {
+      const request = buildRequest("/view/Genome/59201.7581");
+      const response = proxy(request);
+      expect(response.status).toBe(308);
+      expect(getRedirectLocation(response).pathname).toBe("/genome/59201.7581");
+    });
+    it("redirects a list legacy path into ?rql=", () => {
+      const request = buildRequest("/view/GenomeList/?eq(taxon_id,1763)");
+      const response = proxy(request);
+      expect(response.status).toBe(308);
+      const loc = getRedirectLocation(response);
+      expect(loc.pathname).toBe("/genome");
+      expect(loc.searchParams.get("rql")).toBe("eq(taxon_id,1763)");
+    });
+    it("passes through an unknown legacy view name (no redirect)", () => {
+      const request = buildRequest("/view/Nonsense/1");
+      const response = proxy(request);
+      expect(response.status).not.toBe(308);
+      expect(response.headers.get("x-middleware-next")).toBe("1");
+    });
+  });
+
+  // The matcher must stay a static literal (Next.js cannot compute it from
+  // viewSegments at runtime), so it is hand-mirrored in proxy.ts. This guard fails
+  // when a new registry entry is added without its matcher line — preventing the
+  // ?view=→?tab= rewrite from silently skipping the new segment.
+  describe("view-segment matcher drift guard", () => {
+    it("includes a matcher line for every view segment", () => {
+      for (const segment of viewSegments) {
+        expect(config.matcher).toContain(`/${segment}/:path*`);
+      }
     });
   });
 });

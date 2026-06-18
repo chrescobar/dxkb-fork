@@ -1,51 +1,34 @@
+import { taxonomyHref } from "@/lib/views/hrefs";
+
 export interface FeaturedVirus {
   name: string;
   href: string;
+  /** aria-label suffix; "genomes" for genome-list targets, omitted (→ "overview") for taxonomy. */
+  viewLabel?: string;
 }
 
+// Bacteriophages and Ebolavirus use bespoke multi-clause RQL filters (and()/in())
+// that no generic href builder covers — these raw /genome?rql= literals are
+// intentional, and target the genome list (viewLabel "genomes"). The remaining
+// entries are plain taxonomy links via taxonomyHref.
 export const featuredViruses: FeaturedVirus[] = [
   {
     name: "Bacteriophages",
-    href: "https://www.bv-brc.org/view/GenomeList/?and(eq(genome_name,phage),eq(superkingdom,Viruses))",
+    href: "/genome?rql=and(eq(genome_name,phage),eq(superkingdom,Viruses))",
+    viewLabel: "genomes",
   },
-  {
-    name: "Dengue virus",
-    href: "https://www.bv-brc.org/view/Taxonomy/3052464#view_tab=overview",
-  },
+  { name: "Dengue virus", href: taxonomyHref(3052464) },
   {
     name: "Ebolavirus",
-    href: "https://www.bv-brc.org/view/GenomeList/?in(taxon_lineage_ids,(3044781,186536))",
+    href: "/genome?rql=in(taxon_lineage_ids,(3044781,186536))",
+    viewLabel: "genomes",
   },
-  {
-    name: "Enteroviruses",
-    href: "https://www.bv-brc.org/view/Taxonomy/12059#view_tab=overview",
-  },
-  {
-    name: "Hepatitis C virus",
-    href: "https://www.bv-brc.org/view/Taxonomy/3052230#view_tab=overview",
-  },
-  {
-    name: "Influenza A virus",
-    href: "https://www.bv-brc.org/view/Taxonomy/197911#view_tab=overview",
-  },
-  {
-    name: "Lassa virus",
-    href: "https://www.bv-brc.org/view/Taxonomy/3052310#view_tab=overview",
-  },
-  {
-    name: "Measles virus",
-    href: "https://www.bv-brc.org/view/Taxonomy/3052345#view_tab=overview",
-  },
-  {
-    name: "Monkeypox Virus",
-    href: "https://www.bv-brc.org/view/Taxonomy/10244#view_tab=overview",
-  },
-  {
-    name: "SARS-CoV-2",
-    href: "https://www.bv-brc.org/view/Taxonomy/2697049#view_tab=overview",
-  },
-  {
-    name: "Zika Virus",
-    href: "https://www.bv-brc.org/view/Taxonomy/3048459#view_tab=overview",
-  },
+  { name: "Enteroviruses", href: taxonomyHref(12059) },
+  { name: "Hepatitis C virus", href: taxonomyHref(3052230) },
+  { name: "Influenza A virus", href: taxonomyHref(197911) },
+  { name: "Lassa virus", href: taxonomyHref(3052310) },
+  { name: "Measles virus", href: taxonomyHref(3052345) },
+  { name: "Monkeypox Virus", href: taxonomyHref(10244) },
+  { name: "SARS-CoV-2", href: taxonomyHref(2697049) },
+  { name: "Zika Virus", href: taxonomyHref(3048459) },
 ];

@@ -25,11 +25,11 @@ test.describe("all organisms landing page", () => {
     await landing.expectDonut("Isolation Country");
 
     await page.getByRole("button", { name: /Phylogeny/ }).click();
-    await expect(page).toHaveURL(/view=phylogeny/);
+    await expect(page).toHaveURL(/tab=phylogeny/);
     await expect(page.getByText("This view is coming soon")).toBeVisible();
 
     await page.getByRole("button", { name: /AMR Phenotypes/ }).click();
-    await expect(page).toHaveURL(/view=amr-phenotypes/);
+    await expect(page).toHaveURL(/tab=amr-phenotypes/);
     await expect(page.getByText("This view is coming soon")).toBeVisible();
   });
 

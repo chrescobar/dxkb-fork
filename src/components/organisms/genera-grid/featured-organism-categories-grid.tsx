@@ -26,7 +26,7 @@ export function FeaturedOrganismCategoriesGrid({
             </h3>
             <div className="grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-2">
               {cat.organisms.map((org) => (
-                <GeneraCard key={org.name} name={org.name} href={org.href} />
+                <GeneraCard key={org.name} name={org.name} href={org.href} viewLabel="overview" />
               ))}
             </div>
           </div>

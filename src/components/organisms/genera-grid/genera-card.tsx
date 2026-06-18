@@ -10,27 +10,18 @@ interface GeneraCardProps {
   name: string;
   href: string;
   count?: number;
+  /** Suffix for the link's aria-label, e.g. "genomes" or "overview". */
+  viewLabel?: string;
 }
 
-function parseViewTab(href: string): string {
-  try {
-    return new URLSearchParams(new URL(href).hash.slice(1)).get("view_tab") ?? "genomes";
-  } catch {
-    return "genomes";
-  }
-}
-
-export function GeneraCard({ name, href, count }: GeneraCardProps) {
+export function GeneraCard({ name, href, count, viewLabel = "genomes" }: GeneraCardProps) {
   const displayName = facetDisplayLabel(name);
-  const viewTab = parseViewTab(href);
-  const isExternal = href.startsWith("http://") || href.startsWith("https://");
 
   return (
     <Card className="gap-0 rounded-md py-0 shadow-none">
       <Link
         href={href}
-        {...(isExternal && { target: "_blank", rel: "noopener noreferrer" })}
-        aria-label={`View ${displayName} ${viewTab}`}
+        aria-label={`View ${displayName} ${viewLabel}`}
         className="flex min-h-12 items-center gap-2.5 px-2.5 py-1.5 transition-colors hover:bg-muted/40"
       >
         <Avatar

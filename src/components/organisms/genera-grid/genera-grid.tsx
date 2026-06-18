@@ -5,6 +5,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { fetchOrganismGenera } from "@/lib/services/organisms/genera";
+import { genomeListHref } from "@/lib/views/hrefs";
+import { rqlAnd, rqlEq } from "@/lib/views/rql";
 
 import { GeneraCard } from "./genera-card";
 
@@ -41,7 +43,12 @@ export async function GeneraGrid({ taxonId, limit = 24 }: GeneraGridProps) {
             key={genus.name}
             name={genus.name}
             count={genus.count}
-            href={`https://www.bv-brc.org/view/Taxonomy/${String(taxonId)}#view_tab=genomes&filter=genus:${encodeURIComponent(genus.name)}`}
+            href={genomeListHref({
+                rql: rqlAnd(
+                  rqlEq("taxon_lineage_ids", String(taxonId)),
+                  rqlEq("genus", genus.name),
+                ),
+              })}
           />
         ))}
       </div>

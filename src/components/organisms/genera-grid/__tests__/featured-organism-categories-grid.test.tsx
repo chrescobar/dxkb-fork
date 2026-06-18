@@ -6,14 +6,14 @@ const categories = [
   {
     title: "The Three Domains",
     organisms: [
-      { name: "Bacteria", href: "https://www.bv-brc.org/view/Taxonomy/2#view_tab=overview" },
-      { name: "Archaea", href: "https://www.bv-brc.org/view/Taxonomy/2157#view_tab=overview" },
+      { name: "Bacteria", href: "/taxonomy/2" },
+      { name: "Archaea", href: "/taxonomy/2157" },
     ],
   },
   {
     title: "Animals",
     organisms: [
-      { name: "Mammalia", href: "https://www.bv-brc.org/view/Taxonomy/40674#view_tab=overview" },
+      { name: "Mammalia", href: "/taxonomy/40674" },
     ],
   },
 ];

@@ -83,9 +83,9 @@ explicitly with `notFound()` instead (see §2.4).
 | `strain` | — (none) | `/strain` | — | — | — / StrainList |
 | `domains-and-motifs` | — (none) | `/domains-and-motifs` | — | — | — / DomainsAndMotifsList |
 | `protein-structure` | `/protein-structure?accession=…` | `/protein-structure` | accession or workspace path (no path id) | none | ProteinStructure / ProteinStructureList |
-| `experiment` | (workspace-only, no public route) | `/experiment` | — | — | Experiment* / ExperimentList |
+| `experiment` | `/experiment/{experimentId}` | `/experiment` | experiment id | int | ExperimentComparison / ExperimentList |
 
-\* Legacy `Experiment` had **no navigable URL** (workspace-only). We add only the list route.
+\* Legacy singular uses `ExperimentComparison` as the URL segment (not `Experiment`). The bare `Experiment` viewer is workspace-only with no public URL. Both singular and list routes are scaffolded.
 
 ### 2.5 Tab defaults differ between list and singular
 
@@ -106,22 +106,23 @@ per-type in the registry. From the legacy doc:
   separated for multiple: `6VXX,7BZ5`) or `?path=/user@bvbrc/home/x.pdb` (workspace,
   mutually exclusive with `accession`). One `page.tsx` handles both list and id-less
   singular by branching on presence of `accession`/`path`.
-- **`experiment`**: list route only. The singular is workspace-only with no public URL;
-  document it, do not scaffold an `[id]` route.
+- **`experiment`**: has both list and singular routes. Legacy singular URL segment is `ExperimentComparison` (not `Experiment`); map `legacySingular: "ExperimentComparison"` in the registry. The bare `Experiment` viewer is workspace-only and has no public URL.
 
 ### 2.7 Examples
 
 ```
-dxkb.org/taxonomy/234                          # taxonomy singular, default tab (overview)
-dxkb.org/taxonomy/234?tab=genomes              # taxonomy singular, genomes tab
-dxkb.org/genome/59201.7581?tab=features        # genome singular, features tab
-dxkb.org/feature/PATRIC.83332.707.NC_000962.CDS.1.1524.fwd
-dxkb.org/surveillance/ISDN123456?pathogen_test_type=Influenza%20A
-dxkb.org/genome?keyword=influenza              # genome LIST, friendly search
-dxkb.org/genome?taxon_id=1763                  # genome LIST, friendly filter
-dxkb.org/genome?rql=and(eq(taxon_lineage_ids,1763),gt(genomes,0))  # LIST, raw escape hatch
-dxkb.org/protein-structure?accession=6VXX,7BZ5 # id-less singular
-dxkb.org/strain?keyword=H1N1                   # list-only type
+dxkb.org/taxonomy/234                                                  # taxonomy singular, default tab (overview)
+dxkb.org/taxonomy/234?tab=genomes                                      # taxonomy singular, genomes tab
+dxkb.org/genome/59201.7581?tab=features                                # genome singular, features tab
+dxkb.org/feature/PATRIC.83332.707.NC_000962.CDS.1.1524.fwd            # feature singular, default tab (overview); dotted PATRIC id in path
+dxkb.org/surveillance/ISDN123456?pathogen_test_type=Influenza%20A      # surveillance singular; named query param carried verbatim
+dxkb.org/experiment/2000000                                            # experiment singular (legacy: ExperimentComparison), default tab
+dxkb.org/genome?keyword=influenza                                      # genome LIST, friendly keyword search → keyword(influenza)
+dxkb.org/genome?taxon_id=1763                                          # genome LIST, friendly filter → eq(taxon_id,1763)
+dxkb.org/genome?rql=and(eq(taxon_lineage_ids,1763),gt(genomes,0))      # genome LIST, raw RQL escape hatch
+dxkb.org/protein-structure?accession=6VXX,7BZ5                        # protein-structure id-less singular; comma-separated PDB accessions
+dxkb.org/protein-structure?path=/user@bvbrc/home/mystructure.pdb       # protein-structure id-less singular; workspace file path
+dxkb.org/strain?keyword=H1N1                                           # strain LIST (list-only type — no singular route)
 ```
 
 ---
@@ -247,7 +248,8 @@ src/app/(views)/
   protein-structure/
     page.tsx               # handles list AND id-less singular (?accession/?path)
   experiment/
-    page.tsx               # list only public — NO [id]
+    page.tsx               # list
+    [experimentId]/page.tsx  # singular (legacy: ExperimentComparison)
 ```
 
 ### 5.2 Thin page handlers delegate to shells
@@ -290,7 +292,7 @@ parse/validate/resolve logic lives once in the shells.
 
 - `protein-structure/page.tsx` — branches on `?accession=` / `?path=` (id-less singular)
   vs no params (list). Own body; calls shells as appropriate.
-- `strain`, `domains-and-motifs`, `experiment` — list `page.tsx` only, no `[id]` folder.
+- `strain`, `domains-and-motifs` — list `page.tsx` only, no `[id]` folder.
 
 ---
 
@@ -440,6 +442,6 @@ These shipped files (commits from 2026-06-15) must be updated for the `view` →
 | Tab param | `?tab=` (query, server-readable), migrated from `?view=` |
 | Architecture | Data-driven view **registry** (data-only, render stays per-page) |
 | List query format | Friendly named params **+** `?rql=` escape hatch |
-| Oddballs | All 10 documented; scaffold the real ones; list-only → `notFound()` on `[id]`; protein-structure id-less; experiment list-only |
+| Oddballs | All 10 documented; scaffold the real ones; list-only → `notFound()` on `[id]`; protein-structure id-less; experiment singular uses legacy name `ExperimentComparison` |
 | Redirects (build now) | Internal `view`→`tab` + legacy `/view/*` two-stage (server path/query + client hash) |
 | Deferred | Real list/singular data, search repoint, sitemap/JSON-LD/ISR |

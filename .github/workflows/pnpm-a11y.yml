@@ -49,7 +49,7 @@ jobs:
           WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
 
       - name: Set up auth state
-        run: playwright test --config playwright.a11y.config.ts --project=a11y-setup-signed-in
+        run: pnpm exec playwright test --config playwright.a11y.config.ts --project=a11y-setup-signed-in
         env:
           CI: "true"
           WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
@@ -96,7 +96,7 @@ jobs:
           WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
 
       - name: Set up auth state
-        run: playwright test --config playwright.a11y.config.ts --project=a11y-setup-signed-in
+        run: pnpm exec playwright test --config playwright.a11y.config.ts --project=a11y-setup-signed-in
         env:
           CI: "true"
           WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
@@ -143,7 +143,7 @@ jobs:
           WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
 
       - name: Set up auth state
-        run: playwright test --config playwright.a11y.config.ts --project=a11y-setup-signed-in
+        run: pnpm exec playwright test --config playwright.a11y.config.ts --project=a11y-setup-signed-in
         env:
           CI: "true"
           WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
@@ -190,7 +190,7 @@ jobs:
           WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"
 
       - name: Set up auth state
-        run: playwright test --config playwright.a11y.config.ts --project=a11y-setup-signed-in
+        run: pnpm exec playwright test --config playwright.a11y.config.ts --project=a11y-setup-signed-in
         env:
           CI: "true"
           WORKSPACE_GUIDE_URL: "https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html"

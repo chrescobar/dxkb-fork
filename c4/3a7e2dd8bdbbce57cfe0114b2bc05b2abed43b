@@ -1,0 +1,30 @@
+e2e/a11y/routes.ts
+  s_818bb58c504fa9::t_252f9e9b7da8a1 575-595
+  s_818bb58c504fa9::t_c70db073c401f5 242-335
+e2e/a11y/baseline.generated.ts
+  s_10fbb798bfe364::t_3ea752ef227b22 52-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "c43a7e2dd8bdbbce57cfe0114b2bc05b2abed43b",
+  "prompts": {},
+  "sessions": {
+    "s_10fbb798bfe364": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f58a2aa1-1629-40b0-a3c8-0349c5c5d9b1",
+        "model": "unknown"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_818bb58c504fa9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c2e75f3f-5281-442d-933c-8f341b0992d9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

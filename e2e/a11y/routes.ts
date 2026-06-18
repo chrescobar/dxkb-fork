@@ -239,6 +239,100 @@ export const routes: RouteEntry[] = [
     ],
   },
 
+  // ── Views — list pages (render PlaceholderList, no data fetch) ──────────────
+  {
+    name: "taxonomy-list",
+    path: "/taxonomy",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "genome-list",
+    path: "/genome",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "feature-list",
+    path: "/feature",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "epitope-list",
+    path: "/epitope",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "surveillance-list",
+    path: "/surveillance",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "serology-list",
+    path: "/serology",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "strain",
+    path: "/strain",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "domains-and-motifs",
+    path: "/domains-and-motifs",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "experiment",
+    path: "/experiment",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "protein-structure",
+    path: "/protein-structure",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+
+  // ── Views — singular pages (skeleton stage: any valid id renders shell) ──────
+  {
+    name: "genome",
+    path: "/genome/1282460.2049",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "feature",
+    path: "/feature/fig|1282460.2049.peg.1",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "epitope",
+    path: "/epitope/15780",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "surveillance",
+    path: "/surveillance/example-sample-1",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+  {
+    name: "serology",
+    path: "/serology/example-sample-1",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
+
   // ── Jobs ─────────────────────────────────────────────────────────────────────
   {
     name: "jobs",
@@ -478,6 +572,27 @@ export const coveredPageFiles = new Set<string>([
   "(footer)/updates/page.tsx",
   // Taxonomy (views)
   "(views)/taxonomy/[taxonId]/page.tsx",
+  "(views)/taxonomy/page.tsx",
+  // Genome (views)
+  "(views)/genome/[genomeId]/page.tsx",
+  "(views)/genome/page.tsx",
+  // Feature (views)
+  "(views)/feature/[featureId]/page.tsx",
+  "(views)/feature/page.tsx",
+  // Epitope (views)
+  "(views)/epitope/[epitopeId]/page.tsx",
+  "(views)/epitope/page.tsx",
+  // Surveillance (views)
+  "(views)/surveillance/[sampleId]/page.tsx",
+  "(views)/surveillance/page.tsx",
+  // Serology (views)
+  "(views)/serology/[sampleId]/page.tsx",
+  "(views)/serology/page.tsx",
+  // List-only views
+  "(views)/strain/page.tsx",
+  "(views)/domains-and-motifs/page.tsx",
+  "(views)/experiment/page.tsx",
+  "(views)/protein-structure/page.tsx",
   // Organisms
   "organisms/all/page.tsx",
   "organisms/bacteria/page.tsx",

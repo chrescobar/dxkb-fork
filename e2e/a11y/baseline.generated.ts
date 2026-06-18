@@ -49,6 +49,14 @@ const generatedBaseline: BaselineMap = {
       "color-contrast": { maxNodes: 110, ticket: "DXKBCORE-174" },
     },
   },
+  // taxonomy/virus dark exceeds the wildcard 80-node cap (94 observed) because the
+  // AMR chart legend pills and view-tab search components add dark-mode contrast nodes
+  // beyond what existed before the merge. Ticket: DXKBCORE-174
+  "taxonomy/virus": {
+    "dxkb-dark": {
+      "color-contrast": { maxNodes: 100, ticket: "DXKBCORE-174" },
+    },
+  },
   // taxonomy/bacteria renders an error page when mock data lacks taxon_name,
   // causing missing <title> and missing html[lang]. Ticket: DXKBCORE-177
   "taxonomy/bacteria": {

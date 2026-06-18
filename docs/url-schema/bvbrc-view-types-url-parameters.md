@@ -295,11 +295,28 @@ href: `/view/Serology/${sel.sample_identifier}?test_type=${encodeURIComponent(se
 
 ---
 
-### Experiment (user-facing: "Experiments")
+### ExperimentComparison (user-facing: "Experiments" singular)
 
-**Viewer file:** `public/js/p3/widget/viewer/Experiment.js`
+**Viewer file:** `public/js/p3/widget/viewer/ExperimentComparison.js`
 
-> **No direct navigable URL.** This viewer is loaded exclusively via `WorkspaceManager` by calling `_setDataAttr(data)` with a workspace object. It does not implement `_setStateAttr` or parse `hashParams`. Access is only from the workspace browser.
+**URL pattern:**
+```
+/view/ExperimentComparison/{experiment_id}#{hash_params}
+```
+
+**Examples:**
+```
+/view/ExperimentComparison/2000000#view_tab=overview
+```
+
+**Parameter keys:**
+
+| Location | Key | Description |
+|---|---|---|
+| Path segment | `experiment_id` | Experiment ID (integer) |
+| Hash | `view_tab` | Active tab name. Default: `overview` |
+
+> **Note:** The viewer file is `Experiment.js` in legacy BV-BRC, but the URL segment is `ExperimentComparison`, not `Experiment`. The bare `Experiment` viewer (workspace-only) has no public URL.
 
 ---
 

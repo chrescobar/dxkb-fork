@@ -276,7 +276,7 @@ export default function SubspeciesClassificationPage() {
                         if (value != null) field.handleChange(value);
                       }}
                     >
-                      <SelectTrigger className="service-card-select-trigger">
+                      <SelectTrigger className="service-card-select-trigger" aria-label="Species">
                         <SelectValue placeholder="Select species" />
                       </SelectTrigger>
                       <SelectContent className="max-h-[min(20rem,70vh)] overflow-y-auto">

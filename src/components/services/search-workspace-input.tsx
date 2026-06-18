@@ -42,13 +42,14 @@ const SearchWorkspaceInput = ({
             }
           }}
         />
-        <Button size="icon" variant="outline">
+        <Button size="icon" variant="outline" aria-hidden tabIndex={-1}>
           {icon}
         </Button>
         {variant === "add" && (
           <Button
             size="icon"
             variant="outline"
+            aria-label="Add"
             onClick={onAdd}
             disabled={disabled}
           >

@@ -295,6 +295,7 @@ export default function GenomeAlignmentServicePage() {
                   type="button"
                   size="icon"
                   variant="outline"
+                  aria-label="Add genome group"
                   disabled={!selectedGenomeGroup}
                   onClick={() => {
                     if (selectedGenomeGroup) {

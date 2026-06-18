@@ -147,7 +147,7 @@ export default function CitationsMetricsPage() {
               value={yearRange}
               onValueChange={(value) => { setYearRange(value ?? ""); }}
             >
-              <SelectTrigger className="w-45">
+              <SelectTrigger className="w-45" aria-label="Select year range">
                 <SelectValue placeholder="Select year range" />
               </SelectTrigger>
               <SelectContent>

@@ -359,6 +359,7 @@ export default function TaxonomicClassificationPage() {
                     type="button"
                     variant="outline"
                     size="icon"
+                    aria-label="Add paired read library"
                     onClick={handlePairedLibraryAdd}
                     disabled={!pairedRead1 || !pairedRead2}
                   >
@@ -413,6 +414,7 @@ export default function TaxonomicClassificationPage() {
                     type="button"
                     variant="outline"
                     size="icon"
+                    aria-label="Add single read library"
                     onClick={handleSingleLibraryAdd}
                     disabled={!singleRead}
                   >
@@ -483,7 +485,7 @@ export default function TaxonomicClassificationPage() {
                 Selected Libraries
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger>
+                    <TooltipTrigger aria-label="Help: place read files using arrow buttons">
                       <HelpCircle className="service-card-tooltip-icon" />
                     </TooltipTrigger>
                     <TooltipContent>
@@ -538,7 +540,7 @@ export default function TaxonomicClassificationPage() {
                           Sequencing Type
                           <TooltipProvider>
                             <Tooltip>
-                              <TooltipTrigger>
+                              <TooltipTrigger aria-label="Help: select sequencing type for input reads">
                                 <HelpCircle className="service-card-tooltip-icon ml-2" />
                               </TooltipTrigger>
                               <TooltipContent>
@@ -610,7 +612,7 @@ export default function TaxonomicClassificationPage() {
                             }}
                             disabled={!isAnalysisTypeSelectable(sequenceType)}
                           >
-                            <SelectTrigger className="service-card-select-trigger">
+                            <SelectTrigger className="service-card-select-trigger" aria-label="Analysis Type">
                               <SelectValue placeholder="Select analysis type" />
                             </SelectTrigger>
                             <SelectContent>
@@ -658,7 +660,7 @@ export default function TaxonomicClassificationPage() {
                               if (value != null) field.handleChange(value);
                             }}
                           >
-                            <SelectTrigger className="service-card-select-trigger">
+                            <SelectTrigger className="service-card-select-trigger" aria-label="Database">
                               <SelectValue placeholder="Select database" />
                             </SelectTrigger>
                             <SelectContent>
@@ -708,7 +710,7 @@ export default function TaxonomicClassificationPage() {
                             }}
                             disabled={!isHostFilteringAvailable(sequenceType)}
                           >
-                            <SelectTrigger className="service-card-select-trigger">
+                            <SelectTrigger className="service-card-select-trigger" aria-label="Filter Host Reads">
                               <SelectValue placeholder="Select filter option" />
                             </SelectTrigger>
                             <SelectContent>
@@ -757,7 +759,7 @@ export default function TaxonomicClassificationPage() {
                               if (value != null) field.handleChange(value);
                             }}
                           >
-                            <SelectTrigger className="service-card-select-trigger">
+                            <SelectTrigger className="service-card-select-trigger" aria-label="Confidence Interval">
                               <SelectValue placeholder="Select confidence interval" />
                             </SelectTrigger>
                             <SelectContent>

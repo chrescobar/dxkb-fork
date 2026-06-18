@@ -76,7 +76,7 @@ export function WorkspaceItemDetails({
       }}
       disabled={isJobResult || editTypeMutation.isPending}
     >
-      <SelectTrigger size="sm" className="h-6 min-w-0 gap-1 text-xs">
+      <SelectTrigger size="sm" className="h-6 min-w-0 gap-1 text-xs" aria-label="File type">
         <SelectValue placeholder="Unspecified" />
       </SelectTrigger>
       <SelectContent>

@@ -466,7 +466,7 @@ export default function BlastServicePage() {
                           );
                         }}
                       >
-                        <SelectTrigger className="service-card-select-trigger">
+                        <SelectTrigger className="service-card-select-trigger" aria-label="Database Source">
                           <SelectValue placeholder="Select database source" />
                         </SelectTrigger>
                         <SelectContent>
@@ -507,7 +507,7 @@ export default function BlastServicePage() {
                             );
                         }}
                       >
-                        <SelectTrigger className="service-card-select-trigger">
+                        <SelectTrigger className="service-card-select-trigger" aria-label="Database Type">
                           <SelectValue placeholder="Select database type" />
                         </SelectTrigger>
                         <SelectContent>
@@ -732,7 +732,7 @@ export default function BlastServicePage() {
                             if (value != null) field.handleChange(value);
                           }}
                         >
-                          <SelectTrigger className="service-card-select-trigger">
+                          <SelectTrigger className="service-card-select-trigger" aria-label="Max Hits">
                             <SelectValue placeholder="Select max hits" />
                           </SelectTrigger>
                           <SelectContent>
@@ -766,7 +766,7 @@ export default function BlastServicePage() {
                             if (value != null) field.handleChange(value);
                           }}
                         >
-                          <SelectTrigger className="service-card-select-trigger">
+                          <SelectTrigger className="service-card-select-trigger" aria-label="E-Value Threshold">
                             <SelectValue placeholder="Select E-Value Threshold" />
                           </SelectTrigger>
                           <SelectContent>

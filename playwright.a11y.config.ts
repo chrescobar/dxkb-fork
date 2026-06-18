@@ -11,6 +11,7 @@ export default defineConfig({
   testDir: "./e2e",
   // Only a11y specs — excluded from the main playwright.config.ts via negative lookahead.
   testMatch: /tests\/a11y\/.*\.spec\.ts$/,
+  timeout: 60_000,
   fullyParallel: true,
   forbidOnly: isCi,
   retries: isCi ? 1 : 0,

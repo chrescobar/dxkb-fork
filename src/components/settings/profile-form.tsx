@@ -98,15 +98,15 @@ export function ProfileForm({ profile }: ProfileFormProps) {
         >
           {/* Username (read-only) */}
           <FieldItem>
-            <Label>Username</Label>
-            <Input value={profile.id} disabled />
+            <Label htmlFor="profile-username">Username</Label>
+            <Input id="profile-username" value={profile.id} disabled />
           </FieldItem>
 
           {/* Email */}
           <form.Field name="email">
             {(field) => (
               <FieldItem>
-                <RequiredFormLabel>Email</RequiredFormLabel>
+                <RequiredFormLabel htmlFor={field.name}>Email</RequiredFormLabel>
                 <Input
                   id={field.name}
                   type="email"
@@ -123,7 +123,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           <form.Field name="first_name">
             {(field) => (
               <FieldItem>
-                <RequiredFormLabel>First Name</RequiredFormLabel>
+                <RequiredFormLabel htmlFor={field.name}>First Name</RequiredFormLabel>
                 <Input
                   id={field.name}
                   value={field.state.value}
@@ -155,7 +155,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           <form.Field name="last_name">
             {(field) => (
               <FieldItem>
-                <RequiredFormLabel>Last Name</RequiredFormLabel>
+                <RequiredFormLabel htmlFor={field.name}>Last Name</RequiredFormLabel>
                 <Input
                   id={field.name}
                   value={field.state.value}

@@ -1,5 +1,18 @@
 import type { Violation } from "./gate";
 
+export interface ReflowSkipEntry {
+  /** Required ticket reference for the reflow fix. */
+  ticket: string;
+}
+
+/** { routeName: entry } — routes known to have WCAG 1.4.10 reflow failures at 320px. */
+export type ReflowSkipMap = Partial<Record<string, ReflowSkipEntry>>;
+
+/** Returns true if the route's reflow failure is suppressed in the skip map. */
+export function isReflowSkipped(skipMap: ReflowSkipMap, routeName: string): boolean {
+  return routeName in skipMap;
+}
+
 export interface BaselineEntry {
   /** Maximum allowed node count — more nodes than this → still blocks. */
   maxNodes: number;

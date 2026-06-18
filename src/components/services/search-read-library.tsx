@@ -85,6 +85,7 @@ const SearchReadLibrary = ({
           <Button
             variant="outline"
             size="icon"
+            aria-label={`Add ${typeof title === "string" ? title.toLowerCase() : "library"}`}
             onClick={handleAdd}
             disabled={!canAdd || disabled}
           >
@@ -100,7 +101,7 @@ const SearchReadLibrary = ({
           onChange={handleFirstInputChange}
           disabled={disabled}
         />
-        <Button size="icon" variant="outline" disabled={disabled}>
+        <Button size="icon" variant="outline" disabled={disabled} aria-hidden tabIndex={-1}>
           {icon}
         </Button>
       </div>
@@ -114,7 +115,7 @@ const SearchReadLibrary = ({
             onChange={handleSecondInputChange}
             disabled={disabled}
           />
-          <Button size="icon" variant="outline" disabled={disabled}>
+          <Button size="icon" variant="outline" disabled={disabled} aria-hidden tabIndex={-1}>
             {icon}
           </Button>
         </div>

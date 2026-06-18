@@ -166,6 +166,7 @@ const OutputFolder = ({
                 onChange={(e) => onChange?.(e.target.value)}
                 disabled={disabled}
                 aria-invalid={nameTaken}
+                aria-label={resolvedTitle}
               />
             </div>
           )}

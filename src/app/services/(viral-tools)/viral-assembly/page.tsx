@@ -368,7 +368,7 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
                             if (value != null) field.handleChange(value);
                           }}
                         >
-                          <SelectTrigger className="service-card-select-trigger">
+                          <SelectTrigger className="service-card-select-trigger" aria-label="Assembly Strategy">
                             <SelectValue placeholder="Select strategy" />
                           </SelectTrigger>
                           <SelectContent>
@@ -400,7 +400,7 @@ const ViralAssemblyPage = function ViralAssemblyPage() {
                             if (value != null) field.handleChange(value);
                           }}
                         >
-                          <SelectTrigger className="service-card-select-trigger">
+                          <SelectTrigger className="service-card-select-trigger" aria-label="Reference Database">
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
                           <SelectContent>

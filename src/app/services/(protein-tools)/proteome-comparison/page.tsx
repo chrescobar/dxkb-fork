@@ -638,6 +638,7 @@ export default function ProteomeComparisonPage() {
                       type="button"
                       variant="outline"
                       size="icon"
+                      aria-label="Add genome"
                       onClick={() => { void handleAddCompGenome(); }}
                       disabled={
                         !selectedCompGenomeId ||
@@ -676,6 +677,7 @@ export default function ProteomeComparisonPage() {
                       type="button"
                       variant="outline"
                       size="icon"
+                      aria-label="Add protein FASTA file"
                       onClick={handleAddCompFasta}
                       disabled={
                         !selectedCompFasta ||
@@ -709,6 +711,7 @@ export default function ProteomeComparisonPage() {
                       type="button"
                       variant="outline"
                       size="icon"
+                      aria-label="Add feature group"
                       onClick={handleAddCompFeatureGroup}
                       disabled={
                         !selectedCompFeatureGroup ||
@@ -742,6 +745,7 @@ export default function ProteomeComparisonPage() {
                       type="button"
                       variant="outline"
                       size="icon"
+                      aria-label="Add genome group"
                       onClick={() => { void handleAddCompGenomeGroup(); }}
                       disabled={
                         !selectedCompGenomeGroup ||

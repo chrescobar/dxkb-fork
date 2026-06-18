@@ -356,7 +356,7 @@ export default function FastqUtilitiesPage() {
                       if (value != null) setSelectedAction(value);
                     }}
                   >
-                    <SelectTrigger className="service-card-select-trigger">
+                    <SelectTrigger className="service-card-select-trigger" aria-label="Select action">
                       <SelectValue placeholder="Select Action" />
                     </SelectTrigger>
                     <SelectContent>
@@ -373,6 +373,7 @@ export default function FastqUtilitiesPage() {
                     type="button"
                     variant="outline"
                     size="icon"
+                    aria-label="Add pipeline action"
                     onClick={handleAddPipelineAction}
                     disabled={
                       !selectedAction ||
@@ -407,6 +408,7 @@ export default function FastqUtilitiesPage() {
                         variant="ghost"
                         size="icon"
                         className="size-6"
+                        aria-label={`Remove ${action.label} action`}
                         onClick={() => { handleRemovePipelineAction(action.id); }}
                       >
                         <X className="size-3" />
@@ -476,6 +478,7 @@ export default function FastqUtilitiesPage() {
                     type="button"
                     variant="outline"
                     size="icon"
+                    aria-label="Add paired read library"
                     onClick={handlePairedLibraryAdd}
                     disabled={!pairedRead1 || !pairedRead2}
                   >
@@ -513,6 +516,7 @@ export default function FastqUtilitiesPage() {
                     type="button"
                     variant="outline"
                     size="icon"
+                    aria-label="Add single read library"
                     onClick={handleSingleLibraryAdd}
                     disabled={!singleRead || !singlePlatform}
                   >
@@ -528,7 +532,7 @@ export default function FastqUtilitiesPage() {
                       if (value != null) setSinglePlatform(value);
                     }}
                   >
-                    <SelectTrigger className="service-card-select-trigger">
+                    <SelectTrigger className="service-card-select-trigger" aria-label="Select platform">
                       <SelectValue placeholder="Select a Platform..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -584,7 +588,7 @@ export default function FastqUtilitiesPage() {
                 Selected Libraries
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger>
+                    <TooltipTrigger aria-label="Help: place read files using arrow buttons">
                       <HelpCircle className="service-card-tooltip-icon" />
                     </TooltipTrigger>
                     <TooltipContent>

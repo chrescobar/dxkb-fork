@@ -301,6 +301,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                       type="button"
                       variant="outline"
                       size="icon"
+                      aria-label="Add paired read library"
                       onClick={handlePairedLibraryAdd}
                       disabled={!pairedRead1 || !pairedRead2}
                     >
@@ -335,7 +336,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                         setPairedPlatform(v);
                       }}
                     >
-                      <SelectTrigger className="service-card-select-trigger">
+                      <SelectTrigger className="service-card-select-trigger" aria-label="Platform">
                         <SelectValue placeholder="Select a platform..." />
                       </SelectTrigger>
                       <SelectContent>
@@ -363,6 +364,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                         type="button"
                         variant="outline"
                         size="icon"
+                        aria-label="Add single read library"
                         onClick={handleSingleLibraryAdd}
                         disabled={!singleRead}
                       >
@@ -387,7 +389,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                           setSinglePlatform(v);
                         }}
                       >
-                        <SelectTrigger className="service-card-select-trigger">
+                        <SelectTrigger className="service-card-select-trigger" aria-label="Platform">
                           <SelectValue placeholder="Select a platform..." />
                         </SelectTrigger>
                         <SelectContent>
@@ -437,7 +439,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                   Selected Libraries
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger>
+                      <TooltipTrigger aria-label="Help: place read files using arrow buttons">
                         <HelpCircle className="service-card-tooltip-icon" />
                       </TooltipTrigger>
                       <TooltipContent>
@@ -523,7 +525,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                               if (value != null) field.handleChange(value);
                             }}
                           >
-                            <SelectTrigger className="service-card-select-trigger">
+                            <SelectTrigger className="service-card-select-trigger" aria-label="Strategy">
                               <SelectValue placeholder="Select strategy" />
                             </SelectTrigger>
                             <SelectContent>
@@ -556,7 +558,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                                   if (v != null) field.handleChange(v);
                                 }}
                               >
-                                <SelectTrigger className="service-card-select-trigger">
+                                <SelectTrigger className="service-card-select-trigger" aria-label="Primers">
                                   <SelectValue placeholder="Select primers" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -589,7 +591,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                                   if (value != null) field.handleChange(value);
                                 }}
                               >
-                                <SelectTrigger className="service-card-select-trigger">
+                                <SelectTrigger className="service-card-select-trigger" aria-label="Version">
                                   <SelectValue placeholder="Version" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -621,7 +623,7 @@ export default function SarsCov2GenomeAnalysisPage() {
                     Taxonomy Name
                     <TooltipProvider>
                       <Tooltip>
-                        <TooltipTrigger>
+                        <TooltipTrigger aria-label="Help: select taxonomy name for SARS-CoV-2">
                           <HelpCircle className="service-card-tooltip-icon ml-1 inline-block" />
                         </TooltipTrigger>
                         <TooltipContent>

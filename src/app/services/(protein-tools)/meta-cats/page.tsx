@@ -452,6 +452,7 @@ export default function MetaCATSPage() {
                     <Label className="service-card-label">P-Value</Label>
                     <NumberInput
                       name={field.name}
+                      aria-label="P-Value"
                       value={field.state.value}
                       min={0}
                       max={1}
@@ -573,7 +574,7 @@ export default function MetaCATSPage() {
                               }
                             }}
                           >
-                            <SelectTrigger className="service-card-select-trigger">
+                            <SelectTrigger className="service-card-select-trigger" aria-label="Select metadata">
                               <SelectValue placeholder="Select metadata" />
                             </SelectTrigger>
                             <SelectContent
@@ -647,6 +648,7 @@ export default function MetaCATSPage() {
                         type="button"
                         variant="outline"
                         size="icon"
+                        aria-label="Add feature group"
                         onClick={() => { void handleAddAutoFeatureGroup(); }}
                         disabled={
                           !selectedAutoFeatureGroupObject || isLoadingAutoGroup
@@ -700,7 +702,7 @@ export default function MetaCATSPage() {
                           { setSelectedGroupName(value ?? ""); }
                         }
                       >
-                        <SelectTrigger className="service-card-select-trigger flex-1">
+                        <SelectTrigger className="service-card-select-trigger flex-1" aria-label="Select group name">
                           <SelectValue placeholder="Select or enter group name" />
                         </SelectTrigger>
                         <SelectContent>
@@ -750,6 +752,7 @@ export default function MetaCATSPage() {
                               <Checkbox
                                 id="select-all-meta-cats"
                                 name="select-all-meta-cats"
+                                aria-label="Select all"
                                 checked={
                                   selectedGridRows.size === autoGroups.length &&
                                   autoGroups.length > 0
@@ -782,6 +785,7 @@ export default function MetaCATSPage() {
                                   <Checkbox
                                     id={`row-${item.id}-checkbox`}
                                     name={`row-${item.id}-checkbox`}
+                                    aria-label={`Select ${item.patric_id}`}
                                     checked={selectedGridRows.has(item.id)}
                                     onCheckedChange={() =>
                                       { handleRowSelect(item.id); }
@@ -857,6 +861,7 @@ export default function MetaCATSPage() {
                         type="button"
                         variant="outline"
                         size="icon"
+                        aria-label="Add feature group"
                         onClick={handleAddFeatureGroup}
                         disabled={!selectedFeatureGroupObject}
                       >

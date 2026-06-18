@@ -358,6 +358,7 @@ export function GenomeNameSelector({
           type="button"
           size="icon"
           variant="outline"
+          aria-label="Add genome"
           disabled={selectionDisabled || isLoading}
           onClick={() => { void handleManualAdd(); }}
         >

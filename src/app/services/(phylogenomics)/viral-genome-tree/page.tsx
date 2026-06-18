@@ -450,6 +450,7 @@ export default function ViralGenomeTreePage() {
                     type="button"
                     size="icon"
                     variant="outline"
+                    aria-label="Add genome group"
                     onClick={() => { void handleAddGenomeGroup(); }}
                     disabled={
                       !selectedGenomeGroupObject || isValidatingGenomeGroup
@@ -482,6 +483,7 @@ export default function ViralGenomeTreePage() {
                     type="button"
                     size="icon"
                     variant="outline"
+                    aria-label="Add aligned sequence"
                     onClick={() => { handleAddSequence("aligned"); }}
                     disabled={
                       !selectedAlignedFastaObject || isValidatingGenomeGroup
@@ -510,6 +512,7 @@ export default function ViralGenomeTreePage() {
                     type="button"
                     size="icon"
                     variant="outline"
+                    aria-label="Add unaligned sequence"
                     onClick={() => { handleAddSequence("unaligned"); }}
                     disabled={
                       !selectedUnalignedFastaObject || isValidatingGenomeGroup
@@ -570,7 +573,7 @@ export default function ViralGenomeTreePage() {
                           if (value != null) field.handleChange(value);
                         }}
                       >
-                        <SelectTrigger className="service-card-select-trigger">
+                        <SelectTrigger className="service-card-select-trigger" aria-label="Trim ends of alignment threshold">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
@@ -604,7 +607,7 @@ export default function ViralGenomeTreePage() {
                           if (value != null) field.handleChange(value);
                         }}
                       >
-                        <SelectTrigger className="service-card-select-trigger">
+                        <SelectTrigger className="service-card-select-trigger" aria-label="Remove gappy sequences threshold">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
@@ -687,6 +690,7 @@ export default function ViralGenomeTreePage() {
                         <SelectTrigger
                           id="model"
                           className="service-card-select-trigger"
+                          aria-label="Substitution model"
                         >
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
@@ -771,7 +775,7 @@ export default function ViralGenomeTreePage() {
                         if (value != null) handleMetadataSelection(value);
                       }}
                     >
-                      <SelectTrigger className="service-card-select-trigger">
+                      <SelectTrigger className="service-card-select-trigger" aria-label="Metadata table field">
                         <SelectValue placeholder="Select field" />
                       </SelectTrigger>
                       <SelectContent className="max-h-150">
@@ -800,6 +804,7 @@ export default function ViralGenomeTreePage() {
                     <Button
                       size="icon"
                       variant="outline"
+                      aria-label="Add metadata field"
                       onClick={addMetadataField}
                       disabled={!selectedMetadataField}
                     >
@@ -829,6 +834,7 @@ export default function ViralGenomeTreePage() {
                             <Button
                               variant="ghost"
                               size="icon"
+                              aria-label="Remove metadata field"
                               onClick={() => { removeMetadataField(field.id); }}
                               className="size-6 text-destructive hover:text-destructive/90"
                             >

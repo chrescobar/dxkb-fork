@@ -180,6 +180,7 @@ export function TaxIDSelector({
         {!disabled && (
           <Button
             type="button"
+            aria-label={showDropdown ? "Hide suggestions" : "Show suggestions"}
             onClick={handleManualDropdownToggle}
             className="absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
           >

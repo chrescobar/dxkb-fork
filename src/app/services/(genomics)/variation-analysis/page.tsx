@@ -214,6 +214,7 @@ export default function VariationAnalysisPage() {
                     type="button"
                     variant="outline"
                     size="icon"
+                    aria-label="Add paired read library"
                     onClick={handlePairedLibraryAdd}
                     disabled={!pairedRead1 || !pairedRead2}
                   >
@@ -251,6 +252,7 @@ export default function VariationAnalysisPage() {
                     type="button"
                     variant="outline"
                     size="icon"
+                    aria-label="Add single read library"
                     onClick={handleSingleLibraryAdd}
                     disabled={!singleRead}
                   >
@@ -286,7 +288,7 @@ export default function VariationAnalysisPage() {
                   Selected Libraries
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger>
+                      <TooltipTrigger aria-label="Help: Files selected for analysis">
                         <HelpCircle className="service-card-tooltip-icon" />
                       </TooltipTrigger>
                       <TooltipContent>
@@ -358,7 +360,7 @@ export default function VariationAnalysisPage() {
                           if (value != null) field.handleChange(value);
                         }}
                       >
-                        <SelectTrigger className="service-card-select-trigger">
+                        <SelectTrigger className="service-card-select-trigger" aria-label="Aligner">
                           <SelectValue placeholder="Select aligner" />
                         </SelectTrigger>
                         <SelectContent className="service-card-select-content">
@@ -391,7 +393,7 @@ export default function VariationAnalysisPage() {
                           if (value != null) field.handleChange(value);
                         }}
                       >
-                        <SelectTrigger className="service-card-select-trigger">
+                        <SelectTrigger className="service-card-select-trigger" aria-label="SNP Caller">
                           <SelectValue placeholder="Select SNP caller" />
                         </SelectTrigger>
                         <SelectContent className="service-card-select-content">
@@ -455,7 +457,7 @@ export default function VariationAnalysisPage() {
                 Selected Libraries
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger>
+                    <TooltipTrigger aria-label="Help: Files selected for analysis">
                       <HelpCircle className="service-card-tooltip-icon" />
                     </TooltipTrigger>
                     <TooltipContent>

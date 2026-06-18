@@ -126,6 +126,7 @@ const SelectedItemsTable = ({
                     variant="ghost"
                     size="icon"
                     className="size-6"
+                    aria-label="Remove item"
                     onClick={() => { onRemove(item.id); }}
                   >
                     <span className="text-gray-400 hover:text-gray-600">×</span>

@@ -48,12 +48,14 @@ export function RequiredFormLabelInfo({
 export function RequiredFormLabel({
   className,
   children,
+  htmlFor,
 }: {
   className?: string;
   children: React.ReactNode;
+  htmlFor?: string;
 }) {
   return (
-    <Label className={`gap-1 ${className ?? ""}`}>
+    <Label htmlFor={htmlFor} className={`gap-1 ${className ?? ""}`}>
       {children}
       <span className="gap-1 text-red-500">*</span>
     </Label>

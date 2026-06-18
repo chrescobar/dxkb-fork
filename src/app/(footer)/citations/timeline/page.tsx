@@ -79,7 +79,7 @@ export default function CitationsTimelinePage() {
               defaultValue="all"
               onValueChange={(value) => { setTypeFilter(value ?? ""); }}
             >
-              <SelectTrigger className="w-45">
+              <SelectTrigger className="w-45" aria-label="Filter by Publication Type">
                 <SelectValue placeholder="Publication Type" />
               </SelectTrigger>
               <SelectContent>
@@ -101,7 +101,7 @@ export default function CitationsTimelinePage() {
               defaultValue="newest"
               onValueChange={(value) => { setSortOption(value ?? ""); }}
             >
-              <SelectTrigger className="w-45">
+              <SelectTrigger className="w-45" aria-label="Sort by">
                 <SortDesc className="mr-2 size-4" />
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>

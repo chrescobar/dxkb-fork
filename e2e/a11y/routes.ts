@@ -1,4 +1,5 @@
 import type { Page } from "@playwright/test";
+import type { SettleOptions } from "./settle";
 
 export interface RouteVariant {
   /** Appended to parent name: e.g. "virus" → scanned as "taxonomy/virus". */
@@ -34,6 +35,11 @@ export interface RouteEntry {
   covers?: string[];
   /** Variants for dynamic routes — one scan per variant. */
   variants?: RouteVariant[];
+  /**
+   * Options forwarded to awaitSettled(). Use loadState: "domcontentloaded" for
+   * pages with continuous Next.js RSC prefetch cycles that prevent networkidle.
+   */
+  settle?: SettleOptions;
   /**
    * Extra settle hook. Called AFTER awaitSettled() for route-specific waiting
    * (e.g. waitForURL after redirect, element waits for streamed content).
@@ -150,7 +156,9 @@ export const routes: RouteEntry[] = [
     name: "publications",
     path: "/publications",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    // Next.js prefetches all <Link> elements continuously with rolling RSC tokens,
+    // preventing networkidle from ever opening a 500ms quiet window on this page.
+    settle: { loadState: "domcontentloaded" },
   },
   {
     name: "related-resources",

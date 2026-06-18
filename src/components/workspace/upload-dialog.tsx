@@ -176,7 +176,7 @@ export function UploadDialog({
               }}
               items={uploadTypeOptions}
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full" aria-label="Upload type">
                 <SelectValue placeholder="Unspecified" />
               </SelectTrigger>
               <SelectContent>
@@ -221,9 +221,9 @@ export function UploadDialog({
                 accept="*"
                 onChange={onInputChange}
               />
-              <Button type="button" variant="secondary" size="sm">
+              <span className="inline-flex h-9 items-center justify-center rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground shadow-xs pointer-events-none select-none">
                 Select Files
-              </Button>
+              </span>
               <span className="text-xs text-muted-foreground">or Drop files here.</span>
             </div>
           </div>

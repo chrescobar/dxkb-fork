@@ -397,7 +397,7 @@ export default function PublicationsListView() {
                     defaultValue="newest"
                     onValueChange={(value) => { setSortOption(value ?? ""); }}
                   >
-                    <SelectTrigger className="w-45">
+                    <SelectTrigger className="w-45" aria-label="Sort by">
                       <SortDesc className="mr-2 size-4" />
                       <SelectValue placeholder="Sort by" />
                     </SelectTrigger>
@@ -410,7 +410,7 @@ export default function PublicationsListView() {
                       </SelectGroup>
                     </SelectContent>
                   </Select>
-                  <Button variant="outline" size="icon">
+                  <Button variant="outline" size="icon" aria-label="Download">
                     <Download className="size-4" data-icon="inline-start" />
                   </Button>
                 </div>

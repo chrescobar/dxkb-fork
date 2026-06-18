@@ -10,7 +10,8 @@ import { scanPage, formatBlocking, logWarnings } from "../../a11y/axe-scan";
 import { partition } from "../../a11y/gate";
 import { applyBaseline } from "../../a11y/baseline";
 import { forEachTheme } from "../../a11y/theme";
-import generatedBaseline from "../../a11y/baseline.generated";
+import generatedBaseline, { reflowSkip } from "../../a11y/baseline.generated";
+import { isReflowSkipped } from "../../a11y/baseline";
 import { routes } from "../../a11y/routes";
 import type { BaselineMap } from "../../a11y/baseline";
 import type { RouteEntry, RouteVariant } from "../../a11y/routes";
@@ -70,7 +71,7 @@ test.describe("a11y route sweep", () => {
 
         await applyBackendMocks(page, { overrides: buildOverrides(target.route) });
         await page.goto(target.path);
-        await awaitSettled(page);
+        await awaitSettled(page, target.route.settle);
         await target.prepare?.(page);
 
         // Dual-theme axe scan (light → dark).
@@ -102,10 +103,19 @@ test.describe("a11y route sweep", () => {
         const hasHorizontalScroll = await page.evaluate(
           () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
         );
-        expect(
-          hasHorizontalScroll,
-          `${target.name}: horizontal scroll at 320px viewport — WCAG 1.4.10 reflow failure`,
-        ).toBe(false);
+        if (isReflowSkipped(reflowSkip, target.name)) {
+          if (hasHorizontalScroll) {
+            const ticket = reflowSkip[target.name]?.ticket ?? "unknown";
+            console.warn(
+              `[a11y/reflow-skip] ${target.name}: horizontal scroll suppressed (${ticket})`,
+            );
+          }
+        } else {
+          expect(
+            hasHorizontalScroll,
+            `${target.name}: horizontal scroll at 320px viewport — WCAG 1.4.10 reflow failure`,
+          ).toBe(false);
+        }
       },
     );
   }

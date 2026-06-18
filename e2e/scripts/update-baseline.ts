@@ -47,30 +47,30 @@ function updateBaseline(
 
   const updated = lines.map((line) => {
     // Route end (2-space closing brace)
-    if (/^  \},?/.test(line)) {
+    if (/^ {2}\},?/.test(line)) {
       currentRoute = null;
       currentTheme = null;
       return line;
     }
     // Theme end (4-space closing brace)
-    if (/^    \},?/.test(line)) {
+    if (/^ {4}\},?/.test(line)) {
       currentTheme = null;
       return line;
     }
     // Route key at 2-space indent
-    const routeMatch = line.match(/^  "([^"]+)":\s*\{/);
+    const routeMatch = line.match(/^ {2}"([^"]+)":\s*\{/);
     if (routeMatch) {
       currentRoute = routeMatch[1];
       return line;
     }
     // Theme key at 4-space indent
-    const themeMatch = line.match(/^    "(dxkb-[^"]+)":\s*\{/);
+    const themeMatch = line.match(/^ {4}"(dxkb-[^"]+)":\s*\{/);
     if (themeMatch) {
       currentTheme = themeMatch[1];
       return line;
     }
     // Rule entry at 6-space indent: "rule-id": { maxNodes: N, ...
-    const ruleMatch = line.match(/^(      "([^"]+)":\s*\{\s*maxNodes:\s*)(\d+)(.*)/);
+    const ruleMatch = line.match(/^( {6}"([^"]+)":\s*\{\s*maxNodes:\s*)(\d+)(.*)/);
     if (ruleMatch && currentRoute && currentTheme) {
       const [, prefix, ruleId, oldStr, suffix] = ruleMatch;
       const oldMax = Number(oldStr);

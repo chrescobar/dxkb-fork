@@ -63,21 +63,24 @@ const ContactForm = () => {
                   <div className="flex space-x-4">
                     <a
                       href="#"
+                      aria-label="Follow us on X (Twitter)"
                       className="flex size-11 items-center justify-center rounded-full bg-accent/20 transition-colors duration-200 hover:bg-accent/40"
                     >
-                      <SiX className="size-5 text-accent" />
+                      <SiX className="size-5 text-accent" aria-hidden="true" />
                     </a>
                     <a
                       href="#"
+                      aria-label="Follow us on LinkedIn"
                       className="flex size-11 items-center justify-center rounded-full bg-accent/20 transition-colors duration-200 hover:bg-accent/40"
                     >
-                      <LinkedInIcon className="size-5 text-accent" />
+                      <LinkedInIcon className="size-5 text-accent" aria-hidden="true" />
                     </a>
                     <a
                       href="#"
+                      aria-label="Follow us on GitHub"
                       className="flex size-11 items-center justify-center rounded-full bg-accent/20 transition-colors duration-200 hover:bg-accent/40"
                     >
-                      <SiGithub className="size-5 text-accent" />
+                      <SiGithub className="size-5 text-accent" aria-hidden="true" />
                     </a>
                   </div>
 

@@ -130,10 +130,15 @@ test.describe("keyboard: workspace dialogs (WCAG 2.1.2 — no trap)", () => {
 
     // Verify focus is trapped inside the dialog while open.
     // FloatingFocusManager inserts focus-guard sentinels as siblings of [role='dialog']
-    // (outside the role boundary) and redirects via requestAnimationFrame. Include them
-    // in the "inside" check so the assertion doesn't race the async rAF redirect.
+    // (outside the role boundary) and redirects focus back inside via requestAnimationFrame.
+    // We wait briefly after each Tab so the rAF fires before we evaluate or press the next Tab —
+    // without the wait, Tab can be pressed while focus is still on the guard sentinel, which
+    // sends focus past the guard to whatever follows the portal in the DOM (WebKit exhibits this
+    // because buttons are not in its default Tab cycle, making the guard hit much more frequent).
     for (let i = 0; i < 5; i++) {
       await page.keyboard.press("Tab");
+      // Allow the guard's rAF redirect to complete before evaluating.
+      await page.waitForTimeout(50);
       const focusInsideDialog = await page.evaluate(() => {
         const dialog = document.querySelector("[role='dialog']");
         const activeEl = document.activeElement;

@@ -37,7 +37,7 @@ async function assertNoBlocking(
   if (suppressed.length > 0) {
     console.info(`[a11y] ${surfaceName} (${theme}): ${String(suppressed.length)} suppressed`);
   }
-  recordScan({ route: surfaceName, theme: String(theme), blocking: remaining, suppressed, warnings });
+  recordScan({ route: surfaceName, theme, blocking: remaining, suppressed, warnings });
   expect(
     remaining,
     remaining.length === 0 ? undefined : formatBlocking(remaining, `${surfaceName} (${theme})`),

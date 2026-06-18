@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import type { ScanRecord } from "./report";
 
-export default async function globalTeardown(): Promise<void> {
+export default function globalTeardown(): void {
   const scansDir = "a11y-report/scans";
   if (!fs.existsSync(scansDir)) return;
 

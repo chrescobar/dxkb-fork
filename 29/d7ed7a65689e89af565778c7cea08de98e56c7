@@ -1,0 +1,189 @@
+e2e/a11y/baseline.ts
+  s_b9eefbc8672fd1::t_816594b49b69dc 3-15
+playwright.a11y.config.ts
+  s_b9eefbc8672fd1::t_c3bf4fd637f193 14
+src/components/settings/password-change-form.tsx
+  s_b9eefbc8672fd1::t_6b8203603e1751 80
+  s_b9eefbc8672fd1::t_d0139572cbaf33 112
+  s_b9eefbc8672fd1::t_7552d589fae35e 96
+src/components/services/genome-name-selector.tsx
+  s_b9eefbc8672fd1::t_a2fc31952b08f0 361
+src/app/(footer)/citations/timeline/page.tsx
+  s_b9eefbc8672fd1::t_24a8e446fb1bf0 82
+  s_b9eefbc8672fd1::t_772805269b6f53 104
+src/app/services/(viral-tools)/sars-cov2-wastewater-analysis/page.tsx
+  s_b9eefbc8672fd1::t_a8eb1833b395c8 354
+  s_b9eefbc8672fd1::t_5638ee7e6d5289 491
+  s_b9eefbc8672fd1::t_a67bd0b357f467 317
+  s_b9eefbc8672fd1::t_f8cd670eb55746 394
+  s_b9eefbc8672fd1::t_06797b082b3606 543
+  s_b9eefbc8672fd1::t_c1667251b426e2 427
+src/app/(footer)/citations/page.tsx
+  s_b9eefbc8672fd1::t_cabb3161e8fd65 211
+  s_b9eefbc8672fd1::t_772cae2544e6be 230
+src/app/services/(genomics)/blast/page.tsx
+  s_b9eefbc8672fd1::t_a0faf4cdd0e692 469
+  s_b9eefbc8672fd1::t_2019ee2a40bc9e 769
+  s_b9eefbc8672fd1::t_4ccd3fdf3d8a2d 510
+  s_b9eefbc8672fd1::t_6dc2c81364c94a 735
+src/components/organisms/geo-distribution/map-controls.tsx
+  s_b9eefbc8672fd1::t_ff3bb5fac568bc 63
+e2e/a11y/settle.ts
+  s_b9eefbc8672fd1::t_58a10dbaa139f4 23
+  s_b9eefbc8672fd1::t_5e92bd3c718b49 4-10
+src/components/workspace/workspace-item-details.tsx
+  s_b9eefbc8672fd1::t_c559a97a6a8262 79
+src/components/services/search-read-library.tsx
+  s_b9eefbc8672fd1::t_320b894331efb9 88
+  s_b9eefbc8672fd1::t_c73fb93f545829 104,118
+src/components/workspace/upload-dialog.tsx
+  s_b9eefbc8672fd1::t_f17ced5cfec4e4 224,226
+  s_b9eefbc8672fd1::t_4adb379bfbf269 179
+src/components/taxonomy/taxon-name-selector.tsx
+  s_b9eefbc8672fd1::t_d2c4c5d476c55e 301
+src/app/services/(viral-tools)/sars-cov2-genome-analysis/page.tsx
+  s_b9eefbc8672fd1::t_3791379374e1c4 339
+  s_b9eefbc8672fd1::t_2eac18c5ce837c 304
+  s_b9eefbc8672fd1::t_76e1d4c6c755b7 561
+  s_b9eefbc8672fd1::t_35bbd416914eb0 392
+  s_b9eefbc8672fd1::t_5fcb09ff5d5d0e 367
+  s_b9eefbc8672fd1::t_c25029b9a28669 594
+  s_b9eefbc8672fd1::t_41a52d0efa3f2f 442
+  s_b9eefbc8672fd1::t_b2a2666039543f 528
+  s_b9eefbc8672fd1::t_73d9e3a41e0c2b 626
+src/app/services/(viral-tools)/subspecies-classification/page.tsx
+  s_b9eefbc8672fd1::t_d211c8fceec81e 279
+src/app/services/(metagenomics)/metagenomic-binning/page.tsx
+  s_b9eefbc8672fd1::t_5b39d136353ef5 326
+  s_b9eefbc8672fd1::t_7d3c8ffa0d6534 367
+  s_b9eefbc8672fd1::t_8b9e1860c5eb21 288
+src/app/services/(protein-tools)/msa-snp-analysis/page.tsx
+  s_b9eefbc8672fd1::t_fade5cc37c0385 1237
+  s_b9eefbc8672fd1::t_78904635a2d096 1014
+  s_b9eefbc8672fd1::t_b3ecc4c88325ef 1102
+src/app/(footer)/publications/page.tsx
+  s_b9eefbc8672fd1::t_7bb9e90a6bc8cd 400
+  s_b9eefbc8672fd1::t_b5497aeaa4b959 413
+src/components/forms/required-form-components.tsx
+  s_b9eefbc8672fd1::t_ccd5434dbbcf00 51,55,58
+src/app/services/(utilities)/fastq-utilities/page.tsx
+  s_b9eefbc8672fd1::t_5bade5fd395386 359
+  s_b9eefbc8672fd1::t_d839a23dcac593 411
+  s_b9eefbc8672fd1::t_188c0ebc3bedea 481
+  s_b9eefbc8672fd1::t_11d8ab4fcc3112 519
+  s_b9eefbc8672fd1::t_a05e0f2f80fe5b 535
+  s_b9eefbc8672fd1::t_70cbe1900ac97d 591
+  s_b9eefbc8672fd1::t_152b62696abebf 376
+src/components/services/selected-items-table.tsx
+  s_b9eefbc8672fd1::t_25d135fd0380c8 129
+src/app/services/(genomics)/primer-design/page.tsx
+  s_b9eefbc8672fd1::t_0ab7ab9786ff61 805
+  s_b9eefbc8672fd1::t_249ce90f39edea 856
+  s_b9eefbc8672fd1::t_b7dd74cc26e37c 749
+  s_b9eefbc8672fd1::t_963699bd972b8a 903
+  s_b9eefbc8672fd1::t_7d0d62d309cf38 612
+  s_b9eefbc8672fd1::t_2755aff0654d80 691
+  s_b9eefbc8672fd1::t_b6ee962a376d92 560
+src/components/settings/profile-form.tsx
+  s_b9eefbc8672fd1::t_f6a34900e79542 109
+  s_b9eefbc8672fd1::t_2f97323e4c0e10 158
+  s_b9eefbc8672fd1::t_5f8e97a2f479a0 101-102
+  s_b9eefbc8672fd1::t_bcb47a13645421 126
+src/components/ui/select.tsx
+  s_b9eefbc8672fd1::t_d598a8c674b9d0 152
+  s_b9eefbc8672fd1::t_ade86271f75eed 169
+src/app/services/(viral-tools)/viral-assembly/page.tsx
+  s_b9eefbc8672fd1::t_a4ad462ef0afd5 371
+  s_b9eefbc8672fd1::t_45188acd18eda3 403
+src/app/services/(protein-tools)/proteome-comparison/page.tsx
+  s_b9eefbc8672fd1::t_1fd08843e48357 641
+  s_b9eefbc8672fd1::t_3eef2d3929eda8 748
+  s_b9eefbc8672fd1::t_a004d65c001ba7 714
+  s_b9eefbc8672fd1::t_fd0cdafe4a7f6c 680
+src/app/services/(protein-tools)/gene-protein-tree/page.tsx
+  s_b9eefbc8672fd1::t_bd54956289ce02 586
+  s_b9eefbc8672fd1::t_8b54315d9f0eae 493
+  s_b9eefbc8672fd1::t_8a9bedd0345e1d 464
+  s_b9eefbc8672fd1::t_b1f5005cfd7dc5 552
+  s_b9eefbc8672fd1::t_a5537f738e371e 671
+  s_b9eefbc8672fd1::t_bebe8690d3f5a4 756
+  s_b9eefbc8672fd1::t_c63feb1b52f2f6 785
+  s_b9eefbc8672fd1::t_e18c68232ef43e 815
+  s_b9eefbc8672fd1::t_0f3ad1631177a3 435
+src/components/taxonomy/tax-id-selector.tsx
+  s_b9eefbc8672fd1::t_73a85b6cc1af6f 183
+src/app/services/(genomics)/genome-alignment/page.tsx
+  s_b9eefbc8672fd1::t_78bd29bb4e69f3 298
+src/app/services/(genomics)/variation-analysis/page.tsx
+  s_b9eefbc8672fd1::t_bba093aaf45d67 460
+  s_b9eefbc8672fd1::t_ce516db9549494 291
+  s_b9eefbc8672fd1::t_5ea9fb3d568775 217
+  s_b9eefbc8672fd1::t_165314452f4655 363
+  s_b9eefbc8672fd1::t_c706646f172200 396
+  s_b9eefbc8672fd1::t_e65a0bbdeffc4e 255
+src/app/services/(phylogenomics)/viral-genome-tree/page.tsx
+  s_b9eefbc8672fd1::t_6ce2fad1ef371a 576
+  s_b9eefbc8672fd1::t_152c2764973cf9 807
+  s_b9eefbc8672fd1::t_aca4b4a7aa12f0 486
+  s_b9eefbc8672fd1::t_506795034da46d 515
+  s_b9eefbc8672fd1::t_ce5cf0af1d6471 837
+  s_b9eefbc8672fd1::t_6b7dea3f3f7dd6 778
+  s_b9eefbc8672fd1::t_233c84a7b773b2 453
+  s_b9eefbc8672fd1::t_8d4a12c45090bc 610
+  s_b9eefbc8672fd1::t_86965e7a3456f6 693
+src/app/services/(genomics)/genome-annotation/page.tsx
+  s_b9eefbc8672fd1::t_693c0b19ccf11d 187
+  s_b9eefbc8672fd1::t_36efd7e4879bc2 214
+e2e/tests/a11y/routes-sweep.spec.ts
+  s_b9eefbc8672fd1::t_002e9706339be5 74
+  s_b9eefbc8672fd1::t_23ebaef11f8e94 106-118
+  s_b9eefbc8672fd1::t_3d2b63437e3636 13-14
+src/components/services/output-folder.tsx
+  s_b9eefbc8672fd1::t_d0badfd922e457 169
+src/components/services/search-workspace-input.tsx
+  s_b9eefbc8672fd1::t_661dd269b02a44 45,52
+src/app/services/(metagenomics)/taxonomic-classification/page.tsx
+  s_b9eefbc8672fd1::t_d51ed5828e241d 362
+  s_b9eefbc8672fd1::t_8d85bb3b8949fc 713
+  s_b9eefbc8672fd1::t_4e99680bca28f0 417
+  s_b9eefbc8672fd1::t_784e59b6d6401e 543
+  s_b9eefbc8672fd1::t_f2dd332980253c 488
+  s_b9eefbc8672fd1::t_01d0d926765cb2 762
+  s_b9eefbc8672fd1::t_8567c28189c807 615
+  s_b9eefbc8672fd1::t_29a8763f1839ff 663
+e2e/a11y/routes.ts
+  s_b9eefbc8672fd1::t_6ae0ec21c96ac4 2
+  s_b9eefbc8672fd1::t_a78627aab419db 39-42
+  s_b9eefbc8672fd1::t_6bf53520da5724 159-161
+src/app/services/(metagenomics)/metagenomic-read-mapping/page.tsx
+  s_b9eefbc8672fd1::t_65b6ce5beb189f 415
+  s_b9eefbc8672fd1::t_506faa57c788b1 295
+  s_b9eefbc8672fd1::t_9460e27af7592f 215
+  s_b9eefbc8672fd1::t_de14cc5ffd8759 253
+src/app/(footer)/citations/metrics/page.tsx
+  s_b9eefbc8672fd1::t_44ac754e5b4e88 150
+src/app/services/(protein-tools)/meta-cats/page.tsx
+  s_b9eefbc8672fd1::t_90f3f382ce1f9c 755
+  s_b9eefbc8672fd1::t_21bf6c4c248e54 577
+  s_b9eefbc8672fd1::t_d302923e39318b 455
+  s_b9eefbc8672fd1::t_fba4f8916f2ea6 864
+  s_b9eefbc8672fd1::t_1f7bfdb74c4646 651
+  s_b9eefbc8672fd1::t_81b7b1b3a9945a 788
+  s_b9eefbc8672fd1::t_1ff6b6448c307d 705
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "29d7ed7a65689e89af565778c7cea08de98e56c7",
+  "prompts": {},
+  "sessions": {
+    "s_b9eefbc8672fd1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cc21a817-17d7-45ac-a0ee-927eafc38c53",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

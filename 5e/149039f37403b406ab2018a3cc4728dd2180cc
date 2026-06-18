@@ -1,0 +1,25 @@
+e2e/a11y/axe-scan.ts
+  s_b9eefbc8672fd1::t_761d0e46cf77e2 41-44
+e2e/tests/a11y/routes-sweep.spec.ts
+  s_b9eefbc8672fd1::t_76c06bb7c0e3bd 94
+  s_b9eefbc8672fd1::t_9510174c01c85d 23-35
+  s_b9eefbc8672fd1::t_252d87f5b34535 160
+  s_b9eefbc8672fd1::t_fcf3fdcaf60cc1 189
+  s_b9eefbc8672fd1::t_f2030acff5cfb2 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "5e149039f37403b406ab2018a3cc4728dd2180cc",
+  "prompts": {},
+  "sessions": {
+    "s_b9eefbc8672fd1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cc21a817-17d7-45ac-a0ee-927eafc38c53",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

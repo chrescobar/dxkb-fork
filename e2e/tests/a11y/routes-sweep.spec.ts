@@ -13,6 +13,7 @@ import { applyBaseline } from "../../a11y/baseline";
 import { forEachTheme } from "../../a11y/theme";
 import generatedBaseline, { reflowSkip } from "../../a11y/baseline.generated";
 import { isReflowSkipped } from "../../a11y/baseline";
+import { recordScan } from "../../a11y/report";
 import { routes } from "../../a11y/routes";
 import type { BaselineMap } from "../../a11y/baseline";
 import type { RouteEntry, RouteVariant } from "../../a11y/routes";
@@ -27,6 +28,7 @@ function assertNoBlockingViolations(violations: Violation[], routeKey: string, t
   if (suppressed.length > 0) {
     console.info(`[a11y] ${routeKey} (${theme}): ${String(suppressed.length)} suppressed by baseline`);
   }
+  recordScan({ route: routeKey, theme, blocking: remaining, suppressed, warnings });
   expect(
     remaining,
     remaining.length === 0 ? undefined : formatBlocking(remaining, `${routeKey} (${theme})`),
@@ -78,7 +80,13 @@ test.describe("a11y route sweep", () => {
   for (const target of scanTargets) {
     test(
       `${target.name} (${target.path}) has no blocking a11y violations`,
-      async ({ page, context }) => {
+      async ({ page, context }, testInfo) => {
+        if (testInfo.project.name.includes("tripwire") && !target.route.tripwire) {
+          test.skip();
+        }
+        if (testInfo.project.name.includes("mobile") && !target.route.mobile) {
+          test.skip();
+        }
         if (target.route.unauthenticated) {
           await context.clearCookies();
         }

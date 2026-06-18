@@ -101,9 +101,9 @@ const SearchReadLibrary = ({
           onChange={handleFirstInputChange}
           disabled={disabled}
         />
-        <Button size="icon" variant="outline" disabled={disabled} aria-hidden tabIndex={-1}>
+        <div aria-hidden="true" className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg border border-border bg-background">
           {icon}
-        </Button>
+        </div>
       </div>
 
       {variant === "pair" && (
@@ -115,9 +115,9 @@ const SearchReadLibrary = ({
             onChange={handleSecondInputChange}
             disabled={disabled}
           />
-          <Button size="icon" variant="outline" disabled={disabled} aria-hidden tabIndex={-1}>
+          <div aria-hidden="true" className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg border border-border bg-background">
             {icon}
-          </Button>
+          </div>
         </div>
       )}
     </div>

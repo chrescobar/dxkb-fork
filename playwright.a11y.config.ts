@@ -8,6 +8,7 @@ const isCi = Boolean(process.env.CI);
 const webServerCommand = `node e2e/scripts/start-webserver.mjs ${String(port)}`;
 
 export default defineConfig({
+  globalTeardown: "./e2e/a11y/teardown.ts",
   testDir: "./e2e",
   // Only a11y specs — excluded from the main playwright.config.ts via negative lookahead.
   testMatch: /tests\/a11y\/.*\.spec\.ts$/,

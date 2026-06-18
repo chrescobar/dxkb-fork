@@ -15,6 +15,7 @@ import { scanPage, formatBlocking, logWarnings } from "../../a11y/axe-scan";
 import { partition } from "../../a11y/gate";
 import { applyBaseline } from "../../a11y/baseline";
 import { forEachTheme } from "../../a11y/theme";
+import { recordScan } from "../../a11y/report";
 import generatedBaseline from "../../a11y/baseline.generated";
 import { WorkspacePage } from "../../pages/workspace-page";
 import { JobsListPage } from "../../pages/jobs-list-page";
@@ -36,6 +37,7 @@ async function assertNoBlocking(
   if (suppressed.length > 0) {
     console.info(`[a11y] ${surfaceName} (${theme}): ${String(suppressed.length)} suppressed`);
   }
+  recordScan({ route: surfaceName, theme: String(theme), blocking: remaining, suppressed, warnings });
   expect(
     remaining,
     remaining.length === 0 ? undefined : formatBlocking(remaining, `${surfaceName} (${theme})`),

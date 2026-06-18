@@ -42,9 +42,9 @@ const SearchWorkspaceInput = ({
             }
           }}
         />
-        <Button size="icon" variant="outline" aria-hidden tabIndex={-1}>
+        <div aria-hidden="true" className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg border border-border bg-background">
           {icon}
-        </Button>
+        </div>
         {variant === "add" && (
           <Button
             size="icon"

@@ -1,3 +1,5 @@
+import * as fs from "fs";
+import * as path from "path";
 import type { Violation } from "./gate";
 
 export interface ScanRecord {
@@ -8,18 +10,11 @@ export interface ScanRecord {
   warnings: Violation[];
 }
 
-// Phase 1 stub: in-process log only.
-// Phase 5 adds artifact file writing (a11y-report.json / a11y-report.md).
-const records: ScanRecord[] = [];
+const scansDir = "a11y-report/scans";
 
 export function recordScan(record: ScanRecord): void {
-  records.push(record);
-}
-
-export function getRecords(): readonly ScanRecord[] {
-  return records;
-}
-
-export function clearRecords(): void {
-  records.length = 0;
+  fs.mkdirSync(scansDir, { recursive: true });
+  const safeName = `${record.route}__${record.theme}`.replace(/[^a-z0-9_-]/gi, "_");
+  const filename = `${safeName}__${String(process.pid)}.json`;
+  fs.writeFileSync(path.join(scansDir, filename), JSON.stringify(record));
 }

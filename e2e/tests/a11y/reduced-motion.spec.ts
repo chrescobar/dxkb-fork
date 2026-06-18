@@ -17,7 +17,7 @@ import {
 // CSS transitions with duration === 0 are interpreted as "no animation".
 const suppressedDurationMs = 50;
 
-async function getTransitionDurations(
+async function getMotionDurations(
   page: Parameters<typeof applyBackendMocks>[0],
   selector: string,
 ): Promise<number[]> {
@@ -25,9 +25,9 @@ async function getTransitionDurations(
     const el = document.querySelector(sel);
     if (!el) return [];
     const style = window.getComputedStyle(el);
-    return (style.transitionDuration || "0s")
-      .split(",")
-      .map((d) => parseFloat(d) * (d.includes("ms") ? 1 : 1000));
+    const parse = (raw: string) =>
+      (raw || "0s").split(",").map((d) => parseFloat(d) * (d.includes("ms") ? 1 : 1000));
+    return [...parse(style.transitionDuration), ...parse(style.animationDuration)];
   }, selector);
 }
 
@@ -50,7 +50,7 @@ test.describe("prefers-reduced-motion", () => {
     expect(mediaReducedMotion, "reducedMotion context option should activate the media query").toBe(true);
 
     // Verify the workspace sidebar does not have long CSS transitions.
-    const sidebarDurations = await getTransitionDurations(page, "aside, nav, [data-sidebar]");
+    const sidebarDurations = await getMotionDurations(page, "aside, nav, [data-sidebar]");
     const longTransitions = sidebarDurations.filter((d) => d > suppressedDurationMs);
     expect(
       longTransitions,
@@ -77,12 +77,12 @@ test.describe("prefers-reduced-motion", () => {
     );
     expect(mediaReducedMotion, "reducedMotion context option should activate the media query").toBe(true);
 
-    // Check main content wrapper for animation-duration overrides.
-    const mainDurations = await getTransitionDurations(page, "main, [class*='hero'], [class*='animate']");
-    const longAnimations = mainDurations.filter((d) => d > suppressedDurationMs);
+    // Check main content wrapper for transition-duration and animation-duration overrides.
+    const mainDurations = await getMotionDurations(page, "main, [class*='hero'], [class*='animate']");
+    const longMotion = mainDurations.filter((d) => d > suppressedDurationMs);
     expect(
-      longAnimations,
-      `Home hero has animations exceeding ${String(suppressedDurationMs)}ms with reduced-motion active: ${longAnimations.join(", ")}ms`,
+      longMotion,
+      `Home hero has transitions/animations exceeding ${String(suppressedDurationMs)}ms with reduced-motion active: ${longMotion.join(", ")}ms`,
     ).toEqual([]);
   });
 });

@@ -8,6 +8,7 @@ import {
 import { awaitSettled } from "../../a11y/settle";
 import { scanPage, formatBlocking, logWarnings } from "../../a11y/axe-scan";
 import { partition } from "../../a11y/gate";
+import type { Violation } from "../../a11y/gate";
 import { applyBaseline } from "../../a11y/baseline";
 import { forEachTheme } from "../../a11y/theme";
 import generatedBaseline, { reflowSkip } from "../../a11y/baseline.generated";
@@ -18,6 +19,19 @@ import type { RouteEntry, RouteVariant } from "../../a11y/routes";
 import type { JsonOverride } from "../../mocks/backends";
 
 const baselineMap: BaselineMap = generatedBaseline;
+
+function assertNoBlockingViolations(violations: Violation[], routeKey: string, theme: string): void {
+  const { blocking, warnings } = partition(violations);
+  const { remaining, suppressed } = applyBaseline(baselineMap, routeKey, theme, blocking);
+  logWarnings(warnings, `${routeKey} (${theme})`);
+  if (suppressed.length > 0) {
+    console.info(`[a11y] ${routeKey} (${theme}): ${String(suppressed.length)} suppressed by baseline`);
+  }
+  expect(
+    remaining,
+    remaining.length === 0 ? undefined : formatBlocking(remaining, `${routeKey} (${theme})`),
+  ).toEqual([]);
+}
 
 interface ScanTarget {
   route: RouteEntry;
@@ -77,25 +91,7 @@ test.describe("a11y route sweep", () => {
         // Dual-theme axe scan (light → dark).
         await forEachTheme(page, async (theme) => {
           const violations = await scanPage(page);
-          const { blocking, warnings } = partition(violations);
-          const { remaining, suppressed } = applyBaseline(
-            baselineMap,
-            target.name,
-            theme,
-            blocking,
-          );
-          logWarnings(warnings, `${target.name} (${theme})`);
-          if (suppressed.length > 0) {
-            console.info(
-              `[a11y] ${target.name} (${theme}): ${String(suppressed.length)} suppressed by baseline`,
-            );
-          }
-          expect(
-            remaining,
-            remaining.length === 0
-              ? undefined
-              : formatBlocking(remaining, `${target.name} (${theme})`),
-          ).toEqual([]);
+          assertNoBlockingViolations(violations, target.name, theme);
         });
 
         // WCAG 1.4.10 reflow: no horizontal scroll at 320px viewport width.
@@ -161,25 +157,7 @@ test.describe("a11y component surfaces", () => {
       ).toEqual([]);
 
       // Standard gate for any other violations in the scoped region.
-      const { blocking, warnings } = partition(violations);
-      const { remaining, suppressed } = applyBaseline(
-        baselineMap,
-        "taxonomy-metadata-distributions",
-        "dxkb-light",
-        blocking,
-      );
-      logWarnings(warnings, "taxonomy-metadata-distributions");
-      if (suppressed.length > 0) {
-        console.info(
-          `[a11y] taxonomy-metadata-distributions: ${String(suppressed.length)} suppressed by baseline`,
-        );
-      }
-      expect(
-        remaining,
-        remaining.length === 0
-          ? undefined
-          : formatBlocking(remaining, "taxonomy-metadata-distributions"),
-      ).toEqual([]);
+      assertNoBlockingViolations(violations, "taxonomy-metadata-distributions", "dxkb-light");
     },
   );
 
@@ -208,20 +186,6 @@ test.describe("a11y component surfaces", () => {
     await expect(page.locator('[data-slot="command-input"]')).toBeFocused({ timeout: 5_000 });
 
     const violations = await scanPage(page);
-    const { blocking, warnings } = partition(violations);
-    const { remaining, suppressed } = applyBaseline(
-      baselineMap,
-      "command-palette",
-      "dxkb-light",
-      blocking,
-    );
-    logWarnings(warnings, "command-palette");
-    if (suppressed.length > 0) {
-      console.info(`[a11y] command-palette: ${String(suppressed.length)} suppressed by baseline`);
-    }
-    expect(
-      remaining,
-      remaining.length === 0 ? undefined : formatBlocking(remaining, "command-palette"),
-    ).toEqual([]);
+    assertNoBlockingViolations(violations, "command-palette", "dxkb-light");
   });
 });

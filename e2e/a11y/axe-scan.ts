@@ -38,14 +38,12 @@ export interface ScanOptions {
  * Applies vendorExclusions automatically.
  */
 export async function scanPage(page: Page, options: ScanOptions = {}): Promise<Violation[]> {
-  let builder = new AxeBuilder({ page }).withTags(options.tags ?? allAxeTags);
+  let builder = [...vendorExclusions, ...(options.exclude ?? [])].reduce(
+    (b, sel) => b.exclude(sel),
+    new AxeBuilder({ page }).withTags(options.tags ?? allAxeTags),
+  );
 
   if (options.include) builder = builder.include(options.include);
-
-  for (const sel of [...vendorExclusions, ...(options.exclude ?? [])]) {
-    builder = builder.exclude(sel);
-  }
-
   if (options.disableRules?.length) builder = builder.disableRules(options.disableRules);
 
   const results = await builder.analyze();

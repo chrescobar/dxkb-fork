@@ -1,0 +1,25 @@
+src/lib/views/view-registry.ts
+  s_684de1d9f1a6d3::t_edcdbde3b2d518 92,95
+src/lib/views/__tests__/view-registry.test.ts
+  s_684de1d9f1a6d3::t_5813353269d7b6 20,23-27
+playwright.a11y.config.ts
+  s_684de1d9f1a6d3::t_a2a40fec4c1341 13-14
+src/app/(views)/experiment/[experimentId]/page.tsx
+  s_684de1d9f1a6d3::t_dbd57befb241df 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "60803abb24dab4135802735926bbd2aa7e2d182f",
+  "prompts": {},
+  "sessions": {
+    "s_684de1d9f1a6d3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5b67778b-8b10-4e14-b8fd-50cbd4fcbb20",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

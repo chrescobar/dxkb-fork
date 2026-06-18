@@ -10,8 +10,8 @@ const webServerCommand = `node e2e/scripts/start-webserver.mjs ${String(port)}`;
 export default defineConfig({
   globalTeardown: "./e2e/a11y/teardown.ts",
   testDir: "./e2e",
-  // Only a11y specs — excluded from the main playwright.config.ts via negative lookahead.
-  testMatch: /tests\/a11y\/.*\.spec\.ts$/,
+  // Include a11y specs + auth setup files (setup projects need these to create e2e/.auth/user.json).
+  testMatch: [/tests\/a11y\/.*\.spec\.ts$/, /auth\/.*\.setup\.ts$/],
   timeout: 60_000,
   fullyParallel: true,
   forbidOnly: isCi,

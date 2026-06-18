@@ -89,8 +89,10 @@ export const viewRegistry = {
   experiment: {
     segment: "experiment",
     label: "Experiment",
+    legacySingular: "ExperimentComparison",
     legacyList: "ExperimentList",
     searchType: "experiment",
+    singular: { idParam: "experimentId", idKind: "int", defaultTab: "overview" },
     list: { endpoint: "experiment", defaultTab: "experiments", friendlyParams: ["keyword", "taxon_id"] },
   },
 } satisfies ViewRegistry;

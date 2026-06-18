@@ -1,0 +1,24 @@
+e2e/tests/a11y/keyboard.spec.ts
+  s_a886ec9262a3ab::t_1dbc9185aae91b 160
+  s_a886ec9262a3ab::t_60038465877ad8 132-134,139-141
+e2e/tests/a11y/deep-tier.spec.ts
+  s_a886ec9262a3ab::t_eca7b3c65a675a 59
+  s_a886ec9262a3ab::t_2f4a5c37baadc7 202,213
+  s_a886ec9262a3ab::t_b142303ff96064 227,238
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "b565a140a77e3c4f4e8a18fa3b3efc7ac39a51b1",
+  "prompts": {},
+  "sessions": {
+    "s_a886ec9262a3ab": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4b1c983b-8197-48f3-bd2d-10c2c89dce69",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

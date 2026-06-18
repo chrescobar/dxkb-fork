@@ -1,0 +1,61 @@
+e2e/tests/a11y/deep-tier.spec.ts
+  s_d1865f1f7d1614::t_e827eca653a693 18
+  s_d1865f1f7d1614::t_5287fae35a1308 40
+e2e/scripts/update-baseline.ts
+  s_d1865f1f7d1614::t_64169260652bd5 1-121
+e2e/tests/a11y/routes-sweep.spec.ts
+  s_d1865f1f7d1614::t_cb61ce5dd3ba5e 16
+  s_e6eae7e91c1b29::t_a80761a83721e0 87-89
+  s_e6eae7e91c1b29::t_9bfc710d28bd03 83-86
+  s_d1865f1f7d1614::t_eff40f845a0906 31
+src/components/services/search-workspace-input.tsx
+  s_d1865f1f7d1614::t_f56e5f004319f3 45,47
+e2e/a11y/report.ts
+  s_d1865f1f7d1614::t_5a1013d3726741 1-2,13,16-19
+e2e/a11y/teardown.ts
+  s_d1865f1f7d1614::t_9e7b2dc00f4be6 1-27
+e2e/tests/a11y/reduced-motion.spec.ts
+  s_2c12a45ca53c06::t_ed390dd6041789 53
+  s_2c12a45ca53c06::t_849b1fb597b8a8 81
+  s_2c12a45ca53c06::t_f3339a7e79ae98 20,28-30
+  s_2c12a45ca53c06::t_5de0d59a90a238 80,82,84-85
+src/components/services/search-read-library.tsx
+  s_d1865f1f7d1614::t_dd4dffedd3f4ef 104,106,118,120
+playwright.a11y.config.ts
+  s_d1865f1f7d1614::t_9deb78fcffd128 11
+package.json
+  s_e6eae7e91c1b29::t_515a2ca5f45fe3 29
+  s_d1865f1f7d1614::t_91271055e635a6 30-31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "ce31f6586ddd41507b351d6fe453b9bd6f698313",
+  "prompts": {},
+  "sessions": {
+    "s_2c12a45ca53c06": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "44869213-abe4-4e0b-a5f3-50d4b3157c5a",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_d1865f1f7d1614": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "676230c8-7773-42d7-9583-30d2792998aa",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_e6eae7e91c1b29": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "497d4c2e-7aa2-4894-b34c-c980bcc307d1",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

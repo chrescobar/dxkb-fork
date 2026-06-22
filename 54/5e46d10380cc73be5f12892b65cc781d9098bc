@@ -1,0 +1,20 @@
+e2e/a11y/routes.ts
+  s_723a59a7685163::t_f16fcd34c7358d 601
+  s_723a59a7685163::t_99ad54090cd4bb 335-340
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "545e46d10380cc73be5f12892b65cc781d9098bc",
+  "prompts": {},
+  "sessions": {
+    "s_723a59a7685163": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b03f3e95-a588-4720-b5ec-60e6c48121e2",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

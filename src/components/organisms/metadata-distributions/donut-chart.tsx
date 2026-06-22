@@ -609,6 +609,13 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
                       <path
                         ref={(el) => { if (el) pathRefs.current.set(arc.slice.id, el); else pathRefs.current.delete(arc.slice.id); }}
                         suppressHydrationWarning
+                        // SVG <path> has no implicit ARIA role, so aria-label is a
+                        // prohibited attribute (axe aria-prohibited-attr, fires on
+                        // WebKit/Firefox which expose no computed role). role="img"
+                        // would collide with the parent svg's role="img"; the WAI-ARIA
+                        // graphics-symbol role permits a name and keeps the svg as the
+                        // sole img-role node.
+                        role="graphics-symbol"
                         d={arc.pathD}
                         fill={arc.color}
                         stroke={arc.color}

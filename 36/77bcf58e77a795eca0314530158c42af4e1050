@@ -1,0 +1,19 @@
+e2e/tests/a11y/keyboard.spec.ts
+  s_b1ca5d6e4d42c5::t_ed036a8b133289 114,131-155,158
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "3677bcf58e77a795eca0314530158c42af4e1050",
+  "prompts": {},
+  "sessions": {
+    "s_b1ca5d6e4d42c5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "30b59a5e-737d-43d7-b205-3a1caa8fd3d8",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

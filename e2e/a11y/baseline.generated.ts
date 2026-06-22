@@ -94,6 +94,17 @@ export const reflowSkip: ReflowSkipMap = {
   "organisms-all": { ticket: "DXKBCORE-178" },
   "organisms-bacteria": { ticket: "DXKBCORE-178" },
   "organisms-viruses": { ticket: "DXKBCORE-178" },
+  // View list pages — mobile navbar overflows at 320px, same root cause as above.
+  "taxonomy-list": { ticket: "DXKBCORE-178" },
+  "genome-list": { ticket: "DXKBCORE-178" },
+  "feature-list": { ticket: "DXKBCORE-178" },
+  "epitope-list": { ticket: "DXKBCORE-178" },
+  "surveillance-list": { ticket: "DXKBCORE-178" },
+  "serology-list": { ticket: "DXKBCORE-178" },
+  "strain": { ticket: "DXKBCORE-178" },
+  "domains-and-motifs": { ticket: "DXKBCORE-178" },
+  "experiment": { ticket: "DXKBCORE-178" },
+  "protein-structure": { ticket: "DXKBCORE-178" },
 };
 
 // ── Warn-tier tracking (DoD item 6) ──────────────────────────────────────────

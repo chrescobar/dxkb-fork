@@ -332,6 +332,12 @@ export const routes: RouteEntry[] = [
     unauthenticated: true,
     prepare: async (page) => { await page.waitForLoadState("networkidle"); },
   },
+  {
+    name: "experiment-singular",
+    path: "/experiment/2000000",
+    unauthenticated: true,
+    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+  },
 
   // ── Jobs ─────────────────────────────────────────────────────────────────────
   {
@@ -592,6 +598,7 @@ export const coveredPageFiles = new Set<string>([
   "(views)/strain/page.tsx",
   "(views)/domains-and-motifs/page.tsx",
   "(views)/experiment/page.tsx",
+  "(views)/experiment/[experimentId]/page.tsx",
   "(views)/protein-structure/page.tsx",
   // Organisms
   "organisms/all/page.tsx",

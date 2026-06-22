@@ -101,6 +101,13 @@ export const reflowSkip: ReflowSkipMap = {
   "epitope-list": { ticket: "DXKBCORE-178" },
   "surveillance-list": { ticket: "DXKBCORE-178" },
   "serology-list": { ticket: "DXKBCORE-178" },
+  // View singular pages — same mobile navbar overflow root cause.
+  "genome": { ticket: "DXKBCORE-178" },
+  "feature": { ticket: "DXKBCORE-178" },
+  "epitope": { ticket: "DXKBCORE-178" },
+  "surveillance": { ticket: "DXKBCORE-178" },
+  "serology": { ticket: "DXKBCORE-178" },
+  "experiment-singular": { ticket: "DXKBCORE-178" },
   "strain": { ticket: "DXKBCORE-178" },
   "domains-and-motifs": { ticket: "DXKBCORE-178" },
   "experiment": { ticket: "DXKBCORE-178" },

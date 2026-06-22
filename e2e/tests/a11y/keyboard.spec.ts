@@ -111,7 +111,7 @@ test.describe("keyboard: sign-in page", () => {
 // ── Workspace — no keyboard trap in dialogs ──────────────────────────────────────
 
 test.describe("keyboard: workspace dialogs (WCAG 2.1.2 — no trap)", () => {
-  test("new-folder dialog: Escape closes and returns focus to trigger", async ({ page }) => {
+  test("new-folder dialog: Escape closes and returns focus to trigger", async ({ page, browserName }) => {
     await applyBackendMocks(page, {
       overrides: [...authSessionOverrides, ...workspacePopulatedOverrides, ...permissiveBackendOverrides],
     });
@@ -135,10 +135,13 @@ test.describe("keyboard: workspace dialogs (WCAG 2.1.2 — no trap)", () => {
     // without the wait, Tab can be pressed while focus is still on the guard sentinel, which
     // sends focus past the guard to whatever follows the portal in the DOM (WebKit exhibits this
     // because buttons are not in its default Tab cycle, making the guard hit much more frequent).
+    // WebKit needs a longer wait: its rAF scheduling is slower and buttons are excluded from the
+    // default tab sequence, causing guard hits on nearly every Tab keystroke.
+    const rafWaitMs = browserName === "webkit" ? 150 : 50;
     for (let i = 0; i < 5; i++) {
       await page.keyboard.press("Tab");
       // Allow the guard's rAF redirect to complete before evaluating.
-      await page.waitForTimeout(50);
+      await page.waitForTimeout(rafWaitMs);
       const focusInsideDialog = await page.evaluate(() => {
         const dialog = document.querySelector("[role='dialog']");
         const activeEl = document.activeElement;

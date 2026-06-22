@@ -1,3 +1,5 @@
+import type { DataFieldMap } from "./types";
+
 export const experimentFields = {
     exp_id: { 
         label: 'Experiment ID', 
@@ -238,4 +240,4 @@ export const experimentFields = {
         facet_hidden: true, 
         search: true 
         }
-    };
+    } satisfies DataFieldMap;

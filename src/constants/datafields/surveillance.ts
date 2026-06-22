@@ -1,3 +1,5 @@
+import type { DataFieldMap } from "./types";
+
 export const surveillanceFields = {
     project_identifier: { 
         label: 'Project Identifier', 
@@ -928,4 +930,4 @@ export const surveillanceFields = {
         facet_hidden: true, 
         search: true 
         },
-    };
+    } satisfies DataFieldMap;

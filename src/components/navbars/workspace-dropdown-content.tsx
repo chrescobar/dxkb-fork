@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { loadFavorites } from "@/lib/services/workspace/favorites";
 import { workspaceQueryKeys } from "@/lib/services/workspace/workspace-query-keys";
 import { getRecentFolders, getWorkspaceFolderDisplayName } from "@/lib/recent-workspace-folders";
-import { buildEncodedSegmentPath, encodeWorkspaceSegment, parsePathSegments, workspaceUsername } from "@/lib/utils";
+import { buildEncodedSegmentPath, encodeWorkspaceSegment, parsePathSegments, workspaceUsername } from "@/lib/services/workspace/path-utils";
 
 export { workspaceUsername };
 

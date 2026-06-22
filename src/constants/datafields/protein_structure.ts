@@ -1,3 +1,5 @@
+import type { DataFieldMap } from "./types";
+
 export const protein_structureFields = {
     pdb_id: { 
         label: 'PDB ID', 
@@ -202,4 +204,4 @@ export const protein_structureFields = {
         facet_hidden: true, 
         search: true  
         }
-    };
+    } satisfies DataFieldMap;

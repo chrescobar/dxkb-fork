@@ -1,4 +1,4 @@
-import { sanitizePathSegment } from "@/lib/utils";
+import { sanitizePathSegment } from "./path-utils";
 import {
   ValidWorkspaceObjectTypes,
   knownUploadTypes,

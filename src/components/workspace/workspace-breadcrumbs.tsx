@@ -3,7 +3,8 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { ChevronRight, Globe, Home } from "lucide-react";
-import { buildEncodedSegmentPath, cn, encodeWorkspaceSegment, sanitizePathSegment } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { buildEncodedSegmentPath, encodeWorkspaceSegment, sanitizePathSegment } from "@/lib/services/workspace/path-utils";
 import { safeDecode } from "@/lib/url";
 
 export type BreadcrumbsViewMode = "home" | "shared" | "root" | "public";

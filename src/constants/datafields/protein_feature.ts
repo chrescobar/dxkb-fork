@@ -1,3 +1,5 @@
+import type { DataFieldMap } from "./types";
+
 export const protein_featureFields = {
     id: { 
         label: 'ID', 
@@ -257,4 +259,4 @@ export const protein_featureFields = {
         facet_hidden: true, 
         search: true    
         }
-    };
+    } satisfies DataFieldMap;

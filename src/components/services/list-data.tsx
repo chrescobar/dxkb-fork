@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { noop } from "@/lib/utils";
 import { FilterBar } from "@/components/filterbar/filter-bar";
 import { getIdField } from "@/constants/resources";
+import type { DataField } from "@/constants/datafields/types";
 
 interface ColumnInfo {
   id: string;
@@ -16,15 +17,6 @@ interface ColumnInfo {
   facet?: boolean;
   facet_hidden?: boolean;
 }
-
-interface RawField {
-  field?: string;
-  label?: string;
-  hidden?: boolean;
-  show_in_table?: boolean;
-  facet?: boolean;
-  facet_hidden?: boolean;
-};
 
 interface ListDataProps { 
   q: string; 
@@ -55,7 +47,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   useEffect(() => {
     void (async () => {
       try {
-        const mod = await import(`@/constants/datafields/${resource}`) as Record<string, Record<string, RawField> | undefined>;
+        const mod = await import(`@/constants/datafields/${resource}`) as Record<string, Record<string, DataField> | undefined>;
         const fieldObj = mod[`${resource}Fields`];
         if (!fieldObj) {
           console.error(`No fields definition found for resource: ${resource}`);
@@ -65,8 +57,8 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
           Object.values(fieldObj)
             .filter((f) => f.show_in_table !== false)
             .map((f) => ({
-              id: f.field ?? "",
-              label: f.label ?? "",
+              id: f.field,
+              label: f.label,
               visible: !f.hidden,
               facet: f.facet ?? false,
               facet_hidden: f.facet_hidden ?? true,

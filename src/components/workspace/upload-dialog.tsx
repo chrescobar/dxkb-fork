@@ -221,7 +221,7 @@ export function UploadDialog({
                 accept="*"
                 onChange={onInputChange}
               />
-              <span className="inline-flex h-9 items-center justify-center rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground shadow-xs pointer-events-none select-none">
+              <span className="pointer-events-none inline-flex h-9 items-center justify-center rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground shadow-xs select-none">
                 Select Files
               </span>
               <span className="text-xs text-muted-foreground">or Drop files here.</span>

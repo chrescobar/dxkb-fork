@@ -14,7 +14,8 @@ import type {
   WorkspaceViewMode,
 } from "@/types/workspace-browser";
 import type { WorkspaceItem } from "@/lib/services/workspace/domain";
-import { buildEncodedSegmentPath, encodeWorkspaceSegment, noop, parsePathSegments, sanitizePathSegment } from "@/lib/utils";
+import { noop } from "@/lib/utils";
+import { buildEncodedSegmentPath, encodeWorkspaceSegment, parsePathSegments, sanitizePathSegment } from "@/lib/services/workspace/path-utils";
 import { normalizePath } from "@/lib/workspace/table-selection";
 import { isFolderType } from "@/lib/services/workspace/utils";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";

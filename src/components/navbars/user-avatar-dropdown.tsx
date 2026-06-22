@@ -18,7 +18,7 @@ import { SuLoginDialog } from "@/components/auth/su-login-dialog";
 import { useAuth } from "@/lib/auth/hooks";
 import { authAdmin, authAccount } from "@/lib/auth/advanced";
 import { toast } from "sonner";
-import { encodeWorkspaceSegment, workspaceUsername } from "@/lib/utils";
+import { encodeWorkspaceSegment, workspaceUsername } from "@/lib/services/workspace/path-utils";
 
 import {
   NotebookPen,

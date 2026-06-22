@@ -3,7 +3,7 @@
  * Pure utility — no React dependencies.
  */
 
-import { buildEncodedSegmentPath, parsePathSegments } from "@/lib/utils";
+import { buildEncodedSegmentPath, parsePathSegments } from "@/lib/services/workspace/path-utils";
 
 export type ViewerCategory =
   | "text"

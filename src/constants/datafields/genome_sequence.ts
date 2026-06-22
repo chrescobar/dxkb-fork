@@ -1,3 +1,5 @@
+import type { DataFieldMap } from "./types";
+
 export const genome_sequenceFields = {
     genome_id: { 
         label: 'Genome ID', 
@@ -192,4 +194,4 @@ export const genome_sequenceFields = {
         facet_hidden: true, 
         search: true      
     }
-};
+} satisfies DataFieldMap;

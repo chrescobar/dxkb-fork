@@ -48,7 +48,8 @@ import {
   type WorkspaceSortConfig,
   type WorkspaceViewMode,
 } from "@/types/workspace-browser";
-import { encodeWorkspaceSegment, noop, workspaceUsername } from "@/lib/utils";
+import { noop } from "@/lib/utils";
+import { encodeWorkspaceSegment, workspaceUsername } from "@/lib/services/workspace/path-utils";
 import { Skeleton } from "@/components/ui/skeleton";
 type PublicWorkspaceLevel = "root" | "user" | "path";
 

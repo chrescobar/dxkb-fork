@@ -1,3 +1,5 @@
+import type { DataFieldMap } from "./types";
+
 export const serologyFields = {
     project_identifier: { 
         label: 'Project Identifier', 
@@ -219,4 +221,4 @@ export const serologyFields = {
         facet_hidden: true, 
         search: true  
         },
-    };
+    } satisfies DataFieldMap;

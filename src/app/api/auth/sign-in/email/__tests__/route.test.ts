@@ -117,7 +117,7 @@ describe("POST /api/auth/sign-in/email", () => {
     expect(mockCookieStore.set).not.toHaveBeenCalled();
   });
 
-  it("maps upstream 5xx to 503 and does not write session cookies", async () => {
+  it("passes through upstream 5xx status and does not write session cookies", async () => {
     server.use(
       http.post(userAuthUrl, () => new HttpResponse(null, { status: 500 })),
     );
@@ -128,7 +128,7 @@ describe("POST /api/auth/sign-in/email", () => {
     });
     const response = await POST(request, {});
 
-    expect(response.status).toBe(503);
+    expect(response.status).toBe(500);
     expect(mockCookieStore.set).not.toHaveBeenCalled();
   });
 

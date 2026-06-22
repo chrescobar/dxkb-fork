@@ -34,14 +34,9 @@ import { WorkspaceObject } from "@/lib/services/workspace/types";
 import {
   fetchGenomeGroupMembers,
   validateViralGenomes,
-  getGenomeIdsFromGroup,
-  type GenomeSummary,
-  fetchGenomesByIds,
 } from "@/lib/services/genome";
-import {
-  fetchFeaturesFromGroup,
-  type FeatureSummary,
-} from "@/lib/services/feature";
+import { useFeatureGroupOptions } from "@/hooks/services/use-feature-group-options";
+import { useGenomeGroupOptions } from "@/hooks/services/use-genome-group-options";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
@@ -71,10 +66,6 @@ export default function MSAandSNPAnalysisPage() {
   const [selectedGenomeId, setSelectedGenomeId] = useState<string>("");
   const [fastaInputText, setFastaInputText] = useState<string>("");
   const [referenceFastaText, setReferenceFastaText] = useState<string>("");
-  const [featureOptions, setFeatureOptions] = useState<FeatureSummary[]>([]);
-  const [isLoadingFeatures, setIsLoadingFeatures] = useState(false);
-  const [genomeOptions, setGenomeOptions] = useState<GenomeSummary[]>([]);
-  const [isLoadingGenomes, setIsLoadingGenomes] = useState(false);
   const [genomeIdDropdownOpen, setGenomeIdDropdownOpen] = useState(false);
   const [fastaValidationResult, setFastaValidationResult] = useState<{
     valid: boolean;
@@ -104,8 +95,6 @@ export default function MSAandSNPAnalysisPage() {
     setFastaValidationResult(null);
     setReferenceFastaValidationResult(null);
     setShowStrategy(false);
-    setFeatureOptions([]);
-    setGenomeOptions([]);
     setGenomeIdDropdownOpen(false);
     // Clear feature group selection
     form.setFieldValue("feature_groups", "");
@@ -296,138 +285,48 @@ export default function MSAandSNPAnalysisPage() {
     }
   }, [referenceFastaText, refType, form]);
 
-  // Fetch features from feature group when Feature ID reference is selected
+  const {
+    features: featureOptions,
+    isLoading: isLoadingFeatures,
+    error: featureGroupError,
+  } = useFeatureGroupOptions(featureGroup, refType === "feature_id");
+
+  const {
+    options: genomeOptions,
+    isLoading: isLoadingGenomes,
+    error: genomeGroupError,
+  } = useGenomeGroupOptions(
+    selectGenomegroup[0],
+    refType === "genome_id" && selectGenomegroup.length > 0,
+  );
+
+  // Clear selected IDs when the driving inputs change (queueMicrotask avoids set-during-render)
   useEffect(() => {
-    const shouldFetch =
-      refType === "feature_id" && featureGroup && featureGroup.trim() !== "";
+    queueMicrotask(() => { setSelectedFeatureId(""); });
+  }, [featureGroup]);
 
-    if (!shouldFetch) {
-      queueMicrotask(() => {
-        setFeatureOptions([]);
-        setSelectedFeatureId("");
-      });
-      return;
-    }
-
-    let abortController: AbortController | null = null;
-
-    async function loadFeatures() {
-      // TypeScript guard: ensure featureGroup is defined
-      if (!featureGroup || featureGroup.trim() === "") {
-        return;
-      }
-
-      setIsLoadingFeatures(true);
-      abortController = new AbortController();
-
-      try {
-        const features = await fetchFeaturesFromGroup(featureGroup, {
-          signal: abortController.signal,
-        });
-
-        setFeatureOptions(features);
-      } catch (error) {
-        if (error instanceof DOMException && error.name === "AbortError") {
-          // Request was cancelled, ignore
-          return;
-        }
-
-        console.error("Failed to fetch features from feature group:", error);
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : "Failed to fetch features from feature group";
-        toast.error("Failed to load features", {
-          description: errorMessage,
-          closeButton: true,
-        });
-        setFeatureOptions([]);
-      } finally {
-        setIsLoadingFeatures(false);
-      }
-    }
-
-    void loadFeatures();
-
-    return () => {
-      if (abortController) {
-        abortController.abort();
-      }
-    };
-  }, [refType, featureGroup]);
-
-  // Fetch genomes from genome group when Genome ID reference is selected
   useEffect(() => {
-    const shouldFetch =
-      refType === "genome_id" &&
-      selectGenomegroup.length > 0;
+    queueMicrotask(() => { setSelectedGenomeId(""); });
+  }, [selectGenomegroup]);
 
-    if (!shouldFetch) {
-      queueMicrotask(() => {
-        setGenomeOptions([]);
-        setSelectedGenomeId("");
+  // Surface fetch errors via toast
+  useEffect(() => {
+    if (featureGroupError) {
+      toast.error("Failed to load features", {
+        description: featureGroupError,
+        closeButton: true,
       });
-      return;
     }
+  }, [featureGroupError]);
 
-    let abortController: AbortController | null = null;
-
-    async function loadGenomes() {
-      // Guard: ensure genome group is non-empty
-      if (selectGenomegroup.length === 0) {
-        return;
-      }
-
-      // Get the first (and only) genome group path
-      const genomeGroupPath = selectGenomegroup[0];
-
-      setIsLoadingGenomes(true);
-      abortController = new AbortController();
-
-      try {
-        // First, get the genome IDs from the genome group
-        const genomeIds = await getGenomeIdsFromGroup(genomeGroupPath, {
-          signal: abortController.signal,
-        });
-
-        if (genomeIds.length === 0) {
-          setGenomeOptions([]);
-          return;
-        }
-
-        // Fetch summaries for only the genomes in the selected group
-        const groupGenomes = await fetchGenomesByIds(genomeIds, {
-          signal: abortController.signal,
-        });
-
-        setGenomeOptions(
-          groupGenomes.map((genome) => ({
-            genome_id: genome.genome_id,
-            genome_name: genome.genome_name,
-          })),
-        );
-      } catch (error) {
-        console.error("Failed to fetch genome IDs:", error);
-        toast.error("Failed to fetch genome IDs", {
-          description:
-            error instanceof Error
-              ? error.message
-              : "Failed to fetch genome IDs",
-          closeButton: true,
-        });
-        setGenomeOptions([]);
-      }
-      setIsLoadingGenomes(false);
+  useEffect(() => {
+    if (genomeGroupError) {
+      toast.error("Failed to fetch genome IDs", {
+        description: genomeGroupError,
+        closeButton: true,
+      });
     }
-
-    void loadGenomes();
-
-    return () => {
-      if (abortController) {
-        abortController.abort();
-      }
-    };
-  }, [refType, selectGenomegroup]);
+  }, [genomeGroupError]);
 
   // Determine which reference options are available
   const availableRefTypes =
@@ -512,7 +411,6 @@ export default function MSAandSNPAnalysisPage() {
                         setSelectedGenomeId("");
                         setReferenceFastaText("");
                         setGenomeIdDropdownOpen(false);
-                        setFeatureOptions([]);
                       }
                     }}
                     className="service-radio-group-horizontal"
@@ -570,7 +468,6 @@ export default function MSAandSNPAnalysisPage() {
                             setSelectedGenomeId("");
                             setReferenceFastaText("");
                             setGenomeIdDropdownOpen(false);
-                            setFeatureOptions([]);
                           }
                         }}
                         className="service-radio-group-horizontal"

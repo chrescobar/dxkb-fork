@@ -1,3 +1,5 @@
+import type { DataFieldMap } from "./types";
+
 export const strainFields = {
     taxon_id: { 
         label: 'Taxon ID', 
@@ -339,4 +341,4 @@ export const strainFields = {
         facet_hidden: true, 
         search: true  
         }
-    };
+    } satisfies DataFieldMap;

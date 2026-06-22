@@ -1,3 +1,5 @@
+import type { DataFieldMap } from "./types";
+
 export const epitopeFields = {
     epitope_id: { 
         label: 'Epitope ID', 
@@ -168,4 +170,4 @@ export const epitopeFields = {
         facet_hidden: true, 
         search: true  
         }
-    };
+    } satisfies DataFieldMap;

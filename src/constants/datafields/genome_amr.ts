@@ -1,3 +1,5 @@
+import type { DataFieldMap } from "./types";
+
 export const genome_amrFields = {
     taxon_id: { 
         label: 'Taxon ID', 
@@ -170,4 +172,4 @@ export const genome_amrFields = {
         facet_hidden: true, 
         search: true  
         },
-    };
+    } satisfies DataFieldMap;

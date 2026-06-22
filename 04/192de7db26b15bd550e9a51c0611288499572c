@@ -1,0 +1,147 @@
+src/components/jobs/jobs-browser.tsx
+  s_422ab24dfa00e3::t_e86cb5c03cf16b 34
+src/components/workspace/workspace-file-table.tsx
+  s_422ab24dfa00e3::t_6975e54eabae9c 17-18
+src/constants/datafields/genome_amr.ts
+  s_422ab24dfa00e3::t_cfa383bada130e 1-2
+  s_422ab24dfa00e3::t_c164ec1310fbcb 175
+src/constants/datafields/genome_feature.ts
+  s_422ab24dfa00e3::t_c164ec1310fbcb 350
+  s_422ab24dfa00e3::t_cfa383bada130e 1-2
+src/constants/datafields/protein_structure.ts
+  s_422ab24dfa00e3::t_c164ec1310fbcb 207
+  s_422ab24dfa00e3::t_cfa383bada130e 1-2
+src/hooks/services/workspace/use-workspace-dialog-handlers.ts
+  s_422ab24dfa00e3::t_e86cb5c03cf16b 21
+src/app/workspace/home/[[...path]]/page.tsx
+  s_422ab24dfa00e3::t_e86cb5c03cf16b 6
+src/constants/datafields/genome_sequence.ts
+  s_422ab24dfa00e3::t_c164ec1310fbcb 197
+  s_422ab24dfa00e3::t_cfa383bada130e 1-2
+src/components/navbars/user-avatar-dropdown.tsx
+  s_422ab24dfa00e3::t_e86cb5c03cf16b 21
+src/constants/datafields/serology.ts
+  s_422ab24dfa00e3::t_cfa383bada130e 1-2
+  s_422ab24dfa00e3::t_c164ec1310fbcb 224
+src/components/detail-panel/info-panel.tsx
+  s_422ab24dfa00e3::t_5a33b004b6435e 282,287,291-292,296,303,310,317
+  s_422ab24dfa00e3::t_a8086b8325c40a 230-231,233-236,238-246
+  s_422ab24dfa00e3::t_995b12561c4150 16
+  s_422ab24dfa00e3::t_78794aea694470 145
+src/components/services/list-data.tsx
+  s_422ab24dfa00e3::t_b0d55206d433ff 60-61
+  s_422ab24dfa00e3::t_6fb2d87ccb2b0f 50
+  s_422ab24dfa00e3::t_4d195c79a227e8 11
+src/components/search/command-palette.tsx
+  s_422ab24dfa00e3::t_e86cb5c03cf16b 18
+src/constants/datafields/surveillance.ts
+  s_422ab24dfa00e3::t_cfa383bada130e 1-2
+  s_422ab24dfa00e3::t_c164ec1310fbcb 933
+src/app/services/(protein-tools)/msa-snp-analysis/page.tsx
+  s_422ab24dfa00e3::t_c676ee63272656 288-301,306,308,310,312,314-317,320,322-327,329
+  s_422ab24dfa00e3::t_c9f81d56cae74c 38-39
+  s_422ab24dfa00e3::t_569b83f074923f 303-305,309
+src/constants/datafields/epitope.ts
+  s_422ab24dfa00e3::t_cfa383bada130e 1-2
+  s_422ab24dfa00e3::t_c164ec1310fbcb 173
+src/hooks/services/use-genome-group-options.ts
+  s_422ab24dfa00e3::t_3d627ef0369610 25-26,29,31
+  s_422ab24dfa00e3::t_4f534077f2fe1f 1-24,27-28,30,32-45
+src/components/workspace/workspace-browser.tsx
+  s_422ab24dfa00e3::t_a64e345fc0cd4f 51-52
+src/hooks/services/workspace/__tests__/use-workspace-navigation.test.tsx
+  s_422ab24dfa00e3::t_7a99a14b927ce7 9
+src/constants/datafields/protein_feature.ts
+  s_422ab24dfa00e3::t_cfa383bada130e 1-2
+  s_422ab24dfa00e3::t_c164ec1310fbcb 262
+src/constants/datafields/experiment.ts
+  s_422ab24dfa00e3::t_cfa383bada130e 1-2
+  s_422ab24dfa00e3::t_c164ec1310fbcb 243
+src/lib/services/workspace/helpers.ts
+  s_422ab24dfa00e3::t_17d20467dba238 1
+src/hooks/services/use-genome-typeahead.ts
+  s_422ab24dfa00e3::t_8591a337fc04d2 1-10,12-49,52-151,153-166,195-247
+  s_422ab24dfa00e3::t_fa463f7b820cee 11
+  s_422ab24dfa00e3::t_dfb77317e83883 167-194
+  s_422ab24dfa00e3::t_d37de02a61051e 50-51
+  s_422ab24dfa00e3::t_6cf7ecbeac4c1a 152
+src/components/workspace/workspace-breadcrumbs.tsx
+  s_422ab24dfa00e3::t_d8650ddaec9b38 6-7
+src/lib/auth/server/adapters/bvbrc-identity.ts
+  s_422ab24dfa00e3::t_4a4e7b180c4cf5 43,46-50,54-55
+  s_422ab24dfa00e3::t_9d18d7c0c7d95f 45,51-53,56
+  s_422ab24dfa00e3::t_f54c0b2a866aa1 21-27
+src/app/workspace/[username]/page.tsx
+  s_422ab24dfa00e3::t_e86cb5c03cf16b 5
+src/hooks/services/workspace/use-workspace-navigation.ts
+  s_422ab24dfa00e3::t_e86cb5c03cf16b 7
+src/components/navbars/workspace-dropdown-content.tsx
+  s_422ab24dfa00e3::t_17d20467dba238 13
+src/constants/datafields/strain.ts
+  s_422ab24dfa00e3::t_c164ec1310fbcb 344
+  s_422ab24dfa00e3::t_cfa383bada130e 1-2
+src/components/services/genome-name-selector.tsx
+  s_422ab24dfa00e3::t_075626e4858dd7 15-18,41,50-72,83,124,134,136-139,141-143,164-166,169-170,176-224,234-238
+  s_422ab24dfa00e3::t_0e6257824db15a 3-4
+  s_422ab24dfa00e3::t_fbb966e1464133 131-133,144-146
+src/app/api/auth/sign-in/email/__tests__/route.test.ts
+  s_422ab24dfa00e3::t_d7331090e7bf72 120,131
+src/constants/datafields/taxonomy.ts
+  s_422ab24dfa00e3::t_cfa383bada130e 1-2
+  s_422ab24dfa00e3::t_c164ec1310fbcb 96
+src/hooks/services/__tests__/use-genome-group-options.test.ts
+  s_422ab24dfa00e3::t_ef9fde5f36bbcc 7-8
+  s_422ab24dfa00e3::t_df267385fddea5 1-6,9-115
+src/components/services/single-genome-selector.tsx
+  s_422ab24dfa00e3::t_bde182c02f27a5 86-87
+  s_422ab24dfa00e3::t_72d628b3ab6b8c 258-260,268-270
+  s_422ab24dfa00e3::t_77cebe2584a03c 7,21-24,37,50,54-55,62-85,88-90,93-94,96,111-112,117-120,134,138,144-147,161,163,169,185,198-199,201-202,217-219,221,251,261-265,273-274,292-294,310-318,320-324,351,357,375-377,381
+  s_422ab24dfa00e3::t_5a25d379be23bc 9
+src/lib/services/workspace/path-utils.ts
+  s_422ab24dfa00e3::t_a914fd1846a702 119-168
+src/constants/datafields/types.ts
+  s_422ab24dfa00e3::t_b50a31771c11b3 1-39
+src/app/workspace/page.tsx
+  s_422ab24dfa00e3::t_e86cb5c03cf16b 6
+src/components/workspace/file-viewer/file-viewer-registry.ts
+  s_422ab24dfa00e3::t_e86cb5c03cf16b 6
+src/hooks/services/workspace/__tests__/use-workspace-dialog-handlers.test.tsx
+  s_422ab24dfa00e3::t_6a04314ff24a0c 55
+src/hooks/services/use-feature-group-options.ts
+  s_422ab24dfa00e3::t_e2b6edb9bb7022 1-22,25-26,29-39
+  s_422ab24dfa00e3::t_550bcef5d2697d 23-24,27-28
+src/app/workspace/shared/[[...path]]/page.tsx
+  s_422ab24dfa00e3::t_e86cb5c03cf16b 6
+src/hooks/services/__tests__/use-feature-group-options.test.ts
+  s_422ab24dfa00e3::t_f4887773faa900 1-6,8-90
+  s_422ab24dfa00e3::t_377153d90c1181 7
+src/constants/datafields/genome.ts
+  s_422ab24dfa00e3::t_c164ec1310fbcb 849
+  s_422ab24dfa00e3::t_cfa383bada130e 1-2
+src/hooks/services/__tests__/use-genome-typeahead.test.ts
+  s_422ab24dfa00e3::t_85c6fe99e0bd48 1-34
+src/lib/__tests__/utils.test.ts
+  s_422ab24dfa00e3::t_4b9bd1184ef48e 1
+src/constants/datafields/bioset.ts
+  s_422ab24dfa00e3::t_c164ec1310fbcb 148
+  s_422ab24dfa00e3::t_cfa383bada130e 1-2
+src/lib/services/workspace/__tests__/path-utils.test.ts
+  s_422ab24dfa00e3::t_64bb014059a64d 148-254
+  s_422ab24dfa00e3::t_9af35971a417b8 2,6,9-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "04192de7db26b15bd550e9a51c0611288499572c",
+  "prompts": {},
+  "sessions": {
+    "s_422ab24dfa00e3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b41cfca9-59e5-4f54-9cd5-6ae7029403db",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

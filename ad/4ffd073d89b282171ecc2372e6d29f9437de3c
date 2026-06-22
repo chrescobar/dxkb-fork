@@ -1,0 +1,21 @@
+package.json
+  s_278913b6a13d92::t_5bfbdf8831f51a 31
+e2e/scripts/update-baseline.ts
+  s_278913b6a13d92::t_a7b1fc27155234 30-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "ad4ffd073d89b282171ecc2372e6d29f9437de3c",
+  "prompts": {},
+  "sessions": {
+    "s_278913b6a13d92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d5130092-17e8-46d0-b040-bd1ef701b90f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

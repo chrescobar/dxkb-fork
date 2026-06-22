@@ -92,6 +92,9 @@ export function BarChart({
                       fill="var(--chart-1)"
                       rx={2}
                       tabIndex={0}
+                      // SVG <rect> has no implicit ARIA role; graphics-symbol permits
+                      // aria-label without tripping axe aria-prohibited-attr on WebKit/Firefox.
+                      role="graphics-symbol"
                       aria-label={label}
                       onFocus={(event) => {
                         const rect =

@@ -1011,7 +1011,7 @@ export default function MSAandSNPAnalysisPage() {
                     }}
                     disabled={isLoadingFeatures}
                   >
-                    <SelectTrigger className="service-card-select-trigger">
+                    <SelectTrigger className="service-card-select-trigger" aria-label="Select feature ID">
                       <SelectValue
                         placeholder={
                           isLoadingFeatures
@@ -1099,7 +1099,7 @@ export default function MSAandSNPAnalysisPage() {
                     }}
                     disabled={isLoadingGenomes}
                   >
-                    <SelectTrigger className="service-card-select-trigger">
+                    <SelectTrigger className="service-card-select-trigger" aria-label="Select genome ID">
                       <SelectValue
                         placeholder={
                           isLoadingGenomes
@@ -1234,7 +1234,7 @@ export default function MSAandSNPAnalysisPage() {
                         }
                       }}
                     >
-                      <SelectTrigger className="service-card-select-trigger">
+                      <SelectTrigger className="service-card-select-trigger" aria-label="Select aligner">
                         <SelectValue placeholder="Select aligner" />
                       </SelectTrigger>
                       <SelectContent>

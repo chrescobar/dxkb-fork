@@ -208,7 +208,7 @@ export default function CitationsPage() {
               defaultValue="all"
               onValueChange={(value) => { setYearFilter(value ?? ""); }}
             >
-              <SelectTrigger className="w-45">
+              <SelectTrigger className="w-45" aria-label="Filter by Year">
                 <SelectValue placeholder="Filter by Year" />
               </SelectTrigger>
               <SelectContent>
@@ -227,7 +227,7 @@ export default function CitationsPage() {
               value={sortOption}
               onValueChange={(value) => { setSortOption(value ?? ""); }}
             >
-              <SelectTrigger className="w-45">
+              <SelectTrigger className="w-45" aria-label="Sort by">
                 <SortDesc className="mr-2 size-4" />
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>

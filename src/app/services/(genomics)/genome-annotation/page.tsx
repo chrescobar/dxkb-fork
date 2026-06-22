@@ -184,7 +184,7 @@ const GenomeAnnotationContent = () => {
                         ); }
                       }
                     >
-                      <SelectTrigger className="service-card-select-trigger">
+                      <SelectTrigger className="service-card-select-trigger" aria-label="Annotation Recipe">
                         <SelectValue placeholder="--- Select Recipe ---" />
                       </SelectTrigger>
                       <SelectContent>
@@ -211,7 +211,7 @@ const GenomeAnnotationContent = () => {
                         Taxonomy Name
                         <TooltipProvider>
                           <Tooltip>
-                            <TooltipTrigger>
+                            <TooltipTrigger aria-label="Help: taxon must be genus level or below">
                               <HelpCircle className="service-card-tooltip-icon ml-1" />
                             </TooltipTrigger>
                             <TooltipContent className="max-w-sm">

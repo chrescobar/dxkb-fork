@@ -77,7 +77,7 @@ export function PasswordChangeForm() {
           <form.Field name="currentPassword">
             {(field) => (
               <FieldItem>
-                <RequiredFormLabel>Current Password</RequiredFormLabel>
+                <RequiredFormLabel htmlFor={field.name}>Current Password</RequiredFormLabel>
                 <PasswordInput
                   id={field.name}
                   value={field.state.value}
@@ -93,7 +93,7 @@ export function PasswordChangeForm() {
           <form.Field name="newPassword">
             {(field) => (
               <FieldItem>
-                <RequiredFormLabel>New Password</RequiredFormLabel>
+                <RequiredFormLabel htmlFor={field.name}>New Password</RequiredFormLabel>
                 <PasswordInput
                   id={field.name}
                   value={field.state.value}
@@ -109,7 +109,7 @@ export function PasswordChangeForm() {
           <form.Field name="confirmPassword">
             {(field) => (
               <FieldItem>
-                <RequiredFormLabel>Confirm New Password</RequiredFormLabel>
+                <RequiredFormLabel htmlFor={field.name}>Confirm New Password</RequiredFormLabel>
                 <PasswordInput
                   id={field.name}
                   value={field.state.value}

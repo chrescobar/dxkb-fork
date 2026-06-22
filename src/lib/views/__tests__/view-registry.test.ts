@@ -17,10 +17,14 @@ describe("viewRegistry", () => {
     }
   });
 
-  it("marks strain, domains-and-motifs, experiment as list-only (no singular)", () => {
+  it("marks strain and domains-and-motifs as list-only (no singular)", () => {
     expect(reg.strain.singular).toBeUndefined();
     expect(reg["domains-and-motifs"].singular).toBeUndefined();
-    expect(reg.experiment.singular).toBeUndefined();
+  });
+
+  it("gives experiment an int singular with ExperimentComparison legacy name", () => {
+    expect(reg.experiment.singular?.idKind).toBe("int");
+    expect(reg.experiment.legacySingular).toBe("ExperimentComparison");
   });
 
   it("gives protein-structure an id-less singular", () => {

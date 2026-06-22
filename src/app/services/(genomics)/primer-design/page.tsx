@@ -557,6 +557,7 @@ export default function PrimerDesignServicePage() {
                     </TooltipProvider>
                   </div>
                   <Input
+                    id={field.name}
                     value={(field.state.value ?? []).join(" ")}
                     onChange={(e) => {
                       const value = e.target.value;
@@ -608,6 +609,7 @@ export default function PrimerDesignServicePage() {
                           {label}
                         </FieldLabel>
                         <Input
+                          id={field.name}
                           value={field.state.value || ""}
                           onChange={(e) => {
                             const value = e.target.value;
@@ -686,6 +688,7 @@ export default function PrimerDesignServicePage() {
                       <div className="flex items-center gap-2">
                         <span>{prefix}</span>
                         <Input
+                          id={field.name}
                           value={(field.state.value ?? []).join(" ")}
                           onChange={(e) => {
                             const value = e.target.value;
@@ -743,6 +746,7 @@ export default function PrimerDesignServicePage() {
                           </TooltipProvider>
                         </div>
                         <Input
+                          id={field.name}
                           value={field.state.value || ""}
                           onChange={(e) => {
                             const value = e.target.value;
@@ -798,6 +802,7 @@ export default function PrimerDesignServicePage() {
                                 {label}
                               </FieldLabel>
                               <Input
+                                id={field.name}
                                 value={field.state.value || ""}
                                 onChange={(e) => {
                                   const value = e.target.value;
@@ -848,6 +853,7 @@ export default function PrimerDesignServicePage() {
                                 {label}
                               </FieldLabel>
                               <Input
+                                id={field.name}
                                 value={field.state.value || ""}
                                 onChange={(e) => {
                                   const value = e.target.value;
@@ -894,6 +900,7 @@ export default function PrimerDesignServicePage() {
                               {label}
                             </FieldLabel>
                             <Input
+                              id={field.name}
                               value={field.state.value || ""}
                               onChange={(e) => {
                                 const value = e.target.value;

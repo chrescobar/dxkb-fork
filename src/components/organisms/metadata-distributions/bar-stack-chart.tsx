@@ -162,6 +162,9 @@ export function BarStackChart({
                           width={bar.width}
                           fill={bar.color}
                           rx={barStack.index === barStacks.length - 1 ? 2 : 0}
+                          // SVG <rect> has no implicit ARIA role; graphics-symbol permits
+                          // aria-label without tripping axe aria-prohibited-attr on WebKit/Firefox.
+                          role="graphics-symbol"
                           aria-label={label}
                           pointerEvents="none"
                           style={{

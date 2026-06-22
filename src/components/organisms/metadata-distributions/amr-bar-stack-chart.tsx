@@ -184,7 +184,7 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
     <Card className="relative flex-1 rounded-lg" size="sm">
       <CardContent className="flex flex-1 flex-col">
         <h3 className="m-0 text-sm font-semibold">{title}</h3>
-        <div className="mx-auto w-full max-w-[920px]">
+        <div className="mx-auto w-full max-w-230">
           <nav className="mt-2 flex flex-wrap items-center justify-between gap-4 text-xs">
             <div className="flex flex-wrap items-center gap-4">
               <ToggleRow
@@ -232,7 +232,7 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
               viewBox={`0 0 ${String(amrChartWidth)} ${String(amrChartHeight)}`}
               role="img"
               aria-label={`${title} distribution`}
-              className="w-full min-w-[560px]"
+              className="w-full min-w-140"
             >
             <Group left={chartMarginLeft} top={chartMarginTop}>
               <YAxisTicks ticks={yTicks} yScale={yScale} innerWidth={amrInnerWidth} tickClassName="animate-in fade-in duration-200" />
@@ -284,6 +284,9 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
                           key={`bar-${String(barStack.index)}-${String(bar.index)}`}
                           fill={bar.color}
                           rx={barStack.index === barStacks.length - 1 ? 2 : 0}
+                          // SVG <rect> has no implicit ARIA role; graphics-symbol permits
+                          // aria-label without tripping axe aria-prohibited-attr on WebKit/Firefox.
+                          role="graphics-symbol"
                           aria-label={label}
                           pointerEvents="none"
                           style={{

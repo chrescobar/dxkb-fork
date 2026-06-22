@@ -53,17 +53,17 @@ next-env.d.ts
 .superpowers
 /docs/superpowers
 
-
 # Playwright MCP
 .playwright-mcp
 
 # Playwright e2e
-/test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
 /e2e/.auth/
-# /e2e/__snapshots__ is NOT ignored — baselines must be committed for visual regression to work.
+test-results/
+a11y-results/
+a11y-report/
 
 # Screenshots
 .screenshots/

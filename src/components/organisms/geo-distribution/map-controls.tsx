@@ -60,7 +60,7 @@ export function MapControls({
             if (option) onSelectState(option.fips, option.name);
           }}
         >
-          <SelectTrigger className="h-7 min-w-[160px] text-xs">
+          <SelectTrigger className="h-7 min-w-[160px] text-xs" aria-label="View state">
             <SelectValue placeholder="View state…" />
           </SelectTrigger>
           <SelectContent>

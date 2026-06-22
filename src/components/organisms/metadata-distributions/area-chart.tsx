@@ -129,6 +129,9 @@ export function AreaChart({
                       stroke="var(--card)"
                       strokeWidth={2}
                       tabIndex={0}
+                      // SVG <circle> has no implicit ARIA role; graphics-symbol permits
+                      // aria-label without tripping axe aria-prohibited-attr on WebKit/Firefox.
+                      role="graphics-symbol"
                       aria-label={label}
                       onFocus={(event) => {
                         const rect =

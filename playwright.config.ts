@@ -19,7 +19,8 @@ const webServerCommand = `node e2e/scripts/start-webserver.mjs ${String(port)}`;
 
 export default defineConfig({
   testDir: "./e2e",
-  testMatch: /tests\/.*\.spec\.ts$/,
+  // Excludes tests/a11y/ — those run via playwright.a11y.config.ts (pnpm a11y).
+  testMatch: /tests\/(?!a11y\/).*\.spec\.ts$/,
   fullyParallel: true,
   forbidOnly: isCi,
   retries: isCi ? 2 : 0,

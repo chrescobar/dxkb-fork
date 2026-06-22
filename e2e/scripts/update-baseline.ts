@@ -27,9 +27,11 @@ function buildObservedMaps(records: ScanRecord[]): {
     wildcardObs.set(wKey, Math.max(wildcardObs.get(wKey) ?? 0, count));
   }
 
+  // Only observe baseline-suppressed violations (within budget). Iterating
+  // r.blocking would raise maxNodes to absorb unbaselined regressions that
+  // failed the gate, silently hiding real violations instead of surfacing them.
   for (const r of records) {
     for (const v of r.suppressed) observe(r.route, r.theme, v);
-    for (const v of r.blocking) observe(r.route, r.theme, v);
   }
 
   return { routeObs, wildcardObs };

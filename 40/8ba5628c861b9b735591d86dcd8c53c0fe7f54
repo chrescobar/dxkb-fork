@@ -1,0 +1,51 @@
+src/hooks/__tests__/use-hide-on-scroll.test.ts
+  s_66538e50338b4c::t_7e1fffb9deae3c 1-45
+e2e/a11y/routes.ts
+  s_66538e50338b4c::t_4300464f9ae318 221
+  s_66538e50338b4c::t_2475e64d8cef9f 195
+  s_66538e50338b4c::t_c1f4c007161e07 188
+  s_66538e50338b4c::t_1c49db0dac2d72 202
+src/app/(views)/taxonomy/[taxonId]/__tests__/page.test.tsx
+  s_66538e50338b4c::t_916ff9d1d1d4eb 97-98
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_66538e50338b4c::t_7d6f83baca6b2a 8,54-73
+src/components/organisms/reference-genomes/reference-genomes-client.tsx
+  s_66538e50338b4c::t_61c0ee9ceba9bb 84-88
+src/components/organisms/landing-shell/landing-mobile-nav.tsx
+  s_66538e50338b4c::t_0b8cb07d1418ed 71
+  s_66538e50338b4c::t_5404f06911e2f4 1-51,53-59,64-66,68-70,72-108
+  s_66538e50338b4c::t_7476144daab5f4 60-63,67
+  s_66538e50338b4c::t_139c321ce7ab43 52
+src/components/navbars/mobile-navbar.tsx
+  s_66538e50338b4c::t_b8e8d86b0f7275 211,216
+src/app/organisms/bacteria/__tests__/page.test.tsx
+  s_66538e50338b4c::t_754d2d565e180c 28-29
+src/hooks/use-hide-on-scroll.ts
+  s_66538e50338b4c::t_a87c18cddb2e03 1-33
+src/app/organisms/viruses/__tests__/page.test.tsx
+  s_66538e50338b4c::t_1b4363cd2723a2 28-29,42-43
+  s_66538e50338b4c::t_a02c1217502204 57-58
+src/components/organisms/landing-shell/__tests__/landing-shell.test.tsx
+  s_66538e50338b4c::t_f516fa815ef718 1
+  s_66538e50338b4c::t_4cee70ed134da2 60-61
+src/app/organisms/all/__tests__/page.test.tsx
+  s_66538e50338b4c::t_da939d907fdef7 28-29
+src/components/organisms/metadata-distributions/amr-bar-stack-chart.tsx
+  s_66538e50338b4c::t_0229d969ba5d00 229-236
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.11",
+  "base_commit_sha": "408ba5628c861b9b735591d86dcd8c53c0fe7f54",
+  "prompts": {},
+  "sessions": {
+    "s_66538e50338b4c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4232d5ef-3846-4eb8-9556-bac43b9310a9",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

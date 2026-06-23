@@ -22,7 +22,7 @@ export function DetailCollapsibleSection({
 
   const headerClass =
     variant === "primary"
-      ? "border-r border-l border-black bg-primary text-secondary p-2 cursor-pointer"
+      ? "border-x border-y border-primary bg-muted text-foreground cursor-pointer"
       : "bg-muted/60 hover:bg-muted";
 
   return (
@@ -30,7 +30,7 @@ export function DetailCollapsibleSection({
       <div className={`flex w-full items-center ${headerClass}`}>
         <button
           onClick={() => { setExpanded((v) => !v); }}
-          className="flex min-w-0 flex-1 items-center gap-2 px-3 py-2 text-left text-xs font-semibold"
+          className="flex min-w-0 flex-1 items-center gap-2 px-2 py-1 text-left text-xs font-bold uppercase"
         >
           {expanded ? (
             <ChevronDown className="size-3.5 shrink-0" />

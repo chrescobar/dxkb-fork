@@ -10,7 +10,6 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   allThemes,
-  applyTheme,
   renderWithTheme,
   runAxeOnContainer,
   formatBlockingViolations,
@@ -56,7 +55,6 @@ describe("Dialog — a11y primitive", () => {
     for (const theme of allThemes) {
       it(`${state.label} / ${theme} has no blocking violations`, async () => {
         await renderWithTheme(state.ui, theme);
-        applyTheme(theme);
         // Scan the whole document: the dialog is portalled outside the render container.
         const { blocking, warnings } = await runAxeOnContainer(document.body);
         if (warnings.length > 0) {

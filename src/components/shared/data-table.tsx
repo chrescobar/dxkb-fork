@@ -158,7 +158,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
 
   useEffect(() => {
-    if (data.length === 0) return;
+    if (columns.length === 0) return;
 
     const key = columns.map(c => c.id).join(',');
     const columnsChanged = prevColumnKeyRef.current !== key;
@@ -916,8 +916,8 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                           className={clsx(
                             'relative border-x border-primary bg-muted text-foreground',
                             column.id === '__select__'
-                              ? 'flex items-center justify-center p-0 !h-7' // ✅ center checkbox
-                              : 'cursor-pointer px-2 py-0 align-middle text-xs leading-none font-bold !h-7'
+                              ? 'flex !h-7 items-center justify-center p-0' // ✅ center checkbox
+                              : '!h-7 cursor-pointer px-2 py-0 align-middle text-xs leading-none font-bold'
                           )}
                           style={{
                             width: `var(--col-${column.id}-size)`,
@@ -960,8 +960,8 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                                 backgroundColor: draggedColumn && draggedColumn !== column.id ? 'transparent' : '',
                               }}
                             >
-                              <span className="overflow-hidden select-none whitespace-nowrap">{flexRender(header.column.columnDef.header, header.getContext())}</span>
-                              <div className="shrink-0 mr-1 flex flex-col items-center justify-center" style={{ cursor: 'pointer' }}>
+                              <span className="overflow-hidden text-ellipsis whitespace-nowrap select-none">{flexRender(header.column.columnDef.header, header.getContext())}</span>
+                              <div className="mr-1 flex shrink-0 flex-col items-center justify-center" style={{ cursor: 'pointer' }}>
                                 {column.getIsSorted() === 'asc' ? (
                                   <span className="text-xs">▲</span>
                                 ) : column.getIsSorted() === 'desc' ? (
@@ -1188,7 +1188,7 @@ function computeAutoColumnSizes(
   const sizes: Record<string, number> = {};
 
   // Layout overhead beyond raw glyph width:
-  //   Header: th px-2(16) + pr-6(24) + gap-2(8) + sort icon(~10) + mr-3(12) = 70px
+  //   Header: th px-2(16) + pr-2(8) + gap-2(8) + sort icon(~10) + mr-1(4) = 46px
   //   Cell:   th px-2(16)
   const headerOverhead = 46;
   const cellOverhead = 16;
@@ -1206,8 +1206,10 @@ function computeAutoColumnSizes(
       if (typeof raw === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(raw)) {
         const d = new Date(raw);
         str = `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getFullYear())}`;
-      } else {
+      } else if (typeof raw === 'number' || typeof raw === 'boolean') {
         str = String(raw);
+      } else {
+        continue;
       }
       const w = Math.ceil(ctx.measureText(str).width) + cellOverhead;
       if (w > effectiveContentWidth) effectiveContentWidth = w;

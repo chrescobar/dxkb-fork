@@ -127,6 +127,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
   const hasAutoSizedRef = useRef(false);
   const prevColumnKeyRef = useRef('');
+  const columnMinSizesRef = useRef<Record<string, number>>({});
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const resizeLineRef = useRef<HTMLDivElement>(null);
@@ -170,6 +171,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     hasAutoSizedRef.current = true;
 
     const autoSizes = computeAutoColumnSizes(columns, data);
+    columnMinSizesRef.current = computeAutoColumnSizes(columns, []);
     setColumnSizing(columnsChanged ? autoSizes : prev => {
       const result = { ...prev };
       for (const [id, size] of Object.entries(autoSizes)) {
@@ -501,7 +503,8 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
     const onMouseMove = (e: MouseEvent) => {
       const delta = e.clientX - startX;
-      const newSize = Math.max(40, startSize + delta);
+      const minSize = columnMinSizesRef.current[column.id] ?? 40;
+      const newSize = Math.max(minSize, startSize + delta);
 
       if (resizeLineRef.current) { // Make the ghost line move
         resizeLineRef.current.style.left = `${String(colElement.getBoundingClientRect().left - tableRect.left + newSize)}px`;
@@ -510,7 +513,8 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
     const onMouseUp = (e: MouseEvent) => {
       const delta = e.clientX - startX;
-      const finalSize = Math.max(40, startSize + delta);
+      const minSize = columnMinSizesRef.current[column.id] ?? 40;
+      const finalSize = Math.max(minSize, startSize + delta);
 
       setColumnSizing((prev) => ({
         ...prev,
@@ -878,7 +882,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           ref={tableContainerRef}
           style={{
             maxHeight: '100%',
-            paddingBottom: '52px', // leave room for pagination footer
             position: 'relative',
           }}
         >

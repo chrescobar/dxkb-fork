@@ -1,0 +1,44 @@
+src/hooks/services/__tests__/use-genome-group-options.test.ts
+  s_d3a1ba7f89bae0::t_4ff8690db7a2ea 39-40
+  s_d3a1ba7f89bae0::t_d3688ba419c5f1 17-18
+src/components/services/genome-name-selector.tsx
+  s_e00515d6ff2ee4::t_69945c3007c065 145
+src/app/services/(protein-tools)/msa-snp-analysis/page.tsx
+  s_d3a1ba7f89bae0::t_f97e3ef4c087b1 118-120
+src/hooks/services/__tests__/use-feature-group-options.test.ts
+  s_d3a1ba7f89bae0::t_895c73a450d17e 15
+  s_d3a1ba7f89bae0::t_f87acf2324ae21 32
+src/hooks/services/use-genome-typeahead.ts
+  s_e00515d6ff2ee4::t_0c205e4d242893 5
+  s_e00515d6ff2ee4::t_4f7e7591eb3afe 150,156
+  s_e00515d6ff2ee4::t_cda630e8de7dda 199
+  s_e00515d6ff2ee4::t_2ca50ebdc666f8 78-80
+  s_e00515d6ff2ee4::t_db8dbead31de9d 95
+  s_e00515d6ff2ee4::t_7dab7ce86e6053 81-85
+src/components/services/single-genome-selector.tsx
+  s_e00515d6ff2ee4::t_6bde1f8a97801e 269
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "13e786ab20c3d09cb8c9ea46640b9a7af17cd220",
+  "prompts": {},
+  "sessions": {
+    "s_d3a1ba7f89bae0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "180f721d-ee70-417a-9196-5a2c40d61bb3",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_e00515d6ff2ee4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "da2ad8e8-3450-4623-b558-dc1cc48bbd4a",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

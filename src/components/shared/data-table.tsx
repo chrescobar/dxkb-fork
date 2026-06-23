@@ -168,7 +168,13 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       hasAutoSizedRef.current = false;
     }
     if (hasAutoSizedRef.current) return;
-    hasAutoSizedRef.current = true;
+
+    // Only lock sizing as done once we have real data to measure content widths.
+    // With empty data we still run (header-only sizing) but leave the flag false
+    // so the effect fires again when data arrives.
+    if (data.length > 0) {
+      hasAutoSizedRef.current = true;
+    }
 
     const autoSizes = computeAutoColumnSizes(columns, data);
     columnMinSizesRef.current = computeAutoColumnSizes(columns, []);

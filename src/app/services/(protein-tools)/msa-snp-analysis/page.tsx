@@ -310,7 +310,7 @@ export default function MSAandSNPAnalysisPage() {
   // Skip on initial selection (empty → non-empty) so rerun-prefilled ref IDs are preserved.
   useEffect(() => {
     const prev = prevFeatureGroupRef.current;
-    prevFeatureGroupRef.current = featureGroup;
+    prevFeatureGroupRef.current = featureGroup ?? "";
     if (!prev) return;
     queueMicrotask(() => {
       setSelectedFeatureId("");

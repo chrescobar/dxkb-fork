@@ -1,3 +1,5 @@
+import type { DataFieldMap } from "./types";
+
 export const taxonomyFields = {
     taxon_id: { 
         label: 'Taxon ID', 
@@ -91,4 +93,4 @@ export const taxonomyFields = {
         facet_hidden: true, 
         search: true 
         },
-    };
+    } satisfies DataFieldMap;

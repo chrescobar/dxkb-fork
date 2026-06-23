@@ -6,7 +6,7 @@ vi.mock("@/lib/services/workspace/utils", () => ({
   isFolderType: vi.fn((type: string) => type === "folder"),
 }));
 
-vi.mock("@/lib/utils", () => ({
+vi.mock("@/lib/services/workspace/path-utils", () => ({
   encodeWorkspaceSegment: vi.fn((s: string) => s),
   sanitizePathSegment: vi.fn((s: string) => s),
 }));

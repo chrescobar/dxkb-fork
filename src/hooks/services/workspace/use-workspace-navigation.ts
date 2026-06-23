@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import type { WorkspaceViewMode } from "@/types/workspace-browser";
 import { isFolderType } from "@/lib/services/workspace/utils";
-import { encodeWorkspaceSegment, sanitizePathSegment } from "@/lib/utils";
+import { encodeWorkspaceSegment, sanitizePathSegment } from "@/lib/services/workspace/path-utils";
 
 export interface UseWorkspaceNavigationOptions {
   mode: WorkspaceViewMode;

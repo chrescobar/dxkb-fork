@@ -18,6 +18,13 @@ async function parseErrorMessage(
   return body.message || fallback;
 }
 
+function cleanErrorMessage(raw: string, fallback: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return fallback;
+  const firstLine = trimmed.split("\n")[0].trim();
+  return firstLine.length > 200 ? `${firstLine.slice(0, 200)}…` : firstLine;
+}
+
 async function authenticate(
   credentials: SigninCredentials,
 ): Promise<Result<{ token: string }>> {
@@ -33,14 +40,16 @@ async function authenticate(
     });
 
     if (!response.ok) {
+      const raw = await response.text().catch(() => "");
       const isAuthFailure = response.status === 401 || response.status === 403;
-      return isAuthFailure
-        ? fail("invalid_credentials", "Invalid credentials", 401)
-        : fail(
-            "service_unavailable",
-            "Authentication service unavailable",
-            503,
-          );
+      if (isAuthFailure) {
+        return fail("invalid_credentials", "Invalid credentials", response.status);
+      }
+      return fail(
+        "service_unavailable",
+        cleanErrorMessage(raw, "Authentication service unavailable"),
+        response.status,
+      );
     }
 
     const body = await response.text();

@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "@/lib/auth/hooks";
-import { encodeWorkspaceSegment } from "@/lib/utils";
+import { encodeWorkspaceSegment } from "@/lib/services/workspace/path-utils";
 import { workspaceUsername } from "@/components/navbars/workspace-dropdown-content";
 import { serviceItems, type NavSection } from "@/components/navbars/navbar-links";
 import {

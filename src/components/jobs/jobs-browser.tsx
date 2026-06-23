@@ -31,7 +31,7 @@ import { JobDetailsPanel } from "./jobs-detail-panel";
 import { JobsShell } from "./jobs-shell";
 import { DetailPanel } from "@/components/detail-panel";
 import type { JobListItem } from "@/types/workspace";
-import { encodeWorkspaceSegment } from "@/lib/utils";
+import { encodeWorkspaceSegment } from "@/lib/services/workspace/path-utils";
 import { rerunJob } from "@/lib/rerun-utility";
 import {
   defaultPageSize,

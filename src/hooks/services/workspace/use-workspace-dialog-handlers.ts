@@ -18,7 +18,7 @@ import {
 } from "@/lib/services/workspace/protected-folders";
 import { isFolder } from "@/lib/services/workspace/utils";
 import { workspaceQueryKeys } from "@/lib/services/workspace/workspace-query-keys";
-import { sanitizePathSegment } from "@/lib/utils";
+import { sanitizePathSegment } from "@/lib/services/workspace/path-utils";
 import { useWorkspaceDialog } from "@/contexts/workspace-dialog-context";
 
 export interface UseWorkspaceDialogHandlersOptions {

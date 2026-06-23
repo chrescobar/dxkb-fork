@@ -52,7 +52,7 @@ vi.mock("@/lib/services/workspace/utils", () => ({
   isFolder: vi.fn((type: string) => type === "folder"),
 }));
 
-vi.mock("@/lib/utils", () => ({
+vi.mock("@/lib/services/workspace/path-utils", () => ({
   sanitizePathSegment: vi.fn((s: string) => s),
 }));
 

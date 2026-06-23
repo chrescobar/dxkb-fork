@@ -13,6 +13,7 @@ import { serologyFields } from "@/constants/datafields/serology";
 import { strainFields } from "@/constants/datafields/strain";
 import { surveillanceFields } from "@/constants/datafields/surveillance";
 import { taxonomyFields } from "@/constants/datafields/taxonomy";
+import type { DataFieldMap } from "@/constants/datafields/types";
 import { Button } from "@/components/ui/button";
 import { DetailPanel, type DetailField } from "./index";
 import { formatOwner, formatFileSize } from "@/lib/services/workspace/helpers";
@@ -141,7 +142,7 @@ export function InfoPanel(props: InfoPanelProps) {
   }
 
   let order: string[] = [];
-  let fieldFile = {};
+  let fieldFile: DataFieldMap = {};
   let allowedFields: string[] = [];
   let panelTitleField = '';
 
@@ -226,26 +227,23 @@ export function InfoPanel(props: InfoPanelProps) {
   }
 
   interface DisplayColumn {
-    id: unknown;
-    label: unknown;
+    id: string;
+    label: string;
     visible: boolean;
-    group: unknown;
-    link?: unknown;
-    linkType?: unknown;
-    linkText?: unknown;
+    group: string;
+    link?: string;
+    linkType?: string;
+    linkText?: string;
   }
-  const displayColumns: DisplayColumn[] = Object.values(fieldFile).map((obj) => {
-    const o = obj as Record<string, unknown>;
-    return {
-      id: o.field,
-      label: o.label,
-      visible: !o.hidden,
-      group: o.group,
-      link: o.link,
-      linkType: o.linkType,
-      linkText: o.linkText,
-    };
-  });
+  const displayColumns: DisplayColumn[] = Object.values(fieldFile).map((o) => ({
+    id: o.field,
+    label: o.label,
+    visible: !o.hidden,
+    group: o.group,
+    link: o.link,
+    linkType: o.linkType,
+    linkText: o.linkText,
+  }));
 
   const grouped = displayColumns.reduce<Record<string, DisplayColumn[] | undefined>>(
     (acc: Record<string, DisplayColumn[] | undefined>, item) => {
@@ -281,41 +279,42 @@ export function InfoPanel(props: InfoPanelProps) {
         <>
           {order.map((group) => {
             const items = (grouped[group] || []).filter((item) =>
-              allowedFields.includes(String(item.id))
+              allowedFields.includes(item.id)
             );
             if (items.length === 0) return null;
 
             const fields: DetailField[] = items.map((item) => {
-              const fieldId = String(item.id);
+              const fieldId = item.id;
               const rawValue = selectedRow?.[fieldId];
               if (item.link) {
                 const resolved = toAbsoluteUrl(
-                  resolveLink(item.link as string, selectedRow ?? {}, fieldId)                );
+                  resolveLink(item.link, selectedRow ?? {}, fieldId)
+                );
 
                 if (item.linkType === "button") {
                   return {
-                    label: String(item.label),
+                    label: item.label,
                     value: rawValue,
                     render: () => (
                       <Button
                         onClick={() => window.open(resolved, "_blank", "noopener,noreferrer")}
                         className="rounded border-black bg-primary px-2 py-1 text-sm text-secondary"
                       >
-                        {(item.linkText as string | undefined) ?? "View"}
+                        {item.linkText ?? "View"}
                       </Button>
                     ),
                   };
                 }
 
                 return {
-                  label: String(item.label),
+                  label: item.label,
                   value: rawValue,
                   href: resolved,
                 };
               }
 
               return {
-                label: String(item.label),
+                label: item.label,
                 value: rawValue,
               };
             });

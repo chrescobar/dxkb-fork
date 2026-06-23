@@ -43,11 +43,7 @@ async function authenticate(
       const raw = await response.text().catch(() => "");
       const isAuthFailure = response.status === 401 || response.status === 403;
       if (isAuthFailure) {
-        return fail(
-          "invalid_credentials",
-          cleanErrorMessage(raw, "Invalid credentials"),
-          response.status,
-        );
+        return fail("invalid_credentials", "Invalid credentials", response.status);
       }
       return fail(
         "service_unavailable",

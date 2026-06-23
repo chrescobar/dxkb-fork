@@ -3,7 +3,7 @@
 import { useForm } from "@tanstack/react-form";
 import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
 import { normalizeToArray } from "@/lib/rerun-utility";
 import { ServiceHeader } from "@/components/services/service-header";
@@ -114,6 +114,8 @@ export default function MSAandSNPAnalysisPage() {
   const inputStatus = useSelector(form.store, (s) => s.values.input_status);
   const inputType = useSelector(form.store, (s) => s.values.input_type);
   const refType = useSelector(form.store, (s) => s.values.ref_type);
+  const refTypeRef = useRef(refType);
+  refTypeRef.current = refType;
   const aligner = useSelector(form.store, (s) => s.values.aligner);
   const featureGroup = useSelector(form.store, (s) => s.values.feature_groups);
   const rawSelectGenomegroup = useSelector(
@@ -302,12 +304,22 @@ export default function MSAandSNPAnalysisPage() {
 
   // Clear selected IDs when the driving inputs change (queueMicrotask avoids set-during-render)
   useEffect(() => {
-    queueMicrotask(() => { setSelectedFeatureId(""); });
-  }, [featureGroup]);
+    queueMicrotask(() => {
+      setSelectedFeatureId("");
+      if (refTypeRef.current === "feature_id") {
+        form.setFieldValue("ref_string", "");
+      }
+    });
+  }, [featureGroup, form]);
 
   useEffect(() => {
-    queueMicrotask(() => { setSelectedGenomeId(""); });
-  }, [selectGenomegroup]);
+    queueMicrotask(() => {
+      setSelectedGenomeId("");
+      if (refTypeRef.current === "genome_id") {
+        form.setFieldValue("ref_string", "");
+      }
+    });
+  }, [selectGenomegroup, form]);
 
   // Surface fetch errors via toast
   useEffect(() => {

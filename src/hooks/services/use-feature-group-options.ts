@@ -20,8 +20,8 @@ export function useFeatureGroupOptions(
   featureGroupPath: string | undefined,
   enabled = true,
 ): UseFeatureGroupOptionsReturn {
-  const path = featureGroupPath ?? "";
-  const shouldFetch = enabled && !!path.trim();
+  const path = (featureGroupPath ?? "").trim();
+  const shouldFetch = enabled && !!path;
 
   const { data = [], isFetching, error } = useQuery({
     queryKey: ["featureGroupOptions", path],

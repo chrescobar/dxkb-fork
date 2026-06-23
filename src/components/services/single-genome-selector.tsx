@@ -266,7 +266,7 @@ export function SingleGenomeSelector({
         void handleManualSelect();
       }
     },
-    { target: inputRef, ignoreInputs: false, conflictBehavior: "allow" },
+    { target: inputRef, ignoreInputs: false, conflictBehavior: "allow", preventDefault: true },
   );
 
   const showEmptyState =

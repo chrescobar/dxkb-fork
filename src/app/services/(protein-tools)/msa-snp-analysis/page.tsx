@@ -115,7 +115,9 @@ export default function MSAandSNPAnalysisPage() {
   const inputType = useSelector(form.store, (s) => s.values.input_type);
   const refType = useSelector(form.store, (s) => s.values.ref_type);
   const refTypeRef = useRef(refType);
-  refTypeRef.current = refType;
+  useEffect(() => {
+    refTypeRef.current = refType;
+  }, [refType]);
   const aligner = useSelector(form.store, (s) => s.values.aligner);
   const featureGroup = useSelector(form.store, (s) => s.values.feature_groups);
   const rawSelectGenomegroup = useSelector(

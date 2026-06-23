@@ -142,7 +142,7 @@ export function GenomeNameSelector({
         void handleManualAdd();
       }
     },
-    { target: inputRef, ignoreInputs: false, conflictBehavior: "allow" },
+    { target: inputRef, ignoreInputs: false, conflictBehavior: "allow", preventDefault: true },
   );
 
   const showEmptyState =

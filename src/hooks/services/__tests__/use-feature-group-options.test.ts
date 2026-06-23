@@ -12,7 +12,7 @@ vi.mock("@/lib/services/feature", () => ({
 }));
 
 const sampleFeatures: FeatureSummary[] = [
-  { feature_id: "fg1", patric_id: "pf1", product: "Protein A" } as FeatureSummary,
+  { feature_id: "fg1", patric_id: "pf1", product: "Protein A" },
 ];
 
 describe("useFeatureGroupOptions", () => {
@@ -29,7 +29,7 @@ describe("useFeatureGroupOptions", () => {
     await waitFor(() => { expect(result.current.isLoading).toBe(false); });
     expect(result.current.features).toEqual(sampleFeatures);
     expect(result.current.error).toBeNull();
-    expect(mockFetchFeaturesFromGroup).toHaveBeenCalledWith("/user/home/group1", expect.objectContaining({ signal: expect.any(AbortSignal) }));
+    expect(mockFetchFeaturesFromGroup).toHaveBeenCalledWith("/user/home/group1", expect.objectContaining({ signal: expect.any(AbortSignal) as unknown as AbortSignal }));
   });
 
   it("returns empty array and does not fetch when disabled", () => {

@@ -14,8 +14,8 @@ vi.mock("@/lib/services/genome", () => ({
 }));
 
 const sampleGenomes: GenomeSummary[] = [
-  { genome_id: "1.1", genome_name: "Genome A" } as GenomeSummary,
-  { genome_id: "2.2", genome_name: "Genome B" } as GenomeSummary,
+  { genome_id: "1.1", genome_name: "Genome A" },
+  { genome_id: "2.2", genome_name: "Genome B" },
 ];
 
 describe("useGenomeGroupOptions", () => {
@@ -36,8 +36,8 @@ describe("useGenomeGroupOptions", () => {
     await waitFor(() => { expect(result.current.isLoading).toBe(false); });
     expect(result.current.options).toEqual(sampleGenomes);
     expect(result.current.error).toBeNull();
-    expect(mockGetGenomeIdsFromGroup).toHaveBeenCalledWith("/user/home/group1", expect.objectContaining({ signal: expect.any(AbortSignal) }));
-    expect(mockFetchGenomesByIds).toHaveBeenCalledWith(["1.1", "2.2"], expect.objectContaining({ signal: expect.any(AbortSignal) }));
+    expect(mockGetGenomeIdsFromGroup).toHaveBeenCalledWith("/user/home/group1", expect.objectContaining({ signal: expect.any(AbortSignal) as unknown as AbortSignal }));
+    expect(mockFetchGenomesByIds).toHaveBeenCalledWith(["1.1", "2.2"], expect.objectContaining({ signal: expect.any(AbortSignal) as unknown as AbortSignal }));
   });
 
   it("returns empty array and skips fetchGenomesByIds when group has no genome IDs", async () => {

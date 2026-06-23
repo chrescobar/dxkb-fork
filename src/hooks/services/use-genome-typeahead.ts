@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type Dispatch,
@@ -74,6 +75,14 @@ export function useGenomeTypeahead({
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const latestAbortController = useRef<AbortController | null>(null);
+  const skipFetchRef = useRef(skipFetch);
+  const onClickOutsideRef = useRef(onClickOutside);
+  const additionalRefsRef = useRef(additionalClickOutsideRefs);
+  useLayoutEffect(() => {
+    skipFetchRef.current = skipFetch;
+    onClickOutsideRef.current = onClickOutside;
+    additionalRefsRef.current = additionalClickOutsideRefs;
+  });
 
   const updateSuggestions = (next: GenomeSummary[]) => {
     itemRefs.current = [];
@@ -83,7 +92,7 @@ export function useGenomeTypeahead({
 
   // Debounced fetch
   useEffect(() => {
-    if (skipFetch?.(query, selectedItem)) return;
+    if (skipFetchRef.current?.(query, selectedItem)) return;
 
     const shouldReset = !shouldSearch(query, minQueryLength) || disabled;
     const controller = new AbortController();
@@ -130,7 +139,6 @@ export function useGenomeTypeahead({
       window.clearTimeout(timeoutId);
       controller.abort();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, minQueryLength, disabled, selectedItem]);
 
   // Click-outside
@@ -139,19 +147,17 @@ export function useGenomeTypeahead({
       const target = event.target as Node;
       const isInsideDropdown = dropdownRef.current?.contains(target) ?? false;
       const isInsideInput = inputRef.current?.contains(target) ?? false;
-      const isInsideExtra = additionalClickOutsideRefs.some(
+      const isInsideExtra = additionalRefsRef.current.some(
         (ref) => ref.current?.contains(target) ?? false,
       );
       if (!isInsideDropdown && !isInsideInput && !isInsideExtra) {
         setShowDropdown(false);
         setHighlightedIndex(-1);
-        onClickOutside?.();
+        onClickOutsideRef.current?.();
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => { document.removeEventListener("mousedown", handleClickOutside); };
-    // additionalClickOutsideRefs and onClickOutside are caller-stable (React Compiler memoizes)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Scroll highlighted item into view
@@ -190,7 +196,7 @@ export function useGenomeTypeahead({
         },
       },
     ],
-    { target: inputRef, ignoreInputs: false, conflictBehavior: "allow" },
+    { target: inputRef, ignoreInputs: false, conflictBehavior: "allow", preventDefault: true },
   );
 
   const triggerSearch = (overrideQuery: string) => {

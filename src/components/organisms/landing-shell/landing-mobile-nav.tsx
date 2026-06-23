@@ -61,15 +61,15 @@ export function LandingMobileNav({
               // where axe treats the visible text as absent — the label keeps
               // the trigger named for assistive tech in every state.
               aria-label={`Views: ${active.label}`}
-              className="h-12 gap-2 rounded-full border border-white/10 bg-neutral-900 pr-3 pl-4 text-white shadow-2xl hover:bg-neutral-800"
+              className="h-12 gap-2 rounded-full border border-background/10 bg-foreground pr-3 pl-4 text-background shadow-2xl hover:bg-foreground/90"
               {...triggerProps}
             >
-              <LayoutGrid aria-hidden="true" className="size-4 text-white/70" />
-              <span className="text-[10px] font-bold tracking-widest text-white/50 uppercase">
+              <LayoutGrid aria-hidden="true" className="size-4 text-background/60" />
+              <span className="text-[10px] font-bold tracking-widest text-background/50 uppercase">
                 Views
               </span>
               <span className="font-semibold">{active.label}</span>
-              <ChevronUp className="size-4 text-white/70" />
+              <ChevronUp className="size-4 text-background/60" />
             </Button>
           )}
         />

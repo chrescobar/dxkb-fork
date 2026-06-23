@@ -185,18 +185,21 @@ export const routes: RouteEntry[] = [
     path: "/organisms/all",
     unauthenticated: true,
     tripwire: true,
+    mobile: true,
     prepare: async (page) => { await page.waitForLoadState("networkidle"); },
   },
   {
     name: "organisms-bacteria",
     path: "/organisms/bacteria",
     unauthenticated: true,
+    mobile: true,
     prepare: async (page) => { await page.waitForLoadState("networkidle"); },
   },
   {
     name: "organisms-viruses",
     path: "/organisms/viruses",
     unauthenticated: true,
+    mobile: true,
     prepare: async (page) => { await page.waitForLoadState("networkidle"); },
   },
 
@@ -215,6 +218,7 @@ export const routes: RouteEntry[] = [
     name: "taxonomy",
     path: "/taxonomy/234",
     unauthenticated: true,
+    mobile: true,
     prepare: async (page) => {
       // The section's <h2> renders synchronously; chart cards stream in after.
       await page.getByRole("heading", { level: 2, name: /Metadata Distributions/ })

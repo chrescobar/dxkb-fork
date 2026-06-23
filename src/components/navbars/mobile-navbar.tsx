@@ -208,10 +208,12 @@ const MobileNavbar = () => {
               render={(triggerProps) => (
                 <Button
                   variant="ghost"
+                  aria-label="Open navigation menu"
                   className="group hover:bg-white/15"
                   {...triggerProps}
                 >
                   <Menu
+                    aria-hidden="true"
                     className="scale-125 text-primary-foreground transition-all duration-300 group-hover:scale-150"
                     data-icon="inline-start"
                   />

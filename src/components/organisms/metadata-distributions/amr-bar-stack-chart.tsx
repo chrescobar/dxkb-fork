@@ -226,7 +226,14 @@ export function AmrBarStackChart({ title, data, errorMessage }: AmrBarStackChart
               })}
             </div>
           </nav>
-          <div className="overflow-x-auto pt-2">
+          {/* Focusable so keyboard users can scroll the wide chart (axe
+              scrollable-region-focusable); labelled by the chart title. */}
+          <div
+            className="overflow-x-auto pt-2"
+            tabIndex={0}
+            role="group"
+            aria-label={`${title} distribution (scrollable)`}
+          >
             <svg
               ref={svgRef}
               viewBox={`0 0 ${String(amrChartWidth)} ${String(amrChartHeight)}`}

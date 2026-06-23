@@ -81,6 +81,11 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
   return (
     <div
       ref={parentRef}
+      // Keyboard users must be able to scroll the virtualized list; a focusable
+      // scroll container satisfies WCAG (axe scrollable-region-focusable).
+      tabIndex={0}
+      role="group"
+      aria-label="Genome list (scrollable)"
       className="h-80 scrollbar-thin overflow-auto rounded-t-lg xl:min-h-0 xl:flex-1"
     >
       <Table disableScrollWrapper className="table-fixed">

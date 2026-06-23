@@ -9,6 +9,9 @@ import {
   jobsEmptyOverrides,
   buildJobsOverrides,
   mockJobs,
+  buildWorkspaceOverrides,
+  e2eHomePath,
+  journeyOverrides,
 } from "../../fixtures/overrides";
 import { awaitSettled } from "../../a11y/settle";
 import { scanPage, formatBlocking, logWarnings } from "../../a11y/axe-scan";
@@ -19,6 +22,7 @@ import { recordScan } from "../../a11y/report";
 import generatedBaseline from "../../a11y/baseline.generated";
 import { WorkspacePage } from "../../pages/workspace-page";
 import { JobsListPage } from "../../pages/jobs-list-page";
+import { SettingsPage } from "../../pages/settings-page";
 import type { BaselineMap } from "../../a11y/baseline";
 import type { MockJob } from "../../fixtures/overrides";
 
@@ -175,7 +179,9 @@ test.describe("a11y deep tier: jobs", () => {
     });
     const jobs = new JobsListPage(page);
     await jobs.goto();
-    await page.waitForLoadState("networkidle");
+    // Wait for skeleton rows to detach — the DataTable renders 30 [data-slot="skeleton"]
+    // <tr> placeholders that satisfy waitForRows(), so scan only after real rows paint.
+    await awaitSettled(page, { skeletonSelector: '[data-slot="skeleton"]' });
 
     await forEachTheme(page, async (theme) => {
       await assertNoBlocking(page, "jobs/populated", theme);
@@ -188,7 +194,8 @@ test.describe("a11y deep tier: jobs", () => {
     });
     const jobs = new JobsListPage(page);
     await jobs.goto();
-    await page.waitForLoadState("networkidle");
+    // Empty state transitions skeleton → "No jobs found"; wait for skeleton detach.
+    await awaitSettled(page, { skeletonSelector: '[data-slot="skeleton"]' });
 
     await forEachTheme(page, async (theme) => {
       await assertNoBlocking(page, "jobs/empty", theme);
@@ -212,7 +219,9 @@ test.describe("a11y deep tier: jobs", () => {
     });
     const jobs = new JobsListPage(page);
     await jobs.goto();
-    await page.waitForLoadState("networkidle");
+    // Skeleton <tr> rows satisfy waitForRows(); wait for their detach so axe scans
+    // the real failed-job row, not the loading placeholder (root cause of flake).
+    await awaitSettled(page, { skeletonSelector: '[data-slot="skeleton"]' });
     await jobs.waitForRows();
 
     await forEachTheme(page, async (theme) => {
@@ -237,7 +246,7 @@ test.describe("a11y deep tier: jobs", () => {
     });
     const jobs = new JobsListPage(page);
     await jobs.goto();
-    await page.waitForLoadState("networkidle");
+    await awaitSettled(page, { skeletonSelector: '[data-slot="skeleton"]' });
     await jobs.waitForRows();
 
     await jobs.selectJob(runningJob.id);
@@ -325,6 +334,152 @@ test.describe("a11y deep tier: command palette", () => {
 
     await forEachTheme(page, async (theme) => {
       await assertNoBlocking(page, "command-palette/open", theme);
+    });
+  });
+});
+
+// ── Settings — interaction + data states ─────────────────────────────────────
+// 168 deep-tier floor (Q29): settings default · error-toast.
+
+const settingsProfile = {
+  id: "e2e-test-user@patricbrc.org",
+  email: "e2e@example.com",
+  email_verified: true,
+  first_name: "Original",
+  middle_name: "",
+  last_name: "Tester",
+  affiliation: "DXKB",
+  organisms: "",
+  interests: "",
+  creation_date: "2024-01-01T00:00:00Z",
+  l_id: "e2e-test-user",
+  last_login: "2024-01-01T00:00:00Z",
+  reverification: false,
+  source: "bvbrc",
+} as const;
+
+test.describe("a11y deep tier: settings", () => {
+  test("settings: default (form populated)", async ({ page }) => {
+    await applyBackendMocks(page, {
+      overrides: [
+        { url: "/api/auth/profile", method: "GET", body: settingsProfile },
+        ...workspacePopulatedOverrides,
+        ...journeyOverrides,
+      ],
+    });
+    const settings = new SettingsPage(page);
+    await settings.goto();
+    await expect(settings.firstNameInput).toHaveValue("Original");
+
+    await forEachTheme(page, async (theme) => {
+      await assertNoBlocking(page, "settings/default", theme);
+    });
+  });
+
+  test("settings: error toast shown", async ({ page }) => {
+    await applyBackendMocks(page, {
+      overrides: [
+        { url: "/api/auth/profile", method: "GET", body: settingsProfile },
+        // Failing save → error toast. Preserve a real message (project rule:
+        // no generic errors) so the toast text is meaningful.
+        {
+          url: "/api/auth/profile",
+          method: "POST",
+          status: 500,
+          body: { message: "Profile service unavailable" },
+        },
+        ...workspacePopulatedOverrides,
+        ...journeyOverrides,
+      ],
+    });
+    const settings = new SettingsPage(page);
+    await settings.goto();
+    await expect(settings.firstNameInput).toHaveValue("Original");
+
+    // Mutate a field so the form is dirty, then submit to trigger the failing POST.
+    await settings.firstNameInput.fill("Updated");
+    await settings.saveButton.click();
+    await expect(settings.errorToast).toBeVisible();
+
+    await forEachTheme(page, async (theme) => {
+      await assertNoBlocking(page, "settings/error-toast", theme);
+    });
+  });
+});
+
+// ── File viewer — panel render states ────────────────────────────────────────
+// 168 deep-tier floor (Q29): file-viewer text · csv · fallback.
+// Structure (.pdb) is covered by the /viewer/structure route in the sweep.
+// CodeMirror (.cm-editor) and molstar subtrees are in vendorExclusions.
+
+const viewerItems = [
+  { name: "notes.txt", type: "txt", parentPath: e2eHomePath, size: 32 },
+  { name: "table.csv", type: "csv", parentPath: e2eHomePath, size: 64 },
+  { name: "config.json", type: "json", parentPath: e2eHomePath, size: 48 },
+];
+
+function viewerContentOverride(namePattern: string, body: string, contentType: string) {
+  return {
+    url: new RegExp(`/api/workspace/view/.*${namePattern}`),
+    method: "GET" as const,
+    body,
+    headers: { "Content-Type": contentType },
+  };
+}
+
+test.describe("a11y deep tier: file viewer", () => {
+  test.beforeEach(async ({ page }) => {
+    await applyBackendMocks(page, {
+      overrides: [
+        // Specific view URLs MUST precede the catch-all in buildWorkspaceOverrides.
+        viewerContentOverride("notes\\.txt", "Plain text notes.\nSecond line.\n", "text/plain"),
+        viewerContentOverride("table\\.csv", "name,count\nalpha,1\nbeta,2\n", "text/csv"),
+        viewerContentOverride("config\\.json", '{"hello":"world"}', "application/json"),
+        ...authSessionOverrides,
+        ...buildWorkspaceOverrides({ pathItems: { [e2eHomePath]: viewerItems } }),
+        ...permissiveBackendOverrides,
+        ...journeyOverrides,
+      ],
+    });
+  });
+
+  test("file-viewer: text (CodeMirror, vendor-excluded)", async ({ page }) => {
+    const wp = new WorkspacePage(page);
+    await wp.goto();
+    await awaitSettled(page);
+    await wp.selectFile("notes.txt");
+    // CodeMirror streams content into .cm-content; wait for it before scanning.
+    await expect(page.locator(".cm-content")).toContainText("Plain text notes");
+
+    await forEachTheme(page, async (theme) => {
+      await assertNoBlocking(page, "file-viewer/text", theme);
+    });
+  });
+
+  test("file-viewer: csv (data grid)", async ({ page }) => {
+    const wp = new WorkspacePage(page);
+    await wp.goto();
+    await awaitSettled(page);
+    await wp.selectFile("table.csv");
+    // CsvViewer renders a table; wait for a known cell value.
+    await expect(page.getByText("alpha")).toBeVisible();
+
+    await forEachTheme(page, async (theme) => {
+      await assertNoBlocking(page, "file-viewer/csv", theme);
+    });
+  });
+
+  test("file-viewer: json (JsonViewer)", async ({ page }) => {
+    const wp = new WorkspacePage(page);
+    await wp.goto();
+    await awaitSettled(page);
+    await wp.selectFile("config.json");
+    // JsonViewer renders the parsed JSON into CodeMirror (.cm-content);
+    // .cm-editor is vendor-excluded, so the scan covers the surrounding chrome.
+    await expect(page.locator(".cm-content")).toContainText("hello");
+
+    await forEachTheme(page, async (theme) => {
+      await assertNoBlocking(page, "file-viewer/json", theme);
     });
   });
 });

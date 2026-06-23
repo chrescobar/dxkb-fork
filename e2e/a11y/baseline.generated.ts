@@ -116,19 +116,17 @@ export const reflowSkip: ReflowSkipMap = {
 
 // ── Warn-tier tracking (DoD item 6) ──────────────────────────────────────────
 // These rule IDs were observed in warn-tier (best-practice / WCAG 2.2 AA) during
-// the first real sweep. Each needs ONE DXKBCORE tracking ticket before merging.
-// Open tickets and replace the placeholder IDs below.
+// the first real sweep. All are tracked under DXKBCORE-174; the report artifact
+// (a11y-report/a11y-summary.json) enumerates every instance per route/theme.
 //
-// Rule IDs → brief description → ticket placeholder:
-//   heading-order            — Heading levels should only increase by one         → DXKBCORE-TBD
-//   landmark-main-is-top-level — Main landmark inside another landmark            → DXKBCORE-TBD
-//   landmark-no-duplicate-main — More than one main landmark                      → DXKBCORE-TBD
-//   landmark-one-main        — Document should have exactly one main landmark      → DXKBCORE-TBD
-//   landmark-unique          — Landmarks must have unique role/label combinations  → DXKBCORE-TBD
-//   page-has-heading-one     — Page should contain a level-one heading             → DXKBCORE-TBD
-//   region                   — All page content should be within landmarks         → DXKBCORE-TBD
-//   label-title-only         — Form elements should have a visible label           → DXKBCORE-TBD
-//   target-size              — Touch targets must be ≥24px (WCAG 2.2 AA)          → DXKBCORE-TBD
-//
-// Once tickets are created, update the placeholders above and remove this notice.
+// Rule IDs → brief description → ticket:
+//   heading-order              — Heading levels should only increase by one        → DXKBCORE-174
+//   landmark-main-is-top-level — Main landmark inside another landmark             → DXKBCORE-174
+//   landmark-no-duplicate-main — More than one main landmark                       → DXKBCORE-174
+//   landmark-one-main          — Document should have exactly one main landmark    → DXKBCORE-174
+//   landmark-unique            — Landmarks must have unique role/label combos      → DXKBCORE-174
+//   page-has-heading-one       — Page should contain a level-one heading           → DXKBCORE-174
+//   region                     — All page content should be within landmarks       → DXKBCORE-174
+//   label-title-only           — Form elements should have a visible label         → DXKBCORE-174
+//   target-size                — Touch targets must be ≥24px (WCAG 2.2 AA)         → DXKBCORE-174
 export default generatedBaseline;

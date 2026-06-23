@@ -1206,7 +1206,7 @@ function computeAutoColumnSizes(
       if (typeof raw === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(raw)) {
         const d = new Date(raw);
         str = `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getFullYear())}`;
-      } else if (typeof raw === 'number' || typeof raw === 'boolean') {
+      } else if (typeof raw === 'string' || typeof raw === 'number' || typeof raw === 'boolean') {
         str = String(raw);
       } else {
         continue;

@@ -118,6 +118,8 @@ export default function MSAandSNPAnalysisPage() {
   useEffect(() => {
     refTypeRef.current = refType;
   }, [refType]);
+  const prevFeatureGroupRef = useRef<string>("");
+  const prevSelectGenomegroupRef = useRef<string[]>([]);
   const aligner = useSelector(form.store, (s) => s.values.aligner);
   const featureGroup = useSelector(form.store, (s) => s.values.feature_groups);
   const rawSelectGenomegroup = useSelector(
@@ -304,8 +306,12 @@ export default function MSAandSNPAnalysisPage() {
     refType === "genome_id" && selectGenomegroup.length > 0,
   );
 
-  // Clear selected IDs when the driving inputs change (queueMicrotask avoids set-during-render)
+  // Clear selected IDs when the driving inputs change (queueMicrotask avoids set-during-render).
+  // Skip on initial selection (empty → non-empty) so rerun-prefilled ref IDs are preserved.
   useEffect(() => {
+    const prev = prevFeatureGroupRef.current;
+    prevFeatureGroupRef.current = featureGroup;
+    if (!prev) return;
     queueMicrotask(() => {
       setSelectedFeatureId("");
       if (refTypeRef.current === "feature_id") {
@@ -315,6 +321,9 @@ export default function MSAandSNPAnalysisPage() {
   }, [featureGroup, form]);
 
   useEffect(() => {
+    const prev = prevSelectGenomegroupRef.current;
+    prevSelectGenomegroupRef.current = selectGenomegroup;
+    if (prev.length === 0) return;
     queueMicrotask(() => {
       setSelectedGenomeId("");
       if (refTypeRef.current === "genome_id") {

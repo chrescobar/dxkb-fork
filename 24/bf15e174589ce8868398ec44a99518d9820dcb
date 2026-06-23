@@ -1,0 +1,34 @@
+src/app/services/(protein-tools)/msa-snp-analysis/page.tsx
+  s_7d63d5d32a2331::t_d35bc8980932d8 117-118
+  s_7d63d5d32a2331::t_39524db5d506e1 316-322
+  s_7d63d5d32a2331::t_36dc952d3b55d3 307-313
+  s_7d63d5d32a2331::t_5156b603f96ae0 6
+src/lib/auth/server/adapters/bvbrc-identity.ts
+  s_2c8ed4876d45af::t_8d94330c508927 46
+src/hooks/services/use-feature-group-options.ts
+  s_7d63d5d32a2331::t_34638ec45903f5 23-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "24bf15e174589ce8868398ec44a99518d9820dcb",
+  "prompts": {},
+  "sessions": {
+    "s_2c8ed4876d45af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2ce7bc3b-770e-40ce-b1ce-e94ede714c31",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_7d63d5d32a2331": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b61d7284-9b10-47ca-b73f-1a3daab42c9e",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

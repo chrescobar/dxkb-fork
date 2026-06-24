@@ -1,0 +1,28 @@
+src/lib/taxon-view/__tests__/predicates.test.ts
+  s_4c86b1a33be67e::t_1842edce3a4c6d 78
+src/components/organisms/landing-shell/landing-shell.tsx
+  s_4c86b1a33be67e::t_79d6452b6818e2 32-37
+src/components/organisms/landing-shell/landing-nav.tsx
+  s_4c86b1a33be67e::t_e1315999fd2c31 124-129,132-133,135-136
+  s_4c86b1a33be67e::t_31ed5e5bfa2714 84-85,90,99-105,107-115,130,134
+  s_4c86b1a33be67e::t_beb59a3e3cfc2d 131
+  s_4c86b1a33be67e::t_db455a583b4588 106
+src/components/organisms/landing-shell/__tests__/landing-shell.test.tsx
+  s_4c86b1a33be67e::t_3cc6d2828beb4f 56-68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "9ad150ecfd46dcc80033a0cf4192d31b7b80dad1",
+  "prompts": {},
+  "sessions": {
+    "s_4c86b1a33be67e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d75ddb3-e8a6-437b-815b-3b1d6da7f32d",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

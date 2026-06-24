@@ -125,6 +125,10 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
   const [onlyVisibleColumns, setOnlyVisibleColumns] = useState(false);
 
+  const hasAutoSizedRef = useRef(false);
+  const prevColumnKeyRef = useRef('');
+  const columnMinSizesRef = useRef<Record<string, number>>({});
+
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const resizeLineRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLTableSectionElement>(null);
@@ -153,6 +157,29 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     };
   }, [showColumnMenu]);
 
+
+  useEffect(() => {
+    if (columns.length === 0) return;
+
+    const key = columns.map(c => c.id).join(',');
+    const columnsChanged = prevColumnKeyRef.current !== key;
+    if (columnsChanged) {
+      prevColumnKeyRef.current = key;
+      hasAutoSizedRef.current = false;
+    }
+    if (hasAutoSizedRef.current) return;
+
+    // Only lock sizing as done once we have real data to measure content widths.
+    // With empty data we still run (header-only sizing) but leave the flag false
+    // so the effect fires again when data arrives.
+    if (data.length > 0) {
+      hasAutoSizedRef.current = true;
+    }
+
+    const autoSizes = computeAutoColumnSizes(columns, data);
+    columnMinSizesRef.current = computeAutoColumnSizes(columns, []);
+    setColumnSizing(autoSizes);
+  }, [columns, data]);
 
   const renderCheckboxCell = useCallback(
     ({ row, table }: CellContext<Record<string, unknown>, unknown>) => {
@@ -298,7 +325,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           }
           return value;
         },
-        size: 200,
+        size: 250,
         enableResizing: true,
         enableSorting: true,
         sortingFn: (rowA: TanStackRow<Record<string, unknown>>, rowB: TanStackRow<Record<string, unknown>>, columnId: string) => {
@@ -476,7 +503,8 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
     const onMouseMove = (e: MouseEvent) => {
       const delta = e.clientX - startX;
-      const newSize = Math.max(40, startSize + delta);
+      const minSize = columnMinSizesRef.current[column.id] ?? 40;
+      const newSize = Math.max(minSize, startSize + delta);
 
       if (resizeLineRef.current) { // Make the ghost line move
         resizeLineRef.current.style.left = `${String(colElement.getBoundingClientRect().left - tableRect.left + newSize)}px`;
@@ -485,7 +513,8 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
     const onMouseUp = (e: MouseEvent) => {
       const delta = e.clientX - startX;
-      const finalSize = Math.max(40, startSize + delta);
+      const minSize = columnMinSizesRef.current[column.id] ?? 40;
+      const finalSize = Math.max(minSize, startSize + delta);
 
       setColumnSizing((prev) => ({
         ...prev,
@@ -853,7 +882,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           ref={tableContainerRef}
           style={{
             maxHeight: '100%',
-            paddingBottom: '52px', // leave room for pagination footer
             position: 'relative',
           }}
         >
@@ -873,7 +901,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
             >
               <TableHeader
                 ref={headerRef}
-                className="border-black bg-primary text-secondary uppercase"
+                className="border-primary bg-muted text-foreground uppercase"
                 style={{
                   position: 'sticky',
                   top: 0,
@@ -881,7 +909,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                 }}
               >
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="flex border-y border-black bg-primary">
+                  <TableRow key={headerGroup.id} className="flex border-y border-primary bg-muted">
                     {headerGroup.headers.map((header) => {
                       const column = header.column;
                       return (
@@ -889,10 +917,10 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                           key={header.id}
                           colSpan={header.colSpan}
                           className={clsx(
-                            'relative border-x border-black bg-primary text-secondary',
+                            'relative border-x border-primary bg-muted text-foreground',
                             column.id === '__select__'
-                              ? 'flex items-center justify-center p-0' // ✅ center checkbox
-                              : 'cursor-pointer px-2 py-0 align-middle text-sm leading-none font-bold'
+                              ? 'flex !h-7 items-center justify-center p-0' // ✅ center checkbox
+                              : '!h-7 cursor-pointer px-2 py-0 align-middle text-xs leading-none font-bold'
                           )}
                           style={{
                             width: `var(--col-${column.id}-size)`,
@@ -922,8 +950,8 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                             </div>
                           ) : (
                             // Regular column - sortable and draggable
-                            <div 
-                              className="relative flex size-full items-center justify-between py-0"
+                            <div
+                              className="relative flex size-full items-center gap-2 py-0 pr-2"
                               draggable={true}
                               onDragStart={(e) => { handleDragStart(e, column.id); }}
                               onDragOver={handleDragOver}
@@ -935,17 +963,15 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                                 backgroundColor: draggedColumn && draggedColumn !== column.id ? 'transparent' : '',
                               }}
                             >
-                              <div className="flex flex-1 items-center gap-2">
-                                <span className="select-none">{flexRender(header.column.columnDef.header, header.getContext())}</span>
-                                <div className="flex flex-col items-center justify-center">
-                                  {column.getIsSorted() === 'asc' ? (
-                                    <span className="text-xs">▲</span>
-                                  ) : column.getIsSorted() === 'desc' ? (
-                                    <span className="text-xs">▼</span>
-                                  ) : (
-                                    <span className="text-xs opacity-30">⇅</span>
-                                  )}
-                                </div>
+                              <span className="overflow-hidden text-ellipsis whitespace-nowrap select-none">{flexRender(header.column.columnDef.header, header.getContext())}</span>
+                              <div className="mr-1 flex shrink-0 flex-col items-center justify-center" style={{ cursor: 'pointer' }}>
+                                {column.getIsSorted() === 'asc' ? (
+                                  <span className="text-xs">▲</span>
+                                ) : column.getIsSorted() === 'desc' ? (
+                                  <span className="text-xs">▼</span>
+                                ) : (
+                                  <span className="text-xs opacity-75">⇅</span>
+                                )}
                               </div>
                               {column.getCanResize() && (
                                 <div
@@ -953,9 +979,11 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                                     e.stopPropagation();
                                     handleResizeStart(e, header);
                                   }}
-                                  className="absolute top-0 right-0 z-30 h-full w-2 cursor-col-resize hover:bg-blue-300"
+                                  className="group absolute top-0 right-0 z-30 flex h-full w-3 cursor-col-resize items-center justify-end"
                                   style={{ transform: 'translateX(50%)' }}
-                                />
+                                >
+                                  <div className="mr-0.5 h-4/5 w-px bg-foreground/25 group-hover:bg-blue-400" />
+                                </div>
                               )}
                             </div>
                           )}
@@ -977,7 +1005,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                 <TableRow className="flex h-24 w-full items-center justify-center">
                   <TableCell
                     colSpan={table.getVisibleLeafColumns().length}
-                    className="w-full border-t border-black py-8 text-left text-xl font-semibold text-foreground"
+                    className="w-full border-t border-primary py-8 text-left text-xl font-semibold text-foreground"
                     style={{ justifyContent: 'left' }}
                   >
                     No results
@@ -1053,7 +1081,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           </div>
         </div>
 
-        <div className="z-10 w-full border-t border-black bg-secondary py-3 shadow-sm" ref={footerRef}>
+        <div className="z-10 w-full border-t border-primary bg-muted py-3 shadow-sm" ref={footerRef}>
           <div className="flex flex-col items-center justify-between space-y-2 px-4 md:flex-row md:space-y-0">
             <div>
               {(() => {
@@ -1146,6 +1174,54 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       </div>
     </div>
   );
+}
+
+function computeAutoColumnSizes(
+  columns: ColumnInfo[],
+  data: Record<string, unknown>[],
+  maxWidth = 250,
+): Record<string, number> {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return {};
+
+  const cellFont = '12px system-ui, sans-serif';
+  const headerFont = 'bold 12px system-ui, sans-serif';
+
+  const sizes: Record<string, number> = {};
+
+  // Layout overhead beyond raw glyph width:
+  //   Header: th px-2(16) + pr-2(8) + gap-2(8) + sort icon(~10) + mr-1(4) = 46px
+  //   Cell:   th px-2(16)
+  const headerOverhead = 46;
+  const cellOverhead = 16;
+
+  for (const col of columns) {
+    ctx.font = headerFont;
+    const effectiveHeaderWidth = Math.ceil(ctx.measureText(col.label).width * 1.25) + headerOverhead;
+
+    ctx.font = cellFont;
+    let effectiveContentWidth = 0;
+    for (const row of data) {
+      const raw = row[col.id];
+      if (raw == null) continue;
+      let str: string;
+      if (typeof raw === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(raw)) {
+        const d = new Date(raw);
+        str = `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getFullYear())}`;
+      } else if (typeof raw === 'string' || typeof raw === 'number' || typeof raw === 'boolean') {
+        str = String(raw);
+      } else {
+        continue;
+      }
+      const w = Math.ceil(ctx.measureText(str).width) + cellOverhead;
+      if (w > effectiveContentWidth) effectiveContentWidth = w;
+    }
+
+    sizes[col.id] = Math.min(Math.max(effectiveHeaderWidth, effectiveContentWidth) + 25, maxWidth);
+  }
+
+  return sizes;
 }
 
 function downloadFile(filename: string, content: string) {

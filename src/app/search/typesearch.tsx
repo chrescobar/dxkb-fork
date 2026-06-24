@@ -57,20 +57,20 @@ function TabsRenderer({
   setTotalItems,
 }: TabsRendererProps) {
   const clearTimeoutRef = useRef<number | null>(null);
-  const tablistKey = useMemo(() => tablist.join(","), [tablist]);
-  // Whenever urlType (searchtype) changes, set the active tab.
-  // If urlType matches one of the tabs (term), set that; otherwise pick the first tab.
-  useEffect(() => {
+
+  // Compute the tab that should be active given the current URL params.
+  // Memoized so the effect below only needs this stable value in its deps.
+  const urlDerivedTab = useMemo(() => {
     const desired = urlType || "genome";
-    const targetTab = tablist.includes(desired) ? desired : tablist[0];
-    if (targetTab && targetTab !== activeTab) {
-      setActiveTab(targetTab);
-    }
-    // also, if q changes and there is no searchtype, ensure at least the first tab is active
-    if (!urlType && urlQ && tablist[0] !== activeTab) {
-      setActiveTab(tablist[0]);
-    }
-  }, [urlType, urlQ, tablistKey, tablist, activeTab, setActiveTab]);
+    return tablist.includes(desired) ? desired : (tablist[0] ?? "genome");
+  }, [urlType, tablist]);
+
+  // Sync the active tab when URL params change. activeTab is excluded from
+  // deps so user-initiated tab clicks are not overridden — React's useState
+  // already bails out when setActiveTab is called with the current value.
+  useEffect(() => {
+    setActiveTab(urlDerivedTab);
+  }, [urlQ, urlDerivedTab, setActiveTab]);
 
   const encodedQ = encodeURIComponent(urlQ);
   const fullQ = "keyword(" + encodedQ + ")";

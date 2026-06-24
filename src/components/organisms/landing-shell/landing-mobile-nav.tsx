@@ -49,7 +49,7 @@ export function LandingMobileNav({
       <div
         className={cn(
           "fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 transition-all duration-300 ease-out",
-          "focus-within:pointer-events-auto focus-within:translate-y-0 focus-within:opacity-100",
+          "has-[:focus-visible]:pointer-events-auto has-[:focus-visible]:translate-y-0 has-[:focus-visible]:opacity-100",
           hidden ? "pointer-events-none translate-y-24 opacity-0" : "translate-y-0 opacity-100",
         )}
       >

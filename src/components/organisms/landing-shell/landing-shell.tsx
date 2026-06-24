@@ -19,7 +19,7 @@ function isOrganismViewKey(
   value: string | undefined,
   views: readonly OrganismLandingView[],
 ): value is OrganismViewKey {
-  return views.some((view) => view.key === value);
+  return views.some((view) => view.key === value && view.enabled !== false);
 }
 
 export function OrganismLandingShell({
@@ -33,11 +33,15 @@ export function OrganismLandingShell({
     ? activeViewKey
     : defaultView;
   const activeView = views.find((view) => view.key === resolvedKey) ?? views[0];
-  const navItems: OrganismLandingNavItem[] = views.map(({ key, label, icon }) => ({
-    key,
-    label,
-    icon,
-  }));
+  const navItems: OrganismLandingNavItem[] = views.map(
+    ({ key, label, icon, enabled, disabledReason }) => ({
+      key,
+      label,
+      icon,
+      enabled,
+      disabledReason,
+    }),
+  );
   const ActiveViewComponent = activeView.Component;
 
   return (

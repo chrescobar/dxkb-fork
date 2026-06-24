@@ -28,6 +28,43 @@ const views: OrganismLandingView[] = [
   { key: "genomes", label: "Genomes", icon: <span />, Component: Genomes },
 ];
 
+describe("OrganismLandingShell — gate-aware tab resolution", () => {
+  function view(key: string, enabled = true) {
+    return {
+      key,
+      label: key,
+      icon: null,
+      enabled,
+      disabledReason: enabled ? undefined : "nope",
+      Component: () => <div data-testid={`view-${key}`}>{key} view</div>,
+    } as never;
+  }
+
+  it("falls back to the default view when ?tab points at a disabled tab", () => {
+    render(
+      <OrganismLandingShell
+        config={{ displayName: "T", taxonId: 1, accent: "all", metadataFields: [], defaultView: "overview" }}
+        views={[view("overview"), view("amr-phenotypes", false)]}
+        activeViewKey="amr-phenotypes"
+      />,
+    );
+    // The disabled tab must NOT become the active rendered view.
+    expect(screen.queryByTestId("view-amr-phenotypes")).not.toBeInTheDocument();
+    expect(screen.getByTestId("view-overview")).toBeInTheDocument();
+  });
+
+  it("opens an enabled tab named by ?tab", () => {
+    render(
+      <OrganismLandingShell
+        config={{ displayName: "T", taxonId: 1, accent: "all", metadataFields: [], defaultView: "overview" }}
+        views={[view("overview"), view("genomes", true)]}
+        activeViewKey="genomes"
+      />,
+    );
+    expect(screen.getByTestId("view-genomes")).toBeInTheDocument();
+  });
+});
+
 describe("OrganismLandingShell", () => {
   afterEach(() => {
     vi.restoreAllMocks();

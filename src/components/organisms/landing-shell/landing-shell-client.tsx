@@ -50,20 +50,8 @@ export function LandingShellClient({
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-none flex-row gap-3 px-2 sm:px-3 lg:px-4">
-      {/* Desktop rail — hidden below lg, where the mobile nav takes over. */}
-      <div className="hidden lg:block">
-        <LandingNav
-          items={navItems}
-          activeView={serverActiveView}
-          collapsed={navCollapsed}
-          onChange={handleViewChange}
-          onCollapseToggle={() => {
-            startTransition(() => { setNavCollapsed((current) => !current); });
-          }}
-        />
-      </div>
-      {/* Mobile nav — floating pill, fixed-position so it takes no flow space. */}
+    <>
+      {/* Mobile nav — fixed-position pill, lives outside the flex row so it doesn't contribute a phantom gap-3 gutter. */}
       <div className="lg:hidden">
         <LandingMobileNav
           items={navItems}
@@ -71,6 +59,19 @@ export function LandingShellClient({
           onChange={handleViewChange}
         />
       </div>
+      <div className="mx-auto flex w-full max-w-none flex-row gap-3 px-2 sm:px-3 lg:px-4">
+        {/* Desktop rail — hidden below lg, where the mobile nav takes over. */}
+        <div className="hidden lg:block">
+          <LandingNav
+            items={navItems}
+            activeView={serverActiveView}
+            collapsed={navCollapsed}
+            onChange={handleViewChange}
+            onCollapseToggle={() => {
+              startTransition(() => { setNavCollapsed((current) => !current); });
+            }}
+          />
+        </div>
       <section className="min-w-0 flex-1">
         <div className="mb-4 flex items-center justify-between rounded-lg border bg-card px-5 py-3 shadow-sm">
           {headerContent ?? (
@@ -85,5 +86,6 @@ export function LandingShellClient({
         {children}
       </section>
     </div>
+    </>
   );
 }

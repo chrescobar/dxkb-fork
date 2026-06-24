@@ -69,7 +69,7 @@ export function LandingMobileNav({
                 Views
               </span>
               <span className="font-semibold">{active.label}</span>
-              <ChevronUp className="size-4 text-background/60" />
+              <ChevronUp aria-hidden="true" className="size-4 text-background/60" />
             </Button>
           )}
         />

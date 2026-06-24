@@ -1,0 +1,20 @@
+src/lib/taxon-view/tab-policy.tsx
+  s_4c86b1a33be67e::t_9dda4593156cfd 99
+  s_4c86b1a33be67e::t_b34e4e8b059c62 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "592648878beba6fdf43b1c6ae7e260eb2f5bd53a",
+  "prompts": {},
+  "sessions": {
+    "s_4c86b1a33be67e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d75ddb3-e8a6-437b-815b-3b1d6da7f32d",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

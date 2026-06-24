@@ -1,0 +1,21 @@
+src/lib/taxon-view/phylo-manifest.ts
+  s_4c86b1a33be67e::t_8f503ca141a5cc 1-48
+src/lib/taxon-view/__tests__/phylo-manifest.test.ts
+  s_4c86b1a33be67e::t_298812626ed1b6 1-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "5a55284cb862546491e2250563e5557a191ea48a",
+  "prompts": {},
+  "sessions": {
+    "s_4c86b1a33be67e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d75ddb3-e8a6-437b-815b-3b1d6da7f32d",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

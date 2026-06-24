@@ -1,0 +1,23 @@
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_4c86b1a33be67e::t_925e530a2e48dd 41-43
+src/components/organisms/landing-shell/__tests__/landing-mobile-nav.test.tsx
+  s_4c86b1a33be67e::t_5d7b8e77174ad8 86-103
+src/components/organisms/landing-shell/landing-mobile-nav.tsx
+  s_4c86b1a33be67e::t_eee2ff30b19bfb 84,90-95,101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "e87fdcbfc2243f22601dc746144d18b9d6e0e355",
+  "prompts": {},
+  "sessions": {
+    "s_4c86b1a33be67e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d75ddb3-e8a6-437b-815b-3b1d6da7f32d",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

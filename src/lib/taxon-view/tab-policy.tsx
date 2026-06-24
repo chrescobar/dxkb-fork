@@ -1,5 +1,5 @@
 import { GitBranch, Radar, Shuffle, TestTube } from "lucide-react";
-import type { ComponentType, ReactNode } from "react";
+import type { ComponentType } from "react";
 
 import { makePlaceholderView } from "@/components/organisms/shared/make-placeholder-view";
 import {
@@ -96,7 +96,7 @@ export function resolveTabs(
     const view: OrganismLandingView = {
       key,
       label: descriptor.label,
-      icon: descriptor.icon as ReactNode,
+      icon: descriptor.icon,
       Component: resolveComponent(descriptor, overrides[key]),
       enabled,
     };

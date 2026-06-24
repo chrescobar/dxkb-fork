@@ -38,7 +38,7 @@ export default async function TaxonomyPage({ params, searchParams }: TaxonomyPag
     throw err;
   }
   const config = buildTaxonomyConfig(taxonId, taxon);
-  const navItems = buildTaxonomyNavItems(config, taxon);
+  const navItems = buildTaxonomyNavItems(config, taxon, null);
 
   return (
     <OrganismLandingShell

@@ -1,33 +1,35 @@
-import { buildOrganismNavItems } from "@/components/organisms/shared/default-nav-items";
+// src/app/(views)/taxonomy/[taxonId]/_components/nav-items.tsx
 import type {
   OrganismLandingConfig,
   OrganismLandingView,
-  OrganismViewKey,
 } from "@/components/organisms/types";
+import { getCuratedLists } from "@/lib/taxon-view/curated-lists";
+import { buildTabContext } from "@/lib/taxon-view/tab-context";
+import type { PhyloManifest } from "@/lib/taxon-view/tab-context";
+import { resolveTabs } from "@/lib/taxon-view/tab-policy";
 import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 
 import { makeOverviewView } from "../views/overview";
 
+/**
+ * Build the taxon-view tab strip by evaluating the declarative tab policy
+ * against the taxon's lineage, the phylo manifest, and the curated cohort
+ * lists. Conditional tabs that don't apply are returned disabled (shown but
+ * greyed) rather than removed.
+ */
 export function buildTaxonomyNavItems(
   config: OrganismLandingConfig,
   taxon: OrganismTaxonomy | null,
+  manifest: PhyloManifest | null,
 ): OrganismLandingView[] {
-  // Hide views that don't apply to the lineage. AMR Phenotypes is a bacteria
-  // concept — keep it out of viral/fungal taxonomy pages so the sidebar reflects
-  // real capabilities, not just planned ones.
-  const exclude: OrganismViewKey[] = [];
-  if (!config.showAmr) exclude.push("amr-phenotypes");
-
-  return buildOrganismNavItems(
-    {
-      overview: {
-        Component: makeOverviewView({
-          config,
-          taxon,
-          showAmr: config.showAmr ?? false,
-        }),
-      },
+  const ctx = buildTabContext(taxon, manifest, getCuratedLists());
+  return resolveTabs(ctx, {
+    overview: {
+      Component: makeOverviewView({
+        config,
+        taxon,
+        showAmr: config.showAmr ?? false,
+      }),
     },
-    { exclude },
-  );
+  });
 }

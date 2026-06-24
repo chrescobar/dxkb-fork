@@ -178,13 +178,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
     const autoSizes = computeAutoColumnSizes(columns, data);
     columnMinSizesRef.current = computeAutoColumnSizes(columns, []);
-    setColumnSizing(columnsChanged ? autoSizes : prev => {
-      const result = { ...prev };
-      for (const [id, size] of Object.entries(autoSizes)) {
-        if (!(id in result)) result[id] = size;
-      }
-      return result;
-    });
+    setColumnSizing(autoSizes);
   }, [columns, data]);
 
   const renderCheckboxCell = useCallback(

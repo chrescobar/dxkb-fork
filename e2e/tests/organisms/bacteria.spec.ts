@@ -22,12 +22,12 @@ test.describe("bacteria organism landing page — mobile pill nav", () => {
     await expect(pill).toBeVisible();
 
     // Scroll past the 60px floor — pill should hide (opacity: 0 after transition)
-    await page.evaluate(() => window.scrollTo({ top: 300, behavior: "instant" }));
+    await page.evaluate(() => { window.scrollTo({ top: 300, behavior: "instant" }); });
     const pillWrapper = page.locator("div.fixed.bottom-4");
     await expect(pillWrapper).toHaveCSS("opacity", "0", { timeout: 2000 });
 
     // Scroll back up — pill should reveal
-    await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+    await page.evaluate(() => { window.scrollTo({ top: 0, behavior: "instant" }); });
     await expect(pillWrapper).toHaveCSS("opacity", "1", { timeout: 2000 });
   });
 
@@ -49,7 +49,7 @@ test.describe("bacteria organism landing page — mobile pill nav", () => {
     await expect(page.getByRole("dialog")).not.toBeVisible();
 
     // Scroll down — pill must still hide even though trigger now has focus
-    await page.evaluate(() => window.scrollTo({ top: 300, behavior: "instant" }));
+    await page.evaluate(() => { window.scrollTo({ top: 300, behavior: "instant" }); });
     const pillWrapper = page.locator("div.fixed.bottom-4");
     await expect(pillWrapper).toHaveCSS("opacity", "0", { timeout: 2000 });
   });

@@ -25,7 +25,8 @@ describe("VirusesPage", () => {
 
     render(node);
 
-    expect(screen.getAllByText("Features")).toHaveLength(2);
+    // Active label appears 3×: desktop nav button, mobile pill, placeholder heading.
+    expect(screen.getAllByText("Features")).toHaveLength(3);
     expect(
       screen.getByText(/This view is coming soon/),
     ).toBeInTheDocument();
@@ -38,7 +39,8 @@ describe("VirusesPage", () => {
 
     render(node);
 
-    expect(screen.getAllByText("Features")).toHaveLength(2);
+    // Active label appears 3×: desktop nav button, mobile pill, placeholder heading.
+    expect(screen.getAllByText("Features")).toHaveLength(3);
     expect(
       screen.getByText(/This view is coming soon/),
     ).toBeInTheDocument();
@@ -52,7 +54,8 @@ describe("VirusesPage", () => {
     render(node);
 
     expect(screen.getByText(/This view is coming soon/)).toBeInTheDocument();
-    // "Features" appears once (nav link) not twice (nav + active heading) — taxonomy won
+    // "Features" appears once (desktop nav button only) — taxonomy won, so the
+    // mobile pill + placeholder heading show "Taxonomy", not "Features".
     expect(screen.queryAllByText("Features")).toHaveLength(1);
   });
 });

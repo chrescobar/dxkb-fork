@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { startTransition, useState, type ReactNode } from "react";
 
 import { LandingNav } from "./landing-nav";
+import { LandingMobileNav } from "./landing-mobile-nav";
 import type {
   OrganismLandingNavItem,
   OrganismViewKey,
@@ -49,16 +50,28 @@ export function LandingShellClient({
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-none flex-row gap-3 px-2 sm:px-3 lg:px-4">
-      <LandingNav
-        items={navItems}
-        activeView={serverActiveView}
-        collapsed={navCollapsed}
-        onChange={handleViewChange}
-        onCollapseToggle={() => {
-          startTransition(() => { setNavCollapsed((current) => !current); });
-        }}
-      />
+    <>
+      {/* Mobile nav — fixed-position pill, lives outside the flex row so it doesn't contribute a phantom gap-3 gutter. */}
+      <div className="lg:hidden">
+        <LandingMobileNav
+          items={navItems}
+          activeView={serverActiveView}
+          onChange={handleViewChange}
+        />
+      </div>
+      <div className="mx-auto flex w-full max-w-none flex-row gap-3 px-2 sm:px-3 lg:px-4">
+        {/* Desktop rail — hidden below lg, where the mobile nav takes over. */}
+        <div className="hidden lg:block">
+          <LandingNav
+            items={navItems}
+            activeView={serverActiveView}
+            collapsed={navCollapsed}
+            onChange={handleViewChange}
+            onCollapseToggle={() => {
+              startTransition(() => { setNavCollapsed((current) => !current); });
+            }}
+          />
+        </div>
       <section className="min-w-0 flex-1">
         <div className="mb-4 flex items-center justify-between rounded-lg border bg-card px-5 py-3 shadow-sm">
           {headerContent ?? (
@@ -73,5 +86,6 @@ export function LandingShellClient({
         {children}
       </section>
     </div>
+    </>
   );
 }

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { vi } from "vitest";
 
 import { OrganismLandingShell } from "../landing-shell";
@@ -57,6 +57,7 @@ describe("OrganismLandingShell", () => {
   it("defaults to expanded navigation", () => {
     render(<OrganismLandingShell config={config} views={views} />);
 
-    expect(screen.getByText("Views")).toBeInTheDocument();
+    const desktopNav = screen.getByRole("navigation", { name: "Organism views" });
+    expect(within(desktopNav).getByText("Views")).toBeInTheDocument();
   });
 });

@@ -25,7 +25,8 @@ describe("AllOrganismsPage", () => {
 
     render(node);
 
-    expect(screen.getAllByText("AMR Phenotypes")).toHaveLength(2);
+    // Active label appears 3×: desktop nav button, mobile pill, placeholder heading.
+    expect(screen.getAllByText("AMR Phenotypes")).toHaveLength(3);
     expect(
       screen.getByText(/This view is coming soon/),
     ).toBeInTheDocument();

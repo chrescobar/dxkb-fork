@@ -16,19 +16,29 @@ export type OrganismViewKey =
   | "pathways"
   | "subsystems"
   | "experiments"
-  | "interactions";
+  | "interactions"
+  | "strains"
+  | "surveillance"
+  | "serology"
+  | "sfvt";
 
 export interface OrganismLandingView {
   key: OrganismViewKey;
   label: string;
   icon: ReactNode;
   Component: ComponentType;
+  /** When false, the tab renders disabled (greyed, non-clickable). Defaults to enabled. */
+  enabled?: boolean;
+  /** Tooltip/title shown when the tab is disabled. */
+  disabledReason?: string;
 }
 
 export interface OrganismLandingNavItem {
   key: OrganismViewKey;
   label: string;
   icon: ReactNode;
+  enabled?: boolean;
+  disabledReason?: string;
 }
 
 export interface OrganismLandingConfig {

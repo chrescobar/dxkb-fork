@@ -81,29 +81,13 @@ export function LandingNav({
           const isActive = item.key === activeView;
           const isDisabled = item.enabled === false;
 
-          const button = (
-            <Button
-              key={item.key}
-              type="button"
-              variant={isActive ? "secondary" : "ghost"}
-              aria-current={isActive ? "page" : undefined}
-              aria-disabled={isDisabled || undefined}
-              title={item.disabledReason ?? (collapsed ? item.label : undefined)}
-              onClick={() => {
-                if (isDisabled) return;
-                onChange(item.key);
-              }}
-              className={cn(
-                "justify-start px-2",
-                isActive && "font-semibold",
-                isDisabled && "pointer-events-none cursor-not-allowed text-muted-foreground opacity-50",
-              )}
-            >
+          const buttonContent = (
+            <>
               <span aria-hidden="true" className="flex shrink-0 items-center">
                 {item.icon}
               </span>
               {!collapsed && <span className="truncate">{item.label}</span>}
-            </Button>
+            </>
           );
 
           if (isDisabled && item.disabledReason) {
@@ -112,7 +96,23 @@ export function LandingNav({
                 <TooltipTrigger
                   render={
                     <span tabIndex={0} aria-label={`${item.label}: ${item.disabledReason}`}>
-                      {button}
+                      <Button
+                        type="button"
+                        variant={isActive ? "secondary" : "ghost"}
+                        aria-current={isActive ? "page" : undefined}
+                        aria-disabled
+                        title={item.disabledReason}
+                        onClick={() => {
+                          /* no-op: button is disabled */
+                        }}
+                        className={cn(
+                          "justify-start px-2",
+                          isActive && "font-semibold",
+                          "pointer-events-none cursor-not-allowed text-muted-foreground opacity-50",
+                        )}
+                      >
+                        {buttonContent}
+                      </Button>
                     </span>
                   }
                 />
@@ -121,7 +121,19 @@ export function LandingNav({
             );
           }
 
-          return button;
+          return (
+            <Button
+              key={item.key}
+              type="button"
+              variant={isActive ? "secondary" : "ghost"}
+              aria-current={isActive ? "page" : undefined}
+              title={collapsed ? item.label : undefined}
+              onClick={() => { onChange(item.key); }}
+              className={cn("justify-start px-2", isActive && "font-semibold")}
+            >
+              {buttonContent}
+            </Button>
+          );
         })}
       </div>
     </nav>

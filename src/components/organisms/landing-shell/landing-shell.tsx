@@ -29,10 +29,12 @@ export function OrganismLandingShell({
   headerContent,
 }: OrganismLandingShellProps) {
   const defaultView = config.defaultView ?? "overview";
-  const resolvedKey = isOrganismViewKey(activeViewKey, views)
-    ? activeViewKey
-    : defaultView;
-  const activeView = views.find((view) => view.key === resolvedKey) ?? views[0];
+  const requestedKey = isOrganismViewKey(activeViewKey, views) ? activeViewKey : defaultView;
+  const requestedView = views.find((view) => view.key === requestedKey);
+  const activeView =
+    requestedView && requestedView.enabled !== false
+      ? requestedView
+      : views.find((view) => view.enabled !== false) ?? views[0];
   const navItems: OrganismLandingNavItem[] = views.map(
     ({ key, label, icon, enabled, disabledReason }) => ({
       key,

@@ -75,7 +75,7 @@ describe("hasStrains (segmented viruses) — the Lassa vs RVFV canary (doc §5)"
 
 describe("hasSfvt (curated, by lineage id, inherits)", () => {
   it("true when any lineage id is on the curated SFVT list", () => {
-    expect(hasSfvt(ctx({ lineageIds: [10239, 12637] }))).toBe(true); // Dengue
+    expect(hasSfvt(ctx({ lineageIds: [10239, 12637] }))).toBe(true); // 10239 = Viruses root, 12637 = Dengue (the SFVT-bearing id)
   });
   it("inherits to a descendant whose ancestor id is listed", () => {
     expect(hasSfvt(ctx({ taxonId: 99999, lineageIds: [10239, 12637, 99999] }))).toBe(true);

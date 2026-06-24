@@ -53,6 +53,19 @@ describe("OrganismLandingShell — gate-aware tab resolution", () => {
     expect(screen.getByTestId("view-overview")).toBeInTheDocument();
   });
 
+  it("falls back to first ENABLED view when config.defaultView itself is disabled", () => {
+    render(
+      <OrganismLandingShell
+        config={{ displayName: "T", taxonId: 1, accent: "all", metadataFields: [], defaultView: "amr-phenotypes" }}
+        views={[view("amr-phenotypes", false), view("genomes", true)]}
+      />,
+    );
+    // disabled defaultView must NOT be rendered
+    expect(screen.queryByTestId("view-amr-phenotypes")).not.toBeInTheDocument();
+    // first enabled view must be rendered instead
+    expect(screen.getByTestId("view-genomes")).toBeInTheDocument();
+  });
+
   it("opens an enabled tab named by ?tab", () => {
     render(
       <OrganismLandingShell

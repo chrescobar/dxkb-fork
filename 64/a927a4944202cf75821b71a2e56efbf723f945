@@ -1,0 +1,28 @@
+src/lib/taxon-view/tab-policy.tsx
+  s_4c86b1a33be67e::t_aea1e632f308ad 63-65
+  s_4c86b1a33be67e::t_1c610ed1145cbc 73-74
+src/components/organisms/landing-shell/landing-shell.tsx
+  s_4c86b1a33be67e::t_cee8193443a655 33-35,37-39
+src/app/(views)/taxonomy/[taxonId]/page.tsx
+  s_4c86b1a33be67e::t_8cebe10a65057a 33-39,49
+src/lib/taxon-view/phylo-manifest.ts
+  s_4c86b1a33be67e::t_86fd0e9b63a711 25
+src/lib/taxon-view/curated-lists.ts
+  s_4c86b1a33be67e::t_b55da32061d2e4 33-41,43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "64a927a4944202cf75821b71a2e56efbf723f945",
+  "prompts": {},
+  "sessions": {
+    "s_4c86b1a33be67e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d75ddb3-e8a6-437b-815b-3b1d6da7f32d",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

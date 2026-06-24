@@ -80,19 +80,23 @@ export function LandingNav({
         {items.map((item) => {
           const isActive = item.key === activeView;
           const isDisabled = item.enabled === false;
-          return (
+
+          const button = (
             <Button
               key={item.key}
               type="button"
               variant={isActive ? "secondary" : "ghost"}
               aria-current={isActive ? "page" : undefined}
-              aria-disabled={isDisabled ? "true" : undefined}
-              title={collapsed ? item.label : item.disabledReason ?? undefined}
-              onClick={isDisabled ? undefined : () => { onChange(item.key); }}
+              aria-disabled={isDisabled || undefined}
+              title={item.disabledReason ?? (collapsed ? item.label : undefined)}
+              onClick={() => {
+                if (isDisabled) return;
+                onChange(item.key);
+              }}
               className={cn(
                 "justify-start px-2",
                 isActive && "font-semibold",
-                isDisabled && "cursor-not-allowed opacity-50",
+                isDisabled && "pointer-events-none cursor-not-allowed text-muted-foreground opacity-50",
               )}
             >
               <span aria-hidden="true" className="flex shrink-0 items-center">
@@ -101,6 +105,23 @@ export function LandingNav({
               {!collapsed && <span className="truncate">{item.label}</span>}
             </Button>
           );
+
+          if (isDisabled && item.disabledReason) {
+            return (
+              <Tooltip key={item.key}>
+                <TooltipTrigger
+                  render={
+                    <span tabIndex={0} aria-label={`${item.label}: ${item.disabledReason}`}>
+                      {button}
+                    </span>
+                  }
+                />
+                <TooltipContent side="right">{item.disabledReason}</TooltipContent>
+              </Tooltip>
+            );
+          }
+
+          return button;
         })}
       </div>
     </nav>

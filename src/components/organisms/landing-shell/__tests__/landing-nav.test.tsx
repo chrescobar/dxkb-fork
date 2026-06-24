@@ -87,3 +87,29 @@ describe("LandingNav", () => {
     }
   });
 });
+
+const withDisabled: OrganismLandingNavItem[] = [
+  { key: "overview", label: "Overview", icon: <Blocks /> },
+  { key: "amr-phenotypes", label: "AMR Phenotypes", icon: <Dna />, enabled: false, disabledReason: "AMR phenotypes apply to bacterial taxa." },
+];
+
+describe("LandingNav — disabled tabs", () => {
+  it("marks a disabled item with aria-disabled and does not fire onChange", async () => {
+    const onChange = vi.fn();
+    render(
+      <LandingNav items={withDisabled} activeView="overview" collapsed={false} onChange={onChange} onCollapseToggle={vi.fn()} />,
+    );
+    const amr = screen.getByRole("button", { name: /AMR Phenotypes/ });
+    expect(amr).toHaveAttribute("aria-disabled", "true");
+    await userEvent.click(amr);
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it("shows disabledReason as title when collapsed (carryover bug fix)", () => {
+    render(
+      <LandingNav items={withDisabled} activeView="overview" collapsed onChange={vi.fn()} onCollapseToggle={vi.fn()} />,
+    );
+    // The wrapping span carries the aria-label with the reason when collapsed + disabled
+    expect(screen.getByLabelText(/AMR phenotypes apply to bacterial taxa/)).toBeInTheDocument();
+  });
+});

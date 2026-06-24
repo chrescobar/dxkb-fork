@@ -79,17 +79,20 @@ export function LandingNav({
       <div className="flex flex-col gap-1 p-2.5 pt-0">
         {items.map((item) => {
           const isActive = item.key === activeView;
+          const isDisabled = item.enabled === false;
           return (
             <Button
               key={item.key}
               type="button"
               variant={isActive ? "secondary" : "ghost"}
               aria-current={isActive ? "page" : undefined}
-              title={collapsed ? item.label : undefined}
-              onClick={() => { onChange(item.key); }}
+              aria-disabled={isDisabled ? "true" : undefined}
+              title={collapsed ? item.label : item.disabledReason ?? undefined}
+              onClick={isDisabled ? undefined : () => { onChange(item.key); }}
               className={cn(
                 "justify-start px-2",
                 isActive && "font-semibold",
+                isDisabled && "cursor-not-allowed opacity-50",
               )}
             >
               <span aria-hidden="true" className="flex shrink-0 items-center">

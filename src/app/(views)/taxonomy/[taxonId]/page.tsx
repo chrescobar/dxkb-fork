@@ -7,6 +7,8 @@ import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 
 import { firstSearchParam } from "@/lib/views/search-params";
 
+import { fetchPhyloManifest } from "@/lib/taxon-view/phylo-manifest";
+
 import { buildTaxonomyNavItems } from "./_components/nav-items";
 import { buildTaxonomyConfig } from "./_config";
 
@@ -37,8 +39,12 @@ export default async function TaxonomyPage({ params, searchParams }: TaxonomyPag
     }
     throw err;
   }
+  // Fail-open: a missing/broken manifest must not block the page; it only
+  // disables the viral Phylogeny tab.
+  const phyloManifest = await fetchPhyloManifest();
+
   const config = buildTaxonomyConfig(taxonId, taxon);
-  const navItems = buildTaxonomyNavItems(config, taxon, null);
+  const navItems = buildTaxonomyNavItems(config, taxon, phyloManifest);
 
   return (
     <OrganismLandingShell

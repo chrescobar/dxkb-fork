@@ -5,9 +5,6 @@ import type { TabContext } from "./tab-context";
 export const isBacteria = (c: TabContext): boolean =>
   c.taxonomy.lineageNames.includes("Bacteria");
 
-export const isVirus = (c: TabContext): boolean =>
-  c.taxonomy.lineageNames.includes("Viruses");
-
 /**
  * Segmented-genome viruses get a Strains tab. Influenza & relatives sit under
  * the family Orthomyxoviridae; the bunyavirus side keys on the CLASS

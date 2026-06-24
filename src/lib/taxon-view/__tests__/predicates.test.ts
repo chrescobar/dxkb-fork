@@ -8,7 +8,6 @@ import {
   hasSurveillance,
   hasViralTree,
   isBacteria,
-  isVirus,
 } from "../predicates";
 import { getCuratedLists } from "../curated-lists";
 
@@ -35,11 +34,6 @@ describe("organism-kind predicates", () => {
   it("isBacteria true only when lineage contains 'Bacteria'", () => {
     expect(isBacteria(ctx({ lineageNames: ["Bacteria", "Brucella"] }))).toBe(true);
     expect(isBacteria(ctx({ lineageNames: ["Viruses"] }))).toBe(false);
-  });
-
-  it("isVirus true only when lineage contains 'Viruses'", () => {
-    expect(isVirus(ctx({ lineageNames: ["Viruses", "Orthomyxoviridae"] }))).toBe(true);
-    expect(isVirus(ctx({ lineageNames: ["Bacteria"] }))).toBe(false);
   });
 });
 

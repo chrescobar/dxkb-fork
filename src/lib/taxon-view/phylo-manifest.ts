@@ -22,17 +22,13 @@ function parseManifest(payload: unknown): PhyloManifest | null {
  * viral Phylogeny tab is treated as "no tree" (disabled). When PHYLO_MANIFEST_URL
  * is unset we return an empty manifest (placeholder mode) so nothing is fetched.
  */
-export async function fetchPhyloManifest(
-  signal?: AbortSignal,
-): Promise<PhyloManifest | null> {
+export async function fetchPhyloManifest(): Promise<PhyloManifest | null> {
   const url = process.env.PHYLO_MANIFEST_URL;
   if (!url) return emptyManifest;
 
   try {
     const response = await fetch(url, {
-      method: "GET",
       headers: { Accept: "application/json" },
-      signal,
       ...organismFetchCacheInit(organismBvBrcRevalidateSeconds),
     });
     if (!response.ok) {

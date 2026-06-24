@@ -30,11 +30,13 @@ export function OrganismLandingShell({
 }: OrganismLandingShellProps) {
   const defaultView = config.defaultView ?? "overview";
   const requestedKey = isOrganismViewKey(activeViewKey, views) ? activeViewKey : defaultView;
-  const requestedView = views.find((view) => view.key === requestedKey);
+  // requestedKey may still point at a disabled view (when it falls back to a
+  // disabled defaultView), so require enabled here and fall back to the first
+  // enabled view, then to views[0] as a last resort.
   const activeView =
-    requestedView && requestedView.enabled !== false
-      ? requestedView
-      : views.find((view) => view.enabled !== false) ?? views[0];
+    views.find((view) => view.key === requestedKey && view.enabled !== false) ??
+    views.find((view) => view.enabled !== false) ??
+    views[0];
   const navItems: OrganismLandingNavItem[] = views.map(
     ({ key, label, icon, enabled, disabledReason }) => ({
       key,

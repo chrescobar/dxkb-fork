@@ -60,9 +60,9 @@ const gatesByKey: Partial<Record<OrganismViewKey, Gate>> = {
   sfvt: { enabled: hasSfvt, disabledReason: "Sequence Feature Variant Types are not curated for this taxon." },
 };
 
-export type TabPolicyOverride =
-  | { Component: ComponentType }
-  | { description?: string };
+export interface TabPolicyOverride {
+  Component: ComponentType;
+}
 
 export type TabPolicyOverrides = Partial<Record<OrganismViewKey, TabPolicyOverride>>;
 
@@ -70,10 +70,8 @@ function resolveComponent(
   descriptor: DefaultViewDescriptor,
   override: TabPolicyOverride | undefined,
 ): ComponentType {
-  if (override && "Component" in override) return override.Component;
-  const description =
-    override && "description" in override ? override.description : descriptor.description;
-  return makePlaceholderView(descriptor.label, description);
+  if (override) return override.Component;
+  return makePlaceholderView(descriptor.label, descriptor.description);
 }
 
 /**

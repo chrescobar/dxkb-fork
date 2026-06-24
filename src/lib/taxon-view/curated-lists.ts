@@ -30,10 +30,15 @@ const sfvtTaxonIds: readonly number[] = [
   2955291, // Alphainfluenzavirus influenzae
 ];
 
+// Built once at module load — the data is immutable and the return type is
+// ReadonlySet, so there is no reason to re-allocate per call. getCuratedLists()
+// stays a function to preserve the seam for a future `/api/taxon-view` swap.
+const curatedLists: CuratedLists = {
+  sfvtTaxonIds: new Set(sfvtTaxonIds),
+  surveillanceLineageNames: new Set(surveillanceSerologyNames),
+  serologyLineageNames: new Set(surveillanceSerologyNames),
+};
+
 export function getCuratedLists(): CuratedLists {
-  return {
-    sfvtTaxonIds: new Set(sfvtTaxonIds),
-    surveillanceLineageNames: new Set(surveillanceSerologyNames),
-    serologyLineageNames: new Set(surveillanceSerologyNames),
-  };
+  return curatedLists;
 }

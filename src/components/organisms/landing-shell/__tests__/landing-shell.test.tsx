@@ -5,6 +5,7 @@ import { OrganismLandingShell } from "../landing-shell";
 import type {
   OrganismLandingConfig,
   OrganismLandingView,
+  OrganismViewKey,
 } from "@/components/organisms/types";
 
 function Overview() {
@@ -29,7 +30,7 @@ const views: OrganismLandingView[] = [
 ];
 
 describe("OrganismLandingShell — gate-aware tab resolution", () => {
-  function view(key: string, enabled = true) {
+  function view(key: OrganismViewKey, enabled = true): OrganismLandingView {
     return {
       key,
       label: key,
@@ -37,7 +38,7 @@ describe("OrganismLandingShell — gate-aware tab resolution", () => {
       enabled,
       disabledReason: enabled ? undefined : "nope",
       Component: () => <div data-testid={`view-${key}`}>{key} view</div>,
-    } as never;
+    };
   }
 
   it("falls back to the default view when ?tab points at a disabled tab", () => {

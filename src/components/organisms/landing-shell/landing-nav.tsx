@@ -90,32 +90,39 @@ export function LandingNav({
             </>
           );
 
-          if (isDisabled && item.disabledReason) {
+          if (isDisabled) {
+            const disabledButton = (
+              <span
+                key={item.key}
+                tabIndex={0}
+                aria-label={item.disabledReason ? `${item.label}: ${item.disabledReason}` : item.label}
+              >
+                <Button
+                  type="button"
+                  tabIndex={-1}
+                  variant={isActive ? "secondary" : "ghost"}
+                  aria-current={isActive ? "page" : undefined}
+                  aria-disabled
+                  title={item.disabledReason}
+                  onClick={() => {
+                    /* no-op: button is disabled */
+                  }}
+                  className={cn(
+                    "justify-start px-2",
+                    isActive && "font-semibold",
+                    "pointer-events-none cursor-not-allowed text-muted-foreground opacity-50",
+                  )}
+                >
+                  {buttonContent}
+                </Button>
+              </span>
+            );
+
+            if (!item.disabledReason) return disabledButton;
+
             return (
               <Tooltip key={item.key}>
-                <TooltipTrigger
-                  render={
-                    <span tabIndex={0} aria-label={`${item.label}: ${item.disabledReason}`}>
-                      <Button
-                        type="button"
-                        variant={isActive ? "secondary" : "ghost"}
-                        aria-current={isActive ? "page" : undefined}
-                        aria-disabled
-                        title={item.disabledReason}
-                        onClick={() => {
-                          /* no-op: button is disabled */
-                        }}
-                        className={cn(
-                          "justify-start px-2",
-                          isActive && "font-semibold",
-                          "pointer-events-none cursor-not-allowed text-muted-foreground opacity-50",
-                        )}
-                      >
-                        {buttonContent}
-                      </Button>
-                    </span>
-                  }
-                />
+                <TooltipTrigger render={disabledButton} />
                 <TooltipContent side="right">{item.disabledReason}</TooltipContent>
               </Tooltip>
             );

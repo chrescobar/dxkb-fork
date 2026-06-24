@@ -46,7 +46,7 @@ describe("resolveTabs — structure", () => {
     ]);
   });
 
-  it("baseline tabs are always enabled, even for a null taxon", () => {
+  it("baseline tabs are always enabled regardless of taxon content", () => {
     const keys = enabledKeys(tax({}));
     for (const k of baseline) expect(keys.has(k)).toBe(true);
   });

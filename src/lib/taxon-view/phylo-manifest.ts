@@ -29,6 +29,7 @@ export async function fetchPhyloManifest(): Promise<PhyloManifest | null> {
   try {
     const response = await fetch(url, {
       headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(5000),
       ...organismFetchCacheInit(organismBvBrcRevalidateSeconds),
     });
     if (!response.ok) {

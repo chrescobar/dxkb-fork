@@ -13,6 +13,7 @@ describe("getCuratedLists", () => {
     expect(lists.surveillanceLineageNames.has("Alphainfluenzavirus influenzae")).toBe(true);
     expect(lists.surveillanceLineageNames.has("Rhinovirus A")).toBe(true);
     expect(lists.serologyLineageNames.has("Alphainfluenzavirus influenzae")).toBe(true);
+    expect(lists.serologyLineageNames.has("Rhinovirus A")).toBe(true);
   });
 
   it("seeds SFVT taxon ids observed in the source doc truth table", () => {

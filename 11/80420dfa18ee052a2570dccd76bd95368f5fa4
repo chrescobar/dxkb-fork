@@ -1,0 +1,25 @@
+src/components/organisms/landing-shell/__tests__/landing-mobile-nav.test.tsx
+  s_512f90bd9c5faa::t_166338dd156a48 1-5,7-85
+  s_512f90bd9c5faa::t_366cdb80f40b40 6
+src/components/organisms/landing-shell/landing-mobile-nav.tsx
+  s_512f90bd9c5faa::t_8b4646af8a46f4 52
+e2e/tests/organisms/bacteria.spec.ts
+  s_512f90bd9c5faa::t_1f238f1b480533 7-43,46-47,49-57
+  s_512f90bd9c5faa::t_7edddd702d8ebf 44-45,48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.11",
+  "base_commit_sha": "1180420dfa18ee052a2570dccd76bd95368f5fa4",
+  "prompts": {},
+  "sessions": {
+    "s_512f90bd9c5faa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8f6a6323-41ea-4884-ac1b-2705b454cabe",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

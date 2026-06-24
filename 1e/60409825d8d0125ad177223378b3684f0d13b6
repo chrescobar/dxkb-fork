@@ -1,0 +1,23 @@
+src/lib/taxon-view/tab-context.ts
+  s_4c86b1a33be67e::t_21b2dce45139df 1-36
+src/lib/taxon-view/__tests__/predicates.test.ts
+  s_4c86b1a33be67e::t_7f0df2d39125c6 1-139
+src/lib/taxon-view/predicates.ts
+  s_4c86b1a33be67e::t_bc499330d89d15 1-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "1e60409825d8d0125ad177223378b3684f0d13b6",
+  "prompts": {},
+  "sessions": {
+    "s_4c86b1a33be67e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d75ddb3-e8a6-437b-815b-3b1d6da7f32d",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

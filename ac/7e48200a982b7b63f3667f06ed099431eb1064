@@ -1,0 +1,21 @@
+src/lib/taxon-view/__tests__/curated-lists.test.ts
+  s_4c86b1a33be67e::t_9a17c16e7edd74 1-24
+src/lib/taxon-view/curated-lists.ts
+  s_4c86b1a33be67e::t_8247f89f877a46 1-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "ac7e48200a982b7b63f3667f06ed099431eb1064",
+  "prompts": {},
+  "sessions": {
+    "s_4c86b1a33be67e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d75ddb3-e8a6-437b-815b-3b1d6da7f32d",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

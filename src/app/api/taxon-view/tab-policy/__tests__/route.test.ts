@@ -1,6 +1,10 @@
 import { GET } from "../route";
 
 describe("GET /api/taxon-view/tab-policy", () => {
+  afterEach(() => {
+    delete process.env.TAXON_VIEW_POLICY_JSON;
+  });
+
   it("returns 200 with JSON-serializable curated lists shape", async () => {
     const res = GET();
     expect(res.status).toBe(200);

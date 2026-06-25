@@ -29,18 +29,18 @@ const views: OrganismLandingView[] = [
   { key: "genomes", label: "Genomes", icon: <span />, Component: Genomes },
 ];
 
-describe("OrganismLandingShell — gate-aware tab resolution", () => {
-  function view(key: OrganismViewKey, enabled = true): OrganismLandingView {
-    return {
-      key,
-      label: key,
-      icon: null,
-      enabled,
-      disabledReason: enabled ? undefined : "nope",
-      Component: () => <div data-testid={`view-${key}`}>{key} view</div>,
-    };
-  }
+function view(key: OrganismViewKey, enabled = true): OrganismLandingView {
+  return {
+    key,
+    label: key,
+    icon: null,
+    enabled,
+    disabledReason: enabled ? undefined : "nope",
+    Component: () => <div data-testid={`view-${key}`}>{key} view</div>,
+  };
+}
 
+describe("OrganismLandingShell — gate-aware tab resolution", () => {
   it("falls back to the default view when ?tab points at a disabled tab", () => {
     render(
       <OrganismLandingShell
@@ -114,17 +114,6 @@ describe("OrganismLandingShell", () => {
 });
 
 describe("OrganismLandingShell — hideDisabledTabs", () => {
-  function view(key: OrganismViewKey, enabled = true): OrganismLandingView {
-    return {
-      key,
-      label: key,
-      icon: null,
-      enabled,
-      disabledReason: enabled ? undefined : "nope",
-      Component: () => <div data-testid={`view-${key}`}>{key} view</div>,
-    };
-  }
-
   it("removes disabled tabs from the nav when hideDisabledTabs is true", () => {
     render(
       <OrganismLandingShell

@@ -51,6 +51,7 @@ export function OrganismLandingShell({
       disabledReason,
     }),
   );
+  if (!activeView) return null;
   const ActiveViewComponent = activeView.Component;
 
   return (

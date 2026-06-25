@@ -45,6 +45,17 @@ describe("getCuratedLists — env-var override", () => {
     expect(lists.surveillanceLineageNames.has("Alphainfluenzavirus influenzae")).toBe(true);
   });
 
+  it("coerces string taxon IDs in sfvtTaxonIds array to numbers", async () => {
+    // Operator passes strings in a valid array: ["12637"] instead of [12637].
+    // Array.isArray passes so the old code would put string "12637" into
+    // Set<number>, causing hasSfvt's numeric .has(12637) to always miss.
+    process.env.TAXON_VIEW_POLICY_JSON = JSON.stringify({ sfvtTaxonIds: ["12637", "10244"] });
+    const { getCuratedLists } = await import("../curated-lists");
+    const lists = getCuratedLists();
+    expect(lists.sfvtTaxonIds.has(12637)).toBe(true); // coerced from "12637"
+    expect(lists.sfvtTaxonIds.has(10244)).toBe(true); // coerced from "10244"
+  });
+
   it("ignores a present-but-wrong-typed key (non-array) and keeps that key's default", async () => {
     // Operator typo: a bare string instead of an array. Without the Array.isArray
     // guard this becomes new Set("12637") = {"1","2","6","3","7"} and the numeric

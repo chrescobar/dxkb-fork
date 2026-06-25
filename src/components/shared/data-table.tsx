@@ -963,7 +963,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                                 backgroundColor: draggedColumn && draggedColumn !== column.id ? 'transparent' : '',
                               }}
                             >
-                              <span className="overflow-hidden text-ellipsis whitespace-nowrap select-none">{flexRender(header.column.columnDef.header, header.getContext())}</span>
+                              <span className="truncate select-none">{flexRender(header.column.columnDef.header, header.getContext())}</span>
                               <div className="mr-1 flex shrink-0 flex-col items-center justify-center" style={{ cursor: 'pointer' }}>
                                 {column.getIsSorted() === 'asc' ? (
                                   <span className="text-xs">▲</span>

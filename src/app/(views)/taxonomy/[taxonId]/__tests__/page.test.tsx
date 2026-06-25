@@ -101,7 +101,7 @@ describe("TaxonomyPage", () => {
     ).toBeInTheDocument();
   });
 
-  it("omits the AMR Phenotypes nav for viral taxa", async () => {
+  it("shows AMR Phenotypes disabled (not removed) for viral taxa", async () => {
     fetchOrganismTaxonomyMock.mockResolvedValueOnce(viralTaxon);
     const node = await TaxonomyPage({
       params: Promise.resolve({ taxonId: "11320" }),
@@ -110,7 +110,10 @@ describe("TaxonomyPage", () => {
 
     render(node);
 
-    expect(screen.queryByText("AMR Phenotypes")).not.toBeInTheDocument();
+    // Present in the desktop rail, now rendered disabled rather than omitted.
+    const amrButtons = screen.getAllByRole("button", { name: /AMR Phenotypes/ });
+    expect(amrButtons.length).toBeGreaterThan(0);
+    expect(amrButtons.some((b) => b.getAttribute("aria-disabled") === "true")).toBe(true);
   });
 
   it("calls notFound for non-numeric taxonId", async () => {

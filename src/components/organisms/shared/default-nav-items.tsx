@@ -21,14 +21,14 @@ import type { ComponentType, ReactNode } from "react";
 import { makePlaceholderView as placeholderView } from "@/components/organisms/shared/make-placeholder-view";
 import type { OrganismLandingView, OrganismViewKey } from "@/components/organisms/types";
 
-interface DefaultViewDescriptor {
+export interface DefaultViewDescriptor {
   key: OrganismViewKey;
   label: string;
   icon: ReactNode;
   description?: string;
 }
 
-const defaultViewDescriptors: readonly DefaultViewDescriptor[] = [
+export const defaultViewDescriptors: readonly DefaultViewDescriptor[] = [
   { key: "overview", label: "Overview", icon: <Blocks /> },
   {
     key: "phylogeny",

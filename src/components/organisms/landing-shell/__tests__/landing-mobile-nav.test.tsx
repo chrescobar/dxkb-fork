@@ -83,3 +83,21 @@ describe("LandingMobileNav", () => {
     expect(wrapper?.className).toMatch(/has-\[/);
   });
 });
+
+describe("LandingMobileNav — disabled tabs", () => {
+  it("renders a disabled tile that cannot be selected", async () => {
+    const onChange = vi.fn();
+    const disabledItems = [
+      { key: "overview", label: "Overview", icon: <Blocks /> },
+      { key: "amr-phenotypes", label: "AMR Phenotypes", icon: <Dna />, enabled: false, disabledReason: "bacterial only" },
+    ] as OrganismLandingNavItem[];
+
+    render(<LandingMobileNav items={disabledItems} activeView="overview" onChange={onChange} />);
+    await userEvent.click(screen.getByRole("button", { name: /Views:/ }));
+
+    const amr = await screen.findByRole("button", { name: /AMR Phenotypes/ });
+    expect(amr).toHaveAttribute("aria-disabled", "true");
+    await userEvent.click(amr);
+    expect(onChange).not.toHaveBeenCalled();
+  });
+});

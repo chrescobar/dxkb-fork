@@ -38,6 +38,9 @@ export function LandingShellClient({
   });
 
   function handleViewChange(nextView: OrganismViewKey) {
+    const target = navItems.find((item) => item.key === nextView);
+    if (target?.enabled === false) return;
+
     const params = new URLSearchParams(searchParams.toString());
     params.delete("view");
     if (nextView === defaultView) {

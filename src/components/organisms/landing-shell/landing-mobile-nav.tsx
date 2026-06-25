@@ -81,17 +81,24 @@ export function LandingMobileNav({
         <div className="grid grid-cols-4 gap-1.5 overflow-y-auto p-3 pb-8">
           {items.map((item) => {
             const isActive = item.key === activeView;
+            const isDisabled = item.enabled === false;
             return (
               <button
                 key={item.key}
                 type="button"
                 aria-current={isActive ? "page" : undefined}
-                onClick={() => { select(item.key); }}
+                aria-disabled={isDisabled || undefined}
+                title={isDisabled ? item.disabledReason : undefined}
+                onClick={() => {
+                  if (isDisabled) return;
+                  select(item.key);
+                }}
                 className={cn(
                   "flex aspect-square flex-col items-center justify-center gap-1.5 rounded-lg border p-1 text-center transition-colors",
                   isActive
                     ? "border-primary bg-primary/10 text-primary"
                     : "bg-card text-foreground hover:bg-muted/50",
+                  isDisabled && "cursor-not-allowed opacity-40 hover:bg-card",
                 )}
               >
                 <span aria-hidden="true" className="flex items-center [&_svg]:size-5">

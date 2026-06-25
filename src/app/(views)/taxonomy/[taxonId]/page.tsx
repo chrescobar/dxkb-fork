@@ -7,6 +7,8 @@ import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 
 import { firstSearchParam } from "@/lib/views/search-params";
 
+import { fetchPhyloManifest } from "@/lib/taxon-view/phylo-manifest";
+
 import { buildTaxonomyNavItems } from "./_components/nav-items";
 import { buildTaxonomyConfig } from "./_config";
 
@@ -28,6 +30,13 @@ export default async function TaxonomyPage({ params, searchParams }: TaxonomyPag
 
   const activeViewKey = firstSearchParam(await searchParams, "tab");
 
+  // Kick off the manifest fetch in parallel with the taxonomy fetch — they are
+  // independent. Started before the try so taxonomy's notFound/re-throw control
+  // flow is unchanged; fetchPhyloManifest is fail-open (never rejects), so a
+  // missing/broken manifest can't block the page — it only disables the viral
+  // Phylogeny tab.
+  const phyloManifestPromise = fetchPhyloManifest();
+
   let taxon: OrganismTaxonomy;
   try {
     taxon = await fetchOrganismTaxonomy(taxonId);
@@ -37,8 +46,10 @@ export default async function TaxonomyPage({ params, searchParams }: TaxonomyPag
     }
     throw err;
   }
+  const phyloManifest = await phyloManifestPromise;
+
   const config = buildTaxonomyConfig(taxonId, taxon);
-  const navItems = buildTaxonomyNavItems(config, taxon);
+  const navItems = buildTaxonomyNavItems(config, taxon, phyloManifest);
 
   return (
     <OrganismLandingShell

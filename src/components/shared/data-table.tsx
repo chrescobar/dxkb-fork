@@ -875,7 +875,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           Download Displayed Columns Only
         </label>
       </div>
-      <div className="relative flex h-[65vh] w-full flex-col overflow-hidden rounded border border-gray-500"> {/* This is the main container, which contains both the table and the pagination footer. Use a fixed height (65vh) so the table area is strictly constrained and cannot expand the page. */}
+      <div className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded border border-gray-500">
 
         <div
           className="relative flex-1 overflow-auto"

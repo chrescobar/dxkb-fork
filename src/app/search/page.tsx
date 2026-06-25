@@ -10,7 +10,7 @@ export default function GlobalSearch () {
 
       // Get the value of a specific query parameter
       const keyword = searchParams.get("q") ?? "";
-      const searchtype = searchParams.get('searchtype') ?? "";
+      const searchtype = searchParams.get('type') ?? "";
       
       // The first step is to get the search phrase in a friendly format.
       // This requires a handful of replacements to make sure we don't break the API
@@ -64,6 +64,8 @@ export default function GlobalSearch () {
             "serology",
             "taxonomy",
             "experiment",
+            "genome_sequence",
+            "genome_amr", 
           ].includes(searchtype)
         ) {
           return <TypeSearch q={query} searchtype={searchtype} />;

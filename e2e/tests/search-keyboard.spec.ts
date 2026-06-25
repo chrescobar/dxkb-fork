@@ -59,11 +59,11 @@ test.describe("global search (keyboard journey)", () => {
     await page.keyboard.type("influenza");
     await page.keyboard.press("Enter");
 
-    await page.waitForURL(/\/search\?q=influenza(?:&searchtype=[^&]+)?$/, {
+    await page.waitForURL(/\/search\?type=[^&]+&q=influenza$/, {
       timeout: 10_000,
     });
     expect(page.url()).toMatch(/q=influenza/);
-    expect(page.url()).toMatch(/searchtype=everything/);
+    expect(page.url()).toMatch(/type=everything/);
 
     // Beyond URL navigation, the /search page must actually render its results
     // region. A regression that breaks SearchResults rendering would still pass
@@ -202,11 +202,11 @@ test.describe("command palette (Cmd+K)", () => {
     // pressing Enter selects it and the runSearch handler routes us to /search.
     await page.keyboard.press("Enter");
 
-    await page.waitForURL(/\/search\?q=influenza(?:&searchtype=[^&]+)?$/, {
+    await page.waitForURL(/\/search\?type=[^&]+&q=influenza$/, {
       timeout: 10_000,
     });
     expect(page.url()).toMatch(/q=influenza/);
-    expect(page.url()).toMatch(/searchtype=everything/);
+    expect(page.url()).toMatch(/type=everything/);
   });
 
   test("clipboard paste fills the palette input", async ({ page, context, browserName }) => {

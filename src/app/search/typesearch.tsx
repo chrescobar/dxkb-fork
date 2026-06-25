@@ -2,11 +2,14 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect, useMemo, useRef } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { ListData } from "@/components/services/list-data";
 import { GenomeShell } from "@/components/genome/genome-shell";
 import { GenomeDetailPanel } from "@/components/genome/genome-detail-panel";
 import { SearchActionBar } from "@/components/search/search-action-bar";
+import { VerticalMenu } from "@/components/ui/vertical-menu";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight, Activity, Atom, Binary, Blocks, Database, Dna, Eye, FlaskConical, Globe, Handshake, Layers, ListTree, Microscope, Network, Puzzle, Route, Share2, ShieldCheck, Waypoints } from "lucide-react";
 
 // ---- Props interface ----
 export interface TypeSearchProps {
@@ -16,6 +19,46 @@ export interface TypeSearchProps {
 
 // ---- Type for search types ----
 type SearchTypesMap = Record<string, Record<string, string>>;
+
+const searchTypes: SearchTypesMap = {
+  genome: {
+    genome: "Genomes",
+  },
+  genome_amr: {
+    genome_amr: "AMR Phenotypes",
+  },
+  genome_sequence: {
+    genome_sequence: "Sequences",
+  },
+  genome_feature: {
+    genome_feature: "Features",
+  },
+  epitope: {
+    epitope: "Epitopes",
+  },
+  experiment: {
+    experiment: "Experiments",
+    bioset: "Biosets",
+  },
+  protein_feature: {
+    protein_feature: "Domains and Motifs",
+  },
+  protein_structure: {
+    protein_structure: "Protein Structures",
+  },
+  serology: {
+    serology: "Serology",
+  },
+  strain: {
+    strain: "Strains",
+  },
+  surveillance: {
+    surveillance: "Surveillance",
+  },
+  taxonomy: {
+    taxonomy: "Taxa",
+  },
+};
 
 interface TabsRendererProps {
   activeTab: string;
@@ -85,13 +128,15 @@ function TabsRenderer({
 
   return (
     <Tabs value={activeTab} onValueChange={handleTabChange} className="flex min-h-0 flex-1 flex-col overflow-hidden">
-      <TabsList className="mb-0 bg-background pb-0">
-        {Object.entries(tabsForType).map(([term, label]) => (
-          <TabsTrigger key={term} value={term}>
-            {label}
-          </TabsTrigger>
-        ))}
-      </TabsList>
+      {tablist.length > 1 && (
+        <TabsList className="mb-0 bg-background pb-0">
+          {Object.entries(tabsForType).map(([term, label]) => (
+            <TabsTrigger key={term} value={term}>
+              {label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      )}
 
       {Object.keys(tabsForType).map((term) => (
         <TabsContent
@@ -161,50 +206,37 @@ function TabsRenderer({
   );
 }
 
+const searchTypeMenuItems = [
+  { key: "overview",          label: "Overview",           icon: <Blocks className="size-4" /> },
+  { key: "phylogeny",         label: "Phylogeny",          icon: <Network className="size-4" /> },
+  { key: "taxonomy",          label: "Taxa",               icon: <Binary className="size-4" /> },
+  { key: "genome",            label: "Genomes",            icon: <Dna className="size-4" /> },
+  { key: "genome_amr",        label: "AMR Phenotypes",     icon: <ShieldCheck className="size-4" /> },
+  { key: "genome_sequence",   label: "Sequences",          icon: <Database className="size-4" /> },
+  { key: "genome_feature",    label: "Features",           icon: <ListTree className="size-4" /> },
+  { key: "protein",           label: "Proteins",           icon: <Atom className="size-4" /> },
+  { key: "protein_structure", label: "Protein Structures", icon: <Waypoints className="size-4" /> },
+  { key: "sp_gene",           label: "Specialty Genes",    icon: <Microscope className="size-4" /> },
+  { key: "protein_feature",   label: "Domains and Motifs", icon: <Puzzle className="size-4" /> },
+  { key: "epitope",           label: "Epitopes",           icon: <Activity className="size-4" /> },
+  { key: "strain",            label: "Strains",            icon: <Share2 className="size-4" /> },
+  { key: "pathway",           label: "Pathways",           icon: <Route className="size-4" /> },
+  { key: "subsystem",         label: "Subsystems",         icon: <Layers className="size-4" /> },
+  { key: "surveillance",      label: "Surveillance",       icon: <Eye className="size-4" /> },
+  { key: "serology",          label: "Serology",           icon: <Globe className="size-4" /> },
+  { key: "experiment",        label: "Experiments",        icon: <FlaskConical className="size-4" /> },
+  { key: "interaction",       label: "Interactions",       icon: <Handshake className="size-4" /> },
+];
+
 export function TypeSearch({ q, searchtype }: TypeSearchProps) {
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   // Derive URL params directly to avoid extra state + rerender loops.
   const urlQ = q ?? searchParams.get("q") ?? "";
-  const urlType = searchtype ?? searchParams.get("searchtype") ?? "";
+  const urlType = searchtype ?? searchParams.get("type") ?? "";
 
-  // fallback map
-  const searchTypes: SearchTypesMap = {
-    genome: {
-      genome: "Genomes",
-      genome_sequence: "Sequences",
-      genome_amr: "AMR Phenotypes",
-      genome_feature: "Features",
-    },
-    genome_feature: {
-      genome_feature: "Genome Features",
-    },
-    epitope: {
-      epitope: "Epitopes",
-    },
-    experiment: {
-      experiment: "Experiments",
-      bioset: "Biosets",
-    },
-    protein_feature: {
-      protein_feature: "Domains and Motifs",
-    },
-    protein_structure: {
-      protein_structure: "Protein Structures",
-    },
-    serology: {
-      serology: "Serology",
-    },
-    strain: {
-      strain: "Strains",
-    },
-    surveillance: {
-      surveillance: "Surveillance",
-    },
-    taxonomy: {
-      taxonomy: "Taxa",
-    },
-  };
+  const [menuCollapsed, setMenuCollapsed] = useState(false);
 
   // Determine which tab group to render based on urlType (thistype)
   const thistype = urlType || "genome";
@@ -248,6 +280,32 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
     experiment: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/experiments_comparisons_tables.html",
   };
 
+  // The active top-level group: overview when no type is set, otherwise match
+  // the urlType directly or find which group contains it as a sub-tab.
+  const activeGroup = useMemo(() => {
+    if (!urlType || urlType === "everything") return "overview";
+    const searchTypeKeys = searchTypeMenuItems.map(i => i.key);
+    if (searchTypeKeys.includes(urlType)) return urlType;
+    return searchTypeKeys.find(g => Object.keys(searchTypes[g] ?? {}).includes(urlType)) ?? "genome";
+  }, [urlType]);
+
+  const menuItems = searchTypeMenuItems.map(item => ({
+    icon: item.icon,
+    label: item.label,
+    isActive: item.key === activeGroup,
+    onClick: () => {
+      const params = new URLSearchParams();
+      if (item.key === "overview") {
+        if (urlQ) params.set("q", urlQ);
+        router.push(`/search${params.toString() ? `?${params.toString()}` : ""}`);
+      } else {
+        params.set("type", item.key);
+        if (urlQ) params.set("q", urlQ);
+        router.push(`/search?${params.toString()}`);
+      }
+    },
+  }));
+
   // Main return:
   return (
     // Ensure this container fills the available height so child panels using
@@ -255,24 +313,45 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
     // explicit h-full some descendants may compute height auto and allow
     // children to expand the page (pushing the footer).
     <div className="flex h-full min-h-0 flex-1">
-      <GenomeShell
-        hasSidePanel={!!activeGenomeId}
-        actionBar={
-          <SearchActionBar
-            selectedCount={selectedIds.length}
-            searchType={activeTab}
-            guideUrl={guideUrls[activeTab]}
-          />
-        }
-        sidePanel={
-          <GenomeDetailPanel
-            genomeId={activeGenomeId}
-            activeTab={activeTab}
-            selectedIds={selectedIds}
-            isAllPagesSelected={isAllPagesSelected}
-            totalItems={totalItems}
-          />
-        }
+      {/* Left collapsible nav — compact card, self-sized like LandingNav */}
+      <div className="shrink-0 overflow-y-auto p-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="w-fit rounded-lg border bg-card shadow-sm">
+          <div className="flex items-center justify-end p-2">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => { setMenuCollapsed(c => !c); }}
+              title={menuCollapsed ? "Expand navigation" : "Collapse navigation"}
+            >
+              {menuCollapsed ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
+            </Button>
+          </div>
+          <div className="p-2 pt-0">
+            <VerticalMenu items={menuItems} isCollapsed={menuCollapsed} />
+          </div>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        <GenomeShell
+          hasSidePanel={!!activeGenomeId}
+          actionBar={
+            <SearchActionBar
+              selectedCount={selectedIds.length}
+              searchType={activeTab}
+              guideUrl={guideUrls[activeTab]}
+            />
+          }
+          sidePanel={
+            <GenomeDetailPanel
+              genomeId={activeGenomeId}
+              activeTab={activeTab}
+              selectedIds={selectedIds}
+              isAllPagesSelected={isAllPagesSelected}
+              totalItems={totalItems}
+            />
+          }
         >
           <TabsRenderer
             activeTab={activeTab}
@@ -292,7 +371,8 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
             totalItems={totalItems}
             setTotalItems={setTotalItems}
           />
-      </GenomeShell>
+        </GenomeShell>
+      </div>
     </div>
   );
 }

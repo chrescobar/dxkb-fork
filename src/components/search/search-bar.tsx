@@ -36,7 +36,7 @@ function SearchParamsSync({
   useEffect(() => {
     const raw = searchParams.get("q") || "";
     onQueryChange(extractKeywordQuery(raw));
-    const type = searchParams.get("searchtype") || "";
+    const type = searchParams.get("type") || "";
     if (type && searchTypes.some((st) => st.id === type)) onSearchTypeChange(type);
   }, [searchParams, onQueryChange, onSearchTypeChange]);
 
@@ -69,7 +69,7 @@ export function SearchBar({
     if (!inputValue.trim()) return;
 
     router.push(
-      `/search?q=${encodeURIComponent(inputValue)}&searchtype=${selected}`
+      `/search?type=${selected}&q=${encodeURIComponent(inputValue)}`
     );
     void queryClient.invalidateQueries({
       predicate: (query) => {
@@ -94,7 +94,7 @@ export function SearchBar({
           onValueChange={(value) => { setSelected(value ?? "everything"); }}
         >
           <SelectTrigger
-            id="searchtype"
+            id="type"
             aria-label="Search type"
             className={`${size === "lg" ? "h-auto py-6" : ""} min-w-30 rounded-l-md rounded-r-none border-0 border-r border-input bg-background text-sm text-foreground shadow-none focus:ring-0`}
           >

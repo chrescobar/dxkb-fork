@@ -259,7 +259,7 @@ describe("CommandPalette", () => {
       await user.click(searchItem);
 
       expect(mockPush).toHaveBeenCalledWith(
-        "/search?q=influenza&searchtype=everything",
+        "/search?type=everything&q=influenza",
       );
       expect(invalidateSpy).toHaveBeenCalledTimes(1);
 
@@ -286,7 +286,7 @@ describe("CommandPalette", () => {
       await user.click(searchItem);
 
       expect(mockPush).toHaveBeenCalledWith(
-        "/search?q=test%20%26%20more&searchtype=everything",
+        "/search?type=everything&q=test%20%26%20more",
       );
     });
   });

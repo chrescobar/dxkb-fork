@@ -15,32 +15,25 @@ interface NavMenuProps {
 
 export function VerticalMenu({ items, isCollapsed }: NavMenuProps) {
   return (
-    <div className="space-y-1">
+    <div className="flex flex-col gap-1">
       {items.map((item, index) => (
         <Button
           key={index}
           onClick={item.onClick}
           variant="ghost"
           className={cn(
-            "h-10 min-w-10 justify-start p-2 transition-[width] duration-300 ease-in-out",
-            item.isActive && "bg-gray-300 text-secondary hover:bg-gray-300 hover:text-secondary/50",
-            !item.isActive && "text-gray-700 hover:bg-gray-200 hover:text-primary",
-            isCollapsed && "w-10",
-            !isCollapsed && "w-full"
-
+            "min-w-8 px-2 text-foreground transition-[width] duration-300 ease-in-out",
+            item.isActive
+              ? "bg-secondary text-white hover:bg-secondary/90 hover:text-white"
+              : "hover:bg-muted",
+            isCollapsed ? "w-8 justify-center" : "justify-start",
           )}
           title={isCollapsed ? item.label : undefined}
         >
-          <div className="flex h-full items-center gap-2">
-            <span className="flex size-6 shrink-0 items-center justify-center">{item.icon}</span>
-            <span className={`
-              overflow-hidden whitespace-nowrap
-              transition-[width,opacity] duration-300 ease-in-out
-              ${isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"}
-            `}>
-              {item.label}
-            </span>
-          </div>
+          <span className="flex shrink-0 items-center">{item.icon}</span>
+          {!isCollapsed && (
+            <span className="truncate">{item.label}</span>
+          )}
         </Button>
       ))}
     </div>

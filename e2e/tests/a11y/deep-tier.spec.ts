@@ -287,7 +287,7 @@ test.describe("a11y deep tier: search", () => {
     await applyBackendMocks(page, {
       overrides: [...authSessionOverrides, dataApiOverride, ...permissiveBackendOverrides],
     });
-    await page.goto("/search?q=zzznoresultsxxx&searchtype=everything");
+    await page.goto("/search?type=everything&q=zzznoresultsxxx");
     await page.waitForLoadState("networkidle");
 
     await forEachTheme(page, async (theme) => {

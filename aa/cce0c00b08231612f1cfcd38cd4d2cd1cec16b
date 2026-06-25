@@ -1,0 +1,44 @@
+src/lib/taxon-view/curated-lists.ts
+  s_4c86b1a33be67e::t_beb7059298c376 33-35,53-66,75-87,89
+  s_4c86b1a33be67e::t_e90bfb3e9a4926 67-70,72-74
+  s_4c86b1a33be67e::t_069af488524925 71
+  s_4c86b1a33be67e::t_52928ae8dbf76c 41-52
+src/app/api/taxon-view/tab-policy/route.ts
+  s_4c86b1a33be67e::t_0cb5a46a7f3b95 1-18
+src/components/organisms/landing-shell/landing-shell.tsx
+  s_4c86b1a33be67e::t_6625cfc7a455b4 32-37,40,42-45
+src/lib/taxon-view/__tests__/predicates.test.ts
+  s_4c86b1a33be67e::t_abe4a41a1d8722 10,12
+  s_4c86b1a33be67e::t_3f9284c90506c2 136-148,150-161
+  s_4c86b1a33be67e::t_e60f179aa79763 149
+src/components/organisms/landing-shell/__tests__/landing-shell.test.tsx
+  s_4c86b1a33be67e::t_0723d40ee20ec7 115-116,118-124,126-157,162-181
+  s_4c86b1a33be67e::t_c879f822bfeda0 117,125
+  s_4c86b1a33be67e::t_c812ae884d53a0 158-161
+src/lib/taxon-view/predicates.ts
+  s_4c86b1a33be67e::t_6a29735e37f176 8-16
+src/app/api/taxon-view/tab-policy/__tests__/route.test.ts
+  s_4c86b1a33be67e::t_dbf5c4290ca3bb 5
+  s_4c86b1a33be67e::t_da37608a744dc2 1-4,6-18
+src/components/organisms/types.ts
+  s_4c86b1a33be67e::t_d8cf23750d02ea 51-52
+src/lib/taxon-view/__tests__/curated-lists-env.test.ts
+  s_4c86b1a33be67e::t_c99033be817cf7 1-46,58
+  s_4c86b1a33be67e::t_e9ddd54d589c7b 47-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "aacce0c00b08231612f1cfcd38cd4d2cd1cec16b",
+  "prompts": {},
+  "sessions": {
+    "s_4c86b1a33be67e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d75ddb3-e8a6-437b-815b-3b1d6da7f32d",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

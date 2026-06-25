@@ -29,15 +29,20 @@ export function OrganismLandingShell({
   headerContent,
 }: OrganismLandingShellProps) {
   const defaultView = config.defaultView ?? "overview";
-  const requestedKey = isOrganismViewKey(activeViewKey, views) ? activeViewKey : defaultView;
+  // When hideDisabledTabs is set, drop disabled views entirely (hard-hide);
+  // otherwise keep them so they render greyed/disabled (default).
+  const visibleViews = config.hideDisabledTabs
+    ? views.filter((view) => view.enabled !== false)
+    : views;
+  const requestedKey = isOrganismViewKey(activeViewKey, visibleViews) ? activeViewKey : defaultView;
   // requestedKey may still point at a disabled view (when it falls back to a
   // disabled defaultView), so require enabled here and fall back to the first
-  // enabled view, then to views[0] as a last resort.
+  // enabled view, then to visibleViews[0] as a last resort.
   const activeView =
-    views.find((view) => view.key === requestedKey && view.enabled !== false) ??
-    views.find((view) => view.enabled !== false) ??
-    views[0];
-  const navItems: OrganismLandingNavItem[] = views.map(
+    visibleViews.find((view) => view.key === requestedKey && view.enabled !== false) ??
+    visibleViews.find((view) => view.enabled !== false) ??
+    visibleViews[0];
+  const navItems: OrganismLandingNavItem[] = visibleViews.map(
     ({ key, label, icon, enabled, disabledReason }) => ({
       key,
       label,

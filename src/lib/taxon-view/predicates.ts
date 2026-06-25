@@ -5,6 +5,15 @@ import type { TabContext } from "./tab-context";
 export const isBacteria = (c: TabContext): boolean =>
   c.taxonomy.lineageNames.includes("Bacteria");
 
+// Kingdom predicates for the "neither bacterium nor virus" branch (doc §7.5).
+// Building blocks for future per-kingdom tab gates; not yet wired into
+// gatesByKey (tab assignments pending product sign-off — see phase-2 plan).
+export const isFungi = (c: TabContext): boolean =>
+  c.taxonomy.lineageNames.includes("Fungi");
+
+export const isArchaea = (c: TabContext): boolean =>
+  c.taxonomy.lineageNames.includes("Archaea");
+
 /**
  * Segmented-genome viruses get a Strains tab. Influenza & relatives sit under
  * the family Orthomyxoviridae; the bunyavirus side keys on the CLASS

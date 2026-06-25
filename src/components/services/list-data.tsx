@@ -78,7 +78,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   };
 
   const searchParams = useSearchParams();
-  const searchtype = searchParams.get('searchtype') ?? '';
+  const searchtype = searchParams.get('type') ?? '';
   const cleanQ = q.split('#')[0];
   const DataAPI = process.env.NEXT_PUBLIC_DATA_API;
   if (!DataAPI) {
@@ -356,7 +356,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
         }}
       />
 
-      <div className="flex-1 overflow-hidden">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         {!columnVisibility || !fields.length ? (
           <div>Loading...</div>
         ) : (

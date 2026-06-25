@@ -234,7 +234,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
 
   // Derive URL params directly to avoid extra state + rerender loops.
   const urlQ = q ?? searchParams.get("q") ?? "";
-  const urlType = searchtype ?? searchParams.get("searchtype") ?? "";
+  const urlType = searchtype ?? searchParams.get("type") ?? "";
 
   const [menuCollapsed, setMenuCollapsed] = useState(false);
 
@@ -295,11 +295,12 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
     isActive: item.key === activeGroup,
     onClick: () => {
       const params = new URLSearchParams();
-      if (urlQ) params.set("q", urlQ);
       if (item.key === "overview") {
+        if (urlQ) params.set("q", urlQ);
         router.push(`/search${params.toString() ? `?${params.toString()}` : ""}`);
       } else {
-        params.set("searchtype", item.key);
+        params.set("type", item.key);
+        if (urlQ) params.set("q", urlQ);
         router.push(`/search?${params.toString()}`);
       }
     },
@@ -313,7 +314,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
     // children to expand the page (pushing the footer).
     <div className="flex h-full min-h-0 flex-1">
       {/* Left collapsible nav — compact card, self-sized like LandingNav */}
-      <div className="shrink-0 self-start p-2">
+      <div className="shrink-0 overflow-y-auto p-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <div className="w-fit rounded-lg border bg-card shadow-sm">
           <div className="flex items-center justify-end p-2">
             <Button

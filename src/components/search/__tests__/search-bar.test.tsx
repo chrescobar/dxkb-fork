@@ -86,7 +86,7 @@ describe("SearchBar", () => {
       expect(mockPush).not.toHaveBeenCalled();
     });
 
-    it("navigates to /search with query and default searchtype", async () => {
+    it("navigates to /search with query and default type", async () => {
       const user = userEvent.setup();
       renderSearchBar();
 
@@ -94,7 +94,7 @@ describe("SearchBar", () => {
       fireEvent.submit(getForm());
 
       expect(mockPush).toHaveBeenCalledWith(
-        "/search?q=SARS-CoV-2&searchtype=everything",
+        "/search?type=everything&q=SARS-CoV-2",
       );
     });
 
@@ -106,7 +106,7 @@ describe("SearchBar", () => {
       fireEvent.submit(getForm());
 
       expect(mockPush).toHaveBeenCalledWith(
-        "/search?q=test%20%26%20more&searchtype=everything",
+        "/search?type=everything&q=test%20%26%20more",
       );
     });
 

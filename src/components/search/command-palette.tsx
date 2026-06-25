@@ -108,7 +108,7 @@ export function CommandPalette() {
     if (!trimmed) return;
     runCommand(() => {
       router.push(
-        `/search?q=${encodeURIComponent(trimmed)}&searchtype=everything`,
+        `/search?type=everything&q=${encodeURIComponent(trimmed)}`,
       );
       void queryClient.invalidateQueries({
         predicate: (query) => {

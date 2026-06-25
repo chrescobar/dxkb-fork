@@ -29,18 +29,18 @@ const views: OrganismLandingView[] = [
   { key: "genomes", label: "Genomes", icon: <span />, Component: Genomes },
 ];
 
-describe("OrganismLandingShell — gate-aware tab resolution", () => {
-  function view(key: OrganismViewKey, enabled = true): OrganismLandingView {
-    return {
-      key,
-      label: key,
-      icon: null,
-      enabled,
-      disabledReason: enabled ? undefined : "nope",
-      Component: () => <div data-testid={`view-${key}`}>{key} view</div>,
-    };
-  }
+function view(key: OrganismViewKey, enabled = true): OrganismLandingView {
+  return {
+    key,
+    label: key,
+    icon: null,
+    enabled,
+    disabledReason: enabled ? undefined : "nope",
+    Component: () => <div data-testid={`view-${key}`}>{key} view</div>,
+  };
+}
 
+describe("OrganismLandingShell — gate-aware tab resolution", () => {
   it("falls back to the default view when ?tab points at a disabled tab", () => {
     render(
       <OrganismLandingShell
@@ -110,5 +110,61 @@ describe("OrganismLandingShell", () => {
 
     const desktopNav = screen.getByRole("navigation", { name: "Organism views" });
     expect(within(desktopNav).getByText("Views")).toBeInTheDocument();
+  });
+});
+
+describe("OrganismLandingShell — hideDisabledTabs", () => {
+  it("removes disabled tabs from the nav when hideDisabledTabs is true", () => {
+    render(
+      <OrganismLandingShell
+        config={{
+          displayName: "T",
+          taxonId: 1,
+          accent: "all",
+          metadataFields: [],
+          defaultView: "overview",
+          hideDisabledTabs: true,
+        }}
+        views={[view("overview"), view("amr-phenotypes", false)]}
+      />,
+    );
+    expect(screen.queryByRole("button", { name: /amr-phenotypes/i })).not.toBeInTheDocument();
+  });
+
+  it("still shows disabled tabs greyed when hideDisabledTabs is false (default)", () => {
+    render(
+      <OrganismLandingShell
+        config={{
+          displayName: "T",
+          taxonId: 1,
+          accent: "all",
+          metadataFields: [],
+          defaultView: "overview",
+        }}
+        views={[view("overview"), view("amr-phenotypes", false)]}
+      />,
+    );
+    const desktopNav = screen.getByRole("navigation", { name: "Organism views" });
+    expect(
+      within(desktopNav).getByRole("button", { name: /amr-phenotypes/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("renders the first enabled view as active when defaultView is hidden by hideDisabledTabs", () => {
+    render(
+      <OrganismLandingShell
+        config={{
+          displayName: "T",
+          taxonId: 1,
+          accent: "all",
+          metadataFields: [],
+          defaultView: "amr-phenotypes",
+          hideDisabledTabs: true,
+        }}
+        views={[view("amr-phenotypes", false), view("genomes", true)]}
+      />,
+    );
+    expect(screen.getByTestId("view-genomes")).toBeInTheDocument();
+    expect(screen.queryByTestId("view-amr-phenotypes")).not.toBeInTheDocument();
   });
 });

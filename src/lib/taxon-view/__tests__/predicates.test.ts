@@ -7,7 +7,9 @@ import {
   hasStrains,
   hasSurveillance,
   hasViralTree,
+  isArchaea,
   isBacteria,
+  isFungi,
 } from "../predicates";
 import { getCuratedLists } from "../curated-lists";
 
@@ -129,5 +131,31 @@ describe("buildTabContext", () => {
     const built = buildTabContext(null, null, getCuratedLists());
     expect(built.taxonomy.lineageNames).toEqual([]);
     expect(built.taxonomy.lineageIds).toEqual([]);
+  });
+});
+
+describe("kingdom predicates — fungi and archaea", () => {
+  it("isFungi true when lineage contains 'Fungi'", () => {
+    expect(isFungi(ctx({ lineageNames: ["Eukaryota", "Fungi", "Ascomycota", "Candida"] }))).toBe(true);
+    expect(isFungi(ctx({ lineageNames: ["Bacteria"] }))).toBe(false);
+    expect(isFungi(ctx({ lineageNames: ["Viruses"] }))).toBe(false);
+    expect(isFungi(ctx({ lineageNames: [] }))).toBe(false);
+  });
+
+  it("isArchaea true when lineage contains 'Archaea'", () => {
+    expect(isArchaea(ctx({ lineageNames: ["Archaea", "Euryarchaeota"] }))).toBe(true);
+    expect(isArchaea(ctx({ lineageNames: ["Bacteria"] }))).toBe(false);
+    expect(isArchaea(ctx({ lineageNames: ["Eukaryota", "Fungi"] }))).toBe(false);
+    expect(isArchaea(ctx({ lineageNames: [] }))).toBe(false);
+  });
+
+  it("isFungi and isArchaea are mutually exclusive with isBacteria", () => {
+    const fungalCtx = ctx({ lineageNames: ["Eukaryota", "Fungi"] });
+    expect(isBacteria(fungalCtx)).toBe(false);
+    expect(isFungi(fungalCtx)).toBe(true);
+
+    const archaealCtx = ctx({ lineageNames: ["Archaea"] });
+    expect(isBacteria(archaealCtx)).toBe(false);
+    expect(isArchaea(archaealCtx)).toBe(true);
   });
 });

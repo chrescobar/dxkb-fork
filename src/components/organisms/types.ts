@@ -48,6 +48,8 @@ export interface OrganismLandingConfig {
   metadataFields: string[];
   showAmr?: boolean;
   defaultView?: OrganismViewKey;
+  /** When true, tabs with enabled=false are removed from the strip. Default: false (shown greyed). */
+  hideDisabledTabs?: boolean;
 }
 
 // Sentinel that can be placed in metadataFields to position the Taxonomic

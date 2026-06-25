@@ -66,4 +66,18 @@ describe("getCuratedLists — env-var override", () => {
     expect(lists.sfvtTaxonIds.has(12637)).toBe(true); // default preserved
     expect(lists.sfvtTaxonIds.has("1" as never)).toBe(false); // not split into chars
   });
+
+  it("keeps valid sibling overrides when one key has a wrong type", async () => {
+    // A non-array sfvtTaxonIds must NOT throw and discard the whole parse result.
+    // The bad key falls back to its default; the valid surveillanceLineageNames
+    // override must still be applied.
+    process.env.TAXON_VIEW_POLICY_JSON = JSON.stringify({
+      sfvtTaxonIds: "12637",
+      surveillanceLineageNames: ["Custom pathogen"],
+    });
+    const { getCuratedLists } = await import("../curated-lists");
+    const lists = getCuratedLists();
+    expect(lists.sfvtTaxonIds.has(12637)).toBe(true); // bad key → default
+    expect(lists.surveillanceLineageNames.has("Custom pathogen")).toBe(true); // valid override kept
+  });
 });

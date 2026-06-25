@@ -65,11 +65,13 @@ function parseEnvPolicy(): CuratedLists | null {
     };
     return {
       sfvtTaxonIds: mergedSet(
-        // Coerce string IDs (e.g. "12637") to numbers; filter NaN from
-        // non-numeric entries. JSON.parse's type assertion doesn't validate
-        // element types, so ["12637"] would silently produce a Set<string>
-        // that hasSfvt's numeric .has() always misses.
-        parsed.sfvtTaxonIds?.map(Number).filter((n) => !isNaN(n)),
+        // Array.isArray guard before .map: a non-array value (e.g. scalar
+        // "12637") has no .map, so calling it throws and the catch discards
+        // ALL valid sibling overrides. Guard first, then coerce string IDs
+        // and filter NaN so ["12637"] → Set<number> works correctly.
+        Array.isArray(parsed.sfvtTaxonIds)
+          ? parsed.sfvtTaxonIds.map(Number).filter((n) => !isNaN(n))
+          : undefined,
         defaultLists.sfvtTaxonIds,
       ),
       surveillanceLineageNames: mergedSet(

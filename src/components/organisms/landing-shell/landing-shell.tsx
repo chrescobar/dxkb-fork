@@ -37,11 +37,13 @@ export function OrganismLandingShell({
   const requestedKey = isOrganismViewKey(activeViewKey, visibleViews) ? activeViewKey : defaultView;
   // requestedKey may still point at a disabled view (when it falls back to a
   // disabled defaultView), so require enabled here and fall back to the first
-  // enabled view, then to visibleViews[0] as a last resort.
+  // enabled view. .at(0) (not [0]) gives T | undefined so the null guard below
+  // is type-safe — hideDisabledTabs=true with all views disabled yields an
+  // empty visibleViews and a real runtime undefined.
   const activeView =
     visibleViews.find((view) => view.key === requestedKey && view.enabled !== false) ??
     visibleViews.find((view) => view.enabled !== false) ??
-    visibleViews[0];
+    visibleViews.at(0);
   const navItems: OrganismLandingNavItem[] = visibleViews.map(
     ({ key, label, icon, enabled, disabledReason }) => ({
       key,

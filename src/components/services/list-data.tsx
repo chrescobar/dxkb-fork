@@ -48,7 +48,8 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     void (async () => {
       try {
         const mod = await import(`@/constants/datafields/${resource}`) as Record<string, Record<string, DataField> | undefined>;
-        const fieldObj = mod[`${resource}Fields`];
+        const camelResource = resource.replace(/_([a-z])/g, (_: string, c: string) => c.toUpperCase());
+        const fieldObj = mod[`${camelResource}Fields`];
         if (!fieldObj) {
           console.error(`No fields definition found for resource: ${resource}`);
           return;

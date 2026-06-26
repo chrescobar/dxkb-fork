@@ -1,6 +1,6 @@
 import type { DataFieldMap } from "./types";
 
-export const genome_featureFields = {
+export const genomeFeatureFields = {
     genome_id: { 
         label: 'Genome ID', 
         field: 'genome_id', 

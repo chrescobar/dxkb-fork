@@ -1,0 +1,28 @@
+src/constants/datafields/sequence_feature_vt.ts
+  s_9c5e7a31c13648::t_3b9866910ac73a 7-78
+  s_0d3ff4390970e2::t_ea45965176531c 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "29db9595cffbd199ab2adf7ca1fedceaa5270e80",
+  "prompts": {},
+  "sessions": {
+    "s_0d3ff4390970e2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "11225583-60cf-4520-ab41-2a6c801afb0e",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_9c5e7a31c13648": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9f25f1b0-796c-4042-a734-ce1ef3e4ade5",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

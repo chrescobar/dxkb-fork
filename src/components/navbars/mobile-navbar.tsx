@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 import { useQuery } from "@tanstack/react-query";
+import { NavbarThemeSwitcher } from "@/components/navbars/theme-switcher-navbar";
 import {
   Star,
   ChevronDown,
@@ -450,6 +451,8 @@ const MobileNavbar = () => {
               {isSearchOpen ? <ChevronUp size={18} /> : <Search size={18} />}
             </Button>
           )}
+
+          <NavbarThemeSwitcher />
 
           {isLoading && (
             <div className="flex items-center space-x-2">

@@ -323,6 +323,8 @@ test.describe("a11y deep tier: command palette", () => {
     });
     await page.goto("/jobs");
     await page.waitForLoadState("networkidle");
+    // WebKit requires explicit page focus before keyboard events reach document listeners.
+    await page.locator("body").click();
 
     const modifierKey = process.platform === "darwin" ? "Meta" : "Control";
     await page.keyboard.press(`${modifierKey}+K`);

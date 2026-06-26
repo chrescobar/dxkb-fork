@@ -4,7 +4,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { TailwindIndicator } from "@/components/ui/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
-import { ThemeSwitcher } from "@/styles/theme-switcher-floating";
 import { Providers } from "./providers";
 import { AuthBoundary } from "@/lib/auth/provider";
 import { auth } from "@/lib/auth/server/instance";
@@ -51,7 +50,6 @@ export default async function RootLayout({
               </TooltipProvider>
               <CommandPalette />
             </AuthBoundary>
-            <ThemeSwitcher />
             <Toaster
               richColors
               position="top-right"

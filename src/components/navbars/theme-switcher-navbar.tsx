@@ -35,13 +35,15 @@ export function NavbarThemeSwitcher() {
 
   if (!isMounted) return null;
 
-  const currentTheme = theme ?? "zinc-light";
+  const currentTheme = theme ?? "dxkb-light";
   const dashIdx = currentTheme.lastIndexOf("-");
-  const currentBase = currentTheme.slice(0, dashIdx);
-  const currentMode = currentTheme.slice(dashIdx + 1) as "light" | "dark";
+  const parsedBase = dashIdx > 0 ? currentTheme.slice(0, dashIdx) : "";
+  const parsedMode = dashIdx > 0 ? currentTheme.slice(dashIdx + 1) : "";
+  const currentBase = themeBases.includes(parsedBase) ? parsedBase : "zinc";
+  const currentMode: "light" | "dark" = parsedMode === "dark" ? "dark" : "light";
   const isDark = currentMode === "dark";
 
-  const setBase = (base: string) => setTheme(`${base}-${currentMode}`);
+  const setBase = (base: string) => { setTheme(`${base}-${currentMode}`); };
   const toggleMode = (mode: "light" | "dark") => {
     if (mode !== currentMode) setTheme(`${currentBase}-${mode}`);
   };
@@ -72,7 +74,7 @@ export function NavbarThemeSwitcher() {
         <div className="p-2 pb-1">
           <div className="flex rounded-md bg-muted p-0.5">
             <button
-              onClick={() => toggleMode("light")}
+              onClick={() => { toggleMode("light"); }}
               className={cn(
                 "flex flex-1 items-center justify-center gap-1.5 rounded py-1.5 text-xs font-medium transition-all duration-150",
                 !isDark
@@ -84,7 +86,7 @@ export function NavbarThemeSwitcher() {
               Light
             </button>
             <button
-              onClick={() => toggleMode("dark")}
+              onClick={() => { toggleMode("dark"); }}
               className={cn(
                 "flex flex-1 items-center justify-center gap-1.5 rounded py-1.5 text-xs font-medium transition-all duration-150",
                 isDark
@@ -99,7 +101,7 @@ export function NavbarThemeSwitcher() {
         </div>
 
         {/* Theme list */}
-        <div className="px-2 pb-1 pt-0">
+        <div className="px-2 pt-0 pb-1">
           {themeBases.map((base, i) => {
             const isSelected = currentBase === base;
             return (

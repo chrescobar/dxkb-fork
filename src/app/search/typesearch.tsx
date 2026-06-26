@@ -314,7 +314,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
     // children to expand the page (pushing the footer).
     <div className="flex h-full min-h-0 flex-1">
       {/* Left collapsible nav — compact card, self-sized like LandingNav */}
-      <div className="shrink-0 overflow-y-auto p-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="shrink-0 [scrollbar-width:none] overflow-y-auto p-2 [&::-webkit-scrollbar]:hidden">
         <div className="w-fit rounded-lg border bg-card shadow-sm">
           <div className="flex items-center justify-end p-2">
             <Button

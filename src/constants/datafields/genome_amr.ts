@@ -1,6 +1,6 @@
 import type { DataFieldMap } from "./types";
 
-export const genome_amrFields = {
+export const genomeAmrFields = {
     taxon_id: { 
         label: 'Taxon ID', 
         field: 'taxon_id', 

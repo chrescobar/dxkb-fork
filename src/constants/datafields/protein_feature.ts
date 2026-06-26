@@ -1,6 +1,6 @@
 import type { DataFieldMap } from "./types";
 
-export const protein_featureFields = {
+export const proteinFeatureFields = {
     id: { 
         label: 'ID', 
         field: 'id', 

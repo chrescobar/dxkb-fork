@@ -1,14 +1,14 @@
 import { useWorkspaceDu } from "@/hooks/services/workspace/use-workspace-du";
 
 import { genomeFields } from "@/constants/datafields/genome";
-import { genome_sequenceFields } from "@/constants/datafields/genome_sequence";
-import { genome_amrFields } from "@/constants/datafields/genome_amr";
-import { genome_featureFields } from "@/constants/datafields/genome_feature";
+import { genomeSequenceFields } from "@/constants/datafields/genome_sequence";
+import { genomeAmrFields } from "@/constants/datafields/genome_amr";
+import { genomeFeatureFields } from "@/constants/datafields/genome_feature";
 import { biosetFields } from "@/constants/datafields/bioset";
-import { protein_featureFields } from "@/constants/datafields/protein_feature";
+import { proteinFeatureFields } from "@/constants/datafields/protein_feature";
 import { epitopeFields } from "@/constants/datafields/epitope";
 import { experimentFields } from "@/constants/datafields/experiment";
-import { protein_structureFields } from "@/constants/datafields/protein_structure";
+import { proteinStructureFields } from "@/constants/datafields/protein_structure";
 import { serologyFields } from "@/constants/datafields/serology";
 import { strainFields } from "@/constants/datafields/strain";
 import { surveillanceFields } from "@/constants/datafields/surveillance";
@@ -155,18 +155,18 @@ export function InfoPanel(props: InfoPanelProps) {
       break;
     case 'genome_sequence':
       panelTitleField = 'sequence_id';
-      fieldFile = genome_sequenceFields;
+      fieldFile = genomeSequenceFields;
       allowedFields = ["genome_id", "genome_name", "taxon_id", "sequence_id", "accession", "sequence_status", "topology", "description", "gc_content", "length", "sequence_md5", "release_date", "version", "date_inserted", "date_modified"];
       order = ["General Info","Taxonomy Info", "Sequence Info", "Additional Info"];
       break;
     case 'genome_amr':
-      fieldFile = genome_amrFields;
+      fieldFile = genomeAmrFields;
       allowedFields = ['taxon_id', 'genome_id', 'genome_name', 'antibiotic', 'evidence', 'pmid', 'resistant_phenotype', 'measurement_sign', 'measurement_value', 'measurement_unit', 'laboratory_typing_method', 'laboratory_typing_method_version', 'laboratory_typing_platform', 'vendor', 'testing_standard', 'testing_standard_year', 'computational_method', 'computational_method_version', 'computational_method_performance'];
       order = ["Summary","Measurement","Laboratory Method","Computational Method"];
       break;
     case 'genome_feature':
       panelTitleField = 'patric_id';
-      fieldFile = genome_featureFields;
+      fieldFile = genomeFeatureFields;
       allowedFields = ['genome_id', 'genome_name', 'taxon_id', 'sequence_id', 'accession', 'annotation', 'feature_type', 'feature_id', 'alt_locus_tag', 'patric_id', 'refseq_locus_tag', 'protein_id', 'gene_id', 'uniprotkb_accession', 'pdb_accession', 'start', 'end', 'strand', 'location', 'segments', 'Codon Start', 'na_length', 'aa_length', 'na_sequence_md5', 'aa_sequence_md5', 'gene', 'date_inserted', 'product', 'plfam_id','pgfam_id', 'sog_id', 'og_id', 'go','property', 'notes', 'classifier_score', 'classifier_round'];
       order = ['Genome','Source','Identifiers','DB Cross References','Location','Sequences','Annotation','Families','Misc','Provenance'];
       break;
@@ -178,7 +178,7 @@ export function InfoPanel(props: InfoPanelProps) {
       break;
     case 'protein_feature':
       panelTitleField = 'genome_id';
-      fieldFile = protein_featureFields;
+      fieldFile = proteinFeatureFields;
       allowedFields = ['genome_id', 'genome_name', 'taxon_id', 'patric_id', 'refseq_locus_tag', 'gene', 'product', 'interpro_id', 'interpro_description', 'feature_type', 'source', 'source_id', 'description', 'classification', 'score', 'e_value', 'evidence', 'publication', 'start', 'end', 'segments', 'length', 'sequence', 'comments', 'date_inserted'];
       order = ['Genome Info','Sequence Info','Feature Info','Additional Info'];
       break;
@@ -190,7 +190,7 @@ export function InfoPanel(props: InfoPanelProps) {
       break;
     case 'protein_structure':
       panelTitleField = 'pdb_id';
-      fieldFile = protein_structureFields;
+      fieldFile = proteinStructureFields;
       allowedFields = ['pdb_id', 'title', 'organism_name', 'taxon_id', 'genome_id', 'patric_id', 'uniprotkb_accession', 'gene', 'product', 'method', 'resolution', 'pmid', 'institution', 'authors', 'release_date', 'file_path', 'date_inserted'];
       order = ['General Info','Structure Info','Additional Info'];
       break;

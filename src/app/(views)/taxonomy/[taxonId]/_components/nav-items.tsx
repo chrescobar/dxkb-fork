@@ -10,6 +10,10 @@ import { resolveTabs } from "@/lib/taxon-view/tab-policy";
 import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 
 import { makeOverviewView } from "../views/overview";
+import { makeStrainsView } from "../views/strains";
+import { makeSurveillanceView } from "../views/surveillance";
+import { makeSerologyView } from "../views/serology";
+import { makeSfvtView } from "../views/sfvt";
 
 /**
  * Build the taxon-view tab strip by evaluating the declarative tab policy
@@ -31,5 +35,9 @@ export function buildTaxonomyNavItems(
         showAmr: config.showAmr ?? false,
       }),
     },
+    strains: { Component: makeStrainsView({ taxon }) },
+    surveillance: { Component: makeSurveillanceView({ taxon }) },
+    serology: { Component: makeSerologyView({ taxon }) },
+    sfvt: { Component: makeSfvtView({ taxon }) },
   });
 }

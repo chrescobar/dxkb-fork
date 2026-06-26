@@ -1,0 +1,32 @@
+src/components/navbars/theme-switcher-navbar.tsx
+  s_130c4bd86e5fc6::t_01cb942ccf5ef3 71,74-76,78-82,84-88,90-94,96-98,101,112-113,125
+  s_130c4bd86e5fc6::t_d2ab2024a6770d 1-4,6-14,32,38-44,48-55,59-60,62-65,67-68,70,99-100,103-109,111,114-115,117,120,126-130,134-139
+  s_130c4bd86e5fc6::t_533c663e286d79 5,15-18,29-31,33-37,45-47,56-58,61,69,119
+  s_130c4bd86e5fc6::t_f16d9013d05e05 131
+  s_130c4bd86e5fc6::t_7e4321168d988c 19-28
+  s_130c4bd86e5fc6::t_761ac2d20af2a8 72
+  s_130c4bd86e5fc6::t_578d8202fbe600 73,77,83,89,95,110,116,118,122-124
+  s_130c4bd86e5fc6::t_7bca5087fff44f 102
+  s_130c4bd86e5fc6::t_61c39c229e5a3f 66
+  s_130c4bd86e5fc6::t_2d8aa0bf69171c 132-133
+  s_130c4bd86e5fc6::t_a6de5dfbe24e00 121
+src/components/navbars/desktop-navbar.tsx
+  s_130c4bd86e5fc6::t_ca65ad458f54ee 175
+  s_130c4bd86e5fc6::t_7731c945ebea47 33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "3b543030ac462c4e7c9cd907a710f8b998977713",
+  "prompts": {},
+  "sessions": {
+    "s_130c4bd86e5fc6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05d1650d-e9f7-48b4-a709-3d3c241df18b",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

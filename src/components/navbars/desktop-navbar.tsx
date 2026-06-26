@@ -30,6 +30,7 @@ import {
 } from "@/components/navbars/workspace-dropdown-content";
 import { SuBanner } from "@/components/auth/su-banner";
 import { JobStatusPill } from "@/components/jobs/job-status-pill";
+import { NavbarThemeSwitcher } from "@/components/navbars/theme-switcher-navbar";
 
 const serviceEntries = Object.entries(serviceItems) as unknown as [string, NavSection][];
 const serviceColumns = [
@@ -171,6 +172,7 @@ const DesktopNavbar = () => {
         )}
 
         <div className="flex items-center space-x-2">
+          <NavbarThemeSwitcher />
           <div className="flex items-center space-x-2">
             {isLoading && (
               <div className="flex items-center space-x-2">

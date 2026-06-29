@@ -1,0 +1,19 @@
+e2e/tests/organisms/all.spec.ts
+  s_b59a28686f266c::t_6783c21f845723 31-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "5a697abd66d5406d08ae1db1f128f713007bb4d2",
+  "prompts": {},
+  "sessions": {
+    "s_b59a28686f266c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9f4c388b-8834-4907-b063-6d67e48c59e5",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

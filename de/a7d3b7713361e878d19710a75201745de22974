@@ -1,0 +1,42 @@
+src/components/organisms/shared/__tests__/default-nav-items.test.tsx
+  s_41a040dd6b48d0::t_f8437bc1a7086a 92-94,98-100,106
+  s_41a040dd6b48d0::t_34529b5fad38c4 10,12
+src/lib/taxon-view/tab-policy.tsx
+  s_41a040dd6b48d0::t_2c2910e52bd849 34,37-38
+src/components/organisms/landing-shell/__tests__/landing-nav.test.tsx
+  s_41a040dd6b48d0::t_4c3b7dbcf35822 93,102-104,113
+src/lib/taxon-view/__tests__/tab-policy.test.ts
+  s_41a040dd6b48d0::t_c3b9bbc3201728 71
+  s_41a040dd6b48d0::t_12e9111a8f5a48 33
+  s_41a040dd6b48d0::t_18da665481ff2a 37,39,42-43
+  s_41a040dd6b48d0::t_647a8158bc4b7d 55-57
+  s_41a040dd6b48d0::t_87fcf9f44fea12 113,118
+src/app/organisms/all/__tests__/page.test.tsx
+  s_41a040dd6b48d0::t_b9a7ab4d0b4c12 23,29
+src/components/organisms/landing-shell/__tests__/landing-shell.test.tsx
+  s_41a040dd6b48d0::t_e0e3e5164cdca3 48-49,53,60-61,65,128,131,144,149,161,164,168
+src/app/organisms/bacteria/__tests__/page.test.tsx
+  s_41a040dd6b48d0::t_97bb2b1a2e3536 23,29
+src/app/(views)/taxonomy/[taxonId]/__tests__/page.test.tsx
+  s_41a040dd6b48d0::t_66dab0788cf103 89,92,98,104,114-116
+src/app/(views)/taxonomy/[taxonId]/__tests__/nav-items.test.tsx
+  s_41a040dd6b48d0::t_f0ba41c35e6fb8 11,14,17,21,25,28-31
+src/components/organisms/landing-shell/__tests__/landing-mobile-nav.test.tsx
+  s_41a040dd6b48d0::t_7923376d1e88dc 92,98-100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "dea7d3b7713361e878d19710a75201745de22974",
+  "prompts": {},
+  "sessions": {
+    "s_41a040dd6b48d0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4990b4b2-5f74-44e9-852b-36ecf77ab646",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

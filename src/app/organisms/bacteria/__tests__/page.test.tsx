@@ -20,13 +20,13 @@ describe("BacteriaPage", () => {
 
   it("renders legacy placeholder tabs through URL state", async () => {
     const node = await BacteriaPage({
-      searchParams: Promise.resolve({ tab: "amr-phenotypes" }),
+      searchParams: Promise.resolve({ tab: "sequences" }),
     });
 
     render(node);
 
     // Active label appears 3×: desktop nav button, mobile pill, placeholder heading.
-    expect(screen.getAllByText("AMR Phenotypes")).toHaveLength(3);
+    expect(screen.getAllByText("Sequences")).toHaveLength(3);
     expect(
       screen.getByText(/This view is coming soon/),
     ).toBeInTheDocument();

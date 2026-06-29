@@ -90,7 +90,7 @@ describe("LandingNav", () => {
 
 const withDisabled: OrganismLandingNavItem[] = [
   { key: "overview", label: "Overview", icon: <Blocks /> },
-  { key: "amr-phenotypes", label: "AMR Phenotypes", icon: <Dna />, enabled: false, disabledReason: "AMR phenotypes apply to bacterial taxa." },
+  { key: "phylogeny", label: "Phylogeny", icon: <Dna />, enabled: false, disabledReason: "No phylogenetic tree available for this taxon." },
 ];
 
 describe("LandingNav — disabled tabs", () => {
@@ -99,9 +99,9 @@ describe("LandingNav — disabled tabs", () => {
     render(
       <LandingNav items={withDisabled} activeView="overview" collapsed={false} onChange={onChange} onCollapseToggle={vi.fn()} />,
     );
-    const amr = screen.getByRole("button", { name: /AMR Phenotypes/ });
-    expect(amr).toHaveAttribute("aria-disabled", "true");
-    await userEvent.click(amr);
+    const phylogeny = screen.getByRole("button", { name: /Phylogeny/ });
+    expect(phylogeny).toHaveAttribute("aria-disabled", "true");
+    await userEvent.click(phylogeny);
     expect(onChange).not.toHaveBeenCalled();
   });
 
@@ -110,6 +110,6 @@ describe("LandingNav — disabled tabs", () => {
       <LandingNav items={withDisabled} activeView="overview" collapsed onChange={vi.fn()} onCollapseToggle={vi.fn()} />,
     );
     // The wrapping span carries the aria-label with the reason when collapsed + disabled
-    expect(screen.getByLabelText(/AMR phenotypes apply to bacterial taxa/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/No phylogenetic tree available/)).toBeInTheDocument();
   });
 });

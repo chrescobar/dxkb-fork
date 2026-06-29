@@ -86,22 +86,22 @@ describe("TaxonomyPage", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders placeholder stub for amr-phenotypes view", async () => {
+  it("renders placeholder stub for sequences view", async () => {
     const node = await TaxonomyPage({
       params: Promise.resolve({ taxonId: "234" }),
-      searchParams: Promise.resolve({ tab: "amr-phenotypes" }),
+      searchParams: Promise.resolve({ tab: "sequences" }),
     });
 
     render(node);
 
     // Active label appears 3×: desktop nav button, mobile pill, placeholder heading.
-    expect(screen.getAllByText("AMR Phenotypes")).toHaveLength(3);
+    expect(screen.getAllByText("Sequences")).toHaveLength(3);
     expect(
       screen.getByText(/This view is coming soon/),
     ).toBeInTheDocument();
   });
 
-  it("shows AMR Phenotypes disabled (not removed) for viral taxa", async () => {
+  it("shows Interactions disabled (not removed) for viral taxa", async () => {
     fetchOrganismTaxonomyMock.mockResolvedValueOnce(viralTaxon);
     const node = await TaxonomyPage({
       params: Promise.resolve({ taxonId: "11320" }),
@@ -111,9 +111,9 @@ describe("TaxonomyPage", () => {
     render(node);
 
     // Present in the desktop rail, now rendered disabled rather than omitted.
-    const amrButtons = screen.getAllByRole("button", { name: /AMR Phenotypes/ });
-    expect(amrButtons.length).toBeGreaterThan(0);
-    expect(amrButtons.some((b) => b.getAttribute("aria-disabled") === "true")).toBe(true);
+    const interactionsButtons = screen.getAllByRole("button", { name: /Interactions/ });
+    expect(interactionsButtons.length).toBeGreaterThan(0);
+    expect(interactionsButtons.some((b) => b.getAttribute("aria-disabled") === "true")).toBe(true);
   });
 
   it("calls notFound for non-numeric taxonId", async () => {

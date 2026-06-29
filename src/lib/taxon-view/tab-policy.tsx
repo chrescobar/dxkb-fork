@@ -31,12 +31,11 @@ const descriptorByKey = new Map<OrganismViewKey, DefaultViewDescriptor>(
   [...defaultViewDescriptors, ...extraViewDescriptors].map((d) => [d.key, d]),
 );
 
-// Display order for the 20-tab taxon strip (biological grouping).
+// Display order for the 15-tab taxon strip (biological grouping).
 const taxonTabOrder: readonly OrganismViewKey[] = [
   "overview", "phylogeny", "taxonomy", "strains", "genomes",
-  "amr-phenotypes", "sequences", "features", "proteins",
-  "protein-structures", "specialty-genes", "domains-and-motifs",
-  "sfvt", "epitopes", "pathways", "subsystems", "experiments",
+  "sequences", "features", "protein-structures",
+  "domains-and-motifs", "sfvt", "epitopes", "experiments",
   "surveillance", "serology", "interactions",
 ];
 
@@ -49,10 +48,6 @@ interface Gate {
 // (always enabled). Phylogeny is one label over two gates (bacterial OR viral).
 const gatesByKey: Partial<Record<OrganismViewKey, Gate>> = {
   phylogeny: { enabled: hasBacterialOrViralPhylogeny, disabledReason: "No phylogenetic tree available for this taxon." },
-  "amr-phenotypes": { enabled: isBacteria, disabledReason: "AMR phenotypes apply to bacterial taxa." },
-  "specialty-genes": { enabled: isBacteria, disabledReason: "Specialty genes apply to bacterial taxa." },
-  pathways: { enabled: isBacteria, disabledReason: "Metabolic pathways apply to bacterial taxa." },
-  subsystems: { enabled: isBacteria, disabledReason: "Subsystems apply to bacterial taxa." },
   interactions: { enabled: isBacteria, disabledReason: "Interaction data applies to bacterial taxa." },
   strains: { enabled: hasStrains, disabledReason: "Strains apply to segmented-genome viruses." },
   surveillance: { enabled: hasSurveillance, disabledReason: "No surveillance data for this pathogen." },
@@ -77,7 +72,7 @@ function resolveComponent(
 }
 
 /**
- * Evaluate the full tab policy against a TabContext. Returns all 20 tabs in
+ * Evaluate the full tab policy against a TabContext. Returns all 15 tabs in
  * fixed order; each conditional tab whose gate fails is marked `enabled: false`
  * with a `disabledReason`. Baseline tabs are always enabled. Override semantics
  * mirror buildOrganismNavItems (swap Component, or rewrite placeholder copy).

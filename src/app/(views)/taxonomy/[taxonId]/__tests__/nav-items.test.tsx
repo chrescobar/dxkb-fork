@@ -8,28 +8,27 @@ function tax(over: Partial<OrganismTaxonomy>): OrganismTaxonomy {
 }
 
 describe("buildTaxonomyNavItems", () => {
-  it("returns all 20 tabs", () => {
+  it("returns all 15 tabs", () => {
     const taxon = tax({ lineageNames: ["Bacteria"] });
     const items = buildTaxonomyNavItems(buildTaxonomyConfig(1, taxon), taxon, null);
-    expect(items).toHaveLength(20);
+    expect(items).toHaveLength(15);
   });
 
-  it("enables the bacteria cluster for a bacterial taxon", () => {
+  it("enables interactions for a bacterial taxon", () => {
     const taxon = tax({ taxonId: 562, lineageNames: ["Bacteria", "Pseudomonadota"], lineageIds: [2, 562] });
     const items = buildTaxonomyNavItems(buildTaxonomyConfig(562, taxon), taxon, null);
     const byKey = Object.fromEntries(items.map((i) => [i.key, i.enabled !== false]));
-    expect(byKey["amr-phenotypes"]).toBe(true);
-    expect(byKey["pathways"]).toBe(true);
+    expect(byKey["interactions"]).toBe(true);
     expect(byKey["strains"]).toBe(false);
   });
 
-  it("disables the bacteria cluster (shown, not removed) for a viral taxon", () => {
+  it("disables interactions (shown, not removed) for a viral taxon", () => {
     const taxon = tax({ taxonId: 11320, lineageNames: ["Viruses", "Orthomyxoviridae"], lineageIds: [10239, 11320] });
     const items = buildTaxonomyNavItems(buildTaxonomyConfig(11320, taxon), taxon, null);
-    const amr = items.find((i) => i.key === "amr-phenotypes");
-    expect(amr).toBeDefined();
-    expect(amr?.enabled).toBe(false);
-    expect(amr?.disabledReason).toMatch(/bacterial/i);
+    const interactions = items.find((i) => i.key === "interactions");
+    expect(interactions).toBeDefined();
+    expect(interactions?.enabled).toBe(false);
+    expect(interactions?.disabledReason).toMatch(/bacterial/i);
   });
 
   it("injects the real overview component (not a placeholder)", () => {

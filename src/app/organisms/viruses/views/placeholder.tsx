@@ -12,10 +12,6 @@ export function FeaturesView() {
   return <PlaceholderView title="Features" />;
 }
 
-export function ProteinsView() {
-  return <PlaceholderView title="Proteins" />;
-}
-
 export function ProteinStructuresView() {
   return <PlaceholderView title="Protein Structures" />;
 }

@@ -28,8 +28,8 @@ test.describe("all organisms landing page", () => {
     await expect(page).toHaveURL(/tab=phylogeny/);
     await expect(page.getByText("This view is coming soon")).toBeVisible();
 
-    await page.getByRole("button", { name: /AMR Phenotypes/ }).click();
-    await expect(page).toHaveURL(/tab=amr-phenotypes/);
+    await page.getByRole("button", { name: /Taxonomy/ }).click();
+    await expect(page).toHaveURL(/tab=taxonomy/);
     await expect(page.getByText("This view is coming soon")).toBeVisible();
   });
 

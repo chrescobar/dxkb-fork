@@ -89,15 +89,15 @@ describe("LandingMobileNav — disabled tabs", () => {
     const onChange = vi.fn();
     const disabledItems = [
       { key: "overview", label: "Overview", icon: <Blocks /> },
-      { key: "amr-phenotypes", label: "AMR Phenotypes", icon: <Dna />, enabled: false, disabledReason: "bacterial only" },
+      { key: "phylogeny", label: "Phylogeny", icon: <Dna />, enabled: false, disabledReason: "No phylogenetic tree available for this taxon." },
     ] as OrganismLandingNavItem[];
 
     render(<LandingMobileNav items={disabledItems} activeView="overview" onChange={onChange} />);
     await userEvent.click(screen.getByRole("button", { name: /Views:/ }));
 
-    const amr = await screen.findByRole("button", { name: /AMR Phenotypes/ });
-    expect(amr).toHaveAttribute("aria-disabled", "true");
-    await userEvent.click(amr);
+    const phylogeny = await screen.findByRole("button", { name: /Phylogeny/ });
+    expect(phylogeny).toHaveAttribute("aria-disabled", "true");
+    await userEvent.click(phylogeny);
     expect(onChange).not.toHaveBeenCalled();
   });
 });

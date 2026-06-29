@@ -30,18 +30,17 @@ function enabledKeys(
 
 const baseline: OrganismViewKey[] = [
   "overview", "taxonomy", "genomes", "sequences", "features",
-  "proteins", "protein-structures", "domains-and-motifs", "epitopes", "experiments",
+  "protein-structures", "domains-and-motifs", "epitopes", "experiments",
 ];
 
 describe("resolveTabs — structure", () => {
-  it("always returns all 20 tabs in fixed order", () => {
+  it("always returns all 15 tabs in fixed order", () => {
     const tabs = resolveTabs(buildTabContext(null, null, getCuratedLists()));
-    expect(tabs).toHaveLength(20);
+    expect(tabs).toHaveLength(15);
     expect(tabs.map((t) => t.key)).toEqual([
       "overview", "phylogeny", "taxonomy", "strains", "genomes",
-      "amr-phenotypes", "sequences", "features", "proteins",
-      "protein-structures", "specialty-genes", "domains-and-motifs",
-      "sfvt", "epitopes", "pathways", "subsystems", "experiments",
+      "sequences", "features", "protein-structures",
+      "domains-and-motifs", "sfvt", "epitopes", "experiments",
       "surveillance", "serology", "interactions",
     ]);
   });
@@ -53,9 +52,9 @@ describe("resolveTabs — structure", () => {
 
   it("disabled tabs carry a disabledReason", () => {
     const ctx = buildTabContext(tax({ lineageNames: ["Viruses"] }), null, getCuratedLists());
-    const amr = resolveTabs(ctx).find((t) => t.key === "amr-phenotypes");
-    expect(amr?.enabled).toBe(false);
-    expect(amr?.disabledReason).toMatch(/bacterial/i);
+    const interactions = resolveTabs(ctx).find((t) => t.key === "interactions");
+    expect(interactions?.enabled).toBe(false);
+    expect(interactions?.disabledReason).toMatch(/bacterial/i);
   });
 
   it("applies a Component override (overview)", () => {
@@ -69,7 +68,7 @@ describe("resolveTabs — structure", () => {
 describe("resolveTabs — doc §5 truth table (conditional tabs only)", () => {
   const cond: OrganismViewKey[] = [
     "phylogeny", "strains", "surveillance", "serology", "sfvt",
-    "amr-phenotypes", "specialty-genes", "pathways", "subsystems", "interactions",
+    "interactions",
   ];
   function condEnabled(taxon: OrganismTaxonomy, manifest?: PhyloManifest | null) {
     const keys = enabledKeys(taxon, manifest ?? null);
@@ -111,12 +110,12 @@ describe("resolveTabs — doc §5 truth table (conditional tabs only)", () => {
 
   it("E. coli (562) — bacteria cluster + phylogeny, no viral-only tabs", () => {
     const result = condEnabled(tax({ taxonId: 562, lineageNames: ["Bacteria", "Pseudomonadota"], lineageIds: [2, 562] }));
-    expect(result).toEqual(["phylogeny", "amr-phenotypes", "specialty-genes", "pathways", "subsystems", "interactions"]);
+    expect(result).toEqual(["phylogeny", "interactions"]);
   });
 
   it("Mycobacterium genus (1763) — same bacterial set as a species (rank-independent)", () => {
     const result = condEnabled(tax({ taxonId: 1763, taxonRank: "genus", lineageNames: ["Bacteria", "Actinomycetota"], lineageIds: [2, 1763] }));
-    expect(result).toEqual(["phylogeny", "amr-phenotypes", "specialty-genes", "pathways", "subsystems", "interactions"]);
+    expect(result).toEqual(["phylogeny", "interactions"]);
   });
 
   it("Fungi (4751) — baseline only (doc §7.5)", () => {

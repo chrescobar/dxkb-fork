@@ -7,24 +7,19 @@ function CustomOverview() {
 }
 
 describe("buildOrganismNavItems", () => {
-  it("returns 16 default nav items in fixed order", () => {
+  it("returns 11 default nav items in fixed order", () => {
     const items = buildOrganismNavItems();
-    expect(items).toHaveLength(16);
+    expect(items).toHaveLength(11);
     expect(items.map((i) => i.key)).toEqual([
       "overview",
       "phylogeny",
       "taxonomy",
       "genomes",
-      "amr-phenotypes",
       "sequences",
       "features",
-      "proteins",
       "protein-structures",
-      "specialty-genes",
       "domains-and-motifs",
       "epitopes",
-      "pathways",
-      "subsystems",
       "experiments",
       "interactions",
     ]);
@@ -94,20 +89,20 @@ describe("buildOrganismNavItems", () => {
   });
 
   it("exclude removes the listed keys from the returned list", () => {
-    const items = buildOrganismNavItems({}, { exclude: ["amr-phenotypes"] });
-    expect(items).toHaveLength(15);
-    expect(items.find((i) => i.key === "amr-phenotypes")).toBeUndefined();
+    const items = buildOrganismNavItems({}, { exclude: ["sequences"] });
+    expect(items).toHaveLength(10);
+    expect(items.find((i) => i.key === "sequences")).toBeUndefined();
   });
 
   it("exclude accepts multiple keys", () => {
-    const items = buildOrganismNavItems({}, { exclude: ["amr-phenotypes", "epitopes"] });
-    expect(items).toHaveLength(14);
-    expect(items.find((i) => i.key === "amr-phenotypes")).toBeUndefined();
+    const items = buildOrganismNavItems({}, { exclude: ["sequences", "epitopes"] });
+    expect(items).toHaveLength(9);
+    expect(items.find((i) => i.key === "sequences")).toBeUndefined();
     expect(items.find((i) => i.key === "epitopes")).toBeUndefined();
   });
 
   it("omitting the options object preserves all default items", () => {
     const items = buildOrganismNavItems({ overview: { Component: CustomOverview } });
-    expect(items).toHaveLength(16);
+    expect(items).toHaveLength(11);
   });
 });

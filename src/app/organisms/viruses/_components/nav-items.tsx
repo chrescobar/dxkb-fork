@@ -1,6 +1,5 @@
 import {
   Activity,
-  Atom,
   Binary,
   Blocks,
   Boxes,
@@ -19,7 +18,6 @@ import {
   ExperimentsView,
   FeaturesView,
   GenomesView,
-  ProteinsView,
   ProteinStructuresView,
   TaxonomyView,
 } from "../views/placeholder";
@@ -48,12 +46,6 @@ export const virusNavItems: OrganismLandingView[] = [
     label: "Features",
     icon: <ListTree />,
     Component: FeaturesView,
-  },
-  {
-    key: "proteins",
-    label: "Proteins",
-    icon: <Atom />,
-    Component: ProteinsView,
   },
   {
     key: "protein-structures",

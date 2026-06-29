@@ -72,7 +72,7 @@ function resolveComponent(
 }
 
 /**
- * Evaluate the full tab policy against a TabContext. Returns all 20 tabs in
+ * Evaluate the full tab policy against a TabContext. Returns all 15 tabs in
  * fixed order; each conditional tab whose gate fails is marked `enabled: false`
  * with a `disabledReason`. Baseline tabs are always enabled. Override semantics
  * mirror buildOrganismNavItems (swap Component, or rewrite placeholder copy).

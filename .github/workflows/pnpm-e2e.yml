@@ -57,6 +57,13 @@ jobs:
 
       - name: Build app
         run: pnpm build
+        env:
+          # NEXT_PUBLIC_* vars inline at build time, so the loopback Data API
+          # (mirrored from .env.e2e.test, which is only loaded at server-start and
+          # thus can't reach client bundles) must be baked here for client-side
+          # fetches like the taxonomy tree. Port 3020 is the repo-wide e2e default
+          # (playwright.config.ts, start-webserver.mjs); keep in sync if it changes.
+          NEXT_PUBLIC_DATA_API: "http://127.0.0.1:3020/api/e2e-mock/data"
 
       - name: Set up auth state
         run: pnpm e2e --project=setup-signed-in
@@ -124,6 +131,10 @@ jobs:
 
       - name: Build app
         run: pnpm build
+        env:
+          # See note on the sync-linux-snapshots build: NEXT_PUBLIC_* inlines at
+          # build time, so the loopback Data API must be baked for client fetches.
+          NEXT_PUBLIC_DATA_API: "http://127.0.0.1:3020/api/e2e-mock/data"
 
       - name: Run e2e tests
         run: pnpm e2e --project=setup-signed-in --project="$BROWSER"

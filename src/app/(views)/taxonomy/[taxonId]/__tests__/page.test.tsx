@@ -51,6 +51,16 @@ vi.mock("@/components/organisms/metadata-distributions/metadata-distributions", 
   },
 }));
 
+// The taxonomy tree view client-fetches via TanStack Query and renders inside
+// GenomeShell (react-resizable-panels needs ResizeObserver, absent in jsdom). Its
+// behavior is covered by taxonomy-tree.test.tsx; here we only assert the page wires
+// it under tab=taxonomy, so stub the factory to a plain marker.
+vi.mock("../views/taxonomy-tree-view", () => ({
+  makeTaxonomyTreeView: () => function TaxonomyTreeView() {
+    return <div data-testid="taxonomy-tree" />;
+  },
+}));
+
 vi.mock("next/navigation", () => ({
   notFound: () => notFoundSpy(),
   useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn() }),
@@ -73,7 +83,7 @@ describe("TaxonomyPage", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders the taxonomy stub view when tab=taxonomy", async () => {
+  it("renders the taxonomy tree view when tab=taxonomy", async () => {
     const node = await TaxonomyPage({
       params: Promise.resolve({ taxonId: "234" }),
       searchParams: Promise.resolve({ tab: "taxonomy" }),
@@ -81,9 +91,7 @@ describe("TaxonomyPage", () => {
 
     render(node);
 
-    expect(
-      screen.getByText(/Taxonomy browsing is stubbed/),
-    ).toBeInTheDocument();
+    expect(screen.getByTestId("taxonomy-tree")).toBeInTheDocument();
   });
 
   it("renders placeholder stub for sequences view", async () => {

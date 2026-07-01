@@ -1,0 +1,54 @@
+src/components/organisms/shared/default-nav-items.tsx
+  s_bdab883f339bb7::t_fc430719a64790 35-36,38
+src/components/organisms/shared/__tests__/default-nav-items.test.tsx
+  s_bdab883f339bb7::t_d8e08ebf20dd02 16
+src/app/organisms/viruses/__tests__/page.test.tsx
+  s_bdab883f339bb7::t_6ea21851107946 8
+  s_bdab883f339bb7::t_b41001b4acfdb2 51,57-58
+src/components/taxonomy/taxon-tree-types.ts
+  s_bdab883f339bb7::t_13d6b98874800c 29-30
+src/components/organisms/types.ts
+  s_bdab883f339bb7::t_da47a1af327004 6
+e2e/tests/taxonomy-tree.spec.ts
+  s_bdab883f339bb7::t_bb70c75278f935 65,92
+src/app/(views)/taxonomy/[taxonId]/_components/nav-items.tsx
+  s_bdab883f339bb7::t_ff866a4eda2cfe 39
+src/app/organisms/all/__tests__/page.test.tsx
+  s_bdab883f339bb7::t_b96868f2a8850c 8
+src/lib/taxon-view/__tests__/tab-policy.test.ts
+  s_bdab883f339bb7::t_99766bf08103ac 32
+  s_bdab883f339bb7::t_5560fe6caf956c 41
+src/lib/taxon-view/tab-policy.tsx
+  s_bdab883f339bb7::t_608b37482639ed 36
+src/components/taxonomy/taxonomy-tree.tsx
+  s_bdab883f339bb7::t_df9fc78f2bbf2f 272-291
+  s_bdab883f339bb7::t_8e1b4e2091dc25 18
+  s_bdab883f339bb7::t_3be4aa5b148658 468-473
+  s_bdab883f339bb7::t_d0d0b0d3eac9f1 516
+src/app/(views)/taxonomy/[taxonId]/__tests__/page.test.tsx
+  s_bdab883f339bb7::t_736368a30f3e14 76,86,89
+  s_bdab883f339bb7::t_615f5d5b853430 57
+src/app/organisms/viruses/_components/nav-items.tsx
+  s_bdab883f339bb7::t_c771d2a7f888bf 33-34
+src/app/organisms/all/_components/nav-items.tsx
+  s_bdab883f339bb7::t_be8cab54126732 10
+src/app/organisms/bacteria/__tests__/page.test.tsx
+  s_bdab883f339bb7::t_7a533af869e5cc 17
+  s_bdab883f339bb7::t_8fcc237858971b 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.8",
+  "base_commit_sha": "90e33b784ef1464f9e6297defbd302d3158404b3",
+  "prompts": {},
+  "sessions": {
+    "s_bdab883f339bb7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f429e9e0-3bc0-4da0-8df6-91d38cff3b16",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

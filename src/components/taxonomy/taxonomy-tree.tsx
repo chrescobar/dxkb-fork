@@ -15,7 +15,7 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronRight, Loader2 } from "lucide-react";
+import { ChevronRight, Loader2, Network } from "lucide-react";
 import clsx from "clsx";
 
 import {
@@ -107,9 +107,6 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   // Parents whose children fetch is in flight. Read (fresh) inside the memoized
   // columns via ref to drive the inline chevron spinner without a stale closure.
   const loadingParentIdsRef = useRef<Set<number>>(new Set());
-  // Same reason: columns memo ([] deps) reads the live child-count via ref so the
-  // count badge reflects the latest facet/loaded data without rebuilding columns.
-  const childCountRef = useRef<(id: number) => number | undefined>(() => undefined);
   // Accumulated per-id child counts (id → count). Immutable within a session, so
   // once resolved a count is never refetched or blanked — this is what kills the flash.
   const knownChildCountsRef = useRef<Map<number, number>>(new Map());
@@ -160,7 +157,6 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
     if (loaded) return loaded.filter((c) => !isPlaceholder(c)).length;
     return knownChildCountsRef.current.get(id);
   }
-  childCountRef.current = childCount;
 
   const columns = useMemo<ColumnDef<TaxonRecord>[]>(
     () => [
@@ -240,14 +236,6 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
               >
                 {record.taxon_name}
               </Link>
-              {(() => {
-                const count = childCountRef.current(numericId(record));
-                return count && count > 0 ? (
-                  <Badge variant="secondary" className="ml-1.5 px-1.5 py-0 text-[10px] font-normal">
-                    {numberFormatter.format(count)}
-                  </Badge>
-                ) : null;
-              })()}
             </span>
           );
         },
@@ -280,6 +268,26 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
           return typeof g === "number" ? numberFormatter.format(g) : "";
         },
         size: 100,
+      },
+      {
+        id: "trees",
+        header: "Trees",
+        // Root row only (legacy parity). Disabled for now — will deep-link to the
+        // Phylogeny tab once that view lands.
+        cell: ({ row }) =>
+          isPlaceholder(row.original) || row.depth !== 0 ? null : (
+            <button
+              type="button"
+              disabled
+              aria-label="View phylogenetic tree (coming soon)"
+              title="Phylogenetic tree — coming soon"
+              className="flex size-4 cursor-not-allowed items-center justify-center text-emerald-600 opacity-60"
+              onClick={(e) => { e.stopPropagation(); }}
+            >
+              <Network className="size-3.5" />
+            </button>
+          ),
+        size: 64,
       },
     ],
     [],
@@ -457,7 +465,12 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
                     style={{
                       width: header.getSize() || undefined,
                       flex: header.column.id === "taxon_name" ? 1 : undefined,
-                      justifyContent: header.column.id === "genomes" ? "flex-end" : undefined,
+                      justifyContent:
+                        header.column.id === "genomes"
+                          ? "flex-end"
+                          : header.column.id === "trees"
+                            ? "center"
+                            : undefined,
                     }}
                   >
                     {flexRender(header.column.columnDef.header, header.getContext())}
@@ -500,7 +513,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
                             whiteSpace: "nowrap",
                             textOverflow: "ellipsis",
                             justifyContent:
-                              cell.column.id === "__select__"
+                              cell.column.id === "__select__" || cell.column.id === "trees"
                                 ? "center"
                                 : cell.column.id === "genomes"
                                   ? "flex-end"

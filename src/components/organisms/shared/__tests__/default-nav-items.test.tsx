@@ -13,7 +13,7 @@ describe("buildOrganismNavItems", () => {
     expect(items.map((i) => i.key)).toEqual([
       "overview",
       "phylogeny",
-      "taxonomy",
+      "taxa-tree",
       "genomes",
       "sequences",
       "features",

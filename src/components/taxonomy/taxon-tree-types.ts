@@ -26,6 +26,8 @@ export const rankConfig: Record<string, string> = {
   family: "bg-teal-100 text-teal-700 border-teal-200",
   genus: "bg-emerald-100 text-emerald-700 border-emerald-200",
   species: "bg-amber-100 text-amber-700 border-amber-200",
+  serotype: "bg-rose-100 text-rose-700 border-rose-200",
+  subtype: "bg-rose-100 text-rose-700 border-rose-200",
   strain: "bg-orange-100 text-orange-700 border-orange-200",
 };
 

@@ -32,10 +32,10 @@ export const defaultViewDescriptors: readonly DefaultViewDescriptor[] = [
     description: "Phylogeny data and visualization are planned for a follow-up view.",
   },
   {
-    key: "taxonomy",
-    label: "Taxonomy",
+    key: "taxa-tree",
+    label: "Taxa Tree",
     icon: <Binary />,
-    description: "Taxonomy browsing is stubbed while the overview data panels are brought online.",
+    description: "Taxa Tree browsing is stubbed while the overview data panels are brought online.",
   },
   {
     key: "genomes",

@@ -29,7 +29,7 @@ function enabledKeys(
 }
 
 const baseline: OrganismViewKey[] = [
-  "overview", "taxonomy", "genomes", "sequences", "features",
+  "overview", "taxa-tree", "genomes", "sequences", "features",
   "protein-structures", "domains-and-motifs", "epitopes", "experiments",
 ];
 
@@ -38,7 +38,7 @@ describe("resolveTabs — structure", () => {
     const tabs = resolveTabs(buildTabContext(null, null, getCuratedLists()));
     expect(tabs).toHaveLength(15);
     expect(tabs.map((t) => t.key)).toEqual([
-      "overview", "phylogeny", "taxonomy", "strains", "genomes",
+      "overview", "phylogeny", "taxa-tree", "strains", "genomes",
       "sequences", "features", "protein-structures",
       "domains-and-motifs", "sfvt", "epitopes", "experiments",
       "surveillance", "serology", "interactions",

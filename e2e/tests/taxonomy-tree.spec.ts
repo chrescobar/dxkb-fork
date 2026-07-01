@@ -62,7 +62,7 @@ test.describe("taxonomy tree tab", () => {
   });
 
   test("auto-expands genus, lazily expands a species to its strains, and opens the panel", async ({ page }) => {
-    await page.goto("/taxonomy/234?tab=taxonomy");
+    await page.goto("/taxonomy/234?tab=taxa-tree");
 
     // Root genus row + auto-expanded species children.
     await expect(page.getByRole("link", { name: "Brucella", exact: true })).toBeVisible();
@@ -89,7 +89,7 @@ test.describe("taxonomy tree tab", () => {
   });
 
   test("filters the loaded rows by name", async ({ page }) => {
-    await page.goto("/taxonomy/234?tab=taxonomy");
+    await page.goto("/taxonomy/234?tab=taxa-tree");
     await expect(page.getByRole("link", { name: "Brucella abortus", exact: true })).toBeVisible();
 
     await page.getByRole("searchbox", { name: "Search by taxonomy name" }).fill("melitensis");

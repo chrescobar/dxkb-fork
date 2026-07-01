@@ -33,7 +33,7 @@ const descriptorByKey = new Map<OrganismViewKey, DefaultViewDescriptor>(
 
 // Display order for the 15-tab taxon strip (biological grouping).
 const taxonTabOrder: readonly OrganismViewKey[] = [
-  "overview", "phylogeny", "taxonomy", "strains", "genomes",
+  "overview", "phylogeny", "taxa-tree", "strains", "genomes",
   "sequences", "features", "protein-structures",
   "domains-and-motifs", "sfvt", "epitopes", "experiments",
   "surveillance", "serology", "interactions",

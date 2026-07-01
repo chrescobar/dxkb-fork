@@ -3,7 +3,7 @@ import type { ComponentType, ReactNode } from "react";
 export type OrganismViewKey =
   | "overview"
   | "phylogeny"
-  | "taxonomy"
+  | "taxa-tree"
   | "genomes"
   | "sequences"
   | "features"

@@ -36,7 +36,7 @@ export function buildTaxonomyNavItems(
         showAmr: config.showAmr ?? false,
       }),
     },
-    taxonomy: { Component: makeTaxonomyTreeView({ taxon }) },
+    "taxa-tree": { Component: makeTaxonomyTreeView({ taxon }) },
     strains: { Component: makeStrainsView({ taxon }) },
     surveillance: { Component: makeSurveillanceView({ taxon }) },
     serology: { Component: makeSerologyView({ taxon }) },

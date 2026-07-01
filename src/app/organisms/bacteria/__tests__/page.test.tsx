@@ -5,7 +5,7 @@ import BacteriaPage from "../page";
 describe("BacteriaPage", () => {
   it("renders the selected stub view through the shared shell", async () => {
     const node = await BacteriaPage({
-      searchParams: Promise.resolve({ tab: "taxonomy" }),
+      searchParams: Promise.resolve({ tab: "taxa-tree" }),
     });
 
     render(node);
@@ -14,7 +14,7 @@ describe("BacteriaPage", () => {
       screen.getByRole("heading", { level: 1, name: "Bacteria" }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Taxonomy browsing is stubbed/),
+      screen.getByText(/Taxa Tree browsing is stubbed/),
     ).toBeInTheDocument();
   });
 

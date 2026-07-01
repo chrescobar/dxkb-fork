@@ -1,0 +1,102 @@
+src/components/taxonomy/taxon-tree-types.ts
+  s_bdab883f339bb7::t_f6db58646c980d 16-31
+  s_bdab883f339bb7::t_c2838323dba70c 1-15,32-38
+src/app/(views)/taxonomy/[taxonId]/__tests__/page.test.tsx
+  s_bdab883f339bb7::t_4763c86ae28dc8 86,94
+  s_bdab883f339bb7::t_d0921fd04e50da 62-63
+  s_bdab883f339bb7::t_8ac6855008f11e 54-61
+src/components/taxonomy/use-taxon-children.ts
+  s_bdab883f339bb7::t_4d98c54ed47431 69-129
+  s_bdab883f339bb7::t_77a0a0de2ec753 1-6,12,18,20-24,62-63,65,67-68
+  s_bdab883f339bb7::t_6e99486e2e95fd 7-11
+  s_bdab883f339bb7::t_29c5ff58a9b0d9 13-17,19,25-61,64,66
+src/app/(views)/taxonomy/[taxonId]/views/taxonomy-tree-view.tsx
+  s_bdab883f339bb7::t_cb6a087660be82 1,7
+  s_bdab883f339bb7::t_f5220c84ecb27d 2-6,8-10
+src/__tests__/react-compiler-config.test.ts
+  s_bdab883f339bb7::t_b390e9941fb20d 11
+src/components/taxonomy/__tests__/taxonomy-tree.test.tsx
+  s_bdab883f339bb7::t_6b85f541e1855d 53-55,59-72
+  s_bdab883f339bb7::t_996099bb4bc4f8 138-140
+  s_bdab883f339bb7::t_9b97e8163c8f8a 4-10
+  s_bdab883f339bb7::t_7ec365a8ed2f52 1-3,36-52,56-58,73-119,122-137,141-180
+  s_bdab883f339bb7::t_c99cf30d22f2c3 11-35
+  s_bdab883f339bb7::t_07082ae8a9271a 120-121
+src/app/(views)/taxonomy/[taxonId]/_components/nav-items.tsx
+  s_bdab883f339bb7::t_14e93701dbab4d 13
+  s_bdab883f339bb7::t_b14d0fba18cec2 39
+.github/workflows/pnpm-e2e.yml
+  s_bdab883f339bb7::t_967845f477db34 60-66
+  s_bdab883f339bb7::t_4fca4a83ae2da9 134-137
+src/components/taxonomy/__tests__/use-taxon-children.test.ts
+  s_bdab883f339bb7::t_299edad287a8fb 49-50
+  s_bdab883f339bb7::t_26e21de8406f5a 25
+  s_bdab883f339bb7::t_3ce1f469072ed7 1-6,8-24,26-34,36-48,51-94
+  s_bdab883f339bb7::t_830ecc51e864f5 35
+  s_bdab883f339bb7::t_2a016467e79df8 95-146
+  s_bdab883f339bb7::t_4670dc2bf28740 7
+src/components/taxonomy/taxonomy-tree-panel.tsx
+  s_bdab883f339bb7::t_bf266981e57961 1-38
+eslint.config.mjs
+  s_bdab883f339bb7::t_821bf2aec5023e 86
+e2e/tests/taxonomy-tree.spec.ts
+  s_bdab883f339bb7::t_a6b96ef1f31d3f 28,35
+  s_bdab883f339bb7::t_414e2a70da11a0 14,19-27,29-34,36
+  s_bdab883f339bb7::t_ad74d35feaa853 11-13,15
+  s_bdab883f339bb7::t_e04fdfd9659941 1-10,16-18,37-51,55,57-100
+  s_bdab883f339bb7::t_1d94d0e46aeeb9 52-54,56
+src/components/taxonomy/taxonomy-tree.tsx
+  s_bdab883f339bb7::t_198d80f2f4bc13 445
+  s_bdab883f339bb7::t_fdb75cc7b6d33e 29-30,33-34
+  s_bdab883f339bb7::t_9b637513d3aae4 163
+  s_bdab883f339bb7::t_04953d14352946 243-250,259-270,277-281
+  s_bdab883f339bb7::t_cb72ff1c4da4b6 413-418,420,423-425,428-430
+  s_bdab883f339bb7::t_42dc18b14759c1 7
+  s_bdab883f339bb7::t_1e43a964ee1a47 148,158-160,162
+  s_bdab883f339bb7::t_3ed20fa2c2eb04 110-112
+  s_bdab883f339bb7::t_9d2d9239650ed4 135-138,140,144,153
+  s_bdab883f339bb7::t_7a91eff9763752 155-157,161
+  s_bdab883f339bb7::t_75a49f16beea99 384
+  s_bdab883f339bb7::t_6badcbb562977d 113-115
+  s_bdab883f339bb7::t_fb4c70d87fc985 202-203,205
+  s_bdab883f339bb7::t_bcd4bdc4f2ef04 470,491
+  s_bdab883f339bb7::t_832d1c7a212fee 39-43
+  s_bdab883f339bb7::t_ff778d351a29b7 221-231
+  s_bdab883f339bb7::t_ae6c1a5d2db485 345-350
+  s_bdab883f339bb7::t_42eb1a45671f41 412,419,421-422,426-427,431
+  s_bdab883f339bb7::t_bf41d461549e1c 107-109
+  s_bdab883f339bb7::t_823cab97095617 324-332
+  s_bdab883f339bb7::t_6fda77860d532c 116
+  s_bdab883f339bb7::t_ddc1b3db945a66 342-344
+  s_bdab883f339bb7::t_afb8437fb15d57 5
+  s_bdab883f339bb7::t_306127fbda2d61 18
+  s_bdab883f339bb7::t_ac4d5d2fa6f8ce 295-296,304-310
+  s_bdab883f339bb7::t_1ccef645db5051 1-2,4,6,8-17,19-28,31-32,35-38,44-86,104-105,117-134,164-201,204,206-217,219-220,232-242,251-258,271-276,282-287,311-323,333-341,351-357,407-411,432-444,446-456,462-469,471-477,518-524
+  s_bdab883f339bb7::t_27cdf2e41a5c18 3
+  s_bdab883f339bb7::t_d57227bb38f71d 297-303
+  s_bdab883f339bb7::t_aff194d013ff70 106
+  s_bdab883f339bb7::t_faa2b76454ae08 390-399,401-402
+  s_bdab883f339bb7::t_fa7a45d5641d67 218
+  s_bdab883f339bb7::t_6f7572828a6919 87-103
+  s_bdab883f339bb7::t_973d7b32669644 288-294
+  s_bdab883f339bb7::t_2cc46f8843f041 457-461
+  s_bdab883f339bb7::t_9ffda3f2cea045 139,141-143,145-147,149-152,154
+  s_bdab883f339bb7::t_ff5e8e8d8f29e2 478-490,492-517
+  s_bdab883f339bb7::t_72d3347735608d 358-383,385-389,400,403-406
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.8",
+  "base_commit_sha": "1dea2ec025ba60fc5f5bb2f718d702ab2253da1c",
+  "prompts": {},
+  "sessions": {
+    "s_bdab883f339bb7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f429e9e0-3bc0-4da0-8df6-91d38cff3b16",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -451,18 +451,18 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
         />
       </div>
 
-      <div className="relative min-h-0 flex-1 overflow-auto rounded border border-gray-500" ref={scrollRef}>
+      <div className="relative min-h-0 flex-1 overflow-auto rounded-lg border border-gray-500" ref={scrollRef}>
         <Table className="w-full table-auto border-collapse text-xs" disableScrollWrapper>
           <TableHeader
             className="bg-muted text-foreground "
             style={{ position: "sticky", top: 0, zIndex: 30 }}
           >
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="flex border-y border-primary bg-muted">
+              <TableRow key={headerGroup.id} className="flex border-y border-gray-300 bg-muted">
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="flex items-center border-r border-primary px-2 py-0"
+                    className="flex items-center border-r border-gray-300 px-2 py-0"
                     style={{
                       width: header.getSize() || undefined,
                       height: rowHeight,
@@ -485,7 +485,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
           <TableBody>
             {rows.length === 0 ? (
               <TableRow className="flex w-full">
-                <TableCell className="w-full border-t border-primary py-8 text-center text-muted-foreground">
+                <TableCell className="w-full border-t border-gray-300 py-8 text-center text-muted-foreground">
                   No results
                 </TableCell>
               </TableRow>
@@ -507,7 +507,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
                           key={cell.id}
-                          className="flex items-center overflow-hidden border-r border-primary px-2"
+                          className="flex items-center overflow-hidden border-r border-gray-300 px-2"
                           style={{
                             width: cell.column.getSize() || undefined,
                             flex: cell.column.id === "taxon_name" ? 1 : undefined,

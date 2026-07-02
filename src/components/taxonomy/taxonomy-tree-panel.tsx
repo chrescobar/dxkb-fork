@@ -19,6 +19,7 @@ import type { TaxonRecord } from "./taxon-tree-types";
 export function TaxonomyTreePanel({ taxon }: { taxon: OrganismTaxonomy }) {
   const [selected, setSelected] = useState<TaxonRecord | null>(null);
   return (
+    <div className="-mr-2 flex min-h-0 flex-1 overflow-hidden sm:-mr-3 lg:-mr-4">
     <GenomeShell
       hasSidePanel={!!selected}
       sidePanel={
@@ -30,9 +31,10 @@ export function TaxonomyTreePanel({ taxon }: { taxon: OrganismTaxonomy }) {
         />
       }
     >
-      <div className="flex h-[calc(100vh-12rem)] flex-col overflow-hidden">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <TaxonomyTree rootTaxon={taxon} onSelect={setSelected} />
       </div>
     </GenomeShell>
+    </div>
   );
 }

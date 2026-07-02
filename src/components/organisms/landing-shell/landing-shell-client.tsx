@@ -62,7 +62,7 @@ export function LandingShellClient({
           onChange={handleViewChange}
         />
       </div>
-      <div className="mx-auto flex w-full max-w-none flex-row gap-3 px-2 sm:px-3 lg:px-4">
+      <div className="mx-auto flex min-h-0 w-full max-w-none flex-1 flex-row gap-3 px-2 sm:px-3 lg:px-4">
         {/* Desktop rail — hidden below lg, where the mobile nav takes over. */}
         <div className="hidden lg:block">
           <LandingNav
@@ -75,7 +75,7 @@ export function LandingShellClient({
             }}
           />
         </div>
-      <section className="min-w-0 flex-1">
+      <section className="flex min-h-0 min-w-0 flex-1 flex-col">
         <div className="mb-4 flex items-center justify-between rounded-lg border bg-card px-5 py-3 shadow-sm">
           {headerContent ?? (
             <div>

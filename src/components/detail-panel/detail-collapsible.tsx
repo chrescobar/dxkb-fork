@@ -22,7 +22,7 @@ export function DetailCollapsibleSection({
 
   const headerClass =
     variant === "primary"
-      ? "border-x border-y border-primary bg-muted text-foreground cursor-pointer"
+      ? "border-b bg-muted text-foreground cursor-pointer"
       : "bg-muted/60 hover:bg-muted";
 
   return (

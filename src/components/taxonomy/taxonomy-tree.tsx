@@ -414,6 +414,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
 
   function handleRowClick(row: Row<TaxonRecord>) {
     if (isPlaceholder(row.original)) return;
+    row.toggleSelected();
     onSelect?.(row.original);
   }
 
@@ -453,7 +454,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
       <div className="relative min-h-0 flex-1 overflow-auto rounded border border-gray-500" ref={scrollRef}>
         <Table className="w-full table-auto border-collapse text-xs" disableScrollWrapper>
           <TableHeader
-            className="bg-muted text-foreground uppercase"
+            className="bg-muted text-foreground "
             style={{ position: "sticky", top: 0, zIndex: 30 }}
           >
             {table.getHeaderGroups().map((headerGroup) => (
@@ -461,15 +462,16 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="flex items-center border-r border-primary px-2 py-1"
+                    className="flex items-center border-r border-primary px-2 py-0"
                     style={{
                       width: header.getSize() || undefined,
+                      height: rowHeight,
                       flex: header.column.id === "taxon_name" ? 1 : undefined,
                       justifyContent:
-                        header.column.id === "genomes"
-                          ? "flex-end"
-                          : header.column.id === "trees"
-                            ? "center"
+                        header.column.id === "__select__" || header.column.id === "trees"
+                          ? "center"
+                          : header.column.id === "genomes"
+                            ? "flex-end"
                             : undefined,
                     }}
                   >
@@ -499,7 +501,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
                       style={{ display: "flex", height: rowHeight }}
                       className={clsx(
                         "cursor-pointer items-center",
-                        row.getIsSelected() ? "bg-muted-foreground" : "hover:bg-muted",
+                        row.getIsSelected() ? "bg-blue-100" : "hover:bg-muted",
                       )}
                     >
                       {row.getVisibleCells().map((cell) => (

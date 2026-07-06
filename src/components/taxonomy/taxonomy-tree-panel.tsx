@@ -19,8 +19,11 @@ import type { TaxonRecord } from "./taxon-tree-types";
 export function TaxonomyTreePanel({ taxon }: { taxon: OrganismTaxonomy }) {
   const [selectedRows, setSelectedRows] = useState<TaxonRecord[]>([]);
   const singleRow = selectedRows.length === 1 ? selectedRows[0] : null;
+  // No wrapper div: the shell's fill region already bounds height
+  // (flex-1 min-h-0 overflow-hidden), and GenomeShell wraps its children in a
+  // flex-col overflow-hidden box of its own. Extra wrappers only risk breaking
+  // the min-h-0 chain.
   return (
-    <div className="flex min-h-0 flex-1 overflow-hidden">
     <GenomeShell
       hasSidePanel={selectedRows.length > 0}
       sidePanel={
@@ -32,10 +35,7 @@ export function TaxonomyTreePanel({ taxon }: { taxon: OrganismTaxonomy }) {
         />
       }
     >
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-        <TaxonomyTree rootTaxon={taxon} onSelect={setSelectedRows} />
-      </div>
+      <TaxonomyTree rootTaxon={taxon} onSelect={setSelectedRows} />
     </GenomeShell>
-    </div>
   );
 }

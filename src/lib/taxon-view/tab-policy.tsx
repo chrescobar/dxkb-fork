@@ -56,7 +56,7 @@ const gatesByKey: Partial<Record<OrganismViewKey, Gate>> = {
 };
 
 export type TabPolicyOverride =
-  | { Component: ComponentType }
+  | { Component: ComponentType; layout?: OrganismLandingView["layout"] }
   | { description?: string };
 
 export type TabPolicyOverrides = Partial<Record<OrganismViewKey, TabPolicyOverride>>;
@@ -88,14 +88,18 @@ export function resolveTabs(
     }
     const gate = gatesByKey[key];
     const enabled = gate ? gate.enabled(ctx) : true;
+    const override = overrides[key];
     const view: OrganismLandingView = {
       key,
       label: descriptor.label,
       icon: descriptor.icon,
-      Component: resolveComponent(descriptor, overrides[key]),
+      Component: resolveComponent(descriptor, override),
       enabled,
     };
     if (!enabled && gate) view.disabledReason = gate.disabledReason;
+    if (override && "layout" in override && override.layout) {
+      view.layout = override.layout;
+    }
     return view;
   });
 }

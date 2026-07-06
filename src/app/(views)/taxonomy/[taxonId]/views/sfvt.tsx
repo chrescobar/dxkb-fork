@@ -43,7 +43,7 @@ export function makeSfvtView({ taxon }: { taxon: OrganismTaxonomy | null }) {
       <Suspense
         fallback={<div className="p-8 text-sm text-muted-foreground">Loading SFVT data…</div>}
       >
-        <div className="flex h-[calc(100vh-12rem)] flex-col overflow-hidden">
+        <div className="flex h-full flex-col overflow-hidden">
           <ListData
             resource="sequence_feature_vt"
             q={`keyword(${encodeURIComponent(term)})`}

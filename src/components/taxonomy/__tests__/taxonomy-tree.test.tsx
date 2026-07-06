@@ -144,7 +144,7 @@ describe("TaxonomyTree", () => {
     expect(within(strainRow as HTMLElement).queryByRole("button", { name: /Expand|Collapse/ })).toBeNull();
   });
 
-  it("clicking a row body calls onSelect with that taxon record", async () => {
+  it("clicking a row body calls onSelect with the selected taxon records", async () => {
     mockChildren({ 234: [child(235, "Brucella abortus", "species", 581)] });
     const onSelect = vi.fn();
 
@@ -155,7 +155,13 @@ describe("TaxonomyTree", () => {
     const speciesLink = await screen.findByRole("link", { name: "Brucella abortus" });
     fireEvent.click(speciesLink.closest("tr") as HTMLElement);
 
-    expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({ taxon_id: 235 }));
+    // onSelect fires with the full selected-row array (driven by the selection
+    // effect), not a single record. Assert the row landed in the latest call.
+    await waitFor(() => {
+      expect(onSelect).toHaveBeenLastCalledWith([
+        expect.objectContaining({ taxon_id: 235 }),
+      ]);
+    });
   });
 
   it("filters loaded rows by name", async () => {

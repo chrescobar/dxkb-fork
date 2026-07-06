@@ -36,10 +36,10 @@ export function buildTaxonomyNavItems(
         showAmr: config.showAmr ?? false,
       }),
     },
-    "taxa-tree": { Component: makeTaxonomyTreeView({ taxon }) },
-    strains: { Component: makeStrainsView({ taxon }) },
-    surveillance: { Component: makeSurveillanceView({ taxon }) },
-    serology: { Component: makeSerologyView({ taxon }) },
-    sfvt: { Component: makeSfvtView({ taxon }) },
+    "taxa-tree": { Component: makeTaxonomyTreeView({ taxon }), layout: "fill" },
+    strains: { Component: makeStrainsView({ taxon }), layout: "fill" },
+    surveillance: { Component: makeSurveillanceView({ taxon }), layout: "fill" },
+    serology: { Component: makeSerologyView({ taxon }), layout: "fill" },
+    sfvt: { Component: makeSfvtView({ taxon }), layout: "fill" },
   });
 }

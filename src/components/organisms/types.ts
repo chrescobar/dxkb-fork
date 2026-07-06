@@ -26,6 +26,13 @@ export interface OrganismLandingView {
   enabled?: boolean;
   /** Tooltip/title shown when the tab is disabled. */
   disabledReason?: string;
+  /**
+   * How the shell frames this view's content region.
+   * - "scroll" (default): the region scrolls vertically (doc-style, e.g. Overview).
+   * - "fill": the region is a bounded, non-scrolling flex box that the view fills
+   *   exactly (table views own their internal scroll).
+   */
+  layout?: "scroll" | "fill";
 }
 
 export interface OrganismLandingNavItem {

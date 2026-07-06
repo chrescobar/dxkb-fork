@@ -86,7 +86,9 @@ export function LandingShellClient({
             </div>
           )}
         </div>
-        {children}
+        <div className="scrollbar-themed min-h-0 flex-1 overflow-y-auto pb-4">
+          {children}
+        </div>
       </section>
     </div>
     </>

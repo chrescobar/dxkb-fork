@@ -70,12 +70,13 @@ function rootToRecord(taxon: OrganismTaxonomy): TaxonRecord {
     taxon_name: taxon.taxonName,
     taxon_rank: taxon.taxonRank,
     genomes: taxon.genomes ?? undefined,
+    lineage_names: taxon.lineageNames,
   };
 }
 
 interface TaxonomyTreeProps {
   rootTaxon: OrganismTaxonomy;
-  onSelect?: (row: TaxonRecord | null) => void;
+  onSelect?: (rows: TaxonRecord[]) => void;
 }
 
 export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
@@ -339,6 +340,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
       return count !== undefined && count > 0;
     },
     enableRowSelection: (row) => !isPlaceholder(row.original),
+    enableSubRowSelection: false,
     onExpandedChange: setExpanded,
     onGlobalFilterChange: setGlobalFilter,
     onRowSelectionChange: setRowSelection,
@@ -362,6 +364,19 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   });
 
   const rows = table.getRowModel().rows;
+
+  // Keep a ref so the selection effect can read the latest table without adding
+  // `table` to its dep array (table is recreated every render with "use no memo").
+  const tableRef = useRef(table);
+  tableRef.current = table;
+
+  // Drive onSelect from rowSelection so BOTH row-body clicks and checkbox clicks
+  // update the panel. Previously only handleRowClick called onSelect, but the
+  // checkbox stopPropagation prevents handleRowClick from firing on checkbox clicks.
+  useEffect(() => {
+    const selected = tableRef.current.getSelectedRowModel().flatRows;
+    onSelect?.(selected.filter(r => !isPlaceholder(r.original)).map(r => r.original));
+  }, [rowSelection, onSelect]);
 
   // Virtualize the row render: a node can have tens of thousands of children (H1N1
   // subtype ≈ 35.9k). Rendering them all flat is ~144k DOM nodes → the page OOM-crashes.
@@ -415,7 +430,6 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   function handleRowClick(row: Row<TaxonRecord>) {
     if (isPlaceholder(row.original)) return;
     row.toggleSelected();
-    onSelect?.(row.original);
   }
 
   // Persist expanded nodes (minus the always-open root) to the `open` search param

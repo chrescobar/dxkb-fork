@@ -17,22 +17,23 @@ import type { TaxonRecord } from "./taxon-tree-types";
  * tree's jsdom unit tests.
  */
 export function TaxonomyTreePanel({ taxon }: { taxon: OrganismTaxonomy }) {
-  const [selected, setSelected] = useState<TaxonRecord | null>(null);
+  const [selectedRows, setSelectedRows] = useState<TaxonRecord[]>([]);
+  const singleRow = selectedRows.length === 1 ? selectedRows[0] : null;
   return (
-    <div className="-mr-2 flex min-h-0 flex-1 overflow-hidden sm:-mr-3 lg:-mr-4">
+    <div className="flex min-h-0 flex-1 overflow-hidden">
     <GenomeShell
-      hasSidePanel={!!selected}
+      hasSidePanel={selectedRows.length > 0}
       sidePanel={
         <InfoPanel
           variant="search"
           activeTab="taxonomy"
-          selectedRow={selected}
-          selectedIds={selected ? [String(selected.taxon_id)] : []}
+          selectedRow={singleRow}
+          selectedIds={selectedRows.map(r => String(r.taxon_id))}
         />
       }
     >
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-        <TaxonomyTree rootTaxon={taxon} onSelect={setSelected} />
+        <TaxonomyTree rootTaxon={taxon} onSelect={setSelectedRows} />
       </div>
     </GenomeShell>
     </div>

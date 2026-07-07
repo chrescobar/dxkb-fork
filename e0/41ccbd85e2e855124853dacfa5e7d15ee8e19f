@@ -1,0 +1,20 @@
+src/components/taxonomy/taxonomy-tree.tsx
+  s_7763eb74744e4e::t_0dfbdeacab4fd1 552
+  s_7763eb74744e4e::t_5b6f91c56e985e 468-469
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e041ccbd85e2e855124853dacfa5e7d15ee8e19f",
+  "prompts": {},
+  "sessions": {
+    "s_7763eb74744e4e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f9236a4d-be0b-4be4-9cdd-d77851fefa32",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

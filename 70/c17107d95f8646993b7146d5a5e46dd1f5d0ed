@@ -1,0 +1,19 @@
+e2e/tests/a11y/keyboard.spec.ts
+  s_35e320ee22a361::t_81728ed7ad0422 220-226
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "70c17107d95f8646993b7146d5a5e46dd1f5d0ed",
+  "prompts": {},
+  "sessions": {
+    "s_35e320ee22a361": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "636acaad-5506-4e99-a9c9-35aeac400f5f",
+        "model": "unknown"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

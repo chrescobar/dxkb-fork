@@ -465,7 +465,8 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
         />
       </div>
 
-      <div className="relative min-h-0 flex-1 overflow-auto rounded-lg border border-gray-500" ref={scrollRef}>
+      <div className="relative min-h-0 flex-1 overflow-hidden rounded-lg border border-gray-500">
+      <div className="h-full overflow-auto" ref={scrollRef}>
         <Table className="w-full table-auto border-collapse text-xs" disableScrollWrapper>
           <TableHeader
             className="bg-muted text-foreground "
@@ -547,6 +548,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
             )}
           </TableBody>
         </Table>
+      </div>
       </div>
     </div>
   );

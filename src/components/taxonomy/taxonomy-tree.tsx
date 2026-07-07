@@ -384,7 +384,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   // Virtualize the row render: a node can have tens of thousands of children (H1N1
   // subtype ≈ 35.9k). Rendering them all flat is ~144k DOM nodes → the page OOM-crashes.
   // Only the ~30 rows in view (+ overscan) hit the DOM; padding <tr>s reserve the rest
-  // of the scroll height. Mirrors reference-genomes-client.tsx. Fixed rowHeight (28) so
+  // of the scroll height. Mirrors reference-genomes-client.tsx. Fixed rowHeight (32) so
   // no per-row measurement — that's why the max-height collapse animation had to go.
   const rowVirtualizer = useVirtualizer({
     count: rows.length,

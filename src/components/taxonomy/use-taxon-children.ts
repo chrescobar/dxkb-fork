@@ -66,15 +66,6 @@ export async function fetchTaxonChildren(parentId: number): Promise<TaxonRecord[
   return rows;
 }
 
-/** Lazily fetch one node's children. Tree uses useQueries directly; this wraps a single node. */
-export function useTaxonChildren(parentId: number, enabled: boolean) {
-  return useQuery<TaxonRecord[]>({
-    queryKey: taxonChildrenKey(parentId),
-    enabled,
-    queryFn: () => fetchTaxonChildren(parentId),
-  });
-}
-
 /** React Query key for a batch of nodes' child counts. Sorted so key is order-independent. */
 export function taxonChildCountsKey(ids: number[]) {
   return ["taxon-child-counts", [...ids].sort((a, b) => a - b).join(",")] as const;

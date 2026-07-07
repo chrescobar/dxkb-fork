@@ -210,7 +210,6 @@ export interface SearchActionBarProps {
   selectedCount: number;
   searchType: string;
   guideUrl?: string;
-  disabledActionIds?: SearchActionId[];
   // Per-consumer disable with a tooltip reason. Lets one shared config power both
   // /search and the taxon-view, which disable different subsets of the same
   // taxonomy actions.
@@ -223,7 +222,6 @@ export function SearchActionBar({
   selectedCount,
   searchType,
   guideUrl,
-  disabledActionIds,
   disabledActions,
   loadingActionIds,
   onAction,
@@ -246,7 +244,6 @@ export function SearchActionBar({
   const isDisabled = (action: ActionConfig) =>
     !!(
       action.disabledWithTooltip ||
-      disabledActionIds?.includes(action.id) ||
       disabledActions?.[action.id]
     );
 

@@ -100,7 +100,7 @@ export function LandingShellClient({
           // right margin cancels the outer row's px-* so the table (and its
           // right-flush action strip) reach the viewport edge — no right gutter.
           <div className="-mr-2 flex min-h-0 flex-1 overflow-hidden sm:-mr-3 lg:-mr-4">
-            <div className="min-w-0 flex-1">{children}</div>
+            <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>
           </div>
         ) : (
           // Doc-style scroll region. The negative right margin cancels the outer

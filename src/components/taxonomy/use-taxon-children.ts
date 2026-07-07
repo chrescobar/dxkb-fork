@@ -61,7 +61,7 @@ export async function fetchTaxonChildren(parentId: number): Promise<TaxonRecord[
     const page = (await res.json()) as TaxonRecord[];
     rows.push(...page);
     if (page.length === 0) break; // safety: stop if a page comes back empty
-    start = end;
+    start = rows.length;
   }
   return rows;
 }

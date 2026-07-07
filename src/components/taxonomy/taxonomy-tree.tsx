@@ -35,6 +35,8 @@ import { isLeaf, rankBadgeDefault, rankConfig, type TaxonRecord } from "./taxon-
 
 const indentPx = 16;
 const rowHeight = 32; // h-8, matches reference-genomes-client.tsx touch target
+// Caps initial fetch fan-out on load and URL length on write — both sides must use the same value.
+const maxOpenParam = 20;
 
 // Synthetic non-data row shown beneath an expanded node when the fetch fails.
 // (Loading shows an inline chevron spinner; empty hides the arrow — neither
@@ -96,7 +98,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
     const initial: Record<string, boolean> = { [String(rootId)]: true };
     const open = searchParams.get("open");
     if (open) {
-      for (const id of open.split(",").slice(0, 20)) {
+      for (const id of open.split(",").slice(0, maxOpenParam)) {
         if (id && Number.isFinite(Number(id))) initial[id] = true;
       }
     }
@@ -439,7 +441,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   // The URL is display/reload state only; nothing in this tree reads it after mount,
   // so a bare history entry update is enough. Guarded by a ref (not searchParams,
   // which no longer reflects our manual writes) to skip no-op writes.
-  const openParam = fetchParentIds.filter((id) => id !== rootId).sort((a, b) => a - b).join(",");
+  const openParam = fetchParentIds.filter((id) => id !== rootId).sort((a, b) => a - b).slice(0, maxOpenParam).join(",");
   const lastOpenParamRef = useRef<string | null>(null);
   useEffect(() => {
     if (globalFilter) return;

@@ -43,7 +43,7 @@ export async function fetchTaxonChildren(parentId: number): Promise<TaxonRecord[
   let start = 0;
   let total = Infinity;
   while (start < total) {
-    const end = start + pageSize - 1;
+    const end = start + pageSize;
     const res = await fetch(url, {
       headers: {
         ...taxonomyBaseHeaders,

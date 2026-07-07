@@ -232,7 +232,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
               )}
               <Link
                 href={`/taxonomy/${String(record.taxon_id)}`}
-                className="truncate text-primary hover:underline"
+                className="truncate text-primary dark:text-blue-400 hover:underline"
                 onClick={(e) => { e.stopPropagation(); }}
               >
                 {record.taxon_name}
@@ -461,11 +461,11 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
           onChange={(e) => { setGlobalFilter(e.target.value); }}
           placeholder="Search by taxonomy name…"
           aria-label="Search by taxonomy name"
-          className="w-full max-w-96 rounded-lg border border-gray-500 bg-background px-3 py-1.5 text-xs outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          className="w-full max-w-96 rounded-lg border border-border bg-background px-3 py-1.5 text-xs outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
         />
       </div>
 
-      <div className="relative min-h-0 flex-1 overflow-hidden rounded-lg border border-gray-500">
+      <div className="relative min-h-0 flex-1 overflow-hidden rounded-lg border border-border">
       <div className="h-full overflow-auto" ref={scrollRef}>
         <Table className="w-full table-auto border-collapse text-xs" disableScrollWrapper>
           <TableHeader
@@ -473,11 +473,11 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
             style={{ position: "sticky", top: 0, zIndex: 30 }}
           >
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="flex border-y border-gray-300 bg-muted">
+              <TableRow key={headerGroup.id} className="flex border-y border-border bg-muted">
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="flex items-center border-r border-gray-300 px-2 py-0"
+                    className="flex items-center border-r border-border px-2 py-0"
                     style={{
                       width: header.getSize() || undefined,
                       height: rowHeight,
@@ -500,7 +500,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
           <TableBody>
             {rows.length === 0 ? (
               <TableRow className="flex w-full">
-                <TableCell className="w-full border-t border-gray-300 py-8 text-center text-muted-foreground">
+                <TableCell className="w-full border-t border-border py-8 text-center text-muted-foreground">
                   No results
                 </TableCell>
               </TableRow>
@@ -516,13 +516,13 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
                       style={{ display: "flex", height: rowHeight }}
                       className={clsx(
                         "cursor-pointer items-center",
-                        row.getIsSelected() ? "bg-blue-100" : "hover:bg-muted",
+                        row.getIsSelected() ? "bg-primary/15 dark:bg-primary/30" : "hover:bg-muted",
                       )}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
                           key={cell.id}
-                          className="flex items-center overflow-hidden border-r border-gray-300 px-2"
+                          className="flex items-center overflow-hidden border-r border-border px-2"
                           style={{
                             width: cell.column.getSize() || undefined,
                             flex: cell.column.id === "taxon_name" ? 1 : undefined,

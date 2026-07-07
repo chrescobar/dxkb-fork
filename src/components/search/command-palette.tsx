@@ -63,7 +63,10 @@ export function CommandPalette() {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       // Case-insensitive: CapsLock or Playwright's `Meta+K` send key="K".
-      if (event.key.toLowerCase() === "k" && (event.metaKey || event.ctrlKey)) {
+      // Browser autofill selection fires a synthetic keydown with no `key`,
+      // which the DOM types don't model — hence the widened alias.
+      const key = event.key as string | undefined;
+      if (key?.toLowerCase() === "k" && (event.metaKey || event.ctrlKey)) {
         event.preventDefault();
         // Reset stale input so reopening always starts clean; setInputValue
         // here runs from an event handler, not an effect body.

@@ -99,7 +99,8 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
     const open = searchParams.get("open");
     if (open) {
       for (const id of open.split(",").slice(0, maxOpenParam)) {
-        if (id && Number.isFinite(Number(id))) initial[id] = true;
+        const parsed = Number(id);
+        if (Number.isInteger(parsed) && parsed > 0) initial[String(parsed)] = true;
       }
     }
     return initial;

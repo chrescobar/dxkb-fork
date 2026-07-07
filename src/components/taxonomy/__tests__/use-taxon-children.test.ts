@@ -33,7 +33,7 @@ describe("useTaxonChildren", () => {
         const match = /items=(\d+)-(\d+)/.exec(range);
         const start = match ? Number(match[1]) : 0;
         const end = match ? Number(match[2]) : 50000;
-        const slice = all.slice(start, end);
+        const slice = all.slice(start, end + 1); // end is inclusive
         return HttpResponse.json(slice, {
           headers: { "Content-Range": `items ${String(start)}-${String(end)}/${String(all.length)}` },
         });
@@ -47,7 +47,7 @@ describe("useTaxonChildren", () => {
     await waitFor(() => { expect(result.current.isSuccess).toBe(true); });
     expect(result.current.data).toHaveLength(30);
     // pageSize (50000) covers all 30 rows → one request, no sequential paging.
-    expect(seenRanges).toEqual(["items=0-50000"]);
+    expect(seenRanges).toEqual(["items=0-49999"]);
   });
 
   it("does not fetch when disabled", () => {

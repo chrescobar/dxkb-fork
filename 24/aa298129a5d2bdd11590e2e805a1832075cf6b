@@ -1,0 +1,41 @@
+src/components/search/search-action-bar.tsx
+  s_216fe3b921950f::t_1344e328140ffe 47-49
+  s_216fe3b921950f::t_641d8a3d7bc3d8 53
+  s_216fe3b921950f::t_f97410e233e761 263
+  s_216fe3b921950f::t_30ec7d7430b5dc 269
+  s_216fe3b921950f::t_95cada635d248a 214-217,227,239-242,247-251
+  s_216fe3b921950f::t_9363f544183bf6 286
+  s_216fe3b921950f::t_f7b66e9399cdd8 177-179,187
+src/components/search/__tests__/search-action-bar.test.tsx
+  s_216fe3b921950f::t_f183d6df2d423f 1-9,11-16,18-39,41-45,47-73,75-78
+  s_216fe3b921950f::t_a88c1959ca4a53 10,17,40,46,74
+src/components/taxonomy/taxonomy-tree-panel.tsx
+  s_216fe3b921950f::t_926f3434bc22ed 4,8-12,18-19
+  s_216fe3b921950f::t_d459129457b0c5 29,32-40,48-58
+  s_216fe3b921950f::t_dad99c97541b6b 20
+src/components/taxonomy/__tests__/taxonomy-tree-panel.test.tsx
+  s_216fe3b921950f::t_1e44b7581a8b37 1-46,50-67,69-77,79-80
+  s_216fe3b921950f::t_9b3f9516c156fe 47-49
+  s_216fe3b921950f::t_a88c1959ca4a53 68,78
+src/components/genome/genome-shell.tsx
+  s_216fe3b921950f::t_790d6a83eb6794 40
+src/app/search/typesearch.tsx
+  s_216fe3b921950f::t_f56c874cf042ab 9
+  s_216fe3b921950f::t_6f3472a6914cbc 344-346
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "24aa298129a5d2bdd11590e2e805a1832075cf6b",
+  "prompts": {},
+  "sessions": {
+    "s_216fe3b921950f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e4f11e3f-0f81-4337-a573-45e85db4d457",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

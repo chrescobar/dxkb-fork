@@ -1,0 +1,21 @@
+src/components/taxonomy/__tests__/use-taxon-children.test.ts
+  s_a1c9697d80ec94::t_1de93f526bf0aa 4
+src/components/taxonomy/taxonomy-tree.tsx
+  s_a1c9697d80ec94::t_39875409780435 387
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "63fd66245171b7fc5c580207dba2d7d4746cf919",
+  "prompts": {},
+  "sessions": {
+    "s_a1c9697d80ec94": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3b1029f4-5bcb-4fc1-b89c-8121e7399c0f",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

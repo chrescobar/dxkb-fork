@@ -164,6 +164,105 @@ describe("TaxonomyTree", () => {
     });
   });
 
+  it("unchecking a collapsed parent preserves selected-but-hidden children in onSelect", async () => {
+    mockChildren({
+      234: [child(235, "Brucella abortus", "species", 581)],
+      235: [
+        child(1001, "Brucella abortus 544", "strain", 2),
+        child(1002, "Brucella abortus 2308", "strain", 1),
+      ],
+    });
+    const onSelect = vi.fn();
+
+    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+      wrapper: createQueryClientWrapper(),
+    });
+
+    // Expand to load strains
+    const speciesLink = await screen.findByRole("link", { name: "Brucella abortus" });
+    const speciesRow = speciesLink.closest("tr") as HTMLElement;
+    fireEvent.click(await within(speciesRow).findByRole("button", { name: "Expand" }));
+
+    // Select parent + both strains
+    fireEvent.click(speciesRow);
+    fireEvent.click(
+      (await screen.findByRole("link", { name: "Brucella abortus 544" })).closest("tr") as HTMLElement,
+    );
+    fireEvent.click(
+      (await screen.findByRole("link", { name: "Brucella abortus 2308" })).closest("tr") as HTMLElement,
+    );
+
+    await waitFor(() => {
+      expect(onSelect.mock.calls.at(-1)?.[0]).toHaveLength(3);
+    });
+
+    // Collapse — strains leave the row model (childrenMap drops entry for 235)
+    fireEvent.click(within(speciesRow).getByRole("button", { name: "Collapse" }));
+
+    // Uncheck parent — triggers the selection effect that previously returned 0
+    // because getSelectedRowModel() only saw visible rows.
+    fireEvent.click(speciesRow);
+
+    await waitFor(() => {
+      const lastCall = onSelect.mock.calls.at(-1)?.[0] as TaxonRecord[];
+      expect(lastCall).toHaveLength(2);
+      expect(lastCall).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ taxon_id: 1001 }),
+          expect.objectContaining({ taxon_id: 1002 }),
+        ]),
+      );
+    });
+  });
+
+  it("selecting a visible row after accordion collapses includes hidden selected children in onSelect", async () => {
+    mockChildren({
+      234: [
+        child(235, "Brucella abortus", "species", 581),
+        child(236, "Brucella melitensis", "species", 400),
+      ],
+      235: [child(1001, "Brucella abortus 544", "strain", 2)],
+    });
+    const onSelect = vi.fn();
+
+    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+      wrapper: createQueryClientWrapper(),
+    });
+
+    // Expand Brucella abortus and select its strain
+    const speciesLink = await screen.findByRole("link", { name: "Brucella abortus" });
+    const speciesRow = speciesLink.closest("tr") as HTMLElement;
+    fireEvent.click(await within(speciesRow).findByRole("button", { name: "Expand" }));
+    fireEvent.click(
+      (await screen.findByRole("link", { name: "Brucella abortus 544" })).closest("tr") as HTMLElement,
+    );
+
+    await waitFor(() => {
+      expect(onSelect.mock.calls.at(-1)?.[0]).toHaveLength(1);
+    });
+
+    // Collapse — strain leaves the row model
+    fireEvent.click(within(speciesRow).getByRole("button", { name: "Collapse" }));
+
+    // Select a different visible row — triggers the effect
+    await screen.findByRole("link", { name: "Brucella melitensis" });
+    fireEvent.click(
+      screen.getByRole("link", { name: "Brucella melitensis" }).closest("tr") as HTMLElement,
+    );
+
+    // Should count 2: hidden strain + newly selected species
+    await waitFor(() => {
+      const lastCall = onSelect.mock.calls.at(-1)?.[0] as TaxonRecord[];
+      expect(lastCall).toHaveLength(2);
+      expect(lastCall).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ taxon_id: 1001 }),
+          expect.objectContaining({ taxon_id: 236 }),
+        ]),
+      );
+    });
+  });
+
   it("filters loaded rows by name", async () => {
     mockChildren({
       234: [

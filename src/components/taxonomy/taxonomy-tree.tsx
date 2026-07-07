@@ -15,7 +15,7 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronRight, Loader2, Network } from "lucide-react";
+import { ChevronRight, Loader2, Network, X } from "lucide-react";
 import clsx from "clsx";
 
 import {
@@ -114,6 +114,10 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   // Accumulated per-id child counts (id → count). Immutable within a session, so
   // once resolved a count is never refetched or blanked — this is what kills the flash.
   const knownChildCountsRef = useRef<Map<number, number>>(new Map());
+  // Records keyed by row-id for every taxon that has ever appeared in the model.
+  // Survives accordion collapse (which removes children from the row model) so that
+  // selected-but-hidden children are still resolvable when rowSelection changes.
+  const recordCacheRef = useRef<Map<string, TaxonRecord>>(new Map());
 
   // Only manually-expanded, real, non-leaf nodes drive fetches. The filter may
   // expand everything visually (below) without adding to this set — so name
@@ -373,12 +377,28 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   const tableRef = useRef(table);
   tableRef.current = table;
 
+  // Populate record cache from every row currently in the model. Runs each render;
+  // intentionally monotonic — once a record is cached it stays, so selected children
+  // remain resolvable after their parent accordion collapses and removes them from
+  // getCoreRowModel().flatRows (childrenMap loses their parent entry on collapse).
+  for (const row of table.getCoreRowModel().flatRows) {
+    if (!isPlaceholder(row.original)) {
+      recordCacheRef.current.set(row.id, row.original);
+    }
+  }
+
   // Drive onSelect from rowSelection so BOTH row-body clicks and checkbox clicks
-  // update the panel. Previously only handleRowClick called onSelect, but the
-  // checkbox stopPropagation prevents handleRowClick from firing on checkbox clicks.
+  // update the panel. Uses recordCacheRef instead of getSelectedRowModel() because
+  // the latter only returns rows currently in the model — collapsed children are in
+  // rowSelection but absent from the model, causing their count to drop to zero.
   useEffect(() => {
-    const selected = tableRef.current.getSelectedRowModel().flatRows;
-    onSelect?.(selected.filter(r => !isPlaceholder(r.original)).map(r => r.original));
+    const selected = Object.keys(rowSelection)
+      .filter(id => rowSelection[id])
+      .flatMap(id => {
+        const record = recordCacheRef.current.get(id);
+        return record ? [record] : [];
+      });
+    onSelect?.(selected);
   }, [rowSelection, onSelect]);
 
   // Virtualize the row render: a node can have tens of thousands of children (H1N1
@@ -455,9 +475,11 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
     window.history.replaceState(null, "", query ? `${pathname}?${query}` : pathname);
   }, [openParam, globalFilter, pathname]);
 
+  const hasSelection = Object.values(rowSelection).some(Boolean);
+
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden text-xs">
-      <div className="py-2">
+      <div className="flex items-center gap-2 py-2">
         <input
           type="search"
           value={globalFilter}
@@ -466,6 +488,17 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
           aria-label="Search by taxonomy name"
           className="w-full max-w-96 rounded-lg border border-border bg-background px-3 py-1.5 text-xs outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
         />
+        {hasSelection && (
+          <button
+            type="button"
+            aria-label="Clear selected"
+            onClick={() => { setRowSelection({}); }}
+            className="flex shrink-0 items-center gap-1 rounded-lg px-2 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <X className="size-3" />
+            Clear selected
+          </button>
+        )}
       </div>
 
       <div className="relative min-h-0 flex-1 overflow-hidden rounded-lg border border-border">
@@ -546,7 +579,20 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
                     </TableRow>
                   );
                 })}
-                {paddingBottom > 0 && <tr style={{ height: paddingBottom }} />}
+                {paddingBottom > 0 && (
+                  <tr style={{ display: "flex", height: paddingBottom }}>
+                    {table.getVisibleLeafColumns().map((col) => (
+                      <td
+                        key={col.id}
+                        className="border-r border-border"
+                        style={{
+                          width: col.getSize() || undefined,
+                          flex: col.id === "taxon_name" ? 1 : undefined,
+                        }}
+                      />
+                    ))}
+                  </tr>
+                )}
               </>
             )}
           </TableBody>

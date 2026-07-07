@@ -338,7 +338,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
           hasSidePanel={!!activeGenomeId}
           actionBar={
             <SearchActionBar
-              selectedCount={selectedIds.length}
+              selectedCount={isAllPagesSelected ? totalItems : selectedIds.length}
               searchType={activeTab}
               guideUrl={guideUrls[activeTab]}
               // taxonOverview is enabled only in the taxon-view (which wires the

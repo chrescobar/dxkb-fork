@@ -48,6 +48,8 @@ describe("SearchActionBar (taxonomy)", () => {
   });
 
   describe("callbacks", () => {
+    afterEach(() => vi.restoreAllMocks());
+
     it("opens the guide URL in a new tab on Guide click", async () => {
       const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
       render(
@@ -63,7 +65,6 @@ describe("SearchActionBar (taxonomy)", () => {
         "_blank",
         "noopener,noreferrer",
       );
-      openSpy.mockRestore();
     });
 
     it("fires onAction with the action id for an enabled action", async () => {

@@ -10,6 +10,19 @@ import { parseContentRangeTotal, type TaxonRecord } from "./taxon-tree-types";
 // paging loop below never runs in practice — it stays only as a safety net.
 const pageSize = 50000;
 
+// ponytail: dot notation required — Next.js only inlines NEXT_PUBLIC_ vars at
+// static call sites; bracket notation (e.g. getRequiredEnv) breaks client bundles.
+const taxonomyBaseHeaders = {
+  "Content-type": "application/rqlquery+x-www-form-urlencoded",
+  Accept: "application/json",
+};
+
+function taxonomyEndpoint(query: string): string {
+  const dataApi = process.env.NEXT_PUBLIC_DATA_API;
+  if (!dataApi) throw new Error("NEXT_PUBLIC_DATA_API environment variable is not configured");
+  return `${dataApi}/taxonomy/?${query}`;
+}
+
 /** React Query key for a node's children — shared by the single hook and the tree's useQueries. */
 export function taxonChildrenKey(parentId: number) {
   return ["taxon-children", parentId] as const;
@@ -23,22 +36,17 @@ export function taxonChildrenKey(parentId: number) {
  * (SOLR returns some genomes:1 strain rows anyway — that quirk is intentional).
  */
 export async function fetchTaxonChildren(parentId: number): Promise<TaxonRecord[]> {
-  const dataApi = process.env.NEXT_PUBLIC_DATA_API;
-  if (!dataApi) {
-    throw new Error("NEXT_PUBLIC_DATA_API environment variable is not configured");
-  }
   const query = `and(gt(genomes,1),eq(parent_id,${String(parentId)}))&sort(+taxon_name)`;
-  const url = `${dataApi}/taxonomy/?${query}`;
+  const url = taxonomyEndpoint(query);
 
   const rows: TaxonRecord[] = [];
   let start = 0;
   let total = Infinity;
   while (start < total) {
-    const end = start + pageSize;
+    const end = start + pageSize - 1;
     const res = await fetch(url, {
       headers: {
-        "Content-type": "application/rqlquery+x-www-form-urlencoded",
-        Accept: "application/json",
+        ...taxonomyBaseHeaders,
         Range: `items=${String(start)}-${String(end)}`,
         "X-Range": `items=${String(start)}-${String(end)}`,
       },
@@ -84,19 +92,10 @@ export async function fetchTaxonChildCounts(parentIds: number[]): Promise<Map<nu
   const counts = new Map<number, number>();
   if (parentIds.length === 0) return counts;
 
-  const dataApi = process.env.NEXT_PUBLIC_DATA_API;
-  if (!dataApi) {
-    throw new Error("NEXT_PUBLIC_DATA_API environment variable is not configured");
-  }
   const idList = parentIds.join(",");
   const query = `and(gt(genomes,1),in(parent_id,(${idList})))&facet((field,parent_id),(mincount,1))&limit(1)`;
-  const res = await fetch(`${dataApi}/taxonomy/?${query}`, {
-    headers: {
-      "Content-type": "application/rqlquery+x-www-form-urlencoded",
-      Accept: "application/json",
-      Range: "items=0-0",
-      "X-Range": "items=0-0",
-    },
+  const res = await fetch(taxonomyEndpoint(query), {
+    headers: { ...taxonomyBaseHeaders, Range: "items=0-0", "X-Range": "items=0-0" },
   });
   if (!res.ok) {
     throw new Error(
@@ -108,9 +107,12 @@ export async function fetchTaxonChildCounts(parentIds: number[]): Promise<Map<nu
   // [id, count, id, count, …] array. Absent header → treat all as unknown (empty map).
   const header = res.headers.get("facet_counts");
   if (!header) return counts;
-  const parsed = JSON.parse(header) as {
-    facet_fields?: { parent_id?: (string | number)[] };
-  };
+  let parsed: { facet_fields?: { parent_id?: (string | number)[] } };
+  try {
+    parsed = JSON.parse(header) as typeof parsed;
+  } catch {
+    return counts;
+  }
   const flat = parsed.facet_fields?.parent_id ?? [];
   for (let i = 0; i + 1 < flat.length; i += 2) {
     counts.set(Number(flat[i]), Number(flat[i + 1]));

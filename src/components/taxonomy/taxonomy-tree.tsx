@@ -34,7 +34,7 @@ import { fetchTaxonChildren, taxonChildrenKey, useTaxonChildCounts } from "./use
 import { isLeaf, rankBadgeDefault, rankConfig, type TaxonRecord } from "./taxon-tree-types";
 
 const indentPx = 16;
-const rowHeight = 28;
+const rowHeight = 32; // h-8, matches reference-genomes-client.tsx touch target
 
 // Synthetic non-data row shown beneath an expanded node when the fetch fails.
 // (Loading shows an inline chevron spinner; empty hides the arrow — neither
@@ -96,7 +96,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
     const initial: Record<string, boolean> = { [String(rootId)]: true };
     const open = searchParams.get("open");
     if (open) {
-      for (const id of open.split(",")) {
+      for (const id of open.split(",").slice(0, 20)) {
         if (id && Number.isFinite(Number(id))) initial[id] = true;
       }
     }
@@ -308,7 +308,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   // re-rendered via childCountRef) — neither needs the row MODEL rebuilt. Including
   // them forced a second full 165-row rebuild on every facet settle (the lag).
   const childrenSignature = childQueries
-    .map((q, i) => `${String(fetchParentIds[i])}:${q.status}:${String(q.data?.length ?? 0)}`)
+    .map((q, i) => `${String(fetchParentIds[i])}:${q.status}:${String(q.dataUpdatedAt)}`)
     .join("|");
   const dataRef = useRef<TaxonRecord[]>([rootRecord]);
   const signatureRef = useRef(childrenSignature);
@@ -461,7 +461,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
           onChange={(e) => { setGlobalFilter(e.target.value); }}
           placeholder="Search by taxonomy name…"
           aria-label="Search by taxonomy name"
-          className="w-96 rounded-lg border border-gray-500 bg-background px-3 py-1.5 text-xs outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          className="w-full max-w-96 rounded-lg border border-gray-500 bg-background px-3 py-1.5 text-xs outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
         />
       </div>
 

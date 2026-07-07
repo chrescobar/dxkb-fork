@@ -32,7 +32,7 @@ export const virusNavItems: OrganismLandingView[] = [
   {
     key: "taxa-tree",
     label: "Taxa Tree",
-    icon: <Binary />,
+    icon: <ListTree />,
     Component: TaxonomyView,
   },
   {
@@ -44,7 +44,7 @@ export const virusNavItems: OrganismLandingView[] = [
   {
     key: "features",
     label: "Features",
-    icon: <ListTree />,
+    icon: <Binary />,
     Component: FeaturesView,
   },
   {

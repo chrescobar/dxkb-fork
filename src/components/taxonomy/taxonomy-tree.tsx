@@ -235,7 +235,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
               )}
               <Link
                 href={`/taxonomy/${String(record.taxon_id)}`}
-                className="truncate text-primary dark:text-blue-400 hover:underline"
+                className="truncate text-primary hover:underline dark:text-blue-400"
                 onClick={(e) => { e.stopPropagation(); }}
               >
                 {record.taxon_name}

@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
 
-import { fetchTaxonChildCounts } from "../use-taxon-children";
+import { fetchTaxonChildCounts, fetchTaxonChildren } from "../use-taxon-children";
 
 const dataApi = "https://data.test/api";
 
@@ -11,6 +11,75 @@ beforeEach(() => {
 
 afterEach(() => {
   delete process.env.NEXT_PUBLIC_DATA_API;
+});
+
+describe("fetchTaxonChildren", () => {
+  it("stitches multiple pages into one array", async () => {
+    let callCount = 0;
+    server.use(
+      http.get(`${dataApi}/taxonomy/`, () => {
+        callCount++;
+        if (callCount === 1) {
+          return HttpResponse.json(
+            [
+              { taxon_id: 1, taxon_name: "Alpha", taxon_rank: "genus" },
+              { taxon_id: 2, taxon_name: "Beta", taxon_rank: "genus" },
+            ],
+            { headers: { "Content-Range": "items 0-1/3" } },
+          );
+        }
+        return HttpResponse.json(
+          [{ taxon_id: 3, taxon_name: "Gamma", taxon_rank: "genus" }],
+          { headers: { "Content-Range": "items 2-2/3" } },
+        );
+      }),
+    );
+
+    const children = await fetchTaxonChildren(235);
+    expect(children).toHaveLength(3);
+    expect(callCount).toBe(2);
+    expect(children.map((c) => c.taxon_id)).toEqual([1, 2, 3]);
+  });
+
+  it("stops early when a page returns zero items (safety net)", async () => {
+    let callCount = 0;
+    server.use(
+      http.get(`${dataApi}/taxonomy/`, () => {
+        callCount++;
+        if (callCount === 1) {
+          return HttpResponse.json(
+            [{ taxon_id: 1, taxon_name: "Alpha", taxon_rank: "genus" }],
+            // total claims 5 but subsequent page returns nothing
+            { headers: { "Content-Range": "items 0-0/5" } },
+          );
+        }
+        return HttpResponse.json([], { headers: { "Content-Range": "items 1-0/5" } });
+      }),
+    );
+
+    const children = await fetchTaxonChildren(235);
+    expect(children).toHaveLength(1);
+    expect(callCount).toBe(2);
+  });
+
+  it("throws with status and statusText on HTTP error", async () => {
+    server.use(
+      http.get(`${dataApi}/taxonomy/`, () =>
+        new HttpResponse(null, { status: 503, statusText: "Service Unavailable" }),
+      ),
+    );
+
+    await expect(fetchTaxonChildren(235)).rejects.toThrow(
+      "taxonomy children 235: 503 Service Unavailable",
+    );
+  });
+
+  it("throws when NEXT_PUBLIC_DATA_API is not set", async () => {
+    delete process.env.NEXT_PUBLIC_DATA_API;
+    await expect(fetchTaxonChildren(235)).rejects.toThrow(
+      "NEXT_PUBLIC_DATA_API environment variable is not configured",
+    );
+  });
 });
 
 describe("fetchTaxonChildCounts", () => {

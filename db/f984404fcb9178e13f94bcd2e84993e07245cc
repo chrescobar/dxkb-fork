@@ -1,0 +1,19 @@
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_76709a07629ef0::t_882e7fa89c27e3 103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "dbf984404fcb9178e13f94bcd2e84993e07245cc",
+  "prompts": {},
+  "sessions": {
+    "s_76709a07629ef0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a9245631-957e-418d-9e2b-f4633e3e47fb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

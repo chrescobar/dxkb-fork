@@ -319,6 +319,11 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
     .join("|");
   const dataRef = useRef<TaxonRecord[]>([rootRecord]);
   const signatureRef = useRef(childrenSignature);
+  const prevRootIdRef = useRef(rootId);
+  if (prevRootIdRef.current !== rootId) {
+    prevRootIdRef.current = rootId;
+    recordCacheRef.current.clear();
+  }
   if (signatureRef.current !== childrenSignature || dataRef.current[0] !== rootRecord) {
     signatureRef.current = childrenSignature;
     dataRef.current = [rootRecord];

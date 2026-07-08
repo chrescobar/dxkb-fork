@@ -123,6 +123,9 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   // so every selection path — row click, checkbox, select-all, clear, root switch —
   // can keep it in sync. A stale anchor otherwise selects an unintended range later.
   const lastSelectedIdRef = useRef<string | null>(null);
+  // Stable ref so the stale columns useMemo closure can call the always-current
+  // handleRowClick (which captures rows/shiftHeld defined after the memo).
+  const handleRowClickRef = useRef<(row: Row<TaxonRecord>) => void>(() => {});
 
   // Only manually-expanded, real, non-leaf nodes drive fetches. The filter may
   // expand everything visually (below) without adding to this set — so name
@@ -198,12 +201,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
               aria-label={`Select ${row.original.taxon_name}`}
               checked={row.getIsSelected()}
               disabled={!row.getCanSelect()}
-              onChange={(e) => {
-                // Keep the shift-range anchor in sync with checkbox selection so a
-                // subsequent shift-click ranges from here, matching row-body behavior.
-                lastSelectedIdRef.current = row.id;
-                row.getToggleSelectedHandler()(e);
-              }}
+              onChange={() => { handleRowClickRef.current(row); }}
               onClick={(e) => { e.stopPropagation(); }}
             />
           ),
@@ -506,6 +504,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
     lastSelectedIdRef.current = row.id;
     row.toggleSelected();
   }
+  handleRowClickRef.current = handleRowClick;
 
   // Persist expanded nodes (minus the always-open root) to the `open` search param
   // so the view is shareable / survives reload. Uses history.replaceState, NOT

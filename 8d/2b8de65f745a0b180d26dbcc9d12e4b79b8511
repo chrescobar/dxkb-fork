@@ -1,0 +1,37 @@
+src/components/taxonomy/__tests__/taxonomy-tree.test.tsx
+  s_3f0170f5e64dd2::t_4a7760a23af7ae 89-91
+  s_3f0170f5e64dd2::t_9a8cd061d43370 269-374
+src/components/search/search-action-bar.tsx
+  s_3f0170f5e64dd2::t_204029cb2334b6 64-73
+  s_3f0170f5e64dd2::t_5a22c77c772ea3 63
+src/components/taxonomy/taxonomy-tree.tsx
+  s_9dad0a921424aa::t_4fc2f425357701 327-333
+  s_3f0170f5e64dd2::t_140966374f392b 466-467,469,472-473,475-493
+  s_3f0170f5e64dd2::t_f128932e511778 468,474
+  s_3f0170f5e64dd2::t_d5b80a02fb8452 544
+  s_3f0170f5e64dd2::t_d146d43c0b9dbc 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8d2b8de65f745a0b180d26dbcc9d12e4b79b8511",
+  "prompts": {},
+  "sessions": {
+    "s_3f0170f5e64dd2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "38e4c484-35d7-492a-aade-5ed7c4cd913b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_9dad0a921424aa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f5f8e20e-8295-424c-b709-0dfdf969f7ec",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

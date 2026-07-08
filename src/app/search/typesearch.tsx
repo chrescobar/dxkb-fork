@@ -225,7 +225,6 @@ const searchTypeMenuItems = [
   { key: "surveillance",      label: "Surveillance",       icon: <Eye className="size-4" /> },
   { key: "serology",          label: "Serology",           icon: <Globe className="size-4" /> },
   { key: "experiment",        label: "Experiments",        icon: <FlaskConical className="size-4" /> },
-  // { key: "interaction",       label: "Interactions",       icon: <Handshake className="size-4" /> },
 ];
 
 export function TypeSearch({ q, searchtype }: TypeSearchProps) {

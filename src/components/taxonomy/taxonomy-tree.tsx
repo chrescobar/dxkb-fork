@@ -125,7 +125,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   const lastSelectedIdRef = useRef<string | null>(null);
   // Stable ref so the stale columns useMemo closure can call the always-current
   // handleRowClick (which captures rows/shiftHeld defined after the memo).
-  const handleRowClickRef = useRef<(row: Row<TaxonRecord>) => void>(() => {});
+  const handleRowClickRef = useRef<(row: Row<TaxonRecord>) => void>((_row) => undefined);
 
   // Only manually-expanded, real, non-leaf nodes drive fetches. The filter may
   // expand everything visually (below) without adding to this set — so name

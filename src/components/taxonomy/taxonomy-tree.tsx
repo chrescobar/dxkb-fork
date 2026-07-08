@@ -119,6 +119,10 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   // Survives accordion collapse (which removes children from the row model) so that
   // selected-but-hidden children are still resolvable when rowSelection changes.
   const recordCacheRef = useRef<Map<string, TaxonRecord>>(new Map());
+  // Anchor for shift-click range selection. Declared here (above columns/root guard)
+  // so every selection path — row click, checkbox, select-all, clear, root switch —
+  // can keep it in sync. A stale anchor otherwise selects an unintended range later.
+  const lastSelectedIdRef = useRef<string | null>(null);
 
   // Only manually-expanded, real, non-leaf nodes drive fetches. The filter may
   // expand everything visually (below) without adding to this set — so name
@@ -179,7 +183,12 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
             ref={(el) => {
               if (el) el.indeterminate = table.getIsSomeRowsSelected();
             }}
-            onChange={table.getToggleAllRowsSelectedHandler()}
+            onChange={(e) => {
+              // Bulk select/deselect has no meaningful range anchor — drop it so a
+              // later shift-click starts fresh rather than ranging from a stale row.
+              lastSelectedIdRef.current = null;
+              table.getToggleAllRowsSelectedHandler()(e);
+            }}
           />
         ),
         cell: ({ row }) =>
@@ -189,7 +198,12 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
               aria-label={`Select ${row.original.taxon_name}`}
               checked={row.getIsSelected()}
               disabled={!row.getCanSelect()}
-              onChange={row.getToggleSelectedHandler()}
+              onChange={(e) => {
+                // Keep the shift-range anchor in sync with checkbox selection so a
+                // subsequent shift-click ranges from here, matching row-body behavior.
+                lastSelectedIdRef.current = row.id;
+                row.getToggleSelectedHandler()(e);
+              }}
               onClick={(e) => { e.stopPropagation(); }}
             />
           ),
@@ -331,6 +345,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
     setExpanded({ [String(rootId)]: true });
     setRowSelection({});
     setGlobalFilter("");
+    lastSelectedIdRef.current = null;
   }
   if (signatureRef.current !== childrenSignature || dataRef.current[0] !== rootRecord) {
     signatureRef.current = childrenSignature;
@@ -463,8 +478,6 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
     }
   }
 
-  // Anchor for shift-click range selection: the last row toggled by a plain click.
-  const lastSelectedIdRef = useRef<string | null>(null);
   const shiftHeld = useKeyHold("Shift");
 
   function handleRowClick(row: Row<TaxonRecord>) {
@@ -531,7 +544,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
           <button
             type="button"
             aria-label="Clear selected"
-            onClick={() => { setRowSelection({}); }}
+            onClick={() => { setRowSelection({}); lastSelectedIdRef.current = null; }}
             className="flex shrink-0 items-center gap-1 rounded-lg px-2 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             <X className="size-3" />

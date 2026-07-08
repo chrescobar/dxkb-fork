@@ -372,6 +372,147 @@ describe("TaxonomyTree", () => {
     });
   });
 
+  it("shift-clicking a checkbox selects the full range between anchor and target", async () => {
+    mockChildren({
+      234: [
+        child(235, "Brucella abortus", "species", 581),
+        child(236, "Brucella melitensis", "species", 400),
+        child(237, "Brucella suis", "species", 300),
+      ],
+    });
+    const onSelect = vi.fn();
+
+    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+      wrapper: createQueryClientWrapper(),
+    });
+
+    const firstCb = await screen.findByRole("checkbox", { name: "Select Brucella abortus" });
+    const lastCb = screen.getByRole("checkbox", { name: "Select Brucella suis" });
+
+    // Plain checkbox click sets the anchor.
+    fireEvent.click(firstCb);
+    await waitFor(() => {
+      expect(onSelect.mock.calls.at(-1)?.[0]).toHaveLength(1);
+    });
+
+    // Shift held → checkbox click on last species selects 235, 236, 237.
+    fireEvent.keyDown(document, { key: "Shift" });
+    fireEvent.click(lastCb);
+
+    await waitFor(() => {
+      const last = onSelect.mock.calls.at(-1)?.[0] as TaxonRecord[];
+      expect(last).toHaveLength(3);
+      expect(last).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ taxon_id: 235 }),
+          expect.objectContaining({ taxon_id: 236 }),
+          expect.objectContaining({ taxon_id: 237 }),
+        ]),
+      );
+    });
+  });
+
+  it("shift-clicking a checkbox selects the range regardless of direction (target above anchor)", async () => {
+    mockChildren({
+      234: [
+        child(235, "Brucella abortus", "species", 581),
+        child(236, "Brucella melitensis", "species", 400),
+        child(237, "Brucella suis", "species", 300),
+      ],
+    });
+    const onSelect = vi.fn();
+
+    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+      wrapper: createQueryClientWrapper(),
+    });
+
+    const middleCb = await screen.findByRole("checkbox", { name: "Select Brucella melitensis" });
+    const firstCb = screen.getByRole("checkbox", { name: "Select Brucella abortus" });
+
+    fireEvent.click(middleCb);
+    await waitFor(() => {
+      expect(onSelect.mock.calls.at(-1)?.[0]).toHaveLength(1);
+    });
+
+    fireEvent.keyDown(document, { key: "Shift" });
+    fireEvent.click(firstCb);
+
+    await waitFor(() => {
+      const last = onSelect.mock.calls.at(-1)?.[0] as TaxonRecord[];
+      expect(last).toHaveLength(2);
+      expect(last).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ taxon_id: 235 }),
+          expect.objectContaining({ taxon_id: 236 }),
+        ]),
+      );
+    });
+  });
+
+  it("shift-clicking a checkbox without a prior anchor falls back to toggling just that row", async () => {
+    mockChildren({
+      234: [
+        child(235, "Brucella abortus", "species", 581),
+        child(236, "Brucella melitensis", "species", 400),
+      ],
+    });
+    const onSelect = vi.fn();
+
+    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+      wrapper: createQueryClientWrapper(),
+    });
+
+    const cb = await screen.findByRole("checkbox", { name: "Select Brucella melitensis" });
+
+    fireEvent.keyDown(document, { key: "Shift" });
+    fireEvent.click(cb);
+
+    await waitFor(() => {
+      const last = onSelect.mock.calls.at(-1)?.[0] as TaxonRecord[];
+      expect(last).toHaveLength(1);
+      expect(last).toEqual([expect.objectContaining({ taxon_id: 236 })]);
+    });
+  });
+
+  it("checkbox click sets anchor for a subsequent row-body shift-click", async () => {
+    mockChildren({
+      234: [
+        child(235, "Brucella abortus", "species", 581),
+        child(236, "Brucella melitensis", "species", 400),
+        child(237, "Brucella suis", "species", 300),
+      ],
+    });
+    const onSelect = vi.fn();
+
+    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+      wrapper: createQueryClientWrapper(),
+    });
+
+    // Set anchor via checkbox click.
+    const firstCb = await screen.findByRole("checkbox", { name: "Select Brucella abortus" });
+    fireEvent.click(firstCb);
+    await waitFor(() => {
+      expect(onSelect.mock.calls.at(-1)?.[0]).toHaveLength(1);
+    });
+
+    // Shift + row-body click on last species should range from the checkbox anchor.
+    const lastRow = screen.getByRole("link", { name: "Brucella suis" }).closest("tr") as HTMLElement;
+    fireEvent.keyDown(document, { key: "Shift" });
+    fireEvent.click(lastRow);
+
+    await waitFor(() => {
+      const last = onSelect.mock.calls.at(-1)?.[0] as TaxonRecord[];
+      expect(last).toHaveLength(3);
+      expect(last).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ taxon_id: 235 }),
+          expect.objectContaining({ taxon_id: 236 }),
+          expect.objectContaining({ taxon_id: 237 }),
+        ]),
+      );
+    });
+  });
+
   it("filters loaded rows by name", async () => {
     mockChildren({
       234: [

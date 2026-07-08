@@ -124,7 +124,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   // can keep it in sync. A stale anchor otherwise selects an unintended range later.
   const lastSelectedIdRef = useRef<string | null>(null);
   // Stable ref so the stale columns useMemo closure can call the always-current
-  // handleRowClick (which captures rows/shiftHeld defined after the memo).
+  // handleCheckboxClick (which captures rows/shiftHeld defined after the memo).
   const handleCheckboxClickRef = useRef<(row: Row<TaxonRecord>) => void>((_row) => undefined);
 
   // Only manually-expanded, real, non-leaf nodes drive fetches. The filter may
@@ -481,30 +481,32 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   const metaHeld = useKeyHold("Meta");
   const ctrlOrCmdHeld = ctrlHeld || metaHeld;
 
+  // Applies shift-click range selection. merge=true adds to existing selection; merge=false replaces it.
+  function applyShiftRange(anchorId: string, row: Row<TaxonRecord>, merge: boolean) {
+    const anchorIndex = rows.findIndex((r) => r.id === anchorId);
+    const clickedIndex = rows.findIndex((r) => r.id === row.id);
+    if (anchorIndex === -1 || clickedIndex === -1) return false;
+    const [from, to] = anchorIndex < clickedIndex
+      ? [anchorIndex, clickedIndex]
+      : [clickedIndex, anchorIndex];
+    setRowSelection((prev) => {
+      const next: Record<string, boolean> = merge ? { ...prev } : {};
+      for (let i = from; i <= to; i++) {
+        const r = rows[i];
+        if (r.getCanSelect()) next[r.id] = true;
+      }
+      return next;
+    });
+    return true;
+  }
+
   // Row whitespace click: exclusive single-select; shift replaces selection with range;
   // ctrl/cmd toggles the row additively without clearing other selections.
   function handleWhitespaceClick(row: Row<TaxonRecord>) {
     if (isPlaceholder(row.original)) return;
 
     const anchorId = lastSelectedIdRef.current;
-    if (shiftHeld && anchorId) {
-      const anchorIndex = rows.findIndex((r) => r.id === anchorId);
-      const clickedIndex = rows.findIndex((r) => r.id === row.id);
-      if (anchorIndex !== -1 && clickedIndex !== -1) {
-        const [from, to] = anchorIndex < clickedIndex
-          ? [anchorIndex, clickedIndex]
-          : [clickedIndex, anchorIndex];
-        setRowSelection(() => {
-          const next: Record<string, boolean> = {};
-          for (let i = from; i <= to; i++) {
-            const r = rows[i];
-            if (r.getCanSelect()) next[r.id] = true;
-          }
-          return next;
-        });
-        return; // anchor stays
-      }
-    }
+    if (shiftHeld && anchorId && applyShiftRange(anchorId, row, false)) return; // anchor stays
 
     lastSelectedIdRef.current = row.id;
 
@@ -521,24 +523,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
     if (isPlaceholder(row.original)) return;
 
     const anchorId = lastSelectedIdRef.current;
-    if (shiftHeld && anchorId) {
-      const anchorIndex = rows.findIndex((r) => r.id === anchorId);
-      const clickedIndex = rows.findIndex((r) => r.id === row.id);
-      if (anchorIndex !== -1 && clickedIndex !== -1) {
-        const [from, to] = anchorIndex < clickedIndex
-          ? [anchorIndex, clickedIndex]
-          : [clickedIndex, anchorIndex];
-        setRowSelection((prev) => {
-          const next = { ...prev };
-          for (let i = from; i <= to; i++) {
-            const r = rows[i];
-            if (r.getCanSelect()) next[r.id] = true;
-          }
-          return next;
-        });
-        return; // anchor stays
-      }
-    }
+    if (shiftHeld && anchorId && applyShiftRange(anchorId, row, true)) return; // anchor stays
 
     lastSelectedIdRef.current = row.id;
     row.toggleSelected();

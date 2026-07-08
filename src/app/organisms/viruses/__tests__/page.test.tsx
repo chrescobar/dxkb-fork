@@ -5,7 +5,7 @@ import VirusesPage from "../page";
 describe("VirusesPage", () => {
   it("renders the selected stub view through the shared shell", async () => {
     const node = await VirusesPage({
-      searchParams: Promise.resolve({ tab: "taxonomy" }),
+      searchParams: Promise.resolve({ tab: "taxa-tree" }),
     });
 
     render(node);
@@ -48,14 +48,14 @@ describe("VirusesPage", () => {
 
   it("prefers ?tab= over ?view= when both are present", async () => {
     const node = await VirusesPage({
-      searchParams: Promise.resolve({ tab: "taxonomy", view: "features" }),
+      searchParams: Promise.resolve({ tab: "taxa-tree", view: "features" }),
     });
 
     render(node);
 
     expect(screen.getByText(/This view is coming soon/)).toBeInTheDocument();
-    // "Features" appears once (desktop nav button only) — taxonomy won, so the
-    // mobile pill + placeholder heading show "Taxonomy", not "Features".
+    // "Features" appears once (desktop nav button only) — taxa-tree won, so the
+    // mobile pill + placeholder heading show "Taxa Tree", not "Features".
     expect(screen.queryAllByText("Features")).toHaveLength(1);
   });
 });

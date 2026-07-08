@@ -37,7 +37,7 @@ export function GenomeShell({
   }
 
   const actionStrip = (
-    <div className="flex h-full min-h-0 w-18 shrink-0 flex-col border-l bg-muted">
+    <div className="flex h-full min-h-0 w-20 shrink-0 flex-col rounded-l-lg border-l bg-muted">
       {/* Top toggle button */}
       <div className="border-b p-2">
         {panelExpanded ? (
@@ -104,7 +104,7 @@ export function GenomeShell({
               className="relative min-h-0 overflow-hidden"
             >
               {/* absolute inset-0 breaks the h-full chain dependency */}
-              <div className="absolute inset-0 flex flex-col overflow-hidden">
+              <div className="absolute inset-0 flex flex-col overflow-hidden border-t">
                 {sidePanel}
               </div>
             </ResizablePanel>

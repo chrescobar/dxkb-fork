@@ -6,7 +6,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { ListData } from "@/components/services/list-data";
 import { GenomeShell } from "@/components/genome/genome-shell";
 import { GenomeDetailPanel } from "@/components/genome/genome-detail-panel";
-import { SearchActionBar } from "@/components/search/search-action-bar";
+import { SearchActionBar, notReady } from "@/components/search/search-action-bar";
 import { VerticalMenu } from "@/components/ui/vertical-menu";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Activity, Atom, Binary, Blocks, Database, Dna, Eye, FlaskConical, Globe, Handshake, Layers, ListTree, Microscope, Network, Puzzle, Route, Share2, ShieldCheck, Waypoints } from "lucide-react";
@@ -338,9 +338,12 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
           hasSidePanel={!!activeGenomeId}
           actionBar={
             <SearchActionBar
-              selectedCount={selectedIds.length}
+              selectedCount={isAllPagesSelected ? totalItems : selectedIds.length}
               searchType={activeTab}
               guideUrl={guideUrls[activeTab]}
+              // taxonOverview is enabled only in the taxon-view (which wires the
+              // handler); /search has no handler yet, so keep it disabled here.
+              disabledActions={{ taxonOverview: notReady }}
             />
           }
           sidePanel={

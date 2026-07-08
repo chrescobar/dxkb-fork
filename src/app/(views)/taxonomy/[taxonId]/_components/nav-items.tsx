@@ -10,6 +10,7 @@ import { resolveTabs } from "@/lib/taxon-view/tab-policy";
 import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 
 import { makeOverviewView } from "../views/overview";
+import { makeTaxonomyTreeView } from "../views/taxonomy-tree-view";
 import { makeStrainsView } from "../views/strains";
 import { makeSurveillanceView } from "../views/surveillance";
 import { makeSerologyView } from "../views/serology";
@@ -35,9 +36,10 @@ export function buildTaxonomyNavItems(
         showAmr: config.showAmr ?? false,
       }),
     },
-    strains: { Component: makeStrainsView({ taxon }) },
-    surveillance: { Component: makeSurveillanceView({ taxon }) },
-    serology: { Component: makeSerologyView({ taxon }) },
-    sfvt: { Component: makeSfvtView({ taxon }) },
+    "taxa-tree": { Component: makeTaxonomyTreeView({ taxon }), layout: "fill" },
+    strains: { Component: makeStrainsView({ taxon }), layout: "fill" },
+    surveillance: { Component: makeSurveillanceView({ taxon }), layout: "fill" },
+    serology: { Component: makeSerologyView({ taxon }), layout: "fill" },
+    sfvt: { Component: makeSfvtView({ taxon }), layout: "fill" },
   });
 }

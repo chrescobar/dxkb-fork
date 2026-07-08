@@ -32,10 +32,10 @@ export const defaultViewDescriptors: readonly DefaultViewDescriptor[] = [
     description: "Phylogeny data and visualization are planned for a follow-up view.",
   },
   {
-    key: "taxonomy",
-    label: "Taxonomy",
-    icon: <Binary />,
-    description: "Taxonomy browsing is stubbed while the overview data panels are brought online.",
+    key: "taxa-tree",
+    label: "Taxa Tree",
+    icon: <ListTree />,
+    description: "Taxa Tree browsing is stubbed while the overview data panels are brought online.",
   },
   {
     key: "genomes",
@@ -44,7 +44,7 @@ export const defaultViewDescriptors: readonly DefaultViewDescriptor[] = [
     description: "Genome table filtering and pagination are planned for a dedicated follow-up view.",
   },
   { key: "sequences", label: "Sequences", icon: <Database /> },
-  { key: "features", label: "Features", icon: <ListTree /> },
+  { key: "features", label: "Features", icon: <Binary /> },
   { key: "protein-structures", label: "Protein Structures", icon: <Waypoints /> },
   { key: "domains-and-motifs", label: "Domains and Motifs", icon: <Puzzle /> },
   { key: "epitopes", label: "Epitopes", icon: <Activity /> },

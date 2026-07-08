@@ -10,7 +10,7 @@ export function makeSurveillanceView({ taxon }: { taxon: OrganismTaxonomy | null
       <Suspense
         fallback={<div className="p-8 text-sm text-muted-foreground">Loading surveillance data…</div>}
       >
-        <div className="flex h-[calc(100vh-12rem)] flex-col overflow-hidden">
+        <div className="flex h-full flex-col overflow-hidden">
           <ListData
             resource="surveillance"
             q={`eq(taxon_lineage_ids,${String(taxon.taxonId)})`}

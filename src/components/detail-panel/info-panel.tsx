@@ -274,9 +274,9 @@ export function InfoPanel(props: InfoPanelProps) {
 
   return (
     <DetailPanel>
-      <DetailPanel.Header title={selectedIds.length === 1 ? ((selectedRow?.[panelTitleField] as string | undefined) ?? "") : ""} />
       {selectedIds.length === 1 ? (
         <>
+          <DetailPanel.Header title={(selectedRow?.[panelTitleField] as string | undefined) ?? ""} />
           {order.map((group) => {
             const items = (grouped[group] || []).filter((item) =>
               allowedFields.includes(item.id)
@@ -331,7 +331,7 @@ export function InfoPanel(props: InfoPanelProps) {
           })}
         </>
       ) : (
-        <p className="px-4 py-2 text-xs">
+        <p className="truncate px-3 py-2 text-sm font-semibold">
           {props.isAllPagesSelected && props.totalItems
             ? `All ${props.totalItems.toLocaleString()} rows selected`
             : `${String(selectedIds.length)} rows selected`}

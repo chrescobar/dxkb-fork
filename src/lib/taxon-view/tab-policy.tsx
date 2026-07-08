@@ -33,7 +33,7 @@ const descriptorByKey = new Map<OrganismViewKey, DefaultViewDescriptor>(
 
 // Display order for the 15-tab taxon strip (biological grouping).
 const taxonTabOrder: readonly OrganismViewKey[] = [
-  "overview", "phylogeny", "taxonomy", "strains", "genomes",
+  "overview", "phylogeny", "taxa-tree", "strains", "genomes",
   "sequences", "features", "protein-structures",
   "domains-and-motifs", "sfvt", "epitopes", "experiments",
   "surveillance", "serology", "interactions",
@@ -56,7 +56,7 @@ const gatesByKey: Partial<Record<OrganismViewKey, Gate>> = {
 };
 
 export type TabPolicyOverride =
-  | { Component: ComponentType }
+  | { Component: ComponentType; layout?: OrganismLandingView["layout"] }
   | { description?: string };
 
 export type TabPolicyOverrides = Partial<Record<OrganismViewKey, TabPolicyOverride>>;
@@ -88,14 +88,18 @@ export function resolveTabs(
     }
     const gate = gatesByKey[key];
     const enabled = gate ? gate.enabled(ctx) : true;
+    const override = overrides[key];
     const view: OrganismLandingView = {
       key,
       label: descriptor.label,
       icon: descriptor.icon,
-      Component: resolveComponent(descriptor, overrides[key]),
+      Component: resolveComponent(descriptor, override),
       enabled,
     };
     if (!enabled && gate) view.disabledReason = gate.disabledReason;
+    if (override && "layout" in override && override.layout) {
+      view.layout = override.layout;
+    }
     return view;
   });
 }

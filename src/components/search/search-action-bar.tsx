@@ -44,10 +44,13 @@ interface ActionConfig {
   letter?: string;
   validSearchTypes: string[] | "*";
   requiresSelection?: boolean;
+  // Hide the action once the selection exceeds this many rows (e.g. single-select
+  // -only actions set it to 1). Absent = no upper bound.
+  maxSelection?: number;
   disabledWithTooltip?: string;
 }
 
-const notReady = "This button's functionality is not yet operational.";
+export const notReady = "Coming soon, still under construction";
 
 const actionConfig: ActionConfig[] = [
   {
@@ -56,6 +59,17 @@ const actionConfig: ActionConfig[] = [
     icon: BookOpen,
     validSearchTypes: "*",
     requiresSelection: false,
+  },
+  {
+    id: "taxonOverview",
+    label: "TAXON\nOVERVIEW",
+    labelClassName: "text-[9px]",
+    icon: Eye,
+    validSearchTypes: ["taxonomy"],
+    requiresSelection: true,
+    maxSelection: 1,
+    // Enabled/disabled per consumer via disabledActions (live in taxon-view,
+    // disabled on /search until that page wires a handler).
   },
   {
     id: "copyRows",
@@ -165,20 +179,12 @@ const actionConfig: ActionConfig[] = [
     disabledWithTooltip: notReady,
   },
   {
-    id: "taxonOverview",
-    label: "TAXON\nOVERVIEW",
-    labelClassName: "text-[9px]",
-    icon: Eye,
-    validSearchTypes: ["taxonomy"],
-    requiresSelection: true,
-    disabledWithTooltip: notReady,
-  },
-  {
     id: "features",
     label: "FEATURES",
     letter: "F",
     validSearchTypes: ["taxonomy"],
     requiresSelection: true,
+    maxSelection: 1,
     disabledWithTooltip: notReady,
   },
   {
@@ -204,7 +210,10 @@ export interface SearchActionBarProps {
   selectedCount: number;
   searchType: string;
   guideUrl?: string;
-  disabledActionIds?: SearchActionId[];
+  // Per-consumer disable with a tooltip reason. Lets one shared config power both
+  // /search and the taxon-view, which disable different subsets of the same
+  // taxonomy actions.
+  disabledActions?: Partial<Record<SearchActionId, string>>;
   loadingActionIds?: SearchActionId[];
   onAction?: (actionId: SearchActionId) => void;
 }
@@ -213,7 +222,7 @@ export function SearchActionBar({
   selectedCount,
   searchType,
   guideUrl,
-  disabledActionIds,
+  disabledActions,
   loadingActionIds,
   onAction,
 }: SearchActionBarProps) {
@@ -225,11 +234,18 @@ export function SearchActionBar({
     if (action.requiresSelection && selectedCount === 0) {
       return false;
     }
+    // Hide single-select-only actions once more than maxSelection rows are chosen
+    if (action.maxSelection !== undefined && selectedCount > action.maxSelection) {
+      return false;
+    }
     return true;
   });
 
   const isDisabled = (action: ActionConfig) =>
-    !!(action.disabledWithTooltip || disabledActionIds?.includes(action.id));
+    !!(
+      action.disabledWithTooltip ||
+      disabledActions?.[action.id]
+    );
 
   const isLoading = (actionId: SearchActionId) =>
     loadingActionIds?.includes(actionId) ?? false;
@@ -241,13 +257,13 @@ export function SearchActionBar({
           const Icon = action.icon;
           const showSpinner = isLoading(action.id);
           const disabled = isDisabled(action);
-          const tooltipText = action.disabledWithTooltip;
+          const tooltipText = disabledActions?.[action.id] ?? action.disabledWithTooltip;
 
           const buttonEl = (
             <Button
               key={action.id}
               variant="secondary"
-              className="h-15 w-full flex-col gap-1 overflow-hidden px-1 font-normal"
+              className="h-15 w-full flex-col gap-1 font-normal"
               disabled={disabled}
               onClick={() => {
                 if (action.id === "guide") {
@@ -264,7 +280,7 @@ export function SearchActionBar({
               ) : Icon ? (
                 <Icon className="size-4 shrink-0" />
               ) : null}
-              <span className={`w-full text-center leading-tight font-medium break-words ${action.labelClassName ?? "text-[11px]"}`}>
+              <span className={`text-center leading-tight font-medium break-words whitespace-normal ${action.labelClassName ?? "text-[9px]"}`}>
                 {action.label.split("\n").map((line, i) => (
                   <span key={i} className="block">{line}</span>
                 ))}

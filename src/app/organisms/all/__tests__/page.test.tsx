@@ -5,7 +5,7 @@ import AllOrganismsPage from "../page";
 describe("AllOrganismsPage", () => {
   it("renders the selected stub view through the shared shell", async () => {
     const node = await AllOrganismsPage({
-      searchParams: Promise.resolve({ tab: "taxonomy" }),
+      searchParams: Promise.resolve({ tab: "taxa-tree" }),
     });
 
     render(node);

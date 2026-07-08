@@ -9,7 +9,7 @@ import { GenomeDetailPanel } from "@/components/genome/genome-detail-panel";
 import { SearchActionBar } from "@/components/search/search-action-bar";
 import { VerticalMenu } from "@/components/ui/vertical-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Activity, Atom, Binary, Blocks, Database, Dna, Eye, FlaskConical, Globe, Handshake, Layers, ListTree, Microscope, Network, Puzzle, Route, Share2, ShieldCheck, Waypoints } from "lucide-react";
+import { ChevronLeft, ChevronRight, Activity, Atom, Binary, Blocks, Database, Dna, Eye, FlaskConical, Globe, Layers, ListTree, Microscope, Network, Puzzle, Route, Share2, ShieldCheck, Waypoints } from "lucide-react";
 
 // ---- Props interface ----
 export interface TypeSearchProps {
@@ -225,7 +225,7 @@ const searchTypeMenuItems = [
   { key: "surveillance",      label: "Surveillance",       icon: <Eye className="size-4" /> },
   { key: "serology",          label: "Serology",           icon: <Globe className="size-4" /> },
   { key: "experiment",        label: "Experiments",        icon: <FlaskConical className="size-4" /> },
-  { key: "interaction",       label: "Interactions",       icon: <Handshake className="size-4" /> },
+  // { key: "interaction",       label: "Interactions",       icon: <Handshake className="size-4" /> },
 ];
 
 export function TypeSearch({ q, searchtype }: TypeSearchProps) {

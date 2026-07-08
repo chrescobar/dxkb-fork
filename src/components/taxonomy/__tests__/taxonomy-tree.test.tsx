@@ -86,9 +86,10 @@ beforeEach(() => {
 
 afterEach(() => {
   delete process.env.NEXT_PUBLIC_DATA_API;
-  // Release Shift on the global KeyStateTracker so a held-shift never leaks
-  // into the next test (useKeyHold reads a document-level singleton).
+  // Release modifier keys so held state never leaks into the next test.
   fireEvent.keyUp(document, { key: "Shift" });
+  fireEvent.keyUp(document, { key: "Control" });
+  fireEvent.keyUp(document, { key: "Meta" });
 });
 
 describe("TaxonomyTree", () => {
@@ -186,13 +187,15 @@ describe("TaxonomyTree", () => {
     const speciesRow = speciesLink.closest("tr") as HTMLElement;
     fireEvent.click(await within(speciesRow).findByRole("button", { name: "Expand" }));
 
-    // Select parent + both strains
-    fireEvent.click(speciesRow);
+    // Select parent + both strains via checkboxes (additive).
+    fireEvent.click(within(speciesRow).getByRole("checkbox", { name: "Select Brucella abortus" }));
     fireEvent.click(
-      (await screen.findByRole("link", { name: "Brucella abortus 544" })).closest("tr") as HTMLElement,
+      within((await screen.findByRole("link", { name: "Brucella abortus 544" })).closest("tr") as HTMLElement)
+        .getByRole("checkbox", { name: "Select Brucella abortus 544" }),
     );
     fireEvent.click(
-      (await screen.findByRole("link", { name: "Brucella abortus 2308" })).closest("tr") as HTMLElement,
+      within((await screen.findByRole("link", { name: "Brucella abortus 2308" })).closest("tr") as HTMLElement)
+        .getByRole("checkbox", { name: "Select Brucella abortus 2308" }),
     );
 
     await waitFor(() => {
@@ -202,9 +205,9 @@ describe("TaxonomyTree", () => {
     // Collapse — strains leave the row model (childrenMap drops entry for 235)
     fireEvent.click(within(speciesRow).getByRole("button", { name: "Collapse" }));
 
-    // Uncheck parent — triggers the selection effect that previously returned 0
+    // Uncheck parent via checkbox — triggers the selection effect that previously returned 0
     // because getSelectedRowModel() only saw visible rows.
-    fireEvent.click(speciesRow);
+    fireEvent.click(within(speciesRow).getByRole("checkbox", { name: "Select Brucella abortus" }));
 
     await waitFor(() => {
       const lastCall = onSelect.mock.calls.at(-1)?.[0] as TaxonRecord[];
@@ -232,12 +235,13 @@ describe("TaxonomyTree", () => {
       wrapper: createQueryClientWrapper(),
     });
 
-    // Expand Brucella abortus and select its strain
+    // Expand Brucella abortus and select its strain via checkbox (additive).
     const speciesLink = await screen.findByRole("link", { name: "Brucella abortus" });
     const speciesRow = speciesLink.closest("tr") as HTMLElement;
     fireEvent.click(await within(speciesRow).findByRole("button", { name: "Expand" }));
     fireEvent.click(
-      (await screen.findByRole("link", { name: "Brucella abortus 544" })).closest("tr") as HTMLElement,
+      within((await screen.findByRole("link", { name: "Brucella abortus 544" })).closest("tr") as HTMLElement)
+        .getByRole("checkbox", { name: "Select Brucella abortus 544" }),
     );
 
     await waitFor(() => {
@@ -247,13 +251,14 @@ describe("TaxonomyTree", () => {
     // Collapse — strain leaves the row model
     fireEvent.click(within(speciesRow).getByRole("button", { name: "Collapse" }));
 
-    // Select a different visible row — triggers the effect
+    // Select a different visible row via checkbox — additive, preserves hidden strain.
     await screen.findByRole("link", { name: "Brucella melitensis" });
     fireEvent.click(
-      screen.getByRole("link", { name: "Brucella melitensis" }).closest("tr") as HTMLElement,
+      within(screen.getByRole("link", { name: "Brucella melitensis" }).closest("tr") as HTMLElement)
+        .getByRole("checkbox", { name: "Select Brucella melitensis" }),
     );
 
-    // Should count 2: hidden strain + newly selected species
+    // Should count 2: hidden strain + newly checked species
     await waitFor(() => {
       const lastCall = onSelect.mock.calls.at(-1)?.[0] as TaxonRecord[];
       expect(lastCall).toHaveLength(2);
@@ -369,6 +374,99 @@ describe("TaxonomyTree", () => {
       const last = onSelect.mock.calls.at(-1)?.[0] as TaxonRecord[];
       expect(last).toHaveLength(1);
       expect(last).toEqual([expect.objectContaining({ taxon_id: 236 })]);
+    });
+  });
+
+  it("ctrl/cmd+clicking row whitespace additively toggles the row without clearing other selections", async () => {
+    mockChildren({
+      234: [
+        child(235, "Brucella abortus", "species", 581),
+        child(236, "Brucella melitensis", "species", 400),
+        child(237, "Brucella suis", "species", 300),
+      ],
+    });
+    const onSelect = vi.fn();
+
+    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+      wrapper: createQueryClientWrapper(),
+    });
+
+    const firstRow = (await screen.findByRole("link", { name: "Brucella abortus" })).closest("tr") as HTMLElement;
+    const secondRow = screen.getByRole("link", { name: "Brucella melitensis" }).closest("tr") as HTMLElement;
+    const thirdRow = screen.getByRole("link", { name: "Brucella suis" }).closest("tr") as HTMLElement;
+
+    // Plain click: exclusive select of first row.
+    fireEvent.click(firstRow);
+    await waitFor(() => {
+      expect(onSelect.mock.calls.at(-1)?.[0]).toHaveLength(1);
+    });
+
+    // Ctrl+click second row: adds to selection.
+    fireEvent.keyDown(document, { key: "Control" });
+    fireEvent.click(secondRow);
+    await waitFor(() => {
+      expect(onSelect.mock.calls.at(-1)?.[0]).toHaveLength(2);
+    });
+
+    // Ctrl+click third row: adds to selection.
+    fireEvent.click(thirdRow);
+    await waitFor(() => {
+      const last = onSelect.mock.calls.at(-1)?.[0] as TaxonRecord[];
+      expect(last).toHaveLength(3);
+      expect(last).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ taxon_id: 235 }),
+          expect.objectContaining({ taxon_id: 236 }),
+          expect.objectContaining({ taxon_id: 237 }),
+        ]),
+      );
+    });
+
+    // Ctrl+click first row again: removes it.
+    fireEvent.click(firstRow);
+    await waitFor(() => {
+      const last = onSelect.mock.calls.at(-1)?.[0] as TaxonRecord[];
+      expect(last).toHaveLength(2);
+      expect(last).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ taxon_id: 236 }),
+          expect.objectContaining({ taxon_id: 237 }),
+        ]),
+      );
+    });
+  });
+
+  it("clicking row whitespace exclusively selects that row, clearing any prior checkbox selections", async () => {
+    mockChildren({
+      234: [
+        child(235, "Brucella abortus", "species", 581),
+        child(236, "Brucella melitensis", "species", 400),
+        child(237, "Brucella suis", "species", 300),
+      ],
+    });
+    const onSelect = vi.fn();
+
+    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+      wrapper: createQueryClientWrapper(),
+    });
+
+    // Select two rows via checkboxes (additive).
+    const cb235 = await screen.findByRole("checkbox", { name: "Select Brucella abortus" });
+    const cb236 = screen.getByRole("checkbox", { name: "Select Brucella melitensis" });
+    fireEvent.click(cb235);
+    fireEvent.click(cb236);
+    await waitFor(() => {
+      expect(onSelect.mock.calls.at(-1)?.[0]).toHaveLength(2);
+    });
+
+    // Plain whitespace click on a third row — should exclusively select only that row.
+    const thirdRow = screen.getByRole("link", { name: "Brucella suis" }).closest("tr") as HTMLElement;
+    fireEvent.click(thirdRow);
+
+    await waitFor(() => {
+      const last = onSelect.mock.calls.at(-1)?.[0] as TaxonRecord[];
+      expect(last).toHaveLength(1);
+      expect(last).toEqual([expect.objectContaining({ taxon_id: 237 })]);
     });
   });
 

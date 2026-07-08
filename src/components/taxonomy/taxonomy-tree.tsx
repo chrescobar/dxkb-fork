@@ -125,7 +125,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   const lastSelectedIdRef = useRef<string | null>(null);
   // Stable ref so the stale columns useMemo closure can call the always-current
   // handleRowClick (which captures rows/shiftHeld defined after the memo).
-  const handleRowClickRef = useRef<(row: Row<TaxonRecord>) => void>((_row) => undefined);
+  const handleCheckboxClickRef = useRef<(row: Row<TaxonRecord>) => void>((_row) => undefined);
 
   // Only manually-expanded, real, non-leaf nodes drive fetches. The filter may
   // expand everything visually (below) without adding to this set — so name
@@ -201,7 +201,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
               aria-label={`Select ${row.original.taxon_name}`}
               checked={row.getIsSelected()}
               disabled={!row.getCanSelect()}
-              onChange={() => { handleRowClickRef.current(row); }}
+              onChange={() => { handleCheckboxClickRef.current(row); }}
               onClick={(e) => { e.stopPropagation(); }}
             />
           ),
@@ -477,8 +477,47 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   }
 
   const shiftHeld = useKeyHold("Shift");
+  const ctrlHeld = useKeyHold("Control");
+  const metaHeld = useKeyHold("Meta");
+  const ctrlOrCmdHeld = ctrlHeld || metaHeld;
 
-  function handleRowClick(row: Row<TaxonRecord>) {
+  // Row whitespace click: exclusive single-select; shift replaces selection with range;
+  // ctrl/cmd toggles the row additively without clearing other selections.
+  function handleWhitespaceClick(row: Row<TaxonRecord>) {
+    if (isPlaceholder(row.original)) return;
+
+    const anchorId = lastSelectedIdRef.current;
+    if (shiftHeld && anchorId) {
+      const anchorIndex = rows.findIndex((r) => r.id === anchorId);
+      const clickedIndex = rows.findIndex((r) => r.id === row.id);
+      if (anchorIndex !== -1 && clickedIndex !== -1) {
+        const [from, to] = anchorIndex < clickedIndex
+          ? [anchorIndex, clickedIndex]
+          : [clickedIndex, anchorIndex];
+        setRowSelection(() => {
+          const next: Record<string, boolean> = {};
+          for (let i = from; i <= to; i++) {
+            const r = rows[i];
+            if (r.getCanSelect()) next[r.id] = true;
+          }
+          return next;
+        });
+        return; // anchor stays
+      }
+    }
+
+    lastSelectedIdRef.current = row.id;
+
+    if (ctrlOrCmdHeld) {
+      row.toggleSelected(); // additive: preserves other selections
+      return;
+    }
+
+    setRowSelection({ [row.id]: true }); // exclusive: clears everything else
+  }
+
+  // Checkbox click: additive toggle; shift+click adds range to existing selection.
+  function handleCheckboxClick(row: Row<TaxonRecord>) {
     if (isPlaceholder(row.original)) return;
 
     const anchorId = lastSelectedIdRef.current;
@@ -497,14 +536,14 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
           }
           return next;
         });
-        return;
+        return; // anchor stays
       }
     }
 
     lastSelectedIdRef.current = row.id;
     row.toggleSelected();
   }
-  handleRowClickRef.current = handleRowClick;
+  handleCheckboxClickRef.current = handleCheckboxClick;
 
   // Persist expanded nodes (minus the always-open root) to the `open` search param
   // so the view is shareable / survives reload. Uses history.replaceState, NOT
@@ -553,7 +592,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
       </div>
 
       <div className="relative min-h-0 flex-1 overflow-hidden rounded-lg border border-border">
-      <div className={clsx("h-full overflow-auto", shiftHeld && "select-none")} ref={scrollRef}>
+      <div className={clsx("h-full overflow-auto", (shiftHeld || ctrlOrCmdHeld) && "select-none")} ref={scrollRef}>
         <Table className="w-full table-auto border-collapse text-xs" disableScrollWrapper>
           <TableHeader
             className="bg-muted text-foreground "
@@ -599,7 +638,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
                   return (
                     <TableRow
                       key={row.id}
-                      onClick={() => { handleRowClick(row); }}
+                      onClick={() => { handleWhitespaceClick(row); }}
                       style={{ display: "flex", height: rowHeight }}
                       className={clsx(
                         "cursor-pointer items-center",

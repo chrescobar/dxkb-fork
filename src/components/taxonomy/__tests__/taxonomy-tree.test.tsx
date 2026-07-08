@@ -86,6 +86,9 @@ beforeEach(() => {
 
 afterEach(() => {
   delete process.env.NEXT_PUBLIC_DATA_API;
+  // Release Shift on the global KeyStateTracker so a held-shift never leaks
+  // into the next test (useKeyHold reads a document-level singleton).
+  fireEvent.keyUp(document, { key: "Shift" });
 });
 
 describe("TaxonomyTree", () => {
@@ -260,6 +263,112 @@ describe("TaxonomyTree", () => {
           expect.objectContaining({ taxon_id: 236 }),
         ]),
       );
+    });
+  });
+
+  it("shift-clicking a row selects the full range between anchor and target", async () => {
+    mockChildren({
+      234: [
+        child(235, "Brucella abortus", "species", 581),
+        child(236, "Brucella melitensis", "species", 400),
+        child(237, "Brucella suis", "species", 300),
+      ],
+    });
+    const onSelect = vi.fn();
+
+    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+      wrapper: createQueryClientWrapper(),
+    });
+
+    // Rows in visible order: root (234), 235, 236, 237.
+    const firstRow = (await screen.findByRole("link", { name: "Brucella abortus" })).closest("tr") as HTMLElement;
+    const lastRow = (await screen.findByRole("link", { name: "Brucella suis" })).closest("tr") as HTMLElement;
+
+    // Plain click sets the anchor.
+    fireEvent.click(firstRow);
+    await waitFor(() => {
+      expect(onSelect.mock.calls.at(-1)?.[0]).toHaveLength(1);
+    });
+
+    // Shift held → click the last species. Everything between anchor and target
+    // (235, 236, 237) becomes selected.
+    fireEvent.keyDown(document, { key: "Shift" });
+    fireEvent.click(lastRow);
+
+    await waitFor(() => {
+      const last = onSelect.mock.calls.at(-1)?.[0] as TaxonRecord[];
+      expect(last).toHaveLength(3);
+      expect(last).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ taxon_id: 235 }),
+          expect.objectContaining({ taxon_id: 236 }),
+          expect.objectContaining({ taxon_id: 237 }),
+        ]),
+      );
+    });
+  });
+
+  it("shift-clicking selects the range regardless of click direction (target above anchor)", async () => {
+    mockChildren({
+      234: [
+        child(235, "Brucella abortus", "species", 581),
+        child(236, "Brucella melitensis", "species", 400),
+        child(237, "Brucella suis", "species", 300),
+      ],
+    });
+    const onSelect = vi.fn();
+
+    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+      wrapper: createQueryClientWrapper(),
+    });
+
+    const middleRow = (await screen.findByRole("link", { name: "Brucella melitensis" })).closest("tr") as HTMLElement;
+    const firstRow = (await screen.findByRole("link", { name: "Brucella abortus" })).closest("tr") as HTMLElement;
+
+    // Anchor on the middle row, then shift-click upward to the first.
+    fireEvent.click(middleRow);
+    await waitFor(() => {
+      expect(onSelect.mock.calls.at(-1)?.[0]).toHaveLength(1);
+    });
+
+    fireEvent.keyDown(document, { key: "Shift" });
+    fireEvent.click(firstRow);
+
+    await waitFor(() => {
+      const last = onSelect.mock.calls.at(-1)?.[0] as TaxonRecord[];
+      expect(last).toHaveLength(2);
+      expect(last).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ taxon_id: 235 }),
+          expect.objectContaining({ taxon_id: 236 }),
+        ]),
+      );
+    });
+  });
+
+  it("shift-clicking without a prior selection falls back to selecting just the clicked row", async () => {
+    mockChildren({
+      234: [
+        child(235, "Brucella abortus", "species", 581),
+        child(236, "Brucella melitensis", "species", 400),
+      ],
+    });
+    const onSelect = vi.fn();
+
+    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+      wrapper: createQueryClientWrapper(),
+    });
+
+    const row = (await screen.findByRole("link", { name: "Brucella melitensis" })).closest("tr") as HTMLElement;
+
+    // No anchor yet → shift-click behaves like a plain toggle.
+    fireEvent.keyDown(document, { key: "Shift" });
+    fireEvent.click(row);
+
+    await waitFor(() => {
+      const last = onSelect.mock.calls.at(-1)?.[0] as TaxonRecord[];
+      expect(last).toHaveLength(1);
+      expect(last).toEqual([expect.objectContaining({ taxon_id: 236 })]);
     });
   });
 

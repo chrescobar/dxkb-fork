@@ -61,6 +61,17 @@ const actionConfig: ActionConfig[] = [
     requiresSelection: false,
   },
   {
+    id: "taxonOverview",
+    label: "TAXON\nOVERVIEW",
+    labelClassName: "text-[9px]",
+    icon: Eye,
+    validSearchTypes: ["taxonomy"],
+    requiresSelection: true,
+    maxSelection: 1,
+    // Enabled/disabled per consumer via disabledActions (live in taxon-view,
+    // disabled on /search until that page wires a handler).
+  },
+  {
     id: "copyRows",
     label: "COPY",
     icon: Copy,
@@ -166,17 +177,6 @@ const actionConfig: ActionConfig[] = [
     validSearchTypes: ["serology"],
     requiresSelection: true,
     disabledWithTooltip: notReady,
-  },
-  {
-    id: "taxonOverview",
-    label: "TAXON\nOVERVIEW",
-    labelClassName: "text-[9px]",
-    icon: Eye,
-    validSearchTypes: ["taxonomy"],
-    requiresSelection: true,
-    maxSelection: 1,
-    // Enabled/disabled per consumer via disabledActions (live in taxon-view,
-    // disabled on /search until that page wires a handler).
   },
   {
     id: "features",

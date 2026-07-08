@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useQueries } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { useKeyHold } from "@tanstack/react-hotkeys";
 import {
   type ColumnDef,
   type ExpandedState,
@@ -323,6 +324,13 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   if (prevRootIdRef.current !== rootId) {
     prevRootIdRef.current = rootId;
     recordCacheRef.current.clear();
+    // Root changed in place (Name link navigates within the [taxonId] segment, no
+    // remount). Reset controlled table state keyed to the old root: re-seed expanded
+    // so the new root auto-expands and drives its fetch, and drop the stale selection
+    // (its records were just cleared from recordCacheRef).
+    setExpanded({ [String(rootId)]: true });
+    setRowSelection({});
+    setGlobalFilter("");
   }
   if (signatureRef.current !== childrenSignature || dataRef.current[0] !== rootRecord) {
     signatureRef.current = childrenSignature;
@@ -455,8 +463,34 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
     }
   }
 
+  // Anchor for shift-click range selection: the last row toggled by a plain click.
+  const lastSelectedIdRef = useRef<string | null>(null);
+  const shiftHeld = useKeyHold("Shift");
+
   function handleRowClick(row: Row<TaxonRecord>) {
     if (isPlaceholder(row.original)) return;
+
+    const anchorId = lastSelectedIdRef.current;
+    if (shiftHeld && anchorId) {
+      const anchorIndex = rows.findIndex((r) => r.id === anchorId);
+      const clickedIndex = rows.findIndex((r) => r.id === row.id);
+      if (anchorIndex !== -1 && clickedIndex !== -1) {
+        const [from, to] = anchorIndex < clickedIndex
+          ? [anchorIndex, clickedIndex]
+          : [clickedIndex, anchorIndex];
+        setRowSelection((prev) => {
+          const next = { ...prev };
+          for (let i = from; i <= to; i++) {
+            const r = rows[i];
+            if (r.getCanSelect()) next[r.id] = true;
+          }
+          return next;
+        });
+        return;
+      }
+    }
+
+    lastSelectedIdRef.current = row.id;
     row.toggleSelected();
   }
 
@@ -507,7 +541,7 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
       </div>
 
       <div className="relative min-h-0 flex-1 overflow-hidden rounded-lg border border-border">
-      <div className="h-full overflow-auto" ref={scrollRef}>
+      <div className={clsx("h-full overflow-auto", shiftHeld && "select-none")} ref={scrollRef}>
         <Table className="w-full table-auto border-collapse text-xs" disableScrollWrapper>
           <TableHeader
             className="bg-muted text-foreground "

@@ -1,0 +1,20 @@
+src/components/taxonomy/taxonomy-tree.tsx
+  s_198d469500c7b4::t_0a09cc97d63e79 127
+  s_198d469500c7b4::t_2ca79928040120 484-502,509,526
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a12d807216cb889e5000b930613fa22e5ec3d006",
+  "prompts": {},
+  "sessions": {
+    "s_198d469500c7b4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "250ce766-8c3f-4cfc-9ebb-3e21b3adea21",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

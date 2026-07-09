@@ -249,6 +249,20 @@ const teamMembers = [
   },
 ];
 
+if (process.env.NODE_ENV !== "production") {
+  const institutionIds = new Set(institutions.map((institution) => institution.id));
+  const orphans = teamMembers.filter(
+    (member) => !institutionIds.has(member.institutionId),
+  );
+  if (orphans.length > 0) {
+    console.warn(
+      `[team] ${String(orphans.length)} member(s) reference an unknown institutionId and will not render: ${orphans
+        .map((member) => `${member.name} (${member.institutionId})`)
+        .join(", ")}`,
+    );
+  }
+}
+
 const MemberName = ({
   member,
 }: {
@@ -260,6 +274,7 @@ const MemberName = ({
       target="_blank"
       rel="noopener noreferrer"
       className="font-semibold hover:underline"
+      aria-label={`${member.name} bio, opens in a new tab`}
     >
       {member.name}
     </a>

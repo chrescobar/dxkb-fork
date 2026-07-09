@@ -210,11 +210,11 @@
 }
 
 .team-section {
-  @apply bg-background container mx-auto my-12 flex w-[95%] max-w-7xl flex-col items-center justify-center gap-8 rounded-xl p-4 sm:my-16 sm:gap-12 sm:p-6 lg:my-20 lg:gap-16 lg:p-8;
+  @apply bg-background container mx-auto my-2 flex w-[95%] max-w-7xl flex-col items-center justify-center gap-4 rounded-xl p-4 sm:my-3 sm:gap-6 sm:p-6 lg:my-4 lg:gap-8 lg:p-8;
 }
 
 .team-member {
-  @apply flex h-full w-full flex-col items-center justify-center;
+  @apply text-sm md:text-base;
 }
 
 .news-link {

@@ -4,7 +4,7 @@ import { FeaturedOrganismsGrid } from "../featured-organisms-grid";
 
 const data = [
   { name: "SARS-CoV-2", href: "/taxonomy/2697049" },
-  { name: "Influenza A virus", href: "/taxonomy/197911" },
+  { name: "Influenza A virus", href: "/taxonomy/2955291" },
 ];
 
 describe("FeaturedOrganismsGrid", () => {

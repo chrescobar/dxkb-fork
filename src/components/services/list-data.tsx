@@ -7,7 +7,6 @@ import { SortingState, RowSelectionState } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { noop } from "@/lib/utils";
 import { FilterBar } from "@/components/filterbar/filter-bar";
-import { getIdField } from "@/constants/resources";
 import type { DataField } from "@/constants/datafields/types";
 
 interface ColumnInfo {
@@ -87,10 +86,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   }
   const pageSize = 200;
 
-  const defaultIdField = getIdField(resource);
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: defaultIdField, desc: false }
-  ]);
+  const [sorting, setSorting] = useState<SortingState>([]);
   const [columnOrder, setColumnOrder] = useState<string[]>([]);
   const [internalPageIndex, setInternalPageIndex] = useState(0);
   const pageIndex = controlledPageIndex !== undefined ? controlledPageIndex : internalPageIndex;
@@ -99,7 +95,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const [prevResource, setPrevResource] = useState(resource);
   if (prevResource !== resource) {
     setPrevResource(resource);
-    setSorting([{ id: getIdField(resource), desc: false }]);
+    setSorting([]);
   }
 
   const setSortingAndResetPage = useCallback((newSorting: SortingState) => {
@@ -183,15 +179,14 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       if (totalItems === 0) return [];
 
       // Derive sort param from sortingKey (already in queryKey) to avoid stale closure
-      // Always apply a sort to ensure consistent ordering
-      const sortParam = sortingKey !== "none"
-        ? (() => { const [field, dir] = sortingKey.split(":"); return `${dir === "desc" ? "-" : "+"}${field}`; })()
-        : `+${getIdField(resource)}`;
       const start = pageIndex * pageSize;
       const end = start + pageSize;
 
       const baseURL = `${DataAPI}/${resource}/?${combinedQuery}`;
-      const url = `${baseURL}&sort(${sortParam})`;
+      const sortClause = sortingKey !== "none"
+        ? (() => { const [field, dir] = sortingKey.split(":"); return `&sort(${dir === "desc" ? "-" : "+"}${field})`; })()
+        : "";
+      const url = `${baseURL}${sortClause}`;
 
       const res = await fetch(url, {
         headers: {

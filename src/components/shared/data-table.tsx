@@ -121,6 +121,11 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
   const ctrlHeld = useKeyHold("Control");
   const metaHeld = useKeyHold("Meta");
   const ctrlOrCmdHeld = ctrlHeld || metaHeld;
+  // Mirror shiftHeld into a ref so the memoized checkbox cell reads the live value
+  // without shiftHeld entering renderCheckboxCell's deps — which would rebuild
+  // columnDefs (and reconfigure the table) on every Shift press/release.
+  const shiftHeldRef = useRef(false);
+  shiftHeldRef.current = shiftHeld;
 
   // Sync when parent provides controlled pageIndex/pageSize values
   useEffect(() => {
@@ -217,19 +222,13 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
               e.stopPropagation();
               const anchorId = lastSelectedIdRef.current;
 
-              if (e.shiftKey && anchorId && anchorId !== row.id) {
-                // Additive range (merge=true): don't update anchor
-                const allRows = table.getRowModel().rows;
-                const anchorIdx = allRows.findIndex(r => r.id === anchorId);
-                const currentIdx = allRows.findIndex(r => r.id === row.id);
-                if (anchorIdx !== -1 && currentIdx !== -1) {
-                  const from = Math.min(anchorIdx, currentIdx);
-                  const to = Math.max(anchorIdx, currentIdx);
+              if (shiftHeldRef.current && anchorId && anchorId !== row.id) {
+                // Additive range (merge into existing selection): don't update anchor
+                const rangeIds = computeShiftRangeIds(table.getRowModel().rows, anchorId, row.id);
+                if (rangeIds.length > 0) {
                   table.setRowSelection((prev) => {
                     const next = { ...prev };
-                    for (let i = from; i <= to; i++) {
-                      next[allRows[i].id] = true;
-                    }
+                    for (const rid of rangeIds) next[rid] = true;
                     return next;
                   });
                 }
@@ -1185,16 +1184,11 @@ function DataTableBody({
               const anchorId = lastSelectedIdRef.current;
 
               if (shiftHeld && anchorId) {
-                const allRows = table.getRowModel().rows;
-                const anchorIdx = allRows.findIndex(r => r.id === anchorId);
-                const currentIdx = allRows.findIndex(r => r.id === currentRowId);
-                if (anchorIdx !== -1 && currentIdx !== -1) {
-                  const from = Math.min(anchorIdx, currentIdx);
-                  const to = Math.max(anchorIdx, currentIdx);
+                // Exclusive range (replace existing selection)
+                const rangeIds = computeShiftRangeIds(table.getRowModel().rows, anchorId, currentRowId);
+                if (rangeIds.length > 0) {
                   const next: Record<string, boolean> = {};
-                  for (let i = from; i <= to; i++) {
-                    next[allRows[i].id] = true;
-                  }
+                  for (const rid of rangeIds) next[rid] = true;
                   table.setRowSelection(next);
                 }
                 return;
@@ -1262,6 +1256,26 @@ const MemoizedDataTableBody = memo(
   DataTableBody,
   (prev, next) => prev.data === next.data,
 );
+
+// Given the visible row list and an anchor/target id pair, return the ids of the
+// contiguous range between them (inclusive). Empty when either id isn't present.
+// Shared by the checkbox and row-body shift-click handlers, which intentionally
+// differ in how they *apply* this range (checkbox merges into the existing
+// selection; row body replaces it) but compute it identically.
+export function computeShiftRangeIds(
+  rows: { id: string }[],
+  anchorId: string,
+  targetId: string,
+): string[] {
+  const anchorIdx = rows.findIndex((r) => r.id === anchorId);
+  const targetIdx = rows.findIndex((r) => r.id === targetId);
+  if (anchorIdx === -1 || targetIdx === -1) return [];
+  const from = Math.min(anchorIdx, targetIdx);
+  const to = Math.max(anchorIdx, targetIdx);
+  const ids: string[] = [];
+  for (let i = from; i <= to; i++) ids.push(rows[i].id);
+  return ids;
+}
 
 function computeAutoColumnSizes(
   columns: ColumnInfo[],

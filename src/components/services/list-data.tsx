@@ -9,6 +9,10 @@ import { noop } from "@/lib/utils";
 import { FilterBar } from "@/components/filterbar/filter-bar";
 import type { DataField } from "@/constants/datafields/types";
 
+// Stable empty-rows reference so DataTable's memoized body comparator (prev.data === next.data)
+// isn't defeated by a fresh [] on every render when there are no results.
+const emptyRows: Record<string, unknown>[] = [];
+
 interface ColumnInfo {
   id: string;
   label: string;
@@ -358,7 +362,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
         ) : (
           <DataTable
             id={widget.id}
-            data={totalItems === 0 ? [] : (pageData ?? [])}
+            data={totalItems === 0 ? emptyRows : (pageData ?? emptyRows)}
             columns={widget.columns}
             resource={resource}
             rowSelection={rowSelection}

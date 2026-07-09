@@ -10,14 +10,15 @@ import {
   PaginationState,
   type CellContext,
   type Row as TanStackRow,
+  type Table as ReactTableInstance,
 } from "@tanstack/react-table";
 
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useCallback, useMemo, useRef, useState, useEffect } from "react";
+import { memo, useCallback, useMemo, useRef, useState, useEffect } from "react";
 import { noop } from "@/lib/utils";
 import { getIdField } from "@/constants/resources";
 
-import { useVirtualizer } from "@tanstack/react-virtual";
+import { useVirtualizer, type VirtualItem } from "@tanstack/react-virtual";
 
 import {
   Table,
@@ -479,7 +480,9 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
   // negative, so widths fall back to natural and the container scrolls horizontally.
   // The actively-resizing column is excluded from stretch so its drag tracks the
   // cursor 1:1 and can push the total past the container edge.
-  const resizingColumnId = table.getState().columnSizingInfo.isResizingColumn;
+  const columnSizingInfo = table.getState().columnSizingInfo;
+  const columnSizingState = table.getState().columnSizing;
+  const resizingColumnId = columnSizingInfo.isResizingColumn;
   const columnSizeVars = useMemo(() => {
     const leafColumns = table.getVisibleLeafColumns();
     const naturalSizes = leafColumns.map((c) => c.getSize());
@@ -517,16 +520,22 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       vars[`--col-${header.column.id}-size`] = `${String(finalSizes.get(header.column.id) ?? header.column.getSize())}px`;
     }
     return vars;
-  }, [table.getState().columnSizingInfo, table.getState().columnSizing, columnVisibility, containerWidth, resizingColumnId]);
+    // columnSizingInfo/columnSizingState/columnVisibility are load-bearing but the
+    // rule can't see it: the callback reads sizing via table.getSize()/getVisibleLeafColumns()
+    // getters, so exhaustive-deps flags these state values as "unnecessary". They are the
+    // triggers that recompute widths per drag-frame and on column toggle (same pattern as
+    // TanStack's own performant-resize example). Dropping them freezes live resize.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [columnSizingInfo, columnSizingState, columnVisibility, containerWidth, resizingColumnId, table]);
 
   const rows = table.getRowModel().rows;
 
   const rowVirtualizer = useVirtualizer({
-    count: table.getRowModel().rows.length,
+    count: rows.length,
     getScrollElement: () => tableContainerRef.current,
     estimateSize: () => 24,
     overscan: 10,
-    getItemKey: (index) => table.getRowModel().rows[index]?.id ?? index,
+    getItemKey: (index) => rows[index]?.id ?? index,
   });
   const virtualRows = rowVirtualizer.getVirtualItems();
   const totalSize = rowVirtualizer.getTotalSize();
@@ -896,13 +905,18 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                           className={clsx(
                             'group relative border-r border-foreground/20 bg-muted text-foreground',
                             column.id === '__select__'
-                              ? '!h-auto flex items-center justify-center p-0'
-                              : '!h-auto !min-h-7 whitespace-normal cursor-pointer px-2 py-0 align-middle text-xs leading-tight font-bold'
+                              ? 'flex h-auto! items-center justify-center p-0'
+                              : 'h-auto! min-h-7! cursor-pointer px-2 py-0 align-middle text-xs leading-tight font-bold whitespace-normal'
                           )}
                           style={{
                             width: `var(--col-${column.id}-size)`,
                             minWidth: `var(--col-${column.id}-size)`,
                             maxWidth: `var(--col-${column.id}-size)`,
+                            ...(column.id === '__select__' && {
+                              position: 'sticky',
+                              left: 0,
+                              zIndex: 1,
+                            }),
                           }}
                           onClick={column.id !== '__select__' ? (e) => {
                             if (justResizedRef.current) {
@@ -977,110 +991,35 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                 ))}
               </TableHeader>
 
-              <TableBody
-                style={{
-                  position: 'relative',
-                  height: totalSize,
-                }}
-                className="relative z-10 border-collapse gap-0"
-              >
-                {rows.length === 0 ? (
-                <TableRow className="flex h-24 w-full items-center justify-center">
-                  <TableCell
-                    colSpan={table.getVisibleLeafColumns().length}
-                    className="w-full border-t border-border py-8 text-left text-muted-foreground"
-                    style={{ justifyContent: 'left' }}
-                  >
-                    No results
-                  </TableCell>
-                </TableRow>
+              {resizingColumnId ? (
+                <MemoizedDataTableBody
+                  table={table}
+                  rows={rows}
+                  virtualRows={virtualRows}
+                  totalSize={totalSize}
+                  data={data}
+                  idField={idField}
+                  shiftHeld={shiftHeld}
+                  ctrlOrCmdHeld={ctrlOrCmdHeld}
+                  lastSelectedIdRef={lastSelectedIdRef}
+                  onGenomeSelect={onGenomeSelect}
+                  onActiveRowChange={onActiveRowChange}
+                />
               ) : (
-                // If there ARE results...
-                virtualRows.map((virtualRow) => {
-//                  const row = rows[virtualRow.index];
-                  const row = table.getRowModel().rows[virtualRow.index];
-                  return (
-                    <TableRow
-                      key={row.id}
-                      // Clicking a row should notify listeners about the active row (used to open side panels).
-                      // If the click originated from a checkbox/input, avoid double-handling because
-                      // the checkbox click handler already calls onActiveRowChange/onGenomeSelect.
-                      onClick={(e) => {
-                        if ((e.target as HTMLElement).closest('input[type="checkbox"]')) return;
-                        const currentRowId = row.id;
-                        const anchorId = lastSelectedIdRef.current;
-
-                        if (shiftHeld && anchorId) {
-                          const allRows = table.getRowModel().rows;
-                          const anchorIdx = allRows.findIndex(r => r.id === anchorId);
-                          const currentIdx = allRows.findIndex(r => r.id === currentRowId);
-                          if (anchorIdx !== -1 && currentIdx !== -1) {
-                            const from = Math.min(anchorIdx, currentIdx);
-                            const to = Math.max(anchorIdx, currentIdx);
-                            const next: Record<string, boolean> = {};
-                            for (let i = from; i <= to; i++) {
-                              next[allRows[i].id] = true;
-                            }
-                            table.setRowSelection(next);
-                          }
-                          return;
-                        }
-
-                        lastSelectedIdRef.current = currentRowId;
-
-                        if (ctrlOrCmdHeld) {
-                          row.toggleSelected();
-                        } else {
-                          table.setRowSelection({ [currentRowId]: true });
-                        }
-
-                        const idVal = row.original[idField] ?? row.original['genome_id'] ?? null;
-                        if (idVal != null && (typeof idVal === 'string' || typeof idVal === 'number')) {
-                          onGenomeSelect?.(String(idVal));
-                          onActiveRowChange?.(String(idVal));
-                        }
-                      }}
-                      style={{
-                        position: 'absolute',
-                        transform: `translateY(${String(virtualRow.start)}px)`,
-                        left: 0,
-                        right: 0,
-                        display: 'flex',
-                        height: '24px',
-                      }}
-                      className={clsx(
-                        "cursor-pointer",
-                        row.getIsSelected()
-                          ? 'bg-primary/15 dark:bg-primary/30'
-                          : 'hover:bg-muted'
-                      )}
-                      
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell
-                          key={cell.id}
-                          className='border border-border py-1'
-                          style={{
-                            width: `var(--col-${cell.column.id}-size)`,
-                            minWidth: `var(--col-${cell.column.id}-size)`,
-                            maxWidth: `var(--col-${cell.column.id}-size)`,
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            display: 'flex',
-                            height: '24px',
-                            alignItems: 'center',
-                            justifyContent: cell.column.id === '__select__' ? 'center' : 'flex-start',
-                          }}
-                        >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  );
-                })
+                <DataTableBody
+                  table={table}
+                  rows={rows}
+                  virtualRows={virtualRows}
+                  totalSize={totalSize}
+                  data={data}
+                  idField={idField}
+                  shiftHeld={shiftHeld}
+                  ctrlOrCmdHeld={ctrlOrCmdHeld}
+                  lastSelectedIdRef={lastSelectedIdRef}
+                  onGenomeSelect={onGenomeSelect}
+                  onActiveRowChange={onActiveRowChange}
+                />
               )}
-              </TableBody>
             </Table>
 
           </div>
@@ -1180,6 +1119,152 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     </div>
   );
 }
+
+interface DataTableBodyProps {
+  table: ReactTableInstance<Record<string, unknown>>;
+  rows: TanStackRow<Record<string, unknown>>[];
+  virtualRows: VirtualItem[];
+  totalSize: number;
+  // Consumed only by MemoizedDataTableBody's comparator (referential identity of the
+  // current page's rows). Intentionally not read inside the render body.
+  data: Record<string, unknown>[];
+  idField: string;
+  shiftHeld: boolean;
+  ctrlOrCmdHeld: boolean;
+  lastSelectedIdRef: React.RefObject<string | null>;
+  onGenomeSelect?: (id: string | null) => void;
+  onActiveRowChange?: (id: string | null) => void;
+}
+
+// Extracted so it can be memoized during an active column resize. columnResizeMode
+// 'onChange' fires setColumnSizing every drag frame; the CSS variables on the wrapper
+// already reflow cell widths without React, so re-reconciling every virtual row/cell
+// each frame is pure waste. While resizing, the parent renders MemoizedDataTableBody
+// (skips re-render unless the data page changes); otherwise the fully reactive body.
+function DataTableBody({
+  table,
+  rows,
+  virtualRows,
+  totalSize,
+  idField,
+  shiftHeld,
+  ctrlOrCmdHeld,
+  lastSelectedIdRef,
+  onGenomeSelect,
+  onActiveRowChange,
+}: DataTableBodyProps) {
+  "use no memo";
+  return (
+    <TableBody
+      style={{
+        position: 'relative',
+        height: totalSize,
+      }}
+      className="relative z-10 border-collapse gap-0"
+    >
+      {rows.length === 0 ? (
+      <TableRow className="flex h-24 w-full items-center justify-center">
+        <TableCell
+          colSpan={table.getVisibleLeafColumns().length}
+          className="w-full border-t border-border py-8 text-left text-muted-foreground"
+          style={{ justifyContent: 'left' }}
+        >
+          No results
+        </TableCell>
+      </TableRow>
+    ) : (
+      // If there ARE results...
+      virtualRows.map((virtualRow) => {
+        const row = rows[virtualRow.index];
+        return (
+          <TableRow
+            key={row.id}
+            // Clicking a row should notify listeners about the active row (used to open side panels).
+            // If the click originated from a checkbox/input, avoid double-handling because
+            // the checkbox click handler already calls onActiveRowChange/onGenomeSelect.
+            onClick={(e) => {
+              if ((e.target as HTMLElement).closest('input[type="checkbox"]')) return;
+              const currentRowId = row.id;
+              const anchorId = lastSelectedIdRef.current;
+
+              if (shiftHeld && anchorId) {
+                const allRows = table.getRowModel().rows;
+                const anchorIdx = allRows.findIndex(r => r.id === anchorId);
+                const currentIdx = allRows.findIndex(r => r.id === currentRowId);
+                if (anchorIdx !== -1 && currentIdx !== -1) {
+                  const from = Math.min(anchorIdx, currentIdx);
+                  const to = Math.max(anchorIdx, currentIdx);
+                  const next: Record<string, boolean> = {};
+                  for (let i = from; i <= to; i++) {
+                    next[allRows[i].id] = true;
+                  }
+                  table.setRowSelection(next);
+                }
+                return;
+              }
+
+              lastSelectedIdRef.current = currentRowId;
+
+              if (ctrlOrCmdHeld) {
+                row.toggleSelected();
+              } else {
+                table.setRowSelection({ [currentRowId]: true });
+              }
+
+              const idVal = row.original[idField] ?? row.original['genome_id'] ?? null;
+              if (idVal != null && (typeof idVal === 'string' || typeof idVal === 'number')) {
+                onGenomeSelect?.(String(idVal));
+                onActiveRowChange?.(String(idVal));
+              }
+            }}
+            style={{
+              transform: `translateY(${String(virtualRow.start)}px)`,
+              height: '24px',
+            }}
+            className={clsx(
+              "group absolute inset-x-0 flex cursor-pointer",
+              row.getIsSelected()
+                ? 'bg-primary/15 dark:bg-primary/30'
+                : 'hover:bg-muted'
+            )}
+
+          >
+            {row.getVisibleCells().map((cell) => (
+              <TableCell
+                key={cell.id}
+                className={clsx(
+                  'flex items-center truncate border border-border py-1',
+                  cell.column.id === '__select__'
+                    ? clsx('justify-center', row.getIsSelected() ? 'bg-primary/15 dark:bg-primary/30' : 'bg-background group-hover:bg-muted')
+                    : 'justify-start'
+                )}
+                style={{
+                  width: `var(--col-${cell.column.id}-size)`,
+                  minWidth: `var(--col-${cell.column.id}-size)`,
+                  maxWidth: `var(--col-${cell.column.id}-size)`,
+                  height: '24px',
+                  ...(cell.column.id === '__select__' && {
+                    position: 'sticky',
+                    left: 0,
+                    zIndex: 1,
+                  }),
+                }}
+              >
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </TableCell>
+            ))}
+          </TableRow>
+        );
+      })
+    )}
+    </TableBody>
+  );
+}
+
+const MemoizedDataTableBody = memo(
+  DataTableBody,
+  (prev, next) => prev.data === next.data,
+);
 
 function computeAutoColumnSizes(
   columns: ColumnInfo[],

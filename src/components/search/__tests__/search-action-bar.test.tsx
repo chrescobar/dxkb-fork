@@ -21,7 +21,7 @@ describe("SearchActionBar (taxonomy)", () => {
     });
 
     it("hides selection-dependent actions when nothing is selected", () => {
-      render(<SearchActionBar selectedCount={0} searchType="taxonomy" />);
+      render(<SearchActionBar selectedCount={0} searchType="taxonomy" guideUrl="https://example.test/guide" />);
       expect(screen.queryByRole("button", { name: /genomes/i })).not.toBeInTheDocument();
       // Guide is always shown (no selection required)
       expect(screen.queryByRole("button", { name: /guide/i })).toBeInTheDocument();

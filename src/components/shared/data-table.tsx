@@ -937,7 +937,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                             // Regular column - sortable and draggable
                             <>
                               <div
-                                className="relative flex size-full items-center gap-1 py-0 pr-0.5"
+                                className="relative flex size-full items-center py-0 pr-0.5"
                                 draggable={true}
                                 onDragStart={(e) => { handleDragStart(e, column.id); }}
                                 onDragOver={handleDragOver}
@@ -949,14 +949,11 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                                   backgroundColor: draggedColumn && draggedColumn !== column.id ? 'transparent' : '',
                                 }}
                               >
-                                <span className="select-none">{flexRender(header.column.columnDef.header, header.getContext())}</span>
-                                <div className="mr-0.5 flex shrink-0 flex-col items-center justify-center" style={{ cursor: 'pointer' }}>
-                                  {column.getIsSorted() === 'asc' ? (
-                                    <ChevronUp className="size-3" />
-                                  ) : column.getIsSorted() === 'desc' ? (
-                                    <ChevronDown className="size-3" />
-                                  ) : null}
-                                </div>
+                                <span className="leading-tight select-none">
+                                  {flexRender(header.column.columnDef.header, header.getContext())}
+                                  {column.getIsSorted() === 'asc' && <ChevronUp className="ml-0.5 inline-block size-3 align-text-bottom" />}
+                                  {column.getIsSorted() === 'desc' && <ChevronDown className="ml-0.5 inline-block size-3 align-text-bottom" />}
+                                </span>
                               </div>
                               {column.getCanResize() && (
                                 <div

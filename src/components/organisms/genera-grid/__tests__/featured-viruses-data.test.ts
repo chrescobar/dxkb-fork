@@ -30,7 +30,7 @@ describe("featuredViruses", () => {
   });
 
   it("taxonomy-based hrefs embed the correct taxon ID", () => {
-    const cases: Array<[string, string]> = [
+    const cases: [string, string][] = [
       ["SARS-CoV-2", "2697049"],
       ["Influenza A virus", "2955291"],
       ["Dengue virus", "3052464"],

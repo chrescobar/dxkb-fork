@@ -230,6 +230,9 @@ export function SearchActionBar({
     if (action.validSearchTypes !== "*" && !action.validSearchTypes.includes(searchType)) {
       return false;
     }
+    if (action.id === "guide" && !guideUrl) {
+      return false;
+    }
     // Hide selection-dependent buttons until at least one row is selected
     if (action.requiresSelection && selectedCount === 0) {
       return false;

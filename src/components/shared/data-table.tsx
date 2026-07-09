@@ -378,13 +378,16 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       const newOrderMap = new Map(selectedItemsOrder);
       Object.keys(newSelection).forEach((rowId) => {
         if (newSelection[rowId] && !selectedItemsOrder.has(rowId)) {
-          // Add new selections with their current order
           newOrderMap.set(rowId, newOrderMap.size);
-        } else if (!newSelection[rowId]) {
-          // Remove deselected items
-          newOrderMap.delete(rowId);
         }
       });
+      // Prune IDs absent from newSelection (handles replace-style setRowSelection
+      // where old ids are simply omitted rather than set to false)
+      for (const rowId of [...newOrderMap.keys()]) {
+        if (!newSelection[rowId]) {
+          newOrderMap.delete(rowId);
+        }
+      }
       setSelectedItemsOrder(newOrderMap);
       
       // If controlled, call the parent handler
@@ -1022,26 +1025,25 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
         </div>
 
         <div className="z-10 w-full border-t border-border bg-muted py-1 shadow-sm" ref={footerRef}>
-          <div className="flex flex-col items-center justify-between space-y-2 px-4 md:flex-row md:space-y-0">
-            <div>
+          <div className="flex flex-wrap items-center justify-between gap-y-1 px-2">
+            <div className="shrink-0 text-xs">
               {(() => {
                 const pageIndex = table.getState().pagination.pageIndex;
                 const pageSize = table.getState().pagination.pageSize;
-                const totalRows = totalItems; // total from backend
+                const totalRows = totalItems;
                 const hasResults = totalItems > 0;
                 const start = hasResults ? pageIndex * pageSize + 1 : 0;
                 const end = hasResults ? Math.min(start + data.length - 1, totalRows): 0;
-                
-                // Show selection count if applicable
-                const selectedCount = isAllPagesSelected 
-                  ? totalItems 
+
+                const selectedCount = isAllPagesSelected
+                  ? totalItems
                   : (totalSelectedCount ?? Object.keys(rowSelection).filter(key => rowSelection[key]).length);
-                
+
                 return (
-                  <div>
-                    Showing {start}-{end} of {totalRows} results
+                  <div className="flex flex-col">
+                    <span>Showing {start}-{end} of {totalRows} results</span>
                     {selectedCount > 0 && (
-                      <span className="ml-2 font-semibold text-blue-600">
+                      <span className="font-semibold text-blue-600">
                         {isAllPagesSelected
                           ? `All ${String(totalItems)} results selected`
                           : `${String(selectedCount)} selected`}
@@ -1051,14 +1053,11 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                 );
               })()}
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center gap-x-1">
               <Button
-                onClick={() => {
-                  table.previousPage();
-
-                }}
+                onClick={() => { table.previousPage(); }}
                 disabled={!table.getCanPreviousPage()}
-                className="border border-border px-2 py-1 disabled:opacity-50"
+                className="border border-border px-2 py-0.5 disabled:opacity-50"
               >
                 {'Prev'}
               </Button>
@@ -1078,16 +1077,12 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                   const prev = idx > 0 ? uniquePages[idx - 1] : undefined;
                   const showDots = prev !== undefined && page - prev > 1;
                   return (
-                    <span key={page}>
-                      {showDots && <span className="px-1">...</span>}
+                    <span key={page} className="flex items-center gap-x-1">
+                      {showDots && <span className="text-muted-foreground">...</span>}
                       <Button
-                        onClick={() => {
-                          // Update table's internal state for immediate UI feedback
-                          table.setPageIndex(page);
-        
-                        }}
+                        onClick={() => { table.setPageIndex(page); }}
                         className={clsx(
-                          'mx-1 border bg-background px-3 py-1 text-foreground',
+                          'border bg-background px-2 py-0.5 text-foreground',
                           currentPage === page ? 'bg-primary/15 font-bold' : 'bg-background'
                         )}
                       >
@@ -1097,14 +1092,10 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                   );
                 });
               })()}
-              {/* Forward arrow */}
               <Button
-                onClick={() => {
-                  table.nextPage();
-
-                }}
+                onClick={() => { table.nextPage(); }}
                 disabled={!table.getCanNextPage()}
-                className="border border-border px-2 py-1 disabled:opacity-50"
+                className="border border-border px-2 py-0.5 disabled:opacity-50"
               >
                 {'Next'}
               </Button>
@@ -1226,7 +1217,7 @@ function DataTableBody({
                 className={clsx(
                   'flex items-center truncate border border-border py-1',
                   cell.column.id === '__select__'
-                    ? clsx('justify-center', row.getIsSelected() ? 'bg-primary/15 dark:bg-primary/30' : 'bg-background group-hover:bg-muted')
+                    ? clsx('justify-center', row.getIsSelected() ? '' : 'bg-background group-hover:bg-muted')
                     : 'justify-start'
                 )}
                 style={{
@@ -1238,6 +1229,12 @@ function DataTableBody({
                     position: 'sticky',
                     left: 0,
                     zIndex: 1,
+                    // color-mix produces an opaque equivalent of bg-primary/15 over
+                    // the page background — transparent backgrounds on sticky elements
+                    // let scrolled content bleed through.
+                    ...(row.getIsSelected() && {
+                      backgroundColor: 'color-mix(in srgb, var(--color-primary) 15%, var(--color-background))',
+                    }),
                   }),
                 }}
               >

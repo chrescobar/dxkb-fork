@@ -44,10 +44,12 @@ describe("makeSerologyView", () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it("renders TaxonDataPanel with serology resource", () => {
+  it("renders TaxonDataPanel with serology resource and taxon query", () => {
     const SerologyView = makeSerologyView({ taxon: fakeTaxon });
     const { getByTestId } = render(<SerologyView />);
-    expect(getByTestId("taxon-data-panel")).toHaveAttribute("data-resource", "serology");
+    const panel = getByTestId("taxon-data-panel");
+    expect(panel).toHaveAttribute("data-resource", "serology");
+    expect(panel.getAttribute("data-q")).toContain("1234");
   });
 });
 
@@ -58,9 +60,11 @@ describe("makeSurveillanceView", () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it("renders TaxonDataPanel with surveillance resource", () => {
+  it("renders TaxonDataPanel with surveillance resource and taxon query", () => {
     const SurveillanceView = makeSurveillanceView({ taxon: fakeTaxon });
     const { getByTestId } = render(<SurveillanceView />);
-    expect(getByTestId("taxon-data-panel")).toHaveAttribute("data-resource", "surveillance");
+    const panel = getByTestId("taxon-data-panel");
+    expect(panel).toHaveAttribute("data-resource", "surveillance");
+    expect(panel.getAttribute("data-q")).toContain("1234");
   });
 });

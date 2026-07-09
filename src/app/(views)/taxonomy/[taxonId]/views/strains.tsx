@@ -8,6 +8,7 @@ export function makeStrainsView({ taxon }: { taxon: OrganismTaxonomy | null }) {
       <TaxonDataPanel
         resource="strain"
         q={`eq(taxon_lineage_ids,${String(taxon.taxonId)})`}
+        guideUrl="https://www.bv-brc.org/docs/quick_references/organisms_taxon/strains.html"
       />
     );
   }

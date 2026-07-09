@@ -39,7 +39,7 @@ export function TaxonDataPanel({ resource, q, guideUrl }: TaxonDataPanelProps) {
       hasSidePanel={!!activeId}
       actionBar={
         <SearchActionBar
-          selectedCount={selectedIds.length}
+          selectedCount={isAllPagesSelected ? totalItems : selectedIds.length}
           searchType={resource}
           guideUrl={guideUrl}
         />

@@ -185,9 +185,16 @@ test.describe("a11y component surfaces", () => {
 
     const modifierKey = process.platform === "darwin" ? "Meta" : "Control";
     await page.keyboard.press(`${modifierKey}+K`);
-    await page
-      .getByRole("dialog", { name: /command palette/i })
-      .waitFor({ state: "visible", timeout: 10_000 });
+    const commandPaletteDialog = page.getByRole("dialog", { name: /command palette/i });
+    // WebKit on Linux CI intercepts Ctrl+K via its built-in Emacs-style "delete to
+    // end of line" shortcut before the keydown reaches the page. Retry with Meta+K
+    // (the app listens for event.metaKey || event.ctrlKey) as a fallback.
+    try {
+      await commandPaletteDialog.waitFor({ state: "visible", timeout: 3_000 });
+    } catch {
+      await page.keyboard.press("Meta+K");
+      await commandPaletteDialog.waitFor({ state: "visible", timeout: 10_000 });
+    }
     // The cmdk popover renders into a portal; on WebKit the theme CSS variables
     // can momentarily lag behind the dialog's visibility, causing false-positive
     // color-contrast violations. Waiting for input auto-focus confirms full mount.

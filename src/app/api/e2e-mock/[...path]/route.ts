@@ -98,6 +98,17 @@ const brucellaTaxonomyFixture = {
   genomes: 1909,
 };
 
+// Influenza A virus — lineage includes "Orthomyxoviridae" so hasStrains = true.
+// Used by the strains-tab e2e tests which need a taxon where the Strains tab is enabled.
+const influenzaATaxonomyFixture = {
+  taxon_id: 11520,
+  taxon_name: "Influenza A virus",
+  lineage_names: ["Viruses", "Orthornavirae", "Negarnaviricota", "Insthoviricetes", "Articulavirales", "Orthomyxoviridae", "Alphainfluenzavirus", "Influenza A virus"],
+  lineage_ids: [10239, 2497569, 2497570, 2497583, 2499399, 11308, 2499397, 11520],
+  taxon_rank: "species",
+  genomes: 245000,
+};
+
 const sharedFacetFixtures: Record<string, (string | number)[]> = {
   genus: [
     "Escherichia",
@@ -544,6 +555,7 @@ function maybeBvBrcWebsite(path: string, request: NextRequest): BvBrcResult | nu
   if (endpoint === "data/summary_by_taxon/131567") return { kind: "ok", body: allOrganismsSummaryFixture };
   if (endpoint === "taxonomy/2") return { kind: "ok", body: bacteriaTaxonomyFixture };
   if (endpoint === "taxonomy/234") return { kind: "ok", body: brucellaTaxonomyFixture };
+  if (endpoint === "taxonomy/11520") return { kind: "ok", body: influenzaATaxonomyFixture };
   if (endpoint === "genome" || endpoint === "genome/") {
     const url = new URL(request.url);
     const query = decodeURIComponent(url.search);

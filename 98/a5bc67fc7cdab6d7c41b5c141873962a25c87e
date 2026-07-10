@@ -1,0 +1,28 @@
+src/components/services/list-data.tsx
+  s_a3dee6b8243e31::t_786b2e1ef5fac8 154
+  s_a3dee6b8243e31::t_7ef6e2ceddc806 362
+  s_a3dee6b8243e31::t_ffcbf51bdc25a3 203
+  s_a3dee6b8243e31::t_ea187c5812c886 211-213
+src/components/shared/__tests__/data-table-rendering.test.tsx
+  s_a3dee6b8243e31::t_f488759ffb876f 1-57
+e2e/tests/organisms/taxon-list-data.spec.ts
+  s_a3dee6b8243e31::t_4921b46e882ff1 1-37
+src/components/shared/data-table.tsx
+  s_a3dee6b8243e31::t_7ef9b72e9a7a46 47,86,1007,1022,1127,1146,1158,1161,1164-1168
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "98a5bc67fc7cdab6d7c41b5c141873962a25c87e",
+  "prompts": {},
+  "sessions": {
+    "s_a3dee6b8243e31": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "598e30bb-35b0-4b74-aae7-48a00beda2fb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

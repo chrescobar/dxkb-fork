@@ -13,6 +13,16 @@ import type { DataField } from "@/constants/datafields/types";
 // isn't defeated by a fresh [] on every render when there are no results.
 const emptyRows: Record<string, unknown>[] = [];
 
+// The page query key is ['genome-full', resource, ...]; index 1 is the resource.
+// Keeping previous rows across a resource change bleeds wrong-shaped data into a
+// table keyed by the new resource's idField → duplicate/undefined React keys.
+export function isSameResourceQuery(
+  previousQueryKey: readonly unknown[] | undefined,
+  resource: string,
+): boolean {
+  return previousQueryKey?.[1] === resource;
+}
+
 interface ColumnInfo {
   id: string;
   label: string;
@@ -204,7 +214,14 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       return res.json() as Promise<Record<string, unknown>[]>;
     },
     enabled: totalItems > 0,
-    placeholderData: (previousData) => previousData,
+    // Keep previous page's rows during refetch for smooth pagination — but ONLY
+    // within the same resource. On a tab switch (e.g. genome → strain) the query
+    // key's resource changes; bleeding the old resource's rows into a table now
+    // keyed by the new resource's idField produces duplicate/undefined React keys
+    // (genome rows share a `strain`, or lack it entirely). Drop the placeholder
+    // when the resource differs so the table renders empty until real rows land.
+    placeholderData: (previousData, previousQuery) =>
+      isSameResourceQuery(previousQuery?.queryKey, resource) ? previousData : undefined,
     staleTime: 0,
   });
 

@@ -58,6 +58,7 @@ export function FacetPanel({
   selected,
 }: FacetPanelProps) {
   const [facets, setFacets] = useState<Partial<Record<string, FacetItem[]>>>({});
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const DataAPI = process.env.NEXT_PUBLIC_DATA_API;
   const requestId = useRef(0);
 
@@ -76,6 +77,7 @@ export function FacetPanel({
 
     const fetchFacets = async () => {
       const currentRequest = ++requestId.current;
+      setFetchError(null);
 
       try {
 
@@ -130,8 +132,11 @@ export function FacetPanel({
 
         if (!res.ok) {
           const text = await res.text();
-          console.error("Facet error response:", text);
-          throw new Error("Failed to fetch facets");
+          console.warn("Facet fetch failed:", text);
+          if (currentRequest === requestId.current) {
+            setFetchError("Facets unavailable");
+          }
+          return;
         }
 
         const json = await res.json() as { facet_counts?: { facet_fields?: Record<string, (string | number)[]> } } | null | undefined;
@@ -148,12 +153,23 @@ export function FacetPanel({
 
         setFacets(parsed);
       } catch (err) {
-        console.error("Facet fetch error:", err);
+        console.warn("Facet fetch error:", err);
+        if (currentRequest === requestId.current) {
+          setFetchError("Facets unavailable");
+        }
       }
     };
 
     void fetchFacets();
   }, [fields, query, resource, DataAPI, selected]);
+
+  if (fetchError) {
+    return (
+      <div className="flex max-h-30 items-center rounded bg-gray-800 p-2 text-[11px] text-gray-400">
+        {fetchError}
+      </div>
+    );
+  }
 
   return (
     <div className="flex max-h-30 gap-3 overflow-auto rounded bg-gray-800 p-2 text-[11px]">

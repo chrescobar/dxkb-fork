@@ -151,7 +151,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       const res = await fetch(`${baseURL}&limit(1)`, {
         headers: { 'Accept': 'application/solr+json' }
       });
-      if (!res.ok) throw new Error('Failed to fetch metadata');
+      if (!res.ok) throw new Error(`Failed to fetch metadata (${String(res.status)} ${res.statusText})`);
       return res.json() as Promise<MetaResponse>;
     },
     staleTime: 0,
@@ -200,7 +200,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
           'X-Range': `items=${String(start)}-${String(end)}`,
         }
       });
-      if (!res.ok) throw new Error('Failed to fetch genome data');
+      if (!res.ok) throw new Error(`Failed to fetch genome data (${String(res.status)} ${res.statusText})`);
       return res.json() as Promise<Record<string, unknown>[]>;
     },
     enabled: totalItems > 0,
@@ -208,15 +208,9 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     staleTime: 0,
   });
 
-  if (metaError || dataError) {
-    return (
-      <div>
-        Error: {(metaError || dataError)?.message}
-        <br />
-        Query: {JSON.stringify(q)}
-      </div>
-    );
-  }
+  const errorMessage = metaError ?? dataError
+    ? `Error: ${((metaError ?? dataError)?.message ?? 'Unknown error')} — Query: ${JSON.stringify(q)}`
+    : undefined;
 
   const handleRowSelectionChange = (newSelection: Record<string, boolean>) => {
     // Apply new selection from table. Avoiding aggressive ignores here so
@@ -365,6 +359,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
             data={totalItems === 0 ? emptyRows : (pageData ?? emptyRows)}
             columns={widget.columns}
             resource={resource}
+            errorMessage={errorMessage}
             rowSelection={rowSelection}
             onRowSelectionChange={handleRowSelectionChange}
             onSelectionChange={noop}

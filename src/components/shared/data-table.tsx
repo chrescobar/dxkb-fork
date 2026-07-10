@@ -44,6 +44,7 @@ interface DataTableProps {
   columns: ColumnInfo[];
   totalItems: number;
   resource: string;
+  errorMessage?: string;
   onSelectionChange?: (rows: Record<string, unknown>[]) => void;
   onGenomeSelect?: (id: string | null) => void;
   selectedIds?: string[];
@@ -82,7 +83,7 @@ interface DataTableProps {
   onActiveRowChange?: (id: string | null) => void;
 }
 
-export function DataTable({ id: _id, data, columns, totalItems, resource, onSelectionChange, onGenomeSelect, selectedIds, pageIndex, pageSize, onPageChange, sorting:controlledSorting, onSortingChange, columnOrder, onColumnOrderChange, columnVisibility: controlledVisibility, onColumnVisibilityChange: onColumnVisibilityChangeProp, rowSelection: controlledRowSelection, onRowSelectionChange, isAllPagesSelected = false, onAllPagesSelectionChange, totalSelectedCount, onDownloadAll, isLoading = false, onActiveRowChange }: DataTableProps) {
+export function DataTable({ id: _id, data, columns, totalItems, resource, errorMessage, onSelectionChange, onGenomeSelect, selectedIds, pageIndex, pageSize, onPageChange, sorting:controlledSorting, onSortingChange, columnOrder, onColumnOrderChange, columnVisibility: controlledVisibility, onColumnVisibilityChange: onColumnVisibilityChangeProp, rowSelection: controlledRowSelection, onRowSelectionChange, isAllPagesSelected = false, onAllPagesSelectionChange, totalSelectedCount, onDownloadAll, isLoading = false, onActiveRowChange }: DataTableProps) {
   "use no memo";
 
   const [columnSizing, setColumnSizing] = useState<Record<string, number>>({});
@@ -1003,6 +1004,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                   lastSelectedIdRef={lastSelectedIdRef}
                   onGenomeSelect={onGenomeSelect}
                   onActiveRowChange={onActiveRowChange}
+                  errorMessage={errorMessage}
                 />
               ) : (
                 <DataTableBody
@@ -1017,6 +1019,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                   lastSelectedIdRef={lastSelectedIdRef}
                   onGenomeSelect={onGenomeSelect}
                   onActiveRowChange={onActiveRowChange}
+                  errorMessage={errorMessage}
                 />
               )}
             </Table>
@@ -1121,6 +1124,7 @@ interface DataTableBodyProps {
   lastSelectedIdRef: React.RefObject<string | null>;
   onGenomeSelect?: (id: string | null) => void;
   onActiveRowChange?: (id: string | null) => void;
+  errorMessage?: string;
 }
 
 // Extracted so it can be memoized during an active column resize. columnResizeMode
@@ -1139,6 +1143,7 @@ function DataTableBody({
   lastSelectedIdRef,
   onGenomeSelect,
   onActiveRowChange,
+  errorMessage,
 }: DataTableBodyProps) {
   "use no memo";
   return (
@@ -1150,13 +1155,17 @@ function DataTableBody({
       className="relative z-10 border-collapse gap-0"
     >
       {rows.length === 0 ? (
-      <TableRow className="flex h-24 w-full items-center justify-center">
+      <TableRow className="flex h-6 w-full items-center">
         <TableCell
           colSpan={table.getVisibleLeafColumns().length}
-          className="w-full border-t border-border py-8 text-left text-muted-foreground"
+          className="w-full px-2 py-0 text-left text-muted-foreground"
           style={{ justifyContent: 'left' }}
         >
-          No results
+          {errorMessage ? (
+            <span className="text-destructive">{errorMessage}</span>
+          ) : (
+            'No results'
+          )}
         </TableCell>
       </TableRow>
     ) : (

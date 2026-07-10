@@ -1,22 +1,14 @@
-import { Suspense } from "react";
-
-import { ListData } from "@/components/services/list-data";
 import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
+import { TaxonDataPanel } from "../_components/taxon-data-panel";
 
 export function makeSurveillanceView({ taxon }: { taxon: OrganismTaxonomy | null }) {
   function SurveillanceView() {
     if (!taxon) return null;
     return (
-      <Suspense
-        fallback={<div className="p-8 text-sm text-muted-foreground">Loading surveillance data…</div>}
-      >
-        <div className="flex h-full flex-col overflow-hidden">
-          <ListData
-            resource="surveillance"
-            q={`eq(taxon_lineage_ids,${String(taxon.taxonId)})`}
-          />
-        </div>
-      </Suspense>
+      <TaxonDataPanel
+        resource="surveillance"
+        q={`eq(taxon_lineage_ids,${String(taxon.taxonId)})`}
+      />
     );
   }
   return SurveillanceView;

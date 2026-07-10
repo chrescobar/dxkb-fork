@@ -1,7 +1,5 @@
-import { Suspense } from "react";
-
-import { ListData } from "@/components/services/list-data";
 import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
+import { TaxonDataPanel } from "../_components/taxon-data-panel";
 
 // SFVT (sequence_feature_vt) has NO taxon_id / taxon_lineage_ids field — every
 // eq(taxon*,…) returns HTTP 400. The taxon is only embedded as a prefix inside
@@ -40,16 +38,10 @@ export function makeSfvtView({ taxon }: { taxon: OrganismTaxonomy | null }) {
     // this map ever drift.
     if (!term) return null;
     return (
-      <Suspense
-        fallback={<div className="p-8 text-sm text-muted-foreground">Loading SFVT data…</div>}
-      >
-        <div className="flex h-full flex-col overflow-hidden">
-          <ListData
-            resource="sequence_feature_vt"
-            q={`keyword(${encodeURIComponent(term)})`}
-          />
-        </div>
-      </Suspense>
+      <TaxonDataPanel
+        resource="sequence_feature_vt"
+        q={`keyword(${encodeURIComponent(term)})`}
+      />
     );
   }
   return SfvtView;

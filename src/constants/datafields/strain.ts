@@ -11,23 +11,25 @@ export const strainFields = {
         facet_hidden: true, 
         search: true  
         },
-    taxon_lineage_ids: { 
-        label: 'Taxon Lineage IDs', 
-        field: 'taxon_lineage_ids', 
+    taxon_lineage_ids: {
+        label: 'Taxon Lineage IDs',
+        field: 'taxon_lineage_ids',
         hidden: true,
+        show_in_table: false,
         group: 'Genome Info',
-        facet: false, 
-        facet_hidden: true, 
-        search: true  
+        facet: false,
+        facet_hidden: true,
+        search: true
         },
-    taxon_lineage_names: { 
-        label: 'Taxon Lineage Names', 
-        field: 'taxon_lineage_names', 
+    taxon_lineage_names: {
+        label: 'Taxon Lineage Names',
+        field: 'taxon_lineage_names',
         hidden: true,
+        show_in_table: false,
         group: 'Genome Info',
-        facet: false, 
-        facet_hidden: true, 
-        search: true 
+        facet: false,
+        facet_hidden: true,
+        search: true
         },
         
     family: { 
@@ -296,49 +298,53 @@ export const strainFields = {
         facet_hidden: true, 
         search: true  
         },
-    s_s: { 
-        label: 'S', 
-        field: 's', 
+    s_s: {
+        label: 'S',
+        field: 's',
         hidden: false,
+        show_in_table: false,
         group: 'Strain Info',
-        facet: false, 
-        facet_hidden: true, 
-        search: true  
+        facet: false,
+        facet_hidden: true,
+        search: true
         },
-    s_m: { 
-        label: 'M', 
-        field: 'm', 
+    s_m: {
+        label: 'M',
+        field: 'm',
         hidden: false,
+        show_in_table: false,
         group: 'Strain Info',
-        facet: false, 
-        facet_hidden: true, 
-        search: true  
+        facet: false,
+        facet_hidden: true,
+        search: true
         },
-    s_l: { 
-        label: 'L', 
-        field: 'l', 
+    s_l: {
+        label: 'L',
+        field: 'l',
         hidden: false,
+        show_in_table: false,
         group: 'Strain Info',
-        facet: false, 
-        facet_hidden: true, 
-        search: true  
+        facet: false,
+        facet_hidden: true,
+        search: true
         },
-    s_other_segments: { 
-        label: 'Other Segments', 
-        field: 'other_segments', 
+    s_other_segments: {
+        label: 'Other Segments',
+        field: 'other_segments',
         hidden: false,
         group: 'Strain Info',
-        facet: false, 
-        facet_hidden: true, 
-        search: true  
+        facet: false,
+        facet_hidden: true,
+        search: true
         },
-    date_added: { 
-        label: 'Date Added', 
-        field: 'date_inserted', 
+    date_added: {
+        label: 'Date Added',
+        field: 'date_inserted',
         hidden: false,
+        show_in_table: false,
         group: 'Strain Info',
-        facet: false, 
-        facet_hidden: true, 
-        search: true  
+        facet: false,
+        facet_hidden: true,
+        search: true
         }
     } satisfies DataFieldMap;

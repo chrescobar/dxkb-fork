@@ -25,7 +25,7 @@ export const featuredViruses: FeaturedVirus[] = [
   },
   { name: "Enteroviruses", href: taxonomyHref(12059) },
   { name: "Hepatitis C virus", href: taxonomyHref(3052230) },
-  { name: "Influenza A virus", href: taxonomyHref(197911) },
+  { name: "Influenza A virus", href: taxonomyHref(2955291) },
   { name: "Lassa virus", href: taxonomyHref(3052310) },
   { name: "Measles virus", href: taxonomyHref(3052345) },
   { name: "Monkeypox Virus", href: taxonomyHref(10244) },

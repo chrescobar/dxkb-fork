@@ -1,5 +1,6 @@
 'use client';
 
+import { useKeyHold } from "@tanstack/react-hotkeys";
 import {
   ColumnDef,
   getCoreRowModel,
@@ -7,16 +8,17 @@ import {
   flexRender,
   SortingState,
   PaginationState,
-  Header,
   type CellContext,
   type Row as TanStackRow,
+  type Table as ReactTableInstance,
 } from "@tanstack/react-table";
 
-import { useCallback, useMemo, useRef, useState, useEffect } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { memo, useCallback, useMemo, useRef, useState, useEffect } from "react";
 import { noop } from "@/lib/utils";
 import { getIdField } from "@/constants/resources";
 
-import { useVirtualizer } from "@tanstack/react-virtual";
+import { useVirtualizer, type VirtualItem } from "@tanstack/react-virtual";
 
 import {
   Table,
@@ -42,6 +44,7 @@ interface DataTableProps {
   columns: ColumnInfo[];
   totalItems: number;
   resource: string;
+  errorMessage?: string;
   onSelectionChange?: (rows: Record<string, unknown>[]) => void;
   onGenomeSelect?: (id: string | null) => void;
   selectedIds?: string[];
@@ -80,10 +83,14 @@ interface DataTableProps {
   onActiveRowChange?: (id: string | null) => void;
 }
 
-export function DataTable({ id: _id, data, columns, totalItems, resource, onSelectionChange, onGenomeSelect, selectedIds, pageIndex, pageSize, onPageChange, sorting:controlledSorting, onSortingChange, columnOrder, onColumnOrderChange, columnVisibility: controlledVisibility, onColumnVisibilityChange: onColumnVisibilityChangeProp, rowSelection: controlledRowSelection, onRowSelectionChange, isAllPagesSelected = false, onAllPagesSelectionChange, totalSelectedCount, onDownloadAll, isLoading = false, onActiveRowChange }: DataTableProps) {
+export function DataTable({ id: _id, data, columns, totalItems, resource, errorMessage, onSelectionChange, onGenomeSelect, selectedIds, pageIndex, pageSize, onPageChange, sorting:controlledSorting, onSortingChange, columnOrder, onColumnOrderChange, columnVisibility: controlledVisibility, onColumnVisibilityChange: onColumnVisibilityChangeProp, rowSelection: controlledRowSelection, onRowSelectionChange, isAllPagesSelected = false, onAllPagesSelectionChange, totalSelectedCount, onDownloadAll, isLoading = false, onActiveRowChange }: DataTableProps) {
   "use no memo";
 
   const [columnSizing, setColumnSizing] = useState<Record<string, number>>({});
+  // Live clientWidth of the scroll container. Drives full-width column stretch;
+  // updated by a ResizeObserver so the table reflows when the side panel or
+  // vertical menu changes the available width.
+  const [containerWidth, setContainerWidth] = useState(0);
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>(
     controlledVisibility || {}
   );
@@ -111,6 +118,16 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
 
   const idField = getIdField(resource);
 
+  const shiftHeld = useKeyHold("Shift");
+  const ctrlHeld = useKeyHold("Control");
+  const metaHeld = useKeyHold("Meta");
+  const ctrlOrCmdHeld = ctrlHeld || metaHeld;
+  // Mirror shiftHeld into a ref so the memoized checkbox cell reads the live value
+  // without shiftHeld entering renderCheckboxCell's deps — which would rebuild
+  // columnDefs (and reconfigure the table) on every Shift press/release.
+  const shiftHeldRef = useRef(false);
+  shiftHeldRef.current = shiftHeld;
+
   // Sync when parent provides controlled pageIndex/pageSize values
   useEffect(() => {
     setPagination((prev) => {
@@ -121,7 +138,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     });
   }, [pageIndex, pageSize]);
 
-  const lastSelectedIndexRef = useRef<number | null>(null);
+  const lastSelectedIdRef = useRef<string | null>(null);
 
   const [onlyVisibleColumns, setOnlyVisibleColumns] = useState(false);
 
@@ -130,10 +147,8 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
   const columnMinSizesRef = useRef<Record<string, number>>({});
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
-  const resizeLineRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLTableSectionElement>(null);
-  const isResizingRef = useRef(false);
-  const preventClickRef = useRef<((e: Event) => void) | null>(null);
+  const justResizedRef = useRef(false);
   const columnMenuRef = useRef<HTMLDivElement>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLDivElement>(null);
@@ -181,6 +196,21 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     setColumnSizing(autoSizes);
   }, [columns, data]);
 
+  // Track the scroll container's width so columns can stretch to fill it.
+  // Fires on side-panel resize, vertical-menu collapse, and window resize.
+  useEffect(() => {
+    const el = tableContainerRef.current;
+    if (!el) return;
+    setContainerWidth(el.clientWidth);
+    const ro = new ResizeObserver((entries) => {
+      // Floor so the stretched total never exceeds the container by a sub-pixel,
+      // which would spawn a spurious 1px horizontal scrollbar.
+      setContainerWidth(Math.floor(entries[0].contentRect.width));
+    });
+    ro.observe(el);
+    return () => { ro.disconnect(); };
+  }, []);
+
   const renderCheckboxCell = useCallback(
     ({ row, table }: CellContext<Record<string, unknown>, unknown>) => {
       return (
@@ -191,53 +221,30 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
             onChange={noop}
             onClick={(e) => {
               e.stopPropagation();
+              const anchorId = lastSelectedIdRef.current;
 
-              const isShift = (e).shiftKey;
-              const allRows = table.getRowModel().rows;
-              const currentRowId = row.id;
-              const currentIndex = allRows.findIndex(r => r.id === currentRowId);
-
-              if (currentIndex === -1) {
-                console.warn('Could not find current row index');
-                return;
-              }
-
-              const lastSelectedIndex = lastSelectedIndexRef.current;
-
-              // Determine whether this click will select or deselect the row based on current state
-              const wasSelected = row.getIsSelected();
-              const willSelect = !wasSelected;
-
-              if (isShift && lastSelectedIndex !== null && lastSelectedIndex !== currentIndex) {
-                const start = Math.min(lastSelectedIndex, currentIndex);
-                const end = Math.max(lastSelectedIndex, currentIndex);
-
-                const newSelection: Record<string, boolean> = {};
-                for (let i = start; i <= end; i++) {
-                  const rowId = allRows[i]?.id;
-                  if (rowId) {
-                    newSelection[rowId] = true;
-                  }
+              if (shiftHeldRef.current && anchorId && anchorId !== row.id) {
+                // Additive range (merge into existing selection): don't update anchor
+                const rangeIds = computeShiftRangeIds(table.getRowModel().rows, anchorId, row.id);
+                if (rangeIds.length > 0) {
+                  table.setRowSelection((prev) => {
+                    const next = { ...prev };
+                    for (const rid of rangeIds) next[rid] = true;
+                    return next;
+                  });
+                  return;
                 }
-
-                table.setRowSelection((prev) => ({
-                  ...prev,
-                  ...newSelection,
-                }));
-              } else {
-                table.setRowSelection((prev) => ({
-                  ...prev,
-                  [row.id]: willSelect,
-                }));
+                // stale anchor (off-page/re-sorted): fall through to single-toggle
               }
 
-              // ✅ Set synchronously
-              lastSelectedIndexRef.current = currentIndex;
+              // No shift: additive toggle, update anchor
+              lastSelectedIdRef.current = row.id;
+              const wasSelected = row.getIsSelected();
+              table.setRowSelection((prev) => ({ ...prev, [row.id]: !wasSelected }));
 
-              // After updating rowSelection, invoke handlers based on the intended new selection state
               const idVal = row.original[idField] ?? row.original['genome_id'] ?? null;
-              if (!willSelect) {
-                onGenomeSelect?.(null); // deselecting, so clear
+              if (wasSelected) {
+                onGenomeSelect?.(null);
                 onActiveRowChange?.(null);
               } else if (idVal != null && (typeof idVal === 'string' || typeof idVal === 'number')) {
                 onGenomeSelect?.(String(idVal));
@@ -373,13 +380,16 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       const newOrderMap = new Map(selectedItemsOrder);
       Object.keys(newSelection).forEach((rowId) => {
         if (newSelection[rowId] && !selectedItemsOrder.has(rowId)) {
-          // Add new selections with their current order
           newOrderMap.set(rowId, newOrderMap.size);
-        } else if (!newSelection[rowId]) {
-          // Remove deselected items
-          newOrderMap.delete(rowId);
         }
       });
+      // Prune IDs absent from newSelection (handles replace-style setRowSelection
+      // where old ids are simply omitted rather than set to false)
+      for (const rowId of [...newOrderMap.keys()]) {
+        if (!newSelection[rowId]) {
+          newOrderMap.delete(rowId);
+        }
+      }
       setSelectedItemsOrder(newOrderMap);
       
       // If controlled, call the parent handler
@@ -455,8 +465,9 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
     manualPagination: true,
     manualSorting: true,
     pageCount: Math.ceil(totalItems / pagination.pageSize),
-    columnResizeMode: 'onEnd',
+    columnResizeMode: 'onChange',
     enableColumnResizing: true,
+    onColumnSizingChange: setColumnSizing,
     getCoreRowModel: getCoreRowModel(),
     enableRowSelection: true,
     enableSortingRemoval: false,
@@ -466,93 +477,72 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
   });
 
 
-  const columnSizeVars: Record<string, string> = {};
-  for (const header of table.getFlatHeaders()) {
-    columnSizeVars[`--col-${header.column.id}-size`] = `${String(header.column.getSize())}px`;
-  }
+  // Memoized CSS vars so cells update via CSS during drag without React re-rendering each cell.
+  // Columns stretch to fill the container: any width the natural sizes leave unused
+  // is distributed proportionally across the resizable columns. When natural sizes
+  // already exceed the container (e.g. a column dragged very wide) the surplus is
+  // negative, so widths fall back to natural and the container scrolls horizontally.
+  // The actively-resizing column is excluded from stretch so its drag tracks the
+  // cursor 1:1 and can push the total past the container edge.
+  const columnSizingInfo = table.getState().columnSizingInfo;
+  const columnSizingState = table.getState().columnSizing;
+  const resizingColumnId = columnSizingInfo.isResizingColumn;
+  const columnSizeVars = useMemo(() => {
+    const leafColumns = table.getVisibleLeafColumns();
+    const naturalSizes = leafColumns.map((c) => c.getSize());
+    const naturalTotal = naturalSizes.reduce((a, b) => a + b, 0);
+
+    const finalSizes = new Map<string, number>();
+    leafColumns.forEach((c, i) => { finalSizes.set(c.id, naturalSizes[i]); });
+
+    // The resize handle (w-2, translateX(50%)) overhangs each cell's right edge
+    // by 4px. Interior overhangs overlap harmlessly, but the last column's would
+    // push a 4px phantom horizontal scrollbar once the table fills exactly — so
+    // stop the stretch 4px short and let that final handle occupy the gap.
+    const handleOverhang = 4;
+    const surplus = containerWidth - handleOverhang - naturalTotal;
+    if (surplus > 0) {
+      const eligible = leafColumns.filter(
+        (c) => c.getCanResize() && c.id !== resizingColumnId,
+      );
+      const eligibleTotal = eligible.reduce((a, c) => a + c.getSize(), 0);
+      if (eligibleTotal > 0) {
+        let distributed = 0;
+        eligible.forEach((c, i) => {
+          const add =
+            i === eligible.length - 1
+              ? surplus - distributed // last column absorbs rounding remainder
+              : Math.round(surplus * (c.getSize() / eligibleTotal));
+          distributed += add;
+          finalSizes.set(c.id, c.getSize() + add);
+        });
+      }
+    }
+
+    const vars: Record<string, string> = {};
+    for (const header of table.getFlatHeaders()) {
+      vars[`--col-${header.column.id}-size`] = `${String(finalSizes.get(header.column.id) ?? header.column.getSize())}px`;
+    }
+    return vars;
+    // columnSizingInfo/columnSizingState/columnVisibility are load-bearing but the
+    // rule can't see it: the callback reads sizing via table.getSize()/getVisibleLeafColumns()
+    // getters, so exhaustive-deps flags these state values as "unnecessary". They are the
+    // triggers that recompute widths per drag-frame and on column toggle (same pattern as
+    // TanStack's own performant-resize example). Dropping them freezes live resize.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [columnSizingInfo, columnSizingState, columnVisibility, containerWidth, resizingColumnId, table]);
 
   const rows = table.getRowModel().rows;
 
   const rowVirtualizer = useVirtualizer({
-    count: table.getRowModel().rows.length,
+    count: rows.length,
     getScrollElement: () => tableContainerRef.current,
     estimateSize: () => 24,
     overscan: 10,
-    getItemKey: (index) => table.getRowModel().rows[index]?.id,
+    getItemKey: (index) => rows[index]?.id ?? index,
   });
   const virtualRows = rowVirtualizer.getVirtualItems();
   const totalSize = rowVirtualizer.getTotalSize();
-
-  const handleResizeStart = (event: React.MouseEvent, header: Header<Record<string, unknown>, unknown>) => {
-    event.preventDefault();
-
-    const startX = event.clientX;
-    const column = header.column;
-    const startSize = column.getSize();
-    const colElement = event.currentTarget.closest('th');
-    if (!colElement) return;
-
-    const tableEl = colElement.closest('table');
-    if (!tableEl) return;
-    const tableRect = tableEl.getBoundingClientRect();
-
-    if (resizeLineRef.current) { // Make the ghost line appear
-      resizeLineRef.current.style.left = `${String(colElement.getBoundingClientRect().right - tableRect.left)}px`;
-      resizeLineRef.current.style.display = 'block';
-    }
-
-    const onMouseMove = (e: MouseEvent) => {
-      const delta = e.clientX - startX;
-      const minSize = columnMinSizesRef.current[column.id] ?? 40;
-      const newSize = Math.max(minSize, startSize + delta);
-
-      if (resizeLineRef.current) { // Make the ghost line move
-        resizeLineRef.current.style.left = `${String(colElement.getBoundingClientRect().left - tableRect.left + newSize)}px`;
-      }
-    };
-
-    const onMouseUp = (e: MouseEvent) => {
-      const delta = e.clientX - startX;
-      const minSize = columnMinSizesRef.current[column.id] ?? 40;
-      const finalSize = Math.max(minSize, startSize + delta);
-
-      setColumnSizing((prev) => ({
-        ...prev,
-        [column.id]: finalSize,
-      }));
-
-      if (resizeLineRef.current) { // Make the ghost line go away
-        resizeLineRef.current.style.display = 'none';
-      }
-
-      // Remove listeners. Keep the temporary click blocker active for a
-      // short while to catch the browser's synthesized click event that
-      // often follows mouseup after a drag/resize. Clean up after 50ms.
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseup', onMouseUp);
-      setTimeout(() => {
-        if (preventClickRef.current) {
-          document.removeEventListener('click', preventClickRef.current, true);
-          preventClickRef.current = null;
-        }
-        isResizingRef.current = false;
-      }, 50);
-    };
-
-    // mark that a resize interaction is in progress
-    isResizingRef.current = true;
-
-    // Block click events during the resize (capture phase) so browsers
-    // that emit a click after mouseup don't trigger header sorting.
-    preventClickRef.current = (ev: Event) => {
-      ev.stopPropagation();
-      ev.preventDefault();
-    };
-    document.addEventListener('click', preventClickRef.current, true);
-
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseup', onMouseUp);
-  };
 
   // Handle column drag start
   const handleDragStart = (e: React.DragEvent, columnId: string) => {
@@ -784,21 +774,21 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       <div className="z-50 mb-2 flex w-full justify-end px-5" ref={controlsRef}>
           <div className="relative inline-block text-left" ref={columnMenuRef}> {/* This is the button for changing the visibility of columns in the table */}
             <Button
-              className="mr-2 flex w-full justify-end rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+              className="mr-2 flex w-full justify-end rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
               onClick={() => { setShowColumnMenu(prev => !prev); }}
             >
               Columns ▾
             </Button>
 
             {showColumnMenu && (
-              <div className="ring-opacity-5 absolute left-0 z-50 mt-1 w-40 rounded-md bg-white shadow-lg ring-1 ring-black">
+              <div className="ring-opacity-5 absolute left-0 z-50 mt-1 w-40 rounded-md bg-background shadow-lg ring-1 ring-border">
                 <div className="max-h-64 overflow-auto py-1 text-xs">
                   {table.getAllColumns()
                     .filter(col => col.id !== '__select__')
                     .map((column) => (
                       <label
                         key={column.id}
-                        className="flex cursor-pointer items-center space-x-2 px-2 py-1 text-black hover:bg-muted-foreground"
+                        className="flex cursor-pointer items-center space-x-2 px-2 py-1 text-foreground hover:bg-muted"
                       >
                         <input
                           type="checkbox"
@@ -816,7 +806,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           {/* Download buttons */}
           <Button
             onClick={() => { void handleDownload('csv'); }}
-            className="mx-2 rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+            className="mx-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
             disabled={downloadingButton !== null}
           >
             {downloadingButton === 'csv-all' ? (
@@ -827,7 +817,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           </Button>
           <Button
             onClick={() => { void handleDownload('txt'); }}
-            className="mr-2 rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+            className="mr-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
             disabled={downloadingButton !== null}
           >
             {downloadingButton === 'txt-all' ? (
@@ -842,7 +832,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
             <>
               <Button
                 onClick={() => { void handleDownload('csv', true); }}
-                className="mr-2 rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                className="mr-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
                 disabled={downloadingButton !== null}
               >
                 {downloadingButton === 'csv-selected' ? (
@@ -853,7 +843,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
               </Button>
               <Button
                 onClick={() => { void handleDownload('txt', true); }}
-                className="mr-2 rounded border border-gray-400 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                className="mr-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
                 disabled={downloadingButton !== null}
               >
                 {downloadingButton === 'txt-selected' ? (
@@ -875,10 +865,10 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           Download Displayed Columns Only
         </label>
       </div>
-      <div className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded border border-gray-500">
+      <div className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded border border-border">
 
         <div
-          className="relative flex-1 overflow-auto"
+          className={clsx("relative flex-1 overflow-auto", (shiftHeld || ctrlOrCmdHeld) && "select-none")}
           ref={tableContainerRef}
           style={{
             maxHeight: '100%',
@@ -886,7 +876,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
           }}
         >
           {isLoading && (
-            <div className="absolute inset-0 z-40 flex items-center justify-center bg-white/60">
+            <div className="absolute inset-0 z-40 flex items-center justify-center bg-background/60">
               <div className="flex flex-col items-center gap-2">
                 <div className="size-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
                 <div className="text-sm text-foreground">Loading…</div>
@@ -901,7 +891,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
             >
               <TableHeader
                 ref={headerRef}
-                className="border-primary bg-muted text-foreground uppercase"
+                className="border-border bg-muted text-foreground"
                 style={{
                   position: 'sticky',
                   top: 0,
@@ -909,7 +899,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                 }}
               >
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="flex border-y border-primary bg-muted">
+                  <TableRow key={headerGroup.id} className="flex border-y border-border bg-muted">
                     {headerGroup.headers.map((header) => {
                       const column = header.column;
                       return (
@@ -917,30 +907,29 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                           key={header.id}
                           colSpan={header.colSpan}
                           className={clsx(
-                            'relative border-x border-primary bg-muted text-foreground',
+                            'group relative border-r border-foreground/20 bg-muted text-foreground',
                             column.id === '__select__'
-                              ? 'flex !h-7 items-center justify-center p-0' // ✅ center checkbox
-                              : '!h-7 cursor-pointer px-2 py-0 align-middle text-xs leading-none font-bold'
+                              ? 'flex h-auto! items-center justify-center p-0'
+                              : 'h-auto! min-h-7! cursor-pointer px-2 py-0 align-middle text-xs leading-tight font-bold whitespace-normal'
                           )}
                           style={{
                             width: `var(--col-${column.id}-size)`,
                             minWidth: `var(--col-${column.id}-size)`,
                             maxWidth: `var(--col-${column.id}-size)`,
+                            ...(column.id === '__select__' && {
+                              position: 'sticky',
+                              left: 0,
+                              zIndex: 1,
+                            }),
                           }}
                           onClick={column.id !== '__select__' ? (e) => {
-                            // If we were resizing just before this click, ignore the click
-                            // because the browser may emit a click after mouseup when the
-                            // user finishes resizing (particularly when shrinking a column).
-                            if (isResizingRef.current) {
+                            if (justResizedRef.current) {
                               e.stopPropagation();
                               return;
                             }
-
                             e.stopPropagation();
                             const handler = column.getToggleSortingHandler();
-                            if (handler) {
-                              handler(e);
-                            }
+                            if (handler) handler(e);
                           } : undefined}
                         >
                           {column.id === '__select__' ? (
@@ -950,42 +939,51 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                             </div>
                           ) : (
                             // Regular column - sortable and draggable
-                            <div
-                              className="relative flex size-full items-center gap-2 py-0 pr-2"
-                              draggable={true}
-                              onDragStart={(e) => { handleDragStart(e, column.id); }}
-                              onDragOver={handleDragOver}
-                              onDrop={(e) => { handleDrop(e, column.id); }}
-                              onDragEnd={handleDragEnd}
-                              style={{
-                                cursor: 'move',
-                                opacity: draggedColumn === column.id ? 0.5 : 1,
-                                backgroundColor: draggedColumn && draggedColumn !== column.id ? 'transparent' : '',
-                              }}
-                            >
-                              <span className="truncate select-none">{flexRender(header.column.columnDef.header, header.getContext())}</span>
-                              <div className="mr-1 flex shrink-0 flex-col items-center justify-center" style={{ cursor: 'pointer' }}>
-                                {column.getIsSorted() === 'asc' ? (
-                                  <span className="text-xs">▲</span>
-                                ) : column.getIsSorted() === 'desc' ? (
-                                  <span className="text-xs">▼</span>
-                                ) : (
-                                  <span className="text-xs opacity-75">⇅</span>
-                                )}
+                            <>
+                              <div
+                                className="relative flex size-full items-center py-0 pr-0.5"
+                                draggable={true}
+                                onDragStart={(e) => { handleDragStart(e, column.id); }}
+                                onDragOver={handleDragOver}
+                                onDrop={(e) => { handleDrop(e, column.id); }}
+                                onDragEnd={handleDragEnd}
+                                style={{
+                                  cursor: 'move',
+                                  opacity: draggedColumn === column.id ? 0.5 : 1,
+                                  backgroundColor: draggedColumn && draggedColumn !== column.id ? 'transparent' : '',
+                                }}
+                              >
+                                <span className="leading-tight select-none">
+                                  {flexRender(header.column.columnDef.header, header.getContext())}
+                                  {column.getIsSorted() === 'asc' && <ChevronUp className="ml-0.5 inline-block size-3 align-text-bottom" />}
+                                  {column.getIsSorted() === 'desc' && <ChevronDown className="ml-0.5 inline-block size-3 align-text-bottom" />}
+                                </span>
                               </div>
                               {column.getCanResize() && (
                                 <div
                                   onMouseDown={(e) => {
                                     e.stopPropagation();
-                                    handleResizeStart(e, header);
+                                    justResizedRef.current = false;
+                                    header.getResizeHandler()(e);
+                                    const onUp = () => {
+                                      justResizedRef.current = true;
+                                      setTimeout(() => { justResizedRef.current = false; }, 100);
+                                      window.removeEventListener('mouseup', onUp);
+                                    };
+                                    window.addEventListener('mouseup', onUp);
                                   }}
-                                  className="group absolute top-0 right-0 z-30 flex h-full w-3 cursor-col-resize items-center justify-end"
+                                  className="absolute top-0 right-0 z-30 flex h-full w-2 cursor-col-resize touch-none select-none"
                                   style={{ transform: 'translateX(50%)' }}
                                 >
-                                  <div className="mr-0.5 h-4/5 w-px bg-foreground/25 group-hover:bg-blue-400" />
+                                  <div className={clsx(
+                                    "mx-auto h-full w-1 transition-opacity",
+                                    header.column.getIsResizing()
+                                      ? "bg-blue-500 opacity-100"
+                                      : "bg-muted-foreground opacity-0 group-hover:opacity-100"
+                                  )} />
                                 </div>
                               )}
-                            </div>
+                            </>
                           )}
                         </TableHead>
                       );
@@ -994,131 +992,76 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                 ))}
               </TableHeader>
 
-              <TableBody
-                style={{
-                  position: 'relative',
-                  height: totalSize,
-                }}
-                className="relative z-10 border-collapse gap-0"
-              >
-                {rows.length === 0 ? (
-                <TableRow className="flex h-24 w-full items-center justify-center">
-                  <TableCell
-                    colSpan={table.getVisibleLeafColumns().length}
-                    className="w-full border-t border-primary py-8 text-left text-xl font-semibold text-foreground"
-                    style={{ justifyContent: 'left' }}
-                  >
-                    No results
-                  </TableCell>
-                </TableRow>
+              {resizingColumnId ? (
+                <MemoizedDataTableBody
+                  table={table}
+                  rows={rows}
+                  virtualRows={virtualRows}
+                  totalSize={totalSize}
+                  data={data}
+                  idField={idField}
+                  shiftHeld={shiftHeld}
+                  ctrlOrCmdHeld={ctrlOrCmdHeld}
+                  lastSelectedIdRef={lastSelectedIdRef}
+                  onGenomeSelect={onGenomeSelect}
+                  onActiveRowChange={onActiveRowChange}
+                  errorMessage={errorMessage}
+                />
               ) : (
-                // If there ARE results...
-                virtualRows.map((virtualRow) => {
-//                  const row = rows[virtualRow.index];
-                  const row = table.getRowModel().rows[virtualRow.index];
-                  return (
-                    <TableRow
-                      key={row.id}
-                      // Clicking a row should notify listeners about the active row (used to open side panels).
-                      // If the click originated from a checkbox/input, avoid double-handling because
-                      // the checkbox click handler already calls onActiveRowChange/onGenomeSelect.
-                      onClick={(e) => {
-                        if ((e.target as HTMLElement).closest('input[type="checkbox"]')) return;
-                        const idVal = row.original[idField];
-                        const genomeId = idVal ?? row.original['genome_id'] ?? null;
-                        if (genomeId != null && (typeof genomeId === 'string' || typeof genomeId === 'number')) {
-                          onGenomeSelect?.(String(genomeId));
-                          onActiveRowChange?.(String(genomeId));
-                        }
-                      }}
-                      style={{
-                        position: 'absolute',
-                        transform: `translateY(${String(virtualRow.start)}px)`,
-                        left: 0,
-                        right: 0,
-                        display: 'flex',
-                        height: '24px',
-                      }}
-                      className={clsx(
-                        row.getIsSelected()
-                          ? 'bg-muted-foreground hover:bg-muted-foreground' // lock in yellow background
-                          : 'hover:bg-muted-foreground' // only apply white hover if not selected
-                      )}
-                      
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell
-                          key={cell.id}
-                          className='border border-primary py-1'
-                          style={{
-                            width: `var(--col-${cell.column.id}-size)`,
-                            minWidth: `var(--col-${cell.column.id}-size)`,
-                            maxWidth: `var(--col-${cell.column.id}-size)`,
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            display: 'flex',
-                            height: '24px',
-                            alignItems: 'center',
-                            justifyContent: cell.column.id === '__select__' ? 'center' : 'flex-start',
-                          }}
-                        >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  );
-                })
+                <DataTableBody
+                  table={table}
+                  rows={rows}
+                  virtualRows={virtualRows}
+                  totalSize={totalSize}
+                  data={data}
+                  idField={idField}
+                  shiftHeld={shiftHeld}
+                  ctrlOrCmdHeld={ctrlOrCmdHeld}
+                  lastSelectedIdRef={lastSelectedIdRef}
+                  onGenomeSelect={onGenomeSelect}
+                  onActiveRowChange={onActiveRowChange}
+                  errorMessage={errorMessage}
+                />
               )}
-              </TableBody>
             </Table>
 
-            <div
-              ref={resizeLineRef}
-              className="pointer-events-none absolute inset-y-0 z-40 w-0.5 bg-blue-600 opacity-50"
-              style={{ display: 'none' }}
-            />
           </div>
         </div>
 
-        <div className="z-10 w-full border-t border-primary bg-muted py-3 shadow-sm" ref={footerRef}>
-          <div className="flex flex-col items-center justify-between space-y-2 px-4 md:flex-row md:space-y-0">
-            <div>
+        <div className="z-10 w-full border-t border-border bg-muted py-1 shadow-sm" ref={footerRef}>
+          <div className="flex flex-wrap items-center justify-between gap-y-1 px-2">
+            <div className="shrink-0 text-xs">
               {(() => {
                 const pageIndex = table.getState().pagination.pageIndex;
                 const pageSize = table.getState().pagination.pageSize;
-                const totalRows = totalItems; // total from backend
+                const totalRows = totalItems;
                 const hasResults = totalItems > 0;
                 const start = hasResults ? pageIndex * pageSize + 1 : 0;
                 const end = hasResults ? Math.min(start + data.length - 1, totalRows): 0;
-                
-                // Show selection count if applicable
-                const selectedCount = isAllPagesSelected 
-                  ? totalItems 
+
+                const selectedCount = isAllPagesSelected
+                  ? totalItems
                   : (totalSelectedCount ?? Object.keys(rowSelection).filter(key => rowSelection[key]).length);
-                
+
                 return (
-                  <div className="flex flex-col gap-1">
-                    <div>Showing {start}-{end} of {totalRows} results</div>
+                  <div className="flex flex-col">
+                    <span>Showing {start}-{end} of {totalRows} results</span>
                     {selectedCount > 0 && (
-                      <div className="font-semibold text-blue-600">
-                        {isAllPagesSelected 
+                      <span className="font-semibold text-blue-600">
+                        {isAllPagesSelected
                           ? `All ${String(totalItems)} results selected`
                           : `${String(selectedCount)} selected`}
-                      </div>
+                      </span>
                     )}
                   </div>
                 );
               })()}
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center gap-x-1">
               <Button
-                onClick={() => {
-                  table.previousPage();
-
-                }}
+                onClick={() => { table.previousPage(); }}
                 disabled={!table.getCanPreviousPage()}
-                className="border border-primary px-2 py-1 disabled:opacity-50"
+                className="border border-border px-2 py-0.5 disabled:opacity-50"
               >
                 {'Prev'}
               </Button>
@@ -1138,17 +1081,13 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                   const prev = idx > 0 ? uniquePages[idx - 1] : undefined;
                   const showDots = prev !== undefined && page - prev > 1;
                   return (
-                    <span key={page}>
-                      {showDots && <span className="px-1">...</span>}
+                    <span key={page} className="flex items-center gap-x-1">
+                      {showDots && <span className="text-muted-foreground">...</span>}
                       <Button
-                        onClick={() => {
-                          // Update table's internal state for immediate UI feedback
-                          table.setPageIndex(page);
-        
-                        }}
+                        onClick={() => { table.setPageIndex(page); }}
                         className={clsx(
-                          'mx-1 border bg-background px-3 py-1 text-foreground',
-                          currentPage === page ? 'bg-muted-foreground font-bold' : 'bg-background'
+                          'border bg-background px-2 py-0.5 text-foreground',
+                          currentPage === page ? 'bg-primary/15 font-bold' : 'bg-background'
                         )}
                       >
                         {page + 1}
@@ -1157,14 +1096,10 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
                   );
                 });
               })()}
-              {/* Forward arrow */}
               <Button
-                onClick={() => {
-                  table.nextPage();
-
-                }}
+                onClick={() => { table.nextPage(); }}
                 disabled={!table.getCanNextPage()}
-                className="border border-primary px-2 py-1 disabled:opacity-50"
+                className="border border-border px-2 py-0.5 disabled:opacity-50"
               >
                 {'Next'}
               </Button>
@@ -1174,6 +1109,180 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, onSele
       </div>
     </div>
   );
+}
+
+interface DataTableBodyProps {
+  table: ReactTableInstance<Record<string, unknown>>;
+  rows: TanStackRow<Record<string, unknown>>[];
+  virtualRows: VirtualItem[];
+  totalSize: number;
+  // Consumed only by MemoizedDataTableBody's comparator (referential identity of the
+  // current page's rows). Intentionally not read inside the render body.
+  data: Record<string, unknown>[];
+  idField: string;
+  shiftHeld: boolean;
+  ctrlOrCmdHeld: boolean;
+  lastSelectedIdRef: React.RefObject<string | null>;
+  onGenomeSelect?: (id: string | null) => void;
+  onActiveRowChange?: (id: string | null) => void;
+  errorMessage?: string;
+}
+
+// Extracted so it can be memoized during an active column resize. columnResizeMode
+// 'onChange' fires setColumnSizing every drag frame; the CSS variables on the wrapper
+// already reflow cell widths without React, so re-reconciling every virtual row/cell
+// each frame is pure waste. While resizing, the parent renders MemoizedDataTableBody
+// (skips re-render unless the data page changes); otherwise the fully reactive body.
+function DataTableBody({
+  table,
+  rows,
+  virtualRows,
+  totalSize,
+  idField,
+  shiftHeld,
+  ctrlOrCmdHeld,
+  lastSelectedIdRef,
+  onGenomeSelect,
+  onActiveRowChange,
+  errorMessage,
+}: DataTableBodyProps) {
+  "use no memo";
+  return (
+    <TableBody
+      style={{
+        position: 'relative',
+        height: totalSize,
+      }}
+      className="relative z-10 border-collapse gap-0"
+    >
+      {rows.length === 0 ? (
+      <TableRow className="flex h-6 w-full items-center">
+        <TableCell
+          colSpan={table.getVisibleLeafColumns().length}
+          className="w-full px-2 py-0 text-left text-muted-foreground"
+          style={{ justifyContent: 'left' }}
+        >
+          {errorMessage ? (
+            <span className="text-destructive">{errorMessage}</span>
+          ) : (
+            'No results'
+          )}
+        </TableCell>
+      </TableRow>
+    ) : (
+      // If there ARE results...
+      virtualRows.map((virtualRow) => {
+        const row = rows[virtualRow.index];
+        return (
+          <TableRow
+            key={row.id}
+            // Clicking a row should notify listeners about the active row (used to open side panels).
+            // If the click originated from a checkbox/input, avoid double-handling because
+            // the checkbox click handler already calls onActiveRowChange/onGenomeSelect.
+            onClick={(e) => {
+              if ((e.target as HTMLElement).closest('input[type="checkbox"]')) return;
+              const currentRowId = row.id;
+              const anchorId = lastSelectedIdRef.current;
+
+              if (shiftHeld && anchorId) {
+                // Exclusive range (replace existing selection)
+                const rangeIds = computeShiftRangeIds(table.getRowModel().rows, anchorId, currentRowId);
+                if (rangeIds.length > 0) {
+                  const next: Record<string, boolean> = {};
+                  for (const rid of rangeIds) next[rid] = true;
+                  table.setRowSelection(next);
+                  return;
+                }
+                // stale anchor (off-page/re-sorted): fall through to single-select
+              }
+
+              lastSelectedIdRef.current = currentRowId;
+
+              if (ctrlOrCmdHeld) {
+                row.toggleSelected();
+              } else {
+                table.setRowSelection({ [currentRowId]: true });
+              }
+
+              const idVal = row.original[idField] ?? row.original['genome_id'] ?? null;
+              if (idVal != null && (typeof idVal === 'string' || typeof idVal === 'number')) {
+                onGenomeSelect?.(String(idVal));
+                onActiveRowChange?.(String(idVal));
+              }
+            }}
+            style={{
+              transform: `translateY(${String(virtualRow.start)}px)`,
+              height: '24px',
+            }}
+            className={clsx(
+              "group absolute inset-x-0 flex cursor-pointer",
+              row.getIsSelected()
+                ? 'bg-primary/15 dark:bg-primary/30'
+                : 'hover:bg-muted'
+            )}
+
+          >
+            {row.getVisibleCells().map((cell) => (
+              <TableCell
+                key={cell.id}
+                className={clsx(
+                  'flex items-center truncate border border-border py-1',
+                  cell.column.id === '__select__'
+                    ? clsx('justify-center', row.getIsSelected() ? '' : 'bg-background group-hover:bg-muted')
+                    : 'justify-start'
+                )}
+                style={{
+                  width: `var(--col-${cell.column.id}-size)`,
+                  minWidth: `var(--col-${cell.column.id}-size)`,
+                  maxWidth: `var(--col-${cell.column.id}-size)`,
+                  height: '24px',
+                  ...(cell.column.id === '__select__' && {
+                    position: 'sticky',
+                    left: 0,
+                    zIndex: 1,
+                    // color-mix produces an opaque equivalent of bg-primary/15 over
+                    // the page background — transparent backgrounds on sticky elements
+                    // let scrolled content bleed through.
+                    ...(row.getIsSelected() && {
+                      backgroundColor: 'color-mix(in srgb, var(--color-primary) 15%, var(--color-background))',
+                    }),
+                  }),
+                }}
+              >
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </TableCell>
+            ))}
+          </TableRow>
+        );
+      })
+    )}
+    </TableBody>
+  );
+}
+
+const MemoizedDataTableBody = memo(
+  DataTableBody,
+  (prev, next) => prev.data === next.data,
+);
+
+// Given the visible row list and an anchor/target id pair, return the ids of the
+// contiguous range between them (inclusive). Empty when either id isn't present.
+// Shared by the checkbox and row-body shift-click handlers, which intentionally
+// differ in how they *apply* this range (checkbox merges into the existing
+// selection; row body replaces it) but compute it identically.
+export function computeShiftRangeIds(
+  rows: { id: string }[],
+  anchorId: string,
+  targetId: string,
+): string[] {
+  const anchorIdx = rows.findIndex((r) => r.id === anchorId);
+  const targetIdx = rows.findIndex((r) => r.id === targetId);
+  if (anchorIdx === -1 || targetIdx === -1) return [];
+  const from = Math.min(anchorIdx, targetIdx);
+  const to = Math.max(anchorIdx, targetIdx);
+  const ids: string[] = [];
+  for (let i = from; i <= to; i++) ids.push(rows[i].id);
+  return ids;
 }
 
 function computeAutoColumnSizes(
@@ -1191,14 +1300,19 @@ function computeAutoColumnSizes(
   const sizes: Record<string, number> = {};
 
   // Layout overhead beyond raw glyph width:
-  //   Header: th px-2(16) + pr-2(8) + gap-2(8) + sort icon(~10) + mr-1(4) = 46px
+  //   Header: th px-2(16) + pr-2(8) + gap when sorted(~8) = 32px
   //   Cell:   th px-2(16)
-  const headerOverhead = 46;
+  const headerOverhead = 32;
   const cellOverhead = 16;
 
   for (const col of columns) {
     ctx.font = headerFont;
-    const effectiveHeaderWidth = Math.ceil(ctx.measureText(col.label).width * 1.25) + headerOverhead;
+    // Headers wrap, so only the longest single word dictates the minimum column width.
+    const longestWord = col.label.split(/\s+/).reduce(
+      (a, b) => (ctx.measureText(a).width >= ctx.measureText(b).width ? a : b),
+      '',
+    );
+    const effectiveHeaderWidth = Math.ceil(ctx.measureText(longestWord).width * 1.1) + headerOverhead;
 
     ctx.font = cellFont;
     let effectiveContentWidth = 0;
@@ -1218,7 +1332,7 @@ function computeAutoColumnSizes(
       if (w > effectiveContentWidth) effectiveContentWidth = w;
     }
 
-    sizes[col.id] = Math.min(Math.max(effectiveHeaderWidth, effectiveContentWidth) + 25, maxWidth);
+    sizes[col.id] = Math.min(Math.max(effectiveHeaderWidth, effectiveContentWidth), maxWidth);
   }
 
   return sizes;

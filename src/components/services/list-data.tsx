@@ -7,8 +7,11 @@ import { SortingState, RowSelectionState } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { noop } from "@/lib/utils";
 import { FilterBar } from "@/components/filterbar/filter-bar";
-import { getIdField } from "@/constants/resources";
 import type { DataField } from "@/constants/datafields/types";
+
+// Stable empty-rows reference so DataTable's memoized body comparator (prev.data === next.data)
+// isn't defeated by a fresh [] on every render when there are no results.
+const emptyRows: Record<string, unknown>[] = [];
 
 interface ColumnInfo {
   id: string;
@@ -87,10 +90,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   }
   const pageSize = 200;
 
-  const defaultIdField = getIdField(resource);
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: defaultIdField, desc: false }
-  ]);
+  const [sorting, setSorting] = useState<SortingState>([]);
   const [columnOrder, setColumnOrder] = useState<string[]>([]);
   const [internalPageIndex, setInternalPageIndex] = useState(0);
   const pageIndex = controlledPageIndex !== undefined ? controlledPageIndex : internalPageIndex;
@@ -99,7 +99,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const [prevResource, setPrevResource] = useState(resource);
   if (prevResource !== resource) {
     setPrevResource(resource);
-    setSorting([{ id: getIdField(resource), desc: false }]);
+    setSorting([]);
   }
 
   const setSortingAndResetPage = useCallback((newSorting: SortingState) => {
@@ -151,7 +151,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       const res = await fetch(`${baseURL}&limit(1)`, {
         headers: { 'Accept': 'application/solr+json' }
       });
-      if (!res.ok) throw new Error('Failed to fetch metadata');
+      if (!res.ok) throw new Error(`Failed to fetch metadata (${String(res.status)} ${res.statusText})`);
       return res.json() as Promise<MetaResponse>;
     },
     staleTime: 0,
@@ -183,15 +183,14 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       if (totalItems === 0) return [];
 
       // Derive sort param from sortingKey (already in queryKey) to avoid stale closure
-      // Always apply a sort to ensure consistent ordering
-      const sortParam = sortingKey !== "none"
-        ? (() => { const [field, dir] = sortingKey.split(":"); return `${dir === "desc" ? "-" : "+"}${field}`; })()
-        : `+${getIdField(resource)}`;
       const start = pageIndex * pageSize;
       const end = start + pageSize;
 
       const baseURL = `${DataAPI}/${resource}/?${combinedQuery}`;
-      const url = `${baseURL}&sort(${sortParam})`;
+      const sortClause = sortingKey !== "none"
+        ? (() => { const [field, dir] = sortingKey.split(":"); return `&sort(${dir === "desc" ? "-" : "+"}${field})`; })()
+        : "";
+      const url = `${baseURL}${sortClause}`;
 
       const res = await fetch(url, {
         headers: {
@@ -201,7 +200,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
           'X-Range': `items=${String(start)}-${String(end)}`,
         }
       });
-      if (!res.ok) throw new Error('Failed to fetch genome data');
+      if (!res.ok) throw new Error(`Failed to fetch genome data (${String(res.status)} ${res.statusText})`);
       return res.json() as Promise<Record<string, unknown>[]>;
     },
     enabled: totalItems > 0,
@@ -209,15 +208,9 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     staleTime: 0,
   });
 
-  if (metaError || dataError) {
-    return (
-      <div>
-        Error: {(metaError || dataError)?.message}
-        <br />
-        Query: {JSON.stringify(q)}
-      </div>
-    );
-  }
+  const errorMessage = metaError ?? dataError
+    ? `Error: ${((metaError ?? dataError)?.message ?? 'Unknown error')} — Query: ${JSON.stringify(q)}`
+    : undefined;
 
   const handleRowSelectionChange = (newSelection: Record<string, boolean>) => {
     // Apply new selection from table. Avoiding aggressive ignores here so
@@ -363,9 +356,10 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
         ) : (
           <DataTable
             id={widget.id}
-            data={totalItems === 0 ? [] : (pageData ?? [])}
+            data={totalItems === 0 ? emptyRows : (pageData ?? emptyRows)}
             columns={widget.columns}
             resource={resource}
+            errorMessage={errorMessage}
             rowSelection={rowSelection}
             onRowSelectionChange={handleRowSelectionChange}
             onSelectionChange={noop}

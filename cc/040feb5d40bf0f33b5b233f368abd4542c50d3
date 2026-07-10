@@ -1,0 +1,19 @@
+src/components/shared/__tests__/data-table-rendering.test.tsx
+  s_bc492d80282271::t_5bd2af2d3f2998 8-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "cc040feb5d40bf0f33b5b233f368abd4542c50d3",
+  "prompts": {},
+  "sessions": {
+    "s_bc492d80282271": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "45b9b79f-351e-4284-8c9d-b094cdb815d4",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

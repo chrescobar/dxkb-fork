@@ -31,6 +31,10 @@ import {
 
 import clsx from "clsx";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// Varied bar widths for skeleton cells so loading rows read as content, not blocks.
+const skeletonWidthPcts = [60, 80, 50, 75, 90, 45, 70];
 
 interface ColumnInfo {
   id: string;
@@ -534,6 +538,16 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
 
   const rows = table.getRowModel().rows;
 
+  // Skeleton rows fill the body at any resolution. The scroll container's height
+  // isn't known on the first render (its ResizeObserver effect only fires once
+  // data arrives), so derive an upper bound from the viewport: window.innerHeight
+  // is always ≥ the table body, and the body's overflow-hidden clips any surplus
+  // rows — so a slight overestimate fills the space with no scrollbar or gap.
+  // 30 is the SSR / pre-mount fallback (covers a ~720px body before hydration).
+  const skeletonRowCount = typeof window === 'undefined'
+    ? 30
+    : Math.ceil(window.innerHeight / 24);
+
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => tableContainerRef.current,
@@ -868,21 +882,19 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
       <div className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded border border-border">
 
         <div
-          className={clsx("relative flex-1 overflow-auto", (shiftHeld || ctrlOrCmdHeld) && "select-none")}
+          className={clsx(
+            "relative flex-1",
+            // During load, clip the overestimated skeleton rows (no scrollbar);
+            // switch to auto once real rows/virtualizer drive the height.
+            isLoading ? "overflow-hidden" : "overflow-auto",
+            (shiftHeld || ctrlOrCmdHeld) && "select-none",
+          )}
           ref={tableContainerRef}
           style={{
             maxHeight: '100%',
             position: 'relative',
           }}
         >
-          {isLoading && (
-            <div className="absolute inset-0 z-40 flex items-center justify-center bg-background/60">
-              <div className="flex flex-col items-center gap-2">
-                <div className="size-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
-                <div className="text-sm text-foreground">Loading…</div>
-              </div>
-            </div>
-          )}
           <div className="relative min-w-max" style={columnSizeVars}>
             <Table 
               className="relative w-full table-auto border-collapse text-xs" 
@@ -916,6 +928,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                             width: `var(--col-${column.id}-size)`,
                             minWidth: `var(--col-${column.id}-size)`,
                             maxWidth: `var(--col-${column.id}-size)`,
+                            transition: resizingColumnId ? undefined : 'width 200ms ease, min-width 200ms ease, max-width 200ms ease',
                             ...(column.id === '__select__' && {
                               position: 'sticky',
                               left: 0,
@@ -1006,6 +1019,9 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                   onGenomeSelect={onGenomeSelect}
                   onActiveRowChange={onActiveRowChange}
                   errorMessage={errorMessage}
+                  isLoading={isLoading}
+                  resizingColumnId={resizingColumnId}
+                  skeletonRowCount={skeletonRowCount}
                 />
               ) : (
                 <DataTableBody
@@ -1021,6 +1037,9 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                   onGenomeSelect={onGenomeSelect}
                   onActiveRowChange={onActiveRowChange}
                   errorMessage={errorMessage}
+                  isLoading={isLoading}
+                  resizingColumnId={resizingColumnId}
+                  skeletonRowCount={skeletonRowCount}
                 />
               )}
             </Table>
@@ -1126,6 +1145,9 @@ interface DataTableBodyProps {
   onGenomeSelect?: (id: string | null) => void;
   onActiveRowChange?: (id: string | null) => void;
   errorMessage?: string;
+  isLoading?: boolean;
+  resizingColumnId?: string | false;
+  skeletonRowCount?: number;
 }
 
 // Extracted so it can be memoized during an active column resize. columnResizeMode
@@ -1145,31 +1167,68 @@ function DataTableBody({
   onGenomeSelect,
   onActiveRowChange,
   errorMessage,
+  isLoading = false,
+  resizingColumnId = false,
+  skeletonRowCount = 20,
 }: DataTableBodyProps) {
   "use no memo";
   return (
     <TableBody
       style={{
         position: 'relative',
-        height: totalSize,
+        // While loading, fill the container (height:100%) so the absolute skeleton
+        // rows have a full-height positioning context. The scroll container is set
+        // to overflow:hidden during load (see DataTable), so the intentionally
+        // overestimated rows are clipped to reach the footer with no gap/scrollbar.
+        height: isLoading ? '100%' : totalSize,
       }}
       className="relative z-10 border-collapse gap-0"
     >
-      {rows.length === 0 ? (
-      <TableRow className="flex h-6 w-full items-center">
-        <TableCell
-          colSpan={table.getVisibleLeafColumns().length}
-          className="w-full px-2 py-0 text-left text-muted-foreground"
-          style={{ justifyContent: 'left' }}
-        >
-          {errorMessage ? (
-            <span className="text-destructive">{errorMessage}</span>
-          ) : (
-            'No results'
-          )}
-        </TableCell>
-      </TableRow>
-    ) : (
+      {isLoading ? (
+        Array.from({ length: skeletonRowCount }, (_, rowIdx) => (
+          <TableRow
+            key={rowIdx}
+            className="absolute flex w-full border-b border-border"
+            style={{ top: rowIdx * 24, height: 24 }}
+          >
+            {table.getVisibleLeafColumns().map((col, colIdx) => (
+              <TableCell
+                key={col.id}
+                className="flex items-center border border-border px-2 py-0"
+                style={{
+                  width: `var(--col-${col.id}-size)`,
+                  minWidth: `var(--col-${col.id}-size)`,
+                  maxWidth: `var(--col-${col.id}-size)`,
+                  height: 24,
+                }}
+              >
+                {col.id === '__select__' ? (
+                  <Skeleton className="size-3.5 rounded-sm" />
+                ) : (
+                  <Skeleton
+                    className="h-3 rounded"
+                    style={{ width: `${String(skeletonWidthPcts[(rowIdx * 7 + colIdx) % skeletonWidthPcts.length])}%` }}
+                  />
+                )}
+              </TableCell>
+            ))}
+          </TableRow>
+        ))
+      ) : rows.length === 0 ? (
+        <TableRow className="flex h-6 w-full items-center">
+          <TableCell
+            colSpan={table.getVisibleLeafColumns().length}
+            className="w-full px-2 py-0 text-left text-muted-foreground"
+            style={{ justifyContent: 'left' }}
+          >
+            {errorMessage ? (
+              <span className="text-destructive">{errorMessage}</span>
+            ) : (
+              'No results'
+            )}
+          </TableCell>
+        </TableRow>
+      ) : (
       // If there ARE results...
       virtualRows.map((virtualRow) => {
         const row = rows[virtualRow.index];
@@ -1236,6 +1295,7 @@ function DataTableBody({
                   minWidth: `var(--col-${cell.column.id}-size)`,
                   maxWidth: `var(--col-${cell.column.id}-size)`,
                   height: '24px',
+                  transition: resizingColumnId ? undefined : 'width 200ms ease, min-width 200ms ease, max-width 200ms ease',
                   ...(cell.column.id === '__select__' && {
                     position: 'sticky',
                     left: 0,
@@ -1255,14 +1315,14 @@ function DataTableBody({
           </TableRow>
         );
       })
-    )}
+      )}
     </TableBody>
   );
 }
 
 const MemoizedDataTableBody = memo(
   DataTableBody,
-  (prev, next) => prev.data === next.data,
+  (prev, next) => prev.data === next.data && prev.isLoading === next.isLoading,
 );
 
 // Given the visible row list and an anchor/target id pair, return the ids of the

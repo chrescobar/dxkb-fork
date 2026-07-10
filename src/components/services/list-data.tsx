@@ -7,11 +7,73 @@ import { SortingState, RowSelectionState } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { noop } from "@/lib/utils";
 import { FilterBar } from "@/components/filterbar/filter-bar";
-import type { DataField } from "@/constants/datafields/types";
+import type { DataFieldMap } from "@/constants/datafields/types";
+import { genomeFields } from "@/constants/datafields/genome";
+import { genomeAmrFields } from "@/constants/datafields/genome_amr";
+import { genomeFeatureFields } from "@/constants/datafields/genome_feature";
+import { genomeSequenceFields } from "@/constants/datafields/genome_sequence";
+import { proteinFeatureFields } from "@/constants/datafields/protein_feature";
+import { proteinStructureFields } from "@/constants/datafields/protein_structure";
+import { sequenceFeatureVtFields } from "@/constants/datafields/sequence_feature_vt";
+import { strainFields } from "@/constants/datafields/strain";
+import { surveillanceFields } from "@/constants/datafields/surveillance";
+import { serologyFields } from "@/constants/datafields/serology";
+import { taxonomyFields } from "@/constants/datafields/taxonomy";
+import { biosetFields } from "@/constants/datafields/bioset";
+import { epitopeFields } from "@/constants/datafields/epitope";
+import { experimentFields } from "@/constants/datafields/experiment";
 
 // Stable empty-rows reference so DataTable's memoized body comparator (prev.data === next.data)
 // isn't defeated by a fresh [] on every render when there are no results.
 const emptyRows: Record<string, unknown>[] = [];
+
+interface ColumnInfo {
+  id: string;
+  label: string;
+  visible: boolean;
+  facet?: boolean;
+  facet_hidden?: boolean;
+}
+
+// Static registry — mirrors the switch in info-panel.tsx. Imported statically
+// (not dynamic import()) so `fields` is available on the very first render,
+// which lets DataTable mount immediately with real column defs. That removes
+// the pre-metadata loading phase entirely, so there is one skeleton (DataTable's
+// own) and one width regime instead of three.
+const resourceFields: Record<string, DataFieldMap | undefined> = {
+  genome: genomeFields,
+  genome_amr: genomeAmrFields,
+  genome_feature: genomeFeatureFields,
+  genome_sequence: genomeSequenceFields,
+  protein_feature: proteinFeatureFields,
+  protein_structure: proteinStructureFields,
+  sequence_feature_vt: sequenceFeatureVtFields,
+  strain: strainFields,
+  surveillance: surveillanceFields,
+  serology: serologyFields,
+  taxonomy: taxonomyFields,
+  bioset: biosetFields,
+  epitope: epitopeFields,
+  experiment: experimentFields,
+};
+
+export function deriveTableFields(resource: string): ColumnInfo[] {
+  const fieldObj = resourceFields[resource];
+  if (!fieldObj) {
+    console.error(`No fields definition found for resource: ${resource}`);
+    return [];
+  }
+  return Object.values(fieldObj)
+    .filter((f) => f.show_in_table !== false)
+    .map((f) => ({
+      id: f.field,
+      label: f.label,
+      visible: !f.hidden,
+      facet: f.facet ?? false,
+      facet_hidden: f.facet_hidden ?? true,
+    }));
+}
+
 
 // The page query key is ['genome-full', resource, ...]; index 1 is the resource.
 // Keeping previous rows across a resource change bleeds wrong-shaped data into a
@@ -23,15 +85,7 @@ export function isSameResourceQuery(
   return previousQueryKey?.[1] === resource;
 }
 
-interface ColumnInfo {
-  id: string;
-  label: string;
-  visible: boolean;
-  facet?: boolean;
-  facet_hidden?: boolean;
-}
-
-interface ListDataProps { 
+interface ListDataProps {
   q: string; 
   resource: string; // 'genome', 'gene', etc.
   onSelectionChange?: (ids: string[]) => void;
@@ -46,8 +100,8 @@ interface ListDataProps {
 }
 
 export function ListData({ q, resource, onSelectionChange, rowSelection: controlledRowSelection, onRowSelectionChange, pageIndex: controlledPageIndex, onPageChange, selectedIds, isAllPagesSelected: controlledIsAllPagesSelected, onAllPagesSelectionChange, onTotalItemsChange }: ListDataProps) {
-  const [fields, setFields] = useState<ColumnInfo[]>([]);
-  
+  const fields = useMemo(() => deriveTableFields(resource), [resource]);
+
   // Use controlled rowSelection if provided, otherwise use internal state
   const [internalRowSelection, setInternalRowSelection] = useState<RowSelectionState>({});
   const rowSelection = controlledRowSelection !== undefined ? controlledRowSelection : internalRowSelection;
@@ -56,33 +110,6 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const [internalIsAllPagesSelected, setInternalIsAllPagesSelected] = useState(false);
   const isAllPagesSelected = controlledIsAllPagesSelected !== undefined ? controlledIsAllPagesSelected : internalIsAllPagesSelected;
   const setIsAllPagesSelected = onAllPagesSelectionChange || setInternalIsAllPagesSelected;
-
-  useEffect(() => {
-    void (async () => {
-      try {
-        const mod = await import(`@/constants/datafields/${resource}`) as Record<string, Record<string, DataField> | undefined>;
-        const camelResource = resource.replace(/_([a-z])/g, (_: string, c: string) => c.toUpperCase());
-        const fieldObj = mod[`${camelResource}Fields`];
-        if (!fieldObj) {
-          console.error(`No fields definition found for resource: ${resource}`);
-          return;
-        }
-        setFields(
-          Object.values(fieldObj)
-            .filter((f) => f.show_in_table !== false)
-            .map((f) => ({
-              id: f.field,
-              label: f.label,
-              visible: !f.hidden,
-              facet: f.facet ?? false,
-              facet_hidden: f.facet_hidden ?? true,
-            }))
-        );
-      } catch (err) {
-        console.error(`Failed to load fields for resource "${resource}":`, err);
-      }
-    })();
-  }, [resource]);
 
   const facetFields = fields.filter(f => f.facet);
 
@@ -101,7 +128,9 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const pageSize = 200;
 
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnOrder, setColumnOrder] = useState<string[]>([]);
+  const [columnOrder, setColumnOrder] = useState<string[]>(() =>
+    fields.length ? ['__select__', ...fields.map(f => f.id)] : []
+  );
   const [internalPageIndex, setInternalPageIndex] = useState(0);
   const pageIndex = controlledPageIndex !== undefined ? controlledPageIndex : internalPageIndex;
   const setPageIndex = onPageChange || setInternalPageIndex;
@@ -119,21 +148,23 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
 //    onSelectionChange?.([]); // Clear selection in parent too
   }, [setPageIndex]);
 
-  const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean> | null>(null);
-
-  if (fields.length > 0 && columnVisibility === null) {
+  const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>(() => {
     const vis: Record<string, boolean> = { __select__: true };
-    fields.forEach(f => {
-      vis[f.id] = f.visible;
-    });
-    setColumnVisibility(vis);
-  }
+    fields.forEach(f => { vis[f.id] = f.visible; });
+    return vis;
+  });
 
+  // Reseed order + visibility if `fields` identity changes (resource swap on the
+  // same ListData instance). With synchronous field derivation this does not fire
+  // on mount — only on an actual resource change.
   const [prevFields, setPrevFields] = useState(fields);
   if (prevFields !== fields) {
     setPrevFields(fields);
     if (fields.length) {
       setColumnOrder(['__select__', ...fields.map(f => f.id)]);
+      const vis: Record<string, boolean> = { __select__: true };
+      fields.forEach(f => { vis[f.id] = f.visible; });
+      setColumnVisibility(vis);
     }
   }
 
@@ -179,7 +210,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   }, [totalItems, onTotalItemsChange]);
 
   // Fetch current page of data
-  const { data: pageData, isLoading: dataLoading, error: dataError, isFetching: dataFetching } = useQuery<Record<string, unknown>[]>({
+  const { data: pageData, isLoading: dataLoading, error: dataError } = useQuery<Record<string, unknown>[]>({
     queryKey: [
       'genome-full',
       resource,
@@ -348,10 +379,6 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     }
   }
 
-  if (fields.length === 0) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden">
       <FilterBar
@@ -368,35 +395,31 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       />
 
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-        {!columnVisibility || !fields.length ? (
-          <div>Loading...</div>
-        ) : (
-          <DataTable
-            id={widget.id}
-            data={totalItems === 0 ? emptyRows : (pageData ?? emptyRows)}
-            columns={widget.columns}
-            resource={resource}
-            errorMessage={errorMessage}
-            rowSelection={rowSelection}
-            onRowSelectionChange={handleRowSelectionChange}
-            onSelectionChange={noop}
-            pageIndex={pageIndex}
-            pageSize={pageSize}
-            totalItems={totalItems}
-            onPageChange={handlePageChange}
-            sorting={sorting}
-            onSortingChange={setSortingAndResetPage}
-            columnOrder={columnOrder}
-            onColumnOrderChange={setColumnOrder}
-            columnVisibility={columnVisibility}
-            onColumnVisibilityChange={setColumnVisibility}
-            isAllPagesSelected={isAllPagesSelected}
-            onAllPagesSelectionChange={handleAllPagesSelectionChange}
-            onDownloadAll={(format, visibleColumns) => { void handleDownloadAll(format, visibleColumns); }}
-            isLoading={metaLoading || dataLoading || dataFetching}
-            selectedIds={selectedIds ?? []}
-          />
-        )}
+        <DataTable
+          id={widget.id}
+          data={totalItems === 0 ? emptyRows : (pageData ?? emptyRows)}
+          columns={widget.columns}
+          resource={resource}
+          errorMessage={errorMessage}
+          rowSelection={rowSelection}
+          onRowSelectionChange={handleRowSelectionChange}
+          onSelectionChange={noop}
+          pageIndex={pageIndex}
+          pageSize={pageSize}
+          totalItems={totalItems}
+          onPageChange={handlePageChange}
+          sorting={sorting}
+          onSortingChange={setSortingAndResetPage}
+          columnOrder={columnOrder}
+          onColumnOrderChange={setColumnOrder}
+          columnVisibility={columnVisibility}
+          onColumnVisibilityChange={setColumnVisibility}
+          isAllPagesSelected={isAllPagesSelected}
+          onAllPagesSelectionChange={handleAllPagesSelectionChange}
+          onDownloadAll={(format, visibleColumns) => { void handleDownloadAll(format, visibleColumns); }}
+          isLoading={metaLoading || dataLoading}
+          selectedIds={selectedIds ?? []}
+        />
       </div>
     </div>
   );

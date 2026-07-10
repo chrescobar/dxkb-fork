@@ -3,6 +3,7 @@ import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 import { makeStrainsView } from "../strains";
 import { makeSerologyView } from "../serology";
 import { makeSurveillanceView } from "../surveillance";
+import { makeGenomesView } from "../genomes";
 
 // TaxonDataPanel has complex network + React dependencies; mock it so tests stay
 // focused on the factory guard logic (null taxon → render nothing).
@@ -65,6 +66,22 @@ describe("makeSurveillanceView", () => {
     const { getByTestId } = render(<SurveillanceView />);
     const panel = getByTestId("taxon-data-panel");
     expect(panel).toHaveAttribute("data-resource", "surveillance");
+    expect(panel.getAttribute("data-q")).toContain("1234");
+  });
+});
+
+describe("makeGenomesView", () => {
+  it("renders nothing when taxon is null", () => {
+    const GenomesView = makeGenomesView({ taxon: null });
+    const { container } = render(<GenomesView />);
+    expect(container.firstChild).toBeNull();
+  });
+
+  it("renders TaxonDataPanel with genome resource and taxon query", () => {
+    const GenomesView = makeGenomesView({ taxon: fakeTaxon });
+    const { getByTestId } = render(<GenomesView />);
+    const panel = getByTestId("taxon-data-panel");
+    expect(panel).toHaveAttribute("data-resource", "genome");
     expect(panel.getAttribute("data-q")).toContain("1234");
   });
 });

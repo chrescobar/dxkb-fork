@@ -5,9 +5,9 @@ const columns = [{ id: "strain_name", label: "Strain Name", visible: true }];
 
 beforeAll(() => {
   global.ResizeObserver = class ResizeObserver {
-    observe() {}
-    unobserve() {}
-    disconnect() {}
+    observe = vi.fn();
+    unobserve = vi.fn();
+    disconnect = vi.fn();
   };
 });
 

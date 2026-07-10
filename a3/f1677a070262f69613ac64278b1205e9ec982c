@@ -1,0 +1,20 @@
+src/components/shared/data-table.tsx
+  s_1b9a332c8cdaaa::t_66f6c8296bd661 235,237
+  s_1b9a332c8cdaaa::t_9817958c9b0aac 1194,1196
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a3f1677a070262f69613ac64278b1205e9ec982c",
+  "prompts": {},
+  "sessions": {
+    "s_1b9a332c8cdaaa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "965ca549-2e94-4531-ac70-72a90e554f03",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": null
+    }
+  }
+}

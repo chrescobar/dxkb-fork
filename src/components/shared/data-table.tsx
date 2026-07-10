@@ -539,14 +539,18 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
   const rows = table.getRowModel().rows;
 
   // Skeleton rows fill the body at any resolution. The scroll container's height
-  // isn't known on the first render (its ResizeObserver effect only fires once
-  // data arrives), so derive an upper bound from the viewport: window.innerHeight
-  // is always ≥ the table body, and the body's overflow-hidden clips any surplus
-  // rows — so a slight overestimate fills the space with no scrollbar or gap.
-  // 30 is the SSR / pre-mount fallback (covers a ~720px body before hydration).
-  const skeletonRowCount = typeof window === 'undefined'
-    ? 30
-    : Math.ceil(window.innerHeight / 24);
+  // isn't known at first render (its ResizeObserver effect only fires once data
+  // arrives), so derive an upper bound from the viewport: window.innerHeight is
+  // always ≥ the table body, and the container's overflow-hidden clips surplus
+  // rows — a slight overestimate fills the space with no scrollbar or gap.
+  // Reading window during render would break SSR hydration, so start from a fixed
+  // fallback (matches server render) and bump to the real viewport count in a
+  // mount effect. The skeleton lives far longer than one frame, so the bump is
+  // applied well before data lands.
+  const [skeletonRowCount, setSkeletonRowCount] = useState(30);
+  useEffect(() => {
+    setSkeletonRowCount(Math.ceil(window.innerHeight / 24));
+  }, []);
 
   const rowVirtualizer = useVirtualizer({
     count: rows.length,

@@ -232,8 +232,9 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                     for (const rid of rangeIds) next[rid] = true;
                     return next;
                   });
+                  return;
                 }
-                return;
+                // stale anchor (off-page/re-sorted): fall through to single-toggle
               }
 
               // No shift: additive toggle, update anchor
@@ -1190,8 +1191,9 @@ function DataTableBody({
                   const next: Record<string, boolean> = {};
                   for (const rid of rangeIds) next[rid] = true;
                   table.setRowSelection(next);
+                  return;
                 }
-                return;
+                // stale anchor (off-page/re-sorted): fall through to single-select
               }
 
               lastSelectedIdRef.current = currentRowId;

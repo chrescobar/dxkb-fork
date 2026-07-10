@@ -1,0 +1,27 @@
+src/app/globals.css
+  s_5d57d66791e059::t_fc4c37de0f7ed8 34-44
+e2e/tests/organisms/taxon-list-data.spec.ts
+  s_5d57d66791e059::t_b52b0aa854168d 14-16,18,27
+  s_5d57d66791e059::t_04276d6b0ca49a 17
+e2e/tests/a11y/routes-sweep.spec.ts
+  s_5d57d66791e059::t_7f08c78453e8f5 188-197
+src/app/api/e2e-mock/[...path]/route.ts
+  s_5d57d66791e059::t_b977af5a81183e 558
+  s_5d57d66791e059::t_7827e44752183a 101-111
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8aa40c8fe67f4d9089f425231d57add6fe758955",
+  "prompts": {},
+  "sessions": {
+    "s_5d57d66791e059": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98b8fd2b-7b40-4901-bb96-8ea996804391",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

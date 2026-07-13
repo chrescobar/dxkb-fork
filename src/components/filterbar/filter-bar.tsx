@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { buildRql } from "./filter-utils";
 import { KeywordSearch } from "./keyword-search";
 import { SelectedFilters } from "./selected-filters";
@@ -72,6 +72,11 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
     document.addEventListener("mousedown", handleClickOutside);
     return () => { document.removeEventListener("mousedown", handleClickOutside); };
   }, []);
+
+  const facetQuery = useMemo(() => {
+    const filterRql = buildRql({ selected, keywords });
+    return [query, filterRql].filter(Boolean).join("&");
+  }, [query, selected, keywords]);
 
   return (
     <div className="mt-0 mb-2 flex flex-col gap-1 p-1 text-sm">
@@ -156,12 +161,12 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
         </div>
       </div>
 
-      {/* FACET PANEL — always mounted so fetched data survives hide/show */}
-      <div className={showFacets ? undefined : "hidden"}>
+      {/* FACET PANEL */}
+      {showFacets && (
         <FacetPanel
           fields={activeFacetFields}
           resource={resource}
-          query={query}
+          query={facetQuery}
           onSelect={(field, value) => {
             setSelected((prev) => {
               const exists = prev.some(
@@ -177,7 +182,7 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
             });
           }}
         />
-      </div>
+      )}
     </div>
   );
 }

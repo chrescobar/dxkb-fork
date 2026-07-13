@@ -195,8 +195,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       if (!res.ok) throw new Error(`Failed to fetch metadata (${String(res.status)} ${res.statusText})`);
       return res.json() as Promise<MetaResponse>;
     },
-    staleTime: 0,
-    refetchOnMount: true,
+    staleTime: 5 * 60 * 1000,
   });
 
   // Compute totalItems safely
@@ -210,7 +209,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   }, [totalItems, onTotalItemsChange]);
 
   // Fetch current page of data
-  const { data: pageData, isLoading: dataLoading, isFetching: dataFetching, error: dataError } = useQuery<Record<string, unknown>[]>({
+  const { data: pageData, isLoading: dataLoading, error: dataError } = useQuery<Record<string, unknown>[]>({
     queryKey: [
       'genome-full',
       resource,
@@ -253,7 +252,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     // when the resource differs so the table renders empty until real rows land.
     placeholderData: (previousData, previousQuery) =>
       isSameResourceQuery(previousQuery?.queryKey, resource) ? previousData : undefined,
-    staleTime: 0,
+    staleTime: 5 * 60 * 1000,
   });
 
   const errorMessage = metaError ?? dataError
@@ -417,7 +416,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
           isAllPagesSelected={isAllPagesSelected}
           onAllPagesSelectionChange={handleAllPagesSelectionChange}
           onDownloadAll={(format, visibleColumns) => { void handleDownloadAll(format, visibleColumns); }}
-          isLoading={metaLoading || dataLoading || dataFetching}
+          isLoading={metaLoading || dataLoading}
           selectedIds={selectedIds ?? []}
         />
       </div>

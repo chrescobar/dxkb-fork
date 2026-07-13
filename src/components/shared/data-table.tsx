@@ -571,7 +571,10 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
   // applied well before data lands.
   const [skeletonRowCount, setSkeletonRowCount] = useState(30);
   useEffect(() => {
-    setSkeletonRowCount(Math.ceil(window.innerHeight / 24));
+    const update = () => { setSkeletonRowCount(Math.ceil(window.innerHeight / 24)); };
+    update();
+    window.addEventListener('resize', update);
+    return () => { window.removeEventListener('resize', update); };
   }, []);
 
   const rowVirtualizer = useVirtualizer({

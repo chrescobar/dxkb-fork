@@ -108,7 +108,7 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
                   </Button>
 
               {facetMenuOpen && (
-                <div className="absolute right-0 z-[9999] mt-1 max-h-64 w-56 overflow-y-auto rounded border border-gray-600 bg-gray-800 shadow-lg">
+                <div className="absolute right-0 z-9999 mt-1 max-h-64 w-56 overflow-y-auto rounded border border-gray-600 bg-gray-800 shadow-lg">
                   {localFacetFields
                     .filter((f) => f.facet)
                     .map((f) => (

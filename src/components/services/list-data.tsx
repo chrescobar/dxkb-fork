@@ -210,7 +210,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   }, [totalItems, onTotalItemsChange]);
 
   // Fetch current page of data
-  const { data: pageData, isLoading: dataLoading, error: dataError } = useQuery<Record<string, unknown>[]>({
+  const { data: pageData, isLoading: dataLoading, isFetching: dataFetching, error: dataError } = useQuery<Record<string, unknown>[]>({
     queryKey: [
       'genome-full',
       resource,
@@ -417,7 +417,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
           isAllPagesSelected={isAllPagesSelected}
           onAllPagesSelectionChange={handleAllPagesSelectionChange}
           onDownloadAll={(format, visibleColumns) => { void handleDownloadAll(format, visibleColumns); }}
-          isLoading={metaLoading || dataLoading}
+          isLoading={metaLoading || dataLoading || dataFetching}
           selectedIds={selectedIds ?? []}
         />
       </div>

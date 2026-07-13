@@ -68,26 +68,26 @@ export function FacetPanel({
     [fields],
   );
 
-  const { data: facets, error, isLoading } = useQuery({
+  const { data: facets, error, isLoading } = useQuery<Record<string, FacetItem[]>>({
     queryKey: ["facets", resource, query, validFieldIds],
     queryFn: async ({ signal }) => {
-      const facetStr = `facet(${validFieldIds.join(",")},( mincount,1),(limit,100))`;
+      const facetStr = `facet(${validFieldIds.join(",")},(mincount,1),(limit,100))`;
       const rql = [query || "", "limit(1)", facetStr].filter(Boolean).join("&");
-      const res = await fetch(`${DataAPI}/${resource}/?${rql}`, {
+      const res = await fetch(`${DataAPI as string}/${resource}/?${rql}`, {
         signal,
         headers: { Accept: "application/solr+json" },
       });
       if (!res.ok) throw new Error(await res.text());
       const json = await res.json() as { facet_counts?: { facet_fields?: Record<string, (string | number)[]> } };
-      return parseFacetCounts(json?.facet_counts?.facet_fields ?? {});
+      return parseFacetCounts(json.facet_counts?.facet_fields ?? {});
     },
     enabled: !!DataAPI && !!resource && validFieldIds.length > 0,
     // Keep previous data visible during background refetch — no flash or spinner
-    placeholderData: prev => prev,
+    placeholderData: (prev) => prev,
     staleTime: 30_000,
   });
 
-  if (error && !facets) {
+  if (error) {
     return (
       <div className="flex max-h-30 items-center rounded bg-gray-800 p-2 text-[11px] text-gray-400">
         Facets unavailable
@@ -95,7 +95,7 @@ export function FacetPanel({
     );
   }
 
-  if (isLoading && !facets) {
+  if (isLoading) {
     return (
       <div className="flex max-h-30 gap-3 overflow-auto rounded bg-gray-800 p-2 text-[11px]">
         {fields.filter(f => visibleFacets.includes(f.id)).map((field) => (

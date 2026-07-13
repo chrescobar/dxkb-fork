@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo, useRef } from "react";
 import { FacetColumn } from "./facet-column";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface FacetItem {
   label: string;
@@ -56,6 +57,7 @@ export function FacetPanel({
 }: FacetPanelProps) {
   const [facets, setFacets] = useState<Partial<Record<string, FacetItem[]>>>({});
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const DataAPI = process.env.NEXT_PUBLIC_DATA_API;
   const requestId = useRef(0);
 
@@ -75,6 +77,7 @@ export function FacetPanel({
     const fetchFacets = async () => {
       const currentRequest = ++requestId.current;
       setFetchError(null);
+      setIsLoading(true);
 
       try {
 
@@ -131,6 +134,7 @@ export function FacetPanel({
           console.warn("Facet fetch failed:", text);
           if (currentRequest === requestId.current) {
             setFetchError("Facets unavailable");
+            setIsLoading(false);
           }
           return;
         }
@@ -148,10 +152,12 @@ export function FacetPanel({
         );
 
         setFacets(parsed);
+        setIsLoading(false);
       } catch (err) {
         console.warn("Facet fetch error:", err);
         if (currentRequest === requestId.current) {
           setFetchError("Facets unavailable");
+          setIsLoading(false);
         }
       }
     };
@@ -163,6 +169,23 @@ export function FacetPanel({
     return (
       <div className="flex max-h-30 items-center rounded bg-gray-800 p-2 text-[11px] text-gray-400">
         {fetchError}
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex max-h-30 gap-3 overflow-auto rounded bg-gray-800 p-2 text-[11px]">
+        {fields.filter(f => visibleFacets.includes(f.id)).map((field) => (
+          <div key={field.id} className="min-w-50 flex-shrink-0">
+            <Skeleton className="mb-2 h-3 w-24 bg-gray-600" />
+            <div className="flex flex-col gap-1">
+              <Skeleton className="h-3.5 w-32 bg-gray-700" />
+              <Skeleton className="h-3.5 w-24 bg-gray-700" />
+              <Skeleton className="h-3.5 w-28 bg-gray-700" />
+            </div>
+          </div>
+        ))}
       </div>
     );
   }

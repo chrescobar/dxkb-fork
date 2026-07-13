@@ -156,8 +156,8 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
         </div>
       </div>
 
-      {/* FACET PANEL */}
-      {showFacets && (
+      {/* FACET PANEL — always mounted so fetched data survives hide/show */}
+      <div className={showFacets ? undefined : "hidden"}>
         <FacetPanel
           fields={activeFacetFields}
           resource={resource}
@@ -177,7 +177,7 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
             });
           }}
         />
-      )}
+      </div>
     </div>
   );
 }

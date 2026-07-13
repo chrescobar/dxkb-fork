@@ -36,6 +36,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 // Varied bar widths for skeleton cells so loading rows read as content, not blocks.
 const skeletonWidthPcts = [60, 80, 50, 75, 90, 45, 70];
 
+// Stable identity for the "no sizing yet" case so the render-path fallback and
+// columnSizeVars' memo don't see a fresh {} each render.
+const emptyColumnSizing: Record<string, number> = {};
+
 interface ColumnInfo {
   id: string;
   label: string;
@@ -90,14 +94,32 @@ interface DataTableProps {
 export function DataTable({ id: _id, data, columns, totalItems, resource, errorMessage, onSelectionChange, onGenomeSelect, selectedIds, pageIndex, pageSize, onPageChange, sorting:controlledSorting, onSortingChange, columnOrder, onColumnOrderChange, columnVisibility: controlledVisibility, onColumnVisibilityChange: onColumnVisibilityChangeProp, rowSelection: controlledRowSelection, onRowSelectionChange, isAllPagesSelected = false, onAllPagesSelectionChange, totalSelectedCount, onDownloadAll, isLoading = false, onActiveRowChange }: DataTableProps) {
   "use no memo";
 
-  const [columnSizing, setColumnSizing] = useState<Record<string, number>>({});
+  // Column sizing kept per resource+columns. The persisted instance keeps this across
+  // tab switches, so: (a) gating on the key in the render path means shared column IDs
+  // never inherit another resource's widths (no stale-width frame), and (b) returning
+  // to an already-sized tab reuses its widths immediately (no revisit snap).
+  const [sizingByKey, setSizingByKey] = useState<Record<string, Record<string, number>>>({});
+  // resource makes shared column IDs distinct across tabs. Labels are static per
+  // resource (derived from the module-level resourceFields[resource]), so id-order
+  // alone pins the header estimates too — no need to include labels in the key.
+  const sizingKey = `${resource}:${columns.map((c) => c.id).join(",")}`;
+  const activeColumnSizing = sizingByKey[sizingKey] ?? emptyColumnSizing;
   // Live clientWidth of the scroll container. Drives full-width column stretch;
   // updated by a ResizeObserver so the table reflows when the side panel or
   // vertical menu changes the available width.
   const [containerWidth, setContainerWidth] = useState(0);
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>(
-    controlledVisibility || {}
+    controlledVisibility ?? {}
   );
+  // Sync internal visibility when the resource/column set changes (same DataTable
+  // instance reused across tab switches). Mirrors the prevFields pattern in ListData.
+  // Without this, columns missing from the stale map default to visible in TanStack Table,
+  // causing all columns to appear after switching tabs.
+  const [prevSizingKey, setPrevSizingKey] = useState(sizingKey);
+  if (prevSizingKey !== sizingKey) {
+    setPrevSizingKey(sizingKey);
+    setColumnVisibility(controlledVisibility ?? {});
+  }
   const [showColumnMenu, setShowColumnMenu] = useState(false);
   
   const [draggedColumn, setDraggedColumn] = useState<string | null>(null);
@@ -146,10 +168,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
 
   const [onlyVisibleColumns, setOnlyVisibleColumns] = useState(false);
 
-  const hasAutoSizedRef = useRef(false);
-  const prevColumnKeyRef = useRef('');
-  const columnMinSizesRef = useRef<Record<string, number>>({});
-
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLTableSectionElement>(null);
   const justResizedRef = useRef(false);
@@ -177,28 +195,26 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
   }, [showColumnMenu]);
 
 
+  // Content-fit each resource+column set exactly once, and only once real rows exist.
+  // While loading (data empty) the columnDef estimateHeaderWidth values drive the
+  // skeleton, so there's no empty→header→content churn — just one instant header→
+  // content snap when data lands. Flooring each width at the header estimate keeps that
+  // snap grow-only. The presence check also makes a cached revisit a no-op: the key's
+  // sizing already exists, so nothing recomputes and nothing reflows.
+  //
+  // Exception (intentional): if the user manually resized or toggled columns before
+  // data arrived, sizingByKey[sizingKey] already exists, so this skips — manual wins.
   useEffect(() => {
-    if (columns.length === 0) return;
-
-    const key = columns.map(c => c.id).join(',');
-    const columnsChanged = prevColumnKeyRef.current !== key;
-    if (columnsChanged) {
-      prevColumnKeyRef.current = key;
-      hasAutoSizedRef.current = false;
-    }
-    if (hasAutoSizedRef.current) return;
-
-    // Only lock sizing as done once we have real data to measure content widths.
-    // With empty data we still run (header-only sizing) but leave the flag false
-    // so the effect fires again when data arrives.
-    if (data.length > 0) {
-      hasAutoSizedRef.current = true;
-    }
+    if (columns.length === 0 || data.length === 0) return;
+    if (sizingKey in sizingByKey) return;
 
     const autoSizes = computeAutoColumnSizes(columns, data);
-    columnMinSizesRef.current = computeAutoColumnSizes(columns, []);
-    setColumnSizing(autoSizes);
-  }, [columns, data]);
+    const sizing: Record<string, number> = {};
+    for (const col of columns) {
+      sizing[col.id] = Math.max(estimateHeaderWidth(col.label), autoSizes[col.id] ?? 0);
+    }
+    setSizingByKey((prev) => ({ ...prev, [sizingKey]: sizing }));
+  }, [columns, data, sizingKey, sizingByKey]);
 
   // Track the scroll container's width so columns can stretch to fill it.
   // Fires on side-panel resize, vertical-menu collapse, and window resize.
@@ -336,7 +352,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
           }
           return value;
         },
-        size: 250,
+        size: estimateHeaderWidth(col.label),
         enableResizing: true,
         enableSorting: true,
         sortingFn: (rowA: TanStackRow<Record<string, unknown>>, rowB: TanStackRow<Record<string, unknown>>, columnId: string) => {
@@ -369,7 +385,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
       pagination,
       columnOrder,
       columnVisibility,
-      columnSizing,
+      columnSizing: activeColumnSizing,
       rowSelection,
     },
     onRowSelectionChange: (updater) => {
@@ -437,14 +453,14 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
       }
 
       // Trigger a recalculation of column sizing on visibility toggle
-      setColumnSizing((prev) => {
-        const updated = { ...prev };
+      setSizingByKey((prev) => {
+        const base = { ...(prev[sizingKey] ?? {}) };
         table.getAllLeafColumns().forEach((col) => {
-          if (!updated[col.id]) {
-            updated[col.id] = col.getSize();
+          if (!base[col.id]) {
+            base[col.id] = col.getSize();
           }
         });
-        return updated;
+        return { ...prev, [sizingKey]: base };
       });
     },
     onPaginationChange: (updater) => {
@@ -471,7 +487,13 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
     pageCount: Math.ceil(totalItems / pagination.pageSize),
     columnResizeMode: 'onChange',
     enableColumnResizing: true,
-    onColumnSizingChange: setColumnSizing,
+    onColumnSizingChange: (updater) => {
+      setSizingByKey((prev) => {
+        const base = prev[sizingKey] ?? emptyColumnSizing;
+        const next = typeof updater === "function" ? updater(base) : updater;
+        return { ...prev, [sizingKey]: next };
+      });
+    },
     getCoreRowModel: getCoreRowModel(),
     enableRowSelection: true,
     enableSortingRemoval: false,
@@ -932,7 +954,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                             width: `var(--col-${column.id}-size)`,
                             minWidth: `var(--col-${column.id}-size)`,
                             maxWidth: `var(--col-${column.id}-size)`,
-                            transition: resizingColumnId ? undefined : 'width 200ms ease, min-width 200ms ease, max-width 200ms ease',
                             ...(column.id === '__select__' && {
                               position: 'sticky',
                               left: 0,
@@ -1024,7 +1045,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                   onActiveRowChange={onActiveRowChange}
                   errorMessage={errorMessage}
                   isLoading={isLoading}
-                  resizingColumnId={resizingColumnId}
                   skeletonRowCount={skeletonRowCount}
                 />
               ) : (
@@ -1042,7 +1062,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                   onActiveRowChange={onActiveRowChange}
                   errorMessage={errorMessage}
                   isLoading={isLoading}
-                  resizingColumnId={resizingColumnId}
                   skeletonRowCount={skeletonRowCount}
                 />
               )}
@@ -1150,7 +1169,6 @@ interface DataTableBodyProps {
   onActiveRowChange?: (id: string | null) => void;
   errorMessage?: string;
   isLoading?: boolean;
-  resizingColumnId?: string | false;
   skeletonRowCount?: number;
 }
 
@@ -1172,7 +1190,6 @@ function DataTableBody({
   onActiveRowChange,
   errorMessage,
   isLoading = false,
-  resizingColumnId = false,
   skeletonRowCount = 20,
 }: DataTableBodyProps) {
   "use no memo";
@@ -1299,7 +1316,6 @@ function DataTableBody({
                   minWidth: `var(--col-${cell.column.id}-size)`,
                   maxWidth: `var(--col-${cell.column.id}-size)`,
                   height: '24px',
-                  transition: resizingColumnId ? undefined : 'width 200ms ease, min-width 200ms ease, max-width 200ms ease',
                   ...(cell.column.id === '__select__' && {
                     position: 'sticky',
                     left: 0,
@@ -1347,6 +1363,20 @@ export function computeShiftRangeIds(
   const ids: string[] = [];
   for (let i = from; i <= to; i++) ids.push(rows[i].id);
   return ids;
+}
+
+// SSR-safe header-width estimate (pure string math — no canvas/document), so the
+// server and the client's first render agree and columns paint at header width
+// immediately instead of the 250px columnDef default. Approximates the header branch
+// of computeAutoColumnSizes: headers wrap, so only the longest single word sets the
+// minimum width. ~7px/char at bold 12px system-ui + 32px th padding, clamped to
+// [60, 250]. This is an approximation, not a pixel mirror of the canvas measurement;
+// exact fit is applied once by computeAutoColumnSizes when data arrives.
+export function estimateHeaderWidth(label: string): number {
+  const longestWord = label
+    .split(/\s+/)
+    .reduce((a, b) => (a.length >= b.length ? a : b), "");
+  return Math.min(Math.max(longestWord.length * 7 + 32, 60), 250);
 }
 
 function computeAutoColumnSizes(

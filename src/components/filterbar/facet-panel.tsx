@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useMemo, useRef } from "react";
 import { FacetColumn } from "./facet-column";
-import { SelectedFilter } from "@/types/filters";
 
 interface FacetItem {
   label: string;
@@ -22,7 +21,6 @@ interface FacetPanelProps {
   query: string;
   resource: string;
   onSelect: (field: string, value: string) => void;
-  selected: SelectedFilter[];
 };
 
 // ------------------------------
@@ -55,7 +53,6 @@ export function FacetPanel({
   query,
   resource,
   onSelect,
-  selected,
 }: FacetPanelProps) {
   const [facets, setFacets] = useState<Partial<Record<string, FacetItem[]>>>({});
   const [fetchError, setFetchError] = useState<string | null>(null);
@@ -107,13 +104,12 @@ export function FacetPanel({
         }
 
         const facetStr = `facet(${facetFieldsStr},(mincount,1),(limit,100))`;
-        const filterStr = selected
-          .map(f => `eq(${f.field},${String(f.value)})`)
-          .join(",");
-          
+
+        // `query` is already `combinedQuery` from ListData, which includes all
+        // active filters. Do not add them again here — that would duplicate them
+        // and can cause API errors with complex filter values.
         const RQLstring = [
           query || "",
-          filterStr,
           "limit(1)",
           facetStr
         ]
@@ -161,7 +157,7 @@ export function FacetPanel({
     };
 
     void fetchFacets();
-  }, [fields, query, resource, DataAPI, selected]);
+  }, [fields, query, resource, DataAPI]);
 
   if (fetchError) {
     return (

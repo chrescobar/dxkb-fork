@@ -162,7 +162,6 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
           fields={activeFacetFields}
           resource={resource}
           query={query}
-          selected={selected}
           onSelect={(field, value) => {
             setSelected((prev) => {
               const exists = prev.some(

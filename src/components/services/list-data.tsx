@@ -383,7 +383,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       <FilterBar
         facetFields={facetFields}
         resource={resource}
-        query={combinedQuery}
+        query={cleanQ}
         onFilterChange={(rql) => {
           setFilter(rql);
           setPageIndex(0);

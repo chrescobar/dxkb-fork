@@ -4,8 +4,9 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { DataTable } from "@/components/shared/data-table";
 import { SortingState, RowSelectionState } from "@tanstack/react-table";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { noop } from "@/lib/utils";
+import { getIdField } from "@/constants/resources";
 import { FilterBar } from "@/components/filterbar/filter-bar";
 import type { DataFieldMap } from "@/constants/datafields/types";
 import { genomeFields } from "@/constants/datafields/genome";
@@ -101,6 +102,8 @@ interface ListDataProps {
 
 export function ListData({ q, resource, onSelectionChange, rowSelection: controlledRowSelection, onRowSelectionChange, pageIndex: controlledPageIndex, onPageChange, selectedIds, isAllPagesSelected: controlledIsAllPagesSelected, onAllPagesSelectionChange, onTotalItemsChange }: ListDataProps) {
   const fields = useMemo(() => deriveTableFields(resource), [resource]);
+  const queryClient = useQueryClient();
+  const idField = getIdField(resource);
 
   // Use controlled rowSelection if provided, otherwise use internal state
   const [internalRowSelection, setInternalRowSelection] = useState<RowSelectionState>({});
@@ -271,6 +274,14 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
 
     const selectedIds = Object.keys(newSelection)
       .filter((id) => newSelection[id]);
+
+    // Pre-populate the detail panel's query cache from already-fetched page data so
+    // GenomeDetailPanel renders instantly (no loading flash) without an extra fetch.
+    if (selectedIds.length === 1 && pageData) {
+      const id = selectedIds[0];
+      const row = pageData.find((r) => String(r[idField]) === id);
+      if (row) queryClient.setQueryData(["selected-row", resource, id], row);
+    }
 
     onSelectionChange?.(selectedIds);
   };

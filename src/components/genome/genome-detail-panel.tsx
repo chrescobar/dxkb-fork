@@ -12,6 +12,22 @@ interface GenomeDetailPanelProps {
   totalItems?: number;
 }
 
+/**
+ * Normalize the several row-list shapes the data API returns (bare array,
+ * `{items}`, or Solr `{response:{docs}}`) down to the first row, or `null` when
+ * empty. Must never return `undefined` — TanStack Query rejects an `undefined`
+ * queryFn result (e.g. an empty array from an id that matches no row in the
+ * queried core).
+ */
+export function firstRowFromApiShape(
+  data: unknown[] | { items?: unknown[]; response?: { docs?: unknown[] } },
+): Record<string, unknown> | null {
+  const row: unknown = Array.isArray(data)
+    ? data[0]
+    : data.items?.[0] ?? data.response?.docs?.[0];
+  return (row ?? null) as Record<string, unknown> | null;
+}
+
 export function GenomeDetailPanel({
   genomeId,
   activeTab,
@@ -27,6 +43,7 @@ export function GenomeDetailPanel({
   const { data: selectedRow, isLoading, error } = useQuery({
     queryKey: ["selected-row", activeTab, genomeId],
     enabled: !!genomeId && selectedIds.length === 1,
+    staleTime: 5 * 60 * 1000,
 
     queryFn: async () => {
       if (!genomeId) return null;
@@ -43,15 +60,7 @@ export function GenomeDetailPanel({
 
       const data = await res.json() as unknown[] | { items?: unknown[]; response?: { docs?: unknown[] } };
 
-      // normalize different API shapes
-      const row: unknown =
-        Array.isArray(data)
-          ? data[0]
-          : (data as { items?: unknown[] }).items?.[0] ??
-            (data as { response?: { docs?: unknown[] } }).response?.docs?.[0] ??
-            null;
-
-      return row as Record<string, unknown> | null;
+      return firstRowFromApiShape(data);
     },
   });
 

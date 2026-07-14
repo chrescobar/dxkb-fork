@@ -1,0 +1,36 @@
+src/components/genome/genome-detail-panel.tsx
+  s_d8399c94410297::t_d3be4c1e85c9ee 46
+  s_d8399c94410297::t_d122eb48b8e401 63
+  s_d8399c94410297::t_aa9795f0b1f404 15-30
+src/components/genome/__tests__/genome-detail-panel.test.ts
+  s_d8399c94410297::t_e743b237717b33 1-37
+src/app/(views)/taxonomy/[taxonId]/views/sequences.tsx
+  s_d8399c94410297::t_6ccc930ba2abab 1-16
+src/components/services/list-data.tsx
+  s_d8399c94410297::t_3d1a7de6fbf08d 105-106
+  s_d8399c94410297::t_846726ae495336 278-285
+  s_d8399c94410297::t_1ef46f0fa6f4af 9
+  s_d8399c94410297::t_9d649b298085f7 7
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_d8399c94410297::t_f49aef245e78c9 7,12-13
+  s_d8399c94410297::t_dbf39e25d2636a 89-118
+src/app/(views)/taxonomy/[taxonId]/_components/nav-items.tsx
+  s_d8399c94410297::t_e8bf37a1aa6e07 15
+  s_d8399c94410297::t_8aeb575da6024f 43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "5bd0d315a7acfc6c326d37f27e8b94cdb013c512",
+  "prompts": {},
+  "sessions": {
+    "s_d8399c94410297": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "73206ae2-4616-4bf4-9821-d84fb8c67a4b",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

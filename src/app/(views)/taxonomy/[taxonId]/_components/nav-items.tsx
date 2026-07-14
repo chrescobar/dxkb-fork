@@ -11,6 +11,7 @@ import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 
 import { makeOverviewView } from "../views/overview";
 import { makeTaxonomyTreeView } from "../views/taxonomy-tree-view";
+import { makeGenomesView } from "../views/genomes";
 import { makeStrainsView } from "../views/strains";
 import { makeSurveillanceView } from "../views/surveillance";
 import { makeSerologyView } from "../views/serology";
@@ -37,6 +38,7 @@ export function buildTaxonomyNavItems(
       }),
     },
     "taxa-tree": { Component: makeTaxonomyTreeView({ taxon }), layout: "fill" },
+    genomes: { Component: makeGenomesView({ taxon }), layout: "fill" },
     strains: { Component: makeStrainsView({ taxon }), layout: "fill" },
     surveillance: { Component: makeSurveillanceView({ taxon }), layout: "fill" },
     serology: { Component: makeSerologyView({ taxon }), layout: "fill" },

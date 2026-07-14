@@ -39,13 +39,14 @@ describe("buildTaxonomyNavItems", () => {
     expect(overview?.Component.name).toBe("OverviewView");
   });
 
-  it("injects the four real data views (not placeholders)", () => {
+  it("injects the five real data views (not placeholders)", () => {
     // resolveComponent returns the override Component regardless of gate state,
     // so any taxon surfaces the real named fn. Catches a dropped override
     // silently falling back to makePlaceholderView.
     const taxon = tax({ lineageNames: ["Bacteria"] });
     const items = buildTaxonomyNavItems(buildTaxonomyConfig(1, taxon), taxon, null);
     const name = (k: string) => items.find((i) => i.key === k)?.Component.name;
+    expect(name("genomes")).toBe("GenomesView");
     expect(name("strains")).toBe("StrainsView");
     expect(name("surveillance")).toBe("SurveillanceView");
     expect(name("serology")).toBe("SerologyView");

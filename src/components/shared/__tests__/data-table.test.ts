@@ -1,4 +1,4 @@
-import { computeShiftRangeIds } from "../data-table";
+import { computeShiftRangeIds, estimateHeaderWidth } from "../data-table";
 
 const rows = ["a", "b", "c", "d", "e"].map((id) => ({ id }));
 
@@ -25,5 +25,22 @@ describe("computeShiftRangeIds", () => {
 
   it("returns empty when the target id is not present", () => {
     expect(computeShiftRangeIds(rows, "c", "z")).toEqual([]);
+  });
+});
+
+describe("estimateHeaderWidth", () => {
+  it("is deterministic and SSR-safe (pure string math, no canvas/document)", () => {
+    expect(estimateHeaderWidth("Genome Name")).toBe(estimateHeaderWidth("Genome Name"));
+    expect(typeof estimateHeaderWidth("Genome Name")).toBe("number");
+  });
+
+  it("sizes by the longest word (headers wrap), not the whole label", () => {
+    // "Collection Year" longest word "Collection" (10) > "Genome Name" longest "Genome" (6).
+    expect(estimateHeaderWidth("Collection Year")).toBeGreaterThan(estimateHeaderWidth("Genome Name"));
+  });
+
+  it("clamps to [60, 250]", () => {
+    expect(estimateHeaderWidth("A")).toBe(60);             // tiny → floor
+    expect(estimateHeaderWidth("x".repeat(100))).toBe(250); // huge → cap
   });
 });

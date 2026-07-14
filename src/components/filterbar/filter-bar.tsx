@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { buildRql } from "./filter-utils";
 import { KeywordSearch } from "./keyword-search";
 import { SelectedFilters } from "./selected-filters";
@@ -73,6 +73,11 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
     return () => { document.removeEventListener("mousedown", handleClickOutside); };
   }, []);
 
+  const facetQuery = useMemo(() => {
+    const filterRql = buildRql({ selected, keywords });
+    return [query, filterRql].filter(Boolean).join("&");
+  }, [query, selected, keywords]);
+
   return (
     <div className="mt-0 mb-2 flex flex-col gap-1 p-1 text-sm">
       
@@ -108,7 +113,7 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
                   </Button>
 
               {facetMenuOpen && (
-                <div className="absolute right-0 z-[9999] mt-1 max-h-64 w-56 overflow-y-auto rounded border border-gray-600 bg-gray-800 shadow-lg">
+                <div className="absolute right-0 z-9999 mt-1 max-h-64 w-56 overflow-y-auto rounded border border-gray-600 bg-gray-800 shadow-lg">
                   {localFacetFields
                     .filter((f) => f.facet)
                     .map((f) => (
@@ -161,8 +166,7 @@ export function FilterBar({ facetFields, onFilterChange, resource, query }: Filt
         <FacetPanel
           fields={activeFacetFields}
           resource={resource}
-          query={query}
-          selected={selected}
+          query={facetQuery}
           onSelect={(field, value) => {
             setSelected((prev) => {
               const exists = prev.some(

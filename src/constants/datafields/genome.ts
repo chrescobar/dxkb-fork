@@ -831,7 +831,7 @@ export const genomeFields = {
       date_inserted: {
         label: 'Date Inserted',
         field: 'date_inserted',
-        hidden: false,
+        hidden: true,
         group: 'Additional Info',
         facet: false, 
         facet_hidden: true, 

@@ -1315,7 +1315,7 @@ function DataTableBody({
               <TableCell
                 key={cell.id}
                 className={clsx(
-                  'flex items-center truncate border border-border py-1',
+                  'flex items-center truncate border border-border py-0.5',
                   cell.column.id === '__select__'
                     ? clsx('justify-center', row.getIsSelected() ? '' : 'bg-background group-hover:bg-muted')
                     : 'justify-start'

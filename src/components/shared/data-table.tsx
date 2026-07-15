@@ -272,7 +272,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
             type="checkbox"
             checked={row.getIsSelected()}
             onChange={noop}
-            onClick={handleToggle}
             className="m-0 cursor-pointer p-0"
           />
         </div>
@@ -327,7 +326,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                 }
               }}
               onChange={noop}
-              onClick={handleHeaderToggle}
               className="m-0 cursor-pointer p-0"
               title={isAllPagesSelected ? "Click to deselect all results" : (allPageRowsSelected ? "Click to deselect this page" : "Click to select all on this page")}
             />
@@ -967,11 +965,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                               zIndex: 1,
                             }),
                           }}
-                          onClick={column.id === '__select__' ? (e) => {
-                            e.stopPropagation();
-                            if ((e.target as HTMLElement).closest('input[type="checkbox"]')) return;
-                            e.currentTarget.querySelector<HTMLInputElement>('input[type="checkbox"]')?.click();
-                          } : (e) => {
+                          onClick={column.id !== '__select__' ? (e) => {
                             if (justResizedRef.current) {
                               e.stopPropagation();
                               return;
@@ -979,7 +973,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                             e.stopPropagation();
                             const handler = column.getToggleSortingHandler();
                             if (handler) handler(e);
-                          }}
+                          } : undefined}
                         >
                           {column.id === '__select__' ? (
                             // Checkbox column - no sorting or dragging
@@ -1328,11 +1322,6 @@ function DataTableBody({
                     ? clsx('justify-center p-0', row.getIsSelected() ? '' : 'bg-background group-hover:bg-muted')
                     : 'justify-start py-0.5'
                 )}
-                onClick={cell.column.id === '__select__' ? (e) => {
-                  e.stopPropagation();
-                  if ((e.target as HTMLElement).closest('input[type="checkbox"]')) return;
-                  e.currentTarget.querySelector<HTMLInputElement>('input[type="checkbox"]')?.click();
-                } : undefined}
                 style={{
                   width: `var(--col-${cell.column.id}-size)`,
                   minWidth: `var(--col-${cell.column.id}-size)`,

@@ -7,6 +7,7 @@ import { SortingState, RowSelectionState } from "@tanstack/react-table";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { noop } from "@/lib/utils";
 import { getIdField } from "@/constants/resources";
+import { detailPanelQueryKey } from "@/components/genome/genome-detail-panel";
 import { FilterBar } from "@/components/filterbar/filter-bar";
 import type { DataFieldMap } from "@/constants/datafields/types";
 import { genomeFields } from "@/constants/datafields/genome";
@@ -75,6 +76,19 @@ export function deriveTableFields(resource: string): ColumnInfo[] {
     }));
 }
 
+
+/**
+ * Find a row in an already-fetched page by its ID field value.
+ * Used to pre-populate the detail-panel query cache so row clicks render
+ * instantly — the page fetch already has every field; no extra request needed.
+ */
+export function findPageRow(
+  pageData: Record<string, unknown>[],
+  idField: string,
+  id: string,
+): Record<string, unknown> | undefined {
+  return pageData.find((r) => String(r[idField]) === id);
+}
 
 // The page query key is ['genome-full', resource, ...]; index 1 is the resource.
 // Keeping previous rows across a resource change bleeds wrong-shaped data into a
@@ -279,8 +293,8 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     // GenomeDetailPanel renders instantly (no loading flash) without an extra fetch.
     if (selectedIds.length === 1 && pageData) {
       const id = selectedIds[0];
-      const row = pageData.find((r) => String(r[idField]) === id);
-      if (row) queryClient.setQueryData(["selected-row", resource, id], row);
+      const row = findPageRow(pageData, idField, id);
+      if (row) queryClient.setQueryData(detailPanelQueryKey(resource, id), row);
     }
 
     onSelectionChange?.(selectedIds);

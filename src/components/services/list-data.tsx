@@ -247,7 +247,12 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       const sortClause = sortingKey !== "none"
         ? (() => { const [field, dir] = sortingKey.split(":"); return `&sort(${dir === "desc" ? "-" : "+"}${field})`; })()
         : "";
-      const url = `${baseURL}${sortClause}`;
+      const fieldMap = resourceFields[resource];
+      const selectIds = fieldMap
+        ? [...new Set([idField, ...Object.values(fieldMap).map(f => f.field)])]
+        : [idField];
+      const selectClause = `&select(${selectIds.join(',')})`;
+      const url = `${baseURL}${sortClause}${selectClause}`;
 
       const res = await fetch(url, {
         headers: {

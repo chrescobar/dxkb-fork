@@ -52,6 +52,26 @@ describe("deriveTableFields", () => {
 // the cache from pageData in handleRowSelectionChange. findPageRow is the lookup that
 // decides whether pre-population fires — if it's broken (returns undefined), the
 // setQueryData call is skipped and the loading flash returns.
+// Regression: genome_sequence API returns the raw `sequence` DNA field by default,
+// inflating each page response from ~80KB to ~18MB. The fix restricts fetches to the
+// fields defined in genomeSequenceFields. Confirm `sequence` stays out of that map.
+describe("genome_sequence field registry", () => {
+  it("does not include the raw 'sequence' DNA field — its absence prevents 18MB responses", () => {
+    const fields = deriveTableFields("genome_sequence");
+    expect(fields.map(f => f.id)).not.toContain("sequence");
+  });
+
+  it("includes the key table fields for genome_sequence", () => {
+    const fields = deriveTableFields("genome_sequence");
+    const ids = fields.map(f => f.id);
+    expect(ids).toContain("sequence_id");
+    expect(ids).toContain("genome_id");
+    expect(ids).toContain("accession");
+    expect(ids).toContain("gc_content");
+    expect(ids).toContain("length");
+  });
+});
+
 describe("findPageRow", () => {
   const rows = [
     { sequence_id: "abc.1", length: 100 },

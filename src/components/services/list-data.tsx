@@ -277,6 +277,43 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     staleTime: 5 * 60 * 1000,
   });
 
+  // Prefetch adjacent pages so navigation is instant once the current page is cached.
+  useEffect(() => {
+    if (!totalItems) return;
+    const fieldMap = resourceFields[resource];
+    const selectIds = fieldMap
+      ? [...new Set([idField, ...Object.values(fieldMap).map(f => f.field)])]
+      : [idField];
+    const sortClause = sortingKey !== "none"
+      ? (() => { const [field, dir] = sortingKey.split(":"); return `&sort(${dir === "desc" ? "-" : "+"}${field})`; })()
+      : "";
+    const prefetchURL = `${DataAPI}/${resource}/?${combinedQuery}${sortClause}&select(${selectIds.join(',')})`;
+
+    const prefetch = (idx: number) => {
+      if (idx < 0 || idx * pageSize >= totalItems) return;
+      const start = idx * pageSize;
+      const end = start + pageSize;
+      void queryClient.prefetchQuery({
+        queryKey: ['genome-full', resource, combinedQuery, idx, sortingKey, searchtype, totalItems],
+        queryFn: async () => {
+          const res = await fetch(prefetchURL, {
+            headers: {
+              'Content-type': 'application/rqlquery+x-www-form-urlencoded',
+              'Accept': 'application/json',
+              'Range': `items=${String(start)}-${String(end)}`,
+              'X-Range': `items=${String(start)}-${String(end)}`,
+            }
+          });
+          if (!res.ok) throw new Error(`Failed to fetch genome data (${String(res.status)} ${res.statusText})`);
+          return res.json() as Promise<Record<string, unknown>[]>;
+        },
+        staleTime: 5 * 60 * 1000,
+      });
+    };
+    prefetch(pageIndex + 1);
+    prefetch(pageIndex - 1);
+  }, [pageIndex, totalItems, combinedQuery, sortingKey, searchtype, resource, queryClient, idField, DataAPI, pageSize]);
+
   const errorMessage = metaError ?? dataError
     ? `Error: ${((metaError ?? dataError)?.message ?? 'Unknown error')} — Query: ${JSON.stringify(q)}`
     : undefined;

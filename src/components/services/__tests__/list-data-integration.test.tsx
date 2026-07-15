@@ -72,7 +72,7 @@ describe("ListData select clause", () => {
     );
 
     await waitFor(() =>
-      expect(capturedDataUrls.length).toBeGreaterThan(0)
+      { expect(capturedDataUrls.length).toBeGreaterThan(0); }
     );
 
     const dataUrl = capturedDataUrls[0];
@@ -100,7 +100,7 @@ describe("ListData select clause", () => {
       </Wrapper>
     );
 
-    await waitFor(() => expect(capturedDataUrls.length).toBeGreaterThan(0));
+    await waitFor(() => { expect(capturedDataUrls.length).toBeGreaterThan(0); });
 
     const dataUrl = capturedDataUrls[0] ?? "";
     const selectMatch = dataUrl.match(/&select\(([^)]+)\)/);
@@ -148,7 +148,7 @@ describe("ListData prefetch", () => {
 
     // Both the page-1 fetch and the page-2 prefetch should complete
     await waitFor(
-      () => expect(capturedRanges).toContain("items=200-400"),
+      () => { expect(capturedRanges).toContain("items=200-400"); },
       { timeout: 4000 }
     );
 

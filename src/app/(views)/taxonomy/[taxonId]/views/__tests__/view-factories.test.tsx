@@ -5,6 +5,7 @@ import { makeSerologyView } from "../serology";
 import { makeSurveillanceView } from "../surveillance";
 import { makeGenomesView } from "../genomes";
 import { makeSequencesView } from "../sequences";
+import { makeFeaturesView } from "../features";
 
 // TaxonDataPanel has complex network + React dependencies; mock it so tests stay
 // focused on the factory guard logic (null taxon → render nothing).
@@ -113,6 +114,37 @@ describe("makeSequencesView", () => {
     const { getByTestId } = render(<SequencesView />);
     expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toContain(
       "sequences.html",
+    );
+  });
+});
+
+describe("makeFeaturesView", () => {
+  it("renders nothing when taxon is null", () => {
+    const FeaturesView = makeFeaturesView({ taxon: null });
+    const { container } = render(<FeaturesView />);
+    expect(container.firstChild).toBeNull();
+  });
+
+  it("renders TaxonDataPanel with the genome_feature cross-core join query", () => {
+    // genome_feature has no taxon_lineage_ids field, so it joins to the genome
+    // core (same shape as sequences). annotation=PATRIC is the legacy default
+    // filter. resource must be exactly genome_feature — the id/field/action/
+    // detail lookups are all keyed on it.
+    const FeaturesView = makeFeaturesView({ taxon: fakeTaxon });
+    const { getByTestId } = render(<FeaturesView />);
+    const panel = getByTestId("taxon-data-panel");
+    expect(panel).toHaveAttribute("data-resource", "genome_feature");
+    const q = panel.getAttribute("data-q") ?? "";
+    expect(q).toContain("eq(genome_id,*)");
+    expect(q).toContain("genome(and(eq(taxon_lineage_ids,1234),ne(genome_status,Deprecated)))");
+    expect(q).toContain("eq(annotation,PATRIC)");
+  });
+
+  it("passes the features guide URL", () => {
+    const FeaturesView = makeFeaturesView({ taxon: fakeTaxon });
+    const { getByTestId } = render(<FeaturesView />);
+    expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toBe(
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/features.html",
     );
   });
 });

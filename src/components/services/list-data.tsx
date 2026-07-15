@@ -292,7 +292,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     const prefetch = (idx: number) => {
       if (idx < 0 || idx * pageSize >= totalItems) return;
       const start = idx * pageSize;
-      const end = start + pageSize - 1;
+      const end = start + pageSize;
       void queryClient.prefetchQuery({
         queryKey: ['genome-full', resource, combinedQuery, idx, sortingKey, searchtype, totalItems],
         queryFn: async () => {

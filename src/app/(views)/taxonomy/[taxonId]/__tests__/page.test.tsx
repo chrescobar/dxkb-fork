@@ -61,6 +61,15 @@ vi.mock("../views/taxonomy-tree-view", () => ({
   },
 }));
 
+// The sequences view renders ListData (useQueryClient, useQuery, react-resizable-panels)
+// and is covered by view-factories.test.tsx. Stub the factory here so this page-level
+// test stays focused on routing/wiring, not TanStack Query provider setup.
+vi.mock("../views/sequences", () => ({
+  makeSequencesView: () => function SequencesView() {
+    return <div data-testid="sequences-view" />;
+  },
+}));
+
 vi.mock("next/navigation", () => ({
   notFound: () => notFoundSpy(),
   useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn() }),
@@ -94,7 +103,7 @@ describe("TaxonomyPage", () => {
     expect(screen.getByTestId("taxonomy-tree")).toBeInTheDocument();
   });
 
-  it("renders placeholder stub for sequences view", async () => {
+  it("renders the sequences view when tab=sequences", async () => {
     const node = await TaxonomyPage({
       params: Promise.resolve({ taxonId: "234" }),
       searchParams: Promise.resolve({ tab: "sequences" }),
@@ -102,11 +111,9 @@ describe("TaxonomyPage", () => {
 
     render(node);
 
-    // Active label appears 3×: desktop nav button, mobile pill, placeholder heading.
-    expect(screen.getAllByText("Sequences")).toHaveLength(3);
-    expect(
-      screen.getByText(/This view is coming soon/),
-    ).toBeInTheDocument();
+    expect(screen.getByTestId("sequences-view")).toBeInTheDocument();
+    // No placeholder — sequences is a real view now.
+    expect(screen.queryByText(/This view is coming soon/)).toBeNull();
   });
 
   it("shows Interactions disabled (not removed) for viral taxa", async () => {

@@ -4,8 +4,10 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { DataTable } from "@/components/shared/data-table";
 import { SortingState, RowSelectionState } from "@tanstack/react-table";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { noop } from "@/lib/utils";
+import { getIdField } from "@/constants/resources";
+import { detailPanelQueryKey } from "@/components/genome/genome-detail-panel";
 import { FilterBar } from "@/components/filterbar/filter-bar";
 import type { DataFieldMap } from "@/constants/datafields/types";
 import { genomeFields } from "@/constants/datafields/genome";
@@ -75,6 +77,19 @@ export function deriveTableFields(resource: string): ColumnInfo[] {
 }
 
 
+/**
+ * Find a row in an already-fetched page by its ID field value.
+ * Used to pre-populate the detail-panel query cache so row clicks render
+ * instantly — the page fetch already has every field; no extra request needed.
+ */
+export function findPageRow(
+  pageData: Record<string, unknown>[],
+  idField: string,
+  id: string,
+): Record<string, unknown> | undefined {
+  return pageData.find((r) => String(r[idField]) === id);
+}
+
 // The page query key is ['genome-full', resource, ...]; index 1 is the resource.
 // Keeping previous rows across a resource change bleeds wrong-shaped data into a
 // table keyed by the new resource's idField → duplicate/undefined React keys.
@@ -101,6 +116,8 @@ interface ListDataProps {
 
 export function ListData({ q, resource, onSelectionChange, rowSelection: controlledRowSelection, onRowSelectionChange, pageIndex: controlledPageIndex, onPageChange, selectedIds, isAllPagesSelected: controlledIsAllPagesSelected, onAllPagesSelectionChange, onTotalItemsChange }: ListDataProps) {
   const fields = useMemo(() => deriveTableFields(resource), [resource]);
+  const queryClient = useQueryClient();
+  const idField = getIdField(resource);
 
   // Use controlled rowSelection if provided, otherwise use internal state
   const [internalRowSelection, setInternalRowSelection] = useState<RowSelectionState>({});
@@ -230,7 +247,12 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
       const sortClause = sortingKey !== "none"
         ? (() => { const [field, dir] = sortingKey.split(":"); return `&sort(${dir === "desc" ? "-" : "+"}${field})`; })()
         : "";
-      const url = `${baseURL}${sortClause}`;
+      const fieldMap = resourceFields[resource];
+      const selectIds = fieldMap
+        ? [...new Set([idField, ...Object.values(fieldMap).map(f => f.field)])]
+        : [idField];
+      const selectClause = `&select(${selectIds.join(',')})`;
+      const url = `${baseURL}${sortClause}${selectClause}`;
 
       const res = await fetch(url, {
         headers: {
@@ -255,6 +277,43 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
     staleTime: 5 * 60 * 1000,
   });
 
+  // Prefetch adjacent pages so navigation is instant once the current page is cached.
+  useEffect(() => {
+    if (!totalItems) return;
+    const fieldMap = resourceFields[resource];
+    const selectIds = fieldMap
+      ? [...new Set([idField, ...Object.values(fieldMap).map(f => f.field)])]
+      : [idField];
+    const sortClause = sortingKey !== "none"
+      ? (() => { const [field, dir] = sortingKey.split(":"); return `&sort(${dir === "desc" ? "-" : "+"}${field})`; })()
+      : "";
+    const prefetchURL = `${DataAPI}/${resource}/?${combinedQuery}${sortClause}&select(${selectIds.join(',')})`;
+
+    const prefetch = (idx: number) => {
+      if (idx < 0 || idx * pageSize >= totalItems) return;
+      const start = idx * pageSize;
+      const end = start + pageSize;
+      void queryClient.prefetchQuery({
+        queryKey: ['genome-full', resource, combinedQuery, idx, sortingKey, searchtype, totalItems],
+        queryFn: async () => {
+          const res = await fetch(prefetchURL, {
+            headers: {
+              'Content-type': 'application/rqlquery+x-www-form-urlencoded',
+              'Accept': 'application/json',
+              'Range': `items=${String(start)}-${String(end)}`,
+              'X-Range': `items=${String(start)}-${String(end)}`,
+            }
+          });
+          if (!res.ok) throw new Error(`Failed to fetch genome data (${String(res.status)} ${res.statusText})`);
+          return res.json() as Promise<Record<string, unknown>[]>;
+        },
+        staleTime: 5 * 60 * 1000,
+      });
+    };
+    prefetch(pageIndex + 1);
+    prefetch(pageIndex - 1);
+  }, [pageIndex, totalItems, combinedQuery, sortingKey, searchtype, resource, queryClient, idField, DataAPI, pageSize]);
+
   const errorMessage = metaError ?? dataError
     ? `Error: ${((metaError ?? dataError)?.message ?? 'Unknown error')} — Query: ${JSON.stringify(q)}`
     : undefined;
@@ -271,6 +330,14 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
 
     const selectedIds = Object.keys(newSelection)
       .filter((id) => newSelection[id]);
+
+    // Pre-populate the detail panel's query cache from already-fetched page data so
+    // GenomeDetailPanel renders instantly (no loading flash) without an extra fetch.
+    if (selectedIds.length === 1 && pageData) {
+      const id = selectedIds[0];
+      const row = findPageRow(pageData, idField, id);
+      if (row) queryClient.setQueryData(detailPanelQueryKey(resource, id), row);
+    }
 
     onSelectionChange?.(selectedIds);
   };

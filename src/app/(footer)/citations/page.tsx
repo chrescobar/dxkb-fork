@@ -12,7 +12,7 @@ export default function CitationsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Citing the DXKB Award</CardTitle>
+            <CardTitle>Citing DXKB</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-sm leading-relaxed">
             <p>

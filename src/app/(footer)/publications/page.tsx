@@ -57,9 +57,9 @@ export default function PublicationsPage() {
       <FooterHeader title="Publications" />
       <section className="container mx-auto max-w-4xl px-4 py-10 md:px-6">
         <div className="flex flex-col gap-8">
-          <p className="text-muted-foreground">
+          <h2 className="text-lg font-semibold text-foreground">
             Research publications that have utilized DXKB resources.
-          </p>
+          </h2>
 
           {publicationsByYear.map(({ year, publications }) => (
             <Card key={year}>

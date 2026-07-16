@@ -31,7 +31,7 @@ describe("parseCepiNews", () => {
   it("builds absolute, URL-encoded image URLs", () => {
     const [newest] = parseCepiNews(fixture, 1);
     expect(newest.image).toBe(
-      "https://static.cepi.net/images/1024x600/2026-07/Photo%20With%20Spaces%20(final).jpg",
+      "https://static.cepi.net/images/800x600/2026-07/Photo%20With%20Spaces%20(final).jpg",
     );
   });
 

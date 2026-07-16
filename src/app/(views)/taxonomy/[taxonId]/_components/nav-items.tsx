@@ -13,6 +13,7 @@ import { makeOverviewView } from "../views/overview";
 import { makeTaxonomyTreeView } from "../views/taxonomy-tree-view";
 import { makeGenomesView } from "../views/genomes";
 import { makeSequencesView } from "../views/sequences";
+import { makeProteinStructuresView } from "../views/protein-structures";
 import { makeFeaturesView } from "../views/features";
 import { makeStrainsView } from "../views/strains";
 import { makeSurveillanceView } from "../views/surveillance";
@@ -42,6 +43,7 @@ export function buildTaxonomyNavItems(
     "taxa-tree": { Component: makeTaxonomyTreeView({ taxon }), layout: "fill" },
     genomes: { Component: makeGenomesView({ taxon }), layout: "fill" },
     sequences: { Component: makeSequencesView({ taxon }), layout: "fill" },
+    "protein-structures": { Component: makeProteinStructuresView({ taxon }), layout: "fill" },
     features: { Component: makeFeaturesView({ taxon }), layout: "fill" },
     strains: { Component: makeStrainsView({ taxon }), layout: "fill" },
     surveillance: { Component: makeSurveillanceView({ taxon }), layout: "fill" },

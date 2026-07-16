@@ -1,0 +1,25 @@
+src/app/(views)/taxonomy/[taxonId]/views/protein-structures.tsx
+  s_a0cf44b9109d60::t_18ffe6c1d089cc 1-16
+src/app/(views)/taxonomy/[taxonId]/_components/nav-items.tsx
+  s_a0cf44b9109d60::t_043e896e7c7517 46
+  s_a0cf44b9109d60::t_9583fb80ef9c56 16
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_a0cf44b9109d60::t_e9577e705e7c6b 8
+  s_a0cf44b9109d60::t_701daccbc89167 122-147
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "3f2afc27ca0a91ccc3dd5f0cdb26a8be8f4389df",
+  "prompts": {},
+  "sessions": {
+    "s_a0cf44b9109d60": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_093a1574fffeuwbQii7BNhtNn1",
+        "model": "gpt55"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

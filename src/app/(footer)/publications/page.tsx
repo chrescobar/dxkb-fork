@@ -1,625 +1,93 @@
-"use client"
+import Link from "next/link";
 
-import { Download, Filter, Search, SortDesc } from "lucide-react"
-import Link from "next/link"
-import { useState } from "react"
-import { cn } from "@/lib/utils"
+import FooterHeader from "@/components/headers/footer-header";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
-import FooterHeader from "@/components/headers/footer-header"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
+interface Publication {
+  title: string;
+  url: string;
+  authors: string;
+  doi: string;
+}
 
-type PublicationType = "journal" | "conference" | "book" | "preprint";
-type FieldType = "medicine" | "computerScience" | "biology" | "education" | "climate";
-type YearRangeKey = "from" | "to";
+interface PublicationYear {
+  year: string;
+  publications: Publication[];
+}
 
-export default function PublicationsListView() {
-  // Search state
-  const [searchQuery, setSearchQuery] = useState("")
+const publicationsByYear: PublicationYear[] = [
+  {
+    year: "2025",
+    publications: [
+      {
+        title: "High-resolution in situ structures of hantavirus glycoprotein tetramers",
+        url: "https://www.biorxiv.org/content/10.1101/2025.06.17.660152v1",
+        authors:
+          "Luqiang Guo, Elizabeth McFadden, Megan M. Slough, E. Taylor Stone, Jacob Berrigan, Eva Mittler, Kiara Hatzakis, Troy Hinkley, Heather S. Kain, Zunlong Ke, Nikole L. Warner, Jesse H. Erasmus, Kartik Chandran, Jason S. McLellan",
+        doi: "10.1101/2025.06.17.660152",
+      },
+    ],
+  },
+  {
+    year: "2024",
+    publications: [
+      {
+        title:
+          "MProt-DPO: Breaking the ExaFLOPS Barrier for Multimodal Protein Design Workflows with Direct Preference Optimization",
+        url: "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10793126&tag=1",
+        authors:
+          "Gautham Dharuman, Kyle Hippe, Alexander Brace, Sam Foreman, Vain Hatanp, Varuni K. Sastry, Huihuo Zheng, Logan Ward, Servesh Muralidharan, Archit Vasan, Bharat Kale, Carla M. Mann, Heng Ma, Yun-Hsuan Cheng, Yuliana Zamora, Shengchao Liu, Chaowei Xiao, Murali Emani, Tom Gibbs, Mahidhar Tatineni, Deepak Canchi, Jerome Mitchell, Koichi Yamada, Maria Garzaran, Michael E. Papka, Ian Foster, Rick Stevens, Anima Anandkumar, Venkatram Vishwanath, Arvind Ramanathan",
+        doi: "10.1109/SC41406.2024.00013",
+      },
+    ],
+  },
+];
 
-  // Sort state
-  const [sortOption, setSortOption] = useState("newest")
-
-  // Filter states
-  const [typeFilters, setTypeFilters] = useState({
-    journal: false,
-    conference: false,
-    book: false,
-    preprint: false,
-  })
-
-  const [fieldFilters, setFieldFilters] = useState({
-    medicine: false,
-    computerScience: false,
-    biology: false,
-    education: false,
-    climate: false,
-  })
-
-  const [yearRange, setYearRange] = useState({
-    from: "",
-    to: "",
-  })
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [prevFilterKey, setPrevFilterKey] = useState("");
-  const itemsPerPage = 5;
-
-  const filterKey = JSON.stringify({ searchQuery, sortOption, typeFilters, fieldFilters, yearRange });
-  if (filterKey !== prevFilterKey) {
-    setPrevFilterKey(filterKey);
-    if (currentPage !== 1) {
-      setCurrentPage(1);
-    }
-  }
-
-  // Handle type filter changes
-  const handleTypeFilterChange = (type: PublicationType) => {
-    setTypeFilters((prev) => ({
-      ...prev,
-      [type]: !prev[type],
-    }))
-  }
-
-  // Handle field filter changes
-  const handleFieldFilterChange = (field: FieldType) => {
-    setFieldFilters((prev) => ({
-      ...prev,
-      [field]: !prev[field],
-    }))
-  }
-
-  // Handle year range changes
-  const handleYearChange = (field: YearRangeKey, value: string) => {
-    setYearRange((prev) => ({
-      ...prev,
-      [field]: value,
-    }))
-  }
-
-  // Apply filters to publications
-  const filteredPublications = publications.filter((publication) => {
-    // Search filter
-    const searchFields = [publication.title, publication.authors, publication.abstract, publication.journal]
-      .join(" ")
-      .toLowerCase()
-
-    const matchesSearch = searchQuery === "" || searchFields.includes(searchQuery.toLowerCase())
-
-    // Type filters
-    const typeFilterActive = Object.values(typeFilters).some((value) => value)
-    const matchesType =
-      !typeFilterActive ||
-      (typeFilters.journal && publication.type === "Journal Article") ||
-      (typeFilters.conference && publication.type === "Conference Paper") ||
-      (typeFilters.book && publication.type === "Book Chapter") ||
-      (typeFilters.preprint && publication.type === "Preprint")
-
-    // Year range filter
-    const fromYear = yearRange.from ? Number.parseInt(yearRange.from) : 0
-    const toYear = yearRange.to ? Number.parseInt(yearRange.to) : 3000
-    const matchesYear = publication.year >= fromYear && publication.year <= toYear
-
-    // Field filters - assuming we have a field property or can infer it
-    // For this example, we'll just return true for field filters since we don't have field data
-    const fieldFilterActive = Object.values(fieldFilters).some((value) => value)
-    const matchesField = !fieldFilterActive || true // Replace with actual field matching logic if you have field data
-
-    return matchesSearch && matchesType && matchesYear && matchesField
-  })
-
-  // Sort publications
-  const sortedPublications = [...filteredPublications].sort((a, b) => {
-    switch (sortOption) {
-      case "newest":
-        return b.year - a.year
-      case "oldest":
-        return a.year - b.year
-      case "citations":
-        return b.citations - a.citations
-      case "title":
-        return a.title.localeCompare(b.title)
-      default:
-        return 0
-    }
-  })
-
-  // Calculate pagination
-  const totalPages = Math.ceil(sortedPublications.length / itemsPerPage);
-  const paginatedPublications = sortedPublications.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  // Generate page numbers to display
-  const getPageNumbers = () => {
-    const pages: (number | string)[] = [];
-    const maxVisiblePages = 5;
-
-    if (totalPages <= maxVisiblePages) {
-      return Array.from({ length: totalPages }, (_, i) => i + 1);
-    }
-
-    pages.push(1);
-    
-    if (currentPage > 3) {
-      pages.push("ellipsis");
-    }
-
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(currentPage + 1, totalPages - 1); i++) {
-      pages.push(i);
-    }
-
-    if (currentPage < totalPages - 2) {
-      pages.push("ellipsis");
-    }
-
-    if (totalPages > 1) {
-      pages.push(totalPages);
-    }
-
-    return pages;
-  };
-
+export default function PublicationsPage() {
   return (
-    <div className="flex min-h-screen flex-col space-y-8">
+    <div className="flex min-h-screen flex-col">
       <FooterHeader title="Publications" />
-      <section className="container mx-auto px-4 py-10 md:px-6">
-        <div className="flex flex-col space-y-8">
-          <div className="space-y-2">
-            {/* <h1 className="text-3xl font-bold tracking-tight">Publications</h1> */}
-            <p className="text-muted-foreground">
-              A comprehensive list of research publications that have utilized our knowledge base platform.
-            </p>
-          </div>
+      <section className="container mx-auto max-w-4xl px-4 py-10 md:px-6">
+        <div className="flex flex-col gap-8">
+          <p className="text-muted-foreground">
+            Research publications that have utilized DXKB resources.
+          </p>
 
-          <div className="flex flex-col gap-6 lg:flex-row">
-            {/* Filters sidebar */}
-            <div className="w-full shrink-0 lg:w-64">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center text-lg">
-                    <Filter className="mr-2 size-4" />
-                    Filters
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-3">
-                    <Label className="text-sm font-medium">Publication Type</Label>
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="journal"
-                          name="journal"
-                          checked={typeFilters.journal}
-                          onCheckedChange={() => { handleTypeFilterChange("journal"); }}
-                        />
-                        <Label htmlFor="journal" className="text-sm font-normal">
-                          Journal Articles
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="conference"
-                          name="conference"
-                          checked={typeFilters.conference}
-                          onCheckedChange={() => { handleTypeFilterChange("conference"); }}
-                        />
-                        <Label htmlFor="conference" className="text-sm font-normal">
-                          Conference Papers
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="book"
-                          name="book"
-                          checked={typeFilters.book}
-                          onCheckedChange={() => { handleTypeFilterChange("book"); }}
-                        />
-                        <Label htmlFor="book" className="text-sm font-normal">
-                          Book Chapters
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="preprint"
-                          name="preprint"
-                          checked={typeFilters.preprint}
-                          onCheckedChange={() => { handleTypeFilterChange("preprint"); }}
-                        />
-                        <Label htmlFor="preprint" className="text-sm font-normal">
-                          Preprints
-                        </Label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-3">
-                    <Label className="text-sm font-medium">Year</Label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="space-y-1">
-                        <Label htmlFor="from-year" className="text-xs">
-                          From
-                        </Label>
-                        <Input
-                          id="from-year"
-                          placeholder="2020"
-                          className="h-8"
-                          value={yearRange.from}
-                          onChange={(e) => { handleYearChange("from", e.target.value); }}
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label htmlFor="to-year" className="text-xs">
-                          To
-                        </Label>
-                        <Input
-                          id="to-year"
-                          placeholder="2023"
-                          className="h-8"
-                          value={yearRange.to}
-                          onChange={(e) => { handleYearChange("to", e.target.value); }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-3">
-                    <Label className="text-sm font-medium">Research Field</Label>
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="medicine"
-                          name="medicine"
-                          checked={fieldFilters.medicine}
-                          onCheckedChange={() => { handleFieldFilterChange("medicine"); }}
-                        />
-                        <Label htmlFor="medicine" className="text-sm font-normal">
-                          Medicine
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="computer-science"
-                          name="computer-science"
-                          checked={fieldFilters.computerScience}
-                          onCheckedChange={() => { handleFieldFilterChange("computerScience"); }}
-                        />
-                        <Label htmlFor="computer-science" className="text-sm font-normal">
-                          Computer Science
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="biology"
-                          name="biology"
-                          checked={fieldFilters.biology}
-                          onCheckedChange={() => { handleFieldFilterChange("biology"); }}
-                        />
-                        <Label htmlFor="biology" className="text-sm font-normal">
-                          Biology
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="education"
-                          name="education"
-                          checked={fieldFilters.education}
-                          onCheckedChange={() => { handleFieldFilterChange("education"); }}
-                        />
-                        <Label htmlFor="education" className="text-sm font-normal">
-                          Education
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="climate"
-                          name="climate"
-                          checked={fieldFilters.climate}
-                          onCheckedChange={() => { handleFieldFilterChange("climate"); }}
-                        />
-                        <Label htmlFor="climate" className="text-sm font-normal">
-                          Climate Science
-                        </Label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Button
-                    className="w-full"
-                    onClick={() => {
-                      // Reset filters
-                      setTypeFilters({
-                        journal: false,
-                        conference: false,
-                        book: false,
-                        preprint: false,
-                      })
-                      setFieldFilters({
-                        medicine: false,
-                        computerScience: false,
-                        biology: false,
-                        education: false,
-                        climate: false,
-                      })
-                      setYearRange({
-                        from: "",
-                        to: "",
-                      })
-                    }}
-                  >
-                    Reset Filters
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Main content */}
-            <div className="flex-1">
-              <div className="mb-6 flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
-                <div className="relative w-full sm:w-96">
-                  <Search className="absolute top-2.5 left-2.5 size-4 text-muted-foreground" />
-                  <Input
-                    type="search"
-                    placeholder="Search by title, author, or keyword..."
-                    className="w-full pl-8"
-                    value={searchQuery}
-                    onChange={(e) => { setSearchQuery(e.target.value); }}
-                  />
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Select
-                    items={[
-                      { value: "newest", label: "Newest First" },
-                      { value: "oldest", label: "Oldest First" },
-                      { value: "citations", label: "Most Cited" },
-                      { value: "title", label: "Title (A-Z)" },
-                    ]}
-                    defaultValue="newest"
-                    onValueChange={(value) => { setSortOption(value ?? ""); }}
-                  >
-                    <SelectTrigger className="w-45" aria-label="Sort by">
-                      <SortDesc className="mr-2 size-4" />
-                      <SelectValue placeholder="Sort by" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="newest">Newest First</SelectItem>
-                        <SelectItem value="oldest">Oldest First</SelectItem>
-                        <SelectItem value="citations">Most Cited</SelectItem>
-                        <SelectItem value="title">Title (A-Z)</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <Button variant="outline" size="icon" aria-label="Download">
-                    <Download className="size-4" data-icon="inline-start" />
-                  </Button>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                {sortedPublications.length > 0 ? (
-                  <>
-                    <div className="space-y-4">
-                      {paginatedPublications.map((publication) => (
-                        <Card key={publication.id} className="overflow-hidden">
-                          <div className="px-6">
-                            <div className="flex flex-col space-y-1.5">
-                              <div className="flex flex-wrap items-center gap-2">
-                                <Badge variant="outline">{publication.type}</Badge>
-                                <Badge variant="secondary">{publication.year}</Badge>
-                                <span className="ml-auto text-sm text-muted-foreground">
-                                  {publication.citations} citations
-                                </span>
-                              </div>
-                              <Link href={`/publications/${publication.id}`} className="hover:underline">
-                                <h3 className="mt-2 text-xl font-semibold tracking-tight">{publication.title}</h3>
-                              </Link>
-                              <p className="text-sm font-medium">{publication.authors}</p>
-                              <p className="text-sm text-muted-foreground italic">{publication.journal}</p>
-                              <p className="mt-2 text-sm">{publication.abstract}</p>
-                              <div className="mt-4 flex items-center gap-2">
-                                <Link
-                                  href={`/publications/${publication.id}`}
-                                  className={buttonVariants({ variant: "outline", size: "sm" })}
-                                >
-                                  View Details
-                                </Link>
-                                <a
-                                  href={publication.doi}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className={buttonVariants({ variant: "outline", size: "sm" })}
-                                >
-                                  View Original
-                                </a>
-                                <Button variant="outline" size="sm">
-                                  <Download className="size-3.5" data-icon="inline-start" />
-                                  Cite
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </Card>
-                      ))}
-                    </div>
-
-                    {sortedPublications.length > itemsPerPage && (
-                      <div className="mt-8">
-                        <Pagination>
-                          <PaginationContent>
-                            <PaginationItem>
-                              <PaginationPrevious
-                                onClick={() => { setCurrentPage(p => Math.max(1, p - 1)); }}
-                                className={cn(
-                                  "cursor-pointer",
-                                  currentPage === 1 && "pointer-events-none opacity-50"
-                                )}
-                              />
-                            </PaginationItem>
-                            
-                            {getPageNumbers().map((page, i) => (
-                              <PaginationItem key={i}>
-                                {page === "ellipsis" ? (
-                                  <PaginationEllipsis />
-                                ) : (
-                                  <PaginationLink
-                                    isActive={page === currentPage}
-                                    onClick={() => { setCurrentPage(page as number); }}
-                                    className="cursor-pointer"
-                                  >
-                                    {page}
-                                  </PaginationLink>
-                                )}
-                              </PaginationItem>
-                            ))}
-
-                            <PaginationItem>
-                              <PaginationNext
-                                onClick={() => { setCurrentPage(p => Math.min(totalPages, p + 1)); }}
-                                className={cn(
-                                  "cursor-pointer",
-                                  currentPage === totalPages && "pointer-events-none opacity-50"
-                                )}
-                              />
-                            </PaginationItem>
-                          </PaginationContent>
-                        </Pagination>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="py-10 text-center">
-                    <p className="text-muted-foreground">No publications found matching your search criteria.</p>
-                    <Button
-                      variant="outline"
-                      className="mt-4"
-                      onClick={() => {
-                        setSearchQuery("")
-                        setTypeFilters({
-                          journal: false,
-                          conference: false,
-                          book: false,
-                          preprint: false,
-                        })
-                        setFieldFilters({
-                          medicine: false,
-                          computerScience: false,
-                          biology: false,
-                          education: false,
-                          climate: false,
-                        })
-                        setYearRange({
-                          from: "",
-                          to: "",
-                        })
-                      }}
+          {publicationsByYear.map(({ year, publications }) => (
+            <Card key={year}>
+              <CardHeader>
+                <CardTitle>{year}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6 text-sm leading-relaxed">
+                {publications.map((publication) => (
+                  <div key={publication.doi} className="space-y-1">
+                    <Link
+                      href={publication.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-primary hover:underline"
                     >
-                      Reset All Filters
-                    </Button>
+                      {publication.title}
+                    </Link>
+                    <p className="text-muted-foreground">{publication.authors}</p>
+                    <p>
+                      DOI:{" "}
+                      <Link
+                        href={`https://doi.org/${publication.doi}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        {publication.doi}
+                      </Link>
+                    </p>
                   </div>
-                )}
-              </div>
-            </div>
-          </div>
+                ))}
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </section>
     </div>
-  )
+  );
 }
-
-// Sample data
-const publications = [
-  {
-    id: "1",
-    title: "Advancements in Knowledge Base Systems for Biomedical Research",
-    authors: "Smith, J., Johnson, M., Williams, R.",
-    year: 2023,
-    type: "Journal Article",
-    journal: "Journal of Biomedical Informatics",
-    abstract:
-      "This paper explores the use of modern knowledge base systems in biomedical research, with a specific focus on how our platform enabled faster data retrieval and analysis.",
-    citations: 24,
-    doi: "https://doi.org/10.1234/jbi.2023.001",
-  },
-  {
-    id: "2",
-    title: "Semantic Web Technologies in Educational Knowledge Bases",
-    authors: "Brown, A., Davis, L., Miller, S.",
-    year: 2022,
-    type: "Conference Paper",
-    journal: "International Conference on Educational Technology",
-    abstract:
-      "We present a framework for integrating semantic web technologies with educational knowledge bases, demonstrating improved learning outcomes through our case study.",
-    citations: 18,
-    doi: "https://doi.org/10.5678/icet.2022.042",
-  },
-  {
-    id: "3",
-    title: "Optimizing Query Performance in Large-Scale Knowledge Repositories",
-    authors: "Garcia, E., Martinez, P., Rodriguez, T.",
-    year: 2023,
-    type: "Journal Article",
-    journal: "ACM Transactions on Database Systems",
-    abstract:
-      "This research investigates methods for optimizing query performance in large-scale knowledge repositories, with benchmarks performed on our knowledge base system.",
-    citations: 31,
-    doi: "https://doi.org/10.1145/tods.2023.007",
-  },
-  {
-    id: "4",
-    title: "Knowledge Graphs for Climate Science: A Case Study",
-    authors: "Wilson, K., Thompson, J., Anderson, L.",
-    year: 2022,
-    type: "Book Chapter",
-    journal: "Advances in Climate Informatics",
-    abstract:
-      "We demonstrate how knowledge graphs can enhance climate science research through improved data integration and discovery capabilities.",
-    citations: 12,
-    doi: "https://doi.org/10.9012/aci.2022.015",
-  },
-  {
-    id: "5",
-    title: "Knowledge Graphs for Climate Science: A Case Study",
-    authors: "Wilson, K., Thompson, J., Anderson, L.",
-    year: 2022,
-    type: "Book Chapter",
-    journal: "Advances in Climate Informatics",
-    abstract:
-      "We demonstrate how knowledge graphs can enhance climate science research through improved data integration and discovery capabilities.",
-    citations: 12,
-    doi: "https://doi.org/10.9012/aci.2022.015",
-  },
-  {
-    id: "6",
-    title: "Knowledge Graphs for Climate Science: A Case Study",
-    authors: "Wilson, K., Thompson, J., Anderson, L.",
-    year: 2022,
-    type: "Book Chapter",
-    journal: "Advances in Climate Informatics",
-    abstract:
-      "We demonstrate how knowledge graphs can enhance climate science research through improved data integration and discovery capabilities.",
-    citations: 12,
-    doi: "https://doi.org/10.9012/aci.2022.015",
-  },
-]
-

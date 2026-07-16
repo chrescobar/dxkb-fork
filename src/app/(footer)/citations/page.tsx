@@ -1,410 +1,110 @@
-"use client"
-
-import { BarChart, Calendar, Download, ExternalLink, Search, SortDesc } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 
-import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CitationNav } from "./components/citation-nav";
-import { citations as citationsData } from "./data/citations";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-
-interface Citation {
-  id: string;
-  title: string;
-  authors: string;
-  year: number;
-  type: string;
-  journal: string;
-  abstract: string;
-  citationCount: number;
-  impactFactor: number;
-  doi: string;
-}
-
-const sortOptions = [
-  { value: "newest", label: "Newest First" },
-  { value: "oldest", label: "Oldest First" },
-  { value: "citations", label: "Most Cited" },
-  { value: "impact", label: "Highest Impact" },
-];
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function CitationsPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortOption, setSortOption] = useState("newest");
-  const [yearFilter, setYearFilter] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-
-  // Filter citations based on search query and year
-  const filteredCitations = citationsData.filter((citation) => {
-    const searchFields = [citation.title, citation.authors, citation.abstract, citation.journal].join(" ").toLowerCase();
-
-    const matchesSearch = searchQuery === "" || searchFields.includes(searchQuery.toLowerCase());
-    const matchesYear = yearFilter === "all" || citation.year.toString() === yearFilter;
-
-    return matchesSearch && matchesYear;
-  });
-
-  // Sort citations based on selected option
-  const sortedCitations = [...filteredCitations].sort((a, b) => {
-    switch (sortOption) {
-      case "newest":
-        return b.year - a.year;
-      case "oldest":
-        return a.year - b.year;
-      case "citations":
-        return b.citationCount - a.citationCount;
-      case "impact":
-        return b.impactFactor - a.impactFactor;
-      default:
-        return 0;
-    }
-  });
-
-  // Calculate pagination
-  const totalPages = Math.ceil(sortedCitations.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedCitations = sortedCitations.slice(startIndex, endIndex);
-
-  // Handle page change
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  // Generate page numbers
-  const getPageNumbers = () => {
-    const pages: number[] = [];
-    const maxVisiblePages = 5;
-    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-    const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-    if (endPage - startPage + 1 < maxVisiblePages) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-
-    return pages;
-  };
-
-  // Calculate metrics
-  const totalCitations = citationsData.reduce((sum, citation) => sum + citation.citationCount, 0);
-  const averageImpactFactor = (
-    citationsData.reduce((sum, citation) => sum + citation.impactFactor, 0) / citationsData.length
-  ).toFixed(2);
-  const citationsByYear: Record<number, number> = {};
-  citationsData.forEach((citation) => {
-    citationsByYear[citation.year] = (citationsByYear[citation.year] || 0) + 1;
-  });
-  const uniqueYears = [...new Set(citationsData.map((citation) => citation.year))].sort((a, b) => b - a);
-
   return (
-    <div className="citation-page-container">
-      <div className="citation-content">
-        <div className="citation-page-header">
-          <h1 className="citation-page-title">Dashboard</h1>
-          <p className="citation-page-description">
-            Research papers and articles that have cited our knowledge base platform.
-          </p>
-          <CitationNav />
-        </div>
+    <section className="container mx-auto max-w-4xl px-4 py-10 md:px-6">
+      <div className="flex flex-col gap-8">
+        <p className="text-muted-foreground">
+          How to cite DXKB and BV-BRC in your research publications and proposals.
+        </p>
 
-        {/* Metrics Overview */}
-        <div className="citation-metrics-grid">
-          <Card>
-            <CardHeader className="citation-metrics-card">
-              <CardTitle className="citation-metrics-title">Total Citations</CardTitle>
-              <BarChart className="citation-metrics-icon" />
-            </CardHeader>
-            <CardContent>
-              <div className="citation-metrics-value">{citationsData.length}</div>
-              <p className="citation-metrics-description">Papers citing our platform</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="citation-metrics-card">
-              <CardTitle className="citation-metrics-title">Citation Count</CardTitle>
-              <BarChart className="citation-metrics-icon" />
-            </CardHeader>
-            <CardContent>
-              <div className="citation-metrics-value">{totalCitations}</div>
-              <p className="citation-metrics-description">Total citations received</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="citation-metrics-card">
-              <CardTitle className="citation-metrics-title">Average Impact Factor</CardTitle>
-              <BarChart className="citation-metrics-icon" />
-            </CardHeader>
-            <CardContent>
-              <div className="citation-metrics-value">{averageImpactFactor}</div>
-              <p className="citation-metrics-description">Across all citing journals</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="citation-metrics-card">
-              <CardTitle className="citation-metrics-title">Most Recent</CardTitle>
-              <Calendar className="citation-metrics-icon" />
-            </CardHeader>
-            <CardContent>
-              <div className="citation-metrics-value">{Math.max(...uniqueYears)}</div>
-              <p className="citation-metrics-description">Year of most recent citation</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Citation Visualization */}
         <Card>
           <CardHeader>
-            <CardTitle>Citation Trends</CardTitle>
-            <CardDescription>Number of citations by year</CardDescription>
+            <CardTitle>Citing the DXKB Award</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="timeline-container">
-              <div className="timeline-bar-container">
-                {uniqueYears.map((year) => (
-                  <div key={year} className="timeline-bar-wrapper">
-                    <div
-                      className="timeline-bar"
-                      style={{
-                        height: `${String((citationsByYear[year] / Math.max(...Object.values(citationsByYear))) * 100)}%`,
-                      }}
-                    />
-                    <div className="timeline-label">
-                      <span className="timeline-year">{year}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+          <CardContent className="space-y-4 text-sm leading-relaxed">
+            <p>
+              If you use <strong>DXKB web resources</strong> to assist in research publications or proposals, please
+              cite us as:
+            </p>
+            <p>
+              The DiseaseX Knowledge Base (DXKB):{" "}
+              <Link href="https://dxkb.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                https://dxkb.org
+              </Link>
+            </p>
+            <p>
+              In some circumstances, you may also wish to cite DXKB in the Acknowledgement section as follows: &ldquo;This
+              project is supported by the Coalition for Epidemic Preparedness Innovations (CEPI) under the Disease X
+              Program. We gratefully acknowledge CEPI&rsquo;s commitment to advancing global health security and its
+              pivotal role in funding initiatives aimed at preventing and controlling infectious disease
+              outbreaks.&rdquo;
+            </p>
           </CardContent>
         </Card>
 
-        {/* Filters and Search */}
-        <div className="citation-filters">
-          <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-y-0 md:space-x-2">
-            <Select
-              items={[
-                { value: "all", label: "All Years" },
-                ...uniqueYears.map((year) => ({ value: year.toString(), label: year.toString() })),
-              ]}
-              defaultValue="all"
-              onValueChange={(value) => { setYearFilter(value ?? ""); }}
-            >
-              <SelectTrigger className="w-45" aria-label="Filter by Year">
-                <SelectValue placeholder="Filter by Year" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="all">All Years</SelectItem>
-                  {uniqueYears.map((year) => (
-                    <SelectItem key={year} value={year.toString()}>
-                      {year}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <Select
-              items={sortOptions}
-              value={sortOption}
-              onValueChange={(value) => { setSortOption(value ?? ""); }}
-            >
-              <SelectTrigger className="w-45" aria-label="Sort by">
-                <SortDesc className="mr-2 size-4" />
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {sortOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="citation-search">
-            <Search className="citation-search-icon" />
-            <Input
-              type="search"
-              placeholder="Search citations..."
-              className="citation-search-input"
-              value={searchQuery}
-              onChange={(e) => { setSearchQuery(e.target.value); }}
-            />
-          </div>
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Citing BV-BRC</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 text-sm leading-relaxed">
+            <p>
+              If you use <strong>BV-BRC web resources</strong> to assist in research publications or proposals, please
+              cite as:
+            </p>
+            <p>
+              <Link
+                href="https://pubmed.ncbi.nlm.nih.gov/36350631/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                Introducing the Bacterial and Viral Bioinformatics Resource Center (BV-BRC): a resource combining
+                PATRIC, IRD and ViPR.
+              </Link>
+              <br />
+              Olson RD, Assaf R, Brettin T, Conrad N, Cucinell C, Davis JJ, Dempsey DM, Dickerman A, Dietrich EM, Kenyon
+              RW, Kuscuoglu M, Lefkowitz EJ, Lu J, Machi D, Macken C, Mao C, Niewiadomska A, Nguyen M, Olsen GJ, Overbeek
+              JC, Parrello B, Parrello V, Porter JS, Pusch GD, Shukla M, Singh I, Stewart L, Tan G, Thomas C, VanOeffelen
+              M, Vonstein V, Wallace ZS, Warren AS, Wattam AR, Xia F, Yoo H, Zhang Y, Zmasek CM, Scheuermann RH, Stevens
+              RL.
+              <br />
+              Nucleic Acids Res. 2022 Nov 9:gkac1003. doi: 10.1093/nar/gkac1003. Epub ahead of print.
+              <br />
+              PMID:{" "}
+              <Link
+                href="https://www.ncbi.nlm.nih.gov/pubmed/36350631"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                36350631
+              </Link>
+            </p>
+            <p>
+              The Bacterial and Viral Bioinformatics Resource Center (BV-BRC):{" "}
+              <Link href="https://www.bv-brc.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                https://www.bv-brc.org
+              </Link>
+            </p>
+          </CardContent>
+        </Card>
 
-        {/* Citations List */}
-        <Tabs defaultValue="all" className="w-full">
-          <TabsList>
-            <TabsTrigger value="all">All Citations</TabsTrigger>
-            <TabsTrigger value="high-impact">High Impact</TabsTrigger>
-            <TabsTrigger value="recent">Recent</TabsTrigger>
-          </TabsList>
-          <TabsContent value="all" className="mt-6">
-            <div className="space-y-4">
-              {paginatedCitations.length > 0 ? (
-                paginatedCitations.map((citation) => <CitationCard key={citation.id} citation={citation} />)
-              ) : (
-                <div className="py-10 text-center">
-                  <p className="text-muted-foreground">No citations found matching your search criteria.</p>
-                  <Button
-                    variant="outline"
-                    className="mt-4"
-                    onClick={() => {
-                      setSearchQuery("");
-                      setYearFilter("all");
-                      setCurrentPage(1);
-                    }}
-                  >
-                    Reset Filters
-                  </Button>
-                </div>
-              )}
-            </div>
-          </TabsContent>
-          <TabsContent value="high-impact" className="mt-6">
-            <div className="space-y-4">
-              {paginatedCitations
-                .filter((citation) => citation.impactFactor > 4)
-                .map((citation) => (
-                  <CitationCard key={citation.id} citation={citation} />
-                ))}
-            </div>
-          </TabsContent>
-          <TabsContent value="recent" className="mt-6">
-            <div className="space-y-4">
-              {paginatedCitations
-                .filter((citation) => citation.year >= 2022)
-                .map((citation) => (
-                  <CitationCard key={citation.id} citation={citation} />
-                ))}
-            </div>
-          </TabsContent>
-        </Tabs>
-
-        {sortedCitations.length > 0 && (
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (currentPage > 1) {
-                      handlePageChange(currentPage - 1);
-                    }
-                  }}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
-                />
-              </PaginationItem>
-              {getPageNumbers().map((page) => (
-                <PaginationItem key={page}>
-                  <PaginationLink
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handlePageChange(page);
-                    }}
-                    isActive={currentPage === page}
-                  >
-                    {page}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (currentPage < totalPages) {
-                      handlePageChange(currentPage + 1);
-                    }
-                  }}
-                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        )}
+        <Card>
+          <CardHeader>
+            <CardTitle>Contacting Us</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 text-sm leading-relaxed">
+            <p>
+              If your manuscript or abstract submission is accepted and cites DXKB, please notify us by sending an email
+              to the following address, to help us track the resource usage.
+            </p>
+            <p>
+              DXKB:{" "}
+              <Link href="mailto:help@dxkb.org" className="text-primary hover:underline">
+                help@dxkb.org
+              </Link>
+              <br />
+              BV-BRC:{" "}
+              <Link href="mailto:help@bv-brc.org" className="text-primary hover:underline">
+                help@bv-brc.org
+              </Link>
+            </p>
+          </CardContent>
+        </Card>
       </div>
-    </div>
+    </section>
   );
 }
-
-function CitationCard({ citation }: { citation: Citation }) {
-  return (
-    <Card>
-      <CardContent className="p-6">
-        <div className="citation-card">
-          <div className="citation-card-header">
-            <div className="citation-card-badges">
-              <Badge variant="outline">{citation.year}</Badge>
-              <Badge variant="secondary">{citation.type}</Badge>
-            </div>
-            <div className="citation-card-badges">
-              <Badge variant="outline" className="flex items-center gap-1">
-                <BarChart className="size-3" data-icon="inline-start" />
-                IF: {citation.impactFactor.toFixed(1)}
-              </Badge>
-              <Badge variant="outline" className="flex items-center gap-1">
-                {citation.citationCount} citations
-              </Badge>
-            </div>
-          </div>
-
-          <div>
-            <Link
-              href={citation.doi}
-              target="_blank"
-              className="citation-card-title"
-            >
-              {citation.title}
-              <ExternalLink className="ml-1 inline-block size-4" />
-            </Link>
-            <p className="citation-card-meta">{citation.authors}</p>
-            <p className="citation-card-journal">{citation.journal}</p>
-          </div>
-
-          <p className="citation-card-abstract">{citation.abstract}</p>
-
-          <div className="citation-card-actions">
-            <a
-              href={citation.doi}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={buttonVariants({ variant: "outline", size: "sm" })}
-            >
-              View Paper
-            </a>
-            <Button variant="outline" size="sm">
-              <Download className="size-3.5" data-icon="inline-start" />
-              Export Citation
-            </Button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-

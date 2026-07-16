@@ -1,0 +1,33 @@
+src/components/shared/data-table.tsx
+  s_11e3e16e4eec60::t_f55f1295b9d8d2 1088-1091
+src/components/services/list-data.tsx
+  s_11e3e16e4eec60::t_1f3ac02049373b 229
+  s_11e3e16e4eec60::t_a0b32a26d3edb0 486
+src/components/shared/__tests__/data-table-rendering.test.tsx
+  s_11e3e16e4eec60::t_5a7d33e8ff4699 51-70
+src/components/services/__tests__/list-data-integration.test.tsx
+  s_11e3e16e4eec60::t_51451ef0e3972e 160,167-168,172
+  s_11e3e16e4eec60::t_5a55b5ce86a8da 8
+  s_11e3e16e4eec60::t_e8f066ff305e1c 142
+  s_11e3e16e4eec60::t_b035f1df2c5908 165
+  s_11e3e16e4eec60::t_9b6535741d6217 123-126
+  s_11e3e16e4eec60::t_2ffaa1f9df354a 127-141,143-145,147-148,150-159,161-164,166,169-171,173-175
+  s_11e3e16e4eec60::t_37b38d490b7bad 146,149
+  s_11e3e16e4eec60::t_44b5fa62d5353b 122
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "12b39c7ff3f9358f68c375721588a1e2040d3468",
+  "prompts": {},
+  "sessions": {
+    "s_11e3e16e4eec60": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_094467ea6ffeM5jiVafutC1Z0D",
+        "model": "gpt55"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

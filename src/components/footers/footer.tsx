@@ -20,7 +20,8 @@ interface FooterLink {
 
 interface FooterSection {
   title: string;
-  titleUrl: string;
+  /** When omitted, the section title renders as plain text (no link). */
+  titleUrl?: string;
   links: FooterLink[];
 }
 
@@ -39,7 +40,6 @@ const footerLinks: FooterSection[] = [
   },
   {
     title: "UPDATES",
-    titleUrl: "/updates",
     links: [
       { name: "Citations", url: "/citations" },
       { name: "Community News", url: "/news" },
@@ -143,15 +143,19 @@ const Footer = () => {
             {footerLinks.map((section) => (
               <div key={section.title}>
                 <h4 className="footer-header">
-                  <Link
-                    href={section.titleUrl}
-                    {...(isExternalUrl(section.titleUrl) && {
-                      target: "_blank",
-                      rel: "noopener noreferrer",
-                    })}
-                  >
-                    {section.title}
-                  </Link>
+                  {section.titleUrl ? (
+                    <Link
+                      href={section.titleUrl}
+                      {...(isExternalUrl(section.titleUrl) && {
+                        target: "_blank",
+                        rel: "noopener noreferrer",
+                      })}
+                    >
+                      {section.title}
+                    </Link>
+                  ) : (
+                    section.title
+                  )}
                 </h4>
                 <ul className="mb-2 space-y-4 md:space-y-6">
                   {section.links.map((link) => (

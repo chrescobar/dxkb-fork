@@ -105,18 +105,6 @@ export const routes: RouteEntry[] = [
     prepare: async (page) => { await page.waitForLoadState("networkidle"); },
   },
   {
-    name: "citations-metrics",
-    path: "/citations/metrics",
-    unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
-  },
-  {
-    name: "citations-timeline",
-    path: "/citations/timeline",
-    unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
-  },
-  {
     name: "contact",
     path: "/contact",
     unauthenticated: true,
@@ -568,8 +556,6 @@ export const coveredPageFiles = new Set<string>([
   // Footer / static
   "(footer)/about/page.tsx",
   "(footer)/citations/page.tsx",
-  "(footer)/citations/metrics/page.tsx",
-  "(footer)/citations/timeline/page.tsx",
   "(footer)/contact/page.tsx",
   "(footer)/faq/page.tsx",
   "(footer)/funding/page.tsx",

@@ -20,6 +20,14 @@ const publicationsByYear: PublicationYear[] = [
     year: "2025",
     publications: [
       {
+        title:
+          "Scalable Agentic Reasoning for Designing Biologics Targeting Intrinsically Disordered Proteins",
+        url: "https://dl.acm.org/doi/10.1145/3815572.3815764",
+        authors:
+          "Matthew Sinclair, Moeen Meigooni, Archit Vasan, Ozan Gokdemir, Xinran Lian, Heng Ma, Yadu Babuji, Alexander Brace, Khalid Hossain, Carlo Siebenschuh, Thomas Brettin, Kyle Chard, Christopher Henry, Daniel Schabacker, Venkatram Vishwanath, Rick Stevens, Ian Foster, Arvind Ramanathan",
+        doi: "10.1145/3815572.3815764",
+      },
+      {
         title: "High-resolution in situ structures of hantavirus glycoprotein tetramers",
         url: "https://www.biorxiv.org/content/10.1101/2025.06.17.660152v1",
         authors:
@@ -86,6 +94,19 @@ export default function PublicationsPage() {
               </CardContent>
             </Card>
           ))}
+
+          <p className="text-sm text-muted-foreground">
+            Looking for more? Explore additional publications on{" "}
+            <Link
+              href="https://scholar.google.com/citations?hl=en&user=wtbrhBgAAAAJ&view_op=list_works&sortby=pubdate"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline"
+            >
+              Google Scholar
+            </Link>
+            .
+          </p>
         </div>
       </section>
     </div>

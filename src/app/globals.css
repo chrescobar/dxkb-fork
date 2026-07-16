@@ -647,7 +647,7 @@
   @apply mt-2 mb-4 font-bold text-white md:mb-6;
 }
 
-.footer-header:hover {
+.footer-header:has(a):hover {
   @apply text-accent cursor-pointer underline transition-all duration-300;
 }
 

@@ -48,6 +48,26 @@ describe("DataTable Showing display during loading", () => {
     expect(screen.getByText(/Showing 201-400 of 5000 results/)).toBeInTheDocument();
   });
 
+  it("uses target page range while loading even when placeholder rows exist", () => {
+    const rows = Array.from({ length: 3 }, (_, i) => ({ strain_name: `Previous Strain ${String(i)}` }));
+
+    render(
+      <DataTable
+        id="test"
+        data={rows}
+        columns={columns}
+        totalItems={5000}
+        resource="strain"
+        isLoading={true}
+        pageIndex={1}
+        pageSize={200}
+      />
+    );
+
+    expect(screen.getByText(/Showing 201-400 of 5000 results/)).toBeInTheDocument();
+    expect(screen.queryByText(/Showing 201-203 of 5000 results/)).not.toBeInTheDocument();
+  });
+
   it("shows 1-0 when data is genuinely empty and not loading", () => {
     render(
       <DataTable

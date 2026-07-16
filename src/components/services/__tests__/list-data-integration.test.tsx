@@ -5,7 +5,7 @@
  * outbound fetches with MSW so they exercise the actual queryFn / prefetch
  * effect code paths without hitting the BV-BRC API.
  */
-import { render, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { http, HttpResponse } from "msw";
 import React from "react";
@@ -116,6 +116,60 @@ describe("ListData select clause", () => {
     expect(selectedFields).toContain("accession");
     expect(selectedFields).toContain("gc_content");
     expect(selectedFields).toContain("length");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Pagination loading regression
+// ---------------------------------------------------------------------------
+// Placeholder rows keep the query in a success state while the next page fetches.
+// The table should still show skeletons instead of rendering stale rows as current data.
+describe("ListData pagination loading", () => {
+  it("shows skeletons instead of stale rows while placeholder page data is fetching", async () => {
+    let resolveThirdPage: (() => void) | undefined;
+
+    server.use(
+      http.get(`${dataApi}/genome_sequence/`, async ({ request }) => {
+        if (request.url.includes("limit(1)")) {
+          return HttpResponse.json({ response: { numFound: 1000 } });
+        }
+
+        const range = request.headers.get("Range") ?? "";
+        if (range === "items=400-600") {
+          await new Promise<void>((resolve) => {
+            resolveThirdPage = resolve;
+          });
+          return HttpResponse.json([{ sequence_id: "page-3-sequence", genome_id: "g3", genome_name: "Page 3 Genome" }]);
+        }
+
+        if (range === "items=0-200") {
+          return HttpResponse.json([{ sequence_id: "page-1-sequence", genome_id: "g1", genome_name: "Page 1 Genome" }]);
+        }
+
+        return HttpResponse.json([{ sequence_id: `range-${range}`, genome_id: range, genome_name: `Genome ${range}` }]);
+      }),
+    );
+
+    const { Wrapper } = makeWrapper();
+    render(
+      <Wrapper>
+        <ListData resource="genome_sequence" q="eq(genome_id,*)" />
+      </Wrapper>
+    );
+
+    expect(await screen.findByText(/Showing 1-1 of 1000 results/)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "3" }));
+
+    await waitFor(() => {
+      expect(document.querySelectorAll('[data-slot="skeleton"]').length).toBeGreaterThan(0);
+    });
+    expect(screen.queryByText(/Showing 401-401 of 1000 results/)).not.toBeInTheDocument();
+    expect(screen.getByText(/Showing 401-600 of 1000 results/)).toBeInTheDocument();
+
+    resolveThirdPage?.();
+
+    expect(await screen.findByText(/Showing 401-401 of 1000 results/)).toBeInTheDocument();
   });
 });
 

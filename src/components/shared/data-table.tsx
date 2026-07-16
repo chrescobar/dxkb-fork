@@ -1085,10 +1085,10 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                 const hasResults = totalItems > 0;
                 const start = hasResults ? pageIndex * pageSize + 1 : 0;
                 const end = hasResults
-                  ? data.length > 0
-                    ? Math.min(start + data.length - 1, totalRows)
-                    : isLoading
-                      ? Math.min(start + pageSize - 1, totalRows)
+                  ? isLoading
+                    ? Math.min(start + pageSize - 1, totalRows)
+                    : data.length > 0
+                      ? Math.min(start + data.length - 1, totalRows)
                       : 0
                   : 0;
 

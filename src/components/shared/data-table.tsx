@@ -14,7 +14,7 @@ import {
 } from "@tanstack/react-table";
 
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { memo, useCallback, useMemo, useRef, useState, useEffect } from "react";
+import { memo, useCallback, useMemo, useRef, useState, useEffect, type MouseEvent as ReactMouseEvent } from "react";
 import { noop } from "@/lib/utils";
 import { getIdField } from "@/constants/resources";
 
@@ -233,44 +233,45 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
 
   const renderCheckboxCell = useCallback(
     ({ row, table }: CellContext<Record<string, unknown>, unknown>) => {
+      const handleToggle = (e: ReactMouseEvent<HTMLElement>) => {
+        e.stopPropagation();
+        const anchorId = lastSelectedIdRef.current;
+
+        if (shiftHeldRef.current && anchorId && anchorId !== row.id) {
+          // Additive range (merge into existing selection): don't update anchor
+          const rangeIds = computeShiftRangeIds(table.getRowModel().rows, anchorId, row.id);
+          if (rangeIds.length > 0) {
+            table.setRowSelection((prev) => {
+              const next = { ...prev };
+              for (const rid of rangeIds) next[rid] = true;
+              return next;
+            });
+            return;
+          }
+          // stale anchor (off-page/re-sorted): fall through to single-toggle
+        }
+
+        // No shift: additive toggle, update anchor
+        lastSelectedIdRef.current = row.id;
+        const wasSelected = row.getIsSelected();
+        table.setRowSelection((prev) => ({ ...prev, [row.id]: !wasSelected }));
+
+        const idVal = row.original[idField] ?? row.original['genome_id'] ?? null;
+        if (wasSelected) {
+          onGenomeSelect?.(null);
+          onActiveRowChange?.(null);
+        } else if (idVal != null && (typeof idVal === 'string' || typeof idVal === 'number')) {
+          onGenomeSelect?.(String(idVal));
+          onActiveRowChange?.(String(idVal));
+        }
+      };
+
       return (
-        <div className="flex size-full items-center justify-center">
+        <div className="flex size-full cursor-pointer items-center justify-center" onClick={handleToggle}>
           <input
             type="checkbox"
             checked={row.getIsSelected()}
             onChange={noop}
-            onClick={(e) => {
-              e.stopPropagation();
-              const anchorId = lastSelectedIdRef.current;
-
-              if (shiftHeldRef.current && anchorId && anchorId !== row.id) {
-                // Additive range (merge into existing selection): don't update anchor
-                const rangeIds = computeShiftRangeIds(table.getRowModel().rows, anchorId, row.id);
-                if (rangeIds.length > 0) {
-                  table.setRowSelection((prev) => {
-                    const next = { ...prev };
-                    for (const rid of rangeIds) next[rid] = true;
-                    return next;
-                  });
-                  return;
-                }
-                // stale anchor (off-page/re-sorted): fall through to single-toggle
-              }
-
-              // No shift: additive toggle, update anchor
-              lastSelectedIdRef.current = row.id;
-              const wasSelected = row.getIsSelected();
-              table.setRowSelection((prev) => ({ ...prev, [row.id]: !wasSelected }));
-
-              const idVal = row.original[idField] ?? row.original['genome_id'] ?? null;
-              if (wasSelected) {
-                onGenomeSelect?.(null);
-                onActiveRowChange?.(null);
-              } else if (idVal != null && (typeof idVal === 'string' || typeof idVal === 'number')) {
-                onGenomeSelect?.(String(idVal));
-                onActiveRowChange?.(String(idVal));
-              }
-            }}
             className="m-0 cursor-pointer p-0"
           />
         </div>
@@ -291,9 +292,31 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
         // Otherwise show the state of the current page
         const isChecked = isAllPagesSelected || allPageRowsSelected;
         const isIndeterminate = !isAllPagesSelected && somePageRowsSelected;
+        const handleHeaderToggle = (e: ReactMouseEvent<HTMLElement>) => {
+          e.stopPropagation();
+
+          if (isAllPagesSelected) {
+            // If all pages are selected, deselect all (including cross-page)
+            onAllPagesSelectionChange?.(false);
+            table.toggleAllRowsSelected(false);
+            // Clear all row selections and notify parent (controlled case)
+            if (onRowSelectionChange) {
+              onRowSelectionChange({});
+            } else {
+              // ensure internal selection is cleared
+              table.setRowSelection({});
+            }
+          } else if (allPageRowsSelected) {
+            // If all rows on current page are selected, clicking again deselects current page
+            table.toggleAllRowsSelected(false);
+          } else {
+            // Otherwise, select all on current page
+            table.toggleAllRowsSelected(true);
+          }
+        };
 
         return (
-          <div className="relative flex size-full items-center justify-center">
+          <div className="relative flex size-full cursor-pointer items-center justify-center" onClick={handleHeaderToggle}>
             <input
               type="checkbox"
               checked={isChecked}
@@ -302,28 +325,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                   el.indeterminate = isIndeterminate;
                 }
               }}
-              onChange={(e) => {
-                e.stopPropagation();
-
-                if (isAllPagesSelected) {
-                  // If all pages are selected, deselect all (including cross-page)
-                  onAllPagesSelectionChange?.(false);
-                  table.toggleAllRowsSelected(false);
-                  // Clear all row selections and notify parent (controlled case)
-                  if (onRowSelectionChange) {
-                    onRowSelectionChange({});
-                  } else {
-                    // ensure internal selection is cleared
-                    table.setRowSelection({});
-                  }
-                } else if (allPageRowsSelected) {
-                  // If all rows on current page are selected, clicking again deselects current page
-                  table.toggleAllRowsSelected(false);
-                } else {
-                  // Otherwise, select all on current page
-                  table.toggleAllRowsSelected(true);
-                }
-              }}
+              onChange={noop}
               className="m-0 cursor-pointer p-0"
               title={isAllPagesSelected ? "Click to deselect all results" : (allPageRowsSelected ? "Click to deselect this page" : "Click to select all on this page")}
             />
@@ -337,7 +339,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
       },
       cell: renderCheckboxCell,
       enableResizing: false,
-      size: 40,
+      size: 32,
     };
     return [
       checkboxColumn,
@@ -1083,10 +1085,10 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                 const hasResults = totalItems > 0;
                 const start = hasResults ? pageIndex * pageSize + 1 : 0;
                 const end = hasResults
-                  ? data.length > 0
-                    ? Math.min(start + data.length - 1, totalRows)
-                    : isLoading
-                      ? Math.min(start + pageSize - 1, totalRows)
+                  ? isLoading
+                    ? Math.min(start + pageSize - 1, totalRows)
+                    : data.length > 0
+                      ? Math.min(start + data.length - 1, totalRows)
                       : 0
                   : 0;
 
@@ -1315,10 +1317,10 @@ function DataTableBody({
               <TableCell
                 key={cell.id}
                 className={clsx(
-                  'flex items-center truncate border border-border py-1',
+                  'flex items-center truncate border border-border',
                   cell.column.id === '__select__'
-                    ? clsx('justify-center', row.getIsSelected() ? '' : 'bg-background group-hover:bg-muted')
-                    : 'justify-start'
+                    ? clsx('justify-center p-0', row.getIsSelected() ? '' : 'bg-background group-hover:bg-muted')
+                    : 'justify-start py-0.5'
                 )}
                 style={{
                   width: `var(--col-${cell.column.id}-size)`,

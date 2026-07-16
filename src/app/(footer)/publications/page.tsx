@@ -76,7 +76,7 @@ export default function PublicationsPage() {
                         href={`https://doi.org/${publication.doi}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-primary hover:underline"
+                        className="text-primary underline"
                       >
                         {publication.doi}
                       </Link>

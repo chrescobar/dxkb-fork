@@ -21,7 +21,7 @@ export default function CitationsPage() {
             </p>
             <p>
               The DiseaseX Knowledge Base (DXKB):{" "}
-              <Link href="https://dxkb.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+              <Link href="https://dxkb.org/" target="_blank" rel="noopener noreferrer" className="text-primary underline">
                 https://dxkb.org
               </Link>
             </p>
@@ -49,7 +49,7 @@ export default function CitationsPage() {
                 href="https://pubmed.ncbi.nlm.nih.gov/36350631/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary hover:underline"
+                className="text-primary underline"
               >
                 Introducing the Bacterial and Viral Bioinformatics Resource Center (BV-BRC): a resource combining
                 PATRIC, IRD and ViPR.
@@ -68,14 +68,14 @@ export default function CitationsPage() {
                 href="https://www.ncbi.nlm.nih.gov/pubmed/36350631"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary hover:underline"
+                className="text-primary underline"
               >
                 36350631
               </Link>
             </p>
             <p>
               The Bacterial and Viral Bioinformatics Resource Center (BV-BRC):{" "}
-              <Link href="https://www.bv-brc.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+              <Link href="https://www.bv-brc.org/" target="_blank" rel="noopener noreferrer" className="text-primary underline">
                 https://www.bv-brc.org
               </Link>
             </p>
@@ -93,12 +93,12 @@ export default function CitationsPage() {
             </p>
             <p>
               DXKB:{" "}
-              <Link href="mailto:help@dxkb.org" className="text-primary hover:underline">
+              <Link href="mailto:help@dxkb.org" className="text-primary underline">
                 help@dxkb.org
               </Link>
               <br />
               BV-BRC:{" "}
-              <Link href="mailto:help@bv-brc.org" className="text-primary hover:underline">
+              <Link href="mailto:help@bv-brc.org" className="text-primary underline">
                 help@bv-brc.org
               </Link>
             </p>

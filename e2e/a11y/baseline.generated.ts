@@ -77,8 +77,6 @@ export const reflowSkip: ReflowSkipMap = {
   "forgot-password": { ticket: "DXKBCORE-178" },
   "about": { ticket: "DXKBCORE-178" },
   "citations": { ticket: "DXKBCORE-178" },
-  "citations-metrics": { ticket: "DXKBCORE-178" },
-  "citations-timeline": { ticket: "DXKBCORE-178" },
   "contact": { ticket: "DXKBCORE-178" },
   "faq": { ticket: "DXKBCORE-178" },
   "funding": { ticket: "DXKBCORE-178" },

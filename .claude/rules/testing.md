@@ -31,7 +31,7 @@ V8 coverage with floor thresholds enforced by `pnpm test:coverage` (see `vitest.
 
 ## CI / GitHub Actions
 
-Four workflows run automatically on every PR targeting `main`:
+These workflows run automatically on every PR targeting `main`:
 
 | Workflow | File | Command |
 |---|---|---|
@@ -39,19 +39,12 @@ Four workflows run automatically on every PR targeting `main`:
 | Typecheck | `.github/workflows/pnpm-typecheck.yml` | `pnpm typecheck` |
 | Build | `.github/workflows/pnpm-build.yml` | `pnpm build` |
 | Test | `.github/workflows/pnpm-test.yml` | `pnpm test` |
+| E2E | `.github/workflows/pnpm-e2e.yml` | `pnpm e2e` |
+| A11y | `.github/workflows/pnpm-a11y.yml` | `pnpm a11y` |
 
-All four must pass before merging. `pnpm typecheck` runs `tsc --noEmit` and catches TS errors in test files that `pnpm build` skips.
+(Also present: `e2e-har-refresh.yml` and `sync-linux-snapshots.yml` for maintenance, not per-PR gates.)
 
-## Test Before Committing
-
-Before committing any changes, run the following commands locally to catch errors before CI does:
-
-```bash
-pnpm lint
-pnpm typecheck
-pnpm build
-pnpm test
-```
+The core four (Lint, Typecheck, Build, Test) must pass before merging. `pnpm typecheck` runs `tsc --noEmit` and catches TS errors in test files that `pnpm build` skips. Run all four locally before committing (see CLAUDE.md).
 
 ## Test Conventions
 
@@ -106,7 +99,7 @@ vi.mock("next/headers", () => ({
 
 - E2E specs live under `/e2e/tests/**`. One spec file per route family; visual-regression specs under `/e2e/tests/visual/`.
 - Do **not** add Playwright tests that duplicate Vitest coverage (auth route handlers, hooks, contexts, units). Reserve Playwright for: multi-page browser journeys, cross-browser parity, and jsdom-impossible interactions (file upload, drag/drop, 3D viewer).
-- Accessibility sweeps run via axe-core (`e2e/tests/a11y.spec.ts`) — extend that spec when adding routes that need a11y coverage rather than spreading axe checks across journey specs.
+- Accessibility has its own suite under `e2e/tests/a11y/` (routes-sweep, keyboard, deep-tier, reduced-motion, coverage.meta) with a dedicated config (`playwright.a11y.config.ts`) and scripts (`pnpm a11y`, `pnpm a11y:routes`, `pnpm a11y:keyboard`, `pnpm a11y:deep`, `pnpm a11y:motion`, `pnpm a11y:tripwire`, `pnpm a11y:mobile`, `pnpm a11y:primitives`). Add new routes to `routes-sweep.spec.ts` rather than spreading axe checks across journey specs. Primitive-level a11y unit tests run under `vitest.a11y.config.mts`. See `docs/a11y-manual-checklist.md` for the manual checklist.
 - Before committing: `pnpm lint && pnpm typecheck && pnpm build && pnpm test && pnpm e2e --project=chromium` for a fast local check (full three-browser matrix runs in CI).
 
 ### Page Objects
@@ -140,37 +133,6 @@ Because of the env-loading dance, the Playwright `webServer` runs `node e2e/scri
 
 ### Snapshots
 
-- Chromium: strict (zero-pixel diff).
-- Firefox / WebKit: `maxDiffPixelRatio: 0.05`.
-- Update baselines via `pnpm e2e:update-snapshots` and review PNG diffs in the PR.
-- Snapshots are platform-specific — committed PNGs are suffixed `-darwin` or `-linux`. `pnpm e2e:update-snapshots` only writes baselines for the host OS, so a Mac can only refresh the `-darwin` set; the `-linux` set is normally regenerated in CI.
-
-#### Refreshing `-linux` baselines locally (Mac → Linux)
-
-When you need to update `-linux` PNGs from a Mac (e.g. UI changes touched the navbar or home page and you want the diff visible in the PR rather than waiting on CI), run Playwright inside the official Linux image. Match the image tag to the installed `@playwright/test` version:
-
-```bash
-PLAYWRIGHT_VERSION=$(pnpm exec playwright --version | awk '{print $2}')
-
-# One-time: named volumes isolate the container's Linux node_modules + .next
-# from your local darwin install so you don't clobber either side.
-docker volume create dxkb-linux-nm
-docker volume create dxkb-linux-next
-
-docker run --rm \
-  -v "$(pwd):/work" \
-  -v dxkb-linux-nm:/work/node_modules \
-  -v dxkb-linux-next:/work/.next \
-  -w /work \
-  -e CI=true \
-  -e WORKSPACE_GUIDE_URL="https://www.bv-brc.org/docs/quick_references/workspace_groups_upload.html" \
-  "mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-jammy" \
-  bash -c "npm install -g pnpm@10 && pnpm install --frozen-lockfile && pnpm build && pnpm e2e:update-snapshots --grep 'visual regression'"
-```
-
-- The source is bind-mounted at `/work`, so regenerated PNGs land back in `e2e/__snapshots__/` on the host. `node_modules` and `.next` live in named volumes — your darwin build/deps stay intact.
-- `WORKSPACE_GUIDE_URL` mirrors the value set in `.github/workflows/pnpm-e2e.yml`; without it, server components on `/workspace/[username]/**` throw at request time.
-- Drop `--grep 'visual regression'` to refresh every spec's snapshots, not just the visual ones.
-- Playwright only rewrites a PNG when the new screenshot exceeds the project's `maxDiffPixelRatio` — expect Firefox/WebKit baselines on visually-minor changes to stay untouched.
-- Reusing the volumes on subsequent runs skips most of the install/build cost. Cleanup when you're done: `docker volume rm dxkb-linux-nm dxkb-linux-next`.
+- Chromium: strict (zero-pixel diff). Firefox / WebKit: `maxDiffPixelRatio: 0.05`.
+- PNGs are platform-specific (`-darwin` / `-linux`); `pnpm e2e:update-snapshots` only writes the host OS set. Refresh `-darwin` locally on a Mac; refresh `-linux` from a failing CI run (do NOT use QEMU docker on Apple Silicon — busts chromium tolerance). Full runbook: `e2e/README.md` → "Visual regression".
 

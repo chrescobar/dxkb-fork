@@ -1,172 +1,81 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code in this repo. Loaded every session — kept lean. Deep module map lives in `docs/architecture.md` (read on demand). Testing rules: `.claude/rules/testing.md` (auto-loaded).
 
 ## Commands
 
 ```bash
-pnpm dev          # Start dev server with Turbopack on port 3019
+pnpm dev          # Dev server, Turbopack, port 3019
 pnpm build        # Production build
 pnpm lint         # ESLint
+pnpm typecheck    # tsc --noEmit (catches test-file TS errors that build skips)
 pnpm test         # Vitest (run once)
-pnpm test:watch   # Vitest (watch mode)
-pnpm test:coverage # Vitest with V8 coverage
-pnpm e2e          # Playwright e2e suite (all browsers)
-pnpm e2e:ui       # Playwright UI runner
-pnpm e2e:record <journey>  # Record a HAR against live backend (local only)
+pnpm e2e          # Playwright (all browsers)
+pnpm a11y         # Accessibility suite (own config: playwright.a11y.config.ts)
 ```
 
-Requires **Node v24** (`nvm use 24`). Vitest 4 / rolldown needs Node >= 22.
+**Before committing, run `pnpm lint && pnpm typecheck && pnpm build && pnpm test`** — all four gate every PR in CI.
 
-## Architecture Overview
+Requires **Node v24** (`nvm use 24`, pinned in `.nvmrc`). `pnpm start` = prod server on port 3010. More scripts (`test:watch`, `test:coverage`, `e2e:record`, `e2e:update-snapshots`, `a11y:*`, `build-pm2`) in `package.json`.
 
-**DXKB V2** is a Next.js 16 app (App Router) serving as a Disease X Knowledge Base — a bioinformatics platform for genomics, metagenomics, and viral research.
+## Architecture (summary — full map in `docs/architecture.md`)
 
-### Key architectural layers
+**DXKB V2**: Next.js 16 App Router bioinformatics platform (genomics, metagenomics, viral research).
 
-**App Router structure (`src/app/`)**
-
-- `/` — Public home page (search, news, statistics)
-- `/workspace/[username]/home/[[...path]]` — File browser for user workspaces
-- `/services/(genomics|metagenomics|phylogenomics|protein-tools|utilities|viral-tools)/...` — Bioinformatics service submission forms (route groups as categories)
-- `/search/` — Global search
-- `/jobs/` — Job monitoring
-- `/api/auth/...` — Custom auth API routes (sign-in, sign-up, sign-out, session, etc.)
-- `/api/services/...` — Proxied service API routes
-- `/api/workspace/...` — Proxied workspace API routes
-
-**Auth system (`src/lib/auth-client.ts`, `src/contexts/auth-context.tsx`)**
-
-- Custom BV-BRC auth built on the `better-auth` library (`src/lib/auth.ts`) for stateless session management; `auth-client.ts` exposes a `bvbrcAuth` client object with a better-auth-style API
-- Auth state lives in `AuthContext`, hydrated from `user_profile` and `user_id` cookies on the server
-- Protected routes: `/services/*` and `/workspace/*` — middleware in `src/proxy.ts` checks for `bvbrc_token` + `bvbrc_user_id` cookies
-- When applicable, use the better-auth stateless functions for auth operations
-- `/api/auth/*` wire contract (envelope shapes, rules, endpoint table): see `docs/auth-api.md`
-
-**Backend communication**
-
-- `JsonRpcClient` (`src/lib/jsonrpc-client.ts`) — All backend calls use JSON-RPC 2.0 over HTTP POST; requires `APP_SERVICE_URL` env var
-- `AppService` (`src/lib/app-service.ts`) — Job management: enumerate/query/kill jobs, submit services via `AppService.start_app2`
-- `WorkspaceApiClient` (`src/lib/services/workspace/client.ts`) — Workspace CRUD operations
-
-**Workspace browser (`src/components/workspace/`)**
-
-- `workspace-browser.tsx` — Main orchestrator; combines file listing, sorting, breadcrumbs, toolbar, dialogs, and resizable panels
-- `workspace-data-table.tsx` — TanStack Table-based file listing with virtual scrolling
-- Details panel uses `react-resizable-panels` with state in `WorkspacePanelContext`
-- Favorites stored in `favorites.json` workspace file, loaded via `loadFavorites()`
-
-**Services pattern**
-
-- Each bioinformatics service is a form page under `/services/`
-- Forms use TanStack Form (`@tanstack/react-form`) + zod validation
-- Submission goes through `useServiceFormSubmission` hook → `submitServiceJob()` → `AppService.start_app2`
-- `ServiceDebuggingProvider` wraps service layouts; enables a debug mode that shows params instead of submitting
-
-**Rerun pre-fill pattern**
-
-- `useRerunForm<T>()` reads job params from `sessionStorage` (keyed by `?rerun_key=`) and returns `{ rerunData }`
-- Pre-fill is auto-applied via the hook's declarative options (`fields`, `libraries`, `syncLibraries`, `onApply`); the hook self-manages one-shot application internally
-- The sessionStorage entry is intentionally NOT consumed on read — `<AuthBoundary>`'s Suspense fallback can mount the form twice during hydration, so a consume-on-read would null out the second mount
-- Library reconstruction helpers in `src/lib/rerun-utility.ts`:
-  - `buildPairedLibraries(rerunData, getExtra?)` — paired-end libs from `paired_end_libs`
-  - `buildSingleLibraries(rerunData, getExtra?)` — single-end libs from `single_end_libs`
-  - `buildSraLibraries(rerunData)` — SRA libs from `srr_libs` with `srr_ids` fallback
-  - Pass a `getExtra` callback to merge service-specific fields (e.g. `platform`, `interleaved`)
-
-**Data fetching**
-
-- TanStack Query for all async state (client-side)
-- Custom hooks in `src/hooks/services/workspace/` wrap workspace API calls
-- `useAuthenticatedFetch` hook wraps fetch with cookie credentials and 401 refresh logic
-
-**UI**
-
-- shadcn/ui (New York style, slate base) in `src/components/ui/`
-- All shadcn/ui components are using the @base-ui primitives (ex: https://ui.shadcn.com/docs/components/base/accordion)
-- Tailwind CSS v4 with CSS variable theming; multiple named themes in `src/app/globals.css`
-- SVG imports handled via `@svgr/webpack` (use `import Icon from './file.svg'` or `'./file.svg?url'` for raw URL)
-- `sonner` for toast notifications; `lucide-react` for icons
-
-**React Compiler**
-
-- The [React Compiler](https://react.dev/learn/react-compiler) is enabled via `reactCompiler: true` in `next.config.ts`. Components in this codebase are auto-memoized at build time — manual `useMemo`/`useCallback`/`React.memo` calls are no longer required for routine cases.
-- **Do not bulk-remove existing memoization.** Per official guidance, removing memoization from already-shipped code can change compilation output. Leave existing call sites in place; only remove memoization deliberately and with test coverage. Known failure mode: removing `useMemo` from a context provider's `value` object breaks downstream consumers that have `"use no memo"` (the compiler does NOT auto-memoize context values for opted-out subtrees) — a pilot sweep on 2026-06-15 hit exactly this and regressed 19 workspace e2e tests.
-- **For new code**, rely on the compiler. Reach for `useMemo`/`useCallback` only when you need precise control (e.g. an effect dependency must be stable across the *exact* same input identity).
-- **Opt-out pattern.** When a component uses a hook the compiler can't safely memoize (TanStack Table's `useReactTable`, TanStack Virtual's `useVirtualizer`, and similar libraries that return new ref-bearing objects on every render), add `"use no memo";` as the first statement inside the component function body. Existing examples: `src/components/shared/data-table.tsx`, `src/components/shared/file-table.tsx`, `src/components/workspace/file-viewer/viewers/csv-viewer.tsx`, `src/components/organisms/reference-genomes/reference-genomes-client.tsx`.
-- **ESLint companion.** `eslint-plugin-react-hooks@7+` (loaded via `eslint-config-next`) emits `react-hooks/incompatible-library` for components the compiler had to skip. Treat that lint message as the canonical signal to add (or move) a `"use no memo"` directive. The rule is selectively silenced in `eslint.config.mjs` for the four files above — extend that list when adding new opt-outs, do not blanket-disable.
-- **Verifying.** Optimized components display a `Memo ✨` badge in React DevTools. Compiled bundles include `Symbol.for("react.memo_cache_sentinel")` cache slots — `grep -l 'react.memo_cache_sentinel' .next/static/chunks -r | head -3` confirms the plugin ran. (Note: Turbopack inlines the `react/compiler-runtime` import rather than preserving the string, so grepping for the import name will return zero matches even when the compiler is active.)
+- **App Router** (`src/app/`) — route groups `(auth)`, `(footer)`, `(views)`, plus `organisms/`, `workspace/`, `services/(<category>)`, `search/`, `jobs/`, `settings/`, `viewer/`, `api/`. Groups `(…)` don't appear in the URL.
+- **Auth** (`src/lib/auth/`) — port/adapter, built on `better-auth`. Consume client state via `useAuth()` (`hooks.ts`) inside `<AuthBoundary>`. Protected-route logic is in `routes.ts` (not `proxy.ts`). No `bvbrcAuth` object, no `contexts/auth-context.tsx` — gone.
+- **Backend** — all calls via `JsonRpcClient` / `AppService` (`src/lib/`) or the workspace repository. JSON-RPC 2.0; never raw-`fetch` a backend URL.
+- **Workspace** — repository pattern: `useWorkspaceRepository()` over `WorkspaceApiClient`. Orchestrator is `workspace-shell.tsx`.
+- **Views** — registry-driven: `src/lib/views/view-registry.ts` feeds thin `(views)/*` pages and organism landing pages.
+- **Services** — form pages using TanStack Form + zod; submit via `useServiceFormSubmission` → `AppService.start_app2`.
+- **Data fetching** — TanStack Query for all async client state.
+- **UI** — shadcn/ui (New York, slate) on `@base-ui` primitives; Tailwind v4 CSS-variable themes in `globals.css`; `sonner` toasts; `lucide-react` icons.
 
 ### Path aliases
 
-- Imports to `src/` should use the `@/` alias.
-- Imports to `public/` should use the `@public/` alias.
+- `@/` → `src/`. `@public/` → `public/`.
 
-### Key type files
+## Conventions
 
-- `src/types/workspace.ts` — Job/RPC types
-- `src/types/workspace-browser.ts` — `WorkspaceBrowserItem`, `SortField`, etc.
-- `src/app/api/auth/types.ts` — `AuthUser`, `UserProfile`, credential types
-
-### Naming Variables
-
-- All variables and constants use `camelCase` — including module-level `const` exports. Do not use `SCREAMING_SNAKE_CASE` for constants (that is a C/Java convention, not TypeScript/JavaScript).
-- The only exceptions are environment variable names (OS convention) and zod schema objects which conventionally use camelCase anyway.
+### Naming
+- All variables and constants use `camelCase`, including module-level `const` exports. No `SCREAMING_SNAKE_CASE` (C/Java convention, not TS/JS). Exceptions: env var names (OS convention) and zod schema objects (camelCase anyway).
 
 ### Code organisation
+- Module-level constants/types used by a service page belong in that service's `*-form-utils.ts`, not inline in the page component. Export and import them.
 
-- Module-level constants and types that are used by a service page belong in that service's `*-form-utils.ts` file, not inline in the page component. Export them and import into the page.
+### Error handling
+- Do NOT swap real errors for generic ones — the original message must still be displayed. Condense if too long, but preserve the meaning.
 
 ### Git
-
-- Do NOT automatically try to commit changes unless it was specified to do so. All changes need to be reviewed manually before blindly commiting them.
+- Do NOT commit unless asked. All changes are reviewed manually first.
 
 ### Plans
+- When creating a plan, also write a `.md` in `/plans` for documentation.
 
-- When creating plans, ensure that a .md file is also created in /plans to ensure proper documentation.
+### React Compiler
+Enabled via `reactCompiler: true` in `next.config.ts` — components are auto-memoized at build. For new code, rely on it; reach for `useMemo`/`useCallback` only for precise control (stable effect deps).
+- **Do NOT bulk-remove existing memoization** — it can change compiled output. Removing `useMemo` from a context provider's `value` breaks `"use no memo"` consumers (compiler skips context values in opted-out subtrees). Only remove deliberately, with test coverage.
+- **Opt-out**: a component using a hook the compiler can't memoize (TanStack `useReactTable`/`useVirtualizer`, etc.) needs `"use no memo";` as the first statement in its body. When you add one, you MUST also add the file to the `files: [...]` list in `eslint.config.mjs` (silences `react-hooks/incompatible-library`). `src/__tests__/react-compiler-config.test.ts` guards that list — keep them in sync. Current opt-outs: `shared/data-table.tsx`, `shared/file-table.tsx`, `workspace/file-viewer/viewers/csv-viewer.tsx`, `organisms/reference-genomes/reference-genomes-client.tsx`, `taxonomy/taxonomy-tree.tsx`.
 
-### Error Handling
+## Staying on-pattern (read before adding anything new)
 
-- Do NOT use generic errors for errors. The original error message should still be displayed.
-- If the original error is too long, condense it but ensure the error still remains the same,
+Find the existing example of the same shape and follow it:
 
-### E2E Testing (Playwright)
+- **New service** → copy the closest one under `src/app/services/(<category>)/`: page (TanStack Form + zod) + `*-form-utils.ts` (constants/types/schema) + submission via `useServiceRuntime`/`useServiceFormSubmission` + rerun via `useRerunForm<T>()` and the `build{Paired,Single,Sra}Libraries` helpers in `src/lib/rerun-utility.ts`.
+- **New data view** → register in `src/lib/views/view-registry.ts` + thin page under `src/app/(views)/`. Don't bypass the registry.
+- **New workspace data access** → add a method to `workspace-repository.ts`, consume via `useWorkspaceRepository()`. Not `WorkspaceApiClient` directly.
+- **New auth endpoint** → under `src/app/api/auth/`, return `{error, code, details?}` (see `docs/auth-api.md`); update `src/lib/auth/routes.ts` if it needs protection.
+- **New backend call** → via `JsonRpcClient` / `AppService` / workspace repository. Never raw `fetch`.
+- **New async client state** → TanStack Query hook, not `useEffect` + `useState`.
 
-- Playwright specs live under `/e2e/`. See `/e2e/README.md` for the full runbook.
-- Do **not** duplicate Vitest coverage. Playwright is only for multi-page journeys, cross-browser parity, and jsdom-impossible interactions (file upload, drag/drop, 3D viewer, visual regressions).
-- All `/api/**` and outbound HTTPS to BV-BRC/PATRIC/TheSEED/NCBI are mocked via `e2e/mocks/backends.ts` (HAR replay + JSON overrides). Never depend on a live backend in the suite that runs in CI.
-- The `plugin:playwright` MCP server is available to agents for interactive browser driving. Start `pnpm dev` and `browser_navigate` to `http://localhost:3019`.
-- Visual regression: strict on Chromium, tolerant on Firefox/WebKit. Update baselines with `pnpm e2e:update-snapshots` and review the PNG diffs in the PR.
+## Keeping guidance current
 
-# Playwright
-  - All screenshots used for MCP debugging (`playwright, chrome-devtoolsm, etc.`) should be saved into `.screenshots/`. Do NOT commit these screenshots to the repository or save them into any other directory.
+- When a change moves a file, renames a public entrypoint, adds a route group, or introduces a pattern future work should follow, update the affected doc in the same PR: durable always-load rules here, deep module map in `docs/architecture.md`, design detail in the relevant `docs/*`. A stale instruction misleads every future session.
+- After structural changes, run `graphify update .` to keep the knowledge graph current (AST-only, free). Graphify usage is documented in the graphify skill; for codebase questions, prefer `graphify query "<q>"` over broad grep.
 
-## graphify
+## E2E (Playwright)
 
-This project has a knowledge graph at `graphify-out/` with god nodes, community structure, and cross-file relationships.
-
-### Daily agent workflow (the important rules)
-- For codebase questions, first run `graphify query "<question>"` when `graphify-out/graph.json` exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than `GRAPH_REPORT.md` or raw grep output.
-- If `graphify-out/wiki/index.md` exists, use it for broad navigation instead of raw source browsing. (It does not exist by default — it is only generated when `/graphify --wiki` has been run.)
-- Read `graphify-out/GRAPH_REPORT.md` only for broad architecture review or when `query` / `path` / `explain` do not surface enough context.
-- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost). This re-extracts only changed files using the on-disk `cache/`, so it is fast and free.
-
-### What lives in `graphify-out/`
-- `graph.html` — interactive graph visualization; open directly in any browser, no server needed
-- `graph.json` — raw graph data (nodes, edges, communities) consumed by `graphify query`
-- `GRAPH_REPORT.md` — human-readable audit (community labels, god nodes, surprising connections, suggested questions)
-- `cost.json` — cumulative token spend across runs
-- `cache/` — extraction cache that backs `graphify update`; never delete unless re-running from scratch
-- `wiki/` — only present when `--wiki` has been run; one article per community
-
-### When to use which mode
-- `graphify update .` after a code change — fast, deterministic, no Claude tokens.
-- `/graphify .` (full rebuild) only when the corpus has changed substantially (mass refactor, dependency churn, new doc/image files). Semantic extraction costs Claude tokens.
-- `/graphify add <url>` to pull an external article, doc, or web page into the corpus and re-graph; use sparingly.
-
-### Optional: post-commit auto-rebuild
-A post-commit git hook can run `graphify update .` automatically. Install only if explicitly requested — see `references/hooks.md` in the graphify skill. It is opt-in because (a) it adds latency to every commit and (b) `update` must be re-run on the worktree, not on a detached commit.
-
-### Notes
-- Graphify's `detect` step already excludes common build artifacts (`.next/`, `node_modules/`, snapshots, lockfiles, binary blobs). Do not maintain a manual exclude list unless something noisy slips through.
-- `graphify-out/` itself is auto-excluded — converted sidecars never re-enter the corpus.
+- Specs under `/e2e/`; full runbook in `/e2e/README.md`. Do NOT duplicate Vitest coverage — Playwright is for multi-page journeys, cross-browser parity, and jsdom-impossible interactions (upload, drag/drop, 3D viewer, visual regression).
+- All `/api/**` and outbound HTTPS (BV-BRC/PATRIC/TheSEED/NCBI) are mocked via `e2e/mocks/backends.ts`. Never depend on a live backend in CI.
+- MCP `plugin:playwright` is available for interactive driving (`pnpm dev`, then `browser_navigate` to `http://localhost:3019`).
+- MCP debug screenshots go in `.screenshots/` only — never commit them.

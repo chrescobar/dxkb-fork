@@ -1,0 +1,26 @@
+.claude/rules/testing.md
+  s_bfda169f2223a5::t_8dfcc55555edeb 34,42-43,45
+  s_bfda169f2223a5::t_541fb0870ebc41 102
+  s_bfda169f2223a5::t_8d364bb5f10051 136-137
+  s_bfda169f2223a5::t_370b25805ae75c 47
+docs/architecture.md
+  s_bfda169f2223a5::t_a9c50fb872703e 1-106
+.claude/CLAUDE.md
+  s_bfda169f2223a5::t_be50ba9e5e498e 3,8,11,13-14,17,19,21,23,25-32,36,38,40-41,44,46-47,50,53,55-58,60,62,64-69,71,73-74,76,78-81
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "b020cb2783f7fd63d95d4974925570f4ae344184",
+  "prompts": {},
+  "sessions": {
+    "s_bfda169f2223a5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f2ab71dc-13a9-492c-a257-2d75c705931a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

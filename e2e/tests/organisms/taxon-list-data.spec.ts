@@ -64,29 +64,30 @@ function buildProteinFeatureRows(count: number) {
   }));
 }
 
+// In E2E, NEXT_PUBLIC_DATA_API=http://127.0.0.1:${E2E_PORT}/api/e2e-mock/data so all
+// protein_feature fetches (count, rows, download POST) go through the loopback, not bv-brc.org.
+const pfLoopback = /\/api\/e2e-mock\/data\/protein_feature\//;
+const pfLoopbackCount = /\/api\/e2e-mock\/data\/protein_feature\/.*limit\(1\)/;
+
 test.describe("taxon domains-and-motifs: Download Selected sends POST not GET", () => {
   test("sends POST with RQL query in body, not GET params in URL", async ({ page }) => {
     const rows = buildProteinFeatureRows(3);
 
     await applyBackendMocks(page, {
       overrides: [
-        // Count request (limit(1) in URL) → numFound drives totalItems
-        {
-          url: /bv-brc\.org.*protein_feature.*limit\(1\)/,
-          method: "GET",
-          body: { response: { numFound: 3 } },
-        },
-        // Data request → table rows
-        { url: /bv-brc\.org.*protein_feature/, method: "GET", body: rows },
-        // Download-selected POST → success (body content doesn't matter for this assertion)
-        { url: /bv-brc\.org.*protein_feature/, method: "POST", body: rows },
+        // Count request (&limit(1) in URL) → solr numFound drives totalItems
+        { url: pfLoopbackCount, method: "GET", body: { response: { numFound: 3 } } },
+        // Data request → table rows (array; ListData parses it directly)
+        { url: pfLoopback, method: "GET", body: rows },
+        // Download-selected POST → rows so handleDownload can build the CSV
+        { url: pfLoopback, method: "POST", body: rows },
         ...permissiveBackendOverrides,
       ],
     });
 
-    // Arm the request capture before any interaction
+    // Arm capture BEFORE interaction — waitForRequest resolves when browser initiates it
     const postReqPromise = page.waitForRequest(
-      (req) => /protein_feature/.test(req.url()) && req.method() === "POST",
+      (req) => pfLoopback.test(req.url()) && req.method() === "POST",
     );
 
     await page.goto(`/taxonomy/${DOMAINS_TAXON_ID}?tab=domains-and-motifs`);
@@ -100,7 +101,7 @@ test.describe("taxon domains-and-motifs: Download Selected sends POST not GET", 
     const postReq = await postReqPromise;
     expect(postReq.method()).toBe("POST");
 
-    // RQL query must be in the body — the URL should be clean
+    // RQL query must be in the body — the URL itself must be clean (no query params)
     const body = postReq.postData() ?? "";
     expect(body).toMatch(/^or\(eq\(id,/);
     expect(postReq.url()).not.toContain("or(eq(id,");
@@ -111,19 +112,15 @@ test.describe("taxon domains-and-motifs: Download Selected sends POST not GET", 
 
     await applyBackendMocks(page, {
       overrides: [
-        {
-          url: /bv-brc\.org.*protein_feature.*limit\(1\)/,
-          method: "GET",
-          body: { response: { numFound: 200 } },
-        },
-        { url: /bv-brc\.org.*protein_feature/, method: "GET", body: rows },
-        { url: /bv-brc\.org.*protein_feature/, method: "POST", body: rows },
+        { url: pfLoopbackCount, method: "GET", body: { response: { numFound: 200 } } },
+        { url: pfLoopback, method: "GET", body: rows },
+        { url: pfLoopback, method: "POST", body: rows },
         ...permissiveBackendOverrides,
       ],
     });
 
     const postReqPromise = page.waitForRequest(
-      (req) => /protein_feature/.test(req.url()) && req.method() === "POST",
+      (req) => pfLoopback.test(req.url()) && req.method() === "POST",
     );
 
     await page.goto(`/taxonomy/${DOMAINS_TAXON_ID}?tab=domains-and-motifs`);
@@ -132,12 +129,12 @@ test.describe("taxon domains-and-motifs: Download Selected sends POST not GET", 
     await page.getByRole("checkbox", { name: /select all on this page/i }).click();
     await page.getByRole("button", { name: /Download Selected \(CSV\)/i }).click();
 
-    // This request would have been net::ERR_FAILED as a GET (URL too long)
+    // This request would have been net::ERR_FAILED as a GET (URL too long for 200 IDs)
     const postReq = await postReqPromise;
     expect(postReq.method()).toBe("POST");
 
     const body = postReq.postData() ?? "";
-    // First and last of the 200 IDs must be in the body — GET would have truncated/failed
+    // First and last of the 200 IDs must be present — GET truncation would have lost some
     expect(body).toContain("mock-pf-0000");
     expect(body).toContain("mock-pf-0199");
   });

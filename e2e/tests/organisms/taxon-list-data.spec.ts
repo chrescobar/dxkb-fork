@@ -40,3 +40,105 @@ test.describe("taxon strains tab: data API error handling", () => {
     await expect(page.getByRole("button", { name: "Strains" })).toBeVisible();
   });
 });
+
+// ─── Download Selected: POST regression ───────────────────────────────────────
+// Regression: the download-selected handler sent a GET with all IDs in the URL.
+// With 200 rows, the URL exceeded browser limits → net::ERR_FAILED.
+// Fix: POST with the RQL query in the request body.
+
+const DOMAINS_TAXON_ID = "11974"; // Caliciviridae — has protein_feature (domains-and-motifs) data
+
+function buildProteinFeatureRows(count: number) {
+  return Array.from({ length: count }, (_, i) => ({
+    id: `mock-pf-${String(i).padStart(4, "0")}`,
+    patric_id: `fig|1.${String(i)}.CDS.1`,
+    refseq_locus_tag: `gp${String(i)}`,
+    gene: `ORF${String(i)}`,
+    product: `mock-product-${String(i)}`,
+    source: "Pfam",
+    source_id: "PF001",
+    interpro_description: "mock domain",
+    e_value: "1E-10",
+    evidence: "InterProScan",
+    date_inserted: "2021-07-27",
+  }));
+}
+
+test.describe("taxon domains-and-motifs: Download Selected sends POST not GET", () => {
+  test("sends POST with RQL query in body, not GET params in URL", async ({ page }) => {
+    const rows = buildProteinFeatureRows(3);
+
+    await applyBackendMocks(page, {
+      overrides: [
+        // Count request (limit(1) in URL) → numFound drives totalItems
+        {
+          url: /bv-brc\.org.*protein_feature.*limit\(1\)/,
+          method: "GET",
+          body: { response: { numFound: 3 } },
+        },
+        // Data request → table rows
+        { url: /bv-brc\.org.*protein_feature/, method: "GET", body: rows },
+        // Download-selected POST → success (body content doesn't matter for this assertion)
+        { url: /bv-brc\.org.*protein_feature/, method: "POST", body: rows },
+        ...permissiveBackendOverrides,
+      ],
+    });
+
+    // Arm the request capture before any interaction
+    const postReqPromise = page.waitForRequest(
+      (req) => /protein_feature/.test(req.url()) && req.method() === "POST",
+    );
+
+    await page.goto(`/taxonomy/${DOMAINS_TAXON_ID}?tab=domains-and-motifs`);
+    await expect(page.getByText("mock-product-0")).toBeVisible({ timeout: 10_000 });
+
+    await page.getByRole("checkbox", { name: /select all on this page/i }).click();
+    await expect(page.getByRole("button", { name: /Download Selected \(CSV\)/i })).toBeVisible();
+
+    await page.getByRole("button", { name: /Download Selected \(CSV\)/i }).click();
+
+    const postReq = await postReqPromise;
+    expect(postReq.method()).toBe("POST");
+
+    // RQL query must be in the body — the URL should be clean
+    const body = postReq.postData() ?? "";
+    expect(body).toMatch(/^or\(eq\(id,/);
+    expect(postReq.url()).not.toContain("or(eq(id,");
+  });
+
+  test("200-row selection succeeds via POST (regression: GET caused net::ERR_FAILED)", async ({ page }) => {
+    const rows = buildProteinFeatureRows(200);
+
+    await applyBackendMocks(page, {
+      overrides: [
+        {
+          url: /bv-brc\.org.*protein_feature.*limit\(1\)/,
+          method: "GET",
+          body: { response: { numFound: 200 } },
+        },
+        { url: /bv-brc\.org.*protein_feature/, method: "GET", body: rows },
+        { url: /bv-brc\.org.*protein_feature/, method: "POST", body: rows },
+        ...permissiveBackendOverrides,
+      ],
+    });
+
+    const postReqPromise = page.waitForRequest(
+      (req) => /protein_feature/.test(req.url()) && req.method() === "POST",
+    );
+
+    await page.goto(`/taxonomy/${DOMAINS_TAXON_ID}?tab=domains-and-motifs`);
+    await expect(page.getByText("mock-product-0")).toBeVisible({ timeout: 10_000 });
+
+    await page.getByRole("checkbox", { name: /select all on this page/i }).click();
+    await page.getByRole("button", { name: /Download Selected \(CSV\)/i }).click();
+
+    // This request would have been net::ERR_FAILED as a GET (URL too long)
+    const postReq = await postReqPromise;
+    expect(postReq.method()).toBe("POST");
+
+    const body = postReq.postData() ?? "";
+    // First and last of the 200 IDs must be in the body — GET would have truncated/failed
+    expect(body).toContain("mock-pf-0000");
+    expect(body).toContain("mock-pf-0199");
+  });
+});

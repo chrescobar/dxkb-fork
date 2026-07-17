@@ -15,8 +15,8 @@ import { TaxonDataPanel } from "../_components/taxon-data-panel";
 // Verified counts (2026-07-17) via eq(taxon_id,<mapped>): Dengue 7630,
 // Monkeypox 1781, Influenza A 5696.
 export const sfvtTaxonIdRemap: Record<number, number> = {
-  12637: 12637, // Dengue virus
-  10244: 10244, // Monkeypox virus
+  12637: 12637, // Dengue virus — self-map: features stored under own taxon_id
+  10244: 10244, // Monkeypox virus — self-map: features stored under own taxon_id
   2955291: 11320, // Alphainfluenzavirus influenzae → Influenza A virus species
 };
 

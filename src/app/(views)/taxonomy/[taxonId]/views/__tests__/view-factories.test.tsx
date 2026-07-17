@@ -5,6 +5,7 @@ import { makeSerologyView } from "../serology";
 import { makeSurveillanceView } from "../surveillance";
 import { makeGenomesView } from "../genomes";
 import { makeSequencesView } from "../sequences";
+import { makeProteinStructuresView } from "../protein-structures";
 import { makeFeaturesView } from "../features";
 
 // TaxonDataPanel has complex network + React dependencies; mock it so tests stay
@@ -114,6 +115,32 @@ describe("makeSequencesView", () => {
     const { getByTestId } = render(<SequencesView />);
     expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toContain(
       "sequences.html",
+    );
+  });
+});
+
+describe("makeProteinStructuresView", () => {
+  it("renders nothing when taxon is null", () => {
+    const ProteinStructuresView = makeProteinStructuresView({ taxon: null });
+    const { container } = render(<ProteinStructuresView />);
+    expect(container.firstChild).toBeNull();
+  });
+
+  it("renders TaxonDataPanel with the protein_structure cross-core join query", () => {
+    const ProteinStructuresView = makeProteinStructuresView({ taxon: fakeTaxon });
+    const { getByTestId } = render(<ProteinStructuresView />);
+    const panel = getByTestId("taxon-data-panel");
+    expect(panel).toHaveAttribute("data-resource", "protein_structure");
+    const q = panel.getAttribute("data-q") ?? "";
+    expect(q).toContain("eq(genome_id,*)");
+    expect(q).toContain("genome(and(eq(taxon_lineage_ids,1234),ne(genome_status,Deprecated)))");
+  });
+
+  it("passes the protein structures guide URL", () => {
+    const ProteinStructuresView = makeProteinStructuresView({ taxon: fakeTaxon });
+    const { getByTestId } = render(<ProteinStructuresView />);
+    expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toBe(
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/protein_structures.html",
     );
   });
 });

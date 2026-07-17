@@ -1,0 +1,19 @@
+src/components/shared/data-table.tsx
+  s_831161bba05fce::t_dbcded9a269358 692-693,700
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "cf22c76e2d879ae5ddc91f1c30d758ca407ffb91",
+  "prompts": {},
+  "sessions": {
+    "s_831161bba05fce": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ada4fe37-a486-4e6b-894d-691381534acb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,30 +1,31 @@
 import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 import { TaxonDataPanel } from "../_components/taxon-data-panel";
 
-// SFVT (sequence_feature_vt) has NO taxon_id / taxon_lineage_ids field — every
-// eq(taxon*,…) returns HTTP 400. The taxon is only embedded as a prefix inside
-// sf_id (e.g. "Dengue virus 1_ancC_SF1", "Influenza A_PA_SF510"), so the only
-// way to scope by taxon is a keyword() full-text match on that prefix.
+// SFVT reads the `sequence_feature` core, which has a taxon_id field, and scopes
+// with eq(taxon_id,…) — same as legacy SFVTGrid. Features are stored only at the
+// curated species taxon_id (sub-species/strain leaves have zero rows), so a page
+// taxon must resolve to its curated species id. Most pages map to themselves;
+// the Influenza A landing taxon (2955291) has no features and remaps to the
+// species 11320 (legacy does the same remap).
 //
-// These terms are paired with the curated SFVT taxon IDs in
+// Paired with the curated SFVT taxon IDs in
 // `src/lib/taxon-view/curated-lists.ts` (`sfvtTaxonIds`) — the same IDs the
 // `hasSfvt` gate enables the tab for. Keep the two in sync: a taxon added to
-// sfvtTaxonIds without a term here enables the tab but renders nothing.
-// Verified keyword counts (2026-06-26): Dengue 145412, Monkeypox 16281,
-// Influenza A 2000036 — each equals the exact eq(sf_id,<term>*) prefix count.
-export const sfvtKeywordByTaxonId: Record<number, string> = {
-  12637: "Dengue", // Dengue virus
-  10244: "Monkeypox", // Monkeypox virus
-  2955291: "Influenza A", // Alphainfluenzavirus influenzae
+// sfvtTaxonIds without an entry here enables the tab but renders nothing.
+// Verified counts (2026-07-17) via eq(taxon_id,<mapped>): Dengue 7630,
+// Monkeypox 1781, Influenza A 5696.
+export const sfvtTaxonIdRemap: Record<number, number> = {
+  12637: 12637, // Dengue virus
+  10244: 10244, // Monkeypox virus
+  2955291: 11320, // Alphainfluenzavirus influenzae → Influenza A virus species
 };
 
 // Match against the full lineage (not just taxonId) so a species/strain under a
-// curated taxon resolves to its ancestor's term — mirrors how `hasSfvt` gates on
-// lineageIds. First lineage hit wins.
-export function resolveSfvtKeyword(lineageIds: readonly number[]): string | null {
+// curated taxon resolves to its ancestor's mapped id — mirrors how `hasSfvt`
+// gates on lineageIds. First lineage hit wins.
+export function resolveSfvtTaxonId(lineageIds: readonly number[]): number | null {
   for (const id of lineageIds) {
-    const term = sfvtKeywordByTaxonId[id];
-    if (term) return term;
+    if (id in sfvtTaxonIdRemap) return sfvtTaxonIdRemap[id];
   }
   return null;
 }
@@ -32,15 +33,15 @@ export function resolveSfvtKeyword(lineageIds: readonly number[]): string | null
 export function makeSfvtView({ taxon }: { taxon: OrganismTaxonomy | null }) {
   function SfvtView() {
     if (!taxon) return null;
-    const term = resolveSfvtKeyword(taxon.lineageIds);
-    // Tab is gated by hasSfvt, so this is normally non-null. Guard keeps the
-    // tab from silently rendering the entire 2.2M-row resource if the gate and
-    // this map ever drift.
-    if (!term) return null;
+    const taxonId = resolveSfvtTaxonId(taxon.lineageIds);
+    // Tab is gated by hasSfvt, so this is normally non-null. Guard keeps the tab
+    // from silently rendering the entire sequence_feature resource if the gate
+    // and this map ever drift.
+    if (taxonId === null) return null;
     return (
       <TaxonDataPanel
-        resource="sequence_feature_vt"
-        q={`keyword(${encodeURIComponent(term)})`}
+        resource="sequence_feature"
+        q={`eq(taxon_id,${String(taxonId)})`}
       />
     );
   }

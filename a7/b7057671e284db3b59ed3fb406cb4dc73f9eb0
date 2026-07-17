@@ -1,0 +1,40 @@
+src/constants/datafields/protein_feature.ts
+  s_234052f552c5a3::t_238bc98ee406f0 117-119,122-124
+src/app/(views)/taxonomy/[taxonId]/__tests__/nav-items.test.tsx
+  s_ae200fdad47747::t_227f25ec0c911a 57
+  s_ae200fdad47747::t_ab6f3d61114ead 51
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_ae200fdad47747::t_fc2c86fb45afd0 9
+  s_ae200fdad47747::t_7bc95f71fee9d1 149-165,167-169,171-174
+  s_ae200fdad47747::t_464253532acf55 166,170
+src/app/(views)/taxonomy/[taxonId]/views/domains-and-motifs.tsx
+  s_ae200fdad47747::t_0383db84bfaf35 1-12,14-18
+  s_ae200fdad47747::t_5ae35ef2c296f3 13
+src/app/(views)/taxonomy/[taxonId]/_components/nav-items.tsx
+  s_ae200fdad47747::t_64b113de76682b 17
+  s_ae200fdad47747::t_28e9e64dc64394 48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "a7b7057671e284db3b59ed3fb406cb4dc73f9eb0",
+  "prompts": {},
+  "sessions": {
+    "s_234052f552c5a3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c2b68426-dda7-4ffc-b8d8-f2d16423a82b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_ae200fdad47747": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_08f8a8871ffeu9R490LH3WQZBK",
+        "model": "gpt55"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -689,13 +689,15 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
 
       const DataAPI = process.env.NEXT_PUBLIC_DATA_API;
 
-      await fetch(`${DataAPI ?? ""}/${resource}/?${query}`, {
+      await fetch(`${DataAPI ?? ""}/${resource}/`, {
+        method: "POST",
         headers: {
           'Content-type': 'application/rqlquery+x-www-form-urlencoded',
           Accept: "application/json",
           'Range': `items=0-${String((selectedIds ?? []).length)}`,
           'X-Range': `items=0-${String((selectedIds ?? []).length)}`,
         },
+        body: query,
       })
         .then((res) => {
           if (!res.ok) throw new Error("Failed to fetch selected rows");

@@ -7,6 +7,7 @@ import { makeGenomesView } from "../genomes";
 import { makeSequencesView } from "../sequences";
 import { makeProteinStructuresView } from "../protein-structures";
 import { makeFeaturesView } from "../features";
+import { makeEpitopesView } from "../epitopes";
 
 // TaxonDataPanel has complex network + React dependencies; mock it so tests stay
 // focused on the factory guard logic (null taxon → render nothing).
@@ -172,6 +173,30 @@ describe("makeFeaturesView", () => {
     const { getByTestId } = render(<FeaturesView />);
     expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toBe(
       "https://www.bv-brc.org/docs/quick_references/organisms_taxon/features.html",
+    );
+  });
+});
+
+describe("makeEpitopesView", () => {
+  it("renders nothing when taxon is null", () => {
+    const EpitopesView = makeEpitopesView({ taxon: null });
+    const { container } = render(<EpitopesView />);
+    expect(container.firstChild).toBeNull();
+  });
+
+  it("renders TaxonDataPanel with epitope resource and taxon query", () => {
+    const EpitopesView = makeEpitopesView({ taxon: fakeTaxon });
+    const { getByTestId } = render(<EpitopesView />);
+    const panel = getByTestId("taxon-data-panel");
+    expect(panel).toHaveAttribute("data-resource", "epitope");
+    expect(panel.getAttribute("data-q")).toContain("1234");
+  });
+
+  it("passes the epitopes guide URL", () => {
+    const EpitopesView = makeEpitopesView({ taxon: fakeTaxon });
+    const { getByTestId } = render(<EpitopesView />);
+    expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toBe(
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/epitopes.html",
     );
   });
 });

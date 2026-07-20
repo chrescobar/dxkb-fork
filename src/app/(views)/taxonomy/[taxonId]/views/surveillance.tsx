@@ -8,6 +8,7 @@ export function makeSurveillanceView({ taxon }: { taxon: OrganismTaxonomy | null
       <TaxonDataPanel
         resource="surveillance"
         q={`eq(taxon_lineage_ids,${String(taxon.taxonId)})`}
+        guideUrl="https://www.bv-brc.org/docs/quick_references/organisms_taxon/surveillance_data.html"
       />
     );
   }

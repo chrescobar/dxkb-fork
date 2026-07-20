@@ -912,10 +912,10 @@ export const surveillanceFields = {
         facet_hidden: true, 
         search: true 
         },
-    date_inserted: { 
-        label: 'Date Inserted', 
-        field: 'date_inserted', 
-        hidden: false,
+    date_inserted: {
+        label: 'Date Inserted',
+        field: 'date_inserted',
+        hidden: true,
         group: 'Other',
         facet: false, 
         facet_hidden: true, 

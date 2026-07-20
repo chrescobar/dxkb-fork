@@ -114,14 +114,14 @@ export const proteinFeatureFields = {
         facet_hidden: true, 
         search: true  
         },
-    feature_type: { 
-        label: 'Feature Type', 
-        field: 'feature_type', 
+    feature_type: {
+        label: 'Feature Type',
+        field: 'feature_type',
         hidden: true,
         group: 'Feature Info',
-        facet: true, 
-        facet_hidden: false, 
-        search: true 
+        facet: true,
+        facet_hidden: true,
+        search: true
         },
     source: { 
         label: 'Source', 

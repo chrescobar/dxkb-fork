@@ -6,6 +6,7 @@ import { makeSurveillanceView } from "../surveillance";
 import { makeGenomesView } from "../genomes";
 import { makeSequencesView } from "../sequences";
 import { makeProteinStructuresView } from "../protein-structures";
+import { makeDomainsAndMotifsView } from "../domains-and-motifs";
 import { makeFeaturesView } from "../features";
 import { makeEpitopesView } from "../epitopes";
 
@@ -142,6 +143,32 @@ describe("makeProteinStructuresView", () => {
     const { getByTestId } = render(<ProteinStructuresView />);
     expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toBe(
       "https://www.bv-brc.org/docs/quick_references/organisms_taxon/protein_structures.html",
+    );
+  });
+});
+
+describe("makeDomainsAndMotifsView", () => {
+  it("renders nothing when taxon is null", () => {
+    const DomainsAndMotifsView = makeDomainsAndMotifsView({ taxon: null });
+    const { container } = render(<DomainsAndMotifsView />);
+    expect(container.firstChild).toBeNull();
+  });
+
+  it("renders TaxonDataPanel with the protein_feature cross-core join query", () => {
+    const DomainsAndMotifsView = makeDomainsAndMotifsView({ taxon: fakeTaxon });
+    const { getByTestId } = render(<DomainsAndMotifsView />);
+    const panel = getByTestId("taxon-data-panel");
+    expect(panel).toHaveAttribute("data-resource", "protein_feature");
+    const q = panel.getAttribute("data-q") ?? "";
+    expect(q).toContain("eq(genome_id,*)");
+    expect(q).toContain("genome(eq(taxon_lineage_ids,1234))");
+  });
+
+  it("passes the domains and motifs guide URL", () => {
+    const DomainsAndMotifsView = makeDomainsAndMotifsView({ taxon: fakeTaxon });
+    const { getByTestId } = render(<DomainsAndMotifsView />);
+    expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toBe(
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/domains_and_motifs.html",
     );
   });
 });

@@ -1,0 +1,29 @@
+src/app/(views)/taxonomy/[taxonId]/__tests__/nav-items.test.tsx
+  s_478a314b5c15d6::t_02b00e2d506449 55,57
+src/app/(views)/taxonomy/[taxonId]/views/epitopes.tsx
+  s_b16d46bd123f41::t_97b05770d93701 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "f6aa7c09318e794504d01dfaa662d9a3af1f6624",
+  "prompts": {},
+  "sessions": {
+    "s_478a314b5c15d6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7110acf5-212d-47b3-a4d5-54ed328f3dd6",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_b16d46bd123f41": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2940b15b-907a-4020-9ae5-4f638fcd7492",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

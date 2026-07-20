@@ -4,6 +4,12 @@ import { http, HttpResponse } from "msw";
 import { DataTable } from "../data-table";
 import { server } from "@/test-helpers/msw-server";
 
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((res) => { resolve = res; });
+  return { promise, resolve };
+}
+
 const columns = [{ id: "strain_name", label: "Strain Name", visible: true }];
 
 beforeAll(() => {
@@ -432,5 +438,152 @@ describe("DataTable download selected: POST regression", () => {
     await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
     await waitFor(() => { expect(clickSpy).toHaveBeenCalled(); });
     clickSpy.mockRestore();
+  });
+});
+
+// ─── "Downloading..." indicator: onDownloadAll regression ────────────────────
+// Regression: handleDownload called the parent-supplied onDownloadAll without
+// awaiting it, then immediately cleared downloadingButton — so "Downloading..."
+// never had a chance to render on the plain Download (CSV/TXT) buttons (every
+// caller wires onDownloadAll, so this path is always taken for those two
+// buttons). Fix: onDownloadAll's return value is awaited before the button
+// state clears. These tests use a manually-resolved promise to freeze the
+// in-flight window and assert the label swap happens (and reverts after).
+describe("DataTable 'Downloading...' indicator via onDownloadAll", () => {
+  it("shows 'Downloading...' on Download (CSV) while onDownloadAll's promise is pending", async () => {
+    const user = userEvent.setup();
+    const { promise, resolve } = deferred<undefined>();
+    const onDownloadAll = vi.fn(() => promise);
+
+    render(
+      <DataTable
+        id="dl-all-csv"
+        data={[]}
+        columns={columns}
+        totalItems={10}
+        resource="strain"
+        onDownloadAll={onDownloadAll}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /^Download \(CSV\)$/i }));
+
+    expect(onDownloadAll).toHaveBeenCalledWith("csv", null);
+    expect(await screen.findByText("Downloading...")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^Download \(CSV\)$/i })).not.toBeInTheDocument();
+
+    resolve(undefined);
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /^Download \(CSV\)$/i })).toBeInTheDocument();
+    });
+    expect(screen.queryByText("Downloading...")).not.toBeInTheDocument();
+  });
+
+  it("shows 'Downloading...' on Download (TXT) while onDownloadAll's promise is pending", async () => {
+    const user = userEvent.setup();
+    const { promise, resolve } = deferred<undefined>();
+    const onDownloadAll = vi.fn(() => promise);
+
+    render(
+      <DataTable
+        id="dl-all-txt"
+        data={[]}
+        columns={columns}
+        totalItems={10}
+        resource="strain"
+        onDownloadAll={onDownloadAll}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /^Download \(TXT\)$/i }));
+
+    expect(onDownloadAll).toHaveBeenCalledWith("txt", null);
+    expect(await screen.findByText("Downloading...")).toBeInTheDocument();
+
+    resolve(undefined);
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /^Download \(TXT\)$/i })).toBeInTheDocument();
+    });
+  });
+
+  it("disables the other download buttons while one is in flight", async () => {
+    const user = userEvent.setup();
+    const { promise, resolve } = deferred<undefined>();
+    const onDownloadAll = vi.fn(() => promise);
+
+    render(
+      <DataTable
+        id="dl-all-disable"
+        data={[]}
+        columns={columns}
+        totalItems={10}
+        resource="strain"
+        onDownloadAll={onDownloadAll}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /^Download \(CSV\)$/i }));
+    await screen.findByText("Downloading...");
+
+    expect(screen.getByRole("button", { name: /^Download \(TXT\)$/i })).toBeDisabled();
+
+    resolve(undefined);
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /^Download \(TXT\)$/i })).not.toBeDisabled();
+    });
+  });
+
+  it("shows 'Downloading...' on Download Selected (all-pages-selected path routes through onDownloadAll)", async () => {
+    const user = userEvent.setup();
+    const { promise, resolve } = deferred<undefined>();
+    const onDownloadAll = vi.fn(() => promise);
+
+    render(
+      <DataTable
+        id="dl-selected-allpages"
+        data={[]}
+        columns={columns}
+        totalItems={10}
+        resource="strain"
+        selectedIds={["a", "b"]}
+        isAllPagesSelected={true}
+        onDownloadAll={onDownloadAll}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
+
+    expect(onDownloadAll).toHaveBeenCalledWith("csv", null);
+    expect(await screen.findByText("Downloading...")).toBeInTheDocument();
+
+    resolve(undefined);
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /Download Selected \(CSV\)/i })).toBeInTheDocument();
+    });
+  });
+
+  it("clears 'Downloading...' even when onDownloadAll's promise rejects", async () => {
+    const user = userEvent.setup();
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => { /* no-op */ });
+    const onDownloadAll = vi.fn(() => Promise.reject(new Error("network down")));
+
+    render(
+      <DataTable
+        id="dl-all-error"
+        data={[]}
+        columns={columns}
+        totalItems={10}
+        resource="strain"
+        onDownloadAll={onDownloadAll}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /^Download \(CSV\)$/i }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /^Download \(CSV\)$/i })).toBeInTheDocument();
+    });
+    expect(screen.queryByText("Downloading...")).not.toBeInTheDocument();
+    errorSpy.mockRestore();
   });
 });

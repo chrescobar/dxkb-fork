@@ -139,3 +139,53 @@ test.describe("taxon domains-and-motifs: Download Selected sends POST not GET", 
     expect(body).toContain("mock-pf-0199");
   });
 });
+
+// ─── "Downloading..." indicator on the plain Download buttons ────────────────
+// Regression: the plain Download (CSV)/(TXT) buttons route through ListData's
+// onDownloadAll (every ListData instance wires it), and DataTable fired that
+// callback without awaiting it — clearing the "Downloading..." state before the
+// fetch/blob work finished. Selected-row downloads (bounded page fetch, real
+// .finally()) never hit this path, so they never regressed. A slow backend
+// response is required to observe the transient state; this delays the
+// page-data GET (the request onDownloadAll re-issues) by 500ms.
+test.describe("taxon domains-and-motifs: 'Downloading...' indicator on Download (CSV)", () => {
+  test("shows 'Downloading...' while the download fetch is in flight, then reverts", async ({ page }) => {
+    const rows = buildProteinFeatureRows(3);
+
+    await applyBackendMocks(page, {
+      overrides: [
+        { url: pfLoopbackCount, method: "GET", body: { response: { numFound: 3 } } },
+        { url: pfLoopback, method: "GET", body: rows },
+        ...permissiveBackendOverrides,
+      ],
+    });
+
+    // Registered after applyBackendMocks so it wins (routes are LIFO) and delays
+    // only the row-data GET the Download (CSV) button re-issues via handleDownloadAll.
+    // Must fall through the &limit(1) count request — pfLoopback matches both, and
+    // delaying/misshaping the count response would zero out totalItems and block
+    // the initial page-data fetch entirely (enabled: totalItems > 0).
+    await page.route(pfLoopback, async (route) => {
+      const url = route.request().url();
+      if (route.request().method() !== "GET" || pfLoopbackCount.test(url)) return route.fallback();
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(rows),
+      });
+    });
+
+    await page.goto(`/taxonomy/${DOMAINS_TAXON_ID}?tab=domains-and-motifs`);
+    await expect(page.getByText("mock-product-0")).toBeVisible({ timeout: 10_000 });
+
+    await page.getByRole("button", { name: /^Download \(CSV\)$/i }).click();
+
+    await expect(page.getByText("Downloading...")).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Download \(TXT\)$/i })).toBeDisabled();
+
+    await expect(page.getByText("Downloading...")).not.toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("button", { name: /^Download \(CSV\)$/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Download \(TXT\)$/i })).toBeEnabled();
+  });
+});

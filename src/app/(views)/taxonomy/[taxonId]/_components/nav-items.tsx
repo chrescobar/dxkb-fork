@@ -16,6 +16,7 @@ import { makeSequencesView } from "../views/sequences";
 import { makeProteinStructuresView } from "../views/protein-structures";
 import { makeDomainsAndMotifsView } from "../views/domains-and-motifs";
 import { makeFeaturesView } from "../views/features";
+import { makeExperimentsView } from "../views/experiments";
 import { makeStrainsView } from "../views/strains";
 import { makeSurveillanceView } from "../views/surveillance";
 import { makeSerologyView } from "../views/serology";
@@ -49,6 +50,7 @@ export function buildTaxonomyNavItems(
     "protein-structures": { Component: makeProteinStructuresView({ taxon }), layout: "fill" },
     "domains-and-motifs": { Component: makeDomainsAndMotifsView({ taxon }), layout: "fill" },
     features: { Component: makeFeaturesView({ taxon }), layout: "fill" },
+    experiments: { Component: makeExperimentsView({ taxon }), layout: "fill" },
     strains: { Component: makeStrainsView({ taxon }), layout: "fill" },
     surveillance: { Component: makeSurveillanceView({ taxon }), layout: "fill" },
     serology: { Component: makeSerologyView({ taxon }), layout: "fill" },

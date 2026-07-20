@@ -1,0 +1,25 @@
+e2e/tests/organisms/taxon-list-data.spec.ts
+  s_966530fbef365c::t_21ace72b2537a9 164-167,169-170
+  s_966530fbef365c::t_eee172a443302e 142-163,168,171-191
+src/components/shared/__tests__/data-table-rendering.test.tsx
+  s_966530fbef365c::t_fa57941ec8dec8 7-12
+  s_966530fbef365c::t_22504f72614be0 443-454,456-474,476-483,485-502,504-510,512-529,531-537,539-558,560-589
+  s_966530fbef365c::t_51fd64d92dff31 455,484,511,538
+  s_966530fbef365c::t_4e69c1a33dc296 475,503,530,559
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "4ba1816c6c8ef4f3f42df05ad1f97316f1f1d0d0",
+  "prompts": {},
+  "sessions": {
+    "s_966530fbef365c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3aa75d71-d7d0-43e2-9f8f-59c0639b2415",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

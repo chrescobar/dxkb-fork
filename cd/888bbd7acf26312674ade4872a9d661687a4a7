@@ -1,0 +1,23 @@
+src/constants/datafields/surveillance.ts
+  s_beed8a64e98aa3::t_31c59f50af853d 915-918
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_beed8a64e98aa3::t_88b1bb43302701 75-82
+src/app/(views)/taxonomy/[taxonId]/views/surveillance.tsx
+  s_beed8a64e98aa3::t_21e08cec6de478 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "cd888bbd7acf26312674ade4872a9d661687a4a7",
+  "prompts": {},
+  "sessions": {
+    "s_beed8a64e98aa3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7a38792a-c516-4917-819d-a239ecafd8c7",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

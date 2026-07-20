@@ -1,0 +1,21 @@
+src/constants/datafields/experiment.ts
+  s_c3cef698c7c923::t_968dd49b5addbe 85-88
+  s_c3cef698c7c923::t_b7e1a0074be103 94-97
+  s_c3cef698c7c923::t_2df224a9b830a3 76-79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "86a13aa47bdd482c4f2ce40c27688145bf8da956",
+  "prompts": {},
+  "sessions": {
+    "s_c3cef698c7c923": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6bbe097-2621-4130-a3da-1022a243490e",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

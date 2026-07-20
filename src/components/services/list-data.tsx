@@ -16,7 +16,7 @@ import { genomeFeatureFields } from "@/constants/datafields/genome_feature";
 import { genomeSequenceFields } from "@/constants/datafields/genome_sequence";
 import { proteinFeatureFields } from "@/constants/datafields/protein_feature";
 import { proteinStructureFields } from "@/constants/datafields/protein_structure";
-import { sequenceFeatureVtFields } from "@/constants/datafields/sequence_feature_vt";
+import { sequenceFeatureFields } from "@/constants/datafields/sequence_feature";
 import { strainFields } from "@/constants/datafields/strain";
 import { surveillanceFields } from "@/constants/datafields/surveillance";
 import { serologyFields } from "@/constants/datafields/serology";
@@ -49,7 +49,7 @@ const resourceFields: Record<string, DataFieldMap | undefined> = {
   genome_sequence: genomeSequenceFields,
   protein_feature: proteinFeatureFields,
   protein_structure: proteinStructureFields,
-  sequence_feature_vt: sequenceFeatureVtFields,
+  sequence_feature: sequenceFeatureFields,
   strain: strainFields,
   surveillance: surveillanceFields,
   serology: serologyFields,

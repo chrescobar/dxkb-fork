@@ -32,7 +32,8 @@ export function buildTaxonomyNavItems(
   taxon: OrganismTaxonomy | null,
   manifest: PhyloManifest | null,
 ): OrganismLandingView[] {
-  const ctx = buildTabContext(taxon, manifest, getCuratedLists());
+  const lists = getCuratedLists();
+  const ctx = buildTabContext(taxon, manifest, lists);
   return resolveTabs(ctx, {
     overview: {
       Component: makeOverviewView({
@@ -50,6 +51,6 @@ export function buildTaxonomyNavItems(
     strains: { Component: makeStrainsView({ taxon }), layout: "fill" },
     surveillance: { Component: makeSurveillanceView({ taxon }), layout: "fill" },
     serology: { Component: makeSerologyView({ taxon }), layout: "fill" },
-    sfvt: { Component: makeSfvtView({ taxon }), layout: "fill" },
+    sfvt: { Component: makeSfvtView({ taxon, sfvtTaxonIds: lists.sfvtTaxonIds }), layout: "fill" },
   });
 }

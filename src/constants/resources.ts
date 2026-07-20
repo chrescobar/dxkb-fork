@@ -12,7 +12,7 @@ export const resourceIdField: Record<string, string> = {
   bioset: "bioset_id",
   surveillance: "id",
   serology: "id",
-  sequence_feature_vt: "id",
+  sequence_feature: "id",
 };
 
 export function getIdField(resource: string): string {

@@ -9,7 +9,7 @@ import { proteinFeatureFields } from "@/constants/datafields/protein_feature";
 import { epitopeFields } from "@/constants/datafields/epitope";
 import { experimentFields } from "@/constants/datafields/experiment";
 import { proteinStructureFields } from "@/constants/datafields/protein_structure";
-import { sequenceFeatureVtFields } from "@/constants/datafields/sequence_feature_vt";
+import { sequenceFeatureFields } from "@/constants/datafields/sequence_feature";
 import { serologyFields } from "@/constants/datafields/serology";
 import { strainFields } from "@/constants/datafields/strain";
 import { surveillanceFields } from "@/constants/datafields/surveillance";
@@ -225,11 +225,11 @@ export function InfoPanel(props: InfoPanelProps) {
       allowedFields = ['exp_id', 'exp_name', 'exp_title', 'exp_type', 'bioset_id', 'bioset_name', 'bioset_description', 'bioset_type', 'analysis_method', 'bioset_criter','result_type','protocol','bioset_result','organism', 'strain', 'treatment_type', 'treatment_name', 'treatment_amount', 'treatment_duration', 'entity_count', 'additonal_metadata'];
       order = ['Experiment Info', 'Bioset Info', 'Treatment', 'Additional Metadata'];
       break;
-    case 'sequence_feature_vt':
+    case 'sequence_feature':
       panelTitleField = 'sf_name';
-      fieldFile = sequenceFeatureVtFields;
-      allowedFields = ['sf_id', 'sf_name', 'sf_category', 'sfvt_id', 'sfvt_variations', 'sfvt_genome_count', 'sf_sequence', 'sfvt_sequence'];
-      order = ['Sequence Feature', 'Variant Type', 'Sequence'];
+      fieldFile = sequenceFeatureFields;
+      allowedFields = ['sf_name', 'sf_id', 'gene', 'length', 'variant_types', 'sf_category', 'segments', 'source_strain', 'product', 'evidence_code', 'source', 'additional_metadata', 'segment', 'subtype', 'comments'];
+      order = ['Sequence Feature', 'Variant Type'];
       break;
   }
 

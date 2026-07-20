@@ -109,6 +109,16 @@ const influenzaATaxonomyFixture = {
   genomes: 245000,
 };
 
+// Caliciviridae — virus family used by domains-and-motifs e2e tests.
+const caliciviridaeTaxonomyFixture = {
+  taxon_id: 11974,
+  taxon_name: "Caliciviridae",
+  lineage_names: ["Viruses", "Riboviria", "Orthornavirae", "Pisuviricota", "Pisoniviricetes", "Picornavirales", "Caliciviridae"],
+  lineage_ids: [10239, 2559587, 2732396, 2732408, 2732506, 464095, 11974],
+  taxon_rank: "family",
+  genomes: 86222,
+};
+
 const sharedFacetFixtures: Record<string, (string | number)[]> = {
   genus: [
     "Escherichia",
@@ -556,6 +566,7 @@ function maybeBvBrcWebsite(path: string, request: NextRequest): BvBrcResult | nu
   if (endpoint === "taxonomy/2") return { kind: "ok", body: bacteriaTaxonomyFixture };
   if (endpoint === "taxonomy/234") return { kind: "ok", body: brucellaTaxonomyFixture };
   if (endpoint === "taxonomy/11520") return { kind: "ok", body: influenzaATaxonomyFixture };
+  if (endpoint === "taxonomy/11974") return { kind: "ok", body: caliciviridaeTaxonomyFixture };
   if (endpoint === "genome" || endpoint === "genome/") {
     const url = new URL(request.url);
     const query = decodeURIComponent(url.search);

@@ -48,10 +48,12 @@ describe("buildTaxonomyNavItems", () => {
     const name = (k: string) => items.find((i) => i.key === k)?.Component.name;
     expect(name("genomes")).toBe("GenomesView");
     expect(name("features")).toBe("FeaturesView");
+    expect(name("domains-and-motifs")).toBe("DomainsAndMotifsView");
     expect(name("strains")).toBe("StrainsView");
     expect(name("surveillance")).toBe("SurveillanceView");
     expect(name("serology")).toBe("SerologyView");
     expect(name("sfvt")).toBe("SfvtView");
     expect(items.find((i) => i.key === "features")?.layout).toBe("fill");
+    expect(items.find((i) => i.key === "domains-and-motifs")?.layout).toBe("fill");
   });
 });

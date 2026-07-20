@@ -52,6 +52,8 @@ describe("buildTaxonomyNavItems", () => {
     expect(name("surveillance")).toBe("SurveillanceView");
     expect(name("serology")).toBe("SerologyView");
     expect(name("sfvt")).toBe("SfvtView");
+    expect(name("epitopes")).toBe("EpitopesView");
     expect(items.find((i) => i.key === "features")?.layout).toBe("fill");
+    expect(items.find((i) => i.key === "epitopes")?.layout).toBe("fill");
   });
 });

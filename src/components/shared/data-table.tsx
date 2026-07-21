@@ -352,6 +352,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
             const date = new Date(value);
             return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getFullYear())}`;
           }
+          if (Array.isArray(value)) return value.join(', ');
           return value;
         },
         size: estimateHeaderWidth(col.label),

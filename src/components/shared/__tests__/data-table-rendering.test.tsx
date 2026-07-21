@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
-import { DataTable } from "../data-table";
+import { DataTable, formatCellValue } from "../data-table";
 import { server } from "@/test-helpers/msw-server";
 
 function deferred<T>() {
@@ -126,6 +126,42 @@ describe("DataTable Showing display during loading", () => {
     );
     // expected end: min(201 + 200 - 1, 210) = 210, not 400
     expect(screen.getByText(/Showing 201-210 of 210 results/)).toBeInTheDocument();
+  });
+});
+
+// Regression: array-valued fields (e.g. treatment_duration: [3,6,12,18]) rendered
+// as raw React children with no separator, reading as "361218" instead of "3, 6, 12, 18".
+describe("formatCellValue array handling", () => {
+  it("joins array of numbers with comma-space", () => {
+    expect(formatCellValue([3, 6, 12, 18])).toBe("3, 6, 12, 18");
+  });
+
+  it("joins array of strings with comma-space", () => {
+    expect(formatCellValue(["A/Vietnam/1203", "A/California/04"])).toBe(
+      "A/Vietnam/1203, A/California/04"
+    );
+  });
+
+  it("renders single-element array without trailing separator", () => {
+    expect(formatCellValue([5])).toBe("5");
+  });
+
+  it("renders empty array as empty string", () => {
+    expect(formatCellValue([])).toBe("");
+  });
+
+  it("still formats ISO date strings, unaffected by array handling", () => {
+    expect(formatCellValue("2021-12-20T12:00:00Z")).toBe("20-12-2021");
+  });
+
+  it("returns plain scalar values unchanged", () => {
+    expect(formatCellValue("H5N1")).toBe("H5N1");
+    expect(formatCellValue(42)).toBe(42);
+  });
+
+  it("returns null/undefined unchanged", () => {
+    expect(formatCellValue(null)).toBe(null);
+    expect(formatCellValue(undefined)).toBe(undefined);
   });
 });
 

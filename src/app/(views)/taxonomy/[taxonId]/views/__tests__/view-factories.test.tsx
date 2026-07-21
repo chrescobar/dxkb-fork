@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 import { makeStrainsView } from "../strains";
 import { makeSerologyView } from "../serology";
@@ -9,6 +9,7 @@ import { makeProteinStructuresView } from "../protein-structures";
 import { makeDomainsAndMotifsView } from "../domains-and-motifs";
 import { makeFeaturesView } from "../features";
 import { makeEpitopesView } from "../epitopes";
+import { makeExperimentsView } from "../experiments";
 
 // TaxonDataPanel has complex network + React dependencies; mock it so tests stay
 // focused on the factory guard logic (null taxon → render nothing).
@@ -233,5 +234,38 @@ describe("makeEpitopesView", () => {
     expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toBe(
       "https://www.bv-brc.org/docs/quick_references/organisms_taxon/epitopes.html",
     );
+  });
+});
+
+describe("makeExperimentsView", () => {
+  it("renders nothing when taxon is null", () => {
+    const ExperimentsView = makeExperimentsView({ taxon: null });
+    const { container } = render(<ExperimentsView />);
+    expect(container.firstChild).toBeNull();
+  });
+
+  it("renders the experiment panel by default", () => {
+    const ExperimentsView = makeExperimentsView({ taxon: fakeTaxon });
+    const { getByTestId } = render(<ExperimentsView />);
+    const panel = getByTestId("taxon-data-panel");
+    expect(panel).toHaveAttribute("data-resource", "experiment");
+    expect(panel.getAttribute("data-q")).toBe("eq(taxon_lineage_ids,1234)");
+    expect(panel.getAttribute("data-guide")).toBe(
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/experiments.html",
+    );
+  });
+
+  it("renders the bioset panel after selecting the Biosets sub-tab", () => {
+    const ExperimentsView = makeExperimentsView({ taxon: fakeTaxon });
+    const { getByTestId } = render(<ExperimentsView />);
+
+    fireEvent.click(screen.getByRole("tab", { name: "Biosets" }));
+
+    const panel = getByTestId("taxon-data-panel");
+    expect(panel).toHaveAttribute("data-resource", "bioset");
+    const q = panel.getAttribute("data-q") ?? "";
+    expect(q).toContain("eq(genome_id,*)");
+    expect(q).toContain("genome(eq(taxon_lineage_ids,1234))");
+    expect(panel.getAttribute("data-guide")).toBeNull();
   });
 });

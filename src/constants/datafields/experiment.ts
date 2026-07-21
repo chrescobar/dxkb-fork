@@ -73,28 +73,28 @@ export const experimentFields = {
         facet_hidden: true, 
         search: true  
         },
-    exp_description: { 
-        label: 'Description', 
-        field: 'exp_description', 
-        hidden: false,
+    exp_description: {
+        label: 'Description',
+        field: 'exp_description',
+        hidden: true,
         group: 'Experiment Info',
         facet: false, 
         facet_hidden: true, 
         search: true  
         },
-    exp_poc: { 
-        label: 'PoC', 
-        field: 'exp_poc', 
-        hidden: false,
+    exp_poc: {
+        label: 'PoC',
+        field: 'exp_poc',
+        hidden: true,
         group: 'Experiment Info',
         facet: false, 
         facet_hidden: true, 
         search: true  
         },
-    experimenters: { 
-        label: 'Experimenters', 
-        field: 'experimenters', 
-        hidden: false,
+    experimenters: {
+        label: 'Experimenters',
+        field: 'experimenters',
+        hidden: true,
         group: 'Experiment Info',
         facet: false, 
         facet_hidden: true, 

@@ -13,6 +13,7 @@ export const resourceIdField: Record<string, string> = {
   surveillance: "id",
   serology: "id",
   sequence_feature: "id",
+  ppi: "id",
 };
 
 export function getIdField(resource: string): string {

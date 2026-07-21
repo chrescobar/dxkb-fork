@@ -24,6 +24,7 @@ import { taxonomyFields } from "@/constants/datafields/taxonomy";
 import { biosetFields } from "@/constants/datafields/bioset";
 import { epitopeFields } from "@/constants/datafields/epitope";
 import { experimentFields } from "@/constants/datafields/experiment";
+import { ppiFields } from "@/constants/datafields/ppi";
 
 // Stable empty-rows reference so DataTable's memoized body comparator (prev.data === next.data)
 // isn't defeated by a fresh [] on every render when there are no results.
@@ -57,6 +58,7 @@ const resourceFields: Record<string, DataFieldMap | undefined> = {
   bioset: biosetFields,
   epitope: epitopeFields,
   experiment: experimentFields,
+  ppi: ppiFields,
 };
 
 export function deriveTableFields(resource: string): ColumnInfo[] {

@@ -75,7 +75,7 @@ const actionConfig: ActionConfig[] = [
     id: "copyRows",
     label: "COPY",
     icon: Copy,
-    validSearchTypes: ["genome", "strain", "genome_feature", "protein_feature", "epitope", "protein_structure", "surveillance", "serology"],
+    validSearchTypes: ["genome", "strain", "genome_feature", "protein_feature", "epitope", "protein_structure", "surveillance", "serology", "ppi"],
     requiresSelection: true,
     disabledWithTooltip: notReady,
   },

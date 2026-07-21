@@ -72,6 +72,14 @@ describe("makeSurveillanceView", () => {
     expect(panel).toHaveAttribute("data-resource", "surveillance");
     expect(panel.getAttribute("data-q")).toContain("1234");
   });
+
+  it("passes the surveillance guide URL", () => {
+    const SurveillanceView = makeSurveillanceView({ taxon: fakeTaxon });
+    const { getByTestId } = render(<SurveillanceView />);
+    expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toBe(
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/surveillance_data.html",
+    );
+  });
 });
 
 describe("makeGenomesView", () => {

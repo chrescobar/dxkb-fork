@@ -2,6 +2,7 @@ src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
   s_460eb586197ecb::t_ea35a1dc13fdd8 12
   s_460eb586197ecb::t_b4017a512ffee4 215,240-271
   s_460eb586197ecb::t_ebf29b514a30bb 1
+  s_de6a161d4d3544::t_d8781eb8f266f9 239
 src/app/(views)/taxonomy/[taxonId]/views/experiments.tsx
   s_460eb586197ecb::t_7d5a5add77e559 1-35
 src/app/(views)/taxonomy/[taxonId]/__tests__/nav-items.test.tsx
@@ -21,6 +22,14 @@ src/app/(views)/taxonomy/[taxonId]/_components/nav-items.tsx
         "tool": "opencode",
         "id": "ses_07f26068fffe356Nz2wFnGtVdb",
         "model": "gpt55"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_de6a161d4d3544": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1d4ad20f-f8ad-46a7-931b-fe58f7fba998",
+        "model": "claude-sonnet-5"
       },
       "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
     }

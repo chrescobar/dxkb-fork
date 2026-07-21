@@ -1,5 +1,6 @@
-import { test, expect, applyBackendMocks } from "../../mocks/backends";
+import { test, applyBackendMocks } from "../../mocks/backends";
 import { permissiveBackendOverrides } from "../../fixtures/overrides";
+import { TaxonInteractionsPage } from "../../pages";
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
@@ -46,10 +47,10 @@ test.describe("taxon interactions tab", () => {
       ],
     });
 
-    await page.goto(`/taxonomy/${INTERACTIONS_TAXON_ID}?tab=interactions`);
-    await expect(page).toHaveURL(/tab=interactions/);
-    await expect(page.getByText("Showing 1-3 of 3 results")).toBeVisible({ timeout: 10_000 });
-    await expect(page.getByText("fig|224914.16.peg.600")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Interactions" })).toBeVisible();
+    const interactionsPage = new TaxonInteractionsPage(page);
+    await interactionsPage.goto(INTERACTIONS_TAXON_ID);
+    await interactionsPage.expectResultCount("Showing 1-3 of 3 results");
+    await interactionsPage.expectInteractor("fig|224914.16.peg.600");
+    await interactionsPage.expectTab("Interactions");
   });
 });

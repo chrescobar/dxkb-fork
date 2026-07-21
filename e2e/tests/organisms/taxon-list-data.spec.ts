@@ -189,3 +189,95 @@ test.describe("taxon domains-and-motifs: 'Downloading...' indicator on Download 
     await expect(page.getByRole("button", { name: /^Download \(TXT\)$/i })).toBeEnabled();
   });
 });
+
+// ─── Facet click regression: multi-word eq() values must be quoted ───────────
+// Regression: buildRql() (src/components/filterbar/filter-utils.ts) built eq()
+// clauses with unquoted values. Solr string fields (e.g. epitope_type) split an
+// unquoted multi-word value into separate ANDed terms —
+// `eq(epitope_type,Linear peptide)` becomes `epitope_type:Linear AND
+// epitope_type:peptide`, matching nothing — so clicking any multi-word facet
+// value hung the table at "Showing 0-0 of 0 results" forever. Fix: quote eq()
+// values. buildRql() is shared by every resource's FilterBar (genome, strain,
+// epitope, surveillance, ...), so this one test on the epitope tab exercises
+// the fix for all views — the bug and the fix live in one shared function.
+const epitopeLoopback = /\/api\/e2e-mock\/data\/epitope\//;
+
+function buildEpitopeRows(count: number, epitopeType: string) {
+  return Array.from({ length: count }, (_, i) => ({
+    epitope_id: 100000 + i,
+    epitope_type: epitopeType,
+    epitope_sequence: `SEQ${String(i)}`,
+    organism: "Influenza A virus",
+    protein_name: "Nucleoprotein",
+    total_assays: 1,
+    date_inserted: "2021-09-20",
+  }));
+}
+
+test.describe("taxon epitopes tab: facet click with a multi-word value", () => {
+  test("clicking a multi-word Epitope Type facet value returns matching rows, not an empty table", async ({ page }) => {
+    await applyBackendMocks(page, { overrides: [...permissiveBackendOverrides] });
+
+    // Fakes a minimal Solr backend for the epitope resource, distinguishing the
+    // three request shapes ListData + FacetPanel issue: facet query (has
+    // "facet("), count query (bare "limit(1)"), and page-data query (has
+    // "select("). Only a correctly quoted phrase match
+    // (`eq(epitope_type,"Linear peptide")`) is treated as a hit — an unquoted
+    // value (the regression) must NOT match, which is what makes this test
+    // catch the bug coming back.
+    await page.route(epitopeLoopback, async (route) => {
+      if (route.request().method() !== "GET") return route.fallback();
+      const decoded = decodeURIComponent(route.request().url());
+
+      const hasEpitopeTypeEq = decoded.includes("eq(epitope_type,");
+      const hasQuotedPhrase = decoded.includes('eq(epitope_type,"Linear peptide")');
+      const matches = !hasEpitopeTypeEq || hasQuotedPhrase;
+      const numFound = matches ? (hasEpitopeTypeEq ? 3 : 10) : 0;
+
+      if (decoded.includes("facet(")) {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            response: { numFound },
+            facet_counts: {
+              facet_fields: {
+                epitope_type: matches ? ["Linear peptide", 10, "Discontinuous peptide", 2] : [],
+                protein_name: [],
+                host_name: [],
+                assay_results: [],
+              },
+            },
+          }),
+        });
+        return;
+      }
+
+      if (decoded.includes("limit(1)")) {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ response: { numFound } }),
+        });
+        return;
+      }
+
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(matches ? buildEpitopeRows(numFound, "Linear peptide") : []),
+      });
+    });
+
+    await page.goto(`/taxonomy/${INFLUENZA_TAXON_ID}?tab=epitopes`);
+    await expect(page.getByText("SEQ0")).toBeVisible({ timeout: 10_000 });
+
+    await page.getByRole("button", { name: "Show Filters" }).click();
+    await page.getByRole("button", { name: /^Linear peptide \(/ }).click();
+
+    // The regression hangs here forever at "Showing 0-0 of 0 results" — assert the
+    // real match count instead, proving the request carried a quoted phrase value.
+    await expect(page.getByText(/Showing 1-3 of 3 results/)).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText(/Showing 0-0 of 0 results/)).not.toBeVisible();
+  });
+});

@@ -1,5 +1,6 @@
 import { test, expect, applyBackendMocks } from "../../mocks/backends";
 import { permissiveBackendOverrides } from "../../fixtures/overrides";
+import { TaxonPage } from "../../pages";
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
@@ -37,10 +38,10 @@ test.describe("taxon serology tab", () => {
       ],
     });
 
-    await page.goto(`/taxonomy/${SEROLOGY_TAXON_ID}?tab=serology`);
-    await expect(page).toHaveURL(/tab=serology/);
-    await expect(page.getByText("Showing 1-3 of 3 results")).toBeVisible({ timeout: 10_000 });
-    await expect(page.getByText("sample-0")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Serology" })).toBeVisible();
+    const taxon = new TaxonPage(page);
+    await taxon.goto(SEROLOGY_TAXON_ID, "serology");
+    await expect(taxon.resultsSummary("Showing 1-3 of 3 results")).toBeVisible({ timeout: 10_000 });
+    await expect(taxon.rowCell("sample-0")).toBeVisible();
+    await expect(taxon.tabButton("Serology")).toBeVisible();
   });
 });

@@ -6,10 +6,9 @@
  * effect code paths without hitting the BV-BRC API.
  */
 import { render, screen, waitFor } from "@testing-library/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { http, HttpResponse } from "msw";
-import React from "react";
 
+import { createQueryClientWrapper } from "@/test-helpers/api-route-helpers";
 import { server } from "@/test-helpers/msw-server";
 import { ListData } from "../list-data";
 
@@ -40,18 +39,6 @@ afterEach(() => {
   delete process.env.NEXT_PUBLIC_DATA_API;
 });
 
-function makeWrapper() {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false } },
-  });
-  function Wrapper({ children }: { children: React.ReactNode }) {
-    return (
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    );
-  }
-  return { queryClient, Wrapper };
-}
-
 describe("ListData serology", () => {
   it("renders serology rows for the taxon query", async () => {
     server.use(
@@ -63,7 +50,7 @@ describe("ListData serology", () => {
       }),
     );
 
-    const { Wrapper } = makeWrapper();
+    const Wrapper = createQueryClientWrapper();
     render(
       <Wrapper>
         <ListData resource="serology" q="eq(taxon_lineage_ids,2955291)" />
@@ -90,7 +77,7 @@ describe("ListData serology", () => {
       }),
     );
 
-    const { Wrapper } = makeWrapper();
+    const Wrapper = createQueryClientWrapper();
     render(
       <Wrapper>
         <ListData resource="serology" q="eq(taxon_lineage_ids,2955291)" />
@@ -123,7 +110,7 @@ describe("ListData serology", () => {
       }),
     );
 
-    const { Wrapper } = makeWrapper();
+    const Wrapper = createQueryClientWrapper();
     render(
       <Wrapper>
         <ListData resource="serology" q="eq(taxon_lineage_ids,2955291)" />

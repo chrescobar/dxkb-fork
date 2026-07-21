@@ -1,0 +1,43 @@
+src/components/services/list-data.tsx
+  s_404fa794a1f6ec::t_d67ad87e4fcb6b 61
+  s_404fa794a1f6ec::t_e87c87616cfaae 27
+src/app/(views)/taxonomy/[taxonId]/__tests__/nav-items.test.tsx
+  s_404fa794a1f6ec::t_fd249d569cddee 62
+  s_404fa794a1f6ec::t_6f22f34ec165fd 58
+src/components/detail-panel/info-panel.tsx
+  s_404fa794a1f6ec::t_0c6b1684e65d0f 211-216
+  s_404fa794a1f6ec::t_ca4d34ddc5480c 17
+src/components/detail-panel/__tests__/info-panel-search.test.tsx
+  s_404fa794a1f6ec::t_3e2306df8e8205 99
+  s_404fa794a1f6ec::t_fc78fb6485d984 101
+  s_404fa794a1f6ec::t_4c0b570a7949f0 77,81-98,100,102
+  s_404fa794a1f6ec::t_31cba6b22aeaa7 103
+src/components/search/search-action-bar.tsx
+  s_404fa794a1f6ec::t_e1514eff8d79b0 78
+src/app/(views)/taxonomy/[taxonId]/_components/nav-items.tsx
+  s_404fa794a1f6ec::t_508bba0b6313dd 60
+  s_404fa794a1f6ec::t_6ef60822652c60 25
+src/app/api/e2e-mock/[...path]/route.ts
+  s_404fa794a1f6ec::t_739d021416c32f 42
+src/constants/resources.ts
+  s_404fa794a1f6ec::t_cf825efc35877e 16
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_404fa794a1f6ec::t_a17dfd9ac2fc14 273-299
+  s_404fa794a1f6ec::t_369618ff922b7a 13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "d9a6b65e8998fbab54fdae387f7ae2997922c979",
+  "prompts": {},
+  "sessions": {
+    "s_404fa794a1f6ec": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_079c31c30ffeVtjTMdpfebwtV7",
+        "model": "gpt55"
+      },
+      "human_author": null
+    }
+  }
+}

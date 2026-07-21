@@ -65,6 +65,14 @@ describe("buildRql", () => {
     expect(rql).toBe("eq(host_name,%22Mus%20musculus%20B10.A%284R%22)");
   });
 
+  it("does not quote gt() values (numeric comparison, not a phrase match)", () => {
+    const rql = buildRql({
+      selected: [{ field: "genome_length", value: "100", op: "gt" }],
+      keywords: [],
+    });
+    expect(rql).toBe("gt(genome_length,100)");
+  });
+
   it("returns empty string when nothing is selected", () => {
     expect(buildRql({ selected: [], keywords: [] })).toBe("");
   });

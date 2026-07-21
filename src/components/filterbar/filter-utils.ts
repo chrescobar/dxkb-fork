@@ -30,7 +30,9 @@ export function buildRql({ selected, keywords }: { selected: RqlFilter[]; keywor
     const expr =
       f.op === "between"
         ? `between(${encodeRqlField(f.field)},${encodeRqlValue((f.value as [string, string])[0])},${encodeRqlValue((f.value as [string, string])[1])})`
-        : `${f.op}(${encodeRqlField(f.field)},${encodeRqlEqValue(String(f.value))})`;
+        : f.op === "eq"
+          ? `eq(${encodeRqlField(f.field)},${encodeRqlEqValue(String(f.value))})`
+          : `${f.op}(${encodeRqlField(f.field)},${encodeRqlValue(String(f.value))})`;
 
     const bucket = grouped.get(f.field) ?? [];
     bucket.push(expr);

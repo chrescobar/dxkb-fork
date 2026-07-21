@@ -1,0 +1,21 @@
+src/components/filterbar/filter-utils.ts
+  s_47fbd8b38b9db3::t_82bf405ad18732 33-35
+src/components/filterbar/__tests__/filter-utils.test.ts
+  s_47fbd8b38b9db3::t_b593b306cabfa8 68-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "127daf9145f2e55281c035c31e0875432abbf5f1",
+  "prompts": {},
+  "sessions": {
+    "s_47fbd8b38b9db3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ad9ce2a9-852e-40f2-a95b-afe5d19da24d",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

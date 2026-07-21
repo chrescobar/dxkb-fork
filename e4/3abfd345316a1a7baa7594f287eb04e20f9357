@@ -1,0 +1,28 @@
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_460eb586197ecb::t_ea35a1dc13fdd8 12
+  s_460eb586197ecb::t_b4017a512ffee4 215,240-271
+  s_460eb586197ecb::t_ebf29b514a30bb 1
+src/app/(views)/taxonomy/[taxonId]/views/experiments.tsx
+  s_460eb586197ecb::t_7d5a5add77e559 1-35
+src/app/(views)/taxonomy/[taxonId]/__tests__/nav-items.test.tsx
+  s_460eb586197ecb::t_d28a79641b5fc5 52
+src/app/(views)/taxonomy/[taxonId]/_components/nav-items.tsx
+  s_460eb586197ecb::t_5a691f19fbef3d 53
+  s_460eb586197ecb::t_45b948b0187fd0 19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "e43abfd345316a1a7baa7594f287eb04e20f9357",
+  "prompts": {},
+  "sessions": {
+    "s_460eb586197ecb": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_07f26068fffe356Nz2wFnGtVdb",
+        "model": "gpt55"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

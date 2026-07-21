@@ -482,7 +482,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
           onColumnVisibilityChange={setColumnVisibility}
           isAllPagesSelected={isAllPagesSelected}
           onAllPagesSelectionChange={handleAllPagesSelectionChange}
-          onDownloadAll={(format, visibleColumns) => { void handleDownloadAll(format, visibleColumns); }}
+          onDownloadAll={handleDownloadAll}
           isLoading={metaLoading || dataLoading || isPlaceholderData}
           selectedIds={selectedIds ?? []}
         />

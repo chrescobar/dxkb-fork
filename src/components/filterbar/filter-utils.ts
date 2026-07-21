@@ -9,6 +9,13 @@ function encodeRqlValue(val: string) {
     ;
 }
 
+// Solr string fields split unquoted multi-word values into separate ANDed
+// terms (e.g. `eq(epitope_type,Linear peptide)` becomes `epitope_type:Linear
+// AND epitope_type:peptide`, matching nothing). Quoting forces a phrase match.
+function encodeRqlEqValue(val: string) {
+  return `%22${encodeRqlValue(val)}%22`;
+}
+
 interface RqlFilter {
   op: string;
   field: string;
@@ -23,7 +30,9 @@ export function buildRql({ selected, keywords }: { selected: RqlFilter[]; keywor
     const expr =
       f.op === "between"
         ? `between(${encodeRqlField(f.field)},${encodeRqlValue((f.value as [string, string])[0])},${encodeRqlValue((f.value as [string, string])[1])})`
-        : `${f.op}(${encodeRqlField(f.field)},${encodeRqlValue(String(f.value))})`;
+        : f.op === "eq"
+          ? `eq(${encodeRqlField(f.field)},${encodeRqlEqValue(String(f.value))})`
+          : `${f.op}(${encodeRqlField(f.field)},${encodeRqlValue(String(f.value))})`;
 
     const bucket = grouped.get(f.field) ?? [];
     bucket.push(expr);

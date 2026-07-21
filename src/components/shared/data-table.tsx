@@ -84,7 +84,7 @@ interface DataTableProps {
   totalSelectedCount?: number;
 
   // Optional download handler
-  onDownloadAll?: (format: 'csv' | 'txt', visibleColumns: string[] | null) => void;
+  onDownloadAll?: (format: 'csv' | 'txt', visibleColumns: string[] | null) => void | Promise<void>;
   // Loading indicator: parent can set this while data is being fetched
   isLoading?: boolean;
 
@@ -648,9 +648,9 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
         const visibleCols = onlyVisibleColumns
           ? allCols.filter(col => col.getIsVisible() && col.id !== '__select__')
           : allCols.filter(col => col.id !== '__select__');
-        
+
         const visibleColumnIds = visibleCols.map(col => col.id);
-        onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
+        await onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
         setDownloadingButton(null);
         return;
       }
@@ -663,7 +663,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
           : allCols.filter(col => col.id !== '__select__');
 
         const visibleColumnIds = visibleCols.map(col => col.id);
-        onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
+        await onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
         setDownloadingButton(null);
         return;
       }

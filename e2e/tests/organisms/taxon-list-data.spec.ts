@@ -139,3 +139,145 @@ test.describe("taxon domains-and-motifs: Download Selected sends POST not GET", 
     expect(body).toContain("mock-pf-0199");
   });
 });
+
+// ─── "Downloading..." indicator on the plain Download buttons ────────────────
+// Regression: the plain Download (CSV)/(TXT) buttons route through ListData's
+// onDownloadAll (every ListData instance wires it), and DataTable fired that
+// callback without awaiting it — clearing the "Downloading..." state before the
+// fetch/blob work finished. Selected-row downloads (bounded page fetch, real
+// .finally()) never hit this path, so they never regressed. A slow backend
+// response is required to observe the transient state; this delays the
+// page-data GET (the request onDownloadAll re-issues) by 500ms.
+test.describe("taxon domains-and-motifs: 'Downloading...' indicator on Download (CSV)", () => {
+  test("shows 'Downloading...' while the download fetch is in flight, then reverts", async ({ page }) => {
+    const rows = buildProteinFeatureRows(3);
+
+    await applyBackendMocks(page, {
+      overrides: [
+        { url: pfLoopbackCount, method: "GET", body: { response: { numFound: 3 } } },
+        { url: pfLoopback, method: "GET", body: rows },
+        ...permissiveBackendOverrides,
+      ],
+    });
+
+    // Registered after applyBackendMocks so it wins (routes are LIFO) and delays
+    // only the row-data GET the Download (CSV) button re-issues via handleDownloadAll.
+    // Must fall through the &limit(1) count request — pfLoopback matches both, and
+    // delaying/misshaping the count response would zero out totalItems and block
+    // the initial page-data fetch entirely (enabled: totalItems > 0).
+    await page.route(pfLoopback, async (route) => {
+      const url = route.request().url();
+      if (route.request().method() !== "GET" || pfLoopbackCount.test(url)) return route.fallback();
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(rows),
+      });
+    });
+
+    await page.goto(`/taxonomy/${DOMAINS_TAXON_ID}?tab=domains-and-motifs`);
+    await expect(page.getByText("mock-product-0")).toBeVisible({ timeout: 10_000 });
+
+    await page.getByRole("button", { name: /^Download \(CSV\)$/i }).click();
+
+    await expect(page.getByText("Downloading...")).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Download \(TXT\)$/i })).toBeDisabled();
+
+    await expect(page.getByText("Downloading...")).not.toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("button", { name: /^Download \(CSV\)$/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Download \(TXT\)$/i })).toBeEnabled();
+  });
+});
+
+// ─── Facet click regression: multi-word eq() values must be quoted ───────────
+// Regression: buildRql() (src/components/filterbar/filter-utils.ts) built eq()
+// clauses with unquoted values. Solr string fields (e.g. epitope_type) split an
+// unquoted multi-word value into separate ANDed terms —
+// `eq(epitope_type,Linear peptide)` becomes `epitope_type:Linear AND
+// epitope_type:peptide`, matching nothing — so clicking any multi-word facet
+// value hung the table at "Showing 0-0 of 0 results" forever. Fix: quote eq()
+// values. buildRql() is shared by every resource's FilterBar (genome, strain,
+// epitope, surveillance, ...), so this one test on the epitope tab exercises
+// the fix for all views — the bug and the fix live in one shared function.
+const epitopeLoopback = /\/api\/e2e-mock\/data\/epitope\//;
+
+function buildEpitopeRows(count: number, epitopeType: string) {
+  return Array.from({ length: count }, (_, i) => ({
+    epitope_id: 100000 + i,
+    epitope_type: epitopeType,
+    epitope_sequence: `SEQ${String(i)}`,
+    organism: "Influenza A virus",
+    protein_name: "Nucleoprotein",
+    total_assays: 1,
+    date_inserted: "2021-09-20",
+  }));
+}
+
+test.describe("taxon epitopes tab: facet click with a multi-word value", () => {
+  test("clicking a multi-word Epitope Type facet value returns matching rows, not an empty table", async ({ page }) => {
+    await applyBackendMocks(page, { overrides: [...permissiveBackendOverrides] });
+
+    // Fakes a minimal Solr backend for the epitope resource, distinguishing the
+    // three request shapes ListData + FacetPanel issue: facet query (has
+    // "facet("), count query (bare "limit(1)"), and page-data query (has
+    // "select("). Only a correctly quoted phrase match
+    // (`eq(epitope_type,"Linear peptide")`) is treated as a hit — an unquoted
+    // value (the regression) must NOT match, which is what makes this test
+    // catch the bug coming back.
+    await page.route(epitopeLoopback, async (route) => {
+      if (route.request().method() !== "GET") return route.fallback();
+      const decoded = decodeURIComponent(route.request().url());
+
+      const hasEpitopeTypeEq = decoded.includes("eq(epitope_type,");
+      const hasQuotedPhrase = decoded.includes('eq(epitope_type,"Linear peptide")');
+      const matches = !hasEpitopeTypeEq || hasQuotedPhrase;
+      const numFound = matches ? (hasEpitopeTypeEq ? 3 : 10) : 0;
+
+      if (decoded.includes("facet(")) {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            response: { numFound },
+            facet_counts: {
+              facet_fields: {
+                epitope_type: matches ? ["Linear peptide", 10, "Discontinuous peptide", 2] : [],
+                protein_name: [],
+                host_name: [],
+                assay_results: [],
+              },
+            },
+          }),
+        });
+        return;
+      }
+
+      if (decoded.includes("limit(1)")) {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ response: { numFound } }),
+        });
+        return;
+      }
+
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(matches ? buildEpitopeRows(numFound, "Linear peptide") : []),
+      });
+    });
+
+    await page.goto(`/taxonomy/${INFLUENZA_TAXON_ID}?tab=epitopes`);
+    await expect(page.getByText("SEQ0")).toBeVisible({ timeout: 10_000 });
+
+    await page.getByRole("button", { name: "Show Filters" }).click();
+    await page.getByRole("button", { name: /^Linear peptide \(/ }).click();
+
+    // The regression hangs here forever at "Showing 0-0 of 0 results" — assert the
+    // real match count instead, proving the request carried a quoted phrase value.
+    await expect(page.getByText(/Showing 1-3 of 3 results/)).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText(/Showing 0-0 of 0 results/)).not.toBeVisible();
+  });
+});

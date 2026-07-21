@@ -1,0 +1,33 @@
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_6fa043d101e38d::t_49a8ea8a4a85cc 61-68
+src/app/api/e2e-mock/[...path]/route.ts
+  s_6fa043d101e38d::t_4333b7d785871f 581
+  s_6fa043d101e38d::t_90d26516f96a7e 112-122
+src/app/(views)/taxonomy/[taxonId]/views/serology.tsx
+  s_6fa043d101e38d::t_f82a46fca42168 11
+e2e/tests/organisms/serology.spec.ts
+  s_6fa043d101e38d::t_4c57826130d535 9-12,18-20
+  s_6fa043d101e38d::t_d962b899e81749 1-8,13-17,21-41,44-46
+  s_6fa043d101e38d::t_475434aa3d2759 42-43
+src/constants/datafields/serology.ts
+  s_6fa043d101e38d::t_ea35c6fa8a6927 206-213,215-217,219-222
+src/components/services/__tests__/list-data-serology.test.tsx
+  s_6fa043d101e38d::t_ba681c03339975 1-72,77-142
+  s_6fa043d101e38d::t_ce1da4a565c308 73-76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "7ea9f4175e14158419a2fdb34dc6841bf6742a12",
+  "prompts": {},
+  "sessions": {
+    "s_6fa043d101e38d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c1223484-f848-40a3-834f-84542cb8aed3",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

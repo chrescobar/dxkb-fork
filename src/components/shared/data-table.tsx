@@ -346,15 +346,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
       ...columns.map((col) => ({
         accessorKey: col.id,
         header: col.label,
-        cell: (info: CellContext<Record<string, unknown>, unknown>) => {
-          const value = info.getValue();
-          if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(value)) {
-            const date = new Date(value);
-            return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getFullYear())}`;
-          }
-          if (Array.isArray(value)) return value.join(', ');
-          return value;
-        },
+        cell: (info: CellContext<Record<string, unknown>, unknown>) => formatCellValue(info.getValue()),
         size: estimateHeaderWidth(col.label),
         enableResizing: true,
         enableSorting: true,
@@ -1386,6 +1378,18 @@ export function computeShiftRangeIds(
 // minimum width. ~7px/char at bold 12px system-ui + 32px th padding, clamped to
 // [60, 250]. This is an approximation, not a pixel mirror of the canvas measurement;
 // exact fit is applied once by computeAutoColumnSizes when data arrives.
+// Array-valued fields (e.g. treatment_duration: [3,6,12,18]) must not render as
+// raw React children — React joins array children with no separator, reading as
+// "361218" instead of "3, 6, 12, 18".
+export function formatCellValue(value: unknown): unknown {
+  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(value)) {
+    const date = new Date(value);
+    return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getFullYear())}`;
+  }
+  if (Array.isArray(value)) return value.join(', ');
+  return value;
+}
+
 export function estimateHeaderWidth(label: string): number {
   const longestWord = label
     .split(/\s+/)

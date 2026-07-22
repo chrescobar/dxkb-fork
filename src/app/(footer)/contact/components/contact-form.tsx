@@ -97,13 +97,19 @@ const ContactForm = () => {
                       <form.Field name="inquiryType">
                         {(field) => (
                           <FieldItem>
-                            <FieldLabel
-                              field={field}
+                            {/*
+                              Group label: uses id + aria-labelledby rather than
+                              htmlFor, since a radio group has no single input to
+                              associate with.
+                            */}
+                            <span
+                              id="inquiryType-label"
                               className="text-base font-medium"
                             >
                               What can we help you with?
-                            </FieldLabel>
+                            </span>
                             <RadioGroup
+                              aria-labelledby="inquiryType-label"
                               value={field.state.value}
                               onValueChange={(value) =>
                                 field.handleChange(value as InquiryType)

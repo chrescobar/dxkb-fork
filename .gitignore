@@ -61,3 +61,8 @@ next-env.d.ts
 /playwright/.cache/
 /e2e/.auth/
 # /e2e/__snapshots__ is NOT ignored — baselines must be committed for visual regression to work.
+
+# a11y scan artifacts (generated)
+/a11y-report/
+/a11y-results/
+/.screenshots/

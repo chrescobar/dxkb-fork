@@ -54,7 +54,7 @@ export async function createSession(
     cookieStore.set("bvbrc_realm", "", { ...cookieOptions, maxAge: 0 });
   }
 
-  const userId = String(userProfile?.id ?? username.split("@")[0]);
+  const userId = userProfile?.id ?? username.split("@")[0];
   cookieStore.set("bvbrc_user_id", userId, {
     ...cookieOptions,
     maxAge: sessionMaxAge,
@@ -141,7 +141,7 @@ export async function serverAuthenticatedFetch(
     throw new Error("Not authenticated");
   }
 
-  const callerHeaders = new Headers(options.headers as HeadersInit);
+  const callerHeaders = new Headers(options.headers);
   if (!callerHeaders.has("Content-Type")) {
     callerHeaders.set("Content-Type", "application/json");
   }

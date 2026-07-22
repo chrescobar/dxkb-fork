@@ -21,17 +21,17 @@ export function SvgViewer({ filePath, fileName }: SvgViewerProps) {
       <Button
         variant={viewMode === "image" ? "default" : "ghost"}
         size="sm"
-        onClick={() => setViewMode("image")}
+        onClick={() => { setViewMode("image"); }}
       >
-        <ImageIcon className="mr-1 h-4 w-4" />
+        <ImageIcon className="mr-1 size-4" />
         Image
       </Button>
       <Button
         variant={viewMode === "code" ? "default" : "ghost"}
         size="sm"
-        onClick={() => setViewMode("code")}
+        onClick={() => { setViewMode("code"); }}
       >
-        <Code className="mr-1 h-4 w-4" />
+        <Code className="mr-1 size-4" />
         Code
       </Button>
     </>
@@ -39,7 +39,7 @@ export function SvgViewer({ filePath, fileName }: SvgViewerProps) {
 
   if (viewMode === "code") {
     return (
-      <div className="flex h-full w-full flex-col">
+      <div className="flex size-full flex-col">
         <div className="flex items-center gap-1 border-b border-border px-2 py-1">
           {modeToggle}
         </div>

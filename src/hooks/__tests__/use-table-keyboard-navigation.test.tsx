@@ -2,16 +2,18 @@ import { renderHook, act } from "@testing-library/react";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
 import type React from "react";
 
+type TestKeyEvent = React.KeyboardEvent & { preventDefault: ReturnType<typeof vi.fn> };
+
 function createKeyEvent(
   overrides: Partial<React.KeyboardEvent> & { key: string },
-): React.KeyboardEvent {
+): TestKeyEvent {
   return {
     key: overrides.key,
     preventDefault: vi.fn(),
     shiftKey: overrides.shiftKey ?? false,
     metaKey: overrides.metaKey ?? false,
     ctrlKey: overrides.ctrlKey ?? false,
-  } as unknown as React.KeyboardEvent;
+  } as unknown as TestKeyEvent;
 }
 
 describe("useTableKeyboardNavigation", () => {

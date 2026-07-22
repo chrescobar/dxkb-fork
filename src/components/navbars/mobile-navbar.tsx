@@ -5,9 +5,11 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 import { useQuery } from "@tanstack/react-query";
+import { NavbarThemeSwitcher } from "@/components/navbars/theme-switcher-navbar";
 import {
   Star,
   ChevronDown,
+  Command as CommandIcon,
   Menu,
   Search,
   ChevronUp,
@@ -19,10 +21,11 @@ import {
 } from "lucide-react";
 
 import {
-  gettingStartedItems,
+  resourcesItems,
   organismItems,
   serviceItems,
   workspaceNavItems,
+  type NavSection,
 } from "@/components/navbars/navbar-links";
 import {
   workspaceUsername,
@@ -41,6 +44,7 @@ import {
   CollapsibleContent,
 } from "@/components/ui/collapsible";
 import { SearchBar } from "@/components/search/search-bar";
+import { openCommandPalette } from "@/components/search/command-palette";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/lib/auth/hooks";
@@ -69,8 +73,8 @@ function SectionTrigger({
 }) {
   return (
     <CollapsibleTrigger className="group flex w-full items-center gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40 data-open:bg-secondary/5">
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-secondary/10 text-secondary transition-colors group-hover:bg-secondary/20 group-data-open:bg-secondary/20">
-        <Icon className="h-4 w-4" />
+      <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-secondary/10 text-secondary transition-colors group-hover:bg-secondary/20 group-data-open:bg-secondary/20">
+        <Icon className="size-4" />
       </div>
       <span className="flex-1 text-left text-sm font-semibold text-foreground">
         {children}
@@ -80,7 +84,7 @@ function SectionTrigger({
           {count}
         </span>
       )}
-      <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 group-data-open:rotate-180" />
+      <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-data-open:rotate-180" />
     </CollapsibleTrigger>
   );
 }
@@ -91,7 +95,7 @@ function SubSectionTrigger({ children }: { children: React.ReactNode }) {
       <span className="text-left text-[13px] font-semibold text-foreground/85 transition-colors group-hover:text-secondary group-data-open:text-foreground">
         {children}
       </span>
-      <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground transition-all duration-200 group-hover:text-secondary/60 group-data-open:rotate-180" />
+      <ChevronDown className="size-3.5 shrink-0 text-muted-foreground transition-all duration-200 group-hover:text-secondary/60 group-data-open:rotate-180" />
     </CollapsibleTrigger>
   );
 }
@@ -99,7 +103,7 @@ function SubSectionTrigger({ children }: { children: React.ReactNode }) {
 function SubSectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center py-2.5">
-      <span className="flex flex-1 items-center gap-1.5 text-[14px] font-semibold text-foreground/85">
+      <span className="flex flex-1 items-center gap-1.5 text-sm font-semibold text-foreground/85">
         {children}
       </span>
     </div>
@@ -119,11 +123,11 @@ function NavLink({
     <Link
       href={href}
       target={target}
-      className="group/link flex items-center gap-2 rounded-md px-2 py-2 text-sm text-foreground/75 transition-all hover:bg-secondary/8 hover:text-foreground"
+      className="group/link flex items-center gap-2 rounded-md p-2 text-sm text-foreground/75 transition-all hover:bg-secondary/8 hover:text-foreground"
     >
       {children}
       {target === "_blank" && (
-        <ExternalLink className="h-3 w-3 text-muted-foreground transition-colors group-hover/link:text-secondary" />
+        <ExternalLink className="size-3 text-muted-foreground transition-colors group-hover/link:text-secondary" />
       )}
     </Link>
   );
@@ -152,14 +156,14 @@ function DecoratedSubSection({
   return (
     <div>
       <div className="flex gap-3">
-        <div className="flex flex-col items-center pt-[16px]">
-          <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${dotColor}`} />
+        <div className="flex flex-col items-center pt-4">
+          <span className={`size-1.5 shrink-0 rounded-full ${dotColor}`} />
           <div className={`mt-0.5 w-0.5 flex-1 ${lineColor} ${showClass}`} />
         </div>
         <div className="min-w-0 flex-1">{children}</div>
       </div>
       <div
-        className={`ml-[2px] h-3 rounded-bl-xl border-b-2 border-l-2 ${curveColor} ${showClass}`}
+        className={`ml-0.5 h-3 rounded-bl-xl border-b-2 border-l-2 ${curveColor} ${showClass}`}
       />
     </div>
   );
@@ -197,18 +201,20 @@ const MobileNavbar = () => {
     recentFolders.length;
 
   return (
-    <header className="bg-primary flex flex-col lg:hidden">
-      <div className="flex items-center justify-between px-4 py-4 text-primary-foreground">
+    <header className="flex flex-col bg-primary lg:hidden">
+      <div className="flex items-center justify-between p-4 text-primary-foreground">
         <div className="flex items-center gap-4">
           <Sheet>
             <SheetTrigger
               render={(triggerProps) => (
                 <Button
                   variant="ghost"
+                  aria-label="Open navigation menu"
                   className="group hover:bg-white/15"
                   {...triggerProps}
                 >
                   <Menu
+                    aria-hidden="true"
                     className="scale-125 text-primary-foreground transition-all duration-300 group-hover:scale-150"
                     data-icon="inline-start"
                   />
@@ -241,31 +247,13 @@ const MobileNavbar = () => {
               </div>
 
               <nav className="flex flex-col pb-6">
-                {/* Getting Started */}
-                <Collapsible>
-                  <SectionTrigger icon={BookOpen} count={gettingStartedItems.length}>
-                    Getting Started
-                  </SectionTrigger>
-                  <CollapsibleContent className="*:data-[slot=collapsible-divider]:hidden">
-                    <div className="flex flex-col px-5 pb-3 pt-2">
-                      {gettingStartedItems.map((item) => (
-                        <NavLink key={item.href} href={item.href} target={item.target}>
-                          {item.title}
-                        </NavLink>
-                      ))}
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                <div className="mx-4 h-px bg-border" />
-
                 {/* Organisms */}
                 <Collapsible>
                   <SectionTrigger icon={Bug} count={organismItems.length}>
                     Organisms
                   </SectionTrigger>
                   <CollapsibleContent className="*:data-[slot=collapsible-divider]:hidden">
-                    <div className="flex flex-col px-5 pb-3 pt-2">
+                    <div className="flex flex-col px-5 pt-2 pb-3">
                       {organismItems.map((item) => (
                         <NavLink key={item.href} href={item.href}>
                           {item.title}
@@ -283,8 +271,8 @@ const MobileNavbar = () => {
                     Services
                   </SectionTrigger>
                   <CollapsibleContent className="*:data-[slot=collapsible-divider]:hidden">
-                    <div className="flex flex-col gap-1.5 px-5 pb-3 pt-2">
-                      {Object.entries(serviceItems).map(([key, section]) => (
+                    <div className="flex flex-col gap-1.5 px-5 pt-2 pb-3">
+                      {(Object.entries(serviceItems) as unknown as [string, NavSection][]).map(([key, section]) => (
                         <Collapsible key={key} className="group/sub">
                           <DecoratedSubSection>
                             <SubSectionTrigger>{section.title}</SubSectionTrigger>
@@ -322,7 +310,7 @@ const MobileNavbar = () => {
                         <Skeleton className="h-5 w-32 bg-muted" />
                       </div>
                     ) : (
-                      <div className="flex flex-col gap-1.5 px-5 pb-3 pt-2">
+                      <div className="flex flex-col gap-1.5 px-5 pt-2 pb-3">
                         <DecoratedSubSection alwaysShow>
                           <SubSectionLabel>
                             {workspaceNavItems.workspaces.title}
@@ -360,7 +348,7 @@ const MobileNavbar = () => {
                           >
                             <SubSectionLabel>
                               Favorites{" "}
-                              <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                              <Star className="size-3 fill-amber-400 text-amber-400" />
                             </SubSectionLabel>
                             {favoritePaths.map((path) => (
                               <NavLink key={path} href={buildFolderHref(path)}>
@@ -405,6 +393,24 @@ const MobileNavbar = () => {
                     )}
                   </CollapsibleContent>
                 </Collapsible>
+
+                <div className="mx-4 h-px bg-border" />
+
+                {/* Resources */}
+                <Collapsible>
+                  <SectionTrigger icon={BookOpen} count={resourcesItems.length}>
+                    Resources
+                  </SectionTrigger>
+                  <CollapsibleContent className="*:data-[slot=collapsible-divider]:hidden">
+                    <div className="flex flex-col px-5 pt-2 pb-3">
+                      {resourcesItems.map((item) => (
+                        <NavLink key={item.href} href={item.href} target={item.target}>
+                          {item.title}
+                        </NavLink>
+                      ))}
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
               </nav>
             </SheetContent>
           </Sheet>
@@ -418,23 +424,35 @@ const MobileNavbar = () => {
               priority
             />
           </Link>
-          <span className="self-start mt-0 text-[11px] font-semibold italic text-white/90">
+          <span className="mt-0 self-start text-[11px] font-semibold text-white/90 italic">
             v{process.env.NEXT_PUBLIC_APP_VERSION}
           </span>
         </div>
 
         <div className="flex items-center space-x-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-primary-foreground hover:bg-white/15"
+            onClick={openCommandPalette}
+            aria-label="Open command palette"
+            aria-keyshortcuts="Meta+K Control+K"
+          >
+            <CommandIcon size={18} />
+          </Button>
           {!isHome && (
             <Button
               variant="ghost"
               size="sm"
               className="text-primary-foreground hover:bg-white/15"
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              onClick={() => { setIsSearchOpen(!isSearchOpen); }}
               aria-label={isSearchOpen ? "Close search" : "Open search"}
             >
               {isSearchOpen ? <ChevronUp size={18} /> : <Search size={18} />}
             </Button>
           )}
+
+          <NavbarThemeSwitcher />
 
           {isLoading && (
             <div className="flex items-center space-x-2">

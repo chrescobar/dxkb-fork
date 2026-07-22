@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import {
   FieldItem,
   FieldLabel,
@@ -111,16 +112,16 @@ export default function TaxonomicClassificationPage() {
 
   const form = useForm({
     defaultValues:
-      defaultTaxonomicClassificationFormValues as TaxonomicClassificationFormData,
+      defaultTaxonomicClassificationFormValues,
     validators: { onChange: taxonomicClassificationFormSchema },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as TaxonomicClassificationFormData);
+      await runtime.submitFormData(value);
     },
   });
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const sequenceType = useStore(form.store, (s) => s.values.sequence_type);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const sequenceType = useSelector(form.store, (s) => s.values.sequence_type);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   // Update analysis type and database when sequence type changes
   useEffect(() => {
@@ -329,7 +330,7 @@ export default function TaxonomicClassificationPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="grid grid-cols-1 gap-6 md:grid-cols-12"
       >
@@ -353,11 +354,12 @@ export default function TaxonomicClassificationPage() {
                   <Label className="service-card-label">
                     Paired Read Library
                   </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
+                  <div className="mx-4 h-px flex-1 bg-border" />
                   <Button
                     type="button"
                     variant="outline"
                     size="icon"
+                    aria-label="Add paired read library"
                     onClick={handlePairedLibraryAdd}
                     disabled={!pairedRead1 || !pairedRead2}
                   >
@@ -393,7 +395,7 @@ export default function TaxonomicClassificationPage() {
                   <Input
                     value={pairedSampleId}
                     onChange={(e) =>
-                      handleSampleIdChange("paired", e.target.value)
+                      { handleSampleIdChange("paired", e.target.value); }
                     }
                     placeholder="Sample ID"
                     className="service-card-input mt-1.5 font-mono text-sm"
@@ -407,11 +409,12 @@ export default function TaxonomicClassificationPage() {
                   <Label className="service-card-label">
                     Single Read Library
                   </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
+                  <div className="mx-4 h-px flex-1 bg-border" />
                   <Button
                     type="button"
                     variant="outline"
                     size="icon"
+                    aria-label="Add single read library"
                     onClick={handleSingleLibraryAdd}
                     disabled={!singleRead}
                   >
@@ -434,7 +437,7 @@ export default function TaxonomicClassificationPage() {
                   <Input
                     value={singleSampleId}
                     onChange={(e) =>
-                      handleSampleIdChange("single", e.target.value)
+                      { handleSampleIdChange("single", e.target.value); }
                     }
                     placeholder="Sample ID"
                     className="service-card-input mt-1.5 font-mono text-sm"
@@ -461,7 +464,7 @@ export default function TaxonomicClassificationPage() {
                 </Label>
                 <Input
                   value={srrSampleId}
-                  onChange={(e) => handleSampleIdChange("srr", e.target.value)}
+                  onChange={(e) => { handleSampleIdChange("srr", e.target.value); }}
                   placeholder="Sample ID"
                   className="service-card-input mt-1.5 font-mono text-sm"
                 />
@@ -482,7 +485,7 @@ export default function TaxonomicClassificationPage() {
                 Selected Libraries
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger>
+                    <TooltipTrigger aria-label="Help: place read files using arrow buttons">
                       <HelpCircle className="service-card-tooltip-icon" />
                     </TooltipTrigger>
                     <TooltipContent>
@@ -537,7 +540,7 @@ export default function TaxonomicClassificationPage() {
                           Sequencing Type
                           <TooltipProvider>
                             <Tooltip>
-                              <TooltipTrigger>
+                              <TooltipTrigger aria-label="Help: select sequencing type for input reads">
                                 <HelpCircle className="service-card-tooltip-icon ml-2" />
                               </TooltipTrigger>
                               <TooltipContent>
@@ -552,12 +555,12 @@ export default function TaxonomicClassificationPage() {
 
                         <RadioGroup
                           value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null &&
-                            field.handleChange(
-                              value as TaxonomicClassificationFormData["sequence_type"],
-                            )
-                          }
+                          onValueChange={(value) => {
+                            if (value != null)
+                              field.handleChange(
+                                value as TaxonomicClassificationFormData["sequence_type"],
+                              );
+                          }}
                           className="service-radio-group-horizontal"
                         >
                           <div className="flex items-center gap-3">
@@ -604,20 +607,17 @@ export default function TaxonomicClassificationPage() {
                           <Select
                             items={analysisTypeOptions}
                             value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(
-                                value as TaxonomicClassificationFormData["analysis_type"],
-                              )
-                            }
+                            onValueChange={(value) => {
+                              if (value != null) field.handleChange(value);
+                            }}
                             disabled={!isAnalysisTypeSelectable(sequenceType)}
                           >
-                            <SelectTrigger className="service-card-select-trigger">
+                            <SelectTrigger className="service-card-select-trigger" aria-label="Analysis Type">
                               <SelectValue placeholder="Select analysis type" />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectGroup>
-                                {analysisTypeOptions.map((option) => (
+                                {analysisTypeOptions.map((option: { value: string; label: string }) => (
                                   <SelectItem
                                     key={option.value}
                                     value={option.value}
@@ -656,19 +656,16 @@ export default function TaxonomicClassificationPage() {
                           <Select
                             items={databaseOptions}
                             value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(
-                                value as TaxonomicClassificationFormData["database"],
-                              )
-                            }
+                            onValueChange={(value) => {
+                              if (value != null) field.handleChange(value);
+                            }}
                           >
-                            <SelectTrigger className="service-card-select-trigger">
+                            <SelectTrigger className="service-card-select-trigger" aria-label="Database">
                               <SelectValue placeholder="Select database" />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectGroup>
-                                {databaseOptions.map((option) => (
+                                {databaseOptions.map((option: { value: string; label: string }) => (
                                   <SelectItem
                                     key={option.value}
                                     value={option.value}
@@ -708,15 +705,12 @@ export default function TaxonomicClassificationPage() {
                           <Select
                             items={hostGenomeOptions}
                             value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(
-                                value as TaxonomicClassificationFormData["host_genome"],
-                              )
-                            }
+                            onValueChange={(value) => {
+                              if (value != null) field.handleChange(value);
+                            }}
                             disabled={!isHostFilteringAvailable(sequenceType)}
                           >
-                            <SelectTrigger className="service-card-select-trigger">
+                            <SelectTrigger className="service-card-select-trigger" aria-label="Filter Host Reads">
                               <SelectValue placeholder="Select filter option" />
                             </SelectTrigger>
                             <SelectContent>
@@ -761,11 +755,11 @@ export default function TaxonomicClassificationPage() {
                           <Select
                             items={confidenceIntervalOptions}
                             value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null && field.handleChange(value)
-                            }
+                            onValueChange={(value) => {
+                              if (value != null) field.handleChange(value);
+                            }}
                           >
-                            <SelectTrigger className="service-card-select-trigger">
+                            <SelectTrigger className="service-card-select-trigger" aria-label="Confidence Interval">
                               <SelectValue placeholder="Select confidence interval" />
                             </SelectTrigger>
                             <SelectContent>
@@ -800,10 +794,9 @@ export default function TaxonomicClassificationPage() {
                           </FieldLabel>
                           <RadioGroup
                             value={field.state.value ? "yes" : "no"}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(value === "yes")
-                            }
+                            onValueChange={(value) => {
+                              if (value != null) field.handleChange(value === "yes");
+                            }}
                             className="service-radio-group-horizontal"
                           >
                             <div className="flex items-center gap-3">
@@ -844,10 +837,9 @@ export default function TaxonomicClassificationPage() {
                           </FieldLabel>
                           <RadioGroup
                             value={field.state.value ? "yes" : "no"}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(value === "yes")
-                            }
+                            onValueChange={(value) => {
+                              if (value != null) field.handleChange(value === "yes");
+                            }}
                             className="service-radio-group-horizontal"
                           >
                             <div className="flex items-center gap-3">
@@ -924,7 +916,7 @@ export default function TaxonomicClassificationPage() {
               type="submit"
               disabled={isSubmitting || !canSubmit || !isOutputNameValid}
             >
-              {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
+              {isSubmitting ? <Spinner className="mr-2 size-4" /> : null}
               Submit
             </Button>
           </div>

@@ -43,8 +43,7 @@ describe("getFastaFileTypeLabel", () => {
   });
 
   it("returns the raw type string for an unknown type", () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(getFastaFileTypeLabel("unknown_type" as any)).toBe("unknown_type");
+    expect(getFastaFileTypeLabel("unknown_type")).toBe("unknown_type");
   });
 });
 
@@ -124,7 +123,7 @@ describe("checkFastaFileLimit", () => {
 
   it("returns false even with many files", () => {
     const files = Array.from({ length: 100 }, (_, i) => ({
-      file: `/workspace/seq${i}.fasta`,
+      file: `/workspace/seq${String(i)}.fasta`,
       type: "feature_protein_fasta" as const,
     }));
     expect(checkFastaFileLimit(files)).toBe(false);

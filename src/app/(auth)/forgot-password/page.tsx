@@ -28,8 +28,6 @@ const formSchema = z.object({
   }),
 });
 
-type FormValues = z.infer<typeof formSchema>;
-
 export default function ForgotPasswordPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -50,15 +48,14 @@ export default function ForgotPasswordPage() {
   const form = useForm({
     defaultValues: {
       usernameOrEmail: "",
-    } as FormValues,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: formSchema as any, onSubmit: formSchema as any },
+    },
+    validators: { onChange: formSchema },
     onSubmit: async ({ value }) => {
       setError("");
       setIsSubmitting(true);
       try {
         const { error: resetError } = await authAccount.requestPasswordReset(
-          (value as FormValues).usernameOrEmail,
+          (value).usernameOrEmail,
         );
         if (resetError) {
           setError("An unexpected error occurred. Please try again.");
@@ -73,7 +70,7 @@ export default function ForgotPasswordPage() {
 
   if (success) {
     return (
-      <div className="bg-background flex items-center justify-center p-4">
+      <div className="flex items-center justify-center bg-background p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
             <CardTitle className="text-center text-2xl font-bold">
@@ -98,7 +95,7 @@ export default function ForgotPasswordPage() {
                 className: "w-full",
               })}
             >
-              <ArrowLeft className="h-4 w-4" data-icon="inline-start" />
+              <ArrowLeft className="size-4" data-icon="inline-start" />
               Back to sign in
             </Link>
           </CardContent>
@@ -108,7 +105,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="bg-background flex items-center justify-center p-4">
+    <div className="flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-center text-2xl font-bold">
@@ -123,13 +120,13 @@ export default function ForgotPasswordPage() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              form.handleSubmit();
+              void form.handleSubmit();
             }}
             className="space-y-4"
           >
             {error && (
               <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
+                <AlertCircle className="size-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
@@ -139,13 +136,13 @@ export default function ForgotPasswordPage() {
                 <FieldItem>
                   <RequiredFormLabel>Username or email</RequiredFormLabel>
                   <div className="relative">
-                    <Mail className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
+                    <Mail className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
                     <Input
                       placeholder="Enter your username or email"
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                     />
@@ -157,12 +154,12 @@ export default function ForgotPasswordPage() {
 
             <Button
               type="submit"
-              className="text-muted-foreground hover:text-foreground w-full transition-all duration-200"
+              className="w-full text-muted-foreground transition-all duration-200 hover:text-foreground"
               disabled={isLoading}
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 size-4 animate-spin" />
                   Sending...
                 </>
               ) : (
@@ -173,9 +170,9 @@ export default function ForgotPasswordPage() {
             <div className="text-center text-sm">
               <Link
                 href="/sign-in"
-                className="group text-primary hover:text-secondary font-medium transition-all duration-300 hover:font-medium"
+                className="group font-medium text-primary transition-all duration-300 hover:font-medium hover:text-secondary"
               >
-                <ArrowLeft className="mr-1 inline h-3 w-3" />
+                <ArrowLeft className="mr-1 inline size-3" />
                 Back to sign in
               </Link>
             </div>

@@ -28,7 +28,7 @@ describe("transformTaxonomicClassificationParams", () => {
   };
 
   it("returns basic fields (output_path, output_file, database, confidence_interval)", () => {
-    const result = transformTaxonomicClassificationParams(baseData as never);
+    const result = transformTaxonomicClassificationParams(baseData);
 
     expect(result).toEqual(
       expect.objectContaining({
@@ -42,7 +42,7 @@ describe("transformTaxonomicClassificationParams", () => {
 
   it("trims output_file whitespace", () => {
     const data = { ...baseData, output_file: "  taxonomic_result  " };
-    const result = transformTaxonomicClassificationParams(data as never);
+    const result = transformTaxonomicClassificationParams(data);
 
     expect(result.output_file).toBe("taxonomic_result");
   });
@@ -54,34 +54,34 @@ describe("transformTaxonomicClassificationParams", () => {
       analysis_type: "default" as const,
       database: "SILVA" as const,
     };
-    const result = transformTaxonomicClassificationParams(data as never);
+    const result = transformTaxonomicClassificationParams(data);
 
     expect(result.sequence_type).toBe("sixteenS");
   });
 
   it("passes through wgs sequence_type as-is", () => {
-    const result = transformTaxonomicClassificationParams(baseData as never);
+    const result = transformTaxonomicClassificationParams(baseData);
 
     expect(result.sequence_type).toBe("wgs");
   });
 
   it("converts save_classified_sequences boolean to string", () => {
     const data = { ...baseData, save_classified_sequences: true };
-    const result = transformTaxonomicClassificationParams(data as never);
+    const result = transformTaxonomicClassificationParams(data);
 
     expect(result.save_classified_sequences).toBe("true");
   });
 
   it("converts save_unclassified_sequences boolean to string", () => {
     const data = { ...baseData, save_unclassified_sequences: true };
-    const result = transformTaxonomicClassificationParams(data as never);
+    const result = transformTaxonomicClassificationParams(data);
 
     expect(result.save_unclassified_sequences).toBe("true");
   });
 
   describe("wgs-specific fields", () => {
     it("includes analysis_type and host_genome for wgs", () => {
-      const result = transformTaxonomicClassificationParams(baseData as never);
+      const result = transformTaxonomicClassificationParams(baseData);
 
       expect(result.analysis_type).toBe("microbiome");
       expect(result.host_genome).toBe("no_host");
@@ -94,7 +94,7 @@ describe("transformTaxonomicClassificationParams", () => {
         analysis_type: "default" as const,
         database: "SILVA" as const,
       };
-      const result = transformTaxonomicClassificationParams(data as never);
+      const result = transformTaxonomicClassificationParams(data);
 
       expect(result).not.toHaveProperty("analysis_type");
       expect(result).not.toHaveProperty("host_genome");
@@ -143,7 +143,7 @@ describe("transformTaxonomicClassificationParams", () => {
           { srr_accession: "SRR789012", sample_id: "srr-s2" },
         ],
       };
-      const result = transformTaxonomicClassificationParams(data as never);
+      const result = transformTaxonomicClassificationParams(data);
 
       expect(result.srr_libs).toEqual([
         { srr_accession: "SRR123456", sample_id: "srr-s1", title: "My Run" },
@@ -153,7 +153,7 @@ describe("transformTaxonomicClassificationParams", () => {
     });
 
     it("does not include empty library arrays", () => {
-      const result = transformTaxonomicClassificationParams(baseData as never);
+      const result = transformTaxonomicClassificationParams(baseData);
 
       expect(result).not.toHaveProperty("paired_end_libs");
       expect(result).not.toHaveProperty("single_end_libs");
@@ -161,7 +161,7 @@ describe("transformTaxonomicClassificationParams", () => {
     });
 
     it("does not include top-level sample ids when empty", () => {
-      const result = transformTaxonomicClassificationParams(baseData as never);
+      const result = transformTaxonomicClassificationParams(baseData);
 
       expect(result).not.toHaveProperty("paired_sample_id");
       expect(result).not.toHaveProperty("single_sample_id");

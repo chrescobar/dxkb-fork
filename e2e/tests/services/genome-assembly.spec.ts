@@ -3,10 +3,11 @@ import {
   authSessionOverrides,
   buildJobsOverrides,
   buildWorkspaceOverrides,
+  journeyOverrides,
   mockLifecycleJobs,
-  permissiveBackendOverrides,
 } from "../../fixtures/overrides";
 import { JobsListPage, ServiceFormPage } from "../../pages";
+import { harOverridesFor } from "../../scripts/har-overrides";
 
 test.describe("genome assembly submission", () => {
   /**
@@ -48,7 +49,8 @@ test.describe("genome assembly submission", () => {
     };
     await applyBackendMocks(page, {
       overrides: [
-        ...authSessionOverrides,
+        // buildWorkspaceOverrides covers Workspace.ls / Workspace.get / Workspace.list_permissions
+        // for the output-folder selector and the post-submit /jobs workspace sidebar chrome.
         ...buildWorkspaceOverrides(),
         // Include the lifecycle fixture jobs PLUS the freshly-submitted one so the post-submit
         // /jobs view renders the new row alongside the existing list.
@@ -56,7 +58,7 @@ test.describe("genome assembly submission", () => {
           jobs: [submittedJob, ...mockLifecycleJobs],
           submitResponse: { job: [submittedJob] },
         }),
-        ...permissiveBackendOverrides,
+        ...journeyOverrides,
       ],
     });
 
@@ -106,7 +108,7 @@ test.describe("genome assembly submission", () => {
     // The submission success toast surfaces a "View Job" action that pushes /jobs. Click it
     // (instead of asserting an automatic redirect — the app does not auto-navigate) and verify
     // the freshly-submitted job is rendered in the list.
-    await page.getByRole("button", { name: /view job/i }).click();
+    await page.getByRole("button", { name: "View Job", exact: true }).click();
     await expect(page).toHaveURL(/\/jobs(?:\?|$|\/)/);
     const jobs = new JobsListPage(page);
     await jobs.waitForRows();
@@ -116,12 +118,39 @@ test.describe("genome assembly submission", () => {
   test("renders the form heading", async ({ page }) => {
     await applyBackendMocks(page, {
       overrides: [
-        ...authSessionOverrides,
+        // buildWorkspaceOverrides covers Workspace.ls / Workspace.get / Workspace.list_permissions
+        // used by the output-folder autocomplete and workspace sidebar.
         ...buildWorkspaceOverrides(),
+        // buildJobsOverrides covers AppService.enumerate_tasks_filtered for the sidebar job count.
         ...buildJobsOverrides(),
-        ...permissiveBackendOverrides,
+        ...journeyOverrides,
       ],
     });
+    const form = new ServiceFormPage(page, /genome assembly/i);
+    await form.goto("/services/genome-assembly");
+    await expect(form.heading).toBeVisible();
+    await expect(page.getByRole("button", { name: /assemble/i })).toBeVisible();
+  });
+});
+
+// Drives the genome-assembly form-load journey against post-auth traffic
+// recorded in `service-submit.har`. The submission POST itself isn't
+// recorded — the recorder explicitly avoids it (a real submit would create
+// a billable job under the test account; see
+// `scripts/journeys/service-submit.ts`). Spec assertions stay scoped to
+// what the form renders on mount. See `harOverridesFor` for the canary
+// rationale (no `permissiveBackendOverrides` here).
+test.describe("genome assembly via recorded HAR replay", () => {
+  test("renders the form heading and submit button from recorded form-load traffic", async ({
+    page,
+  }) => {
+    await applyBackendMocks(page, {
+      overrides: [
+        ...authSessionOverrides,
+        ...harOverridesFor("service-submit.har"),
+      ],
+    });
+
     const form = new ServiceFormPage(page, /genome assembly/i);
     await form.goto("/services/genome-assembly");
     await expect(form.heading).toBeVisible();

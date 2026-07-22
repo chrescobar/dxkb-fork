@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import {
   Card,
@@ -39,7 +40,6 @@ import {
 import {
   defaultGenomeAlignmentFormValues,
   genomeAlignmentFormSchema,
-  type GenomeAlignmentFormData,
 } from "@/lib/forms/(genomics)/genome-alignment/genome-alignment-form-schema";
 import { genomeAlignmentService } from "@/lib/forms/(genomics)/genome-alignment/genome-alignment-service";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
@@ -66,13 +66,13 @@ export default function GenomeAlignmentServicePage() {
     defaultValues: defaultGenomeAlignmentFormValues,
     validators: { onChange: genomeAlignmentFormSchema },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as GenomeAlignmentFormData);
+      await runtime.submitFormData(value);
     },
   });
 
-  const manualSeedWeight = useStore(form.store, (s) => s.values.manual_seed_weight);
-  const seedWeightValue = useStore(form.store, (s) => s.values.seed_weight) ?? 15;
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
+  const manualSeedWeight = useSelector(form.store, (s) => s.values.manual_seed_weight);
+  const seedWeightValue = useSelector(form.store, (s) => s.values.seed_weight) ?? 15;
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
 
   useEffect(() => {
     const genomeIds = selectedGenomes.map((genome) => genome.genome_id);
@@ -105,7 +105,7 @@ export default function GenomeAlignmentServicePage() {
   };
 
   const handleGenomeGroupSelect = async (object: WorkspaceObject) => {
-    if (!object?.path) {
+    if (!object.path) {
       toast.error("Invalid genome group selection");
       return;
     }
@@ -146,9 +146,9 @@ export default function GenomeAlignmentServicePage() {
         }
 
         toast.success(
-          `Added ${genomesToAdd.length} genome${
+          `Added ${String(genomesToAdd.length)} genome${
             genomesToAdd.length === 1 ? "" : "s"
-          } from ${object.name ?? "genome group"}`,
+          } from ${object.name}`,
         );
 
         return [...previous, ...genomesToAdd];
@@ -175,7 +175,7 @@ export default function GenomeAlignmentServicePage() {
         if (rerunData.manual_seed_weight != null) {
           form.setFieldValue(
             "manual_seed_weight",
-            rerunBooleanValue(rerunData.manual_seed_weight) as never,
+            rerunBooleanValue(rerunData.manual_seed_weight),
           );
         }
         if (rerunData.seed_weight != null) {
@@ -190,7 +190,7 @@ export default function GenomeAlignmentServicePage() {
           : [];
         if (genomeIds.length > 0) {
           fetchGenomesByIds(genomeIds)
-            .then((genomes) => setSelectedGenomes(genomes))
+            .then((genomes) => { setSelectedGenomes(genomes); })
             .catch(() => {
               toast.error("Could not restore genomes from previous job", {
                 description: "Please re-add your genomes manually.",
@@ -250,7 +250,7 @@ export default function GenomeAlignmentServicePage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="service-form-section"
       >
@@ -287,7 +287,7 @@ export default function GenomeAlignmentServicePage() {
                   <WorkspaceObjectSelector
                     preset="genomeGroup"
                     placeholder="Select a genome group from your workspace"
-                    onObjectSelect={handleGenomeGroupSelect}
+                    onObjectSelect={(obj) => { void handleGenomeGroupSelect(obj); }}
                     onSelectedObjectChange={setSelectedGenomeGroup}
                   />
                 </div>
@@ -295,25 +295,26 @@ export default function GenomeAlignmentServicePage() {
                   type="button"
                   size="icon"
                   variant="outline"
+                  aria-label="Add genome group"
                   disabled={!selectedGenomeGroup}
                   onClick={() => {
                     if (selectedGenomeGroup) {
-                      handleGenomeGroupSelect(selectedGenomeGroup);
+                      void handleGenomeGroupSelect(selectedGenomeGroup);
                       setSelectedGenomeGroup(null);
                     }
                   }}
                 >
-                  <Plus className="h-4 w-4" />
+                  <Plus className="size-4" />
                 </Button>
               </div>
               {isFetchingGroup && (
-                <div className="text-muted-foreground flex items-center gap-2 text-xs">
-                  <Spinner className="h-3 w-3" />
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Spinner className="size-3" />
                   Loading genomes from workspace group...
                 </div>
               )}
               {lastSelectedGroup && !isFetchingGroup && (
-                <p className="text-muted-foreground text-xs">
+                <p className="text-xs text-muted-foreground">
                   Last group added: {lastSelectedGroup}
                 </p>
               )}
@@ -332,7 +333,7 @@ export default function GenomeAlignmentServicePage() {
                       className="max-h-84 overflow-y-auto"
                     />
                     {!hasMinimumGenomes && (
-                      <p className="text-muted-foreground mt-2 text-xs">
+                      <p className="mt-2 text-xs text-muted-foreground">
                         Select at least two genomes to enable submission.
                       </p>
                     )}
@@ -396,7 +397,7 @@ export default function GenomeAlignmentServicePage() {
               <CollapsibleTrigger className="service-collapsible-trigger">
                 Advanced Options
                 <ChevronDown
-                  className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
+                  className={`size-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
                 />
               </CollapsibleTrigger>
 
@@ -409,7 +410,7 @@ export default function GenomeAlignmentServicePage() {
                           <Label className="service-card-label">
                             Manually Set Seed Weight
                           </Label>
-                          <p className="text-muted-foreground text-sm">
+                          <p className="text-sm text-muted-foreground">
                             Enable to specify the seed weight used by progressiveMauve.
                           </p>
                         </div>
@@ -417,7 +418,7 @@ export default function GenomeAlignmentServicePage() {
                           id="manual-seed-weight"
                           checked={field.state.value}
                           onCheckedChange={(checked) =>
-                            field.handleChange(checked)
+                            { field.handleChange(checked); }
                           }
                         />
                       </div>
@@ -434,7 +435,7 @@ export default function GenomeAlignmentServicePage() {
                           <Label className="service-card-label">
                             Seed Weight
                           </Label>
-                          <span className="text-muted-foreground text-sm">
+                          <span className="text-sm text-muted-foreground">
                             {field.state.value ?? seedWeightValue}
                           </span>
                         </div>
@@ -445,12 +446,12 @@ export default function GenomeAlignmentServicePage() {
                           max={21}
                           step={1}
                           onValueChange={(value) =>
-                            field.handleChange(
-                              Array.isArray(value) ? value[0] : value,
-                            )
+                            { field.handleChange(
+                              (Array.isArray(value) ? value[0] : value) as number,
+                            ); }
                           }
                         />
-                        <div className="text-muted-foreground flex justify-between text-xs">
+                        <div className="flex justify-between text-xs text-muted-foreground">
                           <span>3</span>
                           <span>21</span>
                         </div>
@@ -491,7 +492,7 @@ export default function GenomeAlignmentServicePage() {
             Reset
           </Button>
           <Button type="submit" disabled={isSubmitting || !hasMinimumGenomes || !isOutputNameValid}>
-            {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
+            {isSubmitting ? <Spinner className="mr-2 size-4" /> : null}
             Submit
           </Button>
         </div>

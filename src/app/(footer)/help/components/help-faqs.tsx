@@ -3,12 +3,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const HelpFAQs = () => {
   return (
-    <section className="py-12 bg-background">
+    <section className="bg-background py-12">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
+          <h2 className="mb-8 text-center text-2xl font-bold">Frequently Asked Questions</h2>
 
-          <Tabs defaultValue="general" className="max-w-3xl mx-auto">
-            <TabsList className="grid w-full grid-cols-3 mb-8">
+          <Tabs defaultValue="general" className="mx-auto max-w-3xl">
+            <TabsList className="mb-8 grid w-full grid-cols-3">
               <TabsTrigger value="general">General</TabsTrigger>
               <TabsTrigger value="technical">Technical</TabsTrigger>
               <TabsTrigger value="account">Account</TabsTrigger>

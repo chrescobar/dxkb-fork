@@ -2,7 +2,8 @@
 
 import { useState, useCallback, useMemo } from "react";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { ServiceHeader } from "@/components/services/service-header";
 import {
@@ -46,7 +47,6 @@ import {
   proteomeComparisonFormSchema,
   defaultProteomeComparisonFormValues,
   maxComparisonGenomes,
-  type ProteomeComparisonFormData,
   type ComparisonItem,
 } from "@/lib/forms/(protein-tools)/proteome-comparison/proteome-comparison-form-schema";
 import {
@@ -83,11 +83,10 @@ export default function ProteomeComparisonPage() {
 
   const form = useForm({
     defaultValues:
-      defaultProteomeComparisonFormValues as ProteomeComparisonFormData,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: proteomeComparisonFormSchema as any },
+      defaultProteomeComparisonFormValues,
+    validators: { onChange: proteomeComparisonFormSchema },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as ProteomeComparisonFormData);
+      await runtime.submitFormData(value);
     },
   });
 
@@ -109,16 +108,16 @@ export default function ProteomeComparisonPage() {
   const { isSubmitting, jobParamsDialogProps } = runtime;
 
   // Watch form values
-  const rawComparisonItems = useStore(
+  const rawComparisonItems = useSelector(
     form.store,
     (s) => s.values.comparison_items,
   );
   const comparisonItems = useMemo(
-    () => rawComparisonItems || [],
+    () => rawComparisonItems,
     [rawComparisonItems],
   );
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   // Calculate total genome count (accounting for genome groups)
   const totalGenomeCount = countTotalComparisonGenomes(comparisonItems);
@@ -135,13 +134,13 @@ export default function ProteomeComparisonPage() {
 
     if (totalGenomeCount >= maxComparisonGenomes) {
       toast.error("Maximum genomes reached", {
-        description: `Maximum of ${maxComparisonGenomes} comparison genomes allowed.`,
+        description: `Maximum of ${String(maxComparisonGenomes)} comparison genomes allowed.`,
         closeButton: true,
       });
       return;
     }
 
-    const currentItems = form.state.values.comparison_items || [];
+    const currentItems = form.state.values.comparison_items;
 
     // Check for duplicates by genome_id
     if (
@@ -197,13 +196,13 @@ export default function ProteomeComparisonPage() {
 
     if (totalGenomeCount >= maxComparisonGenomes) {
       toast.error("Maximum genomes reached", {
-        description: `Maximum of ${maxComparisonGenomes} comparison genomes allowed.`,
+        description: `Maximum of ${String(maxComparisonGenomes)} comparison genomes allowed.`,
         closeButton: true,
       });
       return;
     }
 
-    const currentItems = form.state.values.comparison_items || [];
+    const currentItems = form.state.values.comparison_items;
     const newItem = createFastaComparisonItem(selectedCompFasta.path);
 
     if (isDuplicateComparisonItem(currentItems, newItem)) {
@@ -230,13 +229,13 @@ export default function ProteomeComparisonPage() {
 
     if (totalGenomeCount >= maxComparisonGenomes) {
       toast.error("Maximum genomes reached", {
-        description: `Maximum of ${maxComparisonGenomes} comparison genomes allowed.`,
+        description: `Maximum of ${String(maxComparisonGenomes)} comparison genomes allowed.`,
         closeButton: true,
       });
       return;
     }
 
-    const currentItems = form.state.values.comparison_items || [];
+    const currentItems = form.state.values.comparison_items;
     const newItem = createFeatureGroupComparisonItem(
       selectedCompFeatureGroup.path,
     );
@@ -279,7 +278,7 @@ export default function ProteomeComparisonPage() {
         return;
       }
 
-      const currentItems = form.state.values.comparison_items || [];
+      const currentItems = form.state.values.comparison_items;
 
       // Validate if adding would exceed max
       const validation = validateGenomeGroupAddition(
@@ -312,7 +311,7 @@ export default function ProteomeComparisonPage() {
       form.setFieldValue("comparison_items", [...currentItems, newItem]);
       setSelectedCompGenomeGroup(null);
 
-      toast.success(`Added genome group with ${genomeIds.length} genome(s)`, {
+      toast.success(`Added genome group with ${String(genomeIds.length)} genome(s)`, {
         closeButton: true,
       });
     } catch (error) {
@@ -331,7 +330,7 @@ export default function ProteomeComparisonPage() {
   // Handle removing comparison item
   const handleRemoveComparisonItem = useCallback(
     (itemId: string) => {
-      const currentItems = form.state.values.comparison_items || [];
+      const currentItems = form.state.values.comparison_items;
       const updatedItems = removeComparisonItemById(currentItems, itemId);
       form.setFieldValue("comparison_items", updatedItems);
     },
@@ -355,7 +354,7 @@ export default function ProteomeComparisonPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="flex flex-col gap-4"
       >
@@ -416,7 +415,7 @@ export default function ProteomeComparisonPage() {
                     <CollapsibleTrigger className="service-collapsible-trigger text-sm font-medium">
                       Advanced Parameters (Optional)
                       <ChevronDown
-                        className={`h-4 w-4 transition-transform ${showAdvancedParams ? "rotate-180 transform" : ""}`}
+                        className={`size-4 transition-transform ${showAdvancedParams ? "rotate-180 transform" : ""}`}
                       />
                     </CollapsibleTrigger>
 
@@ -438,7 +437,7 @@ export default function ProteomeComparisonPage() {
                                   if (value !== undefined)
                                     field.handleChange(value);
                                 }}
-                                className="bg-muted service-card-input relative [appearance:textfield] rounded-r-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                className="service-card-input relative [appearance:textfield] rounded-r-none bg-muted [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                               />
                               <FieldErrors field={field} />
                             </FieldItem>
@@ -454,7 +453,7 @@ export default function ProteomeComparisonPage() {
                               <Input
                                 value={field.state.value}
                                 onChange={(e) =>
-                                  field.handleChange(e.target.value)
+                                  { field.handleChange(e.target.value); }
                                 }
                                 placeholder="1e-5"
                                 className="service-card-input"
@@ -480,7 +479,7 @@ export default function ProteomeComparisonPage() {
                                   if (value !== undefined)
                                     field.handleChange(value);
                                 }}
-                                className="bg-muted service-card-input relative [appearance:textfield] rounded-r-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                className="service-card-input relative [appearance:textfield] rounded-r-none bg-muted [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                               />
                               <FieldErrors field={field} />
                             </FieldItem>
@@ -639,7 +638,8 @@ export default function ProteomeComparisonPage() {
                       type="button"
                       variant="outline"
                       size="icon"
-                      onClick={handleAddCompGenome}
+                      aria-label="Add genome"
+                      onClick={() => { void handleAddCompGenome(); }}
                       disabled={
                         !selectedCompGenomeId ||
                         totalGenomeCount >= maxComparisonGenomes ||
@@ -647,9 +647,9 @@ export default function ProteomeComparisonPage() {
                       }
                     >
                       {isLoadingCompGenome ? (
-                        <Spinner className="h-4 w-4" />
+                        <Spinner className="size-4" />
                       ) : (
-                        <Plus className="h-4 w-4" />
+                        <Plus className="size-4" />
                       )}
                     </Button>
                   </div>
@@ -677,13 +677,14 @@ export default function ProteomeComparisonPage() {
                       type="button"
                       variant="outline"
                       size="icon"
+                      aria-label="Add protein FASTA file"
                       onClick={handleAddCompFasta}
                       disabled={
                         !selectedCompFasta ||
                         totalGenomeCount >= maxComparisonGenomes
                       }
                     >
-                      <Plus className="h-4 w-4" />
+                      <Plus className="size-4" />
                     </Button>
                   </div>
                 </div>
@@ -710,13 +711,14 @@ export default function ProteomeComparisonPage() {
                       type="button"
                       variant="outline"
                       size="icon"
+                      aria-label="Add feature group"
                       onClick={handleAddCompFeatureGroup}
                       disabled={
                         !selectedCompFeatureGroup ||
                         totalGenomeCount >= maxComparisonGenomes
                       }
                     >
-                      <Plus className="h-4 w-4" />
+                      <Plus className="size-4" />
                     </Button>
                   </div>
                 </div>
@@ -743,7 +745,8 @@ export default function ProteomeComparisonPage() {
                       type="button"
                       variant="outline"
                       size="icon"
-                      onClick={handleAddCompGenomeGroup}
+                      aria-label="Add genome group"
+                      onClick={() => { void handleAddCompGenomeGroup(); }}
                       disabled={
                         !selectedCompGenomeGroup ||
                         totalGenomeCount >= maxComparisonGenomes ||
@@ -751,9 +754,9 @@ export default function ProteomeComparisonPage() {
                       }
                     >
                       {isLoadingGenomeGroup ? (
-                        <Spinner className="h-4 w-4" />
+                        <Spinner className="size-4" />
                       ) : (
-                        <Plus className="h-4 w-4" />
+                        <Plus className="size-4" />
                       )}
                     </Button>
                   </div>
@@ -769,7 +772,7 @@ export default function ProteomeComparisonPage() {
                       type: getComparisonItemTypeLabel(item.type),
                       description:
                         item.type === "genome_group" && item.genome_ids
-                          ? `${item.genome_ids.length} genome(s)`
+                          ? `${String(item.genome_ids.length)} genome(s)`
                           : undefined,
                     }))}
                     onRemove={handleRemoveComparisonItem}
@@ -805,7 +808,7 @@ export default function ProteomeComparisonPage() {
             type="submit"
             disabled={isSubmitting || !canSubmit || !isOutputNameValid}
           >
-            {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
+            {isSubmitting ? <Spinner className="mr-2 size-4" /> : null}
             Submit
           </Button>
         </div>

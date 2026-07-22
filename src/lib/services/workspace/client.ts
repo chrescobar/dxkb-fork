@@ -1,5 +1,5 @@
 import { WorkspaceMethod } from "./types";
-import { metaListToObj } from "./helpers";
+import { parseTupleToRawObject } from "./adapters/parsers";
 
 /**
  * Base client for making JSON-RPC requests to the Workspace API
@@ -40,21 +40,24 @@ export class WorkspaceApiClient {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorData = (await response.json().catch(() => ({}))) as { error?: string; apiResponse?: unknown };
         const err = new Error(
-          (errorData as { error?: string }).error ||
-            `HTTP error! status: ${response.status}`,
+          errorData.error ||
+            `HTTP error! status: ${String(response.status)}`,
         ) as Error & { apiResponse?: unknown };
-        err.apiResponse = (errorData as { apiResponse?: unknown }).apiResponse ?? errorData;
+        err.apiResponse = errorData.apiResponse ?? errorData;
         throw err;
       }
 
-      const result = await response.json();
+      const result = (await response.json()) as {
+        error?: { message?: string };
+        result?: unknown[];
+      };
       if (!silent) console.log(`Workspace API response for ${method}:`, result);
 
       // Handle JSON-RPC response format
       if (result.error) {
-        const rpcError = result.error as { message?: string };
+        const rpcError = result.error;
         const err = new Error(rpcError.message || "API error") as Error & {
           apiResponse?: unknown;
         };
@@ -66,10 +69,11 @@ export class WorkspaceApiClient {
 
       // Workspace.list_permissions returns a map path -> [user, perm][]
       if (method === "Workspace.list_permissions") {
-        if (!result.result || !result.result[0]) {
+        const permResult = result.result;
+        if (!permResult || !permResult[0]) {
           return {} as T;
         }
-        return result.result[0] as T;
+        return permResult[0] as T;
       }
 
       // Methods that return result.result as-is (array or nested array).
@@ -96,7 +100,8 @@ export class WorkspaceApiClient {
       }
 
       // Replicate the original logic for processing results (Workspace.ls)
-      if (!result.result || !result.result[0]) {
+      const lsResult = result.result;
+      if (!lsResult || !lsResult[0]) {
         return [] as T;
       }
 
@@ -105,28 +110,29 @@ export class WorkspaceApiClient {
       let targetPath: string | null = null;
       let res: unknown[] = [];
 
-      if (method === "Workspace.ls" && (params[0] as { paths?: string[] })?.paths) {
+      const lsMap = lsResult[0] as Record<string, unknown[] | undefined>;
+      if (method === "Workspace.ls" && (params[0] as { paths?: string[] }).paths) {
         // Find the path that was requested in the parameters
         const requestedPath = (params[0] as { paths: string[] }).paths[0];
-        if (result.result[0][requestedPath]) {
+        if (lsMap[requestedPath]) {
           targetPath = requestedPath;
-          res = result.result[0][requestedPath];
+          res = lsMap[requestedPath];
         }
       } else {
         // For other methods, use the first available path
-        targetPath = Object.keys(result.result[0])[0];
+        targetPath = Object.keys(lsMap)[0] ?? null;
         if (targetPath) {
-          res = result.result[0][targetPath];
+          res = lsMap[targetPath] ?? [];
         }
       }
 
-      if (!targetPath || !res) {
+      if (!targetPath) {
         return [] as T;
       }
 
       // Map results using metaListToObj (same as original)
       res = res.map((r: unknown) => {
-        return metaListToObj(r as unknown[]);
+        return parseTupleToRawObject(r as unknown[]);
       });
 
       // Hidden files/folders (names starting with .) are not filtered here;
@@ -139,8 +145,8 @@ export class WorkspaceApiClient {
         console.error(`Failed to call ${method}:`, error);
         console.error("Error details:", {
           message: error instanceof Error ? error.message : String(error),
-          status: (error as { status?: number })?.status,
-          response: (error as { response?: unknown })?.response,
+          status: (error as { status?: number }).status,
+          response: (error as { response?: unknown }).response,
         });
       }
       throw error;

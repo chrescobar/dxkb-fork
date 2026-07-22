@@ -19,9 +19,11 @@ const inquiryTypeValues = inquiryTypes.map((option) => option.value) as [
 export const contactFormSchema = z.object({
   inquiryType: z.enum(inquiryTypeValues),
   name: z.string().trim().min(1, "Please enter your name."),
-  email: z.string().trim().min(1, "Please enter your email address.").email(
-    "Please enter a valid email address.",
-  ),
+  email: z
+    .string()
+    .trim()
+    .min(1, "Please enter your email address.")
+    .pipe(z.email("Please enter a valid email address.")),
   subject: z.string().trim().min(1, "Please enter a subject."),
   message: z
     .string()

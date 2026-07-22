@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth/server/instance";
+import { HttpResponseError, type Session } from "@/lib/auth/server/route";
 import { getRequiredEnv } from "@/lib/env";
 import { getMimeType } from "@/components/workspace/file-viewer/file-viewer-registry";
 import { safeDecode } from "@/lib/url";
@@ -43,10 +44,11 @@ export function buildWorkspacePath(segments: string[]): string {
 export async function resolveWorkspaceDownload(
   segments: string[],
 ): Promise<ResolvedDownload | NextResponse> {
-  let session;
+  let session: Session;
   try {
     session = await auth.requireSession();
   } catch (error) {
+    if (error instanceof HttpResponseError) return error.response;
     if (error instanceof Response) return error as NextResponse;
     throw error;
   }
@@ -77,13 +79,13 @@ export async function resolveWorkspaceDownload(
     );
     return NextResponse.json(
       {
-        error: `BV-BRC API error: ${wsResponse.status} ${wsResponse.statusText}`,
+        error: `BV-BRC API error: ${String(wsResponse.status)} ${wsResponse.statusText}`,
       },
       { status: wsResponse.status },
     );
   }
 
-  const data = await wsResponse.json();
+  const data = (await wsResponse.json()) as { result?: [[string]] } | null;
   const downloadUrl = data?.result?.[0]?.[0];
 
   if (!downloadUrl) {

@@ -33,7 +33,7 @@ describe("GET /api/services/app-service/jobs/[id]/stderr", () => {
     const request = mockNextRequest();
 
     const response = await GET(request, makeRouteContext("job-1"));
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(401);
     expect(data).toEqual(
@@ -69,7 +69,7 @@ describe("GET /api/services/app-service/jobs/[id]/stderr", () => {
     const request = mockNextRequest();
 
     const response = await GET(request, makeRouteContext("job-err"));
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(500);
     expect(data).toEqual(expect.objectContaining({ error: "Fetch failed" }));

@@ -4,11 +4,11 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { TailwindIndicator } from "@/components/ui/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
-import { ThemeSwitcher } from "@/styles/theme-switcher-floating";
 import { Providers } from "./providers";
 import { AuthBoundary } from "@/lib/auth/provider";
 import { auth } from "@/lib/auth/server/instance";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { CommandPalette } from "@/components/search/command-palette";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,9 +46,10 @@ export default async function RootLayout({
             <AuthBoundary initialUser={initialUser}>
               <TooltipProvider>
                 {children}
+                {/* Dev-only debug loader: safe to include in dev; no runtime UI */}
               </TooltipProvider>
+              <CommandPalette />
             </AuthBoundary>
-            <ThemeSwitcher />
             <Toaster
               richColors
               position="top-right"

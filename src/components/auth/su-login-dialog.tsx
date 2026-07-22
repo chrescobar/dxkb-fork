@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 import {
   Dialog,
@@ -26,8 +27,9 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
   const [targetUser, setTargetUser] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const queryClient = useQueryClient();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
 
     if (!targetUser.trim() || !password) return;
@@ -42,6 +44,7 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
       toast.error(error.message || "SU login failed");
       return;
     }
+    void queryClient.resetQueries();
     onOpenChange(false);
     setTargetUser("");
     setPassword("");
@@ -71,9 +74,9 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
           </h3>
 
           <div className="flex gap-3 rounded-lg border border-amber-300 bg-amber-50 p-3 dark:border-amber-700 dark:bg-amber-950/40">
-            <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />
+            <ShieldAlert className="mt-0.5 size-5 shrink-0 text-amber-600 dark:text-amber-400" />
             <div className="text-sm">
-              <p className="font-bold italic text-amber-800 dark:text-amber-300">
+              <p className="font-bold text-amber-800 italic dark:text-amber-300">
                 WARNING &mdash; With great power comes great responsibility...
               </p>
               <p className="mt-1 text-amber-700 dark:text-amber-400">
@@ -84,14 +87,14 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={(e) => { void handleSubmit(e); }} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="su-target-user">User to Impersonate</Label>
               <Input
                 id="su-target-user"
                 placeholder="User id for other account"
                 value={targetUser}
-                onChange={(e) => setTargetUser(e.target.value)}
+                onChange={(e) => { setTargetUser(e.target.value); }}
                 autoComplete="off"
                 disabled={isSubmitting}
               />
@@ -104,7 +107,7 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
                 type="password"
                 placeholder="Your admin password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => { setPassword(e.target.value); }}
                 autoComplete="off"
                 disabled={isSubmitting}
               />

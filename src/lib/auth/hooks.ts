@@ -23,9 +23,9 @@ export interface UseAuthResult {
 export function useAuth(): UseAuthResult {
   const store = useAuthStore();
   const snapshot = useSyncExternalStore(
-    store.subscribe,
-    store.snapshot,
-    store.snapshot,
+    (cb) => store.subscribe(cb),
+    () => store.snapshot(),
+    () => store.snapshot(),
   );
   const { user, status } = snapshot;
 

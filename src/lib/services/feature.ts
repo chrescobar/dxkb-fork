@@ -54,13 +54,13 @@ export async function fetchFeaturesFromGroup(
     });
 
     if (!response.ok) {
-      const errorBody = await response.json().catch(() => ({}));
-      const message = errorBody?.error || "Failed to fetch features from feature group";
+      const errorBody = (await response.json().catch(() => ({}))) as { error?: string };
+      const message = errorBody.error || "Failed to fetch features from feature group";
       throw new Error(message);
     }
 
-    const data = await response.json();
-    return Array.isArray(data?.results) ? data.results : [];
+    const data = (await response.json()) as { results?: FeatureSummary[] };
+    return Array.isArray(data.results) ? data.results : [];
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
       return [];

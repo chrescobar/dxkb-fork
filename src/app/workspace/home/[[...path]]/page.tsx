@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@/lib/auth/hooks";
-import { encodeWorkspaceSegment } from "@/lib/utils";
+import { encodeWorkspaceSegment } from "@/lib/services/workspace/path-utils";
 
 /**
  * Redirects /workspace/home and /workspace/home/[...path] to

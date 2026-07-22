@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import {
   computeNextSelection,
   normalizePath,
@@ -9,17 +9,27 @@ import {
 } from "@/lib/workspace/table-selection";
 
 export interface UseWorkspaceSelectionOptions {
-  processedItems: WorkspaceBrowserItem[];
+  processedItems: WorkspaceItem[];
   panelManuallyHidden: boolean;
   setPanelExpanded: (v: boolean) => void;
+}
+
+export interface UseWorkspaceSelectionReturn {
+  selectedItems: WorkspaceItem[];
+  anchorPath: string | null;
+  selectedPaths: string[];
+  /** Last selected item, or null when nothing is selected. */
+  primaryItem: WorkspaceItem | null;
+  handleSelectItem: (item: WorkspaceItem, modifiers?: SelectionModifiers) => void;
+  clearSelection: () => void;
 }
 
 export function useWorkspaceSelection({
   processedItems,
   panelManuallyHidden,
   setPanelExpanded,
-}: UseWorkspaceSelectionOptions) {
-  const [selectedItems, setSelectedItems] = useState<WorkspaceBrowserItem[]>([]);
+}: UseWorkspaceSelectionOptions): UseWorkspaceSelectionReturn {
+  const [selectedItems, setSelectedItems] = useState<WorkspaceItem[]>([]);
   const [anchorPath, setAnchorPath] = useState<string | null>(null);
 
   // Keep selected items in sync with latest processedItems data (e.g. after type change refetch)
@@ -40,10 +50,10 @@ export function useWorkspaceSelection({
     [selectedItems],
   );
 
-  const primaryItem = selectedItems[selectedItems.length - 1] ?? null;
+  const primaryItem: WorkspaceItem | null = selectedItems[selectedItems.length - 1] ?? null;
 
   const handleSelectItem = useCallback(
-    (item: WorkspaceBrowserItem, modifiers?: SelectionModifiers) => {
+    (item: WorkspaceItem, modifiers?: SelectionModifiers) => {
       const { nextSelection, nextAnchorPath } = computeNextSelection(
         processedItems,
         selectedItems,

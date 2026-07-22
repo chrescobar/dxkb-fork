@@ -14,8 +14,8 @@ import type {
   WorkspaceMetadata,
   WorkspaceReadOptions,
 } from "../domain";
-import { WorkspaceApiError, toWorkspaceItem } from "../domain";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import { WorkspaceApiError } from "../domain";
+import { assertNoProtectedFolders } from "../protected-folders";
 import type {
   ArchiveRequest,
   ArchiveResult,
@@ -74,7 +74,7 @@ function toBrowserItem(
   parent: string,
   fixture: InMemoryFixtureItem,
   index: number,
-): WorkspaceBrowserItem {
+): WorkspaceItem {
   const parentNormalized = normalize(parent);
   const fullPath =
     parentNormalized === "/"
@@ -82,18 +82,20 @@ function toBrowserItem(
       : `${parentNormalized}/${fixture.name}`;
   const createdAt = fixture.createdAt ?? "2026-01-01T00:00:00Z";
   return {
-    id: `${fullPath}#${index}`,
+    id: `${fullPath}#${String(index)}`,
     name: fixture.name,
     path: fullPath,
     type: fixture.type,
-    creation_time: createdAt,
-    link_reference: "",
-    owner_id: fixture.ownerId ?? "test-user@bvbrc",
+    createdAt,
+    linkReference: "",
+    ownerId: fixture.ownerId ?? "test-user@bvbrc",
     size: fixture.size ?? 0,
     userMeta: {},
     autoMeta: {},
-    user_permission: fixture.userPermission ?? "o",
-    global_permission: fixture.globalPermission ?? "n",
+    permissions: {
+      user: fixture.userPermission ?? "o",
+      global: fixture.globalPermission ?? "n",
+    },
     timestamp: fixture.timestamp ?? Date.parse(createdAt),
   };
 }
@@ -115,7 +117,7 @@ function toGetTuple(
     fixture.type,
     parentWithSlash,
     createdAt,
-    `${parentWithSlash}${fixture.name}#${index}`,
+    `${parentWithSlash}${fixture.name}#${String(index)}`,
     fixture.ownerId ?? "test-user@bvbrc",
     fixture.size ?? 0,
     {},
@@ -166,6 +168,14 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
     }
   }
 
+  private run<T>(fn: () => T): Promise<T> {
+    try {
+      return Promise.resolve(fn());
+    } catch (err) {
+      return Promise.reject(err instanceof Error ? err : new Error(String(err)));
+    }
+  }
+
   private buildMetadata(paths: string[]): WorkspaceMetadata[] {
     return paths.map((path) => {
       const normalized = normalize(path);
@@ -175,282 +185,320 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
       const fixtureIndex = siblings.findIndex((f) => f.name === name);
       const fixture = fixtureIndex >= 0 ? siblings[fixtureIndex] : null;
       const object = fixture
-        ? toWorkspaceItem(toBrowserItem(parent, fixture, fixtureIndex))
+        ? toBrowserItem(parent, fixture, fixtureIndex)
         : null;
       const raw = fixture ? [toGetTuple(parent, fixture, fixtureIndex)] : null;
       return { path: normalized, object, raw };
     });
   }
 
-  async listDirectory(input: ListDirectoryInput): Promise<WorkspaceItem[]> {
-    this.calls.push({ method: "listDirectory", input });
-    this.throwIfConfigured("listDirectory");
-    const items = this.directories[normalize(input.path)] ?? [];
-    const mapped = items.map((f, i) =>
-      toWorkspaceItem(toBrowserItem(input.path, f, i)),
-    );
-    const types = input.query?.type;
-    const allowed = types && types.length > 0 ? new Set(types) : null;
-    const term = input.query?.name?.toLowerCase();
-    if (!allowed && !term) return mapped;
-    return mapped.filter((item) => {
-      if (allowed && !allowed.has(item.type)) return false;
-      if (term && !item.name.toLowerCase().includes(term)) return false;
-      return true;
+  listDirectory(input: ListDirectoryInput): Promise<WorkspaceItem[]> {
+    return this.run(() => {
+      this.calls.push({ method: "listDirectory", input });
+      this.throwIfConfigured("listDirectory");
+      const items = this.directories[normalize(input.path)] ?? [];
+      const mapped = items.map((f, i) =>
+        toBrowserItem(input.path, f, i),
+      );
+      const types = input.query?.type;
+      const allowed = types && types.length > 0 ? new Set(types) : null;
+      const term = input.query?.name?.toLowerCase();
+      if (!allowed && !term) return mapped;
+      return mapped.filter((item) => {
+        if (allowed && !allowed.has(item.type)) return false;
+        if (term && !item.name.toLowerCase().includes(term)) return false;
+        return true;
+      });
     });
   }
 
-  async getMetadata(
+  getMetadata(
     paths: string[],
     options?: WorkspaceReadOptions,
   ): Promise<WorkspaceMetadata[]> {
-    this.calls.push({ method: "getMetadata", paths, options });
-    this.throwIfConfigured("getMetadata");
-    return this.buildMetadata(paths);
-  }
-
-  async getRaw(paths: string[]): Promise<unknown> {
-    this.calls.push({ method: "getRaw", paths });
-    this.throwIfConfigured("getRaw");
-    return this.buildMetadata(paths).map((m) => m.raw);
-  }
-
-  async listPermissions(paths: string[]): Promise<ListPermissionsResult> {
-    this.calls.push({ method: "listPermissions", paths });
-    this.throwIfConfigured("listPermissions");
-    const result: ListPermissionsResult = {};
-    for (const path of paths) {
-      const normalized = normalize(path);
-      result[normalized] = this.permissions[normalized] ?? [];
-    }
-    return result;
-  }
-
-  async createFolder(path: string): Promise<void> {
-    this.calls.push({ method: "createFolder", path });
-    this.throwIfConfigured("createFolder");
-    const normalized = normalize(path);
-    const parent = normalize(
-      normalized.slice(0, normalized.lastIndexOf("/")) || "/",
-    );
-    const name = normalized.split("/").filter(Boolean).pop() ?? "";
-    const children = this.directories[parent] ?? [];
-    if (!children.find((c) => c.name === name)) {
-      children.push({ name, type: "folder" });
-      this.directories[parent] = children;
-    }
-    if (!this.directories[normalized]) this.directories[normalized] = [];
-  }
-
-  async createUploadNode(input: UploadNodeRequest): Promise<UploadNodeResult> {
-    this.calls.push({ method: "createUploadNode", input });
-    this.throwIfConfigured("createUploadNode");
-    return { linkReference: `https://shock.test/node/${input.filename}` };
-  }
-
-  async saveObject(input: {
-    path: string;
-    type: string;
-    content: string;
-    overwrite?: boolean;
-  }): Promise<void> {
-    this.calls.push({
-      method: "saveObject",
-      path: input.path,
-      type: input.type,
-      overwrite: input.overwrite,
+    return this.run(() => {
+      this.calls.push({ method: "getMetadata", paths, options });
+      this.throwIfConfigured("getMetadata");
+      return this.buildMetadata(paths);
     });
-    this.throwIfConfigured("saveObject" as CallRecord["method"]);
-    const normalized = normalize(input.path);
-    const parent = normalize(
-      normalized.slice(0, normalized.lastIndexOf("/")) || "/",
-    );
-    const name = normalized.split("/").filter(Boolean).pop() ?? "";
-    const children = this.directories[parent] ?? [];
-    const existing = children.findIndex((c) => c.name === name);
-    if (existing >= 0 && !input.overwrite) {
-      throw new WorkspaceApiError(
-        `Cannot overwrite ${normalized}`,
-        "Workspace.create",
-        { error: { code: -32603 } },
-      );
-    }
-    if (existing >= 0) {
-      children[existing] = { name, type: input.type };
-    } else {
-      children.push({ name, type: input.type });
-    }
-    this.directories[parent] = children;
   }
 
-  async delete(paths: string[], options?: DeleteOptions): Promise<void> {
-    this.calls.push({ method: "delete", paths, options });
-    this.throwIfConfigured("delete");
-    for (const path of paths) {
+  getRaw(paths: string[]): Promise<unknown> {
+    return this.run(() => {
+      this.calls.push({ method: "getRaw", paths });
+      this.throwIfConfigured("getRaw");
+      return this.buildMetadata(paths).map((m) => m.raw);
+    });
+  }
+
+  listPermissions(paths: string[]): Promise<ListPermissionsResult> {
+    return this.run(() => {
+      this.calls.push({ method: "listPermissions", paths });
+      this.throwIfConfigured("listPermissions");
+      const result: ListPermissionsResult = {};
+      for (const path of paths) {
+        const normalized = normalize(path);
+        result[normalized] = this.permissions[normalized] ?? [];
+      }
+      return result;
+    });
+  }
+
+  createFolder(path: string): Promise<void> {
+    return this.run(() => {
+      this.calls.push({ method: "createFolder", path });
+      this.throwIfConfigured("createFolder");
       const normalized = normalize(path);
       const parent = normalize(
         normalized.slice(0, normalized.lastIndexOf("/")) || "/",
       );
       const name = normalized.split("/").filter(Boolean).pop() ?? "";
-      const children = this.directories[parent];
-      if (children) {
-        this.directories[parent] = children.filter((c) => c.name !== name);
+      const children = this.directories[parent] ?? [];
+      if (!children.find((c) => c.name === name)) {
+        children.push({ name, type: "folder" });
+        this.directories[parent] = children;
       }
-      this.directories = Object.fromEntries(
-        Object.entries(this.directories).filter(([key]) => key !== normalized),
-      );
-    }
+      if (!(normalized in this.directories)) this.directories[normalized] = [];
+    });
   }
 
-  async copy(input: CopyInput): Promise<void> {
-    this.calls.push({ method: "copy", input });
-    this.throwIfConfigured("copy");
-    for (const [src, dest] of input.pairs) {
-      const srcNormalized = normalize(src);
-      const destNormalized = normalize(dest);
-      const destParent = normalize(
-        destNormalized.slice(0, destNormalized.lastIndexOf("/")) || "/",
+  createUploadNode(input: UploadNodeRequest): Promise<UploadNodeResult> {
+    return this.run(() => {
+      this.calls.push({ method: "createUploadNode", input });
+      this.throwIfConfigured("createUploadNode");
+      return { linkReference: `https://shock.test/node/${input.filename}` };
+    });
+  }
+
+  saveObject(input: {
+    path: string;
+    type: string;
+    content: string;
+    overwrite?: boolean;
+  }): Promise<void> {
+    return this.run(() => {
+      this.calls.push({
+        method: "saveObject",
+        path: input.path,
+        type: input.type,
+        overwrite: input.overwrite,
+      });
+      this.throwIfConfigured("saveObject");
+      const normalized = normalize(input.path);
+      const parent = normalize(
+        normalized.slice(0, normalized.lastIndexOf("/")) || "/",
       );
-      const destName = destNormalized.split("/").filter(Boolean).pop() ?? "";
-      const destSiblings = this.directories[destParent] ?? [];
-      if (destSiblings.some((c) => c.name === destName)) {
+      const name = normalized.split("/").filter(Boolean).pop() ?? "";
+      const children = this.directories[parent] ?? [];
+      const existing = children.findIndex((c) => c.name === name);
+      if (existing >= 0 && !input.overwrite) {
         throw new WorkspaceApiError(
-          `Cannot overwrite ${destNormalized}`,
-          "Workspace.copy",
+          `Cannot overwrite ${normalized}`,
+          "Workspace.create",
           { error: { code: -32603 } },
         );
       }
-      const srcParent = normalize(
-        srcNormalized.slice(0, srcNormalized.lastIndexOf("/")) || "/",
-      );
-      const srcName = srcNormalized.split("/").filter(Boolean).pop() ?? "";
-      const srcSiblings = this.directories[srcParent] ?? [];
-      const source = srcSiblings.find((c) => c.name === srcName);
-      if (!source) continue;
-      destSiblings.push({ ...source, name: destName });
-      this.directories[destParent] = destSiblings;
-
-      // Recursively carry any nested directory listings for folder sources.
-      // Mirrors the HTTP server behavior when `recursive: true` is passed.
-      const clonedKeys: string[] = [];
-      if (input.recursive) {
-        const srcPrefix = srcNormalized === "/" ? "/" : `${srcNormalized}/`;
-        const suffixOffset = srcPrefix.length - 1;
-        for (const key of Object.keys(this.directories)) {
-          if (key !== srcNormalized && !key.startsWith(srcPrefix)) continue;
-          const suffix = key === srcNormalized ? "" : key.slice(suffixOffset);
-          const newKey = normalize(`${destNormalized}${suffix}`);
-          this.directories[newKey] = this.directories[key].map((c) => ({
-            ...c,
-          }));
-          clonedKeys.push(key);
-        }
+      if (existing >= 0) {
+        children[existing] = { name, type: input.type };
+      } else {
+        children.push({ name, type: input.type });
       }
+      this.directories[parent] = children;
+    });
+  }
 
-      if (input.move) {
-        this.directories[srcParent] = srcSiblings.filter(
-          (c) => c.name !== srcName,
+  delete(paths: string[], options?: DeleteOptions): Promise<void> {
+    return this.run(() => {
+      assertNoProtectedFolders(paths);
+      this.calls.push({ method: "delete", paths, options });
+      this.throwIfConfigured("delete");
+      for (const path of paths) {
+        const normalized = normalize(path);
+        const parent = normalize(
+          normalized.slice(0, normalized.lastIndexOf("/")) || "/",
         );
-        if (clonedKeys.length > 0) {
-          const removed = new Set(clonedKeys);
-          this.directories = Object.fromEntries(
-            Object.entries(this.directories).filter(
-              ([key]) => !removed.has(key),
-            ),
+        const name = normalized.split("/").filter(Boolean).pop() ?? "";
+        if (parent in this.directories) {
+          this.directories[parent] = this.directories[parent].filter(
+            (c) => c.name !== name,
           );
         }
+        this.directories = Object.fromEntries(
+          Object.entries(this.directories).filter(([key]) => key !== normalized),
+        );
       }
-    }
+    });
   }
 
-  async updateObjectType(path: string, newType: string): Promise<void> {
-    this.calls.push({ method: "updateObjectType", path, newType });
-    this.throwIfConfigured("updateObjectType");
-    const normalized = normalize(path);
-    const parent = normalize(
-      normalized.slice(0, normalized.lastIndexOf("/")) || "/",
-    );
-    const name = normalized.split("/").filter(Boolean).pop() ?? "";
-    const children = this.directories[parent] ?? [];
-    const idx = children.findIndex((c) => c.name === name);
-    if (idx >= 0) {
-      children[idx] = { ...children[idx], type: newType };
-      this.directories[parent] = children;
-    }
+  copy(input: CopyInput): Promise<void> {
+    return this.run(() => {
+      this.calls.push({ method: "copy", input });
+      this.throwIfConfigured("copy");
+      for (const [src, dest] of input.pairs) {
+        const srcNormalized = normalize(src);
+        const destNormalized = normalize(dest);
+        const destParent = normalize(
+          destNormalized.slice(0, destNormalized.lastIndexOf("/")) || "/",
+        );
+        const destName = destNormalized.split("/").filter(Boolean).pop() ?? "";
+        const destSiblings = this.directories[destParent] ?? [];
+        if (destSiblings.some((c) => c.name === destName)) {
+          throw new WorkspaceApiError(
+            `Cannot overwrite ${destNormalized}`,
+            "Workspace.copy",
+            { error: { code: -32603 } },
+          );
+        }
+        const srcParent = normalize(
+          srcNormalized.slice(0, srcNormalized.lastIndexOf("/")) || "/",
+        );
+        const srcName = srcNormalized.split("/").filter(Boolean).pop() ?? "";
+        const srcSiblings = this.directories[srcParent] ?? [];
+        const source = srcSiblings.find((c) => c.name === srcName);
+        if (!source) continue;
+        destSiblings.push({ ...source, name: destName });
+        this.directories[destParent] = destSiblings;
+
+        // Recursively carry any nested directory listings for folder sources.
+        // Mirrors the HTTP server behavior when `recursive: true` is passed.
+        const clonedKeys: string[] = [];
+        if (input.recursive) {
+          const srcPrefix = srcNormalized === "/" ? "/" : `${srcNormalized}/`;
+          const suffixOffset = srcPrefix.length - 1;
+          for (const key of Object.keys(this.directories)) {
+            if (key !== srcNormalized && !key.startsWith(srcPrefix)) continue;
+            const suffix = key === srcNormalized ? "" : key.slice(suffixOffset);
+            const newKey = normalize(`${destNormalized}${suffix}`);
+            this.directories[newKey] = this.directories[key].map((c) => ({
+              ...c,
+            }));
+            clonedKeys.push(key);
+          }
+        }
+
+        if (input.move) {
+          this.directories[srcParent] = srcSiblings.filter(
+            (c) => c.name !== srcName,
+          );
+          if (clonedKeys.length > 0) {
+            const removed = new Set(clonedKeys);
+            this.directories = Object.fromEntries(
+              Object.entries(this.directories).filter(
+                ([key]) => !removed.has(key),
+              ),
+            );
+          }
+        }
+      }
+    });
   }
 
-  async updateAutoMetadata(paths: string[]): Promise<void> {
-    this.calls.push({ method: "updateAutoMetadata", paths });
-    this.throwIfConfigured("updateAutoMetadata");
+  updateObjectType(path: string, newType: string): Promise<void> {
+    return this.run(() => {
+      this.calls.push({ method: "updateObjectType", path, newType });
+      this.throwIfConfigured("updateObjectType");
+      const normalized = normalize(path);
+      const parent = normalize(
+        normalized.slice(0, normalized.lastIndexOf("/")) || "/",
+      );
+      const name = normalized.split("/").filter(Boolean).pop() ?? "";
+      const children = this.directories[parent] ?? [];
+      const idx = children.findIndex((c) => c.name === name);
+      if (idx >= 0) {
+        children[idx] = { ...children[idx], type: newType };
+        this.directories[parent] = children;
+      }
+    });
   }
 
-  async getDownloadUrls(paths: string[]): Promise<string[][]> {
-    this.calls.push({ method: "getDownloadUrls", paths });
-    this.throwIfConfigured("getDownloadUrls");
-    return paths.map(
-      (path) =>
-        this.downloadUrls[normalize(path)] ?? [
-          `https://shock.test/dl/${normalize(path)}`,
-        ],
-    );
+  updateAutoMetadata(paths: string[]): Promise<void> {
+    return this.run(() => {
+      this.calls.push({ method: "updateAutoMetadata", paths });
+      this.throwIfConfigured("updateAutoMetadata");
+    });
   }
 
-  async getArchiveUrl(input: ArchiveRequest): Promise<ArchiveResult> {
-    this.calls.push({ method: "getArchiveUrl", input });
-    this.throwIfConfigured("getArchiveUrl");
-    return [
-      `https://shock.test/archive/${input.archiveName}`,
-      input.paths.length,
-      0,
-    ];
+  getDownloadUrls(paths: string[]): Promise<string[][]> {
+    return this.run(() => {
+      this.calls.push({ method: "getDownloadUrls", paths });
+      this.throwIfConfigured("getDownloadUrls");
+      return paths.map(
+        (path) =>
+          this.downloadUrls[normalize(path)] ?? [
+            `https://shock.test/dl/${normalize(path)}`,
+          ],
+      );
+    });
   }
 
-  async searchObjects(
+  getArchiveUrl(input: ArchiveRequest): Promise<ArchiveResult> {
+    return this.run(() => {
+      this.calls.push({ method: "getArchiveUrl", input });
+      this.throwIfConfigured("getArchiveUrl");
+      return [
+        `https://shock.test/archive/${input.archiveName}`,
+        input.paths.length,
+        0,
+      ];
+    });
+  }
+
+  searchObjects(
     input: SearchWorkspaceObjectsInput,
   ): Promise<WorkspaceItem[]> {
-    this.calls.push({ method: "searchObjects", input });
-    this.throwIfConfigured("searchObjects");
-    const path = input.path ?? "/home/";
-    const userSegment = input.username.includes("@")
-      ? input.username
-      : `${input.username}@bvbrc`;
-    const rootPath = normalize(`/${userSegment}${path}`);
+    return this.run(() => {
+      this.calls.push({ method: "searchObjects", input });
+      this.throwIfConfigured("searchObjects");
+      const path = input.path ?? "/home/";
+      const userSegment = input.username.includes("@")
+        ? input.username
+        : `${input.username}@bvbrc`;
+      const rootPath = normalize(`/${userSegment}${path}`);
 
-    const results: WorkspaceItem[] = [];
-    const seen = new Set<string>();
-    const nameFilter = input.name?.toLowerCase();
-    const visit = (dir: string) => {
-      if (seen.has(dir)) return;
-      seen.add(dir);
-      const children = this.directories[dir] ?? [];
-      children.forEach((f, i) => {
-        const item = toWorkspaceItem(toBrowserItem(dir, f, i));
-        const isFolderLike = /folder|job_result|modelfolder|group/.test(
-          item.type,
-        );
-        const typeMatches = !input.types || input.types.includes(item.type);
-        const nameMatches =
-          !nameFilter || item.name.toLowerCase().includes(nameFilter);
-        if (typeMatches && nameMatches) results.push(item);
-        if (isFolderLike) visit(item.path);
-      });
-    };
-    visit(rootPath);
-    return results;
+      const results: WorkspaceItem[] = [];
+      const seen = new Set<string>();
+      const nameFilter = input.name?.toLowerCase();
+      const visit = (dir: string) => {
+        if (seen.has(dir)) return;
+        seen.add(dir);
+        const children = this.directories[dir] ?? [];
+        children.forEach((f, i) => {
+          const item = toBrowserItem(dir, f, i);
+          const isFolderLike = /folder|job_result|modelfolder|group/.test(
+            item.type,
+          );
+          const typeMatches = !input.types || input.types.includes(item.type);
+          const nameMatches =
+            !nameFilter || item.name.toLowerCase().includes(nameFilter);
+          if (typeMatches && nameMatches) results.push(item);
+          if (isFolderLike) visit(item.path);
+        });
+      };
+      visit(rootPath);
+      return results;
+    });
   }
 
-  async diskUsage(
+  diskUsage(
     paths: string[],
     recursive = true,
     _options?: { silent?: boolean },
   ): Promise<[string, number, number, number, string][]> {
-    this.calls.push({ method: "diskUsage", paths, recursive });
-    this.throwIfConfigured("diskUsage");
-    return paths.map((path) => {
-      const entry = this.diskUsageMap[normalize(path)];
-      if (entry)
-        return [path, ...entry] as [string, number, number, number, string];
-      return [path, 0, 0, 0, ""];
+    return this.run(() => {
+      this.calls.push({ method: "diskUsage", paths, recursive });
+      this.throwIfConfigured("diskUsage");
+      return paths.map((path) => {
+        const key = normalize(path);
+        if (key in this.diskUsageMap)
+          return [path, ...this.diskUsageMap[key]] as [
+            string,
+            number,
+            number,
+            number,
+            string,
+          ];
+        return [path, 0, 0, 0, ""];
+      });
     });
   }
 }

@@ -33,11 +33,11 @@ const links: Record<string, string[]> = {
 
 const QuickLinks = () => {
   return (
-    <section className="py-8 px-4">
-      <h3 className="text-2xl font-bold text-center mb-6">Quick Links</h3>
-      <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6">
+    <section className="px-4 py-8">
+      <h3 className="mb-6 text-center text-2xl font-bold">Quick Links</h3>
+      <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-3">
         <Card className="p-6">
-          <h4 className="font-bold mb-4">Viruses</h4>
+          <h4 className="mb-4 font-bold">Viruses</h4>
           <ul className="space-y-2">
             {links.viruses.map((link) => (
               <li key={link}>
@@ -52,7 +52,7 @@ const QuickLinks = () => {
           </ul>
         </Card>
         <Card className="p-6">
-          <h4 className="font-bold mb-4">Analyze</h4>
+          <h4 className="mb-4 font-bold">Analyze</h4>
           <ul className="space-y-2">
             {links.analyze.map((link) => (
               <li key={link}>
@@ -64,7 +64,7 @@ const QuickLinks = () => {
           </ul>
         </Card>
         <Card className="p-6">
-          <h4 className="font-bold mb-4">Resources</h4>
+          <h4 className="mb-4 font-bold">Resources</h4>
           <ul className="space-y-2">
             {links.resources.map((link) => (
               <li key={link}>

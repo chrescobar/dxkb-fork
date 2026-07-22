@@ -73,7 +73,7 @@ export function WorkspaceToolbar({
           if (value != null) onTypeFilterChange(value);
         }}
       >
-        <SelectTrigger className="w-36 shrink-0">
+        <SelectTrigger aria-label="Filter by type" className="w-36 shrink-0">
           <SelectValue placeholder="All Types" />
         </SelectTrigger>
         <SelectContent>
@@ -88,11 +88,11 @@ export function WorkspaceToolbar({
       </Select>
 
       <div className="relative min-w-0 flex-1">
-        <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder="Search files..."
           value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
+          onChange={(e) => { onSearchChange(e.target.value); }}
           className="pl-9"
         />
       </div>
@@ -112,7 +112,7 @@ export function WorkspaceToolbar({
             title="Refresh the workspace"
           >
             <RefreshCw
-              className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+              className={`size-4 ${isRefreshing ? "animate-spin" : ""}`}
               data-icon="inline-start"
             />
             Refresh
@@ -124,7 +124,7 @@ export function WorkspaceToolbar({
             disabled={!onNewWorkspace}
             title="Create a new workspace directory"
           >
-            <HardDrive className="h-4 w-4" data-icon="inline-start" />
+            <HardDrive className="size-4" data-icon="inline-start" />
             New WS
           </Button>
         </div>
@@ -139,14 +139,14 @@ export function WorkspaceToolbar({
       <div className="flex flex-wrap items-center gap-2">
         <Button
           variant="outline"
-          onClick={() => onShowHiddenFilesChange(!showHiddenFiles)}
+          onClick={() => { onShowHiddenFilesChange(!showHiddenFiles); }}
           title={showHiddenFiles ? "Hide dotfiles and hidden items" : "Show hidden files (e.g. .folder)"}
           aria-pressed={showHiddenFiles}
         >
           {showHiddenFiles ? (
-            <EyeOff className="h-4 w-4" data-icon="inline-start" />
+            <EyeOff className="size-4" data-icon="inline-start" />
           ) : (
-            <Eye className="h-4 w-4" data-icon="inline-start" />
+            <Eye className="size-4" data-icon="inline-start" />
           )}
           {showHiddenFiles ? "Hide hidden" : "Show hidden"}
         </Button>
@@ -158,7 +158,7 @@ export function WorkspaceToolbar({
           title="Refresh the workspace"
         >
           <RefreshCw
-            className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+            className={`size-4 ${isRefreshing ? "animate-spin" : ""}`}
             data-icon="inline-start"
           />
           Refresh
@@ -173,7 +173,7 @@ export function WorkspaceToolbar({
                 disabled={!onNewFolder}
                 title={onNewFolder ? "Create a new folder" : undefined}
               >
-                <FolderPlus className="h-4 w-4" data-icon="inline-start" />
+                <FolderPlus className="size-4" data-icon="inline-start" />
                 New Folder
               </Button>
             </TooltipTrigger>
@@ -192,7 +192,7 @@ export function WorkspaceToolbar({
                 disabled={!onUpload}
                 title={onUpload ? "Upload a file to the workspace" : undefined}
               >
-                <Upload className="h-4 w-4" data-icon="inline-start" />
+                <Upload className="size-4" data-icon="inline-start" />
                 Upload
               </Button>
             </TooltipTrigger>

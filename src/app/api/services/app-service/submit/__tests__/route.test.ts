@@ -41,8 +41,8 @@ describe("POST /api/services/app-service/submit", () => {
       body: { app_name: "TestApp", app_params: {} },
     });
 
-    const response = await POST(request);
-    const data = await response.json();
+    const response = await POST(request, {});
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(401);
     expect(data).toEqual(
@@ -58,8 +58,8 @@ describe("POST /api/services/app-service/submit", () => {
       body: { app_params: { output_path: "/test" } },
     });
 
-    const response = await POST(request);
-    const data = await response.json();
+    const response = await POST(request, {});
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(400);
     expect(data).toEqual({ error: "app_name is required" });
@@ -73,8 +73,8 @@ describe("POST /api/services/app-service/submit", () => {
       body: { app_name: "TestApp" },
     });
 
-    const response = await POST(request);
-    const data = await response.json();
+    const response = await POST(request, {});
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(400);
     expect(data).toEqual({ error: "app_params must be an object" });
@@ -88,8 +88,8 @@ describe("POST /api/services/app-service/submit", () => {
       body: { app_name: "TestApp", app_params: "not-an-object" },
     });
 
-    const response = await POST(request);
-    const data = await response.json();
+    const response = await POST(request, {});
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(400);
     expect(data).toEqual({ error: "app_params must be an object" });
@@ -108,8 +108,8 @@ describe("POST /api/services/app-service/submit", () => {
       },
     });
 
-    const response = await POST(request);
-    const data = await response.json();
+    const response = await POST(request, {});
+    const data = (await response.json()) as { success?: boolean; job?: typeof mockResult };
 
     expect(response.status).toBe(200);
     expect(data).toEqual({ success: true, job: mockResult });
@@ -129,7 +129,7 @@ describe("POST /api/services/app-service/submit", () => {
       },
     });
 
-    await POST(request);
+    await POST(request, {});
 
     expect(mockAppService.submitService).toHaveBeenCalledWith({
       app_name: "BLAST",
@@ -151,8 +151,8 @@ describe("POST /api/services/app-service/submit", () => {
       body: { app_name: "TestApp", app_params: { x: 1 } },
     });
 
-    const response = await POST(request);
-    const data = await response.json();
+    const response = await POST(request, {});
+    const data = (await response.json()) as { error?: string; code?: string; details?: unknown };
 
     expect(response.status).toBe(500);
     expect(data).toEqual(
@@ -175,8 +175,8 @@ describe("POST /api/services/app-service/submit", () => {
       body: { app_name: "TestApp", app_params: { x: 1 } },
     });
 
-    const response = await POST(request);
-    const data = await response.json();
+    const response = await POST(request, {});
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(500);
     expect(data).toEqual(
@@ -193,8 +193,8 @@ describe("POST /api/services/app-service/submit", () => {
       body: { app_name: "TestApp", app_params: { x: 1 } },
     });
 
-    const response = await POST(request);
-    const data = await response.json();
+    const response = await POST(request, {});
+    const data = (await response.json()) as { error?: string; code?: string };
 
     expect(response.status).toBe(500);
     expect(data).toEqual(

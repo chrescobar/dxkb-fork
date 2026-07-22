@@ -58,7 +58,7 @@ describe("createGenomeComparisonItem", () => {
     const item = createGenomeComparisonItem("123.456", "E. coli");
     expect(item).toEqual(
       expect.objectContaining({
-        id: expect.any(String),
+        id: expect.any(String) as string,
         name: "E. coli",
         genome_id: "123.456",
         type: "genome",
@@ -81,7 +81,7 @@ describe("createFastaComparisonItem", () => {
     const item = createFastaComparisonItem("/workspace/user/my-file.fasta");
     expect(item).toEqual(
       expect.objectContaining({
-        id: expect.any(String),
+        id: expect.any(String) as string,
         name: "my-file.fasta",
         path: "/workspace/user/my-file.fasta",
         type: "fasta",
@@ -103,7 +103,7 @@ describe("createFeatureGroupComparisonItem", () => {
     const item = createFeatureGroupComparisonItem("/workspace/user/my-group");
     expect(item).toEqual(
       expect.objectContaining({
-        id: expect.any(String),
+        id: expect.any(String) as string,
         name: "my-group",
         path: "/workspace/user/my-group",
         type: "feature_group",
@@ -121,7 +121,7 @@ describe("createGenomeGroupComparisonItem", () => {
     const item = createGenomeGroupComparisonItem("/workspace/user/group1", ids);
     expect(item).toEqual(
       expect.objectContaining({
-        id: expect.any(String),
+        id: expect.any(String) as string,
         name: "group1",
         path: "/workspace/user/group1",
         type: "genome_group",
@@ -202,8 +202,7 @@ describe("getComparisonItemTypeLabel", () => {
   });
 
   it("returns the raw type string for an unknown type", () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(getComparisonItemTypeLabel("unknown" as any)).toBe("unknown");
+    expect(getComparisonItemTypeLabel("unknown" as "genome")).toBe("unknown");
   });
 });
 

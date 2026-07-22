@@ -67,7 +67,7 @@ describe("ExpandableViewerWrapper", () => {
     fireEvent.click(screen.getByRole("button", { name: "Collapse" }));
 
     // Advance past the 200ms fade-out animation
-    act(() => vi.advanceTimersByTime(200));
+    void act(() => vi.advanceTimersByTime(200));
 
     // Back to inline: expand button visible, no title header
     expect(
@@ -90,7 +90,7 @@ describe("ExpandableViewerWrapper", () => {
     fireEvent.keyDown(document, { key: "Escape" });
 
     // Advance past the 200ms fade-out animation
-    act(() => vi.advanceTimersByTime(200));
+    void act(() => vi.advanceTimersByTime(200));
 
     expect(
       screen.getByRole("button", { name: "Expand to full screen" }),
@@ -111,7 +111,7 @@ describe("ExpandableViewerWrapper", () => {
     );
 
     // Advance past the rAF that fires the callback
-    act(() => vi.advanceTimersByTime(50));
+    void act(() => vi.advanceTimersByTime(50));
 
     expect(onChange).toHaveBeenCalledWith(true);
   });
@@ -127,11 +127,11 @@ describe("ExpandableViewerWrapper", () => {
     fireEvent.click(
       screen.getByRole("button", { name: "Expand to full screen" }),
     );
-    act(() => vi.advanceTimersByTime(50));
+    void act(() => vi.advanceTimersByTime(50));
     onChange.mockClear();
 
     fireEvent.click(screen.getByRole("button", { name: "Collapse" }));
-    act(() => vi.advanceTimersByTime(250));
+    void act(() => vi.advanceTimersByTime(250));
 
     expect(onChange).toHaveBeenCalledWith(false);
   });

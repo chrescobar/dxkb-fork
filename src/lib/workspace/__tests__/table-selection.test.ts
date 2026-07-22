@@ -1,7 +1,7 @@
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { normalizePath, computeNextSelection } from "../table-selection";
 
-const makeItem = (path: string) => ({ path }) as WorkspaceBrowserItem;
+const makeItem = (path: string) => ({ path, id: path, name: path, type: "contigs", size: 0 }) as WorkspaceItem;
 
 describe("normalizePath", () => {
   it("collapses consecutive slashes", () => {

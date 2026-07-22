@@ -9,4 +9,5 @@ const authority = createAuth({
 
 export const auth = authority.auth;
 export const authAdmin = authority.authAdmin;
-export const withAuth = authority.auth.route;
+export const withAuth: typeof authority.auth.route = (handler) =>
+  authority.auth.route(handler);

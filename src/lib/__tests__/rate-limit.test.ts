@@ -12,7 +12,7 @@ describe("rateLimit", () => {
   });
 
   it("allows requests up to the limit then blocks", () => {
-    const key = `test-${Math.random()}`;
+    const key = "limit-boundary";
     expect(rateLimit(key, 3, 1000)).toMatchObject({ allowed: true, remaining: 2 });
     expect(rateLimit(key, 3, 1000)).toMatchObject({ allowed: true, remaining: 1 });
     expect(rateLimit(key, 3, 1000)).toMatchObject({ allowed: true, remaining: 0 });
@@ -20,7 +20,7 @@ describe("rateLimit", () => {
   });
 
   it("resets after the window elapses", () => {
-    const key = `test-${Math.random()}`;
+    const key = "window-reset";
     rateLimit(key, 1, 1000);
     expect(rateLimit(key, 1, 1000).allowed).toBe(false);
 
@@ -29,8 +29,8 @@ describe("rateLimit", () => {
   });
 
   it("tracks keys independently", () => {
-    const a = `a-${Math.random()}`;
-    const b = `b-${Math.random()}`;
+    const a = "independent-a";
+    const b = "independent-b";
     rateLimit(a, 1, 1000);
     expect(rateLimit(a, 1, 1000).allowed).toBe(false);
     expect(rateLimit(b, 1, 1000).allowed).toBe(true);

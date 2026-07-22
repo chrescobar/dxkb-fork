@@ -153,7 +153,7 @@ export function validateFasta(
     if (!protein && !isDNA(arr[i])) {
       if (seqType === "dna") {
         result.status = "need_dna";
-        result.message = "Too few nucleotide letters on line " + (i + 1) + ".";
+        result.message = `Too few nucleotide letters on line ${String(i + 1)}.`;
         return result;
       }
       protein = true;
@@ -163,7 +163,7 @@ export function validateFasta(
     if (!/^[ABCDEFGHIJKLMNOPQRSTUVWXYZ\-\n]+$/i.test(arr[i].toUpperCase())) {
       result.status = "invalid_letters";
       result.message =
-        "The sequences must have valid letters. Check line: " + (i + 1) + ".";
+        `The sequences must have valid letters. Check line: ${String(i + 1)}.`;
       return result;
     }
   }
@@ -211,15 +211,12 @@ export function validateFastaForBlast(
   return validateFasta(fastaText, expectedSeqType);
 }
 
-/**
- * Gets appropriate error message for BLAST program requirements
- */
-export function getBlastFastaErrorMessage(
+export function getFastaErrorMessage(
   validationResult: FastaValidationResult,
-  inputType: string,
+  programDisplayName: string,
 ): string {
   if (validationResult.status === "need_dna") {
-    return `${inputType.toUpperCase()} requires nucleotide sequences. ${validationResult.message}`;
+    return `${programDisplayName} requires nucleotide sequences. ${validationResult.message}`;
   }
 
   return validationResult.message;

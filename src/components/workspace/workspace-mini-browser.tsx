@@ -19,9 +19,8 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { WorkspaceItemIcon } from "./workspace-item-icon";
-import { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { useWorkspaceRepository } from "@/contexts/workspace-repository-context";
-import { toWorkspaceBrowserItem } from "@/lib/services/workspace/domain";
 import { workspaceQueryKeys } from "@/lib/services/workspace/workspace-query-keys";
 import {
   useSharedWithUser,
@@ -76,7 +75,7 @@ export function WorkspaceMiniBrowser({
   const [currentPath, setCurrentPath] = useState(initialPath);
   const [prevInitialPath, setPrevInitialPath] = useState(initialPath);
   const tableContainerRef = useRef<HTMLDivElement>(null);
-  const [focusedRow, setFocusedRow] = useState<"parent" | string | null>(null);
+  const [focusedRow, setFocusedRow] = useState<string | null>(null);
 
   if (prevInitialPath !== initialPath) {
     setPrevInitialPath(initialPath);
@@ -107,10 +106,7 @@ export function WorkspaceMiniBrowser({
   const repository = useWorkspaceRepository("authenticated");
   const pathQuery = useQuery({
     queryKey: workspaceQueryKeys.miniBrowser(currentPath),
-    queryFn: async () => {
-      const items = await repository.listDirectory({ path: currentPath });
-      return items.map(toWorkspaceBrowserItem) as WorkspaceBrowserItem[];
-    },
+    queryFn: () => repository.listDirectory({ path: currentPath }),
     enabled: !!currentPath && !isAtRoot,
     staleTime: 60 * 1000,
   });
@@ -119,7 +115,7 @@ export function WorkspaceMiniBrowser({
     if (!isAtRoot) return [];
     const userData = userWorkspacesQuery.data ?? [];
     const shared = (sharedQuery.data ?? []).filter(hasWriteAccess);
-    const byPath = new Map<string, WorkspaceBrowserItem>();
+    const byPath = new Map<string, WorkspaceItem>();
     for (const item of [...userData, ...shared]) {
       if (!byPath.has(item.path)) byPath.set(item.path, item);
     }
@@ -140,29 +136,29 @@ export function WorkspaceMiniBrowser({
   const displayItems = useMemo(() => {
     let list = items;
     if (mode === "folders-only") {
-      list = list.filter((item) => isFolder(item.type ?? ""));
+      list = list.filter((item) => isFolder(item.type));
     }
     if (!showHidden) {
-      list = list.filter((item) => !(item.name ?? "").startsWith("."));
+      list = list.filter((item) => !item.name.startsWith("."));
     }
-    const sortCompare = (a: WorkspaceBrowserItem, b: WorkspaceBrowserItem) => {
+    const sortCompare = (a: WorkspaceItem, b: WorkspaceItem) => {
       const aFolder = isFolderType(a.type);
       const bFolder = isFolderType(b.type);
       if (aFolder !== bFolder) return aFolder ? -1 : 1;
-      return (a.name ?? "").localeCompare(b.name ?? "", undefined, {
+      return a.name.localeCompare(b.name, undefined, {
         sensitivity: "base",
       });
     };
     return [...list].sort(sortCompare);
   }, [items, mode, showHidden]);
 
-  const handleFolderDoubleClick = (item: WorkspaceBrowserItem) => {
+  const handleFolderDoubleClick = (item: WorkspaceItem) => {
     if (isFolderType(item.type)) {
       setCurrentPath(item.path);
     }
   };
 
-  const handleFolderClick = (item: WorkspaceBrowserItem) => {
+  const handleFolderClick = (item: WorkspaceItem) => {
     if (isFolderType(item.type)) {
       onSelectPath(item.path);
     }
@@ -184,7 +180,7 @@ export function WorkspaceMiniBrowser({
 
   const handleParentClick = useCallback(() => {
     if (isInSharedFolder && pathSegments.length <= 2) {
-      setCurrentPath(workspaceRoot as string);
+      setCurrentPath(workspaceRoot);
       return;
     }
     const parentSegments = pathSegments.slice(0, -1);
@@ -198,8 +194,8 @@ export function WorkspaceMiniBrowser({
     [displayItems],
   );
 
-  const navigationTargets = useMemo<("parent" | string)[]>(() => {
-    const targets: ("parent" | string)[] = [];
+  const navigationTargets = useMemo<string[]>(() => {
+    const targets: string[] = [];
     if (showParentRow) {
       targets.push("parent");
     }
@@ -251,7 +247,6 @@ export function WorkspaceMiniBrowser({
             ? 0
             : Math.min(currentIndex + 1, navigationTargets.length - 1);
       } else {
-        // ArrowUp without Shift: clamp at the first row (no wrapping)
         if (currentIndex <= 0) {
           nextIndex = 0;
         } else {
@@ -291,21 +286,19 @@ export function WorkspaceMiniBrowser({
     );
     if (!row) return;
 
-    // Defer so DOM has the new focus/selection; use "start" so first row scrolls into view
     const id = requestAnimationFrame(() => {
       row.scrollIntoView({ block: "center", inline: "start" });
     });
-    return () => cancelAnimationFrame(id);
+    return () => { cancelAnimationFrame(id); };
   }, [focusedRow, selectedPath]);
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       <div
         ref={tableContainerRef}
-        role="grid"
         tabIndex={0}
         aria-label="Workspace destination browser"
-        className="scrollbar-themed focus-visible:ring-ring flex h-full min-h-0 flex-col overflow-auto rounded-md border outline-none focus-visible:ring-2"
+        className="scrollbar-themed flex h-full min-h-0 flex-col overflow-auto rounded-md border outline-none focus-visible:ring-2 focus-visible:ring-ring"
         onKeyDown={handleKeyDown}
         onPointerDownCapture={() => tableContainerRef.current?.focus()}
       >
@@ -326,15 +319,15 @@ export function WorkspaceMiniBrowser({
               <TableRow
                 data-row-key="parent"
                 className={cn(
-                  "hover:bg-muted/50 cursor-pointer",
+                  "cursor-pointer hover:bg-muted/50",
                   focusedRow === "parent" && "bg-muted",
                 )}
                 onClick={handleParentClick}
               >
                 <TableCell className="pl-3" colSpan={4}>
                   <div className="flex items-center gap-2">
-                    <FolderUp className="text-muted-foreground h-4 w-4 shrink-0" />
-                    <span className="text-muted-foreground text-sm">
+                    <FolderUp className="size-4 shrink-0 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">
                       {parentRowLabel}
                     </span>
                   </div>
@@ -347,7 +340,7 @@ export function WorkspaceMiniBrowser({
                 <TableRow key={i}>
                   <TableCell className="pl-3">
                     <div className="flex items-center gap-2">
-                      <Skeleton className="h-4 w-4" />
+                      <Skeleton className="size-4" />
                       <Skeleton className="h-4 w-32" />
                     </div>
                   </TableCell>
@@ -364,7 +357,7 @@ export function WorkspaceMiniBrowser({
               ))
             ) : error ? (
               <TableRow>
-                <TableCell className="text-destructive pl-3" colSpan={4}>
+                <TableCell className="pl-3 text-destructive" colSpan={4}>
                   Failed to load folder contents.
                 </TableCell>
               </TableRow>
@@ -377,17 +370,17 @@ export function WorkspaceMiniBrowser({
                     item.path === selectedPath.replace(/\/+$/, ""));
                 return (
                   <TableRow
-                    key={item.id ?? item.path}
+                    key={item.id}
                     data-row-key={normalizePath(item.path)}
                     className={cn(
-                      "hover:bg-muted/50 cursor-pointer",
+                      "cursor-pointer hover:bg-muted/50",
                       isFolderType(item.type) &&
                         isSelected &&
                         focusedRow !== "parent" &&
                         "bg-muted",
                     )}
-                    onClick={() => handleFolderClick(item)}
-                    onDoubleClick={() => handleFolderDoubleClick(item)}
+                    onClick={() => { handleFolderClick(item); }}
+                    onDoubleClick={() => { handleFolderDoubleClick(item); }}
                   >
                     <TableCell className="pl-3">
                       <div className="flex items-center gap-2">
@@ -398,13 +391,13 @@ export function WorkspaceMiniBrowser({
                     <TableCell className="hidden pl-3 text-sm sm:table-cell">
                       {isFolderType(item.type)
                         ? "—"
-                        : formatFileSize(item.size ?? 0)}
+                        : formatFileSize(item.size)}
                     </TableCell>
                     <TableCell className="hidden pl-3 text-sm md:table-cell">
-                      {formatOwner(item.owner_id ?? "")}
+                      {formatOwner(item.ownerId ?? "")}
                     </TableCell>
                     <TableCell className="hidden pl-3 text-sm lg:table-cell">
-                      {formatDate(item.creation_time ?? "")}
+                      {formatDate(item.createdAt ?? "")}
                     </TableCell>
                   </TableRow>
                 );

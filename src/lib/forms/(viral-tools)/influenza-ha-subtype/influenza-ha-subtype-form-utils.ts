@@ -28,7 +28,8 @@ export function transformHaSubtypeParams(
     params.input_fasta_data = normalizeFastaData(data.input_fasta_data);
   } else if (data.input_source === "fasta_file") {
     params.input_fasta_file = data.input_fasta_file.trim();
-  } else if (data.input_source === "feature_group") {
+  } else {
+    // data.input_source === "feature_group"
     params.input_feature_group = data.input_feature_group.trim();
   }
 

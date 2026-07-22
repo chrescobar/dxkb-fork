@@ -6,7 +6,7 @@ import { auth } from "@/lib/auth/server/instance";
  * Base URL for PATRIC/BV-BRC genome API (e.g. https://patricbrc.org/api or BV-BRC equivalent).
  * Genome endpoint: ${BVBRC_WEBSITE_API_URL}/genome/
  */
-const genomeWebsiteApi = `${process.env.BVBRC_WEBSITE_API_URL}/genome/`;
+const genomeWebsiteApi = `${process.env.BVBRC_WEBSITE_API_URL ?? ""}/genome/`;
 
 const maxRows = 25_000;
 
@@ -15,18 +15,18 @@ function csvToJson(csvText: string): Record<string, string>[] {
   if (trimmed.length === 0) return [];
 
   try {
-    const records = parse(trimmed, {
+    const records = parse<Record<string, string>>(trimmed, {
       columns: true,
       skip_empty_lines: true,
       trim: true,
       relax_quotes: true,
       relax_column_count: true,
-    }) as Record<string, string>[];
+    });
 
     return records.map((row) => {
       const out: Record<string, string> = {};
       for (const [k, v] of Object.entries(row)) {
-        out[k] = v ?? "";
+        out[k] = v;
       }
       return out;
     });
@@ -42,8 +42,8 @@ function escapeSolrTerm(value: string): string {
 
 export const POST = auth.route(async (request: NextRequest, { token }) => {
   try {
-    const body = await request.json().catch(() => ({}));
-    const genomeIds: string[] = Array.isArray(body?.genome_ids)
+    const body = (await request.json().catch(() => ({}))) as { genome_ids?: unknown };
+    const genomeIds: string[] = Array.isArray(body.genome_ids)
       ? (body.genome_ids as string[]).map((id: unknown) => String(id).trim())
       : [];
 
@@ -74,7 +74,7 @@ export const POST = auth.route(async (request: NextRequest, { token }) => {
       console.error("Genome website query error:", response.status, errorText);
       return NextResponse.json(
         {
-          error: `BV-BRC genome query failed: ${response.status} ${response.statusText}`,
+          error: `BV-BRC genome query failed: ${String(response.status)} ${response.statusText}`,
         },
         { status: response.status },
       );
@@ -84,8 +84,10 @@ export const POST = auth.route(async (request: NextRequest, { token }) => {
     const text = await response.text();
 
     if (contentType.includes("application/json")) {
-      const data = JSON.parse(text);
-      const results = Array.isArray(data) ? data : data?.items ?? data?.results ?? [];
+      const data = JSON.parse(text) as unknown[] | { items?: unknown[]; results?: unknown[] };
+      const results = Array.isArray(data)
+        ? data
+        : data.items ?? data.results ?? [];
       return NextResponse.json({ results });
     }
 

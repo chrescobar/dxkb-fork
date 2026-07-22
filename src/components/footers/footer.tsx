@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { SiGithub, SiFacebook, SiInstagram, SiYoutube, SiX } from "@icons-pack/react-simple-icons";
+import {
+  SiGithub,
+  SiFacebook,
+  SiInstagram,
+  SiYoutube,
+  SiX,
+} from "@icons-pack/react-simple-icons";
 import Logo from "@/components/ui/logo";
 import ThemeContent from "@/components/ui/theme-content";
 
@@ -14,7 +20,8 @@ interface FooterLink {
 
 interface FooterSection {
   title: string;
-  titleUrl: string;
+  /** When omitted, the section title renders as plain text (no link). */
+  titleUrl?: string;
   links: FooterLink[];
 }
 
@@ -29,7 +36,14 @@ const footerLinks: FooterSection[] = [
     links: [
       { name: "Funding", url: "/funding" },
       { name: "Our Team", url: "/team" },
-      { name: "Source Code", url: "https://github.com/CEPI-dxkb" },
+    ],
+  },
+  {
+    title: "UPDATES",
+    links: [
+      { name: "Citations", url: "/citations" },
+      { name: "Community News", url: "/news" },
+      { name: "Publications", url: "/publications" },
     ],
   },
   {
@@ -38,16 +52,6 @@ const footerLinks: FooterSection[] = [
     links: [
       { name: "Documentation", url: "https://docs.dxkb.org" },
       { name: "Related Resources", url: "/related-resources" },
-      { name: "Tutorials", url: "https://docs.dxkb.org/bv-brc/resources" },
-    ],
-  },
-  {
-    title: "UPDATES",
-    titleUrl: "/updates",
-    links: [
-      { name: "Citations", url: "/citations" },
-      { name: "Community News", url: "/news" },
-      { name: "Publications", url: "/publications" },
     ],
   },
   {
@@ -55,8 +59,11 @@ const footerLinks: FooterSection[] = [
     titleUrl: "/help",
     links: [
       { name: "Contact Us", url: "/contact" },
-      { name: "Instructional Videos", url: "https://docs.dxkb.org/bv-brc/resources" },
       { name: "Privacy Policy", url: "/privacy-policy" },
+      {
+        name: "Walkthroughs",
+        url: "https://docs.dxkb.org/docs/bv-brc/resources",
+      },
     ],
   },
 ];
@@ -88,7 +95,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className={socialLinkClassName}
               >
-                <SiX className="h-4 w-4" data-icon="inline-start" />
+                <SiX className="size-4" data-icon="inline-start" />
                 <span className="sr-only">X</span>
               </Link>
               <Link
@@ -97,7 +104,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className={socialLinkClassName}
               >
-                <SiFacebook className="h-4 w-4" data-icon="inline-start" />
+                <SiFacebook className="size-4" data-icon="inline-start" />
                 <span className="sr-only">Facebook</span>
               </Link>
               <Link
@@ -106,16 +113,16 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className={socialLinkClassName}
               >
-                <SiInstagram className="h-4 w-4" data-icon="inline-start" />
+                <SiInstagram className="size-4" data-icon="inline-start" />
                 <span className="sr-only">Instagram</span>
               </Link>
               <Link
-                href="https://github.com"
+                href="https://github.com/CEPI-dxkb"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={socialLinkClassName}
               >
-                <SiGithub className="h-4 w-4" data-icon="inline-start" />
+                <SiGithub className="size-4" data-icon="inline-start" />
                 <span className="sr-only">GitHub</span>
               </Link>
               <Link
@@ -124,7 +131,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className={socialLinkClassName}
               >
-                <SiYoutube className="h-4 w-4" data-icon="inline-start" />
+                <SiYoutube className="size-4" data-icon="inline-start" />
                 <span className="sr-only">YouTube</span>
               </Link>
             </div>
@@ -136,22 +143,30 @@ const Footer = () => {
             {footerLinks.map((section) => (
               <div key={section.title}>
                 <h4 className="footer-header">
-                  <Link
-                    href={section.titleUrl}
-                    {...(isExternalUrl(section.titleUrl) && {
-                      target: "_blank",
-                    })}
-                  >
-                    {section.title}
-                  </Link>
+                  {section.titleUrl ? (
+                    <Link
+                      href={section.titleUrl}
+                      {...(isExternalUrl(section.titleUrl) && {
+                        target: "_blank",
+                        rel: "noopener noreferrer",
+                      })}
+                    >
+                      {section.title}
+                    </Link>
+                  ) : (
+                    section.title
+                  )}
                 </h4>
-                <ul className="space-y-4 md:space-y-6 mb-2">
+                <ul className="mb-2 space-y-4 md:space-y-6">
                   {section.links.map((link) => (
                     <li key={link.name}>
                       <Link
                         href={link.url}
                         className="footer-link"
-                        {...(isExternalUrl(link.url) && { target: "_blank" })}
+                        {...(isExternalUrl(link.url) && {
+                          target: "_blank",
+                          rel: "noopener noreferrer",
+                        })}
                       >
                         {link.name}
                       </Link>

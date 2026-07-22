@@ -19,7 +19,7 @@ describe("POST /api/services/genome/by-ids", () => {
       method: "POST",
       body: { genome_ids: ["1.1"] },
     });
-    const res = await POST(req);
+    const res = await POST(req, {});
 
     expect(res.status).toBe(401);
     expect(await json(res)).toEqual(
@@ -31,7 +31,7 @@ describe("POST /api/services/genome/by-ids", () => {
     mockGetAuthToken.mockResolvedValue("token");
 
     const req = mockNextRequest({ method: "POST", body: { genome_ids: [] } });
-    const res = await POST(req);
+    const res = await POST(req, {});
 
     expect(res.status).toBe(200);
     expect(await json(res)).toEqual({ results: [] });
@@ -44,7 +44,7 @@ describe("POST /api/services/genome/by-ids", () => {
       method: "POST",
       body: { genome_ids: "not-an-array" },
     });
-    const res = await POST(req);
+    const res = await POST(req, {});
 
     expect(res.status).toBe(200);
     expect(await json(res)).toEqual({ results: [] });
@@ -57,7 +57,7 @@ describe("POST /api/services/genome/by-ids", () => {
       method: "POST",
       body: { genome_ids: ["abc", "!@#"] },
     });
-    const res = await POST(req);
+    const res = await POST(req, {});
 
     expect(res.status).toBe(200);
     expect(await json(res)).toEqual({ results: [] });
@@ -78,7 +78,7 @@ describe("POST /api/services/genome/by-ids", () => {
       method: "POST",
       body: { genome_ids: ["123.45", "abc", "67.89"] },
     });
-    await POST(req);
+    await POST(req, {});
 
     expect(capturedUrl).toContain("in(genome_id,(123.45,67.89))");
   });
@@ -94,12 +94,12 @@ describe("POST /api/services/genome/by-ids", () => {
       }),
     );
 
-    const ids = Array.from({ length: 3 }, (_, i) => `${i}.1`);
+    const ids = Array.from({ length: 3 }, (_, i) => `${String(i)}.1`);
     const req = mockNextRequest({
       method: "POST",
       body: { genome_ids: ids },
     });
-    await POST(req);
+    await POST(req, {});
 
     expect(capturedUrl).toContain("limit(3)");
   });
@@ -118,7 +118,7 @@ describe("POST /api/services/genome/by-ids", () => {
       method: "POST",
       body: { genome_ids: ["1.1"] },
     });
-    const res = await POST(req);
+    const res = await POST(req, {});
 
     expect(res.status).toBe(200);
     expect(await json(res)).toEqual({ results: genomes });
@@ -138,7 +138,7 @@ describe("POST /api/services/genome/by-ids", () => {
       method: "POST",
       body: { genome_ids: ["2.2"] },
     });
-    const res = await POST(req);
+    const res = await POST(req, {});
 
     expect(res.status).toBe(200);
     expect(await json(res)).toEqual({ results: genomes });
@@ -157,11 +157,11 @@ describe("POST /api/services/genome/by-ids", () => {
       method: "POST",
       body: { genome_ids: ["1.1"] },
     });
-    const res = await POST(req);
+    const res = await POST(req, {});
 
     expect(res.status).toBe(502);
     expect(await json(res)).toEqual(
-      expect.objectContaining({ error: expect.stringContaining("failed") }),
+      expect.objectContaining({ error: expect.stringContaining("failed") as unknown }),
     );
   });
 });

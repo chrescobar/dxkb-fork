@@ -35,7 +35,8 @@ export function transformMetagenomicReadMappingParams(
     params.gene_set_name = data.gene_set_name;
   } else if (data.gene_set_type === "fasta_file") {
     params.gene_set_fasta = data.gene_set_fasta;
-  } else if (data.gene_set_type === "feature_group") {
+  } else {
+    // data.gene_set_type === "feature_group"
     params.gene_set_feature_group = data.gene_set_feature_group;
   }
 

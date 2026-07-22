@@ -11,6 +11,7 @@ import {
   SubmitServiceParams,
   EnumerateTasksFilteredParams,
   EnumerateTasksFilteredResponse,
+  JobListItem,
   QueryTaskSummaryFilteredParams,
   QueryTaskSummaryFilteredResponse,
   QueryAppSummaryFilteredParams,
@@ -85,7 +86,7 @@ export class AppService {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${String(response.status)}`);
       }
 
       return await response.text();
@@ -128,12 +129,12 @@ export class AppService {
     if (start_time) opts.start_time = start_time;
     if (end_time) opts.end_time = end_time;
 
-    const raw = (await this.client.call(
+    const raw = await this.client.call<[unknown[], number] | unknown[]>(
       "AppService.enumerate_tasks_filtered",
       [offset, limit, opts],
-    )) as unknown[];
+    );
     // Backend returns [[...jobs], totalTasks]
-    const jobs = Array.isArray(raw[0]) ? raw[0] : raw;
+    const jobs = (Array.isArray(raw[0]) ? raw[0] : raw) as JobListItem[];
     const totalTasks = typeof raw[1] === "number" ? raw[1] : 0;
     return { jobs, totalTasks };
   }

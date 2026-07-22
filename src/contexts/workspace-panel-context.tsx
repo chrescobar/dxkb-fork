@@ -56,7 +56,7 @@ export function WorkspacePanelProvider({
   const setPanelLayout = useCallback((layout: Record<string, number>) => {
     panelLayoutRef.current = layout;
     // Persist to cookie so the server can render the correct layout on next page load
-    document.cookie = `${panelLayoutCookieName}=${JSON.stringify(layout)};path=/workspace;max-age=${60 * 60 * 24 * 365};SameSite=Lax`;
+    document.cookie = `${panelLayoutCookieName}=${JSON.stringify(layout)};path=/workspace;max-age=${String(60 * 60 * 24 * 365)};SameSite=Lax`;
   }, []);
 
   const value = useMemo<WorkspacePanelContextType>(

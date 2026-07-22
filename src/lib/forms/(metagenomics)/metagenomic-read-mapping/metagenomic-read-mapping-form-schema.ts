@@ -38,7 +38,7 @@ export const metagenomicReadMappingFormSchema = z
 
     if (!hasPaired && !hasSingle && !hasSrr) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: "At least one library (paired, single, or SRA) must be provided",
         path: ["paired_end_libs"],
       });
@@ -48,7 +48,7 @@ export const metagenomicReadMappingFormSchema = z
     if (data.gene_set_type === "predefined_list") {
       if (!data.gene_set_name) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: "Gene Set Name is required",
           path: ["gene_set_name"],
         });
@@ -58,7 +58,7 @@ export const metagenomicReadMappingFormSchema = z
     if (data.gene_set_type === "fasta_file") {
       if (!data.gene_set_fasta || data.gene_set_fasta.trim() === "") {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: "Gene Set FASTA file is required",
           path: ["gene_set_fasta"],
         });
@@ -68,7 +68,7 @@ export const metagenomicReadMappingFormSchema = z
     if (data.gene_set_type === "feature_group") {
       if (!data.gene_set_feature_group || data.gene_set_feature_group.trim() === "") {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: "Gene Set Feature Group is required",
           path: ["gene_set_feature_group"],
         });

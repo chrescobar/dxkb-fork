@@ -13,7 +13,7 @@ const validationDebounceMs = 500;
 
 /** Strips HTML tags so only plain text is stored/displayed (XSS safety). */
 function toPlainText(s: string): string {
-  const text = new DOMParser().parseFromString(s, "text/html").body.textContent ?? "";
+  const text = new DOMParser().parseFromString(s, "text/html").body.textContent;
   return text.trim() || s;
 }
 
@@ -228,8 +228,8 @@ const SraRunAccessionWithValidation = ({
         );
 
         if (!response.ok) {
-          const errorData = await response.json();
-          const rawError = errorData?.error != null ? String(errorData.error) : "";
+          const errorData = await (response.json() as Promise<{ error?: unknown }>);
+          const rawError = errorData.error != null ? (typeof errorData.error === 'string' ? errorData.error : JSON.stringify(errorData.error)) : "";
           const plainError = rawError ? toPlainText(rawError) : `Your input ${accession} is not valid`;
           if (response.status >= 400 && response.status < 500) {
             setValidationMessage(plainError);
@@ -240,7 +240,7 @@ const SraRunAccessionWithValidation = ({
           return null;
         }
 
-        const data = await response.json();
+        const data = await (response.json() as Promise<{ timeout?: boolean; xml?: string }>);
 
         if (data.timeout) {
           setValidationMessage("Timeout exceeded.");
@@ -249,7 +249,7 @@ const SraRunAccessionWithValidation = ({
           return validationCacheRef.current.result;
         }
 
-        const { title: studyTitle, runs, isValid } = parseXmlAndExtract(data.xml);
+        const { title: studyTitle, runs, isValid } = parseXmlAndExtract(data.xml ?? "");
         if (!isValid || runs.length === 0) {
           setValidationMessage("The accession is not a run id.");
           setIsValidSra(false);
@@ -287,7 +287,7 @@ const SraRunAccessionWithValidation = ({
     }
 
     const timer = setTimeout(() => {
-      validateAccession(trimmed).then((result) => {
+      void validateAccession(trimmed).then((result) => {
         // When there's no add button, auto-add the valid SRA so the form becomes valid (keep input visible)
         if (result && !showAddButton) {
           const libs = selectedLibrariesRef.current;
@@ -301,7 +301,7 @@ const SraRunAccessionWithValidation = ({
       });
     }, validationDebounceMs);
 
-    return () => clearTimeout(timer);
+    return () => { clearTimeout(timer); };
   }, [sraAccession, validateAccession, showAddButton, applyValidationResult]);
 
   const handleAdd = useCallback(async () => {
@@ -309,7 +309,7 @@ const SraRunAccessionWithValidation = ({
     if (!accession) return;
 
     const cached = validationCacheRef.current;
-    if (cached && cached.accession === accession && cached.result) {
+    if (cached && cached.accession === accession) {
       applyValidationResult(accession, cached.result);
       return;
     }
@@ -331,7 +331,7 @@ const SraRunAccessionWithValidation = ({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !showAddButton) {
       e.preventDefault();
-      handleAdd();
+      void handleAdd();
     }
   };
 
@@ -344,21 +344,22 @@ const SraRunAccessionWithValidation = ({
               {label ?? (
                 <Label className="service-card-label">{title}</Label>
               )}
-              <div className="bg-border mx-4 h-px flex-1" />
+              <div className="mx-4 h-px flex-1 bg-border" />
             </>
           ) : (
-            <div className="bg-border mx-4 h-px flex-1" />
+            <div className="mx-4 h-px flex-1 bg-border" />
           )}
           {showAddButton &&
             (addButton ?? (
               <Button
                 variant="outline"
                 size="icon"
-                onClick={handleAdd}
+                aria-label="Add SRA run accession to selected libraries"
+                onClick={() => { void handleAdd(); }}
                 disabled={!sraAccession.trim() || disabled || isValidating}
               >
                 {isValidating ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="size-4 animate-spin" />
                 ) : (
                   <ChevronRight size={16} />
                 )}

@@ -14,7 +14,7 @@ export default async function WorkspaceLayout({
   const layoutCookie = cookieStore.get(panelLayoutCookieName);
   let initialLayout: Record<string, number> | undefined;
   try {
-    initialLayout = layoutCookie ? JSON.parse(layoutCookie.value) : undefined;
+    initialLayout = layoutCookie ? (JSON.parse(layoutCookie.value) as Record<string, number>) : undefined;
   } catch {
     initialLayout = undefined;
   }

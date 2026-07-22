@@ -9,10 +9,10 @@ import { Button } from "@/components/ui/button";
 import { triggerDownload } from "@/lib/utils";
 import { formatFileSize } from "@/lib/services/workspace/helpers";
 import { getProxyUrl } from "@/components/workspace/file-viewer/file-viewer-registry";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 interface WorkspaceItemHeaderProps {
-  item: WorkspaceBrowserItem;
+  item: WorkspaceItem;
   onClose?: () => void;
   children?: React.ReactNode;
 }
@@ -56,7 +56,7 @@ export function WorkspaceItemHeader({
         <Button variant="ghost" size="icon-sm" onClick={handleDownload} title="Download file">
           <Download />
         </Button>
-        <Button variant="ghost" size="icon-sm" onClick={handleCopyPath} title="Copy path">
+        <Button variant="ghost" size="icon-sm" onClick={() => { void handleCopyPath(); }} title="Copy path">
           <ClipboardCopy />
         </Button>
         {children}

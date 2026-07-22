@@ -62,18 +62,18 @@ export function getYearGroupLabels(ranges: number[][]): string[] {
 
   // First range
   if (ranges[0].length === 1) {
-    labels.push(`<=${ranges[0][0]}`);
+    labels.push(`<=${String(ranges[0][0])}`);
   } else {
-    labels.push(`${ranges[0][0]}-${ranges[0][1]}`);
+    labels.push(`${String(ranges[0][0])}-${String(ranges[0][1])}`);
   }
 
   // Middle ranges
   for (let i = 1; i < ranges.length - 1; i++) {
     const range = ranges[i];
     if (range.length === 1) {
-      labels.push(`${range[0]}`);
+      labels.push(String(range[0]));
     } else {
-      labels.push(`${range[0]}-${range[1]}`);
+      labels.push(`${String(range[0])}-${String(range[1])}`);
     }
   }
 
@@ -81,9 +81,9 @@ export function getYearGroupLabels(ranges: number[][]): string[] {
   if (ranges.length > 1) {
     const last = ranges[ranges.length - 1];
     if (last.length === 1) {
-      labels.push(`>=${last[0]}`);
+      labels.push(`>=${String(last[0])}`);
     } else {
-      labels.push(`${last[0]}-${last[1]}`);
+      labels.push(`${String(last[0])}-${String(last[1])}`);
     }
   }
 
@@ -178,7 +178,8 @@ export function transformMetaCatsParams(
   } else if (data.input_type === "groups") {
     params.alphabet = data.group_alphabet === "aa" ? "aa" : "na";
     params.groups = data.groups;
-  } else if (data.input_type === "files") {
+  } else {
+    // data.input_type === "files"
     params.alignment_file = data.alignment_file;
     params.group_file = data.group_file;
 
@@ -217,12 +218,12 @@ export function validateYearRanges(yearRanges: string): {
     return { valid: false, message: "No valid year ranges found" };
   }
 
-  return { valid: true, message: `${ranges.length} range(s) parsed successfully` };
+  return { valid: true, message: `${String(ranges.length)} range(s) parsed successfully` };
 }
 
 function createMetaCatsRowId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
-  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  return `${String(Date.now())}-${Math.random().toString(16).slice(2)}`;
 }
 
 export function createGenomeIdMapFromFeatures(
@@ -273,7 +274,9 @@ export function buildMetaCatsAutoGroupsFromGenomes(args: {
 
   genomes.forEach((genome) => {
     const metadataValue = genome[metadataGroup];
-    const metadataStr = metadataValue !== undefined ? String(metadataValue) : "";
+    const metadataStr = metadataValue !== undefined && metadataValue !== null
+      ? (typeof metadataValue === 'string' ? metadataValue : (typeof metadataValue === 'number' || typeof metadataValue === 'boolean' ? String(metadataValue) : JSON.stringify(metadataValue)))
+      : "";
 
     let groupValue = metadataStr;
     if (metadataGroup === "collection_year" && parsedRanges.length > 0) {

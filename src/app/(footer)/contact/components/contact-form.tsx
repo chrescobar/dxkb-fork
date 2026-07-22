@@ -35,9 +35,11 @@ const ContactForm = () => {
         });
 
         if (!response.ok) {
-          const body = await response.json().catch(() => null);
+          const body = (await response.json().catch(() => null)) as {
+            error?: string;
+          } | null;
           throw new Error(
-            body?.error ?? `Request failed with status ${response.status}`,
+            body?.error ?? `Request failed with status ${String(response.status)}`,
           );
         }
 
@@ -54,20 +56,20 @@ const ContactForm = () => {
   return (
     <section className="py-12">
       <div className="container mx-auto px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {/* Contact Info Sidebar */}
             <div className="md:col-span-1">
               <div className="sticky top-24">
-                <h2 className="text-xl font-bold mb-6">Contact Information</h2>
+                <h2 className="mb-6 text-xl font-bold">Contact Information</h2>
 
                 <div className="space-y-6">
                   <div className="flex items-start">
-                    <div className="bg-secondary/20 p-3 rounded-full mr-4">
-                      <Mail className="h-5 w-5 text-secondary" />
+                    <div className="mr-4 rounded-full bg-secondary/20 p-3">
+                      <Mail className="size-5 text-secondary" />
                     </div>
                     <div>
-                      <h3 className="font-medium mb-1">Email</h3>
+                      <h3 className="mb-1 font-medium">Email</h3>
                       <a
                         href="mailto:help@dxkb.org"
                         className="text-link hover:underline"
@@ -84,13 +86,13 @@ const ContactForm = () => {
             <div className="md:col-span-2">
               <Card>
                 <CardContent className="px-8 py-4">
-                  <h2 className="text-xl font-bold mb-6">Send Us a Message</h2>
+                  <h2 className="mb-6 text-xl font-bold">Send Us a Message</h2>
                   <form
                     className="space-y-6"
                     onSubmit={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      form.handleSubmit();
+                      void form.handleSubmit();
                     }}
                   >
                     <div className="space-y-4">
@@ -112,9 +114,9 @@ const ContactForm = () => {
                               aria-labelledby="inquiryType-label"
                               value={field.state.value}
                               onValueChange={(value) =>
-                                field.handleChange(value as InquiryType)
+                                { field.handleChange(value as InquiryType); }
                               }
-                              className="mt-1 grid grid-cols-1 md:grid-cols-2 gap-3"
+                              className="mt-1 grid grid-cols-1 gap-3 md:grid-cols-2"
                             >
                               {inquiryTypes.map((option) => (
                                 <div
@@ -139,7 +141,7 @@ const ContactForm = () => {
                         )}
                       </form.Field>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <form.Field name="name">
                           {(field) => (
                             <FieldItem>
@@ -155,7 +157,7 @@ const ContactForm = () => {
                                 value={field.state.value}
                                 onBlur={field.handleBlur}
                                 onChange={(e) =>
-                                  field.handleChange(e.target.value)
+                                  { field.handleChange(e.target.value); }
                                 }
                                 placeholder="Enter your full name"
                               />
@@ -180,7 +182,7 @@ const ContactForm = () => {
                                 value={field.state.value}
                                 onBlur={field.handleBlur}
                                 onChange={(e) =>
-                                  field.handleChange(e.target.value)
+                                  { field.handleChange(e.target.value); }
                                 }
                                 placeholder="Enter your email address"
                               />
@@ -204,7 +206,7 @@ const ContactForm = () => {
                               name={field.name}
                               value={field.state.value}
                               onBlur={field.handleBlur}
-                              onChange={(e) => field.handleChange(e.target.value)}
+                              onChange={(e) => { field.handleChange(e.target.value); }}
                               placeholder="Enter the subject of your message"
                             />
                             <FieldErrors field={field} />
@@ -226,7 +228,7 @@ const ContactForm = () => {
                               name={field.name}
                               value={field.state.value}
                               onBlur={field.handleBlur}
-                              onChange={(e) => field.handleChange(e.target.value)}
+                              onChange={(e) => { field.handleChange(e.target.value); }}
                               placeholder="Please provide details about your inquiry..."
                               rows={6}
                             />
@@ -244,7 +246,7 @@ const ContactForm = () => {
                           <Button
                             type="submit"
                             disabled={isSubmitting}
-                            className="w-full bg-secondary hover:bg-secondary py-6"
+                            className="w-full bg-secondary py-6 hover:bg-secondary"
                           >
                             {isSubmitting ? (
                               <>

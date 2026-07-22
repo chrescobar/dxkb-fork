@@ -5,16 +5,16 @@ const ContactUs = () => {
   return (
     <section className="py-12">
       <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl font-bold mb-4">Still Need Help?</h2>
-          <p className="text-muted-foreground mb-8">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="mb-4 text-2xl font-bold">Still Need Help?</h2>
+          <p className="mb-8 text-muted-foreground">
             Our support team is available to assist you with any questions or issues you may encounter.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <div className="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center mx-auto mb-4">
+                <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-secondary/20">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -45,7 +45,7 @@ const ContactUs = () => {
 
             <Card>
               <CardHeader>
-                <div className="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center mx-auto mb-4">
+                <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-secondary/20">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WorkspaceItemDetails } from "../workspace-item-details";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 vi.mock("@/lib/services/workspace/helpers", () => ({
   formatDate: vi.fn((d: string) => d || ""),
@@ -52,17 +52,17 @@ vi.mock("@/components/workspace/workspace-item-icon", () => ({
   WorkspaceItemIcon: () => <span data-testid="item-icon" />,
 }));
 
-const makeItem = (overrides?: Partial<WorkspaceBrowserItem>): WorkspaceBrowserItem =>
+const makeItem = (overrides?: Partial<WorkspaceItem>): WorkspaceItem =>
   ({
     id: "id-1",
     path: "/user/home/data.fasta",
     name: "data.fasta",
     type: "contigs",
     size: 1024,
-    creation_time: "2024-01-01",
-    owner_id: "user@bvbrc",
+    createdAt: "2024-01-01",
+    ownerId: "user@bvbrc",
     ...overrides,
-  }) as WorkspaceBrowserItem;
+  });
 
 function renderWithQueryClient(ui: React.ReactElement) {
   const queryClient = new QueryClient({
@@ -81,7 +81,7 @@ describe("WorkspaceItemDetails", () => {
 
   it("renders the creation date", () => {
     renderWithQueryClient(
-      <WorkspaceItemDetails item={makeItem({ creation_time: "2024-06-15" })} />,
+      <WorkspaceItemDetails item={makeItem({ createdAt: "2024-06-15" })} />,
     );
     expect(screen.getByText("2024-06-15")).toBeInTheDocument();
   });

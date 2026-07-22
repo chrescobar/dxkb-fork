@@ -46,11 +46,11 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
     );
   }
 
-  const json = await request.json().catch(() => null);
+  const json: unknown = await request.json().catch(() => null);
 
   const parsed = contactFormSchema.safeParse(json);
   if (!parsed.success) {
-    const firstIssue = parsed.error.issues[0];
+    const firstIssue = parsed.error.issues[0] as { message: string } | undefined;
     return NextResponse.json(
       {
         error: firstIssue?.message ?? "Invalid contact submission.",

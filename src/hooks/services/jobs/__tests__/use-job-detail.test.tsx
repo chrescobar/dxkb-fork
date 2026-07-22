@@ -41,7 +41,7 @@ describe("useJobDetail", () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => { expect(result.current.isSuccess).toBe(true); });
 
     expect(result.current.data).toEqual(jobDetail);
   });
@@ -72,7 +72,7 @@ describe("useJobOutput", () => {
       { wrapper: createWrapper() },
     );
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => { expect(result.current.isSuccess).toBe(true); });
 
     expect(result.current.data).toBe(outputText);
   });
@@ -98,7 +98,7 @@ describe("useJobOutput", () => {
       { wrapper: createWrapper() },
     );
 
-    await waitFor(() => expect(result.current.isError).toBe(true));
+    await waitFor(() => { expect(result.current.isError).toBe(true); });
 
     expect(result.current.error).toBeInstanceOf(ApiCallError);
     expect(result.current.error?.status).toBe(404);

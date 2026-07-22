@@ -55,7 +55,7 @@ describe("use-shared-with-user", () => {
       { wrapper: makeWrapper(repo) },
     );
 
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    await waitFor(() => { expect(result.current.isLoading).toBe(false); });
     expect(result.current.data?.map((item) => item.name)).toEqual([
       "shared-by-bob",
     ]);
@@ -76,7 +76,7 @@ describe("use-shared-with-user", () => {
       { wrapper: makeWrapper(repo) },
     );
 
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    await waitFor(() => { expect(result.current.isLoading).toBe(false); });
     expect(result.current.data?.map((item) => item.path)).toEqual([
       "/alice@bvbrc/workspace-a",
     ]);

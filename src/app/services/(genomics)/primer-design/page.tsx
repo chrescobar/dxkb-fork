@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import {
   FieldItem,
   FieldLabel,
@@ -72,14 +73,13 @@ export default function PrimerDesignServicePage() {
   });
 
   const form = useForm({
-    defaultValues: defaultPrimerDesignFormValues as PrimerDesignFormData,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: primerDesignFormSchema as any },
+    defaultValues: defaultPrimerDesignFormValues,
+    validators: { onChange: primerDesignFormSchema },
     onSubmit: async ({ value }) => {
-      const data = value as PrimerDesignFormData;
+      const data = value;
 
       if (data.input_type === "sequence_text") {
-        const validation = validatePrimerDesignSequence(data.sequence_input);
+        const validation = validatePrimerDesignSequence(data.sequence_input ?? "");
 
         if (!validation.isValid) {
           toast.error(validation.message);
@@ -91,14 +91,14 @@ export default function PrimerDesignServicePage() {
         }
       }
 
-      await runtime.submitFormData(data);
+      await runtime.submitFormData(data as PrimerDesignFormData);
     },
   });
 
-  const inputType = useStore(form.store, (s) => s.values.input_type);
-  const sequenceInput = useStore(form.store, (s) => s.values.sequence_input);
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const inputType = useSelector(form.store, (s) => s.values.input_type);
+  const sequenceInput = useSelector(form.store, (s) => s.values.sequence_input);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const sequenceValidation = useMemo(() => {
     if (inputType === "workplace_fasta" || !sequenceInput) return null;
@@ -167,8 +167,8 @@ export default function PrimerDesignServicePage() {
   ) {
     const target = event.currentTarget;
     selectionRangeRef.current = {
-      start: target.selectionStart ?? 0,
-      end: target.selectionEnd ?? 0,
+      start: target.selectionStart,
+      end: target.selectionEnd,
     };
   }
 
@@ -204,7 +204,7 @@ export default function PrimerDesignServicePage() {
       include: ["{", "}"],
     } as const;
 
-    const [openMarker, closeMarker] = markers[marker as keyof typeof markers];
+    const [openMarker, closeMarker] = markers[marker];
     const markedSequence =
       currentSequence.slice(0, start) +
       openMarker +
@@ -255,14 +255,14 @@ export default function PrimerDesignServicePage() {
           inputTypeVal === "sequence_text" ||
           inputTypeVal === "workplace_fasta"
         ) {
-          form.setFieldValue("input_type", inputTypeVal as never);
+          form.setFieldValue("input_type", inputTypeVal);
         }
 
         if (inputTypeVal === "workplace_fasta") {
           const path =
             typeof d.sequence_input === "string" ? d.sequence_input : "";
           isRestoringValueRef.current = true;
-          form.setFieldValue("sequence_input", path as never);
+          form.setFieldValue("sequence_input", path);
           setWorkspaceFastaValue(path);
           setTimeout(() => {
             isRestoringValueRef.current = false;
@@ -271,8 +271,8 @@ export default function PrimerDesignServicePage() {
           const seq =
             typeof d.sequence_input === "string" ? d.sequence_input : "";
           const seqId = typeof d.SEQUENCE_ID === "string" ? d.SEQUENCE_ID : "";
-          form.setFieldValue("sequence_input", seq as never);
-          form.setFieldValue("SEQUENCE_ID", seqId as never);
+          form.setFieldValue("sequence_input", seq);
+          form.setFieldValue("SEQUENCE_ID", seqId);
           setSequenceTextValue(seq);
           setSequenceTextId(seqId);
         }
@@ -280,7 +280,7 @@ export default function PrimerDesignServicePage() {
         if (typeof d.PRIMER_PICK_INTERNAL_OLIGO === "boolean") {
           form.setFieldValue(
             "PRIMER_PICK_INTERNAL_OLIGO",
-            d.PRIMER_PICK_INTERNAL_OLIGO as never,
+            d.PRIMER_PICK_INTERNAL_OLIGO,
           );
         }
 
@@ -289,17 +289,17 @@ export default function PrimerDesignServicePage() {
             const val = Array.isArray(d[field])
               ? (d[field] as string[])
               : typeof d[field] === "string"
-                ? (d[field] as string).trim().split(/\s+/).filter(Boolean)
+                ? (d[field]).trim().split(/\s+/).filter(Boolean)
                 : undefined;
             if (val !== undefined) {
-              form.setFieldValue(field, val as never);
+              form.setFieldValue(field, val);
             }
           }
         }
 
         for (const field of primerScalarFields) {
           if (d[field] !== undefined) {
-            form.setFieldValue(field, String(d[field]) as never);
+            form.setFieldValue(field, String(d[field] as string | number | boolean));
           }
         }
 
@@ -333,7 +333,7 @@ export default function PrimerDesignServicePage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="space-y-4"
       >
@@ -421,7 +421,7 @@ export default function PrimerDesignServicePage() {
                         id={field.name}
                         value={field.state.value}
                         onChange={(event) =>
-                          handleSequenceValueChange(event.target.value)
+                          { handleSequenceValueChange(event.target.value); }
                         }
                         onSelect={handleSequenceSelect}
                         onKeyUp={handleSequenceSelect}
@@ -430,7 +430,7 @@ export default function PrimerDesignServicePage() {
                         className="service-card-textarea"
                       />
                       {sequenceValidation && !sequenceValidation.isValid && (
-                        <p className="text-destructive text-sm">
+                        <p className="text-sm text-destructive">
                           {sequenceValidation.message}
                         </p>
                       )}
@@ -456,7 +456,7 @@ export default function PrimerDesignServicePage() {
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={() => updateSequenceWithMarkers(markerKey)}
+                        onClick={() => { updateSequenceWithMarkers(markerKey); }}
                       >
                         {markerLabels[markerKey]}
                       </Button>
@@ -465,7 +465,7 @@ export default function PrimerDesignServicePage() {
                       type="button"
                       variant="outline"
                       size="sm"
-                      onClick={() => updateSequenceWithMarkers("clear")}
+                      onClick={() => { updateSequenceWithMarkers("clear"); }}
                     >
                       Clear markers
                     </Button>
@@ -509,7 +509,7 @@ export default function PrimerDesignServicePage() {
                           }
                         }}
                       />
-                      <p className="text-muted-foreground text-xs">
+                      <p className="text-xs text-muted-foreground">
                         Note: only the first FASTA record will be used.
                       </p>
                       <FieldErrors field={field} />
@@ -527,7 +527,7 @@ export default function PrimerDesignServicePage() {
                   </FieldLabel>
                   <Switch
                     checked={field.state.value ? true : false}
-                    onCheckedChange={(checked) => field.handleChange(checked)}
+                    onCheckedChange={(checked) => { field.handleChange(checked); }}
                   />
                   <FieldErrors field={field} />
                 </FieldItem>
@@ -557,11 +557,8 @@ export default function PrimerDesignServicePage() {
                     </TooltipProvider>
                   </div>
                   <Input
-                    value={
-                      Array.isArray(field.state.value)
-                        ? field.state.value.join(" ")
-                        : field.state.value || ""
-                    }
+                    id={field.name}
+                    value={(field.state.value ?? []).join(" ")}
                     onChange={(e) => {
                       const value = e.target.value;
                       field.handleChange(
@@ -612,6 +609,7 @@ export default function PrimerDesignServicePage() {
                           {label}
                         </FieldLabel>
                         <Input
+                          id={field.name}
                           value={field.state.value || ""}
                           onChange={(e) => {
                             const value = e.target.value;
@@ -690,11 +688,8 @@ export default function PrimerDesignServicePage() {
                       <div className="flex items-center gap-2">
                         <span>{prefix}</span>
                         <Input
-                          value={
-                            Array.isArray(field.state.value)
-                              ? field.state.value.join(" ")
-                              : field.state.value || ""
-                          }
+                          id={field.name}
+                          value={(field.state.value ?? []).join(" ")}
                           onChange={(e) => {
                             const value = e.target.value;
                             field.handleChange(
@@ -720,7 +715,7 @@ export default function PrimerDesignServicePage() {
               <CollapsibleTrigger className="service-collapsible-trigger">
                 Advanced Options
                 <ChevronDown
-                  className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
+                  className={`size-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
                 />
               </CollapsibleTrigger>
 
@@ -751,6 +746,7 @@ export default function PrimerDesignServicePage() {
                           </TooltipProvider>
                         </div>
                         <Input
+                          id={field.name}
                           value={field.state.value || ""}
                           onChange={(e) => {
                             const value = e.target.value;
@@ -806,6 +802,7 @@ export default function PrimerDesignServicePage() {
                                 {label}
                               </FieldLabel>
                               <Input
+                                id={field.name}
                                 value={field.state.value || ""}
                                 onChange={(e) => {
                                   const value = e.target.value;
@@ -856,6 +853,7 @@ export default function PrimerDesignServicePage() {
                                 {label}
                               </FieldLabel>
                               <Input
+                                id={field.name}
                                 value={field.state.value || ""}
                                 onChange={(e) => {
                                   const value = e.target.value;
@@ -902,6 +900,7 @@ export default function PrimerDesignServicePage() {
                               {label}
                             </FieldLabel>
                             <Input
+                              id={field.name}
                               value={field.state.value || ""}
                               onChange={(e) => {
                                 const value = e.target.value;
@@ -946,7 +945,7 @@ export default function PrimerDesignServicePage() {
                     variant="name"
                     required
                     value={field.state.value}
-                    onChange={(value) => field.handleChange(value)}
+                    onChange={(value) => { field.handleChange(value); }}
                     outputFolderPath={outputPath}
                     onValidationChange={setIsOutputNameValid}
                   />
@@ -965,7 +964,7 @@ export default function PrimerDesignServicePage() {
             type="submit"
             disabled={runtime.isSubmitting || !canSubmit || !isOutputNameValid}
           >
-            {runtime.isSubmitting && <Spinner className="mr-2 h-4 w-4" />}
+            {runtime.isSubmitting && <Spinner className="mr-2 size-4" />}
             Submit
           </Button>
         </div>

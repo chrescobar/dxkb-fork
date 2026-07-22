@@ -5,7 +5,7 @@ import { ExternalLink } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { formatFileSize } from "@/lib/services/workspace/helpers";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { WorkspaceItemHeader } from "@/components/workspace/workspace-item-header";
 import { WorkspaceItemDetails } from "@/components/workspace/workspace-item-details";
 import { Separator } from "@/components/ui/separator";
@@ -14,7 +14,7 @@ import { FileViewerContent } from "./file-viewer-content";
 import { getProxyUrl } from "./file-viewer-registry";
 
 interface FileViewerPanelProps {
-  item: WorkspaceBrowserItem;
+  item: WorkspaceItem;
   onClose: () => void;
 }
 

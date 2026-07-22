@@ -38,7 +38,11 @@ export function useMolstarPlugin(
   useEffect(() => {
     if (!filePath) return;
 
-    let disposed = false;
+    // `isDisposed` reads through a function call so TypeScript cannot narrow the
+    // return value to `false` after a guard — the cleanup callback can set it to
+    // `true` at any await boundary and all subsequent checks are genuinely needed.
+    const lifecycle = { disposed: false };
+    const isDisposed = (): boolean => lifecycle.disposed;
 
     async function init() {
       if (!containerRef.current) return;
@@ -51,7 +55,7 @@ export function useMolstarPlugin(
             import("molstar/lib/mol-plugin-ui/spec"),
           ]);
 
-        if (disposed) return;
+        if (isDisposed()) return;
         setStatus("initializing");
 
         const spec = {
@@ -80,7 +84,7 @@ export function useMolstarPlugin(
           spec,
         });
 
-        if (disposed) {
+        if (isDisposed()) {
           plugin.dispose();
           return;
         }
@@ -101,10 +105,10 @@ export function useMolstarPlugin(
           "default",
         );
 
-        if (disposed) return;
+        if (isDisposed()) return;
         setStatus("ready");
       } catch (err) {
-        if (disposed) return;
+        if (isDisposed()) return;
         setErrorMessage(
           err instanceof Error ? err.message : "Failed to load structure",
         );
@@ -112,10 +116,10 @@ export function useMolstarPlugin(
       }
     }
 
-    init();
+    void init();
 
     return () => {
-      disposed = true;
+      lifecycle.disposed = true;
       pluginRef.current?.dispose();
       pluginRef.current = null;
     };
@@ -131,8 +135,7 @@ export function useMolstarPlugin(
     const observer = new ResizeObserver(() => {
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (pluginRef.current as any)?.canvas3d?.handleResize();
+        (pluginRef.current as { canvas3d?: { handleResize?: () => void } } | null)?.canvas3d?.handleResize?.();
       });
     });
 

@@ -34,7 +34,7 @@ describe("useWorkspaceObjectSearch", () => {
       () => useWorkspaceObjectSearch({ username: "alice", types: ["reads"] }),
       { wrapper: makeWrapper(repo) },
     );
-    await waitFor(() => expect(result.current.loading).toBe(false));
+    await waitFor(() => { expect(result.current.loading).toBe(false); });
     expect(result.current.items.map((i) => i.name)).toEqual(["x.fq"]);
     expect(result.current.objects[0]?.type).toBe("reads");
   });
@@ -53,8 +53,8 @@ describe("useWorkspaceObjectSearch", () => {
       () => useWorkspaceObjectSearch({ username: "alice" }),
       { wrapper: makeWrapper(repo) },
     );
-    await waitFor(() => expect(result.current.loading).toBe(false));
-    act(() => result.current.search("apple"));
+    await waitFor(() => { expect(result.current.loading).toBe(false); });
+    act(() => { result.current.search("apple"); });
     expect(result.current.filteredItems.map((i) => i.name)).toEqual([
       "apple.fq",
       "apple2.fq",
@@ -71,10 +71,10 @@ describe("useWorkspaceObjectSearch", () => {
       () => useWorkspaceObjectSearch({ username: "alice" }),
       { wrapper: makeWrapper(repo) },
     );
-    await waitFor(() => expect(result.current.loading).toBe(false));
-    act(() => result.current.search("xyz"));
+    await waitFor(() => { expect(result.current.loading).toBe(false); });
+    act(() => { result.current.search("xyz"); });
     expect(result.current.filteredItems).toHaveLength(0);
-    act(() => result.current.clearSearch());
+    act(() => { result.current.clearSearch(); });
     expect(result.current.filteredItems).toHaveLength(1);
   });
 

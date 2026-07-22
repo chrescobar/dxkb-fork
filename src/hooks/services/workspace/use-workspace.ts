@@ -15,7 +15,7 @@ export function useKillJob() {
       if (!response.ok) {
         throw new Error(`Failed to kill job: ${response.statusText}`);
       }
-      return response.json();
+      return response.json() as Promise<KillJobResponse>;
     },
     onSuccess: (data, jobId) => {
       toast.success(`Kill request for Job ${jobId} was sent successfully`);

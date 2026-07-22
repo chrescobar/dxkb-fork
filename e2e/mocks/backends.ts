@@ -1,6 +1,16 @@
 import { test as base, type Page, type Route } from "@playwright/test";
 import path from "node:path";
+import os from "node:os";
 import fs from "node:fs";
+
+import { harReplayHostPlaceholder } from "../scripts/har-constants";
+
+// Process-lifetime cache of HARs that have already had the placeholder host
+// rewritten to the live origin. Keyed by `harPath + liveOrigin` so a single
+// worker materializes each HAR at most once instead of leaking a fresh
+// `mkdtempSync` directory per test. The OS reclaims `os.tmpdir()` between
+// CI runs, so we don't register an explicit unlink hook.
+const materializedHarCache = new Map<string, string>();
 
 export interface JsonOverrideBodyContext {
   /** Parsed JSON request body (null when the body was not JSON or was empty). */
@@ -8,6 +18,25 @@ export interface JsonOverrideBodyContext {
   /** 0-based count of how many times this override has been served on the current page. */
   callIndex: number;
 }
+
+/**
+ * Response body shape for a {@link JsonOverride}. Covers every JSON-serializable
+ * primitive, plain object, and array — plus a factory function that receives
+ * `{ parsedBody, callIndex }` and returns the body for that call. The factory
+ * branch lets a single mock evolve between calls (e.g. a workspace listing that
+ * gains a new row after an upload completes).
+ *
+ * `object` is intentional (not `Record<string, unknown>`) so typed object
+ * literals without an index signature — `MockJob`, `mockUserProfile`, etc. —
+ * satisfy this alias without per-call-site casts.
+ */
+export type JsonOverrideBody =
+  | object
+  | string
+  | number
+  | boolean
+  | null
+  | ((ctx: JsonOverrideBodyContext) => unknown);
 
 export interface JsonOverride {
   url: string | RegExp;
@@ -18,7 +47,7 @@ export interface JsonOverride {
    * returns the body for that call — used when a single mock needs to evolve between calls
    * (e.g. a workspace listing that gains a new row after an upload completes).
    */
-  body?: unknown | ((ctx: JsonOverrideBodyContext) => unknown);
+  body?: JsonOverrideBody;
   headers?: Record<string, string>;
   /**
    * Optional predicate against the parsed JSON request body. Lets multiple overrides share the
@@ -34,6 +63,18 @@ export interface BackendMockOptions {
   /** When true (default), any unmocked request to a backend host or /api/** fails the test. */
   strict?: boolean;
 }
+
+// Default overrides merged into every applyBackendMocks call. Tests can override
+// individual entries by placing their own override earlier in the array (first match wins).
+// Add entries here for any navbar/layout component that fetches on every page load so
+// tests that don't care about that data don't have to mock it themselves.
+const defaultOverrides: JsonOverride[] = [
+  {
+    url: "/api/services/app-service/jobs/summary",
+    method: "POST",
+    body: { taskSummary: {}, appSummary: {} },
+  },
+];
 
 // Per-page log of backend requests the strict guard aborted. Populated inside the
 // strict route handler and drained by verifyNoUnmockedBackendRequests() — which the
@@ -114,6 +155,8 @@ function parseJsonBody(raw: string | null): unknown {
  */
 export async function applyBackendMocks(page: Page, options: BackendMockOptions = {}): Promise<void> {
   const { har, overrides = [], strict = true } = options;
+  // Merge defaults after caller overrides so caller-provided entries win (first match wins).
+  const effectiveOverrides = [...overrides, ...defaultOverrides];
   const appHost = resolveAppHost();
 
   // 1. Strict guard — registered FIRST so it runs LAST (routes are LIFO).
@@ -136,6 +179,9 @@ export async function applyBackendMocks(page: Page, options: BackendMockOptions 
 
   // 2. HAR replay — registered SECOND so it runs between overrides (above) and strict (below).
   //    `notFound: "fallback"` lets uncovered requests fall through to overrides then strict.
+  //    Recorded HARs use harReplayHostPlaceholder for the origin so they don't lock to
+  //    the recorder's port. Materialize a per-worker copy with the placeholder swapped to
+  //    the live app host (cached by harPath+liveOrigin), then point routeFromHAR at it.
   if (har) {
     const harPath = path.isAbsolute(har) ? har : path.resolve(process.cwd(), "e2e/fixtures/hars", har);
     if (!fs.existsSync(harPath)) {
@@ -143,7 +189,20 @@ export async function applyBackendMocks(page: Page, options: BackendMockOptions 
         `HAR file not found: ${harPath}. Record it first with \`pnpm e2e:record ${path.basename(har, ".har")}\`.`,
       );
     }
-    await page.routeFromHAR(harPath, {
+    const liveOrigin = `http://${appHost ?? `127.0.0.1:${process.env.E2E_PORT ?? "3020"}`}`;
+    const cacheKey = `${harPath}\0${liveOrigin}`;
+    let liveHarPath = materializedHarCache.get(cacheKey);
+    if (!liveHarPath) {
+      const harText = fs
+        .readFileSync(harPath, "utf8")
+        .split(harReplayHostPlaceholder)
+        .join(liveOrigin);
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "e2e-har-"));
+      liveHarPath = path.join(tmpDir, path.basename(harPath));
+      fs.writeFileSync(liveHarPath, harText);
+      materializedHarCache.set(cacheKey, liveHarPath);
+    }
+    await page.routeFromHAR(liveHarPath, {
       url: /.*/,
       update: false,
       notFound: "fallback",
@@ -151,7 +210,7 @@ export async function applyBackendMocks(page: Page, options: BackendMockOptions 
   }
 
   // 3. Overrides — registered LAST so they run FIRST. These win over HAR and strict.
-  if (overrides.length > 0) {
+  if (effectiveOverrides.length > 0) {
     const callCounts = new WeakMap<JsonOverride, { value: number }>();
     const counterFor = (o: JsonOverride) => {
       let counter = callCounts.get(o);
@@ -164,7 +223,7 @@ export async function applyBackendMocks(page: Page, options: BackendMockOptions 
     await page.route("**/*", async (route: Route) => {
       const request = route.request();
       const parsedBody = parseJsonBody(request.postData());
-      const override = overrides.find((o) =>
+      const override = effectiveOverrides.find((o) =>
         matchesOverride(o, request.url(), request.method(), parsedBody),
       );
       if (!override) {
@@ -172,13 +231,12 @@ export async function applyBackendMocks(page: Page, options: BackendMockOptions 
         return;
       }
       const counter = counterFor(override);
-      const resolvedBody =
-        typeof override.body === "function"
-          ? (override.body as (ctx: JsonOverrideBodyContext) => unknown)({
-              parsedBody,
-              callIndex: counter.value,
-            })
-          : override.body;
+      const bodyFn = typeof override.body === "function"
+        ? (override.body as (ctx: JsonOverrideBodyContext) => unknown)
+        : null;
+      const resolvedBody: unknown = bodyFn
+        ? bodyFn({ parsedBody, callIndex: counter.value })
+        : override.body;
       counter.value += 1;
       await route.fulfill({
         status: override.status ?? 200,
@@ -215,7 +273,7 @@ export function verifyNoUnmockedBackendRequests(page: Page): void {
   const list = leaks.map((r) => `  - ${r}`).join("\n");
   unmockedBackendRequests.set(page, []);
   throw new Error(
-    `applyBackendMocks/strict: ${leaks.length} unmocked backend request(s) leaked during this test:\n${list}`,
+    `applyBackendMocks/strict: ${String(leaks.length)} unmocked backend request(s) leaked during this test:\n${list}`,
   );
 }
 

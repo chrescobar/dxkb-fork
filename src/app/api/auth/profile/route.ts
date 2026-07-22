@@ -1,62 +1,47 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth/server/instance";
 import { getRequiredEnv } from "@/lib/env";
+import { statusToErrorCode } from "@/lib/api/types";
+import { respondWithAck } from "@/lib/auth/server/respond";
 
 export const GET = auth.route(async (_request, { userId }) => {
-  try {
-    const response = await auth.fetch(
-      `${getRequiredEnv("USER_URL")}/${encodeURIComponent(userId)}`,
-      { headers: { Accept: "application/json" } },
-    );
+  const response = await auth.fetch(
+    `${getRequiredEnv("USER_URL")}/${encodeURIComponent(userId)}`,
+    { headers: { Accept: "application/json" } },
+  );
 
-    if (!response.ok) {
-      return NextResponse.json(
-        { message: "Failed to fetch profile" },
-        { status: response.status },
-      );
-    }
-
-    const profile = await response.json();
-    return NextResponse.json(profile);
-  } catch (error) {
-    console.error("Profile fetch error:", error);
+  if (!response.ok) {
     return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 },
+      { error: "Failed to fetch profile", code: statusToErrorCode(response.status) },
+      { status: response.status },
     );
   }
+
+  return NextResponse.json(await response.json());
 });
 
 export const POST = auth.route(async (request: NextRequest, { userId }) => {
-  try {
-    const body = await request.text();
+  const body = await request.text();
 
-    const response = await auth.fetch(
-      `${getRequiredEnv("USER_URL")}/${encodeURIComponent(userId)}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json-patch+json",
-          Accept: "application/json",
-        },
-        body,
+  const response = await auth.fetch(
+    `${getRequiredEnv("USER_URL")}/${encodeURIComponent(userId)}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json-patch+json",
+        Accept: "application/json",
       },
-    );
+      body,
+    },
+  );
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      return NextResponse.json(
-        { message: errorText || "Failed to update profile" },
-        { status: response.status },
-      );
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Profile update error:", error);
+  if (!response.ok) {
+    const text = (await response.text()) || "Failed to update profile";
     return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 },
+      { error: text, code: statusToErrorCode(response.status) },
+      { status: response.status },
     );
   }
+
+  return respondWithAck({ data: undefined, error: null });
 });

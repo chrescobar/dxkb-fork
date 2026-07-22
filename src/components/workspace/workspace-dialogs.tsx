@@ -89,7 +89,7 @@ export function WorkspaceDialogs({
         isDeleting={activeDialog?.type === "delete" && isDialogLoading}
         pendingDeleteSelection={activeDialog?.type === "delete" ? activeDialog.items : []}
         nonEmptyFolderPathsInDelete={activeDialog?.type === "delete" ? activeDialog.nonEmptyPaths : []}
-        onConfirmDelete={onConfirmDelete}
+        onConfirmDelete={() => { void onConfirmDelete(); }}
       />
     </>
   );

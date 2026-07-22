@@ -10,7 +10,7 @@ export const primerDesignService =
   createServiceDefinition<PrimerDesignFormData>({
     serviceName: "PrimerDesign",
     displayName: "Primer Design",
-    defaultValues: defaultPrimerDesignFormValues,
+    defaultValues: defaultPrimerDesignFormValues as PrimerDesignFormData,
     transformParams: transformPrimerDesignParams,
     rerun: {
       fields: ["output_path", "output_file"],

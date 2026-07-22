@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback, Fragment } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -39,10 +40,7 @@ import {
   subspeciesVirusTypeOptions,
   type SubspeciesClassificationFormData,
 } from "@/lib/forms/(viral-tools)/subspecies-classification/subspecies-classification-form-schema";
-import {
-  validateSubspeciesFasta,
-  getSubspeciesFastaMessage,
-} from "@/lib/forms/(viral-tools)/subspecies-classification/subspecies-classification-form-utils";
+import { validateFasta, getFastaErrorMessage } from "@/lib/fasta-validation";
 import { subspeciesClassificationService } from "@/lib/forms/(viral-tools)/subspecies-classification/subspecies-classification-service";
 
 import type { WorkspaceObject } from "@/lib/services/workspace/types";
@@ -58,32 +56,31 @@ const subspeciesSpeciesSeparatorBeforeIndex = new Set([5, 7, 17, 21, 23, 24]);
 export default function SubspeciesClassificationPage() {
   const form = useForm({
     defaultValues:
-      defaultSubspeciesClassificationFormValues as SubspeciesClassificationFormData,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: subspeciesClassificationFormSchema as any },
+      defaultSubspeciesClassificationFormValues,
+    validators: { onChange: subspeciesClassificationFormSchema  },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as SubspeciesClassificationFormData);
+      await runtime.submitFormData(value);
     },
   });
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  const inputSource = useStore(form.store, (s) => s.values.input_source);
+  const inputSource = useSelector(form.store, (s) => s.values.input_source);
 
   const handleFastaBlur = useCallback(() => {
     const value = form.state.values.input_fasta_data ?? "";
     if (!value.trim()) return;
-    const result = validateSubspeciesFasta(value);
+    const result = validateFasta(value, "dna");
     if (!result.valid) {
       form.setFieldMeta("input_fasta_data", (prev) => ({
         ...prev,
-        errors: [getSubspeciesFastaMessage(result)],
+        errors: [getFastaErrorMessage(result, "Subspecies Classification")],
         errorMap: {
           ...prev.errorMap,
-          onChange: getSubspeciesFastaMessage(result),
+          onChange: getFastaErrorMessage(result, "Subspecies Classification"),
         },
       }));
     } else {
@@ -150,7 +147,7 @@ export default function SubspeciesClassificationPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="grid grid-cols-1 gap-6 md:grid-cols-12"
       >
@@ -175,7 +172,7 @@ export default function SubspeciesClassificationPage() {
                       value={field.state.value}
                       onValueChange={(v) => {
                         if (v == null) return;
-                        field.handleChange(v);
+                        field.handleChange(v as SubspeciesClassificationFormData["input_source"]);
                         if (v === "fasta_file") {
                           form.setFieldMeta("input_fasta_data", (prev) => ({
                             ...prev,
@@ -219,9 +216,9 @@ export default function SubspeciesClassificationPage() {
                     <FieldItem className="mt-4">
                       <Textarea
                         placeholder="Enter one or more query nucleotide or protein sequences to search. Requires FASTA format."
-                        className="min-h-[175px] font-mono text-xs"
+                        className="min-h-44 font-mono text-xs"
                         value={field.state.value ?? ""}
-                        onChange={(e) => field.handleChange(e.target.value)}
+                        onChange={(e) => { field.handleChange(e.target.value); }}
                         onBlur={() => {
                           field.handleBlur();
                           handleFastaBlur();
@@ -242,7 +239,7 @@ export default function SubspeciesClassificationPage() {
                         placeholder="Select or upload FASTA file to your workspace."
                         value={field.state.value ?? ""}
                         onObjectSelect={(object: WorkspaceObject) =>
-                          field.handleChange(object.path)
+                          { field.handleChange(object.path); }
                         }
                       />
                       <FieldErrors field={field} />
@@ -275,11 +272,11 @@ export default function SubspeciesClassificationPage() {
                     <Select
                       items={subspeciesVirusTypeOptions}
                       value={field.state.value}
-                      onValueChange={(value) =>
-                        value != null && field.handleChange(value)
-                      }
+                      onValueChange={(value) => {
+                        if (value != null) field.handleChange(value);
+                      }}
                     >
-                      <SelectTrigger className="service-card-select-trigger">
+                      <SelectTrigger className="service-card-select-trigger" aria-label="Species">
                         <SelectValue placeholder="Select species" />
                       </SelectTrigger>
                       <SelectContent className="max-h-[min(20rem,70vh)] overflow-y-auto">
@@ -309,7 +306,7 @@ export default function SubspeciesClassificationPage() {
                       <FieldItem>
                         <OutputFolder
                           value={field.state.value}
-                          onChange={(value) => field.handleChange(value)}
+                          onChange={(value) => { field.handleChange(value); }}
                         />
                         <FieldErrors field={field} />
                       </FieldItem>
@@ -324,7 +321,7 @@ export default function SubspeciesClassificationPage() {
                         <OutputFolder
                           variant="name"
                           value={field.state.value}
-                          onChange={(value) => field.handleChange(value)}
+                          onChange={(value) => { field.handleChange(value); }}
                           outputFolderPath={outputPath}
                           onValidationChange={setIsOutputNameValid}
                         />
@@ -349,7 +346,7 @@ export default function SubspeciesClassificationPage() {
               type="submit"
               disabled={isSubmitting || !canSubmit || !isOutputNameValid}
             >
-              {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
+              {isSubmitting ? <Spinner className="mr-2 size-4" /> : null}
               Submit
             </Button>
           </div>

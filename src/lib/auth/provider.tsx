@@ -74,7 +74,7 @@ export function AuthBoundary({
       void store.refresh();
     };
     document.addEventListener("visibilitychange", onVisible);
-    return () => document.removeEventListener("visibilitychange", onVisible);
+    return () => { document.removeEventListener("visibilitychange", onVisible); };
   }, [store]);
 
   return (

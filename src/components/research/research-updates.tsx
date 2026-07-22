@@ -5,12 +5,12 @@ const ResearchUpdates = () => {
   return (
     <section className="py-12">
       <div className="container mx-auto px-4">
-        <h2 className="text-2xl font-bold mb-8 text-center">Featured Research & Updates</h2>
+        <h2 className="mb-8 text-center text-2xl font-bold">Featured Research & Updates</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           <Card>
             <CardHeader>
-              <div className="h-40 bg-blue-100 rounded-t-lg flex items-center justify-center">
+              <div className="flex h-40 items-center justify-center rounded-t-lg bg-blue-100">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="64"
@@ -30,7 +30,7 @@ const ResearchUpdates = () => {
               <CardDescription>Published April 2, 2023</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="mb-4 text-sm text-muted-foreground">
                 Comprehensive genomic and proteomic analysis of the latest SARS-CoV-2 variant, including mutation
                 profiles and potential impact on transmissibility.
               </p>
@@ -42,7 +42,7 @@ const ResearchUpdates = () => {
 
           <Card>
             <CardHeader>
-              <div className="h-40 bg-green-100 rounded-t-lg flex items-center justify-center">
+              <div className="flex h-40 items-center justify-center rounded-t-lg bg-green-100">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="64"
@@ -66,7 +66,7 @@ const ResearchUpdates = () => {
               <CardDescription>Updated March 15, 2023</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="mb-4 text-sm text-muted-foreground">
                 Our database has been expanded with over 5,000 new viral protein entries, including structural data
                 and functional annotations from recent research.
               </p>
@@ -78,7 +78,7 @@ const ResearchUpdates = () => {
 
           <Card>
             <CardHeader>
-              <div className="h-40 bg-purple-100 rounded-t-lg flex items-center justify-center">
+              <div className="flex h-40 items-center justify-center rounded-t-lg bg-purple-100">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="64"
@@ -100,7 +100,7 @@ const ResearchUpdates = () => {
               <CardDescription>Released April 5, 2023</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="mb-4 text-sm text-muted-foreground">
                 Introducing our new computational tool for predicting viral epitopes with enhanced accuracy,
                 supporting vaccine design and immunological research.
               </p>
@@ -111,7 +111,7 @@ const ResearchUpdates = () => {
           </Card>
         </div>
 
-        <div className="text-center mt-8">
+        <div className="mt-8 text-center">
           <Button variant="outline">View All Research Updates</Button>
         </div>
       </div>

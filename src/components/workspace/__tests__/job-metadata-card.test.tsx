@@ -4,10 +4,10 @@ import type { ResolvedPathObject } from "@/lib/services/workspace/types";
 
 vi.mock("@/lib/jobs/formatting", () => ({
   formatElapsedSeconds: vi.fn((s: number | undefined) =>
-    s != null ? `${s}s` : "—",
+    s != null ? `${String(s)}s` : "—",
   ),
   formatUnixTimestamp: vi.fn((ts: number | undefined) =>
-    ts != null ? `ts:${ts}` : "—",
+    ts != null ? `ts:${String(ts)}` : "—",
   ),
 }));
 
@@ -64,7 +64,7 @@ function makeMeta(
     },
     taskData: undefined,
     ...overrides,
-  } as ResolvedPathObject;
+  };
 }
 
 describe("JobMetadataCard", () => {
@@ -80,8 +80,8 @@ describe("JobMetadataCard", () => {
 
   it("falls back to taskData.task_id when jobSysMeta.id is missing", () => {
     const meta = makeMeta({
-      jobSysMeta: {} as ResolvedPathObject["jobSysMeta"],
-      taskData: { task_id: "task-456" } as ResolvedPathObject["taskData"],
+      jobSysMeta: {},
+      taskData: { task_id: "task-456" },
     });
     render(<JobMetadataCard resolvedJobMeta={meta} />);
     expect(screen.getByText("task-456")).toBeInTheDocument();
@@ -89,7 +89,7 @@ describe("JobMetadataCard", () => {
 
   it("shows em-dash when no job ID is available", () => {
     const meta = makeMeta({
-      jobSysMeta: {} as ResolvedPathObject["jobSysMeta"],
+      jobSysMeta: {},
       taskData: undefined,
     });
     render(<JobMetadataCard resolvedJobMeta={meta} />);
@@ -111,8 +111,8 @@ describe("JobMetadataCard", () => {
 
   it("falls back to taskData for app label", () => {
     const meta = makeMeta({
-      jobSysMeta: {} as ResolvedPathObject["jobSysMeta"],
-      taskData: { app_id: "MetaCATS" } as ResolvedPathObject["taskData"],
+      jobSysMeta: {},
+      taskData: { app_id: "MetaCATS" },
     });
     render(<JobMetadataCard resolvedJobMeta={meta} />);
     expect(screen.getByText("MetaCATS Job Result")).toBeInTheDocument();
@@ -120,7 +120,7 @@ describe("JobMetadataCard", () => {
 
   it("falls back to resolvedJobMeta.name for app label", () => {
     const meta = makeMeta({
-      jobSysMeta: {} as ResolvedPathObject["jobSysMeta"],
+      jobSysMeta: {},
       taskData: undefined,
     });
     render(<JobMetadataCard resolvedJobMeta={meta} />);

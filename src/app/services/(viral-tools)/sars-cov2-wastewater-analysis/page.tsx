@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import {
   Card,
@@ -54,9 +55,7 @@ import {
   primerVersionOptions,
   defaultPrimerVersion,
   recipeOptions,
-  type SarsCov2WastewaterAnalysisFormData,
   type SarsCov2WastewaterLibraryItem,
-  type Primers,
   type SrrLibItem,
 } from "@/lib/forms/(viral-tools)/sars-cov2-wastewater-analysis/sars-cov2-wastewater-analysis-form-schema";
 import {
@@ -87,16 +86,15 @@ const tutorial =
 export default function SarsCov2WastewaterAnalysisPage() {
   const form = useForm({
     defaultValues:
-      defaultSarsCov2WastewaterAnalysisFormValues as SarsCov2WastewaterAnalysisFormData,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: sarsCov2WastewaterAnalysisFormSchema as any },
+      defaultSarsCov2WastewaterAnalysisFormValues,
+    validators: { onChange: sarsCov2WastewaterAnalysisFormSchema },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as SarsCov2WastewaterAnalysisFormData);
+      await runtime.submitFormData(value);
     },
   });
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const [pairedRead1, setPairedRead1] = useState<string | null>(null);
   const [pairedRead2, setPairedRead2] = useState<string | null>(null);
@@ -107,9 +105,8 @@ export default function SarsCov2WastewaterAnalysisPage() {
   const [sraResetKey, setSraResetKey] = useState(0);
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
-  const primers = useStore(form.store, (s) => s.values.primers);
-  const primerVersionOpts =
-    primerVersionOptions[primers] ?? primerVersionOptions.ARTIC;
+  const primers = useSelector(form.store, (s) => s.values.primers);
+  const primerVersionOpts = primerVersionOptions[primers];
 
   const {
     selectedLibraries,
@@ -164,14 +161,12 @@ export default function SarsCov2WastewaterAnalysisPage() {
   });
 
   useEffect(() => {
-    if (primers) {
-      const defaultVersion = defaultPrimerVersion[primers];
-      if (
-        defaultVersion &&
-        form.state.values.primer_version !== defaultVersion
-      ) {
-        form.setFieldValue("primer_version", defaultVersion);
-      }
+    const defaultVersion = defaultPrimerVersion[primers];
+    if (
+      defaultVersion &&
+      form.state.values.primer_version !== defaultVersion
+    ) {
+      form.setFieldValue("primer_version", defaultVersion);
     }
   }, [primers, form]);
 
@@ -195,7 +190,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
       read1: pairedRead1,
       read2: pairedRead2,
       buildLibrary: getPairedLibraryBuildFn(sampleId, sampleLevelDate),
-      onError: (msg) => handleLibraryErrorUtil(msg, toast),
+      onError: (msg) => { handleLibraryErrorUtil(msg, toast); },
       onAfterAdd: () => {
         setPairedRead1(null);
         setPairedRead2(null);
@@ -214,7 +209,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
       read: singleRead,
       buildLibrary: getSingleLibraryBuildFn(sampleId, sampleLevelDate),
       duplicateMatcher: singleLibraryDuplicateMatcher,
-      onError: (msg) => handleLibraryErrorUtil(msg, toast),
+      onError: (msg) => { handleLibraryErrorUtil(msg, toast); },
       onAfterAdd: () => {
         setSingleRead(null);
         setCurrentSampleId("");
@@ -288,7 +283,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="grid grid-cols-1 gap-6 md:grid-cols-12"
       >
@@ -314,11 +309,12 @@ export default function SarsCov2WastewaterAnalysisPage() {
                   <Label className="service-card-label">
                     Paired Read Library
                   </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
+                  <div className="mx-4 h-px flex-1 bg-border" />
                   <Button
                     type="button"
                     variant="outline"
                     size="icon"
+                    aria-label="Add paired read library"
                     onClick={handlePairedLibraryAdd}
                     disabled={!pairedRead1 || !pairedRead2}
                   >
@@ -331,7 +327,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                     placeholder="Select READ FILE 1..."
                     value={pairedRead1 ?? ""}
                     onObjectSelect={(object: WorkspaceObject) =>
-                      handlePairedRead1Select(object.path)
+                      { handlePairedRead1Select(object.path); }
                     }
                   />
                   <WorkspaceObjectSelector
@@ -339,7 +335,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                     placeholder="Select READ FILE 2..."
                     value={pairedRead2 ?? ""}
                     onObjectSelect={(object: WorkspaceObject) =>
-                      setPairedRead2(object.path)
+                      { setPairedRead2(object.path); }
                     }
                   />
                 </div>
@@ -350,11 +346,12 @@ export default function SarsCov2WastewaterAnalysisPage() {
                   <Label className="service-card-label">
                     Single Read Library
                   </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
+                  <div className="mx-4 h-px flex-1 bg-border" />
                   <Button
                     type="button"
                     variant="outline"
                     size="icon"
+                    aria-label="Add single read library"
                     onClick={handleSingleLibraryAdd}
                     disabled={!singleRead}
                   >
@@ -366,7 +363,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                   placeholder="Select READ FILE..."
                   value={singleRead ?? ""}
                   onObjectSelect={(object: WorkspaceObject) =>
-                    handleSingleReadSelect(object.path)
+                    { handleSingleReadSelect(object.path); }
                   }
                 />
               </div>
@@ -390,11 +387,11 @@ export default function SarsCov2WastewaterAnalysisPage() {
                         <Select
                           items={primerOptions}
                           value={field.state.value}
-                          onValueChange={(v) =>
-                            v != null && field.handleChange(v as Primers)
-                          }
+                          onValueChange={(v) => {
+                            if (v != null) field.handleChange(v);
+                          }}
                         >
-                          <SelectTrigger className="service-card-select-trigger">
+                          <SelectTrigger className="service-card-select-trigger" aria-label="Primers">
                             <SelectValue placeholder="Select primers" />
                           </SelectTrigger>
                           <SelectContent>
@@ -423,11 +420,11 @@ export default function SarsCov2WastewaterAnalysisPage() {
                         <Select
                           items={primerVersionOpts}
                           value={field.state.value}
-                          onValueChange={(value) =>
-                            value != null && field.handleChange(value)
-                          }
+                          onValueChange={(value) => {
+                            if (value != null) field.handleChange(value);
+                          }}
                         >
-                          <SelectTrigger className="service-card-select-trigger">
+                          <SelectTrigger className="service-card-select-trigger" aria-label="Version">
                             <SelectValue placeholder="Version" />
                           </SelectTrigger>
                           <SelectContent>
@@ -456,7 +453,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                   className="service-card-input"
                   placeholder="SAMPLE ID"
                   value={currentSampleId}
-                  onChange={(e) => setCurrentSampleId(e.target.value)}
+                  onChange={(e) => { setCurrentSampleId(e.target.value); }}
                 />
               </div>
 
@@ -468,7 +465,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                   className="service-card-input"
                   placeholder="MM/DD/YYYY"
                   value={currentSampleDate}
-                  onChange={(e) => setCurrentSampleDate(e.target.value)}
+                  onChange={(e) => { setCurrentSampleDate(e.target.value); }}
                 />
               </div>
 
@@ -491,7 +488,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                 Selected Libraries
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger>
+                    <TooltipTrigger aria-label="Help: place read files using arrow buttons">
                       <HelpCircle className="service-card-tooltip-icon" />
                     </TooltipTrigger>
                     <TooltipContent>
@@ -539,11 +536,11 @@ export default function SarsCov2WastewaterAnalysisPage() {
                       <Select
                         items={recipeOptions}
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
+                        onValueChange={(value) => {
+                          if (value != null) field.handleChange(value);
+                        }}
                       >
-                        <SelectTrigger className="service-card-select-trigger">
+                        <SelectTrigger className="service-card-select-trigger" aria-label="Strategy">
                           <SelectValue placeholder="Select strategy" />
                         </SelectTrigger>
                         <SelectContent>
@@ -571,7 +568,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                     <FieldItem className="flex-1">
                       <OutputFolder
                         value={field.state.value}
-                        onChange={(value) => field.handleChange(value)}
+                        onChange={(value) => { field.handleChange(value); }}
                       />
                       <FieldErrors field={field} />
                     </FieldItem>
@@ -583,7 +580,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
                       <OutputFolder
                         variant="name"
                         value={field.state.value}
-                        onChange={(value) => field.handleChange(value)}
+                        onChange={(value) => { field.handleChange(value); }}
                         outputFolderPath={outputPath}
                         onValidationChange={setIsOutputNameValid}
                       />
@@ -606,7 +603,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
               type="submit"
               disabled={isSubmitting || !canSubmit || !isOutputNameValid}
             >
-              {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
+              {isSubmitting ? <Spinner className="mr-2 size-4" /> : null}
               Submit
             </Button>
           </div>

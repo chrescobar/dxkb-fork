@@ -1,23 +1,24 @@
-import React from "react";
 import { useWorkspaceDu } from "@/hooks/services/workspace/use-workspace-du";
 
 import { genomeFields } from "@/constants/datafields/genome";
-import { genome_sequenceFields } from "@/constants/datafields/genome_sequence";
-import { genome_amrFields } from "@/constants/datafields/genome_amr";
-import { genome_featureFields } from "@/constants/datafields/genome_feature";
+import { genomeSequenceFields } from "@/constants/datafields/genome_sequence";
+import { genomeAmrFields } from "@/constants/datafields/genome_amr";
+import { genomeFeatureFields } from "@/constants/datafields/genome_feature";
 import { biosetFields } from "@/constants/datafields/bioset";
-import { protein_featureFields } from "@/constants/datafields/protein_feature";
+import { proteinFeatureFields } from "@/constants/datafields/protein_feature";
 import { epitopeFields } from "@/constants/datafields/epitope";
 import { experimentFields } from "@/constants/datafields/experiment";
-import { protein_structureFields } from "@/constants/datafields/protein_structure";
+import { proteinStructureFields } from "@/constants/datafields/protein_structure";
+import { sequenceFeatureFields } from "@/constants/datafields/sequence_feature";
 import { serologyFields } from "@/constants/datafields/serology";
 import { strainFields } from "@/constants/datafields/strain";
 import { surveillanceFields } from "@/constants/datafields/surveillance";
 import { taxonomyFields } from "@/constants/datafields/taxonomy";
+import type { DataFieldMap } from "@/constants/datafields/types";
 import { Button } from "@/components/ui/button";
-import { DetailPanel, type DetailField } from "@/components/detail-panel";
+import { DetailPanel, type DetailField } from "./index";
 import { formatOwner, formatFileSize } from "@/lib/services/workspace/helpers";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { WorkspaceItemHeader } from "@/components/workspace/workspace-item-header";
 import { WorkspaceItemDetails } from "@/components/workspace/workspace-item-details";
 
@@ -25,19 +26,28 @@ export type InfoPanelProps =
   | {
       variant: "workspace";
       /** When multiple items are selected, single-file details are not shown. */
-      selection: WorkspaceBrowserItem[];
+      selection: WorkspaceItem[];
       onClose?: () => void;
-      onAction?: (actionId: string, selection: WorkspaceBrowserItem[]) => void;
+      onAction?: (actionId: string, selection: WorkspaceItem[]) => void;
     }
   | {
       variant?: "search";
-      rows: Record<string, unknown>[];
+      selectedIds: string[];
       activeTab: string;
+      selectedRow?: Record<string, unknown> | null;
+      isLoading?: boolean;
+      isAllPagesSelected?: boolean;
+      totalItems?: number;
     };
 
 
 /** Build the full path to a workspace item (parent + name) for API calls like Workspace.du. */
-export function getItemFullPath(item: WorkspaceBrowserItem): string {
+export function getItemFullPath(
+  item: Omit<WorkspaceItem, "path" | "name"> & {
+    path?: string | null;
+    name?: string | null;
+  },
+): string {
   const rawPath = (item.path ?? "").replace(/\/+$/, "").replace(/\/+/g, "/");
   const name = (item.name ?? "").trim();
   const segmentSuffix = `/${name}`;
@@ -51,9 +61,9 @@ function WorkspaceItemDetailContent({
   workspaceItem,
   onClose,
 }: {
-  workspaceItem: WorkspaceBrowserItem;
+  workspaceItem: WorkspaceItem;
   onClose?: () => void;
-  onAction?: (actionId: string, selection: WorkspaceBrowserItem[]) => void;
+  onAction?: (actionId: string, selection: WorkspaceItem[]) => void;
 }) {
   const fullPath = getItemFullPath(workspaceItem);
 
@@ -67,8 +77,8 @@ function WorkspaceItemDetailContent({
         <div>
           <dt className="text-muted-foreground">Workspace Members</dt>
           <dd>
-            {formatOwner(workspaceItem.owner_id)}
-            {workspaceItem.user_permission === "o" ? " (me) – Owner" : " – Owner"}
+            {formatOwner(workspaceItem.ownerId ?? "")}
+            {workspaceItem.permissions?.user === "o" ? " (me) – Owner" : " – Owner"}
           </dd>
         </div>
         <div>
@@ -78,9 +88,7 @@ function WorkspaceItemDetailContent({
               ? "Loading…"
               : diskUsageError
                 ? "—"
-                : diskUsage !== undefined
-                  ? formatFileSize(diskUsage.sizeBytes, { showZero: true })
-                  : "—"}
+                : formatFileSize(diskUsage.sizeBytes, { showZero: true })}
           </dd>
         </div>
         {diskUsage !== undefined && (
@@ -107,10 +115,10 @@ export function InfoPanel(props: InfoPanelProps) {
     const hasSingleSelection = selection.length === 1;
 
     return (
-      <div className="flex h-full w-full flex-col overflow-hidden">
+      <div className="flex size-full flex-col overflow-hidden">
         {isMultiSelect ? (
           <div className="px-4 py-2">
-            <DetailPanel.Header title={`${selection.length} items selected`} />
+            <DetailPanel.Header title={`${String(selection.length)} items selected`} />
             <DetailPanel.EmptyState message="Select a single item to view details" />
           </div>
         ) : hasSingleSelection ? (
@@ -128,9 +136,14 @@ export function InfoPanel(props: InfoPanelProps) {
     );
   }
 
-  const { rows, activeTab } = props;
+  const { selectedIds, activeTab, selectedRow, isLoading } = props;
+
+  if (selectedIds.length === 1 && isLoading) {
+    return <div className="p-4 text-sm">Loading...</div>;
+  }
+
   let order: string[] = [];
-  let fieldFile = {};
+  let fieldFile: DataFieldMap = {};
   let allowedFields: string[] = [];
   let panelTitleField = '';
 
@@ -143,18 +156,18 @@ export function InfoPanel(props: InfoPanelProps) {
       break;
     case 'genome_sequence':
       panelTitleField = 'sequence_id';
-      fieldFile = genome_sequenceFields;
+      fieldFile = genomeSequenceFields;
       allowedFields = ["genome_id", "genome_name", "taxon_id", "sequence_id", "accession", "sequence_status", "topology", "description", "gc_content", "length", "sequence_md5", "release_date", "version", "date_inserted", "date_modified"];
       order = ["General Info","Taxonomy Info", "Sequence Info", "Additional Info"];
       break;
     case 'genome_amr':
-      fieldFile = genome_amrFields;
+      fieldFile = genomeAmrFields;
       allowedFields = ['taxon_id', 'genome_id', 'genome_name', 'antibiotic', 'evidence', 'pmid', 'resistant_phenotype', 'measurement_sign', 'measurement_value', 'measurement_unit', 'laboratory_typing_method', 'laboratory_typing_method_version', 'laboratory_typing_platform', 'vendor', 'testing_standard', 'testing_standard_year', 'computational_method', 'computational_method_version', 'computational_method_performance'];
       order = ["Summary","Measurement","Laboratory Method","Computational Method"];
       break;
     case 'genome_feature':
       panelTitleField = 'patric_id';
-      fieldFile = genome_featureFields;
+      fieldFile = genomeFeatureFields;
       allowedFields = ['genome_id', 'genome_name', 'taxon_id', 'sequence_id', 'accession', 'annotation', 'feature_type', 'feature_id', 'alt_locus_tag', 'patric_id', 'refseq_locus_tag', 'protein_id', 'gene_id', 'uniprotkb_accession', 'pdb_accession', 'start', 'end', 'strand', 'location', 'segments', 'Codon Start', 'na_length', 'aa_length', 'na_sequence_md5', 'aa_sequence_md5', 'gene', 'date_inserted', 'product', 'plfam_id','pgfam_id', 'sog_id', 'og_id', 'go','property', 'notes', 'classifier_score', 'classifier_round'];
       order = ['Genome','Source','Identifiers','DB Cross References','Location','Sequences','Annotation','Families','Misc','Provenance'];
       break;
@@ -166,7 +179,7 @@ export function InfoPanel(props: InfoPanelProps) {
       break;
     case 'protein_feature':
       panelTitleField = 'genome_id';
-      fieldFile = protein_featureFields;
+      fieldFile = proteinFeatureFields;
       allowedFields = ['genome_id', 'genome_name', 'taxon_id', 'patric_id', 'refseq_locus_tag', 'gene', 'product', 'interpro_id', 'interpro_description', 'feature_type', 'source', 'source_id', 'description', 'classification', 'score', 'e_value', 'evidence', 'publication', 'start', 'end', 'segments', 'length', 'sequence', 'comments', 'date_inserted'];
       order = ['Genome Info','Sequence Info','Feature Info','Additional Info'];
       break;
@@ -178,7 +191,7 @@ export function InfoPanel(props: InfoPanelProps) {
       break;
     case 'protein_structure':
       panelTitleField = 'pdb_id';
-      fieldFile = protein_structureFields;
+      fieldFile = proteinStructureFields;
       allowedFields = ['pdb_id', 'title', 'organism_name', 'taxon_id', 'genome_id', 'patric_id', 'uniprotkb_accession', 'gene', 'product', 'method', 'resolution', 'pmid', 'institution', 'authors', 'release_date', 'file_path', 'date_inserted'];
       order = ['General Info','Structure Info','Additional Info'];
       break;
@@ -212,44 +225,48 @@ export function InfoPanel(props: InfoPanelProps) {
       allowedFields = ['exp_id', 'exp_name', 'exp_title', 'exp_type', 'bioset_id', 'bioset_name', 'bioset_description', 'bioset_type', 'analysis_method', 'bioset_criter','result_type','protocol','bioset_result','organism', 'strain', 'treatment_type', 'treatment_name', 'treatment_amount', 'treatment_duration', 'entity_count', 'additonal_metadata'];
       order = ['Experiment Info', 'Bioset Info', 'Treatment', 'Additional Metadata'];
       break;
+    case 'sequence_feature':
+      panelTitleField = 'sf_name';
+      fieldFile = sequenceFeatureFields;
+      allowedFields = ['sf_name', 'sf_id', 'gene', 'length', 'variant_types', 'sf_category', 'segments', 'source_strain', 'product', 'evidence_code', 'source', 'additional_metadata', 'segment', 'subtype', 'comments'];
+      order = ['Sequence Feature', 'Variant Type'];
+      break;
   }
 
   interface DisplayColumn {
-    id: unknown;
-    label: unknown;
+    id: string;
+    label: string;
     visible: boolean;
-    group: unknown;
-    link?: unknown;
-    linkType?: unknown;
-    linkText?: unknown;
+    group: string;
+    link?: string;
+    linkType?: string;
+    linkText?: string;
   }
-  const displayColumns: DisplayColumn[] = Object.values(fieldFile ?? {}).map((obj) => {
-    const o = obj as Record<string, unknown>;
-    return {
-      id: o.field,
-      label: o.label,
-      visible: !o.hidden,
-      group: o.group,
-      link: o?.link,
-      linkType: o?.linkType,
-      linkText: o?.linkText,
-    };
-  });
+  const displayColumns: DisplayColumn[] = Object.values(fieldFile).map((o) => ({
+    id: o.field,
+    label: o.label,
+    visible: !o.hidden,
+    group: o.group,
+    link: o.link,
+    linkType: o.linkType,
+    linkText: o.linkText,
+  }));
 
-  const grouped = displayColumns.reduce(
-    (acc: Record<string, DisplayColumn[]>, item) => {
-      const g = String(item.group ?? "");
+  const grouped = displayColumns.reduce<Record<string, DisplayColumn[] | undefined>>(
+    (acc: Record<string, DisplayColumn[] | undefined>, item) => {
+      const g = (item.group as string | undefined) ?? "";
       if (!acc[g]) acc[g] = [];
       acc[g].push(item);
       return acc;
     },
-    {} as Record<string, DisplayColumn[]>
+    {}
   );
 
   function resolveLink(template: string, row: Record<string, unknown>, fallbackField: string) {
     return template.replace(/{([^}]+)}/g, (_, key: string) => {
       const value = row[key] ?? row[fallbackField] ?? "";
-      return encodeURIComponent(String(value));
+      const primitive = typeof value === "string" || typeof value === "number" || typeof value === "boolean" ? value : "";
+      return encodeURIComponent(String(primitive));
     });
   }
 
@@ -264,48 +281,47 @@ export function InfoPanel(props: InfoPanelProps) {
 
   return (
     <DetailPanel>
-      <DetailPanel.Header title={String(rows[0]?.[panelTitleField] ?? "")} />
-      {rows.length === 1 ? (
+      {selectedIds.length === 1 ? (
         <>
+          <DetailPanel.Header title={(selectedRow?.[panelTitleField] as string | undefined) ?? ""} />
           {order.map((group) => {
             const items = (grouped[group] || []).filter((item) =>
-              allowedFields.includes(String(item.id))
+              allowedFields.includes(item.id)
             );
             if (items.length === 0) return null;
 
             const fields: DetailField[] = items.map((item) => {
-              const fieldId = String(item.id);
-              const rawValue = rows[0]?.[fieldId];
-
+              const fieldId = item.id;
+              const rawValue = selectedRow?.[fieldId];
               if (item.link) {
                 const resolved = toAbsoluteUrl(
-                  resolveLink(String(item.link), rows[0], fieldId)
+                  resolveLink(item.link, selectedRow ?? {}, fieldId)
                 );
 
                 if (item.linkType === "button") {
                   return {
-                    label: String(item.label),
+                    label: item.label,
                     value: rawValue,
                     render: () => (
                       <Button
                         onClick={() => window.open(resolved, "_blank", "noopener,noreferrer")}
-                        className="text-sm border-black bg-primary text-secondary py-1 px-2 rounded"
+                        className="rounded border-black bg-primary px-2 py-1 text-sm text-secondary"
                       >
-                        {String(item.linkText ?? "View")}
+                        {item.linkText ?? "View"}
                       </Button>
                     ),
                   };
                 }
 
                 return {
-                  label: String(item.label),
+                  label: item.label,
                   value: rawValue,
                   href: resolved,
                 };
               }
 
               return {
-                label: String(item.label),
+                label: item.label,
                 value: rawValue,
               };
             });
@@ -322,7 +338,11 @@ export function InfoPanel(props: InfoPanelProps) {
           })}
         </>
       ) : (
-        <p className="px-4 py-2 text-xs">{rows.length} rows selected</p>
+        <p className="truncate px-3 py-2 text-sm font-semibold">
+          {props.isAllPagesSelected && props.totalItems
+            ? `All ${props.totalItems.toLocaleString()} rows selected`
+            : `${String(selectedIds.length)} rows selected`}
+        </p>
       )}
     </DetailPanel>
   );

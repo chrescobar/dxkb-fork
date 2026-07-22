@@ -1,7 +1,10 @@
 import { NextRequest } from "next/server";
 import { authAdmin } from "@/lib/auth/server/instance";
 import { respondWithSession } from "@/lib/auth/server/respond";
+import { withErrorHandling } from "@/lib/auth/server/errors";
+import type { SigninCredentials } from "@/lib/auth/types";
 
-export async function POST(request: NextRequest) {
-  return respondWithSession(await authAdmin.signIn(await request.json()));
-}
+export const POST = withErrorHandling(async (request: NextRequest) => {
+  const body = (await request.json().catch(() => ({}))) as SigninCredentials;
+  return respondWithSession(await authAdmin.signIn(body));
+});

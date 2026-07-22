@@ -14,13 +14,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { WorkspaceMiniBrowser } from "./workspace-mini-browser";
-import { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { isFolder } from "@/lib/services/workspace/utils";
 
 export interface CopyToDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  sourceItems: WorkspaceBrowserItem[];
+  sourceItems: WorkspaceItem[];
   currentUserWorkspaceRoot: string;
   onConfirm: (destinationPath: string, filenameOverride?: string) => Promise<void>;
   isCopying: boolean;
@@ -86,18 +86,18 @@ export function CopyToDialog({
   const n = sourceItems.length;
   const title =
     mode === "move"
-      ? `Move contents of ${n} ${n === 1 ? "item" : "items"} to…`
-      : `Copy contents of ${n} ${n === 1 ? "item" : "items"} to…`;
+      ? `Move contents of ${String(n)} ${n === 1 ? "item" : "items"} to…`
+      : `Copy contents of ${String(n)} ${n === 1 ? "item" : "items"} to…`;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="scrollbar-themed flex max-h-[90vh] md:max-h-[70vh] h-full max-w-lg flex-col overflow-hidden sm:max-w-xl md:max-w-2xl lg:max-w-4xl">
+      <DialogContent className="scrollbar-themed flex h-full max-h-[90vh] max-w-lg flex-col overflow-hidden sm:max-w-xl md:max-h-[70vh] md:max-w-2xl lg:max-w-4xl">
         <DialogHeader className="shrink-0">
           <DialogTitle className="pr-8">{title}</DialogTitle>
         </DialogHeader>
         <div className="-mx-4 flex min-h-0 flex-1 flex-col gap-4 px-4 pt-1">
           <div className="flex shrink-0 flex-col gap-2">
-            <Label className="text-muted-foreground text-xs font-medium">
+            <Label className="text-xs font-medium text-muted-foreground">
               Destination
             </Label>
             <Input
@@ -109,7 +109,7 @@ export function CopyToDialog({
 
           <div className="flex shrink-0 flex-col gap-2">
             <Label
-              className="text-muted-foreground text-xs font-medium"
+              className="text-xs font-medium text-muted-foreground"
               htmlFor="copy-dialog-filename"
             >
               Filename
@@ -117,7 +117,7 @@ export function CopyToDialog({
             <Input
               id="copy-dialog-filename"
               value={customFilename}
-              onChange={(e) => setCustomFilename(e.target.value)}
+              onChange={(e) => { setCustomFilename(e.target.value); }}
               placeholder={
                 mode === "move"
                   ? "Name for the moved file"
@@ -142,7 +142,7 @@ export function CopyToDialog({
               <Checkbox
                 checked={showAllFiles}
                 onCheckedChange={(checked) =>
-                  setShowAllFiles(checked === true)
+                  { setShowAllFiles(checked); }
                 }
               />
               <span>Show all files and folders</span>
@@ -153,7 +153,7 @@ export function CopyToDialog({
         <DialogFooter className="shrink-0">
           <Button
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={() => { onOpenChange(false); }}
             disabled={isCopying}
           >
             Cancel
@@ -164,7 +164,7 @@ export function CopyToDialog({
           >
             {isCopying ? (
               <>
-                <Spinner className="mr-2 h-3.5 w-3.5 shrink-0" />
+                <Spinner className="mr-2 size-3.5 shrink-0" />
                 {mode === "move" ? "Moving…" : "Copying…"}
               </>
             ) : mode === "move" ? (

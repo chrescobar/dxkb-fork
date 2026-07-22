@@ -4,20 +4,21 @@ import {
   buildWorkspaceOverrides,
   e2eHomePath,
   e2eUsername,
-  permissiveBackendOverrides,
+  journeyOverrides,
   workspaceEmptyOverrides,
   workspaceErrorOverrides,
   workspacePopulatedOverrides,
 } from "../fixtures/overrides";
 import { WorkspacePage } from "../pages";
+import { recordedTestUserId } from "../scripts/har-constants";
+import { harOverridesFor } from "../scripts/har-overrides";
 
 test.describe("workspace browse", () => {
   test("populated listing renders rows for each workspace item", async ({ page }) => {
     await applyBackendMocks(page, {
       overrides: [
-        ...authSessionOverrides,
         ...workspacePopulatedOverrides,
-        ...permissiveBackendOverrides,
+        ...journeyOverrides,
       ],
     });
     const workspace = new WorkspacePage(page);
@@ -40,7 +41,6 @@ test.describe("workspace browse", () => {
     ];
     await applyBackendMocks(page, {
       overrides: [
-        ...authSessionOverrides,
         ...buildWorkspaceOverrides({
           pathItems: {
             [e2eHomePath]: [
@@ -53,8 +53,12 @@ test.describe("workspace browse", () => {
             ],
             [`${e2eHomePath}/Datasets`]: nestedItems,
           },
+          // Folder navigation triggers ancillary Workspace.* RPCs (permissions
+          // re-check, metadata fetch). These are covered by the helper's path-
+          // agnostic listPermsOverride and getKnownOverride (since Datasets is in
+          // pathItems), so no permissive catch-all is needed.
         }),
-        ...permissiveBackendOverrides,
+        ...journeyOverrides,
       ],
     });
     const workspace = new WorkspacePage(page);
@@ -64,11 +68,14 @@ test.describe("workspace browse", () => {
     // Select the row first, then press Enter. `useTableKeyboardNavigation.onEnter` requires the
     // row to already be selected — under load the keyboard event can arrive before React has
     // committed the selection state, so we wait for the row to render its selected variant
-    // before firing Enter.
+    // before firing Enter. Focus the table region explicitly: in firefox/webkit a row click does
+    // not transfer DOM focus to the focusable table container, so the keystroke would land on
+    // <body> and never reach the keydown handler.
     const datasetsRow = workspace.rowByName("Datasets").first();
+    const tableRegion = page.getByRole("region", { name: /workspace items/i });
     await datasetsRow.click();
     await expect(datasetsRow).toHaveAttribute("aria-selected", "true");
-    await page.keyboard.press("Enter");
+    await tableRegion.press("Enter");
 
     await expect(page).toHaveURL(/\/home\/Datasets$/);
     await expect(workspace.breadcrumbs).toContainText("Datasets");
@@ -78,9 +85,8 @@ test.describe("workspace browse", () => {
   test("empty workspace shows the empty-state message", async ({ page }) => {
     await applyBackendMocks(page, {
       overrides: [
-        ...authSessionOverrides,
         ...workspaceEmptyOverrides,
-        ...permissiveBackendOverrides,
+        ...journeyOverrides,
       ],
     });
     const workspace = new WorkspacePage(page);
@@ -92,9 +98,8 @@ test.describe("workspace browse", () => {
   test("ls failure surfaces the error alert", async ({ page }) => {
     await applyBackendMocks(page, {
       overrides: [
-        ...authSessionOverrides,
         ...workspaceErrorOverrides,
-        ...permissiveBackendOverrides,
+        ...journeyOverrides,
       ],
     });
     const workspace = new WorkspacePage(page);
@@ -109,11 +114,10 @@ test.describe("workspace browse", () => {
     // the browser and doesn't crash the UI.
     await applyBackendMocks(page, {
       overrides: [
-        ...authSessionOverrides,
         ...buildWorkspaceOverrides({
           favorites: [`${e2eHomePath}/Datasets`],
         }),
-        ...permissiveBackendOverrides,
+        ...journeyOverrides,
       ],
     });
     const workspace = new WorkspacePage(page);
@@ -130,9 +134,15 @@ test.describe("workspace browse", () => {
     // contract — a UI that lights up the star locally but never calls the API would fail here.
     await applyBackendMocks(page, {
       overrides: [
-        ...authSessionOverrides,
+        // The favorites toggle fires Workspace.create against favorites.json AND a
+        // follow-up Workspace.get to re-read it. The helper's createOverride matches
+        // both creates (the .preferences dir bootstrap and the favorites.json write),
+        // and getOverride matches the favorites.json read by path. The .preferences
+        // dir existence check (Workspace.get on the dir path) falls through to
+        // getNotFoundOverride's 500, which ensurePreferencesDir handles by creating
+        // the dir. No permissive catch-all needed.
         ...buildWorkspaceOverrides(),
-        ...permissiveBackendOverrides,
+        ...journeyOverrides,
       ],
     });
     const workspace = new WorkspacePage(page);
@@ -169,8 +179,39 @@ test.describe("workspace browse", () => {
     const objects = body.params?.[0]?.objects ?? [];
     const tuple = objects[0] as [string, string, unknown, string];
     // The 4th tuple slot is the JSON body; it must contain the toggled folder path.
-    const content = JSON.parse(String(tuple[3])) as { folders?: string[] };
+    const content = JSON.parse(tuple[3]) as { folders?: string[] };
     expect(content.folders).toContain(`${e2eHomePath}/Datasets`);
     expect(body.params?.[0]?.overwrite).toBe(1);
+  });
+});
+
+// Drives the browse journey against post-auth traffic recorded in
+// `workspace-browse.har`. The auth-shape contract test against
+// `auth-sign-in.har` lives in `auth.spec.ts` — the canonical canary, not
+// duplicated here. See `harOverridesFor` for the rationale on why this
+// spec must NOT layer `journeyOverrides` or `permissiveBackendOverrides`
+// on top of HAR replay.
+test.describe("workspace browse via recorded HAR replay", () => {
+  test("renders the recorded workspace listing", async ({ page }) => {
+    await applyBackendMocks(page, {
+      overrides: [
+        ...authSessionOverrides,
+        ...harOverridesFor("workspace-browse.har"),
+      ],
+    });
+
+    await page.goto(`/workspace/${encodeURIComponent(recordedTestUserId)}/home`);
+
+    const workspace = new WorkspacePage(page);
+    await expect(workspace.breadcrumbs).toBeVisible();
+
+    // These four folders all appear in the recorded `Workspace.ls` response
+    // (`workspace-browse.har` entry 5). If the HAR replay actually fed the
+    // workspace browser, the rows render; if the override fell through to
+    // the permissive catchall (`{result:[[]]}`), the listing would be empty
+    // and these assertions would time out.
+    for (const name of ["Experiment Groups", "Genome Groups", "Experiments", "Feature Groups"]) {
+      await expect(workspace.rowByName(name).first()).toBeVisible();
+    }
   });
 });

@@ -60,6 +60,13 @@ describe("SearchBar", () => {
       const form = getForm();
       expect(form.className).toContain("max-w-[1000px]");
     });
+
+    it("exposes an accessible name on the search-type trigger", () => {
+      renderSearchBar();
+      expect(
+        screen.getByRole("combobox", { name: /search type/i }),
+      ).toBeInTheDocument();
+    });
   });
 
   describe("form submission", () => {
@@ -79,7 +86,7 @@ describe("SearchBar", () => {
       expect(mockPush).not.toHaveBeenCalled();
     });
 
-    it("navigates to /search with query and default searchtype", async () => {
+    it("navigates to /search with query and default type", async () => {
       const user = userEvent.setup();
       renderSearchBar();
 
@@ -87,7 +94,7 @@ describe("SearchBar", () => {
       fireEvent.submit(getForm());
 
       expect(mockPush).toHaveBeenCalledWith(
-        "/search?q=SARS-CoV-2&searchtype=everything",
+        "/search?type=everything&q=SARS-CoV-2",
       );
     });
 
@@ -99,7 +106,7 @@ describe("SearchBar", () => {
       fireEvent.submit(getForm());
 
       expect(mockPush).toHaveBeenCalledWith(
-        "/search?q=test%20%26%20more&searchtype=everything",
+        "/search?type=everything&q=test%20%26%20more",
       );
     });
 

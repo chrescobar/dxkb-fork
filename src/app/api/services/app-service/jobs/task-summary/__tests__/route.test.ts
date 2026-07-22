@@ -29,8 +29,8 @@ describe("POST /api/services/app-service/jobs/task-summary", () => {
 
     const request = mockNextRequest({ method: "POST", body: {} });
 
-    const response = await POST(request);
-    const data = await response.json();
+    const response = await POST(request, {});
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(401);
     expect(data).toEqual(
@@ -45,8 +45,8 @@ describe("POST /api/services/app-service/jobs/task-summary", () => {
 
     const request = mockNextRequest({ method: "POST", body: {} });
 
-    const response = await POST(request);
-    const data = await response.json();
+    const response = await POST(request, {});
+    const data = (await response.json()) as { summary?: typeof summaryData };
 
     expect(response.status).toBe(200);
     expect(data).toEqual({ summary: summaryData });
@@ -61,7 +61,7 @@ describe("POST /api/services/app-service/jobs/task-summary", () => {
       body: { include_archived: true },
     });
 
-    await POST(request);
+    await POST(request, {});
 
     expect(mockAppService.queryTaskSummaryFiltered).toHaveBeenCalledWith({
       include_archived: true,
@@ -76,8 +76,8 @@ describe("POST /api/services/app-service/jobs/task-summary", () => {
 
     const request = mockNextRequest({ method: "POST", body: {} });
 
-    const response = await POST(request);
-    const data = await response.json();
+    const response = await POST(request, {});
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(500);
     expect(data).toEqual(expect.objectContaining({ error: "Service down" }));

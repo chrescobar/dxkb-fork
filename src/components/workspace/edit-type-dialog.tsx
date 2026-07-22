@@ -18,13 +18,13 @@ import {
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { editTypeOptions } from "@/lib/services/workspace/types";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 export interface EditTypeDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   /** Single item whose type is being changed */
-  item: WorkspaceBrowserItem | null;
+  item: WorkspaceItem | null;
   onConfirm: (newType: string) => Promise<void>;
   isUpdating: boolean;
 }
@@ -39,12 +39,12 @@ function EditTypeForm({
   onConfirm,
   isUpdating,
 }: {
-  item: WorkspaceBrowserItem;
+  item: WorkspaceItem;
   onOpenChange: (open: boolean) => void;
   onConfirm: (newType: string) => Promise<void>;
   isUpdating: boolean;
 }) {
-  const currentType = item.type ?? "";
+  const currentType = item.type;
   const [selectedType, setSelectedType] = React.useState(currentType);
 
   const handleSave = React.useCallback(async () => {
@@ -75,14 +75,14 @@ function EditTypeForm({
       <DialogTitle>Change Object Type</DialogTitle>
       <div className="flex flex-col gap-2 py-2">
         <label
-          className="text-muted-foreground text-xs font-medium"
+          className="text-xs font-medium text-muted-foreground"
           htmlFor="edit-type-select"
         >
           Select a new type…
         </label>
         <Select
           value={selectedType}
-          onValueChange={(value) => setSelectedType(value ?? "")}
+          onValueChange={(value) => { setSelectedType(value ?? ""); }}
           disabled={isUpdating}
         >
           <SelectTrigger id="edit-type-select" className="w-full">
@@ -98,22 +98,22 @@ function EditTypeForm({
             </SelectGroup>
           </SelectContent>
         </Select>
-        <p className="text-muted-foreground text-xs">
-          Changing type for: {item.name ?? "item"}
+        <p className="text-xs text-muted-foreground">
+          Changing type for: {item.name}
         </p>
       </div>
       <DialogFooter showCloseButton={false}>
         <Button
           variant="outline"
-          onClick={() => onOpenChange(false)}
+          onClick={() => { onOpenChange(false); }}
           disabled={isUpdating}
         >
           Cancel
         </Button>
-        <Button onClick={handleSave} disabled={!canSave}>
+        <Button onClick={() => { void handleSave(); }} disabled={!canSave}>
           {isUpdating ? (
             <>
-              <Spinner className="mr-2 h-3.5 w-3.5 shrink-0" />
+              <Spinner className="mr-2 size-3.5 shrink-0" />
               Saving…
             </>
           ) : (

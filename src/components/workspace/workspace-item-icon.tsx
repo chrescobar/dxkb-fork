@@ -18,7 +18,7 @@ import {
 import { cn } from "@/lib/utils";
 import { isFolderType, normalizeWorkspaceObjectType } from "@/lib/services/workspace/utils";
 
-const typeIconMap: Record<string, LucideIcon> = {
+const typeIconMap: Partial<Record<string, LucideIcon>> = {
   folder: Folder,
   directory: Folder,
   job_result: BriefcaseMedical,
@@ -77,7 +77,7 @@ export function WorkspaceItemIcon({ type, className, variant = "default" }: Work
   return (
     <Icon
       className={cn(
-        "h-4 w-4 shrink-0",
+        "size-4 shrink-0",
         isFolderLike ? "text-amber-500" : "text-muted-foreground",
         className,
       )}

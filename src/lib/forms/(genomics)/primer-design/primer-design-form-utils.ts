@@ -377,7 +377,7 @@ export function transformPrimerDesignParams(
 }
 
 export function resetPrimerDesignValues(): PrimerDesignFormData {
-  return { ...defaultPrimerDesignFormValues };
+  return { ...defaultPrimerDesignFormValues } as PrimerDesignFormData;
 }
 
 

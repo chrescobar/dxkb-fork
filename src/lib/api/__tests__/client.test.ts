@@ -13,11 +13,11 @@ function installAuthStore(
   return store;
 }
 
-afterEach(() => setActiveAuthStore(null));
+afterEach(() => { setActiveAuthStore(null); });
 
 describe("apiCall", () => {
   it("sends a POST with credentials and JSON content-type", async () => {
-    let capturedHeaders: Headers | null = null;
+    let capturedHeaders: Headers | undefined;
 
     server.use(
       http.post("/api/test", async ({ request }) => {

@@ -8,12 +8,12 @@ import {
   type ReactNode,
   type Dispatch,
 } from "react";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 export type ActiveDialog =
-  | { type: "delete"; items: WorkspaceBrowserItem[]; nonEmptyPaths: string[] }
-  | { type: "copy"; items: WorkspaceBrowserItem[]; mode: "copy" | "move" }
-  | { type: "editType"; item: WorkspaceBrowserItem }
+  | { type: "delete"; items: WorkspaceItem[]; nonEmptyPaths: string[] }
+  | { type: "copy"; items: WorkspaceItem[]; mode: "copy" | "move" }
+  | { type: "editType"; item: WorkspaceItem }
   | { type: "createFolder" }
   | { type: "createWorkspace" }
   | { type: "upload" }
@@ -25,10 +25,10 @@ export interface WorkspaceDialogState {
 }
 
 export type WorkspaceDialogAction =
-  | { type: "OPEN_DELETE"; items: WorkspaceBrowserItem[] }
+  | { type: "OPEN_DELETE"; items: WorkspaceItem[] }
   | { type: "SET_DELETE_NON_EMPTY_PATHS"; paths: string[] }
-  | { type: "OPEN_COPY"; items: WorkspaceBrowserItem[]; mode: "copy" | "move" }
-  | { type: "OPEN_EDIT_TYPE"; item: WorkspaceBrowserItem }
+  | { type: "OPEN_COPY"; items: WorkspaceItem[]; mode: "copy" | "move" }
+  | { type: "OPEN_EDIT_TYPE"; item: WorkspaceItem }
   | { type: "OPEN_CREATE_FOLDER" }
   | { type: "OPEN_CREATE_WORKSPACE" }
   | { type: "OPEN_UPLOAD" }

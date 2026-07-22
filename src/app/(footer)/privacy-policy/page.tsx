@@ -10,21 +10,21 @@ const PrivacyPolicy = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row gap-8">
+        <div className="flex flex-col gap-8 md:flex-row">
           {/* Sidebar */}
           <PrivacySidebar />
 
           {/* Main Content */}
-          <main className="flex-grow max-w-3xl">
+          <main className="max-w-3xl flex-grow">
             <section id="introduction" className="mb-10">
-              <div className="bg-secondary/20 border-l-4 border-secondary p-4 mb-6">
+              <div className="mb-6 border-l-4 border-secondary bg-secondary/20 p-4">
                 <p className="text-secondary">
                   This Privacy Policy was last updated on <strong>July 22, 2026</strong>. Please read it carefully as it
                   affects your rights and how your data is handled.
                 </p>
               </div>
 
-              <p className="text-lg text-muted-foreground mb-6">
+              <p className="mb-6 text-lg text-muted-foreground">
                 DXKB is provided as a public resource for the research community. This Privacy Policy describes the ways
                 DXKB collects, stores, uses, discloses, and protects the personal information about users and how they
                 use DXKB. DXKB never collects information for commercial marketing or any purpose unrelated to DXKB
@@ -34,9 +34,9 @@ const PrivacyPolicy = () => {
 
             {privacyPolicySections.map((section) => (
               <section id={section.title.toLowerCase().replace(/\s+/g, '-')} key={section.id}>
-                <div className="flex items-center mb-4">
-                  <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center mr-3" key={section.id}>
-                    <span className="text-secondary font-bold">{section.id}</span>
+                <div className="mb-4 flex items-center">
+                  <div className="mr-3 flex size-8 items-center justify-center rounded-full bg-secondary/20" key={section.id}>
+                    <span className="font-bold text-secondary">{section.id}</span>
                   </div>
                   <h2 className="text-xl font-bold">{section.title}</h2>
                 </div>
@@ -47,7 +47,7 @@ const PrivacyPolicy = () => {
 
             <Separator className="my-8" />
 
-            <div className="flex justify-end items-center">
+            <div className="flex items-center justify-end">
               <div className="text-sm text-foreground">© 2026 DXKB. All rights reserved.</div>
             </div>
           </main>

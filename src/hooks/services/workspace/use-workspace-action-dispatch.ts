@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 import { useMutation, type QueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { useWorkspaceRepository } from "@/contexts/workspace-repository-context";
 import { triggerDownload } from "@/lib/utils";
 import {
@@ -21,7 +21,7 @@ export interface UseWorkspaceActionDispatchOptions {
   currentUser: string;
   myWorkspaceRoot: string;
   queryClient: QueryClient;
-  items: WorkspaceBrowserItem[];
+  items: WorkspaceItem[];
   /** When true, dispatch download through the public (unauthenticated) repository. */
   isPublic?: boolean;
 }
@@ -62,7 +62,7 @@ export function useWorkspaceActionDispatch({
       downloadable,
     }: {
       mappedPaths: string[];
-      downloadable: WorkspaceBrowserItem[];
+      downloadable: WorkspaceItem[];
     }) => {
       const urlArrays = await repository.getDownloadUrls(mappedPaths);
       return { urlArrays, downloadable };
@@ -85,7 +85,7 @@ export function useWorkspaceActionDispatch({
   const { mutate: downloadMutate } = downloadMutation;
 
   const handleAction = useCallback(
-    async (actionId: string, selection: WorkspaceBrowserItem[]) => {
+    (actionId: string, selection: WorkspaceItem[]) => {
       if (actionId === "delete") {
         dispatch({ type: "OPEN_DELETE", items: selection });
         return;
@@ -99,21 +99,21 @@ export function useWorkspaceActionDispatch({
         return;
       }
       if (actionId === "editType") {
-        const single = selection[0] ?? null;
+        const single = selection.at(0);
         if (single?.path) {
           dispatch({ type: "OPEN_EDIT_TYPE", item: single });
         }
         return;
       }
       if (actionId === "viewer3d") {
-        const single = selection[0] ?? null;
+        const single = selection.at(0);
         if (single?.path) {
           window.open(getStructureViewerUrl(single.path), "_blank", "noopener,noreferrer");
         }
         return;
       }
       if (actionId === "favorite") {
-        const single = selection[0] ?? null;
+        const single = selection.at(0);
         if (
           !currentUser ||
           !myWorkspaceRoot ||
@@ -130,7 +130,7 @@ export function useWorkspaceActionDispatch({
         (item) =>
           Boolean(item.path) &&
           !(forbiddenDownloadTypes as readonly string[]).includes(
-            (item.type ?? "").toLowerCase(),
+            item.type.toLowerCase(),
           ),
       );
       if (downloadable.length === 0) {
@@ -149,15 +149,15 @@ export function useWorkspaceActionDispatch({
         return;
       }
       const single = downloadable.length === 1 ? downloadable[0] : null;
-      const singleType = String(single?.type ?? "").toLowerCase();
+      const singleType = (single?.type ?? "").toLowerCase();
       const defaultName =
         singleType === "job_result"
-          ? String(single?.name ?? "").replace(/^\./, "").trim() || "archive"
-          : single?.name != null && String(single.name).startsWith(".")
-            ? (getSiblingJobResultPathForDotFolder(single.path ?? "", items)?.split("/").filter(Boolean).pop() ??
-                String(single.name).replace(/^\./, "")).trim() || "archive"
+          ? (single?.name ?? "").replace(/^\./, "").trim() || "archive"
+          : single?.name != null && single.name.startsWith(".")
+            ? (getSiblingJobResultPathForDotFolder(single.path, items)?.split("/").filter(Boolean).pop() ??
+                single.name.replace(/^\./, "")).trim() || "archive"
             : single?.name != null
-              ? String(single.name).trim() || "archive"
+              ? single.name.trim() || "archive"
               : "archive";
 
       dispatch({ type: "OPEN_DOWNLOAD_OPTIONS", paths: mappedPaths, defaultName });

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { ServiceHeader } from "@/components/services/service-header";
 import {
@@ -43,7 +44,6 @@ import { toast } from "sonner";
 import {
   variationAnalysisFormSchema,
   defaultVariationAnalysisFormValues,
-  type VariationAnalysisFormData,
   type VariationLibraryItem,
 } from "@/lib/forms/(genomics)/variation-analysis/variation-analysis-form-schema";
 import {
@@ -77,7 +77,7 @@ export default function VariationAnalysisPage() {
     defaultValues: defaultVariationAnalysisFormValues,
     validators: { onChange: variationAnalysisFormSchema },
     onSubmit: async ({ value }) => {
-      const data = value as VariationAnalysisFormData;
+      const data = value;
 
       const hasPaired = data.paired_end_libs && data.paired_end_libs.length > 0;
       const hasSingle = data.single_end_libs && data.single_end_libs.length > 0;
@@ -166,8 +166,8 @@ export default function VariationAnalysisPage() {
     });
   };
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   return (
     <section>
@@ -183,7 +183,7 @@ export default function VariationAnalysisPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="grid grid-cols-1 gap-6 md:grid-cols-12"
       >
@@ -209,11 +209,12 @@ export default function VariationAnalysisPage() {
                   <Label className="service-card-label">
                     Paired Read Library
                   </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
+                  <div className="mx-4 h-px flex-1 bg-border" />
                   <Button
                     type="button"
                     variant="outline"
                     size="icon"
+                    aria-label="Add paired read library"
                     onClick={handlePairedLibraryAdd}
                     disabled={!pairedRead1 || !pairedRead2}
                   >
@@ -246,11 +247,12 @@ export default function VariationAnalysisPage() {
                   <Label className="service-card-label">
                     Single Read Library
                   </Label>
-                  <div className="bg-border mx-4 h-[1px] flex-1" />
+                  <div className="mx-4 h-px flex-1 bg-border" />
                   <Button
                     type="button"
                     variant="outline"
                     size="icon"
+                    aria-label="Add single read library"
                     onClick={handleSingleLibraryAdd}
                     disabled={!singleRead}
                   >
@@ -286,7 +288,7 @@ export default function VariationAnalysisPage() {
                   Selected Libraries
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger>
+                      <TooltipTrigger aria-label="Help: Files selected for analysis">
                         <HelpCircle className="service-card-tooltip-icon" />
                       </TooltipTrigger>
                       <TooltipContent>
@@ -335,7 +337,7 @@ export default function VariationAnalysisPage() {
                     <FieldItem>
                       <RequiredFormLabel>Target Genome</RequiredFormLabel>
                       <SingleGenomeSelector
-                        value={field.state.value ?? ""}
+                        value={field.state.value}
                         onChange={(genomeId) => {
                           field.handleChange(genomeId);
                         }}
@@ -354,11 +356,11 @@ export default function VariationAnalysisPage() {
                       <Select
                         items={variationAnalysisMappers}
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
+                        onValueChange={(value) => {
+                          if (value != null) field.handleChange(value);
+                        }}
                       >
-                        <SelectTrigger className="service-card-select-trigger">
+                        <SelectTrigger className="service-card-select-trigger" aria-label="Aligner">
                           <SelectValue placeholder="Select aligner" />
                         </SelectTrigger>
                         <SelectContent className="service-card-select-content">
@@ -387,11 +389,11 @@ export default function VariationAnalysisPage() {
                       <Select
                         items={variationAnalysisCallers}
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
+                        onValueChange={(value) => {
+                          if (value != null) field.handleChange(value);
+                        }}
                       >
-                        <SelectTrigger className="service-card-select-trigger">
+                        <SelectTrigger className="service-card-select-trigger" aria-label="SNP Caller">
                           <SelectValue placeholder="Select SNP caller" />
                         </SelectTrigger>
                         <SelectContent className="service-card-select-content">
@@ -455,7 +457,7 @@ export default function VariationAnalysisPage() {
                 Selected Libraries
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger>
+                    <TooltipTrigger aria-label="Help: Files selected for analysis">
                       <HelpCircle className="service-card-tooltip-icon" />
                     </TooltipTrigger>
                     <TooltipContent>

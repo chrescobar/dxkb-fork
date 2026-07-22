@@ -1,6 +1,6 @@
 "use client";
 
-import React, {
+import {
   useCallback,
   forwardRef,
   useImperativeHandle,
@@ -10,11 +10,12 @@ import React, {
 import { useRouter } from "next/navigation";
 import type { Row } from "@tanstack/react-table";
 import type {
-  WorkspaceBrowserItem,
-  WorkspaceBrowserSort,
+  WorkspaceSortConfig,
   WorkspaceViewMode,
 } from "@/types/workspace-browser";
-import { buildEncodedSegmentPath, encodeWorkspaceSegment, noop, parsePathSegments, sanitizePathSegment } from "@/lib/utils";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
+import { noop } from "@/lib/utils";
+import { buildEncodedSegmentPath, encodeWorkspaceSegment, parsePathSegments, sanitizePathSegment } from "@/lib/services/workspace/path-utils";
 import { normalizePath } from "@/lib/workspace/table-selection";
 import { isFolderType } from "@/lib/services/workspace/utils";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
@@ -27,24 +28,21 @@ import {
   type DataTableHandle,
 } from "@/components/shared/file-table";
 
-/** Stable empty array for table data fallback (avoids infinite re-renders per TanStack Data guide). */
-const emptyItems: WorkspaceBrowserItem[] = [];
-
 const defaultColumnOrder = [
   "name",
   "size",
-  "owner_id",
-  "creation_time",
+  "ownerId",
+  "createdAt",
   "members",
   "type",
 ];
 
 interface WorkspaceDataTableProps {
-  items: WorkspaceBrowserItem[];
+  items: WorkspaceItem[];
   isLoading: boolean;
   path: string;
-  sort: WorkspaceBrowserSort;
-  onSortChange: (sort: WorkspaceBrowserSort) => void;
+  sort: WorkspaceSortConfig;
+  onSortChange: (sort: WorkspaceSortConfig) => void;
   viewMode?: WorkspaceViewMode;
   memberCountByPath?: Record<string, number>;
   username?: string;
@@ -52,10 +50,10 @@ interface WorkspaceDataTableProps {
   favoritePaths?: string[];
   selectedPaths?: string[];
   onSelect?: (
-    item: WorkspaceBrowserItem,
+    item: WorkspaceItem,
     modifiers?: { ctrlOrMeta: boolean; shift: boolean },
   ) => void;
-  onItemDoubleClick?: (item: WorkspaceBrowserItem) => void;
+  onItemDoubleClick?: (item: WorkspaceItem) => void;
   onClearSelection?: () => void;
 }
 
@@ -98,7 +96,7 @@ export const WorkspaceDataTable = forwardRef<
     [path],
   );
   const selectedPathSet = useMemo(
-    () => new Set((selectedPaths ?? []).map(normalizePath)),
+    () => new Set(selectedPaths.map(normalizePath)),
     [selectedPaths],
   );
   const safeUsername = sanitizePathSegment(username);
@@ -113,22 +111,25 @@ export const WorkspaceDataTable = forwardRef<
       ? `/workspace/${encodeWorkspaceSegment(sanitizePathSegment(sharedRootUsername))}`
       : sharedBase;
 
-  function handleItemClick(item: WorkspaceBrowserItem) {
-    if (!isFolderType(item.type)) return;
-    if (viewMode === "public") {
-      const encoded = buildEncodedSegmentPath(parsePathSegments(item.path));
-      router.push(`/workspace/public/${encoded}`);
-    } else if (viewMode === "shared") {
-      const encoded = buildEncodedSegmentPath(parsePathSegments(item.path));
-      router.push(`/workspace/${encoded}`);
-    } else {
-      const segments = path
-        ? path.split("/").map(sanitizePathSegment).filter(Boolean)
-        : [];
-      segments.push(sanitizePathSegment(item.name));
-      router.push(`${homeBase}/${buildEncodedSegmentPath(segments)}`);
-    }
-  }
+  const handleItemClick = useCallback(
+    (item: WorkspaceItem) => {
+      if (!isFolderType(item.type)) return;
+      if (viewMode === "public") {
+        const encoded = buildEncodedSegmentPath(parsePathSegments(item.path));
+        router.push(`/workspace/public/${encoded}`);
+      } else if (viewMode === "shared") {
+        const encoded = buildEncodedSegmentPath(parsePathSegments(item.path));
+        router.push(`/workspace/${encoded}`);
+      } else {
+        const segments = path
+          ? path.split("/").map(sanitizePathSegment).filter(Boolean)
+          : [];
+        segments.push(sanitizePathSegment(item.name));
+        router.push(`${homeBase}/${buildEncodedSegmentPath(segments)}`);
+      }
+    },
+    [viewMode, path, homeBase, router],
+  );
 
   const handleParentClick = useCallback(() => {
     if (viewMode === "public") {
@@ -175,14 +176,13 @@ export const WorkspaceDataTable = forwardRef<
   const parentOffset = showParentRow ? 1 : 0;
 
   const getFocusedIndex = useCallback(() => {
-    const paths = selectedPaths ?? [];
-    if (paths.length === 0) return -1;
-    const normalizedFocus = normalizePath(paths[paths.length - 1]);
+    if (selectedPaths.length === 0) return -1;
+    const normalizedFocus = normalizePath(selectedPaths[selectedPaths.length - 1]);
     return items.findIndex((i) => normalizePath(i.path) === normalizedFocus);
   }, [selectedPaths, items]);
 
   const handleEnter = useCallback(
-    (item: WorkspaceBrowserItem) => {
+    (item: WorkspaceItem) => {
       if (isFolderType(item.type)) {
         onItemDoubleClick?.(item);
       }
@@ -190,7 +190,7 @@ export const WorkspaceDataTable = forwardRef<
     [onItemDoubleClick],
   );
 
-  const { focusedSpecialRow, handleKeyDown } = useTableKeyboardNavigation<WorkspaceBrowserItem>({
+  const { focusedSpecialRow, handleKeyDown } = useTableKeyboardNavigation<WorkspaceItem>({
     items,
     getFocusedIndex,
     onSelect: onSelect ?? noop,
@@ -244,7 +244,7 @@ export const WorkspaceDataTable = forwardRef<
   ]);
 
   const renderRows = useCallback(
-    (rows: Row<WorkspaceBrowserItem>[]) => (
+    (rows: Row<WorkspaceItem>[]) => (
       <>
         {rows.map((row) => (
           <DataRow
@@ -261,8 +261,7 @@ export const WorkspaceDataTable = forwardRef<
         ))}
       </>
     ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- handleItemClick changes every render (uses path)
-    [useSelectionMode, selectedPathSet, onSelect, onItemDoubleClick, path, viewMode, homeBase],
+    [useSelectionMode, selectedPathSet, onSelect, onItemDoubleClick, handleItemClick],
   );
 
   const renderEmptyState = useCallback(
@@ -271,9 +270,9 @@ export const WorkspaceDataTable = forwardRef<
   );
 
   return (
-    <DataTable<WorkspaceBrowserItem>
+    <DataTable<WorkspaceItem>
       ref={dataTableRef}
-      data={items ?? emptyItems}
+      data={items}
       columns={columns}
       defaultColumnOrder={defaultColumnOrder}
       isLoading={isLoading}

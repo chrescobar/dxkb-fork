@@ -24,10 +24,10 @@ import { formatDate, formatOwner } from "@/lib/services/workspace/helpers";
 import { useWorkspaceRepository } from "@/contexts/workspace-repository-context";
 import { workspaceQueryKeys } from "@/lib/services/workspace/workspace-query-keys";
 import { editTypeOptions } from "@/lib/services/workspace/types";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 interface WorkspaceItemDetailsProps {
-  item: WorkspaceBrowserItem;
+  item: WorkspaceItem;
   defaultExpanded?: boolean;
   children?: React.ReactNode;
 }
@@ -41,7 +41,7 @@ export function WorkspaceItemDetails({
   const repository = useWorkspaceRepository("authenticated");
 
   const typeOptions = useMemo(() => {
-    const currentType = item.type ?? "";
+    const currentType = item.type;
     const set = new Set(editTypeOptions);
     if (currentType && !set.has(currentType)) {
       return [currentType, ...editTypeOptions].sort((a, b) => a.localeCompare(b));
@@ -68,7 +68,7 @@ export function WorkspaceItemDetails({
 
   const selectEl = (
     <Select
-      value={(editTypeMutation.isPending ? editTypeMutation.variables : item.type) ?? ""}
+      value={editTypeMutation.isPending ? editTypeMutation.variables : item.type}
       onValueChange={(value) => {
         if (value && value !== item.type) {
           editTypeMutation.mutate(value);
@@ -76,7 +76,7 @@ export function WorkspaceItemDetails({
       }}
       disabled={isJobResult || editTypeMutation.isPending}
     >
-      <SelectTrigger size="sm" className="h-6 min-w-0 gap-1 text-xs">
+      <SelectTrigger size="sm" className="h-6 min-w-0 gap-1 text-xs" aria-label="File type">
         <SelectValue placeholder="Unspecified" />
       </SelectTrigger>
       <SelectContent>
@@ -93,9 +93,9 @@ export function WorkspaceItemDetails({
 
   return (
     <DetailPanel.CollapsibleSection label="Details" defaultExpanded={defaultExpanded}>
-      <div className="space-y-3 px-3 py-3 text-xs border-b">
+      <div className="space-y-3 border-b p-3 text-xs">
         <div className="flex items-center gap-2">
-          <WorkspaceItemIcon type={item.type} className="h-5 w-5 shrink-0" />
+          <WorkspaceItemIcon type={item.type} className="size-5 shrink-0" />
           {isJobResult ? (
             <TooltipProvider>
               <Tooltip>
@@ -113,15 +113,15 @@ export function WorkspaceItemDetails({
         <dl className="grid gap-1.5">
           <div>
             <dt className="text-muted-foreground">Owner</dt>
-            <dd className="break-all">{formatOwner(item.owner_id)}</dd>
+            <dd className="break-all">{formatOwner(item.ownerId ?? "")}</dd>
           </div>
           <div>
             <dt className="text-muted-foreground">Created</dt>
-            <dd>{formatDate(item.creation_time)}</dd>
+            <dd>{formatDate(item.createdAt ?? "")}</dd>
           </div>
           <div>
             <dt className="text-muted-foreground">Path</dt>
-            <dd className="break-all font-mono text-[11px]">{item.path}</dd>
+            <dd className="font-mono text-[11px] break-all">{item.path}</dd>
           </div>
           {children}
         </dl>

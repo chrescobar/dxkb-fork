@@ -37,7 +37,7 @@ describe("useApiQuery", () => {
       { wrapper: createWrapper() },
     );
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => { expect(result.current.isSuccess).toBe(true); });
     expect(result.current.data).toEqual({ items: [{ id: 1 }] });
   });
 
@@ -57,7 +57,7 @@ describe("useApiQuery", () => {
       { wrapper: createWrapper() },
     );
 
-    await waitFor(() => expect(result.current.isError).toBe(true));
+    await waitFor(() => { expect(result.current.isError).toBe(true); });
     expect(result.current.error).toBeInstanceOf(ApiCallError);
     expect((result.current.error as ApiCallError).code).toBe("forbidden");
   });
@@ -83,7 +83,7 @@ describe("useApiMutation", () => {
 
     result.current.mutate({ name: "test" });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => { expect(result.current.isSuccess).toBe(true); });
     expect(result.current.data).toEqual({ id: 1, name: "test" });
   });
 });

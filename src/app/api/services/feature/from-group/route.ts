@@ -2,10 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { withAuth } from "@/lib/auth/server/instance";
 import { getRequiredEnv } from "@/lib/env";
 
+interface FeatureGroupBody {
+  feature_group_path?: unknown;
+}
 
 export const POST = withAuth(async (request: NextRequest, { token }) => {
-  const body = await request.json();
-  const featureGroupPath: string = body?.feature_group_path;
+  const body = (await request.json()) as FeatureGroupBody;
+  const featureGroupPath: string =
+    typeof body.feature_group_path === "string" ? body.feature_group_path : "";
 
   if (!featureGroupPath || typeof featureGroupPath !== "string" || featureGroupPath.trim() === "") {
     return NextResponse.json({ results: [] });
@@ -33,14 +37,14 @@ export const POST = withAuth(async (request: NextRequest, { token }) => {
     console.error("Feature group lookup error:", response.status, errorText);
     return NextResponse.json(
       {
-        error: `BV-BRC feature lookup failed: ${response.status} ${response.statusText}`,
+        error: `BV-BRC feature lookup failed: ${String(response.status)} ${response.statusText}`,
       },
       { status: response.status },
     );
   }
 
-  const data = await response.json();
-  const results = Array.isArray(data) ? data : data?.items || [];
+  const data = (await response.json()) as unknown[] | { items?: unknown[] };
+  const results = Array.isArray(data) ? data : data.items ?? [];
 
   return NextResponse.json({ results });
 });

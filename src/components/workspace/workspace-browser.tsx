@@ -5,12 +5,16 @@ import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import type { ListPermissionsResult } from "@/lib/services/workspace/shared";
+import type { ListPermissionsResult } from "@/lib/services/workspace/domain";
 import { useAuth } from "@/lib/auth/hooks";
 import { useWorkspacePanel } from "@/contexts/workspace-panel-context";
 import { useWorkspaceDialog } from "@/contexts/workspace-dialog-context";
 import { useWorkspacePathResolve } from "@/hooks/services/workspace/use-workspace-path-resolve";
-import { useWorkspaceBrowserDirectory } from "@/hooks/services/workspace/use-workspace-browser-directory";
+import {
+  useWorkspaceDirectory,
+  type WorkspaceDirectoryMode,
+} from "@/hooks/services/workspace/use-workspace-directory";
+import { useEnsureUserWorkspace } from "@/hooks/services/workspace/use-ensure-user-workspace";
 import { useWorkspaceFilteredItems } from "@/hooks/services/workspace/use-workspace-filtered-items";
 import { useWorkspaceSelection } from "@/hooks/services/workspace/use-workspace-selection";
 import { useWorkspaceNavigation } from "@/hooks/services/workspace/use-workspace-navigation";
@@ -41,14 +45,67 @@ import { loadFavorites } from "@/lib/services/workspace/favorites";
 import { workspaceQueryKeys } from "@/lib/services/workspace/workspace-query-keys";
 import { addRecentFolder } from "@/lib/recent-workspace-folders";
 import {
-  WorkspaceBrowserItem,
-  WorkspaceBrowserSort,
+  type WorkspaceSortConfig,
   type WorkspaceViewMode,
 } from "@/types/workspace-browser";
-import { encodeWorkspaceSegment, noop, workspaceUsername } from "@/lib/utils";
+import { noop } from "@/lib/utils";
+import { encodeWorkspaceSegment, workspaceUsername } from "@/lib/services/workspace/path-utils";
 import { Skeleton } from "@/components/ui/skeleton";
-
 type PublicWorkspaceLevel = "root" | "user" | "path";
+
+export function pickDirectoryMode(options: {
+  mode: WorkspaceViewMode;
+  username: string;
+  path: string;
+  fullPath: string;
+  currentUser: string;
+  isJobResultView: boolean;
+  isAtSharedRoot: boolean;
+  isPublic: boolean;
+  publicLevel: PublicWorkspaceLevel;
+  jobDotPath?: string;
+}): WorkspaceDirectoryMode | null {
+  const {
+    mode,
+    username,
+    path,
+    fullPath,
+    currentUser,
+    isJobResultView,
+    isAtSharedRoot,
+    isPublic,
+    publicLevel,
+    jobDotPath,
+  } = options;
+
+  if (isJobResultView) {
+    if (!jobDotPath) return null;
+    const dotPathNormalized = jobDotPath.startsWith("/")
+      ? jobDotPath
+      : `/${jobDotPath}`;
+    return {
+      kind: "jobResult",
+      fullPath: dotPathNormalized,
+      visiblePath: path,
+    };
+  }
+  if (isPublic) {
+    if (publicLevel === "root" || !username) return { kind: "publicRoot" };
+    if (publicLevel === "user") return { kind: "publicUser", username };
+    return { kind: "publicPath", fullPath };
+  }
+  if (mode === "home") {
+    if (!currentUser) return null;
+    return { kind: "home", username, path };
+  }
+  // shared mode
+  if (isAtSharedRoot) {
+    if (!currentUser) return null;
+    return { kind: "sharedRoot", currentUser };
+  }
+  if (!fullPath) return null;
+  return { kind: "sharedPath", fullPath };
+}
 
 interface WorkspaceBrowserProps {
   /** "home" = current user's home; "shared" = shared-with-me / shared folder view; "public" = public browsing */
@@ -58,9 +115,7 @@ interface WorkspaceBrowserProps {
   path: string;
   /** URL for the workspace guide (env WORKSPACE_GUIDE_URL). Passed from server. */
   workspaceGuideUrl: string;
-  /** Optional initial data for shared mode (SSR/prefetch) */
-  initialSharedItems?: WorkspaceBrowserItem[];
-  initialPathItems?: WorkspaceBrowserItem[];
+  /** Pre-fetched permissions map to seed the permissions query. */
   initialPermissions?: ListPermissionsResult;
 }
 
@@ -69,8 +124,6 @@ export function WorkspaceBrowser({
   username,
   path,
   workspaceGuideUrl,
-  initialSharedItems,
-  initialPathItems,
   initialPermissions,
 }: WorkspaceBrowserProps) {
   const router = useRouter();
@@ -79,10 +132,16 @@ export function WorkspaceBrowser({
   const fullWorkspaceUsername = workspaceUsername(user);
   const myWorkspaceRoot = fullWorkspaceUsername || currentUser;
 
+  const isUrlCurrentUser =
+    username === currentUser ||
+    username === fullWorkspaceUsername ||
+    username === myWorkspaceRoot ||
+    (!!currentUser && username.startsWith(`${currentUser}@`));
+
   const [authChecked, setAuthChecked] = useState(false);
   useEffect(() => {
-    const t = setTimeout(() => setAuthChecked(true), 800);
-    return () => clearTimeout(t);
+    const t = setTimeout(() => { setAuthChecked(true); }, 800);
+    return () => { clearTimeout(t); };
   }, []);
 
   const [dismissedPath, setDismissedPath] = useState<string | null>(null);
@@ -105,7 +164,7 @@ export function WorkspaceBrowser({
     staleTime: 2 * 60 * 1000,
   });
 
-  const [sort, setSort] = useState<WorkspaceBrowserSort>({
+  const [sort, setSort] = useState<WorkspaceSortConfig>({
     field: "name",
     direction: "asc",
   });
@@ -122,11 +181,9 @@ export function WorkspaceBrowser({
     return fullPath;
   }, [path, isHome, username, fullPath]);
 
-  // Determine the public browsing level for the public data hook
   const publicLevel: PublicWorkspaceLevel = useMemo(() => {
     if (!isPublic) return "root";
     if (!username) return "root";
-    // If path has more segments than just the username, we're inside a workspace
     const pathSegments = path ? path.split("/").filter(Boolean) : [];
     return pathSegments.length > 1 ? "path" : "user";
   }, [isPublic, username, path]);
@@ -146,7 +203,7 @@ export function WorkspaceBrowser({
     enabled: isJobResultView,
   });
 
-  const browserDirectory = useWorkspaceBrowserDirectory({
+  const directoryMode = pickDirectoryMode({
     mode,
     username,
     path,
@@ -157,21 +214,37 @@ export function WorkspaceBrowser({
     isPublic,
     publicLevel,
     jobDotPath: dotPath,
-    pathResolveFailed: resolveQuery.isError,
-    initialSharedItems,
-    initialPathItems,
-    initialPermissions,
   });
+  const enabled = !!directoryMode && !resolveQuery.isError;
+
+  const directoryResult = useWorkspaceDirectory(
+    directoryMode ?? { kind: "publicRoot" },
+    {
+      enabled,
+      initialPermissions,
+    },
+  );
 
   const {
-    items,
+    items: rawItems,
     isLoading,
     isFetching,
     error,
     refetch,
     memberCountByPath,
-    currentDirPermissions,
-  } = browserDirectory;
+    permissions: currentDirPermissions,
+  } = directoryResult;
+
+  const items = useMemo(() => (enabled ? rawItems : []), [enabled, rawItems]);
+
+  const isOwnHome = mode === "home" && isUrlCurrentUser;
+  const homeAppearsEmpty =
+    isOwnHome && path === "" && !isLoading && items.length === 0;
+  useEnsureUserWorkspace({
+    enabled: isOwnHome,
+    listError: enabled ? error : null,
+    homeAppearsEmpty,
+  });
 
   const processedItems = useWorkspaceFilteredItems(items, {
     showHiddenFiles: isJobResultView ? true : showHiddenFiles,
@@ -268,29 +341,20 @@ export function WorkspaceBrowser({
   });
 
   const isCurrentSelectionFavorite =
-    primaryItem?.path != null && favoritePaths.includes(primaryItem.path);
+    primaryItem != null && favoritePaths.includes(primaryItem.path);
 
-  // Restore focus to the table after selection
   useEffect(() => {
     if (selectedItems.length === 0) return;
     const id = setTimeout(() => tableRef.current?.focus(), 50);
-    return () => clearTimeout(id);
+    return () => { clearTimeout(id); };
   }, [selectedItems]);
 
-  // After route change (and after loading resolves), focus the table so keyboard navigation works.
-  // resolveQuery.isLoading causes an early return that unmounts the ref'd table; guard against that.
   useEffect(() => {
     if (resolveQuery.isLoading) return;
     const id = setTimeout(() => tableRef.current?.focus(), 100);
-    return () => clearTimeout(id);
+    return () => { clearTimeout(id); };
   }, [path, mode, resolveQuery.isLoading]);
 
-  // Redirect non-owner to their own shared root
-  const isUrlCurrentUser =
-    username === currentUser ||
-    username === fullWorkspaceUsername ||
-    username === myWorkspaceRoot ||
-    (currentUser && username.startsWith(`${currentUser}@`));
   useEffect(() => {
     if (
       isPublic ||
@@ -311,15 +375,12 @@ export function WorkspaceBrowser({
     router,
   ]);
 
-  // Detect when the workspace path doesn't exist
   const pathNotFound = useMemo(() => {
     if (isPublic || !path || path.trim() === "") return false;
-    // resolveQuery errors when the path doesn't exist at all
     if (resolveQuery.isError) return true;
-    // authenticatedData.error when directory listing fails (e.g. deleted between resolve and listing)
-    if (error && !resolveQuery.isLoading && !resolveQuery.isError) return true;
+    if (enabled && error && !resolveQuery.isLoading) return true;
     return false;
-  }, [isPublic, path, resolveQuery.isError, resolveQuery.isLoading, error]);
+  }, [isPublic, path, resolveQuery.isError, resolveQuery.isLoading, enabled, error]);
 
   const handleNotFoundConfirm = useCallback(() => {
     router.replace(
@@ -353,8 +414,7 @@ export function WorkspaceBrowser({
     !isPublic &&
     path &&
     path.trim() !== "" &&
-    resolveQuery.isLoading &&
-    !resolveQuery.isError
+    resolveQuery.isLoading
   ) {
     return loadingSkeleton(isHome ? "home" : "shared");
   }
@@ -365,7 +425,7 @@ export function WorkspaceBrowser({
     }
     return (
       <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
+        <AlertCircle className="size-4" />
         <AlertDescription>
           You must be signed in to access the workspace.
         </AlertDescription>
@@ -449,24 +509,24 @@ export function WorkspaceBrowser({
           onShowHiddenFilesChange={isJobResultView ? noop : setShowHiddenFiles}
           onNewFolder={
             !isPublic && !isJobResultView && (isHome || canWriteToCurrentDir)
-              ? () => dialogDispatch({ type: "OPEN_CREATE_FOLDER" })
+              ? () => { dialogDispatch({ type: "OPEN_CREATE_FOLDER" }); }
               : undefined
           }
           onUpload={
             !isPublic && !isJobResultView && (isHome || canWriteToCurrentDir)
-              ? () => dialogDispatch({ type: "OPEN_UPLOAD" })
+              ? () => { dialogDispatch({ type: "OPEN_UPLOAD" }); }
               : undefined
           }
           isAtRoot={isAtSharedRoot}
           onNewWorkspace={
             !isPublic && !isJobResultView && isAtSharedRoot
-              ? () => dialogDispatch({ type: "OPEN_CREATE_WORKSPACE" })
+              ? () => { dialogDispatch({ type: "OPEN_CREATE_WORKSPACE" }); }
               : undefined
           }
         />
-        {error && (
+        {enabled && error && (
           <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
+            <AlertCircle className="size-4" />
             <AlertDescription>
               {isPublic
                 ? "Failed to load public workspaces"
@@ -479,7 +539,7 @@ export function WorkspaceBrowser({
         )}
       </div>
       {isJobResultView ? (
-        <div className="border-border flex min-h-0 flex-1 flex-col gap-4 overflow-hidden pb-4">
+        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden border-border pb-4">
           <div className="px-4">
             {resolveQuery.data && (
               <JobMetadataCard

@@ -3,7 +3,7 @@
  * Pure utility — no React dependencies.
  */
 
-import { buildEncodedSegmentPath, parsePathSegments } from "@/lib/utils";
+import { buildEncodedSegmentPath, parsePathSegments } from "@/lib/services/workspace/path-utils";
 
 export type ViewerCategory =
   | "text"
@@ -18,7 +18,7 @@ export type ViewerCategory =
 // Workspace object type -> viewer
 // ---------------------------------------------------------------------------
 
-const typeToViewer: Record<string, ViewerCategory> = {
+const typeToViewer: Partial<Record<string, ViewerCategory>> = {
   txt: "text",
   gff: "text",
   aligned_dna_fasta: "text",
@@ -50,7 +50,7 @@ const typeToViewer: Record<string, ViewerCategory> = {
 // File extension -> viewer
 // ---------------------------------------------------------------------------
 
-const extensionToViewer: Record<string, ViewerCategory> = {
+const extensionToViewer: Partial<Record<string, ViewerCategory>> = {
   ".txt": "text",
   ".log": "text",
   ".fa": "text",
@@ -218,6 +218,6 @@ export function getPreviewUrl(
   filePath: string,
   maxBytes: number = previewMaxBytes,
 ): string {
-  return `/api/workspace/preview/${encodePath(filePath)}?maxBytes=${maxBytes}`;
+  return `/api/workspace/preview/${encodePath(filePath)}?maxBytes=${String(maxBytes)}`;
 }
 

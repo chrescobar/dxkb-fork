@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import {
   Card,
@@ -54,7 +55,6 @@ import {
   pipelineActionOptions,
   platformOptions,
   maxPipelineActions,
-  type FastqUtilitiesFormData,
   type LibraryItem,
   type PipelineActionItem,
   type PipelineAction,
@@ -95,7 +95,7 @@ export default function FastqUtilitiesPage() {
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
   const handleReset = () => {
-    form.reset(defaultFastqUtilitiesFormValues as FastqUtilitiesFormData);
+    form.reset(defaultFastqUtilitiesFormValues);
     setLibraries([]);
     setPairedRead1(null);
     setPairedRead2(null);
@@ -107,17 +107,16 @@ export default function FastqUtilitiesPage() {
   };
 
   const form = useForm({
-    defaultValues: defaultFastqUtilitiesFormValues as FastqUtilitiesFormData,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: fastqUtilitiesFormSchema as any },
+    defaultValues: defaultFastqUtilitiesFormValues,
+    validators: { onChange: fastqUtilitiesFormSchema },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as FastqUtilitiesFormData);
+      await runtime.submitFormData(value);
     },
   });
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const recipe = useStore(form.store, (s) => s.values.recipe);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const recipe = useSelector(form.store, (s) => s.values.recipe);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   // Check if align is selected (to show/require target genome)
   const alignSelected = isAlignSelected(recipe);
@@ -133,7 +132,7 @@ export default function FastqUtilitiesPage() {
     mapLibraryToItem: (library) => ({
       ...buildBaseLibraryItem(library),
       ...(library.type === "single" && {
-        platform: (library.platform as Platform) ?? "illumina",
+        platform: (library.platform ?? "illumina") as Platform,
       }),
     }),
     fields: {
@@ -172,7 +171,7 @@ export default function FastqUtilitiesPage() {
             createPipelineActionItem(action, i),
           );
           setPipelineActions(actions);
-          form.setFieldValue("recipe", actionItemsToRecipe(actions) as never);
+          form.setFieldValue("recipe", actionItemsToRecipe(actions));
         }
       },
     },
@@ -213,20 +212,15 @@ export default function FastqUtilitiesPage() {
   const handleSingleLibraryAdd = () => {
     addSingleLibrary({
       read: singleRead,
-      buildLibrary: (read) => {
-        if (!singlePlatform) {
-          return { error: "Platform must be selected for single read library" };
-        }
-        return {
-          library: {
-            id: read,
-            name: getSingleLibraryName(read),
-            type: "single",
-            files: [read],
-            platform: singlePlatform,
-          },
-        };
-      },
+      buildLibrary: (read) => ({
+        library: {
+          id: read,
+          name: getSingleLibraryName(read),
+          type: "single",
+          files: [read],
+          platform: singlePlatform,
+        },
+      }),
       duplicateMatcher: (library, read) =>
         library.id === read && library.type === "single",
       onError: handleLibraryError,
@@ -245,7 +239,7 @@ export default function FastqUtilitiesPage() {
 
     if (pipelineActions.length >= maxPipelineActions) {
       toast.error("Maximum actions reached", {
-        description: `You can add up to ${maxPipelineActions} pipeline actions`,
+        description: `You can add up to ${String(maxPipelineActions)} pipeline actions`,
       });
       return;
     }
@@ -291,7 +285,7 @@ export default function FastqUtilitiesPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="grid grid-cols-1 gap-6 md:grid-cols-12"
       >
@@ -314,7 +308,7 @@ export default function FastqUtilitiesPage() {
                   <FieldItem className="w-full">
                     <OutputFolder
                       value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
+                      onChange={(value) => { field.handleChange(value); }}
                     />
                     <FieldErrors field={field} />
                   </FieldItem>
@@ -326,7 +320,7 @@ export default function FastqUtilitiesPage() {
                     <OutputFolder
                       variant="name"
                       value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
+                      onChange={(value) => { field.handleChange(value); }}
                       outputFolderPath={outputPath}
                       onValidationChange={setIsOutputNameValid}
                     />
@@ -358,12 +352,11 @@ export default function FastqUtilitiesPage() {
                   <Select
                     items={pipelineActionOptions}
                     value={selectedAction}
-                    onValueChange={(value) =>
-                      value != null &&
-                      setSelectedAction(value as PipelineAction)
-                    }
+                    onValueChange={(value) => {
+                      if (value != null) setSelectedAction(value);
+                    }}
                   >
-                    <SelectTrigger className="service-card-select-trigger">
+                    <SelectTrigger className="service-card-select-trigger" aria-label="Select action">
                       <SelectValue placeholder="Select Action" />
                     </SelectTrigger>
                     <SelectContent>
@@ -380,13 +373,14 @@ export default function FastqUtilitiesPage() {
                     type="button"
                     variant="outline"
                     size="icon"
+                    aria-label="Add pipeline action"
                     onClick={handleAddPipelineAction}
                     disabled={
                       !selectedAction ||
                       pipelineActions.length >= maxPipelineActions
                     }
                   >
-                    <Plus className="h-4 w-4" />
+                    <Plus className="size-4" />
                   </Button>
                 </div>
               </div>
@@ -394,7 +388,7 @@ export default function FastqUtilitiesPage() {
               {/* Pipeline Actions List */}
               <div className="mt-4 space-y-2">
                 {pipelineActions.length === 0 ? (
-                  <p className="text-muted-foreground py-4 text-center text-sm">
+                  <p className="py-4 text-center text-sm text-muted-foreground">
                     No actions added yet
                   </p>
                 ) : (
@@ -405,7 +399,7 @@ export default function FastqUtilitiesPage() {
                     >
                       <div className="flex items-center gap-2">
                         <span
-                          className={`h-3 w-3 rounded-full ${action.color}`}
+                          className={`size-3 rounded-full ${action.color ?? ""}`}
                         />
                         <span className="text-sm">{action.label}</span>
                       </div>
@@ -413,10 +407,11 @@ export default function FastqUtilitiesPage() {
                         type="button"
                         variant="ghost"
                         size="icon"
-                        className="h-6 w-6"
-                        onClick={() => handleRemovePipelineAction(action.id)}
+                        className="size-6"
+                        aria-label={`Remove ${action.label} action`}
+                        onClick={() => { handleRemovePipelineAction(action.id); }}
                       >
-                        <X className="h-3 w-3" />
+                        <X className="size-3" />
                       </Button>
                     </div>
                   ))
@@ -478,11 +473,12 @@ export default function FastqUtilitiesPage() {
                   <Label className="service-card-label">
                     Paired Read Library
                   </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
+                  <div className="mx-4 h-px flex-1 bg-border" />
                   <Button
                     type="button"
                     variant="outline"
                     size="icon"
+                    aria-label="Add paired read library"
                     onClick={handlePairedLibraryAdd}
                     disabled={!pairedRead1 || !pairedRead2}
                   >
@@ -515,11 +511,12 @@ export default function FastqUtilitiesPage() {
                   <Label className="service-card-label">
                     Single Read Library
                   </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
+                  <div className="mx-4 h-px flex-1 bg-border" />
                   <Button
                     type="button"
                     variant="outline"
                     size="icon"
+                    aria-label="Add single read library"
                     onClick={handleSingleLibraryAdd}
                     disabled={!singleRead || !singlePlatform}
                   >
@@ -531,11 +528,11 @@ export default function FastqUtilitiesPage() {
                   <Select
                     items={platformOptions}
                     value={singlePlatform}
-                    onValueChange={(value) =>
-                      value != null && setSinglePlatform(value as Platform)
-                    }
+                    onValueChange={(value) => {
+                      if (value != null) setSinglePlatform(value);
+                    }}
                   >
-                    <SelectTrigger className="service-card-select-trigger">
+                    <SelectTrigger className="service-card-select-trigger" aria-label="Select platform">
                       <SelectValue placeholder="Select a Platform..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -591,7 +588,7 @@ export default function FastqUtilitiesPage() {
                 Selected Libraries
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger>
+                    <TooltipTrigger aria-label="Help: place read files using arrow buttons">
                       <HelpCircle className="service-card-tooltip-icon" />
                     </TooltipTrigger>
                     <TooltipContent>
@@ -629,7 +626,7 @@ export default function FastqUtilitiesPage() {
               type="submit"
               disabled={isSubmitting || !canSubmit || !isOutputNameValid}
             >
-              {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
+              {isSubmitting ? <Spinner className="mr-2 size-4" /> : null}
               Submit
             </Button>
           </div>

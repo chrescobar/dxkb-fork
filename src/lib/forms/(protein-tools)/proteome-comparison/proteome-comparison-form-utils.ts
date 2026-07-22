@@ -11,7 +11,7 @@ export function createComparisonItemId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return crypto.randomUUID();
   }
-  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  return `${String(Date.now())}-${Math.random().toString(16).slice(2)}`;
 }
 
 /**
@@ -223,17 +223,13 @@ export function transformProteomeComparisonParams(
   }
 
   // Add advanced parameters (convert percentages to decimals)
-  if (data.min_seq_cov !== undefined) {
-    params.min_seq_cov = data.min_seq_cov / 100;
-  }
+  params.min_seq_cov = data.min_seq_cov / 100;
 
-  if (data.max_e_val) {
+  if (data.max_e_val.trim()) {
     params.max_e_val = data.max_e_val.trim();
   }
 
-  if (data.min_ident !== undefined) {
-    params.min_ident = data.min_ident / 100;
-  }
+  params.min_ident = data.min_ident / 100;
 
   return params;
 }
@@ -252,7 +248,7 @@ export function validateGenomeGroupAddition(
   if (totalAfterAdd > maxGenomes) {
     return {
       valid: false,
-      message: `Adding this genome group would exceed the maximum of ${maxGenomes} genomes. Current: ${currentCount}, Group size: ${newGenomeIds.length}`,
+      message: `Adding this genome group would exceed the maximum of ${String(maxGenomes)} genomes. Current: ${String(currentCount)}, Group size: ${String(newGenomeIds.length)}`,
     };
   }
 

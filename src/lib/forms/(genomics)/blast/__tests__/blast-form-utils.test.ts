@@ -1,5 +1,3 @@
-import { validateFastaForBlast, getBlastFastaErrorMessage } from "@/lib/fasta-validation";
-
 vi.mock("@/types/services", () => ({
   blastPrecomputedDatabases: [
     { value: "bacteria-archaea", label: "Bacteria/Archaea" },
@@ -24,17 +22,11 @@ vi.mock("@/types/services", () => ({
   },
 }));
 
-vi.mock("@/lib/fasta-validation", () => ({
-  validateFastaForBlast: vi.fn(() => ({ valid: true, message: "" })),
-  getBlastFastaErrorMessage: vi.fn(() => ""),
-}));
-
 vi.mock("./blast-form-schema", () => ({}));
 
 import {
   getAvailableBlastDatabaseTypes,
   getDefaultBlastDatabaseType,
-  validateBlastFastaInput,
   transformBlastParams,
   resolveDbSource,
   createInputSourceOverrides,
@@ -98,45 +90,6 @@ describe("getDefaultBlastDatabaseType", () => {
 
   it("returns fna for blastn + viral-reference", () => {
     expect(getDefaultBlastDatabaseType("blastn", "viral-reference")).toBe("fna");
-  });
-});
-
-describe("validateBlastFastaInput", () => {
-  beforeEach(() => {
-    vi.mocked(validateFastaForBlast).mockReturnValue({ valid: true, message: "" } as ReturnType<typeof validateFastaForBlast>);
-    vi.mocked(getBlastFastaErrorMessage).mockReturnValue("");
-  });
-
-  it("returns invalid for empty text", () => {
-    const result = validateBlastFastaInput("", "blastn");
-    expect(result.isValid).toBe(false);
-    expect(result.message).toBe("FASTA input is required");
-  });
-
-  it("returns invalid for whitespace-only text", () => {
-    const result = validateBlastFastaInput("   ", "blastn");
-    expect(result.isValid).toBe(false);
-    expect(result.message).toBe("FASTA input is required");
-  });
-
-  it("calls validateFastaForBlast with the text and input type", () => {
-    validateBlastFastaInput(">seq1\nACGT", "blastp");
-    expect(validateFastaForBlast).toHaveBeenCalledWith(">seq1\nACGT", "blastp");
-  });
-
-  it("returns valid when validation passes", () => {
-    const result = validateBlastFastaInput(">seq1\nACGT", "blastn");
-    expect(result.isValid).toBe(true);
-    expect(result.message).toBe("");
-  });
-
-  it("returns invalid with error message when validation fails", () => {
-    vi.mocked(validateFastaForBlast).mockReturnValue({ valid: false, message: "bad" } as ReturnType<typeof validateFastaForBlast>);
-    vi.mocked(getBlastFastaErrorMessage).mockReturnValue("Invalid FASTA sequence");
-
-    const result = validateBlastFastaInput(">bad\nXXX", "blastx");
-    expect(result.isValid).toBe(false);
-    expect(result.message).toBe("Invalid FASTA sequence");
   });
 });
 
@@ -332,8 +285,7 @@ describe("createInputSourceOverrides", () => {
   });
 
   it("returns only input_source for unknown source type", () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result = createInputSourceOverrides("unknown" as any);
+    const result = createInputSourceOverrides("unknown" as "fasta_data");
     expect(result).toEqual({ input_source: "unknown" });
   });
 });
@@ -513,8 +465,7 @@ describe("createDatabaseSourceOverrides", () => {
 
   it("throws for invalid database source", () => {
     expect(() =>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      createDatabaseSourceOverrides("nonexistent" as any, {}),
+      createDatabaseSourceOverrides("nonexistent" as "bacteria-archaea", {}),
     ).toThrow("Invalid database source: nonexistent");
   });
 });

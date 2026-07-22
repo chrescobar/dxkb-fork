@@ -1,6 +1,7 @@
 "use client";
 
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { ServiceHeader } from "@/components/services/service-header";
@@ -72,7 +73,6 @@ import {
 import {
   formatMetadataLabel,
   getSequenceTypeLabel,
-  type Alphabet,
   checkDuplicateSequence,
   checkSequenceLimit,
   createSequenceItem,
@@ -104,18 +104,17 @@ export default function GeneProteinTreePage() {
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
   const form = useForm({
-    defaultValues: defaultGeneProteinTreeFormValues as GeneProteinTreeFormData,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: geneProteinTreeFormSchema as any },
+    defaultValues: defaultGeneProteinTreeFormValues,
+    validators: { onChange: geneProteinTreeFormSchema },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as GeneProteinTreeFormData);
+      await runtime.submitFormData(value);
     },
   });
 
-  const alphabet = useStore(form.store, (s) => s.values.alphabet);
-  const sequences = useStore(form.store, (s) => s.values.sequences);
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const alphabet = useSelector(form.store, (s) => s.values.alphabet);
+  const sequences = useSelector(form.store, (s) => s.values.sequences);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const substitutionModelOptions = useMemo(
     () => (alphabet === "DNA" ? dnaModels : proteinModels),
@@ -190,11 +189,11 @@ export default function GeneProteinTreePage() {
         if (rerunData.trim_threshold != null) {
           form.setFieldValue(
             "trim_threshold",
-            String(rerunData.trim_threshold),
+            String(rerunData.trim_threshold as string | number),
           );
         }
         if (rerunData.gap_threshold != null) {
-          form.setFieldValue("gap_threshold", String(rerunData.gap_threshold));
+          form.setFieldValue("gap_threshold", String(rerunData.gap_threshold as string | number));
         }
 
         const sequences = normalizeToArray<SequenceItem>(rerunData.sequences);
@@ -271,7 +270,7 @@ export default function GeneProteinTreePage() {
 
     if (checkDuplicateSequence(currentSequences, inputValue, type)) {
       toast.error("Duplicate selection detected", {
-        description: `${getSequenceTypeLabel(type, alphabet as Alphabet)} is already selected.`,
+        description: `${getSequenceTypeLabel(type, alphabet)} is already selected.`,
         closeButton: true,
       });
       return;
@@ -344,9 +343,9 @@ export default function GeneProteinTreePage() {
   const selectedItemsForTable = useMemo(
     () =>
       sequences.map((seq, index) => ({
-        id: `${index}`,
+        id: String(index),
         name: getDisplayName(seq.filename.split("/").pop() || seq.filename),
-        type: getSequenceTypeLabel(seq.type, alphabet as Alphabet),
+        type: getSequenceTypeLabel(seq.type, alphabet),
         description: seq.filename,
       })),
     [alphabet, sequences],
@@ -367,7 +366,7 @@ export default function GeneProteinTreePage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="grid grid-cols-1 gap-4 md:grid-cols-2"
       >
@@ -393,12 +392,12 @@ export default function GeneProteinTreePage() {
                   <FieldItem>
                     <RadioGroup
                       value={field.state.value}
-                      onValueChange={(value) =>
-                        value != null &&
-                        field.handleChange(
-                          value as GeneProteinTreeFormData["alphabet"],
-                        )
-                      }
+                      onValueChange={(value) => {
+                        if (value != null)
+                          field.handleChange(
+                            value as GeneProteinTreeFormData["alphabet"],
+                          );
+                      }}
                       className="service-radio-group-horizontal"
                     >
                       <div className="flex items-center gap-3">
@@ -433,7 +432,8 @@ export default function GeneProteinTreePage() {
                     type="button"
                     size="icon"
                     variant="outline"
-                    onClick={() => handleAddSequence("feature")}
+                    aria-label="Add feature group sequence"
+                    onClick={() => { handleAddSequence("feature"); }}
                     disabled={!selectedFeatureGroupObject}
                   >
                     <Plus size={16} />
@@ -461,7 +461,8 @@ export default function GeneProteinTreePage() {
                     type="button"
                     size="icon"
                     variant="outline"
-                    onClick={() => handleAddSequence("aligned")}
+                    aria-label="Add aligned FASTA sequence"
+                    onClick={() => { handleAddSequence("aligned"); }}
                     disabled={!selectedAlignedFastaObject}
                   >
                     <Plus size={16} />
@@ -489,7 +490,8 @@ export default function GeneProteinTreePage() {
                     type="button"
                     size="icon"
                     variant="outline"
-                    onClick={() => handleAddSequence("unaligned")}
+                    aria-label="Add unaligned FASTA sequence"
+                    onClick={() => { handleAddSequence("unaligned"); }}
                     disabled={!selectedUnalignedFastaObject}
                   >
                     <Plus size={16} />
@@ -503,7 +505,7 @@ export default function GeneProteinTreePage() {
                     <SelectedItemsTable
                       title="Selected file / feature group"
                       items={selectedItemsForTable}
-                      onRemove={(id) => removeSequence(parseInt(id, 10))}
+                      onRemove={(id) => { removeSequence(parseInt(id, 10)); }}
                       className="max-h-84 overflow-y-auto"
                       allowDuplicates={false}
                       description="No mixing of DNA and Protein FASTA files is allowed."
@@ -543,11 +545,11 @@ export default function GeneProteinTreePage() {
                           label: v,
                         }))}
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
+                        onValueChange={(value) => {
+                          if (value != null) field.handleChange(value);
+                        }}
                       >
-                        <SelectTrigger className="service-card-select-trigger">
+                        <SelectTrigger className="service-card-select-trigger" aria-label="Trim ends of alignment threshold">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
@@ -577,11 +579,11 @@ export default function GeneProteinTreePage() {
                           label: v,
                         }))}
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
+                        onValueChange={(value) => {
+                          if (value != null) field.handleChange(value);
+                        }}
                       >
-                        <SelectTrigger className="service-card-select-trigger">
+                        <SelectTrigger className="service-card-select-trigger" aria-label="Remove gappy sequences threshold">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
@@ -621,12 +623,12 @@ export default function GeneProteinTreePage() {
                     <FieldItem>
                       <RadioGroup
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null &&
-                          field.handleChange(
-                            value as GeneProteinTreeFormData["recipe"],
-                          )
-                        }
+                        onValueChange={(value) => {
+                          if (value != null)
+                            field.handleChange(
+                              value as GeneProteinTreeFormData["recipe"],
+                            );
+                        }}
                         className="service-radio-group-horizontal"
                       >
                         <div className="flex items-center gap-3">
@@ -654,24 +656,25 @@ export default function GeneProteinTreePage() {
                         Model
                       </RequiredFormLabel>
                       <Select
-                        items={substitutionModelOptions.map((m) => ({
+                        items={substitutionModelOptions.map((m: { value: string; label: string }) => ({
                           value: m.value,
                           label: m.label,
                         }))}
                         value={field.state.value}
-                        onValueChange={(value) =>
-                          value != null && field.handleChange(value)
-                        }
+                        onValueChange={(value) => {
+                          if (value != null) field.handleChange(value);
+                        }}
                       >
                         <SelectTrigger
                           id="model"
                           className="service-card-select-trigger"
+                          aria-label="Substitution model"
                         >
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            {substitutionModelOptions.map((model) => (
+                            {substitutionModelOptions.map((model: { value: string; label: string }) => (
                               <SelectItem key={model.value} value={model.value}>
                                 {model.label}
                               </SelectItem>
@@ -726,7 +729,7 @@ export default function GeneProteinTreePage() {
           <CollapsibleTrigger className="service-collapsible-trigger">
             Metadata Options
             <ChevronDown
-              className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
+              className={`size-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
             />
           </CollapsibleTrigger>
 
@@ -735,7 +738,7 @@ export default function GeneProteinTreePage() {
               <div className="space-y-4">
                 <div>
                   <Label>Metadata Table Fields</Label>
-                  <p className="text-muted-foreground pt-2 pb-4 text-sm">
+                  <p className="pt-2 pb-4 text-sm text-muted-foreground">
                     These fields will appear as options in the phyloxml
                     visualization
                   </p>
@@ -746,14 +749,14 @@ export default function GeneProteinTreePage() {
                         .filter((f) => !f.isLabel)
                         .map((f) => ({ value: f.value, label: f.label }))}
                       value={selectedMetadataField}
-                      onValueChange={(value) =>
-                        value != null && handleMetadataSelection(value)
-                      }
+                      onValueChange={(value) => {
+                        if (value != null) handleMetadataSelection(value);
+                      }}
                     >
-                      <SelectTrigger className="service-card-select-trigger">
+                      <SelectTrigger className="service-card-select-trigger" aria-label="Metadata table field">
                         <SelectValue placeholder="Select field" />
                       </SelectTrigger>
-                      <SelectContent className="max-h-[600px]">
+                      <SelectContent className="max-h-150">
                         <SelectGroup>
                           {availableMetadataOptions.map((field) => {
                             // Check if this is a label (section header)
@@ -761,7 +764,7 @@ export default function GeneProteinTreePage() {
                               return (
                                 <SelectLabel
                                   key={field.value}
-                                  className="border-border mb-1 border-b pb-1.5 font-medium"
+                                  className="mb-1 border-b border-border pb-1.5 font-medium"
                                 >
                                   {field.label}
                                 </SelectLabel>
@@ -779,10 +782,11 @@ export default function GeneProteinTreePage() {
                     <Button
                       size="icon"
                       variant="outline"
+                      aria-label="Add metadata field"
                       onClick={addMetadataField}
                       disabled={!selectedMetadataField}
                     >
-                      <ArrowRight className="h-4 w-4" />
+                      <ArrowRight className="size-4" />
                     </Button>
                   </div>
                 </div>
@@ -808,8 +812,9 @@ export default function GeneProteinTreePage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => removeMetadataField(field.id)}
-                              className="text-destructive hover:text-destructive/90 h-6 w-6"
+                              aria-label="Remove metadata field"
+                              onClick={() => { removeMetadataField(field.id); }}
+                              className="size-6 text-destructive hover:text-destructive/90"
                             >
                               <X size={14} />
                             </Button>

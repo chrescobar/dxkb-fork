@@ -22,20 +22,20 @@ export function DetailCollapsibleSection({
 
   const headerClass =
     variant === "primary"
-      ? "border-r border-l border-black bg-primary text-secondary p-2 cursor-pointer"
+      ? "border-b bg-muted text-foreground cursor-pointer"
       : "bg-muted/60 hover:bg-muted";
 
   return (
     <div className="border-t">
       <div className={`flex w-full items-center ${headerClass}`}>
         <button
-          onClick={() => setExpanded((v) => !v)}
-          className="flex min-w-0 flex-1 items-center gap-2 px-3 py-2 text-left text-xs font-semibold"
+          onClick={() => { setExpanded((v) => !v); }}
+          className="flex min-w-0 flex-1 items-center gap-2 px-2 py-1 text-left text-xs font-bold uppercase"
         >
           {expanded ? (
-            <ChevronDown className="h-3.5 w-3.5 shrink-0" />
+            <ChevronDown className="size-3.5 shrink-0" />
           ) : (
-            <ChevronRight className="h-3.5 w-3.5 shrink-0" />
+            <ChevronRight className="size-3.5 shrink-0" />
           )}
           {label}
         </button>

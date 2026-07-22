@@ -16,6 +16,39 @@ describe("InMemoryWorkspaceRepository", () => {
     expect(items[0]?.path).toBe("/user@bvbrc/home/a.fa");
   });
 
+  it("returns WorkspaceItem with camelCase fields from fixture", async () => {
+    const repo = new InMemoryWorkspaceRepository({
+      directories: {
+        "/user@bvbrc/home": [
+          {
+            name: "data.fa",
+            type: "contigs",
+            ownerId: "owner@bvbrc",
+            createdAt: "2026-01-01T00:00:00Z",
+            userPermission: "w",
+            globalPermission: "n",
+            size: 512,
+          },
+        ],
+      },
+    });
+    const [item] = await repo.listDirectory({ path: "/user@bvbrc/home" });
+    expect(item).toEqual(
+      expect.objectContaining({
+        name: "data.fa",
+        type: "contigs",
+        ownerId: "owner@bvbrc",
+        createdAt: "2026-01-01T00:00:00Z",
+        size: 512,
+        permissions: { user: "w", global: "n" },
+      }),
+    );
+    // Verify no snake_case fields bleed through
+    expect(item).not.toHaveProperty("owner_id");
+    expect(item).not.toHaveProperty("creation_time");
+    expect(item).not.toHaveProperty("user_permission");
+  });
+
   it("filters listDirectory by query.type and query.name", async () => {
     const repo = new InMemoryWorkspaceRepository({
       directories: {
@@ -117,8 +150,30 @@ describe("InMemoryWorkspaceRepository", () => {
       },
     });
     const [meta] = await repo.getMetadata(["/u/home/second.fa"]);
-    const rawTuple = (meta?.raw as unknown[][])?.[0];
-    expect(meta?.object?.id).toBe("/u/home/second.fa#1");
-    expect(rawTuple?.[4]).toBe("/u/home/second.fa#1");
+    const rawTuple = (meta.raw as unknown[][])[0];
+    expect(meta.object?.id).toBe("/u/home/second.fa#1");
+    expect(rawTuple[4]).toBe("/u/home/second.fa#1");
+  });
+
+  it("rejects delete of protected folders without recording the call or mutating fixtures", async () => {
+    const repo = new InMemoryWorkspaceRepository({
+      directories: {
+        "/alice@bvbrc/home": [
+          { name: "Genome Groups", type: "folder" },
+          { name: "My Project", type: "folder" },
+        ],
+      },
+    });
+
+    await expect(
+      repo.delete(["/alice@bvbrc/home/Genome Groups"]),
+    ).rejects.toMatchObject({
+      name: "ProtectedFolderError",
+      protectedPaths: ["/alice@bvbrc/home/Genome Groups"],
+    });
+
+    expect(repo.calls.some((c) => c.method === "delete")).toBe(false);
+    const remaining = await repo.listDirectory({ path: "/alice@bvbrc/home" });
+    expect(remaining.map((i) => i.name)).toEqual(["Genome Groups", "My Project"]);
   });
 });

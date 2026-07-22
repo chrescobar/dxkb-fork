@@ -25,7 +25,7 @@ function Command({
     <CommandPrimitive
       data-slot="command"
       className={cn(
-        "bg-popover text-popover-foreground rounded-xl! p-1 flex size-full flex-col overflow-hidden",
+        "flex size-full flex-col overflow-hidden rounded-xl! bg-popover p-1 text-popover-foreground",
         className
       )}
       {...props}
@@ -55,7 +55,7 @@ function CommandDialog({
       </DialogHeader>
       <DialogContent
         className={cn(
-          "rounded-xl! top-1/3 translate-y-0 overflow-hidden p-0",
+          "top-1/3 translate-y-0 overflow-hidden rounded-xl! p-0",
           className
         )}
         showCloseButton={showCloseButton}
@@ -68,11 +68,14 @@ function CommandDialog({
 
 function CommandInput({
   className,
+  children,
   ...props
-}: React.ComponentProps<typeof CommandPrimitive.Input>) {
+}: React.ComponentProps<typeof CommandPrimitive.Input> & {
+  children?: React.ReactNode
+}) {
   return (
     <div data-slot="command-input-wrapper" className="p-1 pb-0">
-      <InputGroup className="bg-input/30 border-input/30 h-8! rounded-lg! shadow-none! *:data-[slot=input-group-addon]:pl-2!">
+      <InputGroup className="h-8! rounded-lg! border-input/30 bg-input/30 shadow-none! *:data-[slot=input-group-addon]:pl-2!">
         <CommandPrimitive.Input
           data-slot="command-input"
           className={cn(
@@ -84,8 +87,29 @@ function CommandInput({
         <InputGroupAddon>
           <SearchIcon className="size-4 shrink-0 opacity-50" />
         </InputGroupAddon>
+        {children ? (
+          <InputGroupAddon align="inline-end" className="gap-1.5 pr-1.5">
+            {children}
+          </InputGroupAddon>
+        ) : null}
       </InputGroup>
     </div>
+  )
+}
+
+function CommandShortcutChip({
+  className,
+  ...props
+}: React.ComponentProps<"kbd">) {
+  return (
+    <kbd
+      data-slot="command-shortcut-chip"
+      className={cn(
+        "inline-flex h-5 min-w-5 items-center justify-center rounded border bg-muted/40 px-1 font-sans text-[10px] font-medium text-foreground/80",
+        className
+      )}
+      {...props}
+    />
   )
 }
 
@@ -97,7 +121,7 @@ function CommandList({
     <CommandPrimitive.List
       data-slot="command-list"
       className={cn(
-        "no-scrollbar max-h-72 scroll-py-1 outline-none overflow-x-hidden overflow-y-auto",
+        "no-scrollbar max-h-72 scroll-py-1 overflow-x-hidden overflow-y-auto outline-none",
         className
       )}
       {...props}
@@ -125,7 +149,7 @@ function CommandGroup({
   return (
     <CommandPrimitive.Group
       data-slot="command-group"
-      className={cn("text-foreground **:[[cmdk-group-heading]]:text-muted-foreground overflow-hidden p-1 **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:py-1.5 **:[[cmdk-group-heading]]:text-xs **:[[cmdk-group-heading]]:font-medium", className)}
+      className={cn("overflow-hidden p-1 text-foreground **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:pt-2 **:[[cmdk-group-heading]]:pb-1 **:[[cmdk-group-heading]]:text-[11px] **:[[cmdk-group-heading]]:font-semibold **:[[cmdk-group-heading]]:tracking-wider **:[[cmdk-group-heading]]:text-foreground/80 **:[[cmdk-group-heading]]:uppercase", className)}
       {...props}
     />
   )
@@ -138,7 +162,7 @@ function CommandSeparator({
   return (
     <CommandPrimitive.Separator
       data-slot="command-separator"
-      className={cn("bg-border -mx-1 h-px", className)}
+      className={cn("-mx-1 h-px bg-border", className)}
       {...props}
     />
   )
@@ -147,18 +171,54 @@ function CommandSeparator({
 function CommandItem({
   className,
   children,
+  description,
+  badge,
   ...props
-}: React.ComponentProps<typeof CommandPrimitive.Item>) {
+}: React.ComponentProps<typeof CommandPrimitive.Item> & {
+  description?: string
+  badge?: React.ReactNode
+}) {
+  const itemClassName = cn(
+    "data-[selected=true]:bg-secondary/8 data-[selected=true]:text-foreground data-[selected=true]:*:[svg]:text-foreground",
+    "relative flex cursor-default items-center gap-2 rounded-sm text-sm outline-hidden select-none in-data-[slot=dialog-content]:rounded-lg!",
+    description ? "px-3 py-2.5" : "px-2 py-1.5",
+    "group/command-item data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+    className
+  )
+
+  let body: React.ReactNode
+  if (description) {
+    const [icon, ...rest] = React.Children.toArray(children)
+    body = (
+      <>
+        {icon}
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <div className="flex items-center gap-2">
+            <span className="font-medium">{rest}</span>
+            {badge}
+          </div>
+          <span className="truncate text-xs text-foreground/80">
+            {description}
+          </span>
+        </div>
+      </>
+    )
+  } else {
+    body = (
+      <>
+        {children}
+        {badge}
+      </>
+    )
+  }
+
   return (
     <CommandPrimitive.Item
       data-slot="command-item"
-      className={cn(
-        "data-selected:bg-muted data-selected:text-foreground data-selected:*:[svg]:text-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none in-data-[slot=dialog-content]:rounded-lg! [&_svg:not([class*='size-'])]:size-4 group/command-item data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
-        className
-      )}
+      className={itemClassName}
       {...props}
     >
-      {children}
+      {body}
       <CheckIcon className="ml-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100" />
     </CommandPrimitive.Item>
   )
@@ -171,9 +231,48 @@ function CommandShortcut({
   return (
     <span
       data-slot="command-shortcut"
-      className={cn("text-muted-foreground group-data-selected/command-item:text-foreground ml-auto text-xs tracking-widest", className)}
+      className={cn("ml-auto text-xs tracking-widest text-muted-foreground group-data-selected/command-item:text-foreground", className)}
       {...props}
     />
+  )
+}
+
+function CommandFooter({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="command-footer"
+      className={cn(
+        "flex items-center gap-4 border-t px-3 py-2 text-xs text-foreground/80",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function CommandFooterHint({
+  keys,
+  children,
+  className,
+  ...props
+}: React.ComponentProps<"span"> & {
+  keys: string[]
+  children: React.ReactNode
+}) {
+  return (
+    <span
+      data-slot="command-footer-hint"
+      className={cn("inline-flex items-center gap-1.5", className)}
+      {...props}
+    >
+      {keys.map((key) => (
+        <CommandShortcutChip key={key}>{key}</CommandShortcutChip>
+      ))}
+      <span>{children}</span>
+    </span>
   )
 }
 
@@ -186,5 +285,8 @@ export {
   CommandGroup,
   CommandItem,
   CommandShortcut,
+  CommandShortcutChip,
   CommandSeparator,
+  CommandFooter,
+  CommandFooterHint,
 }

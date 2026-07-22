@@ -165,28 +165,28 @@ export function JobsDateFilter({
               variant="outline"
               className={
                 hasActiveFilter
-                  ? "border-primary bg-primary/5 text-primary h-8 gap-1.5 rounded-lg text-sm font-normal"
-                  : "border-input h-8 gap-1.5 rounded-lg text-sm font-normal"
+                  ? "h-8 gap-1.5 rounded-lg border-primary bg-primary/5 text-sm font-normal text-primary"
+                  : "h-8 gap-1.5 rounded-lg border-input text-sm font-normal"
               }
             >
-              <CalendarIcon className="h-3.5 w-3.5" />
+              <CalendarIcon className="size-3.5" />
               <span className="max-w-60 truncate">
                 {activeLabel ?? "All dates"}
               </span>
-              <ChevronDown className="h-3 w-3 opacity-50" />
+              <ChevronDown className="size-3 opacity-50" />
             </Button>
           }
         />
         {hasActiveFilter && (
           <Button
             variant="ghost"
-            className="h-8 w-8 p-0"
+            className="size-8 p-0"
             onClick={(e) => {
               e.stopPropagation();
               resetFilter(true);
             }}
           >
-            <X className="h-3.5 w-3.5" />
+            <X className="size-3.5" />
           </Button>
         )}
       </div>
@@ -198,9 +198,9 @@ export function JobsDateFilter({
             <Select
               items={conditionOptions}
               value={condition}
-              onValueChange={(value) =>
-                value != null && handleConditionChange(value)
-              }
+              onValueChange={(value) => {
+                if (value != null) handleConditionChange(value);
+              }}
             >
               <SelectTrigger className="h-8 w-auto gap-1 text-xs">
                 <SelectValue />
@@ -217,8 +217,8 @@ export function JobsDateFilter({
             </Select>
             <button
               type="button"
-              className="text-destructive ml-auto text-xs hover:underline"
-              onClick={() => resetFilter(false)}
+              className="ml-auto text-xs text-destructive hover:underline"
+              onClick={() => { resetFilter(false); }}
             >
               Clear
             </button>

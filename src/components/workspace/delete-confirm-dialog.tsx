@@ -43,11 +43,10 @@ export function DeleteConfirmDialog({
       ? "item"
       : pendingDeleteSelection.length === 1
         ? pendingDeleteSelection[0]?.name ?? "item"
-        : `${pendingDeleteSelection.length} items`;
+        : `${String(pendingDeleteSelection.length)} items`;
 
   const requiresAcknowledgment = nonEmptyFolderPathsInDelete.length > 0;
-  const canDelete =
-    !requiresAcknowledgment || (requiresAcknowledgment && acknowledgeChecked);
+  const canDelete = !requiresAcknowledgment || acknowledgeChecked;
 
   return (
     <AlertDialog open={open} onOpenChange={handleOpenChange}>
@@ -69,7 +68,7 @@ export function DeleteConfirmDialog({
               id="delete-acknowledge"
               checked={acknowledgeChecked}
               onCheckedChange={(checked) =>
-                setAcknowledgeChecked(checked === true)
+                { setAcknowledgeChecked(checked); }
               }
               disabled={isDeleting}
             />
@@ -85,12 +84,12 @@ export function DeleteConfirmDialog({
           <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
           <AlertDialogAction
             variant="destructive"
-            onClick={() => void onConfirmDelete()}
+            onClick={() => { onConfirmDelete(); }}
             disabled={isDeleting || !canDelete}
           >
             {isDeleting ? (
               <>
-                <Spinner className="mr-2 h-3.5 w-3.5 shrink-0" />
+                <Spinner className="mr-2 size-3.5 shrink-0" />
                 Deleting…
               </>
             ) : (

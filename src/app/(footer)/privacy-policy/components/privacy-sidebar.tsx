@@ -1,32 +1,15 @@
 import React from "react";
-import { Input } from "@/components/ui/input";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import {
-  Progress,
-  ProgressLabel,
-  ProgressValue,
-} from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
 import { privacyPolicySections } from "@/app/(footer)/privacy-policy/data/privacy-policy-sections";
 
 const PrivacySidebar = () => {
   return (
     <aside className="md:w-64 lg:w-72 shrink-0">
     <div className="sticky top-24">
-      <div className="relative mb-6">
-        <Input type="text" placeholder="Search policy..." className="pl-9" />
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-primary" size={16} />
-      </div>
-
       <div className="mb-6">
-        <Badge className="mb-2">Last Updated: April 8, 2023</Badge>
-        <Progress value={0} className="mb-2">
-          <ProgressLabel className="text-xs text-muted-foreground">
-            Reading progress
-          </ProgressLabel>
-          <ProgressValue />
-        </Progress>
+        <Badge>Last Updated: July 22, 2026</Badge>
       </div>
 
       <div className="space-y-1 mb-6">
@@ -47,9 +30,15 @@ const PrivacySidebar = () => {
       <div className="p-4 bg-secondary rounded-lg">
         <h3 className="font-medium text-sm mb-2 text-white">Need Help?</h3>
         <p className="text-sm text-white mb-4">
-          If you have questions about our privacy practices, please contact our Data Protection Officer.
+          If you have questions about our privacy practices, please contact us at help@dxkb.org.
         </p>
-        <Button size="sm" variant="outline" className="w-full bg-secondary hover:bg-accent text-white">
+        <Button
+          size="sm"
+          variant="outline"
+          nativeButton={false}
+          className="w-full bg-secondary hover:bg-accent text-white"
+          render={<Link href="/contact" />}
+        >
           Contact Us
         </Button>
       </div>

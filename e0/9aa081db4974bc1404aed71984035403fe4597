@@ -1,0 +1,99 @@
+src/lib/interactions/use-interactions.ts
+  s_fefdeb04b5a60d::t_26efbbac9b97ce 28
+  s_fefdeb04b5a60d::t_6a56e6b3773729 1-27,29-34
+src/components/interactions/interactions-subview-shell.tsx
+  s_fefdeb04b5a60d::t_33706a82e84b79 1-37
+src/lib/interactions/__tests__/use-interactions.test.ts
+  s_fefdeb04b5a60d::t_077f64ec605b5e 54
+  s_fefdeb04b5a60d::t_fec1f4b46cd135 1-53,55-78
+e2e/tests/organisms/interactions.spec.ts
+  s_fefdeb04b5a60d::t_708dbb6390a5c4 56-87
+src/lib/interactions/renderer-capabilities.ts
+  s_fefdeb04b5a60d::t_b8c0e116e78ab9 1,14
+  s_fefdeb04b5a60d::t_d5fe7200581ca3 2
+  s_fefdeb04b5a60d::t_b6e4c63943bd71 3-13
+src/components/interactions/graph-detail-panel.tsx
+  s_fefdeb04b5a60d::t_3b8e4cc5d37866 1-44
+src/components/interactions/graph-legend.tsx
+  s_fefdeb04b5a60d::t_6ac84635a28f6a 1-18
+src/lib/interactions/types.ts
+  s_fefdeb04b5a60d::t_f4ceaca2ce1a6c 1-2
+  s_fefdeb04b5a60d::t_031af6bfceff73 3-71,73
+  s_fefdeb04b5a60d::t_b155e8e1cf7823 72
+src/components/interactions/interactions-graph.tsx
+  s_fefdeb04b5a60d::t_29d00cf9a7f91f 17
+  s_fefdeb04b5a60d::t_d9976bc951b09e 67
+  s_fefdeb04b5a60d::t_84cc6a6dcfeca1 64,76
+  s_fefdeb04b5a60d::t_890791dde5443d 1-7,10-16,18-28,30-63,65-66,69-75,77-82
+  s_fefdeb04b5a60d::t_35754a1011f857 29
+  s_fefdeb04b5a60d::t_1f15dc90d34393 8-9
+  s_fefdeb04b5a60d::t_becc140213e521 68
+src/lib/interactions/to-graph.ts
+  s_fefdeb04b5a60d::t_624b4a83bfbd8d 1-45
+src/lib/interactions/graph-theme.ts
+  s_fefdeb04b5a60d::t_0364eefc4ae24c 1-10
+src/lib/interactions/__tests__/to-graph.test.ts
+  s_fefdeb04b5a60d::t_aa9379e128f823 1-71
+src/components/interactions/graph-toolbar.tsx
+  s_fefdeb04b5a60d::t_a98fb4e57afa72 1-13,16-84,86-94
+  s_fefdeb04b5a60d::t_28a4d1c121c047 14-15
+  s_fefdeb04b5a60d::t_0d56d5d327550b 85
+src/app/(views)/taxonomy/[taxonId]/views/interactions.tsx
+  s_fefdeb04b5a60d::t_10d5fc62fe8941 2,7,9-11
+package.json
+  s_fefdeb04b5a60d::t_37b74b01c407d9 53-54,83-85,100
+src/components/interactions/sigma/sigma-canvas.tsx
+  s_fefdeb04b5a60d::t_dc03915ad422a9 389-400,405-418
+  s_fefdeb04b5a60d::t_0a394409174e88 33
+  s_fefdeb04b5a60d::t_46c31fe1a17916 188-195,198-200,207-217
+  s_fefdeb04b5a60d::t_e52186af70aa46 13
+  s_fefdeb04b5a60d::t_14b2739b020178 34
+  s_fefdeb04b5a60d::t_7850ec0bd4c7ec 1-2,11,14,552-554,568,570,580-581,617-619
+  s_fefdeb04b5a60d::t_6dd4dfbb60a523 84-89,91-94,96
+  s_fefdeb04b5a60d::t_0b13e84598089f 81,101
+  s_fefdeb04b5a60d::t_0f1504fdcb5c4f 125-135,138-140,176-183,186
+  s_fefdeb04b5a60d::t_547140ea846f24 220-224,227
+  s_fefdeb04b5a60d::t_919e83a48edf5d 451-454
+  s_fefdeb04b5a60d::t_90f1ebac8411e4 225-226,228-259,269-271,275-276,279,289,291,296-300,336-337
+  s_fefdeb04b5a60d::t_bed55e9cc386d3 387-388
+  s_fefdeb04b5a60d::t_209263bed678cf 35-41
+  s_fefdeb04b5a60d::t_33d94ab4d7a3ac 21-23
+  s_fefdeb04b5a60d::t_ab4608e4ec2b7c 308-326,331-332
+  s_fefdeb04b5a60d::t_2536df8f129e81 430-432
+  s_fefdeb04b5a60d::t_d285d780836b29 48-57,70,76,78,118-124,136-137,184,196-197,201,218-219,437-448
+  s_fefdeb04b5a60d::t_6c29a47285ef8e 455-460
+  s_fefdeb04b5a60d::t_eb3c4ca1db47f3 563
+  s_fefdeb04b5a60d::t_a9c2e3929d74d9 58-69,71-75,77,79-80,82-83,90,95,97-100,102-117
+  s_fefdeb04b5a60d::t_da409c15e28fb8 367
+  s_fefdeb04b5a60d::t_df03efdb6fa795 260-268,272-274,277-278,280-288,290,292-295,301-307,327-330,333-335
+  s_fefdeb04b5a60d::t_0e58fc87434fed 559-562
+  s_fefdeb04b5a60d::t_da50fbe81fd806 141-175,202-206
+  s_fefdeb04b5a60d::t_4c9ee9c61428f1 338-366,368-386,401-404,419-427
+  s_fefdeb04b5a60d::t_a1ac2af330e711 3-10,12,15-20,24-32,42-47,428-429,433-436,449-450,461-551,555-558,564-567,569,571-579,582-616
+  s_fefdeb04b5a60d::t_82303e97f6d8b0 185,187
+e2e/tests/a11y/deep-tier.spec.ts
+  s_fefdeb04b5a60d::t_a2d8af2f05f447 413-417,419-458,460-463
+  s_fefdeb04b5a60d::t_21dbe2756af63c 459
+  s_fefdeb04b5a60d::t_fb362a32cc2ac2 26
+  s_fefdeb04b5a60d::t_c3714c2315072d 418
+e2e/pages/taxon-interactions-page.ts
+  s_fefdeb04b5a60d::t_aff41d4fcf0cf2 26-41
+pnpm-lock.yaml
+  s_fefdeb04b5a60d::t_1c6e15543d5b27 71-76,161-169,212-214,2063-2069,2185-2189,3922-3925,3981-3983,4123-4145,4832-4834,4994-4996,5031-5033,5585-5587,7931-7936,8004-8008,9924-9925,10003-10004,10140-10161,11041-11044,11221-11222,11260-11263,11887-11893
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "e09aa081db4974bc1404aed71984035403fe4597",
+  "prompts": {},
+  "sessions": {
+    "s_fefdeb04b5a60d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ba5a22ea-703a-47ca-a599-92c9e9004e88",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -23,6 +23,7 @@ import generatedBaseline from "../../a11y/baseline.generated";
 import { WorkspacePage } from "../../pages/workspace-page";
 import { JobsListPage } from "../../pages/jobs-list-page";
 import { SettingsPage } from "../../pages/settings-page";
+import { TaxonInteractionsPage } from "../../pages/taxon-interactions-page";
 import type { BaselineMap } from "../../a11y/baseline";
 import type { MockJob } from "../../fixtures/overrides";
 
@@ -405,6 +406,57 @@ test.describe("a11y deep tier: settings", () => {
 
     await forEachTheme(page, async (theme) => {
       await assertNoBlocking(page, "settings/error-toast", theme);
+    });
+  });
+});
+
+// ── Taxon interactions — Graph subtab (interaction state, not URL-addressable) ────
+// The Graph subtab is local React state (no query param), so routes-sweep.spec.ts
+// cannot reach it. Cover it here by driving the click before scanning.
+
+test.describe("a11y deep tier: taxon interactions graph", () => {
+  test("interactions: Graph subtab has no blocking violations", async ({ page }) => {
+    const rows = [
+      {
+        id: "ppi-0000",
+        genome_id_a: "224914.16",
+        genome_name_a: "Brucella melitensis bv. 1 str. 16M [WGS]",
+        interactor_a: "fig|224914.16.peg.600",
+        feature_id_a: "PATRIC.224914.16.feature-a-0",
+        refseq_locus_tag_a: "BAWG_1000",
+        gene_a: "",
+        interactor_desc_a: "6,7-dimethyl-8-ribityllumazine synthase",
+        genome_id_b: "224914.16",
+        genome_name_b: "Brucella melitensis bv. 1 str. 16M [WGS]",
+        interactor_b: "fig|224914.16.peg.2400",
+        feature_id_b: "PATRIC.224914.16.feature-b-0",
+        refseq_locus_tag_b: "BAWG_2000",
+        gene_b: "",
+        interactor_desc_b: "CrcB protein",
+        category: "PPI",
+        interaction_type: ["predicted interaction"],
+        detection_method: ["predictive text mining"],
+        evidence: ["experimental"],
+        score: 2.5316925,
+      },
+    ];
+
+    await applyBackendMocks(page, {
+      overrides: [
+        { url: /\/api\/e2e-mock\/data\/ppi\/.*limit/, method: "GET", body: { response: { numFound: 1 } } },
+        { url: /\/api\/e2e-mock\/data\/ppi\//, method: "GET", body: rows },
+        ...authSessionOverrides,
+        ...permissiveBackendOverrides,
+      ],
+    });
+
+    const interactionsPage = new TaxonInteractionsPage(page);
+    await interactionsPage.goto("234");
+    await interactionsPage.switchToGraph();
+    await interactionsPage.expectCanvasVisible();
+
+    await forEachTheme(page, async (theme) => {
+      await assertNoBlocking(page, "interactions/graph", theme);
     });
   });
 });

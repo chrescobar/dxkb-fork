@@ -23,4 +23,20 @@ export class TaxonInteractionsPage {
   async expectTab(name: string): Promise<void> {
     await expect(this.page.getByRole("button", { name })).toBeVisible();
   }
+
+  async switchToGraph(): Promise<void> {
+    await this.page.getByRole("tab", { name: "Graph" }).click();
+  }
+
+  async switchToTable(): Promise<void> {
+    await this.page.getByRole("tab", { name: "Table" }).click();
+  }
+
+  async expectCanvasVisible(): Promise<void> {
+    await expect(this.page.getByRole("tabpanel", { name: "Graph" }).locator("canvas").first()).toBeVisible();
+  }
+
+  async expectEmptyGraphState(): Promise<void> {
+    await expect(this.page.getByText("No interactions found.")).toBeVisible();
+  }
 }

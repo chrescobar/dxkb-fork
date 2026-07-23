@@ -53,4 +53,36 @@ test.describe("taxon interactions tab", () => {
     await interactionsPage.expectInteractor("fig|224914.16.peg.600");
     await interactionsPage.expectTab("Interactions");
   });
+
+  test("Graph subtab renders a canvas", async ({ page }) => {
+    const rows = buildPpiRows(3);
+
+    await applyBackendMocks(page, {
+      overrides: [
+        { url: ppiLoopbackCount, method: "GET", body: { response: { numFound: 3 } } },
+        { url: ppiLoopback, method: "GET", body: rows },
+        ...permissiveBackendOverrides,
+      ],
+    });
+
+    const interactionsPage = new TaxonInteractionsPage(page);
+    await interactionsPage.goto(INTERACTIONS_TAXON_ID);
+    await interactionsPage.switchToGraph();
+    await interactionsPage.expectCanvasVisible();
+  });
+
+  test("Graph subtab shows an empty state when there are no interactions", async ({ page }) => {
+    await applyBackendMocks(page, {
+      overrides: [
+        { url: ppiLoopbackCount, method: "GET", body: { response: { numFound: 0 } } },
+        { url: ppiLoopback, method: "GET", body: [] },
+        ...permissiveBackendOverrides,
+      ],
+    });
+
+    const interactionsPage = new TaxonInteractionsPage(page);
+    await interactionsPage.goto(INTERACTIONS_TAXON_ID);
+    await interactionsPage.switchToGraph();
+    await interactionsPage.expectEmptyGraphState();
+  });
 });

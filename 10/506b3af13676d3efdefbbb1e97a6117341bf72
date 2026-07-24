@@ -1,0 +1,27 @@
+src/components/interactions/interactions-graph.tsx
+  s_030b7c73bfd11a::t_a1b3b60102c93c 102
+  h_dbd94c95afa702 86,113
+src/components/interactions/graph-toolbar.tsx
+  h_dbd94c95afa702 45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "10506b3af13676d3efdefbbb1e97a6117341bf72",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_030b7c73bfd11a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ce0a59ce-8298-4788-8609-0f1279a917ba",
+        "model": "unknown"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -167,9 +167,10 @@ export function SigmaCanvas({ nodes, edges, layout, selection, onSelect, handleR
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   // Derive the highlight target from the controlled selection so every path —
   // canvas click, node list, edge list — drives the same reducer.
-  const selectedId = selection.nodes[0]?.id ?? selection.edges[0]?.id ?? null;
   const selectedKind: "node" | "edge" | null =
     selection.nodes.length > 0 ? "node" : selection.edges.length > 0 ? "edge" : null;
+  const selectedId =
+    selectedKind === "node" ? selection.nodes[0].id : selectedKind === "edge" ? selection.edges[0].id : null;
 
   return (
     <div className="relative size-full">

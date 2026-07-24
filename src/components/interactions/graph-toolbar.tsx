@@ -42,7 +42,7 @@ export function GraphToolbar({
 }: GraphToolbarProps) {
   return (
     <TooltipProvider>
-      <div className="flex flex-wrap items-center gap-2 border-b p-2">
+      <div className="flex flex-wrap items-center gap-2 p-2">
         <Tooltip>
           <TooltipTrigger
             render={

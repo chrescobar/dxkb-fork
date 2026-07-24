@@ -83,7 +83,7 @@ export function InteractionsGraph({ taxonId, q }: InteractionsGraphProps) {
         exportReady={canvasReady}
       />
       <div className="flex min-h-0 flex-1">
-        <div className="flex w-60 shrink-0 flex-col border-r">
+        <div className="flex w-60 shrink-0 flex-col rounded-tl-md border-l border-r border-t">
           <div className="border-b p-2">
             <GraphLegend />
           </div>
@@ -99,7 +99,7 @@ export function InteractionsGraph({ taxonId, q }: InteractionsGraphProps) {
             node list (left) and detail panel (right) are the keyboard-operable
             path to the same node/edge selection, so hide the decorative render
             from assistive tech rather than exposing it as a static image. */}
-        <div className="min-h-0 min-w-0 flex-1" aria-hidden="true">
+        <div className="min-h-0 min-w-0 flex-1 border-t" aria-hidden="true">
           <SigmaCanvas
             nodes={nodes}
             edges={edges}
@@ -110,7 +110,7 @@ export function InteractionsGraph({ taxonId, q }: InteractionsGraphProps) {
             onReady={() => { setCanvasReady(true); }}
           />
         </div>
-        <div className="w-64 shrink-0 overflow-y-auto border-l" tabIndex={0} aria-label="Selection details">
+        <div className="w-64 shrink-0 overflow-y-auto border-l border-t" tabIndex={0} aria-label="Selection details">
           <GraphDetailPanel
             selection={selection}
             incidentEdges={incidentEdges}

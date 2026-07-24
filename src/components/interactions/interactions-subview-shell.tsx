@@ -26,10 +26,10 @@ export function InteractionsSubviewShell({ taxonId, q, guideUrl }: InteractionsS
         <TabsTrigger value="table">Table</TabsTrigger>
         <TabsTrigger value="graph">Graph</TabsTrigger>
       </TabsList>
-      <TabsContent value="table" className="min-h-0 flex-1">
+      <TabsContent value="table" className="flex min-h-0 flex-1 flex-col">
         <TaxonDataPanel resource="ppi" q={q} guideUrl={guideUrl} />
       </TabsContent>
-      <TabsContent value="graph" className="min-h-0 flex-1">
+      <TabsContent value="graph" className="flex min-h-0 flex-1 flex-col">
         <InteractionsGraph taxonId={taxonId} q={q} />
       </TabsContent>
     </Tabs>

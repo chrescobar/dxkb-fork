@@ -104,6 +104,7 @@ export function InteractionsGraph({ taxonId, q }: InteractionsGraphProps) {
             nodes={nodes}
             edges={edges}
             layout={layout}
+            selection={selection}
             onSelect={setSelection}
             handleRef={canvasHandleRef}
             onReady={() => { setCanvasReady(true); }}

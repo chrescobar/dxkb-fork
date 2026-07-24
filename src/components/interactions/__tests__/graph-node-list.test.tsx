@@ -19,6 +19,13 @@ beforeAll(() => {
   );
 });
 
+// Undo the global stubs so they don't leak to sibling files (clearMocks resets
+// neither stubGlobal nor prototype mutations).
+afterAll(() => {
+  delete (Element.prototype as Partial<Element>).scrollIntoView;
+  vi.unstubAllGlobals();
+});
+
 const nodes: GNode[] = [
   { id: "fig|1.1", gene: "dnaA", kind: "microbial" },
   { id: "fig|2.2", gene: "recA", kind: "host" },

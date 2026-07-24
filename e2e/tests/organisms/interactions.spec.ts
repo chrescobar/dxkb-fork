@@ -28,7 +28,14 @@ test.describe("taxon interactions tab", () => {
     await interactionsPage.expectTab("Interactions");
   });
 
-  test("Graph subtab renders a canvas", async ({ page }) => {
+  test("Graph subtab renders a canvas", async ({ page, browserName }) => {
+    // Sigma.js renders into a WebGL canvas and has no software fallback. Headless
+    // Firefox in CI cannot create a WebGL context ("Exhausted GL driver options"),
+    // so Sigma throws and the canvas never mounts. Chromium and WebKit ship
+    // software GL and render it fine. Mirrors viewer-3d.spec.ts, which gates its
+    // Mol* WebGL canvas assertion the same way.
+    test.skip(browserName === "firefox", "Headless Firefox has no WebGL for Sigma.js to render into");
+
     const interactionsPage = await setupInteractionsPage(page);
 
     await interactionsPage.switchToGraph();

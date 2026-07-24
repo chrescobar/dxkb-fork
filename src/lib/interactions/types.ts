@@ -68,6 +68,10 @@ export interface GraphCanvasProps {
   nodes: GNode[];
   edges: GEdge[];
   layout: LayoutName;
+  // Controlled selection: the canvas highlight reducer reads this so keyboard
+  // selection (node list / edge list) highlights the same node/edge a canvas
+  // click would. onSelect reports selections back out.
+  selection: GraphSelection;
   onSelect: (sel: GraphSelection) => void;
   handleRef: RefObject<GraphCanvasHandle | null>;
   onReady?: () => void;

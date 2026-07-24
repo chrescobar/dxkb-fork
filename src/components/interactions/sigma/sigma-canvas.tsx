@@ -75,10 +75,9 @@ interface GraphEventsProps {
   onHover: (tooltip: TooltipState | null) => void;
   selectedId: string | null;
   selectedKind: "node" | "edge" | null;
-  onSelectId: (id: string | null, kind: "node" | "edge" | null) => void;
 }
 
-function GraphEvents({ onSelect, onHover, selectedId, selectedKind, onSelectId }: GraphEventsProps) {
+function GraphEvents({ onSelect, onHover, selectedId, selectedKind }: GraphEventsProps) {
   const sigma = useSigma();
   const registerEvents = useRegisterEvents();
   const setSettings = useSetSettings();
@@ -86,17 +85,14 @@ function GraphEvents({ onSelect, onHover, selectedId, selectedKind, onSelectId }
   useEffect(() => {
     registerEvents({
       clickNode: ({ node }) => {
-        onSelectId(node, "node");
         const data = sigma.getGraph().getNodeAttributes(node) as GNode;
         onSelect({ nodes: [data], edges: [] });
       },
       clickEdge: ({ edge }) => {
-        onSelectId(edge, "edge");
         const data = sigma.getGraph().getEdgeAttributes(edge) as GEdge;
         onSelect({ nodes: [], edges: [data] });
       },
       clickStage: () => {
-        onSelectId(null, null);
         onSelect({ nodes: [], edges: [] });
       },
       enterNode: ({ node, event }) => {
@@ -167,10 +163,13 @@ function HandleBridge({
   return null;
 }
 
-export function SigmaCanvas({ nodes, edges, layout, onSelect, handleRef, onReady }: GraphCanvasProps) {
+export function SigmaCanvas({ nodes, edges, layout, selection, onSelect, handleRef, onReady }: GraphCanvasProps) {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [selectedKind, setSelectedKind] = useState<"node" | "edge" | null>(null);
+  // Derive the highlight target from the controlled selection so every path —
+  // canvas click, node list, edge list — drives the same reducer.
+  const selectedId = selection.nodes[0]?.id ?? selection.edges[0]?.id ?? null;
+  const selectedKind: "node" | "edge" | null =
+    selection.nodes.length > 0 ? "node" : selection.edges.length > 0 ? "edge" : null;
 
   return (
     <div className="relative size-full">
@@ -193,7 +192,6 @@ export function SigmaCanvas({ nodes, edges, layout, onSelect, handleRef, onReady
           onHover={setTooltip}
           selectedId={selectedId}
           selectedKind={selectedKind}
-          onSelectId={(id, kind) => { setSelectedId(id); setSelectedKind(kind); }}
         />
         <HandleBridge handleRef={handleRef} onReady={onReady} />
       </SigmaContainer>

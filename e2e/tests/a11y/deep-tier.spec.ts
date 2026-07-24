@@ -417,7 +417,15 @@ test.describe("a11y deep tier: settings", () => {
 // cannot reach it. Cover it here by driving the click before scanning.
 
 test.describe("a11y deep tier: taxon interactions graph", () => {
-  test("interactions: Graph subtab has no blocking violations", async ({ page }) => {
+  test("interactions: Graph subtab has no blocking violations", async ({ page, browserName }) => {
+    // Sigma.js needs a WebGL context to mount its canvas; headless Firefox in CI
+    // has none ("Exhausted GL driver options"), so the graph crashes the page and
+    // the Graph tab never renders. Chromium (the deep-scan project) and WebKit
+    // ship software GL. The chromium project carries the real a11y coverage; the
+    // firefox tripwire can't reach this surface. Mirrors interactions.spec.ts and
+    // viewer-3d.spec.ts.
+    test.skip(browserName === "firefox", "Headless Firefox has no WebGL for Sigma.js to render into");
+
     const rows = buildPpiRows(1);
 
     await applyBackendMocks(page, {

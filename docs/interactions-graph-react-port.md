@@ -356,8 +356,8 @@ legacy Topic.publish('/navigate') to a Next router push:
 ```tsx
 // selection → unique feature_ids (nodes are proteins; skip molecules)
 const featureIds = selection.nodes
-  .filter(n => n.interactor_type === 'Protein')
-  .map(n => n.feature_id);
+  .filter(n => n.interactorType === 'Protein')
+  .map(n => n.featureId);
 ```
 
 ---
@@ -438,14 +438,14 @@ function toElements(nodes: GNode[], edges: GEdge[], pins: string[]): ElementDefi
     data: { ...n },
     classes: [
       n.kind === 'host' ? 'host' : '',
-      n.interactor_type !== 'Protein' ? 'molecule' : '',
-      pins.includes(n.feature_id) ? 'pinned' : '',
+      n.interactorType !== 'Protein' ? 'molecule' : '',
+      pins.includes(n.featureId) ? 'pinned' : '',
     ].filter(Boolean).join(' '),
   }));
   const edgeEls = edges.map(e => ({
     data: { id: e.id, source: e.source, target: e.target,
-            evidence: e.evidence, interaction_type: e.interaction_type,
-            detection_method: e.detection_method },
+            evidence: e.evidence, interaction_type: e.interactionType,
+            detection_method: e.detectionMethod },
     classes: e.experimental ? 'typeA' : '',
   }));
   return [...nodeEls, ...edgeEls];
@@ -589,7 +589,7 @@ import type { GNode, GEdge } from '@/lib/toGraph';
 export function buildGraph(nodes: GNode[], edges: GEdge[], pins: string[]) {
   const g = new Graph({ multi: true });
   for (const n of nodes) {
-    const pinned = pins.includes(n.feature_id);
+    const pinned = pins.includes(n.featureId);
     g.addNode(n.id, {
       label: n.gene || n.id,
       size: pinned ? 8 : 6,

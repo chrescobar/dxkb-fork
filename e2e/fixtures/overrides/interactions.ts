@@ -1,9 +1,14 @@
 import type { JsonOverride } from "../../mocks/backends";
 
 // In E2E, NEXT_PUBLIC_DATA_API=http://127.0.0.1:${E2E_PORT}/api/e2e-mock/data so all
-// ppi fetches (count, rows) go through the loopback, not bv-brc.org.
+// ppi fetches (count, rows, facets) go through the loopback, not bv-brc.org.
 const ppiLoopback = /\/api\/e2e-mock\/data\/ppi\//;
-const ppiLoopbackCount = /\/api\/e2e-mock\/data\/ppi\/.*limit/;
+// Anchored on `limit(1)` at the end of the URL — that's how ListData's count fetch
+// (list-data.tsx) always ends. A bare `.*limit` also matched FacetPanel's facet
+// request (`...&limit(1)&facet(...)`), which ends with the facet clause, not
+// `limit(1)` — that collision would've served the count body (no facet_counts) to
+// a facet request instead of falling through to ppiLoopback.
+const ppiLoopbackCount = /\/api\/e2e-mock\/data\/ppi\/.*limit\(1\)$/;
 
 export interface MockPpiRow {
   id: string;

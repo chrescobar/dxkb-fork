@@ -59,6 +59,14 @@ describe("makeSerologyView", () => {
     expect(panel).toHaveAttribute("data-resource", "serology");
     expect(panel.getAttribute("data-q")).toContain("1234");
   });
+
+  it("passes the serology guide URL", () => {
+    const SerologyView = makeSerologyView({ taxon: fakeTaxon });
+    const { getByTestId } = render(<SerologyView />);
+    expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toBe(
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/serology_data.html",
+    );
+  });
 });
 
 describe("makeSurveillanceView", () => {

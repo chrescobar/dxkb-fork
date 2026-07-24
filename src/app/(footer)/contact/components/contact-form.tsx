@@ -1,222 +1,274 @@
-import { Separator } from "@/components/ui/separator";
-import { Mail, MapPin, Clock, Phone } from "lucide-react";
-import { SiX, SiGithub } from "@icons-pack/react-simple-icons";
-import LinkedInIcon from "@/components/icons/linkedin-icon";
+"use client";
+
+import { useForm } from "@tanstack/react-form";
+import { toast } from "sonner";
+import { Mail } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import {
+  FieldItem,
+  FieldLabel,
+  FieldErrors,
+} from "@/components/ui/tanstack-form";
+import {
+  contactFormSchema,
+  defaultContactFormValues,
+  inquiryTypes,
+  type ContactFormData,
+  type InquiryType,
+} from "./contact-form-utils";
 
 const ContactForm = () => {
+  const form = useForm({
+    defaultValues: defaultContactFormValues,
+    validators: { onChange: contactFormSchema },
+    onSubmit: async ({ value, formApi }) => {
+      try {
+        const response = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(value satisfies ContactFormData),
+        });
+
+        if (!response.ok) {
+          const body = (await response.json().catch(() => null)) as {
+            error?: string;
+          } | null;
+          throw new Error(
+            body?.error ?? `Request failed with status ${String(response.status)}`,
+          );
+        }
+
+        toast.success("Message sent. We'll be in touch soon.");
+        formApi.reset();
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : "Failed to send message.";
+        toast.error(message);
+      }
+    },
+  });
+
   return (
     <section className="py-12">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-6xl">
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-              {/* Contact Info Sidebar */}
-              <div className="md:col-span-1">
-                <div className="sticky top-24">
-                  <h2 className="mb-6 text-xl font-bold">Contact Information</h2>
+      <div className="container mx-auto px-4">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            {/* Contact Info Sidebar */}
+            <div className="md:col-span-1">
+              <div className="sticky top-24">
+                <h2 className="mb-6 text-xl font-bold">Contact Information</h2>
 
-                  <div className="space-y-6">
-                    <div className="flex items-start">
-                      <div className="mr-4 rounded-full bg-secondary/20 p-3">
-                        <Mail className="size-5 text-secondary" />
-                      </div>
-                      <div>
-                        <h3 className="mb-1 font-medium">Email</h3>
-                        <a href="mailto:contact@virusdb.org" className="text-link hover:underline">
-                          contact@virusdb.org
-                        </a>
-                      </div>
+                <div className="space-y-6">
+                  <div className="flex items-start">
+                    <div className="mr-4 rounded-full bg-secondary/20 p-3">
+                      <Mail className="size-5 text-secondary" />
                     </div>
-
-                    <div className="flex items-start">
-                      <div className="mr-4 rounded-full bg-secondary/20 p-3">
-                        <Phone className="size-5 text-secondary" />
-                      </div>
-                      <div>
-                        <h3 className="mb-1 font-medium">Phone</h3>
-                        <a href="tel:+18005551234" className="text-link hover:underline">
-                          +1 (800) 555-1234
-                        </a>
-                        <p className="mt-1 text-sm text-muted-foreground">Mon-Fri, 9am-5pm EST</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start">
-                      <div className="mr-4 rounded-full bg-secondary/20 p-3">
-                        <MapPin className="size-5 text-secondary" />
-                      </div>
-                      <div>
-                        <h3 className="mb-1 font-medium">Main Office</h3>
-                        <p className="text-muted-foreground">123 Science Way, Cambridge, MA 02142, USA</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Separator className="my-8" />
-
-                  <h3 className="mb-4 font-medium">Follow Us</h3>
-                  <div className="flex space-x-4">
-                    <a
-                      href="#"
-                      aria-label="Follow us on X (Twitter)"
-                      className="flex size-11 items-center justify-center rounded-full bg-accent/20 transition-colors duration-200 hover:bg-accent/40"
-                    >
-                      <SiX className="size-5 text-accent" aria-hidden="true" />
-                    </a>
-                    <a
-                      href="#"
-                      aria-label="Follow us on LinkedIn"
-                      className="flex size-11 items-center justify-center rounded-full bg-accent/20 transition-colors duration-200 hover:bg-accent/40"
-                    >
-                      <LinkedInIcon className="size-5 text-accent" aria-hidden="true" />
-                    </a>
-                    <a
-                      href="#"
-                      aria-label="Follow us on GitHub"
-                      className="flex size-11 items-center justify-center rounded-full bg-accent/20 transition-colors duration-200 hover:bg-accent/40"
-                    >
-                      <SiGithub className="size-5 text-accent" aria-hidden="true" />
-                    </a>
-                  </div>
-
-                  <Separator className="my-8" />
-
-                  <div className="rounded-lg bg-secondary/20 p-6">
-                    <h3 className="mb-2 font-medium">Support Hours</h3>
-                    <div className="space-y-2">
-                      <div className="flex items-center">
-                        <Clock className="mr-2 size-4 text-secondary" />
-                        <span className="text-sm">Monday - Friday: 9:00 AM - 5:00 PM (EST)</span>
-                      </div>
-                      <div className="flex items-center">
-                        <Clock className="mr-2 size-4 text-secondary" />
-                        <span className="text-sm">Saturday: 10:00 AM - 2:00 PM (EST)</span>
-                      </div>
-                      <div className="flex items-center">
-                        <Clock className="mr-2 size-4 text-secondary" />
-                        <span className="text-sm">Sunday: Closed</span>
-                      </div>
+                    <div>
+                      <h3 className="mb-1 font-medium">Email</h3>
+                      <a
+                        href="mailto:help@dxkb.org"
+                        className="text-link hover:underline"
+                      >
+                        help@dxkb.org
+                      </a>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Contact Form */}
-              <div className="md:col-span-2">
-                <Card>
-                  <CardContent className="px-8 py-4">
-                    <h2 className="mb-6 text-xl font-bold">Send Us a Message</h2>
-                    <form className="space-y-6">
-                      <div className="space-y-4">
-                        <div>
-                          <Label htmlFor="inquiry-type" className="text-base font-medium">
-                            What can we help you with?
-                          </Label>
-                          <RadioGroup defaultValue="general" className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
-                            <div className="flex items-center gap-3">
-                              <RadioGroupItem value="general" id="general" />
-                              <Label htmlFor="general" className="font-normal">
-                                General Inquiry
-                              </Label>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <RadioGroupItem value="technical" id="technical" />
-                              <Label htmlFor="technical" className="font-normal">
-                                Technical Support
-                              </Label>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <RadioGroupItem value="research" id="research" />
-                              <Label htmlFor="research" className="font-normal">
-                                Research Collaboration
-                              </Label>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <RadioGroupItem value="feedback" id="feedback" />
-                              <Label htmlFor="feedback" className="font-normal">
-                                Feedback & Suggestions
-                              </Label>
-                            </div>
-                          </RadioGroup>
-                        </div>
+            {/* Contact Form */}
+            <div className="md:col-span-2">
+              <Card>
+                <CardContent className="px-8 py-4">
+                  <h2 className="mb-6 text-xl font-bold">Send Us a Message</h2>
+                  <form
+                    className="space-y-6"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      void form.handleSubmit();
+                    }}
+                  >
+                    <div className="space-y-4">
+                      <form.Field name="inquiryType">
+                        {(field) => (
+                          <FieldItem>
+                            {/*
+                              Group label: uses id + aria-labelledby rather than
+                              htmlFor, since a radio group has no single input to
+                              associate with.
+                            */}
+                            <span
+                              id="inquiryType-label"
+                              className="text-base font-medium"
+                            >
+                              What can we help you with?
+                            </span>
+                            <RadioGroup
+                              aria-labelledby="inquiryType-label"
+                              value={field.state.value}
+                              onValueChange={(value) =>
+                                { field.handleChange(value as InquiryType); }
+                              }
+                              className="mt-1 grid grid-cols-1 gap-3 md:grid-cols-2"
+                            >
+                              {inquiryTypes.map((option) => (
+                                <div
+                                  key={option.value}
+                                  className="flex items-center gap-3"
+                                >
+                                  <RadioGroupItem
+                                    value={option.value}
+                                    id={option.value}
+                                  />
+                                  <FieldLabel
+                                    field={field}
+                                    htmlFor={option.value}
+                                    className="font-normal"
+                                  >
+                                    {option.label}
+                                  </FieldLabel>
+                                </div>
+                              ))}
+                            </RadioGroup>
+                          </FieldItem>
+                        )}
+                      </form.Field>
 
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                          <div className="space-y-2">
-                            <Label htmlFor="name" className="text-sm font-medium">
-                              Full Name
-                            </Label>
-                            <Input id="name" placeholder="Enter your full name" />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="email" className="text-sm font-medium">
-                              Email Address
-                            </Label>
-                            <Input id="email" type="email" placeholder="Enter your email address" />
-                          </div>
-                        </div>
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <form.Field name="name">
+                          {(field) => (
+                            <FieldItem>
+                              <FieldLabel
+                                field={field}
+                                className="text-sm font-medium"
+                              >
+                                Full Name
+                              </FieldLabel>
+                              <Input
+                                id={field.name}
+                                name={field.name}
+                                value={field.state.value}
+                                onBlur={field.handleBlur}
+                                onChange={(e) =>
+                                  { field.handleChange(e.target.value); }
+                                }
+                                placeholder="Enter your full name"
+                              />
+                              <FieldErrors field={field} />
+                            </FieldItem>
+                          )}
+                        </form.Field>
 
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                          <div className="space-y-2">
-                            <Label htmlFor="institution" className="text-sm font-medium">
-                              Institution/Organization
-                            </Label>
-                            <Input id="institution" placeholder="Enter your institution or organization" />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="phone" className="text-sm font-medium">
-                              Phone Number (Optional)
-                            </Label>
-                            <Input id="phone" placeholder="Enter your phone number" />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="subject" className="text-sm font-medium">
-                            Subject
-                          </Label>
-                          <Input id="subject" placeholder="Enter the subject of your message" />
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="message" className="text-sm font-medium">
-                            Message
-                          </Label>
-                          <Textarea
-                            id="message"
-                            placeholder="Please provide details about your inquiry..."
-                            rows={6}
-                          />
-                        </div>
-
-                        <div className="flex items-start space-x-2">
-                          <input type="checkbox" id="privacy" className="mt-1" />
-                          <Label htmlFor="privacy" className="text-sm font-normal">
-                            I agree to the
-                            <a href="#" className="text-link hover:underline">
-                              Privacy Policy
-                            </a>
-                            and consent to the processing of my personal data.
-                          </Label>
-                        </div>
+                        <form.Field name="email">
+                          {(field) => (
+                            <FieldItem>
+                              <FieldLabel
+                                field={field}
+                                className="text-sm font-medium"
+                              >
+                                Email Address
+                              </FieldLabel>
+                              <Input
+                                id={field.name}
+                                name={field.name}
+                                type="email"
+                                value={field.state.value}
+                                onBlur={field.handleBlur}
+                                onChange={(e) =>
+                                  { field.handleChange(e.target.value); }
+                                }
+                                placeholder="Enter your email address"
+                              />
+                              <FieldErrors field={field} />
+                            </FieldItem>
+                          )}
+                        </form.Field>
                       </div>
 
-                      <div className="pt-2">
-                        <Button className="w-full bg-secondary py-6 hover:bg-secondary">Submit Message</Button>
-                      </div>
-                    </form>
-                  </CardContent>
-                </Card>
-              </div>
+                      <form.Field name="subject">
+                        {(field) => (
+                          <FieldItem>
+                            <FieldLabel
+                              field={field}
+                              className="text-sm font-medium"
+                            >
+                              Subject
+                            </FieldLabel>
+                            <Input
+                              id={field.name}
+                              name={field.name}
+                              value={field.state.value}
+                              onBlur={field.handleBlur}
+                              onChange={(e) => { field.handleChange(e.target.value); }}
+                              placeholder="Enter the subject of your message"
+                            />
+                            <FieldErrors field={field} />
+                          </FieldItem>
+                        )}
+                      </form.Field>
+
+                      <form.Field name="message">
+                        {(field) => (
+                          <FieldItem>
+                            <FieldLabel
+                              field={field}
+                              className="text-sm font-medium"
+                            >
+                              Message
+                            </FieldLabel>
+                            <Textarea
+                              id={field.name}
+                              name={field.name}
+                              value={field.state.value}
+                              onBlur={field.handleBlur}
+                              onChange={(e) => { field.handleChange(e.target.value); }}
+                              placeholder="Please provide details about your inquiry..."
+                              rows={6}
+                            />
+                            <FieldErrors field={field} />
+                          </FieldItem>
+                        )}
+                      </form.Field>
+                    </div>
+
+                    <div className="pt-2">
+                      <form.Subscribe
+                        selector={(state) => state.isSubmitting}
+                      >
+                        {(isSubmitting) => (
+                          <Button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="w-full bg-secondary py-6 hover:bg-secondary"
+                          >
+                            {isSubmitting ? (
+                              <>
+                                <Spinner className="mr-2" />
+                                Sending...
+                              </>
+                            ) : (
+                              "Submit Message"
+                            )}
+                          </Button>
+                        )}
+                      </form.Subscribe>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>
-      </section>
-  )
-}
+      </div>
+    </section>
+  );
+};
 
-export default ContactForm
+export default ContactForm;

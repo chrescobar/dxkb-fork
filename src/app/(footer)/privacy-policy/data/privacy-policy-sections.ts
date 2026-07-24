@@ -65,9 +65,9 @@ export const privacyPolicySections: PrivacyPolicySection[] = [
   },
   {
     id: 7,
-    title: "How Infomation DXKB Collects is Protected",
+    title: "How Information DXKB Collects is Protected",
     description:
-      "DXKB restricts access to nonpublic, personal information to those staff and service providers involved in administering and srvicing user accounts. \
+      "DXKB restricts access to nonpublic, personal information to those staff and service providers involved in administering and servicing user accounts. \
       Physical, electronic and procedural safeguards are in place that comply with Federal standards to protect such information.",
   },
   {
@@ -83,7 +83,6 @@ export const privacyPolicySections: PrivacyPolicySection[] = [
     id: 9,
     title: "Contact Information",
     description:
-      "If you have questions about our privacy practices, please contact us <a href='mailto:help@dxkb.org'>here</a>. \
-      Email: help@dxkb.org",
+      "If you have questions about our privacy practices, please contact us by email at help@dxkb.org.",
   }
 ];

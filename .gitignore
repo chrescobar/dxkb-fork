@@ -57,20 +57,17 @@ next-env.d.ts
 .playwright-mcp
 
 # Playwright e2e
+/test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
 /e2e/.auth/
-test-results/
-a11y-results/
-a11y-report/
+# /e2e/__snapshots__ is NOT ignored — baselines must be committed for visual regression to work.
 
-# Screenshots
-.screenshots/
-
-# Superpowers
-.superpowers/
-docs/superpowers
+# a11y scan artifacts (generated)
+/a11y-report/
+/a11y-results/
+/.screenshots/
 
 # graphify
 graphify-out

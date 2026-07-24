@@ -13,12 +13,12 @@ const faqSections = {
       answer: 'DXKB is a comprehensive knowledge base for disease surveillance and outbreak monitoring.',
     },
     {
-      question: 'What is bio-informatics?',
-      answer: 'Bio-informatics is the science of collecting and analyzing complex biological data such as genetic codes, protein sequences, and disease patterns.',
+      question: 'What is bioinformatics?',
+      answer: 'Bioinformatics is an interdisciplinary field that combines computer science and biology to analyze and interpret large biological datasets.',
     },
     {
       question: 'Who funds this project?',
-      answer: 'This project is funded by the Division for Scientific Research Preparedness Innovations (DSRI) under the Disease X Program.',
+      answer: 'DXKB is funded by CEPI, the Coalition for Epidemic Preparedness Innovations.',
     },
   ],
   Services: [

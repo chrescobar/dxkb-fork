@@ -1,0 +1,84 @@
+e2e/fixtures/overrides/interactions.ts
+  s_95872687eb3457::t_62ae01938c2f3a 4,6-11
+src/lib/interactions/types.ts
+  s_45ce7940884541::t_dabebdcdd61603 71-74
+src/components/interactions/sigma/sigma-canvas.tsx
+  s_45ce7940884541::t_95cfca4cbe6f63 80
+  s_45ce7940884541::t_530ea356641f72 166,168-172
+src/components/interactions/__tests__/graph-node-list.test.tsx
+  s_238462e8709a8c::t_32f8f38c7a0dbc 22-28
+src/components/interactions/interactions-graph.tsx
+  s_45ce7940884541::t_acee7e34a7ec54 107
+docs/interactions-graph-react-port.md
+  s_370cddffd4a8af::t_cbb06dbbba356e 447-448
+  s_55bc1170830cca::t_159eec98620a8f 592
+  s_370cddffd4a8af::t_492317c38a72ca 441-442
+  s_370cddffd4a8af::t_6962825c7746d6 359-360
+.github/workflows/pnpm-a11y.yml
+  s_643ebc540ef90e::t_458a0f24a31b62 50-56,104-110,158-164,212-218
+e2e/tests/organisms/interactions.spec.ts
+  s_643ebc540ef90e::t_3377a9c9e8457c 31-38
+e2e/tests/a11y/deep-tier.spec.ts
+  s_643ebc540ef90e::t_1498bd52ec525d 420-428
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "e4b672b961bbbd2cc40da5c47692a293059678df",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_238462e8709a8c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bb309477-1575-47f5-9894-743f233d5ebd",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_370cddffd4a8af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4fad271b-18b8-45b8-8dc2-5f5673a7c3b7",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_45ce7940884541": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b43ebafb-680c-4929-9f44-26f5b3becd9a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_55bc1170830cca": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "70062d31-62d6-4033-b00d-ceacd5f4fdec",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_643ebc540ef90e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6c7b5c23-ac97-4f2a-b287-f7438ec8ea13",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_95872687eb3457": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2383c530-56d9-456f-87e2-33965510cd3a",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

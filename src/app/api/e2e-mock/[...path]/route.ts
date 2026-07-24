@@ -109,6 +109,17 @@ const influenzaATaxonomyFixture = {
   genomes: 245000,
 };
 
+// Alphainfluenzavirus influenzae — lineage includes "Alphainfluenzavirus influenzae"
+// so hasSerology = true. Used by the serology-tab e2e test.
+const alphainfluenzavirusInfluenzaeTaxonomyFixture = {
+  taxon_id: 2955291,
+  taxon_name: "Alphainfluenzavirus influenzae",
+  lineage_names: ["Viruses", "Riboviria", "Orthornavirae", "Negarnaviricota", "Polyploviricotina", "Insthoviricetes", "Articulavirales", "Orthomyxoviridae", "Alphainfluenzavirus", "Alphainfluenzavirus influenzae"],
+  lineage_ids: [10239, 2559587, 2732396, 2497569, 2497571, 2497577, 2499411, 11308, 197911, 2955291],
+  taxon_rank: "species",
+  genomes: 1876178,
+};
+
 // Caliciviridae — virus family used by domains-and-motifs e2e tests.
 const caliciviridaeTaxonomyFixture = {
   taxon_id: 11974,
@@ -567,6 +578,7 @@ function maybeBvBrcWebsite(path: string, request: NextRequest): BvBrcResult | nu
   if (endpoint === "taxonomy/234") return { kind: "ok", body: brucellaTaxonomyFixture };
   if (endpoint === "taxonomy/11520") return { kind: "ok", body: influenzaATaxonomyFixture };
   if (endpoint === "taxonomy/11974") return { kind: "ok", body: caliciviridaeTaxonomyFixture };
+  if (endpoint === "taxonomy/2955291") return { kind: "ok", body: alphainfluenzavirusInfluenzaeTaxonomyFixture };
   if (endpoint === "genome" || endpoint === "genome/") {
     const url = new URL(request.url);
     const query = decodeURIComponent(url.search);

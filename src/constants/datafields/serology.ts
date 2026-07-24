@@ -203,22 +203,22 @@ export const serologyFields = {
         facet_hidden: true, 
         search: true  
         },
-    date_added: { 
-        label: 'Date Inserted', 
-        field: 'date_inserted', 
-        hidden: false,
-        group: 'Sample Tests',
-        facet: false, 
-        facet_hidden: true, 
-        search: true  
-        },
-    date_updated: { 
-        label: 'Date Updated', 
-        field: 'date_updated', 
+    date_added: {
+        label: 'Date Inserted',
+        field: 'date_inserted',
         hidden: true,
-        group: 'Sample Tests',
-        facet: false, 
-        facet_hidden: true, 
-        search: true  
+        group: 'Other',
+        facet: false,
+        facet_hidden: true,
+        search: true
+        },
+    date_modified: {
+        label: 'Date Modified',
+        field: 'date_modified',
+        hidden: true,
+        group: 'Other',
+        facet: false,
+        facet_hidden: true,
+        search: true
         },
     } satisfies DataFieldMap;

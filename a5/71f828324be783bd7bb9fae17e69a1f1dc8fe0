@@ -1,0 +1,24 @@
+src/components/interactions/sigma/sigma-canvas.tsx
+  s_7044b9e1a59fe4::t_6526b01c4181c6 172-173
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "a571f828324be783bd7bb9fae17e69a1f1dc8fe0",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_7044b9e1a59fe4": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_06a5c74eeffeNSIRjzur5oKjRN",
+        "model": "gpt55"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

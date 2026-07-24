@@ -1,0 +1,68 @@
+.gitignore
+  s_4eea53661daebf::t_2e85c49e2a143d 60,65,67-70
+e2e/pages/taxon-page.ts
+  s_4eea53661daebf::t_2e85c49e2a143d 1-30
+src/components/services/__tests__/list-data-serology.test.tsx
+  s_4eea53661daebf::t_2e85c49e2a143d 1-129
+src/app/(footer)/related-resources/page.tsx
+  s_4eea53661daebf::t_2e85c49e2a143d 14-17,82,100
+src/app/(footer)/privacy-policy/page.tsx
+  s_4eea53661daebf::t_2e85c49e2a143d 22,28-31,50-51
+.example.env
+  s_4eea53661daebf::t_2e85c49e2a143d 34-47
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_4eea53661daebf::t_2e85c49e2a143d 62-69
+src/app/(footer)/faq/page.tsx
+  s_4eea53661daebf::t_2e85c49e2a143d 16-17,21
+src/app/api/contact/route.ts
+  s_4eea53661daebf::t_2e85c49e2a143d 1-120
+src/app/(views)/taxonomy/[taxonId]/views/serology.tsx
+  s_4eea53661daebf::t_2e85c49e2a143d 11
+src/app/(footer)/privacy-policy/data/privacy-policy-sections.ts
+  s_4eea53661daebf::t_2e85c49e2a143d 68,70,86
+src/lib/__tests__/rate-limit.test.ts
+  s_4eea53661daebf::t_2e85c49e2a143d 1-59
+e2e/tests/organisms/serology.spec.ts
+  s_4eea53661daebf::t_2e85c49e2a143d 1-47
+src/app/api/e2e-mock/[...path]/route.ts
+  s_4eea53661daebf::t_2e85c49e2a143d 113-123,582
+e2e/pages/index.ts
+  s_4eea53661daebf::t_2e85c49e2a143d 9
+src/app/(footer)/contact/components/contact-form.tsx
+  s_4eea53661daebf::t_2e85c49e2a143d 1-5,11-23,26-35,37-44,46-54,56-64,66-78,83,85-142,144-167,169-193,195-215,217-239,241-265,269-272,274
+src/lib/rate-limit.ts
+  s_4eea53661daebf::t_2e85c49e2a143d 1-72
+src/constants/datafields/serology.ts
+  s_4eea53661daebf::t_2e85c49e2a143d 206-213,215-217,219-222
+package.json
+  s_4eea53661daebf::t_2e85c49e2a143d 91,121
+src/app/(footer)/contact/components/contact-form-utils.ts
+  s_4eea53661daebf::t_2e85c49e2a143d 1-46
+src/app/(footer)/privacy-policy/components/privacy-sidebar.tsx
+  s_4eea53661daebf::t_2e85c49e2a143d 2,12,33,35-41,50
+plans/contact-form.md
+  s_4eea53661daebf::t_d27f9b9dfb0d2d 1-100
+pnpm-lock.yaml
+  s_4eea53661daebf::t_d6cca431a8927d 182-184,267-269,2608-2610,4968-4971,8428-8431,11192-11193
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "ec7a1406c9a932a5b77e7f54289177b9a18e4fb7",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_4eea53661daebf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "838730ff-0c29-4d33-959d-9b09c34912c5",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

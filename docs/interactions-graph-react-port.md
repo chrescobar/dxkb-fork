@@ -433,10 +433,14 @@ const stylesheet: cytoscape.Stylesheet[] = [
 ];
 
 function toElements(nodes: GNode[], edges: GEdge[], pins: string[]): ElementDefinition[] {
+  // Pins are feature IDs; node IDs are interactor IDs and may differ.
   const nodeEls = nodes.map(n => ({
     data: { ...n },
-    classes: [n.kind === 'host' ? 'host' : '', pins.includes(n.id) ? 'pinned' : '']
-      .filter(Boolean).join(' '),
+    classes: [
+      n.kind === 'host' ? 'host' : '',
+      n.interactor_type !== 'Protein' ? 'molecule' : '',
+      pins.includes(n.feature_id) ? 'pinned' : '',
+    ].filter(Boolean).join(' '),
   }));
   const edgeEls = edges.map(e => ({
     data: { id: e.id, source: e.source, target: e.target,
@@ -585,10 +589,11 @@ import type { GNode, GEdge } from '@/lib/toGraph';
 export function buildGraph(nodes: GNode[], edges: GEdge[], pins: string[]) {
   const g = new Graph({ multi: true });
   for (const n of nodes) {
+    const pinned = pins.includes(n.feature_id);
     g.addNode(n.id, {
       label: n.gene || n.id,
-      size: pins.includes(n.id) ? 8 : 6,
-      color: pins.includes(n.id) ? COLORS.pinned
+      size: pinned ? 8 : 6,
+      color: pinned ? COLORS.pinned
            : n.kind === 'host' ? COLORS.host : COLORS.microbial,
       x: Math.random(), y: Math.random(),  // forceatlas2 needs initial coords
       ...n,

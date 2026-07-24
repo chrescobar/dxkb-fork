@@ -23,6 +23,25 @@ describe("toGraph", () => {
     ];
     const { nodes } = toGraph(rows);
     expect(nodes).toHaveLength(3);
+    expect(new Set(nodes.map((n) => n.id))).toEqual(new Set(["A", "B", "C"]));
+  });
+
+  it("keeps feature IDs separate from interactor node IDs", () => {
+    const { nodes } = toGraph([
+      makeRow({
+        interactor_a: "interactor-a",
+        feature_id_a: "feature-a",
+        interactor_b: "interactor-b",
+        feature_id_b: "feature-b",
+      }),
+    ]);
+
+    expect(nodes.find((n) => n.id === "interactor-a")).toEqual(
+      expect.objectContaining({ featureId: "feature-a" }),
+    );
+    expect(nodes.find((n) => n.id === "interactor-b")).toEqual(
+      expect.objectContaining({ featureId: "feature-b" }),
+    );
   });
 
   it("classifies Bacteria domain as microbial", () => {

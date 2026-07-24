@@ -12,6 +12,8 @@ import {
   buildWorkspaceOverrides,
   e2eHomePath,
   journeyOverrides,
+  buildPpiRows,
+  buildPpiOverrides,
 } from "../../fixtures/overrides";
 import { awaitSettled } from "../../a11y/settle";
 import { scanPage, formatBlocking, logWarnings } from "../../a11y/axe-scan";
@@ -416,35 +418,11 @@ test.describe("a11y deep tier: settings", () => {
 
 test.describe("a11y deep tier: taxon interactions graph", () => {
   test("interactions: Graph subtab has no blocking violations", async ({ page }) => {
-    const rows = [
-      {
-        id: "ppi-0000",
-        genome_id_a: "224914.16",
-        genome_name_a: "Brucella melitensis bv. 1 str. 16M [WGS]",
-        interactor_a: "fig|224914.16.peg.600",
-        feature_id_a: "PATRIC.224914.16.feature-a-0",
-        refseq_locus_tag_a: "BAWG_1000",
-        gene_a: "",
-        interactor_desc_a: "6,7-dimethyl-8-ribityllumazine synthase",
-        genome_id_b: "224914.16",
-        genome_name_b: "Brucella melitensis bv. 1 str. 16M [WGS]",
-        interactor_b: "fig|224914.16.peg.2400",
-        feature_id_b: "PATRIC.224914.16.feature-b-0",
-        refseq_locus_tag_b: "BAWG_2000",
-        gene_b: "",
-        interactor_desc_b: "CrcB protein",
-        category: "PPI",
-        interaction_type: ["predicted interaction"],
-        detection_method: ["predictive text mining"],
-        evidence: ["experimental"],
-        score: 2.5316925,
-      },
-    ];
+    const rows = buildPpiRows(1);
 
     await applyBackendMocks(page, {
       overrides: [
-        { url: /\/api\/e2e-mock\/data\/ppi\/.*limit/, method: "GET", body: { response: { numFound: 1 } } },
-        { url: /\/api\/e2e-mock\/data\/ppi\//, method: "GET", body: rows },
+        ...buildPpiOverrides(rows),
         ...authSessionOverrides,
         ...permissiveBackendOverrides,
       ],

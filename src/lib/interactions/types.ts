@@ -70,4 +70,5 @@ export interface GraphCanvasProps {
   layout: LayoutName;
   onSelect: (sel: GraphSelection) => void;
   handleRef: RefObject<GraphCanvasHandle | null>;
+  onReady?: () => void;
 }

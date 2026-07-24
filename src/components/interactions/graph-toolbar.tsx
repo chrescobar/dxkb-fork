@@ -31,25 +31,40 @@ interface GraphToolbarProps {
   layout: LayoutName;
   onLayoutChange: (layout: LayoutName) => void;
   onExport: () => void;
+  exportReady: boolean;
 }
 
 export function GraphToolbar({
   layout,
   onLayoutChange,
   onExport,
+  exportReady,
 }: GraphToolbarProps) {
   return (
     <TooltipProvider>
       <div className="flex flex-wrap items-center gap-2 border-b p-2">
-        <Button variant="outline" size="sm" onClick={onExport}>
-          <Download />
-          Export
-        </Button>
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <span className={exportReady ? undefined : "inline-flex cursor-not-allowed"} tabIndex={exportReady ? undefined : 0}>
+                <Button variant="outline" size="sm" onClick={onExport} disabled={!exportReady}>
+                  <Download />
+                  Export
+                </Button>
+              </span>
+            }
+          />
+          {!exportReady && (
+            <TooltipContent>
+              <p>Loading graph…</p>
+            </TooltipContent>
+          )}
+        </Tooltip>
 
         <Tooltip>
           <TooltipTrigger
             render={
-              <span className="inline-flex cursor-not-allowed">
+              <span className="inline-flex cursor-not-allowed" tabIndex={0}>
                 <Button variant="outline" size="sm" disabled>
                   Sub-Graph
                 </Button>
@@ -64,7 +79,7 @@ export function GraphToolbar({
         <Tooltip>
           <TooltipTrigger
             render={
-              <span className="inline-flex cursor-not-allowed">
+              <span className="inline-flex cursor-not-allowed" tabIndex={0}>
                 <Button variant="outline" size="sm" disabled>
                   Hub Protein
                 </Button>

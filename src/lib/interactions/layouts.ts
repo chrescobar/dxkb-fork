@@ -220,7 +220,7 @@ function assignCoseBilkent(g: Graph) {
 
   const giantDists = giant.nodes.map((node) => {
     const attrs = g.getNodeAttributes(node);
-    return Math.hypot((attrs.x as number) - giant.cx, (attrs.y as number) - giant.cy);
+    return Math.hypot(attrs.x as number, attrs.y as number);
   });
   const innerRadius = percentile(giantDists, 0.9);
 

@@ -7,7 +7,7 @@ import Graph from "graphology";
 import { EdgeRectangleProgram } from "sigma/rendering";
 import { downloadAsImage } from "@sigma/export-image";
 
-import { colors } from "@/lib/interactions/graph-theme";
+import { colors, renderEdge, renderEdgeExperimental } from "@/lib/interactions/graph-theme";
 import { runGraphLayout } from "@/lib/interactions/layouts";
 import type { GEdge, GNode, GraphCanvasProps, GraphSelection, LayoutName } from "@/lib/interactions/types";
 
@@ -30,15 +30,13 @@ function buildGraph(nodes: GNode[], edges: GEdge[]): Graph {
       g.addEdgeWithKey(e.id, e.source, e.target, {
         ...e,
         size: 1,
-        // Translucent so ~4,400 overlapping edges read as individual threads
-        // and accumulate into a density gradient (like the legacy view) instead
-        // of stacking into a solid disk. Sigma blends with premultiplied alpha
-        // (blendFunc ONE, ONE_MINUS_SRC_ALPHA) but its edge shader emits STRAIGHT
-        // alpha, so a plain #rrggbbaa washes out to white. We premultiply RGB by
-        // alpha ourselves: 0x28 ≈ 16% alpha applied to edgeExperimental (#3F51B5
-        // -> #0A0D1C) and edge (#555555 -> #0D0D0D). Wider rectangle edges give
-        // pointer events a usable hit target without making the mesh opaque.
-        color: e.experimental ? "#080D1C28" : "#0A0D0D28",
+        // Translucent (premultiplied) so ~4,400 overlapping edges read as
+        // individual threads and accumulate into a density gradient instead of a
+        // solid disk. Derived from the theme in graph-theme.ts so dense-region
+        // color matches the legend swatches; see renderEdge for the alpha/
+        // premultiply rationale. Wider rectangle edges give pointer events a
+        // usable hit target without making the mesh opaque.
+        color: e.experimental ? renderEdgeExperimental : renderEdge,
       });
     }
   }
@@ -131,7 +129,13 @@ function GraphEvents({ onSelect, onHover, selectedId, selectedKind, onSelectId }
   return null;
 }
 
-function HandleBridge({ handleRef }: { handleRef: GraphCanvasProps["handleRef"] }) {
+function HandleBridge({
+  handleRef,
+  onReady,
+}: {
+  handleRef: GraphCanvasProps["handleRef"];
+  onReady?: () => void;
+}) {
   const sigma = useSigma();
 
   useImperativeHandle(
@@ -154,10 +158,16 @@ function HandleBridge({ handleRef }: { handleRef: GraphCanvasProps["handleRef"] 
     [sigma],
   );
 
+  // Runs after useImperativeHandle's layout effect commits handleRef.current,
+  // so the parent only learns "ready" once the handle is actually callable.
+  useEffect(() => {
+    onReady?.();
+  }, [onReady]);
+
   return null;
 }
 
-export default function SigmaCanvas({ nodes, edges, layout, onSelect, handleRef }: GraphCanvasProps) {
+export function SigmaCanvas({ nodes, edges, layout, onSelect, handleRef, onReady }: GraphCanvasProps) {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedKind, setSelectedKind] = useState<"node" | "edge" | null>(null);
@@ -185,7 +195,7 @@ export default function SigmaCanvas({ nodes, edges, layout, onSelect, handleRef 
           selectedKind={selectedKind}
           onSelectId={(id, kind) => { setSelectedId(id); setSelectedKind(kind); }}
         />
-        <HandleBridge handleRef={handleRef} />
+        <HandleBridge handleRef={handleRef} onReady={onReady} />
       </SigmaContainer>
       {tooltip && (
         <div

@@ -20,10 +20,12 @@ describe("useInteractions", () => {
   it("fetches rows with the range headers and strips any #-fragment from q", async () => {
     let capturedUrl = "";
     let capturedRange: string | null = null;
+    let capturedXRange: string | null = null;
     server.use(
       http.get(`${dataApi}/ppi/`, ({ request }) => {
         capturedUrl = request.url;
         capturedRange = request.headers.get("Range");
+        capturedXRange = request.headers.get("X-Range");
         return HttpResponse.json([{ id: "ppi-1", interactor_a: "A", interactor_b: "B" }]);
       }),
     );
@@ -37,6 +39,7 @@ describe("useInteractions", () => {
     expect(capturedUrl).toContain("eq(evidence,experimental)");
     expect(capturedUrl).not.toContain("view_tab");
     expect(capturedRange).toBe("items=0-5000");
+    expect(capturedXRange).toBe("items=0-5000");
     expect(result.current.data).toEqual([{ id: "ppi-1", interactor_a: "A", interactor_b: "B" }]);
   });
 

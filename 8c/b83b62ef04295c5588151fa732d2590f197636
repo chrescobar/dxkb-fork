@@ -1,0 +1,23 @@
+.github/workflows/pnpm-a11y.yml
+  s_eaca9bdf8c3e1d::t_09bd16d92db600 29,76,123,170,217
+.github/workflows/pnpm-e2e.yml
+  s_eaca9bdf8c3e1d::t_09bd16d92db600 31,102
+.github/workflows/sync-linux-snapshots.yml
+  s_eaca9bdf8c3e1d::t_09bd16d92db600 17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "8cb83b62ef04295c5588151fa732d2590f197636",
+  "prompts": {},
+  "sessions": {
+    "s_eaca9bdf8c3e1d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4c3b2afa-ec82-4c3e-9dd9-1105f9e418cc",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

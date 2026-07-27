@@ -1,0 +1,20 @@
+src/hooks/__tests__/use-table-keyboard-navigation.test.tsx
+  s_eaca9bdf8c3e1d::t_554227c2717501 6
+  s_eaca9bdf8c3e1d::t_7a8f0c2dc39167 5,7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "d716323fbf681f3f7589b585df0b81e9c8531db4",
+  "prompts": {},
+  "sessions": {
+    "s_eaca9bdf8c3e1d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4c3b2afa-ec82-4c3e-9dd9-1105f9e418cc",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

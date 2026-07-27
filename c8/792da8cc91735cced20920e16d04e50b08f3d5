@@ -1,0 +1,14 @@
+package.json
+  h_dbd94c95afa702 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "c8792da8cc91735cced20920e16d04e50b08f3d5",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

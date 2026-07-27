@@ -2,7 +2,9 @@ import { renderHook, act } from "@testing-library/react";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
 import type React from "react";
 
-type TestKeyEvent = React.KeyboardEvent & { preventDefault: ReturnType<typeof vi.fn> };
+type TestKeyEvent = Omit<React.KeyboardEvent, "preventDefault"> & {
+  preventDefault: ReturnType<typeof vi.fn> & (() => void);
+};
 
 function createKeyEvent(
   overrides: Partial<React.KeyboardEvent> & { key: string },

@@ -1,4 +1,11 @@
-import { colors, edgeAlpha, renderEdge, renderEdgeExperimental } from "../graph-theme";
+import {
+  colors,
+  edgeAlpha,
+  edgeHighlightReducer,
+  nodeHighlightReducer,
+  renderEdge,
+  renderEdgeExperimental,
+} from "../graph-theme";
 
 // Premultiplied edge colors must converge back to the opaque theme swatch the
 // legend renders: as translucent edges stack in dense regions they approach
@@ -37,5 +44,35 @@ describe("graph-theme render edges", () => {
         expect(Math.abs(v - want[i])).toBeLessThanOrEqual(tolerance);
       });
     }
+  });
+});
+
+describe("highlight reducers", () => {
+  const baseNode = { color: colors.microbial, size: 2.5 };
+  const baseEdge = { color: renderEdge, size: 1 };
+
+  it("raises zIndex and recolors the selected node so it paints on top", () => {
+    const reduce = nodeHighlightReducer("n1", "node");
+    expect(reduce("n1", baseNode)).toEqual({ ...baseNode, color: colors.selected, zIndex: 1 });
+  });
+
+  it("leaves unselected nodes untouched (no zIndex, original color)", () => {
+    const reduce = nodeHighlightReducer("n1", "node");
+    expect(reduce("n2", baseNode)).toBe(baseNode);
+  });
+
+  it("does not highlight a node when an edge is selected", () => {
+    const reduce = nodeHighlightReducer("e1", "edge");
+    expect(reduce("n1", baseNode)).toBe(baseNode);
+  });
+
+  it("raises zIndex and recolors the selected edge", () => {
+    const reduce = edgeHighlightReducer("e1", "edge");
+    expect(reduce("e1", baseEdge)).toEqual({ ...baseEdge, color: colors.edgeSelected, zIndex: 1 });
+  });
+
+  it("leaves edges untouched when nothing is selected", () => {
+    const reduce = edgeHighlightReducer(null, null);
+    expect(reduce("e1", baseEdge)).toBe(baseEdge);
   });
 });

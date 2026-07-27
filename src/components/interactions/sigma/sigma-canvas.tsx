@@ -7,7 +7,7 @@ import Graph from "graphology";
 import { EdgeRectangleProgram } from "sigma/rendering";
 import { downloadAsImage } from "@sigma/export-image";
 
-import { colors, renderEdge, renderEdgeExperimental } from "@/lib/interactions/graph-theme";
+import { colors, edgeHighlightReducer, nodeHighlightReducer, renderEdge, renderEdgeExperimental } from "@/lib/interactions/graph-theme";
 import { runGraphLayout } from "@/lib/interactions/layouts";
 import type { GEdge, GNode, GraphCanvasProps, GraphSelection, LayoutName } from "@/lib/interactions/types";
 
@@ -111,14 +111,8 @@ function GraphEvents({ onSelect, onHover, selectedId, selectedKind }: GraphEvent
 
   useEffect(() => {
     setSettings({
-      nodeReducer: (node, data) =>
-        selectedKind === "node" && node === selectedId
-          ? { ...data, color: colors.selected, zIndex: 1 }
-          : data,
-      edgeReducer: (edge, data) =>
-        selectedKind === "edge" && edge === selectedId
-          ? { ...data, color: colors.edgeSelected, zIndex: 1 }
-          : data,
+      nodeReducer: nodeHighlightReducer(selectedId, selectedKind),
+      edgeReducer: edgeHighlightReducer(selectedId, selectedKind),
     });
   }, [setSettings, selectedId, selectedKind]);
 
@@ -178,6 +172,10 @@ export function SigmaCanvas({ nodes, edges, layout, selection, onSelect, handleR
         style={{ width: "100%", height: "100%" }}
         settings={{
           renderEdgeLabels: false,
+          // Sort draw order by node/edge zIndex so the reducer's zIndex:1 on the
+          // selected element paints it above the ~1,900-node mesh. Off by default,
+          // which left the selection buried under later-inserted neighbors.
+          zIndex: true,
           // "rectangle" (thick, hit-testable edges) isn't auto-registered — Sigma
           // only ships "line" and "arrow" by default — so register the program
           // for that type key here, or loadGraph throws "could not find a suitable

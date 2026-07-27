@@ -28,3 +28,18 @@ function premultiply(hex: string, alpha: number): string {
 
 export const renderEdge = premultiply(colors.edge, edgeAlpha);
 export const renderEdgeExperimental = premultiply(colors.edgeExperimental, edgeAlpha);
+
+type SelectedKind = "node" | "edge" | null;
+
+// Sigma reducers that recolor the selected node/edge and raise its zIndex so it
+// paints above the mesh (relies on the `zIndex: true` container setting). Pure
+// factories so the highlight logic is unit-testable without a WebGL context.
+export function nodeHighlightReducer<T extends object>(selectedId: string | null, selectedKind: SelectedKind) {
+  return (node: string, data: T): T =>
+    selectedKind === "node" && node === selectedId ? { ...data, color: colors.selected, zIndex: 1 } : data;
+}
+
+export function edgeHighlightReducer<T extends object>(selectedId: string | null, selectedKind: SelectedKind) {
+  return (edge: string, data: T): T =>
+    selectedKind === "edge" && edge === selectedId ? { ...data, color: colors.edgeSelected, zIndex: 1 } : data;
+}

@@ -10,6 +10,7 @@ import { resolveTabs } from "@/lib/taxon-view/tab-policy";
 import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 
 import { makeOverviewView } from "../views/overview";
+import { makePhylogenyView } from "../views/phylogeny";
 import { makeTaxonomyTreeView } from "../views/taxonomy-tree-view";
 import { makeGenomesView } from "../views/genomes";
 import { makeSequencesView } from "../views/sequences";
@@ -44,6 +45,7 @@ export function buildTaxonomyNavItems(
         showAmr: config.showAmr ?? false,
       }),
     },
+    phylogeny: { Component: makePhylogenyView({ taxon }), layout: "fill" },
     "taxa-tree": { Component: makeTaxonomyTreeView({ taxon }), layout: "fill" },
     genomes: { Component: makeGenomesView({ taxon }), layout: "fill" },
     sequences: { Component: makeSequencesView({ taxon }), layout: "fill" },

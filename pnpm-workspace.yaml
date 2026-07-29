@@ -4,10 +4,15 @@ allowBuilds:
   '@parcel/watcher': true
   '@prisma/engines': true
   '@scarf/scarf': true
+  core-js: false
   esbuild: true
   msw: true
   prisma: true
   sharp: true
   unrs-resolver: true
+minimumReleaseAgeExclude:
+  - archaeopteryx@2.3.2
 patchedDependencies:
+  archaeopteryx@2.3.2: patches/archaeopteryx@2.3.2.patch
   molstar: patches/molstar.patch
+  phyloxml@1.0.0: patches/phyloxml@1.0.0.patch

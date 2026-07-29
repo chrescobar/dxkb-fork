@@ -1,0 +1,59 @@
+diff --git a/archaeopteryx.js b/archaeopteryx.js
+index 4d4e405e2a852cd57728664f02bb0bc545934f67..e4cd8b65d06682f52f6126f3d86ef9680e55df7c 100644
+--- a/archaeopteryx.js
++++ b/archaeopteryx.js
+@@ -3745,6 +3745,7 @@ if (!phyloXml) {
+             return;
+         }
+ 
++        _selectedNodes.clear();
+         _treeData = phylo;
+         _id = id;
+         _zoomListener = d3.behavior.zoom().scaleExtent([0.1, 10]).on('zoom', zoom);
+@@ -7197,7 +7198,7 @@ if (!phyloXml) {
+ 
+         // -------------------------------------------
+ 
+-        $(document).keyup(function (e) {
++        $(document).off('keyup.archaeopteryx').on('keyup.archaeopteryx', function (e) {
+             if (e.altKey) {
+                 if (e.keyCode === VK_O) {
+                     orderButtonPressed();
+@@ -7227,7 +7228,7 @@ if (!phyloXml) {
+             }
+         });
+ 
+-        $(document).keydown(function (e) {
++        $(document).off('keydown.archaeopteryx').on('keydown.archaeopteryx', function (e) {
+             if (e.altKey) {
+                 if (e.keyCode === VK_UP) {
+                     zoomInY(BUTTON_ZOOM_IN_FACTOR_SLOW);
+@@ -8572,6 +8573,28 @@ if (!phyloXml) {
+      * @param newHamphshireConfidenceValuesAsInternalNames
+      * @param nodeVisualizations
+      */
++    archaeopteryx.destroy = function () {
++        if (_id) {
++            d3.select(_id).selectAll('*').remove();
++        }
++        if (_settings) {
++            $('#' + _settings.controls0).empty();
++            $('#' + _settings.controls1).empty();
++        }
++        $('.node_mouseover_tooltip').remove();
++        $(document).off('keyup.archaeopteryx keydown.archaeopteryx');
++        d3.select(window).on('resize', null).on('mousedown', null);
++        if (_intervalId) {
++            clearInterval(_intervalId);
++            _intervalId = 0;
++        }
++        _selectedNodes.clear();
++        _baseSvg = null;
++        _id = null;
++        _root = null;
++        _treeData = null;
++    };
++
+     archaeopteryx.launchArchaeopteryx = function (label, location, data, options, settings, newHamphshireConfidenceValuesInBrackets, newHamphshireConfidenceValuesAsInternalNames, nodeVisualizations) {
+         let tree = null;
+         try {

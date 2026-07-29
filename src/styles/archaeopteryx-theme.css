@@ -1,0 +1,44 @@
+.archaeopteryx-dxkb {
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+.archaeopteryx-dxkb > [id$="-controls-primary"],
+.archaeopteryx-dxkb > [id$="-controls-secondary"] {
+  z-index: 2;
+  max-height: calc(100% - 1.25rem);
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: color-mix(in oklab, var(--background) 94%, transparent);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 10%);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+.archaeopteryx-dxkb .ui-widget,
+.archaeopteryx-dxkb .ui-widget input,
+.archaeopteryx-dxkb .ui-widget select,
+.archaeopteryx-dxkb .ui-widget button {
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+.archaeopteryx-dxkb .ui-state-default,
+.archaeopteryx-dxkb .ui-widget-content .ui-state-default {
+  border-color: var(--border);
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.archaeopteryx-dxkb .ui-state-hover,
+.archaeopteryx-dxkb .ui-state-focus,
+.archaeopteryx-dxkb .ui-state-active {
+  border-color: var(--ring);
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.node_mouseover_tooltip {
+  z-index: 100;
+  color: #171717;
+}

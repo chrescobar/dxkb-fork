@@ -19,11 +19,29 @@ interface FilterBarProps {
   onFilterChange: (rql: string) => void;
   resource: string;
   query: string;
-};
+  keywordValue?: string;
+  onKeywordChange?: (value: string) => void;
+}
 
-export function FilterBar({ facetFields, onFilterChange, resource, query }: FilterBarProps) {
-  
-  const [keywords, setKeywords] = useState<string[]>([]);
+export function FilterBar({
+  facetFields,
+  onFilterChange,
+  resource,
+  query,
+  keywordValue,
+  onKeywordChange,
+}: FilterBarProps) {
+  const [internalKeywords, setInternalKeywords] = useState<string[]>([]);
+  const keywords = useMemo(
+    () => keywordValue === undefined
+      ? internalKeywords
+      : keywordValue.split(" ").filter(Boolean),
+    [internalKeywords, keywordValue],
+  );
+  const setKeywords = (nextKeywords: string[]) => {
+    if (keywordValue === undefined) setInternalKeywords(nextKeywords);
+    onKeywordChange?.(nextKeywords.join(" "));
+  };
   const [selected, setSelected] = useState<SelectedFilter[]>([]);
   const [showFacets, setShowFacets] = useState(false);
   const [localFacetFields, setLocalFacetFields] = useState<ColumnField[]>(() => facetFields);

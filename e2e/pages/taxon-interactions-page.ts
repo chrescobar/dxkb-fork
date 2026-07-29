@@ -61,4 +61,10 @@ export class TaxonInteractionsPage {
       this.page.getByRole("tabpanel", { name: "Table" }).getByPlaceholder("Search keywords..."),
     ).toHaveValue(text);
   }
+
+  async expectGraphKeywordValue(text: string): Promise<void> {
+    await expect(
+      this.page.getByRole("tabpanel", { name: "Graph" }).getByPlaceholder("Search keywords..."),
+    ).toHaveValue(text);
+  }
 }

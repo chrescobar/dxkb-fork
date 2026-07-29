@@ -116,9 +116,11 @@ interface ListDataProps {
   onTotalItemsChange?: (total: number) => void;
   filter?: string;
   onFilterChange?: (rql: string) => void;
+  keywordValue?: string;
+  onKeywordChange?: (value: string) => void;
 }
 
-export function ListData({ q, resource, onSelectionChange, rowSelection: controlledRowSelection, onRowSelectionChange, pageIndex: controlledPageIndex, onPageChange, selectedIds, isAllPagesSelected: controlledIsAllPagesSelected, onAllPagesSelectionChange, onTotalItemsChange, filter: controlledFilter, onFilterChange }: ListDataProps) {
+export function ListData({ q, resource, onSelectionChange, rowSelection: controlledRowSelection, onRowSelectionChange, pageIndex: controlledPageIndex, onPageChange, selectedIds, isAllPagesSelected: controlledIsAllPagesSelected, onAllPagesSelectionChange, onTotalItemsChange, filter: controlledFilter, onFilterChange, keywordValue, onKeywordChange }: ListDataProps) {
   const fields = useMemo(() => deriveTableFields(resource), [resource]);
   const queryClient = useQueryClient();
   const idField = getIdField(resource);
@@ -127,13 +129,8 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const [internalRowSelection, setInternalRowSelection] = useState<RowSelectionState>({});
   const rowSelection = controlledRowSelection !== undefined ? controlledRowSelection : internalRowSelection;
   const setRowSelection = onRowSelectionChange || setInternalRowSelection;
-  // `filter` controlled (e.g. an external "clear filters" action) only when the
-  // parent passes the prop; `onFilterChange` alone (no `filter` prop) is a
-  // notify-only mode — ListData keeps driving its own query from internal
-  // state but also reports each change upward, which is how the interactions
-  // tab's shell observes the table's filter without owning it (the table must
-  // stay self-managing so it survives the tab-switch remount, see
-  // interactions-subview-shell.tsx's `keepMounted`).
+  // `filter` is controlled only when the parent passes it. `onFilterChange`
+  // alone is notify-only: ListData applies its filter locally and reports it.
   const [internalFilter, setInternalFilter] = useState('');
   const filter = controlledFilter !== undefined ? controlledFilter : internalFilter;
   const setFilter = useCallback((rql: string) => {
@@ -467,6 +464,8 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
         facetFields={facetFields}
         resource={resource}
         query={cleanQ}
+        keywordValue={keywordValue}
+        onKeywordChange={onKeywordChange}
         onFilterChange={(rql) => {
           setFilter(rql);
           setPageIndex(0);

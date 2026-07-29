@@ -6,7 +6,6 @@ import dynamic from "next/dynamic";
 import { useInteractions } from "@/lib/interactions/use-interactions";
 import { toGraph } from "@/lib/interactions/to-graph";
 import { defaultLayout } from "@/lib/interactions/renderer-capabilities";
-import { buildRql } from "@/components/filterbar/filter-utils";
 import type { GEdge, GNode, GraphCanvasHandle, GraphCanvasProps, GraphSelection, LayoutName } from "@/lib/interactions/types";
 
 import { GraphToolbar } from "./graph-toolbar";
@@ -24,35 +23,26 @@ const emptySelection: GraphSelection = { nodes: [], edges: [] };
 interface InteractionsGraphProps {
   taxonId: number;
   q: string;
-  /**
-   * The Table subtab's current filter (from FilterBar — facets + keyword),
-   * read-only. The graph reflects it but never writes back: Table must stay
-   * fully self-managing to survive the tab-switch remount (see
-   * InteractionsSubviewShell's `keepMounted`), so there is no shared mutable
-   * filter state to write into.
-   */
+  /** The Table subtab's current RQL filter, including the shared keyword. */
   tableFilter?: string;
+  keywordValue: string;
+  onKeywordChange: (value: string) => void;
 }
 
-export function InteractionsGraph({ taxonId, q, tableFilter }: InteractionsGraphProps) {
-  // Graph's own keyword box (below) is independent of the table's filter —
-  // legacy has no graph-side filter UI at all, so there's no existing
-  // contract to preserve here, just two keyword sources that both narrow the
-  // same fetch. Facet selection stays table-only (see graph-toolbar.tsx).
-  const [keywordText, setKeywordText] = useState("");
-  const graphKeyword = useMemo(
-    () => buildRql({ selected: [], keywords: keywordText.split(" ").filter(Boolean) }),
-    [keywordText],
-  );
-
-  // Combine base taxon query + table's filter + graph's own keyword, the same
-  // AND-join ListData.combinedQuery uses (list-data.tsx) for base+filter.
+export function InteractionsGraph({
+  taxonId,
+  q,
+  tableFilter,
+  keywordValue,
+  onKeywordChange,
+}: InteractionsGraphProps) {
+  // The table filter already includes the shared keyword and any table facets.
   const combinedQuery = useMemo(() => {
-    const parts = [q, tableFilter, graphKeyword].filter((p): p is string => Boolean(p) && p !== "false");
+    const parts = [q, tableFilter].filter((p): p is string => Boolean(p) && p !== "false");
     if (parts.length === 0) return "";
     if (parts.length === 1) return parts[0];
     return `and(${parts.join(",")})`;
-  }, [q, tableFilter, graphKeyword]);
+  }, [q, tableFilter]);
   const { data, isPending, isError, error } = useInteractions(taxonId, combinedQuery);
   const [layout, setLayout] = useState<LayoutName>(defaultLayout);
   const [selection, setSelection] = useState<GraphSelection>(emptySelection);
@@ -76,8 +66,8 @@ export function InteractionsGraph({ taxonId, q, tableFilter }: InteractionsGraph
       onLayoutChange={handleLayoutChange}
       onExport={() => { canvasHandleRef.current?.exportPng(); }}
       exportReady={canvasReady}
-      filterValue={keywordText}
-      onFilterChange={setKeywordText}
+      filterValue={keywordValue}
+      onFilterChange={onKeywordChange}
     />
   );
 

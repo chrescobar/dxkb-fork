@@ -15,24 +15,11 @@ interface InteractionsSubviewShellProps {
 
 export function InteractionsSubviewShell({ taxonId, q, guideUrl }: InteractionsSubviewShellProps) {
   const [subTab, setSubTab] = useState<"table" | "graph">("table");
-  // The Table subtab (TaxonDataPanel -> ListData -> FilterBar) must stay
-  // self-managing — FilterBar owns its own keywords/selected state and
-  // re-emits an empty RQL on every mount, so a filter value fed back down as
-  // a controlled prop gets stomped the instant the subtree remounts. Fixing
-  // that requires the subtree to never remount at all: `keepMounted` on the
-  // Table panel keeps its own state (filter, pagination, sorting, selection)
-  // alive across the switch, and this `tableFilter` is a read-only mirror the
-  // shell observes via onFilterChange, not a value it feeds back — just
-  // enough for the Graph subview to reflect the same active filter.
-  //
-  // Graph does NOT get keepMounted: base-ui mounts a keepMounted panel
-  // immediately regardless of which tab is active, which would fire the
-  // (potentially thousands-of-rows) PPI fetch on every page load even for
-  // users who never open Graph. Graph's own keyword box is a net-new feature
-  // with no prior persistence behavior to preserve, so resetting it on
-  // revisit is acceptable — unlike Table's filter, which is user-reported
-  // regression territory.
+  // Keep table-only state (facets, pagination, sorting, selection) mounted.
+  // Only keyword text is shared because both sibling views expose that input.
+  // Graph remains lazy-mounted to avoid fetching its full dataset until opened.
   const [tableFilter, setTableFilter] = useState("");
+  const [keywordText, setKeywordText] = useState("");
 
   return (
     <Tabs
@@ -45,10 +32,23 @@ export function InteractionsSubviewShell({ taxonId, q, guideUrl }: InteractionsS
         <TabsTrigger value="graph">Graph</TabsTrigger>
       </TabsList>
       <TabsContent value="table" keepMounted className="flex min-h-0 flex-1 flex-col">
-        <TaxonDataPanel resource="ppi" q={q} guideUrl={guideUrl} onFilterChange={setTableFilter} />
+        <TaxonDataPanel
+          resource="ppi"
+          q={q}
+          guideUrl={guideUrl}
+          onFilterChange={setTableFilter}
+          keywordValue={keywordText}
+          onKeywordChange={setKeywordText}
+        />
       </TabsContent>
       <TabsContent value="graph" className="flex min-h-0 flex-1 flex-col">
-        <InteractionsGraph taxonId={taxonId} q={q} tableFilter={tableFilter} />
+        <InteractionsGraph
+          taxonId={taxonId}
+          q={q}
+          tableFilter={tableFilter}
+          keywordValue={keywordText}
+          onKeywordChange={setKeywordText}
+        />
       </TabsContent>
     </Tabs>
   );

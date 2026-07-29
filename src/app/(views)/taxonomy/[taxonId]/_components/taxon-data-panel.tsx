@@ -11,17 +11,20 @@ interface TaxonDataPanelProps {
   resource: string;
   q: string;
   guideUrl?: string;
-  /**
-   * Notify-only: lets a caller observe this panel's filter without owning it.
-   * ListData stays uncontrolled here (no `filter` prop passed through) since
-   * the panel must keep driving its own query from internal FilterBar state —
-   * see interactions-subview-shell.tsx for why (that state has to survive a
-   * tab-switch remount, which a controlled prop can't do on its own).
-   */
+  /** Notify-only: lets a caller observe the complete RQL filter. */
   onFilterChange?: (rql: string) => void;
+  keywordValue?: string;
+  onKeywordChange?: (value: string) => void;
 }
 
-export function TaxonDataPanel({ resource, q, guideUrl, onFilterChange }: TaxonDataPanelProps) {
+export function TaxonDataPanel({
+  resource,
+  q,
+  guideUrl,
+  onFilterChange,
+  keywordValue,
+  onKeywordChange,
+}: TaxonDataPanelProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [pageIndex, setPageIndex] = useState(0);
@@ -75,6 +78,8 @@ export function TaxonDataPanel({ resource, q, guideUrl, onFilterChange }: TaxonD
         onAllPagesSelectionChange={setIsAllPagesSelected}
         onTotalItemsChange={setTotalItems}
         onFilterChange={onFilterChange}
+        keywordValue={keywordValue}
+        onKeywordChange={onKeywordChange}
       />
     </GenomeShell>
   );

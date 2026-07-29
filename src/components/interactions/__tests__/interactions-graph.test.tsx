@@ -13,47 +13,59 @@ vi.mock("@/lib/interactions/use-interactions", () => ({
 
 describe("InteractionsGraph filter combination", () => {
   it("combines the base query with the table's filter via and() (bug #1)", () => {
-    render(<InteractionsGraph taxonId={943} q="eq(evidence,experimental)" tableFilter="keyword(groEL*)" />);
+    render(<InteractionsGraph taxonId={943} q="eq(evidence,experimental)" tableFilter="keyword(groEL*)" keywordValue="groEL" onKeywordChange={vi.fn()} />);
 
     expect(useInteractions).toHaveBeenCalledWith(943, "and(eq(evidence,experimental),keyword(groEL*))");
   });
 
   it("uses the bare base query when the table has no active filter", () => {
-    render(<InteractionsGraph taxonId={943} q="eq(evidence,experimental)" tableFilter="" />);
+    render(<InteractionsGraph taxonId={943} q="eq(evidence,experimental)" tableFilter="" keywordValue="" onKeywordChange={vi.fn()} />);
 
     expect(useInteractions).toHaveBeenCalledWith(943, "eq(evidence,experimental)");
   });
 
   it("uses the bare base query when tableFilter is omitted entirely", () => {
-    render(<InteractionsGraph taxonId={943} q="eq(evidence,experimental)" />);
+    render(<InteractionsGraph taxonId={943} q="eq(evidence,experimental)" keywordValue="" onKeywordChange={vi.fn()} />);
 
     expect(useInteractions).toHaveBeenCalledWith(943, "eq(evidence,experimental)");
   });
 
-  it("combines the table's filter with the graph's own keyword box (both active)", () => {
-    render(<InteractionsGraph taxonId={943} q="eq(evidence,experimental)" tableFilter="keyword(groEL*)" />);
+  it("reports graph keyword edits to the shared owner without duplicating the current keyword query", () => {
+    const onKeywordChange = vi.fn();
+    render(
+      <InteractionsGraph
+        taxonId={943}
+        q="eq(evidence,experimental)"
+        tableFilter="keyword(groEL*)"
+        keywordValue="groEL"
+        onKeywordChange={onKeywordChange}
+      />,
+    );
 
     fireEvent.change(screen.getByPlaceholderText("Search keywords..."), { target: { value: "dnaK" } });
 
+    expect(onKeywordChange).toHaveBeenLastCalledWith("dnaK");
     expect(useInteractions).toHaveBeenLastCalledWith(
       943,
-      "and(eq(evidence,experimental),keyword(groEL*),keyword(dnaK*))",
+      "and(eq(evidence,experimental),keyword(groEL*))",
     );
   });
 
-  it("does not mutate or drop the table's filter when the graph's own keyword box changes", () => {
-    // Regression: an earlier design had the graph's keyword box write into the
-    // SAME shared filter the table reads from, via a required onFilterChange
-    // prop. That meant switching to Graph and typing a keyword silently wiped
-    // the table's facet selections when switching back — a surprising,
-    // unrequested side effect. InteractionsGraph now takes no onFilterChange
-    // prop at all; the type signature itself is the regression guard. This
-    // test asserts the table's filter fragment survives verbatim, appended
-    // to (not replaced by) the graph's own keyword.
-    render(<InteractionsGraph taxonId={943} q="" tableFilter="eq(category,PPI)" />);
+  it("preserves table facet filters while reporting graph keyword edits", () => {
+    const onKeywordChange = vi.fn();
+    render(
+      <InteractionsGraph
+        taxonId={943}
+        q=""
+        tableFilter="eq(category,PPI)"
+        keywordValue=""
+        onKeywordChange={onKeywordChange}
+      />,
+    );
 
     fireEvent.change(screen.getByPlaceholderText("Search keywords..."), { target: { value: "dnaK" } });
 
-    expect(useInteractions).toHaveBeenLastCalledWith(943, "and(eq(category,PPI),keyword(dnaK*))");
+    expect(onKeywordChange).toHaveBeenLastCalledWith("dnaK");
+    expect(useInteractions).toHaveBeenLastCalledWith(943, "eq(category,PPI)");
   });
 });

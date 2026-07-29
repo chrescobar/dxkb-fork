@@ -3,32 +3,51 @@ import { render, screen, fireEvent } from "@testing-library/react";
 
 import { InteractionsSubviewShell } from "../interactions-subview-shell";
 
-// Table must stay self-managing (own filter, own pagination/sorting) so it can
-// survive the Graph round-trip — the shell only *observes* its filter via
-// onFilterChange, it never feeds a `filter` prop back down. Asserting on
-// `data-filter` (like the previous version of this test did) only proves the
-// mock's re-render saw the right value; it would pass even if the real
-// TaxonDataPanel/ListData subtree were destroyed and recreated with blank
-// internal state on every switch — which is exactly the bug this fix
-// addresses (FilterBar owns its own keywords/selected state and re-emits ""
-// on mount). A mount counter proves the component instance itself survives.
+// Table keeps its table-only state mounted across the Graph round-trip. A mount
+// counter verifies the component instance survives while keyword text is shared
+// separately by the shell.
 let tableMountCount = 0;
 vi.mock("@/app/(views)/taxonomy/[taxonId]/_components/taxon-data-panel", () => ({
-  TaxonDataPanel: ({ onFilterChange }: { onFilterChange?: (rql: string) => void }) => {
+  TaxonDataPanel: ({
+    onFilterChange,
+    keywordValue,
+    onKeywordChange,
+  }: {
+    onFilterChange?: (rql: string) => void;
+    keywordValue?: string;
+    onKeywordChange?: (value: string) => void;
+  }) => {
     useEffect(() => {
       tableMountCount++;
     }, []);
     return (
-      <div data-testid="table-panel">
-        <button onClick={() => { onFilterChange?.("keyword(fromTable*)"); }}>set-from-table</button>
+      <div data-testid="table-panel" data-keyword={keywordValue}>
+        <button
+          onClick={() => {
+            onKeywordChange?.("fromTable");
+            onFilterChange?.("keyword(fromTable*)");
+          }}
+        >
+          set-from-table
+        </button>
       </div>
     );
   },
 }));
 
 vi.mock("../interactions-graph", () => ({
-  InteractionsGraph: ({ tableFilter }: { tableFilter?: string }) => (
-    <div data-testid="graph-panel" data-table-filter={tableFilter}>graph</div>
+  InteractionsGraph: ({
+    tableFilter,
+    keywordValue,
+    onKeywordChange,
+  }: {
+    tableFilter?: string;
+    keywordValue?: string;
+    onKeywordChange?: (value: string) => void;
+  }) => (
+    <div data-testid="graph-panel" data-table-filter={tableFilter} data-keyword={keywordValue}>
+      <button onClick={() => { onKeywordChange?.("fromGraph"); }}>set-from-graph</button>
+    </div>
   ),
 }));
 
@@ -64,5 +83,17 @@ describe("InteractionsSubviewShell", () => {
     fireEvent.click(screen.getByRole("tab", { name: "Graph" }));
 
     expect(screen.getByTestId("graph-panel")).toHaveAttribute("data-table-filter", "");
+  });
+
+  it("shares keyword text between Table and Graph in both directions", () => {
+    render(<InteractionsSubviewShell taxonId={943} q="eq(evidence,experimental)" />);
+
+    fireEvent.click(screen.getByText("set-from-table"));
+    fireEvent.click(screen.getByRole("tab", { name: "Graph" }));
+    expect(screen.getByTestId("graph-panel")).toHaveAttribute("data-keyword", "fromTable");
+
+    fireEvent.click(screen.getByText("set-from-graph"));
+    fireEvent.click(screen.getByRole("tab", { name: "Table" }));
+    expect(screen.getByTestId("table-panel")).toHaveAttribute("data-keyword", "fromGraph");
   });
 });

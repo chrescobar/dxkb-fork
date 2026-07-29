@@ -128,6 +128,7 @@ test.describe("taxon interactions tab: filter sync between Table and Graph", () 
     await interactionsPage.expectResultCount("Showing 1-1 of 1 results");
 
     await interactionsPage.switchToGraph();
+    await interactionsPage.expectGraphKeywordValue("peg.600");
     await interactionsPage.expectCanvasVisible();
 
     const graphPanel = page.getByRole("tabpanel", { name: "Graph" });
@@ -148,7 +149,7 @@ test.describe("taxon interactions tab: filter sync between Table and Graph", () 
     await interactionsPage.expectResultCount("Showing 1-1 of 1 results");
   });
 
-  test("filtering directly in the graph's own keyword box narrows the rendered nodes, independent of the table (bug #2)", async ({
+  test("editing the shared keyword in Graph updates Graph and Table results (bug #2)", async ({
     page,
     browserName,
   }) => {
@@ -168,10 +169,8 @@ test.describe("taxon interactions tab: filter sync between Table and Graph", () 
     await expect(graphPanel.getByText("fig|224914.16.peg.600")).toBeVisible();
     await expect(graphPanel.getByText("fig|224914.16.peg.601")).not.toBeVisible();
 
-    // The graph's own keyword box is independent — it must not have written
-    // into the table's filter (the table subtab wasn't touched in this test).
     await interactionsPage.switchToTable();
-    await interactionsPage.expectTableKeywordValue("");
-    await interactionsPage.expectResultCount("Showing 1-2 of 2 results");
+    await interactionsPage.expectTableKeywordValue("peg.600");
+    await interactionsPage.expectResultCount("Showing 1-1 of 1 results");
   });
 });

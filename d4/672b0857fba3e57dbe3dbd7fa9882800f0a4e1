@@ -1,0 +1,64 @@
+src/components/interactions/__tests__/graph-toolbar.test.tsx
+  s_43113ce6534017::t_ee93f8e375fdef 18-19
+  s_43113ce6534017::t_e4839c17a8c684 40-41,51,53-66,68-69
+  s_43113ce6534017::t_de8d0f85b5577e 52,67,70-84
+  s_43113ce6534017::t_835d43d1254fcc 85
+  s_43113ce6534017::t_90d4d74fc4c659 1
+src/components/services/list-data.tsx
+  s_43113ce6534017::t_8e6f6a394e5d46 130-136,139-142
+  s_43113ce6534017::t_ec64b99a1fe84e 106,117-118,121,137-138
+src/components/interactions/interactions-graph.tsx
+  s_43113ce6534017::t_db8328435ae2ee 27-34,37-49,52-55
+  s_43113ce6534017::t_d1f6c441b71dd5 51
+  s_43113ce6534017::t_ed0c8529a866a8 73-78,81-86,88-93,98-102,110-115,133
+  s_43113ce6534017::t_3ea3032831bf2e 79
+  s_43113ce6534017::t_046a01bd5bee41 9
+  s_43113ce6534017::t_b5a6f7db51cb3d 80
+  s_43113ce6534017::t_1f8b0e25f36e43 50,56
+e2e/pages/taxon-interactions-page.ts
+  s_43113ce6534017::t_e4cab3d21198f5 31-34,42-62
+  s_43113ce6534017::t_835d43d1254fcc 63
+src/app/(views)/taxonomy/[taxonId]/_components/taxon-data-panel.tsx
+  s_43113ce6534017::t_87718552a69f97 14-20,24
+  s_43113ce6534017::t_525e6a489ddbba 21
+  s_43113ce6534017::t_aac7625ddeadbb 77
+src/components/interactions/graph-toolbar.tsx
+  s_43113ce6534017::t_9357e6f29b4eea 14
+  s_43113ce6534017::t_975a03e41441f3 51
+  s_43113ce6534017::t_7a094dde8121ff 36-37,45-46
+src/components/interactions/__tests__/interactions-graph.test.tsx
+  s_43113ce6534017::t_85a94c8c624a6a 44,50-53,57
+  s_43113ce6534017::t_6bb49460c5dffe 2-14,17-20,23-26,28-30,58-59
+  s_43113ce6534017::t_410e6bada9c45d 1,15-16,21-22,27,31-43,45-49,54-56
+src/components/interactions/interactions-subview-shell.tsx
+  s_43113ce6534017::t_65b34d0efb507b 18-21,35,47-48,51
+  s_43113ce6534017::t_6f8911e5b7a635 22-34
+src/components/services/__tests__/list-data-integration.test.tsx
+  s_43113ce6534017::t_abba290b855beb 241-314,355
+  s_43113ce6534017::t_45a16a982b49b7 315-354
+e2e/tests/organisms/interactions.spec.ts
+  s_43113ce6534017::t_466d02970a8b54 56-70,77-121,125,139,151,157,170-175
+  s_43113ce6534017::t_57c19ab960ae35 52-55,71-76,122-124,126-132,136-138,140-150,152-156,158-161,165-167,176-177
+  s_43113ce6534017::t_9f9f3b89633445 133-135
+  s_43113ce6534017::t_41ee23476abe2f 1
+  s_43113ce6534017::t_d9522e6e4a70e9 162-164,168-169
+src/components/interactions/__tests__/interactions-subview-shell.test.tsx
+  s_43113ce6534017::t_74dec9cc299ad3 2-5,16,27-29,32-34,38,41,43-44,50-51,53-57,59-60,62-65,67-68
+  s_43113ce6534017::t_94b5141eea3031 1,6-15,17-26,30-31,35-37,39-40,42,45-49,52,58,61,66
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "d4672b0857fba3e57dbe3dbd7fa9882800f0a4e1",
+  "prompts": {},
+  "sessions": {
+    "s_43113ce6534017": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e891b350-c043-4a60-b354-3179cd5223c9",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

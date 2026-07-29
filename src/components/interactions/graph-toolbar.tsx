@@ -11,6 +11,7 @@ import {
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { Download } from "lucide-react";
 
+import { KeywordSearch } from "@/components/filterbar/keyword-search";
 import { allLayouts } from "@/lib/interactions/renderer-capabilities";
 import type { LayoutName } from "@/lib/interactions/types";
 
@@ -32,6 +33,8 @@ interface GraphToolbarProps {
   onLayoutChange: (layout: LayoutName) => void;
   onExport: () => void;
   exportReady: boolean;
+  filterValue: string;
+  onFilterChange: (value: string) => void;
 }
 
 export function GraphToolbar({
@@ -39,10 +42,13 @@ export function GraphToolbar({
   onLayoutChange,
   onExport,
   exportReady,
+  filterValue,
+  onFilterChange,
 }: GraphToolbarProps) {
   return (
     <TooltipProvider>
       <div className="flex flex-wrap items-center gap-2 p-2">
+        <KeywordSearch value={filterValue} onChange={onFilterChange} />
         <Tooltip>
           <TooltipTrigger
             render={

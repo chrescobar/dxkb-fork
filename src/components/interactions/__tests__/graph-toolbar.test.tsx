@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { GraphToolbar } from "../graph-toolbar";
@@ -15,6 +15,8 @@ describe("GraphToolbar", () => {
         onLayoutChange={vi.fn()}
         onExport={onExport}
         exportReady={false}
+        filterValue=""
+        onFilterChange={vi.fn()}
       />,
     );
 
@@ -35,6 +37,8 @@ describe("GraphToolbar", () => {
         onLayoutChange={vi.fn()}
         onExport={onExport}
         exportReady
+        filterValue=""
+        onFilterChange={vi.fn()}
       />,
     );
 
@@ -43,5 +47,40 @@ describe("GraphToolbar", () => {
 
     await user.click(exportButton);
     expect(onExport).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders the keyword search box and reports changes via onFilterChange", () => {
+    const onFilterChange = vi.fn();
+
+    render(
+      <GraphToolbar
+        layout={defaultLayout}
+        onLayoutChange={vi.fn()}
+        onExport={vi.fn()}
+        exportReady
+        filterValue=""
+        onFilterChange={onFilterChange}
+      />,
+    );
+
+    const keywordInput = screen.getByPlaceholderText("Search keywords...");
+    fireEvent.change(keywordInput, { target: { value: "groEL" } });
+
+    expect(onFilterChange).toHaveBeenLastCalledWith("groEL");
+  });
+
+  it("reflects the current filterValue back into the keyword input", () => {
+    render(
+      <GraphToolbar
+        layout={defaultLayout}
+        onLayoutChange={vi.fn()}
+        onExport={vi.fn()}
+        exportReady
+        filterValue="groEL"
+        onFilterChange={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByPlaceholderText("Search keywords...")).toHaveValue("groEL");
   });
 });

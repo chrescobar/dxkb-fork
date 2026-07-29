@@ -1,4 +1,4 @@
-import { test, applyBackendMocks } from "../../mocks/backends";
+import { test, expect, applyBackendMocks } from "../../mocks/backends";
 import { buildPpiRows, buildPpiOverrides, permissiveBackendOverrides } from "../../fixtures/overrides";
 import { TaxonInteractionsPage } from "../../pages";
 
@@ -47,5 +47,131 @@ test.describe("taxon interactions tab", () => {
 
     await interactionsPage.switchToGraph();
     await interactionsPage.expectEmptyGraphState();
+  });
+});
+
+// ─── Filter sync between Table and Graph subviews ────────────────────────────
+// Regression: filter state lived only inside ListData (src/components/services/
+// list-data.tsx), local to the Table subview. Switching to Graph never saw it
+// (bug #1). Root cause of bug #3 runs deeper than a missing prop: FilterBar
+// (src/components/filterbar/filter-bar.tsx) owns its own keywords/selected
+// state and unconditionally re-emits an empty RQL on mount, so even a filter
+// value fed back down as a controlled prop gets stomped the instant the
+// subtree remounts — and base-ui's Tabs.Panel unmounts inactive panels by
+// default (keepMounted: false), remounting Table's FilterBar on every
+// switch-back. Fix: `keepMounted` on the Table panel only (interactions-
+// subview-shell.tsx) so Table's own state survives untouched; the shell reads
+// Table's current filter read-only (onFilterChange, notify-only — see
+// list-data.tsx's third filter mode) and passes it into Graph as `tableFilter`,
+// which Graph combines with its own independent keyword box (bug #2) — see
+// interactions-graph.tsx and its unit tests for the query-combination
+// coverage. This spec exercises the real cross-tab DOM mount/unmount and
+// actual FilterBar remount behavior that jsdom unit tests (which mock
+// TaxonDataPanel/InteractionsGraph) can't faithfully reproduce.
+test.describe("taxon interactions tab: filter sync between Table and Graph", () => {
+  // Second row's interactor differs from the first (fig|224914.16.peg.600 vs .601) —
+  // filtering to "peg.600" narrows from all rows to exactly one, giving an
+  // observable row/node-count delta instead of an all-or-nothing assertion.
+  const rows = buildPpiRows(2);
+
+  // In E2E, NEXT_PUBLIC_DATA_API=http://127.0.0.1:${E2E_PORT}/api/e2e-mock/data,
+  // so all ppi fetches (table count/rows, graph rows) go through this loopback.
+  const ppiLoopback = /\/api\/e2e-mock\/data\/ppi\//;
+
+  // buildPpiOverrides (used by the describe block above) always returns the
+  // full row set regardless of query — it can't prove filtering actually
+  // narrows anything. This route inspects the request URL for a
+  // `keyword(<text>*)` clause (the shape buildRql produces — filter-utils.ts —
+  // for both the table's FilterBar and the graph's own keyword box) and
+  // serves only rows whose serialized fields contain that text, so the same
+  // mock validates bugs #1, #2, and #3 regardless of which UI element wrote
+  // the keyword. Mirrors the query-aware epitope-facet mock in
+  // taxon-list-data.spec.ts.
+  async function setupFilterableInteractionsPage(
+    page: Parameters<typeof applyBackendMocks>[0],
+  ): Promise<TaxonInteractionsPage> {
+    await applyBackendMocks(page, { overrides: [...permissiveBackendOverrides] });
+
+    await page.route(ppiLoopback, async (route) => {
+      if (route.request().method() !== "GET") return route.fallback();
+      const url = decodeURIComponent(route.request().url());
+      const keyword = /keyword\(([^*)]+)\*?\)/.exec(url)?.[1];
+      const matchingRows = keyword ? rows.filter((r) => JSON.stringify(r).includes(keyword)) : rows;
+
+      if (url.includes("limit(1)")) {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ response: { numFound: matchingRows.length } }),
+        });
+        return;
+      }
+
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(matchingRows),
+      });
+    });
+
+    const interactionsPage = new TaxonInteractionsPage(page);
+    await interactionsPage.goto(INTERACTIONS_TAXON_ID);
+    return interactionsPage;
+  }
+
+  test("filtering the table narrows the graph to the same subset (bug #1)", async ({ page, browserName }) => {
+    test.skip(browserName === "firefox", "Headless Firefox has no WebGL for Sigma.js to render into");
+
+    const interactionsPage = await setupFilterableInteractionsPage(page);
+
+    await interactionsPage.filterByKeyword("peg.600");
+    await interactionsPage.expectResultCount("Showing 1-1 of 1 results");
+
+    await interactionsPage.switchToGraph();
+    await interactionsPage.expectCanvasVisible();
+
+    const graphPanel = page.getByRole("tabpanel", { name: "Graph" });
+    await expect(graphPanel.getByText("fig|224914.16.peg.600")).toBeVisible();
+    await expect(graphPanel.getByText("fig|224914.16.peg.601")).not.toBeVisible();
+  });
+
+  test("switching Table to Graph and back keeps the table filter applied (bug #3)", async ({ page }) => {
+    const interactionsPage = await setupFilterableInteractionsPage(page);
+
+    await interactionsPage.filterByKeyword("peg.600");
+    await interactionsPage.expectResultCount("Showing 1-1 of 1 results");
+
+    await interactionsPage.switchToGraph();
+    await interactionsPage.switchToTable();
+
+    await interactionsPage.expectTableKeywordValue("peg.600");
+    await interactionsPage.expectResultCount("Showing 1-1 of 1 results");
+  });
+
+  test("filtering directly in the graph's own keyword box narrows the rendered nodes, independent of the table (bug #2)", async ({
+    page,
+    browserName,
+  }) => {
+    test.skip(browserName === "firefox", "Headless Firefox has no WebGL for Sigma.js to render into");
+
+    const interactionsPage = await setupFilterableInteractionsPage(page);
+
+    await interactionsPage.switchToGraph();
+    await interactionsPage.expectCanvasVisible();
+
+    const graphPanel = page.getByRole("tabpanel", { name: "Graph" });
+    await expect(graphPanel.getByText("fig|224914.16.peg.600")).toBeVisible();
+    await expect(graphPanel.getByText("fig|224914.16.peg.601")).toBeVisible();
+
+    await interactionsPage.filterGraphByKeyword("peg.600");
+
+    await expect(graphPanel.getByText("fig|224914.16.peg.600")).toBeVisible();
+    await expect(graphPanel.getByText("fig|224914.16.peg.601")).not.toBeVisible();
+
+    // The graph's own keyword box is independent — it must not have written
+    // into the table's filter (the table subtab wasn't touched in this test).
+    await interactionsPage.switchToTable();
+    await interactionsPage.expectTableKeywordValue("");
+    await interactionsPage.expectResultCount("Showing 1-2 of 2 results");
   });
 });

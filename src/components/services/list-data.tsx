@@ -103,7 +103,7 @@ export function isSameResourceQuery(
 }
 
 interface ListDataProps {
-  q: string; 
+  q: string;
   resource: string; // 'genome', 'gene', etc.
   onSelectionChange?: (ids: string[]) => void;
   rowSelection?: Record<string, boolean>;
@@ -114,9 +114,11 @@ interface ListDataProps {
   isAllPagesSelected?: boolean;
   onAllPagesSelectionChange?: (selected: boolean) => void;
   onTotalItemsChange?: (total: number) => void;
+  filter?: string;
+  onFilterChange?: (rql: string) => void;
 }
 
-export function ListData({ q, resource, onSelectionChange, rowSelection: controlledRowSelection, onRowSelectionChange, pageIndex: controlledPageIndex, onPageChange, selectedIds, isAllPagesSelected: controlledIsAllPagesSelected, onAllPagesSelectionChange, onTotalItemsChange }: ListDataProps) {
+export function ListData({ q, resource, onSelectionChange, rowSelection: controlledRowSelection, onRowSelectionChange, pageIndex: controlledPageIndex, onPageChange, selectedIds, isAllPagesSelected: controlledIsAllPagesSelected, onAllPagesSelectionChange, onTotalItemsChange, filter: controlledFilter, onFilterChange }: ListDataProps) {
   const fields = useMemo(() => deriveTableFields(resource), [resource]);
   const queryClient = useQueryClient();
   const idField = getIdField(resource);
@@ -125,7 +127,19 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const [internalRowSelection, setInternalRowSelection] = useState<RowSelectionState>({});
   const rowSelection = controlledRowSelection !== undefined ? controlledRowSelection : internalRowSelection;
   const setRowSelection = onRowSelectionChange || setInternalRowSelection;
-  const [filter, setFilter] = useState('');
+  // `filter` controlled (e.g. an external "clear filters" action) only when the
+  // parent passes the prop; `onFilterChange` alone (no `filter` prop) is a
+  // notify-only mode — ListData keeps driving its own query from internal
+  // state but also reports each change upward, which is how the interactions
+  // tab's shell observes the table's filter without owning it (the table must
+  // stay self-managing so it survives the tab-switch remount, see
+  // interactions-subview-shell.tsx's `keepMounted`).
+  const [internalFilter, setInternalFilter] = useState('');
+  const filter = controlledFilter !== undefined ? controlledFilter : internalFilter;
+  const setFilter = useCallback((rql: string) => {
+    if (controlledFilter === undefined) setInternalFilter(rql);
+    onFilterChange?.(rql);
+  }, [controlledFilter, onFilterChange]);
   const [internalIsAllPagesSelected, setInternalIsAllPagesSelected] = useState(false);
   const isAllPagesSelected = controlledIsAllPagesSelected !== undefined ? controlledIsAllPagesSelected : internalIsAllPagesSelected;
   const setIsAllPagesSelected = onAllPagesSelectionChange || setInternalIsAllPagesSelected;

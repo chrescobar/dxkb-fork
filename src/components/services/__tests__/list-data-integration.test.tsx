@@ -238,3 +238,118 @@ describe("ListData prefetch", () => {
     expect(capturedRanges).toHaveLength(0);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Controlled filter
+// ---------------------------------------------------------------------------
+// The interactions tab needs table and graph subviews to share one filter, so
+// ListData must support a controlled `filter`/`onFilterChange` pair (mirroring
+// the existing controlled rowSelection/pageIndex pattern) instead of always
+// owning `filter` as internal-only state.
+describe("ListData controlled filter", () => {
+  it("uses the controlled filter prop to build the fetch query instead of empty internal state", async () => {
+    const capturedDataUrls: string[] = [];
+
+    server.use(
+      http.get(`${dataApi}/genome_sequence/`, ({ request }) => {
+        if (request.url.includes("limit(1)")) {
+          return HttpResponse.json({ response: { numFound: 5 } });
+        }
+        capturedDataUrls.push(request.url);
+        return HttpResponse.json([]);
+      }),
+    );
+
+    const { Wrapper } = makeWrapper();
+    render(
+      <Wrapper>
+        <ListData
+          resource="genome_sequence"
+          q="eq(genome_id,*)"
+          filter="eq(foo,bar)"
+          onFilterChange={vi.fn()}
+        />
+      </Wrapper>
+    );
+
+    await waitFor(() => { expect(capturedDataUrls.length).toBeGreaterThan(0); });
+
+    expect(capturedDataUrls[0]).toContain("eq(foo,bar)");
+  });
+
+  it("calls onFilterChange instead of applying the new filter itself when controlled", async () => {
+    const capturedDataUrls: string[] = [];
+
+    server.use(
+      http.get(`${dataApi}/genome_sequence/`, ({ request }) => {
+        if (request.url.includes("limit(1)")) {
+          return HttpResponse.json({ response: { numFound: 0 } });
+        }
+        capturedDataUrls.push(request.url);
+        return HttpResponse.json([]);
+      }),
+    );
+
+    const onFilterChange = vi.fn();
+    const { Wrapper } = makeWrapper();
+    render(
+      <Wrapper>
+        <ListData
+          resource="genome_sequence"
+          q="eq(genome_id,*)"
+          filter=""
+          onFilterChange={onFilterChange}
+        />
+      </Wrapper>
+    );
+
+    const input = screen.getByPlaceholderText("Search keywords...");
+    fireEvent.change(input, { target: { value: "abc" } });
+
+    await waitFor(() => { expect(onFilterChange).toHaveBeenCalledWith("keyword(abc*)"); });
+
+    // Controlled: the prop is still "" (parent chose not to feed it back), so
+    // ListData must not have silently applied the typed keyword itself.
+    expect(capturedDataUrls.every((url) => !url.includes("abc"))).toBe(true);
+  });
+
+  // The interactions tab's Table subtab needs to stay fully self-managing
+  // (own filter, own pagination — required for it to survive tab-switch
+  // remounts, see interactions-subview-shell.tsx's `keepMounted`) while still
+  // letting the shell observe its current filter to pass read-only into the
+  // Graph subtab. That needs a THIRD mode beyond controlled/uncontrolled:
+  // onFilterChange provided but `filter` left undefined — internal state
+  // still drives ListData's own query, and the parent is notified too.
+  it("updates its own query AND notifies onFilterChange when filter is left uncontrolled", async () => {
+    const capturedDataUrls: string[] = [];
+
+    server.use(
+      http.get(`${dataApi}/genome_sequence/`, ({ request }) => {
+        if (request.url.includes("limit(1)")) {
+          return HttpResponse.json({ response: { numFound: 5 } });
+        }
+        capturedDataUrls.push(request.url);
+        return HttpResponse.json([]);
+      }),
+    );
+
+    const onFilterChange = vi.fn();
+    const { Wrapper } = makeWrapper();
+    render(
+      <Wrapper>
+        <ListData resource="genome_sequence" q="eq(genome_id,*)" onFilterChange={onFilterChange} />
+      </Wrapper>
+    );
+
+    const input = screen.getByPlaceholderText("Search keywords...");
+    fireEvent.change(input, { target: { value: "abc" } });
+
+    await waitFor(() => { expect(onFilterChange).toHaveBeenCalledWith("keyword(abc*)"); });
+
+    // No `filter` prop fed back (unlike the controlled test above): ListData
+    // must apply the typed keyword to its own query anyway.
+    await waitFor(() => {
+      expect(capturedDataUrls.some((url) => url.includes("abc"))).toBe(true);
+    });
+  });
+});

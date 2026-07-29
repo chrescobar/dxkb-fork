@@ -51,17 +51,26 @@ export function ArchaeopteryxPhylogeny({
         showConfidenceValues: true,
         showNodeName: true,
         showTaxonomyScientificName: true,
+        showNodeVisualizations: true,
+        // ponytail: matches legacy OutbreaksPhylogenyTreeViewer.js viral defaults;
+        // archaeopteryx no-ops if the tree lacks these properties.
+        ...(!selectable && {
+          initialLabelColorVisualization: "Year",
+          initialNodeFillColorVisualization: "Host",
+        }),
       }, {
         allowManualNodeSelection: selectable,
         controls0: `${id}-controls-primary`,
         controls1: `${id}-controls-secondary`,
+        dynamicallyAddNodeVisualizations: true,
         enableAccessToDatabases: false,
         enableDownloads: false,
         enableDynamicSizing: true,
+        enableNodeVisualizations: true,
         enableSubtreeDeletion: false,
         showBranchColorsButton: false,
         zoomToFitUponWindowResize: true,
-      });
+      }, {});
 
       setStatus(null);
     };

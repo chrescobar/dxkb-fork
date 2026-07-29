@@ -6,7 +6,7 @@ describe("loadArchaeopteryx", () => {
     const jquery = (window as Window & { jQuery?: { widget?: unknown } }).jQuery;
 
     expect(jquery?.widget).toBeTypeOf("function");
-    expect(archaeopteryx.parsePhyloXML).toBeTypeOf("function");
-    expect(archaeopteryx.launch).toBeTypeOf("function");
+    expect(typeof archaeopteryx.parsePhyloXML).toBe("function");
+    expect(typeof archaeopteryx.launch).toBe("function");
   });
 });

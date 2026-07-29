@@ -23,6 +23,7 @@ interface ArchaeopteryxApi {
     tree: ArchaeopteryxNode,
     options: Record<string, unknown>,
     settings: Record<string, unknown>,
+    nodeVisualizations: Record<string, unknown>,
   ): void;
   getSelectedNodes(): ArchaeopteryxNode[];
   destroy(): void;

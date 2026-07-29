@@ -1,0 +1,52 @@
+src/components/interactions/__tests__/interactions-subview-shell.test.tsx
+  s_8711012c0f521e::t_4aba8f42f2ff85 11-19,24-32,39-50
+  s_8711012c0f521e::t_024f3ccda948cb 87-98
+  s_8711012c0f521e::t_0f3d133291a5b1 6-8
+src/components/filterbar/filter-bar.tsx
+  s_8711012c0f521e::t_18bfe113c3a2e1 35-40
+  s_8711012c0f521e::t_b44a2b795e231d 22-24,26-34,41-44
+src/components/services/list-data.tsx
+  s_8711012c0f521e::t_18d89555cd6fe7 119-120,123
+  s_8711012c0f521e::t_7b24b904214e81 467-468
+  s_8711012c0f521e::t_be481a401fc5bc 132-133
+e2e/tests/organisms/interactions.spec.ts
+  s_8711012c0f521e::t_9737532586fb45 131
+  s_8711012c0f521e::t_6d6d569adf6457 152
+  s_8711012c0f521e::t_f20565b0f338a4 173-174
+src/app/(views)/taxonomy/[taxonId]/_components/taxon-data-panel.tsx
+  s_8711012c0f521e::t_1bf3726fe70201 16-17,20-27
+  s_8711012c0f521e::t_655ff671999c6d 81-82
+  s_8711012c0f521e::t_3505c82e8d5bf2 14
+src/components/interactions/interactions-graph.tsx
+  s_8711012c0f521e::t_06540a440d7aeb 69-70
+  s_8711012c0f521e::t_2a8dce615e4c7c 45
+  s_8711012c0f521e::t_ac8d91a435e0e4 28-29,32-39,41
+  s_8711012c0f521e::t_9ba040ecabff1d 26
+src/components/interactions/__tests__/interactions-graph.test.tsx
+  s_8711012c0f521e::t_e173815c3c91fc 33-43,47,50,54-64,68-69
+  s_8711012c0f521e::t_acf4248883a1a0 28
+  s_8711012c0f521e::t_0e6ca90ac39f58 22
+  s_8711012c0f521e::t_df30b3253c2478 16
+src/components/interactions/interactions-subview-shell.tsx
+  s_8711012c0f521e::t_ec7f9cf2406c72 18-20
+  s_8711012c0f521e::t_67cf22f6cc7c2a 22
+  s_8711012c0f521e::t_5ad1c0dc21a36d 35-42,45-51
+e2e/pages/taxon-interactions-page.ts
+  s_8711012c0f521e::t_8bc5306a244ed5 64-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "7e02f02d95f018158b9c0f7816f26d1b3c47d55c",
+  "prompts": {},
+  "sessions": {
+    "s_8711012c0f521e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_050986355ffecVz21dwI66Aax2",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

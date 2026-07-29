@@ -1,0 +1,150 @@
+src/lib/phylogeny/archaeopteryx.ts
+  s_11c92d89763645::t_ae79c68d35a4a3 63-64
+  s_11c92d89763645::t_65083ea7cbd2fc 1-27,29-60,62,65
+  s_11c92d89763645::t_7d83586b712323 61
+  s_11c92d89763645::t_1ff3599a41e0e1 28
+src/components/phylogeny/archaeopteryx-loading.tsx
+  s_11c92d89763645::t_c093758d5be267 1-10
+src/lib/services/organisms/phylogeny.ts
+  s_9c42aa38165137::t_09039809d943e7 1-78,80-86,88-103,106,108-112,114-128
+  s_9c42aa38165137::t_22c26d9a72fe7d 104-105,107
+  s_9c42aa38165137::t_60f4bb4a3fa09e 113
+  s_9c42aa38165137::t_8acdc32338fa34 79
+  s_9c42aa38165137::t_3cb865fc0609db 87
+src/components/phylogeny/bacterial-phylogeny-panel.tsx
+  s_d4d0d138f47047::t_ccda1dbb120fc4 72-75,77
+  s_11c92d89763645::t_edbb3f17d623a4 9,11
+  s_d4d0d138f47047::t_c92c76e4ddcb0a 17
+  s_9c42aa38165137::t_ec7180970d06e1 1-8,10,12-15,18-46,50,52-53,58-70,78-80
+  s_11c92d89763645::t_009e6b3608ccf0 54-55
+  s_11c92d89763645::t_7ae35af23d39e4 16
+  s_11c92d89763645::t_05c3f66c422061 71,76
+  s_11c92d89763645::t_cb8b07816757e9 47-49,51,56-57
+src/types/archaeopteryx.d.ts
+  s_11c92d89763645::t_d3b33d0b8db14e 1-22
+  s_11c92d89763645::t_f2e35a9650ff5b 23
+.example.env
+  s_9c42aa38165137::t_365a07d4d8f88a 23
+src/components/phylogeny/archaeopteryx-phylogeny.tsx
+  s_11c92d89763645::t_0952d7e8defc13 106
+  s_11c92d89763645::t_70b7bb886460b8 38,41-42,44-64
+  s_11c92d89763645::t_3d1ece75df4294 66
+  s_11c92d89763645::t_0437ce0e53f057 1-26,28-37,39-40,43,65,67-68,73-75,81-84,86-88,90-93,95-101,103-105,107-114
+  s_11c92d89763645::t_024c577096a4af 89
+  s_11c92d89763645::t_165c6e79c35a9a 69-72
+  s_11c92d89763645::t_81cb3213e34daf 76-80
+  s_11c92d89763645::t_3c364d885272b2 102
+  s_11c92d89763645::t_7f7f27fbfb6a42 27
+  s_11c92d89763645::t_b1409791180537 85
+  s_11c92d89763645::t_238052418a2ec8 94
+src/styles/archaeopteryx-theme.css
+  s_11c92d89763645::t_544f83103d29c5 1-44
+patches/archaeopteryx@2.3.2.patch
+  s_11c92d89763645::t_aa3cc74dcf2ee0 1-59
+pnpm-workspace.yaml
+  s_11c92d89763645::t_1028af4304fa05 13-14
+  s_d4d0d138f47047::t_0241805f9f9a8a 7
+  s_11c92d89763645::t_c3c87aecfcb3e3 18
+  s_11c92d89763645::t_aa3cc74dcf2ee0 16
+src/lib/phylogeny/__tests__/viral-facets.test.ts
+  s_9c42aa38165137::t_37a1a13e8602e9 18
+  s_9c42aa38165137::t_5b3578e3696c74 1-17,19-37
+src/app/(views)/taxonomy/[taxonId]/_components/nav-items.tsx
+  s_9c42aa38165137::t_85de57d9229d12 13
+  s_9c42aa38165137::t_f324ab76554ad9 48
+src/lib/taxon-view/__tests__/phylo-manifest.test.ts
+  s_d4d0d138f47047::t_e958ce278e94f6 15-24
+  s_9c42aa38165137::t_048d4476550386 27,31,38-47
+  s_d4d0d138f47047::t_8af3ec62dc7352 7
+  s_9c42aa38165137::t_c05cea25c1e3e5 48-49
+src/components/phylogeny/use-phylogeny-data.ts
+  s_9c42aa38165137::t_48021f8ace1875 30-33
+  s_9c42aa38165137::t_473cf47923b4bd 1-29,34-37
+src/lib/taxon-view/phylo-manifest.ts
+  s_d4d0d138f47047::t_e9a963998cba5c 28-29
+  s_d4d0d138f47047::t_aaa1564ca53bdc 10
+  s_9c42aa38165137::t_bb965c4fa27eb8 12-16,20-22
+  s_d4d0d138f47047::t_3fef22532ebde9 32
+package.json
+  s_11c92d89763645::t_1028af4304fa05 72
+  s_11c92d89763645::t_398c716fa2a081 80,84-85,92
+  s_11c92d89763645::t_953d7b21231ae6 86
+patches/phyloxml@1.0.0.patch
+  s_11c92d89763645::t_c3c87aecfcb3e3 1-13
+src/app/layout.tsx
+  s_11c92d89763645::t_a9fd283c9f21df 1-9
+  s_11c92d89763645::t_381d658415e6f3 10
+src/components/phylogeny/viral-phylogeny-panel.tsx
+  s_9c42aa38165137::t_d83893d89a7ca6 1-11,13-37,39-50,52-55
+  s_11c92d89763645::t_9d58a442c57a8e 12
+  s_11c92d89763645::t_0aa895d7ffedc0 51
+  s_9c42aa38165137::t_37a1a13e8602e9 38
+src/lib/services/organisms/__tests__/phylogeny.test.ts
+  s_9c42aa38165137::t_48f668874ef872 1-48
+src/app/(views)/taxonomy/[taxonId]/__tests__/nav-items.test.tsx
+  s_9c42aa38165137::t_a9273bd4aa2f9e 59
+  s_9c42aa38165137::t_47bfde949cc45d 49
+src/app/(views)/taxonomy/[taxonId]/views/phylogeny.tsx
+  s_9c42aa38165137::t_1aef78fee97683 1-15
+docs/phylogeny-tab-react-port.md
+  s_d4d0d138f47047::t_4e9ed771ade717 4
+  s_11c92d89763645::t_189c93da61d513 6-11
+  s_d4d0d138f47047::t_0c4397f8000d30 1-3
+  s_11c92d89763645::t_c0f5dc61fecc75 12-14
+src/lib/phylogeny/viral-facets.ts
+  s_9c42aa38165137::t_a175b263d3dba9 1-85
+src/components/phylogeny/viral-tree-picker.tsx
+  s_9c42aa38165137::t_37a1a13e8602e9 38,149
+  s_9d0ae329ba35bd::t_73b647dcd7d367 147
+  s_9c42aa38165137::t_304d3ff239e5fb 68-72
+  s_9c42aa38165137::t_97d387305ce47d 128
+  s_9c42aa38165137::t_cc988846ab763c 118-120
+  s_9c42aa38165137::t_cb91df5103bdfd 56-58
+  s_9c42aa38165137::t_5d2309bcebe640 3
+  s_9c42aa38165137::t_5fda158e4cf8d8 1-2,4-37,39-55,59-67,73-117,121-127,129-146,150-164
+  s_9c42aa38165137::t_a1ccba6490a1ee 148
+src/lib/phylogeny/__tests__/archaeopteryx.test.ts
+  s_11c92d89763645::t_23fd902ff2059c 1-12
+pnpm-lock.yaml
+  s_11c92d89763645::t_c6461656bb9b6f 8,10,127-129,151-153,163-171,187-189,3025-3032,3037-3039,3045-3049,3074-3076,3095-3097,3126-3132,3154-3159,3207-3209,3339-3348,3474-3476,3528-3533,3600-3602,3606-3609,3736-3738,3845-3849,3964-3968,3977-3980,4016-4019,4061-4064,4097-4103,4184-4186,4221-4229,4286-4289,4294-4297,4478-4480,4499-4501,4529-4538,4549-4551,4561-4563,4578-4580,4584-4586,4596-4599,4618-4621,5158-5163,5211-5214,5245-5247,5279-5284,5338-5341,5424-5426,5435-5438,5646-5650,5689-5692,5741-5745,5840-5843,5847-5851,5858-5860,6034-6037,6042-6044,6072-6081,6220-6224,6235-6238,6358-6360,6373-6375,6425-6427,6435-6439,9146-9149,9155-9158,9163-9164,9188-9199,9217-9218,9281-9286,9305-9308,9361-9364,9473-9483,9601-9602,9658-9663,9720-9721,9724-9727,9848-9852,10040-10048,10256-10257,10266-10267,10321-10322,10361-10362,10396-10403,10485-10488,10514-10520,10596-10601,10609-10612,10780-10781,10797-10798,10835-10840,10849-10850,10877-10896,10905-10906,10909-10910,10917-10923,10943-10947,11639-11642,11697-11705,11753-11754,11775-11780,11833-11834,11864-11867,11875-11876,12134-12156,12189-12190,12267-12268,12418-12420,12423-12434,12439-12440,12621-12625,12630-12631,12659-12668,12850-12851,12863-12868,12967-12968,12981-12985,13048-13049,13054-13055
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "f7e59d726dab9a4bfad859368fff44bf97826440",
+  "prompts": {},
+  "sessions": {
+    "s_11c92d89763645": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_051b3bcc8ffeH4ggHoPhLJqnAe",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_9c42aa38165137": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_056f5f15bffehxVebPWUtZHUwd",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_9d0ae329ba35bd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ee41e84c-bfef-4849-a391-dd791ddb6d46",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_d4d0d138f47047": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_056c3f46bffetJoU2pNio5lkMb",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

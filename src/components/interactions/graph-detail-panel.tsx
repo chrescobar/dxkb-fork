@@ -29,20 +29,20 @@ export function GraphDetailPanel({ selection, incidentEdges, nodesById, onSelect
       {selection.nodes.map((node) => (
         <div key={node.id} className="flex flex-col gap-2">
           <dl className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-1">
-            <dt className="font-medium text-muted-foreground">BRC ID</dt>
-            <dd className="break-all">{node.id}</dd>
-            <dt className="font-medium text-muted-foreground">Genome</dt>
-            <dd className="break-all">{node.genome || "—"}</dd>
-            <dt className="font-medium text-muted-foreground">Locus tag</dt>
-            <dd className="break-all">{node.refseqLocusTag || "—"}</dd>
-            <dt className="font-medium text-muted-foreground">Gene</dt>
-            <dd className="break-all">{node.gene || "—"}</dd>
-            <dt className="font-medium text-muted-foreground">Product</dt>
-            <dd className="break-all">{node.interactorDesc || "—"}</dd>
+            <dt className="font-medium text-foreground">BRC ID</dt>
+            <dd className="break-all text-muted-foreground">{node.id}</dd>
+            <dt className="font-medium text-foreground">Genome</dt>
+            <dd className="break-all text-muted-foreground">{node.genome || "—"}</dd>
+            <dt className="font-medium text-foreground">Locus tag</dt>
+            <dd className="break-all text-muted-foreground">{node.refseqLocusTag || "—"}</dd>
+            <dt className="font-medium text-foreground">Gene</dt>
+            <dd className="break-all text-muted-foreground">{node.gene || "—"}</dd>
+            <dt className="font-medium text-foreground">Product</dt>
+            <dd className="break-all text-muted-foreground">{node.interactorDesc || "—"}</dd>
           </dl>
           {incidentEdges.length > 0 && (
             <div className="flex flex-col gap-1">
-              <p className="font-medium text-muted-foreground">
+              <p className="font-medium text-foreground">
                 Interactions ({incidentEdges.length})
               </p>
               <ul className="flex flex-col gap-0.5">
@@ -53,7 +53,7 @@ export function GraphDetailPanel({ selection, incidentEdges, nodesById, onSelect
                       <button
                         type="button"
                         onClick={() => { onSelectEdge(edge); }}
-                        className="w-full rounded px-2 py-1 text-left break-all hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
+                        className="w-full rounded px-2 py-1 text-left break-all text-muted-foreground hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
                       >
                         {endpointLabel(nodesById, otherId)}
                         {edge.interactionType ? ` · ${edge.interactionType}` : ""}
@@ -67,18 +67,21 @@ export function GraphDetailPanel({ selection, incidentEdges, nodesById, onSelect
         </div>
       ))}
       {selection.edges.map((edge) => (
-        <dl key={edge.id} className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-1">
-          <dt className="font-medium text-muted-foreground">From</dt>
-          <dd className="break-all">{endpointLabel(nodesById, edge.source)}</dd>
-          <dt className="font-medium text-muted-foreground">To</dt>
-          <dd className="break-all">{endpointLabel(nodesById, edge.target)}</dd>
-          <dt className="font-medium text-muted-foreground">Interaction type</dt>
-          <dd className="break-all">{edge.interactionType || "—"}</dd>
-          <dt className="font-medium text-muted-foreground">Detection method</dt>
-          <dd className="break-all">{edge.detectionMethod || "—"}</dd>
-          <dt className="font-medium text-muted-foreground">Evidence</dt>
-          <dd className="break-all">{edge.evidence || "—"}</dd>
-        </dl>
+        <div key={edge.id} className="flex flex-col gap-2">
+          <p className="font-medium text-foreground">Interaction</p>
+          <dl className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-1">
+            <dt className="font-medium text-foreground">From</dt>
+            <dd className="break-all text-muted-foreground">{endpointLabel(nodesById, edge.source)}</dd>
+            <dt className="font-medium text-foreground">To</dt>
+            <dd className="break-all text-muted-foreground">{endpointLabel(nodesById, edge.target)}</dd>
+            <dt className="font-medium text-foreground">Interaction type</dt>
+            <dd className="break-all text-muted-foreground">{edge.interactionType || "—"}</dd>
+            <dt className="font-medium text-foreground">Detection method</dt>
+            <dd className="break-all text-muted-foreground">{edge.detectionMethod || "—"}</dd>
+            <dt className="font-medium text-foreground">Evidence</dt>
+            <dd className="break-all text-muted-foreground">{edge.evidence || "—"}</dd>
+          </dl>
+        </div>
       ))}
     </div>
   );

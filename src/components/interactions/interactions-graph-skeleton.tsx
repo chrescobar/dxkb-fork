@@ -26,7 +26,7 @@ const rowWidths = ["w-20", "w-16", "w-24", "w-14", "w-20", "w-28", "w-16", "w-24
 export function InteractionsGraphSkeleton({ layout, onLayoutChange }: InteractionsGraphSkeletonProps) {
   return (
     <div className="flex min-h-0 flex-1">
-      <div className="flex w-60 shrink-0 flex-col rounded-tl-md border-x border-t">
+      <div className="flex w-60 shrink-0 flex-col rounded-tl-md border-x border-t bg-card">
         <div className="border-b p-2">
           <GraphLegend />
         </div>
@@ -50,7 +50,7 @@ export function InteractionsGraphSkeleton({ layout, onLayoutChange }: Interactio
           Loading interactions…
         </div>
       </div>
-      <div className="w-64 shrink-0 border-t border-l">
+      <div className="w-64 shrink-0 border-t border-l bg-card">
         <p className="p-3 text-sm text-muted-foreground">Select a node or edge to see details.</p>
       </div>
     </div>

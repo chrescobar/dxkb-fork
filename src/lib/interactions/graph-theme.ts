@@ -4,7 +4,10 @@ export const colors = {
   selected: "#FFAB00",
   edge: "#555555",
   edgeExperimental: "#3F51B5",
-  edgeSelected: "#BBBB55",
+  // Bright opaque magenta so a selected edge pops off the ~4,400 translucent
+  // blue/grey threads. Paired with zIndex:1 + a larger size in the reducer so it
+  // draws on top and reads as a single bold line, not another mesh strand.
+  edgeSelected: "#FF1493",
 } as const;
 
 // Alpha applied to graph edges so ~4,400 overlapping threads accumulate into a
@@ -29,6 +32,12 @@ function premultiply(hex: string, alpha: number): string {
 export const renderEdge = premultiply(colors.edge, edgeAlpha);
 export const renderEdgeExperimental = premultiply(colors.edgeExperimental, edgeAlpha);
 
+// Hover highlight: translucent pink so a hovered edge reads as pink-tinted yet
+// stays distinct from the opaque selected edge. Premultiplied for the same
+// reason as the mesh edges (see premultiply) — a straight-alpha pink washes out
+// under Sigma's premultiplied blend. 0x99 = 153/255 ≈ 60%.
+export const renderEdgeHover = premultiply(colors.edgeSelected, 0x99);
+
 type SelectedKind = "node" | "edge" | null;
 
 // Sigma reducers that recolor the selected node/edge and raise its zIndex so it
@@ -44,7 +53,19 @@ export function nodeHighlightReducer<T extends object>(selectedId: string | null
       : data;
 }
 
-export function edgeHighlightReducer<T extends object>(selectedId: string | null, selectedKind: SelectedKind) {
-  return (edge: string, data: T): T =>
-    selectedKind === "edge" && edge === selectedId ? { ...data, color: colors.edgeSelected, zIndex: 1 } : data;
+export function edgeHighlightReducer<T extends object>(
+  selectedId: string | null,
+  selectedKind: SelectedKind,
+  hoveredId: string | null = null,
+) {
+  return (edge: string, data: T): T => {
+    if (selectedKind === "edge" && edge === selectedId) {
+      return { ...data, color: colors.edgeSelected, size: 2, zIndex: 1 };
+    }
+    // Hover loses to selection: don't re-tint the already-highlighted edge.
+    if (hoveredId && edge === hoveredId) {
+      return { ...data, color: renderEdgeHover, size: 2, zIndex: 1 };
+    }
+    return data;
+  };
 }

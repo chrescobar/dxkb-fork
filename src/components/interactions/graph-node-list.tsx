@@ -56,7 +56,7 @@ export function GraphNodeList({ nodes, selectedId, onSelectNode }: GraphNodeList
               // the app selection (`aria-current`, driven equally by canvas
               // clicks and this list) be the single amber highlight — forced to
               // win when a row is both cmdk-focused and app-selected.
-              className="gap-2 aria-[current=true]:bg-secondary/25! aria-[current=true]:font-medium data-[selected=true]:bg-transparent"
+              className="gap-2 hover:bg-secondary/15 aria-[current=true]:bg-secondary/25! aria-[current=true]:font-medium data-[selected=true]:bg-transparent"
             >
               <span
                 aria-hidden

@@ -107,6 +107,20 @@ describe("GraphNodeList", () => {
     expect(dotOf(hostRow).style.backgroundColor).toBe(rgb(colors.host));
   });
 
+  it("gives every row a hover highlight distinct from the selected row's", () => {
+    render(<GraphNodeList nodes={nodes} selectedId="fig|1.1" onSelectNode={vi.fn()} />);
+
+    const selectedRow = screen.getByText("dnaA").closest("[cmdk-item]") as HTMLElement;
+    const otherRow = screen.getByText("recA").closest("[cmdk-item]") as HTMLElement;
+
+    // Hover tint lives on every row (cmdk's pointer-selection is disabled, so the
+    // built-in data-[selected] hover never fires — this explicit class is the
+    // only hover feedback).
+    expect(otherRow).toHaveClass("hover:bg-secondary/15");
+    // Selected row keeps its stronger, forced highlight so hover can't override it.
+    expect(selectedRow).toHaveClass("aria-[current=true]:bg-secondary/25!");
+  });
+
   it("scrolls the newly selected row into view (graph→list sync)", () => {
     const scrollSpy = vi.fn();
     Element.prototype.scrollIntoView = scrollSpy;

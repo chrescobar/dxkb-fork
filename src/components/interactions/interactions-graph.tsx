@@ -120,7 +120,7 @@ export function InteractionsGraph({
     <div className="flex h-full min-h-0 flex-col">
       {toolbar}
       <div className="flex min-h-0 flex-1">
-        <div className="flex w-60 shrink-0 flex-col rounded-tl-md border-x border-t">
+        <div className="flex w-60 shrink-0 flex-col rounded-tl-md border-x border-t bg-card">
           <div className="border-b p-2">
             <GraphLegend />
           </div>
@@ -155,7 +155,7 @@ export function InteractionsGraph({
             />
           </div>
         </div>
-        <div className="w-64 shrink-0 overflow-y-auto border-t border-l" tabIndex={0} aria-label="Selection details">
+        <div className="w-64 shrink-0 overflow-y-auto border-t border-l bg-card" tabIndex={0} aria-label="Selection details">
           <GraphDetailPanel
             selection={selection}
             incidentEdges={incidentEdges}

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -47,7 +48,7 @@ export function GraphActionBar({
 }: GraphActionBarProps) {
   return (
     <TooltipProvider>
-      <div className="flex flex-wrap items-center gap-2 border-b bg-muted/40 px-2 py-1.5">
+      <div className="flex flex-wrap items-center gap-2 border-b bg-card px-2 py-1.5">
         <Tooltip>
           <TooltipTrigger
             render={
@@ -96,16 +97,18 @@ export function GraphActionBar({
           </TooltipContent>
         </Tooltip>
 
-        <Select value={layout} onValueChange={(value) => { onLayoutChange(value as LayoutName); }}>
-          <SelectTrigger aria-label="Layout" className="w-40">
+        <Select items={layoutLabels} value={layout} onValueChange={(value) => { onLayoutChange(value as LayoutName); }}>
+          <SelectTrigger aria-label="Layout" className="w-40 bg-background">
             <SelectValue placeholder="Layout" />
           </SelectTrigger>
           <SelectContent>
-            {allLayouts.map((name) => (
-              <SelectItem key={name} value={name}>
-                {layoutLabels[name]}
-              </SelectItem>
-            ))}
+            <SelectGroup>
+              {allLayouts.map((name) => (
+                <SelectItem key={name} value={name}>
+                  {layoutLabels[name]}
+                </SelectItem>
+              ))}
+            </SelectGroup>
           </SelectContent>
         </Select>
       </div>

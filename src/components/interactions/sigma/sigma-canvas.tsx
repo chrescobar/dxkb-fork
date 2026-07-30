@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useImperativeHandle, useState } from "react";
+import { useEffect, useImperativeHandle, useState, type CSSProperties } from "react";
 import { SigmaContainer, useLoadGraph, useRegisterEvents, useSetSettings, useSigma } from "@react-sigma/core";
 import "@react-sigma/core/lib/style.css";
 import Graph from "graphology";
-import { EdgeRectangleProgram } from "sigma/rendering";
+import { drawDiscNodeHover, EdgeRectangleProgram } from "sigma/rendering";
+import type { NodeHoverDrawingFunction } from "sigma/rendering";
 import { downloadAsImage } from "@sigma/export-image";
 
 import { colors, edgeHighlightReducer, nodeHighlightReducer, renderEdge, renderEdgeExperimental } from "@/lib/interactions/graph-theme";
@@ -44,6 +45,17 @@ function buildGraph(nodes: GNode[], edges: GEdge[]): Graph {
 }
 
 
+// Sigma's hover renderer (drawDiscNodeHover) paints a hardcoded #FFF pill, then
+// draws the label in `labelColor`. Since we drive labelColor off the theme
+// foreground (white in dark mode), the hover/selected label went white-on-white.
+// Force the pill's label dark so it's readable on the always-white pill in every
+// theme, while flat (non-hovered) labels keep their theme-aware color. Declared
+// at module scope so its identity is stable — SigmaContainer deep-diffs settings
+// and recreates the instance (resetting pan/zoom) if this changed each render.
+const drawNodeHover: NodeHoverDrawingFunction = (context, data, settings) => {
+  drawDiscNodeHover(context, data, { ...settings, labelColor: { color: "#000" } });
+};
+
 interface GraphLoaderProps {
   nodes: GNode[];
   edges: GEdge[];
@@ -81,6 +93,7 @@ function GraphEvents({ onSelect, onHover, selectedId, selectedKind }: GraphEvent
   const sigma = useSigma();
   const registerEvents = useRegisterEvents();
   const setSettings = useSetSettings();
+  const [hoveredEdge, setHoveredEdge] = useState<string | null>(null);
 
   useEffect(() => {
     registerEvents({
@@ -103,8 +116,9 @@ function GraphEvents({ onSelect, onHover, selectedId, selectedKind }: GraphEvent
       enterEdge: ({ edge, event }) => {
         const data = sigma.getGraph().getEdgeAttributes(edge) as GEdge;
         onHover({ x: event.x, y: event.y, edge: data });
+        setHoveredEdge(edge);
       },
-      leaveEdge: () => { onHover(null); },
+      leaveEdge: () => { onHover(null); setHoveredEdge(null); },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [registerEvents, sigma]);
@@ -112,9 +126,26 @@ function GraphEvents({ onSelect, onHover, selectedId, selectedKind }: GraphEvent
   useEffect(() => {
     setSettings({
       nodeReducer: nodeHighlightReducer(selectedId, selectedKind),
-      edgeReducer: edgeHighlightReducer(selectedId, selectedKind),
+      edgeReducer: edgeHighlightReducer(selectedId, selectedKind, hoveredEdge),
     });
-  }, [setSettings, selectedId, selectedKind]);
+  }, [setSettings, selectedId, selectedKind, hoveredEdge]);
+
+  // Sigma's flat node labels default to labelColor #000 — invisible on the dark
+  // canvas (the selected label rides its own white hover-pill, so it stayed
+  // legible). Drive labelColor off the theme's --foreground. Canvas 2D can't
+  // parse var(), so resolve the computed value; re-resolve on data-theme changes
+  // (next-themes toggles that attribute, and this effect commits before its
+  // provider effect, so observe the attribute rather than a theme prop).
+  useEffect(() => {
+    const apply = () => {
+      const color = getComputedStyle(document.documentElement).getPropertyValue("--foreground").trim();
+      if (color) setSettings({ labelColor: { color } });
+    };
+    apply();
+    const observer = new MutationObserver(apply);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => { observer.disconnect(); };
+  }, [setSettings]);
 
   return null;
 }
@@ -169,7 +200,12 @@ export function SigmaCanvas({ nodes, edges, layout, selection, onSelect, handleR
   return (
     <div className="relative size-full">
       <SigmaContainer
-        style={{ width: "100%", height: "100%" }}
+        // react-sigma paints the container div with --sigma-background-color
+        // (default #fff) behind its transparent WebGL canvases. Match the
+        // "Search proteins" box (bg-input/30 over the bg-card column) so the
+        // canvas reads as the same surface. Plain var(--card) fails in light
+        // themes where --card is pure white — the input/30 composite never is.
+        style={{ width: "100%", height: "100%", "--sigma-background-color": "color-mix(in oklab, var(--input) 30%, var(--card))" } as CSSProperties}
         settings={{
           renderEdgeLabels: false,
           // Sort draw order by node/edge zIndex so the reducer's zIndex:1 on the
@@ -183,6 +219,7 @@ export function SigmaCanvas({ nodes, edges, layout, selection, onSelect, handleR
           defaultEdgeType: "rectangle",
           edgeProgramClasses: { rectangle: EdgeRectangleProgram },
           enableEdgeEvents: true,
+          defaultDrawNodeHover: drawNodeHover,
         }}
       >
         <GraphLoader nodes={nodes} edges={edges} layout={layout} />

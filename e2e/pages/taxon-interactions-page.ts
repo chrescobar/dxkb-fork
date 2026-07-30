@@ -67,4 +67,36 @@ export class TaxonInteractionsPage {
       this.page.getByRole("tabpanel", { name: "Graph" }).getByPlaceholder("Search keywords..."),
     ).toHaveValue(text);
   }
+
+  /** The Graph action bar's layout Select trigger. */
+  private layoutTrigger() {
+    return this.page.getByRole("tabpanel", { name: "Graph" }).getByRole("combobox", { name: "Layout" });
+  }
+
+  async expectLayoutLabel(text: string): Promise<void> {
+    await expect(this.layoutTrigger()).toContainText(text);
+  }
+
+  async selectLayout(label: string): Promise<void> {
+    await this.layoutTrigger().click();
+    await this.page.getByRole("option", { name: label }).click();
+  }
+
+  /** A protein row in the Graph subview's node list, by its visible label. */
+  async selectNodeInList(label: string): Promise<void> {
+    await this.page.getByRole("tabpanel", { name: "Graph" }).getByRole("option", { name: label }).click();
+  }
+
+  private detailPanel() {
+    return this.page.getByRole("tabpanel", { name: "Graph" }).getByLabel("Selection details");
+  }
+
+  async expectDetailText(text: string): Promise<void> {
+    await expect(this.detailPanel().getByText(text, { exact: false }).first()).toBeVisible();
+  }
+
+  /** Click the first incident-edge button listed in the node's detail panel. */
+  async selectFirstIncidentEdge(): Promise<void> {
+    await this.detailPanel().getByRole("button").first().click();
+  }
 }

@@ -44,4 +44,24 @@ describe("GraphActionBar", () => {
     await user.click(exportButton);
     expect(onExport).toHaveBeenCalledTimes(1);
   });
+
+  it("shows the human-readable layout label on the trigger, not the raw value", () => {
+    // Guards the items={layoutLabels} fix: without it, base-ui's Select.Value
+    // renders the raw value ("forceatlas2") instead of the mapped label.
+    render(
+      <GraphActionBar layout="forceatlas2" onLayoutChange={vi.fn()} onExport={vi.fn()} exportReady />,
+    );
+
+    const trigger = screen.getByRole("combobox", { name: "Layout" });
+    expect(trigger).toHaveTextContent("Force Atlas 2");
+    expect(trigger).not.toHaveTextContent("forceatlas2");
+  });
+
+  it("reflects the controlled layout prop on the trigger", () => {
+    render(
+      <GraphActionBar layout="circular" onLayoutChange={vi.fn()} onExport={vi.fn()} exportReady />,
+    );
+
+    expect(screen.getByRole("combobox", { name: "Layout" })).toHaveTextContent("Circular");
+  });
 });

@@ -48,6 +48,40 @@ test.describe("taxon interactions tab", () => {
     await interactionsPage.switchToGraph();
     await interactionsPage.expectEmptyGraphState();
   });
+
+  test("layout dropdown shows the human-readable label, not the raw value", async ({ page, browserName }) => {
+    // The action bar (and its layout Select) only mount once the graph has nodes,
+    // which mounts SigmaCanvas — no WebGL in headless Firefox.
+    test.skip(browserName === "firefox", "Headless Firefox has no WebGL for Sigma.js to render into");
+
+    const interactionsPage = await setupInteractionsPage(page);
+    await interactionsPage.switchToGraph();
+
+    // Default layout is forceatlas2; the trigger must read "Force Atlas 2".
+    await interactionsPage.expectLayoutLabel("Force Atlas 2");
+
+    // Picking another option updates the trigger to that option's label.
+    await interactionsPage.selectLayout("Circular");
+    await interactionsPage.expectLayoutLabel("Circular");
+  });
+
+  test("selecting a node then an incident edge shows the detail panel headers", async ({ page, browserName }) => {
+    test.skip(browserName === "firefox", "Headless Firefox has no WebGL for Sigma.js to render into");
+
+    const interactionsPage = await setupInteractionsPage(page);
+    await interactionsPage.switchToGraph();
+
+    // buildPpiRows leaves gene blank, so nodes label by interactor id. Row 0
+    // links peg.600 ↔ peg.2400, so selecting peg.600 yields one incident edge.
+    await interactionsPage.selectNodeInList("fig|224914.16.peg.600");
+    await interactionsPage.expectDetailText("BRC ID");
+    await interactionsPage.expectDetailText("Interactions (1)");
+
+    // Clicking that incident edge swaps the panel to the edge view with its header.
+    await interactionsPage.selectFirstIncidentEdge();
+    await interactionsPage.expectDetailText("Interaction");
+    await interactionsPage.expectDetailText("Detection method");
+  });
 });
 
 // ─── Filter sync between Table and Graph subviews ────────────────────────────

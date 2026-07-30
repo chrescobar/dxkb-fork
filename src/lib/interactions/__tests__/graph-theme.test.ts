@@ -5,6 +5,7 @@ import {
   nodeHighlightReducer,
   renderEdge,
   renderEdgeExperimental,
+  renderEdgeHover,
 } from "../graph-theme";
 
 // Premultiplied edge colors must converge back to the opaque theme swatch the
@@ -45,6 +46,19 @@ describe("graph-theme render edges", () => {
       });
     }
   });
+
+  it("premultiplies the hover edge to a translucent form of the selected color", () => {
+    // renderEdgeHover uses 0x99 alpha (≈60%). Its RGB must converge back to the
+    // opaque edgeSelected swatch so the hover reads as a paler pink of the same
+    // hue, not a drifted color. Higher alpha than the mesh → tighter tolerance.
+    const hoverAlpha = 0x99;
+    expect(renderEdgeHover.slice(7)).toBe(hoverAlpha.toString(16).padStart(2, "0"));
+    const got = convergedChannels(renderEdgeHover, hoverAlpha);
+    const want = channels(colors.edgeSelected);
+    got.forEach((v, i) => {
+      expect(Math.abs(v - want[i])).toBeLessThanOrEqual(Math.ceil(255 / hoverAlpha));
+    });
+  });
 });
 
 describe("highlight reducers", () => {
@@ -66,13 +80,24 @@ describe("highlight reducers", () => {
     expect(reduce("n1", baseNode)).toBe(baseNode);
   });
 
-  it("raises zIndex and recolors the selected edge", () => {
+  it("raises zIndex, thickens, and recolors the selected edge", () => {
     const reduce = edgeHighlightReducer("e1", "edge");
-    expect(reduce("e1", baseEdge)).toEqual({ ...baseEdge, color: colors.edgeSelected, zIndex: 1 });
+    expect(reduce("e1", baseEdge)).toEqual({ ...baseEdge, color: colors.edgeSelected, size: 2, zIndex: 1 });
   });
 
   it("leaves edges untouched when nothing is selected", () => {
     const reduce = edgeHighlightReducer(null, null);
     expect(reduce("e1", baseEdge)).toBe(baseEdge);
+  });
+
+  it("tints the hovered edge with the translucent hover color", () => {
+    const reduce = edgeHighlightReducer(null, null, "e1");
+    expect(reduce("e1", baseEdge)).toEqual({ ...baseEdge, color: renderEdgeHover, size: 2, zIndex: 1 });
+    expect(reduce("e2", baseEdge)).toBe(baseEdge);
+  });
+
+  it("selection wins over hover on the same edge", () => {
+    const reduce = edgeHighlightReducer("e1", "edge", "e1");
+    expect(reduce("e1", baseEdge)).toEqual({ ...baseEdge, color: colors.edgeSelected, size: 2, zIndex: 1 });
   });
 });

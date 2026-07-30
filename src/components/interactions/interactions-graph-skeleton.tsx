@@ -14,7 +14,20 @@ interface InteractionsGraphSkeletonProps {
 
 // Varied bar widths so the placeholder rows read as real gene names rather than
 // a uniform template. 12 rows fills the visible w-60 column without scrolling.
-const rowWidths = ["w-20", "w-16", "w-24", "w-14", "w-20", "w-28", "w-16", "w-24", "w-20", "w-14", "w-24", "w-16"];
+const rowWidths = [
+  "w-20",
+  "w-16",
+  "w-24",
+  "w-14",
+  "w-20",
+  "w-28",
+  "w-16",
+  "w-24",
+  "w-20",
+  "w-14",
+  "w-24",
+  "w-16",
+];
 
 /**
  * Loading state for the interactions graph. Mirrors the loaded 3-column layout
@@ -23,11 +36,14 @@ const rowWidths = ["w-20", "w-16", "w-24", "w-14", "w-20", "w-28", "w-16", "w-24
  * a spinner where the canvas will render. The real toolbar/keyword search is
  * rendered by the parent above this, in every state.
  */
-export function InteractionsGraphSkeleton({ layout, onLayoutChange }: InteractionsGraphSkeletonProps) {
+export function InteractionsGraphSkeleton({
+  layout,
+  onLayoutChange,
+}: InteractionsGraphSkeletonProps) {
   return (
     <div className="flex min-h-0 flex-1">
       <div className="flex w-60 shrink-0 flex-col rounded-tl-md border-x border-t bg-card">
-        <div className="border-b p-2">
+        <div className="border-b p-3">
           <GraphLegend />
         </div>
         <div className="flex min-h-0 flex-1 flex-col gap-2 p-2">
@@ -44,14 +60,25 @@ export function InteractionsGraphSkeleton({ layout, onLayoutChange }: Interactio
         </div>
       </div>
       <div className="flex min-h-0 min-w-0 flex-1 flex-col border-t">
-        <GraphActionBar layout={layout} onLayoutChange={onLayoutChange} onExport={() => undefined} exportReady={false} />
+        <GraphActionBar
+          layout={layout}
+          activeSubgraph={null}
+          activeHub={null}
+          onLayoutChange={onLayoutChange}
+          onExport={() => undefined}
+          onSelectSubgraphs={() => undefined}
+          onSelectHubs={() => undefined}
+          exportReady={false}
+        />
         <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
           <Spinner className="size-6 text-muted-foreground" />
           Loading interactions…
         </div>
       </div>
       <div className="w-64 shrink-0 border-t border-l bg-card">
-        <p className="p-3 text-sm text-muted-foreground">Select a node or edge to see details.</p>
+        <p className="p-3 text-sm text-muted-foreground">
+          Select a node or edge to see details.
+        </p>
       </div>
     </div>
   );

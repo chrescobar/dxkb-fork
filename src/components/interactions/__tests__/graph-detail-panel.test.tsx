@@ -49,6 +49,12 @@ describe("GraphDetailPanel", () => {
     expect(screen.getByText("Select a node or edge to see details.")).toBeInTheDocument();
   });
 
+  it("summarizes bulk selections instead of rendering thousands of detail records", () => {
+    renderPanel({ selection: { nodes: [nodeA, nodeB], edges: [edge] } });
+    expect(screen.getByText("Bulk selection")).toBeInTheDocument();
+    expect(screen.getByText("2 proteins and 1 interactions selected.")).toBeInTheDocument();
+  });
+
   describe("node selected", () => {
     it("renders every node field with its value", () => {
       renderPanel({ selection: { nodes: [nodeA], edges: [] } });

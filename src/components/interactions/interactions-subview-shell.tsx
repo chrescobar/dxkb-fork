@@ -25,7 +25,7 @@ export function InteractionsSubviewShell({ taxonId, q, guideUrl }: InteractionsS
     <Tabs
       value={subTab}
       onValueChange={(value) => { setSubTab(value as "table" | "graph"); }}
-      className="flex h-full min-h-0 flex-col"
+      className="mt-2.5 flex min-h-0 flex-1 flex-col"
     >
       <TabsList className="w-fit shrink-0">
         <TabsTrigger value="table">Table</TabsTrigger>

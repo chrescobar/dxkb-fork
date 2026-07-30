@@ -24,6 +24,18 @@ export function GraphDetailPanel({ selection, incidentEdges, nodesById, onSelect
     );
   }
 
+  const selectedCount = selection.nodes.length + selection.edges.length;
+  if (selectedCount > 1) {
+    return (
+      <div className="p-3 text-sm">
+        <p className="font-medium text-foreground">Bulk selection</p>
+        <p className="mt-1 text-muted-foreground">
+          {selection.nodes.length} proteins and {selection.edges.length} interactions selected.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-3 overflow-y-auto p-3 text-sm">
       {selection.nodes.map((node) => (

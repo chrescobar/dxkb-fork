@@ -10,8 +10,8 @@ export const colors = {
   edgeSelected: "#FF1493",
 } as const;
 
-// Alpha applied to graph edges so ~4,400 overlapping threads accumulate into a
-// density gradient instead of a solid disk. 0x28 = 40/255 ≈ 16%.
+// Low alpha keeps thousands of overlapping edges from becoming a solid fill.
+// 0x28 = 40/255, approximately 16%.
 export const edgeAlpha = 0x28;
 
 // Sigma blends with premultiplied alpha (blendFunc ONE, ONE_MINUS_SRC_ALPHA)
@@ -30,7 +30,10 @@ function premultiply(hex: string, alpha: number): string {
 }
 
 export const renderEdge = premultiply(colors.edge, edgeAlpha);
-export const renderEdgeExperimental = premultiply(colors.edgeExperimental, edgeAlpha);
+export const renderEdgeExperimental = premultiply(
+  colors.edgeExperimental,
+  edgeAlpha,
+);
 
 // Hover highlight: translucent pink so a hovered edge reads as pink-tinted yet
 // stays distinct from the opaque selected edge. Premultiplied for the same
@@ -38,28 +41,29 @@ export const renderEdgeExperimental = premultiply(colors.edgeExperimental, edgeA
 // under Sigma's premultiplied blend. 0x99 = 153/255 ≈ 60%.
 export const renderEdgeHover = premultiply(colors.edgeSelected, 0x99);
 
-type SelectedKind = "node" | "edge" | null;
-
-// Sigma reducers that recolor the selected node/edge and raise its zIndex so it
-// paints above the mesh (relies on the `zIndex: true` container setting). Pure
-// factories so the highlight logic is unit-testable without a WebGL context.
-// `highlighted: true` makes Sigma draw the selected node's hover-label pill
-// persistently — the same pill a mouse-hover shows — so a click keeps the label
-// on screen instead of clearing it when the pointer leaves.
-export function nodeHighlightReducer<T extends object>(selectedId: string | null, selectedKind: SelectedKind) {
+// Sigma reducers that recolor selected nodes/edges and raise their zIndex so
+// they paint above the mesh (relies on the `zIndex: true` container setting).
+// Sets keep bulk subgraph and hub highlighting O(1) per rendered element.
+export function nodeHighlightReducer<T extends object>(
+  selectedIds: ReadonlySet<string>,
+) {
   return (node: string, data: T): T =>
-    selectedKind === "node" && node === selectedId
-      ? { ...data, color: colors.selected, zIndex: 1, highlighted: true }
+    selectedIds.has(node)
+      ? {
+          ...data,
+          color: colors.selected,
+          zIndex: 1,
+          highlighted: selectedIds.size === 1,
+        }
       : data;
 }
 
 export function edgeHighlightReducer<T extends object>(
-  selectedId: string | null,
-  selectedKind: SelectedKind,
+  selectedIds: ReadonlySet<string>,
   hoveredId: string | null = null,
 ) {
   return (edge: string, data: T): T => {
-    if (selectedKind === "edge" && edge === selectedId) {
+    if (selectedIds.has(edge)) {
       return { ...data, color: colors.edgeSelected, size: 2, zIndex: 1 };
     }
     // Hover loses to selection: don't re-tint the already-highlighted edge.

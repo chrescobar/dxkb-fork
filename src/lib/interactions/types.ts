@@ -54,6 +54,9 @@ export type LayoutName =
   | "forceatlas2"
   | "circular";
 
+export type SubgraphSelection = 5 | 10 | 20 | "max";
+export type HubSelection = 3 | 4 | 5 | 10 | "max";
+
 export interface GraphSelection {
   nodes: GNode[];
   edges: GEdge[];

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useImperativeHandle, useState, type CSSProperties } from "react";
+import { useEffect, useImperativeHandle, useMemo, useState, type CSSProperties } from "react";
 import { SigmaContainer, useLoadGraph, useRegisterEvents, useSetSettings, useSigma } from "@react-sigma/core";
 import "@react-sigma/core/lib/style.css";
 import Graph from "graphology";
@@ -11,6 +11,8 @@ import { downloadAsImage } from "@sigma/export-image";
 import { colors, edgeHighlightReducer, nodeHighlightReducer, renderEdge, renderEdgeExperimental } from "@/lib/interactions/graph-theme";
 import { runGraphLayout } from "@/lib/interactions/layouts";
 import type { GEdge, GNode, GraphCanvasProps, GraphSelection, LayoutName } from "@/lib/interactions/types";
+
+import { ZoomControl } from "./zoom-control";
 
 function buildGraph(nodes: GNode[], edges: GEdge[]): Graph {
   const g = new Graph({ multi: true });
@@ -85,11 +87,11 @@ interface TooltipState {
 interface GraphEventsProps {
   onSelect: (sel: GraphSelection) => void;
   onHover: (tooltip: TooltipState | null) => void;
-  selectedId: string | null;
-  selectedKind: "node" | "edge" | null;
+  selectedNodeIds: ReadonlySet<string>;
+  selectedEdgeIds: ReadonlySet<string>;
 }
 
-function GraphEvents({ onSelect, onHover, selectedId, selectedKind }: GraphEventsProps) {
+function GraphEvents({ onSelect, onHover, selectedNodeIds, selectedEdgeIds }: GraphEventsProps) {
   const sigma = useSigma();
   const registerEvents = useRegisterEvents();
   const setSettings = useSetSettings();
@@ -125,10 +127,10 @@ function GraphEvents({ onSelect, onHover, selectedId, selectedKind }: GraphEvent
 
   useEffect(() => {
     setSettings({
-      nodeReducer: nodeHighlightReducer(selectedId, selectedKind),
-      edgeReducer: edgeHighlightReducer(selectedId, selectedKind, hoveredEdge),
+      nodeReducer: nodeHighlightReducer(selectedNodeIds),
+      edgeReducer: edgeHighlightReducer(selectedEdgeIds, hoveredEdge),
     });
-  }, [setSettings, selectedId, selectedKind, hoveredEdge]);
+  }, [setSettings, selectedNodeIds, selectedEdgeIds, hoveredEdge]);
 
   // Sigma's flat node labels default to labelColor #000 — invisible on the dark
   // canvas (the selected label rides its own white hover-pill, so it stayed
@@ -190,12 +192,14 @@ function HandleBridge({
 
 export function SigmaCanvas({ nodes, edges, layout, selection, onSelect, handleRef, onReady }: GraphCanvasProps) {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
-  // Derive the highlight target from the controlled selection so every path —
-  // canvas click, node list, edge list — drives the same reducer.
-  const selectedKind: "node" | "edge" | null =
-    selection.nodes.length > 0 ? "node" : selection.edges.length > 0 ? "edge" : null;
-  const selectedId =
-    selectedKind === "node" ? selection.nodes[0].id : selectedKind === "edge" ? selection.edges[0].id : null;
+  const selectedNodeIds = useMemo(
+    () => new Set(selection.nodes.map((node) => node.id)),
+    [selection.nodes],
+  );
+  const selectedEdgeIds = useMemo(
+    () => new Set(selection.edges.map((edge) => edge.id)),
+    [selection.edges],
+  );
 
   return (
     <div className="relative size-full">
@@ -226,10 +230,11 @@ export function SigmaCanvas({ nodes, edges, layout, selection, onSelect, handleR
         <GraphEvents
           onSelect={onSelect}
           onHover={setTooltip}
-          selectedId={selectedId}
-          selectedKind={selectedKind}
+          selectedNodeIds={selectedNodeIds}
+          selectedEdgeIds={selectedEdgeIds}
         />
         <HandleBridge handleRef={handleRef} onReady={onReady} />
+        <ZoomControl />
       </SigmaContainer>
       {tooltip && (
         <div

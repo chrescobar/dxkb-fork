@@ -14,9 +14,15 @@ beforeAll(() => {
   vi.stubGlobal(
     "ResizeObserver",
     class {
-      observe() { return undefined; }
-      unobserve() { return undefined; }
-      disconnect() { return undefined; }
+      observe() {
+        return undefined;
+      }
+      unobserve() {
+        return undefined;
+      }
+      disconnect() {
+        return undefined;
+      }
     },
   );
 });
@@ -54,7 +60,13 @@ describe("GraphNodeList", () => {
     const user = userEvent.setup();
     const onSelectNode = vi.fn();
 
-    render(<GraphNodeList nodes={nodes} selectedId={null} onSelectNode={onSelectNode} />);
+    render(
+      <GraphNodeList
+        nodes={nodes}
+        selectedIds={new Set()}
+        onSelectNode={onSelectNode}
+      />,
+    );
 
     const input = screen.getByPlaceholderText("Search proteins…");
     await user.click(input);
@@ -68,7 +80,13 @@ describe("GraphNodeList", () => {
     const user = userEvent.setup();
     const onSelectNode = vi.fn();
 
-    render(<GraphNodeList nodes={nodes} selectedId={null} onSelectNode={onSelectNode} />);
+    render(
+      <GraphNodeList
+        nodes={nodes}
+        selectedIds={new Set()}
+        onSelectNode={onSelectNode}
+      />,
+    );
 
     await user.click(screen.getByText("dnaA"));
 
@@ -76,7 +94,13 @@ describe("GraphNodeList", () => {
   });
 
   it("marks only the selected row aria-current, keeping the app selection the single highlight", () => {
-    render(<GraphNodeList nodes={nodes} selectedId="fig|2.2" onSelectNode={vi.fn()} />);
+    render(
+      <GraphNodeList
+        nodes={nodes}
+        selectedIds={new Set(["fig|2.2"])}
+        onSelectNode={vi.fn()}
+      />,
+    );
 
     const selected = screen.getByText("recA").closest("[cmdk-item]");
     const other = screen.getByText("dnaA").closest("[cmdk-item]");
@@ -86,39 +110,87 @@ describe("GraphNodeList", () => {
   });
 
   it("recolors the selected row's dot amber and leaves unselected dots on their kind color", () => {
-    render(<GraphNodeList nodes={nodes} selectedId="fig|1.1" onSelectNode={vi.fn()} />);
+    render(
+      <GraphNodeList
+        nodes={nodes}
+        selectedIds={new Set(["fig|1.1"])}
+        onSelectNode={vi.fn()}
+      />,
+    );
 
-    const selectedRow = screen.getByText("dnaA").closest("[cmdk-item]") as HTMLElement;
-    const hostRow = screen.getByText("recA").closest("[cmdk-item]") as HTMLElement;
+    const selectedRow = screen
+      .getByText("dnaA")
+      .closest("[cmdk-item]") as HTMLElement;
+    const hostRow = screen
+      .getByText("recA")
+      .closest("[cmdk-item]") as HTMLElement;
 
-    // dnaA is selected → amber, regardless of its microbial kind.
+    // dnaA is selected -> amber, regardless of its microbial kind.
     expect(dotOf(selectedRow).style.backgroundColor).toBe(rgb(colors.selected));
-    // recA is unselected → its host kind color.
+    // recA is unselected -> its host kind color.
     expect(dotOf(hostRow).style.backgroundColor).toBe(rgb(colors.host));
   });
 
+  it("highlights every protein in a bulk selection", () => {
+    render(
+      <GraphNodeList
+        nodes={nodes}
+        selectedIds={new Set(nodes.map((node) => node.id))}
+        onSelectNode={vi.fn()}
+      />,
+    );
+
+    for (const label of ["dnaA", "recA"]) {
+      const row = screen.getByText(label).closest("[cmdk-item]") as HTMLElement;
+      expect(row).toHaveAttribute("aria-current", "true");
+      expect(dotOf(row).style.backgroundColor).toBe(rgb(colors.selected));
+    }
+  });
+
   it("uses each node's kind color for the dot when nothing is selected", () => {
-    render(<GraphNodeList nodes={nodes} selectedId={null} onSelectNode={vi.fn()} />);
+    render(
+      <GraphNodeList
+        nodes={nodes}
+        selectedIds={new Set()}
+        onSelectNode={vi.fn()}
+      />,
+    );
 
-    const microbialRow = screen.getByText("dnaA").closest("[cmdk-item]") as HTMLElement;
-    const hostRow = screen.getByText("recA").closest("[cmdk-item]") as HTMLElement;
+    const microbialRow = screen
+      .getByText("dnaA")
+      .closest("[cmdk-item]") as HTMLElement;
+    const hostRow = screen
+      .getByText("recA")
+      .closest("[cmdk-item]") as HTMLElement;
 
-    expect(dotOf(microbialRow).style.backgroundColor).toBe(rgb(colors.microbial));
+    expect(dotOf(microbialRow).style.backgroundColor).toBe(
+      rgb(colors.microbial),
+    );
     expect(dotOf(hostRow).style.backgroundColor).toBe(rgb(colors.host));
   });
 
   it("gives every row a hover highlight distinct from the selected row's", () => {
-    render(<GraphNodeList nodes={nodes} selectedId="fig|1.1" onSelectNode={vi.fn()} />);
+    render(
+      <GraphNodeList
+        nodes={nodes}
+        selectedIds={new Set(["fig|1.1"])}
+        onSelectNode={vi.fn()}
+      />,
+    );
 
-    const selectedRow = screen.getByText("dnaA").closest("[cmdk-item]") as HTMLElement;
-    const otherRow = screen.getByText("recA").closest("[cmdk-item]") as HTMLElement;
+    const selectedRow = screen
+      .getByText("dnaA")
+      .closest("[cmdk-item]") as HTMLElement;
+    const otherRow = screen
+      .getByText("recA")
+      .closest("[cmdk-item]") as HTMLElement;
 
     // Hover tint lives on every row (cmdk's pointer-selection is disabled, so the
     // built-in data-[selected] hover never fires — this explicit class is the
     // only hover feedback).
     expect(otherRow).toHaveClass("hover:bg-secondary/15");
     // Selected row keeps its stronger, forced highlight so hover can't override it.
-    expect(selectedRow).toHaveClass("aria-[current=true]:bg-secondary/25!");
+    expect(selectedRow).toHaveClass("aria-current:bg-secondary/25!");
   });
 
   it("scrolls the newly selected row into view (graph→list sync)", () => {
@@ -126,7 +198,11 @@ describe("GraphNodeList", () => {
     Element.prototype.scrollIntoView = scrollSpy;
 
     const { rerender } = render(
-      <GraphNodeList nodes={nodes} selectedId={null} onSelectNode={vi.fn()} />,
+      <GraphNodeList
+        nodes={nodes}
+        selectedIds={new Set()}
+        onSelectNode={vi.fn()}
+      />,
     );
 
     // cmdk scrolls its own internal cursor into view on mount; clear that so the
@@ -134,7 +210,13 @@ describe("GraphNodeList", () => {
     scrollSpy.mockClear();
 
     // A canvas click flows in as a new selectedId → scroll that row into view.
-    rerender(<GraphNodeList nodes={nodes} selectedId="fig|2.2" onSelectNode={vi.fn()} />);
+    rerender(
+      <GraphNodeList
+        nodes={nodes}
+        selectedIds={new Set(["fig|2.2"])}
+        onSelectNode={vi.fn()}
+      />,
+    );
 
     expect(scrollSpy).toHaveBeenCalledWith({ block: "nearest" });
   });

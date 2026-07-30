@@ -1,6 +1,14 @@
 "use client";
 
+import { useState, type ReactNode } from "react";
+import { Check, Download, GitFork, Network } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -9,13 +17,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
-import { Download } from "lucide-react";
-
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 import { allLayouts } from "@/lib/interactions/renderer-capabilities";
-import type { LayoutName } from "@/lib/interactions/types";
-
-const notReady = "Coming soon, still under construction";
+import type {
+  HubSelection,
+  LayoutName,
+  SubgraphSelection,
+} from "@/lib/interactions/types";
 
 const layoutLabels: Record<LayoutName, string> = {
   cola: "Cola",
@@ -28,22 +41,94 @@ const layoutLabels: Record<LayoutName, string> = {
   circular: "Circular",
 };
 
+const subgraphOptions: [SubgraphSelection, string][] = [
+  [5, "5 or More Nodes"],
+  [10, "10 or More Nodes"],
+  [20, "20 or More Nodes"],
+  ["max", "Largest Subgraph"],
+];
+
+const hubOptions: [HubSelection, string][] = [
+  [3, "3 or More Neighbors"],
+  [4, "4 or More Neighbors"],
+  [5, "5 or More Neighbors"],
+  [10, "10 or More Neighbors"],
+  ["max", "Most Connected Hub"],
+];
+
 interface GraphActionBarProps {
   layout: LayoutName;
+  activeSubgraph: SubgraphSelection | null;
+  activeHub: HubSelection | null;
   onLayoutChange: (layout: LayoutName) => void;
   onExport: () => void;
+  onSelectSubgraphs: (threshold: SubgraphSelection) => void;
+  onSelectHubs: (threshold: HubSelection) => void;
   exportReady: boolean;
 }
 
-/**
- * Graph action band. Sits directly above the canvas, spanning only the canvas
- * column (between the legend/node list on the left and the detail panel on the
- * right). Holds the export, sub-graph, hub-protein, and layout controls.
- */
+function SelectionMenu<T extends SubgraphSelection | HubSelection>({
+  label,
+  icon,
+  options,
+  value,
+  onSelect,
+}: {
+  label: string;
+  icon: ReactNode;
+  options: [T, string][];
+  value: T | null;
+  onSelect: (value: T) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const selectedLabel = options.find(([option]) => option === value)?.[1];
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger
+        render={
+          <Button
+            variant={value === null ? "outline" : "secondary"}
+            size="sm"
+          />
+        }
+      >
+        {icon}
+        {selectedLabel ?? label}
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-52 gap-1 p-1">
+        {options.map(([option, optionLabel]) => {
+          const isSelected = option === value;
+          return (
+            <Button
+              key={String(option)}
+              variant={isSelected ? "secondary" : "ghost"}
+              size="sm"
+              className="w-full justify-start"
+              aria-pressed={isSelected}
+              onClick={() => {
+                onSelect(option);
+                setOpen(false);
+              }}
+            >
+              <Check className={isSelected ? "visible" : "invisible"} />
+              {optionLabel}
+            </Button>
+          );
+        })}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+/** Graph action band spanning the canvas column. */
 export function GraphActionBar({
   layout,
+  activeSubgraph,
+  activeHub,
   onLayoutChange,
   onExport,
+  onSelectSubgraphs,
+  onSelectHubs,
   exportReady,
 }: GraphActionBarProps) {
   return (
@@ -52,8 +137,18 @@ export function GraphActionBar({
         <Tooltip>
           <TooltipTrigger
             render={
-              <span className={exportReady ? undefined : "inline-flex cursor-not-allowed"} tabIndex={exportReady ? undefined : 0}>
-                <Button variant="outline" size="sm" onClick={onExport} disabled={!exportReady}>
+              <span
+                className={
+                  exportReady ? undefined : "inline-flex cursor-not-allowed"
+                }
+                tabIndex={exportReady ? undefined : 0}
+              >
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onExport}
+                  disabled={!exportReady}
+                >
                   <Download />
                   Export
                 </Button>
@@ -62,42 +157,33 @@ export function GraphActionBar({
           />
           {!exportReady && (
             <TooltipContent>
-              <p>Loading graph…</p>
+              <p>Loading graph...</p>
             </TooltipContent>
           )}
         </Tooltip>
 
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <span className="inline-flex cursor-not-allowed" tabIndex={0}>
-                <Button variant="outline" size="sm" disabled>
-                  Sub-Graph
-                </Button>
-              </span>
-            }
-          />
-          <TooltipContent>
-            <p>{notReady}</p>
-          </TooltipContent>
-        </Tooltip>
+        <SelectionMenu
+          label="Sub-Graph"
+          icon={<GitFork />}
+          options={subgraphOptions}
+          value={activeSubgraph}
+          onSelect={onSelectSubgraphs}
+        />
+        <SelectionMenu
+          label="Hub Protein"
+          icon={<Network />}
+          options={hubOptions}
+          value={activeHub}
+          onSelect={onSelectHubs}
+        />
 
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <span className="inline-flex cursor-not-allowed" tabIndex={0}>
-                <Button variant="outline" size="sm" disabled>
-                  Hub Protein
-                </Button>
-              </span>
-            }
-          />
-          <TooltipContent>
-            <p>{notReady}</p>
-          </TooltipContent>
-        </Tooltip>
-
-        <Select items={layoutLabels} value={layout} onValueChange={(value) => { onLayoutChange(value as LayoutName); }}>
+        <Select
+          items={layoutLabels}
+          value={layout}
+          onValueChange={(value) => {
+            onLayoutChange(value as LayoutName);
+          }}
+        >
           <SelectTrigger aria-label="Layout" className="w-40 bg-background">
             <SelectValue placeholder="Layout" />
           </SelectTrigger>

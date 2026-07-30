@@ -2,13 +2,19 @@
 
 import { useEffect, useRef } from "react";
 
-import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import {
+  Command,
+  CommandEmpty,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { colors } from "@/lib/interactions/graph-theme";
 import type { GNode } from "@/lib/interactions/types";
 
 interface GraphNodeListProps {
   nodes: GNode[];
-  selectedId: string | null;
+  selectedIds: ReadonlySet<string>;
   onSelectNode: (node: GNode) => void;
 }
 
@@ -16,7 +22,11 @@ interface GraphNodeListProps {
 // only wires pointer events, so this list is the sole path to reach a node
 // (and, via the detail panel, its edges) without a mouse. Selecting here drives
 // the same selection sink as clickNode, keeping canvas and list in lockstep.
-export function GraphNodeList({ nodes, selectedId, onSelectNode }: GraphNodeListProps) {
+export function GraphNodeList({
+  nodes,
+  selectedIds,
+  onSelectNode,
+}: GraphNodeListProps) {
   const listRef = useRef<HTMLDivElement | null>(null);
 
   // cmdk's own `data-selected` cursor follows the pointer, which visually
@@ -26,10 +36,10 @@ export function GraphNodeList({ nodes, selectedId, onSelectNode }: GraphNodeList
   // selection) ourselves below. On a graph→list selection change, scroll the
   // selected row into view so the two stay in sync.
   useEffect(() => {
-    if (!selectedId) return;
+    if (selectedIds.size !== 1) return;
     const el = listRef.current?.querySelector('[aria-current="true"]');
     el?.scrollIntoView({ block: "nearest" });
-  }, [selectedId]);
+  }, [selectedIds]);
 
   return (
     <Command
@@ -43,12 +53,14 @@ export function GraphNodeList({ nodes, selectedId, onSelectNode }: GraphNodeList
       <CommandList ref={listRef} className="max-h-none flex-1">
         <CommandEmpty>No proteins match.</CommandEmpty>
         {nodes.map((node) => {
-          const isSelected = node.id === selectedId;
+          const isSelected = selectedIds.has(node.id);
           return (
             <CommandItem
               key={node.id}
               value={`${node.gene ?? ""} ${node.id}`}
-              onSelect={() => { onSelectNode(node); }}
+              onSelect={() => {
+                onSelectNode(node);
+              }}
               aria-current={isSelected}
               // cmdk keeps its own `data-selected` cursor (mount first-item,
               // keyboard, click) independent of the app selection, which showed
@@ -56,7 +68,7 @@ export function GraphNodeList({ nodes, selectedId, onSelectNode }: GraphNodeList
               // the app selection (`aria-current`, driven equally by canvas
               // clicks and this list) be the single amber highlight — forced to
               // win when a row is both cmdk-focused and app-selected.
-              className="gap-2 hover:bg-secondary/15 aria-[current=true]:bg-secondary/25! aria-[current=true]:font-medium data-[selected=true]:bg-transparent"
+              className="gap-2 hover:bg-secondary/15 aria-current:bg-secondary/25! aria-current:font-medium data-[selected=true]:bg-transparent"
             >
               <span
                 aria-hidden

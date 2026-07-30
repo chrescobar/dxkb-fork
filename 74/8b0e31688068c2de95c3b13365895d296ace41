@@ -1,0 +1,21 @@
+src/components/interactions/__tests__/graph-node-list.test.tsx
+  s_2502b7f539d06d::t_7d9529c7cec2e1 40-43
+  s_2502b7f539d06d::t_a8598b2311cd8c 117-120
+  s_2502b7f539d06d::t_0ef3c508f719da 5,10-11,36-39,44-51,66-116,121-126
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "748b0e31688068c2de95c3b13365895d296ace41",
+  "prompts": {},
+  "sessions": {
+    "s_2502b7f539d06d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c4b23891-7871-49f1-90c8-167b3b9c62b6",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -13,6 +13,7 @@ import { GraphActionBar } from "./graph-action-bar";
 import { GraphLegend } from "./graph-legend";
 import { GraphDetailPanel } from "./graph-detail-panel";
 import { GraphNodeList } from "./graph-node-list";
+import { InteractionsGraphSkeleton } from "./interactions-graph-skeleton";
 
 const SigmaCanvas = dynamic<GraphCanvasProps>(() => import("./sigma/sigma-canvas").then((mod) => mod.SigmaCanvas), {
   ssr: false,
@@ -75,7 +76,7 @@ export function InteractionsGraph({
     return (
       <div className="flex h-full min-h-0 flex-col">
         {toolbar}
-        <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">Loading interactions…</div>
+        <InteractionsGraphSkeleton layout={layout} onLayoutChange={handleLayoutChange} />
       </div>
     );
   }

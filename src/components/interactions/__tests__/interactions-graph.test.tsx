@@ -69,3 +69,20 @@ describe("InteractionsGraph filter combination", () => {
     expect(useInteractions).toHaveBeenLastCalledWith(943, "eq(category,PPI)");
   });
 });
+
+// The mock above holds useInteractions on `isPending`, so this exercises the
+// real loading branch and guards its wiring: a regression that swaps the
+// skeleton back for a blank/centered-text state (the pre-skeleton behavior)
+// makes the spinner disappear and fails here. The query-combination suite above
+// runs in the same pending state but only asserts the query — it would not
+// notice the loading UI reverting.
+describe("InteractionsGraph loading state", () => {
+  it("renders the loading skeleton while the query is pending", () => {
+    render(<InteractionsGraph taxonId={943} q="" keywordValue="" onKeywordChange={vi.fn()} />);
+
+    // Skeleton's Spinner is the single role=status loading announcement.
+    expect(screen.getByRole("status")).toBeInTheDocument();
+    // Real keyword toolbar stays mounted in every state, loading included.
+    expect(screen.getByPlaceholderText("Search keywords...")).toBeInTheDocument();
+  });
+});

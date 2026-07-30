@@ -9,6 +9,7 @@ import { defaultLayout } from "@/lib/interactions/renderer-capabilities";
 import type { GEdge, GNode, GraphCanvasHandle, GraphCanvasProps, GraphSelection, LayoutName } from "@/lib/interactions/types";
 
 import { GraphToolbar } from "./graph-toolbar";
+import { GraphActionBar } from "./graph-action-bar";
 import { GraphLegend } from "./graph-legend";
 import { GraphDetailPanel } from "./graph-detail-panel";
 import { GraphNodeList } from "./graph-node-list";
@@ -62,10 +63,6 @@ export function InteractionsGraph({
 
   const toolbar = (
     <GraphToolbar
-      layout={layout}
-      onLayoutChange={handleLayoutChange}
-      onExport={() => { canvasHandleRef.current?.exportPng(); }}
-      exportReady={canvasReady}
       filterValue={keywordValue}
       onFilterChange={onKeywordChange}
     />
@@ -122,7 +119,7 @@ export function InteractionsGraph({
     <div className="flex h-full min-h-0 flex-col">
       {toolbar}
       <div className="flex min-h-0 flex-1">
-        <div className="flex w-60 shrink-0 flex-col rounded-tl-md border-l border-r border-t">
+        <div className="flex w-60 shrink-0 flex-col rounded-tl-md border-x border-t">
           <div className="border-b p-2">
             <GraphLegend />
           </div>
@@ -134,22 +131,30 @@ export function InteractionsGraph({
             />
           </div>
         </div>
-        {/* Canvas is a pointer-only WebGL surface with no accessible name: the
-            node list (left) and detail panel (right) are the keyboard-operable
-            path to the same node/edge selection, so hide the decorative render
-            from assistive tech rather than exposing it as a static image. */}
-        <div className="min-h-0 min-w-0 flex-1 border-t" aria-hidden="true">
-          <SigmaCanvas
-            nodes={nodes}
-            edges={edges}
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col border-t">
+          <GraphActionBar
             layout={layout}
-            selection={selection}
-            onSelect={setSelection}
-            handleRef={canvasHandleRef}
-            onReady={() => { setCanvasReady(true); }}
+            onLayoutChange={handleLayoutChange}
+            onExport={() => { canvasHandleRef.current?.exportPng(); }}
+            exportReady={canvasReady}
           />
+          {/* Canvas is a pointer-only WebGL surface with no accessible name: the
+              node list (left) and detail panel (right) are the keyboard-operable
+              path to the same node/edge selection, so hide the decorative render
+              from assistive tech rather than exposing it as a static image. */}
+          <div className="min-h-0 flex-1" aria-hidden="true">
+            <SigmaCanvas
+              nodes={nodes}
+              edges={edges}
+              layout={layout}
+              selection={selection}
+              onSelect={setSelection}
+              handleRef={canvasHandleRef}
+              onReady={() => { setCanvasReady(true); }}
+            />
+          </div>
         </div>
-        <div className="w-64 shrink-0 overflow-y-auto border-l border-t" tabIndex={0} aria-label="Selection details">
+        <div className="w-64 shrink-0 overflow-y-auto border-t border-l" tabIndex={0} aria-label="Selection details">
           <GraphDetailPanel
             selection={selection}
             incidentEdges={incidentEdges}

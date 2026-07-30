@@ -51,9 +51,9 @@ describe("highlight reducers", () => {
   const baseNode = { color: colors.microbial, size: 2.5 };
   const baseEdge = { color: renderEdge, size: 1 };
 
-  it("raises zIndex and recolors the selected node so it paints on top", () => {
+  it("raises zIndex, recolors, and flags the selected node highlighted so its label pill persists", () => {
     const reduce = nodeHighlightReducer("n1", "node");
-    expect(reduce("n1", baseNode)).toEqual({ ...baseNode, color: colors.selected, zIndex: 1 });
+    expect(reduce("n1", baseNode)).toEqual({ ...baseNode, color: colors.selected, zIndex: 1, highlighted: true });
   });
 
   it("leaves unselected nodes untouched (no zIndex, original color)", () => {

@@ -34,9 +34,14 @@ type SelectedKind = "node" | "edge" | null;
 // Sigma reducers that recolor the selected node/edge and raise its zIndex so it
 // paints above the mesh (relies on the `zIndex: true` container setting). Pure
 // factories so the highlight logic is unit-testable without a WebGL context.
+// `highlighted: true` makes Sigma draw the selected node's hover-label pill
+// persistently — the same pill a mouse-hover shows — so a click keeps the label
+// on screen instead of clearing it when the pointer leaves.
 export function nodeHighlightReducer<T extends object>(selectedId: string | null, selectedKind: SelectedKind) {
   return (node: string, data: T): T =>
-    selectedKind === "node" && node === selectedId ? { ...data, color: colors.selected, zIndex: 1 } : data;
+    selectedKind === "node" && node === selectedId
+      ? { ...data, color: colors.selected, zIndex: 1, highlighted: true }
+      : data;
 }
 
 export function edgeHighlightReducer<T extends object>(selectedId: string | null, selectedKind: SelectedKind) {

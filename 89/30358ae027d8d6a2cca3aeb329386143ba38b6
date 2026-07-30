@@ -1,0 +1,140 @@
+src/lib/interactions/graph-theme.ts
+  s_e715a6e47b4fc2::t_019fed736062c3 13-14
+  s_e715a6e47b4fc2::t_b6c8fc21925337 44-46,51,62,66
+  s_e715a6e47b4fc2::t_2670e9491f314c 33-36,47-49,52-57
+src/components/interactions/graph-node-list.tsx
+  s_e715a6e47b4fc2::t_811ca8486163df 39,42
+  s_e715a6e47b4fc2::t_bfb055bff55f50 5-11,25-29,61-63
+  s_e715a6e47b4fc2::t_e5de912d54c775 17
+  s_e715a6e47b4fc2::t_7ee1cb86d089c7 56
+src/components/interactions/sigma/sigma-canvas.tsx
+  s_e715a6e47b4fc2::t_bb7ad1ec62d68a 3
+  s_e715a6e47b4fc2::t_d49482ed29bc5a 130-131,133
+  s_e715a6e47b4fc2::t_ffda0be3164f44 195-202
+  s_e715a6e47b4fc2::t_a67af45747717d 233-234
+  s_e715a6e47b4fc2::t_5c7f715da5145a 237
+  s_e715a6e47b4fc2::t_974fc1e8bbcf06 90-91,94
+  s_e715a6e47b4fc2::t_be4500ad83ee5a 15-16
+src/lib/interactions/__tests__/graph-theme.test.ts
+  s_e715a6e47b4fc2::t_d9ad2c0865ba41 112
+  s_e715a6e47b4fc2::t_9adc8f57b3c4e2 123
+  s_e715a6e47b4fc2::t_cbbc1a7a23d9da 97
+  s_e715a6e47b4fc2::t_e0b6f9b89c87df 92
+  s_e715a6e47b4fc2::t_b9b7efa3acdcbd 31
+  s_e715a6e47b4fc2::t_c7e45eae9dfde2 38
+  s_e715a6e47b4fc2::t_6ebbbd73195041 107
+  s_e715a6e47b4fc2::t_963d478d75df3a 77,87
+  s_e715a6e47b4fc2::t_2670e9491f314c 25-27,33-35,47-49,59-61,65-67,78-83,98-103,113-118,124-129
+src/components/interactions/__tests__/graph-node-list.test.tsx
+  s_e715a6e47b4fc2::t_bfb055bff55f50 17-25,63-69,83-89,97-103,113-119,121-126,151-157,159-164,166-168,173-179,181-186,201-205,213-219
+  s_e715a6e47b4fc2::t_7aafb6f02d4e10 193
+  s_e715a6e47b4fc2::t_3d58c455d46da7 128,130,134-147
+  s_e715a6e47b4fc2::t_ad909aa77a726f 148-149
+src/components/interactions/__tests__/graph-detail-panel.test.tsx
+  s_e715a6e47b4fc2::t_d31a8692b533a1 52-57
+src/components/interactions/graph-legend.tsx
+  s_e715a6e47b4fc2::t_2670e9491f314c 7-8,11-13,15-17,19-21,23-51
+  s_e715a6e47b4fc2::t_deb0cb5022b163 10
+  s_e715a6e47b4fc2::t_ea8aaf230c2153 1-3
+  s_e715a6e47b4fc2::t_da1162f8a93aaf 9
+src/components/interactions/sigma/zoom-control.tsx
+  s_e715a6e47b4fc2::t_b41c16b1cdeacb 3
+  s_e715a6e47b4fc2::t_b7bd37788705d4 7
+  s_e715a6e47b4fc2::t_65f38c14a55996 42,48-52
+  s_e715a6e47b4fc2::t_eeb46d4e76e7d3 70,81-82,84
+  s_e715a6e47b4fc2::t_cf3688a9467808 61
+  s_e715a6e47b4fc2::t_a7edebbd8c340f 1-2,4-6,8-41,43-47,53-60,68-69,94-97
+  s_e715a6e47b4fc2::t_e263b4b8894c41 62-67,71-80,83,85-93
+src/components/interactions/__tests__/graph-action-bar.test.tsx
+  s_e715a6e47b4fc2::t_ad126f57018f01 46
+  s_e715a6e47b4fc2::t_f036d3d2473175 86-87
+  s_e715a6e47b4fc2::t_77e44ea6e3039c 7,10-13
+  s_e715a6e47b4fc2::t_549b196bc9e6c8 57-64,67-85,88-94,98-100
+  s_e715a6e47b4fc2::t_bfb055bff55f50 95-97,119-121,128-134,144-150,153-155
+  s_e715a6e47b4fc2::t_be3f035e892184 101-118,122-123
+  s_e715a6e47b4fc2::t_003dce51542e20 8-9
+  s_e715a6e47b4fc2::t_33dcb9ab0f4dfa 25
+  s_e715a6e47b4fc2::t_767b517dc20dc7 65-66
+src/components/interactions/interactions-graph-skeleton.tsx
+  s_e715a6e47b4fc2::t_7d0dfc6f987b3d 79
+  s_e715a6e47b4fc2::t_bfb055bff55f50 17-30,39-42,80-81
+  s_e715a6e47b4fc2::t_9096c3def12d28 63-64,67-72
+  s_e715a6e47b4fc2::t_09501a7c65a50f 65-66
+src/components/interactions/graph-action-bar.tsx
+  s_e715a6e47b4fc2::t_f2891c639207f3 61-62
+  s_e715a6e47b4fc2::t_144d8d5dbc920d 51
+  s_e715a6e47b4fc2::t_3b2853a39e7c9c 74,80,84,96,99-101,116-117
+  s_e715a6e47b4fc2::t_2e12f5cc92927a 4
+  s_e715a6e47b4fc2::t_9684cb87617a03 44
+  s_e715a6e47b4fc2::t_245f2d878e4300 79
+  s_e715a6e47b4fc2::t_5af9108049ca3a 5,45-50,52-58,65-66,70-73,75-77,81-82,85,95,97-98,118-123,130-131
+  s_e715a6e47b4fc2::t_bfb055bff55f50 7-11,20-25,27-31,87-94,102-115,140-151,160,165-178,180-186
+  s_e715a6e47b4fc2::t_f44d46220fb775 78,83,86
+  s_e715a6e47b4fc2::t_37cb4300a8b86d 3
+  s_e715a6e47b4fc2::t_6c5b4fc2efafd9 126-127
+src/components/interactions/graph-detail-panel.tsx
+  s_e715a6e47b4fc2::t_46d37c024e0f22 27-38
+src/components/interactions/__tests__/zoom-control.test.tsx
+  s_e715a6e47b4fc2::t_74131249f790f9 49
+  s_e715a6e47b4fc2::t_a34ce33b89eebc 2-39,41-43,57-92
+  s_e715a6e47b4fc2::t_597d0b8101939f 51-52
+  s_e715a6e47b4fc2::t_061d9a99baeddf 1
+  s_e715a6e47b4fc2::t_d01c36648118f5 50
+  s_e715a6e47b4fc2::t_b5c30c6e223dd1 44
+  s_e715a6e47b4fc2::t_20a77747225167 40
+  s_e715a6e47b4fc2::t_2b27c6f3d77cd3 45-48,53-56
+src/lib/interactions/graph-selections.ts
+  s_e715a6e47b4fc2::t_7c6c0f59ae3933 1-31,34-59,70-80
+  s_e715a6e47b4fc2::t_16d7d85b09f9d9 32-33
+  s_e715a6e47b4fc2::t_d8b6240a8ecb86 60-69
+src/components/interactions/interactions-subview-shell.tsx
+  s_662ce1ba5a74ea::t_ec56585cbd4cc4 28
+src/components/interactions/interactions-graph.tsx
+  s_e715a6e47b4fc2::t_7d0dfc6f987b3d 37,139,230
+  s_e715a6e47b4fc2::t_391428cf278a3a 91-94
+  s_e715a6e47b4fc2::t_cbd96ac7e69c09 198-199
+  s_e715a6e47b4fc2::t_fc576fd57ccdf7 204-205
+  s_e715a6e47b4fc2::t_21dfdedfcf41be 79
+  s_e715a6e47b4fc2::t_9e07c442cd861e 147,156-159,161,165,169-170,174-175
+  s_e715a6e47b4fc2::t_4fbed6c70390ea 218-221
+  s_e715a6e47b4fc2::t_a13d1c6d80fa7e 168,171-173,176-177
+  s_e715a6e47b4fc2::t_cc8c853673f336 190
+  s_e715a6e47b4fc2::t_bfb055bff55f50 8-12,14-23,32-36,38-42,64-66,71-74,77-78,87-90,102,112-115,125-127,140-141,148-149,151-153,201-203,223-225,229,231-233
+src/components/interactions/graph-toolbar.tsx
+  s_662ce1ba5a74ea::t_75fb9a27d4e493 12
+src/lib/interactions/types.ts
+  s_e715a6e47b4fc2::t_e7baa900131657 57-59
+src/lib/interactions/__tests__/graph-selections.test.ts
+  s_e715a6e47b4fc2::t_66d69f91767d5c 12
+  s_e715a6e47b4fc2::t_c4a3c3327faaa7 30,34-35
+  s_e715a6e47b4fc2::t_832448eb090b54 1-11,13-29,31-33,36-49
+src/components/interactions/__tests__/graph-legend.test.tsx
+  s_e715a6e47b4fc2::t_374c19ee3e64a2 22,38-39
+  s_e715a6e47b4fc2::t_2670e9491f314c 24-37,42-44,51-53
+  s_e715a6e47b4fc2::t_12c21b9e1a0c54 21,23
+  s_e715a6e47b4fc2::t_37bf9ded7e5f7d 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.18",
+  "base_commit_sha": "8930358ae027d8d6a2cca3aeb329386143ba38b6",
+  "prompts": {},
+  "sessions": {
+    "s_662ce1ba5a74ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05fa8ef9-154d-47b6-8831-3691736ff6f6",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_e715a6e47b4fc2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_04b4f9787ffef2ZJjXAUTPVw7j",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

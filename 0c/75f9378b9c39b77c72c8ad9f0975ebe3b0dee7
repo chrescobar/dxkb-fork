@@ -1,0 +1,37 @@
+src/lib/interactions/graph-theme.ts
+  s_2502b7f539d06d::t_7b72afe8bbbc71 37-39,42-44
+src/components/interactions/graph-toolbar.tsx
+  s_2502b7f539d06d::t_7e694dbb957aa2 10,12-14
+src/components/interactions/__tests__/graph-action-bar.test.tsx
+  s_2502b7f539d06d::t_7c004e5f4c0db1 1-47
+src/lib/interactions/__tests__/graph-theme.test.ts
+  s_2502b7f539d06d::t_572ec2a1893b67 54,56
+src/components/interactions/graph-action-bar.tsx
+  s_2502b7f539d06d::t_45725db4e76b04 1-114
+src/components/interactions/__tests__/graph-toolbar.test.tsx
+  s_2502b7f539d06d::t_23bb870bb57d1c 9,18
+src/components/interactions/interactions-graph.tsx
+  s_2502b7f539d06d::t_4b4ba433dbbc63 122,157
+  s_2502b7f539d06d::t_505557667f12b1 12
+  s_2502b7f539d06d::t_85afa221a164fa 134-135,137-139,141-155
+src/components/interactions/graph-node-list.tsx
+  s_2502b7f539d06d::t_ab60dfcfceceaf 53-58
+  s_2502b7f539d06d::t_e4fddc3a80ed69 1-4,20-33,40,43,45-52,60-75
+  s_2502b7f539d06d::t_4b4ba433dbbc63 59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "0c75f9378b9c39b77c72c8ad9f0975ebe3b0dee7",
+  "prompts": {},
+  "sessions": {
+    "s_2502b7f539d06d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c4b23891-7871-49f1-90c8-167b3b9c62b6",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

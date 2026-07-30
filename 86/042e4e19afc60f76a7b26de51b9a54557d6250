@@ -1,0 +1,74 @@
+src/components/interactions/graph-detail-panel.tsx
+  s_2502b7f539d06d::t_a14b8ba87b0efd 70-72
+  s_2502b7f539d06d::t_05fafb8a6faa2a 83-84
+  s_2502b7f539d06d::t_a1f36b2b4abefb 32,34,36,38,40,45
+  s_2502b7f539d06d::t_52bf0b8f6a9ce8 73-82
+  s_2502b7f539d06d::t_4f222236d62168 56
+  s_2502b7f539d06d::t_dcc3a071f87a43 33,35,37,39,41
+src/components/interactions/sigma/sigma-canvas.tsx
+  s_2502b7f539d06d::t_3f58d9f6117462 3
+  s_2502b7f539d06d::t_92ed5e9715ba2b 133-148
+  s_2502b7f539d06d::t_e1f52976bbf105 96,119,121,129,131
+  s_2502b7f539d06d::t_62ead796bada10 204-208
+  s_2502b7f539d06d::t_20a8a2fea997ca 48-58
+  s_2502b7f539d06d::t_7d592ea4cb81de 7-8
+  s_2502b7f539d06d::t_3878b6a6a6aec5 203
+  s_2502b7f539d06d::t_8cb367a8980351 222
+  s_2502b7f539d06d::t_a5d6cb1bea2d80 132
+src/lib/interactions/graph-theme.ts
+  s_2502b7f539d06d::t_b18f6f210b10f1 7-10
+  s_2502b7f539d06d::t_82beaead8765dd 56-70
+  s_2502b7f539d06d::t_dd5818bfcc4484 35-40
+src/components/interactions/__tests__/graph-detail-panel.test.tsx
+  s_2502b7f539d06d::t_7990ee1fc23d48 1-67,71,74-156
+  s_2502b7f539d06d::t_d37a4f2f77115c 68-70,72-73
+src/lib/interactions/__tests__/graph-theme.test.ts
+  s_2502b7f539d06d::t_c0e21aeb5e3516 85
+  s_2502b7f539d06d::t_bce77a9008fbcb 92-102
+  s_2502b7f539d06d::t_3f7c5623c4aa6b 49-61
+  s_2502b7f539d06d::t_d5ea651187af2b 83
+  s_2502b7f539d06d::t_c045121f630333 8
+e2e/tests/organisms/interactions.spec.ts
+  s_2502b7f539d06d::t_aab3f44af4d605 51-84
+src/components/interactions/graph-action-bar.tsx
+  s_2502b7f539d06d::t_d181b878db3c75 7
+  s_2502b7f539d06d::t_c82a08df59bdff 100
+  s_2502b7f539d06d::t_c81be4414cbf6a 51
+  s_2502b7f539d06d::t_e2de1c20f5d389 101
+  s_2502b7f539d06d::t_243852a858cf89 105-111
+src/components/interactions/__tests__/graph-legend.test.tsx
+  s_2502b7f539d06d::t_ab8a5d0bdf030d 1-31
+e2e/pages/taxon-interactions-page.ts
+  s_2502b7f539d06d::t_c324bfbb377ef7 70-86,88-101
+  s_2502b7f539d06d::t_2cd318136c8d98 87
+src/components/interactions/graph-legend.tsx
+  s_2502b7f539d06d::t_feb9bad4e2d4c8 5-15
+src/components/interactions/__tests__/graph-action-bar.test.tsx
+  s_2502b7f539d06d::t_03b5231240cdd4 47-66
+src/components/interactions/__tests__/graph-node-list.test.tsx
+  s_2502b7f539d06d::t_0381a17561fdcc 110-123
+src/components/interactions/graph-node-list.tsx
+  s_2502b7f539d06d::t_182a543c3e1ef2 59
+src/components/interactions/interactions-graph-skeleton.tsx
+  s_2502b7f539d06d::t_ae5167821bf66f 29
+  s_2502b7f539d06d::t_c52d1e6f85dd1d 53
+src/components/interactions/interactions-graph.tsx
+  s_2502b7f539d06d::t_ec591625ea496d 158
+  s_2502b7f539d06d::t_8e0244bd613d75 123
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.18",
+  "base_commit_sha": "86042e4e19afc60f76a7b26de51b9a54557d6250",
+  "prompts": {},
+  "sessions": {
+    "s_2502b7f539d06d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c4b23891-7871-49f1-90c8-167b3b9c62b6",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -14,6 +14,7 @@ import { serologyFields } from "@/constants/datafields/serology";
 import { strainFields } from "@/constants/datafields/strain";
 import { surveillanceFields } from "@/constants/datafields/surveillance";
 import { taxonomyFields } from "@/constants/datafields/taxonomy";
+import { ppiFields } from "@/constants/datafields/ppi";
 import type { DataFieldMap } from "@/constants/datafields/types";
 import { Button } from "@/components/ui/button";
 import { DetailPanel, type DetailField } from "./index";
@@ -206,6 +207,12 @@ export function InfoPanel(props: InfoPanelProps) {
       fieldFile = serologyFields;
       allowedFields = ['project_identifier', 'contributing_institution', 'sample_identifier', 'host_identifier', 'host_type', 'host_species', 'host_common_name', 'host_sex', 'host_age', 'host_age_group', 'host_health', 'collection_country', 'collection_state', 'collection_city', 'collection_date', 'collection_year', 'geographic_group', 'test_type', 'test_result', 'test_interpretation', 'serotype', 'comments'];
       order = ['Sample Info', 'Host Info', 'Sample Collection', 'Sample Tests', 'Other'];
+      break;
+    case 'ppi':
+      panelTitleField = 'interactor_a';
+      fieldFile = ppiFields;
+      allowedFields = ['genome_id_a', 'genome_name_a', 'interactor_a', 'interactor_type_a', 'feature_id_a', 'refseq_locus_tag_a', 'gene_a', 'interactor_desc_a', 'taxon_id_a', 'genome_id_b', 'genome_name_b', 'interactor_b', 'interactor_type_b', 'feature_id_b', 'refseq_locus_tag_b', 'gene_b', 'interactor_desc_b', 'taxon_id_b', 'category', 'interaction_type', 'detection_method', 'evidence', 'pubmed', 'score', 'source_db', 'domain_a', 'domain_b', 'date_inserted', 'date_modified'];
+      order = ['Interactor A', 'Interactor B', 'Interaction', 'Other'];
       break;
     case 'taxonomy':
       panelTitleField = 'taxon_name';

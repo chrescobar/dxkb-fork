@@ -39,6 +39,7 @@ const e2eDeterministicCounts: Record<string, number> = {
   epitope: 7890,
   protein_structure: 4567,
   protein_feature: 8901,
+  ppi: 4358,
 };
 
 function maybeSolrCount(path: string): { response: { numFound: number; docs: never[] } } | null {

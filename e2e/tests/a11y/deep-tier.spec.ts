@@ -12,6 +12,8 @@ import {
   buildWorkspaceOverrides,
   e2eHomePath,
   journeyOverrides,
+  buildPpiRows,
+  buildPpiOverrides,
 } from "../../fixtures/overrides";
 import { awaitSettled } from "../../a11y/settle";
 import { scanPage, formatBlocking, logWarnings } from "../../a11y/axe-scan";
@@ -23,6 +25,7 @@ import generatedBaseline from "../../a11y/baseline.generated";
 import { WorkspacePage } from "../../pages/workspace-page";
 import { JobsListPage } from "../../pages/jobs-list-page";
 import { SettingsPage } from "../../pages/settings-page";
+import { TaxonInteractionsPage } from "../../pages/taxon-interactions-page";
 import type { BaselineMap } from "../../a11y/baseline";
 import type { MockJob } from "../../fixtures/overrides";
 
@@ -405,6 +408,41 @@ test.describe("a11y deep tier: settings", () => {
 
     await forEachTheme(page, async (theme) => {
       await assertNoBlocking(page, "settings/error-toast", theme);
+    });
+  });
+});
+
+// ── Taxon interactions — Graph subtab (interaction state, not URL-addressable) ────
+// The Graph subtab is local React state (no query param), so routes-sweep.spec.ts
+// cannot reach it. Cover it here by driving the click before scanning.
+
+test.describe("a11y deep tier: taxon interactions graph", () => {
+  test("interactions: Graph subtab has no blocking violations", async ({ page, browserName }) => {
+    // Sigma.js needs a WebGL context to mount its canvas; headless Firefox in CI
+    // has none ("Exhausted GL driver options"), so the graph crashes the page and
+    // the Graph tab never renders. Chromium (the deep-scan project) and WebKit
+    // ship software GL. The chromium project carries the real a11y coverage; the
+    // firefox tripwire can't reach this surface. Mirrors interactions.spec.ts and
+    // viewer-3d.spec.ts.
+    test.skip(browserName === "firefox", "Headless Firefox has no WebGL for Sigma.js to render into");
+
+    const rows = buildPpiRows(1);
+
+    await applyBackendMocks(page, {
+      overrides: [
+        ...buildPpiOverrides(rows),
+        ...authSessionOverrides,
+        ...permissiveBackendOverrides,
+      ],
+    });
+
+    const interactionsPage = new TaxonInteractionsPage(page);
+    await interactionsPage.goto("234");
+    await interactionsPage.switchToGraph();
+    await interactionsPage.expectCanvasVisible();
+
+    await forEachTheme(page, async (theme) => {
+      await assertNoBlocking(page, "interactions/graph", theme);
     });
   });
 });

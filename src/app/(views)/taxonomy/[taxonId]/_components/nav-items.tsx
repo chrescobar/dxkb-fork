@@ -22,6 +22,7 @@ import { makeSurveillanceView } from "../views/surveillance";
 import { makeSerologyView } from "../views/serology";
 import { makeSfvtView } from "../views/sfvt";
 import { makeEpitopesView } from "../views/epitopes";
+import { makeInteractionsView } from "../views/interactions";
 
 /**
  * Build the taxon-view tab strip by evaluating the declarative tab policy
@@ -56,5 +57,6 @@ export function buildTaxonomyNavItems(
     serology: { Component: makeSerologyView({ taxon }), layout: "fill" },
     sfvt: { Component: makeSfvtView({ taxon, sfvtTaxonIds: lists.sfvtTaxonIds }), layout: "fill" },
     epitopes: { Component: makeEpitopesView({ taxon }), layout: "fill" },
+    interactions: { Component: makeInteractionsView({ taxon }), layout: "fill" },
   });
 }

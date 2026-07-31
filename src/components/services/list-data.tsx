@@ -24,6 +24,7 @@ import { taxonomyFields } from "@/constants/datafields/taxonomy";
 import { biosetFields } from "@/constants/datafields/bioset";
 import { epitopeFields } from "@/constants/datafields/epitope";
 import { experimentFields } from "@/constants/datafields/experiment";
+import { ppiFields } from "@/constants/datafields/ppi";
 
 // Stable empty-rows reference so DataTable's memoized body comparator (prev.data === next.data)
 // isn't defeated by a fresh [] on every render when there are no results.
@@ -57,6 +58,7 @@ const resourceFields: Record<string, DataFieldMap | undefined> = {
   bioset: biosetFields,
   epitope: epitopeFields,
   experiment: experimentFields,
+  ppi: ppiFields,
 };
 
 export function deriveTableFields(resource: string): ColumnInfo[] {
@@ -101,7 +103,7 @@ export function isSameResourceQuery(
 }
 
 interface ListDataProps {
-  q: string; 
+  q: string;
   resource: string; // 'genome', 'gene', etc.
   onSelectionChange?: (ids: string[]) => void;
   rowSelection?: Record<string, boolean>;
@@ -112,9 +114,13 @@ interface ListDataProps {
   isAllPagesSelected?: boolean;
   onAllPagesSelectionChange?: (selected: boolean) => void;
   onTotalItemsChange?: (total: number) => void;
+  filter?: string;
+  onFilterChange?: (rql: string) => void;
+  keywordValue?: string;
+  onKeywordChange?: (value: string) => void;
 }
 
-export function ListData({ q, resource, onSelectionChange, rowSelection: controlledRowSelection, onRowSelectionChange, pageIndex: controlledPageIndex, onPageChange, selectedIds, isAllPagesSelected: controlledIsAllPagesSelected, onAllPagesSelectionChange, onTotalItemsChange }: ListDataProps) {
+export function ListData({ q, resource, onSelectionChange, rowSelection: controlledRowSelection, onRowSelectionChange, pageIndex: controlledPageIndex, onPageChange, selectedIds, isAllPagesSelected: controlledIsAllPagesSelected, onAllPagesSelectionChange, onTotalItemsChange, filter: controlledFilter, onFilterChange, keywordValue, onKeywordChange }: ListDataProps) {
   const fields = useMemo(() => deriveTableFields(resource), [resource]);
   const queryClient = useQueryClient();
   const idField = getIdField(resource);
@@ -123,7 +129,14 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
   const [internalRowSelection, setInternalRowSelection] = useState<RowSelectionState>({});
   const rowSelection = controlledRowSelection !== undefined ? controlledRowSelection : internalRowSelection;
   const setRowSelection = onRowSelectionChange || setInternalRowSelection;
-  const [filter, setFilter] = useState('');
+  // `filter` is controlled only when the parent passes it. `onFilterChange`
+  // alone is notify-only: ListData applies its filter locally and reports it.
+  const [internalFilter, setInternalFilter] = useState('');
+  const filter = controlledFilter !== undefined ? controlledFilter : internalFilter;
+  const setFilter = useCallback((rql: string) => {
+    if (controlledFilter === undefined) setInternalFilter(rql);
+    onFilterChange?.(rql);
+  }, [controlledFilter, onFilterChange]);
   const [internalIsAllPagesSelected, setInternalIsAllPagesSelected] = useState(false);
   const isAllPagesSelected = controlledIsAllPagesSelected !== undefined ? controlledIsAllPagesSelected : internalIsAllPagesSelected;
   const setIsAllPagesSelected = onAllPagesSelectionChange || setInternalIsAllPagesSelected;
@@ -451,6 +464,9 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
         facetFields={facetFields}
         resource={resource}
         query={cleanQ}
+        keywordValue={keywordValue}
+        onKeywordChange={onKeywordChange}
+        keywordPlaceholder={resource === "ppi" ? "Search interaction results..." : undefined}
         onFilterChange={(rql) => {
           setFilter(rql);
           setPageIndex(0);

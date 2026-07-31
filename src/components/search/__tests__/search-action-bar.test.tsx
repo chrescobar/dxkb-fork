@@ -54,6 +54,27 @@ describe("SearchActionBar (taxonomy)", () => {
         expect(screen.getByRole("button", { name })).toBeDisabled();
       }
     });
+
+    it("does not fire onAction when clicking a disabled ppi action", async () => {
+      const onAction = vi.fn();
+      render(<SearchActionBar selectedCount={1} searchType="ppi" onAction={onAction} />);
+      await userEvent.click(screen.getByRole("button", { name: /fasta/i }));
+      expect(onAction).not.toHaveBeenCalled();
+    });
+
+    it("shows the not-ready tooltip text on hover for the new ppi actions", async () => {
+      const user = userEvent.setup();
+      render(<SearchActionBar selectedCount={1} searchType="ppi" />);
+      await user.hover(screen.getByRole("button", { name: /fasta/i }));
+      expect(await screen.findAllByText(notReady)).not.toHaveLength(0);
+    });
+
+    it("does not leak ppi-only actions (FASTA, GROUP, ppiFeatures) into unrelated search types", () => {
+      render(<SearchActionBar selectedCount={1} searchType="epitope" />);
+      expect(screen.queryByRole("button", { name: /fasta/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: /group/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: /^features$/i })).not.toBeInTheDocument();
+    });
   });
 
   describe("callbacks", () => {

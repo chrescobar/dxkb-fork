@@ -61,11 +61,14 @@ describe("InteractionsSubviewShell", () => {
     expect(tableMountCount).toBe(1);
 
     fireEvent.click(screen.getByRole("tab", { name: "Graph" }));
+    expect(screen.getByTestId("table-panel").parentElement).toHaveAttribute("inert");
+
     fireEvent.click(screen.getByRole("tab", { name: "Table" }));
 
     // Still 1: base-ui's Tabs.Panel keepMounted keeps the same instance alive
     // instead of unmounting on hide and remounting on reveal.
     expect(tableMountCount).toBe(1);
+    expect(screen.getByTestId("table-panel").parentElement).not.toHaveAttribute("inert");
   });
 
   it("passes the table's current filter into the graph subview as tableFilter (bug #1)", () => {

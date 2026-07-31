@@ -31,7 +31,12 @@ export function InteractionsSubviewShell({ taxonId, q, guideUrl }: InteractionsS
         <TabsTrigger value="table">Table</TabsTrigger>
         <TabsTrigger value="graph">Graph</TabsTrigger>
       </TabsList>
-      <TabsContent value="table" keepMounted className="flex min-h-0 flex-1 flex-col">
+      <TabsContent
+        value="table"
+        keepMounted
+        inert={subTab !== "table"}
+        className="flex min-h-0 flex-1 flex-col"
+      >
         <TaxonDataPanel
           resource="ppi"
           q={q}

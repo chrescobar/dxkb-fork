@@ -217,11 +217,9 @@ export function InteractionsGraph({
             onSelectHubs={handleSelectHubs}
             exportReady={canvasReady}
           />
-          {/* Canvas is a pointer-only WebGL surface with no accessible name: the
-              node list (left) and detail panel (right) are the keyboard-operable
-              path to the same node/edge selection, so hide the decorative render
-              from assistive tech rather than exposing it as a static image. */}
-          <div className="min-h-0 flex-1" aria-hidden="true">
+          {/* The WebGL canvases have no accessible role. Keep this wrapper exposed
+              because SigmaCanvas also contains labeled, keyboard-operable zoom controls. */}
+          <div className="min-h-0 flex-1">
             <SigmaCanvas
               nodes={nodes}
               edges={edges}

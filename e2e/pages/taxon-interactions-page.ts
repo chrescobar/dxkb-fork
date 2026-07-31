@@ -25,11 +25,15 @@ export class TaxonInteractionsPage {
   }
 
   async switchToGraph(): Promise<void> {
-    await this.page.getByRole("tab", { name: "Graph" }).click();
+    const tab = this.page.getByRole("tab", { name: "Graph" });
+    await tab.click();
+    await expect(tab).toHaveAttribute("aria-selected", "true");
   }
 
   async switchToTable(): Promise<void> {
-    await this.page.getByRole("tab", { name: "Table" }).click();
+    const tab = this.page.getByRole("tab", { name: "Table" });
+    await tab.click();
+    await expect(tab).toHaveAttribute("aria-selected", "true");
   }
 
   async expectCanvasVisible(): Promise<void> {

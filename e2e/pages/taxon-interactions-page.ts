@@ -48,7 +48,7 @@ export class TaxonInteractionsPage {
   async filterByKeyword(text: string): Promise<void> {
     await this.page
       .getByRole("tabpanel", { name: "Table" })
-      .getByPlaceholder("Search keywords...")
+      .getByPlaceholder("Search interaction results...")
       .fill(text);
   }
 

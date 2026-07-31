@@ -47,6 +47,15 @@ describe("SearchActionBar (taxonomy)", () => {
     });
   });
 
+  describe("ppi (interactions)", () => {
+    it("shows COPY, SERVICES, FEATURES, FASTA, and GROUP disabled with the not-ready tooltip", () => {
+      render(<SearchActionBar selectedCount={2} searchType="ppi" />);
+      for (const name of [/copy/i, /services/i, /features/i, /fasta/i, /group/i]) {
+        expect(screen.getByRole("button", { name })).toBeDisabled();
+      }
+    });
+  });
+
   describe("callbacks", () => {
     afterEach(() => vi.restoreAllMocks());
 

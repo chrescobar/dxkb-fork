@@ -21,6 +21,7 @@ interface FilterBarProps {
   query: string;
   keywordValue?: string;
   onKeywordChange?: (value: string) => void;
+  keywordPlaceholder?: string;
 }
 
 export function FilterBar({
@@ -30,6 +31,7 @@ export function FilterBar({
   query,
   keywordValue,
   onKeywordChange,
+  keywordPlaceholder,
 }: FilterBarProps) {
   const [internalKeywords, setInternalKeywords] = useState<string[]>([]);
   const keywords = useMemo(
@@ -107,6 +109,7 @@ export function FilterBar({
           <KeywordSearch
             value={keywords.join(" ")}
             onChange={(val) => { setKeywords(val.split(" ").filter(Boolean)); }}
+            placeholder={keywordPlaceholder}
           />
 
           <SelectedFilters

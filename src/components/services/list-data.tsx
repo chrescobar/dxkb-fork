@@ -466,6 +466,7 @@ export function ListData({ q, resource, onSelectionChange, rowSelection: control
         query={cleanQ}
         keywordValue={keywordValue}
         onKeywordChange={onKeywordChange}
+        keywordPlaceholder={resource === "ppi" ? "Search interaction results..." : undefined}
         onFilterChange={(rql) => {
           setFilter(rql);
           setPageIndex(0);

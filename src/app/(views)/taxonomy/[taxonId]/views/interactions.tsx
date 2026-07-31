@@ -9,7 +9,7 @@ export function makeInteractionsView({ taxon }: { taxon: OrganismTaxonomy | null
       <InteractionsSubviewShell
         taxonId={taxon.taxonId}
         q={q}
-        guideUrl="https://www.bv-brc.org/docs/quick_references/organisms_taxon/protein_protein_interactions.html"
+        guideUrl="https://www.bv-brc.org/docs/quick_references/organisms_taxon/interactions.html"
       />
     );
   }

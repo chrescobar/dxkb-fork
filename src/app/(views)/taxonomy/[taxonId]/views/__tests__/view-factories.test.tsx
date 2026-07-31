@@ -301,7 +301,7 @@ describe("makeInteractionsView", () => {
     const InteractionsView = makeInteractionsView({ taxon: fakeTaxon });
     const { getByTestId } = render(<InteractionsView />);
     expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toBe(
-      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/protein_protein_interactions.html",
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/interactions.html",
     );
   });
 });

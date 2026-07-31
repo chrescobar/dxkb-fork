@@ -1,0 +1,25 @@
+e2e/pages/taxon-interactions-page.ts
+  s_59ccd706ce7d3e::t_3af301b1fed759 28-30,34-36
+src/components/interactions/__tests__/interactions-subview-shell.test.tsx
+  s_59ccd706ce7d3e::t_b64fbb4c27055c 64-65,71
+src/components/interactions/interactions-subview-shell.tsx
+  s_59ccd706ce7d3e::t_394977328ad126 34-39
+src/components/interactions/interactions-graph.tsx
+  s_59ccd706ce7d3e::t_58317aa187711d 220-222
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.19",
+  "base_commit_sha": "66de604864f46946aedbb6a547b50b2df19ef267",
+  "prompts": {},
+  "sessions": {
+    "s_59ccd706ce7d3e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_046f7616cffev7lQPhWj3YGdDO",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -170,7 +170,13 @@ test.describe("taxon interactions tab: filter sync between Table and Graph", () 
     await expect(graphPanel.getByText("fig|224914.16.peg.601")).not.toBeVisible();
   });
 
-  test("switching Table to Graph and back keeps the table filter applied (bug #3)", async ({ page }) => {
+  test("switching Table to Graph and back keeps the table filter applied (bug #3)", async ({ page, browserName }) => {
+    // Switching to Graph mounts SigmaCanvas, which headless Firefox can't give a
+    // WebGL context — Sigma throws and takes the whole page down (no canvas
+    // fallback; see the Graph subtab test above). Table↔Graph state survival is
+    // covered on Chromium/WebKit, which ship software GL.
+    test.skip(browserName === "firefox", "Headless Firefox has no WebGL for Sigma.js to render into");
+
     const interactionsPage = await setupFilterableInteractionsPage(page);
 
     await interactionsPage.filterByKeyword("peg.600");

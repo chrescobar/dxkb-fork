@@ -1,0 +1,23 @@
+src/components/interactions/__tests__/graph-toolbar.test.tsx
+  s_f82fd99837ef39::t_1ce3f12284a52c 11,20
+src/components/interactions/__tests__/interactions-graph.test.tsx
+  s_f82fd99837ef39::t_4bd3fb1ca515aa 88,109,129
+e2e/pages/taxon-interactions-page.ts
+  s_f82fd99837ef39::t_0ac8b4df2ab763 59,65,71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.19",
+  "base_commit_sha": "c22f81c7e01f61a777a97ddb43f8bbdf0b705f83",
+  "prompts": {},
+  "sessions": {
+    "s_f82fd99837ef39": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f31a9f79-16ee-4851-acf4-60c2169b6934",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

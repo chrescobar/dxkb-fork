@@ -10,6 +10,7 @@ import { makeDomainsAndMotifsView } from "../domains-and-motifs";
 import { makeFeaturesView } from "../features";
 import { makeEpitopesView } from "../epitopes";
 import { makeExperimentsView } from "../experiments";
+import { makeInteractionsView } from "../interactions";
 
 // TaxonDataPanel has complex network + React dependencies; mock it so tests stay
 // focused on the factory guard logic (null taxon → render nothing).
@@ -275,5 +276,32 @@ describe("makeExperimentsView", () => {
     expect(q).toContain("eq(genome_id,*)");
     expect(q).toContain("genome(eq(taxon_lineage_ids,1234))");
     expect(panel.getAttribute("data-guide")).toBeNull();
+  });
+});
+
+describe("makeInteractionsView", () => {
+  it("renders nothing when taxon is null", () => {
+    const InteractionsView = makeInteractionsView({ taxon: null });
+    const { container } = render(<InteractionsView />);
+    expect(container.firstChild).toBeNull();
+  });
+
+  it("renders TaxonDataPanel with the ppi cross-core join query", () => {
+    const InteractionsView = makeInteractionsView({ taxon: fakeTaxon });
+    const { getByTestId } = render(<InteractionsView />);
+    const panel = getByTestId("taxon-data-panel");
+    expect(panel).toHaveAttribute("data-resource", "ppi");
+    const q = panel.getAttribute("data-q") ?? "";
+    expect(q).toContain("eq(genome_id_a,*)");
+    expect(q).toContain("genome(to(genome_id_a),and(eq(taxon_lineage_ids,1234),ne(genome_status,Deprecated)))");
+    expect(q).toContain("eq(evidence,experimental)");
+  });
+
+  it("passes the interactions guide URL", () => {
+    const InteractionsView = makeInteractionsView({ taxon: fakeTaxon });
+    const { getByTestId } = render(<InteractionsView />);
+    expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toBe(
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/interactions.html",
+    );
   });
 });

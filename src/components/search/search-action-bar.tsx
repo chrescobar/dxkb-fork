@@ -33,6 +33,7 @@ export type SearchActionId =
   | "serology"
   | "taxonOverview"
   | "features"
+  | "ppiFeatures"
   | "experiment"
   | "biosets";
 
@@ -75,7 +76,7 @@ const actionConfig: ActionConfig[] = [
     id: "copyRows",
     label: "COPY",
     icon: Copy,
-    validSearchTypes: ["genome", "strain", "genome_feature", "protein_feature", "epitope", "protein_structure", "surveillance", "serology"],
+    validSearchTypes: ["genome", "strain", "genome_feature", "protein_feature", "epitope", "protein_structure", "surveillance", "serology", "ppi"],
     requiresSelection: true,
     disabledWithTooltip: notReady,
   },
@@ -108,7 +109,7 @@ const actionConfig: ActionConfig[] = [
     id: "group",
     label: "GROUP",
     icon: Group,
-    validSearchTypes: ["genome", "strain", "genome_feature"],
+    validSearchTypes: ["genome", "strain", "genome_feature", "ppi"],
     requiresSelection: true,
     disabledWithTooltip: notReady,
   },
@@ -121,10 +122,18 @@ const actionConfig: ActionConfig[] = [
     disabledWithTooltip: notReady,
   },
   {
+    id: "ppiFeatures",
+    label: "FEATURES",
+    letter: "F",
+    validSearchTypes: ["ppi"],
+    requiresSelection: true,
+    disabledWithTooltip: notReady,
+  },
+  {
     id: "fasta",
     label: "FASTA",
     icon: Binary,
-    validSearchTypes: ["genome_feature"],
+    validSearchTypes: ["genome_feature", "ppi"],
     requiresSelection: true,
     disabledWithTooltip: notReady,
   },
@@ -283,7 +292,7 @@ export function SearchActionBar({
               ) : Icon ? (
                 <Icon className="size-4 shrink-0" />
               ) : null}
-              <span className={`text-center leading-tight font-medium break-words whitespace-normal ${action.labelClassName ?? "text-[9px]"}`}>
+              <span className={`wrap-break-words text-center leading-tight font-medium whitespace-normal ${action.labelClassName ?? "text-[9px]"}`}>
                 {action.label.split("\n").map((line, i) => (
                   <span key={i} className="block">{line}</span>
                 ))}

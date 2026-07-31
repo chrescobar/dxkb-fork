@@ -74,9 +74,32 @@ describe("InfoPanel — search variant", () => {
           selectedRow={{ genome_id: "genome-1", genome_name: "Test Genome" }}
         />,
       );
-      // Single row, not loading → renders field detail panel (not multi-select message)
+      // Single row, not loading -> renders field detail panel (not multi-select message)
       expect(screen.queryByText(/rows selected/)).not.toBeInTheDocument();
       expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    });
+
+    it("renders ppi details for a selected interaction row", () => {
+      render(
+        <InfoPanel
+          selectedIds={["ppi-1"]}
+          activeTab="ppi"
+          isLoading={false}
+          selectedRow={{
+            id: "ppi-1",
+            interactor_a: "fig|224914.16.peg.635",
+            genome_name_a: "Brucella melitensis bv. 1 str. 16M [WGS]",
+            interactor_b: "fig|224914.16.peg.2425",
+            category: "PPI",
+            evidence: ["experimental"],
+          }}
+        />,
+      );
+
+      expect(screen.getAllByText("fig|224914.16.peg.635").length).toBeGreaterThan(0);
+      expect(screen.getByText("Genome Name A")).toBeInTheDocument();
+      expect(screen.getAllByText("Interactor B").length).toBeGreaterThan(0);
+      expect(screen.getByText("PPI")).toBeInTheDocument();
     });
   });
 });

@@ -11,9 +11,20 @@ interface TaxonDataPanelProps {
   resource: string;
   q: string;
   guideUrl?: string;
+  /** Notify-only: lets a caller observe the complete RQL filter. */
+  onFilterChange?: (rql: string) => void;
+  keywordValue?: string;
+  onKeywordChange?: (value: string) => void;
 }
 
-export function TaxonDataPanel({ resource, q, guideUrl }: TaxonDataPanelProps) {
+export function TaxonDataPanel({
+  resource,
+  q,
+  guideUrl,
+  onFilterChange,
+  keywordValue,
+  onKeywordChange,
+}: TaxonDataPanelProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [pageIndex, setPageIndex] = useState(0);
@@ -66,6 +77,9 @@ export function TaxonDataPanel({ resource, q, guideUrl }: TaxonDataPanelProps) {
         isAllPagesSelected={isAllPagesSelected}
         onAllPagesSelectionChange={setIsAllPagesSelected}
         onTotalItemsChange={setTotalItems}
+        onFilterChange={onFilterChange}
+        keywordValue={keywordValue}
+        onKeywordChange={onKeywordChange}
       />
     </GenomeShell>
   );

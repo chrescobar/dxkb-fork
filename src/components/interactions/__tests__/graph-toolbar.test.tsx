@@ -8,7 +8,7 @@ describe("GraphToolbar", () => {
 
     render(<GraphToolbar filterValue="" onFilterChange={onFilterChange} />);
 
-    const keywordInput = screen.getByPlaceholderText("Search keywords...");
+    const keywordInput = screen.getByPlaceholderText("Search interaction results...");
     fireEvent.change(keywordInput, { target: { value: "groEL" } });
 
     expect(onFilterChange).toHaveBeenLastCalledWith("groEL");
@@ -17,6 +17,6 @@ describe("GraphToolbar", () => {
   it("reflects the current filterValue back into the keyword input", () => {
     render(<GraphToolbar filterValue="groEL" onFilterChange={vi.fn()} />);
 
-    expect(screen.getByPlaceholderText("Search keywords...")).toHaveValue("groEL");
+    expect(screen.getByPlaceholderText("Search interaction results...")).toHaveValue("groEL");
   });
 });

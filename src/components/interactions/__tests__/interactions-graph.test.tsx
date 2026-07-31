@@ -85,7 +85,7 @@ describe("InteractionsGraph filter combination", () => {
       />,
     );
 
-    fireEvent.change(screen.getByPlaceholderText("Search keywords..."), { target: { value: "dnaK" } });
+    fireEvent.change(screen.getByPlaceholderText("Search interaction results..."), { target: { value: "dnaK" } });
 
     expect(onKeywordChange).toHaveBeenLastCalledWith("dnaK");
     expect(useInteractions).toHaveBeenLastCalledWith(
@@ -106,7 +106,7 @@ describe("InteractionsGraph filter combination", () => {
       />,
     );
 
-    fireEvent.change(screen.getByPlaceholderText("Search keywords..."), { target: { value: "dnaK" } });
+    fireEvent.change(screen.getByPlaceholderText("Search interaction results..."), { target: { value: "dnaK" } });
 
     expect(onKeywordChange).toHaveBeenLastCalledWith("dnaK");
     expect(useInteractions).toHaveBeenLastCalledWith(943, "eq(category,PPI)");
@@ -126,7 +126,7 @@ describe("InteractionsGraph loading state", () => {
     // Skeleton's Spinner is the single role=status loading announcement.
     expect(screen.getByRole("status")).toBeInTheDocument();
     // Real keyword toolbar stays mounted in every state, loading included.
-    expect(screen.getByPlaceholderText("Search keywords...")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Search interaction results...")).toBeInTheDocument();
   });
 });
 

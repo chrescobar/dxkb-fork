@@ -56,19 +56,19 @@ export class TaxonInteractionsPage {
   async filterGraphByKeyword(text: string): Promise<void> {
     await this.page
       .getByRole("tabpanel", { name: "Graph" })
-      .getByPlaceholder("Search keywords...")
+      .getByPlaceholder("Search interaction results...")
       .fill(text);
   }
 
   async expectTableKeywordValue(text: string): Promise<void> {
     await expect(
-      this.page.getByRole("tabpanel", { name: "Table" }).getByPlaceholder("Search keywords..."),
+      this.page.getByRole("tabpanel", { name: "Table" }).getByPlaceholder("Search interaction results..."),
     ).toHaveValue(text);
   }
 
   async expectGraphKeywordValue(text: string): Promise<void> {
     await expect(
-      this.page.getByRole("tabpanel", { name: "Graph" }).getByPlaceholder("Search keywords..."),
+      this.page.getByRole("tabpanel", { name: "Graph" }).getByPlaceholder("Search interaction results..."),
     ).toHaveValue(text);
   }
 

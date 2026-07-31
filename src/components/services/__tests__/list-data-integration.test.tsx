@@ -283,7 +283,7 @@ describe("ListData controlled filter", () => {
     server.use(
       http.get(`${dataApi}/genome_sequence/`, ({ request }) => {
         if (request.url.includes("limit(1)")) {
-          return HttpResponse.json({ response: { numFound: 0 } });
+          return HttpResponse.json({ response: { numFound: 5 } });
         }
         capturedDataUrls.push(request.url);
         return HttpResponse.json([]);
@@ -307,6 +307,7 @@ describe("ListData controlled filter", () => {
     fireEvent.change(input, { target: { value: "abc" } });
 
     await waitFor(() => { expect(onFilterChange).toHaveBeenCalledWith("keyword(abc*)"); });
+    await waitFor(() => { expect(capturedDataUrls.length).toBeGreaterThan(0); });
 
     // Controlled: the prop is still "" (parent chose not to feed it back), so
     // ListData must not have silently applied the typed keyword itself.

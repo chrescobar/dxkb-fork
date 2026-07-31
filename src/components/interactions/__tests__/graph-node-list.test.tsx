@@ -93,7 +93,7 @@ describe("GraphNodeList", () => {
     expect(onSelectNode).toHaveBeenCalledWith(nodes[0]);
   });
 
-  it("marks only the selected row aria-current, keeping the app selection the single highlight", () => {
+  it("marks the app-selected row without overriding cmdk's listbox semantics", () => {
     render(
       <GraphNodeList
         nodes={nodes}
@@ -105,8 +105,10 @@ describe("GraphNodeList", () => {
     const selected = screen.getByText("recA").closest("[cmdk-item]");
     const other = screen.getByText("dnaA").closest("[cmdk-item]");
 
-    expect(selected).toHaveAttribute("aria-current", "true");
-    expect(other).toHaveAttribute("aria-current", "false");
+    expect(selected).toHaveAttribute("data-app-selected", "true");
+    expect(other).toHaveAttribute("data-app-selected", "false");
+    expect(selected).not.toHaveAttribute("aria-current");
+    expect(other).not.toHaveAttribute("aria-current");
   });
 
   it("recolors the selected row's dot amber and leaves unselected dots on their kind color", () => {
@@ -142,7 +144,8 @@ describe("GraphNodeList", () => {
 
     for (const label of ["dnaA", "recA"]) {
       const row = screen.getByText(label).closest("[cmdk-item]") as HTMLElement;
-      expect(row).toHaveAttribute("aria-current", "true");
+      expect(row).toHaveAttribute("data-app-selected", "true");
+      expect(row).not.toHaveAttribute("aria-current");
       expect(dotOf(row).style.backgroundColor).toBe(rgb(colors.selected));
     }
   });
@@ -190,7 +193,9 @@ describe("GraphNodeList", () => {
     // only hover feedback).
     expect(otherRow).toHaveClass("hover:bg-secondary/15");
     // Selected row keeps its stronger, forced highlight so hover can't override it.
-    expect(selectedRow).toHaveClass("aria-current:bg-secondary/25!");
+    expect(selectedRow).toHaveClass(
+      "data-[app-selected=true]:bg-secondary/25!",
+    );
   });
 
   it("scrolls the newly selected row into view (graph→list sync)", () => {

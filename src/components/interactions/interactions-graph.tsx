@@ -61,7 +61,8 @@ export function InteractionsGraph({
 }: InteractionsGraphProps) {
   // The table filter already includes the shared keyword and any table facets.
   const combinedQuery = useMemo(() => {
-    const parts = [q, tableFilter].filter(
+    const cleanQ = q.split("#")[0];
+    const parts = [cleanQ, tableFilter].filter(
       (p): p is string => Boolean(p) && p !== "false",
     );
     if (parts.length === 0) return "";
@@ -79,6 +80,17 @@ export function InteractionsGraph({
   const [activeHub, setActiveHub] = useState<HubSelection | null>(null);
   const [canvasReady, setCanvasReady] = useState(false);
   const canvasHandleRef = useRef<GraphCanvasHandle | null>(null);
+  const [graphSource, setGraphSource] = useState({ combinedQuery, data });
+  if (
+    graphSource.combinedQuery !== combinedQuery ||
+    graphSource.data !== data
+  ) {
+    setGraphSource({ combinedQuery, data });
+    setSelection(emptySelection);
+    setActiveSubgraph(null);
+    setActiveHub(null);
+  }
+
   // Keyed on the query data reference so selecting a node/edge (which only
   // updates `selection`) doesn't rebuild nodes/edges. SigmaCanvas reloads and
   // re-lays out the whole graph whenever its nodes/edges props change

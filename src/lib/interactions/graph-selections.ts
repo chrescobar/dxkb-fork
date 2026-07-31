@@ -65,13 +65,13 @@ export function selectSubgraphs(index: GraphSelectionIndex, threshold: SubgraphS
     );
     matching = largest ? [largest] : [];
   } else {
-    matching = index.components.filter((component) => component.length > threshold);
+    matching = index.components.filter((component) => component.length >= threshold);
   }
   return selectionFromNodeIds(index, new Set(matching.flat()), true);
 }
 
 export function selectHubs(index: GraphSelectionIndex, threshold: HubSelection): GraphSelection {
-  const maxDegree = Math.max(0, ...index.neighbors.values().map((neighbors) => neighbors.size));
+  const maxDegree = Math.max(0, ...Array.from(index.neighbors.values(), (neighbors) => neighbors.size));
   const nodeIds = new Set<string>();
   for (const [id, neighbors] of index.neighbors) {
     if (threshold === "max" ? neighbors.size === maxDegree : neighbors.size >= threshold) nodeIds.add(id);

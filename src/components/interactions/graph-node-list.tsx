@@ -32,12 +32,12 @@ export function GraphNodeList({
   // cmdk's own `data-selected` cursor follows the pointer, which visually
   // competed with the app selection and highlighted whatever was last hovered
   // rather than the node clicked on the graph. We disable pointer selection so
-  // that phantom highlight can't wander, and style `aria-current` (the app
-  // selection) ourselves below. On a graph→list selection change, scroll the
+  // that phantom highlight can't wander, and style the app selection through a
+  // separate data attribute below. On a graph→list selection change, scroll the
   // selected row into view so the two stay in sync.
   useEffect(() => {
     if (selectedIds.size !== 1) return;
-    const el = listRef.current?.querySelector('[aria-current="true"]');
+    const el = listRef.current?.querySelector('[data-app-selected="true"]');
     el?.scrollIntoView({ block: "nearest" });
   }, [selectedIds]);
 
@@ -61,14 +61,14 @@ export function GraphNodeList({
               onSelect={() => {
                 onSelectNode(node);
               }}
-              aria-current={isSelected}
+              data-app-selected={isSelected}
               // cmdk keeps its own `data-selected` cursor (mount first-item,
               // keyboard, click) independent of the app selection, which showed
               // as a competing highlight on the wrong row. Neutralise it and let
-              // the app selection (`aria-current`, driven equally by canvas
-              // clicks and this list) be the single amber highlight — forced to
-              // win when a row is both cmdk-focused and app-selected.
-              className="gap-2 hover:bg-secondary/15 aria-current:bg-secondary/25! aria-current:font-medium data-[selected=true]:bg-transparent"
+              // the app selection, driven equally by canvas clicks and this list,
+              // be the single amber highlight, forced to win when a row is both
+              // cmdk-focused and app-selected.
+              className="gap-2 hover:bg-secondary/15 data-[app-selected=true]:bg-secondary/25! data-[app-selected=true]:font-medium data-[selected=true]:bg-transparent"
             >
               <span
                 aria-hidden

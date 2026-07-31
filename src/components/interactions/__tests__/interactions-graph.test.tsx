@@ -1,7 +1,9 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 import { InteractionsGraph } from "../interactions-graph";
 import { useInteractions } from "@/lib/interactions/use-interactions";
+import type { PpiRecord } from "@/lib/interactions/types";
 
 // InteractionsGraph only reaches SigmaCanvas (WebGL, untestable in jsdom —
 // see docs/architecture.md / testing.md canvas exclusion) once useInteractions
@@ -11,11 +13,52 @@ vi.mock("@/lib/interactions/use-interactions", () => ({
   useInteractions: vi.fn(() => ({ data: undefined, isPending: true, isError: false, error: null })),
 }));
 
+vi.mock("../sigma/sigma-canvas", () => ({
+  SigmaCanvas: () => <div data-testid="sigma-canvas" />,
+}));
+
+const graphRows: PpiRecord[] = [
+  {
+    id: "edge-1",
+    interactor_a: "node-a",
+    interactor_b: "node-b",
+    gene_a: "geneA",
+    gene_b: "geneB",
+  },
+];
+
+class ResizeObserverStub {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+}
+
+vi.stubGlobal("ResizeObserver", ResizeObserverStub);
+vi.stubGlobal("scrollTo", vi.fn());
+Element.prototype.scrollIntoView = vi.fn();
+
 describe("InteractionsGraph filter combination", () => {
   it("combines the base query with the table's filter via and() (bug #1)", () => {
     render(<InteractionsGraph taxonId={943} q="eq(evidence,experimental)" tableFilter="keyword(groEL*)" keywordValue="groEL" onKeywordChange={vi.fn()} />);
 
     expect(useInteractions).toHaveBeenCalledWith(943, "and(eq(evidence,experimental),keyword(groEL*))");
+  });
+
+  it("strips the base query's URL fragment before combining a table filter", () => {
+    render(
+      <InteractionsGraph
+        taxonId={943}
+        q="eq(evidence,experimental)#view_tab=interactions"
+        tableFilter="keyword(groEL*)"
+        keywordValue="groEL"
+        onKeywordChange={vi.fn()}
+      />,
+    );
+
+    expect(useInteractions).toHaveBeenCalledWith(
+      943,
+      "and(eq(evidence,experimental),keyword(groEL*))",
+    );
   });
 
   it("uses the bare base query when the table has no active filter", () => {
@@ -84,5 +127,55 @@ describe("InteractionsGraph loading state", () => {
     expect(screen.getByRole("status")).toBeInTheDocument();
     // Real keyword toolbar stays mounted in every state, loading included.
     expect(screen.getByPlaceholderText("Search keywords...")).toBeInTheDocument();
+  });
+});
+
+describe("InteractionsGraph data changes", () => {
+  it("clears stale selection and active presets when the query data changes", async () => {
+    const user = userEvent.setup();
+    vi.mocked(useInteractions).mockReturnValue({
+      data: graphRows,
+      isPending: false,
+      isError: false,
+      error: null,
+    } as ReturnType<typeof useInteractions>);
+
+    const { rerender } = render(
+      <InteractionsGraph
+        taxonId={943}
+        q=""
+        tableFilter="keyword(geneA*)"
+        keywordValue="geneA"
+        onKeywordChange={vi.fn()}
+      />,
+    );
+
+    await user.click(screen.getByText("geneA"));
+    expect(screen.getByText("node-a")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Hub Protein" }));
+    await user.click(screen.getByRole("button", { name: "Most Connected Hub" }));
+    expect(screen.getByRole("button", { name: "Most Connected Hub" })).toBeInTheDocument();
+
+    vi.mocked(useInteractions).mockReturnValue({
+      data: [{ ...graphRows[0], id: "edge-2", interactor_a: "node-c", gene_a: "geneC" }],
+      isPending: false,
+      isError: false,
+      error: null,
+    } as ReturnType<typeof useInteractions>);
+    rerender(
+      <InteractionsGraph
+        taxonId={943}
+        q=""
+        tableFilter="keyword(geneC*)"
+        keywordValue="geneC"
+        onKeywordChange={vi.fn()}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Select a node or edge to see details.")).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Hub Protein" })).toBeInTheDocument();
+    });
+    expect(screen.queryByText("node-a")).not.toBeInTheDocument();
   });
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type KeyboardEvent, type SyntheticEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type SyntheticEvent } from "react";
 import { useCamera, useSigma } from "@react-sigma/core";
 import { Minus, Plus } from "lucide-react";
 
@@ -18,6 +18,7 @@ export function ZoomControl() {
   const camera = sigma.getCamera();
   const [zoomPercent, setZoomPercent] = useState(() => ratioToZoomPercent(camera.ratio));
   const [inputValue, setInputValue] = useState(() => String(zoomPercent));
+  const cancelBlurRef = useRef(false);
 
   useEffect(() => {
     const update = () => {
@@ -44,6 +45,14 @@ export function ZoomControl() {
     commitZoom();
   }
 
+  function handleBlur() {
+    if (cancelBlurRef.current) {
+      cancelBlurRef.current = false;
+      return;
+    }
+    commitZoom();
+  }
+
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -51,6 +60,7 @@ export function ZoomControl() {
       return;
     }
     if (event.key === "Escape") {
+      cancelBlurRef.current = true;
       setInputValue(String(zoomPercent));
       event.currentTarget.blur();
     }
@@ -76,7 +86,7 @@ export function ZoomControl() {
             inputMode="numeric"
             value={inputValue}
             onChange={(event) => { setInputValue(event.target.value); }}
-            onBlur={commitZoom}
+            onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             style={{ width: `${String(Math.max(inputValue.length, 1))}ch` }}
             className="h-8 flex-none [appearance:textfield] bg-transparent px-0 text-right tabular-nums [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"

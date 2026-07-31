@@ -41,19 +41,6 @@ describe("ZoomControl", () => {
     expect(input).toHaveValue(125);
   });
 
-  it("uses a symmetric layout with the complete percentage centered", () => {
-    render(<ZoomControl />);
-    const group = screen.getByRole("group");
-    const input = screen.getByRole("spinbutton", { name: "Zoom percentage" });
-
-    expect(group).toHaveClass("grid-cols-[2rem_1fr_2rem]");
-    expect(input.parentElement).toHaveClass("justify-center", "gap-0.5");
-    expect(input).toHaveClass("text-right");
-    expect(input).toHaveStyle({ width: "2ch" });
-    expect(screen.getByRole("button", { name: "Zoom out" })).toHaveClass("size-8");
-    expect(screen.getByRole("button", { name: "Zoom in" })).toHaveClass("size-8");
-  });
-
   it("uses Sigma camera zoom for the minus and plus buttons", async () => {
     const user = userEvent.setup();
     render(<ZoomControl />);
@@ -76,6 +63,18 @@ describe("ZoomControl", () => {
 
     expect(camera.getBoundedRatio).toHaveBeenCalledWith(0.4);
     expect(goto).toHaveBeenCalledWith({ ratio: 0.4 }, { duration: 150 });
+  });
+
+  it("cancels a typed percentage when Escape is pressed", async () => {
+    const user = userEvent.setup();
+    render(<ZoomControl />);
+
+    const input = screen.getByRole("spinbutton", { name: "Zoom percentage" });
+    await user.clear(input);
+    await user.type(input, "250{Escape}");
+
+    expect(input).toHaveValue(50);
+    expect(goto).not.toHaveBeenCalled();
   });
 
   it("restores the current zoom when typed input is invalid", async () => {

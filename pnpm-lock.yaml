@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  archaeopteryx@2.3.2: 3412bf72549a234021fbb68a6844d0b874be122ea97c84dcf9aaa5f3f4671f7f
+  archaeopteryx@2.3.2: 20caf4c73e8a2b9d930b08202333a8c67bd4f2a9d79dedfe015af1d838cdace8
   molstar: a80c534bab8094a7ca7103c40d6638c0f7127db69d2ac212a1ce6a951f3bc3da
   phyloxml@1.0.0: 4eddfc18ff2113aad48c985883da338442f7a61c7435a1229a3e089a4682c47c
 

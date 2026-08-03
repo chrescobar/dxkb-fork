@@ -1,0 +1,290 @@
+import { expect, test, type Locator, type Page } from "@playwright/test";
+
+const treeXml = `<?xml version="1.0" encoding="UTF-8"?>
+<phyloxml xmlns="http://www.phyloxml.org">
+  <phylogeny rooted="true">
+    <name>Regression tree</name>
+    <clade>
+      <name>Root</name>
+      <confidence type="bootstrap">100</confidence>
+      <clade>
+        <name>Leaf A</name>
+        <branch_length>0.1</branch_length>
+        <property ref="dxkb:genome_name" datatype="xsd:string" applies_to="node">Genome A</property>
+        <property ref="dxkb:host_common_name" datatype="xsd:string" applies_to="node">Human</property>
+        <property ref="dxkb:in-group" datatype="xsd:string" applies_to="node">Yes</property>
+      </clade>
+      <clade>
+        <name>Leaf B</name>
+        <branch_length>0.2</branch_length>
+        <property ref="dxkb:genome_name" datatype="xsd:string" applies_to="node">Genome B</property>
+        <property ref="dxkb:host_common_name" datatype="xsd:string" applies_to="node">Animal</property>
+        <property ref="dxkb:in-group" datatype="xsd:string" applies_to="node">No</property>
+      </clade>
+    </clade>
+  </phylogeny>
+</phyloxml>`;
+
+const box = async (locator: Locator) => {
+  const value = await locator.boundingBox();
+  if (!value)
+    throw new Error(`Expected ${locator.toString()} to have a bounding box`);
+  return value;
+};
+
+const closeTo = (actual: number, expected: number, tolerance = 1) => {
+  expect(Math.abs(actual - expected)).toBeLessThanOrEqual(tolerance);
+};
+
+async function openPhylogeny(page: Page) {
+  await page.route(
+    /\/api\/content\/bvbrc_phylogeny_tab\/taxon_tree_dict\.json$/,
+    (route) =>
+      route.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({ 234: "regression.xml" }),
+      }),
+  );
+  await page.route(
+    /\/api\/content\/bvbrc_phylogeny_tab\/phyloxml\/regression\.xml$/,
+    (route) => route.fulfill({ contentType: "application/xml", body: treeXml }),
+  );
+
+  const dictionaryResponse = page.waitForResponse(/taxon_tree_dict\.json$/);
+  const treeResponse = page.waitForResponse(/phyloxml\/regression\.xml$/);
+  await page.goto("/taxonomy/234?tab=phylogeny");
+  await dictionaryResponse;
+  await treeResponse;
+  await expect(page.getByText("Display Data", { exact: true })).toBeVisible({
+    timeout: 30_000,
+  });
+}
+
+test.use({
+  storageState: { cookies: [], origins: [] },
+  viewport: { width: 1280, height: 900 },
+});
+test.setTimeout(60_000);
+
+test.describe("Archeopteryx phylogeny controls", () => {
+  test("renders readable, consistently sized controls without overflow", async ({
+    page,
+  }) => {
+    await openPhylogeny(page);
+
+    const displayData = page.locator("fieldset", {
+      has: page.getByText("Display Data", { exact: true }),
+    });
+    const displayLabels = await displayData.locator("label").allTextContents();
+    expect(displayLabels).toEqual(
+      expect.arrayContaining([
+        "Node Name",
+        "Genome Name",
+        "Host Common Name",
+        "In Group",
+      ]),
+    );
+    expect(
+      displayLabels.some(
+        (label) =>
+          label.includes("_") ||
+          label !==
+            label.replace(/\b\w/g, (character) => character.toUpperCase()),
+      ),
+    ).toBe(false);
+
+    const primary = page.locator('[id$="-controls-primary"]');
+    const pacHeight = (await box(page.locator('label[for="phy_b"]'))).height;
+    for (const id of [
+      "zoomout_y",
+      "ord_b",
+      "sf0",
+      "reset_s_a",
+      "depth_col_label",
+      "incr_dcl",
+      "dl_b",
+      "exp_f_sel",
+    ]) {
+      closeTo((await box(page.locator(`#${id}`))).height, pacHeight, 2);
+    }
+
+    await expect(page.locator("#depth_col_label")).not.toHaveValue("");
+    const labelSizeHandles = await Promise.all(
+      ["entfs_sl", "intfs_sl", "bdfs_sl"].map((id) =>
+        box(page.locator(`#${id} .ui-slider-handle`)),
+      ),
+    );
+    for (const handle of labelSizeHandles.slice(1)) {
+      closeTo(handle.x, labelSizeHandles[0].x);
+    }
+    await expect(page.locator("#exp_f_sel option")).toHaveText([
+      "PNG",
+      "SVG",
+      "phyloXML",
+      "Newick",
+      "Fasta",
+    ]);
+
+    const search = await box(page.locator("#sf0"));
+    const searchReset = await box(page.locator("#reset_s_a"));
+    closeTo(searchReset.x - (search.x + search.width), 2);
+
+    const zoomButtons = await Promise.all(
+      ["zoomout_x", "zoomtofit", "zoomtoexpandy", "zoomin_x"].map((id) =>
+        box(page.locator(`#${id}`)),
+      ),
+    );
+    for (let index = 1; index < zoomButtons.length; index += 1) {
+      closeTo(
+        zoomButtons[index].x -
+          (zoomButtons[index - 1].x + zoomButtons[index - 1].width),
+        2,
+      );
+    }
+
+    const legendField = page.locator("fieldset", {
+      has: page.getByText("Vis Legend", { exact: true }),
+    });
+    const legendBox = await box(legendField);
+    for (const id of ["legends_mup", "legends_mdown"]) {
+      closeTo((await box(page.locator(`#${id}`))).width, legendBox.width);
+    }
+    const thirds = await Promise.all(
+      ["legends_mleft", "legends_rest", "legends_mright"].map((id) =>
+        box(page.locator(`#${id}`)),
+      ),
+    );
+    closeTo(
+      thirds.reduce((width, item) => width + item.width, 0) + 4,
+      legendBox.width,
+    );
+
+    const disabledLegendButton = page.locator("#legends_mup");
+    await expect(disabledLegendButton).toBeDisabled();
+    const [legendBackground, regularBackground] = await Promise.all([
+      disabledLegendButton.evaluate(
+        (element) => getComputedStyle(element).backgroundColor,
+      ),
+      page
+        .locator("#ord_b")
+        .evaluate((element) => getComputedStyle(element).backgroundColor),
+    ]);
+    expect(legendBackground).toBe(regularBackground);
+
+    const primaryDimensions = await primary.evaluate((element) => ({
+      clientWidth: element.clientWidth,
+      scrollWidth: element.scrollWidth,
+    }));
+    expect(primaryDimensions.scrollWidth).toBe(primaryDimensions.clientWidth);
+  });
+
+  test("keeps the canvas and visualization controls inside the tree viewport while resizing", async ({
+    page,
+  }) => {
+    await openPhylogeny(page);
+
+    const treeViewport = page.locator(".archaeopteryx-dxkb");
+    const treeHost = treeViewport.locator('div[role="img"]');
+    const svg = treeHost.locator("svg");
+    const visualControls = page.locator('[id$="-controls-secondary"]');
+
+    const expectFitted = async () => {
+      const viewportBox = await box(treeViewport);
+      const hostBox = await box(treeHost);
+      const svgBox = await box(svg);
+      const primaryControlsBox = await box(
+        page.locator('[id$="-controls-primary"]'),
+      );
+      const controlsBox = await box(visualControls);
+      closeTo(hostBox.height, viewportBox.height);
+      closeTo(svgBox.height, viewportBox.height);
+      const legend = svg.getByText("Label Color", { exact: true });
+      const getGraphBox = () =>
+        svg.locator(".node text, .link").evaluateAll((elements) => {
+          const bounds = elements
+            .filter((element) => {
+              const style = getComputedStyle(element);
+              return (
+                style.display !== "none" &&
+                style.visibility !== "hidden" &&
+                Number(style.opacity) > 0 &&
+                Number(style.fillOpacity) > 0 &&
+                Number(style.strokeOpacity) > 0
+              );
+            })
+            .map((element) => element.getBoundingClientRect())
+            .filter((bounds) => bounds.width > 0 || bounds.height > 0);
+          return {
+            left: Math.min(...bounds.map((item) => item.left)),
+            right: Math.max(...bounds.map((item) => item.right)),
+          };
+        });
+      expect(hostBox.width).toBeLessThan(viewportBox.width);
+      closeTo(controlsBox.x, hostBox.x + hostBox.width);
+      closeTo(svgBox.width, hostBox.width - 14);
+      if (await legend.count()) {
+        expect((await box(legend)).x).toBeGreaterThanOrEqual(
+          primaryControlsBox.x + primaryControlsBox.width,
+        );
+      }
+      await expect
+        .poll(async () => (await getGraphBox()).left)
+        .toBeGreaterThanOrEqual(
+          primaryControlsBox.x + primaryControlsBox.width - 1,
+        );
+      await expect
+        .poll(async () => (await getGraphBox()).right)
+        .toBeLessThanOrEqual(controlsBox.x);
+      closeTo(
+        viewportBox.x + viewportBox.width - (controlsBox.x + controlsBox.width),
+        12,
+      );
+      expect(controlsBox.x + controlsBox.width).toBeLessThanOrEqual(
+        viewportBox.x + viewportBox.width,
+      );
+      return viewportBox.width;
+    };
+
+    const closedWidth = await expectFitted();
+    await page
+      .getByRole("button", { name: "Show" })
+      .filter({ has: page.locator("svg") })
+      .click();
+    await expect(
+      page
+        .getByRole("button", { name: "Hide" })
+        .filter({ has: page.locator("svg") }),
+    ).toBeVisible();
+    await expect
+      .poll(async () => (await box(treeViewport)).width)
+      .toBeLessThan(closedWidth);
+    const openWidth = await expectFitted();
+
+    const separator = page.getByRole("separator");
+    const separatorBox = await box(separator);
+    await page.mouse.move(
+      separatorBox.x,
+      separatorBox.y + separatorBox.height / 2,
+    );
+    await page.mouse.down();
+    await page.mouse.move(
+      separatorBox.x - 100,
+      separatorBox.y + separatorBox.height / 2,
+      { steps: 5 },
+    );
+    await page.mouse.up();
+    await expect
+      .poll(async () => (await box(treeViewport)).width)
+      .toBeLessThan(openWidth);
+    await expectFitted();
+
+    await page
+      .getByRole("button", { name: "Hide" })
+      .filter({ has: page.locator("svg") })
+      .click();
+    await expect
+      .poll(async () => (await box(treeViewport)).width)
+      .toBeGreaterThan(openWidth);
+    await expectFitted();
+  });
+});

@@ -10,7 +10,14 @@ index 4d4e405e2a852cd57728664f02bb0bc545934f67..e4cd8b65d06682f52f6126f3d86ef968
          _treeData = phylo;
          _id = id;
          _zoomListener = d3.behavior.zoom().scaleExtent([0.1, 10]).on('zoom', zoom);
-@@ -7197,7 +7198,7 @@ if (!phyloXml) {
+@@ -6539 +6540,2 @@ if (!phyloXml) {
+-        $(':radio').checkboxradio({
++        const controls = $('#' + _settings.controls0 + ', #' + _settings.controls1);
++        controls.find(':radio').checkboxradio({
+@@ -6543 +6545 @@ if (!phyloXml) {
+-        $(':checkbox').checkboxradio({
++        controls.find(':checkbox').checkboxradio({
+@@ -7197,7 +7199,7 @@ if (!phyloXml) {
  
          // -------------------------------------------
  
@@ -19,7 +26,7 @@ index 4d4e405e2a852cd57728664f02bb0bc545934f67..e4cd8b65d06682f52f6126f3d86ef968
              if (e.altKey) {
                  if (e.keyCode === VK_O) {
                      orderButtonPressed();
-@@ -7227,7 +7228,7 @@ if (!phyloXml) {
+@@ -7227,7 +7229,7 @@ if (!phyloXml) {
              }
          });
  
@@ -28,7 +35,12 @@ index 4d4e405e2a852cd57728664f02bb0bc545934f67..e4cd8b65d06682f52f6126f3d86ef968
              if (e.altKey) {
                  if (e.keyCode === VK_UP) {
                      zoomInY(BUTTON_ZOOM_IN_FACTOR_SLOW);
-@@ -8572,6 +8573,28 @@ if (!phyloXml) {
+@@ -7734,4 +7736,0 @@ if (!phyloXml) {
+-            const n = 15;
+-            if (label.length > n) {
+-                label = label.substring(0, n);
+-            }
+@@ -8572,6 +8574,28 @@ if (!phyloXml) {
       * @param newHamphshireConfidenceValuesAsInternalNames
       * @param nodeVisualizations
       */

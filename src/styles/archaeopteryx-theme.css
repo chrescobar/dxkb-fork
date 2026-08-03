@@ -7,6 +7,10 @@
   height: 100%;
 }
 
+.archaeopteryx-dxkb > [role="img"] > svg text {
+  fill: var(--foreground) !important;
+}
+
 .archaeopteryx-dxkb > [id$="-controls-primary"],
 .archaeopteryx-dxkb > [id$="-controls-secondary"] {
   z-index: 2;
@@ -23,6 +27,7 @@
 }
 
 .archaeopteryx-dxkb > [id$="-controls-primary"] {
+  left: 10px !important;
   min-width: 10rem;
 }
 

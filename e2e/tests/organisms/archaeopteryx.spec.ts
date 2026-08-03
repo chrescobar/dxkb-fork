@@ -67,6 +67,40 @@ test.use({
 test.setTimeout(60_000);
 
 test.describe("Archeopteryx phylogeny controls", () => {
+  test.describe.configure({ mode: "serial" });
+  test("uses the active dark theme for the canvas and labels", async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem("theme", "dxkb-dark");
+    });
+    await openPhylogeny(page);
+
+    const colors = await page.locator('[role="img"] svg').evaluate((svg) => {
+      const background =
+        svg.querySelector<SVGRectElement>('rect[width="100%"]');
+      const labels = Array.from(svg.querySelectorAll("text"))
+        .filter((element) => element.textContent.trim() !== "")
+        .map((element) => getComputedStyle(element).fill);
+      const branch = svg.querySelector("path");
+      const foregroundProbe = document.createElement("div");
+      foregroundProbe.style.color = "var(--foreground)";
+      document.body.append(foregroundProbe);
+      const foreground = getComputedStyle(foregroundProbe).color;
+      foregroundProbe.remove();
+      return {
+        background: background ? getComputedStyle(background).fill : null,
+        foreground,
+        labels,
+        branch: branch ? getComputedStyle(branch).stroke : null,
+      };
+    });
+
+    expect(colors.background).not.toBe("rgb(255, 255, 255)");
+    expect(new Set(colors.labels)).toEqual(new Set([colors.foreground]));
+    expect(colors.branch).toBe("rgb(115, 115, 115)");
+  });
+
   test("renders readable, consistently sized controls without overflow", async ({
     page,
   }) => {

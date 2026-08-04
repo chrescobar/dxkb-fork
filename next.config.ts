@@ -23,6 +23,31 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_APP_VERSION: pkg.version,
   },
 
+  rewrites() {
+    return Promise.resolve([
+      { source: "/nextstrain-viewer", destination: "/nextstrain-viewer.html" },
+      { source: "/nextstrain-viewer/:path*", destination: "/nextstrain-viewer.html" },
+    ]);
+  },
+
+  headers() {
+    return Promise.resolve([
+      {
+        source: "/nextstrain-viewer/:path*",
+        headers: [{ key: "Cache-Control", value: "no-cache" }],
+      },
+      {
+        source: "/dist/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ]);
+  },
+
   webpack(config: WebpackConfig): WebpackConfig {
     // Grab the existing rule that handles SVG imports
     const fileLoaderRule = config.module.rules.find((rule) =>

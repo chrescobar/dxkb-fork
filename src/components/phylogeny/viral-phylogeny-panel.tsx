@@ -6,18 +6,31 @@ import { useState } from "react";
 import { SectionError } from "@/components/organisms/shared/section-error";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { viewerUrl } from "@/lib/phylogeny/nextstrain-dataset";
 import type { ViralTreeChoice } from "@/lib/phylogeny/viral-facets";
 import { resolvePhylogenyUrl } from "@/lib/services/organisms/phylogeny";
 
 import { ArchaeopteryxPhylogeny } from "./archaeopteryx-phylogeny";
-import { useViralFamily, useViralTreeXml } from "./use-phylogeny-data";
+import {
+  useNextstrainInventory,
+  useViralFamily,
+  useViralTreeXml,
+} from "./use-phylogeny-data";
 import { ViralTreePicker } from "./viral-tree-picker";
+
+const EMPTY_DATASET_IDS = new Set<string>();
 
 export function ViralPhylogenyPanel({ taxonId, taxonName }: { taxonId: number; taxonName: string }) {
   const family = useViralFamily(taxonId);
+  const inventory = useNextstrainInventory();
   const [choice, setChoice] = useState<ViralTreeChoice | null>(null);
-  const url = choice?.viewer === "archaeopteryx" ? resolvePhylogenyUrl(choice.ref.path) : null;
-  const tree = useViralTreeXml(url);
+  const [lastChoiceKey, setLastChoiceKey] = useState<string>();
+  const isNextstrain = choice?.viewer === "nextstrain";
+  const xmlUrl = choice?.viewer === "archaeopteryx"
+    ? resolvePhylogenyUrl(choice.ref.path)
+    : null;
+  const auspiceUrl = isNextstrain ? viewerUrl(choice.ref.path) : null;
+  const tree = useViralTreeXml(xmlUrl);
 
   if (family.isPending) return <Skeleton className="m-4 h-[calc(100%-2rem)]" />;
   if (family.isError) {
@@ -30,7 +43,19 @@ export function ViralPhylogenyPanel({ taxonId, taxonName }: { taxonId: number; t
       </div>
     );
   }
-  if (!choice) return <ViralTreePicker block={family.data} onOpen={setChoice} />;
+  if (!choice) {
+    return (
+      <ViralTreePicker
+        block={family.data}
+        availableNextstrainIds={inventory.data ?? EMPTY_DATASET_IDS}
+        focusChoiceKey={lastChoiceKey}
+        onOpen={nextChoice => {
+          setLastChoiceKey(`${nextChoice.viewer}:${nextChoice.ref.path}`);
+          setChoice(nextChoice);
+        }}
+      />
+    );
+  }
 
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -41,14 +66,25 @@ export function ViralPhylogenyPanel({ taxonId, taxonName }: { taxonId: number; t
           <div className="truncate text-xs text-muted-foreground">{taxonName} / {choice.groupTitle}</div>
         </div>
       </div>
-      {url === null ? (
+      {isNextstrain ? (
+        auspiceUrl === null ? (
+          <div className="p-4"><SectionError title="Tree unavailable" message="The tree reference contains an invalid dataset identifier." /></div>
+        ) : (
+          <iframe
+            key={auspiceUrl}
+            src={auspiceUrl}
+            title={`Auspice phylogeny viewer for ${choice.ref.name}`}
+            className="min-h-[600px] w-full min-w-0 flex-1 border-0"
+          />
+        )
+      ) : xmlUrl === null ? (
         <div className="p-4"><SectionError title="Tree unavailable" message="The tree reference contains an invalid URL." /></div>
       ) : tree.isPending ? (
         <Skeleton className="m-4 h-[calc(100%-2rem)]" />
       ) : tree.isError ? (
         <div className="p-4"><SectionError title="Tree unavailable" message={tree.error.message} /></div>
       ) : (
-        <ArchaeopteryxPhylogeny key={url} xml={tree.data} title={choice.ref.name} />
+        <ArchaeopteryxPhylogeny key={xmlUrl} xml={tree.data} title={choice.ref.name} />
       )}
     </div>
   );

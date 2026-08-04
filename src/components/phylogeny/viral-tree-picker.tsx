@@ -1,7 +1,7 @@
 "use client";
 
 import { Download, Filter, Globe2, Map as MapIcon, Network } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { canonicalDatasetId } from "@/lib/phylogeny/nextstrain-dataset";
 import {
   filterViralTrees,
   flattenViralTrees,
@@ -20,8 +21,10 @@ import {
 } from "@/lib/phylogeny/viral-facets";
 import { resolvePhylogenyUrl, type PhyloFamilyBlock } from "@/lib/services/organisms/phylogeny";
 
-export function ViralTreePicker({ block, onOpen }: {
+export function ViralTreePicker({ block, availableNextstrainIds, focusChoiceKey, onOpen }: {
   block: PhyloFamilyBlock;
+  availableNextstrainIds: ReadonlySet<string>;
+  focusChoiceKey?: string;
   onOpen: (choice: ViralTreeChoice) => void;
 }) {
   const trees = flattenViralTrees(block);
@@ -36,6 +39,13 @@ export function ViralTreePicker({ block, onOpen }: {
   const visible = filterViralTrees(trees, filters);
 
   const update = (next: ViralFilters) => { setFilters(pruneViralFilters(trees, next)); };
+
+  useEffect(() => {
+    if (!focusChoiceKey) return;
+    [...document.querySelectorAll<HTMLElement>("[data-choice-key]")]
+      .find(element => element.dataset.choiceKey === focusChoiceKey)
+      ?.focus();
+  }, [focusChoiceKey]);
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden bg-muted/15">
@@ -71,8 +81,8 @@ export function ViralTreePicker({ block, onOpen }: {
                     }
                   }}>
                     <Label><RadioGroupItem value="all" />All viewers</Label>
-                    <Label><RadioGroupItem value="archaeopteryx" />Interactive tree</Label>
-                    <Label><RadioGroupItem value="nextstrain" />Nextstrain</Label>
+                    <Label><RadioGroupItem value="archaeopteryx" />Archaeopteryx</Label>
+                    <Label><RadioGroupItem value="nextstrain" />Auspice</Label>
                   </RadioGroup>
                 </fieldset>
               )}
@@ -108,13 +118,19 @@ export function ViralTreePicker({ block, onOpen }: {
             <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4">
               {visible.map(choice => {
                 const metadata = choice.ref.metadata ? resolvePhylogenyUrl(choice.ref.metadata) : null;
-                const unavailable = choice.viewer === "nextstrain";
+                const datasetId = choice.viewer === "nextstrain"
+                  ? canonicalDatasetId(choice.ref.path)
+                  : null;
+                const unavailable = choice.viewer === "nextstrain" &&
+                  (!datasetId || !availableNextstrainIds.has(datasetId));
                 return (
                   <Card
                     key={`${choice.viewer}:${choice.ref.path}`}
-                    role={unavailable ? undefined : "button"}
-                    tabIndex={unavailable ? undefined : 0}
-                    className="border bg-background transition-shadow hover:shadow-md"
+                    data-choice-key={`${choice.viewer}:${choice.ref.path}`}
+                    role="button"
+                    tabIndex={unavailable ? -1 : 0}
+                    aria-disabled={unavailable || undefined}
+                    className="border bg-background transition-shadow hover:shadow-md aria-disabled:cursor-not-allowed aria-disabled:opacity-65 aria-disabled:hover:shadow-none"
                     onClick={() => {
                       if (!unavailable) onOpen(choice);
                     }}
@@ -137,7 +153,11 @@ export function ViralTreePicker({ block, onOpen }: {
                     </CardHeader>
                     <CardContent className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Network className="size-4" />
-                      {unavailable ? "Nextstrain viewer not yet available" : "Interactive phylogram"}
+                      {unavailable
+                        ? "Auspice dataset unavailable"
+                        : choice.viewer === "nextstrain"
+                          ? "Nextstrain phylogenomic viewer"
+                          : "Interactive phylogram"}
                     </CardContent>
                     {metadata && (
                       <CardFooter>

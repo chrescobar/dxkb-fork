@@ -5,10 +5,12 @@ allowBuilds:
   '@prisma/engines': true
   '@scarf/scarf': true
   core-js: false
+  ejs: false
   esbuild: true
   msw: true
   prisma: true
   sharp: true
+  styled-components: false
   unrs-resolver: true
 minimumReleaseAgeExclude:
   - archaeopteryx@2.3.2

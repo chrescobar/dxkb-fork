@@ -41,6 +41,50 @@ describe("phylogeny services", () => {
     });
   });
 
+  it("parses absent, empty, populated, and malformed viewer arrays", async () => {
+    const url = `${origin}/api/content/phyloxml_trees/families/2955291/2955291.json`;
+    server.use(http.get(url, () => HttpResponse.json({
+      groups: [
+        { key: "missing", title: "Missing", archaeopteryx: [{ name: "XML", path: "/tree.xml" }] },
+        { key: "empty", title: "Empty", archaeopteryx: [], nextstrain: [] },
+        {
+          key: "mixed",
+          title: "Mixed",
+          archaeopteryx: [{ name: "XML", path: "/mixed.xml" }, { bad: true }],
+          nextstrain: [
+            { name: "Auspice", path: "Influenza-A-Virus/H3N2/HA" },
+            { name: "Missing path" },
+          ],
+        },
+        { key: "nextstrain", title: "Nextstrain only", nextstrain: [{ name: "Tree", path: "Orthoebolavirus/100" }] },
+        { key: "invalid-array", title: "Invalid array", nextstrain: {} },
+      ],
+    })));
+
+    expect(await fetchViralFamilyBlock(2955291)).toEqual({
+      groups: [
+        {
+          key: "missing",
+          title: "Missing",
+          archaeopteryx: [{ name: "XML", path: "/tree.xml" }],
+          nextstrain: undefined,
+        },
+        {
+          key: "mixed",
+          title: "Mixed",
+          archaeopteryx: [{ name: "XML", path: "/mixed.xml" }],
+          nextstrain: [{ name: "Auspice", path: "Influenza-A-Virus/H3N2/HA" }],
+        },
+        {
+          key: "nextstrain",
+          title: "Nextstrain only",
+          archaeopteryx: undefined,
+          nextstrain: [{ name: "Tree", path: "Orthoebolavirus/100" }],
+        },
+      ],
+    });
+  });
+
   it("resolves relative HTTP URLs and rejects unsafe protocols", () => {
     expect(resolvePhylogenyUrl("/tree.xml")).toBe(`${origin}/tree.xml`);
     expect(resolvePhylogenyUrl("javascript:alert(1)")).toBeNull();

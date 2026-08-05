@@ -1,0 +1,83 @@
+auspice/config.json
+  s_3dd79ebcc46b45::t_5ddcca4c347102 4
+src/components/phylogeny/viral-tree-picker.tsx
+  s_386abe8c4501ee::t_99d1082111790a 63-64,142
+  s_386abe8c4501ee::t_3f22f455febc3a 29,40-41
+  s_386abe8c4501ee::t_738f40524ec910 73-76
+  s_386abe8c4501ee::t_9b804d0d3e340c 79,87,100,102,119
+  s_386abe8c4501ee::t_8f7ff0b09c7227 101,103-104,106-110
+  s_386abe8c4501ee::t_2cbd9e62418550 19
+  s_386abe8c4501ee::t_1cb42b75395b2b 44
+  s_386abe8c4501ee::t_46f2e86df40163 25-27
+  s_386abe8c4501ee::t_ea1306b37f5a3c 80-82,84-86,88
+  s_386abe8c4501ee::t_dc9436a1971731 42
+  s_386abe8c4501ee::t_3196868e1d437a 28
+  s_386abe8c4501ee::t_a73d14b208fdaf 105,124
+  s_386abe8c4501ee::t_f9bb4ee5a47243 61-62
+  s_386abe8c4501ee::t_ea8370c8ee9ccf 118,120-123,125-135
+src/lib/phylogeny/__tests__/viral-facets.test.ts
+  s_386abe8c4501ee::t_0f23c12c6ce2dd 48-108
+  s_386abe8c4501ee::t_45a1b97b4d8391 2-12
+src/components/phylogeny/__tests__/viral-tree-picker.test.tsx
+  s_386abe8c4501ee::t_570a59410b7108 125-126,128,132-134,136-137,140-143,147-148
+  s_386abe8c4501ee::t_113399755bd855 144-145
+  s_386abe8c4501ee::t_ef3dd0e6a610ed 115-118,120-124,127,129-131,135,138-139,146,149-150
+  s_386abe8c4501ee::t_84222f4efad113 119
+  s_386abe8c4501ee::t_eff218b488c2d6 23-41
+  s_386abe8c4501ee::t_8a48beb4792cf6 155,157-162
+  s_386abe8c4501ee::t_b70b21261fa92b 224-240
+  s_386abe8c4501ee::t_7712214960f6d7 151-154,156,163-223
+src/components/phylogeny/archaeopteryx-phylogeny.tsx
+  s_3dd79ebcc46b45::t_0a141ef0974c4b 196
+auspice/navbar.js
+  s_3dd79ebcc46b45::t_bea86724ba2981 1-3,5-68
+  s_3dd79ebcc46b45::t_e05ac566c12b06 4
+src/lib/phylogeny/viral-facets.ts
+  s_386abe8c4501ee::t_f1f72ff6fa100b 87
+  s_386abe8c4501ee::t_3b0493cc5ea29c 83
+  s_386abe8c4501ee::t_9b7680d6bbb0b3 75-82,84-86,88-92
+src/app/(views)/taxonomy/[taxonId]/views/phylogeny.tsx
+  s_3dd79ebcc46b45::t_953a723dc39164 8-18
+e2e/tests/organisms/auspice.spec.ts
+  s_386abe8c4501ee::t_97e38f5937090e 217-220,222-223,226-235
+  s_386abe8c4501ee::t_c0dc77bcad8091 221,224-225
+  s_386abe8c4501ee::t_a707db4651469f 197-211,215-216,236-237
+  s_3dd79ebcc46b45::t_d827e88636f55d 147-185
+  s_386abe8c4501ee::t_ab05e4f6a6b405 212-214
+  s_386abe8c4501ee::t_322420a1838bbe 29-36,41-48,50,55
+  s_386abe8c4501ee::t_a0df64131e3b88 49
+  s_386abe8c4501ee::t_1372684c4a4158 238-244,246-267
+  s_386abe8c4501ee::t_07132ef0e5b777 37-40
+  s_386abe8c4501ee::t_a490fb2acd34be 245
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/phylogeny.test.tsx
+  s_3dd79ebcc46b45::t_4327527af185e2 1-73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "5fc6dd3cc0960eba38520fd74f407e2eaf5b6b95",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_386abe8c4501ee": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ac272a83-bd1c-4da3-bfd0-e52b380b4729",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_3dd79ebcc46b45": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "30a09946-15a7-4107-a35f-159b1b75221f",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

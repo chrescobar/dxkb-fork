@@ -17,6 +17,7 @@ export default defineConfig({
     include: [
       "src/**/*.{test,spec}.{ts,tsx}",
       "e2e/scripts/**/*.{test,spec}.{ts,mts}",
+      "scripts/**/*.{test,spec}.{ts,mts}",
     ],
     // Exclude Playwright specs and their helpers; keep e2e/scripts/ tests in scope.
     exclude: [

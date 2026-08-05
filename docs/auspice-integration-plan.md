@@ -250,7 +250,9 @@ auspice/
   Splash.jsx                         # optional embedded empty state
 scripts/
   build-auspice.mjs
+  auspice-shell.test.ts              # guards the bridge/stylesheet token contract
 public/
+  auspice-dark.css                   # committed; theme overrides for the iframe
   dist/                              # generated; gitignored
   nextstrain-viewer.html             # generated; gitignored
   auspice-favicon.png                # generated or copied; gitignored
@@ -301,10 +303,11 @@ Add `scripts/build-auspice.mjs` with this deterministic sequence:
 5. Delete stale `public/dist/` before copying the new `dist/` output. This prevents orphaned hash bundles from accumulating.
 6. Copy the generated `dist/` directory to `public/dist/`.
 7. Copy Auspice's favicon to a non-conflicting path such as `public/auspice-favicon.png`.
-8. Rewrite only the generated shell's favicon reference from `/favicon.png` to `/auspice-favicon.png`; do not rewrite `/dist/` bundle paths.
-9. Write the shell as `public/nextstrain-viewer.html`.
-10. Remove the scratch directory in success and failure cleanup.
-11. Print the generated destinations for build diagnostics.
+8. Rewrite the generated shell's favicon reference from `/favicon.png` to `/auspice-favicon.png`; do not rewrite `/dist/` bundle paths.
+9. Inject the theme bridge before `</head>`: a `<link>` to `public/auspice-dark.css` and an inline `<script>` that copies the host page's design tokens into the iframe as `--dxkb-*`. See "Theming" below. Throw if the anchor is missing rather than writing an unthemed shell.
+10. Write the shell as `public/nextstrain-viewer.html`.
+11. Remove the scratch directory in success and failure cleanup.
+12. Print the generated destinations for build diagnostics.
 
 Add these generated paths to `.gitignore`:
 
@@ -342,6 +345,28 @@ public/nextstrain-viewer.html
 ```
 
 The viewer HTML should be uncached or revalidated. Content-hashed `/dist/*` assets should receive long-lived immutable cache headers in production. Ensure `build-pm2` continues copying `public` into `.next/standalone/public`, so generated files are included in the standalone artifact.
+
+#### Theming
+
+The viewer must read as part of the DXKB shell in all ten themes, not just the two it was designed for. Auspice is **not forked** to achieve this. Three pieces cooperate:
+
+1. **`public/auspice-dark.css`** — committed override sheet, `<link>`ed into the shell. Auspice writes most of its colours as inline styles (d3 `.style()`, React `style={}`), so most rules need `!important`. Every `var(--dxkb-*)` carries a stock-Auspice fallback so a standalone viewer still renders correctly.
+2. **The inline bridge** (built into the shell by `build-auspice.mjs`) — the iframe is same-origin, so it reads `window.parent`'s computed tokens directly and writes them onto its own `documentElement` as `--dxkb-*`. Custom properties do not inherit across a frame boundary; they must be copied. A `MutationObserver` on the parent's `data-theme` re-syncs on theme change, so switching themes needs no reload and no parent-side driver. Inline rather than an external `<script src>` so it runs before first paint. Wrapped in `try/catch`, and a no-op when `parent === window`.
+3. **`auspice/config.json` → `sidebarTheme`** — these values reach styled-components and SVG `stroke` attributes only; nothing parses them as colour objects, so they can hold `var(--dxkb-*)` strings and stay theme-reactive despite being baked in at build time.
+
+Three derived colours live in the stylesheet's own `:root` rather than being bridged, because no single design token clears the contrast floor across all ten themes:
+
+- `--dxkb-brand` = `--primary` mixed 55% toward `--foreground` (worst case 5.39:1, bvbrc-dark). Plain `--primary` is 2.09:1 there.
+- `--dxkb-dim` = `--muted-foreground` mixed 25% toward `--foreground` (worst case 5.59:1, bvbrc-light). Plain `--muted-foreground` is 4.24:1 there.
+- `--dxkb-edge` = `--border` mixed 55% toward `--foreground` (worst case 3.06:1, bvbrc-light), for control outlines over the tree canvas. Plain `--border` is 1.09:1 there — invisible, and below the 3:1 WCAG 1.4.11 floor for a UI-component boundary.
+
+Categorical colour scales (tip fills, legend swatches, branch colours) are **left untouched** — they encode the data. The map is the one surface that cannot be tokenised: the tile URL is baked into the bundle, so the bridge also mirrors `data-theme` and the sheet inverts the light CARTO tiles under `[data-theme$="-dark"]`.
+
+`color-scheme` is the other property that does not cross the frame boundary. Left alone the iframe renders light UA scrollbars over the dark chrome, so the sheet mirrors it off the bridged `data-theme` and matches the host's `.scrollbar-themed` (`globals.css`).
+
+The sidebar collapse control is two separate upstream components with two different shapes — `sidebar-toggle.js` (a rounded 14×44 tab when closed) and `sidebar-chevron.js` (a bare 12px glyph when open) — both hardcoding Auspice's light palette. The sheet gives the open state the same tab treatment mirrored to the right. Its inline `left: sidebarWidth - 12` is measured from the sidebar's *outer* edge, which puts it under the scroll gutter; since no CSS value reports that gutter's UA-defined width, a `transform` on `NavBarContainer` makes it the containing block for the fixed child so `right: 0` lands on the content edge instead.
+
+`scripts/auspice-shell.test.ts` fails the unit suite if the bridged token list and the tokens the stylesheet consumes drift apart, or if a `var()` loses its fallback. When measuring contrast, use canvas pixel readback — the tokens compute to `lab()`, which string-parsing gets wrong (a naive parse reports 1.51:1 for white-on-black).
 
 ### Phase 3: Serve the viewer shell with rewrites
 

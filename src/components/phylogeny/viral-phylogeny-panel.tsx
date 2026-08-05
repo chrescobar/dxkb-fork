@@ -60,7 +60,7 @@ export function ViralPhylogenyPanel({ taxonId, taxonName }: { taxonId: number; t
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex items-center gap-3 border-b bg-background px-3 py-2">
-        <Button variant="ghost" size="sm" onClick={() => { setChoice(null); }}><ArrowLeft /> Back to trees</Button>
+        <Button size="sm" onClick={() => { setChoice(null); }}><ArrowLeft /> Back to trees</Button>
         <div className="min-w-0">
           <div className="truncate text-sm font-semibold">{choice.ref.name}</div>
           <div className="truncate text-xs text-muted-foreground">{taxonName} / {choice.groupTitle}</div>

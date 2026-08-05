@@ -18,6 +18,9 @@ import { routes } from "../../a11y/routes";
 import type { BaselineMap } from "../../a11y/baseline";
 import type { RouteEntry, RouteVariant } from "../../a11y/routes";
 import type { JsonOverride } from "../../mocks/backends";
+import auspiceDataset from "../../fixtures/overrides/organisms/phylogeny/auspice-tree-map-v2.json" with { type: "json" };
+
+const auspiceDatasetId = "Influenza-A-Virus/H3N2/HA";
 
 const baselineMap: BaselineMap = generatedBaseline;
 
@@ -202,5 +205,86 @@ test.describe("a11y component surfaces", () => {
 
     const violations = await scanPage(page);
     assertNoBlockingViolations(violations, "command-palette", "dxkb-light");
+  });
+
+  // Auspice phylogeny viewer — the themed iframe.
+  //
+  // Lives here rather than in the routes[] sweep because the viewer needs
+  // charon + map-tile mocks that buildOverrides() cannot express, and because
+  // the tree only mounts after two clicks. Axe traverses same-origin iframes,
+  // so this scans the Auspice DOM itself; upstream Auspice violations that are
+  // not ours to fix land in the baseline like any other.
+  test("auspice viewer has no blocking a11y violations", async ({ page, context }) => {
+    await context.clearCookies();
+    await applyBackendMocks(page, {
+      overrides: [
+        {
+          url: /\/api\/content\/phyloxml_trees\/families\/2955291\/2955291\.json$/,
+          body: {
+            order: ["h3n2"],
+            groups: [
+              {
+                key: "h3n2",
+                title: "H3N2",
+                archaeopteryx: [],
+                nextstrain: [{ name: "H3N2 segment 4 (HA)", path: auspiceDatasetId }],
+              },
+            ],
+          },
+        },
+        { url: "/api/phylogeny/nextstrain-datasets", body: { ids: [auspiceDatasetId] } },
+        { url: "/api/charon/getAvailable", body: { datasets: [], narratives: [] } },
+        {
+          url: /\/api\/charon\/getDataset\?.*type=(root-sequence|tip-frequencies|measurements)/,
+          status: 404,
+          body: { error: "dataset not found" },
+        },
+        { url: "/api/charon/getDataset", body: auspiceDataset },
+        ...permissiveBackendOverrides,
+      ],
+    });
+    // Basemap tiles are the one outbound host the viewer needs; serve a 1×1 PNG.
+    await page.route(/https:\/\/[a-d]\.basemaps\.cartocdn\.com\/.+\.png/, (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "image/png",
+        body: Buffer.from(
+          "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAF/gL+X2NDNwAAAABJRU5ErkJggg==",
+          "base64",
+        ),
+      }),
+    );
+
+    await page.goto("/taxonomy/2955291?tab=phylogeny");
+    await page.getByRole("heading", { name: "Available phylogenetic trees" }).waitFor();
+    await page.getByText("H3N2 segment 4 (HA)", { exact: true }).click();
+
+    const viewer = page.frameLocator('iframe[title*="Auspice"]');
+    await viewer.getByText("Deterministic H3N2 Auspice tree", { exact: true }).waitFor({
+      timeout: 30_000,
+    });
+    await page.waitForLoadState("networkidle");
+
+    // The bridge mirrors the host theme into the iframe, so scanning per theme
+    // exercises both token sets inside Auspice too. color-contrast stays
+    // enforced — it is the rule the theming work is accountable for.
+    await forEachTheme(page, async (theme) => {
+      const violations = await scanPage(page, {
+        // Pre-existing defects in the unforked Auspice bundle, not introduced by
+        // DXKB and not fixable without patching the dependency. Both are
+        // critical-impact, which the baseline mechanism refuses by design
+        // (see canBaseline in e2e/a11y/baseline.ts), so they are disabled here
+        // with their upstream cause named rather than silently suppressed.
+        disableRules: [
+          // react-select renders a hidden `dummyInput` with role=combobox and no
+          // accessible name (7 nodes, one per sidebar dropdown).
+          "label",
+          // Auspice's own "zoom to selected" / "zoom to root" toolbar buttons
+          // inside #PhylogenyCard ship without discernible text.
+          "button-name",
+        ],
+      });
+      assertNoBlockingViolations(violations, "auspice-viewer", theme);
+    });
   });
 });

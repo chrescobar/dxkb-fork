@@ -265,6 +265,115 @@ test("keeps the filter sidebar pinned while the tree grid scrolls", async ({ pag
   expect(pageScroll.overflow).toBeLessThanOrEqual(1);
 });
 
+test("themes the sidebar collapse control clear of the scroll gutter", async ({
+  page,
+  browserName,
+}) => {
+  test.skip(browserName !== "chromium", "geometry checks run in Chromium");
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await mockAuspice(page);
+  await openPicker(page);
+  await page.getByRole("radio", { name: "Auspice" }).click();
+  await card(page, "H3N2 segment 4 (HA)").click();
+
+  const viewer = page.frameLocator(
+    'iframe[title="Auspice phylogeny viewer for H3N2 segment 4 (HA)"]',
+  );
+  await expect(viewer.getByText("Deterministic H3N2 Auspice tree", { exact: true })).toBeVisible({
+    timeout: 30_000,
+  });
+
+  // Reads through the same-origin iframe rather than a frameLocator so the
+  // sidebar's scroll gutter — the thing the chevron used to sit on — can be
+  // measured. offsetWidth-clientWidth is the only way to see it; no CSS
+  // property reports it, which is why this cannot be a unit test.
+  const probe = () =>
+    page.locator('iframe[title^="Auspice phylogeny viewer"]').evaluate((element) => {
+      const frame = element as HTMLIFrameElement;
+      const doc = frame.contentDocument;
+      const win = frame.contentWindow;
+      if (!doc || !win) throw new Error("Auspice iframe is not same-origin");
+      const sidebar = doc.querySelector('[class*="SidebarContainer"]');
+      const nav = doc.querySelector('[class*="NavBarContainer"]');
+      if (!sidebar || !nav) throw new Error("Auspice sidebar chrome not mounted");
+      const chevron = [...nav.children].find((child) =>
+        child.getAttribute("style")?.includes("position: fixed"),
+      );
+      if (!chevron) throw new Error("sidebar chevron not mounted");
+      const chevronBox = chevron.getBoundingClientRect();
+      const styles = win.getComputedStyle(chevron);
+      return {
+        scheme: win.getComputedStyle(doc.documentElement).colorScheme,
+        // Distance from the chevron's right edge to the sidebar's *content*
+        // edge. The stock inline `left` puts this at -gutterWidth.
+        gapToContentEdge:
+          sidebar.getBoundingClientRect().left + sidebar.clientWidth - chevronBox.right,
+        gutter: (sidebar as HTMLElement).offsetWidth - sidebar.clientWidth,
+        width: Math.round(chevronBox.width),
+        height: Math.round(chevronBox.height),
+        radius: styles.borderRadius,
+        background: styles.backgroundColor,
+      };
+    });
+
+  // The bridge mirrors data-theme into the iframe, so driving the host's
+  // attribute is enough — no reload, no re-key.
+  const setTheme = (theme: string) =>
+    page.evaluate((t) => {
+      document.documentElement.setAttribute("data-theme", t);
+    }, theme);
+
+  await setTheme("dxkb-dark");
+  const dark = await probe();
+  expect(dark.scheme).toBe("dark");
+  expect(dark.gapToContentEdge).toBe(0);
+  // Mirrors the collapsed tab in sidebar-toggle.js (14x44, rounded on the side
+  // facing the panels). Auspice's own chevron is a bare 12px glyph.
+  expect(dark.width).toBe(15);
+  expect(dark.height).toBe(46);
+  expect(dark.radius).toBe("6px 0px 0px 6px");
+
+  // The gutter is the reason for the right-anchoring, so a run where the UA
+  // draws an overlay scrollbar cannot prove the fix. Say so rather than pass
+  // quietly.
+  if (dark.gutter === 0) {
+    console.warn("[auspice] overlay scrollbars: gutter overlap not exercised");
+  }
+
+  // Both halves of the theming: the tab must track the host tokens, and the UA
+  // scrollbar must follow the host out of dark mode.
+  await setTheme("dxkb-light");
+  const light = await probe();
+  expect(light.scheme).toBe("normal");
+  expect(light.background).not.toBe(dark.background);
+  expect(light.gapToContentEdge).toBe(0);
+
+  // Collapsed state: same tab, mirrored. Two different upstream components, so
+  // a change to one does not imply the other.
+  await viewer.locator('[class*="NavBarContainer"] > div[style*="position: fixed"]').click();
+  const collapsed = await page
+    .locator('iframe[title^="Auspice phylogeny viewer"]')
+    .evaluate((element) => {
+      const doc = (element as HTMLIFrameElement).contentDocument;
+      const win = (element as HTMLIFrameElement).contentWindow;
+      if (!doc || !win) throw new Error("Auspice iframe is not same-origin");
+      const toggle = doc.querySelector('div[style*="z-index: 9000"]');
+      if (!toggle) throw new Error("collapsed sidebar toggle not mounted");
+      const styles = win.getComputedStyle(toggle);
+      return {
+        visibility: styles.visibility,
+        background: styles.backgroundColor,
+        radius: styles.borderRadius,
+        shadow: styles.boxShadow,
+      };
+    });
+  expect(collapsed.visibility).toBe("visible");
+  expect(collapsed.radius).toBe("0px 6px 6px 0px");
+  // Stock is a hardcoded #F2F2F2 tab under a drop shadow.
+  expect(collapsed.background).not.toBe("rgb(242, 242, 242)");
+  expect(collapsed.shadow).toBe("none");
+});
+
 test("supports keyboard activation and mobile containment", async ({ page, browserName }) => {
   test.skip(browserName !== "chromium", "detailed keyboard and geometry checks run in Chromium");
   await page.setViewportSize({ width: 390, height: 844 });

@@ -3,10 +3,12 @@
   "browserTitle": "BV-BRC Auspice",
   "navbarComponent": "navbar.js",
   "sidebarTheme": {
-    "background": "#F2F2F2",
-    "color": "#000000",
-    "selectedColor": "#015994",
-    "font-family": "Roboto, sans-serif"
+    "background": "var(--dxkb-card, #F2F2F2)",
+    "color": "var(--dxkb-foreground, #000000)",
+    "selectedColor": "var(--dxkb-brand, #015994)",
+    "unselectedColor": "var(--dxkb-dim, #BBBBBB)",
+    "alternateBackground": "var(--dxkb-muted, #888888)",
+    "font-family": "var(--dxkb-font, Roboto, sans-serif)"
   },
   "mapTiles": {
     "api": "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",

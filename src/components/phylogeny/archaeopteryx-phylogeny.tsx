@@ -193,7 +193,7 @@ export function ArchaeopteryxPhylogeny({
   }
 
   return (
-    <div className="archaeopteryx-dxkb bg-background relative h-full min-h-0 overflow-auto rounded-tl-lg">
+    <div className="archaeopteryx-dxkb bg-background relative h-full min-h-0 overflow-auto">
       {status === undefined && (
         <div className="bg-background absolute inset-0 z-10">
           <ArchaeopteryxLoading />

@@ -72,6 +72,24 @@ export function pruneViralFilters(trees: ViralTreeChoice[], filters: ViralFilter
   };
 }
 
+/**
+ * Counts for each facet option, cascading strain -> viewer -> segment to match
+ * pruneViralFilters. A zero count means the option is a dead end and should be
+ * disabled. Strain is intentionally counted against every tree so choosing a
+ * viewer can never lock a strain out — the cascade relaxes the viewer instead.
+ */
+export function viralFacetCounts(trees: ViralTreeChoice[], filters: ViralFilters) {
+  const strainTrees = trees.filter(tree => !filters.strain || tree.groupKey === filters.strain);
+  const viewerTrees = strainTrees.filter(tree => !filters.viewer || tree.viewer === filters.viewer);
+  return {
+    allStrains: trees.length,
+    allViewers: strainTrees.length,
+    strain: (key: string) => trees.filter(tree => tree.groupKey === key).length,
+    viewer: (value: PhyloViewer) => strainTrees.filter(tree => tree.viewer === value).length,
+    segment: (segment: string) => viewerTrees.filter(tree => tree.segment === segment).length,
+  };
+}
+
 export function sortedSegments(trees: ViralTreeChoice[]): string[] {
   return [...new Set(trees.map(tree => tree.segment).filter((value): value is string => !!value))]
     .sort((a, b) => {

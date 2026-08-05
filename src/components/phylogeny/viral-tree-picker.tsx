@@ -16,10 +16,16 @@ import {
   flattenViralTrees,
   pruneViralFilters,
   sortedSegments,
+  viralFacetCounts,
   type ViralFilters,
   type ViralTreeChoice,
 } from "@/lib/phylogeny/viral-facets";
 import { resolvePhylogenyUrl, type PhyloFamilyBlock } from "@/lib/services/organisms/phylogeny";
+
+// Label styling for an option whose facet count is zero. Base UI renders its
+// radio/checkbox as a <span role> with aria-disabled rather than a natively
+// disabled control, so match on that instead of `peer-disabled:`.
+const disabledOption = "has-aria-disabled:cursor-not-allowed has-aria-disabled:opacity-50";
 
 export function ViralTreePicker({ block, availableNextstrainIds, focusChoiceKey, onOpen }: {
   block: PhyloFamilyBlock;
@@ -31,12 +37,11 @@ export function ViralTreePicker({ block, availableNextstrainIds, focusChoiceKey,
   const [filters, setFilters] = useState<ViralFilters>({ strain: null, viewer: null, segments: new Set() });
   const strains = [...new Map(trees.map(tree => [tree.groupKey, tree.groupTitle])).entries()];
   const viewers = [...new Set(trees.map(tree => tree.viewer))];
-  const segmentSource = trees.filter(tree =>
-    (!filters.strain || tree.groupKey === filters.strain) &&
-    (!filters.viewer || tree.viewer === filters.viewer)
-  );
-  const segments = sortedSegments(segmentSource);
+  // Full segment list so options stay put; unavailable ones are disabled below
+  // rather than disappearing.
+  const segments = sortedSegments(trees);
   const visible = filterViralTrees(trees, filters);
+  const counts = viralFacetCounts(trees, filters);
 
   const update = (next: ViralFilters) => { setFilters(pruneViralFilters(trees, next)); };
 
@@ -53,8 +58,10 @@ export function ViralTreePicker({ block, availableNextstrainIds, focusChoiceKey,
         <h2 className="text-lg font-semibold">Available phylogenetic trees</h2>
         <p className="text-sm text-muted-foreground">Choose a strain, viewer, and genome segment.</p>
       </div>
-      <div className="grid min-h-0 flex-1 grid-cols-1 overflow-auto lg:grid-cols-[260px_1fr]">
-        <aside className="border-b bg-background p-4 lg:border-r lg:border-b-0">
+      {/* lg: each column scrolls independently so Filters stay pinned; below lg
+          the stacked layout scrolls as one column. */}
+      <div className="grid min-h-0 flex-1 grid-cols-1 overflow-auto lg:grid-cols-[260px_1fr] lg:overflow-hidden">
+        <aside className="border-b bg-background p-4 lg:min-h-0 lg:overflow-y-auto lg:border-r lg:border-b-0">
           <Collapsible defaultOpen>
             <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md px-1 py-2 text-sm font-semibold">
               <span className="flex items-center gap-2"><Filter className="size-4" /> Filters</span>
@@ -63,12 +70,22 @@ export function ViralTreePicker({ block, availableNextstrainIds, focusChoiceKey,
             <CollapsibleContent className="space-y-5 pt-4">
               <fieldset>
                 <legend className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">Strain</legend>
-                <RadioGroup value={filters.strain ?? "all"} onValueChange={(value: unknown) => {
+                {/* grid-cols-1 pins the column to the sidebar width; without it
+                    the auto column sizes to the longest strain name and pushes
+                    the count out of view. */}
+                <RadioGroup className="grid-cols-1" value={filters.strain ?? "all"} onValueChange={(value: unknown) => {
                   if (typeof value === "string") update({ ...filters, strain: value === "all" ? null : value });
                 }}>
-                  <Label><RadioGroupItem value="all" />All strains <span className="ml-auto text-xs text-muted-foreground">{trees.length}</span></Label>
+                  <Label><RadioGroupItem value="all" />All strains <span className="ml-auto text-xs text-muted-foreground">{counts.allStrains}</span></Label>
+                  {/* Never disabled: `strains` is derived from `trees`, so every
+                      row has at least one tree, and leaving strain unconstrained
+                      means picking a viewer can't lock the user out of a strain. */}
                   {strains.map(([key, title]) => (
-                    <Label key={key}><RadioGroupItem value={key} /><span className="truncate" title={title}>{title}</span><span className="ml-auto text-xs text-muted-foreground">{trees.filter(tree => tree.groupKey === key).length}</span></Label>
+                    <Label key={key}>
+                      <RadioGroupItem value={key} />
+                      <span className="min-w-0 truncate" title={title}>{title}</span>
+                      <span className="ml-auto shrink-0 text-xs text-muted-foreground">{counts.strain(key)}</span>
+                    </Label>
                   ))}
                 </RadioGroup>
               </fieldset>
@@ -80,9 +97,17 @@ export function ViralTreePicker({ block, availableNextstrainIds, focusChoiceKey,
                       update({ ...filters, viewer: value === "all" ? null : value });
                     }
                   }}>
-                    <Label><RadioGroupItem value="all" />All viewers</Label>
-                    <Label><RadioGroupItem value="archaeopteryx" />Archaeopteryx</Label>
-                    <Label><RadioGroupItem value="nextstrain" />Auspice</Label>
+                    <Label><RadioGroupItem value="all" />All viewers <span className="ml-auto text-xs text-muted-foreground">{counts.allViewers}</span></Label>
+                    {([["archaeopteryx", "Archaeopteryx"], ["nextstrain", "Auspice"]] as const).map(([value, title]) => {
+                      const count = counts.viewer(value);
+                      return (
+                        <Label key={value} className={disabledOption}>
+                          <RadioGroupItem value={value} disabled={count === 0} />
+                          {title}
+                          <span className="ml-auto text-xs text-muted-foreground">{count}</span>
+                        </Label>
+                      );
+                    })}
                   </RadioGroup>
                 </fieldset>
               )}
@@ -90,26 +115,31 @@ export function ViralTreePicker({ block, availableNextstrainIds, focusChoiceKey,
                 <fieldset>
                   <legend className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">Segment</legend>
                   <div className="space-y-2">
-                    {segments.map(segment => (
-                      <Label key={segment}>
-                        <Checkbox
-                          checked={filters.segments.has(segment)}
-                          onCheckedChange={checked => {
-                            const next = new Set(filters.segments);
-                            if (checked) next.add(segment); else next.delete(segment);
-                            update({ ...filters, segments: next });
-                          }}
-                        />
-                        {segment}
-                      </Label>
-                    ))}
+                    {segments.map(segment => {
+                      const count = counts.segment(segment);
+                      return (
+                        <Label key={segment} className={disabledOption}>
+                          <Checkbox
+                            checked={filters.segments.has(segment)}
+                            disabled={count === 0}
+                            onCheckedChange={checked => {
+                              const next = new Set(filters.segments);
+                              if (checked) next.add(segment); else next.delete(segment);
+                              update({ ...filters, segments: next });
+                            }}
+                          />
+                          {segment}
+                          <span className="ml-auto text-xs text-muted-foreground">{count}</span>
+                        </Label>
+                      );
+                    })}
                   </div>
                 </fieldset>
               )}
             </CollapsibleContent>
           </Collapsible>
         </aside>
-        <main className="p-5">
+        <main className="p-5 lg:min-h-0 lg:overflow-y-auto">
           {visible.length === 0 ? (
             <div className="grid min-h-64 place-items-center text-center text-sm text-muted-foreground">
               No trees found for the selected filters.

@@ -26,12 +26,33 @@ const family = {
   ],
 };
 
-async function mockAuspice(page: Parameters<typeof applyBackendMocks>[0], inventoryStatus = 200) {
+// Enough cards to overflow a desktop viewport, so the filter sidebar can be
+// checked against a genuinely scrolled tree grid.
+const scrollFamily = {
+  order: ["h3n2"],
+  groups: [
+    {
+      key: "h3n2",
+      title: "H3N2",
+      archaeopteryx: Array.from({ length: 24 }, (_, index) => {
+        const n = String(index + 1);
+        return { name: `Filler tree ${n}`, path: `/test/filler-${n}.xml` };
+      }),
+      nextstrain: [],
+    },
+  ],
+};
+
+async function mockAuspice(
+  page: Parameters<typeof applyBackendMocks>[0],
+  inventoryStatus = 200,
+  familyBody: typeof family | typeof scrollFamily = family,
+) {
   await applyBackendMocks(page, {
     overrides: [
       ...authSessionOverrides,
       workspaceRpcOverride("Workspace.get", { result: [[]] }),
-      { url: familyUrl, body: family },
+      { url: familyUrl, body: familyBody },
       {
         url: "/api/phylogeny/nextstrain-datasets",
         status: inventoryStatus,
@@ -123,6 +144,45 @@ test("opens the exact Auspice dataset and renders tree, map, and attribution", a
   await expect(available).toBeFocused();
 });
 
+test("nav bar logo and wordmark open the Auspice docs in a new tab", async ({ page, context }) => {
+  // Stock Auspice hardcodes href="/" with no target on both (it assumes it owns
+  // the site root), so a click navigates the iframe to the DXKB home page and
+  // renders it nested inside the phylogeny panel. auspice/navbar.js replaces
+  // that nav bar; this guards the extension staying wired up in the bundle.
+  await mockAuspice(page);
+  await openPicker(page);
+  await page.getByRole("radio", { name: "Auspice" }).click();
+  await card(page, "H3N2 segment 4 (HA)").click();
+
+  const frameSelector = 'iframe[title="Auspice phylogeny viewer for H3N2 segment 4 (HA)"]';
+  const viewer = page.frameLocator(frameSelector);
+  await expect(viewer.getByText("Deterministic H3N2 Auspice tree", { exact: true })).toBeVisible({ timeout: 30_000 });
+
+  const docsUrl = "https://docs.nextstrain.org/projects/auspice/";
+  const wordmark = viewer.getByRole("link", { name: "auspice", exact: true });
+  const logo = viewer.getByRole("link", { name: "Auspice documentation" });
+  for (const link of [wordmark, logo]) {
+    await expect(link).toHaveAttribute("href", docsUrl);
+    await expect(link).toHaveAttribute("target", "_blank");
+    await expect(link).toHaveAttribute("rel", /noopener/);
+  }
+
+  // The regression is the iframe navigating away, so assert on where it ends up
+  // rather than trusting the attributes alone.
+  const popup = await Promise.all([
+    context.waitForEvent("page"),
+    wordmark.click(),
+  ]).then(([opened]) => opened);
+  expect(popup.url()).toContain("docs.nextstrain.org");
+  await popup.close();
+
+  await expect(page.locator(frameSelector)).toHaveAttribute(
+    "src",
+    `/nextstrain-viewer/${datasetId}`,
+  );
+  await expect(viewer.getByText("Deterministic H3N2 Auspice tree", { exact: true })).toBeVisible();
+});
+
 test("fails closed when inventory is unavailable", async ({ page }) => {
   await mockAuspice(page, 500);
   await openPicker(page);
@@ -132,6 +192,77 @@ test("fails closed when inventory is unavailable", async ({ page }) => {
     "true",
   );
   await expect(card(page, "XML HA")).not.toHaveAttribute("aria-disabled", "true");
+});
+
+test("disables filter options with no matching trees", async ({ page }) => {
+  await mockAuspice(page);
+  await openPicker(page);
+
+  // Base UI radios/checkboxes are spans with aria-disabled, not native inputs.
+  const auspice = page.getByRole("radio", { name: /Auspice/ });
+  await expect(auspice).not.toHaveAttribute("aria-disabled", "true");
+
+  // H5N1 in this fixture is Archaeopteryx-only, HA-only.
+  await page.getByRole("radio", { name: /H5N1/ }).click();
+  await expect(auspice).toHaveAttribute("aria-disabled", "true");
+  await expect(page.getByRole("radio", { name: /Archaeopteryx/ })).not.toHaveAttribute("aria-disabled", "true");
+  await expect(page.getByRole("checkbox", { name: /^HA/ })).not.toHaveAttribute("aria-disabled", "true");
+  await expect(page.getByRole("checkbox", { name: /^NA/ })).toHaveAttribute("aria-disabled", "true");
+
+  // Disabled means inert, not just dimmed: Playwright's actionability check
+  // refuses to click a control it considers disabled.
+  await expect(auspice.click({ timeout: 2_000 })).rejects.toThrow(/not enabled/);
+  await expect(auspice).toHaveAttribute("aria-checked", "false");
+  await expect(page.getByText("H5N1 segment 4 (HA)")).toBeVisible();
+
+  // ...and it must also *look* disabled. Base UI renders a span with
+  // aria-disabled rather than a natively disabled control, so a `peer-disabled:`
+  // style silently never applies — only computed style catches that.
+  const rowOpacity = (name: RegExp) =>
+    page.getByRole("radio", { name }).locator("xpath=ancestor::label[1]")
+      .evaluate(element => Number(getComputedStyle(element).opacity));
+  expect(await rowOpacity(/Auspice/)).toBeLessThan(1);
+  expect(await rowOpacity(/Archaeopteryx/)).toBe(1);
+
+  // Options are disabled, never removed: the segment list must not reflow.
+  const segmentLabels = page.getByRole("checkbox").locator("xpath=ancestor::label[1]");
+  const narrowed = await segmentLabels.count();
+  await page.getByRole("radio", { name: /All strains/ }).click();
+  expect(await segmentLabels.count()).toBe(narrowed);
+
+  // Clearing the strain re-enables everything.
+  await expect(auspice).not.toHaveAttribute("aria-disabled", "true");
+  await expect(page.getByRole("checkbox", { name: /^NA/ })).not.toHaveAttribute("aria-disabled", "true");
+});
+
+test("keeps the filter sidebar pinned while the tree grid scrolls", async ({ page, browserName }) => {
+  test.skip(browserName !== "chromium", "geometry checks run in Chromium");
+  await page.setViewportSize({ width: 1440, height: 800 });
+  await mockAuspice(page, 200, scrollFamily);
+  await openPicker(page);
+
+  const filters = page.getByRole("button", { name: /Filters/ });
+  const grid = page.locator("main main:has([data-slot=card])");
+  await expect(filters).toBeVisible();
+
+  const before = await filters.boundingBox();
+  const scrolled = await grid.evaluate(element => {
+    element.scrollTop = element.scrollHeight;
+    return { scrollTop: element.scrollTop, scrollHeight: element.scrollHeight };
+  });
+  // Guards the fixture staying tall enough for the scroll to prove anything.
+  expect(scrolled.scrollTop).toBeGreaterThan(0);
+  const after = await filters.boundingBox();
+
+  expect(after?.y).toBeCloseTo(before?.y ?? -1, 0);
+  await expect(filters).toBeInViewport();
+  // The page itself must not scroll — otherwise the sidebar leaves with it.
+  const pageScroll = await page.evaluate(() => ({
+    scrollY: window.scrollY,
+    overflow: document.documentElement.scrollHeight - document.documentElement.clientHeight,
+  }));
+  expect(pageScroll.scrollY).toBe(0);
+  expect(pageScroll.overflow).toBeLessThanOrEqual(1);
 });
 
 test("supports keyboard activation and mobile containment", async ({ page, browserName }) => {

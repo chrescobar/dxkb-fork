@@ -1,0 +1,84 @@
+auspice/config.json
+  s_811ae2cb68c478::t_95d13e288de6dd 6-8,10-11
+  s_811ae2cb68c478::t_0a315e9ef04324 9
+e2e/tests/organisms/auspice.spec.ts
+  s_811ae2cb68c478::t_0513fd8c035760 268-318,327-344,346-376
+  s_811ae2cb68c478::t_d179ea551f99c4 345
+  s_811ae2cb68c478::t_97dda278ee2c7a 322-324
+  s_811ae2cb68c478::t_9bd9853a196309 319-321,325-326
+scripts/auspice-shell.test.ts
+  s_811ae2cb68c478::t_7d52414531d078 1-18,20-75,89-97,124-131
+  s_811ae2cb68c478::t_befc46dbf2fabf 98-123
+  s_811ae2cb68c478::t_4eaaba64790327 19
+  s_811ae2cb68c478::t_607929724c0833 76-88
+public/auspice-dark.css
+  s_811ae2cb68c478::t_33e1c01ecfd2f9 36-44
+  s_811ae2cb68c478::t_d7b91bfe85f3b0 128
+  s_811ae2cb68c478::t_cf268053b9ae67 272-279,282,286-287
+  s_811ae2cb68c478::t_2bf934f121aea3 71-91
+  s_811ae2cb68c478::t_d6adaab162a588 117-127,129-133,145-147,150-153,155,159-166
+  s_811ae2cb68c478::t_b27551d4fc1367 201,206,208-210,213-230
+  s_811ae2cb68c478::t_79020734f76b0c 290-293,296
+  s_811ae2cb68c478::t_f8a0ba8a1e6df3 202-205,207,211-212
+  s_811ae2cb68c478::t_90ff73477a2675 134-139,141-144,148-149
+  s_811ae2cb68c478::t_2ae97963a89895 317-318,322-323
+  s_811ae2cb68c478::t_da7223ca93ef9b 114,193,247,257,301,328,401
+  s_811ae2cb68c478::t_b1f16d69acb386 1-27,45-46,55-70,92-113,115-116,167-177,181-192,194-200,231-246,248-256,258-271,280-281,283-284,294-295,297-300,302-316,319-321,324-327,329-362,369-371,376-400,402-406
+  s_811ae2cb68c478::t_88832b05ef4b3f 47-54
+  s_811ae2cb68c478::t_5451734154d0d3 285,288-289
+  s_811ae2cb68c478::t_ab0d97dc7259c9 363-368,372-375
+  s_811ae2cb68c478::t_91d3739b8247d9 28-35
+  s_811ae2cb68c478::t_22037704ae15cf 154
+  s_811ae2cb68c478::t_89679167e1be3e 140,156-158
+  s_811ae2cb68c478::t_b257bce64c820f 178-180
+src/components/phylogeny/viral-phylogeny-panel.tsx
+  s_f674db6a5c96c2::t_61bae6fe9f5d75 63
+e2e/tests/a11y/routes-sweep.spec.ts
+  s_811ae2cb68c478::t_ef8483f01c55b5 269-270,272-286
+  s_811ae2cb68c478::t_5667e4c915b6a0 21-23
+  s_811ae2cb68c478::t_2700b858601f69 209-268,271,287-289
+docs/auspice-integration-plan.md
+  s_811ae2cb68c478::t_2de11cb2adc508 349-356,358-360,362-363,368-370
+  s_811ae2cb68c478::t_70e54f0b7e0bbe 357,361,364-367
+  s_811ae2cb68c478::t_a7217070785bc1 253,255
+  s_811ae2cb68c478::t_30a7d6960fb845 306-308
+  s_811ae2cb68c478::t_348e1bd7e2a7df 309-310
+scripts/build-auspice.mjs
+  s_811ae2cb68c478::t_2fa08b70177b7c 46
+  s_811ae2cb68c478::t_f864863a82a971 16-18,20-45,47-51,54-56
+  s_811ae2cb68c478::t_2b3ee26888e669 82-86
+  s_811ae2cb68c478::t_017b4d1edc9b99 19
+  s_811ae2cb68c478::t_5245948ffe3f04 52-53
+  s_811ae2cb68c478::t_de2fc201f4ed54 76-81
+vitest.config.mts
+  s_811ae2cb68c478::t_cb1e3c00d056e0 20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "07251762182242c907b8fd87d13b4e60d2f81acb",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_811ae2cb68c478": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "54ece03c-a2c6-4af5-926c-da1cd7732495",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_f674db6a5c96c2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_02c1396ebffe7ax4lcq80E4B5l",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

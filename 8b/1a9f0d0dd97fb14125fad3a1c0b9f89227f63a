@@ -1,0 +1,56 @@
+src/lib/phylogeny/viral-facets.ts
+  s_893258cc4f4d4f::t_771864cf59a26f 1
+  s_893258cc4f4d4f::t_048f103097c24c 105-154
+e2e/tests/organisms/auspice.spec.ts
+  s_893258cc4f4d4f::t_049fe077eaff4f 106-107
+  s_893258cc4f4d4f::t_6d5477f429e2e0 160-164
+  s_893258cc4f4d4f::t_175498ca34ad70 199-207
+  s_893258cc4f4d4f::t_b103fb6b4a44a6 125-132
+  s_893258cc4f4d4f::t_698e6c486d9c50 258
+  s_893258cc4f4d4f::t_07264b4e7d1c41 290-292
+  s_893258cc4f4d4f::t_41173d0ca1d70a 29-32,41
+  s_893258cc4f4d4f::t_68b39b1454c47e 399-401
+src/components/phylogeny/__tests__/viral-phylogeny-panel.test.tsx
+  s_893258cc4f4d4f::t_ce44a1b277ae53 20,24-28,34,36-37,43-48,64,67-77,83-85,88,92,97,100-103,107-109,112-114,116,119,139-140,177-179,181-183
+e2e/tests/a11y/routes-sweep.spec.ts
+  s_893258cc4f4d4f::t_1ebbe0875789b7 260-270
+src/components/phylogeny/__tests__/viral-tree-picker.test.tsx
+  s_893258cc4f4d4f::t_cdd0bea746265c 63-64
+  s_893258cc4f4d4f::t_4f9c36d0b7d493 83-87,103-106,108,111
+  s_893258cc4f4d4f::t_83d1cbd43d039a 1,45-47,77,88-89,94-102,107,109-110,112-114,125-126,128,143,226,236,273
+  s_893258cc4f4d4f::t_be54a06d3282f0 129-131,279
+  s_893258cc4f4d4f::t_98dc73b93c9fdd 7-9,16,19-20
+  s_893258cc4f4d4f::t_bfcf52b2cd5401 52-53,65-69
+src/lib/phylogeny/__tests__/viral-facets.test.ts
+  s_893258cc4f4d4f::t_e7eae0f5c232d8 3,6,9-10,12,15
+  s_893258cc4f4d4f::t_c715abfc5dba9a 115-187
+src/components/phylogeny/viral-phylogeny-panel.tsx
+  s_893258cc4f4d4f::t_d6b4019a711584 10
+  s_893258cc4f4d4f::t_90b01c07f1ced1 53
+src/components/phylogeny/viral-tree-picker.tsx
+  s_893258cc4f4d4f::t_f4d15f9643b38f 147-148
+  s_893258cc4f4d4f::t_bbba121e935119 154-188,190-307
+  s_893258cc4f4d4f::t_3e007f4746a24f 189
+  s_893258cc4f4d4f::t_a3e0392c58024e 3-4,13,16,18-19,21,23-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "8b1a9f0d0dd97fb14125fad3a1c0b9f89227f63a",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_893258cc4f4d4f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c99b5f56-f8f9-41e6-bb16-37cef1756c78",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

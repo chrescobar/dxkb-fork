@@ -1,12 +1,18 @@
 import type { PhyloFamilyBlock } from "@/lib/services/organisms/phylogeny";
 import {
+  choiceKey,
   filterViralTrees,
   flattenViralTrees,
+  isUnavailable,
   parseSegment,
   pruneViralFilters,
+  segmentColor,
+  segmentRows,
   sortedSegments,
+  viewerLabel,
   viralFacetCounts,
   type ViralFilters,
+  type ViralTreeChoice,
 } from "../viral-facets";
 
 const noFilters: ViralFilters = { strain: null, viewer: null, segments: new Set() };
@@ -104,5 +110,78 @@ describe("viralFacetCounts", () => {
     const filters: ViralFilters = { ...noFilters, strain: "a" };
     expect(viralFacetCounts(trees, filters).viewer("nextstrain")).toBe(0);
     expect(pruneViralFilters(trees, { ...filters, viewer: "nextstrain" }).viewer).toBeNull();
+  });
+});
+
+describe("choiceKey", () => {
+  it("joins viewer and path so it is unique per choice", () => {
+    const choice = flattenViralTrees(block)[0];
+    expect(choiceKey(choice)).toBe(`${choice.viewer}:${choice.ref.path}`);
+  });
+});
+
+describe("isUnavailable", () => {
+  const nextstrainChoice: ViralTreeChoice = {
+    groupKey: "b",
+    groupTitle: "Strain B",
+    viewer: "nextstrain",
+    segment: "HA",
+    ref: { name: "segment 4 (HA)", path: "Influenza-A-Virus/H3N2/HA" },
+  };
+
+  it("is never unavailable for archaeopteryx", () => {
+    expect(isUnavailable({ ...nextstrainChoice, viewer: "archaeopteryx" }, new Set())).toBe(false);
+  });
+
+  it("is unavailable when the canonical dataset id is missing from inventory", () => {
+    expect(isUnavailable(nextstrainChoice, new Set())).toBe(true);
+    expect(isUnavailable(nextstrainChoice, new Set(["Influenza-A-Virus/H3N2/HA"]))).toBe(false);
+  });
+
+  it("is unavailable when the path has no canonical dataset id", () => {
+    const invalid: ViralTreeChoice = { ...nextstrainChoice, ref: { name: "x", path: "//example.org/tree" } };
+    expect(isUnavailable(invalid, new Set(["//example.org/tree"]))).toBe(true);
+  });
+});
+
+describe("viewerLabel", () => {
+  it("labels each viewer for display", () => {
+    expect(viewerLabel.archaeopteryx).toBe("Archaeopteryx");
+    expect(viewerLabel.nextstrain).toBe("Auspice");
+  });
+});
+
+describe("segmentColor", () => {
+  it("maps a known segment to a stable chart variable", () => {
+    expect(segmentColor("HA")).toBe(segmentColor("HA"));
+    expect(segmentColor("HA")).toMatch(/^var\(--chart-\d+\)$/);
+  });
+
+  it("falls back to a hashed slot for an unrecognized segment", () => {
+    expect(segmentColor("ZZ")).toMatch(/^var\(--chart-\d+\)$/);
+  });
+
+  it("uses the muted foreground token when there is no segment", () => {
+    expect(segmentColor(null)).toBe("var(--muted-foreground)");
+  });
+});
+
+describe("segmentRows", () => {
+  it("groups trees into one row per strain and segment, collapsing viewers", () => {
+    const trees = flattenViralTrees(block);
+    const rows = segmentRows(trees);
+
+    expect(rows.map(row => [row.strainKey, row.segment])).toEqual([
+      ["b", "All"],
+      ["b", "HA"],
+      ["a", "M1"],
+    ]);
+    const haRow = rows.find(row => row.segment === "HA");
+    expect(haRow?.choices).toHaveLength(1);
+    expect(haRow?.choices[0]?.viewer).toBe("nextstrain");
+  });
+
+  it("returns no rows for an empty tree list", () => {
+    expect(segmentRows([])).toEqual([]);
   });
 });

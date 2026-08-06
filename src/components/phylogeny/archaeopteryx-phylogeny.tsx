@@ -183,19 +183,19 @@ export function ArchaeopteryxPhylogeny({
     return (
       <div className="grid h-full min-h-64 place-items-center p-6 text-center">
         <div>
-          <h2 className="text-destructive font-semibold">
+          <h2 className="font-semibold text-destructive">
             Phylogeny renderer unavailable
           </h2>
-          <p className="text-muted-foreground mt-1 text-sm">{status}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{status}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="archaeopteryx-dxkb bg-background relative h-full min-h-0 overflow-auto">
+    <div className="archaeopteryx-dxkb relative h-full min-h-0 overflow-auto bg-background">
       {status === undefined && (
-        <div className="bg-background absolute inset-0 z-10">
+        <div className="absolute inset-0 z-10 bg-background">
           <ArchaeopteryxLoading />
         </div>
       )}

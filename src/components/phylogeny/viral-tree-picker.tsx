@@ -1,22 +1,27 @@
 "use client";
 
-import { Download, Filter, Globe2, Map as MapIcon, Network } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Download, Filter } from "lucide-react";
+import { Fragment, useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { canonicalDatasetId } from "@/lib/phylogeny/nextstrain-dataset";
 import {
+  choiceKey,
   filterViralTrees,
   flattenViralTrees,
+  isUnavailable,
   pruneViralFilters,
+  segmentColor,
+  segmentRows,
   sortedSegments,
+  viewerLabel,
   viralFacetCounts,
+  type PhyloViewer,
+  type SegmentRow,
   type ViralFilters,
   type ViralTreeChoice,
 } from "@/lib/phylogeny/viral-facets";
@@ -139,76 +144,164 @@ export function ViralTreePicker({ block, availableNextstrainIds, focusChoiceKey,
             </CollapsibleContent>
           </Collapsible>
         </aside>
-        <main className="p-5 lg:min-h-0 lg:overflow-y-auto">
-          {visible.length === 0 ? (
-            <div className="grid min-h-64 place-items-center text-center text-sm text-muted-foreground">
-              No trees found for the selected filters.
-            </div>
-          ) : (
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4">
-              {visible.map(choice => {
-                const metadata = choice.ref.metadata ? resolvePhylogenyUrl(choice.ref.metadata) : null;
-                const datasetId = choice.viewer === "nextstrain"
-                  ? canonicalDatasetId(choice.ref.path)
-                  : null;
-                const unavailable = choice.viewer === "nextstrain" &&
-                  (!datasetId || !availableNextstrainIds.has(datasetId));
-                return (
-                  <Card
-                    key={`${choice.viewer}:${choice.ref.path}`}
-                    data-choice-key={`${choice.viewer}:${choice.ref.path}`}
-                    role="button"
-                    tabIndex={unavailable ? -1 : 0}
-                    aria-disabled={unavailable || undefined}
-                    className="border bg-background transition-shadow hover:shadow-md aria-disabled:cursor-not-allowed aria-disabled:opacity-65 aria-disabled:hover:shadow-none"
-                    onClick={() => {
-                      if (!unavailable) onOpen(choice);
-                    }}
-                    onKeyDown={event => {
-                      if (unavailable || (event.key !== "Enter" && event.key !== " ")) return;
-                      event.preventDefault();
-                      onOpen(choice);
-                    }}
-                  >
-                    <div className="mx-4 grid h-24 place-items-center rounded-lg bg-linear-to-br from-primary/15 via-background to-cyan-500/10">
-                      {choice.ref.region === "usa" ? <MapIcon className="size-10 text-primary/70" /> : <Globe2 className="size-10 text-primary/70" />}
-                    </div>
-                    <CardHeader>
-                      <div className="mb-1 flex flex-wrap gap-1">
-                        <Badge variant="secondary">{choice.groupTitle}</Badge>
-                        {choice.segment && <Badge variant="outline">{choice.segment}</Badge>}
-                      </div>
-                      <CardTitle>{choice.ref.name}</CardTitle>
-                      {choice.ref.definition && <CardDescription>{choice.ref.definition}</CardDescription>}
-                    </CardHeader>
-                    <CardContent className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Network className="size-4" />
-                      {unavailable
-                        ? "Auspice dataset unavailable"
-                        : choice.viewer === "nextstrain"
-                          ? "Nextstrain phylogenomic viewer"
-                          : "Interactive phylogram"}
-                    </CardContent>
-                    {metadata && (
-                      <CardFooter>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          nativeButton={false}
-                          render={<a href={metadata} target="_blank" rel="noopener noreferrer" aria-label={`Download metadata for ${choice.ref.name}`} />}
-                          onClick={event => { event.stopPropagation(); }}
-                        >
-                          <Download /> Metadata
-                        </Button>
-                      </CardFooter>
-                    )}
-                  </Card>
-                );
-              })}
-            </div>
-          )}
+        <main className="lg:min-h-0 lg:overflow-y-auto">
+          <TreeResults visible={visible} availableNextstrainIds={availableNextstrainIds} onOpen={onOpen} />
         </main>
       </div>
     </div>
+  );
+}
+
+function TreeResults({ visible, availableNextstrainIds, onOpen }: {
+  visible: ViralTreeChoice[];
+  availableNextstrainIds: ReadonlySet<string>;
+  onOpen: (choice: ViralTreeChoice) => void;
+}) {
+  const rows = segmentRows(visible);
+  const multiStrain = new Set(rows.map(row => row.strainKey)).size > 1;
+
+  if (rows.length === 0) {
+    return (
+      <div className="grid min-h-64 place-items-center p-5 text-center text-sm text-muted-foreground">
+        No trees found for the selected filters.
+      </div>
+    );
+  }
+
+  return (
+    <div className="pb-6">
+      {rows.map((row, index) => {
+        const newStrain =
+          multiStrain && (index === 0 || rows[index - 1]?.strainKey !== row.strainKey);
+        const primary = row.choices[0];
+        const metadata = row.choices.map(choice => choice.ref.metadata).find(Boolean);
+
+        return (
+          <Fragment key={`${row.strainKey}:${row.segment ?? "none"}`}>
+            {newStrain && (
+              <StrainRule
+                title={row.strainTitle}
+                count={visible.filter(tree => tree.groupKey === row.strainKey).length}
+                first={index === 0}
+              />
+            )}
+            <div
+              data-slot="tree-row"
+              className="group grid grid-cols-[3.5rem_1fr] items-center gap-y-2 border-b border-border/50 px-5 py-3 transition-colors hover:bg-muted/25 lg:grid-cols-[3.5rem_1fr_auto] lg:gap-y-0 lg:py-0"
+              style={{ ["--seg" as string]: segmentColor(row.segment) }}
+            >
+              <span
+                className="relative py-1 font-mono text-xs font-semibold lg:py-3.5"
+                style={{ color: segmentColor(row.segment) }}
+              >
+                <span
+                  aria-hidden
+                  className="absolute top-1/2 -left-5 h-full w-[3px] -translate-y-1/2 rounded-r-sm opacity-0 transition-opacity group-hover:opacity-100"
+                  style={{ background: segmentColor(row.segment) }}
+                />
+                {row.segment ?? "—"}
+              </span>
+
+              <span className="min-w-0 py-1 pr-6 lg:py-3.5">
+                <span className="block truncate text-sm font-medium">{primary.ref.name}</span>
+                {primary.ref.definition && (
+                  <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                    {primary.ref.definition}
+                  </span>
+                )}
+              </span>
+
+              <span className="col-span-2 flex items-center gap-2 py-2 lg:col-span-1">
+                {(["archaeopteryx", "nextstrain"] as const).map(viewer => (
+                  <PeerButton
+                    key={viewer}
+                    viewer={viewer}
+                    row={row}
+                    availableNextstrainIds={availableNextstrainIds}
+                    onOpen={onOpen}
+                  />
+                ))}
+                <span aria-hidden className="mx-0.5 h-5 w-px bg-border" />
+                <MetadataButton
+                  url={metadata ? resolvePhylogenyUrl(metadata) : null}
+                  name={primary.ref.name}
+                />
+              </span>
+            </div>
+          </Fragment>
+        );
+      })}
+    </div>
+  );
+}
+
+function StrainRule({ title, count, first }: { title: string; count: number; first: boolean }) {
+  return (
+    <div className={`flex items-center gap-3 px-5 pb-2 ${first ? "pt-4" : "pt-8"}`}>
+      <span className="text-[0.68rem] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
+        {title}
+      </span>
+      <span className="h-px flex-1 bg-border" />
+      <span className="font-mono text-[0.68rem] text-muted-foreground/70">{count} trees</span>
+    </div>
+  );
+}
+
+function PeerButton({ viewer, row, availableNextstrainIds, onOpen }: {
+  viewer: PhyloViewer;
+  row: SegmentRow;
+  availableNextstrainIds: ReadonlySet<string>;
+  onOpen: (choice: ViralTreeChoice) => void;
+}) {
+  const choice = row.choices.find(candidate => candidate.viewer === viewer);
+  const dead = !choice || isUnavailable(choice, availableNextstrainIds);
+
+  if (dead) {
+    return (
+      <span
+        className="grid h-7 flex-1 cursor-not-allowed place-items-center rounded-md border border-dashed border-border/60 text-[0.7rem] text-muted-foreground/45 lg:w-[7.5rem] lg:flex-initial"
+        title={
+          choice
+            ? `${viewerLabel[viewer]} dataset is not available`
+            : `No ${viewerLabel[viewer]} tree for this segment`
+        }
+      >
+        Not Available
+      </span>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      data-choice-key={choiceKey(choice)}
+      onClick={() => { onOpen(choice); }}
+      aria-label={`Open ${choice.ref.name} in ${viewerLabel[viewer]}`}
+      className="h-7 flex-1 rounded-md border border-border bg-background text-xs font-medium transition-colors hover:border-[color-mix(in_oklch,var(--seg)_55%,transparent)] hover:bg-[color-mix(in_oklch,var(--seg)_14%,transparent)] focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none lg:w-[7.5rem] lg:flex-initial"
+    >
+      {viewerLabel[viewer]}
+    </button>
+  );
+}
+
+function MetadataButton({ url, name }: { url: string | null; name: string }) {
+  if (!url) return <span className="w-6" aria-hidden />;
+  return (
+    <Button
+      variant="ghost"
+      size="icon-xs"
+      className="text-foreground/75 transition-colors hover:text-foreground"
+      nativeButton={false}
+      render={
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Download metadata for ${name}`}
+        />
+      }
+    >
+      <Download />
+    </Button>
   );
 }

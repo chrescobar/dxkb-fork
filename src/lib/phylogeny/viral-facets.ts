@@ -1,3 +1,4 @@
+import { canonicalDatasetId } from "@/lib/phylogeny/nextstrain-dataset";
 import type { PhyloFamilyBlock, PhyloTreeRef } from "@/lib/services/organisms/phylogeny";
 
 export type PhyloViewer = "archaeopteryx" | "nextstrain";
@@ -100,4 +101,54 @@ export function sortedSegments(trees: ViralTreeChoice[]): string[] {
       if (right === -1) return -1;
       return left - right;
     });
+}
+
+export function choiceKey(choice: ViralTreeChoice): string {
+  return `${choice.viewer}:${choice.ref.path}`;
+}
+
+export function isUnavailable(
+  choice: ViralTreeChoice,
+  availableNextstrainIds: ReadonlySet<string>,
+): boolean {
+  if (choice.viewer !== "nextstrain") return false;
+  const id = canonicalDatasetId(choice.ref.path);
+  return !id || !availableNextstrainIds.has(id);
+}
+
+export const viewerLabel = { archaeopteryx: "Archaeopteryx", nextstrain: "Auspice" } as const;
+
+function hashSegment(value: string): number {
+  let out = 0;
+  for (const character of value) out = (out * 31 + character.charCodeAt(0)) | 0;
+  return out;
+}
+
+/** Segment -> chart colour var, so the same segment reads the same everywhere. */
+export function segmentColor(segment: string | null): string {
+  if (!segment) return "var(--muted-foreground)";
+  const index = segmentOrder.indexOf(segment);
+  const slot = index === -1 ? Math.abs(hashSegment(segment)) % 10 : index % 10;
+  return `var(--chart-${String(slot + 1)})`;
+}
+
+export interface SegmentRow {
+  strainKey: string;
+  strainTitle: string;
+  segment: string | null;
+  choices: ViralTreeChoice[];
+}
+
+/** One row per (strain, segment); viewers collapse into `choices`. */
+export function segmentRows(trees: ViralTreeChoice[]): SegmentRow[] {
+  const order = [...sortedSegments(trees), null];
+  const strains = [...new Map(trees.map(tree => [tree.groupKey, tree.groupTitle])).entries()];
+  return strains.flatMap(([strainKey, strainTitle]) =>
+    order.flatMap(segment => {
+      const choices = trees.filter(
+        tree => tree.groupKey === strainKey && tree.segment === segment,
+      );
+      return choices.length === 0 ? [] : [{ strainKey, strainTitle, segment, choices }];
+    }),
+  );
 }

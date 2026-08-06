@@ -26,8 +26,10 @@ const family = {
   ],
 };
 
-// Enough cards to overflow a desktop viewport, so the filter sidebar can be
-// checked against a genuinely scrolled tree grid.
+// Enough rows to overflow a desktop viewport, so the filter sidebar can be
+// checked against a genuinely scrolled tree list. Each filler needs its own
+// parseable segment — otherwise every tree collapses into a single (strain,
+// segment) row instead of 24 separate scrollable ones.
 const scrollFamily = {
   order: ["h3n2"],
   groups: [
@@ -36,7 +38,7 @@ const scrollFamily = {
       title: "H3N2",
       archaeopteryx: Array.from({ length: 24 }, (_, index) => {
         const n = String(index + 1);
-        return { name: `Filler tree ${n}`, path: `/test/filler-${n}.xml` };
+        return { name: `Filler tree ${n} (S${n})`, path: `/test/filler-${n}.xml` };
       }),
       nextstrain: [],
     },
@@ -101,8 +103,8 @@ async function openPicker(page: Parameters<typeof applyBackendMocks>[0]) {
   ).toBeVisible();
 }
 
-function card(page: Parameters<typeof applyBackendMocks>[0], name: string) {
-  return page.getByText(name, { exact: true }).locator("xpath=ancestor::*[@data-slot='card']");
+function row(page: Parameters<typeof applyBackendMocks>[0], name: string) {
+  return page.getByText(name, { exact: true }).locator("xpath=ancestor::*[@data-slot='tree-row']");
 }
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -120,11 +122,14 @@ test("opens the exact Auspice dataset and renders tree, map, and attribution", a
 
   await openPicker(page);
   await page.getByRole("radio", { name: "Auspice" }).click();
-  const available = card(page, "H3N2 segment 4 (HA)");
-  const missing = card(page, "H3N2 segment 6 (NA)");
-  await expect(available).not.toHaveAttribute("aria-disabled", "true");
-  await expect(missing).toHaveAttribute("aria-disabled", "true");
-  await expect(missing).toHaveAttribute("tabindex", "-1");
+  // Neither row has an Archaeopteryx tree for its segment, so both peer slots
+  // there read dead regardless — the interesting contrast is on the Auspice side.
+  const available = row(page, "H3N2 segment 4 (HA)").getByRole("button", {
+    name: "Open H3N2 segment 4 (HA) in Auspice",
+  });
+  const missing = row(page, "H3N2 segment 6 (NA)").getByTitle("Auspice dataset is not available");
+  await expect(available).toBeVisible();
+  await expect(missing).toHaveText("Not Available");
   await available.click();
 
   const iframe = page.getByTitle("Auspice phylogeny viewer for H3N2 segment 4 (HA)");
@@ -152,7 +157,11 @@ test("nav bar logo and wordmark open the Auspice docs in a new tab", async ({ pa
   await mockAuspice(page);
   await openPicker(page);
   await page.getByRole("radio", { name: "Auspice" }).click();
-  await card(page, "H3N2 segment 4 (HA)").click();
+  // Filtered to Auspice only, so the row's primary (and only) choice is the
+  // nextstrain one — the row's display name matches the button we click.
+  await row(page, "H3N2 segment 4 (HA)")
+    .getByRole("button", { name: "Open H3N2 segment 4 (HA) in Auspice" })
+    .click();
 
   const frameSelector = 'iframe[title="Auspice phylogeny viewer for H3N2 segment 4 (HA)"]';
   const viewer = page.frameLocator(frameSelector);
@@ -187,11 +196,15 @@ test("fails closed when inventory is unavailable", async ({ page }) => {
   await mockAuspice(page, 500);
   await openPicker(page);
 
-  await expect(card(page, "H3N2 segment 4 (HA)")).toHaveAttribute(
-    "aria-disabled",
-    "true",
-  );
-  await expect(card(page, "XML HA")).not.toHaveAttribute("aria-disabled", "true");
+  // "XML HA" has no parseable segment, so it lands in its own row separate
+  // from the HA/NA nextstrain rows — Archaeopteryx is unaffected by inventory
+  // failures either way.
+  await expect(
+    row(page, "H3N2 segment 4 (HA)").getByTitle("Auspice dataset is not available"),
+  ).toHaveText("Not Available");
+  await expect(
+    row(page, "XML HA").getByRole("button", { name: "Open XML HA in Archaeopteryx" }),
+  ).toBeVisible();
 });
 
 test("disables filter options with no matching trees", async ({ page }) => {
@@ -242,7 +255,7 @@ test("keeps the filter sidebar pinned while the tree grid scrolls", async ({ pag
   await openPicker(page);
 
   const filters = page.getByRole("button", { name: /Filters/ });
-  const grid = page.locator("main main:has([data-slot=card])");
+  const grid = page.locator("main main:has([data-slot=tree-row])");
   await expect(filters).toBeVisible();
 
   const before = await filters.boundingBox();
@@ -274,7 +287,9 @@ test("themes the sidebar collapse control clear of the scroll gutter", async ({
   await mockAuspice(page);
   await openPicker(page);
   await page.getByRole("radio", { name: "Auspice" }).click();
-  await card(page, "H3N2 segment 4 (HA)").click();
+  await row(page, "H3N2 segment 4 (HA)")
+    .getByRole("button", { name: "Open H3N2 segment 4 (HA) in Auspice" })
+    .click();
 
   const viewer = page.frameLocator(
     'iframe[title="Auspice phylogeny viewer for H3N2 segment 4 (HA)"]',
@@ -381,7 +396,9 @@ test("supports keyboard activation and mobile containment", async ({ page, brows
   await openPicker(page);
   await page.getByRole("radio", { name: "Auspice" }).click();
 
-  const available = card(page, "H3N2 segment 4 (HA)");
+  const available = row(page, "H3N2 segment 4 (HA)").getByRole("button", {
+    name: "Open H3N2 segment 4 (HA) in Auspice",
+  });
   await available.focus();
   await page.keyboard.press("Enter");
   const iframe = page.getByTitle("Auspice phylogeny viewer for H3N2 segment 4 (HA)");

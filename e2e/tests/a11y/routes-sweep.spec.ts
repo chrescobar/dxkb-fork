@@ -257,7 +257,17 @@ test.describe("a11y component surfaces", () => {
 
     await page.goto("/taxonomy/2955291?tab=phylogeny");
     await page.getByRole("heading", { name: "Available phylogenetic trees" }).waitFor();
-    await page.getByText("H3N2 segment 4 (HA)", { exact: true }).click();
+
+    // The picker/results pane itself has no other scan coverage — only the
+    // opened viewer below is scanned. Cover both themes before navigating away.
+    await forEachTheme(page, async (theme) => {
+      const violations = await scanPage(page);
+      assertNoBlockingViolations(violations, "auspice-picker", theme);
+    });
+
+    await page
+      .getByRole("button", { name: "Open H3N2 segment 4 (HA) in Auspice" })
+      .click();
 
     const viewer = page.frameLocator('iframe[title*="Auspice"]');
     await viewer.getByText("Deterministic H3N2 Auspice tree", { exact: true }).waitFor({

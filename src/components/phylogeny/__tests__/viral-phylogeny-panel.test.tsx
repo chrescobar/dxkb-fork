@@ -17,23 +17,34 @@ vi.mock("../archaeopteryx-phylogeny", () => ({
   ),
 }));
 
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 
 import { ViralPhylogenyPanel } from "../viral-phylogeny-panel";
 
+// Segment suffixes matter: a row is keyed by (strain, segment), and a row's
+// own displayed name is its primary (first) choice — so when Archaeopteryx and
+// Auspice cover the same segment, "Auspice HA (HA)" never appears as row text,
+// only inside that peer button's aria-label. Locate rows by "XML HA (HA)" (the
+// primary choice) and buttons within them by aria-label.
 const family = {
   groups: [
     {
       key: "h3n2",
       title: "H3N2",
-      archaeopteryx: [{ name: "XML HA", path: "/tree.xml" }],
+      archaeopteryx: [{ name: "XML HA (HA)", path: "/tree.xml" }],
       nextstrain: [
-        { name: "Auspice HA", path: "Influenza-A-Virus/H3N2/HA" },
-        { name: "Missing NA", path: "Influenza-A-Virus/H3N2/NA" },
+        { name: "Auspice HA (HA)", path: "Influenza-A-Virus/H3N2/HA" },
+        { name: "Missing NA (NA)", path: "Influenza-A-Virus/H3N2/NA" },
       ],
     },
   ],
 };
+
+function row(name: string): HTMLElement {
+  const element = screen.getByText(name).closest<HTMLElement>("[data-slot=tree-row]");
+  if (!element) throw new Error(`row '${name}' not found`);
+  return element;
+}
 
 beforeEach(() => {
   useViralFamily.mockReturnValue({ data: family, isPending: false, isError: false });
@@ -50,49 +61,62 @@ beforeEach(() => {
 });
 
 describe("ViralPhylogenyPanel", () => {
-  it("enables exact available Auspice cards and keeps missing cards disabled", () => {
+  it("enables the exact available Auspice button and keeps the missing one inert", () => {
     render(<ViralPhylogenyPanel taxonId={2955291} taxonName="Influenza A virus" />);
 
-    const availableCard = screen.getByText("Auspice HA").closest("[data-slot=card]");
-    const missingCard = screen.getByText("Missing NA").closest("[data-slot=card]");
-    expect(availableCard).toHaveAttribute("role", "button");
-    expect(missingCard).toHaveAttribute("role", "button");
-    expect(missingCard).toHaveAttribute("aria-disabled", "true");
-    expect(missingCard).toHaveAttribute("tabindex", "-1");
-    expect(screen.getByText("Auspice dataset unavailable")).toBeInTheDocument();
+    const available = within(row("XML HA (HA)")).getByRole("button", {
+      name: "Open Auspice HA (HA) in Auspice",
+    });
+    expect(available).not.toHaveTextContent("Not Available");
+
+    // NA has an Auspice tree that isn't in the inventory (unavailable, not
+    // simply absent), so its peer slot carries the "dataset is not available"
+    // tooltip rather than the "no tree for this segment" one.
+    const missing = within(row("Missing NA (NA)")).getByTitle("Auspice dataset is not available");
+    expect(missing).toHaveTextContent("Not Available");
+    expect(missing.tagName).toBe("SPAN");
   });
 
   it("renders an isolated Auspice iframe without fetching XML", () => {
     render(<ViralPhylogenyPanel taxonId={2955291} taxonName="Influenza A virus" />);
 
-    fireEvent.click(screen.getByText("Auspice HA"));
+    fireEvent.click(
+      within(row("XML HA (HA)")).getByRole("button", { name: "Open Auspice HA (HA) in Auspice" }),
+    );
 
     expect(useViralTreeXml).toHaveBeenLastCalledWith(null);
-    expect(screen.getByTitle("Auspice phylogeny viewer for Auspice HA")).toHaveAttribute(
+    expect(screen.getByTitle("Auspice phylogeny viewer for Auspice HA (HA)")).toHaveAttribute(
       "src",
       "/nextstrain-viewer/Influenza-A-Virus/H3N2/HA",
     );
-    expect(screen.getByTitle("Auspice phylogeny viewer for Auspice HA")).toHaveClass(
+    expect(screen.getByTitle("Auspice phylogeny viewer for Auspice HA (HA)")).toHaveClass(
       "min-h-[600px]",
     );
   });
 
-  it("returns focus to the selected card and preserves the Archaeopteryx path", async () => {
+  it("returns focus to the exact button clicked and preserves the Archaeopteryx path", async () => {
     render(<ViralPhylogenyPanel taxonId={2955291} taxonName="Influenza A virus" />);
 
-    fireEvent.click(screen.getByText("Auspice HA"));
+    const auspiceButton = within(row("XML HA (HA)")).getByRole("button", {
+      name: "Open Auspice HA (HA) in Auspice",
+    });
+    fireEvent.click(auspiceButton);
     fireEvent.click(screen.getByRole("button", { name: /back to trees/i }));
     expect(screen.queryByTitle(/Auspice phylogeny viewer/)).not.toBeInTheDocument();
     await waitFor(() => {
-      expect(screen.getByText("Auspice HA").closest("[data-slot=card]")).toHaveFocus();
+      expect(
+        within(row("XML HA (HA)")).getByRole("button", { name: "Open Auspice HA (HA) in Auspice" }),
+      ).toHaveFocus();
     });
 
-    fireEvent.click(screen.getByText("XML HA"));
+    fireEvent.click(
+      within(row("XML HA (HA)")).getByRole("button", { name: "Open XML HA (HA) in Archaeopteryx" }),
+    );
     expect(useViralTreeXml).toHaveBeenLastCalledWith("https://www.bv-brc.org/tree.xml");
-    expect(screen.getByText("Archaeopteryx: XML HA")).toBeInTheDocument();
+    expect(screen.getByText("Archaeopteryx: XML HA (HA)")).toBeInTheDocument();
   });
 
-  it("shows a defensive error for an invalid inventoried identifier", () => {
+  it("shows a defensive dead state for an invalid inventoried identifier", () => {
     useViralFamily.mockReturnValue({
       data: {
         groups: [{
@@ -112,10 +136,8 @@ describe("ViralPhylogenyPanel", () => {
 
     render(<ViralPhylogenyPanel taxonId={2955291} taxonName="Influenza A virus" />);
 
-    expect(screen.getByText("Invalid dataset").closest("[data-slot=card]")).toHaveAttribute(
-      "aria-disabled",
-      "true",
-    );
+    const invalid = within(row("Invalid dataset")).getByTitle("Auspice dataset is not available");
+    expect(invalid).toHaveTextContent("Not Available");
     expect(screen.queryByTitle(/Auspice phylogeny viewer/)).not.toBeInTheDocument();
   });
 
@@ -152,13 +174,12 @@ describe("ViralPhylogenyPanel", () => {
 
     render(<ViralPhylogenyPanel taxonId={2955291} taxonName="Influenza A virus" />);
 
-    expect(screen.getByText("Auspice HA").closest("[data-slot=card]")).toHaveAttribute(
-      "aria-disabled",
-      "true",
+    const haRow = row("XML HA (HA)");
+    expect(within(haRow).getByTitle("Auspice dataset is not available")).toHaveTextContent(
+      "Not Available",
     );
-    expect(screen.getByText("XML HA").closest("[data-slot=card]")).toHaveAttribute(
-      "role",
-      "button",
-    );
+    expect(
+      within(haRow).getByRole("button", { name: "Open XML HA (HA) in Archaeopteryx" }),
+    ).toBeInTheDocument();
   });
 });

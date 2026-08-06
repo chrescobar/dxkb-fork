@@ -7,7 +7,7 @@ import { SectionError } from "@/components/organisms/shared/section-error";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { viewerUrl } from "@/lib/phylogeny/nextstrain-dataset";
-import type { ViralTreeChoice } from "@/lib/phylogeny/viral-facets";
+import { choiceKey, type ViralTreeChoice } from "@/lib/phylogeny/viral-facets";
 import { resolvePhylogenyUrl } from "@/lib/services/organisms/phylogeny";
 
 import { ArchaeopteryxPhylogeny } from "./archaeopteryx-phylogeny";
@@ -50,7 +50,7 @@ export function ViralPhylogenyPanel({ taxonId, taxonName }: { taxonId: number; t
         availableNextstrainIds={inventory.data ?? EMPTY_DATASET_IDS}
         focusChoiceKey={lastChoiceKey}
         onOpen={nextChoice => {
-          setLastChoiceKey(`${nextChoice.viewer}:${nextChoice.ref.path}`);
+          setLastChoiceKey(choiceKey(nextChoice));
           setChoice(nextChoice);
         }}
       />

@@ -1,20 +1,23 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import type { PhyloFamilyBlock } from "@/lib/services/organisms/phylogeny";
 import { ViralTreePicker } from "../viral-tree-picker";
 
+// Segment suffixes matter now that a row is keyed by (strain, segment): without
+// them every tree parses to segment `null` and collapses into one row, silently
+// shadowing "Missing NA" behind "Auspice HA" in the nextstrain slot.
 const block: PhyloFamilyBlock = {
   groups: [
     {
       key: "h3n2",
       title: "H3N2",
       archaeopteryx: [
-        { name: "XML HA", path: "/ha.xml", metadata: "/ha.tar.gz" },
+        { name: "XML HA (HA)", path: "/ha.xml", metadata: "/ha.tar.gz" },
       ],
       nextstrain: [
-        { name: "Auspice HA", path: "/Influenza-A-Virus/H3N2/HA/" },
-        { name: "Missing NA", path: "Influenza-A-Virus/H3N2/NA" },
+        { name: "Auspice HA (HA)", path: "/Influenza-A-Virus/H3N2/HA/" },
+        { name: "Missing NA (NA)", path: "Influenza-A-Virus/H3N2/NA" },
       ],
     },
   ],
@@ -39,14 +42,15 @@ const mixedBlock: PhyloFamilyBlock = {
   ],
 };
 
-function card(name: string): HTMLElement {
-  const element = screen.getByText(name).closest<HTMLElement>("[data-slot=card]");
-  if (!element) throw new Error(`card '${name}' not found`);
+function row(name: string): HTMLElement {
+  const element = screen.getByText(name).closest<HTMLElement>("[data-slot=tree-row]");
+  if (!element) throw new Error(`row '${name}' not found`);
   return element;
 }
 
 describe("ViralTreePicker", () => {
-  it.each(["Enter", " "])("opens an available canonical dataset with %j", key => {
+  it.each(["{Enter}", " "])("opens an available canonical dataset via keyboard (%j)", async key => {
+    const user = userEvent.setup();
     const onOpen = vi.fn();
     render(
       <ViralTreePicker
@@ -56,7 +60,13 @@ describe("ViralTreePicker", () => {
       />,
     );
 
-    fireEvent.keyDown(card("Auspice HA"), { key });
+    // Archaeopteryx and Auspice share the HA row, so the row's own displayed
+    // name is the primary (first) choice — "XML HA (HA)" — even though the
+    // button we're targeting is the Auspice peer within that same row. A
+    // native <button> only fires click on Enter/Space through the browser's
+    // real default action, which userEvent simulates but fireEvent does not.
+    within(row("XML HA (HA)")).getByRole("button", { name: "Open Auspice HA (HA) in Auspice" }).focus();
+    await user.keyboard(key);
     expect(onOpen).toHaveBeenCalledOnce();
     expect(onOpen.mock.calls[0]?.[0]).toMatchObject({
       viewer: "nextstrain",
@@ -64,19 +74,42 @@ describe("ViralTreePicker", () => {
     });
   });
 
-  it("keeps unavailable cards visible, untabbable, and inert", () => {
+  it("keeps unavailable viewer slots inert and non-interactive", () => {
     const onOpen = vi.fn();
     render(
       <ViralTreePicker block={block} availableNextstrainIds={new Set()} onOpen={onOpen} />,
     );
 
-    const unavailable = card("Missing NA");
-    expect(unavailable).toHaveAttribute("aria-disabled", "true");
-    expect(unavailable).toHaveAttribute("tabindex", "-1");
+    // NA has no Archaeopteryx tree at all *and* an unavailable Auspice dataset,
+    // so both peer slots in this row read "Not Available" — assert on the
+    // Auspice one specifically via its distinguishing tooltip.
+    const unavailable = within(row("Missing NA (NA)")).getByTitle("Auspice dataset is not available");
+    expect(unavailable).toHaveTextContent("Not Available");
+    expect(unavailable).toHaveClass("cursor-not-allowed");
+    expect(unavailable.tagName).toBe("SPAN");
     fireEvent.click(unavailable);
-    fireEvent.keyDown(unavailable, { key: "Enter" });
-    fireEvent.keyDown(unavailable, { key: " " });
     expect(onOpen).not.toHaveBeenCalled();
+  });
+
+  it("labels each viewer button with the tree name so same-named viewers across rows are distinguishable", () => {
+    render(
+      <ViralTreePicker
+        block={block}
+        availableNextstrainIds={new Set(["Influenza-A-Virus/H3N2/HA"])}
+        onOpen={vi.fn()}
+      />,
+    );
+
+    // Archaeopteryx and Auspice both cover HA, so they share one row (displayed
+    // under the primary choice's name, "XML HA (HA)") — the aria-label is what
+    // actually distinguishes the two buttons within it.
+    const haRow = row("XML HA (HA)");
+    expect(
+      within(haRow).getByRole("button", { name: "Open XML HA (HA) in Archaeopteryx" }),
+    ).toBeInTheDocument();
+    expect(
+      within(haRow).getByRole("button", { name: "Open Auspice HA (HA) in Auspice" }),
+    ).toBeInTheDocument();
   });
 
   it("uses Archaeopteryx and Auspice labels and filters mixed choices", async () => {
@@ -89,14 +122,13 @@ describe("ViralTreePicker", () => {
       />,
     );
 
-    expect(screen.getByText("Archaeopteryx")).toBeInTheDocument();
-    expect(screen.getByText("Auspice")).toBeInTheDocument();
-    expect(screen.getByText("Nextstrain phylogenomic viewer")).toBeInTheDocument();
+    expect(screen.getAllByText("Archaeopteryx").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Auspice").length).toBeGreaterThan(0);
 
-    await user.click(screen.getByText("Auspice"));
-    expect(screen.queryByText("XML HA")).not.toBeInTheDocument();
-    expect(screen.getByText("Auspice HA")).toBeInTheDocument();
-    expect(screen.getByText("Missing NA")).toBeInTheDocument();
+    await user.click(screen.getByRole("radio", { name: /Auspice/ }));
+    expect(screen.queryByText("XML HA (HA)")).not.toBeInTheDocument();
+    expect(screen.getByText("Auspice HA (HA)")).toBeInTheDocument();
+    expect(screen.getByText("Missing NA (NA)")).toBeInTheDocument();
   });
 
   it("does not show a viewer filter for an Archaeopteryx-only block", () => {
@@ -108,7 +140,7 @@ describe("ViralTreePicker", () => {
       />,
     );
 
-    expect(screen.queryByText("Auspice")).not.toBeInTheDocument();
+    expect(screen.queryByRole("radio", { name: /Auspice/ })).not.toBeInTheDocument();
     expect(screen.getByText("Only XML")).toBeInTheDocument();
   });
 
@@ -191,7 +223,7 @@ describe("ViralTreePicker", () => {
     expect(na).toHaveAttribute("aria-checked", "true");
   });
 
-  it("leaves a disabled segment checkbox inert", async () => {
+  it("leaves a dead viewer slot inert when its segment is disabled", async () => {
     const user = userEvent.setup();
     render(<ViralTreePicker block={mixedBlock} availableNextstrainIds={new Set()} onOpen={vi.fn()} />);
 
@@ -201,7 +233,7 @@ describe("ViralTreePicker", () => {
 
     await user.click(ha);
     expect(ha).toHaveAttribute("aria-checked", "false");
-    // Card list unchanged: the dead-end click did nothing.
+    // Result list unchanged: the dead-end click did nothing.
     expect(screen.getByText("XML PB2 (PB2)")).toBeInTheDocument();
   });
 
@@ -238,13 +270,13 @@ describe("ViralTreePicker", () => {
     }
   });
 
-  it("keeps metadata downloads independent from card activation", () => {
+  it("keeps metadata downloads independent from viewer activation", () => {
     const onOpen = vi.fn();
     render(
       <ViralTreePicker block={block} availableNextstrainIds={new Set()} onOpen={onOpen} />,
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Download metadata for XML HA" }));
+    fireEvent.click(screen.getByRole("button", { name: "Download metadata for XML HA (HA)" }));
     expect(onOpen).not.toHaveBeenCalled();
   });
 });

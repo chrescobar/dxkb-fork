@@ -3,6 +3,10 @@ packages:
 overrides:
   jquery: 3.7.1
   jquery-ui: 1.13.3
+  archaeopteryx@2.3.2>Blob.js: "-"
+  archaeopteryx@2.3.2>canvas-toBlob.js: "-"
+  archaeopteryx@2.3.2>file-saver: 2.0.5
+  phyloxml@1.0.0>sax: 1.6.1
 allowBuilds:
   "@parcel/watcher": true
   "@prisma/engines": true

@@ -75,7 +75,7 @@ describe("loadArchaeopteryx", () => {
         if (descriptor) {
           Object.defineProperty(jquery.expr.pseudos, pseudo, descriptor);
         } else {
-          delete jquery.expr.pseudos[pseudo];
+          Reflect.deleteProperty(jquery.expr.pseudos, pseudo);
         }
       }
       if (transformDescriptor) {

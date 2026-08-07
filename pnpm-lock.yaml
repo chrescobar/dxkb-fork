@@ -7,9 +7,13 @@ settings:
 overrides:
   jquery: 3.7.1
   jquery-ui: 1.13.3
+  archaeopteryx@2.3.2>Blob.js: '-'
+  archaeopteryx@2.3.2>canvas-toBlob.js: '-'
+  archaeopteryx@2.3.2>file-saver: 2.0.5
+  phyloxml@1.0.0>sax: 1.6.1
 
 patchedDependencies:
-  archaeopteryx@2.3.2: 386307cafbfbc3ec74a04d031d19c64809f0216d90de8cd8c3a44eee3993bf0d
+  archaeopteryx@2.3.2: b98cc56c3d7008e0aec0265d99ad65c147493b01ef331284a31f88ddbb9bde15
   molstar: a80c534bab8094a7ca7103c40d6638c0f7127db69d2ac212a1ce6a951f3bc3da
   phyloxml@1.0.0: 4eddfc18ff2113aad48c985883da338442f7a61c7435a1229a3e089a4682c47c
 
@@ -136,7 +140,7 @@ importers:
         version: 4.0.0(@types/react@19.2.17)(react@19.2.8)
       archaeopteryx:
         specifier: 2.3.2
-        version: 2.3.2(patch_hash=386307cafbfbc3ec74a04d031d19c64809f0216d90de8cd8c3a44eee3993bf0d)
+        version: 2.3.2(patch_hash=b98cc56c3d7008e0aec0265d99ad65c147493b01ef331284a31f88ddbb9bde15)
       better-auth:
         specifier: ^1.6.25
         version: 1.6.25(next@16.2.12(@babel/core@7.29.7(supports-color@5.5.0))(@playwright/test@1.62.0)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(sass@1.102.0))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(vitest@4.1.10)
@@ -4202,10 +4206,6 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
-  Blob.js@https://codeload.github.com/eligrey/Blob.js/tar.gz/9f7eb544f3c2cd6cf8c50dea8b47bd6634411b50:
-    resolution: {gitHosted: true, tarball: https://codeload.github.com/eligrey/Blob.js/tar.gz/9f7eb544f3c2cd6cf8c50dea8b47bd6634411b50}
-    version: 0.0.0
-
   abab@1.0.4:
     resolution: {integrity: sha512-I+Wi+qiE2kUXyrRhNsWv6XsjUTBJjSoVSctKNBfLG5zG/Xe7Rjbxf13+vqYHNTwHaFU+FtSlVxOCTiMEVtPv0A==}
     deprecated: Use your platform's native atob() and btoa() methods instead
@@ -4680,10 +4680,6 @@ packages:
 
   caniuse-lite@1.0.30001806:
     resolution: {integrity: sha512-72Cuvd95zbSYPKq6Fhg8eDJRlzgWDf7/mtoZv6Qe/DYNCEBdNxoA3+rZAU2ZhGCpZlns3EssFavaZomckT5Uuw==}
-
-  canvas-toBlob.js@https://codeload.github.com/eligrey/canvas-toBlob.js/tar.gz/f1a01896135ab378aa5c0118eadd81da55e698d8:
-    resolution: {gitHosted: true, integrity: sha512-UIEkh8MnOdw8rtJNTcpee1+uAxRdP9WBUNTGnYuu+QpZbGt1iE3AMO1EihsuRiGX4YzDWFwAthcOYs7O93y1CA==, tarball: https://codeload.github.com/eligrey/canvas-toBlob.js/tar.gz/f1a01896135ab378aa5c0118eadd81da55e698d8}
-    version: 0.0.0
 
   canvg@1.5.3:
     resolution: {integrity: sha512-7Gn2IuQzvUQWPIuZuFHrzsTM0gkPz2RRT9OcbdmA03jeKk8kltrD8gqUzNX15ghY/4PV5bbe5lmD6yDLDY6Ybg==}
@@ -5688,10 +5684,6 @@ packages:
 
   file-saver@2.0.5:
     resolution: {integrity: sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==}
-
-  file-saver@https://codeload.github.com/eligrey/FileSaver.js/tar.gz/cea522bc41bfadc364837293d0c4dc585a65ac46:
-    resolution: {gitHosted: true, integrity: sha512-5Eb5Er9QawBHAaknb5cO66pFU+JhIz2VqVHUy4hur+5OCi7J0OjcjHI5Hf6l+VWngjbHcDLqSX+zdcEeCB44fQ==, tarball: https://codeload.github.com/eligrey/FileSaver.js/tar.gz/cea522bc41bfadc364837293d0c4dc585a65ac46}
-    version: 2.0.5
 
   filelist@1.0.6:
     resolution: {integrity: sha512-5giy2PkLYY1cP39p17Ech+2xlpTRL9HLspOfEgm0L6CwBXBTgsK5ou0JtzYuepxkaQ/tvhCFIJ5uXo0OrM2DxA==}
@@ -8097,11 +8089,6 @@ packages:
 
   sax@1.6.1:
     resolution: {integrity: sha512-42tBVwLWnaQvW5zc4HbZrTuWccECCZfBi92FDuwtqxasH+JbPB3/FOKb1m222K42R4WxuxzzMsTswfzgtSu64Q==}
-    engines: {node: '>=11.0.0'}
-
-  sax@https://codeload.github.com/isaacs/sax-js/tar.gz/961ceeefcc5186005466f2085aeb36f31b161e37:
-    resolution: {gitHosted: true, integrity: sha512-jFdFRuaCq/1w2PhNQQPUky6YZlclk82BMHy3f/2/Mz3PDaVvScaK7FAR3iQgGYLogagDxv7F0xe0eLxUB7L87w==, tarball: https://codeload.github.com/isaacs/sax-js/tar.gz/961ceeefcc5186005466f2085aeb36f31b161e37}
-    version: 1.6.1
     engines: {node: '>=11.0.0'}
 
   saxes@6.0.0:
@@ -13095,8 +13082,6 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  Blob.js@https://codeload.github.com/eligrey/Blob.js/tar.gz/9f7eb544f3c2cd6cf8c50dea8b47bd6634411b50: {}
-
   abab@1.0.4: {}
 
   accepts@1.3.8:
@@ -13188,13 +13173,11 @@ snapshots:
 
   aproba@1.2.0: {}
 
-  archaeopteryx@2.3.2(patch_hash=386307cafbfbc3ec74a04d031d19c64809f0216d90de8cd8c3a44eee3993bf0d):
+  archaeopteryx@2.3.2(patch_hash=b98cc56c3d7008e0aec0265d99ad65c147493b01ef331284a31f88ddbb9bde15):
     dependencies:
-      Blob.js: https://codeload.github.com/eligrey/Blob.js/tar.gz/9f7eb544f3c2cd6cf8c50dea8b47bd6634411b50
-      canvas-toBlob.js: https://codeload.github.com/eligrey/canvas-toBlob.js/tar.gz/f1a01896135ab378aa5c0118eadd81da55e698d8
       canvg: 1.5.3
       d3: 3.5.17
-      file-saver: https://codeload.github.com/eligrey/FileSaver.js/tar.gz/cea522bc41bfadc364837293d0c4dc585a65ac46
+      file-saver: 2.0.5
       jquery: 3.7.1
       jquery-ui: 1.13.3
       phyloxml: 1.0.0(patch_hash=4eddfc18ff2113aad48c985883da338442f7a61c7435a1229a3e089a4682c47c)
@@ -13721,8 +13704,6 @@ snapshots:
   camelize@1.0.1: {}
 
   caniuse-lite@1.0.30001806: {}
-
-  canvas-toBlob.js@https://codeload.github.com/eligrey/canvas-toBlob.js/tar.gz/f1a01896135ab378aa5c0118eadd81da55e698d8: {}
 
   canvg@1.5.3:
     dependencies:
@@ -14972,8 +14953,6 @@ snapshots:
       flat-cache: 4.0.1
 
   file-saver@2.0.5: {}
-
-  file-saver@https://codeload.github.com/eligrey/FileSaver.js/tar.gz/cea522bc41bfadc364837293d0c4dc585a65ac46: {}
 
   filelist@1.0.6:
     dependencies:
@@ -16844,7 +16823,7 @@ snapshots:
 
   phyloxml@1.0.0(patch_hash=4eddfc18ff2113aad48c985883da338442f7a61c7435a1229a3e089a4682c47c):
     dependencies:
-      sax: https://codeload.github.com/isaacs/sax-js/tar.gz/961ceeefcc5186005466f2085aeb36f31b161e37
+      sax: 1.6.1
 
   picocolors@0.2.1: {}
 
@@ -17627,8 +17606,6 @@ snapshots:
       '@parcel/watcher': 2.6.0
 
   sax@1.6.1: {}
-
-  sax@https://codeload.github.com/isaacs/sax-js/tar.gz/961ceeefcc5186005466f2085aeb36f31b161e37: {}
 
   saxes@6.0.0:
     dependencies:

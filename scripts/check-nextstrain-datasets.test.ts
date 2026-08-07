@@ -3,6 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import {
+  familyDatasetUrl,
   familyReferences,
   manifestTaxonIds,
   reconcileDatasets,
@@ -23,6 +24,15 @@ afterEach(async () => {
 });
 
 describe("Nextstrain dataset reconciliation", () => {
+  it.each([
+    "https://example.test/families",
+    "https://example.test/families/",
+  ])("builds family URLs from base %s", (baseUrl) => {
+    expect(familyDatasetUrl(baseUrl, "11266")).toBe(
+      "https://example.test/families/11266/11266.json",
+    );
+  });
+
   it("accepts wrapped and flat manifests but rejects invalid taxon IDs", () => {
     expect(manifestTaxonIds({ trees: { "2955291": "influenza" } })).toEqual([
       "2955291",

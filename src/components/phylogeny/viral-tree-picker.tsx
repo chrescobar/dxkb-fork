@@ -232,7 +232,7 @@ export function ViralTreePicker({
             </CollapsibleContent>
           </Collapsible>
         </aside>
-        <main className="lg:min-h-0 lg:overflow-y-auto">
+        <div className="lg:min-h-0 lg:overflow-y-auto">
           {nextstrainInventory.status !== "ready" && (
             <div
               className="border-b bg-background px-5 py-3 text-sm text-muted-foreground"
@@ -248,7 +248,7 @@ export function ViralTreePicker({
             nextstrainInventory={nextstrainInventory}
             onOpen={onOpen}
           />
-        </main>
+        </div>
       </div>
     </div>
   );
@@ -286,7 +286,7 @@ function TreeResults({
           .find(Boolean);
 
         return (
-          <Fragment key={`${row.strainKey}:${row.segment ?? "none"}`}>
+          <Fragment key={`${row.strainKey}:${row.segment ?? "none"}:${choiceKey(primary)}`}>
             {newStrain && (
               <StrainRule
                 title={row.strainTitle}
@@ -385,27 +385,30 @@ function PeerButton({
   onOpen: (choice: ViralTreeChoice) => void;
 }) {
   const choice = row.choices.find((candidate) => candidate.viewer === viewer);
-  const inventoryUnavailable =
-    viewer === "nextstrain" && nextstrainInventory.status !== "ready";
-  const confirmedUnavailable =
+  const inventoryPending =
     !!choice &&
     viewer === "nextstrain" &&
-    nextstrainInventory.status === "ready" &&
-    isUnavailable(choice, nextstrainInventory.ids);
+    nextstrainInventory.status === "pending";
+  const inventoryUnavailable =
+    !!choice &&
+    viewer === "nextstrain" &&
+    (nextstrainInventory.status === "error" ||
+      (nextstrainInventory.status === "ready" &&
+        isUnavailable(choice, nextstrainInventory.ids)));
 
-  if (!choice || inventoryUnavailable || confirmedUnavailable) {
+  if (!choice || inventoryPending || inventoryUnavailable) {
     return (
       <span
         className="grid h-7 flex-1 cursor-not-allowed place-items-center rounded-md border border-dashed border-border/60 text-[0.7rem] text-muted-foreground/45 lg:w-[7.5rem] lg:flex-initial"
         title={
           !choice
             ? `No ${viewerLabel[viewer]} tree for this segment`
-            : inventoryUnavailable
+            : inventoryPending
               ? "Auspice dataset availability has not been confirmed"
               : "Auspice dataset is not available"
         }
       >
-        {inventoryUnavailable ? "Checking Availability" : "Not Available"}
+        {inventoryPending ? "Checking Availability" : "Not Available"}
       </span>
     );
   }

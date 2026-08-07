@@ -16,10 +16,12 @@ deliberately avoids legacy code so the rules stand on their own.
 > `src/app/(views)/taxonomy/[taxonId]/`. Two deliberate divergences from this doc:
 > (1) conditional tabs that fail their gate are rendered **shown-but-disabled**
 > (greyed, non-clickable, reason tooltip) rather than hidden — flipping to hard-hide
-> is a one-line renderer change; (2) the curated cohort lists (`curated-lists.ts`)
-> and the phylo manifest (`PHYLO_MANIFEST_URL`, unset → empty) are **placeholders**
-> pending their real product-data sources. The Lassa-vs-RVFV class/order distinction
-> from §5 is pinned by a regression test in `predicates.test.ts`.
+> is a one-line renderer change; (2) the curated cohort lists (`curated-lists.ts`) are
+> a **placeholder** pending real product-data sources. The phylo manifest
+> (`PHYLO_MANIFEST_URL`) defaults to the public BV-BRC manifest URL when unset —
+> it is fetched on every taxon page load, not skipped. The Lassa-vs-RVFV
+> class/order distinction from §5 is pinned by a regression test in
+> `predicates.test.ts`.
 
 ---
 

@@ -273,18 +273,29 @@ test.describe("a11y component surfaces", () => {
     await viewer.getByText("Deterministic H3N2 Auspice tree", { exact: true }).waitFor({
       timeout: 30_000,
     });
-    await page.waitForLoadState("networkidle");
+    await viewer.locator("#map").waitFor();
+    await viewer.getByText(/Powered by Nextstrain/).waitFor();
 
     // The bridge mirrors the host theme into the iframe, so scanning per theme
     // exercises both token sets inside Auspice too. color-contrast stays
     // enforced — it is the rule the theming work is accountable for.
+    const auspiceFrameSelector = 'iframe[title*="Auspice"]';
     await forEachTheme(page, async (theme) => {
-      const violations = await scanPage(page, {
-        // Pre-existing defects in the unforked Auspice bundle, not introduced by
-        // DXKB and not fixable without patching the dependency. Both are
-        // critical-impact, which the baseline mechanism refuses by design
-        // (see canBaseline in e2e/a11y/baseline.ts), so they are disabled here
-        // with their upstream cause named rather than silently suppressed.
+      // DXKB-owned host chrome (back button, tab bar, etc.) around the iframe —
+      // scanned with the full ruleset, no disables.
+      const hostViolations = await scanPage(page, {
+        exclude: [auspiceFrameSelector],
+      });
+      assertNoBlockingViolations(hostViolations, "auspice-viewer-host", theme);
+
+      // The Auspice iframe itself. Two rules are disabled here, scoped to just
+      // this subtree, for pre-existing defects in the unforked Auspice bundle —
+      // not introduced by DXKB and not fixable without patching the dependency.
+      // Both are critical-impact, which the baseline mechanism refuses by
+      // design (see canBaseline in e2e/a11y/baseline.ts), so they are disabled
+      // here with their upstream cause named rather than silently suppressed.
+      const iframeViolations = await scanPage(page, {
+        include: auspiceFrameSelector,
         disableRules: [
           // react-select renders a hidden `dummyInput` with role=combobox and no
           // accessible name (7 nodes, one per sidebar dropdown).
@@ -294,7 +305,7 @@ test.describe("a11y component surfaces", () => {
           "button-name",
         ],
       });
-      assertNoBlockingViolations(violations, "auspice-viewer", theme);
+      assertNoBlockingViolations(iframeViolations, "auspice-viewer-iframe", theme);
     });
   });
 });

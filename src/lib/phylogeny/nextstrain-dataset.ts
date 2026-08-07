@@ -1,5 +1,9 @@
 const datasetSegment = /^[A-Za-z0-9][A-Za-z0-9.-]*$/;
 
+export const sidecars = ["tip-frequencies", "root-sequence", "measurements"] as const;
+export type Sidecar = (typeof sidecars)[number];
+const reservedFinalSegments: ReadonlySet<string> = new Set(sidecars);
+
 export const maxDatasetIdLength = 256;
 export const maxDatasetSegments = 8;
 
@@ -19,6 +23,7 @@ export function parseDatasetId(value: string): string[] | null {
   ) {
     return null;
   }
+  if (reservedFinalSegments.has(parts[parts.length - 1])) return null;
 
   return parts;
 }
@@ -41,8 +46,12 @@ export function datasetFilename(parts: string[], sidecar?: string): string {
 }
 
 export function stripViewerPrefix(prefix: string): string {
-  const trimmed = prefix.replace(/^\/+/, "");
-  return trimmed.startsWith("nextstrain-viewer/")
-    ? trimmed.slice("nextstrain-viewer/".length)
-    : trimmed;
+  const viewerPrefix = prefix.startsWith("/")
+    ? "/nextstrain-viewer/"
+    : "nextstrain-viewer/";
+  const datasetId = prefix.slice(viewerPrefix.length);
+
+  return prefix.startsWith(viewerPrefix) && !datasetId.startsWith("/")
+    ? datasetId
+    : prefix;
 }

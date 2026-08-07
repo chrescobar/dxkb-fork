@@ -43,7 +43,7 @@ const Spacer = styled.div`
   flex: 1;
 `;
 
-const DxkbNavBar = ({ sidebar }) => {
+function DxkbNavBar({ sidebar }) {
   if (!sidebar) return null;
   return (
     <Container>
@@ -65,6 +65,6 @@ const DxkbNavBar = ({ sidebar }) => {
       <Spacer />
     </Container>
   );
-};
+}
 
 export default DxkbNavBar;

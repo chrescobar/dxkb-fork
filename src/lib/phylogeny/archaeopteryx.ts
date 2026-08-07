@@ -54,7 +54,10 @@ interface ArchaeopteryxGlobals extends Window {
 let loader: Promise<ArchaeopteryxDependencies> | null = null;
 
 export function loadArchaeopteryx(): Promise<ArchaeopteryxDependencies> {
-  loader ??= loadDependencies();
+  loader ??= loadDependencies().catch((cause: unknown) => {
+    loader = null;
+    throw cause;
+  });
   return loader;
 }
 

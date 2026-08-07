@@ -1,6 +1,6 @@
 import { type Locator, type Page } from "@playwright/test";
 
-import { expect, test } from "../../mocks/backends";
+import { applyBackendMocks, expect, test } from "../../mocks/backends";
 
 const treeXml = `<?xml version="1.0" encoding="UTF-8"?>
 <phyloxml xmlns="http://www.phyloxml.org">
@@ -39,6 +39,15 @@ const closeTo = (actual: number, expected: number, tolerance = 1) => {
 };
 
 async function openPhylogeny(page: Page) {
+  await applyBackendMocks(page, {
+    overrides: [
+      {
+        url: "/api/auth/get-session",
+        method: "GET",
+        body: { user: null, session: null },
+      },
+    ],
+  });
   await page.route(
     /\/api\/content\/bvbrc_phylogeny_tab\/taxon_tree_dict\.json$/,
     (route) =>

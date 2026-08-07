@@ -21,8 +21,8 @@ two places at once. There is no computation, no fallback, no per-organism logic:
    `NEXTSTRAIN_DATASET_DIR`.
 
 Today that is **13 manifest entries pointing at 11 distinct datasets, across 3 taxa**,
-out of 154 manifest taxa and 326 total trees. Everything else falls back to
-Archaeopteryx.
+out of 154 manifest taxa and 339 total trees (326 Archaeopteryx + 13 Nextstrain).
+Everything else falls back to Archaeopteryx.
 
 Nothing in the code says "viruses only." The **manifest just happens to contain
 only viral family taxa** — bacteria are gated out by absence, not by a rule.

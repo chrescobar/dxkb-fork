@@ -25,6 +25,12 @@ function bridgedTokens(): string[] {
 }
 
 describe("Auspice theme bridge", () => {
+  it("rebuilds when the generated favicon is missing", () => {
+    const outputCheck = /const outputExists =([\s\S]*?);\nif \(/.exec(buildScript);
+    if (!outputCheck) throw new Error("outputExists check not found in build-auspice.mjs");
+    expect(outputCheck[1]).toContain('"auspice-favicon.png"');
+  });
+
   it("injects the stylesheet and an inline bridge into the built shell", () => {
     expect(buildScript).toContain('<link rel="stylesheet" href="/auspice-dark.css">');
     expect(buildScript).toContain("<script>${themeBridge}</script>");

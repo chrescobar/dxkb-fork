@@ -1,9 +1,14 @@
 import "server-only";
 
-import { readFile, realpath } from "node:fs/promises";
-import { resolve, sep } from "node:path";
+import { readFile, realpath, stat } from "node:fs/promises";
+import { resolve } from "node:path";
 
-import { localDatasetIds, sidecars, type Sidecar } from "./dataset-inventory";
+import {
+  isWithinDirectory,
+  localDatasetIds,
+  sidecars,
+  type Sidecar,
+} from "./dataset-inventory";
 import { datasetFilename, parseDatasetId } from "./nextstrain-dataset";
 
 export { sidecars, type Sidecar };
@@ -50,7 +55,7 @@ export async function readDataset(
 
   const directory = datasetDirectory();
   const target = resolve(directory, datasetFilename(parts, sidecar));
-  if (!target.startsWith(`${directory}${sep}`)) return null;
+  if (!isWithinDirectory(directory, target)) return null;
 
   const directoryRealPath = await realpath(directory);
 
@@ -62,7 +67,15 @@ export async function readDataset(
     throw error;
   }
 
-  if (!targetRealPath.startsWith(`${directoryRealPath}${sep}`)) return null;
+  if (!isWithinDirectory(directoryRealPath, targetRealPath)) return null;
+
+  try {
+    const stats = await stat(targetRealPath);
+    if (!stats.isFile()) return null;
+  } catch (error) {
+    if (isMissingFile(error)) return null;
+    throw error;
+  }
 
   try {
     return await readFile(targetRealPath, "utf8");

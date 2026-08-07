@@ -109,6 +109,27 @@ describe("ViralTreePicker", () => {
     expect(onOpen).not.toHaveBeenCalled();
   });
 
+  it("only labels existing Auspice choices as checking availability", () => {
+    render(
+      <ViralTreePicker
+        block={mixedBlock}
+        nextstrainInventory={{ status: "pending" }}
+        onOpen={vi.fn()}
+      />,
+    );
+
+    expect(
+      within(row("Auspice NA (NA)")).getByTitle(
+        "Auspice dataset availability has not been confirmed",
+      ),
+    ).toHaveTextContent("Checking Availability");
+    expect(
+      within(row("XML PB2 (PB2)")).getByTitle(
+        "No Auspice tree for this segment",
+      ),
+    ).toHaveTextContent("Not Available");
+  });
+
   it("labels each viewer button with the tree name so same-named viewers across rows are distinguishable", () => {
     render(
       <ViralTreePicker
@@ -157,6 +178,32 @@ describe("ViralTreePicker", () => {
     expect(screen.queryByText("XML HA (HA)")).not.toBeInTheDocument();
     expect(screen.getByText("Auspice HA (HA)")).toBeInTheDocument();
     expect(screen.getByText("Missing NA (NA)")).toBeInTheDocument();
+  });
+
+  it("renders every non-segmented tree for the same viewer", () => {
+    render(
+      <ViralTreePicker
+        block={{
+          groups: [{
+            key: "ebola",
+            title: "Ebola",
+            nextstrain: [
+              { name: "100 samples", path: "Orthoebolavirus/100" },
+              { name: "500 samples", path: "Orthoebolavirus/500" },
+            ],
+          }],
+        }}
+        nextstrainInventory={{
+          status: "ready",
+          ids: new Set(["Orthoebolavirus/100", "Orthoebolavirus/500"]),
+        }}
+        onOpen={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText("100 samples")).toBeInTheDocument();
+    expect(screen.getByText("500 samples")).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: /in Auspice/ })).toHaveLength(2);
   });
 
   it("does not show a viewer filter for an Archaeopteryx-only block", () => {
@@ -357,10 +404,11 @@ describe("ViralTreePicker", () => {
       "div.grid.lg\\:grid-cols-\\[260px_1fr\\]",
     );
     const aside = container.querySelector("aside");
-    const main = container.querySelector("main");
+    const results = grid?.lastElementChild;
 
     expect(grid).toHaveClass("lg:overflow-hidden");
-    for (const column of [aside, main]) {
+    expect(container.querySelector("main")).not.toBeInTheDocument();
+    for (const column of [aside, results]) {
       expect(column).toHaveClass("lg:min-h-0", "lg:overflow-y-auto");
     }
   });

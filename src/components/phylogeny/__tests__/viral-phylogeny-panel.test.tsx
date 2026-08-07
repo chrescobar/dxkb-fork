@@ -215,6 +215,8 @@ describe("ViralPhylogenyPanel", () => {
       "pending",
       { data: undefined, isPending: true, isError: false },
       "Checking Auspice dataset availability...",
+      "Auspice dataset availability has not been confirmed",
+      "Checking Availability",
     ],
     [
       "failed",
@@ -225,10 +227,12 @@ describe("ViralPhylogenyPanel", () => {
         error: new Error("inventory failed"),
       },
       "Auspice dataset availability could not be checked: inventory failed",
+      "Auspice dataset is not available",
+      "Not Available",
     ],
   ])(
     "keeps Archaeopteryx usable while inventory is %s",
-    (_name, inventory, message) => {
+    (_name, inventory, message, title, availability) => {
       useNextstrainInventory.mockReturnValue(inventory);
 
       render(
@@ -237,11 +241,7 @@ describe("ViralPhylogenyPanel", () => {
 
       expect(screen.getByText(message)).toBeInTheDocument();
       const haRow = row("XML HA (HA)");
-      expect(
-        within(haRow).getByTitle(
-          "Auspice dataset availability has not been confirmed",
-        ),
-      ).toHaveTextContent("Checking Availability");
+      expect(within(haRow).getByTitle(title)).toHaveTextContent(availability);
       expect(
         within(haRow).getByRole("button", {
           name: "Open XML HA (HA) in Archaeopteryx",

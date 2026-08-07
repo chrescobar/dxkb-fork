@@ -7,7 +7,7 @@ import { NextRequest } from "next/server";
 
 import { GET } from "../route";
 
-const main = '{"version":"v2","meta":{"title":"H3N2"},"tree":{}}';
+const main = "{\"version\":\"v2\",\"meta\":{\"title\":\"H3N2\"},\"tree\":{}}";
 let root: string;
 let datasetDir: string;
 

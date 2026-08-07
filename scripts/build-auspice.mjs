@@ -75,7 +75,8 @@ for (const patch of globSync("patches/*auspice*", { cwd: root })) {
 const buildHash = hash.digest("hex");
 const outputExists =
   existsSync(resolve(publicDir, "dist")) &&
-  existsSync(resolve(publicDir, "nextstrain-viewer.html"));
+  existsSync(resolve(publicDir, "nextstrain-viewer.html")) &&
+  existsSync(resolve(publicDir, "auspice-favicon.png"));
 if (
   !force &&
   outputExists &&

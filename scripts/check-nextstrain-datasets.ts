@@ -20,6 +20,10 @@ export interface ReconciliationResult {
   unadvertised: string[];
 }
 
+export function familyDatasetUrl(baseUrl: string, taxonId: string): string {
+  return `${baseUrl.replace(/\/?$/, "/")}${taxonId}/${taxonId}.json`;
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -144,8 +148,7 @@ async function main(): Promise<void> {
   const result = await reconcileDatasets({
     directory: datasetDirectory(),
     manifest: await fetchJson(manifestUrl),
-    fetchFamily: (taxonId) =>
-      fetchJson(`${familyBaseUrl}${taxonId}/${taxonId}.json`),
+    fetchFamily: (taxonId) => fetchJson(familyDatasetUrl(familyBaseUrl, taxonId)),
   });
 
   console.log(

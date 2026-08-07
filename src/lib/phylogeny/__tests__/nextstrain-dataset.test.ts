@@ -54,6 +54,14 @@ describe("Nextstrain dataset identifiers", () => {
     expect(canonicalDatasetId("//example.org/tree")).toBeNull();
   });
 
+  it.each(["tip-frequencies", "root-sequence", "measurements"])(
+    "rejects a final segment reserved for the '%s' sidecar",
+    (reserved) => {
+      expect(parseDatasetId(`Influenza-A-Virus/H3N2/${reserved}`)).toBeNull();
+      expect(canonicalDatasetId(reserved)).toBeNull();
+    },
+  );
+
   it("maps exact dataset and sidecar filenames", () => {
     const parts = ["Influenza-A-Virus", "H3N2", "HA"];
     expect(datasetFilename(parts)).toBe("Influenza-A-Virus_H3N2_HA.json");
@@ -76,5 +84,14 @@ describe("Nextstrain dataset identifiers", () => {
     expect(stripViewerPrefix("nextstrain-viewer/nextstrain-viewer/x")).toBe(
       "nextstrain-viewer/x",
     );
+  });
+
+  it.each([
+    "//nextstrain-viewer/Orthoebolavirus/100",
+    "///nextstrain-viewer/Orthoebolavirus/100",
+    "nextstrain-viewer//Orthoebolavirus/100",
+    "/nextstrain-viewer//Orthoebolavirus/100",
+  ])("preserves malformed viewer prefix %j for validation", (prefix) => {
+    expect(canonicalDatasetId(stripViewerPrefix(prefix))).toBeNull();
   });
 });

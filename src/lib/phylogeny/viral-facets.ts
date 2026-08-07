@@ -139,16 +139,19 @@ export interface SegmentRow {
   choices: ViralTreeChoice[];
 }
 
-/** One row per (strain, segment); viewers collapse into `choices`. */
+/** Segmented peers share a row; unsegmented references remain distinct. */
 export function segmentRows(trees: ViralTreeChoice[]): SegmentRow[] {
-  const order = [...sortedSegments(trees), null];
+  const order = sortedSegments(trees);
   const strains = [...new Map(trees.map(tree => [tree.groupKey, tree.groupTitle])).entries()];
-  return strains.flatMap(([strainKey, strainTitle]) =>
-    order.flatMap(segment => {
+  return strains.flatMap(([strainKey, strainTitle]) => [
+    ...order.flatMap(segment => {
       const choices = trees.filter(
         tree => tree.groupKey === strainKey && tree.segment === segment,
       );
       return choices.length === 0 ? [] : [{ strainKey, strainTitle, segment, choices }];
     }),
-  );
+    ...trees
+      .filter(tree => tree.groupKey === strainKey && tree.segment === null)
+      .map(choice => ({ strainKey, strainTitle, segment: null, choices: [choice] })),
+  ]);
 }

@@ -63,6 +63,13 @@ describe("GET /api/charon/getDataset", () => {
     expect(
       (await GET(request("?prefix=nextstrain-viewer/../secret"))).status,
     ).toBe(400);
+    expect(
+      (
+        await GET(
+          request("?prefix=//nextstrain-viewer/Influenza-A-Virus/H3N2/HA"),
+        )
+      ).status,
+    ).toBe(400);
     expect(readDataset).not.toHaveBeenCalled();
   });
 

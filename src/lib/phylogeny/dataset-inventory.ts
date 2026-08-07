@@ -1,14 +1,9 @@
 import { readdir, readFile, realpath, stat } from "node:fs/promises";
 import { resolve, sep } from "node:path";
 
-import { canonicalDatasetId } from "./nextstrain-dataset";
+import { canonicalDatasetId, sidecars, type Sidecar } from "./nextstrain-dataset";
 
-export const sidecars = [
-  "tip-frequencies",
-  "root-sequence",
-  "measurements",
-] as const;
-export type Sidecar = (typeof sidecars)[number];
+export { sidecars, type Sidecar };
 
 function isMissingFile(error: unknown): boolean {
   return (
@@ -17,6 +12,11 @@ function isMissingFile(error: unknown): boolean {
     "code" in error &&
     (error as { code?: unknown }).code === "ENOENT"
   );
+}
+
+export function isWithinDirectory(parent: string, child: string): boolean {
+  const prefix = parent.endsWith(sep) ? parent : `${parent}${sep}`;
+  return child === parent || child.startsWith(prefix);
 }
 
 export function isAuspiceV2Dataset(value: unknown): boolean {
@@ -60,7 +60,7 @@ export async function renderableDatasetId(
     if (isMissingFile(error)) return null;
     throw error;
   }
-  if (!targetRealPath.startsWith(`${directoryRealPath}${sep}`)) return null;
+  if (!isWithinDirectory(directoryRealPath, targetRealPath)) return null;
   if (!(await stat(targetRealPath)).isFile()) return null;
 
   try {

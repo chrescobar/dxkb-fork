@@ -4,8 +4,12 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  jquery: 3.7.1
+  jquery-ui: 1.13.3
+
 patchedDependencies:
-  archaeopteryx@2.3.2: 20caf4c73e8a2b9d930b08202333a8c67bd4f2a9d79dedfe015af1d838cdace8
+  archaeopteryx@2.3.2: 386307cafbfbc3ec74a04d031d19c64809f0216d90de8cd8c3a44eee3993bf0d
   molstar: a80c534bab8094a7ca7103c40d6638c0f7127db69d2ac212a1ce6a951f3bc3da
   phyloxml@1.0.0: 4eddfc18ff2113aad48c985883da338442f7a61c7435a1229a3e089a4682c47c
 
@@ -132,7 +136,7 @@ importers:
         version: 4.0.0(@types/react@19.2.17)(react@19.2.8)
       archaeopteryx:
         specifier: 2.3.2
-        version: 2.3.2(patch_hash=20caf4c73e8a2b9d930b08202333a8c67bd4f2a9d79dedfe015af1d838cdace8)
+        version: 2.3.2(patch_hash=386307cafbfbc3ec74a04d031d19c64809f0216d90de8cd8c3a44eee3993bf0d)
       better-auth:
         specifier: ^1.6.25
         version: 1.6.25(next@16.2.12(@babel/core@7.29.7(supports-color@5.5.0))(@playwright/test@1.62.0)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(sass@1.102.0))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(vitest@4.1.10)
@@ -176,14 +180,14 @@ importers:
         specifier: ^0.10.1
         version: 0.10.1(graphology-types@0.24.8)
       jquery:
-        specifier: 1.12.4
-        version: 1.12.4
+        specifier: 3.7.1
+        version: 3.7.1
       jquery-ui:
-        specifier: 1.12.1
-        version: 1.12.1
+        specifier: 1.13.3
+        version: 1.13.3
       jquery-ui-dist:
-        specifier: 1.12.1
-        version: 1.12.1
+        specifier: 1.13.3
+        version: 1.13.3
       lucide-react:
         specifier: ^1.27.0
         version: 1.27.0(react@19.2.8)
@@ -6373,15 +6377,14 @@ packages:
   jose@6.2.4:
     resolution: {integrity: sha512-N8acGzVsQy6M/fjFcxtysNc4Q379TcM5dM/qKkNtsHFji88yANnXTr7BLeP75iPnFwBfQzM/jg2BZ9+HZrHCZA==}
 
-  jquery-ui-dist@1.12.1:
-    resolution: {integrity: sha512-UnQQWIvxaP7s13FLx37WufEwDYLSXKpp9JHrqEYTP6GqQNM+RMVEwsJMoc163QlzEaAV5YVfWlgQU5FPjKBtSw==}
+  jquery-ui-dist@1.13.3:
+    resolution: {integrity: sha512-qeTR3SOSQ0jgxaNXSFU6+JtxdzNUSJKgp8LCzVrVKntM25+2YBJW1Ea8B2AwjmmSHfPLy2dSlZxJQN06OfVFhg==}
 
-  jquery-ui@1.12.1:
-    resolution: {integrity: sha512-K/kDBMXkTky5LH+gqbMvttU1ipqCTaecKyAFjwHjUnPTVfm5I5PZC7We31iNR3yWtAHNqoxkLoit06lR/gKVlA==}
+  jquery-ui@1.13.3:
+    resolution: {integrity: sha512-D2YJfswSJRh/B8M/zCowDpNFfwsDmtfnMPwjJTyvl+CBqzpYwQ+gFYIbUUlzijy/Qvoy30H1YhoSui4MNYpRwA==}
 
-  jquery@1.12.4:
-    resolution: {integrity: sha512-UEVp7PPK9xXYSk8xqXCJrkXnKZtlgWkd2GsAQbMRFK6S/ePU2JN5G2Zum8hIVjzR3CpdfSqdqAzId/xd4TJHeg==}
-    deprecated: This version is deprecated. Please upgrade to the latest version or find support at https://www.herodevs.com/support/jquery-nes.
+  jquery@3.7.1:
+    resolution: {integrity: sha512-m4avr8yL8kmFN8psrbFFFmB/If14iN5o9nw/NgnnM+kybDJpRsAynV2BsfpTYrTRysYUdADVD7CkUUizgkpLfg==}
 
   js-tokens@10.0.0:
     resolution: {integrity: sha512-lM/UBzQmfJRo9ABXbPWemivdCW8V2G8FHaHdypQaIy523snUjog0W71ayWXTjiR+ixeMyVHN2XcpnTd/liPg/Q==}
@@ -13185,15 +13188,15 @@ snapshots:
 
   aproba@1.2.0: {}
 
-  archaeopteryx@2.3.2(patch_hash=20caf4c73e8a2b9d930b08202333a8c67bd4f2a9d79dedfe015af1d838cdace8):
+  archaeopteryx@2.3.2(patch_hash=386307cafbfbc3ec74a04d031d19c64809f0216d90de8cd8c3a44eee3993bf0d):
     dependencies:
       Blob.js: https://codeload.github.com/eligrey/Blob.js/tar.gz/9f7eb544f3c2cd6cf8c50dea8b47bd6634411b50
       canvas-toBlob.js: https://codeload.github.com/eligrey/canvas-toBlob.js/tar.gz/f1a01896135ab378aa5c0118eadd81da55e698d8
       canvg: 1.5.3
       d3: 3.5.17
       file-saver: https://codeload.github.com/eligrey/FileSaver.js/tar.gz/cea522bc41bfadc364837293d0c4dc585a65ac46
-      jquery: 1.12.4
-      jquery-ui: 1.12.1
+      jquery: 3.7.1
+      jquery-ui: 1.13.3
       phyloxml: 1.0.0(patch_hash=4eddfc18ff2113aad48c985883da338442f7a61c7435a1229a3e089a4682c47c)
       rgbcolor: 1.0.1
 
@@ -15679,11 +15682,15 @@ snapshots:
 
   jose@6.2.4: {}
 
-  jquery-ui-dist@1.12.1: {}
+  jquery-ui-dist@1.13.3:
+    dependencies:
+      jquery: 3.7.1
 
-  jquery-ui@1.12.1: {}
+  jquery-ui@1.13.3:
+    dependencies:
+      jquery: 3.7.1
 
-  jquery@1.12.4: {}
+  jquery@3.7.1: {}
 
   js-tokens@10.0.0: {}
 

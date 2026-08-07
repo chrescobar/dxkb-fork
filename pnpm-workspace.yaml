@@ -1,5 +1,8 @@
 packages:
   - .
+overrides:
+  jquery: 3.7.1
+  jquery-ui: 1.13.3
 allowBuilds:
   "@parcel/watcher": true
   "@prisma/engines": true

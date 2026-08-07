@@ -11,4 +11,90 @@ describe("loadArchaeopteryx", () => {
     expect(typeof archaeopteryx.launch).toBe("function");
     expect(typeof forester.collectPropertyRefs).toBe("function");
   });
+
+  it("retries after a transient dependency-load failure instead of caching the rejection", async () => {
+    vi.resetModules();
+    const actualD3 = await vi.importActual<Record<string, unknown>>("d3");
+    let attempt = 0;
+    vi.doMock("d3", () => {
+      attempt += 1;
+      if (attempt === 1) {
+        throw new Error("transient dependency failure");
+      }
+      return actualD3;
+    });
+
+    const fresh = await import("../archaeopteryx");
+    await expect(fresh.loadArchaeopteryx()).rejects.toThrow();
+
+    const { archaeopteryx } = await fresh.loadArchaeopteryx();
+    expect(typeof archaeopteryx.parsePhyloXML).toBe("function");
+
+    vi.doUnmock("d3");
+  });
+
+  it("escapes node labels and removes its wheel handlers when destroyed", async () => {
+    document.body.innerHTML = `
+      <div id="tree"></div>
+      <div id="controls-primary"></div>
+      <div id="controls-secondary"></div>
+    `;
+    const { archaeopteryx } = await loadArchaeopteryx();
+    const jquery = (window as unknown as { jQuery: unknown })
+      .jQuery as {
+      expr: { pseudos: Record<string, () => boolean> };
+      _data(
+        target: Document,
+        key: "events",
+      ): Record<string, { namespace: string }[]> | undefined;
+    };
+    for (const pseudo of ["hover", "link", "visited"]) {
+      jquery.expr.pseudos[pseudo] = () => false;
+    }
+    Object.defineProperty(SVGElement.prototype, "transform", {
+      configurable: true,
+      value: { baseVal: { consolidate: () => null } },
+    });
+    const wheelHandlerCount = () => {
+      const events = jquery._data(document, "events");
+      return ["mousewheel", "DOMMouseScroll"].reduce(
+        (count, eventName) =>
+          count +
+          (events?.[eventName] ?? []).filter(
+            ({ namespace }) => namespace === "archaeopteryx",
+          ).length,
+        0,
+      );
+    };
+
+    const maliciousLabel = '<img src=x onerror="window.__treeXss = true">';
+    archaeopteryx.launch(
+      "#tree",
+      { children: [{ name: maliciousLabel }, { name: "two" }] },
+      {},
+      {
+        controls0: "controls-primary",
+        controls1: "controls-secondary",
+        enableDynamicSizing: false,
+      },
+      {},
+    );
+
+    const maliciousNode = Array.from(
+      document.querySelectorAll<SVGCircleElement>(".nodeCircleOptions"),
+    ).find(
+      (circle) =>
+        (circle as SVGCircleElement & { __data__?: { name?: string } }).__data__
+          ?.name === maliciousLabel,
+    );
+    maliciousNode?.dispatchEvent(new MouseEvent("mousemove", { bubbles: true }));
+    const tooltip = document.querySelector(".node_mouseover_tooltip");
+
+    expect(maliciousNode).toBeDefined();
+    expect(tooltip?.querySelector("img")).toBeNull();
+    expect(tooltip?.textContent).toContain(maliciousLabel);
+    expect(wheelHandlerCount()).toBe(2);
+    archaeopteryx.destroy();
+    expect(wheelHandlerCount()).toBe(0);
+  });
 });

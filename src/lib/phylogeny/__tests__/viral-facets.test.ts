@@ -181,6 +181,26 @@ describe("segmentRows", () => {
     expect(haRow?.choices[0]?.viewer).toBe("nextstrain");
   });
 
+  it("keeps distinct non-segmented references in separate rows", () => {
+    const trees = flattenViralTrees({
+      groups: [{
+        key: "ebola",
+        title: "Ebola",
+        nextstrain: [
+          { name: "100 samples", path: "Orthoebolavirus/100" },
+          { name: "500 samples", path: "Orthoebolavirus/500" },
+        ],
+      }],
+    });
+
+    const rows = segmentRows(trees);
+    expect(rows).toHaveLength(2);
+    expect(rows.map(row => row.choices.map(choice => choice.ref.path))).toEqual([
+      ["Orthoebolavirus/100"],
+      ["Orthoebolavirus/500"],
+    ]);
+  });
+
   it("returns no rows for an empty tree list", () => {
     expect(segmentRows([])).toEqual([]);
   });

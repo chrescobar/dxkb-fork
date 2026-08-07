@@ -4,13 +4,14 @@ import { mkdtemp, mkdir, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
+import { isWithinDirectory } from "../dataset-inventory";
 import {
   availableDatasetIds,
   readDataset,
   resetDatasetInventoryForTests,
 } from "../dataset-store";
 
-const validDataset = '{"version":"v2","meta":{},"tree":{}}';
+const validDataset = "{\"version\":\"v2\",\"meta\":{},\"tree\":{}}";
 
 let root: string;
 let datasetDir: string;
@@ -44,6 +45,22 @@ describe("Nextstrain dataset store", () => {
     expect([...(await availableDatasetIds())]).toEqual([
       "Influenza-A-Virus/H3N2/HA",
     ]);
+  });
+
+  it("consistently rejects a dataset id whose final segment names a sidecar", async () => {
+    // "Influenza-A-Virus_H3N2_measurements.json" is ambiguous: it is both the
+    // filename for dataset "Influenza-A-Virus/H3N2" + the "measurements" sidecar,
+    // and for a hypothetical main dataset "Influenza-A-Virus/H3N2/measurements".
+    // The id must be rejected everywhere, not just hidden from the inventory.
+    await writeFile(
+      join(datasetDir, "Influenza-A-Virus_H3N2_measurements.json"),
+      validDataset,
+    );
+
+    await expect(availableDatasetIds()).resolves.toEqual(new Set());
+    await expect(
+      readDataset("Influenza-A-Virus/H3N2/measurements"),
+    ).resolves.toBeNull();
   });
 
   it("caches successful inventory reads", async () => {
@@ -127,12 +144,31 @@ describe("Nextstrain dataset store", () => {
     await expect(readDataset("../outside")).resolves.toBeNull();
   });
 
+  it("returns null when the resolved target is a directory", async () => {
+    await mkdir(join(datasetDir, "Orthoebolavirus_100.json"));
+
+    await expect(readDataset("Orthoebolavirus/100")).resolves.toBeNull();
+  });
+
   it("rejects a dataset symlink that escapes the store", async () => {
     const outside = join(root, "outside.json");
     await writeFile(outside, "secret");
     await symlink(outside, join(datasetDir, "Orthoebolavirus_100.json"));
 
     await expect(readDataset("Orthoebolavirus/100")).resolves.toBeNull();
+  });
+
+  it("treats a root store directory as containing its children", () => {
+    // regression: naive `child.startsWith(parent + sep)` checks fail at "/"
+    // because resolve("/") has no trailing separator to append, so
+    // `${directory}${sep}` becomes "//" and never matches any real path.
+    expect(isWithinDirectory("/", "/Orthoebolavirus_100.json")).toBe(true);
+    expect(isWithinDirectory("/", "/")).toBe(true);
+    expect(isWithinDirectory("/store", "/store/Orthoebolavirus_100.json")).toBe(
+      true,
+    );
+    expect(isWithinDirectory("/store", "/store-evil/leak.json")).toBe(false);
+    expect(isWithinDirectory("/store", "/outside/leak.json")).toBe(false);
   });
 
   it("throws when the store is not configured", async () => {

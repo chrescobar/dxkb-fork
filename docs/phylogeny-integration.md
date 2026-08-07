@@ -6,7 +6,7 @@ DXKB's taxonomy Phylogeny view supports two renderers. Archaeopteryx renders phy
 
 Viral family JSON advertises Archaeopteryx and Nextstrain choices. Advertised Nextstrain choices are enabled only when `/api/phylogeny/nextstrain-datasets` confirms that the corresponding local main dataset is renderable. Inventory loading or failure is shown separately from confirmed dataset absence.
 
-Auspice calls the local Charon-compatible routes under `/api/charon`. Dataset IDs are canonical slash-separated identifiers; main files in the deployment directory use the same segments joined by underscores and a `.json` suffix. Sidecars use the supported `_tip-frequencies`, `_root-sequence`, and `_measurements` suffixes.
+Auspice calls the local Charon-compatible routes under `/api/charon`. Dataset IDs are canonical slash-separated identifiers; main files in the deployment directory use the same segments joined by underscores and a `.json` suffix. Sidecars use the supported `_tip-frequencies`, `_root-sequence`, and `_measurements` suffixes. Because those suffixes are indistinguishable from a real final ID segment of the same name, `tip-frequencies`, `root-sequence`, and `measurements` are reserved and rejected as a dataset ID's final segment (`parseDatasetId`/`canonicalDatasetId`) — a main dataset must not be named after a sidecar.
 
 ## Deployment
 

@@ -10,6 +10,9 @@ import {
 
 import { ArchaeopteryxLoading } from "./archaeopteryx-loading";
 
+// Mirrors the breakpoint in archaeopteryx-theme.css that stacks the controls.
+const stackedControlsQuery = "(max-width: 640px)";
+
 interface ArchaeopteryxPhylogenyProps {
   xml: string;
   title: string;
@@ -36,6 +39,8 @@ export function ArchaeopteryxPhylogeny({
     if (!host) return;
 
     let cancelled = false;
+    let tornDown = false;
+    let destroyRenderer: (() => void) | null = null;
     let resizeFrame: number | null = null;
     const resizeObserver = new ResizeObserver(() => {
       if (resizeFrame !== null) cancelAnimationFrame(resizeFrame);
@@ -45,12 +50,28 @@ export function ArchaeopteryxPhylogeny({
     });
     resizeObserver.observe(host);
 
+    const teardown = () => {
+      if (tornDown) return;
+      tornDown = true;
+      resizeObserver.disconnect();
+      if (resizeFrame !== null) cancelAnimationFrame(resizeFrame);
+      if (selectable)
+        document.removeEventListener(
+          "selected_nodes_changed_event",
+          selectionChanged,
+        );
+      destroyRenderer?.();
+    };
+
     const render = async () => {
       setStatus(undefined);
       host.replaceChildren();
 
       const { archaeopteryx, forester } = await loadArchaeopteryx();
       if (cancelled) return;
+      destroyRenderer = () => {
+        archaeopteryx.destroy();
+      };
 
       const tree = archaeopteryx.parsePhyloXML(xml);
       const nodeLabels = Object.fromEntries(
@@ -127,25 +148,33 @@ export function ArchaeopteryxPhylogeny({
       const secondaryControls = document.getElementById(
         `${id}-controls-secondary`,
       );
-      if (primaryControls && secondaryControls) {
+      // Below stackedControlsQuery, archaeopteryx-theme.css stacks the controls under
+      // the canvas instead of floating them over it, so the tree needs no side offset.
+      const controlsAreStacked =
+        window.matchMedia(stackedControlsQuery).matches;
+      if (primaryControls && secondaryControls && !controlsAreStacked) {
         const primaryRight =
           primaryControls.offsetLeft + primaryControls.offsetWidth;
         settings.rootOffset = primaryRight + 14;
         options.visualizationsLegendXpos = primaryRight + 14;
         options.visualizationsLegendXposOrig = options.visualizationsLegendXpos;
         host.style.width = `calc(100% - ${String(secondaryControls.offsetWidth + 12)}px)`;
-        document
-          .getElementById("zoomtofit")
-          ?.dispatchEvent(new Event("mousedown"));
+      } else {
+        host.style.width = "100%";
       }
+      document
+        .getElementById("zoomtofit")
+        ?.dispatchEvent(new Event("mousedown"));
 
       setStatus(null);
     };
 
     const selectionChanged = () => {
       void loadArchaeopteryx().then(({ archaeopteryx }) => {
-        if (!cancelled)
-          handleSelect(archaeopteryx.getSelectedNodes().at(-1) ?? null);
+        if (cancelled) return;
+        const node = archaeopteryx.getSelectedNodes().at(-1);
+        const isLeaf = !node?.children?.length && !node?._children?.length;
+        handleSelect(isLeaf ? (node ?? null) : null);
       });
     };
 
@@ -156,6 +185,7 @@ export function ArchaeopteryxPhylogeny({
       );
     void render().catch((cause: unknown) => {
       if (!cancelled) {
+        teardown();
         setStatus(
           cause instanceof Error
             ? cause.message
@@ -166,16 +196,7 @@ export function ArchaeopteryxPhylogeny({
 
     return () => {
       cancelled = true;
-      resizeObserver.disconnect();
-      if (resizeFrame !== null) cancelAnimationFrame(resizeFrame);
-      if (selectable)
-        document.removeEventListener(
-          "selected_nodes_changed_event",
-          selectionChanged,
-        );
-      void loadArchaeopteryx().then(({ archaeopteryx }) => {
-        archaeopteryx.destroy();
-      });
+      teardown();
     };
   }, [id, resolvedTheme, selectable, xml]);
 

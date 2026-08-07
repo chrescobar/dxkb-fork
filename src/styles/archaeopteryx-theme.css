@@ -38,6 +38,24 @@
   min-width: 12rem;
 }
 
+/* Below this width the primary+secondary min-widths would eat the whole host, hiding
+   the tree; stack them under the canvas instead of floating them over it. Breakpoint
+   is mirrored in archaeopteryx-phylogeny.tsx (stackedControlsQuery). */
+@media (max-width: 640px) {
+  .archaeopteryx-dxkb > [role="img"] {
+    width: 100% !important;
+  }
+
+  .archaeopteryx-dxkb > [id$="-controls-primary"],
+  .archaeopteryx-dxkb > [id$="-controls-secondary"] {
+    position: static !important;
+    width: 100%;
+    min-width: 0;
+    max-height: none !important;
+    margin-top: 0.5rem;
+  }
+}
+
 .archaeopteryx-dxkb .ui-widget,
 .archaeopteryx-dxkb .ui-widget input,
 .archaeopteryx-dxkb .ui-widget select,

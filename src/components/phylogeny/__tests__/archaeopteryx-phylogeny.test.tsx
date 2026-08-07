@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 
 import { loadArchaeopteryx } from "@/lib/phylogeny/archaeopteryx";
 
@@ -23,11 +23,81 @@ class ResizeObserverStub {
   }
 }
 
+class MediaQueryListStub {
+  matches = false;
+  private listeners = new Set<(event: MediaQueryListEvent) => void>();
+
+  addEventListener = vi.fn(
+    (_type: "change", listener: (event: MediaQueryListEvent) => void) => {
+      this.listeners.add(listener);
+    },
+  );
+  removeEventListener = vi.fn(
+    (_type: "change", listener: (event: MediaQueryListEvent) => void) => {
+      this.listeners.delete(listener);
+    },
+  );
+
+  setMatches(matches: boolean) {
+    this.matches = matches;
+    for (const listener of this.listeners)
+      listener({ matches } as MediaQueryListEvent);
+  }
+}
+
 vi.stubGlobal("ResizeObserver", ResizeObserverStub);
 
 describe("ArchaeopteryxPhylogeny", () => {
   beforeEach(() => {
     ResizeObserverStub.instances = [];
+  });
+
+  it("updates the tree layout when controls stack or unstack", async () => {
+    const mediaQuery = new MediaQueryListStub();
+    vi.stubGlobal("matchMedia", vi.fn(() => mediaQuery));
+    const renderer = {
+      destroy: vi.fn(),
+      getSelectedNodes: vi.fn(() => []),
+      launch: vi.fn((selector: string) => {
+        const host = document.querySelector(selector);
+        const primaryControls = host?.parentElement?.querySelector(
+          '[id$="-controls-primary"]',
+        );
+        const secondaryControls = host?.parentElement?.querySelector(
+          '[id$="-controls-secondary"]',
+        );
+        if (!primaryControls || !secondaryControls)
+          throw new Error("Expected phylogeny controls");
+        Object.defineProperties(primaryControls, {
+          offsetLeft: { configurable: true, value: 10 },
+          offsetWidth: { configurable: true, value: 160 },
+        });
+        Object.defineProperty(secondaryControls, "offsetWidth", {
+          configurable: true,
+          value: 192,
+        });
+      }),
+      parsePhyloXML: vi.fn(() => ({})),
+    };
+    vi.mocked(loadArchaeopteryx).mockResolvedValue({
+      archaeopteryx: renderer,
+      forester: { collectPropertyRefs: vi.fn(() => new Set<string>()) },
+    });
+
+    const { container } = render(
+      <ArchaeopteryxPhylogeny xml="<phyloxml />" title="Test tree" />,
+    );
+    const host = container.querySelector('[role="img"]') as HTMLDivElement;
+
+    await waitFor(() => {
+      expect(host.style.width).toBe("calc(100% - 204px)");
+    });
+
+    mediaQuery.setMatches(true);
+    expect(host.style.width).toBe("100%");
+
+    mediaQuery.setMatches(false);
+    expect(host.style.width).toBe("calc(100% - 204px)");
   });
 
   it("tears down the renderer lifecycle when rendering fails", async () => {

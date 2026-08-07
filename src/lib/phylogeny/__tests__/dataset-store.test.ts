@@ -140,6 +140,7 @@ describe("Nextstrain dataset store", () => {
   it("returns null for absent or invalid exact identifiers", async () => {
     await writeFile(join(datasetDir, "Influenza-A-Virus_H3N2_HA.json"), "H3N2");
 
+    await expect(readDataset("Influenza-A-Virus/H3N2/HA")).resolves.toBe("H3N2");
     await expect(readDataset("Influenza-A-Virus/H5N1/HA")).resolves.toBeNull();
     await expect(readDataset("../outside")).resolves.toBeNull();
   });

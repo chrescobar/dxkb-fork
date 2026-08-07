@@ -305,12 +305,12 @@ div[style*="z-index: 9000"] div,
    Emotion hashes the class names (`css-13cymwt-control`), so match on the
    stable suffix rather than the hash. */
 
-[class*="-control"] {
+[class*="-control"]:not([class*="leaflet-control"]) {
   border-color: var(--dxkb-border, #cccccc) !important;
   background-color: var(--dxkb-background, #ffffff) !important;
 }
 
-[class*="-control"]:hover {
+[class*="-control"]:not([class*="leaflet-control"]):hover {
   border-color: var(--dxkb-ring, #999999) !important;
 }
 
@@ -320,7 +320,7 @@ div[style*="z-index: 9000"] div,
 [class*="-multiValue"] [class*="-Label"],
 [class*="-input"] input,
 [class*="-Input"] input,
-[class*="-control"] input {
+[class*="-control"]:not([class*="leaflet-control"]) input {
   color: var(--dxkb-foreground, #333333) !important;
 }
 

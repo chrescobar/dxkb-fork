@@ -4,6 +4,7 @@ const contentOrigin = "https://www.bv-brc.org";
 const bacterialTreeDictionaryUrl = `${contentOrigin}/api/content/bvbrc_phylogeny_tab/taxon_tree_dict.json`;
 const bacterialTreeBaseUrl = `${contentOrigin}/api/content/bvbrc_phylogeny_tab/phyloxml/`;
 const viralFamilyBaseUrl = `${contentOrigin}/api/content/phyloxml_trees/families/`;
+const phylogenyFetchTimeoutMs = 2000;
 
 export interface PhyloTreeRef {
   name: string;
@@ -91,6 +92,7 @@ async function fetchTreeDictionary(): Promise<Record<string, string>> {
   if (!dictionaryPromise) {
     dictionaryPromise = fetch(bacterialTreeDictionaryUrl, {
       headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(phylogenyFetchTimeoutMs),
     })
       .then(async (response) => {
         if (!response.ok)
@@ -131,6 +133,7 @@ export async function fetchViralFamilyBlock(
   const url = `${viralFamilyBaseUrl}${id}/${id}.json`;
   const response = await fetch(url, {
     headers: { Accept: "application/json" },
+    signal: AbortSignal.timeout(phylogenyFetchTimeoutMs),
   });
   if (!response.ok)
     throw new Error(`viral family fetch: ${String(response.status)}`);
@@ -162,6 +165,7 @@ export async function fetchNextstrainInventory(): Promise<Set<string>> {
 export async function fetchTreeXml(url: string): Promise<string> {
   const response = await fetch(url, {
     headers: { Accept: "application/xml,text/xml" },
+    signal: AbortSignal.timeout(phylogenyFetchTimeoutMs),
   });
   if (!response.ok) throw new Error(`tree fetch: ${String(response.status)}`);
   return response.text();
@@ -170,7 +174,7 @@ export async function fetchTreeXml(url: string): Promise<string> {
 export function resolvePhylogenyUrl(path: string): string | null {
   try {
     const url = new URL(path, contentOrigin);
-    return url.protocol === "https:" || url.protocol === "http:"
+    return url.protocol === "https:" && url.origin === contentOrigin
       ? url.toString()
       : null;
   } catch {

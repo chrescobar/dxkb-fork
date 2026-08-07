@@ -76,6 +76,7 @@ describe("Nextstrain dataset reconciliation", () => {
 
   it.each([
     [{}, "invalid shape"],
+    [{ groups: [{ title: 1 }] }, "family 1/unknown group has an invalid title"],
     [{ groups: [{ title: "Bad", nextstrain: {} }] }, "invalid nextstrain"],
     [
       { groups: [{ title: "Bad", nextstrain: [{}] }] },

@@ -61,7 +61,13 @@ export async function renderableDatasetId(
     throw error;
   }
   if (!isWithinDirectory(directoryRealPath, targetRealPath)) return null;
-  if (!(await stat(targetRealPath)).isFile()) return null;
+
+  try {
+    if (!(await stat(targetRealPath)).isFile()) return null;
+  } catch (error) {
+    if (isMissingFile(error)) return null;
+    throw error;
+  }
 
   try {
     const value: unknown = JSON.parse(await readFile(targetRealPath, "utf8"));

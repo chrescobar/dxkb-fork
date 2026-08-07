@@ -130,6 +130,25 @@ describe("ViralTreePicker", () => {
     ).toHaveTextContent("Not Available");
   });
 
+  it("keeps Auspice choices fail-closed without claiming they are unavailable when inventory loading fails", () => {
+    const onOpen = vi.fn();
+    render(
+      <ViralTreePicker
+        block={block}
+        nextstrainInventory={{ status: "error", message: "Network error" }}
+        onOpen={onOpen}
+      />,
+    );
+
+    const unconfirmed = within(row("XML HA (HA)")).getByTitle(
+      "Auspice dataset availability could not be confirmed",
+    );
+    expect(unconfirmed).toHaveTextContent("Availability Unconfirmed");
+    expect(unconfirmed.tagName).toBe("SPAN");
+    fireEvent.click(unconfirmed);
+    expect(onOpen).not.toHaveBeenCalled();
+  });
+
   it("labels each viewer button with the tree name so same-named viewers across rows are distinguishable", () => {
     render(
       <ViralTreePicker
@@ -184,14 +203,16 @@ describe("ViralTreePicker", () => {
     render(
       <ViralTreePicker
         block={{
-          groups: [{
-            key: "ebola",
-            title: "Ebola",
-            nextstrain: [
-              { name: "100 samples", path: "Orthoebolavirus/100" },
-              { name: "500 samples", path: "Orthoebolavirus/500" },
-            ],
-          }],
+          groups: [
+            {
+              key: "ebola",
+              title: "Ebola",
+              nextstrain: [
+                { name: "100 samples", path: "Orthoebolavirus/100" },
+                { name: "500 samples", path: "Orthoebolavirus/500" },
+              ],
+            },
+          ],
         }}
         nextstrainInventory={{
           status: "ready",
@@ -203,7 +224,9 @@ describe("ViralTreePicker", () => {
 
     expect(screen.getByText("100 samples")).toBeInTheDocument();
     expect(screen.getByText("500 samples")).toBeInTheDocument();
-    expect(screen.getAllByRole("button", { name: /in Auspice/ })).toHaveLength(2);
+    expect(screen.getAllByRole("button", { name: /in Auspice/ })).toHaveLength(
+      2,
+    );
   });
 
   it("does not show a viewer filter for an Archaeopteryx-only block", () => {

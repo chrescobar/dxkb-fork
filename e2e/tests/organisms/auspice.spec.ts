@@ -87,7 +87,9 @@ async function mockAuspice(
 async function openPicker(page: Parameters<typeof applyBackendMocks>[0]) {
   await page.goto("/taxonomy/2955291?tab=phylogeny");
   const heading = page.getByRole("heading", { name: "Available phylogenetic trees" });
-  if (!(await heading.isVisible())) {
+  try {
+    await expect(heading).toBeVisible({ timeout: 1_000 });
+  } catch {
     if ((page.viewportSize()?.width ?? 1280) < 768) {
       await page.getByRole("button", { name: /Views: Phylogeny/ }).click();
       await page

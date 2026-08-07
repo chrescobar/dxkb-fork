@@ -42,9 +42,12 @@ export function ArchaeopteryxPhylogeny({
     let tornDown = false;
     let destroyRenderer: (() => void) | null = null;
     let resizeFrame: number | null = null;
+    let removeMediaQueryListener: () => void = () => undefined;
+    let updateLayout: () => void = () => undefined;
     const resizeObserver = new ResizeObserver(() => {
       if (resizeFrame !== null) cancelAnimationFrame(resizeFrame);
       resizeFrame = requestAnimationFrame(() => {
+        updateLayout();
         window.dispatchEvent(new Event("resize"));
       });
     });
@@ -54,6 +57,7 @@ export function ArchaeopteryxPhylogeny({
       if (tornDown) return;
       tornDown = true;
       resizeObserver.disconnect();
+      removeMediaQueryListener();
       if (resizeFrame !== null) cancelAnimationFrame(resizeFrame);
       if (selectable)
         document.removeEventListener(
@@ -148,23 +152,35 @@ export function ArchaeopteryxPhylogeny({
       const secondaryControls = document.getElementById(
         `${id}-controls-secondary`,
       );
+      const rootOffset = settings.rootOffset;
+      const visualizationsLegendXpos = options.visualizationsLegendXpos;
+      const visualizationsLegendXposOrig = options.visualizationsLegendXposOrig;
+      const mediaQuery = window.matchMedia(stackedControlsQuery);
       // Below stackedControlsQuery, archaeopteryx-theme.css stacks the controls under
       // the canvas instead of floating them over it, so the tree needs no side offset.
-      const controlsAreStacked =
-        window.matchMedia(stackedControlsQuery).matches;
-      if (primaryControls && secondaryControls && !controlsAreStacked) {
-        const primaryRight =
-          primaryControls.offsetLeft + primaryControls.offsetWidth;
-        settings.rootOffset = primaryRight + 14;
-        options.visualizationsLegendXpos = primaryRight + 14;
-        options.visualizationsLegendXposOrig = options.visualizationsLegendXpos;
-        host.style.width = `calc(100% - ${String(secondaryControls.offsetWidth + 12)}px)`;
-      } else {
-        host.style.width = "100%";
-      }
-      document
-        .getElementById("zoomtofit")
-        ?.dispatchEvent(new Event("mousedown"));
+      updateLayout = () => {
+        if (primaryControls && secondaryControls && !mediaQuery.matches) {
+          const primaryRight =
+            primaryControls.offsetLeft + primaryControls.offsetWidth;
+          settings.rootOffset = primaryRight + 14;
+          options.visualizationsLegendXpos = primaryRight + 14;
+          options.visualizationsLegendXposOrig = options.visualizationsLegendXpos;
+          host.style.width = `calc(100% - ${String(secondaryControls.offsetWidth + 12)}px)`;
+        } else {
+          settings.rootOffset = rootOffset;
+          options.visualizationsLegendXpos = visualizationsLegendXpos;
+          options.visualizationsLegendXposOrig = visualizationsLegendXposOrig;
+          host.style.width = "100%";
+        }
+        document
+          .getElementById("zoomtofit")
+          ?.dispatchEvent(new Event("mousedown"));
+      };
+      mediaQuery.addEventListener("change", updateLayout);
+      removeMediaQueryListener = () => {
+        mediaQuery.removeEventListener("change", updateLayout);
+      };
+      updateLayout();
 
       setStatus(null);
     };

@@ -97,6 +97,7 @@ try {
     { cwd: scratch, stdio: "inherit" },
   );
 
+  rmSync(stampPath, { force: true });
   rmSync(resolve(publicDir, "dist"), { recursive: true, force: true });
   cpSync(resolve(scratch, "dist"), resolve(publicDir, "dist"), {
     recursive: true,

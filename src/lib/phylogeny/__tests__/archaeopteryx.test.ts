@@ -1,6 +1,13 @@
 import { loadArchaeopteryx } from "../archaeopteryx";
 
 describe("loadArchaeopteryx", () => {
+  let restoreTestEnvironment: (() => void) | undefined;
+
+  afterEach(() => {
+    restoreTestEnvironment?.();
+    restoreTestEnvironment = undefined;
+  });
+
   it("initializes the complete legacy runtime on one jQuery instance", async () => {
     const { archaeopteryx, forester } = await loadArchaeopteryx();
     const jquery = (window as Window & { jQuery?: { widget?: unknown } })
@@ -34,19 +41,52 @@ describe("loadArchaeopteryx", () => {
   });
 
   it("escapes node labels and removes its wheel handlers when destroyed", async () => {
+    const bodyHtml = document.body.innerHTML;
+    restoreTestEnvironment = () => {
+      document.body.innerHTML = bodyHtml;
+    };
     document.body.innerHTML = `
       <div id="tree"></div>
       <div id="controls-primary"></div>
       <div id="controls-secondary"></div>
     `;
     const { archaeopteryx } = await loadArchaeopteryx();
-    const jquery = (window as unknown as { jQuery: unknown })
-      .jQuery as {
+    const jquery = (window as unknown as { jQuery: unknown }).jQuery as {
       expr: { pseudos: Record<string, () => boolean> };
       _data(
         target: Document,
         key: "events",
       ): Record<string, { namespace: string }[]> | undefined;
+    };
+    const pseudoDescriptors = Object.fromEntries(
+      ["hover", "link", "visited"].map((pseudo) => [
+        pseudo,
+        Object.getOwnPropertyDescriptor(jquery.expr.pseudos, pseudo),
+      ]),
+    );
+    const transformDescriptor = Object.getOwnPropertyDescriptor(
+      SVGElement.prototype,
+      "transform",
+    );
+    restoreTestEnvironment = () => {
+      document.body.innerHTML = bodyHtml;
+      for (const pseudo of ["hover", "link", "visited"]) {
+        const descriptor = pseudoDescriptors[pseudo];
+        if (descriptor) {
+          Object.defineProperty(jquery.expr.pseudos, pseudo, descriptor);
+        } else {
+          delete jquery.expr.pseudos[pseudo];
+        }
+      }
+      if (transformDescriptor) {
+        Object.defineProperty(
+          SVGElement.prototype,
+          "transform",
+          transformDescriptor,
+        );
+      } else {
+        delete (SVGElement.prototype as { transform?: unknown }).transform;
+      }
     };
     for (const pseudo of ["hover", "link", "visited"]) {
       jquery.expr.pseudos[pseudo] = () => false;
@@ -68,6 +108,7 @@ describe("loadArchaeopteryx", () => {
     };
 
     const maliciousLabel = '<img src=x onerror="window.__treeXss = true">';
+    const maliciousTooltip = 'tooltip" onmouseover="window.__treeXss = true';
     archaeopteryx.launch(
       "#tree",
       { children: [{ name: maliciousLabel }, { name: "two" }] },
@@ -78,7 +119,19 @@ describe("loadArchaeopteryx", () => {
         enableDynamicSizing: false,
       },
       {},
+      {
+        customLabel: {
+          label: "Custom label",
+          propertyRef: "custom:label",
+          description: maliciousTooltip,
+          showButton: true,
+        },
+      },
     );
+
+    const customLabel = document.querySelector('label[for="customLabel__cb"]');
+    expect(customLabel).toHaveAttribute("title", maliciousTooltip);
+    expect(customLabel).not.toHaveAttribute("onmouseover");
 
     const maliciousNode = Array.from(
       document.querySelectorAll<SVGCircleElement>(".nodeCircleOptions"),
@@ -87,7 +140,9 @@ describe("loadArchaeopteryx", () => {
         (circle as SVGCircleElement & { __data__?: { name?: string } }).__data__
           ?.name === maliciousLabel,
     );
-    maliciousNode?.dispatchEvent(new MouseEvent("mousemove", { bubbles: true }));
+    maliciousNode?.dispatchEvent(
+      new MouseEvent("mousemove", { bubbles: true }),
+    );
     const tooltip = document.querySelector(".node_mouseover_tooltip");
 
     expect(maliciousNode).toBeDefined();

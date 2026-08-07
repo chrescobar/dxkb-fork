@@ -85,8 +85,10 @@ describe("phylogeny services", () => {
     });
   });
 
-  it("resolves relative HTTP URLs and rejects unsafe protocols", () => {
+  it("resolves only same-origin HTTPS tree URLs", () => {
     expect(resolvePhylogenyUrl("/tree.xml")).toBe(`${origin}/tree.xml`);
+    expect(resolvePhylogenyUrl("https://example.com/tree.xml")).toBeNull();
+    expect(resolvePhylogenyUrl("http://www.bv-brc.org/tree.xml")).toBeNull();
     expect(resolvePhylogenyUrl("javascript:alert(1)")).toBeNull();
   });
 });

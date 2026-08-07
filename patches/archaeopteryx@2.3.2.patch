@@ -103,7 +103,7 @@ index 4d4e405e..469d0f59 100644
              if (e.shiftKey) {
                  if (e.originalEvent) {
                      let oe = e.originalEvent;
-@@ -7730,10 +7740,8 @@ if (!phyloXml) {
+@@ -7730,10 +7740,11 @@ if (!phyloXml) {
          }
  
          function makeCheckboxButtonTableData(label, id, tooltip) {
@@ -112,9 +112,12 @@ index 4d4e405e..469d0f59 100644
 -                label = label.substring(0, n);
 -            }
 -            return '<label style="width:68px;text-align: left" for="' + id + '" title="' + tooltip + '">' + label + '</label><input  type="checkbox" name="' + id + '" id="' + id + '">';
-+            const safeLabel = safeTreeHtml(label);
-+            const safeTooltip = safeTreeHtml(tooltip);
-+            return '<label style="width:68px;text-align: left" for="' + id + '" title="' + safeTooltip + '">' + safeLabel + '</label><input  type="checkbox" name="' + id + '" id="' + id + '">';
++            const labelElement = $('<label>')
++                .attr({ style: 'width:68px;text-align: left', for: id, title: tooltip })
++                .html(safeTreeHtml(label));
++            const checkboxElement = $('<input>')
++                .attr({ type: 'checkbox', name: id, id: id });
++            return labelElement.prop('outerHTML') + checkboxElement.prop('outerHTML');
          }
  
 @@ -7847,7 +7853,7 @@ if (!phyloXml) {

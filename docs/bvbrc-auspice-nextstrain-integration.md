@@ -32,7 +32,7 @@ only viral family taxa** — bacteria are gated out by absence, not by a rule.
 | Why H3N2 but not H5N1? | H5N1's group in the manifest has `"nextstrain": []`. Nobody built the datasets. |
 | Why no Coronaviridae? | Same — its one group is Archaeopteryx-only. |
 | Why no bacteria? | Bacterial taxon IDs aren't in the viral manifest at all, so the whole tab is hidden; bacteria get a different tab off a different manifest. |
-| Could bacteria work? | Yes, technically. Nothing blocks it. It's a data-production problem, plus one real scale ceiling (§6). |
+| Could bacteria work? | Yes, after implementing a bacterial Auspice renderer and the corresponding tab/widget changes. It remains a data-production problem, plus one real scale ceiling (§6). |
 
 ---
 
@@ -146,7 +146,7 @@ in-page `OutbreaksPhylogenyTreeViewer`.
 The iframe boots the custom Auspice SPA (`app.js:318` → `public/js/auspice-custom/dist`),
 which turns its own pathname into a Charon call:
 
-```
+```text
 /nextstrain-viewer/Influenza-A-Virus/H3N2/HA
   → GET /charon/getDataset?prefix=nextstrain-viewer/Influenza-A-Virus/H3N2/HA
   → routes/auspice.js strips the "nextstrain-viewer/" prefix (:19-36)
@@ -211,7 +211,7 @@ region / clade / subclade`, `build_url: https://github.com/nextstrain/flu`,
 Filoviridae and Orthoebolavirus advertise `Orthoebolavirus/100` and
 `Orthoebolavirus/500`, but no such file exists locally. Confirmed:
 
-```
+```text
 GET /charon/getDataset?prefix=Orthoebolavirus/100  → 404 "couldn't fetch JSONs"
 ```
 
@@ -228,7 +228,7 @@ mismatch is unpoliced. See §7.
 `routes/auspice.js:12` reads `process.env.NEXTSTRAIN_DATASET_DIR`. The only place it
 is set is `package.json:6`:
 
-```
+```json
 "start": "NEXTSTRAIN_DATASET_DIR=./lib/auspice-datasets node ./bin/p3-web"
 ```
 
@@ -253,7 +253,7 @@ inside the iframe.
 Auspice's `redirectIfDatapathMatchFound` walks path fragments and redirects to the
 "best match" rather than 404ing. Verified locally:
 
-```
+```text
 GET /charon/getDataset?prefix=Influenza-A-Virus/H5N1/HA
   → 302 → prefix=/Influenza-A-Virus/H3N2/Concat
   → 200, title "H3N2 Influenza Phylogeny"

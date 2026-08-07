@@ -77,7 +77,7 @@ test.use({
 });
 test.setTimeout(60_000);
 
-test.describe("Archeopteryx phylogeny controls", () => {
+test.describe("Archaeopteryx phylogeny controls", () => {
   test.describe.configure({ mode: "serial" });
   test("uses the active dark theme for the canvas and labels", async ({
     page,
@@ -259,6 +259,9 @@ test.describe("Archeopteryx phylogeny controls", () => {
             })
             .map((element) => element.getBoundingClientRect())
             .filter((bounds) => bounds.width > 0 || bounds.height > 0);
+          if (bounds.length === 0) {
+            throw new Error("Expected visible graph geometry");
+          }
           return {
             left: Math.min(...bounds.map((item) => item.left)),
             right: Math.max(...bounds.map((item) => item.right)),

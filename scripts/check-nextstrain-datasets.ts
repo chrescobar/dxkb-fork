@@ -57,7 +57,10 @@ export function familyReferences(
 
   const references = new Map<string, Reference[]>();
   for (const group of value.groups) {
-    if (!isRecord(group) || typeof group.title !== "string") continue;
+    if (!isRecord(group)) continue;
+    if (typeof group.title !== "string") {
+      throw new Error(`family ${taxonId}/unknown group has an invalid title`);
+    }
     if (group.nextstrain === undefined) continue;
     if (!Array.isArray(group.nextstrain)) {
       throw new Error(

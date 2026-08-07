@@ -93,18 +93,18 @@ export function ViralTreePicker({
   return (
     <div
       ref={containerRef}
-      className="flex h-full min-h-0 flex-col overflow-hidden bg-muted/15"
+      className="bg-muted/15 flex h-full min-h-0 flex-col overflow-hidden"
     >
-      <div className="border-b bg-background px-5 py-4">
+      <div className="bg-background border-b px-5 py-4">
         <h2 className="text-lg font-semibold">Available phylogenetic trees</h2>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Choose a strain, viewer, and genome segment.
         </p>
       </div>
       {/* lg: each column scrolls independently so Filters stay pinned; below lg
           the stacked layout scrolls as one column. */}
       <div className="grid min-h-0 flex-1 grid-cols-1 overflow-auto lg:grid-cols-[260px_1fr] lg:overflow-hidden">
-        <aside className="border-b bg-background p-4 lg:min-h-0 lg:overflow-y-auto lg:border-r lg:border-b-0">
+        <aside className="bg-background border-b p-4 lg:min-h-0 lg:overflow-y-auto lg:border-r lg:border-b-0">
           <Collapsible defaultOpen>
             <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md px-1 py-2 text-sm font-semibold">
               <span className="flex items-center gap-2">
@@ -114,7 +114,7 @@ export function ViralTreePicker({
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-5 pt-4">
               <fieldset>
-                <legend className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                <legend className="text-muted-foreground mb-3 text-xs font-semibold tracking-wide uppercase">
                   Strain
                 </legend>
                 {/* grid-cols-1 pins the column to the sidebar width; without it
@@ -134,7 +134,7 @@ export function ViralTreePicker({
                   <Label>
                     <RadioGroupItem value="all" />
                     All strains{" "}
-                    <span className="ml-auto text-xs text-muted-foreground">
+                    <span className="text-muted-foreground ml-auto text-xs">
                       {counts.allStrains}
                     </span>
                   </Label>
@@ -147,7 +147,7 @@ export function ViralTreePicker({
                       <span className="min-w-0 truncate" title={title}>
                         {title}
                       </span>
-                      <span className="ml-auto shrink-0 text-xs text-muted-foreground">
+                      <span className="text-muted-foreground ml-auto shrink-0 text-xs">
                         {counts.strain(key)}
                       </span>
                     </Label>
@@ -156,7 +156,7 @@ export function ViralTreePicker({
               </fieldset>
               {availableViewers.length > 1 && (
                 <fieldset>
-                  <legend className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                  <legend className="text-muted-foreground mb-3 text-xs font-semibold tracking-wide uppercase">
                     Viewer
                   </legend>
                   <RadioGroup
@@ -177,7 +177,7 @@ export function ViralTreePicker({
                     <Label>
                       <RadioGroupItem value="all" />
                       All viewers{" "}
-                      <span className="ml-auto text-xs text-muted-foreground">
+                      <span className="text-muted-foreground ml-auto text-xs">
                         {counts.allViewers}
                       </span>
                     </Label>
@@ -190,7 +190,7 @@ export function ViralTreePicker({
                             disabled={count === 0}
                           />
                           {title}
-                          <span className="ml-auto text-xs text-muted-foreground">
+                          <span className="text-muted-foreground ml-auto text-xs">
                             {count}
                           </span>
                         </Label>
@@ -201,7 +201,7 @@ export function ViralTreePicker({
               )}
               {segments.length > 1 && (
                 <fieldset>
-                  <legend className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                  <legend className="text-muted-foreground mb-3 text-xs font-semibold tracking-wide uppercase">
                     Segment
                   </legend>
                   <div className="space-y-2">
@@ -220,7 +220,7 @@ export function ViralTreePicker({
                             }}
                           />
                           {segment}
-                          <span className="ml-auto text-xs text-muted-foreground">
+                          <span className="text-muted-foreground ml-auto text-xs">
                             {count}
                           </span>
                         </Label>
@@ -235,7 +235,7 @@ export function ViralTreePicker({
         <div className="lg:min-h-0 lg:overflow-y-auto">
           {nextstrainInventory.status !== "ready" && (
             <div
-              className="border-b bg-background px-5 py-3 text-sm text-muted-foreground"
+              className="bg-background text-muted-foreground border-b px-5 py-3 text-sm"
               role="status"
             >
               {nextstrainInventory.status === "pending"
@@ -268,7 +268,7 @@ function TreeResults({
 
   if (rows.length === 0) {
     return (
-      <div className="grid min-h-64 place-items-center p-5 text-center text-sm text-muted-foreground">
+      <div className="text-muted-foreground grid min-h-64 place-items-center p-5 text-center text-sm">
         No trees found for the selected filters.
       </div>
     );
@@ -286,7 +286,9 @@ function TreeResults({
           .find(Boolean);
 
         return (
-          <Fragment key={`${row.strainKey}:${row.segment ?? "none"}:${choiceKey(primary)}`}>
+          <Fragment
+            key={`${row.strainKey}:${row.segment ?? "none"}:${choiceKey(primary)}`}
+          >
             {newStrain && (
               <StrainRule
                 title={row.strainTitle}
@@ -299,7 +301,7 @@ function TreeResults({
             )}
             <div
               data-slot="tree-row"
-              className="group grid grid-cols-[3.5rem_1fr] items-center gap-y-2 border-b border-border/50 px-5 py-3 transition-colors hover:bg-muted/25 lg:grid-cols-[3.5rem_1fr_auto] lg:gap-y-0 lg:py-0"
+              className="group border-border/50 hover:bg-muted/25 grid grid-cols-[3.5rem_1fr] items-center gap-y-2 border-b px-5 py-3 transition-colors lg:grid-cols-[3.5rem_1fr_auto] lg:gap-y-0 lg:py-0"
               style={{ ["--seg" as string]: segmentColor(row.segment) }}
             >
               <span
@@ -319,7 +321,7 @@ function TreeResults({
                   {primary.ref.name}
                 </span>
                 {primary.ref.definition && (
-                  <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                  <span className="text-muted-foreground mt-0.5 block truncate text-xs">
                     {primary.ref.definition}
                   </span>
                 )}
@@ -335,7 +337,7 @@ function TreeResults({
                     onOpen={onOpen}
                   />
                 ))}
-                <span aria-hidden className="mx-0.5 h-5 w-px bg-border" />
+                <span aria-hidden className="bg-border mx-0.5 h-5 w-px" />
                 <MetadataButton
                   url={metadata ? resolvePhylogenyUrl(metadata) : null}
                   name={primary.ref.name}
@@ -362,11 +364,11 @@ function StrainRule({
     <div
       className={`flex items-center gap-3 px-5 pb-2 ${first ? "pt-4" : "pt-8"}`}
     >
-      <span className="text-[0.68rem] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
+      <span className="text-muted-foreground text-[0.68rem] font-semibold tracking-[0.18em] uppercase">
         {title}
       </span>
-      <span className="h-px flex-1 bg-border" />
-      <span className="font-mono text-[0.68rem] text-muted-foreground/70">
+      <span className="bg-border h-px flex-1" />
+      <span className="text-muted-foreground/70 font-mono text-[0.68rem]">
         {count} trees
       </span>
     </div>
@@ -389,26 +391,40 @@ function PeerButton({
     !!choice &&
     viewer === "nextstrain" &&
     nextstrainInventory.status === "pending";
+  const inventoryUnconfirmed =
+    !!choice &&
+    viewer === "nextstrain" &&
+    nextstrainInventory.status === "error";
   const inventoryUnavailable =
     !!choice &&
     viewer === "nextstrain" &&
-    (nextstrainInventory.status === "error" ||
-      (nextstrainInventory.status === "ready" &&
-        isUnavailable(choice, nextstrainInventory.ids)));
+    nextstrainInventory.status === "ready" &&
+    isUnavailable(choice, nextstrainInventory.ids);
 
-  if (!choice || inventoryPending || inventoryUnavailable) {
+  if (
+    !choice ||
+    inventoryPending ||
+    inventoryUnconfirmed ||
+    inventoryUnavailable
+  ) {
     return (
       <span
-        className="grid h-7 flex-1 cursor-not-allowed place-items-center rounded-md border border-dashed border-border/60 text-[0.7rem] text-muted-foreground/45 lg:w-[7.5rem] lg:flex-initial"
+        className="border-border/60 text-muted-foreground/45 grid h-7 flex-1 cursor-not-allowed place-items-center rounded-md border border-dashed text-[0.7rem] lg:w-[7.5rem] lg:flex-initial"
         title={
           !choice
             ? `No ${viewerLabel[viewer]} tree for this segment`
             : inventoryPending
               ? "Auspice dataset availability has not been confirmed"
-              : "Auspice dataset is not available"
+              : inventoryUnconfirmed
+                ? "Auspice dataset availability could not be confirmed"
+                : "Auspice dataset is not available"
         }
       >
-        {inventoryPending ? "Checking Availability" : "Not Available"}
+        {inventoryPending
+          ? "Checking Availability"
+          : inventoryUnconfirmed
+            ? "Availability Unconfirmed"
+            : "Not Available"}
       </span>
     );
   }
@@ -421,7 +437,7 @@ function PeerButton({
         onOpen(choice);
       }}
       aria-label={`Open ${choice.ref.name} in ${viewerLabel[viewer]}`}
-      className="h-7 flex-1 rounded-md border border-border bg-background text-xs font-medium transition-colors hover:border-[color-mix(in_oklch,var(--seg)_55%,transparent)] hover:bg-[color-mix(in_oklch,var(--seg)_14%,transparent)] focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none lg:w-[7.5rem] lg:flex-initial"
+      className="border-border bg-background focus-visible:ring-ring/50 h-7 flex-1 rounded-md border text-xs font-medium transition-colors hover:border-[color-mix(in_oklch,var(--seg)_55%,transparent)] hover:bg-[color-mix(in_oklch,var(--seg)_14%,transparent)] focus-visible:ring-2 focus-visible:outline-none lg:w-[7.5rem] lg:flex-initial"
     >
       {viewerLabel[viewer]}
     </button>
@@ -434,7 +450,7 @@ function MetadataButton({ url, name }: { url: string | null; name: string }) {
     <Button
       variant="ghost"
       size="icon-xs"
-      className="text-foreground/75 transition-colors hover:text-foreground"
+      className="text-foreground/75 hover:text-foreground transition-colors"
       nativeButton={false}
       render={
         <a

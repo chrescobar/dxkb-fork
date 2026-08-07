@@ -149,6 +149,18 @@ describe("loadArchaeopteryx", () => {
     expect(tooltip?.querySelector("img")).toBeNull();
     expect(tooltip?.textContent).toContain(maliciousLabel);
     expect(wheelHandlerCount()).toBe(2);
+    const d3 = (
+      window as unknown as {
+        d3: {
+          select: (selector: string) => {
+            selectAll: (selector: string) => { interrupt: () => void };
+          };
+          timer: { flush: () => void };
+        };
+      }
+    ).d3;
+    d3.select("#tree").selectAll("*").interrupt();
+    d3.timer.flush();
     archaeopteryx.destroy();
     expect(wheelHandlerCount()).toBe(0);
   });

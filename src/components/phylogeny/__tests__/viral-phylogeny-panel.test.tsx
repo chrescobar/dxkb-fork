@@ -227,8 +227,8 @@ describe("ViralPhylogenyPanel", () => {
         error: new Error("inventory failed"),
       },
       "Auspice dataset availability could not be checked: inventory failed",
-      "Auspice dataset is not available",
-      "Not Available",
+      "Auspice dataset availability could not be confirmed",
+      "Availability Unconfirmed",
     ],
   ])(
     "keeps Archaeopteryx usable while inventory is %s",

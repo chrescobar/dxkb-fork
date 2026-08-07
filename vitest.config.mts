@@ -50,6 +50,7 @@ export default defineConfig({
         "src/**/types.ts",
         "src/**/types/**",
         "src/components/ui/**",
+        "src/**/__tests__/fixtures/**",
       ],
       // Floors set just below the measured baseline so unrelated PRs don't
       // randomly trip on rounding drift. Bump these incrementally as new tests

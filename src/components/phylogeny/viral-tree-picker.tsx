@@ -232,7 +232,10 @@ export function ViralTreePicker({
             </CollapsibleContent>
           </Collapsible>
         </aside>
-        <div className="lg:min-h-0 lg:overflow-y-auto">
+        <div
+          data-slot="tree-results-scroll"
+          className="lg:min-h-0 lg:overflow-y-auto"
+        >
           {nextstrainInventory.status !== "ready" && (
             <div
               className="border-b bg-background px-5 py-3 text-sm text-muted-foreground"
@@ -387,44 +390,37 @@ function PeerButton({
   onOpen: (choice: ViralTreeChoice) => void;
 }) {
   const choice = row.choices.find((candidate) => candidate.viewer === viewer);
-  const inventoryPending =
-    !!choice &&
-    viewer === "nextstrain" &&
-    nextstrainInventory.status === "pending";
-  const inventoryUnconfirmed =
-    !!choice &&
-    viewer === "nextstrain" &&
-    nextstrainInventory.status === "error";
-  const inventoryUnavailable =
-    !!choice &&
-    viewer === "nextstrain" &&
-    nextstrainInventory.status === "ready" &&
-    isUnavailable(choice, nextstrainInventory.ids);
+  let placeholder: { title: string; label: string } | null = null;
 
-  if (
-    !choice ||
-    inventoryPending ||
-    inventoryUnconfirmed ||
-    inventoryUnavailable
-  ) {
+  if (choice && viewer === "nextstrain") {
+    if (nextstrainInventory.status === "pending") {
+      placeholder = {
+        title: "Auspice dataset availability has not been confirmed",
+        label: "Checking Availability",
+      };
+    } else if (nextstrainInventory.status === "error") {
+      placeholder = {
+        title: "Auspice dataset availability could not be confirmed",
+        label: "Availability Unconfirmed",
+      };
+    } else if (isUnavailable(choice, nextstrainInventory.ids)) {
+      placeholder = {
+        title: "Auspice dataset is not available",
+        label: "Not Available",
+      };
+    }
+  }
+
+  if (!choice || placeholder) {
     return (
       <span
         className="grid h-7 flex-1 cursor-not-allowed place-items-center rounded-md border border-dashed border-border/60 text-[0.7rem] text-muted-foreground/45 lg:w-[7.5rem] lg:flex-initial"
         title={
-          !choice
-            ? `No ${viewerLabel[viewer]} tree for this segment`
-            : inventoryPending
-              ? "Auspice dataset availability has not been confirmed"
-              : inventoryUnconfirmed
-                ? "Auspice dataset availability could not be confirmed"
-                : "Auspice dataset is not available"
+          placeholder?.title ??
+          `No ${viewerLabel[viewer]} tree for this segment`
         }
       >
-        {inventoryPending
-          ? "Checking Availability"
-          : inventoryUnconfirmed
-            ? "Availability Unconfirmed"
-            : "Not Available"}
+        {placeholder?.label ?? "Not Available"}
       </span>
     );
   }

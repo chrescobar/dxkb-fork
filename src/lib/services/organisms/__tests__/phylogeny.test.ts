@@ -3,6 +3,7 @@ import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
 import {
   fetchBacterialTreeXml,
+  fetchTreeXml,
   fetchViralFamilyBlock,
   resetPhylogenyCacheForTests,
   resolvePhylogenyUrl,
@@ -14,6 +15,22 @@ const dictionaryUrl = `${origin}/api/content/bvbrc_phylogeny_tab/taxon_tree_dict
 beforeEach(resetPhylogenyCacheForTests);
 
 describe("phylogeny services", () => {
+  it("allows tree bodies longer to download than metadata", async () => {
+    const timeout = vi.spyOn(AbortSignal, "timeout");
+    const familyUrl = `${origin}/api/content/phyloxml_trees/families/2955291/2955291.json`;
+    const treeUrl = `${origin}/tree.xml`;
+    server.use(
+      http.get(familyUrl, () => HttpResponse.json({ groups: [] })),
+      http.get(treeUrl, () => new HttpResponse("<phyloxml />")),
+    );
+
+    await fetchViralFamilyBlock(2955291);
+    await fetchTreeXml(treeUrl);
+
+    expect(timeout).toHaveBeenNthCalledWith(1, 2000);
+    expect(timeout).toHaveBeenNthCalledWith(2, 30_000);
+  });
+
   it("distinguishes a missing bacterial tree from a failed request", async () => {
     server.use(http.get(dictionaryUrl, () => HttpResponse.json({ "562": "ecoli.xml" })));
     expect(await fetchBacterialTreeXml(2)).toBeNull();

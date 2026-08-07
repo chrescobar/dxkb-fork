@@ -202,8 +202,10 @@ test("fails closed when inventory is unavailable", async ({ page }) => {
   // from the HA/NA nextstrain rows — Archaeopteryx is unaffected by inventory
   // failures either way.
   await expect(
-    row(page, "H3N2 segment 4 (HA)").getByTitle("Auspice dataset is not available"),
-  ).toHaveText("Not Available");
+    row(page, "H3N2 segment 4 (HA)").getByTitle(
+      "Auspice dataset availability could not be confirmed",
+    ),
+  ).toHaveText("Availability Unconfirmed");
   await expect(
     row(page, "XML HA").getByRole("button", { name: "Open XML HA in Archaeopteryx" }),
   ).toBeVisible();
@@ -257,7 +259,7 @@ test("keeps the filter sidebar pinned while the tree grid scrolls", async ({ pag
   await openPicker(page);
 
   const filters = page.getByRole("button", { name: /Filters/ });
-  const grid = page.locator("main main:has([data-slot=tree-row])");
+  const grid = page.locator('[data-slot="tree-results-scroll"]');
   await expect(filters).toBeVisible();
 
   const before = await filters.boundingBox();

@@ -1,0 +1,62 @@
+src/components/phylogeny/viral-tree-picker.tsx
+  s_ab29c0e1fa9580::t_14cde398964484 414,419-420,423
+  s_ab29c0e1fa9580::t_ac570c8cf830d5 393,396-413
+  s_9106b8885ba96b::t_0e280ae1108117 235-238
+  s_ab29c0e1fa9580::t_bbd88d8b106001 395
+src/components/phylogeny/__tests__/viral-phylogeny-panel.test.tsx
+  s_9106b8885ba96b::t_b12300f81fd7a7 230-231
+src/lib/services/organisms/phylogeny.ts
+  s_86fb9272371115::t_690eaa839c4e4c 7
+  s_86fb9272371115::t_ba668177b74cb5 8
+  s_86fb9272371115::t_9f984e5ffebb20 96,137
+  s_86fb9272371115::t_649dedb6427cc0 169
+src/lib/services/organisms/__tests__/phylogeny.test.ts
+  s_86fb9272371115::t_84c2c892356d9c 6
+  s_86fb9272371115::t_0ba009319f1193 31
+  s_86fb9272371115::t_6d94125df8fd56 18-30,32-33
+src/lib/phylogeny/__tests__/archaeopteryx.test.ts
+  s_9106b8885ba96b::t_e34663b601132f 158,163
+  s_9106b8885ba96b::t_8278fa312ece49 152-157,159-161
+  s_9106b8885ba96b::t_1eeb0b08d29222 162
+e2e/tests/organisms/auspice.spec.ts
+  s_9106b8885ba96b::t_84fcafb4d1f931 205-208,262
+vitest.config.mts
+  s_9106b8885ba96b::t_dc655559a91b74 53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "2ba9db9be5a26d28824e25c85ce07be1b3d9f527",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_86fb9272371115": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_022924b79ffeZg2pWTbe6iLz6l",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_9106b8885ba96b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_022856763ffekAHbmHxGv51hcV",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_ab29c0e1fa9580": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0228e636bffempdVqhFm1cH608",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,195 @@
+public/auspice-dark.css
+  s_21f954b88a7b66::t_a59b9b4de80219 308,313
+  s_21f954b88a7b66::t_0e120e610f2fac 323
+src/lib/phylogeny/__tests__/archaeopteryx.test.ts
+  s_1888a1a0264eaf::t_6fca1096f482ff 45-47
+  s_1888a1a0264eaf::t_38bfe5fb80372c 54,143-145
+  s_1888a1a0264eaf::t_a1070a023041de 61-90
+  s_1888a1a0264eaf::t_154464059dad26 44
+  s_1888a1a0264eaf::t_cfc8e158b610e5 4-10
+  s_6a853802b31767::t_b1bc6cf2ba4e9d 111,122-129,132-134
+  s_1888a1a0264eaf::t_9a40e1bbb2110b 135
+src/components/phylogeny/__tests__/viral-tree-picker.test.tsx
+  s_767d9e0919d0d8::t_cd1d7ae91f6094 133-151
+  s_767d9e0919d0d8::t_8c29be682d562b 206-215,227-229
+scripts/check-nextstrain-datasets.ts
+  s_d1c0e9380ae738::t_94c805ac60dc82 60-63
+scripts/build-auspice.mjs
+  s_21f954b88a7b66::t_b982fe2293bb2b 100
+e2e/tests/organisms/archaeopteryx.spec.ts
+  s_a51fd45be59475::t_2d1a07a433238f 80
+  s_def603cc2066fa::t_2d034c2d2cbd32 262-264
+src/components/phylogeny/viral-tree-picker.tsx
+  s_767d9e0919d0d8::t_d906f50617f5ac 394-397,401-402,418-420,423-427
+  s_767d9e0919d0d8::t_8c29be682d562b 96,98,100,107,117,137,150,159,180,193,204,223,238,271,289-291,304,324,340,367,370-371,404-409,412,440,453
+e2e/tests/organisms/auspice.spec.ts
+  s_73efaf5eacf8ea::t_821c3bcdd00c6e 90-92
+src/lib/services/organisms/phylogeny.ts
+  s_0899ab3435308e::t_f5a54f0ebcf1fa 168
+  s_c3bb8e43fed59e::t_d737aaadb6297d 177
+  s_0899ab3435308e::t_25477e28acb321 7
+  s_0899ab3435308e::t_c1bd8d2c5ef89e 95
+  s_0899ab3435308e::t_13a0e65e77385f 136
+patches/archaeopteryx@2.3.2.patch
+  s_2af07e1c446818::t_98ff7138e8ed87 115-120
+  s_2af07e1c446818::t_137ee8f57e22d8 106
+docs/bvbrc-auspice-nextstrain-integration.md
+  s_1520b589446f20::t_abdfedc71b2ea5 149
+  s_1520b589446f20::t_455174dca08496 214
+  s_1520b589446f20::t_3ca91943deadcb 256
+  s_1520b589446f20::t_dbd3982adecf7f 35
+  s_1520b589446f20::t_56deaacac2d5a3 231
+scripts/check-nextstrain-datasets.test.ts
+  s_d1c0e9380ae738::t_d446792242ad3f 79
+src/lib/phylogeny/__tests__/dataset-store.test.ts
+  s_5bb9f4f5f73249::t_78bd0409d1b0e8 143
+src/lib/phylogeny/dataset-inventory.ts
+  s_ca6a71058cea15::t_98ce006835007c 64-70
+src/components/phylogeny/archaeopteryx-phylogeny.tsx
+  s_84a8a7f9a25130::t_5ce66af722b794 155-158,161-179,181,183
+  s_84a8a7f9a25130::t_c58ec96785e6aa 180,182
+  s_84a8a7f9a25130::t_8b47f34d8311e2 45-46
+  s_84a8a7f9a25130::t_2f6e4587371da8 50
+  s_84a8a7f9a25130::t_6aa5beb401b908 60
+src/components/phylogeny/__tests__/archaeopteryx-phylogeny.test.tsx
+  s_84a8a7f9a25130::t_09a1b7a0cc975f 26-47
+  s_84a8a7f9a25130::t_b46108c78d419c 69-71,75
+  s_84a8a7f9a25130::t_c70ab3972087f7 92-94
+  s_84a8a7f9a25130::t_08e27edeae6fe7 1
+  s_84a8a7f9a25130::t_fca6ab4e1fc964 55-68,72-74,76-91,95-102
+src/lib/services/organisms/__tests__/phylogeny.test.ts
+  s_c3bb8e43fed59e::t_f00932aa24999a 88,90-91
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "1af3496f529e2b1623226aa47ace6b31e75d285b",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_0899ab3435308e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_022c037b8ffeXqEtKIs3X2jbgi",
+        "model": "gpt56terra"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_1520b589446f20": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_022cbc174ffeWu20Qr4BT2T4XG",
+        "model": "gpt56terra"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_1888a1a0264eaf": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_022b0ecd6ffehRAt4TMTey6YBR",
+        "model": "gpt56terra"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_21f954b88a7b66": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_022c529e5ffe75PzW1Z4PgFWqU",
+        "model": "gpt56terra"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_2af07e1c446818": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_022c6c63cffedKMTbOAOD59cIB",
+        "model": "gpt56terra"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_5bb9f4f5f73249": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_022c19cb2ffeOaHvA5w7I3kZmR",
+        "model": "gpt56terra"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_6a853802b31767": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_022beb087ffeT9z16j24TDjAXN",
+        "model": "gpt56terra"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_73efaf5eacf8ea": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_022ca4aa8ffev5YX85jc87CJCB",
+        "model": "gpt56terra"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_767d9e0919d0d8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_022bc61f3ffeW28hHPffQ4nuQ2",
+        "model": "gpt56terra"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_84a8a7f9a25130": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_022b5783bffesYUayGJseRt3D7",
+        "model": "gpt56terra"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_a51fd45be59475": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_022ccf5e5ffeZj6puDLawJ3Ro0",
+        "model": "gpt56terra"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_c3bb8e43fed59e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_022bf59dfffey1uWBMHS3qMJgD",
+        "model": "gpt56terra"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_ca6a71058cea15": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_022c13409ffebH8WPYsXvHl2rz",
+        "model": "gpt56terra"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_d1c0e9380ae738": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_022c3afe0ffed6XT1ledKroVfx",
+        "model": "gpt56terra"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_def603cc2066fa": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_022cc787dffeOGo5nfI1jj2amn",
+        "model": "gpt56terra"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

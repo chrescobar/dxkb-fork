@@ -1,6 +1,9 @@
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import {
   cpSync,
+  existsSync,
+  globSync,
   mkdirSync,
   readFileSync,
   rmSync,
@@ -12,6 +15,15 @@ const root = resolve(import.meta.dirname, "..");
 const scratch = resolve(root, ".auspice-build");
 const cli = resolve(root, "node_modules/auspice/auspice.js");
 const publicDir = resolve(root, "public");
+const stampPath = resolve(publicDir, ".auspice-build-hash");
+const force = process.argv.includes("--force");
+const buildInputs = [
+  "scripts/build-auspice.mjs",
+  "auspice/config.json",
+  "auspice/navbar.js",
+  "package.json",
+  "pnpm-lock.yaml",
+];
 
 // Design tokens copied from the host page into the iframe as `--dxkb-<name>`.
 // public/auspice-dark.css consumes exactly these; scripts/auspice-shell.test.ts
@@ -54,6 +66,26 @@ var t=from.getAttribute("data-theme");if(t)to.setAttribute("data-theme",t);}
 sync();new host.MutationObserver(sync).observe(from,{attributes:true,attributeFilter:["data-theme","class","style"]});
 }catch(e){}})();`;
 
+const hash = createHash("sha256");
+for (const input of buildInputs)
+  hash.update(readFileSync(resolve(root, input)));
+for (const patch of globSync("patches/*auspice*", { cwd: root })) {
+  hash.update(readFileSync(resolve(root, patch)));
+}
+const buildHash = hash.digest("hex");
+const outputExists =
+  existsSync(resolve(publicDir, "dist")) &&
+  existsSync(resolve(publicDir, "nextstrain-viewer.html"));
+if (
+  !force &&
+  outputExists &&
+  existsSync(stampPath) &&
+  readFileSync(stampPath, "utf8") === buildHash
+) {
+  console.log("auspice: build inputs unchanged; using existing public output");
+  process.exit(0);
+}
+
 rmSync(scratch, { recursive: true, force: true });
 mkdirSync(scratch, { recursive: true });
 
@@ -68,6 +100,12 @@ try {
   cpSync(resolve(scratch, "dist"), resolve(publicDir, "dist"), {
     recursive: true,
   });
+  for (const artifact of globSync("**/*.{br,gz}", {
+    cwd: resolve(publicDir, "dist"),
+  })) {
+    rmSync(resolve(publicDir, "dist", artifact));
+  }
+  rmSync(resolve(publicDir, "dist", "index.html"), { force: true });
   cpSync(
     resolve(root, "node_modules/auspice/favicon.png"),
     resolve(publicDir, "auspice-favicon.png"),
@@ -85,10 +123,9 @@ try {
     );
   }
   writeFileSync(resolve(publicDir, "nextstrain-viewer.html"), shell);
+  writeFileSync(stampPath, buildHash);
 
-  console.log(
-    "auspice: built public/dist and public/nextstrain-viewer.html",
-  );
+  console.log("auspice: built public/dist and public/nextstrain-viewer.html");
 } finally {
   rmSync(scratch, { recursive: true, force: true });
 }

@@ -38,6 +38,11 @@ interface ArchaeopteryxApi {
   destroy(): void;
 }
 
+interface ArchaeopteryxDependencies {
+  archaeopteryx: ArchaeopteryxApi;
+  forester: Forester;
+}
+
 interface ArchaeopteryxGlobals extends Window {
   d3?: unknown;
   jQuery?: unknown;
@@ -46,23 +51,14 @@ interface ArchaeopteryxGlobals extends Window {
   phyloXml?: unknown;
 }
 
-let loader: Promise<{
-  archaeopteryx: ArchaeopteryxApi;
-  forester: Forester;
-}> | null = null;
+let loader: Promise<ArchaeopteryxDependencies> | null = null;
 
-export function loadArchaeopteryx(): Promise<{
-  archaeopteryx: ArchaeopteryxApi;
-  forester: Forester;
-}> {
+export function loadArchaeopteryx(): Promise<ArchaeopteryxDependencies> {
   loader ??= loadDependencies();
   return loader;
 }
 
-async function loadDependencies(): Promise<{
-  archaeopteryx: ArchaeopteryxApi;
-  forester: Forester;
-}> {
+async function loadDependencies(): Promise<ArchaeopteryxDependencies> {
   const globals = window as ArchaeopteryxGlobals;
   const [d3Module, jqueryModule, foresterModule, phyloXmlModule] =
     await Promise.all([

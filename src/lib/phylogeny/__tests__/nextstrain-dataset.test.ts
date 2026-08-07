@@ -1,7 +1,7 @@
 import {
   canonicalDatasetId,
   datasetFilename,
-  MAX_DATASET_ID_LENGTH,
+  maxDatasetIdLength,
   parseDatasetId,
   stripViewerPrefix,
   viewerUrl,
@@ -34,13 +34,13 @@ describe("Nextstrain dataset identifiers", () => {
     "tree_name",
     "tree\u0000name",
     "a/b/c/d/e/f/g/h/i",
-  ])("rejects invalid identifier %j", value => {
+  ])("rejects invalid identifier %j", (value) => {
     expect(parseDatasetId(value)).toBeNull();
   });
 
   it("enforces identifier length and segment limits", () => {
-    expect(parseDatasetId("a".repeat(MAX_DATASET_ID_LENGTH))).not.toBeNull();
-    expect(parseDatasetId("a".repeat(MAX_DATASET_ID_LENGTH + 1))).toBeNull();
+    expect(parseDatasetId("a".repeat(maxDatasetIdLength))).not.toBeNull();
+    expect(parseDatasetId("a".repeat(maxDatasetIdLength + 1))).toBeNull();
     expect(parseDatasetId("a/b/c/d/e/f/g/h")).toHaveLength(8);
     expect(parseDatasetId("a/b/c/d/e/f/g/h/i")).toBeNull();
     expect(parseDatasetId("/")).toBeNull();
@@ -50,9 +50,7 @@ describe("Nextstrain dataset identifiers", () => {
     expect(canonicalDatasetId("/Orthoebolavirus/100/")).toBe(
       "Orthoebolavirus/100",
     );
-    expect(canonicalDatasetId("influenza/H3N2/HA")).toBe(
-      "influenza/H3N2/HA",
-    );
+    expect(canonicalDatasetId("influenza/H3N2/HA")).toBe("influenza/H3N2/HA");
     expect(canonicalDatasetId("//example.org/tree")).toBeNull();
   });
 
@@ -75,8 +73,8 @@ describe("Nextstrain dataset identifiers", () => {
     expect(stripViewerPrefix("/nextstrain-viewer/Orthoebolavirus/100")).toBe(
       "Orthoebolavirus/100",
     );
-    expect(
-      stripViewerPrefix("nextstrain-viewer/nextstrain-viewer/x"),
-    ).toBe("nextstrain-viewer/x");
+    expect(stripViewerPrefix("nextstrain-viewer/nextstrain-viewer/x")).toBe(
+      "nextstrain-viewer/x",
+    );
   });
 });

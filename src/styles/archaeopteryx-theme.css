@@ -7,8 +7,9 @@
   height: 100%;
 }
 
-.archaeopteryx-dxkb > [role="img"] > svg text {
-  fill: var(--foreground) !important;
+/* Node-label fill is controlled by Archaeopteryx so label-color visualizations work. */
+.archaeopteryx-dxkb > [role="img"] > svg :is(text.bllabel, text.conflabel) {
+  fill: var(--foreground);
 }
 
 .archaeopteryx-dxkb > [id$="-controls-primary"],
@@ -310,6 +311,7 @@
   background: var(--primary) !important;
 }
 
+/* Archaeopteryx appends this tooltip to document.body, outside the scoped host. */
 .node_mouseover_tooltip {
   z-index: 100;
   background: var(--popover) !important;

@@ -1,4 +1,6 @@
-import { expect, test, type Locator, type Page } from "@playwright/test";
+import { type Locator, type Page } from "@playwright/test";
+
+import { expect, test } from "../../mocks/backends";
 
 const treeXml = `<?xml version="1.0" encoding="UTF-8"?>
 <phyloxml xmlns="http://www.phyloxml.org">

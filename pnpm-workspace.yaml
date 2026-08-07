@@ -1,9 +1,9 @@
 packages:
   - .
 allowBuilds:
-  '@parcel/watcher': true
-  '@prisma/engines': true
-  '@scarf/scarf': true
+  "@parcel/watcher": true
+  "@prisma/engines": true
+  "@scarf/scarf": true
   core-js: false
   ejs: false
   esbuild: true
@@ -12,8 +12,6 @@ allowBuilds:
   sharp: true
   styled-components: false
   unrs-resolver: true
-minimumReleaseAgeExclude:
-  - archaeopteryx@2.3.2
 patchedDependencies:
   archaeopteryx@2.3.2: patches/archaeopteryx@2.3.2.patch
   molstar: patches/molstar.patch

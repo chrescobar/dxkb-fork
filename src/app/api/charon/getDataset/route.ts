@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 import {
   readDataset,
-  SIDECARS,
+  sidecars,
   type Sidecar,
 } from "@/lib/phylogeny/dataset-store";
 import {
@@ -13,7 +13,7 @@ import {
 export const runtime = "nodejs";
 
 function isSidecar(value: string): value is Sidecar {
-  return (SIDECARS as readonly string[]).includes(value);
+  return (sidecars as readonly string[]).includes(value);
 }
 
 export async function GET(request: NextRequest) {
@@ -23,14 +23,21 @@ export async function GET(request: NextRequest) {
   }
 
   const type = request.nextUrl.searchParams.get("type");
+  // The store uses an omitted sidecar for the main tree JSON.
   const sidecar = type === null || type === "tree" ? undefined : type;
   if (sidecar !== undefined && !isSidecar(sidecar)) {
-    return NextResponse.json({ error: "unsupported dataset type" }, { status: 400 });
+    return NextResponse.json(
+      { error: "unsupported dataset type" },
+      { status: 400 },
+    );
   }
 
   const datasetId = canonicalDatasetId(stripViewerPrefix(prefix));
   if (!datasetId) {
-    return NextResponse.json({ error: "invalid dataset identifier" }, { status: 400 });
+    return NextResponse.json(
+      { error: "invalid dataset identifier" },
+      { status: 400 },
+    );
   }
 
   try {
@@ -46,7 +53,10 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error(`charon/getDataset: store unavailable for '${datasetId}'`, error);
+    console.error(
+      `charon/getDataset: store unavailable for '${datasetId}'`,
+      error,
+    );
     return NextResponse.json(
       { error: "dataset store unavailable" },
       { status: 500 },

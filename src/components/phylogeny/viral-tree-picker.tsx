@@ -1,12 +1,16 @@
 "use client";
 
 import { Download, Filter } from "lucide-react";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
@@ -25,43 +29,77 @@ import {
   type ViralFilters,
   type ViralTreeChoice,
 } from "@/lib/phylogeny/viral-facets";
-import { resolvePhylogenyUrl, type PhyloFamilyBlock } from "@/lib/services/organisms/phylogeny";
+import {
+  resolvePhylogenyUrl,
+  type PhyloFamilyBlock,
+} from "@/lib/services/organisms/phylogeny";
 
 // Label styling for an option whose facet count is zero. Base UI renders its
 // radio/checkbox as a <span role> with aria-disabled rather than a natively
 // disabled control, so match on that instead of `peer-disabled:`.
-const disabledOption = "has-aria-disabled:cursor-not-allowed has-aria-disabled:opacity-50";
+const disabledOption =
+  "has-aria-disabled:cursor-not-allowed has-aria-disabled:opacity-50";
+const viewerEntries = Object.entries(viewerLabel) as [PhyloViewer, string][];
+const viewers = Object.keys(viewerLabel) as PhyloViewer[];
 
-export function ViralTreePicker({ block, availableNextstrainIds, focusChoiceKey, onOpen }: {
+export type NextstrainInventory =
+  | { status: "pending" }
+  | { status: "error"; message: string }
+  | { status: "ready"; ids: ReadonlySet<string> };
+
+export function ViralTreePicker({
+  block,
+  nextstrainInventory,
+  focusChoiceKey,
+  onOpen,
+}: {
   block: PhyloFamilyBlock;
-  availableNextstrainIds: ReadonlySet<string>;
+  nextstrainInventory: NextstrainInventory;
   focusChoiceKey?: string;
   onOpen: (choice: ViralTreeChoice) => void;
 }) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const trees = flattenViralTrees(block);
-  const [filters, setFilters] = useState<ViralFilters>({ strain: null, viewer: null, segments: new Set() });
-  const strains = [...new Map(trees.map(tree => [tree.groupKey, tree.groupTitle])).entries()];
-  const viewers = [...new Set(trees.map(tree => tree.viewer))];
+  const [filters, setFilters] = useState<ViralFilters>({
+    strain: null,
+    viewer: null,
+    segments: new Set(),
+  });
+  const strains = [
+    ...new Map(trees.map((tree) => [tree.groupKey, tree.groupTitle])).entries(),
+  ];
+  const availableViewers = [...new Set(trees.map((tree) => tree.viewer))];
   // Full segment list so options stay put; unavailable ones are disabled below
   // rather than disappearing.
   const segments = sortedSegments(trees);
   const visible = filterViralTrees(trees, filters);
   const counts = viralFacetCounts(trees, filters);
 
-  const update = (next: ViralFilters) => { setFilters(pruneViralFilters(trees, next)); };
+  const update = (next: ViralFilters) => {
+    setFilters(pruneViralFilters(trees, next));
+  };
 
   useEffect(() => {
     if (!focusChoiceKey) return;
-    [...document.querySelectorAll<HTMLElement>("[data-choice-key]")]
-      .find(element => element.dataset.choiceKey === focusChoiceKey)
+    [
+      ...(containerRef.current?.querySelectorAll<HTMLElement>(
+        "[data-choice-key]",
+      ) ?? []),
+    ]
+      .find((element) => element.dataset.choiceKey === focusChoiceKey)
       ?.focus();
   }, [focusChoiceKey]);
 
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden bg-muted/15">
+    <div
+      ref={containerRef}
+      className="flex h-full min-h-0 flex-col overflow-hidden bg-muted/15"
+    >
       <div className="border-b bg-background px-5 py-4">
         <h2 className="text-lg font-semibold">Available phylogenetic trees</h2>
-        <p className="text-sm text-muted-foreground">Choose a strain, viewer, and genome segment.</p>
+        <p className="text-sm text-muted-foreground">
+          Choose a strain, viewer, and genome segment.
+        </p>
       </div>
       {/* lg: each column scrolls independently so Filters stay pinned; below lg
           the stacked layout scrolls as one column. */}
@@ -69,47 +107,92 @@ export function ViralTreePicker({ block, availableNextstrainIds, focusChoiceKey,
         <aside className="border-b bg-background p-4 lg:min-h-0 lg:overflow-y-auto lg:border-r lg:border-b-0">
           <Collapsible defaultOpen>
             <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md px-1 py-2 text-sm font-semibold">
-              <span className="flex items-center gap-2"><Filter className="size-4" /> Filters</span>
+              <span className="flex items-center gap-2">
+                <Filter className="size-4" /> Filters
+              </span>
               <Badge variant="secondary">{visible.length}</Badge>
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-5 pt-4">
               <fieldset>
-                <legend className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">Strain</legend>
+                <legend className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                  Strain
+                </legend>
                 {/* grid-cols-1 pins the column to the sidebar width; without it
                     the auto column sizes to the longest strain name and pushes
                     the count out of view. */}
-                <RadioGroup className="grid-cols-1" value={filters.strain ?? "all"} onValueChange={(value: unknown) => {
-                  if (typeof value === "string") update({ ...filters, strain: value === "all" ? null : value });
-                }}>
-                  <Label><RadioGroupItem value="all" />All strains <span className="ml-auto text-xs text-muted-foreground">{counts.allStrains}</span></Label>
+                <RadioGroup
+                  className="grid-cols-1"
+                  value={filters.strain ?? "all"}
+                  onValueChange={(value: unknown) => {
+                    if (typeof value === "string")
+                      update({
+                        ...filters,
+                        strain: value === "all" ? null : value,
+                      });
+                  }}
+                >
+                  <Label>
+                    <RadioGroupItem value="all" />
+                    All strains{" "}
+                    <span className="ml-auto text-xs text-muted-foreground">
+                      {counts.allStrains}
+                    </span>
+                  </Label>
                   {/* Never disabled: `strains` is derived from `trees`, so every
                       row has at least one tree, and leaving strain unconstrained
                       means picking a viewer can't lock the user out of a strain. */}
                   {strains.map(([key, title]) => (
                     <Label key={key}>
                       <RadioGroupItem value={key} />
-                      <span className="min-w-0 truncate" title={title}>{title}</span>
-                      <span className="ml-auto shrink-0 text-xs text-muted-foreground">{counts.strain(key)}</span>
+                      <span className="min-w-0 truncate" title={title}>
+                        {title}
+                      </span>
+                      <span className="ml-auto shrink-0 text-xs text-muted-foreground">
+                        {counts.strain(key)}
+                      </span>
                     </Label>
                   ))}
                 </RadioGroup>
               </fieldset>
-              {viewers.length > 1 && (
+              {availableViewers.length > 1 && (
                 <fieldset>
-                  <legend className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">Viewer</legend>
-                  <RadioGroup value={filters.viewer ?? "all"} onValueChange={(value: unknown) => {
-                    if (value === "all" || value === "archaeopteryx" || value === "nextstrain") {
-                      update({ ...filters, viewer: value === "all" ? null : value });
-                    }
-                  }}>
-                    <Label><RadioGroupItem value="all" />All viewers <span className="ml-auto text-xs text-muted-foreground">{counts.allViewers}</span></Label>
-                    {([["archaeopteryx", "Archaeopteryx"], ["nextstrain", "Auspice"]] as const).map(([value, title]) => {
+                  <legend className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                    Viewer
+                  </legend>
+                  <RadioGroup
+                    value={filters.viewer ?? "all"}
+                    onValueChange={(value: unknown) => {
+                      if (
+                        value === "all" ||
+                        value === "archaeopteryx" ||
+                        value === "nextstrain"
+                      ) {
+                        update({
+                          ...filters,
+                          viewer: value === "all" ? null : value,
+                        });
+                      }
+                    }}
+                  >
+                    <Label>
+                      <RadioGroupItem value="all" />
+                      All viewers{" "}
+                      <span className="ml-auto text-xs text-muted-foreground">
+                        {counts.allViewers}
+                      </span>
+                    </Label>
+                    {viewerEntries.map(([value, title]) => {
                       const count = counts.viewer(value);
                       return (
                         <Label key={value} className={disabledOption}>
-                          <RadioGroupItem value={value} disabled={count === 0} />
+                          <RadioGroupItem
+                            value={value}
+                            disabled={count === 0}
+                          />
                           {title}
-                          <span className="ml-auto text-xs text-muted-foreground">{count}</span>
+                          <span className="ml-auto text-xs text-muted-foreground">
+                            {count}
+                          </span>
                         </Label>
                       );
                     })}
@@ -118,23 +201,28 @@ export function ViralTreePicker({ block, availableNextstrainIds, focusChoiceKey,
               )}
               {segments.length > 1 && (
                 <fieldset>
-                  <legend className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">Segment</legend>
+                  <legend className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                    Segment
+                  </legend>
                   <div className="space-y-2">
-                    {segments.map(segment => {
+                    {segments.map((segment) => {
                       const count = counts.segment(segment);
                       return (
                         <Label key={segment} className={disabledOption}>
                           <Checkbox
                             checked={filters.segments.has(segment)}
                             disabled={count === 0}
-                            onCheckedChange={checked => {
+                            onCheckedChange={(checked) => {
                               const next = new Set(filters.segments);
-                              if (checked) next.add(segment); else next.delete(segment);
+                              if (checked) next.add(segment);
+                              else next.delete(segment);
                               update({ ...filters, segments: next });
                             }}
                           />
                           {segment}
-                          <span className="ml-auto text-xs text-muted-foreground">{count}</span>
+                          <span className="ml-auto text-xs text-muted-foreground">
+                            {count}
+                          </span>
                         </Label>
                       );
                     })}
@@ -145,20 +233,38 @@ export function ViralTreePicker({ block, availableNextstrainIds, focusChoiceKey,
           </Collapsible>
         </aside>
         <main className="lg:min-h-0 lg:overflow-y-auto">
-          <TreeResults visible={visible} availableNextstrainIds={availableNextstrainIds} onOpen={onOpen} />
+          {nextstrainInventory.status !== "ready" && (
+            <div
+              className="border-b bg-background px-5 py-3 text-sm text-muted-foreground"
+              role="status"
+            >
+              {nextstrainInventory.status === "pending"
+                ? "Checking Auspice dataset availability..."
+                : `Auspice dataset availability could not be checked: ${nextstrainInventory.message}`}
+            </div>
+          )}
+          <TreeResults
+            visible={visible}
+            nextstrainInventory={nextstrainInventory}
+            onOpen={onOpen}
+          />
         </main>
       </div>
     </div>
   );
 }
 
-function TreeResults({ visible, availableNextstrainIds, onOpen }: {
+function TreeResults({
+  visible,
+  nextstrainInventory,
+  onOpen,
+}: {
   visible: ViralTreeChoice[];
-  availableNextstrainIds: ReadonlySet<string>;
+  nextstrainInventory: NextstrainInventory;
   onOpen: (choice: ViralTreeChoice) => void;
 }) {
   const rows = segmentRows(visible);
-  const multiStrain = new Set(rows.map(row => row.strainKey)).size > 1;
+  const multiStrain = new Set(rows.map((row) => row.strainKey)).size > 1;
 
   if (rows.length === 0) {
     return (
@@ -172,16 +278,22 @@ function TreeResults({ visible, availableNextstrainIds, onOpen }: {
     <div className="pb-6">
       {rows.map((row, index) => {
         const newStrain =
-          multiStrain && (index === 0 || rows[index - 1]?.strainKey !== row.strainKey);
+          multiStrain &&
+          (index === 0 || rows[index - 1]?.strainKey !== row.strainKey);
         const primary = row.choices[0];
-        const metadata = row.choices.map(choice => choice.ref.metadata).find(Boolean);
+        const metadata = row.choices
+          .map((choice) => choice.ref.metadata)
+          .find(Boolean);
 
         return (
           <Fragment key={`${row.strainKey}:${row.segment ?? "none"}`}>
             {newStrain && (
               <StrainRule
                 title={row.strainTitle}
-                count={visible.filter(tree => tree.groupKey === row.strainKey).length}
+                count={
+                  visible.filter((tree) => tree.groupKey === row.strainKey)
+                    .length
+                }
                 first={index === 0}
               />
             )}
@@ -203,7 +315,9 @@ function TreeResults({ visible, availableNextstrainIds, onOpen }: {
               </span>
 
               <span className="min-w-0 py-1 pr-6 lg:py-3.5">
-                <span className="block truncate text-sm font-medium">{primary.ref.name}</span>
+                <span className="block truncate text-sm font-medium">
+                  {primary.ref.name}
+                </span>
                 {primary.ref.definition && (
                   <span className="mt-0.5 block truncate text-xs text-muted-foreground">
                     {primary.ref.definition}
@@ -212,12 +326,12 @@ function TreeResults({ visible, availableNextstrainIds, onOpen }: {
               </span>
 
               <span className="col-span-2 flex items-center gap-2 py-2 lg:col-span-1">
-                {(["archaeopteryx", "nextstrain"] as const).map(viewer => (
+                {viewers.map((viewer) => (
                   <PeerButton
                     key={viewer}
                     viewer={viewer}
                     row={row}
-                    availableNextstrainIds={availableNextstrainIds}
+                    nextstrainInventory={nextstrainInventory}
                     onOpen={onOpen}
                   />
                 ))}
@@ -235,38 +349,63 @@ function TreeResults({ visible, availableNextstrainIds, onOpen }: {
   );
 }
 
-function StrainRule({ title, count, first }: { title: string; count: number; first: boolean }) {
+function StrainRule({
+  title,
+  count,
+  first,
+}: {
+  title: string;
+  count: number;
+  first: boolean;
+}) {
   return (
-    <div className={`flex items-center gap-3 px-5 pb-2 ${first ? "pt-4" : "pt-8"}`}>
+    <div
+      className={`flex items-center gap-3 px-5 pb-2 ${first ? "pt-4" : "pt-8"}`}
+    >
       <span className="text-[0.68rem] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
         {title}
       </span>
       <span className="h-px flex-1 bg-border" />
-      <span className="font-mono text-[0.68rem] text-muted-foreground/70">{count} trees</span>
+      <span className="font-mono text-[0.68rem] text-muted-foreground/70">
+        {count} trees
+      </span>
     </div>
   );
 }
 
-function PeerButton({ viewer, row, availableNextstrainIds, onOpen }: {
+function PeerButton({
+  viewer,
+  row,
+  nextstrainInventory,
+  onOpen,
+}: {
   viewer: PhyloViewer;
   row: SegmentRow;
-  availableNextstrainIds: ReadonlySet<string>;
+  nextstrainInventory: NextstrainInventory;
   onOpen: (choice: ViralTreeChoice) => void;
 }) {
-  const choice = row.choices.find(candidate => candidate.viewer === viewer);
-  const dead = !choice || isUnavailable(choice, availableNextstrainIds);
+  const choice = row.choices.find((candidate) => candidate.viewer === viewer);
+  const inventoryUnavailable =
+    viewer === "nextstrain" && nextstrainInventory.status !== "ready";
+  const confirmedUnavailable =
+    !!choice &&
+    viewer === "nextstrain" &&
+    nextstrainInventory.status === "ready" &&
+    isUnavailable(choice, nextstrainInventory.ids);
 
-  if (dead) {
+  if (!choice || inventoryUnavailable || confirmedUnavailable) {
     return (
       <span
         className="grid h-7 flex-1 cursor-not-allowed place-items-center rounded-md border border-dashed border-border/60 text-[0.7rem] text-muted-foreground/45 lg:w-[7.5rem] lg:flex-initial"
         title={
-          choice
-            ? `${viewerLabel[viewer]} dataset is not available`
-            : `No ${viewerLabel[viewer]} tree for this segment`
+          !choice
+            ? `No ${viewerLabel[viewer]} tree for this segment`
+            : inventoryUnavailable
+              ? "Auspice dataset availability has not been confirmed"
+              : "Auspice dataset is not available"
         }
       >
-        Not Available
+        {inventoryUnavailable ? "Checking Availability" : "Not Available"}
       </span>
     );
   }
@@ -275,7 +414,9 @@ function PeerButton({ viewer, row, availableNextstrainIds, onOpen }: {
     <button
       type="button"
       data-choice-key={choiceKey(choice)}
-      onClick={() => { onOpen(choice); }}
+      onClick={() => {
+        onOpen(choice);
+      }}
       aria-label={`Open ${choice.ref.name} in ${viewerLabel[viewer]}`}
       className="h-7 flex-1 rounded-md border border-border bg-background text-xs font-medium transition-colors hover:border-[color-mix(in_oklch,var(--seg)_55%,transparent)] hover:bg-[color-mix(in_oklch,var(--seg)_14%,transparent)] focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none lg:w-[7.5rem] lg:flex-initial"
     >

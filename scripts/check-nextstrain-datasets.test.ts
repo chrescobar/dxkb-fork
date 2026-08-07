@@ -6,7 +6,6 @@ import {
   familyReferences,
   manifestTaxonIds,
   reconcileDatasets,
-  validateV2Dataset,
 } from "./check-nextstrain-datasets";
 
 const validDataset = '{"version":"v2","meta":{},"tree":{}}';
@@ -34,18 +33,28 @@ describe("Nextstrain dataset reconciliation", () => {
   });
 
   it("canonicalizes and aggregates duplicate family references", () => {
-    const first = familyReferences({
-      groups: [{
-        title: "First",
-        nextstrain: [{ path: "/Orthoebolavirus/100/" }],
-      }],
-    }, "11266");
-    const second = familyReferences({
-      groups: [{
-        title: "Second",
-        nextstrain: [{ path: "Orthoebolavirus/100" }],
-      }],
-    }, "3044781");
+    const first = familyReferences(
+      {
+        groups: [
+          {
+            title: "First",
+            nextstrain: [{ path: "/Orthoebolavirus/100/" }],
+          },
+        ],
+      },
+      "11266",
+    );
+    const second = familyReferences(
+      {
+        groups: [
+          {
+            title: "Second",
+            nextstrain: [{ path: "Orthoebolavirus/100" }],
+          },
+        ],
+      },
+      "3044781",
+    );
 
     expect(first.get("Orthoebolavirus/100")).toEqual([
       { taxonId: "11266", group: "First" },
@@ -58,15 +67,24 @@ describe("Nextstrain dataset reconciliation", () => {
   it.each([
     [{}, "invalid shape"],
     [{ groups: [{ title: "Bad", nextstrain: {} }] }, "invalid nextstrain"],
-    [{ groups: [{ title: "Bad", nextstrain: [{}] }] }, "invalid nextstrain record"],
-    [{ groups: [{ title: "Bad", nextstrain: [{ path: "//host/tree" }] }] }, "invalid advertised"],
+    [
+      { groups: [{ title: "Bad", nextstrain: [{}] }] },
+      "invalid nextstrain record",
+    ],
+    [
+      { groups: [{ title: "Bad", nextstrain: [{ path: "//host/tree" }] }] },
+      "invalid advertised",
+    ],
   ])("rejects malformed family data", (family, message) => {
     expect(() => familyReferences(family, "1")).toThrow(message);
   });
 
   it("reports missing and unadvertised IDs and consolidates duplicate diagnostics", async () => {
     await Promise.all([
-      writeFile(join(directory, "Influenza-A-Virus_H3N2_HA.json"), validDataset),
+      writeFile(
+        join(directory, "Influenza-A-Virus_H3N2_HA.json"),
+        validDataset,
+      ),
       writeFile(join(directory, "Local_Only.json"), validDataset),
     ]);
     const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
@@ -74,15 +92,18 @@ describe("Nextstrain dataset reconciliation", () => {
     const result = await reconcileDatasets({
       directory,
       manifest: { trees: { "1": true, "2": true } },
-      fetchFamily: taxonId => Promise.resolve({
-        groups: [{
-          title: `Group ${taxonId}`,
-          nextstrain: [
-            { path: "Influenza-A-Virus/H3N2/HA" },
-            { path: "/Orthoebolavirus/100/" },
+      fetchFamily: (taxonId) =>
+        Promise.resolve({
+          groups: [
+            {
+              title: `Group ${taxonId}`,
+              nextstrain: [
+                { path: "Influenza-A-Virus/H3N2/HA" },
+                { path: "/Orthoebolavirus/100/" },
+              ],
+            },
           ],
-        }],
-      }),
+        }),
     });
 
     expect(result).toEqual({
@@ -102,25 +123,40 @@ describe("Nextstrain dataset reconciliation", () => {
     ["wrong version", '{"version":"v1","meta":{},"tree":{}}'],
     ["missing meta", '{"version":"v2","tree":{}}'],
     ["missing tree", '{"version":"v2","meta":{}}'],
-  ])("rejects an advertised dataset with %s", async (_name, body) => {
-    await writeFile(join(directory, "Dataset_One.json"), body);
+  ])(
+    "reports an advertised dataset with %s as missing",
+    async (_name, body) => {
+      await writeFile(join(directory, "Dataset_One.json"), body);
 
-    await expect(reconcileDatasets({
-      directory,
-      manifest: { "1": true },
-      fetchFamily: () => Promise.resolve({
-        groups: [{ title: "Group", nextstrain: [{ path: "Dataset/One" }] }],
-      }),
-    })).rejects.toThrow();
-  });
+      await expect(
+        reconcileDatasets({
+          directory,
+          manifest: { "1": true },
+          fetchFamily: () =>
+            Promise.resolve({
+              groups: [
+                { title: "Group", nextstrain: [{ path: "Dataset/One" }] },
+              ],
+            }),
+        }),
+      ).resolves.toMatchObject({ available: 0, missing: ["Dataset/One"] });
+    },
+  );
 
-  it("rejects an escaping dataset symlink", async () => {
+  it("reports an escaping dataset symlink as missing", async () => {
     const outside = join(root, "outside.json");
     await writeFile(outside, validDataset);
     await symlink(outside, join(directory, "Dataset_One.json"));
 
-    await expect(validateV2Dataset(directory, "Dataset/One")).rejects.toThrow(
-      "escapes the configured store",
-    );
+    await expect(
+      reconcileDatasets({
+        directory,
+        manifest: { "1": true },
+        fetchFamily: () =>
+          Promise.resolve({
+            groups: [{ title: "Group", nextstrain: [{ path: "Dataset/One" }] }],
+          }),
+      }),
+    ).resolves.toMatchObject({ available: 0, missing: ["Dataset/One"] });
   });
 });

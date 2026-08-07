@@ -54,6 +54,8 @@ const DxkbNavBar = ({ sidebar }) => {
         rel="noopener noreferrer"
         aria-label="Auspice documentation"
       >
+        {/* This navbar is compiled by Auspice, where next/image is unavailable. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img alt="" width="40px" src={logo} />
       </LogoLink>
       <Spacer />

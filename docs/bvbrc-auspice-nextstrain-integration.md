@@ -41,15 +41,15 @@ only viral family taxa** — bacteria are gated out by absence, not by a rule.
 Both are literally titled "Phylogeny", both occupy tab slot 1. Which one you get
 depends on which manifest names your taxon.
 
-| | Bacterial tab (`phylogeny`) | Viral tab (`phylogenyVirus`) |
-|---|---|---|
-| Widget | `public/js/p3/widget/Phylogeny.js` | `public/js/p3/widget/PhylogenyVirus.js` |
-| Manifest | `…/api/content/bvbrc_phylogeny_tab/taxon_tree_dict.json` | `…/api/content/phyloxml_trees/manifest.json` |
-| Manifest shape | `{taxon_id: "<phyloxml filename>"}` | `{taxon_id: "<family name>"}` |
-| Entries | **499,508** taxon IDs → 2,900 distinct files | **154** taxon IDs |
-| Trees per taxon | exactly 1 | 1–17, grouped, with a faceted card picker |
-| Renderers | Archaeopteryx only | Archaeopteryx **and/or** Nextstrain |
-| Added to tab strip by | `changeToBacteriaContext()`, unconditionally | `_toggleTab(this.phylogenyVirus, shouldShow, 1)` |
+|                       | Bacterial tab (`phylogeny`)                              | Viral tab (`phylogenyVirus`)                     |
+| --------------------- | -------------------------------------------------------- | ------------------------------------------------ |
+| Widget                | `public/js/p3/widget/Phylogeny.js`                       | `public/js/p3/widget/PhylogenyVirus.js`          |
+| Manifest              | `…/api/content/bvbrc_phylogeny_tab/taxon_tree_dict.json` | `…/api/content/phyloxml_trees/manifest.json`     |
+| Manifest shape        | `{taxon_id: "<phyloxml filename>"}`                      | `{taxon_id: "<family name>"}`                    |
+| Entries               | **499,508** taxon IDs → 2,900 distinct files             | **154** taxon IDs                                |
+| Trees per taxon       | exactly 1                                                | 1–17, grouped, with a faceted card picker        |
+| Renderers             | Archaeopteryx only                                       | Archaeopteryx **and/or** Nextstrain              |
+| Added to tab strip by | `changeToBacteriaContext()`, unconditionally             | `_toggleTab(this.phylogenyVirus, shouldShow, 1)` |
 
 Wiring: `public/js/p3/widget/viewer/Taxonomy.js:21-22` (both manifest URLs live on
 the same class), `:120` (viral gate), `:73` (bacterial add), `Phylogeny.js:347`
@@ -93,14 +93,27 @@ If gated in, `Taxonomy.js:134` fetches
 ```json
 {
   "order": ["h3n2", "h5n1"],
-  "groups": [{
-    "key": "h3n2",
-    "title": "Influenza A (H3N2) Seasonal Outbreaks",
-    "archaeopteryx": [{ "name": "...", "path": "https://…/segment_4_clade.xml",
-                        "region": "global", "metadata": "https://…tar.gz" }],
-    "nextstrain":    [{ "name": "...", "path": "Influenza-A-Virus/H3N2/HA",
-                        "region": "global" }]
-  }]
+  "groups": [
+    {
+      "key": "h3n2",
+      "title": "Influenza A (H3N2) Seasonal Outbreaks",
+      "archaeopteryx": [
+        {
+          "name": "...",
+          "path": "https://…/segment_4_clade.xml",
+          "region": "global",
+          "metadata": "https://…tar.gz"
+        }
+      ],
+      "nextstrain": [
+        {
+          "name": "...",
+          "path": "Influenza-A-Virus/H3N2/HA",
+          "region": "global"
+        }
+      ]
+    }
+  ]
 }
 ```
 
@@ -115,13 +128,13 @@ Nextstrain paths are **Auspice dataset request strings**, resolved relatively
 
 `PhylogenyTreeCards.js:508-509` renders an "Archaeopteryx" section then a
 "Nextstrain" section per group card. The left **Viewer filter** panel only appears
-when *both* exist (`:366` — `arcTotal > 0 && nxtTotal > 0`), which is why H3N2 shows
+when _both_ exist (`:366` — `arcTotal > 0 && nxtTotal > 0`), which is why H3N2 shows
 the filter and Coronaviridae doesn't.
 
 Selection routes by section label — `PhylogenyVirus.js:141`:
 
 ```javascript
-var isNextstrain = payload.section === 'Nextstrain';
+var isNextstrain = payload.section === "Nextstrain";
 ```
 
 Nextstrain → an iframe at `/nextstrain-viewer/<path>` (`:180`), and the
@@ -153,22 +166,22 @@ reverse on listing is `split("_").join("/")` (`getAvailable.js:31`).
 
 ### 3.1 Manifest inventory (all 154 taxa fetched)
 
-| | Count |
-|---|---|
-| Manifest taxa | 154 |
-| Tree groups | 157 |
-| Archaeopteryx tree entries | **326** |
-| Nextstrain tree entries | **13** |
-| Distinct Nextstrain dataset paths | **11** |
-| Taxa offering *any* Nextstrain | **3** |
+|                                   | Count   |
+| --------------------------------- | ------- |
+| Manifest taxa                     | 154     |
+| Tree groups                       | 157     |
+| Archaeopteryx tree entries        | **326** |
+| Nextstrain tree entries           | **13**  |
+| Distinct Nextstrain dataset paths | **11**  |
+| Taxa offering _any_ Nextstrain    | **3**   |
 
 The complete list of taxa with a Nextstrain option:
 
-| Taxon | ID | Arch | Nextstrain |
-|---|---|---|---|
-| Influenza A virus | 2955291 | 17 | 9 (H3N2 only) |
-| Filoviridae | 11266 | 4 | 2 (Ebola Outbreak 2026 group) |
-| Orthoebolavirus | 3044781 | 2 | 2 |
+| Taxon             | ID      | Arch | Nextstrain                    |
+| ----------------- | ------- | ---- | ----------------------------- |
+| Influenza A virus | 2955291 | 17   | 9 (H3N2 only)                 |
+| Filoviridae       | 11266   | 4    | 2 (Ebola Outbreak 2026 group) |
+| Orthoebolavirus   | 3044781 | 2    | 2                             |
 
 The other **151 taxa are Archaeopteryx-only** — Coronaviridae, Poxviridae,
 Retroviridae, Paramyxoviridae, Hantaviridae, and 146 more.
@@ -253,7 +266,7 @@ wrong data with no error. Worth a guard if H5N1 cards land first.
 ### 5.2 Panels are effectively tree + map only
 
 Auspice enables the **entropy** panel only when `metadata.genome_annotations` exists
-*and* branches carry mutations (`recomputeReduxState.js:350-366`). Checked all 9
+_and_ branches carry mutations (`recomputeReduxState.js:350-366`). Checked all 9
 datasets: no `genome_annotations`, **0 branch mutation sets, 0 branch labels**. So no
 entropy panel, no genotype coloring, and no clade branch labels.
 
@@ -307,12 +320,12 @@ Split the question in three.
 Auspice needs **v2 JSON** (`{version, meta, tree}` with `node_attrs`/`branch_attrs`).
 The existing trees are **phyloXML** with `vipr:`-namespaced properties. Sampled:
 
-| Tree | Bytes | Property refs present |
-|---|---|---|
-| E. coli 561 (bacterial, GTDB) | 24 KB | `BVBRC:In-Group`, minimal |
-| Coronaviridae 100 (viral) | 176 KB | `vipr:Species/Subfamily/Strain/Host/Year/Collection_Date/Genus/Subgenus` |
-| H3N2 seg 4 (viral) | 838 KB | `vipr:Year/H3_clade/H3_shortclade/H3_legacyclade/Host/Host_Group/Region/Country` |
-| H5N1 seg 4 (viral) | **59 MB** | `vipr:Subtype/Strain/Species/Host/Host_Group/Subclade/Country/Region/…` |
+| Tree                          | Bytes     | Property refs present                                                            |
+| ----------------------------- | --------- | -------------------------------------------------------------------------------- |
+| E. coli 561 (bacterial, GTDB) | 24 KB     | `BVBRC:In-Group`, minimal                                                        |
+| Coronaviridae 100 (viral)     | 176 KB    | `vipr:Species/Subfamily/Strain/Host/Year/Collection_Date/Genus/Subgenus`         |
+| H3N2 seg 4 (viral)            | 838 KB    | `vipr:Year/H3_clade/H3_shortclade/H3_legacyclade/Host/Host_Group/Region/Country` |
+| H5N1 seg 4 (viral)            | **59 MB** | `vipr:Subtype/Strain/Species/Host/Host_Group/Subclade/Country/Region/…`          |
 
 These carry the traits Auspice wants (host, country, region, year, clade), so a
 phyloXML→v2 converter is very feasible. But:
@@ -345,7 +358,7 @@ straight conversion.
 ### 6.3 Bacteria — possible, but three blockers
 
 Nothing in the gate is kingdom-aware. `_taxonHasPhyloData` just asks whether a key
-exists. To light Nextstrain up for, say, *E. coli*:
+exists. To light Nextstrain up for, say, _E. coli_:
 
 1. **Manifest**: `561` would have to appear in `phyloxml_trees/manifest.json` with a
    family JSON exposing a `"nextstrain"` array. It currently doesn't — that manifest
@@ -388,23 +401,23 @@ means picking one of those two models deliberately.
 
 **Worth fixing regardless of new content:** a startup check that every `"nextstrain"`
 path in the manifest resolves to a file on disk. That single check catches the live
-Orthoebolavirus 404s (§3.4) *and* the `NEXTSTRAIN_DATASET_DIR`-unset failure (§4),
+Orthoebolavirus 404s (§3.4) _and_ the `NEXTSTRAIN_DATASET_DIR`-unset failure (§4),
 both of which currently fail silently and look identical to "no data".
 
 ---
 
 ## 8. File reference
 
-| Concern | File |
-|---|---|
-| Viral tab gate, both manifest URLs | `public/js/p3/widget/viewer/Taxonomy.js:21,22,119,120,134,530` |
-| Viral tab host, Arch↔Nextstrain routing, iframe | `public/js/p3/widget/PhylogenyVirus.js:141,159,180` |
-| Card grid, facets, Viewer filter | `public/js/p3/widget/PhylogenyTreeCards.js:366,508,580` |
-| Bacterial tab + its manifest | `public/js/p3/widget/Phylogeny.js:347,356` |
-| Charon API shim, `getAvailable` stub | `routes/auspice.js:12,19,39` |
-| SPA static serving, index rewrite | `app.js:287-318` |
-| Auspice build | `package.json:13`, `buildClient.sh:50-53` |
-| Datasets on disk | `lib/auspice-datasets/` |
-| Custom splash / navbar / theme | `public/js/auspice-custom/extend/` |
-| Related: general tab-visibility model | `docs/taxon-view-tab-visibility.md` |
-| Related: React port of these tabs | `docs/phylogeny-tab-react-port.md` |
+| Concern                                          | File                                                           |
+| ------------------------------------------------ | -------------------------------------------------------------- |
+| Viral tab gate, both manifest URLs               | `public/js/p3/widget/viewer/Taxonomy.js:21,22,119,120,134,530` |
+| Viral tab host, Arch↔Nextstrain routing, iframe  | `public/js/p3/widget/PhylogenyVirus.js:141,159,180`            |
+| Card grid, facets, Viewer filter                 | `public/js/p3/widget/PhylogenyTreeCards.js:366,508,580`        |
+| Bacterial tab + its manifest                     | `public/js/p3/widget/Phylogeny.js:347,356`                     |
+| Charon API shim, `getAvailable` stub             | `routes/auspice.js:12,19,39`                                   |
+| SPA static serving, index rewrite                | `app.js:287-318`                                               |
+| Auspice build                                    | `package.json:13`, `buildClient.sh:50-53`                      |
+| Datasets on disk                                 | `lib/auspice-datasets/`                                        |
+| Custom splash / navbar / theme                   | `public/js/auspice-custom/extend/`                             |
+| Related: general tab-visibility model            | `docs/taxon-view-tab-visibility.md`                            |
+| Related: current DXKB integration and operations | `docs/phylogeny-integration.md`                                |

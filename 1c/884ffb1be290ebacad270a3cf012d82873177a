@@ -1,0 +1,36 @@
+src/lib/phylogeny/__tests__/archaeopteryx.test.ts
+  s_9e601b7de529d5::t_8199fc6f5f7cf6 78
+pnpm-workspace.yaml
+  s_003baaa42cf8c4::t_6ca6c0a6fe03ec 6-9
+pnpm-lock.yaml
+  s_003baaa42cf8c4::t_8df314204632a1 10-13,16,143,13176,13180,16826
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "1c884ffb1be290ebacad270a3cf012d82873177a",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_003baaa42cf8c4": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_022add4cfffe70kCaXP794VP4x",
+        "model": "gpt56terra"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_9e601b7de529d5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0229a1bd4ffeublYrcbbhrcnCY",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

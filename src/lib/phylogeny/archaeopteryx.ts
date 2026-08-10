@@ -24,7 +24,7 @@ interface Forester {
   ): Set<string>;
 }
 
-interface ArchaeopteryxApi {
+export interface ArchaeopteryxApi {
   parsePhyloXML(xml: string): ArchaeopteryxNode;
   launch(
     selector: string,
@@ -35,6 +35,7 @@ interface ArchaeopteryxApi {
     nodeLabels?: Record<string, unknown>,
   ): void;
   getSelectedNodes(): ArchaeopteryxNode[];
+  setTheme(backgroundColor: string, labelColor: string): void;
   destroy(): void;
 }
 
@@ -49,6 +50,8 @@ interface ArchaeopteryxGlobals extends Window {
   $?: unknown;
   forester?: unknown;
   phyloXml?: unknown;
+  canvg?: unknown;
+  saveAs?: unknown;
 }
 
 let loader: Promise<ArchaeopteryxDependencies> | null = null;
@@ -63,19 +66,29 @@ export function loadArchaeopteryx(): Promise<ArchaeopteryxDependencies> {
 
 async function loadDependencies(): Promise<ArchaeopteryxDependencies> {
   const globals = window as ArchaeopteryxGlobals;
-  const [d3Module, jqueryModule, foresterModule, phyloXmlModule] =
-    await Promise.all([
-      import("d3"),
-      import("jquery"),
-      import("archaeopteryx/forester"),
-      import("phyloxml"),
-    ]);
+  const [
+    d3Module,
+    jqueryModule,
+    foresterModule,
+    phyloXmlModule,
+    canvgModule,
+    fileSaverModule,
+  ] = await Promise.all([
+    import("d3"),
+    import("jquery"),
+    import("archaeopteryx/forester"),
+    import("phyloxml"),
+    import("canvg"),
+    import("file-saver") as Promise<{ default: unknown }>,
+  ]);
 
   globals.d3 = d3Module.default ?? d3Module;
   globals.jQuery = jqueryModule.default ?? jqueryModule;
   globals.$ = globals.jQuery;
   globals.forester = foresterModule.forester;
   globals.phyloXml = phyloXmlModule.phyloXml;
+  globals.canvg = canvgModule.default;
+  globals.saveAs = fileSaverModule.default;
 
   await import("jquery-ui-dist/jquery-ui");
 

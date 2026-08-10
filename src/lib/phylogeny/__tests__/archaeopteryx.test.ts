@@ -10,10 +10,15 @@ describe("loadArchaeopteryx", () => {
 
   it("initializes the complete legacy runtime on one jQuery instance", async () => {
     const { archaeopteryx, forester } = await loadArchaeopteryx();
-    const jquery = (window as Window & { jQuery?: { widget?: unknown } })
-      .jQuery;
+    const globals = window as Window & {
+      jQuery?: { widget?: unknown };
+      canvg?: unknown;
+      saveAs?: unknown;
+    };
 
-    expect(jquery?.widget).toBeTypeOf("function");
+    expect(globals.jQuery?.widget).toBeTypeOf("function");
+    expect(globals.canvg).toBeTypeOf("function");
+    expect(globals.saveAs).toBeTypeOf("function");
     expect(typeof archaeopteryx.parsePhyloXML).toBe("function");
     expect(typeof archaeopteryx.launch).toBe("function");
     expect(typeof forester.collectPropertyRefs).toBe("function");

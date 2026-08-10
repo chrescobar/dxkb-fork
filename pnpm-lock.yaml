@@ -13,7 +13,7 @@ overrides:
   phyloxml@1.0.0>sax: 1.6.1
 
 patchedDependencies:
-  archaeopteryx@2.3.2: b98cc56c3d7008e0aec0265d99ad65c147493b01ef331284a31f88ddbb9bde15
+  archaeopteryx@2.3.2: c23cacc5694275e5f5fb1c2469842dbecd85246706072c96f1b0b966ba48fe0f
   molstar: a80c534bab8094a7ca7103c40d6638c0f7127db69d2ac212a1ce6a951f3bc3da
   phyloxml@1.0.0: 4eddfc18ff2113aad48c985883da338442f7a61c7435a1229a3e089a4682c47c
 
@@ -140,13 +140,16 @@ importers:
         version: 4.0.0(@types/react@19.2.17)(react@19.2.8)
       archaeopteryx:
         specifier: 2.3.2
-        version: 2.3.2(patch_hash=b98cc56c3d7008e0aec0265d99ad65c147493b01ef331284a31f88ddbb9bde15)
+        version: 2.3.2(patch_hash=c23cacc5694275e5f5fb1c2469842dbecd85246706072c96f1b0b966ba48fe0f)
       better-auth:
         specifier: ^1.6.25
         version: 1.6.25(next@16.2.12(@babel/core@7.29.7(supports-color@5.5.0))(@playwright/test@1.62.0)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(sass@1.102.0))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(vitest@4.1.10)
       boring-avatars:
         specifier: ^2.0.4
         version: 2.0.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      canvg:
+        specifier: 1.5.3
+        version: 1.5.3
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -171,6 +174,9 @@ importers:
       embla-carousel-react:
         specifier: ^8.6.0
         version: 8.6.0(react@19.2.8)
+      file-saver:
+        specifier: 2.0.5
+        version: 2.0.5
       framer-motion:
         specifier: ^12.42.2
         version: 12.42.2(@emotion/is-prop-valid@0.8.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -13173,7 +13179,7 @@ snapshots:
 
   aproba@1.2.0: {}
 
-  archaeopteryx@2.3.2(patch_hash=b98cc56c3d7008e0aec0265d99ad65c147493b01ef331284a31f88ddbb9bde15):
+  archaeopteryx@2.3.2(patch_hash=c23cacc5694275e5f5fb1c2469842dbecd85246706072c96f1b0b966ba48fe0f):
     dependencies:
       canvg: 1.5.3
       d3: 3.5.17

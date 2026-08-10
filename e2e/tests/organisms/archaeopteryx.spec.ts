@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+
 import { type Locator, type Page } from "@playwright/test";
 
 import { applyBackendMocks, expect, test } from "../../mocks/backends";
@@ -87,12 +89,30 @@ test.describe("Archaeopteryx phylogeny controls", () => {
     });
     await openPhylogeny(page);
 
-    const colors = await page.locator('[role="img"] svg').evaluate((svg) => {
+    const svg = page.locator('[role="img"] svg');
+    const defaultLabelColors = await svg
+      .locator("text")
+      .evaluateAll((labels) =>
+        labels
+          .filter((element) => element.textContent.trim() !== "")
+          .map((element) => getComputedStyle(element).fill),
+      );
+    await page.locator("#lcs_menu").selectOption("genome_name");
+    await page.locator("#nfcolors_menu").selectOption("host_common_name");
+
+    const colors = await svg.evaluate((svg) => {
       const background =
         svg.querySelector<SVGRectElement>('rect[width="100%"]');
-      const labels = Array.from(svg.querySelectorAll("text"))
+      const legendLabels = Array.from(
+        svg.querySelectorAll(
+          "text.legend, text.legendLabel, text.legendDescription",
+        ),
+      )
         .filter((element) => element.textContent.trim() !== "")
-        .map((element) => getComputedStyle(element).fill);
+        .map((element) => ({
+          text: element.textContent,
+          fill: getComputedStyle(element).fill,
+        }));
       const branch = svg.querySelector("path");
       const foregroundProbe = document.createElement("div");
       foregroundProbe.style.color = "var(--foreground)";
@@ -102,14 +122,59 @@ test.describe("Archaeopteryx phylogeny controls", () => {
       return {
         background: background ? getComputedStyle(background).fill : null,
         foreground,
-        labels,
+        legendLabels,
         branch: branch ? getComputedStyle(branch).stroke : null,
       };
     });
 
     expect(colors.background).not.toBe("rgb(255, 255, 255)");
-    expect(new Set(colors.labels)).toEqual(new Set([colors.foreground]));
+    expect(new Set(defaultLabelColors)).toEqual(new Set([colors.foreground]));
+    expect(colors.legendLabels).toEqual(
+      expect.arrayContaining(
+        ["Label Color", "genome_name", "Node Fill", "host_common_name"].map(
+          (text) => ({
+            text,
+            fill: colors.foreground,
+          }),
+        ),
+      ),
+    );
+    expect(colors.legendLabels.length).toBeGreaterThan(4);
+    expect(new Set(colors.legendLabels.map(({ fill }) => fill))).toEqual(
+      new Set([colors.foreground]),
+    );
     expect(colors.branch).toBe("rgb(115, 115, 115)");
+  });
+
+  test("updates theme colors without rebuilding the tree", async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem("theme", "dxkb-light");
+    });
+    await openPhylogeny(page);
+
+    const svg = page.locator('[role="img"] svg');
+    const initialBackground = await svg
+      .locator(".basebackground")
+      .evaluate((element) => getComputedStyle(element).fill);
+    await svg.evaluate((element) => {
+      element.dataset.themeIdentity = "preserve";
+    });
+
+    await page.evaluate(() => {
+      document.documentElement.dataset.theme = "dxkb-dark";
+    });
+
+    await expect(svg).toHaveAttribute("data-theme-identity", "preserve");
+    await expect
+      .poll(() =>
+        svg
+          .locator(".basebackground")
+          .evaluate((element) => getComputedStyle(element).fill),
+      )
+      .not.toBe(initialBackground);
+    await expect(
+      page.locator(".archaeopteryx-dxkb > .absolute.inset-0"),
+    ).toHaveCount(0);
   });
 
   test("renders readable, consistently sized controls without overflow", async ({
@@ -162,13 +227,28 @@ test.describe("Archaeopteryx phylogeny controls", () => {
     for (const handle of labelSizeHandles.slice(1)) {
       closeTo(handle.x, labelSizeHandles[0].x);
     }
-    await expect(page.locator("#exp_f_sel option")).toHaveText([
+    const downloadFormat = page.locator("#exp_f_sel");
+    await expect(downloadFormat.locator("option")).toHaveText([
       "PNG",
       "SVG",
       "phyloXML",
       "Newick",
       "Fasta",
     ]);
+    const downloadSpacing = await downloadFormat.evaluate((element) => {
+      const select = element as HTMLSelectElement;
+      return {
+        select: getComputedStyle(select).paddingLeft,
+        options: Array.from(
+          select.options,
+          (option) => getComputedStyle(option).paddingLeft,
+        ),
+      };
+    });
+    expect(downloadSpacing.select).not.toBe("0px");
+    expect(new Set(downloadSpacing.options)).toEqual(
+      new Set([downloadSpacing.select]),
+    );
 
     const search = await box(page.locator("#sf0"));
     const searchReset = await box(page.locator("#reset_s_a"));
@@ -221,6 +301,47 @@ test.describe("Archaeopteryx phylogeny controls", () => {
       scrollWidth: element.scrollWidth,
     }));
     expect(primaryDimensions.scrollWidth).toBe(primaryDimensions.clientWidth);
+  });
+
+  test("only highlights selected display data options", async ({ page }) => {
+    await openPhylogeny(page);
+
+    const displayData = page.locator("fieldset", {
+      has: page.getByText("Display Data", { exact: true }),
+    });
+    const selected = displayData.getByText("Node Name", { exact: true });
+    const option = displayData.getByText("Genome Name", { exact: true });
+    const checkbox = displayData.getByRole("checkbox", {
+      name: "Genome Name",
+    });
+
+    await option.click();
+    await expect(checkbox).toBeChecked();
+    await option.click();
+    await expect(checkbox).not.toBeChecked();
+
+    const [selectedBackground, optionBackground] = await Promise.all([
+      selected.evaluate((element) => getComputedStyle(element).backgroundColor),
+      option.evaluate((element) => getComputedStyle(element).backgroundColor),
+    ]);
+    expect(optionBackground).not.toBe(selectedBackground);
+  });
+
+  test("downloads the tree as a PNG", async ({ page }) => {
+    await openPhylogeny(page);
+
+    const downloadPromise = page.waitForEvent("download");
+    await page.getByRole("button", { name: "Download", exact: true }).click();
+    const download = await downloadPromise;
+    const path = await download.path();
+
+    expect(download.suggestedFilename()).toMatch(/\.png$/);
+    expect(path).not.toBeNull();
+    if (!path) throw new Error("Expected the PNG download to have a path");
+    const bytes = await readFile(path);
+    expect([...bytes.subarray(0, 8)]).toEqual([
+      137, 80, 78, 71, 13, 10, 26, 10,
+    ]);
   });
 
   test("keeps the canvas and visualization controls inside the tree viewport while resizing", async ({

@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useEffectEvent, useId, useRef, useState } from "react";
-import { useTheme } from "next-themes";
 
 import {
   loadArchaeopteryx,
+  type ArchaeopteryxApi,
   type ArchaeopteryxNode,
 } from "@/lib/phylogeny/archaeopteryx";
 
@@ -12,6 +12,23 @@ import { ArchaeopteryxLoading } from "./archaeopteryx-loading";
 
 // Mirrors the breakpoint in archaeopteryx-theme.css that stacks the controls.
 const stackedControlsQuery = "(max-width: 640px)";
+
+function getThemeColors(host: HTMLElement) {
+  const theme = getComputedStyle(document.documentElement);
+  const themeColor = (property: string) =>
+    theme.getPropertyValue(property).trim();
+  const colorProbe = document.createElement("div");
+  colorProbe.style.backgroundColor = `color-mix(in oklab, ${themeColor("--input")} 30%, ${themeColor("--card")})`;
+  colorProbe.style.color = themeColor("--foreground");
+  host.append(colorProbe);
+  const probeStyle = getComputedStyle(colorProbe);
+  const colors = {
+    backgroundColor: probeStyle.backgroundColor,
+    labelColor: probeStyle.color,
+  };
+  colorProbe.remove();
+  return colors;
+}
 
 interface ArchaeopteryxPhylogenyProps {
   xml: string;
@@ -27,8 +44,8 @@ export function ArchaeopteryxPhylogeny({
   onSelect,
 }: ArchaeopteryxPhylogenyProps) {
   const id = `archaeopteryx-${useId().replaceAll(":", "")}`;
-  const { resolvedTheme } = useTheme();
   const hostRef = useRef<HTMLDivElement>(null);
+  const rendererRef = useRef<ArchaeopteryxApi>(null);
   const [status, setStatus] = useState<string | null | undefined>(undefined);
   const handleSelect = useEffectEvent((node: ArchaeopteryxNode | null) => {
     onSelect?.(node);
@@ -56,6 +73,7 @@ export function ArchaeopteryxPhylogeny({
     const teardown = () => {
       if (tornDown) return;
       tornDown = true;
+      rendererRef.current = null;
       resizeObserver.disconnect();
       removeMediaQueryListener();
       if (resizeFrame !== null) cancelAnimationFrame(resizeFrame);
@@ -97,17 +115,7 @@ export function ArchaeopteryxPhylogeny({
           },
         ),
       );
-      const theme = getComputedStyle(document.documentElement);
-      const themeColor = (property: string) =>
-        theme.getPropertyValue(property).trim();
-      const colorProbe = document.createElement("div");
-      colorProbe.style.backgroundColor = `color-mix(in oklab, ${themeColor("--input")} 30%, ${themeColor("--card")})`;
-      colorProbe.style.color = themeColor("--foreground");
-      host.append(colorProbe);
-      const probeStyle = getComputedStyle(colorProbe);
-      const backgroundColor = probeStyle.backgroundColor;
-      const labelColor = probeStyle.color;
-      colorProbe.remove();
+      const { backgroundColor, labelColor } = getThemeColors(host);
       const labelFontSize = 10;
       const options: Record<string, unknown> = {
         backgroundColorDefault: backgroundColor,
@@ -147,6 +155,7 @@ export function ArchaeopteryxPhylogeny({
         zoomToFitUponWindowResize: true,
       };
       archaeopteryx.launch(`#${id}`, tree, options, settings, {}, nodeLabels);
+      rendererRef.current = archaeopteryx;
 
       const primaryControls = document.getElementById(`${id}-controls-primary`);
       const secondaryControls = document.getElementById(
@@ -164,7 +173,8 @@ export function ArchaeopteryxPhylogeny({
             primaryControls.offsetLeft + primaryControls.offsetWidth;
           settings.rootOffset = primaryRight + 14;
           options.visualizationsLegendXpos = primaryRight + 14;
-          options.visualizationsLegendXposOrig = options.visualizationsLegendXpos;
+          options.visualizationsLegendXposOrig =
+            options.visualizationsLegendXpos;
           host.style.width = `calc(100% - ${String(secondaryControls.offsetWidth + 12)}px)`;
         } else {
           settings.rootOffset = rootOffset;
@@ -214,25 +224,48 @@ export function ArchaeopteryxPhylogeny({
       cancelled = true;
       teardown();
     };
-  }, [id, resolvedTheme, selectable, xml]);
+  }, [id, selectable, xml]);
+
+  useEffect(() => {
+    let themeFrame: number | null = null;
+    const updateTheme = () => {
+      if (themeFrame !== null) cancelAnimationFrame(themeFrame);
+      themeFrame = requestAnimationFrame(() => {
+        const host = hostRef.current;
+        const renderer = rendererRef.current;
+        if (!host || !renderer) return;
+        const { backgroundColor, labelColor } = getThemeColors(host);
+        renderer.setTheme(backgroundColor, labelColor);
+      });
+    };
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+    return () => {
+      observer.disconnect();
+      if (themeFrame !== null) cancelAnimationFrame(themeFrame);
+    };
+  }, []);
 
   if (status) {
     return (
       <div className="grid h-full min-h-64 place-items-center p-6 text-center">
         <div>
-          <h2 className="font-semibold text-destructive">
+          <h2 className="text-destructive font-semibold">
             Phylogeny renderer unavailable
           </h2>
-          <p className="mt-1 text-sm text-muted-foreground">{status}</p>
+          <p className="text-muted-foreground mt-1 text-sm">{status}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="archaeopteryx-dxkb relative h-full min-h-0 overflow-auto bg-background">
+    <div className="archaeopteryx-dxkb bg-background relative h-full min-h-0 overflow-auto">
       {status === undefined && (
-        <div className="absolute inset-0 z-10 bg-background">
+        <div className="bg-background absolute inset-0 z-10">
           <ArchaeopteryxLoading />
         </div>
       )}

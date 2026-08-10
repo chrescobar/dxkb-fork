@@ -4,10 +4,6 @@ import { loadArchaeopteryx } from "@/lib/phylogeny/archaeopteryx";
 
 import { ArchaeopteryxPhylogeny } from "../archaeopteryx-phylogeny";
 
-vi.mock("next-themes", () => ({
-  useTheme: () => ({ resolvedTheme: "light" }),
-}));
-
 vi.mock("@/lib/phylogeny/archaeopteryx", () => ({
   loadArchaeopteryx: vi.fn(),
 }));
@@ -49,12 +45,16 @@ vi.stubGlobal("ResizeObserver", ResizeObserverStub);
 
 describe("ArchaeopteryxPhylogeny", () => {
   beforeEach(() => {
+    document.documentElement.dataset.theme = "dxkb-light";
     ResizeObserverStub.instances = [];
   });
 
   it("updates the tree layout when controls stack or unstack", async () => {
     const mediaQuery = new MediaQueryListStub();
-    vi.stubGlobal("matchMedia", vi.fn(() => mediaQuery));
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn(() => mediaQuery),
+    );
     const renderer = {
       destroy: vi.fn(),
       getSelectedNodes: vi.fn(() => []),
@@ -78,6 +78,7 @@ describe("ArchaeopteryxPhylogeny", () => {
         });
       }),
       parsePhyloXML: vi.fn(() => ({})),
+      setTheme: vi.fn(),
     };
     vi.mocked(loadArchaeopteryx).mockResolvedValue({
       archaeopteryx: renderer,
@@ -100,6 +101,38 @@ describe("ArchaeopteryxPhylogeny", () => {
     expect(host.style.width).toBe("calc(100% - 204px)");
   });
 
+  it("updates theme colors without rebuilding the renderer", async () => {
+    const mediaQuery = new MediaQueryListStub();
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn(() => mediaQuery),
+    );
+    const renderer = {
+      destroy: vi.fn(),
+      getSelectedNodes: vi.fn(() => []),
+      launch: vi.fn(),
+      parsePhyloXML: vi.fn(() => ({})),
+      setTheme: vi.fn(),
+    };
+    vi.mocked(loadArchaeopteryx).mockResolvedValue({
+      archaeopteryx: renderer,
+      forester: { collectPropertyRefs: vi.fn(() => new Set<string>()) },
+    });
+
+    render(<ArchaeopteryxPhylogeny xml="<phyloxml />" title="Test tree" />);
+    await waitFor(() => {
+      expect(renderer.launch).toHaveBeenCalledOnce();
+    });
+
+    document.documentElement.dataset.theme = "dxkb-dark";
+
+    await waitFor(() => {
+      expect(renderer.setTheme).toHaveBeenCalledOnce();
+    });
+    expect(renderer.launch).toHaveBeenCalledOnce();
+    expect(renderer.destroy).not.toHaveBeenCalled();
+  });
+
   it("tears down the renderer lifecycle when rendering fails", async () => {
     const renderer = {
       destroy: vi.fn(),
@@ -108,6 +141,7 @@ describe("ArchaeopteryxPhylogeny", () => {
         throw new Error("renderer failed to launch");
       }),
       parsePhyloXML: vi.fn(() => ({})),
+      setTheme: vi.fn(),
     };
     vi.mocked(loadArchaeopteryx).mockResolvedValue({
       archaeopteryx: renderer,
@@ -143,7 +177,9 @@ describe("ArchaeopteryxPhylogeny", () => {
       <ArchaeopteryxPhylogeny xml="<phyloxml />" title="Test tree" />,
     );
 
-    expect(await screen.findByText("renderer failed to load")).toBeInTheDocument();
+    expect(
+      await screen.findByText("renderer failed to load"),
+    ).toBeInTheDocument();
 
     unmount();
     await Promise.resolve();

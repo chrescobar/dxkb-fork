@@ -12,6 +12,13 @@
   fill: var(--foreground);
 }
 
+.archaeopteryx-dxkb
+  > [role="img"]
+  > svg
+  :is(text.legend, text.legendLabel, text.legendDescription) {
+  fill: var(--foreground);
+}
+
 .archaeopteryx-dxkb > [id$="-controls-primary"],
 .archaeopteryx-dxkb > [id$="-controls-secondary"] {
   z-index: 2;
@@ -86,11 +93,14 @@
 
 .archaeopteryx-dxkb .ui-button:hover,
 .archaeopteryx-dxkb .ui-state-hover,
-.archaeopteryx-dxkb .ui-state-focus,
 .archaeopteryx-dxkb .ui-state-active {
   border-color: var(--ring);
   background: var(--accent);
   color: var(--accent-foreground);
+}
+
+.archaeopteryx-dxkb .ui-state-focus {
+  border-color: var(--ring);
 }
 
 .archaeopteryx-dxkb .ui-button[disabled],
@@ -167,6 +177,13 @@
   text-align: center !important;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.archaeopteryx-dxkb
+  fieldset:has(#nn_cb)
+  .ui-checkboxradio-label:not(.ui-state-active) {
+  background: var(--background);
+  color: var(--foreground);
 }
 
 .archaeopteryx-dxkb fieldset:has(#zoomout_y) input[type="button"] {
@@ -312,6 +329,11 @@
 
 .archaeopteryx-dxkb #exp_f_sel {
   width: 50%;
+  padding-inline: 0.5rem 1.5rem;
+}
+
+.archaeopteryx-dxkb #exp_f_sel option {
+  padding-inline: 0.5rem;
 }
 
 .archaeopteryx-dxkb .ui-slider {

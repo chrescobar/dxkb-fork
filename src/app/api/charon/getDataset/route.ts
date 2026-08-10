@@ -43,15 +43,18 @@ export async function GET(request: NextRequest) {
 
   try {
     let body: string | null;
+    let remoteError: Error | null = null;
     try {
       body = await fetchRemoteDataset(datasetId, sidecar);
     } catch (error) {
-      body = await readDataset(datasetId, sidecar);
-      if (body === null) throw error;
+      body = null;
+      remoteError =
+        error instanceof Error ? error : new Error("remote dataset unavailable");
     }
     body ??= await readDataset(datasetId, sidecar);
 
     if (body === null) {
+      if (remoteError !== null) throw remoteError;
       return NextResponse.json({ error: "dataset not found" }, { status: 404 });
     }
 

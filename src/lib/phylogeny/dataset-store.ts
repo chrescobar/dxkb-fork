@@ -62,16 +62,23 @@ function remoteUrl(datasetId: string, sidecar?: Sidecar): URL {
   return url;
 }
 
+async function probeRemoteDataset(datasetId: string): Promise<boolean> {
+  const response = await fetch(remoteUrl(datasetId), {
+    method: "HEAD",
+    headers: remoteRequestHeaders,
+    redirect: "manual",
+    signal: AbortSignal.timeout(remoteFetchTimeoutMs),
+  });
+  if (response.status === 404) return false;
+  if (!response.ok)
+    throw new Error(`remote dataset probe: ${String(response.status)}`);
+  availableRemoteDatasetIds.add(datasetId);
+  return true;
+}
+
 export async function remoteDatasetExists(datasetId: string): Promise<boolean> {
   try {
-    const response = await fetch(remoteUrl(datasetId), {
-      method: "HEAD",
-      headers: remoteRequestHeaders,
-      redirect: "manual",
-      signal: AbortSignal.timeout(remoteFetchTimeoutMs),
-    });
-    if (response.ok) availableRemoteDatasetIds.add(datasetId);
-    return response.ok;
+    return await probeRemoteDataset(datasetId);
   } catch {
     return false;
   }
@@ -83,7 +90,7 @@ export async function fetchRemoteDataset(
 ): Promise<string | null> {
   if (
     !availableRemoteDatasetIds.has(datasetId) &&
-    !(await remoteDatasetExists(datasetId))
+    !(await probeRemoteDataset(datasetId))
   ) {
     return null;
   }

@@ -99,6 +99,7 @@ describe("GET /api/charon/getDataset", () => {
         "Orthoebolavirus/100",
         undefined,
       );
+      expect(readDataset).toHaveBeenCalledOnce();
       expect(readDataset).toHaveBeenCalledWith(
         "Orthoebolavirus/100",
         undefined,
@@ -123,17 +124,22 @@ describe("GET /api/charon/getDataset", () => {
     );
   });
 
-  it("returns a generic 500 when both dataset sources fail", async () => {
-    fetchRemoteDataset.mockRejectedValue(new Error("remote unavailable"));
-    readDataset.mockRejectedValue(new Error("/private/store unavailable"));
+  it.each(["missing", "unavailable"])(
+    "returns a generic 500 when the remote source is unavailable and the local store is %s",
+    async (state) => {
+      fetchRemoteDataset.mockRejectedValue(new Error("remote unavailable"));
+      if (state === "missing") readDataset.mockResolvedValue(null);
+      else readDataset.mockRejectedValue(new Error("/private/store unavailable"));
 
-    const response = await GET(
-      request("?prefix=nextstrain-viewer/Orthoebolavirus/100"),
-    );
+      const response = await GET(
+        request("?prefix=nextstrain-viewer/Orthoebolavirus/100"),
+      );
 
-    expect(response.status).toBe(500);
-    await expect(response.json()).resolves.toEqual({
-      error: "dataset sources unavailable",
-    });
-  });
+      expect(readDataset).toHaveBeenCalledOnce();
+      expect(response.status).toBe(500);
+      await expect(response.json()).resolves.toEqual({
+        error: "dataset sources unavailable",
+      });
+    },
+  );
 });

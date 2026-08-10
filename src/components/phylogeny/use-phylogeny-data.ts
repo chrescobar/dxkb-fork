@@ -29,6 +29,8 @@ export function useNextstrainInventory(datasetIds: string[]) {
   return useQuery({
     queryKey: ["phylogeny", "nextstrain-inventory", datasetIds],
     queryFn: () => fetchNextstrainInventory(datasetIds),
+    enabled: datasetIds.length > 0,
+    initialData: datasetIds.length === 0 ? new Set<string>() : undefined,
     staleTime: 60 * 60 * 1000,
   });
 }

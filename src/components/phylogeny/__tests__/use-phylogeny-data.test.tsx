@@ -5,6 +5,18 @@ import { createQueryClientWrapper } from "@/test-helpers/api-route-helpers";
 import { useNextstrainInventory } from "../use-phylogeny-data";
 
 describe("useNextstrainInventory", () => {
+  it("does not fetch without advertised dataset IDs", () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+
+    const { result } = renderHook(() => useNextstrainInventory([]), {
+      wrapper: createQueryClientWrapper(),
+    });
+
+    expect(result.current.fetchStatus).toBe("idle");
+    expect(result.current.data).toEqual(new Set());
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
   it("canonicalizes, deduplicates, and preserves case-sensitive IDs", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response(

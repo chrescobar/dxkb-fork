@@ -7,7 +7,9 @@ import { join } from "node:path";
 import { isWithinDirectory } from "../dataset-inventory";
 import {
   availableDatasetIds,
+  fetchRemoteDataset,
   readDataset,
+  remoteDatasetExists,
   resetDatasetInventoryForTests,
 } from "../dataset-store";
 
@@ -205,5 +207,32 @@ describe("Nextstrain dataset store", () => {
 
     await expect(availableDatasetIds()).resolves.toEqual(new Set());
     await expect(readDataset("Orthoebolavirus/100")).resolves.toBeNull();
+  });
+
+  it.each([
+    ["a rejected probe", new Error("remote unavailable")],
+    ["a 5xx probe", new Response(null, { status: 503 })],
+  ])("preserves %s for remote dataset fetching", async (_state, result) => {
+    vi.spyOn(globalThis, "fetch").mockImplementationOnce(() =>
+      result instanceof Error ? Promise.reject(result) : Promise.resolve(result),
+    );
+
+    await expect(fetchRemoteDataset("Orthoebolavirus/100")).rejects.toThrow();
+  });
+
+  it("lets availability checks fail closed when a remote probe fails", async () => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValueOnce(
+      new Error("remote unavailable"),
+    );
+
+    await expect(remoteDatasetExists("Orthoebolavirus/100")).resolves.toBe(false);
+  });
+
+  it("returns null when a remote probe confirms the dataset is missing", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      new Response(null, { status: 404 }),
+    );
+
+    await expect(fetchRemoteDataset("Orthoebolavirus/100")).resolves.toBeNull();
   });
 });

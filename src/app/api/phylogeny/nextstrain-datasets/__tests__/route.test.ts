@@ -55,6 +55,39 @@ describe("GET /api/phylogeny/nextstrain-datasets", () => {
     expect(remoteDatasetExists).toHaveBeenCalledTimes(2);
   });
 
+  it("dedupes and caps probes with bounded concurrency", async () => {
+    availableDatasetIds.mockResolvedValue(new Set());
+    let activeProbes = 0;
+    let maxActiveProbes = 0;
+    const pendingProbes: (() => void)[] = [];
+    remoteDatasetExists.mockImplementation(
+      () =>
+        new Promise<boolean>((resolve) => {
+          activeProbes += 1;
+          maxActiveProbes = Math.max(maxActiveProbes, activeProbes);
+          pendingProbes.push(() => {
+            activeProbes -= 1;
+            resolve(false);
+          });
+        }),
+    );
+
+    const repeated = Array.from({ length: 10 }, () => "Orthoebolavirus/100");
+    const distinct = Array.from({ length: 30 }, (_, i) => `Strain/${String(i)}`);
+    const response = GET(request([...repeated, ...distinct]));
+
+    while (pendingProbes.length > 0 || remoteDatasetExists.mock.calls.length < 20) {
+      pendingProbes.splice(0).forEach((resolve) => {
+        resolve();
+      });
+      await Promise.resolve();
+    }
+    await response;
+
+    expect(remoteDatasetExists).toHaveBeenCalledTimes(20);
+    expect(maxActiveProbes).toBe(5);
+  });
+
   it("fails closed when the store is unavailable", async () => {
     availableDatasetIds.mockRejectedValue(new Error("missing mount"));
 

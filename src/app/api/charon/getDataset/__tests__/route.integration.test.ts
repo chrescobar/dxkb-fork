@@ -5,6 +5,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { NextRequest } from "next/server";
 
+import { resetDatasetInventoryForTests } from "@/lib/phylogeny/dataset-store";
+
 import { GET } from "../route";
 
 const main = '{"version":"v2","meta":{"title":"H3N2"},"tree":{}}';
@@ -23,6 +25,7 @@ beforeEach(async () => {
   datasetDir = join(root, "datasets");
   await mkdir(datasetDir);
   process.env.NEXTSTRAIN_DATASET_DIR = datasetDir;
+  resetDatasetInventoryForTests();
   vi.spyOn(globalThis, "fetch").mockResolvedValue(
     new Response(null, { status: 404 }),
   );
@@ -30,6 +33,7 @@ beforeEach(async () => {
 
 afterEach(async () => {
   delete process.env.NEXTSTRAIN_DATASET_DIR;
+  resetDatasetInventoryForTests();
   vi.restoreAllMocks();
   await rm(root, { recursive: true, force: true });
 });
@@ -132,6 +136,10 @@ describe("GET /api/charon/getDataset with the real store", () => {
     );
 
     expect(response.status).toBe(404);
+    expect(fetch).toHaveBeenCalledWith(
+      expect.any(URL),
+      expect.objectContaining({ method: "HEAD" }),
+    );
   });
 
   it.each(["missing", "not-a-directory"])(

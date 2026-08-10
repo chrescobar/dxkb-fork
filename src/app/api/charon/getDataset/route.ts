@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 
 import {
+  fetchRemoteDataset,
   readDataset,
   sidecars,
   type Sidecar,
@@ -41,7 +42,15 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const body = await readDataset(datasetId, sidecar);
+    let body: string | null;
+    try {
+      body = await fetchRemoteDataset(datasetId, sidecar);
+    } catch (error) {
+      body = await readDataset(datasetId, sidecar);
+      if (body === null) throw error;
+    }
+    body ??= await readDataset(datasetId, sidecar);
+
     if (body === null) {
       return NextResponse.json({ error: "dataset not found" }, { status: 404 });
     }
@@ -54,11 +63,11 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error(
-      `charon/getDataset: store unavailable for '${datasetId}'`,
+      `charon/getDataset: dataset sources unavailable for '${datasetId}'`,
       error,
     );
     return NextResponse.json(
-      { error: "dataset store unavailable" },
+      { error: "dataset sources unavailable" },
       { status: 500 },
     );
   }

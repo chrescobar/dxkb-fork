@@ -11,7 +11,7 @@ import {
   resetDatasetInventoryForTests,
 } from "../dataset-store";
 
-const validDataset = "{\"version\":\"v2\",\"meta\":{},\"tree\":{}}";
+const validDataset = '{"version":"v2","meta":{},"tree":{}}';
 
 let root: string;
 let datasetDir: string;
@@ -33,7 +33,10 @@ afterEach(async () => {
 describe("Nextstrain dataset store", () => {
   it("lists only valid main datasets and deduplicates identifiers", async () => {
     await Promise.all([
-      writeFile(join(datasetDir, "Influenza-A-Virus_H3N2_HA.json"), validDataset),
+      writeFile(
+        join(datasetDir, "Influenza-A-Virus_H3N2_HA.json"),
+        validDataset,
+      ),
       writeFile(
         join(datasetDir, "Influenza-A-Virus_H3N2_HA_root-sequence.json"),
         "{}",
@@ -65,10 +68,14 @@ describe("Nextstrain dataset store", () => {
 
   it("caches successful inventory reads", async () => {
     await writeFile(join(datasetDir, "Orthoebolavirus_100.json"), validDataset);
-    expect(await availableDatasetIds()).toEqual(new Set(["Orthoebolavirus/100"]));
+    expect(await availableDatasetIds()).toEqual(
+      new Set(["Orthoebolavirus/100"]),
+    );
 
     await writeFile(join(datasetDir, "Orthoebolavirus_500.json"), validDataset);
-    expect(await availableDatasetIds()).toEqual(new Set(["Orthoebolavirus/100"]));
+    expect(await availableDatasetIds()).toEqual(
+      new Set(["Orthoebolavirus/100"]),
+    );
   });
 
   it("clears a failed inventory so a later read can recover", async () => {
@@ -88,17 +95,31 @@ describe("Nextstrain dataset store", () => {
   it("exposes only regular, in-store, parseable v2 datasets", async () => {
     const outside = join(root, "outside.json");
     await Promise.all([
-      writeFile(join(datasetDir, "Valid_2.0.json"), '{"version":"2.0","meta":{},"tree":{}}'),
+      writeFile(
+        join(datasetDir, "Valid_2.0.json"),
+        '{"version":"2.0","meta":{},"tree":{}}',
+      ),
       writeFile(join(datasetDir, "Malformed.json"), "{"),
-      writeFile(join(datasetDir, "Wrong_Version.json"), '{"version":"v1","meta":{},"tree":{}}'),
-      writeFile(join(datasetDir, "Missing_Tree.json"), '{"version":"v2","meta":{}}'),
+      writeFile(
+        join(datasetDir, "Wrong_Version.json"),
+        '{"version":"v1","meta":{},"tree":{}}',
+      ),
+      writeFile(
+        join(datasetDir, "Missing_Tree.json"),
+        '{"version":"v2","meta":{}}',
+      ),
       mkdir(join(datasetDir, "Directory.json")),
       writeFile(outside, validDataset),
     ]);
     await symlink(outside, join(datasetDir, "Escaping.json"));
-    await symlink(join(root, "missing.json"), join(datasetDir, "Dangling.json"));
+    await symlink(
+      join(root, "missing.json"),
+      join(datasetDir, "Dangling.json"),
+    );
 
-    await expect(availableDatasetIds()).resolves.toEqual(new Set(["Valid/2.0"]));
+    await expect(availableDatasetIds()).resolves.toEqual(
+      new Set(["Valid/2.0"]),
+    );
   });
 
   it("refreshes inventory after an explicit reset", async () => {
@@ -119,18 +140,23 @@ describe("Nextstrain dataset store", () => {
     await Promise.all([
       writeFile(join(datasetDir, "Influenza-A-Virus_H3N2_HA.json"), main),
       ...(["tip-frequencies", "root-sequence", "measurements"] as const).map(
-        sidecar => writeFile(
-          join(datasetDir, `Influenza-A-Virus_H3N2_HA_${sidecar}.json`),
-          JSON.stringify({ sidecar }),
-        ),
+        (sidecar) =>
+          writeFile(
+            join(datasetDir, `Influenza-A-Virus_H3N2_HA_${sidecar}.json`),
+            JSON.stringify({ sidecar }),
+          ),
       ),
     ]);
 
     await expect(readDataset("Influenza-A-Virus/H3N2/HA")).resolves.toBe(main);
-    for (const sidecar of ["tip-frequencies", "root-sequence", "measurements"] as const) {
-      await expect(readDataset("Influenza-A-Virus/H3N2/HA", sidecar)).resolves.toBe(
-        JSON.stringify({ sidecar }),
-      );
+    for (const sidecar of [
+      "tip-frequencies",
+      "root-sequence",
+      "measurements",
+    ] as const) {
+      await expect(
+        readDataset("Influenza-A-Virus/H3N2/HA", sidecar),
+      ).resolves.toBe(JSON.stringify({ sidecar }));
     }
     await expect(
       readDataset("Influenza-A-Virus/H3N2/NA", "measurements"),
@@ -140,7 +166,9 @@ describe("Nextstrain dataset store", () => {
   it("returns null for absent or invalid exact identifiers", async () => {
     await writeFile(join(datasetDir, "Influenza-A-Virus_H3N2_HA.json"), "H3N2");
 
-    await expect(readDataset("Influenza-A-Virus/H3N2/HA")).resolves.toBe("H3N2");
+    await expect(readDataset("Influenza-A-Virus/H3N2/HA")).resolves.toBe(
+      "H3N2",
+    );
     await expect(readDataset("Influenza-A-Virus/H5N1/HA")).resolves.toBeNull();
     await expect(readDataset("../outside")).resolves.toBeNull();
   });
@@ -172,12 +200,10 @@ describe("Nextstrain dataset store", () => {
     expect(isWithinDirectory("/store", "/outside/leak.json")).toBe(false);
   });
 
-  it("throws when the store is not configured", async () => {
+  it("treats an unconfigured local store as an empty optional fallback", async () => {
     delete process.env.NEXTSTRAIN_DATASET_DIR;
 
-    expect(() => availableDatasetIds()).toThrow("NEXTSTRAIN_DATASET_DIR");
-    await expect(readDataset("Orthoebolavirus/100")).rejects.toThrow(
-      "NEXTSTRAIN_DATASET_DIR",
-    );
+    await expect(availableDatasetIds()).resolves.toEqual(new Set());
+    await expect(readDataset("Orthoebolavirus/100")).resolves.toBeNull();
   });
 });

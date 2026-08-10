@@ -1,8 +1,12 @@
-const { readDataset } = vi.hoisted(() => ({ readDataset: vi.fn() }));
+const { fetchRemoteDataset, readDataset } = vi.hoisted(() => ({
+  fetchRemoteDataset: vi.fn(),
+  readDataset: vi.fn(),
+}));
 
 vi.mock("server-only", () => ({}));
-vi.mock("@/lib/phylogeny/dataset-store", async importOriginal => ({
+vi.mock("@/lib/phylogeny/dataset-store", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/phylogeny/dataset-store")>()),
+  fetchRemoteDataset,
   readDataset,
 }));
 
@@ -15,24 +19,31 @@ function request(query = "") {
 }
 
 describe("GET /api/charon/getDataset", () => {
+  beforeEach(() => {
+    fetchRemoteDataset.mockResolvedValue(null);
+  });
+
   it("requires a prefix", async () => {
     const response = await GET(request());
     expect(response.status).toBe(400);
-    await expect(response.json()).resolves.toEqual({ error: "prefix is required" });
+    await expect(response.json()).resolves.toEqual({
+      error: "prefix is required",
+    });
   });
 
-  it("returns an exact main dataset with cache headers", async () => {
+  it("returns an exact remote main dataset with cache headers", async () => {
     const body = '{"version":"v2","meta":{},"tree":{}}';
-    readDataset.mockResolvedValue(body);
+    fetchRemoteDataset.mockResolvedValue(body);
 
     const response = await GET(
       request("?prefix=nextstrain-viewer/Influenza-A-Virus/H3N2/HA&type=tree"),
     );
 
-    expect(readDataset).toHaveBeenCalledWith(
+    expect(fetchRemoteDataset).toHaveBeenCalledWith(
       "Influenza-A-Virus/H3N2/HA",
       undefined,
     );
+    expect(readDataset).not.toHaveBeenCalled();
     expect(response.status).toBe(200);
     expect(response.headers.get("content-type")).toContain("application/json");
     expect(response.headers.get("cache-control")).toBe(
@@ -41,8 +52,8 @@ describe("GET /api/charon/getDataset", () => {
     await expect(response.text()).resolves.toBe(body);
   });
 
-  it("passes supported sidecars to the store", async () => {
-    readDataset.mockResolvedValue("{}");
+  it("passes supported sidecars to the remote source", async () => {
+    fetchRemoteDataset.mockResolvedValue("{}");
 
     await GET(
       request(
@@ -50,16 +61,14 @@ describe("GET /api/charon/getDataset", () => {
       ),
     );
 
-    expect(readDataset).toHaveBeenCalledWith(
+    expect(fetchRemoteDataset).toHaveBeenCalledWith(
       "Influenza-A-Virus/H3N2/HA",
       "root-sequence",
     );
   });
 
   it("rejects unsupported sidecars and malicious identifiers", async () => {
-    expect(
-      (await GET(request("?prefix=tree&type=unknown"))).status,
-    ).toBe(400);
+    expect((await GET(request("?prefix=tree&type=unknown"))).status).toBe(400);
     expect(
       (await GET(request("?prefix=nextstrain-viewer/../secret"))).status,
     ).toBe(400);
@@ -72,6 +81,32 @@ describe("GET /api/charon/getDataset", () => {
     ).toBe(400);
     expect(readDataset).not.toHaveBeenCalled();
   });
+
+  it.each(["missing", "unavailable"])(
+    "falls back to the local store when the remote dataset is %s",
+    async (state) => {
+      const body = '{"version":"v2","meta":{},"tree":{}}';
+      if (state === "missing") fetchRemoteDataset.mockResolvedValue(null);
+      else
+        fetchRemoteDataset.mockRejectedValue(new Error("remote unavailable"));
+      readDataset.mockResolvedValue(body);
+
+      const response = await GET(
+        request("?prefix=nextstrain-viewer/Orthoebolavirus/100"),
+      );
+
+      expect(fetchRemoteDataset).toHaveBeenCalledWith(
+        "Orthoebolavirus/100",
+        undefined,
+      );
+      expect(readDataset).toHaveBeenCalledWith(
+        "Orthoebolavirus/100",
+        undefined,
+      );
+      expect(response.status).toBe(200);
+      await expect(response.text()).resolves.toBe(body);
+    },
+  );
 
   it("returns 404 without redirect for an exact miss", async () => {
     readDataset.mockResolvedValue(null);
@@ -88,7 +123,8 @@ describe("GET /api/charon/getDataset", () => {
     );
   });
 
-  it("returns a generic 500 when the store fails", async () => {
+  it("returns a generic 500 when both dataset sources fail", async () => {
+    fetchRemoteDataset.mockRejectedValue(new Error("remote unavailable"));
     readDataset.mockRejectedValue(new Error("/private/store unavailable"));
 
     const response = await GET(
@@ -97,7 +133,7 @@ describe("GET /api/charon/getDataset", () => {
 
     expect(response.status).toBe(500);
     await expect(response.json()).resolves.toEqual({
-      error: "dataset store unavailable",
+      error: "dataset sources unavailable",
     });
   });
 });

@@ -99,6 +99,11 @@ test.describe("Archaeopteryx phylogeny controls", () => {
       );
     await page.locator("#lcs_menu").selectOption("genome_name");
     await page.locator("#nfcolors_menu").selectOption("host_common_name");
+    await expect(
+      svg.locator("text.legendDescription").filter({
+        hasText: "host_common_name",
+      }),
+    ).toHaveText("host_common_name");
 
     const colors = await svg.evaluate((svg) => {
       const background =

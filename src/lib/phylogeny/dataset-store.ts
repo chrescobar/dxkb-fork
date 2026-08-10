@@ -13,12 +13,18 @@ import { datasetFilename, parseDatasetId } from "./nextstrain-dataset";
 
 export { sidecars, type Sidecar };
 
+const remoteDatasetUrl = "https://www.bv-brc.org/charon/getDataset";
+const remoteFetchTimeoutMs = 30_000;
+const remoteRequestHeaders = {
+  Accept: "application/json",
+  "User-Agent": "curl/8.7.1",
+};
+const availableRemoteDatasetIds = new Set<string>();
 let inventoryPromise: Promise<Set<string>> | null = null;
 
-function datasetDirectory(): string {
+function datasetDirectory(): string | null {
   const directory = process.env.NEXTSTRAIN_DATASET_DIR;
-  if (!directory) throw new Error("NEXTSTRAIN_DATASET_DIR is not set");
-  return resolve(directory);
+  return directory ? resolve(directory) : null;
 }
 
 function isMissingFile(error: unknown): boolean {
@@ -31,8 +37,10 @@ function isMissingFile(error: unknown): boolean {
 }
 
 export function availableDatasetIds(): Promise<Set<string>> {
+  const directory = datasetDirectory();
+  if (!directory) return Promise.resolve(new Set());
+
   if (!inventoryPromise) {
-    const directory = datasetDirectory();
     inventoryPromise = localDatasetIds(directory).catch((error: unknown) => {
       inventoryPromise = null;
       throw error;
@@ -44,6 +52,51 @@ export function availableDatasetIds(): Promise<Set<string>> {
 
 export function resetDatasetInventoryForTests(): void {
   inventoryPromise = null;
+  availableRemoteDatasetIds.clear();
+}
+
+function remoteUrl(datasetId: string, sidecar?: Sidecar): URL {
+  const url = new URL(remoteDatasetUrl);
+  url.searchParams.set("prefix", `nextstrain-viewer/${datasetId}`);
+  if (sidecar) url.searchParams.set("type", sidecar);
+  return url;
+}
+
+export async function remoteDatasetExists(datasetId: string): Promise<boolean> {
+  try {
+    const response = await fetch(remoteUrl(datasetId), {
+      method: "HEAD",
+      headers: remoteRequestHeaders,
+      redirect: "manual",
+      signal: AbortSignal.timeout(remoteFetchTimeoutMs),
+    });
+    if (response.ok) availableRemoteDatasetIds.add(datasetId);
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+export async function fetchRemoteDataset(
+  datasetId: string,
+  sidecar?: Sidecar,
+): Promise<string | null> {
+  if (
+    !availableRemoteDatasetIds.has(datasetId) &&
+    !(await remoteDatasetExists(datasetId))
+  ) {
+    return null;
+  }
+
+  const response = await fetch(remoteUrl(datasetId, sidecar), {
+    headers: remoteRequestHeaders,
+    redirect: "manual",
+    signal: AbortSignal.timeout(remoteFetchTimeoutMs),
+  });
+  if (response.status === 404) return null;
+  if (!response.ok)
+    throw new Error(`remote dataset fetch: ${String(response.status)}`);
+  return response.text();
 }
 
 export async function readDataset(
@@ -54,6 +107,8 @@ export async function readDataset(
   if (!parts) return null;
 
   const directory = datasetDirectory();
+  if (!directory) return null;
+
   const target = resolve(directory, datasetFilename(parts, sidecar));
   if (!isWithinDirectory(directory, target)) return null;
 

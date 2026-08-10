@@ -19,9 +19,16 @@ describe("useNextstrainInventory", () => {
       ),
     );
 
-    const { result } = renderHook(() => useNextstrainInventory(), {
-      wrapper: createQueryClientWrapper(),
-    });
+    const { result } = renderHook(
+      () =>
+        useNextstrainInventory([
+          "Influenza-A-Virus/H3N2/HA",
+          "Orthoebolavirus/100",
+        ]),
+      {
+        wrapper: createQueryClientWrapper(),
+      },
+    );
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
     });
@@ -29,9 +36,10 @@ describe("useNextstrainInventory", () => {
     expect(result.current.data).toEqual(
       new Set(["Influenza-A-Virus/H3N2/HA", "influenza-A-Virus/H3N2/HA"]),
     );
-    expect(fetch).toHaveBeenCalledWith("/api/phylogeny/nextstrain-datasets", {
-      headers: { Accept: "application/json" },
-    });
+    expect(fetch).toHaveBeenCalledWith(
+      "/api/phylogeny/nextstrain-datasets?id=Influenza-A-Virus%2FH3N2%2FHA&id=Orthoebolavirus%2F100",
+      { headers: { Accept: "application/json" } },
+    );
   });
 
   it.each([
@@ -47,9 +55,16 @@ describe("useNextstrainInventory", () => {
   ])("rejects %s", async (_name, response) => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(response);
 
-    const { result } = renderHook(() => useNextstrainInventory(), {
-      wrapper: createQueryClientWrapper(),
-    });
+    const { result } = renderHook(
+      () =>
+        useNextstrainInventory([
+          "Influenza-A-Virus/H3N2/HA",
+          "Orthoebolavirus/100",
+        ]),
+      {
+        wrapper: createQueryClientWrapper(),
+      },
+    );
     await waitFor(() => {
       expect(result.current.isError).toBe(true);
     });

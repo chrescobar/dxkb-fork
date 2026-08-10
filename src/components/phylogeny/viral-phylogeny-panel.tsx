@@ -26,7 +26,11 @@ export function ViralPhylogenyPanel({
   taxonName: string;
 }) {
   const family = useViralFamily(taxonId);
-  const inventory = useNextstrainInventory();
+  const advertisedDatasetIds =
+    family.data?.groups.flatMap((group) =>
+      (group.nextstrain ?? []).map((ref) => ref.path),
+    ) ?? [];
+  const inventory = useNextstrainInventory(advertisedDatasetIds);
   const [choice, setChoice] = useState<ViralTreeChoice | null>(null);
   const [lastChoiceKey, setLastChoiceKey] = useState<string>();
   const isNextstrain = choice?.viewer === "nextstrain";
@@ -52,7 +56,7 @@ export function ViralPhylogenyPanel({
     return (
       <div className="grid h-full place-items-center p-6 text-center">
         <div>
-          <Network className="mx-auto mb-4 size-10 text-muted-foreground" />
+          <Network className="text-muted-foreground mx-auto mb-4 size-10" />
           <h2 className="text-lg font-semibold">No published trees</h2>
         </div>
       </div>
@@ -80,7 +84,7 @@ export function ViralPhylogenyPanel({
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="flex items-center gap-3 border-b bg-background px-3 py-2">
+      <div className="bg-background flex items-center gap-3 border-b px-3 py-2">
         <Button
           size="sm"
           onClick={() => {
@@ -93,7 +97,7 @@ export function ViralPhylogenyPanel({
           <div className="truncate text-sm font-semibold">
             {choice.ref.name}
           </div>
-          <div className="truncate text-xs text-muted-foreground">
+          <div className="text-muted-foreground truncate text-xs">
             {taxonName} / {choice.groupTitle}
           </div>
         </div>

@@ -436,6 +436,37 @@ describe("ViralTreePicker", () => {
     }
   });
 
+  it("shows unavailable metadata without adding an interactive control", () => {
+    const { container } = render(
+      <ViralTreePicker
+        block={{
+          groups: [
+            {
+              key: "nextstrain",
+              title: "Nextstrain",
+              nextstrain: [
+                { name: "Orthoebolavirus 100", path: "Orthoebolavirus/100" },
+              ],
+            },
+          ],
+        }}
+        nextstrainInventory={{
+          status: "ready",
+          ids: new Set(["Orthoebolavirus/100"]),
+        }}
+        onOpen={vi.fn()}
+      />,
+    );
+
+    expect(container.querySelector(".lucide-circle-off")).toHaveAttribute(
+      "aria-hidden",
+      "true",
+    );
+    expect(
+      screen.queryByRole("button", { name: /download metadata/i }),
+    ).not.toBeInTheDocument();
+  });
+
   it("keeps metadata downloads independent from viewer activation", () => {
     const onOpen = vi.fn();
     render(

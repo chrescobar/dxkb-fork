@@ -141,8 +141,12 @@ export async function fetchViralFamilyBlock(
   return parseFamilyBlock(await response.json());
 }
 
-export async function fetchNextstrainInventory(): Promise<Set<string>> {
-  const response = await fetch("/api/phylogeny/nextstrain-datasets", {
+export async function fetchNextstrainInventory(
+  datasetIds: string[],
+): Promise<Set<string>> {
+  const params = new URLSearchParams();
+  for (const id of datasetIds) params.append("id", id);
+  const response = await fetch(`/api/phylogeny/nextstrain-datasets?${params}`, {
     headers: { Accept: "application/json" },
   });
   if (!response.ok)

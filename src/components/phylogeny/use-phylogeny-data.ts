@@ -25,10 +25,10 @@ export function useViralFamily(taxonId: number) {
   });
 }
 
-export function useNextstrainInventory() {
+export function useNextstrainInventory(datasetIds: string[]) {
   return useQuery({
-    queryKey: ["phylogeny", "nextstrain-inventory"],
-    queryFn: fetchNextstrainInventory,
+    queryKey: ["phylogeny", "nextstrain-inventory", datasetIds],
+    queryFn: () => fetchNextstrainInventory(datasetIds),
     staleTime: 60 * 60 * 1000,
   });
 }

@@ -7,7 +7,7 @@ import { NextRequest } from "next/server";
 
 import { GET } from "../route";
 
-const main = "{\"version\":\"v2\",\"meta\":{\"title\":\"H3N2\"},\"tree\":{}}";
+const main = '{"version":"v2","meta":{"title":"H3N2"},"tree":{}}';
 let root: string;
 let datasetDir: string;
 
@@ -23,33 +23,62 @@ beforeEach(async () => {
   datasetDir = join(root, "datasets");
   await mkdir(datasetDir);
   process.env.NEXTSTRAIN_DATASET_DIR = datasetDir;
+  vi.spyOn(globalThis, "fetch").mockResolvedValue(
+    new Response(null, { status: 404 }),
+  );
 });
 
 afterEach(async () => {
   delete process.env.NEXTSTRAIN_DATASET_DIR;
+  vi.restoreAllMocks();
   await rm(root, { recursive: true, force: true });
 });
 
 describe("GET /api/charon/getDataset with the real store", () => {
-  it.each([undefined, "tree"])("returns exact unmodified main content for type %j", async type => {
+  it.each([undefined, "tree"])(
+    "returns exact unmodified local fallback content for type %j",
+    async (type) => {
+      await writeFile(join(datasetDir, "Influenza-A-Virus_H3N2_HA.json"), main);
+
+      const response = await GET(
+        request("nextstrain-viewer/Influenza-A-Virus/H3N2/HA", type),
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.headers.get("location")).toBeNull();
+      expect(response.headers.get("content-type")).toContain(
+        "application/json",
+      );
+      expect(response.headers.get("cache-control")).toBe(
+        "public, max-age=300, stale-while-revalidate=3600",
+      );
+      await expect(response.text()).resolves.toBe(main);
+    },
+  );
+
+  it("prefers an exact remote dataset over the configured local fallback", async () => {
+    const remote = '{"version":"v2","meta":{"title":"Remote"},"tree":{}}';
     await writeFile(join(datasetDir, "Influenza-A-Virus_H3N2_HA.json"), main);
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(new Response(null, { status: 200 }))
+      .mockResolvedValueOnce(
+        new Response(remote, {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      );
 
     const response = await GET(
-      request("nextstrain-viewer/Influenza-A-Virus/H3N2/HA", type),
+      request("nextstrain-viewer/Influenza-A-Virus/H3N2/HA"),
     );
 
     expect(response.status).toBe(200);
-    expect(response.headers.get("location")).toBeNull();
-    expect(response.headers.get("content-type")).toContain("application/json");
-    expect(response.headers.get("cache-control")).toBe(
-      "public, max-age=300, stale-while-revalidate=3600",
-    );
-    await expect(response.text()).resolves.toBe(main);
+    await expect(response.text()).resolves.toBe(remote);
   });
 
   it.each(["tip-frequencies", "root-sequence", "measurements"])(
-    "returns an exact %s sidecar and 404 when absent",
-    async type => {
+    "returns an exact local fallback %s sidecar and 404 when absent",
+    async (type) => {
       const body = JSON.stringify({ type });
       await writeFile(
         join(datasetDir, `Influenza-A-Virus_H3N2_HA_${type}.json`),
@@ -95,11 +124,21 @@ describe("GET /api/charon/getDataset with the real store", () => {
     expect(await response.text()).not.toContain("secret");
   });
 
-  it.each(["unset", "missing", "not-a-directory"])(
-    "returns 500 when the store is %s",
-    async state => {
-      if (state === "unset") delete process.env.NEXTSTRAIN_DATASET_DIR;
-      if (state === "missing") process.env.NEXTSTRAIN_DATASET_DIR = join(root, "missing");
+  it("returns 404 when the remote dataset is absent and no local store is configured", async () => {
+    delete process.env.NEXTSTRAIN_DATASET_DIR;
+
+    const response = await GET(
+      request("nextstrain-viewer/Influenza-A-Virus/H3N2/HA"),
+    );
+
+    expect(response.status).toBe(404);
+  });
+
+  it.each(["missing", "not-a-directory"])(
+    "returns 500 when the configured local fallback is %s",
+    async (state) => {
+      if (state === "missing")
+        process.env.NEXTSTRAIN_DATASET_DIR = join(root, "missing");
       if (state === "not-a-directory") {
         const file = join(root, "file");
         await writeFile(file, "not a directory");
@@ -111,7 +150,7 @@ describe("GET /api/charon/getDataset with the real store", () => {
       );
       expect(response.status).toBe(500);
       await expect(response.json()).resolves.toEqual({
-        error: "dataset store unavailable",
+        error: "dataset sources unavailable",
       });
     },
   );

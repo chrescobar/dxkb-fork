@@ -1,0 +1,84 @@
+src/components/phylogeny/__tests__/archaeopteryx-phylogeny.test.tsx
+  s_76abf4f5352d25::t_9323e4cd1c03fd 123-125
+  s_76abf4f5352d25::t_927a533765d8b9 127
+  s_76abf4f5352d25::t_180d8c788eea2c 48
+  s_76abf4f5352d25::t_a243ba2467fb49 122
+  s_76abf4f5352d25::t_cf63b56d1b900d 129-131
+  s_76abf4f5352d25::t_ca7285e416c361 54-57,106-109,180-182
+  s_76abf4f5352d25::t_984361d58371d0 81,144
+  s_76abf4f5352d25::t_ee421ac8696dfe 104-105,110-121,126,128,132-135
+e2e/tests/organisms/archaeopteryx.spec.ts
+  s_76abf4f5352d25::t_fcda18c7d5e767 149-179
+  s_76abf4f5352d25::t_723c78bc32e2c7 100-101
+  s_76abf4f5352d25::t_a18fd7841f208f 132-133,140-141
+  s_76abf4f5352d25::t_ee62c26e4479b0 1-2,329-331,333-335
+  s_76abf4f5352d25::t_c1180a98a7aada 92,103
+  s_76abf4f5352d25::t_12123200d74c96 131
+  s_76abf4f5352d25::t_660f5b11b2d642 336-346
+  s_76abf4f5352d25::t_115518bfd3b656 230-231,248-251
+  s_76abf4f5352d25::t_067bb054d571bd 306-328,332
+  s_76abf4f5352d25::t_ec4a2e19aa0ca0 93-99
+  s_76abf4f5352d25::t_c9496a0530029a 142-145
+  s_76abf4f5352d25::t_cba307770e41e3 242-244
+  s_76abf4f5352d25::t_23d0b10a817c85 106,110,112-115
+  s_76abf4f5352d25::t_a646c8988d5661 107-109
+  s_76abf4f5352d25::t_d002731faa6fb0 125
+  s_76abf4f5352d25::t_c6fcbad8aa5a99 134
+  s_76abf4f5352d25::t_9082c9d36a9feb 136-139
+  s_76abf4f5352d25::t_af526c873c34ec 238-241,245-247
+  s_76abf4f5352d25::t_84ab0174aaf898 135
+  s_76abf4f5352d25::t_f11f351545f89f 102
+patches/archaeopteryx@2.3.2.patch
+  s_76abf4f5352d25::t_de32d9ba6d4fb3 199-213
+  s_76abf4f5352d25::t_1bfd91594cc76e 214
+  s_76abf4f5352d25::t_312e3586e4ef37 198
+src/lib/phylogeny/archaeopteryx.ts
+  s_76abf4f5352d25::t_b97bd8846e21dd 82
+  s_76abf4f5352d25::t_4af8ebd8d8cae1 27
+  s_76abf4f5352d25::t_c24b1964cac2c4 38
+  s_76abf4f5352d25::t_e66e620fa10b5f 53-54,69-81,83,90-91
+package.json
+  s_76abf4f5352d25::t_75fc5aa30da620 80,89
+src/lib/phylogeny/__tests__/archaeopteryx.test.ts
+  s_76abf4f5352d25::t_96a16a60e56ea6 13-21
+src/components/phylogeny/archaeopteryx-phylogeny.tsx
+  s_76abf4f5352d25::t_432496c7b27339 7
+  s_76abf4f5352d25::t_f1e55dd48cb13c 48
+  s_76abf4f5352d25::t_8410fea9fe8822 230-250
+  s_76abf4f5352d25::t_01166741405dd2 118
+  s_76abf4f5352d25::t_ca7285e416c361 176-177,256,259,266,268
+  s_76abf4f5352d25::t_2c966632231eea 158
+  s_76abf4f5352d25::t_6952ce3a1dd4b0 76
+  s_76abf4f5352d25::t_89badc4f0870cc 16-32
+  s_76abf4f5352d25::t_1af60a4b5703ab 227-229
+src/styles/archaeopteryx-theme.css
+  s_76abf4f5352d25::t_8ace72b7c59da8 104,332-336
+  s_76abf4f5352d25::t_135cf61c47a72e 182-188
+  s_76abf4f5352d25::t_92c55bbe1fa41b 18
+  s_76abf4f5352d25::t_d51cc759cb9f37 15-17,19-21
+  s_76abf4f5352d25::t_71b079806369e7 102-103
+  s_76abf4f5352d25::t_09daff0e8aeb3b 105
+pnpm-lock.yaml
+  s_76abf4f5352d25::t_d2e2492dba514b 16,143,150-152,177-179,13182
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "a3111a2e0199a192c26c752ab294940583b71094",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_76abf4f5352d25": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_013956b09ffeDBVUjiFfffmS0n",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

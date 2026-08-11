@@ -1,0 +1,216 @@
+src/components/organisms/taxon-views/interactions.tsx
+  s_fce34992fdc609::t_d2a27acd797e77 1-2,6,9-10,12-18
+  s_fce34992fdc609::t_6fb9fc2c7112db 4-5,8
+  s_fce34992fdc609::t_eb60577cec3246 3
+  s_fce34992fdc609::t_4b8c7690f87f79 7
+  s_fce34992fdc609::t_a691921e2572c1 11
+src/app/organisms/bacteria/_config.ts
+  s_fce34992fdc609::t_396de9d2e56798 8
+e2e/tests/organisms/all.spec.ts
+  s_fce34992fdc609::t_dea481fc31fdfe 14
+  s_169849e4d6f0ed::t_87f709862326f9 28-29,37-42
+  s_fce34992fdc609::t_c9323d5becaec2 21
+  s_fce34992fdc609::t_66dbf604ff8698 32-36
+src/components/organisms/taxon-views/__tests__/scope.test.ts
+  s_fce34992fdc609::t_d4b399f283ebe4 32-54
+  s_fce34992fdc609::t_8965eed573003a 3
+  s_fce34992fdc609::t_18466ed803a7da 1-2,4-31,55
+src/components/taxonomy/__tests__/taxonomy-tree-panel.test.tsx
+  s_fce34992fdc609::t_254d93c345718f 77-88
+  s_fce34992fdc609::t_15695de26167ab 20-51
+  s_fce34992fdc609::t_62d0653546d738 90,99
+  s_fce34992fdc609::t_179bb97134d4cd 7-10
+  s_fce34992fdc609::t_c59dcdd4e9fa72 67
+src/components/organisms/taxon-views/build-taxon-views.tsx
+  s_fce34992fdc609::t_7cca4ff9bac746 1-78
+src/components/organisms/taxon-views/sfvt.tsx
+  s_fce34992fdc609::t_9f644dcd177d7f 2
+  s_fce34992fdc609::t_d2a27acd797e77 1,3-54
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_fce34992fdc609::t_2a9b1efdea6d56 31
+  s_fce34992fdc609::t_077103b1d59b67 17
+  s_fce34992fdc609::t_997813e56fc716 32-40
+  s_fce34992fdc609::t_fb96e8bdcd940b 3-13
+  s_fce34992fdc609::t_0e1e1ec3aefeb2 44,54,62,72,80,90,104,114,124,134,144,154,168,179,189,197,207,218,282,293
+  s_fce34992fdc609::t_4d211d16b9cade 232-264,267-279
+  s_fce34992fdc609::t_dd6cf064df9b3a 280
+src/components/organisms/taxon-views/epitopes.tsx
+  s_fce34992fdc609::t_0422dc6588f390 9
+  s_fce34992fdc609::t_5357118536a63b 1-2,4
+  s_fce34992fdc609::t_d2a27acd797e77 3,5-8,10-15
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_fce34992fdc609::t_61d2ec2a82c7c3 75
+  s_fce34992fdc609::t_4776bc4e9204c6 72-74,76-78
+src/app/(views)/taxonomy/[taxonId]/__tests__/page.test.tsx
+  s_fce34992fdc609::t_d5284acd1f4364 58,67
+src/components/organisms/taxon-views/strains.tsx
+  s_fce34992fdc609::t_08d6126764d234 9
+  s_fce34992fdc609::t_5e8162c98b9171 1-2,4
+  s_fce34992fdc609::t_d2a27acd797e77 3,5-8,10-15
+e2e/tests/organisms/viruses.spec.ts
+  s_fce34992fdc609::t_e2d14de223a781 14
+  s_fce34992fdc609::t_71f24b3a87e65c 21
+  s_fce34992fdc609::t_3919e4c38323ba 29,32-36
+src/components/organisms/taxon-views/experiments.tsx
+  s_fce34992fdc609::t_d20df3c0375c32 18,25
+  s_fce34992fdc609::t_d2a27acd797e77 1,4,6,8-17,19-24,26-32
+  s_fce34992fdc609::t_257367e01d9dbe 2-3,5,7
+src/app/(views)/taxonomy/[taxonId]/page.tsx
+  s_fce34992fdc609::t_95ed31183e91b7 52-58
+  s_fce34992fdc609::t_8e01019ac6bb59 5
+src/app/organisms/viruses/__tests__/page.test.tsx
+  s_fce34992fdc609::t_4bbc570673c214 5-26,28-32,35-37,40-47
+src/components/taxonomy/taxonomy-tree.tsx
+  s_fce34992fdc609::t_64c17bf065ab3b 554-559
+  s_fce34992fdc609::t_cf232737b27c6e 111-113
+  s_fce34992fdc609::t_3b530c6c5e2c26 81,85,100-101
+  s_fce34992fdc609::t_84f4b287001186 148,153
+  s_fce34992fdc609::t_f8c866942709c7 362-364
+  s_fce34992fdc609::t_4b6e128a612cef 547
+  s_fce34992fdc609::t_5e47f7e6e71f13 88-99
+  s_fce34992fdc609::t_4e3437188c7bfc 347,349-351,353-355,360
+src/components/organisms/taxon-views/__tests__/taxon-data-panel.test.tsx
+  s_fce34992fdc609::t_63a3daac351365 1-173
+src/components/organisms/taxon-views/taxonomy-tree-view.tsx
+  s_fce34992fdc609::t_f6f5b862d0c0b3 2,4
+  s_fce34992fdc609::t_2a9d96b32af750 6
+  s_fce34992fdc609::t_d2a27acd797e77 1,3,5,7-9
+src/components/organisms/taxon-views/serology.tsx
+  s_fce34992fdc609::t_bfdffefee1b10b 1-2,4
+  s_fce34992fdc609::t_d2a27acd797e77 3,5-8,10-15
+  s_fce34992fdc609::t_d62a0820b63554 9
+src/components/organisms/taxon-views/genomes.tsx
+  s_fce34992fdc609::t_ac791516eb18f3 1-2,4
+  s_fce34992fdc609::t_d2a27acd797e77 3,5-8,10-15
+  s_fce34992fdc609::t_fda469e4da16c6 9
+src/lib/taxon-view/__tests__/landing-request.test.ts
+  s_fce34992fdc609::t_8122df33f70724 1-5,16-36,38-64
+  s_fce34992fdc609::t_86e12dd799b6e9 10-15
+  s_fce34992fdc609::t_1fc6fb7243a380 6-9
+  s_fce34992fdc609::t_847b859d084675 37
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_fce34992fdc609::t_3f2dde796f26c0 473-491
+src/app/organisms/viruses/page.tsx
+  s_fce34992fdc609::t_640adaea6e2bdd 1-2,4-6,9,21-33,38-39
+src/app/organisms/bacteria/page.tsx
+  s_fce34992fdc609::t_ef9739eb71d2e0 1-2,4-6,9,21-33,38-39
+src/app/organisms/all/__tests__/page.test.tsx
+  s_fce34992fdc609::t_e68e07142da621 5-32,34-35,37-38,44-45,47-52,54-56
+  s_fce34992fdc609::t_7c8bdfe2d40e45 39-43
+src/app/organisms/viruses/_config.ts
+  s_fce34992fdc609::t_38980c7d6fd32d 8
+src/components/organisms/taxon-views/sequences.tsx
+  s_fce34992fdc609::t_44196591a6a8b4 9
+  s_fce34992fdc609::t_c8b98b7e411968 1-2,4
+  s_fce34992fdc609::t_d2a27acd797e77 3,5-8,10-15
+src/components/organisms/taxon-views/overview.tsx
+  s_fce34992fdc609::t_d2a27acd797e77 1-75
+src/components/interactions/interactions-subview-shell.tsx
+  s_fce34992fdc609::t_d4916f613a8a88 6
+src/app/organisms/error.tsx
+  s_fce34992fdc609::t_670ad5c10ba045 1-28
+src/app/organisms/all/_config.ts
+  s_fce34992fdc609::t_a1c785094f1d94 8
+src/components/organisms/taxon-views/domains-and-motifs.tsx
+  s_fce34992fdc609::t_d2a27acd797e77 3,5-10,12-17
+  s_fce34992fdc609::t_c8d1a4db07fd4a 11
+  s_fce34992fdc609::t_ff5570dcd6a500 1-2,4
+src/components/organisms/taxon-views/protein-structures.tsx
+  s_fce34992fdc609::t_4b70a87b1a40cd 9
+  s_fce34992fdc609::t_d2a27acd797e77 3,5-8,10-15
+  s_fce34992fdc609::t_faff4f297d8a43 1-2,4
+src/lib/taxon-view/landing-request.ts
+  s_fce34992fdc609::t_cec795bda6c086 14
+  s_fce34992fdc609::t_1d70594d4c5bdd 1-13,15-21
+e2e/tests/organisms/bacteria.spec.ts
+  s_fce34992fdc609::t_c5abdcb6b067eb 84
+  s_fce34992fdc609::t_ddd83b36bfd318 78,81-82,88-90
+  s_fce34992fdc609::t_33daa4b08573ea 71
+  s_fce34992fdc609::t_86eb9ea0c13b2f 83,85-87
+  s_fce34992fdc609::t_52fe36926d9e57 65
+src/app/organisms/bacteria/__tests__/page.test.tsx
+  s_fce34992fdc609::t_cf55957346a8c4 5-8,10-25,27-29,31-36,38-41
+src/app/api/e2e-mock/[...path]/route.ts
+  s_fce34992fdc609::t_2f56b64ade650b 93-110
+  s_fce34992fdc609::t_121363cf60e25f 597-598
+src/components/taxonomy/taxonomy-tree-panel.tsx
+  s_fce34992fdc609::t_01e7c492cda4db 28
+  s_fce34992fdc609::t_1fbc9a7e420b67 68
+src/app/organisms/__tests__/layout.test.tsx
+  s_fce34992fdc609::t_ffca8506e30de6 1-23
+src/components/organisms/taxon-views/phylogeny.tsx
+  s_fce34992fdc609::t_d2a27acd797e77 1-45
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/phylogeny.test.tsx
+  s_fce34992fdc609::t_82e9fdac5b0183 5
+src/components/organisms/taxon-views/surveillance.tsx
+  s_fce34992fdc609::t_99d72f2075bf2b 1-2,4
+  s_fce34992fdc609::t_d2a27acd797e77 3,5-8,10-15
+  s_fce34992fdc609::t_31bf1f56c94dea 9
+src/components/interactions/__tests__/interactions-subview-shell.test.tsx
+  s_fce34992fdc609::t_f1fd16b8ca5dfe 52-53,58-59,64-70
+  s_fce34992fdc609::t_071b12dc03f22e 30-36
+  s_fce34992fdc609::t_5507bcd10982de 81-99
+  s_fce34992fdc609::t_807b6fc2ce8fa8 10,12-14,19-21
+src/components/taxonomy/__tests__/taxonomy-tree.test.tsx
+  s_fce34992fdc609::t_eec70b4b71e6ac 113-147
+  s_fce34992fdc609::t_0b6264f940243c 148-226
+  s_fce34992fdc609::t_bca3ba6e770190 104,233,253,269,295,348,398,440,477,504,563,597,637,673,699,736
+src/components/organisms/taxon-views/scope.ts
+  s_fce34992fdc609::t_0c7942a25568f1 1-11,13-16,18-22,28
+  s_fce34992fdc609::t_df4032797c9899 12,17,23-27
+src/components/organisms/taxon-views/features.tsx
+  s_fce34992fdc609::t_1dff44a49b5b83 1-2,4
+  s_fce34992fdc609::t_d2a27acd797e77 3,5-12,14-19
+  s_fce34992fdc609::t_cd5fec53f74656 13
+src/components/organisms/landing-shell/__tests__/landing-shell-client.test.tsx
+  s_fce34992fdc609::t_5cd52a67c51522 57-121
+  s_fce34992fdc609::t_7c7c0ffbe984c2 2
+src/components/organisms/taxon-views/index.ts
+  s_fce34992fdc609::t_b890b078087b7e 1-3
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/sfvt.test.ts
+  s_fce34992fdc609::t_9cc575ae3ef89f 3
+src/app/(views)/taxonomy/[taxonId]/__tests__/nav-items.test.tsx
+  s_fce34992fdc609::t_f4d1a668ee00ef 10-18
+  s_fce34992fdc609::t_8e00a5df6a7263 36
+  s_fce34992fdc609::t_1956561e8b355d 69-95
+  s_fce34992fdc609::t_f740074818c088 22,45,56
+  s_fce34992fdc609::t_34db6ef7113a3f 2
+  s_fce34992fdc609::t_5945a53062ad20 28
+src/app/organisms/__tests__/error.test.tsx
+  s_fce34992fdc609::t_c58f005251365c 1-46
+src/app/organisms/layout.tsx
+  s_fce34992fdc609::t_d79fa746e6f6d5 11
+src/components/organisms/taxon-views/taxon-data-panel.tsx
+  s_fce34992fdc609::t_d2a27acd797e77 1-86
+src/app/organisms/all/page.tsx
+  s_fce34992fdc609::t_3c862f793adb13 1-2,4-6,9,13-14,23-36,41-42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "033889f67e5449407fead14a0591314619d8342d",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_169849e4d6f0ed": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "perftest",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_fce34992fdc609": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_00ebf2a9bffen8wO08nEA31fgW",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

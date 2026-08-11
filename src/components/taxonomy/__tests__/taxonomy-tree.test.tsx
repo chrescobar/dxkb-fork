@@ -101,7 +101,7 @@ describe("TaxonomyTree", () => {
       ],
     });
 
-    render(<TaxonomyTree rootTaxon={rootTaxon} />, { wrapper: createQueryClientWrapper() });
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} />, { wrapper: createQueryClientWrapper() });
 
     expect(screen.getByRole("link", { name: "Brucella" })).toBeInTheDocument();
     await waitFor(() => {
@@ -110,13 +110,127 @@ describe("TaxonomyTree", () => {
     expect(screen.getByRole("link", { name: "Brucella melitensis" })).toBeInTheDocument();
   });
 
+  it("renders multiple roots and their children in one table", async () => {
+    const virusesRoot: OrganismTaxonomy = {
+      taxonId: 10239,
+      taxonName: "Viruses",
+      lineageNames: ["Viruses"],
+      lineageIds: [10239],
+      taxonRank: "superkingdom",
+      genomes: 890123,
+    };
+    mockChildren({
+      234: [child(235, "Brucella abortus", "species", 581)],
+      10239: [
+        {
+          taxon_id: 11308,
+          taxon_name: "Orthomyxoviridae",
+          taxon_rank: "family",
+          parent_id: 10239,
+          genomes: 245000,
+        },
+      ],
+    });
+
+    render(<TaxonomyTree rootTaxa={[rootTaxon, virusesRoot]} />, {
+      wrapper: createQueryClientWrapper(),
+    });
+
+    expect(screen.getByRole("link", { name: "Brucella" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Viruses" })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole("link", { name: "Brucella abortus" })).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: "Orthomyxoviridae" })).toBeInTheDocument();
+    });
+    expect(screen.getAllByRole("table")).toHaveLength(1);
+  });
+
+  it("keeps a successful root usable when another root fails", async () => {
+    const virusesRoot: OrganismTaxonomy = {
+      taxonId: 10239,
+      taxonName: "Viruses",
+      lineageNames: ["Viruses"],
+      lineageIds: [10239],
+      taxonRank: "superkingdom",
+      genomes: 890123,
+    };
+    server.use(
+      http.get(`${dataApi}/taxonomy/`, ({ request }) => {
+        const query = new URL(request.url).search;
+        if (query.includes("facet")) {
+          return HttpResponse.json([], {
+            headers: {
+              facet_counts: JSON.stringify({ facet_fields: { parent_id: [] } }),
+            },
+          });
+        }
+        if (query.includes("eq(parent_id,10239)")) {
+          return HttpResponse.json({ message: "viral branch unavailable" }, { status: 500 });
+        }
+        return HttpResponse.json([child(235, "Brucella abortus", "species", 581)], {
+          headers: { "Content-Range": "items 0-1/1" },
+        });
+      }),
+    );
+
+    render(<TaxonomyTree rootTaxa={[rootTaxon, virusesRoot]} />, {
+      wrapper: createQueryClientWrapper(),
+    });
+
+    expect(await screen.findByRole("link", { name: "Brucella abortus" })).toBeInTheDocument();
+    expect(await screen.findByText(/error:.*500/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Brucella" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Viruses" })).toBeInTheDocument();
+    expect(screen.getAllByRole("table")).toHaveLength(1);
+  });
+
+  it("resets stale roots, selection, and filtering when the root set changes", async () => {
+    const replacement: OrganismTaxonomy = {
+      taxonId: 10239,
+      taxonName: "Viruses",
+      lineageNames: ["Viruses"],
+      lineageIds: [10239],
+      taxonRank: "superkingdom",
+      genomes: 890123,
+    };
+    mockChildren({
+      234: [child(235, "Brucella abortus", "species", 581)],
+      10239: [
+        {
+          taxon_id: 11308,
+          taxon_name: "Orthomyxoviridae",
+          taxon_rank: "family",
+          parent_id: 10239,
+          genomes: 245000,
+        },
+      ],
+    });
+    const onSelect = vi.fn();
+    const { rerender } = render(<TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />, {
+      wrapper: createQueryClientWrapper(),
+    });
+
+    const childLink = await screen.findByRole("link", { name: "Brucella abortus" });
+    fireEvent.click(childLink.closest("tr") as HTMLElement);
+    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "Brucella" } });
+
+    rerender(<TaxonomyTree rootTaxa={[replacement]} onSelect={onSelect} />);
+
+    expect(await screen.findByRole("link", { name: "Orthomyxoviridae" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Brucella" })).not.toBeInTheDocument();
+    expect(screen.getByRole("searchbox")).toHaveValue("");
+    await waitFor(() => {
+      expect(onSelect).toHaveBeenLastCalledWith([]);
+    });
+  });
+
   it("lazily loads a species' strains when its toggle is clicked", async () => {
     mockChildren({
       234: [child(235, "Brucella abortus", "species", 581)],
       235: [child(999, "Brucella abortus 544", "strain", 2)],
     });
 
-    render(<TaxonomyTree rootTaxon={rootTaxon} />, { wrapper: createQueryClientWrapper() });
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} />, { wrapper: createQueryClientWrapper() });
 
     const speciesLink = await screen.findByRole("link", { name: "Brucella abortus" });
     const speciesRow = speciesLink.closest("tr");
@@ -136,7 +250,7 @@ describe("TaxonomyTree", () => {
       235: [child(999, "Brucella abortus 544", "strain", 2)],
     });
 
-    render(<TaxonomyTree rootTaxon={rootTaxon} />, { wrapper: createQueryClientWrapper() });
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} />, { wrapper: createQueryClientWrapper() });
 
     const speciesLink = await screen.findByRole("link", { name: "Brucella abortus" });
     fireEvent.click(
@@ -152,7 +266,7 @@ describe("TaxonomyTree", () => {
     mockChildren({ 234: [child(235, "Brucella abortus", "species", 581)] });
     const onSelect = vi.fn();
 
-    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />, {
       wrapper: createQueryClientWrapper(),
     });
 
@@ -178,7 +292,7 @@ describe("TaxonomyTree", () => {
     });
     const onSelect = vi.fn();
 
-    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />, {
       wrapper: createQueryClientWrapper(),
     });
 
@@ -231,7 +345,7 @@ describe("TaxonomyTree", () => {
     });
     const onSelect = vi.fn();
 
-    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />, {
       wrapper: createQueryClientWrapper(),
     });
 
@@ -281,7 +395,7 @@ describe("TaxonomyTree", () => {
     });
     const onSelect = vi.fn();
 
-    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />, {
       wrapper: createQueryClientWrapper(),
     });
 
@@ -323,7 +437,7 @@ describe("TaxonomyTree", () => {
     });
     const onSelect = vi.fn();
 
-    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />, {
       wrapper: createQueryClientWrapper(),
     });
 
@@ -360,7 +474,7 @@ describe("TaxonomyTree", () => {
     });
     const onSelect = vi.fn();
 
-    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />, {
       wrapper: createQueryClientWrapper(),
     });
 
@@ -387,7 +501,7 @@ describe("TaxonomyTree", () => {
     });
     const onSelect = vi.fn();
 
-    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />, {
       wrapper: createQueryClientWrapper(),
     });
 
@@ -446,7 +560,7 @@ describe("TaxonomyTree", () => {
     });
     const onSelect = vi.fn();
 
-    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />, {
       wrapper: createQueryClientWrapper(),
     });
 
@@ -480,7 +594,7 @@ describe("TaxonomyTree", () => {
     });
     const onSelect = vi.fn();
 
-    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />, {
       wrapper: createQueryClientWrapper(),
     });
 
@@ -520,7 +634,7 @@ describe("TaxonomyTree", () => {
     });
     const onSelect = vi.fn();
 
-    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />, {
       wrapper: createQueryClientWrapper(),
     });
 
@@ -556,7 +670,7 @@ describe("TaxonomyTree", () => {
     });
     const onSelect = vi.fn();
 
-    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />, {
       wrapper: createQueryClientWrapper(),
     });
 
@@ -582,7 +696,7 @@ describe("TaxonomyTree", () => {
     });
     const onSelect = vi.fn();
 
-    render(<TaxonomyTree rootTaxon={rootTaxon} onSelect={onSelect} />, {
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />, {
       wrapper: createQueryClientWrapper(),
     });
 
@@ -619,7 +733,7 @@ describe("TaxonomyTree", () => {
       ],
     });
 
-    render(<TaxonomyTree rootTaxon={rootTaxon} />, { wrapper: createQueryClientWrapper() });
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} />, { wrapper: createQueryClientWrapper() });
 
     await screen.findByRole("link", { name: "Brucella abortus" });
 

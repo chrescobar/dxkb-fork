@@ -5,5 +5,6 @@ export const bacteriaLandingConfig: OrganismLandingConfig = {
   taxonId: 2,
   accent: "bacteria",
   defaultView: "overview",
+  hideDisabledTabs: true,
   metadataFields: ["genus", "host_name", "isolation_country"],
 };

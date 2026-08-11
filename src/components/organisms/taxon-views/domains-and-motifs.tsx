@@ -1,15 +1,14 @@
-import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
-import { TaxonDataPanel } from "../_components/taxon-data-panel";
+import { taxonLineageClause, type TaxonViewScope } from "./scope";
+import { TaxonDataPanel } from "./taxon-data-panel";
 
-export function makeDomainsAndMotifsView({ taxon }: { taxon: OrganismTaxonomy | null }) {
+export function makeDomainsAndMotifsView({ scope }: { scope: TaxonViewScope }) {
   function DomainsAndMotifsView() {
-    if (!taxon) return null;
     // protein_feature has no taxon_lineage_ids field, so this cross-core joins
     // to genome. Legacy proteinFeatures does not exclude Deprecated genomes.
     return (
       <TaxonDataPanel
         resource="protein_feature"
-        q={`and(eq(genome_id,*),genome(eq(taxon_lineage_ids,${String(taxon.taxonId)})))`}
+        q={`and(eq(genome_id,*),genome(${taxonLineageClause(scope)}))`}
         guideUrl="https://www.bv-brc.org/docs/quick_references/organisms_taxon/domains_and_motifs.html"
       />
     );

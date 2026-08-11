@@ -1,6 +1,6 @@
 import { getCuratedLists } from "@/lib/taxon-view/curated-lists";
 
-import { resolveSfvtTaxonId, sfvtTaxonIdRemap } from "../sfvt";
+import { resolveSfvtTaxonId, sfvtTaxonIdRemap } from "@/components/organisms/taxon-views/sfvt";
 
 // SFVT scopes the sequence_feature core via eq(taxon_id,…). The page taxon
 // resolves to the curated species id where features are stored. Taxa in

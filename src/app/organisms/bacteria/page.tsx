@@ -1,8 +1,12 @@
-import { OrganismLandingShell } from "@/components/organisms/landing-shell/landing-shell";
-import { firstSearchParam } from "@/lib/views/search-params";
+import { redirect } from "next/navigation";
 
-import { bacteriaNavItems } from "./_components/nav-items";
+import { OrganismLandingShell } from "@/components/organisms/landing-shell/landing-shell";
+import { buildTaxonViews } from "@/components/organisms/taxon-views";
+import { fetchOrganismTaxonomy } from "@/lib/services/organisms/taxonomy";
+import { resolveLandingTab } from "@/lib/taxon-view/landing-request";
+
 import { bacteriaLandingConfig } from "./_config";
+import { OverviewView } from "./views/overview";
 
 export const dynamic = "force-dynamic";
 
@@ -14,15 +18,25 @@ interface BacteriaPageProps {
 }
 
 export default async function BacteriaPage({ searchParams }: BacteriaPageProps) {
-  const resolvedParams = await searchParams;
-  const activeViewKey =
-    firstSearchParam(resolvedParams, "tab") ?? firstSearchParam(resolvedParams, "view");
+  const [resolvedParams, taxon] = await Promise.all([
+    searchParams,
+    fetchOrganismTaxonomy(bacteriaLandingConfig.taxonId),
+  ]);
+  const views = buildTaxonViews({
+    config: bacteriaLandingConfig,
+    scope: { kind: "lineage", taxon },
+    taxon,
+    OverviewComponent: OverviewView,
+    surface: "landing",
+  });
+  const request = resolveLandingTab(resolvedParams, views);
+  if (request.redirectToOverview) redirect("/organisms/bacteria");
 
   return (
     <OrganismLandingShell
       config={bacteriaLandingConfig}
-      views={bacteriaNavItems}
-      activeViewKey={activeViewKey}
+      views={views}
+      activeViewKey={request.activeViewKey}
     />
   );
 }

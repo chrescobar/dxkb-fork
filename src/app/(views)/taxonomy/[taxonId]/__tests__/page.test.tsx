@@ -55,7 +55,7 @@ vi.mock("@/components/organisms/metadata-distributions/metadata-distributions", 
 // GenomeShell (react-resizable-panels needs ResizeObserver, absent in jsdom). Its
 // behavior is covered by taxonomy-tree.test.tsx; here we only assert the page wires
 // it under tab=taxa-tree, so stub the factory to a plain marker.
-vi.mock("../views/taxonomy-tree-view", () => ({
+vi.mock("@/components/organisms/taxon-views/taxonomy-tree-view", () => ({
   makeTaxonomyTreeView: () => function TaxonomyTreeView() {
     return <div data-testid="taxonomy-tree" />;
   },
@@ -64,7 +64,7 @@ vi.mock("../views/taxonomy-tree-view", () => ({
 // The sequences view renders ListData (useQueryClient, useQuery, react-resizable-panels)
 // and is covered by view-factories.test.tsx. Stub the factory here so this page-level
 // test stays focused on routing/wiring, not TanStack Query provider setup.
-vi.mock("../views/sequences", () => ({
+vi.mock("@/components/organisms/taxon-views/sequences", () => ({
   makeSequencesView: () => function SequencesView() {
     return <div data-testid="sequences-view" />;
   },

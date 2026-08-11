@@ -2,60 +2,48 @@ import { render, screen } from "@testing-library/react";
 
 import VirusesPage from "../page";
 
+const { fetchTaxonomy } = vi.hoisted(() => ({ fetchTaxonomy: vi.fn() }));
+
+vi.mock("@/lib/services/organisms/taxonomy", () => ({
+  fetchOrganismTaxonomy: (taxonId: number) => fetchTaxonomy(taxonId) as unknown,
+}));
+vi.mock("next/navigation", () => ({
+  redirect: vi.fn((path: string) => { throw new Error(`REDIRECT:${path}`); }),
+  useRouter: () => ({ push: vi.fn() }),
+  usePathname: () => "/organisms/viruses",
+  useSearchParams: () => new URLSearchParams(),
+}));
+vi.mock("@/components/organisms/taxon-views", () => ({
+  buildTaxonViews: ({ OverviewComponent }: { OverviewComponent: React.ComponentType }) => [
+    { key: "overview", label: "Overview", icon: null, Component: OverviewComponent },
+    { key: "features", label: "Features", icon: null, Component: () => <div>Real features</div>, layout: "fill" },
+    { key: "taxa-tree", label: "Taxa Tree", icon: null, Component: () => <div>Real tree</div>, layout: "fill" },
+  ],
+}));
+
+beforeEach(() => {
+  fetchTaxonomy.mockResolvedValue({ taxonId: 10239, taxonName: "Viruses" });
+});
+
 describe("VirusesPage", () => {
-  it("renders the selected stub view through the shared shell", async () => {
-    const node = await VirusesPage({
-      searchParams: Promise.resolve({ tab: "taxa-tree" }),
-    });
-
-    render(node);
-
-    expect(
-      screen.getByRole("heading", { level: 1, name: "Viruses" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/This view is coming soon/),
-    ).toBeInTheDocument();
+  it("fetches the viral root", async () => {
+    render(await VirusesPage({ searchParams: Promise.resolve({ tab: "features" }) }));
+    expect(fetchTaxonomy).toHaveBeenCalledWith(10239);
+    expect(screen.getByText("Real features")).toBeInTheDocument();
   });
 
-  it("renders legacy placeholder tabs through URL state", async () => {
-    const node = await VirusesPage({
-      searchParams: Promise.resolve({ tab: "features" }),
-    });
-
-    render(node);
-
-    // Active label appears 3×: desktop nav button, mobile pill, placeholder heading.
-    expect(screen.getAllByText("Features")).toHaveLength(3);
-    expect(
-      screen.getByText(/This view is coming soon/),
-    ).toBeInTheDocument();
+  it("supports legacy ?view= when ?tab= is absent", async () => {
+    render(await VirusesPage({ searchParams: Promise.resolve({ view: "features" }) }));
+    expect(screen.getByText("Real features")).toBeInTheDocument();
   });
 
-  it("falls back to legacy ?view= param when ?tab= is absent", async () => {
-    const node = await VirusesPage({
-      searchParams: Promise.resolve({ view: "features" }),
-    });
-
-    render(node);
-
-    // Active label appears 3×: desktop nav button, mobile pill, placeholder heading.
-    expect(screen.getAllByText("Features")).toHaveLength(3);
-    expect(
-      screen.getByText(/This view is coming soon/),
-    ).toBeInTheDocument();
-  });
-
-  it("prefers ?tab= over ?view= when both are present", async () => {
-    const node = await VirusesPage({
-      searchParams: Promise.resolve({ tab: "taxa-tree", view: "features" }),
-    });
-
-    render(node);
-
-    expect(screen.getByText(/This view is coming soon/)).toBeInTheDocument();
-    // "Features" appears once (desktop nav button only) — taxa-tree won, so the
-    // mobile pill + placeholder heading show "Taxa Tree", not "Features".
-    expect(screen.queryAllByText("Features")).toHaveLength(1);
+  it("prefers ?tab= over ?view=", async () => {
+    render(
+      await VirusesPage({
+        searchParams: Promise.resolve({ tab: "taxa-tree", view: "features" }),
+      }),
+    );
+    expect(screen.getByText("Real tree")).toBeInTheDocument();
+    expect(screen.queryByText("Real features")).not.toBeInTheDocument();
   });
 });

@@ -78,15 +78,27 @@ function rootToRecord(taxon: OrganismTaxonomy): TaxonRecord {
 }
 
 interface TaxonomyTreeProps {
-  rootTaxon: OrganismTaxonomy;
+  rootTaxa: readonly OrganismTaxonomy[];
   onSelect?: (rows: TaxonRecord[]) => void;
 }
 
-export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
+export function TaxonomyTree({ rootTaxa, onSelect }: TaxonomyTreeProps) {
   "use no memo";
 
-  const rootRecord = useMemo(() => rootToRecord(rootTaxon), [rootTaxon]);
-  const rootId = numericId(rootRecord);
+  const rootValueSignature = rootTaxa
+    .map((taxon) =>
+      [taxon.taxonId, taxon.taxonName, taxon.taxonRank, taxon.genomes ?? ""].join(":"),
+    )
+    .join("|");
+  const rootRecordsRef = useRef(rootTaxa.map(rootToRecord));
+  const rootValueSignatureRef = useRef(rootValueSignature);
+  if (rootValueSignatureRef.current !== rootValueSignature) {
+    rootValueSignatureRef.current = rootValueSignature;
+    rootRecordsRef.current = rootTaxa.map(rootToRecord);
+  }
+  const rootRecords = rootRecordsRef.current;
+  const rootIds = useMemo(() => rootRecords.map(numericId), [rootRecords]);
+  const rootSignature = rootIds.join(",");
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -96,7 +108,9 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   // reloads at the same expansion (each seeded ancestor drives its own fetch via
   // fetchParentIds). Read once on mount — later URL writes are one-way (below).
   const [expanded, setExpanded] = useState<ExpandedState>(() => {
-    const initial: Record<string, boolean> = { [String(rootId)]: true };
+    const initial: Record<string, boolean> = Object.fromEntries(
+      rootIds.map((rootId) => [String(rootId), true]),
+    );
     const open = searchParams.get("open");
     if (open) {
       for (const id of open.split(",").slice(0, maxOpenParam)) {
@@ -131,12 +145,12 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   // expand everything visually (below) without adding to this set — so name
   // search stays a filter over already-loaded rows (no fan-out fetch).
   const fetchParentIds = useMemo(() => {
-    if (expanded === true) return [rootId];
+    if (expanded === true) return rootIds;
     return Object.keys(expanded)
       .filter((id) => expanded[id])
       .map(Number)
       .filter((id) => Number.isFinite(id));
-  }, [expanded, rootId]);
+  }, [expanded, rootIds]);
 
   const childQueries = useQueries({
     queries: fetchParentIds.map((parentId) => ({
@@ -330,24 +344,24 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   const childrenSignature = childQueries
     .map((q, i) => `${String(fetchParentIds[i])}:${q.status}:${String(q.dataUpdatedAt)}`)
     .join("|");
-  const dataRef = useRef<TaxonRecord[]>([rootRecord]);
+  const dataRef = useRef<TaxonRecord[]>(rootRecords);
   const signatureRef = useRef(childrenSignature);
-  const prevRootIdRef = useRef(rootId);
-  if (prevRootIdRef.current !== rootId) {
-    prevRootIdRef.current = rootId;
+  const prevRootSignatureRef = useRef(rootSignature);
+  if (prevRootSignatureRef.current !== rootSignature) {
+    prevRootSignatureRef.current = rootSignature;
     recordCacheRef.current.clear();
-    // Root changed in place (Name link navigates within the [taxonId] segment, no
-    // remount). Reset controlled table state keyed to the old root: re-seed expanded
-    // so the new root auto-expands and drives its fetch, and drop the stale selection
-    // (its records were just cleared from recordCacheRef).
-    setExpanded({ [String(rootId)]: true });
+    // Roots can change in place when navigating within the taxonomy segment.
+    // Reset controlled state and auto-expand every new top-level root.
+    setExpanded(Object.fromEntries(rootIds.map((rootId) => [String(rootId), true])));
     setRowSelection({});
     setGlobalFilter("");
     lastSelectedIdRef.current = null;
   }
-  if (signatureRef.current !== childrenSignature || dataRef.current[0] !== rootRecord) {
+  if (signatureRef.current !== childrenSignature || dataRef.current !== rootRecords) {
     signatureRef.current = childrenSignature;
-    dataRef.current = [rootRecord];
+    // TanStack keys its row model on data identity; query settlement must create
+    // a fresh top-level array so getSubRows reads the updated children map.
+    dataRef.current = [...rootRecords];
   }
   const data = dataRef.current;
 
@@ -530,14 +544,19 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   }
   handleCheckboxClickRef.current = handleCheckboxClick;
 
-  // Persist expanded nodes (minus the always-open root) to the `open` search param
+  // Persist expanded nodes (minus the auto-expanded roots) to the `open` search param
   // so the view is shareable / survives reload. Uses history.replaceState, NOT
   // router.replace: router.replace triggers an App Router navigation (RSC round-trip
   // + full client re-render) on every expand/collapse — a major source of the lag.
   // The URL is display/reload state only; nothing in this tree reads it after mount,
   // so a bare history entry update is enough. Guarded by a ref (not searchParams,
   // which no longer reflects our manual writes) to skip no-op writes.
-  const openParam = fetchParentIds.filter((id) => id !== rootId).sort((a, b) => a - b).slice(0, maxOpenParam).join(",");
+  const rootIdSet = new Set(rootIds);
+  const openParam = fetchParentIds
+    .filter((id) => !rootIdSet.has(id))
+    .sort((a, b) => a - b)
+    .slice(0, maxOpenParam)
+    .join(",");
   const lastOpenParamRef = useRef<string | null>(null);
   useEffect(() => {
     if (globalFilter) return;

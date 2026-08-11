@@ -1,5 +1,5 @@
 import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
-import { TaxonDataPanel } from "../_components/taxon-data-panel";
+import { TaxonDataPanel } from "./taxon-data-panel";
 
 // SFVT reads the `sequence_feature` core, which has a taxon_id field, and scopes
 // with eq(taxon_id,…) — same as legacy SFVTGrid. Features are stored only at the

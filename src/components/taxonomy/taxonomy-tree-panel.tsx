@@ -25,7 +25,7 @@ const taxonomyGuideUrl =
  * GenomeShell's resizable panels (which need ResizeObserver) live outside the
  * tree's jsdom unit tests.
  */
-export function TaxonomyTreePanel({ taxon }: { taxon: OrganismTaxonomy }) {
+export function TaxonomyTreePanel({ taxa }: { taxa: readonly OrganismTaxonomy[] }) {
   const router = useRouter();
   const [selectedRows, setSelectedRows] = useState<TaxonRecord[]>([]);
   const singleRow = selectedRows.length === 1 ? selectedRows[0] : null;
@@ -65,7 +65,7 @@ export function TaxonomyTreePanel({ taxon }: { taxon: OrganismTaxonomy }) {
         />
       }
     >
-      <TaxonomyTree rootTaxon={taxon} onSelect={setSelectedRows} />
+      <TaxonomyTree rootTaxa={taxa} onSelect={setSelectedRows} />
     </GenomeShell>
   );
 }

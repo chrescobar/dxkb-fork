@@ -90,6 +90,24 @@ const bacteriaTaxonomyFixture = {
   genomes: 1337420,
 };
 
+const virusesTaxonomyFixture = {
+  taxon_id: 10239,
+  taxon_name: "Viruses",
+  lineage_names: ["Viruses"],
+  lineage_ids: [10239],
+  taxon_rank: "superkingdom",
+  genomes: virusesSummaryFixture.count,
+};
+
+const cellularOrganismsTaxonomyFixture = {
+  taxon_id: 131567,
+  taxon_name: "cellular organisms",
+  lineage_names: ["cellular organisms"],
+  lineage_ids: [131567],
+  taxon_rank: "no rank",
+  genomes: allOrganismsSummaryFixture.count,
+};
+
 const brucellaTaxonomyFixture = {
   taxon_id: 234,
   taxon_name: "Brucella",
@@ -576,6 +594,8 @@ function maybeBvBrcWebsite(path: string, request: NextRequest): BvBrcResult | nu
   if (endpoint === "data/summary_by_taxon/10239") return { kind: "ok", body: virusesSummaryFixture };
   if (endpoint === "data/summary_by_taxon/131567") return { kind: "ok", body: allOrganismsSummaryFixture };
   if (endpoint === "taxonomy/2") return { kind: "ok", body: bacteriaTaxonomyFixture };
+  if (endpoint === "taxonomy/10239") return { kind: "ok", body: virusesTaxonomyFixture };
+  if (endpoint === "taxonomy/131567") return { kind: "ok", body: cellularOrganismsTaxonomyFixture };
   if (endpoint === "taxonomy/234") return { kind: "ok", body: brucellaTaxonomyFixture };
   if (endpoint === "taxonomy/11520") return { kind: "ok", body: influenzaATaxonomyFixture };
   if (endpoint === "taxonomy/11974") return { kind: "ok", body: caliciviridaeTaxonomyFixture };

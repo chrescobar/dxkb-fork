@@ -5,5 +5,6 @@ export const allOrganismsLandingConfig: OrganismLandingConfig = {
   taxonId: 131567,
   accent: "all",
   defaultView: "overview",
+  hideDisabledTabs: true,
   metadataFields: ["host_group", "isolation_country"],
 };

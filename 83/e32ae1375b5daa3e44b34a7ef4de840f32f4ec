@@ -1,0 +1,16 @@
+src/components/phylogeny/viral-phylogeny-panel.tsx
+  h_dbd94c95afa702 59,87,100
+src/components/phylogeny/viral-tree-picker.tsx
+  h_dbd94c95afa702 96,98,100,107,117,137,150,159,180,193,204,223,241,274,307,327,343,370,373-374,417,436,446,453
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "83e32ae1375b5daa3e44b34a7ef4de840f32f4ec",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { TaxonDataPanel } from "@/app/(views)/taxonomy/[taxonId]/_components/taxon-data-panel";
+import { TaxonDataPanel } from "@/components/organisms/taxon-views/taxon-data-panel";
 
 import { InteractionsGraph } from "./interactions-graph";
 

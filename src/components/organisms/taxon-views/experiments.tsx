@@ -1,13 +1,10 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
+import { taxonLineageClause, type TaxonViewScope } from "./scope";
+import { TaxonDataPanel } from "./taxon-data-panel";
 
-import { TaxonDataPanel } from "../_components/taxon-data-panel";
-
-export function makeExperimentsView({ taxon }: { taxon: OrganismTaxonomy | null }) {
+export function makeExperimentsView({ scope }: { scope: TaxonViewScope }) {
   function ExperimentsView() {
-    if (!taxon) return null;
-
-    const taxonId = String(taxon.taxonId);
+    const lineageClause = taxonLineageClause(scope);
 
     return (
       <Tabs defaultValue="experiments" className="flex h-full min-h-0 flex-1 flex-col">
@@ -18,14 +15,14 @@ export function makeExperimentsView({ taxon }: { taxon: OrganismTaxonomy | null 
         <TabsContent value="experiments" className="mt-2 flex min-h-0 flex-1 flex-col">
           <TaxonDataPanel
             resource="experiment"
-            q={`eq(taxon_lineage_ids,${taxonId})`}
+            q={lineageClause}
             guideUrl="https://www.bv-brc.org/docs/quick_references/organisms_taxon/experiments.html"
           />
         </TabsContent>
         <TabsContent value="biosets" className="mt-2 flex min-h-0 flex-1 flex-col">
           <TaxonDataPanel
             resource="bioset"
-            q={`and(eq(genome_id,*),genome(eq(taxon_lineage_ids,${taxonId})))`}
+            q={`and(eq(genome_id,*),genome(${lineageClause}))`}
           />
         </TabsContent>
       </Tabs>

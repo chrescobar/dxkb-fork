@@ -2,7 +2,7 @@ import { render } from "@testing-library/react";
 
 import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 
-import { makePhylogenyView } from "../phylogeny";
+import { makePhylogenyView } from "@/components/organisms/taxon-views/phylogeny";
 
 // Both panels pull in Archaeopteryx/Auspice and live network state. Stub them so
 // these tests stay on the factory: lineage routing and the shared frame.

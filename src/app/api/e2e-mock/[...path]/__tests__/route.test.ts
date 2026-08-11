@@ -470,6 +470,25 @@ describe("api/e2e-mock catch-all — enabled", () => {
     });
   });
 
+  it.each([
+    ["10239", "Viruses", [10239]],
+    ["131567", "cellular organisms", [131567]],
+  ])("GET serves landing root taxonomy fixture %s", async (taxonId, taxonName, lineageIds) => {
+    const resp = await GET(
+      mockNextRequest({
+        url: `http://localhost:3020/api/e2e-mock/bvbrc-website/taxonomy/${taxonId}`,
+      }),
+      ctx(["bvbrc-website", "taxonomy", taxonId]),
+    );
+
+    expect(resp.status).toBe(200);
+    expect((await resp.json()) as unknown).toMatchObject({
+      taxon_id: Number(taxonId),
+      taxon_name: taxonName,
+      lineage_ids: lineageIds,
+    });
+  });
+
   it("POST returns 400 for endpoints outside the allowlisted namespaces", async () => {
     const resp = await POST(
       mockNextRequest({

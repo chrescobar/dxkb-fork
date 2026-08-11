@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { TaxonBreadcrumb } from "@/components/organisms/taxon-breadcrumb";
 import { OrganismLandingShell } from "@/components/organisms/landing-shell/landing-shell";
+import { buildTaxonViews } from "@/components/organisms/taxon-views";
 import { TaxonomyNotFoundError, fetchOrganismTaxonomy } from "@/lib/services/organisms/taxonomy";
 import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 
@@ -9,7 +10,6 @@ import { firstSearchParam } from "@/lib/views/search-params";
 
 import { fetchPhyloManifest } from "@/lib/taxon-view/phylo-manifest";
 
-import { buildTaxonomyNavItems } from "./_components/nav-items";
 import { buildTaxonomyConfig } from "./_config";
 
 export const dynamic = "force-dynamic";
@@ -49,7 +49,13 @@ export default async function TaxonomyPage({ params, searchParams }: TaxonomyPag
   const phyloManifest = await phyloManifestPromise;
 
   const config = buildTaxonomyConfig(taxonId, taxon);
-  const navItems = buildTaxonomyNavItems(config, taxon, phyloManifest);
+  const navItems = buildTaxonViews({
+    config,
+    scope: { kind: "lineage", taxon },
+    taxon,
+    phyloManifest,
+    surface: "taxonomy",
+  });
 
   return (
     <OrganismLandingShell

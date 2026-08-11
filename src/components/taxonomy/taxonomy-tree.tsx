@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useQueries } from "@tanstack/react-query";
@@ -78,15 +78,37 @@ function rootToRecord(taxon: OrganismTaxonomy): TaxonRecord {
 }
 
 interface TaxonomyTreeProps {
-  rootTaxon: OrganismTaxonomy;
+  rootTaxa: readonly OrganismTaxonomy[];
   onSelect?: (rows: TaxonRecord[]) => void;
 }
 
-export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
+export function TaxonomyTree({ rootTaxa, onSelect }: TaxonomyTreeProps) {
   "use no memo";
 
-  const rootRecord = useMemo(() => rootToRecord(rootTaxon), [rootTaxon]);
-  const rootId = numericId(rootRecord);
+  // Must cover every field rootToRecord copies: the committed roots are a cached
+  // snapshot, so anything left out of the signature can go stale in the row model
+  // (and in the detail panel, which reads lineage_names off the selected record).
+  // JSON.stringify for the lineage so a name containing ":" or "|" cannot forge a
+  // matching signature.
+  const rootValueSignature = rootTaxa
+    .map((taxon) =>
+      [
+        taxon.taxonId,
+        taxon.taxonName,
+        taxon.taxonRank,
+        taxon.genomes ?? "",
+        JSON.stringify(taxon.lineageNames),
+      ].join(":"),
+    )
+    .join("|");
+  const [committedRoots, setCommittedRoots] = useState(() => ({
+    signature: rootValueSignature,
+    taxa: rootTaxa,
+  }));
+  const rootsChanged = committedRoots.signature !== rootValueSignature;
+  const renderedRoots = rootsChanged ? rootTaxa : committedRoots.taxa;
+  const rootRecords = useMemo(() => renderedRoots.map(rootToRecord), [renderedRoots]);
+  const rootIds = useMemo(() => rootRecords.map(numericId), [rootRecords]);
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -96,7 +118,9 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   // reloads at the same expansion (each seeded ancestor drives its own fetch via
   // fetchParentIds). Read once on mount — later URL writes are one-way (below).
   const [expanded, setExpanded] = useState<ExpandedState>(() => {
-    const initial: Record<string, boolean> = { [String(rootId)]: true };
+    const initial: Record<string, boolean> = Object.fromEntries(
+      rootIds.map((rootId) => [String(rootId), true]),
+    );
     const open = searchParams.get("open");
     if (open) {
       for (const id of open.split(",").slice(0, maxOpenParam)) {
@@ -131,12 +155,12 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   // expand everything visually (below) without adding to this set — so name
   // search stays a filter over already-loaded rows (no fan-out fetch).
   const fetchParentIds = useMemo(() => {
-    if (expanded === true) return [rootId];
+    if (rootsChanged || expanded === true) return rootIds;
     return Object.keys(expanded)
       .filter((id) => expanded[id])
       .map(Number)
       .filter((id) => Number.isFinite(id));
-  }, [expanded, rootId]);
+  }, [expanded, rootIds, rootsChanged]);
 
   const childQueries = useQueries({
     queries: fetchParentIds.map((parentId) => ({
@@ -321,8 +345,6 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   // which storms the virtualizer (re-measure → setState → re-render) and churns the
   // query observers into duplicate fetches. Key it on a signature of the child
   // queries instead: identity stable between settles, fresh the moment one changes.
-  // A derived ref (not useMemo) so the signature is a real identity key, not a
-  // dependency exhaustive-deps would flag as unused in the memo body.
   // NOTE: child counts are deliberately NOT in this signature. They only affect the
   // expand-arrow (getRowCanExpand, re-run every render) and the count badge (a cell,
   // re-rendered via childCountRef) — neither needs the row MODEL rebuilt. Including
@@ -330,26 +352,26 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   const childrenSignature = childQueries
     .map((q, i) => `${String(fetchParentIds[i])}:${q.status}:${String(q.dataUpdatedAt)}`)
     .join("|");
-  const dataRef = useRef<TaxonRecord[]>([rootRecord]);
-  const signatureRef = useRef(childrenSignature);
-  const prevRootIdRef = useRef(rootId);
-  if (prevRootIdRef.current !== rootId) {
-    prevRootIdRef.current = rootId;
+  const data = useMemo(() => {
+    // Query settlement must invalidate TanStack's identity-keyed row model.
+    void childrenSignature;
+    return [...rootRecords];
+  }, [rootRecords, childrenSignature]);
+
+  useLayoutEffect(() => {
+    if (committedRoots.signature === rootValueSignature) return;
+
+    setCommittedRoots({ signature: rootValueSignature, taxa: rootTaxa });
     recordCacheRef.current.clear();
-    // Root changed in place (Name link navigates within the [taxonId] segment, no
-    // remount). Reset controlled table state keyed to the old root: re-seed expanded
-    // so the new root auto-expands and drives its fetch, and drop the stale selection
-    // (its records were just cleared from recordCacheRef).
-    setExpanded({ [String(rootId)]: true });
+    // Roots can change in place when navigating within the taxonomy segment.
+    // Reset controlled state and auto-expand every new top-level root.
+    const nextRootIds = rootTaxa.map((taxon) => taxon.taxonId);
+    setExpanded(Object.fromEntries(nextRootIds.map((rootId) => [String(rootId), true])));
     setRowSelection({});
     setGlobalFilter("");
     lastSelectedIdRef.current = null;
-  }
-  if (signatureRef.current !== childrenSignature || dataRef.current[0] !== rootRecord) {
-    signatureRef.current = childrenSignature;
-    dataRef.current = [rootRecord];
-  }
-  const data = dataRef.current;
+    onSelect?.([]);
+  }, [rootValueSignature, committedRoots.signature, rootTaxa, onSelect]);
 
   const table = useReactTable({
     data,
@@ -530,14 +552,19 @@ export function TaxonomyTree({ rootTaxon, onSelect }: TaxonomyTreeProps) {
   }
   handleCheckboxClickRef.current = handleCheckboxClick;
 
-  // Persist expanded nodes (minus the always-open root) to the `open` search param
+  // Persist expanded nodes (minus the auto-expanded roots) to the `open` search param
   // so the view is shareable / survives reload. Uses history.replaceState, NOT
   // router.replace: router.replace triggers an App Router navigation (RSC round-trip
   // + full client re-render) on every expand/collapse — a major source of the lag.
   // The URL is display/reload state only; nothing in this tree reads it after mount,
   // so a bare history entry update is enough. Guarded by a ref (not searchParams,
   // which no longer reflects our manual writes) to skip no-op writes.
-  const openParam = fetchParentIds.filter((id) => id !== rootId).sort((a, b) => a - b).slice(0, maxOpenParam).join(",");
+  const rootIdSet = new Set(rootIds);
+  const openParam = fetchParentIds
+    .filter((id) => !rootIdSet.has(id))
+    .sort((a, b) => a - b)
+    .slice(0, maxOpenParam)
+    .join(",");
   const lastOpenParamRef = useRef<string | null>(null);
   useEffect(() => {
     if (globalFilter) return;

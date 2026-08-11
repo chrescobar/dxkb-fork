@@ -5,5 +5,6 @@ export const virusesLandingConfig: OrganismLandingConfig = {
   taxonId: 10239,
   accent: "viruses",
   defaultView: "overview",
+  hideDisabledTabs: true,
   metadataFields: ["family", "host_group", "isolation_country"],
 };

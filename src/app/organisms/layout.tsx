@@ -1,4 +1,3 @@
-import Footer from "@/components/footers/footer";
 import Navbar from "@/components/navbars/navbar";
 
 export default function OrganismsLayout({
@@ -7,10 +6,9 @@ export default function OrganismsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex h-dvh flex-col overflow-hidden">
       <Navbar />
-      <main className="flex grow bg-muted/30 py-4">{children}</main>
-      <Footer />
+      <main className="flex min-h-0 grow flex-col bg-muted/30 pt-4">{children}</main>
     </div>
   );
 }

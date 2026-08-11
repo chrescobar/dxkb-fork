@@ -4,7 +4,10 @@ import userEvent from "@testing-library/user-event";
 import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 import type { TaxonRecord } from "../taxon-tree-types";
 
-const { mockPush } = vi.hoisted(() => ({ mockPush: vi.fn() }));
+const { mockPush, treePropsSpy } = vi.hoisted(() => ({
+  mockPush: vi.fn(),
+  treePropsSpy: vi.fn(),
+}));
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
@@ -14,29 +17,38 @@ vi.mock("next/navigation", () => ({
 // stub that just exposes a button to drive onSelect. This test only covers the
 // panel's action wiring, not the tree.
 vi.mock("../taxonomy-tree", () => ({
-  TaxonomyTree: ({ onSelect }: { onSelect?: (rows: TaxonRecord[]) => void }) => (
-    <div>
-      <button
-        type="button"
-        onClick={() =>
-          onSelect?.([{ taxon_id: 234, taxon_name: "Brucella", taxon_rank: "genus" }])
-        }
-      >
-        select-one
-      </button>
-      <button
-        type="button"
-        onClick={() =>
-          onSelect?.([
-            { taxon_id: 234, taxon_name: "Brucella", taxon_rank: "genus" },
-            { taxon_id: 235, taxon_name: "Brucella abortus", taxon_rank: "species" },
-          ])
-        }
-      >
-        select-two
-      </button>
-    </div>
-  ),
+  TaxonomyTree: ({
+    rootTaxa,
+    onSelect,
+  }: {
+    rootTaxa: readonly OrganismTaxonomy[];
+    onSelect?: (rows: TaxonRecord[]) => void;
+  }) => {
+    treePropsSpy(rootTaxa);
+    return (
+      <div>
+        <button
+          type="button"
+          onClick={() =>
+            onSelect?.([{ taxon_id: 234, taxon_name: "Brucella", taxon_rank: "genus" }])
+          }
+        >
+          select-one
+        </button>
+        <button
+          type="button"
+          onClick={() =>
+            onSelect?.([
+              { taxon_id: 234, taxon_name: "Brucella", taxon_rank: "genus" },
+              { taxon_id: 10239, taxon_name: "Viruses", taxon_rank: "superkingdom" },
+            ])
+          }
+        >
+          select-two
+        </button>
+      </div>
+    );
+  },
 }));
 
 import { TaxonomyTreePanel } from "../taxonomy-tree-panel";
@@ -52,6 +64,7 @@ beforeAll(() => {
 
 beforeEach(() => {
   mockPush.mockClear();
+  treePropsSpy.mockClear();
 });
 
 const taxon = {
@@ -61,8 +74,20 @@ const taxon = {
 } as unknown as OrganismTaxonomy;
 
 describe("TaxonomyTreePanel", () => {
+  it("forwards every root to the tree in order", () => {
+    const viruses = {
+      taxonId: 10239,
+      taxonName: "Viruses",
+      taxonRank: "superkingdom",
+    } as unknown as OrganismTaxonomy;
+
+    render(<TaxonomyTreePanel taxa={[taxon, viruses]} />);
+
+    expect(treePropsSpy).toHaveBeenLastCalledWith([taxon, viruses]);
+  });
+
   it("navigates to the taxon overview when Taxon Overview is clicked with one row", async () => {
-    render(<TaxonomyTreePanel taxon={taxon} />);
+    render(<TaxonomyTreePanel taxa={[taxon]} />);
 
     await userEvent.click(screen.getByRole("button", { name: "select-one" }));
     await userEvent.click(screen.getByRole("button", { name: /taxon\s*overview/i }));
@@ -71,7 +96,7 @@ describe("TaxonomyTreePanel", () => {
   });
 
   it("hides Taxon Overview when multiple rows are selected", async () => {
-    render(<TaxonomyTreePanel taxon={taxon} />);
+    render(<TaxonomyTreePanel taxa={[taxon]} />);
 
     await userEvent.click(screen.getByRole("button", { name: "select-two" }));
 

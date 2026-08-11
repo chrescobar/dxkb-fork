@@ -2,60 +2,58 @@ import { render, screen } from "@testing-library/react";
 
 import VirusesPage from "../page";
 
+const { fetchTaxonomy } = vi.hoisted(() => ({ fetchTaxonomy: vi.fn() }));
+
+vi.mock("@/lib/services/organisms/taxonomy", () => ({
+  fetchOrganismTaxonomy: (taxonId: number) => fetchTaxonomy(taxonId) as unknown,
+}));
+vi.mock("next/navigation", () => ({
+  redirect: vi.fn((path: string) => { throw new Error(`REDIRECT:${path}`); }),
+  useRouter: () => ({ push: vi.fn() }),
+  usePathname: () => "/organisms/viruses",
+  useSearchParams: () => new URLSearchParams(),
+}));
+vi.mock("@/components/organisms/taxon-views/taxon-data-panel", () => ({
+  TaxonDataPanel: ({ resource, q }: { resource: string; q: string }) => (
+    <div>{`${resource}:${q}`}</div>
+  ),
+}));
+vi.mock("@/components/taxonomy/taxonomy-tree-panel", () => ({
+  TaxonomyTreePanel: ({ taxa }: { taxa: { taxonName: string }[] }) => (
+    <div>{`${taxa.map((taxon) => taxon.taxonName).join(", ")} tree`}</div>
+  ),
+}));
+vi.mock("@/components/organisms/virus-families/virus-families-section", () => ({
+  VirusFamiliesSection: () => <div>Viral overview</div>,
+}));
+
+beforeEach(() => {
+  fetchTaxonomy.mockResolvedValue({ taxonId: 10239, taxonName: "Viruses" });
+});
+
 describe("VirusesPage", () => {
-  it("renders the selected stub view through the shared shell", async () => {
-    const node = await VirusesPage({
-      searchParams: Promise.resolve({ tab: "taxa-tree" }),
-    });
+  it("fetches the viral root and wires its overview into the real view registry", async () => {
+    render(await VirusesPage({ searchParams: Promise.resolve({}) }));
+    expect(fetchTaxonomy).toHaveBeenCalledWith(10239);
+    expect(screen.getByText("Viral overview")).toBeInTheDocument();
+  });
 
-    render(node);
-
+  it("supports legacy ?view= when ?tab= is absent", async () => {
+    render(await VirusesPage({ searchParams: Promise.resolve({ view: "features" }) }));
     expect(
-      screen.getByRole("heading", { level: 1, name: "Viruses" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/This view is coming soon/),
+      screen.getByText(
+        "genome_feature:and(eq(genome_id,*),genome(and(eq(taxon_lineage_ids,10239),ne(genome_status,Deprecated))),eq(annotation,PATRIC))",
+      ),
     ).toBeInTheDocument();
   });
 
-  it("renders legacy placeholder tabs through URL state", async () => {
-    const node = await VirusesPage({
-      searchParams: Promise.resolve({ tab: "features" }),
-    });
-
-    render(node);
-
-    // Active label appears 3×: desktop nav button, mobile pill, placeholder heading.
-    expect(screen.getAllByText("Features")).toHaveLength(3);
-    expect(
-      screen.getByText(/This view is coming soon/),
-    ).toBeInTheDocument();
-  });
-
-  it("falls back to legacy ?view= param when ?tab= is absent", async () => {
-    const node = await VirusesPage({
-      searchParams: Promise.resolve({ view: "features" }),
-    });
-
-    render(node);
-
-    // Active label appears 3×: desktop nav button, mobile pill, placeholder heading.
-    expect(screen.getAllByText("Features")).toHaveLength(3);
-    expect(
-      screen.getByText(/This view is coming soon/),
-    ).toBeInTheDocument();
-  });
-
-  it("prefers ?tab= over ?view= when both are present", async () => {
-    const node = await VirusesPage({
-      searchParams: Promise.resolve({ tab: "taxa-tree", view: "features" }),
-    });
-
-    render(node);
-
-    expect(screen.getByText(/This view is coming soon/)).toBeInTheDocument();
-    // "Features" appears once (desktop nav button only) — taxa-tree won, so the
-    // mobile pill + placeholder heading show "Taxa Tree", not "Features".
-    expect(screen.queryAllByText("Features")).toHaveLength(1);
+  it("prefers ?tab= over ?view=", async () => {
+    render(
+      await VirusesPage({
+        searchParams: Promise.resolve({ tab: "taxa-tree", view: "features" }),
+      }),
+    );
+    expect(screen.getByText("Viruses tree")).toBeInTheDocument();
+    expect(screen.queryByText(/^genome_feature:/)).not.toBeInTheDocument();
   });
 });

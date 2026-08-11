@@ -7,12 +7,18 @@ import { InteractionsSubviewShell } from "../interactions-subview-shell";
 // counter verifies the component instance survives while keyword text is shared
 // separately by the shell.
 let tableMountCount = 0;
-vi.mock("@/app/(views)/taxonomy/[taxonId]/_components/taxon-data-panel", () => ({
+vi.mock("@/components/organisms/taxon-views/taxon-data-panel", () => ({
   TaxonDataPanel: ({
+    resource,
+    q,
+    guideUrl,
     onFilterChange,
     keywordValue,
     onKeywordChange,
   }: {
+    resource: string;
+    q: string;
+    guideUrl?: string;
     onFilterChange?: (rql: string) => void;
     keywordValue?: string;
     onKeywordChange?: (value: string) => void;
@@ -21,7 +27,13 @@ vi.mock("@/app/(views)/taxonomy/[taxonId]/_components/taxon-data-panel", () => (
       tableMountCount++;
     }, []);
     return (
-      <div data-testid="table-panel" data-keyword={keywordValue}>
+      <div
+        data-testid="table-panel"
+        data-resource={resource}
+        data-q={q}
+        data-guide={guideUrl}
+        data-keyword={keywordValue}
+      >
         <button
           onClick={() => {
             onKeywordChange?.("fromTable");
@@ -37,15 +49,25 @@ vi.mock("@/app/(views)/taxonomy/[taxonId]/_components/taxon-data-panel", () => (
 
 vi.mock("../interactions-graph", () => ({
   InteractionsGraph: ({
+    taxonId,
+    q,
     tableFilter,
     keywordValue,
     onKeywordChange,
   }: {
+    taxonId: number;
+    q: string;
     tableFilter?: string;
     keywordValue?: string;
     onKeywordChange?: (value: string) => void;
   }) => (
-    <div data-testid="graph-panel" data-table-filter={tableFilter} data-keyword={keywordValue}>
+    <div
+      data-testid="graph-panel"
+      data-taxon-id={taxonId}
+      data-q={q}
+      data-table-filter={tableFilter}
+      data-keyword={keywordValue}
+    >
       <button onClick={() => { onKeywordChange?.("fromGraph"); }}>set-from-graph</button>
     </div>
   ),
@@ -56,6 +78,25 @@ beforeEach(() => {
 });
 
 describe("InteractionsSubviewShell", () => {
+  it("forwards the table and graph data contracts and mounts the graph lazily", () => {
+    render(
+      <InteractionsSubviewShell
+        taxonId={943}
+        q="eq(evidence,experimental)"
+        guideUrl="https://example.test/guide"
+      />,
+    );
+
+    expect(screen.getByTestId("table-panel")).toHaveAttribute("data-resource", "ppi");
+    expect(screen.getByTestId("table-panel")).toHaveAttribute("data-q", "eq(evidence,experimental)");
+    expect(screen.getByTestId("table-panel")).toHaveAttribute("data-guide", "https://example.test/guide");
+    expect(screen.queryByTestId("graph-panel")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "Graph" }));
+    expect(screen.getByTestId("graph-panel")).toHaveAttribute("data-taxon-id", "943");
+    expect(screen.getByTestId("graph-panel")).toHaveAttribute("data-q", "eq(evidence,experimental)");
+  });
+
   it("keeps the Table subview mounted across a switch to Graph and back (bug #3 root cause)", () => {
     render(<InteractionsSubviewShell taxonId={943} q="eq(evidence,experimental)" />);
     expect(tableMountCount).toBe(1);

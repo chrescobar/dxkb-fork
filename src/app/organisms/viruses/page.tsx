@@ -1,8 +1,12 @@
-import { OrganismLandingShell } from "@/components/organisms/landing-shell/landing-shell";
-import { firstSearchParam } from "@/lib/views/search-params";
+import { redirect } from "next/navigation";
 
-import { virusNavItems } from "./_components/nav-items";
+import { OrganismLandingShell } from "@/components/organisms/landing-shell/landing-shell";
+import { buildTaxonViews } from "@/components/organisms/taxon-views";
+import { fetchOrganismTaxonomy } from "@/lib/services/organisms/taxonomy";
+import { resolveLandingTab } from "@/lib/taxon-view/landing-request";
+
 import { virusesLandingConfig } from "./_config";
+import { OverviewView } from "./views/overview";
 
 export const dynamic = "force-dynamic";
 
@@ -14,15 +18,25 @@ interface VirusesPageProps {
 }
 
 export default async function VirusesPage({ searchParams }: VirusesPageProps) {
-  const resolvedParams = await searchParams;
-  const activeViewKey =
-    firstSearchParam(resolvedParams, "tab") ?? firstSearchParam(resolvedParams, "view");
+  const [resolvedParams, taxon] = await Promise.all([
+    searchParams,
+    fetchOrganismTaxonomy(virusesLandingConfig.taxonId),
+  ]);
+  const views = buildTaxonViews({
+    config: virusesLandingConfig,
+    scope: { kind: "lineage", taxon },
+    taxon,
+    OverviewComponent: OverviewView,
+    surface: "landing",
+  });
+  const request = resolveLandingTab(resolvedParams, views);
+  if (request.redirectToOverview) redirect("/organisms/viruses");
 
   return (
     <OrganismLandingShell
       config={virusesLandingConfig}
-      views={virusNavItems}
-      activeViewKey={activeViewKey}
+      views={views}
+      activeViewKey={request.activeViewKey}
     />
   );
 }

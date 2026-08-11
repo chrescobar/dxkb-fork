@@ -1,6 +1,6 @@
 import { getCuratedLists } from "@/lib/taxon-view/curated-lists";
 
-import { resolveSfvtTaxonId, sfvtTaxonIdRemap } from "../sfvt";
+import { resolveSfvtTaxonId, sfvtTaxonIdRemap } from "@/components/organisms/taxon-views/sfvt";
 
 // SFVT scopes the sequence_feature core via eq(taxon_id,…). The page taxon
 // resolves to the curated species id where features are stored. Taxa in
@@ -31,6 +31,10 @@ describe("sfvt taxon-id remap", () => {
   it("remaps the Influenza A landing taxon to the species id", () => {
     const { sfvtTaxonIds } = getCuratedLists();
     expect(resolveSfvtTaxonId([2955291], sfvtTaxonIds)).toBe(11320);
+  });
+
+  it("does not remap a taxon removed from the curated set", () => {
+    expect(resolveSfvtTaxonId([2955291], new Set([12637]))).toBeNull();
   });
 
   it("returns null when no lineage id is curated", () => {

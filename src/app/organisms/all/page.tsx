@@ -1,10 +1,16 @@
-import { OrganismLandingShell } from "@/components/organisms/landing-shell/landing-shell";
-import { firstSearchParam } from "@/lib/views/search-params";
+import { redirect } from "next/navigation";
 
-import { allNavItems } from "./_components/nav-items";
+import { OrganismLandingShell } from "@/components/organisms/landing-shell/landing-shell";
+import { buildTaxonViews } from "@/components/organisms/taxon-views";
+import { fetchOrganismTaxonomy } from "@/lib/services/organisms/taxonomy";
+import { resolveLandingTab } from "@/lib/taxon-view/landing-request";
+
 import { allOrganismsLandingConfig } from "./_config";
+import { OverviewView } from "./views/overview";
 
 export const dynamic = "force-dynamic";
+
+const allOrganismRootIds = [131567, 10239] as const;
 
 interface AllOrganismsPageProps {
   searchParams?: Promise<{
@@ -14,15 +20,26 @@ interface AllOrganismsPageProps {
 }
 
 export default async function AllOrganismsPage({ searchParams }: AllOrganismsPageProps) {
-  const resolvedParams = await searchParams;
-  const activeViewKey =
-    firstSearchParam(resolvedParams, "tab") ?? firstSearchParam(resolvedParams, "view");
+  const [resolvedParams, roots] = await Promise.all([
+    searchParams,
+    Promise.all(allOrganismRootIds.map((taxonId) => fetchOrganismTaxonomy(taxonId))),
+  ]);
+  const scope = { kind: "composite" as const, displayName: "All Organisms", roots };
+  const views = buildTaxonViews({
+    config: allOrganismsLandingConfig,
+    scope,
+    taxon: roots[0],
+    OverviewComponent: OverviewView,
+    surface: "landing",
+  });
+  const request = resolveLandingTab(resolvedParams, views);
+  if (request.redirectToOverview) redirect("/organisms/all");
 
   return (
     <OrganismLandingShell
       config={allOrganismsLandingConfig}
-      views={allNavItems}
-      activeViewKey={activeViewKey}
+      views={views}
+      activeViewKey={request.activeViewKey}
     />
   );
 }

@@ -56,7 +56,7 @@ export function ViralPhylogenyPanel({
     return (
       <div className="grid h-full place-items-center p-6 text-center">
         <div>
-          <Network className="text-muted-foreground mx-auto mb-4 size-10" />
+          <Network className="mx-auto mb-4 size-10 text-muted-foreground" />
           <h2 className="text-lg font-semibold">No published trees</h2>
         </div>
       </div>
@@ -84,7 +84,7 @@ export function ViralPhylogenyPanel({
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="bg-background flex items-center gap-3 border-b px-3 py-2">
+      <div className="flex items-center gap-3 border-b bg-background px-3 py-2">
         <Button
           size="sm"
           onClick={() => {
@@ -97,7 +97,7 @@ export function ViralPhylogenyPanel({
           <div className="truncate text-sm font-semibold">
             {choice.ref.name}
           </div>
-          <div className="text-muted-foreground truncate text-xs">
+          <div className="truncate text-xs text-muted-foreground">
             {taxonName} / {choice.groupTitle}
           </div>
         </div>
@@ -134,7 +134,7 @@ function TreeViewer({
         key={auspiceUrl}
         src={auspiceUrl}
         title={`Auspice phylogeny viewer for ${choice.ref.name}`}
-        className="min-h-[600px] w-full min-w-0 flex-1 border-0"
+        className="min-h-150 w-full min-w-0 flex-1 border-0"
       />
     );
   }

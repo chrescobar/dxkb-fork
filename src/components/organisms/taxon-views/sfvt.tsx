@@ -38,18 +38,23 @@ export function makeSfvtView({
   sfvtTaxonIds: ReadonlySet<number>;
 }) {
   function SfvtView() {
-    const taxonIds = scope.kind === "composite"
-      ? [...sfvtTaxonIds].map((id) => sfvtTaxonIdRemap[id] ?? id)
-      : [resolveSfvtTaxonId(scope.taxon.lineageIds, sfvtTaxonIds)].filter(
-          (id): id is number => id !== null,
-        );
+    const lineages = scope.kind === "composite"
+      ? scope.roots.map((root) => root.lineageIds)
+      : [scope.taxon.lineageIds];
+    // Match hasSfvt's aggregate-root exception for the all-viruses scope.
+    const taxonIds =
+      scope.kind === "composite" && scope.roots.some((root) => root.taxonId === 10239)
+        ? [...sfvtTaxonIds].map((id) => sfvtTaxonIdRemap[id] ?? id)
+        : lineages
+            .map((lineageIds) => resolveSfvtTaxonId(lineageIds, sfvtTaxonIds))
+            .filter((id): id is number => id !== null);
     // The tab gate normally guarantees at least one ID. Keep the guard so gate
     // and curation drift cannot render the entire sequence_feature resource.
     if (taxonIds.length === 0) return null;
-    const q = taxonIds.length === 1
+    const query = taxonIds.length === 1
       ? `eq(taxon_id,${String(taxonIds[0])})`
       : `in(taxon_id,(${taxonIds.join(",")}))`;
-    return <TaxonDataPanel resource="sequence_feature" q={q} />;
+    return <TaxonDataPanel resource="sequence_feature" q={query} />;
   }
   return SfvtView;
 }

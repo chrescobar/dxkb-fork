@@ -4,8 +4,9 @@ import type { TabContext } from "./tab-context";
 const CELLULAR_ORGANISMS_TAXON_ID = 131567;
 const VIRUSES_TAXON_ID = 10239;
 
-const scopeIncludes = (c: TabContext, taxonId: number): boolean =>
-  c.taxonomy.scopeRootIds.includes(taxonId);
+function scopeIncludes(tabContext: TabContext, taxonId: number): boolean {
+  return tabContext.taxonomy.scopeRootIds.includes(taxonId);
+}
 
 // ── organism-kind: "what IS this organism?" (lineage_names) ────────────────
 export const isBacteria = (c: TabContext): boolean =>

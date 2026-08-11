@@ -52,6 +52,21 @@ it("tracks a nested scroll region", () => {
   region.remove();
 });
 
+it("tracks window and nested scroll positions independently", () => {
+  const region = document.createElement("div");
+  document.body.append(region);
+  const { result } = renderHook(() => useHideOnScroll());
+
+  setScroll(200);
+  expect(result.current).toBe(true);
+  setElementScroll(region, 100);
+  expect(result.current).toBe(true);
+  setScroll(120);
+  expect(result.current).toBe(false);
+
+  region.remove();
+});
+
 it("stays visible within the first 60px even when scrolling down", () => {
   const { result } = renderHook(() => useHideOnScroll());
   setScroll(40);
@@ -62,4 +77,19 @@ it("forceShow pins it visible regardless of scroll", () => {
   const { result } = renderHook(() => useHideOnScroll(true));
   setScroll(500);
   expect(result.current).toBe(false);
+});
+
+it("stays visible after a forced-visible scroll region closes", () => {
+  const region = document.createElement("div");
+  document.body.append(region);
+  const { result, rerender } = renderHook(({ forceShow }) => useHideOnScroll(forceShow), { initialProps: { forceShow: false } });
+
+  setElementScroll(region, 200);
+  expect(result.current).toBe(true);
+  rerender({ forceShow: true });
+  setElementScroll(region, 300);
+  rerender({ forceShow: false });
+  expect(result.current).toBe(false);
+
+  region.remove();
 });

@@ -4,11 +4,6 @@ import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 
-interface OrganismsErrorProps {
-  error: Error & { digest?: string };
-  reset: () => void;
-}
-
 export default function OrganismsError({ error, reset }: OrganismsErrorProps) {
   useEffect(() => {
     console.error(error);
@@ -24,4 +19,9 @@ export default function OrganismsError({ error, reset }: OrganismsErrorProps) {
       <Button type="button" onClick={reset}>Try again</Button>
     </section>
   );
+}
+
+interface OrganismsErrorProps {
+  error: Error & { digest?: string };
+  reset: () => void;
 }

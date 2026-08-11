@@ -1,3 +1,4 @@
+import { useLayoutEffect } from "react";
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 
@@ -7,6 +8,7 @@ import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 
 import { TaxonomyTree } from "../taxonomy-tree";
 import type { TaxonRecord } from "../taxon-tree-types";
+import * as taxonChildren from "../use-taxon-children";
 
 // useVirtualizer measures the scroll container via ResizeObserver / getBoundingClientRect,
 // neither of which works in jsdom (0 layout height → 0 rows rendered). Mock it to return
@@ -198,6 +200,32 @@ describe("TaxonomyTree", () => {
     await waitFor(() => {
       expect(onSelect).toHaveBeenLastCalledWith([]);
     });
+  });
+
+  it("commits new roots and query IDs before passive effects run", async () => {
+    mockChildren(twoRootChildren);
+    const queryKeySpy = vi.spyOn(taxonChildren, "taxonChildrenKey");
+    const committedLinks: string[][] = [];
+
+    function TreeWithCommitProbe({ root }: { root: OrganismTaxonomy }) {
+      useLayoutEffect(() => {
+        committedLinks.push(
+          screen.getAllByRole("link").map((link) => link.textContent),
+        );
+      }, [root]);
+      return <TaxonomyTree rootTaxa={[root]} />;
+    }
+
+    const { rerender } = render(<TreeWithCommitProbe root={rootTaxon} />, {
+      wrapper: createQueryClientWrapper(),
+    });
+    await screen.findByRole("link", { name: "Brucella abortus" });
+    queryKeySpy.mockClear();
+
+    rerender(<TreeWithCommitProbe root={virusesRoot} />);
+
+    expect(committedLinks.at(-1)).toEqual(["Viruses"]);
+    expect(queryKeySpy).toHaveBeenNthCalledWith(1, virusesRoot.taxonId);
   });
 
   it("refreshes a selected root's lineage when only lineageNames change", async () => {

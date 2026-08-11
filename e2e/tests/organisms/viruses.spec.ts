@@ -9,10 +9,9 @@ test.describe("viruses organism landing page", () => {
     await applyBackendMocks(page, {
       overrides: [
         {
-          url: /\/api\/e2e-mock\/data\/genome\/\?.*limit\(1\)$/,
+          url: /\/api\/e2e-mock\/data\/genome\/\?eq\(taxon_lineage_ids,10239\)&limit\(1\)(?:&|$)/,
           method: "GET",
-          body: [],
-          headers: { "Content-Range": "items 0-0/0" },
+          body: { response: { numFound: 0, docs: [] } },
         },
         ...workspaceOverrides,
         ...permissiveBackendOverrides,

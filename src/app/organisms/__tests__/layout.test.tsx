@@ -18,7 +18,7 @@ describe("OrganismsLayout", () => {
     expect(screen.getByText("Organism content")).toBeInTheDocument();
     expect(screen.queryByRole("contentinfo")).not.toBeInTheDocument();
     expect(screen.getByText("Organism content").parentElement?.parentElement).toHaveClass(
-      "h-screen",
+      "h-dvh",
       "overflow-hidden",
     );
     expect(screen.getByRole("main")).toHaveClass("min-h-0", "grow", "pt-4");

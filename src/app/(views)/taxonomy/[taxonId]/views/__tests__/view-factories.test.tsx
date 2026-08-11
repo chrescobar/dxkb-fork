@@ -265,7 +265,7 @@ describe("composite scope queries", () => {
     expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute("data-q", expectedQuery);
   });
 
-  it("queries every curated SFVT cohort", () => {
+  it("queries every curated SFVT cohort for a composite containing the Viruses root", () => {
     const View = makeSfvtView({ scope: compositeScope, sfvtTaxonIds: new Set([12637, 2955291]) });
     render(<View />);
 
@@ -273,6 +273,21 @@ describe("composite scope queries", () => {
       "data-q",
       "in(taxon_id,(12637,11320))",
     );
+  });
+
+  it("queries only SFVT cohorts represented by composite roots", () => {
+    const scope = {
+      kind: "composite" as const,
+      displayName: "Fungi and Influenza",
+      roots: [
+        { ...fakeTaxon, taxonId: 4751, lineageIds: [2759, 4751] },
+        { ...fakeTaxon, taxonId: 2955291, lineageIds: [10239, 11308, 2955291] },
+      ],
+    };
+    const View = makeSfvtView({ scope, sfvtTaxonIds: new Set([12637, 2955291]) });
+    render(<View />);
+
+    expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute("data-q", "eq(taxon_id,11320)");
   });
 
   it("applies the composite clause to both experiment subviews", () => {

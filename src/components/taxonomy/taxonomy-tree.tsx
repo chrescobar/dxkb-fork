@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useQueries } from "@tanstack/react-query";
@@ -105,7 +105,9 @@ export function TaxonomyTree({ rootTaxa, onSelect }: TaxonomyTreeProps) {
     signature: rootValueSignature,
     taxa: rootTaxa,
   }));
-  const rootRecords = useMemo(() => committedRoots.taxa.map(rootToRecord), [committedRoots]);
+  const rootsChanged = committedRoots.signature !== rootValueSignature;
+  const renderedRoots = rootsChanged ? rootTaxa : committedRoots.taxa;
+  const rootRecords = useMemo(() => renderedRoots.map(rootToRecord), [renderedRoots]);
   const rootIds = useMemo(() => rootRecords.map(numericId), [rootRecords]);
 
   const pathname = usePathname();
@@ -153,12 +155,12 @@ export function TaxonomyTree({ rootTaxa, onSelect }: TaxonomyTreeProps) {
   // expand everything visually (below) without adding to this set — so name
   // search stays a filter over already-loaded rows (no fan-out fetch).
   const fetchParentIds = useMemo(() => {
-    if (expanded === true) return rootIds;
+    if (rootsChanged || expanded === true) return rootIds;
     return Object.keys(expanded)
       .filter((id) => expanded[id])
       .map(Number)
       .filter((id) => Number.isFinite(id));
-  }, [expanded, rootIds]);
+  }, [expanded, rootIds, rootsChanged]);
 
   const childQueries = useQueries({
     queries: fetchParentIds.map((parentId) => ({
@@ -356,7 +358,7 @@ export function TaxonomyTree({ rootTaxa, onSelect }: TaxonomyTreeProps) {
     return [...rootRecords];
   }, [rootRecords, childrenSignature]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (committedRoots.signature === rootValueSignature) return;
 
     setCommittedRoots({ signature: rootValueSignature, taxa: rootTaxa });

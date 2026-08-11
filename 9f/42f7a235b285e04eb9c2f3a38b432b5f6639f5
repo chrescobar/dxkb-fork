@@ -1,0 +1,24 @@
+src/components/ui/news-carousel.tsx
+  s_398478a85ba931::t_1f9dd009f5c960 77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "9f42f7a235b285e04eb9c2f3a38b432b5f6639f5",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_398478a85ba931": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_00d9df44bffeJ0ggI2UQpYGjZv",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

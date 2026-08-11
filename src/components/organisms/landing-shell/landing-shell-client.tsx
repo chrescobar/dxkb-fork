@@ -111,7 +111,10 @@ export function LandingShellClient({
           // the cards line up with the header instead of the viewport edge.
           // pl-1/py-4 keep the left/top/bottom borders + shadows off the clip box
           // edge (overflow-y:auto forces overflow-x:auto).
-          <div className="scrollbar-themed -mr-2 min-h-0 flex-1 overflow-y-auto py-4 pr-2 pl-1 sm:-mr-3 sm:pr-3 lg:-mr-4 lg:pr-4">
+          <div
+            data-testid="landing-scroll-region"
+            className="scrollbar-themed -mr-2 min-h-0 flex-1 overflow-y-auto py-4 pr-2 pl-1 sm:-mr-3 sm:pr-3 lg:-mr-4 lg:pr-4"
+          >
             {children}
           </div>
         )}

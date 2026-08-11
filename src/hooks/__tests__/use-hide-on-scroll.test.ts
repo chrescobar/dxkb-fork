@@ -9,6 +9,13 @@ function setScroll(y: number) {
   });
 }
 
+function setElementScroll(element: Element, y: number) {
+  Object.defineProperty(element, "scrollTop", { value: y, configurable: true, writable: true });
+  act(() => {
+    element.dispatchEvent(new Event("scroll"));
+  });
+}
+
 beforeEach(() => {
   Object.defineProperty(window, "scrollY", { value: 0, configurable: true, writable: true });
 });
@@ -30,6 +37,19 @@ it("reveals again when scrolling back up", () => {
   expect(result.current).toBe(true);
   setScroll(120);
   expect(result.current).toBe(false);
+});
+
+it("tracks a nested scroll region", () => {
+  const region = document.createElement("div");
+  document.body.append(region);
+  const { result } = renderHook(() => useHideOnScroll());
+
+  setElementScroll(region, 200);
+  expect(result.current).toBe(true);
+  setElementScroll(region, 120);
+  expect(result.current).toBe(false);
+
+  region.remove();
 });
 
 it("stays visible within the first 60px even when scrolling down", () => {

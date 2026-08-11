@@ -1,5 +1,3 @@
-"use client";
-
 import { CircleOff, Download, Filter } from "lucide-react";
 import { Fragment, useEffect, useRef, useState } from "react";
 
@@ -433,7 +431,7 @@ function PeerButton({
         onOpen(choice);
       }}
       aria-label={`Open ${choice.ref.name} in ${viewerLabel[viewer]}`}
-      className="h-7 flex-1 rounded-md border border-border bg-background text-xs font-medium transition-colors hover:border-[color-mix(in_oklch,var(--seg)_55%,transparent)] hover:bg-[color-mix(in_oklch,var(--seg)_14%,transparent)] focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none lg:w-[7.5rem] lg:flex-initial"
+      className="h-7 flex-1 rounded-md border border-border bg-background text-xs font-medium transition-colors hover:border-[color-mix(in_oklch,var(--seg)_55%,transparent)] hover:bg-[color-mix(in_oklch,var(--seg)_14%,transparent)] focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none lg:w-30 lg:flex-initial"
     >
       {viewerLabel[viewer]}
     </button>

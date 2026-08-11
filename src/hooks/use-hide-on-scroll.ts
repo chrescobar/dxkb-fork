@@ -16,17 +16,21 @@ export function useHideOnScroll(forceShow = false): boolean {
 
   useEffect(() => {
     lastY.current = window.scrollY;
-    function onScroll() {
-      const y = window.scrollY;
+    function onScroll(event: Event) {
+      const y = event.target instanceof Element ? event.target.scrollTop : window.scrollY;
       const goingDown = y > lastY.current;
-      // Ignore tiny jitters; never hide within the first 60px of the page.
+      // Ignore tiny jitters; never hide within the first 60px of the scroll region.
       if (Math.abs(y - lastY.current) > 4) {
         setHidden(goingDown && y > 60);
         lastY.current = y;
       }
     }
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => { window.removeEventListener("scroll", onScroll); };
+    document.addEventListener("scroll", onScroll, { capture: true, passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      document.removeEventListener("scroll", onScroll, { capture: true });
+    };
   }, []);
 
   return forceShow ? false : hidden;

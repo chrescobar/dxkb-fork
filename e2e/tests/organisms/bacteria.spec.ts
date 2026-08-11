@@ -21,13 +21,14 @@ test.describe("bacteria organism landing page — mobile pill nav", () => {
     const pill = page.getByRole("button", { name: /Views:/ });
     await expect(pill).toBeVisible();
 
+    const scrollRegion = page.getByTestId("landing-scroll-region");
     // Scroll past the 60px floor — pill should hide (opacity: 0 after transition)
-    await page.evaluate(() => { window.scrollTo({ top: 300, behavior: "instant" }); });
+    await scrollRegion.evaluate((element) => { element.scrollTo({ top: 300, behavior: "instant" }); });
     const pillWrapper = page.locator("div.fixed.bottom-4");
     await expect(pillWrapper).toHaveCSS("opacity", "0", { timeout: 2000 });
 
     // Scroll back up — pill should reveal
-    await page.evaluate(() => { window.scrollTo({ top: 0, behavior: "instant" }); });
+    await scrollRegion.evaluate((element) => { element.scrollTo({ top: 0, behavior: "instant" }); });
     await expect(pillWrapper).toHaveCSS("opacity", "1", { timeout: 2000 });
   });
 
@@ -49,7 +50,9 @@ test.describe("bacteria organism landing page — mobile pill nav", () => {
     await expect(page.getByRole("dialog")).not.toBeVisible();
 
     // Scroll down — pill must still hide even though trigger now has focus
-    await page.evaluate(() => { window.scrollTo({ top: 300, behavior: "instant" }); });
+    await page.getByTestId("landing-scroll-region").evaluate((element) => {
+      element.scrollTo({ top: 300, behavior: "instant" });
+    });
     const pillWrapper = page.locator("div.fixed.bottom-4");
     await expect(pillWrapper).toHaveCSS("opacity", "0", { timeout: 2000 });
   });
@@ -58,7 +61,16 @@ test.describe("bacteria organism landing page — mobile pill nav", () => {
 test.describe("bacteria organism landing page", () => {
   test.beforeEach(async ({ page }) => {
     await applyBackendMocks(page, {
-      overrides: [...workspaceOverrides, ...permissiveBackendOverrides],
+      overrides: [
+        {
+          url: /\/api\/e2e-mock\/data\/genome\/\?.*limit\(1\)$/,
+          method: "GET",
+          body: [],
+          headers: { "Content-Range": "items 0-0/0" },
+        },
+        ...workspaceOverrides,
+        ...permissiveBackendOverrides,
+      ],
     });
   });
 

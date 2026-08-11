@@ -7,7 +7,22 @@ test.use({ storageState: { cookies: [], origins: [] } });
 test.describe("all organisms landing page", () => {
   test.beforeEach(async ({ page }) => {
     await applyBackendMocks(page, {
-      overrides: [...workspaceOverrides, ...permissiveBackendOverrides],
+      overrides: [
+        {
+          url: /\/api\/e2e-mock\/data\/taxonomy\/\?/,
+          method: "GET",
+          body: [],
+          headers: { "Content-Range": "items 0-0/0" },
+        },
+        {
+          url: /\/api\/e2e-mock\/data\/genome\/\?.*limit\(1\)$/,
+          method: "GET",
+          body: [],
+          headers: { "Content-Range": "items 0-0/0" },
+        },
+        ...workspaceOverrides,
+        ...permissiveBackendOverrides,
+      ],
     });
   });
 
@@ -26,7 +41,7 @@ test.describe("all organisms landing page", () => {
     await landing.expectDonut("Isolation Country");
 
     await expect(page.getByRole("button", { name: /Phylogeny/ })).toHaveCount(0);
-    await expect(page.getByRole("button", { name: /Interactions/ })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /Interactions/ })).toBeVisible();
 
     await page.getByRole("button", { name: /Taxa Tree/ }).click();
     await expect(page).toHaveURL(/\/organisms\/all\?tab=taxa-tree/);

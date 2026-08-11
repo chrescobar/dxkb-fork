@@ -7,7 +7,16 @@ test.use({ storageState: { cookies: [], origins: [] } });
 test.describe("viruses organism landing page", () => {
   test.beforeEach(async ({ page }) => {
     await applyBackendMocks(page, {
-      overrides: [...workspaceOverrides, ...permissiveBackendOverrides],
+      overrides: [
+        {
+          url: /\/api\/e2e-mock\/data\/genome\/\?.*limit\(1\)$/,
+          method: "GET",
+          body: [],
+          headers: { "Content-Range": "items 0-0/0" },
+        },
+        ...workspaceOverrides,
+        ...permissiveBackendOverrides,
+      ],
     });
   });
 

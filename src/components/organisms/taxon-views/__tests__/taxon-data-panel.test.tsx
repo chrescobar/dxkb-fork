@@ -85,6 +85,7 @@ vi.mock("@/components/services/list-data", () => ({
     <div data-testid="list-data" data-resource={resource} data-q={q} data-keyword={keywordValue}>
       <button type="button" onClick={() => { onSelectionChange(["a", "b"]); }}>select-two</button>
       <button type="button" onClick={() => { onSelectionChange([]); }}>clear</button>
+      <button type="button" onClick={() => { onSelectionChange([]); onSelectionChange([]); }}>clear-twice</button>
       <button type="button" onClick={() => { onSelectionChange(["c"]); }}>select-new</button>
       <button
         type="button"
@@ -169,5 +170,17 @@ describe("TaxonDataPanel", () => {
     fireEvent.click(screen.getByRole("button", { name: "clear" }));
     act(() => { vi.advanceTimersByTime(120); });
     expect(screen.getByTestId("shell")).toHaveAttribute("data-has-side-panel", "false");
+  });
+
+  it("cancels repeated empty notifications when a new row is selected", () => {
+    render(<TaxonDataPanel resource="genome" q="eq(taxon_lineage_ids,2)" />);
+    fireEvent.click(screen.getByRole("button", { name: "select-two" }));
+    fireEvent.click(screen.getByRole("button", { name: "clear-twice" }));
+    fireEvent.click(screen.getByRole("button", { name: "select-new" }));
+
+    act(() => { vi.advanceTimersByTime(120); });
+
+    expect(screen.getByTestId("shell")).toHaveAttribute("data-has-side-panel", "true");
+    expect(screen.getByTestId("detail-panel")).toHaveAttribute("data-id", "c");
   });
 });

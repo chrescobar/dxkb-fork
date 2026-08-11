@@ -45,9 +45,31 @@ const rootTaxon: OrganismTaxonomy = {
   genomes: 1909,
 };
 
-function child(id: number, name: string, rank: string, genomes: number): TaxonRecord {
-  return { taxon_id: id, taxon_name: name, taxon_rank: rank, parent_id: 234, genomes };
+const virusesRoot: OrganismTaxonomy = {
+  taxonId: 10239,
+  taxonName: "Viruses",
+  lineageNames: ["Viruses"],
+  lineageIds: [10239],
+  taxonRank: "superkingdom",
+  genomes: 890123,
+};
+
+function child(
+  id: number,
+  name: string,
+  rank: string,
+  genomes: number,
+  parentId = rootTaxon.taxonId,
+): TaxonRecord {
+  return { taxon_id: id, taxon_name: name, taxon_rank: rank, parent_id: parentId, genomes };
 }
+
+// Children for the two-root ([rootTaxon, virusesRoot]) scenarios: one bacterial
+// species under Brucella, one viral family under Viruses.
+const twoRootChildren: Record<number, TaxonRecord[]> = {
+  234: [child(235, "Brucella abortus", "species", 581)],
+  10239: [child(11308, "Orthomyxoviridae", "family", 245000, virusesRoot.taxonId)],
+};
 
 // parentId -> rows, served with a Content-Range covering the whole set in one page.
 // Also answers the tree's batched child-count request: in(parent_id,(…))&facet →
@@ -111,26 +133,7 @@ describe("TaxonomyTree", () => {
   });
 
   it("renders multiple roots and their children in one table", async () => {
-    const virusesRoot: OrganismTaxonomy = {
-      taxonId: 10239,
-      taxonName: "Viruses",
-      lineageNames: ["Viruses"],
-      lineageIds: [10239],
-      taxonRank: "superkingdom",
-      genomes: 890123,
-    };
-    mockChildren({
-      234: [child(235, "Brucella abortus", "species", 581)],
-      10239: [
-        {
-          taxon_id: 11308,
-          taxon_name: "Orthomyxoviridae",
-          taxon_rank: "family",
-          parent_id: 10239,
-          genomes: 245000,
-        },
-      ],
-    });
+    mockChildren(twoRootChildren);
 
     render(<TaxonomyTree rootTaxa={[rootTaxon, virusesRoot]} />, {
       wrapper: createQueryClientWrapper(),
@@ -146,14 +149,6 @@ describe("TaxonomyTree", () => {
   });
 
   it("keeps a successful root usable when another root fails", async () => {
-    const virusesRoot: OrganismTaxonomy = {
-      taxonId: 10239,
-      taxonName: "Viruses",
-      lineageNames: ["Viruses"],
-      lineageIds: [10239],
-      taxonRank: "superkingdom",
-      genomes: 890123,
-    };
     server.use(
       http.get(`${dataApi}/taxonomy/`, ({ request }) => {
         const query = new URL(request.url).search;
@@ -185,26 +180,7 @@ describe("TaxonomyTree", () => {
   });
 
   it("resets stale roots, selection, and filtering when the root set changes", async () => {
-    const replacement: OrganismTaxonomy = {
-      taxonId: 10239,
-      taxonName: "Viruses",
-      lineageNames: ["Viruses"],
-      lineageIds: [10239],
-      taxonRank: "superkingdom",
-      genomes: 890123,
-    };
-    mockChildren({
-      234: [child(235, "Brucella abortus", "species", 581)],
-      10239: [
-        {
-          taxon_id: 11308,
-          taxon_name: "Orthomyxoviridae",
-          taxon_rank: "family",
-          parent_id: 10239,
-          genomes: 245000,
-        },
-      ],
-    });
+    mockChildren(twoRootChildren);
     const onSelect = vi.fn();
     const { rerender } = render(<TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />, {
       wrapper: createQueryClientWrapper(),
@@ -214,13 +190,44 @@ describe("TaxonomyTree", () => {
     fireEvent.click(childLink.closest("tr") as HTMLElement);
     fireEvent.change(screen.getByRole("searchbox"), { target: { value: "Brucella" } });
 
-    rerender(<TaxonomyTree rootTaxa={[replacement]} onSelect={onSelect} />);
+    rerender(<TaxonomyTree rootTaxa={[virusesRoot]} onSelect={onSelect} />);
 
     expect(await screen.findByRole("link", { name: "Orthomyxoviridae" })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Brucella" })).not.toBeInTheDocument();
     expect(screen.getByRole("searchbox")).toHaveValue("");
     await waitFor(() => {
       expect(onSelect).toHaveBeenLastCalledWith([]);
+    });
+  });
+
+  it("refreshes a selected root's lineage when only lineageNames change", async () => {
+    mockChildren({ 234: [child(235, "Brucella abortus", "species", 581)] });
+    const onSelect = vi.fn();
+    const { rerender } = render(<TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />, {
+      wrapper: createQueryClientWrapper(),
+    });
+
+    const rootLink = await screen.findByRole("link", { name: "Brucella" });
+    fireEvent.click(rootLink.closest("tr") as HTMLElement);
+    await waitFor(() => {
+      expect(onSelect).toHaveBeenLastCalledWith([
+        expect.objectContaining({ taxon_id: 234, lineage_names: [] }),
+      ]);
+    });
+
+    // Same id/name/rank/genomes — only the lineage was corrected by a refresh.
+    const relineaged = { ...rootTaxon, lineageNames: ["cellular organisms", "Bacteria"] };
+    rerender(<TaxonomyTree rootTaxa={[relineaged]} onSelect={onSelect} />);
+
+    const refreshedRoot = await screen.findByRole("link", { name: "Brucella" });
+    fireEvent.click(refreshedRoot.closest("tr") as HTMLElement);
+    await waitFor(() => {
+      expect(onSelect).toHaveBeenLastCalledWith([
+        expect.objectContaining({
+          taxon_id: 234,
+          lineage_names: ["cellular organisms", "Bacteria"],
+        }),
+      ]);
     });
   });
 

@@ -313,7 +313,7 @@ function TreeResults({
               >
                 <span
                   aria-hidden
-                  className="absolute top-1/2 -left-5 h-full w-[3px] -translate-y-1/2 rounded-r-sm opacity-0 transition-opacity group-hover:opacity-100"
+                  className="absolute top-1/2 -left-5 h-full w-0.75 -translate-y-1/2 rounded-r-sm opacity-0 transition-opacity group-hover:opacity-100"
                   style={{ background: segmentColor(row.segment) }}
                 />
                 {row.segment ?? "—"}
@@ -414,7 +414,7 @@ function PeerButton({
   if (!choice || placeholder) {
     return (
       <span
-        className="grid h-7 flex-1 cursor-not-allowed place-items-center rounded-md border border-dashed border-border/60 text-[0.7rem] text-muted-foreground/45 lg:w-[7.5rem] lg:flex-initial"
+        className="grid h-7 flex-1 cursor-not-allowed place-items-center rounded-md border border-dashed border-border/60 text-[0.7rem] text-muted-foreground/45 lg:w-30 lg:flex-initial"
         title={
           placeholder?.title ??
           `No ${viewerLabel[viewer]} tree for this segment`

@@ -11,6 +11,7 @@ import { makeFeaturesView } from "@/components/organisms/taxon-views/features";
 import { makeEpitopesView } from "@/components/organisms/taxon-views/epitopes";
 import { makeExperimentsView } from "@/components/organisms/taxon-views/experiments";
 import { makeInteractionsView } from "@/components/organisms/taxon-views/interactions";
+import { makeSfvtView } from "@/components/organisms/taxon-views/sfvt";
 
 // TaxonDataPanel has complex network + React dependencies; mock it so tests stay
 // focused on the factory guard logic (null taxon → render nothing).
@@ -262,6 +263,16 @@ describe("composite scope queries", () => {
 
     expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute("data-resource", resource);
     expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute("data-q", expectedQuery);
+  });
+
+  it("queries every curated SFVT cohort", () => {
+    const View = makeSfvtView({ scope: compositeScope, sfvtTaxonIds: new Set([12637, 2955291]) });
+    render(<View />);
+
+    expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute(
+      "data-q",
+      "in(taxon_id,(12637,11320))",
+    );
   });
 
   it("applies the composite clause to both experiment subviews", () => {

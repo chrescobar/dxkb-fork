@@ -1,5 +1,5 @@
-import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 import { TaxonDataPanel } from "./taxon-data-panel";
+import type { TaxonViewScope } from "./scope";
 
 // SFVT reads the `sequence_feature` core, which has a taxon_id field, and scopes
 // with eq(taxon_id,…) — same as legacy SFVTGrid. Features are stored only at the
@@ -31,24 +31,25 @@ export function resolveSfvtTaxonId(
 }
 
 export function makeSfvtView({
-  taxon,
+  scope,
   sfvtTaxonIds,
 }: {
-  taxon: OrganismTaxonomy | null;
+  scope: TaxonViewScope;
   sfvtTaxonIds: ReadonlySet<number>;
 }) {
   function SfvtView() {
-    if (!taxon) return null;
-    const taxonId = resolveSfvtTaxonId(taxon.lineageIds, sfvtTaxonIds);
-    // Tab is gated by hasSfvt, so this is normally non-null. Guard prevents
-    // rendering the entire sequence_feature resource if gate and map drift.
-    if (taxonId === null) return null;
-    return (
-      <TaxonDataPanel
-        resource="sequence_feature"
-        q={`eq(taxon_id,${String(taxonId)})`}
-      />
-    );
+    const taxonIds = scope.kind === "composite"
+      ? [...sfvtTaxonIds].map((id) => sfvtTaxonIdRemap[id] ?? id)
+      : [resolveSfvtTaxonId(scope.taxon.lineageIds, sfvtTaxonIds)].filter(
+          (id): id is number => id !== null,
+        );
+    // The tab gate normally guarantees at least one ID. Keep the guard so gate
+    // and curation drift cannot render the entire sequence_feature resource.
+    if (taxonIds.length === 0) return null;
+    const q = taxonIds.length === 1
+      ? `eq(taxon_id,${String(taxonIds[0])})`
+      : `in(taxon_id,(${taxonIds.join(",")}))`;
+    return <TaxonDataPanel resource="sequence_feature" q={q} />;
   }
   return SfvtView;
 }

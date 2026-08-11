@@ -272,7 +272,7 @@ export function ArchaeopteryxPhylogeny({
       <div
         id={id}
         ref={hostRef}
-        className="size-full min-h-[40rem] min-w-0"
+        className="size-full min-h-160 min-w-0"
         role="img"
         aria-label={`Interactive phylogenetic tree for ${title}`}
       />

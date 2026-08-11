@@ -40,6 +40,42 @@ describe("buildTaxonomyNavItems", () => {
     expect(interactions?.disabledReason).toMatch(/bacterial/i);
   });
 
+  it("evaluates gates across every composite root", () => {
+    const fungi = tax({ taxonId: 4751, lineageNames: ["Eukaryota", "Fungi"], lineageIds: [2759, 4751] });
+    const influenza = tax({
+      taxonId: 2955291,
+      lineageNames: ["Viruses", "Orthomyxoviridae", "Alphainfluenzavirus influenzae"],
+      lineageIds: [10239, 11308, 2955291],
+    });
+    const items = buildTaxonViews({
+      config: buildTaxonomyConfig(fungi.taxonId, fungi),
+      scope: { kind: "composite", displayName: "Composite", roots: [fungi, influenza] },
+      taxon: fungi,
+      surface: "landing",
+    });
+    const enabled = new Set(items.filter((item) => item.enabled !== false).map((item) => item.key));
+
+    expect([...enabled]).toEqual(expect.arrayContaining([
+      "strains", "surveillance", "serology", "sfvt",
+    ]));
+  });
+
+  it("enables descendant-specific tabs for an all-organisms composite scope", () => {
+    const cellular = tax({ taxonId: 131567, taxonName: "cellular organisms", lineageIds: [1, 131567] });
+    const viruses = tax({ taxonId: 10239, taxonName: "Viruses", lineageNames: ["Viruses"], lineageIds: [1, 10239] });
+    const items = buildTaxonViews({
+      config: buildTaxonomyConfig(cellular.taxonId, cellular),
+      scope: { kind: "composite", displayName: "All Organisms", roots: [cellular, viruses] },
+      taxon: cellular,
+      surface: "landing",
+    });
+    const enabled = new Set(items.filter((item) => item.enabled !== false).map((item) => item.key));
+
+    expect([...enabled]).toEqual(expect.arrayContaining([
+      "strains", "surveillance", "serology", "sfvt", "interactions",
+    ]));
+  });
+
   it("injects the real overview component (not a placeholder)", () => {
     const taxon = tax({ lineageNames: ["Bacteria"] });
     const items = buildItems(taxon);

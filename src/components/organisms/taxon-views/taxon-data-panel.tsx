@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 
 import { GenomeShell } from "@/components/genome/genome-shell";
 import { GenomeDetailPanel } from "@/components/genome/genome-detail-panel";
@@ -41,6 +41,7 @@ export function TaxonDataPanel({
       if (debounceRef.current) clearTimeout(debounceRef.current);
       setActiveId(ids[ids.length - 1] ?? null);
     } else {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(() => { setActiveId(null); }, 120);
     }
   }
@@ -65,22 +66,24 @@ export function TaxonDataPanel({
         />
       }
     >
-      <ListData
-        resource={resource}
-        q={q}
-        selectedIds={selectedIds}
-        onSelectionChange={handleSelectionChange}
-        rowSelection={rowSelection}
-        onRowSelectionChange={setRowSelection}
-        pageIndex={pageIndex}
-        onPageChange={setPageIndex}
-        isAllPagesSelected={isAllPagesSelected}
-        onAllPagesSelectionChange={setIsAllPagesSelected}
-        onTotalItemsChange={setTotalItems}
-        onFilterChange={onFilterChange}
-        keywordValue={keywordValue}
-        onKeywordChange={onKeywordChange}
-      />
+      <Suspense fallback={<div className="size-full animate-pulse rounded-lg bg-muted" />}>
+        <ListData
+          resource={resource}
+          q={q}
+          selectedIds={selectedIds}
+          onSelectionChange={handleSelectionChange}
+          rowSelection={rowSelection}
+          onRowSelectionChange={setRowSelection}
+          pageIndex={pageIndex}
+          onPageChange={setPageIndex}
+          isAllPagesSelected={isAllPagesSelected}
+          onAllPagesSelectionChange={setIsAllPagesSelected}
+          onTotalItemsChange={setTotalItems}
+          onFilterChange={onFilterChange}
+          keywordValue={keywordValue}
+          onKeywordChange={onKeywordChange}
+        />
+      </Suspense>
     </GenomeShell>
   );
 }

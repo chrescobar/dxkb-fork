@@ -4,13 +4,12 @@ import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 
-export default function OrganismsError({
-  error,
-  reset,
-}: {
+interface OrganismsErrorProps {
   error: Error & { digest?: string };
   reset: () => void;
-}) {
+}
+
+export default function OrganismsError({ error, reset }: OrganismsErrorProps) {
   useEffect(() => {
     console.error(error);
   }, [error]);

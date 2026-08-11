@@ -13,12 +13,18 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/organisms/viruses",
   useSearchParams: () => new URLSearchParams(),
 }));
-vi.mock("@/components/organisms/taxon-views", () => ({
-  buildTaxonViews: ({ OverviewComponent }: { OverviewComponent: React.ComponentType }) => [
-    { key: "overview", label: "Overview", icon: null, Component: OverviewComponent },
-    { key: "features", label: "Features", icon: null, Component: () => <div>Real features</div>, layout: "fill" },
-    { key: "taxa-tree", label: "Taxa Tree", icon: null, Component: () => <div>Real tree</div>, layout: "fill" },
-  ],
+vi.mock("@/components/organisms/taxon-views/taxon-data-panel", () => ({
+  TaxonDataPanel: ({ resource, q }: { resource: string; q: string }) => (
+    <div>{`${resource}:${q}`}</div>
+  ),
+}));
+vi.mock("@/components/taxonomy/taxonomy-tree-panel", () => ({
+  TaxonomyTreePanel: ({ taxa }: { taxa: { taxonName: string }[] }) => (
+    <div>{`${taxa.map((taxon) => taxon.taxonName).join(", ")} tree`}</div>
+  ),
+}));
+vi.mock("@/components/organisms/virus-families/virus-families-section", () => ({
+  VirusFamiliesSection: () => <div>Viral overview</div>,
 }));
 
 beforeEach(() => {
@@ -26,15 +32,19 @@ beforeEach(() => {
 });
 
 describe("VirusesPage", () => {
-  it("fetches the viral root", async () => {
-    render(await VirusesPage({ searchParams: Promise.resolve({ tab: "features" }) }));
+  it("fetches the viral root and wires its overview into the real view registry", async () => {
+    render(await VirusesPage({ searchParams: Promise.resolve({}) }));
     expect(fetchTaxonomy).toHaveBeenCalledWith(10239);
-    expect(screen.getByText("Real features")).toBeInTheDocument();
+    expect(screen.getByText("Viral overview")).toBeInTheDocument();
   });
 
   it("supports legacy ?view= when ?tab= is absent", async () => {
     render(await VirusesPage({ searchParams: Promise.resolve({ view: "features" }) }));
-    expect(screen.getByText("Real features")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "genome_feature:and(eq(genome_id,*),genome(and(eq(taxon_lineage_ids,10239),ne(genome_status,Deprecated))),eq(annotation,PATRIC))",
+      ),
+    ).toBeInTheDocument();
   });
 
   it("prefers ?tab= over ?view=", async () => {
@@ -43,7 +53,7 @@ describe("VirusesPage", () => {
         searchParams: Promise.resolve({ tab: "taxa-tree", view: "features" }),
       }),
     );
-    expect(screen.getByText("Real tree")).toBeInTheDocument();
-    expect(screen.queryByText("Real features")).not.toBeInTheDocument();
+    expect(screen.getByText("Viruses tree")).toBeInTheDocument();
+    expect(screen.queryByText(/^genome_feature:/)).not.toBeInTheDocument();
   });
 });

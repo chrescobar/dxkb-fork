@@ -18,6 +18,10 @@ import type { TaxonRecord } from "./taxon-tree-types";
 const taxonomyGuideUrl =
   "https://bv-brc.org/docs/quick_references/organisms_taxon/taxonomy.html";
 
+interface TaxonomyTreePanelProps {
+  readonly taxa: readonly OrganismTaxonomy[];
+}
+
 /**
  * Client shell for the taxonomy tab: the tree plus a detail panel for the
  * selected node. Kept separate from the make…View factory so the factory module
@@ -25,7 +29,7 @@ const taxonomyGuideUrl =
  * GenomeShell's resizable panels (which need ResizeObserver) live outside the
  * tree's jsdom unit tests.
  */
-export function TaxonomyTreePanel({ taxa }: { taxa: readonly OrganismTaxonomy[] }) {
+export function TaxonomyTreePanel({ taxa }: TaxonomyTreePanelProps) {
   const router = useRouter();
   const [selectedRows, setSelectedRows] = useState<TaxonRecord[]>([]);
   const singleRow = selectedRows.length === 1 ? selectedRows[0] : null;

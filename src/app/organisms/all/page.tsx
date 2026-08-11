@@ -10,7 +10,7 @@ import { OverviewView } from "./views/overview";
 
 export const dynamic = "force-dynamic";
 
-const ALL_ORGANISM_ROOT_IDS = [131567, 10239] as const;
+const allOrganismRootIds = [131567, 10239] as const;
 
 interface AllOrganismsPageProps {
   searchParams?: Promise<{
@@ -22,7 +22,7 @@ interface AllOrganismsPageProps {
 export default async function AllOrganismsPage({ searchParams }: AllOrganismsPageProps) {
   const [resolvedParams, roots] = await Promise.all([
     searchParams,
-    Promise.all(ALL_ORGANISM_ROOT_IDS.map((taxonId) => fetchOrganismTaxonomy(taxonId))),
+    Promise.all(allOrganismRootIds.map((taxonId) => fetchOrganismTaxonomy(taxonId))),
   ]);
   const scope = { kind: "composite" as const, displayName: "All Organisms", roots };
   const views = buildTaxonViews({

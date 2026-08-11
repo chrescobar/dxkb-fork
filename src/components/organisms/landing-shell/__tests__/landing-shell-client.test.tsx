@@ -90,7 +90,7 @@ it("does not navigate to a disabled item", async () => {
   expect(pushSpy).not.toHaveBeenCalled();
 });
 
-it("uses a viewport-bounded wrapper only for fill views", () => {
+it("uses the parent flex boundary for both fill and scroll views", () => {
   const { container, rerender } = render(
     <LandingShellClient
       displayName="Brucella"
@@ -103,7 +103,10 @@ it("uses a viewport-bounded wrapper only for fill views", () => {
     </LandingShellClient>,
   );
 
-  expect(container.querySelector(".h-\\[calc\\(100dvh-5\\.5rem\\)\\]")).not.toBeNull();
+  const fillWrapper = container.querySelector("section")?.parentElement;
+  expect(fillWrapper).toHaveClass("min-h-0", "flex-1");
+  expect(fillWrapper?.className).not.toContain("100dvh");
+  expect(container.querySelector(".overflow-hidden")).not.toBeNull();
 
   rerender(
     <LandingShellClient
@@ -116,6 +119,8 @@ it("uses a viewport-bounded wrapper only for fill views", () => {
       <div />
     </LandingShellClient>,
   );
-  expect(container.querySelector(".h-\\[calc\\(100dvh-5\\.5rem\\)\\]")).toBeNull();
+  const scrollWrapper = container.querySelector("section")?.parentElement;
+  expect(scrollWrapper).toHaveClass("min-h-0", "flex-1");
+  expect(scrollWrapper?.className).not.toContain("100dvh");
   expect(container.querySelector(".overflow-y-auto")).not.toBeNull();
 });

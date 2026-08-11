@@ -69,13 +69,7 @@ export function LandingShellClient({
           onChange={handleViewChange}
         />
       </div>
-      <div
-        className={
-          layout === "fill"
-            ? "mx-auto flex h-[calc(100dvh-5.5rem)] min-h-0 w-full max-w-none flex-row gap-3 px-2 sm:px-3 lg:px-4"
-            : "mx-auto flex min-h-0 w-full max-w-none flex-1 flex-row gap-3 px-2 sm:px-3 lg:px-4"
-        }
-      >
+      <div className="mx-auto flex min-h-0 w-full max-w-none flex-1 flex-row gap-3 px-2 sm:px-3 lg:px-4">
         {/* Desktop rail — hidden below lg, where the mobile nav takes over. */}
         <div className="hidden lg:block">
           <LandingNav

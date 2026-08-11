@@ -85,20 +85,28 @@ interface TaxonomyTreeProps {
 export function TaxonomyTree({ rootTaxa, onSelect }: TaxonomyTreeProps) {
   "use no memo";
 
+  // Must cover every field rootToRecord copies: the committed roots are a cached
+  // snapshot, so anything left out of the signature can go stale in the row model
+  // (and in the detail panel, which reads lineage_names off the selected record).
+  // JSON.stringify for the lineage so a name containing ":" or "|" cannot forge a
+  // matching signature.
   const rootValueSignature = rootTaxa
     .map((taxon) =>
-      [taxon.taxonId, taxon.taxonName, taxon.taxonRank, taxon.genomes ?? ""].join(":"),
+      [
+        taxon.taxonId,
+        taxon.taxonName,
+        taxon.taxonRank,
+        taxon.genomes ?? "",
+        JSON.stringify(taxon.lineageNames),
+      ].join(":"),
     )
     .join("|");
-  const rootRecordsRef = useRef(rootTaxa.map(rootToRecord));
-  const rootValueSignatureRef = useRef(rootValueSignature);
-  if (rootValueSignatureRef.current !== rootValueSignature) {
-    rootValueSignatureRef.current = rootValueSignature;
-    rootRecordsRef.current = rootTaxa.map(rootToRecord);
-  }
-  const rootRecords = rootRecordsRef.current;
+  const [committedRoots, setCommittedRoots] = useState(() => ({
+    signature: rootValueSignature,
+    taxa: rootTaxa,
+  }));
+  const rootRecords = useMemo(() => committedRoots.taxa.map(rootToRecord), [committedRoots]);
   const rootIds = useMemo(() => rootRecords.map(numericId), [rootRecords]);
-  const rootSignature = rootIds.join(",");
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -335,8 +343,6 @@ export function TaxonomyTree({ rootTaxa, onSelect }: TaxonomyTreeProps) {
   // which storms the virtualizer (re-measure → setState → re-render) and churns the
   // query observers into duplicate fetches. Key it on a signature of the child
   // queries instead: identity stable between settles, fresh the moment one changes.
-  // A derived ref (not useMemo) so the signature is a real identity key, not a
-  // dependency exhaustive-deps would flag as unused in the memo body.
   // NOTE: child counts are deliberately NOT in this signature. They only affect the
   // expand-arrow (getRowCanExpand, re-run every render) and the count badge (a cell,
   // re-rendered via childCountRef) — neither needs the row MODEL rebuilt. Including
@@ -344,26 +350,26 @@ export function TaxonomyTree({ rootTaxa, onSelect }: TaxonomyTreeProps) {
   const childrenSignature = childQueries
     .map((q, i) => `${String(fetchParentIds[i])}:${q.status}:${String(q.dataUpdatedAt)}`)
     .join("|");
-  const dataRef = useRef<TaxonRecord[]>(rootRecords);
-  const signatureRef = useRef(childrenSignature);
-  const prevRootSignatureRef = useRef(rootSignature);
-  if (prevRootSignatureRef.current !== rootSignature) {
-    prevRootSignatureRef.current = rootSignature;
+  const data = useMemo(() => {
+    // Query settlement must invalidate TanStack's identity-keyed row model.
+    void childrenSignature;
+    return [...rootRecords];
+  }, [rootRecords, childrenSignature]);
+
+  useEffect(() => {
+    if (committedRoots.signature === rootValueSignature) return;
+
+    setCommittedRoots({ signature: rootValueSignature, taxa: rootTaxa });
     recordCacheRef.current.clear();
     // Roots can change in place when navigating within the taxonomy segment.
     // Reset controlled state and auto-expand every new top-level root.
-    setExpanded(Object.fromEntries(rootIds.map((rootId) => [String(rootId), true])));
+    const nextRootIds = rootTaxa.map((taxon) => taxon.taxonId);
+    setExpanded(Object.fromEntries(nextRootIds.map((rootId) => [String(rootId), true])));
     setRowSelection({});
     setGlobalFilter("");
     lastSelectedIdRef.current = null;
-  }
-  if (signatureRef.current !== childrenSignature || dataRef.current !== rootRecords) {
-    signatureRef.current = childrenSignature;
-    // TanStack keys its row model on data identity; query settlement must create
-    // a fresh top-level array so getSubRows reads the updated children map.
-    dataRef.current = [...rootRecords];
-  }
-  const data = dataRef.current;
+    onSelect?.([]);
+  }, [rootValueSignature, committedRoots.signature, rootTaxa, onSelect]);
 
   const table = useReactTable({
     data,

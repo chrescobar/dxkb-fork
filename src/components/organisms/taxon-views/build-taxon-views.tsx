@@ -18,7 +18,7 @@ import { makeInteractionsView } from "./interactions";
 import { makeOverviewView } from "./overview";
 import { makePhylogenyView } from "./phylogeny";
 import { makeProteinStructuresView } from "./protein-structures";
-import type { TaxonViewScope } from "./scope";
+import { scopeRoots, type TaxonViewScope } from "./scope";
 import { makeSequencesView } from "./sequences";
 import { makeSerologyView } from "./serology";
 import { makeSfvtView } from "./sfvt";
@@ -44,7 +44,7 @@ export function buildTaxonViews({
   surface,
 }: BuildTaxonViewsOptions): OrganismLandingView[] {
   const lists = getCuratedLists();
-  const views = resolveTabs(buildTabContext(taxon, phyloManifest, lists), {
+  const views = resolveTabs(buildTabContext(taxon, phyloManifest, lists, scopeRoots(scope)), {
     overview: {
       Component:
         OverviewComponent ??
@@ -61,7 +61,7 @@ export function buildTaxonViews({
     strains: { Component: makeStrainsView({ scope }), layout: "fill" },
     surveillance: { Component: makeSurveillanceView({ scope }), layout: "fill" },
     serology: { Component: makeSerologyView({ scope }), layout: "fill" },
-    sfvt: { Component: makeSfvtView({ taxon, sfvtTaxonIds: lists.sfvtTaxonIds }), layout: "fill" },
+    sfvt: { Component: makeSfvtView({ scope, sfvtTaxonIds: lists.sfvtTaxonIds }), layout: "fill" },
     epitopes: { Component: makeEpitopesView({ scope }), layout: "fill" },
     interactions: { Component: makeInteractionsView({ scope }), layout: "fill" },
   });

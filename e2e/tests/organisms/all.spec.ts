@@ -36,6 +36,7 @@ test.describe("all organisms landing page", () => {
 
     await page.getByRole("button", { name: /Genomes/ }).click();
     await expect(page).toHaveURL(/\/organisms\/all\?tab=genomes/);
+    await expect(page.getByRole("table")).toBeVisible();
     await expect(page.getByText("This view is coming soon")).toHaveCount(0);
 
     await page.goto("/organisms/all?tab=unknown");

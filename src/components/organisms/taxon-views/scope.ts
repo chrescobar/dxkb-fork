@@ -8,15 +8,17 @@ export type TaxonViewScope =
       roots: readonly OrganismTaxonomy[];
     };
 
+function lineageClause(taxon: OrganismTaxonomy): string {
+  return `eq(taxon_lineage_ids,${String(taxon.taxonId)})`;
+}
+
 export function taxonLineageClause(scope: TaxonViewScope): string {
   const roots = scopeRoots(scope);
   if (scope.kind === "lineage") {
-    return `eq(taxon_lineage_ids,${String(scope.taxon.taxonId)})`;
+    return lineageClause(scope.taxon);
   }
 
-  return `or(${roots
-    .map((root) => `eq(taxon_lineage_ids,${String(root.taxonId)})`)
-    .join(",")})`;
+  return `or(${roots.map(lineageClause).join(",")})`;
 }
 
 export function scopeRoots(scope: TaxonViewScope): readonly OrganismTaxonomy[] {

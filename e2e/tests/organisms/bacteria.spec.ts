@@ -79,6 +79,7 @@ test.describe("bacteria organism landing page", () => {
 
     await page.getByRole("button", { name: /Genomes/ }).click();
     await expect(page).toHaveURL(/\/organisms\/bacteria\?tab=genomes/);
+    await expect(page.getByRole("table")).toBeVisible();
     await expect(page.getByText("Genome table filtering and pagination")).toHaveCount(0);
     await expect(page.locator("main")).toHaveCSS("padding-bottom", "0px");
     const fillShell = page.locator("main > div.flex-row");

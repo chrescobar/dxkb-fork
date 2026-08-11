@@ -2,7 +2,9 @@ import type { OrganismLandingView } from "@/components/organisms/types";
 
 import { resolveLandingTab } from "../landing-request";
 
-const Component = () => null;
+function Component() {
+  return null;
+}
 const enabledRequests: [
   Parameters<typeof resolveLandingTab>[0],
   "genomes" | "features",

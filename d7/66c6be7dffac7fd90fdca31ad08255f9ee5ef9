@@ -1,0 +1,28 @@
+src/components/organisms/taxon-views/sfvt.tsx
+  s_8660cc5f919a4e::t_04d53bd3b29efc 20-21,28
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/sfvt.test.ts
+  s_8660cc5f919a4e::t_29bcab6a23a568 36-39
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_8660cc5f919a4e::t_479a234b202c5b 293-307
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "d766c6be7dffac7fd90fdca31ad08255f9ee5ef9",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_8660cc5f919a4e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_00db745f6ffeDxwXBQDNswIHsl",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

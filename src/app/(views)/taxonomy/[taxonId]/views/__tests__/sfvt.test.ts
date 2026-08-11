@@ -33,6 +33,10 @@ describe("sfvt taxon-id remap", () => {
     expect(resolveSfvtTaxonId([2955291], sfvtTaxonIds)).toBe(11320);
   });
 
+  it("does not remap a taxon removed from the curated set", () => {
+    expect(resolveSfvtTaxonId([2955291], new Set([12637]))).toBeNull();
+  });
+
   it("returns null when no lineage id is curated", () => {
     const { sfvtTaxonIds } = getCuratedLists();
     expect(resolveSfvtTaxonId([1, 2, 999], sfvtTaxonIds)).toBeNull();

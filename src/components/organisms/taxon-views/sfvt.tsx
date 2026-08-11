@@ -17,15 +17,15 @@ export const sfvtTaxonIdRemap: Record<number, number> = {
 
 // Match against the full lineage (not just taxonId) so a species/strain under a
 // curated taxon resolves to its ancestor's mapped id — mirrors how `hasSfvt`
-// gates on lineageIds. Explicit remap wins; otherwise any curated id self-maps.
+// gates on lineageIds. Curated membership is required before applying an explicit
+// remap; otherwise the curation policy could remove a cohort without hiding it.
 // First lineage hit wins.
 export function resolveSfvtTaxonId(
   lineageIds: readonly number[],
   sfvtTaxonIds: ReadonlySet<number>,
 ): number | null {
   for (const id of lineageIds) {
-    if (id in sfvtTaxonIdRemap) return sfvtTaxonIdRemap[id];
-    if (sfvtTaxonIds.has(id)) return id;
+    if (sfvtTaxonIds.has(id)) return sfvtTaxonIdRemap[id] ?? id;
   }
   return null;
 }

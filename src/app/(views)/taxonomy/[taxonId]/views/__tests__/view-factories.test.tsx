@@ -290,6 +290,21 @@ describe("composite scope queries", () => {
     expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute("data-q", "eq(taxon_id,11320)");
   });
 
+  it("excludes remapped cohorts removed from the curated set", () => {
+    const scope = {
+      kind: "composite" as const,
+      displayName: "Dengue and Influenza",
+      roots: [
+        { ...fakeTaxon, taxonId: 12637, lineageIds: [10239, 12637] },
+        { ...fakeTaxon, taxonId: 2955291, lineageIds: [10239, 11308, 2955291] },
+      ],
+    };
+    const View = makeSfvtView({ scope, sfvtTaxonIds: new Set([12637]) });
+    render(<View />);
+
+    expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute("data-q", "eq(taxon_id,12637)");
+  });
+
   it("applies the composite clause to both experiment subviews", () => {
     const View = makeExperimentsView({ scope: compositeScope });
     render(<View />);

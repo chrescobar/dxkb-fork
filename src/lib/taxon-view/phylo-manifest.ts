@@ -7,29 +7,38 @@ import {
 
 import type { PhyloManifest } from "./tab-context";
 
-const emptyManifest: PhyloManifest = { trees: {} };
+const defaultManifestUrl = "https://www.bv-brc.org/api/content/phyloxml_trees/manifest.json";
+// Bounds worst-case added latency on the taxon page (this fetch runs parallel
+// to, but is awaited before, page render). A slow/dead endpoint only disables
+// the Phylogeny tab, so failing fast matters more than tolerating slow success.
+const manifestFetchTimeoutMs = 2000;
+
+function isTreeMap(value: unknown): value is Record<string, unknown> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const entries = Object.entries(value);
+  return entries.every(([taxonId, tree]) => /^\d+$/.test(taxonId) && tree != null);
+}
 
 function parseManifest(payload: unknown): PhyloManifest | null {
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) return null;
-  const trees = (payload as Record<string, unknown>).trees;
-  if (!trees || typeof trees !== "object" || Array.isArray(trees)) return null;
-  return { trees: trees as Record<string, unknown> };
+  const object = payload as Record<string, unknown>;
+  if (isTreeMap(object.trees)) return { trees: object.trees };
+  return isTreeMap(object) ? { trees: object } : null;
 }
 
 /**
  * Fetch the published-viral-tree manifest (doc §4.5/§7.2). Fail-open by design:
  * a missing/broken manifest must NEVER block the taxon page — it only means the
- * viral Phylogeny tab is treated as "no tree" (disabled). When PHYLO_MANIFEST_URL
- * is unset we return an empty manifest (placeholder mode) so nothing is fetched.
+ * viral Phylogeny tab is treated as "no tree" (disabled). PHYLO_MANIFEST_URL can
+ * override the public BV-BRC manifest URL for mirrors and test deployments.
  */
 export async function fetchPhyloManifest(): Promise<PhyloManifest | null> {
-  const url = process.env.PHYLO_MANIFEST_URL;
-  if (!url) return emptyManifest;
+  const url = process.env.PHYLO_MANIFEST_URL ?? defaultManifestUrl;
 
   try {
     const response = await fetch(url, {
       headers: { Accept: "application/json" },
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(manifestFetchTimeoutMs),
       ...organismFetchCacheInit(organismBvBrcRevalidateSeconds),
     });
     if (!response.ok) {

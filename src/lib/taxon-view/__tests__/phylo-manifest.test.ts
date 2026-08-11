@@ -4,6 +4,7 @@ import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
 import { fetchPhyloManifest } from "../phylo-manifest";
 
+const defaultManifestUrl = "https://www.bv-brc.org/api/content/phyloxml_trees/manifest.json";
 const manifestUrl = "https://example.test/phylo/manifest.json";
 
 afterEach(() => {
@@ -11,20 +12,39 @@ afterEach(() => {
 });
 
 describe("fetchPhyloManifest", () => {
-  it("returns an empty manifest (no network) when the env var is unset", async () => {
-    const result = await fetchPhyloManifest();
-    expect(result).toEqual({ trees: {} });
+  it("uses the published manifest when the env var is unset", async () => {
+    server.use(
+      http.get(defaultManifestUrl, () =>
+        HttpResponse.json({ "2955291": "Influenza A virus" }),
+      ),
+    );
+
+    expect(await fetchPhyloManifest()).toEqual({
+      trees: { "2955291": "Influenza A virus" },
+    });
   });
 
-  it("parses the manifest on a successful fetch", async () => {
+  it("parses an already-wrapped manifest", async () => {
     process.env.PHYLO_MANIFEST_URL = manifestUrl;
     server.use(
       http.get(manifestUrl, () =>
-        HttpResponse.json({ trees: { "2955291": { url: "/trees/flu.nwk" } } }),
+        HttpResponse.json({ trees: { "2955291": { url: "/trees/flu.xml" } } }),
       ),
     );
     const result = await fetchPhyloManifest();
     expect(result?.trees["2955291"]).toBeDefined();
+  });
+
+  it("normalizes the published flat manifest", async () => {
+    process.env.PHYLO_MANIFEST_URL = manifestUrl;
+    server.use(
+      http.get(manifestUrl, () =>
+        HttpResponse.json({ "2955291": "Alphainfluenzavirus influenzae" }),
+      ),
+    );
+    expect(await fetchPhyloManifest()).toEqual({
+      trees: { "2955291": "Alphainfluenzavirus influenzae" },
+    });
   });
 
   it("fails open (null) on a non-OK response", async () => {

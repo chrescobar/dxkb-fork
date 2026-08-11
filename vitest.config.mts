@@ -17,6 +17,7 @@ export default defineConfig({
     include: [
       "src/**/*.{test,spec}.{ts,tsx}",
       "e2e/scripts/**/*.{test,spec}.{ts,mts}",
+      "scripts/**/*.{test,spec}.{ts,mts}",
     ],
     // Exclude Playwright specs and their helpers; keep e2e/scripts/ tests in scope.
     exclude: [
@@ -49,6 +50,7 @@ export default defineConfig({
         "src/**/types.ts",
         "src/**/types/**",
         "src/components/ui/**",
+        "src/**/__tests__/fixtures/**",
       ],
       // Floors set just below the measured baseline so unrelated PRs don't
       // randomly trip on rounding drift. Bump these incrementally as new tests

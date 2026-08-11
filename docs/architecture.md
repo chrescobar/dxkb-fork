@@ -37,6 +37,7 @@ Route groups `(…)` are organizational and do NOT appear in the URL.
 - `types.ts` — `AuthUser`, `UserProfile`, credential types
 
 Notes:
+
 - Built on the `better-auth` dependency. Consume client auth state via `useAuth()` from `hooks.ts`. There is NO `bvbrcAuth` client object and NO `src/contexts/auth-context.tsx` — do not reference them.
 - `src/proxy.ts` middleware delegates to `isProtectedPagePath`/`isProtectedApiPath` (currently `/services/*`, `/workspace/*`, `/api/protected/*`). Checks are optimistic cookie-existence only; real validation is server-side. To change what's protected, edit `routes.ts`, not `proxy.ts`.
 - `/api/auth/*` wire contract (envelope shapes, rules, endpoint table): see `docs/auth-api.md`. Every new auth route MUST use the `{error, code, details?}` envelope.
@@ -65,6 +66,7 @@ Notes:
 - Organism landing pages (`src/app/organisms/(all|bacteria|viruses)`) are tabbed, driven by a per-organism `_config.ts` (`OrganismLandingConfig` in `src/components/organisms/types.ts`) + shared components in `src/components/organisms/`.
 - URL schema (view types → URL params, legacy hash redirects) documented in `docs/url-schema/`. Legacy `#`-URL support: `legacy-hash-adapter.tsx` / `legacy-redirect.ts`.
 - Tab visibility policy: `src/app/api/taxon-view/tab-policy` + `docs/taxon-view-tab-visibility.md`.
+- Phylogeny renderers, local Nextstrain datasets, deployment, and licensing: `docs/phylogeny-integration.md`.
 
 ## Services pattern
 

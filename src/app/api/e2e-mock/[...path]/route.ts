@@ -655,6 +655,9 @@ export async function GET(
   if (!isEnabled()) return disabledResponse();
   const path = await resolvePath(context.params);
   logHit("GET", path);
+  if (path === "phylo-manifest") {
+    return NextResponse.json({ trees: { "2955291": "influenza" } });
+  }
   const bvBrcWebsite = maybeBvBrcWebsite(path, request);
   if (bvBrcWebsite) {
     if (bvBrcWebsite.kind === "unhandled") {

@@ -46,6 +46,7 @@ describe("buildTaxonomyNavItems", () => {
     const taxon = tax({ lineageNames: ["Bacteria"] });
     const items = buildTaxonomyNavItems(buildTaxonomyConfig(1, taxon), taxon, null);
     const name = (k: string) => items.find((i) => i.key === k)?.Component.name;
+    expect(name("phylogeny")).toBe("PhylogenyView");
     expect(name("genomes")).toBe("GenomesView");
     expect(name("features")).toBe("FeaturesView");
     expect(name("domains-and-motifs")).toBe("DomainsAndMotifsView");
@@ -56,6 +57,7 @@ describe("buildTaxonomyNavItems", () => {
     expect(name("sfvt")).toBe("SfvtView");
     expect(name("epitopes")).toBe("EpitopesView");
     expect(name("interactions")).toBe("InteractionsView");
+    expect(items.find((i) => i.key === "phylogeny")?.layout).toBe("fill");
     expect(items.find((i) => i.key === "features")?.layout).toBe("fill");
     expect(items.find((i) => i.key === "domains-and-motifs")?.layout).toBe("fill");
     expect(items.find((i) => i.key === "epitopes")?.layout).toBe("fill");

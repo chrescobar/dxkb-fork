@@ -22,6 +22,13 @@
 
 # production
 /build
+/public/dist/
+/public/nextstrain-viewer.html
+/public/auspice-favicon.png
+/public/.auspice-build-hash
+/.auspice-build/
+/data/auspice-datasets/*
+!/data/auspice-datasets/.gitkeep
 
 # misc
 .DS_Store

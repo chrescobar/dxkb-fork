@@ -1,0 +1,48 @@
+src/components/phylogeny/viral-tree-picker.tsx
+  s_4339eaa76f2b15::t_3a66039e8220b9 434
+e2e/tests/organisms/bacteria.spec.ts
+  s_58090cf4a8beef::t_86a88f7f97992a 24,26,31
+  s_58090cf4a8beef::t_4eb228779cb1f2 64-73
+  s_58090cf4a8beef::t_9a632d306487b5 53-55
+src/hooks/use-hide-on-scroll.ts
+  s_58090cf4a8beef::t_149415a19a9362 19-20,22,29-33
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_58090cf4a8beef::t_91a4638050870c 114-117
+e2e/tests/organisms/viruses.spec.ts
+  s_58090cf4a8beef::t_479d5c0aa49c4d 10-19
+e2e/tests/organisms/all.spec.ts
+  s_58090cf4a8beef::t_85fb59b4d5daea 44
+  s_58090cf4a8beef::t_d306f81ede4702 10-25
+src/hooks/__tests__/use-hide-on-scroll.test.ts
+  s_58090cf4a8beef::t_47d24c02a38f58 12-18
+  s_58090cf4a8beef::t_c7a80f233e83b3 42-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "730f1f1c3528943e84c8851b5d0f1a8e577ae84a",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_4339eaa76f2b15": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "123340b7-686a-4fb3-8b68-411784f9aaa0",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_58090cf4a8beef": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_00df1fd8effeOMh1SpqwJd1b4x",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

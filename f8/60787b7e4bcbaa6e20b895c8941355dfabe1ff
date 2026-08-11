@@ -1,0 +1,183 @@
+src/components/taxonomy/taxonomy-tree.tsx
+  s_63c5d2f8aac935::t_70164cb6309ff1 104-108
+  s_74a8647dfb0a73::t_6d25d6bed7a1ff 100
+  s_74a8647dfb0a73::t_ea72df6b80d9fe 88-92,95-99,101
+  s_63c5d2f8aac935::t_511474a1c312da 353-357
+  s_63c5d2f8aac935::t_d5edf49865a36d 360-362,372
+  s_63c5d2f8aac935::t_91d6ea3eb2ecf0 358-359,366-367,371
+src/app/organisms/all/page.tsx
+  s_d31068a33070a8::t_a0b870652ccf90 25
+  s_d31068a33070a8::t_4334230d6d3f42 13
+src/components/taxonomy/__tests__/taxonomy-tree.test.tsx
+  s_3020d6f48924b2::t_c6a66df96ef26e 48-64,67-72
+  s_3020d6f48924b2::t_337e1a6f6b841b 183
+  s_74a8647dfb0a73::t_e7f944e4f2b478 203-233
+  s_3020d6f48924b2::t_c49e310c0afc2c 136
+  s_3020d6f48924b2::t_7c5cc84bffea5f 193
+  s_3020d6f48924b2::t_545996deada081 73
+e2e/tests/organisms/bacteria.spec.ts
+  s_5deac4187bd60c::t_e9d66bda048cf9 82
+src/lib/taxon-view/__tests__/landing-request.test.ts
+  s_5deac4187bd60c::t_f34371d9623532 5-7
+src/components/organisms/taxon-views/__tests__/taxon-data-panel.test.tsx
+  s_5deac4187bd60c::t_5d2f7eb493cd04 88
+  s_5deac4187bd60c::t_f1eed68dfdbbf7 174-185
+src/components/organisms/taxon-views/build-taxon-views.tsx
+  s_4875e07c8b83ab::t_82a06cbbbce239 21
+  s_4875e07c8b83ab::t_1685560a901c29 47,64
+src/lib/taxon-view/__tests__/predicates.test.ts
+  s_4875e07c8b83ab::t_61f7dde151a7f2 29
+  s_4875e07c8b83ab::t_42c809bf82e89d 30-31
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_4875e07c8b83ab::t_2184664b677987 268-277
+  s_4875e07c8b83ab::t_b9a0bf06b06213 14
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_52ffb594e4315b::t_575be54ac3e946 72
+src/lib/taxon-view/tab-context.ts
+  s_4875e07c8b83ab::t_6e84a6d41df354 17
+  s_4875e07c8b83ab::t_94b43e9e27e7c6 37-38
+  s_4875e07c8b83ab::t_f95a038a0582b1 36
+  s_4875e07c8b83ab::t_06195546ce2e23 18-19
+  s_4875e07c8b83ab::t_3edd31dd3b9da5 29
+src/components/organisms/taxon-views/taxon-data-panel.tsx
+  s_5deac4187bd60c::t_bf03b21ed4dd25 3
+  s_5deac4187bd60c::t_4b39bf5fe0c358 70-86
+  s_5deac4187bd60c::t_0e21fb6fb1e801 44
+  s_5deac4187bd60c::t_5d66a0c43fed4a 69
+e2e/tests/organisms/all.spec.ts
+  s_5deac4187bd60c::t_a6f17a29faa9d2 39
+src/components/taxonomy/taxonomy-tree-panel.tsx
+  s_5deac4187bd60c::t_e0240e96f2fbb8 32
+  s_5deac4187bd60c::t_591648dbee9ef6 21-24
+src/app/organisms/__tests__/layout.test.tsx
+  s_52ffb594e4315b::t_a6d54c5028f8bd 20-23
+src/app/(views)/taxonomy/[taxonId]/__tests__/nav-items.test.tsx
+  s_4875e07c8b83ab::t_bfbd7788a5ea49 43-62
+  s_4875e07c8b83ab::t_bd4d674108e4e0 74,76
+  s_4875e07c8b83ab::t_c44e331d621af9 63-73,75,77-78
+src/app/organisms/layout.tsx
+  s_52ffb594e4315b::t_ff08784782f6c2 9
+src/app/organisms/error.tsx
+  s_5deac4187bd60c::t_ad4899a17696c8 7,10-12
+src/components/organisms/taxon-views/scope.ts
+  s_a2a2e12dc0ed92::t_f9e3685f88400a 11-14,18,21
+src/lib/taxon-view/predicates.ts
+  s_4875e07c8b83ab::t_04c74177717a3e 40,44,48
+  s_4875e07c8b83ab::t_ff0533571ac93a 39,43,47
+  s_4875e07c8b83ab::t_e81c30b68034c2 33-34
+  s_4875e07c8b83ab::t_d35e81df540ea4 4-9,13
+  s_4875e07c8b83ab::t_0665541a94dad6 12
+  s_4875e07c8b83ab::t_6eeb396e76e4ec 35
+src/lib/taxon-view/landing-request.ts
+  s_3aacfa77ad1a3a::t_12206a0f6a4cee 9-10
+  s_3aacfa77ad1a3a::t_79ded4dd61ba21 2
+  s_3aacfa77ad1a3a::t_90d59961929c7c 3
+  s_3aacfa77ad1a3a::t_3f9893bad89236 6
+src/app/organisms/viruses/__tests__/page.test.tsx
+  s_3435a69f3420cc::t_fd9dd37cd66c82 26-27
+  s_3435a69f3420cc::t_1c7e711e511958 38
+  s_3435a69f3420cc::t_a409f937a05e2e 35-36,43-47,56-57
+  s_3435a69f3420cc::t_a8277f7f312d07 16-25
+src/components/organisms/landing-shell/__tests__/landing-shell-client.test.tsx
+  s_52ffb594e4315b::t_ccc80205a0101d 106
+  s_52ffb594e4315b::t_ebb8d77c2c506b 122
+  s_52ffb594e4315b::t_ae92a1712d8709 93,107-109,123-124
+e2e/tests/organisms/viruses.spec.ts
+  s_5deac4187bd60c::t_38bca386fc2616 33
+src/components/organisms/taxon-views/sfvt.tsx
+  s_4875e07c8b83ab::t_b8224e88f2ff79 2
+  s_4875e07c8b83ab::t_6f31f35f21fbe7 34,37,41-52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "f860787b7e4bcbaa6e20b895c8941355dfabe1ff",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_3020d6f48924b2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a98b1c08-1c54-48f2-8d65-a12ecaf3a54f",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_3435a69f3420cc": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_00df52a77ffe5Nah3TLUKhkxuL",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_3aacfa77ad1a3a": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_00df6b621ffe6asFE1iwtSiKes",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_4875e07c8b83ab": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_00dfc4215ffetJxtdFctKkBhu2",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_52ffb594e4315b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_00e0293efffe69LnjD150qgG0Y",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_5deac4187bd60c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_00e0aee49ffeqf5r2cYRWARL0N",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_63c5d2f8aac935": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_00e0d6d49ffem7NwPLay4Tsjoq",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_74a8647dfb0a73": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cf8fbcf3-49ce-4fa2-945b-d0c88e1fe72d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_a2a2e12dc0ed92": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_00e0533c8ffeP56B57a9Ugx5o4",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_d31068a33070a8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_00e0346deffeCT17xh2AjI0XM6",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

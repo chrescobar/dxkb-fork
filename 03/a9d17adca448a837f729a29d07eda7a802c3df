@@ -1,0 +1,300 @@
+src/components/phylogeny/__tests__/viral-phylogeny-panel.test.tsx
+  s_16f23d5e0c2894::t_94d68684ba11b9 96,113
+e2e/tests/services/sequence-input-services.spec.ts
+  s_d22ef9438cf161::t_fd41cf776efe7a 68-70,111-116,201
+  s_5b0534c79a9fcb::t_a7d5fe5347e0cc 11-19
+  s_5b0534c79a9fcb::t_4334a5214f461a 39-67,71-72,96,100-104,117-126
+  s_5b0534c79a9fcb::t_52e7ce37a43128 195-197,200
+  s_5b0534c79a9fcb::t_156c0ea766b740 97-98
+  s_d22ef9438cf161::t_5582d4c01283f7 105-110
+  s_d22ef9438cf161::t_6ab5b736005d3a 20-24,31,33,36
+  s_5b0534c79a9fcb::t_0f6a3b7e0993d7 198
+  s_5b0534c79a9fcb::t_1b5d42e01de03a 199
+  s_5b0534c79a9fcb::t_3d3403040dee27 219
+  s_d22ef9438cf161::t_c7b449b2da1045 73-95,99
+  s_ba83347f6a8284::t_4d78e1528909d8 172
+  s_d22ef9438cf161::t_ccafaa1685c5c7 221-223
+  s_d22ef9438cf161::t_087c97094af39f 127-163
+src/hooks/services/workspace/use-workspace-selection.ts
+  s_88d84933c73700::t_765b9ef1d27b56 78-79,86,89,93-96
+  s_ae54709a6b3c4e::t_0c2c031ca62c53 102
+  s_88d84933c73700::t_70673dbdb5b828 38,40-44
+  s_88d84933c73700::t_27198d8c223a9a 80-85,87-88
+  s_88d84933c73700::t_2569e77639ffc4 3
+  s_88d84933c73700::t_0ec4ed37d1ed8f 5
+  s_ae54709a6b3c4e::t_ff0ea27214ff50 46-56,58-60,63
+src/hooks/services/workspace/__tests__/use-workspace-selection.test.tsx
+  s_88d84933c73700::t_73d65d80666224 53-54,61,64,75-77,79-80
+  s_88d84933c73700::t_9f8724bf5bc6f4 81-92,94-210
+  s_ae54709a6b3c4e::t_808d606f9f938f 298-299
+  s_ae54709a6b3c4e::t_fa97c7201a36a4 261
+  s_ae54709a6b3c4e::t_61be0c29395d10 74,259-260,262-297,300-311
+  s_88d84933c73700::t_86cdd9b39dc3b9 78
+  s_ae54709a6b3c4e::t_76a50c1ef9de15 3
+  s_88d84933c73700::t_dcab557a7e049f 55-59
+  s_ae54709a6b3c4e::t_4dddaa014781ab 37-52
+  s_88d84933c73700::t_8dadd703a6818f 17-21
+  s_88d84933c73700::t_00956b3143abbb 73
+e2e/tests/workspace-browse.spec.ts
+  s_88d84933c73700::t_965bbd0520ba23 209
+  s_88d84933c73700::t_32b30d68b7aff4 217
+  s_88d84933c73700::t_47d81fbe837300 16-21,25-26,92
+  s_88d84933c73700::t_599434c33227f7 132,137-141,145-153
+  s_88d84933c73700::t_e1735db7747c7d 22-24
+  s_88d84933c73700::t_451e7d3e848aa2 94-131,133-136,142-144,154-208,210-216,218-220
+  s_ae54709a6b3c4e::t_df30ac04dbce8e 28-31,39-40,50-76
+  s_ae54709a6b3c4e::t_087a04a803556c 32-38
+  s_88d84933c73700::t_05125fcf026257 89-91
+  s_88d84933c73700::t_f8de2c63ec5a97 93
+src/app/services/(genomics)/blast/__tests__/page-database-types.test.tsx
+  s_d22ef9438cf161::t_c618955a9280f3 1-119,121-125,127-137,141-143
+  s_d22ef9438cf161::t_fd41cf776efe7a 120,126,138-140
+src/hooks/services/workspace/__tests__/use-workspace-object-search.test.tsx
+  s_5b0534c79a9fcb::t_c54902c8a60520 84,120-121
+  s_5b0534c79a9fcb::t_4a569067613315 68-83,85-119
+  s_5b0534c79a9fcb::t_8f717c2094a92f 6-10
+e2e/tests/jobs-lifecycle.spec.ts
+  s_ba83347f6a8284::t_3187467a2f8edb 31-124,126-127
+  s_ba83347f6a8284::t_db7d55b6dafd76 125
+e2e/tests/a11y/deep-tier.spec.ts
+  s_ba83347f6a8284::t_e19195af0fcab3 242
+  s_ba83347f6a8284::t_83a807676f0779 214
+e2e/tests/services/tree-services.spec.ts
+  s_ba83347f6a8284::t_b1bc40df43abf1 56
+src/components/taxonomy/taxonomy-tree.tsx
+  s_f0e657d1d1e7fd::t_b80bb78bd6f2f2 298
+  s_f0e657d1d1e7fd::t_5d341e66045eac 152-154
+  s_f0e657d1d1e7fd::t_335815ce5db137 264-272,274
+  s_f0e657d1d1e7fd::t_068028369d358a 333,344-350
+  s_f0e657d1d1e7fd::t_509c72990e8f11 354
+e2e/pages/workspace-page.ts
+  s_88d84933c73700::t_66e8d80f76f742 50,52
+e2e/tests/services/genome-input-services.spec.ts
+  s_ba83347f6a8284::t_f5e2b7e1209a0c 37
+src/components/workspace/workspace-file-table.tsx
+  s_88d84933c73700::t_48b35b0367afd5 155-159
+e2e/fixtures/overrides/jobs.ts
+  s_ba83347f6a8284::t_ddf302f793e273 51
+  s_ba83347f6a8284::t_0a0bba0786f9b8 39
+  s_ba83347f6a8284::t_4018d8b0ccce44 16
+  s_ba83347f6a8284::t_a6426e15ca7b3a 60
+  s_ba83347f6a8284::t_d81da41a7eb7d6 69
+  s_ba83347f6a8284::t_3af9901d6785ca 29
+src/components/workspace/workspace-shell.tsx
+  s_88d84933c73700::t_6bbf2caea4107f 42-47
+  s_88d84933c73700::t_d931bc230dba2e 140-143,145,150-151
+  s_88d84933c73700::t_ff8a15f0f34691 3-4
+src/components/shared/data-table.tsx
+  s_bf381e6ec5df09::t_a91caf60ba2296 17
+  s_bf381e6ec5df09::t_79d234ba2b5332 118,190-195
+  s_bf381e6ec5df09::t_57962da16b414d 73-87,89,91-106,108-112,119-121
+  s_bf381e6ec5df09::t_19870e00c246b0 68-72
+  s_bf381e6ec5df09::t_18dcf229db16c2 1496-1509
+src/components/taxonomy/__tests__/taxonomy-tree.test.tsx
+  s_f0e657d1d1e7fd::t_50c22c45accf74 282-311
+src/lib/forms/(genomics)/blast/__tests__/blast-form-utils.test.ts
+  s_d22ef9438cf161::t_e6e71cd3afc26d 13-44,48-52,59-61,64,76-86
+  s_d22ef9438cf161::t_c634ff1fef4549 3
+  s_d22ef9438cf161::t_3d09f22d594856 105-128
+  s_d22ef9438cf161::t_fd41cf776efe7a 45-47,53-58,65-73,131-143,408-411,482-485
+src/hooks/services/jobs/__tests__/use-jobs-data.test.tsx
+  s_ba83347f6a8284::t_b4e728341d58da 37-95
+  s_ba83347f6a8284::t_88f1b16addf8ee 133
+  s_ba83347f6a8284::t_4e2925faf17741 18-27
+  s_ba83347f6a8284::t_59c61a204cc9f8 149
+  s_ba83347f6a8284::t_92bbc8c948c36f 166-182,185-186
+  s_ba83347f6a8284::t_81e2ba6410bb6a 129-132,134-147
+  s_ba83347f6a8284::t_bebcf79549bd45 99-100
+  s_ba83347f6a8284::t_c380d8570991f7 183-184
+e2e/tests/services/metagenomic-binning.spec.ts
+  s_ba83347f6a8284::t_313b6789191958 42
+src/components/ui/number-input.test.tsx
+  s_5b5cfe845e6a28::t_622e49a2e3553c 139
+  s_5b5cfe845e6a28::t_3a4b039ceefcf8 202-219,221-222
+  s_5b5cfe845e6a28::t_c8861f8bc55ecb 196
+  s_5b5cfe845e6a28::t_8aeb86624601dd 3-5,10,248,261,264-265
+  s_5b5cfe845e6a28::t_b3362b84d1f44b 2
+  s_5b5cfe845e6a28::t_d96d958fb27a5f 186
+  s_5b5cfe845e6a28::t_9bd89ef3bb1761 201
+  s_5b5cfe845e6a28::t_bccb6002d32a15 140-146,148-151,153-158
+  s_5b5cfe845e6a28::t_43c001832a75ed 147
+  s_5b5cfe845e6a28::t_1ba3f85bfda66d 152
+  s_5b5cfe845e6a28::t_67420893046501 220
+  s_5b5cfe845e6a28::t_31354b9652a8e3 25,27-29,32-34
+  s_5b5cfe845e6a28::t_f261338230c71b 1,6-9,11-24,26,30-31,35-138,159-185,187-195,197-200,223-247,249-260,262-263
+src/components/genome/__tests__/genome-shell.test.tsx
+  s_bf381e6ec5df09::t_c1752aa3305ada 1-56
+src/hooks/services/workspace/use-workspace-object-search.ts
+  s_5b0534c79a9fcb::t_bb55e224815a42 78
+  s_5b0534c79a9fcb::t_adb915e072c5d3 39-54
+src/lib/forms/(genomics)/blast/blast-form-utils.ts
+  s_d22ef9438cf161::t_e8d0d87ff48dfc 50-55,59-63,65,75-76
+  s_d22ef9438cf161::t_755e8730e2864f 108-114
+  s_d22ef9438cf161::t_e8af3e8fbf0715 104-106
+  s_d22ef9438cf161::t_07747a69a6a881 45-49
+  s_d22ef9438cf161::t_f9829a21b9a99a 79-87
+  s_d22ef9438cf161::t_915330ed6ffab8 96-103,107
+  s_d22ef9438cf161::t_0b3197dd0d80ff 367
+  s_d22ef9438cf161::t_40d60560be4738 77-78
+e2e/tests/services/genome-assembly.spec.ts
+  s_ba83347f6a8284::t_c9516a5035b6db 48
+  s_5b5cfe845e6a28::t_05b6f788a6b409 119-138,147-174
+  s_5b5cfe845e6a28::t_e0e4df916f4645 139-146
+src/app/services/(genomics)/blast/page.tsx
+  s_d22ef9438cf161::t_7bfde7617107b9 87-95,97,99,102-103,105-112
+  s_d22ef9438cf161::t_ea65e77746fab1 146-153
+  s_d22ef9438cf161::t_0e385b5ac26395 20
+src/components/shared/__tests__/data-table-rendering.test.tsx
+  s_bf381e6ec5df09::t_dab9c9622259a4 84-107,210-211
+  s_bf381e6ec5df09::t_a18d4ce28bde9f 134
+  s_bf381e6ec5df09::t_facfbde1161764 1
+  s_bf381e6ec5df09::t_2aa1742faf5168 131-133,135-136
+  s_bf381e6ec5df09::t_1da604d9eb7f87 9-30
+  s_bf381e6ec5df09::t_7b68cd6e5f30e5 47-52,126-130,157-158,166,187
+  s_bf381e6ec5df09::t_6a086253a0b762 168,173-176
+  s_bf381e6ec5df09::t_87e658962d9346 40-46,53-74
+  s_bf381e6ec5df09::t_c6d1bd4cf6b06a 138-156,159-165,167,169-172,177-186,188-209
+  s_bf381e6ec5df09::t_a4db9177fcf10f 108-125,137
+src/components/taxonomy/__tests__/use-taxon-children.test.ts
+  s_f0e657d1d1e7fd::t_7dfe4ac0dac067 86
+  s_f0e657d1d1e7fd::t_154494ea9fec46 113,120-164
+src/components/ui/number-input.tsx
+  s_5b5cfe845e6a28::t_dc4b766b3862a9 180,183
+  s_5b5cfe845e6a28::t_81f822363831ee 49,54-61
+  s_5b5cfe845e6a28::t_75e97eba8e56b9 206
+  s_5b5cfe845e6a28::t_6b55881c067c13 62
+e2e/tests/organisms/taxon-list-data.spec.ts
+  s_bf381e6ec5df09::t_60b449a1575ff7 82
+  s_bf381e6ec5df09::t_e15aa330eb6aeb 86
+  s_bf381e6ec5df09::t_2ed650ebb7d903 76-77,87-90,92-93
+  s_bf381e6ec5df09::t_f1e140b39beaae 72-75,94-114
+  s_bf381e6ec5df09::t_4f2e387d2aa25e 78-81,83-85,91
+src/hooks/services/jobs/use-jobs-data.ts
+  s_ba83347f6a8284::t_b39abc978a243a 51-62
+  s_ba83347f6a8284::t_7c56122f08cae3 100
+  s_ba83347f6a8284::t_33d88e11863229 2,7-11,45-49
+  s_ba83347f6a8284::t_924ab0ea80d484 112
+  s_ba83347f6a8284::t_8c457504329936 12-44
+  s_ba83347f6a8284::t_473bd83a13d02b 50
+src/components/workspace/__tests__/workspace-object-selector-view.test.tsx
+  s_5b0534c79a9fcb::t_7eecf5d5084908 34
+  s_5b0534c79a9fcb::t_4af1d7b4376d24 1
+  s_5b0534c79a9fcb::t_afbce3e198f95a 8-10
+  s_5b0534c79a9fcb::t_4ff07e6c52edd0 2-7,11-33,35-82
+src/components/phylogeny/viral-phylogeny-panel.tsx
+  s_16f23d5e0c2894::t_e92e669e40fcc8 133-134
+src/components/workspace/workspace-object-selector-view.tsx
+  s_5b0534c79a9fcb::t_fc656c06952177 121
+src/lib/forms/(genomics)/blast/__tests__/blast-database-types.test.tsx
+  s_d22ef9438cf161::t_711119eea95a34 3-6
+  s_d22ef9438cf161::t_09e829cc9d4034 50
+  s_5b0534c79a9fcb::t_9a8dbbe63f5c13 1-2,7-25,45-49,51-55,57-59,61-86
+  s_5b0534c79a9fcb::t_dcbc051a126b40 56
+  s_5b0534c79a9fcb::t_b4d8e9c99f4b98 60
+  s_d22ef9438cf161::t_913150f1fe417f 26-44
+src/app/services/(genomics)/blast/blast-sections.tsx
+  s_d22ef9438cf161::t_01ef15542c2e2c 40-51
+  s_d22ef9438cf161::t_68f22e8d1c2b8c 8-9
+e2e/tests/organisms/auspice.spec.ts
+  s_16f23d5e0c2894::t_e1a828e2a80b2b 154-175
+src/components/genome/genome-shell.tsx
+  s_bf381e6ec5df09::t_94d09d1b95a400 101-102
+src/components/workspace/__tests__/workspace-browser-rendering.test.tsx
+  s_88d84933c73700::t_4e1f1bca8e42ca 114
+  s_88d84933c73700::t_d737b1f94e896a 66-82
+  s_ae54709a6b3c4e::t_d7e5262fb7bea8 108-113
+  s_ae54709a6b3c4e::t_5973204a9167e4 29-32,34-43
+  s_ae54709a6b3c4e::t_71c11cf410eac0 1-4,6-28,33,44-65,83-107,115-118,122-145
+  s_88d84933c73700::t_1b93128e891226 5
+  s_ae54709a6b3c4e::t_911c50c68a8ab5 119-121
+e2e/tests/taxonomy-tree.spec.ts
+  s_f0e657d1d1e7fd::t_7d6ebd0154d8c2 15
+  s_f0e657d1d1e7fd::t_6040d1caec3b60 32-33,36
+  s_f0e657d1d1e7fd::t_fa9ec12b58a44d 66
+  s_f0e657d1d1e7fd::t_8b4492a5b6c0d4 28-31,35,37-38,45
+  s_f0e657d1d1e7fd::t_d3570fb4d5ccd3 68-69
+  s_f0e657d1d1e7fd::t_5260c34b750668 104-126
+  s_f0e657d1d1e7fd::t_10066ea87f2161 44
+src/components/taxonomy/use-taxon-children.ts
+  s_f0e657d1d1e7fd::t_82598689587717 98-99,101-105,107,109-123,125-142
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "03a9d17adca448a837f729a29d07eda7a802c3df",
+  "prompts": {},
+  "sessions": {
+    "s_16f23d5e0c2894": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_008e999f6ffercZkLbKLGInjry",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_5b0534c79a9fcb": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_008d47858ffekq50N21xjxGYMZ",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_5b5cfe845e6a28": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_008c503d4ffeEx2W7LlAx9bqPL",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_88d84933c73700": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0089ca025ffeBAi5VgqoL3tJjr",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_ae54709a6b3c4e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_008b660f7ffeojQ8u7V7bA5HOq",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_ba83347f6a8284": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_008736683ffev44kfkWid2zQLg",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_bf381e6ec5df09": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_008fa8f12ffeR66T0TQDANBwAT",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_d22ef9438cf161": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0087c07a8ffeKwq9Xxu7QJToo8",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_f0e657d1d1e7fd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_008e2b203ffe12fq53rhguVOjJ",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

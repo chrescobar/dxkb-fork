@@ -205,12 +205,13 @@ const Updates = () => {
                 <h2 className="font-semibold">Upcoming Events</h2>
               </div>
               <ScrollArea className="h-75 md:h-100">
-                {upcomingEvents.map((event, index) => (
-                  <div
-                    key={index}
+                {upcomingEvents.map((event) => (
+                  <button
+                    type="button"
+                    key={`${event.date.month}-${event.date.day}-${event.title}`}
                     onClick={() => { setDate(getEventDate(event.date)); }}
                     className={cn(
-                      "flex cursor-pointer items-start gap-4 border-t px-4 py-3 transition-colors",
+                      "flex w-full cursor-pointer items-start gap-4 border-t px-4 py-3 text-left transition-colors",
                       isSelectedDateEvent(event.date) ? "bg-secondary/40" : "hover:bg-secondary/20"
                     )}
                   >
@@ -229,7 +230,7 @@ const Updates = () => {
                         {event.description}
                       </p>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </ScrollArea>
             </Card>

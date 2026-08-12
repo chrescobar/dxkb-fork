@@ -148,6 +148,12 @@ function DraggableTableHeader({
 
   const sortField = meta.sortField;
   const label = header.column.columnDef.header as string;
+  const minSize = header.column.columnDef.minSize ?? 40;
+  const maxSize = header.column.columnDef.maxSize ?? 1000;
+  const resizeWithKeyboard = (delta: number) => {
+    const size = Math.min(maxSize, Math.max(minSize, header.column.getSize() + delta));
+    header.getContext().table.setColumnSizing((current) => ({ ...current, [header.column.id]: size }));
+  };
 
   return (
     <TableHead
@@ -178,11 +184,20 @@ function DraggableTableHeader({
           <div
             role="separator"
             aria-orientation="vertical"
+            aria-label={`Resize ${label} column`}
+            aria-valuemin={minSize}
+            aria-valuemax={maxSize}
+            aria-valuenow={header.column.getSize()}
+            tabIndex={0}
+            onKeyDown={(event) => {
+              if (event.key === "ArrowLeft") { event.preventDefault(); resizeWithKeyboard(-10); }
+              else if (event.key === "ArrowRight") { event.preventDefault(); resizeWithKeyboard(10); }
+            }}
             onMouseDown={header.getResizeHandler()}
             onTouchStart={header.getResizeHandler()}
             onDoubleClick={() => { header.column.resetSize(); }}
             className={cn(
-              "absolute top-0 right-0 z-10 h-full w-2 cursor-col-resize border-r border-border",
+              "absolute top-0 right-0 z-10 h-full w-2 cursor-col-resize border-r border-border focus-visible:outline-2 focus-visible:outline-primary",
               "hover:border-primary/50 hover:bg-primary/15",
               header.column.getIsResizing() && "h-9 border-primary bg-primary/25",
             )}

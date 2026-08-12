@@ -79,7 +79,7 @@ export function WorkspaceObjectSelector({
   const inputRef = React.useRef<HTMLDivElement>(null);
   const inputElementRef = React.useRef<HTMLInputElement | null>(null);
   const dropdownRef = React.useRef<HTMLDivElement | null>(null);
-  const itemRefs = React.useRef<(HTMLDivElement | null)[]>([]);
+  const itemRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
 
   // Effective types come from either the preset or the explicit `types` prop.
   const effectiveTypes = React.useMemo<
@@ -468,13 +468,14 @@ export function WorkspaceObjectSelector({
                     const isHighlighted = highlightedIndex === index;
 
                     return (
-                      <div
-                        key={`${object.id}-${String(index)}`}
+                      <button
+                        type="button"
+                        key={object.id}
                         ref={(el) => {
                           itemRefs.current[index] = el;
                         }}
                         className={cn(
-                          "flex cursor-pointer items-center justify-between p-2 hover:bg-accent",
+                          "flex w-full cursor-pointer items-center justify-between p-2 text-left hover:bg-accent",
                           isHighlighted && "bg-accent"
                         )}
                         onClick={() => {
@@ -491,7 +492,7 @@ export function WorkspaceObjectSelector({
                             {cleanPath}
                           </p>
                         </div>
-                      </div>
+                      </button>
                     );
                   })
                 ) : (

@@ -248,8 +248,9 @@ describe("rerunJob", () => {
     );
     expect(mockOpen).toHaveBeenCalledWith(
       "/services/genome-assembly?rerun_key=12345678",
-      "_blank",
-    );
+       "_blank",
+       "noopener,noreferrer",
+     );
   });
 
   it("shows toast error for unsupported service", async () => {
@@ -268,8 +269,9 @@ describe("rerunJob", () => {
 
     expect(mockOpen).toHaveBeenCalledWith(
       expect.stringContaining("/services/viral-genome-tree"),
-      "_blank",
-    );
+       "_blank",
+       "noopener,noreferrer",
+     );
   });
 
   it("routes GeneTree with other tree_type to gene-protein-tree", () => {
@@ -277,8 +279,9 @@ describe("rerunJob", () => {
 
     expect(mockOpen).toHaveBeenCalledWith(
       expect.stringContaining("/services/gene-protein-tree"),
-      "_blank",
-    );
+       "_blank",
+       "noopener,noreferrer",
+     );
   });
 
   it("maps various service IDs to correct routes", () => {
@@ -297,6 +300,7 @@ describe("rerunJob", () => {
       expect(mockOpen).toHaveBeenCalledWith(
         expect.stringContaining(expectedRoute),
         "_blank",
+        "noopener,noreferrer",
       );
     }
   });

@@ -88,7 +88,7 @@ export function rerunJob(
 
   const key = generateKey();
   sessionStorage.setItem(key, JSON.stringify(parameters));
-  window.open(`${route}?rerun_key=${key}`, "_blank");
+  window.open(`${route}?rerun_key=${key}`, "_blank", "noopener,noreferrer");
 }
 
 /**

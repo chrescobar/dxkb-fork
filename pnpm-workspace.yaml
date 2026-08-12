@@ -1,5 +1,12 @@
 packages:
   - .
+minimumReleaseAge: 1440
+trustPolicy: no-downgrade
+trustPolicyExclude:
+  - "@trickfilm400/rollup-plugin-off-main-thread@3.0.0-pre1"
+  - "eslint-import-resolver-typescript@3.10.1"
+  - "semver@6.3.1"
+  - "undici-types@6.21.0"
 overrides:
   jquery: 3.7.1
   jquery-ui: 1.13.3

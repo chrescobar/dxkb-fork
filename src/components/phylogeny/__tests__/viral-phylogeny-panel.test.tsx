@@ -110,6 +110,9 @@ describe("ViralPhylogenyPanel", () => {
     ).toHaveAttribute("src", "/nextstrain-viewer/Influenza-A-Virus/H3N2/HA");
     expect(
       screen.getByTitle("Auspice phylogeny viewer for Auspice HA (HA)"),
+    ).toHaveAttribute("sandbox", "allow-scripts");
+    expect(
+      screen.getByTitle("Auspice phylogeny viewer for Auspice HA (HA)"),
     ).toHaveClass("min-h-150");
   });
 

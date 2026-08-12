@@ -14,8 +14,7 @@ import {
 } from "@tanstack/react-table";
 
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { memo, useCallback, useMemo, useRef, useState, useEffect, type MouseEvent as ReactMouseEvent } from "react";
-import { noop } from "@/lib/utils";
+import { memo, useCallback, useMemo, useRef, useState, useEffect, type ChangeEvent as ReactChangeEvent } from "react";
 import { getIdField } from "@/constants/resources";
 
 import { useVirtualizer, type VirtualItem } from "@tanstack/react-virtual";
@@ -152,7 +151,9 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
   // without shiftHeld entering renderCheckboxCell's deps — which would rebuild
   // columnDefs (and reconfigure the table) on every Shift press/release.
   const shiftHeldRef = useRef(false);
-  shiftHeldRef.current = shiftHeld;
+  useEffect(() => {
+    shiftHeldRef.current = shiftHeld;
+  }, [shiftHeld]);
 
   // Sync when parent provides controlled pageIndex/pageSize values
   useEffect(() => {
@@ -233,7 +234,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
 
   const renderCheckboxCell = useCallback(
     ({ row, table }: CellContext<Record<string, unknown>, unknown>) => {
-      const handleToggle = (e: ReactMouseEvent<HTMLElement>) => {
+      const handleToggle = (e: ReactChangeEvent<HTMLInputElement>) => {
         e.stopPropagation();
         const anchorId = lastSelectedIdRef.current;
 
@@ -267,11 +268,13 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
       };
 
       return (
-        <div className="flex size-full cursor-pointer items-center justify-center" onClick={handleToggle}>
+        <div className="flex size-full items-center justify-center">
           <input
             type="checkbox"
+            aria-label={`Select row ${row.id}`}
             checked={row.getIsSelected()}
-            onChange={noop}
+            onChange={handleToggle}
+            onClick={(event) => { event.stopPropagation(); }}
             className="m-0 cursor-pointer p-0"
           />
         </div>
@@ -292,7 +295,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
         // Otherwise show the state of the current page
         const isChecked = isAllPagesSelected || allPageRowsSelected;
         const isIndeterminate = !isAllPagesSelected && somePageRowsSelected;
-        const handleHeaderToggle = (e: ReactMouseEvent<HTMLElement>) => {
+        const handleHeaderToggle = (e: ReactChangeEvent<HTMLInputElement>) => {
           e.stopPropagation();
 
           if (isAllPagesSelected) {
@@ -315,19 +318,22 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
           }
         };
 
+        const selectionLabel = isAllPagesSelected ? "Deselect all results" : (allPageRowsSelected ? "Deselect all rows on this page" : "Select all rows on this page");
         return (
-          <div className="relative flex size-full cursor-pointer items-center justify-center" onClick={handleHeaderToggle}>
+          <div className="relative flex size-full items-center justify-center">
             <input
               type="checkbox"
+              aria-label={selectionLabel}
               checked={isChecked}
               ref={(el) => {
                 if (el) {
                   el.indeterminate = isIndeterminate;
                 }
               }}
-              onChange={noop}
+              onChange={handleHeaderToggle}
+              onClick={(event) => { event.stopPropagation(); }}
               className="m-0 cursor-pointer p-0"
-              title={isAllPagesSelected ? "Click to deselect all results" : (allPageRowsSelected ? "Click to deselect this page" : "Click to select all on this page")}
+              title={selectionLabel}
             />
             {isAllPagesSelected && (
               <div className="absolute -bottom-5 left-1/2 z-50 -translate-x-1/2 transform text-[10px] whitespace-nowrap text-blue-600">
@@ -999,6 +1005,10 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                               </div>
                               {column.getCanResize() && (
                                 <div
+                                  role="separator"
+                                  aria-orientation="vertical"
+                                  aria-label={`Resize ${column.id} column`}
+                                  tabIndex={0}
                                   onMouseDown={(e) => {
                                     e.stopPropagation();
                                     justResizedRef.current = false;

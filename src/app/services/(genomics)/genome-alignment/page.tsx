@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
@@ -80,22 +80,18 @@ export default function GenomeAlignmentServicePage() {
   }, [selectedGenomes, form]);
 
   const handleAddGenome = (genome: GenomeSummary) => {
-    setSelectedGenomes((previous) => {
-      if (previous.length >= maxGenomes) {
-        toast.error("You can add up to 20 genomes");
-        return previous;
-      }
-
-      if (previous.some((item) => item.genome_id === genome.genome_id)) {
-        toast.error("Genome already added", {
-          description: `${genome.genome_name} (${genome.genome_id}) is already in the selection`,
-        });
-        return previous;
-      }
-
-      toast.success(`Added ${genome.genome_name}`);
-      return [...previous, genome];
-    });
+    if (selectedGenomes.length >= maxGenomes) {
+      toast.error("You can add up to 20 genomes");
+      return;
+    }
+    if (selectedGenomes.some((item) => item.genome_id === genome.genome_id)) {
+      toast.error("Genome already added", {
+        description: `${genome.genome_name} (${genome.genome_id}) is already in the selection`,
+      });
+      return;
+    }
+    setSelectedGenomes([...selectedGenomes, genome]);
+    toast.success(`Added ${genome.genome_name}`);
   };
 
   const handleRemoveGenome = (genomeId: string) => {
@@ -120,39 +116,23 @@ export default function GenomeAlignmentServicePage() {
         return;
       }
 
-      setSelectedGenomes((previous) => {
-        const existingIds = new Set(previous.map((item) => item.genome_id));
-        const availableSlots = maxGenomes - previous.length;
-        const uniqueNewGenomes = genomes.filter(
-          (genome) => !existingIds.has(genome.genome_id),
-        );
-
-        if (!uniqueNewGenomes.length) {
-          toast.info("All genomes in this group are already selected");
-          return previous;
-        }
-
-        if (availableSlots <= 0) {
-          toast.error("Genome selection limit reached (20 genomes)");
-          return previous;
-        }
-
-        const genomesToAdd = uniqueNewGenomes.slice(0, availableSlots);
-
-        if (uniqueNewGenomes.length > genomesToAdd.length) {
-          toast.warning(
-            "Some genomes were not added because the selection limit is 20",
-          );
-        }
-
-        toast.success(
-          `Added ${String(genomesToAdd.length)} genome${
-            genomesToAdd.length === 1 ? "" : "s"
-          } from ${object.name}`,
-        );
-
-        return [...previous, ...genomesToAdd];
-      });
+      const existingIds = new Set(selectedGenomes.map((item) => item.genome_id));
+      const uniqueNewGenomes = genomes.filter((genome) => !existingIds.has(genome.genome_id));
+      if (!uniqueNewGenomes.length) {
+        toast.info("All genomes in this group are already selected");
+        return;
+      }
+      const availableSlots = maxGenomes - selectedGenomes.length;
+      if (availableSlots <= 0) {
+        toast.error("Genome selection limit reached (20 genomes)");
+        return;
+      }
+      const genomesToAdd = uniqueNewGenomes.slice(0, availableSlots);
+      setSelectedGenomes([...selectedGenomes, ...genomesToAdd]);
+      if (uniqueNewGenomes.length > genomesToAdd.length) {
+        toast.warning("Some genomes were not added because the selection limit is 20");
+      }
+      toast.success(`Added ${String(genomesToAdd.length)} genome${genomesToAdd.length === 1 ? "" : "s"} from ${object.name}`);
 
       form.setFieldValue("genome_group_path", object.path);
       setLastSelectedGroup(object.name || object.path);
@@ -162,9 +142,8 @@ export default function GenomeAlignmentServicePage() {
           ? error.message
           : "Failed to load genome group";
       toast.error(message);
-    } finally {
-      setIsFetchingGroup(false);
     }
+    setIsFetchingGroup(false);
   };
 
   const runtime = useServiceRuntime({
@@ -209,16 +188,12 @@ export default function GenomeAlignmentServicePage() {
     setLastSelectedGroup(null);
   };
 
-  const selectedItems = useMemo(
-    () =>
-      selectedGenomes.map((genome, index) => ({
-        id: genome.genome_id,
-        name: genome.genome_name,
-        description: genome.genome_id,
-        type: index === 0 ? "Reference Genome" : "Genome",
-      })),
-    [selectedGenomes],
-  );
+  const selectedItems = selectedGenomes.map((genome, index) => ({
+    id: genome.genome_id,
+    name: genome.genome_name,
+    description: genome.genome_id,
+    type: index === 0 ? "Reference Genome" : "Genome",
+  }));
 
   const hasMinimumGenomes = selectedGenomes.length >= 2;
 

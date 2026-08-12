@@ -39,15 +39,15 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
       targetUser.trim(),
       password,
     );
-    setIsSubmitting(false);
     if (error) {
       toast.error(error.message || "SU login failed");
-      return;
+    } else {
+      void queryClient.resetQueries();
+      onOpenChange(false);
+      setTargetUser("");
+      setPassword("");
     }
-    void queryClient.resetQueries();
-    onOpenChange(false);
-    setTargetUser("");
-    setPassword("");
+    setIsSubmitting(false);
   };
 
   const handleOpenChange = (nextOpen: boolean) => {

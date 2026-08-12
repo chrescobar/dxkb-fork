@@ -68,7 +68,7 @@ export function BarChart({
             <svg
               ref={svgRef}
               viewBox={`0 0 ${String(chartWidth)} ${String(yearChartHeight)}`}
-              role="img"
+              role="group"
               aria-label={`${title} distribution`}
               className="w-full"
             >

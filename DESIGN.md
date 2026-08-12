@@ -250,7 +250,7 @@ Shadcn/ui button components automatically size SVGs via `[&_svg:not([class*='siz
 
 ### Social Icons
 
-Social platform icons come from `@icons-pack/react-simple-icons` (e.g., `SiGithub`, `SiFacebook`). These are the only exception to the lucide-react rule and should only appear in the footer.
+Social platform icons are reviewed inline SVG paths in the footer. Do not add a brand-icon package for these static marks.
 
 ### Biology Icons
 

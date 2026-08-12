@@ -467,10 +467,14 @@ export default function GenomeAssemblyPage() {
                         </FieldLabel>
                         <div className="flex items-center gap-2">
                           <input
+                            id={field.name}
+                            name={field.name}
+                            aria-label="Estimated Genome Size"
                             type="number"
                             value={expectedGenomeSize}
                             onChange={(e) => {
-                              const value = parseInt(e.target.value);
+                              const value = e.currentTarget.valueAsNumber;
+                              if (!Number.isFinite(value)) return;
                               setExpectedGenomeSize(value);
                               const calculatedSize = calculateGenomeSize(
                                 value,

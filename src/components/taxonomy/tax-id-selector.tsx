@@ -204,9 +204,10 @@ export function TaxIDSelector({
               </div>
             ) : displayResults.length > 0 ? (
               displayResults.map((item) => (
-                <div
+                <button
+                  type="button"
                   key={item.taxon_id}
-                  className="flex cursor-pointer items-center justify-between p-2 hover:bg-accent"
+                  className="flex w-full cursor-pointer items-center justify-between p-2 text-left hover:bg-accent"
                   onClick={() => { handleSelect(item); }}
                 >
                   <div className="min-w-0 flex-1">
@@ -219,7 +220,7 @@ export function TaxIDSelector({
                       </p>
                     )}
                   </div>
-                </div>
+                </button>
               ))
             ) : (
               <p className="py-4 text-center text-sm text-muted-foreground">

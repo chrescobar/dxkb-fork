@@ -176,18 +176,24 @@ function InteractiveCsvViewer({
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="cursor-pointer border-b border-border px-3 py-2 text-left font-medium select-none"
-                    onClick={header.column.getToggleSortingHandler()}
+                    aria-sort={header.column.getIsSorted() === "asc" ? "ascending" : header.column.getIsSorted() === "desc" ? "descending" : "none"}
+                    className="border-b border-border p-0 text-left font-medium"
                   >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-                    {header.column.getIsSorted() === "asc"
-                      ? " ↑"
-                      : header.column.getIsSorted() === "desc"
-                        ? " ↓"
-                        : ""}
+                    <button
+                      type="button"
+                      className="w-full cursor-pointer px-3 py-2 text-left select-none"
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                      {header.column.getIsSorted() === "asc"
+                        ? " ↑"
+                        : header.column.getIsSorted() === "desc"
+                          ? " ↓"
+                          : ""}
+                    </button>
                   </th>
                 ))}
               </tr>

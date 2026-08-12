@@ -134,6 +134,7 @@ function TreeViewer({
         key={auspiceUrl}
         src={auspiceUrl}
         title={`Auspice phylogeny viewer for ${choice.ref.name}`}
+        sandbox="allow-scripts"
         className="min-h-150 w-full min-w-0 flex-1 border-0"
       />
     );

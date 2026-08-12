@@ -14,9 +14,13 @@ interface LineageEntry {
 }
 
 function buildLineage(names: string[], ids: number[]): LineageEntry[] {
-  return names
-    .map((name, i) => ({ name, id: ids[i] ?? null }))
-    .filter(({ name }) => name !== "cellular organisms");
+  const lineage: LineageEntry[] = [];
+  names.forEach((name, index) => {
+    if (name !== "cellular organisms") {
+      lineage.push({ name, id: ids[index] ?? null });
+    }
+  });
+  return lineage;
 }
 
 export function TaxonBreadcrumb({ taxon, displayName }: TaxonBreadcrumbProps) {
@@ -42,8 +46,8 @@ export function TaxonBreadcrumb({ taxon, displayName }: TaxonBreadcrumbProps) {
         Taxon View
       </p>
       <div className="flex flex-wrap items-baseline gap-x-1 text-sm">
-        {ancestors.map(({ name, id }, index) => (
-          <span key={id ?? `name-${String(index)}`} className="flex items-baseline gap-x-1">
+        {ancestors.map(({ name, id }) => (
+          <span key={id ?? name} className="flex items-baseline gap-x-1">
             {id === null ? (
               <span className="text-muted-foreground">{name}</span>
             ) : (

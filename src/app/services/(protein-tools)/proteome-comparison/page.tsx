@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState } from "react";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
 import { useForm } from "@tanstack/react-form";
 import { useSelector } from "@tanstack/react-store";
@@ -63,7 +63,7 @@ import {
 } from "@/lib/forms/(protein-tools)/proteome-comparison/proteome-comparison-form-utils";
 import { proteomeComparisonService } from "@/lib/forms/(protein-tools)/proteome-comparison/proteome-comparison-service";
 
-export default function ProteomeComparisonPage() {
+function useProteomeComparisonPage() {
   // State for comparison genome selectors
   const [selectedCompGenomeId, setSelectedCompGenomeId] = useState<string>("");
   const [selectedCompFasta, setSelectedCompFasta] =
@@ -82,8 +82,7 @@ export default function ProteomeComparisonPage() {
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
   const form = useForm({
-    defaultValues:
-      defaultProteomeComparisonFormValues,
+    defaultValues: defaultProteomeComparisonFormValues,
     validators: { onChange: proteomeComparisonFormSchema },
     onSubmit: async ({ value }) => {
       await runtime.submitFormData(value);
@@ -91,14 +90,14 @@ export default function ProteomeComparisonPage() {
   });
 
   // Handle reset
-  const handleReset = useCallback(() => {
+  function handleReset() {
     form.reset(defaultProteomeComparisonFormValues);
     setSelectedCompGenomeId("");
     setSelectedCompFasta(null);
     setSelectedCompFeatureGroup(null);
     setSelectedCompGenomeGroup(null);
     setShowAdvancedParams(false);
-  }, [form]);
+  }
 
   const runtime = useServiceRuntime({
     definition: proteomeComparisonService,
@@ -108,13 +107,9 @@ export default function ProteomeComparisonPage() {
   const { isSubmitting, jobParamsDialogProps } = runtime;
 
   // Watch form values
-  const rawComparisonItems = useSelector(
+  const comparisonItems = useSelector(
     form.store,
     (s) => s.values.comparison_items,
-  );
-  const comparisonItems = useMemo(
-    () => rawComparisonItems,
-    [rawComparisonItems],
   );
   const outputPath = useSelector(form.store, (s) => s.values.output_path);
   const canSubmit = useSelector(form.store, (s) => s.canSubmit);
@@ -123,7 +118,7 @@ export default function ProteomeComparisonPage() {
   const totalGenomeCount = countTotalComparisonGenomes(comparisonItems);
 
   // Handle adding comparison genome
-  const handleAddCompGenome = useCallback(async () => {
+  async function handleAddCompGenome() {
     if (!selectedCompGenomeId || selectedCompGenomeId.trim() === "") {
       toast.error("No genome selected", {
         description: "Please select a genome before adding.",
@@ -179,13 +174,11 @@ export default function ProteomeComparisonPage() {
       );
       form.setFieldValue("comparison_items", [...currentItems, newItem]);
       setSelectedCompGenomeId("");
-    } finally {
-      setIsLoadingCompGenome(false);
     }
-  }, [selectedCompGenomeId, totalGenomeCount, form]);
+    setIsLoadingCompGenome(false);
+  }
 
-  // Handle adding comparison fasta
-  const handleAddCompFasta = useCallback(() => {
+  function handleAddCompFasta() {
     if (!selectedCompFasta?.path) {
       toast.error("No FASTA file selected", {
         description: "Please select a protein FASTA file before adding.",
@@ -215,10 +208,9 @@ export default function ProteomeComparisonPage() {
 
     form.setFieldValue("comparison_items", [...currentItems, newItem]);
     setSelectedCompFasta(null);
-  }, [selectedCompFasta, totalGenomeCount, form]);
+  }
 
-  // Handle adding comparison feature group
-  const handleAddCompFeatureGroup = useCallback(() => {
+  function handleAddCompFeatureGroup() {
     if (!selectedCompFeatureGroup?.path) {
       toast.error("No feature group selected", {
         description: "Please select a feature group before adding.",
@@ -250,10 +242,9 @@ export default function ProteomeComparisonPage() {
 
     form.setFieldValue("comparison_items", [...currentItems, newItem]);
     setSelectedCompFeatureGroup(null);
-  }, [selectedCompFeatureGroup, totalGenomeCount, form]);
+  }
 
-  // Handle adding comparison genome group
-  const handleAddCompGenomeGroup = useCallback(async () => {
+  async function handleAddCompGenomeGroup() {
     if (!selectedCompGenomeGroup?.path) {
       toast.error("No genome group selected", {
         description: "Please select a genome group before adding.",
@@ -311,9 +302,12 @@ export default function ProteomeComparisonPage() {
       form.setFieldValue("comparison_items", [...currentItems, newItem]);
       setSelectedCompGenomeGroup(null);
 
-      toast.success(`Added genome group with ${String(genomeIds.length)} genome(s)`, {
-        closeButton: true,
-      });
+      toast.success(
+        `Added genome group with ${String(genomeIds.length)} genome(s)`,
+        {
+          closeButton: true,
+        },
+      );
     } catch (error) {
       console.error("Failed to add genome group:", error);
       const errorMessage =
@@ -322,20 +316,17 @@ export default function ProteomeComparisonPage() {
         description: errorMessage,
         closeButton: true,
       });
-    } finally {
-      setIsLoadingGenomeGroup(false);
     }
-  }, [selectedCompGenomeGroup, form]);
+    setIsLoadingGenomeGroup(false);
+  }
 
-  // Handle removing comparison item
-  const handleRemoveComparisonItem = useCallback(
-    (itemId: string) => {
-      const currentItems = form.state.values.comparison_items;
-      const updatedItems = removeComparisonItemById(currentItems, itemId);
-      form.setFieldValue("comparison_items", updatedItems);
-    },
-    [form],
-  );
+  function handleRemoveComparisonItem(itemId: string) {
+    const currentItems = form.state.values.comparison_items;
+    form.setFieldValue(
+      "comparison_items",
+      removeComparisonItemById(currentItems, itemId),
+    );
+  }
 
   return (
     <section>
@@ -452,9 +443,9 @@ export default function ProteomeComparisonPage() {
                               </Label>
                               <Input
                                 value={field.state.value}
-                                onChange={(e) =>
-                                  { field.handleChange(e.target.value); }
-                                }
+                                onChange={(e) => {
+                                  field.handleChange(e.target.value);
+                                }}
                                 placeholder="1e-5"
                                 className="service-card-input"
                               />
@@ -639,7 +630,9 @@ export default function ProteomeComparisonPage() {
                       variant="outline"
                       size="icon"
                       aria-label="Add genome"
-                      onClick={() => { void handleAddCompGenome(); }}
+                      onClick={() => {
+                        void handleAddCompGenome();
+                      }}
                       disabled={
                         !selectedCompGenomeId ||
                         totalGenomeCount >= maxComparisonGenomes ||
@@ -746,7 +739,9 @@ export default function ProteomeComparisonPage() {
                       variant="outline"
                       size="icon"
                       aria-label="Add genome group"
-                      onClick={() => { void handleAddCompGenomeGroup(); }}
+                      onClick={() => {
+                        void handleAddCompGenomeGroup();
+                      }}
                       disabled={
                         !selectedCompGenomeGroup ||
                         totalGenomeCount >= maxComparisonGenomes ||
@@ -817,4 +812,8 @@ export default function ProteomeComparisonPage() {
       <JobParamsDialog {...jobParamsDialogProps} />
     </section>
   );
+}
+
+export default function ProteomeComparisonPage() {
+  return useProteomeComparisonPage();
 }

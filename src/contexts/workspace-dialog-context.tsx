@@ -4,7 +4,6 @@ import {
   createContext,
   useContext,
   useReducer,
-  useMemo,
   type ReactNode,
   type Dispatch,
 } from "react";
@@ -45,12 +44,23 @@ function dialogReducer(
 ): WorkspaceDialogState {
   switch (action.type) {
     case "OPEN_DELETE":
-      return { activeDialog: { type: "delete", items: action.items, nonEmptyPaths: [] } };
+      return {
+        activeDialog: {
+          type: "delete",
+          items: action.items,
+          nonEmptyPaths: [],
+        },
+      };
     case "SET_DELETE_NON_EMPTY_PATHS":
       if (state.activeDialog?.type !== "delete") return state;
-      return { ...state, activeDialog: { ...state.activeDialog, nonEmptyPaths: action.paths } };
+      return {
+        ...state,
+        activeDialog: { ...state.activeDialog, nonEmptyPaths: action.paths },
+      };
     case "OPEN_COPY":
-      return { activeDialog: { type: "copy", items: action.items, mode: action.mode } };
+      return {
+        activeDialog: { type: "copy", items: action.items, mode: action.mode },
+      };
     case "OPEN_EDIT_TYPE":
       return { activeDialog: { type: "editType", item: action.item } };
     case "OPEN_CREATE_FOLDER":
@@ -60,7 +70,13 @@ function dialogReducer(
     case "OPEN_UPLOAD":
       return { activeDialog: { type: "upload" } };
     case "OPEN_DOWNLOAD_OPTIONS":
-      return { activeDialog: { type: "downloadOptions", paths: action.paths, defaultName: action.defaultName } };
+      return {
+        activeDialog: {
+          type: "downloadOptions",
+          paths: action.paths,
+          defaultName: action.defaultName,
+        },
+      };
     case "CLOSE":
       return initialState;
     default:
@@ -73,11 +89,13 @@ interface WorkspaceDialogContextType {
   dispatch: Dispatch<WorkspaceDialogAction>;
 }
 
-const WorkspaceDialogContext = createContext<WorkspaceDialogContextType | undefined>(undefined);
+const WorkspaceDialogContext = createContext<
+  WorkspaceDialogContextType | undefined
+>(undefined);
 
 export function WorkspaceDialogProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(dialogReducer, initialState);
-  const value = useMemo(() => ({ state, dispatch }), [state, dispatch]);
+  const value = { state, dispatch };
   return (
     <WorkspaceDialogContext.Provider value={value}>
       {children}
@@ -88,7 +106,9 @@ export function WorkspaceDialogProvider({ children }: { children: ReactNode }) {
 export function useWorkspaceDialog(): WorkspaceDialogContextType {
   const ctx = useContext(WorkspaceDialogContext);
   if (ctx === undefined) {
-    throw new Error("useWorkspaceDialog must be used within WorkspaceDialogProvider");
+    throw new Error(
+      "useWorkspaceDialog must be used within WorkspaceDialogProvider",
+    );
   }
   return ctx;
 }

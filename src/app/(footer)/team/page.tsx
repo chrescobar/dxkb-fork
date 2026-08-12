@@ -250,7 +250,9 @@ const teamMembers = [
 ];
 
 if (process.env.NODE_ENV !== "production") {
-  const institutionIds = new Set(institutions.map((institution) => institution.id));
+  const institutionIds = new Set(
+    institutions.map((institution) => institution.id),
+  );
   const orphans = teamMembers.filter(
     (member) => !institutionIds.has(member.institutionId),
   );
@@ -297,6 +299,7 @@ const Team = () => {
                 src={institution.image}
                 alt={`${institution.name} Logo`}
                 fill
+                sizes="(min-width: 640px) 400px, 300px"
                 className="object-contain"
                 priority
               />

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useKeyHold } from "@tanstack/react-hotkeys";
 import {
@@ -14,8 +14,18 @@ import {
 } from "@tanstack/react-table";
 
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { memo, useCallback, useMemo, useRef, useState, useEffect, type ChangeEvent as ReactChangeEvent } from "react";
+import {
+  useRef,
+  useState,
+  useEffect,
+  type ChangeEvent as ReactChangeEvent,
+} from "react";
 import { getIdField } from "@/constants/resources";
+import {
+  computeShiftRangeIds,
+  estimateHeaderWidth,
+  formatCellValue,
+} from "./data-table-utils";
 
 import { useVirtualizer, type VirtualItem } from "@tanstack/react-virtual";
 
@@ -35,14 +45,182 @@ import { Skeleton } from "@/components/ui/skeleton";
 // Varied bar widths for skeleton cells so loading rows read as content, not blocks.
 const skeletonWidthPcts = [60, 80, 50, 75, 90, 45, 70];
 
-// Stable identity for the "no sizing yet" case so the render-path fallback and
-// columnSizeVars' memo don't see a fresh {} each render.
+// Stable identity for the "no sizing yet" case.
 const emptyColumnSizing: Record<string, number> = {};
 
 interface ColumnInfo {
   id: string;
   label: string;
   visible?: boolean;
+}
+
+interface DataTableMeta {
+  idField: string;
+  isAllPagesSelected: boolean;
+  lastSelectedIdRef: React.RefObject<string | null>;
+  onActiveRowChange?: (id: string | null) => void;
+  onAllPagesSelectionChange?: (selected: boolean) => void;
+  onGenomeSelect?: (id: string | null) => void;
+  onRowSelectionChange?: (selection: Record<string, boolean>) => void;
+  shiftHeldRef: React.RefObject<boolean>;
+  totalItems: number;
+}
+
+function getTableMeta(table: ReactTableInstance<Record<string, unknown>>) {
+  return table.options.meta as DataTableMeta;
+}
+
+function SelectionCell({
+  row,
+  table,
+}: CellContext<Record<string, unknown>, unknown>) {
+  const handleToggle = (event: ReactChangeEvent<HTMLInputElement>) => {
+    event.stopPropagation();
+    const meta = getTableMeta(table);
+    const anchorId = meta.lastSelectedIdRef.current;
+
+    if (meta.shiftHeldRef.current && anchorId && anchorId !== row.id) {
+      const rangeIds = computeShiftRangeIds(
+        table.getRowModel().rows,
+        anchorId,
+        row.id,
+      );
+      if (rangeIds.length > 0) {
+        table.setRowSelection((previous) => {
+          const next = { ...previous };
+          for (const id of rangeIds) next[id] = true;
+          return next;
+        });
+        return;
+      }
+    }
+
+    meta.lastSelectedIdRef.current = row.id;
+    const wasSelected = row.getIsSelected();
+    table.setRowSelection((previous) => ({
+      ...previous,
+      [row.id]: !wasSelected,
+    }));
+
+    const idValue =
+      row.original[meta.idField] ?? row.original.genome_id ?? null;
+    if (wasSelected) {
+      meta.onGenomeSelect?.(null);
+      meta.onActiveRowChange?.(null);
+    } else if (typeof idValue === "string" || typeof idValue === "number") {
+      meta.onGenomeSelect?.(String(idValue));
+      meta.onActiveRowChange?.(String(idValue));
+    }
+  };
+
+  return (
+    <div className="flex size-full items-center justify-center">
+      <input
+        type="checkbox"
+        aria-label={`Select row ${row.id}`}
+        checked={row.getIsSelected()}
+        onChange={handleToggle}
+        onClick={(event) => {
+          event.stopPropagation();
+        }}
+        className="m-0 cursor-pointer p-0"
+      />
+    </div>
+  );
+}
+
+function SelectionHeader({
+  table,
+}: {
+  table: ReactTableInstance<Record<string, unknown>>;
+}) {
+  const meta = getTableMeta(table);
+  const allPageRowsSelected = table.getIsAllPageRowsSelected();
+  const somePageRowsSelected = table.getIsSomePageRowsSelected();
+  const isChecked = meta.isAllPagesSelected || allPageRowsSelected;
+  const isIndeterminate = !meta.isAllPagesSelected && somePageRowsSelected;
+  const selectionLabel = meta.isAllPagesSelected
+    ? "Deselect all results"
+    : allPageRowsSelected
+      ? "Deselect all rows on this page"
+      : "Select all rows on this page";
+
+  return (
+    <div className="relative flex size-full items-center justify-center">
+      <input
+        type="checkbox"
+        aria-label={selectionLabel}
+        checked={isChecked}
+        ref={(element) => {
+          if (element) element.indeterminate = isIndeterminate;
+        }}
+        onChange={(event) => {
+          event.stopPropagation();
+          if (meta.isAllPagesSelected) {
+            meta.onAllPagesSelectionChange?.(false);
+            table.toggleAllRowsSelected(false);
+            if (meta.onRowSelectionChange) {
+              meta.onRowSelectionChange({});
+            } else {
+              table.setRowSelection({});
+            }
+          } else {
+            table.toggleAllRowsSelected(!allPageRowsSelected);
+          }
+        }}
+        onClick={(event) => {
+          event.stopPropagation();
+        }}
+        className="m-0 cursor-pointer p-0"
+        title={selectionLabel}
+      />
+      {meta.isAllPagesSelected && (
+        <div className="absolute -bottom-5 left-1/2 z-50 -translate-x-1/2 transform text-[10px] whitespace-nowrap text-blue-600">
+          All {meta.totalItems} selected
+        </div>
+      )}
+    </div>
+  );
+}
+
+function createColumnDefs(columns: ColumnInfo[]) {
+  const definitions: ColumnDef<Record<string, unknown>>[] = [
+    {
+      id: "__select__",
+      header: ({ table }) => <SelectionHeader table={table} />,
+      cell: SelectionCell,
+      enableResizing: false,
+      size: 32,
+    },
+  ];
+
+  for (const column of columns) {
+    definitions.push({
+      accessorKey: column.id,
+      header: column.label,
+      cell: (info: CellContext<Record<string, unknown>, unknown>) =>
+        formatCellValue(info.getValue()),
+      size: estimateHeaderWidth(column.label),
+      enableResizing: true,
+      enableSorting: true,
+      sortingFn: (
+        rowA: TanStackRow<Record<string, unknown>>,
+        rowB: TanStackRow<Record<string, unknown>>,
+        columnId: string,
+      ) => {
+        const a = rowA.getValue<unknown>(columnId);
+        const b = rowB.getValue<unknown>(columnId);
+        const aIsEmpty = a === undefined || a === null || a === "";
+        const bIsEmpty = b === undefined || b === null || b === "";
+        if (aIsEmpty && bIsEmpty) return 0;
+        if (aIsEmpty) return 1;
+        if (bIsEmpty) return -1;
+        return a > b ? 1 : a < b ? -1 : 0;
+      },
+    });
+  }
+
+  return definitions;
 }
 
 interface DataTableProps {
@@ -83,63 +261,114 @@ interface DataTableProps {
   totalSelectedCount?: number;
 
   // Optional download handler
-  onDownloadAll?: (format: 'csv' | 'txt', visibleColumns: string[] | null) => void | Promise<void>;
+  onDownloadAll?: (
+    format: "csv" | "txt",
+    visibleColumns: string[] | null,
+  ) => void | Promise<void>;
   // Loading indicator: parent can set this while data is being fetched
   isLoading?: boolean;
 
   onActiveRowChange?: (id: string | null) => void;
 }
 
-export function DataTable({ id: _id, data, columns, totalItems, resource, errorMessage, onSelectionChange, onGenomeSelect, selectedIds, pageIndex, pageSize, onPageChange, sorting:controlledSorting, onSortingChange, columnOrder, onColumnOrderChange, columnVisibility: controlledVisibility, onColumnVisibilityChange: onColumnVisibilityChangeProp, rowSelection: controlledRowSelection, onRowSelectionChange, isAllPagesSelected = false, onAllPagesSelectionChange, totalSelectedCount, onDownloadAll, isLoading = false, onActiveRowChange }: DataTableProps) {
+export function DataTable(props: DataTableProps) {
+  "use no memo";
+  const columnsKey = props.columns
+    .map(({ id, label }) => `${id}:${label}`)
+    .join("|");
+  return (
+    <DataTableReset key={`${props.resource}:${columnsKey}`} props={props} />
+  );
+}
+
+function DataTableReset({ props }: { props: DataTableProps }) {
+  "use no memo";
+  return useDataTableContent(props);
+}
+
+function useDataTableContent({
+  id: _id,
+  data,
+  columns,
+  totalItems,
+  resource,
+  errorMessage,
+  onSelectionChange,
+  onGenomeSelect,
+  selectedIds,
+  pageIndex,
+  pageSize,
+  onPageChange,
+  sorting: controlledSorting,
+  onSortingChange,
+  columnOrder,
+  onColumnOrderChange,
+  columnVisibility: controlledVisibility,
+  onColumnVisibilityChange: onColumnVisibilityChangeProp,
+  rowSelection: controlledRowSelection,
+  onRowSelectionChange,
+  isAllPagesSelected = false,
+  onAllPagesSelectionChange,
+  totalSelectedCount,
+  onDownloadAll,
+  isLoading = false,
+  onActiveRowChange,
+}: DataTableProps) {
   "use no memo";
 
   // Column sizing kept per resource+columns. The persisted instance keeps this across
   // tab switches, so: (a) gating on the key in the render path means shared column IDs
   // never inherit another resource's widths (no stale-width frame), and (b) returning
   // to an already-sized tab reuses its widths immediately (no revisit snap).
-  const [sizingByKey, setSizingByKey] = useState<Record<string, Record<string, number>>>({});
+  const [sizingByKey, setSizingByKey] = useState<
+    Record<string, Record<string, number>>
+  >({});
   // resource makes shared column IDs distinct across tabs. Labels are static per
   // resource (derived from the module-level resourceFields[resource]), so id-order
   // alone pins the header estimates too — no need to include labels in the key.
   const sizingKey = `${resource}:${columns.map((c) => c.id).join(",")}`;
-  const activeColumnSizing = sizingByKey[sizingKey] ?? emptyColumnSizing;
   // Live clientWidth of the scroll container. Drives full-width column stretch;
   // updated by a ResizeObserver so the table reflows when the side panel or
   // vertical menu changes the available width.
   const [containerWidth, setContainerWidth] = useState(0);
-  const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>(
-    controlledVisibility ?? {}
-  );
-  // Sync internal visibility when the resource/column set changes (same DataTable
-  // instance reused across tab switches). Mirrors the prevFields pattern in ListData.
-  // Without this, columns missing from the stale map default to visible in TanStack Table,
-  // causing all columns to appear after switching tabs.
-  const [prevSizingKey, setPrevSizingKey] = useState(sizingKey);
-  if (prevSizingKey !== sizingKey) {
-    setPrevSizingKey(sizingKey);
-    setColumnVisibility(controlledVisibility ?? {});
-  }
+  const [internalColumnVisibility, setInternalColumnVisibility] = useState<
+    Record<string, boolean>
+  >({});
+  const columnVisibility = controlledVisibility ?? internalColumnVisibility;
   const [showColumnMenu, setShowColumnMenu] = useState(false);
-  
+
   const [draggedColumn, setDraggedColumn] = useState<string | null>(null);
-  
+
   // Track which download button is currently downloading
-  const [downloadingButton, setDownloadingButton] = useState<string | null>(null);
+  const [downloadingButton, setDownloadingButton] = useState<string | null>(
+    null,
+  );
 
   const [internalRowSelection, setInternalRowSelection] = useState({});
-  const rowSelection = controlledRowSelection !== undefined ? controlledRowSelection : internalRowSelection;
+  const rowSelection =
+    controlledRowSelection !== undefined
+      ? controlledRowSelection
+      : internalRowSelection;
 
   // Store the original order of selected items to maintain consistency
-  const [selectedItemsOrder, setSelectedItemsOrder] = useState<Map<string, number>>(new Map());
+  const [selectedItemsOrder, setSelectedItemsOrder] = useState<
+    Map<string, number>
+  >(new Map());
 
   // Pagination state: support both controlled (via pageIndex/pageSize props)
   // and uncontrolled usage. If parent provides pageIndex/pageSize we treat
   // pagination as controlled for that value; otherwise we keep internal state
   // so actions like resizing columns don't reset the current page to 0.
-  const [pagination, setPagination] = useState<PaginationState>(() => ({
-    pageIndex: pageIndex ?? 0,
-    pageSize: pageSize ?? 200,
-  }));
+  const [internalPagination, setInternalPagination] = useState<PaginationState>(
+    () => ({
+      pageIndex: pageIndex ?? 0,
+      pageSize: pageSize ?? 200,
+    }),
+  );
+  const pagination = {
+    pageIndex: pageIndex ?? internalPagination.pageIndex,
+    pageSize: pageSize ?? internalPagination.pageSize,
+  };
 
   const idField = getIdField(resource);
 
@@ -154,16 +383,6 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
   useEffect(() => {
     shiftHeldRef.current = shiftHeld;
   }, [shiftHeld]);
-
-  // Sync when parent provides controlled pageIndex/pageSize values
-  useEffect(() => {
-    setPagination((prev) => {
-      const next = { ...prev };
-      if (pageIndex !== undefined && pageIndex !== prev.pageIndex) next.pageIndex = pageIndex;
-      if (pageSize !== undefined && pageSize !== prev.pageSize) next.pageSize = pageSize;
-      return next;
-    });
-  }, [pageIndex, pageSize]);
 
   const lastSelectedIdRef = useRef<string | null>(null);
 
@@ -185,37 +404,29 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
         setShowColumnMenu(false);
       }
     };
-  
+
     if (showColumnMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
-  
+
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showColumnMenu]);
 
-
-  // Content-fit each resource+column set exactly once, and only once real rows exist.
-  // While loading (data empty) the columnDef estimateHeaderWidth values drive the
-  // skeleton, so there's no empty→header→content churn — just one instant header→
-  // content snap when data lands. Flooring each width at the header estimate keeps that
-  // snap grow-only. The presence check also makes a cached revisit a no-op: the key's
-  // sizing already exists, so nothing recomputes and nothing reflows.
-  //
-  // Exception (intentional): if the user manually resized or toggled columns before
-  // data arrived, sizingByKey[sizingKey] already exists, so this skips — manual wins.
-  useEffect(() => {
-    if (columns.length === 0 || data.length === 0) return;
-    if (sizingKey in sizingByKey) return;
-
+  // Derive initial content-fit sizing directly. Once the user resizes or toggles a
+  // column, sizingByKey takes over and preserves that resource's explicit widths.
+  let activeColumnSizing = sizingByKey[sizingKey] ?? emptyColumnSizing;
+  if (!(sizingKey in sizingByKey) && columns.length > 0 && data.length > 0) {
     const autoSizes = computeAutoColumnSizes(columns, data);
-    const sizing: Record<string, number> = {};
+    activeColumnSizing = {};
     for (const col of columns) {
-      sizing[col.id] = Math.max(estimateHeaderWidth(col.label), autoSizes[col.id] ?? 0);
+      activeColumnSizing[col.id] = Math.max(
+        estimateHeaderWidth(col.label),
+        autoSizes[col.id] ?? 0,
+      );
     }
-    setSizingByKey((prev) => ({ ...prev, [sizingKey]: sizing }));
-  }, [columns, data, sizingKey, sizingByKey]);
+  }
 
   // Track the scroll container's width so columns can stretch to fill it.
   // Fires on side-panel resize, vertical-menu collapse, and window resize.
@@ -229,155 +440,27 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
       setContainerWidth(Math.floor(entries[0].contentRect.width));
     });
     ro.observe(el);
-    return () => { ro.disconnect(); };
+    return () => {
+      ro.disconnect();
+    };
   }, []);
 
-  const renderCheckboxCell = useCallback(
-    ({ row, table }: CellContext<Record<string, unknown>, unknown>) => {
-      const handleToggle = (e: ReactChangeEvent<HTMLInputElement>) => {
-        e.stopPropagation();
-        const anchorId = lastSelectedIdRef.current;
-
-        if (shiftHeldRef.current && anchorId && anchorId !== row.id) {
-          // Additive range (merge into existing selection): don't update anchor
-          const rangeIds = computeShiftRangeIds(table.getRowModel().rows, anchorId, row.id);
-          if (rangeIds.length > 0) {
-            table.setRowSelection((prev) => {
-              const next = { ...prev };
-              for (const rid of rangeIds) next[rid] = true;
-              return next;
-            });
-            return;
-          }
-          // stale anchor (off-page/re-sorted): fall through to single-toggle
-        }
-
-        // No shift: additive toggle, update anchor
-        lastSelectedIdRef.current = row.id;
-        const wasSelected = row.getIsSelected();
-        table.setRowSelection((prev) => ({ ...prev, [row.id]: !wasSelected }));
-
-        const idVal = row.original[idField] ?? row.original['genome_id'] ?? null;
-        if (wasSelected) {
-          onGenomeSelect?.(null);
-          onActiveRowChange?.(null);
-        } else if (idVal != null && (typeof idVal === 'string' || typeof idVal === 'number')) {
-          onGenomeSelect?.(String(idVal));
-          onActiveRowChange?.(String(idVal));
-        }
-      };
-
-      return (
-        <div className="flex size-full items-center justify-center">
-          <input
-            type="checkbox"
-            aria-label={`Select row ${row.id}`}
-            checked={row.getIsSelected()}
-            onChange={handleToggle}
-            onClick={(event) => { event.stopPropagation(); }}
-            className="m-0 cursor-pointer p-0"
-          />
-        </div>
-      );
-    },
-    [idField, onGenomeSelect, onActiveRowChange],
-  );
-
-  const columnDefs = useMemo<ColumnDef<Record<string, unknown>>[]>(() => {
-    const checkboxColumn: ColumnDef<Record<string, unknown>> = {
-      id: '__select__',
-      header: ({ table }) => {
-        // Check if all rows on current page are selected
-        const allPageRowsSelected = table.getIsAllPageRowsSelected();
-        const somePageRowsSelected = table.getIsSomePageRowsSelected();
-
-        // Determine checkbox state - if all pages selected, always show checked
-        // Otherwise show the state of the current page
-        const isChecked = isAllPagesSelected || allPageRowsSelected;
-        const isIndeterminate = !isAllPagesSelected && somePageRowsSelected;
-        const handleHeaderToggle = (e: ReactChangeEvent<HTMLInputElement>) => {
-          e.stopPropagation();
-
-          if (isAllPagesSelected) {
-            // If all pages are selected, deselect all (including cross-page)
-            onAllPagesSelectionChange?.(false);
-            table.toggleAllRowsSelected(false);
-            // Clear all row selections and notify parent (controlled case)
-            if (onRowSelectionChange) {
-              onRowSelectionChange({});
-            } else {
-              // ensure internal selection is cleared
-              table.setRowSelection({});
-            }
-          } else if (allPageRowsSelected) {
-            // If all rows on current page are selected, clicking again deselects current page
-            table.toggleAllRowsSelected(false);
-          } else {
-            // Otherwise, select all on current page
-            table.toggleAllRowsSelected(true);
-          }
-        };
-
-        const selectionLabel = isAllPagesSelected ? "Deselect all results" : (allPageRowsSelected ? "Deselect all rows on this page" : "Select all rows on this page");
-        return (
-          <div className="relative flex size-full items-center justify-center">
-            <input
-              type="checkbox"
-              aria-label={selectionLabel}
-              checked={isChecked}
-              ref={(el) => {
-                if (el) {
-                  el.indeterminate = isIndeterminate;
-                }
-              }}
-              onChange={handleHeaderToggle}
-              onClick={(event) => { event.stopPropagation(); }}
-              className="m-0 cursor-pointer p-0"
-              title={selectionLabel}
-            />
-            {isAllPagesSelected && (
-              <div className="absolute -bottom-5 left-1/2 z-50 -translate-x-1/2 transform text-[10px] whitespace-nowrap text-blue-600">
-                All {totalItems} selected
-              </div>
-            )}
-          </div>
-        );
-      },
-      cell: renderCheckboxCell,
-      enableResizing: false,
-      size: 32,
-    };
-    return [
-      checkboxColumn,
-      ...columns.map((col) => ({
-        accessorKey: col.id,
-        header: col.label,
-        cell: (info: CellContext<Record<string, unknown>, unknown>) => formatCellValue(info.getValue()),
-        size: estimateHeaderWidth(col.label),
-        enableResizing: true,
-        enableSorting: true,
-        sortingFn: (rowA: TanStackRow<Record<string, unknown>>, rowB: TanStackRow<Record<string, unknown>>, columnId: string) => {
-          const a = rowA.getValue<unknown>(columnId);
-          const b = rowB.getValue<unknown>(columnId);
-
-          // Treat empty/undefined/null as "last"
-          const aIsEmpty = a === undefined || a === null || a === '';
-          const bIsEmpty = b === undefined || b === null || b === '';
-
-          if (aIsEmpty && bIsEmpty) return 0;
-          if (aIsEmpty) return 1;
-          if (bIsEmpty) return -1;
-
-          // Normal string/number compare
-          return a > b ? 1 : a < b ? -1 : 0;
-        },
-      }))
-    ];
-  }, [columns, isAllPagesSelected, onAllPagesSelectionChange, onRowSelectionChange, renderCheckboxCell, totalItems]);
+  const [columnDefs] = useState(() => createColumnDefs(columns));
 
   const table = useReactTable({
     data,
     columns: columnDefs,
+    meta: {
+      idField,
+      isAllPagesSelected,
+      lastSelectedIdRef,
+      onActiveRowChange,
+      onAllPagesSelectionChange,
+      onGenomeSelect,
+      onRowSelectionChange,
+      shiftHeldRef,
+      totalItems,
+    } satisfies DataTableMeta,
     state: {
       sorting: controlledSorting ?? [],
       // use the internal pagination state (which is kept in sync with
@@ -390,13 +473,14 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
       rowSelection,
     },
     onRowSelectionChange: (updater) => {
-      const newSelection = typeof updater === 'function' ? updater(rowSelection) : updater;
-      
+      const newSelection =
+        typeof updater === "function" ? updater(rowSelection) : updater;
+
       // If any individual row selection changes, clear the "all pages selected" state
       if (isAllPagesSelected) {
         onAllPagesSelectionChange?.(false);
       }
-      
+
       // Update the order map for selected items
       const newOrderMap = new Map(selectedItemsOrder);
       Object.keys(newSelection).forEach((rowId) => {
@@ -412,7 +496,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
         }
       }
       setSelectedItemsOrder(newOrderMap);
-      
+
       // If controlled, call the parent handler
       if (onRowSelectionChange) {
         onRowSelectionChange(newSelection);
@@ -422,17 +506,17 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
       }
 
       if (onSelectionChange) {
-        const selectedRows = Object.keys(newSelection)
-          .filter((key) => newSelection[key])
-          .map((key) => table.getRowModel().rows.find(r => r.id === key)?.original)
-          .filter((row): row is Record<string, unknown> => row !== undefined);
+        const selectedRows: Record<string, unknown>[] = [];
+        for (const row of table.getRowModel().rows) {
+          if (newSelection[row.id]) selectedRows.push(row.original);
+        }
         onSelectionChange(selectedRows);
       }
     },
 
     onSortingChange: (updater) => {
       const newSorting =
-        typeof updater === 'function'
+        typeof updater === "function"
           ? updater(controlledSorting ?? [])
           : updater;
 
@@ -441,13 +525,15 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
 
       // Notify parent (parent will handle clearing selection)
       onSortingChange?.(newSorting);
-      },
+    },
 
     onColumnVisibilityChange: (updater) => {
       const newVis =
-        typeof updater === 'function' ? updater(columnVisibility) : updater;
+        typeof updater === "function" ? updater(columnVisibility) : updater;
 
-      setColumnVisibility(newVis);
+      if (controlledVisibility === undefined) {
+        setInternalColumnVisibility(newVis);
+      }
 
       if (onColumnVisibilityChangeProp) {
         onColumnVisibilityChangeProp(newVis);
@@ -465,28 +551,29 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
       });
     },
     onPaginationChange: (updater) => {
-      const next = typeof updater === 'function' ? updater(pagination) : updater;
+      const next =
+        typeof updater === "function" ? updater(pagination) : updater;
 
-      // Update internal pagination state so the UI stays on the same page
-      // during interactions like resizing. If the parent controls pageIndex
-      // it will be synced via the effect above.
-      setPagination(next);
+      // Preserve uncontrolled fields during interactions such as resizing.
+      setInternalPagination(next);
 
       // Notify parent of page change (if provided)
       onPageChange?.(next.pageIndex);
     },
-    onColumnOrderChange: onColumnOrderChange ? (updater) => {
-      const newOrder =
-        typeof updater === 'function'
-          ? updater(columnOrder ?? [])
-          : updater;
+    onColumnOrderChange: onColumnOrderChange
+      ? (updater) => {
+          const newOrder =
+            typeof updater === "function"
+              ? updater(columnOrder ?? [])
+              : updater;
 
-      onColumnOrderChange(newOrder);
-    } : undefined,
+          onColumnOrderChange(newOrder);
+        }
+      : undefined,
     manualPagination: true,
     manualSorting: true,
     pageCount: Math.ceil(totalItems / pagination.pageSize),
-    columnResizeMode: 'onChange',
+    columnResizeMode: "onChange",
     enableColumnResizing: true,
     onColumnSizingChange: (updater) => {
       setSizingByKey((prev) => {
@@ -499,10 +586,9 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
     enableRowSelection: true,
     enableSortingRemoval: false,
     enableMultiRowSelection: true,
-//    getRowId: (row, index) => String((row as any).genome_id ?? `${index}`)
+    //    getRowId: (row, index) => String((row as any).genome_id ?? `${index}`)
     getRowId: (row) => String(row[idField]),
   });
-
 
   // Memoized CSS vars so cells update via CSS during drag without React re-rendering each cell.
   // Columns stretch to fill the container: any width the natural sizes leave unused
@@ -511,16 +597,16 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
   // negative, so widths fall back to natural and the container scrolls horizontally.
   // The actively-resizing column is excluded from stretch so its drag tracks the
   // cursor 1:1 and can push the total past the container edge.
-  const columnSizingInfo = table.getState().columnSizingInfo;
-  const columnSizingState = table.getState().columnSizing;
-  const resizingColumnId = columnSizingInfo.isResizingColumn;
-  const columnSizeVars = useMemo(() => {
+  const resizingColumnId = table.getState().columnSizingInfo.isResizingColumn;
+  const columnSizeVars = (() => {
     const leafColumns = table.getVisibleLeafColumns();
     const naturalSizes = leafColumns.map((c) => c.getSize());
     const naturalTotal = naturalSizes.reduce((a, b) => a + b, 0);
 
     const finalSizes = new Map<string, number>();
-    leafColumns.forEach((c, i) => { finalSizes.set(c.id, naturalSizes[i]); });
+    leafColumns.forEach((c, i) => {
+      finalSizes.set(c.id, naturalSizes[i]);
+    });
 
     // The resize handle (w-2, translateX(50%)) overhangs each cell's right edge
     // by 4px. Interior overhangs overlap harmlessly, but the last column's would
@@ -548,16 +634,11 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
 
     const vars: Record<string, string> = {};
     for (const header of table.getFlatHeaders()) {
-      vars[`--col-${header.column.id}-size`] = `${String(finalSizes.get(header.column.id) ?? header.column.getSize())}px`;
+      vars[`--col-${header.column.id}-size`] =
+        `${String(finalSizes.get(header.column.id) ?? header.column.getSize())}px`;
     }
     return vars;
-    // columnSizingInfo/columnSizingState/columnVisibility are load-bearing but the
-    // rule can't see it: the callback reads sizing via table.getSize()/getVisibleLeafColumns()
-    // getters, so exhaustive-deps flags these state values as "unnecessary". They are the
-    // triggers that recompute widths per drag-frame and on column toggle (same pattern as
-    // TanStack's own performant-resize example). Dropping them freezes live resize.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [columnSizingInfo, columnSizingState, columnVisibility, containerWidth, resizingColumnId, table]);
+  })();
 
   const rows = table.getRowModel().rows;
 
@@ -572,10 +653,14 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
   // applied well before data lands.
   const [skeletonRowCount, setSkeletonRowCount] = useState(30);
   useEffect(() => {
-    const update = () => { setSkeletonRowCount(Math.ceil(window.innerHeight / 24)); };
+    const update = () => {
+      setSkeletonRowCount(Math.ceil(window.innerHeight / 24));
+    };
     update();
-    window.addEventListener('resize', update);
-    return () => { window.removeEventListener('resize', update); };
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("resize", update);
+    };
   }, []);
 
   const rowVirtualizer = useVirtualizer({
@@ -591,30 +676,30 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
   // Handle column drag start
   const handleDragStart = (e: React.DragEvent, columnId: string) => {
     setDraggedColumn(columnId);
-    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.effectAllowed = "move";
   };
 
   // Handle column drag over
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
+    e.dataTransfer.dropEffect = "move";
   };
 
   // Handle column drop
   const handleDrop = (e: React.DragEvent, targetColumnId: string) => {
     e.preventDefault();
-    
+
     if (!draggedColumn || draggedColumn === targetColumnId) {
       setDraggedColumn(null);
       return;
     }
 
     const allColumns = table.getAllLeafColumns();
-    const columnIds = allColumns.map(col => col.id);
-    
+    const columnIds = allColumns.map((col) => col.id);
+
     const draggedIndex = columnIds.indexOf(draggedColumn);
     const targetIndex = columnIds.indexOf(targetColumnId);
-    
+
     if (draggedIndex === -1 || targetIndex === -1) {
       setDraggedColumn(null);
       return;
@@ -624,7 +709,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
     const newOrder = [...columnIds];
     const [removed] = newOrder.splice(draggedIndex, 1);
     newOrder.splice(targetIndex, 0, removed);
-    
+
     // Update column order
     onColumnOrderChange?.(newOrder);
     setDraggedColumn(null);
@@ -635,21 +720,29 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
     setDraggedColumn(null);
   };
 
-  const handleDownload = async (format: 'csv' | 'txt', onlySelected = false) => {
+  const handleDownload = async (
+    format: "csv" | "txt",
+    onlySelected = false,
+  ) => {
     // Set downloading state
-    const buttonKey = `${format}-${onlySelected ? 'selected' : 'all'}`;
+    const buttonKey = `${format}-${onlySelected ? "selected" : "all"}`;
     setDownloadingButton(buttonKey);
-    
+
     try {
       // If downloading selected and all pages are selected, download all data
       if (onlySelected && isAllPagesSelected && onDownloadAll) {
         const allCols = table.getAllLeafColumns();
         const visibleCols = onlyVisibleColumns
-          ? allCols.filter(col => col.getIsVisible() && col.id !== '__select__')
-          : allCols.filter(col => col.id !== '__select__');
+          ? allCols.filter(
+              (col) => col.getIsVisible() && col.id !== "__select__",
+            )
+          : allCols.filter((col) => col.id !== "__select__");
 
-        const visibleColumnIds = visibleCols.map(col => col.id);
-        await onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
+        const visibleColumnIds = visibleCols.map((col) => col.id);
+        await onDownloadAll(
+          format,
+          onlyVisibleColumns ? visibleColumnIds : null,
+        );
         setDownloadingButton(null);
         return;
       }
@@ -658,113 +751,141 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
       if (!onlySelected && onDownloadAll) {
         const allCols = table.getAllLeafColumns();
         const visibleCols = onlyVisibleColumns
-          ? allCols.filter(col => col.getIsVisible() && col.id !== '__select__')
-          : allCols.filter(col => col.id !== '__select__');
+          ? allCols.filter(
+              (col) => col.getIsVisible() && col.id !== "__select__",
+            )
+          : allCols.filter((col) => col.id !== "__select__");
 
-        const visibleColumnIds = visibleCols.map(col => col.id);
-        await onDownloadAll(format, onlyVisibleColumns ? visibleColumnIds : null);
+        const visibleColumnIds = visibleCols.map((col) => col.id);
+        await onDownloadAll(
+          format,
+          onlyVisibleColumns ? visibleColumnIds : null,
+        );
         setDownloadingButton(null);
         return;
       }
 
-    // Otherwise, use the local download logic (for selected rows or when onDownloadAll is not provided)
-    const allCols = table.getAllLeafColumns();
-    const visibleCols = onlyVisibleColumns
-      ? allCols.filter(col => col.getIsVisible() && col.id !== '__select__')
-      : allCols.filter(col => col.id !== '__select__');
+      // Otherwise, use the local download logic (for selected rows or when onDownloadAll is not provided)
+      const allCols = table.getAllLeafColumns();
+      const visibleCols = onlyVisibleColumns
+        ? allCols.filter((col) => col.getIsVisible() && col.id !== "__select__")
+        : allCols.filter((col) => col.id !== "__select__");
 
-    const headers = visibleCols.map(col => col.columnDef.header as string);
+      const headers = visibleCols.map((col) => col.columnDef.header as string);
 
-    if (onlySelected) {
-      if (!isAllPagesSelected && (!selectedIds || selectedIds.length === 0)) return;
+      if (onlySelected) {
+        if (!isAllPagesSelected && (!selectedIds || selectedIds.length === 0))
+          return;
 
-      const idField = getIdField(resource);
+        const idField = getIdField(resource);
 
-      const idFilter = (selectedIds ?? [])
-        .map((id) => `eq(${idField},${id})`)
-        .join(",");
+        const idFilter = (selectedIds ?? [])
+          .map((id) => `eq(${idField},${id})`)
+          .join(",");
 
-      const query = `or(${idFilter})`;
+        const query = `or(${idFilter})`;
 
-      const DataAPI = process.env.NEXT_PUBLIC_DATA_API;
+        const DataAPI = process.env.NEXT_PUBLIC_DATA_API;
 
-      await fetch(`${DataAPI ?? ""}/${resource}/`, {
-        method: "POST",
-        headers: {
-          'Content-type': 'application/rqlquery+x-www-form-urlencoded',
-          Accept: "application/json",
-          'Range': `items=0-${String((selectedIds ?? []).length)}`,
-          'X-Range': `items=0-${String((selectedIds ?? []).length)}`,
-        },
-        body: query,
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error("Failed to fetch selected rows");
-          return res.json();
+        await fetch(`${DataAPI ?? ""}/${resource}/`, {
+          method: "POST",
+          headers: {
+            "Content-type": "application/rqlquery+x-www-form-urlencoded",
+            Accept: "application/json",
+            Range: `items=0-${String((selectedIds ?? []).length)}`,
+            "X-Range": `items=0-${String((selectedIds ?? []).length)}`,
+          },
+          body: query,
         })
-        .then((data: unknown) => {
-          type RowBag = Record<string, unknown>;
-          interface ResponseShape { items?: RowBag[]; response?: RowBag[]; rows?: RowBag[] }
-          const rowsArray: RowBag[] = Array.isArray(data)
-            ? (data as RowBag[])
-            : ((data as ResponseShape).items ??
-               (data as ResponseShape).response ??
-               (data as ResponseShape).rows ??
-               []);
+          .then((res) => {
+            if (!res.ok) throw new Error("Failed to fetch selected rows");
+            return res.json();
+          })
+          .then((data: unknown) => {
+            type RowBag = Record<string, unknown>;
+            interface ResponseShape {
+              items?: RowBag[];
+              response?: RowBag[];
+              rows?: RowBag[];
+            }
+            const rowsArray: RowBag[] = Array.isArray(data)
+              ? (data as RowBag[])
+              : ((data as ResponseShape).items ??
+                (data as ResponseShape).response ??
+                (data as ResponseShape).rows ??
+                []);
 
-          // Sort the rows based on the original selection order
-          const sortedRows = rowsArray.sort((a, b) => {
-            const aId = String(a[idField]);
-            const bId = String(b[idField]);
-            const aOrder = selectedItemsOrder.get(aId) ?? Number.MAX_VALUE;
-            const bOrder = selectedItemsOrder.get(bId) ?? Number.MAX_VALUE;
-            return aOrder - bOrder;
+            // Sort the rows based on the original selection order
+            const sortedRows = rowsArray.sort((a, b) => {
+              const aId = String(a[idField]);
+              const bId = String(b[idField]);
+              const aOrder = selectedItemsOrder.get(aId) ?? Number.MAX_VALUE;
+              const bOrder = selectedItemsOrder.get(bId) ?? Number.MAX_VALUE;
+              return aOrder - bOrder;
+            });
+
+            const content = [
+              headers.join(","),
+              ...sortedRows.map((row) =>
+                visibleCols
+                  .map((col) => {
+                    const val = row[col.id];
+                    if (typeof val === "string")
+                      return `"${val.replace(/"/g, '""')}"`;
+                    if (val == null) return "";
+                    if (typeof val === "object")
+                      return `"${JSON.stringify(val).replace(/"/g, '""')}"`;
+                    if (
+                      typeof val === "number" ||
+                      typeof val === "boolean" ||
+                      typeof val === "bigint"
+                    )
+                      return String(val);
+                    return "";
+                  })
+                  .join(","),
+              ),
+            ].join("\n");
+
+            downloadFile(`${resource}-selected.${format}`, content);
+          })
+          .catch((err: unknown) => {
+            console.error("Download selected failed:", err);
+          })
+          .finally(() => {
+            setDownloadingButton(null);
           });
 
-          const content = [
-            headers.join(','),
-            ...sortedRows.map(row =>
-              visibleCols.map(col => {
-                const val = row[col.id];
-                if (typeof val === 'string') return `"${val.replace(/"/g, '""')}"`;
-                if (val == null) return '';
-                if (typeof val === 'object') return `"${JSON.stringify(val).replace(/"/g, '""')}"`;
-                if (typeof val === 'number' || typeof val === 'boolean' || typeof val === 'bigint') return String(val);
-                return '';
-              }).join(',')
-            )
-          ].join('\n');
+        return;
+      }
 
-          downloadFile(`${resource}-selected.${format}`, content);
-        })
-        .catch((err: unknown) => {
-          console.error("Download selected failed:", err);
-        })
-        .finally(() => {
-          setDownloadingButton(null);
-        });
+      const rowsToExport = table.getPrePaginationRowModel().rows;
 
-      return;
-    }
+      const content = [
+        headers.join(","),
+        ...rowsToExport.map((row) =>
+          visibleCols
+            .map((col) => {
+              const val = row.getValue<unknown>(col.id);
+              if (typeof val === "string")
+                return `"${val.replace(/"/g, '""')}"`;
+              if (val == null) return "";
+              if (typeof val === "object")
+                return `"${JSON.stringify(val).replace(/"/g, '""')}"`;
+              if (
+                typeof val === "number" ||
+                typeof val === "boolean" ||
+                typeof val === "bigint"
+              )
+                return String(val);
+              return "";
+            })
+            .join(","),
+        ),
+      ].join("\n");
 
-    const rowsToExport = table.getPrePaginationRowModel().rows;
-
-    const content = [
-      headers.join(','),
-      ...rowsToExport.map(row =>
-        visibleCols.map(col => {
-          const val = row.getValue<unknown>(col.id);
-          if (typeof val === 'string') return `"${val.replace(/"/g, '""')}"`;
-          if (val == null) return '';
-          if (typeof val === 'object') return `"${JSON.stringify(val).replace(/"/g, '""')}"`;
-          if (typeof val === 'number' || typeof val === 'boolean' || typeof val === 'bigint') return String(val);
-          return '';
-        }).join(',')
-      )
-    ].join('\n');
-
-    downloadFile(`${resource}.${format}`, content);
-    setDownloadingButton(null);
+      downloadFile(`${resource}.${format}`, content);
+      setDownloadingButton(null);
     } catch (error) {
       console.error("Download failed:", error);
       setDownloadingButton(null);
@@ -773,14 +894,15 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
 
   // Now that all the setup is done, let's render the table!
   return (
-    <div className="relative flex min-h-0 w-full flex-1 flex-col items-center overflow-hidden border-0 text-xs">{/* This is the main container. Full width and content centered. */}
+    <div className="relative flex min-h-0 w-full flex-1 flex-col items-center overflow-hidden border-0 text-xs">
+      {/* This is the main container. Full width and content centered. */}
       {/* Banner for selecting all results across pages */}
       {!isAllPagesSelected && table.getIsAllPageRowsSelected() && (
-          <div className="mb-2 flex w-full items-center justify-between border border-blue-200 bg-blue-50 px-4 py-2">
+        <div className="mb-2 flex w-full items-center justify-between border border-blue-200 bg-blue-50 px-4 py-2">
           <span className="text-blue-700">
             All {data.length} results on this page are selected.
           </span>
-          <button 
+          <button
             onClick={(e) => {
               e.stopPropagation();
               onAllPagesSelectionChange?.(true);
@@ -797,7 +919,7 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
             <span className="font-semibold text-blue-800">
               All {totalItems} results are selected across all pages.
             </span>
-            <button 
+            <button
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
@@ -813,106 +935,121 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
             </button>
           </div>
           <div className="mt-1 text-xs text-blue-700">
-            Note: Checkboxes on other pages may not appear checked for performance reasons, but all rows are selected.
+            Note: Checkboxes on other pages may not appear checked for
+            performance reasons, but all rows are selected.
           </div>
         </div>
       )}
       <div className="z-50 mb-2 flex w-full justify-end px-5" ref={controlsRef}>
-          <div className="relative inline-block text-left" ref={columnMenuRef}> {/* This is the button for changing the visibility of columns in the table */}
-            <Button
-              className="mr-2 flex w-full justify-end rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
-              onClick={() => { setShowColumnMenu(prev => !prev); }}
-            >
-              Columns ▾
-            </Button>
-
-            {showColumnMenu && (
-              <div className="ring-opacity-5 absolute left-0 z-50 mt-1 w-40 rounded-md bg-background shadow-lg ring-1 ring-border">
-                <div className="max-h-64 overflow-auto py-1 text-xs">
-                  {table.getAllColumns()
-                    .filter(col => col.id !== '__select__')
-                    .map((column) => (
-                      <label
-                        key={column.id}
-                        className="flex cursor-pointer items-center space-x-2 px-2 py-1 text-foreground hover:bg-muted"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={column.getIsVisible()}
-                          onChange={() => { column.toggleVisibility(); }}
-                        />
-                        <span>{column.columnDef.header as string}</span>
-                      </label>
-                    ))}
-                </div>
+        <div className="relative inline-block text-left" ref={columnMenuRef}>
+          {" "}
+          {/* This is the button for changing the visibility of columns in the table */}
+          <Button
+            className="mr-2 flex w-full justify-end rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
+            onClick={() => {
+              setShowColumnMenu((prev) => !prev);
+            }}
+          >
+            Columns ▾
+          </Button>
+          {showColumnMenu && (
+            <div className="ring-opacity-5 absolute left-0 z-50 mt-1 w-40 rounded-md bg-background shadow-lg ring-1 ring-border">
+              <div className="max-h-64 overflow-auto py-1 text-xs">
+                {table.getAllColumns().map((column) =>
+                  column.id === "__select__" ? null : (
+                    <label
+                      key={column.id}
+                      className="flex cursor-pointer items-center space-x-2 px-2 py-1 text-foreground hover:bg-muted"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={column.getIsVisible()}
+                        onChange={() => {
+                          column.toggleVisibility();
+                        }}
+                      />
+                      <span>{column.columnDef.header as string}</span>
+                    </label>
+                  ),
+                )}
               </div>
-            )}
-          </div>
-
-          {/* Download buttons */}
-          <Button
-            onClick={() => { void handleDownload('csv'); }}
-            className="mx-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
-            disabled={downloadingButton !== null}
-          >
-            {downloadingButton === 'csv-all' ? (
-              <span className="text-red-600">Downloading...</span>
-            ) : (
-              'Download (CSV)'
-            )}
-          </Button>
-          <Button
-            onClick={() => { void handleDownload('txt'); }}
-            className="mr-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
-            disabled={downloadingButton !== null}
-          >
-            {downloadingButton === 'txt-all' ? (
-              <span className="text-red-600">Downloading...</span>
-            ) : (
-              'Download (TXT)'
-            )}
-          </Button>
-
-          {/* These next two only show up if rows are selected */}
-          {((selectedIds?.length ?? 0) > 0 || isAllPagesSelected) && ( 
-            <>
-              <Button
-                onClick={() => { void handleDownload('csv', true); }}
-                className="mr-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
-                disabled={downloadingButton !== null}
-              >
-                {downloadingButton === 'csv-selected' ? (
-                  <span className="text-red-600">Downloading...</span>
-                ) : (
-                  'Download Selected (CSV)'
-                )}
-              </Button>
-              <Button
-                onClick={() => { void handleDownload('txt', true); }}
-                className="mr-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
-                disabled={downloadingButton !== null}
-              >
-                {downloadingButton === 'txt-selected' ? (
-                  <span className="text-red-600">Downloading...</span>
-                ) : (
-                  'Download Selected (TXT)'
-                )}
-              </Button>
-            </>
+            </div>
           )}
-        
+        </div>
+
+        {/* Download buttons */}
+        <Button
+          onClick={() => {
+            void handleDownload("csv");
+          }}
+          className="mx-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
+          disabled={downloadingButton !== null}
+        >
+          {downloadingButton === "csv-all" ? (
+            <span className="text-red-600">Downloading...</span>
+          ) : (
+            "Download (CSV)"
+          )}
+        </Button>
+        <Button
+          onClick={() => {
+            void handleDownload("txt");
+          }}
+          className="mr-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
+          disabled={downloadingButton !== null}
+        >
+          {downloadingButton === "txt-all" ? (
+            <span className="text-red-600">Downloading...</span>
+          ) : (
+            "Download (TXT)"
+          )}
+        </Button>
+
+        {/* These next two only show up if rows are selected */}
+        {((selectedIds?.length ?? 0) > 0 || isAllPagesSelected) && (
+          <>
+            <Button
+              onClick={() => {
+                void handleDownload("csv", true);
+              }}
+              className="mr-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
+              disabled={downloadingButton !== null}
+            >
+              {downloadingButton === "csv-selected" ? (
+                <span className="text-red-600">Downloading...</span>
+              ) : (
+                "Download Selected (CSV)"
+              )}
+            </Button>
+            <Button
+              onClick={() => {
+                void handleDownload("txt", true);
+              }}
+              className="mr-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
+              disabled={downloadingButton !== null}
+            >
+              {downloadingButton === "txt-selected" ? (
+                <span className="text-red-600">Downloading...</span>
+              ) : (
+                "Download Selected (TXT)"
+              )}
+            </Button>
+          </>
+        )}
+
         <label className="ml-4 flex items-center text-xs text-foreground">
           <input
             type="checkbox"
             checked={onlyVisibleColumns}
-            onChange={() => { setOnlyVisibleColumns(prev => !prev); }}
+            onChange={() => {
+              setOnlyVisibleColumns((prev) => !prev);
+            }}
             className="mr-1"
           />
           Download Displayed Columns Only
         </label>
       </div>
       <div className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded border border-border">
-
         <div
           className={clsx(
             "relative flex-1",
@@ -923,13 +1060,13 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
           )}
           ref={tableContainerRef}
           style={{
-            maxHeight: '100%',
-            position: 'relative',
+            maxHeight: "100%",
+            position: "relative",
           }}
         >
           <div className="relative min-w-max" style={columnSizeVars}>
-            <Table 
-              className="relative w-full table-auto border-collapse text-xs" 
+            <Table
+              className="relative w-full table-auto border-collapse text-xs"
               style={{ borderSpacing: 0 }}
               disableScrollWrapper={true}
             >
@@ -937,13 +1074,16 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                 ref={headerRef}
                 className="border-border bg-muted text-foreground"
                 style={{
-                  position: 'sticky',
+                  position: "sticky",
                   top: 0,
                   zIndex: 30,
                 }}
               >
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="flex border-y border-border bg-muted">
+                  <TableRow
+                    key={headerGroup.id}
+                    className="flex border-y border-border bg-muted"
+                  >
                     {headerGroup.headers.map((header) => {
                       const column = header.column;
                       return (
@@ -951,35 +1091,43 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                           key={header.id}
                           colSpan={header.colSpan}
                           className={clsx(
-                            'group relative border-r border-foreground/20 bg-muted text-foreground',
-                            column.id === '__select__'
-                              ? 'flex h-auto! items-center justify-center p-0'
-                              : 'h-auto! min-h-7! cursor-pointer px-2 py-0 align-middle text-xs leading-tight font-bold whitespace-normal'
+                            "group relative border-r border-foreground/20 bg-muted text-foreground",
+                            column.id === "__select__"
+                              ? "flex h-auto! items-center justify-center p-0"
+                              : "h-auto! min-h-7! cursor-pointer px-2 py-0 align-middle text-xs leading-tight font-bold whitespace-normal",
                           )}
                           style={{
                             width: `var(--col-${column.id}-size)`,
                             minWidth: `var(--col-${column.id}-size)`,
                             maxWidth: `var(--col-${column.id}-size)`,
-                            ...(column.id === '__select__' && {
-                              position: 'sticky',
+                            ...(column.id === "__select__" && {
+                              position: "sticky",
                               left: 0,
                               zIndex: 1,
                             }),
                           }}
-                          onClick={column.id !== '__select__' ? (e) => {
-                            if (justResizedRef.current) {
-                              e.stopPropagation();
-                              return;
-                            }
-                            e.stopPropagation();
-                            const handler = column.getToggleSortingHandler();
-                            if (handler) handler(e);
-                          } : undefined}
+                          onClick={
+                            column.id !== "__select__"
+                              ? (e) => {
+                                  if (justResizedRef.current) {
+                                    e.stopPropagation();
+                                    return;
+                                  }
+                                  e.stopPropagation();
+                                  const handler =
+                                    column.getToggleSortingHandler();
+                                  if (handler) handler(e);
+                                }
+                              : undefined
+                          }
                         >
-                          {column.id === '__select__' ? (
+                          {column.id === "__select__" ? (
                             // Checkbox column - no sorting or dragging
                             <div className="flex size-full items-center justify-center py-0">
-                              {flexRender(header.column.columnDef.header, header.getContext())}
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
                             </div>
                           ) : (
                             // Regular column - sortable and draggable
@@ -987,20 +1135,35 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                               <div
                                 className="relative flex size-full items-center py-0 pr-0.5"
                                 draggable={true}
-                                onDragStart={(e) => { handleDragStart(e, column.id); }}
+                                onDragStart={(e) => {
+                                  handleDragStart(e, column.id);
+                                }}
                                 onDragOver={handleDragOver}
-                                onDrop={(e) => { handleDrop(e, column.id); }}
+                                onDrop={(e) => {
+                                  handleDrop(e, column.id);
+                                }}
                                 onDragEnd={handleDragEnd}
                                 style={{
-                                  cursor: 'move',
-                                  opacity: draggedColumn === column.id ? 0.5 : 1,
-                                  backgroundColor: draggedColumn && draggedColumn !== column.id ? 'transparent' : '',
+                                  cursor: "move",
+                                  opacity:
+                                    draggedColumn === column.id ? 0.5 : 1,
+                                  backgroundColor:
+                                    draggedColumn && draggedColumn !== column.id
+                                      ? "transparent"
+                                      : "",
                                 }}
                               >
                                 <span className="leading-tight select-none">
-                                  {flexRender(header.column.columnDef.header, header.getContext())}
-                                  {column.getIsSorted() === 'asc' && <ChevronUp className="ml-0.5 inline-block size-3 align-text-bottom" />}
-                                  {column.getIsSorted() === 'desc' && <ChevronDown className="ml-0.5 inline-block size-3 align-text-bottom" />}
+                                  {flexRender(
+                                    header.column.columnDef.header,
+                                    header.getContext(),
+                                  )}
+                                  {column.getIsSorted() === "asc" && (
+                                    <ChevronUp className="ml-0.5 inline-block size-3 align-text-bottom" />
+                                  )}
+                                  {column.getIsSorted() === "desc" && (
+                                    <ChevronDown className="ml-0.5 inline-block size-3 align-text-bottom" />
+                                  )}
                                 </span>
                               </div>
                               {column.getCanResize() && (
@@ -1015,20 +1178,27 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                                     header.getResizeHandler()(e);
                                     const onUp = () => {
                                       justResizedRef.current = true;
-                                      setTimeout(() => { justResizedRef.current = false; }, 100);
-                                      window.removeEventListener('mouseup', onUp);
+                                      setTimeout(() => {
+                                        justResizedRef.current = false;
+                                      }, 100);
+                                      window.removeEventListener(
+                                        "mouseup",
+                                        onUp,
+                                      );
                                     };
-                                    window.addEventListener('mouseup', onUp);
+                                    window.addEventListener("mouseup", onUp);
                                   }}
                                   className="absolute top-0 right-0 z-30 flex h-full w-2 cursor-col-resize touch-none select-none"
-                                  style={{ transform: 'translateX(50%)' }}
+                                  style={{ transform: "translateX(50%)" }}
                                 >
-                                  <div className={clsx(
-                                    "mx-auto h-full w-1 transition-opacity",
-                                    header.column.getIsResizing()
-                                      ? "bg-blue-500 opacity-100"
-                                      : "bg-muted-foreground opacity-0 group-hover:opacity-100"
-                                  )} />
+                                  <div
+                                    className={clsx(
+                                      "mx-auto h-full w-1 transition-opacity",
+                                      header.column.getIsResizing()
+                                        ? "bg-blue-500 opacity-100"
+                                        : "bg-muted-foreground opacity-0 group-hover:opacity-100",
+                                    )}
+                                  />
                                 </div>
                               )}
                             </>
@@ -1040,47 +1210,29 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                 ))}
               </TableHeader>
 
-              {resizingColumnId ? (
-                <MemoizedDataTableBody
-                  table={table}
-                  rows={rows}
-                  virtualRows={virtualRows}
-                  totalSize={totalSize}
-                  data={data}
-                  idField={idField}
-                  shiftHeld={shiftHeld}
-                  ctrlOrCmdHeld={ctrlOrCmdHeld}
-                  lastSelectedIdRef={lastSelectedIdRef}
-                  onGenomeSelect={onGenomeSelect}
-                  onActiveRowChange={onActiveRowChange}
-                  errorMessage={errorMessage}
-                  isLoading={isLoading}
-                  skeletonRowCount={skeletonRowCount}
-                />
-              ) : (
-                <DataTableBody
-                  table={table}
-                  rows={rows}
-                  virtualRows={virtualRows}
-                  totalSize={totalSize}
-                  data={data}
-                  idField={idField}
-                  shiftHeld={shiftHeld}
-                  ctrlOrCmdHeld={ctrlOrCmdHeld}
-                  lastSelectedIdRef={lastSelectedIdRef}
-                  onGenomeSelect={onGenomeSelect}
-                  onActiveRowChange={onActiveRowChange}
-                  errorMessage={errorMessage}
-                  isLoading={isLoading}
-                  skeletonRowCount={skeletonRowCount}
-                />
-              )}
+              <DataTableBody
+                table={table}
+                rows={rows}
+                virtualRows={virtualRows}
+                totalSize={totalSize}
+                idField={idField}
+                shiftHeld={shiftHeld}
+                ctrlOrCmdHeld={ctrlOrCmdHeld}
+                lastSelectedIdRef={lastSelectedIdRef}
+                onGenomeSelect={onGenomeSelect}
+                onActiveRowChange={onActiveRowChange}
+                errorMessage={errorMessage}
+                isLoading={isLoading}
+                skeletonRowCount={skeletonRowCount}
+              />
             </Table>
-
           </div>
         </div>
 
-        <div className="z-10 w-full border-t border-border bg-muted py-1 shadow-sm" ref={footerRef}>
+        <div
+          className="z-10 w-full border-t border-border bg-muted py-1 shadow-sm"
+          ref={footerRef}
+        >
           <div className="flex flex-wrap items-center justify-between gap-y-1 px-2">
             <div className="shrink-0 text-xs">
               {(() => {
@@ -1099,11 +1251,15 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
 
                 const selectedCount = isAllPagesSelected
                   ? totalItems
-                  : (totalSelectedCount ?? Object.keys(rowSelection).filter(key => rowSelection[key]).length);
+                  : (totalSelectedCount ??
+                    Object.keys(rowSelection).filter((key) => rowSelection[key])
+                      .length);
 
                 return (
                   <div className="flex flex-col">
-                    <span>Showing {start}-{end} of {totalRows} results</span>
+                    <span>
+                      Showing {start}-{end} of {totalRows} results
+                    </span>
                     {selectedCount > 0 && (
                       <span className="font-semibold text-blue-600">
                         {isAllPagesSelected
@@ -1117,11 +1273,13 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
             </div>
             <div className="flex flex-wrap items-center gap-x-1">
               <Button
-                onClick={() => { table.previousPage(); }}
+                onClick={() => {
+                  table.previousPage();
+                }}
                 disabled={!table.getCanPreviousPage()}
                 className="border border-border px-2 py-0.5 disabled:opacity-50"
               >
-                {'Prev'}
+                {"Prev"}
               </Button>
               {(() => {
                 const pageCount = table.getPageCount();
@@ -1140,12 +1298,18 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                   const showDots = prev !== undefined && page - prev > 1;
                   return (
                     <span key={page} className="flex items-center gap-x-1">
-                      {showDots && <span className="text-muted-foreground">...</span>}
+                      {showDots && (
+                        <span className="text-muted-foreground">...</span>
+                      )}
                       <Button
-                        onClick={() => { table.setPageIndex(page); }}
+                        onClick={() => {
+                          table.setPageIndex(page);
+                        }}
                         className={clsx(
-                          'border bg-background px-2 py-0.5 text-foreground',
-                          currentPage === page ? 'bg-primary/15 font-bold' : 'bg-background'
+                          "border bg-background px-2 py-0.5 text-foreground",
+                          currentPage === page
+                            ? "bg-primary/15 font-bold"
+                            : "bg-background",
                         )}
                       >
                         {page + 1}
@@ -1155,11 +1319,13 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                 });
               })()}
               <Button
-                onClick={() => { table.nextPage(); }}
+                onClick={() => {
+                  table.nextPage();
+                }}
                 disabled={!table.getCanNextPage()}
                 className="border border-border px-2 py-0.5 disabled:opacity-50"
               >
-                {'Next'}
+                {"Next"}
               </Button>
             </div>
           </div>
@@ -1174,9 +1340,6 @@ interface DataTableBodyProps {
   rows: TanStackRow<Record<string, unknown>>[];
   virtualRows: VirtualItem[];
   totalSize: number;
-  // Consumed only by MemoizedDataTableBody's comparator (referential identity of the
-  // current page's rows). Intentionally not read inside the render body.
-  data: Record<string, unknown>[];
   idField: string;
   shiftHeld: boolean;
   ctrlOrCmdHeld: boolean;
@@ -1188,11 +1351,6 @@ interface DataTableBodyProps {
   skeletonRowCount?: number;
 }
 
-// Extracted so it can be memoized during an active column resize. columnResizeMode
-// 'onChange' fires setColumnSizing every drag frame; the CSS variables on the wrapper
-// already reflow cell widths without React, so re-reconciling every virtual row/cell
-// each frame is pure waste. While resizing, the parent renders MemoizedDataTableBody
-// (skips re-render unless the data page changes); otherwise the fully reactive body.
 function DataTableBody({
   table,
   rows,
@@ -1212,12 +1370,12 @@ function DataTableBody({
   return (
     <TableBody
       style={{
-        position: 'relative',
+        position: "relative",
         // While loading, fill the container (height:100%) so the absolute skeleton
         // rows have a full-height positioning context. The scroll container is set
         // to overflow:hidden during load (see DataTable), so the intentionally
         // overestimated rows are clipped to reach the footer with no gap/scrollbar.
-        height: isLoading ? '100%' : totalSize,
+        height: isLoading ? "100%" : totalSize,
       }}
       className="relative z-10 border-collapse gap-0"
     >
@@ -1239,12 +1397,14 @@ function DataTableBody({
                   height: 24,
                 }}
               >
-                {col.id === '__select__' ? (
+                {col.id === "__select__" ? (
                   <Skeleton className="size-3.5 rounded-sm" />
                 ) : (
                   <Skeleton
                     className="h-3 rounded"
-                    style={{ width: `${String(skeletonWidthPcts[(rowIdx * 7 + colIdx) % skeletonWidthPcts.length])}%` }}
+                    style={{
+                      width: `${String(skeletonWidthPcts[(rowIdx * 7 + colIdx) % skeletonWidthPcts.length])}%`,
+                    }}
                   />
                 )}
               </TableCell>
@@ -1256,131 +1416,125 @@ function DataTableBody({
           <TableCell
             colSpan={table.getVisibleLeafColumns().length}
             className="w-full px-2 py-0 text-left text-muted-foreground"
-            style={{ justifyContent: 'left' }}
+            style={{ justifyContent: "left" }}
           >
             {errorMessage ? (
               <span className="text-destructive">{errorMessage}</span>
             ) : (
-              'No results'
+              "No results"
             )}
           </TableCell>
         </TableRow>
       ) : (
-      // If there ARE results...
-      virtualRows.map((virtualRow) => {
-        const row = rows[virtualRow.index];
-        return (
-          <TableRow
-            key={row.id}
-            // Clicking a row should notify listeners about the active row (used to open side panels).
-            // If the click originated from a checkbox/input, avoid double-handling because
-            // the checkbox click handler already calls onActiveRowChange/onGenomeSelect.
-            onClick={(e) => {
-              if ((e.target as HTMLElement).closest('input[type="checkbox"]')) return;
-              const currentRowId = row.id;
-              const anchorId = lastSelectedIdRef.current;
-
-              if (shiftHeld && anchorId) {
-                // Exclusive range (replace existing selection)
-                const rangeIds = computeShiftRangeIds(table.getRowModel().rows, anchorId, currentRowId);
-                if (rangeIds.length > 0) {
-                  const next: Record<string, boolean> = {};
-                  for (const rid of rangeIds) next[rid] = true;
-                  table.setRowSelection(next);
+        // If there ARE results...
+        virtualRows.map((virtualRow) => {
+          const row = rows[virtualRow.index];
+          return (
+            <TableRow
+              key={row.id}
+              // Clicking a row should notify listeners about the active row (used to open side panels).
+              // If the click originated from a checkbox/input, avoid double-handling because
+              // the checkbox click handler already calls onActiveRowChange/onGenomeSelect.
+              onClick={(e) => {
+                if ((e.target as HTMLElement).closest('input[type="checkbox"]'))
                   return;
+                const currentRowId = row.id;
+                const anchorId = lastSelectedIdRef.current;
+
+                if (shiftHeld && anchorId) {
+                  // Exclusive range (replace existing selection)
+                  const rangeIds = computeShiftRangeIds(
+                    table.getRowModel().rows,
+                    anchorId,
+                    currentRowId,
+                  );
+                  if (rangeIds.length > 0) {
+                    const next: Record<string, boolean> = {};
+                    for (const rid of rangeIds) next[rid] = true;
+                    table.setRowSelection(next);
+                    return;
+                  }
+                  // stale anchor (off-page/re-sorted): fall through to single-select
                 }
-                // stale anchor (off-page/re-sorted): fall through to single-select
-              }
 
-              lastSelectedIdRef.current = currentRowId;
+                lastSelectedIdRef.current = currentRowId;
 
-              if (ctrlOrCmdHeld) {
-                row.toggleSelected();
-              } else {
-                table.setRowSelection({ [currentRowId]: true });
-              }
+                if (ctrlOrCmdHeld) {
+                  row.toggleSelected();
+                } else {
+                  table.setRowSelection({ [currentRowId]: true });
+                }
 
-              const idVal = row.original[idField] ?? row.original['genome_id'] ?? null;
-              if (idVal != null && (typeof idVal === 'string' || typeof idVal === 'number')) {
-                onGenomeSelect?.(String(idVal));
-                onActiveRowChange?.(String(idVal));
-              }
-            }}
-            style={{
-              transform: `translateY(${String(virtualRow.start)}px)`,
-              height: '24px',
-            }}
-            className={clsx(
-              "group absolute inset-x-0 flex cursor-pointer",
-              row.getIsSelected()
-                ? 'bg-primary/15 dark:bg-primary/30'
-                : 'hover:bg-muted'
-            )}
-
-          >
-            {row.getVisibleCells().map((cell) => (
-              <TableCell
-                key={cell.id}
-                className={clsx(
-                  'flex items-center truncate border border-border',
-                  cell.column.id === '__select__'
-                    ? clsx('justify-center p-0', row.getIsSelected() ? '' : 'bg-background group-hover:bg-muted')
-                    : 'justify-start py-0.5'
-                )}
-                style={{
-                  width: `var(--col-${cell.column.id}-size)`,
-                  minWidth: `var(--col-${cell.column.id}-size)`,
-                  maxWidth: `var(--col-${cell.column.id}-size)`,
-                  height: '24px',
-                  ...(cell.column.id === '__select__' && {
-                    position: 'sticky',
-                    left: 0,
-                    zIndex: 1,
-                    // color-mix produces an opaque equivalent of bg-primary/15 over
-                    // the page background — transparent backgrounds on sticky elements
-                    // let scrolled content bleed through.
-                    ...(row.getIsSelected() && {
-                      backgroundColor: 'color-mix(in srgb, var(--color-primary) 15%, var(--color-background))',
+                const idVal =
+                  row.original[idField] ?? row.original["genome_id"] ?? null;
+                if (
+                  idVal != null &&
+                  (typeof idVal === "string" || typeof idVal === "number")
+                ) {
+                  onGenomeSelect?.(String(idVal));
+                  onActiveRowChange?.(String(idVal));
+                }
+              }}
+              style={{
+                transform: `translateY(${String(virtualRow.start)}px)`,
+                height: "24px",
+              }}
+              className={clsx(
+                "group absolute inset-x-0 flex cursor-pointer",
+                row.getIsSelected()
+                  ? "bg-primary/15 dark:bg-primary/30"
+                  : "hover:bg-muted",
+              )}
+            >
+              {row.getVisibleCells().map((cell) => (
+                <TableCell
+                  key={cell.id}
+                  className={clsx(
+                    "flex items-center truncate border border-border",
+                    cell.column.id === "__select__"
+                      ? clsx(
+                          "justify-center p-0",
+                          row.getIsSelected()
+                            ? ""
+                            : "bg-background group-hover:bg-muted",
+                        )
+                      : "justify-start py-0.5",
+                  )}
+                  style={{
+                    width: `var(--col-${cell.column.id}-size)`,
+                    minWidth: `var(--col-${cell.column.id}-size)`,
+                    maxWidth: `var(--col-${cell.column.id}-size)`,
+                    height: "24px",
+                    ...(cell.column.id === "__select__" && {
+                      position: "sticky",
+                      left: 0,
+                      zIndex: 1,
+                      // color-mix produces an opaque equivalent of bg-primary/15 over
+                      // the page background — transparent backgrounds on sticky elements
+                      // let scrolled content bleed through.
+                      ...(row.getIsSelected() && {
+                        backgroundColor:
+                          "color-mix(in srgb, var(--color-primary) 15%, var(--color-background))",
+                      }),
                     }),
-                  }),
-                }}
-              >
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </TableCell>
-            ))}
-          </TableRow>
-        );
-      })
+                  }}
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableCell>
+              ))}
+            </TableRow>
+          );
+        })
       )}
     </TableBody>
   );
 }
-
-const MemoizedDataTableBody = memo(
-  DataTableBody,
-  (prev, next) => prev.data === next.data && prev.isLoading === next.isLoading,
-);
 
 // Given the visible row list and an anchor/target id pair, return the ids of the
 // contiguous range between them (inclusive). Empty when either id isn't present.
 // Shared by the checkbox and row-body shift-click handlers, which intentionally
 // differ in how they *apply* this range (checkbox merges into the existing
 // selection; row body replaces it) but compute it identically.
-export function computeShiftRangeIds(
-  rows: { id: string }[],
-  anchorId: string,
-  targetId: string,
-): string[] {
-  const anchorIdx = rows.findIndex((r) => r.id === anchorId);
-  const targetIdx = rows.findIndex((r) => r.id === targetId);
-  if (anchorIdx === -1 || targetIdx === -1) return [];
-  const from = Math.min(anchorIdx, targetIdx);
-  const to = Math.max(anchorIdx, targetIdx);
-  const ids: string[] = [];
-  for (let i = from; i <= to; i++) ids.push(rows[i].id);
-  return ids;
-}
-
 // SSR-safe header-width estimate (pure string math — no canvas/document), so the
 // server and the client's first render agree and columns paint at header width
 // immediately instead of the 250px columnDef default. Approximates the header branch
@@ -1391,33 +1545,17 @@ export function computeShiftRangeIds(
 // Array-valued fields (e.g. treatment_duration: [3,6,12,18]) must not render as
 // raw React children — React joins array children with no separator, reading as
 // "361218" instead of "3, 6, 12, 18".
-export function formatCellValue(value: unknown): unknown {
-  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(value)) {
-    const date = new Date(value);
-    return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getFullYear())}`;
-  }
-  if (Array.isArray(value)) return value.join(', ');
-  return value;
-}
-
-export function estimateHeaderWidth(label: string): number {
-  const longestWord = label
-    .split(/\s+/)
-    .reduce((a, b) => (a.length >= b.length ? a : b), "");
-  return Math.min(Math.max(longestWord.length * 7 + 32, 60), 250);
-}
-
 function computeAutoColumnSizes(
   columns: ColumnInfo[],
   data: Record<string, unknown>[],
   maxWidth = 250,
 ): Record<string, number> {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
   if (!ctx) return {};
 
-  const cellFont = '12px system-ui, sans-serif';
-  const headerFont = 'bold 12px system-ui, sans-serif';
+  const cellFont = "12px system-ui, sans-serif";
+  const headerFont = "bold 12px system-ui, sans-serif";
 
   const sizes: Record<string, number> = {};
 
@@ -1430,11 +1568,15 @@ function computeAutoColumnSizes(
   for (const col of columns) {
     ctx.font = headerFont;
     // Headers wrap, so only the longest single word dictates the minimum column width.
-    const longestWord = col.label.split(/\s+/).reduce(
-      (a, b) => (ctx.measureText(a).width >= ctx.measureText(b).width ? a : b),
-      '',
-    );
-    const effectiveHeaderWidth = Math.ceil(ctx.measureText(longestWord).width * 1.1) + headerOverhead;
+    const longestWord = col.label
+      .split(/\s+/)
+      .reduce(
+        (a, b) =>
+          ctx.measureText(a).width >= ctx.measureText(b).width ? a : b,
+        "",
+      );
+    const effectiveHeaderWidth =
+      Math.ceil(ctx.measureText(longestWord).width * 1.1) + headerOverhead;
 
     ctx.font = cellFont;
     let effectiveContentWidth = 0;
@@ -1442,10 +1584,14 @@ function computeAutoColumnSizes(
       const raw = row[col.id];
       if (raw == null) continue;
       let str: string;
-      if (typeof raw === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(raw)) {
+      if (typeof raw === "string" && /^\d{4}-\d{2}-\d{2}T/.test(raw)) {
         const d = new Date(raw);
-        str = `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getFullYear())}`;
-      } else if (typeof raw === 'string' || typeof raw === 'number' || typeof raw === 'boolean') {
+        str = `${String(d.getDate()).padStart(2, "0")}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getFullYear())}`;
+      } else if (
+        typeof raw === "string" ||
+        typeof raw === "number" ||
+        typeof raw === "boolean"
+      ) {
         str = String(raw);
       } else {
         continue;
@@ -1454,17 +1600,21 @@ function computeAutoColumnSizes(
       if (w > effectiveContentWidth) effectiveContentWidth = w;
     }
 
-    sizes[col.id] = Math.min(Math.max(effectiveHeaderWidth, effectiveContentWidth), maxWidth);
+    sizes[col.id] = Math.min(
+      Math.max(effectiveHeaderWidth, effectiveContentWidth),
+      maxWidth,
+    );
   }
 
   return sizes;
 }
 
 function downloadFile(filename: string, content: string) {
-  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
+  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  const link = document.createElement("a");
+  const objectUrl = URL.createObjectURL(blob);
+  link.href = objectUrl;
   link.download = filename;
   link.click();
-  URL.revokeObjectURL(link.href);
+  URL.revokeObjectURL(objectUrl);
 }

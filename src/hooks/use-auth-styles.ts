@@ -5,15 +5,18 @@ export function useAuthStyles() {
   const { isAuthenticated, status } = useAuth();
   const isLoading = status === "loading";
 
-  const authClass = (authenticatedClass: string, unauthenticatedClass: string) => {
+  const authClass = (
+    authenticatedClass: string,
+    unauthenticatedClass: string,
+  ) => {
     return isAuthenticated ? authenticatedClass : unauthenticatedClass;
   };
 
   const authClasses = (classes: Record<string, boolean>) => {
     return cn(
-      Object.entries(classes).map(([className, condition]) =>
-        condition ? className : null
-      ).filter(Boolean)
+      Object.entries(classes).flatMap(([className, condition]) =>
+        condition ? [className] : [],
+      ),
     );
   };
 

@@ -13,6 +13,23 @@ import { ArchaeopteryxLoading } from "./archaeopteryx-loading";
 // Mirrors the breakpoint in archaeopteryx-theme.css that stacks the controls.
 const stackedControlsQuery = "(max-width: 640px)";
 
+function subscribeMediaQuery(
+  mediaQuery: MediaQueryList,
+  listener: () => void,
+): () => void {
+  mediaQuery.addEventListener("change", listener);
+  return () => {
+    mediaQuery.removeEventListener("change", listener);
+  };
+}
+
+function subscribeSelectionChange(listener: () => void): () => void {
+  document.addEventListener("selected_nodes_changed_event", listener);
+  return () => {
+    document.removeEventListener("selected_nodes_changed_event", listener);
+  };
+}
+
 function getThemeColors(host: HTMLElement) {
   const theme = getComputedStyle(document.documentElement);
   const themeColor = (property: string) =>
@@ -60,6 +77,7 @@ export function ArchaeopteryxPhylogeny({
     let destroyRenderer: (() => void) | null = null;
     let resizeFrame: number | null = null;
     let removeMediaQueryListener: () => void = () => undefined;
+    let removeSelectionListener: () => void = () => undefined;
     let updateLayout: () => void = () => undefined;
     const resizeObserver = new ResizeObserver(() => {
       if (resizeFrame !== null) cancelAnimationFrame(resizeFrame);
@@ -77,11 +95,7 @@ export function ArchaeopteryxPhylogeny({
       resizeObserver.disconnect();
       removeMediaQueryListener();
       if (resizeFrame !== null) cancelAnimationFrame(resizeFrame);
-      if (selectable)
-        document.removeEventListener(
-          "selected_nodes_changed_event",
-          selectionChanged,
-        );
+      removeSelectionListener();
       destroyRenderer?.();
     };
 
@@ -186,10 +200,7 @@ export function ArchaeopteryxPhylogeny({
           .getElementById("zoomtofit")
           ?.dispatchEvent(new Event("mousedown"));
       };
-      mediaQuery.addEventListener("change", updateLayout);
-      removeMediaQueryListener = () => {
-        mediaQuery.removeEventListener("change", updateLayout);
-      };
+      removeMediaQueryListener = subscribeMediaQuery(mediaQuery, updateLayout);
       updateLayout();
 
       setStatus(null);
@@ -204,11 +215,9 @@ export function ArchaeopteryxPhylogeny({
       });
     };
 
-    if (selectable)
-      document.addEventListener(
-        "selected_nodes_changed_event",
-        selectionChanged,
-      );
+    if (selectable) {
+      removeSelectionListener = subscribeSelectionChange(selectionChanged);
+    }
     void render().catch((cause: unknown) => {
       if (!cancelled) {
         teardown();
@@ -222,7 +231,12 @@ export function ArchaeopteryxPhylogeny({
 
     return () => {
       cancelled = true;
-      teardown();
+      rendererRef.current = null;
+      resizeObserver.disconnect();
+      removeMediaQueryListener();
+      if (resizeFrame !== null) cancelAnimationFrame(resizeFrame);
+      removeSelectionListener();
+      destroyRenderer?.();
     };
   }, [id, selectable, xml]);
 

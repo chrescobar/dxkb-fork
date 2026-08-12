@@ -2,7 +2,7 @@
 
 import { CustomProjection } from "@visx/geo";
 import { geoMercator } from "@visx/vendor/d3-geo";
-import { memo, useCallback, type RefObject } from "react";
+import type { RefObject } from "react";
 
 import type { OrganismGeoDistribution } from "@/lib/services/organisms/types";
 
@@ -26,7 +26,7 @@ interface StateCountiesLayerProps {
   selectedStateName: string | null;
 }
 
-export const StateCountiesLayer = memo(function StateCountiesLayer({
+export function StateCountiesLayer({
   countyFeatures,
   fitBoundsFeatures,
   fitExtent,
@@ -37,28 +37,41 @@ export const StateCountiesLayer = memo(function StateCountiesLayer({
   onHoverLeave,
   selectedStateName,
 }: StateCountiesLayerProps) {
-  const projection = useCallback(() => geoMercator(), []);
+  const projection = () => geoMercator();
 
   return (
     <CustomProjection<CountyFeature>
       data={countyFeatures}
       projection={projection}
-      fitExtent={[fitExtent, { type: "FeatureCollection", features: fitBoundsFeatures } as never]}
+      fitExtent={[
+        fitExtent,
+        { type: "FeatureCollection", features: fitBoundsFeatures } as never,
+      ]}
     >
       {({ features }) =>
-        features.map(({ feature, path }, index) => {
+        features.map(({ feature, path }) => {
           const name = featureName(feature.properties);
           const key = selectedStateName ? `${selectedStateName}|${name}` : name;
           const count = data.countyData[key] ?? 0;
-          const meta = data.countyMeta[key] ?? { count: 0, genera: {}, hosts: {} };
+          const meta = data.countyMeta[key] ?? {
+            count: 0,
+            genera: {},
+            hosts: {},
+          };
           return (
             <ChoroplethPath
-              key={`${name}-${String(feature.id ?? index)}`}
+              key={String(feature.id ?? key)}
               pathD={path ?? ""}
               fill={colorScale(count)}
               strokeWidth={0.5}
               isDraggingRef={isDraggingRef}
-              payload={{ view: "state", name, count, genera: meta.genera, hosts: meta.hosts }}
+              payload={{
+                view: "state",
+                name,
+                count,
+                genera: meta.genera,
+                hosts: meta.hosts,
+              }}
               onHoverEnter={onHoverEnter}
               onHoverLeave={onHoverLeave}
             />
@@ -67,4 +80,4 @@ export const StateCountiesLayer = memo(function StateCountiesLayer({
       }
     </CustomProjection>
   );
-});
+}

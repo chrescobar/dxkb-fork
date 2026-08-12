@@ -2,9 +2,10 @@
 
 import { z } from "zod";
 import { useForm } from "@tanstack/react-form";
-import { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { useAuth, useSignIn } from "@/lib/auth/hooks";
+import { redirectAfterAuth } from "../redirect-action";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -34,21 +35,11 @@ const formSchema = z.object({
 function SigninForm() {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { isAuthenticated, status } = useAuth();
+  const { status } = useAuth();
   const { signIn, isPending } = useSignIn();
   const isLoading = status === "loading" || isPending;
-  const router = useRouter();
   const searchParams = useSearchParams();
-
-  // Get redirect URL from query params (for protected route redirects)
   const redirectTo = searchParams.get("redirect") || "/";
-
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.push(redirectTo);
-    }
-  }, [isAuthenticated, router, redirectTo]);
 
   const form = useForm({
     defaultValues: {
@@ -65,6 +56,7 @@ function SigninForm() {
       toast.success("Logged in successfully. Welcome to DXKB!", {
         closeButton: true,
       });
+      await redirectAfterAuth(redirectTo);
     },
   });
 
@@ -105,7 +97,9 @@ function SigninForm() {
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => { field.handleChange(e.target.value); }}
+                      onChange={(e) => {
+                        field.handleChange(e.target.value);
+                      }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                     />
@@ -123,7 +117,7 @@ function SigninForm() {
                     <p className="text-xs text-primary">
                       <Link
                         href="/forgot-password"
-                        className="transition-all duration-300 hover:font-medium hover:text-secondary"
+                        className="transition-colors duration-300 hover:font-medium hover:text-secondary"
                       >
                         Forgot your password?
                       </Link>
@@ -137,7 +131,9 @@ function SigninForm() {
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
                       value={field.state.value}
-                      onChange={(e) => { field.handleChange(e.target.value); }}
+                      onChange={(e) => {
+                        field.handleChange(e.target.value);
+                      }}
                       onBlur={field.handleBlur}
                       className="px-10"
                       required
@@ -147,7 +143,9 @@ function SigninForm() {
                       variant="ghost"
                       size="icon"
                       className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => { setShowPassword(!showPassword); }}
+                      onClick={() => {
+                        setShowPassword(!showPassword);
+                      }}
                     >
                       {showPassword ? (
                         <EyeOff className="size-4" />
@@ -166,7 +164,7 @@ function SigninForm() {
 
             <Button
               type="submit"
-              className="w-full transition-all duration-200"
+              className="w-full transition-colors duration-200"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -185,7 +183,7 @@ function SigninForm() {
               Don&apos;t have an account?{" "}
               <Link
                 href="/sign-up"
-                className="font-medium text-primary transition-all duration-300 hover:font-medium hover:text-secondary"
+                className="font-medium text-primary transition-colors duration-300 hover:font-medium hover:text-secondary"
               >
                 Sign up on DXKB
               </Link>
@@ -194,8 +192,8 @@ function SigninForm() {
               <span className="font-bold">Note: </span>
               You may use your DXKB or BV-BRC username or email to sign in to
               this resource if you already had an account on one of those
-              resources. While we are merging these resources together, you
-              may sign in at those sites directly as well.
+              resources. While we are merging these resources together, you may
+              sign in at those sites directly as well.
             </p>
           </div>
         </CardContent>

@@ -2,15 +2,42 @@
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import {TooltipProvider, Tooltip, TooltipTrigger, TooltipContent} from "@/components/ui/tooltip";
-import { Box, Download, Trash2, Pencil, Copy, Move, Star, BookOpen, Type, Share2, type LucideIcon } from "lucide-react";
+import {
+  TooltipProvider,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
+import {
+  Box,
+  Download,
+  Trash2,
+  Pencil,
+  Copy,
+  Move,
+  Star,
+  BookOpen,
+  Type,
+  Share2,
+  type LucideIcon,
+} from "lucide-react";
 
 import { findProtectedFolders } from "@/lib/services/workspace/protected-folders";
 import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 const writePermissions = new Set(["o", "a", "w"]);
 
-export type WorkspaceActionId = "guide" | "download" | "delete" | "rename" | "copy" | "move" | "editType" | "viewer3d" | "favorite" | "share";
+export type WorkspaceActionId =
+  | "guide"
+  | "download"
+  | "delete"
+  | "rename"
+  | "copy"
+  | "move"
+  | "editType"
+  | "viewer3d"
+  | "favorite"
+  | "share";
 
 interface ActionConfig {
   id: WorkspaceActionId;
@@ -30,19 +57,44 @@ interface ActionConfig {
 const actionConfig: ActionConfig[] = [
   { id: "guide", label: "GUIDE", icon: BookOpen, validTypes: "*" },
   { id: "download", label: "DWNLD", icon: Download, validTypes: "*" },
-  { id: "delete", label: "DELETE", icon: Trash2, validTypes: "*", requireWrite: true },
+  {
+    id: "delete",
+    label: "DELETE",
+    icon: Trash2,
+    validTypes: "*",
+    requireWrite: true,
+  },
   {
     id: "rename",
     label: "RENAME",
     icon: Pencil,
     validTypes: "*",
     requireWrite: true,
-    disabledWithTooltip: "Rename has been temporarily disabled while we address a technical issue.",
+    disabledWithTooltip:
+      "Rename has been temporarily disabled while we address a technical issue.",
   },
   { id: "copy", label: "COPY", icon: Copy, validTypes: "*" },
-  { id: "move", label: "MOVE", icon: Move, validTypes: "*", requireWrite: true },
-  { id: "editType", label: "EDIT TYPE", icon: Type, validTypes: "*", requireWrite: true },
-  { id: "viewer3d", label: "3D VIEWER", icon: Box, validTypes: ["pdb"], singleOnly: true },
+  {
+    id: "move",
+    label: "MOVE",
+    icon: Move,
+    validTypes: "*",
+    requireWrite: true,
+  },
+  {
+    id: "editType",
+    label: "EDIT TYPE",
+    icon: Type,
+    validTypes: "*",
+    requireWrite: true,
+  },
+  {
+    id: "viewer3d",
+    label: "3D VIEWER",
+    icon: Box,
+    validTypes: ["pdb"],
+    singleOnly: true,
+  },
   { id: "favorite", label: "FAVORITE", icon: Star, validTypes: ["folder"] },
   {
     id: "share",
@@ -58,11 +110,16 @@ function getSelectionDisabledTooltip(
   action: ActionConfig,
   selection: WorkspaceItem[],
 ): string | undefined {
-  if (action.id === "editType" && selection.some((s) => s.type === "job_result")) {
+  if (
+    action.id === "editType" &&
+    selection.some((s) => s.type === "job_result")
+  ) {
     return 'Cannot change "job_result" type';
   }
   if (action.id === "delete") {
-    const paths = selection.map((s) => s.path).filter((p): p is string => Boolean(p));
+    const paths = selection
+      .map((s) => s.path)
+      .filter((p): p is string => Boolean(p));
     if (findProtectedFolders(paths).length > 0) {
       return "This folder is essential to your workspace and cannot be deleted.";
     }
@@ -77,11 +134,10 @@ function isActionValidForSelection(
   if (action.id === "guide") return true;
   if (selection.length === 0) return false;
 
+  const validTypes =
+    action.validTypes === "*" ? null : new Set(action.validTypes);
   const typesMatch =
-    action.validTypes === "*" ||
-    selection.every((s) =>
-      (action.validTypes as string[]).includes(s.type),
-    );
+    validTypes === null || selection.every((s) => validTypes.has(s.type));
   if (!typesMatch) return false;
 
   if (action.singleOnly && selection.length > 1) return false;
@@ -146,7 +202,9 @@ export function WorkspaceActionBar({
           const dynamicTooltip = getSelectionDisabledTooltip(action, selection);
           const tooltipText = action.disabledWithTooltip ?? dynamicTooltip;
           const disabled =
-            isDisabled(action.id) || isPermanentlyDisabled(action) || !!dynamicTooltip;
+            isDisabled(action.id) ||
+            isPermanentlyDisabled(action) ||
+            !!dynamicTooltip;
           const buttonEl = (
             <Button
               key={action.id}
@@ -155,7 +213,11 @@ export function WorkspaceActionBar({
               disabled={disabled}
               onClick={() =>
                 action.id === "guide"
-                  ? window.open(workspaceGuideUrl, "_blank", "noopener,noreferrer")
+                  ? window.open(
+                      workspaceGuideUrl,
+                      "_blank",
+                      "noopener,noreferrer",
+                    )
                   : onAction?.(action.id, selection)
               }
             >
@@ -166,7 +228,9 @@ export function WorkspaceActionBar({
               ) : (
                 <Icon className="size-4 shrink-0" />
               )}
-              <span className="text-[11px] leading-tight font-medium">{action.label}</span>
+              <span className="text-[11px] leading-tight font-medium">
+                {action.label}
+              </span>
             </Button>
           );
           return tooltipText && disabled ? (

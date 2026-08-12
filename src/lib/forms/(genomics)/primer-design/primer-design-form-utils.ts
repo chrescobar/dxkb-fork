@@ -4,10 +4,7 @@ import {
 } from "./primer-design-form-schema";
 
 export type PrimerSequenceValidationError =
-  | "empty"
-  | "multiple_records"
-  | "invalid_characters"
-  | "missing_sequence";
+  "empty" | "multiple_records" | "invalid_characters" | "missing_sequence";
 
 export interface PrimerSequenceValidationResult {
   isValid: boolean;
@@ -84,17 +81,13 @@ export function sanitizePrimerDesignSequence(sequence: string): string {
   }
 
   const normalized = normalizeNewlines(sequence);
-  const lines = normalized.split("\n");
-  
-  // Filter header lines (starting with '>')
-  const headers = lines.filter((line) => /^>.*/.test(line));
-  
-  // Filter non-header lines and remove spaces
-  const sanitized = lines
-    .filter((line) => !/^>.*/.test(line))
-    .map((line) => line.replace(/ /g, ""));
-  
-  // Concatenate headers and sanitized sequence lines
+  const headers: string[] = [];
+  const sanitized: string[] = [];
+  for (const line of normalized.split("\n")) {
+    if (line.startsWith(">")) headers.push(line);
+    else sanitized.push(line.replace(/ /g, ""));
+  }
+
   return headers.concat(sanitized).join("\n");
 }
 
@@ -267,9 +260,7 @@ export function validatePrimerDesignSequence(
   };
 }
 
-export function transformPrimerDesignParams(
-  data: PrimerDesignFormData,
-) {
+export function transformPrimerDesignParams(data: PrimerDesignFormData) {
   const params: Record<string, unknown> = {
     output_path: data.output_path.trim(),
     output_file: data.output_file.trim(),
@@ -307,10 +298,14 @@ export function transformPrimerDesignParams(
     }
   });
 
-  if (data.PRIMER_PRODUCT_SIZE_RANGE && Array.isArray(data.PRIMER_PRODUCT_SIZE_RANGE) && data.PRIMER_PRODUCT_SIZE_RANGE.length > 0) {
-    params.PRIMER_PRODUCT_SIZE_RANGE = data.PRIMER_PRODUCT_SIZE_RANGE
-      .join(" ")
-      .replace(/,/g, "-");
+  if (
+    data.PRIMER_PRODUCT_SIZE_RANGE &&
+    Array.isArray(data.PRIMER_PRODUCT_SIZE_RANGE) &&
+    data.PRIMER_PRODUCT_SIZE_RANGE.length > 0
+  ) {
+    params.PRIMER_PRODUCT_SIZE_RANGE = data.PRIMER_PRODUCT_SIZE_RANGE.join(
+      " ",
+    ).replace(/,/g, "-");
   }
 
   if (data.PRIMER_NUM_RETURN !== undefined) {
@@ -379,5 +374,3 @@ export function transformPrimerDesignParams(
 export function resetPrimerDesignValues(): PrimerDesignFormData {
   return { ...defaultPrimerDesignFormValues } as PrimerDesignFormData;
 }
-
-

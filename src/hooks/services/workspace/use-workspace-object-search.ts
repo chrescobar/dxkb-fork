@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   toWorkspaceObject,
@@ -59,25 +59,23 @@ export function useWorkspaceObjectSearch({
     staleTime: 5 * 60 * 1000,
   });
 
-  const items = useMemo(() => query.data ?? [], [query.data]);
-  const objects = useMemo(() => items.map(toWorkspaceObject), [items]);
+  const items = query.data ?? [];
+  const objects = items.map(toWorkspaceObject);
+  const term = searchQuery.trim().toLowerCase();
+  const filteredItems = term
+    ? items.filter((item) => item.name.toLowerCase().includes(term))
+    : items;
+  const filteredObjects = filteredItems.map(toWorkspaceObject);
 
-  const filteredItems = useMemo(() => {
-    const term = searchQuery.trim().toLowerCase();
-    if (!term) return items;
-    return items.filter((item) => item.name.toLowerCase().includes(term));
-  }, [items, searchQuery]);
-
-  const filteredObjects = useMemo(
-    () => filteredItems.map(toWorkspaceObject),
-    [filteredItems],
-  );
-
-  const search = useCallback((q: string) => { setSearchQuery(q); }, []);
-  const clearSearch = useCallback(() => { setSearchQuery(""); }, []);
-  const refresh = useCallback(async () => {
+  const search = (q: string) => {
+    setSearchQuery(q);
+  };
+  const clearSearch = () => {
+    setSearchQuery("");
+  };
+  const refresh = async () => {
     await query.refetch();
-  }, [query]);
+  };
 
   return {
     items,

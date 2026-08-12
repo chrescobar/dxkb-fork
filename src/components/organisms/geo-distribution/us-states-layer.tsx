@@ -1,7 +1,7 @@
 "use client";
 
 import { AlbersUsa } from "@visx/geo";
-import { memo, type RefObject } from "react";
+import type { RefObject } from "react";
 
 import type { OrganismGeoDistribution } from "@/lib/services/organisms/types";
 
@@ -26,7 +26,7 @@ interface UsStatesLayerProps {
   onSelectState: (fips: string, name: string) => void;
 }
 
-export const UsStatesLayer = memo(function UsStatesLayer({
+export function UsStatesLayer({
   stateFeatures,
   scale,
   width,
@@ -44,19 +44,29 @@ export const UsStatesLayer = memo(function UsStatesLayer({
       translate={[width / 2, mapHeight / 2]}
     >
       {({ features }) =>
-        features.map(({ feature, path }, index) => {
+        features.map(({ feature, path }) => {
           const name = featureName(feature.properties);
           const count = data.stateData[name] ?? 0;
-          const meta = data.stateMeta[name] ?? { count: 0, genera: {}, hosts: {} };
+          const meta = data.stateMeta[name] ?? {
+            count: 0,
+            genera: {},
+            hosts: {},
+          };
           return (
             <ChoroplethPath
-              key={`${name}-${String(index)}`}
+              key={String(feature.id ?? name)}
               pathD={path ?? ""}
               fill={colorScale(count)}
               strokeWidth={0.75}
               cursor="pointer"
               isDraggingRef={isDraggingRef}
-              payload={{ view: "us", name, count, genera: meta.genera, hosts: meta.hosts }}
+              payload={{
+                view: "us",
+                name,
+                count,
+                genera: meta.genera,
+                hosts: meta.hosts,
+              }}
               onHoverEnter={onHoverEnter}
               onHoverLeave={onHoverLeave}
               onClick={() => {
@@ -69,4 +79,4 @@ export const UsStatesLayer = memo(function UsStatesLayer({
       }
     </AlbersUsa>
   );
-});
+}

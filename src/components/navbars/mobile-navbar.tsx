@@ -13,7 +13,6 @@ import {
   Menu,
   Search,
   ChevronUp,
-  ExternalLink,
   BookOpen,
   Bug,
   FlaskConical,
@@ -27,11 +26,11 @@ import {
   workspaceNavItems,
   type NavSection,
 } from "@/components/navbars/navbar-links";
+import { workspaceUsername } from "@/lib/services/workspace/path-utils";
 import {
-  workspaceUsername,
   resolveWorkspaceHref,
   buildFolderHref,
-} from "@/components/navbars/workspace-dropdown-content";
+} from "@/components/navbars/workspace-nav-utils";
 import {
   Sheet,
   SheetContent,
@@ -44,8 +43,9 @@ import {
   CollapsibleContent,
 } from "@/components/ui/collapsible";
 import { SearchBar } from "@/components/search/search-bar";
-import { openCommandPalette } from "@/components/search/command-palette";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { openCommandPalette } from "@/components/search/command-palette-events";
+import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/lib/auth/hooks";
 import Logo from "@/components/ui/logo";
@@ -57,6 +57,10 @@ import {
   getWorkspaceFolderDisplayName,
 } from "@/lib/recent-workspace-folders";
 import { SuBanner } from "@/components/auth/su-banner";
+import { MobileSubSectionTrigger } from "@/components/navbars/mobile-subsection-trigger";
+import { MobileSubSectionLabel } from "@/components/navbars/mobile-subsection-label";
+import { MobileNavLink } from "@/components/navbars/mobile-nav-link";
+import { MobileDecoratedSubSection } from "@/components/navbars/mobile-decorated-subsection";
 
 /* ------------------------------------------------------------------ */
 /*  Sub-components                                                     */
@@ -89,91 +93,11 @@ function SectionTrigger({
   );
 }
 
-function SubSectionTrigger({ children }: { children: React.ReactNode }) {
-  return (
-    <CollapsibleTrigger className="group flex w-full items-center justify-between rounded-md py-2.5 pr-1 transition-colors hover:text-secondary">
-      <span className="text-left text-[13px] font-semibold text-foreground/85 transition-colors group-hover:text-secondary group-data-open:text-foreground">
-        {children}
-      </span>
-      <ChevronDown className="size-3.5 shrink-0 text-muted-foreground transition-all duration-200 group-hover:text-secondary/60 group-data-open:rotate-180" />
-    </CollapsibleTrigger>
-  );
-}
-
-function SubSectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex items-center py-2.5">
-      <span className="flex flex-1 items-center gap-1.5 text-sm font-semibold text-foreground/85">
-        {children}
-      </span>
-    </div>
-  );
-}
-
-function NavLink({
-  href,
-  target,
-  children,
-}: {
-  href: string;
-  target?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Link
-      href={href}
-      target={target}
-      className="group/link flex items-center gap-2 rounded-md p-2 text-sm text-foreground/75 transition-all hover:bg-secondary/8 hover:text-foreground"
-    >
-      {children}
-      {target === "_blank" && (
-        <ExternalLink className="size-3 text-muted-foreground transition-colors group-hover/link:text-secondary" />
-      )}
-    </Link>
-  );
-}
-
-/**
- * Wraps a subsection with a dot + vertical line + curved bottom connector.
- * When `alwaysShow` is false the line/curve are hidden until the parent
- * `group/sub` collapsible opens.
- */
-function DecoratedSubSection({
-  children,
-  alwaysShow = false,
-  dotColor = alwaysShow ? "bg-secondary" : "bg-secondary/40 group-data-open/sub:bg-secondary",
-  lineColor = "bg-secondary/25",
-  curveColor = "border-secondary/25",
-}: {
-  children: React.ReactNode;
-  alwaysShow?: boolean;
-  dotColor?: string;
-  lineColor?: string;
-  curveColor?: string;
-}) {
-  const showClass = alwaysShow ? "" : "hidden group-data-open/sub:block";
-
-  return (
-    <div>
-      <div className="flex gap-3">
-        <div className="flex flex-col items-center pt-4">
-          <span className={`size-1.5 shrink-0 rounded-full ${dotColor}`} />
-          <div className={`mt-0.5 w-0.5 flex-1 ${lineColor} ${showClass}`} />
-        </div>
-        <div className="min-w-0 flex-1">{children}</div>
-      </div>
-      <div
-        className={`ml-0.5 h-3 rounded-bl-xl border-b-2 border-l-2 ${curveColor} ${showClass}`}
-      />
-    </div>
-  );
-}
-
 /* ------------------------------------------------------------------ */
 /*  Main component                                                     */
 /* ------------------------------------------------------------------ */
 
-const MobileNavbar = () => {
+const useMobileNavbar = () => {
   const { isAuthenticated, user, status } = useAuth();
   const isLoading = status === "loading";
   const wsUsername = workspaceUsername(user);
@@ -215,7 +139,7 @@ const MobileNavbar = () => {
                 >
                   <Menu
                     aria-hidden="true"
-                    className="scale-125 text-primary-foreground transition-all duration-300 group-hover:scale-150"
+                    className="scale-125 text-primary-foreground transition-transform duration-300 group-hover:scale-150"
                     data-icon="inline-start"
                   />
                 </Button>
@@ -232,16 +156,16 @@ const MobileNavbar = () => {
 
               <div className="relative bg-primary p-4 pb-5">
                 <div className="flex items-start gap-1">
-                <Logo
-                  variant="logo-white"
-                  width={100}
-                  height={40}
-                  className="h-8 w-auto"
-                  priority
-                />
-                <span className="mt-0.5 text-[10px] font-semibold text-white/70">
-                  v{process.env.NEXT_PUBLIC_APP_VERSION}
-                </span>
+                  <Logo
+                    variant="logo-white"
+                    width={100}
+                    height={40}
+                    className="h-8 w-auto"
+                    priority
+                  />
+                  <span className="mt-0.5 text-[10px] font-semibold text-white/70">
+                    v{process.env.NEXT_PUBLIC_APP_VERSION}
+                  </span>
                 </div>
                 <div className="absolute inset-x-0 bottom-0 h-3 bg-linear-to-b from-primary to-transparent" />
               </div>
@@ -255,9 +179,9 @@ const MobileNavbar = () => {
                   <CollapsibleContent className="*:data-[slot=collapsible-divider]:hidden">
                     <div className="flex flex-col px-5 pt-2 pb-3">
                       {organismItems.map((item) => (
-                        <NavLink key={item.href} href={item.href}>
+                        <MobileNavLink key={item.href} href={item.href}>
                           {item.title}
-                        </NavLink>
+                        </MobileNavLink>
                       ))}
                     </div>
                   </CollapsibleContent>
@@ -272,24 +196,31 @@ const MobileNavbar = () => {
                   </SectionTrigger>
                   <CollapsibleContent className="*:data-[slot=collapsible-divider]:hidden">
                     <div className="flex flex-col gap-1.5 px-5 pt-2 pb-3">
-                      {(Object.entries(serviceItems) as unknown as [string, NavSection][]).map(([key, section]) => (
+                      {(
+                        Object.entries(serviceItems) as unknown as [
+                          string,
+                          NavSection,
+                        ][]
+                      ).map(([key, section]) => (
                         <Collapsible key={key} className="group/sub">
-                          <DecoratedSubSection>
-                            <SubSectionTrigger>{section.title}</SubSectionTrigger>
+                          <MobileDecoratedSubSection>
+                            <MobileSubSectionTrigger>
+                              {section.title}
+                            </MobileSubSectionTrigger>
                             <CollapsibleContent className="*:data-[slot=collapsible-divider]:hidden">
                               <div className="flex flex-col pb-1">
                                 {section.items.map((item) => (
-                                  <NavLink
+                                  <MobileNavLink
                                     key={item.href}
                                     href={item.href}
                                     target={item.target}
                                   >
                                     {item.title}
-                                  </NavLink>
+                                  </MobileNavLink>
                                 ))}
                               </div>
                             </CollapsibleContent>
-                          </DecoratedSubSection>
+                          </MobileDecoratedSubSection>
                         </Collapsible>
                       ))}
                     </div>
@@ -311,65 +242,78 @@ const MobileNavbar = () => {
                       </div>
                     ) : (
                       <div className="flex flex-col gap-1.5 px-5 pt-2 pb-3">
-                        <DecoratedSubSection alwaysShow>
-                          <SubSectionLabel>
+                        <MobileDecoratedSubSection alwaysShow>
+                          <MobileSubSectionLabel>
                             {workspaceNavItems.workspaces.title}
-                          </SubSectionLabel>
+                          </MobileSubSectionLabel>
                           {workspaceNavItems.workspaces.items.map((item) => (
-                            <NavLink
+                            <MobileNavLink
                               key={item.title}
-                              href={resolveWorkspaceHref(item, wsUsername, isAuthenticated)}
+                              href={resolveWorkspaceHref(
+                                item,
+                                wsUsername,
+                                isAuthenticated,
+                              )}
                             >
                               {item.title}
-                            </NavLink>
+                            </MobileNavLink>
                           ))}
-                        </DecoratedSubSection>
+                        </MobileDecoratedSubSection>
 
-                        <DecoratedSubSection alwaysShow>
-                          <SubSectionLabel>
+                        <MobileDecoratedSubSection alwaysShow>
+                          <MobileSubSectionLabel>
                             {workspaceNavItems.data.title}
-                          </SubSectionLabel>
+                          </MobileSubSectionLabel>
                           {workspaceNavItems.data.items.map((item) => (
-                            <NavLink
+                            <MobileNavLink
                               key={item.title}
-                              href={resolveWorkspaceHref(item, wsUsername, isAuthenticated)}
+                              href={resolveWorkspaceHref(
+                                item,
+                                wsUsername,
+                                isAuthenticated,
+                              )}
                             >
                               {item.title}
-                            </NavLink>
+                            </MobileNavLink>
                           ))}
-                        </DecoratedSubSection>
+                        </MobileDecoratedSubSection>
 
                         {isAuthenticated && favoritePaths.length > 0 && (
-                          <DecoratedSubSection
+                          <MobileDecoratedSubSection
                             alwaysShow
                             dotColor="bg-amber-400/50"
                             lineColor="bg-amber-400/25"
                             curveColor="border-amber-400/25"
                           >
-                            <SubSectionLabel>
+                            <MobileSubSectionLabel>
                               Favorites{" "}
                               <Star className="size-3 fill-amber-400 text-amber-400" />
-                            </SubSectionLabel>
+                            </MobileSubSectionLabel>
                             {favoritePaths.map((path) => (
-                              <NavLink key={path} href={buildFolderHref(path)}>
+                              <MobileNavLink
+                                key={path}
+                                href={buildFolderHref(path)}
+                              >
                                 {getWorkspaceFolderDisplayName(path)}
-                              </NavLink>
+                              </MobileNavLink>
                             ))}
-                          </DecoratedSubSection>
+                          </MobileDecoratedSubSection>
                         )}
 
                         {isAuthenticated && recentFolders.length > 0 && (
-                          <DecoratedSubSection alwaysShow>
-                            <SubSectionLabel>Recently Visited</SubSectionLabel>
+                          <MobileDecoratedSubSection alwaysShow>
+                            <MobileSubSectionLabel>
+                              Recently Visited
+                            </MobileSubSectionLabel>
                             {recentFolders.map((folder) => (
-                              <NavLink
+                              <MobileNavLink
                                 key={folder.path}
                                 href={buildFolderHref(folder.path)}
                               >
                                 {getWorkspaceFolderDisplayName(folder.path)}
-                              </NavLink>
+                              </MobileNavLink>
                             ))}
-                          </DecoratedSubSection>
+                          </MobileDecoratedSubSection>
                         )}
 
                         {!isAuthenticated && (
@@ -382,7 +326,8 @@ const MobileNavbar = () => {
                               className={buttonVariants({
                                 variant: "default",
                                 size: "sm",
-                                className: "w-fit bg-secondary hover:bg-secondary/90",
+                                className:
+                                  "bg-secondary hover:bg-secondary/90 w-fit",
                               })}
                             >
                               Sign In
@@ -404,9 +349,13 @@ const MobileNavbar = () => {
                   <CollapsibleContent className="*:data-[slot=collapsible-divider]:hidden">
                     <div className="flex flex-col px-5 pt-2 pb-3">
                       {resourcesItems.map((item) => (
-                        <NavLink key={item.href} href={item.href} target={item.target}>
+                        <MobileNavLink
+                          key={item.href}
+                          href={item.href}
+                          target={item.target}
+                        >
                           {item.title}
-                        </NavLink>
+                        </MobileNavLink>
                       ))}
                     </div>
                   </CollapsibleContent>
@@ -445,7 +394,9 @@ const MobileNavbar = () => {
               variant="ghost"
               size="sm"
               className="text-primary-foreground hover:bg-white/15"
-              onClick={() => { setIsSearchOpen(!isSearchOpen); }}
+              onClick={() => {
+                setIsSearchOpen(!isSearchOpen);
+              }}
               aria-label={isSearchOpen ? "Close search" : "Open search"}
             >
               {isSearchOpen ? <ChevronUp size={18} /> : <Search size={18} />}
@@ -509,5 +460,7 @@ const MobileNavbar = () => {
     </header>
   );
 };
+
+const MobileNavbar = () => useMobileNavbar();
 
 export default MobileNavbar;

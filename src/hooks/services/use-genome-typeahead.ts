@@ -75,11 +75,10 @@ export function useGenomeTypeahead({
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const latestAbortController = useRef<AbortController | null>(null);
-  const skipFetchRef = useRef(skipFetch);
   const onClickOutsideRef = useRef(onClickOutside);
   const additionalRefsRef = useRef(additionalClickOutsideRefs);
+  const skipCurrentFetch = skipFetch?.(query, selectedItem) ?? false;
   useLayoutEffect(() => {
-    skipFetchRef.current = skipFetch;
     onClickOutsideRef.current = onClickOutside;
     additionalRefsRef.current = additionalClickOutsideRefs;
   });
@@ -92,54 +91,57 @@ export function useGenomeTypeahead({
 
   // Debounced fetch
   useEffect(() => {
-    if (skipFetchRef.current?.(query, selectedItem)) return;
+    if (skipCurrentFetch) return;
 
     const shouldReset = !shouldSearch(query, minQueryLength) || disabled;
     const controller = new AbortController();
     latestAbortController.current = controller;
 
-    const timeoutId = window.setTimeout(() => {
-      if (shouldReset) {
-        itemRefs.current = [];
-        setSuggestions([]);
-        setHighlightedIndex(-1);
-        setError(null);
-        setIsLoading(false);
-        return;
-      }
-
-      setIsLoading(true);
-      setError(null);
-
-      fetchGenomeSuggestions(query, { signal: controller.signal })
-        .then((results) => {
-          if (!controller.signal.aborted) {
-            itemRefs.current = [];
-            setSuggestions(results);
-            setHighlightedIndex(-1);
-          }
-        })
-        .catch((fetchError: unknown) => {
-          if (controller.signal.aborted) return;
-          const message =
-            fetchError instanceof Error
-              ? fetchError.message
-              : "Failed to search genomes";
-          setError(message);
+    const timeoutId = window.setTimeout(
+      () => {
+        if (shouldReset) {
           itemRefs.current = [];
           setSuggestions([]);
           setHighlightedIndex(-1);
-        })
-        .finally(() => {
-          if (!controller.signal.aborted) setIsLoading(false);
-        });
-    }, shouldReset ? 0 : 250);
+          setError(null);
+          setIsLoading(false);
+          return;
+        }
+
+        setIsLoading(true);
+        setError(null);
+
+        fetchGenomeSuggestions(query, { signal: controller.signal })
+          .then((results) => {
+            if (!controller.signal.aborted) {
+              itemRefs.current = [];
+              setSuggestions(results);
+              setHighlightedIndex(-1);
+            }
+          })
+          .catch((fetchError: unknown) => {
+            if (controller.signal.aborted) return;
+            const message =
+              fetchError instanceof Error
+                ? fetchError.message
+                : "Failed to search genomes";
+            setError(message);
+            itemRefs.current = [];
+            setSuggestions([]);
+            setHighlightedIndex(-1);
+          })
+          .finally(() => {
+            if (!controller.signal.aborted) setIsLoading(false);
+          });
+      },
+      shouldReset ? 0 : 250,
+    );
 
     return () => {
       window.clearTimeout(timeoutId);
       controller.abort();
     };
-  }, [query, minQueryLength, disabled, selectedItem]);
+  }, [query, minQueryLength, disabled, selectedItem, skipCurrentFetch]);
 
   // Click-outside
   useEffect(() => {
@@ -157,7 +159,9 @@ export function useGenomeTypeahead({
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => { document.removeEventListener("mousedown", handleClickOutside); };
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   // Scroll highlighted item into view
@@ -196,7 +200,12 @@ export function useGenomeTypeahead({
         },
       },
     ],
-    { target: inputRef, ignoreInputs: false, conflictBehavior: "allow", preventDefault: true },
+    {
+      target: inputRef,
+      ignoreInputs: false,
+      conflictBehavior: "allow",
+      preventDefault: true,
+    },
   );
 
   const triggerSearch = (overrideQuery: string) => {

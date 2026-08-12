@@ -1,0 +1,60 @@
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { FieldErrors, FieldItem } from "@/components/ui/tanstack-form";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
+import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
+import { blastServiceSearchProgram } from "@/lib/services/info/blast";
+import type { BlastForm } from "./page";
+
+export { BlastParameters } from "./blast-parameters";
+export { InputSourceCard } from "./input-source-card";
+
+export function SearchProgramCard({ form }: { form: BlastForm }) {
+  const options = [
+    ["blastn", "BLASTN (nucleotide → nucleotide database)"],
+    ["blastp", "BLASTP (protein → protein database)"],
+    ["blastx", "BLASTX (translated nucleotide → protein database)"],
+    ["tblastn", "tBLASTn (protein → translated nucleotide database)"],
+  ] as const;
+  return (
+    <Card>
+      <CardHeader className="service-card-header">
+        <RequiredFormCardTitle className="service-card-title">
+          Search Program
+          <DialogInfoPopup
+            title={blastServiceSearchProgram.title}
+            description={blastServiceSearchProgram.description}
+            sections={blastServiceSearchProgram.sections}
+          />
+        </RequiredFormCardTitle>
+      </CardHeader>
+      <CardContent className="service-card-content">
+        <form.Field name="blast_program">
+          {(field) => (
+            <FieldItem>
+              <RadioGroup
+                value={field.state.value}
+                onValueChange={field.handleChange}
+                className="grid w-full grid-cols-1 gap-4 md:grid-cols-2"
+              >
+                {options.map(([value, label]) => (
+                  <div key={value} className="flex items-center gap-3">
+                    <RadioGroupItem value={value} id={value} />
+                    <Label
+                      htmlFor={value}
+                      className="service-radio-group-label"
+                    >
+                      {label}
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+              <FieldErrors field={field} />
+            </FieldItem>
+          )}
+        </form.Field>
+      </CardContent>
+    </Card>
+  );
+}

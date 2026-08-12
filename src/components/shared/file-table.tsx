@@ -1,11 +1,11 @@
 "use client";
 
 import React, {
+  createContext,
+  useContext,
   useRef,
-  useCallback,
   forwardRef,
   useImperativeHandle,
-  useMemo,
   useState,
   type CSSProperties,
   type ReactNode,
@@ -68,11 +68,8 @@ export interface DataTableProps<T> {
   onSort: (field: string) => void;
   // DnD context id
   dndId?: string;
-  // Render slots
-  renderRows: (rows: Row<T>[]) => ReactNode;
-  renderLeadingRows?: (columnOrder: string[]) => ReactNode;
-  renderEmptyState?: (colSpan: number) => ReactNode;
-  renderSkeleton?: () => ReactNode;
+  children: ReactNode;
+  skeleton?: ReactNode;
   // Keyboard
   onKeyDown?: (e: React.KeyboardEvent) => void;
   ariaLabel?: string;
@@ -86,6 +83,23 @@ export interface DataTableHandle {
 export interface TableSkeletonColumn {
   id: string;
   isFirst?: boolean;
+}
+
+interface DataTableBodyContextValue<T> {
+  rows: Row<T>[];
+  columnOrder: string[];
+  colSpan: number;
+}
+
+const DataTableBodyContext =
+  createContext<DataTableBodyContextValue<unknown> | null>(null);
+
+export function useDataTableBody<T>() {
+  const context = useContext(DataTableBodyContext);
+  if (!context) {
+    throw new Error("useDataTableBody must be used within DataTable");
+  }
+  return context as DataTableBodyContextValue<T>;
 }
 
 // ---------------------------------------------------------------------------
@@ -120,10 +134,16 @@ function DraggableTableHeader({
   onSort: (field: string) => void;
   sort: DataTableSort;
 }) {
-  const { attributes, isDragging, listeners, setNodeRef, transform, transition } =
-    useSortable({
-      id: header.column.id,
-    });
+  const {
+    attributes,
+    isDragging,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({
+    id: header.column.id,
+  });
 
   const colWidth = `var(--col-${header.column.id}-size)`;
   const style: CSSProperties = {
@@ -138,7 +158,10 @@ function DraggableTableHeader({
     zIndex: isDragging ? 1 : 0,
   };
 
-  const meta = header.column.columnDef.meta as { className?: string; sortField?: string };
+  const meta = header.column.columnDef.meta as {
+    className?: string;
+    sortField?: string;
+  };
   const isFirst = header.index === 0;
   const className = clsx(
     isFirst ? "pl-6" : "pl-2",
@@ -151,8 +174,14 @@ function DraggableTableHeader({
   const minSize = header.column.columnDef.minSize ?? 40;
   const maxSize = header.column.columnDef.maxSize ?? 1000;
   const resizeWithKeyboard = (delta: number) => {
-    const size = Math.min(maxSize, Math.max(minSize, header.column.getSize() + delta));
-    header.getContext().table.setColumnSizing((current) => ({ ...current, [header.column.id]: size }));
+    const size = Math.min(
+      maxSize,
+      Math.max(minSize, header.column.getSize() + delta),
+    );
+    header.getContext().table.setColumnSizing((current) => ({
+      ...current,
+      [header.column.id]: size,
+    }));
   };
 
   return (
@@ -173,7 +202,9 @@ function DraggableTableHeader({
         {sortField && (
           <button
             type="button"
-            onClick={() => { onSort(sortField); }}
+            onClick={() => {
+              onSort(sortField);
+            }}
             className="cursor-pointer rounded p-0.5 select-none hover:bg-primary/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label={`Sort by ${label}`}
           >
@@ -190,16 +221,24 @@ function DraggableTableHeader({
             aria-valuenow={header.column.getSize()}
             tabIndex={0}
             onKeyDown={(event) => {
-              if (event.key === "ArrowLeft") { event.preventDefault(); resizeWithKeyboard(-10); }
-              else if (event.key === "ArrowRight") { event.preventDefault(); resizeWithKeyboard(10); }
+              if (event.key === "ArrowLeft") {
+                event.preventDefault();
+                resizeWithKeyboard(-10);
+              } else if (event.key === "ArrowRight") {
+                event.preventDefault();
+                resizeWithKeyboard(10);
+              }
             }}
             onMouseDown={header.getResizeHandler()}
             onTouchStart={header.getResizeHandler()}
-            onDoubleClick={() => { header.column.resetSize(); }}
+            onDoubleClick={() => {
+              header.column.resetSize();
+            }}
             className={cn(
               "absolute top-0 right-0 z-10 h-full w-2 cursor-col-resize border-r border-border focus-visible:outline-2 focus-visible:outline-primary",
               "hover:border-primary/50 hover:bg-primary/15",
-              header.column.getIsResizing() && "h-9 border-primary bg-primary/25",
+              header.column.getIsResizing() &&
+                "h-9 border-primary bg-primary/25",
             )}
             style={{
               transform: "translateX(50%)",
@@ -274,10 +313,8 @@ function DataTableInner<T>(
     sort,
     onSort,
     dndId = "data-table-dnd",
-    renderRows,
-    renderLeadingRows,
-    renderEmptyState,
-    renderSkeleton,
+    children,
+    skeleton,
     onKeyDown,
     ariaLabel = "Data table",
     tabIndex,
@@ -315,7 +352,7 @@ function DataTableInner<T>(
     columnSizeVars[`--col-${col.id}-size`] = `${String(col.getSize())}px`;
   }
 
-  const handleColumnDragEnd = useCallback((event: DragEndEvent) => {
+  const handleColumnDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
       setColumnOrder((prev) => {
@@ -325,7 +362,7 @@ function DataTableInner<T>(
         return arrayMove(prev, oldIndex, newIndex);
       });
     }
-  }, []);
+  };
 
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
@@ -333,40 +370,35 @@ function DataTableInner<T>(
     useSensor(KeyboardSensor, {}),
   );
 
-  const skeletonColumns = useMemo<TableSkeletonColumn[]>(() => {
-    return columnOrder.map((id, index) => ({
+  const skeletonColumns: TableSkeletonColumn[] = columnOrder.map(
+    (id, index) => ({
       id,
       isFirst: index === 0,
-    }));
-  }, [columnOrder]);
-
-  const wrappedKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      onKeyDown?.(e);
-      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-        const direction = e.key;
-        requestAnimationFrame(() => {
-          const container = tableContainerRef.current;
-          if (!container) return;
-          const selected = container.querySelectorAll(
-            'tr[aria-selected="true"]',
-          );
-          if (selected.length > 0) {
-            const target =
-              direction === "ArrowDown"
-                ? selected[selected.length - 1]
-                : selected[0];
-            target.scrollIntoView({ block: "center" });
-          } else {
-            // Special row (leading/parent) — scroll to top of table body
-            const firstRow = container.querySelector("tbody tr");
-            firstRow?.scrollIntoView({ block: "center" });
-          }
-        });
-      }
-    },
-    [onKeyDown],
+    }),
   );
+
+  const wrappedKeyDown = (e: React.KeyboardEvent) => {
+    onKeyDown?.(e);
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      const direction = e.key;
+      requestAnimationFrame(() => {
+        const container = tableContainerRef.current;
+        if (!container) return;
+        const selected = container.querySelectorAll('tr[aria-selected="true"]');
+        if (selected.length > 0) {
+          const target =
+            direction === "ArrowDown"
+              ? selected[selected.length - 1]
+              : selected[0];
+          target.scrollIntoView({ block: "center" });
+        } else {
+          // Special row (leading/parent) — scroll to top of table body
+          const firstRow = container.querySelector("tbody tr");
+          firstRow?.scrollIntoView({ block: "center" });
+        }
+      });
+    }
+  };
 
   return (
     <div
@@ -407,22 +439,17 @@ function DataTableInner<T>(
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                renderSkeleton ? (
-                  renderSkeleton()
-                ) : (
-                  <TableSkeleton columns={skeletonColumns} />
-                )
+                (skeleton ?? <TableSkeleton columns={skeletonColumns} />)
               ) : (
-                <>
-                  {renderLeadingRows?.(columnOrder)}
-                  {data.length === 0 ? (
-                    renderEmptyState ? (
-                      renderEmptyState(table.getAllLeafColumns().length)
-                    ) : null
-                  ) : (
-                    renderRows(table.getRowModel().rows)
-                  )}
-                </>
+                <DataTableBodyContext.Provider
+                  value={{
+                    rows: table.getRowModel().rows,
+                    columnOrder,
+                    colSpan: table.getAllLeafColumns().length,
+                  }}
+                >
+                  {children}
+                </DataTableBodyContext.Provider>
               )}
             </TableBody>
           </Table>

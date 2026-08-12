@@ -1,10 +1,12 @@
 "use client";
 
-import { useCallback } from "react";
 import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import type { WorkspaceViewMode } from "@/types/workspace-browser";
 import { isFolderType } from "@/lib/services/workspace/utils";
-import { encodeWorkspaceSegment, sanitizePathSegment } from "@/lib/services/workspace/path-utils";
+import {
+  encodeWorkspaceSegment,
+  sanitizePathSegment,
+} from "@/lib/services/workspace/path-utils";
 
 export interface UseWorkspaceNavigationOptions {
   mode: WorkspaceViewMode;
@@ -26,50 +28,44 @@ export function useWorkspaceNavigation({
   const isHome = mode === "home";
   const isPublic = mode === "public";
 
-  const navigateToItem = useCallback(
-    (item: WorkspaceItem) => {
-      if (isHome) {
-        const base = basePath ?? path;
-        const segments = base
-          ? base.split("/").map(sanitizePathSegment).filter(Boolean)
-          : [];
-        segments.push(sanitizePathSegment(item.name));
-        const encoded = segments.map(encodeWorkspaceSegment).join("/");
-        const homeBase = `/workspace/${encodeWorkspaceSegment(username)}/home`;
-        router.push(`${homeBase}/${encoded}`);
-      } else if (isPublic) {
-        const segments = item.path
-          .replace(/^\//, "")
-          .split("/")
-          .map(sanitizePathSegment)
-          .filter(Boolean);
-        const encoded = segments.map(encodeWorkspaceSegment).join("/");
-        router.push(`/workspace/public/${encoded}`);
-      } else {
-        const segments = item.path
-          .replace(/^\//, "")
-          .split("/")
-          .map(sanitizePathSegment)
-          .filter(Boolean);
-        const encoded = segments.map(encodeWorkspaceSegment).join("/");
-        router.push(`/workspace/${encoded}`);
-      }
-      clearSelection();
-    },
-    [isHome, isPublic, path, basePath, username, router, clearSelection],
-  );
+  const navigateToItem = (item: WorkspaceItem) => {
+    if (isHome) {
+      const base = basePath ?? path;
+      const segments = base
+        ? base.split("/").map(sanitizePathSegment).filter(Boolean)
+        : [];
+      segments.push(sanitizePathSegment(item.name));
+      const encoded = segments.map(encodeWorkspaceSegment).join("/");
+      const homeBase = `/workspace/${encodeWorkspaceSegment(username)}/home`;
+      router.push(`${homeBase}/${encoded}`);
+    } else if (isPublic) {
+      const segments = item.path
+        .replace(/^\//, "")
+        .split("/")
+        .map(sanitizePathSegment)
+        .filter(Boolean);
+      const encoded = segments.map(encodeWorkspaceSegment).join("/");
+      router.push(`/workspace/public/${encoded}`);
+    } else {
+      const segments = item.path
+        .replace(/^\//, "")
+        .split("/")
+        .map(sanitizePathSegment)
+        .filter(Boolean);
+      const encoded = segments.map(encodeWorkspaceSegment).join("/");
+      router.push(`/workspace/${encoded}`);
+    }
+    clearSelection();
+  };
 
-  const handleItemDoubleClick = useCallback(
-    (item: WorkspaceItem) => {
-      if (item.type === "job_result") {
-        navigateToItem(item);
-        return;
-      }
-      if (!isFolderType(item.type)) return;
+  const handleItemDoubleClick = (item: WorkspaceItem) => {
+    if (item.type === "job_result") {
       navigateToItem(item);
-    },
-    [navigateToItem],
-  );
+      return;
+    }
+    if (!isFolderType(item.type)) return;
+    navigateToItem(item);
+  };
 
   return {
     navigateToItem,

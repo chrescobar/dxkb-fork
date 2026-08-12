@@ -31,14 +31,16 @@ export const POST = withAuth(async (request: NextRequest, { token }) => {
     body: JSON.stringify(body),
   });
 
-  const data = (await response.json().catch(() => ({}))) as { error?: string } & Record<string, unknown>;
-
   if (!response.ok) {
+    const data = (await response.json().catch(() => ({}))) as {
+      error?: string;
+    } & Record<string, unknown>;
     return NextResponse.json(
       { error: data.error ?? "Minhash service error", ...data },
       { status: response.status },
     );
   }
 
+  const data = (await response.json()) as Record<string, unknown>;
   return NextResponse.json(data);
 });

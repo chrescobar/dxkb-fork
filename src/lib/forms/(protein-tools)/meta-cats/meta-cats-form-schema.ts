@@ -52,25 +52,25 @@ export const metaCatsFormSchema = z
   .object({
     // Parameters
     p_value: z.number().min(0).max(1),
-    
+
     // Input type
     input_type: metaCatsInputTypeSchema,
-    
+
     // Auto grouping specific fields
     metadata_group: z.string().optional(),
     year_ranges: z.string().optional(),
     auto_groups: z.array(autoGroupItemSchema).optional(),
     auto_alphabet: metaCatsAlphabetSchema.optional(),
-    
+
     // Feature groups specific fields
     groups: z.array(z.string()).optional(),
     group_alphabet: metaCatsAlphabetSchema.optional(),
-    
+
     // Alignment file specific fields
     alignment_file: z.string().optional(),
     alignment_type: z.string().optional(),
     group_file: z.string().optional(),
-    
+
     // Output
     output_path: z.string().min(1, "Output folder is required"),
     output_file: z.string().min(1, "Output name is required"),
@@ -165,7 +165,6 @@ export type MetaCatsFormData = z.infer<typeof metaCatsFormSchema>;
 // Constants
 export const maxGroups = 10;
 export const minGroups = 2;
-export const startingRows = 10;
 
 // Default form values
 export const defaultMetaCatsFormValues: MetaCatsFormData = {

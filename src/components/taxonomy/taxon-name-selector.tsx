@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SearchIcon, Loader2Icon, ChevronDownIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -175,7 +175,6 @@ export function TaxonNameSelector({
   // Initialize searchQuery from value prop to ensure SSR/client hydration match
   const [searchQuery, setSearchQuery] = useState(value?.taxon_name || "");
   const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
-  const [isManualTrigger, setIsManualTrigger] = useState(false);
   const [touched, setTouched] = useState(false);
   const inputRef = useRef<HTMLDivElement>(null);
   const isSelectingRef = useRef(false);
@@ -188,7 +187,9 @@ export function TaxonNameSelector({
     const timeoutId = setTimeout(() => {
       setDebouncedQuery(searchQuery);
     }, 300);
-    return () => { clearTimeout(timeoutId); };
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [searchQuery]);
 
   // Stabilize filter flags for queryKey
@@ -222,7 +223,6 @@ export function TaxonNameSelector({
   const handleSearchChange = (newValue: string) => {
     setSearchQuery(newValue);
     setShowDropdown(newValue.length > 0);
-    setIsManualTrigger(false);
     // Clear the selected value when user clears the input or changes it from selected value
     if (newValue.trim() === "") {
       onChange?.(null);
@@ -232,23 +232,18 @@ export function TaxonNameSelector({
     }
   };
 
-  const handleSelect = useCallback(
-    (item: TaxonomyItem) => {
-      isSelectingRef.current = true;
-      onChange?.(item);
-      setShowDropdown(false);
-      setSearchQuery(item.taxon_name);
-      // Reset the flag after a brief moment
-      setTimeout(() => {
-        isSelectingRef.current = false;
-      }, 0);
-    },
-    [onChange],
-  );
+  const handleSelect = (item: TaxonomyItem) => {
+    isSelectingRef.current = true;
+    onChange?.(item);
+    setShowDropdown(false);
+    setSearchQuery(item.taxon_name);
+    setTimeout(() => {
+      isSelectingRef.current = false;
+    }, 0);
+  };
 
   const handleManualDropdownToggle = () => {
     setShowDropdown(!showDropdown);
-    setIsManualTrigger(!showDropdown);
   };
 
   // Sync searchQuery with value prop when value is set externally.
@@ -264,18 +259,8 @@ export function TaxonNameSelector({
   // Input always displays searchQuery (what user types or what's selected)
   const inputValue = searchQuery;
 
-  const isValid = useMemo(() => {
-    if (!required) return true;
-    return !!value;
-  }, [required, value]);
-
-  // Use filtered results from search, with manual trigger override
-  const displayResults = useMemo(() => {
-    if (isManualTrigger) {
-      return results; // Show all results when manually triggered
-    }
-    return results;
-  }, [results, isManualTrigger]);
+  const isValid = !required || !!value;
+  const displayResults = results;
 
   return (
     <div className={cn("relative w-full", className)}>
@@ -284,11 +269,17 @@ export function TaxonNameSelector({
         <Input
           placeholder={placeholder}
           value={inputValue}
-          onChange={(e) => { handleSearchChange(e.target.value); }}
-          onFocus={() => { setShowDropdown(searchQuery.length > 0); }}
+          onChange={(e) => {
+            handleSearchChange(e.target.value);
+          }}
+          onFocus={() => {
+            setShowDropdown(searchQuery.length > 0);
+          }}
           onBlur={() => {
             setTouched(true);
-            setTimeout(() => { setShowDropdown(false); }, 200);
+            setTimeout(() => {
+              setShowDropdown(false);
+            }, 200);
           }}
           className={cn(
             "w-full px-10",
@@ -325,7 +316,9 @@ export function TaxonNameSelector({
                   type="button"
                   key={item.taxon_id}
                   className="flex w-full cursor-pointer items-center justify-between p-2 text-left hover:bg-accent"
-                  onClick={() => { handleSelect(item); }}
+                  onClick={() => {
+                    handleSelect(item);
+                  }}
                 >
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">

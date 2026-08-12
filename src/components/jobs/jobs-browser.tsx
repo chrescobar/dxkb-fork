@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useCallback } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Row } from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
@@ -21,7 +21,11 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { useKillJob } from "@/hooks/services/workspace/use-workspace";
 import { useJobsData } from "@/hooks/services/jobs/use-jobs-data";
 import { useJobsSummary } from "@/hooks/services/jobs/use-jobs-summary";
-import { DataTable, type DataTableSort } from "@/components/shared/file-table";
+import {
+  DataTable,
+  type DataTableSort,
+  useDataTableBody,
+} from "@/components/shared/file-table";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
 import { useJobsColumns } from "./jobs-table-columns";
 import { JobsToolbar } from "./jobs-toolbar";
@@ -46,7 +50,7 @@ interface JobDataRowProps {
   onDoubleClick: (job: JobListItem) => void;
 }
 
-const JobDataRow = React.memo(function JobDataRow({
+function JobDataRow({
   row,
   isSelected,
   onSelect,
@@ -58,19 +62,23 @@ const JobDataRow = React.memo(function JobDataRow({
         "cursor-pointer border-l-2",
         isSelected ? "border-l-primary bg-muted" : "border-l-transparent",
       )}
-      onClick={(e) =>
-        { onSelect(row.original, {
+      onClick={(e) => {
+        onSelect(row.original, {
           ctrlOrMeta: e.ctrlKey || e.metaKey,
-        }); }
-      }
-      onDoubleClick={() => { onDoubleClick(row.original); }}
+        });
+      }}
+      onDoubleClick={() => {
+        onDoubleClick(row.original);
+      }}
       onMouseDown={(e) => {
         if (e.shiftKey || e.ctrlKey || e.metaKey) e.preventDefault();
       }}
       aria-selected={isSelected}
     >
       {row.getVisibleCells().map((cell, cellIndex) => {
-        const metaCls = (cell.column.columnDef.meta as Record<string, unknown> | undefined)?.className as string | undefined;
+        const metaCls = (
+          cell.column.columnDef.meta as Record<string, unknown> | undefined
+        )?.className as string | undefined;
         const className = clsx(
           cellIndex === 0 ? "pl-6" : "pl-2",
           "overflow-hidden",
@@ -92,9 +100,52 @@ const JobDataRow = React.memo(function JobDataRow({
       })}
     </TableRow>
   );
-});
+}
 
-export function JobsBrowser() {
+function JobsTableBody({
+  selectedIds,
+  searchQuery,
+  statusFilter,
+  serviceFilter,
+  onSelect,
+  onDoubleClick,
+}: {
+  selectedIds: Set<string>;
+  searchQuery: string;
+  statusFilter: string;
+  serviceFilter: string;
+  onSelect: JobDataRowProps["onSelect"];
+  onDoubleClick: JobDataRowProps["onDoubleClick"];
+}) {
+  const { rows, colSpan } = useDataTableBody<JobListItem>();
+
+  if (rows.length === 0) {
+    return (
+      <TableRow>
+        <TableCell
+          colSpan={colSpan}
+          className="py-12 pl-6 text-center text-muted-foreground"
+        >
+          {searchQuery || statusFilter !== "all" || serviceFilter !== "all"
+            ? "No jobs match your filters"
+            : "No jobs found"}
+        </TableCell>
+      </TableRow>
+    );
+  }
+
+  return rows.map((row) => (
+    <JobDataRow
+      key={row.id}
+      row={row}
+      isSelected={selectedIds.has(row.original.id)}
+      onSelect={onSelect}
+      onDoubleClick={onDoubleClick}
+    />
+  ));
+}
+
+function useJobsBrowser() {
   const router = useRouter();
 
   // State
@@ -113,19 +164,15 @@ export function JobsBrowser() {
   const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
   const [pageSize, setPageSize] = useState(defaultPageSize);
 
-  const dateParams = useMemo(() => {
-    const toLocalDate = (d: Date) =>
-      `${String(d.getFullYear())}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-
-    const startTime = dateFrom ? toLocalDate(dateFrom) : undefined;
-    let endTime: string | undefined;
-    if (dateTo) {
-      const inclusive = new Date(dateTo);
-      inclusive.setDate(inclusive.getDate() + 1);
-      endTime = toLocalDate(inclusive);
-    }
-    return { startTime, endTime };
-  }, [dateFrom, dateTo]);
+  const toLocalDate = (date: Date) =>
+    `${String(date.getFullYear())}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  const startTime = dateFrom ? toLocalDate(dateFrom) : undefined;
+  let endTime: string | undefined;
+  if (dateTo) {
+    const inclusive = new Date(dateTo);
+    inclusive.setDate(inclusive.getDate() + 1);
+    endTime = toLocalDate(inclusive);
+  }
 
   // Data fetching
   const { data: summaryData } = useJobsSummary(includeArchived);
@@ -149,196 +196,178 @@ export function JobsBrowser() {
     sortField: sort.field,
     sortOrder: sort.direction,
     app: serviceFilter !== "all" ? serviceFilter : undefined,
-    startTime: dateParams.startTime,
-    endTime: dateParams.endTime,
+    startTime,
+    endTime,
     refetchInterval: hasActiveJobs ? 10_000 : 30_000,
   });
 
-  const jobs = useMemo(() => jobsResult?.jobs ?? [], [jobsResult]);
+  const jobs = jobsResult?.jobs ?? [];
   const totalTasks = jobsResult?.totalTasks ?? 0;
 
   // Kill mutation
   const killMutation = useKillJob();
 
   // Derived data
-  const availableServices = useMemo(() => {
-    if (!appSummary) return [];
-    return Object.keys(appSummary).sort();
-  }, [appSummary]);
+  const availableServices = appSummary ? Object.keys(appSummary).sort() : [];
 
   // Client-side filters (status, search) applied to the current page
   // Note: serviceFilter is handled server-side via the `app` param in useJobsData
-  const filteredJobs = useMemo(() => {
-    return jobs.filter((job) => {
-      if (!job.id || !job.app) return false;
+  const filteredJobs = jobs.filter((job) => {
+    if (!job.id || !job.app) return false;
 
-      if (statusFilter !== "all") {
-        const isRunning =
-          statusFilter === "running" &&
-          (job.status === "running" || job.status === "in-progress");
-        if (!isRunning && job.status !== statusFilter) return false;
-      }
+    if (statusFilter !== "all") {
+      const isRunning =
+        statusFilter === "running" &&
+        (job.status === "running" || job.status === "in-progress");
+      if (!isRunning && job.status !== statusFilter) return false;
+    }
 
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase();
-        const outputName =
-          job.output_file ?? ((job.parameters.output_file as string | undefined) ?? "");
-        const matches =
-          job.id.toLowerCase().includes(q) ||
-          job.app.toLowerCase().includes(q) ||
-          outputName.toLowerCase().includes(q);
-        if (!matches) return false;
-      }
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      const outputName =
+        job.output_file ??
+        (job.parameters.output_file as string | undefined) ??
+        "";
+      const matches =
+        job.id.toLowerCase().includes(q) ||
+        job.app.toLowerCase().includes(q) ||
+        outputName.toLowerCase().includes(q);
+      if (!matches) return false;
+    }
 
-      return true;
-    });
-  }, [jobs, statusFilter, searchQuery]);
+    return true;
+  });
 
   // Selection
-  const selectedJobs = useMemo(
-    () => filteredJobs.filter((j) => selectedIds.has(j.id)),
-    [filteredJobs, selectedIds],
-  );
+  const selectedJobs = filteredJobs.filter((job) => selectedIds.has(job.id));
 
-  const handleSelect = useCallback(
-    (job: JobListItem, modifiers?: { ctrlOrMeta: boolean }) => {
-      setSelectedIds((prev) => {
-        const next = new Set(prev);
-        if (modifiers?.ctrlOrMeta) {
-          if (next.has(job.id)) next.delete(job.id);
-          else next.add(job.id);
-        } else {
-          next.clear();
-          next.add(job.id);
-        }
-        return next;
-      });
-    },
-    [],
-  );
+  const handleSelect = (
+    job: JobListItem,
+    modifiers?: { ctrlOrMeta: boolean },
+  ) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (modifiers?.ctrlOrMeta) {
+        if (next.has(job.id)) next.delete(job.id);
+        else next.add(job.id);
+      } else {
+        next.clear();
+        next.add(job.id);
+      }
+      return next;
+    });
+  };
 
   // Columns
   const { columns, handleSort } = useJobsColumns(sort, setSort);
 
   // Pagination
-  const handlePrevious = useCallback(() => {
+  const handlePrevious = () => {
     setOffset((prev) => Math.max(0, prev - pageSize));
     setSelectedIds(new Set());
-  }, [pageSize]);
+  };
 
-  const handleNext = useCallback(() => {
+  const handleNext = () => {
     setOffset((prev) => prev + pageSize);
     setSelectedIds(new Set());
-  }, [pageSize]);
+  };
 
-  const handlePageChange = useCallback(
-    (page: number) => {
-      setOffset((page - 1) * pageSize);
-      setSelectedIds(new Set());
-    },
-    [pageSize],
-  );
+  const handlePageChange = (page: number) => {
+    setOffset((page - 1) * pageSize);
+    setSelectedIds(new Set());
+  };
 
   // Reset offset when filters change
-  const handleStatusFilterChange = useCallback((value: string) => {
+  const handleStatusFilterChange = (value: string) => {
     setStatusFilter(value);
     setOffset(0);
     setSelectedIds(new Set());
-  }, []);
+  };
 
-  const handleServiceFilterChange = useCallback((value: string) => {
+  const handleServiceFilterChange = (value: string) => {
     setServiceFilter(value);
     setOffset(0);
     setSelectedIds(new Set());
-  }, []);
+  };
 
-  const handleArchivedChange = useCallback((value: boolean) => {
+  const handleArchivedChange = (value: boolean) => {
     setIncludeArchived(value);
     setOffset(0);
     setSelectedIds(new Set());
-  }, []);
+  };
 
-  const handlePageSizeChange = useCallback((size: number) => {
+  const handlePageSizeChange = (size: number) => {
     setPageSize(size);
     setOffset(0);
     setSelectedIds(new Set());
-  }, []);
+  };
 
-  const handleDateFilterChange = useCallback(
-    (from: Date | undefined, to: Date | undefined) => {
-      setDateFrom(from);
-      setDateTo(to);
-      setOffset(0);
-      setSelectedIds(new Set());
-    },
-    [],
-  );
+  const handleDateFilterChange = (
+    from: Date | undefined,
+    to: Date | undefined,
+  ) => {
+    setDateFrom(from);
+    setDateTo(to);
+    setOffset(0);
+    setSelectedIds(new Set());
+  };
 
   // Row rendering & keyboard
-  const handleDoubleClick = useCallback(
-    (job: JobListItem) => {
-      const outputPath =
-        job.output_path ?? ((job.parameters.output_path as string | undefined) ?? "");
-      const outputFile =
-        job.output_file ?? ((job.parameters.output_file as string | undefined) ?? "");
+  const handleDoubleClick = (job: JobListItem) => {
+    const outputPath =
+      job.output_path ??
+      (job.parameters.output_path as string | undefined) ??
+      "";
+    const outputFile =
+      job.output_file ??
+      (job.parameters.output_file as string | undefined) ??
+      "";
 
-      if (outputPath && outputFile) {
-        const fullPath = `${outputPath}/${outputFile}`;
-        const segments = fullPath
-          .replace(/^\/+/, "")
-          .split("/")
-          .filter(Boolean);
-        const encoded = segments.map(encodeWorkspaceSegment).join("/");
-        router.push(`/workspace/${encoded}`);
-      } else {
-        setShowJobNotFound(true);
-      }
-    },
-    [router],
-  );
+    if (outputPath && outputFile) {
+      const fullPath = `${outputPath}/${outputFile}`;
+      const segments = fullPath.replace(/^\/+/, "").split("/").filter(Boolean);
+      const encoded = segments.map(encodeWorkspaceSegment).join("/");
+      router.push(`/workspace/${encoded}`);
+    } else {
+      setShowJobNotFound(true);
+    }
+  };
 
   // Actions
-  const handleAction = useCallback(
-    (actionId: string, selection: JobListItem[]) => {
-      if (selection.length === 0) return;
-      const job = selection[0];
-      switch (actionId) {
-        case "view":
-          handleDoubleClick(job);
-          break;
-        case "rerun":
-          rerunJob(
-            job.parameters,
-            job.app,
-          );
-          break;
-        case "show":
-          if (job.output_path) {
-            // Navigate to workspace output folder
-            const segments = job.output_path
-              .replace(/^\/+/, "")
-              .split("/")
-              .filter(Boolean);
-            const encoded = segments.map(encodeWorkspaceSegment).join("/");
-            router.push(`/workspace/${encoded}`);
-          }
-          break;
-        case "kill":
-          for (const j of selection) {
-            killMutation.mutate(j.id);
-          }
-          break;
-      }
-    },
-    [router, killMutation, handleDoubleClick],
-  );
+  const handleAction = (actionId: string, selection: JobListItem[]) => {
+    if (selection.length === 0) return;
+    const job = selection[0];
+    switch (actionId) {
+      case "view":
+        handleDoubleClick(job);
+        break;
+      case "rerun":
+        rerunJob(job.parameters, job.app);
+        break;
+      case "show":
+        if (job.output_path) {
+          const segments = job.output_path
+            .replace(/^\/+/, "")
+            .split("/")
+            .filter(Boolean);
+          const encoded = segments.map(encodeWorkspaceSegment).join("/");
+          router.push(`/workspace/${encoded}`);
+        }
+        break;
+      case "kill":
+        for (const selectedJob of selection) {
+          killMutation.mutate(selectedJob.id);
+        }
+        break;
+    }
+  };
 
-  const getFocusedIndex = useCallback(() => {
+  const getFocusedIndex = () => {
     const selectedArray = Array.from(selectedIds);
     if (selectedArray.length === 0) return -1;
     const focusId = selectedArray[selectedArray.length - 1];
-    return filteredJobs.findIndex((j) => j.id === focusId);
-  }, [selectedIds, filteredJobs]);
+    return filteredJobs.findIndex((job) => job.id === focusId);
+  };
 
   const { handleKeyDown } = useTableKeyboardNavigation<JobListItem>({
     items: filteredJobs,
@@ -346,39 +375,6 @@ export function JobsBrowser() {
     onSelect: handleSelect,
     onEnter: handleDoubleClick,
   });
-
-  const renderRows = useCallback(
-    (rows: Row<JobListItem>[]) => (
-      <>
-        {rows.map((row) => (
-          <JobDataRow
-            key={row.id}
-            row={row}
-            isSelected={selectedIds.has(row.original.id)}
-            onSelect={handleSelect}
-            onDoubleClick={handleDoubleClick}
-          />
-        ))}
-      </>
-    ),
-    [selectedIds, handleSelect, handleDoubleClick],
-  );
-
-  const renderEmptyState = useCallback(
-    (colSpan: number) => (
-      <TableRow>
-        <TableCell
-          colSpan={colSpan}
-          className="py-12 pl-6 text-center text-muted-foreground"
-        >
-          {searchQuery || statusFilter !== "all" || serviceFilter !== "all"
-            ? "No jobs match your filters"
-            : "No jobs found"}
-        </TableCell>
-      </TableRow>
-    ),
-    [searchQuery, statusFilter, serviceFilter],
-  );
 
   // Details panel content
   const detailsPanel =
@@ -451,12 +447,19 @@ export function JobsBrowser() {
             sort={sort}
             onSort={handleSort}
             dndId="jobs-table-dnd"
-            renderRows={renderRows}
-            renderEmptyState={renderEmptyState}
             onKeyDown={handleKeyDown}
             ariaLabel="Jobs list"
             tabIndex={0}
-          />
+          >
+            <JobsTableBody
+              selectedIds={selectedIds}
+              searchQuery={searchQuery}
+              statusFilter={statusFilter}
+              serviceFilter={serviceFilter}
+              onSelect={handleSelect}
+              onDoubleClick={handleDoubleClick}
+            />
+          </DataTable>
         </div>
 
         {/* Pagination */}
@@ -486,7 +489,11 @@ export function JobsBrowser() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction onClick={() => { setShowJobNotFound(false); }}>
+            <AlertDialogAction
+              onClick={() => {
+                setShowJobNotFound(false);
+              }}
+            >
               OK
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -494,4 +501,8 @@ export function JobsBrowser() {
       </AlertDialog>
     </JobsShell>
   );
+}
+
+export function JobsBrowser() {
+  return useJobsBrowser();
 }

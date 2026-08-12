@@ -11,7 +11,9 @@ vi.mock("@/lib/utils", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/lib/utils")>();
   return {
     ...actual,
-    triggerDownload: (...args: unknown[]): void => { mockTriggerDownload(...args); },
+    triggerDownload: (...args: unknown[]): void => {
+      mockTriggerDownload(...args);
+    },
   };
 });
 
@@ -26,8 +28,7 @@ vi.mock("../codemirror-languages", () => ({
 }));
 
 // CodeMirror uses requestAnimationFrame for batched rendering
-const flushRaf = () =>
-  vi.advanceTimersByTime(16);
+const flushRaf = () => vi.advanceTimersByTime(16);
 
 beforeEach(() => {
   mockTriggerDownload.mockClear();
@@ -47,12 +48,7 @@ describe("CodeMirrorViewer", () => {
       }),
     );
 
-    render(
-      <CodeMirrorViewer
-        filePath="/user/test.txt"
-        fileName="test.txt"
-      />,
-    );
+    render(<CodeMirrorViewer filePath="/user/test.txt" fileName="test.txt" />);
 
     expect(screen.getByText("Loading...")).toBeInTheDocument();
   });
@@ -64,12 +60,7 @@ describe("CodeMirrorViewer", () => {
       }),
     );
 
-    render(
-      <CodeMirrorViewer
-        filePath="/user/test.txt"
-        fileName="test.txt"
-      />,
-    );
+    render(<CodeMirrorViewer filePath="/user/test.txt" fileName="test.txt" />);
 
     await waitFor(() => {
       expect(
@@ -116,8 +107,12 @@ describe("CodeMirrorViewer", () => {
       expect(screen.getByText(/Preview truncated to/)).toBeInTheDocument();
     });
 
-    expect(screen.getAllByText(/10\.0 MB of 100\.0 MB/).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByRole("button", { name: "Download full file" })).toBeInTheDocument();
+    expect(
+      screen.getAllByText(/10\.0 MB of 100\.0 MB/).length,
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getByRole("button", { name: "Download full file" }),
+    ).toBeInTheDocument();
   });
 
   it("does not show truncation banner for small files", async () => {
@@ -146,26 +141,31 @@ describe("CodeMirrorViewer", () => {
     });
 
     expect(screen.queryByText(/Preview truncated/)).not.toBeInTheDocument();
-    expect(
-      screen.queryByText("Download full file"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Download full file")).not.toBeInTheDocument();
   });
 
   it("does not throw when unmounted before language extension resolves", async () => {
     let resolveLanguage!: (value: null) => void;
     vi.mocked(getLanguageExtension).mockImplementationOnce(
-      () => new Promise<null>((resolve) => { resolveLanguage = resolve; }),
+      () =>
+        new Promise<null>((resolve) => {
+          resolveLanguage = resolve;
+        }),
     );
 
     const { unmount } = render(
       <CodeMirrorViewer filePath="/user/race.txt" fileName="race.txt" />,
     );
 
-    // Unmount while getLanguageExtension is still pending — entry.view is null at this point.
-    // Without the ?. guard this would throw: "Cannot read properties of null (reading 'destroy')"
-    expect(() => { unmount(); }).not.toThrow();
+    await waitFor(() => {
+      expect(resolveLanguage).toBeTypeOf("function");
+    });
 
-    // Let init() reach the isDestroyed() guard and exit cleanly
+    // Unmount while the dynamically loaded editor is waiting for its language.
+    expect(() => {
+      unmount();
+    }).not.toThrow();
+
     resolveLanguage(null);
     await Promise.resolve();
   });

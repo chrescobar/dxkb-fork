@@ -1,6 +1,14 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { Suspense } from "react";
+import { useQuery } from "@tanstack/react-query";
+
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+  timeZone: "UTC",
+});
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dna, Bug, Microscope, Activity, Database } from "lucide-react";
@@ -101,6 +109,50 @@ function processQuery(query: string) {
 }
 // ---------------------------------------------------
 
+async function fetchSearchResults(query: string): Promise<SearchResults> {
+  const searchPayload: Record<string, unknown> = {};
+  const processedQuery = processQuery(query);
+
+  searchTypes.forEach((searchType) => {
+    let typeQuery = processedQuery;
+    switch (searchType) {
+      case "genome_feature":
+        typeQuery += "&ne(annotation,brc1)&ne(feature_type,source)";
+        break;
+      case "taxonomy":
+        typeQuery += "&gt(genomes,1)";
+        break;
+    }
+
+    searchPayload[searchType] = {
+      dataType: searchType,
+      accept: "application/solr+json",
+      query:
+        searchType === "genome_feature"
+          ? typeQuery + "&limit(3)&sort(+annotation,-score)"
+          : typeQuery + "&limit(3)&sort(-score)",
+    };
+  });
+
+  const response = await fetch(bvbrcAPI + "query/", {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(searchPayload),
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Search request failed with status ${String(response.status)}`,
+    );
+  }
+
+  return (await response.json()) as SearchResults;
+}
+
 // Helper function to get the appropriate icon for each data type
 function getDataTypeIcon(dataType: string) {
   switch (dataType) {
@@ -131,7 +183,13 @@ function getFormattedContent(doc: Record<string, unknown>, dataType: string) {
           <h3 className="search-result-header">{R(doc.antibiotic_name)}</h3>
           <div className="search-result-metadata">
             <p
-              dangerouslySetInnerHTML={{ __html: String((Array.isArray(doc.description) ? doc.description[0] : doc.description) ?? "") }}
+              dangerouslySetInnerHTML={{
+                __html: String(
+                  (Array.isArray(doc.description)
+                    ? doc.description[0]
+                    : doc.description) ?? "",
+                ),
+              }}
               className="search-result-description"
             />
           </div>
@@ -169,16 +227,24 @@ function getFormattedContent(doc: Record<string, unknown>, dataType: string) {
               Genome ID: {R(doc.genome_id)} | {R(doc.contigs)} Contigs
             </p>
             <p>
-              SEQUENCED: {doc.completion_date != null ? new Date(doc.completion_date as string).toLocaleDateString() : ""}{" "}
-              {doc.sequencing_centers ? `by ${Array.isArray(doc.sequencing_centers) ? (doc.sequencing_centers as string[]).join(", ") : (doc.sequencing_centers as string)}` : ""}
+              SEQUENCED:{" "}
+              {doc.completion_date != null
+                ? dateFormatter.format(new Date(doc.completion_date as string))
+                : ""}{" "}
+              {doc.sequencing_centers
+                ? `by ${Array.isArray(doc.sequencing_centers) ? (doc.sequencing_centers as string[]).join(", ") : (doc.sequencing_centers as string)}`
+                : ""}
             </p>
-            {doc.collection_date != null && <p>COLLECTED: {R(doc.collection_date)}</p>}
+            {doc.collection_date != null && (
+              <p>COLLECTED: {R(doc.collection_date)}</p>
+            )}
             {doc.host_name != null && <p>HOST: {R(doc.host_name)}</p>}
-            {Array.isArray(doc.comments) && doc.comments.map((comment: unknown, i: number) => (
-              <p key={i} className="mt-2 italic">
-                {R(comment)}
-              </p>
-            ))}
+            {Array.isArray(doc.comments) &&
+              doc.comments.map((comment: unknown) => (
+                <p key={String(comment)} className="mt-2 italic">
+                  {R(comment)}
+                </p>
+              ))}
           </div>
         </>
       );
@@ -186,7 +252,8 @@ function getFormattedContent(doc: Record<string, unknown>, dataType: string) {
       return (
         <>
           <h3 className="search-result-header">
-            {R(doc.product) || R(doc.feature_type)} {doc.gene != null && ` | ${doc.gene as string}`}
+            {R(doc.product) || R(doc.feature_type)}{" "}
+            {doc.gene != null && ` | ${doc.gene as string}`}
           </h3>
           <div className="search-result-metadata">
             <p>{R(doc.genome_name)}</p>
@@ -241,9 +308,10 @@ function getFormattedContent(doc: Record<string, unknown>, dataType: string) {
             {R(doc.pdb_id)} | {R(doc.title)}
           </h3>
           <div className="search-result-metadata">
-            {Array.isArray(doc.organism_name) && doc.organism_name.map((name: unknown, i: number) => (
-              <p key={i}>{R(name)}</p>
-            ))}
+            {Array.isArray(doc.organism_name) &&
+              doc.organism_name.map((name: unknown) => (
+                <p key={String(name)}>{R(name)}</p>
+              ))}
           </div>
         </>
       );
@@ -303,7 +371,9 @@ function getFormattedContent(doc: Record<string, unknown>, dataType: string) {
           <div className="search-result-metadata">
             <p>
               ENV | {R(doc.collection_country)} |{" "}
-              {doc.collection_date != null ? new Date(doc.collection_date as string | number).getFullYear() : ""}
+              {doc.collection_date != null
+                ? new Date(doc.collection_date as string | number).getFullYear()
+                : ""}
             </p>
           </div>
         </>
@@ -325,9 +395,7 @@ function getFormattedContent(doc: Record<string, unknown>, dataType: string) {
             {R(doc.name) || R(doc.id) || "Untitled"}
           </h3>
           {doc.description != null && (
-            <p className="search-result-description">
-              {R(doc.description)}
-            </p>
+            <p className="search-result-description">{R(doc.description)}</p>
           )}
         </>
       );
@@ -335,73 +403,20 @@ function getFormattedContent(doc: Record<string, unknown>, dataType: string) {
 }
 
 function SearchResultsContent({ query }: { query: string }) {
-  const [searchResults, setSearchResults] = useState<SearchResults>({});
-  const [isLoading, setIsLoading] = useState(false);
-
-  const fetchSearchResults = async (query: string) => {
-    setIsLoading(true);
-    try {
-      const searchPayload: Record<string, unknown> = {};
-      const processedQuery = processQuery(query);
-
-      searchTypes.forEach((searchType) => {
-        let tq = processedQuery;
-        switch (searchType) {
-          case "genome_feature":
-            tq += "&ne(annotation,brc1)&ne(feature_type,source)";
-            break;
-          case "taxonomy":
-            tq += "&gt(genomes,1)";
-            break;
-        }
-
-        searchPayload[searchType] = {
-          dataType: searchType,
-          accept: "application/solr+json",
-          query:
-            searchType === "genome_feature"
-              ? tq + "&limit(3)&sort(+annotation,-score)"
-              : tq + "&limit(3)&sort(-score)",
-        };
-      });
-
-//      console.log("query is:", searchPayload);
-
-      const response = await fetch(bvbrcAPI + "query/", {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(searchPayload),
-        cache: 'no-store'
-      });
-
-
-      const data = await response.json() as SearchResults;
-      setSearchResults(data);
-    } catch (error) {
-      console.error("Error fetching search results:", error);
-    } finally {
-      setIsLoading(false);
-    }
-
-//    console.log("results", searchResults);
-  };
-
-  useEffect(() => {
-    if (query) {
-      queueMicrotask(() => { void fetchSearchResults(query); });
-    }
-  }, [query]);
+  const { data: searchResults = {}, isLoading } = useQuery({
+    queryKey: ["all-term-search-results", query],
+    queryFn: () => fetchSearchResults(query),
+    enabled: Boolean(query),
+    retry: false,
+    staleTime: 0,
+  });
 
   // Filter out empty results and sort by numFound
   const validResults = Object.entries(searchResults)
     .filter(([_, data]) => data.result.response.numFound > 0)
     .sort(
       ([_, a], [__, b]) =>
-        b.result.response.numFound -
-        a.result.response.numFound,
+        b.result.response.numFound - a.result.response.numFound,
     );
 
   // Add this before the return statement
@@ -414,15 +429,25 @@ function SearchResultsContent({ query }: { query: string }) {
         </div>
       ) : validResults.length === 0 ? (
         <>
-          <ResultsOverview isLoading={isLoading} searchResults={searchResults} labelsByType={labelsByType} />
+          <ResultsOverview
+            isLoading={isLoading}
+            searchResults={searchResults}
+            labelsByType={labelsByType}
+          />
           <div className="py-20 text-center">
-              <h2 className="mb-4 text-2xl font-medium">No results found</h2>
-            <p className="text-gray-600">Try different search terms or filters</p>
+            <h2 className="mb-4 text-2xl font-medium">No results found</h2>
+            <p className="text-gray-600">
+              Try different search terms or filters
+            </p>
           </div>
         </>
       ) : (
         <>
-          <ResultsOverview isLoading={isLoading} searchResults={searchResults} labelsByType={labelsByType} />
+          <ResultsOverview
+            isLoading={isLoading}
+            searchResults={searchResults}
+            labelsByType={labelsByType}
+          />
 
           <div className="space-y-8">
             {validResults.map(([dataType, data]) => {
@@ -448,10 +473,20 @@ function SearchResultsContent({ query }: { query: string }) {
                     </Badge>
                   </CardHeader>
                   <CardContent className="divide-y">
-                    {docs.map((docUnknown, index) => {
+                    {docs.map((docUnknown) => {
                       const doc = docUnknown as Record<string, unknown>;
+                      const rawDocumentKey =
+                        doc.id ??
+                        doc.genome_id ??
+                        doc.patric_id ??
+                        doc.taxon_id;
+                      const documentKey =
+                        typeof rawDocumentKey === "string" ||
+                        typeof rawDocumentKey === "number"
+                          ? String(rawDocumentKey)
+                          : JSON.stringify(doc);
                       return (
-                        <div key={(doc.id as string | number | undefined) ?? index} className="py-6">
+                        <div key={documentKey} className="py-6">
                           {getFormattedContent(doc, dataType)}
                         </div>
                       );
@@ -468,13 +503,19 @@ function SearchResultsContent({ query }: { query: string }) {
 }
 
 interface SearchResultsProps {
-  query: string;    // 👈 required
+  query: string; // 👈 required
 }
 
-export function SearchResults({query}: SearchResultsProps) { 
-    return ( 
-        <Suspense fallback={<div className="container mx-auto px-4 py-8">Loading search results...</div>}> 
-            <SearchResultsContent query={query} /> 
-        </Suspense> 
-    ); 
+export function SearchResults({ query }: SearchResultsProps) {
+  return (
+    <Suspense
+      fallback={
+        <div className="container mx-auto px-4 py-8">
+          Loading search results...
+        </div>
+      }
+    >
+      <SearchResultsContent query={query} />
+    </Suspense>
+  );
 }

@@ -21,8 +21,7 @@ export interface SubmitSimilarGenomesError {
 }
 
 export type SubmitSimilarGenomesResponse =
-  | SubmitSimilarGenomesResult
-  | SubmitSimilarGenomesError;
+  SubmitSimilarGenomesResult | SubmitSimilarGenomesError;
 
 async function getBaseUrl(): Promise<string> {
   const headersList = await headers();
@@ -53,21 +52,22 @@ function extractMinhashError(result: unknown): string | null {
 async function fetchMinhashResults(
   baseUrl: string,
   payload: unknown,
-): Promise<
-  | { ok: true; result: unknown }
-  | { ok: false; error: string }
-> {
+): Promise<{ ok: true; result: unknown } | { ok: false; error: string }> {
   const res = await fetch(`${baseUrl}/api/services/minhash`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
+  if (!res.ok) {
+    const result = await (res.json() as Promise<unknown>).catch(() => ({}));
+    return {
+      ok: false,
+      error: extractMinhashError(result) ?? "Minhash service request failed",
+    };
+  }
+
   const result = await (res.json() as Promise<unknown>).catch(() => ({}));
   const errorMessage = extractMinhashError(result);
-
-  if (!res.ok) {
-    return { ok: false, error: errorMessage ?? "Minhash service request failed" };
-  }
   if (
     result != null &&
     typeof result === "object" &&
@@ -101,17 +101,25 @@ async function fetchGenomeDetails(
       body: JSON.stringify({ genome_ids: genomeIds }),
     },
   );
-  const genomeData = await (genomeRes.json() as Promise<unknown>).catch(() => ({}));
   if (!genomeRes.ok) {
+    const genomeData = await (genomeRes.json() as Promise<unknown>).catch(
+      () => ({}),
+    );
     return {
       ok: false,
       error:
         typeof (genomeData as Record<string, unknown>).error === "string"
-          ? (genomeData as Record<string, unknown>).error as string
+          ? ((genomeData as Record<string, unknown>).error as string)
           : "Genome detail request failed",
     };
   }
-  const rawResults = Array.isArray((genomeData as Record<string, unknown>).results)
+
+  const genomeData = await (genomeRes.json() as Promise<unknown>).catch(
+    () => ({}),
+  );
+  const rawResults = Array.isArray(
+    (genomeData as Record<string, unknown>).results,
+  )
     ? ((genomeData as Record<string, unknown>).results as unknown[])
     : [];
   const genomes: Record<string, string>[] = rawResults.map((r: unknown) =>
@@ -119,10 +127,12 @@ async function fetchGenomeDetails(
       ? (Object.fromEntries(
           Object.entries(r as Record<string, unknown>).map(([k, v]) => [
             k,
-            v !== null && v !== undefined ? String(v as string | number | boolean) : "",
+            v !== null && v !== undefined
+              ? String(v as string | number | boolean)
+              : "",
           ]),
         ) as Record<string, string>)
-      : ({}),
+      : {},
   );
   return { ok: true, genomes };
 }
@@ -135,9 +145,11 @@ function getMinhashRowsAndIds(result: unknown): {
   genomeIds: string[];
 } {
   let minhashRows = parseMinhashResultPayload(result);
-  let genomeIds = minhashRows
-    .map((r) => r.genome_id.trim())
-    .filter(Boolean);
+  let genomeIds = minhashRows.reduce<string[]>((ids, row) => {
+    const genomeId = row.genome_id.trim();
+    if (genomeId) ids.push(genomeId);
+    return ids;
+  }, []);
 
   if (
     minhashRows.length > 0 &&
@@ -150,14 +162,16 @@ function getMinhashRowsAndIds(result: unknown): {
     if (resObj && typeof resObj === "object") {
       const r = resObj as Record<string, unknown>;
       const idList = (r.genome_id ?? r.genomeId ?? r.id ?? raw.genome_ids) as
-        | unknown[]
-        | undefined;
+        unknown[] | undefined;
       const ids = Array.isArray(idList)
-        ? (idList)
-            .map((x) =>
-              x !== null && x !== undefined ? String(x as string | number | boolean).trim() : "",
-            )
-            .filter(Boolean)
+        ? idList.reduce<string[]>((values, value) => {
+            const id =
+              typeof value === "string" || typeof value === "number"
+                ? String(value).trim()
+                : "";
+            if (id) values.push(id);
+            return values;
+          }, [])
         : [];
       if (ids.length >= minhashRows.length) {
         genomeIds = ids.slice(0, minhashRows.length);
@@ -213,8 +227,7 @@ export async function submitSimilarGenomes(
     const rows = processResults(minhashRows, genomeResult);
     return { success: true, rows };
   } catch (err) {
-    const message =
-      err instanceof Error ? err.message : "Submission failed";
+    const message = err instanceof Error ? err.message : "Submission failed";
     return { success: false, error: message };
   }
 }

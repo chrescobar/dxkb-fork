@@ -39,32 +39,34 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
     }
 
     setIsSubmitting(true);
-    try {
-      const hasExistingSettings = profile.settings !== undefined;
-      const response = await apiFetch("/api/auth/profile", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify([
-          {
-            op: hasExistingSettings ? "replace" : "add",
-            path: "/settings",
-            value: { default_job_folder: defaultJobFolder },
-          },
-        ]),
+    const hasExistingSettings = profile.settings !== undefined;
+    const response = await apiFetch("/api/auth/profile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify([
+        {
+          op: hasExistingSettings ? "replace" : "add",
+          path: "/settings",
+          value: { default_job_folder: defaultJobFolder },
+        },
+      ]),
+    })
+      .catch(() => null)
+      .finally(() => {
+        setIsSubmitting(false);
       });
 
-      if (!response.ok) {
-        const err = await response.json() as { error?: string; message?: string };
-        toast.error(err.error ?? err.message ?? "Failed to update preferences.");
-        return;
-      }
-
+    if (!response) {
+      toast.error("Failed to update preferences.");
+    } else if (!response.ok) {
+      const err = (await response.json()) as {
+        error?: string;
+        message?: string;
+      };
+      toast.error(err.error ?? err.message ?? "Failed to update preferences.");
+    } else {
       toast.success("Preferences updated successfully.");
       await queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-    } catch {
-      toast.error("Failed to update preferences.");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -95,7 +97,9 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
                   variant="ghost"
                   size="icon"
                   className="size-9 shrink-0"
-                  onClick={() => { setDefaultJobFolder(""); }}
+                  onClick={() => {
+                    setDefaultJobFolder("");
+                  }}
                   aria-label="Clear default job output folder"
                 >
                   <X className="size-4" />
@@ -110,7 +114,9 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
 
           <Button
             type="button"
-            onClick={() => { void handleSave(); }}
+            onClick={() => {
+              void handleSave();
+            }}
             disabled={isSubmitting}
             className="w-fit"
           >

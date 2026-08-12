@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 import { httpAuthAdapter } from "@/lib/auth/adapters/http";
 import type { AuthPort } from "@/lib/auth/port";
@@ -27,9 +27,7 @@ const AuthStoreContext = createContext<AuthStore | null>(null);
 export function useAuthStore(): AuthStore {
   const store = useContext(AuthStoreContext);
   if (!store) {
-    throw new Error(
-      "useAuth / useSignIn must be used within <AuthBoundary>",
-    );
+    throw new Error("useAuth / useSignIn must be used within <AuthBoundary>");
   }
   return store;
 }
@@ -74,7 +72,9 @@ export function AuthBoundary({
       void store.refresh();
     };
     document.addEventListener("visibilitychange", onVisible);
-    return () => { document.removeEventListener("visibilitychange", onVisible); };
+    return () => {
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   }, [store]);
 
   return (
@@ -93,7 +93,6 @@ function ProtectedRouteGuard({
   store: AuthStore;
   children: ReactNode;
 }) {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -105,11 +104,13 @@ function ProtectedRouteGuard({
       if (!isProtectedPagePath(pathname)) return;
       const query = searchParams.toString();
       const fullPath = query ? `${pathname}?${query}` : pathname;
-      router.replace(`/sign-in?redirect=${encodeURIComponent(fullPath)}`);
+      window.location.replace(
+        `/sign-in?redirect=${encodeURIComponent(fullPath)}`,
+      );
     };
     check();
     return store.subscribe(check);
-  }, [store, router, pathname, searchParams]);
+  }, [store, pathname, searchParams]);
 
   return children;
 }

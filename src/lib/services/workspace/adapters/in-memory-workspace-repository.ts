@@ -172,7 +172,9 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
     try {
       return Promise.resolve(fn());
     } catch (err) {
-      return Promise.reject(err instanceof Error ? err : new Error(String(err)));
+      return Promise.reject(
+        err instanceof Error ? err : new Error(String(err)),
+      );
     }
   }
 
@@ -197,9 +199,7 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
       this.calls.push({ method: "listDirectory", input });
       this.throwIfConfigured("listDirectory");
       const items = this.directories[normalize(input.path)] ?? [];
-      const mapped = items.map((f, i) =>
-        toBrowserItem(input.path, f, i),
-      );
+      const mapped = items.map((f, i) => toBrowserItem(input.path, f, i));
       const types = input.query?.type;
       const allowed = types && types.length > 0 ? new Set(types) : null;
       const term = input.query?.name?.toLowerCase();
@@ -324,7 +324,9 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
           );
         }
         this.directories = Object.fromEntries(
-          Object.entries(this.directories).filter(([key]) => key !== normalized),
+          Object.entries(this.directories).filter(
+            ([key]) => key !== normalized,
+          ),
         );
       }
     });
@@ -443,9 +445,7 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
     });
   }
 
-  searchObjects(
-    input: SearchWorkspaceObjectsInput,
-  ): Promise<WorkspaceItem[]> {
+  searchObjects(input: SearchWorkspaceObjectsInput): Promise<WorkspaceItem[]> {
     return this.run(() => {
       this.calls.push({ method: "searchObjects", input });
       this.throwIfConfigured("searchObjects");
@@ -457,6 +457,7 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
 
       const results: WorkspaceItem[] = [];
       const seen = new Set<string>();
+      const typeFilter = input.types ? new Set(input.types) : null;
       const nameFilter = input.name?.toLowerCase();
       const visit = (dir: string) => {
         if (seen.has(dir)) return;
@@ -467,7 +468,7 @@ export class InMemoryWorkspaceRepository implements WorkspaceRepository {
           const isFolderLike = /folder|job_result|modelfolder|group/.test(
             item.type,
           );
-          const typeMatches = !input.types || input.types.includes(item.type);
+          const typeMatches = !typeFilter || typeFilter.has(item.type);
           const nameMatches =
             !nameFilter || item.name.toLowerCase().includes(nameFilter);
           if (typeMatches && nameMatches) results.push(item);

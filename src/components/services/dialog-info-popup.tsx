@@ -38,7 +38,13 @@ export function DialogInfoPopup({
               triggerProps.className,
             )}
           >
-            <Info className={cn({ "h-6! w-6! font-bold!": isHeader, "h-4! w-4!": !isHeader })} strokeWidth={isHeader ? 3 : 2} />
+            <Info
+              className={cn({
+                "h-6! w-6! font-bold!": isHeader,
+                "h-4! w-4!": !isHeader,
+              })}
+              strokeWidth={isHeader ? 3 : 2}
+            />
           </Button>
         )}
       />
@@ -46,36 +52,46 @@ export function DialogInfoPopup({
       <DialogContent className="sm:max-w-xl">
         <DialogHeader className="w-full">
           <DialogTitle className="text-2xl font-semibold">{title}</DialogTitle>
-          <DialogDescription className="overflow-x-auto break-all text-foreground/70">{description}</DialogDescription>
+          <DialogDescription className="overflow-x-auto break-all text-foreground/70">
+            {description}
+          </DialogDescription>
         </DialogHeader>
         {sections.length > 0 && (
           <div className="max-h-128 space-y-4 overflow-y-auto rounded-md border bg-card p-4 py-4">
-          {sections.map((section, index) => (
-            <div key={index} className="space-y-3">
-              {section.header && (
-                <h3 className="text-base font-semibold text-foreground">{section.header}</h3>
-              )}
-              {section.description && (
-                <p className="text-sm text-muted-foreground">
-                  {section.description}
-                </p>
-              )}
-              {section.subsections && section.subsections.length > 0 && (
-                <div className="space-y-4">
-                  {section.subsections.map((subsection, subIndex) => (
-                    <div key={subIndex} className="space-y-1">
-                      <h5 className="text-sm font-medium">
-                        {subsection.subheader}
-                      </h5>
-                      <p className="mb-2 ml-4 text-sm text-muted-foreground">
-                        {subsection.subdescription}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {index < sections.length - 1 && <Separator />}
-            </div>
+            {sections.map((section, index) => (
+              <div
+                key={`${section.header ?? "section"}:${section.description ?? ""}`}
+                className="space-y-3"
+              >
+                {section.header && (
+                  <h3 className="text-base font-semibold text-foreground">
+                    {section.header}
+                  </h3>
+                )}
+                {section.description && (
+                  <p className="text-sm text-muted-foreground">
+                    {section.description}
+                  </p>
+                )}
+                {section.subsections && section.subsections.length > 0 && (
+                  <div className="space-y-4">
+                    {section.subsections.map((subsection) => (
+                      <div
+                        key={`${subsection.subheader}:${String(subsection.subdescription)}`}
+                        className="space-y-1"
+                      >
+                        <h5 className="text-sm font-medium">
+                          {subsection.subheader}
+                        </h5>
+                        <p className="mb-2 ml-4 text-sm text-muted-foreground">
+                          {subsection.subdescription}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {index < sections.length - 1 && <Separator />}
+              </div>
             ))}
           </div>
         )}

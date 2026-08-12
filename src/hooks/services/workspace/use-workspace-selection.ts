@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState } from "react";
 import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import {
   computeNextSelection,
@@ -20,7 +20,10 @@ export interface UseWorkspaceSelectionReturn {
   selectedPaths: string[];
   /** Last selected item, or null when nothing is selected. */
   primaryItem: WorkspaceItem | null;
-  handleSelectItem: (item: WorkspaceItem, modifiers?: SelectionModifiers) => void;
+  handleSelectItem: (
+    item: WorkspaceItem,
+    modifiers?: SelectionModifiers,
+  ) => void;
   clearSelection: () => void;
 }
 
@@ -37,41 +40,43 @@ export function useWorkspaceSelection({
   if (prevProcessedItems !== processedItems) {
     setPrevProcessedItems(processedItems);
     if (selectedItems.length > 0) {
-      const itemByPath = new Map(processedItems.map((i) => [normalizePath(i.path), i]));
-      const updated = selectedItems.map((old) => itemByPath.get(normalizePath(old.path)) ?? old);
+      const itemByPath = new Map(
+        processedItems.map((i) => [normalizePath(i.path), i]),
+      );
+      const updated = selectedItems.map(
+        (old) => itemByPath.get(normalizePath(old.path)) ?? old,
+      );
       if (!updated.every((item, idx) => item === selectedItems[idx])) {
         setSelectedItems(updated);
       }
     }
   }
 
-  const selectedPaths = useMemo(
-    () => selectedItems.map((i) => normalizePath(i.path)),
-    [selectedItems],
-  );
+  const selectedPaths = selectedItems.map((i) => normalizePath(i.path));
 
-  const primaryItem: WorkspaceItem | null = selectedItems[selectedItems.length - 1] ?? null;
+  const primaryItem: WorkspaceItem | null =
+    selectedItems[selectedItems.length - 1] ?? null;
 
-  const handleSelectItem = useCallback(
-    (item: WorkspaceItem, modifiers?: SelectionModifiers) => {
-      const { nextSelection, nextAnchorPath } = computeNextSelection(
-        processedItems,
-        selectedItems,
-        anchorPath,
-        item,
-        modifiers ?? { ctrlOrMeta: false, shift: false },
-      );
-      setSelectedItems(nextSelection);
-      setAnchorPath(nextAnchorPath);
-      if (!panelManuallyHidden) setPanelExpanded(true);
-    },
-    [processedItems, selectedItems, anchorPath, panelManuallyHidden, setPanelExpanded],
-  );
+  const handleSelectItem = (
+    item: WorkspaceItem,
+    modifiers?: SelectionModifiers,
+  ) => {
+    const { nextSelection, nextAnchorPath } = computeNextSelection(
+      processedItems,
+      selectedItems,
+      anchorPath,
+      item,
+      modifiers ?? { ctrlOrMeta: false, shift: false },
+    );
+    setSelectedItems(nextSelection);
+    setAnchorPath(nextAnchorPath);
+    if (!panelManuallyHidden) setPanelExpanded(true);
+  };
 
-  const clearSelection = useCallback(() => {
+  const clearSelection = () => {
     setSelectedItems([]);
     setAnchorPath(null);
-  }, []);
+  };
 
   return {
     selectedItems,

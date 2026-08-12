@@ -55,7 +55,7 @@ function DownloadOptionsForm({
     null,
   );
 
-  const handleSubmit = React.useCallback(async () => {
+  const handleSubmit = async () => {
     const trimmed = archiveName.trim();
     if (!trimmed) {
       setValidationError("File name is required.");
@@ -64,12 +64,8 @@ function DownloadOptionsForm({
     const invalidChars = trimmed.match(invalidArchiveNameChars);
     if (invalidChars && invalidChars.length > 0) {
       const unique = [...new Set(invalidChars)];
-      setValidationError(
-        `Remove invalid characters: ${unique.join(", ")}`,
-      );
-      toast.error(
-        `Invalid file name. Remove: ${unique.join(", ")}`,
-      );
+      setValidationError(`Remove invalid characters: ${unique.join(", ")}`);
+      toast.error(`Invalid file name. Remove: ${unique.join(", ")}`);
       return;
     }
     setValidationError(null);
@@ -99,13 +95,11 @@ function DownloadOptionsForm({
         toast.error("Download failed: no URL returned.");
       }
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Download failed.";
+      const message = err instanceof Error ? err.message : "Download failed.";
       toast.error(message);
-    } finally {
-      setIsSubmitting(false);
     }
-  }, [archiveName, archiveType, paths, onOpenChange, repository]);
+    setIsSubmitting(false);
+  };
 
   const canSubmit =
     archiveName.trim().length > 0 && !isSubmitting && paths.length > 0;
@@ -137,7 +131,9 @@ function DownloadOptionsForm({
               }
             }}
             aria-invalid={!!validationError}
-            aria-describedby={validationError ? "archive-name-error" : undefined}
+            aria-describedby={
+              validationError ? "archive-name-error" : undefined
+            }
           />
           {validationError && (
             <p
@@ -181,17 +177,20 @@ function DownloadOptionsForm({
       <DialogFooter showCloseButton={false}>
         <Button
           variant="outline"
-          onClick={() => { onOpenChange(false); }}
+          onClick={() => {
+            onOpenChange(false);
+          }}
           disabled={isSubmitting}
         >
           Cancel
         </Button>
-        <Button onClick={() => { void handleSubmit(); }} disabled={!canSubmit}>
-          {isSubmitting ? (
-            <Spinner className="size-4 shrink-0" />
-          ) : (
-            "Submit"
-          )}
+        <Button
+          onClick={() => {
+            void handleSubmit();
+          }}
+          disabled={!canSubmit}
+        >
+          {isSubmitting ? <Spinner className="size-4 shrink-0" /> : "Submit"}
         </Button>
       </DialogFooter>
     </>

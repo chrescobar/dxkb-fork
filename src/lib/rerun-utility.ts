@@ -99,15 +99,21 @@ export function buildPairedLibraries(
   rerunData: Record<string, unknown>,
   getExtra?: (lib: Record<string, string>) => Partial<Library>,
 ): Library[] {
-  return normalizeToArray<Record<string, string>>(rerunData.paired_end_libs)
-    .filter((lib) => lib.read1 && lib.read2)
-    .map((lib) => ({
-      id: getPairedLibraryId(lib.read1, lib.read2),
-      name: getPairedLibraryName(lib.read1, lib.read2),
-      type: "paired" as const,
-      files: [lib.read1, lib.read2],
-      ...getExtra?.(lib),
-    }));
+  return normalizeToArray<Record<string, string>>(
+    rerunData.paired_end_libs,
+  ).flatMap((lib) =>
+    lib.read1 && lib.read2
+      ? [
+          {
+            id: getPairedLibraryId(lib.read1, lib.read2),
+            name: getPairedLibraryName(lib.read1, lib.read2),
+            type: "paired" as const,
+            files: [lib.read1, lib.read2],
+            ...getExtra?.(lib),
+          },
+        ]
+      : [],
+  );
 }
 
 /**
@@ -118,15 +124,21 @@ export function buildSingleLibraries(
   rerunData: Record<string, unknown>,
   getExtra?: (lib: Record<string, string>) => Partial<Library>,
 ): Library[] {
-  return normalizeToArray<Record<string, string>>(rerunData.single_end_libs)
-    .filter((lib) => !!lib.read)
-    .map((lib) => ({
-      id: lib.read,
-      name: getSingleLibraryName(lib.read),
-      type: "single" as const,
-      files: [lib.read],
-      ...getExtra?.(lib),
-    }));
+  return normalizeToArray<Record<string, string>>(
+    rerunData.single_end_libs,
+  ).flatMap((lib) =>
+    lib.read
+      ? [
+          {
+            id: lib.read,
+            name: getSingleLibraryName(lib.read),
+            type: "single" as const,
+            files: [lib.read],
+            ...getExtra?.(lib),
+          },
+        ]
+      : [],
+  );
 }
 
 /**
@@ -140,14 +152,18 @@ export function buildSraLibraries(
 ): Library[] {
   const srrLibs = normalizeToArray<Record<string, string>>(rerunData.srr_libs);
   if (srrLibs.length > 0) {
-    return srrLibs
-      .filter((lib) => !!lib.srr_accession)
-      .map((lib) => ({
-        id: lib.srr_accession,
-        name: lib.srr_accession,
-        type: "sra" as const,
-        ...getExtra?.(lib),
-      }));
+    return srrLibs.flatMap((lib) =>
+      lib.srr_accession
+        ? [
+            {
+              id: lib.srr_accession,
+              name: lib.srr_accession,
+              type: "sra" as const,
+              ...getExtra?.(lib),
+            },
+          ]
+        : [],
+    );
   }
   if (Array.isArray(rerunData.srr_ids)) {
     return (rerunData.srr_ids as string[]).map((id) => ({

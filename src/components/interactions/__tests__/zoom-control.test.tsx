@@ -1,7 +1,8 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { ZoomControl, ratioToZoomPercent } from "../sigma/zoom-control";
+import { ZoomControl } from "../sigma/zoom-control";
+import { ratioToZoomPercent } from "../sigma/zoom-utils";
 
 const zoomIn = vi.fn();
 const zoomOut = vi.fn();
@@ -10,7 +11,9 @@ let onUpdated: (() => void) | undefined;
 const camera = {
   ratio: 2,
   getBoundedRatio: vi.fn((ratio: number) => ratio),
-  on: vi.fn((_event: string, callback: () => void) => { onUpdated = callback; }),
+  on: vi.fn((_event: string, callback: () => void) => {
+    onUpdated = callback;
+  }),
   off: vi.fn(),
 };
 
@@ -37,7 +40,9 @@ describe("ZoomControl", () => {
     expect(input).toHaveValue(50);
 
     camera.ratio = 0.8;
-    act(() => { onUpdated?.(); });
+    act(() => {
+      onUpdated?.();
+    });
     expect(input).toHaveValue(125);
   });
 

@@ -26,8 +26,11 @@ export const NewsCardImage = ({ src, alt }: { src: string; alt: string }) => {
       src={imageSrc}
       alt={alt}
       fill
+      sizes="(min-width: 768px) 33vw, 100vw"
       className="object-cover"
-      onError={() => { setHasError(true); }}
+      onError={() => {
+        setHasError(true);
+      }}
     />
   );
 };

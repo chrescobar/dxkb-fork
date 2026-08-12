@@ -1,6 +1,5 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import type { ListPermissionsResult } from "@/lib/services/workspace/domain";
@@ -199,8 +198,8 @@ export function useWorkspaceDirectory(
     staleTime: 2 * 60 * 1000,
   });
 
-  const items = useMemo(() => listingQuery.data ?? [], [listingQuery.data]);
-  const itemPaths = useMemo(() => items.map((i) => i.path), [items]);
+  const items = listingQuery.data ?? [];
+  const itemPaths = items.map((item) => item.path);
 
   const permissionsQuery = useQuery<ListPermissionsResult>({
     queryKey: workspaceQueryKeys.permissions(itemPaths),
@@ -229,37 +228,30 @@ export function useWorkspaceDirectory(
 
   const isAuthenticated = isAuthenticatedMode(mode);
 
-  const memberCountByPath = useMemo(() => {
-    if (!isAuthenticated) return undefined;
-    const perms = permissionsQuery.data;
-    if (!perms) return undefined;
-    const out: Record<string, number> = {};
+  let memberCountByPath: Record<string, number> | undefined;
+  if (isAuthenticated && permissionsQuery.data) {
+    memberCountByPath = {};
     for (const path of itemPaths) {
-      const list = perms[path];
-      out[path] = Array.isArray(list) ? list.length : 0;
+      const list = permissionsQuery.data[path];
+      memberCountByPath[path] = Array.isArray(list) ? list.length : 0;
     }
-    return out;
-  }, [isAuthenticated, permissionsQuery.data, itemPaths]);
+  }
 
-  const combinedPermissions = useMemo<ListPermissionsResult | undefined>(() => {
-    if (!isAuthenticated) return undefined;
-    const itemPerms = permissionsQuery.data ?? {};
-    const currentPerms = currentPathPermissionsQuery.data ?? {};
-    return { ...currentPerms, ...itemPerms };
-  }, [
-    isAuthenticated,
-    permissionsQuery.data,
-    currentPathPermissionsQuery.data,
-  ]);
+  const combinedPermissions: ListPermissionsResult | undefined = isAuthenticated
+    ? {
+        ...(currentPathPermissionsQuery.data ?? {}),
+        ...(permissionsQuery.data ?? {}),
+      }
+    : undefined;
 
   const listingRefetch = listingQuery.refetch;
   const permissionsRefetch = permissionsQuery.refetch;
   const currentPathPermissionsRefetch = currentPathPermissionsQuery.refetch;
-  const refetch = useCallback(() => {
+  const refetch = () => {
     void listingRefetch();
     void permissionsRefetch();
     void currentPathPermissionsRefetch();
-  }, [listingRefetch, permissionsRefetch, currentPathPermissionsRefetch]);
+  };
 
   return {
     items,
@@ -271,4 +263,3 @@ export function useWorkspaceDirectory(
     permissions: combinedPermissions,
   };
 }
-

@@ -1,5 +1,8 @@
 import { canonicalDatasetId } from "@/lib/phylogeny/nextstrain-dataset";
-import type { PhyloFamilyBlock, PhyloTreeRef } from "@/lib/services/organisms/phylogeny";
+import type {
+  PhyloFamilyBlock,
+  PhyloTreeRef,
+} from "@/lib/services/organisms/phylogeny";
 
 export type PhyloViewer = "archaeopteryx" | "nextstrain";
 
@@ -29,16 +32,20 @@ export function parseSegment(name: string): string | null {
 export function flattenViralTrees(block: PhyloFamilyBlock): ViralTreeChoice[] {
   const rank = new Map((block.order ?? []).map((key, index) => [key, index]));
   return [...block.groups]
-    .sort((a, b) => (rank.get(a.key) ?? Number.MAX_SAFE_INTEGER) - (rank.get(b.key) ?? Number.MAX_SAFE_INTEGER))
-    .flatMap(group => [
-      ...(group.archaeopteryx ?? []).map(ref => ({
+    .sort(
+      (a, b) =>
+        (rank.get(a.key) ?? Number.MAX_SAFE_INTEGER) -
+        (rank.get(b.key) ?? Number.MAX_SAFE_INTEGER),
+    )
+    .flatMap((group) => [
+      ...(group.archaeopteryx ?? []).map((ref) => ({
         groupKey: group.key,
         groupTitle: group.title,
         viewer: "archaeopteryx" as const,
         segment: parseSegment(ref.name),
         ref,
       })),
-      ...(group.nextstrain ?? []).map(ref => ({
+      ...(group.nextstrain ?? []).map((ref) => ({
         groupKey: group.key,
         groupTitle: group.title,
         viewer: "nextstrain" as const,
@@ -48,28 +55,48 @@ export function flattenViralTrees(block: PhyloFamilyBlock): ViralTreeChoice[] {
     ]);
 }
 
-export function filterViralTrees(trees: ViralTreeChoice[], filters: ViralFilters): ViralTreeChoice[] {
-  return trees.filter(tree =>
-    (!filters.strain || tree.groupKey === filters.strain) &&
-    (!filters.viewer || tree.viewer === filters.viewer) &&
-    (filters.segments.size === 0 || (!!tree.segment && filters.segments.has(tree.segment)))
+export function filterViralTrees(
+  trees: ViralTreeChoice[],
+  filters: ViralFilters,
+): ViralTreeChoice[] {
+  return trees.filter(
+    (tree) =>
+      (!filters.strain || tree.groupKey === filters.strain) &&
+      (!filters.viewer || tree.viewer === filters.viewer) &&
+      (filters.segments.size === 0 ||
+        (!!tree.segment && filters.segments.has(tree.segment))),
   );
 }
 
-export function pruneViralFilters(trees: ViralTreeChoice[], filters: ViralFilters): ViralFilters {
-  const strain = filters.strain && trees.some(tree => tree.groupKey === filters.strain)
-    ? filters.strain
-    : null;
-  const strainTrees = trees.filter(tree => !strain || tree.groupKey === strain);
-  const viewer = filters.viewer && strainTrees.some(tree => tree.viewer === filters.viewer)
-    ? filters.viewer
-    : null;
-  const relevant = strainTrees.filter(tree => !viewer || tree.viewer === viewer);
-  const validSegments = new Set(relevant.map(tree => tree.segment).filter((value): value is string => !!value));
+export function pruneViralFilters(
+  trees: ViralTreeChoice[],
+  filters: ViralFilters,
+): ViralFilters {
+  const strain =
+    filters.strain && trees.some((tree) => tree.groupKey === filters.strain)
+      ? filters.strain
+      : null;
+  const strainTrees = trees.filter(
+    (tree) => !strain || tree.groupKey === strain,
+  );
+  const viewer =
+    filters.viewer && strainTrees.some((tree) => tree.viewer === filters.viewer)
+      ? filters.viewer
+      : null;
+  const relevant = strainTrees.filter(
+    (tree) => !viewer || tree.viewer === viewer,
+  );
+  const validSegments = new Set(
+    relevant
+      .map((tree) => tree.segment)
+      .filter((value): value is string => !!value),
+  );
   return {
     strain,
     viewer,
-    segments: new Set([...filters.segments].filter(segment => validSegments.has(segment))),
+    segments: new Set(
+      [...filters.segments].filter((segment) => validSegments.has(segment)),
+    ),
   };
 }
 
@@ -79,28 +106,43 @@ export function pruneViralFilters(trees: ViralTreeChoice[], filters: ViralFilter
  * disabled. Strain is intentionally counted against every tree so choosing a
  * viewer can never lock a strain out — the cascade relaxes the viewer instead.
  */
-export function viralFacetCounts(trees: ViralTreeChoice[], filters: ViralFilters) {
-  const strainTrees = trees.filter(tree => !filters.strain || tree.groupKey === filters.strain);
-  const viewerTrees = strainTrees.filter(tree => !filters.viewer || tree.viewer === filters.viewer);
+export function viralFacetCounts(
+  trees: ViralTreeChoice[],
+  filters: ViralFilters,
+) {
+  const strainTrees = trees.filter(
+    (tree) => !filters.strain || tree.groupKey === filters.strain,
+  );
+  const viewerTrees = strainTrees.filter(
+    (tree) => !filters.viewer || tree.viewer === filters.viewer,
+  );
   return {
     allStrains: trees.length,
     allViewers: strainTrees.length,
-    strain: (key: string) => trees.filter(tree => tree.groupKey === key).length,
-    viewer: (value: PhyloViewer) => strainTrees.filter(tree => tree.viewer === value).length,
-    segment: (segment: string) => viewerTrees.filter(tree => tree.segment === segment).length,
+    strain: (key: string) =>
+      trees.filter((tree) => tree.groupKey === key).length,
+    viewer: (value: PhyloViewer) =>
+      strainTrees.filter((tree) => tree.viewer === value).length,
+    segment: (segment: string) =>
+      viewerTrees.filter((tree) => tree.segment === segment).length,
   };
 }
 
 export function sortedSegments(trees: ViralTreeChoice[]): string[] {
-  return [...new Set(trees.map(tree => tree.segment).filter((value): value is string => !!value))]
-    .sort((a, b) => {
-      const left = segmentOrder.indexOf(a);
-      const right = segmentOrder.indexOf(b);
-      if (left === -1 && right === -1) return a.localeCompare(b);
-      if (left === -1) return 1;
-      if (right === -1) return -1;
-      return left - right;
-    });
+  return [
+    ...new Set(
+      trees
+        .map((tree) => tree.segment)
+        .filter((value): value is string => !!value),
+    ),
+  ].sort((a, b) => {
+    const left = segmentOrder.indexOf(a);
+    const right = segmentOrder.indexOf(b);
+    if (left === -1 && right === -1) return a.localeCompare(b);
+    if (left === -1) return 1;
+    if (right === -1) return -1;
+    return left - right;
+  });
 }
 
 export function choiceKey(choice: ViralTreeChoice): string {
@@ -116,7 +158,10 @@ export function isUnavailable(
   return !id || !availableNextstrainIds.has(id);
 }
 
-export const viewerLabel = { archaeopteryx: "Archaeopteryx", nextstrain: "Auspice" } as const;
+export const viewerLabel = {
+  archaeopteryx: "Archaeopteryx",
+  nextstrain: "Auspice",
+} as const;
 
 function hashSegment(value: string): number {
   let out = 0;
@@ -142,16 +187,22 @@ export interface SegmentRow {
 /** Segmented peers share a row; unsegmented references remain distinct. */
 export function segmentRows(trees: ViralTreeChoice[]): SegmentRow[] {
   const order = sortedSegments(trees);
-  const strains = [...new Map(trees.map(tree => [tree.groupKey, tree.groupTitle])).entries()];
+  const strains = [
+    ...new Map(trees.map((tree) => [tree.groupKey, tree.groupTitle])).entries(),
+  ];
   return strains.flatMap(([strainKey, strainTitle]) => [
-    ...order.flatMap(segment => {
+    ...order.flatMap((segment) => {
       const choices = trees.filter(
-        tree => tree.groupKey === strainKey && tree.segment === segment,
+        (tree) => tree.groupKey === strainKey && tree.segment === segment,
       );
-      return choices.length === 0 ? [] : [{ strainKey, strainTitle, segment, choices }];
+      return choices.length === 0
+        ? []
+        : [{ strainKey, strainTitle, segment, choices }];
     }),
-    ...trees
-      .filter(tree => tree.groupKey === strainKey && tree.segment === null)
-      .map(choice => ({ strainKey, strainTitle, segment: null, choices: [choice] })),
+    ...trees.flatMap((choice) =>
+      choice.groupKey === strainKey && choice.segment === null
+        ? [{ strainKey, strainTitle, segment: null, choices: [choice] }]
+        : [],
+    ),
   ]);
 }

@@ -1,32 +1,7 @@
-export interface SearchTerm {
-  id: string;
-  termTitle: string;
-}
-
 export interface SearchType {
   id: string;
   typeTitle: string;
 }
-
-// These aren't really used in the current iteration, but are retained in case we want to use them later
-export const searchTerms: readonly SearchTerm[] = [
-  {
-    id: "option_and",
-    termTitle: "All Terms",
-  },
-  {
-    id: "option_or",
-    termTitle: "Any Term",
-  },
-  {
-    id: "option_and2",
-    termTitle: "All Exact Terms",
-  },
-  {
-    id: "option_or2",
-    termTitle: "Any Exact Term",
-  },
-];
 
 export const searchTypes: readonly SearchType[] = [
   {

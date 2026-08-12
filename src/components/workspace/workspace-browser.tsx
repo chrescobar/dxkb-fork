@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -10,10 +10,7 @@ import { useAuth } from "@/lib/auth/hooks";
 import { useWorkspacePanel } from "@/contexts/workspace-panel-context";
 import { useWorkspaceDialog } from "@/contexts/workspace-dialog-context";
 import { useWorkspacePathResolve } from "@/hooks/services/workspace/use-workspace-path-resolve";
-import {
-  useWorkspaceDirectory,
-  type WorkspaceDirectoryMode,
-} from "@/hooks/services/workspace/use-workspace-directory";
+import { useWorkspaceDirectory } from "@/hooks/services/workspace/use-workspace-directory";
 import { useEnsureUserWorkspace } from "@/hooks/services/workspace/use-ensure-user-workspace";
 import { useWorkspaceFilteredItems } from "@/hooks/services/workspace/use-workspace-filtered-items";
 import { useWorkspaceSelection } from "@/hooks/services/workspace/use-workspace-selection";
@@ -49,63 +46,14 @@ import {
   type WorkspaceViewMode,
 } from "@/types/workspace-browser";
 import { noop } from "@/lib/utils";
-import { encodeWorkspaceSegment, workspaceUsername } from "@/lib/services/workspace/path-utils";
+import {
+  encodeWorkspaceSegment,
+  workspaceUsername,
+} from "@/lib/services/workspace/path-utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { pickDirectoryMode } from "./workspace-directory-mode";
+
 type PublicWorkspaceLevel = "root" | "user" | "path";
-
-export function pickDirectoryMode(options: {
-  mode: WorkspaceViewMode;
-  username: string;
-  path: string;
-  fullPath: string;
-  currentUser: string;
-  isJobResultView: boolean;
-  isAtSharedRoot: boolean;
-  isPublic: boolean;
-  publicLevel: PublicWorkspaceLevel;
-  jobDotPath?: string;
-}): WorkspaceDirectoryMode | null {
-  const {
-    mode,
-    username,
-    path,
-    fullPath,
-    currentUser,
-    isJobResultView,
-    isAtSharedRoot,
-    isPublic,
-    publicLevel,
-    jobDotPath,
-  } = options;
-
-  if (isJobResultView) {
-    if (!jobDotPath) return null;
-    const dotPathNormalized = jobDotPath.startsWith("/")
-      ? jobDotPath
-      : `/${jobDotPath}`;
-    return {
-      kind: "jobResult",
-      fullPath: dotPathNormalized,
-      visiblePath: path,
-    };
-  }
-  if (isPublic) {
-    if (publicLevel === "root" || !username) return { kind: "publicRoot" };
-    if (publicLevel === "user") return { kind: "publicUser", username };
-    return { kind: "publicPath", fullPath };
-  }
-  if (mode === "home") {
-    if (!currentUser) return null;
-    return { kind: "home", username, path };
-  }
-  // shared mode
-  if (isAtSharedRoot) {
-    if (!currentUser) return null;
-    return { kind: "sharedRoot", currentUser };
-  }
-  if (!fullPath) return null;
-  return { kind: "sharedPath", fullPath };
-}
 
 interface WorkspaceBrowserProps {
   /** "home" = current user's home; "shared" = shared-with-me / shared folder view; "public" = public browsing */
@@ -119,7 +67,7 @@ interface WorkspaceBrowserProps {
   initialPermissions?: ListPermissionsResult;
 }
 
-export function WorkspaceBrowser({
+function useWorkspaceBrowser({
   mode,
   username,
   path,
@@ -140,8 +88,12 @@ export function WorkspaceBrowser({
 
   const [authChecked, setAuthChecked] = useState(false);
   useEffect(() => {
-    const t = setTimeout(() => { setAuthChecked(true); }, 800);
-    return () => { clearTimeout(t); };
+    const t = setTimeout(() => {
+      setAuthChecked(true);
+    }, 800);
+    return () => {
+      clearTimeout(t);
+    };
   }, []);
 
   const [dismissedPath, setDismissedPath] = useState<string | null>(null);
@@ -175,18 +127,16 @@ export function WorkspaceBrowser({
   const isAtSharedRoot = !isHome && !isPublic && (!path || path === "");
   const fullPath = path ? `/${path}` : "";
 
-  const currentFullPath = useMemo(() => {
-    if (!path || path.trim() === "") return "";
-    if (isHome) return buildHomePath(username, path);
-    return fullPath;
-  }, [path, isHome, username, fullPath]);
+  const currentFullPath =
+    !path || path.trim() === ""
+      ? ""
+      : isHome
+        ? buildHomePath(username, path)
+        : fullPath;
 
-  const publicLevel: PublicWorkspaceLevel = useMemo(() => {
-    if (!isPublic) return "root";
-    if (!username) return "root";
-    const pathSegments = path ? path.split("/").filter(Boolean) : [];
-    return pathSegments.length > 1 ? "path" : "user";
-  }, [isPublic, username, path]);
+  const pathSegments = path ? path.split("/").filter(Boolean) : [];
+  const publicLevel: PublicWorkspaceLevel =
+    !isPublic || !username ? "root" : pathSegments.length > 1 ? "path" : "user";
 
   const resolveQuery = useWorkspacePathResolve({
     fullPath: currentFullPath,
@@ -235,7 +185,7 @@ export function WorkspaceBrowser({
     permissions: currentDirPermissions,
   } = directoryResult;
 
-  const items = useMemo(() => (enabled ? rawItems : []), [enabled, rawItems]);
+  const items = enabled ? rawItems : [];
 
   const isOwnHome = mode === "home" && isUrlCurrentUser;
   const homeAppearsEmpty =
@@ -265,10 +215,10 @@ export function WorkspaceBrowser({
     setPanelExpanded,
   });
 
-  const jobResultBasePath = useMemo(() => {
-    if (!isJobResultView || !resolveQuery.data) return undefined;
-    return getDotPathRelative(path, resolveQuery.data.name);
-  }, [isJobResultView, path, resolveQuery.data]);
+  const jobResultBasePath =
+    isJobResultView && resolveQuery.data
+      ? getDotPathRelative(path, resolveQuery.data.name)
+      : undefined;
 
   const { handleItemDoubleClick } = useWorkspaceNavigation({
     mode,
@@ -288,42 +238,27 @@ export function WorkspaceBrowser({
       isPublic,
     });
 
-  const { currentDirectoryPath, currentUserWorkspaceRoot } = useMemo(
-    () =>
-      computeWorkspacePaths({
-        mode: isPublic ? "public" : isHome ? "home" : "shared",
-        username,
-        path,
-        myWorkspaceRoot,
-      }),
-    [isPublic, isHome, username, path, myWorkspaceRoot],
-  );
+  const { currentDirectoryPath, currentUserWorkspaceRoot } =
+    computeWorkspacePaths({
+      mode: isPublic ? "public" : isHome ? "home" : "shared",
+      username,
+      path,
+      myWorkspaceRoot,
+    });
 
   useEffect(() => {
     if (isPublic || !currentDirectoryPath || mode !== "home") return;
     addRecentFolder(currentDirectoryPath, currentUserWorkspaceRoot);
   }, [isPublic, currentDirectoryPath, mode, currentUserWorkspaceRoot]);
 
-  const canWriteToCurrentDir = useMemo(
-    () =>
-      computeCanWriteToCurrentDir({
-        mode: isPublic ? "public" : isHome ? "home" : "shared",
-        fullPath,
-        currentUser,
-        fullWorkspaceUsername,
-        myWorkspaceRoot,
-        currentDirPermissions,
-      }),
-    [
-      isPublic,
-      isHome,
-      fullPath,
-      currentUser,
-      fullWorkspaceUsername,
-      myWorkspaceRoot,
-      currentDirPermissions,
-    ],
-  );
+  const canWriteToCurrentDir = computeCanWriteToCurrentDir({
+    mode: isPublic ? "public" : isHome ? "home" : "shared",
+    fullPath,
+    currentUser,
+    fullWorkspaceUsername,
+    myWorkspaceRoot,
+    currentDirPermissions,
+  });
 
   const {
     isDialogLoading,
@@ -346,13 +281,17 @@ export function WorkspaceBrowser({
   useEffect(() => {
     if (selectedItems.length === 0) return;
     const id = setTimeout(() => tableRef.current?.focus(), 50);
-    return () => { clearTimeout(id); };
+    return () => {
+      clearTimeout(id);
+    };
   }, [selectedItems]);
 
   useEffect(() => {
     if (resolveQuery.isLoading) return;
     const id = setTimeout(() => tableRef.current?.focus(), 100);
-    return () => { clearTimeout(id); };
+    return () => {
+      clearTimeout(id);
+    };
   }, [path, mode, resolveQuery.isLoading]);
 
   useEffect(() => {
@@ -364,7 +303,9 @@ export function WorkspaceBrowser({
       isUrlCurrentUser
     )
       return;
-    router.replace(`/workspace/${encodeWorkspaceSegment(myWorkspaceRoot)}`);
+    window.location.replace(
+      `/workspace/${encodeWorkspaceSegment(myWorkspaceRoot)}`,
+    );
   }, [
     isPublic,
     isHome,
@@ -375,18 +316,17 @@ export function WorkspaceBrowser({
     router,
   ]);
 
-  const pathNotFound = useMemo(() => {
-    if (isPublic || !path || path.trim() === "") return false;
-    if (resolveQuery.isError) return true;
-    if (enabled && error && !resolveQuery.isLoading) return true;
-    return false;
-  }, [isPublic, path, resolveQuery.isError, resolveQuery.isLoading, enabled, error]);
+  const pathNotFound =
+    !isPublic &&
+    !!path &&
+    path.trim() !== "" &&
+    (resolveQuery.isError || (enabled && !!error && !resolveQuery.isLoading));
 
-  const handleNotFoundConfirm = useCallback(() => {
+  const handleNotFoundConfirm = () => {
     router.replace(
       `/workspace/${encodeWorkspaceSegment(myWorkspaceRoot)}/home`,
     );
-  }, [router, myWorkspaceRoot]);
+  };
 
   // --- Early returns ---
 
@@ -410,12 +350,7 @@ export function WorkspaceBrowser({
     </div>
   );
 
-  if (
-    !isPublic &&
-    path &&
-    path.trim() !== "" &&
-    resolveQuery.isLoading
-  ) {
+  if (!isPublic && path && path.trim() !== "" && resolveQuery.isLoading) {
     return loadingSkeleton(isHome ? "home" : "shared");
   }
 
@@ -509,18 +444,24 @@ export function WorkspaceBrowser({
           onShowHiddenFilesChange={isJobResultView ? noop : setShowHiddenFiles}
           onNewFolder={
             !isPublic && !isJobResultView && (isHome || canWriteToCurrentDir)
-              ? () => { dialogDispatch({ type: "OPEN_CREATE_FOLDER" }); }
+              ? () => {
+                  dialogDispatch({ type: "OPEN_CREATE_FOLDER" });
+                }
               : undefined
           }
           onUpload={
             !isPublic && !isJobResultView && (isHome || canWriteToCurrentDir)
-              ? () => { dialogDispatch({ type: "OPEN_UPLOAD" }); }
+              ? () => {
+                  dialogDispatch({ type: "OPEN_UPLOAD" });
+                }
               : undefined
           }
           isAtRoot={isAtSharedRoot}
           onNewWorkspace={
             !isPublic && !isJobResultView && isAtSharedRoot
-              ? () => { dialogDispatch({ type: "OPEN_CREATE_WORKSPACE" }); }
+              ? () => {
+                  dialogDispatch({ type: "OPEN_CREATE_WORKSPACE" });
+                }
               : undefined
           }
         />
@@ -596,4 +537,8 @@ export function WorkspaceBrowser({
       />
     </WorkspaceShell>
   );
+}
+
+export function WorkspaceBrowser(props: WorkspaceBrowserProps) {
+  return useWorkspaceBrowser(props);
 }

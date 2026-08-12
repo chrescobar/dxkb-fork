@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-} from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { createPortal } from "react-dom";
 import { Search, Loader2, ShieldUser, ChevronDown } from "lucide-react";
@@ -13,10 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import {
-  fetchGenomesByIds,
-  type GenomeSummary,
-} from "@/lib/services/genome";
+import { fetchGenomesByIds, type GenomeSummary } from "@/lib/services/genome";
 import { toast } from "sonner";
 import {
   useGenomeTypeahead,
@@ -39,7 +31,7 @@ function isGenomeId(str: string): boolean {
   return /^[0-9]+(\.[0-9]+)?$/.test(str.trim());
 }
 
-export function SingleGenomeSelector({
+function useSingleGenomeSelector({
   title,
   placeholder = "e.g. Mycobacterium tuberculosis H37Rv",
   helperText,
@@ -81,22 +73,17 @@ export function SingleGenomeSelector({
   } = useGenomeTypeahead({
     minQueryLength,
     disabled,
-    skipFetch: (q, sel) =>
-      sel !== null && q.trim() === sel.genome_name,
+    skipFetch: (q, sel) => sel !== null && q.trim() === sel.genome_name,
     additionalClickOutsideRefs: [buttonRef, containerRef],
-    onClickOutside: () => { setIsManualTrigger(false); },
+    onClickOutside: () => {
+      setIsManualTrigger(false);
+    },
   });
 
-  // Keep refs in sync for race-condition-safe reads in async callbacks
-  const queryRef = useRef(query);
-  const selectedGenomeRef = useRef(selectedGenome);
-  useEffect(() => { queryRef.current = query; }, [query]);
-  useEffect(() => { selectedGenomeRef.current = selectedGenome; }, [selectedGenome]);
-
-  // Sync query with value prop; resolve genome ID → name via fetchGenomesByIds
-  useEffect(() => {
-    if (!value) {
-      if (queryRef.current) {
+  // Sync query with value prop; resolve genome ID -> name via fetchGenomesByIds.
+  const syncValue = useEffectEvent((nextValue: string) => {
+    if (!nextValue) {
+      if (query) {
         queueMicrotask(() => {
           setQuery("");
           setSelectedGenome(null);
@@ -106,20 +93,18 @@ export function SingleGenomeSelector({
       return;
     }
 
-    if (isGenomeId(value)) {
+    if (isGenomeId(nextValue)) {
       if (
-        (selectedGenomeRef.current &&
-          selectedGenomeRef.current.genome_id === value) ||
-        selectedGenomeIdRef.current === value
+        (selectedGenome && selectedGenome.genome_id === nextValue) ||
+        selectedGenomeIdRef.current === nextValue
       ) {
         return;
       }
-      if (
-        !selectedGenomeRef.current ||
-        selectedGenomeRef.current.genome_id !== value
-      ) {
-        queueMicrotask(() => { setIsLoading(true); });
-        fetchGenomesByIds([value])
+      if (!selectedGenome || selectedGenome.genome_id !== nextValue) {
+        queueMicrotask(() => {
+          setIsLoading(true);
+        });
+        fetchGenomesByIds([nextValue])
           .then((results) => {
             if (results.length > 0) {
               const genome = results[0];
@@ -127,41 +112,44 @@ export function SingleGenomeSelector({
               setSelectedGenome(genome);
               setQuery(genome.genome_name);
             } else {
-              setQuery(value);
+              setQuery(nextValue);
               setSelectedGenome(null);
             }
           })
           .catch(() => {
-            setQuery(value);
+            setQuery(nextValue);
             setSelectedGenome(null);
           })
-          .finally(() => { setIsLoading(false); });
+          .finally(() => {
+            setIsLoading(false);
+          });
         return;
       }
     }
 
-    if (value !== queryRef.current) {
-      if (
-        selectedGenomeRef.current &&
-        value === selectedGenomeRef.current.genome_name
-      ) {
+    if (nextValue !== query) {
+      if (selectedGenome && nextValue === selectedGenome.genome_name) {
         return;
       }
       queueMicrotask(() => {
-        setQuery(value);
+        setQuery(nextValue);
         if (
-          selectedGenomeRef.current &&
-          value !== selectedGenomeRef.current.genome_id &&
-          value !== selectedGenomeRef.current.genome_name
+          selectedGenome &&
+          nextValue !== selectedGenome.genome_id &&
+          nextValue !== selectedGenome.genome_name
         ) {
           setSelectedGenome(null);
         }
       });
     }
-  }, [value, setQuery, setSelectedGenome, setIsLoading]);
+  });
+
+  useEffect(() => {
+    syncValue(value);
+  }, [value]);
 
   // Compute portal position (avoids Card overflow-hidden clipping)
-  const updateDropdownLayout = useCallback(() => {
+  const updateDropdownLayout = useEffectEvent(() => {
     if (!showDropdown || !containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
@@ -183,15 +171,13 @@ export function SingleGenomeSelector({
       top = rect.top - maxHeight - gap;
     }
     setDropdownRect({ top, left: rect.left, width: rect.width, maxHeight });
-  }, [showDropdown]);
+  });
 
   useEffect(() => {
     if (showDropdown && containerRef.current) {
       updateDropdownLayout();
-    } else {
-      setDropdownRect(null);
     }
-  }, [showDropdown, updateDropdownLayout]);
+  }, [showDropdown]);
 
   useEffect(() => {
     if (!showDropdown) return;
@@ -201,7 +187,7 @@ export function SingleGenomeSelector({
       window.removeEventListener("scroll", updateDropdownLayout, true);
       window.removeEventListener("resize", updateDropdownLayout);
     };
-  }, [showDropdown, updateDropdownLayout]);
+  }, [showDropdown]);
 
   const handleSelect = (genome: GenomeSummary) => {
     selectedGenomeIdRef.current = genome.genome_id;
@@ -210,6 +196,7 @@ export function SingleGenomeSelector({
     setSelectedGenome(genome);
     updateSuggestions([]);
     setShowDropdown(false);
+    setDropdownRect(null);
     setIsManualTrigger(false);
   };
 
@@ -220,6 +207,7 @@ export function SingleGenomeSelector({
       setIsManualTrigger(true);
       triggerSearch("");
     } else {
+      setDropdownRect(null);
       setIsManualTrigger(false);
     }
   };
@@ -237,22 +225,24 @@ export function SingleGenomeSelector({
     }
 
     setIsLoading(true);
-    try {
-      const results = await fetchGenomesByIds([trimmed]);
-      if (results.length === 0) {
-        toast.error("Genome not found", {
-          description: `${trimmed} was not found in BV-BRC`,
-        });
-        return;
-      }
-      handleSelect(results[0]);
-    } catch (fetchError) {
+    const result = await fetchGenomesByIds([trimmed]).then(
+      (results) => ({ results }),
+      (error: unknown) => ({ error }),
+    );
+    if ("error" in result) {
       const message =
-        fetchError instanceof Error ? fetchError.message : "Failed to add genome";
+        result.error instanceof Error
+          ? result.error.message
+          : "Failed to add genome";
       toast.error(message);
-    } finally {
-      setIsLoading(false);
+    } else if (result.results.length === 0) {
+      toast.error("Genome not found", {
+        description: `${trimmed} was not found in BV-BRC`,
+      });
+    } else {
+      handleSelect(result.results[0]);
     }
+    setIsLoading(false);
   };
 
   useHotkey(
@@ -260,13 +250,21 @@ export function SingleGenomeSelector({
     () => {
       if (!showDropdown || suggestions.length === 0) {
         void handleManualSelect();
-      } else if (highlightedIndex >= 0 && highlightedIndex < suggestions.length) {
+      } else if (
+        highlightedIndex >= 0 &&
+        highlightedIndex < suggestions.length
+      ) {
         handleSelect(suggestions[highlightedIndex]);
       } else {
         void handleManualSelect();
       }
     },
-    { target: inputRef, ignoreInputs: false, conflictBehavior: "allow", preventDefault: true },
+    {
+      target: inputRef,
+      ignoreInputs: false,
+      conflictBehavior: "allow",
+      preventDefault: true,
+    },
   );
 
   const showEmptyState =
@@ -338,7 +336,9 @@ export function SingleGenomeSelector({
               {isLoading ? (
                 <div className="flex items-center justify-center p-4">
                   <Loader2 className="mr-2 size-4 animate-spin" />
-                  <span className="text-sm text-muted-foreground">Searching...</span>
+                  <span className="text-sm text-muted-foreground">
+                    Searching...
+                  </span>
                 </div>
               ) : error ? (
                 <div className="p-4 text-sm text-destructive">{error}</div>
@@ -348,14 +348,20 @@ export function SingleGenomeSelector({
                   return (
                     <button
                       key={genome.genome_id}
-                      ref={(el) => { itemRefs.current[index] = el; }}
+                      ref={(el) => {
+                        itemRefs.current[index] = el;
+                      }}
                       type="button"
                       className={cn(
                         "flex w-full cursor-pointer flex-col items-start gap-1 rounded-md border-0 bg-transparent px-4 py-2 text-left text-sm hover:bg-accent",
                         isHighlighted && "bg-accent",
                       )}
-                      onClick={() => { handleSelect(genome); }}
-                      onMouseEnter={() => { setHighlightedIndex(index); }}
+                      onClick={() => {
+                        handleSelect(genome);
+                      }}
+                      onMouseEnter={() => {
+                        setHighlightedIndex(index);
+                      }}
                     >
                       <span className="flex items-center gap-1 truncate text-sm font-medium">
                         {genome.public === false && (
@@ -386,4 +392,8 @@ export function SingleGenomeSelector({
       )}
     </div>
   );
+}
+
+export function SingleGenomeSelector(props: SingleGenomeSelectorProps) {
+  return useSingleGenomeSelector(props);
 }

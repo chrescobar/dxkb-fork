@@ -1,4 +1,4 @@
-import { pickDirectoryMode } from "../workspace-browser";
+import { pickDirectoryMode } from "../workspace-directory-mode";
 
 const base = {
   username: "alice",
@@ -66,25 +66,45 @@ describe("pickDirectoryMode", () => {
   describe("public mode", () => {
     it("returns publicRoot when publicLevel is root", () => {
       expect(
-        pickDirectoryMode({ ...base, mode: "public", isPublic: true, publicLevel: "root" }),
+        pickDirectoryMode({
+          ...base,
+          mode: "public",
+          isPublic: true,
+          publicLevel: "root",
+        }),
       ).toEqual({ kind: "publicRoot" });
     });
 
     it("returns publicRoot when username is empty", () => {
       expect(
-        pickDirectoryMode({ ...base, mode: "public", isPublic: true, username: "" }),
+        pickDirectoryMode({
+          ...base,
+          mode: "public",
+          isPublic: true,
+          username: "",
+        }),
       ).toEqual({ kind: "publicRoot" });
     });
 
     it("returns publicUser when publicLevel is user", () => {
       expect(
-        pickDirectoryMode({ ...base, mode: "public", isPublic: true, publicLevel: "user" }),
+        pickDirectoryMode({
+          ...base,
+          mode: "public",
+          isPublic: true,
+          publicLevel: "user",
+        }),
       ).toEqual({ kind: "publicUser", username: "alice" });
     });
 
     it("returns publicPath when publicLevel is path", () => {
       expect(
-        pickDirectoryMode({ ...base, mode: "public", isPublic: true, publicLevel: "path" }),
+        pickDirectoryMode({
+          ...base,
+          mode: "public",
+          isPublic: true,
+          publicLevel: "path",
+        }),
       ).toEqual({ kind: "publicPath", fullPath: "/alice@bvbrc/home/folder" });
     });
   });
@@ -114,7 +134,10 @@ describe("pickDirectoryMode", () => {
           jobDotPath: "alice@bvbrc/home/.myjob",
         }),
       ).toEqual(
-        expect.objectContaining({ kind: "jobResult", fullPath: "/alice@bvbrc/home/.myjob" }),
+        expect.objectContaining({
+          kind: "jobResult",
+          fullPath: "/alice@bvbrc/home/.myjob",
+        }),
       );
     });
 

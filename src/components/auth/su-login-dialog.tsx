@@ -35,19 +35,19 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
     if (!targetUser.trim() || !password) return;
 
     setIsSubmitting(true);
-    const { error } = await authAdmin.impersonate.start(
-      targetUser.trim(),
-      password,
-    );
-    if (error) {
-      toast.error(error.message || "SU login failed");
+    const result = await authAdmin.impersonate
+      .start(targetUser.trim(), password)
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+    if (result.error) {
+      toast.error(result.error.message || "SU login failed");
     } else {
       void queryClient.resetQueries();
       onOpenChange(false);
       setTargetUser("");
       setPassword("");
     }
-    setIsSubmitting(false);
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -81,20 +81,27 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
               </p>
               <p className="mt-1 text-amber-700 dark:text-amber-400">
                 You can take control of another user&apos;s account to
-                troubleshoot or assist them. Please be careful and respectful
-                of the user&apos;s account that you are controlling.
+                troubleshoot or assist them. Please be careful and respectful of
+                the user&apos;s account that you are controlling.
               </p>
             </div>
           </div>
 
-          <form onSubmit={(e) => { void handleSubmit(e); }} className="space-y-4">
+          <form
+            onSubmit={(e) => {
+              void handleSubmit(e);
+            }}
+            className="space-y-4"
+          >
             <div className="space-y-2">
               <Label htmlFor="su-target-user">User to Impersonate</Label>
               <Input
                 id="su-target-user"
                 placeholder="User id for other account"
                 value={targetUser}
-                onChange={(e) => { setTargetUser(e.target.value); }}
+                onChange={(e) => {
+                  setTargetUser(e.target.value);
+                }}
                 autoComplete="off"
                 disabled={isSubmitting}
               />
@@ -107,7 +114,9 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
                 type="password"
                 placeholder="Your admin password"
                 value={password}
-                onChange={(e) => { setPassword(e.target.value); }}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
                 autoComplete="off"
                 disabled={isSubmitting}
               />

@@ -1,13 +1,10 @@
 "use client";
 
-import { useCallback, useState, useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 import type { AuthError, Result } from "@/lib/auth/port";
 import { useAuthStore } from "@/lib/auth/provider";
-import type {
-  AuthUser,
-  SigninCredentials,
-} from "@/lib/auth/types";
+import type { AuthUser, SigninCredentials } from "@/lib/auth/types";
 
 export interface UseAuthResult {
   user: AuthUser | null;
@@ -52,20 +49,15 @@ export function useSignIn(): UseSignInResult {
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<AuthError | null>(null);
 
-  const signIn = useCallback(
-    async (credentials: SigninCredentials) => {
-      setIsPending(true);
-      setError(null);
-      try {
-        const result = await store.signIn(credentials);
-        if (result.error) setError(result.error);
-        return result;
-      } finally {
-        setIsPending(false);
-      }
-    },
-    [store],
-  );
+  const signIn = async (credentials: SigninCredentials) => {
+    setIsPending(true);
+    setError(null);
+    const result = await store.signIn(credentials).finally(() => {
+      setIsPending(false);
+    });
+    if (result.error) setError(result.error);
+    return result;
+  };
 
   return { signIn, isPending, error };
 }

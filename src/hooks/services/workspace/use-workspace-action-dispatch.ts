@@ -1,6 +1,5 @@
 "use client";
 
-import { useCallback } from "react";
 import { useMutation, type QueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { WorkspaceItem } from "@/lib/services/workspace/domain";
@@ -13,6 +12,8 @@ import {
 import { isFolderType } from "@/lib/services/workspace/utils";
 import { toggleFavorite } from "@/lib/services/workspace/favorites";
 import { forbiddenDownloadTypes } from "@/lib/services/workspace/types";
+
+const forbiddenDownloadTypeSet = new Set<string>(forbiddenDownloadTypes);
 import { workspaceQueryKeys } from "@/lib/services/workspace/workspace-query-keys";
 import { useWorkspaceDialog } from "@/contexts/workspace-dialog-context";
 import { getStructureViewerUrl } from "@/components/workspace/file-viewer/file-viewer-registry";
@@ -33,7 +34,9 @@ export function useWorkspaceActionDispatch({
   items,
   isPublic = false,
 }: UseWorkspaceActionDispatchOptions) {
-  const repository = useWorkspaceRepository(isPublic ? "public" : "authenticated");
+  const repository = useWorkspaceRepository(
+    isPublic ? "public" : "authenticated",
+  );
   const { dispatch } = useWorkspaceDialog();
 
   const favoriteMutation = useMutation({
@@ -44,10 +47,9 @@ export function useWorkspaceActionDispatch({
       void queryClient.invalidateQueries({
         queryKey: workspaceQueryKeys.favorites(myWorkspaceRoot),
       });
-      toast.success(
-        added ? "Added to favorites" : "Removed from favorites",
-        { description: folderPath },
-      );
+      toast.success(added ? "Added to favorites" : "Removed from favorites", {
+        description: folderPath,
+      });
     },
     onError: (err) => {
       const message =
@@ -75,8 +77,7 @@ export function useWorkspaceActionDispatch({
       }
     },
     onError: (err) => {
-      const message =
-        err instanceof Error ? err.message : "Download failed.";
+      const message = err instanceof Error ? err.message : "Download failed.";
       toast.error(message);
     },
   });
@@ -84,86 +85,93 @@ export function useWorkspaceActionDispatch({
   const { mutate: favoriteMutate } = favoriteMutation;
   const { mutate: downloadMutate } = downloadMutation;
 
-  const handleAction = useCallback(
-    (actionId: string, selection: WorkspaceItem[]) => {
-      if (actionId === "delete") {
-        dispatch({ type: "OPEN_DELETE", items: selection });
+  const handleAction = (actionId: string, selection: WorkspaceItem[]) => {
+    if (actionId === "delete") {
+      dispatch({ type: "OPEN_DELETE", items: selection });
+      return;
+    }
+    if (actionId === "copy") {
+      dispatch({ type: "OPEN_COPY", items: selection, mode: "copy" });
+      return;
+    }
+    if (actionId === "move") {
+      dispatch({ type: "OPEN_COPY", items: selection, mode: "move" });
+      return;
+    }
+    if (actionId === "editType") {
+      const single = selection.at(0);
+      if (single?.path) {
+        dispatch({ type: "OPEN_EDIT_TYPE", item: single });
+      }
+      return;
+    }
+    if (actionId === "viewer3d") {
+      const single = selection.at(0);
+      if (single?.path) {
+        window.open(
+          getStructureViewerUrl(single.path),
+          "_blank",
+          "noopener,noreferrer",
+        );
+      }
+      return;
+    }
+    if (actionId === "favorite") {
+      const single = selection.at(0);
+      if (
+        !currentUser ||
+        !myWorkspaceRoot ||
+        !single?.path ||
+        single.type !== "folder"
+      ) {
         return;
       }
-      if (actionId === "copy") {
-        dispatch({ type: "OPEN_COPY", items: selection, mode: "copy" });
-        return;
-      }
-      if (actionId === "move") {
-        dispatch({ type: "OPEN_COPY", items: selection, mode: "move" });
-        return;
-      }
-      if (actionId === "editType") {
-        const single = selection.at(0);
-        if (single?.path) {
-          dispatch({ type: "OPEN_EDIT_TYPE", item: single });
-        }
-        return;
-      }
-      if (actionId === "viewer3d") {
-        const single = selection.at(0);
-        if (single?.path) {
-          window.open(getStructureViewerUrl(single.path), "_blank", "noopener,noreferrer");
-        }
-        return;
-      }
-      if (actionId === "favorite") {
-        const single = selection.at(0);
-        if (
-          !currentUser ||
-          !myWorkspaceRoot ||
-          !single?.path ||
-          single.type !== "folder"
-        ) {
-          return;
-        }
-        favoriteMutate(single.path);
-        return;
-      }
-      if (actionId !== "download") return;
-      const downloadable = selection.filter(
-        (item) =>
-          Boolean(item.path) &&
-          !(forbiddenDownloadTypes as readonly string[]).includes(
-            item.type.toLowerCase(),
-          ),
-      );
-      if (downloadable.length === 0) {
-        toast.error("Nothing to download for this selection.", {
-          description:
-            "Some object types are not downloadable. Try selecting files or standard folders.",
-        });
-        return;
-      }
+      favoriteMutate(single.path);
+      return;
+    }
+    if (actionId !== "download") return;
+    const downloadable = selection.filter(
+      (item) =>
+        Boolean(item.path) &&
+        !forbiddenDownloadTypeSet.has(item.type.toLowerCase()),
+    );
+    if (downloadable.length === 0) {
+      toast.error("Nothing to download for this selection.", {
+        description:
+          "Some object types are not downloadable. Try selecting files or standard folders.",
+      });
+      return;
+    }
 
-      const mappedPaths = expandDownloadPaths(downloadable, items);
-      const singleFile =
-        downloadable.length === 1 && !isFolderType(downloadable[0]?.type ?? "");
-      if (singleFile) {
-        downloadMutate({ mappedPaths, downloadable });
-        return;
-      }
-      const single = downloadable.length === 1 ? downloadable[0] : null;
-      const singleType = (single?.type ?? "").toLowerCase();
-      const defaultName =
-        singleType === "job_result"
-          ? (single?.name ?? "").replace(/^\./, "").trim() || "archive"
-          : single?.name != null && single.name.startsWith(".")
-            ? (getSiblingJobResultPathForDotFolder(single.path, items)?.split("/").filter(Boolean).pop() ??
-                single.name.replace(/^\./, "")).trim() || "archive"
-            : single?.name != null
-              ? single.name.trim() || "archive"
-              : "archive";
+    const mappedPaths = expandDownloadPaths(downloadable, items);
+    const singleFile =
+      downloadable.length === 1 && !isFolderType(downloadable[0]?.type ?? "");
+    if (singleFile) {
+      downloadMutate({ mappedPaths, downloadable });
+      return;
+    }
+    const single = downloadable.length === 1 ? downloadable[0] : null;
+    const singleType = (single?.type ?? "").toLowerCase();
+    const defaultName =
+      singleType === "job_result"
+        ? (single?.name ?? "").replace(/^\./, "").trim() || "archive"
+        : single?.name != null && single.name.startsWith(".")
+          ? (
+              getSiblingJobResultPathForDotFolder(single.path, items)
+                ?.split("/")
+                .filter(Boolean)
+                .pop() ?? single.name.replace(/^\./, "")
+            ).trim() || "archive"
+          : single?.name != null
+            ? single.name.trim() || "archive"
+            : "archive";
 
-      dispatch({ type: "OPEN_DOWNLOAD_OPTIONS", paths: mappedPaths, defaultName });
-    },
-    [currentUser, myWorkspaceRoot, items, dispatch, favoriteMutate, downloadMutate],
-  );
+    dispatch({
+      type: "OPEN_DOWNLOAD_OPTIONS",
+      paths: mappedPaths,
+      defaultName,
+    });
+  };
 
   return {
     handleAction,

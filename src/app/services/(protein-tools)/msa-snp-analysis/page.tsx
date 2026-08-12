@@ -3,7 +3,7 @@
 import { useForm } from "@tanstack/react-form";
 import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
 import { normalizeToArray } from "@/lib/rerun-utility";
 import { ServiceHeader } from "@/components/services/service-header";
@@ -53,7 +53,9 @@ import { msaSnpAnalysisService } from "@/lib/forms/(protein-tools)/msa-snp-analy
 
 import { msaSNPAnalysisAligners } from "@/lib/forms/(protein-tools)/msa-snp-analysis/msa-snp-analysis-form-utils";
 
-export default function MSAandSNPAnalysisPage() {
+const emptyGenomeGroups: string[] = [];
+
+function useMSAandSNPAnalysisPage() {
   const [_selectedFeatureGroupObject, setSelectedFeatureGroupObject] =
     useState<WorkspaceObject | null>(null);
   const [_selectedGenomeGroupObject, setSelectedGenomeGroupObject] =
@@ -101,34 +103,21 @@ export default function MSAandSNPAnalysisPage() {
   }
 
   const form = useForm({
-    defaultValues:
-      MsaSnpAnalysis.defaultMsaSnpAnalysisFormValues,
+    defaultValues: MsaSnpAnalysis.defaultMsaSnpAnalysisFormValues,
     validators: { onChange: MsaSnpAnalysis.msaSnpAnalysisFormSchema },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(
-        value,
-      );
+      await runtime.submitFormData(value);
     },
   });
 
   const inputStatus = useSelector(form.store, (s) => s.values.input_status);
   const inputType = useSelector(form.store, (s) => s.values.input_type);
   const refType = useSelector(form.store, (s) => s.values.ref_type);
-  const refTypeRef = useRef(refType);
-  useEffect(() => {
-    refTypeRef.current = refType;
-  }, [refType]);
-  const prevFeatureGroupRef = useRef<string>("");
-  const prevSelectGenomegroupRef = useRef<string[]>([]);
   const aligner = useSelector(form.store, (s) => s.values.aligner);
   const featureGroup = useSelector(form.store, (s) => s.values.feature_groups);
-  const rawSelectGenomegroup = useSelector(
+  const selectGenomegroup = useSelector(
     form.store,
-    (s) => s.values.select_genomegroup,
-  );
-  const selectGenomegroup = useMemo(
-    () => rawSelectGenomegroup || [],
-    [rawSelectGenomegroup],
+    (state) => state.values.select_genomegroup ?? emptyGenomeGroups,
   );
   const outputPath = useSelector(form.store, (s) => s.values.output_path);
   const canSubmit = useSelector(form.store, (s) => s.canSubmit);
@@ -142,8 +131,7 @@ export default function MSAandSNPAnalysisPage() {
         const rawInputType = rerunData.input_type as string | undefined;
         if (rawInputType) {
           let inputTypeValue:
-            | MsaSnpAnalysis.MsaSnpAnalysisFormData["input_type"]
-            | undefined;
+            MsaSnpAnalysis.MsaSnpAnalysisFormData["input_type"] | undefined;
           if (rawInputType === "input_group") {
             inputTypeValue = "input_feature_group";
           } else if (rawInputType === "input_genomegroup") {
@@ -152,8 +140,7 @@ export default function MSAandSNPAnalysisPage() {
             rawInputType === "input_fasta" ||
             rawInputType === "input_sequence"
           ) {
-            inputTypeValue =
-              rawInputType;
+            inputTypeValue = rawInputType;
           }
           if (inputTypeValue) {
             form.setFieldValue("input_type", inputTypeValue);
@@ -171,10 +158,7 @@ export default function MSAandSNPAnalysisPage() {
           rerunData.select_genomegroup,
         );
         if (selectGenomegroupRaw.length > 0) {
-          form.setFieldValue(
-            "select_genomegroup",
-            selectGenomegroupRaw,
-          );
+          form.setFieldValue("select_genomegroup", selectGenomegroupRaw);
         }
 
         const fastaFilesRaw = normalizeToArray<MsaSnpAnalysis.FastaFileItem>(
@@ -223,73 +207,53 @@ export default function MSAandSNPAnalysisPage() {
   });
   const { isSubmitting, jobParamsDialogProps } = runtime;
 
-  // Update strategy visibility based on aligner
-  useEffect(() => {
-    if (aligner === "Muscle" || inputStatus === "aligned") {
-      queueMicrotask(() => { setShowStrategy(false); });
-    }
-  }, [aligner, inputStatus]);
-
-  // Validate FASTA input when text changes
-  useEffect(() => {
-    if (!fastaInputText.trim()) {
+  function handleFastaInputChange(value: string) {
+    setFastaInputText(value);
+    if (!value.trim()) {
       form.setFieldValue("fasta_keyboard_input", "");
-      queueMicrotask(() => { setFastaValidationResult(null); });
+      setFastaValidationResult(null);
       return;
     }
 
     const hasReference =
       refType === "string" && referenceFastaText.trim() !== "";
     const validation = MsaSnpAnalysisUtils.validateSequenceFasta(
-      fastaInputText,
+      value,
       hasReference,
     );
-
-    queueMicrotask(() =>
-      { setFastaValidationResult({
-        valid: validation.valid && validation.meetsMinSequenceRequirement,
-        message: validation.meetsMinSequenceRequirement
-          ? validation.message
-          : `At least ${hasReference ? "one" : "two"} sequence(s) are required.`,
-        numseq: validation.numseq,
-      }); },
+    const valid = validation.valid && validation.meetsMinSequenceRequirement;
+    setFastaValidationResult({
+      valid,
+      message: validation.meetsMinSequenceRequirement
+        ? validation.message
+        : `At least ${hasReference ? "one" : "two"} sequence(s) are required.`,
+      numseq: validation.numseq,
+    });
+    form.setFieldValue(
+      "fasta_keyboard_input",
+      valid ? validation.trimFasta : "",
     );
+  }
 
-    if (validation.valid && validation.meetsMinSequenceRequirement) {
-      form.setFieldValue("fasta_keyboard_input", validation.trimFasta);
-    }
-  }, [fastaInputText, refType, referenceFastaText, form]);
-
-  // Validate reference FASTA input when text changes
-  useEffect(() => {
-    if (!referenceFastaText.trim()) {
-      // Only clear ref_string when the "string" ref type controls it.
-      // For "feature_id" / "genome_id", ref_string is set by the dropdown
-      // and must not be wiped out (e.g. after a rerun pre-fill).
-      if (refType === "string") {
-        form.setFieldValue("ref_string", "");
-      }
-      queueMicrotask(() => { setReferenceFastaValidationResult(null); });
+  function handleReferenceFastaChange(value: string) {
+    setReferenceFastaText(value);
+    if (!value.trim()) {
+      form.setFieldValue("ref_string", "");
+      setReferenceFastaValidationResult(null);
       return;
     }
 
-    const validation =
-      MsaSnpAnalysisUtils.validateReferenceFasta(referenceFastaText);
-
-    queueMicrotask(() =>
-      { setReferenceFastaValidationResult({
-        valid: validation.valid && validation.isSingleSequence,
-        message: validation.isSingleSequence
-          ? validation.message
-          : "Only one sequence is allowed.",
-        numseq: validation.numseq,
-      }); },
-    );
-
-    if (validation.valid && validation.isSingleSequence) {
-      form.setFieldValue("ref_string", validation.trimFasta);
-    }
-  }, [referenceFastaText, refType, form]);
+    const validation = MsaSnpAnalysisUtils.validateReferenceFasta(value);
+    const valid = validation.valid && validation.isSingleSequence;
+    setReferenceFastaValidationResult({
+      valid,
+      message: validation.isSingleSequence
+        ? validation.message
+        : "Only one sequence is allowed.",
+      numseq: validation.numseq,
+    });
+    form.setFieldValue("ref_string", valid ? validation.trimFasta : "");
+  }
 
   const {
     features: featureOptions,
@@ -305,32 +269,6 @@ export default function MSAandSNPAnalysisPage() {
     selectGenomegroup[0],
     refType === "genome_id" && selectGenomegroup.length > 0,
   );
-
-  // Clear selected IDs when the driving inputs change (queueMicrotask avoids set-during-render).
-  // Skip on initial selection (empty → non-empty) so rerun-prefilled ref IDs are preserved.
-  useEffect(() => {
-    const prev = prevFeatureGroupRef.current;
-    prevFeatureGroupRef.current = featureGroup ?? "";
-    if (!prev) return;
-    queueMicrotask(() => {
-      setSelectedFeatureId("");
-      if (refTypeRef.current === "feature_id") {
-        form.setFieldValue("ref_string", "");
-      }
-    });
-  }, [featureGroup, form]);
-
-  useEffect(() => {
-    const prev = prevSelectGenomegroupRef.current;
-    prevSelectGenomegroupRef.current = selectGenomegroup;
-    if (prev.length === 0) return;
-    queueMicrotask(() => {
-      setSelectedGenomeId("");
-      if (refTypeRef.current === "genome_id") {
-        form.setFieldValue("ref_string", "");
-      }
-    });
-  }, [selectGenomegroup, form]);
 
   // Surface fetch errors via toast
   useEffect(() => {
@@ -351,27 +289,18 @@ export default function MSAandSNPAnalysisPage() {
     }
   }, [genomeGroupError]);
 
-  // Determine which reference options are available
-  const availableRefTypes =
-    useMemo((): MsaSnpAnalysis.MsaSnpAnalysisFormData["ref_type"][] => {
-      if (inputStatus === "aligned") {
-        return ["none", "first"];
-      }
-
-      if (inputType === "input_feature_group") {
-        return ["none", "feature_id", "string"];
-      }
-
-      if (inputType === "input_genome_group") {
-        return ["none", "genome_id", "string"];
-      }
-
-      if (inputType === "input_fasta" || inputType === "input_sequence") {
-        return ["none", "first", "string"];
-      }
-
-      return ["none", "string"];
-    }, [inputStatus, inputType]);
+  let availableRefTypes: MsaSnpAnalysis.MsaSnpAnalysisFormData["ref_type"][];
+  if (inputStatus === "aligned") {
+    availableRefTypes = ["none", "first"];
+  } else if (inputType === "input_feature_group") {
+    availableRefTypes = ["none", "feature_id", "string"];
+  } else if (inputType === "input_genome_group") {
+    availableRefTypes = ["none", "genome_id", "string"];
+  } else if (inputType === "input_fasta" || inputType === "input_sequence") {
+    availableRefTypes = ["none", "first", "string"];
+  } else {
+    availableRefTypes = ["none", "string"];
+  }
 
   return (
     <section>
@@ -553,8 +482,15 @@ export default function MSAandSNPAnalysisPage() {
                                 return;
                               }
 
+                              const changed = field.state.value !== object.path;
                               field.handleChange(object.path);
                               setSelectedFeatureGroupObject(object);
+                              if (changed) {
+                                setSelectedFeatureId("");
+                                if (refType === "feature_id") {
+                                  form.setFieldValue("ref_string", "");
+                                }
+                              }
                             }}
                             value={field.state.value}
                           />
@@ -661,10 +597,17 @@ export default function MSAandSNPAnalysisPage() {
                             }
 
                             // Replace the existing group (only one group allowed)
+                            const changed = selectGenomegroup[0] !== inputValue;
                             form.setFieldValue("select_genomegroup", [
                               inputValue,
                             ]);
                             setSelectedGenomeGroupObject(null);
+                            if (changed) {
+                              setSelectedGenomeId("");
+                              if (refType === "genome_id") {
+                                form.setFieldValue("ref_string", "");
+                              }
+                            }
                           } catch (error) {
                             console.error(
                               "Failed to validate genome group:",
@@ -678,9 +621,8 @@ export default function MSAandSNPAnalysisPage() {
                               description: errorMessage,
                               closeButton: true,
                             });
-                          } finally {
-                            setIsValidatingGenomeGroup(false);
                           }
+                          setIsValidatingGenomeGroup(false);
                         })();
                       }}
                       value={selectGenomegroup[0]}
@@ -754,7 +696,9 @@ export default function MSAandSNPAnalysisPage() {
                   <div className="space-y-2">
                     <Textarea
                       value={fastaInputText}
-                      onChange={(e) => { setFastaInputText(e.target.value); }}
+                      onChange={(e) => {
+                        handleFastaInputChange(e.target.value);
+                      }}
                       placeholder="Enter FASTA records of sequences to align"
                       className="service-card-textarea"
                       rows={10}
@@ -931,7 +875,10 @@ export default function MSAandSNPAnalysisPage() {
                     }}
                     disabled={isLoadingFeatures}
                   >
-                    <SelectTrigger className="service-card-select-trigger" aria-label="Select feature ID">
+                    <SelectTrigger
+                      className="service-card-select-trigger"
+                      aria-label="Select feature ID"
+                    >
                       <SelectValue
                         placeholder={
                           isLoadingFeatures
@@ -998,10 +945,7 @@ export default function MSAandSNPAnalysisPage() {
                     open={genomeIdDropdownOpen}
                     onOpenChange={(open) => {
                       // Check if a valid genome group is selected before allowing dropdown to open
-                      if (
-                        open &&
-                        selectGenomegroup.length === 0
-                      ) {
+                      if (open && selectGenomegroup.length === 0) {
                         toast.error("Genome Group required", {
                           description:
                             "A valid Genome Group is needed before selecting a Genome ID",
@@ -1019,7 +963,10 @@ export default function MSAandSNPAnalysisPage() {
                     }}
                     disabled={isLoadingGenomes}
                   >
-                    <SelectTrigger className="service-card-select-trigger" aria-label="Select genome ID">
+                    <SelectTrigger
+                      className="service-card-select-trigger"
+                      aria-label="Select genome ID"
+                    >
                       <SelectValue
                         placeholder={
                           isLoadingGenomes
@@ -1082,7 +1029,9 @@ export default function MSAandSNPAnalysisPage() {
                 <div className="space-y-2">
                   <Textarea
                     value={referenceFastaText}
-                    onChange={(e) => { setReferenceFastaText(e.target.value); }}
+                    onChange={(e) => {
+                      handleReferenceFastaChange(e.target.value);
+                    }}
                     placeholder="Enter a FASTA record of a reference sequence to align"
                     className="service-card-textarea"
                     rows={10}
@@ -1142,9 +1091,7 @@ export default function MSAandSNPAnalysisPage() {
                       value={field.state.value}
                       onValueChange={(value) => {
                         if (value == null) return;
-                        field.handleChange(
-                          value,
-                        );
+                        field.handleChange(value);
                         // Reset strategy when aligner changes to Muscle
                         if (value === "Muscle") {
                           form.setFieldValue("strategy", undefined);
@@ -1154,7 +1101,10 @@ export default function MSAandSNPAnalysisPage() {
                         }
                       }}
                     >
-                      <SelectTrigger className="service-card-select-trigger" aria-label="Select aligner">
+                      <SelectTrigger
+                        className="service-card-select-trigger"
+                        aria-label="Select aligner"
+                      >
                         <SelectValue placeholder="Select aligner" />
                       </SelectTrigger>
                       <SelectContent>
@@ -1280,4 +1230,8 @@ export default function MSAandSNPAnalysisPage() {
       <JobParamsDialog {...jobParamsDialogProps} />
     </section>
   );
+}
+
+export default function MSAandSNPAnalysisPage() {
+  return useMSAandSNPAnalysisPage();
 }

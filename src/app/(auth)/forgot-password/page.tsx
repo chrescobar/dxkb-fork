@@ -2,9 +2,10 @@
 
 import { z } from "zod";
 import { useForm } from "@tanstack/react-form";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { Input } from "@/components/ui/input";
 import {
   Card,
@@ -19,7 +20,6 @@ import { Loader2, AlertCircle } from "lucide-react";
 import { Mail, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/lib/auth/hooks";
 import { authAccount } from "@/lib/auth/advanced";
-import { useRouter } from "next/navigation";
 import { RequiredFormLabel } from "@/components/forms/required-form-components";
 
 const formSchema = z.object({
@@ -31,19 +31,9 @@ const formSchema = z.object({
 export default function ForgotPasswordPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const { isAuthenticated, status } = useAuth();
+  const { status } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isLoading = status === "loading" || isSubmitting;
-  const router = useRouter();
-  // Get redirect URL from query params (for protected route redirects)
-  const redirectTo = "/";
-
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.push(redirectTo);
-    }
-  }, [isAuthenticated, router, redirectTo]);
 
   const form = useForm({
     defaultValues: {
@@ -53,18 +43,16 @@ export default function ForgotPasswordPage() {
     onSubmit: async ({ value }) => {
       setError("");
       setIsSubmitting(true);
-      try {
-        const { error: resetError } = await authAccount.requestPasswordReset(
-          (value).usernameOrEmail,
-        );
-        if (resetError) {
-          setError("An unexpected error occurred. Please try again.");
-          return;
-        }
-        setSuccess(true);
-      } finally {
-        setIsSubmitting(false);
+      const { error: resetError } = await authAccount
+        .requestPasswordReset(value.usernameOrEmail)
+        .finally(() => {
+          setIsSubmitting(false);
+        });
+      if (resetError) {
+        setError("An unexpected error occurred. Please try again.");
+        return;
       }
+      setSuccess(true);
     },
   });
 
@@ -142,7 +130,9 @@ export default function ForgotPasswordPage() {
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => { field.handleChange(e.target.value); }}
+                      onChange={(e) => {
+                        field.handleChange(e.target.value);
+                      }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                     />
@@ -154,7 +144,7 @@ export default function ForgotPasswordPage() {
 
             <Button
               type="submit"
-              className="w-full text-muted-foreground transition-all duration-200 hover:text-foreground"
+              className="w-full text-muted-foreground transition-colors duration-200 hover:text-foreground"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -170,7 +160,7 @@ export default function ForgotPasswordPage() {
             <div className="text-center text-sm">
               <Link
                 href="/sign-in"
-                className="group font-medium text-primary transition-all duration-300 hover:font-medium hover:text-secondary"
+                className="group font-medium text-primary transition-colors duration-300 hover:font-medium hover:text-secondary"
               >
                 <ArrowLeft className="mr-1 inline size-3" />
                 Back to sign in

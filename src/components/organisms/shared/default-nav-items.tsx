@@ -14,7 +14,10 @@ import {
 import type { ComponentType, ReactNode } from "react";
 
 import { makePlaceholderView as placeholderView } from "@/components/organisms/shared/make-placeholder-view";
-import type { OrganismLandingView, OrganismViewKey } from "@/components/organisms/types";
+import type {
+  OrganismLandingView,
+  OrganismViewKey,
+} from "@/components/organisms/types";
 
 export interface DefaultViewDescriptor {
   key: OrganismViewKey;
@@ -29,23 +32,30 @@ export const defaultViewDescriptors: readonly DefaultViewDescriptor[] = [
     key: "phylogeny",
     label: "Phylogeny",
     icon: <Network />,
-    description: "Phylogeny data and visualization are planned for a follow-up view.",
+    description:
+      "Phylogeny data and visualization are planned for a follow-up view.",
   },
   {
     key: "taxa-tree",
     label: "Taxa Tree",
     icon: <ListTree />,
-    description: "Taxa Tree browsing is stubbed while the overview data panels are brought online.",
+    description:
+      "Taxa Tree browsing is stubbed while the overview data panels are brought online.",
   },
   {
     key: "genomes",
     label: "Genomes",
     icon: <Dna />,
-    description: "Genome table filtering and pagination are planned for a dedicated follow-up view.",
+    description:
+      "Genome table filtering and pagination are planned for a dedicated follow-up view.",
   },
   { key: "sequences", label: "Sequences", icon: <Database /> },
   { key: "features", label: "Features", icon: <Binary /> },
-  { key: "protein-structures", label: "Protein Structures", icon: <Waypoints /> },
+  {
+    key: "protein-structures",
+    label: "Protein Structures",
+    icon: <Waypoints />,
+  },
   { key: "domains-and-motifs", label: "Domains and Motifs", icon: <Puzzle /> },
   { key: "epitopes", label: "Epitopes", icon: <Activity /> },
   { key: "experiments", label: "Experiments", icon: <FlaskConical /> },
@@ -53,10 +63,11 @@ export const defaultViewDescriptors: readonly DefaultViewDescriptor[] = [
 ];
 
 export type NavItemOverride =
-  | { Component: ComponentType }
-  | { description?: string };
+  { Component: ComponentType } | { description?: string };
 
-export type NavItemOverrides = Partial<Record<OrganismViewKey, NavItemOverride>>;
+export type NavItemOverrides = Partial<
+  Record<OrganismViewKey, NavItemOverride>
+>;
 
 interface BuildOrganismNavItemsOptions {
   exclude?: readonly OrganismViewKey[];
@@ -67,27 +78,29 @@ export function buildOrganismNavItems(
   options: BuildOrganismNavItemsOptions = {},
 ): OrganismLandingView[] {
   const excluded = new Set(options.exclude ?? []);
-  return defaultViewDescriptors
-    .filter((descriptor) => !excluded.has(descriptor.key))
-    .map((descriptor) => {
-      const override = overrides[descriptor.key];
-      if (override && "Component" in override) {
-        return {
-          key: descriptor.key,
-          label: descriptor.label,
-          icon: descriptor.icon,
-          Component: override.Component,
-        };
-      }
-      const description =
-        override && "description" in override
-          ? override.description
-          : descriptor.description;
-      return {
+  const items: OrganismLandingView[] = [];
+  for (const descriptor of defaultViewDescriptors) {
+    if (excluded.has(descriptor.key)) continue;
+    const override = overrides[descriptor.key];
+    if (override && "Component" in override) {
+      items.push({
         key: descriptor.key,
         label: descriptor.label,
         icon: descriptor.icon,
-        Component: placeholderView(descriptor.label, description),
-      };
+        Component: override.Component,
+      });
+      continue;
+    }
+    const description =
+      override && "description" in override
+        ? override.description
+        : descriptor.description;
+    items.push({
+      key: descriptor.key,
+      label: descriptor.label,
+      icon: descriptor.icon,
+      Component: placeholderView(descriptor.label, description),
     });
+  }
+  return items;
 }

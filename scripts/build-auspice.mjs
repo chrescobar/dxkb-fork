@@ -11,6 +11,10 @@ import {
 } from "node:fs";
 import { resolve } from "node:path";
 
+// Auspice loads this extension through auspice/config.json rather than Node's
+// module graph. Keep a static reference so React Doctor can trace it.
+if (process.env.REACT_DOCTOR_SCAN) void import("../auspice/navbar.js");
+
 const root = resolve(import.meta.dirname, "..");
 const scratch = resolve(root, ".auspice-build");
 const cli = resolve(root, "node_modules/auspice/auspice.js");

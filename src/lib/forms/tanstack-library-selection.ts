@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { AnyFormApi } from "@tanstack/react-form";
 import type { Library } from "@/types/services";
 
@@ -78,7 +78,7 @@ export function findNewSraLibraries(
   prevLibs: Library[],
 ): Library[] {
   const prevSraIds = new Set(
-    prevLibs.filter((lib) => lib.type === "sra").map((lib) => lib.id),
+    prevLibs.flatMap((lib) => (lib.type === "sra" ? [lib.id] : [])),
   );
   return nextLibs.filter(
     (lib) => lib.type === "sra" && !prevSraIds.has(lib.id),
@@ -110,134 +110,117 @@ export function useTanstackLibrarySelection<LibraryItem, SrrItem = string>(
     configRef.current = config;
   }, [config]);
 
-  const applyLibrariesToForm = useCallback(
-    (
-      libraries: Library[],
-      cfg: UseTanstackLibrarySelectionConfig<LibraryItem, SrrItem>,
-    ) => {
-      const pairedLibs: LibraryItem[] = [];
-      const singleLibs: LibraryItem[] = [];
-      const srrItems: SrrItem[] = [];
+  const applyLibrariesToForm = (
+    libraries: Library[],
+    cfg: UseTanstackLibrarySelectionConfig<LibraryItem, SrrItem>,
+  ) => {
+    const pairedLibs: LibraryItem[] = [];
+    const singleLibs: LibraryItem[] = [];
+    const srrItems: SrrItem[] = [];
 
-      libraries.forEach((lib) => {
-        if (lib.type === "paired") {
-          pairedLibs.push(cfg.mapLibraryToItem(lib));
-        } else if (lib.type === "single") {
-          singleLibs.push(cfg.mapLibraryToItem(lib));
+    libraries.forEach((lib) => {
+      if (lib.type === "paired") {
+        pairedLibs.push(cfg.mapLibraryToItem(lib));
+      } else if (lib.type === "single") {
+        singleLibs.push(cfg.mapLibraryToItem(lib));
+      } else {
+        // lib.type === "sra"
+        if (cfg.mapSraLibraryToItem) {
+          srrItems.push(cfg.mapSraLibraryToItem(lib));
         } else {
-          // lib.type === "sra"
-          if (cfg.mapSraLibraryToItem) {
-            srrItems.push(cfg.mapSraLibraryToItem(lib));
-          } else {
-            srrItems.push(lib.id as SrrItem);
-          }
+          srrItems.push(lib.id as SrrItem);
         }
-      });
-
-      cfg.form.setFieldValue(cfg.fields.paired, pairedLibs);
-      cfg.form.setFieldValue(cfg.fields.single, singleLibs);
-      cfg.form.setFieldValue(cfg.fields.srr, srrItems);
-    },
-    [],
-  );
-
-  const updateLibraries = useCallback(
-    (nextLibraries: Library[]) => {
-      const cfg = configRef.current;
-      const finalLibraries = cfg.normalizeLibraries
-        ? cfg.normalizeLibraries(nextLibraries, selectedLibrariesRef.current)
-        : nextLibraries;
-      selectedLibrariesRef.current = finalLibraries;
-      setSelectedLibraries(finalLibraries);
-      applyLibrariesToForm(finalLibraries, cfg);
-    },
-    [applyLibrariesToForm],
-  );
-
-  const addPairedLibrary = useCallback(
-    (options: AddPairedLibraryOptions) => {
-      if (!options.read1 || !options.read2) {
-        options.onError?.(
-          options.missingMessage ??
-            "Both read files must be selected for paired library",
-        );
-        return;
       }
+    });
 
-      if (options.read1 === options.read2) {
-        options.onError?.(
-          options.sameFileMessage ??
-            "READ FILE 1 and READ FILE 2 cannot be the same",
-        );
-        return;
-      }
+    cfg.form.setFieldValue(cfg.fields.paired, pairedLibs);
+    cfg.form.setFieldValue(cfg.fields.single, singleLibs);
+    cfg.form.setFieldValue(cfg.fields.srr, srrItems);
+  };
 
-      const libraryId = getPairedLibraryId(options.read1, options.read2);
-      const isDuplicate = selectedLibraries.some((lib) => lib.id === libraryId);
-      if (isDuplicate) {
-        options.onError?.(
-          options.duplicateMessage ??
-            "This paired library has already been added",
-        );
-        return;
-      }
+  const updateLibraries = (nextLibraries: Library[]) => {
+    const cfg = configRef.current;
+    const finalLibraries = cfg.normalizeLibraries
+      ? cfg.normalizeLibraries(nextLibraries, selectedLibrariesRef.current)
+      : nextLibraries;
+    selectedLibrariesRef.current = finalLibraries;
+    setSelectedLibraries(finalLibraries);
+    applyLibrariesToForm(finalLibraries, cfg);
+  };
 
-      const result = options.buildLibrary(
-        options.read1,
-        options.read2,
-        libraryId,
+  const addPairedLibrary = (options: AddPairedLibraryOptions) => {
+    if (!options.read1 || !options.read2) {
+      options.onError?.(
+        options.missingMessage ??
+          "Both read files must be selected for paired library",
       );
-      if (!result.library) {
-        options.onError?.(result.error ?? "Unable to add paired library");
-        return;
-      }
+      return;
+    }
 
-      updateLibraries([...selectedLibraries, result.library]);
-      options.onAfterAdd?.(result.library);
-    },
-    [selectedLibraries, updateLibraries],
-  );
-
-  const addSingleLibrary = useCallback(
-    (options: AddSingleLibraryOptions) => {
-      if (!options.read) {
-        options.onError?.(
-          options.missingMessage ?? "Read file must be selected",
-        );
-        return;
-      }
-
-      const isDuplicate = selectedLibraries.some((lib) =>
-        options.duplicateMatcher
-          ? options.duplicateMatcher(lib, options.read as string)
-          : lib.id === options.read,
+    if (options.read1 === options.read2) {
+      options.onError?.(
+        options.sameFileMessage ??
+          "READ FILE 1 and READ FILE 2 cannot be the same",
       );
-      if (isDuplicate) {
-        options.onError?.(
-          options.duplicateMessage ??
-            "This single library has already been added",
-        );
-        return;
-      }
+      return;
+    }
 
-      const result = options.buildLibrary(options.read);
-      if (!result.library) {
-        options.onError?.(result.error ?? "Unable to add single library");
-        return;
-      }
+    const libraryId = getPairedLibraryId(options.read1, options.read2);
+    const isDuplicate = selectedLibraries.some((lib) => lib.id === libraryId);
+    if (isDuplicate) {
+      options.onError?.(
+        options.duplicateMessage ??
+          "This paired library has already been added",
+      );
+      return;
+    }
 
-      updateLibraries([...selectedLibraries, result.library]);
-      options.onAfterAdd?.(result.library);
-    },
-    [selectedLibraries, updateLibraries],
-  );
+    const result = options.buildLibrary(
+      options.read1,
+      options.read2,
+      libraryId,
+    );
+    if (!result.library) {
+      options.onError?.(result.error ?? "Unable to add paired library");
+      return;
+    }
 
-  const removeLibrary = useCallback(
-    (id: string) => {
-      updateLibraries(selectedLibraries.filter((lib) => lib.id !== id));
-    },
-    [selectedLibraries, updateLibraries],
-  );
+    updateLibraries([...selectedLibraries, result.library]);
+    options.onAfterAdd?.(result.library);
+  };
+
+  const addSingleLibrary = (options: AddSingleLibraryOptions) => {
+    if (!options.read) {
+      options.onError?.(options.missingMessage ?? "Read file must be selected");
+      return;
+    }
+
+    const isDuplicate = selectedLibraries.some((lib) =>
+      options.duplicateMatcher
+        ? options.duplicateMatcher(lib, options.read as string)
+        : lib.id === options.read,
+    );
+    if (isDuplicate) {
+      options.onError?.(
+        options.duplicateMessage ??
+          "This single library has already been added",
+      );
+      return;
+    }
+
+    const result = options.buildLibrary(options.read);
+    if (!result.library) {
+      options.onError?.(result.error ?? "Unable to add single library");
+      return;
+    }
+
+    updateLibraries([...selectedLibraries, result.library]);
+    options.onAfterAdd?.(result.library);
+  };
+
+  const removeLibrary = (id: string) => {
+    updateLibraries(selectedLibraries.filter((lib) => lib.id !== id));
+  };
 
   return {
     selectedLibraries,

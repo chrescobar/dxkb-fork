@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useMemo, type ReactNode } from "react";
+import { createContext, useContext, type ReactNode } from "react";
 import {
   httpWorkspaceRepository,
   publicHttpWorkspaceRepository,
@@ -37,13 +37,10 @@ export function WorkspaceRepositoryProvider({
   value,
   children,
 }: WorkspaceRepositoryProviderProps) {
-  const merged = useMemo<WorkspaceRepositorySet>(
-    () => ({
-      authenticated: value?.authenticated ?? defaultRepositories.authenticated,
-      public: value?.public ?? defaultRepositories.public,
-    }),
-    [value?.authenticated, value?.public],
-  );
+  const merged: WorkspaceRepositorySet = {
+    authenticated: value?.authenticated ?? defaultRepositories.authenticated,
+    public: value?.public ?? defaultRepositories.public,
+  };
 
   return (
     <WorkspaceRepositoryContext.Provider value={merged}>

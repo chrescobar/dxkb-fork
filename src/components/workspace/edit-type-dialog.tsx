@@ -47,7 +47,7 @@ function EditTypeForm({
   const currentType = item.type;
   const [selectedType, setSelectedType] = React.useState(currentType);
 
-  const handleSave = React.useCallback(async () => {
+  const handleSave = async () => {
     if (!selectedType.trim()) return;
     try {
       await onConfirm(selectedType.trim());
@@ -56,11 +56,11 @@ function EditTypeForm({
       // Parent typically handles errors (e.g. toast). Log if rejection is unexpected.
       console.error("[EditTypeDialog] onConfirm failed:", err);
     }
-  }, [selectedType, onConfirm, onOpenChange]);
+  };
 
   const canSave = selectedType.trim().length > 0 && !isUpdating;
 
-  const options = React.useMemo(() => {
+  const options = (() => {
     const set = new Set(editTypeOptions);
     if (currentType && !set.has(currentType)) {
       return [currentType, ...editTypeOptions].sort((a, b) =>
@@ -68,7 +68,7 @@ function EditTypeForm({
       );
     }
     return editTypeOptions;
-  }, [currentType]);
+  })();
 
   return (
     <>
@@ -82,7 +82,9 @@ function EditTypeForm({
         </label>
         <Select
           value={selectedType}
-          onValueChange={(value) => { setSelectedType(value ?? ""); }}
+          onValueChange={(value) => {
+            setSelectedType(value ?? "");
+          }}
           disabled={isUpdating}
         >
           <SelectTrigger id="edit-type-select" className="w-full">
@@ -105,12 +107,19 @@ function EditTypeForm({
       <DialogFooter showCloseButton={false}>
         <Button
           variant="outline"
-          onClick={() => { onOpenChange(false); }}
+          onClick={() => {
+            onOpenChange(false);
+          }}
           disabled={isUpdating}
         >
           Cancel
         </Button>
-        <Button onClick={() => { void handleSave(); }} disabled={!canSave}>
+        <Button
+          onClick={() => {
+            void handleSave();
+          }}
+          disabled={!canSave}
+        >
           {isUpdating ? (
             <>
               <Spinner className="mr-2 size-3.5 shrink-0" />

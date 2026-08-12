@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { parse } from "csv-parse/sync";
 import {
   useReactTable,
@@ -38,6 +38,18 @@ export function CsvViewer({ filePath, fileName, fileSize }: CsvViewerProps) {
 
 const rowHeight = 33;
 
+interface CsvData {
+  records: Record<string, string>[];
+  columnNames: string[];
+  columns: ColumnDef<Record<string, string>, string>[];
+}
+
+const emptyCsvData: CsvData = {
+  records: [],
+  columnNames: [],
+  columns: [],
+};
+
 function InteractiveCsvViewer({
   filePath,
   fileName,
@@ -46,7 +58,7 @@ function InteractiveCsvViewer({
   fileName: string;
 }) {
   "use no memo";
-  const [content, setContent] = useState<string | null>(null);
+  const [data, setData] = useState<CsvData>(emptyCsvData);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -54,69 +66,64 @@ function InteractiveCsvViewer({
 
   useEffect(() => {
     const controller = new AbortController();
+    let cancelled = false;
 
     setLoading(true);
     setError(null);
-    setContent(null);
+    setData(emptyCsvData);
 
     fetch(getProxyUrl(filePath), { signal: controller.signal })
       .then((res) => {
-        if (!res.ok) throw new Error(`Failed to fetch file: ${String(res.status)}`);
+        if (!res.ok)
+          throw new Error(`Failed to fetch file: ${String(res.status)}`);
         return res.text();
       })
-      .then((text) => { setContent(text); })
+      .then((text) => {
+        if (cancelled) return;
+
+        try {
+          const delimiter = fileName.endsWith(".tsv") ? "\t" : ",";
+          const records: Record<string, string>[] = parse(text, {
+            delimiter,
+            columns: true,
+            skip_empty_lines: true,
+            relax_column_count: true,
+          });
+          const columnNames = records[0] ? Object.keys(records[0]) : [];
+          const columns = columnNames.map(
+            (column): ColumnDef<Record<string, string>, string> => ({
+              accessorFn: (row) => row[column] ?? "",
+              id: column,
+              header: column,
+              cell: (info) => info.getValue(),
+            }),
+          );
+          setData({ records, columnNames, columns });
+        } catch (err) {
+          setError(
+            err instanceof Error ? err.message : "Failed to parse CSV/TSV",
+          );
+        }
+      })
       .catch((err: unknown) => {
-        if (err instanceof DOMException && err.name === "AbortError") return;
+        if (
+          cancelled ||
+          (err instanceof DOMException && err.name === "AbortError")
+        )
+          return;
         setError(err instanceof Error ? err.message : "Unknown error");
       })
       .finally(() => {
-        if (!controller.signal.aborted) setLoading(false);
+        if (!cancelled) setLoading(false);
       });
 
-    return () => { controller.abort(); };
-  }, [filePath]);
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [fileName, filePath]);
 
-  const { records, columnNames, parseError } = useMemo<{ records: Record<string, string>[]; columnNames: string[]; parseError: string | null }>(() => {
-    if (!content) return { records: [], columnNames: [], parseError: null };
-
-    try {
-      const delimiter = fileName.endsWith(".tsv") ? "\t" : ",";
-      const parsed = parse(content, {
-        delimiter,
-        columns: true,
-        skip_empty_lines: true,
-        relax_column_count: true,
-      });
-
-      const names: string[] =
-        parsed.length > 0
-          ? Object.keys(parsed[0] as Record<string, unknown>)
-          : [];
-
-      return { records: parsed as Record<string, string>[], columnNames: names, parseError: null };
-    } catch (err) {
-      return {
-        records: [],
-        columnNames: [],
-        parseError:
-          err instanceof Error ? err.message : "Failed to parse CSV/TSV",
-      };
-    }
-  }, [content, fileName]);
-
-  const displayError = error || parseError;
-
-  const columns = useMemo<ColumnDef<Record<string, string>, string>[]>(() => {
-    return columnNames.map((col): ColumnDef<Record<string, string>, string> => {
-      const colId: string = col;
-      return {
-        accessorFn: (row: Record<string, string>): string => row[colId] ?? "",
-        id: colId,
-        header: colId,
-        cell: (info) => info.getValue(),
-      };
-    });
-  }, [columnNames]);
+  const { records, columnNames, columns } = data;
 
   const table = useReactTable({
     data: records,
@@ -144,10 +151,10 @@ function InteractiveCsvViewer({
     );
   }
 
-  if (displayError) {
+  if (error) {
     return (
       <div className="flex size-full items-center justify-center text-destructive">
-        {displayError}
+        {error}
       </div>
     );
   }
@@ -165,10 +172,7 @@ function InteractiveCsvViewer({
       <div className="flex items-center gap-2 border-b border-border px-3 py-1.5 text-xs text-muted-foreground">
         {records.length} rows · {columnNames.length} columns
       </div>
-      <div
-        ref={scrollContainerRef}
-        className="size-full overflow-auto"
-      >
+      <div ref={scrollContainerRef} className="size-full overflow-auto">
         <table className="w-full text-sm">
           <thead className="sticky top-0 z-10 bg-muted">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -176,7 +180,13 @@ function InteractiveCsvViewer({
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    aria-sort={header.column.getIsSorted() === "asc" ? "ascending" : header.column.getIsSorted() === "desc" ? "descending" : "none"}
+                    aria-sort={
+                      header.column.getIsSorted() === "asc"
+                        ? "ascending"
+                        : header.column.getIsSorted() === "desc"
+                          ? "descending"
+                          : "none"
+                    }
                     className="border-b border-border p-0 text-left font-medium"
                   >
                     <button
@@ -204,7 +214,11 @@ function InteractiveCsvViewer({
               <tr>
                 <td
                   colSpan={columns.length}
-                  style={{ height: virtualizer.getVirtualItems()[0]?.start ?? 0, padding: 0, border: "none" }}
+                  style={{
+                    height: virtualizer.getVirtualItems()[0]?.start ?? 0,
+                    padding: 0,
+                    border: "none",
+                  }}
                 />
               </tr>
             )}
@@ -219,10 +233,7 @@ function InteractiveCsvViewer({
                   className="border-b border-border/50 hover:bg-muted/30"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                      className="px-3 py-1.5 whitespace-nowrap"
-                    >
+                    <td key={cell.id} className="px-3 py-1.5 whitespace-nowrap">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),

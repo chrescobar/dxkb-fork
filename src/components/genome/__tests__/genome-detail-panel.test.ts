@@ -1,4 +1,7 @@
-import { firstRowFromApiShape, detailPanelQueryKey } from "../genome-detail-panel";
+import {
+  firstRowFromApiShape,
+  detailPanelQueryKey,
+} from "../genome-detail-panel-utils";
 
 describe("firstRowFromApiShape", () => {
   // Regression: an empty array (id matched no row in the queried core, e.g. a
@@ -12,7 +15,9 @@ describe("firstRowFromApiShape", () => {
   });
 
   it("returns the first row of a bare array", () => {
-    expect(firstRowFromApiShape([{ genome_id: "1.1" }, { genome_id: "2.2" }])).toEqual({
+    expect(
+      firstRowFromApiShape([{ genome_id: "1.1" }, { genome_id: "2.2" }]),
+    ).toEqual({
       genome_id: "1.1",
     });
   });
@@ -46,11 +51,9 @@ describe("firstRowFromApiShape", () => {
 // fails loudly here rather than silently as a UI regression.
 describe("detailPanelQueryKey", () => {
   it("returns the expected three-element tuple", () => {
-    expect(detailPanelQueryKey("genome_sequence", "94625.28.con.0340")).toEqual([
-      "selected-row",
-      "genome_sequence",
-      "94625.28.con.0340",
-    ]);
+    expect(detailPanelQueryKey("genome_sequence", "94625.28.con.0340")).toEqual(
+      ["selected-row", "genome_sequence", "94625.28.con.0340"],
+    );
   });
 
   it("varies by resource so genome and genome_sequence panels cache independently", () => {

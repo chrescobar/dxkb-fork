@@ -14,19 +14,19 @@ interface InteractionsGraphSkeletonProps {
 
 // Varied bar widths so the placeholder rows read as real gene names rather than
 // a uniform template. 12 rows fills the visible w-60 column without scrolling.
-const rowWidths = [
-  "w-20",
-  "w-16",
-  "w-24",
-  "w-14",
-  "w-20",
-  "w-28",
-  "w-16",
-  "w-24",
-  "w-20",
-  "w-14",
-  "w-24",
-  "w-16",
+const rows = [
+  { id: "alpha", width: "w-20" },
+  { id: "beta", width: "w-16" },
+  { id: "gamma", width: "w-24" },
+  { id: "delta", width: "w-14" },
+  { id: "epsilon", width: "w-20" },
+  { id: "zeta", width: "w-28" },
+  { id: "eta", width: "w-16" },
+  { id: "theta", width: "w-24" },
+  { id: "iota", width: "w-20" },
+  { id: "kappa", width: "w-14" },
+  { id: "lambda", width: "w-24" },
+  { id: "mu", width: "w-16" },
 ];
 
 /**
@@ -50,8 +50,8 @@ export function InteractionsGraphSkeleton({
           {/* Stand-in for the CommandInput search box. */}
           <Skeleton className="h-8 w-full" />
           <div className="flex flex-col gap-1.5">
-            {rowWidths.map((width, i) => (
-              <div key={i} className="flex items-center gap-2 p-1">
+            {rows.map(({ id, width }) => (
+              <div key={id} className="flex items-center gap-2 p-1">
                 <Skeleton className="size-2.5 shrink-0 rounded-full" />
                 <Skeleton className={`h-3 ${width}`} />
               </div>

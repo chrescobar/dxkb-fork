@@ -1,14 +1,17 @@
 "use client";
 
-import { useMemo, useCallback } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { WorkspaceItemIcon, type FolderIconVariant } from "./workspace-item-icon";
-import type {
-  SortField,
-  WorkspaceSortConfig,
-} from "@/types/workspace-browser";
+import {
+  WorkspaceItemIcon,
+  type FolderIconVariant,
+} from "./workspace-item-icon";
+import type { SortField, WorkspaceSortConfig } from "@/types/workspace-browser";
 import type { WorkspaceItem } from "@/lib/services/workspace/domain";
-import { formatFileSize, formatDate, formatOwner } from "@/lib/services/workspace/helpers";
+import {
+  formatFileSize,
+  formatDate,
+  formatOwner,
+} from "@/lib/services/workspace/helpers";
 import { isFolderType } from "@/lib/services/workspace/utils";
 
 /** Responsive hide classes for each column — shared with special rows (LeadingRow, ParentRow). */
@@ -35,22 +38,19 @@ export function useWorkspaceColumns(
   memberCountByPath: Record<string, number> | undefined,
   favoritePaths: string[] = emptyFavorites,
 ) {
-  const handleSort = useCallback(
-    (field: string) => {
-      const sortField = field as SortField;
-      if (sort.field === sortField) {
-        onSortChange({
-          field: sortField,
-          direction: sort.direction === "asc" ? "desc" : "asc",
-        });
-      } else {
-        onSortChange({ field: sortField, direction: "asc" });
-      }
-    },
-    [sort.field, sort.direction, onSortChange],
-  );
+  const handleSort = (field: string) => {
+    const sortField = field as SortField;
+    if (sort.field === sortField) {
+      onSortChange({
+        field: sortField,
+        direction: sort.direction === "asc" ? "desc" : "asc",
+      });
+    } else {
+      onSortChange({ field: sortField, direction: "asc" });
+    }
+  };
 
-  const columns = useMemo<ColumnDef<WorkspaceItem>[]>(() => {
+  const columns: ColumnDef<WorkspaceItem>[] = (() => {
     const favoriteSet = new Set(favoritePaths);
     return [
       {
@@ -64,11 +64,16 @@ export function useWorkspaceColumns(
           if (isNavigable) {
             if (item.permissions?.global === "r") variant = "public";
             else if (favoriteSet.has(item.path)) variant = "favorite";
-            else if ((memberCountByPath?.[item.path] ?? 0) > 1) variant = "shared";
+            else if ((memberCountByPath?.[item.path] ?? 0) > 1)
+              variant = "shared";
           }
           return (
             <div className="flex min-w-0 items-center gap-2 overflow-hidden">
-              <WorkspaceItemIcon type={item.type} variant={variant} className="shrink-0" />
+              <WorkspaceItemIcon
+                type={item.type}
+                variant={variant}
+                className="shrink-0"
+              />
               <span
                 className={`truncate ${isNavigable ? "font-medium hover:underline" : ""}`}
                 title={item.name}
@@ -78,7 +83,10 @@ export function useWorkspaceColumns(
             </div>
           );
         },
-        meta: { className: columnClassMap.name, sortField: "name" as SortField },
+        meta: {
+          className: columnClassMap.name,
+          sortField: "name" as SortField,
+        },
         size: 220,
         enableResizing: true,
       },
@@ -91,7 +99,10 @@ export function useWorkspaceColumns(
             {formatFileSize(Number(getValue()) || 0)}
           </span>
         ),
-        meta: { className: columnClassMap.size, sortField: "size" as SortField },
+        meta: {
+          className: columnClassMap.size,
+          sortField: "size" as SortField,
+        },
         size: 50,
         enableResizing: true,
       },
@@ -104,7 +115,10 @@ export function useWorkspaceColumns(
             {formatOwner((getValue() as string | undefined) ?? "")}
           </span>
         ),
-        meta: { className: columnClassMap.ownerId, sortField: "ownerId" as SortField },
+        meta: {
+          className: columnClassMap.ownerId,
+          sortField: "ownerId" as SortField,
+        },
         size: 70,
         enableResizing: true,
       },
@@ -117,7 +131,10 @@ export function useWorkspaceColumns(
             {formatDate((getValue() as string | undefined) ?? "")}
           </span>
         ),
-        meta: { className: columnClassMap.createdAt, sortField: "createdAt" as SortField },
+        meta: {
+          className: columnClassMap.createdAt,
+          sortField: "createdAt" as SortField,
+        },
         size: 80,
         enableResizing: true,
       },
@@ -145,12 +162,15 @@ export function useWorkspaceColumns(
             {(getValue() as string | undefined) ?? ""}
           </span>
         ),
-        meta: { className: columnClassMap.type, sortField: "type" as SortField },
+        meta: {
+          className: columnClassMap.type,
+          sortField: "type" as SortField,
+        },
         size: 60,
         enableResizing: true,
       },
     ];
-  }, [memberCountByPath, favoritePaths]);
+  })();
 
   return { columns, handleSort };
 }

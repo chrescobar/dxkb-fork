@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -40,14 +39,16 @@ export function WorkspaceItemDetails({
   const queryClient = useQueryClient();
   const repository = useWorkspaceRepository("authenticated");
 
-  const typeOptions = useMemo(() => {
+  const typeOptions = (() => {
     const currentType = item.type;
     const set = new Set(editTypeOptions);
     if (currentType && !set.has(currentType)) {
-      return [currentType, ...editTypeOptions].sort((a, b) => a.localeCompare(b));
+      return [currentType, ...editTypeOptions].sort((a, b) =>
+        a.localeCompare(b),
+      );
     }
     return editTypeOptions;
-  }, [item.type]);
+  })();
 
   const editTypeMutation = useMutation({
     mutationFn: async (newType: string) => {
@@ -68,7 +69,9 @@ export function WorkspaceItemDetails({
 
   const selectEl = (
     <Select
-      value={editTypeMutation.isPending ? editTypeMutation.variables : item.type}
+      value={
+        editTypeMutation.isPending ? editTypeMutation.variables : item.type
+      }
       onValueChange={(value) => {
         if (value && value !== item.type) {
           editTypeMutation.mutate(value);
@@ -76,7 +79,11 @@ export function WorkspaceItemDetails({
       }}
       disabled={isJobResult || editTypeMutation.isPending}
     >
-      <SelectTrigger size="sm" className="h-6 min-w-0 gap-1 text-xs" aria-label="File type">
+      <SelectTrigger
+        size="sm"
+        className="h-6 min-w-0 gap-1 text-xs"
+        aria-label="File type"
+      >
         <SelectValue placeholder="Unspecified" />
       </SelectTrigger>
       <SelectContent>
@@ -92,14 +99,23 @@ export function WorkspaceItemDetails({
   );
 
   return (
-    <DetailPanel.CollapsibleSection label="Details" defaultExpanded={defaultExpanded}>
+    <DetailPanel.CollapsibleSection
+      label="Details"
+      defaultExpanded={defaultExpanded}
+    >
       <div className="space-y-3 border-b p-3 text-xs">
         <div className="flex items-center gap-2">
           <WorkspaceItemIcon type={item.type} className="size-5 shrink-0" />
           {isJobResult ? (
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger render={<span className="min-w-0 cursor-not-allowed">{selectEl}</span>} />
+                <TooltipTrigger
+                  render={
+                    <span className="min-w-0 cursor-not-allowed">
+                      {selectEl}
+                    </span>
+                  }
+                />
                 <TooltipContent side="right">
                   <p>Cannot change &quot;job_result&quot; type</p>
                 </TooltipContent>

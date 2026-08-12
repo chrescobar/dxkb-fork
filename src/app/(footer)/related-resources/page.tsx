@@ -51,7 +51,8 @@ const relatedWebsites: ResourceCard[] = [
   },
   {
     title: "KBase",
-    subtitle: "The knowledge creation and discovery environment for systems biology.",
+    subtitle:
+      "The knowledge creation and discovery environment for systems biology.",
     image: "/images/websites/kbase.png",
     url: "https://www.kbase.us",
   },
@@ -64,6 +65,7 @@ const ResourceCard = ({ title, subtitle, image, url }: ResourceCard) => (
         src={image}
         alt={title}
         fill
+        sizes="(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 90vw"
         className="items-center justify-center object-cover"
       />
     </div>
@@ -82,9 +84,7 @@ const RelatedResources = () => {
       <div className="mx-auto my-12 w-[90%] max-w-6xl space-y-12 py-8">
         {/* Disease X/CEPI Resource Centers */}
         <section>
-          <h2 className="section-title">
-            Disease X/CEPI Resource Centers
-          </h2>
+          <h2 className="section-title">Disease X/CEPI Resource Centers</h2>
           <div className="card-grid-three">
             {resourceCenters.map((resource) => (
               <ResourceCard key={resource.title} {...resource} />
@@ -94,9 +94,7 @@ const RelatedResources = () => {
 
         {/* Related Websites */}
         <section>
-          <h2 className="section-title">
-            Related Websites
-          </h2>
+          <h2 className="section-title">Related Websites</h2>
           <div className="card-grid-three">
             {relatedWebsites.map((resource) => (
               <ResourceCard key={resource.title} {...resource} />
@@ -105,7 +103,7 @@ const RelatedResources = () => {
         </section>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default RelatedResources;

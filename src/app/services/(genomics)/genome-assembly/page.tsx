@@ -1,131 +1,134 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useSelector } from "@tanstack/react-store";
-import {
-  FieldItem,
-  FieldLabel,
-  FieldErrors,
-} from "@/components/ui/tanstack-form";
-import { ServiceHeader } from "@/components/services/service-header";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { HelpCircle, ChevronDown } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
-import {
-  genomeAssemblyInfo,
-  genomeAssemblyParameters,
-  readInputFileInfo,
-} from "@/lib/services/info/genome-assembly";
-import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import SraRunAccessionWithValidation from "@/components/services/sra-run-accession-with-validation";
-import SelectedItemsTable from "@/components/services/selected-items-table";
-import OutputFolder from "@/components/services/output-folder";
-import { Library } from "@/types/services";
-import { NumberInput } from "@/components/ui/number-input";
-import { JobParamsDialog } from "@/components/services/job-params-dialog";
-import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { ServiceHeader } from "@/components/services/service-header";
+import { JobParamsDialog } from "@/components/services/job-params-dialog";
+import { genomeAssemblyInfo } from "@/lib/services/info/genome-assembly";
+import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
 import {
   genomeAssemblyFormSchema,
   defaultGenomeAssemblyFormValues,
+  type GenomeAssemblyFormData,
   type LibraryItem,
 } from "@/lib/forms/(genomics)/genome-assembly/genome-assembly-form-schema";
-import {
-  calculateGenomeSize,
-  genomeAssemblyRecipes,
-  genomeSizeUnitOptions,
-} from "@/lib/forms/(genomics)/genome-assembly/genome-assembly-form-utils";
 import { genomeAssemblyService } from "@/lib/forms/(genomics)/genome-assembly/genome-assembly-service";
-import {
-  RequiredFormCardTitle,
-  RequiredFormLabel,
-} from "@/components/forms/required-form-components";
-import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
-import { WorkspaceObject } from "@/lib/services/workspace/types";
-import { ChevronRight } from "lucide-react";
-import { Spinner } from "@/components/ui/spinner";
 import {
   buildBaseLibraryItem,
   getPairedLibraryName,
   getSingleLibraryName,
   useTanstackLibrarySelection,
 } from "@/lib/forms/tanstack-library-selection";
+import type { Library } from "@/types/services";
+import {
+  AssemblyInputs,
+  AssemblyParameters,
+  SelectedLibraries,
+} from "./assembly-sections";
 
-function mapAssemblyLibraryToItem(library: Library): LibraryItem {
-  if (library.type === "paired") {
+export interface AssemblyUiState {
+  showAdvanced: boolean;
+  genomeSizeUnit: "M" | "K";
+  expectedGenomeSize: number;
+  pairedRead1: string | null;
+  pairedRead2: string | null;
+  singleRead: string | null;
+  isOutputNameValid: boolean;
+  sraResetKey: number;
+}
+export type AssemblyAction =
+  | { type: "reset" }
+  | { type: "set-advanced"; value: boolean }
+  | { type: "set-unit"; unit: "M" | "K" }
+  | { type: "set-genome-size"; value: number }
+  | { type: "set-output-valid"; value: boolean }
+  | {
+      type: "set-read";
+      read: "pairedRead1" | "pairedRead2" | "singleRead";
+      value: string | null;
+    }
+  | { type: "clear-paired" };
+const initialUiState: AssemblyUiState = {
+  showAdvanced: false,
+  genomeSizeUnit: "M",
+  expectedGenomeSize: 5,
+  pairedRead1: null,
+  pairedRead2: null,
+  singleRead: null,
+  isOutputNameValid: true,
+  sraResetKey: 0,
+};
+function uiReducer(
+  state: AssemblyUiState,
+  action: AssemblyAction,
+): AssemblyUiState {
+  switch (action.type) {
+    case "reset":
+      return { ...initialUiState, sraResetKey: state.sraResetKey + 1 };
+    case "set-advanced":
+      return state.showAdvanced === action.value
+        ? state
+        : { ...state, showAdvanced: action.value };
+    case "set-unit":
+      return state.genomeSizeUnit === action.unit
+        ? state
+        : {
+            ...state,
+            genomeSizeUnit: action.unit,
+            expectedGenomeSize: action.unit === "M" ? 5 : 500,
+          };
+    case "set-genome-size":
+      return state.expectedGenomeSize === action.value
+        ? state
+        : { ...state, expectedGenomeSize: action.value };
+    case "set-output-valid":
+      return state.isOutputNameValid === action.value
+        ? state
+        : { ...state, isOutputNameValid: action.value };
+    case "set-read":
+      return state[action.read] === action.value
+        ? state
+        : { ...state, [action.read]: action.value };
+    case "clear-paired":
+      return { ...state, pairedRead1: null, pairedRead2: null };
+  }
+}
+function mapLibrary(library: Library): LibraryItem {
+  if (library.type === "paired")
     return {
       ...buildBaseLibraryItem(library),
       platform: library.platform || "infer",
       interleaved: library.interleaved || false,
       read_orientation_outward: library.read_orientation_outward || false,
     };
-  }
-  if (library.type === "single") {
+  if (library.type === "single")
     return {
       ...buildBaseLibraryItem(library),
       platform: library.platform || "infer",
     };
-  }
   return buildBaseLibraryItem(library);
 }
-
-export default function GenomeAssemblyPage() {
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [genomeSizeUnit, setGenomeSizeUnit] = useState<"M" | "K">("M");
-  const [expectedGenomeSize, setExpectedGenomeSize] = useState(5);
-  const [pairedRead1, setPairedRead1] = useState<string | null>(null);
-  const [pairedRead2, setPairedRead2] = useState<string | null>(null);
-  const [singleRead, setSingleRead] = useState<string | null>(null);
-  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
-  const [sraResetKey, setSraResetKey] = useState(0);
-
-  const form = useForm({
+function useAssemblyForm(
+  submit: (value: GenomeAssemblyFormData) => Promise<void>,
+) {
+  return useForm({
     defaultValues: defaultGenomeAssemblyFormValues,
     validators: { onChange: genomeAssemblyFormSchema },
-    onSubmit: async ({ value }) => {
-      const data = value;
-
-      const hasPaired = data.paired_end_libs && data.paired_end_libs.length > 0;
-      const hasSingle = data.single_end_libs && data.single_end_libs.length > 0;
-      const hasSrr = data.srr_ids && data.srr_ids.length > 0;
-
-      if (!hasPaired && !hasSingle && !hasSrr) {
-        toast.error("At least one library must be selected");
-        return;
-      }
-
-      await runtime.submitFormData(data);
-    },
+    onSubmit: async ({ value }) => submit(value),
   });
+}
+export type AssemblyForm = ReturnType<typeof useAssemblyForm>;
 
+export default function GenomeAssemblyPage() {
+  const [state, dispatch] = useReducer(uiReducer, initialUiState);
+  const submitRef = useRef<(value: GenomeAssemblyFormData) => Promise<void>>(
+    () => Promise.resolve(),
+  );
+  const form = useAssemblyForm((value) => submitRef.current(value));
   const {
     selectedLibraries,
     addPairedLibrary,
@@ -134,59 +137,60 @@ export default function GenomeAssemblyPage() {
     setLibraries,
   } = useTanstackLibrarySelection<LibraryItem>({
     form,
-    mapLibraryToItem: mapAssemblyLibraryToItem,
+    mapLibraryToItem: mapLibrary,
     fields: {
       paired: "paired_end_libs",
       single: "single_end_libs",
       srr: "srr_ids",
     },
   });
-
+  const reset = () => {
+    form.reset(defaultGenomeAssemblyFormValues);
+    setLibraries([]);
+    dispatch({ type: "reset" });
+  };
   const runtime = useServiceRuntime({
     definition: genomeAssemblyService,
     form,
-    onSuccess: handleReset,
+    onSuccess: reset,
     rerun: {
       libraries: ["paired", "single", "sra"],
-      getLibraryExtra: (lib, kind) => {
-        if (kind === "paired") {
-          return {
-            platform: lib.platform || "infer",
-            interleaved: !!lib.interleaved,
-            read_orientation_outward: !!lib.read_orientation_outward,
-          };
-        }
-        if (kind === "single") {
-          return { platform: lib.platform || "infer" };
-        }
-        return {};
-      },
+      getLibraryExtra: (library, kind) =>
+        kind === "paired"
+          ? {
+              platform: library.platform || "infer",
+              interleaved: !!library.interleaved,
+              read_orientation_outward: !!library.read_orientation_outward,
+            }
+          : kind === "single"
+            ? { platform: library.platform || "infer" }
+            : {},
       syncLibraries: setLibraries,
     },
   });
-
-  function handleReset() {
-    form.reset(defaultGenomeAssemblyFormValues);
-    setLibraries([]);
-    setShowAdvanced(false);
-    setGenomeSizeUnit("M");
-    setExpectedGenomeSize(5);
-    setPairedRead1(null);
-    setPairedRead2(null);
-    setSingleRead(null);
-    setSraResetKey((k) => k + 1);
-  }
-
-  const recipe = useSelector(form.store, (s) => s.values.recipe);
-  const showGenomeSizeField = recipe === "canu";
-
-  const outputPath = useSelector(form.store, (s) => s.values.output_path);
-  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
-
-  const handlePairedLibraryAdd = () => {
+  const recipe = useSelector(form.store, (value) => value.values.recipe);
+  const outputPath = useSelector(
+    form.store,
+    (value) => value.values.output_path,
+  );
+  const canSubmit = useSelector(form.store, (value) => value.canSubmit);
+  useEffect(() => {
+    submitRef.current = async (value) => {
+      if (
+        !value.paired_end_libs?.length &&
+        !value.single_end_libs?.length &&
+        !value.srr_ids?.length
+      ) {
+        toast.error("At least one library must be selected");
+        return;
+      }
+      await runtime.submitFormData(value);
+    };
+  }, [runtime]);
+  const addPaired = () => {
     addPairedLibrary({
-      read1: pairedRead1,
-      read2: pairedRead2,
+      read1: state.pairedRead1,
+      read2: state.pairedRead2,
       buildLibrary: (read1, read2, id) => ({
         library: {
           id,
@@ -200,15 +204,13 @@ export default function GenomeAssemblyPage() {
       }),
       onError: toast.error,
       onAfterAdd: () => {
-        setPairedRead1(null);
-        setPairedRead2(null);
+        dispatch({ type: "clear-paired" });
       },
     });
   };
-
-  const handleSingleLibraryAdd = () => {
+  const addSingle = () => {
     addSingleLibrary({
-      read: singleRead,
+      read: state.singleRead,
       buildLibrary: (read) => ({
         library: {
           id: read,
@@ -220,7 +222,7 @@ export default function GenomeAssemblyPage() {
       }),
       onError: toast.error,
       onAfterAdd: () => {
-        setSingleRead(null);
+        dispatch({ type: "set-read", read: "singleRead", value: null });
       },
     });
   };
@@ -236,553 +238,42 @@ export default function GenomeAssemblyPage() {
         tutorial="#"
         instructionalVideo="#"
       />
-
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          void form.handleSubmit();
-        }}
+        action={() => form.handleSubmit()}
         className="grid grid-cols-1 gap-6 md:grid-cols-12"
       >
-        {/* Left Column */}
         <div className="space-y-6 md:col-span-7">
-          {/* Input Files Card */}
-          <Card>
-            <CardHeader className="service-card-header">
-              <RequiredFormCardTitle className="service-card-title">
-                Input Files
-                <DialogInfoPopup
-                  title={readInputFileInfo.title}
-                  description={readInputFileInfo.description}
-                  sections={readInputFileInfo.sections}
-                />
-              </RequiredFormCardTitle>
-            </CardHeader>
-
-            <CardContent className="service-card-content space-y-6">
-              {/* Paired Read Library */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="service-card-label">
-                    Paired Read Library
-                  </Label>
-                  <div className="mx-4 h-px flex-1 bg-border" />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    aria-label="Add paired read library to selected libraries"
-                    onClick={handlePairedLibraryAdd}
-                    disabled={!pairedRead1 || !pairedRead2}
-                  >
-                    <ChevronRight size={16} />
-                  </Button>
-                </div>
-                <div className="space-y-3">
-                  <div>
-                    <WorkspaceObjectSelector
-                      preset="reads"
-                      placeholder="Select READ FILE 1..."
-                      onObjectSelect={(object: WorkspaceObject) => {
-                        setPairedRead1(object.path);
-                      }}
-                    />
-                  </div>
-                  <WorkspaceObjectSelector
-                    preset="reads"
-                    placeholder="Select READ FILE 2..."
-                    onObjectSelect={(object: WorkspaceObject) => {
-                      setPairedRead2(object.path);
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Single Read Library */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="service-card-label">
-                    Single Read Library
-                  </Label>
-                  <div className="mx-4 h-px flex-1 bg-border" />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    aria-label="Add single read library to selected libraries"
-                    onClick={handleSingleLibraryAdd}
-                    disabled={!singleRead}
-                  >
-                    <ChevronRight size={16} />
-                  </Button>
-                </div>
-                <WorkspaceObjectSelector
-                  preset="reads"
-                  placeholder="Select READ FILE..."
-                  onObjectSelect={(object: WorkspaceObject) => {
-                    setSingleRead(object.path);
-                  }}
-                />
-              </div>
-
-              {/* SRA Run Accession */}
-              <SraRunAccessionWithValidation
-                key={sraResetKey}
-                title="SRA Run Accession"
-                placeholder="SRR..."
-                selectedLibraries={selectedLibraries}
-                setSelectedLibraries={setLibraries}
-                allowDuplicates={false}
-              />
-            </CardContent>
-          </Card>
-          {/* Selected Libraries (mobile) */}
-          <div className="md:hidden">
-            <Card className="h-full">
-              <CardHeader className="service-card-header">
-                <CardTitle className="service-card-title">
-                  Selected Libraries
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger aria-label="Selected libraries help">
-                        <HelpCircle className="service-card-tooltip-icon" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>
-                          Read files placed here will contribute to a single
-                          analysis.
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </CardTitle>
-                <CardDescription>
-                  Place read files here using the arrow buttons.
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent className="service-card-content">
-                <SelectedItemsTable
-                  items={selectedLibraries.map((library) => ({
-                    id: library.id,
-                    name: library.name,
-                    type: library.type,
-                  }))}
-                  onRemove={removeLibrary}
-                  className="max-h-84 overflow-y-auto"
-                />
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Parameters Card */}
-          <Card>
-            <CardHeader className="service-card-header">
-              <CardTitle className="service-card-title">
-                Parameters
-                <DialogInfoPopup
-                  title={genomeAssemblyParameters.title}
-                  description={genomeAssemblyParameters.description}
-                  sections={genomeAssemblyParameters.sections}
-                />
-              </CardTitle>
-            </CardHeader>
-
-            <CardContent className="service-card-content">
-              <div className="space-y-6">
-                {/* Assembly Strategy */}
-                <form.Field name="recipe">
-                  {(field) => (
-                    <FieldItem>
-                      <RequiredFormLabel>Assembly Strategy</RequiredFormLabel>
-                      <Select
-                        items={genomeAssemblyRecipes}
-                        value={field.state.value}
-                        onValueChange={(value) =>
-                          { field.handleChange(value as string); }
-                        }
-                      >
-                        <SelectTrigger aria-label="Assembly strategy" className="service-card-select-trigger">
-                          <SelectValue placeholder="Select strategy" />
-                        </SelectTrigger>
-                        <SelectContent className="service-card-select-content">
-                          <SelectGroup>
-                            {genomeAssemblyRecipes.map((recipe) => (
-                              <SelectItem
-                                key={recipe.value}
-                                value={recipe.value}
-                              >
-                                {recipe.label}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-
-                {/* Output Folder */}
-                <form.Field name="output_path">
-                  {(field) => (
-                    <FieldItem>
-                      <OutputFolder
-                        required={true}
-                        value={field.state.value}
-                        onChange={(value) => { field.handleChange(value); }}
-                      />
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-
-                {/* Output Name */}
-                <form.Field name="output_file">
-                  {(field) => (
-                    <FieldItem>
-                      <OutputFolder
-                        variant="name"
-                        required={true}
-                        value={field.state.value}
-                        onChange={(value) => { field.handleChange(value); }}
-                        outputFolderPath={outputPath}
-                        onValidationChange={setIsOutputNameValid}
-                      />
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-
-                {/* Genome Size (for Canu only) */}
-                {showGenomeSizeField && (
-                  <form.Field name="genome_size">
-                    {(field) => (
-                      <FieldItem>
-                        <FieldLabel
-                          field={field}
-                          className="service-card-label"
-                        >
-                          Estimated Genome Size
-                        </FieldLabel>
-                        <div className="flex items-center gap-2">
-                          <input
-                            id={field.name}
-                            name={field.name}
-                            aria-label="Estimated Genome Size"
-                            type="number"
-                            value={expectedGenomeSize}
-                            onChange={(e) => {
-                              const value = e.currentTarget.valueAsNumber;
-                              if (!Number.isFinite(value)) return;
-                              setExpectedGenomeSize(value);
-                              const calculatedSize = calculateGenomeSize(
-                                value,
-                                genomeSizeUnit,
-                              );
-                              field.handleChange(calculatedSize);
-                            }}
-                            className="service-card-input flex-1"
-                            min={genomeSizeUnit === "M" ? 1 : 100}
-                            max={genomeSizeUnit === "M" ? 10 : 10000}
-                          />
-                          <span className="text-lg">&times;</span>
-                          <Select
-                            items={genomeSizeUnitOptions}
-                            value={genomeSizeUnit}
-                            onValueChange={(value) => {
-                              if (value == null) return;
-                              setGenomeSizeUnit(value);
-                              if (value === "M") {
-                                setExpectedGenomeSize(5);
-                                field.handleChange(5000000);
-                              } else {
-                                setExpectedGenomeSize(500);
-                                field.handleChange(500000);
-                              }
-                            }}
-                          >
-                            <SelectTrigger aria-label="Genome size unit" className="service-card-select-trigger w-20">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                {genomeSizeUnitOptions.map((option) => (
-                                  <SelectItem
-                                    key={option.value}
-                                    value={option.value}
-                                  >
-                                    {option.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-                )}
-
-                {/* Advanced Options */}
-                <Collapsible
-                  open={showAdvanced}
-                  onOpenChange={setShowAdvanced}
-                  className="service-collapsible-container"
-                >
-                  <CollapsibleTrigger className="service-collapsible-trigger">
-                    Advanced Options
-                    <ChevronDown
-                      className={`size-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
-                    />
-                  </CollapsibleTrigger>
-
-                  <CollapsibleContent className="service-collapsible-content">
-                    {/* Read Processing */}
-                    <div className="space-y-4">
-                      <Label className="service-card-label">
-                        Read Processing
-                      </Label>
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                        <form.Field name="normalize">
-                          {(field) => (
-                            <FieldItem className="flex flex-col items-start justify-between">
-                              <FieldLabel
-                                field={field}
-                                className="service-card-sublabel"
-                              >
-                                Normalize Illumina Reads
-                              </FieldLabel>
-                              <Switch
-                                checked={field.state.value}
-                                onCheckedChange={(checked) =>
-                                  { field.handleChange(checked); }
-                                }
-                              />
-                            </FieldItem>
-                          )}
-                        </form.Field>
-
-                        <form.Field name="trim">
-                          {(field) => (
-                            <FieldItem className="flex flex-col items-start justify-between">
-                              <FieldLabel
-                                field={field}
-                                className="service-card-sublabel"
-                              >
-                                Trim Short Reads
-                              </FieldLabel>
-                              <Switch
-                                checked={field.state.value}
-                                onCheckedChange={(checked) =>
-                                  { field.handleChange(checked); }
-                                }
-                              />
-                            </FieldItem>
-                          )}
-                        </form.Field>
-
-                        <form.Field name="filtlong">
-                          {(field) => (
-                            <FieldItem className="flex flex-col items-start justify-between">
-                              <FieldLabel
-                                field={field}
-                                className="service-card-sublabel"
-                              >
-                                Filter Long Reads
-                              </FieldLabel>
-                              <Switch
-                                checked={field.state.value}
-                                onCheckedChange={(checked) =>
-                                  { field.handleChange(checked); }
-                                }
-                              />
-                            </FieldItem>
-                          )}
-                        </form.Field>
-                      </div>
-                    </div>
-
-                    {/* Genome Parameters */}
-                    <div className="space-y-4">
-                      <Label className="service-card-label">
-                        Genome Parameters
-                      </Label>
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <form.Field name="target_depth">
-                          {(field) => (
-                            <FieldItem>
-                              <FieldLabel
-                                field={field}
-                                className="service-card-sublabel"
-                              >
-                                Target Genome Coverage
-                              </FieldLabel>
-                              <NumberInput
-                                value={field.state.value}
-                                onValueChange={field.handleChange}
-                                min={100}
-                                max={500}
-                                stepper={50}
-                              />
-                              <FieldErrors field={field} />
-                            </FieldItem>
-                          )}
-                        </form.Field>
-                      </div>
-                    </div>
-
-                    {/* Assembly Polishing */}
-                    <div className="space-y-4">
-                      <Label className="service-card-label">
-                        Assembly Polishing
-                      </Label>
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <form.Field name="racon_iter">
-                          {(field) => (
-                            <FieldItem>
-                              <FieldLabel
-                                field={field}
-                                className="service-card-sublabel"
-                              >
-                                Racon Iterations
-                              </FieldLabel>
-                              <NumberInput
-                                value={field.state.value}
-                                onValueChange={field.handleChange}
-                                min={0}
-                                max={4}
-                              />
-                              <FieldErrors field={field} />
-                            </FieldItem>
-                          )}
-                        </form.Field>
-
-                        <form.Field name="pilon_iter">
-                          {(field) => (
-                            <FieldItem>
-                              <FieldLabel
-                                field={field}
-                                className="service-card-sublabel"
-                              >
-                                Pilon Iterations
-                              </FieldLabel>
-                              <NumberInput
-                                value={field.state.value}
-                                onValueChange={field.handleChange}
-                                min={0}
-                                max={4}
-                              />
-                              <FieldErrors field={field} />
-                            </FieldItem>
-                          )}
-                        </form.Field>
-                      </div>
-                    </div>
-
-                    {/* Assembly Thresholds */}
-                    <div className="space-y-4">
-                      <Label className="service-card-label">
-                        Assembly Thresholds
-                      </Label>
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <form.Field name="min_contig_len">
-                          {(field) => (
-                            <FieldItem>
-                              <FieldLabel
-                                field={field}
-                                className="service-card-sublabel"
-                              >
-                                Min. contig length
-                              </FieldLabel>
-                              <NumberInput
-                                value={field.state.value}
-                                onValueChange={field.handleChange}
-                                min={100}
-                                max={100000}
-                                stepper={10}
-                              />
-                              <FieldErrors field={field} />
-                            </FieldItem>
-                          )}
-                        </form.Field>
-
-                        <form.Field name="min_contig_cov">
-                          {(field) => (
-                            <FieldItem>
-                              <FieldLabel
-                                field={field}
-                                className="service-card-sublabel"
-                              >
-                                Min. contig coverage
-                              </FieldLabel>
-                              <NumberInput
-                                value={field.state.value}
-                                onValueChange={field.handleChange}
-                                min={0}
-                                max={100000}
-                                stepper={5}
-                              />
-                              <FieldErrors field={field} />
-                            </FieldItem>
-                          )}
-                        </form.Field>
-                      </div>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-              </div>
-            </CardContent>
-          </Card>
+          <AssemblyInputs
+            state={state}
+            dispatch={dispatch}
+            libraries={selectedLibraries}
+            setLibraries={setLibraries}
+            addPaired={addPaired}
+            addSingle={addSingle}
+          />
+          <SelectedLibraries
+            mobile
+            libraries={selectedLibraries}
+            onRemove={removeLibrary}
+          />
+          <AssemblyParameters
+            form={form}
+            state={state}
+            dispatch={dispatch}
+            outputPath={outputPath}
+            showGenomeSize={recipe === "canu"}
+          />
         </div>
-
-        {/* Right Column - Selected Libraries */}
-        <div className="hidden md:col-span-5 md:block">
-          <Card className="h-full">
-            <CardHeader className="service-card-header">
-              <CardTitle className="service-card-title">
-                Selected Libraries
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger aria-label="Selected libraries help">
-                      <HelpCircle className="service-card-tooltip-icon" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>
-                        Read files placed here will contribute to a single
-                        analysis.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </CardTitle>
-              <CardDescription>
-                Place read files here using the arrow buttons.
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent className="service-card-content">
-              <SelectedItemsTable
-                items={selectedLibraries.map((library) => ({
-                  id: library.id,
-                  name: library.name,
-                  type: library.type,
-                }))}
-                onRemove={removeLibrary}
-                className="max-h-84 overflow-y-auto"
-              />
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Form Controls */}
+        <SelectedLibraries
+          libraries={selectedLibraries}
+          onRemove={removeLibrary}
+        />
         <div className="service-form-controls md:col-span-12">
           <div className="flex items-center gap-2">
             <Button
               type="button"
               variant="outline"
-              onClick={handleReset}
+              onClick={reset}
               className="service-form-controls-button"
             >
               Reset
@@ -790,16 +281,14 @@ export default function GenomeAssemblyPage() {
             <Button
               type="submit"
               disabled={
-                runtime.isSubmitting || !canSubmit || !isOutputNameValid
+                runtime.isSubmitting || !canSubmit || !state.isOutputNameValid
               }
             >
-              {runtime.isSubmitting ? <Spinner /> : null}
-              Assemble
+              {runtime.isSubmitting ? <Spinner /> : null}Assemble
             </Button>
           </div>
         </div>
       </form>
-
       <JobParamsDialog {...runtime.jobParamsDialogProps} />
     </section>
   );

@@ -1,72 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "@tanstack/react-form";
-import { useSelector } from "@tanstack/react-store";
-import {
-  FieldItem,
-  FieldLabel,
-  FieldErrors,
-} from "@/components/ui/tanstack-form";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { ChevronDown, Search } from "lucide-react";
-import { ServiceHeader } from "@/components/services/service-header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DataTable } from "@/components/shared/data-table";
-import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
-import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
-import type { WorkspaceObject } from "@/lib/services/workspace/types";
-import { SingleGenomeSelector } from "@/components/services/single-genome-selector";
-import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { Spinner } from "@/components/ui/spinner";
-
-import { toast } from "sonner";
-import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
-import { useServiceDebugging } from "@/contexts/service-debugging-context";
-import {
-  similarGenomeFinderInfo,
-  similarGenomeFinderSelectGenome,
-  similarGenomeFinderAdvancedParameters,
-} from "@/lib/services/info/similar-genome-finder";
-import {
-  similarGenomeFinderFormSchema,
-  defaultSimilarGenomeFinderFormValues,
-  maxHitsOptions,
-  pValueOptions,
-  distanceOptions,
-} from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-schema";
-import { buildMinhashServicePayload } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-utils";
-import { similarGenomeFinderService } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-service";
-import type { SimilarGenomeFinderResultRow } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-result-utils";
-import { submitSimilarGenomes } from "./actions";
-
-const similarGenomeFinderTableColumns = [
-  { id: "genome_id", label: "Genome ID" },
-  { id: "genome_name", label: "Genome Name" },
-  { id: "organism_name", label: "Organism" },
-  { id: "genome_status", label: "Genome Status" },
-  { id: "genome_quality", label: "Genome Quality" },
-  { id: "distance", label: "Distance" },
-  { id: "pvalue", label: "P Value" },
-  { id: "counts", label: "K-mer Counts" },
-] as const;
+import { JobParamsDialog } from "@/components/services/job-params-dialog";
+import { ServiceHeader } from "@/components/services/service-header";
+import { similarGenomeFinderInfo } from "@/lib/services/info/similar-genome-finder";
+import { AdvancedOptionsSection } from "./advanced-options-section";
+import { GenomeInputSection } from "./genome-input-section";
+import { ResultsSection } from "./results-section";
+import { useSimilarGenomeFinderForm } from "./use-similar-genome-finder-form";
 
 const quickReference =
   "https://www.bv-brc.org/docs/quick_references/services/similar_genome_finder_service.html";
@@ -75,81 +18,11 @@ const tutorial =
 const video =
   "https://youtube.com/playlist?list=PLWfOyhOW_OashHfld0w1DUkO7rQz6s8SA&si=Enh6GME_i4LMcXL8";
 
-/** Re-export for consumers that import from the page */
 export type { SimilarGenomeFinderResultRow } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-result-utils";
 
 export default function SimilarGenomeFinderServicePage() {
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [results, setResults] = useState<SimilarGenomeFinderResultRow[]>([]);
-
-  const { isDebugMode } = useServiceDebugging();
-
-  const [isCustomSubmitting, setIsCustomSubmitting] = useState(false);
-
-  const form = useForm({
-    defaultValues:
-      defaultSimilarGenomeFinderFormValues,
-    validators: { onChange: similarGenomeFinderFormSchema },
-    onSubmit: async ({ value }) => {
-      const data = value;
-
-      // In debug mode, use the hook to show the params dialog
-      if (isDebugMode) {
-        await runtime.previewOrSubmit(
-          buildMinhashServicePayload(data) as unknown as Record<
-            string,
-            unknown
-          >,
-        );
-        return;
-      }
-
-      // Custom submission — calls server action instead of submitServiceJob
-      setIsCustomSubmitting(true);
-      try {
-        const response = await submitSimilarGenomes(data);
-        if (response.success) {
-          setResults(response.rows);
-          toast.success("Similar Genome Finder completed successfully!", {
-            description:
-              response.rows.length > 0
-                ? `Results returned from Minhash service (${String(response.rows.length)} genome${response.rows.length === 1 ? "" : "s"})`
-                : "Results returned from Minhash service",
-            closeButton: true,
-          });
-        } else {
-          toast.error("Submission failed", {
-            description: response.error,
-            closeButton: true,
-          });
-        }
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Failed to submit";
-        toast.error("Submission failed", {
-          description: errorMessage,
-          closeButton: true,
-        });
-      } finally {
-        setIsCustomSubmitting(false);
-      }
-    },
-  });
-
-  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
-
-  const runtime = useServiceRuntime({
-    definition: similarGenomeFinderService,
-    form,
-  });
-  const isSubmitting = runtime.isSubmitting || isCustomSubmitting;
-
-  const handleReset = () => {
-    form.reset(defaultSimilarGenomeFinderFormValues);
-    setShowAdvanced(false);
-    setResults([]);
-  };
-
+  const controller = useSimilarGenomeFinderForm();
+  const { form, runtime, canSubmit, isSubmitting, handleReset } = controller;
   return (
     <section>
       <ServiceHeader
@@ -161,311 +34,14 @@ export default function SimilarGenomeFinderServicePage() {
         tutorial={tutorial}
         instructionalVideo={video}
       />
-
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          void form.handleSubmit();
-        }}
+        action={() => form.handleSubmit()}
         className="grid grid-cols-1 gap-6 md:grid-cols-12"
       >
-        {/* Select a Genome */}
         <div className="md:col-span-12">
-          <Card>
-            <CardHeader className="service-card-header">
-              <RequiredFormCardTitle className="service-card-title">
-                Select a Genome
-                <DialogInfoPopup
-                  title={similarGenomeFinderSelectGenome.title}
-                  description={similarGenomeFinderSelectGenome.description}
-                  sections={similarGenomeFinderSelectGenome.sections}
-                />
-              </RequiredFormCardTitle>
-            </CardHeader>
-            <CardContent className="service-card-content space-y-6">
-              <form.Field name="selectedGenomeId">
-                {(field) => (
-                  <FieldItem>
-                    <FieldLabel field={field} className="service-card-label">
-                      Search by Genome Name or Genome ID
-                    </FieldLabel>
-                    <SingleGenomeSelector
-                      placeholder="e.g. Mycobacterium tuberculosis H37Rv"
-                      value={field.state.value}
-                      onChange={(value) => {
-                        field.handleChange(value);
-                        if (value.trim()) {
-                          form.setFieldValue("fasta_file", "");
-                        }
-                      }}
-                    />
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
-
-              <form.Field name="fasta_file">
-                {(field) => (
-                  <FieldItem>
-                    <FieldLabel field={field} className="service-card-label">
-                      Or Upload FASTA/FASTQ
-                    </FieldLabel>
-                    <WorkspaceObjectSelector
-                      preset="contigsOrReads"
-                      placeholder="Select a FASTA/FASTQ file..."
-                      value={field.state.value}
-                      onObjectSelect={(object: WorkspaceObject) => {
-                        field.handleChange(object.path);
-                        form.setFieldValue("selectedGenomeId", "");
-                      }}
-                    />
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
-
-              <Collapsible
-                open={showAdvanced}
-                onOpenChange={setShowAdvanced}
-                className="service-collapsible-container"
-              >
-                <CollapsibleTrigger className="service-collapsible-trigger">
-                  Advanced Options
-                  <ChevronDown
-                    className={`size-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
-                  />
-                </CollapsibleTrigger>
-
-                <CollapsibleContent className="service-collapsible-content">
-                  <div className="flex w-full flex-col justify-between space-y-4">
-                    <div className="flex items-center">
-                      <Label className="service-card-label">Parameters</Label>
-                      <DialogInfoPopup
-                        title={similarGenomeFinderAdvancedParameters.title}
-                        description={
-                          similarGenomeFinderAdvancedParameters.description
-                        }
-                        sections={
-                          similarGenomeFinderAdvancedParameters.sections
-                        }
-                        className="mb-2 ml-2"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                      <form.Field name="max_hits">
-                        {(field) => (
-                          <FieldItem>
-                            <FieldLabel
-                              field={field}
-                              className="service-card-sublabel"
-                            >
-                              Max Hits
-                            </FieldLabel>
-                            <Select
-                              items={maxHitsOptions}
-                              value={field.state.value.toString()}
-                              onValueChange={(value) => {
-                                if (value != null) field.handleChange(parseInt(value, 10));
-                              }}
-                            >
-                              <SelectTrigger className="service-card-select-trigger">
-                                <SelectValue placeholder="Select max hits" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectGroup>
-                                  {maxHitsOptions.map((o) => (
-                                    <SelectItem
-                                      key={o.value}
-                                      value={String(o.value)}
-                                    >
-                                      {o.label}
-                                    </SelectItem>
-                                  ))}
-                                </SelectGroup>
-                              </SelectContent>
-                            </Select>
-                            <FieldErrors field={field} />
-                          </FieldItem>
-                        )}
-                      </form.Field>
-
-                      <form.Field name="max_pvalue">
-                        {(field) => (
-                          <FieldItem>
-                            <FieldLabel
-                              field={field}
-                              className="service-card-sublabel"
-                            >
-                              P-Value Threshold
-                            </FieldLabel>
-                            <Select
-                              items={pValueOptions}
-                              value={field.state.value.toString()}
-                              onValueChange={(value) => {
-                                if (value != null) field.handleChange(parseFloat(value));
-                              }}
-                            >
-                              <SelectTrigger className="service-card-select-trigger">
-                                <SelectValue placeholder="Select P-value" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectGroup>
-                                  {pValueOptions.map((o) => (
-                                    <SelectItem
-                                      key={o.value}
-                                      value={String(o.value)}
-                                    >
-                                      {o.label}
-                                    </SelectItem>
-                                  ))}
-                                </SelectGroup>
-                              </SelectContent>
-                            </Select>
-                            <FieldErrors field={field} />
-                          </FieldItem>
-                        )}
-                      </form.Field>
-
-                      <form.Field name="max_distance">
-                        {(field) => (
-                          <FieldItem>
-                            <FieldLabel
-                              field={field}
-                              className="service-card-sublabel"
-                            >
-                              Distance
-                            </FieldLabel>
-                            <Select
-                              items={distanceOptions}
-                              value={field.state.value.toString()}
-                              onValueChange={(value) => {
-                                if (value != null) field.handleChange(parseFloat(value));
-                              }}
-                            >
-                              <SelectTrigger className="service-card-select-trigger">
-                                <SelectValue placeholder="Select distance" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectGroup>
-                                  {distanceOptions.map((o) => (
-                                    <SelectItem
-                                      key={o.value}
-                                      value={String(o.value)}
-                                    >
-                                      {o.label}
-                                    </SelectItem>
-                                  ))}
-                                </SelectGroup>
-                              </SelectContent>
-                            </Select>
-                            <FieldErrors field={field} />
-                          </FieldItem>
-                        )}
-                      </form.Field>
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div className="flex flex-col gap-2">
-                          <Label className="service-card-label">
-                            Organism Type
-                          </Label>
-
-                          <form.Field name="include_bacterial">
-                            {(field) => (
-                              <FieldItem className="flex flex-row items-center space-y-0 space-x-2">
-                                <Checkbox
-                                  id="include_bacterial"
-                                  name="include_bacterial"
-                                  checked={field.state.value}
-                                  onCheckedChange={(checked) =>
-                                    { field.handleChange(checked); }
-                                  }
-                                />
-                                <Label
-                                  htmlFor="include_bacterial"
-                                  className="text-sm font-normal"
-                                >
-                                  Bacterial and Archaeal Genomes
-                                </Label>
-                                <FieldErrors field={field} />
-                              </FieldItem>
-                            )}
-                          </form.Field>
-
-                          <form.Field name="include_viral">
-                            {(field) => (
-                              <FieldItem className="flex flex-row items-center space-y-0 space-x-2">
-                                <Checkbox
-                                  id="include_viral"
-                                  name="include_viral"
-                                  checked={field.state.value}
-                                  onCheckedChange={(checked) =>
-                                    { field.handleChange(checked); }
-                                  }
-                                />
-                                <Label
-                                  htmlFor="include_viral"
-                                  className="text-sm font-normal"
-                                >
-                                  Viral Genomes
-                                </Label>
-                                <FieldErrors field={field} />
-                              </FieldItem>
-                            )}
-                          </form.Field>
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                          <Label className="service-card-label">Scope</Label>
-
-                          <form.Field name="scope">
-                            {(field) => (
-                              <FieldItem>
-                                <RadioGroup
-                                  value={field.state.value}
-                                  onValueChange={(value) =>
-                                    { field.handleChange(value as "reference"); }
-                                  }
-                                  className="grid w-full gap-2"
-                                >
-                                  <div className="flex items-center gap-3">
-                                    <RadioGroupItem
-                                      value="reference"
-                                      id="reference"
-                                    />
-                                    <Label
-                                      htmlFor="reference"
-                                      className="text-sm font-normal"
-                                    >
-                                      Reference and Representative Genomes
-                                    </Label>
-                                  </div>
-                                  <div className="flex items-center gap-3">
-                                    <RadioGroupItem value="all" id="all" />
-                                    <Label
-                                      htmlFor="all"
-                                      className="text-sm font-normal"
-                                    >
-                                      All Public Genomes
-                                    </Label>
-                                  </div>
-                                </RadioGroup>
-                                <FieldErrors field={field} />
-                              </FieldItem>
-                            )}
-                          </form.Field>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
-            </CardContent>
-          </Card>
-
-          {/* Form controls */}
+          <GenomeInputSection controller={controller}>
+            <AdvancedOptionsSection controller={controller} />
+          </GenomeInputSection>
           <div className="md:col-span-12">
             <div className="service-form-controls">
               <Button type="button" variant="outline" onClick={handleReset}>
@@ -480,26 +56,7 @@ export default function SimilarGenomeFinderServicePage() {
           </div>
         </div>
       </form>
-
-      {/* Results (DataTable) */}
-      <div className="mt-8">
-        <Card>
-          <CardHeader className="service-card-header">
-            <CardTitle className="service-card-title">Results</CardTitle>
-          </CardHeader>
-          <CardContent className="service-card-content">
-            <DataTable
-              id="similar-genome-finder-results"
-              data={results as unknown as Record<string, unknown>[]}
-              columns={[...similarGenomeFinderTableColumns]}
-              totalItems={results.length}
-              resource="similar-genome-finder-results"
-              isLoading={isSubmitting}
-            />
-          </CardContent>
-        </Card>
-      </div>
-
+      <ResultsSection controller={controller} />
       <JobParamsDialog {...runtime.jobParamsDialogProps} />
     </section>
   );

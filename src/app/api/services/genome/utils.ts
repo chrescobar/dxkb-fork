@@ -4,7 +4,10 @@
  */
 export function buildGenomeInClause(ids: string[]): string {
   return ids
-    .map((id) => id.trim())
-    .filter((id) => /^\d+(\.\d+)?$/.test(id))
+    .reduce<string[]>((validIds, id) => {
+      const trimmedId = id.trim();
+      if (/^\d+(\.\d+)?$/.test(trimmedId)) validIds.push(trimmedId);
+      return validIds;
+    }, [])
     .join(",");
 }

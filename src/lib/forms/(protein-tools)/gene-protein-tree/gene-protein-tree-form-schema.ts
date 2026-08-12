@@ -25,28 +25,24 @@ export const geneProteinTreeFormSchema = z
       error: "Recipe must be selected",
     }),
     substitution_model: z.string().min(1, "Substitution model is required"),
-    trim_threshold: z
-      .string()
-      .refine(
-        (val) => {
-          const num = parseFloat(val);
-          return !isNaN(num) && num >= 0 && num <= 1;
-        },
-        {
-            error: "Trim threshold must be a number between 0 and 1"
-        },
-      ),
-    gap_threshold: z
-      .string()
-      .refine(
-        (val) => {
-          const num = parseFloat(val);
-          return !isNaN(num) && num >= 0 && num <= 1;
-        },
-        {
-            error: "Gap threshold must be a number between 0 and 1"
-        },
-      ),
+    trim_threshold: z.string().refine(
+      (val) => {
+        const num = parseFloat(val);
+        return !isNaN(num) && num >= 0 && num <= 1;
+      },
+      {
+        error: "Trim threshold must be a number between 0 and 1",
+      },
+    ),
+    gap_threshold: z.string().refine(
+      (val) => {
+        const num = parseFloat(val);
+        return !isNaN(num) && num >= 0 && num <= 1;
+      },
+      {
+        error: "Gap threshold must be a number between 0 and 1",
+      },
+    ),
     sequences: z
       .array(sequenceItemSchema)
       .min(1, "At least one sequence must be selected")
@@ -58,12 +54,14 @@ export const geneProteinTreeFormSchema = z
   .superRefine((data, ctx) => {
     // Validate that sequences match the selected alphabet
     const isDNA = data.alphabet === "DNA";
-    const validTypes = isDNA
-      ? ["feature_group", "aligned_dna_fasta", "feature_dna_fasta"]
-      : ["feature_group", "aligned_protein_fasta", "feature_protein_fasta"];
+    const validTypes = new Set(
+      isDNA
+        ? ["feature_group", "aligned_dna_fasta", "feature_dna_fasta"]
+        : ["feature_group", "aligned_protein_fasta", "feature_protein_fasta"],
+    );
 
     data.sequences.forEach((seq, index) => {
-      if (!validTypes.includes(seq.type)) {
+      if (!validTypes.has(seq.type)) {
         ctx.addIssue({
           code: "custom",
           message: `Sequence type ${seq.type} does not match selected alphabet ${data.alphabet}`,
@@ -287,9 +285,9 @@ export const genomeMetadataFieldsData: GenomeMetadataFieldItem[] = [
 ];
 
 // Legacy: Flat array of all field names (excluding labels) for backward compatibility
-export const genomeAdvancedFields: string[] = genomeMetadataFieldsData
-  .filter((item) => !item.field.startsWith("-----"))
-  .map((item) => item.field);
+export const genomeAdvancedFields: string[] = genomeMetadataFieldsData.flatMap(
+  (item) => (item.field.startsWith("-----") ? [] : [item.field]),
+);
 
 // Helper function to extract section label from field name
 function extractSectionLabel(field: string): string {
@@ -333,8 +331,9 @@ export const defaultGeneProteinTreeFormValues: GeneProteinTreeFormData = {
   trim_threshold: "0",
   gap_threshold: "0",
   sequences: [],
-  metadata_fields: defaultMetadataFields.filter((f) => f.selected).map((f) => f.id),
+  metadata_fields: defaultMetadataFields
+    .filter((f) => f.selected)
+    .map((f) => f.id),
   output_path: "",
   output_file: "",
 };
-

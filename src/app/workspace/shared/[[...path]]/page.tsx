@@ -1,31 +1,18 @@
-"use client";
-
-import { useEffect, useMemo } from "react";
-import { useRouter, useParams } from "next/navigation";
-import { useAuth } from "@/lib/auth/hooks";
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/auth/session";
 import { encodeWorkspaceSegment } from "@/lib/services/workspace/path-utils";
 
-/**
- * Redirects /workspace/shared and /workspace/shared/[...path] to
- * /workspace/${username} and /workspace/${username}/[...path].
- */
-export default function WorkspaceSharedRedirect() {
-  const router = useRouter();
-  const params = useParams();
-  const { user } = useAuth();
-  const pathSegments = useMemo(
-    () => (params.path as string[] | undefined) ?? [],
-    [params.path]
-  );
-  const pathKey = pathSegments.join("/");
-
-  useEffect(() => {
-    const username = user?.username;
-    if (!username) return;
-    const encodedPath = pathSegments.map(encodeWorkspaceSegment).join("/");
+export default async function WorkspaceSharedRedirect({
+  params,
+}: {
+  params: Promise<{ path?: string[] }>;
+}) {
+  const [{ userId }, { path = [] }] = await Promise.all([getSession(), params]);
+  if (userId) {
+    const encodedPath = path.map(encodeWorkspaceSegment).join("/");
     const pathPart = encodedPath ? `/${encodedPath}` : "";
-    router.replace(`/workspace/${encodeWorkspaceSegment(username)}${pathPart}`);
-  }, [router, user?.username, pathKey, pathSegments]);
+    redirect(`/workspace/${encodeWorkspaceSegment(userId)}${pathPart}`);
+  }
 
   return null;
 }

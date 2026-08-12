@@ -1,12 +1,15 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
-import { DataTable, formatCellValue } from "../data-table";
+import { DataTable } from "../data-table";
+import { formatCellValue } from "../data-table-utils";
 import { server } from "@/test-helpers/msw-server";
 
 function deferred<T>() {
   let resolve!: (value: T) => void;
-  const promise = new Promise<T>((res) => { resolve = res; });
+  const promise = new Promise<T>((res) => {
+    resolve = res;
+  });
   return { promise, resolve };
 }
 
@@ -36,9 +39,11 @@ describe("DataTable Showing display during loading", () => {
         isLoading={true}
         pageIndex={0}
         pageSize={200}
-      />
+      />,
     );
-    expect(screen.getByText(/Showing 1-200 of 5000 results/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Showing 1-200 of 5000 results/),
+    ).toBeInTheDocument();
   });
 
   it("shows expected range for page 2 while loading (not '201-200')", () => {
@@ -52,13 +57,17 @@ describe("DataTable Showing display during loading", () => {
         isLoading={true}
         pageIndex={1}
         pageSize={200}
-      />
+      />,
     );
-    expect(screen.getByText(/Showing 201-400 of 5000 results/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Showing 201-400 of 5000 results/),
+    ).toBeInTheDocument();
   });
 
   it("uses target page range while loading even when placeholder rows exist", () => {
-    const rows = Array.from({ length: 3 }, (_, i) => ({ strain_name: `Previous Strain ${String(i)}` }));
+    const rows = Array.from({ length: 3 }, (_, i) => ({
+      strain_name: `Previous Strain ${String(i)}`,
+    }));
 
     render(
       <DataTable
@@ -70,11 +79,15 @@ describe("DataTable Showing display during loading", () => {
         isLoading={true}
         pageIndex={1}
         pageSize={200}
-      />
+      />,
     );
 
-    expect(screen.getByText(/Showing 201-400 of 5000 results/)).toBeInTheDocument();
-    expect(screen.queryByText(/Showing 201-203 of 5000 results/)).not.toBeInTheDocument();
+    expect(
+      screen.getByText(/Showing 201-400 of 5000 results/),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/Showing 201-203 of 5000 results/),
+    ).not.toBeInTheDocument();
   });
 
   it("shows 1-0 when data is genuinely empty and not loading", () => {
@@ -88,13 +101,15 @@ describe("DataTable Showing display during loading", () => {
         isLoading={false}
         pageIndex={0}
         pageSize={200}
-      />
+      />,
     );
     expect(screen.getByText(/Showing 1-0 of 5000 results/)).toBeInTheDocument();
   });
 
   it("shows actual row count range when data is loaded", () => {
-    const rows = Array.from({ length: 3 }, (_, i) => ({ strain_name: `Strain ${String(i)}` }));
+    const rows = Array.from({ length: 3 }, (_, i) => ({
+      strain_name: `Strain ${String(i)}`,
+    }));
     render(
       <DataTable
         id="test"
@@ -105,13 +120,15 @@ describe("DataTable Showing display during loading", () => {
         isLoading={false}
         pageIndex={0}
         pageSize={200}
-      />
+      />,
     );
     expect(screen.getByText(/Showing 1-3 of 5000 results/)).toBeInTheDocument();
   });
 
   it("caps end at totalItems when last page is partial", () => {
-    const rows = Array.from({ length: 10 }, (_, i) => ({ strain_name: `Strain ${String(i)}` }));
+    const rows = Array.from({ length: 10 }, (_, i) => ({
+      strain_name: `Strain ${String(i)}`,
+    }));
     render(
       <DataTable
         id="test"
@@ -122,10 +139,12 @@ describe("DataTable Showing display during loading", () => {
         isLoading={true}
         pageIndex={1}
         pageSize={200}
-      />
+      />,
     );
     // expected end: min(201 + 200 - 1, 210) = 210, not 400
-    expect(screen.getByText(/Showing 201-210 of 210 results/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Showing 201-210 of 210 results/),
+    ).toBeInTheDocument();
   });
 });
 
@@ -138,7 +157,7 @@ describe("formatCellValue array handling", () => {
 
   it("joins array of strings with comma-space", () => {
     expect(formatCellValue(["A/Vietnam/1203", "A/California/04"])).toBe(
-      "A/Vietnam/1203, A/California/04"
+      "A/Vietnam/1203, A/California/04",
     );
   });
 
@@ -174,7 +193,7 @@ describe("DataTable empty state", () => {
         columns={columns}
         totalItems={0}
         resource="strain"
-      />
+      />,
     );
     expect(screen.getByText("No results")).toBeInTheDocument();
   });
@@ -188,7 +207,7 @@ describe("DataTable empty state", () => {
         totalItems={0}
         resource="strain"
         errorMessage="Error: Failed to fetch metadata (500 Internal Server Error)"
-      />
+      />,
     );
     expect(screen.getByText(/Failed to fetch metadata/)).toBeInTheDocument();
     expect(screen.queryByText("No results")).not.toBeInTheDocument();
@@ -203,10 +222,14 @@ describe("DataTable empty state", () => {
         totalItems={0}
         resource="strain"
         errorMessage="Error: Failed to fetch metadata (500 Internal Server Error)"
-      />
+      />,
     );
-    expect(screen.getByRole("button", { name: /Download \(CSV\)/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Columns/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Download \(CSV\)/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Columns/i }),
+    ).toBeInTheDocument();
   });
 });
 
@@ -265,8 +288,12 @@ describe("DataTable download selected: POST regression", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
-    await waitFor(() => { expect(requestMethod).toBe("POST"); });
+    await user.click(
+      screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+    );
+    await waitFor(() => {
+      expect(requestMethod).toBe("POST");
+    });
   });
 
   it("sends RQL query in POST body, not in URL query string", async () => {
@@ -292,8 +319,12 @@ describe("DataTable download selected: POST regression", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
-    await waitFor(() => { expect(capturedBody).toBeTruthy(); });
+    await user.click(
+      screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+    );
+    await waitFor(() => {
+      expect(capturedBody).toBeTruthy();
+    });
 
     expect(capturedBody).toBe("or(eq(id,aaaa-0001),eq(id,aaaa-0002))");
     expect(capturedUrl).not.toContain("or(eq(id,");
@@ -320,8 +351,12 @@ describe("DataTable download selected: POST regression", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
-    await waitFor(() => { expect(rangeHeader).toBeTruthy(); });
+    await user.click(
+      screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+    );
+    await waitFor(() => {
+      expect(rangeHeader).toBeTruthy();
+    });
     expect(rangeHeader).toBe("items=0-2");
   });
 
@@ -346,14 +381,21 @@ describe("DataTable download selected: POST regression", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
-    await waitFor(() => { expect(capturedBody).toBeTruthy(); });
+    await user.click(
+      screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+    );
+    await waitFor(() => {
+      expect(capturedBody).toBeTruthy();
+    });
     expect(capturedBody).toBe("or(eq(genome_id,1234.1))");
   });
 
   it("regression: 200 selected IDs fit in POST body (GET URL would have caused ERR_FAILED)", async () => {
     const user = userEvent.setup();
-    const ids = Array.from({ length: 200 }, (_, i) => `id-${String(i).padStart(4, "0")}`);
+    const ids = Array.from(
+      { length: 200 },
+      (_, i) => `id-${String(i).padStart(4, "0")}`,
+    );
     const rows = ids.map((id) => ({ id, source: "Pfam", product: "poly" }));
     let capturedBody = "";
 
@@ -375,8 +417,15 @@ describe("DataTable download selected: POST regression", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
-    await waitFor(() => { expect(capturedBody).toBeTruthy(); }, { timeout: 5000 });
+    await user.click(
+      screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+    );
+    await waitFor(
+      () => {
+        expect(capturedBody).toBeTruthy();
+      },
+      { timeout: 5000 },
+    );
 
     expect(capturedBody).toMatch(/^or\(/);
     // First and last IDs present — a GET URL would have hit length limits and lost some
@@ -395,16 +444,24 @@ describe("DataTable download selected: POST regression", () => {
         selectedIds={[]}
       />,
     );
-    expect(screen.queryByRole("button", { name: /Download Selected/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /Download Selected/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("triggers anchor click (file download) after successful POST", async () => {
     const user = userEvent.setup();
-    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => { /* no-op */ });
+    const clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(() => {
+        /* no-op */
+      });
 
     server.use(
       http.post(`${DATA_API}/protein_feature/`, () =>
-        HttpResponse.json([{ id: "aaaa-0001", source: "PRINTS", product: "polyprotein" }]),
+        HttpResponse.json([
+          { id: "aaaa-0001", source: "PRINTS", product: "polyprotein" },
+        ]),
       ),
     );
 
@@ -419,17 +476,26 @@ describe("DataTable download selected: POST regression", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
-    await waitFor(() => { expect(clickSpy).toHaveBeenCalled(); });
+    await user.click(
+      screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+    );
+    await waitFor(() => {
+      expect(clickSpy).toHaveBeenCalled();
+    });
     clickSpy.mockRestore();
   });
 
   it("logs error and does not crash when POST returns 500", async () => {
     const user = userEvent.setup();
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => { /* no-op */ });
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {
+      /* no-op */
+    });
 
     server.use(
-      http.post(`${DATA_API}/protein_feature/`, () => new HttpResponse(null, { status: 500 })),
+      http.post(
+        `${DATA_API}/protein_feature/`,
+        () => new HttpResponse(null, { status: 500 }),
+      ),
     );
 
     render(
@@ -443,20 +509,31 @@ describe("DataTable download selected: POST regression", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
+    await user.click(
+      screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+    );
     await waitFor(() => {
-      expect(errorSpy).toHaveBeenCalledWith("Download selected failed:", expect.any(Error));
+      expect(errorSpy).toHaveBeenCalledWith(
+        "Download selected failed:",
+        expect.any(Error),
+      );
     });
     errorSpy.mockRestore();
   });
 
   it("handles {items:[...]} response envelope and still downloads", async () => {
     const user = userEvent.setup();
-    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => { /* no-op */ });
+    const clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(() => {
+        /* no-op */
+      });
 
     server.use(
       http.post(`${DATA_API}/protein_feature/`, () =>
-        HttpResponse.json({ items: [{ id: "aaaa-0001", source: "PRINTS", product: "poly" }] }),
+        HttpResponse.json({
+          items: [{ id: "aaaa-0001", source: "PRINTS", product: "poly" }],
+        }),
       ),
     );
 
@@ -471,8 +548,12 @@ describe("DataTable download selected: POST regression", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
-    await waitFor(() => { expect(clickSpy).toHaveBeenCalled(); });
+    await user.click(
+      screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+    );
+    await waitFor(() => {
+      expect(clickSpy).toHaveBeenCalled();
+    });
     clickSpy.mockRestore();
   });
 });
@@ -502,15 +583,21 @@ describe("DataTable 'Downloading...' indicator via onDownloadAll", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /^Download \(CSV\)$/i }));
+    await user.click(
+      screen.getByRole("button", { name: /^Download \(CSV\)$/i }),
+    );
 
     expect(onDownloadAll).toHaveBeenCalledWith("csv", null);
     expect(await screen.findByText("Downloading...")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /^Download \(CSV\)$/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /^Download \(CSV\)$/i }),
+    ).not.toBeInTheDocument();
 
     resolve(undefined);
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /^Download \(CSV\)$/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /^Download \(CSV\)$/i }),
+      ).toBeInTheDocument();
     });
     expect(screen.queryByText("Downloading...")).not.toBeInTheDocument();
   });
@@ -531,14 +618,18 @@ describe("DataTable 'Downloading...' indicator via onDownloadAll", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /^Download \(TXT\)$/i }));
+    await user.click(
+      screen.getByRole("button", { name: /^Download \(TXT\)$/i }),
+    );
 
     expect(onDownloadAll).toHaveBeenCalledWith("txt", null);
     expect(await screen.findByText("Downloading...")).toBeInTheDocument();
 
     resolve(undefined);
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /^Download \(TXT\)$/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /^Download \(TXT\)$/i }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -558,14 +649,20 @@ describe("DataTable 'Downloading...' indicator via onDownloadAll", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /^Download \(CSV\)$/i }));
+    await user.click(
+      screen.getByRole("button", { name: /^Download \(CSV\)$/i }),
+    );
     await screen.findByText("Downloading...");
 
-    expect(screen.getByRole("button", { name: /^Download \(TXT\)$/i })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: /^Download \(TXT\)$/i }),
+    ).toBeDisabled();
 
     resolve(undefined);
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /^Download \(TXT\)$/i })).not.toBeDisabled();
+      expect(
+        screen.getByRole("button", { name: /^Download \(TXT\)$/i }),
+      ).not.toBeDisabled();
     });
   });
 
@@ -587,21 +684,29 @@ describe("DataTable 'Downloading...' indicator via onDownloadAll", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
+    await user.click(
+      screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+    );
 
     expect(onDownloadAll).toHaveBeenCalledWith("csv", null);
     expect(await screen.findByText("Downloading...")).toBeInTheDocument();
 
     resolve(undefined);
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /Download Selected \(CSV\)/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+      ).toBeInTheDocument();
     });
   });
 
   it("clears 'Downloading...' even when onDownloadAll's promise rejects", async () => {
     const user = userEvent.setup();
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => { /* no-op */ });
-    const onDownloadAll = vi.fn(() => Promise.reject(new Error("network down")));
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {
+      /* no-op */
+    });
+    const onDownloadAll = vi.fn(() =>
+      Promise.reject(new Error("network down")),
+    );
 
     render(
       <DataTable
@@ -614,10 +719,14 @@ describe("DataTable 'Downloading...' indicator via onDownloadAll", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /^Download \(CSV\)$/i }));
+    await user.click(
+      screen.getByRole("button", { name: /^Download \(CSV\)$/i }),
+    );
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /^Download \(CSV\)$/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /^Download \(CSV\)$/i }),
+      ).toBeInTheDocument();
     });
     expect(screen.queryByText("Downloading...")).not.toBeInTheDocument();
     errorSpy.mockRestore();

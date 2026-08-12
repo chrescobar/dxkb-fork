@@ -2,8 +2,8 @@
 
 import {
   type ReactNode,
-  useCallback,
   useEffect,
+  useEffectEvent,
   useRef,
   useState,
 } from "react";
@@ -39,7 +39,7 @@ export function ExpandableViewerWrapper({
   const rafRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const expand = useCallback(() => {
+  const expand = () => {
     clearTimeout(timerRef.current);
     setLeaving(false);
     setExpanded(true);
@@ -49,9 +49,9 @@ export function ExpandableViewerWrapper({
       setEntering(false);
       onExpandChange?.(true);
     });
-  }, [onExpandChange]);
+  };
 
-  const collapse = useCallback(() => {
+  const collapse = () => {
     cancelAnimationFrame(rafRef.current);
     setEntering(false);
     setLeaving(true);
@@ -63,7 +63,7 @@ export function ExpandableViewerWrapper({
         onExpandChange?.(false);
       });
     }, 200);
-  }, [onExpandChange]);
+  };
 
   useEffect(() => {
     return () => {
@@ -72,17 +72,23 @@ export function ExpandableViewerWrapper({
     };
   }, []);
 
+  const collapseFromKeyboard = useEffectEvent(() => {
+    collapse();
+  });
+
   useEffect(() => {
     if (!expanded) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.stopPropagation();
-        collapse();
+        collapseFromKeyboard();
       }
     };
     document.addEventListener("keydown", handleKeyDown);
-    return () => { document.removeEventListener("keydown", handleKeyDown); };
-  }, [expanded, collapse]);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [expanded]);
 
   return (
     <div

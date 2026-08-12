@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import type { PanelImperativeHandle } from "react-resizable-panels";
 import {
   ResizableHandle,
@@ -26,14 +26,11 @@ export function JobsShell({
   const detailsPanelRef = useRef<PanelImperativeHandle>(null);
   const [panelExpanded, setPanelExpanded] = useState(true);
 
-  const handleResize = useCallback(
-    (size: { asPercentage: number }) => {
-      const collapsed = size.asPercentage === 0;
-      if (collapsed && panelExpanded) setPanelExpanded(false);
-      else if (!collapsed && !panelExpanded) setPanelExpanded(true);
-    },
-    [panelExpanded],
-  );
+  const handleResize = (size: { asPercentage: number }) => {
+    const collapsed = size.asPercentage === 0;
+    if (collapsed && panelExpanded) setPanelExpanded(false);
+    else if (!collapsed && !panelExpanded) setPanelExpanded(true);
+  };
 
   const actionStrip = (
     <div className="flex h-full w-20 shrink-0 flex-col rounded-l-lg border-r border-border/50 bg-muted/50 py-2">
@@ -70,10 +67,7 @@ export function JobsShell({
   );
 
   return (
-    <ResizablePanelGroup
-      orientation="horizontal"
-      className="size-full min-h-0"
-    >
+    <ResizablePanelGroup orientation="horizontal" className="size-full min-h-0">
       <ResizablePanel
         id={jobsPanelIds.main}
         defaultSize="75%"

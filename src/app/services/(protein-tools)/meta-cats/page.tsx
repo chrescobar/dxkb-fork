@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState } from "react";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
 import { normalizeToArray } from "@/lib/rerun-utility";
 import { useForm } from "@tanstack/react-form";
@@ -68,7 +68,10 @@ import { metaCatsService } from "@/lib/forms/(protein-tools)/meta-cats/meta-cats
 import { fetchFeaturesFromGroup } from "@/lib/services/feature";
 import { fetchGenomesByIds, type GenomeSummary } from "@/lib/services/genome";
 
-export default function MetaCATSPage() {
+const emptyAutoGroups: NonNullable<MetaCatsFormData["auto_groups"]> = [];
+const emptyFeatureGroups: string[] = [];
+
+function useMetaCATSPage() {
   // State for auto grouping
   const [selectedAutoFeatureGroupObject, setSelectedAutoFeatureGroupObject] =
     useState<WorkspaceObject | null>(null);
@@ -105,7 +108,7 @@ export default function MetaCATSPage() {
     },
   });
 
-  const handleReset = useCallback(() => {
+  function handleReset() {
     form.reset(defaultMetaCatsFormValues);
     setSelectedAutoFeatureGroupObject(null);
     setSelectedFeatureGroupObject(null);
@@ -116,16 +119,17 @@ export default function MetaCATSPage() {
     setSelectedGroupName("");
     setYearRangesInput("");
     setYearRangesValidation(null);
-  }, [form]);
+  }
 
   const inputType = useSelector(form.store, (s) => s.values.input_type);
   const metadataGroup = useSelector(form.store, (s) => s.values.metadata_group);
-  const rawAutoGroups = useSelector(form.store, (s) => s.values.auto_groups);
-  const autoGroups = useMemo(() => rawAutoGroups || [], [rawAutoGroups]);
-  const rawFeatureGroups = useSelector(form.store, (s) => s.values.groups);
-  const featureGroups = useMemo(
-    () => rawFeatureGroups || [],
-    [rawFeatureGroups],
+  const autoGroups = useSelector(
+    form.store,
+    (state) => state.values.auto_groups ?? emptyAutoGroups,
+  );
+  const featureGroups = useSelector(
+    form.store,
+    (state) => state.values.groups ?? emptyFeatureGroups,
   );
   const outputPath = useSelector(form.store, (s) => s.values.output_path);
   const canSubmit = useSelector(form.store, (s) => s.canSubmit);
@@ -148,23 +152,26 @@ export default function MetaCATSPage() {
           setYearRangesInput(rerunData.year_ranges);
         }
 
-        const autoGroupsRaw = normalizeToArray<Record<string, unknown>>(rerunData.auto_groups);
+        const autoGroupsRaw = normalizeToArray<Record<string, unknown>>(
+          rerunData.auto_groups,
+        );
         if (autoGroupsRaw.length > 0) {
           const mappedAutoGroups: MetaCatsFormData["auto_groups"] =
-            autoGroupsRaw.map(
-              (item) => ({
-                id: crypto.randomUUID(),
-                patric_id: (item.patric_id ?? item.id ?? "") as string,
-                metadata: (item.metadata ?? "") as string,
-                group: (item.group ?? item.grp ?? "") as string,
-                genome_id: (item.genome_id ?? item.g_id ?? "") as string,
-                strain: (item.strain ?? "") as string,
-                genbank_accessions: (item.genbank_accessions ?? "") as string,
-              }),
-            );
+            autoGroupsRaw.map((item) => ({
+              id: crypto.randomUUID(),
+              patric_id: (item.patric_id ?? item.id ?? "") as string,
+              metadata: (item.metadata ?? "") as string,
+              group: (item.group ?? item.grp ?? "") as string,
+              genome_id: (item.genome_id ?? item.g_id ?? "") as string,
+              strain: (item.strain ?? "") as string,
+              genbank_accessions: (item.genbank_accessions ?? "") as string,
+            }));
           form.setFieldValue("auto_groups", mappedAutoGroups);
           const uniqueGroupNames = Array.from(
-            new Set(mappedAutoGroups.map((item) => item.group).filter(Boolean)),
+            mappedAutoGroups.reduce((groups, item) => {
+              if (item.group) groups.add(item.group);
+              return groups;
+            }, new Set<string>()),
           );
           setGroupNames(uniqueGroupNames);
         }
@@ -178,10 +185,7 @@ export default function MetaCATSPage() {
           typeof rerunData.alignment_file === "string" &&
           rerunData.alignment_file.trim() !== ""
         ) {
-          form.setFieldValue(
-            "alignment_file",
-            rerunData.alignment_file,
-          );
+          form.setFieldValue("alignment_file", rerunData.alignment_file);
         }
         if (
           typeof rerunData.group_file === "string" &&
@@ -194,27 +198,17 @@ export default function MetaCATSPage() {
   });
   const { isSubmitting, jobParamsDialogProps } = runtime;
 
-  // Calculate unique group count
-  const uniqueGroupCount = useMemo(() => {
-    return countUniqueGroups(autoGroups);
-  }, [autoGroups]);
-
-  // Determine if year ranges should be shown
+  const uniqueGroupCount = countUniqueGroups(autoGroups);
   const showYearRanges = metadataGroup === "collection_year";
 
-  // Validate year ranges when input changes
-  const handleYearRangesChange = useCallback(
-    (value: string) => {
-      setYearRangesInput(value);
-      const validation = validateYearRanges(value);
-      setYearRangesValidation(validation);
-      form.setFieldValue("year_ranges", value);
-    },
-    [form],
-  );
+  function handleYearRangesChange(value: string) {
+    setYearRangesInput(value);
+    const validation = validateYearRanges(value);
+    setYearRangesValidation(validation);
+    form.setFieldValue("year_ranges", value);
+  }
 
-  // Handle adding feature group to auto grouping grid
-  const handleAddAutoFeatureGroup = useCallback(async () => {
+  async function handleAddAutoFeatureGroup() {
     if (!selectedAutoFeatureGroupObject?.path) {
       toast.error("No feature group selected", {
         description: "Please select a feature group before adding.",
@@ -232,14 +226,17 @@ export default function MetaCATSPage() {
 
     try {
       // Fetch features from the feature group
-      const features = await fetchFeaturesFromGroup(featureGroupPath);
+      const features = await fetchFeaturesFromGroup(featureGroupPath).finally(
+        () => {
+          setIsLoadingAutoGroup(false);
+        },
+      );
 
       if (features.length === 0) {
         toast.error("Empty feature group", {
           description: "The selected feature group has no features.",
           closeButton: true,
         });
-        setIsLoadingAutoGroup(false);
         return;
       }
 
@@ -289,13 +286,10 @@ export default function MetaCATSPage() {
         description: errorMessage,
         closeButton: true,
       });
-    } finally {
-      setIsLoadingAutoGroup(false);
     }
-  }, [selectedAutoFeatureGroupObject, form, groupNames]);
+  }
 
-  // Handle deleting selected rows from grid
-  const handleDeleteSelectedRows = useCallback(() => {
+  function handleDeleteSelectedRows() {
     if (selectedGridRows.size === 0) return;
 
     const currentAutoGroups = form.state.values.auto_groups || [];
@@ -313,10 +307,9 @@ export default function MetaCATSPage() {
     toast.success(`Deleted ${String(selectedGridRows.size)} row(s)`, {
       closeButton: true,
     });
-  }, [selectedGridRows, form]);
+  }
 
-  // Handle changing group for selected rows
-  const handleChangeGroup = useCallback(() => {
+  function handleChangeGroup() {
     if (!selectedGroupName || selectedGridRows.size === 0) {
       toast.error("Select rows and enter a group name", { closeButton: true });
       return;
@@ -339,35 +332,27 @@ export default function MetaCATSPage() {
     toast.success(`Changed group for ${String(selectedGridRows.size)} row(s)`, {
       closeButton: true,
     });
-  }, [selectedGroupName, selectedGridRows, form, groupNames]);
+  }
 
-  // Handle selecting all rows
-  const handleSelectAllRows = useCallback(
-    (checked: boolean) => {
-      if (checked) {
-        setSelectedGridRows(new Set(autoGroups.map((item) => item.id)));
-      } else {
-        setSelectedGridRows(new Set());
-      }
-    },
-    [autoGroups],
-  );
+  function handleSelectAllRows(checked: boolean) {
+    setSelectedGridRows(
+      checked ? new Set(autoGroups.map((item) => item.id)) : new Set(),
+    );
+  }
 
-  // Handle row selection toggle
-  const handleRowSelect = useCallback((id: string) => {
-    setSelectedGridRows((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id);
+  function handleRowSelect(id: string) {
+    setSelectedGridRows((previousRows) => {
+      const nextRows = new Set(previousRows);
+      if (nextRows.has(id)) {
+        nextRows.delete(id);
       } else {
-        newSet.add(id);
+        nextRows.add(id);
       }
-      return newSet;
+      return nextRows;
     });
-  }, []);
+  }
 
-  // Handle adding feature group in feature groups mode
-  const handleAddFeatureGroup = useCallback(() => {
+  function handleAddFeatureGroup() {
     if (!selectedFeatureGroupObject?.path) {
       toast.error("No feature group selected", {
         description: "Please select a feature group before adding.",
@@ -399,17 +384,15 @@ export default function MetaCATSPage() {
 
     form.setFieldValue("groups", [...currentFeatureGroups, path]);
     setSelectedFeatureGroupObject(null);
-  }, [selectedFeatureGroupObject, form]);
+  }
 
-  // Handle removing feature group
-  const handleRemoveFeatureGroup = useCallback(
-    (path: string) => {
-      const currentFeatureGroups = form.state.values.groups || [];
-      const updatedGroups = currentFeatureGroups.filter((g) => g !== path);
-      form.setFieldValue("groups", updatedGroups);
-    },
-    [form],
-  );
+  function handleRemoveFeatureGroup(path: string) {
+    const currentFeatureGroups = form.state.values.groups || [];
+    form.setFieldValue(
+      "groups",
+      currentFeatureGroups.filter((groupPath) => groupPath !== path),
+    );
+  }
 
   return (
     <section>
@@ -574,7 +557,10 @@ export default function MetaCATSPage() {
                               }
                             }}
                           >
-                            <SelectTrigger className="service-card-select-trigger" aria-label="Select metadata">
+                            <SelectTrigger
+                              className="service-card-select-trigger"
+                              aria-label="Select metadata"
+                            >
                               <SelectValue placeholder="Select metadata" />
                             </SelectTrigger>
                             <SelectContent
@@ -607,9 +593,9 @@ export default function MetaCATSPage() {
                         </Label>
                         <Input
                           value={yearRangesInput}
-                          onChange={(e) =>
-                            { handleYearRangesChange(e.target.value); }
-                          }
+                          onChange={(e) => {
+                            handleYearRangesChange(e.target.value);
+                          }}
                           placeholder="1998,1999-2005,2006"
                           className="service-card-input"
                         />
@@ -649,7 +635,9 @@ export default function MetaCATSPage() {
                         variant="outline"
                         size="icon"
                         aria-label="Add feature group"
-                        onClick={() => { void handleAddAutoFeatureGroup(); }}
+                        onClick={() => {
+                          void handleAddAutoFeatureGroup();
+                        }}
                         disabled={
                           !selectedAutoFeatureGroupObject || isLoadingAutoGroup
                         }
@@ -670,7 +658,8 @@ export default function MetaCATSPage() {
                         <RadioGroup
                           value={field.state.value}
                           onValueChange={(value) => {
-                            if (value != null) field.handleChange(value as "na" | "aa");
+                            if (value != null)
+                              field.handleChange(value as "na" | "aa");
                           }}
                           className="service-radio-group-horizontal"
                         >
@@ -698,11 +687,14 @@ export default function MetaCATSPage() {
                           label: name,
                         }))}
                         value={selectedGroupName}
-                        onValueChange={(value) =>
-                          { setSelectedGroupName(value ?? ""); }
-                        }
+                        onValueChange={(value) => {
+                          setSelectedGroupName(value ?? "");
+                        }}
                       >
-                        <SelectTrigger className="service-card-select-trigger flex-1" aria-label="Select group name">
+                        <SelectTrigger
+                          className="service-card-select-trigger flex-1"
+                          aria-label="Select group name"
+                        >
                           <SelectValue placeholder="Select or enter group name" />
                         </SelectTrigger>
                         <SelectContent>
@@ -787,9 +779,9 @@ export default function MetaCATSPage() {
                                     name={`row-${item.id}-checkbox`}
                                     aria-label={`Select ${item.patric_id}`}
                                     checked={selectedGridRows.has(item.id)}
-                                    onCheckedChange={() =>
-                                      { handleRowSelect(item.id); }
-                                    }
+                                    onCheckedChange={() => {
+                                      handleRowSelect(item.id);
+                                    }}
                                   />
                                 </TableCell>
                                 <TableCell className="font-mono text-xs">
@@ -877,7 +869,8 @@ export default function MetaCATSPage() {
                         <RadioGroup
                           value={field.state.value}
                           onValueChange={(value) => {
-                            if (value != null) field.handleChange(value as "na" | "aa");
+                            if (value != null)
+                              field.handleChange(value as "na" | "aa");
                           }}
                           className="service-radio-group-horizontal"
                         >
@@ -1012,4 +1005,8 @@ export default function MetaCATSPage() {
       <JobParamsDialog {...jobParamsDialogProps} />
     </section>
   );
+}
+
+export default function MetaCATSPage() {
+  return useMetaCATSPage();
 }

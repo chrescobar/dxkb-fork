@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import {
@@ -140,9 +140,7 @@ export function useRerunForm<
     };
   });
 
-  useEffect(() => {
-    if (!rerunData || rerunApplied.current) return;
-    rerunApplied.current = true;
+  const applyRerunData = useEffectEvent((data: T) => {
     const {
       fields: rerunFields,
       libraries: rerunLibs,
@@ -154,7 +152,7 @@ export function useRerunForm<
 
     if (rerunFields) {
       for (const field of rerunFields) {
-        const value = rerunData[field];
+        const value = data[field];
         if (value !== undefined) {
           const formField = field as ServiceFormField<TForm>;
           formApi.setFieldValue(formField, value as TForm[typeof formField]);
@@ -166,7 +164,7 @@ export function useRerunForm<
     if (rerunLibs && rerunLibs.length > 0) {
       builtLibs = rerunLibs.flatMap((kind) =>
         libraryBuilders[kind](
-          rerunData,
+          data,
           getExtra ? (lib) => getExtra(lib, kind) : undefined,
         ),
       );
@@ -179,7 +177,13 @@ export function useRerunForm<
       }
     }
 
-    applyHandler?.(rerunData, formApi, builtLibs);
+    applyHandler?.(data, formApi, builtLibs);
+  });
+
+  useEffect(() => {
+    if (!rerunData || rerunApplied.current) return;
+    rerunApplied.current = true;
+    applyRerunData(rerunData);
   }, [rerunData]);
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, ChevronDown, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -74,7 +74,8 @@ function formatTriggerLabel(
   endDate: Date | undefined,
 ): string | null {
   if (!date) return null;
-  const label = conditionOptions.find((o) => o.value === condition)?.label ?? "";
+  const label =
+    conditionOptions.find((o) => o.value === condition)?.label ?? "";
   const d = format(date, "MMM d, yyyy");
   if (condition === "is_in_between" && endDate) {
     return `${label} ${d} → ${format(endDate, "MMM d, yyyy")}`;
@@ -103,58 +104,44 @@ export function JobsDateFilter({
     ? formatTriggerLabel(condition, isRange ? rangeFrom : singleDate, rangeTo)
     : null;
 
-  const applyFilter = useCallback(
-    (cond: DateCondition, date: Date | undefined, end: Date | undefined) => {
-      const { from, to } = conditionToApiDates(cond, date, end);
-      onFilterChange(from, to);
-    },
-    [onFilterChange],
-  );
+  const applyFilter = (
+    cond: DateCondition,
+    date: Date | undefined,
+    end: Date | undefined,
+  ) => {
+    const { from, to } = conditionToApiDates(cond, date, end);
+    onFilterChange(from, to);
+  };
 
-  const handleConditionChange = useCallback(
-    (value: string) => {
-      const newCondition = value as DateCondition;
-      setCondition(newCondition);
-      // Reset dates when switching conditions
-      setSingleDate(undefined);
-      setRangeFrom(undefined);
-      setRangeTo(undefined);
-      onFilterChange(undefined, undefined);
-    },
-    [onFilterChange],
-  );
+  const handleConditionChange = (value: string) => {
+    const newCondition = value as DateCondition;
+    setCondition(newCondition);
+    setSingleDate(undefined);
+    setRangeFrom(undefined);
+    setRangeTo(undefined);
+    onFilterChange(undefined, undefined);
+  };
 
-  const handleSingleDateSelect = useCallback(
-    (date: Date | undefined) => {
-      setSingleDate(date);
-      if (date) {
-        applyFilter(condition, date, undefined);
-      }
-    },
-    [condition, applyFilter],
-  );
+  const handleSingleDateSelect = (date: Date | undefined) => {
+    setSingleDate(date);
+    if (date) applyFilter(condition, date, undefined);
+  };
 
-  const handleRangeSelect = useCallback(
-    (range: { from?: Date; to?: Date } | undefined) => {
-      const from = range?.from;
-      const to = range?.to;
-      setRangeFrom(from);
-      setRangeTo(to);
-      applyFilter("is_in_between", from, to);
-    },
-    [applyFilter],
-  );
+  const handleRangeSelect = (range: { from?: Date; to?: Date } | undefined) => {
+    const from = range?.from;
+    const to = range?.to;
+    setRangeFrom(from);
+    setRangeTo(to);
+    applyFilter("is_in_between", from, to);
+  };
 
-  const resetFilter = useCallback(
-    (closePopover: boolean) => {
-      setSingleDate(undefined);
-      setRangeFrom(undefined);
-      setRangeTo(undefined);
-      onFilterChange(undefined, undefined);
-      if (closePopover) setOpen(false);
-    },
-    [onFilterChange],
-  );
+  const resetFilter = (closePopover: boolean) => {
+    setSingleDate(undefined);
+    setRangeFrom(undefined);
+    setRangeTo(undefined);
+    onFilterChange(undefined, undefined);
+    if (closePopover) setOpen(false);
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -218,7 +205,9 @@ export function JobsDateFilter({
             <button
               type="button"
               className="ml-auto text-xs text-destructive hover:underline"
-              onClick={() => { resetFilter(false); }}
+              onClick={() => {
+                resetFilter(false);
+              }}
             >
               Clear
             </button>

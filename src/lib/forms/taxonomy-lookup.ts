@@ -6,7 +6,7 @@ function extractTaxonomyDocs(data: unknown): TaxonomyDoc[] {
   if (Array.isArray(data)) return data as TaxonomyDoc[];
   if (!data || typeof data !== "object" || !("response" in data)) return [];
   const response = (data as { response?: { docs?: unknown } }).response;
-  return Array.isArray(response?.docs) ? response.docs as TaxonomyDoc[] : [];
+  return Array.isArray(response?.docs) ? (response.docs as TaxonomyDoc[]) : [];
 }
 
 export async function fetchTaxonNameById(
@@ -16,6 +16,7 @@ export async function fetchTaxonNameById(
     const response = await fetch(
       `/api/services/taxonomy?q=taxon_id:${encodeURIComponent(taxonId)}&fl=taxon_id,taxon_name`,
     );
+    if (!response.ok) return null;
     const docs = extractTaxonomyDocs(await response.json());
     const name = docs[0]?.taxon_name;
     return typeof name === "string" && name.length > 0 ? name : null;

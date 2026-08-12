@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SearchIcon, Loader2Icon, ChevronDownIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TaxonomyItem, TaxonomySelectorProps } from "@/types";
-
 
 interface TaxIDSelectorProps extends TaxonomySelectorProps {
   apiServiceUrl?: string;
@@ -40,7 +39,7 @@ async function searchTaxonById(
     throw new Error(`HTTP error! status: ${String(response.status)}`);
   }
 
-  const data = await response.json() as { response?: { docs?: unknown[] } };
+  const data = (await response.json()) as { response?: { docs?: unknown[] } };
   return (data.response?.docs ?? []) as TaxonomyItem[];
 }
 
@@ -61,7 +60,6 @@ export function TaxIDSelector({
     value ? String(value.taxon_id) : "",
   );
   const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
-  const [isManualTrigger, setIsManualTrigger] = useState(false);
   const [touched, setTouched] = useState(false);
   const inputRef = useRef<HTMLDivElement>(null);
 
@@ -70,12 +68,29 @@ export function TaxIDSelector({
     const timeoutId = setTimeout(() => {
       setDebouncedQuery(searchQuery);
     }, 300);
-    return () => { clearTimeout(timeoutId); };
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [searchQuery]);
 
-  const { data: results = [], isLoading: loading, error: queryError } = useQuery<TaxonomyItem[]>({
-    queryKey: ["taxonomy-search-id", resolvedApiServiceUrl, debouncedQuery, queryFilter],
-    queryFn: ({ signal }) => searchTaxonById(resolvedApiServiceUrl, debouncedQuery, queryFilter, signal),
+  const {
+    data: results = [],
+    isLoading: loading,
+    error: queryError,
+  } = useQuery<TaxonomyItem[]>({
+    queryKey: [
+      "taxonomy-search-id",
+      resolvedApiServiceUrl,
+      debouncedQuery,
+      queryFilter,
+    ],
+    queryFn: ({ signal }) =>
+      searchTaxonById(
+        resolvedApiServiceUrl,
+        debouncedQuery,
+        queryFilter,
+        signal,
+      ),
     enabled: !!debouncedQuery.trim() && !disabled,
     staleTime: 5 * 60 * 1000,
   });
@@ -102,48 +117,26 @@ export function TaxIDSelector({
     if (disabled) return;
     setSearchQuery(value);
     setShowDropdown(value.length > 0);
-    setIsManualTrigger(false);
     // Clear the selected value when user clears the input
     if (value.trim() === "") {
       onChange?.(null);
     }
   };
 
-  const handleSelect = useCallback(
-    (item: TaxonomyItem) => {
-      if (disabled) return;
-      onChange?.(item);
-      setShowDropdown(false);
-      setSearchQuery(String(item.taxon_id));
-    },
-    [onChange, disabled],
-  );
+  const handleSelect = (item: TaxonomyItem) => {
+    if (disabled) return;
+    onChange?.(item);
+    setShowDropdown(false);
+    setSearchQuery(String(item.taxon_id));
+  };
 
   const handleManualDropdownToggle = () => {
     setShowDropdown(!showDropdown);
-    setIsManualTrigger(!showDropdown);
   };
 
-  const isValid = useMemo(() => {
-    if (!required) return true;
-    return !!value;
-  }, [required, value]);
-
-  // Use filtered results from search, with manual trigger override
-  const displayResults = useMemo(() => {
-    if (isManualTrigger) {
-      return results; // Show all results when manually triggered
-    }
-    return results;
-  }, [results, isManualTrigger]);
-
-  // Determine what to display in the input
-  const inputValue = useMemo(() => {
-    if (disabled && value) {
-      return String(value.taxon_id);
-    }
-    return searchQuery;
-  }, [disabled, value, searchQuery]);
+  const isValid = !required || !!value;
+  const displayResults = results;
+  const inputValue = disabled && value ? String(value.taxon_id) : searchQuery;
 
   return (
     <div className={cn("relative w-full", className)}>
@@ -156,7 +149,9 @@ export function TaxIDSelector({
             disabled && !value ? "Select a taxon name first" : placeholder
           }
           value={inputValue}
-          onChange={(e) => { handleSearchChange(e.target.value); }}
+          onChange={(e) => {
+            handleSearchChange(e.target.value);
+          }}
           onFocus={() => {
             if (!disabled) {
               setShowDropdown(searchQuery.length > 0);
@@ -165,7 +160,9 @@ export function TaxIDSelector({
           onBlur={() => {
             setTouched(true);
             if (!disabled) {
-              setTimeout(() => { setShowDropdown(false); }, 200);
+              setTimeout(() => {
+                setShowDropdown(false);
+              }, 200);
             }
           }}
           className={cn(
@@ -208,7 +205,9 @@ export function TaxIDSelector({
                   type="button"
                   key={item.taxon_id}
                   className="flex w-full cursor-pointer items-center justify-between p-2 text-left hover:bg-accent"
-                  onClick={() => { handleSelect(item); }}
+                  onClick={() => {
+                    handleSelect(item);
+                  }}
                 >
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-medium">

@@ -1,16 +1,40 @@
 "use client";
 
-import { useEffect, useImperativeHandle, useMemo, useState, type CSSProperties } from "react";
-import { SigmaContainer, useLoadGraph, useRegisterEvents, useSetSettings, useSigma } from "@react-sigma/core";
+import {
+  useEffect,
+  useEffectEvent,
+  useImperativeHandle,
+  useState,
+  type CSSProperties,
+} from "react";
+import {
+  SigmaContainer,
+  useLoadGraph,
+  useRegisterEvents,
+  useSetSettings,
+  useSigma,
+} from "@react-sigma/core";
 import "@react-sigma/core/lib/style.css";
 import Graph from "graphology";
 import { drawDiscNodeHover, EdgeRectangleProgram } from "sigma/rendering";
 import type { NodeHoverDrawingFunction } from "sigma/rendering";
 import { downloadAsImage } from "@sigma/export-image";
 
-import { colors, edgeHighlightReducer, nodeHighlightReducer, renderEdge, renderEdgeExperimental } from "@/lib/interactions/graph-theme";
+import {
+  colors,
+  edgeHighlightReducer,
+  nodeHighlightReducer,
+  renderEdge,
+  renderEdgeExperimental,
+} from "@/lib/interactions/graph-theme";
 import { runGraphLayout } from "@/lib/interactions/layouts";
-import type { GEdge, GNode, GraphCanvasProps, GraphSelection, LayoutName } from "@/lib/interactions/types";
+import type {
+  GEdge,
+  GNode,
+  GraphCanvasProps,
+  GraphSelection,
+  LayoutName,
+} from "@/lib/interactions/types";
 
 import { ZoomControl } from "./zoom-control";
 
@@ -46,7 +70,6 @@ function buildGraph(nodes: GNode[], edges: GEdge[]): Graph {
   return g;
 }
 
-
 // Sigma's hover renderer (drawDiscNodeHover) paints a hardcoded #FFF pill, then
 // draws the label in `labelColor`. Since we drive labelColor off the theme
 // foreground (white in dark mode), the hover/selected label went white-on-white.
@@ -55,7 +78,10 @@ function buildGraph(nodes: GNode[], edges: GEdge[]): Graph {
 // at module scope so its identity is stable — SigmaContainer deep-diffs settings
 // and recreates the instance (resetting pan/zoom) if this changed each render.
 const drawNodeHover: NodeHoverDrawingFunction = (context, data, settings) => {
-  drawDiscNodeHover(context, data, { ...settings, labelColor: { color: "#000" } });
+  drawDiscNodeHover(context, data, {
+    ...settings,
+    labelColor: { color: "#000" },
+  });
 };
 
 interface GraphLoaderProps {
@@ -91,38 +117,49 @@ interface GraphEventsProps {
   selectedEdgeIds: ReadonlySet<string>;
 }
 
-function GraphEvents({ onSelect, onHover, selectedNodeIds, selectedEdgeIds }: GraphEventsProps) {
+function GraphEvents({
+  onSelect,
+  onHover,
+  selectedNodeIds,
+  selectedEdgeIds,
+}: GraphEventsProps) {
   const sigma = useSigma();
   const registerEvents = useRegisterEvents();
   const setSettings = useSetSettings();
   const [hoveredEdge, setHoveredEdge] = useState<string | null>(null);
+  const select = useEffectEvent(onSelect);
+  const hover = useEffectEvent(onHover);
 
   useEffect(() => {
     registerEvents({
       clickNode: ({ node }) => {
         const data = sigma.getGraph().getNodeAttributes(node) as GNode;
-        onSelect({ nodes: [data], edges: [] });
+        select({ nodes: [data], edges: [] });
       },
       clickEdge: ({ edge }) => {
         const data = sigma.getGraph().getEdgeAttributes(edge) as GEdge;
-        onSelect({ nodes: [], edges: [data] });
+        select({ nodes: [], edges: [data] });
       },
       clickStage: () => {
-        onSelect({ nodes: [], edges: [] });
+        select({ nodes: [], edges: [] });
       },
       enterNode: ({ node, event }) => {
         const data = sigma.getGraph().getNodeAttributes(node) as GNode;
-        onHover({ x: event.x, y: event.y, node: data });
+        hover({ x: event.x, y: event.y, node: data });
       },
-      leaveNode: () => { onHover(null); },
+      leaveNode: () => {
+        hover(null);
+      },
       enterEdge: ({ edge, event }) => {
         const data = sigma.getGraph().getEdgeAttributes(edge) as GEdge;
-        onHover({ x: event.x, y: event.y, edge: data });
+        hover({ x: event.x, y: event.y, edge: data });
         setHoveredEdge(edge);
       },
-      leaveEdge: () => { onHover(null); setHoveredEdge(null); },
+      leaveEdge: () => {
+        hover(null);
+        setHoveredEdge(null);
+      },
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [registerEvents, sigma]);
 
   useEffect(() => {
@@ -140,13 +177,20 @@ function GraphEvents({ onSelect, onHover, selectedNodeIds, selectedEdgeIds }: Gr
   // provider effect, so observe the attribute rather than a theme prop).
   useEffect(() => {
     const apply = () => {
-      const color = getComputedStyle(document.documentElement).getPropertyValue("--foreground").trim();
+      const color = getComputedStyle(document.documentElement)
+        .getPropertyValue("--foreground")
+        .trim();
       if (color) setSettings({ labelColor: { color } });
     };
     apply();
     const observer = new MutationObserver(apply);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-    return () => { observer.disconnect(); };
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+    return () => {
+      observer.disconnect();
+    };
   }, [setSettings]);
 
   return null;
@@ -190,16 +234,18 @@ function HandleBridge({
   return null;
 }
 
-export function SigmaCanvas({ nodes, edges, layout, selection, onSelect, handleRef, onReady }: GraphCanvasProps) {
+export function SigmaCanvas({
+  nodes,
+  edges,
+  layout,
+  selection,
+  onSelect,
+  handleRef,
+  onReady,
+}: GraphCanvasProps) {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
-  const selectedNodeIds = useMemo(
-    () => new Set(selection.nodes.map((node) => node.id)),
-    [selection.nodes],
-  );
-  const selectedEdgeIds = useMemo(
-    () => new Set(selection.edges.map((edge) => edge.id)),
-    [selection.edges],
-  );
+  const selectedNodeIds = new Set(selection.nodes.map((node) => node.id));
+  const selectedEdgeIds = new Set(selection.edges.map((edge) => edge.id));
 
   return (
     <div className="relative size-full">
@@ -209,7 +255,14 @@ export function SigmaCanvas({ nodes, edges, layout, selection, onSelect, handleR
         // "Search proteins" box (bg-input/30 over the bg-card column) so the
         // canvas reads as the same surface. Plain var(--card) fails in light
         // themes where --card is pure white — the input/30 composite never is.
-        style={{ width: "100%", height: "100%", "--sigma-background-color": "color-mix(in oklab, var(--input) 30%, var(--card))" } as CSSProperties}
+        style={
+          {
+            width: "100%",
+            height: "100%",
+            "--sigma-background-color":
+              "color-mix(in oklab, var(--input) 30%, var(--card))",
+          } as CSSProperties
+        }
         settings={{
           renderEdgeLabels: false,
           // Sort draw order by node/edge zIndex so the reducer's zIndex:1 on the

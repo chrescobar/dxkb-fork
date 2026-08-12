@@ -20,28 +20,24 @@ export const viralGenomeTreeFormSchema = z
       error: "Recipe must be selected",
     }),
     substitution_model: z.string().min(1, "Substitution model is required"),
-    trim_threshold: z
-      .string()
-      .refine(
-        (val) => {
-          const num = parseFloat(val);
-          return !isNaN(num) && num >= 0 && num <= 1;
-        },
-        {
-            error: "Trim threshold must be a number between 0 and 1"
-        },
-      ),
-    gap_threshold: z
-      .string()
-      .refine(
-        (val) => {
-          const num = parseFloat(val);
-          return !isNaN(num) && num >= 0 && num <= 1;
-        },
-        {
-            error: "Gap threshold must be a number between 0 and 1"
-        },
-      ),
+    trim_threshold: z.string().refine(
+      (val) => {
+        const num = parseFloat(val);
+        return !isNaN(num) && num >= 0 && num <= 1;
+      },
+      {
+        error: "Trim threshold must be a number between 0 and 1",
+      },
+    ),
+    gap_threshold: z.string().refine(
+      (val) => {
+        const num = parseFloat(val);
+        return !isNaN(num) && num >= 0 && num <= 1;
+      },
+      {
+        error: "Gap threshold must be a number between 0 and 1",
+      },
+    ),
     sequences: z
       .array(viralGenomeSequenceItemSchema)
       .min(1, "At least one sequence must be selected")
@@ -64,7 +60,9 @@ export const viralGenomeTreeFormSchema = z
   });
 
 export type ViralGenomeTreeFormData = z.infer<typeof viralGenomeTreeFormSchema>;
-export type ViralGenomeSequenceItem = z.infer<typeof viralGenomeSequenceItemSchema>;
+export type ViralGenomeSequenceItem = z.infer<
+  typeof viralGenomeSequenceItemSchema
+>;
 
 // Constants
 export const maxSequences = 5000;
@@ -218,9 +216,9 @@ export const genomeMetadataFieldsData: GenomeMetadataFieldItem[] = [
 ];
 
 // Legacy: Flat array of all field names (excluding labels) for backward compatibility
-export const genomeAdvancedFields: string[] = genomeMetadataFieldsData
-  .filter((item) => !item.field.startsWith("-----"))
-  .map((item) => item.field);
+export const genomeAdvancedFields: string[] = genomeMetadataFieldsData.flatMap(
+  (item) => (item.field.startsWith("-----") ? [] : [item.field]),
+);
 
 // Helper function to extract section label from field name
 function extractSectionLabel(field: string): string {
@@ -263,8 +261,9 @@ export const defaultViralGenomeTreeFormValues: ViralGenomeTreeFormData = {
   trim_threshold: "0",
   gap_threshold: "0",
   sequences: [],
-  metadata_fields: defaultMetadataFields.filter((f) => f.selected).map((f) => f.id),
+  metadata_fields: defaultMetadataFields
+    .filter((f) => f.selected)
+    .map((f) => f.id),
   output_path: "",
   output_file: "",
 };
-

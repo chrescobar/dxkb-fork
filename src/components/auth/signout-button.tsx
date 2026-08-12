@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth/hooks";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { cn } from "@/lib/utils";
 import {
   AlertDialog,
@@ -20,12 +21,7 @@ import { LogOut, Loader2 } from "lucide-react";
 
 interface SignoutButtonProps {
   variant?:
-    | "default"
-    | "destructive"
-    | "outline"
-    | "secondary"
-    | "ghost"
-    | "link";
+    "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
   size?: "default" | "sm" | "lg" | "icon";
   showIcon?: boolean;
   confirmDialog?: boolean;
@@ -47,18 +43,13 @@ export function SignoutButton({
 
   const handleSignout = async () => {
     setIsSigningOut(true);
-    try {
-      await signOut();
-      router.push(redirectTo);
-    } catch (error) {
+    await signOut().catch((error: unknown) => {
       console.error("Signout error:", error);
-      // Even if signout fails, redirect to signin
-      router.push(redirectTo);
-    } finally {
-      // Ensure any temporary pointer-events lock is cleared even on errors.
-      setTimeout(() => (document.body.style.pointerEvents = ""), 0);
-      setIsSigningOut(false);
-    }
+    });
+    router.push(redirectTo);
+    // Ensure any temporary pointer-events lock is cleared even on errors.
+    setTimeout(() => (document.body.style.pointerEvents = ""), 0);
+    setIsSigningOut(false);
   };
 
   const triggerChildren = (
@@ -69,9 +60,7 @@ export function SignoutButton({
         showIcon && <LogOut className="size-4" />
       )}
       {size !== "icon" && (
-        <span>
-          {isSigningOut ? "Signing out..." : "Sign Out"}
-        </span>
+        <span>{isSigningOut ? "Signing out..." : "Sign Out"}</span>
       )}
     </>
   );
@@ -83,7 +72,9 @@ export function SignoutButton({
         size={size}
         disabled={isSigningOut}
         className={className}
-        onClick={() => { void handleSignout(); }}
+        onClick={() => {
+          void handleSignout();
+        }}
       >
         {triggerChildren}
       </Button>
@@ -109,13 +100,18 @@ export function SignoutButton({
         <AlertDialogHeader>
           <AlertDialogTitle>Sign out of BV-BRC?</AlertDialogTitle>
           <AlertDialogDescription>
-            You&apos;ll need to sign in again to access your workspace and private
-            data.
+            You&apos;ll need to sign in again to access your workspace and
+            private data.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={() => { void handleSignout(); }} disabled={isSigningOut}>
+          <AlertDialogAction
+            onClick={() => {
+              void handleSignout();
+            }}
+            disabled={isSigningOut}
+          >
             {isSigningOut ? (
               <>
                 <Loader2 className="mr-2 size-4 animate-spin" />

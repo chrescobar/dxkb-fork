@@ -4,34 +4,16 @@ import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { Star } from "lucide-react";
 
-import { workspaceNavItems, type WorkspaceNavItem } from "@/components/navbars/navbar-links";
+import { workspaceNavItems } from "@/components/navbars/navbar-links";
 import { NavigationMenuLink } from "@/components/ui/navigation-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { loadFavorites } from "@/lib/services/workspace/favorites";
 import { workspaceQueryKeys } from "@/lib/services/workspace/workspace-query-keys";
-import { getRecentFolders, getWorkspaceFolderDisplayName } from "@/lib/recent-workspace-folders";
-import { buildEncodedSegmentPath, encodeWorkspaceSegment, parsePathSegments, workspaceUsername } from "@/lib/services/workspace/path-utils";
-
-export { workspaceUsername };
-
-/** Resolve a nav item's href for the current user state. */
-export function resolveWorkspaceHref(
-  item: WorkspaceNavItem,
-  wsUsername: string,
-  isAuthenticated: boolean,
-): string {
-  if (item.requiresAuth && !isAuthenticated) {
-    return item.signInRedirect ?? "/sign-in?redirect=/workspace";
-  }
-  return typeof item.href === "function"
-    ? item.href(encodeWorkspaceSegment(wsUsername))
-    : item.href;
-}
-
-/** Convert a full workspace path (e.g. /user@bvbrc/home/folder) to a browser URL. */
-export function buildFolderHref(folderPath: string): string {
-  return `/workspace/${buildEncodedSegmentPath(parsePathSegments(folderPath))}`;
-}
+import {
+  getRecentFolders,
+  getWorkspaceFolderDisplayName,
+} from "@/lib/recent-workspace-folders";
+import { buildFolderHref, resolveWorkspaceHref } from "./workspace-nav-utils";
 
 interface WorkspaceDropdownContentProps {
   isAuthenticated: boolean;
@@ -83,50 +65,58 @@ export function WorkspaceDropdownContent({
       </div>
 
       {/* Bottom: dynamic sections (authenticated only) */}
-      {isAuthenticated && (favoritePaths.length > 0 || recentFolders.length > 0 || favoritesLoading) && (
-        <div className="mt-1 pt-1">
-          <div className="grid grid-cols-2 gap-2">
-            {/* Favorite Folders */}
-            <div>
-              <SectionHeader>
-                Favorite Folders <Star className="size-4 text-amber-400" fill="currentColor" />
-              </SectionHeader>
-              {favoritesLoading ? (
-                <div className="space-y-1 p-2">
-                  <Skeleton className="h-5 w-32" />
-                  <Skeleton className="h-5 w-24" />
-                </div>
-              ) : favoritePaths.length > 0 ? (
-                favoritePaths.map((path) => (
-                  <NavItem
-                    key={path}
-                    href={buildFolderHref(path)}
-                    title={getWorkspaceFolderDisplayName(path)}
-                  />
-                ))
-              ) : (
-                <p className="px-2 py-1 text-sm text-muted-foreground">No favorites yet</p>
-              )}
-            </div>
+      {isAuthenticated &&
+        (favoritePaths.length > 0 ||
+          recentFolders.length > 0 ||
+          favoritesLoading) && (
+          <div className="mt-1 pt-1">
+            <div className="grid grid-cols-2 gap-2">
+              {/* Favorite Folders */}
+              <div>
+                <SectionHeader>
+                  Favorite Folders{" "}
+                  <Star className="size-4 text-amber-400" fill="currentColor" />
+                </SectionHeader>
+                {favoritesLoading ? (
+                  <div className="space-y-1 p-2">
+                    <Skeleton className="h-5 w-32" />
+                    <Skeleton className="h-5 w-24" />
+                  </div>
+                ) : favoritePaths.length > 0 ? (
+                  favoritePaths.map((path) => (
+                    <NavItem
+                      key={path}
+                      href={buildFolderHref(path)}
+                      title={getWorkspaceFolderDisplayName(path)}
+                    />
+                  ))
+                ) : (
+                  <p className="px-2 py-1 text-sm text-muted-foreground">
+                    No favorites yet
+                  </p>
+                )}
+              </div>
 
-            {/* Recently Visited Folders */}
-            <div>
-              <SectionHeader>Recently Visited Folders</SectionHeader>
-              {recentFolders.length > 0 ? (
-                recentFolders.map((folder) => (
-                  <NavItem
-                    key={folder.path}
-                    href={buildFolderHref(folder.path)}
-                    title={getWorkspaceFolderDisplayName(folder.path)}
-                  />
-                ))
-              ) : (
-                <p className="px-2 py-1 text-sm text-muted-foreground">No recent folders</p>
-              )}
+              {/* Recently Visited Folders */}
+              <div>
+                <SectionHeader>Recently Visited Folders</SectionHeader>
+                {recentFolders.length > 0 ? (
+                  recentFolders.map((folder) => (
+                    <NavItem
+                      key={folder.path}
+                      href={buildFolderHref(folder.path)}
+                      title={getWorkspaceFolderDisplayName(folder.path)}
+                    />
+                  ))
+                ) : (
+                  <p className="px-2 py-1 text-sm text-muted-foreground">
+                    No recent folders
+                  </p>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }

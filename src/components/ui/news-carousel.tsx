@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 
 import {
@@ -7,49 +7,57 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel"
+} from "@/components/ui/carousel";
 
 const newsItems = [
   {
     image: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69",
     title: "Research Update",
     section: "Latest Findings",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco...",
-    link: "/news"
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco...",
+    link: "/news",
   },
   {
     image: "https://images.unsplash.com/photo-1576086213369-97a306d36557",
     title: "New Features",
     section: "Platform Updates",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco...",
-    link: "/news"
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco...",
+    link: "/news",
   },
   {
     image: "https://images.unsplash.com/photo-1475906089153-644d9452ce87",
     title: "Community Spotlight",
     section: "Research Community",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco...",
-    link: "/news"
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco...",
+    link: "/news",
   },
   {
     image: "https://plus.unsplash.com/premium_photo-1674850274929-5c4468358a9e",
     title: "Latest Discovery",
     section: "Breakthrough",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco...",
-    link: "/news"
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco...",
+    link: "/news",
   },
   {
     image: "https://plus.unsplash.com/premium_photo-1661515590895-e2f4d9d16fbb",
     title: "New Research Methods",
     section: "Methodology",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco...",
-    link: "/news"
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco...",
+    link: "/news",
   },
 ];
 
 const NewsCarousel = () => {
   return (
-    <section id="news-carousel-container" className="mx-auto my-16 max-w-7xl items-center">
+    <section
+      id="news-carousel-container"
+      className="mx-auto my-16 max-w-7xl items-center"
+    >
       <h3 className="mb-6 text-center text-2xl font-bold">News</h3>
 
       <Carousel
@@ -61,11 +69,20 @@ const NewsCarousel = () => {
       >
         <CarouselContent className="-ml-2 md:-ml-4">
           {newsItems.map((item, index) => (
-            <CarouselItem key={index} className="pl-2 md:basis-1/2 md:pl-4 lg:basis-1/4">
+            <CarouselItem
+              key={item.image}
+              className="pl-2 md:basis-1/2 md:pl-4 lg:basis-1/4"
+            >
               <div className="p-1">
                 <Card className="h-96 w-full overflow-hidden p-0">
-                  <CardContent id={`news-card-${String(index)}`} className="flex aspect-square size-full flex-col p-0">
-                    <div className="relative h-2/3 w-full" id={`news-image-${String(index)}`}>
+                  <CardContent
+                    id={`news-card-${String(index)}`}
+                    className="flex aspect-square size-full flex-col p-0"
+                  >
+                    <div
+                      className="relative h-2/3 w-full"
+                      id={`news-image-${String(index)}`}
+                    >
                       <Image
                         src={item.image}
                         alt={item.title}
@@ -81,7 +98,9 @@ const NewsCarousel = () => {
                       <a href={item.link} className="news-link">
                         <h4 className="font-bold">{item.title}</h4>
                       </a>
-                      <p className="mb-2 text-sm text-foreground">{item.section}</p>
+                      <p className="mb-2 text-sm text-foreground">
+                        {item.section}
+                      </p>
                       <p className="line-clamp-3 text-sm text-muted-foreground">
                         {item.description}
                       </p>
@@ -96,7 +115,7 @@ const NewsCarousel = () => {
         <CarouselNext />
       </Carousel>
     </section>
-  )
-}
+  );
+};
 
 export default NewsCarousel;

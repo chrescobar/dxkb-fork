@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "@tanstack/react-form";
-import { useSelector } from "@tanstack/react-store";
+import { useFastqUtilitiesPage } from "./use-fastq-utilities-page";
+import { FastqOutputCard, FastqPipelineCard } from "./fastq-parameters";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import {
   Card,
@@ -78,197 +77,36 @@ import { getLibraryTypeLabel } from "@/lib/forms/shared-schemas";
 import type { WorkspaceObject } from "@/lib/services/workspace/types";
 
 export default function FastqUtilitiesPage() {
-  // Read input state
-  const [pairedRead1, setPairedRead1] = useState<string | null>(null);
-  const [pairedRead2, setPairedRead2] = useState<string | null>(null);
-  const [singleRead, setSingleRead] = useState<string | null>(null);
-  const [singlePlatform, setSinglePlatform] = useState<Platform>("illumina");
-  const [sraResetKey, setSraResetKey] = useState(0);
-
-  // Pipeline state
-  const [selectedAction, setSelectedAction] = useState<PipelineAction | "">("");
-  const [pipelineActions, setPipelineActions] = useState<PipelineActionItem[]>(
-    [],
-  );
-
-  // Output name uniqueness (variant="name"); valid until check says otherwise
-  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
-
-  const handleReset = () => {
-    form.reset(defaultFastqUtilitiesFormValues);
-    setLibraries([]);
-    setPairedRead1(null);
-    setPairedRead2(null);
-    setSingleRead(null);
-    setSinglePlatform("illumina");
-    setPipelineActions([]);
-    setSelectedAction("");
-    setSraResetKey((k) => k + 1);
-  };
-
-  const form = useForm({
-    defaultValues: defaultFastqUtilitiesFormValues,
-    validators: { onChange: fastqUtilitiesFormSchema },
-    onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value);
-    },
-  });
-
-  const outputPath = useSelector(form.store, (s) => s.values.output_path);
-  const recipe = useSelector(form.store, (s) => s.values.recipe);
-  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
-
-  // Check if align is selected (to show/require target genome)
-  const alignSelected = isAlignSelected(recipe);
-
+  const page = useFastqUtilitiesPage();
   const {
+    form,
+    outputPath,
+    pairedRead1,
+    pairedRead2,
+    singleRead,
+    singlePlatform,
+    sraResetKey,
+    selectedAction,
+    pipelineActions,
     selectedLibraries,
-    addPairedLibrary,
-    addSingleLibrary,
-    removeLibrary,
+    alignSelected,
+    setPairedRead1,
+    setPairedRead2,
+    setSingleRead,
+    setSinglePlatform,
+    setSelectedAction,
+    setIsOutputNameValid,
     setLibraries,
-  } = useTanstackLibrarySelection<LibraryItem>({
-    form,
-    mapLibraryToItem: (library) => ({
-      ...buildBaseLibraryItem(library),
-      ...(library.type === "single" && {
-        platform: (library.platform ?? "illumina") as Platform,
-      }),
-    }),
-    fields: {
-      paired: "paired_end_libs",
-      single: "single_end_libs",
-      srr: "srr_ids",
-    },
-  });
-
-  const runtime = useServiceRuntime({
-    definition: fastqUtilitiesService,
-    form,
-    onSuccess: handleReset,
-    rerun: {
-      libraries: ["paired", "single", "sra"],
-      getLibraryExtra: (lib, kind) => {
-        if (kind === "single") {
-          return { platform: lib.platform };
-        }
-        return {};
-      },
-      syncLibraries: setLibraries,
-      onApply: (rerunData, form) => {
-        // Backend rerun params may serialize a single action as a string and use Title Case.
-        const rawRecipe = rerunData.recipe;
-        const recipeArray: PipelineAction[] = (
-          Array.isArray(rawRecipe)
-            ? (rawRecipe as string[])
-            : typeof rawRecipe === "string"
-              ? [rawRecipe]
-              : []
-        ).map((a) => a.toLowerCase() as PipelineAction);
-
-        if (recipeArray.length > 0) {
-          const actions = recipeArray.map((action, i) =>
-            createPipelineActionItem(action, i),
-          );
-          setPipelineActions(actions);
-          form.setFieldValue("recipe", actionItemsToRecipe(actions));
-        }
-      },
-    },
-  });
-  const { isSubmitting, jobParamsDialogProps } = runtime;
-
-  const handleLibraryError = (message: string) => {
-    if (
-      message === "This paired library has already been added" ||
-      message === "This single library has already been added"
-    ) {
-      toast.error("Duplicate library", { description: message });
-      return;
-    }
-    toast.error(message);
-  };
-
-  const handlePairedLibraryAdd = () => {
-    addPairedLibrary({
-      read1: pairedRead1,
-      read2: pairedRead2,
-      buildLibrary: (read1, read2, id) => ({
-        library: {
-          id,
-          name: getPairedLibraryName(read1, read2),
-          type: "paired",
-          files: [read1, read2],
-        },
-      }),
-      onError: handleLibraryError,
-      onAfterAdd: () => {
-        setPairedRead1(null);
-        setPairedRead2(null);
-      },
-    });
-  };
-
-  const handleSingleLibraryAdd = () => {
-    addSingleLibrary({
-      read: singleRead,
-      buildLibrary: (read) => ({
-        library: {
-          id: read,
-          name: getSingleLibraryName(read),
-          type: "single",
-          files: [read],
-          platform: singlePlatform,
-        },
-      }),
-      duplicateMatcher: (library, read) =>
-        library.id === read && library.type === "single",
-      onError: handleLibraryError,
-      onAfterAdd: () => {
-        setSingleRead(null);
-      },
-    });
-  };
-
-  // Handle adding pipeline action
-  const handleAddPipelineAction = () => {
-    if (!selectedAction) {
-      toast.error("Please select an action first");
-      return;
-    }
-
-    if (pipelineActions.length >= maxPipelineActions) {
-      toast.error("Maximum actions reached", {
-        description: `You can add up to ${String(maxPipelineActions)} pipeline actions`,
-      });
-      return;
-    }
-
-    const newActionItem = createPipelineActionItem(
-      selectedAction,
-      pipelineActions.length,
-    );
-    const newActions = [...pipelineActions, newActionItem];
-    setPipelineActions(newActions);
-    form.setFieldValue("recipe", actionItemsToRecipe(newActions));
-    setSelectedAction("");
-  };
-
-  // Handle removing pipeline action
-  const handleRemovePipelineAction = (id: string) => {
-    const removedAction = pipelineActions.find((a) => a.id === id);
-    const newActions = removePipelineActionItem(pipelineActions, id);
-    setPipelineActions(newActions);
-    form.setFieldValue("recipe", actionItemsToRecipe(newActions));
-
-    // Clear target genome if align is removed
-    if (
-      removedAction?.action === "align" &&
-      !newActions.some((a) => a.action === "align")
-    ) {
-      form.setFieldValue("reference_genome_id", "");
-    }
-  };
+    removeLibrary,
+    handleReset,
+    handlePairedLibraryAdd,
+    handleSingleLibraryAdd,
+    handleAddPipelineAction,
+    handleRemovePipelineAction,
+    isSubmitting,
+    jobParamsDialogProps,
+    canSubmit,
+  } = page;
 
   return (
     <section>
@@ -283,173 +121,14 @@ export default function FastqUtilitiesPage() {
       />
 
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          void form.handleSubmit();
-        }}
+        action={() => form.handleSubmit()}
         className="grid grid-cols-1 gap-6 md:grid-cols-12"
       >
-        {/* Parameters Section */}
         <div className="md:col-span-7">
-          <Card className="h-full">
-            <CardHeader className="service-card-header">
-              <RequiredFormCardTitle className="service-card-title">
-                Parameters
-                <DialogInfoPopup
-                  title={fastqUtilitiesParameters.title}
-                  sections={fastqUtilitiesParameters.sections}
-                />
-              </RequiredFormCardTitle>
-            </CardHeader>
-
-            <CardContent className="service-card-content">
-              <form.Field name="output_path">
-                {(field) => (
-                  <FieldItem className="w-full">
-                    <OutputFolder
-                      value={field.state.value}
-                      onChange={(value) => { field.handleChange(value); }}
-                    />
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
-              <form.Field name="output_file">
-                {(field) => (
-                  <FieldItem className="w-full">
-                    <OutputFolder
-                      variant="name"
-                      value={field.state.value}
-                      onChange={(value) => { field.handleChange(value); }}
-                      outputFolderPath={outputPath}
-                      onValidationChange={setIsOutputNameValid}
-                    />
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
-            </CardContent>
-          </Card>
+          <FastqOutputCard page={page} />
         </div>
-
-        {/* Pipeline Section */}
         <div className="md:col-span-5">
-          <Card className="h-full">
-            <CardHeader className="service-card-header">
-              <RequiredFormCardTitle className="service-card-title">
-                Pipeline
-                <DialogInfoPopup
-                  title={fastqUtilitiesPipeline.title}
-                  sections={fastqUtilitiesPipeline.sections}
-                />
-              </RequiredFormCardTitle>
-            </CardHeader>
-
-            <CardContent className="service-card-content">
-              <div>
-                <Label className="service-card-label">Select Action</Label>
-                <div className="flex items-center gap-2">
-                  <Select
-                    items={pipelineActionOptions}
-                    value={selectedAction}
-                    onValueChange={(value) => {
-                      if (value != null) setSelectedAction(value);
-                    }}
-                  >
-                    <SelectTrigger className="service-card-select-trigger" aria-label="Select action">
-                      <SelectValue placeholder="Select Action" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {pipelineActionOptions.map((action) => (
-                          <SelectItem key={action.value} value={action.value}>
-                            {action.label}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    aria-label="Add pipeline action"
-                    onClick={handleAddPipelineAction}
-                    disabled={
-                      !selectedAction ||
-                      pipelineActions.length >= maxPipelineActions
-                    }
-                  >
-                    <Plus className="size-4" />
-                  </Button>
-                </div>
-              </div>
-
-              {/* Pipeline Actions List */}
-              <div className="mt-4 space-y-2">
-                {pipelineActions.length === 0 ? (
-                  <p className="py-4 text-center text-sm text-muted-foreground">
-                    No actions added yet
-                  </p>
-                ) : (
-                  pipelineActions.map((action) => (
-                    <div
-                      key={action.id}
-                      className="flex items-center justify-between rounded-md border px-3 py-2"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`size-3 rounded-full ${action.color ?? ""}`}
-                        />
-                        <span className="text-sm">{action.label}</span>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="size-6"
-                        aria-label={`Remove ${action.label} action`}
-                        onClick={() => { handleRemovePipelineAction(action.id); }}
-                      >
-                        <X className="size-3" />
-                      </Button>
-                    </div>
-                  ))
-                )}
-              </div>
-
-              <form.Field name="recipe">
-                {(field) => (
-                  <FieldItem>
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
-
-              {/* Target Genome (enabled only when Align is selected) */}
-              <div className="pt-4">
-                <form.Field name="reference_genome_id">
-                  {(field) => (
-                    <FieldItem>
-                      <SingleGenomeSelector
-                        title="Target Genome"
-                        placeholder="e.g. Mycobacterium tuberculosis H37Rv"
-                        value={field.state.value || ""}
-                        onChange={field.handleChange}
-                        disabled={!alignSelected}
-                        helperText={
-                          alignSelected
-                            ? undefined
-                            : "Add the Align action to enable genome selection."
-                        }
-                      />
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-              </div>
-            </CardContent>
-          </Card>
+          <FastqPipelineCard page={page} />
         </div>
 
         {/* Input Library Section */}
@@ -532,7 +211,10 @@ export default function FastqUtilitiesPage() {
                       if (value != null) setSinglePlatform(value);
                     }}
                   >
-                    <SelectTrigger className="service-card-select-trigger" aria-label="Select platform">
+                    <SelectTrigger
+                      className="service-card-select-trigger"
+                      aria-label="Select platform"
+                    >
                       <SelectValue placeholder="Select a Platform..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -622,10 +304,7 @@ export default function FastqUtilitiesPage() {
             <Button type="button" variant="outline" onClick={handleReset}>
               Reset
             </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting || !canSubmit || !isOutputNameValid}
-            >
+            <Button type="submit" disabled={isSubmitting || !canSubmit}>
               {isSubmitting ? <Spinner className="mr-2 size-4" /> : null}
               Submit
             </Button>

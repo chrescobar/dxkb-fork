@@ -16,9 +16,9 @@ interface NavMenuProps {
 export function VerticalMenu({ items, isCollapsed }: NavMenuProps) {
   return (
     <div className="flex flex-col gap-1">
-      {items.map((item, index) => (
+      {items.map((item) => (
         <Button
-          key={index}
+          key={item.label}
           onClick={item.onClick}
           variant="ghost"
           className={cn(
@@ -31,9 +31,7 @@ export function VerticalMenu({ items, isCollapsed }: NavMenuProps) {
           title={isCollapsed ? item.label : undefined}
         >
           <span className="flex shrink-0 items-center">{item.icon}</span>
-          {!isCollapsed && (
-            <span className="truncate">{item.label}</span>
-          )}
+          {!isCollapsed && <span className="truncate">{item.label}</span>}
         </Button>
       ))}
     </div>

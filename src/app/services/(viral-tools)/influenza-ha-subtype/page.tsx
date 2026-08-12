@@ -1,8 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { useForm } from "@tanstack/react-form";
-import { useSelector } from "@tanstack/react-store";
+import { useInfluenzaHaSubtypePage } from "./use-influenza-ha-subtype-page";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,20 +17,13 @@ import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { Spinner } from "@/components/ui/spinner";
 
-import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
-import { validateFasta } from "@/lib/fasta-validation";
 import {
   haSubtypeNumberingInput,
   haSubtypeNumberingConversionScheme,
 } from "@/lib/services/info/influenza-ha-subtype";
 import { HaReferenceTypes } from "@/types/services";
 
-import {
-  influenzaHaSubtypeFormSchema,
-  defaultInfluenzaHaSubtypeFormValues,
-  type InfluenzaHaSubtypeFormData,
-} from "@/lib/forms/(viral-tools)/influenza-ha-subtype/influenza-ha-subtype-form-schema";
-import { influenzaHaSubtypeService } from "@/lib/forms/(viral-tools)/influenza-ha-subtype/influenza-ha-subtype-service";
+import type { InfluenzaHaSubtypeFormData } from "@/lib/forms/(viral-tools)/influenza-ha-subtype/influenza-ha-subtype-form-schema";
 
 const quickReference =
   "https://www.bv-brc.org/docs/quick_references/services/ha_numbering_service.html";
@@ -40,66 +31,19 @@ const tutorial =
   "https://www.bv-brc.org/docs/tutorial/ha_numbering/ha_numbering.html";
 
 export default function HASubtypeNumberingPage() {
-  const form = useForm({
-    defaultValues:
-      defaultInfluenzaHaSubtypeFormValues,
-    validators: { onChange: influenzaHaSubtypeFormSchema  },
-    onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value);
-    },
-  });
-
-  const outputPath = useSelector(form.store, (s) => s.values.output_path);
-  const watchedTypes = useSelector(form.store, (s) => s.values.types);
-  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
-
-  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
-  const [fastaValidationMessage, setFastaValidationMessage] = useState("");
-  const [isFastaValid, setIsFastaValid] = useState(false);
-
-  const inputSource = useSelector(form.store, (s) => s.values.input_source);
-  const fastaData = useSelector(form.store, (s) => s.values.input_fasta_data);
-
-  const validateFastaData = useCallback(() => {
-    const trimmed = fastaData.trim();
-    if (!trimmed) {
-      setFastaValidationMessage("");
-      setIsFastaValid(false);
-      return;
-    }
-    const result = validateFasta(trimmed, "aa");
-    if (result.valid && result.status === "valid_dna") {
-      setIsFastaValid(false);
-      setFastaValidationMessage(
-        "This service requires protein (amino acid) sequences.",
-      );
-      return;
-    }
-    setIsFastaValid(result.valid);
-    setFastaValidationMessage(result.message || "");
-    if (result.valid && result.trimFasta && result.trimFasta !== trimmed) {
-      form.setFieldValue("input_fasta_data", result.trimFasta);
-    }
-  }, [fastaData, form]);
-
-  const handleReset = () => {
-    form.reset(defaultInfluenzaHaSubtypeFormValues);
-    setIsOutputNameValid(true);
-    setFastaValidationMessage("");
-    setIsFastaValid(false);
-  };
-
-  const runtime = useServiceRuntime({
-    definition: influenzaHaSubtypeService,
+  const {
     form,
-    onSuccess: handleReset,
-  });
-  const { isSubmitting, jobParamsDialogProps } = runtime;
-
-  const isFastaDataInvalid =
-    inputSource === "fasta_data" && !!fastaData.trim() && !isFastaValid;
-  const isSubmitDisabled =
-    !canSubmit || !isOutputNameValid || isSubmitting || isFastaDataInvalid;
+    outputPath,
+    watchedTypeSet,
+    inputSource,
+    fastaValidationMessage,
+    validateFastaData,
+    handleReset,
+    setIsOutputNameValid,
+    isSubmitting,
+    jobParamsDialogProps,
+    isSubmitDisabled,
+  } = useInfluenzaHaSubtypePage();
 
   return (
     <section>
@@ -157,7 +101,10 @@ export default function HASubtypeNumberingPage() {
                     <RadioGroup
                       value={field.state.value}
                       onValueChange={(value) => {
-                        if (value != null) field.handleChange(value as InfluenzaHaSubtypeFormData["input_source"]);
+                        if (value != null)
+                          field.handleChange(
+                            value as InfluenzaHaSubtypeFormData["input_source"],
+                          );
                       }}
                       className="service-radio-group-horizontal"
                     >
@@ -200,7 +147,9 @@ export default function HASubtypeNumberingPage() {
                         placeholder="Enter one or more protein sequences in FASTA format."
                         className="service-card-textarea min-h-44 font-mono text-sm"
                         value={field.state.value}
-                        onChange={(e) => { field.handleChange(e.target.value); }}
+                        onChange={(e) => {
+                          field.handleChange(e.target.value);
+                        }}
                         onBlur={() => {
                           field.handleBlur();
                           validateFastaData();
@@ -225,9 +174,9 @@ export default function HASubtypeNumberingPage() {
                         preset="featureProteinFastaOrContigs"
                         placeholder="Select or upload FASTA file..."
                         value={field.state.value}
-                        onSelectedObjectChange={(obj) =>
-                          { field.handleChange(obj?.path ?? ""); }
-                        }
+                        onSelectedObjectChange={(obj) => {
+                          field.handleChange(obj?.path ?? "");
+                        }}
                       />
                       <FieldErrors field={field} />
                     </FieldItem>
@@ -243,9 +192,9 @@ export default function HASubtypeNumberingPage() {
                         preset="featureGroup"
                         placeholder="Select a feature group..."
                         value={field.state.value}
-                        onSelectedObjectChange={(obj) =>
-                          { field.handleChange(obj?.path ?? ""); }
-                        }
+                        onSelectedObjectChange={(obj) => {
+                          field.handleChange(obj?.path ?? "");
+                        }}
                       />
                       <FieldErrors field={field} />
                     </FieldItem>
@@ -284,7 +233,7 @@ export default function HASubtypeNumberingPage() {
                         >
                           <Checkbox
                             id={`scheme-${scheme.id}`}
-                            checked={watchedTypes.includes(scheme.id)}
+                            checked={watchedTypeSet.has(scheme.id)}
                             onCheckedChange={(checked) => {
                               const current = field.state.value;
                               const next = checked
@@ -313,7 +262,9 @@ export default function HASubtypeNumberingPage() {
                   <FieldItem className="w-full">
                     <OutputFolder
                       value={field.state.value}
-                      onChange={(value) => { field.handleChange(value); }}
+                      onChange={(value) => {
+                        field.handleChange(value);
+                      }}
                     />
                     <FieldErrors field={field} />
                   </FieldItem>
@@ -326,7 +277,9 @@ export default function HASubtypeNumberingPage() {
                     <OutputFolder
                       variant="name"
                       value={field.state.value}
-                      onChange={(value) => { field.handleChange(value); }}
+                      onChange={(value) => {
+                        field.handleChange(value);
+                      }}
                       outputFolderPath={outputPath}
                       onValidationChange={setIsOutputNameValid}
                     />

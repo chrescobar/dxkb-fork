@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import type React from "react";
 
 export interface UseTableKeyboardNavigationOptions<T> {
@@ -52,104 +52,85 @@ export function useTableKeyboardNavigation<T>({
 
   const virtualRowCount = leadingOffset + parentOffset + items.length;
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (!enabled) return;
-      if (virtualRowCount === 0) return;
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!enabled) return;
+    if (virtualRowCount === 0) return;
 
-      const currentItemIndex = getFocusedIndex();
+    const currentItemIndex = getFocusedIndex();
 
-      let currentVirtual: number;
-      if (focusedSpecialRow === "leading") {
-        currentVirtual = 0;
-      } else if (focusedSpecialRow === "parent") {
-        currentVirtual = leadingOffset;
-      } else if (currentItemIndex >= 0) {
-        currentVirtual = leadingOffset + parentOffset + currentItemIndex;
-      } else {
-        currentVirtual = -1;
-      }
+    let currentVirtual: number;
+    if (focusedSpecialRow === "leading") {
+      currentVirtual = 0;
+    } else if (focusedSpecialRow === "parent") {
+      currentVirtual = leadingOffset;
+    } else if (currentItemIndex >= 0) {
+      currentVirtual = leadingOffset + parentOffset + currentItemIndex;
+    } else {
+      currentVirtual = -1;
+    }
 
-      if (e.key === "Enter") {
-        if (focusedSpecialRow === "leading" && onLeadingEnter) {
-          e.preventDefault();
-          onLeadingEnter();
-          return;
-        }
-        if (focusedSpecialRow === "parent" && onParentEnter) {
-          e.preventDefault();
-          onParentEnter();
-          return;
-        }
-        const focusedItem =
-          currentItemIndex >= 0 ? items[currentItemIndex] : null;
-        if (focusedItem) {
-          e.preventDefault();
-          onEnter(focusedItem);
-        }
+    if (e.key === "Enter") {
+      if (focusedSpecialRow === "leading" && onLeadingEnter) {
+        e.preventDefault();
+        onLeadingEnter();
         return;
       }
-
-      if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
-
-      e.preventDefault();
-
-      let nextVirtual: number;
-      let isJump = false;
-      if (e.shiftKey) {
-        nextVirtual =
-          e.key === "ArrowDown" ? virtualRowCount - 1 : 0;
-        isJump = true;
-      } else if (e.key === "ArrowDown") {
-        nextVirtual =
-          currentVirtual < 0
-            ? 0
-            : Math.min(currentVirtual + 1, virtualRowCount - 1);
-      } else {
-        nextVirtual =
-          currentVirtual <= 0 ? 0 : currentVirtual - 1;
+      if (focusedSpecialRow === "parent" && onParentEnter) {
+        e.preventDefault();
+        onParentEnter();
+        return;
       }
-
-      // Check if landing on a special row
-      if (hasSpecialRows) {
-        if (nextVirtual < leadingOffset) {
-          setFocusedSpecialRow("leading");
-          onClearSelection?.();
-          return;
-        }
-        if (nextVirtual < leadingOffset + parentOffset) {
-          setFocusedSpecialRow("parent");
-          onClearSelection?.();
-          return;
-        }
+      const focusedItem =
+        currentItemIndex >= 0 ? items[currentItemIndex] : null;
+      if (focusedItem) {
+        e.preventDefault();
+        onEnter(focusedItem);
       }
+      return;
+    }
 
-      const nextItemIndex = nextVirtual - leadingOffset - parentOffset;
-      const nextItem = items[nextItemIndex];
-      if (nextItem != null) {
-        if (hasSpecialRows) setFocusedSpecialRow(null);
-        onSelect(nextItem, {
-          ctrlOrMeta: isJump ? false : e.metaKey || e.ctrlKey,
-          shift: false,
-        });
+    if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+
+    e.preventDefault();
+
+    let nextVirtual: number;
+    let isJump = false;
+    if (e.shiftKey) {
+      nextVirtual = e.key === "ArrowDown" ? virtualRowCount - 1 : 0;
+      isJump = true;
+    } else if (e.key === "ArrowDown") {
+      nextVirtual =
+        currentVirtual < 0
+          ? 0
+          : Math.min(currentVirtual + 1, virtualRowCount - 1);
+    } else {
+      nextVirtual = currentVirtual <= 0 ? 0 : currentVirtual - 1;
+    }
+
+    // Check if landing on a special row
+    if (hasSpecialRows) {
+      if (nextVirtual < leadingOffset) {
+        setFocusedSpecialRow("leading");
+        onClearSelection?.();
+        return;
       }
-    },
-    [
-      enabled,
-      virtualRowCount,
-      leadingOffset,
-      parentOffset,
-      hasSpecialRows,
-      items,
-      getFocusedIndex,
-      focusedSpecialRow,
-      onSelect,
-      onEnter,
-      onLeadingEnter,
-      onParentEnter,
-      onClearSelection,
-    ],
-  );
+      if (nextVirtual < leadingOffset + parentOffset) {
+        setFocusedSpecialRow("parent");
+        onClearSelection?.();
+        return;
+      }
+    }
+
+    const nextItemIndex = nextVirtual - leadingOffset - parentOffset;
+    const nextItem = items[nextItemIndex];
+    if (nextItem != null) {
+      if (hasSpecialRows) setFocusedSpecialRow(null);
+      onSelect(nextItem, {
+        ctrlOrMeta: isJump ? false : e.metaKey || e.ctrlKey,
+        shift: false,
+      });
+    }
+  };
 
   return {
     focusedSpecialRow,

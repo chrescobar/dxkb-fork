@@ -50,8 +50,11 @@ export function VirusFamiliesSection() {
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {virusFamilies.map((column, index) => (
           <div
-            key={column.group ?? `mixed-${String(index)}`}
-            className={`flex min-w-0 flex-col gap-3${index === 3 ? " hidden md:flex lg:hidden xl:flex" : ""}`}
+            key={
+              column.group ??
+              column.subGroups.map((group) => group.label).join("|")
+            }
+            className={`flex min-w-0 flex-col gap-3${index === 3 ? "hidden md:flex lg:hidden xl:flex" : ""}`}
           >
             {column.group === null ? (
               <SubGroups subGroups={column.subGroups} />

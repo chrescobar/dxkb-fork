@@ -34,8 +34,11 @@ const Title = styled.a`
 `;
 
 const LogoLink = styled.a`
-  padding: 5px 5px;
-  width: 50px;
+  display: block;
+  margin: 5px;
+  width: 40px;
+  height: 40px;
+  background: center / contain no-repeat url(${logo});
   cursor: pointer;
 `;
 
@@ -53,11 +56,7 @@ function DxkbNavBar({ sidebar }) {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Auspice documentation"
-      >
-        {/* This navbar is compiled by Auspice, where next/image is unavailable. */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img alt="" width="40px" src={logo} />
-      </LogoLink>
+      />
       <Spacer />
       <Title href={docsUrl} target="_blank" rel="noopener noreferrer">
         auspice

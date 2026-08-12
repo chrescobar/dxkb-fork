@@ -38,9 +38,11 @@ const ContactForm = () => {
           const body = (await response.json().catch(() => null)) as {
             error?: string;
           } | null;
-          throw new Error(
-            body?.error ?? `Request failed with status ${String(response.status)}`,
+          toast.error(
+            body?.error ??
+              `Request failed with status ${String(response.status)}`,
           );
+          return;
         }
 
         toast.success("Message sent. We'll be in touch soon.");
@@ -113,9 +115,9 @@ const ContactForm = () => {
                             <RadioGroup
                               aria-labelledby="inquiryType-label"
                               value={field.state.value}
-                              onValueChange={(value) =>
-                                { field.handleChange(value as InquiryType); }
-                              }
+                              onValueChange={(value) => {
+                                field.handleChange(value as InquiryType);
+                              }}
                               className="mt-1 grid grid-cols-1 gap-3 md:grid-cols-2"
                             >
                               {inquiryTypes.map((option) => (
@@ -156,9 +158,9 @@ const ContactForm = () => {
                                 name={field.name}
                                 value={field.state.value}
                                 onBlur={field.handleBlur}
-                                onChange={(e) =>
-                                  { field.handleChange(e.target.value); }
-                                }
+                                onChange={(e) => {
+                                  field.handleChange(e.target.value);
+                                }}
                                 placeholder="Enter your full name"
                               />
                               <FieldErrors field={field} />
@@ -181,9 +183,9 @@ const ContactForm = () => {
                                 type="email"
                                 value={field.state.value}
                                 onBlur={field.handleBlur}
-                                onChange={(e) =>
-                                  { field.handleChange(e.target.value); }
-                                }
+                                onChange={(e) => {
+                                  field.handleChange(e.target.value);
+                                }}
                                 placeholder="Enter your email address"
                               />
                               <FieldErrors field={field} />
@@ -206,7 +208,9 @@ const ContactForm = () => {
                               name={field.name}
                               value={field.state.value}
                               onBlur={field.handleBlur}
-                              onChange={(e) => { field.handleChange(e.target.value); }}
+                              onChange={(e) => {
+                                field.handleChange(e.target.value);
+                              }}
                               placeholder="Enter the subject of your message"
                             />
                             <FieldErrors field={field} />
@@ -228,7 +232,9 @@ const ContactForm = () => {
                               name={field.name}
                               value={field.state.value}
                               onBlur={field.handleBlur}
-                              onChange={(e) => { field.handleChange(e.target.value); }}
+                              onChange={(e) => {
+                                field.handleChange(e.target.value);
+                              }}
                               placeholder="Please provide details about your inquiry..."
                               rows={6}
                             />
@@ -239,9 +245,7 @@ const ContactForm = () => {
                     </div>
 
                     <div className="pt-2">
-                      <form.Subscribe
-                        selector={(state) => state.isSubmitting}
-                      >
+                      <form.Subscribe selector={(state) => state.isSubmitting}>
                         {(isSubmitting) => (
                           <Button
                             type="submit"

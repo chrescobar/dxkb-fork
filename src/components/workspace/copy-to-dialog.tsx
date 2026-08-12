@@ -22,7 +22,10 @@ export interface CopyToDialogProps {
   onOpenChange: (open: boolean) => void;
   sourceItems: WorkspaceItem[];
   currentUserWorkspaceRoot: string;
-  onConfirm: (destinationPath: string, filenameOverride?: string) => Promise<void>;
+  onConfirm: (
+    destinationPath: string,
+    filenameOverride?: string,
+  ) => Promise<void>;
   isCopying: boolean;
   /** When "move", dialog shows Move wording and the parent calls API with move: true. */
   mode?: "copy" | "move";
@@ -43,10 +46,9 @@ export function CopyToDialog({
   const [customFilename, setCustomFilename] = React.useState("");
   const [showAllFiles, setShowAllFiles] = React.useState(false);
 
-  const workspaceRootPath =
-    currentUserWorkspaceRoot.startsWith("/")
-      ? currentUserWorkspaceRoot
-      : `/${currentUserWorkspaceRoot}`;
+  const workspaceRootPath = currentUserWorkspaceRoot.startsWith("/")
+    ? currentUserWorkspaceRoot
+    : `/${currentUserWorkspaceRoot}`;
   const [prevOpen, setPrevOpen] = React.useState(false);
 
   if (prevOpen !== open) {
@@ -63,7 +65,7 @@ export function CopyToDialog({
     }
   }
 
-  const handleConfirm = React.useCallback(() => {
+  const handleConfirm = () => {
     if (destinationPath == null) return;
     const filenameOverride =
       customFilename.trim() && customFilename !== sourceItems[0]?.name
@@ -72,13 +74,11 @@ export function CopyToDialog({
     onConfirm(destinationPath, filenameOverride).catch(() => {
       // Error shown by parent (e.g. toast)
     });
-  }, [destinationPath, customFilename, sourceItems, onConfirm]);
+  };
 
   const destinationIsRoot =
     destinationPath != null && destinationPath === workspaceRootPath;
-  const hasNonFolderSource = sourceItems.some(
-    (item) => !isFolder(item.type),
-  );
+  const hasNonFolderSource = sourceItems.some((item) => !isFolder(item.type));
   const rootWithIncompatibleTypes = destinationIsRoot && hasNonFolderSource;
 
   const canConfirm =
@@ -117,7 +117,9 @@ export function CopyToDialog({
             <Input
               id="copy-dialog-filename"
               value={customFilename}
-              onChange={(e) => { setCustomFilename(e.target.value); }}
+              onChange={(e) => {
+                setCustomFilename(e.target.value);
+              }}
               placeholder={
                 mode === "move"
                   ? "Name for the moved file"
@@ -127,23 +129,23 @@ export function CopyToDialog({
             />
           </div>
 
-            <WorkspaceMiniBrowser
-              className="min-h-0 flex-1"
-              initialPath={workspaceRootPath}
-              workspaceRoot={workspaceRootPath}
-              onSelectPath={setDestinationPath}
-              mode={showAllFiles ? "all" : "folders-only"}
-              showHidden={showAllFiles}
-              selectedPath={destinationPath}
-            />
+          <WorkspaceMiniBrowser
+            className="min-h-0 flex-1"
+            initialPath={workspaceRootPath}
+            workspaceRoot={workspaceRootPath}
+            onSelectPath={setDestinationPath}
+            mode={showAllFiles ? "all" : "folders-only"}
+            showHidden={showAllFiles}
+            selectedPath={destinationPath}
+          />
 
           <div className="flex shrink-0 items-center">
             <Label className="flex cursor-pointer items-center gap-2 text-sm">
               <Checkbox
                 checked={showAllFiles}
-                onCheckedChange={(checked) =>
-                  { setShowAllFiles(checked); }
-                }
+                onCheckedChange={(checked) => {
+                  setShowAllFiles(checked);
+                }}
               />
               <span>Show all files and folders</span>
             </Label>
@@ -153,15 +155,14 @@ export function CopyToDialog({
         <DialogFooter className="shrink-0">
           <Button
             variant="outline"
-            onClick={() => { onOpenChange(false); }}
+            onClick={() => {
+              onOpenChange(false);
+            }}
             disabled={isCopying}
           >
             Cancel
           </Button>
-          <Button
-            onClick={handleConfirm}
-            disabled={!canConfirm}
-          >
+          <Button onClick={handleConfirm} disabled={!canConfirm}>
             {isCopying ? (
               <>
                 <Spinner className="mr-2 size-3.5 shrink-0" />

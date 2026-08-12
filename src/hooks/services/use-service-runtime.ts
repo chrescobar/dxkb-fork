@@ -1,7 +1,5 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
-
 import { useDebugParamsPreview } from "@/hooks/services/use-debug-params-preview";
 import { useRerunForm } from "@/hooks/services/use-rerun-form";
 import { useServiceFormSubmission } from "@/hooks/services/use-service-form-submission";
@@ -102,29 +100,20 @@ export function useServiceRuntime<
     serviceName: definition.serviceName,
   });
 
-  const mergedRerun = useMemo(
-    () => mergeServiceRerunConfig(definition.rerun, rerun),
-    [definition.rerun, rerun],
-  );
+  const mergedRerun = mergeServiceRerunConfig(definition.rerun, rerun);
 
   useRerunForm<TRerun, TForm>({
     ...mergedRerun,
     form: form as unknown as ServiceFormApi<TForm>,
   });
 
-  const previewOrSubmit = useCallback(
-    async (params: Record<string, unknown>) => {
-      await previewOrPassthrough(params, submit);
-    },
-    [previewOrPassthrough, submit],
-  );
+  const previewOrSubmit = async (params: Record<string, unknown>) => {
+    await previewOrPassthrough(params, submit);
+  };
 
-  const submitFormData = useCallback(
-    async (data: TForm) => {
-      await previewOrSubmit(definition.transformParams(data));
-    },
-    [definition, previewOrSubmit],
-  );
+  const submitFormData = async (data: TForm) => {
+    await previewOrSubmit(definition.transformParams(data));
+  };
 
   return {
     isSubmitting,

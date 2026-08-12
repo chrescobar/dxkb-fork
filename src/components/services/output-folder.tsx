@@ -1,8 +1,13 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useEffectEvent, useRef, useState } from "react";
 
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { checkWorkspaceObjectExists } from "@/lib/services/workspace/validation";
 import { Input } from "@/components/ui/input";
@@ -51,38 +56,35 @@ const OutputFolder = ({
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  const runCheck = useCallback(
-    async (folderPath: string, name: string) => {
-      const fullPath = buildFullPath(folderPath, name);
-      if (!fullPath) {
-        setNameTaken(false);
-        onValidationChange?.(true);
-        return;
-      }
-
-      abortControllerRef.current?.abort();
-      const controller = new AbortController();
-      abortControllerRef.current = controller;
-      setIsChecking(true);
+  const runCheck = useEffectEvent(async (folderPath: string, name: string) => {
+    const fullPath = buildFullPath(folderPath, name);
+    if (!fullPath) {
       setNameTaken(false);
+      onValidationChange?.(true);
+      return;
+    }
 
-      const exists = await checkWorkspaceObjectExists(fullPath, {
-        signal: controller.signal,
-      });
+    abortControllerRef.current?.abort();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    setIsChecking(true);
+    setNameTaken(false);
 
-      if (controller.signal.aborted) {
-        return;
-      }
+    const exists = await checkWorkspaceObjectExists(fullPath, {
+      signal: controller.signal,
+    });
 
-      setIsChecking(false);
-      setNameTaken(exists);
-      onValidationChange?.(!exists);
-    },
-    [onValidationChange],
-  );
+    if (controller.signal.aborted) return;
 
-  const needsValidation = variant === "name" && !!outputFolderPath.trim() && !!value.trim();
-  const [prevNeedsValidation, setPrevNeedsValidation] = useState(needsValidation);
+    setIsChecking(false);
+    setNameTaken(exists);
+    onValidationChange?.(!exists);
+  });
+
+  const needsValidation =
+    variant === "name" && !!outputFolderPath.trim() && !!value.trim();
+  const [prevNeedsValidation, setPrevNeedsValidation] =
+    useState(needsValidation);
   if (prevNeedsValidation && !needsValidation) {
     setPrevNeedsValidation(needsValidation);
     setIsChecking(false);
@@ -112,7 +114,7 @@ const OutputFolder = ({
       }
       abortControllerRef.current?.abort();
     };
-  }, [needsValidation, outputFolderPath, value, runCheck, onValidationChange]);
+  }, [needsValidation, outputFolderPath, value, onValidationChange]);
 
   const resolvedTitle = variant === "default" ? "Output Folder" : "Output Name";
 
@@ -135,7 +137,12 @@ const OutputFolder = ({
           {tooltipContent && (
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger aria-label={`${resolvedTitle} help`} render={<HelpCircle className="service-card-tooltip-icon mb-2" />} />
+                <TooltipTrigger
+                  aria-label={`${resolvedTitle} help`}
+                  render={
+                    <HelpCircle className="service-card-tooltip-icon mb-2" />
+                  }
+                />
                 <TooltipContent className="max-w-sm font-normal text-white">
                   {resolvedTooltipText}
                 </TooltipContent>

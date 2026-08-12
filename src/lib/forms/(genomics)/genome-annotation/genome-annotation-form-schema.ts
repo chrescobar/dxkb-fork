@@ -1,14 +1,5 @@
 import { z } from "zod";
 
-// Taxonomy item schema
-export const taxonomyItemSchema = z.object({
-  taxon_id: z.number(),
-  taxon_name: z.string(),
-  taxon_rank: z.string().optional(),
-  lineage_names: z.array(z.string()).optional(),
-  division: z.string().optional(),
-});
-
 // Base schema for genome annotation form
 export const baseGenomeAnnotationSchema = z.object({
   contigs: z.string().min(1, "Contigs must be provided"),
@@ -23,8 +14,8 @@ export const baseGenomeAnnotationSchema = z.object({
 });
 
 // Complete form schema with refined validation for required taxonomy fields
-export const completeGenomeAnnotationSchema = baseGenomeAnnotationSchema.superRefine(
-  (data, ctx) => {
+export const completeGenomeAnnotationSchema =
+  baseGenomeAnnotationSchema.superRefine((data, ctx) => {
     if (data.scientific_name === null) {
       ctx.addIssue({
         code: "custom",
@@ -39,11 +30,12 @@ export const completeGenomeAnnotationSchema = baseGenomeAnnotationSchema.superRe
         path: ["taxonomy_id"],
       });
     }
-  }
-);
+  });
 
 // Type inference for the complete form schema
-export type GenomeAnnotationFormData = z.infer<typeof completeGenomeAnnotationSchema>;
+export type GenomeAnnotationFormData = z.infer<
+  typeof completeGenomeAnnotationSchema
+>;
 
 // Default form values
 export const defaultGenomeAnnotationFormValues: GenomeAnnotationFormData = {

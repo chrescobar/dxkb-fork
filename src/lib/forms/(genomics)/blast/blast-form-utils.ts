@@ -42,15 +42,27 @@ export function getAvailableBlastDatabaseTypes(
   inputType: string,
   dbSource: string,
 ) {
-  const dbTypeMap = (
-    blastDatabaseTypeMap as Record<string, Record<string, string[]> | undefined>
-  )[inputType];
-  const availableTypes = new Set(dbTypeMap?.[dbSource] ?? []);
+  const typeMap = blastDatabaseTypeMap as Partial<
+    Record<string, Partial<Record<string, string[]>>>
+  >;
+  const availableTypeValues = typeMap[inputType]?.[dbSource];
+  if (!availableTypeValues?.length) {
+    throw new Error(
+      `No BLAST database types configured for program "${inputType}" and database "${dbSource}"`,
+    );
+  }
+
+  const availableTypes = new Set(availableTypeValues);
   const filtered = blastDatabaseTypes.filter((dbType) =>
     availableTypes.has(dbType.value),
   );
+  if (filtered.length !== availableTypes.size) {
+    throw new Error(
+      `Unknown BLAST database type configured for program "${inputType}" and database "${dbSource}"`,
+    );
+  }
 
-  return filtered.length > 0 ? filtered : blastDatabaseTypes;
+  return filtered;
 }
 
 /**
@@ -60,12 +72,19 @@ export function getDefaultBlastDatabaseType(
   inputType: string,
   dbSource: string,
 ): string {
-  const dbTypeMap = (
-    blastDatabaseTypeMap as Record<string, Record<string, string[]> | undefined>
-  )[inputType];
-  const availableTypes =
-    dbTypeMap?.[dbSource] ?? blastDatabaseTypes.map((t) => t.value);
-  return availableTypes[0] ?? "fna";
+  const [defaultType] = getAvailableBlastDatabaseTypes(inputType, dbSource);
+  return defaultType.value;
+}
+
+export function getCompatibleBlastDatabaseType(
+  currentType: string,
+  inputType: string,
+  dbSource: string,
+): string {
+  const availableTypes = getAvailableBlastDatabaseTypes(inputType, dbSource);
+  return availableTypes.some((type) => type.value === currentType)
+    ? currentType
+    : getDefaultBlastDatabaseType(inputType, dbSource);
 }
 
 /**
@@ -74,6 +93,25 @@ export function getDefaultBlastDatabaseType(
 export function transformBlastParams(
   data: Record<string, unknown>,
 ): Record<string, unknown> {
+  const program = data.blast_program;
+  const database = data.db_precomputed_database;
+  const databaseType = data.db_type;
+  if (
+    typeof program !== "string" ||
+    typeof database !== "string" ||
+    typeof databaseType !== "string"
+  ) {
+    throw new Error(
+      "BLAST program, database, and database type must be strings",
+    );
+  }
+  const availableTypes = getAvailableBlastDatabaseTypes(program, database);
+  if (!availableTypes.some((type) => type.value === databaseType)) {
+    throw new Error(
+      `BLAST database type "${databaseType}" is incompatible with program "${program}" and database "${database}"`,
+    );
+  }
+
   const params: Record<string, unknown> = {
     input_type: data.input_type,
     input_source: data.input_source,
@@ -325,28 +363,8 @@ export function useBlastDatabaseTypes(form: AnyFormApi) {
     form.store,
     (s) => (s.values as BlastFormData).db_precomputed_database,
   );
-  const dbType = useSelector(
-    form.store,
-    (s) => (s.values as BlastFormData).db_type,
-  );
 
-  const availableDatabaseTypes = getAvailableBlastDatabaseTypes(
-    blastProgram,
-    dbPrecomputedDatabase,
-  );
-
-  const isCurrentTypeAvailable = availableDatabaseTypes.some(
-    (type) => type.value === dbType,
-  );
-  if (!isCurrentTypeAvailable && availableDatabaseTypes.length > 0) {
-    const defaultType = getDefaultBlastDatabaseType(
-      blastProgram,
-      dbPrecomputedDatabase,
-    );
-    if (defaultType) form.setFieldValue("db_type", defaultType);
-  }
-
-  return availableDatabaseTypes;
+  return getAvailableBlastDatabaseTypes(blastProgram, dbPrecomputedDatabase);
 }
 
 /**

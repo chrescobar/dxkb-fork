@@ -34,6 +34,7 @@ test.describe("proteome-comparison submission (genome-id-input family)", () => {
       app: "GenomeComparison",
       status: "queued" as const,
       submit_time: "2026-04-24T12:00:00Z",
+      owner: "e2e-test-user",
       parameters: {},
     };
     await applyBackendMocks(page, {

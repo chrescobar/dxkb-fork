@@ -17,6 +17,7 @@ import {
   type BlastFormData,
 } from "@/lib/forms/(genomics)/blast/blast-form-schema";
 import {
+  getCompatibleBlastDatabaseType,
   resolveDbSource,
   useBlastDatabaseTypes,
   useBlastProgramTracking,
@@ -83,19 +84,32 @@ export default function BlastServicePage() {
     form,
     rerun: {
       onApply: (data) => {
+        const program =
+          (data.blast_program as BlastFormData["blast_program"] | undefined) ??
+          form.state.values.blast_program;
+        const database = data.db_precomputed_database
+          ? ((data.db_precomputed_database as string).replace(
+              /_/g,
+              "-",
+            ) as BlastFormData["db_precomputed_database"])
+          : form.state.values.db_precomputed_database;
         if (data.blast_program) {
-          if (data.blast_program !== form.state.values.blast_program)
+          if (program !== form.state.values.blast_program)
             applyingRerun.current = true;
-          form.setFieldValue("blast_program", data.blast_program as never);
+          form.setFieldValue("blast_program", program);
         }
         if (data.db_precomputed_database) {
-          const db = (data.db_precomputed_database as string).replace(
-            /_/g,
-            "-",
-          ) as BlastFormData["db_precomputed_database"];
-          form.setFieldValue("db_precomputed_database", db);
-          form.setFieldValue("db_source", resolveDbSource(db));
+          form.setFieldValue("db_precomputed_database", database);
+          form.setFieldValue("db_source", resolveDbSource(database));
         }
+        form.setFieldValue(
+          "db_type",
+          getCompatibleBlastDatabaseType(
+            form.state.values.db_type,
+            program,
+            database,
+          ) as BlastFormData["db_type"],
+        );
         if (data.blast_max_hits != null)
           form.setFieldValue("blast_max_hits", data.blast_max_hits as number);
         if (data.blast_evalue_cutoff != null)
@@ -129,6 +143,14 @@ export default function BlastServicePage() {
   };
   const changeDatabase = (next: BlastFormData["db_precomputed_database"]) => {
     form.setFieldValue("db_source", resolveDbSource(next));
+    form.setFieldValue(
+      "db_type",
+      getCompatibleBlastDatabaseType(
+        form.state.values.db_type,
+        form.state.values.blast_program,
+        next,
+      ) as BlastFormData["db_type"],
+    );
     form.setFieldValue("db_genome_list", []);
     form.setFieldValue("db_genome_group", "");
     form.setFieldValue("db_feature_group", "");

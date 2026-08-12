@@ -69,6 +69,49 @@ function buildProteinFeatureRows(count: number) {
 const pfLoopback = /\/api\/e2e-mock\/data\/protein_feature\//;
 const pfLoopbackCount = /\/api\/e2e-mock\/data\/protein_feature\/.*limit\(1\)/;
 
+test.describe("taxon data table: checkbox-column selection", () => {
+  test("clicking the cell edge toggles rows additively and keeps checkboxes in sync", async ({ page }) => {
+    const rows = buildProteinFeatureRows(3);
+    await applyBackendMocks(page, {
+      overrides: [...permissiveBackendOverrides],
+    });
+    await page.route("**/*", async (route) => {
+      const request = route.request();
+      if (
+        request.method() !== "GET" ||
+        !request.url().includes("/protein_feature/")
+      ) {
+        return route.fallback();
+      }
+      const isPageRequest = decodeURIComponent(request.url()).includes("select(");
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(
+          isPageRequest ? rows : { response: { numFound: rows.length } },
+        ),
+      });
+    });
+
+    await page.goto(`/taxonomy/${DOMAINS_TAXON_ID}?tab=domains-and-motifs`);
+    await expect(page.getByText("mock-product-0")).toBeVisible({ timeout: 10_000 });
+
+    const first = page.getByRole("checkbox", { name: "Select row mock-pf-0000" });
+    const second = page.getByRole("checkbox", { name: "Select row mock-pf-0001" });
+    const firstCell = first.locator("xpath=ancestor::td");
+    const secondCell = second.locator("xpath=ancestor::td");
+
+    await firstCell.click({ position: { x: 2, y: 12 } });
+    await secondCell.click({ position: { x: 2, y: 12 } });
+    await expect(first).toBeChecked();
+    await expect(second).toBeChecked();
+
+    await firstCell.click({ position: { x: 2, y: 12 } });
+    await expect(first).not.toBeChecked();
+    await expect(second).toBeChecked();
+  });
+});
+
 test.describe("taxon domains-and-motifs: Download Selected sends POST not GET", () => {
   test("sends POST with RQL query in body, not GET params in URL", async ({ page }) => {
     const rows = buildProteinFeatureRows(3);

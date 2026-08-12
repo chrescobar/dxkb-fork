@@ -152,6 +152,11 @@ export const WorkspaceDataTable = forwardRef<
   ref,
 ) {
   const useSelectionMode = onSelect != null;
+  if (useSelectionMode && onItemDoubleClick == null) {
+    throw new Error(
+      "WorkspaceDataTable selection mode requires onItemDoubleClick so folders remain navigable",
+    );
+  }
   const router = useRouter();
   const dataTableRef = useRef<DataTableHandle>(null);
   const isAtRoot = !path || path === "" || path === "/";

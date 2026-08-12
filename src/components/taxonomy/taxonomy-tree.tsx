@@ -149,7 +149,9 @@ function TaxonomyTreeInstance({
     selected: {},
     records: new Map(),
   }));
-  const knownChildCountsRef = useRef<Map<number, number>>(new Map());
+  const [knownChildCounts, setKnownChildCounts] = useState<Map<number, number>>(
+    () => new Map(),
+  );
   const lastSelectedIdRef = useRef<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -259,8 +261,17 @@ function TaxonomyTreeInstance({
     });
   }
 
+  let childCountVersion = "";
+  for (const [id, count] of [...knownChildCounts].sort(([a], [b]) => a - b)) {
+    childCountVersion += `${String(id)}:${String(count)}|`;
+  }
+  const tableData = queryState.data.map((record) => ({
+    ...record,
+    __childCountVersion: childCountVersion,
+  }));
+
   const table = useReactTable({
-    data: queryState.data,
+    data: tableData,
     columns: taxonomyColumns,
     meta: {
       loadingParentIds: queryState.loading,
@@ -284,8 +295,7 @@ function TaxonomyTreeInstance({
       const loaded = queryState.children.get(id);
       const count = loaded
         ? loaded.filter((child) => !isPlaceholder(child)).length
-        : (childCountsQuery.data?.get(id) ??
-          knownChildCountsRef.current.get(id));
+        : knownChildCounts.get(id);
       return count !== undefined && count > 0;
     },
     enableRowSelection: (row) => !isPlaceholder(row.original),
@@ -320,7 +330,7 @@ function TaxonomyTreeInstance({
       !isPlaceholder(record) &&
       !isLeaf(record) &&
       !queryState.children.has(id) &&
-      !knownChildCountsRef.current.has(id)
+      !knownChildCounts.has(id)
     ) {
       countableIds.push(id);
     }
@@ -331,12 +341,17 @@ function TaxonomyTreeInstance({
   useLayoutEffect(() => {
     if (!childCountsQuery.isSuccess) return;
     const settledIds = deferredKey ? deferredKey.split(",").map(Number) : [];
-    for (const id of settledIds) {
-      knownChildCountsRef.current.set(id, childCountsQuery.data.get(id) ?? 0);
-    }
+    setKnownChildCounts((current) => {
+      const next = new Map(current);
+      for (const id of settledIds) {
+        next.set(id, childCountsQuery.data.get(id) ?? 0);
+      }
+      return next;
+    });
   }, [childCountsQuery.data, childCountsQuery.isSuccess, deferredKey]);
 
   usePersistedExpansion(fetchParentIds, rootIds, globalFilter);
+  if (childCountsQuery.error) throw childCountsQuery.error;
 
   function handleWhitespaceClick(row: Row<TaxonRecord>) {
     if (isPlaceholder(row.original) || applyShiftRange(row, false)) return;

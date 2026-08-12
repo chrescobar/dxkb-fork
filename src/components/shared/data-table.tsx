@@ -14,12 +14,7 @@ import {
 } from "@tanstack/react-table";
 
 import { ChevronDown, ChevronUp } from "lucide-react";
-import {
-  useRef,
-  useState,
-  useEffect,
-  type ChangeEvent as ReactChangeEvent,
-} from "react";
+import { useRef, useState, useEffect } from "react";
 import { getIdField } from "@/constants/resources";
 import {
   computeShiftRangeIds,
@@ -70,56 +65,60 @@ function getTableMeta(table: ReactTableInstance<Record<string, unknown>>) {
   return table.options.meta as DataTableMeta;
 }
 
+function toggleRowSelection(
+  row: TanStackRow<Record<string, unknown>>,
+  table: ReactTableInstance<Record<string, unknown>>,
+) {
+  const meta = getTableMeta(table);
+  const anchorId = meta.lastSelectedIdRef.current;
+
+  if (meta.shiftHeldRef.current && anchorId && anchorId !== row.id) {
+    const rangeIds = computeShiftRangeIds(
+      table.getRowModel().rows,
+      anchorId,
+      row.id,
+    );
+    if (rangeIds.length > 0) {
+      table.setRowSelection((previous) => {
+        const next = { ...previous };
+        for (const id of rangeIds) next[id] = true;
+        return next;
+      });
+      return;
+    }
+  }
+
+  meta.lastSelectedIdRef.current = row.id;
+  const wasSelected = row.getIsSelected();
+  table.setRowSelection((previous) => ({
+    ...previous,
+    [row.id]: !wasSelected,
+  }));
+
+  const idValue = row.original[meta.idField] ?? row.original.genome_id ?? null;
+  if (wasSelected) {
+    meta.onGenomeSelect?.(null);
+    meta.onActiveRowChange?.(null);
+  } else if (typeof idValue === "string" || typeof idValue === "number") {
+    meta.onGenomeSelect?.(String(idValue));
+    meta.onActiveRowChange?.(String(idValue));
+  }
+}
+
 function SelectionCell({
   row,
   table,
-}: CellContext<Record<string, unknown>, unknown>) {
-  const handleToggle = (event: ReactChangeEvent<HTMLInputElement>) => {
-    event.stopPropagation();
-    const meta = getTableMeta(table);
-    const anchorId = meta.lastSelectedIdRef.current;
-
-    if (meta.shiftHeldRef.current && anchorId && anchorId !== row.id) {
-      const rangeIds = computeShiftRangeIds(
-        table.getRowModel().rows,
-        anchorId,
-        row.id,
-      );
-      if (rangeIds.length > 0) {
-        table.setRowSelection((previous) => {
-          const next = { ...previous };
-          for (const id of rangeIds) next[id] = true;
-          return next;
-        });
-        return;
-      }
-    }
-
-    meta.lastSelectedIdRef.current = row.id;
-    const wasSelected = row.getIsSelected();
-    table.setRowSelection((previous) => ({
-      ...previous,
-      [row.id]: !wasSelected,
-    }));
-
-    const idValue =
-      row.original[meta.idField] ?? row.original.genome_id ?? null;
-    if (wasSelected) {
-      meta.onGenomeSelect?.(null);
-      meta.onActiveRowChange?.(null);
-    } else if (typeof idValue === "string" || typeof idValue === "number") {
-      meta.onGenomeSelect?.(String(idValue));
-      meta.onActiveRowChange?.(String(idValue));
-    }
-  };
-
+  selected,
+}: CellContext<Record<string, unknown>, unknown> & { selected: boolean }) {
   return (
     <div className="flex size-full items-center justify-center">
       <input
         type="checkbox"
         aria-label={`Select row ${row.id}`}
-        checked={row.getIsSelected()}
-        onChange={handleToggle}
+        checked={selected}
+        onChange={() => {
+          toggleRowSelection(row, table);
+        }}
         onClick={(event) => {
           event.stopPropagation();
         }}
@@ -188,7 +187,12 @@ function createColumnDefs(columns: ColumnInfo[]) {
     {
       id: "__select__",
       header: ({ table }) => <SelectionHeader table={table} />,
-      cell: SelectionCell,
+      cell: (context) => (
+        <SelectionCell
+          {...context}
+          selected={context.row.getIsSelected()}
+        />
+      ),
       enableResizing: false,
       size: 32,
     },
@@ -1489,6 +1493,20 @@ function DataTableBody({
               {row.getVisibleCells().map((cell) => (
                 <TableCell
                   key={cell.id}
+                  onClick={
+                    cell.column.id === "__select__"
+                      ? (event) => {
+                          event.stopPropagation();
+                          if (
+                            !(event.target as HTMLElement).closest(
+                              'input[type="checkbox"]',
+                            )
+                          ) {
+                            toggleRowSelection(row, table);
+                          }
+                        }
+                      : undefined
+                  }
                   className={clsx(
                     "flex items-center truncate border border-border",
                     cell.column.id === "__select__"

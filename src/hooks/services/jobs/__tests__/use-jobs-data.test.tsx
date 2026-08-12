@@ -15,7 +15,16 @@ function createWrapper() {
   return Wrapper;
 }
 
-import { useJobsData } from "../use-jobs-data";
+import { parseJobsResponse, useJobsData } from "../use-jobs-data";
+
+const validJob = {
+  id: "job-1",
+  app: "GenomeAssembly2",
+  status: "completed",
+  submit_time: "2026-04-01T09:55:00Z",
+  owner: "test-user",
+  parameters: {},
+};
 
 const defaultParams = {
   offset: 0,
@@ -25,11 +34,70 @@ const defaultParams = {
   sortOrder: "desc" as const,
 };
 
+describe("parseJobsResponse", () => {
+  it.each([
+    ["zero", 0, "0"],
+    ["positive safe integer", 12345, "12345"],
+    ["string", "00123", "00123"],
+  ])("preserves job identity for a %s ID", (_case, id, expected) => {
+    expect(
+      parseJobsResponse({ jobs: [{ ...validJob, id }], totalTasks: 1 }).jobs[0]?.id,
+    ).toBe(expected);
+  });
+
+  it("preserves optional and unknown upstream fields", () => {
+    const job = {
+      ...validJob,
+      output_file: "result.txt",
+      app_spec: {
+        id: "GenomeAssembly2",
+        script: "run.pl",
+        label: "Genome Assembly",
+        description: "Assemble a genome",
+        upstreamMetadata: true,
+      },
+      upstreamField: { retained: true },
+    };
+
+    expect(parseJobsResponse({ jobs: [job], totalTasks: 1 })).toEqual({
+      jobs: [job],
+      totalTasks: 1,
+    });
+  });
+
+  it.each([
+    ["null response", null],
+    ["missing jobs", { totalTasks: 0 }],
+    ["non-array jobs", { jobs: {}, totalTasks: 0 }],
+    ["unsupported nested shape", { jobs: [[validJob], [validJob]], totalTasks: 2 }],
+    ["missing total", { jobs: [] }],
+    ["negative total", { jobs: [], totalTasks: -1 }],
+    ["fractional total", { jobs: [], totalTasks: 1.5 }],
+    ["string total", { jobs: [], totalTasks: "1" }],
+    ["missing ID", { jobs: [{ ...validJob, id: undefined }], totalTasks: 1 }],
+    ["null ID", { jobs: [{ ...validJob, id: null }], totalTasks: 1 }],
+    ["empty ID", { jobs: [{ ...validJob, id: "" }], totalTasks: 1 }],
+    ["negative numeric ID", { jobs: [{ ...validJob, id: -1 }], totalTasks: 1 }],
+    ["fractional numeric ID", { jobs: [{ ...validJob, id: 1.5 }], totalTasks: 1 }],
+    ["unsafe numeric ID", { jobs: [{ ...validJob, id: Number.MAX_SAFE_INTEGER + 1 }], totalTasks: 1 }],
+    ["boolean ID", { jobs: [{ ...validJob, id: true }], totalTasks: 1 }],
+    ["missing app", { jobs: [{ ...validJob, app: undefined }], totalTasks: 1 }],
+    ["empty app", { jobs: [{ ...validJob, app: "" }], totalTasks: 1 }],
+    ["unknown status", { jobs: [{ ...validJob, status: "killed" }], totalTasks: 1 }],
+    ["missing submit time", { jobs: [{ ...validJob, submit_time: undefined }], totalTasks: 1 }],
+    ["missing owner", { jobs: [{ ...validJob, owner: undefined }], totalTasks: 1 }],
+    ["invalid parameters", { jobs: [{ ...validJob, parameters: [] }], totalTasks: 1 }],
+    ["invalid output file", { jobs: [{ ...validJob, output_file: 4 }], totalTasks: 1 }],
+  ])("throws for %s", (_case, response) => {
+    expect(() => parseJobsResponse(response)).toThrow("Invalid jobs response");
+  });
+});
+
 describe("useJobsData", () => {
   it("returns jobs data on success", async () => {
     const jobs = [
-      { id: "job-1", app: "GenomeAssembly2", status: "completed" },
-      { id: "job-2", app: "GenomeAnnotation", status: "queued" },
+      validJob,
+      { ...validJob, id: "job-2", app: "GenomeAnnotation", status: "queued" },
     ];
 
     let capturedBody: unknown;
@@ -58,10 +126,27 @@ describe("useJobsData", () => {
     );
   });
 
+  it("normalizes numeric job IDs to strings", async () => {
+    server.use(
+      http.post("/api/services/app-service/jobs/enumerate-tasks-filtered", () => {
+        return HttpResponse.json({
+          jobs: [{ ...validJob, id: 12345 }],
+          totalTasks: 1,
+        });
+      }),
+    );
+
+    const { result } = renderHook(() => useJobsData(defaultParams), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => { expect(result.current.isSuccess).toBe(true); });
+
+    expect(result.current.data?.jobs[0]?.id).toBe("12345");
+  });
+
   it("unwraps nested array when raw[0] is an array", async () => {
-    const jobs = [
-      { id: "job-1", app: "GenomeAssembly2", status: "completed" },
-    ];
+    const jobs = [validJob];
 
     server.use(
       http.post("/api/services/app-service/jobs/enumerate-tasks-filtered", () => {
@@ -76,6 +161,27 @@ describe("useJobsData", () => {
     await waitFor(() => { expect(result.current.isSuccess).toBe(true); });
 
     expect(result.current.data).toEqual({ jobs, totalTasks: 10 });
+  });
+
+  it("surfaces invalid response errors through the query", async () => {
+    server.use(
+      http.post("/api/services/app-service/jobs/enumerate-tasks-filtered", () => {
+        return HttpResponse.json({
+          jobs: [{ ...validJob, id: null }],
+          totalTasks: 1,
+        });
+      }),
+    );
+
+    const { result } = renderHook(() => useJobsData(defaultParams), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => { expect(result.current.isError).toBe(true); });
+
+    expect(result.current.error).toBeInstanceOf(Error);
+    expect(result.current.error?.message).toContain("Invalid jobs response");
+    expect(result.current.error?.message).toContain("id");
   });
 
   it("throws ApiCallError on HTTP error", async () => {

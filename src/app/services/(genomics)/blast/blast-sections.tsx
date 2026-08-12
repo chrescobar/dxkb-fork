@@ -5,6 +5,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { blastServiceSearchProgram } from "@/lib/services/info/blast";
+import { getCompatibleBlastDatabaseType } from "@/lib/forms/(genomics)/blast/blast-form-utils";
+import type { BlastFormData } from "@/lib/forms/(genomics)/blast/blast-form-schema";
 import type { BlastForm } from "./page";
 
 export { BlastParameters } from "./blast-parameters";
@@ -35,7 +37,18 @@ export function SearchProgramCard({ form }: { form: BlastForm }) {
             <FieldItem>
               <RadioGroup
                 value={field.state.value}
-                onValueChange={field.handleChange}
+                onValueChange={(value) => {
+                  const program = value as BlastFormData["blast_program"];
+                  field.handleChange(program);
+                  form.setFieldValue(
+                    "db_type",
+                    getCompatibleBlastDatabaseType(
+                      form.state.values.db_type,
+                      program,
+                      form.state.values.db_precomputed_database,
+                    ) as BlastFormData["db_type"],
+                  );
+                }}
                 className="grid w-full grid-cols-1 gap-4 md:grid-cols-2"
               >
                 {options.map(([value, label]) => (

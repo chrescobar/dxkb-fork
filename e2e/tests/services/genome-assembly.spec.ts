@@ -45,6 +45,7 @@ test.describe("genome assembly submission", () => {
       app: "GenomeAssembly2",
       status: "queued" as const,
       submit_time: "2026-04-24T12:00:00Z",
+      owner: "e2e-test-user",
       parameters: {},
     };
     await applyBackendMocks(page, {
@@ -113,6 +114,62 @@ test.describe("genome assembly submission", () => {
     const jobs = new JobsListPage(page);
     await jobs.waitForRows();
     await expect(jobs.rowById(submittedJob.id)).toBeVisible();
+  });
+
+  test("number inputs preserve keyboard, focus, limit, and button behavior without runtime errors", async ({
+    page,
+  }) => {
+    const runtimeErrors: string[] = [];
+    page.on("console", (message) => {
+      if (message.type() === "error") runtimeErrors.push(message.text());
+    });
+    page.on("pageerror", (error) => runtimeErrors.push(error.message));
+
+    await applyBackendMocks(page, {
+      overrides: [
+        ...buildWorkspaceOverrides(),
+        ...buildJobsOverrides(),
+        ...journeyOverrides,
+      ],
+    });
+    const form = new ServiceFormPage(page, /genome assembly/i);
+    await form.goto("/services/genome-assembly");
+    await page.getByRole("button", { name: "Advanced Options" }).click();
+
+    const coverageGroup = page
+      .getByText("Target Genome Coverage", { exact: true })
+      .locator("..");
+    const iterationGroup = page
+      .getByText("Racon Iterations", { exact: true })
+      .locator("..");
+    const coverage = coverageGroup.getByRole("textbox");
+    const iterations = iterationGroup.getByRole("textbox");
+    await expect(coverage).toHaveValue("200");
+    await expect(iterations).toHaveValue("2");
+
+    await coverage.focus();
+    await page.keyboard.press("ArrowUp");
+    await expect(coverage).toHaveValue("250");
+    await expect(iterations).toHaveValue("2");
+
+    await iterations.focus();
+    await page.keyboard.press("ArrowUp");
+    await page.keyboard.press("ArrowUp");
+    await page.keyboard.press("ArrowUp");
+    await expect(iterations).toHaveValue("4");
+
+    const increase = iterationGroup.getByRole("button", {
+      name: "Increase value",
+    });
+    const decrease = iterationGroup.getByRole("button", {
+      name: "Decrease value",
+    });
+    await expect(increase).toBeDisabled();
+    await decrease.click();
+    await expect(iterations).toHaveValue("3");
+    await expect(increase).toBeEnabled();
+
+    expect(runtimeErrors).toEqual([]);
   });
 
   test("renders the form heading", async ({ page }) => {

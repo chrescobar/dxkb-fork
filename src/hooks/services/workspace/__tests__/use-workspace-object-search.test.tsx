@@ -3,7 +3,11 @@ import type { ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { InMemoryWorkspaceRepository } from "@/lib/services/workspace/adapters/in-memory-workspace-repository";
 import { WorkspaceRepositoryProvider } from "@/contexts/workspace-repository-context";
-import { useWorkspaceObjectSearch } from "@/hooks/services/workspace/use-workspace-object-search";
+import {
+  assertUniqueWorkspaceObjectPaths,
+  useWorkspaceObjectSearch,
+} from "@/hooks/services/workspace/use-workspace-object-search";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 function makeWrapper(repo: InMemoryWorkspaceRepository) {
   const qc = new QueryClient({
@@ -59,6 +63,60 @@ describe("useWorkspaceObjectSearch", () => {
       "apple.fq",
       "apple2.fq",
     ]);
+  });
+
+  it("throws when search results contain duplicate paths", () => {
+    const item = {
+      id: "first-id",
+      name: "duplicate.fq",
+      path: "/alice@bvbrc/home/duplicate.fq",
+      type: "reads",
+      size: 1,
+    } satisfies WorkspaceItem;
+
+    expect(() =>
+      assertUniqueWorkspaceObjectPaths([
+        item,
+        { ...item, id: "second-id" },
+      ]),
+    ).toThrow(
+      "Workspace search returned duplicate object path: /alice@bvbrc/home/duplicate.fq",
+    );
+  });
+
+  it("allows a repeated backend id when paths are distinct", () => {
+    const items = [
+      {
+        id: "shared-id",
+        name: "first.fq",
+        path: "/alice@bvbrc/home/first.fq",
+        type: "reads",
+        size: 1,
+      },
+      {
+        id: "shared-id",
+        name: "second.fq",
+        path: "/alice@bvbrc/home/second.fq",
+        type: "reads",
+        size: 1,
+      },
+    ] satisfies WorkspaceItem[];
+
+    expect(assertUniqueWorkspaceObjectPaths(items)).toBe(items);
+  });
+
+  it("throws when a search result has no path", () => {
+    expect(() =>
+      assertUniqueWorkspaceObjectPaths([
+        {
+          id: "missing-path-id",
+          name: "missing.fq",
+          path: "",
+          type: "reads",
+          size: 1,
+        },
+      ]),
+    ).toThrow("Workspace search returned an object without a path: missing-path-id");
   });
 
   it("clearSearch resets the filter", async () => {

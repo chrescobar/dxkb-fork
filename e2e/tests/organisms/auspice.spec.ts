@@ -151,6 +151,28 @@ test("opens the exact Auspice dataset and renders tree, map, and attribution", a
   await expect(available).toBeFocused();
 });
 
+test("keeps the local Auspice viewer same-origin so it can fetch datasets", async ({ page }) => {
+  await mockAuspice(page);
+  const blockedRequests: string[] = [];
+  page.on("requestfailed", request => {
+    if (request.url().includes("/api/charon/")) blockedRequests.push(request.url());
+  });
+
+  await openPicker(page);
+  await row(page, "H3N2 segment 4 (HA)")
+    .getByRole("button", { name: "Open H3N2 segment 4 (HA) in Auspice" })
+    .click();
+
+  const iframe = page.getByTitle("Auspice phylogeny viewer for H3N2 segment 4 (HA)");
+  await expect(iframe).not.toHaveAttribute("sandbox");
+  await expect(
+    page
+      .frameLocator('iframe[title="Auspice phylogeny viewer for H3N2 segment 4 (HA)"]')
+      .getByText("Deterministic H3N2 Auspice tree", { exact: true }),
+  ).toBeVisible({ timeout: 30_000 });
+  expect(blockedRequests).toEqual([]);
+});
+
 test("nav bar logo and wordmark open the Auspice docs in a new tab", async ({ page, context }) => {
   // Stock Auspice hardcodes href="/" with no target on both (it assumes it owns
   // the site root), so a click navigates the iframe to the DXKB home page and

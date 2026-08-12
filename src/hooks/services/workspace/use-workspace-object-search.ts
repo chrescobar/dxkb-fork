@@ -36,6 +36,22 @@ export interface UseWorkspaceObjectSearchReturn {
   refresh: () => Promise<void>;
 }
 
+export function assertUniqueWorkspaceObjectPaths(
+  items: WorkspaceItem[],
+): WorkspaceItem[] {
+  const paths = new Set<string>();
+  for (const item of items) {
+    if (!item.path) {
+      throw new Error(`Workspace search returned an object without a path: ${item.id}`);
+    }
+    if (paths.has(item.path)) {
+      throw new Error(`Workspace search returned duplicate object path: ${item.path}`);
+    }
+    paths.add(item.path);
+  }
+  return items;
+}
+
 /**
  * Workspace object search hook used by `WorkspaceObjectSelector`. Hits the
  * repository so tests and stories can supply fixtures via
@@ -59,7 +75,7 @@ export function useWorkspaceObjectSearch({
     staleTime: 5 * 60 * 1000,
   });
 
-  const items = query.data ?? [];
+  const items = assertUniqueWorkspaceObjectPaths(query.data ?? []);
   const objects = items.map(toWorkspaceObject);
   const term = searchQuery.trim().toLowerCase();
   const filteredItems = term

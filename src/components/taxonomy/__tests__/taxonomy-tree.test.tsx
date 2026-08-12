@@ -279,6 +279,36 @@ describe("TaxonomyTree", () => {
     });
   });
 
+  it("keeps the expand toggle after child counts settle and after collapse", async () => {
+    mockChildren({
+      234: [child(235, "Brucella abortus", "species", 581)],
+      235: [child(999, "Brucella abortus 544", "strain", 2)],
+    });
+
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} />, { wrapper: createQueryClientWrapper() });
+
+    const speciesLink = await screen.findByRole("link", { name: "Brucella abortus" });
+    const speciesRow = speciesLink.closest("tr") as HTMLElement;
+    const expand = await within(speciesRow).findByRole("button", { name: "Expand" });
+
+    // Let the count query switch from its populated key to the empty disabled key.
+    // The toggle must remain because the settled count is part of rendered state.
+    await waitFor(() => {
+      expect(within(speciesRow).getByRole("button", { name: "Expand" })).toBe(expand);
+    });
+    fireEvent.click(expand);
+    expect(await screen.findByRole("link", { name: "Brucella abortus 544" })).toBeInTheDocument();
+
+    fireEvent.click(within(speciesRow).getByRole("button", { name: "Collapse" }));
+    await waitFor(() => {
+      expect(screen.queryByRole("link", { name: "Brucella abortus 544" })).toBeNull();
+    });
+
+    const reExpand = within(speciesRow).getByRole("button", { name: "Expand" });
+    fireEvent.click(reExpand);
+    expect(await screen.findByRole("link", { name: "Brucella abortus 544" })).toBeInTheDocument();
+  });
+
   it("renders strain (leaf) rows without an expand toggle", async () => {
     mockChildren({
       234: [child(235, "Brucella abortus", "species", 581)],

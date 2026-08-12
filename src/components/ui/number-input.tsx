@@ -46,9 +46,19 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
     const [value, setValue] = useState<number | undefined>(
       controlledValue ?? defaultValue,
     );
+    const inputRef = useRef<HTMLInputElement>(null);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const holdTimeRef = useRef(0);
     const lastChangeTimeRef = useRef(0);
+
+    const setInputRef = (node: HTMLInputElement | null) => {
+      inputRef.current = node;
+      if (typeof ref === "function") {
+        ref(node);
+      } else if (ref) {
+        ref.current = node;
+      }
+    };
 
     const handleIncrement = () => {
       setValue((prev) =>
@@ -120,7 +130,6 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
     };
 
     const handleArrowKey = useEffectEvent((e: KeyboardEvent) => {
-      const inputRef = ref as React.RefObject<HTMLInputElement>;
       if (document.activeElement === inputRef.current) {
         if (e.key === "ArrowUp") {
           handleIncrement();
@@ -168,12 +177,10 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
       if (value !== undefined) {
         if (value < min) {
           setValue(min);
-          const inputEl = (ref as React.RefObject<HTMLInputElement>).current;
-          inputEl.value = String(min);
+          if (inputRef.current) inputRef.current.value = String(min);
         } else if (value > max) {
           setValue(max);
-          const inputEl = (ref as React.RefObject<HTMLInputElement>).current;
-          inputEl.value = String(max);
+          if (inputRef.current) inputRef.current.value = String(max);
         }
       }
     };
@@ -196,7 +203,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           customInput={Input}
           placeholder={placeholder}
           className="relative [appearance:textfield] rounded-r-none bg-muted [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-          getInputRef={ref}
+          getInputRef={setInputRef}
           {...props}
         />
 

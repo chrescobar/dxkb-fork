@@ -95,18 +95,51 @@ export async function fetchTaxonChildCounts(parentIds: number[]): Promise<Map<nu
   }
 
   // Header: {"facet_fields":{"parent_id":["11320",138,"2955291",1]}} — a flat
-  // [id, count, id, count, …] array. Absent header → treat all as unknown (empty map).
+  // [id, count, id, count, …] array. This response controls whether nodes are
+  // interactive, so malformed data must fail rather than silently turn branches into leaves.
   const header = res.headers.get("facet_counts");
-  if (!header) return counts;
-  let parsed: { facet_fields?: { parent_id?: (string | number)[] } };
-  try {
-    parsed = JSON.parse(header) as typeof parsed;
-  } catch {
-    return counts;
+  if (!header) {
+    throw new Error("taxonomy child counts: missing facet_counts header");
   }
-  const flat = parsed.facet_fields?.parent_id ?? [];
-  for (let i = 0; i + 1 < flat.length; i += 2) {
-    counts.set(Number(flat[i]), Number(flat[i + 1]));
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(header);
+  } catch {
+    throw new Error("taxonomy child counts: invalid facet_counts JSON");
+  }
+  if (typeof parsed !== "object" || parsed === null) {
+    throw new Error("taxonomy child counts: missing facet_fields.parent_id");
+  }
+  const facetFields = (parsed as { facet_fields?: unknown }).facet_fields;
+  if (typeof facetFields !== "object" || facetFields === null) {
+    throw new Error("taxonomy child counts: missing facet_fields.parent_id");
+  }
+  const flat = (facetFields as { parent_id?: unknown }).parent_id;
+  if (!Array.isArray(flat)) {
+    throw new Error("taxonomy child counts: missing facet_fields.parent_id");
+  }
+  if (flat.length % 2 !== 0) {
+    throw new Error("taxonomy child counts: expected parent/count pairs");
+  }
+
+  const requestedIds = new Set(parentIds);
+  for (let index = 0; index < flat.length; index += 2) {
+    const parentId = Number(flat[index]);
+    const count = Number(flat[index + 1]);
+    if (!Number.isInteger(parentId) || parentId <= 0) {
+      throw new Error(`taxonomy child counts: invalid parent id ${String(flat[index])}`);
+    }
+    if (!Number.isInteger(count) || count < 0) {
+      throw new Error(`taxonomy child counts: invalid child count ${String(flat[index + 1])}`);
+    }
+    if (!requestedIds.has(parentId)) {
+      throw new Error(`taxonomy child counts: unexpected parent id ${String(parentId)}`);
+    }
+    if (counts.has(parentId)) {
+      throw new Error(`taxonomy child counts: duplicate parent id ${String(parentId)}`);
+    }
+    counts.set(parentId, count);
   }
   return counts;
 }

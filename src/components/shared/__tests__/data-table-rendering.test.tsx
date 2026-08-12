@@ -1,9 +1,32 @@
+import { useState } from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import { DataTable } from "../data-table";
 import { formatCellValue } from "../data-table-utils";
 import { server } from "@/test-helpers/msw-server";
+
+vi.mock("@tanstack/react-virtual", () => ({
+  useVirtualizer: ({
+    count,
+    estimateSize,
+  }: {
+    count: number;
+    estimateSize: () => number;
+  }) => ({
+    getVirtualItems: () =>
+      Array.from({ length: count }, (_, index) => ({
+        index,
+        start: index * estimateSize(),
+        size: estimateSize(),
+        end: (index + 1) * estimateSize(),
+        key: index,
+        lane: 0,
+      })),
+    getTotalSize: () => count * estimateSize(),
+    measure: vi.fn(),
+  }),
+}));
 
 function deferred<T>() {
   let resolve!: (value: T) => void;
@@ -14,6 +37,41 @@ function deferred<T>() {
 }
 
 const columns = [{ id: "strain_name", label: "Strain Name", visible: true }];
+const selectionRows = [
+  { genome_id: "100.1", strain_name: "First" },
+  { genome_id: "100.2", strain_name: "Second" },
+  { genome_id: "100.3", strain_name: "Third" },
+  { genome_id: "100.4", strain_name: "Fourth" },
+];
+
+function selectionCell(checkbox: HTMLElement) {
+  const cell = checkbox.closest("td");
+  if (!cell) throw new Error("Selection checkbox must be inside a table cell");
+  return cell;
+}
+
+function ControlledSelectionTable({
+  onGenomeSelect,
+  onActiveRowChange,
+}: {
+  onGenomeSelect?: (id: string | null) => void;
+  onActiveRowChange?: (id: string | null) => void;
+}) {
+  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
+  return (
+    <DataTable
+      id="controlled-selection"
+      data={selectionRows}
+      columns={columns}
+      totalItems={selectionRows.length}
+      resource="genome"
+      rowSelection={rowSelection}
+      onRowSelectionChange={setRowSelection}
+      onGenomeSelect={onGenomeSelect}
+      onActiveRowChange={onActiveRowChange}
+    />
+  );
+}
 
 beforeAll(() => {
   global.ResizeObserver = class ResizeObserver {
@@ -21,6 +79,134 @@ beforeAll(() => {
     unobserve = vi.fn();
     disconnect = vi.fn();
   };
+});
+
+describe("DataTable row selection checkboxes", () => {
+  it("keeps each checkbox checked when multiple rows are selected", async () => {
+    const user = userEvent.setup();
+    render(
+      <DataTable
+        id="selection"
+        data={[
+          { genome_id: "100.1", strain_name: "First" },
+          { genome_id: "100.2", strain_name: "Second" },
+        ]}
+        columns={columns}
+        totalItems={2}
+        resource="genome"
+      />,
+    );
+
+    const first = screen.getByRole("checkbox", { name: "Select row 100.1" });
+    const second = screen.getByRole("checkbox", { name: "Select row 100.2" });
+    await user.click(first);
+    await user.click(second);
+
+    expect(first).toBeChecked();
+    expect(second).toBeChecked();
+  });
+
+  it("uses checkbox toggle semantics when clicking anywhere in the selection cell", async () => {
+    const user = userEvent.setup();
+    render(
+      <DataTable
+        id="selection-cell"
+        data={[
+          { genome_id: "100.1", strain_name: "First" },
+          { genome_id: "100.2", strain_name: "Second" },
+        ]}
+        columns={columns}
+        totalItems={2}
+        resource="genome"
+      />,
+    );
+
+    const first = screen.getByRole("checkbox", { name: "Select row 100.1" });
+    const second = screen.getByRole("checkbox", { name: "Select row 100.2" });
+    const firstCell = selectionCell(first);
+    const secondCell = selectionCell(second);
+
+    await user.click(firstCell);
+    await user.click(secondCell);
+    expect(first).toBeChecked();
+    expect(second).toBeChecked();
+
+    await user.click(firstCell);
+    expect(first).not.toBeChecked();
+    expect(second).toBeChecked();
+  });
+
+  it("does not double-toggle when the checkbox itself is clicked", async () => {
+    const user = userEvent.setup();
+    render(<ControlledSelectionTable />);
+
+    const checkbox = screen.getByRole("checkbox", { name: "Select row 100.1" });
+    await user.click(checkbox);
+    expect(checkbox).toBeChecked();
+
+    await user.click(checkbox);
+    expect(checkbox).not.toBeChecked();
+  });
+
+  it("updates controlled selection when checkbox cells are clicked", async () => {
+    const user = userEvent.setup();
+    render(<ControlledSelectionTable />);
+
+    const first = screen.getByRole("checkbox", { name: "Select row 100.1" });
+    const second = screen.getByRole("checkbox", { name: "Select row 100.2" });
+    await user.click(selectionCell(first));
+    await user.click(selectionCell(second));
+
+    expect(first).toBeChecked();
+    expect(second).toBeChecked();
+  });
+
+  it.each([
+    ["checkbox", (checkbox: HTMLElement) => checkbox],
+    ["selection cell", selectionCell],
+  ])("shift-clicking the %s adds the inclusive range", async (_label, targetFor) => {
+    const user = userEvent.setup();
+    render(<ControlledSelectionTable />);
+
+    const first = screen.getByRole("checkbox", { name: "Select row 100.1" });
+    const fourth = screen.getByRole("checkbox", { name: "Select row 100.4" });
+    await user.click(targetFor(first));
+    await user.keyboard("{Shift>}");
+    await user.click(targetFor(fourth));
+    await user.keyboard("{/Shift}");
+
+    for (const row of selectionRows) {
+      expect(
+        screen.getByRole("checkbox", { name: `Select row ${row.genome_id}` }),
+      ).toBeChecked();
+    }
+  });
+
+  it.each([
+    ["checkbox", (checkbox: HTMLElement) => checkbox],
+    ["selection cell", selectionCell],
+  ])("notifies active-row callbacks once when the %s selects and deselects", async (_label, targetFor) => {
+    const user = userEvent.setup();
+    const onGenomeSelect = vi.fn();
+    const onActiveRowChange = vi.fn();
+    render(
+      <ControlledSelectionTable
+        onGenomeSelect={onGenomeSelect}
+        onActiveRowChange={onActiveRowChange}
+      />,
+    );
+
+    const checkbox = screen.getByRole("checkbox", { name: "Select row 100.1" });
+    await user.click(targetFor(checkbox));
+    expect(onGenomeSelect).toHaveBeenLastCalledWith("100.1");
+    expect(onActiveRowChange).toHaveBeenLastCalledWith("100.1");
+
+    await user.click(targetFor(checkbox));
+    expect(onGenomeSelect).toHaveBeenLastCalledWith(null);
+    expect(onActiveRowChange).toHaveBeenLastCalledWith(null);
+    expect(onGenomeSelect).toHaveBeenCalledTimes(2);
+    expect(onActiveRowChange).toHaveBeenCalledTimes(2);
+  });
 });
 
 // Regression: "Showing 1-0 of N" appeared during page-data loading because end was

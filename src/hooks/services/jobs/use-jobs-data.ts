@@ -1,7 +1,64 @@
 import { keepPreviousData } from "@tanstack/react-query";
+import { z } from "zod";
 import { useApiQuery } from "@/lib/api/hooks";
 import { apiCall } from "@/lib/api/client";
 import type { JobListItem } from "@/types/workspace";
+
+const jobIdSchema = z.union([
+  z.string().min(1),
+  z.number().int().nonnegative().safe().transform(String),
+]);
+
+const jobSchema = z.looseObject({
+  id: jobIdSchema,
+  app: z.string().min(1),
+  status: z.enum([
+    "pending",
+    "queued",
+    "running",
+    "in-progress",
+    "completed",
+    "failed",
+    "cancelled",
+    "error",
+  ]),
+  submit_time: z.string(),
+  start_time: z.string().optional(),
+  completed_time: z.string().optional(),
+  owner: z.string(),
+  parameters: z.record(z.string(), z.unknown()),
+  output_path: z.string().optional(),
+  output_file: z.string().optional(),
+  app_spec: z
+    .looseObject({
+      id: z.string(),
+      script: z.string(),
+      label: z.string(),
+      description: z.string(),
+    })
+    .optional(),
+  elapsed_time: z.number().finite().optional(),
+  req_memory: z.string().optional(),
+  req_cpu: z.number().finite().optional(),
+  req_runtime: z.string().optional(),
+});
+
+const jobsResponseSchema = z.object({
+  jobs: z.union([z.array(jobSchema), z.tuple([z.array(jobSchema)])]),
+  totalTasks: z.number().int().nonnegative().safe(),
+});
+
+export function parseJobsResponse(data: unknown): UseJobsDataResult {
+  const parsed = jobsResponseSchema.safeParse(data);
+  if (!parsed.success) {
+    throw new Error(`Invalid jobs response: ${z.prettifyError(parsed.error)}`);
+  }
+
+  const jobs = Array.isArray(parsed.data.jobs[0])
+    ? parsed.data.jobs[0]
+    : parsed.data.jobs;
+  return { jobs: jobs as JobListItem[], totalTasks: parsed.data.totalTasks };
+}
 
 interface UseJobsDataParams {
   offset: number;
@@ -40,7 +97,7 @@ export function useJobsData(params: UseJobsDataParams) {
     refetchInterval,
     refetchIntervalInBackground: false,
     queryFn: async () => {
-      const data = await apiCall<{ jobs: unknown; totalTasks: number }>(
+      const data = await apiCall<unknown>(
         "/api/services/app-service/jobs/enumerate-tasks-filtered",
         {
           offset, limit,
@@ -52,11 +109,7 @@ export function useJobsData(params: UseJobsDataParams) {
           end_time: endTime,
         },
       );
-      const raw = Array.isArray(data.jobs) ? data.jobs : [];
-      const rawJobs = (Array.isArray(raw[0]) ? raw[0] : raw) as Record<string, unknown>[];
-      const jobs = rawJobs.map((j) => ({ ...j, id: (j.id as string | undefined) ?? "" })) as JobListItem[];
-      const totalTasks = typeof data.totalTasks === "number" ? data.totalTasks : 0;
-      return { jobs, totalTasks };
+      return parseJobsResponse(data);
     },
   });
 }

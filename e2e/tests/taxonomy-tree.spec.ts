@@ -12,7 +12,7 @@ function childrenOverride(parentId: number, rows: Record<string, unknown>[]): Js
     // the "2" in "%2C" is a digit, so that would mis-split the encoded separator.
     // (?![0-9]) guards against matching a longer id (234 must not match 2345).
     // (?!\)) so this doesn't hijack the facet request's in(parent_id,(…)) form.
-    url: new RegExp(`/api/e2e-mock/data/taxonomy/\\?.*parent_id(?:,|%2C)${String(parentId)}(?![0-9])`),
+    url: new RegExp(`/taxonomy/\\?.*parent_id(?:,|%2C)${String(parentId)}(?![0-9])`),
     method: "GET",
     body: rows,
     headers: { "Content-Range": `items 0-${String(rows.length)}/${String(rows.length)}` },
@@ -25,14 +25,24 @@ function childrenOverride(parentId: number, rows: Record<string, unknown>[]): Js
 // expandable. Registered before childrenOverride (first match wins) since its URL
 // also contains parent_id.
 function childCountsOverride(counts: Record<number, number>): JsonOverride {
-  const flat = Object.entries(counts).flatMap(([id, n]) => [id, n]);
+  const entries = Object.entries(counts);
+  const ids = entries.map(([id]) => id).join(",");
+  const encodedIds = entries.map(([id]) => id).join("(?:,|%2C)");
+  const flat = entries.flatMap(([id, n]) => [id, n]);
+  const open = "(?:%28|\\()";
+  const close = "(?:%29|\\))";
   return {
-    url: /\/api\/e2e-mock\/data\/taxonomy\/\?.*facet/,
+    url: new RegExp(
+      `/taxonomy/\\?.*in${open}parent_id(?:,|%2C)${open}${encodedIds}${close}${close}.*facet`,
+      "i",
+    ),
     method: "GET",
     body: [],
     headers: {
       "Content-Range": "items 0-0/0",
       facet_counts: JSON.stringify({ facet_fields: { parent_id: flat } }),
+      "Access-Control-Expose-Headers": "facet_counts, Content-Range",
+      "x-mocked-parent-ids": ids,
     },
   };
 }
@@ -53,7 +63,10 @@ test.describe("taxonomy tree tab", () => {
       // childrenOverride), then specific children, then permissive for the rest.
       // 235 has strains (→ expand arrow), 236 has none.
       overrides: [
+        childCountsOverride({ 234: 2 }),
         childCountsOverride({ 235: 1, 236: 0 }),
+        childCountsOverride({ 235: 1 }),
+        childCountsOverride({ 236: 0 }),
         childrenOverride(234, speciesChildren),
         childrenOverride(235, abortusStrains),
         ...permissiveBackendOverrides,
@@ -86,6 +99,29 @@ test.describe("taxonomy tree tab", () => {
     // appears in the panel, never in the tree's Name/Rank/Genomes columns).
     await strainRow.click();
     await expect(page.getByText("Taxon ID")).toBeVisible();
+  });
+
+  test("preserves a non-leaf's toggle after counts settle, collapse, and re-expansion", async ({ page }) => {
+    await page.goto("/taxonomy/234?tab=taxa-tree");
+
+    const speciesRow = page.locator("tr", {
+      has: page.getByRole("link", { name: "Brucella abortus", exact: true }),
+    });
+    const expand = speciesRow.getByRole("button", { name: "Expand" });
+    await expect(expand).toBeVisible();
+
+    // A missing reactive count briefly rendered this toggle and then removed it
+    // when the count query became disabled. Stability catches that initial-load regression.
+    await expect(expand).toBeVisible();
+    await expand.click();
+    await expect(page.getByRole("link", { name: "Brucella abortus 544" })).toBeVisible();
+
+    await speciesRow.getByRole("button", { name: "Collapse" }).click();
+    await expect(page.getByRole("link", { name: "Brucella abortus 544" })).toHaveCount(0);
+    await expect(expand).toBeVisible();
+
+    await expand.click();
+    await expect(page.getByRole("link", { name: "Brucella abortus 544" })).toBeVisible();
   });
 
   test("filters the loaded rows by name", async ({ page }) => {

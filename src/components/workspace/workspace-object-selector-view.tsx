@@ -118,7 +118,7 @@ function WorkspaceObjectDropdown({
           return (
             <button
               type="button"
-              key={object.id}
+              key={object.path}
               ref={(element) => {
                 itemRefs.current[index] = element;
               }}

@@ -13,7 +13,7 @@ export interface MockJob {
   submit_time: string;
   start_time?: string;
   completed_time?: string;
-  owner?: string;
+  owner: string;
   parameters?: Record<string, unknown>;
   output_path?: string;
   output_file?: string;
@@ -26,6 +26,7 @@ export const mockJobs: MockJob[] = [
     status: "completed",
     submit_time: "2026-04-01T09:55:00Z",
     start_time: "2026-04-01T10:00:00Z",
+    owner: "e2e-test-user",
     completed_time: "2026-04-01T10:30:00Z",
     parameters: { paired_end_libs: [{ read1: "r1.fastq", read2: "r2.fastq" }] },
   },
@@ -35,6 +36,7 @@ export const mockJobs: MockJob[] = [
     status: "running",
     submit_time: "2026-04-20T11:58:00Z",
     start_time: "2026-04-20T12:00:00Z",
+    owner: "e2e-test-user",
     parameters: {},
   },
 ];
@@ -46,6 +48,7 @@ export const mockLifecycleJobs: MockJob[] = [
     app: "GenomeAssembly2",
     status: "queued",
     submit_time: "2026-04-20T08:00:00Z",
+    owner: "e2e-test-user",
     parameters: {},
   },
   {
@@ -54,6 +57,7 @@ export const mockLifecycleJobs: MockJob[] = [
     status: "running",
     submit_time: "2026-04-20T07:50:00Z",
     start_time: "2026-04-20T07:55:00Z",
+    owner: "e2e-test-user",
     parameters: {},
   },
   {
@@ -62,6 +66,7 @@ export const mockLifecycleJobs: MockJob[] = [
     status: "completed",
     submit_time: "2026-04-20T06:00:00Z",
     start_time: "2026-04-20T06:05:00Z",
+    owner: "e2e-test-user",
     completed_time: "2026-04-20T06:45:00Z",
     parameters: {},
     output_path: "/e2e-test-user@patricbrc.org/home",

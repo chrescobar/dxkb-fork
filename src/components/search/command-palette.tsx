@@ -35,10 +35,7 @@ import {
   CommandShortcutChip,
 } from "@/components/ui/command";
 
-import {
-  COMMAND_PALETTE_OPEN_EVENT,
-  openCommandPalette,
-} from "./command-palette-events";
+import { COMMAND_PALETTE_OPEN_EVENT } from "./command-palette-events";
 
 const SEARCH_ITEM_VALUE = "__dxkb-command-search__";
 

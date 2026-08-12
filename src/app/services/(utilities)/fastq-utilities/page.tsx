@@ -26,52 +26,23 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ChevronRight, HelpCircle, Plus, X } from "lucide-react";
-import { toast } from "sonner";
+import { ChevronRight, HelpCircle } from "lucide-react";
 
 import { ServiceHeader } from "@/components/services/service-header";
 import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
 import SraRunAccessionWithValidation from "@/components/services/sra-run-accession-with-validation";
 import SelectedItemsTable from "@/components/services/selected-items-table";
-import OutputFolder from "@/components/services/output-folder";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
-import { SingleGenomeSelector } from "@/components/services/single-genome-selector";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { Spinner } from "@/components/ui/spinner";
 
-import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
 import {
   fastqUtilitiesInfo,
-  fastqUtilitiesParameters,
-  fastqUtilitiesPipeline,
   readInputFileInfo,
 } from "@/lib/services/info/fastq-utilities";
 
-import {
-  fastqUtilitiesFormSchema,
-  defaultFastqUtilitiesFormValues,
-  pipelineActionOptions,
-  platformOptions,
-  maxPipelineActions,
-  type LibraryItem,
-  type PipelineActionItem,
-  type PipelineAction,
-  type Platform,
-} from "@/lib/forms/(utilities)/fastq-utilities/fastq-utilities-form-schema";
-import {
-  isAlignSelected,
-  createPipelineActionItem,
-  removePipelineActionItem,
-  actionItemsToRecipe,
-} from "@/lib/forms/(utilities)/fastq-utilities/fastq-utilities-form-utils";
-import { fastqUtilitiesService } from "@/lib/forms/(utilities)/fastq-utilities/fastq-utilities-service";
-import {
-  buildBaseLibraryItem,
-  getPairedLibraryName,
-  getSingleLibraryName,
-  useTanstackLibrarySelection,
-} from "@/lib/forms/tanstack-library-selection";
+import { platformOptions } from "@/lib/forms/(utilities)/fastq-utilities/fastq-utilities-form-schema";
 import { getLibraryTypeLabel } from "@/lib/forms/shared-schemas";
 
 import type { WorkspaceObject } from "@/lib/services/workspace/types";
@@ -80,29 +51,21 @@ export default function FastqUtilitiesPage() {
   const page = useFastqUtilitiesPage();
   const {
     form,
-    outputPath,
     pairedRead1,
     pairedRead2,
     singleRead,
     singlePlatform,
     sraResetKey,
-    selectedAction,
-    pipelineActions,
     selectedLibraries,
-    alignSelected,
     setPairedRead1,
     setPairedRead2,
     setSingleRead,
     setSinglePlatform,
-    setSelectedAction,
-    setIsOutputNameValid,
     setLibraries,
     removeLibrary,
     handleReset,
     handlePairedLibraryAdd,
     handleSingleLibraryAdd,
-    handleAddPipelineAction,
-    handleRemovePipelineAction,
     isSubmitting,
     jobParamsDialogProps,
     canSubmit,

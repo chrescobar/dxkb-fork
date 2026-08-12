@@ -26,7 +26,6 @@ import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { Spinner } from "@/components/ui/spinner";
 
-import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
 import {
   subspeciesClassificationInfo,
   subspeciesClassificationQuerySource,
@@ -34,13 +33,9 @@ import {
 } from "@/lib/services/info/subspecies-classification";
 
 import {
-  subspeciesClassificationFormSchema,
-  defaultSubspeciesClassificationFormValues,
   subspeciesVirusTypeOptions,
   type SubspeciesClassificationFormData,
 } from "@/lib/forms/(viral-tools)/subspecies-classification/subspecies-classification-form-schema";
-import { validateFasta, getFastaErrorMessage } from "@/lib/fasta-validation";
-import { subspeciesClassificationService } from "@/lib/forms/(viral-tools)/subspecies-classification/subspecies-classification-service";
 
 import type { WorkspaceObject } from "@/lib/services/workspace/types";
 

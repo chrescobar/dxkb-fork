@@ -24,12 +24,6 @@ import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { Spinner } from "@/components/ui/spinner";
 
-import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
-import {
-  buildPairedLibraries,
-  buildSingleLibraries,
-  buildSraLibraries,
-} from "@/lib/rerun-utility";
 import {
   viralAssemblyInfo,
   viralAssemblyInputFile,
@@ -37,23 +31,10 @@ import {
 } from "@/lib/services/info/viral-assembly";
 
 import {
-  viralAssemblyFormSchema,
-  defaultViralAssemblyFormValues,
   strategyOptions,
   moduleOptions,
-  type ViralAssemblyLibraryItem,
   type ViralAssemblyFormData,
 } from "@/lib/forms/(viral-tools)/viral-assembly/viral-assembly-form-schema";
-import {
-  getPairedLibraryBuildFn,
-  getSingleLibraryBuildFn,
-} from "@/lib/forms/(viral-tools)/viral-assembly/viral-assembly-form-utils";
-import { viralAssemblyService } from "@/lib/forms/(viral-tools)/viral-assembly/viral-assembly-service";
-import {
-  buildBaseLibraryItem,
-  getPairedLibraryId,
-  useTanstackLibrarySelection,
-} from "@/lib/forms/tanstack-library-selection";
 
 import type { WorkspaceObject } from "@/lib/services/workspace/types";
 

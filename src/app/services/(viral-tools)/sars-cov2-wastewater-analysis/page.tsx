@@ -4,58 +4,21 @@ import { useEffect, useRef } from "react";
 import { useServicePageState } from "../../use-service-page-state";
 import { useForm } from "@tanstack/react-form";
 import { useSelector } from "@tanstack/react-store";
-import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { ChevronRight, HelpCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { ServiceHeader } from "@/components/services/service-header";
-import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import SraRunAccessionWithValidation from "@/components/services/sra-run-accession-with-validation";
-import SelectedItemsTable from "@/components/services/selected-items-table";
-import OutputFolder from "@/components/services/output-folder";
-import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
-import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { Spinner } from "@/components/ui/spinner";
 
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
-import {
-  sarsCov2WastewaterAnalysisInfo,
-  sarsCov2WastewaterAnalysisInputLib,
-  sarsCov2WastewaterAnalysisParameters,
-} from "@/lib/services/info/sars-cov2-wastewater-analysis";
+import { sarsCov2WastewaterAnalysisInfo } from "@/lib/services/info/sars-cov2-wastewater-analysis";
 
 import {
   sarsCov2WastewaterAnalysisFormSchema,
   defaultSarsCov2WastewaterAnalysisFormValues,
-  primerOptions,
   primerVersionOptions,
   defaultPrimerVersion,
-  recipeOptions,
   type SarsCov2WastewaterAnalysisFormData,
   type SarsCov2WastewaterLibraryItem,
   type SrrLibItem,
@@ -75,9 +38,6 @@ import {
   buildBaseLibraryItem,
   useTanstackLibrarySelection,
 } from "@/lib/forms/tanstack-library-selection";
-import { getLibraryTypeLabel } from "@/lib/forms/shared-schemas";
-
-import type { WorkspaceObject } from "@/lib/services/workspace/types";
 import type { Library } from "@/types/services";
 import { WastewaterParameters } from "./wastewater-parameters";
 import { WastewaterLibrary } from "./wastewater-library";

@@ -53,10 +53,11 @@ export function useViralAssemblyPage() {
       srr: "srr_ids",
     },
   });
-  const librariesRef = useRef(selection.selectedLibraries);
+  const { selectedLibraries, setLibraries } = selection;
+  const librariesRef = useRef(selectedLibraries);
   useEffect(() => {
-    librariesRef.current = selection.selectedLibraries;
-  }, [selection.selectedLibraries]);
+    librariesRef.current = selectedLibraries;
+  }, [selectedLibraries]);
 
   useEffect(() => {
     if (inputType !== "single") return;
@@ -75,14 +76,14 @@ export function useViralAssemblyPage() {
     );
     if (state.singleRead) {
       const result = getSingleLibraryBuildFn()(state.singleRead);
-      selection.setLibraries(
+      setLibraries(
         result.library ? [...others, result.library] : others,
       );
-    } else selection.setLibraries(others);
-  }, [inputType, state.singleRead, selection.setLibraries]);
+    } else setLibraries(others);
+  }, [inputType, state.singleRead, setLibraries]);
 
   const pairedIds = JSON.stringify(
-    selection.selectedLibraries.reduce<string[]>((ids, library) => {
+    selectedLibraries.reduce<string[]>((ids, library) => {
       if (library.type === "paired") ids.push(library.id);
       return ids;
     }, []),
@@ -110,21 +111,21 @@ export function useViralAssemblyPage() {
         state.pairedRead2,
         desiredId,
       );
-      selection.setLibraries(
+      setLibraries(
         result.library ? [...others, result.library] : others,
       );
-    } else selection.setLibraries(others);
+    } else setLibraries(others);
   }, [
     inputType,
     state.pairedRead1,
     state.pairedRead2,
     pairedIds,
-    selection.setLibraries,
+    setLibraries,
   ]);
 
   function handleReset() {
     form.reset(defaultViralAssemblyFormValues);
-    selection.setLibraries([]);
+    setLibraries([]);
     setState("pairedRead1")(null);
     setState("pairedRead2")(null);
     setState("singleRead")(null);
@@ -147,20 +148,20 @@ export function useViralAssemblyPage() {
           rerunForm.setFieldValue("input_type", "paired");
           setState("pairedRead1")(paired.read1);
           setState("pairedRead2")(paired.read2);
-          selection.setLibraries(
+          setLibraries(
             buildPairedLibraries({ paired_end_libs: [paired] }),
           );
         } else if (single?.read) {
           rerunForm.setFieldValue("input_type", "single");
           setState("singleRead")(single.read);
-          selection.setLibraries(
+          setLibraries(
             buildSingleLibraries({ single_end_libs: [single] }),
           );
         } else if (srr) {
           rerunForm.setFieldValue("input_type", "srr_accession");
           setState("sraDefaultValue")(srr);
           setState("sraResetKey")((key) => key + 1);
-          selection.setLibraries(buildSraLibraries({ srr_ids: [srr] }));
+          setLibraries(buildSraLibraries({ srr_ids: [srr] }));
         }
       },
     },

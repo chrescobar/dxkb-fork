@@ -1,0 +1,30 @@
+src/app/services/(viral-tools)/viral-assembly/use-viral-assembly-page.ts
+  s_7f73675ea1b8b2::t_276467b1054c61 86
+  s_7f73675ea1b8b2::t_b6947556667090 56-57,59-60
+  s_7f73675ea1b8b2::t_646dd5a2f8c549 79,82-83,114,117,123,128,151,157,164
+src/components/search/command-palette.tsx
+  s_7f73675ea1b8b2::t_a6abd7b8a68b66 38
+src/components/ui/calendar.tsx
+  s_7f73675ea1b8b2::t_120697f40a5ad1 180
+  s_7f73675ea1b8b2::t_c116159f303ba8 202
+src/app/services/(utilities)/fastq-utilities/page.tsx
+  s_7f73675ea1b8b2::t_609472e5809150 29,45
+src/app/services/(viral-tools)/sars-cov2-wastewater-analysis/page.tsx
+  s_7f73675ea1b8b2::t_78fad16f54ea08 15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "45f9f745fbd2230e6e5fbdc42b0cb74f6eef3430",
+  "prompts": {},
+  "sessions": {
+    "s_7f73675ea1b8b2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_00d7816f9ffejeRN44jhXxceVx",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

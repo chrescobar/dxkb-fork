@@ -1,0 +1,31 @@
+src/lib/__tests__/rerun-utility.test.ts
+  s_daa769dfcefa0d::t_76e2909836bb50 254-255
+  s_daa769dfcefa0d::t_30d3ced865110c 284-285
+  s_daa769dfcefa0d::t_0c6a8d78b7babb 241,243-245,256
+  s_daa769dfcefa0d::t_c29f4cde201562 275-276
+src/lib/rerun-utility.ts
+  s_daa769dfcefa0d::t_2c98cf67ee62c4 91-95
+.github/workflows/react-doctor.yml
+  s_daa769dfcefa0d::t_653c1d712e3226 37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "2913b95d797f833b83724aa4f2fb10a2966578ab",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_daa769dfcefa0d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_004328e2affexxrmHPicWawBHc",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

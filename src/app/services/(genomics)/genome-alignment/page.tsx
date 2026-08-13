@@ -76,29 +76,34 @@ export default function GenomeAlignmentServicePage() {
   const outputPath = useSelector(form.store, (s) => s.values.output_path);
 
   useEffect(() => {
-    selectedGenomesRef.current = selectedGenomes;
     const genomeIds = selectedGenomes.map((genome) => genome.genome_id);
     form.setFieldValue("genome_ids", genomeIds);
   }, [selectedGenomes, form]);
 
+  const replaceSelectedGenomes = (genomes: GenomeSummary[]) => {
+    selectedGenomesRef.current = genomes;
+    setSelectedGenomes(genomes);
+  };
+
   const handleAddGenome = (genome: GenomeSummary) => {
-    if (selectedGenomes.length >= maxGenomes) {
+    const currentSelection = selectedGenomesRef.current;
+    if (currentSelection.length >= maxGenomes) {
       toast.error("You can add up to 20 genomes");
       return;
     }
-    if (selectedGenomes.some((item) => item.genome_id === genome.genome_id)) {
+    if (currentSelection.some((item) => item.genome_id === genome.genome_id)) {
       toast.error("Genome already added", {
         description: `${genome.genome_name} (${genome.genome_id}) is already in the selection`,
       });
       return;
     }
-    setSelectedGenomes([...selectedGenomes, genome]);
+    replaceSelectedGenomes([...currentSelection, genome]);
     toast.success(`Added ${genome.genome_name}`);
   };
 
   const handleRemoveGenome = (genomeId: string) => {
-    setSelectedGenomes((previous) =>
-      previous.filter((genome) => genome.genome_id !== genomeId),
+    replaceSelectedGenomes(
+      selectedGenomesRef.current.filter((genome) => genome.genome_id !== genomeId),
     );
   };
 
@@ -135,8 +140,7 @@ export default function GenomeAlignmentServicePage() {
 
         const genomesToAdd = uniqueNewGenomes.slice(0, availableSlots);
         const nextSelection = [...currentSelection, ...genomesToAdd];
-        selectedGenomesRef.current = nextSelection;
-        setSelectedGenomes(nextSelection);
+        replaceSelectedGenomes(nextSelection);
         if (uniqueNewGenomes.length > genomesToAdd.length) {
           toast.warning("Some genomes were not added because the selection limit is 20");
         }
@@ -178,7 +182,7 @@ export default function GenomeAlignmentServicePage() {
           : [];
         if (genomeIds.length > 0) {
           fetchGenomesByIds(genomeIds)
-            .then((genomes) => { setSelectedGenomes(genomes); })
+            .then((genomes) => { replaceSelectedGenomes(genomes); })
             .catch(() => {
               toast.error("Could not restore genomes from previous job", {
                 description: "Please re-add your genomes manually.",
@@ -192,7 +196,7 @@ export default function GenomeAlignmentServicePage() {
 
   const handleReset = () => {
     form.reset(defaultGenomeAlignmentFormValues);
-    setSelectedGenomes([]);
+    replaceSelectedGenomes([]);
     setShowAdvanced(false);
     setLastSelectedGroup(null);
   };

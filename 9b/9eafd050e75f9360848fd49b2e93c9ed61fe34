@@ -1,0 +1,45 @@
+src/lib/auth/server/adapters/bvbrc-identity.ts
+  s_8c4086bf3d128c::t_329518f40284ac 59,66,78
+  s_8c4086bf3d128c::t_20bbee1dc71dbc 28-36
+  s_8c4086bf3d128c::t_4246d9fafbf44b 55-58,60
+AGENTS.md
+  s_aa00451abec44d::t_17efb8dacb153f 1-7
+src/lib/auth/server/respond.ts
+  s_8c4086bf3d128c::t_2be0bc9186f2e0 14-18,29-33
+src/lib/auth/server/errors.ts
+  s_8c4086bf3d128c::t_5c99f0abe6f9d5 23
+  s_8c4086bf3d128c::t_e17b771fcf3ba0 108-112
+src/lib/auth/port.ts
+  s_8c4086bf3d128c::t_7a5fc6645a523d 22
+src/lib/auth/server/result.ts
+  s_8c4086bf3d128c::t_cedda3f76948eb 11,13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "9b9eafd050e75f9360848fd49b2e93c9ed61fe34",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_8c4086bf3d128c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b50a4d5-6a11-4685-9699-e343078e8f1c",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_aa00451abec44d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_008626630ffeS5G31p7mZH5Kxl",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

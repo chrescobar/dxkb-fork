@@ -89,6 +89,33 @@ describe("useWorkspaceObjectSearch", () => {
     );
   });
 
+  it("reports duplicate paths through the query error state", async () => {
+    const repo = new InMemoryWorkspaceRepository();
+    const item = {
+      id: "first-id",
+      name: "duplicate.fq",
+      path: "/alice@bvbrc/home/duplicate.fq",
+      type: "reads",
+      size: 1,
+    } satisfies WorkspaceItem;
+    vi.spyOn(repo, "searchObjects").mockResolvedValue([
+      item,
+      { ...item, id: "second-id" },
+    ]);
+
+    const { result } = renderHook(
+      () => useWorkspaceObjectSearch({ username: "alice" }),
+      { wrapper: makeWrapper(repo) },
+    );
+
+    await waitFor(() => {
+      expect(result.current.error).toBe(
+        "Workspace search returned duplicate object path: /alice@bvbrc/home/duplicate.fq",
+      );
+    });
+    expect(result.current.items).toEqual([]);
+  });
+
   it("allows a repeated backend id when paths are distinct", () => {
     const items = [
       {
@@ -149,19 +176,17 @@ describe("useWorkspaceObjectSearch", () => {
     expect(result.current.filteredItems).toHaveLength(1);
   });
 
-  it("skips the query when username is empty and keeps derived arrays stable", async () => {
+  it("skips the query when username is empty", async () => {
     const repo = new InMemoryWorkspaceRepository();
-    const { result, rerender } = renderHook(
+    const { result } = renderHook(
       () => useWorkspaceObjectSearch({ username: "" }),
       { wrapper: makeWrapper(repo) },
     );
     await new Promise((r) => setTimeout(r, 20));
-    const first = result.current;
-    rerender();
-    expect(result.current.items).toBe(first.items);
-    expect(result.current.objects).toBe(first.objects);
-    expect(result.current.filteredItems).toBe(first.filteredItems);
-    expect(result.current.filteredObjects).toBe(first.filteredObjects);
+    expect(result.current.items).toHaveLength(0);
+    expect(result.current.objects).toHaveLength(0);
+    expect(result.current.filteredItems).toHaveLength(0);
+    expect(result.current.filteredObjects).toHaveLength(0);
     expect(repo.calls.length).toBe(0);
   });
 });

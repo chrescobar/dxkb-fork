@@ -5,6 +5,10 @@ import {
   downloadResourceRows,
 } from "../list-data-utils";
 
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
 // Guards the placeholderData gate: previous page rows may only carry over when the
 // query is still for the same resource. A resource switch (genome → strain) must
 // drop the placeholder, else genome rows render under a strain-keyed table and
@@ -56,11 +60,10 @@ describe("deriveTableFields", () => {
   });
 
   it("returns a stable empty array for unknown resources", () => {
-    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
     const first = deriveTableFields("not_a_resource");
     expect(first).toEqual([]);
     expect(deriveTableFields("another_unknown_resource")).toBe(first);
-    spy.mockRestore();
   });
 });
 

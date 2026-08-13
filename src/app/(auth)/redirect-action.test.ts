@@ -12,6 +12,7 @@ const redirectMock = vi.mocked(redirect);
 describe("redirectAfterAuth", () => {
   it.each([
     ["//attacker.example/path", "/"],
+    ["/..//attacker.example/path", "/"],
     ["/\\attacker.example/path", "/"],
     ["https://attacker.example/path", "/"],
     ["not-a-path", "/"],

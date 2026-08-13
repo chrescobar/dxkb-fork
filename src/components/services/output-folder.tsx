@@ -18,6 +18,8 @@ import { HelpCircle } from "lucide-react";
 const debounceMs = 350;
 const nameTakenMessage =
   "An object with this name already exists in the selected folder.";
+const validationErrorMessage =
+  "Unable to validate this name. Please try again.";
 
 interface OutputFolderProps {
   title?: boolean;
@@ -53,6 +55,7 @@ const OutputFolder = ({
 }: OutputFolderProps) => {
   const [isChecking, setIsChecking] = useState(false);
   const [nameTaken, setNameTaken] = useState(false);
+  const [validationError, setValidationError] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const checkIdRef = useRef(0);
@@ -74,16 +77,25 @@ const OutputFolder = ({
       abortControllerRef.current = controller;
       setIsChecking(true);
       setNameTaken(false);
+      setValidationError(false);
 
-      const exists = await checkWorkspaceObjectExists(fullPath, {
-        signal: controller.signal,
-      });
+      try {
+        const exists = await checkWorkspaceObjectExists(fullPath, {
+          signal: controller.signal,
+        });
 
-      if (controller.signal.aborted || checkId !== checkIdRef.current) return;
+        if (controller.signal.aborted || checkId !== checkIdRef.current) return;
 
-      setIsChecking(false);
-      setNameTaken(exists);
-      notifyValidation(!exists);
+        setIsChecking(false);
+        setNameTaken(exists);
+        notifyValidation(!exists);
+      } catch {
+        if (controller.signal.aborted || checkId !== checkIdRef.current) return;
+
+        setIsChecking(false);
+        setValidationError(true);
+        notifyValidation(false);
+      }
     },
   );
 
@@ -93,12 +105,18 @@ const OutputFolder = ({
   const [pendingValidationKey, setPendingValidationKey] = useState("");
   const pendingValidation =
     needsValidation && pendingValidationKey !== validationKey;
+  const [prevValidationKey, setPrevValidationKey] = useState(validationKey);
   const [prevNeedsValidation, setPrevNeedsValidation] =
     useState(needsValidation);
+  if (prevValidationKey !== validationKey) {
+    setPrevValidationKey(validationKey);
+    setPendingValidationKey("");
+  }
   if (prevNeedsValidation && !needsValidation) {
     setPrevNeedsValidation(needsValidation);
     setIsChecking(false);
     setNameTaken(false);
+    setValidationError(false);
   } else if (prevNeedsValidation !== needsValidation) {
     setPrevNeedsValidation(needsValidation);
   }
@@ -186,17 +204,24 @@ const OutputFolder = ({
                 value={value}
                 onChange={(e) => onChange?.(e.target.value)}
                 disabled={disabled}
-                aria-invalid={pendingValidation || isChecking || nameTaken}
+                aria-invalid={
+                  pendingValidation ||
+                  isChecking ||
+                  nameTaken ||
+                  validationError
+                }
                 aria-label={resolvedTitle}
               />
             </div>
           )}
         </div>
-        {variant === "name" && !isChecking && nameTaken && (
-          <p className="text-destructive text-sm" role="alert">
-            {nameTakenMessage}
-          </p>
-        )}
+        {variant === "name" &&
+          !isChecking &&
+          (nameTaken || validationError) && (
+            <p className="text-destructive text-sm" role="alert">
+              {validationError ? validationErrorMessage : nameTakenMessage}
+            </p>
+          )}
       </div>
     </div>
   );

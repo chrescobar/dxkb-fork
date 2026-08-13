@@ -257,8 +257,9 @@ function TaxonomyTreeInstance({
 
   const tableData = useMemo(() => {
     void queryState.version;
+    void knownChildCounts;
     return [...rootRecords];
-  }, [rootRecords, queryState.version]);
+  }, [rootRecords, queryState.version, knownChildCounts]);
 
   const table = useReactTable({
     data: tableData,
@@ -321,6 +322,7 @@ function TaxonomyTreeInstance({
     if (
       !isPlaceholder(record) &&
       !isLeaf(record) &&
+      !tableRows[item.index].getIsExpanded() &&
       !queryState.children.has(id) &&
       !knownChildCounts.has(id)
     ) {
@@ -393,11 +395,8 @@ class SelectionResetBoundary extends Component<{
 export function TaxonomyTree({ rootTaxa, onSelect }: TaxonomyTreeProps) {
   const searchParams = useSearchParams();
   const signature = rootSignature(rootTaxa);
-  const rootRecords = useMemo(() => rootTaxa.map(rootToRecord), [rootTaxa]);
-  const rootIds = useMemo(
-    () => rootTaxa.map((taxon) => taxon.taxonId),
-    [rootTaxa],
-  );
+  const rootRecords = rootTaxa.map(rootToRecord);
+  const rootIds = rootTaxa.map((taxon) => taxon.taxonId);
   return (
     <SelectionResetBoundary key={signature} onSelect={onSelect}>
       <TaxonomyTreeInstance

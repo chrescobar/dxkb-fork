@@ -8,8 +8,13 @@ export async function redirectAfterAuth(destination: string) {
 
   try {
     const parsedDestination = new URL(destination, baseUrl);
-    if (destination.startsWith("/") && parsedDestination.origin === baseUrl) {
-      safeDestination = `${parsedDestination.pathname}${parsedDestination.search}${parsedDestination.hash}`;
+    const candidate = `${parsedDestination.pathname}${parsedDestination.search}${parsedDestination.hash}`;
+    if (
+      destination.startsWith("/") &&
+      parsedDestination.origin === baseUrl &&
+      !candidate.startsWith("//")
+    ) {
+      safeDestination = candidate;
     }
   } catch {
     // Invalid destinations fall back to the home page.

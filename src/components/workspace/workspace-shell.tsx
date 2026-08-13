@@ -154,7 +154,11 @@ export function WorkspaceShell({
         collapsedSize={0}
         className="flex min-h-0 flex-col overflow-hidden"
       >
-        <div className="flex min-h-0 flex-1 flex-col">
+        <div
+          className="flex min-h-0 flex-1 flex-col"
+          tabIndex={0}
+          aria-label="Workspace details"
+        >
           {detailsPanelContent}
         </div>
       </ResizablePanel>

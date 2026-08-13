@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   toWorkspaceObject,
@@ -76,25 +76,21 @@ export function useWorkspaceObjectSearch({
 
   const query = useQuery<WorkspaceItem[]>({
     queryKey: workspaceQueryKeys.search(username, path, typesKey),
-    queryFn: () => repository.searchObjects({ username, path, types }),
+    queryFn: async () =>
+      assertUniqueWorkspaceObjectPaths(
+        await repository.searchObjects({ username, path, types }),
+      ),
     enabled: autoLoad && !!username,
     staleTime: 5 * 60 * 1000,
   });
 
-  const items = assertUniqueWorkspaceObjectPaths(query.data ?? emptyItems);
-  const objects = useMemo(() => items.map(toWorkspaceObject), [items]);
+  const items = query.data ?? emptyItems;
+  const objects = items.map(toWorkspaceObject);
   const term = searchQuery.trim().toLowerCase();
-  const filteredItems = useMemo(
-    () =>
-      term
-        ? items.filter((item) => item.name.toLowerCase().includes(term))
-        : items,
-    [items, term],
-  );
-  const filteredObjects = useMemo(
-    () => filteredItems.map(toWorkspaceObject),
-    [filteredItems],
-  );
+  const filteredItems = term
+    ? items.filter((item) => item.name.toLowerCase().includes(term))
+    : items;
+  const filteredObjects = filteredItems.map(toWorkspaceObject);
 
   const search = (q: string) => {
     setSearchQuery(q);

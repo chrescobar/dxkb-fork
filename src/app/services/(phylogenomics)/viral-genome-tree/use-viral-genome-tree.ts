@@ -192,8 +192,31 @@ export function useViralGenomeTree() {
         setIsValidatingGenomeGroup(false);
         return;
       }
+      const latestSequences = form.state.values.sequences;
+      if (
+        ViralGenomeTreeUtils.checkDuplicateSequence(
+          latestSequences,
+          inputValue,
+          "genome_group",
+        )
+      ) {
+        toast.error("Duplicate selection detected", {
+          description: "This genome group is already selected.",
+          closeButton: true,
+        });
+        setIsValidatingGenomeGroup(false);
+        return;
+      }
+      if (ViralGenomeTreeUtils.checkSequenceLimit(latestSequences)) {
+        toast.error("Selection limit reached", {
+          description: "A maximum of 5000 sequences can be added.",
+          closeButton: true,
+        });
+        setIsValidatingGenomeGroup(false);
+        return;
+      }
       form.setFieldValue("sequences", [
-        ...currentSequences,
+        ...latestSequences,
         ViralGenomeTreeUtils.createSequenceItem(inputValue, "genome_group"),
       ]);
       setSelectedGenomeGroupObject(null);

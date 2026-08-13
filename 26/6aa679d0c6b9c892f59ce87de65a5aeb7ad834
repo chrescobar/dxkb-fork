@@ -1,0 +1,26 @@
+.github/workflows/pnpm-e2e.yml
+  s_c4a296c6f038aa::t_8ea041d28b8a4c 83,87
+e2e/tests/organisms/taxon-list-data.spec.ts
+  s_c4a296c6f038aa::t_49737b3956b79d 96,129
+src/components/phylogeny/viral-phylogeny-panel.tsx
+  s_c4a296c6f038aa::t_c272c65ac974c5 133-134
+src/components/phylogeny/__tests__/viral-phylogeny-panel.test.tsx
+  s_c4a296c6f038aa::t_8ef5eaf96a164d 96
+  s_c4a296c6f038aa::t_fe94bf9c84d371 113
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "266aa679d0c6b9c892f59ce87de65a5aeb7ad834",
+  "prompts": {},
+  "sessions": {
+    "s_c4a296c6f038aa": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_003ecacafffeRUsJviL42RWYQQ",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

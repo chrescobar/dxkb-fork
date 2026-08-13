@@ -93,7 +93,7 @@ test.describe("taxon domains-and-motifs: Download Selected sends POST not GET", 
     await page.goto(`/taxonomy/${DOMAINS_TAXON_ID}?tab=domains-and-motifs`);
     await expect(page.getByText("mock-product-0")).toBeVisible({ timeout: 10_000 });
 
-    await page.getByRole("checkbox", { name: /select all on this page/i }).click();
+    await page.getByRole("checkbox", { name: /select all rows on this page/i }).click();
     await expect(page.getByRole("button", { name: /Download Selected \(CSV\)/i })).toBeVisible();
 
     await page.getByRole("button", { name: /Download Selected \(CSV\)/i }).click();
@@ -126,7 +126,7 @@ test.describe("taxon domains-and-motifs: Download Selected sends POST not GET", 
     await page.goto(`/taxonomy/${DOMAINS_TAXON_ID}?tab=domains-and-motifs`);
     await expect(page.getByText("mock-product-0")).toBeVisible({ timeout: 10_000 });
 
-    await page.getByRole("checkbox", { name: /select all on this page/i }).click();
+    await page.getByRole("checkbox", { name: /select all rows on this page/i }).click();
     await page.getByRole("button", { name: /Download Selected \(CSV\)/i }).click();
 
     // This request would have been net::ERR_FAILED as a GET (URL too long for 200 IDs)

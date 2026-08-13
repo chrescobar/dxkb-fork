@@ -130,11 +130,12 @@ function TreeViewer({
       );
     }
     return (
+      // Auspice is a first-party app that fetches our APIs and reads host theme tokens.
+      // react-doctor-disable-next-line iframe-missing-sandbox
       <iframe
         key={auspiceUrl}
         src={auspiceUrl}
         title={`Auspice phylogeny viewer for ${choice.ref.name}`}
-        sandbox="allow-scripts"
         className="min-h-150 w-full min-w-0 flex-1 border-0"
       />
     );

@@ -1,0 +1,75 @@
+src/components/taxonomy/tax-id-selector.tsx
+  s_c301a9aa675ef8::t_4d55524f2b8c17 212-213,215,217,219,221
+src/app/services/(genomics)/genome-alignment/genome-alignment-sections.tsx
+  s_c301a9aa675ef8::t_e02795aece9b68 193-194
+  s_c301a9aa675ef8::t_30bf7cc8ae4d07 46-48,54-56
+  s_c301a9aa675ef8::t_6e6cb0f05ae7b7 1
+  s_c301a9aa675ef8::t_a1723ed4dda020 62-63,65,69,75-98,100-112
+src/hooks/services/jobs/use-jobs-data.ts
+  s_c301a9aa675ef8::t_bf8a0c98f2a474 48
+  s_c301a9aa675ef8::t_94fa7c0fcb87fe 9
+  s_c301a9aa675ef8::t_036d07926f551c 40,42
+src/components/auth/su-login-dialog.tsx
+  s_c301a9aa675ef8::t_213c334f1ed9c2 86-87,92,99,112
+  s_c301a9aa675ef8::t_4d55524f2b8c17 38-52
+src/components/navbars/desktop-navbar.tsx
+  s_c301a9aa675ef8::t_4d55524f2b8c17 112
+src/components/shared/data-table.tsx
+  s_c301a9aa675ef8::t_82dd4729e8b1ac 457-460
+src/components/taxonomy/taxon-name-selector.tsx
+  s_c301a9aa675ef8::t_4d55524f2b8c17 323-324,326-327,330-331
+src/components/shared/file-table.tsx
+  s_c301a9aa675ef8::t_4d55524f2b8c17 335-338
+src/components/workspace/workspace-object-selector-view.tsx
+  s_c301a9aa675ef8::t_7fa4f7f3a0e694 136-140,142-143
+src/app/services/(genomics)/genome-alignment/__tests__/page-selection-races.test.tsx
+  s_c301a9aa675ef8::t_4d55524f2b8c17 1-141
+src/app/services/(genomics)/similar-genome-finder/actions.ts
+  s_c301a9aa675ef8::t_4d55524f2b8c17 208
+src/app/(footer)/updates/page.tsx
+  s_c301a9aa675ef8::t_87e20d8e9cf7f1 252,260,274-276,278-279,281-282
+src/components/filterbar/selected-filters.tsx
+  s_c301a9aa675ef8::t_4d55524f2b8c17 22
+src/components/search/welcome-search.tsx
+  s_c301a9aa675ef8::t_4d55524f2b8c17 34
+.cursorrules
+  s_c301a9aa675ef8::t_4d55524f2b8c17 31
+e2e/tests/organisms/taxon-list-data.spec.ts
+  s_c301a9aa675ef8::t_4d55524f2b8c17 139,172
+.github/workflows/react-doctor.yml
+  s_c301a9aa675ef8::t_4d55524f2b8c17 33
+src/components/phylogeny/__tests__/viral-phylogeny-panel.test.tsx
+  s_c301a9aa675ef8::t_4d55524f2b8c17 96
+.github/workflows/pnpm-e2e.yml
+  s_c301a9aa675ef8::t_4d55524f2b8c17 83,87
+src/app/services/(genomics)/genome-alignment/page.tsx
+  s_c301a9aa675ef8::t_e9824cd69fd227 53-57
+  s_c301a9aa675ef8::t_ac690245654692 75-76,78-90
+  s_c301a9aa675ef8::t_398df0cc9df86d 38-40
+  s_c301a9aa675ef8::t_918dc1a4938662 98,100
+  s_c301a9aa675ef8::t_96c1ab50f916e3 132-134
+src/components/footers/footer.tsx
+  s_c301a9aa675ef8::t_213c334f1ed9c2 7
+  s_c301a9aa675ef8::t_4d55524f2b8c17 11-14,17-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "80ca2224253fc2482d8070168104dacc4ef2f4d3",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_c301a9aa675ef8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_003e2190effe9qrbUZ1z715gCK",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

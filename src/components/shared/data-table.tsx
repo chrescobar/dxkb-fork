@@ -946,6 +946,12 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                   <TableRow key={headerGroup.id} className="flex border-y border-border bg-muted">
                     {headerGroup.headers.map((header) => {
                       const column = header.column;
+                      const minSize = column.columnDef.minSize ?? 40;
+                      const maxSize = column.columnDef.maxSize ?? 1000;
+                      const resizeWithKeyboard = (delta: number) => {
+                        const size = Math.min(maxSize, Math.max(minSize, column.getSize() + delta));
+                        table.setColumnSizing((current) => ({ ...current, [column.id]: size }));
+                      };
                       return (
                         <TableHead
                           key={header.id}
@@ -1008,7 +1014,19 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
                                   role="separator"
                                   aria-orientation="vertical"
                                   aria-label={`Resize ${column.id} column`}
+                                  aria-valuemin={minSize}
+                                  aria-valuemax={maxSize}
+                                  aria-valuenow={column.getSize()}
                                   tabIndex={0}
+                                  onKeyDown={(event) => {
+                                    if (event.key === "ArrowLeft") {
+                                      event.preventDefault();
+                                      resizeWithKeyboard(-10);
+                                    } else if (event.key === "ArrowRight") {
+                                      event.preventDefault();
+                                      resizeWithKeyboard(10);
+                                    }
+                                  }}
                                   onMouseDown={(e) => {
                                     e.stopPropagation();
                                     justResizedRef.current = false;

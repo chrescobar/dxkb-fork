@@ -238,8 +238,11 @@ describe("rerunJob", () => {
     vi.stubGlobal("crypto", { randomUUID: () => "12345678-abcd-efgh-ijkl-mnopqrstuvwx" });
   });
 
-  it("stores params in sessionStorage and opens correct route", () => {
+  it("opens with an opener for sessionStorage cloning, then severs it", () => {
     const params = { genome_id: "123" };
+    const rerunWindow = { opener: window };
+    mockOpen.mockReturnValue(rerunWindow);
+
     rerunJob(params, "GenomeAssembly2");
 
     expect(mockSetItem).toHaveBeenCalledWith(
@@ -248,9 +251,9 @@ describe("rerunJob", () => {
     );
     expect(mockOpen).toHaveBeenCalledWith(
       "/services/genome-assembly?rerun_key=12345678",
-       "_blank",
-       "noopener,noreferrer",
-     );
+      "_blank",
+    );
+    expect(rerunWindow.opener).toBeNull();
   });
 
   it("shows toast error for unsupported service", async () => {
@@ -269,9 +272,8 @@ describe("rerunJob", () => {
 
     expect(mockOpen).toHaveBeenCalledWith(
       expect.stringContaining("/services/viral-genome-tree"),
-       "_blank",
-       "noopener,noreferrer",
-     );
+      "_blank",
+    );
   });
 
   it("routes GeneTree with other tree_type to gene-protein-tree", () => {
@@ -279,9 +281,8 @@ describe("rerunJob", () => {
 
     expect(mockOpen).toHaveBeenCalledWith(
       expect.stringContaining("/services/gene-protein-tree"),
-       "_blank",
-       "noopener,noreferrer",
-     );
+      "_blank",
+    );
   });
 
   it("maps various service IDs to correct routes", () => {
@@ -300,7 +301,6 @@ describe("rerunJob", () => {
       expect(mockOpen).toHaveBeenCalledWith(
         expect.stringContaining(expectedRoute),
         "_blank",
-        "noopener,noreferrer",
       );
     }
   });

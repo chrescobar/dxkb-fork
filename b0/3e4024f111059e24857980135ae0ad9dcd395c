@@ -1,0 +1,24 @@
+.github/workflows/react-doctor.yml
+  s_daa769dfcefa0d::t_4e59396a1549c3 33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "b03e4024f111059e24857980135ae0ad9dcd395c",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_daa769dfcefa0d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_004328e2affexxrmHPicWawBHc",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

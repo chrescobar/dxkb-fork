@@ -378,6 +378,10 @@ export function DataTable({ id: _id, data, columns, totalItems, resource, errorM
   const table = useReactTable({
     data,
     columns: columnDefs,
+    defaultColumn: {
+      minSize: 40,
+      maxSize: 1000,
+    },
     state: {
       sorting: controlledSorting ?? [],
       // use the internal pagination state (which is kept in sync with

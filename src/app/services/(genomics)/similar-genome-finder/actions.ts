@@ -191,7 +191,7 @@ function processResults(
 export async function submitSimilarGenomes(
   data: SimilarGenomeFinderFormData,
 ): Promise<SubmitSimilarGenomesResponse> {
-  await auth.requireSession();
+  await auth.requireUser();
   const baseUrl = await getBaseUrl();
 
   try {

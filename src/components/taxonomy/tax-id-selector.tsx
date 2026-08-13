@@ -210,16 +210,16 @@ export function TaxIDSelector({
                   className="flex w-full cursor-pointer items-center justify-between p-2 text-left hover:bg-accent"
                   onClick={() => { handleSelect(item); }}
                 >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-medium">
                       {item.taxon_id} [{item.taxon_name}]
-                    </p>
+                    </span>
                     {item.lineage_names && item.lineage_names.length > 0 && (
-                      <p className="truncate text-xs text-muted-foreground">
+                      <span className="block truncate text-xs text-muted-foreground">
                         {item.lineage_names.join(" > ")}
-                      </p>
+                      </span>
                     )}
-                  </div>
+                  </span>
                 </button>
               ))
             ) : (

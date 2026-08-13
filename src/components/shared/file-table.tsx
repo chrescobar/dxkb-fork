@@ -295,6 +295,10 @@ function DataTableInner<T>(
   const table = useReactTable<T>({
     data,
     columns,
+    defaultColumn: {
+      minSize: 40,
+      maxSize: 1000,
+    },
     state: {
       columnOrder,
     },

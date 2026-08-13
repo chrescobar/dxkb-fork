@@ -19,7 +19,7 @@ export function SelectedFilters({ selected, onRemove }: SelectedFiltersProps) {
           className="text-primary-background flex items-center gap-2 rounded border-2 border-primary px-2 py-1"
         >
           <span>{f.field}: {String(f.value)}</span>
-          <button type="button" aria-label={`Remove ${f.field} filter`} onClick={() => { onRemove(idx); }}>
+          <button type="button" aria-label={`Remove ${f.field}: ${String(f.value)} filter`} onClick={() => { onRemove(idx); }}>
             <span aria-hidden="true">x</span>
           </button>
         </div>

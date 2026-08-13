@@ -108,7 +108,7 @@ const DesktopNavbar = () => {
                                         href={item.href}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        aria-label={item.title}
+                                        aria-label={`${item.title} (opens in a new tab)`}
                                         className="my-0.5 block p-2 font-medium hover:bg-secondary/20"
                                       />
                                     ) : (

@@ -484,14 +484,14 @@ export function WorkspaceObjectSelector({
                         }}
                         onMouseEnter={() => { setHighlightedIndex(index); }}
                       >
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium">
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-sm font-medium">
                             {object.name}
-                          </p>
-                          <p className="truncate text-xs text-muted-foreground">
+                          </span>
+                          <span className="block truncate text-xs text-muted-foreground">
                             {cleanPath}
-                          </p>
-                        </div>
+                          </span>
+                        </span>
                       </button>
                     );
                   })

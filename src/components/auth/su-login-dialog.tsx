@@ -35,19 +35,21 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
     if (!targetUser.trim() || !password) return;
 
     setIsSubmitting(true);
-    const { error } = await authAdmin.impersonate.start(
-      targetUser.trim(),
-      password,
-    );
-    if (error) {
-      toast.error(error.message || "SU login failed");
-    } else {
-      void queryClient.resetQueries();
-      onOpenChange(false);
-      setTargetUser("");
-      setPassword("");
-    }
-    setIsSubmitting(false);
+    await authAdmin.impersonate.start(targetUser.trim(), password)
+      .then(({ error }) => {
+        if (error) {
+          toast.error(error.message || "SU login failed");
+        } else {
+          void queryClient.resetQueries();
+          onOpenChange(false);
+          setTargetUser("");
+          setPassword("");
+        }
+      })
+      .catch((error: unknown) => {
+        toast.error(error instanceof Error ? error.message : "SU login failed");
+      })
+      .finally(() => { setIsSubmitting(false); });
   };
 
   const handleOpenChange = (nextOpen: boolean) => {

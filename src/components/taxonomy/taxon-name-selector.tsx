@@ -327,15 +327,15 @@ export function TaxonNameSelector({
                   className="flex w-full cursor-pointer items-center justify-between p-2 text-left hover:bg-accent"
                   onClick={() => { handleSelect(item); }}
                 >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-medium">
                       [{item.taxon_rank || "unknown"}] {item.taxon_name}
-                    </p>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    </span>
+                    <span className="flex items-center gap-2 text-xs text-muted-foreground">
                       <span>ID: {item.taxon_id}</span>
                       {item.division && <span>• {item.division}</span>}
-                    </div>
-                  </div>
+                    </span>
+                  </span>
                 </button>
               ))
             ) : (

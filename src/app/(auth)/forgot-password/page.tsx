@@ -2,9 +2,8 @@
 
 import { z } from "zod";
 import { useForm } from "@tanstack/react-form";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { Input } from "@/components/ui/input";
@@ -32,14 +31,9 @@ const formSchema = z.object({
 export default function ForgotPasswordPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const { isAuthenticated, status } = useAuth();
+  const { status } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isLoading = status === "loading" || isSubmitting;
-  const router = useRouter();
-
-  useEffect(() => {
-    if (isAuthenticated) router.push("/");
-  }, [isAuthenticated, router]);
 
   const form = useForm({
     defaultValues: {

@@ -16,7 +16,7 @@ describe("AreaChart", () => {
     );
 
     expect(
-      screen.getByRole("img", { name: "Collection Year distribution" }),
+      screen.getByRole("group", { name: "Collection Year distribution" }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("2018: 50")).toBeInTheDocument();
     expect(screen.getByLabelText("2020: 100")).toBeInTheDocument();

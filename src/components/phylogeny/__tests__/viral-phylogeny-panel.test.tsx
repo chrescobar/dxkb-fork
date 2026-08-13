@@ -93,7 +93,7 @@ describe("ViralPhylogenyPanel", () => {
     expect(missing.tagName).toBe("SPAN");
   });
 
-  it("renders an isolated Auspice iframe without fetching XML", () => {
+  it("renders the first-party Auspice iframe without fetching XML", () => {
     render(
       <ViralPhylogenyPanel taxonId={2955291} taxonName="Influenza A virus" />,
     );
@@ -108,6 +108,9 @@ describe("ViralPhylogenyPanel", () => {
     expect(
       screen.getByTitle("Auspice phylogeny viewer for Auspice HA (HA)"),
     ).toHaveAttribute("src", "/nextstrain-viewer/Influenza-A-Virus/H3N2/HA");
+    expect(
+      screen.getByTitle("Auspice phylogeny viewer for Auspice HA (HA)"),
+    ).not.toHaveAttribute("sandbox");
     expect(
       screen.getByTitle("Auspice phylogeny viewer for Auspice HA (HA)"),
     ).toHaveClass("min-h-150");

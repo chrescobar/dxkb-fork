@@ -42,8 +42,6 @@ jobs:
     if: github.repository == 'chrescobar/dxkb-fork'
     timeout-minutes: 20
     env:
-      E2E_TEST_USER: ${{ secrets.E2E_TEST_USER }}
-      E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
       E2E_RECORD_BASE_URL: http://127.0.0.1:3010
       JOURNEYS: auth-sign-in workspace-browse workspace-viewer jobs-lifecycle service-submit
       PR_BRANCH: chore/e2e-har-refresh-read-only
@@ -73,6 +71,9 @@ jobs:
           tail -50 /tmp/next-start.log >&2
           exit 1
       - name: Write .env.e2e from secrets
+        env:
+          E2E_TEST_USER: ${{ secrets.E2E_TEST_USER }}
+          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
         run: |
           umask 077
           {
@@ -126,8 +127,6 @@ jobs:
       github.event.inputs.include_write == 'true'
     timeout-minutes: 20
     env:
-      E2E_TEST_USER: ${{ secrets.E2E_TEST_USER }}
-      E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
       E2E_RECORD_BASE_URL: http://127.0.0.1:3010
       JOURNEYS: workspace-upload
       PR_BRANCH: chore/e2e-har-refresh-write
@@ -157,6 +156,9 @@ jobs:
           tail -50 /tmp/next-start.log >&2
           exit 1
       - name: Write .env.e2e from secrets
+        env:
+          E2E_TEST_USER: ${{ secrets.E2E_TEST_USER }}
+          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
         run: |
           umask 077
           {

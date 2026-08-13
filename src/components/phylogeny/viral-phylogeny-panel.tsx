@@ -130,6 +130,8 @@ function TreeViewer({
       );
     }
     return (
+      // Auspice is a first-party app that fetches our APIs and reads host theme tokens.
+      // react-doctor-disable-next-line iframe-missing-sandbox
       <iframe
         key={auspiceUrl}
         src={auspiceUrl}

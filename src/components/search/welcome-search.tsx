@@ -28,15 +28,14 @@ const WelcomeSearch = () => {
               <AlertDescription className="text-destructive">
                 <span>
                   Please verify your email to continue using the platform. Click{' '}
-                  <span
-                    role="button"
-                    tabIndex={0}
-                    onClick={e => { e.preventDefault(); void sendVerificationEmail(); }}
-                    className="cursor-pointer text-inherit underline hover:text-foreground focus:underline focus:outline-none"
+                  <button
+                    type="button"
+                    onClick={() => { void sendVerificationEmail(); }}
+                    className="cursor-pointer border-0 bg-transparent p-0 text-inherit underline hover:text-foreground focus:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     style={{ font: "inherit" }}
                   >
                     here
-                  </span>{' '}to resend the verification email.
+                  </button>{' '}to resend the verification email.
                 </span>
               </AlertDescription>
             </Alert>

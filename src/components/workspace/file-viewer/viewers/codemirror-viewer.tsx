@@ -211,7 +211,9 @@ export function CodeMirrorViewer({
 }: CodeMirrorViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const fileSizeRef = useRef(fileSize);
-  fileSizeRef.current = fileSize;
+  useEffect(() => {
+    fileSizeRef.current = fileSize;
+  }, [fileSize]);
   const [progress, setProgress] = useState<{
     bytesLoaded: number;
     totalBytes: number | null;

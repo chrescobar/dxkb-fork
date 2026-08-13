@@ -79,7 +79,7 @@ export function WorkspaceObjectSelector({
   const inputRef = React.useRef<HTMLDivElement>(null);
   const inputElementRef = React.useRef<HTMLInputElement | null>(null);
   const dropdownRef = React.useRef<HTMLDivElement | null>(null);
-  const itemRefs = React.useRef<(HTMLDivElement | null)[]>([]);
+  const itemRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
 
   // Effective types come from either the preset or the explicit `types` prop.
   const effectiveTypes = React.useMemo<
@@ -468,13 +468,14 @@ export function WorkspaceObjectSelector({
                     const isHighlighted = highlightedIndex === index;
 
                     return (
-                      <div
-                        key={`${object.id}-${String(index)}`}
+                      <button
+                        type="button"
+                        key={object.id}
                         ref={(el) => {
                           itemRefs.current[index] = el;
                         }}
                         className={cn(
-                          "flex cursor-pointer items-center justify-between p-2 hover:bg-accent",
+                          "flex w-full cursor-pointer items-center justify-between p-2 text-left hover:bg-accent",
                           isHighlighted && "bg-accent"
                         )}
                         onClick={() => {
@@ -483,15 +484,15 @@ export function WorkspaceObjectSelector({
                         }}
                         onMouseEnter={() => { setHighlightedIndex(index); }}
                       >
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium">
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-sm font-medium">
                             {object.name}
-                          </p>
-                          <p className="truncate text-xs text-muted-foreground">
+                          </span>
+                          <span className="block truncate text-xs text-muted-foreground">
                             {cleanPath}
-                          </p>
-                        </div>
-                      </div>
+                          </span>
+                        </span>
+                      </button>
                     );
                   })
                 ) : (

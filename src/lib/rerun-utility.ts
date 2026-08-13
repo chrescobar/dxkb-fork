@@ -88,7 +88,11 @@ export function rerunJob(
 
   const key = generateKey();
   sessionStorage.setItem(key, JSON.stringify(parameters));
-  window.open(`${route}?rerun_key=${key}`, "_blank");
+
+  // The new tab needs an opener while it is created so the browser copies this
+  // tab's sessionStorage. Sever the reference immediately after that copy.
+  const rerunWindow = window.open(`${route}?rerun_key=${key}`, "_blank");
+  if (rerunWindow) rerunWindow.opener = null;
 }
 
 /**

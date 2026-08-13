@@ -1,6 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
+import { auth } from "@/lib/auth/server/instance";
 import { buildMinhashServicePayload } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-utils";
 import type { SimilarGenomeFinderFormData } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-schema";
 import {
@@ -190,6 +191,7 @@ function processResults(
 export async function submitSimilarGenomes(
   data: SimilarGenomeFinderFormData,
 ): Promise<SubmitSimilarGenomesResponse> {
+  await auth.requireUser();
   const baseUrl = await getBaseUrl();
 
   try {

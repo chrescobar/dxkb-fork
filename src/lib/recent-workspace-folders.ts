@@ -3,7 +3,7 @@ export interface RecentFolder {
   visitedAt: number;
 }
 
-const storageKey = "dxkb-recent-workspace-folders";
+const storageKey = "dxkb-recent-workspace-folders:v1";
 const defaultMaxItems = 5;
 
 /**

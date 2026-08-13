@@ -205,16 +205,18 @@ const Updates = () => {
                 <h2 className="font-semibold">Upcoming Events</h2>
               </div>
               <ScrollArea className="h-75 md:h-100">
-                {upcomingEvents.map((event, index) => (
-                  <div
-                    key={index}
+                {upcomingEvents.map((event) => (
+                  <button
+                    type="button"
+                    key={`${event.date.month}-${event.date.day}-${event.title}`}
                     onClick={() => { setDate(getEventDate(event.date)); }}
+                    aria-pressed={isSelectedDateEvent(event.date)}
                     className={cn(
-                      "flex cursor-pointer items-start gap-4 border-t px-4 py-3 transition-colors",
+                      "flex w-full cursor-pointer items-start gap-4 border-t px-4 py-3 text-left transition-colors",
                       isSelectedDateEvent(event.date) ? "bg-secondary/40" : "hover:bg-secondary/20"
                     )}
                   >
-                    <div className={cn(
+                    <span className={cn(
                       "flex flex-col items-center rounded-lg px-2 py-1",
                       isSelectedDateEvent(event.date) ? "bg-secondary" : "bg-secondary/40"
                     )}>
@@ -222,14 +224,14 @@ const Updates = () => {
                       <span className="text-lg leading-none font-bold">
                         {event.date.day}
                       </span>
-                    </div>
-                    <div>
-                      <h3 className="leading-none font-medium">{event.title}</h3>
-                      <p className="text-sm text-foreground">
+                    </span>
+                    <span>
+                      <span className="block leading-none font-medium">{event.title}</span>
+                      <span className="block text-sm text-foreground">
                         {event.description}
-                      </p>
-                    </div>
-                  </div>
+                      </span>
+                    </span>
+                  </button>
                 ))}
               </ScrollArea>
             </Card>

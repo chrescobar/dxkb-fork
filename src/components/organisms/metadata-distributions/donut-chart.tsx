@@ -331,17 +331,12 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
 
   const toggleSlice = (id: string) => {
     hideTooltip();
-    setHiddenIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-        setHoveredId(id); // keep cursor active immediately after unhiding
-      } else {
-        next.add(id);
-        setHoveredId(null);
-      }
-      return next;
-    });
+    const willUnhide = hiddenIds.has(id);
+    const next = new Set(hiddenIds);
+    if (willUnhide) next.delete(id);
+    else next.add(id);
+    setHiddenIds(next);
+    setHoveredId(willUnhide ? id : null);
   };
 
   const tabsScrollRef = useRef<HTMLDivElement>(null);
@@ -383,11 +378,19 @@ export function DonutChart({ title, data, tabs, layout = "bottom", errorMessage 
   };
 
   const deactivate = () => {
+    if (deactivateTimer.current) clearTimeout(deactivateTimer.current);
     deactivateTimer.current = setTimeout(() => {
+      deactivateTimer.current = null;
       setHoveredId(null);
       hideTooltip();
     }, 40);
   };
+
+  useEffect(() => {
+    return () => {
+      if (deactivateTimer.current) clearTimeout(deactivateTimer.current);
+    };
+  }, []);
 
   const showTooltipForArc = (arc: ArcDatum, clientX: number, clientY: number) => {
     showTooltip({

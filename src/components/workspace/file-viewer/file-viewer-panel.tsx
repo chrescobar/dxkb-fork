@@ -1,6 +1,5 @@
 "use client";
 
-import { useCallback } from "react";
 import { ExternalLink } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -19,9 +18,9 @@ interface FileViewerPanelProps {
 }
 
 export function FileViewerPanel({ item, onClose }: FileViewerPanelProps) {
-  const handleOpenInNewTab = useCallback(() => {
-    window.open(getProxyUrl(item.path), "_blank");
-  }, [item.path]);
+  const handleOpenInNewTab = () => {
+    window.open(getProxyUrl(item.path), "_blank", "noopener,noreferrer");
+  };
 
   return (
     <div className="flex h-full flex-col overflow-hidden">

@@ -21,7 +21,7 @@ const localStorageMock = (() => {
 })();
 vi.stubGlobal("localStorage", localStorageMock);
 
-const storageKey = "dxkb-recent-workspace-folders";
+const storageKey = "dxkb-recent-workspace-folders:v1";
 
 describe("getWorkspaceFolderDisplayName", () => {
   it("extracts the last segment of a path", () => {

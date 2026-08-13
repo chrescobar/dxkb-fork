@@ -10,7 +10,12 @@ import type { PpiRecord } from "@/lib/interactions/types";
 // resolves with rows. Mocking it pending keeps the component on its "Loading
 // interactions…" branch, which is enough to observe what query it built.
 vi.mock("@/lib/interactions/use-interactions", () => ({
-  useInteractions: vi.fn(() => ({ data: undefined, isPending: true, isError: false, error: null })),
+  useInteractions: vi.fn(() => ({
+    data: undefined,
+    isPending: true,
+    isError: false,
+    error: null,
+  })),
 }));
 
 vi.mock("../sigma/sigma-canvas", () => ({
@@ -39,9 +44,20 @@ Element.prototype.scrollIntoView = vi.fn();
 
 describe("InteractionsGraph filter combination", () => {
   it("combines the base query with the table's filter via and() (bug #1)", () => {
-    render(<InteractionsGraph taxonId={943} q="eq(evidence,experimental)" tableFilter="keyword(groEL*)" keywordValue="groEL" onKeywordChange={vi.fn()} />);
+    render(
+      <InteractionsGraph
+        taxonId={943}
+        q="eq(evidence,experimental)"
+        tableFilter="keyword(groEL*)"
+        keywordValue="groEL"
+        onKeywordChange={vi.fn()}
+      />,
+    );
 
-    expect(useInteractions).toHaveBeenCalledWith(943, "and(eq(evidence,experimental),keyword(groEL*))");
+    expect(useInteractions).toHaveBeenCalledWith(
+      943,
+      "and(eq(evidence,experimental),keyword(groEL*))",
+    );
   });
 
   it("strips the base query's URL fragment before combining a table filter", () => {
@@ -62,15 +78,36 @@ describe("InteractionsGraph filter combination", () => {
   });
 
   it("uses the bare base query when the table has no active filter", () => {
-    render(<InteractionsGraph taxonId={943} q="eq(evidence,experimental)" tableFilter="" keywordValue="" onKeywordChange={vi.fn()} />);
+    render(
+      <InteractionsGraph
+        taxonId={943}
+        q="eq(evidence,experimental)"
+        tableFilter=""
+        keywordValue=""
+        onKeywordChange={vi.fn()}
+      />,
+    );
 
-    expect(useInteractions).toHaveBeenCalledWith(943, "eq(evidence,experimental)");
+    expect(useInteractions).toHaveBeenCalledWith(
+      943,
+      "eq(evidence,experimental)",
+    );
   });
 
   it("uses the bare base query when tableFilter is omitted entirely", () => {
-    render(<InteractionsGraph taxonId={943} q="eq(evidence,experimental)" keywordValue="" onKeywordChange={vi.fn()} />);
+    render(
+      <InteractionsGraph
+        taxonId={943}
+        q="eq(evidence,experimental)"
+        keywordValue=""
+        onKeywordChange={vi.fn()}
+      />,
+    );
 
-    expect(useInteractions).toHaveBeenCalledWith(943, "eq(evidence,experimental)");
+    expect(useInteractions).toHaveBeenCalledWith(
+      943,
+      "eq(evidence,experimental)",
+    );
   });
 
   it("reports graph keyword edits to the shared owner without duplicating the current keyword query", () => {
@@ -85,7 +122,10 @@ describe("InteractionsGraph filter combination", () => {
       />,
     );
 
-    fireEvent.change(screen.getByPlaceholderText("Search interaction results..."), { target: { value: "dnaK" } });
+    fireEvent.change(
+      screen.getByPlaceholderText("Search interaction results..."),
+      { target: { value: "dnaK" } },
+    );
 
     expect(onKeywordChange).toHaveBeenLastCalledWith("dnaK");
     expect(useInteractions).toHaveBeenLastCalledWith(
@@ -106,7 +146,10 @@ describe("InteractionsGraph filter combination", () => {
       />,
     );
 
-    fireEvent.change(screen.getByPlaceholderText("Search interaction results..."), { target: { value: "dnaK" } });
+    fireEvent.change(
+      screen.getByPlaceholderText("Search interaction results..."),
+      { target: { value: "dnaK" } },
+    );
 
     expect(onKeywordChange).toHaveBeenLastCalledWith("dnaK");
     expect(useInteractions).toHaveBeenLastCalledWith(943, "eq(category,PPI)");
@@ -121,12 +164,21 @@ describe("InteractionsGraph filter combination", () => {
 // notice the loading UI reverting.
 describe("InteractionsGraph loading state", () => {
   it("renders the loading skeleton while the query is pending", () => {
-    render(<InteractionsGraph taxonId={943} q="" keywordValue="" onKeywordChange={vi.fn()} />);
+    render(
+      <InteractionsGraph
+        taxonId={943}
+        q=""
+        keywordValue=""
+        onKeywordChange={vi.fn()}
+      />,
+    );
 
     // Skeleton's Spinner is the single role=status loading announcement.
     expect(screen.getByRole("status")).toBeInTheDocument();
     // Real keyword toolbar stays mounted in every state, loading included.
-    expect(screen.getByPlaceholderText("Search interaction results...")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Search interaction results..."),
+    ).toBeInTheDocument();
   });
 });
 
@@ -153,11 +205,22 @@ describe("InteractionsGraph data changes", () => {
     await user.click(screen.getByText("geneA"));
     expect(screen.getByText("node-a")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Hub Protein" }));
-    await user.click(screen.getByRole("button", { name: "Most Connected Hub" }));
-    expect(screen.getByRole("button", { name: "Most Connected Hub" })).toBeInTheDocument();
+    await user.click(
+      screen.getByRole("button", { name: "Most Connected Hub" }),
+    );
+    expect(
+      screen.getByRole("button", { name: "Most Connected Hub" }),
+    ).toBeInTheDocument();
 
     vi.mocked(useInteractions).mockReturnValue({
-      data: [{ ...graphRows[0], id: "edge-2", interactor_a: "node-c", gene_a: "geneC" }],
+      data: [
+        {
+          ...graphRows[0],
+          id: "edge-2",
+          interactor_a: "node-c",
+          gene_a: "geneC",
+        },
+      ],
       isPending: false,
       isError: false,
       error: null,
@@ -173,8 +236,12 @@ describe("InteractionsGraph data changes", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("Select a node or edge to see details.")).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: "Hub Protein" })).toBeInTheDocument();
+      expect(
+        screen.getByText("Select a node or edge to see details."),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Hub Protein" }),
+      ).toBeInTheDocument();
     });
     expect(screen.queryByText("node-a")).not.toBeInTheDocument();
   });

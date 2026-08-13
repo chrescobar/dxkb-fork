@@ -5,9 +5,7 @@ import type { WorkspaceObject } from "@/lib/services/workspace/types";
 
 function renderView(objects: WorkspaceObject[]) {
   const onObjectClick = vi.fn();
-  const itemRefs = { current: [] } as RefObject<
-    (HTMLButtonElement | null)[]
-  >;
+  const itemRefs = { current: [] } as RefObject<(HTMLButtonElement | null)[]>;
   const consoleError = vi.mocked(console.error);
   consoleError.mockClear();
 
@@ -21,7 +19,6 @@ function renderView(objects: WorkspaceObject[]) {
       loading={false}
       error={null}
       showDropdown
-      isDialogOpen={false}
       highlightedIndex={-1}
       dropdownLayout={{
         openUpward: false,
@@ -36,7 +33,6 @@ function renderView(objects: WorkspaceObject[]) {
       onInputFocus={vi.fn()}
       onInputKeyDown={vi.fn()}
       onToggleDropdown={vi.fn()}
-      onDialogOpenChange={vi.fn()}
       onObjectClick={onObjectClick}
       onObjectHighlight={vi.fn()}
     />,

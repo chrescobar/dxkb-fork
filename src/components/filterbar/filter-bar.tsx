@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useEffectEvent, useState, useRef } from "react";
 import { buildRql } from "./filter-utils";
 import { KeywordSearch } from "./keyword-search";
 import { SelectedFilters } from "./selected-filters";
@@ -49,6 +49,16 @@ export function FilterBar({
   );
   const [facetMenuOpen, setFacetMenuOpen] = useState(false);
   const facetMenuRef = useRef<HTMLDivElement | null>(null);
+  const syncExternalKeywords = useEffectEvent((value: string) => {
+    onFilterChange(
+      buildRql({ selected, keywords: value.split(" ").filter(Boolean) }),
+    );
+  });
+
+  useEffect(() => {
+    if (keywordValue !== undefined) syncExternalKeywords(keywordValue);
+  }, [keywordValue]);
+
   const updateFilters = (
     nextSelected: SelectedFilter[],
     nextKeywords: string[],

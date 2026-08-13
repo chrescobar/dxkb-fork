@@ -207,7 +207,10 @@ function useMSAandSNPAnalysisPage() {
   });
   const { isSubmitting, jobParamsDialogProps } = runtime;
 
-  function handleFastaInputChange(value: string) {
+  function handleFastaInputChange(
+    value: string,
+    hasReferenceOverride?: boolean,
+  ) {
     setFastaInputText(value);
     if (!value.trim()) {
       form.setFieldValue("fasta_keyboard_input", "");
@@ -216,7 +219,8 @@ function useMSAandSNPAnalysisPage() {
     }
 
     const hasReference =
-      refType === "string" && referenceFastaText.trim() !== "";
+      hasReferenceOverride ??
+      (refType === "string" && referenceFastaText.trim() !== "");
     const validation = MsaSnpAnalysisUtils.validateSequenceFasta(
       value,
       hasReference,
@@ -237,6 +241,10 @@ function useMSAandSNPAnalysisPage() {
 
   function handleReferenceFastaChange(value: string) {
     setReferenceFastaText(value);
+    handleFastaInputChange(
+      fastaInputText,
+      refType === "string" && value.trim() !== "",
+    );
     if (!value.trim()) {
       form.setFieldValue("ref_string", "");
       setReferenceFastaValidationResult(null);
@@ -628,7 +636,7 @@ function useMSAandSNPAnalysisPage() {
                       value={selectGenomegroup[0]}
                     />
                     {isValidatingGenomeGroup && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <div className="text-muted-foreground flex items-center gap-2 text-sm">
                         <Spinner className="size-4" />
                         <span>Validating genome group...</span>
                       </div>
@@ -798,6 +806,11 @@ function useMSAandSNPAnalysisPage() {
                         field.handleChange(
                           value as MsaSnpAnalysis.MsaSnpAnalysisFormData["ref_type"],
                         );
+                        handleFastaInputChange(
+                          fastaInputText,
+                          value === "string" &&
+                            referenceFastaText.trim() !== "",
+                        );
                         // Clear ref_string when changing ref_type
                         if (value === "none" || value === "first") {
                           form.setFieldValue("ref_string", "");
@@ -893,12 +906,12 @@ function useMSAandSNPAnalysisPage() {
                       {isLoadingFeatures ? (
                         <div className="flex items-center justify-center p-4">
                           <Spinner className="mr-2 size-4" />
-                          <span className="text-sm text-muted-foreground">
+                          <span className="text-muted-foreground text-sm">
                             Loading features...
                           </span>
                         </div>
                       ) : featureOptions.length === 0 ? (
-                        <div className="p-4 text-center text-sm text-muted-foreground">
+                        <div className="text-muted-foreground p-4 text-center text-sm">
                           No features found in the selected feature group
                         </div>
                       ) : (
@@ -921,7 +934,7 @@ function useMSAandSNPAnalysisPage() {
                     </SelectContent>
                   </Select>
                   {isLoadingFeatures && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="text-muted-foreground flex items-center gap-2 text-sm">
                       <Spinner className="size-4" />
                       <span>Loading features from feature group...</span>
                     </div>
@@ -981,12 +994,12 @@ function useMSAandSNPAnalysisPage() {
                       {isLoadingGenomes ? (
                         <div className="flex items-center justify-center p-4">
                           <Spinner className="mr-2 size-4" />
-                          <span className="text-sm text-muted-foreground">
+                          <span className="text-muted-foreground text-sm">
                             Loading genomes...
                           </span>
                         </div>
                       ) : genomeOptions.length === 0 ? (
-                        <div className="p-4 text-center text-sm text-muted-foreground">
+                        <div className="text-muted-foreground p-4 text-center text-sm">
                           No genomes found in the selected genome group
                         </div>
                       ) : (
@@ -1009,7 +1022,7 @@ function useMSAandSNPAnalysisPage() {
                     </SelectContent>
                   </Select>
                   {isLoadingGenomes && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="text-muted-foreground flex items-center gap-2 text-sm">
                       <Spinner className="size-4" />
                       <span>Loading genomes from genome group...</span>
                     </div>

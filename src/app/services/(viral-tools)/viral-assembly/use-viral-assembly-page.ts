@@ -76,9 +76,7 @@ export function useViralAssemblyPage() {
     );
     if (state.singleRead) {
       const result = getSingleLibraryBuildFn()(state.singleRead);
-      setLibraries(
-        result.library ? [...others, result.library] : others,
-      );
+      setLibraries(result.library ? [...others, result.library] : others);
     } else setLibraries(others);
   }, [inputType, state.singleRead, setLibraries]);
 
@@ -91,7 +89,9 @@ export function useViralAssemblyPage() {
   useEffect(() => {
     if (inputType !== "paired") return;
     const desiredId =
-      state.pairedRead1 && state.pairedRead2
+      state.pairedRead1 &&
+      state.pairedRead2 &&
+      state.pairedRead1 !== state.pairedRead2
         ? getPairedLibraryId(state.pairedRead1, state.pairedRead2)
         : null;
     const current = librariesRef.current.filter(
@@ -111,9 +111,7 @@ export function useViralAssemblyPage() {
         state.pairedRead2,
         desiredId,
       );
-      setLibraries(
-        result.library ? [...others, result.library] : others,
-      );
+      setLibraries(result.library ? [...others, result.library] : others);
     } else setLibraries(others);
   }, [
     inputType,
@@ -148,15 +146,11 @@ export function useViralAssemblyPage() {
           rerunForm.setFieldValue("input_type", "paired");
           setState("pairedRead1")(paired.read1);
           setState("pairedRead2")(paired.read2);
-          setLibraries(
-            buildPairedLibraries({ paired_end_libs: [paired] }),
-          );
+          setLibraries(buildPairedLibraries({ paired_end_libs: [paired] }));
         } else if (single?.read) {
           rerunForm.setFieldValue("input_type", "single");
           setState("singleRead")(single.read);
-          setLibraries(
-            buildSingleLibraries({ single_end_libs: [single] }),
-          );
+          setLibraries(buildSingleLibraries({ single_end_libs: [single] }));
         } else if (srr) {
           rerunForm.setFieldValue("input_type", "srr_accession");
           setState("sraDefaultValue")(srr);

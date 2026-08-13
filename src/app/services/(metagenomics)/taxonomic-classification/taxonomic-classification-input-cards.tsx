@@ -53,7 +53,7 @@ export function ClassificationInputCard({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Label className="service-card-label">Paired Read Library</Label>
-              <div className="mx-4 h-px flex-1 bg-border" />
+              <div className="bg-border mx-4 h-px flex-1" />
               <Button
                 type="button"
                 variant="outline"
@@ -94,9 +94,9 @@ export function ClassificationInputCard({
               <Label className="service-card-sublabel">Sample Identifier</Label>
               <Input
                 value={state.pairedSampleId}
-                onChange={(event) =>
-                  { controller.handleSampleIdChange("paired", event.target.value); }
-                }
+                onChange={(event) => {
+                  controller.handleSampleIdChange("paired", event.target.value);
+                }}
                 placeholder="Sample ID"
                 className="service-card-input mt-1.5 font-mono text-sm"
               />
@@ -105,7 +105,7 @@ export function ClassificationInputCard({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Label className="service-card-label">Single Read Library</Label>
-              <div className="mx-4 h-px flex-1 bg-border" />
+              <div className="bg-border mx-4 h-px flex-1" />
               <Button
                 type="button"
                 variant="outline"
@@ -132,9 +132,9 @@ export function ClassificationInputCard({
               <Label className="service-card-sublabel">Sample Identifier</Label>
               <Input
                 value={state.singleSampleId}
-                onChange={(event) =>
-                  { controller.handleSampleIdChange("single", event.target.value); }
-                }
+                onChange={(event) => {
+                  controller.handleSampleIdChange("single", event.target.value);
+                }}
                 placeholder="Sample ID"
                 className="service-card-input mt-1.5 font-mono text-sm"
               />
@@ -146,16 +146,15 @@ export function ClassificationInputCard({
             placeholder="SRR..."
             selectedLibraries={selectedLibraries}
             setSelectedLibraries={controller.handleSetSelectedLibraries}
-            onChange={setState("srrSampleId")}
             allowDuplicates={false}
           />
           <div>
             <Label className="service-card-sublabel">Sample Identifier</Label>
             <Input
               value={state.srrSampleId}
-              onChange={(event) =>
-                { controller.handleSampleIdChange("srr", event.target.value); }
-              }
+              onChange={(event) => {
+                controller.handleSampleIdChange("srr", event.target.value);
+              }}
               placeholder="Sample ID"
               className="service-card-input mt-1.5 font-mono text-sm"
             />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   toWorkspaceObject,
@@ -36,16 +36,22 @@ export interface UseWorkspaceObjectSearchReturn {
   refresh: () => Promise<void>;
 }
 
+const emptyItems: WorkspaceItem[] = [];
+
 export function assertUniqueWorkspaceObjectPaths(
   items: WorkspaceItem[],
 ): WorkspaceItem[] {
   const paths = new Set<string>();
   for (const item of items) {
     if (!item.path) {
-      throw new Error(`Workspace search returned an object without a path: ${item.id}`);
+      throw new Error(
+        `Workspace search returned an object without a path: ${item.id}`,
+      );
     }
     if (paths.has(item.path)) {
-      throw new Error(`Workspace search returned duplicate object path: ${item.path}`);
+      throw new Error(
+        `Workspace search returned duplicate object path: ${item.path}`,
+      );
     }
     paths.add(item.path);
   }
@@ -75,13 +81,20 @@ export function useWorkspaceObjectSearch({
     staleTime: 5 * 60 * 1000,
   });
 
-  const items = assertUniqueWorkspaceObjectPaths(query.data ?? []);
-  const objects = items.map(toWorkspaceObject);
+  const items = assertUniqueWorkspaceObjectPaths(query.data ?? emptyItems);
+  const objects = useMemo(() => items.map(toWorkspaceObject), [items]);
   const term = searchQuery.trim().toLowerCase();
-  const filteredItems = term
-    ? items.filter((item) => item.name.toLowerCase().includes(term))
-    : items;
-  const filteredObjects = filteredItems.map(toWorkspaceObject);
+  const filteredItems = useMemo(
+    () =>
+      term
+        ? items.filter((item) => item.name.toLowerCase().includes(term))
+        : items,
+    [items, term],
+  );
+  const filteredObjects = useMemo(
+    () => filteredItems.map(toWorkspaceObject),
+    [filteredItems],
+  );
 
   const search = (q: string) => {
     setSearchQuery(q);

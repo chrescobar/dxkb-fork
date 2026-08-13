@@ -60,9 +60,9 @@ function Help({ children }: { children: React.ReactNode }) {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger
-          render={<HelpCircle className="service-card-tooltip-icon" />}
-        />
+        <TooltipTrigger aria-label="More information">
+          <HelpCircle className="service-card-tooltip-icon" />
+        </TooltipTrigger>
         <TooltipContent className="max-w-sm">{children}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
@@ -95,9 +95,7 @@ export function PrimerOptionsSection({
               value={(field.state.value ?? []).join(" ")}
               onChange={(event) => {
                 const value = event.target.value;
-                field.handleChange(
-                  value.trim() ? value.trim().split(/\s+/) : [],
-                );
+                field.handleChange(value ? value.split(/\s+/) : []);
               }}
               placeholder="50-500"
               className="service-card-input"
@@ -126,9 +124,9 @@ export function PrimerOptionsSection({
                   <Input
                     id={field.name}
                     value={field.state.value || ""}
-                    onChange={(event) =>
-                      { field.handleChange(event.target.value || undefined); }
-                    }
+                    onChange={(event) => {
+                      field.handleChange(event.target.value || undefined);
+                    }}
                     className="service-card-input"
                   />
                   <FieldErrors field={field} />
@@ -156,9 +154,7 @@ export function PrimerOptionsSection({
                     value={(field.state.value ?? []).join(" ")}
                     onChange={(event) => {
                       const value = event.target.value;
-                      field.handleChange(
-                        value.trim() ? value.trim().split(/\s+/) : [],
-                      );
+                      field.handleChange(value ? value.split(/\s+/) : []);
                     }}
                     className="service-card-input"
                   />

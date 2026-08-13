@@ -17,7 +17,6 @@ import { SingleGenomeSelector } from "@/components/services/single-genome-select
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
 import { similarGenomeFinderSelectGenome } from "@/lib/services/info/similar-genome-finder";
-import type { WorkspaceObject } from "@/lib/services/workspace/types";
 import type { SimilarGenomeFinderController } from "./use-similar-genome-finder-form";
 
 export function GenomeInputSection({
@@ -69,9 +68,9 @@ export function GenomeInputSection({
                 preset="contigsOrReads"
                 placeholder="Select a FASTA/FASTQ file..."
                 value={field.state.value}
-                onObjectSelect={(object: WorkspaceObject) => {
-                  field.handleChange(object.path);
-                  form.setFieldValue("selectedGenomeId", "");
+                onSelectedObjectChange={(object) => {
+                  field.handleChange(object?.path ?? "");
+                  if (object) form.setFieldValue("selectedGenomeId", "");
                 }}
               />
               <FieldErrors field={field} />

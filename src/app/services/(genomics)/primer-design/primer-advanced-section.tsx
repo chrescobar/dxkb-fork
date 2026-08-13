@@ -63,9 +63,9 @@ function Help({ children }: { children: React.ReactNode }) {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger
-          render={<HelpCircle className="service-card-tooltip-icon" />}
-        />
+        <TooltipTrigger aria-label="More information">
+          <HelpCircle className="service-card-tooltip-icon" />
+        </TooltipTrigger>
         <TooltipContent className="max-w-sm">{children}</TooltipContent>
       </Tooltip>
     </TooltipProvider>

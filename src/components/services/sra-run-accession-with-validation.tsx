@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -157,10 +157,10 @@ function SraInputView({
           {hasLabel ? (
             <>
               {label ?? <Label className="service-card-label">{title}</Label>}
-              <div className="mx-4 h-px flex-1 bg-border" />
+              <div className="bg-border mx-4 h-px flex-1" />
             </>
           ) : (
-            <div className="mx-4 h-px flex-1 bg-border" />
+            <div className="bg-border mx-4 h-px flex-1" />
           )}
           {hasAddButton &&
             (addButton ?? (
@@ -205,7 +205,7 @@ function SraInputView({
           </p>
         )}
         {validationStatus === "valid" && !validationMessage && (
-          <p className="text-sm text-muted-foreground">Provided SRA is valid</p>
+          <p className="text-muted-foreground text-sm">Provided SRA is valid</p>
         )}
       </div>
     </div>
@@ -236,6 +236,10 @@ const SraRunAccessionWithValidation = ({
     result: ValidationResult;
   } | null>(null);
   const validationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const selectedLibrariesRef = useRef(selectedLibraries);
+  useLayoutEffect(() => {
+    selectedLibrariesRef.current = selectedLibraries;
+  }, [selectedLibraries]);
 
   const applyValidationResult = (
     accession: string,
@@ -244,7 +248,7 @@ const SraRunAccessionWithValidation = ({
   ) => {
     const { runs, title: studyTitle } = result;
     const skipClear = options?.skipClear ?? false;
-    const current = selectedLibraries;
+    const current = selectedLibrariesRef.current;
 
     // Timeout case: accession is a single run
     if (runs.length === 1 && runs[0] === accession) {
@@ -313,77 +317,77 @@ const SraRunAccessionWithValidation = ({
     setIsValidSra(false);
     setValidationMessage(`Validating ${accession}...`);
 
-    const response = await fetch(
+    return fetch(
       `/api/services/sra-validation?accession=${encodeURIComponent(accession)}`,
       {
         method: "GET",
         headers: { Accept: "application/json" },
       },
-    ).catch((error: unknown) => {
-      console.error("Error validating SRA accession:", error);
-      return null;
-    });
+    )
+      .then(async (response): Promise<ValidationResult | null> => {
+        if (!response.ok) {
+          const errorData = await (response.json() as Promise<{
+            error?: unknown;
+          }>);
+          const rawError =
+            errorData.error == null
+              ? ""
+              : typeof errorData.error === "string"
+                ? errorData.error
+                : JSON.stringify(errorData.error);
+          const plainError = rawError
+            ? toPlainText(rawError)
+            : `Your input ${accession} is not valid`;
+          setValidationMessage(plainError);
+          setIsValidSra(false);
+          return null;
+        }
 
-    if (!response) {
-      setValidationMessage("Something went wrong during validation.");
-      setIsValidSra(false);
-      setIsValidating(false);
-      return null;
-    }
+        const data = await (response.json() as Promise<{
+          timeout?: boolean;
+          xml?: string;
+        }>);
 
-    if (!response.ok) {
-      const errorData = await (response.json() as Promise<{
-        error?: unknown;
-      }>);
-      const rawError =
-        errorData.error == null
-          ? ""
-          : typeof errorData.error === "string"
-            ? errorData.error
-            : JSON.stringify(errorData.error);
-      const plainError = rawError
-        ? toPlainText(rawError)
-        : `Your input ${accession} is not valid`;
-      setValidationMessage(plainError);
-      setIsValidSra(false);
-      setIsValidating(false);
-      return null;
-    }
+        if (data.timeout) {
+          setValidationMessage("Timeout exceeded.");
+          validationCacheRef.current = {
+            accession,
+            result: { runs: [accession], title: "" },
+          };
+          setIsValidSra(true);
+          return validationCacheRef.current.result;
+        }
 
-    const data = await (response.json() as Promise<{
-      timeout?: boolean;
-      xml?: string;
-    }>);
+        const {
+          title: studyTitle,
+          runs,
+          isValid,
+        } = parseXmlAndExtract(data.xml ?? "");
+        if (!isValid || runs.length === 0) {
+          setValidationMessage("The accession is not a run id.");
+          setIsValidSra(false);
+          return null;
+        }
 
-    if (data.timeout) {
-      setValidationMessage("Timeout exceeded.");
-      validationCacheRef.current = {
-        accession,
-        result: { runs: [accession], title: "" },
-      };
-      setIsValidSra(true);
-      setIsValidating(false);
-      return validationCacheRef.current.result;
-    }
-
-    const {
-      title: studyTitle,
-      runs,
-      isValid,
-    } = parseXmlAndExtract(data.xml ?? "");
-    if (!isValid || runs.length === 0) {
-      setValidationMessage("The accession is not a run id.");
-      setIsValidSra(false);
-      setIsValidating(false);
-      return null;
-    }
-
-    setValidationMessage("");
-    setIsValidSra(true);
-    setIsValidating(false);
-    const result: ValidationResult = { runs, title: studyTitle };
-    validationCacheRef.current = { accession, result };
-    return result;
+        setValidationMessage("");
+        setIsValidSra(true);
+        const result: ValidationResult = { runs, title: studyTitle };
+        validationCacheRef.current = { accession, result };
+        return result;
+      })
+      .catch((error: unknown) => {
+        console.error("Error validating SRA accession:", error);
+        const message =
+          error instanceof Error
+            ? toPlainText(error.message)
+            : "Something went wrong during validation.";
+        setValidationMessage(message);
+        setIsValidSra(false);
+        return null;
+      })
+      .finally(() => {
+        setIsValidating(false);
+      });
   };
 
   const scheduleValidation = (accession: string) => {
@@ -399,7 +403,7 @@ const SraRunAccessionWithValidation = ({
       void validateAccession(accession).then((result) => {
         if (result && !showAddButton) {
           const alreadyAdded = result.runs.every((runId) =>
-            selectedLibraries.some(
+            selectedLibrariesRef.current.some(
               (library) => library.type === "sra" && library.id === runId,
             ),
           );

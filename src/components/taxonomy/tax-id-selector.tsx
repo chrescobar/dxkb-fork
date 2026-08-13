@@ -113,12 +113,11 @@ export function TaxIDSelector({
     }
   }
 
-  const handleSearchChange = (value: string) => {
+  const handleSearchChange = (query: string) => {
     if (disabled) return;
-    setSearchQuery(value);
-    setShowDropdown(value.length > 0);
-    // Clear the selected value when user clears the input
-    if (value.trim() === "") {
+    setSearchQuery(query);
+    setShowDropdown(query.length > 0);
+    if (query.trim() !== String(value?.taxon_id ?? "")) {
       onChange?.(null);
     }
   };
@@ -142,7 +141,7 @@ export function TaxIDSelector({
     <div className={cn("relative w-full", className)}>
       <div ref={inputRef} className="relative">
         {!disabled && (
-          <SearchIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
         )}
         <Input
           placeholder={
@@ -179,7 +178,7 @@ export function TaxIDSelector({
             type="button"
             aria-label={showDropdown ? "Hide suggestions" : "Show suggestions"}
             onClick={handleManualDropdownToggle}
-            className="absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 size-4 -translate-y-1/2 transition-colors"
           >
             <ChevronDownIcon
               className={`size-4 transition-transform ${showDropdown ? "rotate-180" : ""}`}
@@ -189,13 +188,13 @@ export function TaxIDSelector({
 
         {/* Live Search Dropdown - only show when not disabled */}
         {!disabled && showDropdown && (
-          <div className="absolute inset-x-0 top-full z-50 mt-1 max-h-64 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent overflow-y-auto rounded-md border bg-popover shadow-md hover:scrollbar-thumb-muted-foreground/40 dark:scrollbar-thumb-muted-foreground/30 dark:hover:scrollbar-thumb-muted-foreground/50">
+          <div className="scrollbar-thumb-muted-foreground/20 bg-popover hover:scrollbar-thumb-muted-foreground/40 dark:scrollbar-thumb-muted-foreground/30 dark:hover:scrollbar-thumb-muted-foreground/50 absolute inset-x-0 top-full z-50 mt-1 max-h-64 scrollbar-thin scrollbar-track-transparent overflow-y-auto rounded-md border shadow-md">
             {error ? (
-              <div className="p-4 text-sm text-destructive">Error: {error}</div>
+              <div className="text-destructive p-4 text-sm">Error: {error}</div>
             ) : loading ? (
               <div className="flex items-center justify-center p-4">
                 <Loader2Icon className="mr-2 size-4 animate-spin" />
-                <span className="text-sm text-muted-foreground">
+                <span className="text-muted-foreground text-sm">
                   Searching...
                 </span>
               </div>
@@ -204,7 +203,7 @@ export function TaxIDSelector({
                 <button
                   type="button"
                   key={item.taxon_id}
-                  className="flex w-full cursor-pointer items-center justify-between p-2 text-left hover:bg-accent"
+                  className="hover:bg-accent flex w-full cursor-pointer items-center justify-between p-2 text-left"
                   onClick={() => {
                     handleSelect(item);
                   }}
@@ -214,7 +213,7 @@ export function TaxIDSelector({
                       {item.taxon_id} [{item.taxon_name}]
                     </span>
                     {item.lineage_names && item.lineage_names.length > 0 && (
-                      <span className="block truncate text-xs text-muted-foreground">
+                      <span className="text-muted-foreground block truncate text-xs">
                         {item.lineage_names.join(" > ")}
                       </span>
                     )}
@@ -222,7 +221,7 @@ export function TaxIDSelector({
                 </button>
               ))
             ) : (
-              <p className="py-4 text-center text-sm text-muted-foreground">
+              <p className="text-muted-foreground py-4 text-center text-sm">
                 {searchQuery
                   ? `No taxonomy found for ID: ${searchQuery}`
                   : "No results found"}
@@ -233,7 +232,7 @@ export function TaxIDSelector({
       </div>
 
       {touched && required && !isValid && (
-        <p className="mt-1 text-sm text-destructive">
+        <p className="text-destructive mt-1 text-sm">
           NCBI Tax ID is required.
         </p>
       )}

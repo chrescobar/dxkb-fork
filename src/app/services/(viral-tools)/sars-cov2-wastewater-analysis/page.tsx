@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { useServicePageState } from "../../use-service-page-state";
 import { useForm } from "@tanstack/react-form";
 import { useSelector } from "@tanstack/react-store";
@@ -258,7 +258,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
       },
     },
   });
-  useEffect(() => {
+  useLayoutEffect(() => {
     submitRef.current = (value) => runtime.submitFormData(value);
   }, [runtime]);
   const { isSubmitting, jobParamsDialogProps } = runtime;

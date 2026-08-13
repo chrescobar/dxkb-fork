@@ -75,6 +75,7 @@ export function GenomeAnnotationParameters({
                 <WorkspaceObjectSelector
                   preset="contigs"
                   placeholder="Select or Upload Contigs to your workspace for Annotation"
+                  value={field.state.value}
                   onObjectSelect={(object: WorkspaceObject) => {
                     field.handleChange(object.path);
                   }}

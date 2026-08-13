@@ -199,14 +199,6 @@ export function evictOldest() {
       if (viewCache.size <= maxCacheSize) return;
     }
   }
-
-  const oldest = viewCache.entries().next().value;
-  if (oldest) {
-    const [key, entry] = oldest;
-    entry.abort.abort();
-    entry.view?.destroy();
-    viewCache.delete(key);
-  }
 }
 
 export function startThemeObserver() {

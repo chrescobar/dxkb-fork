@@ -47,7 +47,7 @@ export function WorkspaceShell({
   }, [panelExpanded]);
 
   const actionStrip = (
-    <div className="flex h-full w-20 shrink-0 flex-col rounded-l-lg border-r border-border/50 bg-muted/50 py-2">
+    <div className="border-border/50 bg-muted/50 flex h-full w-20 shrink-0 flex-col rounded-l-lg border-r py-2">
       <div className="relative mx-0.5 mb-1 h-8 shrink-0">
         <Button
           variant="ghost"
@@ -121,7 +121,10 @@ export function WorkspaceShell({
       orientation="horizontal"
       className="size-full min-h-0"
       defaultLayout={panelInitialLayout}
-      onLayoutChanged={setPanelLayout}
+      onLayoutChanged={(layout) => {
+        if ((layout[workspacePanelIds.details] ?? 0) > 0)
+          setPanelLayout(layout);
+      }}
     >
       <ResizablePanel
         id={workspacePanelIds.main}
@@ -133,7 +136,7 @@ export function WorkspaceShell({
         <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           {children}
         </div>
-        <aside className="flex min-h-full shrink-0 rounded-l-lg border-l bg-muted/30">
+        <aside className="bg-muted/30 flex min-h-full shrink-0 rounded-l-lg border-l">
           {actionStrip}
         </aside>
       </ResizablePanel>
@@ -151,7 +154,9 @@ export function WorkspaceShell({
         collapsedSize={0}
         className="flex min-h-0 flex-col overflow-hidden"
       >
-        {detailsPanelContent}
+        <div className="flex min-h-0 flex-1 flex-col" tabIndex={0}>
+          {detailsPanelContent}
+        </div>
       </ResizablePanel>
     </ResizablePanelGroup>
   );

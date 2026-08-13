@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useSelector } from "@tanstack/react-store";
 import { toast } from "sonner";
@@ -45,7 +45,6 @@ export function useTaxonomicClassificationController() {
     srrSampleId: "",
     isOutputNameValid: true,
   });
-  const isInitialMount = useRef(true);
   const form = useForm({
     defaultValues: defaultTaxonomicClassificationFormValues,
     validators: { onChange: taxonomicClassificationFormSchema },
@@ -62,18 +61,32 @@ export function useTaxonomicClassificationController() {
   const canSubmit = useSelector(form.store, (value) => value.canSubmit);
 
   useEffect(() => {
-    form.setFieldValue(
-      "analysis_type",
-      getDefaultAnalysisType(sequenceType) as
-        "microbiome" | "pathogen" | "default",
-    );
-    form.setFieldValue(
-      "database",
-      getDefaultDatabase(sequenceType) as
-        "bvbrc" | "standard" | "SILVA" | "Greengenes",
-    );
+    const analysisTypeIsValid =
+      sequenceType === "wgs"
+        ? form.state.values.analysis_type === "microbiome" ||
+          form.state.values.analysis_type === "pathogen"
+        : form.state.values.analysis_type === "default";
+    if (!analysisTypeIsValid) {
+      form.setFieldValue(
+        "analysis_type",
+        getDefaultAnalysisType(sequenceType) as
+          "microbiome" | "pathogen" | "default",
+      );
+    }
+    const databaseIsValid =
+      sequenceType === "wgs"
+        ? form.state.values.database === "bvbrc" ||
+          form.state.values.database === "standard"
+        : form.state.values.database === "SILVA" ||
+          form.state.values.database === "Greengenes";
+    if (!databaseIsValid) {
+      form.setFieldValue(
+        "database",
+        getDefaultDatabase(sequenceType) as
+          "bvbrc" | "standard" | "SILVA" | "Greengenes",
+      );
+    }
     if (sequenceType === "16s") form.setFieldValue("host_genome", "no_host");
-    if (isInitialMount.current) isInitialMount.current = false;
   }, [sequenceType, form]);
 
   const {

@@ -41,6 +41,7 @@ export const resourceFields: Record<string, DataFieldMap | undefined> = {
   ppi: ppiFields,
 };
 
+const emptyFields: ColumnInfo[] = [];
 const tableFieldsByResource = new Map<string, ColumnInfo[]>();
 
 export function deriveTableFields(resource: string): ColumnInfo[] {
@@ -50,7 +51,7 @@ export function deriveTableFields(resource: string): ColumnInfo[] {
   const fieldObj = resourceFields[resource];
   if (!fieldObj) {
     console.error(`No fields definition found for resource: ${resource}`);
-    return [];
+    return emptyFields;
   }
   const fields: ColumnInfo[] = [];
   for (const field of Object.values(fieldObj)) {
@@ -122,14 +123,23 @@ export async function downloadResourceRows({
   visibleColumns: string[] | null;
   fields: ColumnInfo[];
 }): Promise<void> {
-  const response = await fetch(`${dataApi}/${resource}/?${query}`, {
-    headers: {
-      "Content-type": "application/rqlquery+x-www-form-urlencoded",
-      Accept: "application/json",
-      Range: `items=0-${String(totalItems)}`,
-      "X-Range": `items=0-${String(totalItems)}`,
+  const requestedColumns =
+    visibleColumns && visibleColumns.length > 0
+      ? visibleColumns
+      : fields.map((field) => field.id);
+  const columns = requestedColumns.filter((id) => id !== "__select__");
+  const selectClause = columns.length ? `&select(${columns.join(",")})` : "";
+  const response = await fetch(
+    `${dataApi}/${resource}/?${query}${selectClause}`,
+    {
+      headers: {
+        "Content-type": "application/rqlquery+x-www-form-urlencoded",
+        Accept: "application/json",
+        Range: `items=0-${String(totalItems)}`,
+        "X-Range": `items=0-${String(totalItems)}`,
+      },
     },
-  });
+  );
   if (!response.ok) {
     throw new Error(
       `Failed to fetch all data: ${String(response.status)} ${response.statusText}`,
@@ -143,10 +153,6 @@ export async function downloadResourceRows({
         payloadObject.response ??
         payloadObject.rows ??
         []) as unknown[]);
-  const columns =
-    visibleColumns && visibleColumns.length > 0
-      ? visibleColumns
-      : fields.map((field) => field.id);
   const separator = format === "csv" ? "," : "\t";
   const headers = columns.map(
     (id) => fields.find((field) => field.id === id)?.label ?? id,

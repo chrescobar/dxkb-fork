@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import dynamic from "next/dynamic";
 
 import { useInteractions } from "@/lib/interactions/use-interactions";
+import { buildRql } from "@/components/filterbar/filter-utils";
 import { toGraph } from "@/lib/interactions/to-graph";
 import {
   buildGraphSelectionIndex,
@@ -34,7 +35,7 @@ const SigmaCanvas = dynamic<GraphCanvasProps>(
   {
     ssr: false,
     loading: () => (
-      <div className="flex size-full items-center justify-center text-sm text-muted-foreground">
+      <div className="text-muted-foreground flex size-full items-center justify-center text-sm">
         Loading graph…
       </div>
     ),
@@ -59,11 +60,16 @@ export function InteractionsGraph({
   keywordValue,
   onKeywordChange,
 }: InteractionsGraphProps) {
-  // The table filter already includes the shared keyword and any table facets.
   const cleanQ = q.split("#")[0];
-  const parts = [cleanQ, tableFilter].filter(
-    (part): part is string => Boolean(part) && part !== "false",
-  );
+  const keywordFilter = buildRql({
+    selected: [],
+    keywords: keywordValue.split(" ").filter(Boolean),
+  });
+  const parts = [
+    cleanQ,
+    tableFilter,
+    tableFilter?.includes(keywordFilter) ? "" : keywordFilter,
+  ].filter((part): part is string => Boolean(part) && part !== "false");
   const combinedQuery =
     parts.length === 0
       ? ""
@@ -125,7 +131,7 @@ export function InteractionsGraph({
     return (
       <div className="flex h-full min-h-0 flex-col">
         {toolbar}
-        <div className="flex flex-1 items-center justify-center text-sm text-destructive">
+        <div className="text-destructive flex flex-1 items-center justify-center text-sm">
           {error instanceof Error
             ? error.message
             : "Failed to load interactions."}
@@ -140,7 +146,7 @@ export function InteractionsGraph({
     return (
       <div className="flex h-full min-h-0 flex-col">
         {toolbar}
-        <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
+        <div className="text-muted-foreground flex flex-1 items-center justify-center text-sm">
           No interactions found.
         </div>
       </div>
@@ -184,7 +190,7 @@ export function InteractionsGraph({
     <div className="flex h-full min-h-0 flex-col">
       {toolbar}
       <div className="flex min-h-0 flex-1">
-        <div className="flex w-60 shrink-0 flex-col rounded-tl-md border-x border-t bg-card">
+        <div className="bg-card flex w-60 shrink-0 flex-col rounded-tl-md border-x border-t">
           <div className="border-b p-3">
             <GraphLegend />
           </div>
@@ -229,7 +235,7 @@ export function InteractionsGraph({
           </div>
         </div>
         <div
-          className="w-64 shrink-0 overflow-y-auto border-t border-l bg-card"
+          className="bg-card w-64 shrink-0 overflow-y-auto border-t border-l"
           tabIndex={0}
           aria-label="Selection details"
         >

@@ -1,7 +1,10 @@
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
 
-import { fetchTaxonChildCounts, fetchTaxonChildren } from "../use-taxon-children";
+import {
+  fetchTaxonChildCounts,
+  fetchTaxonChildren,
+} from "../use-taxon-children";
 
 const dataApi = "https://data.test/api";
 
@@ -53,7 +56,9 @@ describe("fetchTaxonChildren", () => {
             { headers: { "Content-Range": "items 0-0/5" } },
           );
         }
-        return HttpResponse.json([], { headers: { "Content-Range": "items 1-0/5" } });
+        return HttpResponse.json([], {
+          headers: { "Content-Range": "items 1-0/5" },
+        });
       }),
     );
 
@@ -64,8 +69,13 @@ describe("fetchTaxonChildren", () => {
 
   it("throws with status and statusText on HTTP error", async () => {
     server.use(
-      http.get(`${dataApi}/taxonomy/`, () =>
-        new HttpResponse(null, { status: 503, statusText: "Service Unavailable" }),
+      http.get(
+        `${dataApi}/taxonomy/`,
+        () =>
+          new HttpResponse(null, {
+            status: 503,
+            statusText: "Service Unavailable",
+          }),
       ),
     );
 
@@ -85,14 +95,18 @@ describe("fetchTaxonChildren", () => {
 describe("fetchTaxonChildCounts", () => {
   it("parses the facet_counts header into a parentId -> count map", async () => {
     server.use(
-      http.get(`${dataApi}/taxonomy/`, () =>
-        // Flat [id, count, id, count, …] array, exactly as SOLR returns it.
-        new HttpResponse("[]", {
-          headers: {
-            "Content-Range": "items 0-0/0",
-            facet_counts: JSON.stringify({ facet_fields: { parent_id: ["235", 3, "236", 0] } }),
-          },
-        }),
+      http.get(
+        `${dataApi}/taxonomy/`,
+        () =>
+          // Flat [id, count, id, count, …] array, exactly as SOLR returns it.
+          new HttpResponse("[]", {
+            headers: {
+              "Content-Range": "items 0-0/0",
+              facet_counts: JSON.stringify({
+                facet_fields: { parent_id: ["235", 3, "236", 0] },
+              }),
+            },
+          }),
       ),
     );
 
@@ -112,8 +126,12 @@ describe("fetchTaxonChildCounts", () => {
 
   it("throws when the facet_counts header is absent", async () => {
     server.use(
-      http.get(`${dataApi}/taxonomy/`, () =>
-        new HttpResponse("[]", { headers: { "Content-Range": "items 0-0/0" } }),
+      http.get(
+        `${dataApi}/taxonomy/`,
+        () =>
+          new HttpResponse("[]", {
+            headers: { "Content-Range": "items 0-0/0" },
+          }),
       ),
     );
 
@@ -145,6 +163,26 @@ describe("fetchTaxonChildCounts", () => {
       "invalid child count",
     ],
     [
+      "non-primitive parent id",
+      JSON.stringify({ facet_fields: { parent_id: [[], 1] } }),
+      "invalid parent id",
+    ],
+    [
+      "boolean count",
+      JSON.stringify({ facet_fields: { parent_id: ["235", true] } }),
+      "invalid child count",
+    ],
+    [
+      "empty parent id",
+      JSON.stringify({ facet_fields: { parent_id: ["", 1] } }),
+      "invalid parent id",
+    ],
+    [
+      "null count",
+      JSON.stringify({ facet_fields: { parent_id: ["235", null] } }),
+      "invalid child count",
+    ],
+    [
       "unexpected parent",
       JSON.stringify({ facet_fields: { parent_id: ["999", 1] } }),
       "unexpected parent id 999",
@@ -156,8 +194,10 @@ describe("fetchTaxonChildCounts", () => {
     ],
   ])("throws for %s", async (_case, facetCounts, expected) => {
     server.use(
-      http.get(`${dataApi}/taxonomy/`, () =>
-        new HttpResponse("[]", { headers: { facet_counts: facetCounts } }),
+      http.get(
+        `${dataApi}/taxonomy/`,
+        () =>
+          new HttpResponse("[]", { headers: { facet_counts: facetCounts } }),
       ),
     );
 
@@ -166,8 +206,13 @@ describe("fetchTaxonChildCounts", () => {
 
   it("preserves the HTTP status and statusText in the thrown error", async () => {
     server.use(
-      http.get(`${dataApi}/taxonomy/`, () =>
-        new HttpResponse(null, { status: 500, statusText: "Internal Server Error" }),
+      http.get(
+        `${dataApi}/taxonomy/`,
+        () =>
+          new HttpResponse(null, {
+            status: 500,
+            statusText: "Internal Server Error",
+          }),
       ),
     );
 

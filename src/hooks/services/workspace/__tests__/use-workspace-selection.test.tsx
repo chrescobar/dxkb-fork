@@ -3,9 +3,7 @@ import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { useWorkspaceFilteredItems } from "@/hooks/services/workspace/use-workspace-filtered-items";
 import { useWorkspaceSelection } from "@/hooks/services/workspace/use-workspace-selection";
 
-const makeItem = (
-  overrides: Partial<WorkspaceItem>,
-): WorkspaceItem =>
+const makeItem = (overrides: Partial<WorkspaceItem>): WorkspaceItem =>
   ({
     name: "file.txt",
     path: "/test/file.txt",
@@ -61,7 +59,11 @@ describe("useWorkspaceSelection", () => {
     const setPanelExpanded = vi.fn();
 
     const { result } = renderHook(() =>
-      useWorkspaceSelection({ ...defaultProps, processedItems, setPanelExpanded }),
+      useWorkspaceSelection({
+        ...defaultProps,
+        processedItems,
+        setPanelExpanded,
+      }),
     );
 
     act(() => {
@@ -187,6 +189,31 @@ describe("useWorkspaceSelection", () => {
     expect(setPanelExpanded).not.toHaveBeenCalled();
   });
 
+  it("cancels pending folder details when the panel is manually hidden", () => {
+    vi.useFakeTimers();
+    const folder = makeItem({ type: "folder", path: "/folder" });
+    const setPanelExpanded = vi.fn();
+    const initialProps = {
+      processedItems: [folder],
+      panelManuallyHidden: false,
+      setPanelExpanded,
+    };
+    const { result, rerender } = renderHook(
+      (props) => useWorkspaceSelection(props),
+      { initialProps },
+    );
+
+    act(() => {
+      result.current.handleSelectItem(folder);
+    });
+    rerender({ ...initialProps, panelManuallyHidden: true });
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(setPanelExpanded).not.toHaveBeenCalled();
+  });
+
   it("cancels pending folder details when the browser unmounts", () => {
     vi.useFakeTimers();
     const folder = makeItem({ type: "folder", path: "/folder" });
@@ -234,8 +261,16 @@ describe("useWorkspaceSelection", () => {
   });
 
   it("syncs selected items when processedItems reference changes", () => {
-    const itemV1 = makeItem({ name: "data.txt", path: "/test/data.txt", size: 100 });
-    const itemV2 = makeItem({ name: "data.txt", path: "/test/data.txt", size: 200 });
+    const itemV1 = makeItem({
+      name: "data.txt",
+      path: "/test/data.txt",
+      size: 100,
+    });
+    const itemV2 = makeItem({
+      name: "data.txt",
+      path: "/test/data.txt",
+      size: 200,
+    });
 
     const initialProps = {
       ...defaultProps,
@@ -264,7 +299,10 @@ describe("useWorkspaceSelection", () => {
   it("preserves selected items that are temporarily filtered out", () => {
     const selected = makeItem({ name: "selected.txt", path: "/selected.txt" });
     const visible = makeItem({ name: "visible.txt", path: "/visible.txt" });
-    const initialProps = { ...defaultProps, processedItems: [selected, visible] };
+    const initialProps = {
+      ...defaultProps,
+      processedItems: [selected, visible],
+    };
     const { result, rerender } = renderHook(
       (props) => useWorkspaceSelection(props),
       { initialProps },
@@ -280,7 +318,11 @@ describe("useWorkspaceSelection", () => {
   });
 
   it("refreshes a multi-selection without changing its order", () => {
-    const alphaV1 = makeItem({ name: "alpha.txt", path: "/alpha.txt", size: 1 });
+    const alphaV1 = makeItem({
+      name: "alpha.txt",
+      path: "/alpha.txt",
+      size: 1,
+    });
     const betaV1 = makeItem({ name: "beta.txt", path: "/beta.txt", size: 2 });
     const alphaV2 = { ...alphaV1, size: 10 };
     const betaV2 = { ...betaV1, size: 20 };

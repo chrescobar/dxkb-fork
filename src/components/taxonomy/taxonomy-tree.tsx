@@ -5,6 +5,7 @@ import {
   useDeferredValue,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   type ReactNode,
@@ -193,17 +194,10 @@ function TaxonomyTreeInstance({
           children.set(parentId, query.data);
         }
       }
-      let queryVersion = "";
-      for (const result of results) {
-        queryVersion += `${result.status}:${String(result.dataUpdatedAt)}|`;
-      }
-      // React Query structurally shares combine results. The version field changes only
-      // when a child query settles, invalidating TanStack Table's identity-keyed model.
-      const data = rootRecords.map((record) => ({
-        ...record,
-        __queryVersion: queryVersion,
-      }));
-      return { children, loading, data };
+      const version = results
+        .map((result) => `${result.status}:${String(result.dataUpdatedAt)}`)
+        .join("|");
+      return { children, loading, version };
     },
   });
 
@@ -261,14 +255,10 @@ function TaxonomyTreeInstance({
     });
   }
 
-  let childCountVersion = "";
-  for (const [id, count] of [...knownChildCounts].sort(([a], [b]) => a - b)) {
-    childCountVersion += `${String(id)}:${String(count)}|`;
-  }
-  const tableData = queryState.data.map((record) => ({
-    ...record,
-    __childCountVersion: childCountVersion,
-  }));
+  const tableData = useMemo(() => {
+    void queryState.version;
+    return [...rootRecords];
+  }, [rootRecords, queryState.version]);
 
   const table = useReactTable({
     data: tableData,
@@ -300,7 +290,9 @@ function TaxonomyTreeInstance({
     },
     enableRowSelection: (row) => !isPlaceholder(row.original),
     enableSubRowSelection: false,
-    onExpandedChange: setExpanded,
+    onExpandedChange: (updater) => {
+      if (!globalFilter) setExpanded(updater);
+    },
     onGlobalFilterChange: setGlobalFilter,
     onRowSelectionChange: handleSelectionChange,
     globalFilterFn: (row, _columnId, value: string) =>
@@ -351,7 +343,6 @@ function TaxonomyTreeInstance({
   }, [childCountsQuery.data, childCountsQuery.isSuccess, deferredKey]);
 
   usePersistedExpansion(fetchParentIds, rootIds, globalFilter);
-  if (childCountsQuery.error) throw childCountsQuery.error;
 
   function handleWhitespaceClick(row: Row<TaxonRecord>) {
     if (isPlaceholder(row.original) || applyShiftRange(row, false)) return;
@@ -402,11 +393,16 @@ class SelectionResetBoundary extends Component<{
 export function TaxonomyTree({ rootTaxa, onSelect }: TaxonomyTreeProps) {
   const searchParams = useSearchParams();
   const signature = rootSignature(rootTaxa);
+  const rootRecords = useMemo(() => rootTaxa.map(rootToRecord), [rootTaxa]);
+  const rootIds = useMemo(
+    () => rootTaxa.map((taxon) => taxon.taxonId),
+    [rootTaxa],
+  );
   return (
     <SelectionResetBoundary key={signature} onSelect={onSelect}>
       <TaxonomyTreeInstance
-        rootRecords={rootTaxa.map(rootToRecord)}
-        rootIds={rootTaxa.map((taxon) => taxon.taxonId)}
+        rootRecords={rootRecords}
+        rootIds={rootIds}
         open={searchParams.get("open")}
         onSelect={onSelect}
       />

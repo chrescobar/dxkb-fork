@@ -2,8 +2,9 @@
 
 import { z } from "zod";
 import { useForm } from "@tanstack/react-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { Input } from "@/components/ui/input";
@@ -31,9 +32,14 @@ const formSchema = z.object({
 export default function ForgotPasswordPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const { status } = useAuth();
+  const { isAuthenticated, status } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isLoading = status === "loading" || isSubmitting;
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isAuthenticated) router.push("/");
+  }, [isAuthenticated, router]);
 
   const form = useForm({
     defaultValues: {
@@ -58,7 +64,7 @@ export default function ForgotPasswordPage() {
 
   if (success) {
     return (
-      <div className="flex items-center justify-center bg-background p-4">
+      <div className="bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
             <CardTitle className="text-center text-2xl font-bold">
@@ -93,7 +99,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex items-center justify-center bg-background p-4">
+    <div className="bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-center text-2xl font-bold">
@@ -124,7 +130,7 @@ export default function ForgotPasswordPage() {
                 <FieldItem>
                   <RequiredFormLabel>Username or email</RequiredFormLabel>
                   <div className="relative">
-                    <Mail className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
+                    <Mail className="text-muted-foreground absolute top-2.5 left-3 size-4" />
                     <Input
                       placeholder="Enter your username or email"
                       id={field.name}
@@ -144,7 +150,7 @@ export default function ForgotPasswordPage() {
 
             <Button
               type="submit"
-              className="w-full text-muted-foreground transition-colors duration-200 hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground w-full transition-colors duration-200"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -160,7 +166,7 @@ export default function ForgotPasswordPage() {
             <div className="text-center text-sm">
               <Link
                 href="/sign-in"
-                className="group font-medium text-primary transition-colors duration-300 hover:font-medium hover:text-secondary"
+                className="group text-primary hover:text-secondary font-medium transition-colors duration-300 hover:font-medium"
               >
                 <ArrowLeft className="mr-1 inline size-3" />
                 Back to sign in

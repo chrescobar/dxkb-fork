@@ -38,4 +38,12 @@ describe("primerDesignFormSchema", () => {
     });
     expect(result.success).toBe(false);
   });
+
+  it("safeParse rejects more than one included region pair", () => {
+    const result = primerDesignFormSchema.safeParse({
+      ...validPayload,
+      SEQUENCE_INCLUDED_REGION: ["20,400", "500,100"],
+    });
+    expect(result.success).toBe(false);
+  });
 });

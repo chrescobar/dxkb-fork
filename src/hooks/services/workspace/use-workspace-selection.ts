@@ -39,9 +39,17 @@ export function useWorkspaceSelection({
 
   useEffect(() => {
     return () => {
-      if (panelExpansionTimer.current) clearTimeout(panelExpansionTimer.current);
+      if (panelExpansionTimer.current)
+        clearTimeout(panelExpansionTimer.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (panelManuallyHidden && panelExpansionTimer.current) {
+      clearTimeout(panelExpansionTimer.current);
+      panelExpansionTimer.current = null;
+    }
+  }, [panelManuallyHidden]);
 
   const itemByPath = new Map(
     processedItems.map((item) => [normalizePath(item.path), item]),
@@ -76,7 +84,8 @@ export function useWorkspaceSelection({
     setSelectedItems(nextSelection);
     setAnchorPath(nextAnchorPath);
     if (!panelManuallyHidden) {
-      if (panelExpansionTimer.current) clearTimeout(panelExpansionTimer.current);
+      if (panelExpansionTimer.current)
+        clearTimeout(panelExpansionTimer.current);
       if (isFolderType(item.type)) {
         panelExpansionTimer.current = setTimeout(() => {
           setPanelExpanded(true);

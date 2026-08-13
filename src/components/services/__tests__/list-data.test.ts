@@ -2,6 +2,7 @@ import {
   isSameResourceQuery,
   deriveTableFields,
   findPageRow,
+  downloadResourceRows,
 } from "../list-data-utils";
 
 // Guards the placeholderData gate: previous page rows may only carry over when the
@@ -54,9 +55,11 @@ describe("deriveTableFields", () => {
     expect(fields.find((f) => f.id === "taxon_lineage_ids")).toBeUndefined();
   });
 
-  it("returns [] for an unknown resource", () => {
+  it("returns a stable empty array for unknown resources", () => {
     const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
-    expect(deriveTableFields("not_a_resource")).toEqual([]);
+    const first = deriveTableFields("not_a_resource");
+    expect(first).toEqual([]);
+    expect(deriveTableFields("another_unknown_resource")).toBe(first);
     spy.mockRestore();
   });
 });
@@ -83,6 +86,42 @@ describe("genome_sequence field registry", () => {
     expect(ids).toContain("accession");
     expect(ids).toContain("gc_content");
     expect(ids).toContain("length");
+  });
+});
+
+describe("downloadResourceRows", () => {
+  it("requests only exported columns and omits the selection column", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify([{ genome_id: "1", genome_name: "Example" }]),
+        {
+          status: 200,
+        },
+      ),
+    );
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:download");
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(
+      () => undefined,
+    );
+
+    await downloadResourceRows({
+      dataApi: "https://data.example",
+      resource: "genome",
+      query: "eq(public,true)",
+      totalItems: 1,
+      format: "csv",
+      visibleColumns: ["__select__", "genome_id", "genome_name"],
+      fields: [
+        { id: "genome_id", label: "Genome ID", visible: true },
+        { id: "genome_name", label: "Genome Name", visible: true },
+      ],
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://data.example/genome/?eq(public,true)&select(genome_id,genome_name)",
+      expect.any(Object),
+    );
   });
 });
 

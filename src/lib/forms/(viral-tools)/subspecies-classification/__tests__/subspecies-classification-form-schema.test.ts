@@ -38,4 +38,12 @@ describe("subspeciesClassificationFormSchema", () => {
     });
     expect(result.success).toBe(false);
   });
+
+  it("safeParse rejects malformed FASTA data", () => {
+    const result = subspeciesClassificationFormSchema.safeParse({
+      ...validPayload,
+      input_fasta_data: ">seq\n1234",
+    });
+    expect(result.success).toBe(false);
+  });
 });

@@ -60,7 +60,7 @@ export function ViralGenomeTreeMetadata({
           <div className="space-y-4">
             <div>
               <Label>Metadata Table Fields</Label>
-              <p className="pt-2 pb-4 text-sm text-muted-foreground">
+              <p className="text-muted-foreground pt-2 pb-4 text-sm">
                 These fields will appear as options in the phyloxml
                 visualization
               </p>
@@ -84,7 +84,7 @@ export function ViralGenomeTreeMetadata({
                         field.isLabel ? (
                           <SelectLabel
                             key={field.value}
-                            className="mb-1 border-b border-border pb-1.5 font-medium"
+                            className="border-border mb-1 border-b pb-1.5 font-medium"
                           >
                             {field.label}
                           </SelectLabel>
@@ -98,6 +98,7 @@ export function ViralGenomeTreeMetadata({
                   </SelectContent>
                 </Select>
                 <Button
+                  type="button"
                   size="icon"
                   variant="outline"
                   aria-label="Add metadata field"
@@ -125,13 +126,14 @@ export function ViralGenomeTreeMetadata({
                     <TableCell className="py-1">{field.name}</TableCell>
                     <TableCell className="py-1 text-center">
                       <Button
+                        type="button"
                         variant="ghost"
                         size="icon"
                         aria-label="Remove metadata field"
                         onClick={() => {
                           removeMetadataField(field.id);
                         }}
-                        className="size-6 text-destructive hover:text-destructive/90"
+                        className="text-destructive hover:text-destructive/90 size-6"
                       >
                         <X size={14} />
                       </Button>

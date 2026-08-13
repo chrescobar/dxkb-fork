@@ -60,6 +60,9 @@ function Carousel({
   );
   const [canScrollPrev, setCanScrollPrev] = React.useState(false);
   const [canScrollNext, setCanScrollNext] = React.useState(false);
+  const notifyApi = React.useEffectEvent((carouselApi: CarouselApi) => {
+    setApi?.(carouselApi);
+  });
 
   const scrollPrev = () => {
     api?.scrollPrev();
@@ -79,13 +82,9 @@ function Carousel({
     }
   };
 
-  const setCarouselRef = (node: HTMLDivElement | null) => {
-    carouselRef(node);
-    if (node && api) setApi?.(api);
-  };
-
   React.useEffect(() => {
     if (!api) return;
+    notifyApi(api);
     const onSelect = () => {
       setCanScrollPrev(api.canScrollPrev());
       setCanScrollNext(api.canScrollNext());
@@ -103,7 +102,7 @@ function Carousel({
   return (
     <CarouselContext.Provider
       value={{
-        carouselRef: setCarouselRef,
+        carouselRef,
         api: api,
         opts,
         orientation: orientation,

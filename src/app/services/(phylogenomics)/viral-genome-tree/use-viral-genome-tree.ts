@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useSelector } from "@tanstack/react-store";
 import { toast } from "sonner";
@@ -35,6 +35,7 @@ export function useViralGenomeTree() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
   const [isValidatingGenomeGroup, setIsValidatingGenomeGroup] = useState(false);
+  const genomeGroupRequest = useRef(0);
 
   const form = useForm({
     defaultValues: ViralGenomeTree.defaultViralGenomeTreeFormValues,
@@ -57,6 +58,8 @@ export function useViralGenomeTree() {
   }, [metadataFields, form]);
 
   function handleReset() {
+    genomeGroupRequest.current += 1;
+    setIsValidatingGenomeGroup(false);
     form.reset(ViralGenomeTree.defaultViralGenomeTreeFormValues);
     setSelectedGenomeGroupObject(null);
     setSelectedAlignedFastaObject(null);
@@ -158,9 +161,11 @@ export function useViralGenomeTree() {
       return;
     }
 
+    const request = ++genomeGroupRequest.current;
     setIsValidatingGenomeGroup(true);
     try {
       const genomes = await fetchGenomeGroupMembers(inputValue);
+      if (request !== genomeGroupRequest.current) return;
       if (genomes.length === 0) {
         toast.error("Empty genome group", {
           description: "The selected genome group is empty.",
@@ -173,6 +178,7 @@ export function useViralGenomeTree() {
       const validation = await validateViralGenomes(genomeIds, {
         maxGenomeLength: 250000,
       });
+      if (request !== genomeGroupRequest.current) return;
       if (!validation.allValid) {
         const errors = Object.values(validation.errors).filter(Boolean);
         toast.error("Genome group validation failed", {
@@ -196,6 +202,7 @@ export function useViralGenomeTree() {
         closeButton: true,
       });
     } catch (error) {
+      if (request !== genomeGroupRequest.current) return;
       console.error("Failed to validate genome group:", error);
       toast.error("Validation error", {
         description:
@@ -205,7 +212,9 @@ export function useViralGenomeTree() {
         closeButton: true,
       });
     }
-    setIsValidatingGenomeGroup(false);
+    if (request === genomeGroupRequest.current) {
+      setIsValidatingGenomeGroup(false);
+    }
   }
 
   function handleAddSequence(source: "aligned" | "unaligned") {

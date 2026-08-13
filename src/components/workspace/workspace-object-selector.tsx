@@ -37,7 +37,6 @@ function useWorkspaceObjectSelector({
   value,
 }: WorkspaceObjectSelectorProps) {
   const { user } = useAuth();
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [showDropdown, setShowDropdown] = React.useState(false);
   const [isManualTrigger, setIsManualTrigger] = React.useState(false);
   const selectedObjectRef = React.useRef<WorkspaceObject | null>(null);
@@ -342,7 +341,6 @@ function useWorkspaceObjectSelector({
       loading={loading}
       error={error}
       showDropdown={showDropdown}
-      isDialogOpen={isDialogOpen}
       highlightedIndex={highlightedIndex}
       dropdownLayout={{
         ...dropdownPosition,
@@ -364,7 +362,6 @@ function useWorkspaceObjectSelector({
       }}
       onInputKeyDown={handleInputKeyDown}
       onToggleDropdown={handleManualDropdownToggle}
-      onDialogOpenChange={setIsDialogOpen}
       onObjectClick={(object) => {
         handleObjectClick(object, !onSelectedObjectChange);
       }}

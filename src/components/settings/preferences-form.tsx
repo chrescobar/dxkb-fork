@@ -40,7 +40,7 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
 
     setIsSubmitting(true);
     const hasExistingSettings = profile.settings !== undefined;
-    const response = await apiFetch("/api/auth/profile", {
+    await apiFetch("/api/auth/profile", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify([
@@ -51,23 +51,26 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
         },
       ]),
     })
-      .catch(() => null)
+      .then(async (response) => {
+        if (!response.ok) {
+          const err = (await response.json()) as {
+            error?: string;
+            message?: string;
+          };
+          toast.error(
+            err.error ?? err.message ?? "Failed to update preferences.",
+          );
+          return;
+        }
+        toast.success("Preferences updated successfully.");
+        await queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+      })
+      .catch(() => {
+        toast.error("Failed to update preferences.");
+      })
       .finally(() => {
         setIsSubmitting(false);
       });
-
-    if (!response) {
-      toast.error("Failed to update preferences.");
-    } else if (!response.ok) {
-      const err = (await response.json()) as {
-        error?: string;
-        message?: string;
-      };
-      toast.error(err.error ?? err.message ?? "Failed to update preferences.");
-    } else {
-      toast.success("Preferences updated successfully.");
-      await queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-    }
   };
 
   return (
@@ -106,7 +109,7 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
                 </Button>
               )}
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Set a default folder for job outputs. Leave empty to use home
               folder.
             </p>

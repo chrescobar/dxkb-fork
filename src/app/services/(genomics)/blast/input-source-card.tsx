@@ -9,7 +9,6 @@ import { blastServiceInputSource } from "@/lib/services/info/blast";
 import type { BlastFormData } from "@/lib/forms/(genomics)/blast/blast-form-schema";
 import type { FastaValidationResult } from "@/lib/fasta-validation";
 import type { WorkspaceSelectorPreset } from "@/components/workspace/workspace-selector-presets";
-import type { WorkspaceObject } from "@/lib/services/workspace/types";
 import type { BlastForm } from "./page";
 import { Choice } from "./choice";
 
@@ -101,8 +100,8 @@ export function InputSourceCard({
                         preset={preset}
                         placeholder="Select a FASTA file to search..."
                         value={item.state.value}
-                        onObjectSelect={(object: WorkspaceObject) => {
-                          item.handleChange(object.path);
+                        onSelectedObjectChange={(object) => {
+                          item.handleChange(object?.path ?? "");
                         }}
                       />
                       <FieldErrors field={item} />
@@ -118,8 +117,8 @@ export function InputSourceCard({
                         preset="featureGroup"
                         placeholder="Select a feature group to search..."
                         value={item.state.value}
-                        onObjectSelect={(object: WorkspaceObject) => {
-                          item.handleChange(object.path);
+                        onSelectedObjectChange={(object) => {
+                          item.handleChange(object?.path ?? "");
                         }}
                       />
                       <FieldErrors field={item} />

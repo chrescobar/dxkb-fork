@@ -55,34 +55,44 @@ const OutputFolder = ({
   const [nameTaken, setNameTaken] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
-
-  const runCheck = useEffectEvent(async (folderPath: string, name: string) => {
-    const fullPath = buildFullPath(folderPath, name);
-    if (!fullPath) {
-      setNameTaken(false);
-      onValidationChange?.(true);
-      return;
-    }
-
-    abortControllerRef.current?.abort();
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-    setIsChecking(true);
-    setNameTaken(false);
-
-    const exists = await checkWorkspaceObjectExists(fullPath, {
-      signal: controller.signal,
-    });
-
-    if (controller.signal.aborted) return;
-
-    setIsChecking(false);
-    setNameTaken(exists);
-    onValidationChange?.(!exists);
+  const checkIdRef = useRef(0);
+  const notifyValidation = useEffectEvent((valid: boolean) => {
+    onValidationChange?.(valid);
   });
+
+  const runCheck = useEffectEvent(
+    async (folderPath: string, name: string, checkId: number) => {
+      const fullPath = buildFullPath(folderPath, name);
+      if (!fullPath) {
+        setNameTaken(false);
+        notifyValidation(true);
+        return;
+      }
+
+      abortControllerRef.current?.abort();
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+      setIsChecking(true);
+      setNameTaken(false);
+
+      const exists = await checkWorkspaceObjectExists(fullPath, {
+        signal: controller.signal,
+      });
+
+      if (controller.signal.aborted || checkId !== checkIdRef.current) return;
+
+      setIsChecking(false);
+      setNameTaken(exists);
+      notifyValidation(!exists);
+    },
+  );
 
   const needsValidation =
     variant === "name" && !!outputFolderPath.trim() && !!value.trim();
+  const validationKey = needsValidation ? `${outputFolderPath}\0${value}` : "";
+  const [pendingValidationKey, setPendingValidationKey] = useState("");
+  const pendingValidation =
+    needsValidation && pendingValidationKey !== validationKey;
   const [prevNeedsValidation, setPrevNeedsValidation] =
     useState(needsValidation);
   if (prevNeedsValidation && !needsValidation) {
@@ -94,18 +104,22 @@ const OutputFolder = ({
   }
 
   useEffect(() => {
+    const checkId = ++checkIdRef.current;
+    abortControllerRef.current?.abort();
     if (!needsValidation) {
-      onValidationChange?.(true);
+      notifyValidation(true);
       return;
     }
 
+    notifyValidation(false);
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
 
     debounceRef.current = setTimeout(() => {
       debounceRef.current = null;
-      void runCheck(outputFolderPath, value);
+      setPendingValidationKey(validationKey);
+      void runCheck(outputFolderPath, value, checkId);
     }, debounceMs);
 
     return () => {
@@ -114,7 +128,7 @@ const OutputFolder = ({
       }
       abortControllerRef.current?.abort();
     };
-  }, [needsValidation, outputFolderPath, value, onValidationChange]);
+  }, [needsValidation, outputFolderPath, value, validationKey]);
 
   const resolvedTitle = variant === "default" ? "Output Folder" : "Output Name";
 
@@ -172,14 +186,14 @@ const OutputFolder = ({
                 value={value}
                 onChange={(e) => onChange?.(e.target.value)}
                 disabled={disabled}
-                aria-invalid={nameTaken}
+                aria-invalid={pendingValidation || isChecking || nameTaken}
                 aria-label={resolvedTitle}
               />
             </div>
           )}
         </div>
         {variant === "name" && !isChecking && nameTaken && (
-          <p className="text-sm text-destructive" role="alert">
+          <p className="text-destructive text-sm" role="alert">
             {nameTakenMessage}
           </p>
         )}

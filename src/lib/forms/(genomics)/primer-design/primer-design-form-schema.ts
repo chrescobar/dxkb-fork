@@ -1,6 +1,9 @@
 import { z } from "zod";
 
 const outputNameInvalidChars = /[\\/]/;
+const nonEmptyTokens = z
+  .array(z.string())
+  .transform((values) => values.filter(Boolean));
 
 export const primerDesignFormSchema = z
   .object({
@@ -8,18 +11,24 @@ export const primerDesignFormSchema = z
       .string()
       .min(1, "Output name is required")
       .refine((value) => !outputNameInvalidChars.test(value), {
-          error: "Output name cannot contain slashes"
-    }),
+        error: "Output name cannot contain slashes",
+      }),
     output_path: z.string().prefault(""),
     input_type: z.enum(["sequence_text", "workplace_fasta", "database_id"]),
     sequence_input: z.string().prefault(""),
     SEQUENCE_ID: z.string().prefault("").optional(),
-    SEQUENCE_TARGET: z.array(z.string()).optional(),
-    SEQUENCE_INCLUDED_REGION: z.array(z.string()).optional(),
-    SEQUENCE_EXCLUDED_REGION: z.array(z.string()).optional(),
-    SEQUENCE_OVERLAP_JUNCTION_LIST: z.array(z.string()).optional(),
+    SEQUENCE_TARGET: nonEmptyTokens.optional(),
+    SEQUENCE_INCLUDED_REGION: nonEmptyTokens
+      .pipe(
+        z
+          .array(z.string())
+          .max(1, "Included Regions accepts only one start,length pair"),
+      )
+      .optional(),
+    SEQUENCE_EXCLUDED_REGION: nonEmptyTokens.optional(),
+    SEQUENCE_OVERLAP_JUNCTION_LIST: nonEmptyTokens.optional(),
     PRIMER_PICK_INTERNAL_OLIGO: z.boolean().optional(),
-    PRIMER_PRODUCT_SIZE_RANGE: z.array(z.string()).optional(),
+    PRIMER_PRODUCT_SIZE_RANGE: nonEmptyTokens.optional(),
     PRIMER_NUM_RETURN: z.string().optional(),
     PRIMER_MIN_SIZE: z.string().optional(),
     PRIMER_OPT_SIZE: z.string().optional(),
@@ -95,5 +104,3 @@ export const defaultPrimerDesignFormValues: Partial<PrimerDesignFormData> = {
 };
 
 export type PrimerDesignFormData = z.infer<typeof primerDesignFormSchema>;
-
-

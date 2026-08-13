@@ -14,6 +14,7 @@ export const resourceIdField: Record<string, string> = {
   serology: "id",
   sequence_feature: "id",
   ppi: "id",
+  "similar-genome-finder-results": "genome_id",
 };
 
 export function getIdField(resource: string): string {

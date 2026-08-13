@@ -403,7 +403,11 @@ function getFormattedContent(doc: Record<string, unknown>, dataType: string) {
 }
 
 function SearchResultsContent({ query }: { query: string }) {
-  const { data: searchResults = {}, isLoading } = useQuery({
+  const {
+    data: searchResults = {},
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["all-term-search-results", query],
     queryFn: () => fetchSearchResults(query),
     enabled: Boolean(query),
@@ -426,6 +430,13 @@ function SearchResultsContent({ query }: { query: string }) {
       {isLoading ? (
         <div className="py-20 text-center">
           <p className="text-muted-foreground">Loading results...</p>
+        </div>
+      ) : isError ? (
+        <div className="py-20 text-center" role="alert">
+          <h2 className="mb-4 text-2xl font-medium">Search unavailable</h2>
+          <p className="text-muted-foreground">
+            Search results could not be loaded. Please try again.
+          </p>
         </div>
       ) : validResults.length === 0 ? (
         <>
@@ -459,7 +470,7 @@ function SearchResultsContent({ query }: { query: string }) {
               return (
                 <Card
                   key={dataType}
-                  className="gap-0 rounded-lg border bg-card px-4 py-0 text-card-foreground shadow-sm"
+                  className="bg-card text-card-foreground gap-0 rounded-lg border px-4 py-0 shadow-sm"
                 >
                   <CardHeader className="flex flex-row items-center justify-between border-b p-6">
                     <div className="flex items-center gap-2">
@@ -468,7 +479,7 @@ function SearchResultsContent({ query }: { query: string }) {
                         {labelsByType[dataType]}
                       </CardTitle>
                     </div>
-                    <Badge className="h-8 max-w-fit min-w-8 bg-secondary font-semibold text-white">
+                    <Badge className="bg-secondary h-8 max-w-fit min-w-8 font-semibold text-white">
                       {numFound}
                     </Badge>
                   </CardHeader>

@@ -1,0 +1,25 @@
+src/components/shared/data-table.tsx
+  s_daa769dfcefa0d::t_fcae2e1b23e9dd 1017-1019,1021-1029
+  s_daa769dfcefa0d::t_6b8d44d0ce2a84 949-954
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "1bd8cc5a10aaece0f698fa6458748f258e08c9a4",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_daa769dfcefa0d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_004328e2affexxrmHPicWawBHc",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

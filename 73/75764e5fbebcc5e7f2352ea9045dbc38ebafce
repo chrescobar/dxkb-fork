@@ -1,0 +1,34 @@
+src/app/services/(genomics)/genome-alignment/__tests__/page-selection-races.test.tsx
+  s_c301a9aa675ef8::t_b95788fd15c80d 1-73,75-114,117-134,137-141
+  s_c301a9aa675ef8::t_3d13f4ed2f101d 74
+  s_c301a9aa675ef8::t_36909d975de859 115-116,135-136
+src/app/services/(genomics)/genome-alignment/page.tsx
+  s_c301a9aa675ef8::t_d912b6ade639c5 120,124,215
+  s_c301a9aa675ef8::t_697ebe5b3bb89c 61
+  s_c301a9aa675ef8::t_f18774f4140ce8 158,165-169
+  s_c301a9aa675ef8::t_d0d6b08a684601 202-206,216
+  s_c301a9aa675ef8::t_a1e1b02f79484c 86
+  s_c301a9aa675ef8::t_0d6a8e43cce5e1 194,196-200
+  s_c301a9aa675ef8::t_d5d803db588dbd 60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "7375764e5fbebcc5e7f2352ea9045dbc38ebafce",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_c301a9aa675ef8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_003e2190effe9qrbUZ1z715gCK",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

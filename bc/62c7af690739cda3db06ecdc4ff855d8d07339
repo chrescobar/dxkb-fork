@@ -1,0 +1,54 @@
+src/components/filterbar/selected-filters.tsx
+  s_c301a9aa675ef8::t_184805d72a273b 22
+src/components/taxonomy/taxon-name-selector.tsx
+  s_c301a9aa675ef8::t_0965a8bd5876b5 330-331,333-334,337-338
+src/components/shared/file-table.tsx
+  s_c301a9aa675ef8::t_2d3c0c58346a4c 298-301
+src/components/footers/footer.tsx
+  s_c301a9aa675ef8::t_2c003203fa68ba 11-14,17-21
+src/components/auth/su-login-dialog.tsx
+  s_c301a9aa675ef8::t_9e9a25cbc81e6e 38-52
+src/components/taxonomy/tax-id-selector.tsx
+  s_c301a9aa675ef8::t_8cd16a19061ef9 213-214,216,218,220,222
+src/components/search/welcome-search.tsx
+  s_c301a9aa675ef8::t_4aaeb6e6b8dbdf 34
+src/components/navbars/desktop-navbar.tsx
+  s_c301a9aa675ef8::t_9d66b23c01a756 111
+src/components/workspace/workspace-object-selector.tsx
+  s_c301a9aa675ef8::t_d23880849327bf 487-488,490-491,493-494
+src/components/shared/data-table.tsx
+  s_c301a9aa675ef8::t_5d17956c5e0394 381-384
+src/app/services/(genomics)/similar-genome-finder/actions.ts
+  s_c301a9aa675ef8::t_5936cdfa88795b 194
+src/app/(footer)/updates/page.tsx
+  s_c301a9aa675ef8::t_e2daa8e9b9dffc 213,219,227-230,232-233
+.cursorrules
+  s_c301a9aa675ef8::t_b5dba7f91db544 31
+src/app/services/(genomics)/genome-alignment/page.tsx
+  s_c301a9aa675ef8::t_c40c5929fb049c 135,144
+  s_c301a9aa675ef8::t_4170fa9b58c4a0 3
+  s_c301a9aa675ef8::t_9bd1ad7f86e367 79
+  s_c301a9aa675ef8::t_baf89dbf4650e8 113-134,136-143,145-155
+  s_c301a9aa675ef8::t_0a4393267d7c45 59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "bc62c7af690739cda3db06ecdc4ff855d8d07339",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_c301a9aa675ef8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_003e2190effe9qrbUZ1z715gCK",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

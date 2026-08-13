@@ -57,6 +57,8 @@ const maxGenomes = 20;
 export default function GenomeAlignmentServicePage() {
   const [selectedGenomes, setSelectedGenomes] = useState<GenomeSummary[]>([]);
   const selectedGenomesRef = useRef(selectedGenomes);
+  const selectionRevisionRef = useRef(0);
+  const groupRequestRevisionRef = useRef(0);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
   const [isFetchingGroup, setIsFetchingGroup] = useState(false);
@@ -81,6 +83,7 @@ export default function GenomeAlignmentServicePage() {
   }, [selectedGenomes, form]);
 
   const replaceSelectedGenomes = (genomes: GenomeSummary[]) => {
+    selectionRevisionRef.current += 1;
     selectedGenomesRef.current = genomes;
     setSelectedGenomes(genomes);
   };
@@ -114,9 +117,11 @@ export default function GenomeAlignmentServicePage() {
     }
 
     setIsFetchingGroup(true);
+    const requestRevision = ++groupRequestRevisionRef.current;
 
     await fetchGenomeGroupMembers(object.path)
       .then((genomes) => {
+        if (requestRevision !== groupRequestRevisionRef.current) return;
         if (!genomes.length) {
           toast.error("Selected genome group is empty");
           return;
@@ -150,13 +155,18 @@ export default function GenomeAlignmentServicePage() {
         setLastSelectedGroup(object.name || object.path);
       })
       .catch((error: unknown) => {
+        if (requestRevision !== groupRequestRevisionRef.current) return;
         const message =
           error instanceof Error
             ? error.message
             : "Failed to load genome group";
         toast.error(message);
       })
-      .finally(() => { setIsFetchingGroup(false); });
+      .finally(() => {
+        if (requestRevision === groupRequestRevisionRef.current) {
+          setIsFetchingGroup(false);
+        }
+      });
   };
 
   const runtime = useServiceRuntime({
@@ -181,12 +191,19 @@ export default function GenomeAlignmentServicePage() {
           ? (rerunData.genome_ids as string[])
           : [];
         if (genomeIds.length > 0) {
+          const selectionRevision = selectionRevisionRef.current;
           fetchGenomesByIds(genomeIds)
-            .then((genomes) => { replaceSelectedGenomes(genomes); })
+            .then((genomes) => {
+              if (selectionRevision === selectionRevisionRef.current) {
+                replaceSelectedGenomes(genomes);
+              }
+            })
             .catch(() => {
-              toast.error("Could not restore genomes from previous job", {
-                description: "Please re-add your genomes manually.",
-              });
+              if (selectionRevision === selectionRevisionRef.current) {
+                toast.error("Could not restore genomes from previous job", {
+                  description: "Please re-add your genomes manually.",
+                });
+              }
             });
         }
       },
@@ -195,6 +212,8 @@ export default function GenomeAlignmentServicePage() {
   const { isSubmitting, jobParamsDialogProps } = runtime;
 
   const handleReset = () => {
+    groupRequestRevisionRef.current += 1;
+    setIsFetchingGroup(false);
     form.reset(defaultGenomeAlignmentFormValues);
     replaceSelectedGenomes([]);
     setShowAdvanced(false);

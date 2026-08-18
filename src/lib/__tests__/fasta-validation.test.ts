@@ -94,6 +94,13 @@ describe("FASTA Validation", () => {
       expect(result.status).toBe("need_protein");
     });
 
+    it("rejects RNA and IUPAC nucleotide FASTA as protein-only input", () => {
+      const result = validateProteinFasta(">rna\nAUGCURYSWKMBDHVN");
+
+      expect(result.valid).toBe(false);
+      expect(result.status).toBe("need_protein");
+    });
+
     it("should handle empty input", () => {
       const result = validateFasta("", "dna");
 

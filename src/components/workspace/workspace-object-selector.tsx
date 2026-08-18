@@ -117,6 +117,7 @@ function useWorkspaceObjectSelector({
     setDisplayName(objectName);
     onSelectedObjectChange?.(object);
     setShowDropdown(false);
+    setHighlightedIndex(-1);
 
     // If immediateSelect is true or onObjectSelect is provided without onSelectedObjectChange,
     // call onObjectSelect immediately (for OutputFolder use case)

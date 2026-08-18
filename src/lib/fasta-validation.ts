@@ -25,6 +25,8 @@ const defaultOptions: Required<FastaValidationOptions> = {
   firstName: "record_1",
 };
 
+const nucleotideAlphabet = /^[ACGTURYSWKMBDHVN-]+$/i;
+
 /**
  * Cleans FASTA text by removing unnecessary whitespace
  */
@@ -149,7 +151,7 @@ export function validateFasta(
     nextseq -= 1;
     nextseq = Math.max(0, nextseq);
 
-    if (seqType === "dna" && !/^[ACGTURYSWKMBDHVN-]+$/i.test(arr[i])) {
+    if (seqType === "dna" && !nucleotideAlphabet.test(arr[i])) {
       result.status = "need_dna";
       result.message = `Invalid nucleotide letters on line ${String(i + 1)}.`;
       return result;
@@ -193,7 +195,10 @@ export function validateProteinFasta(
   const nucleotideLine = result.trimFasta
     .split("\n")
     .findIndex(
-      (line) => line.length > 0 && !line.startsWith(">") && isDNA(line),
+      (line) =>
+        line.length > 0 &&
+        !line.startsWith(">") &&
+        nucleotideAlphabet.test(line),
     );
   if (nucleotideLine >= 0) {
     return {

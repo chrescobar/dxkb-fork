@@ -109,10 +109,10 @@ test.describe("blast submission (sequence-input family)", () => {
       .getByRole("button", { name: "Show suggestions" })
       .click();
     await expect(
-      page.getByRole("button", { name: /first-folder/i }),
+      page.getByRole("option", { name: /first-folder/i }),
     ).toBeVisible();
     await expect(
-      page.getByRole("button", { name: /second-folder/i }),
+      page.getByRole("option", { name: /second-folder/i }),
     ).toBeVisible();
 
     expect(

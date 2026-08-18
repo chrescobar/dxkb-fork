@@ -3,13 +3,18 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { WorkspaceObjectSelectorView } from "../workspace-object-selector-view";
 import type { WorkspaceObject } from "@/lib/services/workspace/types";
 
-function renderView(objects: WorkspaceObject[]) {
+function renderView(
+  objects: WorkspaceObject[],
+  overrides: Partial<
+    React.ComponentProps<typeof WorkspaceObjectSelectorView>
+  > = {},
+) {
   const onObjectClick = vi.fn();
   const itemRefs = { current: [] } as RefObject<(HTMLButtonElement | null)[]>;
   const consoleError = vi.mocked(console.error);
   consoleError.mockClear();
 
-  render(
+  const renderResult = render(
     <WorkspaceObjectSelectorView
       placeholder="Search workspace objects"
       validationError={null}
@@ -35,10 +40,11 @@ function renderView(objects: WorkspaceObject[]) {
       onToggleDropdown={vi.fn()}
       onObjectClick={onObjectClick}
       onObjectHighlight={vi.fn()}
+      {...overrides}
     />,
   );
 
-  return { consoleError, onObjectClick };
+  return { consoleError, onObjectClick, ...renderResult };
 }
 
 describe("WorkspaceObjectSelectorView", () => {
@@ -74,5 +80,61 @@ describe("WorkspaceObjectSelectorView", () => {
         ),
       ),
     ).toBe(false);
+  });
+
+  it("keeps option focus on the combobox and exposes only a rendered active option", () => {
+    const objects = [
+      {
+        id: "object-id",
+        name: "reads.fq",
+        path: "/alice@bvbrc/home/reads.fq",
+        type: "reads",
+        isDirectory: false,
+      },
+    ] satisfies WorkspaceObject[];
+    const { rerender } = renderView(objects, {
+      listboxId: "workspace-listbox",
+      highlightedIndex: 0,
+    });
+
+    expect(screen.getByRole("option")).toHaveAttribute("tabindex", "-1");
+    expect(screen.getByRole("combobox")).toHaveAttribute(
+      "aria-activedescendant",
+      "workspace-listbox-option-0",
+    );
+
+    rerender(
+      <WorkspaceObjectSelectorView
+        placeholder="Search workspace objects"
+        validationError={null}
+        inputValue=""
+        searchQuery=""
+        objects={objects}
+        loading={false}
+        error={null}
+        showDropdown={false}
+        highlightedIndex={0}
+        dropdownLayout={{
+          openUpward: false,
+          maxHeight: 640,
+          rect: { top: 20, left: 20, width: 400 },
+        }}
+        listboxId="workspace-listbox"
+        inputRef={createRef<HTMLDivElement>()}
+        inputElementRef={createRef<HTMLInputElement>()}
+        dropdownRef={createRef<HTMLDivElement>()}
+        itemRefs={{ current: [] }}
+        onInputChange={vi.fn()}
+        onInputFocus={vi.fn()}
+        onInputKeyDown={vi.fn()}
+        onToggleDropdown={vi.fn()}
+        onObjectClick={vi.fn()}
+        onObjectHighlight={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("combobox")).not.toHaveAttribute(
+      "aria-activedescendant",
+    );
   });
 });

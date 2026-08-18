@@ -37,6 +37,39 @@ import clsx from "clsx";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
+export function DataTable(props: DataTableProps) {
+  "use no memo";
+  const [sizingByKey, setSizingByKey] = useState<
+    Record<string, Record<string, number>>
+  >({});
+  const columnsKey = props.columns
+    .map(({ id, label }) => `${id}:${label}`)
+    .join("|");
+  return (
+    <DataTableReset
+      key={`${props.resource}:${columnsKey}`}
+      props={props}
+      sizingByKey={sizingByKey}
+      setSizingByKey={setSizingByKey}
+    />
+  );
+}
+
+function DataTableReset({
+  props,
+  sizingByKey,
+  setSizingByKey,
+}: {
+  props: DataTableProps;
+  sizingByKey: Record<string, Record<string, number>>;
+  setSizingByKey: React.Dispatch<
+    React.SetStateAction<Record<string, Record<string, number>>>
+  >;
+}) {
+  "use no memo";
+  return useDataTableContent(props, sizingByKey, setSizingByKey);
+}
+
 // Varied bar widths for skeleton cells so loading rows read as content, not blocks.
 const skeletonWidthPcts = [60, 80, 50, 75, 90, 45, 70];
 
@@ -270,39 +303,6 @@ interface DataTableProps {
   isLoading?: boolean;
 
   onActiveRowChange?: (id: string | null) => void;
-}
-
-export function DataTable(props: DataTableProps) {
-  "use no memo";
-  const [sizingByKey, setSizingByKey] = useState<
-    Record<string, Record<string, number>>
-  >({});
-  const columnsKey = props.columns
-    .map(({ id, label }) => `${id}:${label}`)
-    .join("|");
-  return (
-    <DataTableReset
-      key={`${props.resource}:${columnsKey}`}
-      props={props}
-      sizingByKey={sizingByKey}
-      setSizingByKey={setSizingByKey}
-    />
-  );
-}
-
-function DataTableReset({
-  props,
-  sizingByKey,
-  setSizingByKey,
-}: {
-  props: DataTableProps;
-  sizingByKey: Record<string, Record<string, number>>;
-  setSizingByKey: React.Dispatch<
-    React.SetStateAction<Record<string, Record<string, number>>>
-  >;
-}) {
-  "use no memo";
-  return useDataTableContent(props, sizingByKey, setSizingByKey);
 }
 
 function useDataTableContent(

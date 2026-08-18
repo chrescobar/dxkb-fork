@@ -14,6 +14,103 @@ import { Input } from "@/components/ui/input";
 import type { WorkspaceObject } from "@/lib/services/workspace/types";
 import { cn } from "@/lib/utils";
 
+export function WorkspaceObjectSelectorView({
+  id,
+  className,
+  placeholder,
+  validationError,
+  inputValue,
+  searchQuery,
+  objects,
+  loading,
+  error,
+  showDropdown,
+  highlightedIndex,
+  dropdownLayout,
+  listboxId,
+  inputRef,
+  inputElementRef,
+  dropdownRef,
+  itemRefs,
+  onInputChange,
+  onInputFocus,
+  onInputKeyDown,
+  onToggleDropdown,
+  onObjectClick,
+  onObjectHighlight,
+}: WorkspaceObjectSelectorViewProps) {
+  const generatedListboxId = useId();
+  const resolvedListboxId = listboxId ?? generatedListboxId;
+  const hasActiveOption =
+    showDropdown &&
+    dropdownLayout.rect !== null &&
+    !loading &&
+    !error &&
+    highlightedIndex >= 0 &&
+    highlightedIndex < objects.length;
+
+  return (
+    <div className={className ? `relative ${className}` : "relative w-full"}>
+      {validationError && (
+        <Alert variant="destructive" className="mb-2">
+          <AlertCircle className="size-4" />
+          <AlertDescription>{validationError}</AlertDescription>
+        </Alert>
+      )}
+      <div className="flex flex-row items-center gap-2">
+        <div ref={inputRef} className="relative flex-1">
+          <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+          <Input
+            id={id}
+            ref={inputElementRef}
+            role="combobox"
+            aria-autocomplete="list"
+            aria-expanded={showDropdown}
+            aria-controls={resolvedListboxId}
+            aria-activedescendant={
+              hasActiveOption
+                ? `${resolvedListboxId}-option-${String(highlightedIndex)}`
+                : undefined
+            }
+            placeholder={placeholder}
+            value={inputValue}
+            onChange={onInputChange}
+            onFocus={onInputFocus}
+            onKeyDown={onInputKeyDown}
+            className="service-card-input w-full px-10"
+          />
+          <Button
+            type="button"
+            aria-label={showDropdown ? "Hide suggestions" : "Show suggestions"}
+            aria-expanded={showDropdown}
+            onClick={onToggleDropdown}
+            className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 size-4 -translate-y-1/2 transition-colors"
+          >
+            <ChevronDown
+              className={`size-4 transition-transform ${showDropdown ? "rotate-180" : ""}`}
+            />
+          </Button>
+          {showDropdown && (
+            <WorkspaceObjectDropdown
+              objects={objects}
+              loading={loading}
+              error={error}
+              searchQuery={searchQuery}
+              highlightedIndex={highlightedIndex}
+              dropdownLayout={dropdownLayout}
+              dropdownRef={dropdownRef}
+              itemRefs={itemRefs}
+              onObjectClick={onObjectClick}
+              onObjectHighlight={onObjectHighlight}
+              listboxId={resolvedListboxId}
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface DropdownLayout {
   openUpward: boolean;
   maxHeight: number;
@@ -115,6 +212,7 @@ function WorkspaceObjectDropdown({
               id={`${listboxId}-option-${String(index)}`}
               type="button"
               role="option"
+              tabIndex={-1}
               aria-selected={highlightedIndex === index}
               key={object.path}
               ref={(element) => {
@@ -151,94 +249,5 @@ function WorkspaceObjectDropdown({
       )}
     </div>,
     document.body,
-  );
-}
-
-export function WorkspaceObjectSelectorView({
-  id,
-  className,
-  placeholder,
-  validationError,
-  inputValue,
-  searchQuery,
-  objects,
-  loading,
-  error,
-  showDropdown,
-  highlightedIndex,
-  dropdownLayout,
-  listboxId,
-  inputRef,
-  inputElementRef,
-  dropdownRef,
-  itemRefs,
-  onInputChange,
-  onInputFocus,
-  onInputKeyDown,
-  onToggleDropdown,
-  onObjectClick,
-  onObjectHighlight,
-}: WorkspaceObjectSelectorViewProps) {
-  const generatedListboxId = useId();
-  const resolvedListboxId = listboxId ?? generatedListboxId;
-  return (
-    <div className={className ? `relative ${className}` : "relative w-full"}>
-      {validationError && (
-        <Alert variant="destructive" className="mb-2">
-          <AlertCircle className="size-4" />
-          <AlertDescription>{validationError}</AlertDescription>
-        </Alert>
-      )}
-      <div className="flex flex-row items-center gap-2">
-        <div ref={inputRef} className="relative flex-1">
-          <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
-          <Input
-            id={id}
-            ref={inputElementRef}
-            role="combobox"
-            aria-autocomplete="list"
-            aria-expanded={showDropdown}
-            aria-controls={resolvedListboxId}
-            aria-activedescendant={
-              highlightedIndex >= 0
-                ? `${resolvedListboxId}-option-${String(highlightedIndex)}`
-                : undefined
-            }
-            placeholder={placeholder}
-            value={inputValue}
-            onChange={onInputChange}
-            onFocus={onInputFocus}
-            onKeyDown={onInputKeyDown}
-            className="service-card-input w-full px-10"
-          />
-          <Button
-            type="button"
-            aria-label={showDropdown ? "Hide suggestions" : "Show suggestions"}
-            aria-expanded={showDropdown}
-            onClick={onToggleDropdown}
-            className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 size-4 -translate-y-1/2 transition-colors"
-          >
-            <ChevronDown
-              className={`size-4 transition-transform ${showDropdown ? "rotate-180" : ""}`}
-            />
-          </Button>
-          {showDropdown && (
-            <WorkspaceObjectDropdown
-              objects={objects}
-              loading={loading}
-              error={error}
-              searchQuery={searchQuery}
-              highlightedIndex={highlightedIndex}
-              dropdownLayout={dropdownLayout}
-              dropdownRef={dropdownRef}
-              itemRefs={itemRefs}
-              onObjectClick={onObjectClick}
-              onObjectHighlight={onObjectHighlight}
-              listboxId={resolvedListboxId}
-            />
-          )}
-        </div>
-      </div>
-    </div>
   );
 }

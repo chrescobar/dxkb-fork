@@ -557,6 +557,28 @@ describe("genome service", () => {
       expect(result.errors.missing_metadata_error).toContain("g1");
     });
 
+    it("rejects null contig and length metadata", async () => {
+      server.use(
+        http.post("/api/services/genome/validate-viral", () =>
+          HttpResponse.json({
+            results: [
+              {
+                genome_id: "g1",
+                superkingdom: "Viruses",
+                contigs: null,
+                genome_length: null,
+              },
+            ],
+          }),
+        ),
+      );
+
+      const result = await validateViralGenomes(["g1"]);
+
+      expect(result.allValid).toBe(false);
+      expect(result.errors.missing_metadata_error).toContain("g1");
+    });
+
     it("detects missing_superkingdom when superkingdom is absent", async () => {
       const mockResults = [
         { genome_id: "g1", contigs: 1, genome_length: 1000 },

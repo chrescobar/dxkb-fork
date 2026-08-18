@@ -144,28 +144,31 @@ test.describe("command palette (Cmd+K)", () => {
 
   const modifierKey = process.platform === "darwin" ? "Meta" : "Control";
 
+  async function openCommandPalette(page: import("@playwright/test").Page) {
+    const dialog = page.getByRole("dialog", { name: /command palette/i });
+    await expect(async () => {
+      if (!(await dialog.isVisible())) {
+        await page.keyboard.press(`${modifierKey}+K`);
+      }
+      await expect(dialog).toBeVisible();
+    }).toPass({ timeout: 10_000 });
+    return dialog;
+  }
+
   // The CommandPalette listener attaches in a useEffect at the root layout.
-  // On webkit the keyboard.press can race that effect, causing the keystroke
-  // to be dropped before the listener is wired. waitForLoadState("networkidle")
-  // gives React time to hydrate and run mount effects on every browser.
+  // Retrying the shortcut avoids racing hydration while still testing the
+  // keyboard interaction instead of opening the palette through another path.
   test("Cmd/Ctrl+K opens the palette with an accessible name", async ({ page }) => {
     await page.goto("/jobs");
     await page.waitForLoadState("networkidle");
 
-    await page.keyboard.press(`${modifierKey}+K`);
-
-    const dialog = page.getByRole("dialog", { name: /command palette/i });
-    await expect(dialog).toBeVisible();
+    await openCommandPalette(page);
   });
 
   test("Esc closes the palette", async ({ page }) => {
     await page.goto("/jobs");
     await page.waitForLoadState("networkidle");
-    await page.keyboard.press(`${modifierKey}+K`);
-    const dialog = page.getByRole("dialog", { name: /command palette/i });
-    // WebKit occasionally drops the keystroke even after networkidle if the useEffect
-    // listener hasn't attached yet. Give it extra headroom before declaring failure.
-    await expect(dialog).toBeVisible({ timeout: 10_000 });
+    const dialog = await openCommandPalette(page);
 
     await page.keyboard.press("Escape");
     await expect(dialog).not.toBeVisible();
@@ -174,10 +177,7 @@ test.describe("command palette (Cmd+K)", () => {
   test("ArrowDown then Enter routes to a navigation item", async ({ page }) => {
     await page.goto("/jobs");
     await page.waitForLoadState("networkidle");
-    await page.keyboard.press(`${modifierKey}+K`);
-    await expect(
-      page.getByRole("dialog", { name: /command palette/i }),
-    ).toBeVisible();
+    await openCommandPalette(page);
 
     // cmdk auto-selects the first item ("Home") on open; ArrowDown advances
     // to the next item ("Workspace" when signed in) and Enter selects it.
@@ -191,10 +191,7 @@ test.describe("command palette (Cmd+K)", () => {
   test("typing a query then Enter routes to /search", async ({ page }) => {
     await page.goto("/jobs");
     await page.waitForLoadState("networkidle");
-    await page.keyboard.press(`${modifierKey}+K`);
-    await expect(
-      page.getByRole("dialog", { name: /command palette/i }),
-    ).toBeVisible();
+    await openCommandPalette(page);
 
     await page.keyboard.type("influenza");
 
@@ -218,10 +215,7 @@ test.describe("command palette (Cmd+K)", () => {
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
     await page.goto("/jobs");
     await page.waitForLoadState("networkidle");
-    await page.keyboard.press(`${modifierKey}+K`);
-    await expect(
-      page.getByRole("dialog", { name: /command palette/i }),
-    ).toBeVisible();
+    await openCommandPalette(page);
 
     await page.evaluate(async (text) => {
       await navigator.clipboard.writeText(text);

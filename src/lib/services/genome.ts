@@ -253,8 +253,8 @@ function extractWorkspaceGetEntry(responseData: unknown): unknown {
 export interface ViralGenomeValidationResult {
   genome_id: string;
   superkingdom?: string;
-  genome_length?: number;
-  contigs?: number;
+  genome_length?: number | null;
+  contigs?: number | null;
 }
 
 export interface ViralGenomeValidationErrors {
@@ -318,7 +318,7 @@ export async function validateViralGenomes(
         }
       }
 
-      if (genome.contigs === undefined || genome.genome_length === undefined) {
+      if (genome.contigs == null || genome.genome_length == null) {
         allValid = false;
         if (!errors.missing_metadata_error) {
           errors.missing_metadata_error = `Missing contig or genome length metadata for genome_id: ${genome.genome_id}`;

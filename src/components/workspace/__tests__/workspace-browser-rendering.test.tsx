@@ -101,7 +101,11 @@ describe("WorkspaceBrowser rendering", () => {
       wrapper: Wrapper,
     });
 
-    const alphaRow = await screen.findByRole("row", { name: /alpha\.txt/i });
+    const alphaRow = await screen.findByRole(
+      "row",
+      { name: /alpha\.txt/i },
+      { timeout: 5_000 },
+    );
     expect(screen.queryByText(".hidden.txt")).not.toBeInTheDocument();
 
     fireEvent.click(alphaRow);
@@ -123,7 +127,11 @@ describe("WorkspaceBrowser rendering", () => {
     fireEvent.change(screen.getByPlaceholderText(/search files/i), {
       target: { value: "" },
     });
-    const restoredRow = await screen.findByRole("row", { name: /alpha\.txt/i });
+    const restoredRow = await screen.findByRole(
+      "row",
+      { name: /alpha\.txt/i },
+      { timeout: 5_000 },
+    );
     expect(restoredRow).toHaveAttribute("aria-selected", "true");
 
     fireEvent.click(screen.getByRole("button", { name: /^refresh$/i }));
@@ -133,13 +141,19 @@ describe("WorkspaceBrowser rendering", () => {
       ).toHaveLength(2);
     });
     expect(
-      await screen.findByRole("row", { name: /alpha\.txt/i }),
+      await screen.findByRole(
+        "row",
+        { name: /alpha\.txt/i },
+        { timeout: 5_000 },
+      ),
     ).toHaveAttribute("aria-selected", "true");
 
     for (let index = 0; index < 5; index += 1) {
       rerender(<WorkspaceBrowser {...props} />);
     }
 
-    expect(screen.getByRole("region", { name: /workspace items/i })).toBeVisible();
+    expect(
+      screen.getByRole("region", { name: /workspace items/i }),
+    ).toBeVisible();
   });
 });

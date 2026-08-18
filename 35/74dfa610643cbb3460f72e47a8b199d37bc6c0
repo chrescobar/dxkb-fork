@@ -1,0 +1,27 @@
+src/components/workspace/__tests__/workspace-browser-rendering.test.tsx
+  s_2ea142899d0997::t_ee3d884f4e8736 104-108
+  s_2ea142899d0997::t_df5c8f80f4fbc1 144-148
+  s_2ea142899d0997::t_74df0a6810416a 130-134
+  s_2ea142899d0997::t_ce6211c955d3cf 155-157
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "3574dfa610643cbb3460f72e47a8b199d37bc6c0",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_2ea142899d0997": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fea976e99ffeSfOM8xh0A718Q4",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

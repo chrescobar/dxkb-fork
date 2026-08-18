@@ -274,56 +274,77 @@ interface DataTableProps {
 
 export function DataTable(props: DataTableProps) {
   "use no memo";
+  const [sizingByKey, setSizingByKey] = useState<
+    Record<string, Record<string, number>>
+  >({});
   const columnsKey = props.columns
     .map(({ id, label }) => `${id}:${label}`)
     .join("|");
   return (
-    <DataTableReset key={`${props.resource}:${columnsKey}`} props={props} />
+    <DataTableReset
+      key={`${props.resource}:${columnsKey}`}
+      props={props}
+      sizingByKey={sizingByKey}
+      setSizingByKey={setSizingByKey}
+    />
   );
 }
 
-function DataTableReset({ props }: { props: DataTableProps }) {
+function DataTableReset({
+  props,
+  sizingByKey,
+  setSizingByKey,
+}: {
+  props: DataTableProps;
+  sizingByKey: Record<string, Record<string, number>>;
+  setSizingByKey: React.Dispatch<
+    React.SetStateAction<Record<string, Record<string, number>>>
+  >;
+}) {
   "use no memo";
-  return useDataTableContent(props);
+  return useDataTableContent(props, sizingByKey, setSizingByKey);
 }
 
-function useDataTableContent({
-  id: _id,
-  data,
-  columns,
-  totalItems,
-  resource,
-  errorMessage,
-  onSelectionChange,
-  onGenomeSelect,
-  selectedIds,
-  pageIndex,
-  pageSize,
-  onPageChange,
-  sorting: controlledSorting,
-  onSortingChange,
-  columnOrder,
-  onColumnOrderChange,
-  columnVisibility: controlledVisibility,
-  onColumnVisibilityChange: onColumnVisibilityChangeProp,
-  rowSelection: controlledRowSelection,
-  onRowSelectionChange,
-  isAllPagesSelected = false,
-  onAllPagesSelectionChange,
-  totalSelectedCount,
-  onDownloadAll,
-  isLoading = false,
-  onActiveRowChange,
-}: DataTableProps) {
+function useDataTableContent(
+  {
+    id: _id,
+    data,
+    columns,
+    totalItems,
+    resource,
+    errorMessage,
+    onSelectionChange,
+    onGenomeSelect,
+    selectedIds,
+    pageIndex,
+    pageSize,
+    onPageChange,
+    sorting: controlledSorting,
+    onSortingChange,
+    columnOrder,
+    onColumnOrderChange,
+    columnVisibility: controlledVisibility,
+    onColumnVisibilityChange: onColumnVisibilityChangeProp,
+    rowSelection: controlledRowSelection,
+    onRowSelectionChange,
+    isAllPagesSelected = false,
+    onAllPagesSelectionChange,
+    totalSelectedCount,
+    onDownloadAll,
+    isLoading = false,
+    onActiveRowChange,
+  }: DataTableProps,
+  sizingByKey: Record<string, Record<string, number>>,
+  setSizingByKey: React.Dispatch<
+    React.SetStateAction<Record<string, Record<string, number>>>
+  >,
+) {
   "use no memo";
 
   // Column sizing kept per resource+columns. The persisted instance keeps this across
   // tab switches, so: (a) gating on the key in the render path means shared column IDs
   // never inherit another resource's widths (no stale-width frame), and (b) returning
   // to an already-sized tab reuses its widths immediately (no revisit snap).
-  const [sizingByKey, setSizingByKey] = useState<
-    Record<string, Record<string, number>>
-  >({});
   // resource makes shared column IDs distinct across tabs. Labels are static per
   // resource (derived from the module-level resourceFields[resource]), so id-order
   // alone pins the header estimates too — no need to include labels in the key.
@@ -434,7 +455,7 @@ function useDataTableContent({
       );
     }
     setSizingByKey((current) => ({ ...current, [sizingKey]: next }));
-  }, [columns, data, sizingKey]);
+  }, [columns, data, sizingKey, setSizingByKey]);
 
   // Track the scroll container's width so columns can stretch to fill it.
   // Fires on side-panel resize, vertical-menu collapse, and window resize.

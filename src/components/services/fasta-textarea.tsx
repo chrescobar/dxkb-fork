@@ -57,6 +57,8 @@ export function FastaTextarea({
   });
 
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setValidationResult(null);
+    onValidationChange?.(false, null);
     onChange(event.target.value);
   };
 

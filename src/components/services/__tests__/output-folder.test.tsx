@@ -68,6 +68,45 @@ describe("OutputFolder name validation", () => {
     expect(onValidationChange).toHaveBeenLastCalledWith(false);
   });
 
+  it("clears a stale name conflict while validating a new key", async () => {
+    checkWorkspaceObjectExistsMock
+      .mockResolvedValueOnce(true)
+      .mockResolvedValueOnce(false);
+    const { rerender } = render(
+      <OutputFolder
+        title={false}
+        variant="name"
+        value="result"
+        outputFolderPath="/user/home"
+      />,
+    );
+
+    await finishDebounce();
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "An object with this name already exists in the selected folder.",
+    );
+
+    rerender(
+      <OutputFolder
+        title={false}
+        variant="name"
+        value="result-2"
+        outputFolderPath="/user/home"
+      />,
+    );
+
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    await finishDebounce();
+    expect(checkWorkspaceObjectExistsMock).toHaveBeenLastCalledWith(
+      "/user/home/result-2",
+      expect.any(Object),
+    );
+    expect(screen.getByRole("textbox")).toHaveAttribute(
+      "aria-invalid",
+      "false",
+    );
+  });
+
   it("keeps lookup failures invalid and allows a later retry", async () => {
     checkWorkspaceObjectExistsMock
       .mockRejectedValueOnce(new Error("network unavailable"))
@@ -100,6 +139,8 @@ describe("OutputFolder name validation", () => {
         onValidationChange={onValidationChange}
       />,
     );
+
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     await finishDebounce();
 
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();

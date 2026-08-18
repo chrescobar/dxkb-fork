@@ -1,6 +1,11 @@
 "use client";
 
-import type { ChangeEvent, KeyboardEvent, RefObject } from "react";
+import {
+  useId,
+  type ChangeEvent,
+  type KeyboardEvent,
+  type RefObject,
+} from "react";
 import { createPortal } from "react-dom";
 import { AlertCircle, ChevronDown, Loader2, Search } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -16,6 +21,7 @@ interface DropdownLayout {
 }
 
 interface WorkspaceObjectSelectorViewProps {
+  id?: string;
   className?: string;
   placeholder: string;
   validationError: string | null;
@@ -27,6 +33,7 @@ interface WorkspaceObjectSelectorViewProps {
   showDropdown: boolean;
   highlightedIndex: number;
   dropdownLayout: DropdownLayout;
+  listboxId?: string;
   inputRef: RefObject<HTMLDivElement | null>;
   inputElementRef: RefObject<HTMLInputElement | null>;
   dropdownRef: RefObject<HTMLDivElement | null>;
@@ -50,6 +57,7 @@ function WorkspaceObjectDropdown({
   itemRefs,
   onObjectClick,
   onObjectHighlight,
+  listboxId,
 }: Pick<
   WorkspaceObjectSelectorViewProps,
   | "objects"
@@ -62,13 +70,15 @@ function WorkspaceObjectDropdown({
   | "itemRefs"
   | "onObjectClick"
   | "onObjectHighlight"
->) {
+> & { listboxId: string }) {
   const { rect, openUpward, maxHeight } = dropdownLayout;
   if (!rect || typeof document === "undefined") return null;
 
   return createPortal(
     <div
+      id={listboxId}
       ref={dropdownRef}
+      role="listbox"
       className="scrollbar-thumb-muted-foreground/20 bg-popover hover:scrollbar-thumb-muted-foreground/40 dark:scrollbar-thumb-muted-foreground/30 dark:hover:scrollbar-thumb-muted-foreground/50 fixed z-25 scrollbar-thin scrollbar-track-transparent overflow-y-auto rounded-md border shadow-md"
       style={{
         ...(openUpward
@@ -102,7 +112,10 @@ function WorkspaceObjectDropdown({
             "Unnamed Object";
           return (
             <button
+              id={`${listboxId}-option-${String(index)}`}
               type="button"
+              role="option"
+              aria-selected={highlightedIndex === index}
               key={object.path}
               ref={(element) => {
                 itemRefs.current[index] = element;
@@ -142,6 +155,7 @@ function WorkspaceObjectDropdown({
 }
 
 export function WorkspaceObjectSelectorView({
+  id,
   className,
   placeholder,
   validationError,
@@ -153,6 +167,7 @@ export function WorkspaceObjectSelectorView({
   showDropdown,
   highlightedIndex,
   dropdownLayout,
+  listboxId,
   inputRef,
   inputElementRef,
   dropdownRef,
@@ -164,6 +179,8 @@ export function WorkspaceObjectSelectorView({
   onObjectClick,
   onObjectHighlight,
 }: WorkspaceObjectSelectorViewProps) {
+  const generatedListboxId = useId();
+  const resolvedListboxId = listboxId ?? generatedListboxId;
   return (
     <div className={className ? `relative ${className}` : "relative w-full"}>
       {validationError && (
@@ -176,7 +193,17 @@ export function WorkspaceObjectSelectorView({
         <div ref={inputRef} className="relative flex-1">
           <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
           <Input
+            id={id}
             ref={inputElementRef}
+            role="combobox"
+            aria-autocomplete="list"
+            aria-expanded={showDropdown}
+            aria-controls={resolvedListboxId}
+            aria-activedescendant={
+              highlightedIndex >= 0
+                ? `${resolvedListboxId}-option-${String(highlightedIndex)}`
+                : undefined
+            }
             placeholder={placeholder}
             value={inputValue}
             onChange={onInputChange}
@@ -207,6 +234,7 @@ export function WorkspaceObjectSelectorView({
               itemRefs={itemRefs}
               onObjectClick={onObjectClick}
               onObjectHighlight={onObjectHighlight}
+              listboxId={resolvedListboxId}
             />
           )}
         </div>

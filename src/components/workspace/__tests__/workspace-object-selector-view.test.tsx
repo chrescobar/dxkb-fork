@@ -61,9 +61,9 @@ describe("WorkspaceObjectSelectorView", () => {
     ] satisfies WorkspaceObject[];
     const { consoleError, onObjectClick } = renderView(objects);
 
-    expect(screen.getByRole("button", { name: /first\.fq/i })).toBeVisible();
-    expect(screen.getByRole("button", { name: /second\.fq/i })).toBeVisible();
-    fireEvent.click(screen.getByRole("button", { name: /second\.fq/i }));
+    expect(screen.getByRole("option", { name: /first\.fq/i })).toBeVisible();
+    expect(screen.getByRole("option", { name: /second\.fq/i })).toBeVisible();
+    fireEvent.click(screen.getByRole("option", { name: /second\.fq/i }));
     expect(onObjectClick).toHaveBeenCalledWith(objects[1]);
     expect(
       consoleError.mock.calls.some((args) =>

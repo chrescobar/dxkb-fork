@@ -1,5 +1,6 @@
 import { GeneraCard } from "@/components/organisms/genera-grid/genera-card";
 import { taxonomyHref as familyHref } from "@/lib/views/hrefs";
+import { cn } from "@/lib/utils";
 
 import { type VirusFamiliesColumn, virusFamilies } from "./virus-families-data";
 
@@ -54,7 +55,10 @@ export function VirusFamiliesSection() {
               column.group ??
               column.subGroups.map((group) => group.label).join("|")
             }
-            className={`flex min-w-0 flex-col gap-3${index === 3 ? "hidden md:flex lg:hidden xl:flex" : ""}`}
+            className={cn(
+              "flex min-w-0 flex-col gap-3",
+              index === 3 && "hidden md:flex lg:hidden xl:flex",
+            )}
           >
             {column.group === null ? (
               <SubGroups subGroups={column.subGroups} />

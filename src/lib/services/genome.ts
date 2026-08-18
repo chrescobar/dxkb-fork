@@ -107,7 +107,9 @@ export async function getGenomeIdsFromGroup(
     });
 
     if (!response.ok) {
-      const errorBody = (await response.json().catch(() => ({}))) as { error?: string };
+      const errorBody = (await response.json().catch(() => ({}))) as {
+        error?: string;
+      };
       const message = errorBody.error || "Failed to load genome group";
       throw new Error(message);
     }
@@ -119,14 +121,20 @@ export async function getGenomeIdsFromGroup(
       throw new Error("Invalid workspace response for genome group");
     }
 
-    const rawData: unknown = Array.isArray(entry) ? entry[1] : (entry as { data?: unknown }).data ?? null;
-    const decoded = decodeGroupData(rawData) as { id_list?: { genome_id?: string[] } } | null;
+    const rawData: unknown = Array.isArray(entry)
+      ? entry[1]
+      : ((entry as { data?: unknown }).data ?? null);
+    const decoded = decodeGroupData(rawData) as {
+      id_list?: { genome_id?: string[] };
+    } | null;
 
     if (!decoded?.id_list?.genome_id) {
       return [];
     }
 
-    return decoded.id_list.genome_id.filter((id: unknown) => typeof id === "string");
+    return decoded.id_list.genome_id.filter(
+      (id: unknown) => typeof id === "string",
+    );
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
       return [];
@@ -145,15 +153,41 @@ function decodeGroupData(raw: unknown): unknown {
     } catch (jsonError) {
       try {
         const decoded = (() => {
-          if (typeof window !== "undefined" && typeof window.atob === "function") {
+          if (
+            typeof window !== "undefined" &&
+            typeof window.atob === "function"
+          ) {
             return window.atob(raw);
           }
 
-          if (typeof globalThis !== "undefined" && (globalThis as unknown as { Buffer?: { from(s: string, enc: string): { toString(enc: string): string } } }).Buffer) {
-            return (globalThis as unknown as { Buffer: { from(s: string, enc: string): { toString(enc: string): string } } }).Buffer.from(raw, "base64").toString("utf-8");
+          if (
+            typeof globalThis !== "undefined" &&
+            (
+              globalThis as unknown as {
+                Buffer?: {
+                  from(
+                    s: string,
+                    enc: string,
+                  ): { toString(enc: string): string };
+                };
+              }
+            ).Buffer
+          ) {
+            return (
+              globalThis as unknown as {
+                Buffer: {
+                  from(
+                    s: string,
+                    enc: string,
+                  ): { toString(enc: string): string };
+                };
+              }
+            ).Buffer.from(raw, "base64").toString("utf-8");
           }
 
-          throw new Error("Base64 decoding is not supported in this environment");
+          throw new Error(
+            "Base64 decoding is not supported in this environment",
+          );
         })();
         return JSON.parse(decoded);
       } catch (decodeError) {
@@ -203,7 +237,12 @@ function extractWorkspaceGetEntry(responseData: unknown): unknown {
     if (Array.isArray(firstValue)) {
       return firstValue[0];
     }
-    if (firstValue && typeof firstValue === "object" && "data" in firstValue && "metadata" in firstValue) {
+    if (
+      firstValue &&
+      typeof firstValue === "object" &&
+      "data" in firstValue &&
+      "metadata" in firstValue
+    ) {
       return [firstValue.metadata, firstValue.data];
     }
   }
@@ -224,6 +263,8 @@ export interface ViralGenomeValidationErrors {
   contigs_error?: string;
   genomelength_error?: string;
   missing_superkingdom?: string;
+  missing_genomes_error?: string;
+  missing_metadata_error?: string;
 }
 
 export async function validateViralGenomes(
@@ -248,10 +289,18 @@ export async function validateViralGenomes(
       { genome_ids: uniqueIds },
       { signal },
     );
-    const results: ViralGenomeValidationResult[] = Array.isArray(data.results) ? data.results : [];
+    const results: ViralGenomeValidationResult[] = Array.isArray(data.results)
+      ? data.results
+      : [];
 
     const errors: ViralGenomeValidationErrors = {};
     let allValid = true;
+    const returnedIds = new Set(results.map((genome) => genome.genome_id));
+    const missingIds = uniqueIds.filter((id) => !returnedIds.has(id));
+    if (missingIds.length > 0) {
+      allValid = false;
+      errors.missing_genomes_error = `Missing validation metadata for ${String(missingIds.length)} genome${missingIds.length === 1 ? "" : "s"}. First occurrence: ${missingIds[0]}`;
+    }
 
     results.forEach((genome) => {
       if (!genome.superkingdom) {
@@ -269,17 +318,24 @@ export async function validateViralGenomes(
         }
       }
 
-      if (genome.contigs !== undefined && genome.contigs > 1) {
+      if (genome.contigs === undefined || genome.genome_length === undefined) {
         allValid = false;
-        if (!errors.contigs_error) {
-          errors.contigs_error = `Error: only 1 contig is permitted. First occurrence for genome_id: ${genome.genome_id}`;
+        if (!errors.missing_metadata_error) {
+          errors.missing_metadata_error = `Missing contig or genome length metadata for genome_id: ${genome.genome_id}`;
         }
-      }
+      } else {
+        if (genome.contigs > 1) {
+          allValid = false;
+          if (!errors.contigs_error) {
+            errors.contigs_error = `Error: only 1 contig is permitted. First occurrence for genome_id: ${genome.genome_id}`;
+          }
+        }
 
-      if (genome.genome_length !== undefined && genome.genome_length > maxGenomeLength) {
-        allValid = false;
-        if (!errors.genomelength_error) {
-          errors.genomelength_error = `Error: genome exceeds maximum length ${String(maxGenomeLength)}. First occurrence for genome_id: ${genome.genome_id}`;
+        if (genome.genome_length > maxGenomeLength) {
+          allValid = false;
+          if (!errors.genomelength_error) {
+            errors.genomelength_error = `Error: genome exceeds maximum length ${String(maxGenomeLength)}. First occurrence for genome_id: ${genome.genome_id}`;
+          }
         }
       }
     });
@@ -294,7 +350,9 @@ export async function validateViralGenomes(
   }
 }
 
-export async function fetchGenomeGroupMembers(path: string): Promise<GenomeSummary[]> {
+export async function fetchGenomeGroupMembers(
+  path: string,
+): Promise<GenomeSummary[]> {
   if (!path) {
     return [];
   }
@@ -318,7 +376,9 @@ export async function fetchGenomeGroupMembers(path: string): Promise<GenomeSumma
     });
 
     if (!response.ok) {
-      const errorBody = (await response.json().catch(() => ({}))) as { error?: string };
+      const errorBody = (await response.json().catch(() => ({}))) as {
+        error?: string;
+      };
       const message = errorBody.error || "Failed to load genome group";
       throw new Error(message);
     }
@@ -330,14 +390,20 @@ export async function fetchGenomeGroupMembers(path: string): Promise<GenomeSumma
       throw new Error("Invalid workspace response for genome group");
     }
 
-    const rawData: unknown = Array.isArray(entry) ? entry[1] : (entry as { data?: unknown }).data ?? null;
-    const decoded = decodeGroupData(rawData) as { id_list?: { genome_id?: string[] } } | null;
+    const rawData: unknown = Array.isArray(entry)
+      ? entry[1]
+      : ((entry as { data?: unknown }).data ?? null);
+    const decoded = decodeGroupData(rawData) as {
+      id_list?: { genome_id?: string[] };
+    } | null;
 
     if (!decoded?.id_list?.genome_id) {
       return [];
     }
 
-    const genomeIds: string[] = decoded.id_list.genome_id.filter((id: unknown) => typeof id === "string");
+    const genomeIds: string[] = decoded.id_list.genome_id.filter(
+      (id: unknown) => typeof id === "string",
+    );
 
     return await fetchGenomesByIds(genomeIds);
   } catch (error) {
@@ -348,4 +414,3 @@ export async function fetchGenomeGroupMembers(path: string): Promise<GenomeSumma
     throw error;
   }
 }
-

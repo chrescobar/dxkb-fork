@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useSelector } from "@tanstack/react-store";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
-import { validateFasta } from "@/lib/fasta-validation";
+import { validateProteinFasta } from "@/lib/fasta-validation";
 import {
   defaultInfluenzaHaSubtypeFormValues,
   influenzaHaSubtypeFormSchema,
@@ -41,14 +41,7 @@ export function useInfluenzaHaSubtypePage() {
       setIsFastaValid(false);
       return;
     }
-    const result = validateFasta(trimmed, "aa");
-    if (result.valid && result.status === "valid_dna") {
-      setIsFastaValid(false);
-      setFastaValidationMessage(
-        "This service requires protein (amino acid) sequences.",
-      );
-      return;
-    }
+    const result = validateProteinFasta(trimmed);
     setIsFastaValid(result.valid);
     setFastaValidationMessage(result.message || "");
     if (result.valid && result.trimFasta && result.trimFasta !== trimmed) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useLayoutEffect, useRef, type ReactNode } from "react";
 import type { PanelImperativeHandle } from "react-resizable-panels";
 import {
   useWorkspacePanel,
@@ -41,7 +41,7 @@ export function WorkspaceShell({
   } = useWorkspacePanel();
   const detailsPanelRef = useRef<PanelImperativeHandle>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (panelExpanded) detailsPanelRef.current?.expand();
     else detailsPanelRef.current?.collapse();
   }, [panelExpanded]);
@@ -121,9 +121,10 @@ export function WorkspaceShell({
       orientation="horizontal"
       className="size-full min-h-0"
       defaultLayout={panelInitialLayout}
-      onLayoutChanged={(layout) => {
-        if ((layout[workspacePanelIds.details] ?? 0) > 0)
-          setPanelLayout(layout);
+      onLayoutChanged={(layout, meta) => {
+        const detailsSize = layout[workspacePanelIds.details] ?? 0;
+        if (meta.isUserInteraction) setPanelExpanded(detailsSize > 0);
+        if (detailsSize > 0) setPanelLayout(layout);
       }}
     >
       <ResizablePanel

@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
 import { normalizeToArray } from "@/lib/rerun-utility";
 import {
-  fetchGenomeGroupMembers,
+  getGenomeIdsFromGroup,
   validateViralGenomes,
 } from "@/lib/services/genome";
 import type { WorkspaceObject } from "@/lib/services/workspace/types";
@@ -164,9 +164,9 @@ export function useViralGenomeTree() {
     const request = ++genomeGroupRequest.current;
     setIsValidatingGenomeGroup(true);
     try {
-      const genomes = await fetchGenomeGroupMembers(inputValue);
+      const genomeIds = await getGenomeIdsFromGroup(inputValue);
       if (request !== genomeGroupRequest.current) return;
-      if (genomes.length === 0) {
+      if (genomeIds.length === 0) {
         toast.error("Empty genome group", {
           description: "The selected genome group is empty.",
           closeButton: true,
@@ -174,7 +174,6 @@ export function useViralGenomeTree() {
         setIsValidatingGenomeGroup(false);
         return;
       }
-      const genomeIds = genomes.map((genome) => genome.genome_id);
       const validation = await validateViralGenomes(genomeIds, {
         maxGenomeLength: 250000,
       });
@@ -219,7 +218,9 @@ export function useViralGenomeTree() {
         ...latestSequences,
         ViralGenomeTreeUtils.createSequenceItem(inputValue, "genome_group"),
       ]);
-      setSelectedGenomeGroupObject(null);
+      setSelectedGenomeGroupObject((current) =>
+        current?.path === inputValue ? null : current,
+      );
       toast.success("Genome group added", {
         description: `Added genome group with ${String(genomeIds.length)} genome${genomeIds.length === 1 ? "" : "s"}.`,
         closeButton: true,

@@ -126,6 +126,32 @@ describe("downloadResourceRows", () => {
       expect.any(Object),
     );
   });
+
+  it("does not treat an empty displayed-column selection as all columns", async () => {
+    const fetchMock = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(new Response(JSON.stringify([{}]), { status: 200 }));
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:download");
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(
+      () => undefined,
+    );
+
+    await downloadResourceRows({
+      dataApi: "https://data.example",
+      resource: "genome",
+      query: "eq(public,true)",
+      totalItems: 1,
+      format: "csv",
+      visibleColumns: [],
+      fields: [{ id: "genome_id", label: "Genome ID", visible: true }],
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://data.example/genome/?eq(public,true)",
+      expect.any(Object),
+    );
+  });
 });
 
 describe("findPageRow", () => {

@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useEffectEvent,
+  useLayoutEffect,
+} from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -415,11 +421,33 @@ const SraRunAccessionWithValidation = ({
     }, validationDebounceMs);
   };
 
+  const validateDefaultValue = useEffectEvent((accession: string) => {
+    void validateAccession(accession).then((result) => {
+      if (result && !showAddButton) {
+        const alreadyAdded = result.runs.every((runId) =>
+          selectedLibrariesRef.current.some(
+            (library) => library.type === "sra" && library.id === runId,
+          ),
+        );
+        if (!alreadyAdded) {
+          applyValidationResult(accession, result, { skipClear: true });
+        }
+      }
+    });
+  });
+
   useEffect(() => {
+    const accession = defaultValue.trim();
+    if (accession) {
+      validationTimerRef.current = setTimeout(() => {
+        validationTimerRef.current = null;
+        validateDefaultValue(accession);
+      }, validationDebounceMs);
+    }
     return () => {
       if (validationTimerRef.current) clearTimeout(validationTimerRef.current);
     };
-  }, []);
+  }, [defaultValue, validationDebounceMs]);
 
   const handleAdd = async () => {
     const accession = sraAccession.trim();

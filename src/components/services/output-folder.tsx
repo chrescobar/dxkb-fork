@@ -111,6 +111,8 @@ const OutputFolder = ({
   if (prevValidationKey !== validationKey) {
     setPrevValidationKey(validationKey);
     setPendingValidationKey("");
+    setNameTaken(false);
+    setValidationError(false);
   }
   if (prevNeedsValidation && !needsValidation) {
     setPrevNeedsValidation(needsValidation);

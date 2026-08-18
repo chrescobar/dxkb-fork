@@ -40,6 +40,7 @@ export function FilterBar({
       : keywordValue.split(" ").filter(Boolean);
   const setKeywords = (nextKeywords: string[]) => {
     if (keywordValue === undefined) setInternalKeywords(nextKeywords);
+    else locallyRequestedKeywords.current = nextKeywords.join(" ");
     onKeywordChange?.(nextKeywords.join(" "));
   };
   const [selected, setSelected] = useState<SelectedFilter[]>([]);
@@ -49,7 +50,12 @@ export function FilterBar({
   );
   const [facetMenuOpen, setFacetMenuOpen] = useState(false);
   const facetMenuRef = useRef<HTMLDivElement | null>(null);
+  const locallyRequestedKeywords = useRef<string | null>(null);
   const syncExternalKeywords = useEffectEvent((value: string) => {
+    if (locallyRequestedKeywords.current === value) {
+      locallyRequestedKeywords.current = null;
+      return;
+    }
     onFilterChange(
       buildRql({ selected, keywords: value.split(" ").filter(Boolean) }),
     );

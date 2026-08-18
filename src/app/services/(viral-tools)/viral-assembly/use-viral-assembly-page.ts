@@ -155,7 +155,6 @@ export function useViralAssemblyPage() {
           rerunForm.setFieldValue("input_type", "srr_accession");
           setState("sraDefaultValue")(srr);
           setState("sraResetKey")((key) => key + 1);
-          setLibraries(buildSraLibraries({ srr_ids: [srr] }));
         }
       },
     },

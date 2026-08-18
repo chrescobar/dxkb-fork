@@ -47,6 +47,7 @@ export function GenomeInputSection({
                 Search by Genome Name or Genome ID
               </FieldLabel>
               <SingleGenomeSelector
+                id={field.name}
                 placeholder="e.g. Mycobacterium tuberculosis H37Rv"
                 value={field.state.value}
                 onChange={(value) => {
@@ -65,6 +66,7 @@ export function GenomeInputSection({
                 Or Upload FASTA/FASTQ
               </FieldLabel>
               <WorkspaceObjectSelector
+                id={field.name}
                 preset="contigsOrReads"
                 placeholder="Select a FASTA/FASTQ file..."
                 value={field.state.value}

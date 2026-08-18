@@ -16,6 +16,7 @@ import {
 } from "@/hooks/services/use-genome-typeahead";
 
 interface SingleGenomeSelectorProps {
+  id?: string;
   title?: string;
   placeholder?: string;
   helperText?: string;
@@ -32,6 +33,7 @@ function isGenomeId(str: string): boolean {
 }
 
 function useSingleGenomeSelector({
+  id,
   title,
   placeholder = "e.g. Mycobacterium tuberculosis H37Rv",
   helperText,
@@ -282,6 +284,7 @@ function useSingleGenomeSelector({
       <div ref={containerRef} className="relative">
         <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
         <Input
+          id={id}
           ref={inputRef}
           value={query}
           disabled={disabled}
@@ -293,7 +296,7 @@ function useSingleGenomeSelector({
             setHighlightedIndex(-1);
             setIsManualTrigger(false);
             setShowDropdown(true);
-            if (!newValue.trim()) {
+            if (selectedGenomeIdRef.current !== null) {
               onChange("");
               selectedGenomeIdRef.current = null;
             }

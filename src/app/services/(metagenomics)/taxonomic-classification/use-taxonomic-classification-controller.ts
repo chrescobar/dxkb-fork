@@ -145,6 +145,20 @@ export function useTaxonomicClassificationController() {
         return { sampleId: library.sample_id || "" };
       },
       syncLibraries: setLibraries,
+      onApply: (rerunData, rerunForm) => {
+        const sampleIds = [
+          ["paired_sample_id", "pairedSampleId"],
+          ["single_sample_id", "singleSampleId"],
+          ["srr_sample_id", "srrSampleId"],
+        ] as const;
+        for (const [field, stateKey] of sampleIds) {
+          const value = rerunData[field];
+          if (typeof value === "string") {
+            rerunForm.setFieldValue(field, value);
+            setState(stateKey)(value);
+          }
+        }
+      },
     },
   });
 

@@ -1,4 +1,11 @@
-import { cleanFasta, isDNA, validateFasta, validateFastaForBlast, getFastaErrorMessage } from "@/lib/fasta-validation";
+import {
+  cleanFasta,
+  isDNA,
+  validateFasta,
+  validateProteinFasta,
+  validateFastaForBlast,
+  getFastaErrorMessage,
+} from "@/lib/fasta-validation";
 
 describe("FASTA Validation", () => {
   describe("cleanFasta", () => {
@@ -69,6 +76,22 @@ describe("FASTA Validation", () => {
 
       expect(result.valid).toBe(false);
       expect(result.status).toBe("need_dna");
+    });
+
+    it("accepts RNA and IUPAC nucleotide FASTA", () => {
+      const result = validateFasta(">seq1\nAUGCURYSWKMBDHVN", "dna");
+
+      expect(result.valid).toBe(true);
+      expect(result.status).toBe("valid_dna");
+    });
+
+    it("rejects a mixed protein and nucleotide FASTA as protein-only input", () => {
+      const result = validateProteinFasta(
+        ">protein\nMKAILVVLL\n>dna\nACGTACGT",
+      );
+
+      expect(result.valid).toBe(false);
+      expect(result.status).toBe("need_protein");
     });
 
     it("should handle empty input", () => {

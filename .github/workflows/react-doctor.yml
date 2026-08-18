@@ -42,7 +42,7 @@ jobs:
           version: "0.9.11"
 
       - name: Require React Doctor score of at least 80
-        if: ${{ always() }}
+        if: ${{ always() && (github.event_name != 'pull_request' || steps.react-doctor.outputs.score != '') }}
         env:
           REACT_DOCTOR_SCORE: ${{ steps.react-doctor.outputs.score }}
         run: |

@@ -210,6 +210,17 @@ describe("transformPrimerDesignParams", () => {
     expect(result.PRIMER_PRODUCT_SIZE_RANGE).toBe("50-500 100-300");
   });
 
+  it("omits blank region and product range tokens", () => {
+    const result = transformPrimerDesignParams({
+      ...baseFormData,
+      SEQUENCE_TARGET: ["", "  "],
+      PRIMER_PRODUCT_SIZE_RANGE: ["", "  "],
+    });
+
+    expect(result).not.toHaveProperty("SEQUENCE_TARGET");
+    expect(result).not.toHaveProperty("PRIMER_PRODUCT_SIZE_RANGE");
+  });
+
   it("includes scalar params when defined", () => {
     const result = transformPrimerDesignParams(baseFormData);
 

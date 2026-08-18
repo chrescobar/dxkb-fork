@@ -91,8 +91,14 @@ export function ClassificationInputCard({
               />
             </div>
             <div>
-              <Label className="service-card-sublabel">Sample Identifier</Label>
+              <Label
+                htmlFor="paired-sample-id"
+                className="service-card-sublabel"
+              >
+                Sample Identifier
+              </Label>
               <Input
+                id="paired-sample-id"
                 value={state.pairedSampleId}
                 onChange={(event) => {
                   controller.handleSampleIdChange("paired", event.target.value);
@@ -129,8 +135,14 @@ export function ClassificationInputCard({
               }}
             />
             <div>
-              <Label className="service-card-sublabel">Sample Identifier</Label>
+              <Label
+                htmlFor="single-sample-id"
+                className="service-card-sublabel"
+              >
+                Sample Identifier
+              </Label>
               <Input
+                id="single-sample-id"
                 value={state.singleSampleId}
                 onChange={(event) => {
                   controller.handleSampleIdChange("single", event.target.value);
@@ -149,8 +161,11 @@ export function ClassificationInputCard({
             allowDuplicates={false}
           />
           <div>
-            <Label className="service-card-sublabel">Sample Identifier</Label>
+            <Label htmlFor="srr-sample-id" className="service-card-sublabel">
+              Sample Identifier
+            </Label>
             <Input
+              id="srr-sample-id"
               value={state.srrSampleId}
               onChange={(event) => {
                 controller.handleSampleIdChange("srr", event.target.value);

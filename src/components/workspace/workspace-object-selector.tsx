@@ -13,6 +13,7 @@ import {
 import { useAuth } from "@/lib/auth/hooks";
 
 interface WorkspaceObjectSelectorProps {
+  id?: string;
   onObjectSelect?: (object: WorkspaceObject) => void;
   onSearch?: (query: string) => void;
   onSelectedObjectChange?: (object: WorkspaceObject | null) => void;
@@ -26,6 +27,7 @@ interface WorkspaceObjectSelectorProps {
 }
 
 function useWorkspaceObjectSelector({
+  id,
   onObjectSelect,
   onSearch,
   onSelectedObjectChange,
@@ -332,6 +334,7 @@ function useWorkspaceObjectSelector({
 
   return (
     <WorkspaceObjectSelectorView
+      id={id}
       className={className}
       placeholder={placeholder}
       validationError={validationError}

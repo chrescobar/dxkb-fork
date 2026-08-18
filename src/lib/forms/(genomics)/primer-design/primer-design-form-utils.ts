@@ -293,19 +293,19 @@ export function transformPrimerDesignParams(data: PrimerDesignFormData) {
 
   regionMappings.forEach(([field, key]) => {
     const value = data[field];
-    if (Array.isArray(value) && value.length > 0) {
-      params[key] = value.join(" ");
+    if (Array.isArray(value)) {
+      const tokens = value.map((token) => token.trim()).filter(Boolean);
+      if (tokens.length > 0) params[key] = tokens.join(" ");
     }
   });
 
-  if (
-    data.PRIMER_PRODUCT_SIZE_RANGE &&
-    Array.isArray(data.PRIMER_PRODUCT_SIZE_RANGE) &&
-    data.PRIMER_PRODUCT_SIZE_RANGE.length > 0
-  ) {
-    params.PRIMER_PRODUCT_SIZE_RANGE = data.PRIMER_PRODUCT_SIZE_RANGE.join(
-      " ",
-    ).replace(/,/g, "-");
+  if (Array.isArray(data.PRIMER_PRODUCT_SIZE_RANGE)) {
+    const ranges = data.PRIMER_PRODUCT_SIZE_RANGE.map((range) =>
+      range.trim(),
+    ).filter(Boolean);
+    if (ranges.length > 0) {
+      params.PRIMER_PRODUCT_SIZE_RANGE = ranges.join(" ").replace(/,/g, "-");
+    }
   }
 
   if (data.PRIMER_NUM_RETURN !== undefined) {

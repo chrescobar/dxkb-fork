@@ -52,8 +52,10 @@ export function InputSourceCard({
                 <RadioGroup
                   value={field.state.value}
                   onValueChange={(value) => {
-                    field.handleChange(value as BlastFormData["input_source"]);
-                    onSourceChange(value as BlastFormData["input_source"]);
+                    if (value === null) return;
+                    const source = value as BlastFormData["input_source"];
+                    field.handleChange(source);
+                    onSourceChange(source);
                   }}
                   className="service-radio-group-horizontal"
                 >

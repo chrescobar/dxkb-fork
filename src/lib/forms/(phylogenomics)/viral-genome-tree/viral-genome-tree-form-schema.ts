@@ -241,16 +241,21 @@ export interface MetadataSelectOption {
 export function getMetadataSelectOptions(
   formatLabel: (field: string) => string,
 ): MetadataSelectOption[] {
-  return genomeMetadataFieldsData.map((item) => {
+  const seenFields = new Set<string>();
+  return genomeMetadataFieldsData.flatMap((item) => {
     const isLabel = isMetadataLabel(item.field);
-    return {
-      value: item.field,
-      label: isLabel
-        ? extractSectionLabel(item.field)
-        : item.displayName || formatLabel(item.field),
-      isLabel,
-      sectionLabel: isLabel ? extractSectionLabel(item.field) : undefined,
-    };
+    if (!isLabel && seenFields.has(item.field)) return [];
+    if (!isLabel) seenFields.add(item.field);
+    return [
+      {
+        value: item.field,
+        label: isLabel
+          ? extractSectionLabel(item.field)
+          : item.displayName || formatLabel(item.field),
+        isLabel,
+        sectionLabel: isLabel ? extractSectionLabel(item.field) : undefined,
+      },
+    ];
   });
 }
 

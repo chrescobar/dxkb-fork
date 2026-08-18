@@ -124,9 +124,7 @@ export async function downloadResourceRows({
   fields: ColumnInfo[];
 }): Promise<void> {
   const requestedColumns =
-    visibleColumns && visibleColumns.length > 0
-      ? visibleColumns
-      : fields.map((field) => field.id);
+    visibleColumns !== null ? visibleColumns : fields.map((field) => field.id);
   const columns = requestedColumns.filter((id) => id !== "__select__");
   const selectClause = columns.length ? `&select(${columns.join(",")})` : "";
   const response = await fetch(

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type RefObject } from "react";
 import { useSelector } from "@tanstack/react-store";
 import { Plus, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
@@ -43,64 +43,73 @@ const maxGenomes = 20;
 interface GenomeSelectionProps {
   form: GenomeAlignmentForm;
   genomes: GenomeSummary[];
-  setGenomes: React.Dispatch<React.SetStateAction<GenomeSummary[]>>;
+  genomesRef: RefObject<GenomeSummary[]>;
+  groupRequestRevisionRef: RefObject<number>;
+  replaceGenomes: (genomes: GenomeSummary[]) => void;
 }
 
 export function GenomeSelection({
   form,
   genomes,
-  setGenomes,
+  genomesRef,
+  groupRequestRevisionRef,
+  replaceGenomes,
 }: GenomeSelectionProps) {
   const [isFetchingGroup, setIsFetchingGroup] = useState(false);
   const [lastGroup, setLastGroup] = useState<string | null>(null);
   const [group, setGroup] = useState<WorkspaceObject | null>(null);
   const addGenome = (genome: GenomeSummary) => {
-    if (genomes.length >= maxGenomes)
+    const currentGenomes = genomesRef.current;
+    if (currentGenomes.length >= maxGenomes)
       return toast.error("You can add up to 20 genomes");
-    if (genomes.some((item) => item.genome_id === genome.genome_id))
+    if (currentGenomes.some((item) => item.genome_id === genome.genome_id))
       return toast.error("Genome already added", {
         description: `${genome.genome_name} (${genome.genome_id}) is already in the selection`,
       });
-    setGenomes([...genomes, genome]);
+    replaceGenomes([...currentGenomes, genome]);
     toast.success(`Added ${genome.genome_name}`);
   };
   const addGroup = async (object: WorkspaceObject) => {
     if (!object.path) return toast.error("Invalid genome group selection");
     setIsFetchingGroup(true);
-    try {
-      const members = await fetchGenomeGroupMembers(object.path);
-      if (!members.length) {
-        setIsFetchingGroup(false);
-        return toast.error("Selected genome group is empty");
-      }
-      const ids = new Set(genomes.map((item) => item.genome_id));
-      const unique = members.filter((item) => !ids.has(item.genome_id));
-      if (!unique.length) {
-        setIsFetchingGroup(false);
-        return toast.info("All genomes in this group are already selected");
-      }
-      const added = unique.slice(0, maxGenomes - genomes.length);
-      if (!added.length) {
-        setIsFetchingGroup(false);
-        return toast.error("Genome selection limit reached (20 genomes)");
-      }
-      setGenomes([...genomes, ...added]);
-      if (unique.length > added.length)
-        toast.warning(
-          "Some genomes were not added because the selection limit is 20",
+    const requestRevision = ++groupRequestRevisionRef.current;
+    await fetchGenomeGroupMembers(object.path)
+      .then((members) => {
+        if (requestRevision !== groupRequestRevisionRef.current) return;
+        if (!members.length)
+          return toast.error("Selected genome group is empty");
+
+        const currentGenomes = genomesRef.current;
+        const ids = new Set(currentGenomes.map((item) => item.genome_id));
+        const unique = members.filter((item) => !ids.has(item.genome_id));
+        if (!unique.length)
+          return toast.info("All genomes in this group are already selected");
+
+        const added = unique.slice(0, maxGenomes - currentGenomes.length);
+        if (!added.length)
+          return toast.error("Genome selection limit reached (20 genomes)");
+
+        replaceGenomes([...currentGenomes, ...added]);
+        if (unique.length > added.length)
+          toast.warning(
+            "Some genomes were not added because the selection limit is 20",
+          );
+        toast.success(
+          `Added ${String(added.length)} genome${added.length === 1 ? "" : "s"} from ${object.name}`,
         );
-      toast.success(
-        `Added ${String(added.length)} genome${added.length === 1 ? "" : "s"} from ${object.name}`,
-      );
-      form.setFieldValue("genome_group_path", object.path);
-      setLastGroup(object.name || object.path);
-      setIsFetchingGroup(false);
-    } catch (error) {
-      setIsFetchingGroup(false);
-      toast.error(
-        error instanceof Error ? error.message : "Failed to load genome group",
-      );
-    }
+        form.setFieldValue("genome_group_path", object.path);
+        setLastGroup(object.name || object.path);
+      })
+      .catch((error: unknown) => {
+        if (requestRevision !== groupRequestRevisionRef.current) return;
+        toast.error(
+          error instanceof Error ? error.message : "Failed to load genome group",
+        );
+      })
+      .finally(() => {
+        if (requestRevision === groupRequestRevisionRef.current)
+          setIsFetchingGroup(false);
+      });
   };
   const items = genomes.map((genome, index) => ({
     id: genome.genome_id,
@@ -181,8 +190,8 @@ export function GenomeSelection({
                   description="Remove genomes as needed. The first entry is treated as the reference genome."
                   items={items}
                   onRemove={(id) => {
-                    setGenomes((current) =>
-                      current.filter((item) => item.genome_id !== id),
+                    replaceGenomes(
+                      genomesRef.current.filter((item) => item.genome_id !== id),
                     );
                   }}
                   emptyMessage="No genomes selected"

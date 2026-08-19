@@ -21,8 +21,8 @@ overrides:
   phyloxml@1.0.0>sax: 1.6.1
 
 patchedDependencies:
-  archaeopteryx@2.3.2: 3a801dc502abba60e52a2d7307c82cb51b7b3d57787832f722944541db6338bd
-  auspice@2.73.0: 5fbb74ebbe03f6ddca5e9d1a74ee326540cf26249c390a0b9fa7e69278689f7e
+  archaeopteryx@2.3.2: f4105c98e91967631c20a468283dad680efea7dba9b82c09c6f4ca6e95225df4
+  auspice@2.73.0: 86bdd5368f21ec378285c678e1bc1b54bacfb9c9fb9eaf7853efe3d14c05bceb
   molstar: a80c534bab8094a7ca7103c40d6638c0f7127db69d2ac212a1ce6a951f3bc3da
   phyloxml@1.0.0: 4eddfc18ff2113aad48c985883da338442f7a61c7435a1229a3e089a4682c47c
 
@@ -131,7 +131,7 @@ importers:
         version: 4.0.0(@types/react@19.2.18)(react@19.2.8)
       archaeopteryx:
         specifier: 2.3.2
-        version: 2.3.2(patch_hash=3a801dc502abba60e52a2d7307c82cb51b7b3d57787832f722944541db6338bd)
+        version: 2.3.2(patch_hash=f4105c98e91967631c20a468283dad680efea7dba9b82c09c6f4ca6e95225df4)
       boring-avatars:
         specifier: ^2.0.4
         version: 2.0.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -300,7 +300,7 @@ importers:
         version: 4.1.10(@vitest/browser@4.1.10)(vitest@4.1.10)
       auspice:
         specifier: 2.73.0
-        version: 2.73.0(patch_hash=5fbb74ebbe03f6ddca5e9d1a74ee326540cf26249c390a0b9fa7e69278689f7e)(@types/react@19.2.18)(bluebird@3.7.2)(clean-css@5.3.3)(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.26)(supports-color@5.5.0)
+        version: 2.73.0(patch_hash=86bdd5368f21ec378285c678e1bc1b54bacfb9c9fb9eaf7853efe3d14c05bceb)(@types/react@19.2.18)(bluebird@3.7.2)(clean-css@5.3.3)(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.26)(supports-color@5.5.0)
       axe-core:
         specifier: ^4.13.0
         version: 4.13.0
@@ -12419,7 +12419,7 @@ snapshots:
 
   aproba@1.2.0: {}
 
-  archaeopteryx@2.3.2(patch_hash=3a801dc502abba60e52a2d7307c82cb51b7b3d57787832f722944541db6338bd):
+  archaeopteryx@2.3.2(patch_hash=f4105c98e91967631c20a468283dad680efea7dba9b82c09c6f4ca6e95225df4):
     dependencies:
       canvg: 3.0.11
       d3: 3.5.17
@@ -12540,7 +12540,7 @@ snapshots:
 
   at-least-node@1.0.0: {}
 
-  auspice@2.73.0(patch_hash=5fbb74ebbe03f6ddca5e9d1a74ee326540cf26249c390a0b9fa7e69278689f7e)(@types/react@19.2.18)(bluebird@3.7.2)(clean-css@5.3.3)(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.26)(supports-color@5.5.0):
+  auspice@2.73.0(patch_hash=86bdd5368f21ec378285c678e1bc1b54bacfb9c9fb9eaf7853efe3d14c05bceb)(@types/react@19.2.18)(bluebird@3.7.2)(clean-css@5.3.3)(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.26)(supports-color@5.5.0):
     dependencies:
       '@babel/core': 7.29.7(supports-color@5.5.0)
       '@babel/plugin-proposal-class-properties': 7.18.6(@babel/core@7.29.7(supports-color@5.5.0))(supports-color@5.5.0)

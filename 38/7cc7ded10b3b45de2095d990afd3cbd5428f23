@@ -1,0 +1,26 @@
+src/app/services/(genomics)/genome-alignment/genome-alignment-sections.tsx
+  s_aacb44ad711837::t_07b042ca86800f 46-48,54-56,62-63,65,69,75-98,100-112
+  s_aacb44ad711837::t_82a21c318ee8b3 193-194
+  s_aacb44ad711837::t_d730a91e8f9bf7 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "387cc7ded10b3b45de2095d990afd3cbd5428f23",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_aacb44ad711837": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe5030014ffe8rUCVd0noAcPF2",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

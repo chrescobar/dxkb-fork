@@ -163,10 +163,10 @@ function SraInputView({
           {hasLabel ? (
             <>
               {label ?? <Label className="service-card-label">{title}</Label>}
-              <div className="bg-border mx-4 h-px flex-1" />
+              <div className="mx-4 h-px flex-1 bg-border" />
             </>
           ) : (
-            <div className="bg-border mx-4 h-px flex-1" />
+            <div className="mx-4 h-px flex-1 bg-border" />
           )}
           {hasAddButton &&
             (addButton ?? (
@@ -211,7 +211,7 @@ function SraInputView({
           </p>
         )}
         {validationStatus === "valid" && !validationMessage && (
-          <p className="text-muted-foreground text-sm">Provided SRA is valid</p>
+          <p className="text-sm text-muted-foreground">Provided SRA is valid</p>
         )}
       </div>
     </div>
@@ -447,7 +447,7 @@ const SraRunAccessionWithValidation = ({
     return () => {
       if (validationTimerRef.current) clearTimeout(validationTimerRef.current);
     };
-  }, [defaultValue, validationDebounceMs]);
+  }, [defaultValue]);
 
   const handleAdd = async () => {
     const accession = sraAccession.trim();

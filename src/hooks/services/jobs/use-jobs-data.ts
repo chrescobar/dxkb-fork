@@ -6,7 +6,7 @@ import type { JobListItem } from "@/types/workspace";
 
 const jobIdSchema = z.union([
   z.string().min(1),
-  z.number().int().nonnegative().safe().transform(String),
+  z.number().int().nonnegative().transform(String),
 ]);
 
 const jobSchema = z.looseObject({
@@ -37,15 +37,15 @@ const jobSchema = z.looseObject({
       description: z.string(),
     })
     .optional(),
-  elapsed_time: z.number().finite().optional(),
+  elapsed_time: z.number().optional(),
   req_memory: z.string().optional(),
-  req_cpu: z.number().finite().optional(),
+  req_cpu: z.number().optional(),
   req_runtime: z.string().optional(),
 });
 
 const jobsResponseSchema = z.object({
   jobs: z.union([z.array(jobSchema), z.tuple([z.array(jobSchema)])]),
-  totalTasks: z.number().int().nonnegative().safe(),
+  totalTasks: z.number().int().nonnegative(),
 });
 
 export function parseJobsResponse(data: unknown): UseJobsDataResult {

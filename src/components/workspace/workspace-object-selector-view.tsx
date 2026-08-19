@@ -59,7 +59,7 @@ export function WorkspaceObjectSelectorView({
       )}
       <div className="flex flex-row items-center gap-2">
         <div ref={inputRef} className="relative flex-1">
-          <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             id={id}
             ref={inputElementRef}
@@ -84,7 +84,7 @@ export function WorkspaceObjectSelectorView({
             aria-label={showDropdown ? "Hide suggestions" : "Show suggestions"}
             aria-expanded={showDropdown}
             onClick={onToggleDropdown}
-            className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 size-4 -translate-y-1/2 transition-colors"
+            className="absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
           >
             <ChevronDown
               className={`size-4 transition-transform ${showDropdown ? "rotate-180" : ""}`}
@@ -176,7 +176,7 @@ function WorkspaceObjectDropdown({
       id={listboxId}
       ref={dropdownRef}
       role="listbox"
-      className="scrollbar-thumb-muted-foreground/20 bg-popover hover:scrollbar-thumb-muted-foreground/40 dark:scrollbar-thumb-muted-foreground/30 dark:hover:scrollbar-thumb-muted-foreground/50 fixed z-25 scrollbar-thin scrollbar-track-transparent overflow-y-auto rounded-md border shadow-md"
+      className="fixed z-25 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent overflow-y-auto rounded-md border bg-popover shadow-md hover:scrollbar-thumb-muted-foreground/40 dark:scrollbar-thumb-muted-foreground/30 dark:hover:scrollbar-thumb-muted-foreground/50"
       style={{
         ...(openUpward
           ? { bottom: rect.bottom, top: "auto" }
@@ -198,7 +198,7 @@ function WorkspaceObjectDropdown({
       ) : loading ? (
         <div className="flex items-center justify-center p-4">
           <Loader2 className="mr-2 size-4 animate-spin" />
-          <span className="text-muted-foreground text-sm">Loading...</span>
+          <span className="text-sm text-muted-foreground">Loading...</span>
         </div>
       ) : objects.length > 0 ? (
         objects.map((object, index) => {
@@ -219,7 +219,7 @@ function WorkspaceObjectDropdown({
                 itemRefs.current[index] = element;
               }}
               className={cn(
-                "hover:bg-accent flex w-full cursor-pointer items-center justify-between p-2 text-left",
+                "flex w-full cursor-pointer items-center justify-between p-2 text-left hover:bg-accent",
                 highlightedIndex === index && "bg-accent",
               )}
               onClick={() => {
@@ -233,7 +233,7 @@ function WorkspaceObjectDropdown({
                 <span className="block truncate text-sm font-medium">
                   {object.name}
                 </span>
-                <span className="text-muted-foreground block truncate text-xs">
+                <span className="block truncate text-xs text-muted-foreground">
                   {cleanPath}
                 </span>
               </span>
@@ -241,7 +241,7 @@ function WorkspaceObjectDropdown({
           );
         })
       ) : (
-        <p className="text-muted-foreground py-4 text-center text-sm">
+        <p className="py-4 text-center text-sm text-muted-foreground">
           {searchQuery
             ? "No objects found matching your search"
             : "No objects found"}

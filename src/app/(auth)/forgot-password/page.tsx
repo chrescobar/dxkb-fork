@@ -150,7 +150,7 @@ export default function ForgotPasswordPage() {
 
             <Button
               type="submit"
-              className="text-muted-foreground hover:text-foreground w-full transition-colors duration-200"
+              className="w-full text-muted-foreground transition-colors duration-200 hover:text-foreground"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -166,7 +166,7 @@ export default function ForgotPasswordPage() {
             <div className="text-center text-sm">
               <Link
                 href="/sign-in"
-                className="group text-primary hover:text-secondary font-medium transition-colors duration-300 hover:font-medium"
+                className="group font-medium text-primary transition-colors duration-300 hover:font-medium hover:text-secondary"
               >
                 <ArrowLeft className="mr-1 inline size-3" />
                 Back to sign in

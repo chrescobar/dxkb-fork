@@ -282,7 +282,7 @@ function useSingleGenomeSelector({
     <div className={cn("space-y-2", className)}>
       {title && <Label className="service-card-label">{title}</Label>}
       <div ref={containerRef} className="relative">
-        <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           id={id}
           ref={inputRef}
@@ -312,7 +312,7 @@ function useSingleGenomeSelector({
           ref={buttonRef}
           type="button"
           onClick={handleManualDropdownToggle}
-          className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 size-4 -translate-y-1/2 transition-colors"
+          className="absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
           aria-label="Toggle dropdown"
         >
           <ChevronDown
@@ -330,7 +330,7 @@ function useSingleGenomeSelector({
           createPortal(
             <div
               ref={dropdownRef}
-              className="scrollbar-thumb-muted-foreground/20 bg-popover hover:scrollbar-thumb-muted-foreground/40 fixed z-40 scrollbar-thin scrollbar-track-transparent overflow-y-auto rounded-md border shadow-md"
+              className="fixed z-40 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent overflow-y-auto rounded-md border bg-popover shadow-md hover:scrollbar-thumb-muted-foreground/40"
               style={{
                 top: dropdownRect.top,
                 left: dropdownRect.left,
@@ -341,12 +341,12 @@ function useSingleGenomeSelector({
               {isLoading ? (
                 <div className="flex items-center justify-center p-4">
                   <Loader2 className="mr-2 size-4 animate-spin" />
-                  <span className="text-muted-foreground text-sm">
+                  <span className="text-sm text-muted-foreground">
                     Searching...
                   </span>
                 </div>
               ) : error ? (
-                <div className="text-destructive p-4 text-sm">{error}</div>
+                <div className="p-4 text-sm text-destructive">{error}</div>
               ) : suggestions.length > 0 ? (
                 suggestions.map((genome, index) => {
                   const isHighlighted = highlightedIndex === index;
@@ -358,7 +358,7 @@ function useSingleGenomeSelector({
                       }}
                       type="button"
                       className={cn(
-                        "hover:bg-accent flex w-full cursor-pointer flex-col items-start gap-1 rounded-md border-0 bg-transparent px-4 py-2 text-left text-sm",
+                        "flex w-full cursor-pointer flex-col items-start gap-1 rounded-md border-0 bg-transparent px-4 py-2 text-left text-sm hover:bg-accent",
                         isHighlighted && "bg-accent",
                       )}
                       onClick={() => {
@@ -370,11 +370,11 @@ function useSingleGenomeSelector({
                     >
                       <span className="flex items-center gap-1 truncate text-sm font-medium">
                         {genome.public === false && (
-                          <ShieldUser className="text-foreground/90 size-3.5 shrink-0" />
+                          <ShieldUser className="size-3.5 shrink-0 text-foreground/90" />
                         )}
                         <span className="truncate">{genome.genome_name}</span>
                       </span>
-                      <span className="text-muted-foreground text-xs">
+                      <span className="text-xs text-muted-foreground">
                         {genome.genome_id}
                         {genome.strain ? ` • ${genome.strain}` : ""}
                       </span>
@@ -382,7 +382,7 @@ function useSingleGenomeSelector({
                   );
                 })
               ) : showEmptyState ? (
-                <p className="text-muted-foreground py-4 text-center text-sm">
+                <p className="py-4 text-center text-sm text-muted-foreground">
                   {query.trim()
                     ? `No genomes found for "${query.trim()}"`
                     : "No genomes found"}
@@ -393,7 +393,7 @@ function useSingleGenomeSelector({
           )}
       </div>
       {helperText && (
-        <p className="text-muted-foreground text-xs">{helperText}</p>
+        <p className="text-xs text-muted-foreground">{helperText}</p>
       )}
     </div>
   );

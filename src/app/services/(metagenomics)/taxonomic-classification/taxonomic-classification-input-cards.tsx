@@ -53,7 +53,7 @@ export function ClassificationInputCard({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Label className="service-card-label">Paired Read Library</Label>
-              <div className="bg-border mx-4 h-px flex-1" />
+              <div className="mx-4 h-px flex-1 bg-border" />
               <Button
                 type="button"
                 variant="outline"
@@ -111,7 +111,7 @@ export function ClassificationInputCard({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Label className="service-card-label">Single Read Library</Label>
-              <div className="bg-border mx-4 h-px flex-1" />
+              <div className="mx-4 h-px flex-1 bg-border" />
               <Button
                 type="button"
                 variant="outline"

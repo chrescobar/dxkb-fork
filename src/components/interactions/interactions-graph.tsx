@@ -35,7 +35,7 @@ const SigmaCanvas = dynamic<GraphCanvasProps>(
   {
     ssr: false,
     loading: () => (
-      <div className="text-muted-foreground flex size-full items-center justify-center text-sm">
+      <div className="flex size-full items-center justify-center text-sm text-muted-foreground">
         Loading graph…
       </div>
     ),
@@ -131,7 +131,7 @@ export function InteractionsGraph({
     return (
       <div className="flex h-full min-h-0 flex-col">
         {toolbar}
-        <div className="text-destructive flex flex-1 items-center justify-center text-sm">
+        <div className="flex flex-1 items-center justify-center text-sm text-destructive">
           {error instanceof Error
             ? error.message
             : "Failed to load interactions."}
@@ -146,7 +146,7 @@ export function InteractionsGraph({
     return (
       <div className="flex h-full min-h-0 flex-col">
         {toolbar}
-        <div className="text-muted-foreground flex flex-1 items-center justify-center text-sm">
+        <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
           No interactions found.
         </div>
       </div>
@@ -190,7 +190,7 @@ export function InteractionsGraph({
     <div className="flex h-full min-h-0 flex-col">
       {toolbar}
       <div className="flex min-h-0 flex-1">
-        <div className="bg-card flex w-60 shrink-0 flex-col rounded-tl-md border-x border-t">
+        <div className="flex w-60 shrink-0 flex-col rounded-tl-md border-x border-t bg-card">
           <div className="border-b p-3">
             <GraphLegend />
           </div>
@@ -235,7 +235,7 @@ export function InteractionsGraph({
           </div>
         </div>
         <div
-          className="bg-card w-64 shrink-0 overflow-y-auto border-t border-l"
+          className="w-64 shrink-0 overflow-y-auto border-t border-l bg-card"
           tabIndex={0}
           aria-label="Selection details"
         >

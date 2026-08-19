@@ -14,7 +14,7 @@ function SubGroups({ subGroups }: { subGroups: VirusFamilySubGroup[] }) {
     <>
       {subGroups.map((subGroup) => (
         <div key={subGroup.label} className="flex flex-col gap-3">
-          <h3 className="text-muted-foreground px-0.5 text-sm font-semibold">
+          <h3 className="px-0.5 text-sm font-semibold text-muted-foreground">
             {subGroup.label}
           </h3>
           <div className="flex flex-col gap-2">
@@ -44,7 +44,7 @@ export function VirusFamiliesSection() {
         <h2 className="text-2xl font-semibold tracking-normal">
           Virus Families
         </h2>
-        <p className="text-muted-foreground text-base">
+        <p className="text-base text-muted-foreground">
           Common viral family groupings organized by genome type.
         </p>
       </div>
@@ -64,7 +64,7 @@ export function VirusFamiliesSection() {
               <SubGroups subGroups={column.subGroups} />
             ) : (
               <>
-                <h3 className="text-muted-foreground px-0.5 text-sm font-semibold">
+                <h3 className="px-0.5 text-sm font-semibold text-muted-foreground">
                   {column.group}
                 </h3>
                 <div className="flex flex-col gap-2">

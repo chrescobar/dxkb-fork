@@ -87,7 +87,7 @@ async function loadDependencies(): Promise<ArchaeopteryxDependencies> {
     import("jquery"),
     import("archaeopteryx/forester"),
     import("phyloxml"),
-    import("canvg"),
+    import("canvg") as Promise<unknown>,
     import("file-saver") as Promise<{ default: unknown }>,
   ]);
 
@@ -99,7 +99,7 @@ async function loadDependencies(): Promise<ArchaeopteryxDependencies> {
   globals.canvg = async (canvas: HTMLCanvasElement, svg: string) => {
     const context = canvas.getContext("2d");
     if (!context) throw new Error("Canvas 2D context is unavailable");
-    const { Canvg } = canvgModule as unknown as CanvgModule;
+    const { Canvg } = canvgModule as CanvgModule;
     await Canvg.fromString(context, svg).render();
   };
   globals.saveAs = fileSaverModule.default;

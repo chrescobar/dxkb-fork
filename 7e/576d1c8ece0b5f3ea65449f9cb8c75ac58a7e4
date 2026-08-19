@@ -1,0 +1,42 @@
+patches/auspice@2.73.0.patch
+  s_64ed1bec05f557::t_0c2a90d7a488be 5,11
+  s_64ed1bec05f557::t_89767febd3dd4c 6-10
+patches/archaeopteryx@2.3.2.patch
+  s_7517dff6b5e9f1::t_fdcf48e6fb501e 114
+  s_7517dff6b5e9f1::t_23d6f0916e39c2 255
+  s_64ed1bec05f557::t_c34e6bdfc1a388 37,43
+  s_64ed1bec05f557::t_487fbfe55ef682 210,216-217,219-223,225
+  s_7517dff6b5e9f1::t_92b32358e6ce17 38-42,44-48
+  s_64ed1bec05f557::t_e39048defae104 241
+pnpm-lock.yaml
+  s_64ed1bec05f557::t_2206754fac4733 24-25,134,303,12422,12543
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "7e576d1c8ece0b5f3ea65449f9cb8c75ac58a7e4",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_64ed1bec05f557": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe49f9bdeffeA0Sr6kGspgGMmU",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_7517dff6b5e9f1": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe4a2ced8ffeQD2aoBDouk8CAP",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

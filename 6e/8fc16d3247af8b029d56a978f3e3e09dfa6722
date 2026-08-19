@@ -1,0 +1,88 @@
+src/app/(auth)/redirect-action.ts
+  s_3553778c9b9f8b::t_9d9c32a370afdb 11-17
+src/lib/services/workspace/__tests__/validation.test.ts
+  s_3553778c9b9f8b::t_ed0d3c963f47ec 31,38-40
+.github/workflows/react-doctor.yml
+  s_3553778c9b9f8b::t_09d52e23eb4e01 45,49-52
+src/components/footers/footer.tsx
+  s_3553778c9b9f8b::t_ca10075551b331 2-8
+  s_3553778c9b9f8b::t_0a2bb1772a0f29 17-21,29-30
+src/lib/services/workspace/validation.ts
+  s_3553778c9b9f8b::t_d2a9ae8d05c403 5,15-31,33
+src/app/(auth)/redirect-action.test.ts
+  s_3553778c9b9f8b::t_ffd479d2ea71a9 15
+src/components/workspace/workspace-shell.tsx
+  s_5bcb83a3afc093::t_b1d7ef82030bec 157-161
+src/app/(auth)/forgot-password/page.tsx
+  s_3553778c9b9f8b::t_4b8f53bfdc5a8a 67,102,133
+  s_5bcb83a3afc093::t_0cc3699e58b4cc 5,7
+  s_5bcb83a3afc093::t_10e1e1d236f928 35,38-42
+src/components/taxonomy/taxonomy-tree.tsx
+  s_5bcb83a3afc093::t_db397ee279e3fd 398-399
+  s_5bcb83a3afc093::t_c9b3d8ef55d5f7 260,262
+  s_5bcb83a3afc093::t_18e5784cc7b471 325
+package.json
+  s_3553778c9b9f8b::t_230a11f7673f7e 98
+src/components/services/output-folder.tsx
+  s_3553778c9b9f8b::t_4cfd984d75ca96 58
+  s_3553778c9b9f8b::t_788b5d626981c9 108,111-114
+  s_3553778c9b9f8b::t_58d998f7332b53 119
+  s_3553778c9b9f8b::t_6c1428d9d480ce 21-22
+  s_3553778c9b9f8b::t_66d3dd85581423 218-224
+  s_3553778c9b9f8b::t_c66b8e0b635ee4 207-212
+  s_3553778c9b9f8b::t_fc591efb9f90b7 80,82-85,87,89-98
+src/components/services/__tests__/output-folder.test.tsx
+  s_3553778c9b9f8b::t_7e43f84a65ba9c 1,105
+  s_3553778c9b9f8b::t_c8bf65473a0e24 2-42,47-104,110-112
+  s_3553778c9b9f8b::t_66d3dd85581423 43-46,106-109
+src/hooks/services/workspace/use-workspace-object-search.ts
+  s_3553778c9b9f8b::t_b96da82b49dfdd 79-82,87
+  s_00c9fd07e34089::t_cc623726f39504 3
+  s_00c9fd07e34089::t_ebc1a679599fbe 88,90-93
+src/components/services/__tests__/list-data.test.ts
+  s_3553778c9b9f8b::t_6ecddc39165163 8-11
+  s_3553778c9b9f8b::t_821efa1e9805f7 63
+src/hooks/services/workspace/__tests__/use-workspace-object-search.test.tsx
+  s_3553778c9b9f8b::t_2acd9f11ae6920 92-118
+  s_00c9fd07e34089::t_d7135de32142e9 179
+  s_00c9fd07e34089::t_333314ebcc5b29 181,186-189
+src/app/services/(phylogenomics)/viral-genome-tree/use-viral-genome-tree.ts
+  s_3553778c9b9f8b::t_d01463acd81633 195-217,219
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "6e8fc16d3247af8b029d56a978f3e3e09dfa6722",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_00c9fd07e34089": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0033dfb0affeC76xqxBXYegQ1e",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_3553778c9b9f8b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0031afbadffe1lmh5mf3yYFNhb",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_5bcb83a3afc093": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_003109c98ffeHqobi3Yv7FWa4v",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

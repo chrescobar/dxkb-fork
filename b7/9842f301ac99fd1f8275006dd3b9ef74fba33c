@@ -1,0 +1,29 @@
+src/app/(auth)/forgot-password/page.tsx
+  s_00c9fd07e34089::t_8c460adaf49ae2 5
+  s_00c9fd07e34089::t_4f75d2ee5fd97a 34
+src/components/workspace/workspace-shell.tsx
+  s_00c9fd07e34089::t_2ebd122e5d4089 157
+.github/workflows/react-doctor.yml
+  s_00c9fd07e34089::t_e1d7be53c203ea 37-38,40,43-54,58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "b79842f301ac99fd1f8275006dd3b9ef74fba33c",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_00c9fd07e34089": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0033dfb0affeC76xqxBXYegQ1e",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

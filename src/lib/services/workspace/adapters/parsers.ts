@@ -4,10 +4,64 @@
  * testable.
  */
 
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
-import { metaListToObj } from "../helpers";
 import type { WorkspaceItem } from "../domain";
-import { toWorkspaceItem } from "../domain";
+
+/**
+ * Convert a raw ls tuple array (as returned by Workspace.ls) into an untyped
+ * record. Moved here from helpers.ts so both `parsers.ts` and `client.ts` can
+ * share this without a circular import.
+ */
+export function parseTupleToRawObject(list: unknown[]): Record<string, unknown> {
+  const name = list[0];
+  const parent = (list[2] as string | undefined) ?? "";
+  const nameStr = (name as string | undefined) ?? "";
+  return {
+    id: list[4],
+    path: parent + nameStr,
+    name,
+    type: list[1],
+    creation_time: list[3],
+    link_reference: list[11],
+    owner_id: list[5],
+    size: Number(list[6]) || 0,
+    userMeta: list[7],
+    autoMeta: list[8],
+    user_permission: list[9],
+    global_permission: list[10],
+    timestamp: Date.parse(String(list[3])),
+  };
+}
+
+/** Convert a raw ls tuple directly to a canonical `WorkspaceItem`. */
+function parseTupleToWorkspaceItem(tuple: unknown[]): WorkspaceItem {
+  const name = (tuple[0] as string | undefined) ?? "";
+  const parent = (tuple[2] as string | undefined) ?? "";
+  const createdAt = tuple[3] ? (tuple[3] as string) : undefined;
+  return {
+    id: (tuple[4] as string | undefined) ?? "",
+    name,
+    path: parent + name,
+    type: (tuple[1] as string | undefined) ?? "",
+    size: Number(tuple[6]) || 0,
+    ownerId: tuple[5] ? (tuple[5] as string) : undefined,
+    createdAt,
+    timestamp: createdAt ? Date.parse(createdAt) : undefined,
+    permissions: {
+      user: tuple[9] ? (tuple[9] as string) : undefined,
+      global: tuple[10] ? (tuple[10] as string) : undefined,
+    },
+    userMeta:
+      tuple[7] != null && typeof tuple[7] === "object"
+        ? (tuple[7] as Record<string, unknown>)
+        : undefined,
+    autoMeta:
+      tuple[8] != null && typeof tuple[8] === "object"
+        ? (tuple[8] as Record<string, unknown>)
+        : undefined,
+    linkReference: tuple[11] ? (tuple[11] as string) : undefined,
+    raw: parseTupleToRawObject(tuple),
+  };
+}
 
 /**
  * Parse a `Workspace.ls` result. Raw shape: result[0] is a map from requested
@@ -17,15 +71,13 @@ import { toWorkspaceItem } from "../domain";
 export function parseLsResult(
   rawResult: unknown,
   requestedPath: string,
-): WorkspaceBrowserItem[] {
+): WorkspaceItem[] {
   if (!Array.isArray(rawResult) || rawResult.length === 0) return [];
-  const pathsMap = rawResult[0];
+  const pathsMap: unknown = rawResult[0];
   if (!pathsMap || typeof pathsMap !== "object") return [];
   const entries = (pathsMap as Record<string, unknown>)[requestedPath];
   if (!Array.isArray(entries)) return [];
-  return entries.map(
-    (tuple) => metaListToObj(tuple as unknown[]) as WorkspaceBrowserItem,
-  );
+  return entries.map((tuple) => parseTupleToWorkspaceItem(tuple as unknown[]));
 }
 
 /**
@@ -33,25 +85,16 @@ export function parseLsResult(
  * the exact requested path isn't found. Mirrors the fallback behavior of the
  * old `WorkspaceApiClient.makeRequest`.
  */
-export function parseLsResultLoose(
-  rawResult: unknown,
-): WorkspaceBrowserItem[] {
+export function parseLsResultLoose(rawResult: unknown): WorkspaceItem[] {
   if (!Array.isArray(rawResult) || rawResult.length === 0) return [];
-  const pathsMap = rawResult[0];
+  const pathsMap: unknown = rawResult[0];
   if (!pathsMap || typeof pathsMap !== "object") return [];
-  const keys = Object.keys(pathsMap as Record<string, unknown>);
+  const keys = Object.keys(pathsMap);
   const first = keys[0];
   if (!first) return [];
   const entries = (pathsMap as Record<string, unknown>)[first];
   if (!Array.isArray(entries)) return [];
-  return entries.map(
-    (tuple) => metaListToObj(tuple as unknown[]) as WorkspaceBrowserItem,
-  );
-}
-
-/** Convert an ls listing into canonical `WorkspaceItem`s. */
-export function lsToWorkspaceItems(items: WorkspaceBrowserItem[]): WorkspaceItem[] {
-  return items.map(toWorkspaceItem);
+  return entries.map((tuple) => parseTupleToWorkspaceItem(tuple as unknown[]));
 }
 
 /**
@@ -62,7 +105,7 @@ export function parseListPermissions(
   rawResult: unknown,
 ): Record<string, [string, string][]> {
   if (!Array.isArray(rawResult) || rawResult.length === 0) return {};
-  const map = rawResult[0];
+  const map: unknown = rawResult[0];
   if (!map || typeof map !== "object") return {};
   return map as Record<string, [string, string][]>;
 }
@@ -73,11 +116,11 @@ export function parseListPermissions(
  */
 export function parseUploadNode(rawResult: unknown): string | null {
   if (!Array.isArray(rawResult) || rawResult.length === 0) return null;
-  const outer = rawResult[0];
+  const outer: unknown = rawResult[0];
   if (!Array.isArray(outer) || outer.length === 0) return null;
-  const tuple = outer[0];
+  const tuple: unknown = outer[0];
   if (!Array.isArray(tuple)) return null;
-  const link = tuple[11];
+  const link: unknown = tuple[11];
   return typeof link === "string" ? link : null;
 }
 
@@ -88,7 +131,7 @@ export function parseDuResult(
   rawResult: unknown,
 ): [string, number, number, number, string][] {
   if (!Array.isArray(rawResult) || rawResult.length === 0) return [];
-  const inner = rawResult[0];
+  const inner: unknown = rawResult[0];
   if (!Array.isArray(inner)) return [];
   return inner as [string, number, number, number, string][];
 }

@@ -161,7 +161,7 @@ describe("transformPrimerDesignParams", () => {
   };
 
   it("maps basic fields", () => {
-    const result = transformPrimerDesignParams(baseFormData as never);
+    const result = transformPrimerDesignParams(baseFormData);
 
     expect(result).toEqual(
       expect.objectContaining({
@@ -173,7 +173,7 @@ describe("transformPrimerDesignParams", () => {
   });
 
   it("handles sequence_text input_type by sanitizing and stripping header", () => {
-    const result = transformPrimerDesignParams(baseFormData as never);
+    const result = transformPrimerDesignParams(baseFormData);
 
     expect(result.sequence_input).toBe("ATGCATGC");
     expect(result.SEQUENCE_ID).toBe("seq_001");
@@ -185,14 +185,14 @@ describe("transformPrimerDesignParams", () => {
       input_type: "workplace_fasta" as const,
       sequence_input: " /ws/file.fasta ",
     };
-    const result = transformPrimerDesignParams(data as never);
+    const result = transformPrimerDesignParams(data);
 
     expect(result.sequence_input).toBe("/ws/file.fasta");
     expect(result).not.toHaveProperty("SEQUENCE_ID");
   });
 
   it("includes region arrays as space-joined strings when non-empty", () => {
-    const result = transformPrimerDesignParams(baseFormData as never);
+    const result = transformPrimerDesignParams(baseFormData);
 
     expect(result.SEQUENCE_TARGET).toBe("100,200");
     expect(result.SEQUENCE_EXCLUDED_REGION).toBe("10,20");
@@ -205,13 +205,13 @@ describe("transformPrimerDesignParams", () => {
       ...baseFormData,
       PRIMER_PRODUCT_SIZE_RANGE: ["50,500", "100,300"],
     };
-    const result = transformPrimerDesignParams(data as never);
+    const result = transformPrimerDesignParams(data);
 
     expect(result.PRIMER_PRODUCT_SIZE_RANGE).toBe("50-500 100-300");
   });
 
   it("includes scalar params when defined", () => {
-    const result = transformPrimerDesignParams(baseFormData as never);
+    const result = transformPrimerDesignParams(baseFormData);
 
     expect(result.PRIMER_NUM_RETURN).toBe("5");
     expect(result.PRIMER_MIN_SIZE).toBe("18");
@@ -220,35 +220,35 @@ describe("transformPrimerDesignParams", () => {
   });
 
   it("includes PRIMER_PICK_INTERNAL_OLIGO when defined", () => {
-    const result = transformPrimerDesignParams(baseFormData as never);
+    const result = transformPrimerDesignParams(baseFormData);
 
     expect(result.PRIMER_PICK_INTERNAL_OLIGO).toBe(true);
   });
 
   it("omits SEQUENCE_ID when empty for sequence_text input", () => {
     const data = { ...baseFormData, SEQUENCE_ID: "" };
-    const result = transformPrimerDesignParams(data as never);
+    const result = transformPrimerDesignParams(data);
 
     expect(result).not.toHaveProperty("SEQUENCE_ID");
   });
 
   it("handles empty sequence_input for sequence_text", () => {
     const data = { ...baseFormData, sequence_input: "" };
-    const result = transformPrimerDesignParams(data as never);
+    const result = transformPrimerDesignParams(data);
 
     expect(result.sequence_input).toBe("");
   });
 
   it("includes multiple SEQUENCE_TARGET entries as space-joined string", () => {
     const data = { ...baseFormData, SEQUENCE_TARGET: ["100,200", "300,400"] };
-    const result = transformPrimerDesignParams(data as never);
+    const result = transformPrimerDesignParams(data);
 
     expect(result.SEQUENCE_TARGET).toBe("100,200 300,400");
   });
 
   it("formats PRIMER_PRODUCT_SIZE_RANGE replacing commas with dashes", () => {
     const data = { ...baseFormData, PRIMER_PRODUCT_SIZE_RANGE: ["100,500"] };
-    const result = transformPrimerDesignParams(data as never);
+    const result = transformPrimerDesignParams(data);
 
     expect(result.PRIMER_PRODUCT_SIZE_RANGE).toBe("100-500");
   });

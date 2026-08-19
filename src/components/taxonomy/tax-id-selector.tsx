@@ -8,8 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TaxonomyItem, TaxonomySelectorProps } from "@/types";
 
-/** Default: use Next.js API route so the client does not need BVBRC_WEBSITE_API_URL */
-const defaultTaxonomyApiUrl = "/api/services/taxonomy";
 
 interface TaxIDSelectorProps extends TaxonomySelectorProps {
   apiServiceUrl?: string;
@@ -39,11 +37,11 @@ async function searchTaxonById(
   });
 
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    throw new Error(`HTTP error! status: ${String(response.status)}`);
   }
 
-  const data = await response.json();
-  return data?.response?.docs || [];
+  const data = await response.json() as { response?: { docs?: unknown[] } };
+  return (data.response?.docs ?? []) as TaxonomyItem[];
 }
 
 export function TaxIDSelector({
@@ -56,7 +54,7 @@ export function TaxIDSelector({
   apiServiceUrl = "/api/services/taxonomy",
   queryFilter,
 }: TaxIDSelectorProps) {
-  const resolvedApiServiceUrl = apiServiceUrl ?? defaultTaxonomyApiUrl;
+  const resolvedApiServiceUrl = apiServiceUrl;
   const [showDropdown, setShowDropdown] = useState(false);
   // Initialize searchQuery from value prop to ensure SSR/client hydration match
   const [searchQuery, setSearchQuery] = useState(
@@ -72,10 +70,10 @@ export function TaxIDSelector({
     const timeoutId = setTimeout(() => {
       setDebouncedQuery(searchQuery);
     }, 300);
-    return () => clearTimeout(timeoutId);
+    return () => { clearTimeout(timeoutId); };
   }, [searchQuery]);
 
-  const { data: results = [], isLoading: loading, error: queryError } = useQuery<TaxonomyItem[], Error>({
+  const { data: results = [], isLoading: loading, error: queryError } = useQuery<TaxonomyItem[]>({
     queryKey: ["taxonomy-search-id", resolvedApiServiceUrl, debouncedQuery, queryFilter],
     queryFn: ({ signal }) => searchTaxonById(resolvedApiServiceUrl, debouncedQuery, queryFilter, signal),
     enabled: !!debouncedQuery.trim() && !disabled,
@@ -151,14 +149,14 @@ export function TaxIDSelector({
     <div className={cn("relative w-full", className)}>
       <div ref={inputRef} className="relative">
         {!disabled && (
-          <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+          <SearchIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
         )}
         <Input
           placeholder={
             disabled && !value ? "Select a taxon name first" : placeholder
           }
           value={inputValue}
-          onChange={(e) => handleSearchChange(e.target.value)}
+          onChange={(e) => { handleSearchChange(e.target.value); }}
           onFocus={() => {
             if (!disabled) {
               setShowDropdown(searchQuery.length > 0);
@@ -167,12 +165,12 @@ export function TaxIDSelector({
           onBlur={() => {
             setTouched(true);
             if (!disabled) {
-              setTimeout(() => setShowDropdown(false), 200);
+              setTimeout(() => { setShowDropdown(false); }, 200);
             }
           }}
           className={cn(
             "w-full",
-            !disabled && "pr-10 pl-10",
+            !disabled && "px-10",
             disabled && value && "pl-3",
             touched && !isValid && "border-destructive",
           )}
@@ -182,48 +180,50 @@ export function TaxIDSelector({
         {!disabled && (
           <Button
             type="button"
+            aria-label={showDropdown ? "Hide suggestions" : "Show suggestions"}
             onClick={handleManualDropdownToggle}
-            className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 transition-colors"
+            className="absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
           >
             <ChevronDownIcon
-              className={`h-4 w-4 transition-transform ${showDropdown ? "rotate-180" : ""}`}
+              className={`size-4 transition-transform ${showDropdown ? "rotate-180" : ""}`}
             />
           </Button>
         )}
 
         {/* Live Search Dropdown - only show when not disabled */}
         {!disabled && showDropdown && (
-          <div className="bg-popover scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/20 hover:scrollbar-thumb-muted-foreground/40 dark:scrollbar-thumb-muted-foreground/30 dark:hover:scrollbar-thumb-muted-foreground/50 absolute top-full right-0 left-0 z-50 mt-1 max-h-64 overflow-y-auto rounded-md border shadow-md">
+          <div className="absolute inset-x-0 top-full z-50 mt-1 max-h-64 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent overflow-y-auto rounded-md border bg-popover shadow-md hover:scrollbar-thumb-muted-foreground/40 dark:scrollbar-thumb-muted-foreground/30 dark:hover:scrollbar-thumb-muted-foreground/50">
             {error ? (
-              <div className="text-destructive p-4 text-sm">Error: {error}</div>
+              <div className="p-4 text-sm text-destructive">Error: {error}</div>
             ) : loading ? (
               <div className="flex items-center justify-center p-4">
-                <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                <span className="text-muted-foreground text-sm">
+                <Loader2Icon className="mr-2 size-4 animate-spin" />
+                <span className="text-sm text-muted-foreground">
                   Searching...
                 </span>
               </div>
             ) : displayResults.length > 0 ? (
               displayResults.map((item) => (
-                <div
+                <button
+                  type="button"
                   key={item.taxon_id}
-                  className="hover:bg-accent flex cursor-pointer items-center justify-between p-2"
-                  onClick={() => handleSelect(item)}
+                  className="flex w-full cursor-pointer items-center justify-between p-2 text-left hover:bg-accent"
+                  onClick={() => { handleSelect(item); }}
                 >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-medium">
                       {item.taxon_id} [{item.taxon_name}]
-                    </p>
+                    </span>
                     {item.lineage_names && item.lineage_names.length > 0 && (
-                      <p className="text-muted-foreground truncate text-xs">
+                      <span className="block truncate text-xs text-muted-foreground">
                         {item.lineage_names.join(" > ")}
-                      </p>
+                      </span>
                     )}
-                  </div>
-                </div>
+                  </span>
+                </button>
               ))
             ) : (
-              <p className="text-muted-foreground py-4 text-center text-sm">
+              <p className="py-4 text-center text-sm text-muted-foreground">
                 {searchQuery
                   ? `No taxonomy found for ID: ${searchQuery}`
                   : "No results found"}
@@ -234,7 +234,7 @@ export function TaxIDSelector({
       </div>
 
       {touched && required && !isValid && (
-        <p className="text-destructive mt-1 text-sm">
+        <p className="mt-1 text-sm text-destructive">
           NCBI Tax ID is required.
         </p>
       )}

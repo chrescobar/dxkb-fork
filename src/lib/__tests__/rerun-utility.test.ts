@@ -12,8 +12,8 @@ vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 vi.mock("@/lib/forms/tanstack-library-selection", () => ({
   getPairedLibraryId: (read1: string, read2: string) => `${read1}${read2}`,
   getPairedLibraryName: (read1: string, read2: string) =>
-    `P(${read1.split("/").pop()}, ${read2.split("/").pop()})`,
-  getSingleLibraryName: (read: string) => `S(${read.split("/").pop()})`,
+    `P(${read1.split("/").pop() ?? ""}, ${read2.split("/").pop() ?? ""})`,
+  getSingleLibraryName: (read: string) => `S(${read.split("/").pop() ?? ""})`,
 }));
 
 describe("rerunBooleanValue", () => {
@@ -238,8 +238,11 @@ describe("rerunJob", () => {
     vi.stubGlobal("crypto", { randomUUID: () => "12345678-abcd-efgh-ijkl-mnopqrstuvwx" });
   });
 
-  it("stores params in sessionStorage and opens correct route", () => {
+  it("opens with an opener for sessionStorage cloning, then severs it", () => {
     const params = { genome_id: "123" };
+    const rerunWindow = { opener: window };
+    mockOpen.mockReturnValue(rerunWindow);
+
     rerunJob(params, "GenomeAssembly2");
 
     expect(mockSetItem).toHaveBeenCalledWith(
@@ -250,6 +253,7 @@ describe("rerunJob", () => {
       "/services/genome-assembly?rerun_key=12345678",
       "_blank",
     );
+    expect(rerunWindow.opener).toBeNull();
   });
 
   it("shows toast error for unsupported service", async () => {

@@ -15,7 +15,7 @@ export function transformGenomeAlignmentParams(
 
   params.seedWeight = data.manual_seed_weight ? data.seed_weight ?? null : null;
 
-  if (data.weight !== undefined && data.weight !== null) {
+  if (data.weight !== undefined) {
     params.weight = data.weight;
   }
 

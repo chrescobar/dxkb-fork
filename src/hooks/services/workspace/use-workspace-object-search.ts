@@ -52,7 +52,7 @@ export function useWorkspaceObjectSearch({
 
   const typesKey = types ? JSON.stringify([...types].sort()) : "";
 
-  const query = useQuery<WorkspaceItem[], Error>({
+  const query = useQuery<WorkspaceItem[]>({
     queryKey: workspaceQueryKeys.search(username, path, typesKey),
     queryFn: () => repository.searchObjects({ username, path, types }),
     enabled: autoLoad && !!username,
@@ -73,8 +73,8 @@ export function useWorkspaceObjectSearch({
     [filteredItems],
   );
 
-  const search = useCallback((q: string) => setSearchQuery(q), []);
-  const clearSearch = useCallback(() => setSearchQuery(""), []);
+  const search = useCallback((q: string) => { setSearchQuery(q); }, []);
+  const clearSearch = useCallback(() => { setSearchQuery(""); }, []);
   const refresh = useCallback(async () => {
     await query.refetch();
   }, [query]);

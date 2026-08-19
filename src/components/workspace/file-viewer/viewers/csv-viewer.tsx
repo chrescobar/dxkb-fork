@@ -61,11 +61,11 @@ function InteractiveCsvViewer({
 
     fetch(getProxyUrl(filePath), { signal: controller.signal })
       .then((res) => {
-        if (!res.ok) throw new Error(`Failed to fetch file: ${res.status}`);
+        if (!res.ok) throw new Error(`Failed to fetch file: ${String(res.status)}`);
         return res.text();
       })
-      .then((text) => setContent(text))
-      .catch((err) => {
+      .then((text) => { setContent(text); })
+      .catch((err: unknown) => {
         if (err instanceof DOMException && err.name === "AbortError") return;
         setError(err instanceof Error ? err.message : "Unknown error");
       })
@@ -73,10 +73,10 @@ function InteractiveCsvViewer({
         if (!controller.signal.aborted) setLoading(false);
       });
 
-    return () => controller.abort();
+    return () => { controller.abort(); };
   }, [filePath]);
 
-  const { records, columnNames, parseError } = useMemo(() => {
+  const { records, columnNames, parseError } = useMemo<{ records: Record<string, string>[]; columnNames: string[]; parseError: string | null }>(() => {
     if (!content) return { records: [], columnNames: [], parseError: null };
 
     try {
@@ -86,14 +86,14 @@ function InteractiveCsvViewer({
         columns: true,
         skip_empty_lines: true,
         relax_column_count: true,
-      }) as Record<string, string>[];
+      });
 
-      const names =
+      const names: string[] =
         parsed.length > 0
-          ? Object.keys(parsed[0] as Record<string, string>)
+          ? Object.keys(parsed[0] as Record<string, unknown>)
           : [];
 
-      return { records: parsed, columnNames: names, parseError: null };
+      return { records: parsed as Record<string, string>[], columnNames: names, parseError: null };
     } catch (err) {
       return {
         records: [],
@@ -106,15 +106,18 @@ function InteractiveCsvViewer({
 
   const displayError = error || parseError;
 
-  const columns = useMemo<ColumnDef<Record<string, string>>[]>(() => {
-    return columnNames.map((col) => ({
-      accessorKey: col,
-      header: col,
-      cell: (info) => info.getValue(),
-    }));
+  const columns = useMemo<ColumnDef<Record<string, string>, string>[]>(() => {
+    return columnNames.map((col): ColumnDef<Record<string, string>, string> => {
+      const colId: string = col;
+      return {
+        accessorFn: (row: Record<string, string>): string => row[colId] ?? "",
+        id: colId,
+        header: colId,
+        cell: (info) => info.getValue(),
+      };
+    });
   }, [columnNames]);
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: records,
     columns,
@@ -135,7 +138,7 @@ function InteractiveCsvViewer({
 
   if (loading) {
     return (
-      <div className="flex h-full w-full items-center justify-center gap-2 text-muted-foreground">
+      <div className="flex size-full items-center justify-center gap-2 text-muted-foreground">
         Loading... <Spinner />
       </div>
     );
@@ -143,7 +146,7 @@ function InteractiveCsvViewer({
 
   if (displayError) {
     return (
-      <div className="flex h-full w-full items-center justify-center text-destructive">
+      <div className="flex size-full items-center justify-center text-destructive">
         {displayError}
       </div>
     );
@@ -151,40 +154,46 @@ function InteractiveCsvViewer({
 
   if (records.length === 0) {
     return (
-      <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+      <div className="flex size-full items-center justify-center text-muted-foreground">
         No data found
       </div>
     );
   }
 
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className="flex size-full flex-col">
       <div className="flex items-center gap-2 border-b border-border px-3 py-1.5 text-xs text-muted-foreground">
         {records.length} rows · {columnNames.length} columns
       </div>
       <div
         ref={scrollContainerRef}
-        className="h-full w-full overflow-auto"
+        className="size-full overflow-auto"
       >
         <table className="w-full text-sm">
-          <thead className="bg-muted sticky top-0 z-10">
+          <thead className="sticky top-0 z-10 bg-muted">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="cursor-pointer select-none border-b border-border px-3 py-2 text-left font-medium"
-                    onClick={header.column.getToggleSortingHandler()}
+                    aria-sort={header.column.getIsSorted() === "asc" ? "ascending" : header.column.getIsSorted() === "desc" ? "descending" : "none"}
+                    className="border-b border-border p-0 text-left font-medium"
                   >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-                    {header.column.getIsSorted() === "asc"
-                      ? " ↑"
-                      : header.column.getIsSorted() === "desc"
-                        ? " ↓"
-                        : ""}
+                    <button
+                      type="button"
+                      className="w-full cursor-pointer px-3 py-2 text-left select-none"
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                      {header.column.getIsSorted() === "asc"
+                        ? " ↑"
+                        : header.column.getIsSorted() === "desc"
+                          ? " ↓"
+                          : ""}
+                    </button>
                   </th>
                 ))}
               </tr>
@@ -200,7 +209,7 @@ function InteractiveCsvViewer({
               </tr>
             )}
             {virtualizer.getVirtualItems().map((virtualRow) => {
-              const row = rows[virtualRow.index];
+              const row = rows.at(virtualRow.index);
               if (!row) return null;
               return (
                 <tr

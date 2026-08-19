@@ -28,7 +28,7 @@
   - Always use double quotes for strings and import statements.
   
   UI and Styling
-  - Use Tailwind CSS (V4), Shadcn UI, and React-Icons for components and styling.
+  - Use Tailwind CSS (V4), Shadcn UI, and lucide-react for components and styling. Footer social marks are reviewed inline SVG paths; do not add a brand-icon package for them.
   - Implement responsive design with Tailwind CSS (V4); use a mobile-first approach.
   
   Performance Optimization

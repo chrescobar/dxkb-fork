@@ -53,7 +53,7 @@ export function DatePickerInput({
   onDateChange,
   placeholder,
 }: DatePickerInputProps) {
-  const fmt = formatMap[format] || formatMap["MM/DD/YYYY"];
+  const fmt = formatMap[format];
   const [date, setDate] = React.useState<Date | undefined>(value);
   const [inputValue, setInputValue] = React.useState<string>(
     value ? formatDateFns(value, fmt.dateFns) : "",
@@ -72,7 +72,7 @@ export function DatePickerInput({
     if (value === undefined) {
       setDate(undefined);
       setInputValue("");
-    } else if (value) {
+    } else {
       setDate(value);
       setInputValue(formatDateFns(value, fmt.dateFns));
       setCalendarMonth(value);
@@ -178,11 +178,11 @@ export function DatePickerInput({
                 ref={popoverRef}
                 variant="ghost"
                 size="icon"
-                className="hover:bg-secondary/10 absolute left-0.5 h-[90%] border border-border hover:border-muted-foreground focus-visible:border focus-visible:border-muted-foreground"
+                className="absolute left-0.5 h-[90%] border border-border hover:border-muted-foreground hover:bg-secondary/10 focus-visible:border focus-visible:border-muted-foreground"
                 tabIndex={-1}
                 aria-label="Open calendar"
               >
-                <CalendarIcon className="h-4 w-4" />
+                <CalendarIcon className="size-4" />
               </Button>
             }
           />
@@ -203,7 +203,7 @@ export function DatePickerInput({
           placeholder={placeholder ?? fmt.placeholder}
           maxLength={fmt.mask.reduce((a, b) => a + b) + (fmt.mask.length - 1)}
           className={cn(
-            "w-full pl-10 bg-muted",
+            "w-full bg-muted pl-10",
             !date && "text-muted-foreground",
             error && "border-red-500 focus-visible:ring-red-500",
             className,

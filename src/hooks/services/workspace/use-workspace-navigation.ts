@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback } from "react";
-import type { WorkspaceBrowserItem, WorkspaceViewMode } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
+import type { WorkspaceViewMode } from "@/types/workspace-browser";
 import { isFolderType } from "@/lib/services/workspace/utils";
-import { encodeWorkspaceSegment, sanitizePathSegment } from "@/lib/utils";
+import { encodeWorkspaceSegment, sanitizePathSegment } from "@/lib/services/workspace/path-utils";
 
 export interface UseWorkspaceNavigationOptions {
   mode: WorkspaceViewMode;
@@ -26,7 +27,7 @@ export function useWorkspaceNavigation({
   const isPublic = mode === "public";
 
   const navigateToItem = useCallback(
-    (item: WorkspaceBrowserItem) => {
+    (item: WorkspaceItem) => {
       if (isHome) {
         const base = basePath ?? path;
         const segments = base
@@ -59,7 +60,7 @@ export function useWorkspaceNavigation({
   );
 
   const handleItemDoubleClick = useCallback(
-    (item: WorkspaceBrowserItem) => {
+    (item: WorkspaceItem) => {
       if (item.type === "job_result") {
         navigateToItem(item);
         return;

@@ -23,10 +23,9 @@ function CollapsibleContent({
       keepMounted={keepMounted}
       {...props}
     >
-      <div
+      <hr
         data-slot="collapsible-divider"
-        role="separator"
-        className="h-px shrink-0 bg-border"
+        className="h-px shrink-0 border-0 bg-border"
       />
       {children}
     </CollapsiblePrimitive.Panel>

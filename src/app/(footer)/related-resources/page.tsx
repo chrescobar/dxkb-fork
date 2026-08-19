@@ -11,10 +11,10 @@ interface ResourceCard {
 
 const resourceCenters: ResourceCard[] = [
   {
-    title: "UChicago CASE",
-    subtitle: "University of Chicago Consortium for Advanced Science and Engineering",
-    image: "/images/websites/uchicago-case.png",
-    url: "https://researchdevelopment.uchicago.edu/uchicago-case/",
+    title: "Spillover",
+    subtitle: "Viral risk ranking for pandemic prevention",
+    image: "/images/websites/spillover.png",
+    url: "https://spillover.global/",
   },
   {
     title: "BV-BRC",
@@ -64,7 +64,7 @@ const ResourceCard = ({ title, subtitle, image, url }: ResourceCard) => (
         src={image}
         alt={title}
         fill
-        className="object-cover items-center justify-center"
+        className="items-center justify-center object-cover"
       />
     </div>
     <div className="card-content">
@@ -79,7 +79,7 @@ const RelatedResources = () => {
     <div className="flex w-full flex-col items-center">
       <FooterHeader title="Related Resources" />
 
-      <div className="card-container">
+      <div className="mx-auto my-12 w-[90%] max-w-6xl space-y-12 py-8">
         {/* Disease X/CEPI Resource Centers */}
         <section>
           <h2 className="section-title">
@@ -97,7 +97,7 @@ const RelatedResources = () => {
           <h2 className="section-title">
             Related Websites
           </h2>
-          <div className="card-grid-four">
+          <div className="card-grid-three">
             {relatedWebsites.map((resource) => (
               <ResourceCard key={resource.title} {...resource} />
             ))}

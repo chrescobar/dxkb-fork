@@ -16,7 +16,7 @@ describe("transformGenomeAssemblyParams", () => {
   };
 
   it("returns basic fields (recipe, output_path, output_file)", () => {
-    const result = transformGenomeAssemblyParams(baseData as never);
+    const result = transformGenomeAssemblyParams(baseData);
 
     expect(result).toEqual(
       expect.objectContaining({
@@ -28,7 +28,7 @@ describe("transformGenomeAssemblyParams", () => {
   });
 
   it("does not include empty arrays for libraries or srr_ids", () => {
-    const result = transformGenomeAssemblyParams(baseData as never);
+    const result = transformGenomeAssemblyParams(baseData);
 
     expect(result).not.toHaveProperty("paired_end_libs");
     expect(result).not.toHaveProperty("single_end_libs");
@@ -87,7 +87,7 @@ describe("transformGenomeAssemblyParams", () => {
       srr_ids: ["SRR123456", "SRR789012"],
     };
 
-    const result = transformGenomeAssemblyParams(data as never);
+    const result = transformGenomeAssemblyParams(data);
 
     expect(result.srr_ids).toEqual(["SRR123456", "SRR789012"]);
   });
@@ -98,7 +98,7 @@ describe("transformGenomeAssemblyParams", () => {
       genome_size: 5000000,
     };
 
-    const result = transformGenomeAssemblyParams(data as never);
+    const result = transformGenomeAssemblyParams(data);
 
     expect(result.genome_size).toBe(5000000);
   });
@@ -109,13 +109,13 @@ describe("transformGenomeAssemblyParams", () => {
       genome_size: 0,
     };
 
-    const result = transformGenomeAssemblyParams(data as never);
+    const result = transformGenomeAssemblyParams(data);
 
     expect(result).not.toHaveProperty("genome_size");
   });
 
   it("does not include genome_size when undefined", () => {
-    const result = transformGenomeAssemblyParams(baseData as never);
+    const result = transformGenomeAssemblyParams(baseData);
 
     expect(result).not.toHaveProperty("genome_size");
   });
@@ -133,7 +133,7 @@ describe("transformGenomeAssemblyParams", () => {
       min_contig_cov: 5,
     };
 
-    const result = transformGenomeAssemblyParams(data as never);
+    const result = transformGenomeAssemblyParams(data);
 
     expect(result).toEqual(
       expect.objectContaining({
@@ -150,7 +150,7 @@ describe("transformGenomeAssemblyParams", () => {
   });
 
   it("does not include advanced params when undefined", () => {
-    const result = transformGenomeAssemblyParams(baseData as never);
+    const result = transformGenomeAssemblyParams(baseData);
 
     expect(result).not.toHaveProperty("trim");
     expect(result).not.toHaveProperty("normalize");

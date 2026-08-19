@@ -1,0 +1,44 @@
+{
+  "version": "2.0",
+  "meta": {
+    "title": "Deterministic H3N2 Auspice tree",
+    "updated": "2026-08-04",
+    "panels": ["tree", "map"],
+    "colorings": [
+      { "key": "country", "title": "Country", "type": "categorical" }
+    ],
+    "display_defaults": { "color_by": "country", "geo_resolution": "country" },
+    "geo_resolutions": [
+      {
+        "key": "country",
+        "demes": {
+          "USA": { "latitude": 39.8, "longitude": -98.6 },
+          "Brazil": { "latitude": -10.3, "longitude": -53.2 }
+        }
+      }
+    ]
+  },
+  "tree": {
+    "name": "ROOT",
+    "node_attrs": { "div": 0 },
+    "branch_attrs": {},
+    "children": [
+      {
+        "name": "E2E-USA",
+        "node_attrs": {
+          "div": 0.1,
+          "country": { "value": "USA" }
+        },
+        "branch_attrs": {}
+      },
+      {
+        "name": "E2E-BRAZIL",
+        "node_attrs": {
+          "div": 0.2,
+          "country": { "value": "Brazil" }
+        },
+        "branch_attrs": {}
+      }
+    ]
+  }
+}

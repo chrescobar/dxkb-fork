@@ -124,7 +124,7 @@ describe("transformSarsCov2GenomeAnalysisParams", () => {
 
   it("includes basic fields with reads input_type", () => {
     const result = transformSarsCov2GenomeAnalysisParams(
-      baseReadsData as never,
+      baseReadsData,
     );
 
     expect(result).toEqual(
@@ -139,7 +139,7 @@ describe("transformSarsCov2GenomeAnalysisParams", () => {
 
   it("computes output_file from scientific_name and my_label when output_file is empty", () => {
     const result = transformSarsCov2GenomeAnalysisParams(
-      baseReadsData as never,
+      baseReadsData,
     );
 
     expect(result.output_file).toBe("SARS-CoV-2 run1");
@@ -148,14 +148,14 @@ describe("transformSarsCov2GenomeAnalysisParams", () => {
 
   it("uses provided output_file when not empty", () => {
     const data = { ...baseReadsData, output_file: "custom-output" };
-    const result = transformSarsCov2GenomeAnalysisParams(data as never);
+    const result = transformSarsCov2GenomeAnalysisParams(data);
 
     expect(result.output_file).toBe("custom-output");
   });
 
   it("includes recipe, primers, and primer_version for reads input", () => {
     const result = transformSarsCov2GenomeAnalysisParams(
-      baseReadsData as never,
+      baseReadsData,
     );
 
     expect(result).toEqual(
@@ -207,14 +207,14 @@ describe("transformSarsCov2GenomeAnalysisParams", () => {
       srr_ids: ["SRR123456", "SRR789012"],
     };
 
-    const result = transformSarsCov2GenomeAnalysisParams(data as never);
+    const result = transformSarsCov2GenomeAnalysisParams(data);
 
     expect(result.srr_ids).toEqual(["SRR123456", "SRR789012"]);
   });
 
   it("does not include empty library arrays or srr_ids", () => {
     const result = transformSarsCov2GenomeAnalysisParams(
-      baseReadsData as never,
+      baseReadsData,
     );
 
     expect(result).not.toHaveProperty("paired_end_libs");
@@ -229,7 +229,7 @@ describe("transformSarsCov2GenomeAnalysisParams", () => {
       contigs: "/ws/contigs.fa",
     };
 
-    const result = transformSarsCov2GenomeAnalysisParams(data as never);
+    const result = transformSarsCov2GenomeAnalysisParams(data);
 
     expect(result.contigs).toBe("/ws/contigs.fa");
     expect(result).not.toHaveProperty("recipe");
@@ -240,7 +240,7 @@ describe("transformSarsCov2GenomeAnalysisParams", () => {
 
 describe("getPairedLibraryBuildFn", () => {
   it("returns a function that builds a paired library with platform", () => {
-    const buildFn = getPairedLibraryBuildFn("illumina" as never);
+    const buildFn = getPairedLibraryBuildFn("illumina");
     const result = buildFn("/ws/r1.fq", "/ws/r2.fq", "p1");
 
     expect(result.library).toEqual(
@@ -256,7 +256,7 @@ describe("getPairedLibraryBuildFn", () => {
 
 describe("getSingleLibraryBuildFn", () => {
   it("returns a library with platform when platform is provided", () => {
-    const buildFn = getSingleLibraryBuildFn("nanopore" as never);
+    const buildFn = getSingleLibraryBuildFn("nanopore");
     const result = buildFn("/ws/reads.fq");
 
     expect(result.library).toEqual(

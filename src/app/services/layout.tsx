@@ -14,9 +14,9 @@ export default function ServicesLayout({
 }: ServiceLayoutProps) {
   return (
     <ServiceDebuggingProvider>
-      <div className="min-h-screen flex flex-col">
+      <div className="flex min-h-screen flex-col">
         <Navbar />
-        <main className="grow flex py-8">
+        <main className="flex grow py-8">
           <div className="service-container container">
             {children}
           </div>

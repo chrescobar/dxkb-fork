@@ -81,10 +81,11 @@ const SearchReadLibrary = ({
           {title && (
             <Label className="service-card-label">{title}</Label>
           )}
-          <div className="bg-border mx-4 h-[1px] flex-1" />
+          <div className="mx-4 h-px flex-1 bg-border" />
           <Button
             variant="outline"
             size="icon"
+            aria-label={`Add ${typeof title === "string" ? title.toLowerCase() : "library"}`}
             onClick={handleAdd}
             disabled={!canAdd || disabled}
           >
@@ -100,9 +101,9 @@ const SearchReadLibrary = ({
           onChange={handleFirstInputChange}
           disabled={disabled}
         />
-        <Button size="icon" variant="outline" disabled={disabled}>
+        <div aria-hidden="true" className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg border border-border bg-background">
           {icon}
-        </Button>
+        </div>
       </div>
 
       {variant === "pair" && (
@@ -114,9 +115,9 @@ const SearchReadLibrary = ({
             onChange={handleSecondInputChange}
             disabled={disabled}
           />
-          <Button size="icon" variant="outline" disabled={disabled}>
+          <div aria-hidden="true" className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg border border-border bg-background">
             {icon}
-          </Button>
+          </div>
         </div>
       )}
     </div>

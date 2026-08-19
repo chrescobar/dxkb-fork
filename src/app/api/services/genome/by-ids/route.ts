@@ -3,10 +3,14 @@ import { withAuth } from "@/lib/auth/server/instance";
 import { getRequiredEnv } from "@/lib/env";
 import { buildGenomeInClause } from "../utils";
 
+interface GenomeByIdsBody {
+  genome_ids?: unknown;
+}
+
 export const POST = withAuth(async (request: NextRequest, { token }) => {
-  const body = await request.json();
-  const genomeIds: string[] = Array.isArray(body?.genome_ids)
-    ? body.genome_ids
+  const body = (await request.json()) as GenomeByIdsBody;
+  const genomeIds: string[] = Array.isArray(body.genome_ids)
+    ? (body.genome_ids as string[])
     : [];
 
   if (genomeIds.length === 0) {
@@ -19,7 +23,7 @@ export const POST = withAuth(async (request: NextRequest, { token }) => {
     return NextResponse.json({ results: [] });
   }
 
-  const queryString = `?in(genome_id,(${inClause}))&select(genome_id,genome_name,public,owner,reference_genome,strain,superkingdom)&limit(${Math.min(genomeIds.length, 100)})`;
+  const queryString = `?in(genome_id,(${inClause}))&select(genome_id,genome_name,public,owner,reference_genome,strain,superkingdom)&limit(${String(Math.min(genomeIds.length, 100))})`;
   const url = `${getRequiredEnv("NEXT_PUBLIC_DATA_API")}/genome/${queryString}`;
 
   const response = await fetch(url, {
@@ -35,14 +39,14 @@ export const POST = withAuth(async (request: NextRequest, { token }) => {
     console.error("Genome lookup error:", response.status, errorText);
     return NextResponse.json(
       {
-        error: `BV-BRC genome lookup failed: ${response.status} ${response.statusText}`,
+        error: `BV-BRC genome lookup failed: ${String(response.status)} ${response.statusText}`,
       },
       { status: response.status },
     );
   }
 
-  const data = await response.json();
-  const results = Array.isArray(data) ? data : data?.items || [];
+  const data = (await response.json()) as unknown[] | { items?: unknown[] };
+  const results = Array.isArray(data) ? data : data.items ?? [];
 
   return NextResponse.json({ results });
 });

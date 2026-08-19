@@ -59,7 +59,7 @@ export function createAuthStore(options: CreateAuthStoreOptions): AuthStore {
 
   function userKey(user: AuthUser | null): string | null {
     if (!user) return null;
-    return `${user.id ?? user.username}|${user.token}|${user.expires_at ?? ""}|${user.isImpersonating ?? false}`;
+    return `${user.id ?? user.username}|${user.token}|${String(user.expires_at ?? "")}|${String(user.isImpersonating ?? false)}`;
   }
 
   function setSnapshot(next: AuthSnapshot): void {

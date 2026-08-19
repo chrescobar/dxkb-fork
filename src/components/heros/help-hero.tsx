@@ -5,16 +5,16 @@ import { Search } from "lucide-react";
 
 const HelpHero = () => {
   return (
-    <section className="bg-background border-b">
-    <div className="container mx-auto px-4 py-12 md:py-16 text-center">
+    <section className="border-b bg-background">
+    <div className="container mx-auto px-4 py-12 text-center md:py-16">
       {/* <h1 className="text-3xl md:text-4xl font-bold mb-4">How can we help you?</h1> */}
-      <p className="text-foreground-muted max-w-2xl mx-auto mb-8">
+      <p className="text-foreground-muted mx-auto mb-8 max-w-2xl">
         Search our knowledge base for answers to common questions or browse help topics below.
       </p>
-      <div className="max-w-xl mx-auto relative bg-white rounded-lg">
-        <Input type="text" placeholder="Search for help topics..." className="pl-10 py-6 text-base bg-background" />
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-primary" size={18} />
-        <Button className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-secondary hover:bg-accent text-white hover:text-white">
+      <div className="relative mx-auto max-w-xl rounded-lg bg-white">
+        <Input type="text" placeholder="Search for help topics..." className="bg-background py-6 pl-10 text-base" />
+        <Search className="absolute top-1/2 left-3 -translate-y-1/2 transform text-primary" size={18} />
+        <Button className="absolute top-1/2 right-1 -translate-y-1/2 transform bg-secondary text-white hover:bg-accent hover:text-white">
           Search
         </Button>
       </div>

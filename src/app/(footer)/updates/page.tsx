@@ -184,9 +184,9 @@ const Updates = () => {
       <FooterHeader title="Updates" />
 
       <div className="mx-auto grid w-full max-w-7xl gap-8 p-4 md:p-8">
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-[1fr_300px]">
           {/* Sidebar - Calendar & Events */}
-          <div className="order-1 md:order-2 flex flex-col md:sticky md:top-8 space-y-8 self-start w-full md:w-[300px]">
+          <div className="order-1 flex w-full flex-col space-y-8 self-start md:sticky md:top-8 md:order-2 md:w-75">
             <Card className="w-full p-0">
               <div className="w-full p-3">
                 <Calendar
@@ -204,39 +204,41 @@ const Updates = () => {
               <div className="px-4">
                 <h2 className="font-semibold">Upcoming Events</h2>
               </div>
-              <ScrollArea className="h-[300px] md:h-[400px]">
-                {upcomingEvents.map((event, index) => (
-                  <div
-                    key={index}
-                    onClick={() => setDate(getEventDate(event.date))}
+              <ScrollArea className="h-75 md:h-100">
+                {upcomingEvents.map((event) => (
+                  <button
+                    type="button"
+                    key={`${event.date.month}-${event.date.day}-${event.title}`}
+                    onClick={() => { setDate(getEventDate(event.date)); }}
+                    aria-pressed={isSelectedDateEvent(event.date)}
                     className={cn(
-                      "flex items-start gap-4 border-t px-4 py-3 transition-colors cursor-pointer",
+                      "flex w-full cursor-pointer items-start gap-4 border-t px-4 py-3 text-left transition-colors",
                       isSelectedDateEvent(event.date) ? "bg-secondary/40" : "hover:bg-secondary/20"
                     )}
                   >
-                    <div className={cn(
+                    <span className={cn(
                       "flex flex-col items-center rounded-lg px-2 py-1",
                       isSelectedDateEvent(event.date) ? "bg-secondary" : "bg-secondary/40"
                     )}>
                       <span className="text-xs font-medium">{event.date.month}</span>
-                      <span className="text-lg font-bold leading-none">
+                      <span className="text-lg leading-none font-bold">
                         {event.date.day}
                       </span>
-                    </div>
-                    <div>
-                      <h3 className="font-medium leading-none">{event.title}</h3>
-                      <p className="text-sm text-foreground">
+                    </span>
+                    <span>
+                      <span className="block leading-none font-medium">{event.title}</span>
+                      <span className="block text-sm text-foreground">
                         {event.description}
-                      </p>
-                    </div>
-                  </div>
+                      </span>
+                    </span>
+                  </button>
                 ))}
               </ScrollArea>
             </Card>
           </div>
 
           {/* Timeline */}
-          <div className="order-2 md:order-1 space-y-12">
+          <div className="order-2 space-y-12 md:order-1">
             <Timeline className='mt-8'>
               {timelineData.map((item) => (
                 <TimelineItem key={item.id}>

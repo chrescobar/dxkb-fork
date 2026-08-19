@@ -62,7 +62,7 @@ export function UploadDialog({
   }
 
   const addFiles = React.useCallback((newFiles: FileList | File[]) => {
-    const list = Array.from(newFiles).filter((f) => f.name && f.size !== undefined);
+    const list = Array.from(newFiles).filter((f) => f.name);
     setFiles((prev) => {
       const byName = new Map(prev.map((f) => [f.name, f]));
       list.forEach((f) => byName.set(f.name, f));
@@ -124,9 +124,9 @@ export function UploadDialog({
           body: formData,
         });
         if (!res.ok) {
-          const err = await res.json().catch(() => ({ error: res.statusText }));
+          const err = await (res.json() as Promise<{ error?: string }>).catch(() => ({ error: res.statusText }));
           toast.error(`Upload failed: ${file.name}`, {
-            description: (err as { error?: string }).error ?? res.statusText,
+            description: err.error ?? res.statusText,
           });
           hasError = true;
           break;
@@ -137,7 +137,7 @@ export function UploadDialog({
       }
       if (!hasError) {
         toast.success("Upload complete", {
-          description: `${files.length} file(s) uploaded.`,
+          description: `${String(files.length)} file(s) uploaded.`,
         });
         onUploadComplete();
       }
@@ -158,23 +158,25 @@ export function UploadDialog({
         <DialogTitle>Upload</DialogTitle>
         <div className="flex flex-col gap-4 py-2">
           <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs font-medium">
+            <span className="text-xs font-medium text-muted-foreground">
               Upload file to:
             </span>
-            <p className="bg-muted/50 rounded-md px-2 py-1.5 font-mono text-xs break-all">
+            <p className="rounded-md bg-muted/50 px-2 py-1.5 font-mono text-xs break-all">
               {targetPath || "—"}
             </p>
           </div>
           <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs font-medium">
+            <span className="text-xs font-medium text-muted-foreground">
               Upload type:
             </span>
             <Select
               value={uploadType}
-              onValueChange={(v) => v != null && setUploadType(v)}
+              onValueChange={(v) => {
+                if (v != null) setUploadType(v);
+              }}
               items={uploadTypeOptions}
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full" aria-label="Upload type">
                 <SelectValue placeholder="Unspecified" />
               </SelectTrigger>
               <SelectContent>
@@ -189,15 +191,15 @@ export function UploadDialog({
             </Select>
           </div>
           <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs font-medium">
+            <span className="text-xs font-medium text-muted-foreground">
               File selection
             </span>
             <div
               role="button"
               tabIndex={0}
               className={cn(
-                "border-border bg-muted/30 flex min-h-[120px] flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-4 transition-colors",
-                "hover:bg-muted/50 focus-visible:ring-ring outline-none focus-visible:ring-2",
+                "flex min-h-30 flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border bg-muted/30 p-4 transition-colors",
+                "outline-none hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring",
                 isDragActive && "bg-muted/50",
               )}
               onDragOver={onDragOver}
@@ -219,27 +221,27 @@ export function UploadDialog({
                 accept="*"
                 onChange={onInputChange}
               />
-              <Button type="button" variant="secondary" size="sm">
+              <span className="pointer-events-none inline-flex h-9 items-center justify-center rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground shadow-xs select-none">
                 Select Files
-              </Button>
-              <span className="text-muted-foreground text-xs">or Drop files here.</span>
+              </span>
+              <span className="text-xs text-muted-foreground">or Drop files here.</span>
             </div>
           </div>
           <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs font-medium">
+            <span className="text-xs font-medium text-muted-foreground">
               File Selected
             </span>
-            <div className="border-border rounded-md border overflow-hidden">
+            <div className="overflow-hidden rounded-md border border-border">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-muted/50">
-                    <th className="text-muted-foreground text-left font-medium px-2 py-1.5">
+                    <th className="px-2 py-1.5 text-left font-medium text-muted-foreground">
                       File
                     </th>
-                    <th className="text-muted-foreground text-left font-medium px-2 py-1.5">
+                    <th className="px-2 py-1.5 text-left font-medium text-muted-foreground">
                       Type
                     </th>
-                    <th className="text-muted-foreground text-left font-medium px-2 py-1.5">
+                    <th className="px-2 py-1.5 text-left font-medium text-muted-foreground">
                       Size
                     </th>
                     <th className="w-8" />
@@ -250,7 +252,7 @@ export function UploadDialog({
                     <tr>
                       <td
                         colSpan={4}
-                        className="text-muted-foreground italic px-2 py-2"
+                        className="p-2 text-muted-foreground italic"
                       >
                         None
                       </td>
@@ -258,17 +260,17 @@ export function UploadDialog({
                   ) : (
                     files.map((file) => (
                       <tr key={file.name} className="border-t border-border/50">
-                        <td className="px-2 py-1.5 truncate max-w-[180px]">
+                        <td className="max-w-45 truncate px-2 py-1.5">
                           {file.name}
                         </td>
                         <td className="px-2 py-1.5">{uploadType}</td>
                         <td className="px-2 py-1.5">{file.size}</td>
-                        <td className="px-1 py-1">
+                        <td className="p-1">
                           <Button
                             type="button"
                             variant="ghost"
                             size="icon-sm"
-                            className="h-7 w-7"
+                            className="size-7"
                             onClick={(e) => {
                               e.stopPropagation();
                               removeFile(file.name);
@@ -276,7 +278,7 @@ export function UploadDialog({
                             disabled={isUploading}
                             aria-label={`Remove ${file.name}`}
                           >
-                            <XIcon className="h-3.5 w-3.5" />
+                            <XIcon className="size-3.5" />
                           </Button>
                         </td>
                       </tr>
@@ -290,7 +292,7 @@ export function UploadDialog({
         <DialogFooter showCloseButton={false}>
           <Button
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={() => { onOpenChange(false); }}
             disabled={isUploading}
           >
             Cancel
@@ -298,7 +300,7 @@ export function UploadDialog({
           <Button onClick={() => void handleStartUpload()} disabled={!canStart}>
             {isUploading ? (
               <>
-                <Spinner className="mr-2 h-3.5 w-3.5 shrink-0" />
+                <Spinner className="mr-2 size-3.5 shrink-0" />
                 Uploading…
               </>
             ) : (

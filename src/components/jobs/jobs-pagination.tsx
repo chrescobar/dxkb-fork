@@ -72,8 +72,8 @@ export function JobsPagination({
   const pageNumbers = getPageNumbers(page, totalPages);
 
   return (
-    <div className="flex items-center justify-between px-2 py-2">
-      <span className="text-muted-foreground text-xs">
+    <div className="flex items-center justify-between p-2">
+      <span className="text-xs text-muted-foreground">
         {totalTasks === 0
           ? "No jobs found"
           : <>Showing {offset + 1}{"\u2013"}{offset + totalOnPage} of {totalTasks} jobs</>}
@@ -82,11 +82,11 @@ export function JobsPagination({
         <Select
           items={pageSizeItems}
           value={String(limit)}
-          onValueChange={(value) =>
-            value != null && onPageSizeChange(Number(value))
-          }
+          onValueChange={(value) => {
+            if (value != null) onPageSizeChange(Number(value));
+          }}
         >
-          <SelectTrigger className="mr-1 h-7 w-20 text-xs">
+          <SelectTrigger aria-label="Items per page" className="mr-1 h-7 w-20 text-xs">
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="min-w-0!">
@@ -101,17 +101,18 @@ export function JobsPagination({
         </Select>
         <Button
           variant="outline"
-          className="h-9 w-9 rounded-lg p-0"
+          aria-label="Previous page"
+          className="size-9 rounded-lg p-0"
           onClick={onPrevious}
           disabled={!hasPrevious}
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="size-4" />
         </Button>
         {pageNumbers.map((p, i) =>
           p === "ellipsis" ? (
             <span
-              key={`ellipsis-${i}`}
-              className="text-muted-foreground flex h-9 w-9 items-center justify-center text-sm"
+              key={`ellipsis-${String(i)}`}
+              className="flex size-9 items-center justify-center text-sm text-muted-foreground"
             >
               ...
             </span>
@@ -119,8 +120,10 @@ export function JobsPagination({
             <Button
               key={p}
               variant={p === page ? "default" : "outline"}
-              className="h-9 w-9 rounded-lg p-0 text-sm"
-              onClick={() => onPageChange(p)}
+              aria-label={`Page ${String(p)}`}
+              aria-current={p === page ? "page" : undefined}
+              className="size-9 rounded-lg p-0 text-sm"
+              onClick={() => { onPageChange(p); }}
             >
               {p}
             </Button>
@@ -128,11 +131,12 @@ export function JobsPagination({
         )}
         <Button
           variant="outline"
-          className="h-9 w-9 rounded-lg p-0"
+          aria-label="Next page"
+          className="size-9 rounded-lg p-0"
           onClick={onNext}
           disabled={!hasNext}
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="size-4" />
         </Button>
       </div>
     </div>

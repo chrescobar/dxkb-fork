@@ -18,11 +18,11 @@ export function useWorkspacePathResolve({
   fullPath,
   enabled = true,
 }: UseWorkspacePathResolveOptions) {
-  return useQuery<ResolvedPathObject | null, Error>({
+  return useQuery<ResolvedPathObject | null>({
     queryKey: workspaceQueryKeys.pathResolve(fullPath),
     queryFn: async () => {
       const raw = await getWorkspaceMetadata([fullPath], { silent: true });
-      return parseWorkspaceGetSingle(raw as unknown[], 0);
+      return parseWorkspaceGetSingle(raw, 0);
     },
     enabled: enabled && !!fullPath,
     retry: false,

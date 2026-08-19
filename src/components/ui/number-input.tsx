@@ -124,7 +124,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
     useEffect(() => {
       const handleKeyDown = (e: KeyboardEvent) => {
         const inputRef = ref as React.RefObject<HTMLInputElement>;
-        if (inputRef?.current && document.activeElement === inputRef.current) {
+        if (document.activeElement === inputRef.current) {
           if (e.key === "ArrowUp") {
             handleIncrement();
           } else if (e.key === "ArrowDown") {
@@ -163,11 +163,11 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
         if (value < min) {
           setValue(min);
           const inputEl = (ref as React.RefObject<HTMLInputElement>).current;
-          if (inputEl) inputEl.value = String(min);
+          inputEl.value = String(min);
         } else if (value > max) {
           setValue(max);
           const inputEl = (ref as React.RefObject<HTMLInputElement>).current;
-          if (inputEl) inputEl.value = String(max);
+          inputEl.value = String(max);
         }
       }
     };
@@ -198,9 +198,9 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           <Button
             type="button"
             aria-label="Increase value"
-            className="border-input h-4 rounded-l-none rounded-br-none border-b-[0.5px] border-l-0 px-2 focus-visible:relative"
+            className="h-4 rounded-l-none rounded-br-none border-b-[0.5px] border-l-0 border-input px-2 focus-visible:relative"
             variant="outline"
-            onMouseDown={() => startContinuousChange("up")}
+            onMouseDown={() => { startContinuousChange("up"); }}
             onMouseUp={stopContinuousChange}
             onMouseLeave={stopContinuousChange}
             disabled={value === max}
@@ -210,9 +210,9 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           <Button
             type="button"
             aria-label="Decrease value"
-            className="border-input h-4 rounded-l-none rounded-tr-none border-t-[0.5px] border-l-0 px-2 focus-visible:relative"
+            className="h-4 rounded-l-none rounded-tr-none border-t-[0.5px] border-l-0 border-input px-2 focus-visible:relative"
             variant="outline"
-            onMouseDown={() => startContinuousChange("down")}
+            onMouseDown={() => { startContinuousChange("down"); }}
             onMouseUp={stopContinuousChange}
             onMouseLeave={stopContinuousChange}
             disabled={value === min}

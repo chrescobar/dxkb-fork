@@ -45,22 +45,22 @@ export function memoryAuthAdapter(
       accounts.set(account.user.username, account);
     },
 
-    async getSession() {
-      return { data: session, error: null };
+    getSession() {
+      return Promise.resolve({ data: session, error: null });
     },
 
-    async signIn({ username, password }: SigninCredentials) {
+    signIn({ username, password }: SigninCredentials) {
       const account = accounts.get(username);
       if (!account || account.password !== password) {
-        return fail("Invalid credentials", "invalid_credentials");
+        return Promise.resolve(fail("Invalid credentials", "invalid_credentials"));
       }
       session = account.user;
-      return { data: session, error: null };
+      return Promise.resolve({ data: session, error: null });
     },
 
-    async signUp(input: SignupCredentials) {
+    signUp(input: SignupCredentials) {
       if (accounts.has(input.username)) {
-        return fail("Username already exists", "conflict");
+        return Promise.resolve(fail("Username already exists", "conflict"));
       }
       const user: AuthUser = {
         username: input.username,
@@ -72,22 +72,22 @@ export function memoryAuthAdapter(
       };
       accounts.set(input.username, { user, password: input.password });
       session = user;
-      return { data: user, error: null };
+      return Promise.resolve({ data: user, error: null });
     },
 
-    async signOut() {
+    signOut() {
       session = null;
       impersonationBackup = null;
-      return { data: undefined, error: null };
+      return Promise.resolve({ data: undefined, error: null });
     },
 
-    async impersonate(targetUser, password) {
+    impersonate(targetUser, password) {
       if (!session) {
-        return fail("Not authenticated", "unauthorized");
+        return Promise.resolve(fail("Not authenticated", "unauthorized"));
       }
       const target = accounts.get(targetUser);
       if (!target || target.password !== password) {
-        return fail("Invalid credentials", "invalid_credentials");
+        return Promise.resolve(fail("Invalid credentials", "invalid_credentials"));
       }
       impersonationBackup = session;
       session = {
@@ -95,24 +95,24 @@ export function memoryAuthAdapter(
         isImpersonating: true,
         originalUsername: impersonationBackup.username,
       };
-      return { data: session, error: null };
+      return Promise.resolve({ data: session, error: null });
     },
 
-    async exitImpersonation() {
+    exitImpersonation() {
       if (!impersonationBackup) {
-        return fail("No active impersonation session", "validation");
+        return Promise.resolve(fail("No active impersonation session", "validation"));
       }
       session = impersonationBackup;
       impersonationBackup = null;
-      return { data: session, error: null };
+      return Promise.resolve({ data: session, error: null });
     },
 
-    async requestPasswordReset() {
-      return { data: undefined, error: null };
+    requestPasswordReset() {
+      return Promise.resolve({ data: undefined, error: null });
     },
 
-    async sendVerificationEmail() {
-      return { data: undefined, error: null };
+    sendVerificationEmail() {
+      return Promise.resolve({ data: undefined, error: null });
     },
 
     request(input, init) {

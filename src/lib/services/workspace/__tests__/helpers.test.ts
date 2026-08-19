@@ -1,5 +1,4 @@
 import {
-  metaListToObj,
   parseWorkspaceGetSingle,
   normalizeWsPath,
   formatDate,
@@ -19,92 +18,22 @@ import {
   getNonEmptyFolderPaths,
   ensureDestinationWriteAccess,
 } from "@/lib/services/workspace/helpers";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
-function makeItem(
-  overrides: Partial<WorkspaceBrowserItem>,
-): WorkspaceBrowserItem {
+function makeItem(overrides: Partial<WorkspaceItem>): WorkspaceItem {
   return {
     id: "id-1",
     path: "/user/home/test",
     name: "test",
     type: "contigs",
-    creation_time: "2024-01-01T00:00:00Z",
-    link_reference: "",
-    owner_id: "user@test.com",
+    createdAt: "2024-01-01T00:00:00Z",
+    ownerId: "user@test.com",
     size: 100,
-    userMeta: {},
-    autoMeta: {},
-    user_permission: "o",
-    global_permission: "r",
+    permissions: { user: "o", global: "r" },
     timestamp: Date.parse("2024-01-01T00:00:00Z"),
     ...overrides,
   };
 }
-
-describe("metaListToObj", () => {
-  it("maps array indices correctly", () => {
-    const list = [
-      "myfile.fasta",    // 0: name
-      "contigs",         // 1: type
-      "/user/home/",     // 2: parent path
-      "2024-01-15",      // 3: creation_time
-      "abc123",          // 4: id
-      "owner@test.com",  // 5: owner_id
-      1024,              // 6: size
-      { key: "val" },    // 7: userMeta
-      {},                // 8: autoMeta
-      "o",               // 9: user_permission
-      "r",               // 10: global_permission
-      null,              // 11: link_reference
-    ];
-    const obj = metaListToObj(list);
-    expect(obj.id).toBe("abc123");
-    expect(obj.name).toBe("myfile.fasta");
-    expect(obj.type).toBe("contigs");
-    expect(obj.creation_time).toBe("2024-01-15");
-    expect(obj.owner_id).toBe("owner@test.com");
-    expect(obj.size).toBe(1024);
-    expect(obj.user_permission).toBe("o");
-    expect(obj.global_permission).toBe("r");
-    expect(obj.link_reference).toBeNull();
-  });
-
-  it("coerces null size to 0", () => {
-    const list = [
-      "file.txt", "txt", "/user/home/", "", "", "", null, {}, {}, "", "", null,
-    ];
-    const obj = metaListToObj(list);
-    expect(obj.size).toBe(0);
-  });
-
-  it("coerces undefined size to 0", () => {
-    const list = [
-      "file.txt", "txt", "/user/home/", "", "", "", undefined, {}, {}, "", "", null,
-    ];
-    const obj = metaListToObj(list);
-    expect(obj.size).toBe(0);
-  });
-
-  it("coerces string size to number", () => {
-    const list = [
-      "file.txt", "txt", "/user/home/", "", "", "", "339000000", {}, {}, "", "", null,
-    ];
-    const obj = metaListToObj(list);
-    expect(obj.size).toBe(339000000);
-  });
-
-  it("builds path from parent + name", () => {
-    const list = [
-      "file.txt",        // 0: name
-      "txt",             // 1: type
-      "/user/home/",     // 2: parent path
-      "", "", "", 0, {}, {}, "", "", null,
-    ];
-    const obj = metaListToObj(list);
-    expect(obj.path).toBe("/user/home/file.txt");
-  });
-});
 
 describe("normalizeWsPath", () => {
   it("adds leading slash", () => {
@@ -124,10 +53,8 @@ describe("normalizeWsPath", () => {
   });
 
   it("handles null-ish values", () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(normalizeWsPath(null as any)).toBe("");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(normalizeWsPath(undefined as any)).toBe("");
+    expect(normalizeWsPath(null)).toBe("");
+    expect(normalizeWsPath(undefined)).toBe("");
   });
 
   it("handles whitespace-only input", () => {
@@ -138,7 +65,6 @@ describe("normalizeWsPath", () => {
 describe("formatDate", () => {
   it("formats a valid date string", () => {
     const result = formatDate("2024-06-15T14:30:00Z");
-    // Should contain date parts
     expect(result).toContain("6");
     expect(result).toContain("15");
     expect(result).toContain("24");
@@ -181,32 +107,32 @@ describe("formatFileSize", () => {
 
 describe("hasWriteAccess", () => {
   it("returns true for owner permission (o)", () => {
-    const item = makeItem({ user_permission: "o", global_permission: "r" });
+    const item = makeItem({ permissions: { user: "o", global: "r" } });
     expect(hasWriteAccess(item)).toBe(true);
   });
 
   it("returns true for admin permission (a)", () => {
-    const item = makeItem({ user_permission: "a", global_permission: "r" });
+    const item = makeItem({ permissions: { user: "a", global: "r" } });
     expect(hasWriteAccess(item)).toBe(true);
   });
 
   it("returns true for write permission (w)", () => {
-    const item = makeItem({ user_permission: "w", global_permission: "r" });
+    const item = makeItem({ permissions: { user: "w", global: "r" } });
     expect(hasWriteAccess(item)).toBe(true);
   });
 
   it("returns false for read-only permission", () => {
-    const item = makeItem({ user_permission: "r", global_permission: "r" });
+    const item = makeItem({ permissions: { user: "r", global: "r" } });
     expect(hasWriteAccess(item)).toBe(false);
   });
 
   it("returns true when global permission grants write", () => {
-    const item = makeItem({ user_permission: "r", global_permission: "w" });
+    const item = makeItem({ permissions: { user: "r", global: "w" } });
     expect(hasWriteAccess(item)).toBe(true);
   });
 
   it("checks both user and global permissions", () => {
-    const item = makeItem({ user_permission: "r", global_permission: "o" });
+    const item = makeItem({ permissions: { user: "r", global: "o" } });
     expect(hasWriteAccess(item)).toBe(true);
   });
 });
@@ -224,7 +150,6 @@ describe("sortItems", () => {
 
   it("treats job_result as folder-like (sorted before files)", () => {
     const sorted = sortItems([fileA, jobResult, folder], { field: "name", direction: "asc" });
-    // Both folder-like items should come before fileA
     expect(sorted[0].type).toMatch(/folder|job_result/);
     expect(sorted[1].type).toMatch(/folder|job_result/);
     expect(sorted[2].name).toBe("alpha.txt");
@@ -248,8 +173,8 @@ describe("sortItems", () => {
     expect(sorted[1].name).toBe("alpha.txt");  // 500
   });
 
-  it("sorts by creation_time", () => {
-    const sorted = sortItems([fileA, fileB], { field: "creation_time", direction: "asc" });
+  it("sorts by createdAt (timestamp)", () => {
+    const sorted = sortItems([fileA, fileB], { field: "createdAt", direction: "asc" });
     expect(sorted[0].name).toBe("beta.txt");  // timestamp 150
     expect(sorted[1].name).toBe("alpha.txt");  // timestamp 300
   });
@@ -593,13 +518,13 @@ describe("validateWorkspaceObjectTypes", () => {
 });
 
 describe("sortItems - additional fields", () => {
-  const fileA = makeItem({ name: "alpha.txt", type: "contigs", owner_id: "zack@test.com" });
-  const fileB = makeItem({ name: "beta.txt", type: "reads", owner_id: "alice@test.com" });
+  const fileA = makeItem({ name: "alpha.txt", type: "contigs", ownerId: "zack@test.com" });
+  const fileB = makeItem({ name: "beta.txt", type: "reads", ownerId: "alice@test.com" });
 
-  it("sorts by owner_id ascending", () => {
-    const sorted = sortItems([fileA, fileB], { field: "owner_id", direction: "asc" });
-    expect(sorted[0].owner_id).toBe("alice@test.com");
-    expect(sorted[1].owner_id).toBe("zack@test.com");
+  it("sorts by ownerId ascending", () => {
+    const sorted = sortItems([fileA, fileB], { field: "ownerId", direction: "asc" });
+    expect(sorted[0].ownerId).toBe("alice@test.com");
+    expect(sorted[1].ownerId).toBe("zack@test.com");
   });
 
   it("sorts by type ascending", () => {
@@ -743,7 +668,7 @@ describe("getDotPathRelative", () => {
 describe("ensureDestinationWriteAccess", () => {
   it("returns ok when target exists and has write access", async () => {
     const listFolder = vi.fn().mockResolvedValue([
-      makeItem({ path: "/user/home/target", user_permission: "o" }),
+      makeItem({ path: "/user/home/target", permissions: { user: "o", global: "n" } }),
     ]);
 
     const result = await ensureDestinationWriteAccess("/user/home/target", listFolder);
@@ -752,7 +677,7 @@ describe("ensureDestinationWriteAccess", () => {
 
   it("returns error when target exists but lacks write access", async () => {
     const listFolder = vi.fn().mockResolvedValue([
-      makeItem({ path: "/user/home/target", user_permission: "r", global_permission: "r" }),
+      makeItem({ path: "/user/home/target", permissions: { user: "r", global: "r" } }),
     ]);
 
     const result = await ensureDestinationWriteAccess("/user/home/target", listFolder);
@@ -764,7 +689,7 @@ describe("ensureDestinationWriteAccess", () => {
     const listFolder = vi.fn()
       .mockResolvedValueOnce([]) // target not in listing
       .mockResolvedValueOnce([ // grandparent listing has parent with write
-        makeItem({ path: "/user/home", user_permission: "o" }),
+        makeItem({ path: "/user/home", permissions: { user: "o", global: "n" } }),
       ]);
 
     const result = await ensureDestinationWriteAccess("/user/home/newfile", listFolder);
@@ -775,7 +700,7 @@ describe("ensureDestinationWriteAccess", () => {
     const listFolder = vi.fn()
       .mockResolvedValueOnce([]) // target not in listing
       .mockResolvedValueOnce([ // parent has no write
-        makeItem({ path: "/user/home", user_permission: "r", global_permission: "r" }),
+        makeItem({ path: "/user/home", permissions: { user: "r", global: "r" } }),
       ]);
 
     const result = await ensureDestinationWriteAccess("/user/home/newfile", listFolder);

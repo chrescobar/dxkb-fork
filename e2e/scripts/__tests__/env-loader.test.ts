@@ -88,7 +88,7 @@ describe("loadEnvFile", () => {
   it("returns silently when an optional file is missing", () => {
     const env: EnvFixture = {};
     expect(() =>
-      loadEnvFile(".env.e2e.local", { required: false, port: "3020", env }),
+      { loadEnvFile(".env.e2e.local", { required: false, port: "3020", env }); },
     ).not.toThrow();
     expect(Object.keys(env)).toHaveLength(0);
   });
@@ -96,7 +96,7 @@ describe("loadEnvFile", () => {
   it("throws when a required file is missing", () => {
     const env: EnvFixture = {};
     expect(() =>
-      loadEnvFile(".env.e2e.test", { required: true, port: "3020", env }),
+      { loadEnvFile(".env.e2e.test", { required: true, port: "3020", env }); },
     ).toThrow(/Required env file not found/);
   });
 

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, FormEvent, useEffect, useCallback, Suspense } from "react";
+import { useState, useEffect, useCallback, Suspense, type SyntheticEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { searchTypes } from "@/constants/searchInfo";
+import { searchTypes } from "@/constants/search-info";
 import { Input } from "@/components/ui/input";
 
 import { Search } from "lucide-react";
@@ -36,7 +36,7 @@ function SearchParamsSync({
   useEffect(() => {
     const raw = searchParams.get("q") || "";
     onQueryChange(extractKeywordQuery(raw));
-    const type = searchParams.get("searchtype") || "";
+    const type = searchParams.get("type") || "";
     if (type && searchTypes.some((st) => st.id === type)) onSearchTypeChange(type);
   }, [searchParams, onQueryChange, onSearchTypeChange]);
 
@@ -64,14 +64,14 @@ export function SearchBar({
     setSelected(value);
   }, []);
 
-  const handleSearch = (e: FormEvent) => {
+  const handleSearch = (e: SyntheticEvent) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
 
     router.push(
-      `/search?q=${encodeURIComponent(inputValue)}&searchtype=${selected}`
+      `/search?type=${selected}&q=${encodeURIComponent(inputValue)}`
     );
-    queryClient.invalidateQueries({
+    void queryClient.invalidateQueries({
       predicate: (query) => {
         const key = query.queryKey[0];
         return (
@@ -87,17 +87,18 @@ export function SearchBar({
       <Suspense fallback={null}>
         <SearchParamsSync onQueryChange={handleQueryChange} onSearchTypeChange={handleSearchTypeChange} />
       </Suspense>
-      <div className="relative flex w-full h-full items-stretch rounded-md border border-input bg-background overflow-hidden">
+      <div className="relative flex size-full items-stretch overflow-hidden rounded-md border border-input bg-background">
         <Select
           items={searchTypes.map((option) => ({ value: option.id, label: option.typeTitle }))}
           value={selected}
-          onValueChange={(value) => setSelected(value ?? "everything")}
+          onValueChange={(value) => { setSelected(value ?? "everything"); }}
         >
           <SelectTrigger
-            id="searchtype"
-            className={`${size === "lg" ? "h-auto py-6" : ""} text-sm min-w-[120px] rounded-l-md rounded-r-none border-0 border-r border-input bg-background text-foreground shadow-none focus:ring-0`}
+            id="type"
+            aria-label="Search type"
+            className={`${size === "lg" ? "h-auto py-6" : ""} min-w-30 rounded-l-md rounded-r-none border-0 border-r border-input bg-background text-sm text-foreground shadow-none focus:ring-0`}
           >
-            <SelectValue />
+            <SelectValue aria-label="Search type" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
@@ -110,22 +111,24 @@ export function SearchBar({
           </SelectContent>
         </Select>
 
-        <div className="relative flex-1 min-w-0">
+        <div className="relative min-w-0 flex-1">
           <Input
             type="text"
             placeholder={placeholder}
-            className={`${size === "lg" ? "py-6" : ""} ${showIcon ? "pl-10" : ""} rounded-l-none rounded-r-md border-0 bg-background text-foreground shadow-none focus-visible:ring-0 w-full`}
+            className={`${size === "lg" ? "py-6" : ""} ${showIcon ? "pl-10" : ""} w-full rounded-l-none rounded-r-md border-0 bg-background text-foreground shadow-none focus-visible:ring-0`}
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={(e) => { setInputValue(e.target.value); }}
           />
           {showIcon && (
-            <Search
-              className="absolute top-1/2 left-3 -translate-y-1/2 transform text-primary pointer-events-none"
-              size={18}
-            />
+            <button
+              type="submit"
+              className="absolute top-1/2 left-3 -translate-y-1/2 transform cursor-pointer text-primary transition-colors hover:text-primary/80"
+              aria-label="Search"
+            >
+              <Search size={18} />
+            </button>
           )}
         </div>
-        <button type="submit" className="sr-only">Search</button>
       </div>
     </form>
   );

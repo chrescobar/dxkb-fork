@@ -71,7 +71,7 @@ export function getPairedLibraryBuildFn(
       files: [read1, read2],
       sampleId: sampleId.trim() || getDefaultSampleIdFromPath(read1),
       ...(sampleLevelDate?.trim() && { sampleLevelDate: sampleLevelDate.trim() }),
-    } as Library,
+    },
   });
 }
 
@@ -91,7 +91,7 @@ export function getSingleLibraryBuildFn(
       files: [read],
       sampleId: sampleId.trim() || getDefaultSampleIdFromPath(read),
       ...(sampleLevelDate?.trim() && { sampleLevelDate: sampleLevelDate.trim() }),
-    } as Library,
+    },
   });
 }
 

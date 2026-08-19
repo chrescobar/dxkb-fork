@@ -81,7 +81,7 @@ const OutputFolder = ({
     [onValidationChange],
   );
 
-  const needsValidation = variant === "name" && !!outputFolderPath?.trim() && !!value?.trim();
+  const needsValidation = variant === "name" && !!outputFolderPath.trim() && !!value.trim();
   const [prevNeedsValidation, setPrevNeedsValidation] = useState(needsValidation);
   if (prevNeedsValidation && !needsValidation) {
     setPrevNeedsValidation(needsValidation);
@@ -103,7 +103,7 @@ const OutputFolder = ({
 
     debounceRef.current = setTimeout(() => {
       debounceRef.current = null;
-      runCheck(outputFolderPath, value);
+      void runCheck(outputFolderPath, value);
     }, debounceMs);
 
     return () => {
@@ -135,7 +135,7 @@ const OutputFolder = ({
           {tooltipContent && (
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger render={<HelpCircle className="service-card-tooltip-icon mb-2" />} />
+                <TooltipTrigger aria-label={`${resolvedTitle} help`} render={<HelpCircle className="service-card-tooltip-icon mb-2" />} />
                 <TooltipContent className="max-w-sm font-normal text-white">
                   {resolvedTooltipText}
                 </TooltipContent>
@@ -166,6 +166,7 @@ const OutputFolder = ({
                 onChange={(e) => onChange?.(e.target.value)}
                 disabled={disabled}
                 aria-invalid={nameTaken}
+                aria-label={resolvedTitle}
               />
             </div>
           )}

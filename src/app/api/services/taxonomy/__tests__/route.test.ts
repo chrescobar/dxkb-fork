@@ -26,7 +26,7 @@ describe("GET /api/services/taxonomy", () => {
       url: "http://localhost:3019/api/services/taxonomy",
       searchParams: { q: "test" },
     });
-    const res = await GET(req);
+    const res = await GET(req, {});
 
     expect(res.status).toBe(200);
     // No 401 even though no auth mock
@@ -46,7 +46,7 @@ describe("GET /api/services/taxonomy", () => {
       url: "http://localhost:3019/api/services/taxonomy",
       searchParams: { q: "escherichia", limit: "10" },
     });
-    await GET(req);
+    await GET(req, {});
 
     expect(capturedUrl).toContain("/taxonomy?");
     expect(capturedUrl).toContain("q=escherichia");
@@ -66,7 +66,7 @@ describe("GET /api/services/taxonomy", () => {
       url: "http://localhost:3019/api/services/taxonomy",
       searchParams: { q: "test" },
     });
-    const res = await GET(req);
+    const res = await GET(req, {});
 
     expect(res.status).toBe(200);
     expect(await json(res)).toEqual(taxData);
@@ -83,12 +83,12 @@ describe("GET /api/services/taxonomy", () => {
       url: "http://localhost:3019/api/services/taxonomy",
       searchParams: { q: "test" },
     });
-    const res = await GET(req);
+    const res = await GET(req, {});
 
     expect(res.status).toBe(502);
     expect(await json(res)).toEqual(
       expect.objectContaining({
-        error: expect.stringContaining("Taxonomy API error"),
+        error: expect.stringContaining("Taxonomy API error") as unknown,
       }),
     );
   });
@@ -104,11 +104,11 @@ describe("GET /api/services/taxonomy", () => {
       url: "http://localhost:3019/api/services/taxonomy",
       searchParams: { q: "test" },
     });
-    const res = await GET(req);
+    const res = await GET(req, {});
 
     expect(res.status).toBe(500);
     expect(await json(res)).toEqual(
-      expect.objectContaining({ error: expect.any(String) }),
+      expect.objectContaining({ error: expect.any(String) as unknown }),
     );
   });
 });

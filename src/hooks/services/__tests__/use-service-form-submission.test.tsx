@@ -30,7 +30,11 @@ describe("useServiceFormSubmission", () => {
     );
 
     const { result } = renderHook(
-      () => useServiceFormSubmission({ serviceName: "GenomeAssembly2" }),
+      () =>
+        useServiceFormSubmission({
+          serviceName: "GenomeAssembly2",
+          displayName: "Genome Assembly",
+        }),
       { wrapper },
     );
 
@@ -82,7 +86,11 @@ describe("useServiceFormSubmission", () => {
     );
 
     const { result } = renderHook(
-      () => useServiceFormSubmission({ serviceName: "GenomeAssembly2" }),
+      () =>
+        useServiceFormSubmission({
+          serviceName: "GenomeAssembly2",
+          displayName: "Genome Assembly",
+        }),
       { wrapper },
     );
 
@@ -108,7 +116,11 @@ describe("useServiceFormSubmission", () => {
     );
 
     const { result } = renderHook(
-      () => useServiceFormSubmission({ serviceName: "GenomeAssembly2" }),
+      () =>
+        useServiceFormSubmission({
+          serviceName: "GenomeAssembly2",
+          displayName: "Genome Assembly",
+        }),
       { wrapper },
     );
 
@@ -116,9 +128,9 @@ describe("useServiceFormSubmission", () => {
       await result.current.submit({});
     });
 
-    await waitFor(() => expect(result.current.isSubmitting).toBe(true));
+    await waitFor(() => { expect(result.current.isSubmitting).toBe(true); });
     resolve();
     await promise;
-    await waitFor(() => expect(result.current.isSubmitting).toBe(false));
+    await waitFor(() => { expect(result.current.isSubmitting).toBe(false); });
   });
 });

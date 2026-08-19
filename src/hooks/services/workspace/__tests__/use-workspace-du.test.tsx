@@ -32,7 +32,7 @@ describe("useWorkspaceDu", () => {
       { wrapper: makeWrapper(repo) },
     );
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => { expect(result.current.isSuccess).toBe(true); });
     expect(result.current.data).toEqual({
       sizeBytes: 1024,
       files: 10,
@@ -47,7 +47,7 @@ describe("useWorkspaceDu", () => {
       { wrapper: makeWrapper(repo) },
     );
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => { expect(result.current.isSuccess).toBe(true); });
     expect(result.current.data).toEqual({
       sizeBytes: 0,
       files: 0,
@@ -76,7 +76,7 @@ describe("useWorkspaceDu", () => {
       { wrapper: makeWrapper(repo) },
     );
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => { expect(result.current.isSuccess).toBe(true); });
     const call = repo.calls.find((c) => c.method === "diskUsage");
     expect(call).toEqual({
       method: "diskUsage",

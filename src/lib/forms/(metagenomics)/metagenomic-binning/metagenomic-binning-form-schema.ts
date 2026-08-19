@@ -60,7 +60,7 @@ export const metagenomicBinningFormSchema = z
 
       if (!hasPaired && !hasSingle && !hasSrr) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: "At least one library (paired, single, or SRA) must be provided",
           path: ["paired_end_libs"],
         });
@@ -70,7 +70,7 @@ export const metagenomicBinningFormSchema = z
     if (data.start_with === "contigs") {
       if (!data.contigs || data.contigs.trim() === "") {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: "Contigs file is required",
           path: ["contigs"],
         });

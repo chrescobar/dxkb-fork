@@ -86,7 +86,7 @@ export function createPipelineActionItem(
   index = 0
 ): PipelineActionItem {
   return {
-    id: `${action}_${Date.now()}`,
+    id: `${action}_${String(Date.now())}`,
     action,
     label: getActionLabel(action),
     color: getColorForIndex(index),

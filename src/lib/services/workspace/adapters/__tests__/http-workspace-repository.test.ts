@@ -105,8 +105,8 @@ describe("HttpWorkspaceRepository", () => {
     );
 
     const [meta] = await repository.getMetadata(["/user@bvbrc/home/file.fa"]);
-    expect(meta?.path).toBe("/user@bvbrc/home/file.fa");
-    expect(meta?.object).toEqual(
+    expect(meta.path).toBe("/user@bvbrc/home/file.fa");
+    expect(meta.object).toEqual(
       expect.objectContaining({ id: "id-1", type: "contigs", size: 123 }),
     );
   });
@@ -147,11 +147,11 @@ describe("HttpWorkspaceRepository", () => {
       "/user@bvbrc/home/file-b.fa",
     ]);
 
-    expect(first?.raw).toEqual([firstTuple]);
-    expect(second?.raw).toEqual([secondTuple]);
-    expect(first?.raw).not.toEqual(second?.raw);
-    expect(first?.object?.raw).toEqual(expect.objectContaining({ id: "id-a" }));
-    expect(second?.object?.raw).toEqual(
+    expect(first.raw).toEqual([firstTuple]);
+    expect(second.raw).toEqual([secondTuple]);
+    expect(first.raw).not.toEqual(second.raw);
+    expect(first.object?.raw).toEqual(expect.objectContaining({ id: "id-a" }));
+    expect(second.object?.raw).toEqual(
       expect.objectContaining({ id: "id-b" }),
     );
   });
@@ -191,7 +191,7 @@ describe("HttpWorkspaceRepository", () => {
 
     const error = await repository
       .listDirectory({ path: "/p" })
-      .catch((err) => err);
+      .catch((err: unknown) => err);
     expect(error).toBeInstanceOf(WorkspaceApiError);
     expect((error as WorkspaceApiError).method).toBe("Workspace.ls");
   });
@@ -222,6 +222,45 @@ describe("HttpWorkspaceRepository", () => {
     );
 
     await expect(repository.delete(["/a"])).resolves.toBeUndefined();
+  });
+
+  it("throws ProtectedFolderError before issuing RPC when path is the home folder", async () => {
+    let rpcCalled = false;
+    server.use(
+      http.post("/api/services/workspace", () => {
+        rpcCalled = true;
+        return HttpResponse.json({ id: 1, jsonrpc: "2.0" });
+      }),
+    );
+
+    await expect(
+      repository.delete(["/alice@bvbrc/home"]),
+    ).rejects.toMatchObject({
+      name: "ProtectedFolderError",
+      protectedPaths: ["/alice@bvbrc/home"],
+    });
+    expect(rpcCalled).toBe(false);
+  });
+
+  it("throws ProtectedFolderError when any path is a protected sub-folder", async () => {
+    let rpcCalled = false;
+    server.use(
+      http.post("/api/services/workspace", () => {
+        rpcCalled = true;
+        return HttpResponse.json({ id: 1, jsonrpc: "2.0" });
+      }),
+    );
+
+    await expect(
+      repository.delete([
+        "/alice@bvbrc/home/My Project",
+        "/alice@bvbrc/home/Genome Groups",
+      ]),
+    ).rejects.toMatchObject({
+      name: "ProtectedFolderError",
+      protectedPaths: ["/alice@bvbrc/home/Genome Groups"],
+    });
+    expect(rpcCalled).toBe(false);
   });
 
   it("sends archive_url request with camelCase translated fields", async () => {

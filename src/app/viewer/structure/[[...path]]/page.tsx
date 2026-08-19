@@ -54,11 +54,11 @@ export default function StructureViewerPage({ params }: StructurePageProps) {
           }}
           title="Go back"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="size-4" />
         </Button>
         <Separator orientation="vertical" className="h-5" />
         <div className="flex items-center gap-2 overflow-hidden">
-          <Cuboid className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <Cuboid className="size-4 shrink-0 text-muted-foreground" />
           <span className="truncate text-sm font-medium">{fileName}</span>
         </div>
       </div>
@@ -68,7 +68,7 @@ export default function StructureViewerPage({ params }: StructurePageProps) {
       <div className="relative min-h-0 flex-1">
         <div
           ref={containerRef}
-          className="h-full w-full"
+          className="size-full"
           data-testid="molstar-container"
         />
         <MolstarStatusOverlay

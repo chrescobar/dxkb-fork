@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useEffect, useRef, useState } from "react";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import {
   Card,
@@ -39,7 +40,6 @@ import {
 import {
   defaultGenomeAlignmentFormValues,
   genomeAlignmentFormSchema,
-  type GenomeAlignmentFormData,
 } from "@/lib/forms/(genomics)/genome-alignment/genome-alignment-form-schema";
 import { genomeAlignmentService } from "@/lib/forms/(genomics)/genome-alignment/genome-alignment-service";
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
@@ -56,6 +56,9 @@ const maxGenomes = 20;
 
 export default function GenomeAlignmentServicePage() {
   const [selectedGenomes, setSelectedGenomes] = useState<GenomeSummary[]>([]);
+  const selectedGenomesRef = useRef(selectedGenomes);
+  const selectionRevisionRef = useRef(0);
+  const groupRequestRevisionRef = useRef(0);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isOutputNameValid, setIsOutputNameValid] = useState(true);
   const [isFetchingGroup, setIsFetchingGroup] = useState(false);
@@ -66,105 +69,104 @@ export default function GenomeAlignmentServicePage() {
     defaultValues: defaultGenomeAlignmentFormValues,
     validators: { onChange: genomeAlignmentFormSchema },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as GenomeAlignmentFormData);
+      await runtime.submitFormData(value);
     },
   });
 
-  const manualSeedWeight = useStore(form.store, (s) => s.values.manual_seed_weight);
-  const seedWeightValue = useStore(form.store, (s) => s.values.seed_weight) ?? 15;
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
+  const manualSeedWeight = useSelector(form.store, (s) => s.values.manual_seed_weight);
+  const seedWeightValue = useSelector(form.store, (s) => s.values.seed_weight) ?? 15;
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
 
   useEffect(() => {
     const genomeIds = selectedGenomes.map((genome) => genome.genome_id);
     form.setFieldValue("genome_ids", genomeIds);
   }, [selectedGenomes, form]);
 
+  const replaceSelectedGenomes = (genomes: GenomeSummary[]) => {
+    selectionRevisionRef.current += 1;
+    selectedGenomesRef.current = genomes;
+    setSelectedGenomes(genomes);
+  };
+
   const handleAddGenome = (genome: GenomeSummary) => {
-    setSelectedGenomes((previous) => {
-      if (previous.length >= maxGenomes) {
-        toast.error("You can add up to 20 genomes");
-        return previous;
-      }
-
-      if (previous.some((item) => item.genome_id === genome.genome_id)) {
-        toast.error("Genome already added", {
-          description: `${genome.genome_name} (${genome.genome_id}) is already in the selection`,
-        });
-        return previous;
-      }
-
-      toast.success(`Added ${genome.genome_name}`);
-      return [...previous, genome];
-    });
+    const currentSelection = selectedGenomesRef.current;
+    if (currentSelection.length >= maxGenomes) {
+      toast.error("You can add up to 20 genomes");
+      return;
+    }
+    if (currentSelection.some((item) => item.genome_id === genome.genome_id)) {
+      toast.error("Genome already added", {
+        description: `${genome.genome_name} (${genome.genome_id}) is already in the selection`,
+      });
+      return;
+    }
+    replaceSelectedGenomes([...currentSelection, genome]);
+    toast.success(`Added ${genome.genome_name}`);
   };
 
   const handleRemoveGenome = (genomeId: string) => {
-    setSelectedGenomes((previous) =>
-      previous.filter((genome) => genome.genome_id !== genomeId),
+    replaceSelectedGenomes(
+      selectedGenomesRef.current.filter((genome) => genome.genome_id !== genomeId),
     );
   };
 
   const handleGenomeGroupSelect = async (object: WorkspaceObject) => {
-    if (!object?.path) {
+    if (!object.path) {
       toast.error("Invalid genome group selection");
       return;
     }
 
     setIsFetchingGroup(true);
+    const requestRevision = ++groupRequestRevisionRef.current;
 
-    try {
-      const genomes = await fetchGenomeGroupMembers(object.path);
+    await fetchGenomeGroupMembers(object.path)
+      .then((genomes) => {
+        if (requestRevision !== groupRequestRevisionRef.current) return;
+        if (!genomes.length) {
+          toast.error("Selected genome group is empty");
+          return;
+        }
 
-      if (!genomes.length) {
-        toast.error("Selected genome group is empty");
-        return;
-      }
-
-      setSelectedGenomes((previous) => {
-        const existingIds = new Set(previous.map((item) => item.genome_id));
-        const availableSlots = maxGenomes - previous.length;
+        const currentSelection = selectedGenomesRef.current;
+        const existingIds = new Set(currentSelection.map((item) => item.genome_id));
         const uniqueNewGenomes = genomes.filter(
           (genome) => !existingIds.has(genome.genome_id),
         );
-
         if (!uniqueNewGenomes.length) {
           toast.info("All genomes in this group are already selected");
-          return previous;
+          return;
         }
 
+        const availableSlots = maxGenomes - currentSelection.length;
         if (availableSlots <= 0) {
           toast.error("Genome selection limit reached (20 genomes)");
-          return previous;
+          return;
         }
 
         const genomesToAdd = uniqueNewGenomes.slice(0, availableSlots);
-
+        const nextSelection = [...currentSelection, ...genomesToAdd];
+        replaceSelectedGenomes(nextSelection);
         if (uniqueNewGenomes.length > genomesToAdd.length) {
-          toast.warning(
-            "Some genomes were not added because the selection limit is 20",
-          );
+          toast.warning("Some genomes were not added because the selection limit is 20");
         }
+        toast.success(`Added ${String(genomesToAdd.length)} genome${genomesToAdd.length === 1 ? "" : "s"} from ${object.name}`);
 
-        toast.success(
-          `Added ${genomesToAdd.length} genome${
-            genomesToAdd.length === 1 ? "" : "s"
-          } from ${object.name ?? "genome group"}`,
-        );
-
-        return [...previous, ...genomesToAdd];
+        form.setFieldValue("genome_group_path", object.path);
+        setLastSelectedGroup(object.name || object.path);
+      })
+      .catch((error: unknown) => {
+        if (requestRevision !== groupRequestRevisionRef.current) return;
+        const message =
+          error instanceof Error
+            ? error.message
+            : "Failed to load genome group";
+        toast.error(message);
+      })
+      .finally(() => {
+        if (requestRevision === groupRequestRevisionRef.current) {
+          setIsFetchingGroup(false);
+        }
       });
-
-      form.setFieldValue("genome_group_path", object.path);
-      setLastSelectedGroup(object.name || object.path);
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Failed to load genome group";
-      toast.error(message);
-    } finally {
-      setIsFetchingGroup(false);
-    }
   };
 
   const runtime = useServiceRuntime({
@@ -175,7 +177,7 @@ export default function GenomeAlignmentServicePage() {
         if (rerunData.manual_seed_weight != null) {
           form.setFieldValue(
             "manual_seed_weight",
-            rerunBooleanValue(rerunData.manual_seed_weight) as never,
+            rerunBooleanValue(rerunData.manual_seed_weight),
           );
         }
         if (rerunData.seed_weight != null) {
@@ -189,12 +191,19 @@ export default function GenomeAlignmentServicePage() {
           ? (rerunData.genome_ids as string[])
           : [];
         if (genomeIds.length > 0) {
+          const selectionRevision = selectionRevisionRef.current;
           fetchGenomesByIds(genomeIds)
-            .then((genomes) => setSelectedGenomes(genomes))
+            .then((genomes) => {
+              if (selectionRevision === selectionRevisionRef.current) {
+                replaceSelectedGenomes(genomes);
+              }
+            })
             .catch(() => {
-              toast.error("Could not restore genomes from previous job", {
-                description: "Please re-add your genomes manually.",
-              });
+              if (selectionRevision === selectionRevisionRef.current) {
+                toast.error("Could not restore genomes from previous job", {
+                  description: "Please re-add your genomes manually.",
+                });
+              }
             });
         }
       },
@@ -203,22 +212,20 @@ export default function GenomeAlignmentServicePage() {
   const { isSubmitting, jobParamsDialogProps } = runtime;
 
   const handleReset = () => {
+    groupRequestRevisionRef.current += 1;
+    setIsFetchingGroup(false);
     form.reset(defaultGenomeAlignmentFormValues);
-    setSelectedGenomes([]);
+    replaceSelectedGenomes([]);
     setShowAdvanced(false);
     setLastSelectedGroup(null);
   };
 
-  const selectedItems = useMemo(
-    () =>
-      selectedGenomes.map((genome, index) => ({
-        id: genome.genome_id,
-        name: genome.genome_name,
-        description: genome.genome_id,
-        type: index === 0 ? "Reference Genome" : "Genome",
-      })),
-    [selectedGenomes],
-  );
+  const selectedItems = selectedGenomes.map((genome, index) => ({
+    id: genome.genome_id,
+    name: genome.genome_name,
+    description: genome.genome_id,
+    type: index === 0 ? "Reference Genome" : "Genome",
+  }));
 
   const hasMinimumGenomes = selectedGenomes.length >= 2;
 
@@ -250,7 +257,7 @@ export default function GenomeAlignmentServicePage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="service-form-section"
       >
@@ -287,7 +294,7 @@ export default function GenomeAlignmentServicePage() {
                   <WorkspaceObjectSelector
                     preset="genomeGroup"
                     placeholder="Select a genome group from your workspace"
-                    onObjectSelect={handleGenomeGroupSelect}
+                    onObjectSelect={(obj) => { void handleGenomeGroupSelect(obj); }}
                     onSelectedObjectChange={setSelectedGenomeGroup}
                   />
                 </div>
@@ -295,25 +302,26 @@ export default function GenomeAlignmentServicePage() {
                   type="button"
                   size="icon"
                   variant="outline"
+                  aria-label="Add genome group"
                   disabled={!selectedGenomeGroup}
                   onClick={() => {
                     if (selectedGenomeGroup) {
-                      handleGenomeGroupSelect(selectedGenomeGroup);
+                      void handleGenomeGroupSelect(selectedGenomeGroup);
                       setSelectedGenomeGroup(null);
                     }
                   }}
                 >
-                  <Plus className="h-4 w-4" />
+                  <Plus className="size-4" />
                 </Button>
               </div>
               {isFetchingGroup && (
-                <div className="text-muted-foreground flex items-center gap-2 text-xs">
-                  <Spinner className="h-3 w-3" />
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Spinner className="size-3" />
                   Loading genomes from workspace group...
                 </div>
               )}
               {lastSelectedGroup && !isFetchingGroup && (
-                <p className="text-muted-foreground text-xs">
+                <p className="text-xs text-muted-foreground">
                   Last group added: {lastSelectedGroup}
                 </p>
               )}
@@ -332,7 +340,7 @@ export default function GenomeAlignmentServicePage() {
                       className="max-h-84 overflow-y-auto"
                     />
                     {!hasMinimumGenomes && (
-                      <p className="text-muted-foreground mt-2 text-xs">
+                      <p className="mt-2 text-xs text-muted-foreground">
                         Select at least two genomes to enable submission.
                       </p>
                     )}
@@ -396,7 +404,7 @@ export default function GenomeAlignmentServicePage() {
               <CollapsibleTrigger className="service-collapsible-trigger">
                 Advanced Options
                 <ChevronDown
-                  className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
+                  className={`size-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
                 />
               </CollapsibleTrigger>
 
@@ -409,7 +417,7 @@ export default function GenomeAlignmentServicePage() {
                           <Label className="service-card-label">
                             Manually Set Seed Weight
                           </Label>
-                          <p className="text-muted-foreground text-sm">
+                          <p className="text-sm text-muted-foreground">
                             Enable to specify the seed weight used by progressiveMauve.
                           </p>
                         </div>
@@ -417,7 +425,7 @@ export default function GenomeAlignmentServicePage() {
                           id="manual-seed-weight"
                           checked={field.state.value}
                           onCheckedChange={(checked) =>
-                            field.handleChange(checked)
+                            { field.handleChange(checked); }
                           }
                         />
                       </div>
@@ -434,7 +442,7 @@ export default function GenomeAlignmentServicePage() {
                           <Label className="service-card-label">
                             Seed Weight
                           </Label>
-                          <span className="text-muted-foreground text-sm">
+                          <span className="text-sm text-muted-foreground">
                             {field.state.value ?? seedWeightValue}
                           </span>
                         </div>
@@ -445,12 +453,12 @@ export default function GenomeAlignmentServicePage() {
                           max={21}
                           step={1}
                           onValueChange={(value) =>
-                            field.handleChange(
-                              Array.isArray(value) ? value[0] : value,
-                            )
+                            { field.handleChange(
+                              (Array.isArray(value) ? value[0] : value) as number,
+                            ); }
                           }
                         />
-                        <div className="text-muted-foreground flex justify-between text-xs">
+                        <div className="flex justify-between text-xs text-muted-foreground">
                           <span>3</span>
                           <span>21</span>
                         </div>
@@ -491,7 +499,7 @@ export default function GenomeAlignmentServicePage() {
             Reset
           </Button>
           <Button type="submit" disabled={isSubmitting || !hasMinimumGenomes || !isOutputNameValid}>
-            {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
+            {isSubmitting ? <Spinner className="mr-2 size-4" /> : null}
             Submit
           </Button>
         </div>

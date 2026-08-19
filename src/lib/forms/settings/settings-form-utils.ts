@@ -7,7 +7,7 @@ import type { UserProfile } from "@/lib/auth/types";
 // ============================================================================
 
 export const profileFormSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: z.email("Invalid email address"),
   first_name: z.string().min(1, "First name is required"),
   middle_name: z.string(),
   last_name: z.string().min(1, "Last name is required"),
@@ -68,7 +68,7 @@ export function buildProfilePatches(
 
   for (const field of editableProfileFields) {
     const oldVal = original[field] ?? "";
-    const newVal = updated[field] ?? "";
+    const newVal = updated[field];
     if (oldVal !== newVal) {
       patches.push({ op: "replace", path: `/${field}`, value: newVal });
     }

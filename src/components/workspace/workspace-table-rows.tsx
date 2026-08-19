@@ -6,7 +6,7 @@ import { flexRender } from "@tanstack/react-table";
 import { FolderUp, Users } from "lucide-react";
 import clsx from "clsx";
 import { TableCell, TableRow } from "@/components/ui/table";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { isFolderType } from "@/lib/services/workspace/utils";
 import { columnClassMap } from "./workspace-table-columns";
 
@@ -62,8 +62,8 @@ function SpecialRow({
           >
             {cell.id === "name" ? (
               <div className="flex items-center gap-2">
-                <Icon className="h-4 w-4 shrink-0 text-amber-500" />
-                <span className="text-muted-foreground font-medium italic">
+                <Icon className="size-4 shrink-0 text-amber-500" />
+                <span className="font-medium text-muted-foreground italic">
                   {label}
                 </span>
               </div>
@@ -76,7 +76,7 @@ function SpecialRow({
 }
 
 export function LeadingRow(
-  props: Omit<SpecialRowProps, "icon"> & { label?: string },
+  props: Omit<SpecialRowProps, "icon" | "label"> & { label?: string },
 ) {
   return <SpecialRow {...props} icon={Users} label={props.label ?? "View Shared Folders"} />;
 }
@@ -88,15 +88,15 @@ export function ParentRow(
 }
 
 interface DataRowProps {
-  row: Row<WorkspaceBrowserItem>;
+  row: Row<WorkspaceItem>;
   useSelectionMode: boolean;
   isSelected: boolean;
   onSelect?: (
-    item: WorkspaceBrowserItem,
+    item: WorkspaceItem,
     modifiers?: { ctrlOrMeta: boolean; shift: boolean },
   ) => void;
-  onItemClick: (item: WorkspaceBrowserItem) => void;
-  onItemDoubleClick?: (item: WorkspaceBrowserItem) => void;
+  onItemClick: (item: WorkspaceItem) => void;
+  onItemDoubleClick?: (item: WorkspaceItem) => void;
 }
 
 export function DataRow({
@@ -152,13 +152,11 @@ export function DataRow({
       aria-selected={useSelectionMode ? isSelected : undefined}
     >
       {row.getVisibleCells().map((cell) => {
-        const meta = cell.column.columnDef.meta as
-          | { className?: string }
-          | undefined;
+        const metaCls = (cell.column.columnDef.meta as Record<string, unknown> | undefined)?.className as string | undefined;
         const className = clsx(
           cell.column.id === "name" ? "pl-6" : "pl-2",
           "overflow-hidden",
-          meta?.className ?? "",
+          metaCls ?? "",
         );
         return (
           <TableCell
@@ -187,7 +185,7 @@ export function EmptyRow({ colSpan }: EmptyRowProps) {
     <TableRow className="pl-6">
       <TableCell
         colSpan={colSpan}
-        className="text-muted-foreground py-12 pl-6 text-center"
+        className="py-12 pl-6 text-center text-muted-foreground"
       >
         This folder is empty
       </TableCell>

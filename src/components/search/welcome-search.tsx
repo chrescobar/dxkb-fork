@@ -20,7 +20,7 @@ const WelcomeSearch = () => {
   return (
     <section className="flex-grow">
       {/* Hero Section with Search */}
-      <div className="from-primary to-background bg-gradient-to-b py-16 md:py-8">
+      <div className="bg-gradient-to-b from-primary to-background py-16 md:py-8">
         {isAuthenticated && !isVerified && (
           <div className="container mx-auto px-4">
             <Alert variant="destructive">
@@ -28,15 +28,14 @@ const WelcomeSearch = () => {
               <AlertDescription className="text-destructive">
                 <span>
                   Please verify your email to continue using the platform. Click{' '}
-                  <span
-                    role="button"
-                    tabIndex={0}
-                    onClick={e => { e.preventDefault(); sendVerificationEmail(); }}
-                    className="underline cursor-pointer hover:text-foreground focus:outline-none focus:underline text-inherit"
+                  <button
+                    type="button"
+                    onClick={() => { void sendVerificationEmail(); }}
+                    className="cursor-pointer border-0 bg-transparent p-0 text-inherit underline hover:text-foreground focus:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     style={{ font: "inherit" }}
                   >
                     here
-                  </span>{' '}to resend the verification email.
+                  </button>{' '}to resend the verification email.
                 </span>
               </AlertDescription>
             </Alert>
@@ -52,7 +51,7 @@ const WelcomeSearch = () => {
 
           {/* Search Interface */}
           <div className="mx-auto max-w-4xl">
-            <div className="welcome-search-card bg-card rounded-lg p-6 shadow-lg">
+            <div className="welcome-search-card rounded-lg bg-card p-6 shadow-lg">
               <Tabs defaultValue="basic" className="w-full">
                 <TabsList className="mb-4">
                   <TabsTrigger value="basic">Basic Search</TabsTrigger>
@@ -64,36 +63,36 @@ const WelcomeSearch = () => {
                   <SearchBar size="lg" />
 
                   <div className="mt-4 flex flex-wrap gap-2">
-                    <span className="text-muted-foreground mr-2 text-sm">
+                    <span className="mr-2 text-sm text-muted-foreground">
                       Popular searches:
                     </span>
                     <Badge
                       variant="secondary"
-                      className="text-foreground cursor-pointer"
+                      className="cursor-pointer text-foreground"
                     >
                       SARS-CoV-2
                     </Badge>
                     <Badge
                       variant="secondary"
-                      className="text-foreground cursor-pointer"
+                      className="cursor-pointer text-foreground"
                     >
                       Influenza A
                     </Badge>
                     <Badge
                       variant="secondary"
-                      className="text-foreground cursor-pointer"
+                      className="cursor-pointer text-foreground"
                     >
                       HIV-1
                     </Badge>
                     <Badge
                       variant="secondary"
-                      className="text-foreground cursor-pointer"
+                      className="cursor-pointer text-foreground"
                     >
                       Ebola virus
                     </Badge>
                     <Badge
                       variant="secondary"
-                      className="text-foreground cursor-pointer"
+                      className="cursor-pointer text-foreground"
                     >
                       Zika virus
                     </Badge>
@@ -135,7 +134,7 @@ const WelcomeSearch = () => {
                       />
                     </div>
                   </div>
-                  <Button className="bg-secondary hover:bg-secondary-foreground w-full">
+                  <Button className="w-full bg-secondary hover:bg-secondary-foreground">
                     Submit Advanced Search
                   </Button>
                 </TabsContent>
@@ -157,15 +156,15 @@ const WelcomeSearch = () => {
                       </div>
                     </RadioGroup>
 
-                    <div className="text-foreground gap-4">
+                    <div className="gap-4 text-foreground">
                       <Label className="card-sublabel">Enter Sequence</Label>
                       <Textarea
-                        className="text-foreground m-2 h-24 w-full rounded-md border font-mono text-sm"
+                        className="m-2 h-24 w-full rounded-md border font-mono text-sm text-foreground"
                         placeholder="Paste your sequence here (FASTA format supported)"
                       ></Textarea>
                     </div>
                   </div>
-                  <Button className="bg-secondary hover:bg-secondary-foreground w-full">
+                  <Button className="w-full bg-secondary hover:bg-secondary-foreground">
                     Search by Sequence
                   </Button>
                 </TabsContent>

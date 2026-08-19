@@ -61,7 +61,7 @@ export const fastqUtilitiesFormSchema = z
 
     if (!hasPaired && !hasSingle && !hasSrr) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: "At least one library (paired, single, or SRA) must be provided",
         path: ["paired_end_libs"],
       });
@@ -71,7 +71,7 @@ export const fastqUtilitiesFormSchema = z
     const hasAlign = data.recipe.includes("align");
     if (hasAlign && (!data.reference_genome_id || data.reference_genome_id.trim() === "")) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: "Target Genome is required when Align action is selected",
         path: ["reference_genome_id"],
       });

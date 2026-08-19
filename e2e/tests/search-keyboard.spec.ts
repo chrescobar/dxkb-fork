@@ -1,23 +1,46 @@
 import { test, expect, applyBackendMocks } from "../mocks/backends";
 import {
-  authSessionOverrides,
-  workspaceOverrides,
-  permissiveBackendOverrides,
+  journeyOverrides,
+  workspacePopulatedOverrides,
 } from "../fixtures/overrides";
 
-// The plan called for Cmd/Ctrl+K command-palette coverage, but the only command
-// palette in the repo (`src/components/search/command-search.tsx`) is dead code:
-// it isn't mounted anywhere and binds Cmd+J to placeholder items. The real
-// global search is the navbar `SearchBar` form, so this spec covers its
-// keyboard-driven journey: focus → type → Enter → routed to /search?q=…, plus
-// clipboard paste filling the input.
+// Two complementary keyboard surfaces ship together:
+// - the navbar `SearchBar` form (focus → type → Enter → /search?q=…, plus
+//   clipboard paste filling the input)
+// - the global `<CommandPalette>` mounted in the root layout (Cmd/Ctrl+K
+//   toggles open, arrow keys navigate, Enter routes, Esc closes).
+
+// p3.theseed.org/services/data_api/query/ — bulk multi-type Solr query fired by SearchResults on mount.
+// Returns zero hits for every type so the page renders the ResultsOverview card without errors.
+// Both describe blocks navigate to /search, so this mock has to be in scope for both.
+const emptyDataApiResponse = Object.fromEntries(
+  [
+    "taxonomy", "genome", "strain", "genome_feature", "sp_gene",
+    "protein_feature", "epitope", "protein_structure", "pathway",
+    "subsystem", "surveillance", "serology", "experiment",
+    "antibiotics", "genome_sequence",
+  ].map((type) => [
+    type,
+    { result: { response: { docs: [], numFound: 0, maxScore: 0, numFoundExact: true } } },
+  ]),
+);
+
+const dataApiOverride = {
+  url: /theseed\.org\/services\/data_api\/query/,
+  method: "POST",
+  body: emptyDataApiResponse,
+} as const;
+
 test.describe("global search (keyboard journey)", () => {
   test.beforeEach(async ({ page }) => {
     await applyBackendMocks(page, {
       overrides: [
-        ...authSessionOverrides,
-        ...workspaceOverrides,
-        ...permissiveBackendOverrides,
+        // Workspace.get (favorites) fired when /jobs loads the workspace sidebar chrome.
+        // (AppService.enumerate_tasks_filtered is covered by jobsOverrides inside journeyOverrides.)
+        ...workspacePopulatedOverrides,
+        ...journeyOverrides,
+        // p3.theseed.org data_api bulk Solr query — fired by SearchResults when /search mounts.
+        dataApiOverride,
       ],
     });
   });
@@ -36,11 +59,20 @@ test.describe("global search (keyboard journey)", () => {
     await page.keyboard.type("influenza");
     await page.keyboard.press("Enter");
 
-    await page.waitForURL(/\/search\?q=influenza(?:&searchtype=[^&]+)?$/, {
+    await page.waitForURL(/\/search\?type=[^&]+&q=influenza$/, {
       timeout: 10_000,
     });
     expect(page.url()).toMatch(/q=influenza/);
-    expect(page.url()).toMatch(/searchtype=everything/);
+    expect(page.url()).toMatch(/type=everything/);
+
+    // Beyond URL navigation, the /search page must actually render its results
+    // region. A regression that breaks SearchResults rendering would still pass
+    // the URL-only assertion above; this guards against that.
+    // CardTitle renders as a <div data-slot="card-title">, not a <h*> element,
+    // so we target the text directly.
+    await expect(
+      page.locator('[data-slot="card-title"]', { hasText: /search results/i }),
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test("empty query submission does not navigate", async ({ page }) => {
@@ -91,5 +123,115 @@ test.describe("global search (keyboard journey)", () => {
     await expect(searchInput).not.toBeFocused();
     // Form is still in the DOM after Tab; Esc/blur should not unmount the search bar.
     await expect(searchInput).toBeVisible();
+  });
+});
+
+test.describe("command palette (Cmd+K)", () => {
+  // Command palette is mounted globally in the root layout, so any route
+  // works; /jobs is signed-in and gives us the navbar/auth chrome we'd hit
+  // in real usage. The data_api mock is required because the "typing a query
+  // then Enter" test routes to /search, which fires the SearchResults Solr
+  // POST on mount.
+  test.beforeEach(async ({ page }) => {
+    await applyBackendMocks(page, {
+      overrides: [
+        ...workspacePopulatedOverrides,
+        ...journeyOverrides,
+        dataApiOverride,
+      ],
+    });
+  });
+
+  const modifierKey = process.platform === "darwin" ? "Meta" : "Control";
+
+  // The CommandPalette listener attaches in a useEffect at the root layout.
+  // On webkit the keyboard.press can race that effect, causing the keystroke
+  // to be dropped before the listener is wired. waitForLoadState("networkidle")
+  // gives React time to hydrate and run mount effects on every browser.
+  test("Cmd/Ctrl+K opens the palette with an accessible name", async ({ page }) => {
+    await page.goto("/jobs");
+    await page.waitForLoadState("networkidle");
+
+    await page.keyboard.press(`${modifierKey}+K`);
+
+    const dialog = page.getByRole("dialog", { name: /command palette/i });
+    await expect(dialog).toBeVisible();
+  });
+
+  test("Esc closes the palette", async ({ page }) => {
+    await page.goto("/jobs");
+    await page.waitForLoadState("networkidle");
+    await page.keyboard.press(`${modifierKey}+K`);
+    const dialog = page.getByRole("dialog", { name: /command palette/i });
+    // WebKit occasionally drops the keystroke even after networkidle if the useEffect
+    // listener hasn't attached yet. Give it extra headroom before declaring failure.
+    await expect(dialog).toBeVisible({ timeout: 10_000 });
+
+    await page.keyboard.press("Escape");
+    await expect(dialog).not.toBeVisible();
+  });
+
+  test("ArrowDown then Enter routes to a navigation item", async ({ page }) => {
+    await page.goto("/jobs");
+    await page.waitForLoadState("networkidle");
+    await page.keyboard.press(`${modifierKey}+K`);
+    await expect(
+      page.getByRole("dialog", { name: /command palette/i }),
+    ).toBeVisible();
+
+    // cmdk auto-selects the first item ("Home") on open; ArrowDown advances
+    // to the next item ("Workspace" when signed in) and Enter selects it.
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("Enter");
+
+    await page.waitForURL(/\/workspace\//, { timeout: 10_000 });
+    expect(new URL(page.url()).pathname).toMatch(/^\/workspace\//);
+  });
+
+  test("typing a query then Enter routes to /search", async ({ page }) => {
+    await page.goto("/jobs");
+    await page.waitForLoadState("networkidle");
+    await page.keyboard.press(`${modifierKey}+K`);
+    await expect(
+      page.getByRole("dialog", { name: /command palette/i }),
+    ).toBeVisible();
+
+    await page.keyboard.type("influenza");
+
+    // The "Search for X" item is filtered to the top once the input has text;
+    // pressing Enter selects it and the runSearch handler routes us to /search.
+    await page.keyboard.press("Enter");
+
+    await page.waitForURL(/\/search\?type=[^&]+&q=influenza$/, {
+      timeout: 10_000,
+    });
+    expect(page.url()).toMatch(/q=influenza/);
+    expect(page.url()).toMatch(/type=everything/);
+  });
+
+  test("clipboard paste fills the palette input", async ({ page, context, browserName }) => {
+    test.skip(
+      browserName !== "chromium",
+      "Only Chromium accepts Playwright's clipboard-read/clipboard-write permissions; Firefox rejects them as unknown and WebKit's headless clipboard is unreliable",
+    );
+
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.goto("/jobs");
+    await page.waitForLoadState("networkidle");
+    await page.keyboard.press(`${modifierKey}+K`);
+    await expect(
+      page.getByRole("dialog", { name: /command palette/i }),
+    ).toBeVisible();
+
+    await page.evaluate(async (text) => {
+      await navigator.clipboard.writeText(text);
+    }, "sars-cov-2");
+
+    const pasteShortcut = process.platform === "darwin" ? "Meta+V" : "Control+V";
+    await page.keyboard.press(pasteShortcut);
+
+    // The CommandInput is the focused element after the palette opens.
+    const input = page.locator('[data-slot="command-input"]');
+    await expect(input).toHaveValue("sars-cov-2");
   });
 });

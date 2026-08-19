@@ -17,7 +17,7 @@ export function formatServiceName(app: string): string {
 
 export function getOutputName(job: JobListItem): string {
   const outputFile =
-    job.output_file ?? String(job.parameters?.output_file ?? "");
+    job.output_file ?? ((job.parameters.output_file as string | undefined) ?? "");
   if (outputFile) return outputFile;
   return "\u2014";
 }
@@ -27,7 +27,7 @@ export function formatElapsedSeconds(seconds: number | undefined): string {
   const total = Math.round(seconds);
   const m = Math.floor(total / 60);
   const s = total % 60;
-  return m > 0 ? `${m}m${s}s` : `${s}s`;
+  return m > 0 ? `${String(m)}m${String(s)}s` : `${String(s)}s`;
 }
 
 export function formatUnixTimestamp(ts: number | undefined): string {

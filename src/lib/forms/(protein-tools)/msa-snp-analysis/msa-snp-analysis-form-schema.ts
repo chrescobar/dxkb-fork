@@ -119,7 +119,8 @@ export const msaSnpAnalysisFormSchema = z
             path: ["fasta_files"],
           });
         }
-      } else if (data.input_type === "input_sequence") {
+      } else {
+        // data.input_type === "input_sequence"
         if (!data.fasta_keyboard_input || data.fasta_keyboard_input.trim() === "") {
           ctx.addIssue({
             code: "custom",
@@ -177,8 +178,8 @@ export const msaSnpAnalysisFormSchema = z
           });
         }
       }
-    } else if (data.input_status === "aligned") {
-      // For aligned sequences, only fasta_files is needed
+    } else {
+      // data.input_status === "aligned" — only fasta_files is needed
       if (!data.fasta_files || data.fasta_files.length === 0) {
         ctx.addIssue({
           code: "custom",

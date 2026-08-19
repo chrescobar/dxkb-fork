@@ -1,41 +1,19 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { authAdmin } from "@/lib/auth/server/instance";
+import { respondWithAck } from "@/lib/auth/server/respond";
+import { withErrorHandling } from "@/lib/auth/server/errors";
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json().catch(() => ({}));
-    const { currentPassword, newPassword } = body;
-
-    if (
-      typeof currentPassword !== "string" ||
-      typeof newPassword !== "string" ||
-      !currentPassword ||
-      !newPassword
-    ) {
-      return NextResponse.json(
-        { message: "Current password and new password are required" },
-        { status: 400 },
-      );
-    }
-
-    const result = await authAdmin.changePassword(
-      currentPassword,
-      newPassword,
-    );
-
-    if (result.error) {
-      return NextResponse.json(
-        { message: result.error.message },
-        { status: result.error.status ?? 500 },
-      );
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Change password error:", error);
-    return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 },
-    );
-  }
+interface ChangePasswordBody {
+  currentPassword?: unknown;
+  newPassword?: unknown;
 }
+
+export const POST = withErrorHandling(async (request: NextRequest) => {
+  const body = (await request.json().catch(() => ({}))) as ChangePasswordBody;
+  return respondWithAck(
+    await authAdmin.changePassword(
+      typeof body.currentPassword === "string" ? body.currentPassword : "",
+      typeof body.newPassword === "string" ? body.newPassword : "",
+    ),
+  );
+});

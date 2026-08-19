@@ -48,10 +48,10 @@ export class JsonRpcClient {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${String(response.status)}`);
       }
 
-      const jsonResponse: JsonRpcResponse<T> = await response.json();
+      const jsonResponse = (await response.json()) as JsonRpcResponse<T>;
 
       if (jsonResponse.error) {
         throw new JsonRpcError(
@@ -92,10 +92,10 @@ export class JsonRpcClient {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${String(response.status)}`);
       }
 
-      const jsonResponses: JsonRpcResponse<T>[] = await response.json();
+      const jsonResponses = (await response.json()) as JsonRpcResponse<T>[];
 
       return jsonResponses.map((jsonResponse) => {
         if (jsonResponse.error) {
@@ -125,7 +125,7 @@ export class JsonRpcClient {
   // Update authentication token
   updateAuthToken(token: string): void {
     this.headers = {
-      ...this.headers,
+      ...(this.headers as Record<string, string>),
       Authorization: token.startsWith("Bearer ") ? token : `Bearer ${token}`,
     };
   }

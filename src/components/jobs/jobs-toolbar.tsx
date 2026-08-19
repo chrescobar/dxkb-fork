@@ -45,7 +45,7 @@ interface JobsToolbarProps {
   onIncludeArchivedChange: (value: boolean) => void;
   onRefresh: () => void;
   isRefreshing: boolean;
-  statusSummary?: Record<string, number>;
+  statusSummary?: Record<string, number | undefined>;
   dataUpdatedAt?: number;
   dateFrom: Date | undefined;
   dateTo: Date | undefined;
@@ -77,11 +77,11 @@ export function JobsToolbar({
     <div className="space-y-3">
       {/* Search */}
       <div className="relative">
-        <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder="Search by name, ID, or service..."
           value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
+          onChange={(e) => { onSearchChange(e.target.value); }}
           className="pl-10"
         />
       </div>
@@ -94,16 +94,16 @@ export function JobsToolbar({
             ...availableServices.map((s) => ({
               value: s,
               label: appSummary?.[s] != null
-                ? `${formatServiceName(s)} (${appSummary[s]})`
+                ? `${formatServiceName(s)} (${String(appSummary[s])})`
                 : formatServiceName(s),
             })),
           ]}
           value={serviceFilter}
-          onValueChange={(value) =>
-            value != null && onServiceFilterChange(value)
-          }
+          onValueChange={(value) => {
+            if (value != null) onServiceFilterChange(value);
+          }}
         >
-          <SelectTrigger className="w-68">
+          <SelectTrigger aria-label="Filter by service" className="w-68">
             <SelectValue placeholder="Service" />
           </SelectTrigger>
           <SelectContent>
@@ -112,7 +112,7 @@ export function JobsToolbar({
               {availableServices.map((app) => (
                 <SelectItem key={app} value={app}>
                   {formatServiceName(app)}
-                  {appSummary?.[app] != null && ` (${appSummary[app]})`}
+                  {appSummary?.[app] != null && ` (${String(appSummary[app])})`}
                 </SelectItem>
               ))}
             </SelectGroup>
@@ -123,11 +123,11 @@ export function JobsToolbar({
         <Select
           items={statusOptions}
           value={statusFilter}
-          onValueChange={(value) =>
-            value != null && onStatusFilterChange(value)
-          }
+          onValueChange={(value) => {
+            if (value != null) onStatusFilterChange(value);
+          }}
         >
-          <SelectTrigger className="w-40">
+          <SelectTrigger aria-label="Filter by status" className="w-40">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -154,14 +154,14 @@ export function JobsToolbar({
             id="include-archived"
             checked={includeArchived}
             onCheckedChange={(checked) =>
-              onIncludeArchivedChange(checked === true)
+              { onIncludeArchivedChange(checked); }
             }
           />
           <Label
             htmlFor="include-archived"
             className="flex cursor-pointer items-center gap-1 text-sm font-normal"
           >
-            <Archive className="h-3.5 w-3.5" />
+            <Archive className="size-3.5" />
             Archived
           </Label>
         </div>
@@ -169,38 +169,38 @@ export function JobsToolbar({
       </div>
 
       {/* Status bar + refresh */}
-      <div className="text-muted-foreground flex min-w-0 flex-wrap items-center gap-1 text-xs">
+      <div className="flex min-w-0 flex-wrap items-center gap-1 text-xs text-muted-foreground">
         {statusSummary && (
           <>
             <span className="flex items-center gap-1">
-              <Clock className="h-3 w-3 text-gray-500" />
+              <Clock className="size-3 text-gray-500" />
               queued:{" "}
-              <span className="text-foreground font-medium">
+              <span className="font-medium text-foreground">
                 {statusSummary.queued ?? 0}
               </span>
             </span>
             <span>&middot;</span>
             <span className="flex items-center gap-1">
-              <Loader2 className="h-3 w-3 text-blue-500" />
+              <Loader2 className="size-3 text-blue-500" />
               running:{" "}
-              <span className="text-foreground font-medium">
+              <span className="font-medium text-foreground">
                 {(statusSummary.running ?? 0) +
                   (statusSummary["in-progress"] ?? 0)}
               </span>
             </span>
             <span>&middot;</span>
             <span className="flex items-center gap-1">
-              <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+              <CheckCircle2 className="size-3 text-emerald-500" />
               completed:{" "}
-              <span className="text-foreground font-medium">
+              <span className="font-medium text-foreground">
                 {statusSummary.completed ?? 0}
               </span>
             </span>
             <span>&middot;</span>
             <span className="flex items-center gap-1">
-              <XCircle className="h-3 w-3 text-red-500" />
+              <XCircle className="size-3 text-red-500" />
               failed:{" "}
-              <span className="text-foreground font-medium">
+              <span className="font-medium text-foreground">
                 {statusSummary.failed ?? 0}
               </span>
             </span>
@@ -209,18 +209,19 @@ export function JobsToolbar({
 
         <div className="ml-auto flex items-center gap-2">
           {lastUpdatedText && (
-            <span className="text-muted-foreground text-xs">
+            <span className="text-xs text-muted-foreground">
               Last updated: {lastUpdatedText}
             </span>
           )}
           <Button
             variant="outline"
             size="sm"
+            aria-label="Refresh jobs"
             onClick={onRefresh}
             disabled={isRefreshing}
           >
             <RefreshCw
-              className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+              className={`size-4 ${isRefreshing ? "animate-spin" : ""}`}
             />
           </Button>
         </div>

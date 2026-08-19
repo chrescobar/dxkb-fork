@@ -63,17 +63,17 @@ export function inMemoryIdentity(
       return [...verifyRequests];
     },
 
-    async authenticate({ username, password }: SigninCredentials) {
+    authenticate({ username, password }: SigninCredentials) {
       const account = accounts.get(username);
       if (!account || account.password !== password) {
-        return fail("invalid_credentials", "Invalid credentials", 401);
+        return Promise.resolve(fail("invalid_credentials", "Invalid credentials", 401));
       }
-      return ok({ token: account.token });
+      return Promise.resolve(ok({ token: account.token }));
     },
 
-    async signUp(input: SignupCredentials) {
+    signUp(input: SignupCredentials) {
       if (accounts.has(input.username)) {
-        return fail("conflict", "Username already exists", 409);
+        return Promise.resolve(fail("conflict", "Username already exists", 409));
       }
       const account: InMemoryAccount = {
         username: input.username,
@@ -94,62 +94,62 @@ export function inMemoryIdentity(
         },
       };
       accounts.set(input.username, account);
-      return ok({ token: account.token });
+      return Promise.resolve(ok({ token: account.token }));
     },
 
-    async impersonate(_actingUserId, targetUser, password) {
+    impersonate(_actingUserId: string, targetUser: string, password: string) {
       if (options.suPassword !== undefined && password !== options.suPassword) {
-        return fail("invalid_credentials", "Invalid credentials", 401);
+        return Promise.resolve(fail("invalid_credentials", "Invalid credentials", 401));
       }
       const target = accounts.get(targetUser);
       if (!target) {
-        return fail("not_found", "Target user not found", 404);
+        return Promise.resolve(fail("not_found", "Target user not found", 404));
       }
-      return ok({ token: target.token });
+      return Promise.resolve(ok({ token: target.token }));
     },
 
-    async validateToken(userId, token) {
+    validateToken(userId: string, token: string) {
       const account = accounts.get(userId) ?? findByToken(token);
       if (!account || account.token !== token) {
-        return fail("unauthorized", "Token validation failed", 401);
+        return Promise.resolve(fail("unauthorized", "Token validation failed", 401));
       }
-      return ok(account.profile);
+      return Promise.resolve(ok(account.profile));
     },
 
-    async fetchProfile(userId) {
-      return accounts.get(userId)?.profile ?? null;
+    fetchProfile(userId: string) {
+      return Promise.resolve(accounts.get(userId)?.profile ?? null);
     },
 
-    async requestPasswordReset(usernameOrEmail) {
+    requestPasswordReset(usernameOrEmail: string) {
       resetRequests.push(usernameOrEmail);
-      return ok(undefined);
+      return Promise.resolve(ok(undefined));
     },
 
-    async sendVerificationEmail(userId, token) {
+    sendVerificationEmail(userId: string, token: string) {
       verifyRequests.push({ userId, token });
-      return ok(undefined);
+      return Promise.resolve(ok(undefined));
     },
 
-    async verifyEmailToken(_verificationToken, username) {
+    verifyEmailToken(_verificationToken: string, username: string) {
       const account = accounts.get(username);
-      if (!account) return fail("not_found", "User not found", 404);
+      if (!account) return Promise.resolve(fail("not_found", "User not found", 404));
       accounts.set(username, {
         ...account,
         profile: { ...account.profile, email_verified: true },
       });
-      return ok(undefined);
+      return Promise.resolve(ok(undefined));
     },
 
-    async changePassword(userId, token, currentPassword, newPassword) {
+    changePassword(userId: string, token: string, currentPassword: string, newPassword: string) {
       const account = accounts.get(userId);
       if (!account || account.token !== token) {
-        return fail("unauthorized", "Unauthorized", 401);
+        return Promise.resolve(fail("unauthorized", "Unauthorized", 401));
       }
       if (account.password !== currentPassword) {
-        return fail("validation", "Current password is incorrect", 400);
+        return Promise.resolve(fail("validation", "Current password is incorrect", 400));
       }
       accounts.set(userId, { ...account, password: newPassword });
-      return ok(undefined);
+      return Promise.resolve(ok(undefined));
     },
   };
 }
@@ -174,24 +174,28 @@ export function inMemorySession(
       return { current, backup };
     },
 
-    async read() {
-      return current;
+    read() {
+      return Promise.resolve(current);
     },
-    async write(identity) {
+    write(identity: SessionIdentity) {
       current = identity;
+      return Promise.resolve();
     },
-    async clear() {
+    clear() {
       current = null;
       backup = null;
+      return Promise.resolve();
     },
-    async readBackup() {
-      return backup;
+    readBackup() {
+      return Promise.resolve(backup);
     },
-    async writeBackup(identity) {
+    writeBackup(identity: SessionIdentity) {
       backup = identity;
+      return Promise.resolve();
     },
-    async clearBackup() {
+    clearBackup() {
       backup = null;
+      return Promise.resolve();
     },
   };
 }

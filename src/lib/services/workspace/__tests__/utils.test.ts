@@ -11,10 +11,8 @@ describe("normalizeWorkspaceObjectType", () => {
   });
 
   it("handles null/undefined gracefully", () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(normalizeWorkspaceObjectType(null as any)).toBe("");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(normalizeWorkspaceObjectType(undefined as any)).toBe("");
+    expect(normalizeWorkspaceObjectType(null)).toBe("");
+    expect(normalizeWorkspaceObjectType(undefined)).toBe("");
   });
 
   it("returns empty string for empty input", () => {

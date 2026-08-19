@@ -20,13 +20,13 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
     console.error("BV-BRC Taxonomy API error:", response.status, response.statusText);
     return NextResponse.json(
       {
-        error: `BV-BRC Taxonomy API error: ${response.status} ${response.statusText}`,
+        error: `BV-BRC Taxonomy API error: ${String(response.status)} ${response.statusText}`,
         code: statusToErrorCode(response.status),
       },
       { status: response.status },
     );
   }
 
-  const data = await response.json();
+  const data: unknown = await response.json();
   return NextResponse.json(data);
 });

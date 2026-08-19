@@ -31,7 +31,7 @@ import { JobDetailsPanel } from "./jobs-detail-panel";
 import { JobsShell } from "./jobs-shell";
 import { DetailPanel } from "@/components/detail-panel";
 import type { JobListItem } from "@/types/workspace";
-import { encodeWorkspaceSegment } from "@/lib/utils";
+import { encodeWorkspaceSegment } from "@/lib/services/workspace/path-utils";
 import { rerunJob } from "@/lib/rerun-utility";
 import {
   defaultPageSize,
@@ -59,24 +59,22 @@ const JobDataRow = React.memo(function JobDataRow({
         isSelected ? "border-l-primary bg-muted" : "border-l-transparent",
       )}
       onClick={(e) =>
-        onSelect(row.original, {
+        { onSelect(row.original, {
           ctrlOrMeta: e.ctrlKey || e.metaKey,
-        })
+        }); }
       }
-      onDoubleClick={() => onDoubleClick(row.original)}
+      onDoubleClick={() => { onDoubleClick(row.original); }}
       onMouseDown={(e) => {
         if (e.shiftKey || e.ctrlKey || e.metaKey) e.preventDefault();
       }}
       aria-selected={isSelected}
     >
       {row.getVisibleCells().map((cell, cellIndex) => {
-        const meta = cell.column.columnDef.meta as
-          | { className?: string }
-          | undefined;
+        const metaCls = (cell.column.columnDef.meta as Record<string, unknown> | undefined)?.className as string | undefined;
         const className = clsx(
           cellIndex === 0 ? "pl-6" : "pl-2",
           "overflow-hidden",
-          meta?.className ?? "",
+          metaCls ?? "",
         );
         return (
           <TableCell
@@ -117,7 +115,7 @@ export function JobsBrowser() {
 
   const dateParams = useMemo(() => {
     const toLocalDate = (d: Date) =>
-      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      `${String(d.getFullYear())}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
     const startTime = dateFrom ? toLocalDate(dateFrom) : undefined;
     let endTime: string | undefined;
@@ -172,7 +170,7 @@ export function JobsBrowser() {
   // Note: serviceFilter is handled server-side via the `app` param in useJobsData
   const filteredJobs = useMemo(() => {
     return jobs.filter((job) => {
-      if (!job?.id || !job?.app) return false;
+      if (!job.id || !job.app) return false;
 
       if (statusFilter !== "all") {
         const isRunning =
@@ -184,7 +182,7 @@ export function JobsBrowser() {
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
         const outputName =
-          job.output_file ?? String(job.parameters?.output_file ?? "");
+          job.output_file ?? ((job.parameters.output_file as string | undefined) ?? "");
         const matches =
           job.id.toLowerCase().includes(q) ||
           job.app.toLowerCase().includes(q) ||
@@ -280,9 +278,9 @@ export function JobsBrowser() {
   const handleDoubleClick = useCallback(
     (job: JobListItem) => {
       const outputPath =
-        job.output_path ?? String(job.parameters?.output_path ?? "");
+        job.output_path ?? ((job.parameters.output_path as string | undefined) ?? "");
       const outputFile =
-        job.output_file ?? String(job.parameters?.output_file ?? "");
+        job.output_file ?? ((job.parameters.output_file as string | undefined) ?? "");
 
       if (outputPath && outputFile) {
         const fullPath = `${outputPath}/${outputFile}`;
@@ -302,15 +300,15 @@ export function JobsBrowser() {
   // Actions
   const handleAction = useCallback(
     (actionId: string, selection: JobListItem[]) => {
+      if (selection.length === 0) return;
       const job = selection[0];
-      if (!job) return;
       switch (actionId) {
         case "view":
           handleDoubleClick(job);
           break;
         case "rerun":
           rerunJob(
-            job.parameters as Record<string, unknown>,
+            job.parameters,
             job.app,
           );
           break;
@@ -371,7 +369,7 @@ export function JobsBrowser() {
       <TableRow>
         <TableCell
           colSpan={colSpan}
-          className="text-muted-foreground py-12 pl-6 text-center"
+          className="py-12 pl-6 text-center text-muted-foreground"
         >
           {searchQuery || statusFilter !== "all" || serviceFilter !== "all"
             ? "No jobs match your filters"
@@ -388,7 +386,7 @@ export function JobsBrowser() {
       <JobDetailsPanel job={selectedJobs[0]} />
     ) : selectedJobs.length > 1 ? (
       <DetailPanel.EmptyState
-        message={`${selectedJobs.length} jobs selected`}
+        message={`${String(selectedJobs.length)} jobs selected`}
       />
     ) : (
       <DetailPanel.EmptyState message="Select a job to view details" />
@@ -409,12 +407,12 @@ export function JobsBrowser() {
         {/* Header + toolbar */}
         <div className="min-w-0 shrink-0 space-y-4 overflow-hidden p-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-foreground text-2xl font-bold">Jobs</h1>
+            <h1 className="text-2xl font-bold text-foreground">Jobs</h1>
           </div>
 
           {error && (
             <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
+              <AlertCircle className="size-4" />
               <AlertDescription>
                 Error loading jobs: {error.message}
               </AlertDescription>
@@ -488,7 +486,7 @@ export function JobsBrowser() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction onClick={() => setShowJobNotFound(false)}>
+            <AlertDialogAction onClick={() => { setShowJobNotFound(false); }}>
               OK
             </AlertDialogAction>
           </AlertDialogFooter>

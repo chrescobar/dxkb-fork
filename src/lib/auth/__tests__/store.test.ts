@@ -121,9 +121,9 @@ describe("authenticatedFetch", () => {
 
   it("retries once after refresh on 401", async () => {
     let call = 0;
-    const onRequest = vi.fn().mockImplementation(async () => {
+    const onRequest = vi.fn().mockImplementation(() => {
       call++;
-      return new Response(null, { status: call === 1 ? 401 : 200 });
+      return Promise.resolve(new Response(null, { status: call === 1 ? 401 : 200 }));
     });
     const port = memoryAuthAdapter({ initialSession: alice, onRequest });
     const refreshSpy = vi.spyOn(port, "getSession");

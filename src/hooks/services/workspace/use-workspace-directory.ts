@@ -2,17 +2,13 @@
 
 import { useCallback, useMemo } from "react";
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
-import {
-  toWorkspaceItem,
-  type WorkspaceItem,
-} from "@/lib/services/workspace/domain";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import type { ListPermissionsResult } from "@/lib/services/workspace/domain";
 import { workspaceQueryKeys } from "@/lib/services/workspace/workspace-query-keys";
 import { buildHomePath } from "@/lib/services/workspace/path-utils";
 import { safeDecode } from "@/lib/url";
 import type { WorkspaceRepository } from "@/lib/services/workspace/workspace-repository";
 import { useWorkspaceRepository } from "@/contexts/workspace-repository-context";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
 
 /**
  * Discriminated mode describing what the browser wants to show. Keep these
@@ -73,7 +69,7 @@ async function fetchSharedRoot(
     const g = item.permissions?.global ?? "";
     const u = item.permissions?.user ?? "";
     if (g !== "n") return false;
-    if (u === "o" && g === "n") return false;
+    if (u === "o") return false;
     return true;
   });
   const byPath = new Map<string, WorkspaceItem>();
@@ -193,9 +189,8 @@ export function useWorkspaceDirectory(
 
   const enabled = options.enabled ?? true;
 
-  const listingQuery: UseQueryResult<WorkspaceItem[], Error> = useQuery<
-    WorkspaceItem[],
-    Error
+  const listingQuery: UseQueryResult<WorkspaceItem[]> = useQuery<
+    WorkspaceItem[]
   >({
     queryKey: modeQueryKey(mode),
     queryFn: () => fetchModeItems(repository, mode),
@@ -207,7 +202,7 @@ export function useWorkspaceDirectory(
   const items = useMemo(() => listingQuery.data ?? [], [listingQuery.data]);
   const itemPaths = useMemo(() => items.map((i) => i.path), [items]);
 
-  const permissionsQuery = useQuery<ListPermissionsResult, Error>({
+  const permissionsQuery = useQuery<ListPermissionsResult>({
     queryKey: workspaceQueryKeys.permissions(itemPaths),
     queryFn: () => repository.listPermissions(itemPaths),
     enabled: enabled && isAuthenticatedMode(mode) && itemPaths.length > 0,
@@ -216,7 +211,7 @@ export function useWorkspaceDirectory(
   });
 
   const currentPath = modeDirectoryPath(mode);
-  const currentPathPermissionsQuery = useQuery<ListPermissionsResult, Error>({
+  const currentPathPermissionsQuery = useQuery<ListPermissionsResult>({
     queryKey: currentPath
       ? workspaceQueryKeys.permissions([currentPath])
       : workspaceQueryKeys.permissions([]),
@@ -277,9 +272,3 @@ export function useWorkspaceDirectory(
   };
 }
 
-/** Helper used during migration: converts an incoming `WorkspaceBrowserItem` list to canonical items. */
-export function browserItemsToCanonical(
-  items: WorkspaceBrowserItem[],
-): WorkspaceItem[] {
-  return items.map(toWorkspaceItem);
-}

@@ -36,7 +36,7 @@ export function CreateFolderDialog({
     const name = folderName.trim();
     if (!name || isCreating) return;
     onCreateFolder(name).then(
-      () => onOpenChange(false),
+      () => { onOpenChange(false); },
       () => { /* error handled elsewhere */ },
     );
   }, [folderName, isCreating, onCreateFolder, onOpenChange]);
@@ -49,7 +49,7 @@ export function CreateFolderDialog({
         <DialogTitle className="text-start">Create Folder</DialogTitle>
         <div className="flex flex-col gap-2 py-2">
           <label
-            className="text-muted-foreground text-xs font-medium"
+            className="text-xs font-medium text-muted-foreground"
             htmlFor="create-folder-input"
           >
             Folder name
@@ -57,7 +57,7 @@ export function CreateFolderDialog({
           <Input
             id="create-folder-input"
             value={folderName}
-            onChange={(e) => setFolderName(e.target.value)}
+            onChange={(e) => { setFolderName(e.target.value); }}
             placeholder="My Folder"
             disabled={isCreating}
             onKeyDown={(e) => {
@@ -71,7 +71,7 @@ export function CreateFolderDialog({
         <DialogFooter showCloseButton={false}>
           <Button
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={() => { onOpenChange(false); }}
             disabled={isCreating}
           >
             Cancel
@@ -79,7 +79,7 @@ export function CreateFolderDialog({
           <Button onClick={handleCreate} disabled={!canCreate}>
             {isCreating ? (
               <>
-                <Spinner className="mr-2 h-3.5 w-3.5 shrink-0" />
+                <Spinner className="mr-2 size-3.5 shrink-0" />
                 Creating…
               </>
             ) : (

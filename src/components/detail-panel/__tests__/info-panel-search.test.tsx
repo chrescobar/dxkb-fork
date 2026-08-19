@@ -1,0 +1,105 @@
+import { render, screen } from "@testing-library/react";
+import { InfoPanel } from "../info-panel";
+
+// Workspace hooks are only invoked inside WorkspaceItemDetailContent (workspace variant).
+// These tests only render the search variant, so no mock is needed.
+
+describe("InfoPanel — search variant", () => {
+  describe("loading state", () => {
+    it("shows loading indicator when a single row is selected and data is loading", () => {
+      render(
+        <InfoPanel
+          selectedIds={["genome-1"]}
+          activeTab="genome"
+          isLoading
+        />,
+      );
+      expect(screen.getByText("Loading...")).toBeInTheDocument();
+    });
+
+    it("does not show loading indicator when multiple rows are selected", () => {
+      render(
+        <InfoPanel
+          selectedIds={["genome-1", "genome-2"]}
+          activeTab="genome"
+          isLoading
+        />,
+      );
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("multi-selection display", () => {
+    it("shows selected count when more than one row is selected", () => {
+      render(
+        <InfoPanel
+          selectedIds={["genome-1", "genome-2"]}
+          activeTab="genome"
+        />,
+      );
+      expect(screen.getByText("2 rows selected")).toBeInTheDocument();
+    });
+
+    it("shows all-pages-selected message when isAllPagesSelected and totalItems are set", () => {
+      render(
+        <InfoPanel
+          selectedIds={["genome-1", "genome-2"]}
+          activeTab="genome"
+          isAllPagesSelected
+          totalItems={5000}
+        />,
+      );
+      expect(screen.getByText("All 5,000 rows selected")).toBeInTheDocument();
+    });
+
+    it("falls back to count when isAllPagesSelected is true but totalItems is 0", () => {
+      render(
+        <InfoPanel
+          selectedIds={["genome-1", "genome-2"]}
+          activeTab="genome"
+          isAllPagesSelected
+          totalItems={0}
+        />,
+      );
+      // totalItems is falsy → falls back to count
+      expect(screen.getByText("2 rows selected")).toBeInTheDocument();
+    });
+
+    it("shows count for exactly one selected row without loading", () => {
+      render(
+        <InfoPanel
+          selectedIds={["genome-1"]}
+          activeTab="genome"
+          isLoading={false}
+          selectedRow={{ genome_id: "genome-1", genome_name: "Test Genome" }}
+        />,
+      );
+      // Single row, not loading -> renders field detail panel (not multi-select message)
+      expect(screen.queryByText(/rows selected/)).not.toBeInTheDocument();
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    });
+
+    it("renders ppi details for a selected interaction row", () => {
+      render(
+        <InfoPanel
+          selectedIds={["ppi-1"]}
+          activeTab="ppi"
+          isLoading={false}
+          selectedRow={{
+            id: "ppi-1",
+            interactor_a: "fig|224914.16.peg.635",
+            genome_name_a: "Brucella melitensis bv. 1 str. 16M [WGS]",
+            interactor_b: "fig|224914.16.peg.2425",
+            category: "PPI",
+            evidence: ["experimental"],
+          }}
+        />,
+      );
+
+      expect(screen.getAllByText("fig|224914.16.peg.635").length).toBeGreaterThan(0);
+      expect(screen.getByText("Genome Name A")).toBeInTheDocument();
+      expect(screen.getAllByText("Interactor B").length).toBeGreaterThan(0);
+      expect(screen.getByText("PPI")).toBeInTheDocument();
+    });
+  });
+});

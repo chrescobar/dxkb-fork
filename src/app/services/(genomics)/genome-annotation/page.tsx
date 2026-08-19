@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import { ServiceHeader } from "@/components/services/service-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -58,7 +59,7 @@ const GenomeAnnotationContent = () => {
 
   const form = useForm({
     defaultValues:
-      defaultGenomeAnnotationFormValues as GenomeAnnotationFormData,
+      defaultGenomeAnnotationFormValues,
     validators: { onChange: completeGenomeAnnotationSchema },
     onSubmit: async ({ value }) => {
       // Validate my label for slashes
@@ -72,7 +73,7 @@ const GenomeAnnotationContent = () => {
     },
   });
 
-  const watchedValues = useStore(form.store, (s) => s.values);
+  const watchedValues = useSelector(form.store, (s) => s.values);
   const previousValuesRef = useRef<GenomeAnnotationFormData>(watchedValues);
 
   // Log form changes to console
@@ -108,8 +109,8 @@ const GenomeAnnotationContent = () => {
     form.reset(defaultGenomeAnnotationFormValues);
   };
 
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
 
   return (
     <section>
@@ -127,7 +128,7 @@ const GenomeAnnotationContent = () => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="service-form-section"
       >
@@ -178,12 +179,12 @@ const GenomeAnnotationContent = () => {
                       items={genomeAnnotationRecipes}
                       value={field.state.value}
                       onValueChange={(val) =>
-                        field.handleChange(
+                        { field.handleChange(
                           val as GenomeAnnotationFormData["recipe"],
-                        )
+                        ); }
                       }
                     >
-                      <SelectTrigger className="service-card-select-trigger">
+                      <SelectTrigger className="service-card-select-trigger" aria-label="Annotation Recipe">
                         <SelectValue placeholder="--- Select Recipe ---" />
                       </SelectTrigger>
                       <SelectContent>
@@ -205,12 +206,12 @@ const GenomeAnnotationContent = () => {
               <div className="flex flex-col gap-4 sm:flex-row">
                 <form.Field name="scientific_name">
                   {(field) => (
-                    <FieldItem className="sm:w-[75%]">
+                    <FieldItem className="sm:w-9/12">
                       <Label className="gap-1">
                         Taxonomy Name
                         <TooltipProvider>
                           <Tooltip>
-                            <TooltipTrigger>
+                            <TooltipTrigger aria-label="Help: taxon must be genus level or below">
                               <HelpCircle className="service-card-tooltip-icon ml-1" />
                             </TooltipTrigger>
                             <TooltipContent className="max-w-sm">
@@ -270,7 +271,7 @@ const GenomeAnnotationContent = () => {
                     // Get scientific_name to populate taxon_name in the selector
                     const scientificName = form.state.values.scientific_name;
                     return (
-                      <FieldItem className="sm:w-[25%]">
+                      <FieldItem className="sm:w-3/12">
                         <FieldLabel field={field}>Taxonomy ID</FieldLabel>
                         <TaxIDSelector
                           value={

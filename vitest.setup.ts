@@ -1,6 +1,19 @@
 import React from "react";
 import "@testing-library/jest-dom/vitest";
 
+// vitest's populateGlobal skips localStorage/sessionStorage because Node.js v22+
+// already defines them (as broken experimental APIs). Explicitly re-bind to jsdom's
+// working implementations via global.jsdom, which vitest always sets for the jsdom
+// environment. Done in beforeAll so jsdom is guaranteed to be initialized.
+beforeAll(() => {
+  const dom = (global as unknown as { jsdom?: { window: Window & typeof globalThis } }).jsdom;
+  if (dom) {
+    vi.stubGlobal("localStorage", dom.window.localStorage);
+    vi.stubGlobal("sessionStorage", dom.window.sessionStorage);
+  }
+});
+
+
 // Mock next/navigation
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
@@ -88,6 +101,6 @@ beforeEach(() => {
 
 // MSW server lifecycle — strict mode rejects any unhandled fetch calls
 import { server } from "@/test-helpers/msw-server";
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
+beforeAll(() => { server.listen({ onUnhandledRequest: "error" }); });
+afterEach(() => { server.resetHandlers(); });
+afterAll(() => { server.close(); });

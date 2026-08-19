@@ -116,7 +116,7 @@ function DownloadOptionsForm({
       <div className="grid gap-4 py-2">
         <div className="grid gap-2">
           <label
-            className="text-muted-foreground text-xs font-medium"
+            className="text-xs font-medium text-muted-foreground"
             htmlFor="download-archive-name"
           >
             File Name
@@ -133,7 +133,7 @@ function DownloadOptionsForm({
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
-                if (canSubmit) handleSubmit();
+                if (canSubmit) void handleSubmit();
               }
             }}
             aria-invalid={!!validationError}
@@ -142,7 +142,7 @@ function DownloadOptionsForm({
           {validationError && (
             <p
               id="archive-name-error"
-              className="text-destructive text-xs"
+              className="text-xs text-destructive"
               role="alert"
             >
               {validationError}
@@ -151,14 +151,16 @@ function DownloadOptionsForm({
         </div>
         <div className="grid gap-2">
           <label
-            className="text-muted-foreground text-xs font-medium"
+            className="text-xs font-medium text-muted-foreground"
             htmlFor="download-archive-type"
           >
             File Type
           </label>
           <Select
             value={archiveType}
-            onValueChange={(value) => value != null && setArchiveType(value)}
+            onValueChange={(value) => {
+              if (value != null) setArchiveType(value);
+            }}
             disabled={isSubmitting}
           >
             <SelectTrigger id="download-archive-type" className="w-full">
@@ -179,14 +181,14 @@ function DownloadOptionsForm({
       <DialogFooter showCloseButton={false}>
         <Button
           variant="outline"
-          onClick={() => onOpenChange(false)}
+          onClick={() => { onOpenChange(false); }}
           disabled={isSubmitting}
         >
           Cancel
         </Button>
-        <Button onClick={handleSubmit} disabled={!canSubmit}>
+        <Button onClick={() => { void handleSubmit(); }} disabled={!canSubmit}>
           {isSubmitting ? (
-            <Spinner className="h-4 w-4 shrink-0" />
+            <Spinner className="size-4 shrink-0" />
           ) : (
             "Submit"
           )}

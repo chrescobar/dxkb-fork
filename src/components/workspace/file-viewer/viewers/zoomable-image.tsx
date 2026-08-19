@@ -16,7 +16,7 @@ interface ZoomableImageProps {
 
 export function ZoomableImage({ src, alt, toolbarLeading }: ZoomableImageProps) {
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className="flex size-full flex-col">
       <TransformWrapper>
         {({ zoomIn, zoomOut, resetTransform }) => (
           <>
@@ -26,7 +26,7 @@ export function ZoomableImage({ src, alt, toolbarLeading }: ZoomableImageProps) 
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  onClick={() => zoomIn()}
+                  onClick={() => { zoomIn(); }}
                   title="Zoom in"
                 >
                   <ZoomIn />
@@ -34,7 +34,7 @@ export function ZoomableImage({ src, alt, toolbarLeading }: ZoomableImageProps) 
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  onClick={() => zoomOut()}
+                  onClick={() => { zoomOut(); }}
                   title="Zoom out"
                 >
                   <ZoomOut />
@@ -42,7 +42,7 @@ export function ZoomableImage({ src, alt, toolbarLeading }: ZoomableImageProps) 
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  onClick={() => resetTransform()}
+                  onClick={() => { resetTransform(); }}
                   title="Reset"
                 >
                   <RotateCcw />
@@ -60,7 +60,7 @@ export function ZoomableImage({ src, alt, toolbarLeading }: ZoomableImageProps) 
                   width={0}
                   height={0}
                   sizes="100vw"
-                  className="h-auto w-auto max-h-full max-w-full object-contain"
+                  className="size-auto max-h-full max-w-full object-contain"
                   unoptimized
                 />
               </TransformComponent>

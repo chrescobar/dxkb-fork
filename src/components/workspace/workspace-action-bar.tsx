@@ -5,7 +5,8 @@ import { Spinner } from "@/components/ui/spinner";
 import {TooltipProvider, Tooltip, TooltipTrigger, TooltipContent} from "@/components/ui/tooltip";
 import { Box, Download, Trash2, Pencil, Copy, Move, Star, BookOpen, Type, Share2, type LucideIcon } from "lucide-react";
 
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import { findProtectedFolders } from "@/lib/services/workspace/protected-folders";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 const writePermissions = new Set(["o", "a", "w"]);
 
@@ -55,17 +56,23 @@ const actionConfig: ActionConfig[] = [
 
 function getSelectionDisabledTooltip(
   action: ActionConfig,
-  selection: WorkspaceBrowserItem[],
+  selection: WorkspaceItem[],
 ): string | undefined {
   if (action.id === "editType" && selection.some((s) => s.type === "job_result")) {
     return 'Cannot change "job_result" type';
+  }
+  if (action.id === "delete") {
+    const paths = selection.map((s) => s.path).filter((p): p is string => Boolean(p));
+    if (findProtectedFolders(paths).length > 0) {
+      return "This folder is essential to your workspace and cannot be deleted.";
+    }
   }
   return undefined;
 }
 
 function isActionValidForSelection(
   action: ActionConfig,
-  selection: WorkspaceBrowserItem[],
+  selection: WorkspaceItem[],
 ): boolean {
   if (action.id === "guide") return true;
   if (selection.length === 0) return false;
@@ -73,7 +80,7 @@ function isActionValidForSelection(
   const typesMatch =
     action.validTypes === "*" ||
     selection.every((s) =>
-      (action.validTypes as string[]).includes(s.type ?? ""),
+      (action.validTypes as string[]).includes(s.type),
     );
   if (!typesMatch) return false;
 
@@ -81,7 +88,7 @@ function isActionValidForSelection(
 
   if (action.requireWrite) {
     const hasWrite = selection.every((s) =>
-      writePermissions.has(s.user_permission ?? ""),
+      writePermissions.has(s.permissions?.user ?? ""),
     );
     if (!hasWrite) return false;
   }
@@ -90,7 +97,7 @@ function isActionValidForSelection(
 }
 
 export interface WorkspaceActionBarProps {
-  selection: WorkspaceBrowserItem[];
+  selection: WorkspaceItem[];
   /** URL opened when the Guide button is clicked (from env WORKSPACE_GUIDE_URL). */
   workspaceGuideUrl: string;
   currentPath?: string;
@@ -102,7 +109,7 @@ export interface WorkspaceActionBarProps {
   isCurrentSelectionFavorite?: boolean;
   /** When true, only show read-only actions (guide + download). Used for public workspace browsing. */
   readOnly?: boolean;
-  onAction?: (actionId: WorkspaceActionId, selection: WorkspaceBrowserItem[]) => void;
+  onAction?: (actionId: WorkspaceActionId, selection: WorkspaceItem[]) => void;
 }
 
 const readOnlyAllowedActions = new Set(["guide", "download"]);
@@ -144,7 +151,7 @@ export function WorkspaceActionBar({
             <Button
               key={action.id}
               variant="secondary"
-              className="h-[60px] w-full flex-col gap-1 font-normal"
+              className="h-15 w-full flex-col gap-1 font-normal"
               disabled={disabled}
               onClick={() =>
                 action.id === "guide"
@@ -153,13 +160,13 @@ export function WorkspaceActionBar({
               }
             >
               {showSpinner ? (
-                <Spinner className="h-4 w-4 shrink-0" />
+                <Spinner className="size-4 shrink-0" />
               ) : showFilledStar ? (
-                <Star className="h-4 w-4 shrink-0 fill-current" />
+                <Star className="size-4 shrink-0 fill-current" />
               ) : (
-                <Icon className="h-4 w-4 shrink-0" />
+                <Icon className="size-4 shrink-0" />
               )}
-              <span className="text-[11px] font-medium leading-tight">{action.label}</span>
+              <span className="text-[11px] leading-tight font-medium">{action.label}</span>
             </Button>
           );
           return tooltipText && disabled ? (

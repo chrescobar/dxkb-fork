@@ -36,7 +36,7 @@ export function JobMetadataCard({ resolvedJobMeta, className }: JobMetadataCardP
   const title = `${appLabel} Job Result`;
 
   return (
-    <div className={cn("border-border flex shrink-0 flex-col gap-2 rounded-md border p-4", className)}>
+    <div className={cn("flex shrink-0 flex-col gap-2 rounded-md border border-border p-4", className)}>
       <h2 className="text-lg font-semibold">{title}</h2>
       <dl className="grid grid-cols-1 gap-x-4 gap-y-1 text-sm sm:grid-cols-2 xl:grid-cols-4">
         <div>
@@ -64,9 +64,9 @@ export function JobMetadataCard({ resolvedJobMeta, className }: JobMetadataCardP
       >
         <CollapsibleTrigger className="service-collapsible-trigger text-sm">
           {parametersOpen ? (
-            <ChevronDown className="h-4 w-4" />
+            <ChevronDown className="size-4" />
           ) : (
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="size-4" />
           )}
           Job Parameters
         </CollapsibleTrigger>
@@ -75,7 +75,7 @@ export function JobMetadataCard({ resolvedJobMeta, className }: JobMetadataCardP
             <Button
               type="button"
               variant="ghost"
-              className="absolute right-4 top-2 z-10 h-10 w-10 p-3 border border-border rounded-sm text-muted-foreground hover:text-foreground"
+              className="absolute top-2 right-4 z-10 size-10 rounded-sm border border-border p-3 text-muted-foreground hover:text-foreground"
               onClick={() => {
                 const text = JSON.stringify(parameters, null, 2);
                 void navigator.clipboard.writeText(text).then(
@@ -85,9 +85,9 @@ export function JobMetadataCard({ resolvedJobMeta, className }: JobMetadataCardP
               }}
               title="Copy to clipboard"
             >
-              <ClipboardCopy className="h-5 w-5" />
+              <ClipboardCopy className="size-5" />
             </Button>
-            <pre className="scrollbar-themed bg-muted/50 max-h-64 overflow-auto rounded p-2 pr-10 font-mono text-xs">
+            <pre className="scrollbar-themed max-h-64 overflow-auto rounded bg-muted/50 p-2 pr-10 font-mono text-xs">
               {JSON.stringify(parameters, null, 2)}
             </pre>
           </div>

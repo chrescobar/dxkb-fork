@@ -33,7 +33,7 @@ describe("POST /api/services/app-service/jobs/[id]/kill", () => {
     const request = mockNextRequest({ method: "POST" });
 
     const response = await POST(request, makeRouteContext("job-1"));
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(401);
     expect(data).toEqual(
@@ -49,7 +49,7 @@ describe("POST /api/services/app-service/jobs/[id]/kill", () => {
     const request = mockNextRequest({ method: "POST" });
 
     const response = await POST(request, makeRouteContext("job-abc"));
-    const data = await response.json();
+    const data = (await response.json()) as typeof killResult;
 
     expect(response.status).toBe(200);
     expect(data).toEqual(killResult);
@@ -75,7 +75,7 @@ describe("POST /api/services/app-service/jobs/[id]/kill", () => {
     const request = mockNextRequest({ method: "POST" });
 
     const response = await POST(request, makeRouteContext("job-fail"));
-    const data = await response.json();
+    const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(500);
     expect(data).toEqual(expect.objectContaining({ error: "Kill failed" }));

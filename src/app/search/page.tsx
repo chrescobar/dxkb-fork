@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { TypeSearch } from "@/app/search/typesearch";
-import { SearchResults } from "@/app/allTermSearchResults";
+import { SearchResults } from "@/app/all-term-search-results";
 
 export default function GlobalSearch () {
 
@@ -10,7 +10,7 @@ export default function GlobalSearch () {
 
       // Get the value of a specific query parameter
       const keyword = searchParams.get("q") ?? "";
-      const searchtype = searchParams.get('searchtype') ?? "";
+      const searchtype = searchParams.get('type') ?? "";
       
       // The first step is to get the search phrase in a friendly format.
       // This requires a handful of replacements to make sure we don't break the API
@@ -18,11 +18,9 @@ export default function GlobalSearch () {
 
       // replace some special characters
       query = query.replace(/'/g, '').replace(/:/g, ' ');
-      // console.log("query", query);
 
       // replace special words/characters: (+), (-), +, - , <, >, /, \ with a space as they are causing solr query problems when included in the keywords
       query =  query.replace(/\(\+\)/g, ' ').replace(/\(-\)/g, ' ').replace(/,|\+|-|=|<|>|\\|\//g, ' ');
-      // console.log("query", query);
 
       // When query phrase is quoted, the whole phrase should be search as one keyword unless it contains (), {}, []
       // e.g. "EC 2.1.1.1" should be search as "EC 3.2.1.1" not "EC AND 3.2.1.1"
@@ -66,11 +64,12 @@ export default function GlobalSearch () {
             "serology",
             "taxonomy",
             "experiment",
+            "genome_sequence",
+            "genome_amr", 
           ].includes(searchtype)
         ) {
           return <TypeSearch q={query} searchtype={searchtype} />;
         } else {
-          console.log("Do Search: ", searchtype, query);
           return <div>Fallback search</div>;
         }
 

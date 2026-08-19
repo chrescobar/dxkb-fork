@@ -4,13 +4,14 @@ import {
   loadFavorites,
   toggleFavorite,
 } from "@/lib/services/workspace/favorites";
-import { workspaceApi } from "@/lib/services/workspace/client";
 
-vi.mock("@/lib/services/workspace/client", () => ({
-  workspaceApi: { makeRequest: vi.fn() },
+const { mockMakeRequest } = vi.hoisted(() => ({
+  mockMakeRequest: vi.fn(),
 }));
 
-const mockMakeRequest = workspaceApi.makeRequest as ReturnType<typeof vi.fn>;
+vi.mock("@/lib/services/workspace/client", () => ({
+  workspaceApi: { makeRequest: mockMakeRequest },
+}));
 
 describe("favorites", () => {
   describe("getFavoritesFilePath", () => {
@@ -121,9 +122,9 @@ describe("favorites", () => {
       expect(result).toBe(true);
 
       // Verify the save call includes the new folder
-      const saveCall = mockMakeRequest.mock.calls[2];
+      const saveCall = mockMakeRequest.mock.calls[2] as [string, [{ objects: [unknown, string, unknown, string][] }]];
       expect(saveCall[0]).toBe("Workspace.create");
-      const savedContent = JSON.parse(saveCall[1][0].objects[0][3]);
+      const savedContent = JSON.parse(saveCall[1][0].objects[0][3]) as { folders: string[] };
       expect(savedContent.folders).toContain("/user@bvbrc/home/existing");
       expect(savedContent.folders).toContain("/user@bvbrc/home/new-folder");
     });
@@ -151,8 +152,8 @@ describe("favorites", () => {
       expect(result).toBe(false);
 
       // Verify the save call excludes the removed folder
-      const saveCall = mockMakeRequest.mock.calls[2];
-      const savedContent = JSON.parse(saveCall[1][0].objects[0][3]);
+      const saveCall = mockMakeRequest.mock.calls[2] as [string, [{ objects: [unknown, string, unknown, string][] }]];
+      const savedContent = JSON.parse(saveCall[1][0].objects[0][3]) as { folders: string[] };
       expect(savedContent.folders).not.toContain("/user@bvbrc/home/folder1");
       expect(savedContent.folders).toContain("/user@bvbrc/home/folder2");
     });

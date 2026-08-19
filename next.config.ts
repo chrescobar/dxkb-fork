@@ -12,19 +12,54 @@ const projectRoot = dirname(fileURLToPath(import.meta.url));
 interface WebpackRuleLike {
   test?: { test?(s: string): boolean };
   issuer?: unknown;
-  resourceQuery?: unknown;
+  resourceQuery?: { not?: unknown[] } | RegExp;
   exclude?: RegExp;
+  use?: string[];
+}
+
+interface WebpackConfig {
+  module: {
+    rules: WebpackRuleLike[];
+  };
 }
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
+  output: "standalone",
+  reactCompiler: true,
   env: {
     NEXT_PUBLIC_APP_VERSION: pkg.version,
   },
 
-  webpack(config) {
+  rewrites() {
+    return [
+      {
+        source: "/nextstrain-viewer/:path*",
+        destination: "/nextstrain-viewer.html",
+      },
+    ];
+  },
+
+  headers() {
+    return [
+      {
+        source: "/nextstrain-viewer/:path*",
+        headers: [{ key: "Cache-Control", value: "no-cache" }],
+      },
+      {
+        source: "/dist/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
+  },
+
+  webpack(config: WebpackConfig): WebpackConfig {
     // Grab the existing rule that handles SVG imports
-    const fileLoaderRule = config.module.rules.find((rule: WebpackRuleLike) =>
+    const fileLoaderRule = config.module.rules.find((rule) =>
       rule.test?.test?.(".svg"),
     );
 
@@ -39,14 +74,23 @@ const nextConfig: NextConfig = {
       // Convert all other *.svg imports to React components
       {
         test: /\.svg$/i,
-        issuer: fileLoaderRule.issuer,
-        resourceQuery: { not: [...fileLoaderRule.resourceQuery.not, /url/] }, // exclude if *.svg?url
+        issuer: fileLoaderRule?.issuer,
+        resourceQuery: {
+          not: [
+            ...((
+              fileLoaderRule?.resourceQuery as { not?: unknown[] } | undefined
+            )?.not ?? []),
+            /url/,
+          ],
+        }, // exclude if *.svg?url
         use: ["@svgr/webpack"],
       },
     );
 
     // Modify the file loader rule to ignore *.svg, since we have it handled now.
-    fileLoaderRule.exclude = /\.svg$/i;
+    if (fileLoaderRule) {
+      fileLoaderRule.exclude = /\.svg$/i;
+    }
 
     return config;
   },

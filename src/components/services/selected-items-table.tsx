@@ -53,7 +53,7 @@ const SelectedItemsTable = ({
     if (shape === "triangle") {
       return (
         <div
-          className="inline-block h-0 w-0 border-[5px] border-transparent"
+          className="inline-block size-0 border-[5px] border-transparent"
           style={{
             borderBottomWidth: "8px",
             borderBottomColor: color.replace("bg-", ""),
@@ -62,7 +62,7 @@ const SelectedItemsTable = ({
       );
     }
 
-    return <div className={`h-2.5 w-2.5 ${color} ${getShapeClass(shape)}`} />;
+    return <div className={`size-2.5 ${color} ${getShapeClass(shape)}`} />;
   };
 
   return (
@@ -74,7 +74,7 @@ const SelectedItemsTable = ({
             {tooltipContent && (
               <TooltipProvider>
                 <Tooltip>
-                  <TooltipTrigger>
+                  <TooltipTrigger aria-label={`${title ?? "Field"} help`}>
                     <HelpCircle className="service-card-tooltip-icon mb-2" />
                   </TooltipTrigger>
                   <TooltipContent>{tooltipContent}</TooltipContent>
@@ -88,18 +88,18 @@ const SelectedItemsTable = ({
         </div>
       )}
       <div
-        className={`bg-background/20 overflow-auto rounded-md border p-4 ${className}`}
+        className={`overflow-auto rounded-md border bg-background/20 p-4 ${className}`}
       >
         <div className="h-full overflow-y-auto rounded-md border">
           {items.length === 0 ? (
-            <div className="text-muted-foreground h-full bg-muted p-4.5 text-center text-sm">
+            <div className="h-full bg-muted p-4.5 text-center text-sm text-foreground">
               {emptyMessage}
             </div>
           ) : (
             <div className="divide-y">
               {items.map((item) => (
                 <div
-                  key={item.id + item.type}
+                  key={`${item.id}${item.type ?? ""}`}
                   className="flex items-center justify-between bg-muted px-4 py-2 hover:bg-secondary/20"
                 >
                   <div className="flex items-center gap-2">
@@ -111,12 +111,12 @@ const SelectedItemsTable = ({
                         </div>
                       )}
                       {item.type && (
-                        <div className="text-muted-foreground text-xs">
+                        <div className="text-xs text-muted-foreground">
                           {item.type}
                         </div>
                       )}
                       {item.description && (
-                        <div className="text-muted-foreground text-xs">
+                        <div className="text-xs text-muted-foreground">
                           {item.description}
                         </div>
                       )}
@@ -125,8 +125,9 @@ const SelectedItemsTable = ({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6"
-                    onClick={() => onRemove(item.id)}
+                    className="size-6"
+                    aria-label="Remove item"
+                    onClick={() => { onRemove(item.id); }}
                   >
                     <span className="text-gray-400 hover:text-gray-600">×</span>
                   </Button>

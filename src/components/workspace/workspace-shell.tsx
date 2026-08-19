@@ -17,12 +17,12 @@ import { DetailPanel } from "@/components/detail-panel";
 import { isViewableType } from "@/components/workspace/file-viewer/file-viewer-registry";
 import { isFolderType } from "@/lib/services/workspace/utils";
 import { FileViewerPanel } from "@/components/workspace/file-viewer/file-viewer-panel";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 interface WorkspaceShellProps {
   children: ReactNode;
   actionBar: ReactNode;
-  selectedItems: WorkspaceBrowserItem[];
+  selectedItems: WorkspaceItem[];
 }
 
 export function WorkspaceShell({
@@ -40,12 +40,12 @@ export function WorkspaceShell({
   } = useWorkspacePanel();
 
   const actionStrip = (
-    <div className="border-border/50 bg-muted/50 flex h-full w-[80px] shrink-0 flex-col rounded-l-lg border-r py-2">
+    <div className="flex h-full w-20 shrink-0 flex-col rounded-l-lg border-r border-border/50 bg-muted/50 py-2">
       <div className="relative mx-0.5 mb-1 h-8 shrink-0">
         <Button
           variant="ghost"
           size="sm"
-          className={`absolute inset-0 h-full w-full justify-start gap-1 font-normal ${
+          className={`absolute inset-0 size-full justify-start gap-1 font-normal ${
             panelExpanded ? "pointer-events-none opacity-0" : "opacity-100"
           }`}
           onClick={() => {
@@ -54,13 +54,13 @@ export function WorkspaceShell({
           }}
           title="Show details panel"
         >
-          <PanelRightOpen className="h-4 w-4 shrink-0" />
+          <PanelRightOpen className="size-4 shrink-0" />
           Show
         </Button>
         <Button
           variant="ghost"
           size="sm"
-          className={`absolute inset-0 h-full w-full justify-start gap-1 font-normal ${
+          className={`absolute inset-0 size-full justify-start gap-1 font-normal ${
             panelExpanded ? "opacity-100" : "pointer-events-none opacity-0"
           }`}
           onClick={() => {
@@ -69,7 +69,7 @@ export function WorkspaceShell({
           }}
           title="Hide panel"
         >
-          <PanelRightClose className="h-4 w-4 shrink-0" />
+          <PanelRightClose className="size-4 shrink-0" />
           Hide
         </Button>
       </div>
@@ -103,7 +103,7 @@ export function WorkspaceShell({
       }}
     />
   ) : (
-    <div className="flex h-full w-full flex-col overflow-hidden px-4 py-2">
+    <div className="flex size-full flex-col overflow-hidden px-4 py-2">
       <DetailPanel.Header title="Nothing selected" />
       <DetailPanel.EmptyState message="Select an item to view details" />
     </div>
@@ -111,11 +111,11 @@ export function WorkspaceShell({
 
   if (!panelExpanded) {
     return (
-      <div className="flex h-full min-h-0 w-full flex-row gap-0">
+      <div className="flex size-full min-h-0 flex-row gap-0">
         <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           {children}
         </div>
-        <aside className="bg-muted/30 flex min-h-full shrink-0 rounded-tl-lg rounded-bl-lg border-l">
+        <aside className="flex min-h-full shrink-0 rounded-l-lg border-l bg-muted/30">
           {actionStrip}
         </aside>
       </div>
@@ -125,7 +125,7 @@ export function WorkspaceShell({
   return (
     <ResizablePanelGroup
       orientation="horizontal"
-      className="h-full min-h-0 w-full"
+      className="size-full min-h-0"
       defaultLayout={panelInitialLayout}
       onLayoutChanged={setPanelLayout}
     >
@@ -139,7 +139,7 @@ export function WorkspaceShell({
         <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           {children}
         </div>
-        <aside className="bg-muted/30 flex min-h-full shrink-0 rounded-tl-lg rounded-bl-lg border-l">
+        <aside className="flex min-h-full shrink-0 rounded-l-lg border-l bg-muted/30">
           {actionStrip}
         </aside>
       </ResizablePanel>

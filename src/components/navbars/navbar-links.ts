@@ -1,25 +1,31 @@
-const gettingStartedItems: {
+const resourcesItems: {
   title: string;
   href: string;
   description: string;
   target: "_self" | "_blank";
 }[] = [
   {
-    title: "Introduction",
-    description: "Introduction to DXKB.",
-    href: "/introduction",
-    target: "_self",
-  },
-  {
-    title: "Installation",
-    description: "Installation instructions for DXKB.",
-    href: "/installation",
-    target: "_self",
-  },
-  {
     title: "Documentation",
-    description: "Documentation for DXKB.",
-    href: "https://docs.dxkb.org",
+    description: "DXKB user guide and reference.",
+    href: "https://docs.dxkb.org/",
+    target: "_blank",
+  },
+  {
+    title: "BV-BRC API",
+    description: "BV-BRC Data API reference.",
+    href: "https://www.bv-brc.org/api/doc/",
+    target: "_blank",
+  },
+  {
+    title: "PATRIC",
+    description: "About the PATRIC platform.",
+    href: "https://p3.theseed.org/p3_docs/about.html",
+    target: "_blank",
+  },
+  {
+    title: "GitHub",
+    description: "Source code and issues.",
+    href: "https://github.com/CEPI-dxkb/dxkb",
     target: "_blank",
   },
 ];
@@ -40,12 +46,6 @@ const organismItems: {
     title: "Bacteria",
     href: "/organisms/bacteria",
     description: "Webpage for all bacteria.",
-    target: "_self",
-  },
-  {
-    title: "Fungi",
-    href: "/organisms/fungi",
-    description: "Webpage for all fungi.",
     target: "_self",
   },
   {
@@ -162,7 +162,7 @@ const serviceItems = {
       },
     ],
   },
-  
+
   viralTools: {
     title: "Viral Tools",
     items: [
@@ -239,22 +239,66 @@ const workspaceNavItems: Record<string, WorkspaceNavSection> = {
   workspaces: {
     title: "Workspaces",
     items: [
-      { title: "Home", href: (u) => `/workspace/${u}/home`, requiresAuth: true },
-      { title: "My Workspaces", href: (u) => `/workspace/${u}`, requiresAuth: true },
-      { title: "Public Workspaces", href: "/workspace/public", requiresAuth: false },
-      { title: "BV-BRC Workshop", href: "/workspace/public/ARWattam@patricbrc.org/BV-BRC%20Workshop", requiresAuth: false },
+      {
+        title: "Home",
+        href: (u) => `/workspace/${u}/home`,
+        requiresAuth: true,
+      },
+      {
+        title: "My Workspaces",
+        href: (u) => `/workspace/${u}`,
+        requiresAuth: true,
+      },
+      {
+        title: "Public Workspaces",
+        href: "/workspace/public",
+        requiresAuth: false,
+      },
+      {
+        title: "BV-BRC Workshop",
+        href: "/workspace/public/ARWattam@patricbrc.org/BV-BRC%20Workshop",
+        requiresAuth: false,
+      },
     ],
   },
   data: {
     title: "Data",
     items: [
-      { title: "My Jobs", href: "/jobs", requiresAuth: true, signInRedirect: "/sign-in?redirect=/jobs" },
-      { title: "My Genomes", href: (u) => `/workspace/${u}/home/.genomes`, requiresAuth: true },
-      { title: "My Genome Groups", href: (u) => `/workspace/${u}/home/Genome%20Groups`, requiresAuth: true },
-      { title: "My Feature Groups", href: (u) => `/workspace/${u}/home/Feature%20Groups`, requiresAuth: true },
+      {
+        title: "My Jobs",
+        href: "/jobs",
+        requiresAuth: true,
+        signInRedirect: "/sign-in?redirect=/jobs",
+      },
+      {
+        title: "My Genomes",
+        href: (u) => `/workspace/${u}/home/.genomes`,
+        requiresAuth: true,
+      },
+      {
+        title: "My Genome Groups",
+        href: (u) => `/workspace/${u}/home/Genome%20Groups`,
+        requiresAuth: true,
+      },
+      {
+        title: "My Feature Groups",
+        href: (u) => `/workspace/${u}/home/Feature%20Groups`,
+        requiresAuth: true,
+      },
     ],
   },
 };
 
+export interface NavItem {
+  title: string;
+  href: string;
+  target: "_self" | "_blank";
+}
+
+export interface NavSection {
+  title: string;
+  items: NavItem[];
+}
+
 export type { WorkspaceNavItem, WorkspaceNavSection };
-export { gettingStartedItems, organismItems, serviceItems, workspaceNavItems };
+export { resourcesItems, organismItems, serviceItems, workspaceNavItems };

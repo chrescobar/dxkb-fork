@@ -101,13 +101,13 @@ function SortIcon({
 }) {
   if (currentSort.field !== field) {
     return (
-      <ArrowUpDown className="text-muted-foreground/50 ml-1 inline-block h-3 w-3 align-middle" />
+      <ArrowUpDown className="ml-1 inline-block size-3 align-middle text-muted-foreground/50" />
     );
   }
   return currentSort.direction === "asc" ? (
-    <ArrowUp className="ml-1 inline-block h-3 w-3 align-middle" />
+    <ArrowUp className="ml-1 inline-block size-3 align-middle" />
   ) : (
-    <ArrowDown className="ml-1 inline-block h-3 w-3 align-middle" />
+    <ArrowDown className="ml-1 inline-block size-3 align-middle" />
   );
 }
 
@@ -138,18 +138,22 @@ function DraggableTableHeader({
     zIndex: isDragging ? 1 : 0,
   };
 
-  const meta = header.column.columnDef.meta as
-    | { className?: string; sortField?: string }
-    | undefined;
+  const meta = header.column.columnDef.meta as { className?: string; sortField?: string };
   const isFirst = header.index === 0;
   const className = clsx(
     isFirst ? "pl-6" : "pl-2",
     "relative bg-background",
-    meta?.className ?? "",
+    meta.className ?? "",
   );
 
-  const sortField = meta?.sortField;
+  const sortField = meta.sortField;
   const label = header.column.columnDef.header as string;
+  const minSize = header.column.columnDef.minSize ?? 40;
+  const maxSize = header.column.columnDef.maxSize ?? 1000;
+  const resizeWithKeyboard = (delta: number) => {
+    const size = Math.min(maxSize, Math.max(minSize, header.column.getSize() + delta));
+    header.getContext().table.setColumnSizing((current) => ({ ...current, [header.column.id]: size }));
+  };
 
   return (
     <TableHead
@@ -169,8 +173,8 @@ function DraggableTableHeader({
         {sortField && (
           <button
             type="button"
-            onClick={() => onSort(sortField)}
-            className="hover:bg-primary/10 focus-visible:ring-primary cursor-pointer rounded p-0.5 select-none focus:outline-none focus-visible:ring-2"
+            onClick={() => { onSort(sortField); }}
+            className="cursor-pointer rounded p-0.5 select-none hover:bg-primary/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label={`Sort by ${label}`}
           >
             <SortIcon field={sortField} currentSort={sort} />
@@ -180,13 +184,22 @@ function DraggableTableHeader({
           <div
             role="separator"
             aria-orientation="vertical"
+            aria-label={`Resize ${label} column`}
+            aria-valuemin={minSize}
+            aria-valuemax={maxSize}
+            aria-valuenow={header.column.getSize()}
+            tabIndex={0}
+            onKeyDown={(event) => {
+              if (event.key === "ArrowLeft") { event.preventDefault(); resizeWithKeyboard(-10); }
+              else if (event.key === "ArrowRight") { event.preventDefault(); resizeWithKeyboard(10); }
+            }}
             onMouseDown={header.getResizeHandler()}
             onTouchStart={header.getResizeHandler()}
-            onDoubleClick={() => header.column.resetSize()}
+            onDoubleClick={() => { header.column.resetSize(); }}
             className={cn(
-              "border-border absolute top-0 right-0 z-10 h-full w-2 cursor-col-resize border-r",
-              "hover:bg-primary/15 hover:border-primary/50",
-              header.column.getIsResizing() && "bg-primary/25 border-primary h-9",
+              "absolute top-0 right-0 z-10 h-full w-2 cursor-col-resize border-r border-border focus-visible:outline-2 focus-visible:outline-primary",
+              "hover:border-primary/50 hover:bg-primary/15",
+              header.column.getIsResizing() && "h-9 border-primary bg-primary/25",
             )}
             style={{
               transform: "translateX(50%)",
@@ -271,6 +284,7 @@ function DataTableInner<T>(
   }: DataTableProps<T>,
   ref: React.Ref<DataTableHandle>,
 ) {
+  "use no memo";
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const [columnOrder, setColumnOrder] = useState<string[]>(defaultColumnOrder);
 
@@ -278,10 +292,13 @@ function DataTableInner<T>(
     focus: () => tableContainerRef.current?.focus(),
   }));
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable<T>({
     data,
     columns,
+    defaultColumn: {
+      minSize: 40,
+      maxSize: 1000,
+    },
     state: {
       columnOrder,
     },
@@ -297,20 +314,14 @@ function DataTableInner<T>(
     enableColumnResizing: true,
   });
 
-  const columnSizingState = table.getState().columnSizing;
-  const columnSizingInfoState = table.getState().columnSizingInfo;
-  const columnSizeVars = useMemo(() => {
-    const colSizes: Record<string, string> = {};
-    for (const col of table.getAllFlatColumns()) {
-      colSizes[`--col-${col.id}-size`] = `${col.getSize()}px`;
-    }
-    return colSizes;
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- table is unstable from useReactTable
-  }, [columns, columnSizingState, columnSizingInfoState]);
+  const columnSizeVars: Record<string, string> = {};
+  for (const col of table.getAllFlatColumns()) {
+    columnSizeVars[`--col-${col.id}-size`] = `${String(col.getSize())}px`;
+  }
 
   const handleColumnDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
-    if (active && over && active.id !== over.id) {
+    if (over && active.id !== over.id) {
       setColumnOrder((prev) => {
         const oldIndex = prev.indexOf(active.id as string);
         const newIndex = prev.indexOf(over.id as string);
@@ -364,7 +375,7 @@ function DataTableInner<T>(
   return (
     <div
       ref={tableContainerRef}
-      role="grid"
+      role="region"
       tabIndex={tabIndex}
       aria-label={ariaLabel}
       className="scrollbar-themed h-full min-h-0 overflow-auto rounded-md border outline-none"
@@ -379,7 +390,7 @@ function DataTableInner<T>(
       >
         <div className="relative min-w-max" style={columnSizeVars}>
           <Table disableScrollWrapper>
-            <TableHeader className="border-border bg-background sticky top-0 z-20 border-b shadow-sm [&_tr]:bg-background">
+            <TableHeader className="sticky top-0 z-20 border-b border-border bg-background shadow-sm [&_tr]:bg-background">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id} className="bg-background">
                   <SortableContext
@@ -408,7 +419,7 @@ function DataTableInner<T>(
               ) : (
                 <>
                   {renderLeadingRows?.(columnOrder)}
-                  {data.length === 0 && !isLoading ? (
+                  {data.length === 0 ? (
                     renderEmptyState ? (
                       renderEmptyState(table.getAllLeafColumns().length)
                     ) : null

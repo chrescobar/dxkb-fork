@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import {
   FieldItem,
   FieldLabel,
@@ -96,17 +97,17 @@ export default function MetagenomicBinningPage() {
 
   const form = useForm({
     defaultValues:
-      defaultMetagenomicBinningFormValues as MetagenomicBinningFormData,
+      defaultMetagenomicBinningFormValues,
     validators: { onChange: metagenomicBinningFormSchema },
     onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value as MetagenomicBinningFormData);
+      await runtime.submitFormData(value);
     },
   });
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const startWith = useStore(form.store, (s) => s.values.start_with);
-  const assembler = useStore(form.store, (s) => s.values.assembler);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const startWith = useSelector(form.store, (s) => s.values.start_with);
+  const assembler = useSelector(form.store, (s) => s.values.assembler);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const {
     selectedLibraries,
@@ -207,7 +208,7 @@ export default function MetagenomicBinningPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="grid grid-cols-1 gap-6 md:grid-cols-12"
       >
@@ -231,12 +232,12 @@ export default function MetagenomicBinningPage() {
                   <FieldItem>
                     <RadioGroup
                       value={field.state.value}
-                      onValueChange={(value) =>
-                        value != null &&
-                        field.handleChange(
-                          value as MetagenomicBinningFormData["start_with"],
-                        )
-                      }
+                      onValueChange={(value) => {
+                        if (value != null)
+                          field.handleChange(
+                            value as MetagenomicBinningFormData["start_with"],
+                          );
+                      }}
                       className="service-radio-group-horizontal"
                     >
                       <div className="flex items-center gap-3">
@@ -279,11 +280,12 @@ export default function MetagenomicBinningPage() {
                       <Label className="service-card-label">
                         Paired Read Library
                       </Label>
-                      <div className="bg-border mx-4 h-px flex-1" />
+                      <div className="mx-4 h-px flex-1 bg-border" />
                       <Button
                         type="button"
                         variant="outline"
                         size="icon"
+                        aria-label="Add paired read library"
                         onClick={handlePairedLibraryAdd}
                         disabled={!pairedRead1 || !pairedRead2}
                       >
@@ -316,11 +318,12 @@ export default function MetagenomicBinningPage() {
                       <Label className="service-card-label">
                         Single Read Library
                       </Label>
-                      <div className="bg-border mx-4 h-px flex-1" />
+                      <div className="mx-4 h-px flex-1 bg-border" />
                       <Button
                         type="button"
                         variant="outline"
                         size="icon"
+                        aria-label="Add single read library"
                         onClick={handleSingleLibraryAdd}
                         disabled={!singleRead}
                       >
@@ -361,7 +364,7 @@ export default function MetagenomicBinningPage() {
                     Selected Libraries
                     <TooltipProvider>
                       <Tooltip>
-                        <TooltipTrigger>
+                        <TooltipTrigger aria-label="Help: place read files using arrow buttons">
                           <HelpCircle className="service-card-tooltip-icon" />
                         </TooltipTrigger>
                         <TooltipContent>
@@ -462,12 +465,12 @@ export default function MetagenomicBinningPage() {
                             </FieldLabel>
                             <RadioGroup
                               value={field.state.value}
-                              onValueChange={(value) =>
-                                value != null &&
-                                field.handleChange(
-                                  value as MetagenomicBinningFormData["assembler"],
-                                )
-                              }
+                              onValueChange={(value) => {
+                                if (value != null)
+                                  field.handleChange(
+                                    value as MetagenomicBinningFormData["assembler"],
+                                  );
+                              }}
                               className="service-radio-group-horizontal"
                             >
                               <div className="flex items-center gap-3">
@@ -516,12 +519,12 @@ export default function MetagenomicBinningPage() {
                           </FieldLabel>
                           <RadioGroup
                             value={field.state.value}
-                            onValueChange={(value) =>
-                              value != null &&
-                              field.handleChange(
-                                value as MetagenomicBinningFormData["organism"],
-                              )
-                            }
+                            onValueChange={(value) => {
+                              if (value != null)
+                                field.handleChange(
+                                  value as MetagenomicBinningFormData["organism"],
+                                );
+                            }}
                             className="service-radio-group-horizontal"
                           >
                             <div className="flex items-center gap-3">
@@ -595,7 +598,7 @@ export default function MetagenomicBinningPage() {
                         <Input
                           name={field.name}
                           value={field.state.value ?? ""}
-                          onChange={(e) => field.handleChange(e.target.value)}
+                          onChange={(e) => { field.handleChange(e.target.value); }}
                           onBlur={field.handleBlur}
                           placeholder="My Genome Group"
                           className="service-card-input"
@@ -615,7 +618,7 @@ export default function MetagenomicBinningPage() {
                   <CollapsibleTrigger className="service-collapsible-trigger text-sm font-medium">
                     Advanced Parameters
                     <ChevronDown
-                      className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
+                      className={`size-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
                     />
                   </CollapsibleTrigger>
 
@@ -683,7 +686,7 @@ export default function MetagenomicBinningPage() {
                               name="disable_dangling"
                               checked={field.state.value}
                               onCheckedChange={(checked) =>
-                                field.handleChange(!!checked)
+                                { field.handleChange(checked); }
                               }
                               className="mb-2 bg-white"
                             />
@@ -716,7 +719,7 @@ export default function MetagenomicBinningPage() {
               type="submit"
               disabled={isSubmitting || !canSubmit || !isOutputNameValid}
             >
-              {isSubmitting ? <Spinner className="mr-2 h-4 w-4" /> : null}
+              {isSubmitting ? <Spinner className="mr-2 size-4" /> : null}
               Submit
             </Button>
           </div>

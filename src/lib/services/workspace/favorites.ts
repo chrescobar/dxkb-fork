@@ -24,11 +24,11 @@ export function getPreferencesDirPath(userId: string): string {
  */
 function parseGetFileContent(result: unknown): string | null {
   if (!Array.isArray(result) || result.length === 0) return null;
-  const first = result[0];
+  const first: unknown = result[0];
   if (!Array.isArray(first) || first.length === 0) return null;
-  const pair = first[0];
+  const pair: unknown = first[0];
   if (!Array.isArray(pair) || pair.length < 2) return null;
-  const content = pair[1];
+  const content: unknown = pair[1];
   return typeof content === "string" ? content : null;
 }
 
@@ -39,7 +39,7 @@ export async function loadFavorites(userId: string): Promise<string[]> {
   if (!userId) return [];
   const filePath = getFavoritesFilePath(userId);
   try {
-    const result = await workspaceApi.makeRequest<unknown>(
+    const result = await workspaceApi.makeRequest(
       "Workspace.get",
       [{ objects: [filePath] }],
       { silent: true },
@@ -61,7 +61,7 @@ async function ensurePreferencesDir(userId: string): Promise<void> {
   const dirPath = getPreferencesDirPath(userId);
   let exists = false;
   try {
-    const result = await workspaceApi.makeRequest<unknown>("Workspace.get", [
+    const result = await workspaceApi.makeRequest("Workspace.get", [
       { objects: [dirPath], metadata_only: true },
     ], { silent: true });
     exists =
@@ -73,7 +73,7 @@ async function ensurePreferencesDir(userId: string): Promise<void> {
     // Directory missing or API error — fall through to create.
   }
   if (exists) return;
-  await workspaceApi.makeRequest<unknown>("Workspace.create", [
+  await workspaceApi.makeRequest("Workspace.create", [
     { objects: [[dirPath, "folder", {}]] },
   ]);
 }
@@ -99,7 +99,7 @@ export async function toggleFavorite(
   const filePath = getFavoritesFilePath(userId);
   const content = JSON.stringify({ folders: newFolders }, null, 2);
 
-  await workspaceApi.makeRequest<unknown>("Workspace.create", [
+  await workspaceApi.makeRequest("Workspace.create", [
     {
       objects: [[filePath, "json", {}, content]],
       overwrite: 1,

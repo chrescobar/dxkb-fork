@@ -1,25 +1,9 @@
-export interface WorkspaceBrowserItem {
-  id: string;
-  path: string;
-  name: string;
-  type: string;
-  creation_time: string;
-  link_reference: string;
-  owner_id: string;
-  size: number;
-  userMeta: Record<string, unknown>;
-  autoMeta: Record<string, unknown>;
-  user_permission: string;
-  global_permission: string;
-  timestamp: number;
-}
-
 export type WorkspaceViewMode = "home" | "shared" | "public";
 
-export type SortField = "name" | "type" | "size" | "owner_id" | "creation_time";
+export type SortField = "name" | "type" | "size" | "ownerId" | "createdAt";
 export type SortDirection = "asc" | "desc";
 
-export interface WorkspaceBrowserSort {
+export interface WorkspaceSortConfig {
   field: SortField;
   direction: SortDirection;
 }

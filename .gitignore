@@ -22,6 +22,13 @@
 
 # production
 /build
+/public/dist/
+/public/nextstrain-viewer.html
+/public/auspice-favicon.png
+/public/.auspice-build-hash
+/.auspice-build/
+/data/auspice-datasets/*
+!/data/auspice-datasets/.gitkeep
 
 # misc
 .DS_Store
@@ -50,6 +57,8 @@ next-env.d.ts
 .claude/scheduled_tasks.lock
 /plans/
 /reports/
+.superpowers
+/docs/superpowers
 
 # Playwright MCP
 .playwright-mcp
@@ -72,3 +81,10 @@ next-env.d.ts
 /.screenshots/
 /a11y-report/
 /a11y-results/
+# a11y scan artifacts (generated)
+/a11y-report/
+/a11y-results/
+/.screenshots/
+
+# graphify
+graphify-out

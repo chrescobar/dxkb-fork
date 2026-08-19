@@ -1,3 +1,5 @@
+import type { DataFieldMap } from "./types";
+
 export const biosetFields = {
     exp_id: { 
         label: 'Experiment ID', 
@@ -143,4 +145,4 @@ export const biosetFields = {
         group: 'Additional Metadata',
         show_in_table: false
         }
-    };
+    } satisfies DataFieldMap;

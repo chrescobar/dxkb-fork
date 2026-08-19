@@ -25,10 +25,10 @@ export function StructureViewer({ filePath, fileName }: StructureViewerProps) {
 
   return (
     <ExpandableViewerWrapper title={fileName}>
-      <div className="relative flex h-full w-full flex-col overflow-hidden rounded-b-lg">
+      <div className="relative flex size-full flex-col overflow-hidden rounded-b-lg">
         <div
           ref={containerRef}
-          className="isolate relative min-h-0 flex-1 overflow-hidden"
+          className="relative isolate min-h-0 flex-1 overflow-hidden"
           data-testid="molstar-container"
         />
         <MolstarStatusOverlay

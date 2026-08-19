@@ -23,6 +23,7 @@ function codeFromStatus(status: number): AuthErrorCode {
   if (status === 403) return "forbidden";
   if (status === 404) return "not_found";
   if (status === 409) return "conflict";
+  if (status === 502) return "network";
   if (status === 503) return "service_unavailable";
   return "unknown";
 }
@@ -31,9 +32,9 @@ async function errorFromResponse(
   response: Response,
   fallback: string,
 ): Promise<AuthError> {
-  const body = (await response.json().catch(() => ({}))) as { message?: string };
+  const body = (await response.json().catch(() => ({}))) as { error?: string; message?: string };
   return {
-    message: body.message ?? fallback,
+    message: body.error ?? body.message ?? fallback,
     code: codeFromStatus(response.status),
     status: response.status,
   };
@@ -94,7 +95,7 @@ function unwrapUser(
   fallback: string,
 ): Result<AuthUser> {
   if (result.error) return result;
-  if (!result.data?.user) {
+  if (!result.data.user) {
     return { data: null, error: { message: fallback, code: "unknown" } };
   }
   return { data: result.data.user, error: null };

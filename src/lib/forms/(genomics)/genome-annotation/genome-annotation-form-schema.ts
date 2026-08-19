@@ -42,16 +42,16 @@ export const completeGenomeAnnotationSchema = baseGenomeAnnotationSchema.superRe
   }
 );
 
+// Type inference for the complete form schema
+export type GenomeAnnotationFormData = z.infer<typeof completeGenomeAnnotationSchema>;
+
 // Default form values
-export const defaultGenomeAnnotationFormValues = {
+export const defaultGenomeAnnotationFormValues: GenomeAnnotationFormData = {
   contigs: "",
-  recipe: "default" as const,
+  recipe: "default",
   scientific_name: null,
   taxonomy_id: null,
   my_label: "",
   output_file: "",
   output_path: "",
 };
-
-// Type inference for the complete form schema
-export type GenomeAnnotationFormData = z.infer<typeof completeGenomeAnnotationSchema>;

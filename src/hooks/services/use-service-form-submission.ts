@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { submitServiceJob } from "@/lib/services/service-utils";
@@ -20,6 +20,7 @@ export function useServiceFormSubmission(
 } {
   const { serviceName, displayName, onSuccess } = options;
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const submitMutation = useMutation({
     mutationFn: async (params: Record<string, unknown>) => {
@@ -33,9 +34,11 @@ export function useServiceFormSubmission(
         description: jobId ? `Job ID: ${jobId}` : "Job submitted successfully",
         closeButton: true,
         ...(jobId && {
-          action: { label: "View Job", onClick: () => router.push(`/jobs`) },
+          action: { label: "View Job", onClick: () => { router.push("/jobs"); } },
         }),
       });
+      void queryClient.invalidateQueries({ queryKey: ["jobs-summary"] });
+      void queryClient.invalidateQueries({ queryKey: ["jobs-filtered"] });
       onSuccess?.();
     },
     onError: (error) => {

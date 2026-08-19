@@ -2,12 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAppService } from "@/lib/app-service";
 import { withAuth } from "@/lib/auth/server/instance";
 
+interface JobSummaryBody {
+  include_archived?: boolean;
+}
+
 /**
  * Combined task + app summary endpoint
  * POST /api/services/app-service/jobs/summary
  */
 export const POST = withAuth(async (request: NextRequest, { token }) => {
-  const body = await request.json();
+  const body = (await request.json()) as JobSummaryBody;
   const { include_archived = false } = body;
 
   const appService = createAppService(token);

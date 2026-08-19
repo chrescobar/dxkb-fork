@@ -17,6 +17,7 @@ export default defineConfig({
     include: [
       "src/**/*.{test,spec}.{ts,tsx}",
       "e2e/scripts/**/*.{test,spec}.{ts,mts}",
+      "scripts/**/*.{test,spec}.{ts,mts}",
     ],
     // Exclude Playwright specs and their helpers; keep e2e/scripts/ tests in scope.
     exclude: [
@@ -29,18 +30,37 @@ export default defineConfig({
       "e2e/mocks/**",
       "e2e/fixtures/**",
       "e2e/__snapshots__/**",
+      // Browser-mode a11y primitive specs — run via pnpm a11y:primitives (vitest.a11y.config.mts).
+      "src/**/__a11y__/**",
     ],
     css: false,
     pool: "forks",
     coverage: {
       provider: "v8",
-      include: ["src/lib/**", "src/hooks/**", "src/contexts/**"],
+      reporter: ["text", "html", "json-summary", "json"],
+      include: [
+        "src/lib/**",
+        "src/hooks/**",
+        "src/contexts/**",
+        "src/app/api/**",
+        "src/app/services/page.tsx",
+      ],
       exclude: [
         "src/**/*.d.ts",
         "src/**/types.ts",
         "src/**/types/**",
         "src/components/ui/**",
+        "src/**/__tests__/fixtures/**",
       ],
+      // Floors set just below the measured baseline so unrelated PRs don't
+      // randomly trip on rounding drift. Bump these incrementally as new tests
+      // raise the measured numbers.
+      thresholds: {
+        lines: 81,
+        statements: 80,
+        functions: 84,
+        branches: 70,
+      },
     },
   },
 });

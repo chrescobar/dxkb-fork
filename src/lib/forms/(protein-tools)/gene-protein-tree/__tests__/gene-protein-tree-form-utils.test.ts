@@ -117,7 +117,7 @@ describe("checkDuplicateSequence", () => {
 describe("checkSequenceLimit", () => {
   it("returns true when sequences are at the limit", () => {
     const sequences = Array.from({ length: 100 }, (_, i) => ({
-      filename: `file${i}.fasta`,
+      filename: `file${String(i)}.fasta`,
       type: "aligned_dna_fasta" as const,
     }));
 
@@ -134,7 +134,7 @@ describe("checkSequenceLimit", () => {
 
   it("returns true when above the limit", () => {
     const sequences = Array.from({ length: 101 }, (_, i) => ({
-      filename: `file${i}.fasta`,
+      filename: `file${String(i)}.fasta`,
       type: "aligned_dna_fasta" as const,
     }));
 

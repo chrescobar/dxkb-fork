@@ -51,16 +51,16 @@ export async function rpc<T = unknown>({
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      const errorValue = (errorData as { error?: unknown }).error;
+      const errorData = (await response.json().catch(() => ({}))) as { error?: unknown; apiResponse?: unknown };
+      const errorValue = errorData.error;
       const apiResponse =
-        (errorData as { apiResponse?: unknown }).apiResponse ??
+        errorData.apiResponse ??
         errorValue ??
         errorData;
       const message =
         getErrorMessage(apiResponse) ||
         getErrorMessage(errorValue) ||
-        `HTTP error! status: ${response.status}`;
+        `HTTP error! status: ${String(response.status)}`;
       throw new WorkspaceApiError(message, method, apiResponse);
     }
 

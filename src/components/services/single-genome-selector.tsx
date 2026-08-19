@@ -1,12 +1,12 @@
 "use client";
 
 import {
-  useCallback,
   useEffect,
   useRef,
   useState,
-  type KeyboardEvent as ReactKeyboardEvent,
+  useCallback,
 } from "react";
+import { useHotkey } from "@tanstack/react-hotkeys";
 import { createPortal } from "react-dom";
 import { Search, Loader2, ShieldUser, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -14,11 +14,14 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
-  fetchGenomeSuggestions,
   fetchGenomesByIds,
   type GenomeSummary,
 } from "@/lib/services/genome";
 import { toast } from "sonner";
+import {
+  useGenomeTypeahead,
+  shouldSearch,
+} from "@/hooks/services/use-genome-typeahead";
 
 interface SingleGenomeSelectorProps {
   title?: string;
@@ -31,20 +34,9 @@ interface SingleGenomeSelectorProps {
   minQueryLength?: number;
 }
 
-const defaultMinQueryLength = 0;
-
-function shouldSearch(query: string, minLength: number): boolean {
-  const trimmed = query.trim();
-
-  if (!trimmed) {
-    return false;
-  }
-
-  if (/^[0-9]+(\.[0-9]+)?$/.test(trimmed)) {
-    return trimmed.length >= 2;
-  }
-
-  return trimmed.length >= minLength;
+// Genome IDs match numeric patterns like "123.45"
+function isGenomeId(str: string): boolean {
+  return /^[0-9]+(\.[0-9]+)?$/.test(str.trim());
 }
 
 export function SingleGenomeSelector({
@@ -55,49 +47,56 @@ export function SingleGenomeSelector({
   onChange,
   disabled = false,
   className,
-  minQueryLength = defaultMinQueryLength,
+  minQueryLength = 0,
 }: SingleGenomeSelectorProps) {
-  const [query, setQuery] = useState(value || "");
-  const [suggestions, setSuggestions] = useState<GenomeSummary[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedGenome, setSelectedGenome] = useState<GenomeSummary | null>(null);
-  const [highlightedIndex, setHighlightedIndex] = useState(-1);
-  const [isManualTrigger, setIsManualTrigger] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const [isManualTrigger, setIsManualTrigger] = useState(false);
+  const selectedGenomeIdRef = useRef<string | null>(null);
   const [dropdownRect, setDropdownRect] = useState<{
     top: number;
     left: number;
     width: number;
     maxHeight: number;
   } | null>(null);
-  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const latestAbortController = useRef<AbortController | null>(null);
-  const selectedGenomeIdRef = useRef<string | null>(null);
 
-  // Whenever suggestions change, the highlighted index and item refs must reset
-  // together. Bundling them here avoids deriving state from state via an Effect
-  // or render-phase setState (React docs: "chains of computations" anti-pattern).
-  const updateSuggestions = useCallback((nextSuggestions: GenomeSummary[]) => {
-    itemRefs.current = [];
-    setSuggestions(nextSuggestions);
-    setHighlightedIndex(-1);
-  }, []);
+  const {
+    query,
+    setQuery,
+    suggestions,
+    isLoading,
+    setIsLoading,
+    error,
+    showDropdown,
+    setShowDropdown,
+    selectedItem: selectedGenome,
+    setSelectedItem: setSelectedGenome,
+    highlightedIndex,
+    setHighlightedIndex,
+    inputRef,
+    dropdownRef,
+    itemRefs,
+    updateSuggestions,
+    triggerSearch,
+  } = useGenomeTypeahead({
+    minQueryLength,
+    disabled,
+    skipFetch: (q, sel) =>
+      sel !== null && q.trim() === sel.genome_name,
+    additionalClickOutsideRefs: [buttonRef, containerRef],
+    onClickOutside: () => { setIsManualTrigger(false); },
+  });
 
-  // Check if a string looks like a genome ID (numeric pattern like "123.45")
-  const isGenomeId = (str: string): boolean => {
-    return /^[0-9]+(\.[0-9]+)?$/.test(str.trim());
-  };
+  // Keep refs in sync for race-condition-safe reads in async callbacks
+  const queryRef = useRef(query);
+  const selectedGenomeRef = useRef(selectedGenome);
+  useEffect(() => { queryRef.current = query; }, [query]);
+  useEffect(() => { selectedGenomeRef.current = selectedGenome; }, [selectedGenome]);
 
-  // Sync query with value prop, but preserve genome name if value is a genome ID
+  // Sync query with value prop; resolve genome ID → name via fetchGenomesByIds
   useEffect(() => {
-    // If value is empty, clear query
     if (!value) {
-      if (query) {
+      if (queryRef.current) {
         queueMicrotask(() => {
           setQuery("");
           setSelectedGenome(null);
@@ -107,16 +106,19 @@ export function SingleGenomeSelector({
       return;
     }
 
-    // If value is a genome ID and we have a matching selectedGenome, keep the genome name displayed
     if (isGenomeId(value)) {
-      // Check both state and ref to handle race conditions
-      if ((selectedGenome && selectedGenome.genome_id === value) || selectedGenomeIdRef.current === value) {
-        // Keep the genome name displayed, don't overwrite with ID
+      if (
+        (selectedGenomeRef.current &&
+          selectedGenomeRef.current.genome_id === value) ||
+        selectedGenomeIdRef.current === value
+      ) {
         return;
       }
-      // If we have a genome ID but no matching selectedGenome, fetch it
-      if (!selectedGenome || selectedGenome.genome_id !== value) {
-        queueMicrotask(() => setIsLoading(true));
+      if (
+        !selectedGenomeRef.current ||
+        selectedGenomeRef.current.genome_id !== value
+      ) {
+        queueMicrotask(() => { setIsLoading(true); });
         fetchGenomesByIds([value])
           .then((results) => {
             if (results.length > 0) {
@@ -125,128 +127,46 @@ export function SingleGenomeSelector({
               setSelectedGenome(genome);
               setQuery(genome.genome_name);
             } else {
-              // If genome not found, show the ID
               setQuery(value);
               setSelectedGenome(null);
             }
           })
           .catch(() => {
-            // On error, show the ID
             setQuery(value);
             setSelectedGenome(null);
           })
-          .finally(() => {
-            setIsLoading(false);
-          });
+          .finally(() => { setIsLoading(false); });
         return;
       }
     }
 
-    // If value is not a genome ID (or is a name), sync normally
-    // But only if it's different from current query and not matching selectedGenome
-    if (value !== query) {
-      // If we have a selectedGenome and the value matches its name, keep it
-      if (selectedGenome && value === selectedGenome.genome_name) {
+    if (value !== queryRef.current) {
+      if (
+        selectedGenomeRef.current &&
+        value === selectedGenomeRef.current.genome_name
+      ) {
         return;
       }
-      // Otherwise, update query and clear selectedGenome if value doesn't match
       queueMicrotask(() => {
         setQuery(value);
-        if (selectedGenome && value !== selectedGenome.genome_id && value !== selectedGenome.genome_name) {
+        if (
+          selectedGenomeRef.current &&
+          value !== selectedGenomeRef.current.genome_id &&
+          value !== selectedGenomeRef.current.genome_name
+        ) {
           setSelectedGenome(null);
         }
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
+  }, [value, setQuery, setSelectedGenome, setIsLoading]);
 
-  useEffect(() => {
-    // Normal search logic for typed queries
-    // Skip search if query matches selected genome (from dropdown click)
-    if (selectedGenome && query.trim() === selectedGenome.genome_name) {
-      console.log("selectedGenome and query matches, skipping search");
-      return;
-    }
-
-    console.log("query is:", query);
-    const controller = new AbortController();
-    latestAbortController.current = controller;
-    console.log("fetching suggestions for query:", query);
-    const timeoutId = window.setTimeout(() => {
-      if (disabled) {
-        updateSuggestions([]);
-        setError(null);
-        setIsLoading(false);
-        console.log("shouldSearch is false, skipping search");
-        return;
-      }
-
-      setIsLoading(true);
-      setError(null);
-
-      fetchGenomeSuggestions(query, { signal: controller.signal })
-        .then((results) => {
-          if (!controller.signal.aborted) {
-            updateSuggestions(results);
-            console.log("suggestions are:", results);
-          }
-        })
-        .catch((fetchError) => {
-          if (controller.signal.aborted) {
-            console.log("request aborted");
-            return;
-          }
-          console.log("fetchError is:", fetchError);
-          const message =
-            fetchError instanceof Error
-              ? fetchError.message
-              : "Failed to search genomes";
-          setError(message);
-          updateSuggestions([]);
-        })
-        .finally(() => {
-          if (!controller.signal.aborted) {
-            setIsLoading(false);
-          }
-        });
-    }, disabled ? 0 : 250);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-      controller.abort();
-    };
-  }, [query, minQueryLength, disabled, selectedGenome, isManualTrigger, updateSuggestions]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node) &&
-        inputRef.current &&
-        !inputRef.current.contains(event.target as Node) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target as Node)
-      ) {
-        setShowDropdown(false);
-        setHighlightedIndex(-1);
-        setIsManualTrigger(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  // Compute dropdown position for portal (avoids Card overflow-hidden clipping)
+  // Compute portal position (avoids Card overflow-hidden clipping)
   const updateDropdownLayout = useCallback(() => {
     if (!showDropdown || !containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
     const spaceBelow = viewportHeight - rect.bottom;
-    const preferredHeight = 256; // max-h-64
+    const preferredHeight = 256;
     const minHeight = 160;
     const gap = 4;
     let top: number;
@@ -262,12 +182,7 @@ export function SingleGenomeSelector({
       maxHeight = Math.max(spaceAbove - gap, minHeight);
       top = rect.top - maxHeight - gap;
     }
-    setDropdownRect({
-      top,
-      left: rect.left,
-      width: rect.width,
-      maxHeight,
-    });
+    setDropdownRect({ top, left: rect.left, width: rect.width, maxHeight });
   }, [showDropdown]);
 
   useEffect(() => {
@@ -280,24 +195,13 @@ export function SingleGenomeSelector({
 
   useEffect(() => {
     if (!showDropdown) return;
-    const handleUpdate = () => updateDropdownLayout();
-    window.addEventListener("scroll", handleUpdate, true);
-    window.addEventListener("resize", handleUpdate);
+    window.addEventListener("scroll", updateDropdownLayout, true);
+    window.addEventListener("resize", updateDropdownLayout);
     return () => {
-      window.removeEventListener("scroll", handleUpdate, true);
-      window.removeEventListener("resize", handleUpdate);
+      window.removeEventListener("scroll", updateDropdownLayout, true);
+      window.removeEventListener("resize", updateDropdownLayout);
     };
   }, [showDropdown, updateDropdownLayout]);
-
-  // Scroll highlighted item into view
-  useEffect(() => {
-    if (highlightedIndex >= 0 && itemRefs.current[highlightedIndex]) {
-      itemRefs.current[highlightedIndex]?.scrollIntoView({
-        block: "nearest",
-        behavior: "smooth",
-      });
-    }
-  }, [highlightedIndex]);
 
   const handleSelect = (genome: GenomeSummary) => {
     selectedGenomeIdRef.current = genome.genome_id;
@@ -309,147 +213,74 @@ export function SingleGenomeSelector({
     setIsManualTrigger(false);
   };
 
-  const handleDropdownClick = (genome: GenomeSummary) => {
-    // Select the genome immediately when clicked
-    handleSelect(genome);
-  };
-
   const handleManualDropdownToggle = () => {
-    const newShowDropdown = !showDropdown;
-    setShowDropdown(newShowDropdown);
-    
-    if (newShowDropdown) {
-      // Opening dropdown - trigger search immediately with blank query
+    const next = !showDropdown;
+    setShowDropdown(next);
+    if (next) {
       setIsManualTrigger(true);
-      setIsLoading(true);
-      setError(null);
-      
-      // Abort any existing request
-      latestAbortController.current?.abort();
-      
-      const controller = new AbortController();
-      latestAbortController.current = controller;
-      
-      // Always use empty string for blank search when button is clicked
-      fetchGenomeSuggestions("", { signal: controller.signal })
-        .then((results) => {
-          if (!controller.signal.aborted) {
-            updateSuggestions(results);
-          }
-        })
-        .catch((fetchError) => {
-          if (controller.signal.aborted) {
-            return;
-          }
-
-          const message =
-            fetchError instanceof Error
-              ? fetchError.message
-              : "Failed to search genomes";
-          setError(message);
-          updateSuggestions([]);
-        })
-        .finally(() => {
-          if (!controller.signal.aborted) {
-            setIsLoading(false);
-          }
-        });
+      triggerSearch("");
     } else {
-      // Closing dropdown
       setIsManualTrigger(false);
     }
   };
 
   const handleManualSelect = async () => {
-    // If we have a selected genome from dropdown, use it directly
     if (selectedGenome) {
       handleSelect(selectedGenome);
       return;
     }
 
     const trimmed = query.trim();
-
     if (!trimmed) {
       toast.error("Enter a genome name or ID first");
       return;
     }
 
     setIsLoading(true);
-
     try {
       const results = await fetchGenomesByIds([trimmed]);
-
       if (results.length === 0) {
         toast.error("Genome not found", {
           description: `${trimmed} was not found in BV-BRC`,
         });
         return;
       }
-
       handleSelect(results[0]);
     } catch (fetchError) {
       const message =
-        fetchError instanceof Error
-          ? fetchError.message
-          : "Failed to add genome";
+        fetchError instanceof Error ? fetchError.message : "Failed to add genome";
       toast.error(message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
-    if (!showDropdown || suggestions.length === 0) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        handleManualSelect();
+  useHotkey(
+    "Enter",
+    () => {
+      if (!showDropdown || suggestions.length === 0) {
+        void handleManualSelect();
+      } else if (highlightedIndex >= 0 && highlightedIndex < suggestions.length) {
+        handleSelect(suggestions[highlightedIndex]);
+      } else {
+        void handleManualSelect();
       }
-      return;
-    }
-
-    switch (event.key) {
-      case "ArrowDown":
-        event.preventDefault();
-        setHighlightedIndex((prev) =>
-          prev < suggestions.length - 1 ? prev + 1 : prev
-        );
-        setShowDropdown(true);
-        break;
-      case "ArrowUp":
-        event.preventDefault();
-        setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : -1));
-        setShowDropdown(true);
-        break;
-      case "Enter":
-        event.preventDefault();
-        if (highlightedIndex >= 0 && highlightedIndex < suggestions.length) {
-          const genome = suggestions[highlightedIndex];
-          handleDropdownClick(genome);
-        } else {
-          handleManualSelect();
-        }
-        break;
-      case "Escape":
-        event.preventDefault();
-        setShowDropdown(false);
-        setHighlightedIndex(-1);
-        setIsManualTrigger(false);
-        break;
-    }
-  };
+    },
+    { target: inputRef, ignoreInputs: false, conflictBehavior: "allow", preventDefault: true },
+  );
 
   const showEmptyState =
-    (shouldSearch(query, minQueryLength) || (isManualTrigger && !query.trim())) &&
+    (shouldSearch(query, minQueryLength) ||
+      (isManualTrigger && !query.trim())) &&
     !isLoading &&
     !error &&
     suggestions.length === 0;
 
   return (
-    // TODO: A
     <div className={cn("space-y-2", className)}>
       {title && <Label className="service-card-label">{title}</Label>}
       <div ref={containerRef} className="relative">
-        <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           ref={inputRef}
           value={query}
@@ -458,11 +289,10 @@ export function SingleGenomeSelector({
           onChange={(event) => {
             const newValue = event.target.value;
             setQuery(newValue);
-            setSelectedGenome(null); // Clear selected genome when user types manually
-            setHighlightedIndex(-1); // Reset highlight when typing
-            setIsManualTrigger(false); // Reset manual trigger when user types
+            setSelectedGenome(null);
+            setHighlightedIndex(-1);
+            setIsManualTrigger(false);
             setShowDropdown(true);
-            // Clear form value if input is cleared, but don't update while typing
             if (!newValue.trim()) {
               onChange("");
               selectedGenomeIdRef.current = null;
@@ -473,28 +303,31 @@ export function SingleGenomeSelector({
               setShowDropdown(true);
             }
           }}
-          onKeyDown={handleKeyDown}
           className="w-full pr-12 pl-10"
         />
         <Button
           ref={buttonRef}
-            type="button"
-            onClick={handleManualDropdownToggle}
-            className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 transition-colors"
-            aria-label="Toggle dropdown"
-          >
-            <ChevronDown
-              className={`h-4 w-4 transition-transform ${showDropdown ? "rotate-180" : ""}`}
-            />
-          </Button>
+          type="button"
+          onClick={handleManualDropdownToggle}
+          className="absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+          aria-label="Toggle dropdown"
+        >
+          <ChevronDown
+            className={`size-4 transition-transform ${showDropdown ? "rotate-180" : ""}`}
+          />
+        </Button>
         {showDropdown &&
-          (suggestions.length > 0 || isLoading || error || showEmptyState || isManualTrigger) &&
+          (suggestions.length > 0 ||
+            isLoading ||
+            error ||
+            showEmptyState ||
+            isManualTrigger) &&
           dropdownRect &&
           typeof document !== "undefined" &&
           createPortal(
             <div
               ref={dropdownRef}
-              className="bg-popover scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/20 hover:scrollbar-thumb-muted-foreground/40 fixed z-40 overflow-y-auto rounded-md border shadow-md"
+              className="fixed z-40 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent overflow-y-auto rounded-md border bg-popover shadow-md hover:scrollbar-thumb-muted-foreground/40"
               style={{
                 top: dropdownRect.top,
                 left: dropdownRect.left,
@@ -504,37 +337,33 @@ export function SingleGenomeSelector({
             >
               {isLoading ? (
                 <div className="flex items-center justify-center p-4">
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  <span className="text-muted-foreground text-sm">Searching...</span>
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  <span className="text-sm text-muted-foreground">Searching...</span>
                 </div>
               ) : error ? (
-                <div className="text-destructive p-4 text-sm">{error}</div>
+                <div className="p-4 text-sm text-destructive">{error}</div>
               ) : suggestions.length > 0 ? (
                 suggestions.map((genome, index) => {
                   const isHighlighted = highlightedIndex === index;
                   return (
                     <button
                       key={genome.genome_id}
-                      ref={(el) => {
-                        itemRefs.current[index] = el;
-                      }}
+                      ref={(el) => { itemRefs.current[index] = el; }}
                       type="button"
                       className={cn(
-                        "flex w-full flex-col items-start gap-1 px-4 py-2 text-left hover:bg-accent rounded-md border-0 bg-transparent cursor-pointer text-sm",
+                        "flex w-full cursor-pointer flex-col items-start gap-1 rounded-md border-0 bg-transparent px-4 py-2 text-left text-sm hover:bg-accent",
                         isHighlighted && "bg-accent",
                       )}
-                      onClick={() => {
-                        handleDropdownClick(genome);
-                      }}
-                      onMouseEnter={() => setHighlightedIndex(index)}
+                      onClick={() => { handleSelect(genome); }}
+                      onMouseEnter={() => { setHighlightedIndex(index); }}
                     >
                       <span className="flex items-center gap-1 truncate text-sm font-medium">
                         {genome.public === false && (
-                          <ShieldUser className="text-foreground/90 h-3.5 w-3.5 shrink-0" />
+                          <ShieldUser className="size-3.5 shrink-0 text-foreground/90" />
                         )}
                         <span className="truncate">{genome.genome_name}</span>
                       </span>
-                      <span className="text-muted-foreground text-xs">
+                      <span className="text-xs text-muted-foreground">
                         {genome.genome_id}
                         {genome.strain ? ` • ${genome.strain}` : ""}
                       </span>
@@ -542,18 +371,19 @@ export function SingleGenomeSelector({
                   );
                 })
               ) : showEmptyState ? (
-                <p className="text-muted-foreground py-4 text-center text-sm">
-                  {query.trim() ? `No genomes found for "${query.trim()}"` : "No genomes found"}
+                <p className="py-4 text-center text-sm text-muted-foreground">
+                  {query.trim()
+                    ? `No genomes found for "${query.trim()}"`
+                    : "No genomes found"}
                 </p>
               ) : null}
             </div>,
-            document.body
+            document.body,
           )}
       </div>
       {helperText && (
-        <p className="text-muted-foreground text-xs">{helperText}</p>
+        <p className="text-xs text-muted-foreground">{helperText}</p>
       )}
     </div>
   );
 }
-

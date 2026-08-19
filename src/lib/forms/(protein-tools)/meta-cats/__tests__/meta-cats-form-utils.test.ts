@@ -455,7 +455,7 @@ describe("createGenomeIdMapFromFeatures", () => {
 // ---------------------------------------------------------------------------
 describe("buildMetaCatsAutoGroupsFromGenomes", () => {
   let idCounter: number;
-  const createId = () => `id-${idCounter++}`;
+  const createId = () => `id-${String(idCounter++)}`;
 
   beforeEach(() => {
     idCounter = 0;

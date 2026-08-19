@@ -16,7 +16,7 @@ describe("transformMetagenomicReadMappingParams", () => {
   };
 
   it("returns basic fields (output_path, output_file, gene_set_type)", () => {
-    const result = transformMetagenomicReadMappingParams(baseData as never);
+    const result = transformMetagenomicReadMappingParams(baseData);
 
     expect(result).toEqual(
       expect.objectContaining({
@@ -29,7 +29,7 @@ describe("transformMetagenomicReadMappingParams", () => {
 
   it("trims output_file whitespace", () => {
     const data = { ...baseData, output_file: "  read_mapping_result  " };
-    const result = transformMetagenomicReadMappingParams(data as never);
+    const result = transformMetagenomicReadMappingParams(data);
 
     expect(result.output_file).toBe("read_mapping_result");
   });
@@ -66,13 +66,13 @@ describe("transformMetagenomicReadMappingParams", () => {
         ...baseData,
         srr_ids: ["SRR123456", "SRR789012"],
       };
-      const result = transformMetagenomicReadMappingParams(data as never);
+      const result = transformMetagenomicReadMappingParams(data);
 
       expect(result.srr_ids).toEqual(["SRR123456", "SRR789012"]);
     });
 
     it("does not include empty library arrays or srr_ids", () => {
-      const result = transformMetagenomicReadMappingParams(baseData as never);
+      const result = transformMetagenomicReadMappingParams(baseData);
 
       expect(result).not.toHaveProperty("paired_end_libs");
       expect(result).not.toHaveProperty("single_end_libs");
@@ -82,7 +82,7 @@ describe("transformMetagenomicReadMappingParams", () => {
 
   describe("gene set type: predefined_list", () => {
     it("includes gene_set_name for predefined_list", () => {
-      const result = transformMetagenomicReadMappingParams(baseData as never);
+      const result = transformMetagenomicReadMappingParams(baseData);
 
       expect(result.gene_set_name).toBe("CARD");
       expect(result).not.toHaveProperty("gene_set_fasta");
@@ -91,7 +91,7 @@ describe("transformMetagenomicReadMappingParams", () => {
 
     it("includes VFDB as gene_set_name", () => {
       const data = { ...baseData, gene_set_name: "VFDB" as const };
-      const result = transformMetagenomicReadMappingParams(data as never);
+      const result = transformMetagenomicReadMappingParams(data);
 
       expect(result.gene_set_name).toBe("VFDB");
     });
@@ -104,7 +104,7 @@ describe("transformMetagenomicReadMappingParams", () => {
         gene_set_type: "fasta_file" as const,
         gene_set_fasta: "/workspace/genes.fasta",
       };
-      const result = transformMetagenomicReadMappingParams(data as never);
+      const result = transformMetagenomicReadMappingParams(data);
 
       expect(result.gene_set_fasta).toBe("/workspace/genes.fasta");
       expect(result).not.toHaveProperty("gene_set_name");
@@ -119,7 +119,7 @@ describe("transformMetagenomicReadMappingParams", () => {
         gene_set_type: "feature_group" as const,
         gene_set_feature_group: "/workspace/feature_group",
       };
-      const result = transformMetagenomicReadMappingParams(data as never);
+      const result = transformMetagenomicReadMappingParams(data);
 
       expect(result.gene_set_feature_group).toBe("/workspace/feature_group");
       expect(result).not.toHaveProperty("gene_set_name");

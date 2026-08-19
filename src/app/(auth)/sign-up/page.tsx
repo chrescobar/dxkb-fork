@@ -56,8 +56,6 @@ const formSchema = z
     error: "Passwords do not match",
   });
 
-type FormValues = z.infer<typeof formSchema>;
-
 function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -87,14 +85,13 @@ function SignupForm() {
       interests: "",
       password: "",
       password_repeat: "",
-    } as FormValues,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onChange: formSchema as any, onSubmit: formSchema as any },
+    },
+    validators: { onChange: formSchema },
     onSubmit: async ({ value }) => {
       setIsSubmitting(true);
       try {
         const { error: signUpError } = await authAccount.signUp(
-          value as FormValues,
+          value,
         );
         if (signUpError) {
           setError(signUpError.message || "Sign up failed. Please try again.");
@@ -110,7 +107,7 @@ function SignupForm() {
   });
 
   return (
-    <div className="bg-background flex items-center justify-center p-4">
+    <div className="flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-lg">
         <CardHeader className="space-y-1">
           <CardTitle className="text-center text-2xl font-bold">
@@ -124,13 +121,13 @@ function SignupForm() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              form.handleSubmit();
+              void form.handleSubmit();
             }}
             className="space-y-4"
           >
             {error && (
               <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
+                <AlertCircle className="size-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
@@ -140,13 +137,13 @@ function SignupForm() {
                 <FieldItem>
                   <RequiredFormLabel>First name</RequiredFormLabel>
                   <div className="relative">
-                    <User className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
+                    <User className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
                     <Input
                       placeholder="John"
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                     />
@@ -161,13 +158,13 @@ function SignupForm() {
                 <FieldItem>
                   <FieldLabel field={field}>Middle name</FieldLabel>
                   <div className="relative">
-                    <User className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
+                    <User className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
                     <Input
                       placeholder="James"
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                       disabled={isLoading}
@@ -183,13 +180,13 @@ function SignupForm() {
                 <FieldItem>
                   <RequiredFormLabel>Last name</RequiredFormLabel>
                   <div className="relative">
-                    <User className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
+                    <User className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
                     <Input
                       placeholder="Doe"
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                       disabled={isLoading}
@@ -205,13 +202,13 @@ function SignupForm() {
                 <FieldItem>
                   <RequiredFormLabel>Username</RequiredFormLabel>
                   <div className="relative">
-                    <Mail className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
+                    <Mail className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
                     <Input
                       placeholder="john.doe"
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                     />
@@ -226,13 +223,13 @@ function SignupForm() {
                 <FieldItem>
                   <RequiredFormLabel>Email</RequiredFormLabel>
                   <div className="relative">
-                    <Mail className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
+                    <Mail className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
                     <Input
                       placeholder="john.doe@example.com"
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                     />
@@ -247,13 +244,13 @@ function SignupForm() {
                 <FieldItem>
                   <FieldLabel field={field}>Organization</FieldLabel>
                   <div className="relative">
-                    <User className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
+                    <User className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
                     <Input
                       placeholder="John Doe Inc."
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                     />
@@ -268,13 +265,13 @@ function SignupForm() {
                 <FieldItem>
                   <FieldLabel field={field}>Organisms</FieldLabel>
                   <div className="relative">
-                    <User className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
+                    <User className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
                     <Input
                       placeholder="Enter organisms"
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="pl-10"
                     />
@@ -289,13 +286,13 @@ function SignupForm() {
                 <FieldItem>
                   <FieldLabel field={field}>Interests</FieldLabel>
                   <div className="relative">
-                    <MessageCircle className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
+                    <MessageCircle className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
                     <Textarea
                       placeholder="Enter interests"
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
                       className="max-h-32 pl-10"
                     />
@@ -310,16 +307,16 @@ function SignupForm() {
                 <FieldItem>
                   <RequiredFormLabel>Password</RequiredFormLabel>
                   <div className="relative">
-                    <Lock className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
+                    <Lock className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
                     <Input
                       id={field.name}
                       name={field.name}
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter a password"
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
-                      className="pr-10 pl-10"
+                      className="px-10"
                       required
                     />
                     <Button
@@ -327,12 +324,12 @@ function SignupForm() {
                       variant="ghost"
                       size="icon"
                       className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={() => { setShowPassword(!showPassword); }}
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
+                        <EyeOff className="size-4" />
                       ) : (
-                        <Eye className="h-4 w-4" />
+                        <Eye className="size-4" />
                       )}
                       <span className="sr-only">
                         {showPassword ? "Hide password" : "Show password"}
@@ -349,16 +346,16 @@ function SignupForm() {
                 <FieldItem>
                   <RequiredFormLabel>Confirm password</RequiredFormLabel>
                   <div className="relative">
-                    <Lock className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
+                    <Lock className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
                     <Input
                       id={field.name}
                       name={field.name}
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Enter a password"
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => { field.handleChange(e.target.value); }}
                       onBlur={field.handleBlur}
-                      className="pr-10 pl-10"
+                      className="px-10"
                       required
                     />
                     <Button
@@ -367,13 +364,13 @@ function SignupForm() {
                       size="icon"
                       className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
                       onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
+                        { setShowConfirmPassword(!showConfirmPassword); }
                       }
                     >
                       {showConfirmPassword ? (
-                        <EyeOff className="h-4 w-4" />
+                        <EyeOff className="size-4" />
                       ) : (
-                        <Eye className="h-4 w-4" />
+                        <Eye className="size-4" />
                       )}
                       <span className="sr-only">
                         {showConfirmPassword
@@ -395,7 +392,7 @@ function SignupForm() {
               Already have an account?{" "}
               <Link
                 href="/sign-in"
-                className="text-primary font-medium hover:underline"
+                className="font-medium text-primary hover:underline"
               >
                 Sign in
               </Link>
@@ -411,7 +408,7 @@ export default function SignupPage() {
   return (
     <Suspense
       fallback={
-        <div className="bg-background flex items-center justify-center p-4">
+        <div className="flex items-center justify-center bg-background p-4">
           <Card className="w-full max-w-lg">
             <CardHeader className="space-y-1">
               <CardTitle className="text-center text-2xl font-bold">
@@ -423,7 +420,7 @@ export default function SignupPage() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin" />
+                <Loader2 className="size-6 animate-spin" />
               </div>
             </CardContent>
           </Card>

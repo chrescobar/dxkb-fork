@@ -41,8 +41,8 @@ export function PasswordChangeForm() {
         });
 
         if (!response.ok) {
-          const err = await response.json().catch(() => null);
-          toast.error(err?.message || "Failed to change password.");
+          const err = await response.json().catch(() => null) as { error?: string; message?: string } | null;
+          toast.error(err?.error ?? err?.message ?? "Failed to change password.");
           return;
         }
 
@@ -70,18 +70,18 @@ export function PasswordChangeForm() {
           onSubmit={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            form.handleSubmit();
+            void form.handleSubmit();
           }}
           className="grid gap-4"
         >
           <form.Field name="currentPassword">
             {(field) => (
               <FieldItem>
-                <RequiredFormLabel>Current Password</RequiredFormLabel>
+                <RequiredFormLabel htmlFor={field.name}>Current Password</RequiredFormLabel>
                 <PasswordInput
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={(e) => { field.handleChange(e.target.value); }}
                   onBlur={field.handleBlur}
                   label="current password"
                 />
@@ -93,11 +93,11 @@ export function PasswordChangeForm() {
           <form.Field name="newPassword">
             {(field) => (
               <FieldItem>
-                <RequiredFormLabel>New Password</RequiredFormLabel>
+                <RequiredFormLabel htmlFor={field.name}>New Password</RequiredFormLabel>
                 <PasswordInput
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={(e) => { field.handleChange(e.target.value); }}
                   onBlur={field.handleBlur}
                   label="new password"
                 />
@@ -109,11 +109,11 @@ export function PasswordChangeForm() {
           <form.Field name="confirmPassword">
             {(field) => (
               <FieldItem>
-                <RequiredFormLabel>Confirm New Password</RequiredFormLabel>
+                <RequiredFormLabel htmlFor={field.name}>Confirm New Password</RequiredFormLabel>
                 <PasswordInput
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={(e) => { field.handleChange(e.target.value); }}
                   onBlur={field.handleBlur}
                   label="confirm password"
                 />

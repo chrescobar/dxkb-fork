@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
 import {
   FieldItem,
   FieldLabel,
@@ -55,7 +56,6 @@ import { toast } from "sonner";
 import {
   genomeAssemblyFormSchema,
   defaultGenomeAssemblyFormValues,
-  type GenomeAssemblyFormData,
   type LibraryItem,
 } from "@/lib/forms/(genomics)/genome-assembly/genome-assembly-form-schema";
 import {
@@ -108,10 +108,10 @@ export default function GenomeAssemblyPage() {
   const [sraResetKey, setSraResetKey] = useState(0);
 
   const form = useForm({
-    defaultValues: defaultGenomeAssemblyFormValues as GenomeAssemblyFormData,
+    defaultValues: defaultGenomeAssemblyFormValues,
     validators: { onChange: genomeAssemblyFormSchema },
     onSubmit: async ({ value }) => {
-      const data = value as GenomeAssemblyFormData;
+      const data = value;
 
       const hasPaired = data.paired_end_libs && data.paired_end_libs.length > 0;
       const hasSingle = data.single_end_libs && data.single_end_libs.length > 0;
@@ -177,11 +177,11 @@ export default function GenomeAssemblyPage() {
     setSraResetKey((k) => k + 1);
   }
 
-  const recipe = useStore(form.store, (s) => s.values.recipe);
+  const recipe = useSelector(form.store, (s) => s.values.recipe);
   const showGenomeSizeField = recipe === "canu";
 
-  const outputPath = useStore(form.store, (s) => s.values.output_path);
-  const canSubmit = useStore(form.store, (s) => s.canSubmit);
+  const outputPath = useSelector(form.store, (s) => s.values.output_path);
+  const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
   const handlePairedLibraryAdd = () => {
     addPairedLibrary({
@@ -240,7 +240,7 @@ export default function GenomeAssemblyPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
         className="grid grid-cols-1 gap-6 md:grid-cols-12"
       >
@@ -266,11 +266,12 @@ export default function GenomeAssemblyPage() {
                   <Label className="service-card-label">
                     Paired Read Library
                   </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
+                  <div className="mx-4 h-px flex-1 bg-border" />
                   <Button
                     type="button"
                     variant="outline"
                     size="icon"
+                    aria-label="Add paired read library to selected libraries"
                     onClick={handlePairedLibraryAdd}
                     disabled={!pairedRead1 || !pairedRead2}
                   >
@@ -303,11 +304,12 @@ export default function GenomeAssemblyPage() {
                   <Label className="service-card-label">
                     Single Read Library
                   </Label>
-                  <div className="bg-border mx-4 h-px flex-1" />
+                  <div className="mx-4 h-px flex-1 bg-border" />
                   <Button
                     type="button"
                     variant="outline"
                     size="icon"
+                    aria-label="Add single read library to selected libraries"
                     onClick={handleSingleLibraryAdd}
                     disabled={!singleRead}
                   >
@@ -342,7 +344,7 @@ export default function GenomeAssemblyPage() {
                   Selected Libraries
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger>
+                      <TooltipTrigger aria-label="Selected libraries help">
                         <HelpCircle className="service-card-tooltip-icon" />
                       </TooltipTrigger>
                       <TooltipContent>
@@ -397,10 +399,10 @@ export default function GenomeAssemblyPage() {
                         items={genomeAssemblyRecipes}
                         value={field.state.value}
                         onValueChange={(value) =>
-                          field.handleChange(value as string)
+                          { field.handleChange(value as string); }
                         }
                       >
-                        <SelectTrigger className="service-card-select-trigger">
+                        <SelectTrigger aria-label="Assembly strategy" className="service-card-select-trigger">
                           <SelectValue placeholder="Select strategy" />
                         </SelectTrigger>
                         <SelectContent className="service-card-select-content">
@@ -428,7 +430,7 @@ export default function GenomeAssemblyPage() {
                       <OutputFolder
                         required={true}
                         value={field.state.value}
-                        onChange={(value) => field.handleChange(value)}
+                        onChange={(value) => { field.handleChange(value); }}
                       />
                       <FieldErrors field={field} />
                     </FieldItem>
@@ -443,7 +445,7 @@ export default function GenomeAssemblyPage() {
                         variant="name"
                         required={true}
                         value={field.state.value}
-                        onChange={(value) => field.handleChange(value)}
+                        onChange={(value) => { field.handleChange(value); }}
                         outputFolderPath={outputPath}
                         onValidationChange={setIsOutputNameValid}
                       />
@@ -465,10 +467,14 @@ export default function GenomeAssemblyPage() {
                         </FieldLabel>
                         <div className="flex items-center gap-2">
                           <input
+                            id={field.name}
+                            name={field.name}
+                            aria-label="Estimated Genome Size"
                             type="number"
                             value={expectedGenomeSize}
                             onChange={(e) => {
-                              const value = parseInt(e.target.value);
+                              const value = e.currentTarget.valueAsNumber;
+                              if (!Number.isFinite(value)) return;
                               setExpectedGenomeSize(value);
                               const calculatedSize = calculateGenomeSize(
                                 value,
@@ -486,7 +492,7 @@ export default function GenomeAssemblyPage() {
                             value={genomeSizeUnit}
                             onValueChange={(value) => {
                               if (value == null) return;
-                              setGenomeSizeUnit(value as "M" | "K");
+                              setGenomeSizeUnit(value);
                               if (value === "M") {
                                 setExpectedGenomeSize(5);
                                 field.handleChange(5000000);
@@ -496,7 +502,7 @@ export default function GenomeAssemblyPage() {
                               }
                             }}
                           >
-                            <SelectTrigger className="service-card-select-trigger w-20">
+                            <SelectTrigger aria-label="Genome size unit" className="service-card-select-trigger w-20">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -528,7 +534,7 @@ export default function GenomeAssemblyPage() {
                   <CollapsibleTrigger className="service-collapsible-trigger">
                     Advanced Options
                     <ChevronDown
-                      className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
+                      className={`size-4 transition-transform ${showAdvanced ? "rotate-180 transform" : ""}`}
                     />
                   </CollapsibleTrigger>
 
@@ -551,7 +557,7 @@ export default function GenomeAssemblyPage() {
                               <Switch
                                 checked={field.state.value}
                                 onCheckedChange={(checked) =>
-                                  field.handleChange(checked)
+                                  { field.handleChange(checked); }
                                 }
                               />
                             </FieldItem>
@@ -570,7 +576,7 @@ export default function GenomeAssemblyPage() {
                               <Switch
                                 checked={field.state.value}
                                 onCheckedChange={(checked) =>
-                                  field.handleChange(checked)
+                                  { field.handleChange(checked); }
                                 }
                               />
                             </FieldItem>
@@ -589,7 +595,7 @@ export default function GenomeAssemblyPage() {
                               <Switch
                                 checked={field.state.value}
                                 onCheckedChange={(checked) =>
-                                  field.handleChange(checked)
+                                  { field.handleChange(checked); }
                                 }
                               />
                             </FieldItem>
@@ -739,7 +745,7 @@ export default function GenomeAssemblyPage() {
                 Selected Libraries
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger>
+                    <TooltipTrigger aria-label="Selected libraries help">
                       <HelpCircle className="service-card-tooltip-icon" />
                     </TooltipTrigger>
                     <TooltipContent>

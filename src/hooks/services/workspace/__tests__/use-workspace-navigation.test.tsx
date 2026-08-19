@@ -1,25 +1,25 @@
 import { renderHook, act } from "@testing-library/react";
-import type { WorkspaceBrowserItem } from "@/types/workspace-browser";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { useWorkspaceNavigation } from "@/hooks/services/workspace/use-workspace-navigation";
 
 vi.mock("@/lib/services/workspace/utils", () => ({
   isFolderType: vi.fn((type: string) => type === "folder"),
 }));
 
-vi.mock("@/lib/utils", () => ({
+vi.mock("@/lib/services/workspace/path-utils", () => ({
   encodeWorkspaceSegment: vi.fn((s: string) => s),
   sanitizePathSegment: vi.fn((s: string) => s),
 }));
 
 const makeItem = (
-  overrides: Partial<WorkspaceBrowserItem>,
-): WorkspaceBrowserItem =>
+  overrides: Partial<WorkspaceItem>,
+): WorkspaceItem =>
   ({
     name: "file.txt",
     path: "/test/file.txt",
     type: "contigs",
     ...overrides,
-  }) as WorkspaceBrowserItem;
+  }) as WorkspaceItem;
 
 describe("useWorkspaceNavigation", () => {
   const mockRouter = { push: vi.fn() };

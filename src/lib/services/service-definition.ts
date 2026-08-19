@@ -37,7 +37,7 @@ type ServiceRerunLibraryConfig =
         lib: Record<string, string>,
         kind: ServiceLibraryKind,
       ) => Partial<Library>;
-      syncLibraries: (libs: Library[]) => void;
+      syncLibraries?: (libs: Library[]) => void;
     };
 
 export type ServiceRerunConfig<

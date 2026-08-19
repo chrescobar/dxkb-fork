@@ -1,0 +1,491 @@
+src/components/search/search-bar.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,7-14,34,36-50,52-57,60,62,67,72,78,82,91-94,96-98,124-126
+src/app/services/(viral-tools)/subspecies-classification/use-subspecies-classification-page.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-66
+src/components/workspace/workspace-browser.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,13,49-52,54,56,70,91-96,130-135,137-139,188,218-221,241-247,254-261,284-286,292-294,306-308,319-323,325,329,353,447-449,454-456,462-464,541-543
+src/app/api/services/genome/utils.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 7-11
+src/components/interactions/__tests__/zoom-control.test.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 4-5,14-16,43-45
+src/app/services/(protein-tools)/meta-cats/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,71-74,111,122,126-132,155-157,160-168,171-174,188,201,204-209,211,229-233,290,292,310,312,335,337-341,343-347,349,351,353,355,387-395,560-563,596-598,638-640,661-662,690-692,694-697,782-784,872-873,1009-1011
+src/app/api/workspace/preview/[...path]/route.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 2-5,89-91,94-97
+src/app/services/(viral-tools)/sars-cov2-wastewater-analysis/wastewater-parameters.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-103
+src/app/(footer)/team/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 253-255,302
+src/app/services/(genomics)/blast/blast-sections.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-60
+src/components/workspace/__tests__/workspace-browser-pick-mode.test.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1,69-74,80-85,91-96,102-107,137-140
+src/components/workspace/workspace-file-table.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,11-16,20,22-26,30,64-131,163-166,179-194,196,217,220,222,240,242-244,246,248-252,254-265,288-302
+src/app/(footer)/updates/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 22,24-25,29,31-32,36-39,43-46,50-53,58-61,66-69,131-143,154-166,169-171,175-192,194-198,202,213,249-251,255-257,260-270,276-278,291,295-297,301-303
+src/app/services/(protein-tools)/gene-protein-tree/gene-protein-tree-metadata.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-146
+src/components/interactions/sigma/zoom-utils.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-3
+src/components/workspace/download-options-dialog.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 58,67-68,98,101-102,134-136,180-182,187-193
+src/app/(footer)/contact/components/contact-form.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 41-43,45,118-120,161-163,186-188,211-213,235-237,248
+src/components/navbars/workspace-nav-utils.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-23
+src/components/ui/tabs.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1,3-4,6,19,23,38-39,53,65,69,79,82
+src/components/settings/preferences-form.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 42-56,59-67,100-102,117-119
+src/app/services/(genomics)/blast/input-source-card.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-136
+src/components/organisms/geo-distribution/state-counties-layer.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 5,29,40,46-49,52,56-60,63,68-74,83
+src/lib/forms/tanstack-library-selection.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1,81,113-129,131,134,136-139,141-149,151-155,157-158,160-190,192-206,208-209,211-215,217-219,221-223
+src/components/shared/file-table.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 4-5,71-72,88-104,137-146,161-164,177-184,205-207,224-230,234-236,240-241,316-317,359,369,377-378,381,384-406,446,448-456
+src/components/workspace/workspace-mini-browser-table.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-166
+src/hooks/services/use-genome-typeahead.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 80,94,100-109,111-112,114-128,130,132-138,144,162-164,203-208
+src/components/workspace/edit-type-dialog.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 50,59,63,71,85-87,110-112,117-122
+src/components/interactions/sigma/zoom-control.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3-9,13-18,24-27,29-31,42-44,84-88,94-96,108-110,116-121,127-129
+src/components/shared/data-table-utils.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-31
+src/components/services/list-data-utils.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-168
+src/components/workspace/upload-dialog.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 28-33,66,73,75,77,79-83,85-90,92,97,99,101,103,123-125,147-148,224-226,294-296
+src/app/services/(viral-tools)/influenza-ha-subtype/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,26,34,36-46,104-107,150-152,177-179,195-197,236,265-267,280-282
+src/components/navbars/mobile-subsection-label.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-11
+src/hooks/use-fasta-validation.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,33,35-43,45-48,50-55,57-58,60,67,69-72
+src/app/services/(metagenomics)/metagenomic-binning/metagenomic-binning-parameters-card.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-296
+src/app/services/(metagenomics)/taxonomic-classification/taxonomic-classification-input-cards.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-211
+src/components/organisms/geo-distribution/geo-distribution-client.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 5,42-45,100-106,110-118,120,131,137-141,145-149,153,155-163,165-171,173-195,200-202,218-220,244
+scripts/build-auspice.mjs
+  s_aacb44ad711837::t_d47ce8fd2a701c 14-17
+src/app/services/(genomics)/similar-genome-finder/use-similar-genome-finder-form.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-93
+src/components/services/single-genome-selector.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,11,34,76,78-80,83-86,96,98-99,103-107,115,120,123-125,130-131,135,137-139,145-149,152,174,180,190,199,210,228-232,234-236,238-243,245,253-256,262-267,339-341,351-353,359-364,396-398
+src/lib/forms/(protein-tools)/gene-protein-tree/gene-protein-tree-form-schema.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 28-45,57-61,64,288-290,334-336
+src/lib/forms/(genomics)/genome-annotation/genome-annotation-form-schema.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 17-18,33,36-38
+src/app/services/(phylogenomics)/viral-genome-tree/viral-genome-tree-parameters.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-209
+src/components/workspace/workspace-mini-browser.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,13,15,37-38,40-49,70-71,73-74,77-80,82-93,95-105,107,109-121,123-136,146-158,160,162,166-169,171-176,179-186,188-195,197-214,216-220,222,225-226,233-235,240-249,251-258
+src/components/workspace/file-viewer/viewers/codemirror-viewer.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 5,47-49,54,57,60-69,71-87,90-92,98,101-103,115,170-172,174-176,178,193,198-205,210-213,216-218,227-232,257-259
+src/components/navbars/mobile-nav-link.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-24
+src/contexts/workspace-panel-context.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 10-13,15-18,43-45,57-59,61,65,67-77,89-91
+src/components/organisms/shared/default-nav-items.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 17-20,35-36,42-43,49-50,54-58,66,68-70,81-86,90-102,104-105
+src/components/ui/calendar.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1,3,9,11-18,31,33,40-42,48-53,60,65,70,75,79,83,87,91,98,104,109,113,120,124,129,133,137,141,155,160-164,169-173,178,190,196,206,208,210-211,217,230,234,237
+src/app/services/(protein-tools)/proteome-comparison/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,66,85,93,100,110,121,178-179,181,211,213,245,247,305-310,320-321,323-329,446-448,633-635,742-744,816-818
+src/lib/services/organisms/geo-distribution.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 102-104,111-116
+src/app/workspace/home/[[...path]]/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-2,5-12,14-15
+src/components/jobs/jobs-table-columns.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 27-36,38-132,134-137
+src/app/services/(metagenomics)/taxonomic-classification/use-taxonomic-classification-controller.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-254
+doctor.config.json
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-6
+src/components/ui/carousel.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1,3,6,8-10,12-15,18-21,25-31,33,36,39,42,59-80,82-85,88-95,98-101,106,109,127,131,143,148,152,162,166,175,187,196,205,217,226,237
+src/components/workspace/workspace-object-selector-view.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-269
+src/styles/theme-content.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 61-62,73-77
+src/app/(auth)/layout.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3-4,6,11-13,15-21,23
+src/components/workspace/file-viewer/viewers/loading-progress.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 21-24
+src/contexts/workspace-repository-context.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,40-43
+src/components/organisms/metadata-distributions/bar-stack-chart.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 11-18,118-122,220-230,280-282,284-286
+src/app/services/(viral-tools)/subspecies-classification/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3-4,56,58-66,133-135,181-183,203-205,241-244,274-276,291-293,314
+src/components/taxonomy/tax-id-selector.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,42,71-73,76-93,126-131,137-139,152-154,163-165,208-210
+src/styles/logo-utils.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 21-50,56-57,66-68
+src/lib/forms/taxonomy-lookup.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 9,19
+src/components/taxonomy/taxonomy-tree.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3-11,19-20,29-41,45-47,50-52,65-72,75-89,91-95,97-101,103-112,114-124,126-146,148-151,154,156-165,167,172-205,208-211,213-225,228-230,232-251,253-260,263-271,275,278-279,283-288,295-298,306,309,311,316-324,328,331-334,337,339,342,345-350,354-372,374-379,382-385,387-389,391-398
+src/app/services/(phylogenomics)/viral-genome-tree/use-viral-genome-tree.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-330
+src/components/jobs/jobs-shell.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,29-33,70
+src/app/services/(phylogenomics)/viral-genome-tree/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 5-11,14-15,17-22,35,38-40
+src/components/organisms/taxon-breadcrumb.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 17-23,49-50
+src/components/search/command-palette.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,19-23,38-41,43,55,58-61,78-80,88,90-93,95-103,105,109,117,119,121-122,124-128,130,173-175,187-189,198-200,208-210,229-231,239-241,250-252,258-260
+src/components/services/list-data.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1,3,10,12-18,42-59,64-69,73-76,79-87,89,92,97-98,101-103,109,112-113,122,125,127-129,131-133,144,146-148,153-156,158-163,165-167,170-175,179,181-184,193-195,198-203,205,221-227,230-235,237,242-246,248-251,262-264,273,275-282,289-297,301-305,307-310,318-334,346-348,364,380-383,385,388,392-394,398-406,408-410,416,423-425,464-468
+src/components/workspace/file-viewer/viewers/csv-viewer.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,41-52,61,69,73,77-78,81-107,109-113,117,120-124,126,154,157,175,183-189,217-221,236
+src/app/services/(genomics)/variation-analysis/library-input-section.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-112
+src/app/services/(metagenomics)/metagenomic-read-mapping/use-metagenomic-read-mapping-controller.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-145
+src/components/services/sra-run-accession-with-validation.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,120-214,234-269,271,275,277,279-281,283-284,286-288,290,292-299,301-307,309-310,312-332,334-351,353-367,369-379,381-387,389-391,393-394,397-399,402-404,407,412,414-418,420,434,441,452-466,468-483
+src/app/services/(genomics)/genome-annotation/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 6,8-9,12,18,20,22-26,28,30,32,34-39,44-54,60,67-71,77-79,86-88,90,96,99
+src/app/services/(metagenomics)/taxonomic-classification/taxonomic-classification-parameters-card.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-375
+src/app/(footer)/news/news-card-image.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 29,31-33
+src/app/services/(viral-tools)/viral-assembly/use-viral-assembly-page.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-183
+src/components/phylogeny/archaeopteryx-phylogeny.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 16-32,80,98,203,218-220,234-239
+src/components/services/dialog-info-popup.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 41-47,55-57,61-94
+src/hooks/services/workspace/use-workspace-directory.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 201-202,231-233,235-236,238,240-245,250,254
+src/hooks/services/workspace/use-workspace-action-dispatch.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 15-16,37-39,50-52,80,88-104,106-115,117-126,129-144,146-167,169-174
+src/app/services/(utilities)/fastq-utilities/use-fastq-utilities-page.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-217
+src/app/api/services/genome/website-query/route.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 45-47,56-59,90-91,94
+src/components/navbars/mobile-subsection-trigger.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-15
+src/app/services/(viral-tools)/influenza-ha-subtype/use-influenza-ha-subtype-page.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-91
+src/components/workspace/workspace-breadcrumbs.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 6-10,26,42,46-51,58-61,79-82,98-100,133-136,138-140,178-181
+src/app/services/(viral-tools)/sars-cov2-wastewater-analysis/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3-4,59,82-84,91-95,97,99-106,111-135,195,220-222,241-243,301-303,305-324,338,342,345-348,352-356
+src/components/detail-panel/__tests__/info-panel.test.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1,4,27-30,75-78,83-86
+src/components/taxonomy/taxonomy-tree-columns.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-187
+src/components/workspace/file-viewer/viewers/molstar-loader.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-10
+src/components/ui/number-input.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,9-12,53,59,61,67,69-72,78,80-81,83-85,87-92,94-96,98,100-104,106-107,109-110,112-113,115,120-131,135,143,145-150,209-211,223-225,238
+src/app/(auth)/redirect-action.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-9
+src/components/auth/signout-button.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 6-7,24,46,48-52,63,75-77,103-104,109-114
+src/components/services/debugging-panel.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,19-20,37,41,46,52,55,57,89-91,109-111
+src/app/services/(genomics)/variation-analysis/use-variation-analysis-form.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-137
+src/app/services/(genomics)/variation-analysis/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 5-11,14-16,28,32-37,39-42,55-57,59,65
+src/components/workspace/workspace-item-details.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 42,46-48,51,72-74,82-86,102-105,112-118
+src/components/organisms/metadata-distributions/amr-bar-stack-chart.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,17-20,78-80,111-115,127-153,187,227-229,231-233,254-330,333-334,336,338-369,371-379,381-400,429-431,445-447
+src/hooks/services/workspace/use-workspace-object-search.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,62-68,70-76,78
+src/app/services/(genomics)/genome-annotation/genome-annotation-parameters.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-251
+src/app/services/(viral-tools)/sars-cov2-genome-analysis/sars-genome-sections.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-246
+src/components/detail-panel/info-panel-utils.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-23
+src/components/navbars/mobile-decorated-subsection.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-37
+src/components/navbars/mobile-navbar.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 29,33,46-48,60-63,100,142,159-168,182,184,199-204,206-209,213,219,223,245-246,248,250,252-256,259,261,263-264,266,268,270-274,277,279,282,288,291,293-296,298,300,304-307,309,314,316,329-330,352-356,358,397-399,464
+src/lib/phylogeny/viral-facets.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 2-5,35-41,48,58-67,71-93,97-99,109-118,122-127,132-145,161-164,190-192,194,196,198-200,202-206
+src/app/(auth)/sign-up/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,16,18,20-21,25,31-35,37-45,61,73-74
+src/components/organisms/geo-distribution/world-countries-layer.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 4,34,52,56-60,64,70-76,86
+src/components/interactions/interactions-graph-skeleton.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 17-29,53-54
+src/components/interactions/interactions-graph.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,63-72,95-98
+src/app/services/(protein-tools)/gene-protein-tree/gene-protein-tree-input.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-252
+src/app/(auth)/sign-up/sign-up-fields.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-312
+src/components/jobs/jobs-browser.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,24-28,53,65-66,68-72,79-81,103,105-148,167-175,199-200,204,211,215-223,225-236,238-239,242-259,265,268,270,273-278,281,285,287,291,293,297,299,303-313,316-334,337-363,365,369-370,453-462,492-496,505-508
+src/components/ui/slider.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1,3-4,6,16-20,52,55
+src/app/services/(metagenomics)/metagenomic-binning/use-metagenomic-binning-controller.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-148
+src/app/services/(viral-tools)/sars-cov2-wastewater-analysis/wastewater-selected-libraries.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-59
+src/components/organisms/metadata-distributions/_shared/year-data.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 6-16
+src/lib/services/workspace/adapters/in-memory-workspace-repository.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 175-177,202,327-329,448,460,471
+src/components/organisms/geo-distribution/choropleth-svg.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 17,53-56,60-82,84-93,95-121,123-129,131-136,138-143,145-161,163-166,168-173,175-189,191-225,227-241,243-295,298-334,336-343
+src/components/genome/genome-detail-panel-utils.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-14
+src/components/workspace/workspace-action-bar.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 5-23,30-40,60-66,73-74,77-97,113-116,120-122,137-138,140,205-207,216-220,231-233
+src/components/search/__tests__/command-palette.test.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-7,41-42,274
+src/components/filterbar/facet-panel.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 11,18,25,31,60-65,67-71,81-83,103,119-126,129
+src/lib/forms/(protein-tools)/proteome-comparison/proteome-comparison-form-schema.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 8-12,16-21,116-118
+src/app/services/(genomics)/blast/choice.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-19
+src/app/services/(viral-tools)/sars-cov2-wastewater-analysis/wastewater-library.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-250
+src/components/taxonomy/taxon-name-selector.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,190-192,235-243,262-263,272-277,280-282,319-321
+src/app/services/(protein-tools)/gene-protein-tree/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 5-11,14-15,17-22,35,38-40
+src/app/services/use-service-page-state.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-40
+src/components/workspace/workspace-table-columns.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 4-8,10-14,41-51,53,67-68,72-76,86-89,102-105,118-121,134-137,165-168,173
+src/app/services/(phylogenomics)/viral-genome-tree/viral-genome-tree-metadata.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-148
+src/components/taxonomy/taxonomy-tree-view.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-210
+src/lib/rerun-utility.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 106-120,131-145,159-170
+src/app/services/(genomics)/similar-genome-finder/advanced-options-section.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-218
+src/app/services/(genomics)/similar-genome-finder/results-section.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-43
+src/app/services/(phylogenomics)/viral-genome-tree/viral-genome-tree-input.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-156
+src/lib/forms/(protein-tools)/meta-cats/meta-cats-form-schema.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 55,58,64,68,73
+src/lib/forms/(genomics)/primer-design/primer-design-form-utils.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 7,84-90,263,301-308
+src/components/workspace/file-viewer/viewers/expandable-viewer-wrapper.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 6,42,52,54,66,75-78,84,88-91
+src/lib/auth/hooks.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,7,52-60
+src/components/workspace/workspace-object-selector.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 4,28,43,63-71,78,80-83,108-111,115,119,126,134,175,211,219-221,224,229-231,238,241,263,269,279,285-295,297-332,334-372,375-377
+src/app/services/(genomics)/primer-design/primer-options-section.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-175
+src/app/services/(genomics)/similar-genome-finder/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,6-12,24-25,38,42-44,59
+src/app/services/(metagenomics)/taxonomic-classification/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 4-8,10-11,13,16,29,32-34,37-41,46-50,52-54,60
+src/app/services/(viral-tools)/sars-cov2-genome-analysis/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,6-8,22,24,27-28,36,44,46-47,54-60,62-63,65-100,115-116,119-123,125,127-134,138,141-145,148-187,200,222-225,245,263-265,276-283,285-297,300
+src/lib/forms/(genomics)/blast/blast-form-utils.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1,6-10,45-48,50,63-67,74-76,180-181,186-189,208-216,304-312,320-331,333-335,338-344,346-347,356-359,366-371,375-378,381,388-391
+src/app/(auth)/sign-in/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 5-6,8,38,59,100-102,120,134-136,146-148,167,186,195-196
+src/lib/forms/(phylogenomics)/viral-genome-tree/viral-genome-tree-form-schema.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 23-40,63-65,219-221,264-266
+src/components/search/search-action-bar.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 6-10,84-94,110-115,140-144,263-266,277-280,287,299-300,310-311,320-322,326-332
+src/components/workspace/create-folder-dialog.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 35,39-44,46,64-66,80-82
+src/app/api/services/minhash/route.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 35-37,44
+src/app/services/(genomics)/similar-genome-finder/actions.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 24,55,62-66,68-70,105-107,112,116-122,130-132,135,148-152,165,167-174,230
+src/components/search/command-palette-events.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-7
+src/components/ui/button.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1,3-4,6-7,21,24
+src/constants/workspace-panels.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-6
+src/components/genome/genome-detail-panel.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 6-9,31-35,46,53-54,62,67,70-85
+src/lib/forms/(protein-tools)/gene-protein-tree/gene-protein-tree-form-utils.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-4,23,46-48,81-87,120,122,138-139,141,148
+src/app/services/(genomics)/primer-design/primer-input-section.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-188
+src/components/workspace/create-workspace-dialog.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 37,51,68-70,84-86,91-96
+src/hooks/services/use-rerun-form.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,143,155,167,180-186
+src/app/services/(genomics)/genome-alignment/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 7-9,13,18-19,21-34,37-38,43-46,48-50,52-56,62-64,66,68-73,75,77-78,80,94-97,100,128-141,146,148,152-158
+src/components/workspace/file-viewer/viewers/codemirror-loader.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-250
+src/app/services/(genomics)/variation-analysis/selected-libraries-section.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-63
+src/app/services/(genomics)/similar-genome-finder/genome-input-section.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-99
+src/app/services/(protein-tools)/msa-snp-analysis/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 6,56-58,106,109,118,120,134,143,161,210-212,214,221,224-234,236,238-242,246-256,292-303,485,488-493,600,605-610,625,699-701,878-881,948,966-969,1032-1034,1094,1104-1107,1234-1236
+src/contexts/workspace-dialog-context.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 47-53,56-59,61-63,73-79,92-94,98,109-111
+src/components/interactions/sigma/sigma-canvas.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3-16,23-29,31-37,81-84,120-125,130-131,137,141,144,148-151,155,158-161,180-182,187-193,237-245,247-248,258-265
+src/app/services/(metagenomics)/metagenomic-read-mapping/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 4-8,11,13,16,31,34-36,39-43,48-52,54-56,62
+src/components/ui/badge.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-3,5,13-20,27-28,42,49,52
+src/app/workspace/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-2,5-9
+src/app/services/(genomics)/variation-analysis/parameters-section.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-150
+src/app/services/(protein-tools)/gene-protein-tree/gene-protein-tree-parameters.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-217
+src/components/navbars/workspace-dropdown-content.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 7,12-16,68-98,100-116,119
+src/app/services/(genomics)/blast/database-selector.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-61
+src/hooks/services/workspace/use-workspace-filtered-items.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 18,20-26,28-30,32-37,39
+src/types/workspace.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 133-134
+src/app/services/(utilities)/fastq-utilities/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3-4,80,82-90,92-98,100-109,124,128,131,214-217,307
+src/app/services/(genomics)/primer-design/primer-output-section.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-50
+src/components/workspace/workspace-item-header.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 27,29,31,38,42,46,53-58,61-68,73-78
+src/app/(footer)/related-resources/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 54-55,68,87,97,106-107
+src/components/filterbar/filter-bar.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1,14-15,37-38,40,47-49,52-61,63,66-72,77-78,93-95,98-99,109-111,118-121,130-138,142-156,171,173,177-182,196-202,204,210
+src/components/services/fasta-textarea.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3-4,31,45-52,54-57,59-67,69,71-72,75,121
+src/app/all-term-search-results.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3-11,112-155,186-192,230-236,238-240,242-247,255-256,311-314,374-376,398,406-412,419,432-436,438-441,446-450,476,478-487,489,506,509-520
+src/app/services/(genomics)/blast/option-select.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-43
+src/app/services/(genomics)/genome-assembly/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,6,8-9,11,16,26-101,108,115-118,121,123-124,126-131,140,147-151,155,158-167,171-190,192-193,207,211,213,225,242,246-265,267-270,276,284,287
+src/hooks/services/workspace/use-workspace-selection.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,23-26,43-48,55,57-58,60-74,76,79
+src/app/services/(genomics)/genome-alignment/genome-alignment-sections.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-352
+src/app/services/(genomics)/primer-design/primer-advanced-section.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-211
+src/app/services/(viral-tools)/sars-cov2-genome-analysis/sars-genome-parameters.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-288
+src/components/workspace/file-viewer/viewers/use-molstar-plugin.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 6,52-53,135-139
+src/lib/auth/provider.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 12,30,75-77,107-109,113
+src/components/organisms/geo-distribution/us-states-layer.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 4,29,47,50-54,57,63-69,82
+src/app/services/(metagenomics)/metagenomic-read-mapping/metagenomic-read-mapping-cards.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-379
+src/components/shared/__tests__/data-table-rendering.test.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 4-5,10-12,42,44-46,60,62-64,68-70,82,85-90,104,110-112,123,129-131,142,145-147,160,196,210,225,227-232,291-296,322-327,354-359,384-389,395-398,420-428,447-449,454-458,462-464,479-484,490-492,495-498,512-514,516-519,526-530,534-536,551-556,586-588,592-594,598-600,621-623,630-632,652-654,657-659,663-665,687-689,696-698,704-709,722-724,727-729
+src/app/services/(utilities)/fastq-utilities/fastq-parameters.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-191
+src/components/workspace/workspace-directory-mode.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-54
+.github/workflows/react-doctor.yml
+  s_aacb44ad711837::t_d47ce8fd2a701c 39-41
+src/components/services/__tests__/list-data.test.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-5,13-15,19-21,36-40,46-48,75,80,97-100,110-113
+src/app/search/typesearch.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 4,9-12,15-36,128-131,152-156,205,208,214,221,237-294,334-335,338-353,355-356,361-374,382-384,407-412,414-418,433-435,475
+auspice/navbar.js
+  s_aacb44ad711837::t_d47ce8fd2a701c 37-41,59
+src/app/services/(genomics)/primer-design/use-primer-design-form.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-279
+src/components/services/genome-name-selector.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 9,39-40,42,107-111,113-115,117-122,124,132-135,144-149,177-179,183-186,194-196,207-209,219-221,235-237,249-251
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,89-98,149-150,154-155,206-210,212-213,215,217-218,220-227,232-239,243,247-254,260-268,270-273,275-276,278-279,281-289,292-300,304,306-314,320-326,330-342,350,368-376,387-394,447-449,481-485,512-515,532-535,558-561,564-567,601-603,616-619,626-628,647-649,663-666,673-675,715-717,725-727,732-735,786-788,790-792,820-822,824-826,841-843,871-874,887-890
+src/app/services/(genomics)/blast/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,6,8-13,15-18,20,25,27-30,32-33,36,38-39,41-50,52,54-60,62-64,66-70,73-76,78-80,85-89,91-92,95-97,99-101,104,109-124,128,130-131,138-147,153,160-180,186-189,200
+src/app/services/(metagenomics)/metagenomic-binning/metagenomic-binning-input-cards.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-262
+src/components/ui/navigation-menu.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-2,4-5,19,26,38,42,55,59-60,74-77,79,91,95,115,124,134-137,140,152,158,170
+src/app/services/(genomics)/blast/blast-parameters.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-182
+src/hooks/services/workspace/use-workspace-navigation.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 6-9,31-59,61-62,64-68
+src/app/(auth)/forgot-password/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 5,7-8,34,46-53,55,133-135,147,163
+src/app/services/(viral-tools)/viral-assembly/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,64,66-83,122-125,159-161,167-169,181-183,243-246,278-281,306-308,321-323,341
+src/components/shared/__tests__/data-table.test.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1,19-25,39-41,47-49,53
+src/components/detail-panel/info-panel.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 23,55-59,70-72,112-114,132-137,147,150-151,153-255,257-258,260-282,284,286-312,314-315,317-367,369-370,372-409,411-412,414-446,448-449,451-471,473-474,476-495,497-498,500-603,605-606,608-638,640-641,643-674,676-677,679-691,693-694,696-723,725-726,728-756,758-759,761-778,791,802-809,811-815,818-823,833,841-843,846,855,864-866
+src/hooks/services/use-service-runtime.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 103,110-112,114-116
+src/lib/taxon-view/curated-lists.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 62,73-76
+src/app/services/(protein-tools)/gene-protein-tree/use-gene-protein-tree.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-270
+src/app/(auth)/sign-up/use-signup-form.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-57
+src/app/services/(metagenomics)/metagenomic-binning/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 4-9,11-12,14,17,33,36-40,42,45-49,54-58,60-62,68
+src/components/ui/vertical-menu.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 19,21,34,39
+src/components/workspace/file-viewer/viewers/__tests__/codemirror-viewer.test.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 14-16,31,51,63,110-115,144,150-153,160-167
+src/hooks/use-table-keyboard-navigation.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,55-76,78-80,83-87,89-115,117-120,122-133
+src/components/ui/news-carousel.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1,10,17-19,25-27,33-35,41-43,49-51,57-60,72-75,78-85,101-103,118-119
+src/hooks/use-auth-styles.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 8-11,17-19
+src/components/navbars/desktop-navbar.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 22,27-28,33-36
+src/components/organisms/virus-families/virus-families-section.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 53-57
+src/components/shared/data-table.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1,17,19-23,43,52-229,268-271,278-320,327-329,338-341,343,345,347-349,352-355,358-360,366-375,411,413,415,417,421-424,426,428-431,433,447-449,452,461-471,484-486,491,507,517-520,527,536,540,542-544,562-563,565-566,571-580,584,597,608-609,615-617,645-646,649,664-666,668-671,687,693,699,706-707,710,720,731-734,736,738,744-747,749-753,762-765,767-771,776-780,782,784-786,788,790-792,794,796,798-806,808-833,835-865,867-868,870-896,905-906,909,913,930,946-947,952-954,956-959,961,963-981,983-1012,1014-1047,1052-1054,1071-1072,1076-1077,1085,1091-1094,1108-1111,1117-1118,1123-1136,1138,1141-1144,1152-1154,1156-1158,1161-1167,1171-1180,1207-1213,1215,1218,1220-1227,1239-1253,1258-1261,1280-1282,1286-1288,1302-1304,1308,1327-1329,1331-1333,1335-1338,1348-1350,1354,1399,1404,1426,1431-1433,1445,1450,1455-1465,1467-1483,1486-1558,1560-1567,1593-1594,1597-1598,1611-1619,1627,1629-1634,1645
+src/styles/themes.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 4-14
+src/app/workspace/shared/[[...path]]/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-2,5-12,14-15
+src/components/genome/__tests__/genome-detail-panel.test.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-4,18-20,54-56
+src/components/workspace/copy-to-dialog.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 25-28,49-51,68,77,81,120-122,132-140,146-148,158-160,165
+src/app/services/(genomics)/primer-design/page.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 6-12,15-17,30-35,44
+src/app/services/(genomics)/genome-assembly/assembly-sections.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-461
+src/components/ui/button-variants.ts
+  s_aacb44ad711837::t_d47ce8fd2a701c 1-38
+src/components/services/output-folder.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3-10,59-61,63-65,67-71,73-75,77,79-87,117,140-145
+src/components/jobs/jobs-date-filter.tsx
+  s_aacb44ad711837::t_d47ce8fd2a701c 3,77-78,107-144,208-210
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "7b32e0a5993cc9c6b98b3df6ab4c73d5bdb2f668",
+  "prompts": {},
+  "sessions": {
+    "s_aacb44ad711837": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe5030014ffe8rUCVd0noAcPF2",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

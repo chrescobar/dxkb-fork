@@ -42,7 +42,9 @@ function escapeSolrTerm(value: string): string {
 
 export const POST = auth.route(async (request: NextRequest, { token }) => {
   try {
-    const body = (await request.json().catch(() => ({}))) as { genome_ids?: unknown };
+    const body = (await request.json().catch(() => ({}))) as {
+      genome_ids?: unknown;
+    };
     const genomeIds: string[] = Array.isArray(body.genome_ids)
       ? (body.genome_ids as string[]).map((id: unknown) => String(id).trim())
       : [];
@@ -51,9 +53,10 @@ export const POST = auth.route(async (request: NextRequest, { token }) => {
       return NextResponse.json({ results: [] });
     }
 
-    const escapedIds = genomeIds
-      .filter((id) => id.length > 0)
-      .map((id) => `"${escapeSolrTerm(id)}"`);
+    const escapedIds = genomeIds.reduce<string[]>((ids, id) => {
+      if (id.length > 0) ids.push(`"${escapeSolrTerm(id)}"`);
+      return ids;
+    }, []);
     const q = `genome_id:(${escapedIds.join(" OR ")})`;
     const rowsParam = String(Math.min(maxRows, genomeIds.length));
 
@@ -84,10 +87,11 @@ export const POST = auth.route(async (request: NextRequest, { token }) => {
     const text = await response.text();
 
     if (contentType.includes("application/json")) {
-      const data = JSON.parse(text) as unknown[] | { items?: unknown[]; results?: unknown[] };
+      const data = JSON.parse(text) as
+        unknown[] | { items?: unknown[]; results?: unknown[] };
       const results = Array.isArray(data)
         ? data
-        : data.items ?? data.results ?? [];
+        : (data.items ?? data.results ?? []);
       return NextResponse.json({ results });
     }
 

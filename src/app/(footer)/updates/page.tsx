@@ -19,49 +19,54 @@ import { cn } from "@/lib/utils";
 const timelineData: TimelineItemType[] = [
   {
     id: 1,
-    title: 'Vercel was founded in SF, USA',
+    title: "Vercel was founded in SF, USA",
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    time: 'May, 2020',
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    time: "May, 2020",
   },
   {
     id: 2,
-    title: 'Shadcn First Commit',
+    title: "Shadcn First Commit",
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    time: 'January, 2023',
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    time: "January, 2023",
   },
   {
     id: 3,
-    title: 'Shadcn Timeline 1',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    time: 'November, 2024',
+    title: "Shadcn Timeline 1",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    time: "November, 2024",
   },
   {
     id: 4,
-    title: 'Shadcn Timeline 2',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    time: 'November, 2024',
+    title: "Shadcn Timeline 2",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    time: "November, 2024",
   },
   {
     id: 5,
-    title: 'Shadcn Timeline 3',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    time: 'November, 2024',
+    title: "Shadcn Timeline 3",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    time: "November, 2024",
   },
 
   {
     id: 6,
-    title: 'Shadcn Timeline 4',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    time: 'November, 2024',
+    title: "Shadcn Timeline 4",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    time: "November, 2024",
   },
 
   {
     id: 7,
-    title: 'Shadcn Timeline 5',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    time: 'November, 2024',
+    title: "Shadcn Timeline 5",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    time: "November, 2024",
   },
 ];
 
@@ -123,8 +128,19 @@ const Updates = () => {
   // Function to convert event date to Date object
   const getEventDate = (eventDate: { month: string; day: string }): Date => {
     const monthNum = {
-      'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
-      'June': 5, 'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+      Jan: 0,
+      Feb: 1,
+      Mar: 2,
+      Apr: 3,
+      May: 4,
+      Jun: 5,
+      June: 5,
+      Jul: 6,
+      Aug: 7,
+      Sep: 8,
+      Oct: 9,
+      Nov: 10,
+      Dec: 11,
     }[eventDate.month];
 
     if (monthNum === undefined) return new Date();
@@ -135,34 +151,55 @@ const Updates = () => {
   const isSelectedDateEvent = (eventDate: { month: string; day: string }) => {
     if (!date) return false;
     const monthNum = {
-      'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
-      'June': 5, 'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+      Jan: 0,
+      Feb: 1,
+      Mar: 2,
+      Apr: 3,
+      May: 4,
+      Jun: 5,
+      June: 5,
+      Jul: 6,
+      Aug: 7,
+      Sep: 8,
+      Oct: 9,
+      Nov: 10,
+      Dec: 11,
     }[eventDate.month];
 
-    return monthNum === date.getMonth() && parseInt(eventDate.day) === date.getDate();
+    return (
+      monthNum === date.getMonth() && parseInt(eventDate.day) === date.getDate()
+    );
   };
 
   // Create a map of dates that have events
-  const eventDates = React.useMemo(() => {
-    const dates = new Set<string>();
-    upcomingEvents.forEach((event) => {
-      // Parse the date string to ensure consistent format
-      const monthNum = {
-        'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
-        'June': 5, 'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
-      }[event.date.month];
+  const eventDates = new Set<string>();
+  upcomingEvents.forEach((event) => {
+    // Parse the date string to ensure consistent format
+    const monthNum = {
+      Jan: 0,
+      Feb: 1,
+      Mar: 2,
+      Apr: 3,
+      May: 4,
+      Jun: 5,
+      June: 5,
+      Jul: 6,
+      Aug: 7,
+      Sep: 8,
+      Oct: 9,
+      Nov: 10,
+      Dec: 11,
+    }[event.date.month];
 
-      if (monthNum !== undefined) {
-        const eventDate = new Date(2025, monthNum, parseInt(event.date.day));
-        dates.add(eventDate.toDateString());
-      }
-    });
-    return dates;
-  }, []);
+    if (monthNum !== undefined) {
+      const eventDate = new Date(2025, monthNum, parseInt(event.date.day));
+      eventDates.add(eventDate.toDateString());
+    }
+  });
 
   // Custom day content renderer
   const modifiers = {
-    hasEvent: (date: Date) => eventDates.has(date.toDateString())
+    hasEvent: (date: Date) => eventDates.has(date.toDateString()),
   };
 
   const modifiersStyles = {
@@ -173,7 +210,7 @@ const Updates = () => {
     hasEventSelected: {
       backgroundColor: "var(--color-primary)",
       color: "white",
-    }
+    },
   };
 
   // Debug log to check dates
@@ -209,24 +246,36 @@ const Updates = () => {
                   <button
                     type="button"
                     key={`${event.date.month}-${event.date.day}-${event.title}`}
-                    onClick={() => { setDate(getEventDate(event.date)); }}
+                    onClick={() => {
+                      setDate(getEventDate(event.date));
+                    }}
                     aria-pressed={isSelectedDateEvent(event.date)}
                     className={cn(
                       "flex w-full cursor-pointer items-start gap-4 border-t px-4 py-3 text-left transition-colors",
-                      isSelectedDateEvent(event.date) ? "bg-secondary/40" : "hover:bg-secondary/20"
+                      isSelectedDateEvent(event.date)
+                        ? "bg-secondary/40"
+                        : "hover:bg-secondary/20",
                     )}
                   >
-                    <span className={cn(
-                      "flex flex-col items-center rounded-lg px-2 py-1",
-                      isSelectedDateEvent(event.date) ? "bg-secondary" : "bg-secondary/40"
-                    )}>
-                      <span className="text-xs font-medium">{event.date.month}</span>
+                    <span
+                      className={cn(
+                        "flex flex-col items-center rounded-lg px-2 py-1",
+                        isSelectedDateEvent(event.date)
+                          ? "bg-secondary"
+                          : "bg-secondary/40",
+                      )}
+                    >
+                      <span className="text-xs font-medium">
+                        {event.date.month}
+                      </span>
                       <span className="text-lg leading-none font-bold">
                         {event.date.day}
                       </span>
                     </span>
                     <span>
-                      <span className="block leading-none font-medium">{event.title}</span>
+                      <span className="block leading-none font-medium">
+                        {event.title}
+                      </span>
                       <span className="block text-sm text-foreground">
                         {event.description}
                       </span>
@@ -239,15 +288,19 @@ const Updates = () => {
 
           {/* Timeline */}
           <div className="order-2 space-y-12 md:order-1">
-            <Timeline className='mt-8'>
+            <Timeline className="mt-8">
               {timelineData.map((item) => (
                 <TimelineItem key={item.id}>
                   <TimelineHeader>
-                    <TimelineTime className="bg-primary">{item.time}</TimelineTime>
+                    <TimelineTime className="bg-primary">
+                      {item.time}
+                    </TimelineTime>
                     <TimelineTitle>{item.title}</TimelineTitle>
                   </TimelineHeader>
                   {item.description && (
-                    <TimelineDescription>{item.description}</TimelineDescription>
+                    <TimelineDescription>
+                      {item.description}
+                    </TimelineDescription>
                   )}
                 </TimelineItem>
               ))}

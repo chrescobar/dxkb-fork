@@ -1,22 +1,34 @@
 "use client";
 
-import { useEffect, useRef, useState, type KeyboardEvent, type SyntheticEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type SyntheticEvent,
+} from "react";
 import { useCamera, useSigma } from "@react-sigma/core";
 import { Minus, Plus } from "lucide-react";
 
-import { InputGroup, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
+import {
+  InputGroup,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import { ratioToZoomPercent } from "./zoom-utils";
 
 const zoomFactor = 1.5;
 
-export function ratioToZoomPercent(ratio: number): number {
-  return Math.round(100 / ratio);
-}
-
 export function ZoomControl() {
   const sigma = useSigma();
-  const { goto, zoomIn, zoomOut } = useCamera({ factor: zoomFactor, duration: 150 });
+  const { goto, zoomIn, zoomOut } = useCamera({
+    factor: zoomFactor,
+    duration: 150,
+  });
   const camera = sigma.getCamera();
-  const [zoomPercent, setZoomPercent] = useState(() => ratioToZoomPercent(camera.ratio));
+  const [zoomPercent, setZoomPercent] = useState(() =>
+    ratioToZoomPercent(camera.ratio),
+  );
   const [inputValue, setInputValue] = useState(() => String(zoomPercent));
   const cancelBlurRef = useRef(false);
 
@@ -27,7 +39,9 @@ export function ZoomControl() {
       setInputValue(String(next));
     };
     camera.on("updated", update);
-    return () => { camera.off("updated", update); };
+    return () => {
+      camera.off("updated", update);
+    };
   }, [camera]);
 
   function commitZoom() {
@@ -67,13 +81,19 @@ export function ZoomControl() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="absolute right-3 bottom-3 z-10" aria-label="Graph zoom">
+    <form
+      onSubmit={handleSubmit}
+      className="absolute right-3 bottom-3 z-10"
+      aria-label="Graph zoom"
+    >
       <InputGroup className="grid h-9 w-36 grid-cols-[2rem_1fr_2rem] bg-card p-0.5 shadow-md">
         <InputGroupButton
           aria-label="Zoom out"
           size="icon-sm"
           className="size-8 justify-self-start rounded-md"
-          onClick={() => { zoomOut(); }}
+          onClick={() => {
+            zoomOut();
+          }}
         >
           <Minus />
         </InputGroupButton>
@@ -85,19 +105,28 @@ export function ZoomControl() {
             step={1}
             inputMode="numeric"
             value={inputValue}
-            onChange={(event) => { setInputValue(event.target.value); }}
+            onChange={(event) => {
+              setInputValue(event.target.value);
+            }}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             style={{ width: `${String(Math.max(inputValue.length, 1))}ch` }}
             className="h-8 flex-none [appearance:textfield] bg-transparent px-0 text-right tabular-nums [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           />
-          <span aria-hidden className="pointer-events-none text-sm text-muted-foreground">%</span>
+          <span
+            aria-hidden
+            className="pointer-events-none text-sm text-muted-foreground"
+          >
+            %
+          </span>
         </div>
         <InputGroupButton
           aria-label="Zoom in"
           size="icon-sm"
           className="size-8 justify-self-end rounded-md"
-          onClick={() => { zoomIn(); }}
+          onClick={() => {
+            zoomIn();
+          }}
         >
           <Plus />
         </InputGroupButton>

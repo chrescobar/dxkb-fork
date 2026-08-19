@@ -1,31 +1,6 @@
-vi.mock("@/types/services", () => ({
-  blastPrecomputedDatabases: [
-    { value: "bacteria-archaea", label: "Bacteria/Archaea" },
-    { value: "viral-reference", label: "Viral Reference" },
-    { value: "selGenome", label: "Genome List" },
-    { value: "selGroup", label: "Genome Group" },
-    { value: "selFeatureGroup", label: "Feature Group" },
-    { value: "selTaxon", label: "Taxon List" },
-    { value: "selFasta", label: "FASTA File" },
-  ],
-  blastDatabaseTypes: [
-    { value: "fna", label: "Genome sequences (fna)" },
-    { value: "ffn", label: "Genomic features (ffn)" },
-    { value: "frn", label: "RNA features (frn)" },
-    { value: "faa", label: "Protein features (faa)" },
-  ],
-  blastDatabaseTypeMap: {
-    blastn: { "bacteria-archaea": ["fna", "ffn", "frn"], "viral-reference": ["fna"] },
-    blastp: { "bacteria-archaea": ["faa"] },
-    blastx: { "bacteria-archaea": ["faa"] },
-    tblastn: { "bacteria-archaea": ["fna", "ffn"] },
-  },
-}));
-
-vi.mock("./blast-form-schema", () => ({}));
-
 import {
   getAvailableBlastDatabaseTypes,
+  getCompatibleBlastDatabaseType,
   getDefaultBlastDatabaseType,
   transformBlastParams,
   resolveDbSource,
@@ -35,61 +10,80 @@ import {
   createDatabaseSourceOverrides,
 } from "../blast-form-utils";
 
-describe("getAvailableBlastDatabaseTypes", () => {
-  it("returns filtered types for blastn + bacteria-archaea", () => {
-    const result = getAvailableBlastDatabaseTypes("blastn", "bacteria-archaea");
-    const values = result.map((t) => t.value);
-    expect(values).toEqual(["fna", "ffn", "frn"]);
+describe("BLAST database type compatibility", () => {
+  const databases = [
+    "bacteria-archaea",
+    "viral-reference",
+    "selGenome",
+    "selGroup",
+    "selFeatureGroup",
+    "selTaxon",
+    "selFasta",
+  ] as const;
+
+  it.each([
+    ["blastn", ["fna", "ffn"], ["fna", "ffn", "frn"], ["fna"]],
+    ["blastp", ["faa"], ["faa"], ["faa"]],
+    ["blastx", ["faa"], ["faa"], ["faa"]],
+    ["tblastn", ["fna", "ffn"], ["fna", "ffn", "frn"], ["fna"]],
+  ] as const)(
+    "defines every database combination for %s",
+    (program, precomputedTypes, selectedTypes, fastaTypes) => {
+      for (const database of databases) {
+        const expected =
+          database === "selFasta"
+            ? fastaTypes
+            : database === "bacteria-archaea" || database === "viral-reference"
+              ? precomputedTypes
+              : selectedTypes;
+        expect(
+          getAvailableBlastDatabaseTypes(program, database).map(
+            (type) => type.value,
+          ),
+          `${program}/${database}`,
+        ).toEqual(expected);
+        expect(getDefaultBlastDatabaseType(program, database)).toBe(
+          expected[0],
+        );
+      }
+    },
+  );
+
+  it("preserves every compatible non-default type", () => {
+    expect(getCompatibleBlastDatabaseType("ffn", "blastn", "selGenome")).toBe(
+      "ffn",
+    );
+    expect(getCompatibleBlastDatabaseType("frn", "blastn", "selGenome")).toBe(
+      "frn",
+    );
+    expect(
+      getCompatibleBlastDatabaseType("ffn", "tblastn", "viral-reference"),
+    ).toBe("ffn");
   });
 
-  it("returns filtered types for blastn + viral-reference", () => {
-    const result = getAvailableBlastDatabaseTypes("blastn", "viral-reference");
-    expect(result).toHaveLength(1);
-    expect(result[0]).toEqual(expect.objectContaining({ value: "fna" }));
+  it("normalizes every incompatible type to the configured default", () => {
+    expect(getCompatibleBlastDatabaseType("fna", "blastp", "selGenome")).toBe(
+      "faa",
+    );
+    expect(getCompatibleBlastDatabaseType("faa", "blastn", "selGenome")).toBe(
+      "fna",
+    );
+    expect(getCompatibleBlastDatabaseType("frn", "blastn", "selFasta")).toBe(
+      "fna",
+    );
   });
 
-  it("returns only faa for blastp + bacteria-archaea", () => {
-    const result = getAvailableBlastDatabaseTypes("blastp", "bacteria-archaea");
-    expect(result).toHaveLength(1);
-    expect(result[0]).toEqual(expect.objectContaining({ value: "faa" }));
-  });
-
-  it("returns fna and ffn for tblastn + bacteria-archaea", () => {
-    const result = getAvailableBlastDatabaseTypes("tblastn", "bacteria-archaea");
-    const values = result.map((t) => t.value);
-    expect(values).toEqual(["fna", "ffn"]);
-  });
-
-  it("returns all types for an unknown program/db combo", () => {
-    const result = getAvailableBlastDatabaseTypes("unknown", "unknown");
-    expect(result).toHaveLength(4);
-  });
-
-  it("returns all types when the program exists but db source does not", () => {
-    const result = getAvailableBlastDatabaseTypes("blastp", "viral-reference");
-    expect(result).toHaveLength(4);
-  });
-});
-
-describe("getDefaultBlastDatabaseType", () => {
-  it("returns the first available type for blastn + bacteria-archaea", () => {
-    expect(getDefaultBlastDatabaseType("blastn", "bacteria-archaea")).toBe("fna");
-  });
-
-  it("returns faa for blastp + bacteria-archaea", () => {
-    expect(getDefaultBlastDatabaseType("blastp", "bacteria-archaea")).toBe("faa");
-  });
-
-  it("returns fna for tblastn + bacteria-archaea", () => {
-    expect(getDefaultBlastDatabaseType("tblastn", "bacteria-archaea")).toBe("fna");
-  });
-
-  it("defaults to fna when no types are mapped", () => {
-    expect(getDefaultBlastDatabaseType("unknown", "unknown")).toBe("fna");
-  });
-
-  it("returns fna for blastn + viral-reference", () => {
-    expect(getDefaultBlastDatabaseType("blastn", "viral-reference")).toBe("fna");
+  it.each([
+    ["unknown", "selGenome"],
+    ["blastn", "unknown"],
+    ["unknown", "unknown"],
+  ])("throws for an unconfigured %s/%s combination", (program, database) => {
+    expect(() => getAvailableBlastDatabaseTypes(program, database)).toThrow(
+      `No BLAST database types configured for program "${program}" and database "${database}"`,
+    );
+    expect(() =>
+      getCompatibleBlastDatabaseType("fna", program, database),
+    ).toThrow();
   });
 });
 
@@ -108,19 +102,45 @@ describe("transformBlastParams", () => {
     input_fasta_data: ">seq\nACGT",
   };
 
+  it("throws instead of submitting an incompatible database type", () => {
+    expect(() =>
+      transformBlastParams({
+        ...baseData,
+        blast_program: "blastp",
+        db_type: "fna",
+      }),
+    ).toThrow(
+      'BLAST database type "fna" is incompatible with program "blastp" and database "bacteria-archaea"',
+    );
+  });
+
+  it("throws instead of submitting an unknown program or database", () => {
+    expect(() =>
+      transformBlastParams({ ...baseData, blast_program: "unknown" }),
+    ).toThrow("No BLAST database types configured");
+    expect(() =>
+      transformBlastParams({
+        ...baseData,
+        db_precomputed_database: "unknown",
+      }),
+    ).toThrow("No BLAST database types configured");
+  });
+
   it("maps all basic fields correctly", () => {
     const result = transformBlastParams(baseData);
-    expect(result).toEqual(expect.objectContaining({
-      input_type: "dna",
-      input_source: "fasta_data",
-      db_type: "fna",
-      db_source: "precomputed_database",
-      db_precomputed_database: "bacteria-archaea",
-      blast_program: "blastn",
-      output_file: "output.json",
-      output_path: "/workspace/user/",
-      blast_max_hits: 10,
-    }));
+    expect(result).toEqual(
+      expect.objectContaining({
+        input_type: "dna",
+        input_source: "fasta_data",
+        db_type: "fna",
+        db_source: "precomputed_database",
+        db_precomputed_database: "bacteria-archaea",
+        blast_program: "blastn",
+        output_file: "output.json",
+        output_path: "/workspace/user/",
+        blast_max_hits: 10,
+      }),
+    );
   });
 
   it("converts blast_evalue_cutoff to string", () => {
@@ -385,7 +405,10 @@ describe("createBlastFormValues", () => {
   });
 
   it("derives db_source from db_precomputed_database", () => {
-    const result = createBlastFormValues({}, { db_precomputed_database: "selGenome" });
+    const result = createBlastFormValues(
+      {},
+      { db_precomputed_database: "selGenome" },
+    );
     expect(result.db_source).toBe("genome_list");
   });
 
@@ -456,7 +479,10 @@ describe("createDatabaseSourceOverrides", () => {
   });
 
   it("preserves input fields passed as second argument", () => {
-    const preserved = { input_source: "fasta_data" as const, input_fasta_data: ">seq\nACGT" };
+    const preserved = {
+      input_source: "fasta_data" as const,
+      input_fasta_data: ">seq\nACGT",
+    };
     const result = createDatabaseSourceOverrides("bacteria-archaea", preserved);
 
     expect(result.input_source).toBe("fasta_data");

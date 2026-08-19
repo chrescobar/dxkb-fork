@@ -1,4 +1,10 @@
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -32,7 +38,8 @@ vi.mock("@/lib/auth/hooks", () => ({
   useAuth: () => mockAuth,
 }));
 
-import { CommandPalette, openCommandPalette } from "../command-palette";
+import { CommandPalette } from "../command-palette";
+import { openCommandPalette } from "../command-palette-events";
 
 function setAuth(authed: boolean, user?: { username: string; realm?: string }) {
   Object.assign(mockAuth, {
@@ -264,8 +271,7 @@ describe("CommandPalette", () => {
       expect(invalidateSpy).toHaveBeenCalledTimes(1);
 
       const call = invalidateSpy.mock.calls[0]?.[0] as
-        | { predicate?: (q: { queryKey: unknown[] }) => boolean }
-        | undefined;
+        { predicate?: (q: { queryKey: unknown[] }) => boolean } | undefined;
       expect(call?.predicate).toBeDefined();
       expect(call?.predicate?.({ queryKey: ["genome-meta"] })).toBe(true);
       expect(call?.predicate?.({ queryKey: ["genome-full"] })).toBe(true);

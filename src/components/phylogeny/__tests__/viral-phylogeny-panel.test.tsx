@@ -93,7 +93,7 @@ describe("ViralPhylogenyPanel", () => {
     expect(missing.tagName).toBe("SPAN");
   });
 
-  it("renders the first-party Auspice iframe without fetching XML", () => {
+  it("renders a same-origin Auspice iframe without fetching XML", () => {
     render(
       <ViralPhylogenyPanel taxonId={2955291} taxonName="Influenza A virus" />,
     );

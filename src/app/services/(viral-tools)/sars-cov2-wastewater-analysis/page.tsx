@@ -1,60 +1,25 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
+import { useServicePageState } from "../../use-service-page-state";
 import { useForm } from "@tanstack/react-form";
 import { useSelector } from "@tanstack/react-store";
-import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { ChevronRight, HelpCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { ServiceHeader } from "@/components/services/service-header";
-import { DialogInfoPopup } from "@/components/services/dialog-info-popup";
-import SraRunAccessionWithValidation from "@/components/services/sra-run-accession-with-validation";
-import SelectedItemsTable from "@/components/services/selected-items-table";
-import OutputFolder from "@/components/services/output-folder";
-import { RequiredFormCardTitle } from "@/components/forms/required-form-components";
-import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 import { JobParamsDialog } from "@/components/services/job-params-dialog";
 import { Spinner } from "@/components/ui/spinner";
 
 import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
-import {
-  sarsCov2WastewaterAnalysisInfo,
-  sarsCov2WastewaterAnalysisInputLib,
-  sarsCov2WastewaterAnalysisParameters,
-} from "@/lib/services/info/sars-cov2-wastewater-analysis";
+import { sarsCov2WastewaterAnalysisInfo } from "@/lib/services/info/sars-cov2-wastewater-analysis";
 
 import {
   sarsCov2WastewaterAnalysisFormSchema,
   defaultSarsCov2WastewaterAnalysisFormValues,
-  primerOptions,
   primerVersionOptions,
   defaultPrimerVersion,
-  recipeOptions,
+  type SarsCov2WastewaterAnalysisFormData,
   type SarsCov2WastewaterLibraryItem,
   type SrrLibItem,
 } from "@/lib/forms/(viral-tools)/sars-cov2-wastewater-analysis/sars-cov2-wastewater-analysis-form-schema";
@@ -73,37 +38,62 @@ import {
   buildBaseLibraryItem,
   useTanstackLibrarySelection,
 } from "@/lib/forms/tanstack-library-selection";
-import { getLibraryTypeLabel } from "@/lib/forms/shared-schemas";
-
-import type { WorkspaceObject } from "@/lib/services/workspace/types";
 import type { Library } from "@/types/services";
+import { WastewaterParameters } from "./wastewater-parameters";
+import { WastewaterLibrary } from "./wastewater-library";
+import { WastewaterSelectedLibraries } from "./wastewater-selected-libraries";
 
 const quickReference =
   "https://www.bv-brc.org/docs/quick_references/services/sars_cov_2_wastewater_analysis_service.html";
 const tutorial =
   "https://www.bv-brc.org/docs/tutorial/sars_cov_2_wastewater/sars_cov_2_wastewater.html";
 
-export default function SarsCov2WastewaterAnalysisPage() {
-  const form = useForm({
-    defaultValues:
-      defaultSarsCov2WastewaterAnalysisFormValues,
+function useWastewaterForm(
+  submit: (value: SarsCov2WastewaterAnalysisFormData) => Promise<void>,
+) {
+  return useForm({
+    defaultValues: defaultSarsCov2WastewaterAnalysisFormValues,
     validators: { onChange: sarsCov2WastewaterAnalysisFormSchema },
-    onSubmit: async ({ value }) => {
-      await runtime.submitFormData(value);
-    },
+    onSubmit: async ({ value }) => submit(value),
   });
+}
+export type WastewaterForm = ReturnType<typeof useWastewaterForm>;
+
+export default function SarsCov2WastewaterAnalysisPage() {
+  const submitRef = useRef<
+    (value: SarsCov2WastewaterAnalysisFormData) => Promise<void>
+  >(() => Promise.resolve());
+  const form = useWastewaterForm((value) => submitRef.current(value));
 
   const outputPath = useSelector(form.store, (s) => s.values.output_path);
   const canSubmit = useSelector(form.store, (s) => s.canSubmit);
 
-  const [pairedRead1, setPairedRead1] = useState<string | null>(null);
-  const [pairedRead2, setPairedRead2] = useState<string | null>(null);
-  const [singleRead, setSingleRead] = useState<string | null>(null);
-  const [currentSampleId, setCurrentSampleId] = useState("");
-  const [currentSampleDate, setCurrentSampleDate] = useState("");
+  const [pageState, setPageState] = useServicePageState({
+    pairedRead1: null as string | null,
+    pairedRead2: null as string | null,
+    singleRead: null as string | null,
+    currentSampleId: "",
+    currentSampleDate: "",
+    sraResetKey: 0,
+    isOutputNameValid: true,
+  });
+  const {
+    pairedRead1,
+    pairedRead2,
+    singleRead,
+    currentSampleId,
+    currentSampleDate,
+    sraResetKey,
+    isOutputNameValid,
+  } = pageState;
+  const setPairedRead1 = setPageState("pairedRead1");
+  const setPairedRead2 = setPageState("pairedRead2");
+  const setSingleRead = setPageState("singleRead");
+  const setCurrentSampleId = setPageState("currentSampleId");
+  const setCurrentSampleDate = setPageState("currentSampleDate");
+  const setSraResetKey = setPageState("sraResetKey");
+  const setIsOutputNameValid = setPageState("isOutputNameValid");
   const skipSraNormalization = useRef(false);
-  const [sraResetKey, setSraResetKey] = useState(0);
-  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
 
   const primers = useSelector(form.store, (s) => s.values.primers);
   const primerVersionOpts = primerVersionOptions[primers];
@@ -162,10 +152,7 @@ export default function SarsCov2WastewaterAnalysisPage() {
 
   useEffect(() => {
     const defaultVersion = defaultPrimerVersion[primers];
-    if (
-      defaultVersion &&
-      form.state.values.primer_version !== defaultVersion
-    ) {
+    if (defaultVersion && form.state.values.primer_version !== defaultVersion) {
       form.setFieldValue("primer_version", defaultVersion);
     }
   }, [primers, form]);
@@ -190,7 +177,9 @@ export default function SarsCov2WastewaterAnalysisPage() {
       read1: pairedRead1,
       read2: pairedRead2,
       buildLibrary: getPairedLibraryBuildFn(sampleId, sampleLevelDate),
-      onError: (msg) => { handleLibraryErrorUtil(msg, toast); },
+      onError: (msg) => {
+        handleLibraryErrorUtil(msg, toast);
+      },
       onAfterAdd: () => {
         setPairedRead1(null);
         setPairedRead2(null);
@@ -209,7 +198,9 @@ export default function SarsCov2WastewaterAnalysisPage() {
       read: singleRead,
       buildLibrary: getSingleLibraryBuildFn(sampleId, sampleLevelDate),
       duplicateMatcher: singleLibraryDuplicateMatcher,
-      onError: (msg) => { handleLibraryErrorUtil(msg, toast); },
+      onError: (msg) => {
+        handleLibraryErrorUtil(msg, toast);
+      },
       onAfterAdd: () => {
         setSingleRead(null);
         setCurrentSampleId("");
@@ -267,7 +258,30 @@ export default function SarsCov2WastewaterAnalysisPage() {
       },
     },
   });
+  useLayoutEffect(() => {
+    submitRef.current = (value) => runtime.submitFormData(value);
+  }, [runtime]);
   const { isSubmitting, jobParamsDialogProps } = runtime;
+  const page = {
+    form,
+    pairedRead1,
+    pairedRead2,
+    singleRead,
+    currentSampleId,
+    currentSampleDate,
+    sraResetKey,
+    selectedLibraries,
+    primerVersionOpts,
+    setPairedRead2,
+    setCurrentSampleId,
+    setCurrentSampleDate,
+    handlePairedRead1Select,
+    handleSingleReadSelect,
+    handlePairedLibraryAdd,
+    handleSingleLibraryAdd,
+    handleSetSelectedLibraries,
+    handleSraAccessionChange,
+  };
 
   return (
     <section>
@@ -281,316 +295,25 @@ export default function SarsCov2WastewaterAnalysisPage() {
       />
 
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          void form.handleSubmit();
-        }}
+        action={() => form.handleSubmit()}
         className="grid grid-cols-1 gap-6 md:grid-cols-12"
       >
-        {/* Input Library */}
         <div className="md:col-span-6">
-          <Card>
-            <CardHeader className="service-card-header">
-              <RequiredFormCardTitle className="service-card-title">
-                Input Library Selection
-                <DialogInfoPopup
-                  title={sarsCov2WastewaterAnalysisInputLib.title}
-                  description={sarsCov2WastewaterAnalysisInputLib.description}
-                  sections={sarsCov2WastewaterAnalysisInputLib.sections}
-                />
-              </RequiredFormCardTitle>
-              <CardDescription className="text-xs">
-                Send to selected libraries using the arrow buttons.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="service-card-content space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="service-card-label">
-                    Paired Read Library
-                  </Label>
-                  <div className="mx-4 h-px flex-1 bg-border" />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    aria-label="Add paired read library"
-                    onClick={handlePairedLibraryAdd}
-                    disabled={!pairedRead1 || !pairedRead2}
-                  >
-                    <ChevronRight size={16} />
-                  </Button>
-                </div>
-                <div className="space-y-3">
-                  <WorkspaceObjectSelector
-                    preset="reads"
-                    placeholder="Select READ FILE 1..."
-                    value={pairedRead1 ?? ""}
-                    onObjectSelect={(object: WorkspaceObject) =>
-                      { handlePairedRead1Select(object.path); }
-                    }
-                  />
-                  <WorkspaceObjectSelector
-                    preset="reads"
-                    placeholder="Select READ FILE 2..."
-                    value={pairedRead2 ?? ""}
-                    onObjectSelect={(object: WorkspaceObject) =>
-                      { setPairedRead2(object.path); }
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="service-card-label">
-                    Single Read Library
-                  </Label>
-                  <div className="mx-4 h-px flex-1 bg-border" />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    aria-label="Add single read library"
-                    onClick={handleSingleLibraryAdd}
-                    disabled={!singleRead}
-                  >
-                    <ChevronRight size={16} />
-                  </Button>
-                </div>
-                <WorkspaceObjectSelector
-                  preset="reads"
-                  placeholder="Select READ FILE..."
-                  value={singleRead ?? ""}
-                  onObjectSelect={(object: WorkspaceObject) =>
-                    { handleSingleReadSelect(object.path); }
-                  }
-                />
-              </div>
-
-              <SraRunAccessionWithValidation
-                key={sraResetKey}
-                title="SRA Run Accession"
-                placeholder="SRR..."
-                selectedLibraries={selectedLibraries}
-                setSelectedLibraries={handleSetSelectedLibraries}
-                allowDuplicates={false}
-                onChange={handleSraAccessionChange}
-              />
-
-              <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
-                <div className="flex-1 space-y-2">
-                  <Label className="service-card-label">Primers</Label>
-                  <form.Field name="primers">
-                    {(field) => (
-                      <FieldItem>
-                        <Select
-                          items={primerOptions}
-                          value={field.state.value}
-                          onValueChange={(v) => {
-                            if (v != null) field.handleChange(v);
-                          }}
-                        >
-                          <SelectTrigger className="service-card-select-trigger" aria-label="Primers">
-                            <SelectValue placeholder="Select primers" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              {primerOptions.map((primer) => (
-                                <SelectItem
-                                  key={primer.value}
-                                  value={primer.value}
-                                >
-                                  {primer.label}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-                </div>
-                <div className="w-full space-y-2 sm:w-32">
-                  <Label className="service-card-label">Version</Label>
-                  <form.Field name="primer_version">
-                    {(field) => (
-                      <FieldItem>
-                        <Select
-                          items={primerVersionOpts}
-                          value={field.state.value}
-                          onValueChange={(value) => {
-                            if (value != null) field.handleChange(value);
-                          }}
-                        >
-                          <SelectTrigger className="service-card-select-trigger" aria-label="Version">
-                            <SelectValue placeholder="Version" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              {primerVersionOpts.map((version) => (
-                                <SelectItem
-                                  key={version.value}
-                                  value={version.value}
-                                >
-                                  {version.label}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                        <FieldErrors field={field} />
-                      </FieldItem>
-                    )}
-                  </form.Field>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="service-card-label">Sample Identifier</Label>
-                <Input
-                  className="service-card-input"
-                  placeholder="SAMPLE ID"
-                  value={currentSampleId}
-                  onChange={(e) => { setCurrentSampleId(e.target.value); }}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label className="service-card-label">
-                  Sample Date (optional)
-                </Label>
-                <Input
-                  className="service-card-input"
-                  placeholder="MM/DD/YYYY"
-                  value={currentSampleDate}
-                  onChange={(e) => { setCurrentSampleDate(e.target.value); }}
-                />
-              </div>
-
-              <form.Field name="paired_end_libs">
-                {(field) => (
-                  <FieldItem>
-                    <FieldErrors field={field} />
-                  </FieldItem>
-                )}
-              </form.Field>
-            </CardContent>
-          </Card>
+          <WastewaterLibrary page={page} />
+        </div>
+        <div className="md:col-span-6">
+          <WastewaterSelectedLibraries
+            libraries={selectedLibraries}
+            onRemove={removeLibrary}
+          />
         </div>
 
-        {/* Selected Libraries */}
-        <div className="md:col-span-6">
-          <Card className="h-full">
-            <CardHeader className="service-card-header">
-              <CardTitle className="service-card-title">
-                Selected Libraries
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger aria-label="Help: place read files using arrow buttons">
-                      <HelpCircle className="service-card-tooltip-icon" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Place read files here using the arrow buttons</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Place read files here using the arrow buttons.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="service-card-content">
-              <SelectedItemsTable
-                items={selectedLibraries.map((lib) => ({
-                  id: lib.id,
-                  name: lib.name,
-                  type: getLibraryTypeLabel(lib.type),
-                }))}
-                onRemove={removeLibrary}
-                className="max-h-80 overflow-y-auto"
-              />
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Parameters */}
         <div className="md:col-span-12">
-          <Card>
-            <CardHeader className="service-card-header">
-              <RequiredFormCardTitle className="service-card-title">
-                Parameters
-                <DialogInfoPopup
-                  title={sarsCov2WastewaterAnalysisParameters.title}
-                  sections={sarsCov2WastewaterAnalysisParameters.sections}
-                />
-              </RequiredFormCardTitle>
-            </CardHeader>
-            <CardContent className="service-card-content space-y-4">
-              <div className="space-y-2">
-                <Label className="service-card-label">Strategy</Label>
-                <form.Field name="recipe">
-                  {(field) => (
-                    <FieldItem>
-                      <Select
-                        items={recipeOptions}
-                        value={field.state.value}
-                        onValueChange={(value) => {
-                          if (value != null) field.handleChange(value);
-                        }}
-                      >
-                        <SelectTrigger className="service-card-select-trigger" aria-label="Strategy">
-                          <SelectValue placeholder="Select strategy" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            {recipeOptions.map((recipe) => (
-                              <SelectItem
-                                key={recipe.value}
-                                value={recipe.value}
-                              >
-                                {recipe.label}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-              </div>
-
-              <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
-                <form.Field name="output_path">
-                  {(field) => (
-                    <FieldItem className="flex-1">
-                      <OutputFolder
-                        value={field.state.value}
-                        onChange={(value) => { field.handleChange(value); }}
-                      />
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-                <form.Field name="output_file">
-                  {(field) => (
-                    <FieldItem className="flex-1">
-                      <OutputFolder
-                        variant="name"
-                        value={field.state.value}
-                        onChange={(value) => { field.handleChange(value); }}
-                        outputFolderPath={outputPath}
-                        onValidationChange={setIsOutputNameValid}
-                      />
-                      <FieldErrors field={field} />
-                    </FieldItem>
-                  )}
-                </form.Field>
-              </div>
-            </CardContent>
-          </Card>
+          <WastewaterParameters
+            form={form}
+            outputPath={outputPath}
+            onValidationChange={setIsOutputNameValid}
+          />
         </div>
 
         {/* Form controls */}

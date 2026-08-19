@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -16,8 +16,11 @@ import {
 
 import { useAuth } from "@/lib/auth/hooks";
 import { encodeWorkspaceSegment } from "@/lib/services/workspace/path-utils";
-import { workspaceUsername } from "@/components/navbars/workspace-dropdown-content";
-import { serviceItems, type NavSection } from "@/components/navbars/navbar-links";
+import { workspaceUsername } from "@/lib/services/workspace/path-utils";
+import {
+  serviceItems,
+  type NavSection,
+} from "@/components/navbars/navbar-links";
 import {
   Command,
   CommandDialog,
@@ -32,18 +35,9 @@ import {
   CommandShortcutChip,
 } from "@/components/ui/command";
 
-const COMMAND_PALETTE_OPEN_EVENT = "dxkb:open-command-palette";
-const SEARCH_ITEM_VALUE = "__dxkb-command-search__";
+import { COMMAND_PALETTE_OPEN_EVENT } from "./command-palette-events";
 
-/**
- * Imperatively open the global command palette. Used by visible trigger
- * buttons (mobile / a11y); the keyboard shortcut handler lives inside the
- * mounted `<CommandPalette>` itself.
- */
-export function openCommandPalette() {
-  if (typeof window === "undefined") return;
-  window.dispatchEvent(new CustomEvent(COMMAND_PALETTE_OPEN_EVENT));
-}
+const SEARCH_ITEM_VALUE = "__dxkb-command-search__";
 
 export function CommandPalette() {
   const router = useRouter();
@@ -55,10 +49,13 @@ export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
 
-  const handleOpenChange = useCallback((next: boolean) => {
+  const handleOpenChange = (next: boolean) => {
     setOpen(next);
     if (!next) setInputValue("");
-  }, []);
+  };
+  const openPalette = useEffectEvent(() => {
+    handleOpenChange(true);
+  });
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -75,7 +72,9 @@ export function CommandPalette() {
       }
     };
 
-    const onOpen = () => { handleOpenChange(true); };
+    const onOpen = () => {
+      openPalette();
+    };
 
     document.addEventListener("keydown", onKeyDown);
     window.addEventListener(COMMAND_PALETTE_OPEN_EVENT, onOpen);
@@ -83,36 +82,28 @@ export function CommandPalette() {
       document.removeEventListener("keydown", onKeyDown);
       window.removeEventListener(COMMAND_PALETTE_OPEN_EVENT, onOpen);
     };
-  }, [handleOpenChange]);
+  }, []);
 
-  const runCommand = useCallback(
-    (action: () => void) => {
-      handleOpenChange(false);
-      action();
-    },
-    [handleOpenChange],
-  );
+  const runCommand = (action: () => void) => {
+    handleOpenChange(false);
+    action();
+  };
 
-  const navigate = useCallback(
-    (href: string, target?: "_self" | "_blank") => {
-      runCommand(() => {
-        if (target === "_blank") {
-          window.open(href, "_blank", "noopener,noreferrer");
-        } else {
-          router.push(href);
-        }
-      });
-    },
-    [router, runCommand],
-  );
+  const navigate = (href: string, target?: "_self" | "_blank") => {
+    runCommand(() => {
+      if (target === "_blank") {
+        window.open(href, "_blank", "noopener,noreferrer");
+      } else {
+        router.push(href);
+      }
+    });
+  };
 
-  const runSearch = useCallback(() => {
+  const runSearch = () => {
     const trimmed = inputValue.trim();
     if (!trimmed) return;
     runCommand(() => {
-      router.push(
-        `/search?type=everything&q=${encodeURIComponent(trimmed)}`,
-      );
+      router.push(`/search?type=everything&q=${encodeURIComponent(trimmed)}`);
       void queryClient.invalidateQueries({
         predicate: (query) => {
           const key = query.queryKey[0];
@@ -120,19 +111,20 @@ export function CommandPalette() {
         },
       });
     });
-  }, [inputValue, queryClient, router, runCommand]);
+  };
 
-  const handleSignOut = useCallback(() => {
+  const handleSignOut = () => {
     runCommand(() => {
-      void (async () => {
-        try {
-          await signOut();
-        } finally {
+      void signOut().then(
+        () => {
           router.push("/");
-        }
-      })();
+        },
+        () => {
+          router.push("/");
+        },
+      );
     });
-  }, [router, runCommand, signOut]);
+  };
 
   return (
     <CommandDialog
@@ -175,7 +167,9 @@ export function CommandPalette() {
             <CommandItem
               value="home"
               description="Global dashboard and situational overview"
-              onSelect={() => { navigate("/"); }}
+              onSelect={() => {
+                navigate("/");
+              }}
             >
               <Home />
               <span>Home</span>
@@ -187,9 +181,9 @@ export function CommandPalette() {
                   <CommandItem
                     value="workspace"
                     description="Your files and saved analyses"
-                    onSelect={() =>
-                      { navigate(`/workspace/${encodedUsername}/home`); }
-                    }
+                    onSelect={() => {
+                      navigate(`/workspace/${encodedUsername}/home`);
+                    }}
                   >
                     <Folder />
                     <span>Workspace</span>
@@ -198,7 +192,9 @@ export function CommandPalette() {
                 <CommandItem
                   value="jobs"
                   description="Monitor running and completed jobs"
-                  onSelect={() => { navigate("/jobs"); }}
+                  onSelect={() => {
+                    navigate("/jobs");
+                  }}
                 >
                   <Briefcase />
                   <span>Jobs</span>
@@ -206,7 +202,9 @@ export function CommandPalette() {
                 <CommandItem
                   value="settings"
                   description="Account, preferences, and integrations"
-                  onSelect={() => { navigate("/settings"); }}
+                  onSelect={() => {
+                    navigate("/settings");
+                  }}
                 >
                   <Settings />
                   <span>Settings</span>
@@ -225,7 +223,9 @@ export function CommandPalette() {
                 <CommandItem
                   value="sign in"
                   description="Access your workspace and tools"
-                  onSelect={() => { navigate("/sign-in"); }}
+                  onSelect={() => {
+                    navigate("/sign-in");
+                  }}
                 >
                   <LogIn />
                   <span>Sign in</span>
@@ -233,7 +233,9 @@ export function CommandPalette() {
                 <CommandItem
                   value="sign up"
                   description="Create a new BV-BRC account"
-                  onSelect={() => { navigate("/sign-up"); }}
+                  onSelect={() => {
+                    navigate("/sign-up");
+                  }}
                 >
                   <UserPlus />
                   <span>Sign up</span>
@@ -242,13 +244,17 @@ export function CommandPalette() {
             )}
           </CommandGroup>
 
-          {(Object.entries(serviceItems) as unknown as [string, NavSection][]).map(([key, section]) => (
+          {(
+            Object.entries(serviceItems) as unknown as [string, NavSection][]
+          ).map(([key, section]) => (
             <CommandGroup key={key} heading={section.title}>
               {section.items.map((item) => (
                 <CommandItem
                   key={item.href}
                   value={`${section.title} ${item.title}`}
-                  onSelect={() => { navigate(item.href, item.target); }}
+                  onSelect={() => {
+                    navigate(item.href, item.target);
+                  }}
                 >
                   <span>{item.title}</span>
                 </CommandItem>

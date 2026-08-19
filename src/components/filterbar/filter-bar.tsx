@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useEffectEvent, useState, useRef } from "react";
 import { buildRql } from "./filter-utils";
 import { KeywordSearch } from "./keyword-search";
 import { SelectedFilters } from "./selected-filters";
@@ -11,8 +11,8 @@ interface ColumnField {
   label: string;
   visible: boolean;
   facet?: boolean;
-  facet_hidden?: boolean; 
-};
+  facet_hidden?: boolean;
+}
 
 interface FilterBarProps {
   facetFields: ColumnField[];
@@ -34,50 +34,66 @@ export function FilterBar({
   keywordPlaceholder,
 }: FilterBarProps) {
   const [internalKeywords, setInternalKeywords] = useState<string[]>([]);
-  const keywords = useMemo(
-    () => keywordValue === undefined
+  const keywords =
+    keywordValue === undefined
       ? internalKeywords
-      : keywordValue.split(" ").filter(Boolean),
-    [internalKeywords, keywordValue],
-  );
+      : keywordValue.split(" ").filter(Boolean);
   const setKeywords = (nextKeywords: string[]) => {
     if (keywordValue === undefined) setInternalKeywords(nextKeywords);
+    else locallyRequestedKeywords.current = nextKeywords.join(" ");
     onKeywordChange?.(nextKeywords.join(" "));
   };
   const [selected, setSelected] = useState<SelectedFilter[]>([]);
   const [showFacets, setShowFacets] = useState(false);
-  const [localFacetFields, setLocalFacetFields] = useState<ColumnField[]>(() => facetFields);
+  const [localFacetFields, setLocalFacetFields] = useState<ColumnField[]>(
+    () => facetFields,
+  );
   const [facetMenuOpen, setFacetMenuOpen] = useState(false);
   const facetMenuRef = useRef<HTMLDivElement | null>(null);
+  const locallyRequestedKeywords = useRef<string | null>(null);
+  const syncExternalKeywords = useEffectEvent((value: string) => {
+    if (locallyRequestedKeywords.current === value) {
+      locallyRequestedKeywords.current = null;
+      return;
+    }
+    onFilterChange(
+      buildRql({ selected, keywords: value.split(" ").filter(Boolean) }),
+    );
+  });
+
+  useEffect(() => {
+    if (keywordValue !== undefined) syncExternalKeywords(keywordValue);
+  }, [keywordValue]);
+
+  const updateFilters = (
+    nextSelected: SelectedFilter[],
+    nextKeywords: string[],
+  ) => {
+    setSelected(nextSelected);
+    setKeywords(nextKeywords);
+    onFilterChange(
+      buildRql({ selected: nextSelected, keywords: nextKeywords }),
+    );
+  };
   const clearAll = () => {
-    setSelected([]);
-    setKeywords([]);
+    updateFilters([], []);
   };
 
-  const activeFacetFields = localFacetFields.filter(
-    (f) => f.facet && !f.facet_hidden
-  );
+  const activeFacetFields: ColumnField[] = [];
+  const configurableFacetFields: ColumnField[] = [];
+  for (const field of localFacetFields) {
+    if (!field.facet) continue;
+    configurableFacetFields.push(field);
+    if (!field.facet_hidden) activeFacetFields.push(field);
+  }
 
   const toggleFacetVisibility = (id: string) => {
     setLocalFacetFields((prev) =>
       prev.map((f) =>
-        f.id === id ? { ...f, facet_hidden: !f.facet_hidden } : f
-      )
+        f.id === id ? { ...f, facet_hidden: !f.facet_hidden } : f,
+      ),
     );
   };
-
-  // Parent passes onFilterChange inline (new ref every render); keep it in a
-  // ref so the effect only fires on filter-state changes, not on every render.
-  const onFilterChangeRef = useRef(onFilterChange);
-  useEffect(() => {
-    onFilterChangeRef.current = onFilterChange;
-  });
-
-  // emit filter upward
-  useEffect(() => {
-    const rql = buildRql({ selected, keywords });
-    onFilterChangeRef.current(rql);
-  }, [selected, keywords]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -90,66 +106,70 @@ export function FilterBar({
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => { document.removeEventListener("mousedown", handleClickOutside); };
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
-  const facetQuery = useMemo(() => {
-    const filterRql = buildRql({ selected, keywords });
-    return [query, filterRql].filter(Boolean).join("&");
-  }, [query, selected, keywords]);
+  const filterRql = buildRql({ selected, keywords });
+  const facetQuery = [query, filterRql].filter(Boolean).join("&");
 
   return (
     <div className="mt-0 mb-2 flex flex-col gap-1 p-1 text-sm">
-      
       {/* TOP ROW */}
       <div className="flex items-start justify-between gap-2">
-        
         {/* LEFT SIDE */}
         <div className="flex flex-1 flex-col gap-1">
           <KeywordSearch
             value={keywords.join(" ")}
-            onChange={(val) => { setKeywords(val.split(" ").filter(Boolean)); }}
+            onChange={(val) => {
+              updateFilters(selected, val.split(" ").filter(Boolean));
+            }}
             placeholder={keywordPlaceholder}
           />
 
           <SelectedFilters
             selected={selected}
             onRemove={(idx) => {
-              setSelected((prev) => prev.filter((_, i) => i !== idx));
+              updateFilters(
+                selected.filter((_, index) => index !== idx),
+                keywords,
+              );
             }}
           />
         </div>
 
         <div className="flex items-center gap-2">
-
           {/* FACET DROPDOWN */}
           {showFacets && (
             <div className="relative" ref={facetMenuRef}>
-                  <Button
-                    variant="outline"
-                    onClick={() => { setFacetMenuOpen((prev) => !prev); }}
-                    className="rounded border border-gray-400 px-2 py-1 text-xs hover:bg-gray-700"
-                  >
-                    Facets ⚙
-                  </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setFacetMenuOpen((prev) => !prev);
+                }}
+                className="rounded border border-gray-400 px-2 py-1 text-xs hover:bg-gray-700"
+              >
+                Facets ⚙
+              </Button>
 
               {facetMenuOpen && (
                 <div className="absolute right-0 z-9999 mt-1 max-h-64 w-56 overflow-y-auto rounded border border-gray-600 bg-gray-800 shadow-lg">
-                  {localFacetFields
-                    .filter((f) => f.facet)
-                    .map((f) => (
-                      <label
-                        key={f.id}
-                        className="flex cursor-pointer items-center gap-2 px-2 py-1 text-xs hover:bg-gray-700"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={!f.facet_hidden}
-                          onChange={() => { toggleFacetVisibility(f.id); }}
-                        />
-                        {f.label}
-                      </label>
-                    ))}
+                  {configurableFacetFields.map((f) => (
+                    <label
+                      key={f.id}
+                      className="flex cursor-pointer items-center gap-2 px-2 py-1 text-xs hover:bg-gray-700"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={!f.facet_hidden}
+                        onChange={() => {
+                          toggleFacetVisibility(f.id);
+                        }}
+                      />
+                      {f.label}
+                    </label>
+                  ))}
                 </div>
               )}
             </div>
@@ -164,21 +184,21 @@ export function FilterBar({
               selected.length === 0 && keywords.length === 0
                 ? "cursor-not-allowed border-gray-600 text-gray-500"
                 : "border-red-400 text-red-300 hover:bg-red-900"
-            }`}          
+            }`}
           >
-          Clear All Filters
+            Clear All Filters
           </Button>
 
-
           {/* SHOW/HIDE FILTERS */}
-            <Button
-              variant="outline"
-              onClick={() => { setShowFacets((prev) => !prev); }}
-              className="rounded border border-gray-400 px-2 py-1 text-xs whitespace-nowrap hover:bg-gray-700"
+          <Button
+            variant="outline"
+            onClick={() => {
+              setShowFacets((prev) => !prev);
+            }}
+            className="rounded border border-gray-400 px-2 py-1 text-xs whitespace-nowrap hover:bg-gray-700"
           >
             {showFacets ? "Hide Filters" : "Show Filters"}
           </Button>
-
         </div>
       </div>
 
@@ -189,18 +209,15 @@ export function FilterBar({
           resource={resource}
           query={facetQuery}
           onSelect={(field, value) => {
-            setSelected((prev) => {
-              const exists = prev.some(
-                f => f.field === field && f.value === value
+            const exists = selected.some(
+              (filter) => filter.field === field && filter.value === value,
+            );
+            if (!exists) {
+              updateFilters(
+                [...selected, { field, value, op: "eq" as const }],
+                keywords,
               );
-
-              if (exists) return prev;
-
-              return [
-                ...prev,
-                { field, value, op: "eq" as const },
-              ];
-            });
+            }
           }}
         />
       )}

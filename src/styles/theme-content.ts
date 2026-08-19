@@ -1,5 +1,3 @@
-import { themeBases } from "@/styles/themes";
-
 // Define theme-to-folder mapping for content
 const themeContentMapping: Record<string, string> = {
   zinc: "generic",
@@ -60,8 +58,8 @@ const themeContent: Partial<Record<string, Record<ContentType, string>>> = {
  * Get the content folder for a given theme
  */
 export function getContentFolder(theme: string): string {
-  const themeBase = themeBases.find((base) => theme.includes(base));
-  return themeContentMapping[themeBase || "dxkb"] || "dxkb";
+  const themeBase = theme.split("-", 1)[0] ?? "dxkb";
+  return themeContentMapping[themeBase] ?? "dxkb";
 }
 
 /**
@@ -72,33 +70,9 @@ export function getThemeContent(
   contentType: ContentType,
 ): string {
   const folder = getContentFolder(theme);
-  return themeContent[folder]?.[contentType] ?? themeContent.dxkb?.[contentType] ?? "";
-}
-
-/**
- * Get all content for a theme
- */
-export function getAllThemeContent(theme: string): Record<ContentType, string> {
-  const folder = getContentFolder(theme);
-  return (themeContent[folder] ?? themeContent.dxkb) as Record<ContentType, string>;
-}
-
-/**
- * Add a new theme and its content mapping
- */
-export function addThemeContentMapping(
-  themeBase: string,
-  contentFolder: string,
-): void {
-  themeContentMapping[themeBase] = contentFolder;
-}
-
-/**
- * Add custom content for a theme folder
- */
-export function addThemeContent(
-  folder: string,
-  content: Record<ContentType, string>,
-): void {
-  themeContent[folder] = content;
+  return (
+    themeContent[folder]?.[contentType] ??
+    themeContent.dxkb?.[contentType] ??
+    ""
+  );
 }

@@ -40,7 +40,9 @@ describe("genome service", () => {
         ),
       );
 
-      await expect(fetchGenomeSuggestions("fail")).rejects.toThrow("Server error");
+      await expect(fetchGenomeSuggestions("fail")).rejects.toThrow(
+        "Server error",
+      );
     });
 
     it("returns empty array on AbortError", async () => {
@@ -51,7 +53,6 @@ describe("genome service", () => {
       const result = await fetchGenomeSuggestions("aborted");
 
       expect(result).toEqual([]);
-
     });
   });
 
@@ -161,16 +162,13 @@ describe("genome service", () => {
       const groupData = JSON.stringify({
         id_list: { genome_id: ["g1", "g2", "g3"] },
       });
-      let capturedBody: { method?: string; params?: [{ objects?: string[] }] } = {};
+      let capturedBody: { method?: string; params?: [{ objects?: string[] }] } =
+        {};
       server.use(
         http.post("/api/services/workspace", async ({ request }) => {
           capturedBody = (await request.json()) as typeof capturedBody;
           return HttpResponse.json({
-            result: [
-              [
-                ["metadata-placeholder", groupData],
-              ],
-            ],
+            result: [[["metadata-placeholder", groupData]]],
           });
         }),
       );
@@ -190,11 +188,7 @@ describe("genome service", () => {
       server.use(
         http.post("/api/services/workspace", () =>
           HttpResponse.json({
-            result: [
-              [
-                ["metadata-placeholder", base64Data],
-              ],
-            ],
+            result: [[["metadata-placeholder", base64Data]]],
           }),
         ),
       );
@@ -208,11 +202,7 @@ describe("genome service", () => {
       server.use(
         http.post("/api/services/workspace", () =>
           HttpResponse.json({
-            result: [
-              [
-                ["metadata", { id_list: { genome_id: ["obj-g1"] } }],
-              ],
-            ],
+            result: [[["metadata", { id_list: { genome_id: ["obj-g1"] } }]]],
           }),
         ),
       );
@@ -227,11 +217,7 @@ describe("genome service", () => {
       server.use(
         http.post("/api/services/workspace", () =>
           HttpResponse.json({
-            result: [
-              [
-                ["metadata", groupData],
-              ],
-            ],
+            result: [[["metadata", groupData]]],
           }),
         ),
       );
@@ -246,11 +232,7 @@ describe("genome service", () => {
       server.use(
         http.post("/api/services/workspace", () =>
           HttpResponse.json({
-            result: [
-              [
-                ["metadata", groupData],
-              ],
-            ],
+            result: [[["metadata", groupData]]],
           }),
         ),
       );
@@ -267,11 +249,7 @@ describe("genome service", () => {
       server.use(
         http.post("/api/services/workspace", () =>
           HttpResponse.json({
-            result: [
-              [
-                ["metadata", groupData],
-              ],
-            ],
+            result: [[["metadata", groupData]]],
           }),
         ),
       );
@@ -288,7 +266,9 @@ describe("genome service", () => {
         ),
       );
 
-      await expect(getGenomeIdsFromGroup("/user/fail")).rejects.toThrow("Server error");
+      await expect(getGenomeIdsFromGroup("/user/fail")).rejects.toThrow(
+        "Server error",
+      );
     });
 
     it("throws when workspace response entry is null", async () => {
@@ -311,7 +291,6 @@ describe("genome service", () => {
       const result = await getGenomeIdsFromGroup("/user/aborted");
 
       expect(result).toEqual([]);
-
     });
 
     it("handles container-as-object with metadata/data format", async () => {
@@ -320,7 +299,10 @@ describe("genome service", () => {
           HttpResponse.json({
             result: [
               [
-                { metadata: "meta-info", data: JSON.stringify({ id_list: { genome_id: ["md-g1"] } }) },
+                {
+                  metadata: "meta-info",
+                  data: JSON.stringify({ id_list: { genome_id: ["md-g1"] } }),
+                },
               ],
             ],
           }),
@@ -339,7 +321,10 @@ describe("genome service", () => {
             result: [
               {
                 "/user/group": [
-                  ["metadata", JSON.stringify({ id_list: { genome_id: ["fv-g1"] } })],
+                  [
+                    "metadata",
+                    JSON.stringify({ id_list: { genome_id: ["fv-g1"] } }),
+                  ],
                 ],
               },
             ],
@@ -421,7 +406,9 @@ describe("genome service", () => {
 
       const result = await fetchGenomeGroupMembers("/user/b64-group");
 
-      expect(result).toEqual([{ genome_id: "b64-g1", genome_name: "B64 Genome" }]);
+      expect(result).toEqual([
+        { genome_id: "b64-g1", genome_name: "B64 Genome" },
+      ]);
     });
 
     it("throws when workspace response entry is null", async () => {
@@ -444,7 +431,6 @@ describe("genome service", () => {
       const result = await fetchGenomeGroupMembers("/user/aborted");
 
       expect(result).toEqual([]);
-
     });
   });
 
@@ -466,7 +452,12 @@ describe("genome service", () => {
 
     it("detects kingdom_error for non-Viruses superkingdom", async () => {
       const mockResults = [
-        { genome_id: "g1", superkingdom: "Bacteria", contigs: 1, genome_length: 1000 },
+        {
+          genome_id: "g1",
+          superkingdom: "Bacteria",
+          contigs: 1,
+          genome_length: 1000,
+        },
       ];
       server.use(
         http.post("/api/services/genome/validate-viral", () =>
@@ -483,7 +474,12 @@ describe("genome service", () => {
 
     it("detects contigs_error for multi-contig genomes", async () => {
       const mockResults = [
-        { genome_id: "g1", superkingdom: "Viruses", contigs: 5, genome_length: 1000 },
+        {
+          genome_id: "g1",
+          superkingdom: "Viruses",
+          contigs: 5,
+          genome_length: 1000,
+        },
       ];
       server.use(
         http.post("/api/services/genome/validate-viral", () =>
@@ -494,13 +490,20 @@ describe("genome service", () => {
       const result = await validateViralGenomes(["g1"]);
 
       expect(result.allValid).toBe(false);
-      expect(result.errors.contigs_error).toContain("only 1 contig is permitted");
+      expect(result.errors.contigs_error).toContain(
+        "only 1 contig is permitted",
+      );
       expect(result.errors.contigs_error).toContain("g1");
     });
 
     it("detects genomelength_error for genomes exceeding max length", async () => {
       const mockResults = [
-        { genome_id: "g1", superkingdom: "Viruses", contigs: 1, genome_length: 500000 },
+        {
+          genome_id: "g1",
+          superkingdom: "Viruses",
+          contigs: 1,
+          genome_length: 500000,
+        },
       ];
       server.use(
         http.post("/api/services/genome/validate-viral", () =>
@@ -511,8 +514,69 @@ describe("genome service", () => {
       const result = await validateViralGenomes(["g1"]);
 
       expect(result.allValid).toBe(false);
-      expect(result.errors.genomelength_error).toContain("exceeds maximum length");
+      expect(result.errors.genomelength_error).toContain(
+        "exceeds maximum length",
+      );
       expect(result.errors.genomelength_error).toContain("g1");
+    });
+
+    it("rejects incomplete validation results", async () => {
+      server.use(
+        http.post("/api/services/genome/validate-viral", () =>
+          HttpResponse.json({
+            results: [
+              {
+                genome_id: "g1",
+                superkingdom: "Viruses",
+                contigs: 1,
+                genome_length: 1000,
+              },
+            ],
+          }),
+        ),
+      );
+
+      const result = await validateViralGenomes(["g1", "g2"]);
+
+      expect(result.allValid).toBe(false);
+      expect(result.errors.missing_genomes_error).toContain("g2");
+    });
+
+    it("rejects missing contig or length metadata", async () => {
+      server.use(
+        http.post("/api/services/genome/validate-viral", () =>
+          HttpResponse.json({
+            results: [{ genome_id: "g1", superkingdom: "Viruses" }],
+          }),
+        ),
+      );
+
+      const result = await validateViralGenomes(["g1"]);
+
+      expect(result.allValid).toBe(false);
+      expect(result.errors.missing_metadata_error).toContain("g1");
+    });
+
+    it("rejects null contig and length metadata", async () => {
+      server.use(
+        http.post("/api/services/genome/validate-viral", () =>
+          HttpResponse.json({
+            results: [
+              {
+                genome_id: "g1",
+                superkingdom: "Viruses",
+                contigs: null,
+                genome_length: null,
+              },
+            ],
+          }),
+        ),
+      );
+
+      const result = await validateViralGenomes(["g1"]);
+
+      expect(result.allValid).toBe(false);
+      expect(result.errors.missing_metadata_error).toContain("g1");
     });
 
     it("detects missing_superkingdom when superkingdom is absent", async () => {
@@ -528,7 +592,9 @@ describe("genome service", () => {
       const result = await validateViralGenomes(["g1"]);
 
       expect(result.allValid).toBe(false);
-      expect(result.errors.missing_superkingdom).toContain("Missing superkingdom");
+      expect(result.errors.missing_superkingdom).toContain(
+        "Missing superkingdom",
+      );
       expect(result.errors.missing_superkingdom).toContain("g1");
     });
   });

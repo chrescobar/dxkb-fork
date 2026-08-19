@@ -1,13 +1,15 @@
 import * as React from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { forwardRef, useCallback, useEffect, useState, useRef } from "react";
+import { forwardRef, useEffect, useEffectEvent, useState, useRef } from "react";
 import { NumericFormat, NumericFormatProps } from "react-number-format";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export interface NumberInputProps
-  extends Omit<NumericFormatProps, "value" | "onValueChange"> {
+export interface NumberInputProps extends Omit<
+  NumericFormatProps,
+  "value" | "onValueChange"
+> {
   stepper?: number;
   thousandSeparator?: string;
   placeholder?: string;
@@ -44,93 +46,102 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
     const [value, setValue] = useState<number | undefined>(
       controlledValue ?? defaultValue,
     );
+    const inputRef = useRef<HTMLInputElement>(null);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const holdTimeRef = useRef(0);
     const lastChangeTimeRef = useRef(0);
 
-    const handleIncrement = useCallback(() => {
+    const setInputRef = (node: HTMLInputElement | null) => {
+      inputRef.current = node;
+      if (typeof ref === "function") {
+        ref(node);
+      } else if (ref) {
+        ref.current = node;
+      }
+    };
+
+    const handleIncrement = () => {
       setValue((prev) =>
         prev === undefined
           ? (stepper ?? 1)
           : Math.min(prev + (stepper ?? 1), max),
       );
-    }, [stepper, max]);
+    };
 
-    const handleDecrement = useCallback(() => {
+    const handleDecrement = () => {
       setValue((prev) =>
         prev === undefined
           ? -(stepper ?? 1)
           : Math.max(prev - (stepper ?? 1), min),
       );
-    }, [stepper, min]);
+    };
 
-    const getIntervalDuration = useCallback((holdTime: number) => {
-      // Start at 500ms, gradually decrease to 50ms over 2 seconds
-      const maxHoldTime = 2000; // 2 seconds to reach max speed
-      const minInterval = 50; // Fastest interval (50ms)
-      const maxInterval = 500; // Slowest interval (500ms)
+    const getIntervalDuration = (holdTime: number) => {
+      const maxHoldTime = 2000;
+      const minInterval = 50;
+      const maxInterval = 500;
 
       if (holdTime >= maxHoldTime) return minInterval;
 
       const progress = holdTime / maxHoldTime;
       return maxInterval - progress * (maxInterval - minInterval);
-    }, []);
+    };
 
-    const startContinuousChange = useCallback(
-      (direction: "up" | "down") => {
-        if (intervalRef.current) return;
+    const startContinuousChange = (direction: "up" | "down") => {
+      if (intervalRef.current) return;
 
-        const startTime = Date.now();
-        holdTimeRef.current = 0;
-        lastChangeTimeRef.current = startTime;
+      const startTime = Date.now();
+      holdTimeRef.current = 0;
+      lastChangeTimeRef.current = startTime;
 
-        // Initial change
-        if (direction === "up") {
-          handleIncrement();
-        } else {
-          handleDecrement();
+      // Initial change
+      if (direction === "up") {
+        handleIncrement();
+      } else {
+        handleDecrement();
+      }
+
+      const updateInterval = () => {
+        const now = Date.now();
+        holdTimeRef.current = now - startTime;
+
+        const intervalDuration = getIntervalDuration(holdTimeRef.current);
+
+        if (now - lastChangeTimeRef.current >= intervalDuration) {
+          if (direction === "up") {
+            handleIncrement();
+          } else {
+            handleDecrement();
+          }
+          lastChangeTimeRef.current = now;
         }
 
-        const updateInterval = () => {
-          const now = Date.now();
-          holdTimeRef.current = now - startTime;
+        intervalRef.current = setTimeout(updateInterval, 16); // ~60fps
+      };
 
-          const intervalDuration = getIntervalDuration(holdTimeRef.current);
+      updateInterval();
+    };
 
-          if (now - lastChangeTimeRef.current >= intervalDuration) {
-            if (direction === "up") {
-              handleIncrement();
-            } else {
-              handleDecrement();
-            }
-            lastChangeTimeRef.current = now;
-          }
-
-          intervalRef.current = setTimeout(updateInterval, 16); // ~60fps
-        };
-
-        updateInterval();
-      },
-      [handleIncrement, handleDecrement, getIntervalDuration],
-    );
-
-    const stopContinuousChange = useCallback(() => {
+    const stopContinuousChange = () => {
       if (intervalRef.current) {
         clearTimeout(intervalRef.current);
         intervalRef.current = null;
       }
-    }, []);
+    };
+
+    const handleArrowKey = useEffectEvent((e: KeyboardEvent) => {
+      if (document.activeElement === inputRef.current) {
+        if (e.key === "ArrowUp") {
+          handleIncrement();
+        } else if (e.key === "ArrowDown") {
+          handleDecrement();
+        }
+      }
+    });
 
     useEffect(() => {
       const handleKeyDown = (e: KeyboardEvent) => {
-        const inputRef = ref as React.RefObject<HTMLInputElement>;
-        if (document.activeElement === inputRef.current) {
-          if (e.key === "ArrowUp") {
-            handleIncrement();
-          } else if (e.key === "ArrowDown") {
-            handleDecrement();
-          }
-        }
+        handleArrowKey(e);
       };
 
       window.addEventListener("keydown", handleKeyDown);
@@ -138,10 +149,14 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
       return () => {
         window.removeEventListener("keydown", handleKeyDown);
       };
-    }, [handleIncrement, handleDecrement, ref]);
+    }, []);
 
-    const [prevControlledValue, setPrevControlledValue] = useState(controlledValue);
-    if (controlledValue !== undefined && controlledValue !== prevControlledValue) {
+    const [prevControlledValue, setPrevControlledValue] =
+      useState(controlledValue);
+    if (
+      controlledValue !== undefined &&
+      controlledValue !== prevControlledValue
+    ) {
       setPrevControlledValue(controlledValue);
       setValue(controlledValue);
     }
@@ -162,12 +177,10 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
       if (value !== undefined) {
         if (value < min) {
           setValue(min);
-          const inputEl = (ref as React.RefObject<HTMLInputElement>).current;
-          inputEl.value = String(min);
+          if (inputRef.current) inputRef.current.value = String(min);
         } else if (value > max) {
           setValue(max);
-          const inputEl = (ref as React.RefObject<HTMLInputElement>).current;
-          inputEl.value = String(max);
+          if (inputRef.current) inputRef.current.value = String(max);
         }
       }
     };
@@ -190,7 +203,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           customInput={Input}
           placeholder={placeholder}
           className="relative [appearance:textfield] rounded-r-none bg-muted [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-          getInputRef={ref}
+          getInputRef={setInputRef}
           {...props}
         />
 
@@ -200,7 +213,9 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
             aria-label="Increase value"
             className="h-4 rounded-l-none rounded-br-none border-b-[0.5px] border-l-0 border-input px-2 focus-visible:relative"
             variant="outline"
-            onMouseDown={() => { startContinuousChange("up"); }}
+            onMouseDown={() => {
+              startContinuousChange("up");
+            }}
             onMouseUp={stopContinuousChange}
             onMouseLeave={stopContinuousChange}
             disabled={value === max}
@@ -212,7 +227,9 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
             aria-label="Decrease value"
             className="h-4 rounded-l-none rounded-tr-none border-t-[0.5px] border-l-0 border-input px-2 focus-visible:relative"
             variant="outline"
-            onMouseDown={() => { startContinuousChange("down"); }}
+            onMouseDown={() => {
+              startContinuousChange("down");
+            }}
             onMouseUp={stopContinuousChange}
             onMouseLeave={stopContinuousChange}
             disabled={value === min}

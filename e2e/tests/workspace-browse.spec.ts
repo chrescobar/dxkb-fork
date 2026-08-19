@@ -13,81 +13,243 @@ import { WorkspacePage } from "../pages";
 import { recordedTestUserId } from "../scripts/har-constants";
 import { harOverridesFor } from "../scripts/har-overrides";
 
+function failOnRuntimeErrors(page: Parameters<typeof applyBackendMocks>[0]) {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  page.on("console", (message) => {
+    if (
+      message.type() === "error" &&
+      message.text() !==
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    ) {
+      errors.push(message.text());
+    }
+  });
+  return () => {
+    expect(errors, "workspace emitted runtime errors").toEqual([]);
+  };
+}
+
 test.describe("workspace browse", () => {
-  test("populated listing renders rows for each workspace item", async ({ page }) => {
+  test("home remains free of runtime errors across interactive rerenders", async ({
+    page,
+  }) => {
+    const runtimeErrors: string[] = [];
+    page.on("pageerror", (error) => runtimeErrors.push(error.message));
+    page.on("console", (message) => {
+      if (
+        message.type() === "error" &&
+        message.text() !==
+          "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ) {
+        runtimeErrors.push(message.text());
+      }
+    });
+
     await applyBackendMocks(page, {
-      overrides: [
-        ...workspacePopulatedOverrides,
-        ...journeyOverrides,
-      ],
+      overrides: [...workspacePopulatedOverrides, ...journeyOverrides],
     });
     const workspace = new WorkspacePage(page);
     await workspace.goto();
 
-    for (const name of ["Datasets", "Analysis", "sample.fastq", "notes.json", "logo.png"]) {
+    const sampleRow = workspace.rowByName("sample.fastq").first();
+    await expect(sampleRow).toBeVisible();
+    await sampleRow.click();
+    await expect(sampleRow).toHaveAttribute("aria-selected", "true");
+
+    await workspace.searchInput.fill("missing-item");
+    await expect(sampleRow).toBeHidden();
+    await workspace.searchInput.fill("");
+    await expect(workspace.rowByName("sample.fastq").first()).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+
+    const listingRequest = page.waitForRequest((request) => {
+      if (!request.url().endsWith("/api/services/workspace")) return false;
+      try {
+        const body = request.postDataJSON() as { method?: string };
+        return body.method === "Workspace.ls";
+      } catch {
+        return false;
+      }
+    });
+    await workspace.refreshButton.click();
+    await listingRequest;
+    await expect(workspace.rowByName("sample.fastq").first()).toBeVisible();
+
+    expect(runtimeErrors).toEqual([]);
+  });
+
+  test("populated listing renders rows for each workspace item", async ({
+    page,
+  }) => {
+    await applyBackendMocks(page, {
+      overrides: [...workspacePopulatedOverrides, ...journeyOverrides],
+    });
+    const workspace = new WorkspacePage(page);
+    await workspace.goto();
+
+    for (const name of [
+      "Datasets",
+      "Analysis",
+      "sample.fastq",
+      "notes.json",
+      "logo.png",
+    ]) {
       await expect(workspace.rowByName(name).first()).toBeVisible();
     }
   });
 
-  test("entering a folder navigates into it and updates the breadcrumbs", async ({ page }) => {
-    const nestedItems = [
-      {
-        name: "report.txt",
-        type: "txt",
-        parentPath: `${e2eHomePath}/Datasets`,
-        creationTime: "2026-03-01T00:00:00Z",
-        size: 24,
-      },
-    ];
-    await applyBackendMocks(page, {
-      overrides: [
-        ...buildWorkspaceOverrides({
-          pathItems: {
-            [e2eHomePath]: [
-              {
-                name: "Datasets",
-                type: "folder",
-                parentPath: e2eHomePath,
-                creationTime: "2026-02-01T00:00:00Z",
-              },
-            ],
-            [`${e2eHomePath}/Datasets`]: nestedItems,
-          },
-          // Folder navigation triggers ancillary Workspace.* RPCs (permissions
-          // re-check, metadata fetch). These are covered by the helper's path-
-          // agnostic listPermsOverride and getKnownOverride (since Datasets is in
-          // pathItems), so no permissive catch-all is needed.
-        }),
-        ...journeyOverrides,
+  test.describe("folder activation contract", () => {
+    const pathItems = {
+      [e2eHomePath]: [
+        {
+          name: "Datasets",
+          type: "folder",
+          parentPath: e2eHomePath,
+          creationTime: "2026-02-01T00:00:00Z",
+        },
+        {
+          name: "sample.fastq",
+          type: "reads",
+          parentPath: e2eHomePath,
+          creationTime: "2026-03-01T00:00:00Z",
+          size: 24,
+        },
       ],
+      [`${e2eHomePath}/Datasets`]: [
+        {
+          name: "report.txt",
+          type: "txt",
+          parentPath: `${e2eHomePath}/Datasets`,
+          creationTime: "2026-03-01T00:00:00Z",
+          size: 24,
+        },
+      ],
+    };
+
+    test.beforeEach(async ({ page }) => {
+      await applyBackendMocks(page, {
+        overrides: [
+          ...buildWorkspaceOverrides({ pathItems }),
+          ...journeyOverrides,
+        ],
+      });
+      await new WorkspacePage(page).goto();
     });
-    const workspace = new WorkspacePage(page);
-    await workspace.goto();
-    await expect(workspace.rowByName("Datasets").first()).toBeVisible();
 
-    // Select the row first, then press Enter. `useTableKeyboardNavigation.onEnter` requires the
-    // row to already be selected — under load the keyboard event can arrive before React has
-    // committed the selection state, so we wait for the row to render its selected variant
-    // before firing Enter. Focus the table region explicitly: in firefox/webkit a row click does
-    // not transfer DOM focus to the focusable table container, so the keystroke would land on
-    // <body> and never reach the keydown handler.
-    const datasetsRow = workspace.rowByName("Datasets").first();
-    const tableRegion = page.getByRole("region", { name: /workspace items/i });
-    await datasetsRow.click();
-    await expect(datasetsRow).toHaveAttribute("aria-selected", "true");
-    await tableRegion.press("Enter");
+    test("first click does not move or replace the folder target", async ({
+      page,
+    }) => {
+      const assertNoRuntimeErrors = failOnRuntimeErrors(page);
+      const workspace = new WorkspacePage(page);
+      const row = workspace.rowByName("Datasets").first();
+      const before = await row.boundingBox();
+      const nodeIdentityPreserved = await row.evaluate((element) => {
+        (
+          window as typeof window & { workspaceTestRow?: Element }
+        ).workspaceTestRow = element;
+        return true;
+      });
+      expect(nodeIdentityPreserved).toBe(true);
 
-    await expect(page).toHaveURL(/\/home\/Datasets$/);
-    await expect(workspace.breadcrumbs).toContainText("Datasets");
-    await expect(workspace.rowByName("report.txt").first()).toBeVisible();
+      await row.click();
+
+      await expect(row).toHaveAttribute("aria-selected", "true");
+      expect(await row.boundingBox()).toEqual(before);
+      expect(
+        await row.evaluate(
+          (element) =>
+            (window as typeof window & { workspaceTestRow?: Element })
+              .workspaceTestRow === element,
+        ),
+      ).toBe(true);
+      await expect(page).toHaveURL(/\/home$/);
+      assertNoRuntimeErrors();
+    });
+
+    test("native double-click enters a folder from a collapsed panel", async ({
+      page,
+    }) => {
+      const assertNoRuntimeErrors = failOnRuntimeErrors(page);
+      const workspace = new WorkspacePage(page);
+
+      await workspace.enterFolder("Datasets");
+
+      await expect(page).toHaveURL(/\/home\/Datasets$/);
+      await expect(workspace.rowByName("report.txt").first()).toBeVisible();
+      assertNoRuntimeErrors();
+    });
+
+    test("double-click enters a folder when details are already expanded", async ({
+      page,
+    }) => {
+      const assertNoRuntimeErrors = failOnRuntimeErrors(page);
+      const workspace = new WorkspacePage(page);
+      await workspace.rowByName("sample.fastq").click();
+      await expect(page.getByTitle("Hide panel")).toBeVisible();
+
+      await workspace.enterFolder("Datasets");
+
+      await expect(page).toHaveURL(/\/home\/Datasets$/);
+      await expect(workspace.rowByName("report.txt").first()).toBeVisible();
+      assertNoRuntimeErrors();
+    });
+
+    test("double-click enters a folder while details are manually hidden", async ({
+      page,
+    }) => {
+      const assertNoRuntimeErrors = failOnRuntimeErrors(page);
+      const workspace = new WorkspacePage(page);
+      await workspace.rowByName("sample.fastq").click();
+      await page.getByTitle("Hide panel").click();
+      await expect(page.getByTitle("Show details panel")).toBeVisible();
+
+      await workspace.enterFolder("Datasets");
+
+      await expect(page).toHaveURL(/\/home\/Datasets$/);
+      await expect(workspace.rowByName("report.txt").first()).toBeVisible();
+      assertNoRuntimeErrors();
+    });
+
+    test("single-click selects a folder without navigating and later opens details", async ({
+      page,
+    }) => {
+      const assertNoRuntimeErrors = failOnRuntimeErrors(page);
+      const workspace = new WorkspacePage(page);
+      const row = workspace.rowByName("Datasets").first();
+
+      await row.click();
+
+      await expect(row).toHaveAttribute("aria-selected", "true");
+      await expect(page).toHaveURL(/\/home$/);
+      await expect(page.getByTitle("Hide panel")).toBeVisible({
+        timeout: 1_500,
+      });
+      await expect(page.getByText("Datasets", { exact: true })).toHaveCount(2);
+      assertNoRuntimeErrors();
+    });
+
+    test("double-clicking a file does not navigate and preserves two-click selection semantics", async ({
+      page,
+    }) => {
+      const assertNoRuntimeErrors = failOnRuntimeErrors(page);
+      const workspace = new WorkspacePage(page);
+      const fileRow = workspace.rowByName("sample.fastq").first();
+
+      await fileRow.dblclick();
+
+      await expect(page).toHaveURL(/\/home$/);
+      await expect(fileRow).toHaveAttribute("aria-selected", "false");
+      await expect(page.getByTitle("Hide panel")).toBeVisible();
+      assertNoRuntimeErrors();
+    });
   });
 
   test("empty workspace shows the empty-state message", async ({ page }) => {
     await applyBackendMocks(page, {
-      overrides: [
-        ...workspaceEmptyOverrides,
-        ...journeyOverrides,
-      ],
+      overrides: [...workspaceEmptyOverrides, ...journeyOverrides],
     });
     const workspace = new WorkspacePage(page);
     await workspace.goto();
@@ -97,18 +259,19 @@ test.describe("workspace browse", () => {
 
   test("ls failure surfaces the error alert", async ({ page }) => {
     await applyBackendMocks(page, {
-      overrides: [
-        ...workspaceErrorOverrides,
-        ...journeyOverrides,
-      ],
+      overrides: [...workspaceErrorOverrides, ...journeyOverrides],
     });
     const workspace = new WorkspacePage(page);
     await page.goto("/workspace/e2e-test-user@patricbrc.org/home");
     await expect(workspace.breadcrumbs).toBeVisible();
-    await expect(page.getByText(/failed to load workspace contents/i)).toBeVisible();
+    await expect(
+      page.getByText(/failed to load workspace contents/i),
+    ).toBeVisible();
   });
 
-  test("favorites loaded from favorites.json are visible on the home listing", async ({ page }) => {
+  test("favorites loaded from favorites.json are visible on the home listing", async ({
+    page,
+  }) => {
     // When favorites contain a folder path, its row gets a star indicator. We just assert the
     // favorite-named folder is present — validating the favorites.json override actually reaches
     // the browser and doesn't crash the UI.
@@ -128,7 +291,9 @@ test.describe("workspace browse", () => {
     expect(e2eUsername).toBe("e2e-test-user@patricbrc.org");
   });
 
-  test("toggling FAVORITE on a folder POSTs the updated favorites.json", async ({ page }) => {
+  test("toggling FAVORITE on a folder POSTs the updated favorites.json", async ({
+    page,
+  }) => {
     // Starts with no favorites, then drives the action-bar FAVORITE button and asserts that
     // Workspace.create persists the toggled folder path. This is the end-to-end persistence
     // contract — a UI that lights up the star locally but never calls the API would fail here.
@@ -156,13 +321,19 @@ test.describe("workspace browse", () => {
     // also calls Workspace.create to ensure the .preferences dir exists, and we don't want to
     // race-match that earlier call.
     const writeRequest = page.waitForRequest((req) => {
-      if (!req.url().endsWith("/api/services/workspace") || req.method() !== "POST") return false;
+      if (
+        !req.url().endsWith("/api/services/workspace") ||
+        req.method() !== "POST"
+      )
+        return false;
       const raw = req.postData();
       if (!raw) return false;
       try {
         const body = JSON.parse(raw) as { method?: string; params?: unknown[] };
         if (body.method !== "Workspace.create") return false;
-        const objects = (body.params?.[0] as { objects?: unknown[][] } | undefined)?.objects ?? [];
+        const objects =
+          (body.params?.[0] as { objects?: unknown[][] } | undefined)
+            ?.objects ?? [];
         const first = objects[0];
         return Array.isArray(first) && String(first[0]) === favoritesFilePath;
       } catch {
@@ -200,7 +371,9 @@ test.describe("workspace browse via recorded HAR replay", () => {
       ],
     });
 
-    await page.goto(`/workspace/${encodeURIComponent(recordedTestUserId)}/home`);
+    await page.goto(
+      `/workspace/${encodeURIComponent(recordedTestUserId)}/home`,
+    );
 
     const workspace = new WorkspacePage(page);
     await expect(workspace.breadcrumbs).toBeVisible();
@@ -210,7 +383,12 @@ test.describe("workspace browse via recorded HAR replay", () => {
     // workspace browser, the rows render; if the override fell through to
     // the permissive catchall (`{result:[[]]}`), the listing would be empty
     // and these assertions would time out.
-    for (const name of ["Experiment Groups", "Genome Groups", "Experiments", "Feature Groups"]) {
+    for (const name of [
+      "Experiment Groups",
+      "Genome Groups",
+      "Experiments",
+      "Feature Groups",
+    ]) {
       await expect(workspace.rowByName(name).first()).toBeVisible();
     }
   });

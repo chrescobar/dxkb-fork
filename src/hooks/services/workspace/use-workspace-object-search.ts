@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   toWorkspaceObject,
@@ -36,6 +36,28 @@ export interface UseWorkspaceObjectSearchReturn {
   refresh: () => Promise<void>;
 }
 
+const emptyItems: WorkspaceItem[] = [];
+
+export function assertUniqueWorkspaceObjectPaths(
+  items: WorkspaceItem[],
+): WorkspaceItem[] {
+  const paths = new Set<string>();
+  for (const item of items) {
+    if (!item.path) {
+      throw new Error(
+        `Workspace search returned an object without a path: ${item.id}`,
+      );
+    }
+    if (paths.has(item.path)) {
+      throw new Error(
+        `Workspace search returned duplicate object path: ${item.path}`,
+      );
+    }
+    paths.add(item.path);
+  }
+  return items;
+}
+
 /**
  * Workspace object search hook used by `WorkspaceObjectSelector`. Hits the
  * repository so tests and stories can supply fixtures via
@@ -54,30 +76,31 @@ export function useWorkspaceObjectSearch({
 
   const query = useQuery<WorkspaceItem[]>({
     queryKey: workspaceQueryKeys.search(username, path, typesKey),
-    queryFn: () => repository.searchObjects({ username, path, types }),
+    queryFn: async () =>
+      assertUniqueWorkspaceObjectPaths(
+        await repository.searchObjects({ username, path, types }),
+      ),
     enabled: autoLoad && !!username,
     staleTime: 5 * 60 * 1000,
   });
 
-  const items = useMemo(() => query.data ?? [], [query.data]);
-  const objects = useMemo(() => items.map(toWorkspaceObject), [items]);
+  const items = query.data ?? emptyItems;
+  const objects = items.map(toWorkspaceObject);
+  const term = searchQuery.trim().toLowerCase();
+  const filteredItems = term
+    ? items.filter((item) => item.name.toLowerCase().includes(term))
+    : items;
+  const filteredObjects = filteredItems.map(toWorkspaceObject);
 
-  const filteredItems = useMemo(() => {
-    const term = searchQuery.trim().toLowerCase();
-    if (!term) return items;
-    return items.filter((item) => item.name.toLowerCase().includes(term));
-  }, [items, searchQuery]);
-
-  const filteredObjects = useMemo(
-    () => filteredItems.map(toWorkspaceObject),
-    [filteredItems],
-  );
-
-  const search = useCallback((q: string) => { setSearchQuery(q); }, []);
-  const clearSearch = useCallback(() => { setSearchQuery(""); }, []);
-  const refresh = useCallback(async () => {
+  const search = (q: string) => {
+    setSearchQuery(q);
+  };
+  const clearSearch = () => {
+    setSearchQuery("");
+  };
+  const refresh = async () => {
     await query.refetch();
-  }, [query]);
+  };
 
   return {
     items,

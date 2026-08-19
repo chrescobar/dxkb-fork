@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { WorkspaceItem } from "@/lib/services/workspace/domain";
+import { isFolderType } from "@/lib/services/workspace/utils";
 import {
   computeNextSelection,
   normalizePath,
@@ -20,7 +21,10 @@ export interface UseWorkspaceSelectionReturn {
   selectedPaths: string[];
   /** Last selected item, or null when nothing is selected. */
   primaryItem: WorkspaceItem | null;
-  handleSelectItem: (item: WorkspaceItem, modifiers?: SelectionModifiers) => void;
+  handleSelectItem: (
+    item: WorkspaceItem,
+    modifiers?: SelectionModifiers,
+  ) => void;
   clearSelection: () => void;
 }
 
@@ -31,50 +35,80 @@ export function useWorkspaceSelection({
 }: UseWorkspaceSelectionOptions): UseWorkspaceSelectionReturn {
   const [selectedItems, setSelectedItems] = useState<WorkspaceItem[]>([]);
   const [anchorPath, setAnchorPath] = useState<string | null>(null);
+  const panelExpansionTimer = useRef<ReturnType<typeof setTimeout>>(null);
 
-  // Keep selected items in sync with latest processedItems data (e.g. after type change refetch)
-  const [prevProcessedItems, setPrevProcessedItems] = useState(processedItems);
-  if (prevProcessedItems !== processedItems) {
-    setPrevProcessedItems(processedItems);
-    if (selectedItems.length > 0) {
-      const itemByPath = new Map(processedItems.map((i) => [normalizePath(i.path), i]));
-      const updated = selectedItems.map((old) => itemByPath.get(normalizePath(old.path)) ?? old);
-      if (!updated.every((item, idx) => item === selectedItems[idx])) {
-        setSelectedItems(updated);
-      }
-    }
-  }
-
-  const selectedPaths = useMemo(
-    () => selectedItems.map((i) => normalizePath(i.path)),
-    [selectedItems],
-  );
-
-  const primaryItem: WorkspaceItem | null = selectedItems[selectedItems.length - 1] ?? null;
-
-  const handleSelectItem = useCallback(
-    (item: WorkspaceItem, modifiers?: SelectionModifiers) => {
-      const { nextSelection, nextAnchorPath } = computeNextSelection(
-        processedItems,
-        selectedItems,
-        anchorPath,
-        item,
-        modifiers ?? { ctrlOrMeta: false, shift: false },
-      );
-      setSelectedItems(nextSelection);
-      setAnchorPath(nextAnchorPath);
-      if (!panelManuallyHidden) setPanelExpanded(true);
-    },
-    [processedItems, selectedItems, anchorPath, panelManuallyHidden, setPanelExpanded],
-  );
-
-  const clearSelection = useCallback(() => {
-    setSelectedItems([]);
-    setAnchorPath(null);
+  useEffect(() => {
+    return () => {
+      if (panelExpansionTimer.current)
+        clearTimeout(panelExpansionTimer.current);
+    };
   }, []);
 
+  useEffect(() => {
+    if (panelManuallyHidden && panelExpansionTimer.current) {
+      clearTimeout(panelExpansionTimer.current);
+      panelExpansionTimer.current = null;
+    }
+  }, [panelManuallyHidden]);
+
+  const itemByPath = new Map(
+    processedItems.map((item) => [normalizePath(item.path), item]),
+  );
+  const refreshedItems = selectedItems.map(
+    (item) => itemByPath.get(normalizePath(item.path)) ?? item,
+  );
+  const currentSelectedItems = refreshedItems.every(
+    (item, index) => item === selectedItems[index],
+  )
+    ? selectedItems
+    : refreshedItems;
+
+  const selectedPaths = currentSelectedItems.map((item) =>
+    normalizePath(item.path),
+  );
+
+  const primaryItem: WorkspaceItem | null =
+    currentSelectedItems[currentSelectedItems.length - 1] ?? null;
+
+  const handleSelectItem = (
+    item: WorkspaceItem,
+    modifiers?: SelectionModifiers,
+  ) => {
+    const { nextSelection, nextAnchorPath } = computeNextSelection(
+      processedItems,
+      selectedItems,
+      anchorPath,
+      item,
+      modifiers ?? { ctrlOrMeta: false, shift: false },
+    );
+    setSelectedItems(nextSelection);
+    setAnchorPath(nextAnchorPath);
+    if (!panelManuallyHidden) {
+      if (panelExpansionTimer.current)
+        clearTimeout(panelExpansionTimer.current);
+      if (isFolderType(item.type)) {
+        panelExpansionTimer.current = setTimeout(() => {
+          setPanelExpanded(true);
+          panelExpansionTimer.current = null;
+        }, 500);
+      } else {
+        panelExpansionTimer.current = null;
+        setPanelExpanded(true);
+      }
+    }
+  };
+
+  const clearSelection = () => {
+    if (panelExpansionTimer.current) {
+      clearTimeout(panelExpansionTimer.current);
+      panelExpansionTimer.current = null;
+    }
+    setSelectedItems([]);
+    setAnchorPath(null);
+  };
+
   return {
-    selectedItems,
+    selectedItems: currentSelectedItems,
     anchorPath,
     selectedPaths,
     primaryItem,

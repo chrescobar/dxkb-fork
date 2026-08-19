@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   validateFastaForBlast,
   getFastaErrorMessage,
@@ -30,49 +30,46 @@ export function useFastaValidation({
   const [validationResult, setValidationResult] =
     useState<FastaValidationResult | null>(null);
   const [isValidating, setIsValidating] = useState(false);
-  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
-    null,
-  );
+  const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const setFastaText = useCallback(
-    (text: string) => {
-      setFastaTextState(text);
-      setIsValidating(true);
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) clearTimeout(debounceTimeoutRef.current);
+    };
+  }, []);
 
-      // Clear existing timeout
-      if (debounceTimeout) {
-        clearTimeout(debounceTimeout);
-      }
+  const setFastaText = (text: string) => {
+    setFastaTextState(text);
+    setIsValidating(true);
 
-      // Set new timeout for validation
-      const timeout = setTimeout(() => {
-        const result = validateFastaForBlast(text, inputType);
-        setValidationResult(result);
-        setIsValidating(false);
-      }, debounceMs);
+    // Clear existing timeout
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
 
-      setDebounceTimeout(timeout);
-    },
-    [inputType, debounceMs, debounceTimeout],
-  );
+    // Set new timeout for validation
+    const timeout = setTimeout(() => {
+      const result = validateFastaForBlast(text, inputType);
+      setValidationResult(result);
+      setIsValidating(false);
+    }, debounceMs);
 
-  const validateFasta = useCallback(() => {
+    debounceTimeoutRef.current = timeout;
+  };
+
+  const validateFasta = () => {
     if (fastaText.trim()) {
       setIsValidating(true);
       const result = validateFastaForBlast(fastaText, inputType);
       setValidationResult(result);
       setIsValidating(false);
     }
-  }, [fastaText, inputType]);
+  };
 
-  const isValid = useMemo(() => {
-    return validationResult?.valid ?? false;
-  }, [validationResult]);
-
-  const errorMessage = useMemo(() => {
-    if (!validationResult) return "";
-    return getFastaErrorMessage(validationResult, inputType.toUpperCase());
-  }, [validationResult, inputType]);
+  const isValid = validationResult?.valid ?? false;
+  const errorMessage = validationResult
+    ? getFastaErrorMessage(validationResult, inputType.toUpperCase())
+    : "";
 
   return {
     fastaText,

@@ -3,18 +3,19 @@
 import {
   createContext,
   useContext,
-  useMemo,
   useState,
-  useCallback,
   useRef,
   type ReactNode,
 } from "react";
+import {
+  panelLayoutCookieName,
+  workspacePanelIds,
+} from "@/constants/workspace-panels";
 
-/** Panel ids used by react-resizable-panels in the workspace layout. */
-export const workspacePanelIds = { main: "workspace-main", details: "workspace-details" } as const;
-
-/** Cookie name used to persist the panel layout for server rendering. */
-export const panelLayoutCookieName = "workspace-panel-layout";
+export {
+  panelLayoutCookieName,
+  workspacePanelIds,
+} from "@/constants/workspace-panels";
 
 /** Layout from react-resizable-panels: panel id -> size (%). Persists across folder navigation. */
 const defaultPanelLayout: Record<string, number> = {
@@ -39,7 +40,9 @@ interface WorkspacePanelContextType {
   setPanelLayout: (layout: Record<string, number>) => void;
 }
 
-const WorkspacePanelContext = createContext<WorkspacePanelContextType | undefined>(undefined);
+const WorkspacePanelContext = createContext<
+  WorkspacePanelContextType | undefined
+>(undefined);
 
 export function WorkspacePanelProvider({
   children,
@@ -51,38 +54,27 @@ export function WorkspacePanelProvider({
   const [panelManuallyHidden, setPanelManuallyHidden] = useState(false);
   const [panelExpanded, setPanelExpanded] = useState(false);
   const [showHiddenFiles, setShowHiddenFiles] = useState(false);
-  const [panelInitialLayout] = useState(() => initialLayout ?? defaultPanelLayout);
+  const [panelInitialLayout] = useState(
+    () => initialLayout ?? defaultPanelLayout,
+  );
   const panelLayoutRef = useRef<Record<string, number>>(panelInitialLayout);
-  const setPanelLayout = useCallback((layout: Record<string, number>) => {
+  const setPanelLayout = (layout: Record<string, number>) => {
     panelLayoutRef.current = layout;
     // Persist to cookie so the server can render the correct layout on next page load
     document.cookie = `${panelLayoutCookieName}=${JSON.stringify(layout)};path=/workspace;max-age=${String(60 * 60 * 24 * 365)};SameSite=Lax`;
-  }, []);
+  };
 
-  const value = useMemo<WorkspacePanelContextType>(
-    () => ({
-      panelManuallyHidden,
-      setPanelManuallyHidden,
-      panelExpanded,
-      setPanelExpanded,
-      showHiddenFiles,
-      setShowHiddenFiles,
-      panelInitialLayout,
-      panelLayoutRef,
-      setPanelLayout,
-    }),
-    [
-      panelManuallyHidden,
-      setPanelManuallyHidden,
-      panelExpanded,
-      setPanelExpanded,
-      showHiddenFiles,
-      setShowHiddenFiles,
-      panelInitialLayout,
-      panelLayoutRef,
-      setPanelLayout,
-    ]
-  );
+  const value: WorkspacePanelContextType = {
+    panelManuallyHidden,
+    setPanelManuallyHidden,
+    panelExpanded,
+    setPanelExpanded,
+    showHiddenFiles,
+    setShowHiddenFiles,
+    panelInitialLayout,
+    panelLayoutRef,
+    setPanelLayout,
+  };
 
   return (
     <WorkspacePanelContext.Provider value={value}>
@@ -94,7 +86,9 @@ export function WorkspacePanelProvider({
 export function useWorkspacePanel(): WorkspacePanelContextType {
   const ctx = useContext(WorkspacePanelContext);
   if (ctx === undefined) {
-    throw new Error("useWorkspacePanel must be used within WorkspacePanelProvider");
+    throw new Error(
+      "useWorkspacePanel must be used within WorkspacePanelProvider",
+    );
   }
   return ctx;
 }

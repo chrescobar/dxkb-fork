@@ -1,15 +1,39 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ListData } from "@/components/services/list-data";
 import { GenomeShell } from "@/components/genome/genome-shell";
 import { GenomeDetailPanel } from "@/components/genome/genome-detail-panel";
-import { SearchActionBar, notReady } from "@/components/search/search-action-bar";
+import {
+  SearchActionBar,
+  notReady,
+} from "@/components/search/search-action-bar";
 import { VerticalMenu } from "@/components/ui/vertical-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Activity, Atom, Binary, Blocks, Database, Dna, Eye, FlaskConical, Globe, Layers, ListTree, Microscope, Network, Puzzle, Route, Share2, ShieldCheck, Waypoints } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Activity,
+  Atom,
+  Binary,
+  Blocks,
+  Database,
+  Dna,
+  Eye,
+  FlaskConical,
+  Globe,
+  Layers,
+  ListTree,
+  Microscope,
+  Network,
+  Puzzle,
+  Route,
+  Share2,
+  ShieldCheck,
+  Waypoints,
+} from "lucide-react";
 
 // ---- Props interface ----
 export interface TypeSearchProps {
@@ -101,12 +125,10 @@ function TabsRenderer({
 }: TabsRendererProps) {
   const clearTimeoutRef = useRef<number | null>(null);
 
-  // Compute the tab that should be active given the current URL params.
-  // Memoized so the effect below only needs this stable value in its deps.
-  const urlDerivedTab = useMemo(() => {
-    const desired = urlType || "genome";
-    return tablist.includes(desired) ? desired : (tablist[0] ?? "genome");
-  }, [urlType, tablist]);
+  const desiredTab = urlType || "genome";
+  const urlDerivedTab = tablist.includes(desiredTab)
+    ? desiredTab
+    : (tablist[0] ?? "genome");
 
   // Sync the active tab when URL params change. activeTab is excluded from
   // deps so user-initiated tab clicks are not overridden — React's useState
@@ -127,7 +149,11 @@ function TabsRenderer({
   };
 
   return (
-    <Tabs value={activeTab} onValueChange={handleTabChange} className="flex min-h-0 flex-1 flex-col overflow-hidden">
+    <Tabs
+      value={activeTab}
+      onValueChange={handleTabChange}
+      className="flex min-h-0 flex-1 flex-col overflow-hidden"
+    >
       {tablist.length > 1 && (
         <TabsList className="mb-0 bg-background pb-0">
           {Object.entries(tabsForType).map(([term, label]) => (
@@ -176,22 +202,23 @@ function TabsRenderer({
               // Immediate merge for non-empty updates
               setSelectedIds((prev) => {
                 const next = new Set(prev);
+                const selectedIdSet = new Set(ids);
 
                 // Add new ones
-                ids.forEach((id) => {
+                selectedIdSet.forEach((id) => {
                   if (id) next.add(id);
                 });
 
                 // Remove ones that are no longer selected on this page
                 prev.forEach((id) => {
-                  if (!ids.includes(id)) {
+                  if (!selectedIdSet.has(id)) {
                     next.delete(id);
                   }
                 });
 
                 return Array.from(next);
               });
-            }}            
+            }}
             rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
             pageIndex={pageIndex}
@@ -207,24 +234,64 @@ function TabsRenderer({
 }
 
 const searchTypeMenuItems = [
-  { key: "overview",          label: "Overview",           icon: <Blocks className="size-4" /> },
-  { key: "phylogeny",         label: "Phylogeny",          icon: <Network className="size-4" /> },
-  { key: "taxonomy",          label: "Taxa",               icon: <Binary className="size-4" /> },
-  { key: "genome",            label: "Genomes",            icon: <Dna className="size-4" /> },
-  { key: "genome_amr",        label: "AMR Phenotypes",     icon: <ShieldCheck className="size-4" /> },
-  { key: "genome_sequence",   label: "Sequences",          icon: <Database className="size-4" /> },
-  { key: "genome_feature",    label: "Features",           icon: <ListTree className="size-4" /> },
-  { key: "protein",           label: "Proteins",           icon: <Atom className="size-4" /> },
-  { key: "protein_structure", label: "Protein Structures", icon: <Waypoints className="size-4" /> },
-  { key: "sp_gene",           label: "Specialty Genes",    icon: <Microscope className="size-4" /> },
-  { key: "protein_feature",   label: "Domains and Motifs", icon: <Puzzle className="size-4" /> },
-  { key: "epitope",           label: "Epitopes",           icon: <Activity className="size-4" /> },
-  { key: "strain",            label: "Strains",            icon: <Share2 className="size-4" /> },
-  { key: "pathway",           label: "Pathways",           icon: <Route className="size-4" /> },
-  { key: "subsystem",         label: "Subsystems",         icon: <Layers className="size-4" /> },
-  { key: "surveillance",      label: "Surveillance",       icon: <Eye className="size-4" /> },
-  { key: "serology",          label: "Serology",           icon: <Globe className="size-4" /> },
-  { key: "experiment",        label: "Experiments",        icon: <FlaskConical className="size-4" /> },
+  { key: "overview", label: "Overview", icon: <Blocks className="size-4" /> },
+  {
+    key: "phylogeny",
+    label: "Phylogeny",
+    icon: <Network className="size-4" />,
+  },
+  { key: "taxonomy", label: "Taxa", icon: <Binary className="size-4" /> },
+  { key: "genome", label: "Genomes", icon: <Dna className="size-4" /> },
+  {
+    key: "genome_amr",
+    label: "AMR Phenotypes",
+    icon: <ShieldCheck className="size-4" />,
+  },
+  {
+    key: "genome_sequence",
+    label: "Sequences",
+    icon: <Database className="size-4" />,
+  },
+  {
+    key: "genome_feature",
+    label: "Features",
+    icon: <ListTree className="size-4" />,
+  },
+  { key: "protein", label: "Proteins", icon: <Atom className="size-4" /> },
+  {
+    key: "protein_structure",
+    label: "Protein Structures",
+    icon: <Waypoints className="size-4" />,
+  },
+  {
+    key: "sp_gene",
+    label: "Specialty Genes",
+    icon: <Microscope className="size-4" />,
+  },
+  {
+    key: "protein_feature",
+    label: "Domains and Motifs",
+    icon: <Puzzle className="size-4" />,
+  },
+  { key: "epitope", label: "Epitopes", icon: <Activity className="size-4" /> },
+  { key: "strain", label: "Strains", icon: <Share2 className="size-4" /> },
+  { key: "pathway", label: "Pathways", icon: <Route className="size-4" /> },
+  {
+    key: "subsystem",
+    label: "Subsystems",
+    icon: <Layers className="size-4" />,
+  },
+  {
+    key: "surveillance",
+    label: "Surveillance",
+    icon: <Eye className="size-4" />,
+  },
+  { key: "serology", label: "Serology", icon: <Globe className="size-4" /> },
+  {
+    key: "experiment",
+    label: "Experiments",
+    icon: <FlaskConical className="size-4" />,
+  },
 ];
 
 export function TypeSearch({ q, searchtype }: TypeSearchProps) {
@@ -264,31 +331,47 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
   // as the active genome shown in the panel. This prevents the panel from
   // collapsing whenever the user selects an additional row while already
   // viewing details.
-  const activeGenomeId = selectedIds.length > 0 ? selectedIds[selectedIds.length - 1] : null;
+  const activeGenomeId =
+    selectedIds.length > 0 ? selectedIds[selectedIds.length - 1] : null;
 
   const guideUrls: Record<string, string> = {
-    genome: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/genome_table.html",
-    strain: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/strains.html",
-    genome_feature: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/features.html",
-    protein_feature: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/features.html",
-    epitope: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/epitopes.html",
-    protein_structure: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/protein_structures.html",
-    surveillance: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/surveillance_data.html",
-    serology: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/serology_data.html",
+    genome:
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/genome_table.html",
+    strain:
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/strains.html",
+    genome_feature:
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/features.html",
+    protein_feature:
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/features.html",
+    epitope:
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/epitopes.html",
+    protein_structure:
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/protein_structures.html",
+    surveillance:
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/surveillance_data.html",
+    serology:
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/serology_data.html",
     taxonomy: "https://www.bv-brc.org/docs/quick_references/",
-    experiment: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/experiments_comparisons_tables.html",
+    experiment:
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/experiments_comparisons_tables.html",
   };
 
   // The active top-level group: overview when no type is set, otherwise match
   // the urlType directly or find which group contains it as a sub-tab.
-  const activeGroup = useMemo(() => {
-    if (!urlType || urlType === "everything") return "overview";
-    const searchTypeKeys = searchTypeMenuItems.map(i => i.key);
-    if (searchTypeKeys.includes(urlType)) return urlType;
-    return searchTypeKeys.find(g => Object.keys(searchTypes[g] ?? {}).includes(urlType)) ?? "genome";
-  }, [urlType]);
+  let activeGroup = "overview";
+  if (urlType && urlType !== "everything") {
+    const directGroup = searchTypeMenuItems.find(
+      (item) => item.key === urlType,
+    );
+    activeGroup =
+      directGroup?.key ??
+      searchTypeMenuItems.find((item) =>
+        Object.hasOwn(searchTypes[item.key] ?? {}, urlType),
+      )?.key ??
+      "genome";
+  }
 
-  const menuItems = searchTypeMenuItems.map(item => ({
+  const menuItems = searchTypeMenuItems.map((item) => ({
     icon: item.icon,
     label: item.label,
     isActive: item.key === activeGroup,
@@ -296,7 +379,9 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
       const params = new URLSearchParams();
       if (item.key === "overview") {
         if (urlQ) params.set("q", urlQ);
-        router.push(`/search${params.toString() ? `?${params.toString()}` : ""}`);
+        router.push(
+          `/search${params.toString() ? `?${params.toString()}` : ""}`,
+        );
       } else {
         params.set("type", item.key);
         if (urlQ) params.set("q", urlQ);
@@ -319,10 +404,18 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
             <Button
               variant="ghost"
               size="icon-sm"
-              onClick={() => { setMenuCollapsed(c => !c); }}
-              title={menuCollapsed ? "Expand navigation" : "Collapse navigation"}
+              onClick={() => {
+                setMenuCollapsed((c) => !c);
+              }}
+              title={
+                menuCollapsed ? "Expand navigation" : "Collapse navigation"
+              }
             >
-              {menuCollapsed ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
+              {menuCollapsed ? (
+                <ChevronRight className="size-4" />
+              ) : (
+                <ChevronLeft className="size-4" />
+              )}
             </Button>
           </div>
           <div className="p-2 pt-0">
@@ -337,7 +430,9 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
           hasSidePanel={!!activeGenomeId}
           actionBar={
             <SearchActionBar
-              selectedCount={isAllPagesSelected ? totalItems : selectedIds.length}
+              selectedCount={
+                isAllPagesSelected ? totalItems : selectedIds.length
+              }
               searchType={activeTab}
               guideUrl={guideUrls[activeTab]}
               // taxonOverview is enabled only in the taxon-view (which wires the

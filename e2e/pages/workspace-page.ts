@@ -47,16 +47,9 @@ export class WorkspacePage {
     await this.rowByName(name).click();
   }
 
-  /**
-   * Enter a folder by selecting it and pressing Enter. Keyboard Enter goes through
-   * `useTableKeyboardNavigation.onEnter`, which is a single-path navigation.
-   * More reliable than `dblclick()` against a virtualized row: mouse double-click fires two
-   * rapid events that can race with selection-mode rerenders and sometimes land on a different
-   * node for the second click.
-   */
+  /** Enter a folder with the same double-click gesture exposed by the browser. */
   async enterFolder(name: string): Promise<void> {
-    await this.rowByName(name).first().click();
-    await this.page.keyboard.press("Enter");
+    await this.rowByName(name).first().dblclick();
   }
 
   async openUpload(): Promise<void> {

@@ -28,6 +28,103 @@ test.describe("jobs lifecycle", () => {
     }
   });
 
+  test("normalizes a numeric job id across search, selection, output, and kill", async ({ page }) => {
+    const numericJob = {
+      id: 12345,
+      app: "GenomeAssembly2",
+      status: "running",
+      submit_time: "2026-04-20T07:50:00Z",
+      start_time: "2026-04-20T07:55:00Z",
+      owner: "e2e-test-user",
+      parameters: {},
+    };
+    const pageErrors: Error[] = [];
+    page.on("pageerror", (error) => pageErrors.push(error));
+
+    await applyBackendMocks(page, {
+      overrides: [
+        ...workspacePopulatedOverrides,
+        ...jobsListOverrides,
+        ...journeyOverrides,
+      ],
+    });
+    await page.route(
+      "**/api/services/app-service/jobs/enumerate-tasks-filtered",
+      async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ jobs: [numericJob], totalTasks: 1 }),
+        });
+      },
+    );
+    await page.route("**/api/services/app-service/jobs/12345/stdout", async (route) => {
+      await route.fulfill({ status: 200, body: "numeric job output" });
+    });
+    await page.route("**/api/services/app-service/jobs/12345/kill", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ success: true, message: "Kill request accepted" }),
+      });
+    });
+
+    const jobs = new JobsListPage(page);
+    await jobs.goto();
+    await jobs.waitForRows();
+    await expect(jobs.rowById("12345")).toBeVisible();
+
+    await jobs.searchInput.fill("12345");
+    await expect(jobs.rowById("12345")).toBeVisible();
+    await jobs.selectJob("12345");
+    await expect(page.getByRole("heading", { level: 3, name: "12345" })).toBeVisible();
+
+    const stdoutRequest = page.waitForRequest(
+      (request) => request.url().endsWith("/jobs/12345/stdout"),
+    );
+    await page.getByRole("button", { name: /^standard output$/i }).click();
+    await stdoutRequest;
+    await expect(page.getByText("numeric job output")).toBeVisible();
+
+    const killRequest = page.waitForRequest(
+      (request) =>
+        request.url().endsWith("/jobs/12345/kill") && request.method() === "POST",
+    );
+    await jobs.killSelected();
+    await killRequest;
+    await expect(page.getByText(/kill request for job 12345/i)).toBeVisible();
+    expect(pageErrors).toEqual([]);
+  });
+
+  test("shows a response contract error instead of silently hiding malformed jobs", async ({ page }) => {
+    await applyBackendMocks(page, {
+      overrides: [
+        ...workspacePopulatedOverrides,
+        ...jobsListOverrides,
+        ...journeyOverrides,
+      ],
+    });
+    await page.route(
+      "**/api/services/app-service/jobs/enumerate-tasks-filtered",
+      async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            jobs: [{ id: null, app: "GenomeAssembly2", status: "running" }],
+            totalTasks: 1,
+          }),
+        });
+      },
+    );
+
+    const jobs = new JobsListPage(page);
+    await jobs.goto();
+
+    await expect(page.getByText(/error loading jobs: invalid jobs response/i)).toBeVisible();
+    await expect(jobs.rowById("null")).not.toBeVisible();
+  });
+
   test("filtering by status narrows the rows", async ({ page }) => {
     await applyBackendMocks(page, {
       overrides: [

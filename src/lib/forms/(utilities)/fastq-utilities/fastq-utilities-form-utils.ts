@@ -17,7 +17,7 @@ export const actionColors = [
  * Transform FASTQ utilities form data to API parameters
  */
 export function transformFastqUtilitiesParams(
-  data: FastqUtilitiesFormData
+  data: FastqUtilitiesFormData,
 ): Record<string, unknown> {
   const params: Record<string, unknown> = {
     output_path: data.output_path,
@@ -83,10 +83,10 @@ function getColorForIndex(index: number): string {
  */
 export function createPipelineActionItem(
   action: PipelineAction,
-  index = 0
+  index = 0,
 ): PipelineActionItem {
   return {
-    id: `${action}_${String(Date.now())}`,
+    id: `${action}_${crypto.randomUUID()}`,
     action,
     label: getActionLabel(action),
     color: getColorForIndex(index),
@@ -97,7 +97,7 @@ export function createPipelineActionItem(
  * Reassign colors based on current array position to keep sequence compact
  */
 function renormalizePipelineActions(
-  items: PipelineActionItem[]
+  items: PipelineActionItem[],
 ): PipelineActionItem[] {
   return items.map((item, index) => ({
     ...item,
@@ -110,7 +110,7 @@ function renormalizePipelineActions(
  */
 export function removePipelineActionItem(
   items: PipelineActionItem[],
-  id: string
+  id: string,
 ): PipelineActionItem[] {
   const filtered = items.filter((item) => item.id !== id);
   return renormalizePipelineActions(filtered);
@@ -119,6 +119,8 @@ export function removePipelineActionItem(
 /**
  * Convert pipeline action items to recipe array for form
  */
-export function actionItemsToRecipe(items: PipelineActionItem[]): PipelineAction[] {
+export function actionItemsToRecipe(
+  items: PipelineActionItem[],
+): PipelineAction[] {
   return items.map((item) => item.action);
 }

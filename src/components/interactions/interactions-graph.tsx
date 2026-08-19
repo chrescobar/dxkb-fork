@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import dynamic from "next/dynamic";
 
 import { useInteractions } from "@/lib/interactions/use-interactions";
+import { buildRql } from "@/components/filterbar/filter-utils";
 import { toGraph } from "@/lib/interactions/to-graph";
 import {
   buildGraphSelectionIndex,
@@ -59,16 +60,22 @@ export function InteractionsGraph({
   keywordValue,
   onKeywordChange,
 }: InteractionsGraphProps) {
-  // The table filter already includes the shared keyword and any table facets.
-  const combinedQuery = useMemo(() => {
-    const cleanQ = q.split("#")[0];
-    const parts = [cleanQ, tableFilter].filter(
-      (p): p is string => Boolean(p) && p !== "false",
-    );
-    if (parts.length === 0) return "";
-    if (parts.length === 1) return parts[0];
-    return `and(${parts.join(",")})`;
-  }, [q, tableFilter]);
+  const cleanQ = q.split("#")[0];
+  const keywordFilter = buildRql({
+    selected: [],
+    keywords: keywordValue.split(" ").filter(Boolean),
+  });
+  const parts = [
+    cleanQ,
+    tableFilter,
+    tableFilter?.includes(keywordFilter) ? "" : keywordFilter,
+  ].filter((part): part is string => Boolean(part) && part !== "false");
+  const combinedQuery =
+    parts.length === 0
+      ? ""
+      : parts.length === 1
+        ? parts[0]
+        : `and(${parts.join(",")})`;
   const { data, isPending, isError, error } = useInteractions(
     taxonId,
     combinedQuery,
@@ -91,19 +98,10 @@ export function InteractionsGraph({
     setActiveHub(null);
   }
 
-  // Keyed on the query data reference so selecting a node/edge (which only
-  // updates `selection`) doesn't rebuild nodes/edges. SigmaCanvas reloads and
-  // re-lays out the whole graph whenever its nodes/edges props change
-  // identity, which would otherwise reset pan/zoom and node positions on
-  // every selection for the intended thousands-node datasets.
-  const graph = useMemo(
-    () => (data ? toGraph(data) : { nodes: [], edges: [] }),
-    [data],
-  );
-  const selectionIndex = useMemo(
-    () => buildGraphSelectionIndex(graph.nodes, graph.edges),
-    [graph.nodes, graph.edges],
-  );
+  // React Compiler preserves these derived identities while their inputs are stable,
+  // avoiding graph reloads when only selection state changes.
+  const graph = data ? toGraph(data) : { nodes: [], edges: [] };
+  const selectionIndex = buildGraphSelectionIndex(graph.nodes, graph.edges);
 
   function handleLayoutChange(name: LayoutName) {
     setLayout(name);

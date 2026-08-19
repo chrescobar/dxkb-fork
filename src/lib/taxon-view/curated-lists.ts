@@ -59,7 +59,7 @@ function parseEnvPolicy(): CuratedLists | null {
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw) as {
-      sfvtTaxonIds?: number[];
+      sfvtTaxonIds?: unknown[];
       surveillanceLineageNames?: string[];
       serologyLineageNames?: string[];
     };
@@ -70,7 +70,10 @@ function parseEnvPolicy(): CuratedLists | null {
         // ALL valid sibling overrides. Guard first, then coerce string IDs
         // and filter NaN so ["12637"] → Set<number> works correctly.
         Array.isArray(parsed.sfvtTaxonIds)
-          ? parsed.sfvtTaxonIds.map(Number).filter((n) => !isNaN(n))
+          ? parsed.sfvtTaxonIds.flatMap((value) => {
+              const taxonId = Number(value);
+              return isNaN(taxonId) ? [] : [taxonId];
+            })
           : undefined,
         defaultLists.sfvtTaxonIds,
       ),

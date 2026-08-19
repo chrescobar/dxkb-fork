@@ -8,8 +8,14 @@ import { BarStack } from "@visx/shape";
 import { useTooltip } from "@visx/tooltip";
 
 import { Card, CardContent } from "@/components/ui/card";
-import type { SerotypeDistributionData, SerotypeYear } from "@/lib/services/organisms/types";
-import { chartColors, chartTooltipStyle } from "@/lib/services/organisms/chart-utils";
+import type {
+  SerotypeDistributionData,
+  SerotypeYear,
+} from "@/lib/services/organisms/types";
+import {
+  chartColors,
+  chartTooltipStyle,
+} from "@/lib/services/organisms/chart-utils";
 import { numberFormatter } from "@/lib/services/organisms/utils";
 
 import { ChartLegendPill } from "./_shared/chart-legend-pill";
@@ -109,7 +115,11 @@ export function BarStackChart({
             className="w-full"
           >
             <Group left={chartMarginLeft} top={chartMarginTop}>
-              <YAxisTicks ticks={yTicks} yScale={yScale} innerWidth={yearInnerWidth} />
+              <YAxisTicks
+                ticks={yTicks}
+                yScale={yScale}
+                innerWidth={yearInnerWidth}
+              />
 
               {/* X-axis baseline */}
               <line
@@ -207,12 +217,17 @@ export function BarStackChart({
                     tooltipData: {
                       year: yearEntry.year,
                       rows: data.serovars
-                        .map((sv) => ({
-                          serovar: sv,
-                          count: yearEntry[sv] ?? 0,
-                          color: colorScale(sv),
-                        }))
-                        .filter((r) => r.count > 0)
+                        .reduce<ColumnTooltipRow[]>((rows, serovar) => {
+                          const count = yearEntry[serovar] ?? 0;
+                          if (count > 0) {
+                            rows.push({
+                              serovar,
+                              count,
+                              color: colorScale(serovar),
+                            });
+                          }
+                          return rows;
+                        }, [])
                         .sort((a, b) => b.count - a.count),
                     },
                     tooltipLeft: event.clientX,
@@ -262,9 +277,13 @@ export function BarStackChart({
                 active={isActive}
                 dimmed={isDimmed}
                 ariaPressed={highlight.pressedFor(idx)}
-                onActivate={() => { highlight.activatePill(idx); }}
+                onActivate={() => {
+                  highlight.activatePill(idx);
+                }}
                 onDeactivate={highlight.deactivatePill}
-                onClick={() => { highlight.togglePillLock(idx); }}
+                onClick={() => {
+                  highlight.togglePillLock(idx);
+                }}
               />
             );
           })}

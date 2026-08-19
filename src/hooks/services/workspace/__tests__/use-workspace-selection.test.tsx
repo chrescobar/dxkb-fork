@@ -1,18 +1,9 @@
 import { renderHook, act } from "@testing-library/react";
 import type { WorkspaceItem } from "@/lib/services/workspace/domain";
+import { useWorkspaceFilteredItems } from "@/hooks/services/workspace/use-workspace-filtered-items";
 import { useWorkspaceSelection } from "@/hooks/services/workspace/use-workspace-selection";
 
-vi.mock("@/lib/workspace/table-selection", () => ({
-  computeNextSelection: vi.fn((_ordered, _current, _anchor, clicked: WorkspaceItem) => ({
-    nextSelection: [clicked],
-    nextAnchorPath: clicked.path,
-  })),
-  normalizePath: vi.fn((p: string) => p || "/"),
-}));
-
-const makeItem = (
-  overrides: Partial<WorkspaceItem>,
-): WorkspaceItem =>
+const makeItem = (overrides: Partial<WorkspaceItem>): WorkspaceItem =>
   ({
     name: "file.txt",
     path: "/test/file.txt",
@@ -21,6 +12,11 @@ const makeItem = (
   }) as WorkspaceItem;
 
 describe("useWorkspaceSelection", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.clearAllMocks();
+  });
+
   const defaultProps = {
     processedItems: [] as WorkspaceItem[],
     panelManuallyHidden: false,
@@ -36,12 +32,38 @@ describe("useWorkspaceSelection", () => {
     expect(result.current.selectedPaths).toEqual([]);
   });
 
-  it("handleSelectItem updates selection", () => {
-    const item = makeItem({ name: "clicked.txt", path: "/clicked.txt" });
+  it("settles when processed items are recreated on every render", () => {
+    const items = [makeItem({ name: "a.txt", path: "/a.txt" })];
+
+    expect(() =>
+      renderHook(() => {
+        const processedItems = useWorkspaceFilteredItems(items, {
+          showHiddenFiles: false,
+          typeFilter: "all",
+          searchQuery: "",
+          sort: { field: "name", direction: "asc" },
+        });
+        return useWorkspaceSelection({ ...defaultProps, processedItems });
+      }),
+    ).not.toThrow();
+  });
+
+  it("updates selection immediately and defers panel expansion", () => {
+    vi.useFakeTimers();
+    const item = makeItem({
+      name: "clicked-folder",
+      path: "/clicked-folder",
+      type: "folder",
+    });
     const processedItems = [item];
+    const setPanelExpanded = vi.fn();
 
     const { result } = renderHook(() =>
-      useWorkspaceSelection({ ...defaultProps, processedItems }),
+      useWorkspaceSelection({
+        ...defaultProps,
+        processedItems,
+        setPanelExpanded,
+      }),
     );
 
     act(() => {
@@ -50,8 +72,169 @@ describe("useWorkspaceSelection", () => {
 
     expect(result.current.selectedItems).toEqual([item]);
     expect(result.current.primaryItem).toEqual(
-      expect.objectContaining({ name: "clicked.txt" }),
+      expect.objectContaining({ name: "clicked-folder" }),
     );
+    expect(setPanelExpanded).not.toHaveBeenCalled();
+
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+    expect(setPanelExpanded).toHaveBeenCalledWith(true);
+  });
+
+  it("does not expand folder details before the double-click window closes", () => {
+    vi.useFakeTimers();
+    const folder = makeItem({ type: "folder", path: "/folder" });
+    const setPanelExpanded = vi.fn();
+    const { result } = renderHook(() =>
+      useWorkspaceSelection({
+        ...defaultProps,
+        processedItems: [folder],
+        setPanelExpanded,
+      }),
+    );
+
+    act(() => {
+      result.current.handleSelectItem(folder);
+      vi.advanceTimersByTime(499);
+    });
+
+    expect(setPanelExpanded).not.toHaveBeenCalled();
+  });
+
+  it("opens file details immediately without waiting for folder navigation", () => {
+    vi.useFakeTimers();
+    const file = makeItem({ type: "txt", path: "/file.txt" });
+    const setPanelExpanded = vi.fn();
+    const { result } = renderHook(() =>
+      useWorkspaceSelection({
+        ...defaultProps,
+        processedItems: [file],
+        setPanelExpanded,
+      }),
+    );
+
+    act(() => {
+      result.current.handleSelectItem(file);
+    });
+
+    expect(setPanelExpanded).toHaveBeenCalledOnce();
+    expect(setPanelExpanded).toHaveBeenCalledWith(true);
+  });
+
+  it("cancels pending folder details when navigation clears selection", () => {
+    vi.useFakeTimers();
+    const folder = makeItem({ type: "folder", path: "/folder" });
+    const setPanelExpanded = vi.fn();
+    const { result } = renderHook(() =>
+      useWorkspaceSelection({
+        ...defaultProps,
+        processedItems: [folder],
+        setPanelExpanded,
+      }),
+    );
+
+    act(() => {
+      result.current.handleSelectItem(folder);
+      result.current.clearSelection();
+      vi.runAllTimers();
+    });
+
+    expect(setPanelExpanded).not.toHaveBeenCalled();
+    expect(result.current.selectedItems).toEqual([]);
+  });
+
+  it("cancels pending folder details when a file is selected next", () => {
+    vi.useFakeTimers();
+    const folder = makeItem({ type: "folder", path: "/folder" });
+    const file = makeItem({ type: "txt", path: "/file.txt" });
+    const setPanelExpanded = vi.fn();
+    const { result } = renderHook(() =>
+      useWorkspaceSelection({
+        ...defaultProps,
+        processedItems: [folder, file],
+        setPanelExpanded,
+      }),
+    );
+
+    act(() => {
+      result.current.handleSelectItem(folder);
+      result.current.handleSelectItem(file);
+      vi.runAllTimers();
+    });
+
+    expect(setPanelExpanded).toHaveBeenCalledOnce();
+    expect(result.current.primaryItem).toBe(file);
+  });
+
+  it("never auto-opens details when the panel was manually hidden", () => {
+    vi.useFakeTimers();
+    const folder = makeItem({ type: "folder", path: "/folder" });
+    const file = makeItem({ type: "txt", path: "/file.txt" });
+    const setPanelExpanded = vi.fn();
+    const { result } = renderHook(() =>
+      useWorkspaceSelection({
+        processedItems: [folder, file],
+        panelManuallyHidden: true,
+        setPanelExpanded,
+      }),
+    );
+
+    act(() => {
+      result.current.handleSelectItem(folder);
+      result.current.handleSelectItem(file);
+      vi.runAllTimers();
+    });
+
+    expect(setPanelExpanded).not.toHaveBeenCalled();
+  });
+
+  it("cancels pending folder details when the panel is manually hidden", () => {
+    vi.useFakeTimers();
+    const folder = makeItem({ type: "folder", path: "/folder" });
+    const setPanelExpanded = vi.fn();
+    const initialProps = {
+      processedItems: [folder],
+      panelManuallyHidden: false,
+      setPanelExpanded,
+    };
+    const { result, rerender } = renderHook(
+      (props) => useWorkspaceSelection(props),
+      { initialProps },
+    );
+
+    act(() => {
+      result.current.handleSelectItem(folder);
+    });
+    rerender({ ...initialProps, panelManuallyHidden: true });
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(setPanelExpanded).not.toHaveBeenCalled();
+  });
+
+  it("cancels pending folder details when the browser unmounts", () => {
+    vi.useFakeTimers();
+    const folder = makeItem({ type: "folder", path: "/folder" });
+    const setPanelExpanded = vi.fn();
+    const { result, unmount } = renderHook(() =>
+      useWorkspaceSelection({
+        ...defaultProps,
+        processedItems: [folder],
+        setPanelExpanded,
+      }),
+    );
+
+    act(() => {
+      result.current.handleSelectItem(folder);
+    });
+    unmount();
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(setPanelExpanded).not.toHaveBeenCalled();
   });
 
   it("clearSelection resets to empty", () => {
@@ -78,8 +261,16 @@ describe("useWorkspaceSelection", () => {
   });
 
   it("syncs selected items when processedItems reference changes", () => {
-    const itemV1 = makeItem({ name: "data.txt", path: "/test/data.txt", size: 100 });
-    const itemV2 = makeItem({ name: "data.txt", path: "/test/data.txt", size: 200 });
+    const itemV1 = makeItem({
+      name: "data.txt",
+      path: "/test/data.txt",
+      size: 100,
+    });
+    const itemV2 = makeItem({
+      name: "data.txt",
+      path: "/test/data.txt",
+      size: 200,
+    });
 
     const initialProps = {
       ...defaultProps,
@@ -91,21 +282,75 @@ describe("useWorkspaceSelection", () => {
       { initialProps },
     );
 
-    // Select the item
     act(() => {
       result.current.handleSelectItem(itemV1);
     });
-    expect(result.current.selectedItems).toHaveLength(1);
 
-    // Rerender with new processedItems containing updated version of same item
     rerender({
       ...defaultProps,
       processedItems: [itemV2],
     });
 
-    // Selection should now reference the updated item
-    expect(result.current.selectedItems).toHaveLength(1);
-    expect(result.current.selectedItems[0]).toBe(itemV2);
+    expect(result.current.selectedItems).toEqual([itemV2]);
+    expect(result.current.primaryItem).toBe(itemV2);
+    expect(result.current.selectedPaths).toEqual(["test/data.txt"]);
+  });
+
+  it("preserves selected items that are temporarily filtered out", () => {
+    const selected = makeItem({ name: "selected.txt", path: "/selected.txt" });
+    const visible = makeItem({ name: "visible.txt", path: "/visible.txt" });
+    const initialProps = {
+      ...defaultProps,
+      processedItems: [selected, visible],
+    };
+    const { result, rerender } = renderHook(
+      (props) => useWorkspaceSelection(props),
+      { initialProps },
+    );
+
+    act(() => {
+      result.current.handleSelectItem(selected);
+    });
+    rerender({ ...defaultProps, processedItems: [visible] });
+
+    expect(result.current.selectedItems).toEqual([selected]);
+    expect(result.current.primaryItem).toBe(selected);
+  });
+
+  it("refreshes a multi-selection without changing its order", () => {
+    const alphaV1 = makeItem({
+      name: "alpha.txt",
+      path: "/alpha.txt",
+      size: 1,
+    });
+    const betaV1 = makeItem({ name: "beta.txt", path: "/beta.txt", size: 2 });
+    const alphaV2 = { ...alphaV1, size: 10 };
+    const betaV2 = { ...betaV1, size: 20 };
+    const initialProps = {
+      ...defaultProps,
+      processedItems: [alphaV1, betaV1],
+    };
+    const { result, rerender } = renderHook(
+      (props) => useWorkspaceSelection(props),
+      { initialProps },
+    );
+
+    act(() => {
+      result.current.handleSelectItem(alphaV1);
+    });
+    act(() => {
+      result.current.handleSelectItem(betaV1, {
+        ctrlOrMeta: true,
+        shift: false,
+      });
+    });
+    rerender({
+      ...defaultProps,
+      processedItems: [betaV2, alphaV2],
+    });
+
+    expect(result.current.selectedItems).toEqual([alphaV2, betaV2]);
+    expect(result.current.primaryItem).toBe(betaV2);
   });
 
   it("does not update selection when processedItems reference is the same", () => {

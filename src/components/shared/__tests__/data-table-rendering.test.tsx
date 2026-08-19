@@ -1,16 +1,77 @@
+import { useState } from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
-import { DataTable, formatCellValue } from "../data-table";
+import { DataTable } from "../data-table";
+import { formatCellValue } from "../data-table-utils";
 import { server } from "@/test-helpers/msw-server";
+
+vi.mock("@tanstack/react-virtual", () => ({
+  useVirtualizer: ({
+    count,
+    estimateSize,
+  }: {
+    count: number;
+    estimateSize: () => number;
+  }) => ({
+    getVirtualItems: () =>
+      Array.from({ length: count }, (_, index) => ({
+        index,
+        start: index * estimateSize(),
+        size: estimateSize(),
+        end: (index + 1) * estimateSize(),
+        key: index,
+        lane: 0,
+      })),
+    getTotalSize: () => count * estimateSize(),
+    measure: vi.fn(),
+  }),
+}));
 
 function deferred<T>() {
   let resolve!: (value: T) => void;
-  const promise = new Promise<T>((res) => { resolve = res; });
+  const promise = new Promise<T>((res) => {
+    resolve = res;
+  });
   return { promise, resolve };
 }
 
 const columns = [{ id: "strain_name", label: "Strain Name", visible: true }];
+const selectionRows = [
+  { genome_id: "100.1", strain_name: "First" },
+  { genome_id: "100.2", strain_name: "Second" },
+  { genome_id: "100.3", strain_name: "Third" },
+  { genome_id: "100.4", strain_name: "Fourth" },
+];
+
+function selectionCell(checkbox: HTMLElement) {
+  const cell = checkbox.closest("td");
+  if (!cell) throw new Error("Selection checkbox must be inside a table cell");
+  return cell;
+}
+
+function ControlledSelectionTable({
+  onGenomeSelect,
+  onActiveRowChange,
+}: {
+  onGenomeSelect?: (id: string | null) => void;
+  onActiveRowChange?: (id: string | null) => void;
+}) {
+  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
+  return (
+    <DataTable
+      id="controlled-selection"
+      data={selectionRows}
+      columns={columns}
+      totalItems={selectionRows.length}
+      resource="genome"
+      rowSelection={rowSelection}
+      onRowSelectionChange={setRowSelection}
+      onGenomeSelect={onGenomeSelect}
+      onActiveRowChange={onActiveRowChange}
+    />
+  );
+}
 
 beforeAll(() => {
   global.ResizeObserver = class ResizeObserver {
@@ -18,6 +79,134 @@ beforeAll(() => {
     unobserve = vi.fn();
     disconnect = vi.fn();
   };
+});
+
+describe("DataTable row selection checkboxes", () => {
+  it("keeps each checkbox checked when multiple rows are selected", async () => {
+    const user = userEvent.setup();
+    render(
+      <DataTable
+        id="selection"
+        data={[
+          { genome_id: "100.1", strain_name: "First" },
+          { genome_id: "100.2", strain_name: "Second" },
+        ]}
+        columns={columns}
+        totalItems={2}
+        resource="genome"
+      />,
+    );
+
+    const first = screen.getByRole("checkbox", { name: "Select row 100.1" });
+    const second = screen.getByRole("checkbox", { name: "Select row 100.2" });
+    await user.click(first);
+    await user.click(second);
+
+    expect(first).toBeChecked();
+    expect(second).toBeChecked();
+  });
+
+  it("uses checkbox toggle semantics when clicking anywhere in the selection cell", async () => {
+    const user = userEvent.setup();
+    render(
+      <DataTable
+        id="selection-cell"
+        data={[
+          { genome_id: "100.1", strain_name: "First" },
+          { genome_id: "100.2", strain_name: "Second" },
+        ]}
+        columns={columns}
+        totalItems={2}
+        resource="genome"
+      />,
+    );
+
+    const first = screen.getByRole("checkbox", { name: "Select row 100.1" });
+    const second = screen.getByRole("checkbox", { name: "Select row 100.2" });
+    const firstCell = selectionCell(first);
+    const secondCell = selectionCell(second);
+
+    await user.click(firstCell);
+    await user.click(secondCell);
+    expect(first).toBeChecked();
+    expect(second).toBeChecked();
+
+    await user.click(firstCell);
+    expect(first).not.toBeChecked();
+    expect(second).toBeChecked();
+  });
+
+  it("does not double-toggle when the checkbox itself is clicked", async () => {
+    const user = userEvent.setup();
+    render(<ControlledSelectionTable />);
+
+    const checkbox = screen.getByRole("checkbox", { name: "Select row 100.1" });
+    await user.click(checkbox);
+    expect(checkbox).toBeChecked();
+
+    await user.click(checkbox);
+    expect(checkbox).not.toBeChecked();
+  });
+
+  it("updates controlled selection when checkbox cells are clicked", async () => {
+    const user = userEvent.setup();
+    render(<ControlledSelectionTable />);
+
+    const first = screen.getByRole("checkbox", { name: "Select row 100.1" });
+    const second = screen.getByRole("checkbox", { name: "Select row 100.2" });
+    await user.click(selectionCell(first));
+    await user.click(selectionCell(second));
+
+    expect(first).toBeChecked();
+    expect(second).toBeChecked();
+  });
+
+  it.each([
+    ["checkbox", (checkbox: HTMLElement) => checkbox],
+    ["selection cell", selectionCell],
+  ])("shift-clicking the %s adds the inclusive range", async (_label, targetFor) => {
+    const user = userEvent.setup();
+    render(<ControlledSelectionTable />);
+
+    const first = screen.getByRole("checkbox", { name: "Select row 100.1" });
+    const fourth = screen.getByRole("checkbox", { name: "Select row 100.4" });
+    await user.click(targetFor(first));
+    await user.keyboard("{Shift>}");
+    await user.click(targetFor(fourth));
+    await user.keyboard("{/Shift}");
+
+    for (const row of selectionRows) {
+      expect(
+        screen.getByRole("checkbox", { name: `Select row ${row.genome_id}` }),
+      ).toBeChecked();
+    }
+  });
+
+  it.each([
+    ["checkbox", (checkbox: HTMLElement) => checkbox],
+    ["selection cell", selectionCell],
+  ])("notifies active-row callbacks once when the %s selects and deselects", async (_label, targetFor) => {
+    const user = userEvent.setup();
+    const onGenomeSelect = vi.fn();
+    const onActiveRowChange = vi.fn();
+    render(
+      <ControlledSelectionTable
+        onGenomeSelect={onGenomeSelect}
+        onActiveRowChange={onActiveRowChange}
+      />,
+    );
+
+    const checkbox = screen.getByRole("checkbox", { name: "Select row 100.1" });
+    await user.click(targetFor(checkbox));
+    expect(onGenomeSelect).toHaveBeenLastCalledWith("100.1");
+    expect(onActiveRowChange).toHaveBeenLastCalledWith("100.1");
+
+    await user.click(targetFor(checkbox));
+    expect(onGenomeSelect).toHaveBeenLastCalledWith(null);
+    expect(onActiveRowChange).toHaveBeenLastCalledWith(null);
+    expect(onGenomeSelect).toHaveBeenCalledTimes(2);
+    expect(onActiveRowChange).toHaveBeenCalledTimes(2);
+  });
 });
 
 // Regression: "Showing 1-0 of N" appeared during page-data loading because end was
@@ -36,9 +225,11 @@ describe("DataTable Showing display during loading", () => {
         isLoading={true}
         pageIndex={0}
         pageSize={200}
-      />
+      />,
     );
-    expect(screen.getByText(/Showing 1-200 of 5000 results/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Showing 1-200 of 5000 results/),
+    ).toBeInTheDocument();
   });
 
   it("shows expected range for page 2 while loading (not '201-200')", () => {
@@ -52,13 +243,17 @@ describe("DataTable Showing display during loading", () => {
         isLoading={true}
         pageIndex={1}
         pageSize={200}
-      />
+      />,
     );
-    expect(screen.getByText(/Showing 201-400 of 5000 results/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Showing 201-400 of 5000 results/),
+    ).toBeInTheDocument();
   });
 
   it("uses target page range while loading even when placeholder rows exist", () => {
-    const rows = Array.from({ length: 3 }, (_, i) => ({ strain_name: `Previous Strain ${String(i)}` }));
+    const rows = Array.from({ length: 3 }, (_, i) => ({
+      strain_name: `Previous Strain ${String(i)}`,
+    }));
 
     render(
       <DataTable
@@ -70,11 +265,15 @@ describe("DataTable Showing display during loading", () => {
         isLoading={true}
         pageIndex={1}
         pageSize={200}
-      />
+      />,
     );
 
-    expect(screen.getByText(/Showing 201-400 of 5000 results/)).toBeInTheDocument();
-    expect(screen.queryByText(/Showing 201-203 of 5000 results/)).not.toBeInTheDocument();
+    expect(
+      screen.getByText(/Showing 201-400 of 5000 results/),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/Showing 201-203 of 5000 results/),
+    ).not.toBeInTheDocument();
   });
 
   it("shows 1-0 when data is genuinely empty and not loading", () => {
@@ -88,13 +287,15 @@ describe("DataTable Showing display during loading", () => {
         isLoading={false}
         pageIndex={0}
         pageSize={200}
-      />
+      />,
     );
     expect(screen.getByText(/Showing 1-0 of 5000 results/)).toBeInTheDocument();
   });
 
   it("shows actual row count range when data is loaded", () => {
-    const rows = Array.from({ length: 3 }, (_, i) => ({ strain_name: `Strain ${String(i)}` }));
+    const rows = Array.from({ length: 3 }, (_, i) => ({
+      strain_name: `Strain ${String(i)}`,
+    }));
     render(
       <DataTable
         id="test"
@@ -105,13 +306,15 @@ describe("DataTable Showing display during loading", () => {
         isLoading={false}
         pageIndex={0}
         pageSize={200}
-      />
+      />,
     );
     expect(screen.getByText(/Showing 1-3 of 5000 results/)).toBeInTheDocument();
   });
 
   it("caps end at totalItems when last page is partial", () => {
-    const rows = Array.from({ length: 10 }, (_, i) => ({ strain_name: `Strain ${String(i)}` }));
+    const rows = Array.from({ length: 10 }, (_, i) => ({
+      strain_name: `Strain ${String(i)}`,
+    }));
     render(
       <DataTable
         id="test"
@@ -122,10 +325,12 @@ describe("DataTable Showing display during loading", () => {
         isLoading={true}
         pageIndex={1}
         pageSize={200}
-      />
+      />,
     );
     // expected end: min(201 + 200 - 1, 210) = 210, not 400
-    expect(screen.getByText(/Showing 201-210 of 210 results/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Showing 201-210 of 210 results/),
+    ).toBeInTheDocument();
   });
 });
 
@@ -138,7 +343,7 @@ describe("formatCellValue array handling", () => {
 
   it("joins array of strings with comma-space", () => {
     expect(formatCellValue(["A/Vietnam/1203", "A/California/04"])).toBe(
-      "A/Vietnam/1203, A/California/04"
+      "A/Vietnam/1203, A/California/04",
     );
   });
 
@@ -174,7 +379,7 @@ describe("DataTable empty state", () => {
         columns={columns}
         totalItems={0}
         resource="strain"
-      />
+      />,
     );
     expect(screen.getByText("No results")).toBeInTheDocument();
   });
@@ -188,7 +393,7 @@ describe("DataTable empty state", () => {
         totalItems={0}
         resource="strain"
         errorMessage="Error: Failed to fetch metadata (500 Internal Server Error)"
-      />
+      />,
     );
     expect(screen.getByText(/Failed to fetch metadata/)).toBeInTheDocument();
     expect(screen.queryByText("No results")).not.toBeInTheDocument();
@@ -203,10 +408,14 @@ describe("DataTable empty state", () => {
         totalItems={0}
         resource="strain"
         errorMessage="Error: Failed to fetch metadata (500 Internal Server Error)"
-      />
+      />,
     );
-    expect(screen.getByRole("button", { name: /Download \(CSV\)/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Columns/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Download \(CSV\)/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Columns/i }),
+    ).toBeInTheDocument();
   });
 });
 
@@ -265,8 +474,12 @@ describe("DataTable download selected: POST regression", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
-    await waitFor(() => { expect(requestMethod).toBe("POST"); });
+    await user.click(
+      screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+    );
+    await waitFor(() => {
+      expect(requestMethod).toBe("POST");
+    });
   });
 
   it("sends RQL query in POST body, not in URL query string", async () => {
@@ -292,8 +505,12 @@ describe("DataTable download selected: POST regression", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
-    await waitFor(() => { expect(capturedBody).toBeTruthy(); });
+    await user.click(
+      screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+    );
+    await waitFor(() => {
+      expect(capturedBody).toBeTruthy();
+    });
 
     expect(capturedBody).toBe("or(eq(id,aaaa-0001),eq(id,aaaa-0002))");
     expect(capturedUrl).not.toContain("or(eq(id,");
@@ -320,8 +537,12 @@ describe("DataTable download selected: POST regression", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
-    await waitFor(() => { expect(rangeHeader).toBeTruthy(); });
+    await user.click(
+      screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+    );
+    await waitFor(() => {
+      expect(rangeHeader).toBeTruthy();
+    });
     expect(rangeHeader).toBe("items=0-2");
   });
 
@@ -346,14 +567,21 @@ describe("DataTable download selected: POST regression", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
-    await waitFor(() => { expect(capturedBody).toBeTruthy(); });
+    await user.click(
+      screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+    );
+    await waitFor(() => {
+      expect(capturedBody).toBeTruthy();
+    });
     expect(capturedBody).toBe("or(eq(genome_id,1234.1))");
   });
 
   it("regression: 200 selected IDs fit in POST body (GET URL would have caused ERR_FAILED)", async () => {
     const user = userEvent.setup();
-    const ids = Array.from({ length: 200 }, (_, i) => `id-${String(i).padStart(4, "0")}`);
+    const ids = Array.from(
+      { length: 200 },
+      (_, i) => `id-${String(i).padStart(4, "0")}`,
+    );
     const rows = ids.map((id) => ({ id, source: "Pfam", product: "poly" }));
     let capturedBody = "";
 
@@ -375,8 +603,15 @@ describe("DataTable download selected: POST regression", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
-    await waitFor(() => { expect(capturedBody).toBeTruthy(); }, { timeout: 5000 });
+    await user.click(
+      screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+    );
+    await waitFor(
+      () => {
+        expect(capturedBody).toBeTruthy();
+      },
+      { timeout: 5000 },
+    );
 
     expect(capturedBody).toMatch(/^or\(/);
     // First and last IDs present — a GET URL would have hit length limits and lost some
@@ -395,16 +630,24 @@ describe("DataTable download selected: POST regression", () => {
         selectedIds={[]}
       />,
     );
-    expect(screen.queryByRole("button", { name: /Download Selected/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /Download Selected/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("triggers anchor click (file download) after successful POST", async () => {
     const user = userEvent.setup();
-    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => { /* no-op */ });
+    const clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(() => {
+        /* no-op */
+      });
 
     server.use(
       http.post(`${DATA_API}/protein_feature/`, () =>
-        HttpResponse.json([{ id: "aaaa-0001", source: "PRINTS", product: "polyprotein" }]),
+        HttpResponse.json([
+          { id: "aaaa-0001", source: "PRINTS", product: "polyprotein" },
+        ]),
       ),
     );
 
@@ -419,17 +662,26 @@ describe("DataTable download selected: POST regression", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
-    await waitFor(() => { expect(clickSpy).toHaveBeenCalled(); });
+    await user.click(
+      screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+    );
+    await waitFor(() => {
+      expect(clickSpy).toHaveBeenCalled();
+    });
     clickSpy.mockRestore();
   });
 
   it("logs error and does not crash when POST returns 500", async () => {
     const user = userEvent.setup();
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => { /* no-op */ });
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {
+      /* no-op */
+    });
 
     server.use(
-      http.post(`${DATA_API}/protein_feature/`, () => new HttpResponse(null, { status: 500 })),
+      http.post(
+        `${DATA_API}/protein_feature/`,
+        () => new HttpResponse(null, { status: 500 }),
+      ),
     );
 
     render(
@@ -443,20 +695,31 @@ describe("DataTable download selected: POST regression", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
+    await user.click(
+      screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+    );
     await waitFor(() => {
-      expect(errorSpy).toHaveBeenCalledWith("Download selected failed:", expect.any(Error));
+      expect(errorSpy).toHaveBeenCalledWith(
+        "Download selected failed:",
+        expect.any(Error),
+      );
     });
     errorSpy.mockRestore();
   });
 
   it("handles {items:[...]} response envelope and still downloads", async () => {
     const user = userEvent.setup();
-    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => { /* no-op */ });
+    const clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(() => {
+        /* no-op */
+      });
 
     server.use(
       http.post(`${DATA_API}/protein_feature/`, () =>
-        HttpResponse.json({ items: [{ id: "aaaa-0001", source: "PRINTS", product: "poly" }] }),
+        HttpResponse.json({
+          items: [{ id: "aaaa-0001", source: "PRINTS", product: "poly" }],
+        }),
       ),
     );
 
@@ -471,8 +734,12 @@ describe("DataTable download selected: POST regression", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
-    await waitFor(() => { expect(clickSpy).toHaveBeenCalled(); });
+    await user.click(
+      screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+    );
+    await waitFor(() => {
+      expect(clickSpy).toHaveBeenCalled();
+    });
     clickSpy.mockRestore();
   });
 });
@@ -502,15 +769,21 @@ describe("DataTable 'Downloading...' indicator via onDownloadAll", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /^Download \(CSV\)$/i }));
+    await user.click(
+      screen.getByRole("button", { name: /^Download \(CSV\)$/i }),
+    );
 
     expect(onDownloadAll).toHaveBeenCalledWith("csv", null);
     expect(await screen.findByText("Downloading...")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /^Download \(CSV\)$/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /^Download \(CSV\)$/i }),
+    ).not.toBeInTheDocument();
 
     resolve(undefined);
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /^Download \(CSV\)$/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /^Download \(CSV\)$/i }),
+      ).toBeInTheDocument();
     });
     expect(screen.queryByText("Downloading...")).not.toBeInTheDocument();
   });
@@ -531,14 +804,18 @@ describe("DataTable 'Downloading...' indicator via onDownloadAll", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /^Download \(TXT\)$/i }));
+    await user.click(
+      screen.getByRole("button", { name: /^Download \(TXT\)$/i }),
+    );
 
     expect(onDownloadAll).toHaveBeenCalledWith("txt", null);
     expect(await screen.findByText("Downloading...")).toBeInTheDocument();
 
     resolve(undefined);
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /^Download \(TXT\)$/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /^Download \(TXT\)$/i }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -558,14 +835,20 @@ describe("DataTable 'Downloading...' indicator via onDownloadAll", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /^Download \(CSV\)$/i }));
+    await user.click(
+      screen.getByRole("button", { name: /^Download \(CSV\)$/i }),
+    );
     await screen.findByText("Downloading...");
 
-    expect(screen.getByRole("button", { name: /^Download \(TXT\)$/i })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: /^Download \(TXT\)$/i }),
+    ).toBeDisabled();
 
     resolve(undefined);
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /^Download \(TXT\)$/i })).not.toBeDisabled();
+      expect(
+        screen.getByRole("button", { name: /^Download \(TXT\)$/i }),
+      ).not.toBeDisabled();
     });
   });
 
@@ -587,21 +870,29 @@ describe("DataTable 'Downloading...' indicator via onDownloadAll", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /Download Selected \(CSV\)/i }));
+    await user.click(
+      screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+    );
 
     expect(onDownloadAll).toHaveBeenCalledWith("csv", null);
     expect(await screen.findByText("Downloading...")).toBeInTheDocument();
 
     resolve(undefined);
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /Download Selected \(CSV\)/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+      ).toBeInTheDocument();
     });
   });
 
   it("clears 'Downloading...' even when onDownloadAll's promise rejects", async () => {
     const user = userEvent.setup();
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => { /* no-op */ });
-    const onDownloadAll = vi.fn(() => Promise.reject(new Error("network down")));
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {
+      /* no-op */
+    });
+    const onDownloadAll = vi.fn(() =>
+      Promise.reject(new Error("network down")),
+    );
 
     render(
       <DataTable
@@ -614,10 +905,14 @@ describe("DataTable 'Downloading...' indicator via onDownloadAll", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /^Download \(CSV\)$/i }));
+    await user.click(
+      screen.getByRole("button", { name: /^Download \(CSV\)$/i }),
+    );
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /^Download \(CSV\)$/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /^Download \(CSV\)$/i }),
+      ).toBeInTheDocument();
     });
     expect(screen.queryByText("Downloading...")).not.toBeInTheDocument();
     errorSpy.mockRestore();

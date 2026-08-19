@@ -98,8 +98,8 @@ export function GenomeShell({
             <ResizableHandle withHandle />
 
             <ResizablePanel
-              defaultSize={20}
-              minSize="20%"
+              defaultSize="15%"
+              minSize="10%"
               maxSize="60%"
               className="relative min-h-0 overflow-hidden"
             >

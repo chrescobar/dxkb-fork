@@ -98,22 +98,22 @@ export async function fetchOrganismGeoDistribution(
   const baseUrl = getBvBrcWebsiteApiBaseUrl();
   const { signal } = options;
 
-  const [countryData, stateData, countyPivot] = await Promise.all([
-    fetchField(baseUrl, taxonId, "isolation_country", countryLimit, signal),
-    fetchField(baseUrl, taxonId, "state_province", stateLimit, signal),
-    // Pivot on state_province→county so each county is scoped to its state.
-    // A flat `county` facet would merge same-named counties across states
-    // (e.g. "Washington County" exists in 31 states) into a single key.
-    fetchPivotOrEmpty(baseUrl, taxonId, "state_province", "county", countyLimit, signal),
-  ]);
-
   const [
+    countryData,
+    stateData,
+    countyPivot,
     countryGenera,
     countryHosts,
     stateGenera,
     stateHosts,
     countyGenera,
   ] = await Promise.all([
+    fetchField(baseUrl, taxonId, "isolation_country", countryLimit, signal),
+    fetchField(baseUrl, taxonId, "state_province", stateLimit, signal),
+    // Pivot on state_province→county so each county is scoped to its state.
+    // A flat `county` facet would merge same-named counties across states
+    // (e.g. "Washington County" exists in 31 states) into a single key.
+    fetchPivotOrEmpty(baseUrl, taxonId, "state_province", "county", countyLimit, signal),
     fetchPivotOrEmpty(baseUrl, taxonId, "isolation_country", "genus", undefined, signal),
     fetchPivotOrEmpty(baseUrl, taxonId, "isolation_country", "host_common_name", undefined, signal),
     fetchPivotOrEmpty(baseUrl, taxonId, "state_province", "genus", undefined, signal),

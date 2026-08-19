@@ -3,7 +3,11 @@ import type { ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { InMemoryWorkspaceRepository } from "@/lib/services/workspace/adapters/in-memory-workspace-repository";
 import { WorkspaceRepositoryProvider } from "@/contexts/workspace-repository-context";
-import { useWorkspaceObjectSearch } from "@/hooks/services/workspace/use-workspace-object-search";
+import {
+  assertUniqueWorkspaceObjectPaths,
+  useWorkspaceObjectSearch,
+} from "@/hooks/services/workspace/use-workspace-object-search";
+import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
 function makeWrapper(repo: InMemoryWorkspaceRepository) {
   const qc = new QueryClient({
@@ -12,7 +16,9 @@ function makeWrapper(repo: InMemoryWorkspaceRepository) {
   return function Wrapper({ children }: { children: ReactNode }) {
     return (
       <QueryClientProvider client={qc}>
-        <WorkspaceRepositoryProvider value={{ authenticated: repo, public: repo }}>
+        <WorkspaceRepositoryProvider
+          value={{ authenticated: repo, public: repo }}
+        >
           {children}
         </WorkspaceRepositoryProvider>
       </QueryClientProvider>
@@ -34,7 +40,9 @@ describe("useWorkspaceObjectSearch", () => {
       () => useWorkspaceObjectSearch({ username: "alice", types: ["reads"] }),
       { wrapper: makeWrapper(repo) },
     );
-    await waitFor(() => { expect(result.current.loading).toBe(false); });
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
     expect(result.current.items.map((i) => i.name)).toEqual(["x.fq"]);
     expect(result.current.objects[0]?.type).toBe("reads");
   });
@@ -53,12 +61,96 @@ describe("useWorkspaceObjectSearch", () => {
       () => useWorkspaceObjectSearch({ username: "alice" }),
       { wrapper: makeWrapper(repo) },
     );
-    await waitFor(() => { expect(result.current.loading).toBe(false); });
-    act(() => { result.current.search("apple"); });
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+    act(() => {
+      result.current.search("apple");
+    });
     expect(result.current.filteredItems.map((i) => i.name)).toEqual([
       "apple.fq",
       "apple2.fq",
     ]);
+  });
+
+  it("throws when search results contain duplicate paths", () => {
+    const item = {
+      id: "first-id",
+      name: "duplicate.fq",
+      path: "/alice@bvbrc/home/duplicate.fq",
+      type: "reads",
+      size: 1,
+    } satisfies WorkspaceItem;
+
+    expect(() =>
+      assertUniqueWorkspaceObjectPaths([item, { ...item, id: "second-id" }]),
+    ).toThrow(
+      "Workspace search returned duplicate object path: /alice@bvbrc/home/duplicate.fq",
+    );
+  });
+
+  it("reports duplicate paths through the query error state", async () => {
+    const repo = new InMemoryWorkspaceRepository();
+    const item = {
+      id: "first-id",
+      name: "duplicate.fq",
+      path: "/alice@bvbrc/home/duplicate.fq",
+      type: "reads",
+      size: 1,
+    } satisfies WorkspaceItem;
+    vi.spyOn(repo, "searchObjects").mockResolvedValue([
+      item,
+      { ...item, id: "second-id" },
+    ]);
+
+    const { result } = renderHook(
+      () => useWorkspaceObjectSearch({ username: "alice" }),
+      { wrapper: makeWrapper(repo) },
+    );
+
+    await waitFor(() => {
+      expect(result.current.error).toBe(
+        "Workspace search returned duplicate object path: /alice@bvbrc/home/duplicate.fq",
+      );
+    });
+    expect(result.current.items).toEqual([]);
+  });
+
+  it("allows a repeated backend id when paths are distinct", () => {
+    const items = [
+      {
+        id: "shared-id",
+        name: "first.fq",
+        path: "/alice@bvbrc/home/first.fq",
+        type: "reads",
+        size: 1,
+      },
+      {
+        id: "shared-id",
+        name: "second.fq",
+        path: "/alice@bvbrc/home/second.fq",
+        type: "reads",
+        size: 1,
+      },
+    ] satisfies WorkspaceItem[];
+
+    expect(assertUniqueWorkspaceObjectPaths(items)).toBe(items);
+  });
+
+  it("throws when a search result has no path", () => {
+    expect(() =>
+      assertUniqueWorkspaceObjectPaths([
+        {
+          id: "missing-path-id",
+          name: "missing.fq",
+          path: "",
+          type: "reads",
+          size: 1,
+        },
+      ]),
+    ).toThrow(
+      "Workspace search returned an object without a path: missing-path-id",
+    );
   });
 
   it("clearSearch resets the filter", async () => {
@@ -71,10 +163,16 @@ describe("useWorkspaceObjectSearch", () => {
       () => useWorkspaceObjectSearch({ username: "alice" }),
       { wrapper: makeWrapper(repo) },
     );
-    await waitFor(() => { expect(result.current.loading).toBe(false); });
-    act(() => { result.current.search("xyz"); });
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+    act(() => {
+      result.current.search("xyz");
+    });
     expect(result.current.filteredItems).toHaveLength(0);
-    act(() => { result.current.clearSearch(); });
+    act(() => {
+      result.current.clearSearch();
+    });
     expect(result.current.filteredItems).toHaveLength(1);
   });
 
@@ -85,7 +183,10 @@ describe("useWorkspaceObjectSearch", () => {
       { wrapper: makeWrapper(repo) },
     );
     await new Promise((r) => setTimeout(r, 20));
-    expect(result.current.items).toEqual([]);
+    expect(result.current.items).toHaveLength(0);
+    expect(result.current.objects).toHaveLength(0);
+    expect(result.current.filteredItems).toHaveLength(0);
+    expect(result.current.filteredObjects).toHaveLength(0);
     expect(repo.calls.length).toBe(0);
   });
 });

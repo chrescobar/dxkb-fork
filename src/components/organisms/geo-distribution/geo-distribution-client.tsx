@@ -2,7 +2,7 @@
 
 import { TooltipWithBounds, useTooltip } from "@visx/tooltip";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import * as topojson from "topojson-client";
 
@@ -39,7 +39,10 @@ async function fetchTopoJson(url: string): Promise<TopologyLike> {
   return (await response.json()) as TopologyLike;
 }
 
-export function GeoDistributionClient({ data, accent }: GeoDistributionClientProps) {
+export function GeoDistributionClient({
+  data,
+  accent,
+}: GeoDistributionClientProps) {
   const [mapState, setMapState] = useState<GeoMapState>({
     view: "us",
     selectedStateFips: null,
@@ -94,24 +97,27 @@ export function GeoDistributionClient({ data, accent }: GeoDistributionClientPro
       : String(worldQuery.error)
     : null;
 
-  const stateOptions = useMemo(() => {
-    if (!stateTopo) return [];
-    const object = stateTopo.objects.states;
-    if (!object) return [];
-    const fc = topojson.feature(stateTopo as never, object as never) as unknown as GeoJSON.FeatureCollection<
+  const stateOptions: { fips: string; name: string }[] = [];
+  const statesObject = stateTopo?.objects.states;
+  if (stateTopo && statesObject) {
+    const collection = topojson.feature(
+      stateTopo as never,
+      statesObject as never,
+    ) as unknown as GeoJSON.FeatureCollection<
       GeoJSON.Geometry,
       { name?: string }
     >;
-    return fc.features
-      .map((feature) => ({
-        fips: String((feature as { id?: string | number }).id ?? "").padStart(2, "0"),
-        name: feature.properties.name ?? "",
-      }))
-      .filter((option) => option.fips && option.name)
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }, [stateTopo]);
+    for (const feature of collection.features) {
+      const fips = String(
+        (feature as { id?: string | number }).id ?? "",
+      ).padStart(2, "0");
+      const name = feature.properties.name ?? "";
+      if (fips && name) stateOptions.push({ fips, name });
+    }
+    stateOptions.sort((a, b) => a.name.localeCompare(b.name));
+  }
 
-  const colorScale = useMemo(() => makeColorScale(data.maxCount, accent), [data.maxCount, accent]);
+  const colorScale = makeColorScale(data.maxCount, accent);
 
   const {
     tooltipOpen,
@@ -122,64 +128,78 @@ export function GeoDistributionClient({ data, accent }: GeoDistributionClientPro
     hideTooltip,
   } = useTooltip<HoverPayload>();
 
-  const handleViewChange = useCallback((view: GeoMapView) => {
+  const handleViewChange = (view: GeoMapView) => {
     setMapState((prev) => {
       if (view === "us") {
         return { view: "us", selectedStateFips: null, selectedStateName: null };
       }
       if (view === "world") {
-        return { view: "world", selectedStateFips: null, selectedStateName: null };
+        return {
+          view: "world",
+          selectedStateFips: null,
+          selectedStateName: null,
+        };
       }
       // view === "state" — default to Illinois if no state is already selected
       if (prev.selectedStateFips) return { ...prev, view: "state" };
-      return { view: "state", selectedStateFips: "17", selectedStateName: "Illinois" };
+      return {
+        view: "state",
+        selectedStateFips: "17",
+        selectedStateName: "Illinois",
+      };
     });
     hideTooltip();
     choroplethRef.current?.reset();
-  }, [hideTooltip]);
+  };
 
-  const handleSelectState = useCallback(
-    (fips: string, name: string) => {
-      setMapState({ view: "state", selectedStateFips: fips, selectedStateName: name });
+  const handleSelectState = (fips: string, name: string) => {
+    setMapState({
+      view: "state",
+      selectedStateFips: fips,
+      selectedStateName: name,
+    });
+    hideTooltip();
+    choroplethRef.current?.reset();
+  };
+
+  const handleHoverChange = (
+    payload: HoverPayload | null,
+    event: ReactPointerEvent<SVGPathElement>,
+  ) => {
+    if (!payload) {
       hideTooltip();
-      choroplethRef.current?.reset();
-    },
-    [hideTooltip],
-  );
+      return;
+    }
+    const container = containerRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    const left = event.clientX - rect.left + tooltipOffset;
+    const top = event.clientY - rect.top + tooltipOffset;
+    showTooltip({ tooltipData: payload, tooltipLeft: left, tooltipTop: top });
+  };
 
-  const handleHoverChange = useCallback(
-    (payload: HoverPayload | null, event: ReactPointerEvent<SVGPathElement>) => {
-      if (!payload) {
-        hideTooltip();
-        return;
-      }
-      const container = containerRef.current;
-      if (!container) return;
-      const rect = container.getBoundingClientRect();
-      const left = event.clientX - rect.left + tooltipOffset;
-      const top = event.clientY - rect.top + tooltipOffset;
-      showTooltip({ tooltipData: payload, tooltipLeft: left, tooltipTop: top });
-    },
-    [hideTooltip, showTooltip],
-  );
-
-  const helperMessage = useMemo(() => {
-    if (mapState.view === "world" && Object.keys(data.countryData).length === 0) {
-      return "No country-level data for this taxon.";
-    }
-    if (mapState.view === "us" && Object.keys(data.stateData).length === 0) {
-      return "No US state-level data for this taxon.";
-    }
-    if (mapState.view === "state" && mapState.selectedStateFips && Object.keys(data.countyData).length === 0) {
-      return "No county-level data for this taxon.";
-    }
-    return null;
-  }, [mapState, data]);
+  let helperMessage: string | null = null;
+  if (mapState.view === "world" && Object.keys(data.countryData).length === 0) {
+    helperMessage = "No country-level data for this taxon.";
+  } else if (
+    mapState.view === "us" &&
+    Object.keys(data.stateData).length === 0
+  ) {
+    helperMessage = "No US state-level data for this taxon.";
+  } else if (
+    mapState.view === "state" &&
+    mapState.selectedStateFips &&
+    Object.keys(data.countyData).length === 0
+  ) {
+    helperMessage = "No county-level data for this taxon.";
+  }
 
   return (
     <Card className="rounded-lg" size="sm">
       <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 pb-3">
-        <CardTitle className="text-lg!" role="heading" aria-level={2}>Geographic Distribution</CardTitle>
+        <CardTitle className="text-lg!" role="heading" aria-level={2}>
+          Geographic Distribution
+        </CardTitle>
         <MapControls
           mapState={mapState}
           stateOptions={stateOptions}
@@ -195,7 +215,9 @@ export function GeoDistributionClient({ data, accent }: GeoDistributionClientPro
             colorScale={colorScale}
             mapState={mapState}
             onSelectState={handleSelectState}
-            onSwitchToUs={() => { handleViewChange("us"); }}
+            onSwitchToUs={() => {
+              handleViewChange("us");
+            }}
             worldTopo={worldTopo}
             worldTopoLoading={worldQuery.isLoading}
             worldTopoError={worldTopoError}
@@ -219,9 +241,7 @@ export function GeoDistributionClient({ data, accent }: GeoDistributionClientPro
           )}
         </div>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-          <span className="text-xs text-muted-foreground">
-            {helperMessage}
-          </span>
+          <span className="text-xs text-muted-foreground">{helperMessage}</span>
           <ColorLegend maxCount={data.maxCount} accent={accent} />
         </div>
       </CardContent>

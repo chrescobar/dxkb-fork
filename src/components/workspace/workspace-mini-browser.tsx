@@ -1,24 +1,7 @@
 "use client";
 
-import {
-  useState,
-  useMemo,
-  useEffect,
-  useCallback,
-  useRef,
-  type KeyboardEvent,
-} from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
-import { WorkspaceItemIcon } from "./workspace-item-icon";
 import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { useWorkspaceRepository } from "@/contexts/workspace-repository-context";
 import { workspaceQueryKeys } from "@/lib/services/workspace/workspace-query-keys";
@@ -27,16 +10,10 @@ import {
   useUserWorkspaces,
 } from "@/hooks/services/workspace/use-shared-with-user";
 import { cn } from "@/lib/utils";
-import {
-  hasWriteAccess,
-  formatDate,
-  formatFileSize,
-  formatOwner,
-} from "@/lib/services/workspace/helpers";
-import { FolderUp } from "lucide-react";
+import { hasWriteAccess } from "@/lib/services/workspace/helpers";
 import { isFolderType, isFolder } from "@/lib/services/workspace/utils";
+import { WorkspaceMiniBrowserTable } from "./workspace-mini-browser-table";
 
-/** Derive username (e.g. "user") from workspace root path (e.g. "/user@bvbrc"). */
 function usernameFromWorkspaceRoot(workspaceRoot: string): string {
   return workspaceRoot.replace(/^\//, "").split("@")[0] ?? "";
 }
@@ -48,19 +25,85 @@ function normalizePath(path: string | null | undefined): string {
 }
 
 export interface WorkspaceMiniBrowserProps {
-  /** Full path (e.g. /user@bvbrc/home) */
   initialPath: string;
   onSelectPath: (path: string) => void;
   mode?: "folders-only" | "all";
   showHidden?: boolean;
-  /** Currently selected path for highlight */
   selectedPath?: string | null;
-  /**
-   * When set, at this path the mini browser shows merged user workspaces + shared folders
-   * (e.g. "/user@bvbrc"). Enables choosing shared folders as destination.
-   */
   workspaceRoot?: string;
   className?: string;
+}
+
+function useMiniBrowserItems({
+  currentPath,
+  workspaceRoot,
+  mode,
+  showHidden,
+}: {
+  currentPath: string;
+  workspaceRoot?: string;
+  mode: "folders-only" | "all";
+  showHidden: boolean;
+}) {
+  const normalizedCurrent = normalizePath(currentPath);
+  const normalizedRoot = workspaceRoot ? normalizePath(workspaceRoot) : "";
+  const isAtRoot = !!workspaceRoot && normalizedCurrent === normalizedRoot;
+  const username = workspaceRoot
+    ? usernameFromWorkspaceRoot(workspaceRoot)
+    : "";
+  const userWorkspacesQuery = useUserWorkspaces({
+    username,
+    enabled: isAtRoot && !!username,
+  });
+  const sharedQuery = useSharedWithUser({
+    username,
+    enabled: isAtRoot && !!username,
+  });
+  const repository = useWorkspaceRepository("authenticated");
+  const pathQuery = useQuery({
+    queryKey: workspaceQueryKeys.miniBrowser(currentPath),
+    queryFn: () => repository.listDirectory({ path: currentPath }),
+    enabled: !!currentPath && !isAtRoot,
+    staleTime: 60 * 1000,
+  });
+
+  let items: WorkspaceItem[];
+  if (isAtRoot) {
+    const byPath = new Map<string, WorkspaceItem>();
+    const shared = (sharedQuery.data ?? []).filter(hasWriteAccess);
+    for (const item of [...(userWorkspacesQuery.data ?? []), ...shared]) {
+      if (!byPath.has(item.path)) byPath.set(item.path, item);
+    }
+    items = Array.from(byPath.values());
+  } else {
+    items = pathQuery.data ?? [];
+  }
+
+  if (mode === "folders-only") {
+    items = items.filter((item) => isFolder(item.type));
+  }
+  if (!showHidden) {
+    items = items.filter((item) => !item.name.startsWith("."));
+  }
+  items = [...items].sort((a, b) => {
+    const aFolder = isFolderType(a.type);
+    const bFolder = isFolderType(b.type);
+    if (aFolder !== bFolder) return aFolder ? -1 : 1;
+    return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+  });
+
+  return {
+    items,
+    isAtRoot,
+    normalizedCurrent,
+    normalizedRoot,
+    isLoading: isAtRoot
+      ? userWorkspacesQuery.isLoading || sharedQuery.isLoading
+      : pathQuery.isLoading,
+    error: isAtRoot
+      ? (userWorkspacesQuery.error ?? sharedQuery.error)
+      : pathQuery.error,
+  };
 }
 
 export function WorkspaceMiniBrowser({
@@ -74,100 +117,23 @@ export function WorkspaceMiniBrowser({
 }: WorkspaceMiniBrowserProps) {
   const [currentPath, setCurrentPath] = useState(initialPath);
   const [prevInitialPath, setPrevInitialPath] = useState(initialPath);
-  const tableContainerRef = useRef<HTMLDivElement>(null);
   const [focusedRow, setFocusedRow] = useState<string | null>(null);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
 
   if (prevInitialPath !== initialPath) {
     setPrevInitialPath(initialPath);
     setCurrentPath(initialPath);
   }
 
-  const normalizedCurrent = currentPath.replace(/\/+$/, "") || "/";
-  const normalizedRoot = workspaceRoot?.replace(/\/+$/, "") ?? "";
-  const isAtRoot = !!workspaceRoot && normalizedCurrent === normalizedRoot;
-
-  useEffect(() => {
-    onSelectPath(normalizedCurrent);
-  }, [normalizedCurrent, onSelectPath]);
-
-  const username = workspaceRoot
-    ? usernameFromWorkspaceRoot(workspaceRoot)
-    : "";
-
-  const userWorkspacesQuery = useUserWorkspaces({
-    username,
-    enabled: isAtRoot && !!username,
-  });
-  const sharedQuery = useSharedWithUser({
-    username,
-    enabled: isAtRoot && !!username,
-  });
-
-  const repository = useWorkspaceRepository("authenticated");
-  const pathQuery = useQuery({
-    queryKey: workspaceQueryKeys.miniBrowser(currentPath),
-    queryFn: () => repository.listDirectory({ path: currentPath }),
-    enabled: !!currentPath && !isAtRoot,
-    staleTime: 60 * 1000,
-  });
-
-  const rootItems = useMemo(() => {
-    if (!isAtRoot) return [];
-    const userData = userWorkspacesQuery.data ?? [];
-    const shared = (sharedQuery.data ?? []).filter(hasWriteAccess);
-    const byPath = new Map<string, WorkspaceItem>();
-    for (const item of [...userData, ...shared]) {
-      if (!byPath.has(item.path)) byPath.set(item.path, item);
-    }
-    return Array.from(byPath.values());
-  }, [isAtRoot, userWorkspacesQuery.data, sharedQuery.data]);
-
-  const items = useMemo(
-    () => (isAtRoot ? rootItems : (pathQuery.data ?? [])),
-    [isAtRoot, rootItems, pathQuery.data],
-  );
-  const isLoading = isAtRoot
-    ? userWorkspacesQuery.isLoading || sharedQuery.isLoading
-    : pathQuery.isLoading;
-  const error = isAtRoot
-    ? (userWorkspacesQuery.error ?? sharedQuery.error)
-    : pathQuery.error;
-
-  const displayItems = useMemo(() => {
-    let list = items;
-    if (mode === "folders-only") {
-      list = list.filter((item) => isFolder(item.type));
-    }
-    if (!showHidden) {
-      list = list.filter((item) => !item.name.startsWith("."));
-    }
-    const sortCompare = (a: WorkspaceItem, b: WorkspaceItem) => {
-      const aFolder = isFolderType(a.type);
-      const bFolder = isFolderType(b.type);
-      if (aFolder !== bFolder) return aFolder ? -1 : 1;
-      return a.name.localeCompare(b.name, undefined, {
-        sensitivity: "base",
-      });
-    };
-    return [...list].sort(sortCompare);
-  }, [items, mode, showHidden]);
-
-  const handleFolderDoubleClick = (item: WorkspaceItem) => {
-    if (isFolderType(item.type)) {
-      setCurrentPath(item.path);
-    }
-  };
-
-  const handleFolderClick = (item: WorkspaceItem) => {
-    if (isFolderType(item.type)) {
-      onSelectPath(item.path);
-    }
-  };
-
-  const pathSegments = useMemo(
-    () => currentPath.split("/").filter(Boolean),
-    [currentPath],
-  );
+  const {
+    items,
+    isAtRoot,
+    normalizedCurrent,
+    normalizedRoot,
+    isLoading,
+    error,
+  } = useMiniBrowserItems({ currentPath, workspaceRoot, mode, showHidden });
+  const pathSegments = currentPath.split("/").filter(Boolean);
   const isInSharedFolder =
     !!workspaceRoot &&
     normalizedCurrent !== normalizedRoot &&
@@ -177,236 +143,119 @@ export function WorkspaceMiniBrowser({
     isInSharedFolder && pathSegments.length <= 2
       ? "Back to my workspaces"
       : "Parent folder";
+  const navigableItems = items.filter((item) => isFolderType(item.type));
+  const navigationTargets = [
+    ...(showParentRow ? ["parent"] : []),
+    ...navigableItems.map((item) => normalizePath(item.path)),
+  ];
 
-  const handleParentClick = useCallback(() => {
+  const navigateTo = (path: string | undefined) => {
+    if (!path) return;
+    const normalizedPath = normalizePath(path);
+    setCurrentPath(normalizedPath);
+    setFocusedRow(null);
+    onSelectPath(normalizedPath);
+  };
+
+  const handleParentClick = () => {
     if (isInSharedFolder && pathSegments.length <= 2) {
-      setCurrentPath(workspaceRoot);
+      navigateTo(workspaceRoot);
       return;
     }
     const parentSegments = pathSegments.slice(0, -1);
-    const parentPath =
-      parentSegments.length > 0 ? "/" + parentSegments.join("/") : "/";
-    setCurrentPath(parentPath);
-  }, [isInSharedFolder, pathSegments, workspaceRoot]);
+    navigateTo(
+      parentSegments.length > 0 ? `/${parentSegments.join("/")}` : "/",
+    );
+  };
 
-  const navigableItems = useMemo(
-    () => displayItems.filter((item) => isFolderType(item.type)),
-    [displayItems],
-  );
-
-  const navigationTargets = useMemo<string[]>(() => {
-    const targets: string[] = [];
-    if (showParentRow) {
-      targets.push("parent");
-    }
-    for (const item of navigableItems) {
-      targets.push(normalizePath(item.path));
-    }
-    return targets;
-  }, [showParentRow, navigableItems]);
-
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent<HTMLDivElement>) => {
-      if (e.key === "Enter") {
-        if (focusedRow === "parent") {
-          if (!showParentRow) return;
-          e.preventDefault();
-          handleParentClick();
-          return;
-        }
-        if (!focusedRow && selectedPath == null) return;
-        const key = focusedRow ?? normalizePath(selectedPath);
-        const focusedItem =
-          navigableItems.find((item) => normalizePath(item.path) === key) ??
-          null;
-        if (focusedItem) {
-          e.preventDefault();
-          setCurrentPath(focusedItem.path);
-        }
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter") {
+      if (focusedRow === "parent") {
+        if (!showParentRow) return;
+        event.preventDefault();
+        handleParentClick();
         return;
       }
-
-      if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
-      if (navigationTargets.length === 0) return;
-
-      const selectedKey =
-        selectedPath != null ? normalizePath(selectedPath) : null;
-      const currentKey =
-        focusedRow ?? selectedKey ?? (showParentRow ? "parent" : null);
-
-      const currentIndex = currentKey
-        ? navigationTargets.indexOf(currentKey)
-        : -1;
-
-      let nextIndex: number;
-      if (e.shiftKey) {
-        nextIndex = e.key === "ArrowDown" ? navigationTargets.length - 1 : 0;
-      } else if (e.key === "ArrowDown") {
-        nextIndex =
-          currentIndex < 0
-            ? 0
-            : Math.min(currentIndex + 1, navigationTargets.length - 1);
-      } else {
-        if (currentIndex <= 0) {
-          nextIndex = 0;
-        } else {
-          nextIndex = currentIndex - 1;
-        }
+      if (!focusedRow && selectedPath == null) return;
+      const key = focusedRow ?? normalizePath(selectedPath);
+      const focusedItem = navigableItems.find(
+        (item) => normalizePath(item.path) === key,
+      );
+      if (focusedItem) {
+        event.preventDefault();
+        navigateTo(focusedItem.path);
       }
+      return;
+    }
+    if (
+      (event.key !== "ArrowDown" && event.key !== "ArrowUp") ||
+      navigationTargets.length === 0
+    ) {
+      return;
+    }
 
-      e.preventDefault();
-      const nextKey = navigationTargets[nextIndex];
-      setFocusedRow(nextKey);
-      if (nextKey === "parent") {
-        return;
-      }
-      onSelectPath(nextKey);
-    },
-    [
-      focusedRow,
-      selectedPath,
-      navigationTargets,
-      showParentRow,
-      navigableItems,
-      handleParentClick,
-      onSelectPath,
-    ],
-  );
+    const selectedKey =
+      selectedPath != null ? normalizePath(selectedPath) : null;
+    const currentKey =
+      focusedRow ?? selectedKey ?? (showParentRow ? "parent" : null);
+    const currentIndex = currentKey
+      ? navigationTargets.indexOf(currentKey)
+      : -1;
+    let nextIndex: number;
+    if (event.shiftKey) {
+      nextIndex = event.key === "ArrowDown" ? navigationTargets.length - 1 : 0;
+    } else if (event.key === "ArrowDown") {
+      nextIndex =
+        currentIndex < 0
+          ? 0
+          : Math.min(currentIndex + 1, navigationTargets.length - 1);
+    } else {
+      nextIndex = currentIndex <= 0 ? 0 : currentIndex - 1;
+    }
+
+    event.preventDefault();
+    const nextKey = navigationTargets[nextIndex];
+    setFocusedRow(nextKey);
+    if (nextKey !== "parent") onSelectPath(nextKey);
+  };
 
   useEffect(() => {
-    if (!tableContainerRef.current) return;
-
     const key =
       focusedRow ?? (selectedPath != null ? normalizePath(selectedPath) : null);
-    if (!key) return;
-
-    const container = tableContainerRef.current;
-    const row = container.querySelector<HTMLElement>(
+    if (!key || !tableContainerRef.current) return;
+    const row = tableContainerRef.current.querySelector<HTMLElement>(
       `[data-row-key="${CSS.escape(key)}"]`,
     );
     if (!row) return;
-
     const id = requestAnimationFrame(() => {
       row.scrollIntoView({ block: "center", inline: "start" });
     });
-    return () => { cancelAnimationFrame(id); };
+    return () => {
+      cancelAnimationFrame(id);
+    };
   }, [focusedRow, selectedPath]);
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>
-      <div
-        ref={tableContainerRef}
-        role="region"
-        tabIndex={0}
-        aria-label="Workspace destination browser"
-        className="scrollbar-themed flex h-full min-h-0 flex-col overflow-auto rounded-md border outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      <WorkspaceMiniBrowserTable
+        containerRef={tableContainerRef}
+        items={items}
+        isLoading={isLoading}
+        error={error}
+        selectedPath={selectedPath}
+        focusedRow={focusedRow}
+        showParentRow={showParentRow}
+        parentRowLabel={parentRowLabel}
+        normalizePath={normalizePath}
         onKeyDown={handleKeyDown}
-        onPointerDownCapture={() => tableContainerRef.current?.focus()}
-      >
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="pl-3">Name</TableHead>
-              <TableHead className="hidden pl-3 sm:table-cell">Size</TableHead>
-              <TableHead className="hidden pl-3 md:table-cell">Owner</TableHead>
-              <TableHead className="hidden pl-3 lg:table-cell">
-                Created
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {/* Back to my workspaces / Parent folder */}
-            {showParentRow && (
-              <TableRow
-                data-row-key="parent"
-                className={cn(
-                  "cursor-pointer hover:bg-muted/50",
-                  focusedRow === "parent" && "bg-muted",
-                )}
-                onClick={handleParentClick}
-              >
-                <TableCell className="pl-3" colSpan={4}>
-                  <div className="flex items-center gap-2">
-                    <FolderUp className="size-4 shrink-0 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">
-                      {parentRowLabel}
-                    </span>
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
-
-            {isLoading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i}>
-                  <TableCell className="pl-3">
-                    <div className="flex items-center gap-2">
-                      <Skeleton className="size-4" />
-                      <Skeleton className="h-4 w-32" />
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden pl-3 sm:table-cell">
-                    <Skeleton className="h-4 w-12" />
-                  </TableCell>
-                  <TableCell className="hidden pl-3 md:table-cell">
-                    <Skeleton className="h-4 w-20" />
-                  </TableCell>
-                  <TableCell className="hidden pl-3 lg:table-cell">
-                    <Skeleton className="h-4 w-24" />
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : error ? (
-              <TableRow>
-                <TableCell className="pl-3 text-destructive" colSpan={4}>
-                  Failed to load folder contents.
-                </TableCell>
-              </TableRow>
-            ) : (
-              displayItems.map((item) => {
-                const isSelected =
-                  selectedPath != null &&
-                  (item.path === selectedPath ||
-                    item.path + "/" === selectedPath ||
-                    item.path === selectedPath.replace(/\/+$/, ""));
-                return (
-                  <TableRow
-                    key={item.id}
-                    data-row-key={normalizePath(item.path)}
-                    className={cn(
-                      "cursor-pointer hover:bg-muted/50",
-                      isFolderType(item.type) &&
-                        isSelected &&
-                        focusedRow !== "parent" &&
-                        "bg-muted",
-                    )}
-                    onClick={() => { handleFolderClick(item); }}
-                    onDoubleClick={() => { handleFolderDoubleClick(item); }}
-                  >
-                    <TableCell className="pl-3">
-                      <div className="flex items-center gap-2">
-                        <WorkspaceItemIcon type={item.type} />
-                        <span className="truncate text-sm">{item.name}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden pl-3 text-sm sm:table-cell">
-                      {isFolderType(item.type)
-                        ? "—"
-                        : formatFileSize(item.size)}
-                    </TableCell>
-                    <TableCell className="hidden pl-3 text-sm md:table-cell">
-                      {formatOwner(item.ownerId ?? "")}
-                    </TableCell>
-                    <TableCell className="hidden pl-3 text-sm lg:table-cell">
-                      {formatDate(item.createdAt ?? "")}
-                    </TableCell>
-                  </TableRow>
-                );
-              })
-            )}
-          </TableBody>
-        </Table>
-      </div>
+        onParentClick={handleParentClick}
+        onFolderClick={(item) => {
+          if (isFolderType(item.type)) onSelectPath(item.path);
+        }}
+        onFolderDoubleClick={(item) => {
+          if (isFolderType(item.type)) navigateTo(item.path);
+        }}
+      />
     </div>
   );
 }

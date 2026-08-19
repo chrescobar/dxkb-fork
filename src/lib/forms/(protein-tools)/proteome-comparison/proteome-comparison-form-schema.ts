@@ -3,14 +3,22 @@ import { z } from "zod";
 // Constants
 export const maxComparisonGenomes = 9;
 export const minComparisonGenomes = 1;
-export const proteomeComparisonStartingRows = 9;
 
 // Reference source types
-export const referenceSourceTypes = ["genome", "fasta", "feature_group"] as const;
+export const referenceSourceTypes = [
+  "genome",
+  "fasta",
+  "feature_group",
+] as const;
 export type ReferenceSourceType = (typeof referenceSourceTypes)[number];
 
 // Comparison item types
-export const comparisonItemTypes = ["genome", "fasta", "feature_group", "genome_group"] as const;
+export const comparisonItemTypes = [
+  "genome",
+  "fasta",
+  "feature_group",
+  "genome_group",
+] as const;
 export type ComparisonItemType = (typeof comparisonItemTypes)[number];
 
 // Comparison item schema for grid items
@@ -105,7 +113,9 @@ export const proteomeComparisonFormSchema = z
     }
   });
 
-export type ProteomeComparisonFormData = z.infer<typeof proteomeComparisonFormSchema>;
+export type ProteomeComparisonFormData = z.infer<
+  typeof proteomeComparisonFormSchema
+>;
 
 // Default form values
 export const defaultProteomeComparisonFormValues: ProteomeComparisonFormData = {

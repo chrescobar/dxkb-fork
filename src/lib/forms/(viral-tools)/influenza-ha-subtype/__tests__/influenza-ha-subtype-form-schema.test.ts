@@ -31,6 +31,14 @@ describe("influenzaHaSubtypeFormSchema", () => {
     expect(result.success).toBe(false);
   });
 
+  it("safeParse rejects mixed protein and nucleotide records", () => {
+    const result = influenzaHaSubtypeFormSchema.safeParse({
+      ...validPayload,
+      input_fasta_data: ">protein\nMKAILVVLL\n>dna\nACGTACGT",
+    });
+    expect(result.success).toBe(false);
+  });
+
   it("safeParse rejects an empty types array", () => {
     const result = influenzaHaSubtypeFormSchema.safeParse({
       ...validPayload,

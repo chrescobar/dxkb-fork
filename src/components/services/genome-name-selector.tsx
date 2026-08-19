@@ -1,16 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { Search, Loader2, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import {
-  fetchGenomesByIds,
-  type GenomeSummary,
-} from "@/lib/services/genome";
+import { fetchGenomesByIds, type GenomeSummary } from "@/lib/services/genome";
 import { toast } from "sonner";
 import {
   useGenomeTypeahead,
@@ -40,12 +36,10 @@ export function GenomeNameSelector({
   className,
   minQueryLength = 3,
 }: GenomeNameSelectorProps) {
-  const selectionDisabled = disabled || selectedGenomeIds.length >= maxSelections;
+  const selectionDisabled =
+    disabled || selectedGenomeIds.length >= maxSelections;
 
-  const existingGenomeIds = useMemo(
-    () => new Set(selectedGenomeIds.map((id) => id.trim())),
-    [selectedGenomeIds],
-  );
+  const existingGenomeIds = new Set(selectedGenomeIds.map((id) => id.trim()));
 
   const {
     query,
@@ -110,22 +104,24 @@ export function GenomeNameSelector({
     }
 
     setIsLoading(true);
-    try {
-      const results = await fetchGenomesByIds([trimmed]);
-      if (results.length === 0) {
-        toast.error("Genome not found", {
-          description: `${trimmed} was not found in BV-BRC`,
-        });
-        return;
-      }
-      handleSelect(results[0]);
-    } catch (fetchError) {
+    const result = await fetchGenomesByIds([trimmed]).then(
+      (results) => ({ results }),
+      (error: unknown) => ({ error }),
+    );
+    if ("error" in result) {
       const message =
-        fetchError instanceof Error ? fetchError.message : "Failed to add genome";
+        result.error instanceof Error
+          ? result.error.message
+          : "Failed to add genome";
       toast.error(message);
-    } finally {
-      setIsLoading(false);
+    } else if (result.results.length === 0) {
+      toast.error("Genome not found", {
+        description: `${trimmed} was not found in BV-BRC`,
+      });
+    } else {
+      handleSelect(result.results[0]);
     }
+    setIsLoading(false);
   };
 
   useHotkey(
@@ -133,7 +129,10 @@ export function GenomeNameSelector({
     () => {
       if (!showDropdown || suggestions.length === 0) {
         void handleManualAdd();
-      } else if (highlightedIndex >= 0 && highlightedIndex < suggestions.length) {
+      } else if (
+        highlightedIndex >= 0 &&
+        highlightedIndex < suggestions.length
+      ) {
         const genome = suggestions[highlightedIndex];
         if (!existingGenomeIds.has(genome.genome_id)) {
           handleDropdownClick(genome);
@@ -142,7 +141,12 @@ export function GenomeNameSelector({
         void handleManualAdd();
       }
     },
-    { target: inputRef, ignoreInputs: false, conflictBehavior: "allow", preventDefault: true },
+    {
+      target: inputRef,
+      ignoreInputs: false,
+      conflictBehavior: "allow",
+      preventDefault: true,
+    },
   );
 
   const showEmptyState =
@@ -170,11 +174,16 @@ export function GenomeNameSelector({
               setHighlightedIndex(-1);
               setShowDropdown(true);
             }}
-            onFocus={() => { setShowDropdown(true); }}
+            onFocus={() => {
+              setShowDropdown(true);
+            }}
             className="w-full px-10"
           />
           {showDropdown &&
-            (suggestions.length > 0 || isLoading || error || showEmptyState) && (
+            (suggestions.length > 0 ||
+              isLoading ||
+              error ||
+              showEmptyState) && (
               <div
                 ref={dropdownRef}
                 className="absolute z-50 mt-1 max-h-64 w-full scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent overflow-y-auto rounded-md border bg-popover shadow-md hover:scrollbar-thumb-muted-foreground/40"
@@ -182,7 +191,9 @@ export function GenomeNameSelector({
                 {isLoading ? (
                   <div className="flex items-center justify-center p-4">
                     <Loader2 className="mr-2 size-4 animate-spin" />
-                    <span className="text-sm text-muted-foreground">Searching...</span>
+                    <span className="text-sm text-muted-foreground">
+                      Searching...
+                    </span>
                   </div>
                 ) : error ? (
                   <div className="p-4 text-sm text-destructive">{error}</div>
@@ -193,7 +204,9 @@ export function GenomeNameSelector({
                     return (
                       <button
                         key={genome.genome_id}
-                        ref={(el) => { itemRefs.current[index] = el; }}
+                        ref={(el) => {
+                          itemRefs.current[index] = el;
+                        }}
                         type="button"
                         className={cn(
                           "flex w-full flex-col items-start gap-1 px-4 py-2 text-left hover:bg-accent",
@@ -203,7 +216,9 @@ export function GenomeNameSelector({
                         onClick={() => {
                           if (!isDuplicate) handleDropdownClick(genome);
                         }}
-                        onMouseEnter={() => { setHighlightedIndex(index); }}
+                        onMouseEnter={() => {
+                          setHighlightedIndex(index);
+                        }}
                       >
                         <span className="truncate text-sm font-medium">
                           {genome.genome_name}
@@ -217,7 +232,9 @@ export function GenomeNameSelector({
                   })
                 ) : showEmptyState ? (
                   <p className="py-4 text-center text-sm text-muted-foreground">
-                    No genomes found for {'"'}{query.trim()}{'"'}
+                    No genomes found for {'"'}
+                    {query.trim()}
+                    {'"'}
                   </p>
                 ) : null}
               </div>
@@ -229,7 +246,9 @@ export function GenomeNameSelector({
           variant="outline"
           aria-label="Add genome"
           disabled={selectionDisabled || isLoading}
-          onClick={() => { void handleManualAdd(); }}
+          onClick={() => {
+            void handleManualAdd();
+          }}
         >
           {isLoading ? (
             <Loader2 className="size-4 animate-spin" />

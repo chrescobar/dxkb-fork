@@ -1,4 +1,7 @@
-import type { GeneProteinTreeFormData, SequenceItem } from "./gene-protein-tree-form-schema";
+import type {
+  GeneProteinTreeFormData,
+  SequenceItem,
+} from "./gene-protein-tree-form-schema";
 import * as GeneProteinTreeSchema from "./gene-protein-tree-form-schema";
 
 // Types
@@ -17,7 +20,7 @@ export function getDisplayName(name: string): string {
   const maxName = 36;
   if (name.length <= maxName) return name;
   return `${name.slice(0, maxName / 2 - 2)}...${name.slice(
-    name.length - (maxName / 2) + 2,
+    name.length - maxName / 2 + 2,
   )}`;
 }
 
@@ -40,7 +43,9 @@ export function checkDuplicateSequence(
   filename: string,
   type: SequenceItem["type"],
 ): boolean {
-  return sequences.some((seq) => seq.filename === filename && seq.type === type);
+  return sequences.some(
+    (seq) => seq.filename === filename && seq.type === type,
+  );
 }
 
 /**
@@ -73,8 +78,13 @@ export function createSequenceItem(
 /**
  * Create a metadata field object from a field ID
  */
-export function createMetadataField(fieldId: string): { id: string; name: string; selected: boolean } {
-  const allMetadataOptions = GeneProteinTreeSchema.getMetadataSelectOptions(formatMetadataLabel);
+export function createMetadataField(fieldId: string): {
+  id: string;
+  name: string;
+  selected: boolean;
+} {
+  const allMetadataOptions =
+    GeneProteinTreeSchema.getMetadataSelectOptions(formatMetadataLabel);
   const option = allMetadataOptions.find((opt) => opt.value === fieldId);
   const name = option ? option.label : formatMetadataLabel(fieldId);
 
@@ -107,9 +117,9 @@ export function transformGeneProteinTreeParams(
   const metadataFields = data.metadata_fields || [];
   const featureMetadataFields: string[] = [];
   const genomeMetadataFields: string[] = [];
-  
+
   // Common genome metadata fields
-  const genomeFields = [
+  const genomeFields = new Set([
     "genome_id",
     "genome_name",
     "genome_length",
@@ -125,17 +135,17 @@ export function transformGeneProteinTreeParams(
     "geographic_group",
     "isolation_country",
     "geographic_location",
-  ];
-  
+  ]);
+
   metadataFields.forEach((field) => {
-    if (genomeFields.includes(field)) {
+    if (genomeFields.has(field)) {
       genomeMetadataFields.push(field);
     } else {
       // Assume other fields are feature-related
       featureMetadataFields.push(field);
     }
   });
-  
+
   return {
     alphabet: data.alphabet, // API expects "DNA" or "Protein" (uppercase)
     tree_type: "gene",
@@ -157,4 +167,3 @@ export function transformGeneProteinTreeParams(
     output_file: data.output_file.trim(),
   };
 }
-

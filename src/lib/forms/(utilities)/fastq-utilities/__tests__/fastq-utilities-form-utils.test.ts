@@ -155,6 +155,13 @@ describe("createPipelineActionItem", () => {
     expect(item.id).toContain("trim_");
   });
 
+  it("creates unique IDs for duplicate actions", () => {
+    const first = createPipelineActionItem("trim");
+    const second = createPipelineActionItem("trim");
+
+    expect(first.id).not.toBe(second.id);
+  });
+
   it("uses default index 0 when no index is provided", () => {
     const item = createPipelineActionItem("align");
 
@@ -177,9 +184,24 @@ describe("createPipelineActionItem", () => {
 describe("removePipelineActionItem", () => {
   it("removes the item with the given id", () => {
     const items = [
-      { id: "a", action: "trim" as const, label: "Trim", color: actionColors[0] },
-      { id: "b", action: "align" as const, label: "Align", color: actionColors[1] },
-      { id: "c", action: "fastqc" as const, label: "FastQC", color: actionColors[2] },
+      {
+        id: "a",
+        action: "trim" as const,
+        label: "Trim",
+        color: actionColors[0],
+      },
+      {
+        id: "b",
+        action: "align" as const,
+        label: "Align",
+        color: actionColors[1],
+      },
+      {
+        id: "c",
+        action: "fastqc" as const,
+        label: "FastQC",
+        color: actionColors[2],
+      },
     ];
 
     const result = removePipelineActionItem(items, "b");
@@ -190,9 +212,24 @@ describe("removePipelineActionItem", () => {
 
   it("renormalizes colors after removal", () => {
     const items = [
-      { id: "a", action: "trim" as const, label: "Trim", color: actionColors[0] },
-      { id: "b", action: "align" as const, label: "Align", color: actionColors[1] },
-      { id: "c", action: "fastqc" as const, label: "FastQC", color: actionColors[2] },
+      {
+        id: "a",
+        action: "trim" as const,
+        label: "Trim",
+        color: actionColors[0],
+      },
+      {
+        id: "b",
+        action: "align" as const,
+        label: "Align",
+        color: actionColors[1],
+      },
+      {
+        id: "c",
+        action: "fastqc" as const,
+        label: "FastQC",
+        color: actionColors[2],
+      },
     ];
 
     const result = removePipelineActionItem(items, "a");
@@ -203,7 +240,12 @@ describe("removePipelineActionItem", () => {
 
   it("returns an empty array when the only item is removed", () => {
     const items = [
-      { id: "a", action: "trim" as const, label: "Trim", color: actionColors[0] },
+      {
+        id: "a",
+        action: "trim" as const,
+        label: "Trim",
+        color: actionColors[0],
+      },
     ];
 
     const result = removePipelineActionItem(items, "a");
@@ -215,8 +257,18 @@ describe("removePipelineActionItem", () => {
 describe("actionItemsToRecipe", () => {
   it("extracts action values from items", () => {
     const items = [
-      { id: "a", action: "trim" as const, label: "Trim", color: actionColors[0] },
-      { id: "b", action: "align" as const, label: "Align", color: actionColors[1] },
+      {
+        id: "a",
+        action: "trim" as const,
+        label: "Trim",
+        color: actionColors[0],
+      },
+      {
+        id: "b",
+        action: "align" as const,
+        label: "Align",
+        color: actionColors[1],
+      },
     ];
 
     expect(actionItemsToRecipe(items)).toEqual(["trim", "align"]);

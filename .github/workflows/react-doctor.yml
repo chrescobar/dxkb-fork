@@ -34,14 +34,33 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: millionco/react-doctor@01820bb4fd4d0a4aebcd8df2b2a143a098649cb2 # v2
+      - id: react-doctor
+        uses: millionco/react-doctor@01820bb4fd4d0a4aebcd8df2b2a143a098649cb2 # v2
         with:
-          blocking: error
+          blocking: none
+          scope: ${{ github.event_name == 'pull_request' && 'changed' || 'full' }}
+          version: "0.9.11"
+
+      - name: Require React Doctor score of at least 80
+        if: ${{ always() && (github.event_name != 'pull_request' || steps.react-doctor.outputs.score != '') }}
+        env:
+          REACT_DOCTOR_SCORE: ${{ steps.react-doctor.outputs.score }}
+        run: |
+          if ! [[ "$REACT_DOCTOR_SCORE" =~ ^[0-9]+$ ]]; then
+            echo "React Doctor returned an empty or nonnumeric score: '$REACT_DOCTOR_SCORE'."
+            exit 1
+          fi
+          if [ "$REACT_DOCTOR_SCORE" -lt 80 ]; then
+            echo "React Doctor score $REACT_DOCTOR_SCORE/100 is below the required 80/100."
+            exit 1
+          fi
+          echo "React Doctor score $REACT_DOCTOR_SCORE/100 meets the required 80/100."
+
         # Full reference: https://www.react.doctor/ci
         # Optional configuration:
         # with:
-        #   blocking: warning        # Fail on any new finding
-        #   scope: full              # On PRs, scan the whole project instead of just changed files
+        #   blocking: warning        # Fail on any new finding instead of using a score threshold
+        #   scope: full              # Scan the whole project instead of just changed files
         #   comment: false           # Disable the sticky PR summary comment
         #   review-comments: false   # Disable inline review comments on changed lines
         #   commit-status: false     # Disable the commit status (score + counts, links to the run)

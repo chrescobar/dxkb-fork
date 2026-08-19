@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import "molstar/lib/mol-plugin-ui/skin/light.scss";
 import { getProxyUrl } from "../file-viewer-registry";
+import { loadMolstar } from "./molstar-loader";
 
 export type ViewerStatus = "loading" | "initializing" | "ready" | "error";
 
@@ -48,12 +49,8 @@ export function useMolstarPlugin(
       if (!containerRef.current) return;
 
       try {
-        const [{ createPluginUI }, { renderReact18 }, { DefaultPluginUISpec }] =
-          await Promise.all([
-            import("molstar/lib/mol-plugin-ui"),
-            import("molstar/lib/mol-plugin-ui/react18"),
-            import("molstar/lib/mol-plugin-ui/spec"),
-          ]);
+        const { createPluginUI, renderReact18, DefaultPluginUISpec } =
+          await loadMolstar();
 
         if (isDisposed()) return;
         setStatus("initializing");
@@ -135,7 +132,11 @@ export function useMolstarPlugin(
     const observer = new ResizeObserver(() => {
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
-        (pluginRef.current as { canvas3d?: { handleResize?: () => void } } | null)?.canvas3d?.handleResize?.();
+        (
+          pluginRef.current as {
+            canvas3d?: { handleResize?: () => void };
+          } | null
+        )?.canvas3d?.handleResize?.();
       });
     });
 

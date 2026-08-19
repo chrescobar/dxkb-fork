@@ -211,6 +211,7 @@ test.describe("a11y deep tier: jobs", () => {
       app: "GenomeAssembly",
       status: "failed",
       submit_time: "2026-04-01T09:00:00Z",
+      owner: "e2e-test-user",
       parameters: {},
     };
     await applyBackendMocks(page, {
@@ -238,6 +239,7 @@ test.describe("a11y deep tier: jobs", () => {
       app: mockJobs[1].app,
       status: "running",
       submit_time: mockJobs[1].submit_time,
+      owner: mockJobs[1].owner,
       parameters: {},
     };
     await applyBackendMocks(page, {

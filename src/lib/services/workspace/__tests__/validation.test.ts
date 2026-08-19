@@ -28,16 +28,16 @@ describe("checkWorkspaceObjectExists", () => {
     expect(result).toBe(false);
   });
 
-  it("returns false when fetch throws", async () => {
+  it("rejects when fetch fails", async () => {
     server.use(
       http.post("/api/services/workspace", () => {
         return HttpResponse.error();
       }),
     );
 
-    const result = await checkWorkspaceObjectExists("/user/home/file.txt");
-
-    expect(result).toBe(false);
+    await expect(
+      checkWorkspaceObjectExists("/user/home/file.txt"),
+    ).rejects.toThrow();
   });
 
   it("returns false for empty path", async () => {

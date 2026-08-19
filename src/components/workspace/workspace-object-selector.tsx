@@ -1,25 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { createPortal } from "react-dom";
-import {
-  Search,
-  FolderOpen,
-  ChevronDown,
-  Loader2,
-  AlertCircle,
-} from "lucide-react";
-
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { WorkspaceObjectSelectorView } from "./workspace-object-selector-view";
 import { useWorkspaceObjectSearch } from "@/hooks/services/workspace/use-workspace-object-search";
 import { WorkspaceObject } from "@/lib/services/workspace/types";
 import { validateWorkspaceObjectTypes } from "@/lib/services/workspace/helpers";
@@ -29,9 +11,9 @@ import {
   type WorkspaceSelectorPreset,
 } from "./workspace-selector-presets";
 import { useAuth } from "@/lib/auth/hooks";
-import { cn } from "@/lib/utils";
 
 interface WorkspaceObjectSelectorProps {
+  id?: string;
   onObjectSelect?: (object: WorkspaceObject) => void;
   onSearch?: (query: string) => void;
   onSelectedObjectChange?: (object: WorkspaceObject | null) => void;
@@ -44,7 +26,8 @@ interface WorkspaceObjectSelectorProps {
   value?: string;
 }
 
-export function WorkspaceObjectSelector({
+function useWorkspaceObjectSelector({
+  id,
   onObjectSelect,
   onSearch,
   onSelectedObjectChange,
@@ -56,13 +39,9 @@ export function WorkspaceObjectSelector({
   value,
 }: WorkspaceObjectSelectorProps) {
   const { user } = useAuth();
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [showDropdown, setShowDropdown] = React.useState(false);
   const [isManualTrigger, setIsManualTrigger] = React.useState(false);
-  const [validationError, setValidationError] = React.useState<string | null>(
-    null,
-  );
-  const [selectedObject, setSelectedObject] = React.useState<WorkspaceObject | null>(null);
+  const selectedObjectRef = React.useRef<WorkspaceObject | null>(null);
   const [displayName, setDisplayName] = React.useState<string>("");
   const [highlightedIndex, setHighlightedIndex] = React.useState(-1);
   const [dropdownPosition, setDropdownPosition] = React.useState<{
@@ -82,36 +61,27 @@ export function WorkspaceObjectSelector({
   const itemRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
 
   // Effective types come from either the preset or the explicit `types` prop.
-  const effectiveTypes = React.useMemo<
-    ValidWorkspaceObjectTypes[] | undefined
-  >(() => {
-    if (preset) return resolveSelectorPreset(preset);
-    if (!types) return undefined;
-    return Array.isArray(types) ? types : [types];
-  }, [preset, types]);
+  const effectiveTypes: ValidWorkspaceObjectTypes[] | undefined = preset
+    ? resolveSelectorPreset(preset)
+    : types
+      ? Array.isArray(types)
+        ? types
+        : [types]
+      : undefined;
 
-  const validatedTypes = React.useMemo(() => {
+  const validatedTypes = (() => {
     if (!effectiveTypes) return undefined;
     const { valid, invalid } = validateWorkspaceObjectTypes(effectiveTypes);
     if (invalid.length > 0) {
       return { valid: valid.length > 0 ? valid : undefined, invalid };
     }
     return { valid, invalid: [] as string[] };
-  }, [effectiveTypes]);
+  })();
 
-  const [prevTypes, setPrevTypes] = React.useState(effectiveTypes);
-  if (prevTypes !== effectiveTypes) {
-    setPrevTypes(effectiveTypes);
-    if (!effectiveTypes) {
-      setValidationError(null);
-    } else if (validatedTypes && validatedTypes.invalid.length > 0) {
-      const errorMsg = `Invalid upload type(s): ${validatedTypes.invalid.join(", ")}. Valid types include: unspecified, aligned_dna_fasta, reads, contigs, etc.`;
-      setValidationError(errorMsg);
-    } else {
-      setValidationError(null);
-    }
-  }
-
+  const validationError =
+    validatedTypes && validatedTypes.invalid.length > 0
+      ? `Invalid upload type(s): ${validatedTypes.invalid.join(", ")}. Valid types include: unspecified, aligned_dna_fasta, reads, contigs, etc.`
+      : null;
   const resolvedTypes = validatedTypes?.valid;
 
   // Use the repository-backed object search hook
@@ -136,22 +106,26 @@ export function WorkspaceObjectSelector({
     onSearch?.(value);
   };
 
-  const handleObjectClick = (object: WorkspaceObject, immediateSelect = false) => {
+  const handleObjectClick = (
+    object: WorkspaceObject,
+    immediateSelect = false,
+  ) => {
     // Populate the input field
     const objectName = object.name || "";
     setSearchQuery(objectName);
-    setSelectedObject(object);
+    selectedObjectRef.current = object;
     setDisplayName(objectName);
     onSelectedObjectChange?.(object);
     setShowDropdown(false);
-    
+    setHighlightedIndex(-1);
+
     // If immediateSelect is true or onObjectSelect is provided without onSelectedObjectChange,
     // call onObjectSelect immediately (for OutputFolder use case)
     if (immediateSelect || (onObjectSelect && !onSelectedObjectChange)) {
       onObjectSelect?.(object);
       // Keep the display name but clear search query for controlled mode
       setSearchQuery("");
-      setSelectedObject(null);
+      selectedObjectRef.current = null;
       onSelectedObjectChange?.(null);
     }
   };
@@ -159,6 +133,7 @@ export function WorkspaceObjectSelector({
   const handleManualDropdownToggle = () => {
     setShowDropdown(!showDropdown);
     setIsManualTrigger(!showDropdown);
+    setHighlightedIndex(-1);
   };
 
   // Handle click outside to close dropdown
@@ -184,22 +159,6 @@ export function WorkspaceObjectSelector({
     };
   }, []);
 
-  // Reset highlighted index when displayObjects change
-  const [prevHighlightDeps, setPrevHighlightDeps] = React.useState({
-    filteredObjects,
-    objects,
-    isManualTrigger,
-    showDropdown,
-  });
-  if (
-    prevHighlightDeps.filteredObjects !== filteredObjects ||
-    prevHighlightDeps.objects !== objects ||
-    prevHighlightDeps.isManualTrigger !== isManualTrigger ||
-    prevHighlightDeps.showDropdown !== showDropdown
-  ) {
-    setPrevHighlightDeps({ filteredObjects, objects, isManualTrigger, showDropdown });
-    setHighlightedIndex(-1);
-  }
   React.useEffect(() => {
     itemRefs.current = [];
   }, [filteredObjects, objects, isManualTrigger, showDropdown]);
@@ -215,7 +174,7 @@ export function WorkspaceObjectSelector({
   }, [highlightedIndex]);
 
   // Calculate dropdown position and rect for portal (so it isn't clipped by Card overflow)
-  const updateDropdownLayout = React.useCallback(() => {
+  const updateDropdownLayout = React.useEffectEvent(() => {
     if (!showDropdown || !inputRef.current) return;
     const rect = inputRef.current.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
@@ -251,7 +210,7 @@ export function WorkspaceObjectSelector({
       width: rect.width,
       ...(openUpward && { bottom: viewportHeight - (rect.top - gap) }),
     });
-  }, [showDropdown]);
+  });
 
   React.useEffect(() => {
     if (showDropdown && inputRef.current) {
@@ -259,30 +218,29 @@ export function WorkspaceObjectSelector({
       const raf = requestAnimationFrame(() => {
         updateDropdownLayout();
       });
-      return () => { cancelAnimationFrame(raf); };
+      return () => {
+        cancelAnimationFrame(raf);
+      };
     }
     setDropdownRect(null);
-  }, [showDropdown, updateDropdownLayout]);
+  }, [showDropdown]);
 
   // Update portal position on scroll/resize so dropdown stays aligned
   React.useEffect(() => {
     if (!showDropdown) return;
-    const handleUpdate = () => { updateDropdownLayout(); };
+    const handleUpdate = () => {
+      updateDropdownLayout();
+    };
     window.addEventListener("scroll", handleUpdate, true);
     window.addEventListener("resize", handleUpdate);
     return () => {
       window.removeEventListener("scroll", handleUpdate, true);
       window.removeEventListener("resize", handleUpdate);
     };
-  }, [showDropdown, updateDropdownLayout]);
+  }, [showDropdown]);
 
   // Use filtered objects from hook, with manual trigger override
-  const displayObjects = React.useMemo(() => {
-    if (isManualTrigger) {
-      return objects; // Show all objects when manually triggered
-    }
-    return filteredObjects;
-  }, [filteredObjects, objects, isManualTrigger]);
+  const displayObjects = isManualTrigger ? objects : filteredObjects;
 
   // Track previous value to avoid unnecessary updates
   const previousValueRef = React.useRef<string | undefined>(value);
@@ -304,13 +262,13 @@ export function WorkspaceObjectSelector({
         queueMicrotask(() => {
           if (foundObject) {
             setDisplayName(foundObject.name || "");
-            setSelectedObject(foundObject);
+            selectedObjectRef.current = foundObject;
           } else {
             // Object not in the loaded list (e.g. a subfolder not fetched at this level).
             // Derive a display name from the last path segment.
             const derivedName = value.split("/").filter(Boolean).pop() ?? value;
             setDisplayName(derivedName);
-            setSelectedObject(null);
+            selectedObjectRef.current = null;
             setSearchQuery("");
           }
         });
@@ -320,236 +278,102 @@ export function WorkspaceObjectSelector({
       resolvedValueRef.current = undefined;
       queueMicrotask(() => {
         setDisplayName("");
-        setSelectedObject(null);
+        selectedObjectRef.current = null;
         setSearchQuery("");
       });
     }
   }, [value, objects, setSearchQuery]);
 
+  const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showDropdown || displayObjects.length === 0) {
+      if (event.key === "Enter" && selectedObjectRef.current) {
+        event.preventDefault();
+        onObjectSelect?.(selectedObjectRef.current);
+        setSearchQuery("");
+        selectedObjectRef.current = null;
+        onSelectedObjectChange?.(null);
+      }
+      return;
+    }
+
+    switch (event.key) {
+      case "ArrowDown":
+        event.preventDefault();
+        setHighlightedIndex((previous) =>
+          previous < displayObjects.length - 1 ? previous + 1 : previous,
+        );
+        setShowDropdown(true);
+        break;
+      case "ArrowUp":
+        event.preventDefault();
+        setHighlightedIndex((previous) => (previous > 0 ? previous - 1 : -1));
+        setShowDropdown(true);
+        break;
+      case "Enter": {
+        event.preventDefault();
+        const hasHighlightedObject =
+          highlightedIndex >= 0 && highlightedIndex < displayObjects.length;
+        if (hasHighlightedObject) {
+          handleObjectClick(
+            displayObjects[highlightedIndex],
+            !onSelectedObjectChange,
+          );
+        } else if (selectedObjectRef.current && !onSelectedObjectChange) {
+          onObjectSelect?.(selectedObjectRef.current);
+          setSearchQuery("");
+          selectedObjectRef.current = null;
+        }
+        break;
+      }
+      case "Escape":
+        event.preventDefault();
+        setShowDropdown(false);
+        setHighlightedIndex(-1);
+        break;
+    }
+  };
+
   return (
-    <div className={className ? `relative ${className}` : "relative w-full"}>
-      {/* Validation Error Alert */}
-      {validationError && (
-        <Alert variant="destructive" className="mb-2">
-          <AlertCircle className="size-4" />
-          <AlertDescription>{validationError}</AlertDescription>
-        </Alert>
-      )}
-
-      {/* Single Row Layout */}
-      <div className="flex flex-row items-center gap-2">
-        {/* Search Input with Dropdown */}
-        <div ref={inputRef} className="relative flex-1">
-          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            ref={inputElementRef}
-            placeholder={placeholder}
-            value={searchQuery || displayName || (value !== undefined ? value : "")}
-            onChange={(e) => {
-              handleSearchChange(e.target.value);
-              setSelectedObject(null);
-              setDisplayName("");
-              onSelectedObjectChange?.(null);
-              setHighlightedIndex(-1);
-            }}
-            onFocus={() => {
-              if (searchQuery.length > 0 || isManualTrigger) {
-                setShowDropdown(true);
-              }
-            }}
-            onKeyDown={(e) => {
-              if (!showDropdown || displayObjects.length === 0) {
-                // If no dropdown but we have a selected object, allow Enter to confirm selection
-                if (e.key === "Enter" && selectedObject) {
-                  e.preventDefault();
-                  onObjectSelect?.(selectedObject);
-                  setSearchQuery("");
-                  setSelectedObject(null);
-                  onSelectedObjectChange?.(null);
-                }
-                return;
-              }
-
-              switch (e.key) {
-                case "ArrowDown":
-                  e.preventDefault();
-                  setHighlightedIndex((prev) =>
-                    prev < displayObjects.length - 1 ? prev + 1 : prev
-                  );
-                  setShowDropdown(true);
-                  break;
-                case "ArrowUp":
-                  e.preventDefault();
-                  setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : -1));
-                  setShowDropdown(true);
-                  break;
-                case "Enter":
-                  e.preventDefault();
-                  if (highlightedIndex >= 0 && highlightedIndex < displayObjects.length) {
-                    const object = displayObjects[highlightedIndex];
-                    // If onSelectedObjectChange is provided, use the '+' pattern (don't immediately select)
-                    // Otherwise, immediately select (for OutputFolder use case)
-                    const immediateSelect = !onSelectedObjectChange;
-                    handleObjectClick(object, immediateSelect);
-                  } else if (selectedObject) {
-                    // If no highlight but we have a selected object, confirm it
-                    // If onSelectedObjectChange is provided, use the '+' pattern (don't immediately select)
-                    // Otherwise, immediately select (for OutputFolder use case)
-                    if (!onSelectedObjectChange) {
-                      onObjectSelect?.(selectedObject);
-                      setSearchQuery("");
-                      setSelectedObject(null);
-                    }
-                  }
-                  break;
-                case "Escape":
-                  e.preventDefault();
-                  setShowDropdown(false);
-                  setHighlightedIndex(-1);
-                  break;
-              }
-            }}
-            className="service-card-input w-full px-10"
-          />
-          {/* Manual Dropdown Trigger */}
-          <Button
-            type="button"
-            aria-label={showDropdown ? "Hide suggestions" : "Show suggestions"}
-            aria-expanded={showDropdown}
-            onClick={handleManualDropdownToggle}
-            className="absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ChevronDown
-              className={`size-4 transition-transform ${showDropdown ? "rotate-180" : ""}`}
-            />
-          </Button>
-
-          {/* Live Search Dropdown — rendered in portal so it isn't clipped by Card overflow-hidden */}
-          {showDropdown &&
-            dropdownRect &&
-            typeof document !== "undefined" &&
-            createPortal(
-              <div
-                ref={dropdownRef}
-                className="fixed z-25 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent overflow-y-auto rounded-md border bg-popover shadow-md hover:scrollbar-thumb-muted-foreground/40 dark:scrollbar-thumb-muted-foreground/30 dark:hover:scrollbar-thumb-muted-foreground/50"
-                style={{
-                  ...(dropdownPosition.openUpward
-                    ? { bottom: dropdownRect.bottom, top: "auto" }
-                    : { top: dropdownRect.top }),
-                  left: dropdownRect.left,
-                  width: dropdownRect.width,
-                  maxHeight: dropdownPosition.maxHeight,
-                }}
-              >
-                {error ? (
-                  <div className="p-4">
-                    <Alert variant="destructive">
-                      <AlertCircle className="size-4" />
-                      <AlertDescription>
-                        Failed to load workspace objects: {error}
-                      </AlertDescription>
-                    </Alert>
-                  </div>
-                ) : loading ? (
-                  <div className="flex items-center justify-center p-4">
-                    <Loader2 className="mr-2 size-4 animate-spin" />
-                    <span className="text-sm text-muted-foreground">
-                      Loading...
-                    </span>
-                  </div>
-                ) : displayObjects.length > 0 ? (
-                  displayObjects.map((object, index) => {
-                    const cleanPath =
-                      object.path.replace(/^\/[^/]+@[^/]+/, "") ||
-                      object.path ||
-                      object.name ||
-                      "Unnamed Object";
-
-                    const isHighlighted = highlightedIndex === index;
-
-                    return (
-                      <button
-                        type="button"
-                        key={object.id}
-                        ref={(el) => {
-                          itemRefs.current[index] = el;
-                        }}
-                        className={cn(
-                          "flex w-full cursor-pointer items-center justify-between p-2 text-left hover:bg-accent",
-                          isHighlighted && "bg-accent"
-                        )}
-                        onClick={() => {
-                          const immediateSelect = !onSelectedObjectChange;
-                          handleObjectClick(object, immediateSelect);
-                        }}
-                        onMouseEnter={() => { setHighlightedIndex(index); }}
-                      >
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate text-sm font-medium">
-                            {object.name}
-                          </span>
-                          <span className="block truncate text-xs text-muted-foreground">
-                            {cleanPath}
-                          </span>
-                        </span>
-                      </button>
-                    );
-                  })
-                ) : (
-                  <p className="py-4 text-center text-sm text-muted-foreground">
-                    {searchQuery
-                      ? "No objects found matching your search"
-                      : "No objects found"}
-                  </p>
-                )}
-              </div>,
-              document.body
-            )}
-        </div>
-
-        {/* Folder Icon Button */}
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger
-            render={(triggerProps) => (
-              <Button
-                {...triggerProps}
-                variant="outline"
-                size="icon"
-                aria-label="Browse workspace"
-                className="shrink-0"
-              >
-                <FolderOpen className="size-4" />
-              </Button>
-            )}
-          />
-          <DialogContent className="max-h-[80vh] max-w-4xl">
-            <DialogHeader>
-              <DialogTitle>Choose or Upload a Workspace Object</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              {/* Placeholder content for workspace browser */}
-              <div className="rounded-lg border p-8 text-center">
-                <FolderOpen className="mx-auto mb-4 size-12 text-muted-foreground" />
-                <h3 className="mb-2 text-lg font-medium">Workspace Browser</h3>
-                <p className="mb-4 text-muted-foreground">
-                  This will be the full workspace browser interface where users
-                  can navigate folders, upload files, and select objects.
-                </p>
-                <div className="text-sm text-muted-foreground">
-                  <p>Features to be implemented:</p>
-                  <ul className="mt-2 list-inside list-disc space-y-1">
-                    <li>Folder navigation with breadcrumbs</li>
-                    <li>File and folder listing with details</li>
-                    <li>Upload functionality</li>
-                    <li>Search and filter options</li>
-                    <li>Selection and confirmation</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </div>
+    <WorkspaceObjectSelectorView
+      id={id}
+      className={className}
+      placeholder={placeholder}
+      validationError={validationError}
+      inputValue={searchQuery || displayName || value || ""}
+      searchQuery={searchQuery}
+      objects={displayObjects}
+      loading={loading}
+      error={error}
+      showDropdown={showDropdown}
+      highlightedIndex={highlightedIndex}
+      dropdownLayout={{
+        ...dropdownPosition,
+        rect: dropdownRect,
+      }}
+      inputRef={inputRef}
+      inputElementRef={inputElementRef}
+      dropdownRef={dropdownRef}
+      itemRefs={itemRefs}
+      onInputChange={(event) => {
+        handleSearchChange(event.target.value);
+        selectedObjectRef.current = null;
+        setDisplayName("");
+        onSelectedObjectChange?.(null);
+        setHighlightedIndex(-1);
+      }}
+      onInputFocus={() => {
+        if (searchQuery.length > 0 || isManualTrigger) setShowDropdown(true);
+      }}
+      onInputKeyDown={handleInputKeyDown}
+      onToggleDropdown={handleManualDropdownToggle}
+      onObjectClick={(object) => {
+        handleObjectClick(object, !onSelectedObjectChange);
+      }}
+      onObjectHighlight={setHighlightedIndex}
+    />
   );
+}
+
+export function WorkspaceObjectSelector(props: WorkspaceObjectSelectorProps) {
+  return useWorkspaceObjectSelector(props);
 }

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { validateProteinFasta } from "@/lib/fasta-validation";
 
 export const inputSourceSchema = z.enum([
   "fasta_data",
@@ -13,9 +14,7 @@ export const influenzaHaSubtypeFormSchema = z
     input_fasta_data: z.string(),
     input_fasta_file: z.string(),
     input_feature_group: z.string(),
-    types: z
-      .array(z.string())
-      .min(1, "Select at least one numbering scheme"),
+    types: z.array(z.string()).min(1, "Select at least one numbering scheme"),
     output_path: z.string().trim().min(1, "Output folder is required"),
     output_file: z.string().trim().min(1, "Output name is required"),
   })
@@ -27,6 +26,15 @@ export const influenzaHaSubtypeFormSchema = z
           message: "Enter at least one protein sequence in FASTA format",
           path: ["input_fasta_data"],
         });
+      } else {
+        const validation = validateProteinFasta(data.input_fasta_data);
+        if (!validation.valid) {
+          ctx.addIssue({
+            code: "custom",
+            message: validation.message,
+            path: ["input_fasta_data"],
+          });
+        }
       }
     } else if (data.input_source === "fasta_file") {
       if (!data.input_fasta_file.trim()) {
@@ -48,15 +56,16 @@ export const influenzaHaSubtypeFormSchema = z
     }
   });
 
-  export type InfluenzaHaSubtypeFormData = z.infer<typeof influenzaHaSubtypeFormSchema>;
-  
-export const defaultInfluenzaHaSubtypeFormValues: InfluenzaHaSubtypeFormData =
-  {
-    input_source: "fasta_data",
-    input_fasta_data: "",
-    input_fasta_file: "",
-    input_feature_group: "",
-    types: ["H1N1pdm"],
-    output_path: "",
-    output_file: "",
-  };
+export type InfluenzaHaSubtypeFormData = z.infer<
+  typeof influenzaHaSubtypeFormSchema
+>;
+
+export const defaultInfluenzaHaSubtypeFormValues: InfluenzaHaSubtypeFormData = {
+  input_source: "fasta_data",
+  input_fasta_data: "",
+  input_fasta_file: "",
+  input_feature_group: "",
+  types: ["H1N1pdm"],
+  output_path: "",
+  output_file: "",
+};

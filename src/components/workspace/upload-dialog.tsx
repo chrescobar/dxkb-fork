@@ -25,10 +25,12 @@ import { cn } from "@/lib/utils";
 
 const uploadApi = "/api/services/workspace/upload";
 
-const uploadTypeOptions = Object.entries(knownUploadTypes).map(([value, { label }]) => ({
-  value,
-  label,
-}));
+const uploadTypeOptions = Object.entries(knownUploadTypes).map(
+  ([value, { label }]) => ({
+    value,
+    label,
+  }),
+);
 
 export interface UploadDialogProps {
   open: boolean;
@@ -61,50 +63,44 @@ export function UploadDialog({
     }
   }
 
-  const addFiles = React.useCallback((newFiles: FileList | File[]) => {
+  const addFiles = (newFiles: FileList | File[]) => {
     const list = Array.from(newFiles).filter((f) => f.name);
     setFiles((prev) => {
       const byName = new Map(prev.map((f) => [f.name, f]));
       list.forEach((f) => byName.set(f.name, f));
       return Array.from(byName.values());
     });
-  }, []);
+  };
 
-  const removeFile = React.useCallback((name: string) => {
+  const removeFile = (name: string) => {
     setFiles((prev) => prev.filter((f) => f.name !== name));
-  }, []);
+  };
 
-  const onInputChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const selected = e.target.files;
-      if (selected?.length) addFiles(selected);
-      e.target.value = "";
-    },
-    [addFiles],
-  );
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files;
+    if (selected?.length) addFiles(selected);
+    e.target.value = "";
+  };
 
-  const onDrop = React.useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setIsDragActive(false);
-      if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
-    },
-    [addFiles],
-  );
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragActive(false);
+    if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
+  };
 
-  const onDragOver = React.useCallback((e: React.DragEvent) => {
+  const onDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragActive(true);
     e.dataTransfer.dropEffect = "copy";
-  }, []);
+  };
 
-  const onDragLeave = React.useCallback((_e: React.DragEvent) => {
+  const onDragLeave = (_e: React.DragEvent) => {
     setIsDragActive(false);
-  }, []);
+  };
 
-  const handleStartUpload = React.useCallback(async () => {
+  const handleStartUpload = async () => {
     if (!files.length || !targetPath.trim() || isUploading) return;
     setIsUploading(true);
     let hasError = false;
@@ -124,7 +120,9 @@ export function UploadDialog({
           body: formData,
         });
         if (!res.ok) {
-          const err = await (res.json() as Promise<{ error?: string }>).catch(() => ({ error: res.statusText }));
+          const err = await (res.json() as Promise<{ error?: string }>).catch(
+            () => ({ error: res.statusText }),
+          );
           toast.error(`Upload failed: ${file.name}`, {
             description: err.error ?? res.statusText,
           });
@@ -145,10 +143,9 @@ export function UploadDialog({
       const message = err instanceof Error ? err.message : "Upload failed.";
       toast.error(message);
       hasError = true;
-    } finally {
-      setIsUploading(false);
     }
-  }, [files, targetPath, uploadType, isUploading, repository, onUploadComplete]);
+    setIsUploading(false);
+  };
 
   const canStart = files.length > 0 && !isUploading;
 
@@ -224,7 +221,9 @@ export function UploadDialog({
               <span className="pointer-events-none inline-flex h-9 items-center justify-center rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground shadow-xs select-none">
                 Select Files
               </span>
-              <span className="text-xs text-muted-foreground">or Drop files here.</span>
+              <span className="text-xs text-muted-foreground">
+                or Drop files here.
+              </span>
             </div>
           </div>
           <div className="flex flex-col gap-1">
@@ -292,7 +291,9 @@ export function UploadDialog({
         <DialogFooter showCloseButton={false}>
           <Button
             variant="outline"
-            onClick={() => { onOpenChange(false); }}
+            onClick={() => {
+              onOpenChange(false);
+            }}
             disabled={isUploading}
           >
             Cancel

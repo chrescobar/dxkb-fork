@@ -1,9 +1,7 @@
-import { getItemFullPath } from "../info-panel";
+import { getItemFullPath } from "../info-panel-utils";
 import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 
-function makeItem(
-  overrides: Partial<WorkspaceItem>,
-): WorkspaceItem {
+function makeItem(overrides: Partial<WorkspaceItem>): WorkspaceItem {
   return {
     id: "id-1",
     path: "/user/home/test",
@@ -26,7 +24,10 @@ describe("getItemFullPath", () => {
   });
 
   it("does not duplicate name when path already contains it", () => {
-    const item = makeItem({ path: "/user/home/myfile.txt", name: "myfile.txt" });
+    const item = makeItem({
+      path: "/user/home/myfile.txt",
+      name: "myfile.txt",
+    });
     expect(getItemFullPath(item)).toBe("/user/home/myfile.txt");
   });
 
@@ -71,12 +72,18 @@ describe("getItemFullPath", () => {
   });
 
   it("handles null-ish path gracefully", () => {
-    const item = makeItem({ path: null as unknown as string, name: "file.txt" });
+    const item = makeItem({
+      path: null as unknown as string,
+      name: "file.txt",
+    });
     expect(getItemFullPath(item)).toBe("/file.txt");
   });
 
   it("handles null-ish name gracefully", () => {
-    const item = makeItem({ path: "/user/home", name: null as unknown as string });
+    const item = makeItem({
+      path: "/user/home",
+      name: null as unknown as string,
+    });
     expect(getItemFullPath(item)).toBe("/user/home/");
   });
 });

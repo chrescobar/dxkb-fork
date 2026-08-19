@@ -1,6 +1,7 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useLayoutEffect, useRef, type ReactNode } from "react";
+import type { PanelImperativeHandle } from "react-resizable-panels";
 import {
   useWorkspacePanel,
   workspacePanelIds,
@@ -38,6 +39,12 @@ export function WorkspaceShell({
     panelInitialLayout,
     setPanelLayout,
   } = useWorkspacePanel();
+  const detailsPanelRef = useRef<PanelImperativeHandle>(null);
+
+  useLayoutEffect(() => {
+    if (panelExpanded) detailsPanelRef.current?.expand();
+    else detailsPanelRef.current?.collapse();
+  }, [panelExpanded]);
 
   const actionStrip = (
     <div className="flex h-full w-20 shrink-0 flex-col rounded-l-lg border-r border-border/50 bg-muted/50 py-2">
@@ -109,25 +116,16 @@ export function WorkspaceShell({
     </div>
   );
 
-  if (!panelExpanded) {
-    return (
-      <div className="flex size-full min-h-0 flex-row gap-0">
-        <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-          {children}
-        </div>
-        <aside className="flex min-h-full shrink-0 rounded-l-lg border-l bg-muted/30">
-          {actionStrip}
-        </aside>
-      </div>
-    );
-  }
-
   return (
     <ResizablePanelGroup
       orientation="horizontal"
       className="size-full min-h-0"
       defaultLayout={panelInitialLayout}
-      onLayoutChanged={setPanelLayout}
+      onLayoutChanged={(layout, meta) => {
+        const detailsSize = layout[workspacePanelIds.details] ?? 0;
+        if (meta.isUserInteraction) setPanelExpanded(detailsSize > 0);
+        if (detailsSize > 0) setPanelLayout(layout);
+      }}
     >
       <ResizablePanel
         id={workspacePanelIds.main}
@@ -143,15 +141,27 @@ export function WorkspaceShell({
           {actionStrip}
         </aside>
       </ResizablePanel>
-      <ResizableHandle withHandle className="shrink-0" />
+      <ResizableHandle
+        withHandle={panelExpanded}
+        className={`shrink-0 ${panelExpanded ? "" : "w-0 opacity-0"}`}
+      />
       <ResizablePanel
+        panelRef={detailsPanelRef}
         id={workspacePanelIds.details}
         defaultSize={panelInitialLayout[workspacePanelIds.details] ?? 40}
         minSize="10%"
         maxSize="70%"
+        collapsible
+        collapsedSize={0}
         className="flex min-h-0 flex-col overflow-hidden"
       >
-        {detailsPanelContent}
+        <div
+          className="flex min-h-0 flex-1 flex-col"
+          tabIndex={0}
+          aria-label="Workspace details"
+        >
+          {detailsPanelContent}
+        </div>
       </ResizablePanel>
     </ResizablePanelGroup>
   );

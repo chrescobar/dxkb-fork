@@ -25,6 +25,8 @@ const defaultOptions: Required<FastaValidationOptions> = {
   firstName: "record_1",
 };
 
+const nucleotideAlphabet = /^[ACGTURYSWKMBDHVN-]+$/i;
+
 /**
  * Cleans FASTA text by removing unnecessary whitespace
  */
@@ -149,21 +151,19 @@ export function validateFasta(
     nextseq -= 1;
     nextseq = Math.max(0, nextseq);
 
-    // Check if sequence is DNA or protein
-    if (!protein && !isDNA(arr[i])) {
-      if (seqType === "dna") {
-        result.status = "need_dna";
-        result.message = `Too few nucleotide letters on line ${String(i + 1)}.`;
-        return result;
-      }
-      protein = true;
+    if (seqType === "dna" && !nucleotideAlphabet.test(arr[i])) {
+      result.status = "need_dna";
+      result.message = `Invalid nucleotide letters on line ${String(i + 1)}.`;
+      return result;
     }
+
+    // Check if sequence is DNA or protein
+    if (!protein && !isDNA(arr[i])) protein = true;
 
     // Validate sequence characters (extended amino acid alphabet)
     if (!/^[ABCDEFGHIJKLMNOPQRSTUVWXYZ\-\n]+$/i.test(arr[i].toUpperCase())) {
       result.status = "invalid_letters";
-      result.message =
-        `The sequences must have valid letters. Check line: ${String(i + 1)}.`;
+      result.message = `The sequences must have valid letters. Check line: ${String(i + 1)}.`;
       return result;
     }
   }
@@ -178,9 +178,36 @@ export function validateFasta(
 
   // All validations passed
   result.valid = true;
-  result.status = protein ? "valid_protein" : "valid_dna";
+  result.status = seqType === "dna" || !protein ? "valid_dna" : "valid_protein";
   result.numseq = numseq;
   result.message = "";
+
+  return result;
+}
+
+export function validateProteinFasta(
+  fastaText: string,
+  options: FastaValidationOptions = {},
+): FastaValidationResult {
+  const result = validateFasta(fastaText, "aa", options);
+  if (!result.valid) return result;
+
+  const nucleotideLine = result.trimFasta
+    .split("\n")
+    .findIndex(
+      (line) =>
+        line.length > 0 &&
+        !line.startsWith(">") &&
+        nucleotideAlphabet.test(line),
+    );
+  if (nucleotideLine >= 0) {
+    return {
+      ...result,
+      valid: false,
+      status: "need_protein",
+      message: `This service requires protein sequences. Nucleotide sequence found on line ${String(nucleotideLine + 1)}.`,
+    };
+  }
 
   return result;
 }

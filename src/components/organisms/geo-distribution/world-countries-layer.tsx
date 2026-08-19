@@ -1,7 +1,7 @@
 "use client";
 
 import { NaturalEarth } from "@visx/geo";
-import { memo, type RefObject } from "react";
+import type { RefObject } from "react";
 
 import type { OrganismGeoDistribution } from "@/lib/services/organisms/types";
 
@@ -31,7 +31,7 @@ interface WorldCountriesLayerProps {
   onSwitchToUs: () => void;
 }
 
-export const WorldCountriesLayer = memo(function WorldCountriesLayer({
+export function WorldCountriesLayer({
   countryFeatures,
   scale,
   width,
@@ -49,21 +49,31 @@ export const WorldCountriesLayer = memo(function WorldCountriesLayer({
       translate={[width / 2, mapHeight / 2]}
     >
       {({ features }) =>
-        features.map(({ feature, path }, index) => {
+        features.map(({ feature, path }) => {
           const name = featureName(feature.properties);
           const count = lookupCountryCount(name, data.countryData);
           const dataKey = resolveCountryDataKey(name, data.countryData) ?? name;
-          const meta = data.countryMeta[dataKey] ?? { count: 0, genera: {}, hosts: {} };
+          const meta = data.countryMeta[dataKey] ?? {
+            count: 0,
+            genera: {},
+            hosts: {},
+          };
           const interactable = isUsaTopoName(name);
           return (
             <ChoroplethPath
-              key={`${name}-${String(index)}`}
+              key={String(feature.id ?? name)}
               pathD={path ?? ""}
               fill={colorScale(count)}
               strokeWidth={0.6}
               cursor={interactable ? "pointer" : "default"}
               isDraggingRef={isDraggingRef}
-              payload={{ view: "world", name, count, genera: meta.genera, hosts: meta.hosts }}
+              payload={{
+                view: "world",
+                name,
+                count,
+                genera: meta.genera,
+                hosts: meta.hosts,
+              }}
               onHoverEnter={onHoverEnter}
               onHoverLeave={onHoverLeave}
               onClick={interactable ? onSwitchToUs : undefined}
@@ -73,4 +83,4 @@ export const WorldCountriesLayer = memo(function WorldCountriesLayer({
       }
     </NaturalEarth>
   );
-});
+}

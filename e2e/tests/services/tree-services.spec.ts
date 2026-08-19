@@ -53,6 +53,7 @@ test.describe("viral genome tree submission (representative for tree-services fa
       app: "GeneTree",
       status: "queued" as const,
       submit_time: "2026-04-28T12:00:00Z",
+      owner: "e2e-test-user",
       parameters: {},
     };
     await applyBackendMocks(page, {

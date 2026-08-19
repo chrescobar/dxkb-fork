@@ -1,0 +1,66 @@
+import { useState } from "react";
+import { useForm } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-store";
+import { useServiceRuntime } from "@/hooks/services/use-service-runtime";
+import { getFastaErrorMessage, validateFasta } from "@/lib/fasta-validation";
+import {
+  defaultSubspeciesClassificationFormValues,
+  subspeciesClassificationFormSchema,
+} from "@/lib/forms/(viral-tools)/subspecies-classification/subspecies-classification-form-schema";
+import { subspeciesClassificationService } from "@/lib/forms/(viral-tools)/subspecies-classification/subspecies-classification-service";
+
+export function useSubspeciesClassificationPage() {
+  const [isOutputNameValid, setIsOutputNameValid] = useState(true);
+  const form = useForm({
+    defaultValues: defaultSubspeciesClassificationFormValues,
+    validators: { onChange: subspeciesClassificationFormSchema },
+    onSubmit: async ({ value }) => runtime.submitFormData(value),
+  });
+  const outputPath = useSelector(
+    form.store,
+    (state) => state.values.output_path,
+  );
+  const canSubmit = useSelector(form.store, (state) => state.canSubmit);
+  const inputSource = useSelector(
+    form.store,
+    (state) => state.values.input_source,
+  );
+
+  function handleFastaBlur() {
+    const value = form.state.values.input_fasta_data ?? "";
+    if (!value.trim()) return;
+    const result = validateFasta(value, "dna");
+    const error = getFastaErrorMessage(result, "Subspecies Classification");
+    form.setFieldMeta("input_fasta_data", (previous) => ({
+      ...previous,
+      errors: result.valid ? [] : [error],
+      errorMap: {
+        ...previous.errorMap,
+        onChange: result.valid ? undefined : error,
+      },
+    }));
+    if (result.valid && result.trimFasta !== value) {
+      form.setFieldValue("input_fasta_data", result.trimFasta);
+    }
+  }
+  function handleReset() {
+    form.reset(defaultSubspeciesClassificationFormValues);
+    setIsOutputNameValid(true);
+  }
+  const runtime = useServiceRuntime({
+    definition: subspeciesClassificationService,
+    form,
+    onSuccess: handleReset,
+  });
+  return {
+    form,
+    outputPath,
+    inputSource,
+    handleFastaBlur,
+    handleReset,
+    setIsOutputNameValid,
+    isSubmitting: runtime.isSubmitting,
+    jobParamsDialogProps: runtime.jobParamsDialogProps,
+    canSubmit: canSubmit && isOutputNameValid,
+  };
+}

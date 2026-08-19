@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
+import type { ChangeEvent } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
@@ -27,7 +28,7 @@ export interface FastaTextareaProps {
   debounceMs?: number;
 }
 
-export const FastaTextarea = React.memo(function FastaTextarea({
+export function FastaTextarea({
   id = "sequence-input",
   value,
   onChange,
@@ -41,63 +42,37 @@ export const FastaTextarea = React.memo(function FastaTextarea({
   debounceMs = 500,
 }: FastaTextareaProps) {
   const [validationResult, setValidationResult] =
-    React.useState<FastaValidationResult | null>(null);
-  const [_isValidating, setIsValidating] = React.useState(false);
-  const [debounceTimeout, setDebounceTimeout] =
-    React.useState<NodeJS.Timeout | null>(null);
-
-  const validateFasta = React.useCallback(
-    (text: string) => {
-      if (!text.trim()) {
-        setValidationResult(null);
-        onValidationChange?.(false, null);
-        return;
-      }
-
-      const result = validateFastaForBlast(text, inputType);
-      setValidationResult(result);
-      onValidationChange?.(result.valid, result);
-    },
-    [inputType, onValidationChange],
-  );
-
-  const handleChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const newValue = e.target.value;
-      onChange(newValue);
-
-      // Clear existing timeout
-      if (debounceTimeout) {
-        clearTimeout(debounceTimeout);
-      }
-
-      // Set new timeout for validation
-      setIsValidating(true);
-      const timeout = setTimeout(() => {
-        validateFasta(newValue);
-        setIsValidating(false);
-      }, debounceMs);
-
-      setDebounceTimeout(timeout);
-    },
-    [onChange, debounceTimeout, debounceMs, validateFasta],
-  );
-
-  // Validate on mount if there's already a value
-  React.useEffect(() => {
-    if (value) {
-      validateFasta(value);
+    useState<FastaValidationResult | null>(null);
+  const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const validateFasta = useEffectEvent((text: string) => {
+    if (!text.trim()) {
+      setValidationResult(null);
+      onValidationChange?.(false, null);
+      return;
     }
-  }, [value, validateFasta]);
 
-  // Cleanup timeout on unmount
-  React.useEffect(() => {
+    const result = validateFastaForBlast(text, inputType);
+    setValidationResult(result);
+    onValidationChange?.(result.valid, result);
+  });
+
+  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setValidationResult(null);
+    onValidationChange?.(false, null);
+    onChange(event.target.value);
+  };
+
+  useEffect(() => {
+    if (debounceTimeoutRef.current) clearTimeout(debounceTimeoutRef.current);
+    debounceTimeoutRef.current = setTimeout(() => {
+      validateFasta(value);
+      debounceTimeoutRef.current = null;
+    }, debounceMs);
+
     return () => {
-      if (debounceTimeout) {
-        clearTimeout(debounceTimeout);
-      }
+      if (debounceTimeoutRef.current) clearTimeout(debounceTimeoutRef.current);
     };
-  }, [debounceTimeout]);
+  }, [value, inputType, debounceMs]);
 
   const getErrorMessage = () => {
     if (!validationResult || validationResult.valid) {
@@ -143,4 +118,4 @@ export const FastaTextarea = React.memo(function FastaTextarea({
       )}
     </div>
   );
-});
+}

@@ -2,7 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import {
+  TooltipProvider,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 import {
   BookOpen,
   Copy,
@@ -76,7 +81,17 @@ const actionConfig: ActionConfig[] = [
     id: "copyRows",
     label: "COPY",
     icon: Copy,
-    validSearchTypes: ["genome", "strain", "genome_feature", "protein_feature", "epitope", "protein_structure", "surveillance", "serology", "ppi"],
+    validSearchTypes: [
+      "genome",
+      "strain",
+      "genome_feature",
+      "protein_feature",
+      "epitope",
+      "protein_structure",
+      "surveillance",
+      "serology",
+      "ppi",
+    ],
     requiresSelection: true,
     disabledWithTooltip: notReady,
   },
@@ -92,7 +107,12 @@ const actionConfig: ActionConfig[] = [
     id: "genome",
     label: "GENOME",
     letter: "G",
-    validSearchTypes: ["genome", "genome_feature", "protein_feature", "protein_structure"],
+    validSearchTypes: [
+      "genome",
+      "genome_feature",
+      "protein_feature",
+      "protein_structure",
+    ],
     requiresSelection: true,
     disabledWithTooltip: notReady,
   },
@@ -117,7 +137,11 @@ const actionConfig: ActionConfig[] = [
     id: "feature",
     label: "FEATURE",
     letter: "F",
-    validSearchTypes: ["genome_feature", "protein_feature", "protein_structure"],
+    validSearchTypes: [
+      "genome_feature",
+      "protein_feature",
+      "protein_structure",
+    ],
     requiresSelection: true,
     disabledWithTooltip: notReady,
   },
@@ -236,7 +260,10 @@ export function SearchActionBar({
   onAction,
 }: SearchActionBarProps) {
   const visibleActions = actionConfig.filter((action) => {
-    if (action.validSearchTypes !== "*" && !action.validSearchTypes.includes(searchType)) {
+    if (
+      action.validSearchTypes !== "*" &&
+      !action.validSearchTypes.includes(searchType)
+    ) {
       return false;
     }
     if (action.id === "guide" && !guideUrl) {
@@ -247,17 +274,17 @@ export function SearchActionBar({
       return false;
     }
     // Hide single-select-only actions once more than maxSelection rows are chosen
-    if (action.maxSelection !== undefined && selectedCount > action.maxSelection) {
+    if (
+      action.maxSelection !== undefined &&
+      selectedCount > action.maxSelection
+    ) {
       return false;
     }
     return true;
   });
 
   const isDisabled = (action: ActionConfig) =>
-    !!(
-      action.disabledWithTooltip ||
-      disabledActions?.[action.id]
-    );
+    !!(action.disabledWithTooltip || disabledActions?.[action.id]);
 
   const isLoading = (actionId: SearchActionId) =>
     loadingActionIds?.includes(actionId) ?? false;
@@ -269,7 +296,8 @@ export function SearchActionBar({
           const Icon = action.icon;
           const showSpinner = isLoading(action.id);
           const disabled = isDisabled(action);
-          const tooltipText = disabledActions?.[action.id] ?? action.disabledWithTooltip;
+          const tooltipText =
+            disabledActions?.[action.id] ?? action.disabledWithTooltip;
 
           const buttonEl = (
             <Button
@@ -279,7 +307,8 @@ export function SearchActionBar({
               disabled={disabled}
               onClick={() => {
                 if (action.id === "guide") {
-                  if (guideUrl) window.open(guideUrl, "_blank", "noopener,noreferrer");
+                  if (guideUrl)
+                    window.open(guideUrl, "_blank", "noopener,noreferrer");
                 } else {
                   onAction?.(action.id);
                 }
@@ -288,13 +317,19 @@ export function SearchActionBar({
               {showSpinner ? (
                 <Spinner className="size-4 shrink-0" />
               ) : action.letter ? (
-                <span className="text-2xl leading-none font-black">{action.letter}</span>
+                <span className="text-2xl leading-none font-black">
+                  {action.letter}
+                </span>
               ) : Icon ? (
                 <Icon className="size-4 shrink-0" />
               ) : null}
-              <span className={`wrap-break-words text-center leading-tight font-medium whitespace-normal ${action.labelClassName ?? "text-[9px]"}`}>
-                {action.label.split("\n").map((line, i) => (
-                  <span key={i} className="block">{line}</span>
+              <span
+                className={`wrap-break-words text-center leading-tight font-medium whitespace-normal ${action.labelClassName ?? "text-[9px]"}`}
+              >
+                {action.label.split("\n").map((line) => (
+                  <span key={line} className="block">
+                    {line}
+                  </span>
                 ))}
               </span>
             </Button>

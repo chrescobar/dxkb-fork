@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useEffectEvent } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,7 +16,8 @@ import { useServiceDebugging } from "@/contexts/service-debugging-context";
 
 export function DebuggingPanel() {
   const [isOpen, setIsOpen] = useState(false);
-  const { isDebugMode, containerBuildId, setIsDebugMode, setContainerBuildId } = useServiceDebugging();
+  const { isDebugMode, containerBuildId, setIsDebugMode, setContainerBuildId } =
+    useServiceDebugging();
 
   // Local state for the dialog
   const [localDebugMode, setLocalDebugMode] = useState(isDebugMode);
@@ -33,27 +34,27 @@ export function DebuggingPanel() {
     setPrevSyncKey("");
   }
 
-  const handleOpenDialog = useCallback(() => {
+  const handleOpenDialog = useEffectEvent(() => {
     setLocalDebugMode(isDebugMode);
     setLocalContainerId(containerBuildId);
     setIsOpen(true);
-  }, [isDebugMode, containerBuildId]);
+  });
 
   // Add keyboard shortcut listener
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.shiftKey && event.key === 'D') {
+      if (event.ctrlKey && event.shiftKey && event.key === "D") {
         event.preventDefault();
         handleOpenDialog();
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handleOpenDialog]);
+  }, []);
 
   const handleOpenChange = (open: boolean) => {
     if (open) {
@@ -70,8 +71,6 @@ export function DebuggingPanel() {
     setIsOpen(false);
   };
 
-
-
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-125">
@@ -87,7 +86,9 @@ export function DebuggingPanel() {
               id="debug-mode"
               name="debug-mode"
               checked={localDebugMode}
-              onCheckedChange={(checked) => { setLocalDebugMode(checked); }}
+              onCheckedChange={(checked) => {
+                setLocalDebugMode(checked);
+              }}
             />
             <Label
               htmlFor="debug-mode"
@@ -105,7 +106,9 @@ export function DebuggingPanel() {
               id="container-build-id"
               type="text"
               value={localContainerId}
-              onChange={(e) => { setLocalContainerId(e.target.value); }}
+              onChange={(e) => {
+                setLocalContainerId(e.target.value);
+              }}
               placeholder="Enter container build ID"
               className="w-full"
             />

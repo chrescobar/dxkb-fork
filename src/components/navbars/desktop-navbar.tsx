@@ -19,20 +19,21 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { SearchBar } from "@/components/search/search-bar";
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { Skeleton } from "@/components/ui/skeleton";
 import Logo from "@/components/ui/logo";
 import { useAuth } from "@/lib/auth/hooks";
 import { UserAvatarDropdown } from "@/components/navbars/user-avatar-dropdown";
-import {
-  WorkspaceDropdownContent,
-  workspaceUsername,
-} from "@/components/navbars/workspace-dropdown-content";
+import { WorkspaceDropdownContent } from "@/components/navbars/workspace-dropdown-content";
+import { workspaceUsername } from "@/lib/services/workspace/path-utils";
 import { SuBanner } from "@/components/auth/su-banner";
 import { JobStatusPill } from "@/components/jobs/job-status-pill";
 import { NavbarThemeSwitcher } from "@/components/navbars/theme-switcher-navbar";
 
-const serviceEntries = Object.entries(serviceItems) as unknown as [string, NavSection][];
+const serviceEntries = Object.entries(serviceItems) as unknown as [
+  string,
+  NavSection,
+][];
 const serviceColumns = [
   serviceEntries.slice(0, Math.ceil(serviceEntries.length / 2)),
   serviceEntries.slice(Math.ceil(serviceEntries.length / 2)),

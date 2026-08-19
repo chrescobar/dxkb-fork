@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { contentDisposition, resolveWorkspaceDownload } from "../../resolve-download";
+import {
+  contentDisposition,
+  resolveWorkspaceDownload,
+} from "../../resolve-download";
 
 const defaultMaxBytes = 2 * 1024 * 1024; // 2 MB default
 const maxBytesCap = 10 * 1024 * 1024; // 10 MB server-enforced cap (matches client previewMaxBytes)
@@ -83,16 +86,15 @@ export async function GET(
         truncated = !done;
       }
     } finally {
-      reader.cancel().catch(() => { /* connection already closed */ });
+      reader.cancel().catch(() => {
+        /* connection already closed */
+      });
     }
 
-    // Combine chunks into a single buffer
-    const combined = new Uint8Array(bytesRead);
-    let offset = 0;
-    for (const chunk of chunks) {
-      combined.set(chunk, offset);
-      offset += chunk.byteLength;
-    }
+    // Blob combines the chunks without mutating a response buffer in this GET handler.
+    const combined = new Uint8Array(
+      await new Blob(chunks as BlobPart[]).arrayBuffer(),
+    );
 
     // If truncated, round down to the last newline for clean line breaks
     let finalBytes = combined;

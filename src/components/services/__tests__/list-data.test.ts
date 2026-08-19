@@ -1,4 +1,13 @@
-import { isSameResourceQuery, deriveTableFields, findPageRow } from "../list-data";
+import {
+  isSameResourceQuery,
+  deriveTableFields,
+  findPageRow,
+  downloadResourceRows,
+} from "../list-data-utils";
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 // Guards the placeholderData gate: previous page rows may only carry over when the
 // query is still for the same resource. A resource switch (genome → strain) must
@@ -6,11 +15,15 @@ import { isSameResourceQuery, deriveTableFields, findPageRow } from "../list-dat
 // collide on React keys (duplicate/undefined `strain` values).
 describe("isSameResourceQuery", () => {
   it("returns true when the previous query key's resource matches", () => {
-    expect(isSameResourceQuery(["genome-full", "genome", "q"], "genome")).toBe(true);
+    expect(isSameResourceQuery(["genome-full", "genome", "q"], "genome")).toBe(
+      true,
+    );
   });
 
   it("returns false when the resource differs (tab switch)", () => {
-    expect(isSameResourceQuery(["genome-full", "genome", "q"], "strain")).toBe(false);
+    expect(isSameResourceQuery(["genome-full", "genome", "q"], "strain")).toBe(
+      false,
+    );
   });
 
   it("returns false when there is no previous query key (first load)", () => {
@@ -25,13 +38,19 @@ describe("deriveTableFields", () => {
   it("returns synchronous fields for a known resource", () => {
     const fields = deriveTableFields("genome");
     expect(fields.length).toBeGreaterThan(0);
-    expect(fields.every((f) => typeof f.id === "string" && typeof f.label === "string")).toBe(true);
+    expect(
+      fields.every(
+        (f) => typeof f.id === "string" && typeof f.label === "string",
+      ),
+    ).toBe(true);
   });
 
   it("maps hidden:true to visible:false and hidden:false to visible:true", () => {
     const fields = deriveTableFields("genome");
     expect(fields.find((f) => f.id === "genome_name")?.visible).toBe(true);
-    expect(fields.find((f) => f.id === "taxon_lineage_ids")?.visible).toBe(false);
+    expect(fields.find((f) => f.id === "taxon_lineage_ids")?.visible).toBe(
+      false,
+    );
   });
 
   it("excludes fields marked show_in_table:false", () => {
@@ -40,10 +59,11 @@ describe("deriveTableFields", () => {
     expect(fields.find((f) => f.id === "taxon_lineage_ids")).toBeUndefined();
   });
 
-  it("returns [] for an unknown resource", () => {
-    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
-    expect(deriveTableFields("not_a_resource")).toEqual([]);
-    spy.mockRestore();
+  it("returns a stable empty array for unknown resources", () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const first = deriveTableFields("not_a_resource");
+    expect(first).toEqual([]);
+    expect(deriveTableFields("another_unknown_resource")).toBe(first);
   });
 });
 
@@ -58,17 +78,79 @@ describe("deriveTableFields", () => {
 describe("genome_sequence field registry", () => {
   it("does not include the raw 'sequence' DNA field — its absence prevents 18MB responses", () => {
     const fields = deriveTableFields("genome_sequence");
-    expect(fields.map(f => f.id)).not.toContain("sequence");
+    expect(fields.map((f) => f.id)).not.toContain("sequence");
   });
 
   it("includes the key table fields for genome_sequence", () => {
     const fields = deriveTableFields("genome_sequence");
-    const ids = fields.map(f => f.id);
+    const ids = fields.map((f) => f.id);
     expect(ids).toContain("sequence_id");
     expect(ids).toContain("genome_id");
     expect(ids).toContain("accession");
     expect(ids).toContain("gc_content");
     expect(ids).toContain("length");
+  });
+});
+
+describe("downloadResourceRows", () => {
+  it("requests only exported columns and omits the selection column", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify([{ genome_id: "1", genome_name: "Example" }]),
+        {
+          status: 200,
+        },
+      ),
+    );
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:download");
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(
+      () => undefined,
+    );
+
+    await downloadResourceRows({
+      dataApi: "https://data.example",
+      resource: "genome",
+      query: "eq(public,true)",
+      totalItems: 1,
+      format: "csv",
+      visibleColumns: ["__select__", "genome_id", "genome_name"],
+      fields: [
+        { id: "genome_id", label: "Genome ID", visible: true },
+        { id: "genome_name", label: "Genome Name", visible: true },
+      ],
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://data.example/genome/?eq(public,true)&select(genome_id,genome_name)",
+      expect.any(Object),
+    );
+  });
+
+  it("does not treat an empty displayed-column selection as all columns", async () => {
+    const fetchMock = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(new Response(JSON.stringify([{}]), { status: 200 }));
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:download");
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(
+      () => undefined,
+    );
+
+    await downloadResourceRows({
+      dataApi: "https://data.example",
+      resource: "genome",
+      query: "eq(public,true)",
+      totalItems: 1,
+      format: "csv",
+      visibleColumns: [],
+      fields: [{ id: "genome_id", label: "Genome ID", visible: true }],
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://data.example/genome/?eq(public,true)",
+      expect.any(Object),
+    );
   });
 });
 
@@ -80,7 +162,10 @@ describe("findPageRow", () => {
   ];
 
   it("returns the matching row when the id is present", () => {
-    expect(findPageRow(rows, "sequence_id", "def.2")).toEqual({ sequence_id: "def.2", length: 200 });
+    expect(findPageRow(rows, "sequence_id", "def.2")).toEqual({
+      sequence_id: "def.2",
+      length: 200,
+    });
   });
 
   it("returns undefined when the id is not in pageData", () => {
@@ -90,7 +175,10 @@ describe("findPageRow", () => {
   it("coerces non-string id field values to string for comparison", () => {
     // API rows may carry numeric ids (e.g. taxon_id: 234). String(234) === "234".
     const numericRows = [{ taxon_id: 234, name: "Brucella" }];
-    expect(findPageRow(numericRows, "taxon_id", "234")).toEqual({ taxon_id: 234, name: "Brucella" });
+    expect(findPageRow(numericRows, "taxon_id", "234")).toEqual({
+      taxon_id: 234,
+      name: "Brucella",
+    });
   });
 
   it("returns undefined for an empty pageData array", () => {

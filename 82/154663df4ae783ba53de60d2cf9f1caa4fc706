@@ -1,0 +1,43 @@
+pnpm-workspace.yaml
+  s_db0f21170f11a8::t_b62c4294d38b28 23
+  s_db0f21170f11a8::t_2d440899ef3188 18
+  s_db0f21170f11a8::t_1942004a69fda2 20
+  s_db0f21170f11a8::t_ed8aff6b4fd807 19
+  s_db0f21170f11a8::t_536cbb144761ab 21-22
+  s_db0f21170f11a8::t_b37f7ba9088aee 17
+  s_db0f21170f11a8::t_0cd02f4d99e5a4 16
+  s_db0f21170f11a8::t_7a50e548a8b28e 39
+patches/archaeopteryx@2.3.2.patch
+  s_db0f21170f11a8::t_3780c868a87fad 199-207
+  s_db0f21170f11a8::t_fd55f89388f497 198
+src/lib/phylogeny/archaeopteryx.ts
+  s_db0f21170f11a8::t_60f7eecb4cf03c 99-104
+  s_db0f21170f11a8::t_b2d388944d3a4f 47-55
+patches/auspice@2.73.0.patch
+  s_db0f21170f11a8::t_7a50e548a8b28e 1-13
+package.json
+  s_db0f21170f11a8::t_08a063faebe01b 73
+pnpm-lock.yaml
+  s_db0f21170f11a8::t_e113f5501c18ab 13-20,24-25,134,139-140,303,3561-3563,4373-4375,4487-4489,4633-4635,4637-4643,4938-4939,5420-5422,5674-5678,6372-6375,6994-6998,7000-7004,7006-7010,7012-7016,7169-7171,7749-7751,7889-7892,8203-8204,8350-8352,11841-11842,12422,12424,12543,12569,12585,12622,12901,12903-12907,12909-12910,13009-13010,13039,13143,13145-13150,13152-13153,13475-13477,14183-14184,14474,14476,15204-15207,15894,15896,15898,15900-15902,15905,15907-15908,15910,15912-15913,16003-16006,16199,16764,16929-16930,17266,17373,17386,17388-17390,17392
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "82154663df4ae783ba53de60d2cf9f1caa4fc706",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_db0f21170f11a8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe4d26039ffemhi8Pc58ymetVo",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

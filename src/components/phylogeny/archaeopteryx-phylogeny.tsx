@@ -106,7 +106,7 @@ export function ArchaeopteryxPhylogeny({
       const { archaeopteryx, forester } = await loadArchaeopteryx();
       if (cancelled) return;
       destroyRenderer = () => {
-        archaeopteryx.destroy();
+        archaeopteryx.destroy(`#${id}`);
       };
 
       const tree = archaeopteryx.parsePhyloXML(xml);

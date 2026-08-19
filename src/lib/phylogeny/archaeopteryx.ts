@@ -36,12 +36,21 @@ export interface ArchaeopteryxApi {
   ): void;
   getSelectedNodes(): ArchaeopteryxNode[];
   setTheme(backgroundColor: string, labelColor: string): void;
-  destroy(): void;
+  destroy(selector?: string): void;
 }
 
 interface ArchaeopteryxDependencies {
   archaeopteryx: ArchaeopteryxApi;
   forester: Forester;
+}
+
+interface CanvgModule {
+  Canvg: {
+    fromString(
+      context: CanvasRenderingContext2D,
+      svg: string,
+    ): { render(): Promise<void> };
+  };
 }
 
 interface ArchaeopteryxGlobals extends Window {
@@ -78,7 +87,7 @@ async function loadDependencies(): Promise<ArchaeopteryxDependencies> {
     import("jquery"),
     import("archaeopteryx/forester"),
     import("phyloxml"),
-    import("canvg"),
+    import("canvg") as Promise<unknown>,
     import("file-saver") as Promise<{ default: unknown }>,
   ]);
 
@@ -87,7 +96,12 @@ async function loadDependencies(): Promise<ArchaeopteryxDependencies> {
   globals.$ = globals.jQuery;
   globals.forester = foresterModule.forester;
   globals.phyloXml = phyloXmlModule.phyloXml;
-  globals.canvg = canvgModule.default;
+  globals.canvg = async (canvas: HTMLCanvasElement, svg: string) => {
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Canvas 2D context is unavailable");
+    const { Canvg } = canvgModule as CanvgModule;
+    await Canvg.fromString(context, svg).render();
+  };
   globals.saveAs = fileSaverModule.default;
 
   await import("jquery-ui-dist/jquery-ui");

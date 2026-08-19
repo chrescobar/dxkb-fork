@@ -26,14 +26,29 @@ index 4d4e405e..469d0f59 100644
              .style('left', (d3.event.pageX) + 'px')
              .style('top', (d3.event.pageY) + 'px');
      }
-@@ -3745,6 +3753,7 @@ if (!phyloXml) {
+@@ -3745,6 +3753,10 @@ if (!phyloXml) {
              return;
          }
  
++        if (_id) {
++            archaeopteryx.destroy();
++        }
 +        _selectedNodes.clear();
          _treeData = phylo;
          _id = id;
          _zoomListener = d3.behavior.zoom().scaleExtent([0.1, 10]).on('zoom', zoom);
+@@ -3834,4 +3843,4 @@ if (!phyloXml) {
+         if (settings.enableNodeVisualizations || settings.enableBranchVisualizations) {
+             d3.select(window)
+-                .on("mousedown", mouseDown);
++                .on("mousedown.archaeopteryx", mouseDown);
+         }
+@@ -3851,4 +3860,4 @@ if (!phyloXml) {
+         if (_settings.enableDynamicSizing) {
+             d3.select(window)
+-                .on('resize', function () {
++                .on('resize.archaeopteryx', function () {
+                     let element = d3.select(_id).node();
 @@ -4061,7 +4070,7 @@ if (!phyloXml) {
  
                  $('#' + NODE_DATA).dialog("destroy");
@@ -99,7 +114,7 @@ index 4d4e405e..469d0f59 100644
  
  
 -        $(document).on('mousewheel DOMMouseScroll', function (e) {
-+        $(document).on('mousewheel.archaeopteryx DOMMouseScroll.archaeopteryx', function (e) {
++        $(document).off('mousewheel.archaeopteryx DOMMouseScroll.archaeopteryx').on('mousewheel.archaeopteryx DOMMouseScroll.archaeopteryx', function (e) {
              if (e.shiftKey) {
                  if (e.originalEvent) {
                      let oe = e.originalEvent;
@@ -195,7 +210,30 @@ index 4d4e405e..469d0f59 100644
                      }
                  }
              }
-@@ -8539,3 +8545,15 @@ if (!phyloXml) {
+@@ -8525,7 +8531,18 @@ if (!phyloXml) {
+-    function downloadAsPng() {
++    async function downloadAsPng() {
+         let svg = getTreeAsSvg();
+         let canvas = document.createElement('canvas');
+-        canvg(canvas, svg);
+-        canvas.toBlob(function (blob) {
+-            saveAs(blob, _options.nameForPngDownload);
++        await canvg(canvas, svg);
++        await new Promise(function (resolve, reject) {
++            canvas.toBlob(function (blob) {
++                if (!blob) {
++                    reject(new Error('Could not create PNG image'));
++                    return;
++                }
++                try {
++                    saveAs(blob, _options.nameForPngDownload);
++                    resolve();
++                } catch (error) {
++                    reject(error);
++                }
++            });
+         });
+@@ -8539,3 +8548,15 @@ if (!phyloXml) {
      archaeopteryx.getSelectedNodes = function () {
          return Array.from(_selectedNodes);
      };
@@ -211,11 +249,14 @@ index 4d4e405e..469d0f59 100644
 +    };
 +
 +
-@@ -8572,6 +8588,28 @@ if (!phyloXml) {
+@@ -8572,6 +8602,31 @@ if (!phyloXml) {
       * @param newHamphshireConfidenceValuesAsInternalNames
       * @param nodeVisualizations
       */
-+    archaeopteryx.destroy = function () {
++    archaeopteryx.destroy = function (id) {
++        if (id && id !== _id) {
++            return;
++        }
 +        if (_id) {
 +            d3.select(_id).selectAll('*').remove();
 +        }
@@ -225,7 +266,7 @@ index 4d4e405e..469d0f59 100644
 +        }
 +        $('.node_mouseover_tooltip').remove();
 +        $(document).off('.archaeopteryx');
-+        d3.select(window).on('resize', null).on('mousedown', null);
++        d3.select(window).on('resize.archaeopteryx', null).on('mousedown.archaeopteryx', null);
 +        if (_intervalId) {
 +            clearInterval(_intervalId);
 +            _intervalId = 0;

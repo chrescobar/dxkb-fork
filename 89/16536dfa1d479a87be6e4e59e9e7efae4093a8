@@ -1,0 +1,28 @@
+src/components/services/sra-run-accession-with-validation.tsx
+  s_aacb44ad711837::t_ad382bb21a633b 450
+src/hooks/services/jobs/use-jobs-data.ts
+  s_aacb44ad711837::t_cc45ee1cb1dedd 48
+  s_aacb44ad711837::t_a738fcfdc042f7 9
+  s_aacb44ad711837::t_c61be99ff1e7fc 40,42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "8916536dfa1d479a87be6e4e59e9e7efae4093a8",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_aacb44ad711837": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe5030014ffe8rUCVd0noAcPF2",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

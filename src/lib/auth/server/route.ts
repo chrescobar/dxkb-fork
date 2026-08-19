@@ -148,7 +148,15 @@ export function createAuthHelpers(
   ): Promise<Response> {
     const runFetch = async () => {
       const session = await requireSessionInner();
-      const headers = new Headers(init.headers);
+      // Passing `headers` in the init overrides a Request input's own headers
+      // wholesale, so seed from the Request first and let init.headers win
+      // per-header on top of it.
+      const headers = new Headers(
+        input instanceof Request ? input.headers : undefined,
+      );
+      new Headers(init.headers).forEach((value, name) => {
+        headers.set(name, value);
+      });
       if (!headers.has("Content-Type")) {
         headers.set("Content-Type", "application/json");
       }

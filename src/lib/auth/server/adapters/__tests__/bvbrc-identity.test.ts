@@ -389,3 +389,38 @@ describe("bvbrcIdentity().changePassword", () => {
     expect(result.error?.status).toBe(500);
   });
 });
+
+describe("bvbrcIdentity() User-Agent", () => {
+  // Node's fetch defaults to `User-Agent: node`, which Cloudflare in front of
+  // the BV-BRC services answers with a 403 bot challenge instead of the API
+  // response. Every outbound call must identify itself.
+  it("sends an explicit User-Agent on authenticate", async () => {
+    let seen: string | null = null;
+    server.use(
+      http.post("https://auth.test/auth", ({ request }) => {
+        seen = request.headers.get("User-Agent");
+        return new HttpResponse("", { headers: { Authorization: "t" } });
+      }),
+    );
+
+    await bvbrcIdentity().authenticate({ username: "u", password: "p" });
+
+    expect(seen).toBeTruthy();
+    expect(seen).not.toMatch(/^node/i);
+  });
+
+  it("sends an explicit User-Agent on profile lookups", async () => {
+    let seen: string | null = null;
+    server.use(
+      http.get("https://user.test/user/alice", ({ request }) => {
+        seen = request.headers.get("User-Agent");
+        return HttpResponse.json({ id: "alice", email_verified: true });
+      }),
+    );
+
+    await bvbrcIdentity().validateToken("alice", "tok");
+
+    expect(seen).toBeTruthy();
+    expect(seen).not.toMatch(/^node/i);
+  });
+});

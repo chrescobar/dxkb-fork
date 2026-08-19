@@ -71,6 +71,16 @@ next-env.d.ts
 /e2e/.auth/
 # /e2e/__snapshots__ is NOT ignored — baselines must be committed for visual regression to work.
 
+# Auspice / Nextstrain viewer build output
+/public/dist/
+/public/nextstrain-viewer.html
+/public/auspice-favicon.png
+/public/.auspice-build-hash
+
+# a11y scan + screenshot artifacts
+/.screenshots/
+/a11y-report/
+/a11y-results/
 # a11y scan artifacts (generated)
 /a11y-report/
 /a11y-results/

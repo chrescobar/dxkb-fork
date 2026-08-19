@@ -7,6 +7,7 @@ import type {
 } from "@/lib/auth/types";
 import { ok, fail, networkFailure } from "../result";
 import type { IdentityProviderPort } from "../ports";
+import { serverUserAgent as userAgent } from "../user-agent";
 
 async function parseErrorMessage(
   response: Response,
@@ -32,7 +33,10 @@ async function authenticate(
     const authUrl = getRequiredEnv("USER_AUTH_URL");
     const response = await fetch(authUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": userAgent,
+      },
       body: new URLSearchParams({
         username: credentials.username,
         password: credentials.password,
@@ -76,7 +80,10 @@ async function signUp(
     const registerUrl = getRequiredEnv("USER_REGISTER_URL");
     const response = await fetch(registerUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": userAgent,
+      },
       body: new URLSearchParams({
         first_name: input.first_name || "",
         middle_name: input.middle_name || "",
@@ -132,7 +139,10 @@ async function impersonate(
     const authUrl = getRequiredEnv("USER_AUTH_URL");
     const response = await fetch(`${authUrl}/sulogin`, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": userAgent,
+      },
       body: new URLSearchParams({
         targetUser,
         password,
@@ -169,6 +179,7 @@ async function validateToken(
         headers: {
           Authorization: token,
           Accept: "application/json",
+          "User-Agent": userAgent,
         },
       },
     );
@@ -193,7 +204,10 @@ async function fetchProfile(
   userId: string,
   token?: string,
 ): Promise<UserProfile | null> {
-  const headers: Record<string, string> = { Accept: "application/json" };
+  const headers: Record<string, string> = {
+    Accept: "application/json",
+    "User-Agent": userAgent,
+  };
   if (token) headers["Authorization"] = token;
 
   try {
@@ -220,7 +234,10 @@ async function requestPasswordReset(
   try {
     const response = await fetch(getRequiredEnv("USER_PASSWORD_RESET_URL"), {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": userAgent,
+      },
       body: new URLSearchParams({ email: usernameOrEmail }),
     });
 
@@ -251,6 +268,7 @@ async function sendVerificationEmail(
         "Content-Type": "application/json",
         Accept: "application/json",
         Authorization: token,
+        "User-Agent": userAgent,
       },
       body: JSON.stringify({ id: userId }),
     });
@@ -285,6 +303,7 @@ async function verifyEmailToken(
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        "User-Agent": userAgent,
       },
       body: JSON.stringify({ token: verificationToken, username }),
       signal: controller.signal,
@@ -333,6 +352,7 @@ async function changePassword(
         Authorization: token,
         "Content-Type": "application/json",
         Accept: "application/json",
+        "User-Agent": userAgent,
       },
       body: JSON.stringify({
         id: 1,

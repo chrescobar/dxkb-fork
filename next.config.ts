@@ -1,5 +1,12 @@
+import { fileURLToPath } from "node:url";
+import { dirname } from "node:path";
 import type { NextConfig } from "next";
 import pkg from "./package.json" with { type: "json" };
+
+// Pin the Turbopack workspace root to this directory. Stray package-lock.json
+// files in parent directories otherwise make Next infer an ancestor as the root,
+// which breaks file-watching/cache invalidation (nested API routes silently 404).
+const projectRoot = dirname(fileURLToPath(import.meta.url));
 
 // Minimal type for webpack rule (avoids depending on full webpack types)
 interface WebpackRuleLike {
@@ -99,6 +106,7 @@ const nextConfig: NextConfig = {
   },
 
   turbopack: {
+    root: projectRoot,
     rules: {
       "*.svg": {
         loaders: ["@svgr/webpack"],

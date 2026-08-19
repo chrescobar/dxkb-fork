@@ -26,6 +26,7 @@ import {
   type InMemoryAccount,
 } from "../adapters/memory";
 import type { UserProfile } from "@/lib/auth/types";
+import { serverUserAgent } from "../user-agent";
 
 function makeProfile(partial: Partial<UserProfile> = {}): UserProfile {
   return {
@@ -258,6 +259,86 @@ describe("auth.fetch", () => {
     await expect(auth.fetch("https://backend/foo")).rejects.toMatchObject({
       status: 401,
     });
+  });
+
+  // Node's fetch defaults to `User-Agent: node`, which Cloudflare in front of
+  // the BV-BRC services answers with a 403 bot challenge instead of the API
+  // response.
+  it("defaults the User-Agent when the caller sets none", async () => {
+    const { auth, session } = buildAuthority([makeAccount("alice")]);
+    await session.write({
+      token: "alice-token",
+      userId: "alice",
+      expiresAt: Date.now(),
+    });
+    fetchSpy.mockResolvedValue(new Response(null, { status: 200 }));
+
+    await auth.fetch("https://backend/foo");
+
+    const callInit = fetchSpy.mock.calls[0][1] as RequestInit;
+    const headers = new Headers(callInit.headers);
+    expect(headers.get("User-Agent")).toBe(serverUserAgent);
+  });
+
+  it("keeps a User-Agent supplied in the init headers", async () => {
+    const { auth, session } = buildAuthority([makeAccount("alice")]);
+    await session.write({
+      token: "alice-token",
+      userId: "alice",
+      expiresAt: Date.now(),
+    });
+    fetchSpy.mockResolvedValue(new Response(null, { status: 200 }));
+
+    await auth.fetch("https://backend/foo", {
+      headers: { "User-Agent": "caller-agent" },
+    });
+
+    const callInit = fetchSpy.mock.calls[0][1] as RequestInit;
+    const headers = new Headers(callInit.headers);
+    expect(headers.get("User-Agent")).toBe("caller-agent");
+  });
+
+  it("preserves headers carried on a Request input", async () => {
+    const { auth, session } = buildAuthority([makeAccount("alice")]);
+    await session.write({
+      token: "alice-token",
+      userId: "alice",
+      expiresAt: Date.now(),
+    });
+    fetchSpy.mockResolvedValue(new Response(null, { status: 200 }));
+
+    await auth.fetch(
+      new Request("https://backend/foo", {
+        headers: { "User-Agent": "caller-agent", "X-Request": "from-request" },
+      }),
+    );
+
+    const callInit = fetchSpy.mock.calls[0][1] as RequestInit;
+    const headers = new Headers(callInit.headers);
+    expect(headers.get("User-Agent")).toBe("caller-agent");
+    expect(headers.get("X-Request")).toBe("from-request");
+  });
+
+  it("lets init headers win over a Request input's headers", async () => {
+    const { auth, session } = buildAuthority([makeAccount("alice")]);
+    await session.write({
+      token: "alice-token",
+      userId: "alice",
+      expiresAt: Date.now(),
+    });
+    fetchSpy.mockResolvedValue(new Response(null, { status: 200 }));
+
+    await auth.fetch(
+      new Request("https://backend/foo", {
+        headers: { "User-Agent": "request-agent", "X-Request": "from-request" },
+      }),
+      { headers: { "User-Agent": "init-agent" } },
+    );
+
+    const callInit = fetchSpy.mock.calls[0][1] as RequestInit;
+    const headers = new Headers(callInit.headers);
+    expect(headers.get("User-Agent")).toBe("init-agent");
+    expect(headers.get("X-Request")).toBe("from-request");
   });
 });
 

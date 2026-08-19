@@ -5,6 +5,7 @@ import type { AuthUser, UserProfile } from "@/lib/auth/types";
 import { getRequestScope, withRequestScope } from "./request-scope";
 import { errorResponse } from "./errors";
 import { hasSession as hasSessionFromRequest } from "./middleware";
+import { serverUserAgent } from "./user-agent";
 import type {
   IdentityProviderPort,
   SessionIdentity,
@@ -147,9 +148,23 @@ export function createAuthHelpers(
   ): Promise<Response> {
     const runFetch = async () => {
       const session = await requireSessionInner();
-      const headers = new Headers(init.headers);
+      // Passing `headers` in the init overrides a Request input's own headers
+      // wholesale, so seed from the Request first and let init.headers win
+      // per-header on top of it.
+      const headers = new Headers(
+        input instanceof Request ? input.headers : undefined,
+      );
+      new Headers(init.headers).forEach((value, name) => {
+        headers.set(name, value);
+      });
       if (!headers.has("Content-Type")) {
         headers.set("Content-Type", "application/json");
+      }
+      // Node's fetch sends `User-Agent: node`, which Cloudflare in front of the
+      // BV-BRC services answers with a 403 bot challenge instead of the API
+      // response. Identify ourselves unless the caller already set a UA.
+      if (!headers.has("User-Agent")) {
+        headers.set("User-Agent", serverUserAgent);
       }
       headers.set("Authorization", session.token);
       const response = await fetch(input, { ...init, headers });

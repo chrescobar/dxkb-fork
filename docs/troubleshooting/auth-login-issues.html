@@ -1,0 +1,431 @@
+<title>Sign-In 404 &amp; Phantom Verification</title>
+<style>
+  :root {
+    --ground: #FCFCFD;
+    --surface: #FFFFFF;
+    --sunk: #F3F4F8;
+    --ink: #15171E;
+    --ink-soft: #575D6E;
+    --ink-faint: #858B9C;
+    --rule: #E2E4EC;
+    --rule-strong: #C9CDDA;
+    --accent: #2A4CC7;
+    --warn: #9A5B06;
+    --warn-bg: #FDF3E3;
+    --ok: #1F6547;
+    --ok-bg: #E8F4ED;
+    --crit: #A8322A;
+    --crit-bg: #FBEDEB;
+
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0F1116;
+      --surface: #161923;
+      --sunk: #1C2029;
+      --ink: #E8EAF0;
+      --ink-soft: #A2A9BB;
+      --ink-faint: #6E7688;
+      --rule: #262B37;
+      --rule-strong: #39404F;
+      --accent: #8FA6FF;
+      --warn: #E0A855;
+      --warn-bg: #2A2113;
+      --ok: #6FCB9F;
+      --ok-bg: #13251C;
+      --crit: #F0908A;
+      --crit-bg: #2A1614;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0F1116;
+    --surface: #161923;
+    --sunk: #1C2029;
+    --ink: #E8EAF0;
+    --ink-soft: #A2A9BB;
+    --ink-faint: #6E7688;
+    --rule: #262B37;
+    --rule-strong: #39404F;
+    --accent: #8FA6FF;
+    --warn: #E0A855;
+    --warn-bg: #2A2113;
+    --ok: #6FCB9F;
+    --ok-bg: #13251C;
+    --crit: #F0908A;
+    --crit-bg: #2A1614;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 3rem 1.5rem 5rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 50rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2.75rem;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0;
+  }
+
+  h1 {
+    font-size: clamp(1.85rem, 4.5vw, 2.6rem);
+    line-height: 1.12;
+    letter-spacing: -0.022em;
+    font-weight: 680;
+    text-wrap: balance;
+    margin: 0.6rem 0 0;
+  }
+
+  .standfirst {
+    font-size: 1.09rem;
+    color: var(--ink-soft);
+    max-width: 40rem;
+    margin: 0.85rem 0 0;
+    text-wrap: pretty;
+  }
+
+  header { border-bottom: 1px solid var(--rule); padding-bottom: 2rem; }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin-top: 1.4rem;
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    color: var(--ink-faint);
+  }
+  .meta b { color: var(--ink-soft); font-weight: 500; }
+
+  .tldr {
+    background: var(--sunk);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1.25rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .tldr p { margin: 0; font-size: 0.95rem; color: var(--ink-soft); }
+  .tldr p strong { color: var(--ink); font-weight: 620; }
+
+  section { display: flex; flex-direction: column; gap: 1rem; }
+
+  h2 {
+    font-size: 1.32rem;
+    letter-spacing: -0.014em;
+    font-weight: 660;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .case-head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+
+  .chip {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    border: 1px solid transparent;
+  }
+  .chip.warn { background: var(--warn-bg); color: var(--warn); border-color: color-mix(in srgb, var(--warn) 28%, transparent); }
+  .chip.ok   { background: var(--ok-bg);   color: var(--ok);   border-color: color-mix(in srgb, var(--ok) 28%, transparent); }
+  .chip.crit { background: var(--crit-bg); color: var(--crit); border-color: color-mix(in srgb, var(--crit) 28%, transparent); }
+  .chip.flat { background: var(--sunk); color: var(--ink-soft); border-color: var(--rule); }
+
+  h3 {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 500;
+    margin: 0.8rem 0 0;
+  }
+
+  p { margin: 0; text-wrap: pretty; }
+  section > p, .block > p { color: var(--ink-soft); }
+  strong { color: var(--ink); font-weight: 620; }
+
+  .block { display: flex; flex-direction: column; gap: 0.55rem; }
+
+  ul { margin: 0; padding-left: 1.15rem; display: flex; flex-direction: column; gap: 0.45rem; color: var(--ink-soft); }
+  li::marker { color: var(--ink-faint); }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.855em;
+    background: var(--sunk);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 0.08em 0.34em;
+    color: var(--ink);
+    word-break: break-word;
+  }
+
+  .term {
+    background: var(--sunk);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 0.9rem 1.1rem;
+    overflow-x: auto;
+  }
+  .term pre {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    line-height: 1.75;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+  .term .c { color: var(--ink-faint); }
+  .term .bad { color: var(--crit); }
+  .term .good { color: var(--ok); }
+
+  .tablewrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 4px; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.87rem; }
+  caption { text-align: left; padding: 0 0 0.6rem; font-size: 0.85rem; color: var(--ink-soft); }
+  th, td { text-align: left; padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--rule); }
+  thead th {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 500;
+    background: var(--sunk);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.ep { font-family: var(--mono); font-size: 0.8rem; white-space: nowrap; }
+  td.code { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+  td.code.is-bad { color: var(--crit); }
+  td.code.is-ok { color: var(--ok); }
+  td.note { color: var(--ink-soft); }
+
+  .callout {
+    border: 1px solid color-mix(in srgb, var(--warn) 32%, var(--rule));
+    background: var(--warn-bg);
+    border-radius: 4px;
+    padding: 1rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .callout .lbl {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--warn);
+  }
+  .callout p { color: var(--ink); font-size: 0.94rem; }
+
+  .fix {
+    border: 1px solid color-mix(in srgb, var(--ok) 30%, var(--rule));
+    background: var(--ok-bg);
+    border-radius: 4px;
+    padding: 1rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .fix .lbl {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ok);
+  }
+  .fix p, .fix ul { color: var(--ink); font-size: 0.94rem; }
+
+  .files { display: flex; flex-direction: column; gap: 0.35rem; font-family: var(--mono); font-size: 0.8rem; color: var(--ink-soft); }
+  .files span b { color: var(--ink); font-weight: 600; }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 1.6rem;
+    font-size: 0.87rem;
+    color: var(--ink-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  a { color: var(--accent); text-underline-offset: 2px; }
+  a:focus-visible, :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">DXKB V2 · Auth</p>
+    <h1>Sign-In 404 &amp; Phantom Verification</h1>
+    <p class="standfirst">Two unrelated failures that hit the login flow back to back. One is local to your dev machine and needs no code. The other is a real bug in how the server talks to BV-BRC — fixed, but not yet merged.</p>
+    <div class="meta">
+      <span><b>Found</b> 17 Aug 2026</span>
+      <span><b>Branch</b> DXKBCORE-221</span>
+      <span><b>Status</b> both fixed, uncommitted</span>
+    </div>
+  </header>
+
+  <div class="tldr">
+    <p><strong>If your sign-in POST 404s:</strong> your dev server's router went stale. Restart it — nothing is wrong with the code.</p>
+    <p><strong>If you sign in but get a "verify your email" banner, a dead resend link, and get logged out on refresh:</strong> that's Cloudflare blocking the server's profile lookup. Needs the code fix below.</p>
+  </div>
+
+  <section>
+    <div class="case-head">
+      <div class="tags">
+        <span class="chip flat">Issue 1</span>
+        <span class="chip warn">Local dev only</span>
+        <span class="chip ok">No code change</span>
+      </div>
+      <h2>POST /api/auth/sign-in/email returns 404</h2>
+    </div>
+
+    <p>You click submit and the request 404s. The route file exists, it's committed, and it looks fine — because it <em>is</em> fine. The request never reached it.</p>
+
+    <div class="block">
+      <h3>How to confirm it's this</h3>
+      <p>Two tells. First, the 404 body is Next.js's <strong>HTML</strong> error page, not a JSON error from the handler — so nothing in the app ran. Second, and quicker:</p>
+      <div class="term"><pre><span class="c"># the route only exports POST, so send it a GET</span>
+curl -o /dev/null -w '%{http_code}' localhost:3019/api/auth/sign-in/email
+
+<span class="good">405</span>  <span class="c">→ route is registered, your problem is elsewhere</span>
+<span class="bad">404</span>  <span class="c">→ router never registered it. This issue.</span></pre></div>
+      <p>A registered route rejects the wrong method with 405. Only an unregistered path gives 404.</p>
+    </div>
+
+    <div class="block">
+      <h3>What was actually wrong</h3>
+      <p>Turbopack's dev cache had desynced. The route was compiled on disk, its chunks existed, and it was listed in the route manifest — but the running router had never registered it. Nested routes were hit and flat ones weren't: both <code>sign-in/email</code> and <code>sign-up/email</code> 404'd while <code>sign-out</code>, <code>profile</code>, and <code>forget-password</code> all worked.</p>
+    </div>
+
+    <div class="fix">
+      <span class="lbl">Fix</span>
+      <ul>
+        <li><strong>Right now:</strong> <code>touch</code> the route file to force an HMR rebuild, or restart the dev server.</li>
+        <li><strong>If it comes back:</strong> <code>rm -rf .next/dev &amp;&amp; pnpm dev</code> for a clean rebuild.</li>
+        <li><strong>Root cause, now pinned:</strong> stray <code>package-lock.json</code> files in parent directories were making Next infer <code>/home/&lt;user&gt;/</code> as the workspace root, which breaks file-watching. <code>turbopack.root</code> is now set explicitly in <code>next.config.ts</code>. If you saw a "Next.js inferred your workspace root" warning at startup, that was this — it should be gone.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="case-head">
+      <div class="tags">
+        <span class="chip flat">Issue 2</span>
+        <span class="chip crit">Affects everyone</span>
+        <span class="chip ok">Code fix</span>
+      </div>
+      <h2>False "verify your email" banner, dead resend link, logout on refresh</h2>
+    </div>
+
+    <p>Sign-in succeeds. Then three things go wrong at once, and they look like three separate bugs:</p>
+    <ul>
+      <li>A red <strong>"Unverified Account Email"</strong> banner appears — even for accounts that are verified.</li>
+      <li>The <strong>"click here"</strong> resend link does nothing visible.</li>
+      <li><strong>Refreshing the page logs you out.</strong></li>
+    </ul>
+    <p>All three are one cause: <strong>Cloudflare is blocking the server's calls to the BV-BRC user service.</strong></p>
+
+    <div class="block">
+      <h3>Why</h3>
+      <p>Node's <code>fetch</code> sends <code>User-Agent: node</code> by default. Cloudflare in front of <code>user.patricbrc.org</code> answers that with a <strong>403 bot challenge</strong> — an HTML page reading <em>"Just a moment…"</em> — instead of the API response.</p>
+    </div>
+
+    <div class="block">
+      <h3>Why it's hard to spot</h3>
+      <p>Only some endpoints are challenged, and <code>/authenticate</code> isn't one of them. That's exactly why sign-in works and everything after it breaks.</p>
+      <div class="tablewrap">
+        <table>
+          <caption>Same token, same host, from Node's fetch</caption>
+          <thead>
+            <tr><th scope="col">Endpoint</th><th scope="col">Status</th><th scope="col">Result</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="ep">POST /authenticate</td><td class="code is-ok">401</td><td class="note">Real API response — sign-in works</td></tr>
+            <tr><td class="ep">GET /user/&lt;id&gt;</td><td class="code is-bad">403</td><td class="note">Cloudflare challenge</td></tr>
+            <tr><td class="ep">POST /verify</td><td class="code is-bad">403</td><td class="note">Cloudflare challenge</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="lbl">The trap</span>
+      <p>You cannot reproduce this with <code>curl</code>. Identical request, three different user agents:</p>
+      <div class="term"><pre>bare (as the app does)  → <span class="bad">403</span>  <span class="c">Cloudflare challenge</span>
+with curl UA            → <span class="good">200</span>
+with browser UA         → <span class="good">200</span></pre></div>
+      <p>Probe the endpoint by hand and it looks perfectly healthy. <strong>A 403 with an HTML body is a bot challenge; a 403 with a JSON body is the API.</strong></p>
+    </div>
+
+    <div class="block">
+      <h3>How one 403 caused all three symptoms</h3>
+      <ul>
+        <li><strong>The banner:</strong> the profile fetch 403'd, so <code>email_verified</code> never arrived. <code>isVerified</code> is <code>user.email_verified !== false</code>, which went false. The account was verified the whole time.</li>
+        <li><strong>The dead link:</strong> it calls <code>POST /verify</code> — also challenged. The click handler discards its result, so the failure was silent.</li>
+        <li><strong>The logout:</strong> session revalidation calls the same profile endpoint. Any error there is treated as "session invalid", so your cookies got cleared.</li>
+      </ul>
+    </div>
+
+    <div class="fix">
+      <span class="lbl">Fix</span>
+      <p>Send an explicit <code>User-Agent</code> on every server-side call to BV-BRC. Shared constant, applied in two places — the identity adapter, and the authenticated-fetch helper that route handlers use:</p>
+      <div class="files">
+        <span><b>src/lib/auth/server/user-agent.ts</b> — new, exports <code>serverUserAgent</code></span>
+        <span><b>src/lib/auth/server/adapters/bvbrc-identity.ts</b> — all 9 outbound calls</span>
+        <span><b>src/lib/auth/server/route.ts</b> — <code>auth.fetch</code>, covers <code>/api/auth/profile</code> and friends</span>
+      </div>
+      <p>Both places were needed: <code>/api/auth/profile</code> bypasses the adapter entirely and still 403'd after the adapter alone was fixed.</p>
+    </div>
+
+    <div class="block">
+      <h3>Verified</h3>
+      <p><code>get-session</code> went from returning <code>{"user": null}</code> to a full profile with <code>email_verified: true</code>; <code>/api/auth/profile</code> went 403 → 200. Two regression tests assert the UA isn't <code>node</code>, and fail if the header is stripped.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p><strong>What to do:</strong> if you only have the 404, restart your dev server — you don't need the code change. If you're seeing the verification banner or getting logged out on refresh, you need the <code>User-Agent</code> fix; it isn't committed yet, so pull once it lands on <code>DXKBCORE-221</code> (branched from <code>dev</code>).</p>
+    <p>Known gap: the resend-verification click handler still swallows its result, so failures there stay silent. Worth adding a toast.</p>
+  </footer>
+
+</div>

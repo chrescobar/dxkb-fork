@@ -177,6 +177,8 @@ src/app/services/(viral-tools)/sars-cov2-wastewater-analysis/page.tsx
 src/components/workspace/workspace-object-selector-view.tsx
   s_906b8ac70fd2c0::t_40d703239ddf70 5
   s_906b8ac70fd2c0::t_a1e8eb4c9a4769 72,94,111,125,133,177,192
+  s_aacb44ad711837::t_9ced9090f7c5b2 121-124
+  s_aacb44ad711837::t_e53cbacce45add 127-128
 src/components/services/list-data-utils.ts
   s_bb4cee3e5b79ae::t_80cee3a31e847a 44
   s_bb4cee3e5b79ae::t_41cf7d2c885d91 54
@@ -222,6 +224,14 @@ src/components/services/list-data-utils.ts
       "agent_id": {
         "tool": "opencode",
         "id": "ses_0036882cfffex5kuLDkxijis1w",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_aacb44ad711837": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe5030014ffe8rUCVd0noAcPF2",
         "model": "gpt56sol"
       },
       "human_author": "Chris Escobar <chrescobar@uchicago.edu>"

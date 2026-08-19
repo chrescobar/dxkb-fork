@@ -1,0 +1,13 @@
+diff --git a/cli/develop.js b/cli/develop.js
+index e6d6831fcb468efac69dd511b273665aa11cfb5e..5020674ebf15dc22dd08e67050f317b0ac9eed54 100644
+--- a/cli/develop.js
++++ b/cli/develop.js
+@@ -60,7 +60,7 @@ const run = (args) => {
+ 
+   app.use((webpackDevMiddleware)(
+     compiler,
+-    {logLevel: 'warn', publicPath: webpackConfig.output.publicPath}
++    {publicPath: webpackConfig.output.publicPath}
+   ));
+   app.use((webpackHotMiddleware)(
+     compiler,

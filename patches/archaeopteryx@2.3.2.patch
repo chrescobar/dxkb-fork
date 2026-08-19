@@ -195,6 +195,16 @@ index 4d4e405e..469d0f59 100644
                      }
                  }
              }
+@@ -8525,7 +8531,7 @@ if (!phyloXml) {
+-    function downloadAsPng() {
++    async function downloadAsPng() {
+         let svg = getTreeAsSvg();
+         let canvas = document.createElement('canvas');
+-        canvg(canvas, svg);
++        await canvg(canvas, svg);
+         canvas.toBlob(function (blob) {
+             saveAs(blob, _options.nameForPngDownload);
+         });
 @@ -8539,3 +8545,15 @@ if (!phyloXml) {
      archaeopteryx.getSelectedNodes = function () {
          return Array.from(_selectedNodes);

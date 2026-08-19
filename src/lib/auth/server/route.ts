@@ -5,6 +5,7 @@ import type { AuthUser, UserProfile } from "@/lib/auth/types";
 import { getRequestScope, withRequestScope } from "./request-scope";
 import { errorResponse } from "./errors";
 import { hasSession as hasSessionFromRequest } from "./middleware";
+import { serverUserAgent } from "./user-agent";
 import type {
   IdentityProviderPort,
   SessionIdentity,
@@ -132,6 +133,12 @@ export function createAuthHelpers(
       const headers = new Headers(init.headers);
       if (!headers.has("Content-Type")) {
         headers.set("Content-Type", "application/json");
+      }
+      // Node's fetch sends `User-Agent: node`, which Cloudflare in front of the
+      // BV-BRC services answers with a 403 bot challenge instead of the API
+      // response. Identify ourselves unless the caller already set a UA.
+      if (!headers.has("User-Agent")) {
+        headers.set("User-Agent", serverUserAgent);
       }
       headers.set("Authorization", session.token);
       const response = await fetch(input, { ...init, headers });

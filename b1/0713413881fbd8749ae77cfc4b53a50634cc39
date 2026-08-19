@@ -1,0 +1,25 @@
+src/lib/phylogeny/archaeopteryx.ts
+  s_c57e354912c81c::t_c12f158401c0e5 90
+  s_c57e354912c81c::t_a667f4153c30a4 102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "b10713413881fbd8749ae77cfc4b53a50634cc39",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_c57e354912c81c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe4aed4afffe3m7aJ1kEqj40MX",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

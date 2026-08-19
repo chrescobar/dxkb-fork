@@ -1,0 +1,34 @@
+src/lib/phylogeny/archaeopteryx.ts
+  s_5c172ff1fd9fb5::t_18f3d898e32e6d 39
+src/components/phylogeny/archaeopteryx-phylogeny.tsx
+  s_5c172ff1fd9fb5::t_0436cb8fa8e0f1 109
+patches/archaeopteryx@2.3.2.patch
+  s_5c172ff1fd9fb5::t_b612cdf9a713ca 29,33-35
+  s_5c172ff1fd9fb5::t_d72a8e2789dd0a 222,224-233
+  s_5c172ff1fd9fb5::t_3abb0b369df8a5 252
+  s_5c172ff1fd9fb5::t_e90df6c1ba7c15 213
+  s_5c172ff1fd9fb5::t_e3f5a7b2e4beb8 256-259
+pnpm-lock.yaml
+  s_5c172ff1fd9fb5::t_c3e3a2fe91117f 24,134,12422
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "9b1a0d49cd1ae56e79ab6369b0f77776f8b980cb",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_5c172ff1fd9fb5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe492fe78ffe9UoTHuv1orT1Tg",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

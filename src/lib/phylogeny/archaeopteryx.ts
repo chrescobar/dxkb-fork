@@ -36,7 +36,7 @@ export interface ArchaeopteryxApi {
   ): void;
   getSelectedNodes(): ArchaeopteryxNode[];
   setTheme(backgroundColor: string, labelColor: string): void;
-  destroy(): void;
+  destroy(selector?: string): void;
 }
 
 interface ArchaeopteryxDependencies {

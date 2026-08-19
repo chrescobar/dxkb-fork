@@ -1,0 +1,97 @@
+src/components/phylogeny/__tests__/viral-phylogeny-panel.test.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 96
+src/components/shared/__tests__/data-table-rendering.test.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 1,9-30,40-74,84-209
+src/components/taxonomy/use-taxon-children.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 98-99,101-105,107,109-123,125-142
+src/hooks/services/jobs/use-jobs-data.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 2,7-62,100,112
+src/hooks/services/workspace/use-workspace-object-search.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 39-54,78
+e2e/tests/a11y/deep-tier.spec.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 214,242
+src/components/genome/genome-shell.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 101-102
+src/components/workspace/workspace-object-selector-view.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 121
+e2e/tests/workspace-browse.spec.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 16-26,28-40,50-76,79,82,88-220
+src/components/workspace/__tests__/workspace-object-selector-view.test.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 1-82
+e2e/fixtures/overrides/jobs.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 16,29,39,51,60,69
+e2e/tests/services/genome-assembly.spec.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 48,119-172
+src/app/services/(genomics)/blast/blast-sections.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 8-9,40-51
+src/components/genome/__tests__/genome-shell.test.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 1-56
+e2e/tests/services/sequence-input-services.spec.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 11-24,31,33,36,39-163,172,195-201,219,221-223
+e2e/tests/organisms/taxon-list-data.spec.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 72-114
+e2e/tests/organisms/auspice.spec.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 154-175
+src/hooks/services/workspace/__tests__/use-workspace-object-search.test.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 6-10,68-120
+src/components/taxonomy/taxonomy-tree.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 152-154,264-272,274,298,333,344-350,354
+src/hooks/services/workspace/__tests__/use-workspace-selection.test.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 3,17-21,37-59,61,64,73-92,94-210,259-311
+e2e/tests/services/metagenomic-binning.spec.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 42
+src/app/services/(genomics)/blast/__tests__/page-database-types.test.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 1-143
+src/components/workspace/workspace-shell.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 3-4,42-47,140-143,145,150-151
+src/hooks/services/workspace/use-workspace-selection.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 3,5,38,40-56,58-60,63,78-89,93-96,102
+src/components/taxonomy/__tests__/use-taxon-children.test.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 86,113,120-164
+src/components/ui/number-input.test.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 1-265
+src/lib/forms/(genomics)/blast/__tests__/blast-database-types.test.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 1-86
+e2e/tests/services/genome-input-services.spec.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 37
+src/components/taxonomy/__tests__/taxonomy-tree.test.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 282-311
+src/hooks/services/jobs/__tests__/use-jobs-data.test.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 18-27,37-95,99-100,129-147,149,166-185
+src/lib/forms/(genomics)/blast/__tests__/blast-form-utils.test.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 3,13-61,64-73,76-86,105-128,131-143,408-411,482-485
+src/lib/forms/(genomics)/blast/blast-form-utils.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 45-55,59-63,65,75-87,96-114,367
+src/components/ui/number-input.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 49,54-62,180,183,206
+src/components/workspace/__tests__/workspace-browser-rendering.test.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 1-145
+src/components/workspace/workspace-file-table.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 155-159
+e2e/tests/services/tree-services.spec.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 56
+e2e/tests/taxonomy-tree.spec.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 15,28-33,35-38,44-45,66,68-69,104-124
+e2e/tests/jobs-lifecycle.spec.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 31-127
+e2e/pages/workspace-page.ts
+  s_aacb44ad711837::t_ad3d5c6501d9c8 50,52
+src/app/services/(genomics)/blast/page.tsx
+  s_aacb44ad711837::t_ad3d5c6501d9c8 20,87-95,97,99,102-103,105-112,146-153
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "8da192c080f34ece31345740709a0124c05b4aa1",
+  "prompts": {},
+  "sessions": {
+    "s_aacb44ad711837": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe5030014ffe8rUCVd0noAcPF2",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

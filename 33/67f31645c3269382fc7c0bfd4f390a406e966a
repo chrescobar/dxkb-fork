@@ -1,0 +1,34 @@
+src/app/(auth)/forgot-password/page.tsx
+  h_dbd94c95afa702 61,96,127,147,163
+src/app/(auth)/sign-in/page.tsx
+  h_dbd94c95afa702 67,97,120,123,130,185,189,194,212
+src/app/(auth)/sign-up/page.tsx
+  h_dbd94c95afa702 52,87,103
+src/components/auth/su-banner.tsx
+  h_dbd94c95afa702 23,31
+src/components/jobs/job-status-pill.tsx
+  h_dbd94c95afa702 123,134,138,151
+src/components/navbars/desktop-navbar.tsx
+  h_dbd94c95afa702 49,65,97,111,116,232
+src/components/navbars/mobile-navbar.tsx
+  h_dbd94c95afa702 78-79,82,86,90,126-127,140,155,168,188,228,312-313,333
+src/components/navbars/user-avatar-dropdown.tsx
+  h_dbd94c95afa702 51,79,100,107,119,125,137,151,160
+src/components/search/welcome-search.tsx
+  h_dbd94c95afa702 22,35,56,68,73,79,85,91,97,139,161,164,169
+src/components/settings/preferences-form.tsx
+  h_dbd94c95afa702 99
+src/components/workspace/workspace-browser.tsx
+  h_dbd94c95afa702 483
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "3367f31645c3269382fc7c0bfd4f390a406e966a",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -2,9 +2,8 @@
 
 import { z } from "zod";
 import { useForm } from "@tanstack/react-form";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { Input } from "@/components/ui/input";
@@ -19,8 +18,7 @@ import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Mail, ArrowLeft } from "lucide-react";
-import { useAuth } from "@/lib/auth/hooks";
-import { authAccount } from "@/lib/auth/advanced";
+import { useAuthActions } from "@/lib/auth/provider";
 import { RequiredFormLabel } from "@/components/forms/required-form-components";
 
 const formSchema = z.object({
@@ -32,14 +30,8 @@ const formSchema = z.object({
 export default function ForgotPasswordPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const { isAuthenticated, status } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const isLoading = status === "loading" || isSubmitting;
-  const router = useRouter();
-
-  useEffect(() => {
-    if (isAuthenticated) router.push("/");
-  }, [isAuthenticated, router]);
+  const { requestPasswordReset } = useAuthActions();
 
   const form = useForm({
     defaultValues: {
@@ -49,22 +41,24 @@ export default function ForgotPasswordPage() {
     onSubmit: async ({ value }) => {
       setError("");
       setIsSubmitting(true);
-      const { error: resetError } = await authAccount
-        .requestPasswordReset(value.usernameOrEmail)
+      await requestPasswordReset(value.usernameOrEmail)
+        .then(
+          () => {
+            setSuccess(true);
+          },
+          () => {
+            setError("An unexpected error occurred. Please try again.");
+          },
+        )
         .finally(() => {
           setIsSubmitting(false);
         });
-      if (resetError) {
-        setError("An unexpected error occurred. Please try again.");
-        return;
-      }
-      setSuccess(true);
     },
   });
 
   if (success) {
     return (
-      <div className="flex items-center justify-center bg-background p-4">
+      <div className="bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
             <CardTitle className="text-center text-2xl font-bold">
@@ -99,7 +93,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex items-center justify-center bg-background p-4">
+    <div className="bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-center text-2xl font-bold">
@@ -130,7 +124,7 @@ export default function ForgotPasswordPage() {
                 <FieldItem>
                   <RequiredFormLabel>Username or email</RequiredFormLabel>
                   <div className="relative">
-                    <Mail className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
+                    <Mail className="text-muted-foreground absolute top-2.5 left-3 size-4" />
                     <Input
                       placeholder="Enter your username or email"
                       id={field.name}
@@ -150,10 +144,10 @@ export default function ForgotPasswordPage() {
 
             <Button
               type="submit"
-              className="w-full text-muted-foreground transition-colors duration-200 hover:text-foreground"
-              disabled={isLoading}
+              className="text-muted-foreground hover:text-foreground w-full transition-colors duration-200"
+              disabled={isSubmitting}
             >
-              {isLoading ? (
+              {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 size-4 animate-spin" />
                   Sending...
@@ -166,7 +160,7 @@ export default function ForgotPasswordPage() {
             <div className="text-center text-sm">
               <Link
                 href="/sign-in"
-                className="group font-medium text-primary transition-colors duration-300 hover:font-medium hover:text-secondary"
+                className="group text-primary hover:text-secondary font-medium transition-colors duration-300 hover:font-medium"
               >
                 <ArrowLeft className="mr-1 inline size-3" />
                 Back to sign in

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { WorkspaceBrowser } from "@/components/workspace/workspace-browser";
-import { auth } from "@/lib/auth/server/instance";
+import { getCurrentUser } from "@/lib/auth/server/actions";
 import { getRequiredEnv } from "@/lib/env";
 import { encodeWorkspaceSegment } from "@/lib/services/workspace/path-utils";
 
@@ -19,7 +19,7 @@ export default async function WorkspaceUsernamePage({ params }: WorkspaceUsernam
     redirect("/workspace/home");
   }
 
-  const currentUser = await auth.currentUser();
+  const currentUser = await getCurrentUser();
   if (!currentUser) {
     redirect(`/sign-in?redirect=${encodeURIComponent(`/workspace/${encodeWorkspaceSegment(username)}`)}`);
   }

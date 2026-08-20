@@ -1,5 +1,13 @@
-import { apiFetch } from "@/lib/auth/fetch";
 import { ApiCallError, statusToErrorCode } from "./types";
+
+let reloadScheduled = false;
+
+async function credentialedFetch(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+): Promise<Response> {
+  return fetch(input, { ...init, credentials: "include" });
+}
 
 async function handleResponse<T>(response: Response): Promise<T> {
   if (response.ok) {
@@ -16,7 +24,16 @@ async function handleResponse<T>(response: Response): Promise<T> {
     error?: unknown;
     message?: unknown;
     details?: unknown;
+    code?: unknown;
   };
+  if (
+    body.code === "session_expired" &&
+    !reloadScheduled &&
+    typeof window !== "undefined"
+  ) {
+    reloadScheduled = true;
+    window.location.reload();
+  }
   const message =
     typeof body.error === "string"
       ? body.error
@@ -27,7 +44,10 @@ async function handleResponse<T>(response: Response): Promise<T> {
   throw new ApiCallError({
     message,
     status: response.status,
-    code: statusToErrorCode(response.status),
+    code:
+      body.code === "session_expired"
+        ? "session_expired"
+        : statusToErrorCode(response.status),
     details: body.details,
   });
 }
@@ -37,7 +57,7 @@ export async function apiCall<T>(
   body: unknown,
   init?: Omit<RequestInit, "method" | "body" | "credentials">,
 ): Promise<T> {
-  const response = await apiFetch(url, {
+  const response = await credentialedFetch(url, {
     ...init,
     method: "POST",
     headers: {
@@ -68,6 +88,6 @@ export async function apiGet<T>(
     if (qs) fullUrl = `${url}?${qs}`;
   }
 
-  const response = await apiFetch(fullUrl, { ...init, method: "GET" });
+  const response = await credentialedFetch(fullUrl, { ...init, method: "GET" });
   return handleResponse<T>(response);
 }

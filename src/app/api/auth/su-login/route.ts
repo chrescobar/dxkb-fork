@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
-import { authAdmin } from "@/lib/auth/server/instance";
+import { startImpersonation } from "@/lib/auth/server/actions";
 import { respondWithSession } from "@/lib/auth/server/respond";
-import { withErrorHandling } from "@/lib/auth/server/errors";
+import { parseJsonBody, withErrorHandling } from "@/lib/auth/server/errors";
 
 interface SuLoginBody {
   targetUser?: unknown;
@@ -9,11 +9,17 @@ interface SuLoginBody {
 }
 
 export const POST = withErrorHandling(async (request: NextRequest) => {
-  const body = (await request.json().catch(() => ({}))) as SuLoginBody;
-  return respondWithSession(
-    await authAdmin.impersonate(
-      typeof body.targetUser === "string" ? body.targetUser : "",
-      typeof body.password === "string" ? body.password : "",
-    ),
+  const body = await parseJsonBody<SuLoginBody>(request);
+  const result = await startImpersonation(
+    typeof body.targetUser === "string" ? body.targetUser : "",
+    typeof body.password === "string" ? body.password : "",
   );
+  return result.error
+    ? respondWithSession(result, undefined, {
+        sessionExpired: result.error.sessionExpired,
+      })
+    : respondWithSession(
+        { data: result.data.user, error: null },
+        result.data.expiresAt,
+      );
 });

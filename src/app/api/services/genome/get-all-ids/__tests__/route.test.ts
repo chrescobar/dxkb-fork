@@ -1,19 +1,23 @@
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
 import { POST } from "../route";
-import { json, mockNextRequest } from "@/test-helpers/api-route-helpers";
-
-vi.mock("@/lib/auth/session", () => ({ getAuthToken: vi.fn() }));
+import {
+  clearTestCookies,
+  json,
+  mockNextRequest,
+  setTestSession,
+} from "@/test-helpers/api-route-helpers";
 vi.mock("@/lib/env", () => ({
   getRequiredEnv: vi.fn(() => "http://mock-api"),
 }));
 
-import { getAuthToken } from "@/lib/auth/session";
-const mockGetAuthToken = vi.mocked(getAuthToken);
-
 describe("POST /api/services/genome/get-all-ids", () => {
+  beforeEach(() => {
+    setTestSession();
+  });
+
   it("returns 401 when no auth token", async () => {
-    mockGetAuthToken.mockResolvedValue(undefined);
+    clearTestCookies();
 
     const req = mockNextRequest({ method: "POST", body: {} });
     const res = await POST(req, {});
@@ -25,8 +29,6 @@ describe("POST /api/services/genome/get-all-ids", () => {
   });
 
   it("uses default limit of 10000 when no body", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     let capturedUrl: string | undefined;
     server.use(
       http.get("http://mock-api/genome/", ({ request }) => {
@@ -46,8 +48,6 @@ describe("POST /api/services/genome/get-all-ids", () => {
   });
 
   it("clamps limit below 1 to 1", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     let capturedUrl: string | undefined;
     server.use(
       http.get("http://mock-api/genome/", ({ request }) => {
@@ -63,8 +63,6 @@ describe("POST /api/services/genome/get-all-ids", () => {
   });
 
   it("clamps limit above 10000 to 10000", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     let capturedUrl: string | undefined;
     server.use(
       http.get("http://mock-api/genome/", ({ request }) => {
@@ -80,8 +78,6 @@ describe("POST /api/services/genome/get-all-ids", () => {
   });
 
   it("returns results on success", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     const genomes = [{ genome_id: "1.1" }, { genome_id: "2.2" }];
     server.use(
       http.get("http://mock-api/genome/", () => {
@@ -97,8 +93,6 @@ describe("POST /api/services/genome/get-all-ids", () => {
   });
 
   it("returns empty array when backend responds with null", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     server.use(
       http.get("http://mock-api/genome/", () => {
         return HttpResponse.json(null);
@@ -113,8 +107,6 @@ describe("POST /api/services/genome/get-all-ids", () => {
   });
 
   it("returns results from items envelope when backend wraps response in an object", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     const genomes = [{ genome_id: "1.1" }];
     server.use(
       http.get("http://mock-api/genome/", () => {
@@ -130,8 +122,6 @@ describe("POST /api/services/genome/get-all-ids", () => {
   });
 
   it("returns upstream error on non-ok response", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     server.use(
       http.get("http://mock-api/genome/", () => {
         return new HttpResponse("err", { status: 500 });

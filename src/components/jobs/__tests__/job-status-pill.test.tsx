@@ -14,7 +14,7 @@ const { mockAuth } = vi.hoisted(() => ({
   },
 }));
 
-vi.mock("@/lib/auth/hooks", () => ({
+vi.mock("@/lib/auth/provider", () => ({
   useAuth: () => mockAuth,
 }));
 
@@ -61,14 +61,18 @@ describe("JobStatusPill", () => {
     renderPill();
     // Wait for potential async data and confirm nothing rendered
     await new Promise((r) => setTimeout(r, 50));
-    expect(screen.queryByRole("button", { name: /view job status/i })).toBeNull();
+    expect(
+      screen.queryByRole("button", { name: /view job status/i }),
+    ).toBeNull();
   });
 
   it("renders nothing when displayable count is zero (no completed/running/queued jobs)", async () => {
     mockSummary({});
     renderPill();
     await new Promise((r) => setTimeout(r, 50));
-    expect(screen.queryByRole("button", { name: /view job status/i })).toBeNull();
+    expect(
+      screen.queryByRole("button", { name: /view job status/i }),
+    ).toBeNull();
   });
 
   it("renders nothing when only failed/error/cancelled jobs exist", async () => {
@@ -76,7 +80,9 @@ describe("JobStatusPill", () => {
     renderPill();
     await new Promise((r) => setTimeout(r, 50));
     // totalCount > 0 but displayableCount (completed + running + queued) = 0 → null
-    expect(screen.queryByRole("button", { name: /view job status/i })).toBeNull();
+    expect(
+      screen.queryByRole("button", { name: /view job status/i }),
+    ).toBeNull();
   });
 
   it("renders the pill with completed count", async () => {
@@ -84,7 +90,9 @@ describe("JobStatusPill", () => {
     mockJobsList([]);
     renderPill();
     await waitFor(() =>
-      expect(screen.getByRole("button", { name: /view job status/i })).toBeInTheDocument(),
+      expect(
+        screen.getByRole("button", { name: /view job status/i }),
+      ).toBeInTheDocument(),
     );
     expect(screen.getByText("5")).toBeInTheDocument();
   });
@@ -94,7 +102,9 @@ describe("JobStatusPill", () => {
     mockJobsList([]);
     renderPill();
     await waitFor(() =>
-      expect(screen.getByRole("button", { name: /view job status/i })).toBeInTheDocument(),
+      expect(
+        screen.getByRole("button", { name: /view job status/i }),
+      ).toBeInTheDocument(),
     );
     expect(screen.getByText("3")).toBeInTheDocument();
   });
@@ -104,7 +114,9 @@ describe("JobStatusPill", () => {
     mockJobsList([]);
     renderPill();
     await waitFor(() =>
-      expect(screen.getByRole("button", { name: /view job status/i })).toBeInTheDocument(),
+      expect(
+        screen.getByRole("button", { name: /view job status/i }),
+      ).toBeInTheDocument(),
     );
     expect(screen.getByText("3")).toBeInTheDocument();
   });
@@ -114,7 +126,9 @@ describe("JobStatusPill", () => {
     mockJobsList([]);
     renderPill();
     await waitFor(() =>
-      expect(screen.getByRole("button", { name: /view job status/i })).toBeInTheDocument(),
+      expect(
+        screen.getByRole("button", { name: /view job status/i }),
+      ).toBeInTheDocument(),
     );
     const counts = screen.getAllByText(/^\d+$/);
     expect(counts.map((el) => el.textContent)).toEqual(["4", "2", "1"]);
@@ -124,18 +138,25 @@ describe("JobStatusPill", () => {
     // Summary resolves immediately; enumerate stalls
     mockSummary({ completed: 1 });
     server.use(
-      http.post("/api/services/app-service/jobs/enumerate-tasks-filtered", async () => {
-        await new Promise((r) => setTimeout(r, 500));
-        return HttpResponse.json({ jobs: [], totalTasks: 0 });
-      }),
+      http.post(
+        "/api/services/app-service/jobs/enumerate-tasks-filtered",
+        async () => {
+          await new Promise((r) => setTimeout(r, 500));
+          return HttpResponse.json({ jobs: [], totalTasks: 0 });
+        },
+      ),
     );
 
     renderPill();
     await waitFor(() =>
-      expect(screen.getByRole("button", { name: /view job status/i })).toBeInTheDocument(),
+      expect(
+        screen.getByRole("button", { name: /view job status/i }),
+      ).toBeInTheDocument(),
     );
 
-    await userEvent.click(screen.getByRole("button", { name: /view job status/i }));
+    await userEvent.click(
+      screen.getByRole("button", { name: /view job status/i }),
+    );
     expect(await screen.findByText("Loading…")).toBeInTheDocument();
   });
 
@@ -154,10 +175,14 @@ describe("JobStatusPill", () => {
 
     renderPill();
     await waitFor(() =>
-      expect(screen.getByRole("button", { name: /view job status/i })).toBeInTheDocument(),
+      expect(
+        screen.getByRole("button", { name: /view job status/i }),
+      ).toBeInTheDocument(),
     );
 
-    await userEvent.click(screen.getByRole("button", { name: /view job status/i }));
+    await userEvent.click(
+      screen.getByRole("button", { name: /view job status/i }),
+    );
 
     await waitFor(() =>
       expect(screen.getByText("Genome Assembly")).toBeInTheDocument(),
@@ -171,10 +196,14 @@ describe("JobStatusPill", () => {
 
     renderPill();
     await waitFor(() =>
-      expect(screen.getByRole("button", { name: /view job status/i })).toBeInTheDocument(),
+      expect(
+        screen.getByRole("button", { name: /view job status/i }),
+      ).toBeInTheDocument(),
     );
 
-    await userEvent.click(screen.getByRole("button", { name: /view job status/i }));
+    await userEvent.click(
+      screen.getByRole("button", { name: /view job status/i }),
+    );
     await waitFor(() =>
       expect(screen.getByText("No recent jobs")).toBeInTheDocument(),
     );
@@ -186,10 +215,14 @@ describe("JobStatusPill", () => {
 
     renderPill();
     await waitFor(() =>
-      expect(screen.getByRole("button", { name: /view job status/i })).toBeInTheDocument(),
+      expect(
+        screen.getByRole("button", { name: /view job status/i }),
+      ).toBeInTheDocument(),
     );
 
-    await userEvent.click(screen.getByRole("button", { name: /view job status/i }));
+    await userEvent.click(
+      screen.getByRole("button", { name: /view job status/i }),
+    );
     await waitFor(() =>
       expect(screen.getByText("My Jobs")).toBeInTheDocument(),
     );

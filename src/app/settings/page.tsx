@@ -9,7 +9,7 @@ import { ProfileForm } from "@/components/settings/profile-form";
 import { PreferencesForm } from "@/components/settings/preferences-form";
 import { PasswordChangeForm } from "@/components/settings/password-change-form";
 
-import { apiFetch } from "@/lib/auth/fetch";
+import { getProfile } from "@/lib/auth/client";
 import type { UserProfile } from "@/lib/auth/types";
 
 export default function SettingsPage() {
@@ -19,11 +19,7 @@ export default function SettingsPage() {
     isError,
   } = useQuery<UserProfile>({
     queryKey: ["user-profile"],
-    queryFn: async () => {
-      const res = await apiFetch("/api/auth/profile");
-      if (!res.ok) throw new Error("Failed to load profile");
-      return res.json() as Promise<UserProfile>;
-    },
+    queryFn: getProfile,
   });
 
   if (isLoading) {

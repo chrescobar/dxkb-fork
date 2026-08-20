@@ -23,7 +23,7 @@ Requires **Node v24** (`nvm use 24`, pinned in `.nvmrc`). `pnpm start` = prod se
 **DXKB V2**: Next.js 16 App Router bioinformatics platform (genomics, metagenomics, viral research).
 
 - **App Router** (`src/app/`) — route groups `(auth)`, `(footer)`, `(views)`, plus `organisms/`, `workspace/`, `services/(<category>)`, `search/`, `jobs/`, `settings/`, `viewer/`, `api/`. Groups `(…)` don't appear in the URL.
-- **Auth** (`src/lib/auth/`) — port/adapter, built on `better-auth`. Consume client state via `useAuth()` (`hooks.ts`) inside `<AuthBoundary>`. Protected-route logic is in `routes.ts` (not `proxy.ts`). No `bvbrcAuth` object, no `contexts/auth-context.tsx` — gone.
+- **Auth** (`src/lib/auth/`) — server-first BV-BRC auth. Server Components call `getCurrentUser()` from `server/actions.ts` and pass the browser-safe user to `<AuthBoundary>`; client consumers use `useAuth()` / `useAuthActions()` from `provider.tsx`. Cookie ownership is in `server/session.ts`, protected handlers use named exports from `server/route.ts`, and page classification stays in `routes.ts`.
 - **Backend** — all calls via `JsonRpcClient` / `AppService` (`src/lib/`) or the workspace repository. JSON-RPC 2.0; never raw-`fetch` a backend URL.
 - **Workspace** — repository pattern: `useWorkspaceRepository()` over `WorkspaceApiClient`. Orchestrator is `workspace-shell.tsx`.
 - **Views** — registry-driven: `src/lib/views/view-registry.ts` feeds thin `(views)/*` pages and organism landing pages.
@@ -38,22 +38,29 @@ Requires **Node v24** (`nvm use 24`, pinned in `.nvmrc`). `pnpm start` = prod se
 ## Conventions
 
 ### Naming
+
 - All variables and constants use `camelCase`, including module-level `const` exports. No `SCREAMING_SNAKE_CASE` (C/Java convention, not TS/JS). Exceptions: env var names (OS convention) and zod schema objects (camelCase anyway).
 
 ### Code organisation
+
 - Module-level constants/types used by a service page belong in that service's `*-form-utils.ts`, not inline in the page component. Export and import them.
 
 ### Error handling
+
 - Do NOT swap real errors for generic ones — the original message must still be displayed. Condense if too long, but preserve the meaning.
 
 ### Git
+
 - Do NOT commit unless asked. All changes are reviewed manually first.
 
 ### Plans
+
 - When creating a plan, also write a `.md` in `/plans` for documentation.
 
 ### React Compiler
+
 Enabled via `reactCompiler: true` in `next.config.ts` — components are auto-memoized at build. For new code, rely on it; reach for `useMemo`/`useCallback` only for precise control (stable effect deps).
+
 - **Do NOT bulk-remove existing memoization** — it can change compiled output. Removing `useMemo` from a context provider's `value` breaks `"use no memo"` consumers (compiler skips context values in opted-out subtrees). Only remove deliberately, with test coverage.
 - **Opt-out**: a component using a hook the compiler can't memoize (TanStack `useReactTable`/`useVirtualizer`, etc.) needs `"use no memo";` as the first statement in its body. When you add one, you MUST also add the file to the `files: [...]` list in `eslint.config.mjs` (silences `react-hooks/incompatible-library`). `src/__tests__/react-compiler-config.test.ts` guards that list — keep them in sync. Current opt-outs: `shared/data-table.tsx`, `shared/file-table.tsx`, `workspace/file-viewer/viewers/csv-viewer.tsx`, `organisms/reference-genomes/reference-genomes-client.tsx`, `taxonomy/taxonomy-tree.tsx`.
 
@@ -64,7 +71,7 @@ Find the existing example of the same shape and follow it:
 - **New service** → copy the closest one under `src/app/services/(<category>)/`: page (TanStack Form + zod) + `*-form-utils.ts` (constants/types/schema) + submission via `useServiceRuntime`/`useServiceFormSubmission` + rerun via `useRerunForm<T>()` and the `build{Paired,Single,Sra}Libraries` helpers in `src/lib/rerun-utility.ts`.
 - **New data view** → register in `src/lib/views/view-registry.ts` + thin page under `src/app/(views)/`. Don't bypass the registry.
 - **New workspace data access** → add a method to `workspace-repository.ts`, consume via `useWorkspaceRepository()`. Not `WorkspaceApiClient` directly.
-- **New auth endpoint** → under `src/app/api/auth/`, return `{error, code, details?}` (see `docs/auth-api.md`); update `src/lib/auth/routes.ts` if it needs protection.
+- **New auth endpoint** → add a named operation in `src/lib/auth/server/actions.ts`, a concrete browser call in `src/lib/auth/client.ts` when needed, and a thin route under `src/app/api/auth/` using `{error, code}` (see `docs/auth-api.md`). Do not add a factory, port, or browser session endpoint.
 - **New backend call** → via `JsonRpcClient` / `AppService` / workspace repository. Never raw `fetch`.
 - **New async client state** → TanStack Query hook, not `useEffect` + `useState`.
 

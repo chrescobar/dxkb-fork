@@ -1,15 +1,11 @@
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
 
-const { mockCookieStore } = vi.hoisted(() => ({
-  mockCookieStore: { get: vi.fn(), set: vi.fn() },
-}));
-
-vi.mock("next/headers", () => ({
-  cookies: vi.fn(() => Promise.resolve(mockCookieStore)),
-}));
-
-import { mockNextRequest } from "@/test-helpers/api-route-helpers";
+import {
+  clearTestCookies,
+  mockNextRequest,
+  setTestSession,
+} from "@/test-helpers/api-route-helpers";
 import { POST } from "../route";
 
 const workspaceApiUrl = "https://workspace.test/Workspace";
@@ -20,33 +16,14 @@ interface JsonRpcRequest {
   params: unknown[];
 }
 
-function setSessionCookies({
-  token,
-  userId,
-  realm,
-}: {
-  token: string;
-  userId: string;
-  realm?: string;
-}) {
-  mockCookieStore.get.mockImplementation((name: string) => {
-    if (name === "bvbrc_token") return { value: token };
-    if (name === "bvbrc_user_id") return { value: userId };
-    if (name === "bvbrc_realm") return realm ? { value: realm } : undefined;
-    return undefined;
-  });
-}
-
-function clearSessionCookies() {
-  mockCookieStore.get.mockReturnValue(undefined);
-}
+const setSessionCookies = setTestSession;
+const clearSessionCookies = clearTestCookies;
 
 beforeEach(() => {
   process.env.WORKSPACE_API_URL = workspaceApiUrl;
   process.env.USER_URL = userUrl;
   process.env.DEFAULT_REALM = "bvbrc";
-  mockCookieStore.get.mockReset();
-  mockCookieStore.set.mockReset();
+  clearTestCookies();
 });
 
 afterEach(() => {

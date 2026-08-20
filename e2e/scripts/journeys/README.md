@@ -4,10 +4,9 @@ Each `<name>.ts` here exports a `drive(page, env)` function (or default export o
 same shape). `pnpm e2e:record <name>` looks the file up, launches headless Chromium
 with HAR recording, and runs the driver against `E2E_RECORD_BASE_URL` (defaults to
 `http://127.0.0.1:3010` — i.e. `pnpm start` against a production build, which proxies
-the real BV-BRC backends). `pnpm dev` (Turbopack) is intentionally avoided here:
-HMR plumbing blocks React hydration in headless Chromium, leaving the auth boundary
-stuck in `loading` and the sign-in form unsubmittable. Run `pnpm build && pnpm start`
-in another terminal first.
+the real BV-BRC backends). `pnpm dev` (Turbopack) is intentionally avoided so
+recordings exclude development-only HMR traffic and remain deterministic. Run
+`pnpm build && pnpm start` in another terminal first.
 
 The resulting HAR lands in `e2e/fixtures/hars/<name>.har`. How a spec consumes it
 depends on what the spec is asserting:
@@ -47,13 +46,13 @@ The `e2e-har-refresh` workflow refreshes these on a schedule (read-only) or on
 manual dispatch (write). Drivers share `_helpers/sign-in.ts` so the auth flow
 lives in one place.
 
-| Journey | Group | What it captures | Notes |
-|---|---|---|---|
-| `auth-sign-in` | read-only | `/api/auth/sign-in/email`, `/api/auth/get-session` | The bare auth surface. |
-| `workspace-browse` | read-only | `Workspace.ls`, `Workspace.get` for `favorites.json` | Lands on the test user's home. |
-| `workspace-viewer` | read-only | `/api/workspace/view/<path>` for a seeded text file | Requires a seeded `home/e2e-fixtures/readme.txt` on the test account. |
-| `jobs-lifecycle` | read-only | `enumerate-tasks-filtered` + sidebar counters | List page only — no row select / kill. |
-| `service-submit` | read-only | genome-assembly form-load traffic | Does NOT click submit. See driver doc-comment. |
+| Journey            | Group     | What it captures                                                   | Notes                                                                                      |
+| ------------------ | --------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `auth-sign-in`     | read-only | `/api/auth/sign-in/email` plus post-sign-in navigation             | The bare browser auth surface; current identity is server-rendered.                        |
+| `workspace-browse` | read-only | `Workspace.ls`, `Workspace.get` for `favorites.json`               | Lands on the test user's home.                                                             |
+| `workspace-viewer` | read-only | `/api/workspace/view/<path>` for a seeded text file                | Requires a seeded `home/e2e-fixtures/readme.txt` on the test account.                      |
+| `jobs-lifecycle`   | read-only | `enumerate-tasks-filtered` + sidebar counters                      | List page only — no row select / kill.                                                     |
+| `service-submit`   | read-only | genome-assembly form-load traffic                                  | Does NOT click submit. See driver doc-comment.                                             |
 | `workspace-upload` | **write** | `POST /api/services/workspace/upload` + post-upload `Workspace.ls` | Writes a `recorded-<timestamp>.txt` file under `home/.e2e-records/`. Manual dispatch only. |
 
 Read-only journeys re-record on the bi-weekly cron. Write journeys only run

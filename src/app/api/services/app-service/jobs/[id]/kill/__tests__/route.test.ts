@@ -1,21 +1,17 @@
 import {
+  clearTestCookies,
   makeRouteContext,
   mockNextRequest,
+  setTestSession,
 } from "@/test-helpers/api-route-helpers";
-
-vi.mock("@/lib/auth/session", () => ({
-  getAuthToken: vi.fn(),
-}));
 
 vi.mock("@/lib/app-service", () => ({
   createAppService: vi.fn(),
 }));
 
 import { POST } from "../route";
-import { getAuthToken } from "@/lib/auth/session";
 import { createAppService } from "@/lib/app-service";
 
-const mockGetAuthToken = vi.mocked(getAuthToken);
 const mockCreateAppService = vi.mocked(createAppService);
 
 const mockAppService = {
@@ -24,11 +20,12 @@ const mockAppService = {
 
 describe("POST /api/services/app-service/jobs/[id]/kill", () => {
   beforeEach(() => {
+    setTestSession();
     mockCreateAppService.mockReturnValue(mockAppService as never);
   });
 
   it("returns 401 when no auth token is available", async () => {
-    mockGetAuthToken.mockResolvedValue(undefined);
+    clearTestCookies();
 
     const request = mockNextRequest({ method: "POST" });
 
@@ -42,7 +39,6 @@ describe("POST /api/services/app-service/jobs/[id]/kill", () => {
   });
 
   it("returns result on successful kill", async () => {
-    mockGetAuthToken.mockResolvedValue("test-token");
     const killResult = { killed: true };
     mockAppService.killJob.mockResolvedValue(killResult);
 
@@ -56,7 +52,6 @@ describe("POST /api/services/app-service/jobs/[id]/kill", () => {
   });
 
   it("passes the correct job ID to killJob", async () => {
-    mockGetAuthToken.mockResolvedValue("test-token");
     mockAppService.killJob.mockResolvedValue({ killed: true });
 
     const request = mockNextRequest({ method: "POST" });
@@ -69,7 +64,6 @@ describe("POST /api/services/app-service/jobs/[id]/kill", () => {
   });
 
   it("returns 500 when an error is thrown", async () => {
-    mockGetAuthToken.mockResolvedValue("test-token");
     mockAppService.killJob.mockRejectedValue(new Error("Kill failed"));
 
     const request = mockNextRequest({ method: "POST" });

@@ -1,23 +1,25 @@
-import { test, expect, applyBackendMocks, bvbrcCookies } from "../mocks/backends";
+import {
+  test,
+  expect,
+  applyBackendMocks,
+  bvbrcCookies,
+} from "../mocks/backends";
 import {
   journeyOverrides,
   workspacePopulatedOverrides,
 } from "../fixtures/overrides";
 import { SignInPage, ForgotPasswordPage, SignUpPage } from "../pages";
 
-const signedOutGetSession = {
-  url: "/api/auth/get-session",
-  method: "GET",
-  status: 200,
-  body: { user: null, session: null },
-} as const;
+// Auth mutations share one loopback identity backend; serialize this file so
+// interception-heavy contract tests cannot contend with real lifecycle flows.
+test.describe.configure({ mode: "serial" });
 
 test.describe("auth (signed out)", () => {
   test.use({ storageState: { cookies: [], origins: [] } });
 
   test("sign-in page renders with form fields", async ({ page }) => {
     await applyBackendMocks(page, {
-      overrides: [signedOutGetSession, ...journeyOverrides],
+      overrides: [...journeyOverrides],
     });
     const signIn = new SignInPage(page);
     await signIn.goto();
@@ -28,7 +30,7 @@ test.describe("auth (signed out)", () => {
 
   test("preserves redirect query param", async ({ page }) => {
     await applyBackendMocks(page, {
-      overrides: [signedOutGetSession, ...journeyOverrides],
+      overrides: [...journeyOverrides],
     });
     const signIn = new SignInPage(page);
     await signIn.goto("/workspace");
@@ -37,7 +39,7 @@ test.describe("auth (signed out)", () => {
 
   test("short password shows zod validation error", async ({ page }) => {
     await applyBackendMocks(page, {
-      overrides: [signedOutGetSession, ...journeyOverrides],
+      overrides: [...journeyOverrides],
     });
     const signIn = new SignInPage(page);
     await signIn.goto();
@@ -46,10 +48,9 @@ test.describe("auth (signed out)", () => {
     await signIn.expectValidationError(/at least 8 characters/i);
   });
 
-  test("submits credentials and redirects to target on success", async ({ page }) => {
+  test("submits the canonical sign-in request", async ({ page }) => {
     await applyBackendMocks(page, {
       overrides: [
-        signedOutGetSession,
         {
           url: "/api/auth/sign-in/email",
           method: "POST",
@@ -60,7 +61,7 @@ test.describe("auth (signed out)", () => {
               email: "e2e@example.com",
               email_verified: true,
             },
-            session: { token: "e2e-test-token", expiresAt: "2099-01-01T00:00:00Z" },
+            session: { token: "", expiresAt: "2099-01-01T00:00:00Z" },
           },
         },
         // Workspace.get (favorites) and Workspace.ls fire on the post-sign-in landing page.
@@ -73,7 +74,8 @@ test.describe("auth (signed out)", () => {
 
     const signInRequest = page.waitForRequest(
       (req) =>
-        req.url().endsWith("/api/auth/sign-in/email") && req.method() === "POST",
+        req.url().endsWith("/api/auth/sign-in/email") &&
+        req.method() === "POST",
     );
     await signIn.fill("e2e-test-user", "password1234");
     await signIn.submit();
@@ -82,10 +84,9 @@ test.describe("auth (signed out)", () => {
       username: "e2e-test-user",
       password: "password1234",
     });
-    // After sign-in, the sign-in page pushes the redirect target (/forgot-password).
-    // /forgot-password hardcodes its authed-user redirect to "/" (see its useEffect),
-    // so the post-signin chain ends at "/". Mirrors the HAR-replay assertion below.
-    await expect(page).toHaveURL(/\/$/);
+    // This request-shape test intercepts the app endpoint, so it deliberately does
+    // not assert server-authoritative navigation or cookies. The real lifecycle
+    // scenarios below cover those behaviors without interception.
   });
 
   // Same flow as the test above but driven by the recorded `auth-sign-in.har` instead
@@ -96,7 +97,7 @@ test.describe("auth (signed out)", () => {
     // No `permissiveBackendOverrides` here: those have a `/\/api\/auth\//` POST
     // catch-all that would intercept the sign-in call before HAR replay sees it,
     // returning `{}` instead of the recorded session payload. The HAR itself
-    // covers `/api/auth/get-session` (signed-out shape) and `/api/auth/sign-in/email`.
+    // covers `/api/auth/sign-in/email` and its post-sign-in navigation.
     await applyBackendMocks(page, {
       har: "auth-sign-in.har",
     });
@@ -111,24 +112,21 @@ test.describe("auth (signed out)", () => {
     await signIn.fill("e2e-test-user", "REDACTED-PASSWORD");
     await signIn.submit();
     const res = await signInResponse;
-    const body = await res.json() as { user: unknown; session: unknown };
+    const body = (await res.json()) as { user: unknown; session: unknown };
     expect(body.user).toMatchObject({
       username: "e2e-test-user",
       realm: "bvbrc",
       email_verified: true,
     });
     expect(body.session).toHaveProperty("expiresAt");
-    // Without an explicit `?redirect=...`, the sign-in page pushes to "/" once
-    // the store flips to authed. Asserting the post-signin landing URL proves
-    // both that the recorded payload was accepted and that the authed-redirect
-    // effect fired — i.e. the HAR's user shape unwrapped cleanly.
+    // Without an explicit `?redirect=...`, successful sign-in redirects to "/".
+    // The landing URL proves the recorded payload matches the current envelope.
     await expect(page).toHaveURL(/\/$/);
   });
 
   test("surfaces backend error on invalid credentials", async ({ page }) => {
     await applyBackendMocks(page, {
       overrides: [
-        signedOutGetSession,
         {
           url: "/api/auth/sign-in/email",
           method: "POST",
@@ -150,12 +148,14 @@ test.describe("auth (signed out)", () => {
   }) => {
     await applyBackendMocks(page, {
       overrides: [
-        signedOutGetSession,
         {
           // Successful password reset — server returns { success: true, message: "..." }
           url: "/api/auth/forget-password",
           method: "POST",
-          body: { success: true, message: "Password reset email sent successfully" },
+          body: {
+            success: true,
+            message: "Password reset email sent successfully",
+          },
         },
         ...journeyOverrides,
       ],
@@ -171,8 +171,7 @@ test.describe("auth (signed out)", () => {
     );
     await forgot.submit();
     const req = await forgetRequest;
-    // The HTTP adapter sends `{ usernameOrEmail }`; the route handler also
-    // tolerates `email` as a server-side fallback, but the client never uses it.
+    // The concrete auth client sends the route's canonical request shape.
     const body = req.postDataJSON() as { usernameOrEmail: string };
     expect(body.usernameOrEmail).toBe("e2e@example.com");
 
@@ -184,7 +183,6 @@ test.describe("auth (signed out)", () => {
   }) => {
     await applyBackendMocks(page, {
       overrides: [
-        signedOutGetSession,
         {
           // Failed password reset — server returns 400 with an error message
           url: "/api/auth/forget-password",
@@ -208,7 +206,6 @@ test.describe("auth (signed out)", () => {
   }) => {
     await applyBackendMocks(page, {
       overrides: [
-        signedOutGetSession,
         {
           // Successful sign-up — respondWithSession unwraps the returned user + session.
           url: "/api/auth/sign-up/email",
@@ -220,11 +217,13 @@ test.describe("auth (signed out)", () => {
               email: "new@example.com",
               email_verified: false,
             },
-            session: { token: "new-session", expiresAt: "2099-01-01T00:00:00Z" },
+            session: {
+              token: "",
+              expiresAt: "2099-01-01T00:00:00Z",
+            },
           },
         },
-        // The session response sets isAuthenticated = true; the form's useEffect
-        // redirects to "/" which fires workspace RPC calls on the home page.
+        // The form redirects after sign-up, which fires workspace RPC calls on the home page.
         ...workspacePopulatedOverrides,
         ...journeyOverrides,
       ],
@@ -264,7 +263,6 @@ test.describe("auth (signed out)", () => {
   }) => {
     await applyBackendMocks(page, {
       overrides: [
-        signedOutGetSession,
         {
           // 409 conflict — the page surfaces the upstream message verbatim.
           url: "/api/auth/sign-up/email",
@@ -291,33 +289,229 @@ test.describe("auth (signed out)", () => {
     ).toBeVisible();
   });
 
-  test("unauthenticated visit to /workspace redirects to sign-in", async ({ page }) => {
+  test("unauthenticated visit to /workspace redirects to sign-in", async ({
+    page,
+  }) => {
     await applyBackendMocks(page, {
-      overrides: [signedOutGetSession, ...journeyOverrides],
+      overrides: [...journeyOverrides],
     });
     await page.goto("/workspace");
     await expect(page).toHaveURL(/sign-in\?redirect=/);
   });
 
-  test("unauthenticated visit to /jobs redirects to sign-in", async ({ page }) => {
+  test("unauthenticated visit to /jobs redirects to sign-in", async ({
+    page,
+  }) => {
     await applyBackendMocks(page, {
-      overrides: [signedOutGetSession, ...journeyOverrides],
+      overrides: [...journeyOverrides],
     });
     await page.goto("/jobs");
     await expect(page).toHaveURL(/sign-in/);
   });
 
-  test("unauthenticated visit to /settings redirects to sign-in", async ({ page }) => {
+  test("unauthenticated visit to /settings redirects to sign-in", async ({
+    page,
+  }) => {
     await applyBackendMocks(page, {
-      overrides: [signedOutGetSession, ...journeyOverrides],
+      overrides: [...journeyOverrides],
     });
     await page.goto("/settings");
     await expect(page).toHaveURL(/sign-in/);
   });
 });
 
+test.describe("auth lifecycle (local identity fake)", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  test("signs in through the app handler and signs out through the Server Action", async ({
+    page,
+    context,
+  }) => {
+    const sessionCookieNames = ["bvbrc_token", "bvbrc_user_id", "bvbrc_realm"];
+    const allAuthCookieNames = [
+      ...sessionCookieNames,
+      "bvbrc_su_original_token",
+      "bvbrc_su_original_user_id",
+      "bvbrc_su_original_realm",
+      "bvbrc_user_profile",
+    ];
+
+    expect(
+      (await context.cookies()).filter((cookie) =>
+        allAuthCookieNames.includes(cookie.name),
+      ),
+    ).toEqual([]);
+
+    const signIn = new SignInPage(page);
+    await signIn.goto("/settings");
+    await signIn.fill("e2e-test-user", "password1234");
+
+    const signInResponse = page.waitForResponse(
+      (response) =>
+        response.url().endsWith("/api/auth/sign-in/email") &&
+        response.request().method() === "POST",
+    );
+    await signIn.submit();
+    expect((await signInResponse).status()).toBe(200);
+    await expect(page).toHaveURL(/\/$/);
+
+    const cookies = await context.cookies();
+    const sessionCookies = Object.fromEntries(
+      cookies
+        .filter((cookie) => sessionCookieNames.includes(cookie.name))
+        .map((cookie) => [cookie.name, cookie]),
+    );
+    expect(Object.keys(sessionCookies).sort()).toEqual(
+      [...sessionCookieNames].sort(),
+    );
+    expect(decodeURIComponent(sessionCookies.bvbrc_token.value)).toBe(
+      "un=e2e-test-user@patricbrc.org|e2e-admin-token",
+    );
+    expect(decodeURIComponent(sessionCookies.bvbrc_user_id.value)).toBe(
+      "e2e-test-user@patricbrc.org",
+    );
+    expect(sessionCookies.bvbrc_realm.value).toBe("patricbrc.org");
+    for (const cookie of Object.values(sessionCookies)) {
+      expect(cookie).toMatchObject({
+        httpOnly: true,
+        secure: true,
+        sameSite: "Strict",
+        path: "/",
+      });
+      expect(cookie.expires).toBeGreaterThan(Date.now() / 1000);
+    }
+
+    await page.goto("/settings");
+    await expect(page).toHaveURL(/\/settings$/);
+
+    await page.locator('[data-slot="dropdown-menu-trigger"]').first().click();
+    await page
+      .getByRole("button", { name: /^sign out$/i })
+      .first()
+      .click();
+    await page
+      .getByRole("button", { name: /^sign out$/i })
+      .last()
+      .click();
+
+    await expect(page).toHaveURL(/\/$/);
+    await expect
+      .poll(async () =>
+        (await context.cookies())
+          .filter((cookie) => allAuthCookieNames.includes(cookie.name))
+          .map((cookie) => cookie.name),
+      )
+      .toEqual([]);
+
+    await page.goto("/settings");
+    await expect(page).toHaveURL(/\/sign-in\?redirect=/);
+  });
+
+  test("admin can impersonate a distinct target and restore the original session without app endpoint interception", async ({
+    page,
+    context,
+  }) => {
+    const signIn = new SignInPage(page);
+    await signIn.goto();
+    await signIn.fill("e2e-test-user", "password1234");
+    const signInResponse = page.waitForResponse(
+      (response) =>
+        response.url().endsWith("/api/auth/sign-in/email") &&
+        response.request().method() === "POST",
+    );
+    await signIn.submit();
+    expect((await signInResponse).status()).toBe(200);
+    await expect(page).toHaveURL((url) => url.pathname === "/");
+    await page.goto("/settings");
+    await expect(page).toHaveURL(/\/settings$/);
+
+    await page.locator('[data-slot="dropdown-menu-trigger"]').first().click();
+    await page.getByText("SU Login", { exact: true }).click();
+    await expect(page.getByRole("dialog", { name: "SU Login" })).toBeVisible();
+    await page.getByLabel("User to Impersonate").fill("e2e-target-user");
+    await page.getByLabel("Your Password").fill("password1234");
+
+    const suLoginResponse = page.waitForResponse(
+      (response) =>
+        response.url().endsWith("/api/auth/su-login") &&
+        response.request().method() === "POST",
+    );
+    await page.getByRole("button", { name: "Take Control" }).click();
+    expect((await suLoginResponse).status()).toBe(200);
+
+    await expect(
+      page
+        .getByText("You are impersonating e2e-target-user.", { exact: true })
+        .first(),
+    ).toBeVisible();
+    const impersonatingCookies = Object.fromEntries(
+      (await context.cookies()).map((cookie) => [cookie.name, cookie.value]),
+    );
+    expect(decodeURIComponent(impersonatingCookies.bvbrc_token)).toBe(
+      "un=e2e-target-user@patricbrc.org|e2e-target-token",
+    );
+    expect(decodeURIComponent(impersonatingCookies.bvbrc_user_id)).toBe(
+      "e2e-target-user@patricbrc.org",
+    );
+    expect(
+      decodeURIComponent(impersonatingCookies.bvbrc_su_original_token),
+    ).toBe("un=e2e-test-user@patricbrc.org|e2e-admin-token");
+    expect(
+      decodeURIComponent(impersonatingCookies.bvbrc_su_original_user_id),
+    ).toBe("e2e-test-user@patricbrc.org");
+
+    await page.locator('[data-slot="dropdown-menu-trigger"]').first().click();
+    await expect(
+      page.getByText("Hello, e2e-target-user!", { exact: true }),
+    ).toBeVisible();
+    await page.keyboard.press("Escape");
+
+    const suExitResponse = page.waitForResponse(
+      (response) =>
+        response.url().endsWith("/api/auth/su-exit") &&
+        response.request().method() === "POST",
+    );
+    await page.getByRole("button", { name: "Exit SU" }).first().click();
+    expect((await suExitResponse).status()).toBe(200);
+    await expect(
+      page.getByText("You are impersonating", { exact: false }).first(),
+    ).toBeHidden();
+
+    await expect
+      .poll(async () => {
+        const cookies = Object.fromEntries(
+          (await context.cookies()).map((cookie) => [
+            cookie.name,
+            cookie.value,
+          ]),
+        );
+        return {
+          token: decodeURIComponent(cookies.bvbrc_token),
+          userId: decodeURIComponent(cookies.bvbrc_user_id),
+          originalToken: cookies.bvbrc_su_original_token,
+          originalUserId: cookies.bvbrc_su_original_user_id,
+        };
+      })
+      .toEqual({
+        token: "un=e2e-test-user@patricbrc.org|e2e-admin-token",
+        userId: "e2e-test-user@patricbrc.org",
+        originalToken: undefined,
+        originalUserId: undefined,
+      });
+
+    await page.locator('[data-slot="dropdown-menu-trigger"]').first().click();
+    await expect(
+      page.getByText("Hello, e2e-test-user!", { exact: true }),
+    ).toBeVisible();
+    await expect(page.getByText("SU Login", { exact: true })).toBeVisible();
+  });
+});
+
 test.describe("auth (signed in)", () => {
-  test("signs out via avatar dropdown and POSTs /api/auth/sign-out", async ({ page }) => {
+  test("signs out via avatar dropdown and clears the local session", async ({
+    page,
+    context,
+  }) => {
     await applyBackendMocks(page, {
       overrides: [
         // Workspace.get (favorites) + Workspace.ls fire when /settings loads the workspace sidebar.
@@ -328,20 +522,35 @@ test.describe("auth (signed in)", () => {
     await page.goto("/settings");
     await expect(page).not.toHaveURL(/sign-in/);
 
-    const avatarTrigger = page.locator('[data-slot="dropdown-menu-trigger"]').first();
+    const avatarTrigger = page
+      .locator('[data-slot="dropdown-menu-trigger"]')
+      .first();
     await avatarTrigger.click();
-    const signOutTrigger = page.getByRole("button", { name: /^sign out$/i }).first();
+    const signOutTrigger = page
+      .getByRole("button", { name: /^sign out$/i })
+      .first();
     await expect(signOutTrigger).toBeVisible();
     await signOutTrigger.click();
-    const confirmButton = page.getByRole("button", { name: /^sign out$/i }).last();
-    const signOutRequest = page.waitForRequest(
-      (req) => req.url().endsWith("/api/auth/sign-out") && req.method() === "POST",
-    );
+    const confirmButton = page
+      .getByRole("button", { name: /^sign out$/i })
+      .last();
     await confirmButton.click();
-    await signOutRequest;
+    await expect
+      .poll(async () =>
+        (await context.cookies()).filter((cookie) =>
+          bvbrcCookies.some((expected) => expected.name === cookie.name),
+        ),
+      )
+      .toEqual([]);
+    const cookies = await context.cookies();
+    for (const name of bvbrcCookies.map((cookie) => cookie.name)) {
+      expect(cookies.find((cookie) => cookie.name === name)).toBeUndefined();
+    }
   });
 
-  test("session cookies are available on signed-in session", async ({ context }) => {
+  test("session cookies are available on signed-in session", async ({
+    context,
+  }) => {
     const cookies = await context.cookies();
     const names = cookies.map((c) => c.name);
     for (const expected of bvbrcCookies.map((c) => c.name)) {

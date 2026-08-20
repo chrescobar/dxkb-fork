@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, Clock, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/lib/auth/hooks";
+import { useAuth } from "@/lib/auth/provider";
 import { useJobsSummary } from "@/hooks/services/jobs/use-jobs-summary";
 import { useJobsData } from "@/hooks/services/jobs/use-jobs-data";
 import {
@@ -15,21 +15,26 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { statusConfig } from "@/lib/jobs/constants";
-import {
-  formatServiceName,
-  formatElapsedSeconds,
-} from "@/lib/jobs/formatting";
+import { formatServiceName, formatElapsedSeconds } from "@/lib/jobs/formatting";
 import type { JobListItem } from "@/types/workspace";
 
 function formatJobTime(job: JobListItem): string {
-  if (job.elapsed_time != null && Number.isFinite(job.elapsed_time) && job.elapsed_time >= 0) {
+  if (
+    job.elapsed_time != null &&
+    Number.isFinite(job.elapsed_time) &&
+    job.elapsed_time >= 0
+  ) {
     return formatElapsedSeconds(job.elapsed_time);
   }
   if (job.completed_time) {
-    const secondsAgo = Math.max(0, Math.floor((Date.now() - new Date(job.completed_time).getTime()) / 1000));
+    const secondsAgo = Math.max(
+      0,
+      Math.floor((Date.now() - new Date(job.completed_time).getTime()) / 1000),
+    );
     if (secondsAgo < 60) return "just now";
     if (secondsAgo < 3600) return `${String(Math.floor(secondsAgo / 60))}m ago`;
-    if (secondsAgo < 86400) return `${String(Math.floor(secondsAgo / 3600))}h ago`;
+    if (secondsAgo < 86400)
+      return `${String(Math.floor(secondsAgo / 3600))}h ago`;
     return `${String(Math.floor(secondsAgo / 86400))}d ago`;
   }
   return "";
@@ -50,12 +55,28 @@ export function JobStatusPill() {
   const displayableCount = completedCount + runningCount + queuedCount;
 
   const statusGroups = [
-    { key: "completed", count: completedCount, icon: CheckCircle2, className: "text-emerald-400" },
-    { key: "running", count: runningCount, icon: Loader2, className: "text-blue-300 animate-spin" },
-    { key: "queued", count: queuedCount, icon: Clock, className: "text-white/60" },
+    {
+      key: "completed",
+      count: completedCount,
+      icon: CheckCircle2,
+      className: "text-emerald-400",
+    },
+    {
+      key: "running",
+      count: runningCount,
+      icon: Loader2,
+      className: "text-blue-300 animate-spin",
+    },
+    {
+      key: "queued",
+      count: queuedCount,
+      icon: Clock,
+      className: "text-white/60",
+    },
   ].filter(({ count }) => count > 0);
 
-  const activeRefetchInterval = runningCount > 0 || queuedCount > 0 ? 3_000 : 30_000;
+  const activeRefetchInterval =
+    runningCount > 0 || queuedCount > 0 ? 3_000 : 30_000;
 
   const { data: jobsResult, isPending } = useJobsData({
     offset: 0,
@@ -99,8 +120,10 @@ export function JobStatusPill() {
           <PopoverTitle className="text-sm font-medium">My Jobs</PopoverTitle>
           <Link
             href="/jobs"
-            className="text-xs text-muted-foreground transition-colors hover:text-foreground"
-            onClick={() => { setIsOpen(false); }}
+            className="text-muted-foreground hover:text-foreground text-xs transition-colors"
+            onClick={() => {
+              setIsOpen(false);
+            }}
           >
             View all →
           </Link>
@@ -108,11 +131,11 @@ export function JobStatusPill() {
 
         <div className="divide-y">
           {isPending ? (
-            <p className="px-3 py-4 text-center text-sm text-muted-foreground">
+            <p className="text-muted-foreground px-3 py-4 text-center text-sm">
               Loading…
             </p>
           ) : jobs.length === 0 ? (
-            <p className="px-3 py-4 text-center text-sm text-muted-foreground">
+            <p className="text-muted-foreground px-3 py-4 text-center text-sm">
               No recent jobs
             </p>
           ) : (
@@ -120,17 +143,12 @@ export function JobStatusPill() {
               const config = statusConfig[job.status];
               const Icon = config.icon;
               return (
-                <div
-                  key={job.id}
-                  className="flex items-center gap-2 px-3 py-2"
-                >
-                  <Icon
-                    className={cn("size-4 shrink-0", config.className)}
-                  />
+                <div key={job.id} className="flex items-center gap-2 px-3 py-2">
+                  <Icon className={cn("size-4 shrink-0", config.className)} />
                   <span className="min-w-0 flex-1 truncate text-sm">
                     {formatServiceName(job.app)}
                   </span>
-                  <span className="shrink-0 text-xs text-muted-foreground">
+                  <span className="text-muted-foreground shrink-0 text-xs">
                     {formatJobTime(job)}
                   </span>
                 </div>

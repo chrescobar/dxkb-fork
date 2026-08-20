@@ -5,112 +5,121 @@ import {
   Suspense,
   useContext,
   useEffect,
-  useRef,
-  useState,
   type ReactNode,
 } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { httpAuthAdapter } from "@/lib/auth/adapters/http";
-import type { AuthPort } from "@/lib/auth/port";
-import {
-  createAuthStore,
-  getActiveAuthStore,
-  setActiveAuthStore,
-  type AuthStore,
-} from "@/lib/auth/store";
+import * as authClient from "@/lib/auth/client";
 import { isProtectedPagePath } from "@/lib/auth/routes";
-import type { AuthUser } from "@/lib/auth/types";
+import type {
+  AuthUser,
+  SigninCredentials,
+  SignupCredentials,
+} from "@/lib/auth/types";
 
-const AuthStoreContext = createContext<AuthStore | null>(null);
-
-export function useAuthStore(): AuthStore {
-  const store = useContext(AuthStoreContext);
-  if (!store) {
-    throw new Error("useAuth / useSignIn must be used within <AuthBoundary>");
-  }
-  return store;
-}
+const AuthContext = createContext<AuthUser | null | undefined>(undefined);
 
 export interface AuthBoundaryProps {
   children: ReactNode;
-  initialUser?: AuthUser | null;
-  port?: AuthPort;
+  user: AuthUser | null;
 }
 
-export function AuthBoundary({
-  children,
-  initialUser = null,
-  port,
-}: AuthBoundaryProps) {
-  const [store] = useState<AuthStore>(() =>
-    createAuthStore({
-      port: port ?? httpAuthAdapter(),
-      initialUser,
-    }),
-  );
-
-  const hydratedRef = useRef(false);
-
-  useEffect(() => {
-    setActiveAuthStore(store);
-    return () => {
-      if (getActiveAuthStore() === store) setActiveAuthStore(null);
-    };
-  }, [store]);
-
-  useEffect(() => {
-    if (hydratedRef.current) return;
-    hydratedRef.current = true;
-    void store.refresh();
-  }, [store]);
-
-  useEffect(() => {
-    const onVisible = () => {
-      if (document.visibilityState !== "visible") return;
-      if (store.snapshot().status !== "authed") return;
-      void store.refresh();
-    };
-    document.addEventListener("visibilitychange", onVisible);
-    return () => {
-      document.removeEventListener("visibilitychange", onVisible);
-    };
-  }, [store]);
-
+export function AuthBoundary({ children, user }: AuthBoundaryProps) {
   return (
-    <AuthStoreContext.Provider value={store}>
+    <AuthContext.Provider value={user}>
       <Suspense fallback={children}>
-        <ProtectedRouteGuard store={store}>{children}</ProtectedRouteGuard>
+        <ProtectedRouteGuard user={user}>{children}</ProtectedRouteGuard>
       </Suspense>
-    </AuthStoreContext.Provider>
+    </AuthContext.Provider>
   );
+}
+
+export function useAuth() {
+  const user = useContext(AuthContext);
+  if (user === undefined) {
+    throw new Error("useAuth must be used within <AuthBoundary>");
+  }
+
+  return {
+    user,
+    isAuthenticated: user !== null,
+    isVerified: !!user && user.email_verified !== false,
+    isAdmin: user?.roles?.includes("admin") ?? false,
+    isImpersonating: user?.isImpersonating ?? false,
+    originalUsername: user?.originalUsername ?? null,
+  };
+}
+
+export function useAuthActions() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  const clearAccountCache = () => {
+    queryClient.clear();
+  };
+
+  const signIn = async (credentials: SigninCredentials) => {
+    const user = await authClient.signIn(credentials);
+    clearAccountCache();
+    return user;
+  };
+  const signUp = async (input: SignupCredentials) => {
+    const user = await authClient.signUp(input);
+    clearAccountCache();
+    return user;
+  };
+  const startImpersonation = async (targetUser: string, password: string) => {
+    const user = await authClient.startImpersonation(targetUser, password);
+    clearAccountCache();
+    router.refresh();
+    return user;
+  };
+  const exitImpersonation = async () => {
+    const user = await authClient.exitImpersonation();
+    clearAccountCache();
+    router.refresh();
+    return user;
+  };
+  const updateProfile = async (patches: unknown) => {
+    await authClient.updateProfile(patches);
+    await queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+    router.refresh();
+  };
+
+  return {
+    signIn,
+    signUp,
+    startImpersonation,
+    exitImpersonation,
+    requestPasswordReset: (usernameOrEmail: string) =>
+      authClient.requestPasswordReset(usernameOrEmail),
+    sendVerificationEmail: () => authClient.sendVerificationEmail(),
+    changePassword: (currentPassword: string, newPassword: string) =>
+      authClient.changePassword(currentPassword, newPassword),
+    getProfile: () => authClient.getProfile(),
+    updateProfile,
+  };
 }
 
 function ProtectedRouteGuard({
-  store,
+  user,
   children,
 }: {
-  store: AuthStore;
+  user: AuthUser | null;
   children: ReactNode;
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const check = () => {
-      const { user, status } = store.snapshot();
-      if (status === "loading") return;
-      if (user) return;
-      if (!isProtectedPagePath(pathname)) return;
-      const query = searchParams.toString();
-      const fullPath = query ? `${pathname}?${query}` : pathname;
-      window.location.replace(
-        `/sign-in?redirect=${encodeURIComponent(fullPath)}`,
-      );
-    };
-    check();
-    return store.subscribe(check);
-  }, [store, pathname, searchParams]);
+    if (user || !isProtectedPagePath(pathname)) return;
+    const query = searchParams.toString();
+    const fullPath = query ? `${pathname}?${query}` : pathname;
+    window.location.replace(
+      `/sign-in?redirect=${encodeURIComponent(fullPath)}`,
+    );
+  }, [user, pathname, searchParams]);
 
   return children;
 }

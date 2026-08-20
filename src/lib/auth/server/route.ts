@@ -1,228 +1,68 @@
+import { redirect } from "next/navigation";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { redirect } from "next/navigation";
-import type { AuthUser, UserProfile } from "@/lib/auth/types";
-import { getRequestScope, withRequestScope } from "./request-scope";
+import type { SessionIdentity } from "@/lib/auth/types";
 import { errorResponse } from "./errors";
-import { hasSession as hasSessionFromRequest } from "./middleware";
+import { getCurrentUser } from "./actions";
+import { readSession } from "./session";
 import { serverUserAgent } from "./user-agent";
-import type {
-  IdentityProviderPort,
-  SessionIdentity,
-  SessionStoragePort,
-} from "./ports";
-
-export interface Session {
-  token: string;
-  userId: string;
-  realm?: string;
-}
 
 export type AuthRouteHandler<TCtx = object> = (
-  req: NextRequest,
-  ctx: TCtx & Session,
+  request: NextRequest,
+  context: TCtx & SessionIdentity,
 ) => Promise<NextResponse>;
 
-export interface AuthHelpers {
-  route<TCtx = object>(
-    handler: AuthRouteHandler<TCtx>,
-  ): (req: NextRequest, ctx: TCtx) => Promise<NextResponse>;
-
-  fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
-
-  hasSession(req: NextRequest): boolean;
-
-  requireSession(): Promise<Session>;
-
-  currentUser(): Promise<AuthUser | null>;
-
-  requireUser(redirectTo?: string): Promise<AuthUser>;
-}
-
-export interface CreateAuthHelpersOptions {
-  identity: IdentityProviderPort;
-  session: SessionStoragePort;
-}
-
-/**
- * Error carrier that wraps a NextResponse so it can be `throw`n through code
- * paths that flow back to a `route()`-wrapped handler. The wrapper's catch
- * unwraps this and returns `response` to the client. Exposes `status` so
- * call sites that previously inspected the thrown NextResponse's `status`
- * (e.g. `auth.fetch`/`auth.requireSession` consumers) continue to work.
- */
-export class HttpResponseError extends Error {
-  constructor(public readonly response: NextResponse) {
-    super(`HTTP ${String(response.status)}`);
-    this.name = "HttpResponseError";
-  }
-
-  get status(): number {
-    return this.response.status;
-  }
-}
-
-function unauthenticatedResponse(): NextResponse {
+function sessionExpiredResponse(): NextResponse {
   return NextResponse.json(
-    { error: "Authentication required", code: "unauthenticated" },
+    { error: "Authentication required", code: "session_expired" },
     { status: 401 },
   );
 }
 
-function hydrateUser(
-  session: SessionIdentity,
-  profile: UserProfile,
-  backupUserId: string | undefined,
-): AuthUser {
-  return {
-    id: profile.id || session.userId,
-    username: session.userId,
-    email: profile.email || "",
-    first_name: profile.first_name || "",
-    last_name: profile.last_name || "",
-    email_verified: profile.email_verified || false,
-    realm: session.realm,
-    roles: profile.roles,
-    token: "",
-    ...(backupUserId
-      ? { isImpersonating: true, originalUsername: backupUserId }
-      : {}),
+export async function readAuthSession(): Promise<SessionIdentity | null> {
+  return readSession();
+}
+
+export async function requireAuthSession(): Promise<SessionIdentity> {
+  const session = await readSession();
+  if (!session) throw new Error("Authentication required");
+  return session;
+}
+
+export function withAuth<TCtx = object>(
+  handler: AuthRouteHandler<TCtx>,
+): (request: NextRequest, context: TCtx) => Promise<NextResponse> {
+  return async (request, context) => {
+    const session = await readSession();
+    if (!session) return sessionExpiredResponse();
+    try {
+      return await handler(request, { ...context, ...session });
+    } catch (error) {
+      if (error instanceof Response) return error as NextResponse;
+      console.error("Route handler error:", error);
+      return errorResponse(error);
+    }
   };
 }
 
-export function createAuthHelpers(
-  options: CreateAuthHelpersOptions,
-): AuthHelpers {
-  const { identity, session: sessionPort } = options;
+export async function authFetch(
+  input: RequestInfo | URL,
+  init: RequestInit = {},
+): Promise<Response> {
+  const session = await requireAuthSession();
+  const headers = new Headers(
+    input instanceof Request ? input.headers : undefined,
+  );
+  new Headers(init.headers).forEach((value, name) => {
+    headers.set(name, value);
+  });
+  if (!headers.has("User-Agent")) headers.set("User-Agent", serverUserAgent);
+  headers.set("Authorization", session.token);
+  return fetch(input, { ...init, headers });
+}
 
-  function readSessionCached(): Promise<SessionIdentity | null> {
-    const scope = getRequestScope();
-    if (scope?.sessionPromise) return scope.sessionPromise;
-    const promise = sessionPort.read();
-    if (scope) scope.sessionPromise = promise;
-    return promise;
-  }
-
-  function readUserCached(): Promise<AuthUser | null> {
-    const scope = getRequestScope();
-    if (scope?.userPromise) return scope.userPromise;
-
-    const promise = (async (): Promise<AuthUser | null> => {
-      const session = await readSessionCached();
-      if (!session) return null;
-      const validation = await identity.validateToken(
-        session.userId,
-        session.token,
-      );
-      if (validation.error) return null;
-      const backup = await sessionPort.readBackup();
-      return hydrateUser(session, validation.data, backup?.userId);
-    })();
-
-    if (scope) scope.userPromise = promise;
-    return promise;
-  }
-
-  async function requireSessionInner(): Promise<SessionIdentity> {
-    const session = await readSessionCached();
-    if (!session) {
-      throw new HttpResponseError(unauthenticatedResponse());
-    }
-    return session;
-  }
-
-  async function requireSession(): Promise<Session> {
-    return withRequestScope(async () => {
-      const session = await requireSessionInner();
-      return {
-        token: session.token,
-        userId: session.userId,
-        realm: session.realm,
-      };
-    });
-  }
-
-  async function fetchAuthed(
-    input: RequestInfo | URL,
-    init: RequestInit = {},
-  ): Promise<Response> {
-    const runFetch = async () => {
-      const session = await requireSessionInner();
-      // Passing `headers` in the init overrides a Request input's own headers
-      // wholesale, so seed from the Request first and let init.headers win
-      // per-header on top of it.
-      const headers = new Headers(
-        input instanceof Request ? input.headers : undefined,
-      );
-      new Headers(init.headers).forEach((value, name) => {
-        headers.set(name, value);
-      });
-      if (!headers.has("Content-Type")) {
-        headers.set("Content-Type", "application/json");
-      }
-      // Node's fetch sends `User-Agent: node`, which Cloudflare in front of the
-      // BV-BRC services answers with a 403 bot challenge instead of the API
-      // response. Identify ourselves unless the caller already set a UA.
-      if (!headers.has("User-Agent")) {
-        headers.set("User-Agent", serverUserAgent);
-      }
-      headers.set("Authorization", session.token);
-      const response = await fetch(input, { ...init, headers });
-      if (response.status === 401) {
-        await sessionPort.clear();
-      }
-      return response;
-    };
-
-    if (getRequestScope()) return runFetch();
-    return withRequestScope(runFetch);
-  }
-
-  function hasSession(req: NextRequest): boolean {
-    return hasSessionFromRequest(req);
-  }
-
-  function route<TCtx = object>(
-    handler: AuthRouteHandler<TCtx>,
-  ): (req: NextRequest, ctx: TCtx) => Promise<NextResponse> {
-    return (req: NextRequest, ctx: TCtx) =>
-      withRequestScope(async (scope) => {
-        try {
-          const session = await readSessionCached();
-          if (!session) return unauthenticatedResponse();
-          scope.sessionPromise = Promise.resolve(session);
-          return await handler(req, {
-            ...ctx,
-            token: session.token,
-            userId: session.userId,
-            realm: session.realm,
-          });
-        } catch (error) {
-          if (error instanceof HttpResponseError) return error.response;
-          if (error instanceof Response) return error as NextResponse;
-          console.error("Route handler error:", error);
-          return errorResponse(error);
-        }
-      });
-  }
-
-  async function currentUser(): Promise<AuthUser | null> {
-    if (getRequestScope()) return readUserCached();
-    return withRequestScope(() => readUserCached());
-  }
-
-  async function requireUser(redirectTo?: string): Promise<AuthUser> {
-    const user = await currentUser();
-    if (!user) redirect(redirectTo ?? "/sign-in");
-    return user;
-  }
-
-  return {
-    route,
-    fetch: fetchAuthed,
-    hasSession,
-    requireSession,
-    currentUser,
-    requireUser,
-  };
+export async function requireUser(redirectTo?: string) {
+  const user = await getCurrentUser();
+  if (!user) redirect(redirectTo ?? "/sign-in");
+  return user;
 }

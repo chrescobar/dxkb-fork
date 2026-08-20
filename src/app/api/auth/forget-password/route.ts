@@ -1,21 +1,15 @@
 import { NextRequest } from "next/server";
-import { authAdmin } from "@/lib/auth/server/instance";
+import { requestPasswordReset } from "@/lib/auth/server/actions";
 import { respondWithAck } from "@/lib/auth/server/respond";
-import { withErrorHandling } from "@/lib/auth/server/errors";
+import { parseJsonBody, withErrorHandling } from "@/lib/auth/server/errors";
 
 interface ForgetPasswordBody {
   usernameOrEmail?: unknown;
-  // legacy field: some clients send `email` instead of `usernameOrEmail`
-  email?: unknown;
 }
 
 export const POST = withErrorHandling(async (request: NextRequest) => {
-  const body = (await request.json().catch(() => ({}))) as ForgetPasswordBody;
+  const body = await parseJsonBody<ForgetPasswordBody>(request);
   const identifier =
-    typeof body.usernameOrEmail === "string"
-      ? body.usernameOrEmail
-      : typeof body.email === "string"
-        ? body.email
-        : "";
-  return respondWithAck(await authAdmin.requestPasswordReset(identifier));
+    typeof body.usernameOrEmail === "string" ? body.usernameOrEmail : "";
+  return respondWithAck(await requestPasswordReset(identifier));
 });

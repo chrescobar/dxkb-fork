@@ -1,15 +1,12 @@
 export interface AuthUser {
+  id: string;
   username: string;
   email: string;
-  token: string;
-  refresh_token?: string;
-  expires_at?: number;
   realm?: string;
   un?: string;
   first_name?: string;
   last_name?: string;
   email_verified?: boolean;
-  id?: string;
   roles?: string[];
   isImpersonating?: boolean;
   originalUsername?: string;
@@ -69,4 +66,37 @@ export interface PasswordResetResponse {
   message: string;
   success: boolean;
   code?: string;
+}
+
+export type AuthErrorCode =
+  | "invalid_credentials"
+  | "unauthorized"
+  | "network"
+  | "service_unavailable"
+  | "rate_limited"
+  | "validation"
+  | "forbidden"
+  | "not_found"
+  | "conflict"
+  | "unknown";
+
+export interface AuthError {
+  message: string;
+  code: AuthErrorCode;
+  status?: number;
+  sessionExpired?: boolean;
+}
+
+export type Result<T> =
+  { data: T; error: null } | { data: null; error: AuthError };
+
+export interface SessionIdentity {
+  token: string;
+  userId: string;
+  realm?: string;
+}
+
+export interface AuthSessionMutation {
+  user: AuthUser;
+  expiresAt: number;
 }

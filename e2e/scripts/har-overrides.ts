@@ -177,9 +177,8 @@ interface GroupedEntries {
  * `permissiveBackendOverrides` on top.** The catch-all would silently serve
  * `{}` / `{result:[[]]}` for any drift in the HAR's coverage and the test
  * would still pass; letting the strict guard fail loudly is what surfaces
- * the missing replay so the HAR can be re-recorded. Layer
- * `authSessionOverrides` first so the AuthBoundary's hydration refresh sees
- * a signed-in user instead of the HAR's pre-sign-in `{user:null}` probe.
+ * the missing replay so the HAR can be re-recorded. Layer endpoint-specific
+ * overrides first when a journey intentionally replaces recorded responses.
  *
  * @param harPath  Absolute path or relative-to-CWD path; relative paths
  *                 resolve from `e2e/fixtures/hars/`.
@@ -190,7 +189,8 @@ export function harOverridesFor(harPath: string): JsonOverride[] {
   const groupOrder: string[] = [];
   const groups = new Map<string, GroupedEntries>();
   for (const entry of har.log.entries) {
-    const rpcMethod = parseRpcRequest(entry.request.postData?.text)?.method ?? null;
+    const rpcMethod =
+      parseRpcRequest(entry.request.postData?.text)?.method ?? null;
     const pathSearch = urlToPathSearch(entry.request.url);
     const method = entry.request.method.toUpperCase();
     const key = `${method} ${pathSearch} ${rpcMethod ?? ""}`;
@@ -218,7 +218,8 @@ export function harOverridesFor(harPath: string): JsonOverride[] {
       body:
         bodies.length === 1
           ? bodies[0]
-          : ({ callIndex }: JsonOverrideBodyContext) => bodies[Math.min(callIndex, bodies.length - 1)],
+          : ({ callIndex }: JsonOverrideBodyContext) =>
+              bodies[Math.min(callIndex, bodies.length - 1)],
     };
 
     if (group.rpcMethod !== null) {

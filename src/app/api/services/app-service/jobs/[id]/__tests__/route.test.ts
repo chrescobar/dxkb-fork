@@ -1,21 +1,17 @@
 import {
+  clearTestCookies,
   makeRouteContext,
   mockNextRequest,
+  setTestSession,
 } from "@/test-helpers/api-route-helpers";
-
-vi.mock("@/lib/auth/session", () => ({
-  getAuthToken: vi.fn(),
-}));
 
 vi.mock("@/lib/app-service", () => ({
   createAppService: vi.fn(),
 }));
 
 import { GET } from "../route";
-import { getAuthToken } from "@/lib/auth/session";
 import { createAppService } from "@/lib/app-service";
 
-const mockGetAuthToken = vi.mocked(getAuthToken);
 const mockCreateAppService = vi.mocked(createAppService);
 
 const mockAppService = {
@@ -24,11 +20,12 @@ const mockAppService = {
 
 describe("GET /api/services/app-service/jobs/[id]", () => {
   beforeEach(() => {
+    setTestSession();
     mockCreateAppService.mockReturnValue(mockAppService as never);
   });
 
   it("returns 401 when no auth token is available", async () => {
-    mockGetAuthToken.mockResolvedValue(undefined);
+    clearTestCookies();
 
     const request = mockNextRequest();
 
@@ -42,7 +39,6 @@ describe("GET /api/services/app-service/jobs/[id]", () => {
   });
 
   it("returns job details on success", async () => {
-    mockGetAuthToken.mockResolvedValue("test-token");
     const mockDetails = {
       id: "job-1",
       status: "completed",
@@ -60,7 +56,6 @@ describe("GET /api/services/app-service/jobs/[id]", () => {
   });
 
   it("passes include_logs=true when query param is set", async () => {
-    mockGetAuthToken.mockResolvedValue("test-token");
     mockAppService.queryJobDetails.mockResolvedValue({ id: "job-2" });
 
     const request = mockNextRequest({
@@ -76,7 +71,6 @@ describe("GET /api/services/app-service/jobs/[id]", () => {
   });
 
   it("defaults include_logs to false when query param is absent", async () => {
-    mockGetAuthToken.mockResolvedValue("test-token");
     mockAppService.queryJobDetails.mockResolvedValue({ id: "job-3" });
 
     const request = mockNextRequest();
@@ -90,7 +84,6 @@ describe("GET /api/services/app-service/jobs/[id]", () => {
   });
 
   it("returns 500 when an error is thrown", async () => {
-    mockGetAuthToken.mockResolvedValue("test-token");
     mockAppService.queryJobDetails.mockRejectedValue(
       new Error("Service unavailable"),
     );

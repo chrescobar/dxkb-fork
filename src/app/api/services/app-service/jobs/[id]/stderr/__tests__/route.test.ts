@@ -1,21 +1,17 @@
 import {
+  clearTestCookies,
   makeRouteContext,
   mockNextRequest,
+  setTestSession,
 } from "@/test-helpers/api-route-helpers";
-
-vi.mock("@/lib/auth/session", () => ({
-  getAuthToken: vi.fn(),
-}));
 
 vi.mock("@/lib/app-service", () => ({
   createAppService: vi.fn(),
 }));
 
 import { GET } from "../route";
-import { getAuthToken } from "@/lib/auth/session";
 import { createAppService } from "@/lib/app-service";
 
-const mockGetAuthToken = vi.mocked(getAuthToken);
 const mockCreateAppService = vi.mocked(createAppService);
 
 const mockAppService = {
@@ -24,11 +20,12 @@ const mockAppService = {
 
 describe("GET /api/services/app-service/jobs/[id]/stderr", () => {
   beforeEach(() => {
+    setTestSession();
     mockCreateAppService.mockReturnValue(mockAppService as never);
   });
 
   it("returns 401 when no auth token is available", async () => {
-    mockGetAuthToken.mockResolvedValue(undefined);
+    clearTestCookies();
 
     const request = mockNextRequest();
 
@@ -42,7 +39,6 @@ describe("GET /api/services/app-service/jobs/[id]/stderr", () => {
   });
 
   it("returns plain text stderr output on success", async () => {
-    mockGetAuthToken.mockResolvedValue("test-token");
     const stderrText = "Warning: low memory\nError: segfault";
     mockAppService.fetchJobOutput.mockResolvedValue(stderrText);
 
@@ -61,7 +57,6 @@ describe("GET /api/services/app-service/jobs/[id]/stderr", () => {
   });
 
   it("returns 500 when an error is thrown", async () => {
-    mockGetAuthToken.mockResolvedValue("test-token");
     mockAppService.fetchJobOutput.mockRejectedValue(
       new Error("Fetch failed"),
     );

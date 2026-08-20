@@ -1,7 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth/server/instance";
+import { requireAuthSession } from "@/lib/auth/server/route";
 import { buildMinhashServicePayload } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-utils";
 import type { SimilarGenomeFinderFormData } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-schema";
 import {
@@ -51,11 +51,12 @@ function extractMinhashError(result: unknown): string | null {
  */
 async function fetchMinhashResults(
   baseUrl: string,
+  token: string,
   payload: unknown,
 ): Promise<{ ok: true; result: unknown } | { ok: false; error: string }> {
   const res = await fetch(`${baseUrl}/api/services/minhash`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", Authorization: token },
     body: JSON.stringify(payload),
   });
   if (!res.ok) {
@@ -88,6 +89,7 @@ async function fetchMinhashResults(
  */
 async function fetchGenomeDetails(
   baseUrl: string,
+  token: string,
   genomeIds: string[],
 ): Promise<
   | { ok: true; genomes: Record<string, string>[] }
@@ -97,7 +99,7 @@ async function fetchGenomeDetails(
     `${baseUrl}/api/services/genome/website-query`,
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Authorization: token },
       body: JSON.stringify({ genome_ids: genomeIds }),
     },
   );
@@ -205,12 +207,12 @@ function processResults(
 export async function submitSimilarGenomes(
   data: SimilarGenomeFinderFormData,
 ): Promise<SubmitSimilarGenomesResponse> {
-  await auth.requireUser();
+  const { token } = await requireAuthSession();
   const baseUrl = await getBaseUrl();
 
   try {
     const payload = buildMinhashServicePayload(data);
-    const minhashRes = await fetchMinhashResults(baseUrl, payload);
+    const minhashRes = await fetchMinhashResults(baseUrl, token, payload);
     if (!minhashRes.ok) {
       return { success: false, error: minhashRes.error };
     }
@@ -220,7 +222,7 @@ export async function submitSimilarGenomes(
     let genomeResult: { ok: true; genomes: Record<string, string>[] } | null =
       null;
     if (genomeIds.length > 0) {
-      const res = await fetchGenomeDetails(baseUrl, genomeIds);
+      const res = await fetchGenomeDetails(baseUrl, token, genomeIds);
       if (res.ok) genomeResult = res;
     }
 

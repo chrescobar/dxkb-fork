@@ -40,14 +40,19 @@ describe("harOverridesFor", () => {
   it("emits one override per recorded entry when URLs are unique", () => {
     const harPath = writeHar(tmpDir, "auth.har", [
       {
-        request: { method: "GET", url: "http://e2e-har-replay.local/api/auth/get-session" },
+        request: {
+          method: "GET",
+          url: "http://e2e-har-replay.local/api/auth/profile",
+        },
         response: { status: 200, content: { text: '{"user":null}' } },
       },
       {
         request: {
           method: "POST",
           url: "http://e2e-har-replay.local/api/auth/sign-in/email",
-          postData: { text: '{"username":"e2e-test-user","password":"REDACTED-PASSWORD"}' },
+          postData: {
+            text: '{"username":"e2e-test-user","password":"REDACTED-PASSWORD"}',
+          },
         },
         response: { status: 200, content: { text: '{"user":{"id":"u1"}}' } },
       },
@@ -56,7 +61,7 @@ describe("harOverridesFor", () => {
     const overrides = harOverridesFor(harPath);
     expect(overrides).toHaveLength(2);
     expect(overrides[0]).toMatchObject({
-      url: "/api/auth/get-session",
+      url: "/api/auth/profile",
       method: "GET",
       status: 200,
       body: '{"user":null}',
@@ -86,7 +91,9 @@ describe("harOverridesFor", () => {
         request: {
           method: "POST",
           url: "http://e2e-har-replay.local/api/services/workspace",
-          postData: { text: '{"id":1,"method":"Workspace.list_permissions","params":[]}' },
+          postData: {
+            text: '{"id":1,"method":"Workspace.list_permissions","params":[]}',
+          },
         },
         response: { status: 200, content: { text: '{"result":"perm-data"}' } },
       },
@@ -95,7 +102,9 @@ describe("harOverridesFor", () => {
     const overrides = harOverridesFor(harPath);
     expect(overrides).toHaveLength(2);
 
-    const lsOverride = overrides.find((o) => o.matchBody?.({ method: "Workspace.ls" }));
+    const lsOverride = overrides.find((o) =>
+      o.matchBody?.({ method: "Workspace.ls" }),
+    );
     const permOverride = overrides.find((o) =>
       o.matchBody?.({ method: "Workspace.list_permissions" }),
     );
@@ -136,17 +145,26 @@ describe("harOverridesFor", () => {
     const body = overrides[0].body;
     if (typeof body !== "function") throw new Error("expected body function");
     const bodyFn = body as (ctx: JsonOverrideBodyContext) => unknown;
-    expect(bodyFn({ callIndex: 0, parsedBody: null })).toBe('{"result":"before"}');
-    expect(bodyFn({ callIndex: 1, parsedBody: null })).toBe('{"result":"after"}');
+    expect(bodyFn({ callIndex: 0, parsedBody: null })).toBe(
+      '{"result":"before"}',
+    );
+    expect(bodyFn({ callIndex: 1, parsedBody: null })).toBe(
+      '{"result":"after"}',
+    );
     // Beyond the recorded sequence, freeze on the last entry rather than
     // returning undefined and serving an empty body.
-    expect(bodyFn({ callIndex: 7, parsedBody: null })).toBe('{"result":"after"}');
+    expect(bodyFn({ callIndex: 7, parsedBody: null })).toBe(
+      '{"result":"after"}',
+    );
   });
 
   it("strips sensitive headers and preserves the rest", () => {
     const harPath = writeHar(tmpDir, "headers.har", [
       {
-        request: { method: "GET", url: "http://e2e-har-replay.local/api/auth/get-session" },
+        request: {
+          method: "GET",
+          url: "http://e2e-har-replay.local/api/auth/profile",
+        },
         response: {
           status: 200,
           headers: [
@@ -174,7 +192,10 @@ describe("harOverridesFor", () => {
   it("strips hop-by-hop and body-shape headers from replayed responses", () => {
     const harPath = writeHar(tmpDir, "transport.har", [
       {
-        request: { method: "GET", url: "http://e2e-har-replay.local/api/services/foo" },
+        request: {
+          method: "GET",
+          url: "http://e2e-har-replay.local/api/services/foo",
+        },
         response: {
           status: 200,
           headers: [
@@ -223,7 +244,10 @@ describe("harOverridesFor", () => {
   it("propagates non-200 status from the first entry of a group", () => {
     const harPath = writeHar(tmpDir, "error.har", [
       {
-        request: { method: "GET", url: "http://e2e-har-replay.local/api/services/genome/by-ids" },
+        request: {
+          method: "GET",
+          url: "http://e2e-har-replay.local/api/services/genome/by-ids",
+        },
         response: { status: 502, content: { text: '{"error":"upstream"}' } },
       },
     ]);
@@ -239,7 +263,10 @@ describe("harOverridesFor", () => {
     fs.mkdirSync(fixtureDir, { recursive: true });
     writeHar(fixtureDir, "fixture.har", [
       {
-        request: { method: "GET", url: "http://e2e-har-replay.local/api/auth/get-session" },
+        request: {
+          method: "GET",
+          url: "http://e2e-har-replay.local/api/auth/profile",
+        },
         response: { status: 200, content: { text: "{}" } },
       },
     ]);

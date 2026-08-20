@@ -34,18 +34,18 @@ cp .example.env .env.local
 
 Fill in `.env.local` with the appropriate values:
 
-| Variable | Description |
-|---|---|
-| `USER_URL` | BV-BRC User Service URL |
-| `USER_AUTH_URL` | BV-BRC Authentication Service URL |
-| `USER_VERIFICATION_URL` | BV-BRC Email Verification Service URL |
-| `USER_PASSWORD_RESET_URL` | BV-BRC Password Reset Service URL |
-| `APP_SERVICE_URL` | BV-BRC AppService — JSON-RPC endpoint for job submission |
-| `DATA_SERVICE_URL` | BV-BRC Data Service URL |
-| `NEXT_PUBLIC_DATA_API` | Public-facing data API endpoint |
-| `SHOCK_ORIGINS` | Comma-separated Shock file storage node URLs |
-| `BETTER_AUTH_SECRET` | Session encryption key — generate with `openssl rand -base64 32` |
-| `BETTER_AUTH_URL` | Base URL of the app (default: `http://localhost:3019`) |
+| Variable                  | Description                                                            |
+| ------------------------- | ---------------------------------------------------------------------- |
+| `USER_URL`                | BV-BRC User Service URL                                                |
+| `USER_AUTH_URL`           | BV-BRC Authentication Service URL                                      |
+| `USER_REGISTER_URL`       | BV-BRC Registration Service URL                                        |
+| `USER_VERIFICATION_URL`   | BV-BRC Email Verification Service URL                                  |
+| `USER_PASSWORD_RESET_URL` | BV-BRC Password Reset Service URL                                      |
+| `APP_SERVICE_URL`         | BV-BRC AppService — JSON-RPC endpoint for job submission               |
+| `DATA_SERVICE_URL`        | BV-BRC Data Service URL                                                |
+| `NEXT_PUBLIC_DATA_API`    | Public-facing data API endpoint                                        |
+| `SHOCK_ORIGINS`           | Comma-separated Shock file storage node URLs                           |
+| `DEFAULT_REALM`           | Realm used when a BV-BRC token does not include one (default: `bvbrc`) |
 
 > All variables except `NEXT_PUBLIC_DATA_API` are server-side only and never exposed to the browser.
 
@@ -77,24 +77,25 @@ pnpm test:coverage  # Vitest with V8 coverage report
 
 ### App Router structure (`src/app/`)
 
-| Route | Description |
-|---|---|
-| `/` | Public home page — search, news, statistics |
-| `/workspace/[username]/home/[[...path]]` | File browser for user workspaces |
-| `/services/(category)/...` | Bioinformatics service submission forms (genomics, metagenomics, phylogenomics, protein-tools, utilities, viral-tools) |
-| `/search/` | Global search |
-| `/jobs/` | Job monitoring |
-| `/api/auth/...` | Custom auth API routes (sign-in, sign-up, sign-out, session, etc.) |
-| `/api/services/...` | Proxied service API routes |
-| `/api/workspace/...` | Proxied workspace API routes |
+| Route                                    | Description                                                                                                            |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `/`                                      | Public home page — search, news, statistics                                                                            |
+| `/workspace/[username]/home/[[...path]]` | File browser for user workspaces                                                                                       |
+| `/services/(category)/...`               | Bioinformatics service submission forms (genomics, metagenomics, phylogenomics, protein-tools, utilities, viral-tools) |
+| `/search/`                               | Global search                                                                                                          |
+| `/jobs/`                                 | Job monitoring                                                                                                         |
+| `/api/auth/...`                          | Retained auth mutations and profile operations; current-user reads and sign-out are server APIs                        |
+| `/api/services/...`                      | Proxied service API routes                                                                                             |
+| `/api/workspace/...`                     | Proxied workspace API routes                                                                                           |
 
 ### Authentication
 
-Auth is custom-built on [`better-auth`](https://www.better-auth.com/) with **stateless sessions — no database required**.
+Authentication is a server-first integration with the BV-BRC identity service.
 
-- Auth state lives in `AuthContext` (`src/contexts/auth-context.tsx`), hydrated from `user_profile` and `user_id` cookies set by the server.
-- Protected routes (`/services/*`, `/workspace/*`) are guarded by Next.js middleware in `src/proxy.ts`, which checks for `bvbrc_token` and `bvbrc_user_id` cookies.
-- Key files: `src/lib/auth.ts` (server-side), `src/lib/auth-client.ts` (client-side).
+- Server Components call `getCurrentUser()` and pass a browser-safe user to `<AuthBoundary>`; there is no browser session fetch or token in `AuthUser`.
+- `src/lib/auth/server/session.ts` owns the HttpOnly `bvbrc_token`, `bvbrc_user_id`, and optional `bvbrc_realm` cookies. They expire four hours after an identity-changing write and do not roll on reads.
+- Protected pages are optimistically gated by `src/proxy.ts`; authoritative checks use `getCurrentUser()` or `withAuth()` server-side.
+- Browser mutations use named functions in `src/lib/auth/client.ts`. Explicit sign-out uses a redirecting Server Action that clears cookies before navigation.
 
 ### Backend communication
 
@@ -151,5 +152,4 @@ Three GitHub Actions CI workflows run automatically on every PR targeting `main`
 - [Next.js Documentation](https://nextjs.org/docs)
 - [TanStack Query](https://tanstack.com/query/latest)
 - [shadcn/ui](https://ui.shadcn.com/)
-- [better-auth](https://www.better-auth.com/)
 - [BV-BRC](https://www.bv-brc.org/)

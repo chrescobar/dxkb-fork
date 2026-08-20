@@ -7,31 +7,19 @@ import React from "react";
 import BlastServicePage from "@/app/services/(genomics)/blast/page";
 import { ServiceDebuggingProvider } from "@/contexts/service-debugging-context";
 import { AuthBoundary } from "@/lib/auth/provider";
-import { memoryAuthAdapter } from "@/lib/auth/adapters/memory";
 import { server } from "@/test-helpers/msw-server";
 
 function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   });
-  const port = memoryAuthAdapter({
-    initialSession: {
-      username: "testuser",
-      email: "test@example.com",
-      token: "test-token",
-      email_verified: true,
-    },
-    onRequest: (input, init) => fetch(input, init),
-  });
-
   return (
     <QueryClientProvider client={queryClient}>
       <AuthBoundary
-        port={port}
-        initialUser={{
+        user={{
+          id: "testuser",
           username: "testuser",
           email: "test@example.com",
-          token: "test-token",
           email_verified: true,
         }}
       >

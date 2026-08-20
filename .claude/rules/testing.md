@@ -18,12 +18,12 @@ pnpm test:coverage    # Run with V8 coverage
 
 V8 coverage with floor thresholds enforced by `pnpm test:coverage` (see `vitest.config.mts`):
 
-| Metric | Floor |
-|---|---|
-| lines | 81 |
-| statements | 80 |
-| functions | 84 |
-| branches | 70 |
+| Metric     | Floor |
+| ---------- | ----- |
+| lines      | 81    |
+| statements | 80    |
+| functions  | 84    |
+| branches   | 70    |
 
 - Floors sit just below the measured baseline so unrelated PRs don't trip on rounding drift. Bump them upward when new tests raise the measured numbers; never lower them.
 - Scope: `src/lib/**`, `src/hooks/**`, `src/contexts/**`, `src/app/api/**`, `src/app/services/page.tsx`. Excludes `src/components/ui/**`, `*.d.ts`, and `types.ts` / `types/**`.
@@ -33,14 +33,14 @@ V8 coverage with floor thresholds enforced by `pnpm test:coverage` (see `vitest.
 
 These workflows run automatically on every PR targeting `main`:
 
-| Workflow | File | Command |
-|---|---|---|
-| Lint | `.github/workflows/pnpm-lint.yml` | `pnpm lint` |
+| Workflow  | File                                   | Command          |
+| --------- | -------------------------------------- | ---------------- |
+| Lint      | `.github/workflows/pnpm-lint.yml`      | `pnpm lint`      |
 | Typecheck | `.github/workflows/pnpm-typecheck.yml` | `pnpm typecheck` |
-| Build | `.github/workflows/pnpm-build.yml` | `pnpm build` |
-| Test | `.github/workflows/pnpm-test.yml` | `pnpm test` |
-| E2E | `.github/workflows/pnpm-e2e.yml` | `pnpm e2e` |
-| A11y | `.github/workflows/pnpm-a11y.yml` | `pnpm a11y` |
+| Build     | `.github/workflows/pnpm-build.yml`     | `pnpm build`     |
+| Test      | `.github/workflows/pnpm-test.yml`      | `pnpm test`      |
+| E2E       | `.github/workflows/pnpm-e2e.yml`       | `pnpm e2e`       |
+| A11y      | `.github/workflows/pnpm-a11y.yml`      | `pnpm a11y`      |
 
 (Also present: `e2e-har-refresh.yml` and `sync-linux-snapshots.yml` for maintenance, not per-PR gates.)
 
@@ -72,7 +72,7 @@ Use [MSW (Mock Service Worker)](https://mswjs.io/docs/) to intercept HTTP reques
 
 - A shared MSW server is configured in `src/test-helpers/msw-server.ts` with lifecycle hooks in `vitest.setup.ts` (strict mode — unhandled requests error).
 - Use `server.use()` inside individual tests to add request handlers. Handlers are automatically reset after each test via `afterEach(() => server.resetHandlers())`.
-- For server-side code that depends on `next/headers` cookies (e.g. `getSession`, `getAuthToken`, `serverAuthenticatedFetch`), mock `next/headers` with a `mockCookieStore` via `vi.hoisted()` to control auth state, and let the real functions run so their `fetch()` calls hit MSW:
+- For server-side code that depends on `next/headers` cookies (for example `readSession`, `getCurrentUser`, `withAuth`, or `authFetch`), use `mockSessionCookies({ token, userId, realm })` from `api-route-helpers.ts`, which configures the hoisted `mockCookieStore`; let the real auth functions run so outbound calls hit MSW:
 
 ```ts
 const { mockCookieStore } = vi.hoisted(() => ({
@@ -85,7 +85,7 @@ vi.mock("next/headers", () => ({
 ```
 
 - Set env vars (e.g. `process.env.USER_URL`) in `beforeEach` / `afterEach` instead of mocking `getRequiredEnv`.
-- See `src/lib/auth/__tests__/session.test.ts` and `src/app/api/auth/profile/__tests__/route.test.ts` for reference examples.
+- See `src/lib/auth/server/__tests__/session.test.ts`, `server/__tests__/actions.test.ts`, and protected route tests using `mockSessionCookies` for reference examples.
 
 ## Linting Rules
 
@@ -110,7 +110,7 @@ Specs interact with the app through page objects in `e2e/pages/` (e.g. `SignInPa
 
 `playwright.config.ts` defines two setup projects that run before browser projects:
 
-- `setup-signed-in` (`e2e/auth/signed-in.setup.ts`) — Authenticates and writes `e2e/.auth/user.json`. The `chromium`, `firefox`, and `webkit` projects depend on it and load that storage state by default.
+- `setup-signed-in` (`e2e/auth/signed-in.setup.ts`) — Seeds production-named HttpOnly session cookies and writes `e2e/.auth/user.json`. The `chromium`, `firefox`, and `webkit` projects depend on it and load that storage state by default. Auth lifecycle specs use empty state and exercise real local sign-in/sign-out separately.
 - `setup-public` (`e2e/auth/public.setup.ts`) — Empty storage state for unauthenticated specs.
 
 Specs that must run logged-out should override with `test.use({ storageState: { cookies: [], origins: [] } })` (or the public storage path) at the top of the spec.
@@ -120,7 +120,7 @@ Specs that must run logged-out should override with `test.use({ storageState: { 
 Two layers, both required for full isolation:
 
 1. **Browser-side** — `applyBackendMocks(page, { har, overrides })` from `e2e/mocks/backends.ts` intercepts requests made from the page via `page.route()`.
-2. **Server-side (loopback)** — Server components and route handlers fetch through env vars (e.g. `APP_SERVICE_URL`) that `.env.e2e.test` rewrites to `http://127.0.0.1:${E2E_PORT}/api/e2e-mock/<service>`. The loopback handler at `src/app/api/e2e-mock/[...path]/route.ts` serves the same HARs/overrides. Playwright's `page.route()` cannot see server-side fetches, so this layer is mandatory — without it, RSC/route-handler fetches make real outbound calls.
+2. **Server-side (loopback)** — Server Components and route handlers fetch through env vars (e.g. `APP_SERVICE_URL` and `USER_URL`) that `.env.e2e.test` rewrites to `http://127.0.0.1:${E2E_PORT}/api/e2e-mock/<service>`. The loopback handler returns endpoint-correct identity responses and deterministic service fixtures. Playwright's `page.route()` cannot see server-side fetches, so this layer is mandatory.
 
 Because of the env-loading dance, the Playwright `webServer` runs `node e2e/scripts/start-webserver.mjs ${port}` instead of `next start` directly. Run `pnpm build` before `pnpm e2e` (the wrapper does not rebuild).
 
@@ -135,4 +135,3 @@ Because of the env-loading dance, the Playwright `webServer` runs `node e2e/scri
 
 - Chromium: strict (zero-pixel diff). Firefox / WebKit: `maxDiffPixelRatio: 0.05`.
 - PNGs are platform-specific (`-darwin` / `-linux`); `pnpm e2e:update-snapshots` only writes the host OS set. Refresh `-darwin` locally on a Mac; refresh `-linux` from a failing CI run (do NOT use QEMU docker on Apple Silicon — busts chromium tolerance). Full runbook: `e2e/README.md` → "Visual regression".
-

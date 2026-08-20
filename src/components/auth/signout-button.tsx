@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/auth/hooks";
+import { useQueryClient } from "@tanstack/react-query";
+import { signOutAndRedirect } from "@/app/(auth)/redirect-action";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { cn } from "@/lib/utils";
@@ -38,18 +38,10 @@ export function SignoutButton({
   redirectTo = "/",
 }: SignoutButtonProps) {
   const [isSigningOut, setIsSigningOut] = useState(false);
-  const { signOut } = useAuth();
-  const router = useRouter();
-
-  const handleSignout = async () => {
+  const queryClient = useQueryClient();
+  const prepareSignOut = () => {
     setIsSigningOut(true);
-    await signOut().catch((error: unknown) => {
-      console.error("Signout error:", error);
-    });
-    router.push(redirectTo);
-    // Ensure any temporary pointer-events lock is cleared even on errors.
-    setTimeout(() => (document.body.style.pointerEvents = ""), 0);
-    setIsSigningOut(false);
+    queryClient.clear();
   };
 
   const triggerChildren = (
@@ -67,17 +59,18 @@ export function SignoutButton({
 
   if (!confirmDialog) {
     return (
-      <Button
-        variant={variant}
-        size={size}
-        disabled={isSigningOut}
-        className={className}
-        onClick={() => {
-          void handleSignout();
-        }}
-      >
-        {triggerChildren}
-      </Button>
+      <form action={signOutAndRedirect} onSubmit={prepareSignOut}>
+        <input type="hidden" name="redirectTo" value={redirectTo} />
+        <Button
+          type="submit"
+          variant={variant}
+          size={size}
+          disabled={isSigningOut}
+          className={className}
+        >
+          {triggerChildren}
+        </Button>
+      </form>
     );
   }
 
@@ -106,21 +99,22 @@ export function SignoutButton({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={() => {
-              void handleSignout();
-            }}
-            disabled={isSigningOut}
+          <form
+            action={signOutAndRedirect}
+            onSubmit={prepareSignOut}
           >
-            {isSigningOut ? (
-              <>
-                <Loader2 className="mr-2 size-4 animate-spin" />
-                Signing out...
-              </>
-            ) : (
-              "Sign Out"
-            )}
-          </AlertDialogAction>
+            <input type="hidden" name="redirectTo" value={redirectTo} />
+            <AlertDialogAction type="submit" disabled={isSigningOut}>
+              {isSigningOut ? (
+                <>
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  Signing out...
+                </>
+              ) : (
+                "Sign Out"
+              )}
+            </AlertDialogAction>
+          </form>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

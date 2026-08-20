@@ -1,5 +1,7 @@
 import type { NextRequest } from "next/server";
 
+export const sessionMaxAgeMs = 4 * 60 * 60 * 1000;
+
 export const sessionCookieNames = {
   token: "bvbrc_token",
   userId: "bvbrc_user_id",
@@ -12,8 +14,9 @@ export const suBackupCookieNames = {
   realm: "bvbrc_su_original_realm",
 } as const;
 
-export function hasSession(request: NextRequest): boolean {
-  const token = request.cookies.get(sessionCookieNames.token)?.value;
-  const userId = request.cookies.get(sessionCookieNames.userId)?.value;
-  return Boolean(token && userId);
+export function hasSessionCookies(request: NextRequest): boolean {
+  return Boolean(
+    request.cookies.get(sessionCookieNames.token)?.value &&
+    request.cookies.get(sessionCookieNames.userId)?.value,
+  );
 }

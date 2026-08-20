@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiFetch } from "@/lib/auth/fetch";
+import { apiCall } from "@/lib/api/client";
 import { toast } from "sonner";
 import type { KillJobResponse } from "@/types/workspace";
 
@@ -8,14 +8,10 @@ export function useKillJob() {
 
   return useMutation<KillJobResponse, Error, string>({
     mutationFn: async (jobId) => {
-      const response = await apiFetch(
+      return apiCall<KillJobResponse>(
         `/api/services/app-service/jobs/${jobId}/kill`,
-        { method: "POST" },
+        undefined,
       );
-      if (!response.ok) {
-        throw new Error(`Failed to kill job: ${response.statusText}`);
-      }
-      return response.json() as Promise<KillJobResponse>;
     },
     onSuccess: (data, jobId) => {
       toast.success(`Kill request for Job ${jobId} was sent successfully`);

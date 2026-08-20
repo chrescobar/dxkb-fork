@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth/server/instance";
-import { HttpResponseError, type Session } from "@/lib/auth/server/route";
+import { readAuthSession } from "@/lib/auth/server/route";
 import { getRequiredEnv } from "@/lib/env";
 import { getMimeType } from "@/components/workspace/file-viewer/file-viewer-registry";
 import { safeDecode } from "@/lib/url";
@@ -44,13 +43,12 @@ export function buildWorkspacePath(segments: string[]): string {
 export async function resolveWorkspaceDownload(
   segments: string[],
 ): Promise<ResolvedDownload | NextResponse> {
-  let session: Session;
-  try {
-    session = await auth.requireSession();
-  } catch (error) {
-    if (error instanceof HttpResponseError) return error.response;
-    if (error instanceof Response) return error as NextResponse;
-    throw error;
+  const session = await readAuthSession();
+  if (!session) {
+    return NextResponse.json(
+      { error: "Authentication required", code: "session_expired" },
+      { status: 401 },
+    );
   }
 
   const workspacePath = buildWorkspacePath(segments);

@@ -1,4 +1,4 @@
-import { isProtectedPagePath, isProtectedApiPath } from "../routes";
+import { isProtectedPagePath } from "../routes";
 
 describe("isProtectedPagePath", () => {
   it("returns true for /services/ sub-paths", () => {
@@ -55,22 +55,5 @@ describe("isProtectedPagePath", () => {
     expect(isProtectedPagePath("/search")).toBe(false);
     expect(isProtectedPagePath("/sign-in")).toBe(false);
     expect(isProtectedPagePath("/about")).toBe(false);
-  });
-});
-
-describe("isProtectedApiPath", () => {
-  it("returns true for /api/protected/ sub-paths", () => {
-    expect(isProtectedApiPath("/api/protected/some-endpoint")).toBe(true);
-    expect(isProtectedApiPath("/api/protected/nested/path")).toBe(true);
-  });
-
-  it("returns false for non-protected API paths", () => {
-    expect(isProtectedApiPath("/api/auth/sign-in")).toBe(false);
-    expect(isProtectedApiPath("/api/services/workspace")).toBe(false);
-  });
-
-  it("returns false for non-API paths", () => {
-    expect(isProtectedApiPath("/services/blast")).toBe(false);
-    expect(isProtectedApiPath("/")).toBe(false);
   });
 });

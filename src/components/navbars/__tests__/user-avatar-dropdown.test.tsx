@@ -10,31 +10,46 @@ const { mockAuth } = vi.hoisted(() => ({
   },
 }));
 
-vi.mock("@/lib/auth/hooks", () => ({
+vi.mock("@/lib/auth/provider", () => ({
   useAuth: () => mockAuth,
-}));
-
-vi.mock("@/lib/auth/advanced", () => ({
-  authAdmin: { impersonate: { exit: vi.fn() } },
-  authAccount: { sendVerificationEmail: vi.fn() },
+  useAuthActions: () => ({
+    exitImpersonation: vi.fn(),
+    sendVerificationEmail: vi.fn(),
+  }),
 }));
 
 vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
 vi.mock("next/link", () => ({
-  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href}>{children}</a>
-  ),
+  default: ({
+    href,
+    children,
+  }: {
+    href: string;
+    children: React.ReactNode;
+  }) => <a href={href}>{children}</a>,
 }));
 
 vi.mock("@/components/ui/dropdown-menu", () => ({
-  DropdownMenu: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  DropdownMenuTrigger: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  DropdownMenuContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  DropdownMenuGroup: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  DropdownMenuLabel: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div className={className}>{children}</div>
+  DropdownMenu: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
   ),
+  DropdownMenuTrigger: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  DropdownMenuContent: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  DropdownMenuGroup: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  DropdownMenuLabel: ({
+    children,
+    className,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => <div className={className}>{children}</div>,
   DropdownMenuItem: ({
     children,
     render: renderProp,
@@ -53,8 +68,12 @@ vi.mock("@/components/ui/dropdown-menu", () => ({
 }));
 
 vi.mock("@/components/ui/avatar", () => ({
-  Avatar: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  AvatarFallback: ({ children }: { children: React.ReactNode }) => <span>{children}</span>,
+  Avatar: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  AvatarFallback: ({ children }: { children: React.ReactNode }) => (
+    <span>{children}</span>
+  ),
 }));
 
 vi.mock("@/components/auth/signout-button", () => ({
@@ -93,7 +112,7 @@ describe("UserAvatarDropdown", () => {
 
   describe("greeting label", () => {
     it("shows the username when user is authenticated", () => {
-      setUser({ username: "alice", email: "alice@example.com", token: "tok" });
+      setUser({ id: "alice", username: "alice", email: "alice@example.com" });
       render(<UserAvatarDropdown />);
       expect(screen.getByText("alice")).toBeInTheDocument();
     });
@@ -118,7 +137,7 @@ describe("UserAvatarDropdown", () => {
 
   describe("avatar fallback letter", () => {
     it("shows the first letter of the username uppercased", () => {
-      setUser({ username: "bob", email: "bob@example.com", token: "tok" });
+      setUser({ id: "bob", username: "bob", email: "bob@example.com" });
       render(<UserAvatarDropdown />);
       expect(screen.getByText("B")).toBeInTheDocument();
     });

@@ -32,43 +32,6 @@ const validSession = {
 };
 
 describe("proxy", () => {
-  describe("protected API paths", () => {
-    it("returns 401 for /api/protected/ without session cookies", () => {
-      const request = buildRequest("/api/protected/some-endpoint");
-      const response = proxy(request);
-      const data = response.headers.get("content-type");
-
-      expect(response.status).toBe(401);
-      expect(data).toContain("application/json");
-    });
-
-    it("allows /api/protected/ with valid session cookies", () => {
-      const request = buildRequest("/api/protected/some-endpoint", validSession);
-      const response = proxy(request);
-
-      // NextResponse.next() returns a 200 with x-middleware-next header
-      expect(response.headers.get("x-middleware-next")).toBe("1");
-    });
-
-    it("returns 401 when only token is present (missing user_id)", () => {
-      const request = buildRequest("/api/protected/endpoint", {
-        bvbrc_token: "tok",
-      });
-      const response = proxy(request);
-
-      expect(response.status).toBe(401);
-    });
-
-    it("returns 401 when only user_id is present (missing token)", () => {
-      const request = buildRequest("/api/protected/endpoint", {
-        bvbrc_user_id: "user",
-      });
-      const response = proxy(request);
-
-      expect(response.status).toBe(401);
-    });
-  });
-
   describe("protected page paths", () => {
     it("redirects to /sign-in for /services/ sub-paths without session", () => {
       const request = buildRequest("/services/blast");

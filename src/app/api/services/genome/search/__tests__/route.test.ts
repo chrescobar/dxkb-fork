@@ -1,19 +1,23 @@
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
 import { GET } from "../route";
-import { json, mockNextRequest } from "@/test-helpers/api-route-helpers";
-
-vi.mock("@/lib/auth/session", () => ({ getAuthToken: vi.fn() }));
+import {
+  clearTestCookies,
+  json,
+  mockNextRequest,
+  setTestSession,
+} from "@/test-helpers/api-route-helpers";
 vi.mock("@/lib/env", () => ({
   getRequiredEnv: vi.fn(() => "http://mock-api"),
 }));
 
-import { getAuthToken } from "@/lib/auth/session";
-const mockGetAuthToken = vi.mocked(getAuthToken);
-
 describe("GET /api/services/genome/search", () => {
+  beforeEach(() => {
+    setTestSession();
+  });
+
   it("returns 401 when no auth token", async () => {
-    mockGetAuthToken.mockResolvedValue(undefined);
+    clearTestCookies();
 
     const req = mockNextRequest({
       url: "http://localhost:3019/api/services/genome/search",
@@ -28,8 +32,6 @@ describe("GET /api/services/genome/search", () => {
   });
 
   it("returns all genomes (no wildcard filter) when query is blank", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     let capturedUrl: string | undefined;
     server.use(
       http.get("http://mock-api/genome/", ({ request }) => {
@@ -49,8 +51,6 @@ describe("GET /api/services/genome/search", () => {
   });
 
   it("sanitizes special characters from query", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     let capturedUrl: string | undefined;
     server.use(
       http.get("http://mock-api/genome/", ({ request }) => {
@@ -69,8 +69,6 @@ describe("GET /api/services/genome/search", () => {
   });
 
   it("returns empty results when query is only special chars (sanitized to empty)", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     let handlerCalled = false;
     server.use(
       http.get("http://mock-api/genome/", () => {
@@ -91,8 +89,6 @@ describe("GET /api/services/genome/search", () => {
   });
 
   it("clamps limit to 1-50 range with default 25", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     const capturedUrls: string[] = [];
     server.use(
       http.get("http://mock-api/genome/", ({ request }) => {
@@ -127,8 +123,6 @@ describe("GET /api/services/genome/search", () => {
   });
 
   it("wraps sanitized query with wildcards", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     let capturedUrl: string | undefined;
     server.use(
       http.get("http://mock-api/genome/", ({ request }) => {
@@ -147,8 +141,6 @@ describe("GET /api/services/genome/search", () => {
   });
 
   it("returns results on success", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     const genomes = [{ genome_id: "1.1", genome_name: "E. coli" }];
     server.use(
       http.get("http://mock-api/genome/", () => {
@@ -167,8 +159,6 @@ describe("GET /api/services/genome/search", () => {
   });
 
   it("handles {items} wrapper response", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     const genomes = [{ genome_id: "2.2" }];
     server.use(
       http.get("http://mock-api/genome/", () => {
@@ -186,8 +176,6 @@ describe("GET /api/services/genome/search", () => {
   });
 
   it("returns upstream error status on non-ok response", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     server.use(
       http.get("http://mock-api/genome/", () => {
         return new HttpResponse("error", { status: 503 });

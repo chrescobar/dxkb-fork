@@ -6,7 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import type { ListPermissionsResult } from "@/lib/services/workspace/domain";
-import { useAuth } from "@/lib/auth/hooks";
+import { useAuth } from "@/lib/auth/provider";
 import { useWorkspacePanel } from "@/contexts/workspace-panel-context";
 import { useWorkspaceDialog } from "@/contexts/workspace-dialog-context";
 import { useWorkspacePathResolve } from "@/hooks/services/workspace/use-workspace-path-resolve";
@@ -480,7 +480,7 @@ function useWorkspaceBrowser({
         )}
       </div>
       {isJobResultView ? (
-        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden border-border pb-4">
+        <div className="border-border flex min-h-0 flex-1 flex-col gap-4 overflow-hidden pb-4">
           <div className="px-4">
             {resolveQuery.data && (
               <JobMetadataCard

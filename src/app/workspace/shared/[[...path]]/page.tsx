@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth/session";
+import { requireAuthSession } from "@/lib/auth/server/route";
 import { encodeWorkspaceSegment } from "@/lib/services/workspace/path-utils";
 
 export default async function WorkspaceSharedRedirect({
@@ -7,7 +7,10 @@ export default async function WorkspaceSharedRedirect({
 }: {
   params: Promise<{ path?: string[] }>;
 }) {
-  const [{ userId }, { path = [] }] = await Promise.all([getSession(), params]);
+  const [{ userId }, { path = [] }] = await Promise.all([
+    requireAuthSession(),
+    params,
+  ]);
   if (userId) {
     const encodedPath = path.map(encodeWorkspaceSegment).join("/");
     const pathPart = encodedPath ? `/${encodedPath}` : "";

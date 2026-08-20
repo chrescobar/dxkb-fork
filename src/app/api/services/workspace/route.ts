@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth/server/instance";
+import { withAuth } from "@/lib/auth/server/route";
 import { getRequiredEnv } from "@/lib/env";
 
 /** Safe shape we forward to the client; avoids leaking stack traces, paths, or config. */
@@ -33,7 +33,7 @@ function sanitizeUpstreamError(raw: unknown): SanitizedApiError | null {
  * Workspace API proxy route
  * Forwards JSON-RPC requests to WORKSPACE_API_URL
  */
-export const POST = auth.route(async (request: NextRequest, { token }) => {
+export const POST = withAuth(async (request: NextRequest, { token }) => {
   try {
     const body = (await request.json()) as { method?: unknown; params?: unknown };
     const { method, params } = body;

@@ -2,6 +2,42 @@ import { NextRequest } from "next/server";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createElement, type ReactNode } from "react";
 
+const testCookies = new Map<string, string>();
+
+export const testCookieStore = {
+  get: vi.fn((name: string) => {
+    const value = testCookies.get(name);
+    return value === undefined ? undefined : { name, value };
+  }),
+  set: vi.fn((name: string, value: string, _options?: unknown) => {
+    if (value) testCookies.set(name, value);
+    else testCookies.delete(name);
+  }),
+};
+
+export function clearTestCookies(): void {
+  testCookies.clear();
+  testCookieStore.get.mockClear();
+  testCookieStore.set.mockClear();
+}
+
+export function mockSessionCookies({
+  token = "test-token",
+  userId = "testuser",
+  realm,
+}: {
+  token?: string;
+  userId?: string;
+  realm?: string;
+} = {}): void {
+  testCookies.set("bvbrc_token", token);
+  testCookies.set("bvbrc_user_id", userId);
+  if (realm) testCookies.set("bvbrc_realm", realm);
+  else testCookies.delete("bvbrc_realm");
+}
+
+export const setTestSession = mockSessionCookies;
+
 /**
  * Factory for creating mock NextRequest objects for route handler tests.
  */
@@ -30,14 +66,16 @@ export function mockNextRequest(
 
   const init: Record<string, unknown> = {
     method,
-    headers: { "Content-Type": "application/json", ...headers },
+    headers:
+      body !== undefined && method !== "GET"
+        ? { "Content-Type": "application/json", ...headers }
+        : headers,
   };
 
   if (body !== undefined && method !== "GET") {
     init.body = JSON.stringify(body);
   }
 
-   
   return new NextRequest(finalUrl, init);
 }
 

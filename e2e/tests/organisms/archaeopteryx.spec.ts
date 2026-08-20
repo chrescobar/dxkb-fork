@@ -41,15 +41,7 @@ const closeTo = (actual: number, expected: number, tolerance = 1) => {
 };
 
 async function openPhylogeny(page: Page) {
-  await applyBackendMocks(page, {
-    overrides: [
-      {
-        url: "/api/auth/get-session",
-        method: "GET",
-        body: { user: null, session: null },
-      },
-    ],
-  });
+  await applyBackendMocks(page);
   await page.route(
     /\/api\/content\/bvbrc_phylogeny_tab\/taxon_tree_dict\.json$/,
     (route) =>

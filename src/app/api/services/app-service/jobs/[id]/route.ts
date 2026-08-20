@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAppService } from "@/lib/app-service";
-import { withAuth } from "@/lib/auth/server/instance";
+import { withAuth } from "@/lib/auth/server/route";
 
 interface RouteParams {
   params: Promise<{ id: string }>;

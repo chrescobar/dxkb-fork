@@ -15,10 +15,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SignoutButton } from "@/components/auth/signout-button";
 import { SuLoginDialog } from "@/components/auth/su-login-dialog";
-import { useAuth } from "@/lib/auth/hooks";
-import { authAdmin, authAccount } from "@/lib/auth/advanced";
+import { useAuth, useAuthActions } from "@/lib/auth/provider";
 import { toast } from "sonner";
-import { encodeWorkspaceSegment, workspaceUsername } from "@/lib/services/workspace/path-utils";
+import {
+  encodeWorkspaceSegment,
+  workspaceUsername,
+} from "@/lib/services/workspace/path-utils";
 
 import {
   NotebookPen,
@@ -32,21 +34,21 @@ import {
 
 export function UserAvatarDropdown() {
   const { user, isAdmin, isImpersonating } = useAuth();
-  const sendVerificationEmail = () => authAccount.sendVerificationEmail();
+  const { sendVerificationEmail, exitImpersonation } = useAuthActions();
   const suExit = async () => {
-    const { error } = await authAdmin.impersonate.exit();
-    if (error) {
+    try {
+      await exitImpersonation();
+      toast.success("Returned to your account");
+    } catch {
       toast.error("Failed to exit impersonation");
-      return;
     }
-    toast.success("Returned to your account");
   };
   const wsUsername = workspaceUsername(user);
   const [suDialogOpen, setSuDialogOpen] = useState(false);
 
   return (
     <>
-      <div className="flex items-center space-x-2 rounded-md p-1 hover:bg-foreground/10">
+      <div className="hover:bg-foreground/10 flex items-center space-x-2 rounded-md p-1">
         <div className="size-8 shrink-0 overflow-hidden rounded-full **:data-[slot=dropdown-menu-trigger]:size-full **:data-[slot=dropdown-menu-trigger]:min-w-0">
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger
@@ -74,8 +76,11 @@ export function UserAvatarDropdown() {
               className="w-60"
             >
               <DropdownMenuGroup>
-                <DropdownMenuLabel className="truncate text-sm text-foreground">
-                  Hello, <span className="font-semibold">{user?.username ?? "User"}</span>
+                <DropdownMenuLabel className="text-foreground truncate text-sm">
+                  Hello,{" "}
+                  <span className="font-semibold">
+                    {user?.username ?? "User"}
+                  </span>
                   !
                 </DropdownMenuLabel>
               </DropdownMenuGroup>
@@ -92,34 +97,44 @@ export function UserAvatarDropdown() {
                     />
                   }
                 >
-                  <NotebookPen className="size-4 text-foreground" />
+                  <NotebookPen className="text-foreground size-4" />
                   {isImpersonating
                     ? `${user?.username ?? ""}'s Workspace`
                     : "My Workspace"}
                 </DropdownMenuItem>
 
                 <DropdownMenuItem render={<Link href="/jobs" />}>
-                  <BriefcaseBusiness className="size-4 text-foreground" />
-                  {isImpersonating ? `${user?.username ?? ""}'s Jobs` : "My Jobs"}
+                  <BriefcaseBusiness className="text-foreground size-4" />
+                  {isImpersonating
+                    ? `${user?.username ?? ""}'s Jobs`
+                    : "My Jobs"}
                 </DropdownMenuItem>
 
-                <DropdownMenuItem onClick={() => { void sendVerificationEmail(); }}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    void sendVerificationEmail();
+                  }}
+                >
                   <span className="flex items-center gap-2">
-                    <Mail className="size-4 text-foreground" />
+                    <Mail className="text-foreground size-4" />
                     Resend Verification Email
                   </span>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem render={<Link href="/settings" />}>
-                  <Settings className="size-4 text-foreground" />
+                  <Settings className="text-foreground size-4" />
                   Settings
                 </DropdownMenuItem>
 
                 {isAdmin && !isImpersonating && (
                   <>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => { setSuDialogOpen(true); }}>
-                      <LogIn className="size-4 text-foreground" />
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setSuDialogOpen(true);
+                      }}
+                    >
+                      <LogIn className="text-foreground size-4" />
                       SU Login
                     </DropdownMenuItem>
                   </>
@@ -128,8 +143,12 @@ export function UserAvatarDropdown() {
                 {isImpersonating && (
                   <>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => { void suExit(); }}>
-                      <LogOut className="size-4 text-foreground" />
+                    <DropdownMenuItem
+                      onClick={() => {
+                        void suExit();
+                      }}
+                    >
+                      <LogOut className="text-foreground size-4" />
                       Exit SU
                     </DropdownMenuItem>
                   </>
@@ -138,7 +157,7 @@ export function UserAvatarDropdown() {
                 <DropdownMenuSeparator />
                 <SignoutButton
                   variant="ghost"
-                  className="h-auto w-full justify-start gap-2 rounded-md border-none px-1.5 py-1 text-sm shadow-none hover:bg-secondary/80 focus:bg-secondary/80"
+                  className="hover:bg-secondary/80 focus:bg-secondary/80 h-auto w-full justify-start gap-2 rounded-md border-none px-1.5 py-1 text-sm shadow-none"
                 />
               </DropdownMenuGroup>
             </DropdownMenuContent>

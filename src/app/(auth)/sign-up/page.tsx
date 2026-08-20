@@ -3,8 +3,7 @@
 import { useState, Suspense } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth/hooks";
-import { authAccount } from "@/lib/auth/advanced";
+import { useAuthActions } from "@/lib/auth/provider";
 import {
   Card,
   CardContent,
@@ -22,31 +21,35 @@ import { useSignupForm } from "./use-signup-form";
 
 function SignupForm() {
   const [error, setError] = useState("");
-  const { status } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const isLoading = status === "loading" || isSubmitting;
+  const { signUp } = useAuthActions();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") || "/";
 
   const form = useSignupForm(async (value) => {
     setIsSubmitting(true);
-    const { error: signUpError } = await authAccount
-      .signUp(value)
+    setError("");
+    await signUp(value)
+      .then(async () => {
+        toast.success("Account created successfully. Welcome to DXKB!", {
+          closeButton: true,
+        });
+        await redirectAfterAuth(redirectTo);
+      })
+      .catch((cause: unknown) => {
+        setError(
+          cause instanceof Error
+            ? cause.message
+            : "Sign up failed. Please try again.",
+        );
+      })
       .finally(() => {
         setIsSubmitting(false);
       });
-    if (signUpError) {
-      setError(signUpError.message || "Sign up failed. Please try again.");
-      return;
-    }
-    toast.success("Account created successfully. Welcome to DXKB!", {
-      closeButton: true,
-    });
-    await redirectAfterAuth(redirectTo);
   });
 
   return (
-    <div className="flex items-center justify-center bg-background p-4">
+    <div className="bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-lg">
         <CardHeader className="space-y-1">
           <CardTitle className="text-center text-2xl font-bold">
@@ -70,18 +73,18 @@ function SignupForm() {
               </Alert>
             )}
 
-            <SignupProfileFields form={form} disabled={isLoading} />
+            <SignupProfileFields form={form} disabled={isSubmitting} />
             <SignupPasswordFields form={form} />
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Creating account..." : "Create account"}
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "Creating account..." : "Create account"}
             </Button>
 
             <div className="text-center text-sm">
               Already have an account?{" "}
               <Link
                 href="/sign-in"
-                className="font-medium text-primary hover:underline"
+                className="text-primary font-medium hover:underline"
               >
                 Sign in
               </Link>
@@ -97,7 +100,7 @@ export default function SignupPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex items-center justify-center bg-background p-4">
+        <div className="bg-background flex items-center justify-center p-4">
           <Card className="w-full max-w-lg">
             <CardHeader className="space-y-1">
               <CardTitle className="text-center text-2xl font-bold">

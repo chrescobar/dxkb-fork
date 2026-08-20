@@ -2,15 +2,11 @@ import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
 import { NextRequest } from "next/server";
 
-const { mockCookieStore } = vi.hoisted(() => ({
-  mockCookieStore: { get: vi.fn(), set: vi.fn() },
-}));
-
-vi.mock("next/headers", () => ({
-  cookies: vi.fn(() => Promise.resolve(mockCookieStore)),
-}));
-
-import { mockNextRequest } from "@/test-helpers/api-route-helpers";
+import {
+  clearTestCookies,
+  mockNextRequest,
+  testCookieStore,
+} from "@/test-helpers/api-route-helpers";
 import { POST } from "../route";
 
 const userRegisterUrl = "https://auth.test/register";
@@ -56,8 +52,7 @@ beforeEach(() => {
   process.env.USER_URL = userUrl;
   process.env.WORKSPACE_API_URL = workspaceApiUrl;
   process.env.DEFAULT_REALM = "bvbrc";
-  mockCookieStore.get.mockReset();
-  mockCookieStore.set.mockReset();
+  clearTestCookies();
   installDefaultWorkspaceHandler();
 });
 
@@ -96,7 +91,7 @@ describe("POST /api/auth/sign-up/email", () => {
     const response = await POST(request, {});
     const data = (await response.json()) as {
       user?: Record<string, unknown>;
-      session?: { expiresAt?: string; token?: string };
+      session?: { expiresAt?: string };
     };
 
     expect(response.status).toBe(200);
@@ -108,10 +103,10 @@ describe("POST /api/auth/sign-up/email", () => {
     expect(upstreamRegisterBody).toContain("password=securePass1%21");
     expect(upstreamRegisterBody).toContain("password_repeat=securePass1%21");
 
-    const setNames = mockCookieStore.set.mock.calls.map((call) => call[0] as string);
+    const setNames = testCookieStore.set.mock.calls.map((call) => call[0]);
     expect(setNames).toContain("bvbrc_token");
     expect(setNames).toContain("bvbrc_user_id");
-    const tokenCall = mockCookieStore.set.mock.calls.find(
+    const tokenCall = testCookieStore.set.mock.calls.find(
       (call) => call[0] === "bvbrc_token",
     );
     expect(tokenCall?.[1]).toBe("token-bob");
@@ -125,7 +120,6 @@ describe("POST /api/auth/sign-up/email", () => {
       email_verified: false,
     });
     expect(data.session).toHaveProperty("expiresAt");
-    expect(data.session?.token).toBe("");
   });
 
   it("returns 400 when passwords do not match without calling upstream and without writing cookies", async () => {
@@ -147,7 +141,7 @@ describe("POST /api/auth/sign-up/email", () => {
     expect(response.status).toBe(400);
     expect(data.error).toMatch(/passwords do not match/i);
     expect(upstreamCalled).toBe(false);
-    expect(mockCookieStore.set).not.toHaveBeenCalled();
+    expect(testCookieStore.set).not.toHaveBeenCalled();
   });
 
   it("propagates the upstream message and status when registration fails (409 conflict) and writes no cookies", async () => {
@@ -166,7 +160,7 @@ describe("POST /api/auth/sign-up/email", () => {
 
     expect(response.status).toBe(409);
     expect(data.error).toBe("Username already taken");
-    expect(mockCookieStore.set).not.toHaveBeenCalled();
+    expect(testCookieStore.set).not.toHaveBeenCalled();
   });
 
   it("triggers workspace provisioning with the new session token after successful registration", async () => {
@@ -252,7 +246,7 @@ describe("POST /api/auth/sign-up/email", () => {
     // Cookies must still be set so the user is signed in even though the
     // workspace setup failed — Path C is the recovery mechanism on first
     // workspace visit.
-    const setNames = mockCookieStore.set.mock.calls.map((call) => call[0] as string);
+    const setNames = testCookieStore.set.mock.calls.map((call) => call[0]);
     expect(setNames).toContain("bvbrc_token");
     expect(setNames).toContain("bvbrc_user_id");
 
@@ -271,6 +265,6 @@ describe("POST /api/auth/sign-up/email", () => {
     expect(response.status).toBe(400);
     expect(data.error).toMatch(/username.*email.*password are required/i);
     expect(data.code).toBe("validation");
-    expect(mockCookieStore.set).not.toHaveBeenCalled();
+    expect(testCookieStore.set).not.toHaveBeenCalled();
   });
 });

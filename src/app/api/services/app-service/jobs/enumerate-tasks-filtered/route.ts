@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createAppService } from "@/lib/app-service";
-import { withAuth } from "@/lib/auth/server/instance";
+import { withAuth } from "@/lib/auth/server/route";
 
 const requestSchema = z.object({
   offset: z.number().int().nonnegative().default(0),

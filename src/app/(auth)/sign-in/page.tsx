@@ -4,7 +4,7 @@ import { z } from "zod";
 import { useForm } from "@tanstack/react-form";
 import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { useAuth, useSignIn } from "@/lib/auth/hooks";
+import { useAuthActions } from "@/lib/auth/provider";
 import { redirectAfterAuth } from "../redirect-action";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,9 +35,7 @@ const formSchema = z.object({
 function SigninForm() {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { status } = useAuth();
-  const { signIn, isPending } = useSignIn();
-  const isLoading = status === "loading" || isPending;
+  const { signIn } = useAuthActions();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") || "/";
 
@@ -48,20 +46,25 @@ function SigninForm() {
     },
     validators: { onChange: formSchema },
     onSubmit: async ({ value }) => {
-      const { error: signInError } = await signIn(value);
-      if (signInError) {
-        setError(signInError.message || "Invalid username or password");
-        return;
+      setError("");
+      try {
+        await signIn(value);
+        toast.success("Logged in successfully. Welcome to DXKB!", {
+          closeButton: true,
+        });
+        await redirectAfterAuth(redirectTo);
+      } catch (cause) {
+        setError(
+          cause instanceof Error
+            ? cause.message
+            : "Invalid username or password",
+        );
       }
-      toast.success("Logged in successfully. Welcome to DXKB!", {
-        closeButton: true,
-      });
-      await redirectAfterAuth(redirectTo);
     },
   });
 
   return (
-    <div className="flex items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+    <div className="bg-background flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="mb-2 space-y-1">
           <CardTitle className="text-center text-2xl font-bold">
@@ -91,7 +94,7 @@ function SigninForm() {
                 <FieldItem>
                   <RequiredFormLabel>Username or email</RequiredFormLabel>
                   <div className="relative">
-                    <User className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
+                    <User className="text-muted-foreground absolute top-2.5 left-3 size-4" />
                     <Input
                       placeholder="Enter your username or email"
                       id={field.name}
@@ -114,17 +117,17 @@ function SigninForm() {
                 <FieldItem>
                   <div className="flex items-center justify-between">
                     <RequiredFormLabel>Password</RequiredFormLabel>
-                    <p className="text-xs text-primary">
+                    <p className="text-primary text-xs">
                       <Link
                         href="/forgot-password"
-                        className="transition-colors duration-300 hover:font-medium hover:text-secondary"
+                        className="hover:text-secondary transition-colors duration-300 hover:font-medium"
                       >
                         Forgot your password?
                       </Link>
                     </p>
                   </div>
                   <div className="relative">
-                    <Lock className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
+                    <Lock className="text-muted-foreground absolute top-2.5 left-3 size-4" />
                     <Input
                       id={field.name}
                       name={field.name}
@@ -165,9 +168,9 @@ function SigninForm() {
             <Button
               type="submit"
               className="w-full transition-colors duration-200"
-              disabled={isLoading}
+              disabled={form.state.isSubmitting}
             >
-              {isLoading ? (
+              {form.state.isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 size-4 animate-spin" />
                   Signing in...
@@ -179,16 +182,16 @@ function SigninForm() {
           </form>
 
           <div className="mt-6 space-y-2 text-center">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Don&apos;t have an account?{" "}
               <Link
                 href="/sign-up"
-                className="font-medium text-primary transition-colors duration-300 hover:font-medium hover:text-secondary"
+                className="text-primary hover:text-secondary font-medium transition-colors duration-300 hover:font-medium"
               >
                 Sign up on DXKB
               </Link>
             </p>
-            <p className="mt-6 text-xs text-muted-foreground">
+            <p className="text-muted-foreground mt-6 text-xs">
               <span className="font-bold">Note: </span>
               You may use your DXKB or BV-BRC username or email to sign in to
               this resource if you already had an account on one of those
@@ -206,7 +209,7 @@ export default function SigninPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+        <div className="bg-background flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
           <Card className="w-full max-w-md">
             <CardHeader className="mb-2 space-y-1">
               <CardTitle className="text-center text-2xl font-bold">

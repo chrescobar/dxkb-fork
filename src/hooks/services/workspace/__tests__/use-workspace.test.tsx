@@ -2,10 +2,10 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { createQueryClientWrapper } from "@/test-helpers/api-route-helpers";
 import { useKillJob } from "@/hooks/services/workspace/use-workspace";
 
-const { mockFetch } = vi.hoisted(() => ({ mockFetch: vi.fn() }));
+const { mockApiCall } = vi.hoisted(() => ({ mockApiCall: vi.fn() }));
 
-vi.mock("@/lib/auth/fetch", () => ({
-  apiFetch: mockFetch,
+vi.mock("@/lib/api/client", () => ({
+  apiCall: mockApiCall,
 }));
 
 vi.mock("sonner", () => ({
@@ -17,10 +17,7 @@ vi.mock("sonner", () => ({
 
 describe("useKillJob", () => {
   it("calls the correct URL with POST method", async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ status: "killed" }),
-    });
+    mockApiCall.mockResolvedValue({ status: "killed" });
 
     const wrapper = createQueryClientWrapper();
     const { result } = renderHook(() => useKillJob(), { wrapper });
@@ -31,17 +28,14 @@ describe("useKillJob", () => {
       expect(result.current.isSuccess).toBe(true);
     });
 
-    expect(mockFetch).toHaveBeenCalledWith(
+    expect(mockApiCall).toHaveBeenCalledWith(
       "/api/services/app-service/jobs/job-123/kill",
-      { method: "POST" },
+      undefined,
     );
   });
 
   it("includes the jobId in the fetch URL", async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ status: "killed" }),
-    });
+    mockApiCall.mockResolvedValue({ status: "killed" });
 
     const wrapper = createQueryClientWrapper();
     const { result } = renderHook(() => useKillJob(), { wrapper });
@@ -52,17 +46,16 @@ describe("useKillJob", () => {
       expect(result.current.isSuccess).toBe(true);
     });
 
-    expect(mockFetch).toHaveBeenCalledWith(
+    expect(mockApiCall).toHaveBeenCalledWith(
       "/api/services/app-service/jobs/my-unique-job-456/kill",
-      expect.objectContaining({ method: "POST" }),
+      undefined,
     );
   });
 
   it("throws when the response is not ok", async () => {
-    mockFetch.mockResolvedValue({
-      ok: false,
-      statusText: "Internal Server Error",
-    });
+    mockApiCall.mockRejectedValue(
+      new Error("Failed to kill job: Internal Server Error"),
+    );
 
     const wrapper = createQueryClientWrapper();
     const { result } = renderHook(() => useKillJob(), { wrapper });
@@ -81,10 +74,7 @@ describe("useKillJob", () => {
   });
 
   it("calls toast.success on successful mutation", async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ status: "killed" }),
-    });
+    mockApiCall.mockResolvedValue({ status: "killed" });
 
     const { toast } = await import("sonner");
     const wrapper = createQueryClientWrapper();
@@ -102,10 +92,7 @@ describe("useKillJob", () => {
   });
 
   it("calls toast.error on failed mutation", async () => {
-    mockFetch.mockResolvedValue({
-      ok: false,
-      statusText: "Bad Request",
-    });
+    mockApiCall.mockRejectedValue(new Error("Failed to kill job: Bad Request"));
 
     const { toast } = await import("sonner");
     const wrapper = createQueryClientWrapper();
@@ -123,10 +110,7 @@ describe("useKillJob", () => {
   });
 
   it("invalidates jobs query keys on success", async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ status: "killed" }),
-    });
+    mockApiCall.mockResolvedValue({ status: "killed" });
 
     const wrapper = createQueryClientWrapper();
     const { result } = renderHook(() => useKillJob(), { wrapper });

@@ -1,18 +1,12 @@
-import { mockNextRequest } from "@/test-helpers/api-route-helpers";
-
-vi.mock("@/lib/auth/session", () => ({
-  getAuthToken: vi.fn(),
-}));
+import { clearTestCookies, mockNextRequest, setTestSession } from "@/test-helpers/api-route-helpers";
 
 vi.mock("@/lib/app-service", () => ({
   createAppService: vi.fn(),
 }));
 
 import { POST } from "../route";
-import { getAuthToken } from "@/lib/auth/session";
 import { createAppService } from "@/lib/app-service";
 
-const mockGetAuthToken = vi.mocked(getAuthToken);
 const mockCreateAppService = vi.mocked(createAppService);
 
 const mockAppService = {
@@ -21,11 +15,12 @@ const mockAppService = {
 
 describe("POST /api/services/app-service/jobs/app-summary", () => {
   beforeEach(() => {
+    setTestSession();
     mockCreateAppService.mockReturnValue(mockAppService as never);
   });
 
   it("returns 401 when no auth token is available", async () => {
-    mockGetAuthToken.mockResolvedValue(undefined);
+    clearTestCookies();
 
     const request = mockNextRequest({ method: "POST", body: {} });
 
@@ -39,7 +34,6 @@ describe("POST /api/services/app-service/jobs/app-summary", () => {
   });
 
   it("returns summary on success", async () => {
-    mockGetAuthToken.mockResolvedValue("test-token");
     const summaryData = { GenomeAssembly2: 3, BLAST: 12 };
     mockAppService.queryAppSummaryFiltered.mockResolvedValue(summaryData);
 
@@ -53,7 +47,6 @@ describe("POST /api/services/app-service/jobs/app-summary", () => {
   });
 
   it("passes include_archived through to the service", async () => {
-    mockGetAuthToken.mockResolvedValue("test-token");
     mockAppService.queryAppSummaryFiltered.mockResolvedValue({});
 
     const request = mockNextRequest({
@@ -69,7 +62,6 @@ describe("POST /api/services/app-service/jobs/app-summary", () => {
   });
 
   it("returns 500 when an error is thrown", async () => {
-    mockGetAuthToken.mockResolvedValue("test-token");
     mockAppService.queryAppSummaryFiltered.mockRejectedValue(
       new Error("Timeout"),
     );

@@ -1,5 +1,6 @@
 export type ApiErrorCode =
-  | "unauthenticated" // 401
+  | "session_expired" // app session guard 401
+  | "unauthenticated" // upstream/auth service 401
   | "forbidden" // 403
   | "not_found" // 404
   | "validation" // 400

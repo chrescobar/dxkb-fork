@@ -100,7 +100,10 @@ function isInternalApi(url: URL, appHost: string | undefined): boolean {
   return url.host === appHost && url.pathname.startsWith("/api/");
 }
 
-function isBackendRequest(requestUrl: string, appHost: string | undefined): boolean {
+function isBackendRequest(
+  requestUrl: string,
+  appHost: string | undefined,
+): boolean {
   let parsed: URL;
   try {
     parsed = new URL(requestUrl);
@@ -117,7 +120,8 @@ function matchesOverride(
   method: string,
   parsedBody: unknown,
 ): boolean {
-  if (override.method && override.method.toUpperCase() !== method.toUpperCase()) return false;
+  if (override.method && override.method.toUpperCase() !== method.toUpperCase())
+    return false;
   if (typeof override.url === "string") {
     if (!requestUrl.includes(override.url)) return false;
   } else if (!override.url.test(requestUrl)) {
@@ -153,7 +157,10 @@ function parseJsonBody(raw: string | null): unknown {
  * Non-backend requests (Next.js assets, fonts, CDN) pass through unchanged regardless of strict
  * mode.
  */
-export async function applyBackendMocks(page: Page, options: BackendMockOptions = {}): Promise<void> {
+export async function applyBackendMocks(
+  page: Page,
+  options: BackendMockOptions = {},
+): Promise<void> {
   const { har, overrides = [], strict = true } = options;
   // Merge defaults after caller overrides so caller-provided entries win (first match wins).
   const effectiveOverrides = [...overrides, ...defaultOverrides];
@@ -172,7 +179,9 @@ export async function applyBackendMocks(page: Page, options: BackendMockOptions 
       }
       const record = `${route.request().method()} ${url}`;
       unmockedBackendRequests.get(page)?.push(record);
-      console.warn(`[applyBackendMocks/strict] aborting unmocked backend request: ${record}`);
+      console.warn(
+        `[applyBackendMocks/strict] aborting unmocked backend request: ${record}`,
+      );
       await route.abort("failed");
     });
   }
@@ -183,7 +192,9 @@ export async function applyBackendMocks(page: Page, options: BackendMockOptions 
   //    the recorder's port. Materialize a per-worker copy with the placeholder swapped to
   //    the live app host (cached by harPath+liveOrigin), then point routeFromHAR at it.
   if (har) {
-    const harPath = path.isAbsolute(har) ? har : path.resolve(process.cwd(), "e2e/fixtures/hars", har);
+    const harPath = path.isAbsolute(har)
+      ? har
+      : path.resolve(process.cwd(), "e2e/fixtures/hars", har);
     if (!fs.existsSync(harPath)) {
       throw new Error(
         `HAR file not found: ${harPath}. Record it first with \`pnpm e2e:record ${path.basename(har, ".har")}\`.`,
@@ -231,9 +242,10 @@ export async function applyBackendMocks(page: Page, options: BackendMockOptions 
         return;
       }
       const counter = counterFor(override);
-      const bodyFn = typeof override.body === "function"
-        ? (override.body as (ctx: JsonOverrideBodyContext) => unknown)
-        : null;
+      const bodyFn =
+        typeof override.body === "function"
+          ? (override.body as (ctx: JsonOverrideBodyContext) => unknown)
+          : null;
       const resolvedBody: unknown = bodyFn
         ? bodyFn({ parsedBody, callIndex: counter.value })
         : override.body;
@@ -242,7 +254,10 @@ export async function applyBackendMocks(page: Page, options: BackendMockOptions 
         status: override.status ?? 200,
         contentType: "application/json",
         headers: override.headers ?? {},
-        body: typeof resolvedBody === "string" ? resolvedBody : JSON.stringify(resolvedBody ?? {}),
+        body:
+          typeof resolvedBody === "string"
+            ? resolvedBody
+            : JSON.stringify(resolvedBody ?? {}),
       });
     });
   }
@@ -297,21 +312,34 @@ export const test = base.extend({
 export { expect } from "@playwright/test";
 
 export const bvbrcCookies = [
-  { name: "bvbrc_token", value: "e2e-test-token", path: "/", domain: "127.0.0.1" },
-  { name: "bvbrc_user_id", value: "e2e-test-user@patricbrc.org", path: "/", domain: "127.0.0.1" },
-  { name: "bvbrc_realm", value: "patricbrc.org", path: "/", domain: "127.0.0.1" },
   {
-    name: "user_profile",
-    value: encodeURIComponent(
-      JSON.stringify({
-        id: "e2e-test-user@patricbrc.org",
-        email: "e2e@example.com",
-        first_name: "E2E",
-        last_name: "User",
-      }),
-    ),
+    name: "bvbrc_token",
+    value: "e2e-test-token",
     path: "/",
     domain: "127.0.0.1",
+    httpOnly: true,
+    secure: true,
+    sameSite: "Strict" as const,
+    expires: 4070908800,
   },
-  { name: "user_id", value: "e2e-test-user@patricbrc.org", path: "/", domain: "127.0.0.1" },
+  {
+    name: "bvbrc_user_id",
+    value: "e2e-test-user@patricbrc.org",
+    path: "/",
+    domain: "127.0.0.1",
+    httpOnly: true,
+    secure: true,
+    sameSite: "Strict" as const,
+    expires: 4070908800,
+  },
+  {
+    name: "bvbrc_realm",
+    value: "patricbrc.org",
+    path: "/",
+    domain: "127.0.0.1",
+    httpOnly: true,
+    secure: true,
+    sameSite: "Strict" as const,
+    expires: 4070908800,
+  },
 ];

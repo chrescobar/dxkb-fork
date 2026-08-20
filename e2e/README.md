@@ -63,7 +63,7 @@ The permissive catch-all `permissiveBackendOverrides` (from `e2e/fixtures/overri
 
 ### Server-side backends: loopback isolation
 
-`page.route()` only intercepts *browser* requests. Server components and API route handlers make their own outbound fetches to `APP_SERVICE_URL`, `WORKSPACE_API_URL`, `USER_URL`, etc. before the page is streamed, and those fetches bypass Playwright entirely — previously they failed with "JSON-RPC call failed: HTTP error! status: 500" and flooded the webServer log on every render.
+`page.route()` only intercepts _browser_ requests. Server components and API route handlers make their own outbound fetches to `APP_SERVICE_URL`, `WORKSPACE_API_URL`, `USER_URL`, etc. before the page is streamed, and those fetches bypass Playwright entirely — previously they failed with "JSON-RPC call failed: HTTP error! status: 500" and flooded the webServer log on every render.
 
 To fix this the test server runs through a wrapper that seeds the right env vars before Next starts:
 
@@ -83,7 +83,7 @@ If you add a new server-side backend dependency, add its env var to `.env.e2e.te
 import { SignInPage } from "../pages";
 
 const signIn = new SignInPage(page);
-await signIn.goto("/workspace");          // goto with optional redirect=
+await signIn.goto("/workspace"); // goto with optional redirect=
 await signIn.fill(username, password);
 await signIn.submit();
 await signIn.expectInlineError(/invalid/i);
@@ -102,7 +102,7 @@ Add a new page object when a spec starts repeating the same selector tuple twice
 Steps:
 
 1. `cp .env.e2e.example .env.e2e` and fill in valid BV-BRC creds (gitignored — never commit).
-2. `pnpm build && pnpm start` — recording requires the production build because `pnpm dev` (Turbopack) injects HMR plumbing that blocks React hydration in headless Chromium, leaving the auth boundary stuck in `loading`.
+2. `pnpm build && pnpm start` — recording uses the production build to avoid development-only HMR traffic and keep HAR output deterministic.
 3. `pnpm e2e:record auth-sign-in` (or your journey name).
 4. The recorder filters non-backend traffic (skips `_next/static`, fonts, images), scrubs the live username/password/email out of all bodies, and rewrites the recorded host to `http://e2e-har-replay.local`. `applyBackendMocks` swaps that placeholder back to the active app host at replay time, so HARs are port-portable across `E2E_PORT` values.
 5. Commit the resulting `.har`. Re-record when the API contract drifts; the bi-weekly cron does this automatically (see below).
@@ -130,10 +130,9 @@ import { harOverridesFor } from "../scripts/har-overrides";
 
 await applyBackendMocks(page, {
   overrides: [
-    // Layered first so the AuthBoundary's hydration refresh sees a signed-in
-    // user. Without this, the HAR's pre-sign-in `/api/auth/get-session` entry
-    // (recorded before sign-in fired) would return `{user:null}` and the
-    // ProtectedRouteGuard would redirect to /sign-in.
+    // Endpoint-specific profile and mutation responses used by this journey.
+    // Signed-in identity itself comes from the production-named cookies and
+    // server-side profile validation.
     ...authSessionOverrides,
     ...harOverridesFor("workspace-browse.har"),
     // Mops up anything the HAR didn't capture (future code paths) so strict

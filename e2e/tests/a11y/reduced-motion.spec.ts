@@ -26,8 +26,13 @@ async function getMotionDurations(
     if (!el) return [];
     const style = window.getComputedStyle(el);
     const parse = (raw: string) =>
-      (raw || "0s").split(",").map((d) => parseFloat(d) * (d.includes("ms") ? 1 : 1000));
-    return [...parse(style.transitionDuration), ...parse(style.animationDuration)];
+      (raw || "0s")
+        .split(",")
+        .map((d) => parseFloat(d) * (d.includes("ms") ? 1 : 1000));
+    return [
+      ...parse(style.transitionDuration),
+      ...parse(style.animationDuration),
+    ];
   }, selector);
 }
 
@@ -36,7 +41,11 @@ test.describe("prefers-reduced-motion", () => {
     page,
   }) => {
     await applyBackendMocks(page, {
-      overrides: [...authSessionOverrides, ...workspacePopulatedOverrides, ...permissiveBackendOverrides],
+      overrides: [
+        ...authSessionOverrides,
+        ...workspacePopulatedOverrides,
+        ...permissiveBackendOverrides,
+      ],
     });
     await page.goto("/workspace");
     await page.waitForURL(/\/workspace\/[^/]+\/home/, { timeout: 10_000 });
@@ -47,11 +56,19 @@ test.describe("prefers-reduced-motion", () => {
     const mediaReducedMotion = await page.evaluate(
       () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
     );
-    expect(mediaReducedMotion, "reducedMotion context option should activate the media query").toBe(true);
+    expect(
+      mediaReducedMotion,
+      "reducedMotion context option should activate the media query",
+    ).toBe(true);
 
     // Verify the workspace sidebar does not have long CSS transitions.
-    const sidebarDurations = await getMotionDurations(page, "aside, nav, [data-sidebar]");
-    const longTransitions = sidebarDurations.filter((d) => d > suppressedDurationMs);
+    const sidebarDurations = await getMotionDurations(
+      page,
+      "aside, nav, [data-sidebar]",
+    );
+    const longTransitions = sidebarDurations.filter(
+      (d) => d > suppressedDurationMs,
+    );
     expect(
       longTransitions,
       `Sidebar has CSS transitions exceeding ${String(suppressedDurationMs)}ms with reduced-motion active: ${longTransitions.join(", ")}ms`,
@@ -64,10 +81,7 @@ test.describe("prefers-reduced-motion", () => {
   }) => {
     await context.clearCookies();
     await applyBackendMocks(page, {
-      overrides: [
-        { url: "/api/auth/get-session", method: "GET", status: 200, body: { user: null, session: null } } as const,
-        ...permissiveBackendOverrides,
-      ],
+      overrides: [...permissiveBackendOverrides],
     });
     await page.goto("/");
     await page.waitForLoadState("networkidle");
@@ -75,10 +89,16 @@ test.describe("prefers-reduced-motion", () => {
     const mediaReducedMotion = await page.evaluate(
       () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
     );
-    expect(mediaReducedMotion, "reducedMotion context option should activate the media query").toBe(true);
+    expect(
+      mediaReducedMotion,
+      "reducedMotion context option should activate the media query",
+    ).toBe(true);
 
     // Check main content wrapper for transition-duration and animation-duration overrides.
-    const mainDurations = await getMotionDurations(page, "main, [class*='hero'], [class*='animate']");
+    const mainDurations = await getMotionDurations(
+      page,
+      "main, [class*='hero'], [class*='animate']",
+    );
     const longMotion = mainDurations.filter((d) => d > suppressedDurationMs);
     expect(
       longMotion,

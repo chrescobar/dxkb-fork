@@ -17,7 +17,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 
-import { apiFetch } from "@/lib/auth/fetch";
+import { useAuthActions } from "@/lib/auth/provider";
 import type { UserProfile } from "@/lib/auth/types";
 
 interface PreferencesFormProps {
@@ -26,6 +26,7 @@ interface PreferencesFormProps {
 
 export function PreferencesForm({ profile }: PreferencesFormProps) {
   const queryClient = useQueryClient();
+  const { updateProfile } = useAuthActions();
   const [defaultJobFolder, setDefaultJobFolder] = useState(
     profile.settings?.default_job_folder ?? "",
   );
@@ -40,28 +41,14 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
 
     setIsSubmitting(true);
     const hasExistingSettings = profile.settings !== undefined;
-    await apiFetch("/api/auth/profile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify([
-        {
-          op: hasExistingSettings ? "replace" : "add",
-          path: "/settings",
-          value: { default_job_folder: defaultJobFolder },
-        },
-      ]),
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          const err = (await response.json()) as {
-            error?: string;
-            message?: string;
-          };
-          toast.error(
-            err.error ?? err.message ?? "Failed to update preferences.",
-          );
-          return;
-        }
+    await updateProfile([
+      {
+        op: hasExistingSettings ? "replace" : "add",
+        path: "/settings",
+        value: { default_job_folder: defaultJobFolder },
+      },
+    ])
+      .then(async () => {
         toast.success("Preferences updated successfully.");
         await queryClient.invalidateQueries({ queryKey: ["user-profile"] });
       })
@@ -109,7 +96,7 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
                 </Button>
               )}
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Set a default folder for job outputs. Leave empty to use home
               folder.
             </p>

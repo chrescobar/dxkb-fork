@@ -1,23 +1,18 @@
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
 
-const { mockCookieStore } = vi.hoisted(() => ({
-  mockCookieStore: { get: vi.fn(), set: vi.fn() },
-}));
-
-vi.mock("next/headers", () => ({
-  cookies: vi.fn(() => Promise.resolve(mockCookieStore)),
-}));
-
-import { mockNextRequest } from "@/test-helpers/api-route-helpers";
+import {
+  clearTestCookies,
+  mockNextRequest,
+  setTestSession,
+} from "@/test-helpers/api-route-helpers";
 import { POST } from "../route";
 
 const userUrl = "https://user.test/user";
 
 beforeEach(() => {
   process.env.USER_URL = userUrl;
-  mockCookieStore.get.mockReset();
-  mockCookieStore.set.mockReset();
+  clearTestCookies();
 });
 
 afterEach(() => {
@@ -25,11 +20,7 @@ afterEach(() => {
 });
 
 function setSessionCookies(token: string, userId: string) {
-  mockCookieStore.get.mockImplementation((name: string) => {
-    if (name === "bvbrc_token") return { value: token };
-    if (name === "bvbrc_user_id") return { value: userId };
-    return undefined;
-  });
+  setTestSession({ token, userId });
 }
 
 describe("POST /api/auth/change-password", () => {
@@ -52,7 +43,7 @@ describe("POST /api/auth/change-password", () => {
   });
 
   it("returns 401 when no session cookies are set so the session.read() returns null", async () => {
-    mockCookieStore.get.mockReturnValue(undefined);
+    clearTestCookies();
 
     const request = mockNextRequest({
       method: "POST",

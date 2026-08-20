@@ -20,9 +20,8 @@ import {
 } from "@/components/ui/navigation-menu";
 import { SearchBar } from "@/components/search/search-bar";
 import { buttonVariants } from "@/components/ui/button-variants";
-import { Skeleton } from "@/components/ui/skeleton";
 import Logo from "@/components/ui/logo";
-import { useAuth } from "@/lib/auth/hooks";
+import { useAuth } from "@/lib/auth/provider";
 import { UserAvatarDropdown } from "@/components/navbars/user-avatar-dropdown";
 import { WorkspaceDropdownContent } from "@/components/navbars/workspace-dropdown-content";
 import { workspaceUsername } from "@/lib/services/workspace/path-utils";
@@ -40,15 +39,14 @@ const serviceColumns = [
 ];
 
 const DesktopNavbar = () => {
-  const { isAuthenticated, user, status } = useAuth();
-  const isLoading = status === "loading";
+  const { isAuthenticated, user } = useAuth();
   const wsUsername = workspaceUsername(user);
 
   const pathname = usePathname();
   const isHome = pathname === "/";
 
   return (
-    <header className="hidden flex-col bg-primary text-white lg:flex">
+    <header className="bg-primary hidden flex-col text-white lg:flex">
       <div className="flex h-18 items-center justify-between p-4">
         <div className="flex shrink-0 items-center space-x-2">
           <Link id="dxkb-logo" href="/" className="shrink-0">
@@ -64,7 +62,7 @@ const DesktopNavbar = () => {
             v{process.env.NEXT_PUBLIC_APP_VERSION}
           </span>
 
-          <NavigationMenu className="hidden w-full items-center justify-between bg-primary font-bold lg:flex">
+          <NavigationMenu className="bg-primary hidden w-full items-center justify-between font-bold lg:flex">
             <NavigationMenuList>
               <NavigationMenuItem id="organisms-nav">
                 <NavigationMenuTrigger className="bg-primary">
@@ -96,7 +94,7 @@ const DesktopNavbar = () => {
                       <div key={colIdx} className="space-y-0">
                         {column.map(([key, section]) => (
                           <div key={key}>
-                            <h4 className="my-0.5 rounded-md bg-primary p-2 text-sm font-bold text-white">
+                            <h4 className="bg-primary my-0.5 rounded-md p-2 text-sm font-bold text-white">
                               {section.title}
                             </h4>
                             <div className="space-y-0">
@@ -110,12 +108,12 @@ const DesktopNavbar = () => {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         aria-label={`${item.title} (opens in a new tab)`}
-                                        className="my-0.5 block p-2 font-medium hover:bg-secondary/20"
+                                        className="hover:bg-secondary/20 my-0.5 block p-2 font-medium"
                                       />
                                     ) : (
                                       <Link
                                         href={item.href}
-                                        className="my-0.5 block p-2 font-medium hover:bg-secondary/20"
+                                        className="hover:bg-secondary/20 my-0.5 block p-2 font-medium"
                                       />
                                     )
                                   }
@@ -176,14 +174,7 @@ const DesktopNavbar = () => {
         <div className="flex items-center space-x-2">
           <NavbarThemeSwitcher />
           <div className="flex items-center space-x-2">
-            {isLoading && (
-              <div className="flex items-center space-x-2">
-                <Skeleton className="h-8 w-16 bg-white/20" />
-                <Skeleton className="h-8 w-20 bg-white/20" />
-              </div>
-            )}
-
-            {!isLoading && !isAuthenticated && (
+            {!isAuthenticated && (
               <>
                 <Link
                   href="/sign-in"
@@ -209,7 +200,7 @@ const DesktopNavbar = () => {
               </>
             )}
 
-            {!isLoading && isAuthenticated && (
+            {isAuthenticated && (
               <>
                 <JobStatusPill />
                 <UserAvatarDropdown />
@@ -238,7 +229,7 @@ function ListItem({
       <NavigationMenuLink render={<Link href={href} target={target} />}>
         <div className="flex flex-col gap-1 text-sm">
           <div className="leading-none font-medium">{title}</div>
-          <div className="line-clamp-2 text-muted-foreground">{children}</div>
+          <div className="text-muted-foreground line-clamp-2">{children}</div>
         </div>
       </NavigationMenuLink>
     </li>

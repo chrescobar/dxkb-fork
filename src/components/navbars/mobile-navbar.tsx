@@ -46,8 +46,7 @@ import { SearchBar } from "@/components/search/search-bar";
 import { openCommandPalette } from "@/components/search/command-palette-events";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button-variants";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useAuth } from "@/lib/auth/hooks";
+import { useAuth } from "@/lib/auth/provider";
 import Logo from "@/components/ui/logo";
 import { UserAvatarDropdown } from "@/components/navbars/user-avatar-dropdown";
 import { loadFavorites } from "@/lib/services/workspace/favorites";
@@ -76,19 +75,19 @@ function SectionTrigger({
   children: React.ReactNode;
 }) {
   return (
-    <CollapsibleTrigger className="group flex w-full items-center gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40 data-open:bg-secondary/5">
-      <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-secondary/10 text-secondary transition-colors group-hover:bg-secondary/20 group-data-open:bg-secondary/20">
+    <CollapsibleTrigger className="group hover:bg-muted/40 data-open:bg-secondary/5 flex w-full items-center gap-3 px-4 py-3.5 transition-colors">
+      <div className="bg-secondary/10 text-secondary group-hover:bg-secondary/20 group-data-open:bg-secondary/20 flex size-8 shrink-0 items-center justify-center rounded-lg transition-colors">
         <Icon className="size-4" />
       </div>
-      <span className="flex-1 text-left text-sm font-semibold text-foreground">
+      <span className="text-foreground flex-1 text-left text-sm font-semibold">
         {children}
       </span>
       {count != null && (
-        <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-bold text-white">
+        <span className="bg-primary rounded-full px-2.5 py-0.5 text-xs font-bold text-white">
           {count}
         </span>
       )}
-      <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-data-open:rotate-180" />
+      <ChevronDown className="text-muted-foreground size-4 shrink-0 transition-transform duration-200 group-data-open:rotate-180" />
     </CollapsibleTrigger>
   );
 }
@@ -98,8 +97,7 @@ function SectionTrigger({
 /* ------------------------------------------------------------------ */
 
 const useMobileNavbar = () => {
-  const { isAuthenticated, user, status } = useAuth();
-  const isLoading = status === "loading";
+  const { isAuthenticated, user } = useAuth();
   const wsUsername = workspaceUsername(user);
   const pathname = usePathname();
   const isHome = pathname === "/";
@@ -125,8 +123,8 @@ const useMobileNavbar = () => {
     recentFolders.length;
 
   return (
-    <header className="flex flex-col bg-primary lg:hidden">
-      <div className="flex items-center justify-between p-4 text-primary-foreground">
+    <header className="bg-primary flex flex-col lg:hidden">
+      <div className="text-primary-foreground flex items-center justify-between p-4">
         <div className="flex items-center gap-4">
           <Sheet>
             <SheetTrigger
@@ -139,7 +137,7 @@ const useMobileNavbar = () => {
                 >
                   <Menu
                     aria-hidden="true"
-                    className="scale-125 text-primary-foreground transition-transform duration-300 group-hover:scale-150"
+                    className="text-primary-foreground scale-125 transition-transform duration-300 group-hover:scale-150"
                     data-icon="inline-start"
                   />
                 </Button>
@@ -154,7 +152,7 @@ const useMobileNavbar = () => {
                 Mobile Navigation Menu
               </SheetTitle>
 
-              <div className="relative bg-primary p-4 pb-5">
+              <div className="bg-primary relative p-4 pb-5">
                 <div className="flex items-start gap-1">
                   <Logo
                     variant="logo-white"
@@ -167,7 +165,7 @@ const useMobileNavbar = () => {
                     v{process.env.NEXT_PUBLIC_APP_VERSION}
                   </span>
                 </div>
-                <div className="absolute inset-x-0 bottom-0 h-3 bg-linear-to-b from-primary to-transparent" />
+                <div className="from-primary absolute inset-x-0 bottom-0 h-3 bg-linear-to-b to-transparent" />
               </div>
 
               <nav className="flex flex-col pb-6">
@@ -187,7 +185,7 @@ const useMobileNavbar = () => {
                   </CollapsibleContent>
                 </Collapsible>
 
-                <div className="mx-4 h-px bg-border" />
+                <div className="bg-border mx-4 h-px" />
 
                 {/* Services */}
                 <Collapsible>
@@ -227,7 +225,7 @@ const useMobileNavbar = () => {
                   </CollapsibleContent>
                 </Collapsible>
 
-                <div className="mx-4 h-px bg-border" />
+                <div className="bg-border mx-4 h-px" />
 
                 {/* Workspace */}
                 <Collapsible>
@@ -235,111 +233,104 @@ const useMobileNavbar = () => {
                     Workspace
                   </SectionTrigger>
                   <CollapsibleContent className="*:data-[slot=collapsible-divider]:hidden">
-                    {isLoading ? (
-                      <div className="space-y-2 px-8 py-3">
-                        <Skeleton className="h-5 w-24 bg-muted" />
-                        <Skeleton className="h-5 w-32 bg-muted" />
-                      </div>
-                    ) : (
-                      <div className="flex flex-col gap-1.5 px-5 pt-2 pb-3">
-                        <MobileDecoratedSubSection alwaysShow>
-                          <MobileSubSectionLabel>
-                            {workspaceNavItems.workspaces.title}
-                          </MobileSubSectionLabel>
-                          {workspaceNavItems.workspaces.items.map((item) => (
-                            <MobileNavLink
-                              key={item.title}
-                              href={resolveWorkspaceHref(
-                                item,
-                                wsUsername,
-                                isAuthenticated,
-                              )}
-                            >
-                              {item.title}
-                            </MobileNavLink>
-                          ))}
-                        </MobileDecoratedSubSection>
-
-                        <MobileDecoratedSubSection alwaysShow>
-                          <MobileSubSectionLabel>
-                            {workspaceNavItems.data.title}
-                          </MobileSubSectionLabel>
-                          {workspaceNavItems.data.items.map((item) => (
-                            <MobileNavLink
-                              key={item.title}
-                              href={resolveWorkspaceHref(
-                                item,
-                                wsUsername,
-                                isAuthenticated,
-                              )}
-                            >
-                              {item.title}
-                            </MobileNavLink>
-                          ))}
-                        </MobileDecoratedSubSection>
-
-                        {isAuthenticated && favoritePaths.length > 0 && (
-                          <MobileDecoratedSubSection
-                            alwaysShow
-                            dotColor="bg-amber-400/50"
-                            lineColor="bg-amber-400/25"
-                            curveColor="border-amber-400/25"
+                    <div className="flex flex-col gap-1.5 px-5 pt-2 pb-3">
+                      <MobileDecoratedSubSection alwaysShow>
+                        <MobileSubSectionLabel>
+                          {workspaceNavItems.workspaces.title}
+                        </MobileSubSectionLabel>
+                        {workspaceNavItems.workspaces.items.map((item) => (
+                          <MobileNavLink
+                            key={item.title}
+                            href={resolveWorkspaceHref(
+                              item,
+                              wsUsername,
+                              isAuthenticated,
+                            )}
                           >
-                            <MobileSubSectionLabel>
-                              Favorites{" "}
-                              <Star className="size-3 fill-amber-400 text-amber-400" />
-                            </MobileSubSectionLabel>
-                            {favoritePaths.map((path) => (
-                              <MobileNavLink
-                                key={path}
-                                href={buildFolderHref(path)}
-                              >
-                                {getWorkspaceFolderDisplayName(path)}
-                              </MobileNavLink>
-                            ))}
-                          </MobileDecoratedSubSection>
-                        )}
+                            {item.title}
+                          </MobileNavLink>
+                        ))}
+                      </MobileDecoratedSubSection>
 
-                        {isAuthenticated && recentFolders.length > 0 && (
-                          <MobileDecoratedSubSection alwaysShow>
-                            <MobileSubSectionLabel>
-                              Recently Visited
-                            </MobileSubSectionLabel>
-                            {recentFolders.map((folder) => (
-                              <MobileNavLink
-                                key={folder.path}
-                                href={buildFolderHref(folder.path)}
-                              >
-                                {getWorkspaceFolderDisplayName(folder.path)}
-                              </MobileNavLink>
-                            ))}
-                          </MobileDecoratedSubSection>
-                        )}
+                      <MobileDecoratedSubSection alwaysShow>
+                        <MobileSubSectionLabel>
+                          {workspaceNavItems.data.title}
+                        </MobileSubSectionLabel>
+                        {workspaceNavItems.data.items.map((item) => (
+                          <MobileNavLink
+                            key={item.title}
+                            href={resolveWorkspaceHref(
+                              item,
+                              wsUsername,
+                              isAuthenticated,
+                            )}
+                          >
+                            {item.title}
+                          </MobileNavLink>
+                        ))}
+                      </MobileDecoratedSubSection>
 
-                        {!isAuthenticated && (
-                          <div className="mt-4 rounded-xl border border-secondary/20 bg-linear-to-br from-secondary/5 to-accent/5 p-4">
-                            <p className="mb-3 text-sm font-medium text-foreground/80">
-                              Sign in to access your full workspace.
-                            </p>
-                            <Link
-                              href="/sign-in?redirect=/workspace"
-                              className={buttonVariants({
-                                variant: "default",
-                                size: "sm",
-                                className:
-                                  "bg-secondary hover:bg-secondary/90 w-fit",
-                              })}
+                      {isAuthenticated && favoritePaths.length > 0 && (
+                        <MobileDecoratedSubSection
+                          alwaysShow
+                          dotColor="bg-amber-400/50"
+                          lineColor="bg-amber-400/25"
+                          curveColor="border-amber-400/25"
+                        >
+                          <MobileSubSectionLabel>
+                            Favorites{" "}
+                            <Star className="size-3 fill-amber-400 text-amber-400" />
+                          </MobileSubSectionLabel>
+                          {favoritePaths.map((path) => (
+                            <MobileNavLink
+                              key={path}
+                              href={buildFolderHref(path)}
                             >
-                              Sign In
-                            </Link>
-                          </div>
-                        )}
-                      </div>
-                    )}
+                              {getWorkspaceFolderDisplayName(path)}
+                            </MobileNavLink>
+                          ))}
+                        </MobileDecoratedSubSection>
+                      )}
+
+                      {isAuthenticated && recentFolders.length > 0 && (
+                        <MobileDecoratedSubSection alwaysShow>
+                          <MobileSubSectionLabel>
+                            Recently Visited
+                          </MobileSubSectionLabel>
+                          {recentFolders.map((folder) => (
+                            <MobileNavLink
+                              key={folder.path}
+                              href={buildFolderHref(folder.path)}
+                            >
+                              {getWorkspaceFolderDisplayName(folder.path)}
+                            </MobileNavLink>
+                          ))}
+                        </MobileDecoratedSubSection>
+                      )}
+
+                      {!isAuthenticated && (
+                        <div className="border-secondary/20 from-secondary/5 to-accent/5 mt-4 rounded-xl border bg-linear-to-br p-4">
+                          <p className="text-foreground/80 mb-3 text-sm font-medium">
+                            Sign in to access your full workspace.
+                          </p>
+                          <Link
+                            href="/sign-in?redirect=/workspace"
+                            className={buttonVariants({
+                              variant: "default",
+                              size: "sm",
+                              className:
+                                "bg-secondary hover:bg-secondary/90 w-fit",
+                            })}
+                          >
+                            Sign In
+                          </Link>
+                        </div>
+                      )}
+                    </div>
                   </CollapsibleContent>
                 </Collapsible>
 
-                <div className="mx-4 h-px bg-border" />
+                <div className="bg-border mx-4 h-px" />
 
                 {/* Resources */}
                 <Collapsible>
@@ -405,14 +396,7 @@ const useMobileNavbar = () => {
 
           <NavbarThemeSwitcher />
 
-          {isLoading && (
-            <div className="flex items-center space-x-2">
-              <Skeleton className="h-8 w-16 bg-white/20" />
-              <Skeleton className="h-8 w-20 bg-white/20" />
-            </div>
-          )}
-
-          {!isLoading && !isAuthenticated && (
+          {!isAuthenticated && (
             <>
               <Link
                 href="/sign-in"
@@ -438,7 +422,7 @@ const useMobileNavbar = () => {
             </>
           )}
 
-          {!isLoading && isAuthenticated && <UserAvatarDropdown />}
+          {isAuthenticated && <UserAvatarDropdown />}
         </div>
       </div>
 

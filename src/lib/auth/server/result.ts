@@ -1,4 +1,4 @@
-import type { AuthError, AuthErrorCode, Result } from "@/lib/auth/port";
+import type { AuthError, AuthErrorCode, Result } from "@/lib/auth/types";
 
 export function ok<T>(data: T): Result<T> {
   return { data, error: null };
@@ -12,13 +12,10 @@ export function fail<T>(
   return { data: null, error: { code, message, status } };
 }
 
-export function forwardError<T>(error: AuthError): Result<T> {
-  return { data: null, error };
-}
-
 export function networkFailure(cause: unknown, fallback: string): AuthError {
   return {
     message: cause instanceof Error ? cause.message : fallback,
     code: "network",
+    status: 502,
   };
 }

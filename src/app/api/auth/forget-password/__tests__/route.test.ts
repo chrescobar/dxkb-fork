@@ -47,23 +47,14 @@ describe("POST /api/auth/forget-password", () => {
     expect(handlerCalled).toBe(true);
   });
 
-  it("accepts email field as fallback", async () => {
-    server.use(
-      http.post("https://auth.test/reset", () => {
-        return new HttpResponse(null, { status: 200 });
-      }),
-    );
-
+  it("rejects the removed email field alias", async () => {
     const request = mockNextRequest({
       method: "POST",
       body: { email: "test@example.com" },
     });
 
     const response = await POST(request, {});
-    const data = (await response.json()) as { success?: boolean };
-
-    expect(response.status).toBe(200);
-    expect(data).toEqual({ success: true });
+    expect(response.status).toBe(400);
   });
 
   it("returns upstream error with message from JSON response", async () => {
@@ -104,7 +95,7 @@ describe("POST /api/auth/forget-password", () => {
     const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(500);
-    expect(data.error).toBe("Failed to send password reset email");
+    expect(data.error).toBe("not json");
   });
 
   it("returns 502 when a network exception is thrown", async () => {

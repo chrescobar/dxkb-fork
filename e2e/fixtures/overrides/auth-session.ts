@@ -3,7 +3,6 @@ import type { JsonOverride } from "../../mocks/backends";
 export const mockUserProfile = {
   id: "e2e-test-user@patricbrc.org",
   username: "e2e-test-user@patricbrc.org",
-  token: "e2e-test-token",
   email: "e2e@example.com",
   email_verified: true,
   first_name: "E2E",
@@ -13,30 +12,17 @@ export const mockUserProfile = {
 
 export const authSessionOverrides: JsonOverride[] = [
   {
-    url: "/api/auth/get-session",
-    method: "GET",
-    body: {
-      user: mockUserProfile,
-      session: { token: "e2e-test-token", expires_at: "2099-01-01T00:00:00Z" },
-    },
-  },
-  {
     url: "/api/auth/profile",
     method: "GET",
-    body: { user: mockUserProfile },
+    body: mockUserProfile,
   },
   {
     url: "/api/auth/sign-in/email",
     method: "POST",
     body: {
       user: mockUserProfile,
-      session: { token: "e2e-test-token", expires_at: "2099-01-01T00:00:00Z" },
+      session: { token: "", expiresAt: "2099-01-01T00:00:00.000Z" },
     },
-  },
-  {
-    url: "/api/auth/sign-out",
-    method: "POST",
-    body: { success: true },
   },
   {
     url: "/api/auth/ensure-workspace",

@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { JsonRpcError, jsonRpcErrorCodes } from "@/lib/jsonrpc-client";
-import type { AuthErrorCode } from "@/lib/auth/port";
+import type { AuthErrorCode } from "@/lib/auth/types";
 import { statusToErrorCode } from "@/lib/api/types";
 
 const authErrorCodes: readonly AuthErrorCode[] = [
@@ -9,6 +9,7 @@ const authErrorCodes: readonly AuthErrorCode[] = [
   "unauthorized",
   "network",
   "service_unavailable",
+  "rate_limited",
   "validation",
   "forbidden",
   "not_found",
@@ -60,6 +61,8 @@ export function statusFor(error: {
       return 409;
     case "validation":
       return 400;
+    case "rate_limited":
+      return 429;
     case "service_unavailable":
       return 503;
     case "network":
@@ -122,6 +125,10 @@ export function errorResponse(
   );
 }
 
+export async function parseJsonBody<T>(request: NextRequest): Promise<T> {
+  return (await request.json().catch(() => ({}))) as T;
+}
+
 export async function toResponse(
   fn: () => Promise<NextResponse>,
 ): Promise<NextResponse> {
@@ -136,6 +143,5 @@ export async function toResponse(
 export function withErrorHandling<TCtx = object>(
   handler: (req: NextRequest, ctx: TCtx) => Promise<NextResponse>,
 ): (req: NextRequest, ctx: TCtx) => Promise<NextResponse> {
-  return (req: NextRequest, ctx: TCtx) =>
-    toResponse(() => handler(req, ctx));
+  return (req: NextRequest, ctx: TCtx) => toResponse(() => handler(req, ctx));
 }

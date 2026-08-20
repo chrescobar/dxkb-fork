@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth/server/instance";
+import { withAuth } from "@/lib/auth/server/route";
 import { getRequiredEnv } from "@/lib/env";
 
 function isAllowedShockUrl(urlString: string, allowedOrigins: string): boolean {
@@ -16,7 +16,7 @@ function isAllowedShockUrl(urlString: string, allowedOrigins: string): boolean {
  * Proxy route: accepts a file and Shock node URL, then PUTs the file to Shock with auth.
  * Keeps the BV-BRC token server-side and avoids CORS.
  */
-export const POST = auth.route(async (request: NextRequest, { token }) => {
+export const POST = withAuth(async (request: NextRequest, { token }) => {
   try {
     let allowedShockOrigins: string;
     try {

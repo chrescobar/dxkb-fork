@@ -1,0 +1,153 @@
+src/app/api/auth/profile/route.ts
+  s_0f5e29c3ee7cb4::t_bb1e6571ebefff 8
+  s_0f5e29c3ee7cb4::t_96314a8d143b0d 34
+src/app/api/auth/sign-in/email/__tests__/route.test.ts
+  s_0f5e29c3ee7cb4::t_ae5effb6f01f04 57-62
+src/lib/forms/settings/settings-form-utils.ts
+  s_0f5e29c3ee7cb4::t_ee01c6a0cd41ce 60-61
+  s_0f5e29c3ee7cb4::t_7f3491d9279262 3
+src/app/api/auth/sign-up/email/__tests__/route.test.ts
+  s_0f5e29c3ee7cb4::t_305daa625e1d65 168
+  s_0f5e29c3ee7cb4::t_4b8a5d3a222bb6 153
+  s_0f5e29c3ee7cb4::t_80206b1ad3d943 86-91
+  s_0f5e29c3ee7cb4::t_3127b820c7721f 183-195,246-258
+src/components/search/welcome-search.tsx
+  s_0f5e29c3ee7cb4::t_fcf0ea5ea45c5d 19-26
+  s_0f5e29c3ee7cb4::t_0afcc9636ae085 42
+  s_0f5e29c3ee7cb4::t_895477ba355f1c 14
+src/app/workspace/page.tsx
+  s_0f5e29c3ee7cb4::t_03820e103dbc38 6-7
+  s_0f5e29c3ee7cb4::t_8f1e9707b0e4e1 2
+src/lib/auth/server/adapters/__tests__/bvbrc-identity.test.ts
+  s_0f5e29c3ee7cb4::t_902edbaf07024d 4
+  s_0f5e29c3ee7cb4::t_34181989b32e96 226-228
+  s_0f5e29c3ee7cb4::t_6c881aa1613576 366
+  s_0f5e29c3ee7cb4::t_c1baff208c306b 182
+src/lib/auth/server/__tests__/route.test.ts
+  s_0f5e29c3ee7cb4::t_7885eb73081fce 134-138
+  s_0f5e29c3ee7cb4::t_e63ee5940f909a 69-74,79-80
+  s_0f5e29c3ee7cb4::t_096401f9c2b895 27-30
+  s_0f5e29c3ee7cb4::t_bafc316c8799d4 119-121
+src/app/api/auth/change-password/__tests__/route.test.ts
+  s_0f5e29c3ee7cb4::t_b3ad131e91358c 124,144
+  s_0f5e29c3ee7cb4::t_8786ed952cea07 127
+src/components/auth/su-banner.tsx
+  s_0f5e29c3ee7cb4::t_edc813e916772a 23
+  s_0f5e29c3ee7cb4::t_0703edf37d3069 9
+  s_0f5e29c3ee7cb4::t_1ad917da0209ac 5
+src/lib/auth/types.ts
+  s_0f5e29c3ee7cb4::t_f26cbea10203d1 15-37
+  s_0f5e29c3ee7cb4::t_dba51364b2ea26 61
+src/app/services/(genomics)/similar-genome-finder/actions.ts
+  s_0f5e29c3ee7cb4::t_05cf4e5e3962cd 211-212
+src/components/navbars/user-avatar-dropdown.tsx
+  s_0f5e29c3ee7cb4::t_441bba3e9b5201 43,45-46,48
+  s_0f5e29c3ee7cb4::t_ea2902c2750e3b 41-42
+  s_0f5e29c3ee7cb4::t_fe2a72568adbbb 120
+  s_0f5e29c3ee7cb4::t_08636e5232b970 153
+  s_0f5e29c3ee7cb4::t_21bc5fd04370b1 18-22
+src/app/api/auth/__tests__/auth-routes.integration.test.ts
+  s_0f5e29c3ee7cb4::t_7ff12b9bd71a21 27-31
+  s_0f5e29c3ee7cb4::t_e739b06f48d633 42-46
+src/app/services/(genomics)/blast/__tests__/page-database-types.test.tsx
+  s_0f5e29c3ee7cb4::t_06cb3455963330 11
+  s_0f5e29c3ee7cb4::t_2a7c354cf91372 19
+src/lib/auth/server/actions.ts
+  s_0f5e29c3ee7cb4::t_991c69b4765af1 28
+  s_0f5e29c3ee7cb4::t_0f8c4ff38681eb 265
+  s_0f5e29c3ee7cb4::t_7f5ad299cb278f 175-181
+src/lib/auth/provider.tsx
+  s_0f5e29c3ee7cb4::t_00eba7fd5093e0 18
+  s_0f5e29c3ee7cb4::t_f67ebb29d1ee85 56-68
+  s_0f5e29c3ee7cb4::t_3926ef0487c679 33
+  s_0f5e29c3ee7cb4::t_1ecf71955e759b 12
+  s_0f5e29c3ee7cb4::t_27fb78f1a6fad7 80,86
+  s_0f5e29c3ee7cb4::t_5c76179b0c4e30 101
+  s_0f5e29c3ee7cb4::t_6853d3134ef3d3 131-132,135,138-139,141
+e2e/tests/auth.spec.ts
+  s_0f5e29c3ee7cb4::t_01fdb03b2dce1d 370
+src/lib/auth/server/adapters/bvbrc-identity.ts
+  s_0f5e29c3ee7cb4::t_9f1de3c0a6df84 4
+  s_0f5e29c3ee7cb4::t_f05fc73e8aa869 11
+  s_0f5e29c3ee7cb4::t_750ecc02ce2df8 19-20
+  s_0f5e29c3ee7cb4::t_24d748c2fd2b30 94-103
+  s_0f5e29c3ee7cb4::t_3f3aca8d7cdae4 42-47,49-53
+  s_0f5e29c3ee7cb4::t_6a3b319cf5d3a8 228
+src/lib/auth/__tests__/provider.test.tsx
+  s_0f5e29c3ee7cb4::t_b47db49afaaa21 171
+  s_0f5e29c3ee7cb4::t_3b8b2bccd939e1 29,128,198,227,237
+  s_0f5e29c3ee7cb4::t_18334a46573de8 4
+  s_0f5e29c3ee7cb4::t_a5d589cfbe4f1b 170,172
+src/lib/auth/__tests__/client.test.ts
+  s_0f5e29c3ee7cb4::t_73c3fad0520b9e 4,117-119
+src/app/api/auth/forget-password/__tests__/route.test.ts
+  s_0f5e29c3ee7cb4::t_416be201f66ac5 60
+  s_0f5e29c3ee7cb4::t_bf05f319c93dca 79,98
+src/lib/auth/server/user-agent.ts
+  s_0f5e29c3ee7cb4::t_5eea408dfa1182 12
+src/lib/auth/server/result.ts
+  s_0f5e29c3ee7cb4::t_7c1fb1b870b4e1 15,17
+src/lib/auth/server/__tests__/actions.test.ts
+  s_0f5e29c3ee7cb4::t_e78b7cc9b59134 13
+  s_0f5e29c3ee7cb4::t_27c113a7d2bae8 37
+  s_0f5e29c3ee7cb4::t_5b75b69b6fb028 64
+  s_0f5e29c3ee7cb4::t_0489258f3bffdb 69
+  s_0f5e29c3ee7cb4::t_71f385aaab909a 237,284,427,431
+  s_0f5e29c3ee7cb4::t_6877649e91e6ac 244,299,303,358,362,453,457
+  s_0f5e29c3ee7cb4::t_d7be65037dcb05 68,73
+  s_0f5e29c3ee7cb4::t_218d0a3e6adf8e 367-369,376
+  s_0f5e29c3ee7cb4::t_ceca07b33f41d8 309-333
+src/app/services/(genomics)/genome-assembly/__tests__/page-rerun.test.tsx
+  s_0f5e29c3ee7cb4::t_0861b5c6263eca 19
+  s_0f5e29c3ee7cb4::t_9e63b3a37718f8 11
+src/test-helpers/api-route-helpers.ts
+  s_0f5e29c3ee7cb4::t_e07e80d050f1e3 4-11
+src/app/workspace/home/[[...path]]/page.tsx
+  s_0f5e29c3ee7cb4::t_eca044691b23b7 2
+  s_0f5e29c3ee7cb4::t_ffbfdaddf3e762 10-15
+src/app/workspace/shared/[[...path]]/page.tsx
+  s_0f5e29c3ee7cb4::t_cd7039609dae71 10-15
+  s_0f5e29c3ee7cb4::t_cad2435960d40d 2
+docs/troubleshooting/auth-login-issues.html
+  s_0f5e29c3ee7cb4::t_a6410b90711859 569-571
+  s_0f5e29c3ee7cb4::t_7212a4d373bcba 641-645
+  s_0f5e29c3ee7cb4::t_c88eda0f98131b 694-696
+src/components/navbars/__tests__/user-avatar-dropdown.test.tsx
+  s_0f5e29c3ee7cb4::t_6a6e752cd40264 15-16
+src/app/api/auth/profile/__tests__/route.test.ts
+  s_0f5e29c3ee7cb4::t_dada0743ffa57f 192
+  s_0f5e29c3ee7cb4::t_dfdaa8cb2c7374 35-47
+src/lib/auth/server/route.ts
+  s_0f5e29c3ee7cb4::t_c0c923e834b290 69-73
+  s_0f5e29c3ee7cb4::t_ac99b97558bf32 8
+  s_0f5e29c3ee7cb4::t_9db583f459d2a7 32-39
+src/components/settings/preferences-form.tsx
+  s_0f5e29c3ee7cb4::t_c98e33d7e3cb38 49
+src/lib/auth/client.ts
+  s_0f5e29c3ee7cb4::t_bf7046ffa773c2 160
+  s_0f5e29c3ee7cb4::t_46b0ea24f1d303 5
+src/app/services/(protein-tools)/gene-protein-tree/__tests__/page-alphabet.test.tsx
+  s_0f5e29c3ee7cb4::t_69a128a57cfa00 11
+  s_0f5e29c3ee7cb4::t_696dc77b8401e9 19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "6042dab5cbe7cb52338785b521be6e642b3ecad2",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_0f5e29c3ee7cb4": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fdf6d3bb4ffehoGE7Np2wQUy32",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -75,19 +75,19 @@ function SectionTrigger({
   children: React.ReactNode;
 }) {
   return (
-    <CollapsibleTrigger className="group hover:bg-muted/40 data-open:bg-secondary/5 flex w-full items-center gap-3 px-4 py-3.5 transition-colors">
-      <div className="bg-secondary/10 text-secondary group-hover:bg-secondary/20 group-data-open:bg-secondary/20 flex size-8 shrink-0 items-center justify-center rounded-lg transition-colors">
+    <CollapsibleTrigger className="group flex w-full items-center gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40 data-open:bg-secondary/5">
+      <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-secondary/10 text-secondary transition-colors group-hover:bg-secondary/20 group-data-open:bg-secondary/20">
         <Icon className="size-4" />
       </div>
-      <span className="text-foreground flex-1 text-left text-sm font-semibold">
+      <span className="flex-1 text-left text-sm font-semibold text-foreground">
         {children}
       </span>
       {count != null && (
-        <span className="bg-primary rounded-full px-2.5 py-0.5 text-xs font-bold text-white">
+        <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-bold text-white">
           {count}
         </span>
       )}
-      <ChevronDown className="text-muted-foreground size-4 shrink-0 transition-transform duration-200 group-data-open:rotate-180" />
+      <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-data-open:rotate-180" />
     </CollapsibleTrigger>
   );
 }
@@ -123,8 +123,8 @@ const useMobileNavbar = () => {
     recentFolders.length;
 
   return (
-    <header className="bg-primary flex flex-col lg:hidden">
-      <div className="text-primary-foreground flex items-center justify-between p-4">
+    <header className="flex flex-col bg-primary lg:hidden">
+      <div className="flex items-center justify-between p-4 text-primary-foreground">
         <div className="flex items-center gap-4">
           <Sheet>
             <SheetTrigger
@@ -137,7 +137,7 @@ const useMobileNavbar = () => {
                 >
                   <Menu
                     aria-hidden="true"
-                    className="text-primary-foreground scale-125 transition-transform duration-300 group-hover:scale-150"
+                    className="scale-125 text-primary-foreground transition-transform duration-300 group-hover:scale-150"
                     data-icon="inline-start"
                   />
                 </Button>
@@ -152,7 +152,7 @@ const useMobileNavbar = () => {
                 Mobile Navigation Menu
               </SheetTitle>
 
-              <div className="bg-primary relative p-4 pb-5">
+              <div className="relative bg-primary p-4 pb-5">
                 <div className="flex items-start gap-1">
                   <Logo
                     variant="logo-white"
@@ -165,7 +165,7 @@ const useMobileNavbar = () => {
                     v{process.env.NEXT_PUBLIC_APP_VERSION}
                   </span>
                 </div>
-                <div className="from-primary absolute inset-x-0 bottom-0 h-3 bg-linear-to-b to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 h-3 bg-linear-to-b from-primary to-transparent" />
               </div>
 
               <nav className="flex flex-col pb-6">
@@ -185,7 +185,7 @@ const useMobileNavbar = () => {
                   </CollapsibleContent>
                 </Collapsible>
 
-                <div className="bg-border mx-4 h-px" />
+                <div className="mx-4 h-px bg-border" />
 
                 {/* Services */}
                 <Collapsible>
@@ -225,7 +225,7 @@ const useMobileNavbar = () => {
                   </CollapsibleContent>
                 </Collapsible>
 
-                <div className="bg-border mx-4 h-px" />
+                <div className="mx-4 h-px bg-border" />
 
                 {/* Workspace */}
                 <Collapsible>
@@ -309,8 +309,8 @@ const useMobileNavbar = () => {
                       )}
 
                       {!isAuthenticated && (
-                        <div className="border-secondary/20 from-secondary/5 to-accent/5 mt-4 rounded-xl border bg-linear-to-br p-4">
-                          <p className="text-foreground/80 mb-3 text-sm font-medium">
+                        <div className="mt-4 rounded-xl border border-secondary/20 bg-linear-to-br from-secondary/5 to-accent/5 p-4">
+                          <p className="mb-3 text-sm font-medium text-foreground/80">
                             Sign in to access your full workspace.
                           </p>
                           <Link
@@ -330,7 +330,7 @@ const useMobileNavbar = () => {
                   </CollapsibleContent>
                 </Collapsible>
 
-                <div className="bg-border mx-4 h-px" />
+                <div className="mx-4 h-px bg-border" />
 
                 {/* Resources */}
                 <Collapsible>

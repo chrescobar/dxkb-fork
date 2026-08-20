@@ -96,7 +96,7 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
                 </Button>
               )}
             </div>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground">
               Set a default folder for job outputs. Leave empty to use home
               folder.
             </p>

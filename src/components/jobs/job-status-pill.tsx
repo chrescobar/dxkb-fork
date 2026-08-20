@@ -120,7 +120,7 @@ export function JobStatusPill() {
           <PopoverTitle className="text-sm font-medium">My Jobs</PopoverTitle>
           <Link
             href="/jobs"
-            className="text-muted-foreground hover:text-foreground text-xs transition-colors"
+            className="text-xs text-muted-foreground transition-colors hover:text-foreground"
             onClick={() => {
               setIsOpen(false);
             }}
@@ -131,11 +131,11 @@ export function JobStatusPill() {
 
         <div className="divide-y">
           {isPending ? (
-            <p className="text-muted-foreground px-3 py-4 text-center text-sm">
+            <p className="px-3 py-4 text-center text-sm text-muted-foreground">
               Loading…
             </p>
           ) : jobs.length === 0 ? (
-            <p className="text-muted-foreground px-3 py-4 text-center text-sm">
+            <p className="px-3 py-4 text-center text-sm text-muted-foreground">
               No recent jobs
             </p>
           ) : (
@@ -148,7 +148,7 @@ export function JobStatusPill() {
                   <span className="min-w-0 flex-1 truncate text-sm">
                     {formatServiceName(job.app)}
                   </span>
-                  <span className="text-muted-foreground shrink-0 text-xs">
+                  <span className="shrink-0 text-xs text-muted-foreground">
                     {formatJobTime(job)}
                   </span>
                 </div>

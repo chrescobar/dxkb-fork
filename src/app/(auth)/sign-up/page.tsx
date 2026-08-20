@@ -49,7 +49,7 @@ function SignupForm() {
   });
 
   return (
-    <div className="bg-background flex items-center justify-center p-4">
+    <div className="flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-lg">
         <CardHeader className="space-y-1">
           <CardTitle className="text-center text-2xl font-bold">
@@ -84,7 +84,7 @@ function SignupForm() {
               Already have an account?{" "}
               <Link
                 href="/sign-in"
-                className="text-primary font-medium hover:underline"
+                className="font-medium text-primary hover:underline"
               >
                 Sign in
               </Link>
@@ -100,7 +100,7 @@ export default function SignupPage() {
   return (
     <Suspense
       fallback={
-        <div className="bg-background flex items-center justify-center p-4">
+        <div className="flex items-center justify-center bg-background p-4">
           <Card className="w-full max-w-lg">
             <CardHeader className="space-y-1">
               <CardTitle className="text-center text-2xl font-bold">

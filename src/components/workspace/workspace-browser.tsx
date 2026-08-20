@@ -480,7 +480,7 @@ function useWorkspaceBrowser({
         )}
       </div>
       {isJobResultView ? (
-        <div className="border-border flex min-h-0 flex-1 flex-col gap-4 overflow-hidden pb-4">
+        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden border-border pb-4">
           <div className="px-4">
             {resolveQuery.data && (
               <JobMetadataCard

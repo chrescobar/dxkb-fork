@@ -64,7 +64,7 @@ function SigninForm() {
   });
 
   return (
-    <div className="bg-background flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="mb-2 space-y-1">
           <CardTitle className="text-center text-2xl font-bold">
@@ -94,7 +94,7 @@ function SigninForm() {
                 <FieldItem>
                   <RequiredFormLabel>Username or email</RequiredFormLabel>
                   <div className="relative">
-                    <User className="text-muted-foreground absolute top-2.5 left-3 size-4" />
+                    <User className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
                     <Input
                       placeholder="Enter your username or email"
                       id={field.name}
@@ -117,17 +117,17 @@ function SigninForm() {
                 <FieldItem>
                   <div className="flex items-center justify-between">
                     <RequiredFormLabel>Password</RequiredFormLabel>
-                    <p className="text-primary text-xs">
+                    <p className="text-xs text-primary">
                       <Link
                         href="/forgot-password"
-                        className="hover:text-secondary transition-colors duration-300 hover:font-medium"
+                        className="transition-colors duration-300 hover:font-medium hover:text-secondary"
                       >
                         Forgot your password?
                       </Link>
                     </p>
                   </div>
                   <div className="relative">
-                    <Lock className="text-muted-foreground absolute top-2.5 left-3 size-4" />
+                    <Lock className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
                     <Input
                       id={field.name}
                       name={field.name}
@@ -182,16 +182,16 @@ function SigninForm() {
           </form>
 
           <div className="mt-6 space-y-2 text-center">
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground">
               Don&apos;t have an account?{" "}
               <Link
                 href="/sign-up"
-                className="text-primary hover:text-secondary font-medium transition-colors duration-300 hover:font-medium"
+                className="font-medium text-primary transition-colors duration-300 hover:font-medium hover:text-secondary"
               >
                 Sign up on DXKB
               </Link>
             </p>
-            <p className="text-muted-foreground mt-6 text-xs">
+            <p className="mt-6 text-xs text-muted-foreground">
               <span className="font-bold">Note: </span>
               You may use your DXKB or BV-BRC username or email to sign in to
               this resource if you already had an account on one of those
@@ -209,7 +209,7 @@ export default function SigninPage() {
   return (
     <Suspense
       fallback={
-        <div className="bg-background flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
           <Card className="w-full max-w-md">
             <CardHeader className="mb-2 space-y-1">
               <CardTitle className="text-center text-2xl font-bold">

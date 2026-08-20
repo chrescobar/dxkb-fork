@@ -20,7 +20,7 @@ export function SuBanner() {
   if (!isImpersonating) return null;
 
   return (
-    <div className="bg-accent text-accent-foreground flex items-center justify-center gap-2 px-4 py-1.5 text-sm font-medium">
+    <div className="flex items-center justify-center gap-2 bg-accent px-4 py-1.5 text-sm font-medium text-accent-foreground">
       <ShieldAlert className="size-4 shrink-0" />
       <span>
         You are impersonating <strong>{user?.username}</strong>.
@@ -28,7 +28,7 @@ export function SuBanner() {
       <Button
         variant="outline"
         size="sm"
-        className="border-accent-foreground/30 hover:bg-accent-foreground/10 ml-1 h-6 bg-transparent px-2 text-xs"
+        className="ml-1 h-6 border-accent-foreground/30 bg-transparent px-2 text-xs hover:bg-accent-foreground/10"
         onClick={() => void suExit()}
       >
         Exit SU

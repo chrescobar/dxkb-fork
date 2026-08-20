@@ -1,0 +1,46 @@
+.example.env
+  s_acc6386f6c0670::t_9b9f73ace78ed0 14-15
+src/hooks/use-resend-verification-email.ts
+  s_acc6386f6c0670::t_a660d8d201591e 1-17
+src/app/api/auth/profile/route.ts
+  s_acc6386f6c0670::t_a8ac24bf0efe7e 19-35,45-69
+  s_acc6386f6c0670::t_2168bbb3916e9a 2-5,87-116
+  s_acc6386f6c0670::t_0e7432d595bf52 8
+  s_acc6386f6c0670::t_325416f4645034 36-44
+README.md
+  s_acc6386f6c0670::t_d8fd706f7170e4 45
+src/components/navbars/user-avatar-dropdown.tsx
+  s_acc6386f6c0670::t_2b25197a553277 18-19
+  s_acc6386f6c0670::t_68a286b92ada44 38
+src/components/search/welcome-search.tsx
+  s_acc6386f6c0670::t_76b95f05cf204b 9-10
+  s_acc6386f6c0670::t_cc0084c714769a 18
+src/app/services/(genomics)/similar-genome-finder/actions.ts
+  s_acc6386f6c0670::t_725983ef506f2a 26-27
+  s_acc6386f6c0670::t_bfb0f869580b96 4
+  s_acc6386f6c0670::t_bbb339687a7d02 49,91,204
+src/app/api/auth/profile/__tests__/route.test.ts
+  s_acc6386f6c0670::t_2168bbb3916e9a 50,79-81,95,124-126,172,175-177,198,217-219,239-241,260
+  s_acc6386f6c0670::t_52f21d124de315 152-171,173-174,178-193
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "1d8a9623e1195d5144591baaaeb8018491da640d",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_acc6386f6c0670": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fdf2b6a4bffeD0BlKn7j5XOxrq",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

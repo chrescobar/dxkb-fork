@@ -1,0 +1,14 @@
+src/components/search/welcome-search.tsx
+  h_dbd94c95afa702 20,22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "bf4a93e4f6a06c92b8ddb044f1a356bb76b8d7c9",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

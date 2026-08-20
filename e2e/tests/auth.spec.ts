@@ -351,9 +351,27 @@ test.describe("auth lifecycle (local identity fake)", () => {
         response.url().endsWith("/api/auth/sign-in/email") &&
         response.request().method() === "POST",
     );
+    await page.evaluate(() => {
+      sessionStorage.removeItem("e2e-next-redirect-flash");
+      new MutationObserver(() => {
+        if (document.body.textContent.includes("NEXT_REDIRECT")) {
+          sessionStorage.setItem("e2e-next-redirect-flash", "true");
+        }
+      }).observe(document.body, { childList: true, subtree: true });
+    });
     await signIn.submit();
     expect((await signInResponse).status()).toBe(200);
     await expect(page).toHaveURL(/\/$/);
+    expect(
+      await page.evaluate(() =>
+        sessionStorage.getItem("e2e-next-redirect-flash"),
+      ),
+    ).toBeNull();
+    await expect(page.getByRole("link", { name: /^sign in$/i })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: /^sign up$/i })).toHaveCount(0);
+    await expect(
+      page.locator('[data-slot="dropdown-menu-trigger"]').first(),
+    ).toBeVisible();
 
     const cookies = await context.cookies();
     const sessionCookies = Object.fromEntries(

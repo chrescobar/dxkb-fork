@@ -21,9 +21,9 @@ function safeRedirect(destination: string): string {
   return "/";
 }
 
-export async function redirectAfterAuth(destination: string) {
+export async function safePostAuthDestination(destination: string) {
   await Promise.resolve();
-  redirect(safeRedirect(destination));
+  return safeRedirect(destination);
 }
 
 export async function signOutAndRedirect(formData: FormData) {

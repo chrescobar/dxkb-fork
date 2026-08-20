@@ -118,6 +118,10 @@ const operationContracts: {
 ];
 
 describe("named BV-BRC identity operations", () => {
+  it("uses a Cloudflare-compatible non-browser user-agent", () => {
+    expect(serverUserAgent).toMatch(/^curl\//);
+  });
+
   it.each(operationContracts)(
     "$name uses the configured URL, method, and user-agent",
     async ({ method, url, invoke, response }) => {

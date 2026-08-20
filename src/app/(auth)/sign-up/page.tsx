@@ -14,7 +14,7 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { redirectAfterAuth } from "../redirect-action";
+import { safePostAuthDestination } from "../redirect-action";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { SignupPasswordFields, SignupProfileFields } from "./sign-up-fields";
 import { useSignupForm } from "./use-signup-form";
@@ -34,7 +34,7 @@ function SignupForm() {
         toast.success("Account created successfully. Welcome to DXKB!", {
           closeButton: true,
         });
-        await redirectAfterAuth(redirectTo);
+        window.location.replace(await safePostAuthDestination(redirectTo));
       })
       .catch((cause: unknown) => {
         setError(

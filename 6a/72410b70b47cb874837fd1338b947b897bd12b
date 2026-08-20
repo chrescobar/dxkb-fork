@@ -1,0 +1,41 @@
+src/app/(auth)/sign-up/page.tsx
+  s_d6d0962d918a1e::t_31cc75720bb1e3 37
+  s_d6d0962d918a1e::t_1c9d4684776b91 17
+src/lib/auth/server/adapters/__tests__/bvbrc-identity.test.ts
+  s_d6d0962d918a1e::t_621a32d27c96ad 121-124
+src/app/(auth)/redirect-action.test.ts
+  s_d6d0962d918a1e::t_8a0b0bb20b7a76 3
+  s_d6d0962d918a1e::t_7fa2d04077d411 17,25-27
+src/app/(auth)/sign-in/page.tsx
+  s_d6d0962d918a1e::t_c82376be2764d0 8
+  s_d6d0962d918a1e::t_81b0c6d5624259 55
+e2e/tests/auth.spec.ts
+  s_d6d0962d918a1e::t_ca2f3a932e2fbe 357
+  s_d6d0962d918a1e::t_ad2401c63c6199 354-356,358-361,365-374
+src/lib/auth/server/user-agent.ts
+  s_d6d0962d918a1e::t_1907d80c2ded0b 6-9,11
+  s_d6d0962d918a1e::t_ca39dbea9db353 12
+src/app/(auth)/redirect-action.ts
+  s_d6d0962d918a1e::t_5fd5c7448f495e 24,26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "6a72410b70b47cb874837fd1338b947b897bd12b",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_d6d0962d918a1e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fdfbaad39ffeM6jxNloPVpeeVP",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

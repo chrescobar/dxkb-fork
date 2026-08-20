@@ -77,7 +77,6 @@ export function useAuthActions() {
   const signIn = async (credentials: SigninCredentials) => {
     const user = await authClient.signIn(credentials);
     clearAccountCache();
-    router.refresh();
     return user;
   };
   const signUp = async (input: SignupCredentials) => {

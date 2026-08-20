@@ -98,21 +98,8 @@ describe("AuthBoundary", () => {
     expect(screen.getByText("alice")).toBeInTheDocument();
   });
 
-  it.each([
-    {
-      name: "sign-in",
-      arrange: () => vi.mocked(authClient.signIn).mockResolvedValue(user),
-      invoke: (actions: ReturnType<typeof useAuthActions>) =>
-        actions.signIn({ username: "alice", password: "password" }),
-    },
-    {
-      name: "sign-up",
-      arrange: () => vi.mocked(authClient.signUp).mockResolvedValue(user),
-      invoke: (actions: ReturnType<typeof useAuthActions>) =>
-        actions.signUp(signupInput),
-    },
-  ])("clears account cache after $name", async ({ arrange, invoke }) => {
-    arrange();
+  it("clears account cache after sign-in without racing the caller's navigation", async () => {
+    vi.mocked(authClient.signIn).mockResolvedValue(user);
     const queryClient = new QueryClient();
     queryClient.setQueryData(["private"], { secret: true });
     const clearSpy = vi.spyOn(queryClient, "clear");
@@ -122,7 +109,26 @@ describe("AuthBoundary", () => {
       ),
     });
 
-    await expect(invoke(result.current)).resolves.toEqual(user);
+    await expect(
+      result.current.signIn({ username: "alice", password: "password" }),
+    ).resolves.toEqual(user);
+    expect(clearSpy).toHaveBeenCalledOnce();
+    expect(queryClient.getQueryData(["private"])).toBeUndefined();
+    expect(refreshMock).not.toHaveBeenCalled();
+  });
+
+  it("clears account cache and refreshes after sign-up", async () => {
+    vi.mocked(authClient.signUp).mockResolvedValue(user);
+    const queryClient = new QueryClient();
+    queryClient.setQueryData(["private"], { secret: true });
+    const clearSpy = vi.spyOn(queryClient, "clear");
+    const { result } = renderHook(() => useAuthActions(), {
+      wrapper: ({ children }) => (
+        <Wrapper queryClient={queryClient}>{children}</Wrapper>
+      ),
+    });
+
+    await expect(result.current.signUp(signupInput)).resolves.toEqual(user);
     expect(clearSpy).toHaveBeenCalledOnce();
     expect(queryClient.getQueryData(["private"])).toBeUndefined();
     expect(refreshMock).toHaveBeenCalledOnce();

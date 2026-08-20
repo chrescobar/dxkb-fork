@@ -48,11 +48,12 @@ function SigninForm() {
     onSubmit: async ({ value }) => {
       setError("");
       try {
+        const destination = await safePostAuthDestination(redirectTo);
         await signIn(value);
         toast.success("Logged in successfully. Welcome to DXKB!", {
           closeButton: true,
         });
-        window.location.replace(await safePostAuthDestination(redirectTo));
+        window.location.replace(destination);
       } catch (cause) {
         setError(
           cause instanceof Error

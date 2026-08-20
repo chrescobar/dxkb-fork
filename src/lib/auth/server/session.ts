@@ -9,9 +9,13 @@ import {
 
 const vestigialUserProfileCookieName = "bvbrc_user_profile";
 const sessionMaxAgeSeconds = sessionMaxAgeMs / 1000;
+const secureCookies =
+  process.env.AUTH_COOKIE_SECURE === undefined
+    ? process.env.NODE_ENV === "production"
+    : process.env.AUTH_COOKIE_SECURE === "true";
 const cookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
+  secure: secureCookies,
   sameSite: "strict" as const,
   path: "/",
 };

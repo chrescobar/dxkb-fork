@@ -42,6 +42,7 @@ Fill in `.env.local` with the appropriate values:
 | `USER_VERIFICATION_URL`   | BV-BRC Email Verification Service URL                                  |
 | `USER_PASSWORD_RESET_URL` | BV-BRC Password Reset Service URL                                      |
 | `APP_SERVICE_URL`         | BV-BRC AppService — JSON-RPC endpoint for job submission               |
+| `INTERNAL_API_ORIGIN`     | Trusted origin for server-side calls to this Next.js application       |
 | `DATA_SERVICE_URL`        | BV-BRC Data Service URL                                                |
 | `NEXT_PUBLIC_DATA_API`    | Public-facing data API endpoint                                        |
 | `SHOCK_ORIGINS`           | Comma-separated Shock file storage node URLs                           |

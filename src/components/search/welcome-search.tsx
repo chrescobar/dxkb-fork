@@ -6,24 +6,16 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { SearchBar } from "@/components/search/search-bar";
 import ThemeContent from "@/components/ui/theme-content";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuth, useAuthActions } from "@/lib/auth/provider";
+import { useAuth } from "@/lib/auth/provider";
+import { useResendVerificationEmail } from "@/hooks/use-resend-verification-email";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
 
 const WelcomeSearch = () => {
   const { isAuthenticated, isVerified } = useAuth();
-  const { sendVerificationEmail } = useAuthActions();
-  const resendVerificationEmail = async () => {
-    try {
-      await sendVerificationEmail();
-      toast.success("Verification email sent");
-    } catch {
-      toast.error("Failed to send verification email");
-    }
-  };
+  const resendVerificationEmail = useResendVerificationEmail();
 
   return (
     <section className="grow">

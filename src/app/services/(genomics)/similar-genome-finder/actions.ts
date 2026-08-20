@@ -1,7 +1,7 @@
 "use server";
 
-import { headers } from "next/headers";
 import { requireAuthSession } from "@/lib/auth/server/route";
+import { getRequiredEnv } from "@/lib/env";
 import { buildMinhashServicePayload } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-utils";
 import type { SimilarGenomeFinderFormData } from "@/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-schema";
 import {
@@ -23,16 +23,8 @@ export interface SubmitSimilarGenomesError {
 export type SubmitSimilarGenomesResponse =
   SubmitSimilarGenomesResult | SubmitSimilarGenomesError;
 
-async function getBaseUrl(): Promise<string> {
-  const headersList = await headers();
-  const host =
-    headersList.get("x-forwarded-host") ??
-    headersList.get("host") ??
-    "localhost:3000";
-  const proto =
-    headersList.get("x-forwarded-proto") ??
-    (host.includes("localhost") ? "http" : "https");
-  return `${proto}://${host}`;
+function getInternalApiOrigin(): string {
+  return new URL(getRequiredEnv("INTERNAL_API_ORIGIN")).origin;
 }
 
 function extractMinhashError(result: unknown): string | null {
@@ -54,7 +46,7 @@ async function fetchMinhashResults(
   token: string,
   payload: unknown,
 ): Promise<{ ok: true; result: unknown } | { ok: false; error: string }> {
-  const res = await fetch(`${baseUrl}/api/services/minhash`, {
+  const res = await fetch(new URL("/api/services/minhash", baseUrl), {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: token },
     body: JSON.stringify(payload),
@@ -96,7 +88,7 @@ async function fetchGenomeDetails(
   | { ok: false; error: string; genomes?: undefined }
 > {
   const genomeRes = await fetch(
-    `${baseUrl}/api/services/genome/website-query`,
+    new URL("/api/services/genome/website-query", baseUrl),
     {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: token },
@@ -209,7 +201,7 @@ export async function submitSimilarGenomes(
 ): Promise<SubmitSimilarGenomesResponse> {
   try {
     const { token } = await requireAuthSession();
-    const baseUrl = await getBaseUrl();
+    const baseUrl = getInternalApiOrigin();
     const payload = buildMinhashServicePayload(data);
     const minhashRes = await fetchMinhashResults(baseUrl, token, payload);
     if (!minhashRes.ok) {

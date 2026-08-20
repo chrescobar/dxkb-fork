@@ -15,12 +15,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SignoutButton } from "@/components/auth/signout-button";
 import { SuLoginDialog } from "@/components/auth/su-login-dialog";
-import {
-  useAuth,
-  useAuthActions,
-  useExitImpersonation,
-} from "@/lib/auth/provider";
-import { toast } from "sonner";
+import { useAuth, useExitImpersonation } from "@/lib/auth/provider";
+import { useResendVerificationEmail } from "@/hooks/use-resend-verification-email";
 import {
   encodeWorkspaceSegment,
   workspaceUsername,
@@ -38,16 +34,8 @@ import {
 
 export function UserAvatarDropdown() {
   const { user, isAdmin, isImpersonating } = useAuth();
-  const { sendVerificationEmail } = useAuthActions();
   const exitImpersonation = useExitImpersonation();
-  const resendVerificationEmail = async () => {
-    try {
-      await sendVerificationEmail();
-      toast.success("Verification email sent");
-    } catch {
-      toast.error("Failed to send verification email");
-    }
-  };
+  const resendVerificationEmail = useResendVerificationEmail();
   const wsUsername = workspaceUsername(user);
   const [suDialogOpen, setSuDialogOpen] = useState(false);
 

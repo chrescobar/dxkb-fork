@@ -47,9 +47,7 @@ describe("GET /api/auth/profile", () => {
     };
     setAuthCookies("tok", "user1");
 
-    server.use(
-      http.get(`${userUrl}/user1`, () => HttpResponse.json(profile)),
-    );
+    server.use(http.get(`${userUrl}/user1`, () => HttpResponse.json(profile)));
 
     const response = await GET(mockNextRequest(), {});
     const data = (await response.json()) as typeof profile;
@@ -78,8 +76,9 @@ describe("GET /api/auth/profile", () => {
     setAuthCookies("tok", "user1");
 
     server.use(
-      http.get(`${userUrl}/user1`, () =>
-        new HttpResponse(null, { status: 404 }),
+      http.get(
+        `${userUrl}/user1`,
+        () => new HttpResponse(null, { status: 404 }),
       ),
     );
 
@@ -93,9 +92,7 @@ describe("GET /api/auth/profile", () => {
   it("returns 500 when an exception is thrown", async () => {
     setAuthCookies("tok", "user1");
 
-    server.use(
-      http.get(`${userUrl}/user1`, () => HttpResponse.error()),
-    );
+    server.use(http.get(`${userUrl}/user1`, () => HttpResponse.error()));
 
     const response = await GET(mockNextRequest(), {});
     const data = (await response.json()) as { error?: string };
@@ -124,7 +121,9 @@ describe("POST /api/auth/profile", () => {
   it("forwards JSON Patch body to upstream", async () => {
     setAuthCookies("the-token", "user1");
 
-    const patchOps = [{ op: "replace", path: "/email", value: "new@example.com" }];
+    const patchOps = [
+      { op: "replace", path: "/email", value: "new@example.com" },
+    ];
     let capturedBody: string | null = null;
     let capturedContentType: string | null = null;
     let capturedAuthorization: string | null = null;
@@ -150,13 +149,53 @@ describe("POST /api/auth/profile", () => {
     expect(capturedAuthorization).toBe("the-token");
   });
 
+  it.each([
+    { name: "a non-array body", body: {} },
+    {
+      name: "an unsupported operation",
+      body: [{ op: "remove", path: "/email" }],
+    },
+    {
+      name: "an unsupported path",
+      body: [{ op: "replace", path: "/roles", value: "admin" }],
+    },
+    {
+      name: "an invalid string value",
+      body: [{ op: "replace", path: "/email", value: 1 }],
+    },
+    {
+      name: "invalid settings",
+      body: [{ op: "replace", path: "/settings", value: { unknown: true } }],
+    },
+  ])("returns 400 for $name", async ({ body }) => {
+    setAuthCookies("the-token", "user1");
+    const response = await POST(mockNextRequest({ method: "POST", body }), {});
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toMatchObject({
+      code: "validation",
+    });
+  });
+
+  it("returns 400 for malformed JSON", async () => {
+    setAuthCookies("the-token", "user1");
+    const response = await POST(
+      mockNextRequest({ method: "POST", rawBody: "{" }),
+      {},
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toMatchObject({
+      error: "Malformed JSON",
+      code: "validation",
+    });
+  });
+
   it("returns success when upstream succeeds", async () => {
     setAuthCookies("the-token", "user1");
 
     server.use(
-      http.post(`${userUrl}/user1`, () =>
-        HttpResponse.json({ ok: true }),
-      ),
+      http.post(`${userUrl}/user1`, () => HttpResponse.json({ ok: true })),
     );
 
     const request = mockNextRequest({
@@ -175,8 +214,9 @@ describe("POST /api/auth/profile", () => {
     setAuthCookies("the-token", "user1");
 
     server.use(
-      http.post(`${userUrl}/user1`, () =>
-        new HttpResponse("Bad Request", { status: 400 }),
+      http.post(
+        `${userUrl}/user1`,
+        () => new HttpResponse("Bad Request", { status: 400 }),
       ),
     );
 
@@ -196,8 +236,9 @@ describe("POST /api/auth/profile", () => {
     setAuthCookies("the-token", "user1");
 
     server.use(
-      http.post(`${userUrl}/user1`, () =>
-        new HttpResponse("", { status: 422 }),
+      http.post(
+        `${userUrl}/user1`,
+        () => new HttpResponse("", { status: 422 }),
       ),
     );
 
@@ -216,9 +257,7 @@ describe("POST /api/auth/profile", () => {
   it("returns 500 when an exception is thrown", async () => {
     setAuthCookies("the-token", "user1");
 
-    server.use(
-      http.post(`${userUrl}/user1`, () => HttpResponse.error()),
-    );
+    server.use(http.post(`${userUrl}/user1`, () => HttpResponse.error()));
 
     const request = mockNextRequest({
       method: "POST",

@@ -1,5 +1,6 @@
 import type { Page } from "@playwright/test";
 
+import { SignInPage } from "../../../pages";
 import type { JourneyEnv } from "../../record-har";
 
 /**
@@ -11,8 +12,6 @@ import type { JourneyEnv } from "../../record-har";
  * only this helper needs updating; individual journey drivers stay focused
  * on the surface they capture.
  *
- * Selector strategy mirrors `auth-sign-in.ts` (the bare sign-in journey),
- * which mirrors `SignInPage`. Update all three together if the form changes.
  */
 export async function signIn(page: Page, env: JourneyEnv): Promise<void> {
   const { baseURL, user, password } = env;
@@ -22,33 +21,10 @@ export async function signIn(page: Page, env: JourneyEnv): Promise<void> {
     );
   }
 
-  await page.goto(`${baseURL}/sign-in`);
-  const usernameInput = page.getByPlaceholder(/username or email/i);
-  const passwordInput = page.getByPlaceholder(/enter your password/i);
-  await usernameInput.waitFor({ state: "visible", timeout: 30_000 });
-
-  const signInForm = page.locator("form").filter({ has: usernameInput });
-  const submitButton = signInForm.locator('button[type="submit"]').first();
-  await submitButton.waitFor({ state: "visible", timeout: 30_000 });
-  // Wait until the form is interactive.
-  await page.waitForFunction(
-    () => {
-      const buttons = Array.from(
-        document.querySelectorAll('form button[type="submit"]'),
-      );
-      return buttons.some(
-        (b) =>
-          b instanceof HTMLButtonElement &&
-          !b.disabled &&
-          /^sign in$/i.test(b.textContent.trim()),
-      );
-    },
-    null,
-    { timeout: 30_000 },
-  );
-
-  await usernameInput.fill(user);
-  await passwordInput.fill(password);
+  const signInPage = new SignInPage(page);
+  await signInPage.goto(undefined, baseURL);
+  await signInPage.waitUntilInteractive();
+  await signInPage.fill(user, password);
 
   const signInResponse = page.waitForResponse(
     (res) =>
@@ -56,7 +32,7 @@ export async function signIn(page: Page, env: JourneyEnv): Promise<void> {
       res.request().method() === "POST",
     { timeout: 30_000 },
   );
-  await submitButton.click();
+  await signInPage.submit();
   await signInResponse;
 
   // Settle post-auth redirects and downstream requests so they land in the HAR too.

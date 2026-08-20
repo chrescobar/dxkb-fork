@@ -46,6 +46,7 @@ export function mockNextRequest(
     method?: string;
     url?: string;
     body?: unknown;
+    rawBody?: BodyInit;
     headers?: Record<string, string>;
     searchParams?: Record<string, string>;
   } = {},
@@ -54,6 +55,7 @@ export function mockNextRequest(
     method = "GET",
     url: baseUrl = "http://localhost:3019/api/test",
     body,
+    rawBody,
     headers = {},
     searchParams,
   } = opts;
@@ -67,13 +69,14 @@ export function mockNextRequest(
   const init: Record<string, unknown> = {
     method,
     headers:
-      body !== undefined && method !== "GET"
+      body !== undefined && rawBody === undefined && method !== "GET"
         ? { "Content-Type": "application/json", ...headers }
         : headers,
   };
 
-  if (body !== undefined && method !== "GET") {
-    init.body = JSON.stringify(body);
+  if (method !== "GET") {
+    if (rawBody !== undefined) init.body = rawBody;
+    else if (body !== undefined) init.body = JSON.stringify(body);
   }
 
   return new NextRequest(finalUrl, init);
@@ -92,7 +95,11 @@ export function createQueryClientWrapper() {
   });
 
   return function Wrapper({ children }: { children: ReactNode }) {
-    return createElement(QueryClientProvider, { client: queryClient }, children);
+    return createElement(
+      QueryClientProvider,
+      { client: queryClient },
+      children,
+    );
   };
 }
 

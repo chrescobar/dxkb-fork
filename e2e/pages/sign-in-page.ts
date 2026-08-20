@@ -24,12 +24,17 @@ export class SignInPage {
     this.alert = page.locator('[role="alert"][data-slot="alert"]');
   }
 
-  async goto(redirect?: string): Promise<void> {
-    const url = redirect
+  async goto(redirect?: string, baseURL = ""): Promise<void> {
+    const path = redirect
       ? `/sign-in?redirect=${encodeURIComponent(redirect)}`
       : "/sign-in";
-    await this.page.goto(url);
+    await this.page.goto(`${baseURL}${path}`);
     await expect(this.heading).toBeVisible();
+  }
+
+  async waitUntilInteractive(timeout = 30_000): Promise<void> {
+    await this.submitButton.waitFor({ state: "visible", timeout });
+    await expect(this.submitButton).toBeEnabled({ timeout });
   }
 
   async fill(username: string, password: string): Promise<void> {

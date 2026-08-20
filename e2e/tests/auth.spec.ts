@@ -8,7 +8,12 @@ import {
   journeyOverrides,
   workspacePopulatedOverrides,
 } from "../fixtures/overrides";
-import { SignInPage, ForgotPasswordPage, SignUpPage } from "../pages";
+import {
+  AuthSessionPage,
+  SignInPage,
+  ForgotPasswordPage,
+  SignUpPage,
+} from "../pages";
 
 // Auth mutations share one loopback identity backend; serialize this file so
 // interception-heavy contract tests cannot contend with real lifecycle flows.
@@ -343,6 +348,7 @@ test.describe("auth lifecycle (local identity fake)", () => {
     ).toEqual([]);
 
     const signIn = new SignInPage(page);
+    const authSession = new AuthSessionPage(page);
     await signIn.goto("/settings");
     await signIn.fill("e2e-test-user", "password1234");
 
@@ -367,11 +373,7 @@ test.describe("auth lifecycle (local identity fake)", () => {
         sessionStorage.getItem("e2e-next-redirect-flash"),
       ),
     ).toBeNull();
-    await expect(page.getByRole("link", { name: /^sign in$/i })).toHaveCount(0);
-    await expect(page.getByRole("link", { name: /^sign up$/i })).toHaveCount(0);
-    await expect(
-      page.locator('[data-slot="dropdown-menu-trigger"]').first(),
-    ).toBeVisible();
+    await authSession.expectSignedIn();
 
     const cookies = await context.cookies();
     const sessionCookies = Object.fromEntries(
@@ -402,15 +404,7 @@ test.describe("auth lifecycle (local identity fake)", () => {
     await page.goto("/settings");
     await expect(page).toHaveURL(/\/settings$/);
 
-    await page.locator('[data-slot="dropdown-menu-trigger"]').first().click();
-    await page
-      .getByRole("button", { name: /^sign out$/i })
-      .first()
-      .click();
-    await page
-      .getByRole("button", { name: /^sign out$/i })
-      .last()
-      .click();
+    await authSession.signOut();
 
     await expect(page).toHaveURL(/\/$/);
     await expect
@@ -430,6 +424,7 @@ test.describe("auth lifecycle (local identity fake)", () => {
     context,
   }) => {
     const signIn = new SignInPage(page);
+    const authSession = new AuthSessionPage(page);
     await signIn.goto();
     await signIn.fill("e2e-test-user", "password1234");
     const signInResponse = page.waitForResponse(
@@ -443,25 +438,15 @@ test.describe("auth lifecycle (local identity fake)", () => {
     await page.goto("/settings");
     await expect(page).toHaveURL(/\/settings$/);
 
-    await page.locator('[data-slot="dropdown-menu-trigger"]').first().click();
-    await page.getByText("SU Login", { exact: true }).click();
-    await expect(page.getByRole("dialog", { name: "SU Login" })).toBeVisible();
-    await page.getByLabel("User to Impersonate").fill("e2e-target-user");
-    await page.getByLabel("Your Password").fill("password1234");
-
     const suLoginResponse = page.waitForResponse(
       (response) =>
         response.url().endsWith("/api/auth/su-login") &&
         response.request().method() === "POST",
     );
-    await page.getByRole("button", { name: "Take Control" }).click();
+    await authSession.startImpersonation("e2e-target-user", "password1234");
     expect((await suLoginResponse).status()).toBe(200);
 
-    await expect(
-      page
-        .getByText("You are impersonating e2e-target-user.", { exact: true })
-        .first(),
-    ).toBeVisible();
+    await authSession.expectImpersonating("e2e-target-user");
     const impersonatingCookies = Object.fromEntries(
       (await context.cookies()).map((cookie) => [cookie.name, cookie.value]),
     );
@@ -478,22 +463,15 @@ test.describe("auth lifecycle (local identity fake)", () => {
       decodeURIComponent(impersonatingCookies.bvbrc_su_original_user_id),
     ).toBe("e2e-test-user@patricbrc.org");
 
-    await page.locator('[data-slot="dropdown-menu-trigger"]').first().click();
-    await expect(
-      page.getByText("Hello, e2e-target-user!", { exact: true }),
-    ).toBeVisible();
-    await page.keyboard.press("Escape");
+    await authSession.expectUserGreeting("e2e-target-user");
 
     const suExitResponse = page.waitForResponse(
       (response) =>
         response.url().endsWith("/api/auth/su-exit") &&
         response.request().method() === "POST",
     );
-    await page.getByRole("button", { name: "Exit SU" }).first().click();
+    await authSession.exitImpersonation();
     expect((await suExitResponse).status()).toBe(200);
-    await expect(
-      page.getByText("You are impersonating", { exact: false }).first(),
-    ).toBeHidden();
 
     await expect
       .poll(async () => {
@@ -517,11 +495,8 @@ test.describe("auth lifecycle (local identity fake)", () => {
         originalUserId: undefined,
       });
 
-    await page.locator('[data-slot="dropdown-menu-trigger"]').first().click();
-    await expect(
-      page.getByText("Hello, e2e-test-user!", { exact: true }),
-    ).toBeVisible();
-    await expect(page.getByText("SU Login", { exact: true })).toBeVisible();
+    await authSession.expectUserGreeting("e2e-test-user");
+    await authSession.expectSuLoginAvailable();
   });
 });
 
@@ -540,19 +515,8 @@ test.describe("auth (signed in)", () => {
     await page.goto("/settings");
     await expect(page).not.toHaveURL(/sign-in/);
 
-    const avatarTrigger = page
-      .locator('[data-slot="dropdown-menu-trigger"]')
-      .first();
-    await avatarTrigger.click();
-    const signOutTrigger = page
-      .getByRole("button", { name: /^sign out$/i })
-      .first();
-    await expect(signOutTrigger).toBeVisible();
-    await signOutTrigger.click();
-    const confirmButton = page
-      .getByRole("button", { name: /^sign out$/i })
-      .last();
-    await confirmButton.click();
+    const authSession = new AuthSessionPage(page);
+    await authSession.signOut();
     await expect
       .poll(async () =>
         (await context.cookies()).filter((cookie) =>

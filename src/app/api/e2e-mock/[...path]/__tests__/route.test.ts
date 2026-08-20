@@ -263,16 +263,13 @@ describe("api/e2e-mock catch-all — enabled", () => {
   });
 
   it("POST user-auth returns the admin identity token", async () => {
-    const request = new Request(
-      "http://localhost:3020/api/e2e-mock/user-auth",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: "username=e2e-test-user&password=password1234",
-      },
-    );
     const resp = await POST(
-      request as unknown as Parameters<typeof POST>[0],
+      mockNextRequest({
+        method: "POST",
+        url: "http://localhost:3020/api/e2e-mock/user-auth",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        rawBody: "username=e2e-test-user&password=password1234",
+      }),
       ctx(["user-auth"]),
     );
 
@@ -286,16 +283,14 @@ describe("api/e2e-mock catch-all — enabled", () => {
   });
 
   it("POST user-auth/sulogin returns a token for the requested target", async () => {
-    const request = new Request(
-      "http://localhost:3020/api/e2e-mock/user-auth/sulogin",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: "username=e2e-test-user%40patricbrc.org&targetUser=e2e-target-user&password=password1234",
-      },
-    );
     const resp = await POST(
-      request as unknown as Parameters<typeof POST>[0],
+      mockNextRequest({
+        method: "POST",
+        url: "http://localhost:3020/api/e2e-mock/user-auth/sulogin",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        rawBody:
+          "username=e2e-test-user%40patricbrc.org&targetUser=e2e-target-user&password=password1234",
+      }),
       ctx(["user-auth", "sulogin"]),
     );
 
@@ -306,16 +301,14 @@ describe("api/e2e-mock catch-all — enabled", () => {
   });
 
   it("POST user-auth/sulogin rejects an unknown target", async () => {
-    const request = new Request(
-      "http://localhost:3020/api/e2e-mock/user-auth/sulogin",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: "username=e2e-test-user%40patricbrc.org&targetUser=missing-user&password=password1234",
-      },
-    );
     const resp = await POST(
-      request as unknown as Parameters<typeof POST>[0],
+      mockNextRequest({
+        method: "POST",
+        url: "http://localhost:3020/api/e2e-mock/user-auth/sulogin",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        rawBody:
+          "username=e2e-test-user%40patricbrc.org&targetUser=missing-user&password=password1234",
+      }),
       ctx(["user-auth", "sulogin"]),
     );
 
@@ -341,14 +334,13 @@ describe("api/e2e-mock catch-all — enabled", () => {
   );
 
   it("POST handles non-JSON bodies without throwing", async () => {
-    const request = new Request("http://localhost:3020/api/e2e-mock/upload", {
-      method: "POST",
-      headers: { "Content-Type": "text/plain" },
-      body: "raw text",
-    });
-
     const resp = await POST(
-      request as unknown as Parameters<typeof POST>[0],
+      mockNextRequest({
+        method: "POST",
+        url: "http://localhost:3020/api/e2e-mock/upload",
+        headers: { "Content-Type": "text/plain" },
+        rawBody: "raw text",
+      }),
       ctx(["upload"]),
     );
 
@@ -722,19 +714,15 @@ describe("api/e2e-mock catch-all — enabled", () => {
       "&facet((pivot,(antibiotic,resistant_phenotype)),(mincount,1),(limit,-1))" +
       "&json(nl,map)";
 
-    const request = new Request(
-      "http://localhost:3020/api/e2e-mock/bvbrc-website/genome_amr/",
-      {
+    const resp = await POST(
+      mockNextRequest({
         method: "POST",
+        url: "http://localhost:3020/api/e2e-mock/bvbrc-website/genome_amr/",
         headers: {
           "Content-Type": "application/rqlquery+x-www-form-urlencoded",
         },
-        body,
-      },
-    );
-
-    const resp = await POST(
-      request as unknown as Parameters<typeof POST>[0],
+        rawBody: body,
+      }),
       ctx(["bvbrc-website", "genome_amr"]),
     );
 
@@ -765,19 +753,15 @@ describe("api/e2e-mock catch-all — enabled", () => {
       "&facet((field,antibiotic))" +
       "&limit(1)";
 
-    const request = new Request(
-      "http://localhost:3020/api/e2e-mock/bvbrc-website/genome_amr/",
-      {
+    const resp = await POST(
+      mockNextRequest({
         method: "POST",
+        url: "http://localhost:3020/api/e2e-mock/bvbrc-website/genome_amr/",
         headers: {
           "Content-Type": "application/rqlquery+x-www-form-urlencoded",
         },
-        body,
-      },
-    );
-
-    const resp = await POST(
-      request as unknown as Parameters<typeof POST>[0],
+        rawBody: body,
+      }),
       ctx(["bvbrc-website", "genome_amr"]),
     );
 

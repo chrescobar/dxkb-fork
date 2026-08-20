@@ -57,7 +57,7 @@ describe("POST /api/auth/forget-password", () => {
     expect(response.status).toBe(400);
   });
 
-  it("returns upstream error with message from JSON response", async () => {
+  it("returns a safe fallback for an upstream JSON error", async () => {
     server.use(
       http.post("https://auth.test/reset", () => {
         return HttpResponse.json(
@@ -76,7 +76,7 @@ describe("POST /api/auth/forget-password", () => {
     const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(404);
-    expect(data.error).toBe("User not found");
+    expect(data.error).toBe("Failed to send password reset email");
   });
 
   it("returns default error message when upstream JSON parse fails", async () => {
@@ -95,7 +95,7 @@ describe("POST /api/auth/forget-password", () => {
     const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(500);
-    expect(data.error).toBe("not json");
+    expect(data.error).toBe("Failed to send password reset email");
   });
 
   it("returns 502 when a network exception is thrown", async () => {

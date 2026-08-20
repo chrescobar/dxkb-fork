@@ -25,6 +25,7 @@ import {
 import { fail, ok } from "./result";
 import {
   clearCurrentSession,
+  clearImpersonationBackup,
   clearSession,
   readImpersonationBackup,
   readSession,
@@ -171,7 +172,13 @@ export async function startImpersonation(
     realm: extractRealmFromToken(impersonated.data.token),
   };
   await writeImpersonationBackup(current);
-  const expiresAt = await writeSession(targetIdentity);
+  let expiresAt: number;
+  try {
+    expiresAt = await writeSession(targetIdentity);
+  } catch (error) {
+    await clearImpersonationBackup();
+    throw error;
+  }
   return ok({
     user: buildUser(targetProfile.data, targetIdentity, current),
     expiresAt,
@@ -255,10 +262,7 @@ async function readCurrentUser(): Promise<AuthUser | null> {
   const current = await readSession();
   if (!current) return null;
   const profile = await getProfile(current.userId, current.token);
-  if (profile.error) {
-    if (profile.error.code === "unauthorized") return null;
-    throw new Error(profile.error.message, { cause: profile.error });
-  }
+  if (profile.error) return null;
   return buildUser(profile.data, current, await readImpersonationBackup());
 }
 

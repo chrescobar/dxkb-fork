@@ -5,7 +5,7 @@ import type { SessionIdentity } from "@/lib/auth/types";
 import { errorResponse } from "./errors";
 import { getCurrentUser } from "./actions";
 import { readSession } from "./session";
-import { serverUserAgent } from "./user-agent";
+import { requestTimeoutMs, serverUserAgent } from "./user-agent";
 
 export type AuthRouteHandler<TCtx = object> = (
   request: NextRequest,
@@ -26,6 +26,14 @@ export async function readAuthSession(): Promise<SessionIdentity | null> {
 export async function requireAuthSession(): Promise<SessionIdentity> {
   const session = await readSession();
   if (!session) throw new Error("Authentication required");
+  return session;
+}
+
+export async function requireAuthSessionOrRedirect(
+  redirectTo: string,
+): Promise<SessionIdentity> {
+  const session = await readSession();
+  if (!session) redirect(`/sign-in?redirect=${encodeURIComponent(redirectTo)}`);
   return session;
 }
 
@@ -58,7 +66,11 @@ export async function authFetch(
   });
   if (!headers.has("User-Agent")) headers.set("User-Agent", serverUserAgent);
   headers.set("Authorization", session.token);
-  return fetch(input, { ...init, headers });
+  const timeoutSignal = AbortSignal.timeout(requestTimeoutMs);
+  const signal = init.signal
+    ? AbortSignal.any([init.signal, timeoutSignal])
+    : timeoutSignal;
+  return fetch(input, { ...init, headers, signal });
 }
 
 export async function requireUser(redirectTo?: string) {

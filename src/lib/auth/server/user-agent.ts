@@ -9,4 +9,5 @@
  * but the profile lookup 403s and the session is never created.
  */
 export const serverUserAgent = "curl/8.7.1 DXKB-V2/1.0";
+export const requestTimeoutMs = 15_000;
 // export const serverUserAgent = "DXKB-V2/1.0 (+https://www.bv-brc.org)";

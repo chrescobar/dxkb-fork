@@ -1,15 +1,14 @@
 import { getRequiredEnv } from "@/lib/env";
 import type {
   AuthErrorCode,
+  ProfilePatch,
   Result,
   SigninCredentials,
   SignupCredentials,
   UserProfile,
 } from "@/lib/auth/types";
 import { fail, networkFailure, ok } from "../result";
-import { serverUserAgent } from "../user-agent";
-
-const requestTimeoutMs = 15_000;
+import { requestTimeoutMs, serverUserAgent } from "../user-agent";
 
 function joinUrl(base: string, path = ""): string {
   return path
@@ -17,22 +16,8 @@ function joinUrl(base: string, path = ""): string {
     : base;
 }
 
-function cleanErrorMessage(raw: string, fallback: string): string {
-  const trimmed = raw.trim();
-  if (!trimmed) return fallback;
-  let message = trimmed;
-  try {
-    const parsed = JSON.parse(trimmed) as {
-      message?: unknown;
-      error?: unknown;
-    };
-    if (typeof parsed.message === "string") message = parsed.message;
-    else if (typeof parsed.error === "string") message = parsed.error;
-  } catch {
-    // Plain-text upstream errors are supported.
-  }
-  const firstLine = message.split("\n")[0].trim();
-  return firstLine.length > 200 ? `${firstLine.slice(0, 200)}...` : firstLine;
+function cleanErrorMessage(_raw: string, fallback: string): string {
+  return fallback;
 }
 
 async function responseMessage(
@@ -54,8 +39,18 @@ async function request(
   try {
     const headers = new Headers(init.headers);
     headers.set("User-Agent", serverUserAgent);
+    const response = await fetch(input, {
+      ...init,
+      headers,
+      signal: controller.signal,
+    });
+    const body = response.body ? await response.arrayBuffer() : null;
     return ok(
-      await fetch(input, { ...init, headers, signal: controller.signal }),
+      new Response(body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+      }),
     );
   } catch (cause) {
     if (cause instanceof Error && cause.name === "AbortError") {
@@ -96,7 +91,16 @@ function isUserProfile(value: unknown): value is UserProfile {
   return (
     typeof profile.id === "string" &&
     profile.id.length > 0 &&
-    typeof profile.email === "string"
+    typeof profile.email === "string" &&
+    typeof profile.email_verified === "boolean" &&
+    typeof profile.first_name === "string" &&
+    typeof profile.last_name === "string" &&
+    typeof profile.l_id === "string" &&
+    typeof profile.creation_date === "string" &&
+    typeof profile.last_login === "string" &&
+    typeof profile.organisms === "string" &&
+    typeof profile.reverification === "boolean" &&
+    typeof profile.source === "string"
   );
 }
 
@@ -221,7 +225,7 @@ export async function getProfile(
 export async function updateProfile(
   userId: string,
   token: string,
-  patches: unknown,
+  patches: ProfilePatch[],
 ): Promise<Result<void>> {
   const result = await request(
     joinUrl(getRequiredEnv("USER_URL"), encodeURIComponent(userId)),

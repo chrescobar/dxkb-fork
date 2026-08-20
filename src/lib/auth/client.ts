@@ -2,6 +2,7 @@
 
 import type {
   AuthUser,
+  ProfilePatch,
   SigninCredentials,
   SignupCredentials,
   UserProfile,
@@ -156,6 +157,6 @@ export function getProfile(): Promise<UserProfile> {
   return requestJson("/api/auth/profile", {}, "Failed to load profile");
 }
 
-export function updateProfile(patches: unknown): Promise<void> {
+export function updateProfile(patches: ProfilePatch[]): Promise<void> {
   return postJson("/api/auth/profile", patches, "Failed to update profile");
 }

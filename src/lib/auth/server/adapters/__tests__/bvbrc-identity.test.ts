@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
 import { serverUserAgent } from "../../user-agent";
+import type { ProfilePatch } from "@/lib/auth/types";
 import {
   authenticate,
   changePassword,
@@ -178,7 +179,7 @@ describe("named BV-BRC identity operations", () => {
       (await authenticate({ username: "u", password: "bad" })).error,
     ).toMatchObject({
       code: "invalid_credentials",
-      message: "secret",
+      message: "Authentication failed",
       status: 401,
     });
   });
@@ -222,7 +223,9 @@ describe("named BV-BRC identity operations", () => {
   it("updates an encoded profile URL with JSON Patch and a raw auth token", async () => {
     process.env.USER_URL = "https://user.test/user///";
     let requestSeen: Request | undefined;
-    const patches = [{ op: "replace", path: "/first_name", value: "Alicia" }];
+    const patches: ProfilePatch[] = [
+      { op: "replace", path: "/first_name", value: "Alicia" },
+    ];
     server.use(
       http.post("https://user.test/user/alice%2Fadmin", ({ request }) => {
         requestSeen = request;
@@ -360,7 +363,7 @@ describe("named BV-BRC identity operations", () => {
     ).toEqual({
       code: "network",
       status: 502,
-      message: "connection refused",
+      message: "Authentication service unavailable",
     });
     fetchSpy.mockRestore();
   });

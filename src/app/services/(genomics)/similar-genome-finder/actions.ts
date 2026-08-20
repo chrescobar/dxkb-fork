@@ -207,10 +207,9 @@ function processResults(
 export async function submitSimilarGenomes(
   data: SimilarGenomeFinderFormData,
 ): Promise<SubmitSimilarGenomesResponse> {
-  const { token } = await requireAuthSession();
-  const baseUrl = await getBaseUrl();
-
   try {
+    const { token } = await requireAuthSession();
+    const baseUrl = await getBaseUrl();
     const payload = buildMinhashServicePayload(data);
     const minhashRes = await fetchMinhashResults(baseUrl, token, payload);
     if (!minhashRes.ok) {

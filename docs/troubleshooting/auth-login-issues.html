@@ -566,8 +566,9 @@ curl -o /dev/null -w '%{http_code}' localhost:3019/api/auth/sign-in/email
     <div class="block">
       <h3>Why</h3>
       <p>
-        Node's <code>fetch</code> sends <code>User-Agent: node</code> by
-        default. Cloudflare in front of <code>user.patricbrc.org</code> answers
+        Node 24's built-in <code>fetch</code> sends
+        <code>User-Agent: node</code> by default. Cloudflare in front of
+        <code>user.patricbrc.org</code> answers
         that with a <strong>403 bot challenge</strong> — an HTML page reading
         <em>"Just a moment…"</em> — instead of the API response.
       </p>
@@ -637,10 +638,11 @@ with browser UA         → <span class="good">200</span></pre>
       <h3>How one 403 caused all three symptoms</h3>
       <ul>
         <li>
-          <strong>The banner:</strong> the profile fetch 403'd, so
-          <code>email_verified</code> never arrived. <code>isVerified</code> is
-          <code>user.email_verified !== false</code>, which went false. The
-          account was verified the whole time.
+          <strong>The banner:</strong> <code>isVerified</code> treats an
+          authenticated account as unverified only when
+          <code>email_verified</code> is explicitly <code>false</code>. A missing
+          value satisfies <code>user.email_verified !== false</code>, so it does
+          not explain the banner.
         </li>
         <li>
           <strong>The dead link:</strong> it calls <code>POST /verify</code> —
@@ -689,8 +691,9 @@ with browser UA         → <span class="good">200</span></pre>
       <p>
         Server-rendered <code>getCurrentUser()</code> now receives a full
         profile with <code>email_verified: true</code>, and
-        <code>/api/auth/profile</code> returns 200. Regression tests assert the
-        user agent is not <code>node</code> and fail if the header is stripped.
+        <code>/api/auth/profile</code> returns 200. Regression tests assert that
+        every identity request's User-Agent equals
+        <code>serverUserAgent</code> and fail if the header is stripped.
       </p>
     </div>
   </section>

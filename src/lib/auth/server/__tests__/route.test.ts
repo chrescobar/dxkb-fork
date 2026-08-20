@@ -24,6 +24,10 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
 describe("direct route helpers", () => {
   it("returns session_expired only when an app guard has no session", async () => {
     mocks.readSession.mockResolvedValue(null);
@@ -62,11 +66,18 @@ describe("direct route helpers", () => {
   });
 
   it("supports nullable and required session reads", async () => {
-    mocks.readSession.mockResolvedValueOnce(null).mockResolvedValueOnce(null);
+    const session = { token: "t", userId: "u" };
+    mocks.readSession
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(session)
+      .mockResolvedValueOnce(session);
     expect(await readAuthSession()).toBeNull();
     await expect(requireAuthSession()).rejects.toThrow(
       "Authentication required",
     );
+    await expect(readAuthSession()).resolves.toEqual(session);
+    await expect(requireAuthSession()).resolves.toEqual(session);
   });
 });
 
@@ -81,7 +92,6 @@ describe("authFetch", () => {
     expect(headers.get("Authorization")).toBe("t");
     expect(headers.get("User-Agent")).toBe(serverUserAgent);
     expect(headers.has("Content-Type")).toBe(false);
-    fetchSpy.mockRestore();
   });
 
   it("preserves Request headers and lets init headers override them", async () => {
@@ -102,17 +112,15 @@ describe("authFetch", () => {
     expect(headers.get("X-Request")).toBe("request");
     expect(headers.get("X-Init")).toBe("init");
     expect(headers.get("Authorization")).toBe("t");
-    fetchSpy.mockRestore();
   });
 
   it("does not clear auth state after a service 401", async () => {
     mocks.readSession.mockResolvedValue({ token: "t", userId: "u" });
-    const fetchSpy = vi
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValue(new Response(null, { status: 401 }));
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(null, { status: 401 }),
+    );
     expect((await authFetch("https://service.test/x")).status).toBe(401);
     expect(mocks.readSession).toHaveBeenCalledTimes(1);
-    fetchSpy.mockRestore();
   });
 });
 
@@ -123,7 +131,11 @@ describe("requireUser", () => {
       username: "u",
       email: "u@x",
     });
-    expect(await requireUser()).toMatchObject({ id: "u" });
+    expect(await requireUser()).toEqual({
+      id: "u",
+      username: "u",
+      email: "u@x",
+    });
   });
 
   it("redirects guests", async () => {

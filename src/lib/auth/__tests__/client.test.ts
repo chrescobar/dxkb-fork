@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 
 import { server } from "@/test-helpers/msw-server";
+import type { ProfilePatch } from "@/lib/auth/types";
 import {
   changePassword,
   exitImpersonation,
@@ -113,7 +114,9 @@ describe("auth client", () => {
   });
 
   it("posts profile patches with included credentials", async () => {
-    const patches = [{ op: "replace", path: "/first_name", value: "Alicia" }];
+    const patches: ProfilePatch[] = [
+      { op: "replace", path: "/first_name", value: "Alicia" },
+    ];
     server.use(
       http.post("/api/auth/profile", async ({ request }) => {
         expect(request.credentials).toBe("include");

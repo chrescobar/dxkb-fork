@@ -121,10 +121,10 @@ describe("POST /api/auth/change-password", () => {
     // bvbrcIdentity.changePassword maps a JSON-RPC error envelope to fail("validation", msg, 400)
     // and the route surfaces error.status (400) directly.
     expect(response.status).toBe(400);
-    expect(data.error).toBe("Wrong current password");
+    expect(data.error).toBe("Failed to change password");
   });
 
-  it("returns the upstream HTTP error status with the upstream body text on a transport-level failure", async () => {
+  it("returns the upstream HTTP status with a safe fallback message", async () => {
     setSessionCookies("valid-token", "alice");
 
     server.use(
@@ -141,6 +141,6 @@ describe("POST /api/auth/change-password", () => {
     const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(403);
-    expect(data.error).toBe("Forbidden");
+    expect(data.error).toBe("Failed to change password");
   });
 });

@@ -8,6 +8,7 @@ import GenomeAssemblyPage from "@/app/services/(genomics)/genome-assembly/page";
 import { ServiceDebuggingProvider } from "@/contexts/service-debugging-context";
 import { AuthBoundary } from "@/lib/auth/provider";
 import { server } from "@/test-helpers/msw-server";
+import { testAuthUser } from "@/test-helpers/api-route-helpers";
 
 function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient({
@@ -15,14 +16,7 @@ function Providers({ children }: { children: React.ReactNode }) {
   });
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthBoundary
-        user={{
-          id: "testuser",
-          username: "testuser",
-          email: "test@example.com",
-          email_verified: true,
-        }}
-      >
+      <AuthBoundary user={testAuthUser}>
         <ServiceDebuggingProvider>{children}</ServiceDebuggingProvider>
       </AuthBoundary>
     </QueryClientProvider>

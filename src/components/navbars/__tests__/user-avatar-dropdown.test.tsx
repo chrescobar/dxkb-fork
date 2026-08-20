@@ -12,10 +12,8 @@ const { mockAuth } = vi.hoisted(() => ({
 
 vi.mock("@/lib/auth/provider", () => ({
   useAuth: () => mockAuth,
-  useAuthActions: () => ({
-    exitImpersonation: vi.fn(),
-    sendVerificationEmail: vi.fn(),
-  }),
+  useAuthActions: () => ({ sendVerificationEmail: vi.fn() }),
+  useExitImpersonation: () => vi.fn(),
 }));
 
 vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn() } }));

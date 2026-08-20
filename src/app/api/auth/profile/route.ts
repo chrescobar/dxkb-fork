@@ -5,7 +5,7 @@ import { clearCurrentSession } from "@/lib/auth/server/session";
 import { parseJsonBody, statusFor } from "@/lib/auth/server/errors";
 import { statusToErrorCode } from "@/lib/api/types";
 import { respondWithAck } from "@/lib/auth/server/respond";
-import type { Result } from "@/lib/auth/types";
+import type { ProfilePatch, Result } from "@/lib/auth/types";
 
 async function clearRejectedSession(result: Result<unknown>): Promise<boolean> {
   if (result.error?.code !== "unauthorized") return false;
@@ -31,7 +31,7 @@ export const GET = withAuth(async (_request, { token, userId }) => {
 });
 
 export const POST = withAuth(async (request: NextRequest, { token, userId }) => {
-  const patches = await parseJsonBody<unknown>(request);
+  const patches = await parseJsonBody<ProfilePatch[]>(request);
   const result = await updateProfile(userId, token, patches);
   if (result.error && (await clearRejectedSession(result))) {
     return NextResponse.json(

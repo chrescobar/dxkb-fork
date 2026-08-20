@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, renderHook, screen, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
+import type { ProfilePatch } from "@/lib/auth/types";
 
 import * as authClient from "@/lib/auth/client";
 import { AuthBoundary, useAuth, useAuthActions } from "@/lib/auth/provider";
@@ -25,7 +26,7 @@ vi.mock("next/navigation", () => ({
     }
     return navigation.searchParams;
   },
-  useRouter: () => ({ refresh: refreshMock }),
+  useRouter: () => ({ refresh: refreshMock, replace: replaceMock }),
 }));
 
 vi.mock("@/lib/auth/client", async (importOriginal) => {
@@ -124,7 +125,7 @@ describe("AuthBoundary", () => {
     await expect(invoke(result.current)).resolves.toEqual(user);
     expect(clearSpy).toHaveBeenCalledOnce();
     expect(queryClient.getQueryData(["private"])).toBeUndefined();
-    expect(refreshMock).not.toHaveBeenCalled();
+    expect(refreshMock).toHaveBeenCalledOnce();
   });
 
   it("clears account cache and refreshes after starting impersonation", async () => {
@@ -166,7 +167,9 @@ describe("AuthBoundary", () => {
 
   it("invalidates the profile and refreshes after updating it", async () => {
     vi.mocked(authClient.updateProfile).mockResolvedValue();
-    const patches = [{ op: "replace", path: "/first_name", value: "Alicia" }];
+    const patches: ProfilePatch[] = [
+      { op: "replace", path: "/first_name", value: "Alicia" },
+    ];
     const queryClient = new QueryClient();
     const invalidateSpy = vi.spyOn(queryClient, "invalidateQueries");
     const clearSpy = vi.spyOn(queryClient, "clear");
@@ -192,7 +195,7 @@ describe("AuthBoundary", () => {
       </AuthBoundary>,
     );
 
-    expect(screen.getByText("protected content")).toBeInTheDocument();
+    expect(screen.queryByText("protected content")).not.toBeInTheDocument();
     await waitFor(() => {
       expect(replaceMock).toHaveBeenCalledWith(
         "/sign-in?redirect=%2Fworkspace%2Falice%3Ffolder%3DMy%2BData",
@@ -221,7 +224,7 @@ describe("AuthBoundary", () => {
     });
   });
 
-  it("preserves children as the Suspense fallback while the guard suspends", () => {
+  it("hides protected children while the guard suspends", () => {
     navigation.pathname = "/settings";
     navigation.suspendSearchParams = true;
 
@@ -231,6 +234,6 @@ describe("AuthBoundary", () => {
       </AuthBoundary>,
     );
 
-    expect(screen.getByText("settings content")).toBeInTheDocument();
+    expect(screen.queryByText("settings content")).not.toBeInTheDocument();
   });
 });

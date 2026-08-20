@@ -24,6 +24,11 @@ const adminProfile = {
   first_name: "Ada",
   last_name: "Admin",
   email_verified: true,
+  creation_date: "",
+  last_login: "",
+  organisms: "",
+  reverification: false,
+  source: "test",
   roles: ["admin"],
 };
 
@@ -34,6 +39,11 @@ const targetProfile = {
   first_name: "Terry",
   last_name: "Target",
   email_verified: true,
+  creation_date: "",
+  last_login: "",
+  organisms: "",
+  reverification: false,
+  source: "test",
   roles: [],
 };
 

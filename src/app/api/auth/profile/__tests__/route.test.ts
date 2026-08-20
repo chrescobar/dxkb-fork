@@ -32,7 +32,19 @@ describe("GET /api/auth/profile", () => {
   });
 
   it("returns profile data when authenticated", async () => {
-    const profile = { id: "user1", email: "test@example.com", first_name: "Test" };
+    const profile = {
+      id: "user1",
+      l_id: "user1",
+      email: "test@example.com",
+      email_verified: true,
+      first_name: "Test",
+      last_name: "User",
+      creation_date: "",
+      last_login: "",
+      organisms: "",
+      reverification: false,
+      source: "test",
+    };
     setAuthCookies("tok", "user1");
 
     server.use(
@@ -177,7 +189,7 @@ describe("POST /api/auth/profile", () => {
     const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(400);
-    expect(data.error).toBe("Bad Request");
+    expect(data.error).toBe("Failed to update profile");
   });
 
   it("returns fallback message when upstream error body is empty", async () => {

@@ -54,6 +54,12 @@ describe("POST /api/auth/sign-in/email", () => {
           first_name: "Alice",
           last_name: "Tester",
           email_verified: true,
+          l_id: "alice",
+          creation_date: "",
+          last_login: "",
+          organisms: "",
+          reverification: false,
+          source: "test",
         });
       }),
     );

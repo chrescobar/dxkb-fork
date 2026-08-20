@@ -2,20 +2,11 @@
 
 import { ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAuth, useAuthActions } from "@/lib/auth/provider";
-import { toast } from "sonner";
+import { useAuth, useExitImpersonation } from "@/lib/auth/provider";
 
 export function SuBanner() {
   const { isImpersonating, user } = useAuth();
-  const { exitImpersonation } = useAuthActions();
-  const suExit = async () => {
-    try {
-      await exitImpersonation();
-      toast.success("Returned to your account");
-    } catch {
-      toast.error("Failed to exit impersonation");
-    }
-  };
+  const exitImpersonation = useExitImpersonation();
 
   if (!isImpersonating) return null;
 
@@ -29,7 +20,7 @@ export function SuBanner() {
         variant="outline"
         size="sm"
         className="ml-1 h-6 border-accent-foreground/30 bg-transparent px-2 text-xs hover:bg-accent-foreground/10"
-        onClick={() => void suExit()}
+        onClick={() => void exitImpersonation()}
       >
         Exit SU
       </Button>

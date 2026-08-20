@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   readSession: vi.fn(),
   writeSession: vi.fn(),
   clearCurrentSession: vi.fn(),
+  clearBackup: vi.fn(),
   clearSession: vi.fn(),
   readBackup: vi.fn(),
   writeBackup: vi.fn(),
@@ -33,6 +34,7 @@ vi.mock("../session", () => ({
   readSession: mocks.readSession,
   writeSession: mocks.writeSession,
   clearCurrentSession: mocks.clearCurrentSession,
+  clearImpersonationBackup: mocks.clearBackup,
   clearSession: mocks.clearSession,
   readImpersonationBackup: mocks.readBackup,
   writeImpersonationBackup: mocks.writeBackup,
@@ -59,16 +61,16 @@ import {
 } from "../actions";
 import type { UserProfile } from "@/lib/auth/types";
 
-const outage = {
+const outage = () => ({
   code: "service_unavailable" as const,
   message: "down",
   status: 503,
-};
-const unauthorized = {
+});
+const unauthorized = () => ({
   code: "unauthorized" as const,
   message: "expired",
   status: 401,
-};
+});
 
 const profile = (partial: Partial<UserProfile> = {}): UserProfile => ({
   id: "canonical-id",
@@ -232,14 +234,14 @@ describe("auth actions", () => {
   it.each([
     {
       name: "target token failure",
-      impersonated: { data: null, error: unauthorized },
+      impersonated: { data: null, error: unauthorized() },
       targetProfile: undefined,
       code: "unauthorized",
     },
     {
       name: "target profile failure",
       impersonated: { data: { token: "target-token" }, error: null },
-      targetProfile: { data: null, error: outage },
+      targetProfile: { data: null, error: outage() },
       code: "service_unavailable",
     },
   ])("preserves the admin session and backup on $name", async (testCase) => {
@@ -279,7 +281,7 @@ describe("auth actions", () => {
     });
     mocks.getProfile.mockResolvedValue({
       data: null,
-      error: { ...unauthorized },
+      error: { ...unauthorized() },
     });
 
     await expect(startImpersonation("target", "pw")).resolves.toMatchObject({
@@ -294,14 +296,39 @@ describe("auth actions", () => {
       token: "admin-token",
       userId: "admin",
     });
-    mocks.getProfile.mockResolvedValue({ data: null, error: outage });
+    mocks.getProfile.mockResolvedValue({ data: null, error: outage() });
 
     await expect(startImpersonation("target", "pw")).resolves.toEqual({
       data: null,
-      error: outage,
+      error: outage(),
     });
     expect(mocks.impersonateUser).not.toHaveBeenCalled();
     expect(mocks.clearCurrentSession).not.toHaveBeenCalled();
+  });
+
+  it("clears the SU backup when switching the active session fails", async () => {
+    const admin = { token: "admin-token", userId: "admin-id" };
+    mocks.readSession.mockResolvedValue(admin);
+    mocks.getProfile
+      .mockResolvedValueOnce({
+        data: profile({ id: "admin-id", roles: ["admin"] }),
+        error: null,
+      })
+      .mockResolvedValueOnce({
+        data: profile({ id: "target-id", l_id: "target" }),
+        error: null,
+      });
+    mocks.impersonateUser.mockResolvedValue({
+      data: { token: "target-token" },
+      error: null,
+    });
+    mocks.writeSession.mockRejectedValue(new Error("cookie write failed"));
+
+    await expect(startImpersonation("target", "pw")).rejects.toThrow(
+      "cookie write failed",
+    );
+    expect(mocks.writeBackup).toHaveBeenCalledWith(admin);
+    expect(mocks.clearBackup).toHaveBeenCalledOnce();
   });
 
   it("validates recovery before atomically restoring the SU backup", async () => {
@@ -328,32 +355,25 @@ describe("auth actions", () => {
       token: "admin-token",
       userId: "admin",
     });
-    mocks.getProfile.mockResolvedValue({ data: null, error: outage });
+    mocks.getProfile.mockResolvedValue({ data: null, error: outage() });
 
     await expect(exitImpersonation()).resolves.toEqual({
       data: null,
-      error: outage,
+      error: outage(),
     });
     expect(mocks.restoreBackup).not.toHaveBeenCalled();
   });
 
-  it.each([
-    { error: unauthorized, outcome: "null" },
-    { error: outage, outcome: "throw" },
-  ])(
-    "keeps getCurrentUser read-only on $error.code",
-    async ({ error, outcome }) => {
+  it.each([{ error: unauthorized() }, { error: outage() }])(
+    "treats $error.code as an anonymous current-user read",
+    async ({ error }) => {
       mocks.readSession.mockResolvedValue({
         token: "token",
         userId: "canonical-id",
       });
       mocks.getProfile.mockResolvedValue({ data: null, error });
 
-      if (outcome === "null") {
-        await expect(getCurrentUser()).resolves.toBeNull();
-      } else {
-        await expect(getCurrentUser()).rejects.toThrow("down");
-      }
+      await expect(getCurrentUser()).resolves.toBeNull();
       expect(mocks.clearCurrentSession).not.toHaveBeenCalled();
       expect(mocks.clearSession).not.toHaveBeenCalled();
     },
@@ -404,11 +424,11 @@ describe("auth actions", () => {
         token: "token",
         userId: "canonical-id",
       });
-      testCase.adapter.mockResolvedValue({ data: null, error: unauthorized });
+      testCase.adapter.mockResolvedValue({ data: null, error: unauthorized() });
 
       await expect(testCase.invoke()).resolves.toEqual({
         data: null,
-        error: unauthorized,
+        error: unauthorized(),
       });
       expect(testCase.adapter).toHaveBeenCalledWith(...testCase.args);
       expect(mocks.clearCurrentSession).toHaveBeenCalledOnce();
@@ -430,11 +450,11 @@ describe("auth actions", () => {
       token: "token",
       userId: "canonical-id",
     });
-    testCase.adapter.mockResolvedValue({ data: null, error: outage });
+    testCase.adapter.mockResolvedValue({ data: null, error: outage() });
 
     await expect(testCase.invoke()).resolves.toEqual({
       data: null,
-      error: outage,
+      error: outage(),
     });
     expect(mocks.clearCurrentSession).not.toHaveBeenCalled();
   });

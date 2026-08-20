@@ -83,6 +83,12 @@ describe("POST /api/auth/sign-up/email", () => {
           first_name: "Bob",
           last_name: "Builder",
           email_verified: false,
+          l_id: "bob",
+          creation_date: "",
+          last_login: "",
+          organisms: "",
+          reverification: false,
+          source: "test",
         }),
       ),
     );
@@ -144,7 +150,7 @@ describe("POST /api/auth/sign-up/email", () => {
     expect(testCookieStore.set).not.toHaveBeenCalled();
   });
 
-  it("propagates the upstream message and status when registration fails (409 conflict) and writes no cookies", async () => {
+  it("preserves the conflict status with a safe message and writes no cookies", async () => {
     server.use(
       http.post(userRegisterUrl, () =>
         HttpResponse.json(
@@ -159,7 +165,7 @@ describe("POST /api/auth/sign-up/email", () => {
     const data = (await response.json()) as { error?: string };
 
     expect(response.status).toBe(409);
-    expect(data.error).toBe("Username already taken");
+    expect(data.error).toBe("Registration failed");
     expect(testCookieStore.set).not.toHaveBeenCalled();
   });
 
@@ -174,7 +180,19 @@ describe("POST /api/auth/sign-up/email", () => {
         }),
       ),
       http.get(`${userUrl}/bob`, () =>
-        HttpResponse.json({ id: "bob", email: "bob@example.com" }),
+        HttpResponse.json({
+          id: "bob",
+          l_id: "bob",
+          email: "bob@example.com",
+          email_verified: false,
+          first_name: "Bob",
+          last_name: "Builder",
+          creation_date: "",
+          last_login: "",
+          organisms: "",
+          reverification: false,
+          source: "test",
+        }),
       ),
       http.post(workspaceApiUrl, async ({ request }) => {
         const body = (await request.json()) as { method: string; params: unknown[] };
@@ -225,7 +243,19 @@ describe("POST /api/auth/sign-up/email", () => {
         }),
       ),
       http.get(`${userUrl}/bob`, () =>
-        HttpResponse.json({ id: "bob", email: "bob@example.com" }),
+        HttpResponse.json({
+          id: "bob",
+          l_id: "bob",
+          email: "bob@example.com",
+          email_verified: false,
+          first_name: "Bob",
+          last_name: "Builder",
+          creation_date: "",
+          last_login: "",
+          organisms: "",
+          reverification: false,
+          source: "test",
+        }),
       ),
       http.post(workspaceApiUrl, () =>
         new HttpResponse("Workspace API down", { status: 503 }),

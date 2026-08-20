@@ -11,10 +11,19 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 const WelcomeSearch = () => {
   const { isAuthenticated, isVerified } = useAuth();
   const { sendVerificationEmail } = useAuthActions();
+  const resendVerificationEmail = async () => {
+    try {
+      await sendVerificationEmail();
+      toast.success("Verification email sent");
+    } catch {
+      toast.error("Failed to send verification email");
+    }
+  };
 
   return (
     <section className="grow">
@@ -30,7 +39,7 @@ const WelcomeSearch = () => {
                   <button
                     type="button"
                     onClick={() => {
-                      void sendVerificationEmail();
+                      void resendVerificationEmail();
                     }}
                     className="cursor-pointer border-0 bg-transparent p-0 text-inherit underline hover:text-foreground focus:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     style={{ font: "inherit" }}

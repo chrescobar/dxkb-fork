@@ -12,6 +12,29 @@ export interface AuthUser {
   originalUsername?: string;
 }
 
+export interface ProfileSettings {
+  default_job_folder?: string;
+}
+
+export type ProfilePatch =
+  | {
+      op: "replace";
+      path:
+        | "/email"
+        | "/first_name"
+        | "/middle_name"
+        | "/last_name"
+        | "/affiliation"
+        | "/organisms"
+        | "/interests";
+      value: string;
+    }
+  | {
+      op: "add" | "replace";
+      path: "/settings";
+      value: ProfileSettings;
+    };
+
 export interface UserProfile {
   affiliation?: string;
   created_by?: string;
@@ -35,9 +58,7 @@ export interface UserProfile {
   verification_date?: string;
   verification_error?: string;
   verification_send_date?: string;
-  settings?: {
-    default_job_folder?: string;
-  };
+  settings?: ProfileSettings;
 }
 
 export interface SigninCredentials {

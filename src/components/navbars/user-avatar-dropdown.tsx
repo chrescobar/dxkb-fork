@@ -15,7 +15,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SignoutButton } from "@/components/auth/signout-button";
 import { SuLoginDialog } from "@/components/auth/su-login-dialog";
-import { useAuth, useAuthActions } from "@/lib/auth/provider";
+import {
+  useAuth,
+  useAuthActions,
+  useExitImpersonation,
+} from "@/lib/auth/provider";
 import { toast } from "sonner";
 import {
   encodeWorkspaceSegment,
@@ -34,13 +38,14 @@ import {
 
 export function UserAvatarDropdown() {
   const { user, isAdmin, isImpersonating } = useAuth();
-  const { sendVerificationEmail, exitImpersonation } = useAuthActions();
-  const suExit = async () => {
+  const { sendVerificationEmail } = useAuthActions();
+  const exitImpersonation = useExitImpersonation();
+  const resendVerificationEmail = async () => {
     try {
-      await exitImpersonation();
-      toast.success("Returned to your account");
+      await sendVerificationEmail();
+      toast.success("Verification email sent");
     } catch {
-      toast.error("Failed to exit impersonation");
+      toast.error("Failed to send verification email");
     }
   };
   const wsUsername = workspaceUsername(user);
@@ -112,7 +117,7 @@ export function UserAvatarDropdown() {
 
                 <DropdownMenuItem
                   onClick={() => {
-                    void sendVerificationEmail();
+                    void resendVerificationEmail();
                   }}
                 >
                   <span className="flex items-center gap-2">
@@ -145,7 +150,7 @@ export function UserAvatarDropdown() {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       onClick={() => {
-                        void suExit();
+                        void exitImpersonation();
                       }}
                     >
                       <LogOut className="size-4 text-foreground" />

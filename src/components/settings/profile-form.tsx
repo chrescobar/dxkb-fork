@@ -1,7 +1,6 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -31,7 +30,6 @@ interface ProfileFormProps {
 }
 
 export function ProfileForm({ profile }: ProfileFormProps) {
-  const queryClient = useQueryClient();
   const { updateProfile } = useAuthActions();
 
   const form = useForm({
@@ -55,7 +53,6 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       try {
         await updateProfile(patches);
         toast.success("Profile updated successfully.");
-        await queryClient.invalidateQueries({ queryKey: ["user-profile"] });
       } catch {
         toast.error("Failed to update profile.");
       }

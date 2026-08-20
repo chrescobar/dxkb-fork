@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { X } from "lucide-react";
@@ -25,7 +24,6 @@ interface PreferencesFormProps {
 }
 
 export function PreferencesForm({ profile }: PreferencesFormProps) {
-  const queryClient = useQueryClient();
   const { updateProfile } = useAuthActions();
   const [defaultJobFolder, setDefaultJobFolder] = useState(
     profile.settings?.default_job_folder ?? "",
@@ -48,9 +46,8 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
         value: { default_job_folder: defaultJobFolder },
       },
     ])
-      .then(async () => {
+      .then(() => {
         toast.success("Preferences updated successfully.");
-        await queryClient.invalidateQueries({ queryKey: ["user-profile"] });
       })
       .catch(() => {
         toast.error("Failed to update preferences.");

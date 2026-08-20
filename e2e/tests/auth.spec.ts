@@ -367,7 +367,7 @@ test.describe("auth lifecycle (local identity fake)", () => {
     });
     await signIn.submit();
     expect((await signInResponse).status()).toBe(200);
-    await expect(page).toHaveURL(/\/$/);
+    await expect(page).toHaveURL(/\/settings$/);
     expect(
       await page.evaluate(() =>
         sessionStorage.getItem("e2e-next-redirect-flash"),

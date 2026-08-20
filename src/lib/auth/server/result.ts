@@ -12,9 +12,9 @@ export function fail<T>(
   return { data: null, error: { code, message, status } };
 }
 
-export function networkFailure(cause: unknown, fallback: string): AuthError {
+export function networkFailure(_cause: unknown, fallback: string): AuthError {
   return {
-    message: cause instanceof Error ? cause.message : fallback,
+    message: fallback,
     code: "network",
     status: 502,
   };

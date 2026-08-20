@@ -17,9 +17,9 @@ const WelcomeSearch = () => {
   const { sendVerificationEmail } = useAuthActions();
 
   return (
-    <section className="flex-grow">
+    <section className="grow">
       {/* Hero Section with Search */}
-      <div className="bg-gradient-to-b from-primary to-background py-16 md:py-8">
+      <div className="bg-linear-to-b from-primary to-background py-16 md:py-8">
         {isAuthenticated && !isVerified && (
           <div className="container mx-auto px-4">
             <Alert variant="destructive">

@@ -1,0 +1,747 @@
+src/app/api/auth/__tests__/auth-routes.integration.test.ts
+  s_81670cc38b5aee::t_2f4a129ff362ff 4,6
+  s_81670cc38b5aee::t_c8acf26e9dcf5d 134
+  s_81670cc38b5aee::t_2a2a3725feeeab 83-99,104-120
+  s_81670cc38b5aee::t_586eea2ce48ba6 100-103
+  s_e065d0677c8960::t_263a8efd133f70 1-3,5,7-78,80-82,121-133,135-214
+  s_81670cc38b5aee::t_d2cf1ed113b4ee 79
+src/app/(auth)/sign-up/page.tsx
+  s_77b508089863af::t_3bb8975bf7cfbe 25
+  s_77b508089863af::t_80b7e1418497da 32-45
+  s_77b508089863af::t_89484929e625a7 6
+  s_8dd4ea570743e0::t_75be7859ad0993 52,87,103
+  s_77b508089863af::t_0b8e1026421d18 76,79-80
+  s_77b508089863af::t_bdb9c06267020d 31
+src/lib/auth/server/route.ts
+  s_81670cc38b5aee::t_40f2b327b15fc0 56-58
+  s_8a790c65e62fc5::t_4d8ced2af8980e 53-55
+  s_81670cc38b5aee::t_3cc5436178e1f5 28
+  s_8a790c65e62fc5::t_028127c8cc5e19 1,4,6-7,11-12,15,17,22-23,26-27,29-30,32-43,45-46,48-52,59-62,64-67
+src/app/(auth)/forgot-password/page.tsx
+  s_77b508089863af::t_c9568ef7f38cc2 5
+  s_77b508089863af::t_bb3f875c09e3f5 21
+  s_77b508089863af::t_2b2514901f0a0b 34
+  s_77b508089863af::t_6f23ed5d96693f 44-52
+  s_8dd4ea570743e0::t_75be7859ad0993 61,96,127,147,163
+  s_77b508089863af::t_0b677825e5c071 148,150
+src/app/api/auth/change-password/route.ts
+  s_81670cc38b5aee::t_8ff68975e714c2 4
+  s_81670cc38b5aee::t_7fef057fa6479a 12
+  s_81670cc38b5aee::t_84d97e5f4a1d75 13-15,17-19
+  s_290d3e7bdbbc96::t_6c6159a36aad7d 2
+src/app/api/auth/sign-in/email/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_12f0fdf55dd213 68
+  s_81670cc38b5aee::t_19846c349a9406 86-90,163-170
+  s_bbb3b8f2cd0496::t_4f6c412757c16d 81,92,122,137,159,177
+  s_81670cc38b5aee::t_f3eb4f96824807 35,37
+  s_bbb3b8f2cd0496::t_073a9103e94b33 28
+  s_81670cc38b5aee::t_8f13e29ce963a5 50
+  s_bbb3b8f2cd0496::t_d31f4d6cb0595e 6,19,121
+  s_81670cc38b5aee::t_403d3cc9d34a11 10
+  s_81670cc38b5aee::t_567588c704b948 74,76
+  s_81670cc38b5aee::t_965413f5754417 43
+  s_bbb3b8f2cd0496::t_28ae85aafe68e2 5,7-9
+e2e/mocks/backends.ts
+  s_8dd4ea570743e0::t_b950e8b58aa517 323,333,343
+  s_8dd4ea570743e0::t_00b4656601b3ff 103-106,123-124,160-163,182-184,195-197,245-248,257-260
+  s_8dd4ea570743e0::t_e90f380fcfdcfe 316-322,324-332,334-337,340-342
+src/app/(auth)/layout.tsx
+  s_77b508089863af::t_42231776f4977c 4
+  s_77b508089863af::t_8f0b2e43dff26c 11-12
+src/app/api/services/app-service/submit/route.ts
+  s_290d3e7bdbbc96::t_b737676af3e88d 3
+src/app/services/(protein-tools)/gene-protein-tree/__tests__/page-alphabet.test.tsx
+  s_bbb3b8f2cd0496::t_85d632ddeaad35 19
+  s_bbb3b8f2cd0496::t_7e83db3f351dfd 20
+src/lib/auth/server/session.ts
+  s_8a790c65e62fc5::t_4d8ced2af8980e 22-25
+  s_8a790c65e62fc5::t_0d7fc934c26ecf 1-21,26-106
+src/app/workspace/shared/[[...path]]/page.tsx
+  s_290d3e7bdbbc96::t_d5851ce089ad8b 2
+  s_290d3e7bdbbc96::t_ac4614f157ddbb 10-13
+src/app/layout.tsx
+  s_77b508089863af::t_3614b96747f7a9 35
+  s_77b508089863af::t_6ce6ed2c3ed1da 9
+  s_77b508089863af::t_c43fcdf087af06 46
+src/components/workspace/__tests__/workspace-browser-rendering.test.tsx
+  s_77b508089863af::t_bd0af1b585e45f 11,14
+src/app/services/(genomics)/genome-assembly/__tests__/page-rerun.test.tsx
+  s_bbb3b8f2cd0496::t_6ab4a5eaddd46e 19
+  s_bbb3b8f2cd0496::t_e1fc045741be7a 20
+README.md
+  s_8dd4ea570743e0::t_bae75a6d60ae36 93,95-98
+  s_8dd4ea570743e0::t_00b4656601b3ff 37-48,80-89
+.claude/rules/testing.md
+  s_8dd4ea570743e0::t_b7ddaf9832b0af 75,113
+  s_8dd4ea570743e0::t_0155be1d593f7d 123
+  s_8dd4ea570743e0::t_00b4656601b3ff 21-26,36-38,40-43
+  s_8dd4ea570743e0::t_6e28ef2ab954df 88
+src/app/workspace/home/[[...path]]/page.tsx
+  s_290d3e7bdbbc96::t_3e36f70a5257c1 10-13
+  s_290d3e7bdbbc96::t_d1d7e7268648f9 2
+src/lib/api/types.ts
+  s_8a790c65e62fc5::t_bbcc04d60fbdb3 2-3
+e2e/tests/a11y/routes-sweep.spec.ts
+  s_8dd4ea570743e0::t_00b4656601b3ff 27-31,33-38,41-43,45-51,54-56,71-73,97-112,114-119,121-125,127-139,141-147,154-162,164-168,170-172,174-192,194-200,204-206,220-222,235-237,250-253,266-268,273-280,291-301,305-307,321-325,358-362
+  s_8dd4ea570743e0::t_8a0c5a77334e35 85
+src/lib/auth/server/__tests__/route.test.ts
+  s_8a790c65e62fc5::t_ea32b82c695e26 2-5,9-11,15-20,23-24,27-34,36-39,43,49-50,52-53,55-60,64-66,73-81,83-84,108-115,119-120,126,129-131
+  s_81670cc38b5aee::t_5530b0a205264e 87-91,93-95,97,100,102-105
+  s_81670cc38b5aee::t_19846c349a9406 67-69
+  s_8a790c65e62fc5::t_4d8ced2af8980e 44-47,121-124
+src/components/search/welcome-search.tsx
+  s_77b508089863af::t_5885a1b02656b1 9
+  s_8dd4ea570743e0::t_75be7859ad0993 22,29,32-35,39-40,56,68,73,79,85,91,97,139,161,164,169
+  s_77b508089863af::t_cfb253bb81cc02 17
+src/lib/api/__tests__/client.test.ts
+  s_77b508089863af::t_9f92ae8a87e34d 2,6-7,10-12,16-17,22,27,33-36,65,80
+  s_81670cc38b5aee::t_938468efcc8ddb 21,23-24
+  s_81670cc38b5aee::t_3d69382d84f3a1 37-38,41-43,45-50,53-55,57-62,81
+  s_77b508089863af::t_9eae092b2929dc 77-78
+  s_77b508089863af::t_cbe4591b31d79e 32
+  s_77b508089863af::t_db037dbab4a9d5 79
+src/lib/auth/provider.tsx
+  s_81670cc38b5aee::t_4bbb8e211c247d 62-84,86-89,91-101
+  s_81670cc38b5aee::t_d316d01fbe4542 25,28-32
+  s_81670cc38b5aee::t_bb2df7a517b271 85
+  s_77b508089863af::t_06d031b616f81f 10-11,13,15-19,21,34,36,38-42,44-52,54-56,58-60,90,102,106,109,116-122
+src/components/jobs/__tests__/job-status-pill.test.tsx
+  s_77b508089863af::t_f12f78f5d0feb8 17
+  s_77b508089863af::t_9eae092b2929dc 64-66,73-75,83-85,93-95,105-107,117-119,129-131,141-147,152-154,157-159,178-180,183-185,199-201,204-206,218-220,223-225
+src/lib/auth/server/cookies.ts
+  s_8a790c65e62fc5::t_4d8ced2af8980e 20
+  s_8a790c65e62fc5::t_1f753d20083dbf 1-19,21-22
+src/components/search/__tests__/command-palette.test.tsx
+  s_77b508089863af::t_6c98596b857dad 360
+  s_77b508089863af::t_ccc5188c719529 23,25,42-43
+  s_77b508089863af::t_450f3d1027dc4a 75
+  s_77b508089863af::t_fd02d5a7296d5e 371
+  s_77b508089863af::t_0733669d150a91 38
+  s_77b508089863af::t_b3c5a39941e56e 44-45
+src/app/api/services/workspace/upload/route.ts
+  s_290d3e7bdbbc96::t_4f2388f471a106 19
+  s_290d3e7bdbbc96::t_7b4cef0eb40411 2
+e2e/scripts/journeys/auth-sign-in.ts
+  s_8dd4ea570743e0::t_a8f446f51696a7 5-6
+src/app/api/services/genome/get-all-ids/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_af0793828ac26a 4-9
+  s_bbb3b8f2cd0496::t_85f3780c7acca9 15-17
+  s_bbb3b8f2cd0496::t_17c0a18768989e 18,20
+src/lib/api/client.ts
+  s_77b508089863af::t_46b5c7aaca5623 3-10
+  s_77b508089863af::t_0c030c12a1bc90 60,91
+  s_77b508089863af::t_de1405e40768a7 47-50
+  s_77b508089863af::t_a8629ea082e8a9 27,29-36
+  s_77b508089863af::t_e346877158f4d5 11
+e2e/tests/a11y/reduced-motion.spec.ts
+  s_8dd4ea570743e0::t_00b4656601b3ff 29-35,44-48,59-62,65-71,92-95,98-101
+  s_8dd4ea570743e0::t_ce9fe8c1b1e8b3 84
+src/components/workspace/workspace-object-selector.tsx
+  s_77b508089863af::t_5fe58a649ff242 13
+src/components/search/command-palette.tsx
+  s_77b508089863af::t_a92e196c8dfeed 121
+  s_77b508089863af::t_bc13c02d62246b 46-47
+  s_8dd4ea570743e0::t_75be7859ad0993 131-134,136-143,145-154,156-164,166-176,178-191,193-194,196,199-200,202-244,246-270
+  s_77b508089863af::t_b3c6712482521a 120
+  s_77b508089863af::t_da632e87fb8b5b 3
+  s_77b508089863af::t_83d2af01ec8288 126-130
+  s_77b508089863af::t_c7b74231f41145 17-18
+  s_77b508089863af::t_27f46753802248 271-272
+e2e/scripts/har-overrides.ts
+  s_8dd4ea570743e0::t_7575605887d246 180-181
+  s_8dd4ea570743e0::t_00b4656601b3ff 192-193,221-222
+e2e/tests/backends.spec.ts
+  s_8dd4ea570743e0::t_d0fb52dd6e64d5 163,165-166
+  s_8dd4ea570743e0::t_00b4656601b3ff 36-37,39-49,51-53,63-66,68-72,84-93,98-100,103-105,109-112,121-126,129-131,136-138,141-144,154-158,169-171,175-178,190-193,199-200,206-207,216-221,228-233
+  s_8dd4ea570743e0::t_898263a2acfe10 119
+src/lib/auth/server/errors.ts
+  s_81670cc38b5aee::t_8f52e8ee28ed6a 128-131
+  s_8a790c65e62fc5::t_4d8ced2af8980e 146
+  s_8a790c65e62fc5::t_4d889a53b992e8 4
+  s_8a790c65e62fc5::t_609532d2788616 12
+  s_8a790c65e62fc5::t_86a9737ec1a54a 64-65
+src/app/settings/page.tsx
+  s_77b508089863af::t_244b4d8b833b8f 22
+  s_8a790c65e62fc5::t_43e0480e57fe62 12
+src/app/api/services/feature/from-group/route.ts
+  s_290d3e7bdbbc96::t_f309268f580eb4 2
+e2e/scripts/journeys/README.md
+  s_81670cc38b5aee::t_23bde93d7eaca6 7-9
+  s_8dd4ea570743e0::t_00b4656601b3ff 49-55
+src/app/api/services/app-service/jobs/[id]/stderr/route.ts
+  s_290d3e7bdbbc96::t_78b2879653b7d6 2
+src/components/settings/preferences-form.tsx
+  s_8dd4ea570743e0::t_75be7859ad0993 99
+  s_8a790c65e62fc5::t_10ffcdc2d37108 29
+  s_8a790c65e62fc5::t_43e0480e57fe62 20
+  s_77b508089863af::t_9b07f38ae3d923 44-51
+src/app/api/auth/change-password/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_45b6e51b292ffd 4-8
+  s_bbb3b8f2cd0496::t_ee97117d7c1715 23,46
+  s_bbb3b8f2cd0496::t_7b8c8992cdd22e 15
+.claude/CLAUDE.md
+  s_8dd4ea570743e0::t_a59445b6c68e3f 26,74
+  s_8dd4ea570743e0::t_00b4656601b3ff 41,45,49,53,57,61,63
+src/app/api/auth/send-verification-email/route.ts
+  s_290d3e7bdbbc96::t_a3bdbba197aabd 1
+  s_81670cc38b5aee::t_8d5f07b9c3dad8 6-9
+src/app/api/auth/sign-in/email/route.ts
+  s_81670cc38b5aee::t_c6a5bd63437efe 4
+  s_290d3e7bdbbc96::t_1b89883f2f77f8 9-15
+  s_290d3e7bdbbc96::t_0fe0188ca0980a 2
+  s_81670cc38b5aee::t_806cedff51353d 8
+src/lib/auth/server/__tests__/actions.test.ts
+  s_2198921e56e8b4::t_b6492e94e28c11 27-30
+  s_2198921e56e8b4::t_18f84599605694 17-18
+  s_1247a388ed5544::t_1b443d58552e79 164-266,292-342,351,361-440
+  s_81670cc38b5aee::t_c37ea47c73e7e7 267,269-274
+  s_81670cc38b5aee::t_317840cb1450fe 268
+  s_2198921e56e8b4::t_4909848763dd3f 343-350,352-360
+  s_2198921e56e8b4::t_ab544aee830aa8 42,45,48-59,61-71
+  s_81670cc38b5aee::t_aeeb3d4a6bd0c1 275-279,284-291
+  s_2198921e56e8b4::t_15df90f9df3841 6-9
+  s_81670cc38b5aee::t_586eea2ce48ba6 280-283
+  s_81670cc38b5aee::t_15719cd3f55d88 105-108
+  s_8a790c65e62fc5::t_4d8ced2af8980e 41,43,136-147,150-153
+  s_8a790c65e62fc5::t_5f3995f486c7c3 1-5,10-16,19-26,31-40,44,46-47,60,72-104,109-135,148-149,154-163,441
+src/app/api/services/genome/validate-viral/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_bb0d7b99a559c6 4-9
+  s_bbb3b8f2cd0496::t_c691620f4b6acc 15-17
+  s_bbb3b8f2cd0496::t_b5bd5d0533844a 18,20
+src/app/api/auth/verify-email-token/route.ts
+  s_290d3e7bdbbc96::t_617762d6f97706 2
+  s_290d3e7bdbbc96::t_be57726414f8f9 9
+e2e/tests/organisms/archaeopteryx.spec.ts
+  s_8dd4ea570743e0::t_46fca956fa90a0 44
+docs/architecture.md
+  s_8dd4ea570743e0::t_ddac6c1ec9f860 95
+  s_8dd4ea570743e0::t_74b76acee2ef78 84
+  s_8dd4ea570743e0::t_019e5522300d75 28-38,42-45
+src/components/settings/profile-form.tsx
+  s_77b508089863af::t_a1853c55f45af8 56,58
+  s_77b508089863af::t_f5da00b8721076 35
+  s_8dd4ea570743e0::t_75be7859ad0993 72,93-95,100-102,114-116,120-122,138-140,152-154,158-160,176-178,194-196,212-214
+  s_8a790c65e62fc5::t_43e0480e57fe62 21
+src/hooks/services/use-rerun-form.ts
+  s_77b508089863af::t_48389d9857a9bf 109
+  s_8a790c65e62fc5::t_43e0480e57fe62 11
+src/app/api/auth/sign-up/email/route.ts
+  s_81670cc38b5aee::t_d114162e53e620 3
+  s_290d3e7bdbbc96::t_68146430ba33c1 2
+  s_290d3e7bdbbc96::t_7892bb7c29450d 9-15
+  s_81670cc38b5aee::t_16b0cc9a7ab51f 8
+src/app/api/auth/su-exit/route.ts
+  s_290d3e7bdbbc96::t_72aeb3f9a79620 6-12
+  s_290d3e7bdbbc96::t_1c6fd9fbddab8b 1
+  s_81670cc38b5aee::t_102dad5b405a8a 3,5,13
+src/app/api/workspace/public/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_d014ad6fd8941e 3-7,14,82,104
+src/app/api/services/app-service/jobs/summary/route.ts
+  s_290d3e7bdbbc96::t_0171cfe588b899 3
+src/proxy.ts
+  s_81670cc38b5aee::t_9ae3c6d9e364c4 2
+  s_81670cc38b5aee::t_4083a57b3d5904 8-9
+  s_290d3e7bdbbc96::t_1fc448d11b5847 3
+  s_290d3e7bdbbc96::t_8b7481ea116d13 37
+src/app/api/services/app-service/jobs/[id]/stdout/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_55a01d65ab48b4 23
+  s_bbb3b8f2cd0496::t_afcecf5e9f6c3e 2,5
+  s_bbb3b8f2cd0496::t_e5050a9be2ead7 28
+src/app/(auth)/sign-in/page.tsx
+  s_77b508089863af::t_2ae7f86aa4c396 7
+  s_77b508089863af::t_4c3cb42c52a9b1 171,173
+  s_8dd4ea570743e0::t_75be7859ad0993 58-60,67,97,120,123,130,185,189,194,212
+  s_77b508089863af::t_3d5da22ef8b439 38
+  s_77b508089863af::t_08dc45f6aeeff9 49-57,61
+src/app/(auth)/redirect-action.ts
+  s_81670cc38b5aee::t_bce8469ea49160 31-32
+  s_77b508089863af::t_9a71a4ca44c3bf 4,6,16,21-22,24,26-30
+src/app/api/services/app-service/jobs/[id]/stdout/route.ts
+  s_290d3e7bdbbc96::t_739800876b17d0 2
+src/test-helpers/api-route-helpers.ts
+  s_81670cc38b5aee::t_f2b5078f53d47b 24
+  s_81670cc38b5aee::t_1b7a9562c88f85 69-72
+  s_81670cc38b5aee::t_1b9e303e98268d 39-40
+  s_bbb3b8f2cd0496::t_e04d1860c3cb1b 5-11,13-23,25-38
+  s_bbb3b8f2cd0496::t_9a0fb4661b04d6 12
+src/app/api/services/genome/by-ids/route.ts
+  s_290d3e7bdbbc96::t_366be891b374b9 2
+src/app/api/services/genome/validate-viral/route.ts
+  s_290d3e7bdbbc96::t_28f16f50ba058a 2
+src/app/api/workspace/resolve-download.ts
+  s_290d3e7bdbbc96::t_6c3c8ed4e69f5f 46-51
+  s_290d3e7bdbbc96::t_6427b10fe4ded8 2
+src/app/services/(genomics)/blast/__tests__/page-database-types.test.tsx
+  s_bbb3b8f2cd0496::t_8bb2d30c7753ce 20
+  s_bbb3b8f2cd0496::t_663fbe3d3ef3cd 19
+src/components/navbars/desktop-navbar.tsx
+  s_77b508089863af::t_59c76f192e5afb 24
+  s_77b508089863af::t_af0a33762af558 42
+  s_77b508089863af::t_c7845e02e835b5 177,203
+  s_8dd4ea570743e0::t_75be7859ad0993 49,65,97,111,116,232
+src/app/api/services/app-service/jobs/[id]/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_bbc87262fea308 23
+  s_bbb3b8f2cd0496::t_3d6561a401c477 2,5
+  s_bbb3b8f2cd0496::t_3a6fd14228b6db 28
+src/app/api/services/minhash/route.ts
+  s_290d3e7bdbbc96::t_d2e227bf979951 2
+src/app/api/services/app-service/jobs/app-summary/route.ts
+  s_290d3e7bdbbc96::t_6bbfed74e63ebf 3
+src/lib/auth/server/adapters/bvbrc-identity.ts
+  s_8a790c65e62fc5::t_4b7c476fa2860b 208-209
+  s_8a790c65e62fc5::t_0b6fc2bad75c0d 344-348
+  s_8a790c65e62fc5::t_6306c81eb2aa7b 3-4,9-10,12-14,23-24,29-36,42-50,54-56,60-83,85-86,88-102,107-109,112,115-117,119,124-128,135,138,141-143,145,158-163,166,171-173,175,181-185,192-195,198,202-207,211-213,245,248-250,252,254-260,263,267-269,277-282,290,294-296,303-309,311-315,318,324-326,339-342,353-360,362,365-369
+  s_8a790c65e62fc5::t_3d401801e1eea0 84,87
+  s_8a790c65e62fc5::t_4d8ced2af8980e 15-17,25-28,38-41,57-59,103-106,129-133,186-190,214-218,350-352
+  s_8a790c65e62fc5::t_877494acb0cf8d 283-286
+  s_81670cc38b5aee::t_222e1d094f7360 51-53
+  s_81670cc38b5aee::t_1b0ca150ee0384 221,223-242
+  s_8a790c65e62fc5::t_a7a5eeb24bb1a5 343,349
+  s_8a790c65e62fc5::t_6fb146dedc1b3a 37
+e2e/tests/visual/visual.spec.ts
+  s_8dd4ea570743e0::t_00b4656601b3ff 24-27,49-51,58-61
+src/components/navbars/__tests__/user-avatar-dropdown.test.tsx
+  s_77b508089863af::t_caa7e0eee60b0d 140
+  s_77b508089863af::t_d16f1ed962e584 13,15-18,115
+  s_77b508089863af::t_9eae092b2929dc 24-30,34-38,40-52,71-76
+src/app/api/services/app-service/jobs/[id]/stderr/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_b5a0c04f0e9f52 2,5
+  s_bbb3b8f2cd0496::t_43f3e45367a939 23
+  s_bbb3b8f2cd0496::t_2f9d26e9df41f4 28
+src/components/navbars/user-avatar-dropdown.tsx
+  s_77b508089863af::t_c071e4bd344d70 37,39-42
+  s_8dd4ea570743e0::t_75be7859ad0993 20-23,51,79-83,100,107-110,113-117,119,125,132-137,146-151,160
+  s_77b508089863af::t_e0a879f82e101e 18
+src/app/api/contact/route.ts
+  s_290d3e7bdbbc96::t_8ebaeabef5c683 3
+src/app/api/auth/su-login/route.ts
+  s_81670cc38b5aee::t_9c7cf222d5a4f2 18,20
+  s_290d3e7bdbbc96::t_f02581821a1a28 2
+  s_81670cc38b5aee::t_9a6894eb85cf5b 19
+  s_81670cc38b5aee::t_1972c537be156d 4
+  s_81670cc38b5aee::t_edd4502d908c5e 12
+  s_290d3e7bdbbc96::t_68bb95ad58bbc8 13-15,17,21-24
+src/components/auth/signout-button.tsx
+  s_77b508089863af::t_0403b82edcb50c 41-42,44
+  s_77b508089863af::t_f34f8315e8c9ff 62
+  s_8dd4ea570743e0::t_75be7859ad0993 102-103
+  s_77b508089863af::t_af6b856683081e 5
+  s_81670cc38b5aee::t_a9f7504cc58f26 104
+  s_77b508089863af::t_79cdbba9503a46 4
+  s_77b508089863af::t_8a08a4d079fc74 63-73
+  s_77b508089863af::t_fb78db5c2f4546 106-117
+src/components/navbars/mobile-navbar.tsx
+  s_77b508089863af::t_509708ea458cc6 49
+  s_8dd4ea570743e0::t_75be7859ad0993 78-79,82,86,90,126-127,140,155,168,188,228,237-279,281-282,284,286-287,289,293,295,298,300,302-303,305,309-323,325-328,333
+  s_77b508089863af::t_952adf20c8a9ee 236,329,399,425
+  s_77b508089863af::t_58f168bdeabbe2 100
+src/components/auth/su-login-dialog.tsx
+  s_8dd4ea570743e0::t_75be7859ad0993 46-48,82-83,88-93,100-102,115-117
+  s_77b508089863af::t_daeb0b781d15d9 6
+  s_77b508089863af::t_1f8cae4b684cc0 37-41
+  s_77b508089863af::t_7751d74d957653 29
+src/app/workspace/page.tsx
+  s_290d3e7bdbbc96::t_04cb25fe9ec8b4 6
+  s_290d3e7bdbbc96::t_e630232e922c52 2
+src/app/api/workspace/public/route.ts
+  s_290d3e7bdbbc96::t_31100625e0ff1e 32
+  s_290d3e7bdbbc96::t_ed8b7da2b0e23e 2
+src/app/api/auth/profile/route.ts
+  s_81670cc38b5aee::t_0acdd2fb477681 34
+  s_81670cc38b5aee::t_1cb1fce7ed2084 3-4
+  s_81670cc38b5aee::t_5d9594bcbadec5 2,8,10-14,16-20,22-26,30,35-36,38-39,42
+  s_81670cc38b5aee::t_5703e93013ffe6 5
+  s_81670cc38b5aee::t_863ceac980c280 33
+src/components/settings/password-change-form.tsx
+  s_77b508089863af::t_89049ba49bd3fd 25
+  s_8a790c65e62fc5::t_43e0480e57fe62 18
+  s_8dd4ea570743e0::t_75be7859ad0993 51,65-67,71-73,85-87,91-93,105-107,111-113
+  s_77b508089863af::t_ce23ddc5db55a2 35
+src/lib/auth/server/adapters/__tests__/bvbrc-identity.test.ts
+  s_b0401c7821a671::t_14948537b29cdc 48,54,339
+  s_8a790c65e62fc5::t_33b820ba8962ca 4-6,8-11,15,18-19,25-38,120,138-139,141-142,146,152,167,169-170,176-178,182,192-193,195-197,203,206,212-215,284,295,301,308-309,313,320-321,325,328-329
+  s_8a790c65e62fc5::t_4d8ced2af8980e 143-145,148-150,173-175,184-186,200-201,208-209,287,292,296-297,303-305,315-317
+  s_81670cc38b5aee::t_a2f650f27041df 3
+  s_3b69ceccc4a7ba::t_b4e523968ffed0 7,12-14
+  s_3b69ceccc4a7ba::t_bf25804eb32db2 155,158-159,162-163
+  s_81670cc38b5aee::t_19846c349a9406 263-268,273-278,354-356
+  s_3b69ceccc4a7ba::t_7ced088e30ca75 22
+  s_81670cc38b5aee::t_c394a1a53eaf0f 135
+  s_3b69ceccc4a7ba::t_296aa9e98e0afb 39-47,49-53,55-119,121-130,132,134,136-137
+  s_81670cc38b5aee::t_25e494b0204c46 151
+  s_b0401c7821a671::t_ac56c7bfe08614 333-338,340-341,344-350,352-353,357-361,364-369
+  s_3b69ceccc4a7ba::t_51061b6f94c9da 198,218-221,223-225,229-235,237,240-241,243-246,249-250,252-258,261-262,269-272,279-281
+  s_3b69ceccc4a7ba::t_cb28797f27bdb2 189
+  s_81670cc38b5aee::t_caf666e6db089d 171,202
+src/app/api/services/app-service/jobs/app-summary/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_dcff22238db830 18
+  s_bbb3b8f2cd0496::t_0b8282d1ec5352 23
+  s_bbb3b8f2cd0496::t_9db0a89a248d86 1
+src/app/api/auth/sign-up/email/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_6eedc4909b4c91 5,7-9
+  s_bbb3b8f2cd0496::t_2e5665f2bc6a2b 6,55
+  s_bbb3b8f2cd0496::t_5775b0b864dccc 106,249
+  s_bbb3b8f2cd0496::t_c323058e54ee02 94
+  s_bbb3b8f2cd0496::t_45c33691e7e795 109,144,163,268
+src/app/api/services/genome/get-all-ids/route.ts
+  s_290d3e7bdbbc96::t_5d9e83b52d0ace 2
+src/app/api/services/workspace/route.ts
+  s_290d3e7bdbbc96::t_4b3aae4326550f 36
+  s_290d3e7bdbbc96::t_c9ba008389372e 2
+src/app/api/auth/forget-password/route.ts
+  s_290d3e7bdbbc96::t_47c222449fde45 14
+  s_81670cc38b5aee::t_979ae1db7c079c 13
+  s_81670cc38b5aee::t_f825725cfa3b8e 4
+  s_290d3e7bdbbc96::t_4336f691723495 2
+  s_81670cc38b5aee::t_4fd94db7642eae 11
+src/app/api/services/genome/search/route.ts
+  s_290d3e7bdbbc96::t_cf9e8129be1939 2
+.example.env
+  s_8dd4ea570743e0::t_65d836801fb7e8 1,7
+src/app/api/services/app-service/jobs/[id]/kill/route.ts
+  s_290d3e7bdbbc96::t_d810037605eda9 3
+src/app/api/auth/forget-password/__tests__/route.test.ts
+  s_81670cc38b5aee::t_1af1e9f38cfe79 50,57
+  s_bbb3b8f2cd0496::t_34031f8cd18974 98
+src/lib/auth/server/__tests__/session.test.ts
+  s_81670cc38b5aee::t_4796be41334209 170
+  s_81670cc38b5aee::t_80995710dc1632 20,22,25
+  s_81670cc38b5aee::t_fc50ad0b48d171 63-76
+  s_81670cc38b5aee::t_b0b0e12c411528 62
+  s_81670cc38b5aee::t_bb9086aaca9e2e 89,94-137
+  s_81670cc38b5aee::t_c074b814a3bdad 1-6,8-11
+  s_8a790c65e62fc5::t_45d1b11d117582 7,12-19,21,23-24,26-36,41-44,50-56,58,60-61,77-79,85-88,90-93,138-151,160-169,171-189
+  s_8a790c65e62fc5::t_307302a91d33dc 57,59
+  s_81670cc38b5aee::t_8dee8d376490cd 152-159
+  s_81670cc38b5aee::t_184d35d3115a89 37-40
+  s_8a790c65e62fc5::t_4d8ced2af8980e 45-49,80-84
+src/app/services/(genomics)/similar-genome-finder/actions.ts
+  s_81670cc38b5aee::t_6443d8ad91daf7 54,59
+  s_81670cc38b5aee::t_bc5bac6c2f0fe8 210,215
+  s_81670cc38b5aee::t_c3c862258d3460 92
+  s_81670cc38b5aee::t_b6388dbafd8e88 4
+  s_81670cc38b5aee::t_31e654682ce336 225
+  s_81670cc38b5aee::t_303675e4303dd7 102
+src/components/jobs/job-status-pill.tsx
+  s_8dd4ea570743e0::t_75be7859ad0993 18,22-26,30-33,36-37,58-75,78-79,123-126,134,138,146-147,151
+  s_77b508089863af::t_db8f3f0235e018 7
+src/app/api/services/genome/search/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_fc9c1d74f6756f 4-9
+  s_bbb3b8f2cd0496::t_89b774accf7fa1 18,20
+  s_bbb3b8f2cd0496::t_75436009286060 15-17
+src/lib/auth/__tests__/routes.test.ts
+  s_81670cc38b5aee::t_25be68a9851780 1
+src/app/api/e2e-mock/[...path]/route.ts
+  s_8dd4ea570743e0::t_09eb4589793840 11
+  s_8dd4ea570743e0::t_408df5d34110fb 38-49,51-52,88
+  s_8dd4ea570743e0::t_9ba8c7b3d667ab 902,911
+  s_8dd4ea570743e0::t_00b4656601b3ff 22-25,99-101,170-178,189-201,211-226,235-243,324,415-421,443-449,459-460,472-482,484,488-497,506-510,515-518,538-542,545-548,558-561,579-582,623-626,652-671,674-679,681-698,704-718,728-731,753-756,762-765,774-777,786,788-791,796-815,837-840,846-849,856-859
+  s_b0401c7821a671::t_dc074c433d2c2d 903-910,983-1005
+  s_b0401c7821a671::t_d2ff080be3d810 37,50,53-87
+  s_8dd4ea570743e0::t_4e1d3a5dcb1b04 1006-1013
+src/hooks/services/workspace/use-workspace.ts
+  s_77b508089863af::t_f3ede65f234cf4 11,13
+  s_8a790c65e62fc5::t_43e0480e57fe62 2
+src/app/api/services/genome/by-ids/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_dfe9555a0b3d16 15-17
+  s_bbb3b8f2cd0496::t_dabbf52069ae8c 4-9
+  s_bbb3b8f2cd0496::t_a03746f97cdfdc 18,20
+src/app/api/services/minhash/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_6efdeabf47b3d7 4-8,13,73,97
+src/app/api/auth/profile/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_1fd0eee8fa9c43 20,25,98
+  s_bbb3b8f2cd0496::t_57fd8bd0cf4533 3-7
+  s_81670cc38b5aee::t_4f196a73ac57ea 78
+  s_81670cc38b5aee::t_01898649797753 91,219
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_b0401c7821a671::t_931c52fa4e9a33 309-311,313,315-318
+  s_b0401c7821a671::t_60bb41ba9d83a3 266-268,270,272-275
+  s_8dd4ea570743e0::t_00b4656601b3ff 47-49,52-56,81-83,192-194,212-216,221-223,350-353,356-360,365-369,379-382,404-406,447-475,477-485,518-523,537-542,564-566,589-598,601-603,605-607,622-628,639-641,655-657,680-688,690-697,725-734,743-744,750-753,768-777,786-791
+  s_b0401c7821a671::t_a06278537b1f44 289-291,293,295-298
+  s_8dd4ea570743e0::t_e7816fb2419919 219-220,224-231,233-235,326-342
+  s_b0401c7821a671::t_d567faa041e31f 217,232,236-265,269,271,276-288,292,294,299-308,312,314,319-323
+  s_3b69ceccc4a7ba::t_2d96da5b222105 218
+e2e/tests/auth.spec.ts
+  s_b0b8469308a09d::t_0313a3e5931029 370
+  s_b0401c7821a671::t_3dbb48a32f6094 409-416,422,427-442,446-455,459-476,478-482,487-507
+  s_b0401c7821a671::t_7c0224ef43ea09 417-421,423-424
+  s_b0401c7821a671::t_6e84b4e2baa237 425-426
+  s_b0b8469308a09d::t_89d71f414e02c9 330,387
+  s_b0b8469308a09d::t_7fdde056aad85d 356
+  s_8dd4ea570743e0::t_598e19d92cff4e 64
+  s_8dd4ea570743e0::t_4536a3c1a05261 22,33,42,296,306,316
+  s_81670cc38b5aee::t_62ad16c8e09ab0 174
+  s_81670cc38b5aee::t_96529fab612310 13-15
+  s_b0401c7821a671::t_afead60acb65c6 368
+  s_8dd4ea570743e0::t_00b4656601b3ff 2-6,77-78,115,155-158,220,222-223,292-294,302-304,312-314,511-514,525-527,529-531,534-536,551-553
+  s_b0401c7821a671::t_a532cec7fdcb75 477
+  s_8dd4ea570743e0::t_c2287c11111b95 100,545-548
+  s_81670cc38b5aee::t_6cea1a2c1fa0cd 122-123
+  s_81670cc38b5aee::t_9dbe97ce2d3c41 226
+  s_b0401c7821a671::t_ad27b231b9b368 456-458,483-486
+  s_b0b8469308a09d::t_cc0be0cacbf735 384-386
+  s_b0b8469308a09d::t_834888d03e6349 323-329,331-355,357-367,369,371-383,388-408,508-509
+  s_81670cc38b5aee::t_90afc66864a57c 51
+  s_81670cc38b5aee::t_6f9ad67723fec7 538-544
+  s_b0401c7821a671::t_4cb3407765a442 443-445
+  s_81670cc38b5aee::t_7872965f93bf13 221
+  s_81670cc38b5aee::t_c1fbe185b8df20 87-89
+  s_8dd4ea570743e0::t_dcbb5510b31432 1
+docs/auth-api.md
+  s_81670cc38b5aee::t_74197cb4b5c061 70
+  s_8dd4ea570743e0::t_3b67c1e24d2a93 27-30
+  s_8dd4ea570743e0::t_86f14507ef7023 84-85
+  s_81670cc38b5aee::t_5c32a1cc4be325 46
+  s_8dd4ea570743e0::t_e8717bf980a0f8 90-91,130-133,136-137,143
+  s_8dd4ea570743e0::t_00b4656601b3ff 23-26,40-45,47-50,54-60,66-69,71-78
+  s_8dd4ea570743e0::t_42ec186505f962 103
+  s_8dd4ea570743e0::t_cdbc1a96f93819 108-111
+  s_81670cc38b5aee::t_051a409756b8c7 121
+  s_81670cc38b5aee::t_6b66b4f27cab8c 139,142
+e2e/README.md
+  s_8dd4ea570743e0::t_00b4656601b3ff 66,86
+  s_8dd4ea570743e0::t_d80e9176c7ca68 133-135
+  s_81670cc38b5aee::t_f935c614259d4e 105
+src/app/workspace/[username]/page.tsx
+  s_290d3e7bdbbc96::t_d382cff17ec3ab 3
+  s_290d3e7bdbbc96::t_48d9d82f01ae8d 22
+src/lib/auth/__tests__/provider.test.tsx
+  s_77b508089863af::t_9eae092b2929dc 68-74,86-88,92-96,131-134,140-142
+  s_1247a388ed5544::t_4f28c4654f6fbc 196,199-200
+  s_1247a388ed5544::t_0da6a72317a3b2 22-24
+  s_77b508089863af::t_002e8b3cb0de41 1,3-7,17-18,28-34,37,40-43,67,75-85,89-91,97-99,130,135-139,143-148,236
+  s_1247a388ed5544::t_109f5605fc6168 100-129
+  s_1247a388ed5544::t_c34b0b990d2ece 149-195,198,201-209,213-218,222-235
+  s_1247a388ed5544::t_9c5aa9aa8377d4 8,15
+  s_1247a388ed5544::t_b7320defe63006 44-56,66
+  s_1247a388ed5544::t_28a9bb57cd34cc 197
+  s_1247a388ed5544::t_e6b865422b72fc 210-212,219-221
+  s_1247a388ed5544::t_518e074b530971 2,9-14,16,19-20,26-27,35-36,38-39
+  s_1247a388ed5544::t_a417034382a362 21,25
+  s_1247a388ed5544::t_3f688428e2859c 57-65
+src/app/api/services/app-service/jobs/[id]/route.ts
+  s_290d3e7bdbbc96::t_38f63410a2dab9 3
+src/app/api/services/app-service/jobs/enumerate-tasks-filtered/route.ts
+  s_290d3e7bdbbc96::t_d0eaefbec93681 4
+src/lib/auth/server/respond.ts
+  s_8a790c65e62fc5::t_653d98fb586372 2,4-33,37,46-49
+  s_81670cc38b5aee::t_b63c5f5706105d 52-56,58-59
+  s_81670cc38b5aee::t_78a9031bc65a0b 38,40,42-43
+  s_8a790c65e62fc5::t_4d8ced2af8980e 62
+src/lib/auth/server/result.ts
+  s_8a790c65e62fc5::t_62c987879c573a 1,19
+src/lib/auth/server/__tests__/respond.test.ts
+  s_8a790c65e62fc5::t_4d8ced2af8980e 27-31
+  s_8a790c65e62fc5::t_92275e41310690 2,4,6-12,16-17,20-21,24-25,32-38,40-42
+src/lib/auth/__tests__/client.test.ts
+  s_77b508089863af::t_9eae092b2929dc 44-47,52-54,132-135,141-143,193
+  s_1247a388ed5544::t_e5db27757eb4e2 101
+  s_1247a388ed5544::t_c70e186cfed517 184-192,194,196-202
+  s_77b508089863af::t_0980d8c3d5fb51 1-4,6-7,10,12,14-16,38-43,48-51,55-56,129-131,136-140,144-146,195,203
+  s_1247a388ed5544::t_613d418ec78fa3 5,8-9,11,13,17-37
+  s_1247a388ed5544::t_d9c197d954fd6d 147-183
+  s_1247a388ed5544::t_e8fad794b5f57e 126
+  s_1247a388ed5544::t_41719b818ecb92 57-100,102-125,127-128
+e2e/tests/a11y/keyboard.spec.ts
+  s_8dd4ea570743e0::t_bd466360aa1f56 56,92
+  s_8dd4ea570743e0::t_00b4656601b3ff 21-23,38-43,50-53,67-69,76-79,86-89,96-98,102-107,125-128,135-138,140-144,174-188,197-199,201-205,212-214,225-227,229-233,243-248,261-264,275-278,283-286,309-312,314-317
+e2e/scripts/__tests__/har-overrides.test.ts
+  s_8dd4ea570743e0::t_2e5aa7c716002a 64
+  s_8dd4ea570743e0::t_00b4656601b3ff 43-46,53-55,94-96,105-107,148-153,156-158,164-167,195-198,247-250,266-269
+src/app/api/auth/ensure-workspace/route.ts
+  s_290d3e7bdbbc96::t_3751bfb4807797 2
+  s_290d3e7bdbbc96::t_a03c1af4191c89 7
+src/app/api/services/app-service/jobs/enumerate-tasks-filtered/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_b23840a112b1bb 23
+  s_bbb3b8f2cd0496::t_1f5747299a7985 1
+  s_bbb3b8f2cd0496::t_162389498832a5 18
+src/app/api/services/app-service/submit/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_8e0e10aec75169 1
+  s_bbb3b8f2cd0496::t_ec2e330251bd27 27
+  s_bbb3b8f2cd0496::t_d1a3a8c361ef27 32
+src/app/api/services/feature/from-group/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_e9adf3ca3787d5 19,21
+  s_bbb3b8f2cd0496::t_384d79bfb3d224 16-18
+  s_bbb3b8f2cd0496::t_d0c931cb9e10ed 5-10
+e2e/scripts/__tests__/record-har.test.ts
+  s_8dd4ea570743e0::t_57416ae2c9c313 118
+  s_8dd4ea570743e0::t_00b4656601b3ff 120-123,130-133,149-154,178-180,191-193,196-198,205-211
+src/app/api/services/genome/website-query/route.ts
+  s_290d3e7bdbbc96::t_f52aeb630e4bb9 43
+  s_290d3e7bdbbc96::t_ff04cd4fa85b7a 3
+src/lib/auth/types.ts
+  s_81670cc38b5aee::t_c058368bf9f6d1 87
+  s_8a790c65e62fc5::t_4d8ced2af8980e 91
+  s_8a790c65e62fc5::t_666f319ba8d2cb 2,70-86,88-90,92-102
+src/app/api/services/app-service/jobs/[id]/kill/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_75a093c91791a5 28
+  s_bbb3b8f2cd0496::t_53963c45964236 23
+  s_bbb3b8f2cd0496::t_78637947df97e0 2,5
+e2e/scripts/journeys/_helpers/sign-in.ts
+  s_8dd4ea570743e0::t_00b4656601b3ff 20-22,36-38,55-56
+  s_81670cc38b5aee::t_9489e4c0057b91 67
+  s_81670cc38b5aee::t_a659b322c6523c 78
+  s_8dd4ea570743e0::t_48b4ab1f5ae7a5 33,62
+e2e/fixtures/overrides/auth-session.ts
+  s_8dd4ea570743e0::t_5cfe0a1c76f022 24
+  s_81670cc38b5aee::t_7aa637f471ed5a 17
+src/components/auth/su-banner.tsx
+  s_77b508089863af::t_fb8dee9d2e3db2 10,12-15
+  s_77b508089863af::t_e140cffe8ce69c 5
+  s_8dd4ea570743e0::t_75be7859ad0993 23,26,31
+src/lib/auth/server/actions.ts
+  s_8a790c65e62fc5::t_4d8ced2af8980e 69-72,87-91,159-163,181-183,209-212
+  s_81670cc38b5aee::t_8fd02ee6f553c5 129
+  s_8a790c65e62fc5::t_854ccb7b8b4cf1 1-68,73-86,92-128,130-136,146-148,153-158,164-180,184-188,190-208,213-259,261-265
+  s_81670cc38b5aee::t_f2b3d1521496e0 137-145,149-152
+  s_8a790c65e62fc5::t_9ab2309f1d739d 189
+  s_81670cc38b5aee::t_1b981fa63c6f75 260
+src/hooks/services/workspace/__tests__/use-workspace.test.tsx
+  s_77b508089863af::t_6e2826431bec94 56-58
+  s_77b508089863af::t_5cc41c543d30ea 51
+  s_77b508089863af::t_f5265ada995fd5 95
+  s_77b508089863af::t_da9d03a0757639 31,49
+  s_77b508089863af::t_f120b2fd1a86ab 20,38,77,113
+  s_77b508089863af::t_ef48b4fb47f557 5,7-8
+  s_77b508089863af::t_5aa6a65460883b 33
+docs/troubleshooting/auth-login-issues.html
+  s_8dd4ea570743e0::t_00b4656601b3ff 4-25,30,32-44,49,51-68,115-118,129-132,143-151,153-157,175-179,190-209,221-232,234-238,240-250,278-286,288-309,319-341,359-362,380-384,386-397,409-418,421-424,432-436,445-456,469-473,477-483,487-492,497-505,511-527,539-541,544-547,549-555,558-564,568-573,578-582,585-587,589-593,596-610,618-623,625-633,639-655,661-665,667-678,680-684,689-694,699-709
+src/app/(auth)/redirect-action.test.ts
+  s_77b508089863af::t_a4b36e754116db 31-41
+  s_77b508089863af::t_4eb07d98c6b933 2-3
+  s_77b508089863af::t_def16721bea04b 11-14
+src/app/api/services/app-service/jobs/task-summary/route.ts
+  s_290d3e7bdbbc96::t_7ef3de3008ef30 3
+src/lib/auth/client.ts
+  s_81670cc38b5aee::t_367ae6d710ea5c 159
+  s_77b508089863af::t_d5d8c7a981f101 1-158,160-161
+src/app/api/services/app-service/jobs/summary/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_ae2fb73dafa229 19
+  s_bbb3b8f2cd0496::t_c6dd92f2030fe1 24
+  s_bbb3b8f2cd0496::t_323981d861afbb 1
+src/app/api/services/app-service/jobs/task-summary/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_cb8413a9e78e6e 18
+  s_bbb3b8f2cd0496::t_02726057c1499b 23
+  s_bbb3b8f2cd0496::t_405c2c475da357 1
+src/app/api/auth/ensure-workspace/__tests__/route.test.ts
+  s_bbb3b8f2cd0496::t_2454c59d7781d0 4-8
+  s_bbb3b8f2cd0496::t_7797d0239d7261 19-20
+  s_bbb3b8f2cd0496::t_303c45f981e761 26
+src/components/workspace/workspace-browser.tsx
+  s_8dd4ea570743e0::t_75be7859ad0993 483
+  s_77b508089863af::t_3fa9177a5a39ba 9
+vitest.setup.ts
+  s_bbb3b8f2cd0496::t_09da891d1607cb 17-19
+  s_bbb3b8f2cd0496::t_b7dee21e522ec2 55-56,58
+  s_bbb3b8f2cd0496::t_aacd4a4c615441 57
+  s_bbb3b8f2cd0496::t_cccc48dee8500e 20-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "f0c73096deabb7a8394a1ab3e370a9b5921cd553",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_1247a388ed5544": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe00b946effeTZJAc38DBXefb6",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_2198921e56e8b4": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe00b9487fferIk8lFosGaXzfe",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_290d3e7bdbbc96": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe051e951ffeUndCclvBEpYy6E",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_3b69ceccc4a7ba": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe02856c9ffePM275co2StCoyg",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_77b508089863af": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe05fdfeeffesUlsZhJoeVa99b",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_81670cc38b5aee": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe442dcb4ffegIJstWjxyrt7d3",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_8a790c65e62fc5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe05fe036ffeyhbgvi3W22DVX4",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_8dd4ea570743e0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe05fdfd5ffeBT7NBcBimNvPC0",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_b0401c7821a671": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe02856e2ffe5m6pTYVVcznVMr",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_b0b8469308a09d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe02c5e57ffepHIXhkDyLQynoh",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_bbb3b8f2cd0496": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe051e931ffebFXWuRl9VVdXnQ",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_e065d0677c8960": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe02c5e74ffep4t82iDwntb33l",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,56 @@
+src/test-helpers/api-route-helpers.ts
+  s_6a1fca2001927b::t_c464422ab5235e 58
+  s_6a1fca2001927b::t_674761ee5aefba 98-102
+  s_6a1fca2001927b::t_c0185daec254fe 72,77-79
+  s_6a1fca2001927b::t_0527b62d3dd07c 49
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_6a1fca2001927b::t_4304819b847660 266-267,269,271-272
+  s_6a1fca2001927b::t_aa99c760514a9f 286-287,289,291-293
+  s_6a1fca2001927b::t_fd99f75f34b1e7 717-718,720,724-725,756-757,759,763-764
+  s_6a1fca2001927b::t_087a6e1289d3c3 338-343
+  s_6a1fca2001927b::t_53cad4f6f1c213 304-305,307,309-311
+e2e/pages/auth-session-page.ts
+  s_6a1fca2001927b::t_d27d0b798c7e33 15-20,36-39,74-76
+  s_6a1fca2001927b::t_ca58501ff781ed 1-14,21-35,40-73,77-78
+e2e/pages/sign-in-page.ts
+  s_6a1fca2001927b::t_f8654cf2cee197 27-28,31,35-37
+  s_6a1fca2001927b::t_1a4c5a00270e30 38-39
+e2e/tests/auth.spec.ts
+  s_6a1fca2001927b::t_83abf61ee2206b 518-519
+  s_6a1fca2001927b::t_c87c7e7d4049ea 427
+  s_6a1fca2001927b::t_a7cd9ba1814578 376
+  s_6a1fca2001927b::t_e52c429c51a0c6 351
+  s_6a1fca2001927b::t_f928ccb4cd96f3 407
+  s_6a1fca2001927b::t_d5d647c366607d 446,449
+  s_6a1fca2001927b::t_67261a492f9ef9 466
+  s_6a1fca2001927b::t_40a21d3a7d336e 473
+  s_6a1fca2001927b::t_d2de6e90919354 11-16
+  s_6a1fca2001927b::t_f9a6f9b4074b43 498-499
+e2e/scripts/journeys/_helpers/sign-in.ts
+  s_6a1fca2001927b::t_2fe6398d8e2547 3
+  s_6a1fca2001927b::t_a531b780463fc3 35
+  s_6a1fca2001927b::t_1715b8fedd2eac 24-27
+e2e/pages/index.ts
+  s_6a1fca2001927b::t_11e3c7515ef507 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "dfc8730b6925fb407963d0f308a088d79f861bd9",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_6a1fca2001927b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fdf7f0ec2ffehkcxtUSVNHKS2b",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+e2e/tests/a11y/deep-tier.spec.ts
+  s_de28f6d3c46244::t_b4855dd2ab03e3 423-429
+e2e/mocks/backends.ts
+  s_de28f6d3c46244::t_5f39b90aa5248f 321,331,341
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "cc8fedd5a8e31ee24ea47d49e86abcd3abe162f5",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_de28f6d3c46244": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fdf768f19ffeanH4BQfQ5MnWEA",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

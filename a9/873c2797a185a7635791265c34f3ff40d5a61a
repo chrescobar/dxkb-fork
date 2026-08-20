@@ -1,0 +1,32 @@
+.env.e2e.test
+  s_1d55ebddf61451::t_18011a86ff0545 18-21
+src/app/(auth)/sign-in/page.tsx
+  s_1d55ebddf61451::t_b90cdd60014b07 51,56
+src/lib/auth/__tests__/provider.test.tsx
+  s_1d55ebddf61451::t_5d0cbbc4e72ba9 101-102,112-131
+e2e/tests/auth.spec.ts
+  s_1d55ebddf61451::t_14092ae3dcda83 394
+src/lib/auth/server/session.ts
+  s_1d55ebddf61451::t_4687f64d24183d 12-15,18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "a9873c2797a185a7635791265c34f3ff40d5a61a",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_1d55ebddf61451": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fdf26fd2cfferhWDwWbDPdpkQT",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

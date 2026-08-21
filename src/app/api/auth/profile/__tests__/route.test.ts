@@ -89,7 +89,7 @@ describe("GET /api/auth/profile", () => {
     expect(data.error).toBe("Profile lookup failed");
   });
 
-  it("returns 500 when an exception is thrown", async () => {
+  it("returns 502 when the upstream request fails", async () => {
     setAuthCookies("tok", "user1");
 
     server.use(http.get(`${userUrl}/user1`, () => HttpResponse.error()));
@@ -142,8 +142,10 @@ describe("POST /api/auth/profile", () => {
       body: patchOps,
     });
 
-    await POST(request, {});
+    const response = await POST(request, {});
 
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({ success: true });
     expect(capturedBody).toBe(JSON.stringify(patchOps));
     expect(capturedContentType).toBe("application/json-patch+json");
     expect(capturedAuthorization).toBe("the-token");
@@ -191,25 +193,6 @@ describe("POST /api/auth/profile", () => {
     });
   });
 
-  it("returns success when upstream succeeds", async () => {
-    setAuthCookies("the-token", "user1");
-
-    server.use(
-      http.post(`${userUrl}/user1`, () => HttpResponse.json({ ok: true })),
-    );
-
-    const request = mockNextRequest({
-      method: "POST",
-      body: [{ op: "replace", path: "/first_name", value: "New" }],
-    });
-
-    const response = await POST(request, {});
-    const data = (await response.json()) as { success?: boolean };
-
-    expect(response.status).toBe(200);
-    expect(data.success).toBe(true);
-  });
-
   it("returns upstream status when upstream fails", async () => {
     setAuthCookies("the-token", "user1");
 
@@ -254,7 +237,7 @@ describe("POST /api/auth/profile", () => {
     expect(data.error).toBe("Failed to update profile");
   });
 
-  it("returns 500 when an exception is thrown", async () => {
+  it("returns 502 when the upstream request fails", async () => {
     setAuthCookies("the-token", "user1");
 
     server.use(http.post(`${userUrl}/user1`, () => HttpResponse.error()));

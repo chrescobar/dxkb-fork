@@ -1,5 +1,5 @@
 import { renderHook, waitFor } from "@testing-library/react";
-import { createQueryClientWrapper } from "@/test-helpers/api-route-helpers";
+import { createQueryClientWrapper } from "@/test-helpers/react";
 import type { ResolvedPathObject } from "@/lib/services/workspace/types";
 
 vi.mock("@/lib/services/workspace/shared", () => ({

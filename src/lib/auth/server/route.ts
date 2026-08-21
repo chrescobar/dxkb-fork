@@ -3,9 +3,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import type { SessionIdentity } from "@/lib/auth/types";
 import { errorResponse } from "./errors";
-import { getCurrentUser } from "./actions";
 import { readSession } from "./session";
-import { requestTimeoutMs, serverUserAgent } from "./user-agent";
 
 export type AuthRouteHandler<TCtx = object> = (
   request: NextRequest,
@@ -51,30 +49,4 @@ export function withAuth<TCtx = object>(
       return errorResponse(error);
     }
   };
-}
-
-export async function authFetch(
-  input: RequestInfo | URL,
-  init: RequestInit = {},
-): Promise<Response> {
-  const session = await requireAuthSession();
-  const headers = new Headers(
-    input instanceof Request ? input.headers : undefined,
-  );
-  new Headers(init.headers).forEach((value, name) => {
-    headers.set(name, value);
-  });
-  if (!headers.has("User-Agent")) headers.set("User-Agent", serverUserAgent);
-  headers.set("Authorization", session.token);
-  const timeoutSignal = AbortSignal.timeout(requestTimeoutMs);
-  const signal = init.signal
-    ? AbortSignal.any([init.signal, timeoutSignal])
-    : timeoutSignal;
-  return fetch(input, { ...init, headers, signal });
-}
-
-export async function requireUser(redirectTo?: string) {
-  const user = await getCurrentUser();
-  if (!user) redirect(redirectTo ?? "/sign-in");
-  return user;
 }

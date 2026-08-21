@@ -1,7 +1,7 @@
 import { test as setup } from "@playwright/test";
 import path from "node:path";
 import fs from "node:fs";
-import { bvbrcCookies } from "../mocks/backends";
+import { bvbrcCookies } from "../fixtures/overrides/auth-session";
 
 const authFile = path.resolve(process.cwd(), "e2e/.auth/user.json");
 

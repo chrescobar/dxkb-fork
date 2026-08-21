@@ -8,7 +8,10 @@ import type {
   UserProfile,
 } from "@/lib/auth/types";
 import { fail, networkFailure, ok } from "../result";
-import { requestTimeoutMs, serverUserAgent } from "../user-agent";
+
+// Cloudflare rejects Node's default user-agent for BV-BRC API requests.
+const serverUserAgent = "curl/8.7.1 DXKB-V2/1.0";
+const requestTimeoutMs = 15_000;
 
 function joinUrl(base: string, path = ""): string {
   return path

@@ -18,7 +18,7 @@ interface ErrorEnvelope {
   code?: unknown;
 }
 
-export class AuthClientError extends Error {
+class AuthClientError extends Error {
   readonly status?: number;
   readonly code?: string;
 

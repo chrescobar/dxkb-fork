@@ -129,7 +129,7 @@ export async function parseJsonBody<T>(request: NextRequest): Promise<T> {
   return (await request.json().catch(() => ({}))) as T;
 }
 
-export async function toResponse(
+async function toResponse(
   fn: () => Promise<NextResponse>,
 ): Promise<NextResponse> {
   try {

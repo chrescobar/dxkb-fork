@@ -66,6 +66,19 @@ export function useExitImpersonation() {
   };
 }
 
+export function useResendVerificationEmail(): () => Promise<void> {
+  const { sendVerificationEmail } = useAuthActions();
+
+  return async () => {
+    try {
+      await sendVerificationEmail();
+      toast.success("Verification email sent");
+    } catch {
+      toast.error("Failed to send verification email");
+    }
+  };
+}
+
 export function useAuthActions() {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -113,7 +126,6 @@ export function useAuthActions() {
     sendVerificationEmail: () => authClient.sendVerificationEmail(),
     changePassword: (currentPassword: string, newPassword: string) =>
       authClient.changePassword(currentPassword, newPassword),
-    getProfile: () => authClient.getProfile(),
     updateProfile,
   };
 }

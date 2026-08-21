@@ -1,4 +1,4 @@
-export { authSessionOverrides, mockUserProfile } from "./auth-session";
+export { authSessionOverrides } from "./auth-session";
 export {
   workspaceOverrides,
   mockWorkspaceItems,

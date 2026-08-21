@@ -79,16 +79,6 @@ export interface SignupCredentials {
   password_repeat: string;
 }
 
-export interface PasswordResetRequest {
-  usernameOrEmail: string;
-}
-
-export interface PasswordResetResponse {
-  message: string;
-  success: boolean;
-  code?: string;
-}
-
 export type AuthErrorCode =
   | "invalid_credentials"
   | "unauthorized"

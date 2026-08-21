@@ -1,14 +1,4 @@
 import { NextRequest } from "next/server";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createElement, type ReactNode } from "react";
-import type { AuthUser } from "@/lib/auth/types";
-
-export const testAuthUser: AuthUser = {
-  id: "testuser",
-  username: "testuser",
-  email: "test@example.com",
-  email_verified: true,
-};
 
 const testCookies = new Map<string, string>();
 
@@ -29,7 +19,7 @@ export function clearTestCookies(): void {
   testCookieStore.set.mockClear();
 }
 
-export function mockSessionCookies({
+export function setTestSession({
   token = "test-token",
   userId = "testuser",
   realm,
@@ -43,8 +33,6 @@ export function mockSessionCookies({
   if (realm) testCookies.set("bvbrc_realm", realm);
   else testCookies.delete("bvbrc_realm");
 }
-
-export const setTestSession = mockSessionCookies;
 
 /**
  * Factory for creating mock NextRequest objects for route handler tests.
@@ -90,26 +78,6 @@ export function mockNextRequest(
   return new NextRequest(finalUrl, init);
 }
 
-/**
- * Creates a QueryClientProvider wrapper for use with renderHook.
- * Configured with retry: false for test stability.
- */
-export function createQueryClientWrapper() {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: { retry: false },
-      mutations: { retry: false },
-    },
-  });
-
-  return function Wrapper({ children }: { children: ReactNode }) {
-    return createElement(
-      QueryClientProvider,
-      { client: queryClient },
-      children,
-    );
-  };
-}
 
 export function makeRouteContext(id: string) {
   return { params: Promise.resolve({ id }) };

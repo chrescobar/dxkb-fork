@@ -11,11 +11,7 @@ recordings exclude development-only HMR traffic and remain deterministic. Run
 The resulting HAR lands in `e2e/fixtures/hars/<name>.har`. How a spec consumes it
 depends on what the spec is asserting:
 
-- **Auth-shape contract test:** `applyBackendMocks(page, { har: "<name>.har", overrides: [] })`.
-  Routes the entire HAR through `page.routeFromHAR` (URL + method + strict POST-body
-  match). Use this only when the spec replays the recorded auth payload itself —
-  `auth.spec.ts` against `auth-sign-in.har` is the canonical example.
-- **Body-aware journey replay (everything else):** `harOverridesFor("<name>.har")`
+- **Body-aware journey replay:** `harOverridesFor("<name>.har")`
   from `../scripts/har-overrides`. `routeFromHAR` matches URL + method only and
   cannot disambiguate the four-plus JSON-RPC methods that share
   `/api/services/workspace`, so a `{ har }` wiring would serve the first recorded
@@ -48,7 +44,6 @@ lives in one place.
 
 | Journey            | Group     | What it captures                                                   | Notes                                                                                      |
 | ------------------ | --------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| `auth-sign-in`     | read-only | `/api/auth/sign-in/email` plus post-sign-in navigation             | The bare browser auth surface; current identity is server-rendered.                        |
 | `workspace-browse` | read-only | `Workspace.ls`, `Workspace.get` for `favorites.json`               | Lands on the test user's home.                                                             |
 | `workspace-viewer` | read-only | `/api/workspace/view/<path>` for a seeded text file                | Requires a seeded `home/e2e-fixtures/readme.txt` on the test account.                      |
 | `jobs-lifecycle`   | read-only | `enumerate-tasks-filtered` + sidebar counters                      | List page only — no row select / kill.                                                     |

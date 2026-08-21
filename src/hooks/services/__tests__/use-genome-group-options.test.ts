@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { useGenomeGroupOptions } from "../use-genome-group-options";
-import { createQueryClientWrapper } from "@/test-helpers/api-route-helpers";
+import { createQueryClientWrapper } from "@/test-helpers/react";
 import type { GenomeSummary } from "@/lib/services/genome";
 
 const { mockGetGenomeIdsFromGroup, mockFetchGenomesByIds } = vi.hoisted(() => ({

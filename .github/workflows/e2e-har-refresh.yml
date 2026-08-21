@@ -43,7 +43,7 @@ jobs:
     timeout-minutes: 20
     env:
       E2E_RECORD_BASE_URL: http://127.0.0.1:3010
-      JOURNEYS: auth-sign-in workspace-browse workspace-viewer jobs-lifecycle service-submit
+      JOURNEYS: workspace-browse workspace-viewer jobs-lifecycle service-submit
       PR_BRANCH: chore/e2e-har-refresh-read-only
       PR_GROUP: read-only
     steps:

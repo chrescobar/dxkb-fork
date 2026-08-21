@@ -357,11 +357,8 @@ test.describe("workspace browse", () => {
 });
 
 // Drives the browse journey against post-auth traffic recorded in
-// `workspace-browse.har`. The auth-shape contract test against
-// `auth-sign-in.har` lives in `auth.spec.ts` — the canonical canary, not
-// duplicated here. See `harOverridesFor` for the rationale on why this
-// spec must NOT layer `journeyOverrides` or `permissiveBackendOverrides`
-// on top of HAR replay.
+// `workspace-browse.har`. See `harOverridesFor` for why this spec must not
+// layer `journeyOverrides` or `permissiveBackendOverrides` on top of replay.
 test.describe("workspace browse via recorded HAR replay", () => {
   test("renders the recorded workspace listing", async ({ page }) => {
     await applyBackendMocks(page, {

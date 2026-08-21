@@ -1,5 +1,5 @@
 import { renderHook, waitFor } from "@testing-library/react";
-import { createQueryClientWrapper } from "@/test-helpers/api-route-helpers";
+import { createQueryClientWrapper } from "@/test-helpers/react";
 import { useKillJob } from "@/hooks/services/workspace/use-workspace";
 
 const { mockApiCall } = vi.hoisted(() => ({ mockApiCall: vi.fn() }));

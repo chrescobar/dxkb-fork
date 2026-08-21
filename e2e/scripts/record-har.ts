@@ -86,7 +86,9 @@ export function sanitizeHar(
     return next.replace(originRe, harReplayHostPlaceholder);
   };
 
-  const stripSensitiveHeaders = (headers: HarHeader[] | undefined): HarHeader[] | undefined =>
+  const stripSensitiveHeaders = (
+    headers: HarHeader[] | undefined,
+  ): HarHeader[] | undefined =>
     headers?.filter((h) => !sensitiveHeaderNames.has(h.name.toLowerCase()));
 
   for (const entry of har.log.entries) {
@@ -107,7 +109,12 @@ export function sanitizeHar(
   // in a future schema bump — without enumerating fields by hand.
   fs.writeFileSync(
     harPath,
-    JSON.stringify(har, (_key, value: unknown) => (typeof value === "string" ? scrub(value) : value), 2),
+    JSON.stringify(
+      har,
+      (_key, value: unknown) =>
+        typeof value === "string" ? scrub(value) : value,
+      2,
+    ),
   );
   assertNoSensitiveData(harPath, user, password);
 }
@@ -118,7 +125,11 @@ export function sanitizeHar(
  * `sanitizeHar`. The check runs against the on-disk file (post-write), so it
  * catches drift in either the sanitizer or the HAR shape.
  */
-export function assertNoSensitiveData(harPath: string, user: string, password: string): void {
+export function assertNoSensitiveData(
+  harPath: string,
+  user: string,
+  password: string,
+): void {
   const text = fs.readFileSync(harPath, "utf8");
   const violations: string[] = [];
 
@@ -165,7 +176,11 @@ export interface JourneyEnv {
 export type JourneyDriver = (page: Page, env: JourneyEnv) => Promise<void>;
 
 async function loadJourneyDriver(name: string): Promise<JourneyDriver | null> {
-  const journeyPath = path.resolve(process.cwd(), "e2e/scripts/journeys", `${name}.ts`);
+  const journeyPath = path.resolve(
+    process.cwd(),
+    "e2e/scripts/journeys",
+    `${name}.ts`,
+  );
   if (!fs.existsSync(journeyPath)) return null;
   const mod = (await import(pathToFileURL(journeyPath).href)) as {
     default?: JourneyDriver;
@@ -181,7 +196,10 @@ async function loadJourneyDriver(name: string): Promise<JourneyDriver | null> {
 }
 
 async function promptEnter(question: string): Promise<void> {
-  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
   return new Promise((resolve) => {
     rl.question(question, () => {
       rl.close();
@@ -194,7 +212,7 @@ async function main(): Promise<void> {
   const [, , journeyName] = process.argv;
   if (!journeyName) {
     console.error("Usage: pnpm e2e:record <journey-name>");
-    console.error("Example: pnpm e2e:record auth-sign-in");
+    console.error("Example: pnpm e2e:record workspace-browse");
     process.exit(1);
   }
   if (!/^[a-zA-Z0-9_-]+$/.test(journeyName)) {
@@ -253,8 +271,12 @@ async function main(): Promise<void> {
       await driver(page, { baseURL, user, password });
     } else {
       await page.goto(baseURL);
-      console.log("The browser will stay open. Drive the journey manually, then press Enter.");
-      await promptEnter("Press Enter here when you are done with the journey...");
+      console.log(
+        "The browser will stay open. Drive the journey manually, then press Enter.",
+      );
+      await promptEnter(
+        "Press Enter here when you are done with the journey...",
+      );
     }
   } catch (e) {
     driverError = e;
@@ -278,7 +300,9 @@ async function main(): Promise<void> {
     // Re-throw after sanitizing so the recorder still exits non-zero.
     throw driverError instanceof Error
       ? driverError
-      : new Error(`HAR driver failed: ${typeof driverError === "string" ? driverError : JSON.stringify(driverError)}`);
+      : new Error(
+          `HAR driver failed: ${typeof driverError === "string" ? driverError : JSON.stringify(driverError)}`,
+        );
   }
   console.log(`HAR saved to ${harPath}`);
 }

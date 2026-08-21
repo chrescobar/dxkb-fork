@@ -34,7 +34,7 @@ Route groups `(…)` are organizational and do NOT appear in the URL.
 - `server/actions.ts` — named auth operations such as `signIn`, `signOut`, `startImpersonation`, and cached `getCurrentUser`
 - `server/session.ts` — sole owner of HttpOnly session and SU backup cookie reads/writes
 - `server/cookies.ts` — Edge-safe cookie names and optimistic cookie-presence check
-- `server/route.ts` — `withAuth`, `readAuthSession`, `requireAuthSession`, `authFetch`, and `requireUser`
+- `server/route.ts` — authenticated route wrapping and direct session reads for routes and Server Components
 - `server/adapters/bvbrc-identity.ts` — named BV-BRC identity protocol calls
 
 Notes:

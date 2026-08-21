@@ -103,25 +103,13 @@ Steps:
 
 1. `cp .env.e2e.example .env.e2e` and fill in valid BV-BRC creds (gitignored — never commit).
 2. `pnpm build && pnpm start` — recording uses the production build to avoid development-only HMR traffic and keep HAR output deterministic.
-3. `pnpm e2e:record auth-sign-in` (or your journey name).
+3. `pnpm e2e:record workspace-browse` (or your journey name).
 4. The recorder filters non-backend traffic (skips `_next/static`, fonts, images), scrubs the live username/password/email out of all bodies, and rewrites the recorded host to `http://e2e-har-replay.local`. `applyBackendMocks` swaps that placeholder back to the active app host at replay time, so HARs are port-portable across `E2E_PORT` values.
 5. Commit the resulting `.har`. Re-record when the API contract drifts; the bi-weekly cron does this automatically (see below).
 
 ### Wiring a HAR into a spec
 
 Two integration modes — pick the one that matches what the spec is asserting.
-
-**Auth-shape contract test (`{ har }` option).** Routes the entire recorded HAR through `page.routeFromHAR`. Matching is strict: URL + HTTP method, plus an exact POST-payload comparison for POSTs, with header similarity as the tiebreaker when multiple entries match the same key. Use this when the spec drives the recorded auth flow itself and just asserts the sign-in response shape (drift canary against contract changes) — strict-body matching is fine here because the spec replays the same payload bytes the recorder captured. `auth.spec.ts` is the canonical example.
-
-```ts
-await applyBackendMocks(page, {
-  har: "auth-sign-in.har",
-  // Skip `permissiveBackendOverrides` for routes the HAR covers — overrides
-  // run before HAR replay (LIFO route registration), so a permissive override
-  // would intercept and return `{}` before the HAR served the recorded body.
-  overrides: [],
-});
-```
 
 **Body-aware journey replay (`harOverridesFor` helper).** Reads the HAR file and emits one `JsonOverride` per `(path, method, JSON-RPC method)` tuple, with `matchBody` fanning the JSON-RPC entry point out by request `method` field. Sequential entries that share a tuple replay in HAR order via the override's `callIndex` body function — so a `Workspace.ls` recorded twice (pre- and post-upload) replays correctly. Use this when the spec drives a signed-in journey (workspace listing, file viewer, jobs page, service form) and asserts on UI rendered from the recorded post-auth payloads.
 
@@ -156,7 +144,7 @@ await page.goto(`/workspace/${encodeURIComponent("e2e-test-user@bvbrc")}/home`);
 
 The workflow has two matrix groups:
 
-- **read-only** (cron + manual dispatch): `auth-sign-in`, `workspace-browse`, `workspace-viewer`, `jobs-lifecycle`, `service-submit`. Nothing writes to the test account.
+- **read-only** (cron + manual dispatch): `workspace-browse`, `workspace-viewer`, `jobs-lifecycle`, `service-submit`. Nothing writes to the test account.
 - **write** (manual dispatch with `include_write: true` only): `workspace-upload`. Each refresh creates a new file under `home/.e2e-records/` on the test account, so we keep this off the cron.
 
 Each group opens its own PR (`chore/e2e-har-refresh-read-only` / `chore/e2e-har-refresh-write`). Some journeys depend on seeded fixtures on the test account — see [`e2e/scripts/journeys/README.md`](./scripts/journeys/README.md) for the catalogue and seeding requirements.

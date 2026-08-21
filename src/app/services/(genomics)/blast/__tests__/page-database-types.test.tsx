@@ -8,7 +8,7 @@ import BlastServicePage from "@/app/services/(genomics)/blast/page";
 import { ServiceDebuggingProvider } from "@/contexts/service-debugging-context";
 import { AuthBoundary } from "@/lib/auth/provider";
 import { server } from "@/test-helpers/msw-server";
-import { testAuthUser } from "@/test-helpers/api-route-helpers";
+import { testAuthUser } from "@/test-helpers/react";
 
 function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient({

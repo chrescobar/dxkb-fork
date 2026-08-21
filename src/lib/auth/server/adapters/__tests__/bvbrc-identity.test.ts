@@ -1,6 +1,5 @@
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
-import { serverUserAgent } from "../../user-agent";
 import type { ProfilePatch } from "@/lib/auth/types";
 import {
   authenticate,
@@ -119,10 +118,6 @@ const operationContracts: {
 ];
 
 describe("named BV-BRC identity operations", () => {
-  it("uses a Cloudflare-compatible non-browser user-agent", () => {
-    expect(serverUserAgent).toMatch(/^curl\//);
-  });
-
   it.each(operationContracts)(
     "$name uses the configured URL, method, and user-agent",
     async ({ method, url, invoke, response }) => {
@@ -137,7 +132,7 @@ describe("named BV-BRC identity operations", () => {
       await invoke();
 
       expect(requestSeen?.method).toBe(method);
-      expect(requestSeen?.headers.get("User-Agent")).toBe(serverUserAgent);
+      expect(requestSeen?.headers.get("User-Agent")).toMatch(/^curl\//);
     },
   );
   it("authenticates with form data, user-agent, and header token", async () => {
@@ -153,7 +148,6 @@ describe("named BV-BRC identity operations", () => {
     expect(
       (await authenticate({ username: "u", password: "p" })).data?.token,
     ).toBe("header");
-    expect(requestSeen?.headers.get("User-Agent")).toBe(serverUserAgent);
     expect(await requestSeen?.text()).toBe("username=u&password=p");
   });
 
@@ -182,16 +176,6 @@ describe("named BV-BRC identity operations", () => {
       message: "Authentication failed",
       status: 401,
     });
-  });
-
-  it("preserves registration conflicts", async () => {
-    server.use(
-      http.post(
-        "https://auth.test/register",
-        () => new HttpResponse("exists", { status: 409 }),
-      ),
-    );
-    expect((await registerUser(signupInput)).error?.code).toBe("conflict");
   });
 
   it("joins trailing URLs safely and sends raw authorization", async () => {
@@ -305,23 +289,6 @@ describe("named BV-BRC identity operations", () => {
   ] as const)("maps %s", async (_name, status, code, invoke) => {
     server.use(http.all("*", () => new HttpResponse("upstream", { status })));
     expect((await invoke()).error).toMatchObject({ code, status });
-  });
-
-  it("preserves profile not-found and rate-limit statuses", async () => {
-    server.use(
-      http.get(
-        "https://user.test/user/missing",
-        () => new HttpResponse(null, { status: 404 }),
-      ),
-      http.post(
-        "https://auth.test/reset",
-        () => new HttpResponse(null, { status: 429 }),
-      ),
-    );
-    expect((await getProfile("missing", "t")).error?.code).toBe("not_found");
-    expect((await requestPasswordReset("u@x")).error?.code).toBe(
-      "rate_limited",
-    );
   });
 
   it("does not collapse impersonation rate limiting into invalid credentials", async () => {

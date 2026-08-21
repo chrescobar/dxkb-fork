@@ -1,24 +1,15 @@
 const mocks = vi.hoisted(() => ({
   readSession: vi.fn(),
-  getCurrentUser: vi.fn(),
   redirect: vi.fn((path: string) => {
     throw new Error(`NEXT_REDIRECT:${path}`);
   }),
 }));
 
 vi.mock("../session", () => ({ readSession: mocks.readSession }));
-vi.mock("../actions", () => ({ getCurrentUser: mocks.getCurrentUser }));
 vi.mock("next/navigation", () => ({ redirect: mocks.redirect }));
 
 import { NextRequest, NextResponse } from "next/server";
-import {
-  authFetch,
-  readAuthSession,
-  requireAuthSession,
-  requireUser,
-  withAuth,
-} from "../route";
-import { serverUserAgent } from "../user-agent";
+import { readAuthSession, requireAuthSession, withAuth } from "../route";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -78,68 +69,5 @@ describe("direct route helpers", () => {
     );
     await expect(readAuthSession()).resolves.toEqual(session);
     await expect(requireAuthSession()).resolves.toEqual(session);
-  });
-});
-
-describe("authFetch", () => {
-  it("adds auth and user-agent without adding a content type", async () => {
-    mocks.readSession.mockResolvedValue({ token: "t", userId: "u" });
-    const fetchSpy = vi
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValue(new Response(null, { status: 200 }));
-    await authFetch("https://service.test/x");
-    const headers = new Headers(fetchSpy.mock.calls[0][1]?.headers);
-    expect(headers.get("Authorization")).toBe("t");
-    expect(headers.get("User-Agent")).toBe(serverUserAgent);
-    expect(headers.has("Content-Type")).toBe(false);
-  });
-
-  it("preserves Request headers and lets init headers override them", async () => {
-    mocks.readSession.mockResolvedValue({ token: "t", userId: "u" });
-    const fetchSpy = vi
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValue(new Response(null, { status: 200 }));
-
-    await authFetch(
-      new Request("https://service.test/x", {
-        headers: { "User-Agent": "request-agent", "X-Request": "request" },
-      }),
-      { headers: { "User-Agent": "init-agent", "X-Init": "init" } },
-    );
-
-    const headers = new Headers(fetchSpy.mock.calls[0][1]?.headers);
-    expect(headers.get("User-Agent")).toBe("init-agent");
-    expect(headers.get("X-Request")).toBe("request");
-    expect(headers.get("X-Init")).toBe("init");
-    expect(headers.get("Authorization")).toBe("t");
-  });
-
-  it("does not clear auth state after a service 401", async () => {
-    mocks.readSession.mockResolvedValue({ token: "t", userId: "u" });
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(null, { status: 401 }),
-    );
-    expect((await authFetch("https://service.test/x")).status).toBe(401);
-    expect(mocks.readSession).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe("requireUser", () => {
-  it("returns a browser-safe current user", async () => {
-    mocks.getCurrentUser.mockResolvedValue({
-      id: "u",
-      username: "u",
-      email: "u@x",
-    });
-    expect(await requireUser()).toEqual({
-      id: "u",
-      username: "u",
-      email: "u@x",
-    });
-  });
-
-  it("redirects guests", async () => {
-    mocks.getCurrentUser.mockResolvedValue(null);
-    await expect(requireUser("/login")).rejects.toThrow("NEXT_REDIRECT:/login");
   });
 });

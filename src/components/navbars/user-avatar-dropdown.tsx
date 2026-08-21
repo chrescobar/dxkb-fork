@@ -15,8 +15,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SignoutButton } from "@/components/auth/signout-button";
 import { SuLoginDialog } from "@/components/auth/su-login-dialog";
-import { useAuth, useExitImpersonation } from "@/lib/auth/provider";
-import { useResendVerificationEmail } from "@/hooks/use-resend-verification-email";
+import {
+  useAuth,
+  useExitImpersonation,
+  useResendVerificationEmail,
+} from "@/lib/auth/provider";
 import {
   encodeWorkspaceSegment,
   workspaceUsername,

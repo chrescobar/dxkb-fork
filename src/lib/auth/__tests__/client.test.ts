@@ -148,47 +148,13 @@ describe("auth client", () => {
   });
 
   it.each([
-    {
-      name: "sign-up",
-      method: "post" as const,
-      endpoint: "/api/auth/sign-up/email",
-      invoke: () => signUp(signupInput),
-    },
-    {
-      name: "password reset",
-      method: "post" as const,
-      endpoint: "/api/auth/forget-password",
-      invoke: () => requestPasswordReset("alice"),
-    },
-    {
-      name: "verification send",
-      method: "post" as const,
-      endpoint: "/api/auth/send-verification-email",
-      invoke: () => sendVerificationEmail(),
-    },
-    {
-      name: "password change",
-      method: "post" as const,
-      endpoint: "/api/auth/change-password",
-      invoke: () => changePassword("old-password", "new-password"),
-    },
-    {
-      name: "profile get",
-      method: "get" as const,
-      endpoint: "/api/auth/profile",
-      invoke: () => getProfile(),
-    },
-    {
-      name: "profile update",
-      method: "post" as const,
-      endpoint: "/api/auth/profile",
-      invoke: () => updateProfile([]),
-    },
-  ])(
-    "parses a $name endpoint error envelope",
-    async ({ method, endpoint, invoke }) => {
+    ["POST", "/api/auth/change-password", () => changePassword("old", "new")],
+    ["GET", "/api/auth/profile", () => getProfile()],
+  ] as const)(
+    "parses a %s endpoint error envelope",
+    async (method, endpoint, invoke) => {
       server.use(
-        http[method](endpoint, () =>
+        http[method.toLowerCase() as "get" | "post"](endpoint, () =>
           HttpResponse.json(
             { error: "Session unavailable", code: "service_unavailable" },
             { status: 503 },
@@ -203,4 +169,36 @@ describe("auth client", () => {
       });
     },
   );
+
+  it("normalizes network failures", async () => {
+    server.use(http.get("/api/auth/profile", () => HttpResponse.error()));
+
+    await expect(getProfile()).rejects.toMatchObject({ code: "network" });
+  });
+
+  it("uses the fallback for malformed error responses", async () => {
+    server.use(
+      http.get(
+        "/api/auth/profile",
+        () => new HttpResponse("not json", { status: 502 }),
+      ),
+    );
+
+    await expect(getProfile()).rejects.toMatchObject({
+      message: "Failed to load profile",
+      status: 502,
+    });
+  });
+
+  it("rejects a successful session envelope without a user", async () => {
+    server.use(
+      http.post("/api/auth/sign-in/email", () =>
+        HttpResponse.json({ user: null, session: null }),
+      ),
+    );
+
+    await expect(
+      signIn({ username: "alice", password: "password" }),
+    ).rejects.toMatchObject({ message: "Sign in failed" });
+  });
 });

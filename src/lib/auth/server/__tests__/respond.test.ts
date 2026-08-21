@@ -1,5 +1,5 @@
 import type { AuthUser } from "@/lib/auth/types";
-import { buildEnvelope, respondWithAck, respondWithSession } from "../respond";
+import { respondWithAck, respondWithSession } from "../respond";
 
 const user: AuthUser = { id: "alice-id", username: "alice", email: "a@x" };
 
@@ -14,11 +14,17 @@ describe("session responses", () => {
   });
 
   it("does not fabricate expiry for a user response", () => {
-    expect(() => buildEnvelope(user)).toThrow("expiresAt is required");
+    expect(() => respondWithSession({ data: user, error: null })).toThrow(
+      "expiresAt is required",
+    );
   });
 
-  it("allows a guest envelope without expiry", () => {
-    expect(buildEnvelope(null)).toEqual({ user: null, session: null });
+  it("allows a guest envelope without expiry", async () => {
+    const response = respondWithSession({ data: null, error: null });
+    await expect(response.json()).resolves.toEqual({
+      user: null,
+      session: null,
+    });
   });
 
   it("uses the common error response branch", async () => {

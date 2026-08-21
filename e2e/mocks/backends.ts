@@ -310,36 +310,3 @@ export const test = base.extend({
 });
 
 export { expect } from "@playwright/test";
-
-export const bvbrcCookies = [
-  {
-    name: "bvbrc_token",
-    value: "e2e-test-token",
-    path: "/",
-    domain: "127.0.0.1",
-    httpOnly: true,
-    secure: false,
-    sameSite: "Strict" as const,
-    expires: 4070908800,
-  },
-  {
-    name: "bvbrc_user_id",
-    value: "e2e-test-user@patricbrc.org",
-    path: "/",
-    domain: "127.0.0.1",
-    httpOnly: true,
-    secure: false,
-    sameSite: "Strict" as const,
-    expires: 4070908800,
-  },
-  {
-    name: "bvbrc_realm",
-    value: "patricbrc.org",
-    path: "/",
-    domain: "127.0.0.1",
-    httpOnly: true,
-    secure: false,
-    sameSite: "Strict" as const,
-    expires: 4070908800,
-  },
-];

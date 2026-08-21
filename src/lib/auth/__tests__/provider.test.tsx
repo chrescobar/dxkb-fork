@@ -81,6 +81,17 @@ function Wrapper({
 }
 
 describe("AuthBoundary", () => {
+  it("requires an AuthBoundary", () => {
+    function Consumer() {
+      useAuth();
+      return null;
+    }
+
+    expect(() => render(<Consumer />)).toThrow(
+      "useAuth must be used within <AuthBoundary>",
+    );
+  });
+
   it("exposes the server-provided user without loading state", () => {
     function Consumer() {
       const auth = useAuth();
@@ -98,78 +109,59 @@ describe("AuthBoundary", () => {
     expect(screen.getByText("alice")).toBeInTheDocument();
   });
 
-  it("clears account cache after sign-in without racing the caller's navigation", async () => {
-    vi.mocked(authClient.signIn).mockResolvedValue(user);
-    const queryClient = new QueryClient();
-    queryClient.setQueryData(["private"], { secret: true });
-    const clearSpy = vi.spyOn(queryClient, "clear");
-    const { result } = renderHook(() => useAuthActions(), {
-      wrapper: ({ children }) => (
-        <Wrapper queryClient={queryClient}>{children}</Wrapper>
-      ),
-    });
+  it.each([
+    {
+      name: "sign-in",
+      setup: () => vi.mocked(authClient.signIn).mockResolvedValue(user),
+      invoke: (actions: ReturnType<typeof useAuthActions>) =>
+        actions.signIn({ username: "alice", password: "password" }),
+      refreshes: false,
+    },
+    {
+      name: "sign-up",
+      setup: () => vi.mocked(authClient.signUp).mockResolvedValue(user),
+      invoke: (actions: ReturnType<typeof useAuthActions>) =>
+        actions.signUp(signupInput),
+      refreshes: true,
+    },
+    {
+      name: "start impersonation",
+      setup: () =>
+        vi
+          .mocked(authClient.startImpersonation)
+          .mockResolvedValue({ ...user, username: "bob" }),
+      invoke: (actions: ReturnType<typeof useAuthActions>) =>
+        actions.startImpersonation("bob", "password"),
+      refreshes: true,
+    },
+    {
+      name: "exit impersonation",
+      setup: () =>
+        vi.mocked(authClient.exitImpersonation).mockResolvedValue(user),
+      invoke: (actions: ReturnType<typeof useAuthActions>) =>
+        actions.exitImpersonation(),
+      refreshes: true,
+    },
+  ])(
+    "clears account cache after $name",
+    async ({ setup, invoke, refreshes }) => {
+      setup();
+      const queryClient = new QueryClient();
+      queryClient.setQueryData(["private"], { secret: true });
+      const clearSpy = vi.spyOn(queryClient, "clear");
+      const { result } = renderHook(() => useAuthActions(), {
+        wrapper: ({ children }) => (
+          <Wrapper queryClient={queryClient}>{children}</Wrapper>
+        ),
+      });
 
-    await expect(
-      result.current.signIn({ username: "alice", password: "password" }),
-    ).resolves.toEqual(user);
-    expect(clearSpy).toHaveBeenCalledOnce();
-    expect(queryClient.getQueryData(["private"])).toBeUndefined();
-    expect(refreshMock).not.toHaveBeenCalled();
-  });
+      await invoke(result.current);
 
-  it("clears account cache and refreshes after sign-up", async () => {
-    vi.mocked(authClient.signUp).mockResolvedValue(user);
-    const queryClient = new QueryClient();
-    queryClient.setQueryData(["private"], { secret: true });
-    const clearSpy = vi.spyOn(queryClient, "clear");
-    const { result } = renderHook(() => useAuthActions(), {
-      wrapper: ({ children }) => (
-        <Wrapper queryClient={queryClient}>{children}</Wrapper>
-      ),
-    });
-
-    await expect(result.current.signUp(signupInput)).resolves.toEqual(user);
-    expect(clearSpy).toHaveBeenCalledOnce();
-    expect(queryClient.getQueryData(["private"])).toBeUndefined();
-    expect(refreshMock).toHaveBeenCalledOnce();
-  });
-
-  it("clears account cache and refreshes after starting impersonation", async () => {
-    vi.mocked(authClient.startImpersonation).mockResolvedValue({
-      ...user,
-      username: "bob",
-    });
-    const queryClient = new QueryClient();
-    queryClient.setQueryData(["private"], { secret: true });
-    const clearSpy = vi.spyOn(queryClient, "clear");
-
-    const { result } = renderHook(() => useAuthActions(), {
-      wrapper: ({ children }) => (
-        <Wrapper queryClient={queryClient}>{children}</Wrapper>
-      ),
-    });
-
-    await result.current.startImpersonation("bob", "password");
-    expect(clearSpy).toHaveBeenCalledOnce();
-    expect(refreshMock).toHaveBeenCalledOnce();
-  });
-
-  it("clears account cache and refreshes after exiting impersonation", async () => {
-    vi.mocked(authClient.exitImpersonation).mockResolvedValue(user);
-    const queryClient = new QueryClient();
-    queryClient.setQueryData(["private"], { secret: true });
-    const clearSpy = vi.spyOn(queryClient, "clear");
-    const { result } = renderHook(() => useAuthActions(), {
-      wrapper: ({ children }) => (
-        <Wrapper queryClient={queryClient}>{children}</Wrapper>
-      ),
-    });
-
-    await expect(result.current.exitImpersonation()).resolves.toEqual(user);
-    expect(clearSpy).toHaveBeenCalledOnce();
-    expect(queryClient.getQueryData(["private"])).toBeUndefined();
-    expect(refreshMock).toHaveBeenCalledOnce();
-  });
+      expect(clearSpy).toHaveBeenCalledOnce();
+      expect(queryClient.getQueryData(["private"])).toBeUndefined();
+      expect(refreshMock).toHaveBeenCalledTimes(refreshes ? 1 : 0);
+    },
+  );
 
   it("invalidates the profile and refreshes after updating it", async () => {
     vi.mocked(authClient.updateProfile).mockResolvedValue();

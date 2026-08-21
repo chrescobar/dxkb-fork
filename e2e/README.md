@@ -27,7 +27,7 @@ e2e/
     signed-in.setup.ts          # Seeds mocked auth cookies → e2e/.auth/user.json
     public.setup.ts             # Empty storageState for public specs
   mocks/
-    backends.ts                 # applyBackendMocks(page, { har, overrides })
+    backends.ts                 # applyBackendMocks(page, { overrides })
   pages/                        # Page-object helpers (SignInPage, …) — import from "../pages"
   fixtures/
     hars/                       # Recorded HAR files (committed)
@@ -49,15 +49,14 @@ e2e/
 
 ## Mocking strategy
 
-All `/api/**` and outbound HTTPS to `*.patricbrc.org`, `*.bv-brc.org`, `*.theseed.org`, `*.ncbi.nlm.nih.gov` are mocked. Three layers (registered into the Playwright routing stack in this order so LIFO precedence gives overrides the first shot):
+All `/api/**` and outbound HTTPS to `*.patricbrc.org`, `*.bv-brc.org`, `*.theseed.org`, `*.ncbi.nlm.nih.gov` are mocked. Two layers are registered into the Playwright routing stack so LIFO precedence gives overrides the first shot:
 
-1. **JSON overrides** (`e2e/fixtures/overrides/*`) — hand-written responses. Highest precedence.
-2. **HAR replay** (`page.routeFromHAR`) — recorded traffic. Runs after overrides via `notFound: "fallback"`.
-3. **Strict guard** — any backend request not matched by the above is aborted with `route.abort("failed")` and logged as `[applyBackendMocks/strict]` to the test output.
+1. **JSON overrides** (`e2e/fixtures/overrides/*`) — hand-written responses plus body-aware overrides generated from recorded HARs. Highest precedence.
+2. **Strict guard** — any backend request not matched by an override is aborted with `route.abort("failed")` and logged as `[applyBackendMocks/strict]` to the test output.
 
 Non-backend requests (Next.js assets, fonts, CDN) always pass through regardless of strict mode.
 
-Call `applyBackendMocks(page, { overrides, har? })` in a `beforeEach`. **Strict is the default.** If you genuinely need to let real backend calls through for an exploratory test, pass `strict: false`.
+Call `applyBackendMocks(page, { overrides })` in a `beforeEach`. **Strict is the default.** If you genuinely need to let real backend calls through for an exploratory test, pass `strict: false`.
 
 The permissive catch-all `permissiveBackendOverrides` (from `e2e/fixtures/overrides`) covers `/api/auth/`, `/api/services/`, `/api/workspace/`, and the four backend hosts with generic 200 responses — use it as the last spread in your override list for the "I just want the page to render" case, after specific fixtures.
 
@@ -93,7 +92,7 @@ Add a new page object when a spec starts repeating the same selector tuple twice
 
 ## Recording a HAR
 
-`pnpm e2e:record <journey>` captures real backend traffic into `e2e/fixtures/hars/<journey>.har`. Specs replay the HAR via `applyBackendMocks(page, { har, overrides })` so they assert against the real BV-BRC response shape rather than hand-maintained mocks. Two recording modes:
+`pnpm e2e:record <journey>` captures real backend traffic into `e2e/fixtures/hars/<journey>.har`. Specs convert recorded entries into body-aware JSON overrides with `harOverridesFor()` so they assert against the real BV-BRC response shape rather than hand-maintained mocks. Two recording modes:
 
 **Scripted (preferred — used by the bi-weekly refresh workflow):** drop a driver at `e2e/scripts/journeys/<name>.ts` exporting `drive(page, env)` (see `e2e/scripts/journeys/README.md`). The recorder runs it headless against `E2E_RECORD_BASE_URL` (default `http://127.0.0.1:3010`, the production build). Use this when you want determinism — the same driver records the same flow every time, which is what makes the cron'd refresh meaningful.
 
@@ -104,12 +103,10 @@ Steps:
 1. `cp .env.e2e.example .env.e2e` and fill in valid BV-BRC creds (gitignored — never commit).
 2. `pnpm build && pnpm start` — recording uses the production build to avoid development-only HMR traffic and keep HAR output deterministic.
 3. `pnpm e2e:record workspace-browse` (or your journey name).
-4. The recorder filters non-backend traffic (skips `_next/static`, fonts, images), scrubs the live username/password/email out of all bodies, and rewrites the recorded host to `http://e2e-har-replay.local`. `applyBackendMocks` swaps that placeholder back to the active app host at replay time, so HARs are port-portable across `E2E_PORT` values.
+4. The recorder filters non-backend traffic (skips `_next/static`, fonts, images), scrubs the live username/password/email out of all bodies, and rewrites the recorded host to `http://e2e-har-replay.local`. `harOverridesFor()` matches recorded paths rather than origins, so HARs remain portable across `E2E_PORT` values.
 5. Commit the resulting `.har`. Re-record when the API contract drifts; the bi-weekly cron does this automatically (see below).
 
 ### Wiring a HAR into a spec
-
-Two integration modes — pick the one that matches what the spec is asserting.
 
 **Body-aware journey replay (`harOverridesFor` helper).** Reads the HAR file and emits one `JsonOverride` per `(path, method, JSON-RPC method)` tuple, with `matchBody` fanning the JSON-RPC entry point out by request `method` field. Sequential entries that share a tuple replay in HAR order via the override's `callIndex` body function — so a `Workspace.ls` recorded twice (pre- and post-upload) replays correctly. Use this when the spec drives a signed-in journey (workspace listing, file viewer, jobs page, service form) and asserts on UI rendered from the recorded post-auth payloads.
 
@@ -136,7 +133,7 @@ await applyBackendMocks(page, {
 await page.goto(`/workspace/${encodeURIComponent("e2e-test-user@bvbrc")}/home`);
 ```
 
-`harOverridesFor` matches on `pathname + search`, so the host-placeholder rewrite (`http://e2e-har-replay.local`) is irrelevant — the override matcher does a substring `includes` check against the live request URL. Status and response headers are taken from the first entry of each group; if a journey needs status drift across same-key calls, layer hand-rolled overrides on top.
+`harOverridesFor` matches on `pathname + search`, so the host-placeholder rewrite (`http://e2e-har-replay.local`) is irrelevant; the override matcher does a substring `includes` check against the live request URL. Status and response headers are taken from the first entry of each group; if a journey needs status drift across same-key calls, layer hand-rolled overrides on top.
 
 ### Bi-weekly refresh
 

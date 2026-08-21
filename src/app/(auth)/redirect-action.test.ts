@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { signOut } from "@/lib/auth/server/actions";
-import { safePostAuthDestination, signOutAndRedirect } from "./redirect-action";
+import { safePostAuthDestination } from "@/lib/auth/redirect";
+import { signOutAndRedirect } from "./redirect-action";
 
 vi.mock("next/navigation", () => ({
   redirect: vi.fn((url: string) => {
@@ -22,8 +23,8 @@ describe("safePostAuthDestination", () => {
     ["https://attacker.example/path", "/"],
     ["not-a-path", "/"],
     ["/services?tab=jobs#latest", "/services?tab=jobs#latest"],
-  ])("maps %s to %s", async (destination, expected) => {
-    await expect(safePostAuthDestination(destination)).resolves.toBe(expected);
+  ])("maps %s to %s", (destination, expected) => {
+    expect(safePostAuthDestination(destination)).toBe(expected);
     expect(redirectMock).not.toHaveBeenCalled();
   });
 

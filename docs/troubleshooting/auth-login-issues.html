@@ -568,8 +568,8 @@ curl -o /dev/null -w '%{http_code}' localhost:3019/api/auth/sign-in/email
       <p>
         Node 24's built-in <code>fetch</code> sends
         <code>User-Agent: node</code> by default. Cloudflare in front of
-        <code>user.patricbrc.org</code> answers
-        that with a <strong>403 bot challenge</strong> — an HTML page reading
+        <code>user.patricbrc.org</code> answers that with a
+        <strong>403 bot challenge</strong> — an HTML page reading
         <em>"Just a moment…"</em> — instead of the API response.
       </p>
     </div>
@@ -640,9 +640,9 @@ with browser UA         → <span class="good">200</span></pre>
         <li>
           <strong>The banner:</strong> <code>isVerified</code> treats an
           authenticated account as unverified only when
-          <code>email_verified</code> is explicitly <code>false</code>. A missing
-          value satisfies <code>user.email_verified !== false</code>, so it does
-          not explain the banner.
+          <code>email_verified</code> is explicitly <code>false</code>. A
+          missing value satisfies <code>user.email_verified !== false</code>, so
+          it does not explain the banner.
         </li>
         <li>
           <strong>The dead link:</strong> it calls <code>POST /verify</code> —
@@ -661,28 +661,21 @@ with browser UA         → <span class="good">200</span></pre>
     <div class="fix">
       <span class="lbl">Fix</span>
       <p>
-        Send an explicit <code>User-Agent</code> on every server-side call to
-        BV-BRC. Shared constant, applied in two places — the identity adapter,
-        and the authenticated-fetch helper that route handlers use:
+        Send an explicit <code>User-Agent</code> on every server-side identity
+        request to BV-BRC. The identity adapter applies the header in its shared
+        request helper, so authentication, registration, profile, verification,
+        and password operations all use the same behavior:
       </p>
       <div class="files">
         <span
-          ><b>src/lib/auth/server/user-agent.ts</b> — new, exports
-          <code>serverUserAgent</code></span
-        >
-        <span
-          ><b>src/lib/auth/server/adapters/bvbrc-identity.ts</b> — all 9
-          outbound calls</span
-        >
-        <span
-          ><b>src/lib/auth/server/route.ts</b> — named <code>authFetch</code>,
-          used by authenticated server calls</span
+          ><b>src/lib/auth/server/adapters/bvbrc-identity.ts</b> — shared
+          request helper and all identity-service calls</span
         >
       </div>
       <p>
-        The identity adapter now owns profile validation, while authenticated
-        domain fetches use the same explicit user agent through
-        <code>authFetch</code>.
+        The identity adapter owns both profile validation and the explicit
+        user-agent policy. Inspect its request helper when diagnosing stripped
+        headers or BV-BRC identity failures.
       </p>
     </div>
 

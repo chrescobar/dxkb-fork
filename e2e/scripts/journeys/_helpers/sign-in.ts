@@ -26,14 +26,7 @@ export async function signIn(page: Page, env: JourneyEnv): Promise<void> {
   await signInPage.waitUntilInteractive();
   await signInPage.fill(user, password);
 
-  const signInResponse = page.waitForResponse(
-    (res) =>
-      res.url().includes("/api/auth/sign-in/email") &&
-      res.request().method() === "POST",
-    { timeout: 30_000 },
-  );
-  await signInPage.submit();
-  await signInResponse;
+  await signInPage.submitAndWaitForResponse();
 
   // Settle post-auth redirects and downstream requests so they land in the HAR too.
   await page.waitForLoadState("networkidle", { timeout: 30_000 });

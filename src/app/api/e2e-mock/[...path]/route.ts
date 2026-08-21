@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { handleIdentityGet, handleIdentityPost } from "./identity";
 
 /**
  * Loopback mock for Playwright e2e only.
@@ -32,58 +33,6 @@ function resolvePath(params: Promise<{ path: string[] }>): Promise<string> {
 function logHit(method: string, path: string, extra?: string): void {
   const tail = extra ? ` ${extra}` : "";
   console.log(`[api/e2e-mock] ${method} /${path}${tail}`);
-}
-
-const e2eAdminProfile = {
-  id: "e2e-test-user@patricbrc.org",
-  email: "e2e@example.com",
-  email_verified: true,
-  first_name: "E2E",
-  middle_name: "",
-  last_name: "User",
-  creation_date: "2026-01-01T00:00:00Z",
-  l_id: "e2e-test-user",
-  last_login: "2026-01-01T00:00:00Z",
-  organisms: "",
-  reverification: false,
-  source: "bvbrc",
-  roles: ["admin"],
-};
-
-const e2eTargetProfile = {
-  id: "e2e-target-user@patricbrc.org",
-  email: "target@example.com",
-  email_verified: true,
-  first_name: "Target",
-  middle_name: "",
-  last_name: "User",
-  creation_date: "2026-01-02T00:00:00Z",
-  l_id: "e2e-target-user",
-  last_login: "2026-01-02T00:00:00Z",
-  organisms: "",
-  reverification: false,
-  source: "bvbrc",
-  roles: [],
-};
-
-const e2eAdminToken = "un=e2e-test-user@patricbrc.org|e2e-admin-token";
-const e2eTargetToken = "un=e2e-target-user@patricbrc.org|e2e-target-token";
-
-function identityTokenResponse(token: string): NextResponse {
-  return new NextResponse(token, {
-    status: 200,
-    headers: { Authorization: token, "Content-Type": "text/plain" },
-  });
-}
-
-function requestedUserId(path: string): string | null {
-  const encodedUserId = path.slice("user/".length);
-  if (!encodedUserId) return null;
-  try {
-    return decodeURIComponent(encodedUserId);
-  } catch {
-    return null;
-  }
 }
 
 const e2eDeterministicCounts: Record<string, number> = {
@@ -899,16 +848,8 @@ export async function GET(
   if (path === "phylo-manifest") {
     return NextResponse.json({ trees: { "2955291": "influenza" } });
   }
-  if (path.startsWith("user/")) {
-    const userId = requestedUserId(path);
-    if (userId === e2eAdminProfile.id || userId === e2eAdminProfile.l_id) {
-      return NextResponse.json(e2eAdminProfile);
-    }
-    if (userId === e2eTargetProfile.id || userId === e2eTargetProfile.l_id) {
-      return NextResponse.json(e2eTargetProfile);
-    }
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
-  }
+  const identityResponse = handleIdentityGet(path);
+  if (identityResponse) return identityResponse;
   const bvBrcWebsite = maybeBvBrcWebsite(path, request);
   if (bvBrcWebsite) {
     if (bvBrcWebsite.kind === "unhandled") {
@@ -980,36 +921,8 @@ export async function POST(
     return NextResponse.json(bvBrcWebsitePost.body);
   }
 
-  if (path === "user-auth/sulogin") {
-    const form = new URLSearchParams(await request.clone().text());
-    if (
-      form.get("username") !== e2eAdminProfile.id ||
-      form.get("targetUser") !== e2eTargetProfile.l_id ||
-      !form.get("password")
-    ) {
-      return new NextResponse("Invalid SU login", { status: 401 });
-    }
-    return identityTokenResponse(e2eTargetToken);
-  }
-  if (path === "user-auth") {
-    const form = new URLSearchParams(await request.clone().text());
-    if (
-      form.get("username") !== e2eAdminProfile.l_id ||
-      !form.get("password")
-    ) {
-      return new NextResponse("Invalid username or password", { status: 401 });
-    }
-    return identityTokenResponse(e2eAdminToken);
-  }
-  if (path === "user-register") {
-    return identityTokenResponse(e2eAdminToken);
-  }
-  if (path === "user-password-reset" || path === "user-verification") {
-    return NextResponse.json({ success: true });
-  }
-  if (path === "user" && rpcMethod === "setPassword") {
-    return NextResponse.json({ id: 1, jsonrpc: "2.0", result: true });
-  }
+  const identityResponse = await handleIdentityPost(path, request, rpcMethod);
+  if (identityResponse) return identityResponse;
 
   const firstSegment = path.split("/").filter(Boolean)[0] ?? "";
   if (!postAllowedNamespaces.has(firstSegment)) {

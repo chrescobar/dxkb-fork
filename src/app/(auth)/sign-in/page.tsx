@@ -5,7 +5,7 @@ import { useForm } from "@tanstack/react-form";
 import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAuthActions } from "@/lib/auth/provider";
-import { safePostAuthDestination } from "../redirect-action";
+import { safePostAuthDestination } from "@/lib/auth/redirect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -48,7 +48,7 @@ function SigninForm() {
     onSubmit: async ({ value }) => {
       setError("");
       try {
-        const destination = await safePostAuthDestination(redirectTo);
+        const destination = safePostAuthDestination(redirectTo);
         await signIn(value);
         toast.success("Logged in successfully. Welcome to DXKB!", {
           closeButton: true,

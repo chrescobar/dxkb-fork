@@ -1,5 +1,9 @@
 import type { AuthUser } from "@/lib/auth/types";
-import { respondWithAck, respondWithSession } from "../respond";
+import {
+  respondWithAck,
+  respondWithSession,
+  respondWithSessionMutation,
+} from "../respond";
 
 const user: AuthUser = { id: "alice-id", username: "alice", email: "a@x" };
 
@@ -8,6 +12,19 @@ describe("session responses", () => {
     const expiresAt = 1_800_000_000_000;
     const response = respondWithSession({ data: user, error: null }, expiresAt);
     expect(await response.json()).toEqual({
+      user,
+      session: { token: "", expiresAt: new Date(expiresAt).toISOString() },
+    });
+  });
+
+  it("adapts a session mutation and redacts the token", async () => {
+    const expiresAt = 1_800_000_000_000;
+    const response = respondWithSessionMutation({
+      data: { user, expiresAt },
+      error: null,
+    });
+
+    await expect(response.json()).resolves.toEqual({
       user,
       session: { token: "", expiresAt: new Date(expiresAt).toISOString() },
     });

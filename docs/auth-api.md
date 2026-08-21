@@ -84,8 +84,8 @@ All status mapping flows through `statusFor()` in `src/lib/auth/server/errors.ts
 1. **Every auth route calls a named operation from `src/lib/auth/server/actions.ts` or explicitly proxies an upstream response.**
    Orchestration belongs in the named server action, while route files stay thin and searchable.
 
-2. **The two envelope helpers are the only path to a response.**
-   `respondWithSession` for routes that return a user. `respondWithAck` for routes that return no payload. Adding a third requires updating this document.
+2. **The three envelope helpers are the only path to a response.**
+   `respondWithSessionMutation` adapts session-changing action results, `respondWithSession` returns a user or empty session, and `respondWithAck` returns no payload. Adding another helper requires updating this document.
 
 3. **Validation lives in the named server action, not the route.**
    Actions return a typed `Result` for invalid input. Routes use the shared JSON parser and do not re-check, re-message, or re-map action errors.

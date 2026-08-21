@@ -1,16 +1,4 @@
 import { test as base, type Page, type Route } from "@playwright/test";
-import path from "node:path";
-import os from "node:os";
-import fs from "node:fs";
-
-import { harReplayHostPlaceholder } from "../scripts/har-constants";
-
-// Process-lifetime cache of HARs that have already had the placeholder host
-// rewritten to the live origin. Keyed by `harPath + liveOrigin` so a single
-// worker materializes each HAR at most once instead of leaking a fresh
-// `mkdtempSync` directory per test. The OS reclaims `os.tmpdir()` between
-// CI runs, so we don't register an explicit unlink hook.
-const materializedHarCache = new Map<string, string>();
 
 export interface JsonOverrideBodyContext {
   /** Parsed JSON request body (null when the body was not JSON or was empty). */
@@ -58,7 +46,6 @@ export interface JsonOverride {
 }
 
 export interface BackendMockOptions {
-  har?: string;
   overrides?: JsonOverride[];
   /** When true (default), any unmocked request to a backend host or /api/** fails the test. */
   strict?: boolean;
@@ -143,10 +130,9 @@ function parseJsonBody(raw: string | null): unknown {
 /**
  * Apply backend mocks to a Playwright page.
  *
- * Playwright route handlers run LIFO (last registered is matched first). To make overrides and
- * HAR replay actually serve requests, we must register the strict catch-all FIRST, then HAR,
- * then overrides. That way overrides win, then HAR fills gaps, and strict only fires if nothing
- * else matched.
+ * Playwright route handlers run LIFO (last registered is matched first). Register the strict
+ * catch-all first and overrides last so overrides win and strict only fires if nothing else
+ * matched.
  *
  * With `strict: true` (default), every unmocked request to a backend host or the app's /api/**
  * namespace is aborted AND recorded on the page. Import `test` from this module (instead of
@@ -161,12 +147,12 @@ export async function applyBackendMocks(
   page: Page,
   options: BackendMockOptions = {},
 ): Promise<void> {
-  const { har, overrides = [], strict = true } = options;
+  const { overrides = [], strict = true } = options;
   // Merge defaults after caller overrides so caller-provided entries win (first match wins).
   const effectiveOverrides = [...overrides, ...defaultOverrides];
   const appHost = resolveAppHost();
 
-  // 1. Strict guard — registered FIRST so it runs LAST (routes are LIFO).
+  // Strict guard — registered FIRST so it runs LAST (routes are LIFO).
   //    Only fires for backend requests that none of the later handlers matched.
   //    Aborts + records to the per-page log; verifyNoUnmockedBackendRequests throws later.
   if (strict) {
@@ -186,41 +172,7 @@ export async function applyBackendMocks(
     });
   }
 
-  // 2. HAR replay — registered SECOND so it runs between overrides (above) and strict (below).
-  //    `notFound: "fallback"` lets uncovered requests fall through to overrides then strict.
-  //    Recorded HARs use harReplayHostPlaceholder for the origin so they don't lock to
-  //    the recorder's port. Materialize a per-worker copy with the placeholder swapped to
-  //    the live app host (cached by harPath+liveOrigin), then point routeFromHAR at it.
-  if (har) {
-    const harPath = path.isAbsolute(har)
-      ? har
-      : path.resolve(process.cwd(), "e2e/fixtures/hars", har);
-    if (!fs.existsSync(harPath)) {
-      throw new Error(
-        `HAR file not found: ${harPath}. Record it first with \`pnpm e2e:record ${path.basename(har, ".har")}\`.`,
-      );
-    }
-    const liveOrigin = `http://${appHost ?? `127.0.0.1:${process.env.E2E_PORT ?? "3020"}`}`;
-    const cacheKey = `${harPath}\0${liveOrigin}`;
-    let liveHarPath = materializedHarCache.get(cacheKey);
-    if (!liveHarPath) {
-      const harText = fs
-        .readFileSync(harPath, "utf8")
-        .split(harReplayHostPlaceholder)
-        .join(liveOrigin);
-      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "e2e-har-"));
-      liveHarPath = path.join(tmpDir, path.basename(harPath));
-      fs.writeFileSync(liveHarPath, harText);
-      materializedHarCache.set(cacheKey, liveHarPath);
-    }
-    await page.routeFromHAR(liveHarPath, {
-      url: /.*/,
-      update: false,
-      notFound: "fallback",
-    });
-  }
-
-  // 3. Overrides — registered LAST so they run FIRST. These win over HAR and strict.
+  // Overrides — registered LAST so they run FIRST. These win over strict.
   if (effectiveOverrides.length > 0) {
     const callCounts = new WeakMap<JsonOverride, { value: number }>();
     const counterFor = (o: JsonOverride) => {

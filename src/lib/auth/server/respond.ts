@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import type { AuthUser, Result } from "@/lib/auth/types";
+import type { AuthSessionMutation, AuthUser, Result } from "@/lib/auth/types";
 import { statusToErrorCode } from "@/lib/api/types";
 import { statusFor } from "./errors";
 
@@ -47,6 +47,18 @@ export function respondWithSession(
     errorResultResponse(result) ??
     NextResponse.json(buildEnvelope(result.data, expiresAt))
   );
+}
+
+export function respondWithSessionMutation(
+  result: Result<AuthSessionMutation>,
+  options?: { sessionExpired?: boolean },
+): NextResponse {
+  return result.error
+    ? respondWithSession(result, undefined, options)
+    : respondWithSession(
+        { data: result.data.user, error: null },
+        result.data.expiresAt,
+      );
 }
 
 export function respondWithAck(

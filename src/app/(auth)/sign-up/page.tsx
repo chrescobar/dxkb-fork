@@ -14,7 +14,7 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { safePostAuthDestination } from "../redirect-action";
+import { safePostAuthDestination } from "@/lib/auth/redirect";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { SignupPasswordFields, SignupProfileFields } from "./sign-up-fields";
 import { useSignupForm } from "./use-signup-form";
@@ -30,11 +30,11 @@ function SignupForm() {
     setIsSubmitting(true);
     setError("");
     await signUp(value)
-      .then(async () => {
+      .then(() => {
         toast.success("Account created successfully. Welcome to DXKB!", {
           closeButton: true,
         });
-        window.location.replace(await safePostAuthDestination(redirectTo));
+        window.location.replace(safePostAuthDestination(redirectTo));
       })
       .catch((cause: unknown) => {
         setError(

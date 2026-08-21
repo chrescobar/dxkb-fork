@@ -14,9 +14,9 @@ const emailPlaceholder = "e2e@example.com";
 
 /**
  * Headers that may carry session tokens, signed cookies, or other credentials.
- * Drop them entirely from the recorded HAR — `routeFromHAR` doesn't need them
- * for matching, and the served set-cookie would otherwise reach the browser at
- * replay time. Compared lower-case.
+ * Drop them entirely from the recorded HAR because replay fixtures do not need
+ * them for matching and committed recordings must not retain credentials.
+ * Compared lower-case.
  */
 const sensitiveHeaderNames = new Set([
   "cookie",

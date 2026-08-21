@@ -155,9 +155,7 @@ interface GroupedEntries {
  *    don't break matching.
  *  - When the request body is a JSON-RPC envelope, `matchBody` ensures only
  *    requests carrying that RPC method are served by this override. This
- *    closes the routeFromHAR gap: routeFromHAR matches URL+method only, so
- *    four different JSON-RPC calls to `/api/services/workspace` would all
- *    serve the first matching response.
+ *    disambiguates different JSON-RPC calls that share a URL and HTTP method.
  *  - When a group has multiple entries (e.g. two `Workspace.ls` calls before
  *    and after an upload), responses are served in HAR order via the
  *    override's `callIndex` body function. Once the recorded sequence is

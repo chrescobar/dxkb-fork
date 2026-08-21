@@ -55,15 +55,6 @@ beforeEach(() => {
   navigation.pathname = "/";
   navigation.searchParams = new URLSearchParams();
   navigation.suspendSearchParams = false;
-  vi.stubGlobal(
-    "window",
-    new Proxy(window, {
-      get(target, property, receiver) {
-        if (property === "location") return { replace: replaceMock };
-        return Reflect.get(target, property, receiver) as unknown;
-      },
-    }),
-  );
 });
 
 function Wrapper({

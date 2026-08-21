@@ -72,17 +72,8 @@ Use [MSW (Mock Service Worker)](https://mswjs.io/docs/) to intercept HTTP reques
 
 - A shared MSW server is configured in `src/test-helpers/msw-server.ts` with lifecycle hooks in `vitest.setup.ts` (strict mode — unhandled requests error).
 - Use `server.use()` inside individual tests to add request handlers. Handlers are automatically reset after each test via `afterEach(() => server.resetHandlers())`.
-- For server-side code that depends on `next/headers` cookies (for example `readSession`, `getCurrentUser`, or `withAuth`), use `setTestSession({ token, userId, realm })` from `api-route-helpers.ts`, which configures the hoisted test cookie store; let the real auth functions run so outbound calls hit MSW:
-
-```ts
-const { mockCookieStore } = vi.hoisted(() => ({
-  mockCookieStore: { get: vi.fn(), set: vi.fn() },
-}));
-
-vi.mock("next/headers", () => ({
-  cookies: vi.fn(() => Promise.resolve(mockCookieStore)),
-}));
-```
+- For server-side code that depends on `next/headers` cookies (for example `readSession`, `getCurrentUser`, or `withAuth`), use `setTestSession({ token, userId, realm })` from `api-route-helpers.ts`, which configures the global test cookie store installed by `vitest.setup.ts`; let the real auth functions run so outbound calls hit MSW.
+- Mock `next/headers` directly only in tests that intentionally replace the shared cookie-store behavior itself.
 
 - Set env vars (e.g. `process.env.USER_URL`) in `beforeEach` / `afterEach` instead of mocking `getRequiredEnv`.
 - See `src/lib/auth/server/__tests__/session.test.ts`, `server/__tests__/actions.test.ts`, and protected route tests using `setTestSession` for reference examples.

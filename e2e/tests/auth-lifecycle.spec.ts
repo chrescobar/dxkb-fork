@@ -29,11 +29,6 @@ test.describe("auth lifecycle (local identity fake)", () => {
     await signIn.goto("/settings");
     await signIn.fill("e2e-test-user", "password1234");
 
-    const signInResponse = page.waitForResponse(
-      (response) =>
-        response.url().endsWith("/api/auth/sign-in/email") &&
-        response.request().method() === "POST",
-    );
     await page.evaluate(() => {
       sessionStorage.removeItem("e2e-next-redirect-flash");
       new MutationObserver(() => {
@@ -42,8 +37,7 @@ test.describe("auth lifecycle (local identity fake)", () => {
         }
       }).observe(document.body, { childList: true, subtree: true });
     });
-    await signIn.submit();
-    expect((await signInResponse).status()).toBe(200);
+    expect((await signIn.submitAndWaitForResponse()).status()).toBe(200);
     await expect(page).toHaveURL(/\/settings$/);
     expect(
       await page.evaluate(() =>
@@ -104,13 +98,7 @@ test.describe("auth lifecycle (local identity fake)", () => {
     const authSession = new AuthSessionPage(page);
     await signIn.goto();
     await signIn.fill("e2e-test-user", "password1234");
-    const signInResponse = page.waitForResponse(
-      (response) =>
-        response.url().endsWith("/api/auth/sign-in/email") &&
-        response.request().method() === "POST",
-    );
-    await signIn.submit();
-    expect((await signInResponse).status()).toBe(200);
+    expect((await signIn.submitAndWaitForResponse()).status()).toBe(200);
     await expect(page).toHaveURL((url) => url.pathname === "/");
     await page.goto("/settings");
     await expect(page).toHaveURL(/\/settings$/);

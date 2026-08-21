@@ -34,6 +34,17 @@ import {
   writeSession,
 } from "./session";
 
+function buildSessionIdentity(
+  token: string,
+  profile: UserProfile,
+): SessionIdentity {
+  return {
+    token,
+    userId: profile.id,
+    realm: extractRealmFromToken(token),
+  };
+}
+
 function buildUser(
   profile: UserProfile,
   session: SessionIdentity,
@@ -54,11 +65,6 @@ function buildUser(
   };
 }
 
-function returnError<T>(result: Result<unknown>): Result<T> {
-  if (!result.error) throw new Error("Expected an auth error");
-  return { data: null, error: result.error };
-}
-
 export async function signIn(
   credentials: SigninCredentials,
 ): Promise<Result<AuthSessionMutation>> {
@@ -66,17 +72,13 @@ export async function signIn(
     return fail("validation", "Username and password are required", 400);
   }
   const authenticated = await authenticate(credentials);
-  if (authenticated.error) return returnError(authenticated);
+  if (authenticated.error) return authenticated;
   const profile = await getProfile(
     credentials.username,
     authenticated.data.token,
   );
-  if (profile.error) return returnError(profile);
-  const identity = {
-    token: authenticated.data.token,
-    userId: profile.data.id,
-    realm: extractRealmFromToken(authenticated.data.token),
-  };
+  if (profile.error) return profile;
+  const identity = buildSessionIdentity(authenticated.data.token, profile.data);
   const expiresAt = await writeSession(identity);
   return ok({ user: buildUser(profile.data, identity), expiresAt });
 }
@@ -95,14 +97,10 @@ export async function signUp(
     return fail("validation", "Passwords do not match", 400);
   }
   const registered = await registerUser(input);
-  if (registered.error) return returnError(registered);
+  if (registered.error) return registered;
   const profile = await getProfile(input.username, registered.data.token);
-  if (profile.error) return returnError(profile);
-  const identity = {
-    token: registered.data.token,
-    userId: profile.data.id,
-    realm: extractRealmFromToken(registered.data.token),
-  };
+  if (profile.error) return profile;
+  const identity = buildSessionIdentity(registered.data.token, profile.data);
   const expiresAt = await writeSession(identity);
   try {
     await ensureUserWorkspace({
@@ -151,7 +149,7 @@ export async function startImpersonation(
       await clearCurrentSession();
       adminProfile.error.sessionExpired = true;
     }
-    return returnError(adminProfile);
+    return adminProfile;
   }
   if (!adminProfile.data.roles?.includes("admin")) {
     return fail("forbidden", "Admin role required", 403);
@@ -162,15 +160,14 @@ export async function startImpersonation(
     targetUser,
     password,
   );
-  if (impersonated.error) return returnError(impersonated);
+  if (impersonated.error) return impersonated;
   const targetProfile = await getProfile(targetUser, impersonated.data.token);
-  if (targetProfile.error) return returnError(targetProfile);
+  if (targetProfile.error) return targetProfile;
 
-  const targetIdentity = {
-    token: impersonated.data.token,
-    userId: targetProfile.data.id,
-    realm: extractRealmFromToken(impersonated.data.token),
-  };
+  const targetIdentity = buildSessionIdentity(
+    impersonated.data.token,
+    targetProfile.data,
+  );
   await writeImpersonationBackup(current);
   let expiresAt: number;
   try {
@@ -193,7 +190,7 @@ export async function exitImpersonation(): Promise<
     return fail("validation", "No active impersonation session", 400);
   }
   const profile = await getProfile(backup.userId, backup.token);
-  if (profile.error) return returnError(profile);
+  if (profile.error) return profile;
   const expiresAt = await restoreImpersonationBackup();
   if (expiresAt === null) {
     return fail("validation", "No active impersonation session", 400);

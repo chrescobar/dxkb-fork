@@ -19,17 +19,6 @@ function joinUrl(base: string, path = ""): string {
     : base;
 }
 
-function cleanErrorMessage(_raw: string, fallback: string): string {
-  return fallback;
-}
-
-async function responseMessage(
-  response: Response,
-  fallback: string,
-): Promise<string> {
-  return cleanErrorMessage(await response.text().catch(() => ""), fallback);
-}
-
 async function request(
   input: string,
   init: RequestInit,
@@ -76,16 +65,16 @@ function codeForStatus(status: number): AuthErrorCode {
   return "unknown";
 }
 
-async function httpFailure<T>(
+function httpFailure<T>(
   response: Response,
   fallback: string,
   authFailureCode?: "unauthorized" | "invalid_credentials",
-): Promise<Result<T>> {
+): Result<T> {
   const code =
     authFailureCode && (response.status === 401 || response.status === 403)
       ? authFailureCode
       : codeForStatus(response.status);
-  return fail(code, await responseMessage(response, fallback), response.status);
+  return fail(code, fallback, response.status);
 }
 
 function isUserProfile(value: unknown): value is UserProfile {
@@ -327,11 +316,7 @@ export async function verifyEmailToken(
   if (result.data.status >= 500 || result.data.status === 429) {
     return httpFailure(result.data, "Email verification failed");
   }
-  return fail(
-    "validation",
-    await responseMessage(result.data, "Email verification failed"),
-    result.data.status,
-  );
+  return fail("validation", "Email verification failed", result.data.status);
 }
 
 export async function changePassword(
@@ -370,13 +355,7 @@ export async function changePassword(
     error?: { message?: unknown };
   } | null;
   if (body?.error) {
-    return fail(
-      "validation",
-      typeof body.error.message === "string"
-        ? cleanErrorMessage(body.error.message, "Failed to change password")
-        : "Failed to change password",
-      400,
-    );
+    return fail("validation", "Failed to change password", 400);
   }
   return ok(undefined);
 }

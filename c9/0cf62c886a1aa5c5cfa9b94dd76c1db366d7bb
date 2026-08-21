@@ -1,0 +1,100 @@
+e2e/mocks/backends.ts
+  s_a6e5147352cecd::t_135013e7d90161 133-135,150,155,175
+src/app/api/e2e-mock/[...path]/route.ts
+  s_a6e5147352cecd::t_73aaa0b0638085 924-925
+  s_a6e5147352cecd::t_618c1a4b1e8ce1 2
+  s_a6e5147352cecd::t_9b42892a306260 851-852
+e2e/scripts/journeys/README.md
+  s_a6e5147352cecd::t_1f9c6de71ed38a 11-16,73-74
+src/app/(auth)/sign-up/page.tsx
+  s_a6e5147352cecd::t_e542cfe7b2ceee 17,37
+  s_a6e5147352cecd::t_c85620aca5e604 33
+e2e/scripts/record-har.ts
+  s_a6e5147352cecd::t_a72c36ef5e1cc6 17-19
+src/app/api/e2e-mock/[...path]/identity.ts
+  s_a6e5147352cecd::t_1b179a30e93745 1-102
+src/lib/auth/server/respond.ts
+  s_a6e5147352cecd::t_83e92153e95080 52-63
+  s_a6e5147352cecd::t_719ee973b6a309 2
+src/app/(auth)/redirect-action.test.ts
+  s_a6e5147352cecd::t_2a3b10f66d1fa1 3-4,27
+  s_a6e5147352cecd::t_de046251677af6 26
+src/lib/auth/redirect.ts
+  s_a6e5147352cecd::t_1a395ed88f9bc3 1-17
+src/lib/auth/server/__tests__/respond.test.ts
+  s_a6e5147352cecd::t_9677ba2509481a 2-6
+  s_a6e5147352cecd::t_93e3b196ded8e0 20-31
+  s_a6e5147352cecd::t_cbd370c41478ce 19
+src/app/(auth)/redirect-action.ts
+  s_a6e5147352cecd::t_0d42ccac38bef3 10-12
+src/lib/auth/server/adapters/bvbrc-identity.ts
+  s_a6e5147352cecd::t_3bdcf4d2fa7be7 68,72,77,319,358
+e2e/scripts/journeys/_helpers/sign-in.ts
+  s_a6e5147352cecd::t_aa2aff840cd20b 29
+e2e/pages/sign-in-page.ts
+  s_a6e5147352cecd::t_c5bcbcd0043ea0 5
+  s_a6e5147352cecd::t_fbc120e03e5774 1-4,6
+  s_a6e5147352cecd::t_4d9017ad44f858 55-64
+  s_a6e5147352cecd::t_62b452fc7df877 54
+docs/auth-api.md
+  s_a6e5147352cecd::t_dc233dbaac9888 87-88
+e2e/scripts/har-constants.ts
+  s_a6e5147352cecd::t_842e9f5cdd270d 5-6
+e2e/scripts/har-overrides.ts
+  s_a6e5147352cecd::t_648ff42d64e7c8 158
+.env.e2e.test
+  s_a6e5147352cecd::t_d9f4a7ccaec5a7 17
+src/app/api/auth/su-login/route.ts
+  s_a6e5147352cecd::t_16a72bac276b6f 3
+  s_a6e5147352cecd::t_c9ebdf7f124976 17-19
+e2e/README.md
+  s_a6e5147352cecd::t_4eb875865d367d 30
+  s_a6e5147352cecd::t_14306501f316ad 52,54-55,59,95
+  s_a6e5147352cecd::t_a512bc97a4bce4 106,136
+src/app/api/auth/su-exit/route.ts
+  s_a6e5147352cecd::t_ff019be9808499 2
+  s_a6e5147352cecd::t_d6c6399c4abe64 6
+src/app/api/auth/sign-up/email/route.ts
+  s_a6e5147352cecd::t_d989cf5537cafb 4
+  s_a6e5147352cecd::t_cb998d0baeced8 9
+e2e/tests/auth-lifecycle.spec.ts
+  s_a6e5147352cecd::t_1163942c07d4e4 40,101
+docs/troubleshooting/auth-login-issues.html
+  s_a6e5147352cecd::t_a454ce45c7edc3 664-667,676-678
+  s_a6e5147352cecd::t_92a2843fc8e6da 571-572,643-645,671-672
+src/lib/auth/server/actions.ts
+  s_a6e5147352cecd::t_28cb7fd4a93778 81,103,167-170
+  s_a6e5147352cecd::t_c205c629e2ba21 75,80,100,102,152,163,165,193
+  s_a6e5147352cecd::t_5ac4a2ec498212 37-47
+src/app/api/auth/sign-in/email/route.ts
+  s_a6e5147352cecd::t_3695213d2e697b 9
+  s_a6e5147352cecd::t_c76ecab2bfcacb 3
+src/app/services/(genomics)/similar-genome-finder/actions.test.ts
+  s_a6e5147352cecd::t_670045bb20a1ff 1-33,37-43,47-68
+  s_a6e5147352cecd::t_2c1aa87745a243 34-36,44-46
+.claude/rules/testing.md
+  s_a6e5147352cecd::t_b8a46a8a5f7da5 75-76
+src/app/(auth)/sign-in/page.tsx
+  s_a6e5147352cecd::t_ebc335e0f4c4cb 51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "c90cf62c886a1aa5c5cfa9b94dd76c1db366d7bb",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_a6e5147352cecd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fdb164e08ffeweOXJY3v3DNNRz",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

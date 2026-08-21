@@ -1,0 +1,26 @@
+src/lib/auth/server/adapters/bvbrc-identity.ts
+  s_c856fe6a432fd4::t_1a6dabb52137e1 215-227
+src/lib/auth/server/adapters/__tests__/bvbrc-identity.test.ts
+  s_c856fe6a432fd4::t_5a878390c6107d 211-229
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "42739ad8aa40773bc31e4ffa11ddeb58608dbbd4",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_c856fe6a432fd4": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fdb5a7e07ffeUTOHY34ZZCV0Cd",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

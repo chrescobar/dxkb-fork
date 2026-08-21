@@ -212,7 +212,19 @@ export async function getProfile(
   if (!result.data.ok) {
     return httpFailure(result.data, "Profile lookup failed", "unauthorized");
   }
-  const profile: unknown = await result.data.json().catch(() => null);
+  const rawProfile: unknown = await result.data.json().catch(() => null);
+  const profile =
+    rawProfile && typeof rawProfile === "object"
+      ? {
+          ...rawProfile,
+          creation_date:
+            (rawProfile as Record<string, unknown>).creation_date ??
+            (rawProfile as Record<string, unknown>).creationDate,
+          last_login:
+            (rawProfile as Record<string, unknown>).last_login ??
+            (rawProfile as Record<string, unknown>).lastLogin,
+        }
+      : rawProfile;
   return isUserProfile(profile)
     ? ok(profile)
     : fail(

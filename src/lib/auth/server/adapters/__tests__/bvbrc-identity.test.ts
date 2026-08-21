@@ -208,6 +208,25 @@ describe("named BV-BRC identity operations", () => {
     expect(authorization).toBe("raw-token");
   });
 
+  it("normalizes date fields from the BV-BRC profile response", async () => {
+    server.use(
+      http.get("https://user.test/user/alice", () =>
+        HttpResponse.json({
+          ...validProfile,
+          creation_date: undefined,
+          last_login: undefined,
+          creationDate: "2026-01-01T00:00:00Z",
+          lastLogin: "2026-01-02T00:00:00Z",
+        }),
+      ),
+    );
+
+    expect((await getProfile("alice", "t")).data).toMatchObject({
+      creation_date: "2026-01-01T00:00:00Z",
+      last_login: "2026-01-02T00:00:00Z",
+    });
+  });
+
   it("rejects malformed profile JSON as an upstream failure", async () => {
     server.use(
       http.get("https://user.test/user/alice", () =>

@@ -1,0 +1,125 @@
+src/hooks/services/__tests__/use-genome-group-options.test.ts
+  s_7aace734af70ef::t_67c4b935cbcdf5 3
+src/hooks/services/workspace/__tests__/use-workspace-path-resolve.test.tsx
+  s_7aace734af70ef::t_67c4b935cbcdf5 2
+src/lib/interactions/__tests__/use-interactions.test.ts
+  s_7aace734af70ef::t_67c4b935cbcdf5 5
+src/components/navbars/__tests__/user-avatar-dropdown.test.tsx
+  s_7aace734af70ef::t_0627d29c14351e 17
+src/app/api/auth/profile/__tests__/route.test.ts
+  s_7aace734af70ef::t_94b3a1cea8d9bf 92
+  s_7aace734af70ef::t_266dd4170e127c 240
+  s_7aace734af70ef::t_24a1a74f407bbf 145,147-148
+src/hooks/services/__tests__/use-feature-group-options.test.ts
+  s_7aace734af70ef::t_67c4b935cbcdf5 3
+src/lib/auth/server/adapters/bvbrc-identity.ts
+  s_7aace734af70ef::t_36a434f274af0f 11-14
+e2e/auth/signed-in.setup.ts
+  s_7aace734af70ef::t_691c5e03ce86d1 4
+src/lib/auth/__tests__/client.test.ts
+  s_7aace734af70ef::t_ff6b1bcf010acf 151-152,172-203
+  s_7aace734af70ef::t_c74da213a6bbe2 153-155,157
+src/test-helpers/api-route-helpers.ts
+  s_7aace734af70ef::t_0a55c61f14b92e 22
+e2e/fixtures/overrides/auth-session.ts
+  s_7aace734af70ef::t_5d558ca700d2ce 3-35
+  s_7aace734af70ef::t_1a7eb327942889 36
+src/lib/auth/__tests__/provider.test.tsx
+  s_7aace734af70ef::t_84f461c6c41e13 112-138,141-144
+  s_7aace734af70ef::t_c74da213a6bbe2 139-140,145-164
+  s_7aace734af70ef::t_9c5a3761d04e77 84-94
+src/components/services/__tests__/list-data-serology.test.tsx
+  s_7aace734af70ef::t_67c4b935cbcdf5 11
+src/app/api/auth/ensure-workspace/__tests__/route.test.ts
+  s_7aace734af70ef::t_3da2237611146b 1-15,25,33-34,37-42,46-56
+src/test-helpers/react.ts
+  s_7aace734af70ef::t_bf89c3426599f0 1-27
+src/app/api/auth/__tests__/auth-routes.integration.test.ts
+  s_7aace734af70ef::t_ee7ed36871152f 80
+  s_7aace734af70ef::t_6327d68efea3f5 48-51
+  s_7aace734af70ef::t_12a62927caefa3 6
+src/app/services/(genomics)/blast/__tests__/page-database-types.test.tsx
+  s_7aace734af70ef::t_67c4b935cbcdf5 11
+e2e/tests/workspace-browse.spec.ts
+  s_7aace734af70ef::t_8ac6666bbfb0a7 360-361
+src/components/jobs/__tests__/job-status-pill.test.tsx
+  s_7aace734af70ef::t_67c4b935cbcdf5 5
+src/components/phylogeny/__tests__/use-phylogeny-data.test.tsx
+  s_7aace734af70ef::t_67c4b935cbcdf5 3
+src/lib/auth/server/adapters/__tests__/bvbrc-identity.test.ts
+  s_7aace734af70ef::t_bf7a087174ba97 135
+docs/architecture.md
+  s_7aace734af70ef::t_3111b443540e2b 37
+src/lib/auth/provider.tsx
+  s_7aace734af70ef::t_1099efde20796c 69-81
+src/lib/auth/server/__tests__/respond.test.ts
+  s_7aace734af70ef::t_7e9ea548872530 2,17-19,22-23
+  s_7aace734af70ef::t_c74da213a6bbe2 24-27
+e2e/scripts/record-har.ts
+  s_7aace734af70ef::t_c74da213a6bbe2 89-91,112-117,128-132,179-183,199-202,274-279,303-305
+  s_7aace734af70ef::t_a4343a1d04b5ec 215
+src/lib/auth/server/__tests__/route.test.ts
+  s_7aace734af70ef::t_4f46f8b69db2d9 12
+.github/workflows/e2e-har-refresh.yml
+  s_7aace734af70ef::t_237e8cc43b3a77 46
+src/hooks/services/workspace/__tests__/use-ensure-user-workspace.test.tsx
+  s_7aace734af70ef::t_67c4b935cbcdf5 4
+src/hooks/services/workspace/__tests__/use-workspace.test.tsx
+  s_7aace734af70ef::t_67c4b935cbcdf5 2
+src/components/search/welcome-search.tsx
+  s_7aace734af70ef::t_3fb1db32ab1fea 9
+e2e/README.md
+  s_7aace734af70ef::t_8c97f0153736ee 147
+  s_7aace734af70ef::t_b0e7b1b7f08781 106
+e2e/scripts/journeys/README.md
+  s_7aace734af70ef::t_d4234d25b46c2b 14
+e2e/tests/auth-lifecycle.spec.ts
+  s_7aace734af70ef::t_4d3d0643d5b731 1-178
+src/app/services/(genomics)/genome-assembly/__tests__/page-rerun.test.tsx
+  s_7aace734af70ef::t_67c4b935cbcdf5 11
+e2e/fixtures/overrides/index.ts
+  s_7aace734af70ef::t_72071ed6fc7fe3 1
+src/app/api/auth/__tests__/route-contracts.test.ts
+  s_7aace734af70ef::t_c74da213a6bbe2 78-82,99-103,115-116,131-133,140-144,152-154,194-196
+  s_7aace734af70ef::t_92ad1cf2ff38da 1-29,32,35-38,40-42,45-51,53,55-57,61-64,66-68,71-77,83-84,86-87,90-93,96-98,104-111,114,120-126,128,134-139,147-151,157-178,180-187,190-193,197-205
+.claude/rules/testing.md
+  s_7aace734af70ef::t_7341f041da45b5 75,88
+src/components/navbars/user-avatar-dropdown.tsx
+  s_7aace734af70ef::t_8793eb3d943e8f 18-22
+src/lib/auth/client.ts
+  s_7aace734af70ef::t_e6eb9614f07f6b 21
+src/components/taxonomy/__tests__/taxonomy-tree.test.tsx
+  s_7aace734af70ef::t_67c4b935cbcdf5 6
+src/hooks/services/workspace/__tests__/use-job-result-data.test.tsx
+  s_7aace734af70ef::t_67c4b935cbcdf5 2
+e2e/tests/auth.spec.ts
+  s_7aace734af70ef::t_6ff5d600091867 191
+  s_7aace734af70ef::t_c74da213a6bbe2 145
+  s_7aace734af70ef::t_27f435e6d99bbb 6,12,21,28,92,118-120,160,183,226
+  s_7aace734af70ef::t_960606299e8ac4 1
+src/lib/auth/server/errors.ts
+  s_7aace734af70ef::t_827d1bb2ffa7a1 132
+src/app/services/(protein-tools)/gene-protein-tree/__tests__/page-alphabet.test.tsx
+  s_7aace734af70ef::t_67c4b935cbcdf5 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "9980afba8a7065f4a2d6f5615a17bf11951e42cb",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  },
+  "sessions": {
+    "s_7aace734af70ef": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fdb3cf8a3ffeBgI71mpBd0k4TL",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

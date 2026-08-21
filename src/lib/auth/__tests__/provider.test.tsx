@@ -113,7 +113,7 @@ describe("AuthBoundary", () => {
       setup: () => vi.mocked(authClient.signUp).mockResolvedValue(user),
       invoke: (actions: ReturnType<typeof useAuthActions>) =>
         actions.signUp(signupInput),
-      refreshes: true,
+      refreshes: false,
     },
     {
       name: "start impersonation",

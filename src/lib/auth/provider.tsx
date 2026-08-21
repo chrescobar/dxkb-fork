@@ -95,7 +95,6 @@ export function useAuthActions() {
   const signUp = async (input: SignupCredentials) => {
     const user = await authClient.signUp(input);
     clearAccountCache();
-    router.refresh();
     return user;
   };
   const startImpersonation = async (targetUser: string, password: string) => {

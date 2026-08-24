@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth/server/instance";
-import { HttpResponseError } from "@/lib/auth/server/route";
+import { readAuthSession } from "@/lib/auth/server/route";
 import { getRequiredEnv } from "@/lib/env";
 
 const allowedMethods = new Set(["Workspace.ls", "Workspace.get"]);
@@ -30,18 +29,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let authToken: string | undefined;
-    try {
-      const session = await auth.requireSession();
-      authToken = session.token;
-    } catch (error) {
-      if (
-        !(error instanceof HttpResponseError) &&
-        !(error instanceof Response)
-      ) {
-        throw error;
-      }
-    }
+    const authToken = (await readAuthSession())?.token;
 
     const headers: Record<string, string> = {
       "Content-Type": "application/jsonrpc+json",

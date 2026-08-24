@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { withAuth } from "@/lib/auth/server/instance";
+import { withAuth } from "@/lib/auth/server/route";
 
 const minhashServiceUrl = process.env.MINHASH_SERVICE_URL;
 

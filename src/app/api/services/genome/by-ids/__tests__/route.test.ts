@@ -1,19 +1,23 @@
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
 import { POST } from "../route";
-import { json, mockNextRequest } from "@/test-helpers/api-route-helpers";
-
-vi.mock("@/lib/auth/session", () => ({ getAuthToken: vi.fn() }));
+import {
+  clearTestCookies,
+  json,
+  mockNextRequest,
+  setTestSession,
+} from "@/test-helpers/api-route-helpers";
 vi.mock("@/lib/env", () => ({
   getRequiredEnv: vi.fn(() => "http://mock-api"),
 }));
 
-import { getAuthToken } from "@/lib/auth/session";
-const mockGetAuthToken = vi.mocked(getAuthToken);
-
 describe("POST /api/services/genome/by-ids", () => {
+  beforeEach(() => {
+    setTestSession();
+  });
+
   it("returns 401 when no auth token", async () => {
-    mockGetAuthToken.mockResolvedValue(undefined);
+    clearTestCookies();
 
     const req = mockNextRequest({
       method: "POST",
@@ -28,8 +32,6 @@ describe("POST /api/services/genome/by-ids", () => {
   });
 
   it("returns empty results for empty genome_ids array", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     const req = mockNextRequest({ method: "POST", body: { genome_ids: [] } });
     const res = await POST(req, {});
 
@@ -38,8 +40,6 @@ describe("POST /api/services/genome/by-ids", () => {
   });
 
   it("returns empty results when genome_ids is not an array", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     const req = mockNextRequest({
       method: "POST",
       body: { genome_ids: "not-an-array" },
@@ -51,8 +51,6 @@ describe("POST /api/services/genome/by-ids", () => {
   });
 
   it("returns empty results when all IDs are invalid (non-numeric)", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     const req = mockNextRequest({
       method: "POST",
       body: { genome_ids: ["abc", "!@#"] },
@@ -64,8 +62,6 @@ describe("POST /api/services/genome/by-ids", () => {
   });
 
   it("sanitizes IDs to only digits and dots", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     let capturedUrl: string | undefined;
     server.use(
       http.get("http://mock-api/genome/", ({ request }) => {
@@ -84,8 +80,6 @@ describe("POST /api/services/genome/by-ids", () => {
   });
 
   it("sets limit to Math.min(ids.length, 100)", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     let capturedUrl: string | undefined;
     server.use(
       http.get("http://mock-api/genome/", ({ request }) => {
@@ -105,8 +99,6 @@ describe("POST /api/services/genome/by-ids", () => {
   });
 
   it("returns results from array response", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     const genomes = [{ genome_id: "1.1", genome_name: "Test" }];
     server.use(
       http.get("http://mock-api/genome/", () => {
@@ -125,8 +117,6 @@ describe("POST /api/services/genome/by-ids", () => {
   });
 
   it("returns results from {items} wrapper response", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     const genomes = [{ genome_id: "2.2", genome_name: "Test2" }];
     server.use(
       http.get("http://mock-api/genome/", () => {
@@ -145,8 +135,6 @@ describe("POST /api/services/genome/by-ids", () => {
   });
 
   it("returns upstream error status on non-ok response", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     server.use(
       http.get("http://mock-api/genome/", () => {
         return new HttpResponse("error", { status: 502 });

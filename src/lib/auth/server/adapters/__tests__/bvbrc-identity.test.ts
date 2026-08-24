@@ -1,426 +1,364 @@
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
-import { bvbrcIdentity } from "../bvbrc-identity";
+import type { ProfilePatch } from "@/lib/auth/types";
+import {
+  authenticate,
+  changePassword,
+  extractRealmFromToken,
+  getProfile,
+  impersonateUser,
+  registerUser,
+  requestPasswordReset,
+  sendVerificationEmail,
+  updateProfile,
+  verifyEmailToken,
+} from "../bvbrc-identity";
 
 beforeEach(() => {
-  process.env.USER_AUTH_URL = "https://auth.test/auth";
-  process.env.USER_URL = "https://user.test/user";
+  process.env.USER_AUTH_URL = "https://auth.test/auth/";
+  process.env.USER_URL = "https://user.test/user/";
   process.env.USER_REGISTER_URL = "https://auth.test/register";
-  process.env.USER_VERIFICATION_URL = "https://auth.test/verify";
   process.env.USER_PASSWORD_RESET_URL = "https://auth.test/reset";
+  process.env.USER_VERIFICATION_URL = "https://auth.test/verify";
 });
 
-afterEach(() => {
-  delete process.env.USER_AUTH_URL;
-  delete process.env.USER_URL;
-  delete process.env.USER_REGISTER_URL;
-  delete process.env.USER_VERIFICATION_URL;
-  delete process.env.USER_PASSWORD_RESET_URL;
-});
+const validProfile = {
+  id: "canonical-id",
+  l_id: "alice",
+  email: "a@x",
+  email_verified: true,
+  first_name: "Alice",
+  last_name: "User",
+  creation_date: "",
+  last_login: "",
+  organisms: "",
+  reverification: false,
+  source: "test",
+};
 
-describe("bvbrcIdentity().authenticate", () => {
-  it("returns the token from the Authorization response header on success", async () => {
+const signupInput = {
+  username: "u",
+  email: "u@x",
+  first_name: "U",
+  last_name: "X",
+  password: "p",
+  password_repeat: "p",
+};
+
+const operationContracts: {
+  name: string;
+  method: string;
+  url: string;
+  invoke: () => Promise<unknown>;
+  response: () => Response;
+}[] = [
+  {
+    name: "authenticate",
+    method: "POST",
+    url: "https://auth.test/auth/",
+    invoke: () => authenticate({ username: "u", password: "p" }),
+    response: () => new HttpResponse(null, { headers: { Authorization: "t" } }),
+  },
+  {
+    name: "registerUser",
+    method: "POST",
+    url: "https://auth.test/register",
+    invoke: () => registerUser(signupInput),
+    response: () => new HttpResponse("t"),
+  },
+  {
+    name: "impersonateUser",
+    method: "POST",
+    url: "https://auth.test/auth/sulogin",
+    invoke: () => impersonateUser("admin", "target", "p"),
+    response: () => new HttpResponse("t"),
+  },
+  {
+    name: "getProfile",
+    method: "GET",
+    url: "https://user.test/user/u",
+    invoke: () => getProfile("u", "t"),
+    response: () => HttpResponse.json(validProfile),
+  },
+  {
+    name: "updateProfile",
+    method: "POST",
+    url: "https://user.test/user/u",
+    invoke: () => updateProfile("u", "t", []),
+    response: () => new HttpResponse(null, { status: 204 }),
+  },
+  {
+    name: "requestPasswordReset",
+    method: "POST",
+    url: "https://auth.test/reset",
+    invoke: () => requestPasswordReset("u@x"),
+    response: () => new HttpResponse(null, { status: 204 }),
+  },
+  {
+    name: "sendVerificationEmail",
+    method: "POST",
+    url: "https://auth.test/verify",
+    invoke: () => sendVerificationEmail("u", "t"),
+    response: () => new HttpResponse(null, { status: 204 }),
+  },
+  {
+    name: "verifyEmailToken",
+    method: "POST",
+    url: "https://auth.test/verify",
+    invoke: () => verifyEmailToken("verification-token", "u"),
+    response: () => new HttpResponse(null, { status: 204 }),
+  },
+  {
+    name: "changePassword",
+    method: "POST",
+    url: "https://user.test/user/",
+    invoke: () => changePassword("u", "t", "old", "new"),
+    response: () => HttpResponse.json({ result: true }),
+  },
+];
+
+describe("named BV-BRC identity operations", () => {
+  it.each(operationContracts)(
+    "$name uses the configured URL, method, and user-agent",
+    async ({ method, url, invoke, response }) => {
+      let requestSeen: Request | undefined;
+      server.use(
+        http.all(url, ({ request }) => {
+          requestSeen = request;
+          return response();
+        }),
+      );
+
+      await invoke();
+
+      expect(requestSeen?.method).toBe(method);
+      expect(requestSeen?.headers.get("User-Agent")).toMatch(/^curl\//);
+    },
+  );
+  it("authenticates with form data, user-agent, and header token", async () => {
+    let requestSeen: Request | undefined;
     server.use(
-      http.post(
-        "https://auth.test/auth",
-        () =>
-          new HttpResponse("", {
-            headers: { Authorization: "real-token" },
-          }),
-      ),
-    );
-
-    const result = await bvbrcIdentity().authenticate({
-      username: "u",
-      password: "p",
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data?.token).toBe("real-token");
-  });
-
-  it("falls back to the response body when the Authorization header is absent", async () => {
-    server.use(
-      http.post("https://auth.test/auth", () => new HttpResponse("body-token")),
-    );
-
-    const result = await bvbrcIdentity().authenticate({
-      username: "u",
-      password: "p",
-    });
-
-    expect(result.data?.token).toBe("body-token");
-  });
-
-  it("returns invalid_credentials on 401", async () => {
-    server.use(
-      http.post(
-        "https://auth.test/auth",
-        () => new HttpResponse(null, { status: 401 }),
-      ),
-    );
-
-    const result = await bvbrcIdentity().authenticate({
-      username: "u",
-      password: "bad",
-    });
-
-    expect(result.data).toBeNull();
-    expect(result.error?.code).toBe("invalid_credentials");
-    expect(result.error?.status).toBe(401);
-  });
-
-  it("returns service_unavailable on 500", async () => {
-    server.use(
-      http.post(
-        "https://auth.test/auth",
-        () => new HttpResponse(null, { status: 500 }),
-      ),
-    );
-
-    const result = await bvbrcIdentity().authenticate({
-      username: "u",
-      password: "p",
-    });
-
-    expect(result.error?.code).toBe("service_unavailable");
-  });
-
-  it("returns service_unavailable when response is ok but token is empty", async () => {
-    server.use(
-      http.post("https://auth.test/auth", () => new HttpResponse("   ")),
-    );
-
-    const result = await bvbrcIdentity().authenticate({
-      username: "u",
-      password: "p",
-    });
-
-    expect(result.error?.code).toBe("service_unavailable");
-  });
-});
-
-describe("bvbrcIdentity().validateToken", () => {
-  it("returns the profile on 200", async () => {
-    server.use(
-      http.get("https://user.test/user/myuser", () =>
-        HttpResponse.json({ id: "myuser", email: "m@x.com" }),
-      ),
-    );
-
-    const result = await bvbrcIdentity().validateToken("myuser", "tok");
-
-    expect(result.data).toEqual(
-      expect.objectContaining({ id: "myuser", email: "m@x.com" }),
-    );
-  });
-
-  it("returns unauthorized on 401", async () => {
-    server.use(
-      http.get(
-        "https://user.test/user/myuser",
-        () => new HttpResponse(null, { status: 401 }),
-      ),
-    );
-
-    const result = await bvbrcIdentity().validateToken("myuser", "tok");
-
-    expect(result.error?.code).toBe("unauthorized");
-  });
-
-  it("returns service_unavailable on other failures", async () => {
-    server.use(
-      http.get(
-        "https://user.test/user/myuser",
-        () => new HttpResponse(null, { status: 500 }),
-      ),
-    );
-
-    const result = await bvbrcIdentity().validateToken("myuser", "tok");
-
-    expect(result.error?.code).toBe("service_unavailable");
-  });
-
-  it("sends the Authorization header", async () => {
-    let capturedAuth: string | null = null;
-    server.use(
-      http.get("https://user.test/user/myuser", ({ request }) => {
-        capturedAuth = request.headers.get("Authorization");
-        return HttpResponse.json({ id: "myuser" });
+      http.post("https://auth.test/auth/", ({ request }) => {
+        requestSeen = request;
+        return new HttpResponse("body", {
+          headers: { Authorization: "header" },
+        });
       }),
     );
-
-    await bvbrcIdentity().validateToken("myuser", "my-token");
-
-    expect(capturedAuth).toBe("my-token");
+    expect(
+      (await authenticate({ username: "u", password: "p" })).data?.token,
+    ).toBe("header");
+    expect(await requestSeen?.text()).toBe("username=u&password=p");
   });
-});
 
-describe("bvbrcIdentity().impersonate", () => {
-  it("returns the target token on success", async () => {
+  it("falls back to a trimmed response-body auth token", async () => {
     server.use(
       http.post(
-        "https://auth.test/auth/sulogin",
-        () => new HttpResponse("target-token"),
+        "https://auth.test/auth/",
+        () => new HttpResponse("  body-token\n"),
       ),
     );
-
-    const result = await bvbrcIdentity().impersonate("admin", "bob", "pw");
-
-    expect(result.data?.token).toBe("target-token");
+    expect((await authenticate({ username: "u", password: "p" })).data).toEqual(
+      { token: "body-token" },
+    );
   });
 
-  it("returns invalid_credentials on failure", async () => {
+  it("maps credential failures separately from validation and outages", async () => {
     server.use(
-      http.post(
-        "https://auth.test/auth/sulogin",
-        () => new HttpResponse(null, { status: 401 }),
+      http.post("https://auth.test/auth/", () =>
+        HttpResponse.json({ message: "secret\ntrace" }, { status: 401 }),
       ),
     );
-
-    const result = await bvbrcIdentity().impersonate("admin", "bob", "bad");
-
-    expect(result.error?.code).toBe("invalid_credentials");
+    expect(
+      (await authenticate({ username: "u", password: "bad" })).error,
+    ).toMatchObject({
+      code: "invalid_credentials",
+      message: "Authentication failed",
+      status: 401,
+    });
   });
 
-  it("returns invalid_credentials when body is empty", async () => {
-    server.use(
-      http.post("https://auth.test/auth/sulogin", () => new HttpResponse("")),
-    );
-
-    const result = await bvbrcIdentity().impersonate("admin", "bob", "pw");
-
-    expect(result.error?.code).toBe("invalid_credentials");
-  });
-});
-
-describe("bvbrcIdentity().fetchProfile", () => {
-  it("returns the profile when successful", async () => {
-    server.use(
-      http.get("https://user.test/user/alice", () =>
-        HttpResponse.json({ id: "alice", email: "a@x.com" }),
-      ),
-    );
-
-    const profile = await bvbrcIdentity().fetchProfile("alice", "tok");
-
-    expect(profile).toEqual(
-      expect.objectContaining({ id: "alice", email: "a@x.com" }),
-    );
-  });
-
-  it("returns null on non-200 responses", async () => {
-    server.use(
-      http.get(
-        "https://user.test/user/alice",
-        () => new HttpResponse(null, { status: 404 }),
-      ),
-    );
-
-    expect(await bvbrcIdentity().fetchProfile("alice", "tok")).toBeNull();
-  });
-
-  it("omits Authorization when token is not provided", async () => {
-    let capturedAuth: string | null = null;
+  it("joins trailing URLs safely and sends raw authorization", async () => {
+    let authorization: string | null = null;
     server.use(
       http.get("https://user.test/user/alice", ({ request }) => {
-        capturedAuth = request.headers.get("Authorization");
-        return HttpResponse.json({ id: "alice" });
+        authorization = request.headers.get("Authorization");
+        return HttpResponse.json(validProfile);
       }),
     );
-
-    await bvbrcIdentity().fetchProfile("alice");
-
-    expect(capturedAuth).toBeNull();
-  });
-});
-
-describe("bvbrcIdentity().requestPasswordReset", () => {
-  it("returns ok on success", async () => {
-    server.use(
-      http.post(
-        "https://auth.test/reset",
-        () => new HttpResponse(null, { status: 200 }),
-      ),
+    expect((await getProfile("alice", "raw-token")).data?.id).toBe(
+      "canonical-id",
     );
-
-    const result = await bvbrcIdentity().requestPasswordReset("me@example.com");
-
-    expect(result.error).toBeNull();
+    expect(authorization).toBe("raw-token");
   });
 
-  it("returns service_unavailable on failure", async () => {
+  it("normalizes date fields from the BV-BRC profile response", async () => {
     server.use(
-      http.post("https://auth.test/reset", () =>
-        HttpResponse.json({ message: "boom" }, { status: 502 }),
-      ),
-    );
-
-    const result = await bvbrcIdentity().requestPasswordReset("me@example.com");
-
-    expect(result.error?.code).toBe("service_unavailable");
-    expect(result.error?.message).toBe("boom");
-  });
-});
-
-describe("bvbrcIdentity().sendVerificationEmail", () => {
-  it("sends POST to USER_VERIFICATION_URL with token + user id", async () => {
-    let captured: { auth: string | null; body: unknown } | undefined;
-    server.use(
-      http.post("https://auth.test/verify", async ({ request }) => {
-        captured = {
-          auth: request.headers.get("Authorization"),
-          body: await request.json(),
-        };
-        return new HttpResponse(null, { status: 200 });
-      }),
-    );
-
-    const result = await bvbrcIdentity().sendVerificationEmail("alice", "tok");
-
-    expect(result.error).toBeNull();
-    expect(captured?.auth).toBe("tok");
-    expect(captured?.body).toEqual({ id: "alice" });
-  });
-
-  it("returns service_unavailable on failure", async () => {
-    server.use(
-      http.post("https://auth.test/verify", () =>
-        HttpResponse.json({ message: "no" }, { status: 500 }),
-      ),
-    );
-
-    const result = await bvbrcIdentity().sendVerificationEmail("alice", "tok");
-
-    expect(result.error?.code).toBe("service_unavailable");
-  });
-});
-
-describe("bvbrcIdentity().verifyEmailToken", () => {
-  it("returns ok on success", async () => {
-    server.use(
-      http.post("https://auth.test/verify", () =>
-        HttpResponse.json({ verified: true }),
-      ),
-    );
-
-    const result = await bvbrcIdentity().verifyEmailToken("vtok", "alice");
-
-    expect(result.error).toBeNull();
-  });
-
-  it("returns validation on failure", async () => {
-    server.use(
-      http.post("https://auth.test/verify", () =>
-        HttpResponse.json({ message: "bad token" }, { status: 400 }),
-      ),
-    );
-
-    const result = await bvbrcIdentity().verifyEmailToken("vtok", "alice");
-
-    expect(result.error?.code).toBe("validation");
-    expect(result.error?.message).toBe("bad token");
-  });
-});
-
-describe("bvbrcIdentity().changePassword", () => {
-  it("sends the JSON-RPC setPassword payload and returns ok on success", async () => {
-    let capturedBody: unknown = null;
-    server.use(
-      http.post("https://user.test/user/", async ({ request }) => {
-        capturedBody = await request.json();
-        return HttpResponse.json({ id: 1, jsonrpc: "2.0", result: true });
-      }),
-    );
-
-    const result = await bvbrcIdentity().changePassword(
-      "alice",
-      "tok",
-      "old",
-      "new",
-    );
-
-    expect(result.error).toBeNull();
-    expect(capturedBody).toEqual(
-      expect.objectContaining({
-        method: "setPassword",
-        params: ["alice", "old", "new"],
-      }),
-    );
-  });
-
-  it("returns validation on a JSON-RPC error", async () => {
-    server.use(
-      http.post("https://user.test/user/", () =>
+      http.get("https://user.test/user/alice", () =>
         HttpResponse.json({
-          id: 1,
-          jsonrpc: "2.0",
-          error: { message: "bad password" },
+          ...validProfile,
+          creation_date: undefined,
+          last_login: undefined,
+          creationDate: "2026-01-01T00:00:00Z",
+          lastLogin: "2026-01-02T00:00:00Z",
         }),
       ),
     );
 
-    const result = await bvbrcIdentity().changePassword(
-      "alice",
-      "tok",
-      "old",
-      "new",
-    );
-
-    expect(result.error?.code).toBe("validation");
+    expect((await getProfile("alice", "t")).data).toMatchObject({
+      creation_date: "2026-01-01T00:00:00Z",
+      last_login: "2026-01-02T00:00:00Z",
+    });
   });
 
-  it("returns validation on HTTP failure", async () => {
+  it("rejects malformed profile JSON as an upstream failure", async () => {
+    server.use(
+      http.get("https://user.test/user/alice", () =>
+        HttpResponse.json({ id: "alice" }),
+      ),
+    );
+    expect((await getProfile("alice", "t")).error).toMatchObject({
+      code: "service_unavailable",
+      status: 502,
+    });
+  });
+
+  it("updates an encoded profile URL with JSON Patch and a raw auth token", async () => {
+    process.env.USER_URL = "https://user.test/user///";
+    let requestSeen: Request | undefined;
+    const patches: ProfilePatch[] = [
+      { op: "replace", path: "/first_name", value: "Alicia" },
+    ];
+    server.use(
+      http.post("https://user.test/user/alice%2Fadmin", ({ request }) => {
+        requestSeen = request;
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
+
+    expect(await updateProfile("alice/admin", "raw-token", patches)).toEqual({
+      data: undefined,
+      error: null,
+    });
+    expect(requestSeen?.headers.get("Authorization")).toBe("raw-token");
+    expect(requestSeen?.headers.get("Content-Type")).toBe(
+      "application/json-patch+json",
+    );
+    expect(await requestSeen?.json()).toEqual(patches);
+  });
+
+  it("sends verification requests with their distinct bodies and auth policy", async () => {
+    const requests: Request[] = [];
+    server.use(
+      http.post("https://auth.test/verify", ({ request }) => {
+        requests.push(request);
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
+
+    await sendVerificationEmail("canonical-id", "raw-token");
+    await verifyEmailToken("email-token", "alice");
+
+    expect(requests[0].headers.get("Authorization")).toBe("raw-token");
+    expect(await requests[0].json()).toEqual({ id: "canonical-id" });
+    expect(requests[1].headers.has("Authorization")).toBe(false);
+    expect(await requests[1].json()).toEqual({
+      token: "email-token",
+      username: "alice",
+    });
+  });
+
+  it.each([
+    ["400 verification", 400, "validation", () => verifyEmailToken("bad", "u")],
+    [
+      "401 verification send",
+      401,
+      "unauthorized",
+      () => sendVerificationEmail("u", "t"),
+    ],
+    ["403 profile", 403, "unauthorized", () => getProfile("u", "t")],
+    ["404 profile", 404, "not_found", () => getProfile("u", "t")],
+    ["409 registration", 409, "conflict", () => registerUser(signupInput)],
+    ["429 reset", 429, "rate_limited", () => requestPasswordReset("u@x")],
+    [
+      "503 password change",
+      503,
+      "service_unavailable",
+      () => changePassword("u", "t", "old", "new"),
+    ],
+  ] as const)("maps %s", async (_name, status, code, invoke) => {
+    server.use(http.all("*", () => new HttpResponse("upstream", { status })));
+    expect((await invoke()).error).toMatchObject({ code, status });
+  });
+
+  it("does not collapse impersonation rate limiting into invalid credentials", async () => {
+    server.use(
+      http.post(
+        "https://auth.test/auth/sulogin",
+        () => new HttpResponse(null, { status: 429 }),
+      ),
+    );
+    expect((await impersonateUser("admin", "target", "pw")).error?.code).toBe(
+      "rate_limited",
+    );
+  });
+
+  it("maps password HTTP 401 to unauthorized and RPC errors to validation", async () => {
     server.use(
       http.post(
         "https://user.test/user/",
-        () => new HttpResponse("server error", { status: 500 }),
+        () => new HttpResponse(null, { status: 401 }),
       ),
     );
-
-    const result = await bvbrcIdentity().changePassword(
-      "alice",
-      "tok",
-      "old",
-      "new",
+    expect((await changePassword("u", "t", "old", "new")).error?.code).toBe(
+      "unauthorized",
     );
-
-    expect(result.error?.code).toBe("validation");
-    expect(result.error?.status).toBe(500);
-  });
-});
-
-describe("bvbrcIdentity() User-Agent", () => {
-  // Node's fetch defaults to `User-Agent: node`, which Cloudflare in front of
-  // the BV-BRC services answers with a 403 bot challenge instead of the API
-  // response. Every outbound call must identify itself.
-  it("sends an explicit User-Agent on authenticate", async () => {
-    let seen: string | null = null;
     server.use(
-      http.post("https://auth.test/auth", ({ request }) => {
-        seen = request.headers.get("User-Agent");
-        return new HttpResponse("", { headers: { Authorization: "t" } });
-      }),
+      http.post("https://user.test/user/", () =>
+        HttpResponse.json({ error: { message: "bad password" } }),
+      ),
     );
-
-    await bvbrcIdentity().authenticate({ username: "u", password: "p" });
-
-    expect(seen).toBeTruthy();
-    expect(seen).not.toMatch(/^node/i);
+    expect((await changePassword("u", "t", "old", "new")).error?.code).toBe(
+      "validation",
+    );
   });
 
-  it("sends an explicit User-Agent on profile lookups", async () => {
-    let seen: string | null = null;
-    server.use(
-      http.get("https://user.test/user/alice", ({ request }) => {
-        seen = request.headers.get("User-Agent");
-        return HttpResponse.json({ id: "alice", email_verified: true });
-      }),
+  it("distinguishes request timeouts from network failures", async () => {
+    vi.useFakeTimers();
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation(
+      (_input, init) =>
+        new Promise((_resolve, reject) => {
+          init?.signal?.addEventListener("abort", () => {
+            reject(Object.assign(new Error("aborted"), { name: "AbortError" }));
+          });
+        }),
     );
 
-    await bvbrcIdentity().validateToken("alice", "tok");
+    const pending = authenticate({ username: "u", password: "p" });
+    await vi.advanceTimersByTimeAsync(15_000);
+    expect((await pending).error).toMatchObject({
+      code: "service_unavailable",
+      status: 504,
+      message: "Authentication service unavailable timed out",
+    });
 
-    expect(seen).toBeTruthy();
-    expect(seen).not.toMatch(/^node/i);
+    vi.useRealTimers();
+    fetchSpy.mockRejectedValueOnce(new Error("connection refused"));
+    expect(
+      (await authenticate({ username: "u", password: "p" })).error,
+    ).toEqual({
+      code: "network",
+      status: 502,
+      message: "Authentication service unavailable",
+    });
+    fetchSpy.mockRestore();
+  });
+
+  it.each([
+    ["token|un=alice@bvbrc", "bvbrc"],
+    ["un=alice", undefined],
+    ["token-without-user", undefined],
+  ])("extracts the realm from %s", (token, realm) => {
+    expect(extractRealmFromToken(token)).toBe(realm);
   });
 });

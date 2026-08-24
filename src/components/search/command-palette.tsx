@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useEffectEvent, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -14,7 +14,8 @@ import {
   UserPlus,
 } from "lucide-react";
 
-import { useAuth } from "@/lib/auth/hooks";
+import { useAuth } from "@/lib/auth/provider";
+import { signOutAndRedirect } from "@/app/(auth)/redirect-action";
 import { encodeWorkspaceSegment } from "@/lib/services/workspace/path-utils";
 import { workspaceUsername } from "@/lib/services/workspace/path-utils";
 import {
@@ -42,7 +43,8 @@ const SEARCH_ITEM_VALUE = "__dxkb-command-search__";
 export function CommandPalette() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { isAuthenticated, user, signOut } = useAuth();
+  const signOutFormRef = useRef<HTMLFormElement>(null);
+  const { isAuthenticated, user } = useAuth();
   const wsUsername = workspaceUsername(user);
   const encodedUsername = wsUsername ? encodeWorkspaceSegment(wsUsername) : "";
 
@@ -115,159 +117,158 @@ export function CommandPalette() {
 
   const handleSignOut = () => {
     runCommand(() => {
-      void signOut().then(
-        () => {
-          router.push("/");
-        },
-        () => {
-          router.push("/");
-        },
-      );
+      queryClient.clear();
+      signOutFormRef.current?.requestSubmit();
     });
   };
 
   return (
-    <CommandDialog
-      title="Command Palette"
-      description="Search DXKB or jump to a page"
-      open={open}
-      onOpenChange={handleOpenChange}
-    >
-      <Command
-        filter={(value, search) => {
-          if (value === SEARCH_ITEM_VALUE) {
-            return search.length > 0 ? 1 : 0;
-          }
-          if (!search) return 1;
-          return value.toLowerCase().includes(search.toLowerCase()) ? 1 : 0;
-        }}
+    <>
+      <form ref={signOutFormRef} action={signOutAndRedirect} className="hidden">
+        <input type="hidden" name="redirectTo" value="/" />
+      </form>
+      <CommandDialog
+        title="Command Palette"
+        description="Search DXKB or jump to a page"
+        open={open}
+        onOpenChange={handleOpenChange}
       >
-        <CommandInput
-          placeholder="Search DXKB or jump to a page..."
-          value={inputValue}
-          onValueChange={setInputValue}
+        <Command
+          filter={(value, search) => {
+            if (value === SEARCH_ITEM_VALUE) {
+              return search.length > 0 ? 1 : 0;
+            }
+            if (!search) return 1;
+            return value.toLowerCase().includes(search.toLowerCase()) ? 1 : 0;
+          }}
         >
-          <CommandShortcutChip>⌘</CommandShortcutChip>
-          <CommandShortcutChip>K</CommandShortcutChip>
-        </CommandInput>
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandInput
+            placeholder="Search DXKB or jump to a page..."
+            value={inputValue}
+            onValueChange={setInputValue}
+          >
+            <CommandShortcutChip>⌘</CommandShortcutChip>
+            <CommandShortcutChip>K</CommandShortcutChip>
+          </CommandInput>
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
 
-          {inputValue.trim() && (
-            <CommandGroup heading="Search">
-              <CommandItem value={SEARCH_ITEM_VALUE} onSelect={runSearch}>
-                <Search />
-                <span>Search for &ldquo;{inputValue.trim()}&rdquo;</span>
-                <CommandShortcut>Enter</CommandShortcut>
+            {inputValue.trim() && (
+              <CommandGroup heading="Search">
+                <CommandItem value={SEARCH_ITEM_VALUE} onSelect={runSearch}>
+                  <Search />
+                  <span>Search for &ldquo;{inputValue.trim()}&rdquo;</span>
+                  <CommandShortcut>Enter</CommandShortcut>
+                </CommandItem>
+              </CommandGroup>
+            )}
+
+            <CommandGroup heading="Navigate">
+              <CommandItem
+                value="home"
+                description="Global dashboard and situational overview"
+                onSelect={() => {
+                  navigate("/");
+                }}
+              >
+                <Home />
+                <span>Home</span>
               </CommandItem>
-            </CommandGroup>
-          )}
 
-          <CommandGroup heading="Navigate">
-            <CommandItem
-              value="home"
-              description="Global dashboard and situational overview"
-              onSelect={() => {
-                navigate("/");
-              }}
-            >
-              <Home />
-              <span>Home</span>
-            </CommandItem>
-
-            {isAuthenticated ? (
-              <>
-                {encodedUsername && (
+              {isAuthenticated ? (
+                <>
+                  {encodedUsername && (
+                    <CommandItem
+                      value="workspace"
+                      description="Your files and saved analyses"
+                      onSelect={() => {
+                        navigate(`/workspace/${encodedUsername}/home`);
+                      }}
+                    >
+                      <Folder />
+                      <span>Workspace</span>
+                    </CommandItem>
+                  )}
                   <CommandItem
-                    value="workspace"
-                    description="Your files and saved analyses"
+                    value="jobs"
+                    description="Monitor running and completed jobs"
                     onSelect={() => {
-                      navigate(`/workspace/${encodedUsername}/home`);
+                      navigate("/jobs");
                     }}
                   >
-                    <Folder />
-                    <span>Workspace</span>
+                    <Briefcase />
+                    <span>Jobs</span>
                   </CommandItem>
-                )}
-                <CommandItem
-                  value="jobs"
-                  description="Monitor running and completed jobs"
-                  onSelect={() => {
-                    navigate("/jobs");
-                  }}
-                >
-                  <Briefcase />
-                  <span>Jobs</span>
-                </CommandItem>
-                <CommandItem
-                  value="settings"
-                  description="Account, preferences, and integrations"
-                  onSelect={() => {
-                    navigate("/settings");
-                  }}
-                >
-                  <Settings />
-                  <span>Settings</span>
-                </CommandItem>
-                <CommandItem
-                  value="sign out"
-                  description="End your current session"
-                  onSelect={handleSignOut}
-                >
-                  <LogOut />
-                  <span>Sign out</span>
-                </CommandItem>
-              </>
-            ) : (
-              <>
-                <CommandItem
-                  value="sign in"
-                  description="Access your workspace and tools"
-                  onSelect={() => {
-                    navigate("/sign-in");
-                  }}
-                >
-                  <LogIn />
-                  <span>Sign in</span>
-                </CommandItem>
-                <CommandItem
-                  value="sign up"
-                  description="Create a new BV-BRC account"
-                  onSelect={() => {
-                    navigate("/sign-up");
-                  }}
-                >
-                  <UserPlus />
-                  <span>Sign up</span>
-                </CommandItem>
-              </>
-            )}
-          </CommandGroup>
-
-          {(
-            Object.entries(serviceItems) as unknown as [string, NavSection][]
-          ).map(([key, section]) => (
-            <CommandGroup key={key} heading={section.title}>
-              {section.items.map((item) => (
-                <CommandItem
-                  key={item.href}
-                  value={`${section.title} ${item.title}`}
-                  onSelect={() => {
-                    navigate(item.href, item.target);
-                  }}
-                >
-                  <span>{item.title}</span>
-                </CommandItem>
-              ))}
+                  <CommandItem
+                    value="settings"
+                    description="Account, preferences, and integrations"
+                    onSelect={() => {
+                      navigate("/settings");
+                    }}
+                  >
+                    <Settings />
+                    <span>Settings</span>
+                  </CommandItem>
+                  <CommandItem
+                    value="sign out"
+                    description="End your current session"
+                    onSelect={handleSignOut}
+                  >
+                    <LogOut />
+                    <span>Sign out</span>
+                  </CommandItem>
+                </>
+              ) : (
+                <>
+                  <CommandItem
+                    value="sign in"
+                    description="Access your workspace and tools"
+                    onSelect={() => {
+                      navigate("/sign-in");
+                    }}
+                  >
+                    <LogIn />
+                    <span>Sign in</span>
+                  </CommandItem>
+                  <CommandItem
+                    value="sign up"
+                    description="Create a new BV-BRC account"
+                    onSelect={() => {
+                      navigate("/sign-up");
+                    }}
+                  >
+                    <UserPlus />
+                    <span>Sign up</span>
+                  </CommandItem>
+                </>
+              )}
             </CommandGroup>
-          ))}
-        </CommandList>
-        <CommandFooter>
-          <CommandFooterHint keys={["↑", "↓"]}>Select</CommandFooterHint>
-          <CommandFooterHint keys={["ENTER"]}>Open</CommandFooterHint>
-          <CommandFooterHint keys={["ESC"]}>Close</CommandFooterHint>
-        </CommandFooter>
-      </Command>
-    </CommandDialog>
+
+            {(
+              Object.entries(serviceItems) as unknown as [string, NavSection][]
+            ).map(([key, section]) => (
+              <CommandGroup key={key} heading={section.title}>
+                {section.items.map((item) => (
+                  <CommandItem
+                    key={item.href}
+                    value={`${section.title} ${item.title}`}
+                    onSelect={() => {
+                      navigate(item.href, item.target);
+                    }}
+                  >
+                    <span>{item.title}</span>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            ))}
+          </CommandList>
+          <CommandFooter>
+            <CommandFooterHint keys={["↑", "↓"]}>Select</CommandFooterHint>
+            <CommandFooterHint keys={["ENTER"]}>Open</CommandFooterHint>
+            <CommandFooterHint keys={["ESC"]}>Close</CommandFooterHint>
+          </CommandFooter>
+        </Command>
+      </CommandDialog>
+    </>
   );
 }

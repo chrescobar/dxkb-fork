@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
-import { withErrorHandling } from "@/lib/api/server";
+import { withErrorHandling } from "@/lib/auth/server/errors";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 import {
   contactFormSchema,

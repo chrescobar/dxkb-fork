@@ -7,33 +7,16 @@ import React from "react";
 import GenomeAssemblyPage from "@/app/services/(genomics)/genome-assembly/page";
 import { ServiceDebuggingProvider } from "@/contexts/service-debugging-context";
 import { AuthBoundary } from "@/lib/auth/provider";
-import { memoryAuthAdapter } from "@/lib/auth/adapters/memory";
 import { server } from "@/test-helpers/msw-server";
+import { testAuthUser } from "@/test-helpers/react";
 
 function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   });
-  const port = memoryAuthAdapter({
-    initialSession: {
-      username: "testuser",
-      email: "test@example.com",
-      token: "test-token",
-      email_verified: true,
-    },
-    onRequest: (input, init) => fetch(input, init),
-  });
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthBoundary
-        port={port}
-        initialUser={{
-          username: "testuser",
-          email: "test@example.com",
-          token: "test-token",
-          email_verified: true,
-        }}
-      >
+      <AuthBoundary user={testAuthUser}>
         <ServiceDebuggingProvider>{children}</ServiceDebuggingProvider>
       </AuthBoundary>
     </QueryClientProvider>

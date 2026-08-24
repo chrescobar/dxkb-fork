@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { handleIdentityGet, handleIdentityPost } from "./identity";
 
 /**
  * Loopback mock for Playwright e2e only.
@@ -8,8 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
  * never pass through `page.route()`, so without this catch-all the test
  * server emits "HTTP error! status: 500" for every render. During e2e,
  * .env.e2e.test points every backend URL here and this handler returns
- * the shapes the callers expect (empty object for REST, empty JSON-RPC
- * result for POST).
+ * endpoint-specific identity responses plus deterministic service fixtures.
  *
  * Guarded by E2E_MOCK_ENABLED=1 so a production deploy that somehow ships
  * this file still can't be tricked into serving fake backend responses.
@@ -20,7 +20,10 @@ function isEnabled(): boolean {
 }
 
 function disabledResponse(): NextResponse {
-  return NextResponse.json({ error: "Mock endpoint disabled" }, { status: 404 });
+  return NextResponse.json(
+    { error: "Mock endpoint disabled" },
+    { status: 404 },
+  );
 }
 
 function resolvePath(params: Promise<{ path: string[] }>): Promise<string> {
@@ -42,7 +45,9 @@ const e2eDeterministicCounts: Record<string, number> = {
   ppi: 4358,
 };
 
-function maybeSolrCount(path: string): { response: { numFound: number; docs: never[] } } | null {
+function maybeSolrCount(
+  path: string,
+): { response: { numFound: number; docs: never[] } } | null {
   const segments = path.split("/").filter(Boolean);
   if (segments[0] !== "data" || segments.length < 2) return null;
   const core = segments[1];
@@ -111,7 +116,15 @@ const cellularOrganismsTaxonomyFixture = {
 const brucellaTaxonomyFixture = {
   taxon_id: 234,
   taxon_name: "Brucella",
-  lineage_names: ["cellular organisms", "Bacteria", "Pseudomonadota", "Alphaproteobacteria", "Hyphomicrobiales", "Brucellaceae", "Brucella"],
+  lineage_names: [
+    "cellular organisms",
+    "Bacteria",
+    "Pseudomonadota",
+    "Alphaproteobacteria",
+    "Hyphomicrobiales",
+    "Brucellaceae",
+    "Brucella",
+  ],
   lineage_ids: [131567, 2, 1224, 28211, 356, 118882, 234],
   taxon_rank: "genus",
   genomes: 1909,
@@ -122,8 +135,19 @@ const brucellaTaxonomyFixture = {
 const influenzaATaxonomyFixture = {
   taxon_id: 11520,
   taxon_name: "Influenza A virus",
-  lineage_names: ["Viruses", "Orthornavirae", "Negarnaviricota", "Insthoviricetes", "Articulavirales", "Orthomyxoviridae", "Alphainfluenzavirus", "Influenza A virus"],
-  lineage_ids: [10239, 2497569, 2497570, 2497583, 2499399, 11308, 2499397, 11520],
+  lineage_names: [
+    "Viruses",
+    "Orthornavirae",
+    "Negarnaviricota",
+    "Insthoviricetes",
+    "Articulavirales",
+    "Orthomyxoviridae",
+    "Alphainfluenzavirus",
+    "Influenza A virus",
+  ],
+  lineage_ids: [
+    10239, 2497569, 2497570, 2497583, 2499399, 11308, 2499397, 11520,
+  ],
   taxon_rank: "species",
   genomes: 245000,
 };
@@ -133,8 +157,22 @@ const influenzaATaxonomyFixture = {
 const alphainfluenzavirusInfluenzaeTaxonomyFixture = {
   taxon_id: 2955291,
   taxon_name: "Alphainfluenzavirus influenzae",
-  lineage_names: ["Viruses", "Riboviria", "Orthornavirae", "Negarnaviricota", "Polyploviricotina", "Insthoviricetes", "Articulavirales", "Orthomyxoviridae", "Alphainfluenzavirus", "Alphainfluenzavirus influenzae"],
-  lineage_ids: [10239, 2559587, 2732396, 2497569, 2497571, 2497577, 2499411, 11308, 197911, 2955291],
+  lineage_names: [
+    "Viruses",
+    "Riboviria",
+    "Orthornavirae",
+    "Negarnaviricota",
+    "Polyploviricotina",
+    "Insthoviricetes",
+    "Articulavirales",
+    "Orthomyxoviridae",
+    "Alphainfluenzavirus",
+    "Alphainfluenzavirus influenzae",
+  ],
+  lineage_ids: [
+    10239, 2559587, 2732396, 2497569, 2497571, 2497577, 2499411, 11308, 197911,
+    2955291,
+  ],
   taxon_rank: "species",
   genomes: 1876178,
 };
@@ -143,7 +181,15 @@ const alphainfluenzavirusInfluenzaeTaxonomyFixture = {
 const caliciviridaeTaxonomyFixture = {
   taxon_id: 11974,
   taxon_name: "Caliciviridae",
-  lineage_names: ["Viruses", "Riboviria", "Orthornavirae", "Pisuviricota", "Pisoniviricetes", "Picornavirales", "Caliciviridae"],
+  lineage_names: [
+    "Viruses",
+    "Riboviria",
+    "Orthornavirae",
+    "Pisuviricota",
+    "Pisoniviricetes",
+    "Picornavirales",
+    "Caliciviridae",
+  ],
   lineage_ids: [10239, 2559587, 2732396, 2732408, 2732506, 464095, 11974],
   taxon_rank: "family",
   genomes: 86222,
@@ -224,12 +270,7 @@ const sharedFacetFixtures: Record<string, (string | number)[]> = {
     "Georgia",
     16,
   ],
-  county: [
-    "Los Angeles",
-    12,
-    "Harris",
-    8,
-  ],
+  county: ["Los Angeles", 12, "Harris", 8],
   host_name: [
     "Homo sapiens",
     401232,
@@ -320,7 +361,13 @@ function facetFieldFromRequest(request: NextRequest): string | null {
     url.search,
     ...Array.from(url.searchParams.keys()),
     ...Array.from(url.searchParams.values()),
-  ].map((value) => { try { return decodeURIComponent(value); } catch { return value; } });
+  ].map((value) => {
+    try {
+      return decodeURIComponent(value);
+    } catch {
+      return value;
+    }
+  });
 
   for (const candidate of candidates) {
     const match = candidate.match(/\(field,([^),=]+)\)/);
@@ -342,7 +389,13 @@ function pivotKeyFromRequest(request: NextRequest): PivotKey | null {
     url.search,
     ...Array.from(url.searchParams.keys()),
     ...Array.from(url.searchParams.values()),
-  ].map((value) => { try { return decodeURIComponent(value); } catch { return value; } });
+  ].map((value) => {
+    try {
+      return decodeURIComponent(value);
+    } catch {
+      return value;
+    }
+  });
 
   for (const candidate of candidates) {
     // `[^,)]+` prevents `(...,foo)),(mincount,1)` from being misread as a
@@ -352,7 +405,8 @@ function pivotKeyFromRequest(request: NextRequest): PivotKey | null {
       return { primary: triple[1], secondary: triple[2], tertiary: triple[3] };
     }
     const match = candidate.match(/\(pivot,\(([^,)]+),([^,)]+)\)\)/);
-    if (match?.[1] && match[2]) return { primary: match[1], secondary: match[2] };
+    if (match?.[1] && match[2])
+      return { primary: match[1], secondary: match[2] };
   }
 
   return null;
@@ -364,19 +418,32 @@ function pivotKeyFromRequest(request: NextRequest): PivotKey | null {
 // can successfully join count data to tooltip genera. "Park" county appears in
 // both Wyoming and Idaho to exercise state-scoped lookups (same county name,
 // different state → different genus set).
-const countyGeoFixtures: { state: string; county: string; count: number; genus: string }[] = [
-  { state: "Wyoming", county: "Park",        count: 30, genus: "Brucella" },
-  { state: "Wyoming", county: "Teton",       count: 18, genus: "Bordetella" },
-  { state: "Idaho",   county: "Ada",         count: 22, genus: "Brucella" },
-  { state: "Idaho",   county: "Park",        count: 13, genus: "Listeria" },
-  { state: "Texas",   county: "Harris",      count: 14, genus: "Brucella" },
+const countyGeoFixtures: {
+  state: string;
+  county: string;
+  count: number;
+  genus: string;
+}[] = [
+  { state: "Wyoming", county: "Park", count: 30, genus: "Brucella" },
+  { state: "Wyoming", county: "Teton", count: 18, genus: "Bordetella" },
+  { state: "Idaho", county: "Ada", count: 22, genus: "Brucella" },
+  { state: "Idaho", county: "Park", count: 13, genus: "Listeria" },
+  { state: "Texas", county: "Harris", count: 14, genus: "Brucella" },
   { state: "Montana", county: "Yellowstone", count: 12, genus: "Bordetella" },
-  { state: "Georgia", county: "Fulton",      count: 9,  genus: "Listeria" },
+  { state: "Georgia", county: "Fulton", count: 9, genus: "Listeria" },
 ];
 
 function solrPivot(primary: string, secondary: string) {
-  const counts = sharedFacetFixtures[primary === "isolation_country" ? "isolation_country_geo" : primary] ?? [];
-  const pivots: { field: string; value: string; count: number; pivot: { field: string; value: string; count: number }[] }[] = [];
+  const counts =
+    sharedFacetFixtures[
+      primary === "isolation_country" ? "isolation_country_geo" : primary
+    ] ?? [];
+  const pivots: {
+    field: string;
+    value: string;
+    count: number;
+    pivot: { field: string; value: string; count: number }[];
+  }[] = [];
   for (let i = 0; i < counts.length; i += 2) {
     const value = counts[i] as string;
     const count = counts[i + 1] as number;
@@ -385,12 +452,19 @@ function solrPivot(primary: string, secondary: string) {
       value,
       count,
       pivot: [
-        { field: secondary, value: secondary === "genus" ? "Brucella" : "Human", count },
+        {
+          field: secondary,
+          value: secondary === "genus" ? "Brucella" : "Human",
+          count,
+        },
       ],
     });
   }
   return {
-    response: { numFound: pivots.reduce((sum, p) => sum + p.count, 0), docs: [] },
+    response: {
+      numFound: pivots.reduce((sum, p) => sum + p.count, 0),
+      docs: [],
+    },
     facet_counts: {
       facet_pivot: {
         [`${primary},${secondary}`]: pivots,
@@ -410,10 +484,17 @@ function solrStateCountyPivot(fixtures: typeof countyGeoFixtures) {
     field: "state_province",
     value: state,
     count: counties.reduce((s, c) => s + c.count, 0),
-    pivot: counties.map((c) => ({ field: "county", value: c.county, count: c.count })),
+    pivot: counties.map((c) => ({
+      field: "county",
+      value: c.county,
+      count: c.count,
+    })),
   }));
   return {
-    response: { numFound: pivots.reduce((sum, p) => sum + p.count, 0), docs: [] },
+    response: {
+      numFound: pivots.reduce((sum, p) => sum + p.count, 0),
+      docs: [],
+    },
     facet_counts: {
       facet_pivot: {
         "state_province,county": pivots,
@@ -423,7 +504,10 @@ function solrStateCountyPivot(fixtures: typeof countyGeoFixtures) {
 }
 
 function solrStateCountyGenusPivot(fixtures: typeof countyGeoFixtures) {
-  const byState = new Map<string, { county: string; count: number; genus: string }[]>();
+  const byState = new Map<
+    string,
+    { county: string; count: number; genus: string }[]
+  >();
   for (const row of fixtures) {
     const counties = byState.get(row.state) ?? [];
     counties.push({ county: row.county, count: row.count, genus: row.genus });
@@ -441,7 +525,10 @@ function solrStateCountyGenusPivot(fixtures: typeof countyGeoFixtures) {
     })),
   }));
   return {
-    response: { numFound: pivots.reduce((sum, p) => sum + p.count, 0), docs: [] },
+    response: {
+      numFound: pivots.reduce((sum, p) => sum + p.count, 0),
+      docs: [],
+    },
     facet_counts: {
       facet_pivot: {
         "state_province,county,genus": pivots,
@@ -482,7 +569,10 @@ function solrSerotypePivot() {
     ],
   }));
   return {
-    response: { numFound: pivots.reduce((sum, p) => sum + p.count, 0), docs: [] },
+    response: {
+      numFound: pivots.reduce((sum, p) => sum + p.count, 0),
+      docs: [],
+    },
     facet_counts: {
       facet_pivot: {
         "collection_year,serovar": pivots,
@@ -508,25 +598,73 @@ function solrFacet(field: string, count: number) {
 }
 
 const referenceGenomesFixture: Record<string, unknown>[] = [
-  { genome_id: "234.1", genome_name: "Brucella suis 1330", reference_genome: "Reference" },
-  { genome_id: "234.2", genome_name: "Brucella abortus 2308", reference_genome: "Reference" },
-  { genome_id: "234.3", genome_name: "Brucella melitensis 16M", reference_genome: "Representative" },
-  { genome_id: "234.4", genome_name: "Brucella canis ATCC 23365", reference_genome: "Representative" },
+  {
+    genome_id: "234.1",
+    genome_name: "Brucella suis 1330",
+    reference_genome: "Reference",
+  },
+  {
+    genome_id: "234.2",
+    genome_name: "Brucella abortus 2308",
+    reference_genome: "Reference",
+  },
+  {
+    genome_id: "234.3",
+    genome_name: "Brucella melitensis 16M",
+    reference_genome: "Representative",
+  },
+  {
+    genome_id: "234.4",
+    genome_name: "Brucella canis ATCC 23365",
+    reference_genome: "Representative",
+  },
 ];
 
-const amrAntibioticFixtures: { antibiotic: string; Resistant: number; Susceptible: number; Intermediate: number }[] = [
+const amrAntibioticFixtures: {
+  antibiotic: string;
+  Resistant: number;
+  Susceptible: number;
+  Intermediate: number;
+}[] = [
   { antibiotic: "ampicillin", Resistant: 75, Susceptible: 40, Intermediate: 5 },
-  { antibiotic: "ciprofloxacin", Resistant: 30, Susceptible: 60, Intermediate: 10 },
-  { antibiotic: "tetracycline", Resistant: 45, Susceptible: 50, Intermediate: 5 },
-  { antibiotic: "streptomycin", Resistant: 20, Susceptible: 70, Intermediate: 10 },
+  {
+    antibiotic: "ciprofloxacin",
+    Resistant: 30,
+    Susceptible: 60,
+    Intermediate: 10,
+  },
+  {
+    antibiotic: "tetracycline",
+    Resistant: 45,
+    Susceptible: 50,
+    Intermediate: 5,
+  },
+  {
+    antibiotic: "streptomycin",
+    Resistant: 20,
+    Susceptible: 70,
+    Intermediate: 10,
+  },
 ];
 
 function buildAmrFixtureBody(): Record<string, unknown> {
   const pivots = amrAntibioticFixtures.map((row) => {
     const innerPivots = [
-      { field: "resistant_phenotype", value: "Resistant", count: row.Resistant },
-      { field: "resistant_phenotype", value: "Susceptible", count: row.Susceptible },
-      { field: "resistant_phenotype", value: "Intermediate", count: row.Intermediate },
+      {
+        field: "resistant_phenotype",
+        value: "Resistant",
+        count: row.Resistant,
+      },
+      {
+        field: "resistant_phenotype",
+        value: "Susceptible",
+        count: row.Susceptible,
+      },
+      {
+        field: "resistant_phenotype",
+        value: "Intermediate",
+        count: row.Intermediate,
+      },
     ].filter((p) => p.count > 0);
     return {
       field: "antibiotic",
@@ -536,7 +674,10 @@ function buildAmrFixtureBody(): Record<string, unknown> {
     };
   });
   return {
-    response: { numFound: pivots.reduce((sum, p) => sum + p.count, 0), docs: [] },
+    response: {
+      numFound: pivots.reduce((sum, p) => sum + p.count, 0),
+      docs: [],
+    },
     facet_counts: {
       facet_pivot: {
         "antibiotic,resistant_phenotype": pivots,
@@ -558,13 +699,19 @@ function validateAmrPostBody(body: string): AmrPostValidation {
   ];
   for (const fragment of requiredFragments) {
     if (!body.includes(fragment)) {
-      return { ok: false, reason: `missing required RQL fragment: ${fragment}` };
+      return {
+        ok: false,
+        reason: `missing required RQL fragment: ${fragment}`,
+      };
     }
   }
   return { ok: true };
 }
 
-async function maybeBvBrcWebsitePost(path: string, request: NextRequest): Promise<BvBrcResult | null> {
+async function maybeBvBrcWebsitePost(
+  path: string,
+  request: NextRequest,
+): Promise<BvBrcResult | null> {
   const segments = path.split("/").filter(Boolean);
   if (segments[0] !== "bvbrc-website") return null;
   const endpoint = segments.slice(1).join("/");
@@ -573,7 +720,10 @@ async function maybeBvBrcWebsitePost(path: string, request: NextRequest): Promis
     const body = await request.clone().text();
     const validation = validateAmrPostBody(body);
     if (!validation.ok) {
-      return { kind: "unhandled", reason: validation.reason ?? "invalid amr body" };
+      return {
+        kind: "unhandled",
+        reason: validation.reason ?? "invalid amr body",
+      };
     }
     return { kind: "ok", body: buildAmrFixtureBody() };
   }
@@ -582,24 +732,36 @@ async function maybeBvBrcWebsitePost(path: string, request: NextRequest): Promis
 }
 
 type BvBrcResult =
-  | { kind: "ok"; body: unknown }
-  | { kind: "unhandled"; reason: string };
+  { kind: "ok"; body: unknown } | { kind: "unhandled"; reason: string };
 
-function maybeBvBrcWebsite(path: string, request: NextRequest): BvBrcResult | null {
+function maybeBvBrcWebsite(
+  path: string,
+  request: NextRequest,
+): BvBrcResult | null {
   const segments = path.split("/").filter(Boolean);
   if (segments[0] !== "bvbrc-website") return null;
   const endpoint = segments.slice(1).join("/");
 
-  if (endpoint === "data/summary_by_taxon/2") return { kind: "ok", body: bacteriaSummaryFixture };
-  if (endpoint === "data/summary_by_taxon/10239") return { kind: "ok", body: virusesSummaryFixture };
-  if (endpoint === "data/summary_by_taxon/131567") return { kind: "ok", body: allOrganismsSummaryFixture };
-  if (endpoint === "taxonomy/2") return { kind: "ok", body: bacteriaTaxonomyFixture };
-  if (endpoint === "taxonomy/10239") return { kind: "ok", body: virusesTaxonomyFixture };
-  if (endpoint === "taxonomy/131567") return { kind: "ok", body: cellularOrganismsTaxonomyFixture };
-  if (endpoint === "taxonomy/234") return { kind: "ok", body: brucellaTaxonomyFixture };
-  if (endpoint === "taxonomy/11520") return { kind: "ok", body: influenzaATaxonomyFixture };
-  if (endpoint === "taxonomy/11974") return { kind: "ok", body: caliciviridaeTaxonomyFixture };
-  if (endpoint === "taxonomy/2955291") return { kind: "ok", body: alphainfluenzavirusInfluenzaeTaxonomyFixture };
+  if (endpoint === "data/summary_by_taxon/2")
+    return { kind: "ok", body: bacteriaSummaryFixture };
+  if (endpoint === "data/summary_by_taxon/10239")
+    return { kind: "ok", body: virusesSummaryFixture };
+  if (endpoint === "data/summary_by_taxon/131567")
+    return { kind: "ok", body: allOrganismsSummaryFixture };
+  if (endpoint === "taxonomy/2")
+    return { kind: "ok", body: bacteriaTaxonomyFixture };
+  if (endpoint === "taxonomy/10239")
+    return { kind: "ok", body: virusesTaxonomyFixture };
+  if (endpoint === "taxonomy/131567")
+    return { kind: "ok", body: cellularOrganismsTaxonomyFixture };
+  if (endpoint === "taxonomy/234")
+    return { kind: "ok", body: brucellaTaxonomyFixture };
+  if (endpoint === "taxonomy/11520")
+    return { kind: "ok", body: influenzaATaxonomyFixture };
+  if (endpoint === "taxonomy/11974")
+    return { kind: "ok", body: caliciviridaeTaxonomyFixture };
+  if (endpoint === "taxonomy/2955291")
+    return { kind: "ok", body: alphainfluenzavirusInfluenzaeTaxonomyFixture };
   if (endpoint === "genome" || endpoint === "genome/") {
     const url = new URL(request.url);
     const query = decodeURIComponent(url.search);
@@ -621,20 +783,29 @@ function maybeBvBrcWebsite(path: string, request: NextRequest): BvBrcResult | nu
         ? `${pivot.primary},${pivot.secondary},${pivot.tertiary}`
         : `${pivot.primary},${pivot.secondary}`;
       if (!supportedPivotKeys.has(pivotKey)) {
-        return { kind: "unhandled", reason: `unsupported pivot key '${pivotKey}'` };
+        return {
+          kind: "unhandled",
+          reason: `unsupported pivot key '${pivotKey}'`,
+        };
       }
       if (pivotKey === "collection_year,serovar") {
         return { kind: "ok", body: solrSerotypePivot() };
       }
       if (pivotKey === "state_province,county,genus") {
-        return { kind: "ok", body: solrStateCountyGenusPivot(countyGeoFixtures) };
+        return {
+          kind: "ok",
+          body: solrStateCountyGenusPivot(countyGeoFixtures),
+        };
       }
       if (pivot.tertiary) {
         // This branch is unreachable today — supportedPivotKeys only allows
         // state_province,county,genus as a 3-level pivot, which is handled above.
         // Kept as a safety net if a new 3-level pivot is ever added without a
         // dedicated builder.
-        return { kind: "unhandled", reason: `no dedicated builder for 3-level pivot '${pivotKey}'` };
+        return {
+          kind: "unhandled",
+          reason: `no dedicated builder for 3-level pivot '${pivotKey}'`,
+        };
       }
       if (pivotKey === "state_province,county") {
         return { kind: "ok", body: solrStateCountyPivot(countyGeoFixtures) };
@@ -667,7 +838,6 @@ function maybeBvBrcWebsite(path: string, request: NextRequest): BvBrcResult | nu
   return null;
 }
 
-
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ path: string[] }> },
@@ -678,6 +848,8 @@ export async function GET(
   if (path === "phylo-manifest") {
     return NextResponse.json({ trees: { "2955291": "influenza" } });
   }
+  const identityResponse = handleIdentityGet(path);
+  if (identityResponse) return identityResponse;
   const bvBrcWebsite = maybeBvBrcWebsite(path, request);
   if (bvBrcWebsite) {
     if (bvBrcWebsite.kind === "unhandled") {
@@ -715,11 +887,6 @@ const postAllowedNamespaces = new Set([
   "data-service",
   "sra-validation",
   "minhash",
-  "user",
-  "user-auth",
-  "user-register",
-  "user-password-reset",
-  "user-verification",
   "upload",
 ]);
 
@@ -753,6 +920,9 @@ export async function POST(
     }
     return NextResponse.json(bvBrcWebsitePost.body);
   }
+
+  const identityResponse = await handleIdentityPost(path, request, rpcMethod);
+  if (identityResponse) return identityResponse;
 
   const firstSegment = path.split("/").filter(Boolean)[0] ?? "";
   if (!postAllowedNamespaces.has(firstSegment)) {

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isProtectedPagePath, isProtectedApiPath } from "@/lib/auth/routes";
-import { hasSession } from "@/lib/auth/server/middleware";
+import { isProtectedPagePath } from "@/lib/auth/routes";
+import { hasSessionCookies } from "@/lib/auth/server/cookies";
 import { mapLegacyViewPath } from "@/lib/views/legacy-redirect";
 import { viewSegments } from "@/lib/views/view-registry";
 
 /**
- * Next.js Proxy for authentication checks (better-auth stateless pattern).
- * Optimistic cookie-existence checks only — validation happens server-side.
+ * Next.js Proxy for optimistic page authentication checks.
+ * Cookie validation remains server-side.
  */
 export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
@@ -33,18 +33,8 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  if (isProtectedApiPath(pathname)) {
-    if (!hasSession(request)) {
-      return NextResponse.json(
-        { message: "Authentication required" },
-        { status: 401 },
-      );
-    }
-    return NextResponse.next();
-  }
-
   if (isProtectedPagePath(pathname)) {
-    if (!hasSession(request)) {
+    if (!hasSessionCookies(request)) {
       const signInUrl = new URL("/sign-in", request.url);
       signInUrl.searchParams.set("redirect", pathname + search);
       return NextResponse.redirect(signInUrl);
@@ -59,7 +49,6 @@ export function proxy(request: NextRequest) {
 // from viewSegments at runtime, so the list is intentionally duplicated here.
 export const config = {
   matcher: [
-    "/api/protected/:path*",
     "/services/:path*",
     "/workspace/:path*",
     "/jobs/:path*",

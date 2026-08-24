@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
+import { useAuthActions } from "@/lib/auth/provider";
 
 import {
   Dialog,
@@ -16,7 +16,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { authAdmin } from "@/lib/auth/advanced";
 
 interface SuLoginDialogProps {
   open: boolean;
@@ -27,7 +26,7 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
   const [targetUser, setTargetUser] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const queryClient = useQueryClient();
+  const { startImpersonation } = useAuthActions();
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -35,21 +34,18 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
     if (!targetUser.trim() || !password) return;
 
     setIsSubmitting(true);
-    await authAdmin.impersonate.start(targetUser.trim(), password)
-      .then(({ error }) => {
-        if (error) {
-          toast.error(error.message || "SU login failed");
-        } else {
-          void queryClient.resetQueries();
-          onOpenChange(false);
-          setTargetUser("");
-          setPassword("");
-        }
+    await startImpersonation(targetUser.trim(), password)
+      .then(() => {
+        onOpenChange(false);
+        setTargetUser("");
+        setPassword("");
       })
       .catch((error: unknown) => {
         toast.error(error instanceof Error ? error.message : "SU login failed");
       })
-      .finally(() => { setIsSubmitting(false); });
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -83,20 +79,27 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
               </p>
               <p className="mt-1 text-amber-700 dark:text-amber-400">
                 You can take control of another user&apos;s account to
-                troubleshoot or assist them. Please be careful and respectful
-                of the user&apos;s account that you are controlling.
+                troubleshoot or assist them. Please be careful and respectful of
+                the user&apos;s account that you are controlling.
               </p>
             </div>
           </div>
 
-          <form onSubmit={(e) => { void handleSubmit(e); }} className="space-y-4">
+          <form
+            onSubmit={(e) => {
+              void handleSubmit(e);
+            }}
+            className="space-y-4"
+          >
             <div className="space-y-2">
               <Label htmlFor="su-target-user">User to Impersonate</Label>
               <Input
                 id="su-target-user"
                 placeholder="User id for other account"
                 value={targetUser}
-                onChange={(e) => { setTargetUser(e.target.value); }}
+                onChange={(e) => {
+                  setTargetUser(e.target.value);
+                }}
                 autoComplete="off"
                 disabled={isSubmitting}
               />
@@ -109,7 +112,9 @@ export function SuLoginDialog({ open, onOpenChange }: SuLoginDialogProps) {
                 type="password"
                 placeholder="Your admin password"
                 value={password}
-                onChange={(e) => { setPassword(e.target.value); }}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
                 autoComplete="off"
                 disabled={isSubmitting}
               />

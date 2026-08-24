@@ -8,7 +8,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 
-import { createQueryClientWrapper } from "@/test-helpers/api-route-helpers";
+import { createQueryClientWrapper } from "@/test-helpers/react";
 import { server } from "@/test-helpers/msw-server";
 import { ListData } from "../list-data";
 

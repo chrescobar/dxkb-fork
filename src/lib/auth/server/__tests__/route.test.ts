@@ -1,442 +1,73 @@
 const mocks = vi.hoisted(() => ({
-  redirect: vi.fn((url: string) => {
-    const error = new Error(`NEXT_REDIRECT: ${url}`);
-    throw error;
+  readSession: vi.fn(),
+  redirect: vi.fn((path: string) => {
+    throw new Error(`NEXT_REDIRECT:${path}`);
   }),
 }));
 
-vi.mock("next/navigation", () => ({
-  redirect: mocks.redirect,
-  useRouter: () => ({
-    push: vi.fn(),
-    replace: vi.fn(),
-    back: vi.fn(),
-    prefetch: vi.fn(),
-  }),
-  usePathname: () => "/",
-  useSearchParams: () => new URLSearchParams(),
-  useParams: () => ({}),
-}));
+vi.mock("../session", () => ({ readSession: mocks.readSession }));
+vi.mock("next/navigation", () => ({ redirect: mocks.redirect }));
 
 import { NextRequest, NextResponse } from "next/server";
-import { createAuth } from "../create";
-import {
-  inMemoryIdentity,
-  inMemorySession,
-  type InMemoryAccount,
-} from "../adapters/memory";
-import type { UserProfile } from "@/lib/auth/types";
-import { serverUserAgent } from "../user-agent";
+import { readAuthSession, requireAuthSession, withAuth } from "../route";
 
-function makeProfile(partial: Partial<UserProfile> = {}): UserProfile {
-  return {
-    id: "alice",
-    email: "alice@example.com",
-    email_verified: true,
-    first_name: "Alice",
-    last_name: "Wonder",
-    creation_date: "2024-01-01",
-    last_login: "2024-01-01",
-    organisms: "",
-    reverification: false,
-    source: "memory",
-    l_id: "alice",
-    ...partial,
-  };
-}
-
-function makeAccount(username: string): InMemoryAccount {
-  return {
-    username,
-    password: "pw",
-    token: `${username}-token`,
-    profile: makeProfile({ id: username, l_id: username }),
-  };
-}
-
-function buildAuthority(accounts: InMemoryAccount[] = []) {
-  const identity = inMemoryIdentity({ accounts, suPassword: "su-pw" });
-  const session = inMemorySession();
-  const { auth, authAdmin } = createAuth({ identity, session });
-  return { auth, authAdmin, identity, session };
-}
-
-describe("auth.hasSession", () => {
-  it("returns true when both cookies are present", () => {
-    const { auth } = buildAuthority();
-    const req = new NextRequest("http://localhost/", {
-      headers: { cookie: "bvbrc_token=t; bvbrc_user_id=u" },
-    });
-    expect(auth.hasSession(req)).toBe(true);
-  });
-
-  it("returns false when token is missing", () => {
-    const { auth } = buildAuthority();
-    const req = new NextRequest("http://localhost/", {
-      headers: { cookie: "bvbrc_user_id=u" },
-    });
-    expect(auth.hasSession(req)).toBe(false);
-  });
-
-  it("returns false when userId is missing", () => {
-    const { auth } = buildAuthority();
-    const req = new NextRequest("http://localhost/", {
-      headers: { cookie: "bvbrc_token=t" },
-    });
-    expect(auth.hasSession(req)).toBe(false);
-  });
+beforeEach(() => {
+  vi.clearAllMocks();
 });
 
-// Indirection so the literal `throw` site is not a NextResponse expression,
-// which satisfies @typescript-eslint/only-throw-error while still routing the
-// Response through the catch block under test.
-function throwAsResponse(response: NextResponse): never {
-  throw response as unknown as Error;
-}
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
-describe("auth.route", () => {
-  it("returns 401 when no session exists", async () => {
-    const { auth } = buildAuthority();
-    const handler = vi.fn(() => Promise.resolve(NextResponse.json({ ok: true })));
-    const wrapped = auth.route(handler);
-
-    const req = new NextRequest("http://localhost/api/x");
-    const response = await wrapped(req, {});
-
+describe("direct route helpers", () => {
+  it("returns session_expired only when an app guard has no session", async () => {
+    mocks.readSession.mockResolvedValue(null);
+    const handler = vi.fn();
+    const response = await withAuth(handler)(
+      new NextRequest("http://localhost/api/x"),
+      {},
+    );
     expect(response.status).toBe(401);
+    expect(await response.json()).toEqual({
+      error: "Authentication required",
+      code: "session_expired",
+    });
     expect(handler).not.toHaveBeenCalled();
   });
 
-  it("injects token/userId/realm into the handler context when authenticated", async () => {
-    const { auth, session } = buildAuthority([makeAccount("alice")]);
-    await session.write({
-      token: "alice-token",
-      userId: "alice",
-      realm: "bvbrc.org",
-      expiresAt: Date.now(),
-    });
-
-    const handler = vi.fn((_req: NextRequest, ctx: Record<string, unknown>) => Promise.resolve(NextResponse.json(ctx)));
-    const wrapped = auth.route(handler);
-
-    const req = new NextRequest("http://localhost/api/x");
-    const response = await wrapped(req, {});
-
-    expect(response.status).toBe(200);
-    const body = await response.json() as { token: string; userId: string; realm: string };
-    expect(body).toEqual(
-      expect.objectContaining({
-        token: "alice-token",
-        userId: "alice",
-        realm: "bvbrc.org",
-      }),
-    );
-  });
-
-  it("memoizes session.read and identity.validateToken across the request", async () => {
-    const { auth, session, identity } = buildAuthority([makeAccount("alice")]);
-    await session.write({
-      token: "alice-token",
-      userId: "alice",
-      expiresAt: Date.now(),
-    });
-
-    const readSpy = vi.spyOn(session, "read");
-    const validateSpy = vi.spyOn(identity, "validateToken");
-
-    const wrapped = auth.route(async (_req, ctx) => {
-      expect(ctx.token).toBe("alice-token");
-      const user1 = await auth.currentUser();
-      const user2 = await auth.currentUser();
-      expect(user1?.username).toBe("alice");
-      expect(user2?.username).toBe("alice");
-      return NextResponse.json({ ok: true });
-    });
-
-    await wrapped(new NextRequest("http://localhost/"), {});
-
-    expect(readSpy).toHaveBeenCalledTimes(1);
-    expect(validateSpy).toHaveBeenCalledTimes(1);
-  });
-
-  it("returns a Response thrown by the handler unchanged", async () => {
-    const { auth, session } = buildAuthority([makeAccount("alice")]);
-    await session.write({
-      token: "alice-token",
-      userId: "alice",
-      expiresAt: Date.now(),
-    });
-
-    const wrapped = auth.route((): never => {
-      throwAsResponse(NextResponse.json({ error: "forced" }, { status: 418 }));
-    });
-
-    const response = await wrapped(new NextRequest("http://localhost/"), {});
-
-    expect(response.status).toBe(418);
-    const body = await response.json() as { error: string };
-    expect(body).toEqual({ error: "forced" });
-  });
-
-  it("maps thrown Error via errorResponse", async () => {
-    const { auth, session } = buildAuthority([makeAccount("alice")]);
-    await session.write({
-      token: "alice-token",
-      userId: "alice",
-      expiresAt: Date.now(),
-    });
-
-    const wrapped = auth.route(() => {
-      throw new Error("boom");
-    });
-
-    const response = await wrapped(new NextRequest("http://localhost/"), {});
-
-    expect(response.status).toBe(500);
-    const body = await response.json() as { error: string };
-    expect(body.error).toBe("boom");
-  });
-});
-
-describe("auth.fetch", () => {
-  const fetchSpy = vi.fn();
-  const originalFetch = globalThis.fetch;
-
-  beforeEach(() => {
-    fetchSpy.mockReset();
-    globalThis.fetch = fetchSpy;
-  });
-  afterEach(() => {
-    globalThis.fetch = originalFetch;
-  });
-
-  it("attaches Authorization from the current session", async () => {
-    const { auth, session } = buildAuthority([makeAccount("alice")]);
-    await session.write({
-      token: "alice-token",
-      userId: "alice",
-      expiresAt: Date.now(),
-    });
-    fetchSpy.mockResolvedValue(new Response(null, { status: 200 }));
-
-    await auth.fetch("https://backend/foo");
-
-    const callInit = fetchSpy.mock.calls[0][1] as RequestInit;
-    const headers = new Headers(callInit.headers);
-    expect(headers.get("Authorization")).toBe("alice-token");
-  });
-
-  it("clears session cookies when upstream returns 401", async () => {
-    const { auth, session } = buildAuthority([makeAccount("alice")]);
-    await session.write({
-      token: "alice-token",
-      userId: "alice",
-      expiresAt: Date.now(),
-    });
-    fetchSpy.mockResolvedValue(new Response(null, { status: 401 }));
-
-    await auth.fetch("https://backend/foo");
-
-    expect(session.inspect().current).toBeNull();
-  });
-
-  it("does not clear session for non-401 responses", async () => {
-    const { auth, session } = buildAuthority([makeAccount("alice")]);
-    await session.write({
-      token: "alice-token",
-      userId: "alice",
-      expiresAt: Date.now(),
-    });
-    fetchSpy.mockResolvedValue(new Response(null, { status: 500 }));
-
-    await auth.fetch("https://backend/foo");
-
-    expect(session.inspect().current?.token).toBe("alice-token");
-  });
-
-  it("throws a 401 NextResponse when called without a session", async () => {
-    const { auth } = buildAuthority();
-    await expect(auth.fetch("https://backend/foo")).rejects.toMatchObject({
-      status: 401,
-    });
-  });
-
-  // Node's fetch defaults to `User-Agent: node`, which Cloudflare in front of
-  // the BV-BRC services answers with a 403 bot challenge instead of the API
-  // response.
-  it("defaults the User-Agent when the caller sets none", async () => {
-    const { auth, session } = buildAuthority([makeAccount("alice")]);
-    await session.write({
-      token: "alice-token",
-      userId: "alice",
-      expiresAt: Date.now(),
-    });
-    fetchSpy.mockResolvedValue(new Response(null, { status: 200 }));
-
-    await auth.fetch("https://backend/foo");
-
-    const callInit = fetchSpy.mock.calls[0][1] as RequestInit;
-    const headers = new Headers(callInit.headers);
-    expect(headers.get("User-Agent")).toBe(serverUserAgent);
-  });
-
-  it("keeps a User-Agent supplied in the init headers", async () => {
-    const { auth, session } = buildAuthority([makeAccount("alice")]);
-    await session.write({
-      token: "alice-token",
-      userId: "alice",
-      expiresAt: Date.now(),
-    });
-    fetchSpy.mockResolvedValue(new Response(null, { status: 200 }));
-
-    await auth.fetch("https://backend/foo", {
-      headers: { "User-Agent": "caller-agent" },
-    });
-
-    const callInit = fetchSpy.mock.calls[0][1] as RequestInit;
-    const headers = new Headers(callInit.headers);
-    expect(headers.get("User-Agent")).toBe("caller-agent");
-  });
-
-  it("preserves headers carried on a Request input", async () => {
-    const { auth, session } = buildAuthority([makeAccount("alice")]);
-    await session.write({
-      token: "alice-token",
-      userId: "alice",
-      expiresAt: Date.now(),
-    });
-    fetchSpy.mockResolvedValue(new Response(null, { status: 200 }));
-
-    await auth.fetch(
-      new Request("https://backend/foo", {
-        headers: { "User-Agent": "caller-agent", "X-Request": "from-request" },
-      }),
-    );
-
-    const callInit = fetchSpy.mock.calls[0][1] as RequestInit;
-    const headers = new Headers(callInit.headers);
-    expect(headers.get("User-Agent")).toBe("caller-agent");
-    expect(headers.get("X-Request")).toBe("from-request");
-  });
-
-  it("lets init headers win over a Request input's headers", async () => {
-    const { auth, session } = buildAuthority([makeAccount("alice")]);
-    await session.write({
-      token: "alice-token",
-      userId: "alice",
-      expiresAt: Date.now(),
-    });
-    fetchSpy.mockResolvedValue(new Response(null, { status: 200 }));
-
-    await auth.fetch(
-      new Request("https://backend/foo", {
-        headers: { "User-Agent": "request-agent", "X-Request": "from-request" },
-      }),
-      { headers: { "User-Agent": "init-agent" } },
-    );
-
-    const callInit = fetchSpy.mock.calls[0][1] as RequestInit;
-    const headers = new Headers(callInit.headers);
-    expect(headers.get("User-Agent")).toBe("init-agent");
-    expect(headers.get("X-Request")).toBe("from-request");
-  });
-});
-
-describe("auth.requireSession", () => {
-  it("returns the session when present", async () => {
-    const { auth, session } = buildAuthority();
-    await session.write({
+  it("reads once and passes the session directly to a handler", async () => {
+    mocks.readSession.mockResolvedValue({
       token: "t",
       userId: "u",
       realm: "r",
-      expiresAt: Date.now(),
     });
-    expect(await auth.requireSession()).toEqual(
-      expect.objectContaining({ token: "t", userId: "u", realm: "r" }),
+    const handler = vi.fn((_request, context) =>
+      Promise.resolve(NextResponse.json(context)),
     );
-  });
-
-  it("throws a 401 NextResponse when absent", async () => {
-    const { auth } = buildAuthority();
-    await expect(auth.requireSession()).rejects.toMatchObject({ status: 401 });
-  });
-});
-
-describe("auth.currentUser", () => {
-  it("returns null when no session is present", async () => {
-    const { auth } = buildAuthority();
-    expect(await auth.currentUser()).toBeNull();
-  });
-
-  it("returns null when token is invalid", async () => {
-    const { auth, session } = buildAuthority([makeAccount("alice")]);
-    await session.write({
-      token: "stale",
-      userId: "alice",
-      expiresAt: Date.now(),
+    await withAuth(handler)(new NextRequest("http://localhost/api/x"), {
+      params: "p",
     });
-    expect(await auth.currentUser()).toBeNull();
-  });
-
-  it("returns a hydrated user when session is valid", async () => {
-    const { auth, session } = buildAuthority([makeAccount("alice")]);
-    await session.write({
-      token: "alice-token",
-      userId: "alice",
-      expiresAt: Date.now(),
-    });
-    const user = await auth.currentUser();
-    expect(user?.username).toBe("alice");
-    expect(user?.isImpersonating).toBeUndefined();
-  });
-
-  it("flags isImpersonating when a backup session is stored", async () => {
-    const { auth, session } = buildAuthority([makeAccount("alice")]);
-    await session.write({
-      token: "alice-token",
-      userId: "alice",
-      expiresAt: Date.now(),
-    });
-    await session.writeBackup({
-      token: "admin-token",
-      userId: "admin",
-      expiresAt: Date.now(),
-    });
-    const user = await auth.currentUser();
-    expect(user?.isImpersonating).toBe(true);
-    expect(user?.originalUsername).toBe("admin");
-  });
-});
-
-describe("auth.requireUser", () => {
-  beforeEach(() => {
-    mocks.redirect.mockReset();
-    mocks.redirect.mockImplementation((url: string) => {
-      throw new Error(`NEXT_REDIRECT: ${url}`);
+    expect(mocks.readSession).toHaveBeenCalledTimes(1);
+    expect(handler).toHaveBeenCalledWith(expect.any(NextRequest), {
+      params: "p",
+      token: "t",
+      userId: "u",
+      realm: "r",
     });
   });
 
-  it("returns the user when authenticated", async () => {
-    const { auth, session } = buildAuthority([makeAccount("alice")]);
-    await session.write({
-      token: "alice-token",
-      userId: "alice",
-      expiresAt: Date.now(),
-    });
-    const user = await auth.requireUser();
-    expect(user.username).toBe("alice");
-    expect(mocks.redirect).not.toHaveBeenCalled();
-  });
-
-  it("redirects to /sign-in by default when no session", async () => {
-    const { auth } = buildAuthority();
-    await expect(auth.requireUser()).rejects.toThrow(/NEXT_REDIRECT/);
-    expect(mocks.redirect).toHaveBeenCalledWith("/sign-in");
-  });
-
-  it("redirects to the supplied path when provided", async () => {
-    const { auth } = buildAuthority();
-    await expect(auth.requireUser("/login")).rejects.toThrow(/NEXT_REDIRECT/);
-    expect(mocks.redirect).toHaveBeenCalledWith("/login");
+  it("supports nullable and required session reads", async () => {
+    const session = { token: "t", userId: "u" };
+    mocks.readSession
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(session)
+      .mockResolvedValueOnce(session);
+    expect(await readAuthSession()).toBeNull();
+    await expect(requireAuthSession()).rejects.toThrow(
+      "Authentication required",
+    );
+    await expect(readAuthSession()).resolves.toEqual(session);
+    await expect(requireAuthSession()).resolves.toEqual(session);
   });
 });

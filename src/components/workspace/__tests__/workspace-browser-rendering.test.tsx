@@ -8,13 +8,13 @@ import { WorkspacePanelProvider } from "@/contexts/workspace-panel-context";
 import { WorkspaceRepositoryProvider } from "@/contexts/workspace-repository-context";
 import { InMemoryWorkspaceRepository } from "@/lib/services/workspace/adapters/in-memory-workspace-repository";
 
-vi.mock("@/lib/auth/hooks", () => ({
+vi.mock("@/lib/auth/provider", () => ({
   useAuth: () => ({
     user: {
+      id: "alice",
       username: "alice",
       realm: "bvbrc",
       email: "alice@example.test",
-      token: "test-token",
     },
     status: "authed",
     isAuthenticated: true,

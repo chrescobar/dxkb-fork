@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth/server/instance";
+import { withAuth } from "@/lib/auth/server/route";
 import { ensureUserWorkspace } from "@/lib/services/workspace/setup";
 import { createServerWorkspaceRpc } from "@/lib/services/workspace/server-rpc";
 import { getDefaultRealm } from "@/lib/services/workspace/realm";
 
-export const POST = auth.route(async (_request, { token, userId, realm }) => {
+export const POST = withAuth(async (_request, { token, userId, realm }) => {
   const result = await ensureUserWorkspace({
     rpc: createServerWorkspaceRpc(token),
     userId,

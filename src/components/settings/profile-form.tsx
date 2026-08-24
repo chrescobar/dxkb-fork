@@ -1,7 +1,6 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -18,8 +17,7 @@ import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { RequiredFormLabel } from "@/components/forms/required-form-components";
 import { Label } from "@/components/ui/label";
 
-import { apiFetch } from "@/lib/auth/fetch";
-import { authAccount } from "@/lib/auth/advanced";
+import { useAuthActions } from "@/lib/auth/provider";
 import type { UserProfile } from "@/lib/auth/types";
 import {
   profileFormSchema,
@@ -32,7 +30,7 @@ interface ProfileFormProps {
 }
 
 export function ProfileForm({ profile }: ProfileFormProps) {
-  const queryClient = useQueryClient();
+  const { updateProfile } = useAuthActions();
 
   const form = useForm({
     defaultValues: {
@@ -53,23 +51,8 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       }
 
       try {
-        const response = await apiFetch("/api/auth/profile", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(patches),
-        });
-
-        if (!response.ok) {
-          const err = await response.json().catch(() => null) as { error?: string; message?: string } | null;
-          toast.error(err?.error ?? err?.message ?? "Failed to update profile.");
-          return;
-        }
-
+        await updateProfile(patches);
         toast.success("Profile updated successfully.");
-        await Promise.all([
-          authAccount.refresh(),
-          queryClient.invalidateQueries({ queryKey: ["user-profile"] }),
-        ]);
       } catch {
         toast.error("Failed to update profile.");
       }
@@ -83,9 +66,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
     <Card>
       <CardHeader>
         <CardTitle>User Information</CardTitle>
-        <CardDescription>
-          Update your personal information.
-        </CardDescription>
+        <CardDescription>Update your personal information.</CardDescription>
       </CardHeader>
       <CardContent>
         <form
@@ -106,12 +87,16 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           <form.Field name="email">
             {(field) => (
               <FieldItem>
-                <RequiredFormLabel htmlFor={field.name}>Email</RequiredFormLabel>
+                <RequiredFormLabel htmlFor={field.name}>
+                  Email
+                </RequiredFormLabel>
                 <Input
                   id={field.name}
                   type="email"
                   value={field.state.value}
-                  onChange={(e) => { field.handleChange(e.target.value); }}
+                  onChange={(e) => {
+                    field.handleChange(e.target.value);
+                  }}
                   onBlur={field.handleBlur}
                 />
                 <FieldErrors field={field} />
@@ -123,11 +108,15 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           <form.Field name="first_name">
             {(field) => (
               <FieldItem>
-                <RequiredFormLabel htmlFor={field.name}>First Name</RequiredFormLabel>
+                <RequiredFormLabel htmlFor={field.name}>
+                  First Name
+                </RequiredFormLabel>
                 <Input
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => { field.handleChange(e.target.value); }}
+                  onChange={(e) => {
+                    field.handleChange(e.target.value);
+                  }}
                   onBlur={field.handleBlur}
                 />
                 <FieldErrors field={field} />
@@ -143,7 +132,9 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 <Input
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => { field.handleChange(e.target.value); }}
+                  onChange={(e) => {
+                    field.handleChange(e.target.value);
+                  }}
                   onBlur={field.handleBlur}
                 />
                 <FieldErrors field={field} />
@@ -155,11 +146,15 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           <form.Field name="last_name">
             {(field) => (
               <FieldItem>
-                <RequiredFormLabel htmlFor={field.name}>Last Name</RequiredFormLabel>
+                <RequiredFormLabel htmlFor={field.name}>
+                  Last Name
+                </RequiredFormLabel>
                 <Input
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => { field.handleChange(e.target.value); }}
+                  onChange={(e) => {
+                    field.handleChange(e.target.value);
+                  }}
                   onBlur={field.handleBlur}
                 />
                 <FieldErrors field={field} />
@@ -175,7 +170,9 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 <Input
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => { field.handleChange(e.target.value); }}
+                  onChange={(e) => {
+                    field.handleChange(e.target.value);
+                  }}
                   onBlur={field.handleBlur}
                 />
                 <FieldErrors field={field} />
@@ -191,7 +188,9 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 <Input
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => { field.handleChange(e.target.value); }}
+                  onChange={(e) => {
+                    field.handleChange(e.target.value);
+                  }}
                   onBlur={field.handleBlur}
                 />
                 <FieldErrors field={field} />
@@ -207,7 +206,9 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 <Textarea
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => { field.handleChange(e.target.value); }}
+                  onChange={(e) => {
+                    field.handleChange(e.target.value);
+                  }}
                   onBlur={field.handleBlur}
                   rows={3}
                 />

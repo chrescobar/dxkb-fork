@@ -2,19 +2,23 @@ import { http, HttpResponse } from "msw";
 
 import { server } from "@/test-helpers/msw-server";
 import { POST } from "../route";
-import { json, mockNextRequest } from "@/test-helpers/api-route-helpers";
-
-vi.mock("@/lib/auth/session", () => ({ getAuthToken: vi.fn() }));
+import {
+  clearTestCookies,
+  json,
+  mockNextRequest,
+  setTestSession,
+} from "@/test-helpers/api-route-helpers";
 vi.mock("@/lib/env", () => ({
   getRequiredEnv: vi.fn(() => "http://mock-api"),
 }));
 
-import { getAuthToken } from "@/lib/auth/session";
-const mockGetAuthToken = vi.mocked(getAuthToken);
-
 describe("POST /api/services/feature/from-group", () => {
+  beforeEach(() => {
+    setTestSession();
+  });
+
   it("returns 401 when no auth token", async () => {
-    mockGetAuthToken.mockResolvedValue(undefined);
+    clearTestCookies();
 
     const req = mockNextRequest({
       method: "POST",
@@ -29,8 +33,6 @@ describe("POST /api/services/feature/from-group", () => {
   });
 
   it("returns empty results when feature_group_path is missing", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     const req = mockNextRequest({ method: "POST", body: {} });
     const res = await POST(req, {});
 
@@ -39,8 +41,6 @@ describe("POST /api/services/feature/from-group", () => {
   });
 
   it("returns empty results when feature_group_path is empty string", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     const req = mockNextRequest({
       method: "POST",
       body: { feature_group_path: "   " },
@@ -52,8 +52,6 @@ describe("POST /api/services/feature/from-group", () => {
   });
 
   it("URL encodes the feature group path", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     let capturedUrl: string | undefined;
 
     server.use(
@@ -75,8 +73,6 @@ describe("POST /api/services/feature/from-group", () => {
   });
 
   it("returns results on success", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     const features = [
       { feature_id: "f1", patric_id: "p1" },
       { feature_id: "f2", patric_id: "p2" },
@@ -99,8 +95,6 @@ describe("POST /api/services/feature/from-group", () => {
   });
 
   it("returns upstream error on non-ok response", async () => {
-    mockGetAuthToken.mockResolvedValue("token");
-
     server.use(
       http.get("http://mock-api/genome_feature/", () => {
         return new HttpResponse("err", { status: 502 });

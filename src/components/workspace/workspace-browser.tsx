@@ -6,7 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import type { ListPermissionsResult } from "@/lib/services/workspace/domain";
-import { useAuth } from "@/lib/auth/hooks";
+import { useAuth } from "@/lib/auth/provider";
 import { useWorkspacePanel } from "@/contexts/workspace-panel-context";
 import { useWorkspaceDialog } from "@/contexts/workspace-dialog-context";
 import { useWorkspacePathResolve } from "@/hooks/services/workspace/use-workspace-path-resolve";

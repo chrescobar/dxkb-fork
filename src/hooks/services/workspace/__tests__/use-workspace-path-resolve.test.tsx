@@ -1,5 +1,5 @@
 import { renderHook, waitFor } from "@testing-library/react";
-import { createQueryClientWrapper } from "@/test-helpers/api-route-helpers";
+import { createQueryClientWrapper } from "@/test-helpers/react";
 
 vi.mock("@/lib/services/workspace/shared", () => ({
   getWorkspaceMetadata: vi.fn(),

@@ -4,8 +4,8 @@ import { z } from "zod";
 import { useForm } from "@tanstack/react-form";
 import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { useAuth, useSignIn } from "@/lib/auth/hooks";
-import { redirectAfterAuth } from "../redirect-action";
+import { useAuthActions } from "@/lib/auth/provider";
+import { safePostAuthDestination } from "@/lib/auth/redirect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -35,9 +35,7 @@ const formSchema = z.object({
 function SigninForm() {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { status } = useAuth();
-  const { signIn, isPending } = useSignIn();
-  const isLoading = status === "loading" || isPending;
+  const { signIn } = useAuthActions();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") || "/";
 
@@ -48,15 +46,21 @@ function SigninForm() {
     },
     validators: { onChange: formSchema },
     onSubmit: async ({ value }) => {
-      const { error: signInError } = await signIn(value);
-      if (signInError) {
-        setError(signInError.message || "Invalid username or password");
-        return;
+      setError("");
+      try {
+        const destination = safePostAuthDestination(redirectTo);
+        await signIn(value);
+        toast.success("Logged in successfully. Welcome to DXKB!", {
+          closeButton: true,
+        });
+        window.location.replace(destination);
+      } catch (cause) {
+        setError(
+          cause instanceof Error
+            ? cause.message
+            : "Invalid username or password",
+        );
       }
-      toast.success("Logged in successfully. Welcome to DXKB!", {
-        closeButton: true,
-      });
-      await redirectAfterAuth(redirectTo);
     },
   });
 
@@ -165,9 +169,9 @@ function SigninForm() {
             <Button
               type="submit"
               className="w-full transition-colors duration-200"
-              disabled={isLoading}
+              disabled={form.state.isSubmitting}
             >
-              {isLoading ? (
+              {form.state.isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 size-4 animate-spin" />
                   Signing in...

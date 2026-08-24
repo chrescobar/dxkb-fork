@@ -2,23 +2,11 @@
 
 import { ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth/hooks";
-import { authAdmin } from "@/lib/auth/advanced";
-import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
+import { useAuth, useExitImpersonation } from "@/lib/auth/provider";
 
 export function SuBanner() {
   const { isImpersonating, user } = useAuth();
-  const queryClient = useQueryClient();
-  const suExit = async () => {
-    const { error } = await authAdmin.impersonate.exit();
-    if (error) {
-      toast.error("Failed to exit impersonation");
-      return;
-    }
-    void queryClient.resetQueries();
-    toast.success("Returned to your account");
-  };
+  const exitImpersonation = useExitImpersonation();
 
   if (!isImpersonating) return null;
 
@@ -26,14 +14,13 @@ export function SuBanner() {
     <div className="flex items-center justify-center gap-2 bg-accent px-4 py-1.5 text-sm font-medium text-accent-foreground">
       <ShieldAlert className="size-4 shrink-0" />
       <span>
-        You are impersonating{" "}
-        <strong>{user?.username}</strong>.
+        You are impersonating <strong>{user?.username}</strong>.
       </span>
       <Button
         variant="outline"
         size="sm"
         className="ml-1 h-6 border-accent-foreground/30 bg-transparent px-2 text-xs hover:bg-accent-foreground/10"
-        onClick={() => void suExit()}
+        onClick={() => void exitImpersonation()}
       >
         Exit SU
       </Button>

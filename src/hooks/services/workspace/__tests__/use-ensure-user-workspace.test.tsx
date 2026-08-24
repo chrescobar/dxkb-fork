@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
-import { createQueryClientWrapper } from "@/test-helpers/api-route-helpers";
+import { createQueryClientWrapper } from "@/test-helpers/react";
 import { useEnsureUserWorkspace } from "../use-ensure-user-workspace";
 
 interface EndpointTracker {

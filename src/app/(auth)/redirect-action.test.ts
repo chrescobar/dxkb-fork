@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
-import { redirectAfterAuth } from "./redirect-action";
+import { signOut } from "@/lib/auth/server/actions";
+import { safePostAuthDestination } from "@/lib/auth/redirect";
+import { signOutAndRedirect } from "./redirect-action";
 
 vi.mock("next/navigation", () => ({
   redirect: vi.fn((url: string) => {
@@ -7,9 +9,13 @@ vi.mock("next/navigation", () => ({
   }),
 }));
 
+vi.mock("@/lib/auth/server/actions", () => ({
+  signOut: vi.fn(),
+}));
+
 const redirectMock = vi.mocked(redirect);
 
-describe("redirectAfterAuth", () => {
+describe("safePostAuthDestination", () => {
   it.each([
     ["//attacker.example/path", "/"],
     ["/..//attacker.example/path", "/"],
@@ -17,10 +23,19 @@ describe("redirectAfterAuth", () => {
     ["https://attacker.example/path", "/"],
     ["not-a-path", "/"],
     ["/services?tab=jobs#latest", "/services?tab=jobs#latest"],
-  ])("redirects %s to %s", async (destination, expected) => {
-    await expect(redirectAfterAuth(destination)).rejects.toThrow(
-      `NEXT_REDIRECT: ${expected}`,
+  ])("maps %s to %s", (destination, expected) => {
+    expect(safePostAuthDestination(destination)).toBe(expected);
+    expect(redirectMock).not.toHaveBeenCalled();
+  });
+
+  it("clears the session before redirecting sign-out", async () => {
+    const formData = new FormData();
+    formData.set("redirectTo", "/sign-in");
+
+    await expect(signOutAndRedirect(formData)).rejects.toThrow(
+      "NEXT_REDIRECT: /sign-in",
     );
-    expect(redirectMock).toHaveBeenCalledWith(expected);
+    expect(signOut).toHaveBeenCalledOnce();
+    expect(redirectMock).toHaveBeenCalledWith("/sign-in");
   });
 });

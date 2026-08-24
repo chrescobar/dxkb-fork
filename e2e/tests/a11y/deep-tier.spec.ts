@@ -420,13 +420,13 @@ test.describe("a11y deep tier: settings", () => {
 
 test.describe("a11y deep tier: taxon interactions graph", () => {
   test("interactions: Graph subtab has no blocking violations", async ({ page, browserName }) => {
-    // Sigma.js needs a WebGL context to mount its canvas; headless Firefox in CI
-    // has none ("Exhausted GL driver options"), so the graph crashes the page and
-    // the Graph tab never renders. Chromium (the deep-scan project) and WebKit
-    // ship software GL. The chromium project carries the real a11y coverage; the
-    // firefox tripwire can't reach this surface. Mirrors interactions.spec.ts and
-    // viewer-3d.spec.ts.
-    test.skip(browserName === "firefox", "Headless Firefox has no WebGL for Sigma.js to render into");
+    // Sigma.js needs a WebGL context to mount its canvas. Headless Firefox and
+    // WebKit cannot render it reliably, so Chromium carries this a11y coverage.
+    // Mirrors interactions.spec.ts and viewer-3d.spec.ts.
+    test.skip(
+      browserName !== "chromium",
+      "Headless non-Chromium browsers cannot render the Sigma.js WebGL canvas",
+    );
 
     const rows = buildPpiRows(1);
 

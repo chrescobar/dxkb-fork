@@ -44,10 +44,16 @@ describe("api/e2e-mock catch-all — guard", () => {
         ctx(["foo"]),
       );
       expect(getResp.status).toBe(404);
-      expect((await getResp.json()) as unknown).toEqual({ error: "Mock endpoint disabled" });
+      expect((await getResp.json()) as unknown).toEqual({
+        error: "Mock endpoint disabled",
+      });
 
       const postResp = await POST(
-        mockNextRequest({ method: "POST", body: { method: "x" }, url: "http://localhost:3020/api/e2e-mock/foo" }),
+        mockNextRequest({
+          method: "POST",
+          body: { method: "x" },
+          url: "http://localhost:3020/api/e2e-mock/foo",
+        }),
         ctx(["foo"]),
       );
       expect(postResp.status).toBe(404);
@@ -72,7 +78,9 @@ describe("api/e2e-mock catch-all — enabled", () => {
 
   it("GET returns 200 with empty object", async () => {
     const resp = await GET(
-      mockNextRequest({ url: "http://localhost:3020/api/e2e-mock/app-service/foo" }),
+      mockNextRequest({
+        url: "http://localhost:3020/api/e2e-mock/app-service/foo",
+      }),
       ctx(["app-service", "foo"]),
     );
 
@@ -181,7 +189,9 @@ describe("api/e2e-mock catch-all — enabled", () => {
       facet_counts?: { facet_fields?: { host_group?: unknown[] } };
     };
     expect(body).toMatchObject({
-      facet_counts: { facet_fields: { host_group: expect.any(Array) as unknown } },
+      facet_counts: {
+        facet_fields: { host_group: expect.any(Array) as unknown },
+      },
     });
     expect(body.facet_counts?.facet_fields?.host_group).toEqual(
       expect.arrayContaining(["Human", 512004]),
@@ -199,25 +209,156 @@ describe("api/e2e-mock catch-all — enabled", () => {
     );
 
     expect(resp.status).toBe(200);
-    expect((await resp.json()) as unknown).toEqual({ id: 1, jsonrpc: "2.0", result: [[]] });
+    expect((await resp.json()) as unknown).toEqual({
+      id: 1,
+      jsonrpc: "2.0",
+      result: [[]],
+    });
   });
 
-  it("POST handles non-JSON bodies without throwing", async () => {
-    const request = new Request("http://localhost:3020/api/e2e-mock/upload", {
-      method: "POST",
-      headers: { "Content-Type": "text/plain" },
-      body: "raw text",
-    });
-
-    const resp = await POST(request as unknown as Parameters<typeof POST>[0], ctx(["upload"]));
+  it("GET returns a valid BV-BRC profile for server-side session hydration", async () => {
+    const resp = await GET(
+      mockNextRequest({
+        url: "http://localhost:3020/api/e2e-mock/user/e2e-test-user%40patricbrc.org",
+      }),
+      ctx(["user", "e2e-test-user%40patricbrc.org"]),
+    );
 
     expect(resp.status).toBe(200);
-    expect((await resp.json()) as unknown).toEqual({ id: 1, jsonrpc: "2.0", result: [[]] });
+    expect((await resp.json()) as unknown).toMatchObject({
+      id: "e2e-test-user@patricbrc.org",
+      email: "e2e@example.com",
+      email_verified: true,
+      roles: ["admin"],
+    });
+  });
+
+  it("GET returns the distinct target profile requested by SU login", async () => {
+    const resp = await GET(
+      mockNextRequest({
+        url: "http://localhost:3020/api/e2e-mock/user/e2e-target-user",
+      }),
+      ctx(["user", "e2e-target-user"]),
+    );
+
+    expect(resp.status).toBe(200);
+    expect((await resp.json()) as unknown).toMatchObject({
+      id: "e2e-target-user@patricbrc.org",
+      email: "target@example.com",
+      l_id: "e2e-target-user",
+      roles: [],
+    });
+  });
+
+  it("GET returns 404 instead of substituting an identity for an unknown profile", async () => {
+    const resp = await GET(
+      mockNextRequest({
+        url: "http://localhost:3020/api/e2e-mock/user/missing-user",
+      }),
+      ctx(["user", "missing-user"]),
+    );
+
+    expect(resp.status).toBe(404);
+    expect((await resp.json()) as unknown).toEqual({ error: "User not found" });
+  });
+
+  it("POST user-auth returns the admin identity token", async () => {
+    const resp = await POST(
+      mockNextRequest({
+        method: "POST",
+        url: "http://localhost:3020/api/e2e-mock/user-auth",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        rawBody: "username=e2e-test-user&password=password1234",
+      }),
+      ctx(["user-auth"]),
+    );
+
+    expect(resp.status).toBe(200);
+    expect(resp.headers.get("Authorization")).toBe(
+      "un=e2e-test-user@patricbrc.org|e2e-admin-token",
+    );
+    expect(await resp.text()).toBe(
+      "un=e2e-test-user@patricbrc.org|e2e-admin-token",
+    );
+  });
+
+  it("POST user-auth/sulogin returns a token for the requested target", async () => {
+    const resp = await POST(
+      mockNextRequest({
+        method: "POST",
+        url: "http://localhost:3020/api/e2e-mock/user-auth/sulogin",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        rawBody:
+          "username=e2e-test-user%40patricbrc.org&targetUser=e2e-target-user&password=password1234",
+      }),
+      ctx(["user-auth", "sulogin"]),
+    );
+
+    expect(resp.status).toBe(200);
+    expect(await resp.text()).toBe(
+      "un=e2e-target-user@patricbrc.org|e2e-target-token",
+    );
+  });
+
+  it("POST user-auth/sulogin rejects an unknown target", async () => {
+    const resp = await POST(
+      mockNextRequest({
+        method: "POST",
+        url: "http://localhost:3020/api/e2e-mock/user-auth/sulogin",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        rawBody:
+          "username=e2e-test-user%40patricbrc.org&targetUser=missing-user&password=password1234",
+      }),
+      ctx(["user-auth", "sulogin"]),
+    );
+
+    expect(resp.status).toBe(401);
+    expect(await resp.text()).toBe("Invalid SU login");
+  });
+
+  it.each(["user-password-reset", "user-verification"])(
+    "POST %s returns an acknowledgement instead of JSON-RPC",
+    async (identityPath) => {
+      const resp = await POST(
+        mockNextRequest({
+          method: "POST",
+          body: { id: "e2e-test-user@patricbrc.org" },
+          url: `http://localhost:3020/api/e2e-mock/${identityPath}`,
+        }),
+        ctx([identityPath]),
+      );
+
+      expect(resp.status).toBe(200);
+      expect((await resp.json()) as unknown).toEqual({ success: true });
+    },
+  );
+
+  it("POST handles non-JSON bodies without throwing", async () => {
+    const resp = await POST(
+      mockNextRequest({
+        method: "POST",
+        url: "http://localhost:3020/api/e2e-mock/upload",
+        headers: { "Content-Type": "text/plain" },
+        rawBody: "raw text",
+      }),
+      ctx(["upload"]),
+    );
+
+    expect(resp.status).toBe(200);
+    expect((await resp.json()) as unknown).toEqual({
+      id: 1,
+      jsonrpc: "2.0",
+      result: [[]],
+    });
   });
 
   it("PUT returns 200 with empty object", async () => {
     const resp = await PUT(
-      mockNextRequest({ method: "PUT", body: {}, url: "http://localhost:3020/api/e2e-mock/foo" }),
+      mockNextRequest({
+        method: "PUT",
+        body: {},
+        url: "http://localhost:3020/api/e2e-mock/foo",
+      }),
       ctx(["foo"]),
     );
 
@@ -227,7 +368,10 @@ describe("api/e2e-mock catch-all — enabled", () => {
 
   it("DELETE returns 200 with empty object", async () => {
     const resp = await DELETE(
-      mockNextRequest({ method: "DELETE", url: "http://localhost:3020/api/e2e-mock/foo/bar" }),
+      mockNextRequest({
+        method: "DELETE",
+        url: "http://localhost:3020/api/e2e-mock/foo/bar",
+      }),
       ctx(["foo", "bar"]),
     );
 
@@ -249,7 +393,9 @@ describe("api/e2e-mock catch-all — enabled", () => {
     expect(body[0]).toMatchObject({
       genome_id: expect.stringMatching(/^234\./) as unknown,
       genome_name: expect.any(String) as unknown,
-      reference_genome: expect.stringMatching(/Reference|Representative/) as unknown,
+      reference_genome: expect.stringMatching(
+        /Reference|Representative/,
+      ) as unknown,
     });
   });
 
@@ -290,25 +436,45 @@ describe("api/e2e-mock catch-all — enabled", () => {
   });
 
   it.each([
-    ["isolation_country,genus", "facet%28%28pivot%2C%28isolation_country%2Cgenus%29%29%2C%28mincount%2C1%29%29"],
-    ["isolation_country,host_common_name", "facet%28%28pivot%2C%28isolation_country%2Chost_common_name%29%29%2C%28mincount%2C1%29%29"],
-    ["state_province,genus", "facet%28%28pivot%2C%28state_province%2Cgenus%29%29%2C%28mincount%2C1%29%29"],
-    ["state_province,host_common_name", "facet%28%28pivot%2C%28state_province%2Chost_common_name%29%29%2C%28mincount%2C1%29%29"],
-    ["state_province,county", "facet%28%28pivot%2C%28state_province%2Ccounty%29%29%2C%28mincount%2C1%29%29"],
-  ])("GET serves the %s pivot with a non-empty facet_pivot", async (pivotKey, encoded) => {
-    const resp = await GET(
-      mockNextRequest({
-        url: `http://localhost:3020/api/e2e-mock/bvbrc-website/genome/?eq(taxon_lineage_ids,234)&${encoded}`,
-      }),
-      ctx(["bvbrc-website", "genome"]),
-    );
+    [
+      "isolation_country,genus",
+      "facet%28%28pivot%2C%28isolation_country%2Cgenus%29%29%2C%28mincount%2C1%29%29",
+    ],
+    [
+      "isolation_country,host_common_name",
+      "facet%28%28pivot%2C%28isolation_country%2Chost_common_name%29%29%2C%28mincount%2C1%29%29",
+    ],
+    [
+      "state_province,genus",
+      "facet%28%28pivot%2C%28state_province%2Cgenus%29%29%2C%28mincount%2C1%29%29",
+    ],
+    [
+      "state_province,host_common_name",
+      "facet%28%28pivot%2C%28state_province%2Chost_common_name%29%29%2C%28mincount%2C1%29%29",
+    ],
+    [
+      "state_province,county",
+      "facet%28%28pivot%2C%28state_province%2Ccounty%29%29%2C%28mincount%2C1%29%29",
+    ],
+  ])(
+    "GET serves the %s pivot with a non-empty facet_pivot",
+    async (pivotKey, encoded) => {
+      const resp = await GET(
+        mockNextRequest({
+          url: `http://localhost:3020/api/e2e-mock/bvbrc-website/genome/?eq(taxon_lineage_ids,234)&${encoded}`,
+        }),
+        ctx(["bvbrc-website", "genome"]),
+      );
 
-    expect(resp.status).toBe(200);
-    const body = (await resp.json()) as SolrFacetBody;
-    expect(body.facet_counts.facet_pivot[pivotKey]).toEqual(
-      expect.arrayContaining([expect.objectContaining({ field: expect.any(String) as unknown })]),
-    );
-  });
+      expect(resp.status).toBe(200);
+      const body = (await resp.json()) as SolrFacetBody;
+      expect(body.facet_counts.facet_pivot[pivotKey]).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ field: expect.any(String) as unknown }),
+        ]),
+      );
+    },
+  );
 
   it("GET serves collection_year,serovar with numeric outer year keys", async () => {
     const resp = await GET(
@@ -341,8 +507,12 @@ describe("api/e2e-mock catch-all — enabled", () => {
 
     expect(resp.status).toBe(400);
     expect((await resp.json()) as unknown).toMatchObject({
-      error: expect.stringContaining("unhandled bvbrc-website/genome query") as unknown,
-      reason: expect.stringContaining("unsupported pivot key 'state_province,wrong_field'") as unknown,
+      error: expect.stringContaining(
+        "unhandled bvbrc-website/genome query",
+      ) as unknown,
+      reason: expect.stringContaining(
+        "unsupported pivot key 'state_province,wrong_field'",
+      ) as unknown,
     });
   });
 
@@ -356,8 +526,12 @@ describe("api/e2e-mock catch-all — enabled", () => {
 
     expect(resp.status).toBe(400);
     expect((await resp.json()) as unknown).toMatchObject({
-      error: expect.stringContaining("unhandled bvbrc-website/genome query") as unknown,
-      reason: expect.stringContaining("unsupported pivot key 'state_province,county,wrong_field'") as unknown,
+      error: expect.stringContaining(
+        "unhandled bvbrc-website/genome query",
+      ) as unknown,
+      reason: expect.stringContaining(
+        "unsupported pivot key 'state_province,county,wrong_field'",
+      ) as unknown,
     });
   });
 
@@ -379,7 +553,9 @@ describe("api/e2e-mock catch-all — enabled", () => {
       pivot: expect.arrayContaining([
         expect.objectContaining({
           field: "county",
-          pivot: expect.arrayContaining([expect.objectContaining({ field: "genus", value: "Brucella" })]) as unknown,
+          pivot: expect.arrayContaining([
+            expect.objectContaining({ field: "genus", value: "Brucella" }),
+          ]) as unknown,
         }),
       ]) as unknown,
     });
@@ -402,14 +578,25 @@ describe("api/e2e-mock catch-all — enabled", () => {
     const twoBody = (await twoLevelResp.json()) as SolrFacetBody;
     const threeBody = (await threeLevelResp.json()) as SolrFacetBody;
 
-    interface PivotEntry { value: string; pivot?: PivotEntry[] }
-    const twoLevel: PivotEntry[] = twoBody.facet_counts.facet_pivot["state_province,county"] as unknown as PivotEntry[];
-    const threeLevel: PivotEntry[] = threeBody.facet_counts.facet_pivot["state_province,county,genus"] as unknown as PivotEntry[];
+    interface PivotEntry {
+      value: string;
+      pivot?: PivotEntry[];
+    }
+    const twoLevel: PivotEntry[] = twoBody.facet_counts.facet_pivot[
+      "state_province,county"
+    ] as unknown as PivotEntry[];
+    const threeLevel: PivotEntry[] = threeBody.facet_counts.facet_pivot[
+      "state_province,county,genus"
+    ] as unknown as PivotEntry[];
 
     for (const stateEntry of twoLevel) {
-      const matchingThreeState = threeLevel.find((e) => e.value === stateEntry.value);
+      const matchingThreeState = threeLevel.find(
+        (e) => e.value === stateEntry.value,
+      );
       expect(matchingThreeState).toBeDefined();
-      const threeCounties = (matchingThreeState?.pivot ?? []).map((c) => c.value);
+      const threeCounties = (matchingThreeState?.pivot ?? []).map(
+        (c) => c.value,
+      );
       for (const countyEntry of stateEntry.pivot ?? []) {
         expect(threeCounties).toContain(countyEntry.value);
       }
@@ -424,8 +611,13 @@ describe("api/e2e-mock catch-all — enabled", () => {
       ctx(["bvbrc-website", "genome"]),
     );
     const body = (await resp.json()) as SolrFacetBody;
-    interface PivotEntry { value: string; pivot?: PivotEntry[] }
-    const pivot: PivotEntry[] = body.facet_counts.facet_pivot["state_province,county"] as unknown as PivotEntry[];
+    interface PivotEntry {
+      value: string;
+      pivot?: PivotEntry[];
+    }
+    const pivot: PivotEntry[] = body.facet_counts.facet_pivot[
+      "state_province,county"
+    ] as unknown as PivotEntry[];
 
     const countyToStates = new Map<string, string[]>();
     for (const stateEntry of pivot) {
@@ -436,7 +628,9 @@ describe("api/e2e-mock catch-all — enabled", () => {
       }
     }
 
-    const crossStateCounty = Array.from(countyToStates.entries()).find(([, states]) => states.length > 1);
+    const crossStateCounty = Array.from(countyToStates.entries()).find(
+      ([, states]) => states.length > 1,
+    );
     expect(crossStateCounty).toBeDefined();
   });
 
@@ -450,7 +644,9 @@ describe("api/e2e-mock catch-all — enabled", () => {
 
     expect(resp.status).toBe(400);
     expect((await resp.json()) as unknown).toMatchObject({
-      error: expect.stringContaining("unhandled bvbrc-website/genome query") as unknown,
+      error: expect.stringContaining(
+        "unhandled bvbrc-website/genome query",
+      ) as unknown,
     });
   });
 
@@ -473,21 +669,24 @@ describe("api/e2e-mock catch-all — enabled", () => {
   it.each([
     ["10239", "Viruses", [10239]],
     ["131567", "cellular organisms", [131567]],
-  ])("GET serves landing root taxonomy fixture %s", async (taxonId, taxonName, lineageIds) => {
-    const resp = await GET(
-      mockNextRequest({
-        url: `http://localhost:3020/api/e2e-mock/bvbrc-website/taxonomy/${taxonId}`,
-      }),
-      ctx(["bvbrc-website", "taxonomy", taxonId]),
-    );
+  ])(
+    "GET serves landing root taxonomy fixture %s",
+    async (taxonId, taxonName, lineageIds) => {
+      const resp = await GET(
+        mockNextRequest({
+          url: `http://localhost:3020/api/e2e-mock/bvbrc-website/taxonomy/${taxonId}`,
+        }),
+        ctx(["bvbrc-website", "taxonomy", taxonId]),
+      );
 
-    expect(resp.status).toBe(200);
-    expect((await resp.json()) as unknown).toMatchObject({
-      taxon_id: Number(taxonId),
-      taxon_name: taxonName,
-      lineage_ids: lineageIds,
-    });
-  });
+      expect(resp.status).toBe(200);
+      expect((await resp.json()) as unknown).toMatchObject({
+        taxon_id: Number(taxonId),
+        taxon_name: taxonName,
+        lineage_ids: lineageIds,
+      });
+    },
+  );
 
   it("POST returns 400 for endpoints outside the allowlisted namespaces", async () => {
     const resp = await POST(
@@ -515,26 +714,31 @@ describe("api/e2e-mock catch-all — enabled", () => {
       "&facet((pivot,(antibiotic,resistant_phenotype)),(mincount,1),(limit,-1))" +
       "&json(nl,map)";
 
-    const request = new Request("http://localhost:3020/api/e2e-mock/bvbrc-website/genome_amr/", {
-      method: "POST",
-      headers: { "Content-Type": "application/rqlquery+x-www-form-urlencoded" },
-      body,
-    });
-
     const resp = await POST(
-      request as unknown as Parameters<typeof POST>[0],
+      mockNextRequest({
+        method: "POST",
+        url: "http://localhost:3020/api/e2e-mock/bvbrc-website/genome_amr/",
+        headers: {
+          "Content-Type": "application/rqlquery+x-www-form-urlencoded",
+        },
+        rawBody: body,
+      }),
       ctx(["bvbrc-website", "genome_amr"]),
     );
 
     expect(resp.status).toBe(200);
     const payload = (await resp.json()) as SolrFacetBody;
-    const pivot = payload.facet_counts.facet_pivot["antibiotic,resistant_phenotype"];
+    const pivot =
+      payload.facet_counts.facet_pivot["antibiotic,resistant_phenotype"];
     expect(Array.isArray(pivot)).toBe(true);
     expect(pivot[0]).toMatchObject({
       field: "antibiotic",
       value: expect.any(String) as unknown,
       pivot: expect.arrayContaining([
-        expect.objectContaining({ field: "resistant_phenotype", value: "Resistant" }),
+        expect.objectContaining({
+          field: "resistant_phenotype",
+          value: "Resistant",
+        }),
       ]) as unknown,
     });
   });
@@ -549,21 +753,26 @@ describe("api/e2e-mock catch-all — enabled", () => {
       "&facet((field,antibiotic))" +
       "&limit(1)";
 
-    const request = new Request("http://localhost:3020/api/e2e-mock/bvbrc-website/genome_amr/", {
-      method: "POST",
-      headers: { "Content-Type": "application/rqlquery+x-www-form-urlencoded" },
-      body,
-    });
-
     const resp = await POST(
-      request as unknown as Parameters<typeof POST>[0],
+      mockNextRequest({
+        method: "POST",
+        url: "http://localhost:3020/api/e2e-mock/bvbrc-website/genome_amr/",
+        headers: {
+          "Content-Type": "application/rqlquery+x-www-form-urlencoded",
+        },
+        rawBody: body,
+      }),
       ctx(["bvbrc-website", "genome_amr"]),
     );
 
     expect(resp.status).toBe(400);
     expect((await resp.json()) as unknown).toMatchObject({
-      error: expect.stringContaining("invalid bvbrc-website/genome_amr POST") as unknown,
-      reason: expect.stringContaining("facet((pivot,(antibiotic,resistant_phenotype))") as unknown,
+      error: expect.stringContaining(
+        "invalid bvbrc-website/genome_amr POST",
+      ) as unknown,
+      reason: expect.stringContaining(
+        "facet((pivot,(antibiotic,resistant_phenotype))",
+      ) as unknown,
     });
   });
 });

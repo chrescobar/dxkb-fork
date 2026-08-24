@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth/session";
+import { requireAuthSessionOrRedirect } from "@/lib/auth/server/route";
 import { encodeWorkspaceSegment } from "@/lib/services/workspace/path-utils";
 
 export default async function WorkspaceHomeRedirect({
@@ -7,12 +7,10 @@ export default async function WorkspaceHomeRedirect({
 }: {
   params: Promise<{ path?: string[] }>;
 }) {
-  const [{ userId }, { path = [] }] = await Promise.all([getSession(), params]);
-  if (userId) {
-    const encodedPath = path.map(encodeWorkspaceSegment).join("/");
-    const pathPart = encodedPath ? `/${encodedPath}` : "";
-    redirect(`/workspace/${encodeWorkspaceSegment(userId)}/home${pathPart}`);
-  }
-
-  return null;
+  const { path = [] } = await params;
+  const encodedPath = path.map(encodeWorkspaceSegment).join("/");
+  const pathPart = encodedPath ? `/${encodedPath}` : "";
+  const requestedPath = `/workspace/home${pathPart}`;
+  const { userId } = await requireAuthSessionOrRedirect(requestedPath);
+  redirect(`/workspace/${encodeWorkspaceSegment(userId)}/home${pathPart}`);
 }

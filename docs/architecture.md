@@ -25,22 +25,24 @@ Route groups `(…)` are organizational and do NOT appear in the URL.
 - `/api/taxon-view/tab-policy` — tab-visibility policy for views (see `docs/taxon-view-tab-visibility.md`)
 - `/api/e2e-mock/[...path]` — loopback backend mock used only by the Playwright suite
 
-## Auth system (`src/lib/auth/`) — port/adapter architecture
+## Auth system (`src/lib/auth/`) — server-first identity
 
-- `port.ts` — `AuthPort` interface + `Result<T>` type (all auth ops return `Result`, not throws)
-- `adapters/` — `http.ts` (real backend), `memory.ts` (tests)
-- `store.ts` — client-side reactive `AuthStore` (`AuthStatus = "loading" | "authed" | "guest"`)
-- `provider.tsx` — `<AuthBoundary>` React provider + `useAuthStore()`
-- `hooks.ts` — `useAuth()`, `useSignIn()`, etc. (consumer-facing client hooks; MUST be used inside `<AuthBoundary>`)
-- `server/` — server-side handlers, envelopes, token, middleware, request-scope; backs the `/api/auth/*` routes
-- `routes.ts` — `isProtectedPagePath()` / `isProtectedApiPath()` — single source of truth for what is protected
-- `types.ts` — `AuthUser`, `UserProfile`, credential types
+- `client.ts` — concrete browser functions for retained `/api/auth/*` mutations and profile operations
+- `provider.tsx` — `<AuthBoundary user={user}>`, `useAuth()` derived identity, `useAuthActions()` mutations, and the minimal client route guard
+- `routes.ts` — protected page classification used by the proxy and client guard
+- `types.ts` — browser-safe `AuthUser`, upstream `UserProfile`, credentials, sessions, and `Result` types
+- `server/actions.ts` — named auth operations such as `signIn`, `signOut`, `startImpersonation`, and cached `getCurrentUser`
+- `server/session.ts` — sole owner of HttpOnly session and SU backup cookie reads/writes
+- `server/cookies.ts` — Edge-safe cookie names and optimistic cookie-presence check
+- `server/route.ts` — authenticated route wrapping and direct session reads for routes and Server Components
+- `server/adapters/bvbrc-identity.ts` — named BV-BRC identity protocol calls
 
 Notes:
 
-- Built on the `better-auth` dependency. Consume client auth state via `useAuth()` from `hooks.ts`. There is NO `bvbrcAuth` client object and NO `src/contexts/auth-context.tsx` — do not reference them.
-- `src/proxy.ts` middleware delegates to `isProtectedPagePath`/`isProtectedApiPath` (currently `/services/*`, `/workspace/*`, `/api/protected/*`). Checks are optimistic cookie-existence only; real validation is server-side. To change what's protected, edit `routes.ts`, not `proxy.ts`.
-- `/api/auth/*` wire contract (envelope shapes, rules, endpoint table): see `docs/auth-api.md`. Every new auth route MUST use the `{error, code, details?}` envelope.
+- This is custom BV-BRC authentication, not Better Auth. Server rendering validates cookies through `getCurrentUser()` and passes the browser-safe user into `<AuthBoundary>`; the browser does not fetch a session on mount and never receives the BV-BRC token.
+- `src/proxy.ts` delegates page classification to `isProtectedPagePath()`. It optimistically checks cookie presence; Server Components and protected API handlers perform authoritative validation.
+- The active session cookies are `bvbrc_token`, `bvbrc_user_id`, and optional `bvbrc_realm`, all HttpOnly, SameSite Strict, path `/`, and Secure in production. Explicit sign-out is a redirecting Server Action, not an `/api/auth/sign-out` route.
+- `/api/auth/*` wire contracts are documented in `docs/auth-api.md`. Every auth failure uses `{error, code}`.
 
 ## Backend communication
 
@@ -79,7 +81,7 @@ Notes:
 
 - `useRerunForm<T>()` reads job params from `sessionStorage` (keyed by `?rerun_key=`) and returns `{ rerunData }`
 - Pre-fill is auto-applied via the hook's declarative options (`fields`, `libraries`, `syncLibraries`, `onApply`); the hook self-manages one-shot application internally
-- The sessionStorage entry is intentionally NOT consumed on read — `<AuthBoundary>`'s Suspense fallback can mount the form twice during hydration, so a consume-on-read would null out the second mount
+- The sessionStorage entry is intentionally NOT consumed on read because React rendering may remount the form; consume-on-read could null out a subsequent mount
 - Library reconstruction helpers in `src/lib/rerun-utility.ts`:
   - `buildPairedLibraries(rerunData, getExtra?)` — paired-end libs from `paired_end_libs`
   - `buildSingleLibraries(rerunData, getExtra?)` — single-end libs from `single_end_libs`
@@ -90,7 +92,7 @@ Notes:
 
 - TanStack Query for all async state (client-side)
 - Custom hooks in `src/hooks/services/workspace/` wrap workspace API calls
-- `useAuthenticatedFetch` wraps fetch with cookie credentials and 401 refresh logic
+- `src/lib/api/client.ts` uses credentialed fetch; only the app-specific `session_expired` code triggers one hard reload, while ordinary upstream 401 responses remain API errors
 
 ## UI
 

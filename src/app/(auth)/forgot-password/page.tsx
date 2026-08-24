@@ -2,9 +2,8 @@
 
 import { z } from "zod";
 import { useForm } from "@tanstack/react-form";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { Input } from "@/components/ui/input";
@@ -19,8 +18,7 @@ import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Mail, ArrowLeft } from "lucide-react";
-import { useAuth } from "@/lib/auth/hooks";
-import { authAccount } from "@/lib/auth/advanced";
+import { useAuthActions } from "@/lib/auth/provider";
 import { RequiredFormLabel } from "@/components/forms/required-form-components";
 
 const formSchema = z.object({
@@ -32,14 +30,8 @@ const formSchema = z.object({
 export default function ForgotPasswordPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const { isAuthenticated, status } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const isLoading = status === "loading" || isSubmitting;
-  const router = useRouter();
-
-  useEffect(() => {
-    if (isAuthenticated) router.push("/");
-  }, [isAuthenticated, router]);
+  const { requestPasswordReset } = useAuthActions();
 
   const form = useForm({
     defaultValues: {
@@ -49,16 +41,18 @@ export default function ForgotPasswordPage() {
     onSubmit: async ({ value }) => {
       setError("");
       setIsSubmitting(true);
-      const { error: resetError } = await authAccount
-        .requestPasswordReset(value.usernameOrEmail)
+      await requestPasswordReset(value.usernameOrEmail)
+        .then(
+          () => {
+            setSuccess(true);
+          },
+          () => {
+            setError("An unexpected error occurred. Please try again.");
+          },
+        )
         .finally(() => {
           setIsSubmitting(false);
         });
-      if (resetError) {
-        setError("An unexpected error occurred. Please try again.");
-        return;
-      }
-      setSuccess(true);
     },
   });
 
@@ -151,9 +145,9 @@ export default function ForgotPasswordPage() {
             <Button
               type="submit"
               className="w-full text-muted-foreground transition-colors duration-200 hover:text-foreground"
-              disabled={isLoading}
+              disabled={isSubmitting}
             >
-              {isLoading ? (
+              {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 size-4 animate-spin" />
                   Sending...

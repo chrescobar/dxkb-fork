@@ -1,7 +1,10 @@
-import { authAdmin } from "@/lib/auth/server/instance";
+import { sendVerificationEmail } from "@/lib/auth/server/actions";
 import { respondWithAck } from "@/lib/auth/server/respond";
 import { withErrorHandling } from "@/lib/auth/server/errors";
 
 export const POST = withErrorHandling(async () => {
-  return respondWithAck(await authAdmin.sendVerificationEmail());
+  const result = await sendVerificationEmail();
+  return respondWithAck(result, {
+    sessionExpired: result.error?.code === "unauthorized",
+  });
 });

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { X } from "lucide-react";
@@ -17,7 +16,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { WorkspaceObjectSelector } from "@/components/workspace/workspace-object-selector";
 
-import { apiFetch } from "@/lib/auth/fetch";
+import { useAuthActions } from "@/lib/auth/provider";
 import type { UserProfile } from "@/lib/auth/types";
 
 interface PreferencesFormProps {
@@ -25,7 +24,7 @@ interface PreferencesFormProps {
 }
 
 export function PreferencesForm({ profile }: PreferencesFormProps) {
-  const queryClient = useQueryClient();
+  const { updateProfile } = useAuthActions();
   const [defaultJobFolder, setDefaultJobFolder] = useState(
     profile.settings?.default_job_folder ?? "",
   );
@@ -40,30 +39,15 @@ export function PreferencesForm({ profile }: PreferencesFormProps) {
 
     setIsSubmitting(true);
     const hasExistingSettings = profile.settings !== undefined;
-    await apiFetch("/api/auth/profile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify([
-        {
-          op: hasExistingSettings ? "replace" : "add",
-          path: "/settings",
-          value: { default_job_folder: defaultJobFolder },
-        },
-      ]),
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          const err = (await response.json()) as {
-            error?: string;
-            message?: string;
-          };
-          toast.error(
-            err.error ?? err.message ?? "Failed to update preferences.",
-          );
-          return;
-        }
+    await updateProfile([
+      {
+        op: hasExistingSettings ? "replace" : "add",
+        path: "/settings",
+        value: { default_job_folder: defaultJobFolder },
+      },
+    ])
+      .then(() => {
         toast.success("Preferences updated successfully.");
-        await queryClient.invalidateQueries({ queryKey: ["user-profile"] });
       })
       .catch(() => {
         toast.error("Failed to update preferences.");

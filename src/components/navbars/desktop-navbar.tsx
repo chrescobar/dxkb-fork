@@ -20,9 +20,8 @@ import {
 } from "@/components/ui/navigation-menu";
 import { SearchBar } from "@/components/search/search-bar";
 import { buttonVariants } from "@/components/ui/button-variants";
-import { Skeleton } from "@/components/ui/skeleton";
 import Logo from "@/components/ui/logo";
-import { useAuth } from "@/lib/auth/hooks";
+import { useAuth } from "@/lib/auth/provider";
 import { UserAvatarDropdown } from "@/components/navbars/user-avatar-dropdown";
 import { WorkspaceDropdownContent } from "@/components/navbars/workspace-dropdown-content";
 import { workspaceUsername } from "@/lib/services/workspace/path-utils";
@@ -40,8 +39,7 @@ const serviceColumns = [
 ];
 
 const DesktopNavbar = () => {
-  const { isAuthenticated, user, status } = useAuth();
-  const isLoading = status === "loading";
+  const { isAuthenticated, user } = useAuth();
   const wsUsername = workspaceUsername(user);
 
   const pathname = usePathname();
@@ -176,14 +174,7 @@ const DesktopNavbar = () => {
         <div className="flex items-center space-x-2">
           <NavbarThemeSwitcher />
           <div className="flex items-center space-x-2">
-            {isLoading && (
-              <div className="flex items-center space-x-2">
-                <Skeleton className="h-8 w-16 bg-white/20" />
-                <Skeleton className="h-8 w-20 bg-white/20" />
-              </div>
-            )}
-
-            {!isLoading && !isAuthenticated && (
+            {!isAuthenticated && (
               <>
                 <Link
                   href="/sign-in"
@@ -209,7 +200,7 @@ const DesktopNavbar = () => {
               </>
             )}
 
-            {!isLoading && isAuthenticated && (
+            {isAuthenticated && (
               <>
                 <JobStatusPill />
                 <UserAvatarDropdown />

@@ -20,10 +20,14 @@ HTTP status is canonical. `code` is a machine-readable category. This matches th
 
 Auth routes have two success envelope families:
 
-| Family | Success body | Routes |
-|---|---|---|
-| **Session** | `{user, session}` | sign-in, sign-up, get-session, su-login, su-exit |
-| **Ack** | `{success: true}` | sign-out, forget-password, send-verification-email, verify-email-token, change-password, profile (POST) |
+| Family               | Success body      | Routes                                                                                        |
+| -------------------- | ----------------- | --------------------------------------------------------------------------------------------- |
+| **Session mutation** | `{user, session}` | sign-in, sign-up, su-login, su-exit                                                           |
+| **Ack**              | `{success: true}` | forget-password, send-verification-email, verify-email-token, change-password, profile (POST) |
+
+Session mutation responses redact the token as `session.token: ""` and expose the exact cookie expiry as the ISO `session.expiresAt` field. Browser `AuthUser` objects never contain a token.
+
+Current identity is not an HTTP endpoint. Server Components call `getCurrentUser()` from `src/lib/auth/server/actions.ts`; protected route handlers use `withAuth()` or `readAuthSession()` from `src/lib/auth/server/route.ts`. Sign-out submits to the redirecting `signOutAndRedirect` Server Action, which clears cookies before redirecting.
 
 Two routes are documented exceptions (see [Exceptions](#exceptions) below).
 
@@ -33,59 +37,58 @@ Two routes are documented exceptions (see [Exceptions](#exceptions) below).
 
 All status mapping flows through `statusFor()` in `src/lib/auth/server/errors.ts`:
 
-| Error code | HTTP status |
-|---|---|
-| `invalid_credentials`, `unauthorized` | 401 |
-| `forbidden` | 403 |
-| `not_found` | 404 |
-| `conflict` | 409 |
-| `validation` | 400 |
-| `service_unavailable` | 503 |
-| `network` | **502** (not 503) |
-| anything else | 500 |
+| Error code                            | HTTP status       |
+| ------------------------------------- | ----------------- |
+| `invalid_credentials`, `unauthorized` | 401               |
+| `forbidden`                           | 403               |
+| `not_found`                           | 404               |
+| `conflict`                            | 409               |
+| `rate_limited`                        | 429               |
+| `validation`                          | 400               |
+| `service_unavailable`                 | 503               |
+| `network`                             | **502** (not 503) |
+| anything else                         | 500               |
 
 `code` in the error body is derived from the HTTP status via `statusToErrorCode()` in `src/lib/api/types.ts`:
 
-| HTTP status | `code` |
-|---|---|
-| 401 | `unauthenticated` |
-| 403 | `forbidden` |
-| 404 | `not_found` |
-| 4xx | `validation` |
-| 5xx | `upstream` |
+| HTTP status | `code`            |
+| ----------- | ----------------- |
+| 401         | `unauthenticated` |
+| 403         | `forbidden`       |
+| 404         | `not_found`       |
+| 4xx         | `validation`      |
+| 5xx         | `upstream`        |
 
 ---
 
 ## Endpoint table
 
-| Method | Path | Envelope | Request body | Success body | Auth required |
-|---|---|---|---|---|---|
-| POST | `/api/auth/sign-in/email` | Session | `{username, password}` | `{user, session}` | No |
-| POST | `/api/auth/sign-up/email` | Session | `SignupCredentials` | `{user, session}` | No |
-| GET | `/api/auth/get-session` | Session | — | `{user, session}` | No |
-| POST | `/api/auth/sign-out` | Ack | — | `{success: true}` | No |
-| POST | `/api/auth/forget-password` | Ack | `{usernameOrEmail}` or `{email}` | `{success: true}` | No |
-| POST | `/api/auth/send-verification-email` | Ack | — | `{success: true}` | Yes (cookie) |
-| GET | `/api/auth/verify-email-token` | Ack | `?token=&username=` | `{success: true}` | No |
-| POST | `/api/auth/change-password` | Ack | `{currentPassword, newPassword}` | `{success: true}` | Yes (cookie) |
-| GET | `/api/auth/profile` | Passthrough | — | upstream profile JSON | Yes (cookie) |
-| POST | `/api/auth/profile` | Ack | JSON Patch array | `{success: true}` | Yes (cookie) |
-| POST | `/api/auth/su-login` | Session | `{targetUser, password}` | `{user, session}` | Yes (cookie) |
-| POST | `/api/auth/su-exit` | Session | — | `{user, session}` | Yes (cookie) |
-| POST | `/api/auth/ensure-workspace` | Exception | — | `{success: true, created, failures}` | Yes (cookie) |
+| Method | Path                                | Envelope    | Request body                     | Success body                         | Auth required |
+| ------ | ----------------------------------- | ----------- | -------------------------------- | ------------------------------------ | ------------- |
+| POST   | `/api/auth/sign-in/email`           | Session     | `{username, password}`           | `{user, session}`                    | No            |
+| POST   | `/api/auth/sign-up/email`           | Session     | `SignupCredentials`              | `{user, session}`                    | No            |
+| POST   | `/api/auth/forget-password`         | Ack         | `{usernameOrEmail}`              | `{success: true}`                    | No            |
+| POST   | `/api/auth/send-verification-email` | Ack         | —                                | `{success: true}`                    | Yes (cookie)  |
+| GET    | `/api/auth/verify-email-token`      | Ack         | `?token=&username=`              | `{success: true}`                    | No            |
+| POST   | `/api/auth/change-password`         | Ack         | `{currentPassword, newPassword}` | `{success: true}`                    | Yes (cookie)  |
+| GET    | `/api/auth/profile`                 | Passthrough | —                                | upstream profile JSON                | Yes (cookie)  |
+| POST   | `/api/auth/profile`                 | Ack         | JSON Patch array                 | `{success: true}`                    | Yes (cookie)  |
+| POST   | `/api/auth/su-login`                | Session     | `{targetUser, password}`         | `{user, session}`                    | Yes (cookie)  |
+| POST   | `/api/auth/su-exit`                 | Session     | —                                | `{user, session}`                    | Yes (cookie)  |
+| POST   | `/api/auth/ensure-workspace`        | Exception   | —                                | `{success: true, created, failures}` | Yes (cookie)  |
 
 ---
 
 ## Nine rules
 
-1. **Every auth route returns a `Result<T>` from `authAdmin` or an upstream-proxied response, never a hand-built envelope.**
-   New behavior belongs as a method on `authAdmin`. The route file is 1–5 lines of dispatch.
+1. **Every auth route calls a named operation from `src/lib/auth/server/actions.ts` or explicitly proxies an upstream response.**
+   Orchestration belongs in the named server action, while route files stay thin and searchable.
 
-2. **The two envelope helpers are the only path to a response.**
-   `respondWithSession` for routes that return a user. `respondWithAck` for routes that return no payload. Adding a third requires updating this document.
+2. **The three envelope helpers are the only path to a response.**
+   `respondWithSessionMutation` adapts session-changing action results, `respondWithSession` returns a user or empty session, and `respondWithAck` returns no payload. Adding another helper requires updating this document.
 
-3. **All validation lives in `authAdmin`, not the route.**
-   The service layer already returns `{error: {code: "validation", ...}}` for bad inputs. Routes do not re-check, re-message, or re-map. Body parsing uses `await request.json().catch(() => ({}))` so malformed JSON flows to `authAdmin` as an empty object and gets a clean 400 validation response.
+3. **Validation lives in the named server action, not the route.**
+   Actions return a typed `Result` for invalid input. Routes use the shared JSON parser and do not re-check, re-message, or re-map action errors.
 
 4. **All status-code mapping flows through `statusFor()`.**
    Routes do not map error codes to status codes themselves. New error codes go in `AuthErrorCode` + `statusFor()`.
@@ -97,15 +100,15 @@ All status mapping flows through `statusFor()` in `src/lib/auth/server/errors.ts
    HTTP status carries success/failure. The browser caller branches on `response.ok`.
 
 7. **No route catches an error and re-throws it as a different error.**
-   Either let the throw propagate (the wrapper formats it) or convert to a `Result.error` at the `authAdmin` layer.
+   Either let the throw propagate (the wrapper formats it) or convert it to a `Result.error` in the named server action.
 
 8. **Tests assert on `response.status` and the typed body shape, not on string contents of success messages.**
 
 9. **Adding a new auth endpoint follows this checklist:**
-   - Add a method to `authAdmin` (and `AuthAdmin` interface, and both adapters).
-   - Add the route file: 1–5 lines, dispatches to the helper.
-   - Add unit tests for the `authAdmin` method and a thin route test.
-   - If browser-callable, add to `AuthPort` and both adapters.
+   - Add a named operation to `src/lib/auth/server/actions.ts` and, when needed, a named BV-BRC protocol function in `server/adapters/bvbrc-identity.ts`.
+   - Add the route file: parse input, call the named operation, and use the shared response helper.
+   - Add focused action/protocol tests and a thin route test.
+   - If browser-callable, add a concrete function to `src/lib/auth/client.ts` and expose it through `useAuthActions()` when UI consumers need it.
    - Update this document's endpoint table.
 
 ---
@@ -115,7 +118,7 @@ All status mapping flows through `statusFor()` in `src/lib/auth/server/errors.ts
 Two routes don't fit the ack/session pattern cleanly, but both share the `{error, code}` error envelope:
 
 - **`GET /api/auth/profile`** — Returns upstream profile JSON unchanged on success (not `{success: true}`). Useful because callers need the profile fields directly.
-- **`POST /api/auth/ensure-workspace`** — Returns `{success: true, created, failures}` because the caller needs the failure list for logging. Uses `auth.route()` and lets the outer catch handle errors via `errorResponse`.
+- **`POST /api/auth/ensure-workspace`** — Returns `{success: true, created, failures}` because the caller needs the failure list for logging. Uses `withAuth()` and lets the wrapper handle errors via `errorResponse`.
 
 New exceptions require adding a row to this section.
 
@@ -124,23 +127,20 @@ New exceptions require adding a row to this section.
 ## Adding a new endpoint
 
 ```ts
-// 1. Add method to authAdmin in src/lib/auth/server/admin.ts
-async function myAction(arg: string): Promise<Result<void>> {
-  // validation...
-  const result = await identity.myAction(arg);
-  if (result.error) return forwardError(result.error);
-  return ok(undefined);
+// src/lib/auth/server/actions.ts
+export async function myAction(arg: string): Promise<Result<void>> {
+  if (!arg) return fail("validation", "arg is required", 400);
+  return runIdentityOperation(arg);
 }
 
-// 2. Add the route file (1-5 lines)
-import { NextRequest } from "next/server";
-import { authAdmin } from "@/lib/auth/server/instance";
+// src/app/api/auth/my-action/route.ts
+import { myAction } from "@/lib/auth/server/actions";
 import { respondWithAck } from "@/lib/auth/server/respond";
-import { withErrorHandling } from "@/lib/auth/server/errors";
+import { parseJsonBody, withErrorHandling } from "@/lib/auth/server/errors";
 
 export const POST = withErrorHandling(async (request: NextRequest) => {
-  const body = await request.json().catch(() => ({}));
-  return respondWithAck(await authAdmin.myAction(body.arg ?? ""));
+  const body = await parseJsonBody<{ arg?: string }>(request);
+  return respondWithAck(await myAction(body.arg ?? ""));
 });
 ```
 

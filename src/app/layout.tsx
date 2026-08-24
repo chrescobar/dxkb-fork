@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 import { Providers } from "./providers";
 import { AuthBoundary } from "@/lib/auth/provider";
-import { auth } from "@/lib/auth/server/instance";
+import { getCurrentUser } from "@/lib/auth/server/actions";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CommandPalette } from "@/components/search/command-palette";
 
@@ -32,7 +32,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const initialUser = await auth.currentUser();
+  const initialUser = await getCurrentUser();
 
   return (
     <html
@@ -43,7 +43,7 @@ export default async function RootLayout({
       <body className="min-h-screen">
         <Providers>
           <ThemeProvider>
-            <AuthBoundary initialUser={initialUser}>
+            <AuthBoundary user={initialUser}>
               <TooltipProvider>
                 {children}
                 {/* Dev-only debug loader: safe to include in dev; no runtime UI */}

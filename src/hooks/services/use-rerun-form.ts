@@ -8,7 +8,7 @@ import {
   buildSingleLibraries,
   buildSraLibraries,
 } from "@/lib/rerun-utility";
-import { apiFetch } from "@/lib/auth/fetch";
+import { getProfile } from "@/lib/auth/client";
 import type { UserProfile } from "@/lib/auth/types";
 import type {
   ServiceFormApi,
@@ -106,9 +106,7 @@ export function useRerunForm<
   const { data: profile } = useQuery<UserProfile>({
     queryKey: ["user-profile"],
     queryFn: async () => {
-      const res = await apiFetch("/api/auth/profile");
-      if (!res.ok) throw new Error("Failed to load profile");
-      return res.json() as Promise<UserProfile>;
+      return getProfile();
     },
     staleTime: 5 * 60 * 1000,
     enabled: defaultOutputPath !== null && !rerunData,

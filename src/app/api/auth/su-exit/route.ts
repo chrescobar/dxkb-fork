@@ -1,6 +1,7 @@
-import { authAdmin } from "@/lib/auth/server/instance";
-import { respondWithSession } from "@/lib/auth/server/respond";
+import { exitImpersonation } from "@/lib/auth/server/actions";
+import { respondWithSessionMutation } from "@/lib/auth/server/respond";
+import { withErrorHandling } from "@/lib/auth/server/errors";
 
-export async function POST() {
-  return respondWithSession(await authAdmin.exitImpersonation());
-}
+export const POST = withErrorHandling(async () => {
+  return respondWithSessionMutation(await exitImpersonation());
+});

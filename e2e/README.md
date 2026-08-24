@@ -27,7 +27,7 @@ e2e/
     signed-in.setup.ts          # Seeds mocked auth cookies → e2e/.auth/user.json
     public.setup.ts             # Empty storageState for public specs
   mocks/
-    backends.ts                 # applyBackendMocks(page, { har, overrides })
+    backends.ts                 # applyBackendMocks(page, { overrides })
   pages/                        # Page-object helpers (SignInPage, …) — import from "../pages"
   fixtures/
     hars/                       # Recorded HAR files (committed)
@@ -49,21 +49,20 @@ e2e/
 
 ## Mocking strategy
 
-All `/api/**` and outbound HTTPS to `*.patricbrc.org`, `*.bv-brc.org`, `*.theseed.org`, `*.ncbi.nlm.nih.gov` are mocked. Three layers (registered into the Playwright routing stack in this order so LIFO precedence gives overrides the first shot):
+All `/api/**` and outbound HTTPS to `*.patricbrc.org`, `*.bv-brc.org`, `*.theseed.org`, `*.ncbi.nlm.nih.gov` are mocked. Two layers are registered into the Playwright routing stack so LIFO precedence gives overrides the first shot:
 
-1. **JSON overrides** (`e2e/fixtures/overrides/*`) — hand-written responses. Highest precedence.
-2. **HAR replay** (`page.routeFromHAR`) — recorded traffic. Runs after overrides via `notFound: "fallback"`.
-3. **Strict guard** — any backend request not matched by the above is aborted with `route.abort("failed")` and logged as `[applyBackendMocks/strict]` to the test output.
+1. **JSON overrides** (`e2e/fixtures/overrides/*`) — hand-written responses plus body-aware overrides generated from recorded HARs. Highest precedence.
+2. **Strict guard** — any backend request not matched by an override is aborted with `route.abort("failed")` and logged as `[applyBackendMocks/strict]` to the test output.
 
 Non-backend requests (Next.js assets, fonts, CDN) always pass through regardless of strict mode.
 
-Call `applyBackendMocks(page, { overrides, har? })` in a `beforeEach`. **Strict is the default.** If you genuinely need to let real backend calls through for an exploratory test, pass `strict: false`.
+Call `applyBackendMocks(page, { overrides })` in a `beforeEach`. **Strict is the default.** If you genuinely need to let real backend calls through for an exploratory test, pass `strict: false`.
 
 The permissive catch-all `permissiveBackendOverrides` (from `e2e/fixtures/overrides`) covers `/api/auth/`, `/api/services/`, `/api/workspace/`, and the four backend hosts with generic 200 responses — use it as the last spread in your override list for the "I just want the page to render" case, after specific fixtures.
 
 ### Server-side backends: loopback isolation
 
-`page.route()` only intercepts *browser* requests. Server components and API route handlers make their own outbound fetches to `APP_SERVICE_URL`, `WORKSPACE_API_URL`, `USER_URL`, etc. before the page is streamed, and those fetches bypass Playwright entirely — previously they failed with "JSON-RPC call failed: HTTP error! status: 500" and flooded the webServer log on every render.
+`page.route()` only intercepts _browser_ requests. Server components and API route handlers make their own outbound fetches to `APP_SERVICE_URL`, `WORKSPACE_API_URL`, `USER_URL`, etc. before the page is streamed, and those fetches bypass Playwright entirely — previously they failed with "JSON-RPC call failed: HTTP error! status: 500" and flooded the webServer log on every render.
 
 To fix this the test server runs through a wrapper that seeds the right env vars before Next starts:
 
@@ -83,7 +82,7 @@ If you add a new server-side backend dependency, add its env var to `.env.e2e.te
 import { SignInPage } from "../pages";
 
 const signIn = new SignInPage(page);
-await signIn.goto("/workspace");          // goto with optional redirect=
+await signIn.goto("/workspace"); // goto with optional redirect=
 await signIn.fill(username, password);
 await signIn.submit();
 await signIn.expectInlineError(/invalid/i);
@@ -93,7 +92,7 @@ Add a new page object when a spec starts repeating the same selector tuple twice
 
 ## Recording a HAR
 
-`pnpm e2e:record <journey>` captures real backend traffic into `e2e/fixtures/hars/<journey>.har`. Specs replay the HAR via `applyBackendMocks(page, { har, overrides })` so they assert against the real BV-BRC response shape rather than hand-maintained mocks. Two recording modes:
+`pnpm e2e:record <journey>` captures real backend traffic into `e2e/fixtures/hars/<journey>.har`. Specs convert recorded entries into body-aware JSON overrides with `harOverridesFor()` so they assert against the real BV-BRC response shape rather than hand-maintained mocks. Two recording modes:
 
 **Scripted (preferred — used by the bi-weekly refresh workflow):** drop a driver at `e2e/scripts/journeys/<name>.ts` exporting `drive(page, env)` (see `e2e/scripts/journeys/README.md`). The recorder runs it headless against `E2E_RECORD_BASE_URL` (default `http://127.0.0.1:3010`, the production build). Use this when you want determinism — the same driver records the same flow every time, which is what makes the cron'd refresh meaningful.
 
@@ -102,26 +101,12 @@ Add a new page object when a spec starts repeating the same selector tuple twice
 Steps:
 
 1. `cp .env.e2e.example .env.e2e` and fill in valid BV-BRC creds (gitignored — never commit).
-2. `pnpm build && pnpm start` — recording requires the production build because `pnpm dev` (Turbopack) injects HMR plumbing that blocks React hydration in headless Chromium, leaving the auth boundary stuck in `loading`.
-3. `pnpm e2e:record auth-sign-in` (or your journey name).
-4. The recorder filters non-backend traffic (skips `_next/static`, fonts, images), scrubs the live username/password/email out of all bodies, and rewrites the recorded host to `http://e2e-har-replay.local`. `applyBackendMocks` swaps that placeholder back to the active app host at replay time, so HARs are port-portable across `E2E_PORT` values.
+2. `pnpm build && pnpm start` — recording uses the production build to avoid development-only HMR traffic and keep HAR output deterministic.
+3. `pnpm e2e:record workspace-browse` (or your journey name).
+4. The recorder filters non-backend traffic (skips `_next/static`, fonts, images), scrubs the live username/password/email out of all bodies, and rewrites the recorded host to `http://e2e-har-replay.local`. `harOverridesFor()` matches recorded paths rather than origins, so HARs remain portable across `E2E_PORT` values.
 5. Commit the resulting `.har`. Re-record when the API contract drifts; the bi-weekly cron does this automatically (see below).
 
 ### Wiring a HAR into a spec
-
-Two integration modes — pick the one that matches what the spec is asserting.
-
-**Auth-shape contract test (`{ har }` option).** Routes the entire recorded HAR through `page.routeFromHAR`. Matching is strict: URL + HTTP method, plus an exact POST-payload comparison for POSTs, with header similarity as the tiebreaker when multiple entries match the same key. Use this when the spec drives the recorded auth flow itself and just asserts the sign-in response shape (drift canary against contract changes) — strict-body matching is fine here because the spec replays the same payload bytes the recorder captured. `auth.spec.ts` is the canonical example.
-
-```ts
-await applyBackendMocks(page, {
-  har: "auth-sign-in.har",
-  // Skip `permissiveBackendOverrides` for routes the HAR covers — overrides
-  // run before HAR replay (LIFO route registration), so a permissive override
-  // would intercept and return `{}` before the HAR served the recorded body.
-  overrides: [],
-});
-```
 
 **Body-aware journey replay (`harOverridesFor` helper).** Reads the HAR file and emits one `JsonOverride` per `(path, method, JSON-RPC method)` tuple, with `matchBody` fanning the JSON-RPC entry point out by request `method` field. Sequential entries that share a tuple replay in HAR order via the override's `callIndex` body function — so a `Workspace.ls` recorded twice (pre- and post-upload) replays correctly. Use this when the spec drives a signed-in journey (workspace listing, file viewer, jobs page, service form) and asserts on UI rendered from the recorded post-auth payloads.
 
@@ -130,10 +115,9 @@ import { harOverridesFor } from "../scripts/har-overrides";
 
 await applyBackendMocks(page, {
   overrides: [
-    // Layered first so the AuthBoundary's hydration refresh sees a signed-in
-    // user. Without this, the HAR's pre-sign-in `/api/auth/get-session` entry
-    // (recorded before sign-in fired) would return `{user:null}` and the
-    // ProtectedRouteGuard would redirect to /sign-in.
+    // Endpoint-specific profile and mutation responses used by this journey.
+    // Signed-in identity itself comes from the production-named cookies and
+    // server-side profile validation.
     ...authSessionOverrides,
     ...harOverridesFor("workspace-browse.har"),
     // Mops up anything the HAR didn't capture (future code paths) so strict
@@ -149,7 +133,7 @@ await applyBackendMocks(page, {
 await page.goto(`/workspace/${encodeURIComponent("e2e-test-user@bvbrc")}/home`);
 ```
 
-`harOverridesFor` matches on `pathname + search`, so the host-placeholder rewrite (`http://e2e-har-replay.local`) is irrelevant — the override matcher does a substring `includes` check against the live request URL. Status and response headers are taken from the first entry of each group; if a journey needs status drift across same-key calls, layer hand-rolled overrides on top.
+`harOverridesFor` matches on `pathname + search`, so the host-placeholder rewrite (`http://e2e-har-replay.local`) is irrelevant; the override matcher does a substring `includes` check against the live request URL. Status and response headers are taken from the first entry of each group; if a journey needs status drift across same-key calls, layer hand-rolled overrides on top.
 
 ### Bi-weekly refresh
 
@@ -157,7 +141,7 @@ await page.goto(`/workspace/${encodeURIComponent("e2e-test-user@bvbrc")}/home`);
 
 The workflow has two matrix groups:
 
-- **read-only** (cron + manual dispatch): `auth-sign-in`, `workspace-browse`, `workspace-viewer`, `jobs-lifecycle`, `service-submit`. Nothing writes to the test account.
+- **read-only** (cron + manual dispatch): `workspace-browse`, `workspace-viewer`, `jobs-lifecycle`, `service-submit`. Nothing writes to the test account.
 - **write** (manual dispatch with `include_write: true` only): `workspace-upload`. Each refresh creates a new file under `home/.e2e-records/` on the test account, so we keep this off the cron.
 
 Each group opens its own PR (`chore/e2e-har-refresh-read-only` / `chore/e2e-har-refresh-write`). Some journeys depend on seeded fixtures on the test account — see [`e2e/scripts/journeys/README.md`](./scripts/journeys/README.md) for the catalogue and seeding requirements.

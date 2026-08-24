@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parse } from "csv-parse/sync";
-import { auth } from "@/lib/auth/server/instance";
+import { withAuth } from "@/lib/auth/server/route";
 
 /**
  * Base URL for PATRIC/BV-BRC genome API (e.g. https://patricbrc.org/api or BV-BRC equivalent).
@@ -40,7 +40,7 @@ function escapeSolrTerm(value: string): string {
   return value.replace(/([+\-!(){}[\]^"~*?:\\/]|&&|\|\|)/g, "\\$1");
 }
 
-export const POST = auth.route(async (request: NextRequest, { token }) => {
+export const POST = withAuth(async (request: NextRequest, { token }) => {
   try {
     const body = (await request.json().catch(() => ({}))) as {
       genome_ids?: unknown;

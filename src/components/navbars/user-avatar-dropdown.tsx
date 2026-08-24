@@ -15,10 +15,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SignoutButton } from "@/components/auth/signout-button";
 import { SuLoginDialog } from "@/components/auth/su-login-dialog";
-import { useAuth } from "@/lib/auth/hooks";
-import { authAdmin, authAccount } from "@/lib/auth/advanced";
-import { toast } from "sonner";
-import { encodeWorkspaceSegment, workspaceUsername } from "@/lib/services/workspace/path-utils";
+import {
+  useAuth,
+  useExitImpersonation,
+  useResendVerificationEmail,
+} from "@/lib/auth/provider";
+import {
+  encodeWorkspaceSegment,
+  workspaceUsername,
+} from "@/lib/services/workspace/path-utils";
 
 import {
   NotebookPen,
@@ -32,15 +37,8 @@ import {
 
 export function UserAvatarDropdown() {
   const { user, isAdmin, isImpersonating } = useAuth();
-  const sendVerificationEmail = () => authAccount.sendVerificationEmail();
-  const suExit = async () => {
-    const { error } = await authAdmin.impersonate.exit();
-    if (error) {
-      toast.error("Failed to exit impersonation");
-      return;
-    }
-    toast.success("Returned to your account");
-  };
+  const exitImpersonation = useExitImpersonation();
+  const resendVerificationEmail = useResendVerificationEmail();
   const wsUsername = workspaceUsername(user);
   const [suDialogOpen, setSuDialogOpen] = useState(false);
 
@@ -75,7 +73,10 @@ export function UserAvatarDropdown() {
             >
               <DropdownMenuGroup>
                 <DropdownMenuLabel className="truncate text-sm text-foreground">
-                  Hello, <span className="font-semibold">{user?.username ?? "User"}</span>
+                  Hello,{" "}
+                  <span className="font-semibold">
+                    {user?.username ?? "User"}
+                  </span>
                   !
                 </DropdownMenuLabel>
               </DropdownMenuGroup>
@@ -100,10 +101,16 @@ export function UserAvatarDropdown() {
 
                 <DropdownMenuItem render={<Link href="/jobs" />}>
                   <BriefcaseBusiness className="size-4 text-foreground" />
-                  {isImpersonating ? `${user?.username ?? ""}'s Jobs` : "My Jobs"}
+                  {isImpersonating
+                    ? `${user?.username ?? ""}'s Jobs`
+                    : "My Jobs"}
                 </DropdownMenuItem>
 
-                <DropdownMenuItem onClick={() => { void sendVerificationEmail(); }}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    void resendVerificationEmail();
+                  }}
+                >
                   <span className="flex items-center gap-2">
                     <Mail className="size-4 text-foreground" />
                     Resend Verification Email
@@ -118,7 +125,11 @@ export function UserAvatarDropdown() {
                 {isAdmin && !isImpersonating && (
                   <>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => { setSuDialogOpen(true); }}>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setSuDialogOpen(true);
+                      }}
+                    >
                       <LogIn className="size-4 text-foreground" />
                       SU Login
                     </DropdownMenuItem>
@@ -128,7 +139,11 @@ export function UserAvatarDropdown() {
                 {isImpersonating && (
                   <>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => { void suExit(); }}>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        void exitImpersonation();
+                      }}
+                    >
                       <LogOut className="size-4 text-foreground" />
                       Exit SU
                     </DropdownMenuItem>

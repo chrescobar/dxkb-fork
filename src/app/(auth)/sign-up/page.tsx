@@ -3,8 +3,7 @@
 import { useState, Suspense } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth/hooks";
-import { authAccount } from "@/lib/auth/advanced";
+import { useAuthActions } from "@/lib/auth/provider";
 import {
   Card,
   CardContent,
@@ -15,34 +14,38 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { redirectAfterAuth } from "../redirect-action";
+import { safePostAuthDestination } from "@/lib/auth/redirect";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { SignupPasswordFields, SignupProfileFields } from "./sign-up-fields";
 import { useSignupForm } from "./use-signup-form";
 
 function SignupForm() {
   const [error, setError] = useState("");
-  const { status } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const isLoading = status === "loading" || isSubmitting;
+  const { signUp } = useAuthActions();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") || "/";
 
   const form = useSignupForm(async (value) => {
     setIsSubmitting(true);
-    const { error: signUpError } = await authAccount
-      .signUp(value)
+    setError("");
+    await signUp(value)
+      .then(() => {
+        toast.success("Account created successfully. Welcome to DXKB!", {
+          closeButton: true,
+        });
+        window.location.replace(safePostAuthDestination(redirectTo));
+      })
+      .catch((cause: unknown) => {
+        setError(
+          cause instanceof Error
+            ? cause.message
+            : "Sign up failed. Please try again.",
+        );
+      })
       .finally(() => {
         setIsSubmitting(false);
       });
-    if (signUpError) {
-      setError(signUpError.message || "Sign up failed. Please try again.");
-      return;
-    }
-    toast.success("Account created successfully. Welcome to DXKB!", {
-      closeButton: true,
-    });
-    await redirectAfterAuth(redirectTo);
   });
 
   return (
@@ -70,11 +73,11 @@ function SignupForm() {
               </Alert>
             )}
 
-            <SignupProfileFields form={form} disabled={isLoading} />
+            <SignupProfileFields form={form} disabled={isSubmitting} />
             <SignupPasswordFields form={form} />
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Creating account..." : "Create account"}
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "Creating account..." : "Create account"}
             </Button>
 
             <div className="text-center text-sm">

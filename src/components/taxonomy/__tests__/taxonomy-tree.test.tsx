@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { http, HttpResponse } from "msw";
 
 import { server } from "@/test-helpers/msw-server";
-import { createQueryClientWrapper } from "@/test-helpers/api-route-helpers";
+import { createQueryClientWrapper } from "@/test-helpers/react";
 import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 
 import { TaxonomyTree } from "../taxonomy-tree";

@@ -6,8 +6,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { SearchBar } from "@/components/search/search-bar";
 import ThemeContent from "@/components/ui/theme-content";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuth } from "@/lib/auth/hooks";
-import { authAccount } from "@/lib/auth/advanced";
+import { useAuth, useResendVerificationEmail } from "@/lib/auth/provider";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -15,27 +14,30 @@ import { Label } from "@/components/ui/label";
 
 const WelcomeSearch = () => {
   const { isAuthenticated, isVerified } = useAuth();
-  const sendVerificationEmail = () => authAccount.sendVerificationEmail();
+  const resendVerificationEmail = useResendVerificationEmail();
 
   return (
-    <section className="flex-grow">
+    <section className="grow">
       {/* Hero Section with Search */}
-      <div className="bg-gradient-to-b from-primary to-background py-16 md:py-8">
+      <div className="bg-linear-to-b from-primary to-background py-16 md:py-8">
         {isAuthenticated && !isVerified && (
           <div className="container mx-auto px-4">
             <Alert variant="destructive">
               <AlertTitle>Unverified Account Email</AlertTitle>
               <AlertDescription className="text-destructive">
                 <span>
-                  Please verify your email to continue using the platform. Click{' '}
+                  Please verify your email to continue using the platform. Click{" "}
                   <button
                     type="button"
-                    onClick={() => { void sendVerificationEmail(); }}
+                    onClick={() => {
+                      void resendVerificationEmail();
+                    }}
                     className="cursor-pointer border-0 bg-transparent p-0 text-inherit underline hover:text-foreground focus:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     style={{ font: "inherit" }}
                   >
                     here
-                  </button>{' '}to resend the verification email.
+                  </button>{" "}
+                  to resend the verification email.
                 </span>
               </AlertDescription>
             </Alert>

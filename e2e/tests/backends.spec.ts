@@ -33,21 +33,24 @@ async function inPageFetch(
   url: string,
   init?: SerializableRequestInit,
 ): Promise<FetchResult> {
-  return page.evaluate(async (args: { url: string; init?: SerializableRequestInit }) => {
-    try {
-      const res = await fetch(args.url, args.init);
-      const text = await res.text();
-      let body: unknown = text;
+  return page.evaluate(
+    async (args: { url: string; init?: SerializableRequestInit }) => {
       try {
-        body = JSON.parse(text);
-      } catch {
-        /* keep as text */
+        const res = await fetch(args.url, args.init);
+        const text = await res.text();
+        let body: unknown = text;
+        try {
+          body = JSON.parse(text);
+        } catch {
+          /* keep as text */
+        }
+        return { status: res.status, ok: res.ok, body };
+      } catch (error) {
+        return { status: 0, ok: false, body: (error as Error).message };
       }
-      return { status: res.status, ok: res.ok, body };
-    } catch (error) {
-      return { status: 0, ok: false, body: (error as Error).message };
-    }
-  }, { url, init });
+    },
+    { url, init },
+  );
 }
 
 test.describe("applyBackendMocks", () => {
@@ -57,9 +60,16 @@ test.describe("applyBackendMocks", () => {
     await page.goto("about:blank");
   });
 
-  test("override fulfills a matching internal API request", async ({ page, baseURL }) => {
+  test("override fulfills a matching internal API request", async ({
+    page,
+    baseURL,
+  }) => {
     const overrides: JsonOverride[] = [
-      { url: "/api/services/taxonomy", method: "GET", body: { fixture: "taxonomy" } },
+      {
+        url: "/api/services/taxonomy",
+        method: "GET",
+        body: { fixture: "taxonomy" },
+      },
     ];
     await applyBackendMocks(page, { overrides, strict: false });
     // Need a real origin for fetch — navigate to baseURL so fetch can hit /api paths.
@@ -71,42 +81,67 @@ test.describe("applyBackendMocks", () => {
 
   test("override matches by regex and method", async ({ page, baseURL }) => {
     const overrides: JsonOverride[] = [
-      { url: /\/api\/services\/genome\/.*/, method: "POST", body: { matched: "post" } },
-      { url: /\/api\/services\/genome\/.*/, method: "GET", body: { matched: "get" } },
+      {
+        url: /\/api\/services\/genome\/.*/,
+        method: "POST",
+        body: { matched: "post" },
+      },
+      {
+        url: /\/api\/services\/genome\/.*/,
+        method: "GET",
+        body: { matched: "get" },
+      },
     ];
     await applyBackendMocks(page, { overrides, strict: false });
     await page.goto(baseURL ?? "/");
 
-    const post = await inPageFetch(page, "/api/services/genome/search", { method: "POST" });
+    const post = await inPageFetch(page, "/api/services/genome/search", {
+      method: "POST",
+    });
     expect(post.body).toEqual({ matched: "post" });
 
-    const get = await inPageFetch(page, "/api/services/genome/search", { method: "GET" });
+    const get = await inPageFetch(page, "/api/services/genome/search", {
+      method: "GET",
+    });
     expect(get.body).toEqual({ matched: "get" });
   });
 
-  test("strict mode aborts an unmocked backend request and records it", async ({ page, baseURL }) => {
+  test("strict mode aborts an unmocked backend request and records it", async ({
+    page,
+    baseURL,
+  }) => {
     await applyBackendMocks(page, { overrides: [], strict: true });
     await page.goto(baseURL ?? "/");
     const result = await inPageFetch(page, "/api/services/unmocked-endpoint");
     // Strict mode calls route.abort("failed") which surfaces as a fetch network error in the page.
     expect(result.ok).toBe(false);
     expect(result.status).toBe(0);
-    // The guard also records the leak. We don't assert exact count because the app's hydration
-    // may fire its own /api calls (e.g. /api/auth/get-session) that strict also records.
+    // The guard also records the leak. Other independently rendered page APIs may be recorded.
     const leaks = getUnmockedBackendRequests(page);
-    expect(leaks.some((r) => r.includes("/api/services/unmocked-endpoint"))).toBe(true);
-    expect(() => { verifyNoUnmockedBackendRequests(page); }).toThrow(/unmocked backend request/);
+    expect(
+      leaks.some((r) => r.includes("/api/services/unmocked-endpoint")),
+    ).toBe(true);
+    expect(() => {
+      verifyNoUnmockedBackendRequests(page);
+    }).toThrow(/unmocked backend request/);
   });
 
-  test("verifyNoUnmockedBackendRequests is a no-op when nothing leaked", async ({ page }) => {
+  test("verifyNoUnmockedBackendRequests is a no-op when nothing leaked", async ({
+    page,
+  }) => {
     await applyBackendMocks(page, { overrides: [], strict: true });
     // Stay on about:blank — no browser requests means nothing for strict to record.
     // This exercises the empty-leak path in isolation from any app hydration fetches.
     expect(getUnmockedBackendRequests(page)).toEqual([]);
-    expect(() => { verifyNoUnmockedBackendRequests(page); }).not.toThrow();
+    expect(() => {
+      verifyNoUnmockedBackendRequests(page);
+    }).not.toThrow();
   });
 
-  test("strict mode lets non-backend navigation pass through", async ({ page, baseURL }) => {
+  test("strict mode lets non-backend navigation pass through", async ({
+    page,
+    baseURL,
+  }) => {
     await applyBackendMocks(page, { overrides: [], strict: true });
     const response = await page.goto(baseURL ?? "/");
     // The document response itself is served by Next, not a backend — goto must succeed even
@@ -116,22 +151,31 @@ test.describe("applyBackendMocks", () => {
 
   test("overrides win over strict mode", async ({ page, baseURL }) => {
     const overrides: JsonOverride[] = [
-      { url: "/api/auth/get-session", method: "GET", body: { user: null } },
+      {
+        url: "/api/services/genome/search",
+        method: "GET",
+        body: { genomes: [] },
+      },
     ];
     await applyBackendMocks(page, { overrides, strict: true });
     await page.goto(baseURL ?? "/");
 
-    const result = await inPageFetch(page, "/api/auth/get-session");
+    const result = await inPageFetch(page, "/api/services/genome/search");
     expect(result.status).toBe(200);
-    expect(result.body).toEqual({ user: null });
-    // Override handled /api/auth/get-session, so that specific URL was never recorded as a leak.
+    expect(result.body).toEqual({ genomes: [] });
+    // The override target was handled, so that URL was never recorded as a leak.
     // (Other app-internal /api calls may get recorded; we only assert about the override target.)
     expect(
-      getUnmockedBackendRequests(page).filter((r) => r.includes("/api/auth/get-session")),
+      getUnmockedBackendRequests(page).filter((r) =>
+        r.includes("/api/services/genome/search"),
+      ),
     ).toHaveLength(0);
   });
 
-  test("first matching override wins when multiple apply", async ({ page, baseURL }) => {
+  test("first matching override wins when multiple apply", async ({
+    page,
+    baseURL,
+  }) => {
     const overrides: JsonOverride[] = [
       { url: /\/api\/workspace\//, body: { winner: "first" } },
       { url: /\/api\/workspace\/view/, body: { winner: "second" } },
@@ -143,19 +187,24 @@ test.describe("applyBackendMocks", () => {
     expect(result.body).toEqual({ winner: "first" });
   });
 
-  test("matchBody routes same URL to different responses by request body", async ({ page, baseURL }) => {
+  test("matchBody routes same URL to different responses by request body", async ({
+    page,
+    baseURL,
+  }) => {
     // Simulates JSON-RPC dispatch: one endpoint, many methods. matchBody lets us fan out by payload.
     const overrides: JsonOverride[] = [
       {
         url: "/api/services/workspace",
         method: "POST",
-        matchBody: (body) => (body as { method?: string } | null)?.method === "Workspace.ls",
+        matchBody: (body) =>
+          (body as { method?: string } | null)?.method === "Workspace.ls",
         body: { result: "ls-result" },
       },
       {
         url: "/api/services/workspace",
         method: "POST",
-        matchBody: (body) => (body as { method?: string } | null)?.method === "Workspace.get",
+        matchBody: (body) =>
+          (body as { method?: string } | null)?.method === "Workspace.get",
         body: { result: "get-result" },
       },
     ];
@@ -164,14 +213,24 @@ test.describe("applyBackendMocks", () => {
 
     const ls = await inPageFetch(page, "/api/services/workspace", {
       method: "POST",
-      body: JSON.stringify({ method: "Workspace.ls", params: [], id: 1, jsonrpc: "2.0" }),
+      body: JSON.stringify({
+        method: "Workspace.ls",
+        params: [],
+        id: 1,
+        jsonrpc: "2.0",
+      }),
       headers: { "Content-Type": "application/json" },
     });
     expect(ls.body).toEqual({ result: "ls-result" });
 
     const get = await inPageFetch(page, "/api/services/workspace", {
       method: "POST",
-      body: JSON.stringify({ method: "Workspace.get", params: [], id: 2, jsonrpc: "2.0" }),
+      body: JSON.stringify({
+        method: "Workspace.get",
+        params: [],
+        id: 2,
+        jsonrpc: "2.0",
+      }),
       headers: { "Content-Type": "application/json" },
     });
     expect(get.body).toEqual({ result: "get-result" });

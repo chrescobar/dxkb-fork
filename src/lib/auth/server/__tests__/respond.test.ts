@@ -1,90 +1,68 @@
-import { respondWithAck, respondWithSession } from "../respond";
 import type { AuthUser } from "@/lib/auth/types";
+import {
+  respondWithAck,
+  respondWithSession,
+  respondWithSessionMutation,
+} from "../respond";
 
-const aliceUser: AuthUser = {
-  id: "alice",
-  username: "alice",
-  email: "alice@example.com",
-  first_name: "Alice",
-  last_name: "Wonder",
-  email_verified: true,
-  realm: "bvbrc.org",
-  token: "",
-};
+const user: AuthUser = { id: "alice-id", username: "alice", email: "a@x" };
 
-describe("respondWithSession", () => {
-  it("returns { user, session } envelope with 200 on success", async () => {
-    const response = respondWithSession({ data: aliceUser, error: null });
-    expect(response.status).toBe(200);
-    const body = await response.json() as { user: AuthUser; session: { token: string; expiresAt: string } };
-    expect(body.user).toEqual(aliceUser);
-    expect(body.session.token).toBe("");
-    expect(typeof body.session.expiresAt).toBe("string");
+describe("session responses", () => {
+  it("uses the exact cookie-write expiry and redacts the token", async () => {
+    const expiresAt = 1_800_000_000_000;
+    const response = respondWithSession({ data: user, error: null }, expiresAt);
+    expect(await response.json()).toEqual({
+      user,
+      session: { token: "", expiresAt: new Date(expiresAt).toISOString() },
+    });
   });
 
-  it("returns { user: null, session: null } when data is null", async () => {
+  it("adapts a session mutation and redacts the token", async () => {
+    const expiresAt = 1_800_000_000_000;
+    const response = respondWithSessionMutation({
+      data: { user, expiresAt },
+      error: null,
+    });
+
+    await expect(response.json()).resolves.toEqual({
+      user,
+      session: { token: "", expiresAt: new Date(expiresAt).toISOString() },
+    });
+  });
+
+  it("does not fabricate expiry for a user response", () => {
+    expect(() => respondWithSession({ data: user, error: null })).toThrow(
+      "expiresAt is required",
+    );
+  });
+
+  it("allows a guest envelope without expiry", async () => {
     const response = respondWithSession({ data: null, error: null });
-    expect(response.status).toBe(200);
-    const body = await response.json() as { user: null; session: null };
-    expect(body).toEqual({ user: null, session: null });
-  });
-
-  it("maps invalid_credentials to 401 with message", async () => {
-    const response = respondWithSession({
-      data: null,
-      error: { code: "invalid_credentials", message: "bad login" },
+    await expect(response.json()).resolves.toEqual({
+      user: null,
+      session: null,
     });
-    expect(response.status).toBe(401);
-    const body = await response.json() as { error: string; code: string };
-    expect(body).toEqual({ error: "bad login", code: "unauthenticated" });
   });
 
-  it("uses explicit status when provided", () => {
-    const response = respondWithSession({
+  it("uses the common error response branch", async () => {
+    const result = {
       data: null,
-      error: { code: "validation", message: "bad", status: 422 },
+      error: {
+        code: "rate_limited" as const,
+        message: "slow down",
+        status: 429,
+      },
+    };
+    const sessionResponse = respondWithSession(result);
+    const ackResponse = respondWithAck(result);
+    expect(sessionResponse.status).toBe(429);
+    expect(await sessionResponse.json()).toEqual({
+      error: "slow down",
+      code: "validation",
     });
-    expect(response.status).toBe(422);
-  });
-
-  it("maps forbidden to 403", () => {
-    const response = respondWithSession({
-      data: null,
-      error: { code: "forbidden", message: "nope" },
+    expect(await ackResponse.json()).toEqual({
+      error: "slow down",
+      code: "validation",
     });
-    expect(response.status).toBe(403);
-  });
-
-  it("maps validation to 400", () => {
-    const response = respondWithSession({
-      data: null,
-      error: { code: "validation", message: "fix me" },
-    });
-    expect(response.status).toBe(400);
-  });
-
-  it("maps service_unavailable to 503", () => {
-    const response = respondWithSession({
-      data: null,
-      error: { code: "service_unavailable", message: "down" },
-    });
-    expect(response.status).toBe(503);
-  });
-});
-
-describe("respondWithAck", () => {
-  it("returns { success: true } on success", async () => {
-    const response = respondWithAck({ data: undefined, error: null });
-    expect(response.status).toBe(200);
-    expect(await response.json() as { success: boolean }).toEqual({ success: true });
-  });
-
-  it("returns { error, code } with mapped status on error", async () => {
-    const response = respondWithAck({
-      data: null,
-      error: { code: "unauthorized", message: "nope" },
-    });
-    expect(response.status).toBe(401);
-    expect(await response.json() as { error: string; code: string }).toEqual({ error: "nope", code: "unauthenticated" });
   });
 });

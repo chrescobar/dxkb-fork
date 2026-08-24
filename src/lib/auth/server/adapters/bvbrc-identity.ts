@@ -1,89 +1,144 @@
 import { getRequiredEnv } from "@/lib/env";
-import type { Result, AuthErrorCode } from "@/lib/auth/port";
 import type {
+  AuthErrorCode,
+  ProfilePatch,
+  Result,
   SigninCredentials,
   SignupCredentials,
   UserProfile,
 } from "@/lib/auth/types";
-import { ok, fail, networkFailure } from "../result";
-import type { IdentityProviderPort } from "../ports";
-import { serverUserAgent as userAgent } from "../user-agent";
+import { fail, networkFailure, ok } from "../result";
 
-async function parseErrorMessage(
+// Cloudflare rejects Node's default user-agent for BV-BRC API requests.
+const serverUserAgent = "curl/8.7.1 DXKB-V2/1.0";
+const requestTimeoutMs = 15_000;
+
+function joinUrl(base: string, path = ""): string {
+  return path
+    ? `${base.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`
+    : base;
+}
+
+async function request(
+  input: string,
+  init: RequestInit,
+  fallback: string,
+): Promise<Result<Response>> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => {
+    controller.abort();
+  }, requestTimeoutMs);
+  try {
+    const headers = new Headers(init.headers);
+    headers.set("User-Agent", serverUserAgent);
+    const response = await fetch(input, {
+      ...init,
+      headers,
+      signal: controller.signal,
+    });
+    const body = response.body ? await response.arrayBuffer() : null;
+    return ok(
+      new Response(body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+      }),
+    );
+  } catch (cause) {
+    if (cause instanceof Error && cause.name === "AbortError") {
+      return fail("service_unavailable", `${fallback} timed out`, 504);
+    }
+    return { data: null, error: networkFailure(cause, fallback) };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function codeForStatus(status: number): AuthErrorCode {
+  if (status === 401) return "unauthorized";
+  if (status === 403) return "forbidden";
+  if (status === 404) return "not_found";
+  if (status === 409) return "conflict";
+  if (status === 429) return "rate_limited";
+  if (status >= 500) return "service_unavailable";
+  if (status >= 400) return "validation";
+  return "unknown";
+}
+
+function httpFailure<T>(
   response: Response,
   fallback: string,
-): Promise<string> {
-  const body = (await response.json().catch(() => ({}))) as {
-    message?: string;
-  };
-  return body.message || fallback;
+  authFailureCode?: "unauthorized" | "invalid_credentials",
+): Result<T> {
+  const code =
+    authFailureCode && (response.status === 401 || response.status === 403)
+      ? authFailureCode
+      : codeForStatus(response.status);
+  return fail(code, fallback, response.status);
 }
 
-function cleanErrorMessage(raw: string, fallback: string): string {
-  const trimmed = raw.trim();
-  if (!trimmed) return fallback;
-  const firstLine = trimmed.split("\n")[0].trim();
-  return firstLine.length > 200 ? `${firstLine.slice(0, 200)}…` : firstLine;
+function isUserProfile(value: unknown): value is UserProfile {
+  if (!value || typeof value !== "object") return false;
+  const profile = value as Record<string, unknown>;
+  return (
+    typeof profile.id === "string" &&
+    profile.id.length > 0 &&
+    typeof profile.email === "string" &&
+    typeof profile.email_verified === "boolean" &&
+    typeof profile.first_name === "string" &&
+    typeof profile.last_name === "string" &&
+    typeof profile.l_id === "string" &&
+    typeof profile.creation_date === "string" &&
+    typeof profile.last_login === "string" &&
+    typeof profile.organisms === "string" &&
+    typeof profile.reverification === "boolean" &&
+    typeof profile.source === "string"
+  );
 }
 
-async function authenticate(
+async function readToken(
+  response: Response,
+  fallback: string,
+): Promise<Result<{ token: string }>> {
+  const headerToken = response.headers.get("Authorization")?.trim();
+  const token = headerToken || (await response.text()).trim();
+  return token ? ok({ token }) : fail("service_unavailable", fallback, 502);
+}
+
+export async function authenticate(
   credentials: SigninCredentials,
 ): Promise<Result<{ token: string }>> {
-  try {
-    const authUrl = getRequiredEnv("USER_AUTH_URL");
-    const response = await fetch(authUrl, {
+  const result = await request(
+    getRequiredEnv("USER_AUTH_URL"),
+    {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": userAgent,
-      },
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         username: credentials.username,
         password: credentials.password,
       }),
-    });
-
-    if (!response.ok) {
-      const raw = await response.text().catch(() => "");
-      const isAuthFailure = response.status === 401 || response.status === 403;
-      if (isAuthFailure) {
-        return fail("invalid_credentials", "Invalid credentials", response.status);
-      }
-      return fail(
-        "service_unavailable",
-        cleanErrorMessage(raw, "Authentication service unavailable"),
-        response.status,
-      );
-    }
-
-    const body = await response.text();
-    const rawToken = response.headers.get("Authorization") ?? body;
-    const token = rawToken.trim();
-    if (!token) {
-      return fail(
-        "service_unavailable",
-        "Authentication service unavailable",
-        503,
-      );
-    }
-
-    return ok({ token });
-  } catch (cause) {
-    return { data: null, error: networkFailure(cause, "Sign in failed") };
+    },
+    "Authentication service unavailable",
+  );
+  if (result.error) return result;
+  if (!result.data.ok) {
+    return httpFailure(
+      result.data,
+      "Authentication failed",
+      "invalid_credentials",
+    );
   }
+  return readToken(result.data, "Authentication service returned no token");
 }
 
-async function signUp(
+export async function registerUser(
   input: SignupCredentials,
 ): Promise<Result<{ token: string }>> {
-  try {
-    const registerUrl = getRequiredEnv("USER_REGISTER_URL");
-    const response = await fetch(registerUrl, {
+  const result = await request(
+    getRequiredEnv("USER_REGISTER_URL"),
+    {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": userAgent,
-      },
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         first_name: input.first_name || "",
         middle_name: input.middle_name || "",
@@ -96,263 +151,188 @@ async function signUp(
         password: input.password,
         password_repeat: input.password_repeat,
       }),
-    });
-
-    if (!response.ok) {
-      const body = await response.text();
-      let message = "Registration failed";
-      try {
-        const parsed = JSON.parse(body) as { message?: string };
-        message = parsed.message || message;
-      } catch {
-        message = body || message;
-      }
-      return fail("validation", message, response.status);
-    }
-
-    const body = await response.text();
-    const rawToken = response.headers.get("Authorization") ?? body;
-    const token = rawToken.trim();
-    if (!token) {
-      return fail(
-        "service_unavailable",
-        "Registration failed: missing auth token",
-        502,
-      );
-    }
-
-    return ok({ token });
-  } catch (cause) {
-    return {
-      data: null,
-      error: networkFailure(cause, "Registration service unavailable"),
-    };
-  }
+    },
+    "Registration service unavailable",
+  );
+  if (result.error) return result;
+  if (!result.data.ok) return httpFailure(result.data, "Registration failed");
+  return readToken(result.data, "Registration service returned no token");
 }
 
-async function impersonate(
+export async function impersonateUser(
   actingUserId: string,
   targetUser: string,
   password: string,
 ): Promise<Result<{ token: string }>> {
-  try {
-    const authUrl = getRequiredEnv("USER_AUTH_URL");
-    const response = await fetch(`${authUrl}/sulogin`, {
+  const result = await request(
+    joinUrl(getRequiredEnv("USER_AUTH_URL"), "sulogin"),
+    {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": userAgent,
-      },
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         targetUser,
         password,
         username: actingUserId,
       }),
-    });
-
-    if (!response.ok) {
-      return fail("invalid_credentials", "Invalid credentials", 401);
-    }
-
-    const token = (await response.text()).trim();
-    if (!token) {
-      return fail("invalid_credentials", "Invalid credentials", 401);
-    }
-
-    return ok({ token });
-  } catch (cause) {
-    return {
-      data: null,
-      error: networkFailure(cause, "Authentication service unavailable"),
-    };
+    },
+    "Authentication service unavailable",
+  );
+  if (result.error) return result;
+  if (!result.data.ok) {
+    return httpFailure(
+      result.data,
+      "Impersonation failed",
+      "invalid_credentials",
+    );
   }
+  const token = (await result.data.text()).trim();
+  return token
+    ? ok({ token })
+    : fail("invalid_credentials", "Impersonation returned no token", 401);
 }
 
-async function validateToken(
+export async function getProfile(
   userId: string,
   token: string,
 ): Promise<Result<UserProfile>> {
-  try {
-    const response = await fetch(
-      `${getRequiredEnv("USER_URL")}/${encodeURIComponent(userId)}`,
-      {
-        headers: {
-          Authorization: token,
-          Accept: "application/json",
-          "User-Agent": userAgent,
-        },
-      },
-    );
-
-    if (!response.ok) {
-      const code: AuthErrorCode =
-        response.status === 401 ? "unauthorized" : "service_unavailable";
-      return fail(code, "Token validation failed", response.status);
-    }
-
-    const profile = (await response.json()) as UserProfile;
-    return ok(profile);
-  } catch (cause) {
-    return {
-      data: null,
-      error: networkFailure(cause, "Token validation failed"),
-    };
+  const result = await request(
+    joinUrl(getRequiredEnv("USER_URL"), encodeURIComponent(userId)),
+    { headers: { Accept: "application/json", Authorization: token } },
+    "Profile service unavailable",
+  );
+  if (result.error) return result;
+  if (!result.data.ok) {
+    return httpFailure(result.data, "Profile lookup failed", "unauthorized");
   }
+  const rawProfile: unknown = await result.data.json().catch(() => null);
+  const profile =
+    rawProfile && typeof rawProfile === "object"
+      ? {
+          ...rawProfile,
+          creation_date:
+            (rawProfile as Record<string, unknown>).creation_date ??
+            (rawProfile as Record<string, unknown>).creationDate,
+          last_login:
+            (rawProfile as Record<string, unknown>).last_login ??
+            (rawProfile as Record<string, unknown>).lastLogin,
+        }
+      : rawProfile;
+  return isUserProfile(profile)
+    ? ok(profile)
+    : fail(
+        "service_unavailable",
+        "Profile service returned an invalid response",
+        502,
+      );
 }
 
-async function fetchProfile(
+export async function updateProfile(
   userId: string,
-  token?: string,
-): Promise<UserProfile | null> {
-  const headers: Record<string, string> = {
-    Accept: "application/json",
-    "User-Agent": userAgent,
-  };
-  if (token) headers["Authorization"] = token;
-
-  try {
-    const response = await fetch(
-      `${getRequiredEnv("USER_URL")}/${encodeURIComponent(userId)}`,
-      { headers },
-    );
-
-    if (response.ok) return (await response.json()) as UserProfile;
-    console.warn(
-      `Failed to fetch user profile for ${userId}:`,
-      response.status,
-    );
-    return null;
-  } catch (error) {
-    console.warn("Failed to fetch user profile:", error);
-    return null;
-  }
-}
-
-async function requestPasswordReset(
-  usernameOrEmail: string,
+  token: string,
+  patches: ProfilePatch[],
 ): Promise<Result<void>> {
-  try {
-    const response = await fetch(getRequiredEnv("USER_PASSWORD_RESET_URL"), {
+  const result = await request(
+    joinUrl(getRequiredEnv("USER_URL"), encodeURIComponent(userId)),
+    {
       method: "POST",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": userAgent,
+        "Content-Type": "application/json-patch+json",
+        Accept: "application/json",
+        Authorization: token,
       },
-      body: new URLSearchParams({ email: usernameOrEmail }),
-    });
-
-    if (!response.ok) {
-      return fail(
-        "service_unavailable",
-        await parseErrorMessage(response, "Failed to send password reset email"),
-        response.status,
-      );
-    }
-    return ok(undefined);
-  } catch (cause) {
-    return {
-      data: null,
-      error: networkFailure(cause, "Password reset service unavailable"),
-    };
-  }
+      body: JSON.stringify(patches),
+    },
+    "Profile service unavailable",
+  );
+  if (result.error) return result;
+  return result.data.ok
+    ? ok(undefined)
+    : httpFailure(result.data, "Failed to update profile", "unauthorized");
 }
 
-async function sendVerificationEmail(
+export async function requestPasswordReset(
+  usernameOrEmail: string,
+): Promise<Result<void>> {
+  const result = await request(
+    getRequiredEnv("USER_PASSWORD_RESET_URL"),
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ email: usernameOrEmail }),
+    },
+    "Password reset service unavailable",
+  );
+  if (result.error) return result;
+  return result.data.ok
+    ? ok(undefined)
+    : httpFailure(result.data, "Failed to send password reset email");
+}
+
+export async function sendVerificationEmail(
   userId: string,
   token: string,
 ): Promise<Result<void>> {
-  try {
-    const response = await fetch(getRequiredEnv("USER_VERIFICATION_URL"), {
+  const result = await request(
+    getRequiredEnv("USER_VERIFICATION_URL"),
+    {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
         Authorization: token,
-        "User-Agent": userAgent,
       },
       body: JSON.stringify({ id: userId }),
-    });
-
-    if (!response.ok) {
-      return fail(
-        "service_unavailable",
-        await parseErrorMessage(response, "Failed to send verification email"),
-        response.status,
+    },
+    "Verification service unavailable",
+  );
+  if (result.error) return result;
+  return result.data.ok
+    ? ok(undefined)
+    : httpFailure(
+        result.data,
+        "Failed to send verification email",
+        "unauthorized",
       );
-    }
-    return ok(undefined);
-  } catch (cause) {
-    return {
-      data: null,
-      error: networkFailure(cause, "Internal server error"),
-    };
-  }
 }
 
-async function verifyEmailToken(
+export async function verifyEmailToken(
   verificationToken: string,
   username: string,
 ): Promise<Result<void>> {
-  const timeoutMs = 15_000;
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => { controller.abort(); }, timeoutMs);
-
-  try {
-    const response = await fetch(getRequiredEnv("USER_VERIFICATION_URL"), {
+  const result = await request(
+    getRequiredEnv("USER_VERIFICATION_URL"),
+    {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        "User-Agent": userAgent,
       },
       body: JSON.stringify({ token: verificationToken, username }),
-      signal: controller.signal,
-    });
-
-    if (!response.ok) {
-      return fail(
-        "validation",
-        await parseErrorMessage(response, "Email verification failed"),
-        response.status,
-      );
-    }
-
-    await response.json().catch(() => undefined);
-    return ok(undefined);
-  } catch (cause) {
-    if (cause instanceof Error && cause.name === "AbortError") {
-      return fail(
-        "service_unavailable",
-        "Email verification request timed out",
-        504,
-      );
-    }
-    return {
-      data: null,
-      error: networkFailure(
-        cause,
-        "Internal server error during email verification",
-      ),
-    };
-  } finally {
-    clearTimeout(timeoutId);
+    },
+    "Email verification service unavailable",
+  );
+  if (result.error) return result;
+  if (result.data.ok) return ok(undefined);
+  if (result.data.status >= 500 || result.data.status === 429) {
+    return httpFailure(result.data, "Email verification failed");
   }
+  return fail("validation", "Email verification failed", result.data.status);
 }
 
-async function changePassword(
+export async function changePassword(
   userId: string,
   token: string,
   currentPassword: string,
   newPassword: string,
 ): Promise<Result<void>> {
-  try {
-    const response = await fetch(`${getRequiredEnv("USER_URL")}/`, {
+  const result = await request(
+    joinUrl(getRequiredEnv("USER_URL"), "/"),
+    {
       method: "POST",
       headers: {
         Authorization: token,
         "Content-Type": "application/json",
         Accept: "application/json",
-        "User-Agent": userAgent,
       },
       body: JSON.stringify({
         id: 1,
@@ -360,44 +340,29 @@ async function changePassword(
         method: "setPassword",
         params: [userId, currentPassword, newPassword],
       }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      return fail(
-        "validation",
-        errorText || "Failed to change password",
-        response.status,
-      );
-    }
-
-    const result = (await response.json()) as { error?: { message?: string } };
-    if (result.error) {
-      return fail(
-        "validation",
-        result.error.message || "Failed to change password",
-        400,
-      );
-    }
-    return ok(undefined);
-  } catch (cause) {
-    return {
-      data: null,
-      error: networkFailure(cause, "Internal server error"),
-    };
+    },
+    "Password service unavailable",
+  );
+  if (result.error) return result;
+  if (!result.data.ok) {
+    return httpFailure(
+      result.data,
+      "Failed to change password",
+      "unauthorized",
+    );
   }
+  const body = (await result.data.json().catch(() => null)) as {
+    error?: { message?: unknown };
+  } | null;
+  if (body?.error) {
+    return fail("validation", "Failed to change password", 400);
+  }
+  return ok(undefined);
 }
 
-export function bvbrcIdentity(): IdentityProviderPort {
-  return {
-    authenticate,
-    signUp,
-    impersonate,
-    validateToken,
-    fetchProfile,
-    requestPasswordReset,
-    sendVerificationEmail,
-    verifyEmailToken,
-    changePassword,
-  };
+export function extractRealmFromToken(token: string): string | undefined {
+  const unMatch = token.match(/(?:^|\|)un=([^|]+)/);
+  if (!unMatch) return undefined;
+  const atIndex = unMatch[1].indexOf("@");
+  return atIndex === -1 ? undefined : unMatch[1].slice(atIndex + 1);
 }

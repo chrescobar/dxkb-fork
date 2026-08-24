@@ -20,8 +20,9 @@ globalThis.ResizeObserver = ResizeObserverStub;
 // active item changes.
 Element.prototype.scrollIntoView = vi.fn();
 
-const { mockPush, mockAuth } = vi.hoisted(() => ({
+const { mockPush, mockSignOut, mockAuth } = vi.hoisted(() => ({
   mockPush: vi.fn(),
+  mockSignOut: vi.fn(),
   mockAuth: {
     isAuthenticated: false,
     user: null as { username?: string; realm?: string } | null,
@@ -34,8 +35,12 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 
-vi.mock("@/lib/auth/hooks", () => ({
+vi.mock("@/lib/auth/provider", () => ({
   useAuth: () => mockAuth,
+}));
+
+vi.mock("@/app/(auth)/redirect-action", () => ({
+  signOutAndRedirect: mockSignOut,
 }));
 
 import { CommandPalette } from "../command-palette";
@@ -67,7 +72,7 @@ function renderPalette() {
 describe("CommandPalette", () => {
   beforeEach(() => {
     mockPush.mockClear();
-    mockAuth.signOut = vi.fn().mockResolvedValue(undefined);
+    mockSignOut.mockClear();
     setAuth(false);
   });
 
@@ -352,10 +357,8 @@ describe("CommandPalette", () => {
       });
     }
 
-    it("invokes auth.signOut when authenticated and selects sign out", async () => {
+    it("submits the redirecting sign-out action", async () => {
       setAuth(true, { username: "alice", realm: "bvbrc" });
-      const signOutSpy = vi.fn().mockResolvedValue(undefined);
-      mockAuth.signOut = signOutSpy;
 
       renderPalette();
       await openPalette();
@@ -365,10 +368,7 @@ describe("CommandPalette", () => {
       await user.click(signOut);
 
       await waitFor(() => {
-        expect(signOutSpy).toHaveBeenCalled();
-      });
-      await waitFor(() => {
-        expect(mockPush).toHaveBeenCalledWith("/");
+        expect(mockSignOut).toHaveBeenCalled();
       });
     });
   });

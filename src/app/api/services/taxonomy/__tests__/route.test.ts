@@ -8,9 +8,6 @@ vi.mock("@/lib/env", () => ({
   getRequiredEnv: vi.fn(() => "http://mock-api"),
 }));
 
-vi.mock("@/lib/auth/session", () => ({
-  getAuthToken: vi.fn(() => Promise.resolve(undefined)),
-}));
 
 describe("GET /api/services/taxonomy", () => {
   it("does not require auth", async () => {

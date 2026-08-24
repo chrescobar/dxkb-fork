@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { useFeatureGroupOptions } from "../use-feature-group-options";
-import { createQueryClientWrapper } from "@/test-helpers/api-route-helpers";
+import { createQueryClientWrapper } from "@/test-helpers/react";
 import type { FeatureSummary } from "@/lib/services/feature";
 
 const { mockFetchFeaturesFromGroup } = vi.hoisted(() => ({

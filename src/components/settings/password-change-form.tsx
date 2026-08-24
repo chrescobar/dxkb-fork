@@ -15,13 +15,14 @@ import { FieldItem, FieldErrors } from "@/components/ui/tanstack-form";
 import { RequiredFormLabel } from "@/components/forms/required-form-components";
 import { PasswordInput } from "@/components/settings/password-input";
 
-import { apiFetch } from "@/lib/auth/fetch";
+import { useAuthActions } from "@/lib/auth/provider";
 import {
   passwordFormSchema,
   type PasswordFormData,
 } from "@/lib/forms/settings/settings-form-utils";
 
 export function PasswordChangeForm() {
+  const { changePassword } = useAuthActions();
 
   const form = useForm({
     defaultValues: {
@@ -31,21 +32,7 @@ export function PasswordChangeForm() {
     } satisfies PasswordFormData,
     onSubmit: async ({ value }) => {
       try {
-        const response = await apiFetch("/api/auth/change-password", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            currentPassword: value.currentPassword,
-            newPassword: value.newPassword,
-          }),
-        });
-
-        if (!response.ok) {
-          const err = await response.json().catch(() => null) as { error?: string; message?: string } | null;
-          toast.error(err?.error ?? err?.message ?? "Failed to change password.");
-          return;
-        }
-
+        await changePassword(value.currentPassword, value.newPassword);
         toast.success("Password changed successfully.");
         form.reset();
       } catch {
@@ -61,9 +48,7 @@ export function PasswordChangeForm() {
     <Card>
       <CardHeader>
         <CardTitle>Change Password</CardTitle>
-        <CardDescription>
-          Update your account password.
-        </CardDescription>
+        <CardDescription>Update your account password.</CardDescription>
       </CardHeader>
       <CardContent>
         <form
@@ -77,11 +62,15 @@ export function PasswordChangeForm() {
           <form.Field name="currentPassword">
             {(field) => (
               <FieldItem>
-                <RequiredFormLabel htmlFor={field.name}>Current Password</RequiredFormLabel>
+                <RequiredFormLabel htmlFor={field.name}>
+                  Current Password
+                </RequiredFormLabel>
                 <PasswordInput
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => { field.handleChange(e.target.value); }}
+                  onChange={(e) => {
+                    field.handleChange(e.target.value);
+                  }}
                   onBlur={field.handleBlur}
                   label="current password"
                 />
@@ -93,11 +82,15 @@ export function PasswordChangeForm() {
           <form.Field name="newPassword">
             {(field) => (
               <FieldItem>
-                <RequiredFormLabel htmlFor={field.name}>New Password</RequiredFormLabel>
+                <RequiredFormLabel htmlFor={field.name}>
+                  New Password
+                </RequiredFormLabel>
                 <PasswordInput
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => { field.handleChange(e.target.value); }}
+                  onChange={(e) => {
+                    field.handleChange(e.target.value);
+                  }}
                   onBlur={field.handleBlur}
                   label="new password"
                 />
@@ -109,11 +102,15 @@ export function PasswordChangeForm() {
           <form.Field name="confirmPassword">
             {(field) => (
               <FieldItem>
-                <RequiredFormLabel htmlFor={field.name}>Confirm New Password</RequiredFormLabel>
+                <RequiredFormLabel htmlFor={field.name}>
+                  Confirm New Password
+                </RequiredFormLabel>
                 <PasswordInput
                   id={field.name}
                   value={field.state.value}
-                  onChange={(e) => { field.handleChange(e.target.value); }}
+                  onChange={(e) => {
+                    field.handleChange(e.target.value);
+                  }}
                   onBlur={field.handleBlur}
                   label="confirm password"
                 />

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import type { UserProfile } from "@/lib/auth/types";
+import type { ProfilePatch, UserProfile } from "@/lib/auth/types";
 
 // ============================================================================
 // Profile form
@@ -43,12 +43,6 @@ export type PasswordFormData = z.input<typeof passwordFormSchema>;
 // Patch builder
 // ============================================================================
 
-interface JsonPatchOp {
-  op: "replace";
-  path: string;
-  value: string;
-}
-
 const editableProfileFields = [
   "email",
   "first_name",
@@ -63,8 +57,8 @@ const editableProfileFields = [
 export function buildProfilePatches(
   original: UserProfile,
   updated: ProfileFormData,
-): JsonPatchOp[] {
-  const patches: JsonPatchOp[] = [];
+): ProfilePatch[] {
+  const patches: ProfilePatch[] = [];
 
   for (const field of editableProfileFields) {
     const oldVal = original[field] ?? "";

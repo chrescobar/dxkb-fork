@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
-import { authAdmin } from "@/lib/auth/server/instance";
+import { changePassword } from "@/lib/auth/server/actions";
 import { respondWithAck } from "@/lib/auth/server/respond";
-import { withErrorHandling } from "@/lib/auth/server/errors";
+import { parseJsonBody, withErrorHandling } from "@/lib/auth/server/errors";
 
 interface ChangePasswordBody {
   currentPassword?: unknown;
@@ -9,11 +9,12 @@ interface ChangePasswordBody {
 }
 
 export const POST = withErrorHandling(async (request: NextRequest) => {
-  const body = (await request.json().catch(() => ({}))) as ChangePasswordBody;
-  return respondWithAck(
-    await authAdmin.changePassword(
-      typeof body.currentPassword === "string" ? body.currentPassword : "",
-      typeof body.newPassword === "string" ? body.newPassword : "",
-    ),
+  const body = await parseJsonBody<ChangePasswordBody>(request);
+  const result = await changePassword(
+    typeof body.currentPassword === "string" ? body.currentPassword : "",
+    typeof body.newPassword === "string" ? body.newPassword : "",
   );
+  return respondWithAck(result, {
+    sessionExpired: result.error?.code === "unauthorized",
+  });
 });

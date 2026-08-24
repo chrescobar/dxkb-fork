@@ -1,21 +1,17 @@
-const { mockCookieStore } = vi.hoisted(() => ({
-  mockCookieStore: { get: vi.fn(), set: vi.fn() },
-}));
-
-vi.mock("next/headers", () => ({
-  cookies: vi.fn(() => Promise.resolve(mockCookieStore)),
-}));
-
 import { http, HttpResponse } from "msw";
 import { server } from "@/test-helpers/msw-server";
-import { mockNextRequest } from "@/test-helpers/api-route-helpers";
+import {
+  clearTestCookies,
+  mockNextRequest,
+  setTestSession,
+} from "@/test-helpers/api-route-helpers";
 import { POST } from "../route";
 
 const workspaceApiUrl = "http://mock-workspace-api";
 
 beforeEach(() => {
   process.env.WORKSPACE_API_URL = workspaceApiUrl;
-  mockCookieStore.get.mockReturnValue(undefined);
+  clearTestCookies();
 });
 
 afterEach(() => {
@@ -83,7 +79,7 @@ describe("POST /api/workspace/public", () => {
   });
 
   it("does not require authentication", async () => {
-    mockCookieStore.get.mockReturnValue(undefined);
+    clearTestCookies();
 
     let capturedAuthorization: string | null = null;
     server.use(
@@ -105,11 +101,7 @@ describe("POST /api/workspace/public", () => {
   });
 
   it("forwards auth token when user is logged in", async () => {
-    mockCookieStore.get.mockImplementation((name: string) => {
-      if (name === "bvbrc_token") return { value: "user-token" };
-      if (name === "bvbrc_user_id") return { value: "testuser" };
-      return undefined;
-    });
+    setTestSession({ token: "user-token" });
 
     let capturedAuthorization: string | null = null;
     server.use(

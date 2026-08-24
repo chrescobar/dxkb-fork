@@ -1,4 +1,9 @@
-import { expect, type Page, type Locator } from "@playwright/test";
+import {
+  expect,
+  type Page,
+  type Locator,
+  type Response,
+} from "@playwright/test";
 
 /**
  * Page object for the /sign-in route. Wraps the form selectors and the common
@@ -24,12 +29,17 @@ export class SignInPage {
     this.alert = page.locator('[role="alert"][data-slot="alert"]');
   }
 
-  async goto(redirect?: string): Promise<void> {
-    const url = redirect
+  async goto(redirect?: string, baseURL = ""): Promise<void> {
+    const path = redirect
       ? `/sign-in?redirect=${encodeURIComponent(redirect)}`
       : "/sign-in";
-    await this.page.goto(url);
+    await this.page.goto(`${baseURL}${path}`);
     await expect(this.heading).toBeVisible();
+  }
+
+  async waitUntilInteractive(timeout = 30_000): Promise<void> {
+    await this.submitButton.waitFor({ state: "visible", timeout });
+    await expect(this.submitButton).toBeEnabled({ timeout });
   }
 
   async fill(username: string, password: string): Promise<void> {
@@ -39,6 +49,17 @@ export class SignInPage {
 
   async submit(): Promise<void> {
     await this.submitButton.click();
+  }
+
+  async submitAndWaitForResponse(timeout = 30_000): Promise<Response> {
+    const response = this.page.waitForResponse(
+      (candidate) =>
+        new URL(candidate.url()).pathname === "/api/auth/sign-in/email" &&
+        candidate.request().method() === "POST",
+      { timeout },
+    );
+    await this.submit();
+    return response;
   }
 
   async expectInlineError(text: string | RegExp): Promise<void> {

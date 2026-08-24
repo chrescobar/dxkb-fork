@@ -115,16 +115,22 @@ describe("sanitizeHar", () => {
       {
         request: {
           method: "GET",
-          url: "http://localhost:3010/api/auth/get-session",
+          url: "http://localhost:3010/api/auth/profile",
           headers: [
-            { name: "Cookie", value: "bvbrc_token=abc|sig=deadbeefdeadbeefdeadbeefdeadbeef" },
+            {
+              name: "Cookie",
+              value: "bvbrc_token=abc|sig=deadbeefdeadbeefdeadbeefdeadbeef",
+            },
             { name: "X-Trace-Id", value: "trace-123" },
           ],
         },
         response: {
           status: 200,
           headers: [
-            { name: "Set-Cookie", value: "bvbrc_token=abc|sig=deadbeefdeadbeefdeadbeefdeadbeef" },
+            {
+              name: "Set-Cookie",
+              value: "bvbrc_token=abc|sig=deadbeefdeadbeefdeadbeefdeadbeef",
+            },
             { name: "Authentication-Info", value: "nextnonce=..." },
             { name: "Content-Type", value: "application/json" },
           ],
@@ -140,8 +146,12 @@ describe("sanitizeHar", () => {
       log: { entries: MinimalEntry[] };
     };
     const entry = har.log.entries[0];
-    const requestHeaderNames = (entry.request.headers ?? []).map((h) => h.name.toLowerCase());
-    const responseHeaderNames = (entry.response.headers ?? []).map((h) => h.name.toLowerCase());
+    const requestHeaderNames = (entry.request.headers ?? []).map((h) =>
+      h.name.toLowerCase(),
+    );
+    const responseHeaderNames = (entry.response.headers ?? []).map((h) =>
+      h.name.toLowerCase(),
+    );
     expect(requestHeaderNames).not.toContain("cookie");
     expect(requestHeaderNames).toContain("x-trace-id");
     expect(responseHeaderNames).not.toContain("set-cookie");
@@ -165,7 +175,9 @@ describe("assertNoSensitiveData", () => {
   it("passes when the file contains no sensitive markers", () => {
     const harPath = path.join(tmpDir, "clean.har");
     fs.writeFileSync(harPath, JSON.stringify({ log: { entries: [] } }));
-    expect(() => { assertNoSensitiveData(harPath, "liveuser", "livepass"); }).not.toThrow();
+    expect(() => {
+      assertNoSensitiveData(harPath, "liveuser", "livepass");
+    }).not.toThrow();
   });
 
   it("detects credentials in their JSON-escaped on-disk form", () => {
@@ -176,19 +188,26 @@ describe("assertNoSensitiveData", () => {
     const harPath = path.join(tmpDir, "leaked.har");
     fs.writeFileSync(
       harPath,
-      JSON.stringify({ log: { entries: [{ note: `leak:${trickyPassword}` }] } }),
+      JSON.stringify({
+        log: { entries: [{ note: `leak:${trickyPassword}` }] },
+      }),
     );
 
-    expect(() => { assertNoSensitiveData(harPath, "", trickyPassword); }).toThrow(
-      /live password appears in HAR/,
-    );
+    expect(() => {
+      assertNoSensitiveData(harPath, "", trickyPassword);
+    }).toThrow(/live password appears in HAR/);
     // The assertion deletes the file when it finds violations.
     expect(fs.existsSync(harPath)).toBe(false);
   });
 
   it("detects BV-BRC-shaped session tokens", () => {
     const harPath = path.join(tmpDir, "token.har");
-    fs.writeFileSync(harPath, '{"x":"un=foo|sig=deadbeefdeadbeefdeadbeefdeadbeef"}');
-    expect(() => { assertNoSensitiveData(harPath, "", ""); }).toThrow(/sig=<hex>/);
+    fs.writeFileSync(
+      harPath,
+      '{"x":"un=foo|sig=deadbeefdeadbeefdeadbeefdeadbeef"}',
+    );
+    expect(() => {
+      assertNoSensitiveData(harPath, "", "");
+    }).toThrow(/sig=<hex>/);
   });
 });

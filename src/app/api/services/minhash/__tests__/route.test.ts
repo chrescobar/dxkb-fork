@@ -1,20 +1,16 @@
 import { http, HttpResponse } from "msw";
 import { NextRequest } from "next/server";
 import { server } from "@/test-helpers/msw-server";
-import { json } from "@/test-helpers/api-route-helpers";
-
-const { mockGetAuthToken } = vi.hoisted(() => ({
-  mockGetAuthToken: vi.fn(),
-}));
-
-vi.mock("@/lib/auth/session", () => ({
-  getAuthToken: mockGetAuthToken,
-}));
+import {
+  clearTestCookies,
+  json,
+  setTestSession,
+} from "@/test-helpers/api-route-helpers";
 
 describe("POST /api/services/minhash", () => {
   beforeEach(() => {
     vi.resetModules();
-    mockGetAuthToken.mockResolvedValue("test-token");
+    setTestSession();
   });
 
   it("returns 500 when MINHASH_SERVICE_URL is not set", async () => {
@@ -74,7 +70,7 @@ describe("POST /api/services/minhash", () => {
 
   it("includes auth header when token is present", async () => {
     vi.stubEnv("MINHASH_SERVICE_URL", "http://mock-minhash");
-    mockGetAuthToken.mockResolvedValue("my-token");
+    setTestSession({ token: "my-token" });
 
     const { POST } = await import("../route");
 
@@ -98,7 +94,7 @@ describe("POST /api/services/minhash", () => {
 
   it("returns 401 when no auth token", async () => {
     vi.stubEnv("MINHASH_SERVICE_URL", "http://mock-minhash");
-    mockGetAuthToken.mockResolvedValue(undefined);
+    clearTestCookies();
 
     const { POST } = await import("../route");
     const req = new NextRequest("http://localhost:3019/api/services/minhash", {

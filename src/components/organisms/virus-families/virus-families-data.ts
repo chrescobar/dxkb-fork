@@ -35,7 +35,7 @@ export const virusFamilies: VirusFamiliesColumn[] = [
   {
     group: "Single-Stranded Negative-Sense RNA",
     families: [
-      { name: "Bunyavirales", taxonId: 1980410 },
+      { name: "Bunyaviricetes", taxonId: 3151693 },
       { name: "Filoviridae", taxonId: 11266 },
       { name: "Paramyxoviridae", taxonId: 11158 },
       { name: "Orthomyxoviridae", taxonId: 11308 },

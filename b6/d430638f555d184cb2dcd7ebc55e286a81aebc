@@ -1,0 +1,19 @@
+src/components/organisms/virus-families/virus-families-data.ts
+  s_2f8b2be8937749::t_f124b7521ccd51 38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "b6d430638f555d184cb2dcd7ebc55e286a81aebc",
+  "prompts": {},
+  "sessions": {
+    "s_2f8b2be8937749": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fca811272ffeEhDhS9Jrv3cYwn",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

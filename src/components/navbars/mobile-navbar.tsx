@@ -374,7 +374,7 @@ const useMobileNavbar = () => {
           <Button
             variant="ghost"
             size="sm"
-            className="text-primary-foreground hover:bg-white/15"
+            className="text-primary-foreground hover:bg-white/15 hover:text-primary-foreground"
             onClick={openCommandPalette}
             aria-label="Open command palette"
             aria-keyshortcuts="Meta+K Control+K"
@@ -385,7 +385,7 @@ const useMobileNavbar = () => {
             <Button
               variant="ghost"
               size="sm"
-              className="text-primary-foreground hover:bg-white/15"
+              className="text-primary-foreground hover:bg-white/15 hover:text-primary-foreground"
               onClick={() => {
                 setIsSearchOpen(!isSearchOpen);
               }}

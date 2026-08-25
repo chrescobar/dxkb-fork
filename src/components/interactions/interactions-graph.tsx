@@ -142,17 +142,6 @@ export function InteractionsGraph({
 
   const { nodes, edges } = graph;
 
-  if (nodes.length === 0) {
-    return (
-      <div className="flex h-full min-h-0 flex-col">
-        {toolbar}
-        <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
-          No interactions found.
-        </div>
-      </div>
-    );
-  }
-
   const nodesById = new Map(nodes.map((n) => [n.id, n]));
   const selectedNodeIds = new Set(selection.nodes.map((node) => node.id));
   const selectedNode =
@@ -218,20 +207,26 @@ export function InteractionsGraph({
           {/* The WebGL canvases have no accessible role. Keep this wrapper exposed
               because SigmaCanvas also contains labeled, keyboard-operable zoom controls. */}
           <div className="min-h-0 flex-1">
-            <SigmaCanvas
-              nodes={nodes}
-              edges={edges}
-              layout={layout}
-              selection={selection}
-              onSelect={(nextSelection) => {
-                clearActivePreset();
-                setSelection(nextSelection);
-              }}
-              handleRef={canvasHandleRef}
-              onReady={() => {
-                setCanvasReady(true);
-              }}
-            />
+            {nodes.length === 0 ? (
+              <div className="flex size-full items-center justify-center text-sm text-muted-foreground">
+                No Interactions
+              </div>
+            ) : (
+              <SigmaCanvas
+                nodes={nodes}
+                edges={edges}
+                layout={layout}
+                selection={selection}
+                onSelect={(nextSelection) => {
+                  clearActivePreset();
+                  setSelection(nextSelection);
+                }}
+                handleRef={canvasHandleRef}
+                onReady={() => {
+                  setCanvasReady(true);
+                }}
+              />
+            )}
           </div>
         </div>
         <div

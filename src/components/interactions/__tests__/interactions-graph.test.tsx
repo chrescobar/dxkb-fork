@@ -182,6 +182,33 @@ describe("InteractionsGraph loading state", () => {
   });
 });
 
+describe("InteractionsGraph empty state", () => {
+  it("preserves the graph workspace and replaces only the canvas content", () => {
+    vi.mocked(useInteractions).mockReturnValue({
+      data: [],
+      isPending: false,
+      isError: false,
+      error: null,
+    } as unknown as ReturnType<typeof useInteractions>);
+
+    render(
+      <InteractionsGraph
+        taxonId={776}
+        q=""
+        keywordValue=""
+        onKeywordChange={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText("Microbial protein")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Sub-Graph" })).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: "Layout" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Selection details")).toBeInTheDocument();
+    expect(screen.getByText("No Interactions")).toBeInTheDocument();
+    expect(screen.queryByTestId("sigma-canvas")).not.toBeInTheDocument();
+  });
+});
+
 describe("InteractionsGraph data changes", () => {
   it("clears stale selection and active presets when the query data changes", async () => {
     const user = userEvent.setup();

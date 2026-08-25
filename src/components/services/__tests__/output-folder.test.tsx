@@ -35,6 +35,13 @@ vi.mock("@/hooks/services/workspace/use-workspace-object-search", () => ({
         type: "job_result",
         isDirectory: true,
       },
+      {
+        id: "hidden-parent-folder-id",
+        name: "Visible Child",
+        path: "/alice@bvbrc/home/.hidden/Visible Child",
+        type: "folder",
+        isDirectory: true,
+      },
     ],
     filteredObjects: [],
     loading: false,
@@ -78,6 +85,9 @@ describe("OutputFolder folder selection", () => {
     expect(screen.getAllByRole("option")).toHaveLength(1);
     expect(
       screen.queryByRole("option", { name: /ERR791626[23]/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("option", { name: /Visible Child/i }),
     ).not.toBeInTheDocument();
   });
 });

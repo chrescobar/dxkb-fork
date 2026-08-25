@@ -42,8 +42,10 @@ function buildFullPath(outputFolderPath: string, name: string): string {
 }
 
 function isSelectableOutputFolder(object: { name: string; path: string }): boolean {
-  const pathName = object.path.split("/").filter(Boolean).pop();
-  return !object.name.startsWith(".") && !pathName?.startsWith(".");
+  const hasHiddenPathSegment = object.path
+    .split("/")
+    .some((segment) => segment.startsWith("."));
+  return !object.name.startsWith(".") && !hasHiddenPathSegment;
 }
 
 const OutputFolder = ({

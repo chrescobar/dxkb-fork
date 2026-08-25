@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
@@ -103,6 +103,19 @@ const useMobileNavbar = () => {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 63.999rem)");
+    const updateViewport = () => {
+      setIsMobileViewport(mediaQuery.matches);
+    };
+    updateViewport();
+    mediaQuery.addEventListener("change", updateViewport);
+    return () => {
+      mediaQuery.removeEventListener("change", updateViewport);
+    };
+  }, []);
 
   const { data: favoritePaths = [] } = useQuery({
     queryKey: workspaceQueryKeys.favorites(wsUsername),
@@ -425,7 +438,7 @@ const useMobileNavbar = () => {
 
           {isAuthenticated && (
             <>
-              <JobStatusPill />
+              {isMobileViewport && <JobStatusPill />}
               <UserAvatarDropdown />
             </>
           )}

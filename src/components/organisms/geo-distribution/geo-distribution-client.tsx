@@ -60,6 +60,7 @@ export function GeoDistributionClient({
   const statesQuery = useQuery({
     queryKey: ["geo-distribution", "states-topo"],
     queryFn: () => fetchTopoJson("/maps/states-10m.json"),
+    enabled: mapState.view === "us" || mapState.view === "state",
     staleTime: Infinity,
     gcTime: Infinity,
   });

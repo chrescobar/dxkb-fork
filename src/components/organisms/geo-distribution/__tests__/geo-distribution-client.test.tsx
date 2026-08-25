@@ -5,8 +5,14 @@ import type { OrganismGeoDistribution } from "@/lib/services/organisms/types";
 import { GeoDistributionClient } from "../geo-distribution-client";
 import { MapTooltip } from "../map-tooltip";
 
+const useQueryMock = vi.fn((_options: unknown) => ({
+  data: null,
+  error: null,
+  isLoading: false,
+}));
+
 vi.mock("@tanstack/react-query", () => ({
-  useQuery: () => ({ data: null, error: null, isLoading: false }),
+  useQuery: (options: unknown) => useQueryMock(options),
 }));
 
 vi.mock("@visx/tooltip", () => ({
@@ -69,6 +75,17 @@ describe("GeoDistributionClient", () => {
 
     expect(screen.getByText("France")).toBeVisible();
     expect(screen.getByText("No data available")).toBeVisible();
+  });
+
+  it("does not request state topology when World is the default", () => {
+    render(<GeoDistributionClient data={distribution()} accent="bacteria" />);
+
+    expect(useQueryMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        queryKey: ["geo-distribution", "states-topo"],
+        enabled: false,
+      }),
+    );
   });
 
   it.each([

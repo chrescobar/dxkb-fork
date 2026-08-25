@@ -11,8 +11,8 @@ interface ChartLegendPillProps {
   ariaLabel?: string;
   ariaPressed?: boolean;
   children?: React.ReactNode;
-  onActivate: () => void;
-  onDeactivate: () => void;
+  onActivate?: () => void;
+  onDeactivate?: () => void;
   onFocus?: (event: FocusEvent<HTMLButtonElement>) => void;
   onClick?: () => void;
 }
@@ -70,7 +70,7 @@ export function ChartLegendPill({
       onMouseEnter={onActivate}
       onMouseLeave={onDeactivate}
       onFocus={(event) => {
-        onActivate();
+        onActivate?.();
         onFocus?.(event);
       }}
       onBlur={onDeactivate}

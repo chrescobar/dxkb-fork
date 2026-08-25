@@ -202,7 +202,7 @@ export function InteractionsGraph({
             }}
             onSelectSubgraphs={handleSelectSubgraphs}
             onSelectHubs={handleSelectHubs}
-            exportReady={canvasReady}
+            exportReady={canvasReady && nodes.length > 0}
           />
           {/* The WebGL canvases have no accessible role. Keep this wrapper exposed
               because SigmaCanvas also contains labeled, keyboard-operable zoom controls. */}

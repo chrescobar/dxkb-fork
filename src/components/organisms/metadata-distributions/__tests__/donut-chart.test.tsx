@@ -201,6 +201,13 @@ describe("DonutChart", () => {
         name: "No data available",
       }),
     ).toHaveAttribute("fill", "var(--muted-foreground)");
+
+    const placeholder = screen.getByRole("button", { name: "No data available" });
+    fireEvent.mouseEnter(placeholder);
+    fireEvent.focus(placeholder);
+    fireEvent.click(placeholder);
+    expect(placeholder).not.toHaveAttribute("data-active");
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
 
   it("renders a non-degenerate annulus path for a single positive slice", () => {

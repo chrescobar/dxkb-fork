@@ -66,6 +66,26 @@ describe("ReferenceGenomesClient", () => {
     expect(typeColumn).toHaveStyle({ width: "154px" });
   });
 
+  it("caps the Type column width at its configured maximum", () => {
+    const clientWidth = vi
+      .spyOn(HTMLElement.prototype, "clientWidth", "get")
+      .mockReturnValue(1_000);
+    render(<ReferenceGenomesClient genomes={[]} />);
+
+    const separator = screen.getByRole("separator", {
+      name: "Resize Type column",
+    });
+    const typeColumn = document.querySelector("col");
+
+    expect(separator).toHaveAttribute("aria-valuemax", "480");
+    for (let index = 0; index < 40; index += 1) {
+      fireEvent.keyDown(separator, { key: "ArrowRight" });
+    }
+    expect(separator).toHaveAttribute("aria-valuenow", "480");
+    expect(typeColumn).toHaveStyle({ width: "480px" });
+    clientWidth.mockRestore();
+  });
+
   it("renders one tab per reference type plus an All tab", () => {
     render(<ReferenceGenomesClient genomes={genomes} />);
 

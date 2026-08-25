@@ -116,20 +116,15 @@ test.describe("jobs lifecycle", () => {
     await applyBackendMocks(page, {
       overrides: [
         ...workspacePopulatedOverrides,
+        {
+          url: /\/api\/services\/app-service\/jobs\/enumerate-tasks-filtered$/,
+          method: "POST",
+          body: { jobs: [productionJob], totalTasks: 1 },
+        },
         ...jobsListOverrides,
         ...journeyOverrides,
       ],
     });
-    await page.route(
-      "**/api/services/app-service/jobs/enumerate-tasks-filtered",
-      async (route) => {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({ jobs: [productionJob], totalTasks: 1 }),
-        });
-      },
-    );
 
     const jobs = new JobsListPage(page);
     await jobs.goto();

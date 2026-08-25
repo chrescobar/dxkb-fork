@@ -789,13 +789,21 @@ function useDonutChart({
                       dimmed={isHidden}
                       variant="row"
                       ariaPressed={!isHidden}
-                      onActivate={() => {
-                        activateFromLegend(slice.id);
-                      }}
-                      onDeactivate={deactivate}
-                      onClick={() => {
-                        toggleSlice(slice.id);
-                      }}
+                      onActivate={
+                        hasData
+                          ? () => {
+                              activateFromLegend(slice.id);
+                            }
+                          : undefined
+                      }
+                      onDeactivate={hasData ? deactivate : undefined}
+                      onClick={
+                        hasData
+                          ? () => {
+                              toggleSlice(slice.id);
+                            }
+                          : undefined
+                      }
                     >
                       <span className="min-w-0 flex-1 truncate text-left">
                         {slice.label}
@@ -829,13 +837,21 @@ function useDonutChart({
                           ? `${slice.label}: ${numberFormatter.format(slice.value)}`
                           : slice.label
                       }
-                      onActivate={() => {
-                        activateFromLegend(slice.id);
-                      }}
-                      onDeactivate={deactivate}
-                      onClick={() => {
-                        toggleSlice(slice.id);
-                      }}
+                      onActivate={
+                        hasData
+                          ? () => {
+                              activateFromLegend(slice.id);
+                            }
+                          : undefined
+                      }
+                      onDeactivate={hasData ? deactivate : undefined}
+                      onClick={
+                        hasData
+                          ? () => {
+                              toggleSlice(slice.id);
+                            }
+                          : undefined
+                      }
                     />
                   );
                 })}

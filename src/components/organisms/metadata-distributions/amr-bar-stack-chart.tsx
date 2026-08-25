@@ -21,7 +21,7 @@ import {
 import { numberFormatter } from "@/lib/services/organisms/utils";
 
 import { ChartLegendPill } from "./_shared/chart-legend-pill";
-import { ChartStatusMessage } from "./_shared/chart-status-message";
+import { ChartStatusMessage, EmptyChart } from "./_shared/chart-status-message";
 import {
   amrChartHeight,
   amrChartWidth,
@@ -170,9 +170,7 @@ function useAmrBarStackChart({
       <Card className="relative flex-1 rounded-lg" size="sm">
         <CardContent className="flex flex-1 flex-col">
           <h3 className="m-0 text-sm font-semibold">{title}</h3>
-          <div className="flex flex-1 items-center justify-center">
-            <p className="text-sm text-muted-foreground">No data available</p>
-          </div>
+          <EmptyChart title={title} />
         </CardContent>
       </Card>
     );

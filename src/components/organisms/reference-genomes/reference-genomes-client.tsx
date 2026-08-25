@@ -80,7 +80,10 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
   function resizeTypeColumn(nextWidth: number) {
     const tableWidth = parentRef.current?.clientWidth;
     const maxWidth = tableWidth
-      ? Math.max(minTypeColumnWidth, tableWidth - minGenomeNameColumnWidth)
+      ? Math.min(
+          maxTypeColumnWidth,
+          Math.max(minTypeColumnWidth, tableWidth - minGenomeNameColumnWidth),
+        )
       : maxTypeColumnWidth;
     setTypeColumnWidth(
       Math.min(Math.max(nextWidth, minTypeColumnWidth), maxWidth),
@@ -148,9 +151,12 @@ function GenomeTable({ genomes }: { genomes: ReferenceGenome[] }) {
                 aria-valuemin={minTypeColumnWidth}
                 aria-valuemax={
                   parentRef.current?.clientWidth
-                    ? Math.max(
-                        minTypeColumnWidth,
-                        parentRef.current.clientWidth - minGenomeNameColumnWidth,
+                    ? Math.min(
+                        maxTypeColumnWidth,
+                        Math.max(
+                          minTypeColumnWidth,
+                          parentRef.current.clientWidth - minGenomeNameColumnWidth,
+                        ),
                       )
                     : maxTypeColumnWidth
                 }

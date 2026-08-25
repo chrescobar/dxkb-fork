@@ -40,7 +40,11 @@ describe("AmrBarStackChart", () => {
     );
 
     expect(screen.getByText("No data available")).toBeInTheDocument();
-    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("img", {
+        name: "Antimicrobial Resistance Profile distribution",
+      }),
+    ).toBeInTheDocument();
   });
 
   it("renders the title and an SVG with the correct aria-label", () => {

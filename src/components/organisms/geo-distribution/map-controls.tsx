@@ -49,7 +49,7 @@ export function MapControls({
 
       <div className={cn(
         "overflow-hidden transition-[max-width,opacity] duration-200 ease-in-out",
-        isStateView && stateOptions.length > 0 ? "max-w-[220px] opacity-100" : "pointer-events-none max-w-0 opacity-0",
+        isStateView && stateOptions.length > 0 ? "max-w-55 opacity-100" : "pointer-events-none max-w-0 opacity-0",
       )}>
         <Select
           items={stateOptions.map((option) => ({ value: option.fips, label: option.name }))}
@@ -60,7 +60,7 @@ export function MapControls({
             if (option) onSelectState(option.fips, option.name);
           }}
         >
-          <SelectTrigger className="h-7 min-w-[160px] text-xs" aria-label="View state">
+          <SelectTrigger className="h-7 min-w-40 text-xs" aria-label="View state">
             <SelectValue placeholder="View state…" />
           </SelectTrigger>
           <SelectContent>
@@ -91,6 +91,7 @@ function PillButton({ active, onClick, children }: PillButtonProps) {
       type="button"
       variant={active ? "default" : "ghost"}
       size="xs"
+      aria-pressed={active}
       onClick={onClick}
       className={cn("text-xs transition-colors duration-150", active && "shadow-sm")}
     >

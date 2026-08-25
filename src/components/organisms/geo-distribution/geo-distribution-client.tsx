@@ -44,7 +44,9 @@ export function GeoDistributionClient({
   accent,
 }: GeoDistributionClientProps) {
   const [mapState, setMapState] = useState<GeoMapState>({
-    view: "us",
+    view: Object.values(data.stateData).some((count) => count > 0)
+      ? "us"
+      : "world",
     selectedStateFips: null,
     selectedStateName: null,
   });

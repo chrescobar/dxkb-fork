@@ -24,5 +24,7 @@ export async function GeoDistribution({ taxonId, accent }: GeoDistributionProps)
     );
   }
 
-  return <GeoDistributionClient data={data} accent={accent} />;
+  return (
+    <GeoDistributionClient key={taxonId} data={data} accent={accent} />
+  );
 }

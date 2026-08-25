@@ -306,7 +306,7 @@ function useSingleGenomeSelector({
               setShowDropdown(true);
             }
           }}
-          className="w-full pr-12 pl-10"
+          className="service-card-input w-full pr-12 pl-10"
         />
         <Button
           ref={buttonRef}

@@ -1,0 +1,21 @@
+src/lib/auth/server/cookies.ts
+  s_ae227c4eabbe12::t_e43defc2d7a2db 3
+src/lib/auth/server/__tests__/session.test.ts
+  s_ae227c4eabbe12::t_982b16170f6d6f 44-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "2bf506ed1794d8d913e4a44cab0e6f5ddad091e9",
+  "prompts": {},
+  "sessions": {
+    "s_ae227c4eabbe12": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc635a277ffeqax7oNDBjlPVVa",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

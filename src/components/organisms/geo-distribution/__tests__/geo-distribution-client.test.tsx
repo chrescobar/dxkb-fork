@@ -3,6 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import type { OrganismGeoDistribution } from "@/lib/services/organisms/types";
 
 import { GeoDistributionClient } from "../geo-distribution-client";
+import { MapTooltip } from "../map-tooltip";
 
 vi.mock("@tanstack/react-query", () => ({
   useQuery: () => ({ data: null, error: null, isLoading: false }),
@@ -53,6 +54,23 @@ function distribution({
 }
 
 describe("GeoDistributionClient", () => {
+  it("describes an empty map region as having no data", () => {
+    render(
+      <MapTooltip
+        data={{
+          view: "world",
+          name: "France",
+          count: 0,
+          genera: {},
+          hosts: {},
+        }}
+      />,
+    );
+
+    expect(screen.getByText("France")).toBeVisible();
+    expect(screen.getByText("No data available")).toBeVisible();
+  });
+
   it.each([
     {
       name: "country-only data",

@@ -65,8 +65,9 @@ describe("AreaChart", () => {
       />,
     );
 
+    expect(screen.getByText("No data available")).toBeInTheDocument();
     expect(
-      screen.getByText("No distribution data was returned."),
+      screen.getByRole("img", { name: "Collection Year distribution" }),
     ).toBeInTheDocument();
   });
 });

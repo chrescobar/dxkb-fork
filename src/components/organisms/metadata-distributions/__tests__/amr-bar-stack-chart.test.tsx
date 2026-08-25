@@ -31,7 +31,7 @@ const sampleData: AmrDistributionData = {
 };
 
 describe("AmrBarStackChart", () => {
-  it("renders the empty state when no antibiotics", () => {
+  it("renders only the empty-state message when no antibiotics are available", () => {
     render(
       <AmrBarStackChart
         title="Antimicrobial Resistance Profile"
@@ -39,9 +39,7 @@ describe("AmrBarStackChart", () => {
       />,
     );
 
-    expect(
-      screen.getByText("No distribution data was returned."),
-    ).toBeInTheDocument();
+    expect(screen.getByText("No data available")).toBeInTheDocument();
     expect(screen.queryByRole("img")).not.toBeInTheDocument();
   });
 

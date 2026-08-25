@@ -152,13 +152,26 @@ function useAmrBarStackChart({
       ? 100
       : Math.max(...sortedRows.map((row) => row.total), 1);
 
-  if (errorMessage || data.antibiotics.length === 0) {
+  if (errorMessage) {
     return (
       <Card className="relative flex-1 rounded-lg" size="sm">
         <CardContent className="flex flex-1 flex-col">
           <h3 className="m-0 text-sm font-semibold">{title}</h3>
           <div className="flex flex-1 items-center justify-center">
             <ChartStatusMessage errorMessage={errorMessage} />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (data.antibiotics.length === 0) {
+    return (
+      <Card className="relative flex-1 rounded-lg" size="sm">
+        <CardContent className="flex flex-1 flex-col">
+          <h3 className="m-0 text-sm font-semibold">{title}</h3>
+          <div className="flex flex-1 items-center justify-center">
+            <p className="text-sm text-muted-foreground">No data available</p>
           </div>
         </CardContent>
       </Card>

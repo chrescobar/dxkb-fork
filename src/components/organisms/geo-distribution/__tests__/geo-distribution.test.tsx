@@ -31,17 +31,14 @@ function distribution(maxCount: number): OrganismGeoDistribution {
 }
 
 describe("GeoDistribution", () => {
-  it("does not render map controls when no geographic data exists", async () => {
+  it("renders the map when no geographic data exists", async () => {
     vi.mocked(fetchOrganismGeoDistribution).mockResolvedValue(distribution(0));
 
     await renderServer(
       GeoDistribution({ taxonId: 2871700, accent: "bacteria" }),
     );
 
-    expect(
-      screen.getByText("No geographic distribution data is available for this taxon."),
-    ).toBeVisible();
-    expect(screen.queryByTestId("geo-distribution-client")).not.toBeInTheDocument();
+    expect(screen.getByTestId("geo-distribution-client")).toBeVisible();
   });
 
   it("renders the map when any geographic data exists", async () => {

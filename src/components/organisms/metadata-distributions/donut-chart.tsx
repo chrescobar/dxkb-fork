@@ -330,10 +330,14 @@ function useDonutChart({
   const activeData: DonutDatum[] = tabs
     ? (tabs[activeTabIndex]?.data ?? [])
     : (data ?? []);
-  const slices = chartData(activeData);
+  const dataSlices = chartData(activeData);
+  const hasData = dataSlices.length > 0;
+  const slices: DonutChartDatum[] = hasData
+    ? dataSlices
+    : [{ id: "no-data", label: "No data available", value: 1 }];
   const colorScale = scaleOrdinal<string, string>({
     domain: slices.map((datum) => datum.id),
-    range: donutPalette,
+    range: hasData ? donutPalette : ["var(--muted-foreground)"],
   });
   const visibleSlices = slices.filter((slice) => !hiddenIds.has(slice.id));
   const arcData = buildArcData(visibleSlices, (id) => colorScale(id));
@@ -684,7 +688,7 @@ function useDonutChart({
             </div>
           )}
         </div>
-        {errorMessage || slices.length === 0 ? (
+        {errorMessage ? (
           <ChartStatusMessage errorMessage={errorMessage} />
         ) : (
           <div
@@ -717,7 +721,9 @@ function useDonutChart({
               >
                 {displayedArcs.map((arc) => {
                   const isActive = activeId === arc.slice.id;
-                  const accessibleLabel = `${arc.slice.label}: ${numberFormatter.format(arc.slice.value)}`;
+                  const accessibleLabel = hasData
+                    ? `${arc.slice.label}: ${numberFormatter.format(arc.slice.value)}`
+                    : arc.slice.label;
                   return (
                     <g
                       key={arc.slice.id}
@@ -761,8 +767,8 @@ function useDonutChart({
                   data-testid="chart-overlay"
                   r={outerRadius}
                   fill="transparent"
-                  onMouseMove={handleOverlayMouseMove}
-                  onMouseLeave={deactivate}
+                  onMouseMove={hasData ? handleOverlayMouseMove : undefined}
+                  onMouseLeave={hasData ? deactivate : undefined}
                 />
               </g>
             </svg>
@@ -794,9 +800,11 @@ function useDonutChart({
                       <span className="min-w-0 flex-1 truncate text-left">
                         {slice.label}
                       </span>
-                      <span className="tabular-nums">
-                        {numberFormatter.format(slice.value)}
-                      </span>
+                      {hasData && (
+                        <span className="tabular-nums">
+                          {numberFormatter.format(slice.value)}
+                        </span>
+                      )}
                     </ChartLegendPill>
                   );
                 })}
@@ -816,7 +824,11 @@ function useDonutChart({
                       active={activeId === slice.id}
                       dimmed={isHidden}
                       ariaPressed={!isHidden}
-                      ariaLabel={`${slice.label}: ${numberFormatter.format(slice.value)}`}
+                      ariaLabel={
+                        hasData
+                          ? `${slice.label}: ${numberFormatter.format(slice.value)}`
+                          : slice.label
+                      }
                       onActivate={() => {
                         activateFromLegend(slice.id);
                       }}

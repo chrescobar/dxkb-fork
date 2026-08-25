@@ -187,12 +187,20 @@ describe("DonutChart", () => {
     ).toHaveTextContent("Salmonella: 48,185");
   });
 
-  it("renders an empty state", () => {
+  it("renders an empty chart and gray legend", () => {
     render(<DonutChart title="Country" data={[]} />);
 
     expect(
-      screen.getByText("No distribution data was returned."),
+      screen.getByRole("img", { name: "Country distribution" }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "No data available" }),
+    ).toHaveTextContent("No data available");
+    expect(
+      within(screen.getByRole("img")).getByRole("graphics-symbol", {
+        name: "No data available",
+      }),
+    ).toHaveAttribute("fill", "var(--muted-foreground)");
   });
 
   it("renders a non-degenerate annulus path for a single positive slice", () => {

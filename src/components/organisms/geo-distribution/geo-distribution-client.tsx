@@ -197,7 +197,7 @@ export function GeoDistributionClient({
   }
 
   return (
-    <Card className="rounded-lg" size="sm">
+    <Card className="h-full rounded-lg" size="sm">
       <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 pb-3">
         <CardTitle className="text-lg!" role="heading" aria-level={2}>
           Geographic Distribution

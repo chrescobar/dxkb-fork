@@ -1,7 +1,11 @@
 "use client";
 
 import type { Dispatch, RefObject, SetStateAction } from "react";
-import type { Row, Table as TableModel } from "@tanstack/react-table";
+import type {
+  Row,
+  RowSelectionState,
+  Table as TableModel,
+} from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
 import { X } from "lucide-react";
 import clsx from "clsx";
@@ -14,12 +18,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { TaxonRecord } from "./taxon-tree-types";
+import { isPlaceholder, type TreeTableMeta } from "./taxonomy-tree-columns";
 
-export const taxonomyRowHeight = 32;
+export const taxonomyRowHeight = 24;
 
 interface TreeTableViewProps {
   table: TableModel<TaxonRecord>;
   rows: Row<TaxonRecord>[];
+  rowSelection: RowSelectionState;
   virtualItems: { index: number; start: number; end: number }[];
   totalSize: number;
   scrollRef: RefObject<HTMLDivElement | null>;
@@ -34,6 +40,7 @@ interface TreeTableViewProps {
 export function TreeTableView({
   table,
   rows,
+  rowSelection,
   virtualItems,
   totalSize,
   scrollRef,
@@ -100,6 +107,7 @@ export function TreeTableView({
                     <TreeBodyRow
                       key={rows[item.index].id}
                       row={rows[item.index]}
+                      selected={rowSelection[rows[item.index].id] ?? false}
                       onClick={handleRowClick}
                     />
                   ))}
@@ -144,7 +152,7 @@ function TreeTableHeader({ table }: { table: TableModel<TaxonRecord> }) {
               className="flex items-center border-r border-border px-2 py-0"
               style={{
                 width: header.getSize() || undefined,
-                height: taxonomyRowHeight,
+                height: 32,
                 flex: header.column.id === "taxon_name" ? 1 : undefined,
                 justifyContent:
                   header.column.id === "__select__" ||
@@ -166,9 +174,11 @@ function TreeTableHeader({ table }: { table: TableModel<TaxonRecord> }) {
 
 function TreeBodyRow({
   row,
+  selected,
   onClick,
 }: {
   row: Row<TaxonRecord>;
+  selected: boolean;
   onClick: (row: Row<TaxonRecord>) => void;
 }) {
   return (
@@ -179,7 +189,7 @@ function TreeBodyRow({
       style={{ display: "flex", height: taxonomyRowHeight }}
       className={clsx(
         "cursor-pointer items-center",
-        row.getIsSelected()
+        selected
           ? "bg-primary/15 dark:bg-primary/30"
           : "hover:bg-muted",
       )}
@@ -187,7 +197,25 @@ function TreeBodyRow({
       {row.getVisibleCells().map((cell) => (
         <TableCell
           key={cell.id}
-          className="flex items-center overflow-hidden border-r border-border px-2"
+          onClick={
+            cell.column.id === "__select__" && row.getCanSelect()
+              ? (event) => {
+                  event.stopPropagation();
+                  if (
+                    !(event.target as HTMLElement).closest(
+                      'input[type="checkbox"]',
+                    )
+                  ) {
+                    (cell.getContext().table.options.meta as TreeTableMeta)
+                      .onCheckboxClick(row);
+                  }
+                }
+              : undefined
+          }
+          className={clsx(
+            "flex items-center overflow-hidden border-r border-border px-2",
+            cell.column.id === "__select__" && "cursor-pointer",
+          )}
           style={{
             width: cell.column.getSize() || undefined,
             flex: cell.column.id === "taxon_name" ? 1 : undefined,
@@ -202,7 +230,23 @@ function TreeBodyRow({
                   : "flex-start",
           }}
         >
-          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+          {cell.column.id === "__select__" && !isPlaceholder(row.original) ? (
+            <input
+              type="checkbox"
+              aria-label={`Select ${row.original.taxon_name}`}
+              checked={selected}
+              disabled={!row.getCanSelect()}
+              onChange={() => {
+                (cell.getContext().table.options.meta as TreeTableMeta)
+                  .onCheckboxClick(row);
+              }}
+              onClick={(event) => {
+                event.stopPropagation();
+              }}
+            />
+          ) : (
+            flexRender(cell.column.columnDef.cell, cell.getContext())
+          )}
         </TableCell>
       ))}
     </TableRow>

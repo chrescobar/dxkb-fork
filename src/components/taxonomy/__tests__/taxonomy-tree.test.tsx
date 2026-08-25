@@ -347,6 +347,31 @@ describe("TaxonomyTree", () => {
     });
   });
 
+  it("toggles selection from anywhere in the checkbox cell and uses data-table row height", async () => {
+    mockChildren({ 234: [child(235, "Brucella abortus", "species", 581)] });
+    const onSelect = vi.fn();
+
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />, {
+      wrapper: createQueryClientWrapper(),
+    });
+
+    const checkbox = await screen.findByRole("checkbox", {
+      name: "Select Brucella abortus",
+    });
+    const row = checkbox.closest("tr") as HTMLElement;
+    const selectionCell = checkbox.closest("td") as HTMLElement;
+
+    expect(row).toHaveStyle({ height: "24px" });
+    fireEvent.click(selectionCell);
+
+    expect(checkbox).toBeChecked();
+    await waitFor(() => {
+      expect(onSelect).toHaveBeenLastCalledWith([
+        expect.objectContaining({ taxon_id: 235 }),
+      ]);
+    });
+  });
+
   it("unchecking a collapsed parent preserves selected-but-hidden children in onSelect", async () => {
     mockChildren({
       234: [child(235, "Brucella abortus", "species", 581)],

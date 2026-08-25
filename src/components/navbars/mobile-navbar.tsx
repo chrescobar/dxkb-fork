@@ -60,6 +60,7 @@ import { MobileSubSectionTrigger } from "@/components/navbars/mobile-subsection-
 import { MobileSubSectionLabel } from "@/components/navbars/mobile-subsection-label";
 import { MobileNavLink } from "@/components/navbars/mobile-nav-link";
 import { MobileDecoratedSubSection } from "@/components/navbars/mobile-decorated-subsection";
+import { JobStatusPill } from "@/components/jobs/job-status-pill";
 
 /* ------------------------------------------------------------------ */
 /*  Sub-components                                                     */
@@ -422,7 +423,12 @@ const useMobileNavbar = () => {
             </>
           )}
 
-          {isAuthenticated && <UserAvatarDropdown />}
+          {isAuthenticated && (
+            <>
+              <JobStatusPill />
+              <UserAvatarDropdown />
+            </>
+          )}
         </div>
       </div>
 

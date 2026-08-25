@@ -24,6 +24,7 @@ interface WorkspaceObjectSelectorProps {
   /** Optional preset that supplies `types`; if set, takes precedence over `types`. */
   preset?: WorkspaceSelectorPreset;
   value?: string;
+  filter?: (object: WorkspaceObject) => boolean;
 }
 
 function useWorkspaceObjectSelector({
@@ -37,6 +38,7 @@ function useWorkspaceObjectSelector({
   types,
   preset,
   value,
+  filter,
 }: WorkspaceObjectSelectorProps) {
   const { user } = useAuth();
   const [showDropdown, setShowDropdown] = React.useState(false);
@@ -239,8 +241,11 @@ function useWorkspaceObjectSelector({
     };
   }, [showDropdown]);
 
-  // Use filtered objects from hook, with manual trigger override
-  const displayObjects = isManualTrigger ? objects : filteredObjects;
+  // Use filtered objects from hook, with manual trigger override.
+  const candidateObjects = isManualTrigger ? objects : filteredObjects;
+  const displayObjects = filter
+    ? candidateObjects.filter(filter)
+    : candidateObjects;
 
   // Track previous value to avoid unnecessary updates
   const previousValueRef = React.useRef<string | undefined>(value);

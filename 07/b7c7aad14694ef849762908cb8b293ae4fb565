@@ -1,0 +1,35 @@
+src/components/taxonomy/taxonomy-tree-view.tsx
+  s_bfba876d8ba6a0::t_1c291278185aae 177,181
+  s_bfba876d8ba6a0::t_9e2d489290cc6e 200-218
+  s_bfba876d8ba6a0::t_9768e9ed35c754 110
+  s_bfba876d8ba6a0::t_0f92ba412bd1f8 233-249
+  s_bfba876d8ba6a0::t_15a5eb48ec88a3 21
+  s_bfba876d8ba6a0::t_c6b9cbc93569d3 28
+  s_bfba876d8ba6a0::t_cf8f6454cdcffc 155
+  s_bfba876d8ba6a0::t_e3de69492e065d 43
+  s_bfba876d8ba6a0::t_769fca79d65545 23
+  s_bfba876d8ba6a0::t_e21cb2aafce9fb 4-8
+  s_bfba876d8ba6a0::t_cd2864dfcfad0d 192
+src/components/taxonomy/__tests__/taxonomy-tree.test.tsx
+  s_bfba876d8ba6a0::t_949ad289c9ee75 350-374
+src/components/taxonomy/taxonomy-tree-columns.tsx
+  s_bfba876d8ba6a0::t_0c77ef56490137 146
+src/components/taxonomy/taxonomy-tree.tsx
+  s_bfba876d8ba6a0::t_86a217d7abb52f 366
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "07b7c7aad14694ef849762908cb8b293ae4fb565",
+  "prompts": {},
+  "sessions": {
+    "s_bfba876d8ba6a0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc623a67effeFOqh5k7Re4HWK3",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

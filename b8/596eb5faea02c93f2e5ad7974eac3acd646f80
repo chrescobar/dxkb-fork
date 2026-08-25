@@ -1,0 +1,87 @@
+src/components/organisms/metadata-distributions/area-chart.tsx
+  s_3df30394cc9b4c::t_7bd402b3293e5d 71,73-74
+  s_3df30394cc9b4c::t_79db080f636861 23
+src/components/organisms/geo-distribution/map-tooltip.tsx
+  s_3df30394cc9b4c::t_d9e2192ad59321 34-36
+src/components/organisms/geo-distribution/__tests__/geo-distribution-client.test.tsx
+  s_3df30394cc9b4c::t_8ba1c1fe7fc9b0 6
+  s_3df30394cc9b4c::t_f2cb3c376844be 57-73
+src/components/organisms/geo-distribution/__tests__/geo-distribution.test.tsx
+  s_3df30394cc9b4c::t_c4dc8e0e6caf4b 34,41
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  s_3df30394cc9b4c::t_7f84250c2b113c 828-831
+  s_3df30394cc9b4c::t_573691603e0f48 724-726,770-771
+  s_3df30394cc9b4c::t_b48178aca5a22d 803-807
+  s_3df30394cc9b4c::t_13f133c59331df 333-337,340,691
+  s_3df30394cc9b4c::t_3f97f27812d234 827
+src/components/organisms/reference-genomes/reference-genomes-client.tsx
+  s_3df30394cc9b4c::t_945fd924756033 92,95
+  s_3df30394cc9b4c::t_bdba959d7e5768 192
+  s_3df30394cc9b4c::t_7623c6cb81a99c 149-156
+  s_3df30394cc9b4c::t_0569d5331dc721 217
+  s_3df30394cc9b4c::t_f804002bc234dc 40
+  s_3df30394cc9b4c::t_0bc741258665fc 142,186
+  s_3df30394cc9b4c::t_dc9cf41e0b2e96 81-84
+  s_3df30394cc9b4c::t_43e73b307a0293 4
+  s_3df30394cc9b4c::t_44422cb9399eed 172-182
+  s_3df30394cc9b4c::t_dbd1e3698abecd 247
+  s_3df30394cc9b4c::t_d798b7692bd7b2 32
+  s_3df30394cc9b4c::t_fdbebf7a629c57 30-31,33
+  s_3df30394cc9b4c::t_65f4ff79698e1b 136-139,143-148,157-171,183
+  s_3df30394cc9b4c::t_3863225bd9f99f 266
+  s_3df30394cc9b4c::t_9bbf04546efd00 133
+  s_3df30394cc9b4c::t_2fa967c7f8c607 103
+  s_3df30394cc9b4c::t_cd4bd80bf75376 41
+  s_3df30394cc9b4c::t_01dfa649151525 80,85-91,93-94,96-102,104-116
+src/components/organisms/metadata-distributions/__tests__/area-chart.test.tsx
+  s_3df30394cc9b4c::t_1722e5e08cd7b8 68,70
+src/components/organisms/metadata-distributions/bar-chart.tsx
+  s_3df30394cc9b4c::t_83cc822a29f0c9 64,66-67
+  s_3df30394cc9b4c::t_4ee80655960d31 21
+src/components/organisms/metadata-distributions/__tests__/bar-stack-chart.test.tsx
+  s_3df30394cc9b4c::t_7d0706b9b159ae 23-24
+src/components/organisms/metadata-distributions/__tests__/donut-chart.test.tsx
+  s_3df30394cc9b4c::t_4d80fab95783c0 196,198
+  s_3df30394cc9b4c::t_d45cd68c6f0462 199-203
+  s_3df30394cc9b4c::t_f3b1b282f037bd 197
+  s_3df30394cc9b4c::t_36fbaa32814e7f 190,194
+src/components/organisms/geo-distribution/geo-distribution-client.tsx
+  s_3df30394cc9b4c::t_9f5edf37abdb99 200
+src/components/organisms/metadata-distributions/_shared/chart-status-message.tsx
+  s_3df30394cc9b4c::t_82299f97150725 7-8,12-38
+  s_3df30394cc9b4c::t_6b8232835e2b20 39-40
+src/components/organisms/metadata-distributions/__tests__/bar-chart.test.tsx
+  s_3df30394cc9b4c::t_ab7cc85da734c5 68,70
+src/components/organisms/metadata-distributions/bar-stack-chart.tsx
+  s_3df30394cc9b4c::t_0ace5c58db5be5 22
+  s_3df30394cc9b4c::t_bab492a8f8b11c 71-75
+src/components/organisms/geo-distribution/geo-distribution.tsx
+  s_3df30394cc9b4c::t_b290a5b5807aa4 14
+src/components/organisms/reference-genomes/__tests__/reference-genomes-client.test.tsx
+  s_3df30394cc9b4c::t_6093428e109414 38-47
+  s_3df30394cc9b4c::t_786cc2cea1c98a 48-57,62-68
+  s_3df30394cc9b4c::t_ff1680c98b404a 58-61
+src/components/organisms/metadata-distributions/__tests__/amr-bar-stack-chart.test.tsx
+  s_3df30394cc9b4c::t_a0e3e3535a645f 42
+  s_3df30394cc9b4c::t_9f2449e5d95b54 34
+src/components/organisms/metadata-distributions/amr-bar-stack-chart.tsx
+  s_3df30394cc9b4c::t_d7e561af9699ac 155,168-172
+  s_3df30394cc9b4c::t_03dd6ca5ae2c23 173-175
+  s_3df30394cc9b4c::t_94ce8dfb9da09b 176-178
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "b8596eb5faea02c93f2e5ad7974eac3acd646f80",
+  "prompts": {},
+  "sessions": {
+    "s_3df30394cc9b4c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc5e718e8ffeafJqLREpXelqtp",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

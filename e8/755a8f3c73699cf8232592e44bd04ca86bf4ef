@@ -1,0 +1,26 @@
+src/hooks/services/jobs/__tests__/use-jobs-data.test.tsx
+  s_b6223961ff6de7::t_e340b2a84766e2 68-81
+  s_b6223961ff6de7::t_819c05d9b93b99 82-106,108-117
+  s_b6223961ff6de7::t_4cc1dec01b3c7e 107
+src/hooks/services/jobs/use-jobs-data.ts
+  s_b6223961ff6de7::t_05d78457489f1a 60-71
+  s_b6223961ff6de7::t_0c3ce8b46fb64a 12-59
+e2e/tests/jobs-lifecycle.spec.ts
+  s_b6223961ff6de7::t_426a4f9eb5d12e 99-146
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "e8755a8f3c73699cf8232592e44bd04ca86bf4ef",
+  "prompts": {},
+  "sessions": {
+    "s_b6223961ff6de7": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc686b9b1ffeVdpwcnjVqJY48l",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

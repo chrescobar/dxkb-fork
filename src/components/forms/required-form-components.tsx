@@ -32,7 +32,7 @@ export function RequiredFormLabelInfo({
 }: RequiredFormLabelInfoProps) {
   return (
     <div className="flex flex-row items-center gap-1">
-      <Label className={`service-card-label !mb-0 ${className ?? ""}`}>
+      <Label className={`service-card-label mb-0! ${className ?? ""}`}>
         {label}
       </Label>
       <DialogInfoPopup

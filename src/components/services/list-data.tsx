@@ -285,33 +285,35 @@ function useListData({
       if (idx < 0 || idx * pageSize >= totalItems) return;
       const start = idx * pageSize;
       const end = start + pageSize;
-      void queryClient.prefetchQuery({
-        queryKey: [
-          "genome-full",
-          resource,
-          combinedQuery,
-          idx,
-          sortingKey,
-          searchtype,
-          totalItems,
-        ],
-        queryFn: async () => {
-          const res = await fetch(prefetchURL, {
-            headers: {
-              "Content-type": "application/rqlquery+x-www-form-urlencoded",
-              Accept: "application/json",
-              Range: `items=${String(start)}-${String(end)}`,
-              "X-Range": `items=${String(start)}-${String(end)}`,
-            },
-          });
-          if (!res.ok)
-            throw new Error(
-              `Failed to fetch genome data (${String(res.status)} ${res.statusText})`,
-            );
-          return res.json() as Promise<Record<string, unknown>[]>;
-        },
-        staleTime: 5 * 60 * 1000,
-      });
+      void queryClient
+        .query({
+          queryKey: [
+            "genome-full",
+            resource,
+            combinedQuery,
+            idx,
+            sortingKey,
+            searchtype,
+            totalItems,
+          ],
+          queryFn: async () => {
+            const res = await fetch(prefetchURL, {
+              headers: {
+                "Content-type": "application/rqlquery+x-www-form-urlencoded",
+                Accept: "application/json",
+                Range: `items=${String(start)}-${String(end)}`,
+                "X-Range": `items=${String(start)}-${String(end)}`,
+              },
+            });
+            if (!res.ok)
+              throw new Error(
+                `Failed to fetch genome data (${String(res.status)} ${res.statusText})`,
+              );
+            return res.json() as Promise<Record<string, unknown>[]>;
+          },
+          staleTime: 5 * 60 * 1000,
+        })
+        .catch(noop);
     };
     prefetch(pageIndex + 1);
     prefetch(pageIndex - 1);

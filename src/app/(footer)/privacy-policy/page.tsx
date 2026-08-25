@@ -15,7 +15,7 @@ const PrivacyPolicy = () => {
           <PrivacySidebar />
 
           {/* Main Content */}
-          <main className="max-w-3xl flex-grow">
+          <main className="max-w-3xl grow">
             <section id="introduction" className="mb-10">
               <div className="mb-6 border-l-4 border-secondary bg-secondary/20 p-4">
                 <p className="text-secondary">

@@ -71,16 +71,20 @@ describe("LandingMobileNav", () => {
     expect(wrapper).not.toHaveClass("opacity-0");
   });
 
-  it("uses has-[:focus-visible] not focus-within to keep pill visible on keyboard focus (regression guard)", () => {
+  it("uses has-focus-visible not focus-within to keep pill visible on keyboard focus (regression guard)", () => {
     // CSS :focus-within fires for any focus, including programmatic focus restoration
     // after a dialog closes (e.g. Radix returning focus to the Sheet trigger on close).
     // This caused scroll-hide to stop working after the user opened and closed the sheet.
-    // has-[:focus-visible] only activates for keyboard-driven focus, not click/programmatic focus.
+    // has-focus-visible only activates for keyboard-driven focus, not click/programmatic focus.
     mockHideOnScroll.mockReturnValue(true);
     render(<LandingMobileNav items={items} activeView="overview" onChange={vi.fn()} />);
     const wrapper = getPillWrapper();
     expect(wrapper?.className).not.toMatch(/\bfocus-within:/);
-    expect(wrapper?.className).toMatch(/has-\[/);
+    expect(wrapper).toHaveClass(
+      "has-focus-visible:pointer-events-auto",
+      "has-focus-visible:translate-y-0",
+      "has-focus-visible:opacity-100",
+    );
   });
 });
 

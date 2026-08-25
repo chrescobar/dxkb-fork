@@ -44,7 +44,7 @@ These workflows run automatically on every PR targeting `main`:
 
 (Also present: `e2e-har-refresh.yml` and `sync-linux-snapshots.yml` for maintenance, not per-PR gates.)
 
-The core four (Lint, Typecheck, Build, Test) must pass before merging. `pnpm typecheck` runs `tsc --noEmit` and catches TS errors in test files that `pnpm build` skips. Run all four locally before committing (see CLAUDE.md).
+The core four (Lint, Typecheck, Build, Test) must pass before merging. `pnpm typecheck` runs `tsc --noEmit` and catches TS errors in test files that `pnpm build` skips. Run all four locally before committing (see `AGENTS.md`).
 
 ## Test Conventions
 

@@ -4,7 +4,7 @@
 and `#view_tab=phylogenyVirus`. Answers: why H3N2 has Nextstrain but H5N1 doesn't,
 why Coronaviridae has none, why no bacterium ever does, and what the real limits are.
 
-**Verified against** this checkout (branch `alpha`, `auspice@2.73.0`), the live
+**Verified against** this checkout (branch `alpha`, `auspice@2.73.2`), the live
 content API (`https://www.bv-brc.org/api/content/...`), and a running
 `localhost:3000`. Numbers below are as-fetched on 2026-08-04.
 

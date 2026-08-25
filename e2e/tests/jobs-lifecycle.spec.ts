@@ -96,6 +96,54 @@ test.describe("jobs lifecycle", () => {
     expect(pageErrors).toEqual([]);
   });
 
+  test("renders production AppService jobs in the table and navbar", async ({ page }) => {
+    const productionJob = {
+      id: 22976705,
+      app: "PredictStructure",
+      application_name: "PredictStructure",
+      status: "completed",
+      submit_time: "2026-07-08T14:13:10Z",
+      start_time: "2026-07-08T14:13:32Z",
+      completed_time: "2026-07-08T14:15:02Z",
+      elapsed_time: "00:01:30",
+      user_id: "e2e-test-user@bvbrc",
+      parameters: { output_file: "production-shaped-output" },
+      parent_id: null,
+      workspace: null,
+      storage_location: "",
+    };
+
+    await applyBackendMocks(page, {
+      overrides: [
+        ...workspacePopulatedOverrides,
+        ...jobsListOverrides,
+        ...journeyOverrides,
+      ],
+    });
+    await page.route(
+      "**/api/services/app-service/jobs/enumerate-tasks-filtered",
+      async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ jobs: [productionJob], totalTasks: 1 }),
+        });
+      },
+    );
+
+    const jobs = new JobsListPage(page);
+    await jobs.goto();
+    await jobs.waitForRows();
+
+    await expect(page.getByText(/error loading jobs/i)).not.toBeVisible();
+    await expect(jobs.rowById("22976705")).toContainText("production-shaped-output");
+
+    await page.getByRole("button", { name: /view job status/i }).click();
+    const jobPopover = page.getByRole("dialog", { name: /my jobs/i });
+    await expect(jobPopover.getByText("Predict Structure")).toBeVisible();
+    await expect(jobPopover.getByText("1m30s")).toBeVisible();
+  });
+
   test("shows a response contract error instead of silently hiding malformed jobs", async ({ page }) => {
     await applyBackendMocks(page, {
       overrides: [

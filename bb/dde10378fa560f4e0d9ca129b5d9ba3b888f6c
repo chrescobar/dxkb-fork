@@ -1,0 +1,26 @@
+src/app/page.tsx
+  s_fd001b7d35e7fe::t_309301909c06ef 12-13
+src/lib/services/statistics.ts
+  s_fd001b7d35e7fe::t_80463ac24033c0 59-61
+  s_fd001b7d35e7fe::t_fb938c5415a3c4 42
+src/lib/services/__tests__/statistics.test.ts
+  s_fd001b7d35e7fe::t_ec074568d92990 95-110
+pnpm-lock.yaml
+  s_fd001b7d35e7fe::t_2347191d8f849d 4942-4944,5519-5521,6529-6531,7142-7145,7245-7255,7738-7741,12632,13502-13503,14318-14322,15474-15477,16006-16007,16106-16120,16784-16785
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "bbdde10378fa560f4e0d9ca129b5d9ba3b888f6c",
+  "prompts": {},
+  "sessions": {
+    "s_fd001b7d35e7fe": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc545d418ffe3rDmNa3ByAddN7",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

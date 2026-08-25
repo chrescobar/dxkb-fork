@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 
-export const sessionMaxAgeMs = 4 * 60 * 60 * 1000;
+export const sessionMaxAgeMs = 24 * 60 * 60 * 1000;
 
 export const sessionCookieNames = {
   token: "bvbrc_token",

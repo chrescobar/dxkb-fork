@@ -41,6 +41,10 @@ function cookies(values: Record<string, string>) {
 }
 
 describe("session cookies", () => {
+  it("uses a 24-hour lifetime", () => {
+    expect(sessionMaxAgeMs).toBe(24 * 60 * 60 * 1000);
+  });
+
   it("reads a complete identity without synthesizing expiry", async () => {
     cookies({
       bvbrc_token: "token",

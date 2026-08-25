@@ -12,7 +12,7 @@ export default async function AuthLayout({
   if (user) redirect("/");
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-muted/30">
       <Navbar />
       <main className="flex grow py-8">
         <div className="auth-container">{children}</div>

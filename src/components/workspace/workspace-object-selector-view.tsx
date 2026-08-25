@@ -84,7 +84,7 @@ export function WorkspaceObjectSelectorView({
             aria-label={showDropdown ? "Hide suggestions" : "Show suggestions"}
             aria-expanded={showDropdown}
             onClick={onToggleDropdown}
-            className="absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+            className="absolute top-1/2 right-3 size-4 -translate-y-1/2 bg-primary/15 text-primary transition-colors hover:bg-primary/25 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/80"
           >
             <ChevronDown
               className={`size-4 transition-transform ${showDropdown ? "rotate-180" : ""}`}
@@ -176,7 +176,7 @@ function WorkspaceObjectDropdown({
       id={listboxId}
       ref={dropdownRef}
       role="listbox"
-      className="fixed z-25 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent overflow-y-auto rounded-md border bg-popover shadow-md hover:scrollbar-thumb-muted-foreground/40 dark:scrollbar-thumb-muted-foreground/30 dark:hover:scrollbar-thumb-muted-foreground/50"
+      className="fixed z-40 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent overflow-y-auto rounded-md border bg-popover shadow-md hover:scrollbar-thumb-muted-foreground/40 dark:scrollbar-thumb-muted-foreground/30 dark:hover:scrollbar-thumb-muted-foreground/50"
       style={{
         ...(openUpward
           ? { bottom: rect.bottom, top: "auto" }

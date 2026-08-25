@@ -21,7 +21,7 @@ import {
 import { numberFormatter } from "@/lib/services/organisms/utils";
 
 import { ChartLegendPill } from "./_shared/chart-legend-pill";
-import { ChartStatusMessage } from "./_shared/chart-status-message";
+import { ChartStatusMessage, EmptyChart } from "./_shared/chart-status-message";
 import {
   amrChartHeight,
   amrChartWidth,
@@ -152,7 +152,7 @@ function useAmrBarStackChart({
       ? 100
       : Math.max(...sortedRows.map((row) => row.total), 1);
 
-  if (errorMessage || data.antibiotics.length === 0) {
+  if (errorMessage) {
     return (
       <Card className="relative flex-1 rounded-lg" size="sm">
         <CardContent className="flex flex-1 flex-col">
@@ -160,6 +160,17 @@ function useAmrBarStackChart({
           <div className="flex flex-1 items-center justify-center">
             <ChartStatusMessage errorMessage={errorMessage} />
           </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (data.antibiotics.length === 0) {
+    return (
+      <Card className="relative flex-1 rounded-lg" size="sm">
+        <CardContent className="flex flex-1 flex-col">
+          <h3 className="m-0 text-sm font-semibold">{title}</h3>
+          <EmptyChart title={title} />
         </CardContent>
       </Card>
     );

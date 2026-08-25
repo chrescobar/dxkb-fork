@@ -44,7 +44,9 @@ export function GeoDistributionClient({
   accent,
 }: GeoDistributionClientProps) {
   const [mapState, setMapState] = useState<GeoMapState>({
-    view: "us",
+    view: Object.values(data.stateData).some((count) => count > 0)
+      ? "us"
+      : "world",
     selectedStateFips: null,
     selectedStateName: null,
   });
@@ -58,6 +60,7 @@ export function GeoDistributionClient({
   const statesQuery = useQuery({
     queryKey: ["geo-distribution", "states-topo"],
     queryFn: () => fetchTopoJson("/maps/states-10m.json"),
+    enabled: mapState.view === "us" || mapState.view === "state",
     staleTime: Infinity,
     gcTime: Infinity,
   });
@@ -195,7 +198,7 @@ export function GeoDistributionClient({
   }
 
   return (
-    <Card className="rounded-lg" size="sm">
+    <Card className="h-full rounded-lg" size="sm">
       <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 pb-3">
         <CardTitle className="text-lg!" role="heading" aria-level={2}>
           Geographic Distribution

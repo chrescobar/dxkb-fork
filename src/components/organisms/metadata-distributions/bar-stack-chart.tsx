@@ -19,7 +19,7 @@ import {
 import { numberFormatter } from "@/lib/services/organisms/utils";
 
 import { ChartLegendPill } from "./_shared/chart-legend-pill";
-import { ChartStatusMessage } from "./_shared/chart-status-message";
+import { ChartStatusMessage, EmptyChart } from "./_shared/chart-status-message";
 import {
   chartMarginLeft,
   chartMarginTop,
@@ -68,7 +68,11 @@ export function BarStackChart({
       <Card className="relative rounded-lg" size="sm">
         <CardContent className="flex flex-1 flex-col">
           <h3 className="m-0 text-sm font-semibold">{title}</h3>
-          <ChartStatusMessage errorMessage={errorMessage} />
+          {errorMessage ? (
+            <ChartStatusMessage errorMessage={errorMessage} />
+          ) : (
+            <EmptyChart title={title} />
+          )}
         </CardContent>
       </Card>
     );

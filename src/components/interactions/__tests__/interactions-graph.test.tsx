@@ -19,7 +19,11 @@ vi.mock("@/lib/interactions/use-interactions", () => ({
 }));
 
 vi.mock("../sigma/sigma-canvas", () => ({
-  SigmaCanvas: () => <div data-testid="sigma-canvas" />,
+  SigmaCanvas: ({ onReady }: { onReady: () => void }) => (
+    <button type="button" data-testid="sigma-canvas" onClick={onReady}>
+      Mark canvas ready
+    </button>
+  ),
 }));
 
 const graphRows: PpiRecord[] = [
@@ -182,7 +186,72 @@ describe("InteractionsGraph loading state", () => {
   });
 });
 
+describe("InteractionsGraph empty state", () => {
+  it("preserves the graph workspace and replaces only the canvas content", () => {
+    vi.mocked(useInteractions).mockReturnValue({
+      data: [],
+      isPending: false,
+      isError: false,
+      error: null,
+    } as unknown as ReturnType<typeof useInteractions>);
+
+    render(
+      <InteractionsGraph
+        taxonId={776}
+        q=""
+        keywordValue=""
+        onKeywordChange={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText("Microbial protein")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Sub-Graph" })).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: "Layout" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Selection details")).toBeInTheDocument();
+    expect(screen.getByText("No Interactions")).toBeInTheDocument();
+    expect(screen.queryByTestId("sigma-canvas")).not.toBeInTheDocument();
+  });
+});
+
 describe("InteractionsGraph data changes", () => {
+  it("disables export when a ready populated graph becomes empty", async () => {
+    vi.mocked(useInteractions).mockReturnValue({
+      data: graphRows,
+      isPending: false,
+      isError: false,
+      error: null,
+    } as ReturnType<typeof useInteractions>);
+
+    const { rerender } = render(
+      <InteractionsGraph
+        taxonId={943}
+        q=""
+        keywordValue=""
+        onKeywordChange={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(await screen.findByTestId("sigma-canvas"));
+    expect(screen.getByRole("button", { name: "Export" })).toBeEnabled();
+
+    vi.mocked(useInteractions).mockReturnValue({
+      data: [],
+      isPending: false,
+      isError: false,
+      error: null,
+    } as unknown as ReturnType<typeof useInteractions>);
+    rerender(
+      <InteractionsGraph
+        taxonId={943}
+        q=""
+        keywordValue=""
+        onKeywordChange={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "Export" })).toBeDisabled();
+  });
+
   it("clears stale selection and active presets when the query data changes", async () => {
     const user = userEvent.setup();
     vi.mocked(useInteractions).mockReturnValue({

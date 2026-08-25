@@ -65,6 +65,56 @@ describe("parseJobsResponse", () => {
     });
   });
 
+  it("normalizes production AppService fields", () => {
+    const job = {
+      ...validJob,
+      owner: undefined,
+      user_id: "test-user@bvbrc",
+      elapsed_time: "01:02:03",
+    };
+
+    expect(parseJobsResponse({ jobs: [job], totalTasks: 1 })).toEqual({
+      jobs: [{ ...job, owner: "test-user@bvbrc", elapsed_time: 3723 }],
+      totalTasks: 1,
+    });
+  });
+
+  it("prefers owner when both owner fields are present", () => {
+    const job = { ...validJob, user_id: "upstream-user" };
+
+    expect(parseJobsResponse({ jobs: [job], totalTasks: 1 }).jobs[0]?.owner).toBe(
+      validJob.owner,
+    );
+  });
+
+  it.each([
+    ["zero duration", "00:00:00", 0],
+    ["multi-hour duration", "125:04:09", 450249],
+    ["empty duration", "", undefined],
+    ["numeric duration", 90.5, 90.5],
+  ])("normalizes %s", (_case, elapsed_time, expected) => {
+    const job = { ...validJob, elapsed_time };
+
+    expect(
+      parseJobsResponse({ jobs: [job], totalTasks: 1 }).jobs[0]?.elapsed_time,
+    ).toBe(expected);
+  });
+
+  it.each([
+    ["missing owner aliases", { ...validJob, owner: undefined }],
+    ["empty owner", { ...validJob, owner: "" }],
+    ["empty user ID", { ...validJob, owner: undefined, user_id: "" }],
+    ["malformed duration", { ...validJob, elapsed_time: "01:2:03" }],
+    ["out-of-range minutes", { ...validJob, elapsed_time: "01:60:00" }],
+    ["out-of-range seconds", { ...validJob, elapsed_time: "01:00:60" }],
+    ["negative duration", { ...validJob, elapsed_time: -1 }],
+    ["null duration", { ...validJob, elapsed_time: null }],
+  ])("rejects %s", (_case, job) => {
+    expect(() => parseJobsResponse({ jobs: [job], totalTasks: 1 })).toThrow(
+      "Invalid jobs response",
+    );
+  });
+
   it.each([
     ["null response", null],
     ["missing jobs", { totalTasks: 0 }],

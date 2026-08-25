@@ -41,6 +41,13 @@ function buildFullPath(outputFolderPath: string, name: string): string {
   return trimmed ? `${base}/${trimmed}` : "";
 }
 
+function isSelectableOutputFolder(object: { name: string; path: string }): boolean {
+  const hasHiddenPathSegment = object.path
+    .split("/")
+    .some((segment) => segment.startsWith("."));
+  return !object.name.startsWith(".") && !hasHiddenPathSegment;
+}
+
 const OutputFolder = ({
   title = true,
   required = false,
@@ -193,6 +200,7 @@ const OutputFolder = ({
               preset="folder"
               placeholder="Search for folders..."
               value={value}
+              filter={isSelectableOutputFolder}
               onObjectSelect={(object) => {
                 onChange?.(object.path || "");
               }}

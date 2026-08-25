@@ -40,8 +40,12 @@ export class TaxonInteractionsPage {
     await expect(this.page.getByRole("tabpanel", { name: "Graph" }).locator("canvas").first()).toBeVisible();
   }
 
-  async expectEmptyGraphState(): Promise<void> {
-    await expect(this.page.getByText("No interactions found.")).toBeVisible();
+  async expectEmptyGraphWorkspace(): Promise<void> {
+    const graphPanel = this.page.getByRole("tabpanel", { name: "Graph" });
+    await expect(graphPanel.getByText("No Interactions", { exact: true })).toBeVisible();
+    await expect(graphPanel.getByRole("combobox", { name: "Layout" })).toBeVisible();
+    await expect(graphPanel.getByRole("button", { name: "Export" })).toBeDisabled();
+    await expect(graphPanel.getByLabel("Selection details")).toBeVisible();
   }
 
   /** Table subview's own FilterBar keyword box (top of the Table tabpanel). */

@@ -1,6 +1,6 @@
 # Architecture (deep reference)
 
-On-demand companion to `.claude/CLAUDE.md`. Read this when you need the full module map; the CLAUDE.md summary + on-pattern recipes cover most day-to-day work.
+On-demand companion to `AGENTS.md`. Read this when you need the full module map; the `AGENTS.md` summary + on-pattern recipes cover most day-to-day work.
 
 **DXKB V2** is a Next.js 16 app (App Router) serving as a Disease X Knowledge Base — a bioinformatics platform for genomics, metagenomics, and viral research.
 

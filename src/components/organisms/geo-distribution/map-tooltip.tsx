@@ -28,10 +28,12 @@ export function MapTooltip({ data }: MapTooltipProps) {
   const hosts = topItems(data.hosts);
 
   return (
-    <div className="w-max max-w-[240px] text-xs text-foreground">
+    <div className="w-max max-w-60 text-xs text-foreground">
       <div className="text-sm font-semibold">{data.name || "Unknown"}</div>
       <div className="text-muted-foreground tabular-nums">
-        {numberFormatter.format(total)} {total === 1 ? "genome" : "genomes"}
+        {total > 0
+          ? `${numberFormatter.format(total)} ${total === 1 ? "genome" : "genomes"}`
+          : "No data available"}
       </div>
       {genera.length > 0 && (
         <div className="mt-2 border-t border-border/40 pt-2">

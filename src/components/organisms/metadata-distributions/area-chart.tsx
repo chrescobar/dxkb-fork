@@ -20,7 +20,7 @@ import {
   yearInnerHeight,
   yearInnerWidth,
 } from "./_shared/chart-dimensions";
-import { ChartStatusMessage } from "./_shared/chart-status-message";
+import { ChartStatusMessage, EmptyChart } from "./_shared/chart-status-message";
 import { nearestBandIndex } from "./_shared/use-svg-band-pointer";
 import { YAxisTicks } from "./_shared/y-axis-ticks";
 import { labelStep, parseYearData, type YearDatum } from "./_shared/year-data";
@@ -68,8 +68,10 @@ export function AreaChart({
         <CardTitle className="text-sm! font-semibold!">{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        {errorMessage || yearData.length === 0 ? (
+        {errorMessage ? (
           <ChartStatusMessage errorMessage={errorMessage} />
+        ) : yearData.length === 0 ? (
+          <EmptyChart title={title} />
         ) : (
           <div className="min-w-0 overflow-hidden">
             <svg

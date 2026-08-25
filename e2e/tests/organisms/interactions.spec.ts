@@ -42,11 +42,11 @@ test.describe("taxon interactions tab", () => {
     await interactionsPage.expectCanvasVisible();
   });
 
-  test("Graph subtab shows an empty state when there are no interactions", async ({ page }) => {
+  test("Graph subtab preserves the workspace when there are no interactions", async ({ page }) => {
     const interactionsPage = await setupInteractionsPage(page, []);
 
     await interactionsPage.switchToGraph();
-    await interactionsPage.expectEmptyGraphState();
+    await interactionsPage.expectEmptyGraphWorkspace();
   });
 
   test("layout dropdown shows the human-readable label, not the raw value", async ({ page, browserName }) => {

@@ -1543,7 +1543,7 @@ git commit -m "feat(views): add taxonomy list route via registry"
 - [ ] **Step 1: Lint**
 
 Run: `pnpm lint`
-Expected: no errors. If `react-hooks/incompatible-library` fires on `LegacyHashAdapter`, add `"use no memo";` as the first statement in the component body and extend the silence list in `eslint.config.mjs` per `CLAUDE.md`.
+Expected: no errors. If `react-hooks/incompatible-library` fires on `LegacyHashAdapter`, add `"use no memo";` as the first statement in the component body and extend the silence list in `eslint.config.mjs` per `AGENTS.md`.
 
 - [ ] **Step 2: Typecheck**
 

@@ -20,10 +20,8 @@ describe("BarStackChart", () => {
       />,
     );
 
-    expect(
-      screen.getByText("No distribution data was returned."),
-    ).toBeInTheDocument();
-    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+    expect(screen.getByText("No data available")).toBeInTheDocument();
+    expect(screen.getByRole("img")).toBeInTheDocument();
   });
 
   it("renders an SVG with the correct aria-label", () => {

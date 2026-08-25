@@ -365,7 +365,7 @@ follow-up. Guidance for the next engineer:
   `src/lib/services/organisms/taxonomy.ts`) and a real list component to replace the
   placeholder grid in `renderListShell`. Use the existing TanStack Table virtualized
   pattern (`workspace-data-table.tsx`, `shared/data-table.tsx`) and add `"use no memo"` per
-  the React Compiler rules in `CLAUDE.md`. Wire columns from the registry endpoint. Start
+  the React Compiler rules in `AGENTS.md`. Wire columns from the registry endpoint. Start
   with `genome` (highest traffic) as the template, then replicate.
 - **Dependency:** none on other deferred items; can begin immediately after the skeleton.
 
@@ -424,7 +424,7 @@ These shipped files (commits from 2026-06-15) must be updated for the `view` →
 | R4 | **Legacy name → segment reverse-map is incomplete** (a legacy name maps to nothing). | Low | 404 on inbound legacy link | Derive the table from the registry; unit-test totality (every `legacySingular`/`legacyList` resolves). |
 | R5 | **`?view=` rename breaks day-old links / tests.** | High (it will) until migrated | Broken tab nav / red CI | Do the rename + the `view`→`tab` redirect together (§6.1); update tests in the same change. |
 | R6 | **Coverage floor trips** on the skeleton PR. | Low | Red CI | New pure `rql.ts` + registry tests *raise* measured coverage; do not lower floors. |
-| R7 | **React Compiler + `LegacyHashAdapter`** (a client hook-bearing component) gets mis-memoized. | Low | Subtle client bug | Follow `CLAUDE.md` rules; add `"use no memo"` if it uses an incompatible hook; let the `react-hooks/incompatible-library` lint be the signal. |
+| R7 | **React Compiler + `LegacyHashAdapter`** (a client hook-bearing component) gets mis-memoized. | Low | Subtle client bug | Follow `AGENTS.md` rules; add `"use no memo"` if it uses an incompatible hook; let the `react-hooks/incompatible-library` lint be the signal. |
 | R8 | **`protein-structure` dual-mode page** (list vs id-less singular) is an inconsistent shape vs the other 9. | Medium | Confusing/edge bugs | Keep its own explicit `page.tsx` body (no forced registry dispatch); cover both `?accession=` and `?path=` branches with tests. |
 | R9 | **Premature registry abstraction** if the 10 types diverge more than expected. | Low | Rework | Registry is **data-only**; render stays per-page, so divergence is absorbed in page bodies, not the table. The table only holds genuinely shared metadata. |
 | R10 | **`force-dynamic` everywhere** forgoes caching for high-traffic singulars. | Medium (perf, later) | Slower pages at scale | Acceptable for the skeleton; revisit with SSG/ISR in 8.4. |

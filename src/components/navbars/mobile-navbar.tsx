@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
@@ -60,6 +60,7 @@ import { MobileSubSectionTrigger } from "@/components/navbars/mobile-subsection-
 import { MobileSubSectionLabel } from "@/components/navbars/mobile-subsection-label";
 import { MobileNavLink } from "@/components/navbars/mobile-nav-link";
 import { MobileDecoratedSubSection } from "@/components/navbars/mobile-decorated-subsection";
+import { JobStatusPill } from "@/components/jobs/job-status-pill";
 
 /* ------------------------------------------------------------------ */
 /*  Sub-components                                                     */
@@ -102,6 +103,19 @@ const useMobileNavbar = () => {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 63.999rem)");
+    const updateViewport = () => {
+      setIsMobileViewport(mediaQuery.matches);
+    };
+    updateViewport();
+    mediaQuery.addEventListener("change", updateViewport);
+    return () => {
+      mediaQuery.removeEventListener("change", updateViewport);
+    };
+  }, []);
 
   const { data: favoritePaths = [] } = useQuery({
     queryKey: workspaceQueryKeys.favorites(wsUsername),
@@ -373,7 +387,7 @@ const useMobileNavbar = () => {
           <Button
             variant="ghost"
             size="sm"
-            className="text-primary-foreground hover:bg-white/15"
+            className="text-primary-foreground hover:bg-white/15 hover:text-primary-foreground"
             onClick={openCommandPalette}
             aria-label="Open command palette"
             aria-keyshortcuts="Meta+K Control+K"
@@ -384,7 +398,7 @@ const useMobileNavbar = () => {
             <Button
               variant="ghost"
               size="sm"
-              className="text-primary-foreground hover:bg-white/15"
+              className="text-primary-foreground hover:bg-white/15 hover:text-primary-foreground"
               onClick={() => {
                 setIsSearchOpen(!isSearchOpen);
               }}
@@ -422,7 +436,12 @@ const useMobileNavbar = () => {
             </>
           )}
 
-          {isAuthenticated && <UserAvatarDropdown />}
+          {isAuthenticated && (
+            <>
+              {isMobileViewport && <JobStatusPill />}
+              <UserAvatarDropdown />
+            </>
+          )}
         </div>
       </div>
 

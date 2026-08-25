@@ -363,6 +363,7 @@ function TaxonomyTreeInstance({
     <TreeTableView
       table={table}
       rows={tableRows}
+      rowSelection={selection.selected}
       virtualItems={virtualItems}
       totalSize={rowVirtualizer.getTotalSize()}
       scrollRef={scrollRef}

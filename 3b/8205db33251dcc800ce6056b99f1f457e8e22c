@@ -1,0 +1,33 @@
+src/app/(auth)/sign-in/page.tsx
+  s_648ec0c414c730::t_1dc8b50f6346a8 68
+src/app/(auth)/layout.tsx
+  s_648ec0c414c730::t_f771252107e634 15
+src/app/(auth)/sign-up/page.tsx
+  s_648ec0c414c730::t_613715bea2c9ad 52
+src/app/services/layout.tsx
+  s_648ec0c414c730::t_f771252107e634 12,15,18,25
+src/app/globals.css
+  s_648ec0c414c730::t_f771252107e634 112,115-119,155-160
+  s_648ec0c414c730::t_19a2b4da03a282 591,600,608,612,620
+  s_648ec0c414c730::t_87ecaf0214d01b 535,539,543,547,551,555
+src/app/(auth)/forgot-password/page.tsx
+  s_648ec0c414c730::t_9032bcfdcda236 61,96
+src/app/services/(metagenomics)/metagenomic-binning/metagenomic-binning-parameters-card.tsx
+  s_648ec0c414c730::t_f771252107e634 190-192,275
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "3b8205db33251dcc800ce6056b99f1f457e8e22c",
+  "prompts": {},
+  "sessions": {
+    "s_648ec0c414c730": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc6c475daffeodLIBwTmat4rs3",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -187,9 +187,9 @@ export function BinningParametersCard({
                     <Input
                       name={field.name}
                       value={field.state.value ?? ""}
-                      onChange={(event) =>
-                        { field.handleChange(event.target.value); }
-                      }
+                      onChange={(event) => {
+                        field.handleChange(event.target.value);
+                      }}
                       onBlur={field.handleBlur}
                       placeholder="My Genome Group"
                       className="service-card-input"
@@ -272,7 +272,7 @@ export function BinningParametersCard({
                           name="disable_dangling"
                           checked={field.state.value}
                           onCheckedChange={field.handleChange}
-                          className="mb-2 bg-white"
+                          className="mb-2 bg-background"
                         />
                         <FieldLabel
                           field={field}

@@ -9,17 +9,13 @@ interface ServiceLayoutProps {
   children: React.ReactNode;
 }
 
-export default function ServicesLayout({
-  children,
-}: ServiceLayoutProps) {
+export default function ServicesLayout({ children }: ServiceLayoutProps) {
   return (
     <ServiceDebuggingProvider>
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col bg-muted/30">
         <Navbar />
         <main className="flex grow py-8">
-          <div className="service-container container">
-            {children}
-          </div>
+          <div className="service-container container">{children}</div>
         </main>
         <Footer />
         <DebuggingPanel />

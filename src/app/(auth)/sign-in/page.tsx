@@ -65,7 +65,7 @@ function SigninForm() {
   });
 
   return (
-    <div className="flex items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="mb-2 space-y-1">
           <CardTitle className="text-center text-2xl font-bold">
@@ -210,7 +210,7 @@ export default function SigninPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
           <Card className="w-full max-w-md">
             <CardHeader className="mb-2 space-y-1">
               <CardTitle className="text-center text-2xl font-bold">

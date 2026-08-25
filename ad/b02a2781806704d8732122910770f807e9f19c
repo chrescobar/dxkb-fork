@@ -1,0 +1,42 @@
+src/components/organisms/geo-distribution/map-controls.tsx
+  s_e8d54fd2ed39ca::t_daa9bb1414c16b 94
+src/components/organisms/geo-distribution/geo-distribution.tsx
+  s_e8d54fd2ed39ca::t_fab3fb2a93dc89 27-29
+src/components/organisms/geo-distribution/geo-distribution-client.tsx
+  s_e8d54fd2ed39ca::t_b880f89055b546 47-49
+src/components/services/single-genome-selector.tsx
+  s_ffc58751523b5c::t_31b5c7d239ed26 309
+src/components/organisms/geo-distribution/__tests__/geo-distribution.test.tsx
+  s_e8d54fd2ed39ca::t_e65e5228fd21ab 1-56
+src/components/organisms/geo-distribution/__tests__/geo-distribution-client.test.tsx
+  s_e8d54fd2ed39ca::t_c0b37362c9c691 114
+  s_e8d54fd2ed39ca::t_5839da5d8b3973 1
+  s_e8d54fd2ed39ca::t_eecbc81273548d 2-28,39,41-43,45,52-55,75-76,108-109,111-112,115-117,121-122
+  s_e8d54fd2ed39ca::t_53977bb242cb91 78-79
+  s_e8d54fd2ed39ca::t_753165ffeb68e3 98
+  s_e8d54fd2ed39ca::t_ea169a1093b331 29-38,40,44,46-51,56-74,77,80-97,99-107,110,113,118-120
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "adb02a2781806704d8732122910770f807e9f19c",
+  "prompts": {},
+  "sessions": {
+    "s_e8d54fd2ed39ca": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc69704a5ffe8z7m00wdYEH96N",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_ffc58751523b5c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc6a35f8cffetPeFI8xCUdhKbJ",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

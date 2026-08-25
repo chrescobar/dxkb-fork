@@ -973,7 +973,7 @@ function useDataTableContent(
           </div>
         </div>
       )}
-      <div className="z-50 mb-2 flex w-full justify-end px-5" ref={controlsRef}>
+      <div className="mb-2 flex w-full justify-end px-5" ref={controlsRef}>
         <div className="relative inline-block text-left" ref={columnMenuRef}>
           {" "}
           {/* This is the button for changing the visibility of columns in the table */}

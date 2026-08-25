@@ -312,7 +312,7 @@ function useSingleGenomeSelector({
           ref={buttonRef}
           type="button"
           onClick={handleManualDropdownToggle}
-          className="absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+          className="absolute top-1/2 right-3 size-4 -translate-y-1/2 bg-primary/15 text-primary transition-colors hover:bg-primary/25 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/80"
           aria-label="Toggle dropdown"
         >
           <ChevronDown

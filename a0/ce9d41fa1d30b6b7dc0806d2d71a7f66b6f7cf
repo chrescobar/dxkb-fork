@@ -1,0 +1,21 @@
+e2e/tests/organisms/interactions.spec.ts
+  s_954a5a78ac74b0::t_11118649d9bf58 45,49
+e2e/pages/taxon-interactions-page.ts
+  s_954a5a78ac74b0::t_7b583bbd45ffe2 43-48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "a0ce9d41fa1d30b6b7dc0806d2d71a7f66b6f7cf",
+  "prompts": {},
+  "sessions": {
+    "s_954a5a78ac74b0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc5968c62ffeqn2yOTY4z0Njw7",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

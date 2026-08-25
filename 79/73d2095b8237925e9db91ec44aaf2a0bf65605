@@ -1,0 +1,59 @@
+src/components/organisms/metadata-distributions/__tests__/amr-bar-stack-chart.test.tsx
+  s_f13e924f6246b0::t_0ccdc9a9cc1822 43-47
+src/components/services/__tests__/output-folder.test.tsx
+  s_f13e924f6246b0::t_6a78f2664e0c27 38-44
+  s_f13e924f6246b0::t_e6c4279310d8a1 89-91
+src/components/organisms/geo-distribution/geo-distribution-client.tsx
+  s_f13e924f6246b0::t_63febc01a43a2c 63
+src/components/interactions/__tests__/interactions-graph.test.tsx
+  s_f13e924f6246b0::t_31477eb940182e 22-26
+  s_f13e924f6246b0::t_87eed41960754f 234
+  s_f13e924f6246b0::t_57395d3fd63b56 242
+  s_f13e924f6246b0::t_d8438cc4716827 217-233,235-241,243-254
+src/components/interactions/interactions-graph.tsx
+  s_f13e924f6246b0::t_a01e9e15619433 205
+src/components/services/output-folder.tsx
+  s_f13e924f6246b0::t_77bfc28051ecf6 45-48
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  s_f13e924f6246b0::t_26fd59bda25bc8 792-806,840-854
+src/components/organisms/metadata-distributions/__tests__/donut-chart.test.tsx
+  s_f13e924f6246b0::t_ed8b7b30150bda 204-209
+  s_f13e924f6246b0::t_3b77cd2bcae752 210
+src/components/organisms/reference-genomes/reference-genomes-client.tsx
+  s_f13e924f6246b0::t_f12bcb54c67c93 154-159
+  s_f13e924f6246b0::t_c460c3147664c8 83-86
+src/components/organisms/geo-distribution/__tests__/geo-distribution-client.test.tsx
+  s_f13e924f6246b0::t_ca10476f28b3f9 8
+  s_f13e924f6246b0::t_8238a29214061f 9-13,15
+  s_f13e924f6246b0::t_9ece42dda2b928 80-90
+src/components/organisms/metadata-distributions/_shared/chart-legend-pill.tsx
+  s_f13e924f6246b0::t_5b9db69ac32127 73
+  s_f13e924f6246b0::t_343da440e3d505 14-15
+src/components/navbars/mobile-navbar.tsx
+  s_f13e924f6246b0::t_65296a1092a78f 441
+  s_f13e924f6246b0::t_ae38d4759f44c5 106-118
+  s_f13e924f6246b0::t_3fc1c1338dba29 3
+src/components/organisms/metadata-distributions/amr-bar-stack-chart.tsx
+  s_f13e924f6246b0::t_51bf1e82f54cf1 173
+  s_f13e924f6246b0::t_3494c03d441456 24
+e2e/tests/jobs-lifecycle.spec.ts
+  s_f13e924f6246b0::t_9d9ed6bf611009 119-123
+src/components/organisms/reference-genomes/__tests__/reference-genomes-client.test.tsx
+  s_f13e924f6246b0::t_44729fa9e2c31b 69-88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "7973d2095b8237925e9db91ec44aaf2a0bf65605",
+  "prompts": {},
+  "sessions": {
+    "s_f13e924f6246b0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc5b45e85ffetcRHBJAI2QXLn1",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

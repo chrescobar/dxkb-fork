@@ -3,7 +3,7 @@ import * as path from "path";
 import type { ScanRecord } from "./report";
 
 export default function globalTeardown(): void {
-  const scansDir = "a11y-report/scans";
+  const scansDir = ".misc/a11y-report/scans";
   if (!fs.existsSync(scansDir)) return;
 
   const files = fs.readdirSync(scansDir).filter((f) => f.endsWith(".json"));
@@ -22,6 +22,6 @@ export default function globalTeardown(): void {
     (a, b) => a.route.localeCompare(b.route) || a.theme.localeCompare(b.theme),
   );
 
-  fs.mkdirSync("a11y-report", { recursive: true });
-  fs.writeFileSync("a11y-report/a11y-summary.json", JSON.stringify(summary, null, 2));
+  fs.mkdirSync(".misc/a11y-report", { recursive: true });
+  fs.writeFileSync(".misc/a11y-report/a11y-summary.json", JSON.stringify(summary, null, 2));
 }

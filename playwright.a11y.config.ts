@@ -21,10 +21,10 @@ export default defineConfig({
     ? [
         ["github"],
         ["html", { open: "never" }],
-        ["json", { outputFile: "a11y-report/results.json" }],
+        ["json", { outputFile: ".misc/a11y-report/results.json" }],
       ]
     : [["list"], ["html", { open: "never" }]],
-  outputDir: "a11y-results",
+  outputDir: ".misc/a11y-results",
   use: {
     baseURL,
     trace: "retain-on-failure",

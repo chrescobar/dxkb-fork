@@ -74,8 +74,8 @@ jobs:
         with:
           name: a11y-report-routes-sweep
           path: |
-            a11y-report/
-            a11y-results/
+            .misc/a11y-report/
+            .misc/a11y-results/
           retention-days: 14
 
   a11y-deep-tier:
@@ -128,8 +128,8 @@ jobs:
         with:
           name: a11y-report-deep-tier
           path: |
-            a11y-report/
-            a11y-results/
+            .misc/a11y-report/
+            .misc/a11y-results/
           retention-days: 14
 
   a11y-keyboard:
@@ -182,8 +182,8 @@ jobs:
         with:
           name: a11y-report-keyboard
           path: |
-            a11y-report/
-            a11y-results/
+            .misc/a11y-report/
+            .misc/a11y-results/
           retention-days: 14
 
   a11y-tripwire:
@@ -236,8 +236,8 @@ jobs:
         with:
           name: a11y-report-tripwire
           path: |
-            a11y-report/
-            a11y-results/
+            .misc/a11y-report/
+            .misc/a11y-results/
           retention-days: 14
 
   a11y-primitives:

@@ -1,14 +1,14 @@
 "use client";
 
 import React from "react";
-import type { Row } from "@tanstack/react-table";
-import { flexRender } from "@tanstack/react-table";
+import { FlexRender, type Row } from "@tanstack/react-table";
 import { FolderUp, Users } from "lucide-react";
 import clsx from "clsx";
 import { TableCell, TableRow } from "@/components/ui/table";
 import type { WorkspaceItem } from "@/lib/services/workspace/domain";
 import { isFolderType } from "@/lib/services/workspace/utils";
 import { columnClassMap } from "./workspace-table-columns";
+import type { FileTableFeatures } from "@/components/shared/file-table";
 
 interface SpecialRowProps {
   useSelectionMode: boolean;
@@ -88,7 +88,7 @@ export function ParentRow(
 }
 
 interface DataRowProps {
-  row: Row<WorkspaceItem>;
+  row: Row<FileTableFeatures, WorkspaceItem>;
   useSelectionMode: boolean;
   isSelected: boolean;
   onSelect?: (
@@ -152,7 +152,7 @@ export function DataRow({
       aria-selected={useSelectionMode ? isSelected : undefined}
     >
       {row.getVisibleCells().map((cell) => {
-        const metaCls = (cell.column.columnDef.meta as Record<string, unknown> | undefined)?.className as string | undefined;
+        const metaCls = cell.column.columnDef.meta?.className;
         const className = clsx(
           cell.column.id === "name" ? "pl-6" : "pl-2",
           "overflow-hidden",
@@ -168,7 +168,7 @@ export function DataRow({
               maxWidth: `var(--col-${cell.column.id}-size)`,
             }}
           >
-            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            <FlexRender cell={cell} />
           </TableCell>
         );
       })}

@@ -5,7 +5,6 @@ const repoRoot = resolve(__dirname, "..", "..");
 
 const optOutFiles = [
   "src/components/shared/data-table.tsx",
-  "src/components/shared/file-table.tsx",
   "src/components/workspace/file-viewer/viewers/csv-viewer.tsx",
   "src/components/organisms/reference-genomes/reference-genomes-client.tsx",
   "src/components/taxonomy/taxonomy-tree.tsx",

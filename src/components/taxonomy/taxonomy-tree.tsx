@@ -19,10 +19,7 @@ import {
   type Row,
   type RowSelectionState,
   type Updater,
-  getCoreRowModel,
-  getExpandedRowModel,
-  getFilteredRowModel,
-  useReactTable,
+  useTable,
 } from "@tanstack/react-table";
 
 import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
@@ -37,7 +34,8 @@ import {
   isPlaceholder,
   numericId,
   taxonomyColumns,
-  type TreeTableMeta,
+  taxonomyTableFeatures,
+  type TaxonomyTableFeatures,
 } from "./taxonomy-tree-columns";
 import { taxonomyRowHeight, TreeTableView } from "./taxonomy-tree-view";
 
@@ -93,6 +91,21 @@ function resolveUpdater<T>(updater: Updater<T>, current: T): T {
   return typeof updater === "function"
     ? (updater as (value: T) => T)(current)
     : updater;
+}
+
+function toggleSelected(
+  selected: RowSelectionState,
+  rowId: string,
+): RowSelectionState {
+  const next = { ...selected };
+  if (rowId in next) {
+    // RowSelectionState permits selected keys only.
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    delete next[rowId];
+  } else {
+    next[rowId] = true;
+  }
+  return next;
 }
 
 function usePersistedExpansion(
@@ -206,16 +219,16 @@ function TaxonomyTreeInstance({
   const metaHeld = useKeyHold("Meta");
   const ctrlOrCmdHeld = ctrlHeld || metaHeld;
 
-  let tableRows: Row<TaxonRecord>[] = [];
+  let tableRows: Row<TaxonomyTableFeatures, TaxonRecord>[] = [];
   function commitSelection(nextSelected: RowSelectionState) {
     const records = new Map(selection.records);
     for (const row of tableRows) {
-      if (nextSelected[row.id] && !isPlaceholder(row.original)) {
+      if (row.id in nextSelected && !isPlaceholder(row.original)) {
         records.set(row.id, row.original);
       }
     }
     for (const id of records.keys()) {
-      if (!nextSelected[id]) records.delete(id);
+      if (!(id in nextSelected)) records.delete(id);
     }
     setSelection({ selected: nextSelected, records });
     onSelect?.([...records.values()]);
@@ -225,7 +238,10 @@ function TaxonomyTreeInstance({
     commitSelection(resolveUpdater(updater, selection.selected));
   }
 
-  function applyShiftRange(row: Row<TaxonRecord>, merge: boolean): boolean {
+  function applyShiftRange(
+    row: Row<TaxonomyTableFeatures, TaxonRecord>,
+    merge: boolean,
+  ): boolean {
     const anchorId = lastSelectedIdRef.current;
     if (!shiftHeld || !anchorId) return false;
     const anchorIndex = tableRows.findIndex(
@@ -246,13 +262,12 @@ function TaxonomyTreeInstance({
     return true;
   }
 
-  function handleCheckboxClick(row: Row<TaxonRecord>) {
+  function handleCheckboxClick(rowId: string) {
+    const row = tableRows.find((candidate) => candidate.id === rowId);
+    if (!row) return;
     if (applyShiftRange(row, true)) return;
     lastSelectedIdRef.current = row.id;
-    commitSelection({
-      ...selection.selected,
-      [row.id]: !selection.selected[row.id],
-    });
+    commitSelection(toggleSelected(selection.selected, row.id));
   }
 
   const tableData = useMemo(() => {
@@ -261,7 +276,8 @@ function TaxonomyTreeInstance({
     return [...rootRecords];
   }, [rootRecords, queryState.version, knownChildCounts]);
 
-  const table = useReactTable({
+  const table = useTable({
+    features: taxonomyTableFeatures,
     data: tableData,
     columns: taxonomyColumns,
     meta: {
@@ -270,7 +286,7 @@ function TaxonomyTreeInstance({
       clearAnchor: () => {
         lastSelectedIdRef.current = null;
       },
-    } satisfies TreeTableMeta,
+    },
     state: {
       expanded: globalFilter ? true : expanded,
       globalFilter,
@@ -290,6 +306,7 @@ function TaxonomyTreeInstance({
       return count !== undefined && count > 0;
     },
     enableRowSelection: (row) => !isPlaceholder(row.original),
+    enableRowRangeSelection: false,
     enableSubRowSelection: false,
     onExpandedChange: (updater) => {
       if (!globalFilter) setExpanded(updater);
@@ -301,10 +318,6 @@ function TaxonomyTreeInstance({
       row.original.taxon_name.toLowerCase().includes(value.toLowerCase()),
     filterFromLeafRows: true,
     autoResetExpanded: false,
-    autoResetPageIndex: false,
-    getCoreRowModel: getCoreRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
   });
   tableRows = table.getRowModel().rows;
 
@@ -346,14 +359,11 @@ function TaxonomyTreeInstance({
 
   usePersistedExpansion(fetchParentIds, rootIds, globalFilter);
 
-  function handleWhitespaceClick(row: Row<TaxonRecord>) {
+  function handleWhitespaceClick(row: Row<TaxonomyTableFeatures, TaxonRecord>) {
     if (isPlaceholder(row.original) || applyShiftRange(row, false)) return;
     lastSelectedIdRef.current = row.id;
     if (ctrlOrCmdHeld) {
-      commitSelection({
-        ...selection.selected,
-        [row.id]: !selection.selected[row.id],
-      });
+      commitSelection(toggleSelected(selection.selected, row.id));
     } else {
       commitSelection({ [row.id]: true });
     }

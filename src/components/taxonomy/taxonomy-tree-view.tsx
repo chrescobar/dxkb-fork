@@ -1,12 +1,12 @@
 "use client";
 
 import type { Dispatch, RefObject, SetStateAction } from "react";
-import type {
-  Row,
-  RowSelectionState,
-  Table as TableModel,
+import {
+  FlexRender,
+  type Row,
+  type RowSelectionState,
+  type Table as TableModel,
 } from "@tanstack/react-table";
-import { flexRender } from "@tanstack/react-table";
 import { X } from "lucide-react";
 import clsx from "clsx";
 import {
@@ -18,13 +18,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { TaxonRecord } from "./taxon-tree-types";
-import { isPlaceholder, type TreeTableMeta } from "./taxonomy-tree-columns";
+import {
+  isPlaceholder,
+  type TaxonomyTableFeatures,
+} from "./taxonomy-tree-columns";
 
 export const taxonomyRowHeight = 24;
 
 interface TreeTableViewProps {
-  table: TableModel<TaxonRecord>;
-  rows: Row<TaxonRecord>[];
+  table: TableModel<TaxonomyTableFeatures, TaxonRecord>;
+  rows: Row<TaxonomyTableFeatures, TaxonRecord>[];
   rowSelection: RowSelectionState;
   virtualItems: { index: number; start: number; end: number }[];
   totalSize: number;
@@ -33,7 +36,7 @@ interface TreeTableViewProps {
   setGlobalFilter: Dispatch<SetStateAction<string>>;
   hasSelection: boolean;
   clearSelection: () => void;
-  handleRowClick: (row: Row<TaxonRecord>) => void;
+  handleRowClick: (row: Row<TaxonomyTableFeatures, TaxonRecord>) => void;
   modifierHeld: boolean;
 }
 
@@ -67,20 +70,20 @@ export function TreeTableView({
           }}
           placeholder="Search by taxonomy name..."
           aria-label="Search by taxonomy name"
-          className="w-full max-w-96 rounded-lg border border-border bg-background px-3 py-1.5 text-xs outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          className="border-border bg-background focus-visible:ring-ring/50 w-full max-w-96 rounded-lg border px-3 py-1.5 text-xs outline-none focus-visible:ring-2"
         />
         {hasSelection && (
           <button
             type="button"
             aria-label="Clear selected"
             onClick={clearSelection}
-            className="flex shrink-0 items-center gap-1 rounded-lg px-2 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="text-muted-foreground hover:bg-muted hover:text-foreground flex shrink-0 items-center gap-1 rounded-lg px-2 py-1.5 text-xs transition-colors"
           >
             <X className="size-3" /> Clear selected
           </button>
         )}
       </div>
-      <div className="relative min-h-0 flex-1 overflow-hidden rounded-lg border border-border">
+      <div className="border-border relative min-h-0 flex-1 overflow-hidden rounded-lg border">
         <div
           className={clsx(
             "h-full overflow-auto",
@@ -96,7 +99,7 @@ export function TreeTableView({
             <TableBody>
               {rows.length === 0 ? (
                 <TableRow className="flex w-full">
-                  <TableCell className="w-full border-t border-border py-8 text-center text-muted-foreground">
+                  <TableCell className="border-border text-muted-foreground w-full border-t py-8 text-center">
                     No results
                   </TableCell>
                 </TableRow>
@@ -116,7 +119,7 @@ export function TreeTableView({
                       {table.getVisibleLeafColumns().map((column) => (
                         <td
                           key={column.id}
-                          className="border-r border-border"
+                          className="border-border border-r"
                           style={{
                             width: column.getSize() || undefined,
                             flex: column.id === "taxon_name" ? 1 : undefined,
@@ -135,7 +138,11 @@ export function TreeTableView({
   );
 }
 
-function TreeTableHeader({ table }: { table: TableModel<TaxonRecord> }) {
+function TreeTableHeader({
+  table,
+}: {
+  table: TableModel<TaxonomyTableFeatures, TaxonRecord>;
+}) {
   return (
     <TableHeader
       className="bg-muted text-foreground"
@@ -144,12 +151,12 @@ function TreeTableHeader({ table }: { table: TableModel<TaxonRecord> }) {
       {table.getHeaderGroups().map((group) => (
         <TableRow
           key={group.id}
-          className="flex border-y border-border bg-muted"
+          className="border-border bg-muted flex border-y"
         >
           {group.headers.map((header) => (
             <TableHead
               key={header.id}
-              className="flex items-center border-r border-border px-2 py-0"
+              className="border-border flex items-center border-r px-2 py-0"
               style={{
                 width: header.getSize() || undefined,
                 height: 32,
@@ -163,7 +170,7 @@ function TreeTableHeader({ table }: { table: TableModel<TaxonRecord> }) {
                       : undefined,
               }}
             >
-              {flexRender(header.column.columnDef.header, header.getContext())}
+              <FlexRender header={header} />
             </TableHead>
           ))}
         </TableRow>
@@ -177,9 +184,9 @@ function TreeBodyRow({
   selected,
   onClick,
 }: {
-  row: Row<TaxonRecord>;
+  row: Row<TaxonomyTableFeatures, TaxonRecord>;
   selected: boolean;
-  onClick: (row: Row<TaxonRecord>) => void;
+  onClick: (row: Row<TaxonomyTableFeatures, TaxonRecord>) => void;
 }) {
   return (
     <TableRow
@@ -189,9 +196,7 @@ function TreeBodyRow({
       style={{ display: "flex", height: taxonomyRowHeight }}
       className={clsx(
         "cursor-pointer items-center",
-        selected
-          ? "bg-primary/15 dark:bg-primary/30"
-          : "hover:bg-muted",
+        selected ? "bg-primary/15 dark:bg-primary/30" : "hover:bg-muted",
       )}
     >
       {row.getVisibleCells().map((cell) => (
@@ -206,14 +211,15 @@ function TreeBodyRow({
                       'input[type="checkbox"]',
                     )
                   ) {
-                    (cell.getContext().table.options.meta as TreeTableMeta)
-                      .onCheckboxClick(row);
+                    cell
+                      .getContext()
+                      .table.options.meta?.onCheckboxClick(row.id);
                   }
                 }
               : undefined
           }
           className={clsx(
-            "flex items-center overflow-hidden border-r border-border px-2",
+            "border-border flex items-center overflow-hidden border-r px-2",
             cell.column.id === "__select__" && "cursor-pointer",
           )}
           style={{
@@ -237,15 +243,14 @@ function TreeBodyRow({
               checked={selected}
               disabled={!row.getCanSelect()}
               onChange={() => {
-                (cell.getContext().table.options.meta as TreeTableMeta)
-                  .onCheckboxClick(row);
+                cell.getContext().table.options.meta?.onCheckboxClick(row.id);
               }}
               onClick={(event) => {
                 event.stopPropagation();
               }}
             />
           ) : (
-            flexRender(cell.column.columnDef.cell, cell.getContext())
+            <FlexRender cell={cell} />
           )}
         </TableCell>
       ))}

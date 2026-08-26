@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Row } from "@tanstack/react-table";
-import { flexRender } from "@tanstack/react-table";
+import { FlexRender, type Row } from "@tanstack/react-table";
 import clsx from "clsx";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, TriangleAlert } from "lucide-react";
@@ -24,6 +23,7 @@ import { useJobsSummary } from "@/hooks/services/jobs/use-jobs-summary";
 import {
   DataTable,
   type DataTableSort,
+  type FileTableFeatures,
   useDataTableBody,
 } from "@/components/shared/file-table";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
@@ -44,7 +44,7 @@ import {
 } from "@/lib/jobs/constants";
 
 interface JobDataRowProps {
-  row: Row<JobListItem>;
+  row: Row<FileTableFeatures, JobListItem>;
   isSelected: boolean;
   onSelect: (job: JobListItem, modifiers?: { ctrlOrMeta: boolean }) => void;
   onDoubleClick: (job: JobListItem) => void;
@@ -76,9 +76,7 @@ function JobDataRow({
       aria-selected={isSelected}
     >
       {row.getVisibleCells().map((cell, cellIndex) => {
-        const metaCls = (
-          cell.column.columnDef.meta as Record<string, unknown> | undefined
-        )?.className as string | undefined;
+        const metaCls = cell.column.columnDef.meta?.className;
         const className = clsx(
           cellIndex === 0 ? "pl-6" : "pl-2",
           "overflow-hidden",
@@ -94,7 +92,7 @@ function JobDataRow({
               maxWidth: `var(--col-${cell.column.id}-size)`,
             }}
           >
-            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            <FlexRender cell={cell} />
           </TableCell>
         );
       })}

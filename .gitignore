@@ -88,3 +88,6 @@ next-env.d.ts
 
 # graphify
 graphify-out
+
+# misc
+/.misc

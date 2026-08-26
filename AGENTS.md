@@ -62,7 +62,7 @@ Requires **Node v24** (`nvm use 24`, pinned in `.nvmrc`). `pnpm start` = prod se
 Enabled via `reactCompiler: true` in `next.config.ts` — components are auto-memoized at build. For new code, rely on it; reach for `useMemo`/`useCallback` only for precise control (stable effect deps).
 
 - **Do NOT bulk-remove existing memoization** — it can change compiled output. Removing `useMemo` from a context provider's `value` breaks `"use no memo"` consumers (compiler skips context values in opted-out subtrees). Only remove deliberately, with test coverage.
-- **Opt-out**: a component using a hook the compiler can't memoize (TanStack `useReactTable`/`useVirtualizer`, etc.) needs `"use no memo";` as the first statement in its body. When you add one, you MUST also add the file to the `files: [...]` list in `eslint.config.mjs` (silences `react-hooks/incompatible-library`). `src/__tests__/react-compiler-config.test.ts` guards that list — keep them in sync. Current opt-outs: `shared/data-table.tsx`, `shared/file-table.tsx`, `workspace/file-viewer/viewers/csv-viewer.tsx`, `organisms/reference-genomes/reference-genomes-client.tsx`, `taxonomy/taxonomy-tree.tsx`.
+- **Opt-out**: a component using a hook the compiler can't memoize (such as TanStack Virtual's `useVirtualizer`) needs `"use no memo";` as the first statement in its body. When you add one, you MUST also add the file to the `files: [...]` list in `eslint.config.mjs` (silences `react-hooks/incompatible-library`). `src/__tests__/react-compiler-config.test.ts` guards that list — keep them in sync. Current opt-outs: `shared/data-table.tsx`, `workspace/file-viewer/viewers/csv-viewer.tsx`, `organisms/reference-genomes/reference-genomes-client.tsx`, `taxonomy/taxonomy-tree.tsx`.
 
 ## Staying on-pattern (read before adding anything new)
 
@@ -86,3 +86,7 @@ Find the existing example of the same shape and follow it:
 - All `/api/**` and outbound HTTPS (BV-BRC/PATRIC/TheSEED/NCBI) are mocked via `e2e/mocks/backends.ts`. Never depend on a live backend in CI.
 - MCP `plugin:playwright` is available for interactive driving (`pnpm dev`, then `browser_navigate` to `http://localhost:3019`).
 - MCP debug screenshots go in `.screenshots/` only — never commit them.
+
+## File Structure
+
+- All miscellaneous folders (e.g. `/graphify-out`, `/a11y-report`, `/.playwright-mcp`, `/.screenshots`) and any new folders like this should be placed in the `/.misc` folder in the root of the repository. The only exceptions to this rule are `/.claude`, `/.devcontainer`, `/.github`, `/.misc`, `/.next`, `/.vscode`, `/auspice`, `/.docs`, `/.e2e`, `/node_modules`, `/patches`, `/public`, `/scripts`, `/src`, and `/.git`.

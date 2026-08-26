@@ -2,15 +2,24 @@
 
 import { useKeyHold } from "@tanstack/react-hotkeys";
 import {
-  ColumnDef,
-  getCoreRowModel,
-  useReactTable,
-  flexRender,
-  SortingState,
-  PaginationState,
+  columnOrderingFeature,
+  columnResizingFeature,
+  columnSizingFeature,
+  columnVisibilityFeature,
+  metaHelper,
+  rowPaginationFeature,
+  rowSelectionFeature,
+  rowSortingFeature,
+  tableFeatures,
+  useTable,
   type CellContext,
+  type ColumnDef,
+  type PaginationState,
+  type ReactTable,
   type Row as TanStackRow,
-  type Table as ReactTableInstance,
+  type RowSelectionState,
+  type SortingState,
+  type Table as TanStackTable,
 } from "@tanstack/react-table";
 
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -89,18 +98,34 @@ interface DataTableMeta {
   onActiveRowChange?: (id: string | null) => void;
   onAllPagesSelectionChange?: (selected: boolean) => void;
   onGenomeSelect?: (id: string | null) => void;
-  onRowSelectionChange?: (selection: Record<string, boolean>) => void;
+  onRowSelectionChange?: (selection: RowSelectionState) => void;
   shiftHeldRef: React.RefObject<boolean>;
   totalItems: number;
 }
 
-function getTableMeta(table: ReactTableInstance<Record<string, unknown>>) {
-  return table.options.meta as DataTableMeta;
+const dataTableFeatures = tableFeatures({
+  rowSortingFeature,
+  rowPaginationFeature,
+  columnOrderingFeature,
+  columnVisibilityFeature,
+  columnSizingFeature,
+  columnResizingFeature,
+  rowSelectionFeature,
+  tableMeta: metaHelper<DataTableMeta>(),
+});
+
+type DataTableFeatures = typeof dataTableFeatures;
+type DataRow = Record<string, unknown>;
+
+function getTableMeta(table: TanStackTable<DataTableFeatures, DataRow>) {
+  const meta = table.options.meta;
+  if (!meta) throw new Error("DataTable metadata is required");
+  return meta;
 }
 
 function toggleRowSelection(
-  row: TanStackRow<Record<string, unknown>>,
-  table: ReactTableInstance<Record<string, unknown>>,
+  row: TanStackRow<DataTableFeatures, DataRow>,
+  table: TanStackTable<DataTableFeatures, DataRow>,
 ) {
   const meta = getTableMeta(table);
   const anchorId = meta.lastSelectedIdRef.current;
@@ -123,10 +148,12 @@ function toggleRowSelection(
 
   meta.lastSelectedIdRef.current = row.id;
   const wasSelected = row.getIsSelected();
-  table.setRowSelection((previous) => ({
-    ...previous,
-    [row.id]: !wasSelected,
-  }));
+  table.setRowSelection((previous) => {
+    const next = { ...previous };
+    if (wasSelected) Reflect.deleteProperty(next, row.id);
+    else next[row.id] = true;
+    return next;
+  });
 
   const idValue = row.original[meta.idField] ?? row.original.genome_id ?? null;
   if (wasSelected) {
@@ -142,7 +169,7 @@ function SelectionCell({
   row,
   table,
   selected,
-}: CellContext<Record<string, unknown>, unknown> & { selected: boolean }) {
+}: CellContext<DataTableFeatures, DataRow> & { selected: boolean }) {
   return (
     <div className="flex size-full items-center justify-center">
       <input
@@ -164,13 +191,16 @@ function SelectionCell({
 function SelectionHeader({
   table,
 }: {
-  table: ReactTableInstance<Record<string, unknown>>;
+  table: TanStackTable<DataTableFeatures, DataRow>;
 }) {
   const meta = getTableMeta(table);
   const allPageRowsSelected = table.getIsAllPageRowsSelected();
   const somePageRowsSelected = table.getIsSomePageRowsSelected();
   const isChecked = meta.isAllPagesSelected || allPageRowsSelected;
-  const isIndeterminate = !meta.isAllPagesSelected && somePageRowsSelected;
+  const isIndeterminate =
+    !meta.isAllPagesSelected &&
+    somePageRowsSelected &&
+    !allPageRowsSelected;
   const selectionLabel = meta.isAllPagesSelected
     ? "Deselect all results"
     : allPageRowsSelected
@@ -216,7 +246,7 @@ function SelectionHeader({
 }
 
 function createColumnDefs(columns: ColumnInfo[]) {
-  const definitions: ColumnDef<Record<string, unknown>>[] = [
+  const definitions: ColumnDef<DataTableFeatures, DataRow>[] = [
     {
       id: "__select__",
       header: ({ table }) => <SelectionHeader table={table} />,
@@ -232,14 +262,14 @@ function createColumnDefs(columns: ColumnInfo[]) {
     definitions.push({
       accessorKey: column.id,
       header: column.label,
-      cell: (info: CellContext<Record<string, unknown>, unknown>) =>
+      cell: (info: CellContext<DataTableFeatures, DataRow>) =>
         formatCellValue(info.getValue()),
       size: estimateHeaderWidth(column.label),
       enableResizing: true,
       enableSorting: true,
-      sortingFn: (
-        rowA: TanStackRow<Record<string, unknown>>,
-        rowB: TanStackRow<Record<string, unknown>>,
+      sortFn: (
+        rowA: TanStackRow<DataTableFeatures, DataRow>,
+        rowB: TanStackRow<DataTableFeatures, DataRow>,
         columnId: string,
       ) => {
         const a = rowA.getValue<unknown>(columnId);
@@ -286,8 +316,8 @@ interface DataTableProps {
   onColumnVisibilityChange?: (newVis: Record<string, boolean>) => void;
 
   // row selection (controlled)
-  rowSelection?: Record<string, boolean>;
-  onRowSelectionChange?: (selection: Record<string, boolean>) => void;
+  rowSelection?: RowSelectionState;
+  onRowSelectionChange?: (selection: RowSelectionState) => void;
 
   // Cross-page selection
   isAllPagesSelected?: boolean;
@@ -366,7 +396,8 @@ function useDataTableContent(
     null,
   );
 
-  const [internalRowSelection, setInternalRowSelection] = useState({});
+  const [internalRowSelection, setInternalRowSelection] =
+    useState<RowSelectionState>({});
   const rowSelection =
     controlledRowSelection !== undefined
       ? controlledRowSelection
@@ -476,7 +507,8 @@ function useDataTableContent(
 
   const [columnDefs] = useState(() => createColumnDefs(columns));
 
-  const table = useReactTable({
+  const table = useTable({
+    features: dataTableFeatures,
     data,
     columns: columnDefs,
     defaultColumn: {
@@ -500,7 +532,7 @@ function useDataTableContent(
       // controlled props when provided). This prevents ephemeral UI
       // operations like column-resize from resetting the active page.
       pagination,
-      columnOrder,
+      ...(columnOrder !== undefined && { columnOrder }),
       columnVisibility,
       columnSizing: activeColumnSizing,
       rowSelection,
@@ -517,14 +549,14 @@ function useDataTableContent(
       // Update the order map for selected items
       const newOrderMap = new Map(selectedItemsOrder);
       Object.keys(newSelection).forEach((rowId) => {
-        if (newSelection[rowId] && !selectedItemsOrder.has(rowId)) {
+        if (!selectedItemsOrder.has(rowId)) {
           newOrderMap.set(rowId, newOrderMap.size);
         }
       });
       // Prune IDs absent from newSelection (handles replace-style setRowSelection
       // where old ids are simply omitted rather than set to false)
       for (const rowId of [...newOrderMap.keys()]) {
-        if (!newSelection[rowId]) {
+        if (!(rowId in newSelection)) {
           newOrderMap.delete(rowId);
         }
       }
@@ -541,7 +573,7 @@ function useDataTableContent(
       if (onSelectionChange) {
         const selectedRows: Record<string, unknown>[] = [];
         for (const row of table.getRowModel().rows) {
-          if (newSelection[row.id]) selectedRows.push(row.original);
+          if (row.id in newSelection) selectedRows.push(row.original);
         }
         onSelectionChange(selectedRows);
       }
@@ -615,8 +647,8 @@ function useDataTableContent(
         return { ...prev, [sizingKey]: next };
       });
     },
-    getCoreRowModel: getCoreRowModel(),
     enableRowSelection: true,
+    enableRowRangeSelection: false,
     enableSortingRemoval: false,
     enableMultiRowSelection: true,
     //    getRowId: (row, index) => String((row as any).genome_id ?? `${index}`)
@@ -630,7 +662,7 @@ function useDataTableContent(
   // negative, so widths fall back to natural and the container scrolls horizontally.
   // The actively-resizing column is excluded from stretch so its drag tracks the
   // cursor 1:1 and can push the total past the container edge.
-  const resizingColumnId = table.getState().columnSizingInfo.isResizingColumn;
+  const resizingColumnId = table.state.columnResizing.isResizingColumn;
   const columnSizeVars = (() => {
     const leafColumns = table.getVisibleLeafColumns();
     const naturalSizes = leafColumns.map((c) => c.getSize());
@@ -892,7 +924,7 @@ function useDataTableContent(
         return;
       }
 
-      const rowsToExport = table.getPrePaginationRowModel().rows;
+      const rowsToExport = table.getPrePaginatedRowModel().rows;
 
       const content = [
         headers.join(","),
@@ -1169,10 +1201,7 @@ function useDataTableContent(
                           {column.id === "__select__" ? (
                             // Checkbox column - no sorting or dragging
                             <div className="flex size-full items-center justify-center py-0">
-                              {flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
+                              <table.FlexRender header={header} />
                             </div>
                           ) : (
                             // Regular column - sortable and draggable
@@ -1199,10 +1228,7 @@ function useDataTableContent(
                                 }}
                               >
                                 <span className="leading-tight select-none">
-                                  {flexRender(
-                                    header.column.columnDef.header,
-                                    header.getContext(),
-                                  )}
+                                  <table.FlexRender header={header} />
                                   {column.getIsSorted() === "asc" && (
                                     <ChevronUp className="ml-0.5 inline-block size-3 align-text-bottom" />
                                   )}
@@ -1293,8 +1319,7 @@ function useDataTableContent(
           <div className="flex flex-wrap items-center justify-between gap-y-1 px-2">
             <div className="shrink-0 text-xs">
               {(() => {
-                const pageIndex = table.getState().pagination.pageIndex;
-                const pageSize = table.getState().pagination.pageSize;
+                const { pageIndex, pageSize } = table.state.pagination;
                 const totalRows = totalItems;
                 const hasResults = totalItems > 0;
                 const start = hasResults ? pageIndex * pageSize + 1 : 0;
@@ -1308,9 +1333,7 @@ function useDataTableContent(
 
                 const selectedCount = isAllPagesSelected
                   ? totalItems
-                  : (totalSelectedCount ??
-                    Object.keys(rowSelection).filter((key) => rowSelection[key])
-                      .length);
+                  : (totalSelectedCount ?? Object.keys(rowSelection).length);
 
                 return (
                   <div className="flex flex-col">
@@ -1340,7 +1363,7 @@ function useDataTableContent(
               </Button>
               {(() => {
                 const pageCount = table.getPageCount();
-                const currentPage = table.getState().pagination.pageIndex;
+                const currentPage = table.state.pagination.pageIndex;
                 const pages: number[] = [];
 
                 if (pageCount > 0) pages.push(0);
@@ -1393,8 +1416,8 @@ function useDataTableContent(
 }
 
 interface DataTableBodyProps {
-  table: ReactTableInstance<Record<string, unknown>>;
-  rows: TanStackRow<Record<string, unknown>>[];
+  table: ReactTable<DataTableFeatures, DataRow>;
+  rows: TanStackRow<DataTableFeatures, DataRow>[];
   virtualRows: VirtualItem[];
   totalSize: number;
   idField: string;
@@ -1506,7 +1529,7 @@ function DataTableBody({
                     currentRowId,
                   );
                   if (rangeIds.length > 0) {
-                    const next: Record<string, boolean> = {};
+                    const next: RowSelectionState = {};
                     for (const rid of rangeIds) next[rid] = true;
                     table.setRowSelection(next);
                     return;
@@ -1590,7 +1613,7 @@ function DataTableBody({
                     }),
                   }}
                 >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  <table.FlexRender cell={cell} />
                 </TableCell>
               ))}
             </TableRow>

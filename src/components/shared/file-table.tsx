@@ -11,11 +11,18 @@ import React, {
   type ReactNode,
 } from "react";
 import {
-  getCoreRowModel,
-  useReactTable,
+  columnOrderingFeature,
+  columnResizingFeature,
+  columnSizingFeature,
+  columnVisibilityFeature,
+  FlexRender,
+  metaHelper,
+  tableFeatures,
+  useTable,
   type ColumnDef,
   type Header,
   type Row,
+  type RowData,
 } from "@tanstack/react-table";
 import {
   DndContext,
@@ -57,9 +64,24 @@ export interface DataTableSort {
   direction: "asc" | "desc";
 }
 
-export interface DataTableProps<T> {
+export interface FileTableColumnMeta {
+  className?: string;
+  sortField?: string;
+}
+
+export const fileTableFeatures = tableFeatures({
+  columnOrderingFeature,
+  columnSizingFeature,
+  columnResizingFeature,
+  columnVisibilityFeature,
+  columnMeta: metaHelper<FileTableColumnMeta>(),
+});
+
+export type FileTableFeatures = typeof fileTableFeatures;
+
+export interface DataTableProps<T extends RowData> {
   data: T[];
-  columns: ColumnDef<T>[];
+  columns: ColumnDef<FileTableFeatures, T>[];
   defaultColumnOrder: string[];
   isLoading: boolean;
   getRowId: (row: T) => string;
@@ -85,16 +107,16 @@ export interface TableSkeletonColumn {
   isFirst?: boolean;
 }
 
-interface DataTableBodyContextValue<T> {
-  rows: Row<T>[];
+interface DataTableBodyContextValue<T extends RowData> {
+  rows: Row<FileTableFeatures, T>[];
   columnOrder: string[];
   colSpan: number;
 }
 
 const DataTableBodyContext =
-  createContext<DataTableBodyContextValue<unknown> | null>(null);
+  createContext<DataTableBodyContextValue<Record<string, unknown>> | null>(null);
 
-export function useDataTableBody<T>() {
+export function useDataTableBody<T extends RowData>() {
   const context = useContext(DataTableBodyContext);
   if (!context) {
     throw new Error("useDataTableBody must be used within DataTable");
@@ -125,12 +147,12 @@ function SortIcon({
   );
 }
 
-function DraggableTableHeader({
+function DraggableTableHeader<T extends RowData>({
   header,
   onSort,
   sort,
 }: {
-  header: Header<unknown, unknown>;
+  header: Header<FileTableFeatures, T>;
   onSort: (field: string) => void;
   sort: DataTableSort;
 }) {
@@ -158,18 +180,15 @@ function DraggableTableHeader({
     zIndex: isDragging ? 1 : 0,
   };
 
-  const meta = header.column.columnDef.meta as {
-    className?: string;
-    sortField?: string;
-  };
+  const meta = header.column.columnDef.meta;
   const isFirst = header.index === 0;
   const className = clsx(
     isFirst ? "pl-6" : "pl-2",
     "relative bg-background",
-    meta.className ?? "",
+    meta?.className ?? "",
   );
 
-  const sortField = meta.sortField;
+  const sortField = meta?.sortField;
   const label = header.column.columnDef.header as string;
   const minSize = header.column.columnDef.minSize ?? 40;
   const maxSize = header.column.columnDef.maxSize ?? 1000;
@@ -197,7 +216,7 @@ function DraggableTableHeader({
           {...attributes}
           {...listeners}
         >
-          {label}
+          <FlexRender header={header} />
         </div>
         {sortField && (
           <button
@@ -303,7 +322,7 @@ function TableSkeleton({ columns }: { columns?: TableSkeletonColumn[] }) {
 // DataTable
 // ---------------------------------------------------------------------------
 
-function DataTableInner<T>(
+function DataTableInner<T extends RowData>(
   {
     data,
     columns,
@@ -321,7 +340,6 @@ function DataTableInner<T>(
   }: DataTableProps<T>,
   ref: React.Ref<DataTableHandle>,
 ) {
-  "use no memo";
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const [columnOrder, setColumnOrder] = useState<string[]>(defaultColumnOrder);
 
@@ -329,7 +347,8 @@ function DataTableInner<T>(
     focus: () => tableContainerRef.current?.focus(),
   }));
 
-  const table = useReactTable<T>({
+  const table = useTable({
+    features: fileTableFeatures,
     data,
     columns,
     defaultColumn: {
@@ -345,8 +364,6 @@ function DataTableInner<T>(
       setColumnOrder(next);
     },
     getRowId,
-    getCoreRowModel: getCoreRowModel(),
-    manualSorting: true,
     columnResizeMode: "onChange",
     enableColumnResizing: true,
   });
@@ -432,7 +449,7 @@ function DataTableInner<T>(
                     {headerGroup.headers.map((header) => (
                       <DraggableTableHeader
                         key={header.id}
-                        header={header as Header<unknown, unknown>}
+                        header={header}
                         onSort={onSort}
                         sort={sort}
                       />
@@ -446,11 +463,15 @@ function DataTableInner<T>(
                 (skeleton ?? <TableSkeleton columns={skeletonColumns} />)
               ) : (
                 <DataTableBodyContext.Provider
-                  value={{
-                    rows: table.getRowModel().rows,
-                    columnOrder,
-                    colSpan: table.getAllLeafColumns().length,
-                  }}
+                  value={
+                    {
+                      rows: table.getRowModel().rows,
+                      columnOrder,
+                      colSpan: table.getAllLeafColumns().length,
+                    } as unknown as DataTableBodyContextValue<
+                      Record<string, unknown>
+                    >
+                  }
                 >
                   {children}
                 </DataTableBodyContext.Provider>
@@ -464,6 +485,6 @@ function DataTableInner<T>(
 }
 
 // Export with displayName for forwardRef generic pattern
-export const DataTable = forwardRef(DataTableInner) as <T>(
+export const DataTable = forwardRef(DataTableInner) as <T extends RowData>(
   props: DataTableProps<T> & { ref?: React.Ref<DataTableHandle> },
 ) => React.ReactElement;

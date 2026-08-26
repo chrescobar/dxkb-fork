@@ -1,0 +1,22 @@
+AGENTS.md
+  s_61ec12a16c4604::t_ca186060d0588c 92
+.claude/settings.json
+  s_61ec12a16c4604::t_ca47513d0d5994 18
+  s_61ec12a16c4604::t_94d1718157c8b3 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "9df962ab965d822fff0fcfa7ec9f76afa8923945",
+  "prompts": {},
+  "sessions": {
+    "s_61ec12a16c4604": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc0b86edaffeykJLGl3HjN7l9n",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,185 @@
+src/components/taxonomy/taxonomy-tree-view.tsx
+  s_037e6cc04ca792::t_3fa2467ebaa730 29-30,39,141-145,187,189
+  s_037e6cc04ca792::t_d857f4433d1bd3 73,80,86,102,122,154,159,199,214-216,222
+  s_037e6cc04ca792::t_56ba98e53a5669 21-24
+  s_037e6cc04ca792::t_de3f0a07531f06 173,246,253
+  s_037e6cc04ca792::t_49bd41fdca0343 4-8
+src/components/workspace/workspace-table-rows.tsx
+  s_359ba577017aa1::t_6f4179b6ec3a35 11
+  s_359ba577017aa1::t_21f5c3be1595d9 155
+  s_359ba577017aa1::t_b779262baa4937 91
+  s_359ba577017aa1::t_b977d4147d9fd7 171
+  s_359ba577017aa1::t_a216eb9c648de5 4
+src/components/services/list-data.tsx
+  s_5c8be4af5583be::t_4c44ca295ae2c2 6
+  s_5c8be4af5583be::t_10dd6c8cd2f8ec 348
+  s_037e6cc04ca792::t_a0189538df5e02 338
+  s_5c8be4af5583be::t_ea07555ab14fff 28-29
+src/components/shared/__tests__/data-table-rendering.test.tsx
+  s_5c8be4af5583be::t_d5684af19fa3ae 2
+  s_5c8be4af5583be::t_53671034048ecd 76
+  s_5c8be4af5583be::t_271ec54ee5d3f6 146,148-153,158,162
+  s_5c8be4af5583be::t_dec1e0d8642931 57,61,64-67
+  s_5c8be4af5583be::t_a93a72a59b7b0d 178-197
+  s_5c8be4af5583be::t_966678742f6c33 63
+src/app/search/typesearch.tsx
+  s_5c8be4af5583be::t_bdaf35a5f77dff 95-96
+  s_5c8be4af5583be::t_0745c3b9bc854b 314
+src/components/workspace/file-viewer/viewers/csv-viewer.tsx
+  s_79f4acba331f83::t_c8f54f18dd8fd1 6
+  s_79f4acba331f83::t_57a7b2cb533f1d 113
+  s_79f4acba331f83::t_d13b328f54a544 43-44,46-55,57
+  s_79f4acba331f83::t_63d6caff2b92e0 59
+  s_79f4acba331f83::t_577cddce7fa4a0 206
+  s_79f4acba331f83::t_ea5b5d43e89fb4 108
+  s_79f4acba331f83::t_c81bf2b26a6fd1 7-12
+  s_79f4acba331f83::t_208d8e3e0b0849 143-144
+  s_79f4acba331f83::t_b00b0ae9fbb520 247
+  s_79f4acba331f83::t_9125c1b8e62e82 210
+  s_79f4acba331f83::t_4bf4c96132ac77 45
+src/components/organisms/taxon-views/taxon-data-panel.tsx
+  s_5c8be4af5583be::t_c1f392858ed5f2 4
+  s_5c8be4af5583be::t_de002639d5ada1 30
+src/components/jobs/jobs-browser.tsx
+  s_359ba577017aa1::t_f72b3bd31e2279 79
+  s_359ba577017aa1::t_00873a21dd817e 26
+  s_359ba577017aa1::t_e18873a1fd2f10 5
+  s_359ba577017aa1::t_b4d9e479726b61 47
+  s_359ba577017aa1::t_65a8430d3212ad 95
+src/components/shared/data-table.tsx
+  s_5c8be4af5583be::t_c26dbcf9e679e2 1231
+  s_5c8be4af5583be::t_ee72617c4b75e9 200-203
+  s_5c8be4af5583be::t_c01ef8ab15ad0c 1616
+  s_5c8be4af5583be::t_cb82b1286bb83b 1322
+  s_5c8be4af5583be::t_ff53bdf58a7ec7 535
+  s_5c8be4af5583be::t_5a6a7e70c6b79a 194
+  s_5c8be4af5583be::t_fc7bac2d5cb583 559
+  s_5c8be4af5583be::t_d663dd6a092caa 1204
+  s_5c8be4af5583be::t_1f54ede309b952 1336
+  s_5c8be4af5583be::t_7bd964b81cfa7a 151-152,154-156
+  s_5c8be4af5583be::t_fe46bdf932fd05 270-272
+  s_5c8be4af5583be::t_dd0b67c79c8de1 665
+  s_5c8be4af5583be::t_f09193528610a2 319-320
+  s_5c8be4af5583be::t_c1df065f049ddc 121-123
+  s_5c8be4af5583be::t_3419bf2dc5556e 172
+  s_5c8be4af5583be::t_1b0a9c90fbd734 399-400
+  s_5c8be4af5583be::t_9be5e05b4f7677 510-511
+  s_5c8be4af5583be::t_79ca12fa209eab 552
+  s_5c8be4af5583be::t_29a338e4495702 576
+  s_5c8be4af5583be::t_bc60a90c5b9bf9 1532
+  s_5c8be4af5583be::t_25f0793a30106c 651
+  s_5c8be4af5583be::t_1eb83eb8261710 1366
+  s_5c8be4af5583be::t_840482a4097e9c 5-14,16-18,20-22
+  s_5c8be4af5583be::t_1f9dbd3ae442df 1419-1420
+  s_5c8be4af5583be::t_61438300d6cf11 927
+  s_5c8be4af5583be::t_27ece7ea5f7aa8 153
+  s_5c8be4af5583be::t_22b133eb7bc0cb 249
+  s_5c8be4af5583be::t_025f5efab8a788 101,106-120,127-128
+  s_5c8be4af5583be::t_b6d38cc7dd1053 265
+package.json
+  s_79f4acba331f83::t_f68325e5176162 62
+src/components/workspace/__tests__/workspace-browser-rendering.test.tsx
+  s_359ba577017aa1::t_ecfe9eeac07ce3 95-96,98
+  s_359ba577017aa1::t_eee850367fc3ee 104
+  s_359ba577017aa1::t_f538c92197775b 115
+  s_359ba577017aa1::t_40650b219b035b 66-94,97,99-103,105-114,116-117
+src/components/workspace/file-viewer/viewers/__tests__/csv-viewer.test.tsx
+  s_79f4acba331f83::t_3c77558c4b630a 1-32,34-51,53-54,56-58
+  s_79f4acba331f83::t_640b9359aa30e6 33
+  s_79f4acba331f83::t_b4b2e0151bc767 52,55
+eslint.config.mjs
+  s_79f4acba331f83::t_99823aeaf4e985 78-80
+AGENTS.md
+  s_79f4acba331f83::t_1d06a2743ebb2d 65
+  s_71099b96cb71f4::t_e5ca51a340c1e0 89-91
+  s_71099b96cb71f4::t_bea7db4151444f 92
+src/components/shared/file-table.tsx
+  s_359ba577017aa1::t_cc05193bacbb76 150,155
+  s_359ba577017aa1::t_e1c34388e25d1b 452
+  s_359ba577017aa1::t_fe4614ef9b77fd 325
+  s_359ba577017aa1::t_6b9565f438679b 67-82,84
+  s_359ba577017aa1::t_083fd8e3dfc0fe 183
+  s_359ba577017aa1::t_48b9f5d2106a6b 350-351
+  s_359ba577017aa1::t_8a5f0ee5618d6e 18
+  s_359ba577017aa1::t_6ad87e4ecf69ac 219
+  s_359ba577017aa1::t_7b24c3244127f3 466-474
+  s_359ba577017aa1::t_9b1fff6443b866 110-111,117,119
+  s_359ba577017aa1::t_b026fcb062fff3 488
+  s_359ba577017aa1::t_0e9de61f86c4ca 188,191
+  s_359ba577017aa1::t_701220aaecec66 14-17,19-21,25
+src/components/taxonomy/__tests__/taxonomy-tree.test.tsx
+  s_359ba577017aa1::t_9377326f7cc61b 469
+  s_037e6cc04ca792::t_31af4b377fefdd 148-149,233,237,323-324,328,352-353,357,361,398-399,403,413,432,471,473-476,479-497,515,588,831,834,870,873,914,917,954,983,1018-1019
+  s_037e6cc04ca792::t_7a3fb5b3f60241 470,472,477-478
+  s_359ba577017aa1::t_690d608e621378 2-8,72-78,85-87,102-105,118-120,147,153-155,157-159,172-177,194-197,199-204,212-214,224-229,231-232,235-236,241-246,282-287,298-301,322,326-327,332-335,339-341,351,355-356,359-360,366-368,371-373,375-377,379-381,386-388,397,401-402,405-408,411-412,415-419,430-431,513-514,517-519,523-525,528-539,547-549,553-557,586-587,591-598,606-608,613-617,648-653,693-698,734-736,763-771,829-830,832-833,842-844,868-869,871-872,912-913,915-916,952-953,981-982,990-992,1017,1023-1028,1031-1033
+src/components/jobs/jobs-table-columns.tsx
+  s_359ba577017aa1::t_3ca6f712c1e379 41
+  s_359ba577017aa1::t_3c183e24b9f278 8-11
+src/components/taxonomy/taxonomy-tree-columns.tsx
+  s_037e6cc04ca792::t_d544e4c887b72d 38,42-54
+  s_037e6cc04ca792::t_93beb5bd6f598e 4-16
+  s_037e6cc04ca792::t_d857f4433d1bd3 66-70,73-79,81-83,87-122,125,128-154,159-209,214-217,219
+  s_037e6cc04ca792::t_e653942b165c59 55
+src/components/taxonomy/taxonomy-tree.tsx
+  s_037e6cc04ca792::t_e92359e2df6a8d 96-100,108-110,222
+  s_037e6cc04ca792::t_0159abf7a2858f 22
+  s_037e6cc04ca792::t_3092a5c8d9f109 101-107,226,231
+  s_037e6cc04ca792::t_f9c714d3721b52 241-244,265-267,270,279-280,289,309
+  s_037e6cc04ca792::t_036b46f52a2344 366
+  s_037e6cc04ca792::t_d857f4433d1bd3 362
+  s_037e6cc04ca792::t_deb62611875aed 37-38
+src/components/workspace/workspace-table-columns.tsx
+  s_359ba577017aa1::t_fed0f768ac30d6 10
+  s_359ba577017aa1::t_abccb4608a32d8 54
+  s_359ba577017aa1::t_98ec017a662a40 89,105,121,137,168
+pnpm-lock.yaml
+  s_79f4acba331f83::t_04c076cf0db5fc 106-107,3372-3374,3376,3387-3389,11663,11665-11666,11668-11669,11679-11681
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "6ba472ce04a98e95db77cea1facd4b4606b96893",
+  "prompts": {},
+  "sessions": {
+    "s_037e6cc04ca792": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc1608099ffem12Pj7wh93ywPX",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_359ba577017aa1": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc16080d7ffe9smms7NuTjOLvp",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_5c8be4af5583be": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc16080fdffelyNPAZPoXLHF9k",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_71099b96cb71f4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "28b6482c-29d8-4220-bfcd-28bff715ee97",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_79f4acba331f83": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc16186baffe2XvrzlikQA6jYi",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}
